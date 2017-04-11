@@ -54,6 +54,10 @@ export default class Main extends Component {
     isNavbar: PropTypes.bool.isRequired,
     navOpenKeys: PropTypes.array.isRequired,
 
+    switchMenuPopover: PropTypes.func.isRequired,
+    switchSider: PropTypes.func.isRequired,
+    changeOpenKeys: PropTypes.func.isRequired,
+    changeTheme: PropTypes.func.isRequired,
   }
 
   static defaultProps = {

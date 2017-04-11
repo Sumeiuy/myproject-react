@@ -1,14 +1,10 @@
 import React, { PropTypes } from 'react';
-import { Menu, Icon, Popover } from 'antd';
+import { Icon, Popover } from 'antd';
 
 import Menus from './Menu';
 import styles from './header.less';
 
-const SubMenu = Menu.SubMenu;
-
 function Header({
-  user = { name: '测试用户' },
-  logout,
   switchSider,
   siderFold,
   isNavbar,
@@ -18,7 +14,6 @@ function Header({
   navOpenKeys,
   changeOpenKeys,
 }) {
-  const handleClickMenu = e => e.key === 'logout' && logout();
   const menusProps = {
     siderFold: false,
     darkTheme: false,
@@ -39,43 +34,19 @@ function Header({
         : <div className={styles.button} onClick={switchSider}>
           <Icon type={siderFold ? 'menu-unfold' : 'menu-fold'} />
         </div>}
-      <div className={styles.rightWarpper}>
-        <div className={styles.button}>
-          <Icon type="mail" />
-        </div>
-        <Menu mode="horizontal" onClick={handleClickMenu}>
-          <SubMenu
-            style={{
-              float: 'right',
-            }}
-            title={
-              <span>
-                <Icon type="user" />
-                {user.name}
-              </span>
-            }
-          >
-            <Menu.Item key="logout">
-              <a>注销</a>
-            </Menu.Item>
-          </SubMenu>
-        </Menu>
-      </div>
     </div>
   );
 }
 
 Header.propTypes = {
-  user: PropTypes.object,
-  logout: PropTypes.func,
-  switchSider: PropTypes.func,
-  siderFold: PropTypes.bool,
-  isNavbar: PropTypes.bool,
-  menuPopoverVisible: PropTypes.bool,
-  location: PropTypes.object,
-  switchMenuPopover: PropTypes.func,
-  navOpenKeys: PropTypes.array,
-  changeOpenKeys: PropTypes.func,
+  switchSider: PropTypes.func.isRequired,
+  siderFold: PropTypes.bool.isRequired,
+  isNavbar: PropTypes.bool.isRequired,
+  menuPopoverVisible: PropTypes.bool.isRequired,
+  location: PropTypes.object.isRequired,
+  switchMenuPopover: PropTypes.func.isRequired,
+  navOpenKeys: PropTypes.array.isRequired,
+  changeOpenKeys: PropTypes.func.isRequired,
 };
 
 export default Header;
