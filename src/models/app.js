@@ -10,7 +10,7 @@ export default {
     menuPopoverVisible: false,
     siderFold: localStorage.getItem('htSiderFold') === 'true',
     darkTheme: localStorage.getItem('htDarkTheme') !== 'false',
-    isNavbar: document.body.clientWidth < 769,
+    useMenuPopover: document.body.clientWidth < 769,
     navOpenKeys: [],
   },
   subscriptions: {
@@ -51,7 +51,7 @@ export default {
       payload,
     }, { put }) {
       yield put({
-        type: 'handleSwitchMenuPopver',
+        type: 'handleSwitchMenuPopover',
       });
     },
   },
@@ -73,16 +73,16 @@ export default {
     showNavbar(state) {
       return {
         ...state,
-        isNavbar: true,
+        useMenuPopover: true,
       };
     },
     hideNavbar(state) {
       return {
         ...state,
-        isNavbar: false,
+        useMenuPopover: false,
       };
     },
-    handleSwitchMenuPopver(state) {
+    handleSwitchMenuPopover(state) {
       return {
         ...state,
         menuPopoverVisible: !state.menuPopoverVisible,

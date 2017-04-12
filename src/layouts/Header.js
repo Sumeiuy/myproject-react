@@ -7,7 +7,7 @@ import styles from './header.less';
 function Header({
   switchSider,
   siderFold,
-  isNavbar,
+  useMenuPopover,
   menuPopoverVisible,
   location,
   switchMenuPopover,
@@ -15,21 +15,32 @@ function Header({
   const menusProps = {
     siderFold: false,
     darkTheme: false,
-    isNavbar,
+    useMenuPopover,
     handleClickNavMenu: switchMenuPopover,
     location,
   };
   return (
     <div className={styles.header}>
-      {isNavbar
-        ? <Popover placement="bottomLeft" onVisibleChange={switchMenuPopover} visible={menuPopoverVisible} overlayClassName={styles.popovermenu} trigger="click" content={<Menus {...menusProps} />}>
-          <div className={styles.button}>
-            <Icon type="bars" />
+      {useMenuPopover
+        ? (
+          <Popover
+            placement="bottomLeft"
+            onVisibleChange={switchMenuPopover}
+            visible={menuPopoverVisible}
+            overlayClassName={styles.popovermenu}
+            trigger="click"
+            content={<Menus {...menusProps} />}
+          >
+            <div className={styles.button}>
+              <Icon type="bars" />
+            </div>
+          </Popover>
+        ) : (
+          <div className={styles.button} onClick={switchSider}>
+            <Icon type={siderFold ? 'menu-unfold' : 'menu-fold'} />
           </div>
-        </Popover>
-        : <div className={styles.button} onClick={switchSider}>
-          <Icon type={siderFold ? 'menu-unfold' : 'menu-fold'} />
-        </div>}
+        )
+      }
     </div>
   );
 }
@@ -37,7 +48,7 @@ function Header({
 Header.propTypes = {
   switchSider: PropTypes.func.isRequired,
   siderFold: PropTypes.bool.isRequired,
-  isNavbar: PropTypes.bool.isRequired,
+  useMenuPopover: PropTypes.bool.isRequired,
   menuPopoverVisible: PropTypes.bool.isRequired,
   location: PropTypes.object.isRequired,
   switchMenuPopover: PropTypes.func.isRequired,
