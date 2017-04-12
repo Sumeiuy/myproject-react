@@ -1,46 +1,14 @@
 import React, { PropTypes } from 'react';
-import { Icon, Popover } from 'antd';
+import { Icon } from 'antd';
 
-import Menus from './Menu';
 import styles from './header.less';
 
-function Header({
-  switchSider,
-  siderFold,
-  useMenuPopover,
-  menuPopoverVisible,
-  location,
-  switchMenuPopover,
-}) {
-  const menusProps = {
-    siderFold: false,
-    darkTheme: false,
-    useMenuPopover,
-    handleClickNavMenu: switchMenuPopover,
-    location,
-  };
+function Header({ switchSider, siderFold }) {
   return (
     <div className={styles.header}>
-      {useMenuPopover
-        ? (
-          <Popover
-            placement="bottomLeft"
-            onVisibleChange={switchMenuPopover}
-            visible={menuPopoverVisible}
-            overlayClassName={styles.popovermenu}
-            trigger="click"
-            content={<Menus {...menusProps} />}
-          >
-            <div className={styles.button}>
-              <Icon type="bars" />
-            </div>
-          </Popover>
-        ) : (
-          <div className={styles.button} onClick={switchSider}>
-            <Icon type={siderFold ? 'menu-unfold' : 'menu-fold'} />
-          </div>
-        )
-      }
+      <div className={styles.button} onClick={switchSider}>
+        <Icon type={siderFold ? 'menu-unfold' : 'menu-fold'} />
+      </div>
     </div>
   );
 }
@@ -48,10 +16,6 @@ function Header({
 Header.propTypes = {
   switchSider: PropTypes.func.isRequired,
   siderFold: PropTypes.bool.isRequired,
-  useMenuPopover: PropTypes.bool.isRequired,
-  menuPopoverVisible: PropTypes.bool.isRequired,
-  location: PropTypes.object.isRequired,
-  switchMenuPopover: PropTypes.func.isRequired,
 };
 
 export default Header;

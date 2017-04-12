@@ -46,12 +46,11 @@ export default class Main extends Component {
   static propTypes = {
     children: PropTypes.node.isRequired,
     location: PropTypes.object.isRequired,
-    menuPopoverVisible: PropTypes.bool.isRequired,
     // 侧栏折叠
     siderFold: PropTypes.bool.isRequired,
     // 是否深色主题
     darkTheme: PropTypes.bool.isRequired,
-    useMenuPopover: PropTypes.bool.isRequired,
+    siderAvailable: PropTypes.bool.isRequired,
     navOpenKeys: PropTypes.array.isRequired,
 
     switchMenuPopover: PropTypes.func.isRequired,
@@ -69,11 +68,9 @@ export default class Main extends Component {
       location,
       siderFold,
       darkTheme,
-      useMenuPopover,
-      menuPopoverVisible,
+      siderAvailable,
       navOpenKeys,
       // 方法
-      switchMenuPopover,
       switchSider,
       changeOpenKeys,
       changeTheme,
@@ -81,14 +78,7 @@ export default class Main extends Component {
 
     const headerProps = {
       siderFold,
-      location,
-      useMenuPopover,
-      menuPopoverVisible,
-      switchMenuPopover,
       switchSider,
-      logout() {
-        console.log('logout...');
-      },
     };
 
     const siderProps = {
@@ -111,15 +101,15 @@ export default class Main extends Component {
             classnames(
               styles.layout,
               {
-                [styles.fold]: useMenuPopover ? false : siderFold,
+                [styles.fold]: siderAvailable ? false : siderFold,
               },
               {
-                [styles.withnavbar]: useMenuPopover,
+                [styles.withnavbar]: siderAvailable,
               },
             )
           }
         >
-          {!useMenuPopover
+          {!siderAvailable
             ? (
               <aside className={classnames(styles.sider, { [styles.light]: !darkTheme })}>
                 <Sider {...siderProps} />

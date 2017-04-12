@@ -7,10 +7,10 @@
 export default {
   namespace: 'app',
   state: {
-    menuPopoverVisible: false,
     siderFold: localStorage.getItem('htSiderFold') === 'true',
     darkTheme: localStorage.getItem('htDarkTheme') !== 'false',
-    useMenuPopover: document.body.clientWidth < 769,
+    // 屏幕宽度很小的时候，不显示边栏
+    siderAvailable: document.body.clientWidth < 769,
     navOpenKeys: [],
   },
   subscriptions: {
@@ -42,17 +42,10 @@ export default {
       payload,
     }, { put }) {
       if (document.body.clientWidth < 769) {
-        yield put({ type: 'showNavbar' });
+        yield put({ type: 'showSidebar' });
       } else {
         yield put({ type: 'hideNavbar' });
       }
-    },
-    * switchMenuPopver({
-      payload,
-    }, { put }) {
-      yield put({
-        type: 'handleSwitchMenuPopover',
-      });
     },
   },
   reducers: {
@@ -70,22 +63,16 @@ export default {
         darkTheme: !state.darkTheme,
       };
     },
-    showNavbar(state) {
+    showSidebar(state) {
       return {
         ...state,
-        useMenuPopover: true,
+        siderAvailable: true,
       };
     },
     hideNavbar(state) {
       return {
         ...state,
-        useMenuPopover: false,
-      };
-    },
-    handleSwitchMenuPopover(state) {
-      return {
-        ...state,
-        menuPopoverVisible: !state.menuPopoverVisible,
+        siderAvailable: false,
       };
     },
     changeOpenKeys(state, action) {
