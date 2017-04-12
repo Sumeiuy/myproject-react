@@ -84,19 +84,17 @@ export default class Main extends Component {
       location,
       isNavbar,
       menuPopoverVisible,
-      navOpenKeys,
       switchMenuPopover,
       switchSider,
-      changeOpenKeys,
       logout() {
         console.log('logout...');
       },
     };
 
     const siderProps = {
+      location,
       siderFold,
       darkTheme,
-      location,
       navOpenKeys,
       changeTheme,
       changeOpenKeys,

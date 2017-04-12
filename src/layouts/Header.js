@@ -11,8 +11,6 @@ function Header({
   menuPopoverVisible,
   location,
   switchMenuPopover,
-  navOpenKeys,
-  changeOpenKeys,
 }) {
   const menusProps = {
     siderFold: false,
@@ -20,8 +18,6 @@ function Header({
     isNavbar,
     handleClickNavMenu: switchMenuPopover,
     location,
-    navOpenKeys,
-    changeOpenKeys,
   };
   return (
     <div className={styles.header}>
@@ -45,8 +41,6 @@ Header.propTypes = {
   menuPopoverVisible: PropTypes.bool.isRequired,
   location: PropTypes.object.isRequired,
   switchMenuPopover: PropTypes.func.isRequired,
-  navOpenKeys: PropTypes.array.isRequired,
-  changeOpenKeys: PropTypes.func.isRequired,
 };
 
 export default Header;
