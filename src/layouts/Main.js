@@ -93,7 +93,6 @@ export default class Main extends Component {
     return (
       <div>
         <Helmet>
-          <title>ANTD ADMIN</title>
           <link rel="icon" href={constants.logoSrc} type="image/x-icon" />
         </Helmet>
         <div

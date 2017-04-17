@@ -4,7 +4,8 @@
  */
 
 import dva from 'dva';
-import { browserHistory } from 'dva/router';
+import { hashHistory, routerRedux } from 'dva/router';
+
 import createLoading from 'dva-loading';
 import createLogger from 'redux-logger';
 import { persistStore, autoRehydrate } from 'redux-persist';
@@ -33,11 +34,13 @@ const onError = (e) => {
 
 // 1. Initialize
 const app = dva({
-  history: browserHistory,
+  history: hashHistory,
   onAction: [createLogger(), createSensorsLogger()],
   extraEnhancers,
   onError,
 });
+
+const store = app._store; // eslint-disable-line
 
 // 2. Plugins
 app.use(createLoading({ effects: true }));
@@ -55,5 +58,9 @@ app.start('#app');
 
 // 6. redux-persist
 if (persistConfig.active) {
-  persistStore(app._store, persistConfig); // eslint-disable-line
+  persistStore(store, persistConfig);
 }
+
+window.navTo = (url) => {
+  store.dispatch(routerRedux.push(url));
+};

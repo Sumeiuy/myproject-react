@@ -8,10 +8,10 @@ export default {
   ...api,
 
   // 获取xx列表
-  getList: query => api.post('/test/list', query),
+  getList: query => api.get('/test/list', query),
 
   // 获取xx详情
-  getDetail: query => api.post('/test/detail', query),
+  getDetail: query => api.get('/test/detail', query),
 
   // 保存xx详情
   saveDetail: query => api.post('/test/saveDetail', query),
