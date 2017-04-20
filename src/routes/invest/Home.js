@@ -4,8 +4,9 @@
  * @author sunweibin
  */
 
-import React, { PropTypes, PureComponent } from 'react';
-import { connect } from 'react-redux';
+import React, { PureComponent } from 'react';
+// import { connect } from 'react-redux';
+import { Row, Col } from 'antd';
 
 // import List from '../../components/example/List';
 import styles from './Home.less';
@@ -21,31 +22,36 @@ import styles from './Home.less';
 //   }),
 // };
 
-//@connect(mapStateToProps, mapDispatchToProps)
+// @connect(mapStateToProps, mapDispatchToProps)
 export default class InvestHome extends PureComponent {
 
   static propTypes = {
-    //getList: PropTypes.func.isRequired,
-    //list: PropTypes.array,
+    // getList: PropTypes.func.isRequired,
+    // list: PropTypes.array,
   }
 
   static defaultProps = {
-    //list: [],
+    // list: [],
   }
 
   componentWillMount() {
-    //this.props.getList();
+    // this.props.getList();
   }
 
   render() {
-    //const { list } = this.props;
+    // const { list } = this.props;
     return (
       <div className="page-invest content-inner">
         <div className={styles.investBlock}>
           <div className={styles.headerFilter}>
-            {/* TODO 添加内容 
-              此处添加的内容的容器使用inlin-block
-            */}
+            <Row type="flex" justify="start" align="middle">
+              <Col span={15}>
+                投顾业绩汇总
+              </Col>
+              <Col span={9}>
+                时间筛选
+              </Col>
+            </Row>
           </div>
         </div>
         <div className={styles.investBlock}>

@@ -12,7 +12,7 @@ import classnames from 'classnames';
 import { constants } from '../config';
 
 import Header from './Header';
-import Bread from './Bread';
+// import Bread from './Bread';
 import Footer from './Footer';
 import Sider from './Sider';
 
