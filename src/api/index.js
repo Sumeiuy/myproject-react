@@ -15,4 +15,7 @@ export default {
 
   // 保存xx详情
   saveDetail: query => api.post('/test/saveDetail', query),
+
+   // 获取绩效统计接口
+  getPerformance: query => api.get('/invest/performance', query),
 };
