@@ -12,7 +12,7 @@
     "build": "node build/build.js",
     "unit": "karma start test/unit/karma.conf.js --single-run",
     "test": "npm run unit",
-    "lint": "./node_modules/eslint/bin/eslint.js --ext js src"
+    "lint": "eslint --ext .js src"
   },
   "keywords": [],
   "dependencies": {
