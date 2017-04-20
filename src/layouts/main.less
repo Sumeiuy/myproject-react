@@ -189,21 +189,23 @@
     overflow: auto;
     height: 100vh;
     transition: @transition-ease-out;
-
+    
+    background-color: @invest-bkc-base;
     .container {
-      margin: 24px;
+      //margin: 24px;
+      margin: @invest-content-container-margin;
     }
 
     .content {
       min-height: e("calc(100vh - 184px)");
       position: relative;
 
-      & > :first-child {
-        background: #fff;
-        padding: 24px;
-        box-shadow: @shadow-1;
-        min-height: e("calc(100vh - 184px)");
-      }
+      // & > :first-child {
+      //   background: #fff;
+      //   padding: 24px;
+      //   box-shadow: @shadow-1;
+      //   min-height: e("calc(100vh - 184px)");
+      // }
     }
   }
 }
