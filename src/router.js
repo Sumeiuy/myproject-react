@@ -16,7 +16,6 @@ import Main from './layouts/Main';
 import Test from './routes/example/Home';
 import TestDetail from './routes/example/Detail';
 import Page from './routes/example/Page';
-
 import InvestHome from './routes/invest/Home';
 
 const routes = ({ history }) => (// eslint-disable-line

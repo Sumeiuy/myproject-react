@@ -6,8 +6,10 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
+import { withRouter } from 'dva/router';
 import { connect } from 'react-redux';
 import { Row, Col, Radio } from 'antd';
+import PerformanceItem from '../../components/invest/PerformanceItem';
 
 import styles from './Home.less';
 
@@ -27,6 +29,7 @@ const mapDispatchToProps = {
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
+@withRouter
 export default class InvestHome extends PureComponent {
 
   static propTypes = {
@@ -108,9 +111,9 @@ export default class InvestHome extends PureComponent {
           </div>
         </div>
         <div className={styles.investBlock}>
-          <div className={styles.investIndex}>
-            {/* TODO 添加内容 */}
-          </div>
+          <PerformanceItem
+            data={performance}
+          />
         </div>
         <div className={styles.investBlock}>
           {/* TODO 后期迭代任务 */}
