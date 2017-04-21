@@ -18,4 +18,7 @@ export default {
 
    // 获取绩效统计接口
   getPerformance: query => api.get('/invest/performance', query),
+
+  // 获取指标图表数据
+  getChartInfo: query => api.get('/invest/chartInfo', query),
 };
