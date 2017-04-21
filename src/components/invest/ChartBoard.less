@@ -1,0 +1,27 @@
+.board {
+  background-color: #f3f3f4;
+}
+.chartHeight {
+  height: 340px;
+}
+.chartBorder {
+  border-right:8px solid #f3f3f4;
+  &:last-child {
+    border-right:none;
+  }
+}
+.chartRow {
+  padding: 0 18px;
+  background-color: #fff;
+  margin-bottom: 8px;
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+.chartContainer {
+  composes: chartHeight;
+  composes: chartBorder;
+  &:not(:first-child) {
+    padding-left: 20px;
+  }
+}

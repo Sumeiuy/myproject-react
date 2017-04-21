@@ -9,7 +9,9 @@ import { autobind } from 'core-decorators';
 import { withRouter } from 'dva/router';
 import { connect } from 'react-redux';
 import { Row, Col, Radio } from 'antd';
+// import _ from 'lodash';
 import PerformanceItem from '../../components/invest/PerformanceItem';
+import PreformanceChartBoard from '../../components/invest/PerformanceChartBoard';
 
 import styles from './Home.less';
 
@@ -19,11 +21,16 @@ const RadioGroup = Radio.Group;
 
 const mapStateToProps = state => ({
   performance: state.invest.performance,
+  chartInfo: state.invest.chartInfo,
 });
 
 const mapDispatchToProps = {
   getPerformance: query => ({
     type: 'invest/getPerformance',
+    payload: query || {},
+  }),
+  getChartInfo: query => ({
+    type: 'invest/getChartInfo',
     payload: query || {},
   }),
 };
@@ -35,10 +42,13 @@ export default class InvestHome extends PureComponent {
   static propTypes = {
     getPerformance: PropTypes.func.isRequired,
     performance: PropTypes.array,
+    getChartInfo: PropTypes.func.isRequired,
+    chartInfo: PropTypes.array,
   }
 
   static defaultProps = {
     performance: [],
+    chartInfo: [],
   }
 
   constructor(props) {
@@ -47,9 +57,27 @@ export default class InvestHome extends PureComponent {
       duration: this.getDurationString('m'),
     };
   }
+
   componentWillMount() {
-    this.props.getPerformance();
+    const { getPerformance, getChartInfo } = this.props;
+    // if (!performance) {
+    getPerformance();
+    // }
+    // if (!chartInfo) {
+    getChartInfo();
+    // }
   }
+
+  // componentWillReceiveProps(nextProps) {
+  //   判断props是否变化
+  //   const { performance, chartInfo } = nextProps;
+  //   if (_.isEmpty(performance)) {
+  //     this.props.getPerformance();
+  //   }
+  //   if (_isEmpty(chartInfo)) {
+  //     this.props.getChartInfo();
+  //   }
+  // }
 
   @autobind
   getDurationString(flag) {
@@ -86,8 +114,7 @@ export default class InvestHome extends PureComponent {
 
   render() {
     const { duration } = this.state;
-    const { performance } = this.props;
-    console.log(performance);
+    const { performance, chartInfo } = this.props;
     return (
       <div className="page-invest content-inner">
         <div className={styles.investBlock}>
@@ -116,7 +143,7 @@ export default class InvestHome extends PureComponent {
           />
         </div>
         <div className={styles.investBlock}>
-          {/* TODO 后期迭代任务 */}
+          <PreformanceChartBoard chartData={chartInfo} />
         </div>
       </div>
     );

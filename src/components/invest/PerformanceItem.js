@@ -21,7 +21,7 @@ export default class PerformanceItem extends PureComponent {
     const { data } = this.props;
     return (
       <div>
-        <h2 className={styles.h2}>总量指标</h2>
+        <div className={styles.titleText}>总量指标</div>
         <div className={styles.items}>
           <Row gutter={4}>
             {

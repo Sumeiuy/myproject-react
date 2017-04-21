@@ -2,7 +2,7 @@ exports.response = function (req, res) {
   return {
     "code": "0",
     "msg": "OK",
-    "data": {
+    "resultData": {
       "performance": [
       {
         title: "投顾入岗人数",
