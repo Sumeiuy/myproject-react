@@ -3,26 +3,35 @@
 .inlineBlock {
   display: inline-block;
 }
+.pd-20 {
+  padding:0 20px;
+}
+.reportHeader {
+  composes: pd-20;
+  width: 100%;
+  height: 55px;
+  line-height: 55px;
+  background-color: #fff;
+}
+.reportBody {
+  margin: 20px;
+  background-color: #f3f3f4;
+}
+.reportPart {
+  width: 100%;
+  height: auto;
+  overflow: hidden;
+  margin-bottom: 25px;
+  border-radius: 5px;
+  box-shadow: 0.5px 0.866px 3px 0px rgb( 173, 173, 173 );
+}
 
-.investBlock {
-  margin-bottom: @invest-block-gutter;
-  padding: 5px 1px 1px 1px;
-  background-color: @invest-bkc-block;
-}
-.pd-18 {
-  padding:0 18px;
-}
 .textAlignRight {
   text-align: right;
 }
-.headerFilter {
-  composes: pd-18;
-  height: 40px;
-  line-height: 40px;
-  background-color: @bkc-fff;
-}
+
 .investIndex {
-  composes: pd-18;
+  // composes: pd-18;
   background-color: @bkc-fff;
 }
 .dateFilter {

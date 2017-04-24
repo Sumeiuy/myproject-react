@@ -8,6 +8,7 @@ import { Button, Icon } from 'antd';
 
 import ChartBoard from './ChartBoard';
 
+
 import styles from './PerformanceChartBoard.less';
 
 export default class PerformanceChartBoard extends PureComponent {
