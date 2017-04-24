@@ -40,8 +40,6 @@ const app = dva({
   onError,
 });
 
-const store = app._store; // eslint-disable-line
-
 // 2. Plugins
 app.use(createLoading({ effects: true }));
 app.use(createActivityIndicator());
@@ -56,6 +54,9 @@ app.router(routerConfig);
 
 // 5. Start
 app.start('#app');
+
+// start后_store才被初始化
+const store = app._store; // eslint-disable-line
 
 // 6. redux-persist
 if (persistConfig.active) {

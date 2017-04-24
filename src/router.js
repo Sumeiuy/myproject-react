@@ -21,7 +21,7 @@ import InvestHome from './routes/invest/Home';
 const routes = ({ history }) => (// eslint-disable-line
   <Router history={history}>
     <Route path="/" component={Main}>
-      <IndexRedirect to="/example" />
+      <IndexRedirect to="/invest" />
       <Route path="example">
         <IndexRoute component={Test} />
         <Route path="detail/:id" component={TestDetail} />
