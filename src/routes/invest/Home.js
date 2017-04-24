@@ -117,33 +117,33 @@ export default class InvestHome extends PureComponent {
     const { performance, chartInfo } = this.props;
     return (
       <div className="page-invest content-inner">
-        <div className={styles.investBlock}>
-          <div className={styles.headerFilter}>
-            <Row type="flex" justify="start" align="middle">
-              <Col span={15}>
-                投顾业绩汇总
-              </Col>
-              <Col span={9} className={styles.textAlignRight}>
-                <div className={styles.dateFilter}>{duration}</div>
-                <RadioGroup
-                  defaultValue="m"
-                  onChange={this.handleDurationChange}
-                >
-                  <RadioButton value="m">本月</RadioButton>
-                  <RadioButton value="q">本季</RadioButton>
-                  <RadioButton value="y">本年</RadioButton>
-                </RadioGroup>
-              </Col>
-            </Row>
+        <div className={styles.reportHeader}>
+          <Row type="flex" justify="start" align="middle">
+            <Col span={15}>
+              投顾业绩汇总
+            </Col>
+            <Col span={9} className={styles.textAlignRight}>
+              <div className={styles.dateFilter}>{duration}</div>
+              <RadioGroup
+                defaultValue="m"
+                onChange={this.handleDurationChange}
+              >
+                <RadioButton value="m">本月</RadioButton>
+                <RadioButton value="q">本季</RadioButton>
+                <RadioButton value="y">本年</RadioButton>
+              </RadioGroup>
+            </Col>
+          </Row>
+        </div>
+        <div className={styles.reportBody}>
+          <div className={styles.reportPart}>
+            <PerformanceItem
+              data={performance}
+            />
           </div>
-        </div>
-        <div className={styles.investBlock}>
-          <PerformanceItem
-            data={performance}
-          />
-        </div>
-        <div className={styles.investBlock}>
-          <PreformanceChartBoard chartData={chartInfo} />
+          <div className={styles.reportPart}>
+            <PreformanceChartBoard chartData={chartInfo} />
+          </div>
         </div>
       </div>
     );
