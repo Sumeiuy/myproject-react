@@ -157,10 +157,28 @@ export default class ChartBar extends PureComponent {
     for (let i = 0; i < seriesDataLen; i++) {
       dataShadow.push(gridXAxisMax);
     }
+
+    // tooltip 配置项
+    const tooltipOtions = {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'shadow',
+      },
+      formatter(params) {
+        return `${params[1].axisValue}<br /> ${params[1].seriesName}: <span style="color:#f8ac59; font-size: 15px;">${params[1].data}</span>${unit}`;
+      },
+      backgroundColor: 'rgba(0, 0, 0, .56)',
+      padding: [12, 11, 13, 13],
+      extraCssText: 'border-radius: 8px',
+    };
     // 生成柱状图渐变
+
 
     const options = {
       color: [barColor],
+      tooltip: {
+        ...tooltipOtions,
+      },
       grid: {
         ...gridOptions,
       },

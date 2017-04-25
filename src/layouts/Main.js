@@ -75,7 +75,6 @@ export default class Main extends Component {
       changeOpenKeys,
       changeTheme,
     } = this.props;
-
     const headerProps = {
       siderFold,
       switchSider,

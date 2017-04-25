@@ -9,10 +9,10 @@ import { Select } from 'antd';
 import Icon from '../common/Icon';
 import ChartBoard from './ChartBoard';
 
-
 import styles from './PerformanceChartBoard.less';
 
 const Option = Select.Option;
+
 
 export default class PerformanceChartBoard extends PureComponent {
 

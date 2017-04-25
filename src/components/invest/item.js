@@ -1,12 +1,13 @@
 /**
- * item.js 单项数据统计组件
+ * @file invest/item.js 单项数据统计组件
  * @author LiuJianShu
  */
-import React, { Component, PropTypes } from 'react';
+import React, { PureComponent, PropTypes } from 'react';
+import IconTypeMap from '../../config/IconTypeMap';
 import Icon from '../common/Icon';
 import styles from './item.less';
 
-export default class Item extends Component {
+export default class Item extends PureComponent {
 
   static propTypes = {
     data: PropTypes.object,
@@ -21,7 +22,7 @@ export default class Item extends Component {
     return (
       <div className={styles.content}>
         <h3 className={styles.title}>
-          <Icon type={data.type} />
+          <Icon type={IconTypeMap[data.icon]} />
           {data.title}
         </h3>
         <h4 className={styles.num}>
