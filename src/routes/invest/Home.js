@@ -6,12 +6,13 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
-import { withRouter } from 'dva/router';
+import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import { Row, Radio, Select } from 'antd';
 // import _ from 'lodash';
 import PerformanceItem from '../../components/invest/PerformanceItem';
 import PreformanceChartBoard from '../../components/invest/PerformanceChartBoard';
+import CustRange from '../../components/invest/CustRange';
 
 import styles from './Home.less';
 
@@ -24,6 +25,7 @@ const Option = Select.Option;
 const mapStateToProps = state => ({
   performance: state.invest.performance,
   chartInfo: state.invest.chartInfo,
+  custRange: state.invest.custRange,
 });
 
 const mapDispatchToProps = {
@@ -35,6 +37,11 @@ const mapDispatchToProps = {
     type: 'invest/getChartInfo',
     payload: query || {},
   }),
+  getCustRange: () => ({
+    type: 'invest/getCustRange',
+  }),
+  push: routerRedux.push,
+  replace: routerRedux.replace,
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -46,11 +53,19 @@ export default class InvestHome extends PureComponent {
     performance: PropTypes.array,
     getChartInfo: PropTypes.func.isRequired,
     chartInfo: PropTypes.array,
+    getCustRange: PropTypes.func.isRequired,
+    custRange: PropTypes.array,
+    location: PropTypes.object.isRequired,
+    replace: PropTypes.func.isRequired,
+    push: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
     performance: [],
     chartInfo: [],
+    custRange: [],
+    location: {},
+    getCustRange: () => { },
   }
 
   constructor(props) {
@@ -61,13 +76,19 @@ export default class InvestHome extends PureComponent {
   }
 
   componentWillMount() {
-    const { getPerformance, getChartInfo } = this.props;
+    const { getPerformance, getChartInfo, getCustRange } = this.props;
     // if (!performance) {
     getPerformance();
     // }
     // if (!chartInfo) {
     getChartInfo();
     // }
+    getCustRange();
+  }
+
+  componentDidMount() {
+    const { location: { query } } = this.props;
+    console.log('query', query);
   }
 
   // componentWillReceiveProps(nextProps) {
@@ -116,7 +137,13 @@ export default class InvestHome extends PureComponent {
 
   render() {
     const { duration } = this.state;
-    const { performance, chartInfo } = this.props;
+    const {
+      performance,
+      chartInfo,
+      custRange,
+      location,
+      replace,
+    } = this.props;
     return (
       <div className="page-invest content-inner">
         <div className="reportHeader">
@@ -143,6 +170,11 @@ export default class InvestHome extends PureComponent {
               </RadioGroup>
               <div className={styles.vSplit} />
               {/* 营业地址选择项 */}
+              <CustRange
+                custRange={custRange}
+                location={location}
+                replace={replace}
+              />
             </div>
           </Row>
         </div>

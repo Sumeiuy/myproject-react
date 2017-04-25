@@ -12,6 +12,7 @@ export default {
   state: {
     performance: [],
     chartInfo: [],
+    custRange: [],
   },
   reducers: {
     getPerformanceSuccess(state, action) {
@@ -28,6 +29,17 @@ export default {
       return {
         ...state,
         chartInfo,
+      };
+    },
+    getCustRangeSuccess(state, action) {
+      const { response: { resultData } } = action;
+      const custRange = [
+        { label: resultData.label, value: resultData.value },
+        ...resultData.children,
+      ];
+      return {
+        ...state,
+        custRange,
       };
     },
   },
@@ -47,6 +59,15 @@ export default {
       yield put({
         type: 'getChartInfoSuccess',
         payload: { response },
+      });
+    },
+
+    // 获取客户范围
+    * getCustRange({ payload }, { call, put }) {
+      const response = yield call(api.getCustRange, payload);
+      yield put({
+        type: 'getCustRangeSuccess',
+        response,
       });
     },
   },
