@@ -3,6 +3,7 @@
  * @author LiuJianShu
  */
 import React, { Component, PropTypes } from 'react';
+import Icon from '../common/Icon';
 import styles from './item.less';
 
 export default class Item extends Component {
@@ -19,11 +20,14 @@ export default class Item extends Component {
     const { data } = this.props;
     return (
       <div className={styles.content}>
-        <h3 className={styles.title}>{ data.title }</h3>
+        <h3 className={styles.title}>
+          <Icon type={data.type} />
+          {data.title}
+        </h3>
         <h4 className={styles.num}>
-          { data.num }
+          {data.num}
           <span className={styles.span}>
-            {data.unit }
+            {data.unit}
           </span>
         </h4>
       </div>
