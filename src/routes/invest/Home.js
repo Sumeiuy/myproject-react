@@ -8,7 +8,7 @@ import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import { withRouter } from 'dva/router';
 import { connect } from 'react-redux';
-import { Row, Col, Radio } from 'antd';
+import { Row, Radio, Select } from 'antd';
 // import _ from 'lodash';
 import PerformanceItem from '../../components/invest/PerformanceItem';
 import PreformanceChartBoard from '../../components/invest/PerformanceChartBoard';
@@ -18,6 +18,8 @@ import styles from './Home.less';
 // RadioButton
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
+// Select
+const Option = Select.Option;
 
 const mapStateToProps = state => ({
   performance: state.invest.performance,
@@ -117,12 +119,19 @@ export default class InvestHome extends PureComponent {
     const { performance, chartInfo } = this.props;
     return (
       <div className="page-invest content-inner">
-        <div className={styles.reportHeader}>
+        <div className="reportHeader">
           <Row type="flex" justify="start" align="middle">
-            <Col span={15}>
-              投顾业绩汇总
-            </Col>
-            <Col span={9} className={styles.textAlignRight}>
+            <div className={styles.reportName}>
+              <Select
+                defaultValue="1"
+                style={{
+                  width: '150px',
+                }}
+              >
+                <Option value="1">投顾业绩汇总</Option>
+              </Select>
+            </div>
+            <div className={styles.reportHeaderRight}>
               <div className={styles.dateFilter}>{duration}</div>
               <RadioGroup
                 defaultValue="m"
@@ -132,7 +141,9 @@ export default class InvestHome extends PureComponent {
                 <RadioButton value="q">本季</RadioButton>
                 <RadioButton value="y">本年</RadioButton>
               </RadioGroup>
-            </Col>
+              <div className={styles.vSplit} />
+              {/* 营业地址选择项 */}
+            </div>
           </Row>
         </div>
         <div className={styles.reportBody}>

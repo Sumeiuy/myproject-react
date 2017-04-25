@@ -25,32 +25,32 @@ export default class ChartBoard extends PureComponent {
         <div className={styles.chartRow}>
           <Row type="flex">
             <Col span={6} className={styles.chartContainer}>
-              <CharBar chartData={chartData[0]} />
+              <CharBar chartData={chartData[0]} iconType="renyuan" />
             </Col>
             <Col span={6} className={styles.chartContainer}>
-              <CharBar chartData={chartData[1]} />
+              <CharBar chartData={chartData[1]} iconType="kehu-copy" />
             </Col>
             <Col span={6} className={styles.chartContainer}>
-              <CharBar chartData={chartData[2]} />
+              <CharBar chartData={chartData[2]} iconType="zichan" />
             </Col>
             <Col span={6} className={styles.chartContainer}>
-              <CharBar chartData={chartData[3]} />
+              <CharBar chartData={chartData[3]} iconType="tuoguan" />
             </Col>
           </Row>
         </div>
         <div className={styles.chartRow}>
           <Row type="flex">
             <Col span={6} className={styles.chartContainer}>
-              <CharBar chartData={chartData[4]} />
+              <CharBar chartData={chartData[4]} iconType="zichan" />
             </Col>
             <Col span={6} className={styles.chartContainer}>
-              <CharBar chartData={chartData[5]} />
+              <CharBar chartData={chartData[5]} iconType="xinyonghucanyuzhanbi" />
             </Col>
             <Col span={6} className={styles.chartContainer}>
-              <CharBar chartData={chartData[6]} />
+              <CharBar chartData={chartData[6]} iconType="tuoguan" />
             </Col>
             <Col span={6} className={styles.chartContainer}>
-              <CharBar chartData={chartData[7]} />
+              <CharBar chartData={chartData[7]} iconType="xinyonghucanyuzhanbi" />
             </Col>
           </Row>
         </div>
