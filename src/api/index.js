@@ -21,4 +21,7 @@ export default {
 
   // 获取指标图表数据
   getChartInfo: query => api.get('/invest/chartInfo', query),
+
+  // 获取客户范围
+  getCustRange: query => api.get('/invest/custRange', query),
 };
