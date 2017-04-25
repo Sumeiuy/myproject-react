@@ -86,11 +86,6 @@ export default class InvestHome extends PureComponent {
     getCustRange();
   }
 
-  componentDidMount() {
-    const { location: { query } } = this.props;
-    console.log('query', query);
-  }
-
   // componentWillReceiveProps(nextProps) {
   //   判断props是否变化
   //   const { performance, chartInfo } = nextProps;

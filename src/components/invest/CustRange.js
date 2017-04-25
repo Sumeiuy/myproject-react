@@ -1,6 +1,6 @@
 /**
  * @file invest/CustRange.js
- *  客户范围组件
+ *  客户范围筛选组件
  * @author wangjunjun
  */
 
@@ -45,8 +45,8 @@ export default class CustRange extends PureComponent {
   }
 
   @autobind
-  onChange(value) {
-    console.log(value);
+  onChange(value, label, extra) {
+    console.log(value, label, extra);
     const { location: { query }, replace } = this.props;
     this.setState({
       value,
@@ -55,7 +55,7 @@ export default class CustRange extends PureComponent {
         pathname: '',
         query: {
           ...query,
-          custRange: value,
+          custRange: encodeURIComponent(value),
         },
       });
     });
@@ -70,10 +70,9 @@ export default class CustRange extends PureComponent {
         value={this.state.value}
         onChange={this.onChange}
         dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-        dropdownMatchSelectWidth={false}
         showSearch
         allowClear
-        treeDefaultExpandAll
+        dropdownMatchSelectWidth
       >
         {getNodes(this.props.custRange)}
       </TreeSelect>
