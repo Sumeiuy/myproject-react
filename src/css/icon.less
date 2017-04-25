@@ -1,35 +1,38 @@
 @font-face {font-family: "iconfont";
-  src: url('iconfont.eot?t=1492764471706'); /* IE9*/
-  src: url('iconfont.eot?t=1492764471706#iefix') format('embedded-opentype'), /* IE6-IE8 */
-  url('iconfont.woff?t=1492764471706') format('woff'), /* chrome, firefox */
-  url('iconfont.ttf?t=1492764471706') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
-  url('iconfont.svg?t=1492764471706#iconfont') format('svg'); /* iOS 4.1- */
+  src: url('@{iconfont-url}.eot?t=1492764471706'); /* IE9*/
+  src: url('@{iconfont-url}.eot?t=1492764471706#iefix') format('embedded-opentype'), /* IE6-IE8 */
+  url('@{iconfont-url}.woff?t=1492764471706') format('woff'), /* chrome, firefox */
+  url('@{iconfont-url}.ttf?t=1492764471706') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
+  url('@{iconfont-url}.svg?t=1492764471706#iconfont') format('svg'); /* iOS 4.1- */
 }
 
-.iconfont {
-  font-family:"iconfont" !important;
-  font-size:16px;
-  font-style:normal;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+:global {
+  .iconfont {
+    font-family:"iconfont" !important;
+    font-size:16px;
+    font-style:normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    vertical-align: middle;
+  }
+
+  .icon-hide:before { content: "\e68b"; }
+
+  .icon-tables:before { content: "\e612"; }
+
+  .icon-zichan:before { content: "\e658"; }
+
+  .icon-kehu-copy:before { content: "\e629"; }
+
+  .icon-tuoguan:before { content: "\e600"; }
+
+  .icon-daochu:before { content: "\e60b"; }
+
+  .icon-xinyonghucanyuzhanbi:before { content: "\e728"; }
+
+  .icon-xianshi:before { content: "\e6db"; }
+
+  .icon-zhuzhuangtu:before { content: "\e661"; }
+
+  .icon-renyuan:before { content: "\e675"; }
 }
-
-.icon-hide:before { content: "\e68b"; }
-
-.icon-tables:before { content: "\e612"; }
-
-.icon-zichan:before { content: "\e658"; }
-
-.icon-kehu-copy:before { content: "\e629"; }
-
-.icon-tuoguan:before { content: "\e600"; }
-
-.icon-daochu:before { content: "\e60b"; }
-
-.icon-xinyonghucanyuzhanbi:before { content: "\e728"; }
-
-.icon-xianshi:before { content: "\e6db"; }
-
-.icon-zhuzhuangtu:before { content: "\e661"; }
-
-.icon-renyuan:before { content: "\e675"; }
