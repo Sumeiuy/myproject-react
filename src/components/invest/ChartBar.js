@@ -7,6 +7,7 @@ import React, { PropTypes, PureComponent } from 'react';
 import ReactEcharts from 'echarts-for-react';
 import { autobind } from 'core-decorators';
 
+import IconTypeMap from '../../config/IconTypeMap';
 import Icon from '../common/Icon';
 import styles from './ChartBar.less';
 
@@ -142,7 +143,7 @@ export default class ChartBar extends PureComponent {
   }
 
   render() {
-    const { chartData: { title, unit, data = [] }, iconType } = this.props;
+    const { chartData: { title, unit, icon, data = [] } } = this.props;
     const { seeChart } = this.state;
     // 此处为y轴刻度值
     const yAxisLabels = this.getChartData(data, 'name');
@@ -210,7 +211,7 @@ export default class ChartBar extends PureComponent {
       <div>
         <div className={styles.chartHeader}>
           <div className={styles.chartTitle}>
-            <Icon type={iconType} className={styles.chartTiltleTextIcon} />
+            <Icon type={IconTypeMap[icon]} className={styles.chartTiltleTextIcon} />
             <span className={styles.chartTitleText}>{title}</span>
           </div>
           <div className={styles.seeIcon}>

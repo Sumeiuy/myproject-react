@@ -6,10 +6,10 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
-import { withRouter } from 'dva/router';
+import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import { Row, Radio, Select } from 'antd';
-// import _ from 'lodash';
+import _ from 'lodash';
 import PerformanceItem from '../../components/invest/PerformanceItem';
 import PreformanceChartBoard from '../../components/invest/PerformanceChartBoard';
 
@@ -21,20 +21,29 @@ const RadioGroup = Radio.Group;
 // Select
 const Option = Select.Option;
 
+const effects = {
+  performance: 'invest/getPerformance',
+  chartInfo: 'invest/getChartInfo',
+};
+
+const fectchDataFunction = (globalLoading, type) => query => ({
+  type,
+  payLoad: query || {},
+  loading: globalLoading,
+});
+
 const mapStateToProps = state => ({
   performance: state.invest.performance,
   chartInfo: state.invest.chartInfo,
+  chartLoading: state.loading.effects[effects.chartInfo],
 });
 
 const mapDispatchToProps = {
-  getPerformance: query => ({
-    type: 'invest/getPerformance',
-    payload: query || {},
-  }),
-  getChartInfo: query => ({
-    type: 'invest/getChartInfo',
-    payload: query || {},
-  }),
+  getPerformance: fectchDataFunction(true, effects.performance),
+  refreshPerformance: fectchDataFunction(false, effects.performance),
+  getChartInfo: fectchDataFunction(true, effects.chartInfo),
+  refreshChartInfo: fectchDataFunction(false, effects.chartInfo),
+  replace: routerRedux.replace,
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -42,44 +51,55 @@ const mapDispatchToProps = {
 export default class InvestHome extends PureComponent {
 
   static propTypes = {
+    location: PropTypes.object.isRequired,
     getPerformance: PropTypes.func.isRequired,
+    refreshPerformance: PropTypes.func.isRequired,
     performance: PropTypes.array,
     getChartInfo: PropTypes.func.isRequired,
+    refreshChartInfo: PropTypes.func.isRequired,
     chartInfo: PropTypes.array,
+    replace: PropTypes.func.isRequired,
+    chartLoading: PropTypes.bool,
   }
 
   static defaultProps = {
+    chartLoading: false,
     performance: [],
     chartInfo: [],
+    repalce: () => {},
   }
 
   constructor(props) {
     super(props);
     this.state = {
-      duration: this.getDurationString('m'),
+      duration: this.getDurationString('month'),
     };
   }
 
   componentWillMount() {
     const { getPerformance, getChartInfo } = this.props;
-    // if (!performance) {
     getPerformance();
-    // }
-    // if (!chartInfo) {
     getChartInfo();
-    // }
   }
 
-  // componentWillReceiveProps(nextProps) {
-  //   判断props是否变化
-  //   const { performance, chartInfo } = nextProps;
-  //   if (_.isEmpty(performance)) {
-  //     this.props.getPerformance();
-  //   }
-  //   if (_isEmpty(chartInfo)) {
-  //     this.props.getChartInfo();
-  //   }
-  // }
+  componentWillReceiveProps(nextProps) {
+    // 判断props是否变化
+    const { location: { query } } = nextProps;
+    const { location: { query: preQuery }, refreshChartInfo } = this.props;
+    // 此处需要判断需要修改哪个值
+    // 是投顾头部总量指标
+    // 还是chart部分的数据
+    if (!_.isEqual(query, preQuery)) {
+      // 判断是排序方式的值不同
+      const sortNow = _.pick(query, ['sortColumn', 'sortOrder']);
+      const sortPre = _.pick(preQuery, ['sortColumn', 'sortOrder']);
+      if (!_.isEqual(sortNow, sortPre)) {
+        refreshChartInfo({
+          ...query,
+        });
+      }
+    }
+  }
 
   @autobind
   getDurationString(flag) {
@@ -90,11 +110,11 @@ export default class InvestHome extends PureComponent {
     let qStartMonth = (Math.floor((now.getMonth() + 3) / 3) * 3) - 2;
     qStartMonth = qStartMonth < 10 ? `0${qStartMonth}` : `${qStartMonth}`;
     // 本月
-    if (flag === 'm') {
+    if (flag === 'month') {
       duration = `${month}/01-${month}/${day}`;
-    } else if (flag === 'q') {
+    } else if (flag === 'season') {
       duration = `${qStartMonth}/01-${month}/${day}`;
-    } else if (flag === 'y') {
+    } else if (flag === 'year') {
       duration = `01/01-${month}/${day}`;
     }
     return duration;
@@ -111,12 +131,28 @@ export default class InvestHome extends PureComponent {
   @autobind
   handleDurationChange(e) {
     const value = e.target.value;
+    const { replace, location: { query } } = this.props;
     this.durationChange(value);
+    // 需要改变query中的查询变量
+    replace({
+      pathname: '/invest',
+      query: {
+        ...query,
+        duration: value,
+      },
+    });
   }
 
   render() {
     const { duration } = this.state;
-    const { performance, chartInfo } = this.props;
+    const {
+      performance,
+      chartInfo,
+      location,
+      replace,
+      chartLoading,
+    } = this.props;
+
     return (
       <div className="page-invest content-inner">
         <div className="reportHeader">
@@ -134,12 +170,12 @@ export default class InvestHome extends PureComponent {
             <div className={styles.reportHeaderRight}>
               <div className={styles.dateFilter}>{duration}</div>
               <RadioGroup
-                defaultValue="m"
+                defaultValue="month"
                 onChange={this.handleDurationChange}
               >
-                <RadioButton value="m">本月</RadioButton>
-                <RadioButton value="q">本季</RadioButton>
-                <RadioButton value="y">本年</RadioButton>
+                <RadioButton value="month">本月</RadioButton>
+                <RadioButton value="season">本季</RadioButton>
+                <RadioButton value="year">本年</RadioButton>
               </RadioGroup>
               <div className={styles.vSplit} />
               {/* 营业地址选择项 */}
@@ -153,7 +189,12 @@ export default class InvestHome extends PureComponent {
             />
           </div>
           <div className={styles.reportPart}>
-            <PreformanceChartBoard chartData={chartInfo} />
+            <PreformanceChartBoard
+              chartData={chartInfo}
+              location={location}
+              replace={replace}
+              loading={chartLoading}
+            />
           </div>
         </div>
       </div>
