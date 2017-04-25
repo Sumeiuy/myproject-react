@@ -3,7 +3,7 @@
  * @author LiuJianShu
  */
 import React, { PureComponent, PropTypes } from 'react';
-import IconTypeMap from '../../config/IconTypeMap';
+import iconTypeMap from '../../config/iconTypeMap';
 import Icon from '../common/Icon';
 import styles from './item.less';
 
@@ -22,7 +22,7 @@ export default class Item extends PureComponent {
     return (
       <div className={styles.content}>
         <h3 className={styles.title}>
-          <Icon type={IconTypeMap[data.icon]} />
+          <Icon type={iconTypeMap[data.icon]} />
           {data.title}
         </h3>
         <h4 className={styles.num}>
