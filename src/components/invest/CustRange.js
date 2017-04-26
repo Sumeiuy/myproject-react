@@ -44,6 +44,18 @@ export default class CustRange extends PureComponent {
     };
   }
 
+  componentDidMount() {
+    const { custRange } = this.props;
+    this.setDefaultValue(custRange);
+  }
+
+  componentDidUpdate(prevProps) {
+    const { custRange } = this.props;
+    if (prevProps.custRange !== custRange) {
+      this.setDefaultValue(custRange);
+    }
+  }
+
   @autobind
   onChange(value, label, extra) {
     console.log(value, label, extra);
@@ -61,16 +73,22 @@ export default class CustRange extends PureComponent {
     });
   }
 
+  setDefaultValue(custRange) {
+    this.setState({
+      value: (custRange[0] || {}).label,
+    });
+  }
+
   render() {
     const { custRange } = this.props;
     return (
       <TreeSelect
-        placeholder="客户范围"
         notFoundContent="没有结果"
         className={styles.custRang}
         value={this.state.value}
         onChange={this.onChange}
         dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+        treeNodeFilterProp={'title'}
         showSearch
         allowClear
         dropdownMatchSelectWidth
