@@ -78,7 +78,6 @@ export default class Main extends Component {
       changeTheme,
       loading,
     } = this.props;
-
     const headerProps = {
       siderFold,
       switchSider,

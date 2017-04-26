@@ -13,6 +13,7 @@ import styles from './PerformanceChartBoard.less';
 
 const Option = Select.Option;
 
+
 export default class PerformanceChartBoard extends PureComponent {
 
   static propTypes = {

@@ -12,6 +12,7 @@ import { Row, Radio, Select } from 'antd';
 import _ from 'lodash';
 import PerformanceItem from '../../components/invest/PerformanceItem';
 import PreformanceChartBoard from '../../components/invest/PerformanceChartBoard';
+import CustRange from '../../components/invest/CustRange';
 
 import styles from './Home.less';
 
@@ -24,6 +25,7 @@ const Option = Select.Option;
 const effects = {
   performance: 'invest/getPerformance',
   chartInfo: 'invest/getChartInfo',
+  custRange: 'invest/getCustRange',
 };
 
 const fectchDataFunction = (globalLoading, type) => query => ({
@@ -36,6 +38,7 @@ const mapStateToProps = state => ({
   performance: state.invest.performance,
   chartInfo: state.invest.chartInfo,
   chartLoading: state.loading.effects[effects.chartInfo],
+  custRange: state.invest.custRange,
 });
 
 const mapDispatchToProps = {
@@ -43,6 +46,8 @@ const mapDispatchToProps = {
   refreshPerformance: fectchDataFunction(false, effects.performance),
   getChartInfo: fectchDataFunction(true, effects.chartInfo),
   refreshChartInfo: fectchDataFunction(false, effects.chartInfo),
+  getCustRange: fectchDataFunction(true, effects.custRange),
+  push: routerRedux.push,
   replace: routerRedux.replace,
 };
 
@@ -58,15 +63,18 @@ export default class InvestHome extends PureComponent {
     getChartInfo: PropTypes.func.isRequired,
     refreshChartInfo: PropTypes.func.isRequired,
     chartInfo: PropTypes.array,
-    replace: PropTypes.func.isRequired,
     chartLoading: PropTypes.bool,
+    getCustRange: PropTypes.func.isRequired,
+    custRange: PropTypes.array,
+    replace: PropTypes.func.isRequired,
+    push: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
-    chartLoading: false,
     performance: [],
     chartInfo: [],
-    repalce: () => {},
+    chartLoading: false,
+    custRange: [],
   }
 
   constructor(props) {
@@ -77,15 +85,21 @@ export default class InvestHome extends PureComponent {
   }
 
   componentWillMount() {
-    const { getPerformance, getChartInfo } = this.props;
+    const { getPerformance, getChartInfo, getCustRange } = this.props;
     getPerformance();
     getChartInfo();
+    getCustRange();
   }
 
   componentWillReceiveProps(nextProps) {
     // 判断props是否变化
     const { location: { query } } = nextProps;
-    const { location: { query: preQuery }, refreshChartInfo } = this.props;
+    const {
+      location: { query: preQuery },
+      refreshChartInfo,
+      getChartInfo,
+      getPerformance,
+    } = this.props;
     // 此处需要判断需要修改哪个值
     // 是投顾头部总量指标
     // 还是chart部分的数据
@@ -94,7 +108,16 @@ export default class InvestHome extends PureComponent {
       const sortNow = _.pick(query, ['sortColumn', 'sortOrder']);
       const sortPre = _.pick(preQuery, ['sortColumn', 'sortOrder']);
       if (!_.isEqual(sortNow, sortPre)) {
+        // 只刷新指标分布区域
         refreshChartInfo({
+          ...query,
+        });
+      } else {
+        // 重新获取页面所有数据
+        getPerformance({
+          ...query,
+        });
+        getChartInfo({
           ...query,
         });
       }
@@ -151,6 +174,7 @@ export default class InvestHome extends PureComponent {
       location,
       replace,
       chartLoading,
+      custRange,
     } = this.props;
 
     return (
@@ -179,6 +203,11 @@ export default class InvestHome extends PureComponent {
               </RadioGroup>
               <div className={styles.vSplit} />
               {/* 营业地址选择项 */}
+              <CustRange
+                custRange={custRange}
+                location={location}
+                replace={replace}
+              />
             </div>
           </Row>
         </div>

@@ -7,7 +7,7 @@ import React, { PropTypes, PureComponent } from 'react';
 import ReactEcharts from 'echarts-for-react';
 import { autobind } from 'core-decorators';
 
-import IconTypeMap from '../../config/IconTypeMap';
+import { iconTypeMap } from '../../config';
 import Icon from '../common/Icon';
 import styles from './ChartBar.less';
 
@@ -158,10 +158,28 @@ export default class ChartBar extends PureComponent {
     for (let i = 0; i < seriesDataLen; i++) {
       dataShadow.push(gridXAxisMax);
     }
+
+    // tooltip 配置项
+    const tooltipOtions = {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'shadow',
+      },
+      formatter(params) {
+        return `${params[1].axisValue}<br /> ${params[1].seriesName}: <span style="color:#f8ac59; font-size: 15px;">${params[1].data}</span>${unit}`;
+      },
+      backgroundColor: 'rgba(0, 0, 0, .56)',
+      padding: [12, 11, 13, 13],
+      extraCssText: 'border-radius: 8px',
+    };
     // 生成柱状图渐变
+
 
     const options = {
       color: [barColor],
+      tooltip: {
+        ...tooltipOtions,
+      },
       grid: {
         ...gridOptions,
       },
@@ -211,7 +229,7 @@ export default class ChartBar extends PureComponent {
       <div>
         <div className={styles.chartHeader}>
           <div className={styles.chartTitle}>
-            <Icon type={IconTypeMap[icon]} className={styles.chartTiltleTextIcon} />
+            <Icon type={iconTypeMap[icon]} className={styles.chartTiltleTextIcon} />
             <span className={styles.chartTitleText}>{title}</span>
           </div>
           <div className={styles.seeIcon}>

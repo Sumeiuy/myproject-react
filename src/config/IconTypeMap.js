@@ -1,4 +1,4 @@
-const IconTypeMap = {
+const iconTypeMap = {
   zc: 'zichan',
   kh: 'kehu-copy',
   tg: 'tuoguan',
@@ -6,4 +6,4 @@ const IconTypeMap = {
   ren: 'renyuan',
 };
 
-export default IconTypeMap;
+export default iconTypeMap;
