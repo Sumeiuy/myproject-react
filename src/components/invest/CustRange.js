@@ -62,6 +62,7 @@ export default class CustRange extends PureComponent {
   }
 
   render() {
+    const { custRange } = this.props;
     return (
       <TreeSelect
         placeholder="客户范围"
@@ -74,7 +75,7 @@ export default class CustRange extends PureComponent {
         allowClear
         dropdownMatchSelectWidth
       >
-        {getNodes(this.props.custRange)}
+        {getNodes(custRange)}
       </TreeSelect>
     );
   }
