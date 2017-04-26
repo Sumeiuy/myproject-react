@@ -5,6 +5,7 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { Row, Col } from 'antd';
+import Loading from '../../layouts/Loading';
 import CharBar from './ChartBar';
 import styles from './ChartBoard.less';
 
@@ -12,45 +13,49 @@ export default class ChartBoard extends PureComponent {
 
   static propTypes = {
     chartData: PropTypes.array,
+    loading: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
     chartData: [],
+    loading: false,
   }
 
   render() {
-    const { chartData } = this.props;
+    const { chartData, loading } = this.props;
+
     return (
       <div className={styles.board}>
+        <Loading loading={loading} />
         <div className={styles.chartRow}>
           <Row type="flex">
             <Col span={6} className={styles.chartContainer}>
-              <CharBar chartData={chartData[0]} iconType="renyuan" />
+              <CharBar chartData={chartData[0]} />
             </Col>
             <Col span={6} className={styles.chartContainer}>
-              <CharBar chartData={chartData[1]} iconType="kehu-copy" />
+              <CharBar chartData={chartData[1]} />
             </Col>
             <Col span={6} className={styles.chartContainer}>
-              <CharBar chartData={chartData[2]} iconType="zichan" />
+              <CharBar chartData={chartData[2]} />
             </Col>
             <Col span={6} className={styles.chartContainer}>
-              <CharBar chartData={chartData[3]} iconType="tuoguan" />
+              <CharBar chartData={chartData[3]} />
             </Col>
           </Row>
         </div>
         <div className={styles.chartRow}>
           <Row type="flex">
             <Col span={6} className={styles.chartContainer}>
-              <CharBar chartData={chartData[4]} iconType="zichan" />
+              <CharBar chartData={chartData[4]} />
             </Col>
             <Col span={6} className={styles.chartContainer}>
-              <CharBar chartData={chartData[5]} iconType="xinyonghucanyuzhanbi" />
+              <CharBar chartData={chartData[5]} />
             </Col>
             <Col span={6} className={styles.chartContainer}>
-              <CharBar chartData={chartData[6]} iconType="tuoguan" />
+              <CharBar chartData={chartData[6]} />
             </Col>
             <Col span={6} className={styles.chartContainer}>
-              <CharBar chartData={chartData[7]} iconType="xinyonghucanyuzhanbi" />
+              <CharBar chartData={chartData[7]} />
             </Col>
           </Row>
         </div>

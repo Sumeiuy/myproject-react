@@ -8,11 +8,13 @@
       "data": [
         {
           "name": "南京",
-          "value": 200
+          "value": 200,
+          "unit": "户",
         },
         {
           "name": "北京",
-          "value": 820
+          "value": 820,
+          "unit": "户",
         },
         {
           "name": "上海",

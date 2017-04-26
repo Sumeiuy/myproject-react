@@ -12,7 +12,7 @@ import classnames from 'classnames';
 import { constants } from '../config';
 
 import Header from './Header';
-// import Bread from './Bread';
+import Loading from './Loading';
 import Footer from './Footer';
 import Sider from './Sider';
 
@@ -21,6 +21,7 @@ import '../css/skin.less';
 
 const mapStateToProps = state => ({
   ...state.app,
+  loading: state.activity.global,
 });
 
 const mapDispatchToProps = {
@@ -46,6 +47,7 @@ export default class Main extends Component {
   static propTypes = {
     children: PropTypes.node.isRequired,
     location: PropTypes.object.isRequired,
+    loading: PropTypes.bool.isRequired,
     // 侧栏折叠
     siderFold: PropTypes.bool.isRequired,
     // 是否深色主题
@@ -74,8 +76,8 @@ export default class Main extends Component {
       switchSider,
       changeOpenKeys,
       changeTheme,
+      loading,
     } = this.props;
-
     const headerProps = {
       siderFold,
       switchSider,
@@ -121,6 +123,7 @@ export default class Main extends Component {
             {/* <Bread location={location} /> */}
             <div className={styles.container}>
               <div className={styles.content}>
+                <Loading loading={loading} />
                 {children}
               </div>
             </div>
