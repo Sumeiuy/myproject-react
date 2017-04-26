@@ -3,7 +3,7 @@
  * @author LiuJianShu
  */
 import React, { PureComponent, PropTypes } from 'react';
-import iconTypeMap from '../../config/iconTypeMap';
+import { iconTypeMap } from '../../config';
 import Icon from '../common/Icon';
 import styles from './item.less';
 
@@ -18,17 +18,17 @@ export default class Item extends PureComponent {
   }
 
   render() {
-    const { data } = this.props;
+    const { data: { icon, unit, num, title } } = this.props;
     return (
       <div className={styles.content}>
         <h3 className={styles.title}>
-          <Icon type={iconTypeMap[data.icon]} />
-          {data.title}
+          <Icon type={iconTypeMap[icon]} />
+          {title}
         </h3>
         <h4 className={styles.num}>
-          {data.num}
+          {num}
           <span className={styles.span}>
-            {data.unit}
+            {unit}
           </span>
         </h4>
       </div>

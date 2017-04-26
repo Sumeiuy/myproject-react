@@ -40,6 +40,7 @@ const app = dva({
   onError,
 });
 
+
 // 2. Plugins
 app.use(createLoading({ effects: true }));
 app.use(createActivityIndicator());
