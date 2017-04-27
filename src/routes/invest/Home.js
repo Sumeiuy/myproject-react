@@ -90,7 +90,10 @@ export default class InvestHome extends PureComponent {
   }
 
   componentWillMount() {
-    const { getPerformance, getChartInfo, getCustRange } = this.props;
+    const { getPerformance, getChartInfo, getCustRange, location: { query } } = this.props;
+    this.state = {
+      timeDuration: query.duration,
+    };
     getPerformance();
     getChartInfo();
     getCustRange();
@@ -172,7 +175,7 @@ export default class InvestHome extends PureComponent {
   }
 
   render() {
-    const { duration } = this.state;
+    const { duration, timeDuration } = this.state;
     const {
       performance,
       chartInfo,
@@ -198,11 +201,14 @@ export default class InvestHome extends PureComponent {
             <div className={styles.reportHeaderRight}>
               <div className={styles.dateFilter}>{duration}</div>
               <RadioGroup
-                defaultValue="month"
+                defaultValue={timeDuration || 'month'}
                 onChange={this.handleDurationChange}
               >
                 {
-                  timeOptions.map(item => <RadioButton value={item.key}>{item.name}</RadioButton>)
+                  timeOptions.map((item, index) => {
+                    const timeIndex = index;
+                    return <RadioButton key={timeIndex} value={item.key}>{item.name}</RadioButton>;
+                  })
                 }
               </RadioGroup>
               <div className={styles.vSplit} />
