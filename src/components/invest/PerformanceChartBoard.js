@@ -10,6 +10,8 @@ import { autobind } from 'core-decorators';
 import Icon from '../common/Icon';
 import ChartBoard from './ChartBoard';
 import styles from './PerformanceChartBoard.less';
+// 选择项字典   --todo  defaultValue
+import { optionsMap } from '../../config';
 
 const Option = Select.Option;
 
@@ -73,6 +75,10 @@ export default class PerformanceChartBoard extends PureComponent {
     if (chartData.length === 0) {
       return null;
     }
+    // 按类别排序
+    const sortBytype = optionsMap.sortBytype;
+    // 按顺序排序
+    const sortByOrder = optionsMap.sortByOrder;
     return (
       <div className="investPerformanceBoard">
         <div className={styles.titleBar}>
@@ -85,16 +91,18 @@ export default class PerformanceChartBoard extends PureComponent {
                 className={styles.newSelect}
                 onChange={(v) => { this.handleSortChange('sortColumn', v); }}
               >
-                <Option value="1">按分公司</Option>
-                <Option value="2">按营业部</Option>
+                {
+                  sortBytype.map(item => <Option value={item.key}>{item.name}</Option>)
+                }
               </Select>
               <Select
                 defaultValue="1"
                 className={styles.newSelect1}
                 onChange={(v) => { this.handleSortChange('sortOrder', v); }}
               >
-                <Option value="1">自高到低</Option>
-                <Option value="2">自低到高</Option>
+                {
+                  sortByOrder.map(item => <Option value={item.key}>{item.name}</Option>)
+                }
               </Select>
             </div>
             <div className={styles.iconBtn}>
