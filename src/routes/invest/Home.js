@@ -30,7 +30,7 @@ const effects = {
 
 const fectchDataFunction = (globalLoading, type) => query => ({
   type,
-  payLoad: query || {},
+  payload: query || {},
   loading: globalLoading,
 });
 
@@ -39,6 +39,7 @@ const mapStateToProps = state => ({
   chartInfo: state.invest.chartInfo,
   chartLoading: state.loading.effects[effects.chartInfo],
   custRange: state.invest.custRange,
+  globalLoading: state.activity.global,
 });
 
 const mapDispatchToProps = {
@@ -64,6 +65,7 @@ export default class InvestHome extends PureComponent {
     refreshChartInfo: PropTypes.func.isRequired,
     chartInfo: PropTypes.array,
     chartLoading: PropTypes.bool,
+    globalLoading: PropTypes.bool,
     getCustRange: PropTypes.func.isRequired,
     custRange: PropTypes.array,
     replace: PropTypes.func.isRequired,
@@ -74,6 +76,7 @@ export default class InvestHome extends PureComponent {
     performance: [],
     chartInfo: [],
     chartLoading: false,
+    globalLoading: false,
     custRange: [],
   }
 
@@ -86,9 +89,10 @@ export default class InvestHome extends PureComponent {
 
   componentWillMount() {
     const { getPerformance, getChartInfo, getCustRange } = this.props;
-    getPerformance();
-    getChartInfo();
-    getCustRange();
+    const { location: { query } } = this.props;
+    getPerformance(query);
+    getChartInfo(query);
+    getCustRange(query);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -172,8 +176,9 @@ export default class InvestHome extends PureComponent {
       performance,
       chartInfo,
       location,
-      replace,
       chartLoading,
+      globalLoading,
+      replace,
       custRange,
     } = this.props;
 
@@ -222,7 +227,7 @@ export default class InvestHome extends PureComponent {
               chartData={chartInfo}
               location={location}
               replace={replace}
-              loading={chartLoading}
+              loading={chartLoading && !globalLoading}
             />
           </div>
         </div>
