@@ -27,7 +27,7 @@ const optionsMap = {
     },
   ],
   // 按类别排序
-  sortBytype: [
+  sortByType: [
     {
       key: '1',
       name: '按分公司',

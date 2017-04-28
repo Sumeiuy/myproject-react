@@ -42,6 +42,14 @@ export default class PerformanceChartBoard extends PureComponent {
     };
   }
 
+  componentWillMount() {
+    const { location: { query } } = this.props;
+    this.state = {
+      sortColumn: query.sortColumn,
+      sortOrder: query.sortOrder,
+    };
+  }
+
   @autobind
   handleSortChange(column, value) {
     const { replace, location: { query } } = this.props;
@@ -70,13 +78,13 @@ export default class PerformanceChartBoard extends PureComponent {
   }
 
   render() {
-    const { showChart } = this.state;
+    const { showChart, sortColumn, sortOrder } = this.state;
     const { chartData, loading } = this.props;
     if (chartData.length === 0) {
       return null;
     }
     // 按类别排序
-    const sortBytype = optionsMap.sortBytype;
+    const sortByType = optionsMap.sortByType;
     // 按顺序排序
     const sortByOrder = optionsMap.sortByOrder;
     return (
@@ -87,21 +95,27 @@ export default class PerformanceChartBoard extends PureComponent {
             <div className={styles.iconBtn1}>
               <span>排序方式:</span>
               <Select
-                defaultValue="1"
+                defaultValue={sortColumn || '1'}
                 className={styles.newSelect}
                 onChange={(v) => { this.handleSortChange('sortColumn', v); }}
               >
                 {
-                  sortBytype.map(item => <Option value={item.key}>{item.name}</Option>)
+                  sortByType.map((item, index) => {
+                    const sortByTypeIndex = index;
+                    return <Option key={sortByTypeIndex} value={item.key}>{item.name}</Option>;
+                  })
                 }
               </Select>
               <Select
-                defaultValue="1"
+                defaultValue={sortOrder || '1'}
                 className={styles.newSelect1}
                 onChange={(v) => { this.handleSortChange('sortOrder', v); }}
               >
                 {
-                  sortByOrder.map(item => <Option value={item.key}>{item.name}</Option>)
+                  sortByOrder.map((item, index) => {
+                    const sortByOrderIndex = index;
+                    return <Option key={sortByOrderIndex} value={item.key}>{item.name}</Option>;
+                  })
                 }
               </Select>
             </div>

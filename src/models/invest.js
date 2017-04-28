@@ -25,7 +25,7 @@ export default {
     },
     getChartInfoSuccess(state, action) {
       const { payload: { response } } = action;
-      const chartInfo = response.resultData;
+      const { chartInfo } = response.resultData;
       return {
         ...state,
         chartInfo,
