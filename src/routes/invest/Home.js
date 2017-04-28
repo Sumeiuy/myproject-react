@@ -13,7 +13,8 @@ import _ from 'lodash';
 import PerformanceItem from '../../components/invest/PerformanceItem';
 import PreformanceChartBoard from '../../components/invest/PerformanceChartBoard';
 import CustRange from '../../components/invest/CustRange';
-
+// 选择项字典
+import { optionsMap } from '../../config';
 import styles from './Home.less';
 
 // RadioButton
@@ -21,6 +22,10 @@ const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 // Select
 const Option = Select.Option;
+// 头部筛选条件
+const headBar = optionsMap.headBar;
+// 时间筛选条件
+const timeOptions = optionsMap.time;
 
 const effects = {
   performance: 'invest/getPerformance',
@@ -176,19 +181,18 @@ export default class InvestHome extends PureComponent {
       chartLoading,
       custRange,
     } = this.props;
-
     return (
       <div className="page-invest content-inner">
         <div className="reportHeader">
           <Row type="flex" justify="start" align="middle">
             <div className={styles.reportName}>
               <Select
-                defaultValue="1"
+                defaultValue={headBar.key}
                 style={{
                   width: '150px',
                 }}
               >
-                <Option value="1">投顾业绩汇总</Option>
+                <Option value={headBar.key}>{headBar.name}</Option>
               </Select>
             </div>
             <div className={styles.reportHeaderRight}>
@@ -197,9 +201,9 @@ export default class InvestHome extends PureComponent {
                 defaultValue="month"
                 onChange={this.handleDurationChange}
               >
-                <RadioButton value="month">本月</RadioButton>
-                <RadioButton value="season">本季</RadioButton>
-                <RadioButton value="year">本年</RadioButton>
+                {
+                  timeOptions.map(item => <RadioButton value={item.key}>{item.name}</RadioButton>)
+                }
               </RadioGroup>
               <div className={styles.vSplit} />
               {/* 营业地址选择项 */}

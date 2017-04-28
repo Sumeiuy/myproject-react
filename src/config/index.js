@@ -4,5 +4,6 @@ import menu from './menu';
 import persist from './persist';
 import request from './request';
 import iconTypeMap from './iconTypeMap';
+import optionsMap from './optionsMap';
 
-export default { constants, log, menu, persist, request, iconTypeMap };
+export default { constants, log, menu, persist, request, iconTypeMap, optionsMap };
