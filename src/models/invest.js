@@ -33,10 +33,33 @@ export default {
     },
     getCustRangeSuccess(state, action) {
       const { response: { resultData } } = action;
-      const custRange = [
-        { label: resultData.label, value: resultData.value },
-        ...resultData.children,
-      ];
+      const user = {
+        roleId: 1,
+        company: '分公司2',
+      };
+      let custRange;
+      if (user.roleId === 1) {  // 经纪业务总部团队经理
+        custRange = [
+          { label: resultData.label, value: resultData.value },
+          ...resultData.children,
+        ];
+      } else if (user.roleId === 2) { // 分公司团队经理
+        resultData.children.forEach((v) => {
+          if (v.label === user.company) {
+            custRange = [v];
+          }
+        });
+      } else if (user.roleId === 3) { // 营业部团队经理
+        resultData.children.forEach((v) => {
+          if (v.children) {
+            v.children.forEach((item) => {
+              if (item.label === user.company) {
+                custRange = [item];
+              }
+            });
+          }
+        });
+      }
       return {
         ...state,
         custRange,

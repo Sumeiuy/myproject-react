@@ -12,15 +12,22 @@ import styles from './custRange.less';
 
 const TreeNode = TreeSelect.TreeNode;
 
-function getNodes(arr) {
-  return arr.map(item => (
-    <TreeNode value={item.value} title={item.label} key={Math.random()} >
-      {
-        item.children && getNodes(item.children)
-      }
-    </TreeNode>
-    ),
-  );
+function getNodes(arr, level = 0) {
+  return arr.map((item, index) => {
+    const pos = `${level}-${index}`;
+    const props = {
+      title: item.label,
+      value: item.value,
+      key: item.key || item.value || pos,
+    };
+    let res;
+    if (item.children && item.children.length) {
+      res = (<TreeNode {...props}>{getNodes(item.children, pos)}</TreeNode>);
+    } else {
+      res = (<TreeNode {...props} />);
+    }
+    return res;
+  });
 }
 
 export default class CustRange extends PureComponent {
@@ -44,6 +51,18 @@ export default class CustRange extends PureComponent {
     };
   }
 
+  componentDidMount() {
+    const { custRange } = this.props;
+    this.setDefaultValue(custRange);
+  }
+
+  componentDidUpdate(prevProps) {
+    const { custRange } = this.props;
+    if (prevProps.custRange !== custRange) {
+      this.setDefaultValue(custRange);
+    }
+  }
+
   @autobind
   onChange(value, label, extra) {
     console.log(value, label, extra);
@@ -61,20 +80,28 @@ export default class CustRange extends PureComponent {
     });
   }
 
+  setDefaultValue(custRange) {
+    this.setState({
+      value: (custRange[0] || {}).label,
+    });
+  }
+
   render() {
+    const { custRange } = this.props;
     return (
       <TreeSelect
-        placeholder="客户范围"
         notFoundContent="没有结果"
         className={styles.custRang}
         value={this.state.value}
         onChange={this.onChange}
+        onSelect={this.onSelect}
         dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+        treeNodeFilterProp={'title'}
         showSearch
         allowClear
         dropdownMatchSelectWidth
       >
-        {getNodes(this.props.custRange)}
+        {getNodes(custRange)}
       </TreeSelect>
     );
   }

@@ -29,15 +29,29 @@ exports.response = function (req, res) {
           "value": '0102',
           "children": [
             {
-              "label": '营业部1',
+              "label": '营业部3',
               "value": '010201',
             },
             {
-              "label": '营业部2',
+              "label": '营业部4',
               "value": '010202',
+              "children": [
+                {
+                  "label": '投顾1',
+                  "value": '01020201',
+                },
+                {
+                  "label": '投顾2',
+                  "value": '01020202',
+                },
+                {
+                  "label": '投顾3',
+                  "value": '01020203',
+                },
+              ],
             },
             {
-              "label": '营业部3',
+              "label": '营业部5',
               "value": '010203',
             },
           ]
@@ -47,15 +61,15 @@ exports.response = function (req, res) {
           "value": '0103',
           "children": [
             {
-              "label": '营业部1',
+              "label": '营业部6',
               "value": '010301',
             },
             {
-              "label": '营业部2',
+              "label": '营业部7',
               "value": '010302',
             },
             {
-              "label": '营业部3',
+              "label": '营业部8',
               "value": '010303',
             },
           ]
