@@ -95,7 +95,7 @@ export default class PerformanceChartBoard extends PureComponent {
             <div className={styles.iconBtn1}>
               <span>排序方式:</span>
               <Select
-                defaultValue={sortColumn || 1}
+                defaultValue={sortColumn || '1'}
                 className={styles.newSelect}
                 onChange={(v) => { this.handleSortChange('sortColumn', v); }}
               >
@@ -107,7 +107,7 @@ export default class PerformanceChartBoard extends PureComponent {
                 }
               </Select>
               <Select
-                defaultValue={sortOrder || 1}
+                defaultValue={sortOrder || '1'}
                 className={styles.newSelect1}
                 onChange={(v) => { this.handleSortChange('sortOrder', v); }}
               >
