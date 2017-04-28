@@ -46,7 +46,7 @@ const mapDispatchToProps = {
   refreshPerformance: fectchDataFunction(false, effects.performance),
   getChartInfo: fectchDataFunction(true, effects.chartInfo),
   refreshChartInfo: fectchDataFunction(false, effects.chartInfo),
-  getCustRange: fectchDataFunction(true, effects.custRange),
+  getCustRange: fectchDataFunction(false, effects.custRange),
   push: routerRedux.push,
   replace: routerRedux.replace,
 };
