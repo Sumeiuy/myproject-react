@@ -9,11 +9,7 @@
       "data": [
         {
           "name": "南京",
-<<<<<<< Updated upstream
-          "value": 300
-=======
           "value": 900
->>>>>>> Stashed changes
         },
         {
           "name": "北京",
@@ -103,11 +99,7 @@
     {
       "title": "签约资产",
       "unit": "万元",
-<<<<<<< Updated upstream
-      "icon": "zc",
-=======
       "icon": "ren",
->>>>>>> Stashed changes
       "data": [
         {
           "name": "南京",
@@ -155,7 +147,6 @@
       "title": "签约平均佣金率",
       "icon": "tg",
       "unit": "%",
-      "icon": "ren",
       "data": [
         {
           "name": "南京",
@@ -203,7 +194,6 @@
       "title": "投顾净佣金收入",
       "icon": "zc",
       "unit": "万元",
-      "icon": "ren",
       "data": [
         {
           "name": "南京",
@@ -250,11 +240,7 @@
     {
       "title": "资产配置覆盖率",
       "unit": "%",
-<<<<<<< Updated upstream
       "icon": "per",
-=======
-      "icon": "ren",
->>>>>>> Stashed changes
       "data": [
         {
           "name": "南京",
@@ -301,11 +287,7 @@
     {
       "title": "托管总资产",
       "unit": "万元",
-<<<<<<< Updated upstream
-      "icon": "tg",
-=======
       "icon": "ren",
->>>>>>> Stashed changes
       "data": [
         {
           "name": "南京",
@@ -352,11 +334,7 @@
     {
       "title": "MOT任务完成率",
       "unit": "%",
-<<<<<<< Updated upstream
       "icon": "per",
-=======
-      "icon": "ren",
->>>>>>> Stashed changes
       "data": [
         {
           "name": "南京",
