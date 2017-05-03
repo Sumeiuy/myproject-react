@@ -40,9 +40,11 @@ export default class PerformanceItem extends PureComponent {
                 // 索引大于最后一行开始的索引 则 无边框，否则有边框
                 const itemBorder = index > lastLineFirst ? styles.noBorder : '';
                 return (
-                  <Col key={uniqueKey} span={3} className={`${itemBorder} ${styles.itemWrap}`}>
-                    <Item data={item} />
-                  </Col>
+                  <a className={styles.hover}>
+                    <Col key={uniqueKey} span={3} className={`${itemBorder} ${styles.itemWrap}`}>
+                      <Item data={item} />
+                    </Col>
+                  </a>
                 );
               })
             }
