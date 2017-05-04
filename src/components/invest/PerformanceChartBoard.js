@@ -7,14 +7,19 @@ import React, { PropTypes, PureComponent } from 'react';
 import { Select } from 'antd';
 import { autobind } from 'core-decorators';
 
+import { optionsMap } from '../../config';
 import Icon from '../common/Icon';
 import ChartBoard from './ChartBoard';
+import ChartTable from './ChartTable';
 import styles from './PerformanceChartBoard.less';
-// 选择项字典   --todo  defaultValue
-import { optionsMap } from '../../config';
 
 const Option = Select.Option;
-
+// 按类别排序
+const sortByType = optionsMap.sortByType;
+// 按顺序排序
+const sortByOrder = optionsMap.sortByOrder;
+// 表格与图表视图
+const showType = optionsMap.showType;
 
 export default class PerformanceChartBoard extends PureComponent {
 
@@ -34,19 +39,19 @@ export default class PerformanceChartBoard extends PureComponent {
     sort: () => {},
   }
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      showChart: true,
-    };
-  }
+  // constructor(props) {
+  //   super(props);
+  //   this.state = {
+  //     showChart: 'zhuzhuangtu',
+  //   };
+  // }
 
   componentWillMount() {
     const { location: { query } } = this.props;
     this.state = {
       sortColumn: query.sortColumn,
       sortOrder: query.sortOrder,
+      showChart: 'zhuzhuangtu',
     };
   }
 
@@ -64,10 +69,18 @@ export default class PerformanceChartBoard extends PureComponent {
 
   // 柱状图与表格切换
   @autobind
-  handleIconClick() {
-    const { showChart } = this.state;
+  handleIconClick(type) {
+    // const val = event.target.getAttribute('type');
+    const { replace, location: { query } } = this.props;
+    replace({
+      pathname: '/invest',
+      query: {
+        ...query,
+        showChart: type,
+      },
+    });
     this.setState({
-      showChart: !showChart,
+      showChart: type,
     });
   }
 
@@ -83,10 +96,6 @@ export default class PerformanceChartBoard extends PureComponent {
     if (chartData.length === 0) {
       return null;
     }
-    // 按类别排序
-    const sortByType = optionsMap.sortByType;
-    // 按顺序排序
-    const sortByOrder = optionsMap.sortByOrder;
     return (
       <div className="investPerformanceBoard">
         <div className={styles.titleBar}>
@@ -120,24 +129,21 @@ export default class PerformanceChartBoard extends PureComponent {
               </Select>
             </div>
             <div className={styles.iconBtn}>
-              <Icon
-                title="表格视图"
-                type="tables"
-                className={styles.fixMargin}
-                onClick={this.handleIconClick}
-                style={{
-                  color: showChart ? '#fff' : '#ffd92a',
-                }}
-              />
-              <Icon
-                title="柱状图"
-                type="zhuzhuangtu"
-                className={styles.fixMargin}
-                onClick={this.handleIconClick}
-                style={{
-                  color: showChart ? '#ffd92a' : '#fff',
-                }}
-              />
+              {
+                showType.map((item, index) => {
+                  const iconIndex = `icon${index}`;
+                  return (
+                    <Icon
+                      title={item.title}
+                      type={item.type}
+                      key={iconIndex}
+                      className={styles.fixMargin}
+                      onClick={() => { this.handleIconClick(item.type); }}
+                      style={{ color: showChart === item.type ? '#ffd92a' : '#fff' }}
+                    />
+                  );
+                })
+              }
             </div>
             <div className={styles.iconBtn}>
               <Icon
@@ -148,10 +154,16 @@ export default class PerformanceChartBoard extends PureComponent {
             </div>
           </div>
         </div>
-        <ChartBoard
-          chartData={chartData}
-          loading={loading}
-        />
+        {/* 根据 url 里的 showChart 来显示不同的组件 */}
+        {
+          showChart === showType[0].type ?
+            <ChartTable />
+          :
+            <ChartBoard
+              chartData={chartData}
+              loading={loading}
+            />
+        }
       </div>
     );
   }

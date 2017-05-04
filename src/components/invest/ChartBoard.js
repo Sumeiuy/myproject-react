@@ -6,7 +6,7 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { Row, Col } from 'antd';
 import Loading from '../../layouts/Loading';
-import CharBar from './ChartBar';
+import ChartBar from './ChartBar';
 import styles from './ChartBoard.less';
 
 export default class ChartBoard extends PureComponent {
@@ -27,38 +27,18 @@ export default class ChartBoard extends PureComponent {
     return (
       <div className={styles.board}>
         <Loading loading={loading} />
-        <div className={styles.chartRow}>
-          <Row type="flex">
-            <Col span={6} className={styles.chartContainer}>
-              <CharBar chartData={chartData[0]} />
-            </Col>
-            <Col span={6} className={styles.chartContainer}>
-              <CharBar chartData={chartData[1]} />
-            </Col>
-            <Col span={6} className={styles.chartContainer}>
-              <CharBar chartData={chartData[2]} />
-            </Col>
-            <Col span={6} className={styles.chartContainer}>
-              <CharBar chartData={chartData[3]} />
-            </Col>
-          </Row>
-        </div>
-        <div className={styles.chartRow}>
-          <Row type="flex">
-            <Col span={6} className={styles.chartContainer}>
-              <CharBar chartData={chartData[4]} />
-            </Col>
-            <Col span={6} className={styles.chartContainer}>
-              <CharBar chartData={chartData[5]} />
-            </Col>
-            <Col span={6} className={styles.chartContainer}>
-              <CharBar chartData={chartData[6]} />
-            </Col>
-            <Col span={6} className={styles.chartContainer}>
-              <CharBar chartData={chartData[7]} />
-            </Col>
-          </Row>
-        </div>
+        <Row type="flex">
+          {
+            chartData.map((item, index) => {
+              const chartDataIndex = `chartData${index}`;
+              return (
+                <Col span={6} key={chartDataIndex} className={styles.colWrapper}>
+                  <ChartBar chartData={item} />
+                </Col>
+              );
+            })
+          }
+        </Row>
       </div>
     );
   }
