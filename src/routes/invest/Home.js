@@ -224,6 +224,11 @@ export default class InvestHome extends PureComponent {
           </Row>
         </div>
         <div className={styles.reportBody}>
+          {
+            /**
+             * <ChartTable sourceData={chartInfo} />
+             */
+          }
           <div className={styles.reportPart}>
             <PerformanceItem
               data={performance}

@@ -5,16 +5,15 @@
     {
       "title": "投顾入岗人数",
       "unit": "户",
+      "icon": "ren",
       "data": [
         {
           "name": "南京",
-          "value": 200,
-          "unit": "户",
+          "value": 900
         },
         {
           "name": "北京",
-          "value": 820,
-          "unit": "户",
+          "value": 820
         },
         {
           "name": "上海",
@@ -53,6 +52,7 @@
     {
       "title": "签约客户数",
       "unit": "户",
+      "icon": "kh",
       "data": [
         {
           "name": "南京",
@@ -99,6 +99,7 @@
     {
       "title": "签约资产",
       "unit": "万元",
+      "icon": "ren",
       "data": [
         {
           "name": "南京",
@@ -144,6 +145,7 @@
     },
     {
       "title": "签约平均佣金率",
+      "icon": "tg",
       "unit": "%",
       "data": [
         {
@@ -190,6 +192,7 @@
     },
     {
       "title": "投顾净佣金收入",
+      "icon": "zc",
       "unit": "万元",
       "data": [
         {
@@ -237,6 +240,7 @@
     {
       "title": "资产配置覆盖率",
       "unit": "%",
+      "icon": "per",
       "data": [
         {
           "name": "南京",
@@ -283,6 +287,7 @@
     {
       "title": "托管总资产",
       "unit": "万元",
+      "icon": "ren",
       "data": [
         {
           "name": "南京",
@@ -329,6 +334,7 @@
     {
       "title": "MOT任务完成率",
       "unit": "%",
+      "icon": "per",
       "data": [
         {
           "name": "南京",
