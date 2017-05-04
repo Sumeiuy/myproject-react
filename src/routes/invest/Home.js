@@ -10,6 +10,7 @@ import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import { Row, Radio, Select } from 'antd';
 import _ from 'lodash';
+
 import PerformanceItem from '../../components/invest/PerformanceItem';
 import PreformanceChartBoard from '../../components/invest/PerformanceChartBoard';
 import CustRange from '../../components/invest/CustRange';
@@ -114,8 +115,8 @@ export default class InvestHome extends PureComponent {
     // 还是chart部分的数据
     if (!_.isEqual(query, preQuery)) {
       // 判断是排序方式的值不同
-      const sortNow = _.pick(query, ['sortColumn', 'sortOrder']);
-      const sortPre = _.pick(preQuery, ['sortColumn', 'sortOrder']);
+      const sortNow = _.pick(query, ['sortColumn', 'sortOrder', 'showChart']);
+      const sortPre = _.pick(preQuery, ['sortColumn', 'sortOrder', 'showChart']);
       if (!_.isEqual(sortNow, sortPre)) {
         // 只刷新指标分布区域
         refreshChartInfo({
@@ -224,11 +225,6 @@ export default class InvestHome extends PureComponent {
           </Row>
         </div>
         <div className={styles.reportBody}>
-          {
-            /**
-             * <ChartTable sourceData={chartInfo} />
-             */
-          }
           <div className={styles.reportPart}>
             <PerformanceItem
               data={performance}

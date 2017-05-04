@@ -6,6 +6,7 @@ import React, { PureComponent, PropTypes } from 'react';
 import { iconTypeMap } from '../../config';
 import Icon from '../common/Icon';
 import styles from './item.less';
+import { toUnit } from '../../utils/helper';
 
 export default class Item extends PureComponent {
 
@@ -26,9 +27,9 @@ export default class Item extends PureComponent {
           {title}
         </h3>
         <h4 className={styles.num}>
-          {num}
+          {toUnit(num, 5).value}
           <span className={styles.span}>
-            {unit}
+            {toUnit(num, 5).unit}{unit}
           </span>
         </h4>
       </div>

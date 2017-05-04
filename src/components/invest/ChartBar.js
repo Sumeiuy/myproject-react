@@ -4,31 +4,58 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import createG2 from 'g2-react';
-
+import ReactEcharts from 'echarts-for-react';
 import { autobind } from 'core-decorators';
 
 import { iconTypeMap } from '../../config';
 import Icon from '../common/Icon';
 import styles from './ChartBar.less';
 
+import imgSrc from './noChart.png';
 
-const Chart = createG2((chart) => {
-  chart.axis('name', {
-    labels: {
-      autoRotate: true, // 文本是否允许自动旋转
-      label: {
-        textAlign: 'center', // 文本对齐方向，可取值为： left center right
-        fill: '#404040', // 文本的颜色
-        fontSize: '12', // 文本大小
-      },
+// Y轴通用样式
+const AxisOptions = {
+  axisLine: {
+    lineStyle: {
+      color: '#e7eaec',
     },
-    title: null,
-  });
-  chart.coord('rect').transpose();
-  chart.interval().position('name*value');
-  chart.render();
-});
+  },
+  axisTick: {
+    show: false,
+  },
+  axisLabel: {
+    textStyle: {
+      color: '#999',
+    },
+  },
+};
+
+// eCharts图表表格基础样式
+const gridOptions = {
+  show: true,
+  top: '0',
+  left: '0',
+  right: '40px',
+  bottom: '20px',
+  containLabel: true,
+  borderWidth: '1',
+  borderColor: '#e7eaec',
+};
+// 柱状图颜色
+const barColor = '#4bbbf4';
+
+// 柱状图的阴影
+const barShadow = {
+  type: 'bar',
+  itemStyle: {
+    normal: {
+      color: 'rgba(0,0,0,0.05)',
+    },
+  },
+  barGap: '-100%',
+  barCategoryGap: '30%',
+  animation: false,
+};
 
 export default class ChartBar extends PureComponent {
 
@@ -46,12 +73,6 @@ export default class ChartBar extends PureComponent {
     super(props);
     this.state = {
       seeChart: true,
-      width: 200,
-      height: 290,
-      plotCfg: {
-        margin: [0, 30, 30, 40],
-      },
-      forceFit: true,
     };
   }
 
@@ -94,22 +115,119 @@ export default class ChartBar extends PureComponent {
     );
   }
 
+  @autobind
+  createBarLinear(input) {
+    const output = [];
+    input.forEach((item) => {
+      const bar = {
+        name: 'no',
+        value: item,
+        itemStyle: {
+          normal: {
+            color: {
+              type: 'linear',
+              x: 0,
+              y: 0,
+              x2: 1,
+              y2: 1,
+              colorStops: [{
+                offset: 0, color: 'rgb(136,214,254)',
+              }, {
+                offset: 1, color: 'rgb(24,141,240)',
+              }],
+            },
+          },
+        },
+      };
+      output.push(bar);
+    });
+    return output;
+  }
   render() {
-    const { chartData: { title, icon, data = [] } } = this.props;
+    const { chartData: { title, unit, icon, data = [] } } = this.props;
     const { seeChart } = this.state;
-    console.log(data);
     // 此处为y轴刻度值
-    // const yAxisLabels = this.getChartData(data, 'name');
-    // // 此处为数据
-    // const seriesData = this.getChartData(data, 'value');
-    // const seriesDataLen = seriesData.length;
-    // // 数据中最大的值
-    // const xMax = Math.max(...seriesData);
-    // // 图表边界值
-    // const gridXAxisMax = xMax * 1.1;
+    const yAxisLabels = this.getChartData(data, 'name');
+    // 此处为数据
+    const seriesData = this.getChartData(data, 'value');
+    const seriesDataLen = seriesData.length;
+    // 数据中最大的值
+    const xMax = Math.max(...seriesData);
+    // 图表边界值
+    const gridXAxisMax = xMax * 1.1;
+    const dataShadow = [];
+    for (let i = 0; i < seriesDataLen; i++) {
+      dataShadow.push(gridXAxisMax);
+    }
+
+    // tooltip 配置项
+    const tooltipOtions = {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'shadow',
+      },
+      formatter(params) {
+        return `${params[1].axisValue}<br /> ${params[1].seriesName}: <span style="color:#f8ac59; font-size: 15px;">${params[1].data}</span>${unit}`;
+      },
+      backgroundColor: 'rgba(0, 0, 0, .56)',
+      padding: [12, 11, 13, 13],
+      extraCssText: 'border-radius: 8px',
+    };
+    // 生成柱状图渐变
+
+
+    const options = {
+      color: [barColor],
+      tooltip: {
+        ...tooltipOtions,
+      },
+      grid: {
+        ...gridOptions,
+      },
+      xAxis: {
+        type: 'value',
+        name: unit,
+        nameGap: '8',
+        nameTextStyle: {
+          color: '#999',
+        },
+        max: gridXAxisMax,
+        ...AxisOptions,
+        splitLine: {
+          show: true,
+          lineStyle: {
+            color: '#e7eaec',
+          },
+        },
+      },
+      yAxis: {
+        type: 'category',
+        inverse: true,
+        ...AxisOptions,
+        data: yAxisLabels,
+      },
+      series: [
+        {
+          ...barShadow,
+          data: dataShadow,
+        },
+        {
+          name: title,
+          type: 'bar',
+          silent: true,
+          label: {
+            normal: {
+              show: true,
+              position: 'insideRight',
+            },
+          },
+          data: seriesData,
+        },
+      ],
+    };
 
     return (
-      <div>
+      <div className={styles.chartMain}>
         <div className={styles.chartHeader}>
           <div className={styles.chartTitle}>
             <Icon type={iconTypeMap[icon]} className={styles.chartTiltleTextIcon} />
@@ -120,12 +238,19 @@ export default class ChartBar extends PureComponent {
           </div>
         </div>
         <div className={styles.chartWrapper}>
-          <Chart
-            data={data}
-            height={this.state.height}
-            plotCfg={this.state.plotCfg}
-            forceFit={this.state.forceFit}
-          />
+          {
+            seeChart ?
+              <ReactEcharts
+                option={options}
+                style={{
+                  height: '290px',
+                }}
+              />
+            :
+              <div className={styles.noChart}>
+                <img src={imgSrc} alt="图表不可见" />
+              </div>
+          }
         </div>
       </div>
     );

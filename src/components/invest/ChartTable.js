@@ -1,5 +1,105 @@
+/*
+ * @Author: LiuJianShu
+ * @Date: 2017-05-04 16:50:40
+ * @Last Modified by:   LiuJianShu
+ * @Last Modified time: 2017-05-04 16:50:40
+ */
 import React, { PropTypes, PureComponent } from 'react';
 import { Table } from 'antd';
+
+import styles from './ChartTable.less';
+
+const data = [{
+  key: '1',
+  city: '南京',
+  tgrgrs: 123,
+  qykhs: 456,
+  qyzc: 789,
+  qypjyjl: 1234,
+  jyjsr: 5678,
+  zcpzfgl: 9123,
+  motwcl: 4567,
+}, {
+  key: '2',
+  city: '上海',
+  tgrgrs: 8912,
+  qykhs: 345,
+  qyzc: 678,
+  qypjyjl: 912,
+  jyjsr: 3456,
+  zcpzfgl: 7891,
+  motwcl: 234,
+}, {
+  key: '3',
+  city: '广东',
+  tgrgrs: 456,
+  qykhs: 678,
+  qyzc: 9123,
+  qypjyjl: 456,
+  jyjsr: 789,
+  zcpzfgl: 123,
+  motwcl: 4567,
+}, {
+  key: '4',
+  city: '湖北',
+  tgrgrs: 1421,
+  qykhs: 6322,
+  qyzc: 227,
+  qypjyjl: 3965,
+  jyjsr: 5267,
+  zcpzfgl: 4721,
+  motwcl: 743,
+}, {
+  key: '5',
+  city: '湖南',
+  tgrgrs: 2562,
+  qykhs: 8332,
+  qyzc: 3434,
+  qypjyjl: 5233,
+  jyjsr: 733,
+  zcpzfgl: 135,
+  motwcl: 673,
+}, {
+  key: '6',
+  city: '北京',
+  tgrgrs: 5623,
+  qykhs: 2783,
+  qyzc: 873,
+  qypjyjl: 258,
+  jyjsr: 2422,
+  zcpzfgl: 720,
+  motwcl: 108,
+}, {
+  key: '7',
+  city: '浙江',
+  tgrgrs: 252,
+  qykhs: 672,
+  qyzc: 934,
+  qypjyjl: 1112,
+  jyjsr: 7632,
+  zcpzfgl: 1223,
+  motwcl: 9434,
+}, {
+  key: '8',
+  city: '苏州',
+  tgrgrs: 2523,
+  qykhs: 2378,
+  qyzc: 190,
+  qypjyjl: 3434,
+  jyjsr: 896,
+  zcpzfgl: 223,
+  motwcl: 664,
+}, {
+  key: '9',
+  city: '江西',
+  tgrgrs: 174,
+  qykhs: 906,
+  qyzc: 233,
+  qypjyjl: 7454,
+  jyjsr: 7564,
+  zcpzfgl: 8754,
+  motwcl: 122,
+}];
 
 export default class ChartTable extends PureComponent {
   static propTypes = {
@@ -17,72 +117,75 @@ export default class ChartTable extends PureComponent {
       bordered: true,
       loading: false,
       pagination: true,
-      size: 'default',
+      sortedInfo: null,
     };
   }
 
-  render() {
-    const { sourceData } = this.props;
-    console.log(sourceData);
-    const columns = [];
-    const data = [];
-
-    columns[0] = {};
-    columns[0].key = 'key';
-    columns[0].title = '城市';
-    columns[0].dataIndex = 'city';
-    sourceData.forEach((item, index) => {
-      columns[index + 1] = {};
-
-      columns[index + 1].key = index + 1;
-      columns[index + 1].title = item.title;
-      columns[index + 1].dataIndex = item.title;
-
-      item.data.forEach((child, idx) => {
-        data[idx] = {};
-        data[idx].city = child.name;
-        data[idx][item.title] = child.value;
-      });
+  setAgeSort = () => {
+    this.setState({
+      sortedInfo: {
+        order: 'descend',
+        columnKey: 'age',
+      },
     });
-    console.log(111111);
-    console.log(columns);
-    console.log(222222);
-    console.log(data);
-    // const columns = [{
-    //   title: 'Name',
-    //   dataIndex: 'name',
-    //   render: text => <a href="#">{text}</a>,
-    // }, {
-    //   title: 'Age',
-    //   dataIndex: 'age',
-    // }, {
-    //   title: 'Address',
-    //   dataIndex: 'address',
-    // }];
-    // const data = [{
-    //   key: '1',
-    //   name: 'John Brown',
-    //   age: 32,
-    //   address: 'New York No. 1 Lake Park',
-    // }, {
-    //   key: '2',
-    //   name: 'Jim Green',
-    //   age: 42,
-    //   address: 'London No. 1 Lake Park',
-    // }, {
-    //   key: '3',
-    //   name: 'Joe Black',
-    //   age: 32,
-    //   address: 'Sidney No. 1 Lake Park',
-    // }, {
-    //   key: '4',
-    //   name: 'Disabled User',
-    //   age: 99,
-    //   address: 'Sidney No. 1 Lake Park',
-    // }];
+  };
+  handleChange = (pagination, sorter) => {
+    console.log('Various parameters', pagination, sorter);
+    this.setState({
+      sortedInfo: sorter,
+    });
+  }
+  clearAll = () => {
+    this.setState({
+      sortedInfo: null,
+    });
+  }
+  render() {
+    let { sortedInfo } = this.state;
+    sortedInfo = sortedInfo || {};
+    const columns = [{
+      title: '分公司',
+      dataIndex: 'city',
+      key: 'city',
+    }, {
+      title: '投顾入岗人数',
+      dataIndex: 'tgrgrs',
+      key: 'tgrgrs',
+      sorter: (a, b) => a.tgrgrs - b.tgrgrs,
+    }, {
+      title: '签约客户数',
+      dataIndex: 'qykhs',
+      key: 'qykhs',
+      sorter: (a, b) => a.qykhs - b.qykhs,
+    }, {
+      title: '签约资产',
+      dataIndex: 'qyzc',
+      key: 'qyzc',
+      sorter: (a, b) => a.qyzc - b.qyzc,
+    }, {
+      title: '签约平均佣金率',
+      dataIndex: 'qypjyjl',
+      key: 'qypjyjl',
+      sorter: (a, b) => a.qypjyjl - b.qypjyjl,
+    }, {
+      title: '净佣金收入',
+      dataIndex: 'jyjsr',
+      key: 'jyjsr',
+      sorter: (a, b) => a.jyjsr - b.jyjsr,
+    }, {
+      title: '资产配置覆盖率',
+      dataIndex: 'zcpzfgl',
+      key: 'zcpzfgl',
+      sorter: (a, b) => a.zcpzfgl - b.zcpzfgl,
+    }, {
+      title: 'MOT 完成率',
+      dataIndex: 'motwcl',
+      key: 'motwcl',
+      sorter: (a, b) => a.motwcl - b.motwcl,
+    }];
     return (
-      <div>
-        <Table {...this.state} columns={columns} dataSource={data} />
+      <div className={styles.tableDiv}>
+        <Table {...this.state} columns={columns} dataSource={data} onChange={this.handleChange} />
       </div>
     );
   }
