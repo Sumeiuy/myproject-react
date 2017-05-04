@@ -18,7 +18,7 @@ function getNodes(arr, level = 0) {
     const props = {
       title: item.label,
       value: item.value,
-      key: item.key || item.value || pos,
+      key: pos,
     };
     let res;
     if (item.children && item.children.length) {
