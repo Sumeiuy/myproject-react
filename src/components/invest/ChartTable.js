@@ -141,8 +141,6 @@ export default class ChartTable extends PureComponent {
     });
   }
   render() {
-    let { sortedInfo } = this.state;
-    sortedInfo = sortedInfo || {};
     const columns = [{
       title: '分公司',
       dataIndex: 'city',
