@@ -48,6 +48,20 @@ const optionsMap = {
       name: '自低到高',
     },
   ],
+  showType: [
+    {
+      key: '1',
+      type: 'tables',
+      title: '表格视图',
+      active: 'active',
+    },
+    {
+      key: '2',
+      type: 'zhuzhuangtu',
+      title: '柱状图',
+      active: '',
+    },
+  ],
 };
 
 export default optionsMap;

@@ -1,31 +1,9 @@
-.board {
-  position: relative;
-  background-color: #f3f3f4;
+.board{
+  background: #f3f3f4;
 }
-.chartHeight {
-  height: 340px;
+.colWrapper:nth-child(n+5) div{
+  margin-top: 8px;
 }
-.chartBorder {
-  border-right:8px solid #f3f3f4;
-  &:last-child {
-    border-right:none;
-  }
-}
-.chartRow {
-  padding: 0 18px;
-  background-color: #fff;
-  margin-bottom: 8px;
-  &:last-child {
-    margin-bottom: 0;
-  }
-}
-.chartContainer {
-  composes: chartHeight;
-  composes: chartBorder;
-  &:not(:first-child) {
-    padding-left: 20px;
-  }
-  &:hover {
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-  }
+.colWrapper:nth-child(4n) div{
+  margin-right: 0;
 }

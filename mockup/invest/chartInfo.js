@@ -17,18 +17,18 @@ exports.response = function (req, res) {
     "msg": "OK",
     "resultData": {
       "chartInfo": [
-              {
+        {
         "title": "投顾入岗人数",
         "unit": "户",
         "icon": "ren",
         "data": [
           {
             "name": "南京",
-            "value": 900
+            "value": 700
           },
           {
             "name": "北京",
-            "value": 820
+            "value": 750
           },
           {
             "name": "上海",
@@ -67,14 +67,15 @@ exports.response = function (req, res) {
       {
         "title": "签约客户数",
         "unit": "户",
+        "icon": "ren",
         "data": [
           {
             "name": "南京",
-            "value": 900
+            "value": 600
           },
           {
             "name": "北京",
-            "value": 820
+            "value": 720
           },
           {
             "name": "上海",
@@ -117,7 +118,7 @@ exports.response = function (req, res) {
         "data": [
           {
             "name": "南京",
-            "value": 900
+            "value": 800
           },
           {
             "name": "北京",
@@ -164,7 +165,7 @@ exports.response = function (req, res) {
         "data": [
           {
             "name": "南京",
-            "value": 900
+            "value": 700
           },
           {
             "name": "北京",
@@ -211,7 +212,7 @@ exports.response = function (req, res) {
         "data": [
           {
             "name": "南京",
-            "value": 900
+            "value": 500
           },
           {
             "name": "北京",
@@ -305,7 +306,7 @@ exports.response = function (req, res) {
         "data": [
           {
             "name": "南京",
-            "value": 900
+            "value": 200
           },
           {
             "name": "北京",
@@ -352,7 +353,7 @@ exports.response = function (req, res) {
         "data": [
           {
             "name": "南京",
-            "value": 900
+            "value": 100
           },
           {
             "name": "北京",

@@ -1,0 +1,26 @@
+.tableDiv{
+  background: #fff;
+  table{
+    thead{
+      background: #f3f3f4;
+      font-size: 13px;
+    }
+    tr{
+      height: 38px;
+      font-size: 12px;
+    }
+    tr:nth-child(even){
+      background: #f9f9f9;
+    }
+  }
+}
+:global {
+  .ant-table-column-sorter{
+    span:before{
+      background: #f8ac59;
+    }
+    .ant-table-column-sorter-up.on .anticon-caret-up, .ant-table-column-sorter-down.on .anticon-caret-up, .ant-table-column-sorter-up.on .anticon-caret-down, .ant-table-column-sorter-down.on .anticon-caret-down {
+      color: #f8ac59;
+    }
+  }
+}

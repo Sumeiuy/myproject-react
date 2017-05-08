@@ -36,7 +36,7 @@ export default class PerformanceItem extends PureComponent {
           <Row>
             {
               data.map((item, index) => {
-                const uniqueKey = `invest-index-${index}`;
+                const uniqueKey = `investIndex${index}`;
                 // 索引大于最后一行开始的索引 则 无边框，否则有边框
                 const itemBorder = index > lastLineFirst ? styles.noBorder : '';
                 return (
