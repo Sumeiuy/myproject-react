@@ -1,3 +1,4 @@
 module.exports = {
-  'icon-url': '"/static/font/anticon/iconfont"',
+  'icon-url': process.env.NODE_ENV === 'development'
+    ? '"/static/font/anticon/iconfont"' : '"/fspa/static/font/anticon/iconfont"',
 };
