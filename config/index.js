@@ -26,7 +26,7 @@ module.exports = {
     port: 9081,
     autoOpenBrowser: true,
     assetsSubDirectory: 'static',
-    assetsPublicPath: '',
+    assetsPublicPath: '/',
     proxyTable: {
       '/mcrm/api': {
         target: 'http://192.168.71.29:9082',
