@@ -1,0 +1,89 @@
+.pageCheckBrowser {
+  position: relative;
+  background-color: #2a4051;
+}
+.content {
+  position: absolute;
+  top:50%;
+  left:50%;
+  width: 960px;
+  height: 375px;
+  transform: translate(-50%,-50%);
+  text-align: center;
+}
+.left {
+  float:left;
+  width: 375px;
+  height: 375px;
+}
+.imgResponsive {
+  max-width: 100%;
+  height: auto;
+}
+.right {
+  height: 100%;
+  padding-left: 400px;
+  text-align: left;
+}
+.infoHeader {
+  padding: 60px 0;
+}
+
+.title {
+  margin: 6px 0;
+  font-size: 55px;
+  color:#fff;
+}
+.subtitle {
+  margin: 6px 0;
+  font-size: 15px;
+  color:#fff;
+}
+
+.tipCircle {
+  &:before {
+    content: " ";
+    position: absolute;
+    top:3px;
+    left:0;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 3px solid #545e45;
+    background-color: #fed515;
+  }
+}
+.tip {
+  margin-bottom: 8px;
+  position: relative;
+  padding-left: 20px;
+  height: 20px;
+  line-height: 20px;
+  composes:tipCircle;
+}
+.tipcontent {
+  line-height: 20px;
+  font-size: 14px;
+  color:#97bfd4;
+  vertical-align: top;
+}
+.icon {
+  padding-left: 8px;
+  font-size: 14px;
+  color:#456072;
+  vertical-align: top;
+  &:hover {
+    cursor: pointer;
+    color:#97bfd4;
+  }
+}
+
+:global {
+  .ant-tooltip-inner {
+    color:#2a4051;
+    background-color: #97bfd4;
+  }
+  .ant-tooltip-placement-right .ant-tooltip-arrow {
+    border-right-color: #97bfd4;
+  }
+}
