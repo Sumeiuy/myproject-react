@@ -110,6 +110,16 @@ var webpackConfig = merge(baseWebpackConfig, {
       // necessary to consistently work with multiple chunks via CommonsChunkPlugin
       chunksSortMode: 'dependency'
     }),
+    new HtmlWebpackPlugin({
+      filename: config.build.fragment,
+      template: 'fragment.html',
+      inject: true,
+      minify: {
+        removeComments: true,
+        removeAttributeQuotes: true
+      },
+      chunksSortMode: 'dependency'
+    }),
     // split vendor js into its own file
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
