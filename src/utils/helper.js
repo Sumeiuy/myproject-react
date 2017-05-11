@@ -72,31 +72,53 @@ const helper = {
   hasClass(elem, className) {
     return elem.className.indexOf(className) > -1;
   },
-
-  toUnit(str, per) {
-    // 分割成数组
-    const arr = str.toString().split('.');
-    // 取出整数部分长度
-    const length = arr[0].length;
+  /**
+     * toUnit('123456', '元', 5) => {vale: 12.345, unit:'万元'}
+     * @param  { string } str  需要转换的字符串数字
+     * @param  { string } unit 单位
+     * @return { number } per  以显示几位为转换依据，默认 5 位
+  */
+  toUnit(value, unit, per = 5) {
     const obj = {};
-    // 整数部分大于等于 依据 长度
-    if (length >= per) {
-      // 按照依据长度取出 依据 数字，超出长度以 0 补足
-      const num = arr[0].substr(0, per) + arr[0].substr(per).replace(/\d/g, '0');
-      switch (true) {
-        case length < 9:
-          obj.value = `${num / 10000}`;
-          obj.unit = '万';
-          break;
-        case length >= 9 && length < 13:
-          obj.value = `${num / 100000000}`;
-          obj.unit = '亿';
-          break;
-        default:
-          obj.value = `${num / 1000000000000}`;
-          obj.unit = '万亿';
-          break;
+    if (Number(value)) {
+      // 分割成数组
+      const arr = value.toString().split('.');
+      // 取出整数部分长度
+      const length = arr[0].length;
+      // 整数部分大于等于 依据 长度
+      if (length >= per) {
+        // 按照依据长度取出 依据 数字，超出长度以 0 补足
+        const num = arr[0].substr(0, per) + arr[0].substr(per).replace(/\d/g, '0');
+        switch (true) {
+          case length < 9:
+            obj.value = `${num / 10000}`;
+            obj.unit = `万${unit}`;
+            return obj;
+          case length >= 9 && length < 13:
+            obj.value = `${num / 100000000}`;
+            obj.unit = `亿${unit}`;
+            return obj;
+          default:
+            obj.value = `${num / 1000000000000}`;
+            obj.unit = `万亿${unit}`;
+            return obj;
+        }
+      } else {
+        // 计算小数部分长度
+        // 如果有小数，小数部分取 依据 长度减整数部分长度
+        if (arr[1]) {
+          arr[1] = arr[1].substr(0, per - length);
+        }
+        obj.value = arr.join('.');
+        obj.unit = unit;
+        return obj;
       }
+<<<<<<< Updated upstream
+=======
+    } else {
+      obj.value = '暂无';
+      obj.unit = '';
+>>>>>>> Stashed changes
       return obj;
     }
     // 计算小数部分长度

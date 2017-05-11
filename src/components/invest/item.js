@@ -19,17 +19,18 @@ export default class Item extends PureComponent {
   }
 
   render() {
-    const { data: { icon, unit, num, title } } = this.props;
+    const { data: { key, unit, value, name } } = this.props;
+    const data = toUnit(value, unit, 5);
     return (
       <div className={styles.content}>
         <h3 className={styles.title}>
-          <Icon type={iconTypeMap[icon]} />
-          {title}
+          <Icon type={iconTypeMap[key]} />
+          {name}
         </h3>
         <h4 className={styles.num}>
-          {toUnit(num, 5).value}
+          {data.value}
           <span className={styles.span}>
-            {toUnit(num, 5).unit}{unit}
+            {data.unit}
           </span>
         </h4>
       </div>
