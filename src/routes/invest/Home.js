@@ -167,7 +167,7 @@ export default class InvestHome extends PureComponent {
     // 本月
     if (flag === 'month') {
       duration = `${month}/01-${month}/${day}`;
-    } else if (flag === 'season') {
+    } else if (flag === 'quarter') {
       duration = `${qStartMonth}/01-${month}/${day}`;
     } else if (flag === 'year') {
       duration = `01/01-${month}/${day}`;

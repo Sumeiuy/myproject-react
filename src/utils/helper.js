@@ -113,22 +113,11 @@ const helper = {
         obj.unit = unit;
         return obj;
       }
-<<<<<<< Updated upstream
-=======
     } else {
       obj.value = '暂无';
       obj.unit = '';
->>>>>>> Stashed changes
       return obj;
     }
-    // 计算小数部分长度
-    // 如果有小数，小数部分取 依据 长度减整数部分长度
-    if (arr[1]) {
-      arr[1] = arr[1].substr(0, per - length);
-    }
-    obj.value = arr.join('.');
-    obj.unit = '';
-    return obj;
   },
 
   /**
