@@ -24,6 +24,13 @@ export default function createApi() {
     return url;
   };
 
+  // 授权信息: empId, deviceId, token
+  // const authInfo = {
+  //   empId: '002332',
+  //   deviceId: '1002',
+  //   token: 'PO0BYN4OCISTE0H2U09PC8DRE5IAOU3A',
+  // };
+
   return {
 
     /**
@@ -39,6 +46,7 @@ export default function createApi() {
         `${finalUrl}?${queryString}`,
         {
           method: 'GET',
+          empId: '002332',
         },
       );
     },
@@ -57,6 +65,7 @@ export default function createApi() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            empId: '002332',
           },
           body: JSON.stringify(query),
         },

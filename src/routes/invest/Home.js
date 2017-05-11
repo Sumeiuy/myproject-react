@@ -95,10 +95,32 @@ export default class InvestHome extends PureComponent {
 
   componentWillMount() {
     const { getPerformance, getChartInfo, getCustRange } = this.props;
-    const { location: { query } } = this.props;
-    getPerformance(query);
-    getChartInfo(query);
-    getCustRange(query);
+    getPerformance(
+      {
+        scope: '3',
+        empId: '002332',
+        indicatorIdList: ['tgNum', 'gjPurRake', 'platformCustNumM'],
+        begin: '20170401',
+        end: '20170510',
+        cycleType: 'quarter',
+      },
+    );
+    getChartInfo(
+      {
+        scope: '3',
+        localScope: '1',
+        empId: '002332',
+        indicatorIdList: ['tgNum', 'gjPurRake', 'platformCustNumM'],
+        begin: '20170410',
+        end: '20170412',
+        cycleType: 'year',
+        orderIndicatorId: '',
+        orderType: '',
+        pageSize: '',
+        pageNum: '',
+      },
+    );
+    getCustRange({ empId: '002332' });
   }
 
   componentWillReceiveProps(nextProps) {

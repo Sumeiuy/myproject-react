@@ -1,9 +1,10 @@
 const iconTypeMap = {
-  zc: 'zichan',
+  gjPurRake: 'zichan',
   kh: 'kehu-copy',
   tg: 'tuoguan',
   per: 'xinyonghucanyuzhanbi',
-  ren: 'renyuan',
+  tgNum: 'renyuan',
+  platformCustNumM: 'renyuan',
 };
 
 export default iconTypeMap;
