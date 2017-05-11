@@ -17,7 +17,7 @@ export default {
   reducers: {
     getPerformanceSuccess(state, action) {
       const { payload: { response } } = action;
-      const { performance } = response.resultData;
+      const performance = response.resultData.singleRecords;
       return {
         ...state,
         performance,
@@ -25,7 +25,7 @@ export default {
     },
     getChartInfoSuccess(state, action) {
       const { payload: { response } } = action;
-      const { chartInfo } = response.resultData;
+      const chartInfo = response.resultData;
       return {
         ...state,
         chartInfo,

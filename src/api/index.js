@@ -17,11 +17,11 @@ export default {
   saveDetail: query => api.post('/test/saveDetail', query),
 
    // 获取绩效统计接口
-  getPerformance: query => api.get('/invest/performance', query),
+  getPerformance: query => api.post('/groovynoauth/jxzb/querySingleRecord', query),
 
   // 获取指标图表数据
-  getChartInfo: query => api.get('/invest/chartInfo', query),
+  getChartInfo: query => api.post('/groovynoauth/jxzb/queryMultiCardRecord', query),
 
   // 获取客户范围
-  getCustRange: query => api.get('/invest/custRange', query),
+  getCustRange: query => api.post('/groovynoauth/jxzb/empOrgTree', query),
 };

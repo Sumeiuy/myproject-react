@@ -18,7 +18,7 @@ const optionsMap = {
       name: '本月',
     },
     {
-      key: 'season',
+      key: 'quarter',
       name: '本季',
     },
     {

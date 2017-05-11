@@ -1,8 +1,8 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-05-04 16:50:40
- * @Last Modified by:   LiuJianShu
- * @Last Modified time: 2017-05-04 16:50:40
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2017-05-04 20:02:48
  */
 import React, { PropTypes, PureComponent } from 'react';
 import { Table } from 'antd';
@@ -121,14 +121,6 @@ export default class ChartTable extends PureComponent {
     };
   }
 
-  setAgeSort = () => {
-    this.setState({
-      sortedInfo: {
-        order: 'descend',
-        columnKey: 'age',
-      },
-    });
-  };
   handleChange = (pagination, sorter) => {
     console.log('Various parameters', pagination, sorter);
     this.setState({
