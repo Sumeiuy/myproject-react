@@ -109,6 +109,32 @@ const helper = {
     return obj;
   },
 
+  /**
+   * 将字符串添加到剪贴板中
+   * @param  {string} value 需要将复制的字符串
+   */
+  copyToClipBoard(value) {
+    // 选中元素中的文本
+    const selectElementText = (element) => {
+      if (document.selection) {
+        const range = document.body.createTextRange();
+        range.moveToElementText(element);
+        range.select();
+      } else if (window.getSelection) {
+        const range = document.createRange();
+        range.selectNode(element);
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(range);
+      }
+    };
+    const element = document.createElement('DIV');
+    element.textContent = value;
+    document.body.appendChild(element);
+    selectElementText(element);
+    document.execCommand('copy');
+    element.remove();
+  },
+
 };
 
 export default helper;

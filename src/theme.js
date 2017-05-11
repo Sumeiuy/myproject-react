@@ -1,3 +1,4 @@
 module.exports = {
-  'xx-yy': 'value', // 覆盖antd less 变量
+  'icon-url': process.env.NODE_ENV === 'development'
+    ? '"/static/font/anticon/iconfont"' : '"/fspa/static/font/anticon/iconfont"',
 };

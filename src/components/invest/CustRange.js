@@ -11,6 +11,7 @@ import { autobind } from 'core-decorators';
 import styles from './custRange.less';
 
 const TreeNode = TreeSelect.TreeNode;
+const EMPTY_OBJECT = {};
 
 function getNodes(arr, level = 0) {
   return arr.map((item, index) => {
@@ -39,9 +40,6 @@ export default class CustRange extends PureComponent {
   }
 
   static defaultProps = {
-    custRange: [],
-    location: {},
-    replace: () => { },
   }
 
   constructor(props) {
@@ -68,13 +66,17 @@ export default class CustRange extends PureComponent {
     console.log(value, label, extra);
     const { location: { query }, replace } = this.props;
     this.setState({
-      value,
+      value: {
+        ...value,
+        // FIXME: 在这里改变label的值
+        label: `${value.label}--`,
+      },
     }, () => {
       replace({
         pathname: '',
         query: {
           ...query,
-          custRange: encodeURIComponent(value),
+          custRange: encodeURIComponent(value.value),
         },
       });
     });
@@ -82,7 +84,7 @@ export default class CustRange extends PureComponent {
 
   setDefaultValue(custRange) {
     this.setState({
-      value: (custRange[0] || {}).label,
+      value: custRange[0] || EMPTY_OBJECT,
     });
   }
 
@@ -100,6 +102,7 @@ export default class CustRange extends PureComponent {
         showSearch
         allowClear
         dropdownMatchSelectWidth
+        labelInValue
       >
         {getNodes(custRange)}
       </TreeSelect>
