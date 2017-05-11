@@ -63,7 +63,7 @@ export default class CustRange extends PureComponent {
 
   @autobind
   onChange(value, label, extra) {
-    console.log(value, label, extra);
+    console.log('onChange', value, label, extra);
     const { location: { query }, replace } = this.props;
     this.setState({
       value: {
@@ -90,6 +90,7 @@ export default class CustRange extends PureComponent {
 
   render() {
     const { custRange } = this.props;
+    console.log('this.state.value', this.state.value, custRange);
     return (
       <TreeSelect
         notFoundContent="没有结果"

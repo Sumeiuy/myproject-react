@@ -88,6 +88,7 @@ export default {
     // 获取客户范围
     * getCustRange({ payload }, { call, put }) {
       const response = yield call(api.getCustRange, payload);
+      console.log('response>>>', response);
       yield put({
         type: 'getCustRangeSuccess',
         response,
