@@ -17,7 +17,7 @@ function getNodes(arr, parent) {
   return arr.map((item) => {
     const props = {
       title: item.name,
-      value: item.id,
+      value: `${item.level}-${item.id}`,
       key: `${item.level}-${item.id}`,
       name: item.name === parent ? parent : `${parent}/${item.name}`,
     };
@@ -63,6 +63,7 @@ export default class CustRange extends PureComponent {
 
   @autobind
   onChange(value, label, extra) {
+    console.log('onChange', value, label, extra);
     const { location: { query }, replace } = this.props;
     this.setState({
       value: {

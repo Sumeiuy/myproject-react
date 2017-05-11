@@ -29,7 +29,7 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-      '/mcrm/api': {
+      '/fspa/mcrm/api': {
         target: 'http://192.168.71.27:8082',
         secure: false
       }

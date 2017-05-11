@@ -6,5 +6,5 @@
 
 export default {
   timeout: 15000,
-  prefix: '/mcrm/api',
+  prefix: '/fspa/mcrm/api',
 };
