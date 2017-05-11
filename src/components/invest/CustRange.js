@@ -13,7 +13,7 @@ import styles from './custRange.less';
 const TreeNode = TreeSelect.TreeNode;
 const EMPTY_OBJECT = {};
 
-function getNodes(arr, parent = '经纪业务总部') {
+function getNodes(arr, parent) {
   return arr.map((item) => {
     const props = {
       title: item.name,
@@ -106,7 +106,7 @@ export default class CustRange extends PureComponent {
         dropdownMatchSelectWidth
         labelInValue
       >
-        {getNodes(custRange)}
+        {getNodes(custRange, (custRange[0] || {}).name)}
       </TreeSelect>
     );
   }
