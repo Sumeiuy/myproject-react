@@ -120,7 +120,10 @@ export default class InvestHome extends PureComponent {
         pageNum: '',
       },
     );
-    getCustRange({ empId: '002332' });
+    // 001750  经总
+    // 001410  分公司
+    // 002332  营业部
+    getCustRange({ empId: '001750' });
   }
 
   componentWillReceiveProps(nextProps) {

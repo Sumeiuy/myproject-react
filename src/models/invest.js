@@ -33,33 +33,42 @@ export default {
     },
     getCustRangeSuccess(state, action) {
       const { response: { resultData } } = action;
-      const user = {
-        roleId: 1,
-        company: '分公司2',
-      };
       let custRange;
-      if (user.roleId === 1) {  // 经纪业务总部团队经理
+      if (resultData.level === '1') {
         custRange = [
-          { label: resultData.label, value: resultData.value },
+          { id: resultData.id, name: resultData.name, level: resultData.level },
           ...resultData.children,
         ];
-      } else if (user.roleId === 2) { // 分公司团队经理
-        resultData.children.forEach((v) => {
-          if (v.label === user.company) {
-            custRange = [v];
-          }
-        });
-      } else if (user.roleId === 3) { // 营业部团队经理
-        resultData.children.forEach((v) => {
-          if (v.children) {
-            v.children.forEach((item) => {
-              if (item.label === user.company) {
-                custRange = [item];
-              }
-            });
-          }
-        });
+      } else {
+        custRange = [resultData];
       }
+      // const user = {
+      //   roleId: 1,
+      //   company: '分公司2',
+      // };
+      // let custRange;
+      // if (user.roleId === 1) {  // 经纪业务总部团队经理
+      //   custRange = [
+      //     { label: resultData.label, value: resultData.value },
+      //     ...resultData.children,
+      //   ];
+      // } else if (user.roleId === 2) { // 分公司团队经理
+      //   resultData.children.forEach((v) => {
+      //     if (v.label === user.company) {
+      //       custRange = [v];
+      //     }
+      //   });
+      // } else if (user.roleId === 3) { // 营业部团队经理
+      //   resultData.children.forEach((v) => {
+      //     if (v.children) {
+      //       v.children.forEach((item) => {
+      //         if (item.label === user.company) {
+      //           custRange = [item];
+      //         }
+      //       });
+      //     }
+      //   });
+      // }
       return {
         ...state,
         custRange,
@@ -88,7 +97,6 @@ export default {
     // 获取客户范围
     * getCustRange({ payload }, { call, put }) {
       const response = yield call(api.getCustRange, payload);
-      console.log('response>>>', response);
       yield put({
         type: 'getCustRangeSuccess',
         response,

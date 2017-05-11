@@ -13,17 +13,17 @@ import styles from './custRange.less';
 const TreeNode = TreeSelect.TreeNode;
 const EMPTY_OBJECT = {};
 
-function getNodes(arr, level = 0) {
-  return arr.map((item, index) => {
-    const pos = `${level}-${index}`;
+function getNodes(arr, parent = '经纪业务总部') {
+  return arr.map((item) => {
     const props = {
-      title: item.label,
-      value: item.value,
-      key: pos,
+      title: item.name,
+      value: item.id,
+      key: `${item.level}-${item.id}`,
+      name: item.name === parent ? parent : `${parent}/${item.name}`,
     };
     let res;
     if (item.children && item.children.length) {
-      res = (<TreeNode {...props}>{getNodes(item.children, pos)}</TreeNode>);
+      res = (<TreeNode {...props}>{getNodes(item.children, props.name)}</TreeNode>);
     } else {
       res = (<TreeNode {...props} />);
     }
@@ -63,41 +63,42 @@ export default class CustRange extends PureComponent {
 
   @autobind
   onChange(value, label, extra) {
-    console.log('onChange', value, label, extra);
     const { location: { query }, replace } = this.props;
     this.setState({
       value: {
         ...value,
-        // FIXME: 在这里改变label的值
-        label: `${value.label}--`,
+        key: value ? value.key : '',
+        label: value ? extra.triggerNode.props.name : '',
       },
     }, () => {
       replace({
         pathname: '',
         query: {
           ...query,
-          custRange: encodeURIComponent(value.value),
+          custRange: value ? encodeURIComponent(value.value) : '',
         },
       });
     });
   }
 
   setDefaultValue(custRange) {
+    const initValue = {
+      label: (custRange[0] || {}).name,
+      key: (custRange[0] || {}).id,
+    };
     this.setState({
-      value: custRange[0] || EMPTY_OBJECT,
+      value: initValue || EMPTY_OBJECT,
     });
   }
 
   render() {
     const { custRange } = this.props;
-    console.log('this.state.value', this.state.value, custRange);
     return (
       <TreeSelect
         notFoundContent="没有结果"
         className={styles.custRang}
         value={this.state.value}
         onChange={this.onChange}
-        onSelect={this.onSelect}
         dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
         treeNodeFilterProp={'title'}
         showSearch
