@@ -9,26 +9,6 @@ import { Table } from 'antd';
 
 import styles from './ChartTable.less';
 
-const data = [{
-  key: '1',
-  city: '南京',
-  gjPurRake: 123,
-  platformCustNumM: 456,
-  tgNum: 789,
-}, {
-  key: '2',
-  city: '上海',
-  gjPurRake: 1234,
-  platformCustNumM: 4567,
-  tgNum: 7890,
-}, {
-  key: '3',
-  city: '广东',
-  gjPurRake: 12,
-  platformCustNumM: 45,
-  tgNum: 78,
-}];
-
 export default class ChartTable extends PureComponent {
   static propTypes = {
     chartTableInfo: PropTypes.object,
@@ -52,7 +32,6 @@ export default class ChartTable extends PureComponent {
   }
 
   handleChange = (pagination, sorter) => {
-    console.log('Various parameters', pagination, sorter);
     this.setState({
       sortedInfo: sorter,
     });
@@ -68,19 +47,46 @@ export default class ChartTable extends PureComponent {
     const columns = chartTableInfo.titleList;
     // const key = 'dataIndex';
     // const name = 'title';
-    // const alrColumns = columns.map((item) => {
-    //   const test = item.key;
-    //   item[key] = item.key;
-    //   item[name] = item.name;
-    //   item.sorter = (a, b) => a[test] - b[test];
-    //   delete item.name;
-    //   return item;
+    // const b = columns.map((item) => {
+    //   return {
+    //     dataIndex: item.key,
+    //     title: item.name,
+    //     sorter: (a, b)=> a - b
+    //   },
     // });
-    columns.unshift({
+    const arr = columns.map(item => (
+      {
+        dataIndex: item.key,
+        title: item.name,
+        sorter: (a, b) => a[item.key] - b[item.key],
+      }
+    ));
+    console.log('arr', arr);
+    arr.unshift({
       title: '分公司',
       dataIndex: 'city',
       key: 'city',
     });
+
+    const data = [{
+      key: '1',
+      city: '南京',
+      gjPurRake: 3223,
+      platformCustNumM: 124,
+      tgNum: 7434,
+    }, {
+      key: '2',
+      city: '上海',
+      gjPurRake: 1244,
+      platformCustNumM: 43,
+      tgNum: 2241,
+    }, {
+      key: '3',
+      city: '广东',
+      gjPurRake: 454,
+      platformCustNumM: 4121,
+      tgNum: 8324,
+    }];
     // const columns = [{
     //   title: '分公司',
     //   dataIndex: 'city',
@@ -123,7 +129,7 @@ export default class ChartTable extends PureComponent {
     // }];
     return (
       <div className={styles.tableDiv}>
-        <Table {...this.state} columns={columns} dataSource={data} onChange={this.handleChange} />
+        <Table {...this.state} columns={arr} dataSource={data} onChange={this.handleChange} />
       </div>
     );
   }

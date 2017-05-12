@@ -41,19 +41,12 @@ export default class PerformanceChartBoard extends PureComponent {
     sort: () => {},
   }
 
-  // constructor(props) {
-  //   super(props);
-  //   this.state = {
-  //     showChart: 'zhuzhuangtu',
-  //   };
-  // }
-
   componentWillMount() {
     const { location: { query } } = this.props;
     this.state = {
       sortColumn: query.sortColumn,
       sortOrder: query.sortOrder,
-      showChart: 'zhuzhuangtu',
+      showChart: query.showChart || 'zhuzhuangtu',
     };
   }
 

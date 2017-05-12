@@ -98,6 +98,7 @@ export default class InvestHome extends PureComponent {
       getChartInfo,
       getCustRange,
       getChartTableInfo,
+      custRange,
       location: { query },
     } = this.props;
     console.log('query', query);
@@ -109,11 +110,16 @@ export default class InvestHome extends PureComponent {
     this.state = {
       ...obj,
     };
+
+    // 001750  经总
+    // 001410  分公司
+    // 002332  营业部
+    getCustRange({ empId: '001750' });
+    console.log('custRange', custRange && custRange);
     getPerformance(
       {
         scope: '3',
         empId: '002332',
-        indicatorIdList: ['tgNum', 'gjPurRake', 'platformCustNumM'],
         begin: query.begin || obj.begin,
         end: query.end || obj.end,
         cycleType: query.cycleType || obj.cycleType,
@@ -124,29 +130,26 @@ export default class InvestHome extends PureComponent {
         scope: '3',
         localScope: '1',
         empId: '002332',
-        indicatorIdList: ['tgNum', 'gjPurRake', 'platformCustNumM'],
-        begin: query.begin || obj.begin,
-        end: query.end || obj.end,
-        cycleType: query.cycleType || obj.cycleType,
+        // begin: query.begin || obj.begin,
+        begin: '20170410',
+        end: '20170412',
+        // end: query.end || obj.end,
+        cycleType: 'year',
+        // cycleType: query.cycleType || obj.cycleType,
         orderIndicatorId: '',
         orderType: '',
         pageSize: '',
         pageNum: '',
       },
     );
-    // 001750  经总
-    // 001410  分公司
-    // 002332  营业部
-    getCustRange({ empId: '001750' });
     getChartTableInfo(
       {
         empId: '002332',
         localScope: '1',
         scope: '3',
-        indicatorIdList: ['tgNum', 'gjPurRake', 'platformCustNumM'],
         begin: '20170410',
         end: '20170412',
-        cycleType: 'month',
+        cycleType: 'year',
         orderType: '',
         pageNum: '1',
         pageSize: '30',
@@ -183,7 +186,7 @@ export default class InvestHome extends PureComponent {
           // localScope: custArr[0] || '1',
           localScope: '1',
           empId: '002332',
-          indicatorIdList: ['tgNum', 'gjPurRake', 'platformCustNumM'],
+          indicatorIdList: ['tgInNum', 'newSignCustNum', 'currSignCustAset', 'totAset', 'pur_rake', 'pur_inte_income', 'prdt_pur_fee', 'gjAvgPercent', 'motCompletePercent', 'serviceComPercent', 'infoCompPercent', 'feeConfigPercent'],
           orderIndicatorId: '',
           orderType: '',
           pageSize: '',
@@ -195,7 +198,7 @@ export default class InvestHome extends PureComponent {
           ...query,
           scope: '3',
           empId: '002332',
-          indicatorIdList: ['tgNum', 'gjPurRake', 'platformCustNumM'],
+          indicatorIdList: ['tgInNum', 'newSignCustNum', 'currSignCustAset', 'totAset', 'pur_rake', 'pur_inte_income', 'prdt_pur_fee', 'gjAvgPercent', 'motCompletePercent', 'serviceComPercent', 'infoCompPercent', 'feeConfigPercent'],
           orderIndicatorId: '',
           orderType: '',
           pageSize: '',
@@ -207,7 +210,7 @@ export default class InvestHome extends PureComponent {
           // localScope: custArr[0] || '1',
           localScope: '1',
           empId: '002332',
-          indicatorIdList: ['tgNum', 'gjPurRake', 'platformCustNumM'],
+          indicatorIdList: ['tgInNum', 'newSignCustNum', 'currSignCustAset', 'totAset', 'pur_rake', 'pur_inte_income', 'prdt_pur_fee', 'gjAvgPercent', 'motCompletePercent', 'serviceComPercent', 'infoCompPercent', 'feeConfigPercent'],
           orderIndicatorId: '',
           orderType: '',
           pageSize: '',
@@ -219,7 +222,7 @@ export default class InvestHome extends PureComponent {
             empId: '002332',
             localScope: '1',
             scope: '3',
-            indicatorIdList: ['tgNum', 'gjPurRake', 'platformCustNumM'],
+            indicatorIdList: ['tgInNum', 'newSignCustNum', 'currSignCustAset', 'totAset', 'pur_rake', 'pur_inte_income', 'prdt_pur_fee', 'gjAvgPercent', 'motCompletePercent', 'serviceComPercent', 'infoCompPercent', 'feeConfigPercent'],
             orderType: '',
             pageNum: '1',
             pageSize: '30',
