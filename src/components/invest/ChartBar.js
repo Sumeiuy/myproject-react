@@ -60,59 +60,22 @@ const barShadow = {
 export default class ChartBar extends PureComponent {
 
   static propTypes = {
+    level: PropTypes.string,
     chartData: PropTypes.object,
     iconType: PropTypes.string,
   }
 
   static defaultProps = {
+    level: '1',
     chartData: {},
     iconType: 'zichan',
   }
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      seeChart: true,
-    };
-  }
-
   @autobind
-  getChartData(data, key) {
+  getChartData(orgModel, key) {
     const yAxisLabels = [];
-    data.forEach(item => yAxisLabels.push(item[key]));
+    orgModel.forEach(item => yAxisLabels.push(item[key]));
     return yAxisLabels;
-  }
-
-  @autobind
-  handleClickSeeChart() {
-    const { seeChart } = this.state;
-    this.setState({
-      seeChart: !seeChart,
-    });
-  }
-
-  @autobind
-  seeChart(see) {
-    if (see) {
-      return (
-        <Icon
-          type="xianshi"
-          style={{
-            color: '#6f7e96',
-          }}
-          onClick={this.handleClickSeeChart}
-        />
-      );
-    }
-    return (
-      <Icon
-        type="hide"
-        style={{
-          color: '#bbbbbb',
-        }}
-        onClick={this.handleClickSeeChart}
-      />
-    );
   }
 
   @autobind
@@ -144,12 +107,13 @@ export default class ChartBar extends PureComponent {
     return output;
   }
   render() {
-    const { chartData: { title, unit, icon, data = [] } } = this.props;
-    const { seeChart } = this.state;
+    // const { chartData } = this.props;
+    const { chartData: { name, unit, key, orgModel = [] }, level } = this.props;
+    const levelName = `level${parseInt(level, 10) + 1}Name`;
     // 此处为y轴刻度值
-    const yAxisLabels = this.getChartData(data, 'name');
+    const yAxisLabels = this.getChartData(orgModel, levelName);
     // 此处为数据
-    const seriesData = this.getChartData(data, 'value');
+    const seriesData = this.getChartData(orgModel, 'value');
     const seriesDataLen = seriesData.length;
     // 数据中最大的值
     const xMax = Math.max(...seriesData);
@@ -212,7 +176,7 @@ export default class ChartBar extends PureComponent {
           data: dataShadow,
         },
         {
-          name: title,
+          name,
           type: 'bar',
           silent: true,
           label: {
@@ -230,16 +194,13 @@ export default class ChartBar extends PureComponent {
       <div className={styles.chartMain}>
         <div className={styles.chartHeader}>
           <div className={styles.chartTitle}>
-            <Icon type={iconTypeMap[icon]} className={styles.chartTiltleTextIcon} />
-            <span className={styles.chartTitleText}>{title}</span>
-          </div>
-          <div className={styles.seeIcon}>
-            {this.seeChart(seeChart)}
+            <Icon type={iconTypeMap[key]} className={styles.chartTiltleTextIcon} />
+            <span className={styles.chartTitleText}>{name}</span>
           </div>
         </div>
         <div className={styles.chartWrapper}>
           {
-            seeChart ?
+            orgModel.length ?
               <ReactEcharts
                 option={options}
                 style={{

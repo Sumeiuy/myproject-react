@@ -26,6 +26,7 @@ export default class PerformanceChartBoard extends PureComponent {
   static propTypes = {
     location: PropTypes.object,
     chartData: PropTypes.array,
+    chartTableInfo: PropTypes.object,
     replace: PropTypes.func.isRequired,
     sort: PropTypes.func.isRequired,
     loading: PropTypes.bool,
@@ -35,6 +36,7 @@ export default class PerformanceChartBoard extends PureComponent {
     loading: false,
     location: {},
     chartData: [],
+    chartTableInfo: {},
     repalce: () => {},
     sort: () => {},
   }
@@ -92,7 +94,7 @@ export default class PerformanceChartBoard extends PureComponent {
 
   render() {
     const { showChart, sortColumn, sortOrder } = this.state;
-    const { chartData, loading } = this.props;
+    const { chartData, chartTableInfo, loading, location } = this.props;
     if (chartData.length === 0) {
       return null;
     }
@@ -157,10 +159,11 @@ export default class PerformanceChartBoard extends PureComponent {
         {/* 根据 url 里的 showChart 来显示不同的组件 */}
         {
           showChart === showType[0].type ?
-            <ChartTable />
+            <ChartTable chartTableInfo={chartTableInfo} />
           :
             <ChartBoard
               chartData={chartData}
+              location={location}
               loading={loading}
             />
         }

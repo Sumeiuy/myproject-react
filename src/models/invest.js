@@ -31,6 +31,14 @@ export default {
         chartInfo,
       };
     },
+    getChartTableInfoSuccess(state, action) {
+      const { payload: { response } } = action;
+      const chartTableInfo = response.resultData.data;
+      return {
+        ...state,
+        chartTableInfo,
+      };
+    },
     getCustRangeSuccess(state, action) {
       const { response: { resultData } } = action;
       let custRange;
@@ -90,6 +98,15 @@ export default {
       const response = yield call(api.getChartInfo, payload);
       yield put({
         type: 'getChartInfoSuccess',
+        payload: { response },
+      });
+    },
+
+    // 获取图表表格视图数据
+    * getChartTableInfo({ payload }, { call, put }) {
+      const response = yield call(api.getChartTableInfo, payload);
+      yield put({
+        type: 'getChartTableInfoSuccess',
         payload: { response },
       });
     },
