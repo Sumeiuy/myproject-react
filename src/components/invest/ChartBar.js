@@ -74,7 +74,13 @@ export default class ChartBar extends PureComponent {
   @autobind
   getChartData(orgModel, key) {
     const yAxisLabels = [];
-    orgModel.forEach(item => yAxisLabels.push(item[key]));
+    orgModel.forEach((item) => {
+      if (item[key] === null || item[key] === 'null') {
+        yAxisLabels.push(0);
+      } else {
+        yAxisLabels.push(item[key]);
+      }
+    });
     return yAxisLabels;
   }
 
@@ -106,6 +112,20 @@ export default class ChartBar extends PureComponent {
     });
     return output;
   }
+
+  @autobind
+  createNewSeriesData(series, medianValue) {
+    return series.map(item => ({
+      value: item,
+      label: {
+        normal: {
+          show: true,
+          position: medianValue > item ? 'right' : 'insideRight',
+        },
+      },
+    }));
+  }
+
   render() {
     // const { chartData } = this.props;
     const { chartData: { name, unit, key, orgModel = [] }, level } = this.props;
@@ -119,6 +139,11 @@ export default class ChartBar extends PureComponent {
     const xMax = Math.max(...seriesData);
     // 图表边界值
     const gridXAxisMax = xMax * 1.1;
+    // 计算出所有值的中间值
+    const medianValue = gridXAxisMax / 2;
+    // 需要针对不同的值编写不同的柱状图Label样式
+    const newSeriesData = this.createNewSeriesData(seriesData, medianValue);
+    // 柱状图阴影
     const dataShadow = [];
     for (let i = 0; i < seriesDataLen; i++) {
       dataShadow.push(gridXAxisMax);
@@ -131,15 +156,13 @@ export default class ChartBar extends PureComponent {
         type: 'shadow',
       },
       formatter(params) {
-        return `${params[1].axisValue}<br /> ${params[1].seriesName}: <span style="color:#f8ac59; font-size: 15px;">${params[1].data}</span>${unit}`;
+        return `${params[1].axisValue}<br /> ${params[1].seriesName}: <span style="color:#f8ac59; font-size: 15px;">${params[1].data.value}</span>${unit}`;
       },
       backgroundColor: 'rgba(0, 0, 0, .56)',
       padding: [12, 11, 13, 13],
       extraCssText: 'border-radius: 8px',
     };
-    // 生成柱状图渐变
-
-
+    // eCharts的配置项
     const options = {
       color: [barColor],
       tooltip: {
@@ -168,6 +191,15 @@ export default class ChartBar extends PureComponent {
         type: 'category',
         inverse: true,
         ...AxisOptions,
+        axisLabel: {
+          ...AxisOptions.axisLabel,
+          formatter(value) {
+            if (value.length > 4) {
+              return value.substr(0, 4);
+            }
+            return value;
+          },
+        },
         data: yAxisLabels,
       },
       series: [
@@ -181,11 +213,10 @@ export default class ChartBar extends PureComponent {
           silent: true,
           label: {
             normal: {
-              show: true,
-              position: 'insideRight',
+              show: false,
             },
           },
-          data: seriesData,
+          data: newSeriesData,
         },
       ],
     };

@@ -176,8 +176,8 @@ export default class InvestHome extends PureComponent {
     // 还是chart部分的数据
     if (!_.isEqual(query, preQuery)) {
       // 判断是排序方式的值不同
-      const sortNow = _.pick(query, ['sortColumn', 'sortOrder', 'showChart']);
-      const sortPre = _.pick(preQuery, ['sortColumn', 'sortOrder', 'showChart']);
+      const sortNow = _.pick(query, ['scope', 'orderType']);
+      const sortPre = _.pick(preQuery, ['scope', 'orderType']);
       if (!_.isEqual(sortNow, sortPre)) {
         // 只刷新指标分布区域
         refreshChartInfo({

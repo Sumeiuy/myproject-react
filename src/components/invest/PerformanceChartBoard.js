@@ -44,9 +44,9 @@ export default class PerformanceChartBoard extends PureComponent {
   componentWillMount() {
     const { location: { query } } = this.props;
     this.state = {
-      sortColumn: query.sortColumn,
-      sortOrder: query.sortOrder,
       showChart: query.showChart || 'zhuzhuangtu',
+      scope: query.scope,
+      orderType: query.orderType,
     };
   }
 
@@ -86,7 +86,7 @@ export default class PerformanceChartBoard extends PureComponent {
   }
 
   render() {
-    const { showChart, sortColumn, sortOrder } = this.state;
+    const { showChart, scope, orderType } = this.state;
     const { chartData, chartTableInfo, loading, location } = this.props;
     if (chartData.length === 0) {
       return null;
@@ -99,9 +99,9 @@ export default class PerformanceChartBoard extends PureComponent {
             <div className={styles.iconBtn1}>
               <span>排序方式:</span>
               <Select
-                defaultValue={sortColumn || '1'}
+                defaultValue={scope || '1'}
                 className={styles.newSelect}
-                onChange={(v) => { this.handleSortChange('sortColumn', v); }}
+                onChange={(v) => { this.handleSortChange('scope', v); }}
               >
                 {
                   sortByType.map((item, index) => {
@@ -111,9 +111,9 @@ export default class PerformanceChartBoard extends PureComponent {
                 }
               </Select>
               <Select
-                defaultValue={sortOrder || '1'}
+                defaultValue={orderType || 'desc'}
                 className={styles.newSelect1}
-                onChange={(v) => { this.handleSortChange('sortOrder', v); }}
+                onChange={(v) => { this.handleSortChange('orderType', v); }}
               >
                 {
                   sortByOrder.map((item, index) => {
