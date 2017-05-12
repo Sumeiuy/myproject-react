@@ -55,6 +55,13 @@ export default class CustRange extends PureComponent {
     this.setDefaultValue(custRange);
   }
 
+  // componentWillReceiveProps(nextProps) {
+  //   const { custRange, location: { query: { custRangeId } } } = this.props;
+  //   if (custRangeId !== nextProps.location.query.custRangeId) {
+  //     this.setDefaultValue(custRange);
+  //   }
+  // }
+
   componentDidUpdate(prevProps) {
     const { custRange } = this.props;
     if (prevProps.custRange !== custRange) {
@@ -79,16 +86,20 @@ export default class CustRange extends PureComponent {
           ...query,
           custRangeId: value ? encodeURIComponent(value.value) : '',
           custRangeLevel: value ? encodeURIComponent(extra.triggerNode.props.level) : '',
+          custRangeName: value ? encodeURIComponent(extra.triggerNode.props.name) : '',
         },
       });
     });
   }
 
   setDefaultValue(custRange) {
+    const { location: { query: { custRangeId, custRangeName } } } = this.props;
+    console.log('locationChange', custRangeId, custRangeName);
     const initValue = {
-      label: (custRange[0] || {}).name,
-      key: (custRange[0] || {}).id,
+      label: !custRangeName ? (custRange[0] || {}).name : decodeURIComponent(custRangeName),
+      key: custRangeId || (custRange[0] || {}).id,
     };
+    console.log('initValue: ', initValue);
     this.setState({
       value: initValue || EMPTY_OBJECT,
     });
@@ -105,7 +116,6 @@ export default class CustRange extends PureComponent {
         dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
         treeNodeFilterProp={'title'}
         showSearch
-        allowClear
         dropdownMatchSelectWidth
         labelInValue
       >
