@@ -32,6 +32,7 @@ const effects = {
   performance: 'invest/getPerformance',
   chartInfo: 'invest/getChartInfo',
   custRange: 'invest/getCustRange',
+  chartTableInfo: 'invest/getChartTableInfo',
 };
 
 const fectchDataFunction = (globalLoading, type) => query => ({
@@ -43,6 +44,7 @@ const fectchDataFunction = (globalLoading, type) => query => ({
 const mapStateToProps = state => ({
   performance: state.invest.performance,
   chartInfo: state.invest.chartInfo,
+  chartTableInfo: state.invest.chartTableInfo,
   chartLoading: state.loading.effects[effects.chartInfo],
   custRange: state.invest.custRange,
   globalLoading: state.activity.global,
@@ -52,6 +54,7 @@ const mapDispatchToProps = {
   getPerformance: fectchDataFunction(true, effects.performance),
   refreshPerformance: fectchDataFunction(false, effects.performance),
   getChartInfo: fectchDataFunction(true, effects.chartInfo),
+  getChartTableInfo: fectchDataFunction(true, effects.chartTableInfo),
   refreshChartInfo: fectchDataFunction(false, effects.chartInfo),
   getCustRange: fectchDataFunction(false, effects.custRange),
   push: routerRedux.push,
@@ -68,8 +71,10 @@ export default class InvestHome extends PureComponent {
     refreshPerformance: PropTypes.func.isRequired,
     performance: PropTypes.array,
     getChartInfo: PropTypes.func.isRequired,
+    getChartTableInfo: PropTypes.func.isRequired,
     refreshChartInfo: PropTypes.func.isRequired,
     chartInfo: PropTypes.array,
+    chartTableInfo: PropTypes.object,
     chartLoading: PropTypes.bool,
     globalLoading: PropTypes.bool,
     getCustRange: PropTypes.func.isRequired,
@@ -81,28 +86,37 @@ export default class InvestHome extends PureComponent {
   static defaultProps = {
     performance: [],
     chartInfo: [],
+    chartTableInfo: [],
     chartLoading: false,
     globalLoading: false,
     custRange: [],
   }
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      duration: this.getDurationString('month'),
-    };
-  }
-
   componentWillMount() {
-    const { getPerformance, getChartInfo, getCustRange } = this.props;
+    const {
+      getPerformance,
+      getChartInfo,
+      getCustRange,
+      getChartTableInfo,
+      location: { query },
+    } = this.props;
+    console.log('query', query);
+    // let custArr = [];
+    // if (query.custRange) {
+    //   custArr = query.custRange.split('-');
+    // }
+    const obj = this.getDurationString('month');
+    this.state = {
+      ...obj,
+    };
     getPerformance(
       {
         scope: '3',
         empId: '002332',
         indicatorIdList: ['tgNum', 'gjPurRake', 'platformCustNumM'],
-        begin: '20170401',
-        end: '20170510',
-        cycleType: 'quarter',
+        begin: query.begin || obj.begin,
+        end: query.end || obj.end,
+        cycleType: query.cycleType || obj.cycleType,
       },
     );
     getChartInfo(
@@ -111,9 +125,9 @@ export default class InvestHome extends PureComponent {
         localScope: '1',
         empId: '002332',
         indicatorIdList: ['tgNum', 'gjPurRake', 'platformCustNumM'],
-        begin: '20170410',
-        end: '20170412',
-        cycleType: 'year',
+        begin: query.begin || obj.begin,
+        end: query.end || obj.end,
+        cycleType: query.cycleType || obj.cycleType,
         orderIndicatorId: '',
         orderType: '',
         pageSize: '',
@@ -124,6 +138,20 @@ export default class InvestHome extends PureComponent {
     // 001410  分公司
     // 002332  营业部
     getCustRange({ empId: '001750' });
+    getChartTableInfo(
+      {
+        empId: '002332',
+        localScope: '1',
+        scope: '3',
+        indicatorIdList: ['tgNum', 'gjPurRake', 'platformCustNumM'],
+        begin: '20170410',
+        end: '20170412',
+        cycleType: 'month',
+        orderType: '',
+        pageNum: '1',
+        pageSize: '30',
+      },
+    );
   }
 
   componentWillReceiveProps(nextProps) {
@@ -133,8 +161,13 @@ export default class InvestHome extends PureComponent {
       location: { query: preQuery },
       refreshChartInfo,
       getChartInfo,
+      getChartTableInfo,
       getPerformance,
     } = this.props;
+    // const custArr = [];
+    // if (query.custRange) {
+    //   custArr = query.custRange.split('-');
+    // }
     // 此处需要判断需要修改哪个值
     // 是投顾头部总量指标
     // 还是chart部分的数据
@@ -146,66 +179,119 @@ export default class InvestHome extends PureComponent {
         // 只刷新指标分布区域
         refreshChartInfo({
           ...query,
+          scope: '3',
+          // localScope: custArr[0] || '1',
+          localScope: '1',
+          empId: '002332',
+          indicatorIdList: ['tgNum', 'gjPurRake', 'platformCustNumM'],
+          orderIndicatorId: '',
+          orderType: '',
+          pageSize: '',
+          pageNum: '',
         });
       } else {
         // 重新获取页面所有数据
         getPerformance({
           ...query,
+          scope: '3',
+          empId: '002332',
+          indicatorIdList: ['tgNum', 'gjPurRake', 'platformCustNumM'],
+          orderIndicatorId: '',
+          orderType: '',
+          pageSize: '',
+          pageNum: '',
         });
         getChartInfo({
           ...query,
+          scope: '3',
+          // localScope: custArr[0] || '1',
+          localScope: '1',
+          empId: '002332',
+          indicatorIdList: ['tgNum', 'gjPurRake', 'platformCustNumM'],
+          orderIndicatorId: '',
+          orderType: '',
+          pageSize: '',
+          pageNum: '',
         });
+        getChartTableInfo(
+          {
+            ...query,
+            empId: '002332',
+            localScope: '1',
+            scope: '3',
+            indicatorIdList: ['tgNum', 'gjPurRake', 'platformCustNumM'],
+            orderType: '',
+            pageNum: '1',
+            pageSize: '30',
+          },
+        );
       }
     }
   }
 
   @autobind
   getDurationString(flag) {
-    let duration = '';
+    const durationObj = {};
     const now = new Date();
+    const year = now.getFullYear();
     const month = now.getMonth() + 1 < 10 ? `0${now.getMonth() + 1}` : `${now.getMonth() + 1}`;
     const day = now.getDate();
     let qStartMonth = (Math.floor((now.getMonth() + 3) / 3) * 3) - 2;
     qStartMonth = qStartMonth < 10 ? `0${qStartMonth}` : `${qStartMonth}`;
     // 本月
     if (flag === 'month') {
-      duration = `${month}/01-${month}/${day}`;
+      durationObj.duration = `${month}/01-${month}/${day}`;
+      durationObj.cycleType = 'month';
+      durationObj.begin = `${year}${month}01`;
+      durationObj.end = `${year}${month}${day}`;
     } else if (flag === 'quarter') {
-      duration = `${qStartMonth}/01-${month}/${day}`;
+      durationObj.duration = `${qStartMonth}/01-${month}/${day}`;
+      durationObj.cycleType = 'quarter';
+      durationObj.begin = `${year}${qStartMonth}01`;
+      durationObj.end = `${year}${month}${day}`;
     } else if (flag === 'year') {
-      duration = `01/01-${month}/${day}`;
+      durationObj.duration = `01/01-${month}/${day}`;
+      durationObj.cycleType = 'year';
+      durationObj.begin = `${year}0101`;
+      durationObj.end = `${year}${month}${day}`;
     }
-    return duration;
+    return durationObj;
   }
 
-  @autobind
-  durationChange(value) {
-    const duration = this.getDurationString(value);
-    this.setState({
-      duration,
-    });
-  }
+  // @autobind
+  // durationChange(value) {
+  //   const obj = this.getDurationString(value);
+  //   this.setState({
+  //     duration: obj,
+  //   });
+  // }
   // 期间变化
   @autobind
   handleDurationChange(e) {
     const value = e.target.value;
+    const obj = this.getDurationString(value);
     const { replace, location: { query } } = this.props;
-    this.durationChange(value);
+    // this.setState({
+    //   duration: obj,
+    // });
     // 需要改变query中的查询变量
     replace({
       pathname: '/invest',
       query: {
         ...query,
-        duration: value,
+        begin: obj.begin,
+        end: obj.end,
+        cycleType: value,
       },
     });
   }
 
   render() {
-    const { duration, timeDuration } = this.state;
+    const { duration, cycleType } = this.state;
     const {
       performance,
       chartInfo,
+      chartTableInfo,
       location,
       chartLoading,
       globalLoading,
@@ -229,7 +315,7 @@ export default class InvestHome extends PureComponent {
             <div className={styles.reportHeaderRight}>
               <div className={styles.dateFilter}>{duration}</div>
               <RadioGroup
-                defaultValue={timeDuration || 'month'}
+                defaultValue={cycleType || 'month'}
                 onChange={this.handleDurationChange}
               >
                 {
@@ -258,6 +344,7 @@ export default class InvestHome extends PureComponent {
           <div className={styles.reportPart}>
             <PreformanceChartBoard
               chartData={chartInfo}
+              chartTableInfo={chartTableInfo}
               location={location}
               replace={replace}
               loading={chartLoading && !globalLoading}
