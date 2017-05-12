@@ -36,15 +36,19 @@ const optionsMap = {
       key: '2',
       name: '按营业部',
     },
+    {
+      key: '3',
+      name: '按投顾',
+    },
   ],
   // 按顺序排序
   sortByOrder: [
     {
-      key: '1',
+      key: 'desc',
       name: '自高到低',
     },
     {
-      key: '2',
+      key: 'asc',
       name: '自低到高',
     },
   ],
