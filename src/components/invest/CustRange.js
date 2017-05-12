@@ -17,9 +17,10 @@ function getNodes(arr, parent) {
   return arr.map((item) => {
     const props = {
       title: item.name,
-      value: `${item.level}-${item.id}`,
+      value: item.id,
       key: `${item.level}-${item.id}`,
       name: item.name === parent ? parent : `${parent}/${item.name}`,
+      level: item.level,
     };
     let res;
     if (item.children && item.children.length) {
@@ -76,7 +77,8 @@ export default class CustRange extends PureComponent {
         pathname: '',
         query: {
           ...query,
-          custRange: value ? encodeURIComponent(value.value) : '',
+          custRangeId: value ? encodeURIComponent(value.value) : '',
+          custRangeLevel: value ? encodeURIComponent(extra.triggerNode.props.level) : '',
         },
       });
     });
