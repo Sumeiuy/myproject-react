@@ -44,9 +44,9 @@ export default class PerformanceChartBoard extends PureComponent {
   componentWillMount() {
     const { location: { query } } = this.props;
     this.state = {
+      showChart: query.showChart || 'zhuzhuangtu',
       scope: query.scope,
       orderType: query.orderType,
-      showChart: 'zhuzhuangtu',
     };
   }
 
