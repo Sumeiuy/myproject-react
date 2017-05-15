@@ -30,6 +30,7 @@ export default class PerformanceChartBoard extends PureComponent {
     replace: PropTypes.func.isRequired,
     sort: PropTypes.func.isRequired,
     loading: PropTypes.bool,
+    level: PropTypes.string,
   }
 
   static defaultProps = {
@@ -37,6 +38,7 @@ export default class PerformanceChartBoard extends PureComponent {
     location: {},
     chartData: [],
     chartTableInfo: {},
+    level: '',
     repalce: () => {},
     sort: () => {},
   }
@@ -45,7 +47,7 @@ export default class PerformanceChartBoard extends PureComponent {
     const { location: { query } } = this.props;
     this.state = {
       showChart: query.showChart || 'zhuzhuangtu',
-      scope: query.scope,
+      scope: query.scope || query.custRangeLevel,
       orderType: query.orderType,
     };
   }
@@ -86,8 +88,11 @@ export default class PerformanceChartBoard extends PureComponent {
   }
 
   render() {
-    const { showChart, scope, orderType } = this.state;
-    const { chartData, chartTableInfo, loading, location } = this.props;
+    const { showChart, orderType } = this.state;
+    const { chartData, chartTableInfo, loading, location, level } = this.props;
+    console.log('sortByType', sortByType.slice(level - 1));
+    const sliceSortByType = sortByType.slice(level - 1);
+    const sliceScope = sliceSortByType[0].scope;
     if (chartData.length === 0) {
       return null;
     }
@@ -98,15 +103,18 @@ export default class PerformanceChartBoard extends PureComponent {
           <div className={styles.titleBarRight}>
             <div className={styles.iconBtn1}>
               <span>排序方式:</span>
+              {/**
+                * todo -- 切换一级菜单的时候，清空二级菜单项目
+              */}
               <Select
-                defaultValue={scope || '1'}
+                value={sliceScope}
                 className={styles.newSelect}
                 onChange={(v) => { this.handleSortChange('scope', v); }}
               >
                 {
-                  sortByType.map((item, index) => {
+                  sliceSortByType.map((item, index) => {
                     const sortByTypeIndex = index;
-                    return <Option key={sortByTypeIndex} value={item.key}>{item.name}</Option>;
+                    return <Option key={sortByTypeIndex} value={item.scope}>{item.name}</Option>;
                   })
                 }
               </Select>
