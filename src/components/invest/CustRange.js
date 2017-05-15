@@ -73,6 +73,9 @@ export default class CustRange extends PureComponent {
   onChange(value, label, extra) {
     console.log('onChange', value, label, extra);
     const { location: { query }, replace } = this.props;
+    if (extra.triggerValue === extra.preValue[0].value) {
+      return;
+    }
     this.setState({
       value: {
         ...value,
