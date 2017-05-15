@@ -114,9 +114,9 @@ export default class ChartBar extends PureComponent {
   }
 
   @autobind
-  createNewSeriesData(series, medianValue) {
+  createNewSeriesData(series, medianValue, unit) {
     return series.map(item => ({
-      value: item,
+      value: unit === '%' ? (Number(item) * 100).toFixed(2) : item,
       label: {
         normal: {
           show: true,
@@ -129,6 +129,7 @@ export default class ChartBar extends PureComponent {
   render() {
     // const { chartData } = this.props;
     const { chartData: { name, unit, key, orgModel = [] }, level } = this.props;
+
     const levelName = `level${parseInt(level, 10) + 1}Name`;
     // 此处为y轴刻度值
     const yAxisLabels = this.getChartData(orgModel, levelName);
@@ -142,7 +143,7 @@ export default class ChartBar extends PureComponent {
     // 计算出所有值的中间值
     const medianValue = gridXAxisMax / 2;
     // 需要针对不同的值编写不同的柱状图Label样式
-    const newSeriesData = this.createNewSeriesData(seriesData, medianValue);
+    const newSeriesData = this.createNewSeriesData(seriesData, medianValue, unit);
     // 柱状图阴影
     const dataShadow = [];
     for (let i = 0; i < seriesDataLen; i++) {

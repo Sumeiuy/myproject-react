@@ -71,7 +71,7 @@ export default class CustRange extends PureComponent {
 
   @autobind
   onChange(value, label, extra) {
-    console.log('onChange', value, label, extra);
+    // console.log('onChange', value, label, extra);
     const { location: { query }, replace } = this.props;
     this.setState({
       value: {
@@ -84,9 +84,8 @@ export default class CustRange extends PureComponent {
         pathname: '',
         query: {
           ...query,
-          custRangeId: value ? encodeURIComponent(value.value) : '',
+          orgId: value ? encodeURIComponent(value.value) : '',
           custRangeLevel: value ? encodeURIComponent(extra.triggerNode.props.level) : '',
-          custRangeName: value ? encodeURIComponent(extra.triggerNode.props.name) : '',
         },
       });
     });
@@ -94,12 +93,12 @@ export default class CustRange extends PureComponent {
 
   setDefaultValue(custRange) {
     const { location: { query: { custRangeId, custRangeName } } } = this.props;
-    console.log('locationChange', custRangeId, custRangeName);
+    // console.log('locationChange', custRangeId, custRangeName);
     const initValue = {
       label: !custRangeName ? (custRange[0] || {}).name : decodeURIComponent(custRangeName),
       key: custRangeId || (custRange[0] || {}).id,
     };
-    console.log('initValue: ', initValue);
+    // console.log('initValue: ', initValue);
     this.setState({
       value: initValue || EMPTY_OBJECT,
     });
