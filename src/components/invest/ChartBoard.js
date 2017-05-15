@@ -34,7 +34,7 @@ export default class ChartBoard extends PureComponent {
               const chartDataIndex = `chartData${index}`;
               return (
                 <Col span={6} key={chartDataIndex} className={styles.colWrapper}>
-                  <ChartBar chartData={item} level={query.sortColumn} />
+                  <ChartBar chartData={item} level={query.scope} />
                 </Col>
               );
             })
