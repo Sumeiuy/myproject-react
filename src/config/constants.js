@@ -7,4 +7,5 @@
 export default {
   logoSrc: 'https://t.alipayobjects.com/images/T1QUBfXo4fXXXXXXXX.png',
   logoText: '华泰证券',
+  version: '0.0.1',
 };

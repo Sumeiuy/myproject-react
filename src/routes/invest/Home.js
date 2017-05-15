@@ -110,7 +110,7 @@ export default class InvestHome extends PureComponent {
     };
     getAllInfo({
       custRange: {
-        empId: '001750',
+        empId,
       },
       performance: {
         orgId: query.orgId || '',

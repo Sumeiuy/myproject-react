@@ -4,6 +4,21 @@
  * @author maoquan(maoquan@htsc.com)
  */
 
+import bowser from 'bowser';
+
+import constants from '../config/constants';
+
+function getOS() {
+  const osList = ['mac', 'windows', 'windowsphone'];
+  for (let i = 0, len = osList.length; i < len; i++) {
+    const os = osList[i];
+    if (bowser[os]) {
+      return os;
+    }
+  }
+  return 'unknown';
+}
+
 const helper = {
 
   /**
@@ -151,6 +166,22 @@ const helper = {
     element.remove();
   },
 
+  getEnv() {
+    // $app_version 字符串 应用的版本
+    // $os 字符串 操作系统，例如iOS
+    // $screen_height  数值  屏幕高度，例如1920
+    // $screen_width 数值  屏幕宽度，例如1080
+    // $browser  字符串 浏览器名，例如Chrome
+    // $browser_version  字符串 浏览器版本，例如Chrome 45
+    return {
+      $app_version: constants.version,
+      $os: getOS(),
+      $screen_width: screen.width,
+      $screen_height: screen.height,
+      $browser: bowser.name,
+      $browser_version: `${bowser.name} ${bowser.version}`,
+    };
+  },
 };
 
 export default helper;
