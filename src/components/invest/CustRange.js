@@ -7,19 +7,34 @@
 import React, { PureComponent, PropTypes } from 'react';
 import { TreeSelect } from 'antd';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
 
 import styles from './custRange.less';
 
 const TreeNode = TreeSelect.TreeNode;
 const EMPTY_OBJECT = {};
+const TOP_LEVEL_NAME = '经纪业务总部';
 
 function getNodes(arr, parent) {
   return arr.map((item) => {
+    let tempName;
+    let name;
+    if (item.name === parent) {
+      tempName = parent;
+    } else {
+      tempName = `${parent}/${item.name}`;
+    }
+    const tempArr = tempName.split('/');
+    if (tempArr.length > 1) {
+      name = _.difference(tempArr, [TOP_LEVEL_NAME]).join('/');
+    } else {
+      name = TOP_LEVEL_NAME;
+    }
     const props = {
       title: item.name,
       value: item.id,
       key: item.id,
-      name: item.name === parent ? parent : `${parent}/${item.name}`,
+      name,
       level: item.level,
     };
     let res;
@@ -55,13 +70,6 @@ export default class CustRange extends PureComponent {
     this.setDefaultValue(custRange);
   }
 
-  // componentWillReceiveProps(nextProps) {
-  //   const { custRange, location: { query: { custRangeId } } } = this.props;
-  //   if (custRangeId !== nextProps.location.query.custRangeId) {
-  //     this.setDefaultValue(custRange);
-  //   }
-  // }
-
   componentDidUpdate(prevProps) {
     const { custRange } = this.props;
     if (prevProps.custRange !== custRange) {
@@ -71,7 +79,7 @@ export default class CustRange extends PureComponent {
 
   @autobind
   onChange(value, label, extra) {
-    // console.log('onChange', value, label, extra);
+    console.log('onChange', value, label, extra);
     const { location: { query }, replace } = this.props;
     if (extra.triggerValue === extra.preValue[0].value) {
       return;
@@ -89,19 +97,20 @@ export default class CustRange extends PureComponent {
           ...query,
           orgId: value ? encodeURIComponent(value.value) : '',
           custRangeLevel: value ? encodeURIComponent(extra.triggerNode.props.level) : '',
+          custRangeName: value ? encodeURIComponent(extra.triggerNode.props.name) : '',
         },
       });
     });
   }
 
   setDefaultValue(custRange) {
-    const { location: { query: { custRangeId, custRangeName } } } = this.props;
-    // console.log('locationChange', custRangeId, custRangeName);
+    const { location: { query: { orgId, custRangeName } } } = this.props;
+    console.log('locationChange', orgId, custRangeName, (custRange[0] || {}).id);
     const initValue = {
       label: !custRangeName ? (custRange[0] || {}).name : decodeURIComponent(custRangeName),
-      key: custRangeId || (custRange[0] || {}).id,
+      key: orgId || (custRange[0] || {}).id,
+      value: orgId || (custRange[0] || {}).id,
     };
-    // console.log('initValue: ', initValue);
     this.setState({
       value: initValue || EMPTY_OBJECT,
     });
@@ -110,6 +119,9 @@ export default class CustRange extends PureComponent {
   render() {
     const { custRange } = this.props;
     console.log('this.state.value>>>', this.state.value);
+    if (_.isEmpty(this.state.value) || !this.state.value.value) {
+      return null;
+    }
     return (
       <TreeSelect
         notFoundContent="没有结果"
