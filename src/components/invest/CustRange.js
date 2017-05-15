@@ -18,7 +18,7 @@ function getNodes(arr, parent) {
     const props = {
       title: item.name,
       value: item.id,
-      key: `${item.level}-${item.id}`,
+      key: item.id,
       name: item.name === parent ? parent : `${parent}/${item.name}`,
       level: item.level,
     };
@@ -79,7 +79,7 @@ export default class CustRange extends PureComponent {
     this.setState({
       value: {
         ...value,
-        key: value ? value.key : '',
+        key: value ? extra.triggerValue : '',
         label: value ? extra.triggerNode.props.name : '',
       },
     }, () => {
@@ -110,6 +110,7 @@ export default class CustRange extends PureComponent {
 
   render() {
     const { custRange } = this.props;
+    console.log('this.state.value>>>', this.state.value);
     return (
       <TreeSelect
         notFoundContent="没有结果"
