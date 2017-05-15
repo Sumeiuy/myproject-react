@@ -43,7 +43,6 @@ export default class ChartTable extends PureComponent {
   }
   render() {
     const { chartTableInfo } = this.props;
-    console.log('chartTableInfo', chartTableInfo);
     const columns = chartTableInfo.titleList;
     // const key = 'dataIndex';
     // const name = 'title';
@@ -61,7 +60,7 @@ export default class ChartTable extends PureComponent {
         sorter: (a, b) => a[item.key] - b[item.key],
       }
     ));
-    console.log('arr', arr);
+    // console.log('arr', arr);
     arr.unshift({
       title: '分公司',
       dataIndex: 'city',
