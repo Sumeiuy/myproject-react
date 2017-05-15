@@ -89,7 +89,7 @@ export default class PerformanceChartBoard extends PureComponent {
 
   render() {
     const { showChart, orderType } = this.state;
-    const { chartData, chartTableInfo, loading, location, level } = this.props;
+    const { chartData, chartTableInfo, replace, loading, location, level } = this.props;
     // console.log('sortByType', sortByType.slice(level - 1));
     const sliceSortByType = sortByType.slice(level - 1);
     const sliceScope = sliceSortByType[0].scope;
@@ -114,7 +114,7 @@ export default class PerformanceChartBoard extends PureComponent {
                 {
                   sliceSortByType.map((item, index) => {
                     const sortByTypeIndex = index;
-                    return <Option key={sortByTypeIndex} value={item.scope}>{item.name}</Option>;
+                    return <Option key={sortByTypeIndex} value={item.scope}>按{item.name}</Option>;
                   })
                 }
               </Select>
@@ -160,7 +160,12 @@ export default class PerformanceChartBoard extends PureComponent {
         {/* 根据 url 里的 showChart 来显示不同的组件 */}
         {
           showChart === showType[0].type ?
-            <ChartTable chartTableInfo={chartTableInfo} />
+            <ChartTable
+              chartTableInfo={chartTableInfo}
+              replace={replace}
+              level={level}
+              location={location}
+            />
           :
             <ChartBoard
               chartData={chartData}
