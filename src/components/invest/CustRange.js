@@ -98,6 +98,7 @@ export default class CustRange extends PureComponent {
           orgId: value ? encodeURIComponent(value.value) : '',
           custRangeLevel: value ? encodeURIComponent(extra.triggerNode.props.level) : '',
           custRangeName: value ? encodeURIComponent(extra.triggerNode.props.name) : '',
+          level: extra.triggerNode.props.level,
         },
       });
     });

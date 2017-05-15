@@ -162,7 +162,7 @@ export default class InvestHome extends PureComponent {
       // 判断是排序方式的值不同
       const sortNow = _.pick(query, ['scope', 'orderType', 'showChart']);
       const sortPre = _.pick(preQuery, ['scope', 'orderType', 'showChart']);
-      console.log('sortNow', sortNow);
+      // console.log('sortNow', sortNow);
       if (!_.isEqual(sortNow, sortPre)) {
         // 只刷新指标分布区域
         refreshChartInfo({
@@ -170,7 +170,7 @@ export default class InvestHome extends PureComponent {
           scope: query.scope || (parseInt(custRange[0].level, 10) + 1),
           localScope: custRange[0].level,
           orgId: query.orgId || custRange[0].id,
-          empId: '002332',
+          empId,
           orderType: sortNow.orderType || '',
           begin: query.begin || duration.begin,
           end: query.end || duration.end,
@@ -179,7 +179,7 @@ export default class InvestHome extends PureComponent {
         refreshChartTableInfo({
           ...query,
           scope: query.scope || (parseInt(custRange[0].level, 10) + 1),
-          empId: '002332',
+          empId,
           localScope: custRange[0].level,
           orgId: query.orgId || custRange[0].id,
           orderType: query.orderType || '',
@@ -195,7 +195,7 @@ export default class InvestHome extends PureComponent {
           ...query,
           orgId: query.orgId || custRange[0].id,
           scope: query.scope || (parseInt(custRange[0].level, 10) + 1),
-          empId: '002332',
+          empId,
           localScope: custRange[0].level,
         });
         getChartInfo({
@@ -210,7 +210,7 @@ export default class InvestHome extends PureComponent {
           {
             ...query,
             scope: query.scope || (parseInt(custRange[0].level, 10) + 1),
-            empId: '002332',
+            empId,
             localScope: custRange[0].level,
             orgId: query.orgId || custRange[0].id,
             orderType: query.orderType || '',

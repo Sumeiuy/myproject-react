@@ -35,7 +35,7 @@ const gridOptions = {
   show: true,
   top: '0',
   left: '0',
-  right: '40px',
+  right: '20px',
   bottom: '20px',
   containLabel: true,
   borderWidth: '1',
@@ -61,22 +61,28 @@ export default class ChartBar extends PureComponent {
 
   static propTypes = {
     level: PropTypes.string,
+    scope: PropTypes.string,
     chartData: PropTypes.object,
     iconType: PropTypes.string,
   }
 
   static defaultProps = {
-    level: '1',
+    level: '',
+    scope: '',
     chartData: {},
     iconType: 'zichan',
   }
 
   @autobind
-  getChartData(orgModel, key) {
+  getChartData(orgModel, key, axis) {
     const yAxisLabels = [];
     orgModel.forEach((item) => {
       if (item[key] === null || item[key] === 'null') {
-        yAxisLabels.push(0);
+        if (axis === 'yAxis') {
+          yAxisLabels.push('--');
+        } else if (axis === 'xAxis') {
+          yAxisLabels.push(0);
+        }
       } else {
         yAxisLabels.push(item[key]);
       }
@@ -116,7 +122,7 @@ export default class ChartBar extends PureComponent {
   @autobind
   createNewSeriesData(series, medianValue, unit) {
     return series.map(item => ({
-      value: unit === '%' ? (Number(item) * 100).toFixed(2) : item,
+      value: unit === '%' ? Number(item).toFixed(2) : item,
       label: {
         normal: {
           show: true,
@@ -128,13 +134,22 @@ export default class ChartBar extends PureComponent {
 
   render() {
     // const { chartData } = this.props;
-    const { chartData: { name, unit, key, orgModel = [] }, level } = this.props;
-
-    const levelName = `level${parseInt(level, 10) + 1}Name`;
+    const {
+      chartData: { name, unit, key, orgModel = [] },
+      level,
+      scope,
+    } = this.props;
+    const levelAndScope = scope !== '' ? scope : (parseInt(level, 10) + 1);
+    const levelName = `level${levelAndScope}Name`;
+    console.log('level', level);
+    console.log('levelName', levelName);
     // 此处为y轴刻度值
     const yAxisLabels = this.getChartData(orgModel, levelName);
-    // 此处为数据
-    const seriesData = this.getChartData(orgModel, 'value');
+    // 此处为数据,此数据在百分比的情况下,全部都是小数，需要乘以100
+    let seriesData = this.getChartData(orgModel, 'value');
+    if (unit === '%') {
+      seriesData = seriesData.map(item => (Number(item) * 100));
+    }
     const seriesDataLen = seriesData.length;
     // 数据中最大的值
     const xMax = Math.max(...seriesData);
@@ -196,7 +211,7 @@ export default class ChartBar extends PureComponent {
           ...AxisOptions.axisLabel,
           formatter(value) {
             if (value.length > 4) {
-              return value.substr(0, 4);
+              return `${value.substr(0, 4)}...`;
             }
             return value;
           },

@@ -43,11 +43,11 @@ export default class PerformanceChartBoard extends PureComponent {
     sort: () => {},
   }
 
-  componentWillMount() {
+  constructor(props) {
+    super(props);
     const { location: { query } } = this.props;
     this.state = {
       showChart: query.showChart || 'zhuzhuangtu',
-      scope: query.scope || query.custRangeLevel,
       orderType: query.orderType,
     };
   }
@@ -90,7 +90,7 @@ export default class PerformanceChartBoard extends PureComponent {
   render() {
     const { showChart, orderType } = this.state;
     const { chartData, chartTableInfo, loading, location, level } = this.props;
-    console.log('sortByType', sortByType.slice(level - 1));
+    // console.log('sortByType', sortByType.slice(level - 1));
     const sliceSortByType = sortByType.slice(level - 1);
     const sliceScope = sliceSortByType[0].scope;
     if (chartData.length === 0) {
@@ -107,7 +107,7 @@ export default class PerformanceChartBoard extends PureComponent {
                 * todo -- 切换一级菜单的时候，清空二级菜单项目
               */}
               <Select
-                value={sliceScope}
+                defaultValue={sliceScope}
                 className={styles.newSelect}
                 onChange={(v) => { this.handleSortChange('scope', v); }}
               >
@@ -166,6 +166,7 @@ export default class PerformanceChartBoard extends PureComponent {
               chartData={chartData}
               location={location}
               loading={loading}
+              level={level}
             />
         }
       </div>
