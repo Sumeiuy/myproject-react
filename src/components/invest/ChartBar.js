@@ -116,7 +116,7 @@ export default class ChartBar extends PureComponent {
   @autobind
   createNewSeriesData(series, medianValue, unit) {
     return series.map(item => ({
-      value: unit === '%' ? (Number(item) * 100).toFixed(2) : item,
+      value: unit === '%' ? Number(item).toFixed(2) : item,
       label: {
         normal: {
           show: true,
@@ -133,8 +133,13 @@ export default class ChartBar extends PureComponent {
     const levelName = `level${parseInt(level, 10) + 1}Name`;
     // 此处为y轴刻度值
     const yAxisLabels = this.getChartData(orgModel, levelName);
-    // 此处为数据
-    const seriesData = this.getChartData(orgModel, 'value');
+    // 此处为数据,此数据在百分比的情况下,全部都是小数，需要乘以100
+    let seriesData = this.getChartData(orgModel, 'value');
+    if (unit === '%') {
+      console.log('xxxxxxx');
+      seriesData = seriesData.map(item => (Number(item) * 100));
+    }
+    console.log('seriesData', seriesData);
     const seriesDataLen = seriesData.length;
     // 数据中最大的值
     const xMax = Math.max(...seriesData);
@@ -196,7 +201,7 @@ export default class ChartBar extends PureComponent {
           ...AxisOptions.axisLabel,
           formatter(value) {
             if (value.length > 4) {
-              return value.substr(0, 4);
+              return `${value.substr(0, 4)}...`;
             }
             return value;
           },
