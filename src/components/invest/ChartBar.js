@@ -74,11 +74,15 @@ export default class ChartBar extends PureComponent {
   }
 
   @autobind
-  getChartData(orgModel, key) {
+  getChartData(orgModel, key, axis) {
     const yAxisLabels = [];
     orgModel.forEach((item) => {
       if (item[key] === null || item[key] === 'null') {
-        yAxisLabels.push(0);
+        if (axis === 'yAxis') {
+          yAxisLabels.push('--');
+        } else if (axis === 'xAxis') {
+          yAxisLabels.push(0);
+        }
       } else {
         yAxisLabels.push(item[key]);
       }
