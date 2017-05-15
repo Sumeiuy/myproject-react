@@ -66,7 +66,7 @@ export default class ChartBar extends PureComponent {
   }
 
   static defaultProps = {
-    level: '1',
+    level: '',
     chartData: {},
     iconType: 'zichan',
   }
@@ -131,6 +131,8 @@ export default class ChartBar extends PureComponent {
     const { chartData: { name, unit, key, orgModel = [] }, level } = this.props;
 
     const levelName = `level${parseInt(level, 10) + 1}Name`;
+    console.log('level', level);
+    console.log('levelName', levelName);
     // 此处为y轴刻度值
     const yAxisLabels = this.getChartData(orgModel, levelName);
     // 此处为数据,此数据在百分比的情况下,全部都是小数，需要乘以100
