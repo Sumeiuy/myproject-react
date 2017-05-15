@@ -18,6 +18,7 @@ import CustRange from '../../components/invest/CustRange';
 import { optionsMap } from '../../config';
 import styles from './Home.less';
 
+const empId = window.curUserCode || '002332';
 // RadioButton
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -29,6 +30,7 @@ const headBar = optionsMap.headBar;
 const timeOptions = optionsMap.time;
 
 const effects = {
+  allInfo: 'invest/getAllInfo',
   performance: 'invest/getPerformance',
   chartInfo: 'invest/getChartInfo',
   custRange: 'invest/getCustRange',
@@ -51,11 +53,13 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
+  getAllInfo: fectchDataFunction(true, effects.allInfo),
   getPerformance: fectchDataFunction(true, effects.performance),
   refreshPerformance: fectchDataFunction(false, effects.performance),
   getChartInfo: fectchDataFunction(true, effects.chartInfo),
   getChartTableInfo: fectchDataFunction(true, effects.chartTableInfo),
   refreshChartInfo: fectchDataFunction(false, effects.chartInfo),
+  refreshChartTableInfo: fectchDataFunction(false, effects.chartTableInfo),
   getCustRange: fectchDataFunction(false, effects.custRange),
   push: routerRedux.push,
   replace: routerRedux.replace,
@@ -67,12 +71,14 @@ export default class InvestHome extends PureComponent {
 
   static propTypes = {
     location: PropTypes.object.isRequired,
+    getAllInfo: PropTypes.func.isRequired,
     getPerformance: PropTypes.func.isRequired,
     refreshPerformance: PropTypes.func.isRequired,
     performance: PropTypes.array,
     getChartInfo: PropTypes.func.isRequired,
     getChartTableInfo: PropTypes.func.isRequired,
     refreshChartInfo: PropTypes.func.isRequired,
+    refreshChartTableInfo: PropTypes.func.isRequired,
     chartInfo: PropTypes.array,
     chartTableInfo: PropTypes.object,
     chartLoading: PropTypes.bool,
@@ -86,7 +92,7 @@ export default class InvestHome extends PureComponent {
   static defaultProps = {
     performance: [],
     chartInfo: [],
-    chartTableInfo: [],
+    chartTableInfo: {},
     chartLoading: false,
     globalLoading: false,
     custRange: [],
@@ -94,136 +100,123 @@ export default class InvestHome extends PureComponent {
 
   componentWillMount() {
     const {
-      getPerformance,
-      getChartInfo,
-      getCustRange,
-      getChartTableInfo,
-      custRange,
+      getAllInfo,
       location: { query },
     } = this.props;
-    console.log('query', query);
-    // let custArr = [];
-    // if (query.custRange) {
-    //   custArr = query.custRange.split('-');
-    // }
-    const obj = this.getDurationString('month');
+    const value = query.cycleType || 'month';
+    const obj = this.getDurationString(value);
     this.state = {
       ...obj,
     };
-
-    // 001750  经总
-    // 001410  分公司
-    // 002332  营业部
-    getCustRange({ empId: '001750' });
-    console.log('custRange', custRange && custRange);
-    getPerformance(
-      {
-        scope: '3',
-        empId: '002332',
+    getAllInfo({
+      custRange: {
+        empId,
+      },
+      performance: {
+        orgId: query.orgId || '',
+        scope: query.scope || '',
+        empId,
         begin: query.begin || obj.begin,
         end: query.end || obj.end,
         cycleType: query.cycleType || obj.cycleType,
       },
-    );
-    getChartInfo(
-      {
-        scope: '3',
-        localScope: '1',
-        empId: '002332',
-        // begin: query.begin || obj.begin,
-        begin: '20170410',
-        end: '20170412',
-        // end: query.end || obj.end,
-        cycleType: 'year',
-        // cycleType: query.cycleType || obj.cycleType,
-        orderIndicatorId: '',
-        orderType: '',
-        pageSize: '',
-        pageNum: '',
+      chartInfo: {
+        orgId: query.orgId || '',
+        scope: query.scope || '',
+        empId,
+        begin: query.begin || obj.begin,
+        end: query.end || obj.end,
+        cycleType: query.cycleType || obj.cycleType,
+        orderType: query.orderType || '',
       },
-    );
-    getChartTableInfo(
-      {
-        empId: '002332',
-        localScope: '1',
-        scope: '3',
-        begin: '20170410',
-        end: '20170412',
-        cycleType: 'year',
-        orderType: '',
+      chartTableInfo: {
+        orgId: query.orgId || '',
+        empId,
+        scope: query.scope || '',
+        begin: query.begin || obj.begin,
+        end: query.end || obj.end,
+        cycleType: query.cycleType || obj.cycleType,
+        orderType: query.orderType || '',
         pageNum: '1',
         pageSize: '30',
       },
-    );
+    });
   }
 
   componentWillReceiveProps(nextProps) {
     // 判断props是否变化
-    const { location: { query } } = nextProps;
+    const { custRange, location: { query } } = nextProps;
+    const duration = this.state;
     const {
       location: { query: preQuery },
       refreshChartInfo,
+      refreshChartTableInfo,
       getChartInfo,
       getChartTableInfo,
       getPerformance,
     } = this.props;
-    // const custArr = [];
-    // if (query.custRange) {
-    //   custArr = query.custRange.split('-');
-    // }
     // 此处需要判断需要修改哪个值
     // 是投顾头部总量指标
     // 还是chart部分的数据
     if (!_.isEqual(query, preQuery)) {
       // 判断是排序方式的值不同
-      const sortNow = _.pick(query, ['scope', 'orderType']);
-      const sortPre = _.pick(preQuery, ['scope', 'orderType']);
+      const sortNow = _.pick(query, ['scope', 'orderType', 'showChart']);
+      const sortPre = _.pick(preQuery, ['scope', 'orderType', 'showChart']);
+      console.log('sortNow', sortNow);
       if (!_.isEqual(sortNow, sortPre)) {
         // 只刷新指标分布区域
         refreshChartInfo({
           ...query,
-          scope: '3',
-          // localScope: custArr[0] || '1',
-          localScope: '1',
+          scope: query.scope || (parseInt(custRange[0].level, 10) + 1),
+          localScope: custRange[0].level,
+          orgId: query.orgId || custRange[0].id,
           empId: '002332',
-          indicatorIdList: ['tgInNum', 'newSignCustNum', 'currSignCustAset', 'totAset', 'pur_rake', 'pur_inte_income', 'prdt_pur_fee', 'gjAvgPercent', 'motCompletePercent', 'serviceComPercent', 'infoCompPercent', 'feeConfigPercent'],
-          orderIndicatorId: '',
-          orderType: '',
-          pageSize: '',
-          pageNum: '',
+          orderType: sortNow.orderType || '',
+          begin: query.begin || duration.begin,
+          end: query.end || duration.end,
+          cycleType: query.cycleType || duration.cycleType,
+        });
+        refreshChartTableInfo({
+          ...query,
+          scope: query.scope || (parseInt(custRange[0].level, 10) + 1),
+          empId: '002332',
+          localScope: custRange[0].level,
+          orgId: query.orgId || custRange[0].id,
+          orderType: query.orderType || '',
+          begin: query.begin || duration.begin,
+          end: query.end || duration.end,
+          cycleType: query.cycleType || duration.cycleType,
+          pageNum: '1',
+          pageSize: '30',
         });
       } else {
         // 重新获取页面所有数据
         getPerformance({
           ...query,
-          scope: '3',
+          orgId: query.orgId || custRange[0].id,
+          scope: query.scope || (parseInt(custRange[0].level, 10) + 1),
           empId: '002332',
-          indicatorIdList: ['tgInNum', 'newSignCustNum', 'currSignCustAset', 'totAset', 'pur_rake', 'pur_inte_income', 'prdt_pur_fee', 'gjAvgPercent', 'motCompletePercent', 'serviceComPercent', 'infoCompPercent', 'feeConfigPercent'],
-          orderIndicatorId: '',
-          orderType: '',
-          pageSize: '',
-          pageNum: '',
+          localScope: custRange[0].level,
         });
         getChartInfo({
           ...query,
-          scope: '3',
-          // localScope: custArr[0] || '1',
-          localScope: '1',
+          scope: query.scope || (parseInt(custRange[0].level, 10) + 1),
           empId: '002332',
-          indicatorIdList: ['tgInNum', 'newSignCustNum', 'currSignCustAset', 'totAset', 'pur_rake', 'pur_inte_income', 'prdt_pur_fee', 'gjAvgPercent', 'motCompletePercent', 'serviceComPercent', 'infoCompPercent', 'feeConfigPercent'],
-          orderIndicatorId: '',
-          orderType: '',
-          pageSize: '',
-          pageNum: '',
+          localScope: custRange[0].level,
+          orgId: query.orgId || custRange[0].id,
+          orderType: query.orderType || '',
         });
         getChartTableInfo(
           {
             ...query,
+            scope: query.scope || (parseInt(custRange[0].level, 10) + 1),
             empId: '002332',
-            localScope: '1',
-            scope: '3',
-            indicatorIdList: ['tgInNum', 'newSignCustNum', 'currSignCustAset', 'totAset', 'pur_rake', 'pur_inte_income', 'prdt_pur_fee', 'gjAvgPercent', 'motCompletePercent', 'serviceComPercent', 'infoCompPercent', 'feeConfigPercent'],
-            orderType: '',
+            localScope: custRange[0].level,
+            orgId: query.orgId || custRange[0].id,
+            orderType: query.orderType || '',
+            begin: query.begin || duration.begin,
+            end: query.end || duration.end,
+            cycleType: query.cycleType || duration.cycleType,
             pageNum: '1',
             pageSize: '30',
           },
@@ -243,17 +236,17 @@ export default class InvestHome extends PureComponent {
     qStartMonth = qStartMonth < 10 ? `0${qStartMonth}` : `${qStartMonth}`;
     // 本月
     if (flag === 'month') {
-      durationObj.duration = `${month}/01-${month}/${day}`;
+      durationObj.durationStr = `${month}/01-${month}/${day}`;
       durationObj.cycleType = 'month';
       durationObj.begin = `${year}${month}01`;
       durationObj.end = `${year}${month}${day}`;
     } else if (flag === 'quarter') {
-      durationObj.duration = `${qStartMonth}/01-${month}/${day}`;
+      durationObj.durationStr = `${qStartMonth}/01-${month}/${day}`;
       durationObj.cycleType = 'quarter';
       durationObj.begin = `${year}${qStartMonth}01`;
       durationObj.end = `${year}${month}${day}`;
     } else if (flag === 'year') {
-      durationObj.duration = `01/01-${month}/${day}`;
+      durationObj.durationStr = `01/01-${month}/${day}`;
       durationObj.cycleType = 'year';
       durationObj.begin = `${year}0101`;
       durationObj.end = `${year}${month}${day}`;
@@ -274,9 +267,9 @@ export default class InvestHome extends PureComponent {
     const value = e.target.value;
     const obj = this.getDurationString(value);
     const { replace, location: { query } } = this.props;
-    // this.setState({
-    //   duration: obj,
-    // });
+    this.setState({
+      ...obj,
+    });
     // 需要改变query中的查询变量
     replace({
       pathname: '/invest',
@@ -290,7 +283,7 @@ export default class InvestHome extends PureComponent {
   }
 
   render() {
-    const { duration, cycleType } = this.state;
+    const duration = this.state;
     const {
       performance,
       chartInfo,
@@ -301,6 +294,7 @@ export default class InvestHome extends PureComponent {
       replace,
       custRange,
     } = this.props;
+    const selScope = location.query.custRangeLevel || (custRange[0] && custRange[0].level);
     return (
       <div className="page-invest content-inner">
         <div className="reportHeader">
@@ -316,9 +310,9 @@ export default class InvestHome extends PureComponent {
               </Select>
             </div>
             <div className={styles.reportHeaderRight}>
-              <div className={styles.dateFilter}>{duration}</div>
+              <div className={styles.dateFilter}>{duration.durationStr}</div>
               <RadioGroup
-                defaultValue={cycleType || 'month'}
+                defaultValue={duration.cycleType || 'month'}
                 onChange={this.handleDurationChange}
               >
                 {
@@ -348,6 +342,7 @@ export default class InvestHome extends PureComponent {
             <PreformanceChartBoard
               chartData={chartInfo}
               chartTableInfo={chartTableInfo}
+              level={selScope}
               location={location}
               replace={replace}
               loading={chartLoading && !globalLoading}

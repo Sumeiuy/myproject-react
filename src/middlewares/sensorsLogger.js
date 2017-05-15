@@ -11,13 +11,19 @@ import {
   enable as enableLog,
   eventPropertyMap,
   url,
+  projectName,
   interval,
   whitelist,
   blacklist,
 } from '../config/log';
 import helper from '../utils/helper';
 
-const envVars = {};
+const EVENT_PROFILE_ACTION = 'sendProfile';
+const EVENT_PROFILE_KEY = 'profile_set';
+
+function format(type) {
+  return type.replace(/\//g, '_').replace(/[^\w$]/g, '');
+}
 
 // 待发送日志队列
 let QUEUE = [];
@@ -37,10 +43,19 @@ function getEventType(action) {
   const { type } = action;
   const eventType = {
     type: 'track',
-    event: type.replace(/\//g, '_').replace(/[^\w$]/g, ''),
+    event: format(type),
   };
-  if (/getEmpInfoSuccess$/.test(type)) {
-    return { type: 'profile_set' };
+  if (EVENT_PROFILE_ACTION === type) {
+    return { type: EVENT_PROFILE_KEY };
+  }
+  if (EVENT_PROFILE_ACTION === type
+    && action.payload
+    && action.payload.pathname
+  ) {
+    return {
+      ...eventType,
+      event: format(action.payload.pathname),
+    };
   }
   return eventType;
 }
@@ -73,47 +88,60 @@ function getExtraData(action) {
 }
 
 function getLogData(action) {
+  // 事件类型 { type, event= }
   const eventType = getEventType(action);
+  // 系统变量
+  const env = eventType.type === EVENT_PROFILE_KEY ? {} : helper.getEnv();
   const extraData = getExtraData(action);
+
   return {
     ...eventType,
-    distinct_id: envVars.uuid, // eslint-disable-line
-    time: new Date().getTime(),
-    project: process.env.NODE_ENV === 'development'
-      ? 'MCRM_Test' : 'MCRM_1_0',
+    distinct_id: window.curUserCode,
+    project: projectName,
     properties: {
-      ...envVars,
+      ...env,
       ...extraData,
+      eventType: eventType.event,
     },
   };
 }
 
-const flushLog = _.throttle(
-  () => {
-    const data = [...QUEUE];
-    if (enableLog) {
-      api.sendLog(url, data).then(
-        () => {
-          QUEUE = [];
-        },
-      ).catch(
-        e => (console.log(e)),
-      );
-    }
-  },
-  interval,
-);
+// 发送缓冲区日志
+function flushLog() {
+  const data = [...QUEUE];
+  if (enableLog && data.length > 1) {
+    api.sendLog(url, data).then(
+      () => {
+        QUEUE = [];
+      },
+    ).catch(
+      e => (console.log(e)),
+    );
+  }
+}
+
+// 节流函数
+const throttledFlushLog = _.throttle(flushLog, interval);
 
 function sendLog(action) {
   if (!isPass(action)) {
     return;
   }
   const data = getLogData(action);
+  // profile_set拿到以后单独发送
+  if (data.type === EVENT_PROFILE_KEY) {
+    api.sendLog(url, [data]);
+    return;
+  }
   QUEUE.push(data);
-  flushLog();
+  throttledFlushLog();
 }
 
 export default function createSensorsLogger() {
+  // 一进来先发一次用户信息
+  sendLog({
+    type: EVENT_PROFILE_ACTION,
+  });
   /* eslint-disable */
   return ({ getState }) => (next) => (action) => {
     sendLog(action);

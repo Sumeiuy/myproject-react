@@ -6,10 +6,10 @@
 
 const config = {
   url: process.env.NODE_ENV === 'development1'
-    ? '/' : 'https://crm.htsc.com.cn:2443/abtest/pass/mc/sensors',
-  interval: 2 * 60 * 1000,
+    ? '/' : '/abtest/pass/mc/sensors',
+  interval: 1 * 10 * 1000,
   // 开启日志监控
-  enable: false,
+  enable: true,
   blacklist: [
     '@@DVA_LOADING/HIDE',
     '@@DVA_LOADING/SHOW',
@@ -18,30 +18,11 @@ const config = {
   ],
   whitelist: [],
   eventPropertyMap: {
-    // 获取当前登录用户信息
-    'global/getEmpInfoSuccess': {
-      values: [
-        'empInfo',
-      ],
-    },
     // 页面pv
     '@@router/LOCATION_CHANGE': {
       values: [
         'pathname',
         'query',
-      ],
-    },
-    // 获取客户详情
-    'customer/fetchCustDetailSuccess': {
-      values: [
-        'custSor',
-        'response.resultData.custBaseInfo',
-      ],
-    },
-    // 任务详情
-    'mission/reportDetail': {
-      values: [
-        '*', // *表示payload所有第一层字段
       ],
     },
   },
