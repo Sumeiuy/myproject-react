@@ -16,7 +16,12 @@ function Loading({
   }
 
   return (
-    <div className={styles.popmask}>
+    <div
+      className={styles.popmask}
+      style={{
+        height: document.documentElement.clientHeight,
+      }}
+    >
       <Spin tip="Loading" spinning={loading} />
     </div>
   );

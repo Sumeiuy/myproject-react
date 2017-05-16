@@ -5,7 +5,7 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { Row, Col } from 'antd';
-import Loading from '../../layouts/Loading';
+// import Loading from '../../layouts/Loading';
 import ChartBar from './ChartBar';
 import styles from './ChartBoard.less';
 
@@ -15,7 +15,7 @@ export default class ChartBoard extends PureComponent {
     level: PropTypes.string,
     location: PropTypes.object,
     chartData: PropTypes.array,
-    loading: PropTypes.bool.isRequired,
+    // loading: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -26,10 +26,10 @@ export default class ChartBoard extends PureComponent {
   }
 
   render() {
-    const { chartData, loading, location: { query }, level } = this.props;
+    const { chartData, location: { query }, level } = this.props;
     return (
       <div className={styles.board}>
-        <Loading loading={loading} />
+        {/* <Loading loading={loading} /> */}
         <Row type="flex">
           {
             chartData.map((item, index) => {
