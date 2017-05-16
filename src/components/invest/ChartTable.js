@@ -51,8 +51,6 @@ export default class ChartTable extends PureComponent {
   // 分页事件
   @autobind
   handlePaginationChange(page, pageSize) {
-    console.log(page);
-    console.log(pageSize);
     const { replace, location: { query } } = this.props;
     replace({
       pathname: '/invest',

@@ -79,7 +79,6 @@ export default class CustRange extends PureComponent {
 
   @autobind
   onChange(value, label, extra) {
-    console.log('onChange', value, label, extra);
     const { location: { query }, replace } = this.props;
     if (extra.triggerValue === extra.preValue[0].value) {
       return;
@@ -106,7 +105,6 @@ export default class CustRange extends PureComponent {
 
   setDefaultValue(custRange) {
     const { location: { query: { orgId, custRangeName } } } = this.props;
-    console.log('locationChange', orgId, custRangeName, (custRange[0] || {}).id);
     const initValue = {
       label: !custRangeName ? (custRange[0] || {}).name : decodeURIComponent(custRangeName),
       key: orgId || (custRange[0] || {}).id,
@@ -119,7 +117,6 @@ export default class CustRange extends PureComponent {
 
   render() {
     const { custRange } = this.props;
-    console.log('this.state.value>>>', this.state.value);
     if (_.isEmpty(this.state.value) || !this.state.value.value) {
       return null;
     }

@@ -90,7 +90,7 @@ export default class PerformanceChartBoard extends PureComponent {
   render() {
     const { showChart, orderType } = this.state;
     const { chartData, chartTableInfo, replace, loading, location, level } = this.props;
-    // console.log('sortByType', sortByType.slice(level - 1));
+    console.log('sortByType', sortByType.slice(level - 1));
     const sliceSortByType = sortByType.slice(level - 1);
     const sliceScope = sliceSortByType[0].scope;
     if (chartData.length === 0) {
@@ -107,6 +107,7 @@ export default class PerformanceChartBoard extends PureComponent {
                 * todo -- 切换一级菜单的时候，清空二级菜单项目
               */}
               <Select
+                key={`${sliceScope}key`}
                 defaultValue={sliceScope}
                 className={styles.newSelect}
                 onChange={(v) => { this.handleSortChange('scope', v); }}
