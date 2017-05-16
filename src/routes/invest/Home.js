@@ -18,7 +18,7 @@ import CustRange from '../../components/invest/CustRange';
 import { optionsMap } from '../../config';
 import styles from './Home.less';
 
-const empId = window.curUserCode || '004584';
+const empId = window.curUserCode || '001750';
 // RadioButton
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
