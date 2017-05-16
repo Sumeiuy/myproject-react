@@ -5,130 +5,127 @@
  * @Last Modified time: 2017-05-04 20:02:48
  */
 import React, { PropTypes, PureComponent } from 'react';
-import { Table } from 'antd';
+import { autobind } from 'core-decorators';
+import { Table, Pagination } from 'antd';
 
+import { optionsMap } from '../../config';
 import styles from './ChartTable.less';
+
+// 按类别排序
+const sortByType = optionsMap.sortByType;
 
 export default class ChartTable extends PureComponent {
   static propTypes = {
+    location: PropTypes.object,
+    level: PropTypes.string,
     chartTableInfo: PropTypes.object,
     sourceData: PropTypes.array,
     data: PropTypes.object,
+    replace: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
+    location: {},
+    level: '',
     chartTableInfo: {},
     sourceData: [],
     data: {},
+    repalce: () => {},
   }
   constructor(props) {
     super(props);
     this.state = {
       bordered: true,
       loading: false,
-      pagination: true,
+      pagination: false,
       sortedInfo: null,
     };
   }
 
-  handleChange = (pagination, sorter) => {
+  @autobind
+  handleChange(pagination, sorter) {
     this.setState({
       sortedInfo: sorter,
     });
   }
-  clearAll = () => {
+  // 分页事件
+  @autobind
+  handlePaginationChange(page, pageSize) {
+    console.log(page);
+    console.log(pageSize);
+    const { replace, location: { query } } = this.props;
+    replace({
+      pathname: '/invest',
+      query: {
+        ...query,
+        page,
+        pageSize,
+      },
+    });
+  }
+
+  @autobind
+  clearAll() {
     this.setState({
       sortedInfo: null,
     });
   }
   render() {
-    const { chartTableInfo } = this.props;
+    const { chartTableInfo, location: { query }, level } = this.props;
     const columns = chartTableInfo.titleList;
-    // const key = 'dataIndex';
-    // const name = 'title';
-    // const b = columns.map((item) => {
-    //   return {
-    //     dataIndex: item.key,
-    //     title: item.name,
-    //     sorter: (a, b)=> a - b
-    //   },
-    // });
-    const arr = columns.map(item => (
-      {
-        dataIndex: item.key,
-        title: item.name,
-        sorter: (a, b) => a[item.key] - b[item.key],
-      }
-    ));
-    // console.log('arr', arr);
-    arr.unshift({
-      title: '分公司',
-      dataIndex: 'city',
-      key: 'city',
-    });
+    const data = chartTableInfo.indicatorSummuryRecordDtos;
 
-    const data = [{
-      key: '1',
-      city: '南京',
-      gjPurRake: 3223,
-      platformCustNumM: 124,
-      tgNum: 7434,
-    }, {
-      key: '2',
-      city: '上海',
-      gjPurRake: 1244,
-      platformCustNumM: 43,
-      tgNum: 2241,
-    }, {
-      key: '3',
-      city: '广东',
-      gjPurRake: 454,
-      platformCustNumM: 4121,
-      tgNum: 8324,
-    }];
-    // const columns = [{
-    //   title: '分公司',
-    //   dataIndex: 'city',
-    //   key: 'city',
-    // }, {
-    //   title: '投顾入岗人数',
-    //   dataIndex: 'tgrgrs',
-    //   key: 'tgrgrs',
-    //   sorter: (a, b) => a.tgrgrs - b.tgrgrs,
-    // }, {
-    //   title: '签约客户数',
-    //   dataIndex: 'qykhs',
-    //   key: 'qykhs',
-    //   sorter: (a, b) => a.qykhs - b.qykhs,
-    // }, {
-    //   title: '签约资产',
-    //   dataIndex: 'qyzc',
-    //   key: 'qyzc',
-    //   sorter: (a, b) => a.qyzc - b.qyzc,
-    // }, {
-    //   title: '签约平均佣金率',
-    //   dataIndex: 'qypjyjl',
-    //   key: 'qypjyjl',
-    //   sorter: (a, b) => a.qypjyjl - b.qypjyjl,
-    // }, {
-    //   title: '净佣金收入',
-    //   dataIndex: 'jyjsr',
-    //   key: 'jyjsr',
-    //   sorter: (a, b) => a.jyjsr - b.jyjsr,
-    // }, {
-    //   title: '资产配置覆盖率',
-    //   dataIndex: 'zcpzfgl',
-    //   key: 'zcpzfgl',
-    //   sorter: (a, b) => a.zcpzfgl - b.zcpzfgl,
-    // }, {
-    //   title: 'MOT 完成率',
-    //   dataIndex: 'motwcl',
-    //   key: 'motwcl',
-    //   sorter: (a, b) => a.motwcl - b.motwcl,
-    // }];
+    let itemData;
+    let obj = {};
+    const test = [];
+    let arr = [];
+    const newArr = [];
+    if (data && data.length) {
+      for (let i = 0; i < data.length; i++) {
+        itemData = data[i].indicatorDataList;
+        const tempArr = itemData.map(item => (
+          {
+            [item.key]: item.value,
+            city: data[i].name,
+          }
+        ));
+        test.push(tempArr);
+        for (let j = 0; j < test.length; j++) {
+          obj = Object.assign({ key: j }, ...test[j]);
+        }
+        newArr.push(obj);
+      }
+      arr = columns.map(item => (
+        {
+          dataIndex: item.key,
+          title: item.name,
+          sorter: (a, b) => a[item.key] - b[item.key],
+        }
+      ));
+      const tempScope = query.scope || Number(level) + 1;
+      let keyName = '';
+      for (let i = 0; i < sortByType.length; i++) {
+        if (Number(tempScope) === Number(sortByType[i].scope)) {
+          keyName = sortByType[i].name;
+        }
+      }
+      arr.unshift({
+        title: keyName,
+        dataIndex: 'city',
+        key: 'city',
+      });
+    }
+
     return (
       <div className={styles.tableDiv}>
-        <Table {...this.state} columns={arr} dataSource={data} onChange={this.handleChange} />
+        <Table {...this.state} columns={arr} dataSource={newArr} onChange={this.handleChange} />
+        <Pagination
+          defaultCurrent={1}
+          current={Number(query.page) || 1}
+          total={50}
+          pageSize={5}
+          onChange={this.handlePaginationChange}
+        />
       </div>
     );
   }

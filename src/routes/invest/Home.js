@@ -18,7 +18,7 @@ import CustRange from '../../components/invest/CustRange';
 import { optionsMap } from '../../config';
 import styles from './Home.less';
 
-const empId = window.curUserCode || '001750';
+const empId = window.curUserCode || '004584';
 // RadioButton
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -137,8 +137,8 @@ export default class InvestHome extends PureComponent {
         end: query.end || obj.end,
         cycleType: query.cycleType || obj.cycleType,
         orderType: query.orderType || '',
-        pageNum: '1',
-        pageSize: '30',
+        pageNum: query.page || '1',
+        pageSize: '5',
       },
     });
   }
@@ -160,8 +160,8 @@ export default class InvestHome extends PureComponent {
     // 还是chart部分的数据
     if (!_.isEqual(query, preQuery)) {
       // 判断是排序方式的值不同
-      const sortNow = _.pick(query, ['scope', 'orderType', 'showChart']);
-      const sortPre = _.pick(preQuery, ['scope', 'orderType', 'showChart']);
+      const sortNow = _.pick(query, ['scope', 'orderType', 'showChart', 'page']);
+      const sortPre = _.pick(preQuery, ['scope', 'orderType', 'showChart', 'page']);
       // console.log('sortNow', sortNow);
       if (!_.isEqual(sortNow, sortPre)) {
         // 只刷新指标分布区域
@@ -186,8 +186,8 @@ export default class InvestHome extends PureComponent {
           begin: query.begin || duration.begin,
           end: query.end || duration.end,
           cycleType: query.cycleType || duration.cycleType,
-          pageNum: '1',
-          pageSize: '30',
+          pageNum: query.page || '1',
+          pageSize: '5',
         });
       } else {
         // 重新获取页面所有数据
@@ -196,15 +196,22 @@ export default class InvestHome extends PureComponent {
           orgId: query.orgId || custRange[0].id,
           scope: query.scope || (parseInt(custRange[0].level, 10) + 1),
           empId,
+          orderType: query.orderType || '',
+          begin: query.begin || duration.begin,
+          end: query.end || duration.end,
+          cycleType: query.cycleType || duration.cycleType,
           localScope: custRange[0].level,
         });
         getChartInfo({
           ...query,
           scope: query.scope || (parseInt(custRange[0].level, 10) + 1),
-          empId: '002332',
+          empId,
+          orderType: query.orderType || '',
+          begin: query.begin || duration.begin,
+          end: query.end || duration.end,
+          cycleType: query.cycleType || duration.cycleType,
           localScope: custRange[0].level,
           orgId: query.orgId || custRange[0].id,
-          orderType: query.orderType || '',
         });
         getChartTableInfo(
           {
@@ -217,8 +224,8 @@ export default class InvestHome extends PureComponent {
             begin: query.begin || duration.begin,
             end: query.end || duration.end,
             cycleType: query.cycleType || duration.cycleType,
-            pageNum: '1',
-            pageSize: '30',
+            pageNum: query.page || '1',
+            pageSize: '5',
           },
         );
       }
