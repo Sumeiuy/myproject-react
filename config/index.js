@@ -31,8 +31,8 @@ module.exports = {
     proxyTable: {
       '/fspa/mcrm/api': {
         target: 'http://192.168.71.26:9084', // 29 UAT， 26 SIT
-        secure: false,
-      },
+        secure: false
+      }
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README
@@ -40,7 +40,7 @@ module.exports = {
     // In our experience, they generally work as expected,
     // just be aware of this issue when enabling this option.
     cssSourceMap: false,
-    mock: false,
+    mock: false
   },
   cssModules: true,
   appSrc: path.resolve(__dirname, '../src'),

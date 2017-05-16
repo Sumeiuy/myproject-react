@@ -83,7 +83,9 @@ export default class ChartTable extends PureComponent {
         itemData = data[i].indicatorDataList;
         const tempArr = itemData.map(item => (
           {
-            [item.key]: item.value,
+            [item.key]: (item.unit === '%')
+            ? (Number(item.value) * 100).toFixed(3)
+            : item.value,
             city: data[i].name,
           }
         ));
@@ -96,7 +98,7 @@ export default class ChartTable extends PureComponent {
       arr = columns.map(item => (
         {
           dataIndex: item.key,
-          title: item.name,
+          title: `${item.name} (${item.unit})`,
           sorter: (a, b) => a[item.key] - b[item.key],
         }
       ));
@@ -113,7 +115,6 @@ export default class ChartTable extends PureComponent {
         key: 'city',
       });
     }
-
     return (
       <div className={styles.tableDiv}>
         <Table {...this.state} columns={arr} dataSource={newArr} onChange={this.handleChange} />

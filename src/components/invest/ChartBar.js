@@ -126,7 +126,7 @@ export default class ChartBar extends PureComponent {
       label: {
         normal: {
           show: true,
-          position: medianValue > item ? 'right' : 'insideRight',
+          position: (medianValue > item || Number(item) === 0) ? 'right' : 'insideRight',
         },
       },
     }));
@@ -152,7 +152,7 @@ export default class ChartBar extends PureComponent {
     // 数据中最大的值
     const xMax = Math.max(...seriesData);
     // 图表边界值
-    const gridXAxisMax = xMax * 1.1;
+    const gridXAxisMax = xMax * 1.1 || 1;
     // 计算出所有值的中间值
     const medianValue = gridXAxisMax / 2;
     // 需要针对不同的值编写不同的柱状图Label样式
@@ -208,6 +208,9 @@ export default class ChartBar extends PureComponent {
         axisLabel: {
           ...AxisOptions.axisLabel,
           formatter(value) {
+            if (!value) {
+              return '--';
+            }
             if (value.length > 4) {
               return `${value.substr(0, 4)}...`;
             }
