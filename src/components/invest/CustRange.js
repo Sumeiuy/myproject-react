@@ -28,7 +28,7 @@ function getNodes(arr, parent) {
     if (tempArr.length > 1) {
       name = _.difference(tempArr, [TOP_LEVEL_NAME]).join('/');
     } else {
-      name = TOP_LEVEL_NAME;
+      name = tempName;
     }
     const props = {
       title: item.name,
