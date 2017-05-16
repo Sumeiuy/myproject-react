@@ -58,7 +58,7 @@ const mapDispatchToProps = {
   refreshPerformance: fectchDataFunction(false, effects.performance),
   getChartInfo: fectchDataFunction(true, effects.chartInfo),
   getChartTableInfo: fectchDataFunction(true, effects.chartTableInfo),
-  refreshChartInfo: fectchDataFunction(false, effects.chartInfo),
+  refreshChartInfo: fectchDataFunction(true, effects.chartInfo),
   refreshChartTableInfo: fectchDataFunction(false, effects.chartTableInfo),
   getCustRange: fectchDataFunction(false, effects.custRange),
   push: routerRedux.push,
@@ -283,14 +283,14 @@ export default class InvestHome extends PureComponent {
   }
 
   render() {
+    // chartLoading,
+    // globalLoading,
     const duration = this.state;
     const {
       performance,
       chartInfo,
       chartTableInfo,
       location,
-      chartLoading,
-      globalLoading,
       replace,
       custRange,
     } = this.props;
@@ -345,7 +345,7 @@ export default class InvestHome extends PureComponent {
               level={selScope}
               location={location}
               replace={replace}
-              loading={chartLoading && !globalLoading}
+              loading={false}
             />
           </div>
         </div>
