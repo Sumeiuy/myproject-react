@@ -103,9 +103,6 @@ export default class PerformanceChartBoard extends PureComponent {
           <div className={styles.titleBarRight}>
             <div className={styles.iconBtn1}>
               <span>排序方式:</span>
-              {/**
-                * todo -- 切换一级菜单的时候，清空二级菜单项目
-              */}
               <Select
                 key={`${sliceScope}key`}
                 defaultValue={sliceScope}
@@ -119,18 +116,23 @@ export default class PerformanceChartBoard extends PureComponent {
                   })
                 }
               </Select>
-              <Select
-                defaultValue={orderType || 'desc'}
-                className={styles.newSelect1}
-                onChange={(v) => { this.handleSortChange('orderType', v); }}
-              >
-                {
-                  sortByOrder.map((item, index) => {
-                    const sortByOrderIndex = index;
-                    return <Option key={sortByOrderIndex} value={item.key}>{item.name}</Option>;
-                  })
-                }
-              </Select>
+              {
+                showChart === showType[1].type ?
+                  <Select
+                    defaultValue={orderType || 'desc'}
+                    className={styles.newSelect1}
+                    onChange={(v) => { this.handleSortChange('orderType', v); }}
+                  >
+                    {
+                      sortByOrder.map((item, index) => {
+                        const sortByOrderIndex = index;
+                        return <Option key={sortByOrderIndex} value={item.key}>{item.name}</Option>;
+                      })
+                    }
+                  </Select>
+                :
+                ''
+              }
             </div>
             <div className={styles.iconBtn}>
               {
