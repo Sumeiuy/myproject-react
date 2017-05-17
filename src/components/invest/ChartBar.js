@@ -122,11 +122,11 @@ export default class ChartBar extends PureComponent {
   @autobind
   createNewSeriesData(series, medianValue, unit) {
     return series.map(item => ({
-      value: unit === '%' ? Number(item).toFixed(2) : item,
+      value: unit === '%' ? Number(item.toFixed(2)) : item,
       label: {
         normal: {
           show: true,
-          position: (medianValue > item || Number(item) === 0) ? 'right' : 'insideRight',
+          position: (medianValue > item || item === 0) ? 'right' : 'insideRight',
         },
       },
     }));
@@ -200,7 +200,10 @@ export default class ChartBar extends PureComponent {
     // 数据中最大的值
     const xMax = Math.max(...seriesData);
     // 图表边界值,如果xMax是0的话则最大值为1
-    const gridXAxisMax = xMax * 1.1 || 1;
+    let gridXAxisMax = xMax * 1.1 || 1;
+    if (unit === '%') {
+      gridXAxisMax = 100;
+    }
     // 计算出所有值的中间值
     const medianValue = gridXAxisMax / 2;
     // 需要针对不同的值编写不同的柱状图Label样式
@@ -219,6 +222,12 @@ export default class ChartBar extends PureComponent {
       },
       formatter(params) {
         return `${params[1].axisValue}<br /> ${params[1].seriesName}: <span style="color:#f8ac59; font-size: 15px;">${params[1].data.value}</span>${unit}`;
+      },
+      position(pos, params, dom, rect, size) {
+        // 鼠标在左侧时 tooltip 显示到右侧，鼠标在右侧时 tooltip 显示到左侧。
+        const obj = { top: (pos[1] - size.contentSize[1]) };
+        obj[['left', 'right'][+(pos[0] < size.viewSize[0] / 2)]] = 5;
+        return obj;
       },
       backgroundColor: 'rgba(0, 0, 0, .56)',
       padding: [12, 11, 13, 13],
