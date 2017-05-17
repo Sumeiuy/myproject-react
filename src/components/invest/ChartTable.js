@@ -43,9 +43,17 @@ export default class ChartTable extends PureComponent {
   }
 
   @autobind
-  handleChange(pagination, sorter) {
-    this.setState({
-      sortedInfo: sorter,
+  handleChange(e, pagination, sorter) {
+    // 表格排序方式
+    const tableOrderType = sorter.order === 'ascend' ? 'asc' : '';
+    const { replace, location: { query } } = this.props;
+    replace({
+      pathname: '/invest',
+      query: {
+        ...query,
+        orderIndicatorId: sorter.field || '',
+        tableOrderType,
+      },
     });
   }
   // 分页事件
@@ -99,7 +107,8 @@ export default class ChartTable extends PureComponent {
         {
           dataIndex: item.key,
           title: `${item.name} (${item.unit})`,
-          sorter: (a, b) => a[item.key] - b[item.key],
+          sorter: true,
+          // sorter: (a, b) => a[item.key] - b[item.key],
         }
       ));
       const tempScope = query.scope || Number(level) + 1;
@@ -120,9 +129,9 @@ export default class ChartTable extends PureComponent {
         <Table {...this.state} columns={arr} dataSource={newArr} onChange={this.handleChange} />
         <Pagination
           defaultCurrent={1}
-          current={Number(query.page) || 1}
-          total={50}
-          pageSize={5}
+          current={chartTableInfo.curPageNum || 1}
+          total={chartTableInfo.totalCnt}
+          pageSize={chartTableInfo.pageSize}
           onChange={this.handlePaginationChange}
         />
       </div>
