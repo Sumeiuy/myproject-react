@@ -35,7 +35,7 @@ const gridOptions = {
   show: true,
   top: '0',
   left: '0',
-  right: '20px',
+  right: '40px',
   bottom: '20px',
   containLabel: true,
   borderWidth: '1',
@@ -132,21 +132,69 @@ export default class ChartBar extends PureComponent {
     }));
   }
 
+  // 对小数进行处理
+  @autobind
+  toFixedDecimal(value) {
+    if (value > 10000) {
+      return value.toFixed(0);
+    }
+    if (value > 1000) {
+      return value.toFixed(1);
+    }
+    if (value > 100) {
+      return value.toFixed(2);
+    }
+    if (value > 10) {
+      return value.toFixed(3);
+    }
+    return value.toFixed(4);
+  }
+
+  // 对金额进行特殊处理的函数
+  @autobind
+  toFixedMoney(series) {
+    let newUnit = '元';
+    let newSeries = series;
+    const MaxMoney = Math.max(...series);
+    // 1. 全部在万元以下的数据不做处理
+    // 2.超过万元的，以‘万元’为单位
+    // 3.超过亿元的，以‘亿元’为单位
+    if (MaxMoney > 100000000) {
+      newUnit = '亿元';
+      newSeries = series.map(item => Number(this.toFixedDecimal(item / 100000000)));
+    } else if (MaxMoney > 10000) {
+      newUnit = '万元';
+      newSeries = series.map(item => Number(this.toFixedDecimal(item / 10000)));
+    }
+
+    return {
+      newUnit,
+      newSeries,
+    };
+  }
+
   render() {
     // const { chartData } = this.props;
     const {
-      chartData: { name, unit, key, orgModel = [] },
+      chartData: { name, key, orgModel = [] },
       level,
       scope,
     } = this.props;
+    let { chartData: { unit } } = this.props;
     const levelAndScope = scope !== '' ? scope : (parseInt(level, 10) + 1);
     const levelName = `level${levelAndScope}Name`;
     // 此处为y轴刻度值
     const yAxisLabels = this.getChartData(orgModel, levelName);
     // 此处为数据,此数据在百分比的情况下,全部都是小数，需要乘以100
     let seriesData = this.getChartData(orgModel, 'value');
+    seriesData = seriesData.map(item => Number(item));
     if (unit === '%') {
-      seriesData = seriesData.map(item => (Number(item) * 100));
+      seriesData = seriesData.map(item => (item * 100));
+    } else if (unit === '元') {
+      // 如果图表中的数据表示的是金额的话，需要对其进行单位识别和重构
+      const tempSeries = this.toFixedMoney(seriesData);
+      seriesData = tempSeries.newSeries;
+      unit = tempSeries.newUnit;
     }
     const seriesDataLen = seriesData.length;
     // 数据中最大的值
@@ -188,7 +236,7 @@ export default class ChartBar extends PureComponent {
       xAxis: {
         type: 'value',
         name: unit,
-        nameGap: '8',
+        nameGap: '6',
         nameTextStyle: {
           color: '#999',
         },
