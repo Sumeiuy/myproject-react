@@ -20,7 +20,7 @@ module.exports = {
     // View the bundle analyzer report after build finishes:
     // `npm run build --report`
     // Set to `true` or `false` to always turn it on or off
-    bundleAnalyzerReport: process.env.npm_config_report
+    bundleAnalyzerReport: process.env.npm_config_report,
   },
   dev: {
     env: require('./dev.env'),
@@ -30,9 +30,10 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/fspa/mcrm/api': {
-        target: 'http://192.168.71.26:9084', // 29 UAT， 26 SIT
-        secure: false
-      }
+        target: 'http://192.168.71.26:9084', // SIT
+        // target: 'http://192.168.71.29:9082', // UAT
+        secure: false,
+      },
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README
@@ -40,9 +41,9 @@ module.exports = {
     // In our experience, they generally work as expected,
     // just be aware of this issue when enabling this option.
     cssSourceMap: false,
-    mock: false
+    mock: false,
   },
   cssModules: true,
   appSrc: path.resolve(__dirname, '../src'),
-  appNodeModules: path.resolve(__dirname, '../node_modules')
+  appNodeModules: path.resolve(__dirname, '../node_modules'),
 }
