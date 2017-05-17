@@ -138,14 +138,14 @@ export default class InvestHome extends PureComponent {
         cycleType: query.cycleType || obj.cycleType,
         orderType: query.orderType || '',
         pageNum: query.page || '1',
-        pageSize: '5',
+        pageSize: '30',
       },
     });
   }
 
   componentWillReceiveProps(nextProps) {
     // 判断props是否变化
-    const { custRange, location: { query } } = nextProps;
+    const { replace, custRange, location: { query } } = nextProps;
     const duration = this.state;
     const {
       location: { query: preQuery },
@@ -159,6 +159,19 @@ export default class InvestHome extends PureComponent {
     // 是投顾头部总量指标
     // 还是chart部分的数据
     if (!_.isEqual(query, preQuery)) {
+      // 如果切换 机构树，更改下面筛选的 按分公司、营业部、投顾
+      const custRangeNow = _.pick(query, 'custRangeLevel');
+      const custRangePre = _.pick(preQuery, 'custRangeLevel');
+      if (!_.isEqual(custRangeNow, custRangePre)) {
+        // 需要改变query中的查询变量
+        replace({
+          pathname: '/invest',
+          query: {
+            ...query,
+            scope: Number(query.custRangeLevel) + 1,
+          },
+        });
+      }
       // 判断是排序方式的值不同
       const sortNow = _.pick(query, ['scope', 'orderType', 'showChart', 'page']);
       const sortPre = _.pick(preQuery, ['scope', 'orderType', 'showChart', 'page']);
@@ -182,12 +195,12 @@ export default class InvestHome extends PureComponent {
           empId,
           localScope: custRange[0].level,
           orgId: query.orgId || custRange[0].id,
-          orderType: query.orderType || '',
           begin: query.begin || duration.begin,
           end: query.end || duration.end,
           cycleType: query.cycleType || duration.cycleType,
           pageNum: query.page || '1',
-          pageSize: '5',
+          orderType: query.tableOrderType || '',
+          orderIndicatorId: query.orderIndicatorId || '',
         });
       } else {
         // 重新获取页面所有数据
@@ -220,12 +233,12 @@ export default class InvestHome extends PureComponent {
             empId,
             localScope: custRange[0].level,
             orgId: query.orgId || custRange[0].id,
-            orderType: query.orderType || '',
             begin: query.begin || duration.begin,
             end: query.end || duration.end,
             cycleType: query.cycleType || duration.cycleType,
             pageNum: query.page || '1',
-            pageSize: '5',
+            orderType: query.tableOrderType || '',
+            orderIndicatorId: query.orderIndicatorId || '',
           },
         );
       }
