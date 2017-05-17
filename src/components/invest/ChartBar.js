@@ -151,7 +151,7 @@ export default class ChartBar extends PureComponent {
     const seriesDataLen = seriesData.length;
     // 数据中最大的值
     const xMax = Math.max(...seriesData);
-    // 图表边界值
+    // 图表边界值,如果xMax是0的话则最大值为1
     const gridXAxisMax = xMax * 1.1 || 1;
     // 计算出所有值的中间值
     const medianValue = gridXAxisMax / 2;
