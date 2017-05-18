@@ -70,12 +70,47 @@ export default class ChartTable extends PureComponent {
     });
   }
 
+  // 对小数进行处理
   @autobind
-  clearAll() {
-    this.setState({
-      sortedInfo: null,
-    });
+  toFixedDecimal(value) {
+    if (value > 10000) {
+      return value.toFixed(0);
+    }
+    if (value > 1000) {
+      return value.toFixed(1);
+    }
+    if (value > 100) {
+      return value.toFixed(2);
+    }
+    if (value > 10) {
+      return value.toFixed(3);
+    }
+    return value.toFixed(4);
   }
+
+  // 对金额进行特殊处理的函数
+  @autobind
+  toFixedMoney(series) {
+    let newUnit = '元';
+    let newSeries = series;
+    const MaxMoney = Math.max(...series);
+    // 1. 全部在万元以下的数据不做处理
+    // 2.超过万元的，以‘万元’为单位
+    // 3.超过亿元的，以‘亿元’为单位
+    if (MaxMoney > 100000000) {
+      newUnit = '亿元';
+      newSeries = series.map(item => Number(this.toFixedDecimal(item / 100000000)));
+    } else if (MaxMoney > 10000) {
+      newUnit = '万元';
+      newSeries = series.map(item => Number(this.toFixedDecimal(item / 10000)));
+    }
+
+    return {
+      newUnit,
+      newSeries,
+    };
+  }
+
   render() {
     const { chartTableInfo, location: { query }, level } = this.props;
     const columns = chartTableInfo.titleList;
@@ -108,9 +143,11 @@ export default class ChartTable extends PureComponent {
           dataIndex: item.key,
           title: `${item.name} (${item.unit})`,
           sorter: true,
+          width: 150,
           // sorter: (a, b) => a[item.key] - b[item.key],
         }
       ));
+      console.log('newArr', newArr);
       const tempScope = query.scope || Number(level) + 1;
       let keyName = '';
       for (let i = 0; i < sortByType.length; i++) {
@@ -122,11 +159,19 @@ export default class ChartTable extends PureComponent {
         title: keyName,
         dataIndex: 'city',
         key: 'city',
+        width: 100,
+        fixed: 'left',
       });
     }
     return (
       <div className={styles.tableDiv}>
-        <Table {...this.state} columns={arr} dataSource={newArr} onChange={this.handleChange} />
+        <Table
+          {...this.state}
+          columns={arr}
+          dataSource={newArr}
+          onChange={this.handleChange}
+          scroll={{ x: 1700, y: 400 }}
+        />
         <Pagination
           defaultCurrent={1}
           current={chartTableInfo.curPageNum || 1}
