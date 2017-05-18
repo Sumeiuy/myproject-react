@@ -90,6 +90,69 @@ export default class ChartBar extends PureComponent {
     return yAxisLabels;
   }
 
+  // 针对百分比的数字来确认图表坐标轴的最大和最小值
+  @autobind
+  getMaxAndMinPercent(series) {
+    let max = Math.max(...series);
+    let min = Math.min(...series);
+    max = Math.ceil((max / 10)) * 10;
+    min = Math.floor((min / 10)) * 10;
+    if (max === 0) {
+      max = 100;
+    }
+    if (min === 100) {
+      min = 0;
+    }
+    return {
+      max,
+      min,
+    };
+  }
+
+  // 针对千分比确认图表最大和最小值
+  @autobind
+  getMaxAndMinPermillage(series) {
+    let max = Math.max(...series);
+    let min = Math.min(...series);
+    max = Math.ceil(max);
+    min = Math.floor(min);
+    if (max === 0) {
+      max = 1;
+    }
+    return {
+      max,
+      min,
+    };
+  }
+
+  // 针对金额确认图表最大和最小值
+  @autobind
+  getMaxAndMinMoney(series) {
+    let max = Math.max(...series);
+    let min = Math.min(...series);
+    if (max >= 10000) {
+      max = Math.ceil(max / 1000) * 1000;
+    } else if (max >= 100) {
+      max = Math.ceil(max / 100) * 100;
+    } else if (max < 100) {
+      max = Math.ceil(max / 10) * 10;
+    }
+    if (max === 0) {
+      max = 1;
+    }
+    if (min >= 10000) {
+      min = Math.floor(min / 1000) * 1000;
+    } else if (min >= 100) {
+      min = Math.floor(min / 100) * 100;
+    } else if (min < 100) {
+      min = Math.floor(min / 10) * 10;
+    }
+    if (min <= 0 || min >= max) {
+      min = 0;
+    }
+    return { max, min };
+  }
+
   @autobind
   createBarLinear(input) {
     const output = [];
@@ -122,11 +185,11 @@ export default class ChartBar extends PureComponent {
   @autobind
   createNewSeriesData(series, medianValue, unit) {
     return series.map(item => ({
-      value: unit === '%' ? Number(item).toFixed(2) : item,
+      value: (unit === '%' || unit === '\u2030') ? Number(item.toFixed(2)) : item,
       label: {
         normal: {
           show: true,
-          position: (medianValue > item || Number(item) === 0) ? 'right' : 'insideRight',
+          position: (medianValue > item || item === 0) ? 'right' : 'insideRight',
         },
       },
     }));
@@ -190,6 +253,8 @@ export default class ChartBar extends PureComponent {
     seriesData = seriesData.map(item => Number(item));
     if (unit === '%') {
       seriesData = seriesData.map(item => (item * 100));
+    } else if (unit === '\u2030') {
+      seriesData = seriesData.map(item => (item * 1000));
     } else if (unit === '元') {
       // 如果图表中的数据表示的是金额的话，需要对其进行单位识别和重构
       const tempSeries = this.toFixedMoney(seriesData);
@@ -200,7 +265,22 @@ export default class ChartBar extends PureComponent {
     // 数据中最大的值
     const xMax = Math.max(...seriesData);
     // 图表边界值,如果xMax是0的话则最大值为1
-    const gridXAxisMax = xMax * 1.1 || 1;
+    let gridXAxisMax = xMax * 1.1 || 1;
+    let gridXaxisMin = 0;
+    if (unit === '%') {
+      // TODO 此处需要对
+      const maxAndMinPercent = this.getMaxAndMinPercent(seriesData);
+      gridXAxisMax = maxAndMinPercent.max;
+      gridXaxisMin = maxAndMinPercent.min;
+    } else if (unit === '\u2030') {
+      const maxAndMinPermillage = this.getMaxAndMinPermillage(seriesData);
+      gridXAxisMax = maxAndMinPermillage.max;
+      gridXaxisMin = maxAndMinPermillage.min;
+    } else if (unit.indexOf('元') > -1) {
+      const maxAndMinMoney = this.getMaxAndMinMoney(seriesData);
+      gridXAxisMax = maxAndMinMoney.max;
+      gridXaxisMin = maxAndMinMoney.min;
+    }
     // 计算出所有值的中间值
     const medianValue = gridXAxisMax / 2;
     // 需要针对不同的值编写不同的柱状图Label样式
@@ -219,6 +299,12 @@ export default class ChartBar extends PureComponent {
       },
       formatter(params) {
         return `${params[1].axisValue}<br /> ${params[1].seriesName}: <span style="color:#f8ac59; font-size: 15px;">${params[1].data.value}</span>${unit}`;
+      },
+      position(pos, params, dom, rect, size) {
+        // 鼠标在左侧时 tooltip 显示到右侧，鼠标在右侧时 tooltip 显示到左侧。
+        const obj = { top: (pos[1] - size.contentSize[1]) };
+        obj[['left', 'right'][+(pos[0] < size.viewSize[0] / 2)]] = 5;
+        return obj;
       },
       backgroundColor: 'rgba(0, 0, 0, .56)',
       padding: [12, 11, 13, 13],
@@ -241,9 +327,16 @@ export default class ChartBar extends PureComponent {
           color: '#999',
         },
         max: gridXAxisMax,
+        min: gridXaxisMin,
         ...AxisOptions,
-        splitLine: {
+        axisTick: {
           show: true,
+          lineStyle: {
+            color: '#e7eaec',
+          },
+        },
+        splitLine: {
+          show: false,
           lineStyle: {
             color: '#e7eaec',
           },

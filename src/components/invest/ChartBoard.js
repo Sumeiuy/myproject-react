@@ -35,7 +35,11 @@ export default class ChartBoard extends PureComponent {
             chartData.map((item, index) => {
               const chartDataIndex = `chartData${index}`;
               return (
-                <Col span={6} key={chartDataIndex} className={styles.colWrapper}>
+                <Col
+                  span={8}
+                  key={chartDataIndex}
+                  className={styles.colWrapper}
+                >
                   <ChartBar
                     chartData={item}
                     level={query.level || level}
