@@ -27,6 +27,8 @@ const onError = (e) => {
   // See src/utils/request.js
   if (msg === 'xxx') {
     message.error('登录超时，请重新登录！');
+  } else if (e.name === 'SyntaxError' && msg.indexOf('JSON') > -1) {
+    window.location.reload();
   } else {
     message.error(msg);
   }
