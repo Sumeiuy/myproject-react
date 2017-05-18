@@ -131,6 +131,7 @@ export default class CustRange extends PureComponent {
         showSearch
         dropdownMatchSelectWidth
         labelInValue
+        getPopupContainer={() => document.getElementById('app')}
       >
         {getNodes(custRange, (custRange[0] || {}).name)}
       </TreeSelect>
