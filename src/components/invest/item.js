@@ -23,7 +23,7 @@ export default class Item extends PureComponent {
     const data = toUnit(value, unit, 5);
     return (
       <div className={styles.content}>
-        <h3 className={styles.title}>
+        <h3 className={styles.title} title={name}>
           <Icon type={iconTypeMap[key]} />
           {name}
         </h3>
