@@ -13,12 +13,12 @@ import _ from 'lodash';
 
 import PerformanceItem from '../../components/invest/PerformanceItem';
 import PreformanceChartBoard from '../../components/invest/PerformanceChartBoard';
-import CustRange from '../../components/invest/CustRange2';
+import CustRange from '../../components/invest/CustRange';
 // 选择项字典
 import { optionsMap } from '../../config';
 import styles from './Home.less';
 
-const empId = window.curUserCode || '001750';
+const empId = window.curUserCode || '002475';
 // RadioButton
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;

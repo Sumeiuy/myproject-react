@@ -7,6 +7,7 @@
 import React, { PureComponent, PropTypes } from 'react';
 import { TreeSelect } from 'antd';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
 
 import styles from './custRange.less';
 
@@ -15,10 +16,10 @@ function transformCustRangeData(list, parent = '') {
     const obj = {
       label: item.name,
       value: parent
-            ?
-            `${item.level}-${item.id}-${parent}-${item.name}`
-            :
-            `${item.level}-${item.id}-${item.name}`,
+              ?
+              `${item.level}-${item.id}-${parent}-${item.name}`
+              :
+              `${item.level}-${item.id}-${item.name}`,
       key: item.id,
     };
     if (item.children && item.children.length) {
@@ -48,15 +49,12 @@ export default class CustRange extends PureComponent {
 
   componentDidMount() {
     const { custRange } = this.props;
-    if (custRange && !custRange.length) {
-      return;
-    }
     this.setDefaultValue(custRange);
   }
 
   componentWillReceiveProps(nextProps) {
     const { custRange } = this.props;
-    if (nextProps.custRange !== custRange) {
+    if (_.isEqual(nextProps, this.props)) {
       this.setDefaultValue(custRange);
     }
   }
@@ -92,7 +90,7 @@ export default class CustRange extends PureComponent {
   }
 
   setDefaultValue(custRange) {
-    if (custRange && !custRange.length) {
+    if (!custRange || !custRange.length) {
       return;
     }
     const { location: { query: { orgId, custRangeName } } } = this.props;
