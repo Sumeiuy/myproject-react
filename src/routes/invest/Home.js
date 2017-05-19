@@ -13,7 +13,7 @@ import _ from 'lodash';
 
 import PerformanceItem from '../../components/invest/PerformanceItem';
 import PreformanceChartBoard from '../../components/invest/PerformanceChartBoard';
-import CustRange from '../../components/invest/CustRange';
+import CustRange from '../../components/invest/CustRange2';
 // 选择项字典
 import { optionsMap } from '../../config';
 import styles from './Home.less';
@@ -279,6 +279,9 @@ export default class InvestHome extends PureComponent {
       custRange,
     } = this.props;
     const selScope = location.query.custRangeLevel || (custRange[0] && custRange[0].level);
+    if (!custRange || !custRange.length) {
+      return null;
+    }
     return (
       <div className="page-invest content-inner">
         <div className="reportHeader">
