@@ -153,6 +153,34 @@ export default class ChartBar extends PureComponent {
     return { max, min };
   }
 
+  // 针对户获取图表最大和最小值
+  @autobind
+  getMaxAndMinCust(series) {
+    let max = Math.max(...series);
+    let min = Math.min(...series);
+    if (max >= 10000) {
+      max = Math.ceil(max / 1000) * 1000;
+    } else if (max >= 100) {
+      max = Math.ceil(max / 100) * 100;
+    } else if (max < 100) {
+      max = Math.ceil(max / 10) * 10;
+    }
+    if (max === 0) {
+      max = 10;
+    }
+    if (min >= 10000) {
+      min = Math.floor(min / 1000) * 1000;
+    } else if (min >= 100) {
+      min = Math.floor(min / 100) * 100;
+    } else if (min < 100) {
+      min = Math.floor(min / 10) * 10;
+    }
+    if (min <= 0 || min >= max) {
+      min = 0;
+    }
+    return { max, min };
+  }
+
   @autobind
   createBarLinear(input) {
     const output = [];
@@ -280,6 +308,10 @@ export default class ChartBar extends PureComponent {
       const maxAndMinMoney = this.getMaxAndMinMoney(seriesData);
       gridXAxisMax = maxAndMinMoney.max;
       gridXaxisMin = maxAndMinMoney.min;
+    } else if (unit === '户') {
+      const maxAndMinPeople = this.getMaxAndMinCust(seriesData);
+      gridXAxisMax = maxAndMinPeople.max;
+      gridXaxisMin = maxAndMinPeople.min;
     }
     // 计算出所有值的中间值
     const medianValue = gridXAxisMax / 2;
