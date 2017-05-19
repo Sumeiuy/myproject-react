@@ -47,53 +47,48 @@ export default class CustRange extends PureComponent {
     };
   }
 
-  componentDidMount() {
+  componentWillMount() {
     const { custRange } = this.props;
     this.setDefaultValue(custRange);
   }
 
   componentWillReceiveProps(nextProps) {
-    const { custRange, location: { query: { orgId } } } = this.props;
-    if (_.isEqual(nextProps.custRange, custRange)
-        || _.isEqual(nextProps.location.query.orgId, orgId)) {
-      this.setDefaultValue(custRange);
+    const { location: { query: { orgId, custRangeName, custRangeLevel } } } = nextProps;
+    if (!_.isEqual(this.props.location.query.orgId, orgId)) {
+      this.setState({
+        value: {
+          label: decodeURIComponent(custRangeName),
+          value: `${custRangeLevel}-${orgId}-${decodeURIComponent(custRangeName)}`,
+        },
+      });
     }
   }
 
+  shouldComponentUpdate(nextProps) {
+    const { location: { query: { orgId } } } = this.props;
+    return nextProps.location.query.orgId !== orgId;
+  }
+
   @autobind
-  onChange(value, label, extra) {
-    const curValue = extra.triggerValue;
-    console.log('curValue', curValue);
-    this.setState({
-      value: {
-        label: curValue.split('-').slice(2).join('/'),
-        value: curValue,
+  onChange(value) {
+    const { replace, location: { query } } = this.props;
+    const tmpArr = value.value.split('-');
+    const custRangeLevel = encodeURIComponent(tmpArr[0]);
+    const orgId = encodeURIComponent(tmpArr[1]);
+    const custRangeName = encodeURIComponent(tmpArr.slice(2).join('/'));
+    replace({
+      pathname: '',
+      query: {
+        ...query,
+        orgId,
+        custRangeLevel,
+        custRangeName,
+        level: custRangeLevel,
       },
-    }, () => {
-      console.log('state2', this.state);
-      const { replace, location: { query } } = this.props;
-      // const { value } = this.state;
-      const tmpArr = value.value.split('-');
-      const custRangeLevel = encodeURIComponent(tmpArr[0]);
-      const orgId = encodeURIComponent(tmpArr[1]);
-      const custRangeName = encodeURIComponent(tmpArr.slice(2).join('/'));
-      replace({
-        pathname: '',
-        query: {
-          ...query,
-          orgId,
-          custRangeLevel,
-          custRangeName,
-          level: custRangeLevel,
-        },
-      });
     });
   }
 
   setDefaultValue(custRange) {
-    if (!custRange || !custRange.length) {
-      return;
-    }
     const { location: { query: { orgId, custRangeName } } } = this.props;
     const initValue = {
       label: !custRangeName ? custRange[0].name : decodeURIComponent(custRangeName),
@@ -107,9 +102,6 @@ export default class CustRange extends PureComponent {
   render() {
     const { custRange } = this.props;
     const { value } = this.state;
-    if (!custRange || !custRange.length) {
-      return null;
-    }
     const formatCustRange = transformCustRangeData(custRange);
     return (
       <TreeSelect
