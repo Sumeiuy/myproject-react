@@ -53,8 +53,9 @@ export default class CustRange extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { custRange } = this.props;
-    if (_.isEqual(nextProps, this.props)) {
+    const { custRange, location: { query: { orgId } } } = this.props;
+    if (_.isEqual(nextProps.custRange, custRange)
+        || _.isEqual(nextProps.location.query.orgId, orgId)) {
       this.setDefaultValue(custRange);
     }
   }
