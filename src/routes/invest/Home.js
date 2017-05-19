@@ -18,7 +18,7 @@ import CustRange from '../../components/invest/CustRange2';
 import { optionsMap } from '../../config';
 import styles from './Home.less';
 
-const empId = window.curUserCode || '002727';
+const empId = window.curUserCode || '001750';
 // RadioButton
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -47,7 +47,7 @@ const mapStateToProps = state => ({
   performance: state.invest.performance,
   chartInfo: state.invest.chartInfo,
   chartTableInfo: state.invest.chartTableInfo,
-  chartLoading: state.loading.effects[effects.chartInfo],
+  // chartLoading: state.loading.effects[effects.chartInfo],
   custRange: state.invest.custRange,
   globalLoading: state.activity.global,
 });
@@ -55,11 +55,8 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   getAllInfo: fectchDataFunction(true, effects.allInfo),
   getPerformance: fectchDataFunction(true, effects.performance),
-  refreshPerformance: fectchDataFunction(false, effects.performance),
   getChartInfo: fectchDataFunction(true, effects.chartInfo),
   getChartTableInfo: fectchDataFunction(true, effects.chartTableInfo),
-  refreshChartInfo: fectchDataFunction(true, effects.chartInfo),
-  refreshChartTableInfo: fectchDataFunction(false, effects.chartTableInfo),
   getCustRange: fectchDataFunction(false, effects.custRange),
   push: routerRedux.push,
   replace: routerRedux.replace,
@@ -73,15 +70,12 @@ export default class InvestHome extends PureComponent {
     location: PropTypes.object.isRequired,
     getAllInfo: PropTypes.func.isRequired,
     getPerformance: PropTypes.func.isRequired,
-    refreshPerformance: PropTypes.func.isRequired,
     performance: PropTypes.array,
     getChartInfo: PropTypes.func.isRequired,
-    getChartTableInfo: PropTypes.func.isRequired,
-    refreshChartInfo: PropTypes.func.isRequired,
-    refreshChartTableInfo: PropTypes.func.isRequired,
     chartInfo: PropTypes.array,
+    getChartTableInfo: PropTypes.func.isRequired,
     chartTableInfo: PropTypes.object,
-    chartLoading: PropTypes.bool,
+    // chartLoading: PropTypes.bool,
     globalLoading: PropTypes.bool,
     getCustRange: PropTypes.func.isRequired,
     custRange: PropTypes.array,
@@ -93,14 +87,13 @@ export default class InvestHome extends PureComponent {
     performance: [],
     chartInfo: [],
     chartTableInfo: {},
-    chartLoading: false,
+    // chartLoading: false,
     globalLoading: false,
     custRange: [],
   }
 
   componentWillMount() {
     const {
-      getAllInfo,
       location: { query },
     } = this.props;
     const value = query.cycleType || 'month';
@@ -108,141 +101,112 @@ export default class InvestHome extends PureComponent {
     this.state = {
       ...obj,
     };
+    this.getInfo(query);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    // 判断props是否变化
+    const { custRange, location: { query } } = nextProps;
+    const duration = this.state;
+    const {
+      location: { query: preQuery },
+      getChartInfo,
+      getChartTableInfo,
+    } = this.props;
+
+    const payload = {
+      ...query,
+      empId,
+      orgId: query.orgId || (custRange[0] && custRange[0].id),
+      scope: query.scope || Number(custRange[0] && custRange[0].level) + 1,
+      orderType: query.orderType || '',
+      begin: query.begin || duration.begin,
+      end: query.end || duration.end,
+      cycleType: query.cycleType || duration.cycleType,
+      localScope: query.custRangeLevel || (custRange[0] && custRange[0].level),
+    };
+    // 还是chart部分的数据
+    if (!_.isEqual(query, preQuery)) {
+      // 如果切换 机构树以及时间段，对下面的所有接口发起新的请求
+      const nowCustAndCycle = _.pick(query, ['custRangeLevel', 'cycleType']);
+      const preCustAndCycle = _.pick(preQuery, ['custRangeLevel', 'cycleType']);
+      if (!_.isEqual(nowCustAndCycle, preCustAndCycle)) {
+        this.getInfo(query);
+        // // 更改 scope 的值
+        // replace({
+        //   pathname: '/invest',
+        //   query: {
+        //     ...query,
+        //     scope: Number(query.custRangeLevel) + 1 || '',
+        //   },
+        // });
+      }
+      // 判断更改按分公司、营业部、投顾排序维度
+      // 判断排序方式变更
+      // 判断切换图表与表格
+      if (!_.isEqual(query.scope, preQuery.scope) ||
+        !_.isEqual(query.orderType, preQuery.orderType) ||
+        !_.isEqual(query.showChart, preQuery.showChart)) {
+        // todo，请求参数
+        // 如果现在是 zhuzhuangtu，则请求柱状图接口，否则请求表格接口
+
+        if (query.showChart === 'zhuzhuangtu' || !query.showChart) {
+          getChartInfo({
+            ...payload,
+          });
+        } else {
+          getChartTableInfo({
+            ...payload,
+            pageNum: query.page || '1',
+            orderIndicatorId: query.orderIndicatorId || '',
+          });
+        }
+      }
+      // 判断 页数 变更，请求表格数据接口
+      if (!_.isEqual(query.page, preQuery.page)) {
+        getChartTableInfo({
+          ...payload,
+          pageNum: query.page || '1',
+          orderIndicatorId: query.orderIndicatorId || '',
+        });
+      }
+    }
+  }
+
+  @autobind
+  getInfo(query) {
+    const { getAllInfo } = this.props;
+    const obj = this.state;
+    const payload = {
+      empId,
+      orgId: query.orgId || '',
+      begin: query.begin || obj.begin,
+      end: query.end || obj.end,
+      cycleType: query.cycleType || obj.cycleType,
+      localScope: query.custRangeLevel,
+    };
+    console.log('query', query);
     getAllInfo({
       custRange: {
         empId,
       },
       performance: {
-        orgId: query.orgId || '',
-        scope: query.scope || '',
-        empId,
-        begin: query.begin || obj.begin,
-        end: query.end || obj.end,
-        cycleType: query.cycleType || obj.cycleType,
+        ...payload,
+        scope: query.custRangeLevel,
       },
       chartInfo: {
-        orgId: query.orgId || '',
-        scope: query.scope || '',
-        empId,
-        begin: query.begin || obj.begin,
-        end: query.end || obj.end,
-        cycleType: query.cycleType || obj.cycleType,
+        ...payload,
+        scope: query.scope || Number(query.custRangeLevel) + 1,
+        localScope: query.custRangeLevel || '',
         orderType: query.orderType || '',
       },
       chartTableInfo: {
-        orgId: query.orgId || '',
-        empId,
-        scope: query.scope || '',
-        begin: query.begin || obj.begin,
-        end: query.end || obj.end,
-        cycleType: query.cycleType || obj.cycleType,
+        ...payload,
+        scope: query.scope || Number(query.custRangeLevel) + 1,
         orderType: query.orderType || '',
         pageNum: query.page || '1',
-        pageSize: '30',
       },
     });
-  }
-
-  componentWillReceiveProps(nextProps) {
-    // 判断props是否变化
-    const { replace, custRange, location: { query } } = nextProps;
-    const duration = this.state;
-    const {
-      location: { query: preQuery },
-      refreshChartInfo,
-      refreshChartTableInfo,
-      getChartInfo,
-      getChartTableInfo,
-      getPerformance,
-    } = this.props;
-    // 此处需要判断需要修改哪个值
-    // 是投顾头部总量指标
-    // 还是chart部分的数据
-    if (!_.isEqual(query, preQuery)) {
-      // 如果切换 机构树，更改下面筛选的 按分公司、营业部、投顾
-      const custRangeNow = _.pick(query, 'custRangeLevel');
-      const custRangePre = _.pick(preQuery, 'custRangeLevel');
-      if (!_.isEqual(custRangeNow, custRangePre)) {
-        // 需要改变query中的查询变量
-        replace({
-          pathname: '/invest',
-          query: {
-            ...query,
-            scope: Number(query.custRangeLevel) + 1,
-          },
-        });
-      }
-      // 判断是排序方式的值不同
-      const sortNow = _.pick(query, ['scope', 'orderType', 'showChart', 'page']);
-      const sortPre = _.pick(preQuery, ['scope', 'orderType', 'showChart', 'page']);
-      // console.log('sortNow', sortNow);
-      if (!_.isEqual(sortNow, sortPre)) {
-        // 只刷新指标分布区域
-        refreshChartInfo({
-          ...query,
-          scope: query.scope || (parseInt(custRange[0].level, 10) + 1),
-          localScope: custRange[0].level,
-          orgId: query.orgId || custRange[0].id,
-          empId,
-          orderType: sortNow.orderType || '',
-          begin: query.begin || duration.begin,
-          end: query.end || duration.end,
-          cycleType: query.cycleType || duration.cycleType,
-        });
-        refreshChartTableInfo({
-          ...query,
-          scope: query.scope || (parseInt(custRange[0].level, 10) + 1),
-          empId,
-          localScope: custRange[0].level,
-          orgId: query.orgId || custRange[0].id,
-          begin: query.begin || duration.begin,
-          end: query.end || duration.end,
-          cycleType: query.cycleType || duration.cycleType,
-          pageNum: query.page || '1',
-          orderType: query.tableOrderType || '',
-          orderIndicatorId: query.orderIndicatorId || '',
-        });
-      } else {
-        // 重新获取页面所有数据
-        getPerformance({
-          ...query,
-          orgId: query.orgId || custRange[0].id,
-          scope: query.scope || (parseInt(custRange[0].level, 10) + 1),
-          empId,
-          orderType: query.orderType || '',
-          begin: query.begin || duration.begin,
-          end: query.end || duration.end,
-          cycleType: query.cycleType || duration.cycleType,
-          localScope: custRange[0].level,
-        });
-        getChartInfo({
-          ...query,
-          scope: query.scope || (parseInt(custRange[0].level, 10) + 1),
-          empId,
-          orderType: query.orderType || '',
-          begin: query.begin || duration.begin,
-          end: query.end || duration.end,
-          cycleType: query.cycleType || duration.cycleType,
-          localScope: custRange[0].level,
-          orgId: query.orgId || custRange[0].id,
-        });
-        getChartTableInfo(
-          {
-            ...query,
-            scope: query.scope || (parseInt(custRange[0].level, 10) + 1),
-            empId,
-            localScope: custRange[0].level,
-            orgId: query.orgId || custRange[0].id,
-            begin: query.begin || duration.begin,
-            end: query.end || duration.end,
-            cycleType: query.cycleType || duration.cycleType,
-            pageNum: query.page || '1',
-            orderType: query.tableOrderType || '',
-            orderIndicatorId: query.orderIndicatorId || '',
-          },
-        );
-      }
-    }
   }
 
   @autobind

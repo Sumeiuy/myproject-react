@@ -67,23 +67,24 @@ export default {
       });
     },
     * getAllInfo({ payload }, { call, put }) {
+      console.log('payload', payload);
       const response = yield call(api.getCustRange, payload.custRange);
       const [resPerformance, resChartInfo, resChartTableInfo] = yield [
         call(api.getPerformance, {
           ...payload.performance,
-          localScope: response.resultData.level,
+          localScope: payload.performance.localScope || response.resultData.level,
           orgId: payload.performance.orgId || response.resultData.id,
-          scope: payload.performance.scope || parseInt(response.resultData.level, 10) + 1,
+          scope: payload.performance.scope || response.resultData.level,
         }),
         call(api.getChartInfo, {
           ...payload.chartInfo,
-          localScope: response.resultData.level,
+          localScope: payload.chartInfo.localScope || response.resultData.level,
           orgId: payload.chartInfo.orgId || response.resultData.id,
           scope: payload.chartInfo.scope || parseInt(response.resultData.level, 10) + 1,
         }),
         call(api.getChartTableInfo, {
           ...payload.chartTableInfo,
-          localScope: response.resultData.level,
+          localScope: payload.chartTableInfo.localScope || response.resultData.level,
           orgId: payload.chartTableInfo.orgId || response.resultData.id,
           scope: payload.chartTableInfo.scope || parseInt(response.resultData.level, 10) + 1,
         }),
