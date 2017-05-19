@@ -308,9 +308,6 @@ export default class ChartBar extends PureComponent {
       const maxAndMinMoney = this.getMaxAndMinMoney(seriesData);
       gridXAxisMax = maxAndMinMoney.max;
       gridXaxisMin = maxAndMinMoney.min;
-      console.log(name);
-      console.log('gridXAxisMax', gridXAxisMax);
-      console.log('gridXaxisMin', gridXaxisMin);
     } else if (unit === '户') {
       const maxAndMinPeople = this.getMaxAndMinCust(seriesData);
       gridXAxisMax = maxAndMinPeople.max;

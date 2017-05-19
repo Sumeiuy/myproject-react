@@ -67,7 +67,6 @@ export default {
       });
     },
     * getAllInfo({ payload }, { call, put }) {
-      console.log('payload', payload);
       const response = yield call(api.getCustRange, payload.custRange);
       const [resPerformance, resChartInfo, resChartTableInfo] = yield [
         call(api.getPerformance, {

@@ -7,6 +7,7 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import { Table, Pagination } from 'antd';
+import _ from 'lodash';
 
 import { optionsMap } from '../../config';
 import styles from './ChartTable.less';
@@ -71,86 +72,62 @@ export default class ChartTable extends PureComponent {
       },
     });
   }
-
   // 对小数进行处理
   @autobind
   toFixedDecimal(value) {
-    if (value > 10000) {
-      return value.toFixed(0);
+    let v = 0;
+    if (value === 0) {
+      v = 0;
+    } else {
+      v = _.ceil(value, 2);
     }
-    if (value > 1000) {
-      return value.toFixed(1);
-    }
-    if (value > 100) {
-      return value.toFixed(2);
-    }
-    if (value > 10) {
-      return value.toFixed(3);
-    }
-    return value.toFixed(4);
+    return v;
   }
 
-  // 对金额进行特殊处理的函数
   @autobind
-  toFixedMoney(series) {
-    let newUnit = '元';
-    let newSeries = series;
-    const MaxMoney = Math.max(...series);
-    // 1. 全部在万元以下的数据不做处理
-    // 2.超过万元的，以‘万元’为单位
-    // 3.超过亿元的，以‘亿元’为单位
-    if (MaxMoney > 100000000) {
-      newUnit = '亿元';
-      newSeries = series.map(item => Number(this.toFixedDecimal(item / 100000000)));
-    } else if (MaxMoney > 10000) {
-      newUnit = '万元';
-      newSeries = series.map(item => Number(this.toFixedDecimal(item / 10000)));
-    }
-
-    return {
-      newUnit,
-      newSeries,
-    };
+  unitChange(arr, name) {
+    let value;
+    const newArr = arr.map((item) => {
+      if (item.unit === '%') {
+        value = Number(item.value) * 100;
+      } else if (item.unit === '\u2030') {
+        value = Number(item.value) * 1000;
+      } else {
+        value = Number(item.value);
+      }
+      return {
+        [item.key]: this.toFixedDecimal(value),
+        city: name,
+      };
+    });
+    return newArr;
   }
 
   render() {
     const { chartTableInfo, location: { query }, level, style } = this.props;
     const columns = chartTableInfo.titleList;
     const data = chartTableInfo.indicatorSummuryRecordDtos;
-
-    let itemData;
-    let obj = {};
-    const test = [];
+    const temp = [];
+    let allWidth = 0;
     let arr = [];
-    const newArr = [];
     if (data && data.length) {
-      for (let i = 0; i < data.length; i++) {
-        itemData = data[i].indicatorDataList;
-        const tempArr = itemData.map(item => (
-          {
-            [item.key]: (item.unit === '%')
-            ? (Number(item.value) * 100).toFixed(3)
-            : item.value,
-            city: data[i].name,
-          }
-        ));
-        test.push(tempArr);
-        for (let j = 0; j < test.length; j++) {
-          obj = Object.assign({ key: j }, ...test[j]);
-        }
-        newArr.push(obj);
-      }
-      arr = columns.map(item => (
+      data.map((item, index) => {
+        const testArr = this.unitChange(item.indicatorDataList, item.name);
+        return temp.push(Object.assign({ key: index }, ...testArr));
+      });
+      // console.log(temp);
+      const columnWidth = [140, 150, 180, 210, 180, 140, 190, 140, 140, 150, 150, 150];
+      allWidth = _.sum(columnWidth);
+      arr = columns.map((item, index) => (
         {
           dataIndex: item.key,
           title: `${item.name} (${item.unit})`,
           sorter: true,
-          width: 150,
-          // sorter: (a, b) => a[item.key] - b[item.key],
+          width: columnWidth[index],
         }
       ));
-      console.log('newArr', newArr);
       const tempScope = query.scope || Number(level) + 1;
+      // 匹配第一列标题文字，分公司、营业部、投顾
       let keyName = '';
       for (let i = 0; i < sortByType.length; i++) {
         if (Number(tempScope) === Number(sortByType[i].scope)) {
@@ -161,7 +138,7 @@ export default class ChartTable extends PureComponent {
         title: keyName,
         dataIndex: 'city',
         key: 'city',
-        width: 100,
+        width: 150,
         fixed: 'left',
       });
     }
@@ -170,9 +147,9 @@ export default class ChartTable extends PureComponent {
         <Table
           {...this.state}
           columns={arr}
-          dataSource={newArr}
+          dataSource={temp}
           onChange={this.handleChange}
-          scroll={{ x: 1700, y: 400 }}
+          scroll={{ x: allWidth }}
         />
         <Pagination
           defaultCurrent={1}
