@@ -115,40 +115,37 @@ export default class PerformanceChartBoard extends PureComponent {
                   })
                 }
               </Select>
-              {
-                showChart === showType[1].type ?
-                  <Select
-                    defaultValue={orderType || 'desc'}
-                    className={styles.newSelect1}
-                    onChange={(v) => { this.handleSortChange('orderType', v); }}
-                  >
-                    {
-                      sortByOrder.map((item, index) => {
-                        const sortByOrderIndex = index;
-                        return <Option key={sortByOrderIndex} value={item.key}>{item.name}</Option>;
-                      })
-                    }
-                  </Select>
-                :
-                ''
-              }
+              <Select
+                defaultValue={orderType || 'desc'}
+                className={styles.newSelect1}
+                onChange={(v) => { this.handleSortChange('orderType', v); }}
+                style={{
+                  display: showChart === showType[1].type ? 'inline-block' : 'none',
+                }}
+              >
+                {
+                  sortByOrder.map((item, index) => {
+                    const sortByOrderIndex = index;
+                    return <Option key={sortByOrderIndex} value={item.key}>{item.name}</Option>;
+                  })
+                }
+              </Select>
             </div>
             <div className={styles.iconBtn}>
-              {
-                showType.map((item, index) => {
-                  const iconIndex = `icon${index}`;
-                  return (
-                    <Icon
-                      title={item.title}
-                      type={item.type}
-                      key={iconIndex}
-                      className={styles.fixMargin}
-                      onClick={() => { this.handleIconClick(item.type); }}
-                      style={{ color: showChart === item.type ? '#ffd92a' : '#fff' }}
-                    />
-                  );
-                })
-              }
+              <Icon
+                title={'表格视图'}
+                type={'tables'}
+                className={styles.fixMargin}
+                onClick={() => { this.handleIconClick('tables'); }}
+                style={{ color: showChart === 'tables' ? '#ffd92a' : '#fff' }}
+              />
+              <Icon
+                title={'柱状视图'}
+                type={'zhuzhuangtu'}
+                className={styles.fixMargin}
+                onClick={() => { this.handleIconClick('zhuzhuangtu'); }}
+                style={{ color: showChart === 'zhuzhuangtu' ? '#ffd92a' : '#fff' }}
+              />
             </div>
             <div className={styles.iconBtn}>
               <Icon
@@ -160,22 +157,24 @@ export default class PerformanceChartBoard extends PureComponent {
           </div>
         </div>
         {/* 根据 url 里的 showChart 来显示不同的组件 */}
-        {
-          showChart === showType[0].type ?
-            <ChartTable
-              chartTableInfo={chartTableInfo}
-              replace={replace}
-              level={level}
-              location={location}
-            />
-          :
-            <ChartBoard
-              chartData={chartData}
-              location={location}
-              loading={loading}
-              level={level}
-            />
-        }
+        <ChartTable
+          chartTableInfo={chartTableInfo}
+          replace={replace}
+          level={level}
+          location={location}
+          style={{
+            display: showChart === 'tables' ? 'block' : 'none',
+          }}
+        />
+        <ChartBoard
+          chartData={chartData}
+          location={location}
+          loading={loading}
+          level={level}
+          style={{
+            display: showChart === 'zhuzhuangtu' ? 'block' : 'none',
+          }}
+        />
       </div>
     );
   }
