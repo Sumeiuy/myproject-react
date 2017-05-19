@@ -22,12 +22,18 @@ const empId = window.curUserCode || '002727';
 // RadioButton
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
+
 // Select
 const Option = Select.Option;
 // 头部筛选条件
 const headBar = optionsMap.headBar;
 // 时间筛选条件
 const timeOptions = optionsMap.time;
+// 渲染3个头部期间Radio
+const timeRadios = timeOptions.map((item, index) => {
+  const timeIndex = `Timeradio${index}`;
+  return React.createElement(RadioButton, { key: timeIndex, value: `${item.key}` }, `${item.name}`);
+});
 
 const effects = {
   allInfo: 'invest/getAllInfo',
@@ -302,12 +308,7 @@ export default class InvestHome extends PureComponent {
                 defaultValue={duration.cycleType || 'month'}
                 onChange={this.handleDurationChange}
               >
-                {
-                  timeOptions.map((item, index) => {
-                    const timeIndex = index;
-                    return <RadioButton key={timeIndex} value={item.key}>{item.name}</RadioButton>;
-                  })
-                }
+                {timeRadios}
               </RadioGroup>
               <div className={styles.vSplit} />
               {/* 营业地址选择项 */}
