@@ -13,7 +13,7 @@ import _ from 'lodash';
 
 import PerformanceItem from '../../components/invest/PerformanceItem';
 import PreformanceChartBoard from '../../components/invest/PerformanceChartBoard';
-import CustRange2 from '../../components/invest/CustRange2';
+import CustRange from '../../components/invest/CustRange2';
 // 选择项字典
 import { optionsMap } from '../../config';
 import styles from './Home.less';
@@ -344,7 +344,7 @@ export default class InvestHome extends PureComponent {
               </RadioGroup>
               <div className={styles.vSplit} />
               {/* 营业地址选择项 */}
-              <CustRange2
+              <CustRange
                 custRange={custRange}
                 location={location}
                 replace={replace}
