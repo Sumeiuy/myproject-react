@@ -19,6 +19,7 @@ export default class ChartTable extends PureComponent {
     location: PropTypes.object,
     level: PropTypes.string,
     chartTableInfo: PropTypes.object,
+    style: PropTypes.object,
     sourceData: PropTypes.array,
     data: PropTypes.object,
     replace: PropTypes.func.isRequired,
@@ -26,6 +27,7 @@ export default class ChartTable extends PureComponent {
 
   static defaultProps = {
     location: {},
+    style: {},
     level: '',
     chartTableInfo: {},
     sourceData: [],
@@ -112,7 +114,7 @@ export default class ChartTable extends PureComponent {
   }
 
   render() {
-    const { chartTableInfo, location: { query }, level } = this.props;
+    const { chartTableInfo, location: { query }, level, style } = this.props;
     const columns = chartTableInfo.titleList;
     const data = chartTableInfo.indicatorSummuryRecordDtos;
 
@@ -164,7 +166,7 @@ export default class ChartTable extends PureComponent {
       });
     }
     return (
-      <div className={styles.tableDiv}>
+      <div className={styles.tableDiv} style={style}>
         <Table
           {...this.state}
           columns={arr}

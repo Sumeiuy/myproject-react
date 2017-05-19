@@ -14,6 +14,7 @@ export default class ChartBoard extends PureComponent {
   static propTypes = {
     level: PropTypes.string,
     location: PropTypes.object,
+    style: PropTypes.object,
     chartData: PropTypes.array,
     // loading: PropTypes.bool.isRequired,
   }
@@ -21,14 +22,15 @@ export default class ChartBoard extends PureComponent {
   static defaultProps = {
     level: '',
     location: {},
+    style: {},
     chartData: [],
-    loading: false,
+    // loading: false,
   }
 
   render() {
-    const { chartData, location: { query }, level } = this.props;
+    const { chartData, location: { query }, level, style } = this.props;
     return (
-      <div className={styles.board}>
+      <div className={styles.board} style={style}>
         {/* <Loading loading={loading} /> */}
         <Row type="flex">
           {
