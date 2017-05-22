@@ -124,7 +124,11 @@ export default class InvestHome extends PureComponent {
       ...query,
       empId,
       orgId: query.orgId || (custRange[0] && custRange[0].id),
-      scope: query.scope || Number(custRange[0] && custRange[0].level) + 1,
+      // scope: query.scope || Number(custRange[0] && custRange[0].level) + 1,
+      scope: query.scope ||
+      (query.custRangeLevel
+      ? Number(query.custRangeLevel) + 1
+      : Number(custRange[0] && custRange[0].level) + 1),
       orderType: query.orderType || '',
       begin: query.begin || duration.begin,
       end: query.end || duration.end,
@@ -174,6 +178,7 @@ export default class InvestHome extends PureComponent {
       if (!_.isEqual(nowPageAndOrderType, prePageAndOrderType)) {
         getChartTableInfo({
           ...payload,
+          scope: query.scope || Number(query.custRangeLevel) + 1,
           pageNum: query.page || '1',
           orderIndicatorId: query.orderIndicatorId || '',
           orderType: query.tableOrderType || '',
