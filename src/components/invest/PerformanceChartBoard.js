@@ -95,7 +95,6 @@ export default class PerformanceChartBoard extends PureComponent {
     const { chartData, chartTableInfo, replace, loading, location, level } = this.props;
     const sliceSortByType = sortByType.slice(level - 1);
     const sliceScope = sliceSortByType[0].scope;
-    console.log('sliceScope', sliceScope);
     if (!(chartData && chartData.length)) {
       return null;
     }
