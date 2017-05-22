@@ -292,13 +292,6 @@ export default class InvestHome extends PureComponent {
       http://192.168.71.26:9084/fspa/mcrm/api/excel/jxzb/exportExcel?${queryToString(data)}
     `;
   }
-  // @autobind
-  // durationChange(value) {
-  //   const obj = this.getDurationString(value);
-  //   this.setState({
-  //     duration: obj,
-  //   });
-  // }
   // 期间变化
   @autobind
   handleDurationChange(e) {
@@ -316,6 +309,7 @@ export default class InvestHome extends PureComponent {
         begin: obj.begin,
         end: obj.end,
         cycleType: value,
+        page: 1,
       },
     });
   }
