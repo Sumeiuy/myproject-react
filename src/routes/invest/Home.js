@@ -41,6 +41,7 @@ const effects = {
   chartInfo: 'invest/getChartInfo',
   custRange: 'invest/getCustRange',
   chartTableInfo: 'invest/getChartTableInfo',
+  excelInfo: 'invest/postExcelInfo',
 };
 
 const fectchDataFunction = (globalLoading, type) => query => ({
@@ -55,6 +56,7 @@ const mapStateToProps = state => ({
   chartTableInfo: state.invest.chartTableInfo,
   // chartLoading: state.loading.effects[effects.chartInfo],
   custRange: state.invest.custRange,
+  excelInfo: state.invest.excelInfo,
   globalLoading: state.activity.global,
 });
 
@@ -64,6 +66,7 @@ const mapDispatchToProps = {
   getChartInfo: fectchDataFunction(true, effects.chartInfo),
   getChartTableInfo: fectchDataFunction(true, effects.chartTableInfo),
   getCustRange: fectchDataFunction(false, effects.custRange),
+  postExcelInfo: fectchDataFunction(true, effects.excelInfo),
   push: routerRedux.push,
   replace: routerRedux.replace,
 };
@@ -81,6 +84,8 @@ export default class InvestHome extends PureComponent {
     chartInfo: PropTypes.array,
     getChartTableInfo: PropTypes.func.isRequired,
     chartTableInfo: PropTypes.object,
+    excelInfo: PropTypes.object,
+    postExcelInfo: PropTypes.func.isRequired,
     // chartLoading: PropTypes.bool,
     globalLoading: PropTypes.bool,
     getCustRange: PropTypes.func.isRequired,
@@ -93,6 +98,7 @@ export default class InvestHome extends PureComponent {
     performance: [],
     chartInfo: [],
     chartTableInfo: {},
+    excelInfo: {},
     // chartLoading: false,
     globalLoading: false,
     custRange: [],
@@ -138,18 +144,33 @@ export default class InvestHome extends PureComponent {
     // 还是chart部分的数据
     if (!_.isEqual(query, preQuery)) {
       // 如果切换 机构树以及时间段，对下面的所有接口发起新的请求
-      const nowCustAndCycle = _.pick(query, ['custRangeLevel', 'cycleType']);
-      const preCustAndCycle = _.pick(preQuery, ['custRangeLevel', 'cycleType']);
+      const nowCustAndCycle = _.pick(query, ['cycleType']);
+      const preCustAndCycle = _.pick(preQuery, ['cycleType']);
       if (!_.isEqual(nowCustAndCycle, preCustAndCycle)) {
-        this.getInfo(query);
-        // // 更改 scope 的值
-        // replace({
-        //   pathname: '/invest',
-        //   query: {
-        //     ...query,
-        //     scope: Number(query.custRangeLevel) + 1 || '',
-        //   },
-        // });
+        this.getInfo({
+          ...query,
+          page: '1',
+        });
+      }
+      // 如果切换 机构树，对下面的所有接口发起新的请求
+      const nowOrgId = _.pick(query, ['orgId']);
+      const preOrgId = _.pick(preQuery, ['orgId']);
+      if (!_.isEqual(nowOrgId, preOrgId)) {
+        if (query.scope) {
+          if (Number(query.level) + 1 !== query.scope) {
+            // const newQuery = Object.assign(query, { scope: Number(query.level) + 1 });
+            this.getInfo({
+              ...query,
+              scope: Number(query.level) + 1,
+              page: '1',
+            });
+          }
+        } else {
+          this.getInfo({
+            ...query,
+            page: '1',
+          });
+        }
       }
       // 判断更改按分公司、营业部、投顾排序维度
       // 判断排序方式变更
@@ -162,13 +183,14 @@ export default class InvestHome extends PureComponent {
 
         if (query.showChart === 'zhuzhuangtu' || !query.showChart) {
           getChartInfo({
-            ...payload,
+            ..._.pick(payload, ['scope', 'localScope', 'orgId', 'begin', 'end', 'cycleType', 'orderType']),
           });
         } else {
           getChartTableInfo({
-            ...payload,
-            pageNum: query.page || '1',
+            ..._.pick(payload, ['scope', 'localScope', 'orgId', 'begin', 'end', 'cycleType']),
+            pageNum: '1',
             orderIndicatorId: query.orderIndicatorId || '',
+            orderType: query.tableOrderType || '',
           });
         }
       }
@@ -177,7 +199,7 @@ export default class InvestHome extends PureComponent {
       const prePageAndOrderType = _.pick(preQuery, ['page', 'tableOrderType']);
       if (!_.isEqual(nowPageAndOrderType, prePageAndOrderType)) {
         getChartTableInfo({
-          ...payload,
+          ..._.pick(payload, ['localScope', 'orgId', 'begin', 'end', 'cycleType']),
           scope: query.scope || Number(query.custRangeLevel) + 1,
           pageNum: query.page || '1',
           orderIndicatorId: query.orderIndicatorId || '',
@@ -204,17 +226,16 @@ export default class InvestHome extends PureComponent {
         empId,
       },
       performance: {
-        ...payload,
         scope: query.custRangeLevel,
+        ..._.pick(payload, ['orgId', 'begin', 'end', 'cycleType', 'localScope']),
       },
       chartInfo: {
-        ...payload,
         scope: query.scope || Number(query.custRangeLevel) + 1,
-        localScope: query.custRangeLevel || '',
         orderType: query.orderType || '',
+        ..._.pick(payload, ['orgId', 'begin', 'end', 'cycleType', 'localScope']),
       },
       chartTableInfo: {
-        ...payload,
+        ..._.pick(payload, ['orgId', 'localScope', 'begin', 'end', 'cycleType']),
         scope: query.scope || Number(query.custRangeLevel) + 1,
         orderType: query.orderType || '',
         pageNum: query.page || '1',
@@ -250,7 +271,20 @@ export default class InvestHome extends PureComponent {
     }
     return durationObj;
   }
-
+  // 导出 excel 文件
+  // todo --数据绑定
+  @autobind
+  exportExcel() {
+    const { postExcelInfo } = this.props;
+    postExcelInfo({
+      orgId: 'ZZ001041093',
+      localScope: '1',
+      scope: '2',
+      begin: '20170501',
+      end: '20170518',
+      cycleType: 'month',
+    });
+  }
   // @autobind
   // durationChange(value) {
   //   const obj = this.getDurationString(value);
@@ -337,6 +371,7 @@ export default class InvestHome extends PureComponent {
             <PreformanceChartBoard
               chartData={chartInfo}
               chartTableInfo={chartTableInfo}
+              postExcelInfo={this.exportExcel}
               level={selScope}
               location={location}
               replace={replace}
