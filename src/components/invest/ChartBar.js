@@ -273,6 +273,8 @@ export default class ChartBar extends PureComponent {
     } = this.props;
     let { chartData: { unit } } = this.props;
     const levelAndScope = scope !== '' ? scope : (parseInt(level, 10) + 1);
+    console.log('levelAndScope', levelAndScope);
+    // const levelAndScope = parseInt(level, 10) + 1;
     const levelName = `level${levelAndScope}Name`;
     // 此处为y轴刻度值
     const yAxisLabels = this.getChartData(orgModel, levelName);

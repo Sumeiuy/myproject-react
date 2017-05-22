@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 import { Row, Radio, Select } from 'antd';
 import _ from 'lodash';
 
+import { queryToString } from '../../utils/helper';
 import PerformanceItem from '../../components/invest/PerformanceItem';
 import PreformanceChartBoard from '../../components/invest/PerformanceChartBoard';
 import CustRange from '../../components/invest/CustRange2';
@@ -199,8 +200,7 @@ export default class InvestHome extends PureComponent {
       const prePageAndOrderType = _.pick(preQuery, ['page', 'tableOrderType']);
       if (!_.isEqual(nowPageAndOrderType, prePageAndOrderType)) {
         getChartTableInfo({
-          ..._.pick(payload, ['localScope', 'orgId', 'begin', 'end', 'cycleType']),
-          scope: query.scope || Number(query.custRangeLevel) + 1,
+          ..._.pick(payload, ['scope', 'localScope', 'orgId', 'begin', 'end', 'cycleType']),
           pageNum: query.page || '1',
           orderIndicatorId: query.orderIndicatorId || '',
           orderType: query.tableOrderType || '',
@@ -271,19 +271,26 @@ export default class InvestHome extends PureComponent {
     }
     return durationObj;
   }
-  // 导出 excel 文件
-  // todo --数据绑定
+    // 导出 excel 文件
   @autobind
   exportExcel() {
-    const { postExcelInfo } = this.props;
-    postExcelInfo({
-      orgId: 'ZZ001041093',
-      localScope: '1',
-      scope: '2',
-      begin: '20170501',
-      end: '20170518',
-      cycleType: 'month',
-    });
+    const { custRange, location: { query } } = this.props;
+    const duration = this.state;
+    const data = {
+      orgId: query.orgId || (custRange[0] && custRange[0].id),
+      localScope: query.custRangeLevel || (custRange[0] && custRange[0].level),
+      scope: query.scope ||
+      (query.custRangeLevel
+      ? Number(query.custRangeLevel) + 1
+      : Number(custRange[0] && custRange[0].level) + 1),
+      begin: query.begin || duration.begin,
+      end: query.end || duration.end,
+      cycleType: query.cycleType || duration.cycleType,
+    };
+    console.warn('data', data);
+    window.location.href = `
+      http://192.168.71.26:9084/fspa/mcrm/api/excel/jxzb/exportExcel?${queryToString(data)}
+    `;
   }
   // @autobind
   // durationChange(value) {
