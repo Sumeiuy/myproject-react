@@ -132,6 +132,8 @@ export default class ChartBar extends PureComponent {
     let min = Math.min(...series);
     if (max >= 10000) {
       max = Math.ceil(max / 1000) * 1000;
+    } else if (max >= 1000) {
+      max = Math.ceil(max / 1000) * 1000;
     } else if (max >= 100) {
       max = Math.ceil(max / 100) * 100;
     } else if (max < 100) {
@@ -141,6 +143,8 @@ export default class ChartBar extends PureComponent {
       max = 1;
     }
     if (min >= 10000) {
+      min = Math.floor(min / 1000) * 1000;
+    } else if (min >= 1000) {
       min = Math.floor(min / 1000) * 1000;
     } else if (min >= 100) {
       min = Math.floor(min / 100) * 100;
@@ -310,7 +314,7 @@ export default class ChartBar extends PureComponent {
       const maxAndMinMoney = this.getMaxAndMinMoney(seriesData);
       gridXAxisMax = maxAndMinMoney.max;
       gridXaxisMin = maxAndMinMoney.min;
-    } else if (unit === '户') {
+    } else if (unit === '户' || unit === '人') {
       const maxAndMinPeople = this.getMaxAndMinCust(seriesData);
       gridXAxisMax = maxAndMinPeople.max;
       gridXaxisMin = maxAndMinPeople.min;
