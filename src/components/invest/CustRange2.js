@@ -84,6 +84,9 @@ export default class CustRange extends PureComponent {
         custRangeLevel,
         custRangeName,
         level: custRangeLevel,
+        scope: Number(custRangeLevel) + 1,
+        orderIndicatorId: '',
+        orderType: '',
       },
     });
   }
