@@ -31,6 +31,7 @@ export default class PerformanceChartBoard extends PureComponent {
     sort: PropTypes.func.isRequired,
     loading: PropTypes.bool,
     level: PropTypes.string,
+    postExcelInfo: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -41,6 +42,7 @@ export default class PerformanceChartBoard extends PureComponent {
     level: '',
     repalce: () => {},
     sort: () => {},
+    postExcelInfo: () => {},
   }
 
   constructor(props) {
@@ -84,15 +86,16 @@ export default class PerformanceChartBoard extends PureComponent {
   // 导出图标
   @autobind
   handleDataExportClick() {
-
+    const { postExcelInfo } = this.props;
+    postExcelInfo();
   }
 
   render() {
     const { showChart, orderType } = this.state;
     const { chartData, chartTableInfo, replace, loading, location, level } = this.props;
     const sliceSortByType = sortByType.slice(level - 1);
-    console.log('sliceSortByType', sliceSortByType);
-    const sliceScope = location.query.scope || sliceSortByType[0].scope;
+    const sliceScope = sliceSortByType[0].scope;
+    console.log('sliceScope', sliceScope);
     if (!(chartData && chartData.length)) {
       return null;
     }
