@@ -53,12 +53,16 @@ export default class CustRange extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { location: { query: { orgId, custRangeName, custRangeLevel } } } = nextProps;
+    const { custRange, location: { query: { orgId, custRangeName, custRangeLevel } } } = nextProps;
+    console.log('componentWillReceiveProps>>>', nextProps);
     if (!_.isEqual(this.props.location.query.orgId, orgId)) {
       this.setState({
         value: {
-          label: decodeURIComponent(custRangeName),
-          value: `${custRangeLevel}-${orgId}-${decodeURIComponent(custRangeName)}`,
+          label: custRangeName ? decodeURIComponent(custRangeName) : custRange[0].name,
+          value: custRangeName
+                  ?
+                  `${custRangeLevel}-${orgId}-${decodeURIComponent(custRangeName)}`
+                  : custRange[0].id,
         },
       });
     }
