@@ -40,6 +40,14 @@ export default {
         chartTableInfo,
       };
     },
+    postExcelInfoSuccess(state, action) {
+      const { payload: { resExcelInfo } } = action;
+      const excelInfo = resExcelInfo.resultData.data;
+      return {
+        ...state,
+        excelInfo,
+      };
+    },
     getCustRangeSuccess(state, action) {
       const { response: { resultData } } = action;
       let custRange;
@@ -67,7 +75,6 @@ export default {
       });
     },
     * getAllInfo({ payload }, { call, put }) {
-      console.log('payload', payload);
       const response = yield call(api.getCustRange, payload.custRange);
       const [resPerformance, resChartInfo, resChartTableInfo] = yield [
         call(api.getPerformance, {
@@ -123,6 +130,16 @@ export default {
         payload: { resChartTableInfo },
       });
     },
+
+    // 导出表格数据
+    * postExcelInfo({ payload }, { call, put }) {
+      const resExcelInfo = yield call(api.postExcelInfo, payload);
+      yield put({
+        type: 'postExcelInfoSuccess',
+        payload: { resExcelInfo },
+      });
+    },
+
     // 获取客户范围
     * getCustRange({ payload }, { call, put }) {
       const response = yield call(api.getCustRange, payload);
