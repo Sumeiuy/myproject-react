@@ -88,6 +88,10 @@ body {
   color: #97bfd4;
   text-decoration: none;
 }
+.pageCheckBrowser .content .right .tip .download:active,
+.pageCheckBrowser .content .right .tip .download:visited, {
+  outline: none;
+}
 .pageCheckBrowser .content .right .tip .download-tool-tip {
   position: absolute;
   top: -6px;
