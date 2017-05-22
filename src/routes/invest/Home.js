@@ -168,12 +168,15 @@ export default class InvestHome extends PureComponent {
           });
         }
       }
-      // 判断 页数 变更，请求表格数据接口
-      if (!_.isEqual(query.page, preQuery.page)) {
+      // 判断 页数，表格排序方式 变更，请求表格数据接口
+      const nowPageAndOrderType = _.pick(query, ['page', 'tableOrderType']);
+      const prePageAndOrderType = _.pick(preQuery, ['page', 'tableOrderType']);
+      if (!_.isEqual(nowPageAndOrderType, prePageAndOrderType)) {
         getChartTableInfo({
           ...payload,
           pageNum: query.page || '1',
           orderIndicatorId: query.orderIndicatorId || '',
+          orderType: query.tableOrderType || '',
         });
       }
     }
@@ -191,7 +194,6 @@ export default class InvestHome extends PureComponent {
       cycleType: query.cycleType || obj.cycleType,
       localScope: query.custRangeLevel,
     };
-    console.log('query', query);
     getAllInfo({
       custRange: {
         empId,
