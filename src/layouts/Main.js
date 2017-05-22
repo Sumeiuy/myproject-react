@@ -6,8 +6,6 @@
 import React, { Component, PropTypes } from 'react';
 import { withRouter } from 'dva/router';
 import { connect } from 'dva';
-import { Helmet } from 'react-helmet';
-import { constants } from '../config';
 import Loading from './Loading';
 import Footer from './Footer';
 
@@ -35,9 +33,6 @@ export default class Main extends Component {
     const { children, loading } = this.props;
     return (
       <div>
-        <Helmet>
-          <link rel="icon" href={constants.logoSrc} type="image/x-icon" />
-        </Helmet>
         <div className={styles.layout}>
           <div className={styles.main}>
             <div className={styles.container}>
