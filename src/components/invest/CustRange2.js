@@ -44,12 +44,18 @@ export default class CustRange extends PureComponent {
     super(props);
     this.state = {
       value: undefined,
+      open: false,
     };
   }
 
   componentWillMount() {
     const { custRange } = this.props;
     this.setDefaultValue(custRange);
+  }
+
+  componentDidMount() {
+    document.addEventListener('mousewheel', this.handleMousewheel, false);
+    document.addEventListener('DOMMouseScroll', this.handleMousewheel, false);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -107,10 +113,36 @@ export default class CustRange extends PureComponent {
     });
   }
 
+  @autobind
+  handleMousewheel() {
+    const dropDown = document.querySelector('.ant-select-dropdown');
+    if (!dropDown) {
+      return;
+    }
+    this.addDropDownMouseWheel();
+    const evt = new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window });
+    document.dispatchEvent(evt);
+  }
+
+  handleDropDownMousewheel(e = window.event) {
+    if (e.stopPropagation) {
+      e.stopPropagation();
+    } else {
+      e.cancelBubble = true;
+    }
+  }
+
+  addDropDownMouseWheel() {
+    const elem = document.querySelector('.ant-select-tree-dropdown');
+    elem.addEventListener('mousewheel', this.handleDropDownMousewheel, false);
+    elem.addEventListener('DOMMouseScroll', this.handleDropDownMousewheel, false);
+  }
+
   render() {
     const { custRange } = this.props;
     const { value } = this.state;
     const formatCustRange = transformCustRangeData(custRange);
+    console.log('TreeSelct>>>', TreeSelect);
     return (
       <TreeSelect
         notFoundContent="没有结果"
