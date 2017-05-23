@@ -106,9 +106,7 @@ export default class InvestHome extends PureComponent {
   }
 
   componentWillMount() {
-    const {
-      location: { query },
-    } = this.props;
+    const { location: { query } } = this.props;
     const value = query.cycleType || 'month';
     const obj = this.getDurationString(value);
     this.state = {
@@ -196,8 +194,8 @@ export default class InvestHome extends PureComponent {
         }
       }
       // 判断 页数，表格排序方式 变更，请求表格数据接口
-      const nowPageAndOrderType = _.pick(query, ['page', 'tableOrderType']);
-      const prePageAndOrderType = _.pick(preQuery, ['page', 'tableOrderType']);
+      const nowPageAndOrderType = _.pick(query, ['page', 'tableOrderType', 'orderIndicatorId']);
+      const prePageAndOrderType = _.pick(preQuery, ['page', 'tableOrderType', 'orderIndicatorId']);
       if (!_.isEqual(nowPageAndOrderType, prePageAndOrderType)) {
         getChartTableInfo({
           ..._.pick(payload, ['scope', 'localScope', 'orgId', 'begin', 'end', 'cycleType']),
