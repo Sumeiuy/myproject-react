@@ -278,14 +278,12 @@ export default class ChartBar extends PureComponent {
     } = this.props;
     let { chartData: { unit } } = this.props;
     const levelAndScope = query.scope ? query.scope : (parseInt(level, 10) + 1);
-    console.log('levelAndScope', levelAndScope);
     // const levelAndScope = parseInt(level, 10) + 1;
     const levelName = `level${levelAndScope}Name`;
-    console.log('levelName', levelName);
     // 此处为y轴刻度值
-    const yAxisLabels = this.getChartData(orgModel, levelName);
+    const yAxisLabels = this.getChartData(orgModel, levelName, 'yAxis');
     // 此处为数据,此数据在百分比的情况下,全部都是小数，需要乘以100
-    let seriesData = this.getChartData(orgModel, 'value');
+    let seriesData = this.getChartData(orgModel, 'value', 'xAxis');
     seriesData = seriesData.map(item => Number(item));
     if (unit === '%') {
       seriesData = seriesData.map(item => (item * 100));
@@ -425,21 +423,31 @@ export default class ChartBar extends PureComponent {
           <div className={styles.chartTitle}>
             <Icon type={iconTypeMap[key]} className={styles.chartTiltleTextIcon} />
             <span className={styles.chartTitleText}>{name}</span>
+            {/*
+              <span
+                style={{
+                  float: 'right',
+                  height: '100%',
+                  verticalAlign: 'middle',
+                  lineHeight: '45px',
+                }}
+              >3600户</span>
+            */}
           </div>
         </div>
         <div className={styles.chartWrapper}>
           {
             orgModel.length ?
-              <ReactEcharts
+              (<ReactEcharts
                 option={options}
                 style={{
                   height: '290px',
                 }}
-              />
+              />)
             :
-              <div className={styles.noChart}>
+              (<div className={styles.noChart}>
                 <img src={imgSrc} alt="图表不可见" />
-              </div>
+              </div>)
           }
         </div>
       </div>
