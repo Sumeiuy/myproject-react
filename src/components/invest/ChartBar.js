@@ -60,15 +60,15 @@ const barShadow = {
 export default class ChartBar extends PureComponent {
 
   static propTypes = {
+    location: PropTypes.object,
     level: PropTypes.string,
-    scope: PropTypes.string,
     chartData: PropTypes.object,
     iconType: PropTypes.string,
   }
 
   static defaultProps = {
     level: '',
-    scope: '',
+    location: {},
     chartData: {},
     iconType: 'zichan',
   }
@@ -269,17 +269,19 @@ export default class ChartBar extends PureComponent {
   }
 
   render() {
+    // todo未对数据为空进行判断，导致初始页面不渲染
     // const { chartData } = this.props;
     const {
       chartData: { name, key, orgModel = [] },
+      location: { query },
       level,
-      scope,
     } = this.props;
     let { chartData: { unit } } = this.props;
-    const levelAndScope = scope !== '' ? scope : (parseInt(level, 10) + 1);
+    const levelAndScope = query.scope ? query.scope : (parseInt(level, 10) + 1);
     console.log('levelAndScope', levelAndScope);
     // const levelAndScope = parseInt(level, 10) + 1;
     const levelName = `level${levelAndScope}Name`;
+    console.log('levelName', levelName);
     // 此处为y轴刻度值
     const yAxisLabels = this.getChartData(orgModel, levelName);
     // 此处为数据,此数据在百分比的情况下,全部都是小数，需要乘以100
