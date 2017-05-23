@@ -28,7 +28,7 @@ export default class ChartBoard extends PureComponent {
   }
 
   render() {
-    const { chartData, location: { query }, level, style } = this.props;
+    const { chartData, location, level, style } = this.props;
     return (
       <div className={styles.board} style={style}>
         {/* <Loading loading={loading} /> */}
@@ -44,8 +44,8 @@ export default class ChartBoard extends PureComponent {
                 >
                   <ChartBar
                     chartData={item}
-                    level={query.level || level}
-                    scope={query.scope}
+                    location={location}
+                    level={location.query.level || level}
                   />
                 </Col>
               );

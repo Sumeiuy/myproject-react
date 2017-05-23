@@ -76,6 +76,7 @@ export default class PerformanceChartBoard extends PureComponent {
       query: {
         ...query,
         showChart: type,
+        page: type !== 'tables' ? '1' : query.page,
       },
     });
     this.setState({
