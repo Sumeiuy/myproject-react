@@ -1,6 +1,10 @@
 body {
   margin: 0;
 }
+a:focus,
+a:link,a:visited,a:active{
+  outline: none;
+}
 .imgResponsive {
   width: 100%;
   height: 100%;
@@ -72,6 +76,8 @@ body {
   vertical-align: top;
 }
 .pageCheckBrowser .content .right .tip .icon {
+  position: relative;
+  top:2px;
   margin-left: 4px;
   display: inline-block;
   width: 14px;
@@ -88,8 +94,10 @@ body {
   color: #97bfd4;
   text-decoration: none;
 }
+.pageCheckBrowser .content .right .tip .download:link,
 .pageCheckBrowser .content .right .tip .download:active,
-.pageCheckBrowser .content .right .tip .download:visited, {
+.pageCheckBrowser .content .right .tip .download:visited,
+.pageCheckBrowser .content .right .tip .download:focus, {
   outline: none;
 }
 .pageCheckBrowser .content .right .tip .download-tool-tip {
