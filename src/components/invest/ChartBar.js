@@ -60,15 +60,15 @@ const barShadow = {
 export default class ChartBar extends PureComponent {
 
   static propTypes = {
+    location: PropTypes.object,
     level: PropTypes.string,
-    scope: PropTypes.string,
     chartData: PropTypes.object,
     iconType: PropTypes.string,
   }
 
   static defaultProps = {
     level: '',
-    scope: '',
+    location: {},
     chartData: {},
     iconType: 'zichan',
   }
@@ -269,21 +269,21 @@ export default class ChartBar extends PureComponent {
   }
 
   render() {
+    // todo未对数据为空进行判断，导致初始页面不渲染
     // const { chartData } = this.props;
     const {
       chartData: { name, key, orgModel = [] },
+      location: { query },
       level,
-      scope,
     } = this.props;
     let { chartData: { unit } } = this.props;
-    const levelAndScope = scope !== '' ? scope : (parseInt(level, 10) + 1);
-    console.log('levelAndScope', levelAndScope);
+    const levelAndScope = query.scope ? query.scope : (parseInt(level, 10) + 1);
     // const levelAndScope = parseInt(level, 10) + 1;
     const levelName = `level${levelAndScope}Name`;
     // 此处为y轴刻度值
-    const yAxisLabels = this.getChartData(orgModel, levelName);
+    const yAxisLabels = this.getChartData(orgModel, levelName, 'yAxis');
     // 此处为数据,此数据在百分比的情况下,全部都是小数，需要乘以100
-    let seriesData = this.getChartData(orgModel, 'value');
+    let seriesData = this.getChartData(orgModel, 'value', 'xAxis');
     seriesData = seriesData.map(item => Number(item));
     if (unit === '%') {
       seriesData = seriesData.map(item => (item * 100));
@@ -423,21 +423,31 @@ export default class ChartBar extends PureComponent {
           <div className={styles.chartTitle}>
             <Icon type={iconTypeMap[key]} className={styles.chartTiltleTextIcon} />
             <span className={styles.chartTitleText}>{name}</span>
+            {/*
+              <span
+                style={{
+                  float: 'right',
+                  height: '100%',
+                  verticalAlign: 'middle',
+                  lineHeight: '45px',
+                }}
+              >3600户</span>
+            */}
           </div>
         </div>
         <div className={styles.chartWrapper}>
           {
             orgModel.length ?
-              <ReactEcharts
+              (<ReactEcharts
                 option={options}
                 style={{
                   height: '290px',
                 }}
-              />
+              />)
             :
-              <div className={styles.noChart}>
+              (<div className={styles.noChart}>
                 <img src={imgSrc} alt="图表不可见" />
-              </div>
+              </div>)
           }
         </div>
       </div>

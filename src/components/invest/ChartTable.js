@@ -115,8 +115,7 @@ export default class ChartTable extends PureComponent {
         const testArr = this.unitChange(item.indicatorDataList, item.name);
         return temp.push(Object.assign({ key: index }, ...testArr));
       });
-      // console.log(temp);
-      const columnWidth = [140, 150, 180, 210, 180, 140, 190, 140, 140, 150, 150, 150];
+      const columnWidth = [160, 180, 180, 210, 180, 140, 190, 140, 140, 150, 150, 150];
       allWidth = _.sum(columnWidth);
       arr = columns.map((item, index) => (
         {
@@ -154,7 +153,7 @@ export default class ChartTable extends PureComponent {
         <Pagination
           defaultCurrent={1}
           current={chartTableInfo.curPageNum || 1}
-          total={chartTableInfo.totalCnt}
+          total={chartTableInfo.totalCnt || 1}
           pageSize={chartTableInfo.pageSize}
           onChange={this.handlePaginationChange}
         />

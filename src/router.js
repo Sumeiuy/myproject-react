@@ -17,6 +17,7 @@ import Test from './routes/example/Home';
 import TestDetail from './routes/example/Detail';
 import Page from './routes/example/Page';
 import InvestHome from './routes/invest/Home';
+import BusinessHome from './routes/business/Home';
 
 const routes = ({ history }) => (// eslint-disable-line
   <Router history={history}>
@@ -28,6 +29,9 @@ const routes = ({ history }) => (// eslint-disable-line
       </Route>
       <Route path="invest">
         <IndexRoute component={InvestHome} />
+      </Route>
+      <Route path="business">
+        <IndexRoute component={BusinessHome} />
       </Route>
       {/** 侧栏测试 */}
       <Route path="menu:id" component={Page}>

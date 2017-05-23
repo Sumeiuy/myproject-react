@@ -44,6 +44,7 @@ export default class CustRange extends PureComponent {
     super(props);
     this.state = {
       value: undefined,
+      open: false,
     };
   }
 
@@ -52,9 +53,14 @@ export default class CustRange extends PureComponent {
     this.setDefaultValue(custRange);
   }
 
+  componentDidMount() {
+    document.addEventListener('mousewheel', this.handleMousewheel, false);
+    document.addEventListener('DOMMouseScroll', this.handleMousewheel, false);
+  }
+
   componentWillReceiveProps(nextProps) {
     const { custRange, location: { query: { orgId, custRangeName, custRangeLevel } } } = nextProps;
-    console.log('componentWillReceiveProps>>>', nextProps);
+    // console.log('componentWillReceiveProps>>>', nextProps);
     if (!_.isEqual(this.props.location.query.orgId, orgId)) {
       this.setState({
         value: {
@@ -91,6 +97,7 @@ export default class CustRange extends PureComponent {
         scope: Number(custRangeLevel) + 1,
         orderIndicatorId: '',
         orderType: '',
+        page: 1,
       },
     });
   }
@@ -106,10 +113,36 @@ export default class CustRange extends PureComponent {
     });
   }
 
+  @autobind
+  handleMousewheel() {
+    const dropDown = document.querySelector('.ant-select-dropdown');
+    if (!dropDown) {
+      return;
+    }
+    this.addDropDownMouseWheel();
+    const evt = new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window });
+    document.dispatchEvent(evt);
+  }
+
+  handleDropDownMousewheel(e = window.event) {
+    if (e.stopPropagation) {
+      e.stopPropagation();
+    } else {
+      e.cancelBubble = true;
+    }
+  }
+
+  addDropDownMouseWheel() {
+    const elem = document.querySelector('.ant-select-tree-dropdown');
+    elem.addEventListener('mousewheel', this.handleDropDownMousewheel, false);
+    elem.addEventListener('DOMMouseScroll', this.handleDropDownMousewheel, false);
+  }
+
   render() {
     const { custRange } = this.props;
     const { value } = this.state;
     const formatCustRange = transformCustRangeData(custRange);
+    console.log('TreeSelct>>>', TreeSelect);
     return (
       <TreeSelect
         notFoundContent="没有结果"

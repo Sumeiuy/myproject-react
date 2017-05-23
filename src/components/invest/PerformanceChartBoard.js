@@ -76,6 +76,7 @@ export default class PerformanceChartBoard extends PureComponent {
       query: {
         ...query,
         showChart: type,
+        page: type !== 'tables' ? '1' : query.page,
       },
     });
     this.setState({
@@ -160,24 +161,26 @@ export default class PerformanceChartBoard extends PureComponent {
           </div>
         </div>
         {/* 根据 url 里的 showChart 来显示不同的组件 */}
-        <ChartTable
-          chartTableInfo={chartTableInfo}
-          replace={replace}
-          level={level}
-          location={location}
-          style={{
-            display: showChart === 'tables' ? 'block' : 'none',
-          }}
-        />
-        <ChartBoard
-          chartData={chartData}
-          location={location}
-          loading={loading}
-          level={level}
-          style={{
-            display: showChart === 'zhuzhuangtu' ? 'block' : 'none',
-          }}
-        />
+        {
+          showChart === 'tables' ?
+          (
+            <ChartTable
+              chartTableInfo={chartTableInfo}
+              replace={replace}
+              level={level}
+              location={location}
+            />
+          )
+          :
+          (
+            <ChartBoard
+              chartData={chartData}
+              location={location}
+              loading={loading}
+              level={level}
+            />
+          )
+        }
       </div>
     );
   }
