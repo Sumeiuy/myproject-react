@@ -48,7 +48,7 @@ export default class ChartTable extends PureComponent {
   @autobind
   handleChange(e, pagination, sorter) {
     // 表格排序方式
-    const tableOrderType = sorter.order === 'ascend' ? 'asc' : '';
+    const tableOrderType = sorter.order === 'ascend' ? 'asc' : 'desc';
     const { replace, location: { query } } = this.props;
     replace({
       pathname: '/invest',
@@ -88,12 +88,20 @@ export default class ChartTable extends PureComponent {
   unitChange(arr, name) {
     let value;
     const newArr = arr.map((item) => {
-      if (item.unit === '%') {
-        value = Number(item.value) * 100;
-      } else if (item.unit === '\u2030') {
-        value = Number(item.value) * 1000;
-      } else {
-        value = Number(item.value);
+      const itemValue = Number(item.value);
+      switch (item.unit) {
+        case '%':
+          value = ((itemValue * 100) === 100) ? 100 : (itemValue * 100);
+          break;
+        case '\u2030':
+          value = ((itemValue * 1000) === 1000) ? 1000 : (itemValue * 1000);
+          break;
+        case '元':
+          value = itemValue / 10000;
+          break;
+        default:
+          value = itemValue;
+          break;
       }
       return {
         [item.key]: this.toFixedDecimal(value),
@@ -115,12 +123,13 @@ export default class ChartTable extends PureComponent {
         const testArr = this.unitChange(item.indicatorDataList, item.name);
         return temp.push(Object.assign({ key: index }, ...testArr));
       });
-      const columnWidth = [160, 180, 180, 210, 180, 140, 190, 140, 140, 150, 150, 150];
+      console.log('temp', temp);
+      const columnWidth = [180, 180, 180, 210, 180, 140, 190, 170, 170, 210, 180, 150];
       allWidth = _.sum(columnWidth);
       arr = columns.map((item, index) => (
         {
           dataIndex: item.key,
-          title: `${item.name} (${item.unit})`,
+          title: `${item.name}(${item.unit === '元' ? '万元' : item.unit})`,
           sorter: true,
           width: columnWidth[index],
         }

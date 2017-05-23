@@ -98,7 +98,8 @@ const helper = {
     if (Number(value)) {
       // 如果是 %
       if (unit === '%') {
-        obj.value = (value * 100).toFixed(3);
+        // 如果计算后的值 等于100，则直接显示 100
+        obj.value = ((value * 100).toFixed(3) === 100) ? 100 : (value * 100).toFixed(3);
         obj.unit = unit;
       } else {
         // 分割成数组
