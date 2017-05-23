@@ -215,12 +215,17 @@ export default class ChartBar extends PureComponent {
   }
 
   @autobind
-  createNewSeriesData(series, medianValue, unit) {
-    return series.map(item => ({
+  createNewSeriesData(series, medianValue, unit, padLength) {
+    let maxIndex = 10;
+    if (padLength !== 0) {
+      maxIndex = 10 - padLength;
+    }
+
+    return series.map((item, index) => ({
       value: (unit === '%' || unit === '\u2030') ? Number(item.toFixed(2)) : item,
       label: {
         normal: {
-          show: true,
+          show: index < maxIndex,
           position: (medianValue > item || item === 0) ? 'right' : 'insideRight',
         },
       },
@@ -285,6 +290,14 @@ export default class ChartBar extends PureComponent {
     // 此处为数据,此数据在百分比的情况下,全部都是小数，需要乘以100
     let seriesData = this.getChartData(orgModel, 'value', 'xAxis');
     seriesData = seriesData.map(item => Number(item));
+    const padLength = 10 - seriesData.length;
+    if (padLength > 0) {
+      for (let i = 0; i < padLength; i++) {
+        yAxisLabels.push('--');
+        seriesData.push(0);
+      }
+    }
+
     if (unit === '%') {
       seriesData = seriesData.map(item => (item * 100));
     } else if (unit === '\u2030') {
@@ -322,7 +335,7 @@ export default class ChartBar extends PureComponent {
     // 计算出所有值的中间值
     const medianValue = gridXAxisMax / 2;
     // 需要针对不同的值编写不同的柱状图Label样式
-    const newSeriesData = this.createNewSeriesData(seriesData, medianValue, unit);
+    const newSeriesData = this.createNewSeriesData(seriesData, medianValue, unit, padLength);
     // 柱状图阴影
     const dataShadow = [];
     for (let i = 0; i < seriesDataLen; i++) {
@@ -336,7 +349,14 @@ export default class ChartBar extends PureComponent {
         type: 'shadow',
       },
       formatter(params) {
-        return `${params[1].axisValue}<br /> ${params[1].seriesName}: <span style="color:#f8ac59; font-size: 15px;">${params[1].data.value}</span>${unit}`;
+        const item = params[1];
+        const axisValue = item.axisValue;
+        const seriesName = item.seriesName;
+        let value = item.data.value;
+        if (axisValue === '--') {
+          value = '--';
+        }
+        return `${axisValue}<br /> ${seriesName}: <span style="color:#f8ac59; font-size: 15px;">${value}</span>${unit}`;
       },
       position(pos, params, dom, rect, size) {
         // 鼠标在左侧时 tooltip 显示到右侧，鼠标在右侧时 tooltip 显示到左侧。
