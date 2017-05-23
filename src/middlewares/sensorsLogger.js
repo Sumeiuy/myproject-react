@@ -109,7 +109,7 @@ function getLogData(action) {
 // 发送缓冲区日志
 function flushLog() {
   const data = [...QUEUE];
-  if (enableLog && data.length > 1) {
+  if (data.length > 1) {
     api.sendLog(url, data).then(
       () => {
         QUEUE = [];
@@ -124,7 +124,7 @@ function flushLog() {
 const throttledFlushLog = _.throttle(flushLog, interval);
 
 function sendLog(action) {
-  if (!isPass(action)) {
+  if (!isPass(action) || !enableLog) {
     return;
   }
   const data = getLogData(action);
