@@ -34,7 +34,10 @@ export default {
     },
     getChartTableInfoSuccess(state, action) {
       const { payload: { resChartTableInfo } } = action;
-      const chartTableInfo = resChartTableInfo.resultData.data;
+      let chartTableInfo;
+      if (resChartTableInfo.resultData && resChartTableInfo.resultData.data) {
+        chartTableInfo = resChartTableInfo.resultData.data;
+      }
       return {
         ...state,
         chartTableInfo,

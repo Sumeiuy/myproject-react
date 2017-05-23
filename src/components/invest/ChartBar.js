@@ -278,10 +278,8 @@ export default class ChartBar extends PureComponent {
     } = this.props;
     let { chartData: { unit } } = this.props;
     const levelAndScope = query.scope ? query.scope : (parseInt(level, 10) + 1);
-    console.log('levelAndScope', levelAndScope);
     // const levelAndScope = parseInt(level, 10) + 1;
     const levelName = `level${levelAndScope}Name`;
-    console.log('levelName', levelName);
     // 此处为y轴刻度值
     const yAxisLabels = this.getChartData(orgModel, levelName);
     // 此处为数据,此数据在百分比的情况下,全部都是小数，需要乘以100
