@@ -9,7 +9,7 @@ const config = {
     ? '/' : '/abtest/pass/mc/sensors',
   interval: 1 * 10 * 1000,
   // 开启日志监控
-  enable: true,
+  enable: false,
   blacklist: [
     '@@DVA_LOADING/HIDE',
     '@@DVA_LOADING/SHOW',
