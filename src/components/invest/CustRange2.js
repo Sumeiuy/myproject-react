@@ -60,7 +60,7 @@ export default class CustRange extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { custRange, location: { query: { orgId, custRangeName, custRangeLevel } } } = nextProps;
-    console.log('componentWillReceiveProps>>>', nextProps);
+    // console.log('componentWillReceiveProps>>>', nextProps);
     if (!_.isEqual(this.props.location.query.orgId, orgId)) {
       this.setState({
         value: {
