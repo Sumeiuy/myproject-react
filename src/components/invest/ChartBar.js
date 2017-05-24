@@ -237,18 +237,12 @@ export default class ChartBar extends PureComponent {
   @autobind
   toFixedDecimal(value) {
     if (value > 10000) {
-      return value.toFixed(0);
+      return Number.parseFloat(value.toFixed(0));
     }
     if (value > 1000) {
-      return value.toFixed(1);
+      return Number.parseFloat(value.toFixed(1));
     }
-    if (value > 100) {
-      return value.toFixed(2);
-    }
-    if (value > 10) {
-      return value.toFixed(3);
-    }
-    return value.toFixed(4);
+    return Number.parseFloat(value.toFixed(2));
   }
 
   // 对金额进行特殊处理的函数
@@ -262,10 +256,10 @@ export default class ChartBar extends PureComponent {
     // 3.超过亿元的，以‘亿元’为单位
     if (MaxMoney > 100000000) {
       newUnit = '亿元';
-      newSeries = series.map(item => Number(this.toFixedDecimal(item / 100000000)));
+      newSeries = series.map(item => this.toFixedDecimal(item / 100000000));
     } else if (MaxMoney > 10000) {
       newUnit = '万元';
-      newSeries = series.map(item => Number(this.toFixedDecimal(item / 10000)));
+      newSeries = series.map(item => this.toFixedDecimal(item / 10000));
     }
 
     return {

@@ -26,10 +26,11 @@ const sortByType = optionsMap.sortByType;
 function createOrderTypeSelectOptions(options, defaultValue) {
   return (onChange) => {
     const selectOptions = options.map((item, index) => {
-      const optionKey = `type-${item.scope}-${index}`;
+      const optionKey = `options-${item.scope}-${index}`;
       return (React.createElement(Option, { key: optionKey, value: `${item.scope}` }, `${item.name}`));
     });
     const props = {
+      key: `typeSelect-${defaultValue}`,
       defaultValue,
       className: styles.newSelect,
       onChange,
