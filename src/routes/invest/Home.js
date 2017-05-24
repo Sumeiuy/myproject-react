@@ -209,35 +209,35 @@ export default class InvestHome extends PureComponent {
   }
 
   @autobind
-  getInfo(query) {
-    const { getAllInfo } = this.props;
+  getInfo(queryObj) {
+    const { getAllInfo, location: { query } } = this.props;
     const obj = this.state;
     empId = window.curUserCode || (query.empId || eid);
     const payload = {
-      orgId: query.orgId || '',
-      begin: query.begin || obj.begin,
-      end: query.end || obj.end,
-      cycleType: query.cycleType || obj.cycleType,
-      localScope: query.custRangeLevel,
+      orgId: queryObj.orgId || '',
+      begin: queryObj.begin || obj.begin,
+      end: queryObj.end || obj.end,
+      cycleType: queryObj.cycleType || obj.cycleType,
+      localScope: queryObj.custRangeLevel,
     };
     getAllInfo({
       custRange: {
         empId,
       },
       performance: {
-        scope: query.custRangeLevel,
+        scope: queryObj.custRangeLevel,
         ..._.pick(payload, ['orgId', 'begin', 'end', 'cycleType', 'localScope']),
       },
       chartInfo: {
-        scope: query.scope || Number(query.custRangeLevel) + 1,
-        orderType: query.orderType || '',
+        scope: queryObj.scope || Number(queryObj.custRangeLevel) + 1,
+        orderType: queryObj.orderType || '',
         ..._.pick(payload, ['orgId', 'begin', 'end', 'cycleType', 'localScope']),
       },
       chartTableInfo: {
         ..._.pick(payload, ['orgId', 'localScope', 'begin', 'end', 'cycleType']),
-        scope: query.scope || Number(query.custRangeLevel) + 1,
-        orderType: query.orderType || '',
-        pageNum: query.page || '1',
+        scope: queryObj.scope || Number(queryObj.custRangeLevel) + 1,
+        orderType: queryObj.orderType || '',
+        pageNum: queryObj.page || '1',
       },
     });
   }
