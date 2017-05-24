@@ -191,7 +191,6 @@ export default class BusinessHome extends PureComponent {
       cycleType: query.cycleType || obj.cycleType,
       localScope: query.custRangeLevel,
     };
-    console.log('query', query);
     getAllInfo({
       custRange: {
         empId,

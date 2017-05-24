@@ -34,10 +34,7 @@ export default {
     },
     getChartTableInfoSuccess(state, action) {
       const { payload: { resChartTableInfo } } = action;
-      let chartTableInfo;
-      if (resChartTableInfo.resultData && resChartTableInfo.resultData.data) {
-        chartTableInfo = resChartTableInfo.resultData.data;
-      }
+      const chartTableInfo = resChartTableInfo.resultData.data;
       return {
         ...state,
         chartTableInfo,
@@ -77,44 +74,56 @@ export default {
         payload: { resPerformance },
       });
     },
-    * getAllInfo({ payload }, { call, put }) {
-      const response = yield call(api.getCustRange, payload.custRange);
-      const [resPerformance, resChartInfo, resChartTableInfo] = yield [
-        call(api.getPerformance, {
-          ...payload.performance,
-          localScope: payload.performance.localScope || response.resultData.level,
-          orgId: payload.performance.orgId || response.resultData.id,
-          scope: payload.performance.scope || response.resultData.level,
-        }),
-        call(api.getChartInfo, {
-          ...payload.chartInfo,
-          localScope: payload.chartInfo.localScope || response.resultData.level,
-          orgId: payload.chartInfo.orgId || response.resultData.id,
-          scope: payload.chartInfo.scope || parseInt(response.resultData.level, 10) + 1,
-        }),
-        call(api.getChartTableInfo, {
-          ...payload.chartTableInfo,
-          localScope: payload.chartTableInfo.localScope || response.resultData.level,
-          orgId: payload.chartTableInfo.orgId || response.resultData.id,
-          scope: payload.chartTableInfo.scope || parseInt(response.resultData.level, 10) + 1,
-        }),
-      ];
-      yield put({
-        type: 'getCustRangeSuccess',
-        response,
+    * getAllInfo({ payload }, { call, put, select }) {
+      const cust = yield select(state => state.invest.custRange);
+      let firstCust;
+      if (cust.length) {
+        firstCust = cust[0];
+      } else {
+        const response = yield call(api.getCustRange, payload.custRange);
+        yield put({
+          type: 'getCustRangeSuccess',
+          response,
+        });
+        firstCust = response.resultData;
+      }
+      // 总量指标
+      const resPerformance = yield call(api.getPerformance, {
+        ...payload.performance,
+        localScope: payload.performance.localScope || firstCust.level,
+        orgId: payload.performance.orgId || firstCust.id,
+        scope: payload.performance.scope || firstCust.level,
       });
       yield put({
         type: 'getPerformanceSuccess',
         payload: { resPerformance },
       });
-      yield put({
-        type: 'getChartInfoSuccess',
-        payload: { resChartInfo },
-      });
-      yield put({
-        type: 'getChartTableInfoSuccess',
-        payload: { resChartTableInfo },
-      });
+      // 判断柱状图或者表格
+      // 柱状图
+      if (!payload.showChart || payload.showChart === 'zhuzhuangtu') {
+        const resChartInfo = yield call(api.getChartInfo, {
+          ...payload.chartInfo,
+          localScope: payload.chartInfo.localScope || firstCust.level,
+          orgId: payload.chartInfo.orgId || firstCust.id,
+          scope: payload.chartInfo.scope || parseInt(firstCust.level, 10) + 1,
+        });
+        yield put({
+          type: 'getChartInfoSuccess',
+          payload: { resChartInfo },
+        });
+      } else {
+        // 表格
+        const resChartTableInfo = yield call(api.getChartTableInfo, {
+          ...payload.chartTableInfo,
+          localScope: payload.chartTableInfo.localScope || firstCust.level,
+          orgId: payload.chartTableInfo.orgId || firstCust.id,
+          scope: payload.chartTableInfo.scope || parseInt(firstCust.level, 10) + 1,
+        });
+        yield put({
+          type: 'getChartTableInfoSuccess',
+          payload: { resChartTableInfo },
+        });
+      }
     },
     // 获取投顾图表数据
     * getChartInfo({ payload }, { call, put }) {

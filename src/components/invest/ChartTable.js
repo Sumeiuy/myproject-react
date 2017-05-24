@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-05-04 16:50:40
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-05-04 20:02:48
+ * @Last Modified time: 2017-05-24 20:24:53
  */
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -123,8 +123,7 @@ export default class ChartTable extends PureComponent {
         const testArr = this.unitChange(item.indicatorDataList, item.name);
         return temp.push(Object.assign({ key: index }, ...testArr));
       });
-      // console.log('temp', temp);
-      const columnWidth = [180, 180, 180, 210, 180, 140, 190, 170, 170, 210, 180, 150];
+      const columnWidth = [180, 180, 180, 210, 180, 170, 170, 210, 170, 210, 180, 150];
       allWidth = _.sum(columnWidth);
       arr = columns.map((item, index) => (
         {
