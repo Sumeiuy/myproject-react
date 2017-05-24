@@ -1,9 +1,34 @@
-
-.floatLeft {
-  float:  left;
+.verticalTop {
+  vertical-align: top;
 }
 .floatRight {
   float:right;
+}
+.floatLeft {
+  float:  left;
+}
+.iconBtnBorder {
+  border-left:1px solid #62c4f5;
+}
+.fixIconBtnBorder {
+  border-left: none;
+}
+.fixMargin {
+  composes: verticalTop;
+  margin-right:20px;
+}
+.newSelect {
+  margin-left: 10px;
+  width: 90px;
+}
+.newSelect1 {
+  composes: newSelect;
+  composes: fixMargin;
+}
+:global{
+  .hideSelect {
+    display: none;
+  }
 }
 
 .titleBar {
@@ -25,20 +50,6 @@
   composes: floatRight;
   height: 40px;
 }
-
-.iconBtnBorder {
-  border-left:1px solid #62c4f5;
-}
-.fixIconBtnBorder {
-  border-left: none;
-}
-.verticalTop {
-  vertical-align: top;
-}
-.fixMargin {
-  composes: verticalTop;
-  margin-right:20px;
-}
 .iconBtn {
   composes: iconBtnBorder;
   display: inline-block;
@@ -57,17 +68,9 @@
   composes: fixIconBtnBorder;
 }
 
-.newSelect {
-  margin-left: 10px;
-  width: 90px;
-}
-.newSelect1 {
-  composes: newSelect;
-  composes: fixMargin;
-}
-:global{
-  .hideSelect {
-    display: none;
+:global {
+  .iconColor {
+    color: #ffd92a;
   }
 }
 

@@ -286,7 +286,6 @@ export default class InvestHome extends PureComponent {
       end: query.end || duration.end,
       cycleType: query.cycleType || duration.cycleType,
     };
-    console.warn('data', data);
     window.location.href = `
       http://192.168.71.26:9084/fspa/mcrm/api/excel/jxzb/exportExcel?${queryToString(data)}
     `;

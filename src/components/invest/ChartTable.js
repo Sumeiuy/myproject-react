@@ -123,8 +123,8 @@ export default class ChartTable extends PureComponent {
         const testArr = this.unitChange(item.indicatorDataList, item.name);
         return temp.push(Object.assign({ key: index }, ...testArr));
       });
-      console.log('temp', temp);
-      const columnWidth = [180, 180, 180, 210, 180, 170, 170, 200, 170, 210, 180, 150];
+      // console.log('temp', temp);
+      const columnWidth = [180, 180, 180, 210, 180, 140, 190, 170, 170, 210, 180, 150];
       allWidth = _.sum(columnWidth);
       arr = columns.map((item, index) => (
         {

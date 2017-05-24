@@ -4,45 +4,29 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import { Select } from 'antd';
 import { autobind } from 'core-decorators';
 
-import { optionsMap } from '../../config';
-import Icon from '../common/Icon';
 import ChartBoard from './ChartBoard';
 import ChartTable from './ChartTable';
-import styles from './PerformanceChartBoard.less';
-
-const Option = Select.Option;
-// 按类别排序
-const sortByType = optionsMap.sortByType;
-// 按顺序排序
-const sortByOrder = optionsMap.sortByOrder;
-// 表格与图表视图
-const showType = optionsMap.showType;
+import BoardHeader from './BoardHeader';
 
 export default class PerformanceChartBoard extends PureComponent {
 
   static propTypes = {
-    location: PropTypes.object,
     chartData: PropTypes.array,
     chartTableInfo: PropTypes.object,
     replace: PropTypes.func.isRequired,
-    sort: PropTypes.func.isRequired,
-    loading: PropTypes.bool,
     level: PropTypes.string,
     postExcelInfo: PropTypes.func.isRequired,
+    location: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
-    loading: false,
     location: {},
     chartData: [],
     chartTableInfo: {},
     level: '',
     repalce: () => {},
-    sort: () => {},
-    postExcelInfo: () => {},
   }
 
   constructor(props) {
@@ -50,116 +34,33 @@ export default class PerformanceChartBoard extends PureComponent {
     const { location: { query } } = this.props;
     this.state = {
       showChart: query.showChart || 'zhuzhuangtu',
-      orderType: query.orderType,
     };
   }
 
   @autobind
-  handleSortChange(column, value) {
-    const { replace, location: { query } } = this.props;
-    replace({
-      pathname: '/invest',
-      query: {
-        ...query,
-        [column]: value,
-      },
-    });
-  }
-
-  // 柱状图与表格切换
-  @autobind
-  handleIconClick(type) {
-    // const val = event.target.getAttribute('type');
-    const { replace, location: { query } } = this.props;
-    replace({
-      pathname: '/invest',
-      query: {
-        ...query,
-        showChart: type,
-        page: type !== 'tables' ? '1' : query.page,
-      },
-    });
+  changeBoard(showChart) {
     this.setState({
-      showChart: type,
+      showChart,
     });
-  }
-
-  // 导出图标
-  @autobind
-  handleDataExportClick() {
-    const { postExcelInfo } = this.props;
-    postExcelInfo();
   }
 
   render() {
-    const { showChart, orderType } = this.state;
-    const { chartData, chartTableInfo, replace, loading, location, level } = this.props;
-    const sliceSortByType = sortByType.slice(level - 1);
-    const sliceScope = sliceSortByType[0].scope;
+    const { showChart } = this.state;
+    const { chartData, chartTableInfo, replace, location, level, postExcelInfo } = this.props;
     if (!(chartData && chartData.length)) {
       return null;
     }
+
     return (
       <div className="investPerformanceBoard">
-        <div className={styles.titleBar}>
-          <div className={styles.titleText}>指标分布</div>
-          <div className={styles.titleBarRight}>
-            <div className={styles.iconBtn1}>
-              <span>排序方式:</span>
-              <Select
-                key={`${sliceScope}key`}
-                defaultValue={sliceScope}
-                className={styles.newSelect}
-                onChange={(v) => { this.handleSortChange('scope', v); }}
-              >
-                {
-                  sliceSortByType.map((item, index) => {
-                    const sortByTypeIndex = index;
-                    return <Option key={sortByTypeIndex} value={item.scope}>按{item.name}</Option>;
-                  })
-                }
-              </Select>
-              <Select
-                defaultValue={orderType || 'desc'}
-                className={styles.newSelect1}
-                onChange={(v) => { this.handleSortChange('orderType', v); }}
-                style={{
-                  display: showChart === showType[1].type ? 'inline-block' : 'none',
-                }}
-              >
-                {
-                  sortByOrder.map((item, index) => {
-                    const sortByOrderIndex = index;
-                    return <Option key={sortByOrderIndex} value={item.key}>{item.name}</Option>;
-                  })
-                }
-              </Select>
-            </div>
-            <div className={styles.iconBtn}>
-              <Icon
-                title={'表格视图'}
-                type={'tables'}
-                className={styles.fixMargin}
-                onClick={() => { this.handleIconClick('tables'); }}
-                style={{ color: showChart === 'tables' ? '#ffd92a' : '#fff' }}
-              />
-              <Icon
-                title={'柱状视图'}
-                type={'zhuzhuangtu'}
-                className={styles.fixMargin}
-                onClick={() => { this.handleIconClick('zhuzhuangtu'); }}
-                style={{ color: showChart === 'zhuzhuangtu' ? '#ffd92a' : '#fff' }}
-              />
-            </div>
-            <div className={styles.iconBtn}>
-              <Icon
-                title="导出到文件"
-                type="daochu"
-                onClick={this.handleDataExportClick}
-              />
-            </div>
-          </div>
-        </div>
+        <BoardHeader
+          location={location}
+          title={'指标分布'}
+          postExcelInfo={postExcelInfo}
+          replace={replace}
+          level={level}
+          changeBoard={this.changeBoard}
+        />
         {/* 根据 url 里的 showChart 来显示不同的组件 */}
         {
           showChart === 'tables' ?
@@ -176,7 +77,6 @@ export default class PerformanceChartBoard extends PureComponent {
             <ChartBoard
               chartData={chartData}
               location={location}
-              loading={loading}
               level={level}
             />
           )
