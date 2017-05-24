@@ -4,9 +4,10 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import ReactEcharts from 'echarts-for-react';
+// import ReactEcharts from 'echarts-for-react';
 import { autobind } from 'core-decorators';
 
+import IECharts from '../IECharts';
 import { iconTypeMap } from '../../config';
 import Icon from '../common/Icon';
 import styles from './ChartBar.less';
@@ -333,7 +334,7 @@ export default class ChartBar extends PureComponent {
       gridXaxisMin = maxAndMinPeople.min;
     }
     // 计算出所有值的中间值
-    const medianValue = gridXAxisMax / 2;
+    const medianValue = (gridXAxisMax + gridXaxisMin) / 2;
     // 需要针对不同的值编写不同的柱状图Label样式
     const newSeriesData = this.createNewSeriesData(seriesData, medianValue, unit, padLength);
     // 柱状图阴影
@@ -458,11 +459,9 @@ export default class ChartBar extends PureComponent {
         <div className={styles.chartWrapper}>
           {
             orgModel.length ?
-              (<ReactEcharts
+              (<IECharts
                 option={options}
-                style={{
-                  height: '290px',
-                }}
+                resizable
               />)
             :
               (<div className={styles.noChart}>

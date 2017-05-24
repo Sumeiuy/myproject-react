@@ -18,7 +18,7 @@ module.exports = {
       : config.dev.assetsPublicPath
   },
   resolve: {
-    extensions: ['ts', 'tsx', '.web.tsx', '.web.ts', '.web.jsx', '.web.js', '.js', '.less', '.css'],
+    extensions: ['.jsx', 'ts', 'tsx', '.web.tsx', '.web.ts', '.web.jsx', '.web.js', '.js', '.less', '.css'],
     modules: [
       resolve('src'),
       resolve('node_modules'),
@@ -38,7 +38,7 @@ module.exports = {
       //   }
       // },
       {
-        test: /\.js$/,
+        test: /\.jsx?$/,
         loader: 'babel-loader',
         include: [resolve('src')]
       },
