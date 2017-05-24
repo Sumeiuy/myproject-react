@@ -19,7 +19,9 @@ import CustRange from '../../components/invest/CustRange2';
 import { optionsMap } from '../../config';
 import styles from './Home.less';
 
-const empId = window.curUserCode || '002727';
+let empId;
+const eid = '002727';
+
 // RadioButton
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -127,7 +129,6 @@ export default class InvestHome extends PureComponent {
 
     const payload = {
       ...query,
-      empId,
       orgId: query.orgId || (custRange[0] && custRange[0].id),
       // scope: query.scope || Number(custRange[0] && custRange[0].level) + 1,
       scope: query.scope ||
@@ -211,8 +212,8 @@ export default class InvestHome extends PureComponent {
   getInfo(query) {
     const { getAllInfo } = this.props;
     const obj = this.state;
+    empId = window.curUserCode || (query.empId || eid);
     const payload = {
-      empId,
       orgId: query.orgId || '',
       begin: query.begin || obj.begin,
       end: query.end || obj.end,
