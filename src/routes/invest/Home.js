@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 import { Row, Radio, Select } from 'antd';
 import _ from 'lodash';
 
-import { queryToString } from '../../utils/helper';
+import { queryToString, getQuery } from '../../utils/helper';
 import PerformanceItem from '../../components/invest/PerformanceItem';
 import PreformanceChartBoard from '../../components/invest/PerformanceChartBoard';
 import CustRange from '../../components/invest/CustRange2';
@@ -210,9 +210,10 @@ export default class InvestHome extends PureComponent {
 
   @autobind
   getInfo(queryObj) {
-    const { getAllInfo, location: { query } } = this.props;
+    const { getAllInfo } = this.props;
+    const nativeQuery = getQuery(window.location.search);
+    empId = window.curUserCode || (nativeQuery.empId || eid);
     const obj = this.state;
-    empId = window.curUserCode || (query.empId || eid);
     const payload = {
       orgId: queryObj.orgId || '',
       begin: queryObj.begin || obj.begin,
