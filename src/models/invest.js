@@ -100,7 +100,9 @@ export default {
       });
       // 判断柱状图或者表格
       // 柱状图
+      console.log('111111111');
       if (!payload.showChart || payload.showChart === 'zhuzhuangtu') {
+        console.log('payload.showChart>>>', payload.showChart);
         const resChartInfo = yield call(api.getChartInfo, {
           ...payload.chartInfo,
           localScope: payload.chartInfo.localScope || firstCust.level,
@@ -111,7 +113,8 @@ export default {
           type: 'getChartInfoSuccess',
           payload: { resChartInfo },
         });
-      } else {
+      } else if (payload.showChart === 'tables') {
+        console.log(22222222222222222);
         // 表格
         const resChartTableInfo = yield call(api.getChartTableInfo, {
           ...payload.chartTableInfo,

@@ -145,12 +145,12 @@ export default class InvestHome extends PureComponent {
     // 还是chart部分的数据
     if (!_.isEqual(query, preQuery)) {
       // 如果切换 时间段
-      const nowCycleType = _.pick(query, ['cycleType']);
-      const preCycleType = _.pick(preQuery, ['cycleType']);
-      if (!_.isEqual(nowCycleType, preCycleType)) {
+      const nowCycleType = query.cycleType;
+      const preCycleType = preQuery.cycleType;
+
+      if (nowCycleType !== preCycleType) {
         this.getInfo({
           ...query,
-          page: '1',
         });
       }
       // 如果切换 机构树
@@ -159,7 +159,6 @@ export default class InvestHome extends PureComponent {
       if (nowOrgId !== preOrgId) {
         this.getInfo({
           ...query,
-          page: '1',
         });
       }
       const nowShowChart = query.showChart;
@@ -255,7 +254,7 @@ export default class InvestHome extends PureComponent {
       // 如果切换页面、表格字段排序，则请求表格接口
       const nowPageAndOrderType = _.pick(query, ['page', 'tableOrderType', 'orderIndicatorId']);
       const prePageAndOrderType = _.pick(preQuery, ['page', 'tableOrderType', 'orderIndicatorId']);
-      if (!_.isEqual(nowPageAndOrderType, prePageAndOrderType) && nowOrgId === preOrgId) {
+      if (!_.isEqual(nowPageAndOrderType, prePageAndOrderType) && nowOrgId === preOrgId && query.showChart === 'tables') {
         getChartTableInfo({
           ..._.pick(payload, ['scope', 'localScope', 'orgId', 'begin', 'end', 'cycleType']),
           pageNum: query.page || '1',
@@ -279,6 +278,8 @@ export default class InvestHome extends PureComponent {
       cycleType: queryObj.cycleType || obj.cycleType,
       localScope: queryObj.custRangeLevel,
     };
+
+    console.log('query.showChart', query.showChart);
     getAllInfo({
       custRange: {
         empId,

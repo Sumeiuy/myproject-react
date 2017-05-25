@@ -277,9 +277,13 @@ export default class ChartBar extends PureComponent {
       level,
     } = this.props;
     let { chartData: { unit } } = this.props;
-    const levelAndScope = query.scope ? query.scope : (parseInt(level, 10) + 1);
-    // const levelAndScope = parseInt(level, 10) + 1;
+    const levelAndScope = query.scope ? Number(query.scope) : Number(level) + 1;
+
     const levelName = `level${levelAndScope}Name`;
+    // 分公司名称数组
+    const levelCompanyArr = this.getChartData(orgModel, 'level2Name', 'yAxis');
+    const levelStoreArr = this.getChartData(orgModel, 'level3Name', 'yAxis');
+
     // 此处为y轴刻度值
     const yAxisLabels = this.getChartData(orgModel, levelName, 'yAxis');
     // 此处为数据,此数据在百分比的情况下,全部都是小数，需要乘以100
@@ -336,7 +340,6 @@ export default class ChartBar extends PureComponent {
     for (let i = 0; i < seriesDataLen; i++) {
       dataShadow.push(gridXAxisMax);
     }
-
     // tooltip 配置项
     const tooltipOtions = {
       trigger: 'axis',
@@ -345,11 +348,16 @@ export default class ChartBar extends PureComponent {
       },
       formatter(params) {
         const item = params[1];
+        console.log('params', params);
         const axisValue = item.axisValue;
         const seriesName = item.seriesName;
         let value = item.data.value;
         if (axisValue === '--') {
           value = '--';
+        }
+        if (levelAndScope === 4) {
+          const seriesIndex = item.seriesIndex;
+          return `${levelCompanyArr[seriesIndex]} - ${levelStoreArr[seriesIndex]}<br />${axisValue}<br /> ${seriesName}: <span style="color:#f8ac59; font-size: 15px;">${value}</span>${unit}`;
         }
         return `${axisValue}<br /> ${seriesName}: <span style="color:#f8ac59; font-size: 15px;">${value}</span>${unit}`;
       },
@@ -361,7 +369,7 @@ export default class ChartBar extends PureComponent {
       },
       backgroundColor: 'rgba(0, 0, 0, .56)',
       padding: [12, 11, 13, 13],
-      extraCssText: 'border-radius: 8px',
+      extraCssText: 'border-radius: 8px;',
     };
     // eCharts的配置项
     const options = {
