@@ -2,8 +2,9 @@
  * @Author: LiuJianShu
  * @Date: 2017-05-04 16:50:40
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-05-24 20:24:53
+ * @Last Modified time: 2017-05-25 14:01:17
  */
+
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import { Table, Pagination } from 'antd';
@@ -63,6 +64,7 @@ export default class ChartTable extends PureComponent {
   @autobind
   handlePaginationChange(page, pageSize) {
     const { replace, location: { query } } = this.props;
+    window.scrollTop(0);
     replace({
       pathname: '/invest',
       query: {

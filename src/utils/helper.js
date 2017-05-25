@@ -88,7 +88,7 @@ const helper = {
     return elem.className.indexOf(className) > -1;
   },
   /**
-     * toUnit('123456', '元', 5) => {vale: 12.345, unit:'万元'}
+     * toUnit('123456', '元', 5) => {vale: 12.34, unit:'万元'}
      * @param  { string } str  需要转换的字符串数字
      * @param  { string } unit 单位
      * @return { number } per  以显示几位为转换依据，默认 5 位
@@ -98,8 +98,11 @@ const helper = {
     if (Number(value)) {
       // 如果是 %
       if (unit === '%') {
-        // 如果计算后的值 等于100，则直接显示 100
-        obj.value = ((value * 100).toFixed(3) === 100) ? 100 : (value * 100).toFixed(3);
+        obj.value = Number.parseFloat((value * 100).toFixed(2));
+        obj.unit = unit;
+      } else if (unit === '\u2030') {
+        // 如果是 千分符
+        obj.value = Number.parseFloat((value * 1000).toFixed(2));
         obj.unit = unit;
       } else {
         // 分割成数组
@@ -112,15 +115,15 @@ const helper = {
           const num = arr[0].substr(0, per) + arr[0].substr(per).replace(/\d/g, '0');
           switch (true) {
             case length < 9:
-              obj.value = `${num / 10000}`;
+              obj.value = `${Number.parseFloat((num / 10000).toFixed(2))}`;
               obj.unit = `万${unit}`;
               break;
             case length >= 9 && length < 13:
-              obj.value = `${num / 100000000}`;
+              obj.value = `${Number.parseFloat((num / 100000000).toFixed(2))}`;
               obj.unit = `亿${unit}`;
               break;
             default:
-              obj.value = `${num / 1000000000000}`;
+              obj.value = `${Number.parseFloat((num / 1000000000000).toFixed(2))}`;
               obj.unit = `万亿${unit}`;
               break;
           }
@@ -128,7 +131,7 @@ const helper = {
           // 计算小数部分长度
           // 如果有小数，小数部分取 依据 长度减整数部分长度
           if (arr[1]) {
-            arr[1] = arr[1].substr(0, per - length);
+            arr[1] = arr[1].substr(0, 2);
           }
           obj.value = arr.join('.');
           obj.unit = unit;
