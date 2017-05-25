@@ -90,8 +90,7 @@ export default class CustRange extends PureComponent {
     const custRangeLevel = encodeURIComponent(tmpArr[0]);
     const orgId = encodeURIComponent(tmpArr[1]);
     const custRangeName = encodeURIComponent(tmpArr.slice(2).join('/'));
-    if (
-      !query.custRangeLevel &&
+    if (!query.custRangeLevel &&
       custRange &&
       custRange[0].level === tmpArr[0]) {
       return;
