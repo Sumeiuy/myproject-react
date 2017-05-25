@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-05-04 16:50:40
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-05-25 14:01:17
+ * @Last Modified time: 2017-05-25 18:20:35
  */
 
 import React, { PropTypes, PureComponent } from 'react';
@@ -66,7 +66,6 @@ export default class ChartTable extends PureComponent {
   @autobind
   handlePaginationChange(page, pageSize) {
     const { replace, location: { query } } = this.props;
-    window.scrollTop(0);
     replace({
       pathname: '/invest',
       query: {
@@ -187,7 +186,7 @@ export default class ChartTable extends PureComponent {
           defaultCurrent={1}
           current={chartTableInfo.curPageNum || 1}
           total={chartTableInfo.totalCnt || 1}
-          pageSize={chartTableInfo.pageSize}
+          pageSize={10}
           onChange={this.handlePaginationChange}
         />
       </div>

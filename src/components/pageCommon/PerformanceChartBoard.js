@@ -47,7 +47,7 @@ export default class PerformanceChartBoard extends PureComponent {
   render() {
     const { showChart } = this.state;
     const { chartData, chartTableInfo, replace, location, level, postExcelInfo } = this.props;
-    if (!(chartData && chartData.length)) {
+    if (!(chartData && chartData.length) && showChart !== 'tables') {
       return null;
     }
 

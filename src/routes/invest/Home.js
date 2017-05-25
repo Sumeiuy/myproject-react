@@ -242,6 +242,7 @@ export default class InvestHome extends PureComponent {
           pageNum: query.page || '1',
           orderIndicatorId: query.orderIndicatorId || '',
           orderType: query.tableOrderType || '',
+          pageSize: 10,
         });
       }
     }
@@ -286,6 +287,7 @@ export default class InvestHome extends PureComponent {
         ..._.pick(payload, ['orgId', 'localScope', 'begin', 'end', 'cycleType']),
         scope: queryObj.scope || Number(queryObj.custRangeLevel) + 1,
         orderType: queryObj.orderType || '',
+        pageSize: 10,
         pageNum: queryObj.page || '1',
       },
       showChart: query.showChart,
