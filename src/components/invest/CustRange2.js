@@ -82,11 +82,20 @@ export default class CustRange extends PureComponent {
 
   @autobind
   onChange(value) {
-    const { replace, location: { query } } = this.props;
+    if (!value) {
+      return;
+    }
+    const { replace, location: { query }, custRange } = this.props;
     const tmpArr = value.value.split('-');
     const custRangeLevel = encodeURIComponent(tmpArr[0]);
     const orgId = encodeURIComponent(tmpArr[1]);
     const custRangeName = encodeURIComponent(tmpArr.slice(2).join('/'));
+    if (
+      !query.custRangeLevel &&
+      custRange &&
+      custRange[0].level === tmpArr[0]) {
+      return;
+    }
     replace({
       pathname: '/invest',
       query: {
