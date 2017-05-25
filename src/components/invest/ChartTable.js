@@ -16,6 +16,8 @@ import styles from './ChartTable.less';
 // 按类别排序
 const sortByType = optionsMap.sortByType;
 
+const revert = { asc: 'desc', desc: 'asc' };
+
 export default class ChartTable extends PureComponent {
   static propTypes = {
     location: PropTypes.object,
@@ -113,6 +115,25 @@ export default class ChartTable extends PureComponent {
     return newArr;
   }
 
+  @autobind
+  handleTitleClick(item) {
+    const { replace, location: { query } } = this.props;
+    let tableOrderType;
+    if (query.orderIndicatorId === item.key) {
+      tableOrderType = revert[query.tableOrderType] || 'desc';
+    } else {
+      tableOrderType = 'asc';
+    }
+    replace({
+      pathname: '/invest',
+      query: {
+        ...query,
+        orderIndicatorId: item.key || '',
+        tableOrderType,
+      },
+    });
+  }
+
   render() {
     const { chartTableInfo, location: { query }, level, style } = this.props;
     const columns = chartTableInfo.titleList;
@@ -130,7 +151,9 @@ export default class ChartTable extends PureComponent {
       arr = columns.map((item, index) => (
         {
           dataIndex: item.key,
-          title: `${item.name}(${item.unit === '元' ? '万元' : item.unit})`,
+          title: (<span onClick={() => { this.handleTitleClick(item); }}>
+            {`${item.name}(${item.unit === '元' ? '万元' : item.unit})`}
+          </span>),
           sorter: true,
           width: columnWidth[index],
         }
