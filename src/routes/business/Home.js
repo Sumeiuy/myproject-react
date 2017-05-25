@@ -11,9 +11,9 @@ import { connect } from 'react-redux';
 import { Row, Radio, Select } from 'antd';
 import _ from 'lodash';
 
-import PerformanceItem from '../../components/invest/PerformanceItem';
-import PreformanceChartBoard from '../../components/invest/PerformanceChartBoard';
-import CustRange from '../../components/invest/CustRange2';
+import PerformanceItem from '../../components/pageCommon/PerformanceItem';
+import PreformanceChartBoard from '../../components/pageCommon/PerformanceChartBoard';
+import CustRange from '../../components/pageCommon/CustRange2';
 // 选择项字典
 import { optionsMap } from '../../config';
 import styles from './Home.less';

@@ -186,6 +186,34 @@ const helper = {
       $browser_version: `${bowser.name} ${bowser.version}`,
     };
   },
+
+  getDurationString(flag) {
+    const durationObj = {};
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth() + 1 < 10 ? `0${now.getMonth() + 1}` : `${now.getMonth() + 1}`;
+    const day = now.getDate();
+    let qStartMonth = (Math.floor((now.getMonth() + 3) / 3) * 3) - 2;
+    qStartMonth = qStartMonth < 10 ? `0${qStartMonth}` : `${qStartMonth}`;
+    // 本月
+    if (flag === 'month') {
+      durationObj.durationStr = `${month}/01-${month}/${day}`;
+      durationObj.cycleType = 'month';
+      durationObj.begin = `${year}${month}01`;
+      durationObj.end = `${year}${month}${day}`;
+    } else if (flag === 'quarter') {
+      durationObj.durationStr = `${qStartMonth}/01-${month}/${day}`;
+      durationObj.cycleType = 'quarter';
+      durationObj.begin = `${year}${qStartMonth}01`;
+      durationObj.end = `${year}${month}${day}`;
+    } else if (flag === 'year') {
+      durationObj.durationStr = `01/01-${month}/${day}`;
+      durationObj.cycleType = 'year';
+      durationObj.begin = `${year}0101`;
+      durationObj.end = `${year}${month}${day}`;
+    }
+    return durationObj;
+  },
 };
 
 export default helper;

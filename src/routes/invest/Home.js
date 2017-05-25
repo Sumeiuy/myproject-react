@@ -8,34 +8,16 @@ import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
-import { Row, Radio, Select } from 'antd';
 import _ from 'lodash';
 
-import { queryToString, getQuery } from '../../utils/helper';
-import PerformanceItem from '../../components/invest/PerformanceItem';
-import PreformanceChartBoard from '../../components/invest/PerformanceChartBoard';
-import CustRange from '../../components/invest/CustRange2';
-// 选择项字典
-import { optionsMap } from '../../config';
+import { queryToString, getQuery, getDurationString } from '../../utils/helper';
+import PerformanceItem from '../../components/pageCommon/PerformanceItem';
+import PreformanceChartBoard from '../../components/pageCommon/PerformanceChartBoard';
+import PageHeader from '../../components/pageCommon/PageHeader';
 import styles from './Home.less';
 
 let empId;
 const eid = '002727';
-// RadioButton
-const RadioButton = Radio.Button;
-const RadioGroup = Radio.Group;
-
-// Select
-const Option = Select.Option;
-// 头部筛选条件
-const headBar = optionsMap.headBar;
-// 时间筛选条件
-const timeOptions = optionsMap.time;
-// 渲染3个头部期间Radio
-const timeRadios = timeOptions.map((item, index) => {
-  const timeIndex = `Timeradio${index}`;
-  return React.createElement(RadioButton, { key: timeIndex, value: `${item.key}` }, `${item.name}`);
-});
 
 const effects = {
   allInfo: 'invest/getAllInfo',
@@ -109,7 +91,7 @@ export default class InvestHome extends PureComponent {
   componentWillMount() {
     const { location: { query } } = this.props;
     const value = query.cycleType || 'month';
-    const obj = this.getDurationString(value);
+    const obj = getDurationString(value);
     this.state = {
       ...obj,
     };
@@ -266,6 +248,13 @@ export default class InvestHome extends PureComponent {
   }
 
   @autobind
+  setGlobalState(obj) {
+    this.setState({
+      ...obj,
+    });
+  }
+
+  @autobind
   getInfo(queryObj) {
     const { getAllInfo, location: { query } } = this.props;
     const nativeQuery = getQuery(window.location.search);
@@ -303,35 +292,7 @@ export default class InvestHome extends PureComponent {
     });
   }
 
-  @autobind
-  getDurationString(flag) {
-    const durationObj = {};
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = now.getMonth() + 1 < 10 ? `0${now.getMonth() + 1}` : `${now.getMonth() + 1}`;
-    const day = now.getDate();
-    let qStartMonth = (Math.floor((now.getMonth() + 3) / 3) * 3) - 2;
-    qStartMonth = qStartMonth < 10 ? `0${qStartMonth}` : `${qStartMonth}`;
-    // 本月
-    if (flag === 'month') {
-      durationObj.durationStr = `${month}/01-${month}/${day}`;
-      durationObj.cycleType = 'month';
-      durationObj.begin = `${year}${month}01`;
-      durationObj.end = `${year}${month}${day}`;
-    } else if (flag === 'quarter') {
-      durationObj.durationStr = `${qStartMonth}/01-${month}/${day}`;
-      durationObj.cycleType = 'quarter';
-      durationObj.begin = `${year}${qStartMonth}01`;
-      durationObj.end = `${year}${month}${day}`;
-    } else if (flag === 'year') {
-      durationObj.durationStr = `01/01-${month}/${day}`;
-      durationObj.cycleType = 'year';
-      durationObj.begin = `${year}0101`;
-      durationObj.end = `${year}${month}${day}`;
-    }
-    return durationObj;
-  }
-    // 导出 excel 文件
+  // 导出 excel 文件
   @autobind
   exportExcel() {
     const { custRange, location: { query } } = this.props;
@@ -351,32 +312,8 @@ export default class InvestHome extends PureComponent {
       http://192.168.71.26:9084/fspa/mcrm/api/excel/jxzb/exportExcel?${queryToString(data)}
     `;
   }
-  // 期间变化
-  @autobind
-  handleDurationChange(e) {
-    const value = e.target.value;
-    const obj = this.getDurationString(value);
-    const { replace, location: { query } } = this.props;
-    this.setState({
-      ...obj,
-    });
-    // 需要改变query中的查询变量
-    replace({
-      pathname: '/invest',
-      query: {
-        ...query,
-        begin: obj.begin,
-        end: obj.end,
-        cycleType: value,
-        page: 1,
-      },
-    });
-  }
 
   render() {
-    // chartLoading,
-    // globalLoading,
-    const duration = this.state;
     const {
       performance,
       chartInfo,
@@ -391,36 +328,11 @@ export default class InvestHome extends PureComponent {
     }
     return (
       <div className="page-invest content-inner">
-        <div className="reportHeader">
-          <Row type="flex" justify="start" align="middle">
-            <div className={styles.reportName}>
-              <Select
-                defaultValue={headBar.key}
-                style={{
-                  width: '150px',
-                }}
-              >
-                <Option value={headBar.key}>{headBar.name}</Option>
-              </Select>
-            </div>
-            <div className={styles.reportHeaderRight}>
-              <div className={styles.dateFilter}>{duration.durationStr}</div>
-              <RadioGroup
-                defaultValue={duration.cycleType || 'month'}
-                onChange={this.handleDurationChange}
-              >
-                {timeRadios}
-              </RadioGroup>
-              <div className={styles.vSplit} />
-              {/* 营业地址选择项 */}
-              <CustRange
-                custRange={custRange}
-                location={location}
-                replace={replace}
-              />
-            </div>
-          </Row>
-        </div>
+        <PageHeader
+          location={location}
+          replace={replace}
+          custRange={custRange}
+        />
         <div className={styles.reportBody}>
           <div className={styles.reportPart}>
             <PerformanceItem

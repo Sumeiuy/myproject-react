@@ -7,10 +7,18 @@
 
 const optionsMap = {
   // 头部查询条件
-  headBar: {
-    key: 'invest',
-    name: '投顾业绩汇总',
-  },
+  headBar: [
+    {
+      key: 'invest',
+      name: '投顾业绩汇总',
+      url: '/invest',
+    },
+    {
+      key: 'business',
+      name: '经营业绩汇总',
+      url: '/business',
+    },
+  ],
   // 时间选择
   time: [
     {
