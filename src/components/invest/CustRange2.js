@@ -88,7 +88,7 @@ export default class CustRange extends PureComponent {
     const orgId = encodeURIComponent(tmpArr[1]);
     const custRangeName = encodeURIComponent(tmpArr.slice(2).join('/'));
     replace({
-      pathname: '',
+      pathname: '/invest',
       query: {
         ...query,
         orgId,
@@ -143,7 +143,6 @@ export default class CustRange extends PureComponent {
     const { custRange } = this.props;
     const { value } = this.state;
     const formatCustRange = transformCustRangeData(custRange);
-    console.log('TreeSelct>>>', TreeSelect);
     return (
       <TreeSelect
         notFoundContent="没有结果"

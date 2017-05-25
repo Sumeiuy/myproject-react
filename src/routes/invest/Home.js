@@ -21,7 +21,6 @@ import styles from './Home.less';
 
 let empId;
 const eid = '002727';
-
 // RadioButton
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -114,7 +113,9 @@ export default class InvestHome extends PureComponent {
     this.state = {
       ...obj,
     };
-    this.getInfo(query);
+    this.getInfo({
+      ...query,
+    });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -143,61 +144,118 @@ export default class InvestHome extends PureComponent {
     };
     // 还是chart部分的数据
     if (!_.isEqual(query, preQuery)) {
-      // 如果切换 机构树以及时间段，对下面的所有接口发起新的请求
-      const nowCustAndCycle = _.pick(query, ['cycleType']);
-      const preCustAndCycle = _.pick(preQuery, ['cycleType']);
-      if (!_.isEqual(nowCustAndCycle, preCustAndCycle)) {
+      // 如果切换 时间段
+      const nowCycleType = _.pick(query, ['cycleType']);
+      const preCycleType = _.pick(preQuery, ['cycleType']);
+      if (!_.isEqual(nowCycleType, preCycleType)) {
         this.getInfo({
           ...query,
           page: '1',
         });
       }
-      // 如果切换 机构树，对下面的所有接口发起新的请求
-      const nowOrgId = _.pick(query, ['orgId']);
-      const preOrgId = _.pick(preQuery, ['orgId']);
-      if (!_.isEqual(nowOrgId, preOrgId)) {
-        if (query.scope) {
-          if (Number(query.level) + 1 !== query.scope) {
-            // const newQuery = Object.assign(query, { scope: Number(query.level) + 1 });
-            this.getInfo({
-              ...query,
-              scope: Number(query.level) + 1,
-              page: '1',
-            });
-          }
-        } else {
-          this.getInfo({
-            ...query,
-            page: '1',
-          });
-        }
+      // 如果切换 机构树
+      const nowOrgId = query.orgId;
+      const preOrgId = preQuery.orgId;
+      if (nowOrgId !== preOrgId) {
+        this.getInfo({
+          ...query,
+          page: '1',
+        });
       }
-      // 判断更改按分公司、营业部、投顾排序维度
-      // 判断排序方式变更
-      // 判断切换图表与表格
-      if (!_.isEqual(query.scope, preQuery.scope) ||
-        !_.isEqual(query.orderType, preQuery.orderType) ||
-        !_.isEqual(query.showChart, preQuery.showChart)) {
-        // todo，请求参数
-        // 如果现在是 zhuzhuangtu，则请求柱状图接口，否则请求表格接口
-
-        if (query.showChart === 'zhuzhuangtu' || !query.showChart) {
+      const nowShowChart = query.showChart;
+      const preShowChart = preQuery.showChart;
+      // 如果切换 柱状图或者表格
+      if (nowShowChart !== preShowChart) {
+        if (nowShowChart === 'zhuzhuangtu' || !nowShowChart) {
           getChartInfo({
-            ..._.pick(payload, ['scope', 'localScope', 'orgId', 'begin', 'end', 'cycleType', 'orderType']),
+            ..._.pick(payload,
+              [
+                'scope',
+                'localScope',
+                'orgId',
+                'begin',
+                'end',
+                'cycleType',
+                'orderType',
+              ]),
           });
         } else {
           getChartTableInfo({
-            ..._.pick(payload, ['scope', 'localScope', 'orgId', 'begin', 'end', 'cycleType']),
+            ..._.pick(payload,
+              [
+                'scope',
+                'localScope',
+                'orgId',
+                'begin',
+                'end',
+                'cycleType',
+              ]),
             pageNum: '1',
             orderIndicatorId: query.orderIndicatorId || '',
             orderType: query.tableOrderType || '',
           });
         }
       }
-      // 判断 页数，表格排序方式 变更，请求表格数据接口
+
+      // 如果切换层级维度排序
+      const nowScope = query.scope;
+      const preScope = preQuery.scope;
+      if (nowScope !== preScope && nowOrgId === preOrgId) {
+        // 如果当前是柱状图
+        if (query.showChart === 'zhuzhuangtu' || !query.showChart) {
+          getChartInfo({
+            ..._.pick(payload,
+              [
+                'scope',
+                'localScope',
+                'orgId',
+                'begin',
+                'end',
+                'cycleType',
+                'orderType',
+              ]),
+          });
+        } else {
+          // 否则则是表格
+          getChartTableInfo({
+            ..._.pick(payload,
+              [
+                'scope',
+                'localScope',
+                'orgId',
+                'begin',
+                'end',
+                'cycleType',
+              ]),
+            pageNum: '1',
+            orderIndicatorId: query.orderIndicatorId || '',
+            orderType: query.tableOrderType || '',
+          });
+        }
+      }
+
+      // 如果切换升降序方式，只要新的与旧的不想等，则请求图表接口
+      const nowOrderType = query.orderType;
+      const preOrderType = preQuery.orderType;
+      if (nowOrderType !== preOrderType) {
+        getChartInfo({
+          ..._.pick(payload,
+            [
+              'scope',
+              'localScope',
+              'orgId',
+              'begin',
+              'end',
+              'cycleType',
+              'orderType',
+            ]),
+        });
+      }
+
+      // 如果切换页面、表格字段排序，则请求表格接口
       const nowPageAndOrderType = _.pick(query, ['page', 'tableOrderType', 'orderIndicatorId']);
       const prePageAndOrderType = _.pick(preQuery, ['page', 'tableOrderType', 'orderIndicatorId']);
-      if (!_.isEqual(nowPageAndOrderType, prePageAndOrderType)) {
+      if (!_.isEqual(nowPageAndOrderType, prePageAndOrderType) && nowOrgId === preOrgId) {
         getChartTableInfo({
           ..._.pick(payload, ['scope', 'localScope', 'orgId', 'begin', 'end', 'cycleType']),
           pageNum: query.page || '1',
@@ -210,7 +268,7 @@ export default class InvestHome extends PureComponent {
 
   @autobind
   getInfo(queryObj) {
-    const { getAllInfo } = this.props;
+    const { getAllInfo, location: { query } } = this.props;
     const nativeQuery = getQuery(window.location.search);
     empId = window.curUserCode || (nativeQuery.empId || eid);
     const obj = this.state;
@@ -240,6 +298,7 @@ export default class InvestHome extends PureComponent {
         orderType: queryObj.orderType || '',
         pageNum: queryObj.page || '1',
       },
+      showChart: query.showChart,
     });
   }
 
