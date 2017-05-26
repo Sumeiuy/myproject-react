@@ -350,7 +350,6 @@ export default class ChartBar extends PureComponent {
       },
       formatter(params) {
         const item = params[1];
-        console.log('params', params);
         const axisValue = item.axisValue;
         const seriesName = item.seriesName;
         let value = item.data.value;

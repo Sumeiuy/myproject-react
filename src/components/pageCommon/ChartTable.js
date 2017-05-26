@@ -17,7 +17,7 @@ import styles from './ChartTable.less';
 const sortByType = optionsMap.sortByType;
 const revert = { asc: 'desc', desc: 'asc' };
 // 表格标题宽度
-const columnWidth = [180, 180, 180, 210, 180, 170, 170, 210, 170, 210, 180, 150];
+const columnWidth = [180, 180, 180, 210, 180, 170, 170, 210, 210, 210, 180, 150];
 
 export default class ChartTable extends PureComponent {
   static propTypes = {
@@ -93,7 +93,7 @@ export default class ChartTable extends PureComponent {
           value = `${Number.parseFloat((itemValue / 10000).toFixed(2))}`;
           break;
         default:
-          value = Number.parseFloat(itemValue).toFixed(2);
+          value = Number.parseFloat(itemValue.toFixed(2));
           break;
       }
       return {
