@@ -77,17 +77,19 @@ export default class ChartBar extends PureComponent {
   @autobind
   getChartData(orgModel, key, axis) {
     const yAxisLabels = [];
-    orgModel.forEach((item) => {
-      if (item[key] === null || item[key] === 'null') {
-        if (axis === 'yAxis') {
-          yAxisLabels.push('--');
-        } else if (axis === 'xAxis') {
-          yAxisLabels.push(0);
+    if (orgModel) {
+      orgModel.forEach((item) => {
+        if (item[key] === null || item[key] === 'null') {
+          if (axis === 'yAxis') {
+            yAxisLabels.push('--');
+          } else if (axis === 'xAxis') {
+            yAxisLabels.push(0);
+          }
+        } else {
+          yAxisLabels.push(item[key]);
         }
-      } else {
-        yAxisLabels.push(item[key]);
-      }
-    });
+      });
+    }
     return yAxisLabels;
   }
 
@@ -460,7 +462,7 @@ export default class ChartBar extends PureComponent {
         </div>
         <div className={styles.chartWrapper}>
           {
-            orgModel.length ?
+            (orgModel && orgModel.length) ?
               (<IECharts
                 option={options}
                 resizable

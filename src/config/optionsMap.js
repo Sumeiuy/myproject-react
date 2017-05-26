@@ -38,15 +38,15 @@ const optionsMap = {
   sortByType: [
     {
       scope: '2',
-      name: '按分公司',
+      name: '分公司',
     },
     {
       scope: '3',
-      name: '按营业部',
+      name: '营业部',
     },
     {
       scope: '4',
-      name: '按投顾',
+      name: '投顾',
     },
   ],
   // 按顺序排序
