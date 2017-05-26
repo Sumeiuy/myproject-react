@@ -15,8 +15,9 @@ import styles from './ChartTable.less';
 
 // 按类别排序
 const sortByType = optionsMap.sortByType;
-
 const revert = { asc: 'desc', desc: 'asc' };
+// 表格标题宽度
+const columnWidth = [180, 180, 180, 210, 180, 170, 170, 210, 170, 210, 180, 150];
 
 export default class ChartTable extends PureComponent {
   static propTypes = {
@@ -48,20 +49,20 @@ export default class ChartTable extends PureComponent {
     };
   }
 
-  @autobind
-  handleChange(e, pagination, sorter) {
-    // 表格排序方式
-    const tableOrderType = sorter.order === 'ascend' ? 'asc' : 'desc';
-    const { replace, location: { query } } = this.props;
-    replace({
-      pathname: '/invest',
-      query: {
-        ...query,
-        orderIndicatorId: sorter.field || '',
-        tableOrderType,
-      },
-    });
-  }
+  // @autobind
+  // handleChange(e, pagination, sorter) {
+  //   // 表格排序方式
+  //   const tableOrderType = sorter.order === 'ascend' ? 'asc' : 'desc';
+  //   const { replace, location: { query } } = this.props;
+  //   replace({
+  //     pathname: '/invest',
+  //     query: {
+  //       ...query,
+  //       orderIndicatorId: sorter.field || '',
+  //       tableOrderType,
+  //     },
+  //   });
+  // }
   // 分页事件
   @autobind
   handlePaginationChange(page, pageSize) {
@@ -75,17 +76,6 @@ export default class ChartTable extends PureComponent {
       },
     });
   }
-  // 对小数进行处理
-  @autobind
-  toFixedDecimal(value) {
-    let v = 0;
-    if (value === 0) {
-      v = 0;
-    } else {
-      v = _.ceil(value, 2);
-    }
-    return v;
-  }
 
   @autobind
   unitChange(arr, name) {
@@ -94,20 +84,20 @@ export default class ChartTable extends PureComponent {
       const itemValue = Number(item.value);
       switch (item.unit) {
         case '%':
-          value = ((itemValue * 100) === 100) ? 100 : (itemValue * 100);
+          value = Number.parseFloat((itemValue * 100).toFixed(2));
           break;
         case '\u2030':
-          value = ((itemValue * 1000) === 1000) ? 1000 : (itemValue * 1000);
+          value = Number.parseFloat((itemValue * 1000).toFixed(2));
           break;
         case '元':
-          value = itemValue / 10000;
+          value = `${Number.parseFloat((itemValue / 10000).toFixed(2))}`;
           break;
         default:
-          value = itemValue;
+          value = Number.parseFloat(itemValue).toFixed(2);
           break;
       }
       return {
-        [item.key]: this.toFixedDecimal(value),
+        [item.key]: value,
         city: name,
       };
     });
@@ -133,6 +123,20 @@ export default class ChartTable extends PureComponent {
     });
   }
 
+  @autobind
+  arrowHandle(e, item, type) {
+    const { replace, location: { query } } = this.props;
+    e.stopPropagation();
+    replace({
+      pathname: '/invest',
+      query: {
+        ...query,
+        orderIndicatorId: item.key || '',
+        tableOrderType: type,
+      },
+    });
+  }
+
   render() {
     const { chartTableInfo, location: { query }, level, style } = this.props;
     const columns = chartTableInfo.titleList;
@@ -145,15 +149,44 @@ export default class ChartTable extends PureComponent {
         const testArr = this.unitChange(item.indicatorDataList, item.name);
         return temp.push(Object.assign({ key: index }, ...testArr));
       });
-      const columnWidth = [180, 180, 180, 210, 180, 170, 170, 210, 170, 210, 180, 150];
       allWidth = _.sum(columnWidth);
       arr = columns.map((item, index) => (
         {
           dataIndex: item.key,
-          title: (<span onClick={() => { this.handleTitleClick(item); }}>
-            {`${item.name}(${item.unit === '元' ? '万元' : item.unit})`}
-          </span>),
-          sorter: true,
+          title: (
+            <span
+              className={styles.columnsTitle}
+              onClick={() => { this.handleTitleClick(item); }}
+            >
+              {`${item.name}(${item.unit === '元' ? '万元' : item.unit})`}
+              <span className={'ant-table-column-sorter'}>
+                <span
+                  className={`
+                    ant-table-column-sorter-up
+                    ${(query.orderIndicatorId === item.key && query.tableOrderType !== 'desc') ? 'on' : 'off'}
+                  `}
+                  title="↑"
+                  onClick={(e) => {
+                    this.arrowHandle(e, item, 'asc');
+                  }}
+                >
+                  <i className={'anticon anticon-caret-up'} />
+                </span>
+                <span
+                  className={`
+                    ant-table-column-sorter-up
+                    ${(query.orderIndicatorId === item.key && query.tableOrderType !== 'asc') ? 'on' : 'off'}
+                  `}
+                  title="↓"
+                  onClick={(e) => {
+                    this.arrowHandle(e, item, 'desc');
+                  }}
+                >
+                  <i className={'anticon anticon-caret-down'} />
+                </span>
+              </span>
+            </span>
+          ),
           width: columnWidth[index],
         }
       ));

@@ -27,7 +27,7 @@ function createOrderTypeSelectOptions(options, defaultValue) {
   return (onChange) => {
     const selectOptions = options.map((item, index) => {
       const optionKey = `options-${item.scope}-${index}`;
-      return (React.createElement(Option, { key: optionKey, value: `${item.scope}` }, `${item.name}`));
+      return (React.createElement(Option, { key: optionKey, value: `${item.scope}` }, `按${item.name}`));
     });
     const props = {
       key: `typeSelect-${defaultValue}`,
