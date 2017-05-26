@@ -23,26 +23,6 @@ const sortByOrderSelect = sortByOrder.map((item, index) => {
 });
 // 按类别排序
 const sortByType = optionsMap.sortByType;
-function createOrderTypeSelectOptions(options, defaultValue) {
-  return (onChange) => {
-    const selectOptions = options.map((item, index) => {
-      const optionKey = `options-${item.scope}-${index}`;
-      return (React.createElement(Option, { key: optionKey, value: `${item.scope}` }, `按${item.name}`));
-    });
-    const props = {
-      key: `typeSelect-${defaultValue}`,
-      defaultValue,
-      className: styles.newSelect,
-      onChange,
-    };
-    return React.createElement(Select, props, selectOptions);
-  };
-}
-
-const sortByTypeSelect3 = createOrderTypeSelectOptions(sortByType, '2');
-const sortByTypeSelect2 = createOrderTypeSelectOptions(sortByType.slice(1), '3');
-const sortByTypeSelect1 = createOrderTypeSelectOptions(sortByType.slice(2), '4');
-
 
 export default class BoardHeader extends PureComponent {
 
@@ -61,27 +41,25 @@ export default class BoardHeader extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { location: { query } } = this.props;
+    const { location: { query }, level } = this.props;
     this.state = {
+      scopeSelectValue: String(Number(level) + 1),
       showChart: query.showChart || 'zhuzhuangtu',
       orderType: query.orderType || 'desc',
     };
   }
 
-  @autobind
-  generateSelect(level) {
-    // level = 1 || 2 || 3
-    const NLevel = Number(level);
-    if (NLevel === 1) {
-      return sortByTypeSelect3(this.handleScopeChange);
-    } else if (NLevel === 2) {
-      return sortByTypeSelect2(this.handleScopeChange);
-    } else if (NLevel === 3) {
-      return sortByTypeSelect1(this.handleScopeChange);
+  componentWillReceiveProps(nextProps) {
+    const { location: { query: { orgId } } } = nextProps;
+    const { location: { query: { orgId: preOrgId } } } = this.props;
+    const { level } = nextProps;
+    const { level: preLevel } = this.props;
+    if (preLevel !== level || orgId !== preOrgId) {
+      this.setState({
+        scopeSelectValue: String(Number(level) + 1),
+      });
     }
-    return null;
   }
-
 
   @autobind
   handleDataExportClick() {
@@ -122,6 +100,9 @@ export default class BoardHeader extends PureComponent {
 
   @autobind
   handleScopeChange(v) {
+    this.setState({
+      scopeSelectValue: v,
+    });
     this.handleSortChange('scope', v);
   }
   @autobind
@@ -142,7 +123,7 @@ export default class BoardHeader extends PureComponent {
   render() {
     // 取出相关变量
     const { title, level } = this.props;
-    const { showChart, orderType } = this.state;
+    const { showChart, orderType, scopeSelectValue } = this.state;
 
     const toggleOrderTypeSelect = classnames({
       [styles.newSelect1]: true,
@@ -158,13 +139,46 @@ export default class BoardHeader extends PureComponent {
       iconColor: showChart === 'tables',
     });
 
+    const toggleScope2Option = classnames({
+      hideOption: Number(level) !== 1,
+    });
+    const toggleScope3Option = classnames({
+      hideOption: Number(level) === 3,
+    });
+
     return (
       <div className={styles.titleBar}>
         <div className={styles.titleText}>{title}</div>
         <div className={styles.titleBarRight}>
           <div className={styles.iconBtn1}>
             <span>排序方式:</span>
-            {this.generateSelect(level)}
+            <Select
+              value={scopeSelectValue}
+              className={styles.newSelect}
+              onChange={this.handleScopeChange}
+            >
+              {
+                sortByType.map((item, index) => {
+                  const sortByTypeIndex = index;
+                  let optionClass = '';
+                  if (index === 0) {
+                    optionClass = toggleScope2Option;
+                  }
+                  if (index === 1) {
+                    optionClass = toggleScope3Option;
+                  }
+                  return (
+                    <Option
+                      className={optionClass}
+                      key={sortByTypeIndex}
+                      value={item.scope}
+                    >
+                      按{item.name}
+                    </Option>
+                  );
+                })
+              }
+            </Select>
             <Select
               defaultValue={orderType}
               className={toggleOrderTypeSelect}

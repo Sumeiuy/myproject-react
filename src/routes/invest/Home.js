@@ -15,7 +15,10 @@ import PerformanceItem from '../../components/pageCommon/PerformanceItem';
 import PreformanceChartBoard from '../../components/pageCommon/PerformanceChartBoard';
 import PageHeader from '../../components/pageCommon/PageHeader';
 import styles from './Home.less';
+import config from '../../config/request';
 
+
+const { url } = config;
 let empId;
 const eid = '002727';
 
@@ -97,6 +100,7 @@ export default class InvestHome extends PureComponent {
     };
     this.getInfo({
       ...query,
+      scope: Number(query.custRangeLevel) + 1,
     });
   }
 
@@ -311,7 +315,7 @@ export default class InvestHome extends PureComponent {
       cycleType: query.cycleType || duration.cycleType,
     };
     window.location.href = `
-      http://192.168.71.26:9084/fspa/mcrm/api/excel/jxzb/exportExcel?${queryToString(data)}
+      ${url}/fspa/mcrm/api/excel/jxzb/exportExcel?${queryToString(data)}
     `;
   }
 
