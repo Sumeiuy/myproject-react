@@ -1,6 +1,6 @@
 /**
  * @file business/Home.js
- *  经营业绩汇总
+ *  投顾业绩汇总首页
  * @author sunweibin
  */
 
@@ -8,32 +8,16 @@ import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
-import { Row, Radio, Select } from 'antd';
 import _ from 'lodash';
 
+import { queryToString, getQuery, getDurationString } from '../../utils/helper';
 import PerformanceItem from '../../components/pageCommon/PerformanceItem';
 import PreformanceChartBoard from '../../components/pageCommon/PerformanceChartBoard';
-import CustRange from '../../components/pageCommon/CustRange2';
-// 选择项字典
-import { optionsMap } from '../../config';
+import PageHeader from '../../components/pageCommon/PageHeader';
 import styles from './Home.less';
 
-const empId = window.curUserCode || '002727';
-// RadioButton
-const RadioButton = Radio.Button;
-const RadioGroup = Radio.Group;
-
-// Select
-const Option = Select.Option;
-// 头部筛选条件
-const headBar = optionsMap.headBar;
-// 时间筛选条件
-const timeOptions = optionsMap.time;
-// 渲染3个头部期间Radio
-const timeRadios = timeOptions.map((item, index) => {
-  const timeIndex = `Timeradio${index}`;
-  return React.createElement(RadioButton, { key: timeIndex, value: `${item.key}` }, `${item.name}`);
-});
+let empId;
+const eid = '002727';
 
 const effects = {
   allInfo: 'invest/getAllInfo',
@@ -41,6 +25,7 @@ const effects = {
   chartInfo: 'invest/getChartInfo',
   custRange: 'invest/getCustRange',
   chartTableInfo: 'invest/getChartTableInfo',
+  excelInfo: 'invest/postExcelInfo',
 };
 
 const fectchDataFunction = (globalLoading, type) => query => ({
@@ -55,6 +40,7 @@ const mapStateToProps = state => ({
   chartTableInfo: state.invest.chartTableInfo,
   // chartLoading: state.loading.effects[effects.chartInfo],
   custRange: state.invest.custRange,
+  excelInfo: state.invest.excelInfo,
   globalLoading: state.activity.global,
 });
 
@@ -64,13 +50,14 @@ const mapDispatchToProps = {
   getChartInfo: fectchDataFunction(true, effects.chartInfo),
   getChartTableInfo: fectchDataFunction(true, effects.chartTableInfo),
   getCustRange: fectchDataFunction(false, effects.custRange),
+  postExcelInfo: fectchDataFunction(true, effects.excelInfo),
   push: routerRedux.push,
   replace: routerRedux.replace,
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
-export default class BusinessHome extends PureComponent {
+export default class InvestHome extends PureComponent {
 
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -81,6 +68,8 @@ export default class BusinessHome extends PureComponent {
     chartInfo: PropTypes.array,
     getChartTableInfo: PropTypes.func.isRequired,
     chartTableInfo: PropTypes.object,
+    excelInfo: PropTypes.object,
+    postExcelInfo: PropTypes.func.isRequired,
     // chartLoading: PropTypes.bool,
     globalLoading: PropTypes.bool,
     getCustRange: PropTypes.func.isRequired,
@@ -93,21 +82,22 @@ export default class BusinessHome extends PureComponent {
     performance: [],
     chartInfo: [],
     chartTableInfo: {},
+    excelInfo: {},
     // chartLoading: false,
     globalLoading: false,
     custRange: [],
   }
 
   componentWillMount() {
-    const {
-      location: { query },
-    } = this.props;
+    const { location: { query } } = this.props;
     const value = query.cycleType || 'month';
-    const obj = this.getDurationString(value);
+    const obj = getDurationString(value);
     this.state = {
       ...obj,
     };
-    this.getInfo(query);
+    this.getInfo({
+      ...query,
+    });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -122,9 +112,12 @@ export default class BusinessHome extends PureComponent {
 
     const payload = {
       ...query,
-      empId,
       orgId: query.orgId || (custRange[0] && custRange[0].id),
-      scope: query.scope || Number(custRange[0] && custRange[0].level) + 1,
+      // scope: query.scope || Number(custRange[0] && custRange[0].level) + 1,
+      scope: query.scope ||
+      (query.custRangeLevel
+      ? Number(query.custRangeLevel) + 1
+      : Number(custRange[0] && custRange[0].level) + 1),
       orderType: query.orderType || '',
       begin: query.begin || duration.begin,
       end: query.end || duration.end,
@@ -133,148 +126,196 @@ export default class BusinessHome extends PureComponent {
     };
     // 还是chart部分的数据
     if (!_.isEqual(query, preQuery)) {
-      // 如果切换 机构树以及时间段，对下面的所有接口发起新的请求
-      const nowCustAndCycle = _.pick(query, ['custRangeLevel', 'cycleType']);
-      const preCustAndCycle = _.pick(preQuery, ['custRangeLevel', 'cycleType']);
-      if (!_.isEqual(nowCustAndCycle, preCustAndCycle)) {
-        this.getInfo(query);
-        // // 更改 scope 的值
-        // replace({
-        //   pathname: '/invest',
-        //   query: {
-        //     ...query,
-        //     scope: Number(query.custRangeLevel) + 1 || '',
-        //   },
-        // });
-      }
-      // 判断更改按分公司、营业部、投顾排序维度
-      // 判断排序方式变更
-      // 判断切换图表与表格
-      if (!_.isEqual(query.scope, preQuery.scope) ||
-        !_.isEqual(query.orderType, preQuery.orderType) ||
-        !_.isEqual(query.showChart, preQuery.showChart)) {
-        // todo，请求参数
-        // 如果现在是 zhuzhuangtu，则请求柱状图接口，否则请求表格接口
+      // 如果切换 时间段
+      const nowCycleType = query.cycleType;
+      const preCycleType = preQuery.cycleType;
 
-        if (query.showChart === 'zhuzhuangtu' || !query.showChart) {
+      if (nowCycleType !== preCycleType) {
+        this.getInfo({
+          ...query,
+        });
+      }
+      // 如果切换 机构树
+      const nowOrgId = query.orgId;
+      const preOrgId = preQuery.orgId;
+      if (nowOrgId !== preOrgId) {
+        this.getInfo({
+          ...query,
+        });
+      }
+      const nowShowChart = query.showChart;
+      const preShowChart = preQuery.showChart;
+      // 如果切换 柱状图或者表格
+      if (nowShowChart !== preShowChart) {
+        if (nowShowChart === 'zhuzhuangtu' || !nowShowChart) {
           getChartInfo({
-            ...payload,
+            ..._.pick(payload,
+              [
+                'scope',
+                'localScope',
+                'orgId',
+                'begin',
+                'end',
+                'cycleType',
+                'orderType',
+              ]),
           });
         } else {
           getChartTableInfo({
-            ...payload,
-            pageNum: query.page || '1',
+            ..._.pick(payload,
+              [
+                'scope',
+                'localScope',
+                'orgId',
+                'begin',
+                'end',
+                'cycleType',
+              ]),
+            pageNum: '1',
             orderIndicatorId: query.orderIndicatorId || '',
+            orderType: query.tableOrderType || '',
           });
         }
       }
-      // 判断 页数 变更，请求表格数据接口
-      if (!_.isEqual(query.page, preQuery.page)) {
+
+      // 如果切换层级维度排序
+      const nowScope = query.scope;
+      const preScope = preQuery.scope;
+      if (nowScope !== preScope && nowOrgId === preOrgId) {
+        // 如果当前是柱状图
+        if (query.showChart === 'zhuzhuangtu' || !query.showChart) {
+          getChartInfo({
+            ..._.pick(payload,
+              [
+                'scope',
+                'localScope',
+                'orgId',
+                'begin',
+                'end',
+                'cycleType',
+                'orderType',
+              ]),
+          });
+        } else {
+          // 否则则是表格
+          getChartTableInfo({
+            ..._.pick(payload,
+              [
+                'scope',
+                'localScope',
+                'orgId',
+                'begin',
+                'end',
+                'cycleType',
+              ]),
+            pageNum: '1',
+            orderIndicatorId: query.orderIndicatorId || '',
+            orderType: query.tableOrderType || '',
+          });
+        }
+      }
+
+      // 如果切换升降序方式，只要新的与旧的不想等，则请求图表接口
+      const nowOrderType = query.orderType;
+      const preOrderType = preQuery.orderType;
+      if (nowOrderType !== preOrderType) {
+        getChartInfo({
+          ..._.pick(payload,
+            [
+              'scope',
+              'localScope',
+              'orgId',
+              'begin',
+              'end',
+              'cycleType',
+              'orderType',
+            ]),
+        });
+      }
+
+      // 如果切换页面、表格字段排序，则请求表格接口
+      const nowPageAndOrderType = _.pick(query, ['page', 'tableOrderType', 'orderIndicatorId']);
+      const prePageAndOrderType = _.pick(preQuery, ['page', 'tableOrderType', 'orderIndicatorId']);
+      if (!_.isEqual(nowPageAndOrderType, prePageAndOrderType) && nowOrgId === preOrgId && query.showChart === 'tables') {
         getChartTableInfo({
-          ...payload,
+          ..._.pick(payload, ['scope', 'localScope', 'orgId', 'begin', 'end', 'cycleType']),
           pageNum: query.page || '1',
           orderIndicatorId: query.orderIndicatorId || '',
+          orderType: query.tableOrderType || '',
+          pageSize: 10,
         });
       }
     }
   }
 
   @autobind
-  getInfo(query) {
-    const { getAllInfo } = this.props;
+  setGlobalState(obj) {
+    this.setState({
+      ...obj,
+    });
+  }
+
+  @autobind
+  getInfo(queryObj) {
+    const { getAllInfo, location: { query } } = this.props;
+    const nativeQuery = getQuery(window.location.search);
+    empId = window.curUserCode || (nativeQuery.empId || eid);
     const obj = this.state;
     const payload = {
-      empId,
-      orgId: query.orgId || '',
-      begin: query.begin || obj.begin,
-      end: query.end || obj.end,
-      cycleType: query.cycleType || obj.cycleType,
-      localScope: query.custRangeLevel,
+      orgId: queryObj.orgId || '',
+      begin: queryObj.begin || obj.begin,
+      end: queryObj.end || obj.end,
+      cycleType: queryObj.cycleType || obj.cycleType,
+      localScope: queryObj.custRangeLevel,
     };
+
+    console.log('query.showChart', query.showChart);
     getAllInfo({
       custRange: {
         empId,
       },
       performance: {
-        ...payload,
-        scope: query.custRangeLevel,
+        scope: queryObj.custRangeLevel,
+        ..._.pick(payload, ['orgId', 'begin', 'end', 'cycleType', 'localScope']),
       },
       chartInfo: {
-        ...payload,
-        scope: query.scope || Number(query.custRangeLevel) + 1,
-        localScope: query.custRangeLevel || '',
-        orderType: query.orderType || '',
+        scope: queryObj.scope || Number(queryObj.custRangeLevel) + 1,
+        orderType: queryObj.orderType || '',
+        ..._.pick(payload, ['orgId', 'begin', 'end', 'cycleType', 'localScope']),
       },
       chartTableInfo: {
-        ...payload,
-        scope: query.scope || Number(query.custRangeLevel) + 1,
-        orderType: query.orderType || '',
-        pageNum: query.page || '1',
+        ..._.pick(payload, ['orgId', 'localScope', 'begin', 'end', 'cycleType']),
+        scope: queryObj.scope || Number(queryObj.custRangeLevel) + 1,
+        orderType: queryObj.orderType || '',
+        pageSize: 10,
+        pageNum: queryObj.page || '1',
       },
+      showChart: query.showChart,
     });
   }
 
+  // 导出 excel 文件
   @autobind
-  getDurationString(flag) {
-    const durationObj = {};
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = now.getMonth() + 1 < 10 ? `0${now.getMonth() + 1}` : `${now.getMonth() + 1}`;
-    const day = now.getDate();
-    let qStartMonth = (Math.floor((now.getMonth() + 3) / 3) * 3) - 2;
-    qStartMonth = qStartMonth < 10 ? `0${qStartMonth}` : `${qStartMonth}`;
-    // 本月
-    if (flag === 'month') {
-      durationObj.durationStr = `${month}/01-${month}/${day}`;
-      durationObj.cycleType = 'month';
-      durationObj.begin = `${year}${month}01`;
-      durationObj.end = `${year}${month}${day}`;
-    } else if (flag === 'quarter') {
-      durationObj.durationStr = `${qStartMonth}/01-${month}/${day}`;
-      durationObj.cycleType = 'quarter';
-      durationObj.begin = `${year}${qStartMonth}01`;
-      durationObj.end = `${year}${month}${day}`;
-    } else if (flag === 'year') {
-      durationObj.durationStr = `01/01-${month}/${day}`;
-      durationObj.cycleType = 'year';
-      durationObj.begin = `${year}0101`;
-      durationObj.end = `${year}${month}${day}`;
-    }
-    return durationObj;
-  }
-
-  // @autobind
-  // durationChange(value) {
-  //   const obj = this.getDurationString(value);
-  //   this.setState({
-  //     duration: obj,
-  //   });
-  // }
-  // 期间变化
-  @autobind
-  handleDurationChange(e) {
-    const value = e.target.value;
-    const obj = this.getDurationString(value);
-    const { replace, location: { query } } = this.props;
-    this.setState({
-      ...obj,
-    });
-    // 需要改变query中的查询变量
-    replace({
-      pathname: '/invest',
-      query: {
-        ...query,
-        begin: obj.begin,
-        end: obj.end,
-        cycleType: value,
-      },
-    });
+  exportExcel() {
+    const { custRange, location: { query } } = this.props;
+    const duration = this.state;
+    const data = {
+      orgId: query.orgId || (custRange[0] && custRange[0].id),
+      localScope: query.custRangeLevel || (custRange[0] && custRange[0].level),
+      scope: query.scope ||
+      (query.custRangeLevel
+      ? Number(query.custRangeLevel) + 1
+      : Number(custRange[0] && custRange[0].level) + 1),
+      begin: query.begin || duration.begin,
+      end: query.end || duration.end,
+      cycleType: query.cycleType || duration.cycleType,
+    };
+    window.location.href = `
+      http://192.168.71.26:9084/fspa/mcrm/api/excel/jxzb/exportExcel?${queryToString(data)}
+    `;
   }
 
   render() {
-    // chartLoading,
-    // globalLoading,
-    const duration = this.state;
     const {
       performance,
       chartInfo,
@@ -289,36 +330,11 @@ export default class BusinessHome extends PureComponent {
     }
     return (
       <div className="page-invest content-inner">
-        <div className="reportHeader">
-          <Row type="flex" justify="start" align="middle">
-            <div className={styles.reportName}>
-              <Select
-                defaultValue={headBar.key}
-                style={{
-                  width: '150px',
-                }}
-              >
-                <Option value={headBar.key}>{headBar.name}</Option>
-              </Select>
-            </div>
-            <div className={styles.reportHeaderRight}>
-              <div className={styles.dateFilter}>{duration.durationStr}</div>
-              <RadioGroup
-                defaultValue={duration.cycleType || 'month'}
-                onChange={this.handleDurationChange}
-              >
-                {timeRadios}
-              </RadioGroup>
-              <div className={styles.vSplit} />
-              {/* 营业地址选择项 */}
-              <CustRange
-                custRange={custRange}
-                location={location}
-                replace={replace}
-              />
-            </div>
-          </Row>
-        </div>
+        <PageHeader
+          location={location}
+          replace={replace}
+          custRange={custRange}
+        />
         <div className={styles.reportBody}>
           <div className={styles.reportPart}>
             <PerformanceItem
@@ -329,6 +345,7 @@ export default class BusinessHome extends PureComponent {
             <PreformanceChartBoard
               chartData={chartInfo}
               chartTableInfo={chartTableInfo}
+              postExcelInfo={this.exportExcel}
               level={selScope}
               location={location}
               replace={replace}
