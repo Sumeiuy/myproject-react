@@ -17,7 +17,9 @@ export default class PerformanceChartBoard extends PureComponent {
     chartTableInfo: PropTypes.object,
     replace: PropTypes.func.isRequired,
     level: PropTypes.string,
+    boardTitle: PropTypes.string.isRequired,
     postExcelInfo: PropTypes.func.isRequired,
+    showScopeOrder: PropTypes.bool.isRequired,
     location: PropTypes.object.isRequired,
   }
 
@@ -46,7 +48,16 @@ export default class PerformanceChartBoard extends PureComponent {
 
   render() {
     const { showChart } = this.state;
-    const { chartData, chartTableInfo, replace, location, level, postExcelInfo } = this.props;
+    const {
+      chartData,
+      chartTableInfo,
+      replace,
+      location,
+      level,
+      postExcelInfo,
+      boardTitle,
+      showScopeOrder,
+    } = this.props;
     if (!(chartData && chartData.length) && showChart !== 'tables') {
       return null;
     }
@@ -55,11 +66,12 @@ export default class PerformanceChartBoard extends PureComponent {
       <div className="investPerformanceBoard">
         <BoardHeader
           location={location}
-          title={'指标分布'}
+          title={boardTitle}
           postExcelInfo={postExcelInfo}
           replace={replace}
           level={level}
           changeBoard={this.changeBoard}
+          showScopeOrder={showScopeOrder}
         />
         {/* 根据 url 里的 showChart 来显示不同的组件 */}
         {

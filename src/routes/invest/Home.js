@@ -354,6 +354,8 @@ export default class InvestHome extends PureComponent {
               location={location}
               replace={replace}
               loading={false}
+              boardTitle={'指标分布'}
+              showScopeOrder
             />
           </div>
         </div>
