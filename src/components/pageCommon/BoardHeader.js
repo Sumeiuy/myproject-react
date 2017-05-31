@@ -32,6 +32,7 @@ export default class BoardHeader extends PureComponent {
     postExcelInfo: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
     changeBoard: PropTypes.func.isRequired,
+    showScopeOrder: PropTypes.bool.isRequired,
     level: PropTypes.string,
   }
 
@@ -122,8 +123,13 @@ export default class BoardHeader extends PureComponent {
 
   render() {
     // 取出相关变量
-    const { title, level } = this.props;
+    const { title, level, showScopeOrder } = this.props;
     const { showChart, orderType, scopeSelectValue } = this.state;
+
+    const toggleScopeSelect = classnames({
+      [styles.newSelect]: true,
+      hideSelect: !showScopeOrder,
+    });
 
     const toggleOrderTypeSelect = classnames({
       [styles.newSelect1]: true,
@@ -154,7 +160,7 @@ export default class BoardHeader extends PureComponent {
             <span>排序方式:</span>
             <Select
               value={scopeSelectValue}
-              className={styles.newSelect}
+              className={toggleScopeSelect}
               onChange={this.handleScopeChange}
             >
               {
