@@ -19,9 +19,9 @@ a:link,a:visited,a:active{
   position: absolute;
   top:50%;
   left:50%;
-  width: 960px;
+  width: 1020px;
   height: 375px;
-  margin: -188px 0 0 -480px;
+  margin: -188px 0 0 -510px;
   text-align: center;
 }
 .pageCheckBrowser .content .left {
@@ -75,6 +75,9 @@ a:link,a:visited,a:active{
   color:#97bfd4;
   vertical-align: top;
 }
+.pageCheckBrowser .content .right .tip .tipcontent.noWrap {
+  white-space: nowrap;
+}
 .pageCheckBrowser .content .right .tip .icon {
   position: relative;
   top:2px;
@@ -92,13 +95,16 @@ a:link,a:visited,a:active{
 .pageCheckBrowser .content .right .tip .download {
   vertical-align: top;
   color: #97bfd4;
-  text-decoration: none;
+  text-decoration: underline;
 }
 .pageCheckBrowser .content .right .tip .download:link,
 .pageCheckBrowser .content .right .tip .download:active,
 .pageCheckBrowser .content .right .tip .download:visited,
 .pageCheckBrowser .content .right .tip .download:focus, {
   outline: none;
+}
+.pageCheckBrowser .content .right .tip .download:hover {
+  text-decoration: underline;
 }
 .pageCheckBrowser .content .right .tip .download-tool-tip {
   position: absolute;

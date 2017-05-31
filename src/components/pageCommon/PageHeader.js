@@ -37,6 +37,7 @@ export default class PageHeader extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
+    selectDefault: PropTypes.string.isRequired,
     custRange: PropTypes.array,
   }
 
@@ -78,14 +79,14 @@ export default class PageHeader extends PureComponent {
 
   render() {
     const duration = this.state;
-    const { replace, custRange, location } = this.props;
+    const { replace, custRange, location, selectDefault } = this.props;
 
     return (
       <div className="reportHeader">
         <Row type="flex" justify="start" align="middle">
           <div className="reportName">
             <Select
-              defaultValue={headBar[0].key}
+              defaultValue={selectDefault}
               style={{
                 maxWidth: '190px',
               }}
