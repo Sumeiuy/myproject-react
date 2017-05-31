@@ -176,6 +176,7 @@ export default class InvestHome extends PureComponent {
                 'cycleType',
               ]),
             pageNum: '1',
+            pageSize: 10,
             orderIndicatorId: query.orderIndicatorId || '',
             orderType: query.tableOrderType || '',
           });
@@ -213,6 +214,7 @@ export default class InvestHome extends PureComponent {
                 'cycleType',
               ]),
             pageNum: '1',
+            pageSize: 10,
             orderIndicatorId: query.orderIndicatorId || '',
             orderType: query.tableOrderType || '',
           });
@@ -272,8 +274,6 @@ export default class InvestHome extends PureComponent {
       cycleType: queryObj.cycleType || obj.cycleType,
       localScope: queryObj.custRangeLevel,
     };
-
-    console.log('query.showChart', query.showChart);
     getAllInfo({
       custRange: {
         empId,
