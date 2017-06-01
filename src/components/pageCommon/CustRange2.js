@@ -54,7 +54,7 @@ export default class CustRange extends PureComponent {
   }
 
   componentDidMount() {
-    const app = document.querySelector('#app');
+    const app = document.querySelector('.react-app');
     app.addEventListener('mousewheel', this.handleMousewheel, false);
     app.addEventListener('DOMMouseScroll', this.handleMousewheel, false);
   }
