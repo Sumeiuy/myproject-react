@@ -9,6 +9,7 @@ import { TreeSelect } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
+import { constants } from '../../config';
 import styles from './custRange.less';
 
 function transformCustRangeData(list, parent = '') {
@@ -54,7 +55,7 @@ export default class CustRange extends PureComponent {
   }
 
   componentDidMount() {
-    const app = document.querySelector('.react-app');
+    const app = document.querySelector(constants.container);
     app.addEventListener('mousewheel', this.handleMousewheel, false);
     app.addEventListener('DOMMouseScroll', this.handleMousewheel, false);
   }
@@ -130,7 +131,7 @@ export default class CustRange extends PureComponent {
     }
     this.addDropDownMouseWheel();
     const evt = new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window });
-    document.querySelector('#app').dispatchEvent(evt);
+    document.querySelector(constants.container).dispatchEvent(evt);
   }
 
   handleDropDownMousewheel(e = window.event) {
@@ -163,7 +164,7 @@ export default class CustRange extends PureComponent {
         showSearch
         dropdownMatchSelectWidth
         labelInValue
-        getPopupContainer={() => document.getElementById('app')}
+        getPopupContainer={() => document.querySelector(constants.container)}
       />
     );
   }
