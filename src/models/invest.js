@@ -6,6 +6,7 @@
 // import { routerRedux } from 'dva/router';
 
 import api from '../api';
+import config from '../config/request';
 
 export default {
   namespace: 'invest',
@@ -40,14 +41,6 @@ export default {
         chartTableInfo,
       };
     },
-    postExcelInfoSuccess(state, action) {
-      const { payload: { resExcelInfo } } = action;
-      const excelInfo = resExcelInfo.resultData.data;
-      return {
-        ...state,
-        excelInfo,
-      };
-    },
     getCustRangeSuccess(state, action) {
       const { response: { resultData } } = action;
       let custRange;
@@ -66,6 +59,11 @@ export default {
     },
   },
   effects: {
+    // 获取业绩指标
+    * exportExcel({ payload: { query } }) {
+      const { prefix } = config;
+      yield window.location.href = `${prefix}/excel/jxzb/exportExcel?${query}`;
+    },
     // 获取业绩指标
     * getPerformance({ payload }, { call, put }) {
       const resPerformance = yield call(api.getPerformance, payload);
@@ -101,7 +99,6 @@ export default {
       // 判断柱状图或者表格
       // 柱状图
       if (!payload.showChart || payload.showChart === 'zhuzhuangtu') {
-        console.log('payload.showChart>>>', payload.showChart);
         const resChartInfo = yield call(api.getChartInfo, {
           ...payload.chartInfo,
           localScope: payload.chartInfo.localScope || firstCust.level,
@@ -142,15 +139,6 @@ export default {
       yield put({
         type: 'getChartTableInfoSuccess',
         payload: { resChartTableInfo },
-      });
-    },
-
-    // 导出表格数据
-    * postExcelInfo({ payload }, { call, put }) {
-      const resExcelInfo = yield call(api.postExcelInfo, payload);
-      yield put({
-        type: 'postExcelInfoSuccess',
-        payload: { resExcelInfo },
       });
     },
 

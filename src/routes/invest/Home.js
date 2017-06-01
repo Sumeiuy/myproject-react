@@ -15,10 +15,7 @@ import PerformanceItem from '../../components/pageCommon/PerformanceItem';
 import PreformanceChartBoard from '../../components/pageCommon/PerformanceChartBoard';
 import PageHeader from '../../components/pageCommon/PageHeader';
 import styles from './Home.less';
-import config from '../../config/request';
 
-
-const { url } = config;
 let empId;
 const eid = '002727';
 
@@ -28,7 +25,7 @@ const effects = {
   chartInfo: 'invest/getChartInfo',
   custRange: 'invest/getCustRange',
   chartTableInfo: 'invest/getChartTableInfo',
-  excelInfo: 'invest/postExcelInfo',
+  exportExcel: 'invest/exportExcel',
 };
 
 const fectchDataFunction = (globalLoading, type) => query => ({
@@ -53,7 +50,7 @@ const mapDispatchToProps = {
   getChartInfo: fectchDataFunction(true, effects.chartInfo),
   getChartTableInfo: fectchDataFunction(true, effects.chartTableInfo),
   getCustRange: fectchDataFunction(false, effects.custRange),
-  postExcelInfo: fectchDataFunction(true, effects.excelInfo),
+  exportExcel: fectchDataFunction(true, effects.exportExcel),
   push: routerRedux.push,
   replace: routerRedux.replace,
 };
@@ -71,8 +68,7 @@ export default class InvestHome extends PureComponent {
     chartInfo: PropTypes.array,
     getChartTableInfo: PropTypes.func.isRequired,
     chartTableInfo: PropTypes.object,
-    excelInfo: PropTypes.object,
-    postExcelInfo: PropTypes.func.isRequired,
+    exportExcel: PropTypes.func.isRequired,
     // chartLoading: PropTypes.bool,
     globalLoading: PropTypes.bool,
     getCustRange: PropTypes.func.isRequired,
@@ -85,7 +81,6 @@ export default class InvestHome extends PureComponent {
     performance: [],
     chartInfo: [],
     chartTableInfo: {},
-    excelInfo: {},
     // chartLoading: false,
     globalLoading: false,
     custRange: [],
@@ -300,8 +295,8 @@ export default class InvestHome extends PureComponent {
 
   // 导出 excel 文件
   @autobind
-  exportExcel() {
-    const { custRange, location: { query } } = this.props;
+  handleExportExcel() {
+    const { custRange, location: { query }, exportExcel } = this.props;
     const duration = this.state;
     const data = {
       orgId: query.orgId || (custRange[0] && custRange[0].id),
@@ -314,9 +309,7 @@ export default class InvestHome extends PureComponent {
       end: query.end || duration.end,
       cycleType: query.cycleType || duration.cycleType,
     };
-    window.location.href = `
-      ${url}/fspa/mcrm/api/excel/jxzb/exportExcel?${queryToString(data)}
-    `;
+    exportExcel({ query: queryToString(data) });
   }
 
   render() {
@@ -350,7 +343,7 @@ export default class InvestHome extends PureComponent {
             <PreformanceChartBoard
               chartData={chartInfo}
               chartTableInfo={chartTableInfo}
-              postExcelInfo={this.exportExcel}
+              postExcelInfo={this.handleExportExcel}
               level={selScope}
               location={location}
               replace={replace}
