@@ -25,9 +25,6 @@ export default {
   // 获取指标图表表格视图数据
   getChartTableInfo: query => api.post('/groovynoauth/jxzb/queryMultiSummuryRecord', query),
 
-  // 导出 excel 表格
-  postExcelInfo: query => api.post('/excel/jxzb/exportExcel', query),
-
   // 获取客户范围
   getCustRange: query => api.post('/groovynoauth/jxzb/empOrgTree', query),
 };
