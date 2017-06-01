@@ -20,7 +20,7 @@ import BusinessHome from './routes/business/Home';
 const routes = ({ history }) => (// eslint-disable-line
   <Router history={history}>
     <Route path="/" component={Main}>
-      <IndexRedirect to="/empty" />
+      <IndexRedirect to="/invest" />
       <Route path="empty">
         <IndexRoute component={Empty} />
       </Route>
