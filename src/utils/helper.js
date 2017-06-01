@@ -5,6 +5,7 @@
  */
 
 import bowser from 'bowser';
+import moment from 'moment';
 
 import constants from '../config/constants';
 
@@ -189,29 +190,28 @@ const helper = {
 
   getDurationString(flag) {
     const durationObj = {};
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = now.getMonth() + 1 < 10 ? `0${now.getMonth() + 1}` : `${now.getMonth() + 1}`;
-    const day = now.getDate();
-    let qStartMonth = (Math.floor((now.getMonth() + 3) / 3) * 3) - 2;
-    qStartMonth = qStartMonth < 10 ? `0${qStartMonth}` : `${qStartMonth}`;
-    // 本月
+    const year = moment().format('YYYY');
+    const month = moment().format('MM');
+    // 当前年月日
+    const nowTime = moment().format('YYYYMMDD');
+    // 当前月日
+    const nowMonthDay = moment().format('MM/DD');
+    // 当前季度开始月
+    const qStartMonth = moment().startOf('quarter').format('MM');
     if (flag === 'month') {
-      durationObj.durationStr = `${month}/01-${month}/${day}`;
+      durationObj.durationStr = `${month}/01-${nowMonthDay}`;
       durationObj.cycleType = 'month';
       durationObj.begin = `${year}${month}01`;
-      durationObj.end = `${year}${month}${day}`;
     } else if (flag === 'quarter') {
-      durationObj.durationStr = `${qStartMonth}/01-${month}/${day}`;
+      durationObj.durationStr = `${qStartMonth}/01-${nowMonthDay}`;
       durationObj.cycleType = 'quarter';
       durationObj.begin = `${year}${qStartMonth}01`;
-      durationObj.end = `${year}${month}${day}`;
     } else if (flag === 'year') {
-      durationObj.durationStr = `01/01-${month}/${day}`;
+      durationObj.durationStr = `01/01-${nowMonthDay}`;
       durationObj.cycleType = 'year';
       durationObj.begin = `${year}0101`;
-      durationObj.end = `${year}${month}${day}`;
     }
+    durationObj.end = nowTime;
     return durationObj;
   },
 };

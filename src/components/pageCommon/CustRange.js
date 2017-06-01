@@ -9,6 +9,7 @@ import { TreeSelect } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
+import { constants } from '../../config';
 import styles from './custRange.less';
 
 const TreeNode = TreeSelect.TreeNode;
@@ -131,7 +132,7 @@ export default class CustRange extends PureComponent {
         showSearch
         dropdownMatchSelectWidth
         labelInValue
-        getPopupContainer={() => document.getElementById('app')}
+        getPopupContainer={() => document.querySelector(constants.container)}
       >
         {getNodes(custRange, (custRange[0] || {}).name)}
       </TreeSelect>

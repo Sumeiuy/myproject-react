@@ -356,7 +356,7 @@ export default class ChartBar extends PureComponent {
         if (axisValue === '--') {
           value = '--';
         }
-        if (levelAndScope === 4) {
+        if (levelAndScope === 4 && axisValue !== '--') {
           const seriesIndex = item.seriesIndex;
           return `${levelCompanyArr[seriesIndex]} - ${levelStoreArr[seriesIndex]}<br />${axisValue}<br /> ${seriesName}: <span style="color:#f8ac59; font-size: 15px;">${value}</span>${unit}`;
         }

@@ -49,7 +49,6 @@ app.use(createActivityIndicator());
 
 // 3. Model
 app.model(require('./models/app'));
-app.model(require('./models/example'));
 app.model(require('./models/invest'));
 app.model(require('./models/business'));
 
@@ -57,7 +56,7 @@ app.model(require('./models/business'));
 app.router(routerConfig);
 
 // 5. Start
-app.start('#app');
+app.start('#exApp');
 
 // start后_store才被初始化
 const store = app._store; // eslint-disable-line
