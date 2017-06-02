@@ -6,10 +6,11 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
-import { Row, Radio, Select } from 'antd';
+import { Row, Radio } from 'antd';
 
 import { getDurationString } from '../../utils/helper';
 import CustRange from './CustRange2';
+import BoardSelect from './BoardSelect';
 // 选择项字典
 import { optionsMap } from '../../config';
 import styles from './PageHeader.less';
@@ -19,8 +20,6 @@ import styles from './PageHeader.less';
 // RadioButton
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
-// Select
-const Option = Select.Option;
 
 // 时间筛选条件
 const timeOptions = optionsMap.time;
@@ -29,8 +28,6 @@ const timeRadios = timeOptions.map((item, index) => {
   const timeIndex = `Timeradio${index}`;
   return React.createElement(RadioButton, { key: timeIndex, value: `${item.key}` }, `${item.name}`);
 });
-// 头部页面切换Select的值
-const headBar = optionsMap.headBar;
 
 
 export default class PageHeader extends PureComponent {
@@ -85,15 +82,10 @@ export default class PageHeader extends PureComponent {
       <div className="reportHeader">
         <Row type="flex" justify="start" align="middle">
           <div className="reportName">
-            <Select
-              defaultValue={selectDefault}
-              style={{
-                maxWidth: '190px',
-              }}
-            >
-              <Option className="boardMenu" value={headBar[0].key}>{headBar[0].name}</Option>
-              <Option className="boardMenu" value={headBar[1].key}>{headBar[1].name}</Option>
-            </Select>
+            <BoardSelect
+              location={location}
+              selectDefault={selectDefault}
+            />
           </div>
           <div className={styles.reportHeaderRight}>
             <div className={styles.dateFilter}>{duration.durationStr}</div>
