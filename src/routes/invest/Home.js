@@ -331,7 +331,7 @@ export default class InvestHome extends PureComponent {
           location={location}
           replace={replace}
           custRange={custRange}
-          selectDefault={'invest'}
+          selectDefault="invest"
         />
         <div className={styles.reportBody}>
           <div className={styles.reportPart}>
