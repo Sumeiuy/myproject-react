@@ -59,7 +59,7 @@ export default {
     },
   },
   effects: {
-    // 获取业绩指标
+    // 导出Excel表格
     * exportExcel({ payload: { query } }) {
       const { prefix } = config;
       yield window.location.href = `${prefix}/excel/jxzb/exportExcel?${query}`;

@@ -447,16 +447,6 @@ export default class ChartBar extends PureComponent {
           <div className={styles.chartTitle}>
             <Icon type={iconTypeMap[key]} className={styles.chartTiltleTextIcon} />
             <span className={styles.chartTitleText}>{name}</span>
-            {/*
-              <span
-                style={{
-                  float: 'right',
-                  height: '100%',
-                  verticalAlign: 'middle',
-                  lineHeight: '45px',
-                }}
-              >3600户</span>
-            */}
           </div>
         </div>
         <div className={styles.chartWrapper}>

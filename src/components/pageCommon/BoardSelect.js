@@ -62,7 +62,7 @@ export default class BoardSelect extends PureComponent {
     const { key } = MenuItem;
     console.log('handleMenuClick>>key>>', key);
     // TODO 此处后期迭代中需要做跳转页面逻辑处理
-    const url = `/${key}`;
+    const url = `/${key}?boardName=${key}`;
     push(url);
   }
 
