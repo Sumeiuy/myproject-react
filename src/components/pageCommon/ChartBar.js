@@ -383,7 +383,6 @@ export default class ChartBar extends PureComponent {
       },
       xAxis: {
         type: 'value',
-        name: unit,
         nameGap: '6',
         nameTextStyle: {
           color: '#999',
@@ -446,7 +445,7 @@ export default class ChartBar extends PureComponent {
         <div className={styles.chartHeader}>
           <div className={styles.chartTitle}>
             <Icon type={iconTypeMap[key]} className={styles.chartTiltleTextIcon} />
-            <span className={styles.chartTitleText}>{name}</span>
+            <span className={styles.chartTitleText}>{`${name}(${unit})`}</span>
           </div>
         </div>
         <div className={styles.chartWrapper}>

@@ -98,7 +98,7 @@ export default class CustRange extends PureComponent {
     if (!value) {
       return;
     }
-    const { replace, location: { query }, custRange } = this.props;
+    const { replace, location: { query, pathname }, custRange } = this.props;
     const tmpArr = value.value.split('-');
     const custRangeLevel = tmpArr[0];
     const orgId = tmpArr[1];
@@ -120,7 +120,7 @@ export default class CustRange extends PureComponent {
     });
 
     replace({
-      pathname: '/invest',
+      pathname,
       query: {
         ...query,
         orgId,

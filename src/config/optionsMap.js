@@ -22,6 +22,14 @@ const optionsMap = {
   // 时间选择
   time: [
     {
+      key: 'pre2month',
+      name: '上上月',
+    },
+    {
+      key: 'premonth',
+      name: '上月',
+    },
+    {
       key: 'month',
       name: '本月',
     },
