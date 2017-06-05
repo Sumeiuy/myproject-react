@@ -24,7 +24,20 @@ exports.response = function (req, res) {
                 level3Name: null,
                 level4Id: null,
                 level4Name: null,
-                value: '34',
+                value: [
+                    {
+                        value: '11',
+                        legend: 'a',
+                    },
+                    {
+                        value: '11',
+                        legend: 'b',
+                    },
+                    {
+                        value: '11',
+                        legend: 'c',
+                    },
+                ],
               },
               {
                 level1Id: 'ZZ001041',
@@ -35,7 +48,20 @@ exports.response = function (req, res) {
                 level3Name: null,
                 level4Id: null,
                 level4Name: null,
-                value: '34',
+                  value: [
+                    {
+                        value: '20',
+                        legend: 'a',
+                    },
+                    {
+                        value: '1',
+                        legend: 'b',
+                    },
+                    {
+                        value: '11',
+                        legend: 'c',
+                    },
+                ],
               },
               {
                 level1Id: 'ZZ001041',
@@ -46,7 +72,20 @@ exports.response = function (req, res) {
                 level3Name: null,
                 level4Id: null,
                 level4Name: null,
-                value: '31',
+                  value: [
+                    {
+                        value: '1',
+                        legend: 'a',
+                    },
+                    {
+                        value: '11',
+                        legend: 'b',
+                    },
+                    {
+                        value: '10',
+                        legend: 'c',
+                    },
+                ],
               },
               {
                 level1Id: 'ZZ001041',
@@ -57,7 +96,20 @@ exports.response = function (req, res) {
                 level3Name: null,
                 level4Id: null,
                 level4Name: null,
-                value: '24',
+                value: [
+                    {
+                        value: '5',
+                        legend: 'a',
+                    },
+                    {
+                        value: '5',
+                        legend: 'b',
+                    },
+                    {
+                        value: '5',
+                        legend: 'c',
+                    },
+                ],
               },
               {
                 level1Id: 'ZZ001041',
@@ -68,7 +120,20 @@ exports.response = function (req, res) {
                 level3Name: null,
                 level4Id: null,
                 level4Name: null,
-                value: '14',
+                value: [
+                    {
+                        value: '7',
+                        legend: 'a',
+                    },
+                    {
+                        value: '11',
+                        legend: 'b',
+                    },
+                    {
+                        value: '5',
+                        legend: 'c',
+                    },
+                ],
               },
               {
                 level1Id: 'ZZ001041',
@@ -79,7 +144,20 @@ exports.response = function (req, res) {
                 level3Name: null,
                 level4Id: null,
                 level4Name: null,
-                value: '6',
+                  value: [
+                    {
+                        value: '23',
+                        legend: 'a',
+                    },
+                    {
+                        value: '1',
+                        legend: 'b',
+                    },
+                    {
+                        value: '0',
+                        legend: 'c',
+                    },
+                ],
               },
               {
                 level1Id: 'ZZ001041',
@@ -90,7 +168,20 @@ exports.response = function (req, res) {
                 level3Name: null,
                 level4Id: null,
                 level4Name: null,
-                value: '4',
+                  value: [
+                    {
+                        value: '0',
+                        legend: 'a',
+                    },
+                    {
+                        value: '0',
+                        legend: 'b',
+                    },
+                    {
+                        value: '11',
+                        legend: 'c',
+                    },
+                ],
               },
               {
                 level1Id: 'ZZ001041',
@@ -101,7 +192,20 @@ exports.response = function (req, res) {
                 level3Name: null,
                 level4Id: null,
                 level4Name: null,
-                value: '3',
+                  value: [
+                    {
+                        value: '0',
+                        legend: 'a',
+                    },
+                    {
+                        value: '0',
+                        legend: 'b',
+                    },
+                    {
+                        value: '0',
+                        legend: 'c',
+                    },
+                ],
               },
               {
                 level1Id: 'ZZ001041',
@@ -112,7 +216,20 @@ exports.response = function (req, res) {
                 level3Name: null,
                 level4Id: null,
                 level4Name: null,
-                value: '0',
+                 value: [
+                    {
+                        value: '11',
+                        legend: 'a',
+                    },
+                    {
+                        value: '4',
+                        legend: 'b',
+                    },
+                    {
+                        value: '7',
+                        legend: 'c',
+                    },
+                ],
               },
               {
                 level1Id: 'ZZ001041',
@@ -123,7 +240,20 @@ exports.response = function (req, res) {
                 level3Name: null,
                 level4Id: null,
                 level4Name: null,
-                value: '0',
+                 value: [
+                    {
+                        value: '0',
+                        legend: 'a',
+                    },
+                    {
+                        value: '0',
+                        legend: 'b',
+                    },
+                    {
+                        value: '0',
+                        legend: 'c',
+                    },
+                ],
               },
             ],
           },
