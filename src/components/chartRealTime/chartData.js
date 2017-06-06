@@ -5,6 +5,7 @@
  */
 
 import moment from 'moment';
+import _ from 'lodash';
 
 const chartData = {
   // 取出orgModel中分公司、营业部、的名称数组
@@ -49,19 +50,31 @@ const chartData = {
     // 设置一个uniqueStack值
     const now = moment().format('x');
     const uniqueStack = `${stack}-${now}`;
-    const stackObj = {
-      stack: uniqueStack,
-      type: 'bar',
-    };
     if (orgModel) {
       // 首先确定stackSeries的长度
       const stackLen = orgModel[0].value.length;
-      console.log(stackLen);
-      console.log(stackObj);
-      console.log(key);
-      // for (let i = 0; i < stackLen; i++) {
-
-      // }
+      for (let i = 0; i < stackLen; i++) {
+        const stackObj = {
+          stack: uniqueStack,
+          type: 'bar',
+          name: orgModel[0].value[i].legend,
+        };
+        const data = [];
+        orgModel.forEach((item) => {
+          let stackValue = item.value[i].value;
+          if (stackValue === '' || stackValue === 'null' || stackValue === null || stackValue === undefined) {
+            stackValue = 0;
+          }
+          data.push(Number(stackValue));
+        });
+        // 补足数据
+        const padLength = 10 - data.length;
+        for (let j = 0; j < padLength; j++) {
+          data.push(0);
+        }
+        _.assign(stackObj, { data });
+        stackSeries.push(stackObj);
+      }
     }
     return stackSeries;
   },

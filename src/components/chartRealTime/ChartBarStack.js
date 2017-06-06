@@ -70,7 +70,9 @@ export default class ChartBarStack extends PureComponent {
     // 此处为y轴刻度值
     const yAxisLabels = getLevelName(orgModel, levelName);
     // 获取stackSeries
-    let seriesData = getStackSeries(orgModel, 'value', key);
+    const stackSeries = getStackSeries(orgModel, 'value', key);
+    console.log('chartBarStack===stackSeries>>>', stackSeries);
+    let seriesData = [];
     seriesData = seriesData.map(item => Number(item));
     const padLength = 10 - seriesData.length;
     if (padLength > 0) {
