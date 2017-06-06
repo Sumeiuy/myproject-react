@@ -20,12 +20,12 @@ let empId;
 const eid = '002727';
 
 const effects = {
-  allInfo: 'invest/getAllInfo',
-  performance: 'invest/getPerformance',
-  chartInfo: 'invest/getChartInfo',
-  custRange: 'invest/getCustRange',
-  chartTableInfo: 'invest/getChartTableInfo',
-  exportExcel: 'invest/exportExcel',
+  allInfo: 'business/getAllInfo',
+  performance: 'business/getPerformance',
+  chartInfo: 'business/getChartInfo',
+  custRange: 'business/getCustRange',
+  chartTableInfo: 'business/getChartTableInfo',
+  exportExcel: 'business/exportExcel',
 };
 
 const fectchDataFunction = (globalLoading, type) => query => ({
@@ -35,12 +35,11 @@ const fectchDataFunction = (globalLoading, type) => query => ({
 });
 
 const mapStateToProps = state => ({
-  performance: state.invest.performance,
-  chartInfo: state.invest.chartInfo,
-  chartTableInfo: state.invest.chartTableInfo,
-  // chartLoading: state.loading.effects[effects.chartInfo],
-  custRange: state.invest.custRange,
-  excelInfo: state.invest.excelInfo,
+  performance: state.business.performance,
+  chartInfo: state.business.chartInfo,
+  chartTableInfo: state.business.chartTableInfo,
+  custRange: state.business.custRange,
+  excelInfo: state.business.excelInfo,
   globalLoading: state.activity.global,
 });
 
@@ -57,7 +56,7 @@ const mapDispatchToProps = {
 
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
-export default class InvestHome extends PureComponent {
+export default class BusinessHome extends PureComponent {
 
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -69,7 +68,6 @@ export default class InvestHome extends PureComponent {
     getChartTableInfo: PropTypes.func.isRequired,
     chartTableInfo: PropTypes.object,
     exportExcel: PropTypes.func.isRequired,
-    // chartLoading: PropTypes.bool,
     globalLoading: PropTypes.bool,
     getCustRange: PropTypes.func.isRequired,
     custRange: PropTypes.array,
@@ -81,7 +79,6 @@ export default class InvestHome extends PureComponent {
     performance: [],
     chartInfo: [],
     chartTableInfo: {},
-    // chartLoading: false,
     globalLoading: false,
     custRange: [],
   }
@@ -112,7 +109,6 @@ export default class InvestHome extends PureComponent {
     const payload = {
       ...query,
       orgId: query.orgId || (custRange[0] && custRange[0].id),
-      // scope: query.scope || Number(custRange[0] && custRange[0].level) + 1,
       scope: query.scope ||
       (query.custRangeLevel
       ? Number(query.custRangeLevel) + 1
@@ -325,13 +321,15 @@ export default class InvestHome extends PureComponent {
     if (!custRange || !custRange.length) {
       return null;
     }
+    // 新增报表看板名称
+    const boardName = location.query.boardName;
     return (
       <div className="page-invest content-inner">
         <PageHeader
           location={location}
           replace={replace}
           custRange={custRange}
-          selectDefault="business"
+          selectDefault={boardName}
         />
         <div className={styles.reportBody}>
           <div className={styles.reportPart}>
@@ -339,19 +337,38 @@ export default class InvestHome extends PureComponent {
               data={performance}
             />
           </div>
-          <div className={styles.reportPart}>
-            <PreformanceChartBoard
-              chartData={chartInfo}
-              chartTableInfo={chartTableInfo}
-              postExcelInfo={this.handleExportExcel}
-              level={selScope}
-              location={location}
-              replace={replace}
-              loading={false}
-              boardTitle={'指标分布'}
-              showScopeOrder
-            />
-          </div>
+          {/*
+            TODO此处需要进行经营业绩的修改
+            1.修改数据获取的类型为分类指标的数组
+            2.进行数据修改
+          */}
+          {
+            chartInfo.map((item) => {
+              const { name, id, key, indexData } = item;
+              const time = new Date().getTime();
+              const uniqueID = `${id}-${time}`;
+              // TODO chartTableInfo的值通过index来获取和传递
+              return (
+                <div
+                  className={styles.reportPart}
+                  key={uniqueID}
+                >
+                  <PreformanceChartBoard
+                    chartData={indexData}
+                    indexID={id}
+                    indexKey={key}
+                    chartTableInfo={chartTableInfo}
+                    postExcelInfo={this.handleExportExcel}
+                    level={selScope}
+                    location={location}
+                    replace={replace}
+                    boardTitle={name}
+                    showScopeOrder={false}
+                  />
+                </div>
+              );
+            })
+          }
         </div>
       </div>
     );

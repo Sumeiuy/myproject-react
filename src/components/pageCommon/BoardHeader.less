@@ -25,12 +25,6 @@
   composes: newSelect;
   composes: fixMargin;
 }
-:global{
-  .hideOption,
-  .hideSelect {
-    display: none;
-  }
-}
 
 .titleBar {
   padding:0 18px;
@@ -74,7 +68,12 @@
     color: #ffd92a;
   }
 }
-
+:global{
+  .hideOption,
+  .hideSelect {
+    display: none;
+  }
+}
 // 修改antd上Select样式
 :global {
   .investPerformanceBoard {

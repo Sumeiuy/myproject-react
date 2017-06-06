@@ -23,7 +23,7 @@ const RadioGroup = Radio.Group;
 
 // 时间筛选条件
 const timeOptions = optionsMap.time;
-// 渲染3个头部期间Radio
+// 渲染5个头部期间Radio
 const timeRadios = timeOptions.map((item, index) => {
   const timeIndex = `Timeradio${index}`;
   return React.createElement(RadioButton, { key: timeIndex, value: `${item.key}` }, `${item.name}`);
@@ -68,7 +68,7 @@ export default class PageHeader extends PureComponent {
         ...query,
         begin: obj.begin,
         end: obj.end,
-        cycleType: value,
+        cycleType: obj.cycleType,
         page: 1,
       },
     });

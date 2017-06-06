@@ -34,10 +34,14 @@ export default class BoardHeader extends PureComponent {
     changeBoard: PropTypes.func.isRequired,
     showScopeOrder: PropTypes.bool.isRequired,
     level: PropTypes.string,
+    indexID: PropTypes.string,
+    indexKey: PropTypes.string,
   }
 
   static defaultProps = {
     level: '',
+    indexID: '',
+    indexKey: '',
   }
 
   constructor(props) {
@@ -71,10 +75,9 @@ export default class BoardHeader extends PureComponent {
   // 柱状图与表格切换
   @autobind
   handleIconClick(type) {
-    // const val = event.target.getAttribute('type');
-    const { replace, location: { query }, changeBoard } = this.props;
+    const { replace, location: { query, pathname }, changeBoard } = this.props;
     replace({
-      pathname: '/invest',
+      pathname,
       query: {
         ...query,
         showChart: type,
@@ -89,12 +92,14 @@ export default class BoardHeader extends PureComponent {
 
   @autobind
   handleSortChange(column, value) {
-    const { replace, location: { query } } = this.props;
+    const { replace, location: { query }, indexKey, indexID } = this.props;
     replace({
       pathname: '/invest',
       query: {
         ...query,
         [column]: value,
+        indexKey,
+        indexID,
       },
     });
   }
@@ -126,6 +131,18 @@ export default class BoardHeader extends PureComponent {
     const { title, level, showScopeOrder } = this.props;
     const { showChart, orderType, scopeSelectValue } = this.state;
 
+    // 首先通过showScopeOrder来判断当前页面在invest还是在其他页面中
+    const toggleSortText = classnames({
+      [styles.iconBtn1]: true,
+      hideSelect: !showScopeOrder && showChart === 'tables',
+    });
+
+    // 当showScopeOrder=true时在invest页面中
+    const toggleIconBtn = classnames({
+      [styles.iconBtn]: true,
+      [styles.fixIconBtnBorder]: showScopeOrder ? false : (showChart === 'tables'),
+    });
+
     const toggleScopeSelect = classnames({
       [styles.newSelect]: true,
       hideSelect: !showScopeOrder,
@@ -156,7 +173,7 @@ export default class BoardHeader extends PureComponent {
       <div className={styles.titleBar}>
         <div className={styles.titleText}>{title}</div>
         <div className={styles.titleBarRight}>
-          <div className={styles.iconBtn1}>
+          <div className={toggleSortText}>
             <span>排序方式:</span>
             <Select
               value={scopeSelectValue}
@@ -193,7 +210,7 @@ export default class BoardHeader extends PureComponent {
               {sortByOrderSelect}
             </Select>
           </div>
-          <div className={styles.iconBtn}>
+          <div className={toggleIconBtn}>
             <Icon
               title={'表格视图'}
               type={'tables'}

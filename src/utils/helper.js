@@ -198,20 +198,42 @@ const helper = {
     const nowMonthDay = moment().format('MM/DD');
     // 当前季度开始月
     const qStartMonth = moment().startOf('quarter').format('MM');
-    if (flag === 'month') {
+    if (flag === 'pre2month') {
+      // 上上月的起始日期
+      const durationStart = moment().subtract(2, 'month').startOf('month').format('MM/DD');
+      const durationEnd = moment().subtract(2, 'month').endOf('month').format('MM/DD');
+      const pre2monthBegin = moment().subtract(2, 'month').startOf('month').format('YYYYMMDD');
+      const pre2monthEnd = moment().subtract(2, 'month').endOf('month').format('YYYYMMDD');
+      durationObj.durationStr = `${durationStart}-${durationEnd}`;
+      durationObj.cycleType = 'month';
+      durationObj.begin = pre2monthBegin;
+      durationObj.end = pre2monthEnd;
+    } else if (flag === 'premonth') {
+      // 上个月的起始日期
+      const durationStart = moment().subtract(1, 'month').startOf('month').format('MM/DD');
+      const durationEnd = moment().subtract(1, 'month').endOf('month').format('MM/DD');
+      const pre2monthBegin = moment().subtract(1, 'month').startOf('month').format('YYYYMMDD');
+      const pre2monthEnd = moment().subtract(1, 'month').endOf('month').format('YYYYMMDD');
+      durationObj.durationStr = `${durationStart}-${durationEnd}`;
+      durationObj.cycleType = 'month';
+      durationObj.begin = pre2monthBegin;
+      durationObj.end = pre2monthEnd;
+    } else if (flag === 'month') {
       durationObj.durationStr = `${month}/01-${nowMonthDay}`;
       durationObj.cycleType = 'month';
       durationObj.begin = `${year}${month}01`;
+      durationObj.end = nowTime;
     } else if (flag === 'quarter') {
       durationObj.durationStr = `${qStartMonth}/01-${nowMonthDay}`;
       durationObj.cycleType = 'quarter';
       durationObj.begin = `${year}${qStartMonth}01`;
+      durationObj.end = nowTime;
     } else if (flag === 'year') {
       durationObj.durationStr = `01/01-${nowMonthDay}`;
       durationObj.cycleType = 'year';
       durationObj.begin = `${year}0101`;
+      durationObj.end = nowTime;
     }
-    durationObj.end = nowTime;
     return durationObj;
   },
 };

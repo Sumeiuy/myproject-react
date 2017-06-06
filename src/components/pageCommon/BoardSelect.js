@@ -62,7 +62,7 @@ export default class BoardSelect extends PureComponent {
     const { key } = MenuItem;
     console.log('handleMenuClick>>key>>', key);
     // TODO 此处后期迭代中需要做跳转页面逻辑处理
-    const url = `/${key}`;
+    const url = `/${key}?boardName=${key}`;
     push(url);
   }
 
@@ -73,10 +73,14 @@ export default class BoardSelect extends PureComponent {
       <Menu onClick={this.handleMenuClick}>
         <Menu.ItemGroup>
           <Menu.Item key="invest">投顾业绩汇总</Menu.Item>
-          <Menu.Item key="business">经营业绩汇总</Menu.Item>
+          {/*
+            <Menu.Item key="business">经营业绩汇总</Menu.Item>
+          */}
         </Menu.ItemGroup>
-        <Menu.Divider />
-        <Menu.Item key="default3">看板管理</Menu.Item>
+        {/*
+          <Menu.Divider />
+          <Menu.Item key="default3">看板管理</Menu.Item>
+        */}
       </Menu>
     );
 
