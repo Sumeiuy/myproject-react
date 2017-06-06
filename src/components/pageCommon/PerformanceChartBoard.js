@@ -17,6 +17,7 @@ export default class PerformanceChartBoard extends PureComponent {
     chartTableInfo: PropTypes.object,
     replace: PropTypes.func.isRequired,
     level: PropTypes.string,
+    scope: PropTypes.number.isRequired,
     boardTitle: PropTypes.string.isRequired,
     postExcelInfo: PropTypes.func.isRequired,
     showScopeOrder: PropTypes.bool.isRequired,
@@ -58,6 +59,7 @@ export default class PerformanceChartBoard extends PureComponent {
       replace,
       location,
       level,
+      scope,
       postExcelInfo,
       boardTitle,
       showScopeOrder,
@@ -76,6 +78,7 @@ export default class PerformanceChartBoard extends PureComponent {
           postExcelInfo={postExcelInfo}
           replace={replace}
           level={level}
+          scope={scope}
           changeBoard={this.changeBoard}
           showScopeOrder={showScopeOrder}
           indexID={indexID}
