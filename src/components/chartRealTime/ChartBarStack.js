@@ -8,56 +8,15 @@ import React, { PropTypes, PureComponent } from 'react';
 // import ReactEcharts from 'echarts-for-react';
 import { autobind } from 'core-decorators';
 
+import { AxisOptions, gridOptions, barColor, barShadow } from './ChartGeneralOptions';
+import { getLevelName, getStackSeries } from './chartData';
+// import {  } from './FixNumber';
 import IECharts from '../IECharts';
 import { iconTypeMap } from '../../config';
 import Icon from '../common/Icon';
 import styles from './ChartBar.less';
 
 import imgSrc from './noChart.png';
-
-// Y轴通用样式
-const AxisOptions = {
-  axisLine: {
-    lineStyle: {
-      color: '#e7eaec',
-    },
-  },
-  axisTick: {
-    show: false,
-  },
-  axisLabel: {
-    textStyle: {
-      color: '#999',
-    },
-  },
-};
-
-// eCharts图表表格基础样式
-const gridOptions = {
-  show: true,
-  top: '0',
-  left: '0',
-  right: '40px',
-  bottom: '20px',
-  containLabel: true,
-  borderWidth: '1',
-  borderColor: '#e7eaec',
-};
-// 柱状图颜色
-const barColor = '#4bbbf4';
-
-// 柱状图的阴影
-const barShadow = {
-  type: 'bar',
-  itemStyle: {
-    normal: {
-      color: 'rgba(0,0,0,0.05)',
-    },
-  },
-  barGap: '-100%',
-  barCategoryGap: '30%',
-  animation: false,
-};
 
 export default class ChartBarStack extends PureComponent {
 
@@ -73,149 +32,6 @@ export default class ChartBarStack extends PureComponent {
     location: {},
     chartData: {},
     iconType: 'zichan',
-  }
-
-  @autobind
-  getChartData(orgModel, key, axis) {
-    const yAxisLabels = [];
-    if (orgModel) {
-      orgModel.forEach((item) => {
-        if (item[key] === null || item[key] === 'null') {
-          if (axis === 'yAxis') {
-            yAxisLabels.push('--');
-          } else if (axis === 'xAxis') {
-            yAxisLabels.push(0);
-          }
-        } else {
-          yAxisLabels.push(item[key]);
-        }
-      });
-    }
-    return yAxisLabels;
-  }
-
-  // 针对百分比的数字来确认图表坐标轴的最大和最小值
-  @autobind
-  getMaxAndMinPercent(series) {
-    let max = Math.max(...series);
-    let min = Math.min(...series);
-    max = Math.ceil((max / 10)) * 10;
-    min = Math.floor((min / 10)) * 10;
-    if (max === 0) {
-      max = 100;
-    }
-    if (min === 100) {
-      min = 0;
-    }
-    return {
-      max,
-      min,
-    };
-  }
-
-  // 针对千分比确认图表最大和最小值
-  @autobind
-  getMaxAndMinPermillage(series) {
-    let max = Math.max(...series);
-    let min = Math.min(...series);
-    max = Math.ceil(max);
-    min = Math.floor(min);
-    if (max === 0) {
-      max = 1;
-    }
-    return {
-      max,
-      min,
-    };
-  }
-
-  // 针对金额确认图表最大和最小值
-  @autobind
-  getMaxAndMinMoney(series) {
-    let max = Math.max(...series);
-    let min = Math.min(...series);
-    if (max >= 10000) {
-      max = Math.ceil(max / 1000) * 1000;
-    } else if (max >= 1000) {
-      max = Math.ceil(max / 1000) * 1000;
-    } else if (max >= 100) {
-      max = Math.ceil(max / 100) * 100;
-    } else if (max < 100) {
-      max = Math.ceil(max / 10) * 10;
-    }
-    if (max === 0) {
-      max = 1;
-    }
-    if (min >= 10000) {
-      min = Math.floor(min / 1000) * 1000;
-    } else if (min >= 1000) {
-      min = Math.floor(min / 1000) * 1000;
-    } else if (min >= 100) {
-      min = Math.floor(min / 100) * 100;
-    } else if (min < 100) {
-      min = Math.floor(min / 10) * 10;
-    }
-    if (min <= 0 || min >= max) {
-      min = 0;
-    }
-    return { max, min };
-  }
-
-  // 针对户获取图表最大和最小值
-  @autobind
-  getMaxAndMinCust(series) {
-    let max = Math.max(...series);
-    let min = Math.min(...series);
-    if (max >= 10000) {
-      max = Math.ceil(max / 1000) * 1000;
-    } else if (max >= 100) {
-      max = Math.ceil(max / 100) * 100;
-    } else if (max < 100) {
-      max = Math.ceil(max / 10) * 10;
-    }
-    if (max === 0) {
-      max = 10;
-    }
-    if (min >= 10000) {
-      min = Math.floor(min / 1000) * 1000;
-    } else if (min >= 100) {
-      min = Math.floor(min / 100) * 100;
-    } else if (min < 100) {
-      min = Math.floor(min / 10) * 10;
-    }
-    if (min <= 0 || min >= max) {
-      min = 0;
-    }
-    return { max, min };
-  }
-
-  @autobind
-  createBarLinear(input) {
-    const output = [];
-    input.forEach((item) => {
-      const bar = {
-        name: 'no',
-        value: item,
-        itemStyle: {
-          normal: {
-            color: {
-              type: 'linear',
-              x: 0,
-              y: 0,
-              x2: 1,
-              y2: 1,
-              colorStops: [{
-                offset: 0, color: 'rgb(136,214,254)',
-              }, {
-                offset: 1, color: 'rgb(24,141,240)',
-              }],
-            },
-          },
-        },
-      };
-      output.push(bar);
-    });
-    return output;
   }
 
   @autobind
@@ -236,61 +52,25 @@ export default class ChartBarStack extends PureComponent {
     }));
   }
 
-  // 对小数进行处理
-  @autobind
-  toFixedDecimal(value) {
-    if (value > 10000) {
-      return Number.parseFloat(value.toFixed(0));
-    }
-    if (value > 1000) {
-      return Number.parseFloat(value.toFixed(1));
-    }
-    return Number.parseFloat(value.toFixed(2));
-  }
-
-  // 对金额进行特殊处理的函数
-  @autobind
-  toFixedMoney(series) {
-    let newUnit = '元';
-    let newSeries = series;
-    const MaxMoney = Math.max(...series);
-    // 1. 全部在万元以下的数据不做处理
-    // 2.超过万元的，以‘万元’为单位
-    // 3.超过亿元的，以‘亿元’为单位
-    if (MaxMoney > 100000000) {
-      newUnit = '亿元';
-      newSeries = series.map(item => this.toFixedDecimal(item / 100000000));
-    } else if (MaxMoney > 10000) {
-      newUnit = '万元';
-      newSeries = series.map(item => this.toFixedDecimal(item / 10000));
-    }
-
-    return {
-      newUnit,
-      newSeries,
-    };
-  }
-
   render() {
-    // todo未对数据为空进行判断，导致初始页面不渲染
-    // const { chartData } = this.props;
     const {
       chartData: { name, key, orgModel = [] },
       location: { query },
       level,
     } = this.props;
+    // 获取本图表的单位,
     let { chartData: { unit } } = this.props;
+    // 查询当前需要的Y轴字段名称
     const levelAndScope = query.scope ? Number(query.scope) : Number(level) + 1;
-
     const levelName = `level${levelAndScope}Name`;
     // 分公司名称数组
-    const levelCompanyArr = this.getChartData(orgModel, 'level2Name', 'yAxis');
-    const levelStoreArr = this.getChartData(orgModel, 'level3Name', 'yAxis');
-
+    const levelCompanyArr = getLevelName(orgModel, 'level2Name');
+    // 营业部名称数组
+    const levelStoreArr = getLevelName(orgModel, 'level3Name');
     // 此处为y轴刻度值
-    const yAxisLabels = this.getChartData(orgModel, levelName, 'yAxis');
-    // 此处为数据,此数据在百分比的情况下,全部都是小数，需要乘以100
-    let seriesData = this.getChartData(orgModel, 'value', 'xAxis');
+    const yAxisLabels = getLevelName(orgModel, levelName);
+    // 获取stackSeries
+    let seriesData = getStackSeries(orgModel, 'value', key);
     seriesData = seriesData.map(item => Number(item));
     const padLength = 10 - seriesData.length;
     if (padLength > 0) {
