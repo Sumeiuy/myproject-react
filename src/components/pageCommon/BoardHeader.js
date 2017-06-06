@@ -36,6 +36,7 @@ export default class BoardHeader extends PureComponent {
     level: PropTypes.string,
     indexID: PropTypes.string,
     indexKey: PropTypes.string,
+    scope: PropTypes.number.isRequired,
   }
 
   static defaultProps = {
@@ -46,9 +47,9 @@ export default class BoardHeader extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { location: { query }, level } = this.props;
+    const { location: { query }, scope } = this.props;
     this.state = {
-      scopeSelectValue: String(Number(level) + 1),
+      scopeSelectValue: String(scope),
       showChart: query.showChart || 'zhuzhuangtu',
       orderType: query.orderType || 'desc',
     };

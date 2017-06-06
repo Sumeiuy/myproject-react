@@ -198,24 +198,24 @@ const helper = {
     const nowMonthDay = moment().format('MM/DD');
     // 当前季度开始月
     const qStartMonth = moment().startOf('quarter').format('MM');
-    if (flag === 'pre2month') {
+    if (flag === 'beforeLastMonth') {
       // 上上月的起始日期
       const durationStart = moment().subtract(2, 'month').startOf('month').format('MM/DD');
       const durationEnd = moment().subtract(2, 'month').endOf('month').format('MM/DD');
       const pre2monthBegin = moment().subtract(2, 'month').startOf('month').format('YYYYMMDD');
       const pre2monthEnd = moment().subtract(2, 'month').endOf('month').format('YYYYMMDD');
       durationObj.durationStr = `${durationStart}-${durationEnd}`;
-      durationObj.cycleType = 'month';
+      durationObj.cycleType = 'beforeLastMonth';
       durationObj.begin = pre2monthBegin;
       durationObj.end = pre2monthEnd;
-    } else if (flag === 'premonth') {
+    } else if (flag === 'lastMonth') {
       // 上个月的起始日期
       const durationStart = moment().subtract(1, 'month').startOf('month').format('MM/DD');
       const durationEnd = moment().subtract(1, 'month').endOf('month').format('MM/DD');
       const pre2monthBegin = moment().subtract(1, 'month').startOf('month').format('YYYYMMDD');
       const pre2monthEnd = moment().subtract(1, 'month').endOf('month').format('YYYYMMDD');
       durationObj.durationStr = `${durationStart}-${durationEnd}`;
-      durationObj.cycleType = 'month';
+      durationObj.cycleType = 'lastMonth';
       durationObj.begin = pre2monthBegin;
       durationObj.end = pre2monthEnd;
     } else if (flag === 'month') {

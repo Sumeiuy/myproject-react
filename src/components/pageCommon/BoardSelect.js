@@ -73,10 +73,14 @@ export default class BoardSelect extends PureComponent {
       <Menu onClick={this.handleMenuClick}>
         <Menu.ItemGroup>
           <Menu.Item key="invest">投顾业绩汇总</Menu.Item>
-          <Menu.Item key="business">经营业绩汇总</Menu.Item>
+          {/*
+            <Menu.Item key="business">经营业绩汇总</Menu.Item>
+          */}
         </Menu.ItemGroup>
-        <Menu.Divider />
-        <Menu.Item key="default3">看板管理</Menu.Item>
+        {/*
+          <Menu.Divider />
+          <Menu.Item key="default3">看板管理</Menu.Item>
+        */}
       </Menu>
     );
 
