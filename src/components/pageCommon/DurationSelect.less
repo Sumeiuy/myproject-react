@@ -1,0 +1,121 @@
+:global {
+  .durationSelect {
+    position: relative;
+    box-sizing: border-box;
+    display: inline-block;
+    height: 24px;
+    width: 190px;
+    vertical-align: middle;
+
+    .duration {
+      width: 190px;
+      height: 24px;
+      cursor: pointer;
+      line-height: 24px;
+      user-select: none;
+      .anticon {
+        margin-top: 3px;
+        font-size: 14px;
+        vertical-align: middle;
+      }
+      .text {
+        width: 160px;
+        height: 24px;
+        display: inline-block;
+        color:#4c4c4c;
+        font-size: 14px;
+        text-align: left;
+        vertical-align: middle;
+      }
+    }
+
+    .durationPicker {
+      position: absolute;
+      z-index: 11;
+      top:0;
+      right:0;
+      width: 240px;
+      height: 150px;
+      background-color: #fff;
+      border-radius: 4px;
+      box-shadow: 0px 10px 29px 0px rgb( 138, 133, 133 );
+      .pickerHead {
+        padding: 8px 18px;
+        font-size: 14px;
+        color: #4c4c4c;
+        height: 45px;
+        line-height: 28px;
+        text-align: left;
+      }
+      .divider {
+        width: 100%;
+        height: 1px;
+        background-color: #ddd;
+      }
+      .pickerFoot {
+        padding: 15px 18px;
+        height: 104px;
+      }
+    }
+
+    .hide {
+      display: none;
+    }
+  }
+}
+
+@invest-btn-base-color: #1eaaf1;
+@invest-btn-text-color: #777;
+@invest-btn-text-hvr-color: @invest-btn-base-color;
+@invest-btn-border-color: #ddd;
+@invest-btn-border-hvr-color: @invest-btn-base-color;
+
+// 修改RadioButton样式
+:global{
+  .ant-radio-group {
+    vertical-align: middle;
+  }
+  .ant-radio-button-wrapper {
+    float:left;
+    padding: 0;
+    width: 60px;
+    height: 28px;
+    z-index: 1;
+    margin-left: -1px;
+    margin-bottom: 10px;
+    border:1px solid @invest-btn-border-color;
+    color:@invest-btn-text-color;
+    text-align: center;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    margin-right: 10px;
+    &:nth-child(3) {
+      margin-right: 0;
+    }
+    &:first-child,
+    &:last-child {
+      border-radius: 4px;
+    }
+    &:hover {
+      z-index: 2;
+      color:@invest-btn-text-hvr-color;
+      border-color:@invest-btn-border-hvr-color;
+    }
+  }
+  .ant-radio-button-wrapper-checked {
+    border-color:@invest-btn-base-color;
+    color:#fff;
+    background-color: @invest-btn-base-color;
+    box-shadow: none;
+    &:first-child {
+      border-color:@invest-btn-base-color;
+    }
+    &:hover {
+      color:#fff;
+      border-color:@invest-btn-base-color;
+      box-shadow: none;
+    }
+  }
+}
+
+// end
