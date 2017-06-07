@@ -48,7 +48,7 @@ function getEventType(action) {
   if (EVENT_PROFILE_ACTION === type) {
     return { type: EVENT_PROFILE_KEY };
   }
-  if (EVENT_PROFILE_ACTION === type
+  if (/LOCATION_CHANGE$/.test(type)
     && action.payload
     && action.payload.pathname
   ) {
