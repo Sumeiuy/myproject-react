@@ -4,10 +4,10 @@ exports.response = function (req, res) {
     msg: 'OK',
     resultData: [
       {
-        name: '客户数明细',
+        title: '客户数明细',
         id: 'bo-1',
         key: '1-bo-1',
-        indexData: [
+        data: [
           {
             key: 'tgInNum',
             name: '投顾入岗人数',
@@ -24,18 +24,19 @@ exports.response = function (req, res) {
                 level3Name: null,
                 level4Id: null,
                 level4Name: null,
-                value: [
+                value: '34',
+                children: [
                     {
                         value: '11',
-                        legend: 'a',
+                        name: 'a',
                     },
                     {
                         value: '11',
-                        legend: 'b',
+                        name: 'b',
                     },
                     {
                         value: '11',
-                        legend: 'c',
+                        name: 'c',
                     },
                 ],
               },
@@ -48,18 +49,19 @@ exports.response = function (req, res) {
                 level3Name: null,
                 level4Id: null,
                 level4Name: null,
-                  value: [
+                value: '34',
+                  children: [
                     {
                         value: '20',
-                        legend: 'a',
+                        name: 'a',
                     },
                     {
                         value: '1',
-                        legend: 'b',
+                        name: 'b',
                     },
                     {
                         value: '11',
-                        legend: 'c',
+                        name: 'c',
                     },
                 ],
               },
@@ -72,18 +74,19 @@ exports.response = function (req, res) {
                 level3Name: null,
                 level4Id: null,
                 level4Name: null,
-                  value: [
+                value: '25',
+                  children: [
                     {
                         value: '1',
-                        legend: 'a',
+                        name: 'a',
                     },
                     {
                         value: '11',
-                        legend: 'b',
+                        name: 'b',
                     },
                     {
                         value: '10',
-                        legend: 'c',
+                        name: 'c',
                     },
                 ],
               },
@@ -96,18 +99,19 @@ exports.response = function (req, res) {
                 level3Name: null,
                 level4Id: null,
                 level4Name: null,
-                value: [
+                value: '15',
+                children: [
                     {
                         value: '5',
-                        legend: 'a',
+                        name: 'a',
                     },
                     {
                         value: '5',
-                        legend: 'b',
+                        name: 'b',
                     },
                     {
                         value: '5',
-                        legend: 'c',
+                        name: 'c',
                     },
                 ],
               },
@@ -120,18 +124,19 @@ exports.response = function (req, res) {
                 level3Name: null,
                 level4Id: null,
                 level4Name: null,
-                value: [
+                value: '23',
+                children: [
                     {
                         value: '7',
-                        legend: 'a',
+                        name: 'a',
                     },
                     {
                         value: '11',
-                        legend: 'b',
+                        name: 'b',
                     },
                     {
                         value: '5',
-                        legend: 'c',
+                        name: 'c',
                     },
                 ],
               },
@@ -144,18 +149,19 @@ exports.response = function (req, res) {
                 level3Name: null,
                 level4Id: null,
                 level4Name: null,
-                  value: [
+                value: '24',
+                children: [
                     {
                         value: '23',
-                        legend: 'a',
+                        name: 'a',
                     },
                     {
                         value: '1',
-                        legend: 'b',
+                        name: 'b',
                     },
                     {
                         value: '0',
-                        legend: 'c',
+                        name: 'c',
                     },
                 ],
               },
@@ -168,18 +174,19 @@ exports.response = function (req, res) {
                 level3Name: null,
                 level4Id: null,
                 level4Name: null,
-                  value: [
+                value: '0',
+                  children: [
                     {
                         value: '0',
-                        legend: 'a',
+                        name: 'a',
                     },
                     {
                         value: '0',
-                        legend: 'b',
+                        name: 'b',
                     },
                     {
                         value: '11',
-                        legend: 'c',
+                        name: 'c',
                     },
                 ],
               },
@@ -192,18 +199,19 @@ exports.response = function (req, res) {
                 level3Name: null,
                 level4Id: null,
                 level4Name: null,
-                  value: [
+                value: '0',
+                  children: [
                     {
                         value: '0',
-                        legend: 'a',
+                        name: 'a',
                     },
                     {
                         value: '0',
-                        legend: 'b',
+                        name: 'b',
                     },
                     {
                         value: '0',
-                        legend: 'c',
+                        name: 'c',
                     },
                 ],
               },
@@ -216,18 +224,19 @@ exports.response = function (req, res) {
                 level3Name: null,
                 level4Id: null,
                 level4Name: null,
-                 value: [
+                value: '22',
+                 children: [
                     {
                         value: '11',
-                        legend: 'a',
+                        name: 'a',
                     },
                     {
                         value: '4',
-                        legend: 'b',
+                        name: 'b',
                     },
                     {
                         value: '7',
-                        legend: 'c',
+                        name: 'c',
                     },
                 ],
               },
@@ -240,18 +249,19 @@ exports.response = function (req, res) {
                 level3Name: null,
                 level4Id: null,
                 level4Name: null,
-                 value: [
+                value: '0',
+                 children: [
                     {
                         value: '0',
-                        legend: 'a',
+                        name: 'a',
                     },
                     {
                         value: '0',
-                        legend: 'b',
+                        name: 'b',
                     },
                     {
                         value: '0',
-                        legend: 'c',
+                        name: 'c',
                     },
                 ],
               },

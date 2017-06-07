@@ -344,7 +344,7 @@ export default class BusinessHome extends PureComponent {
           */}
           {
             chartInfo.map((item) => {
-              const { name, id, key, indexData } = item;
+              const { title, id, key, data } = item;
               const time = new Date().getTime();
               const uniqueID = `${id}-${time}`;
               // TODO chartTableInfo的值通过index来获取和传递
@@ -354,7 +354,7 @@ export default class BusinessHome extends PureComponent {
                   key={uniqueID}
                 >
                   <PreformanceChartBoard
-                    chartData={indexData}
+                    chartData={data}
                     indexID={id}
                     indexKey={key}
                     chartTableInfo={chartTableInfo}
@@ -362,7 +362,7 @@ export default class BusinessHome extends PureComponent {
                     level={selScope}
                     location={location}
                     replace={replace}
-                    boardTitle={name}
+                    boardTitle={title}
                     showScopeOrder={false}
                   />
                 </div>

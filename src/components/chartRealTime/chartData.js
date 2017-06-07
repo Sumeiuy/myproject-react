@@ -77,7 +77,7 @@ const chartData = {
         const stackObj = {
           stack: uniqueStack,
           type: 'bar',
-          name: orgModel[0].value[i].legend,
+          name: orgModel[0].value[i].name,
         };
         const data = [];
         orgModel.forEach((item) => {

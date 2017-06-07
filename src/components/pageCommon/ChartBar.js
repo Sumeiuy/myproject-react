@@ -28,8 +28,10 @@ export default class ChartBar extends PureComponent {
     const { chartData, level, location } = this.props;
     // 增加判断走堆叠还是普通柱状图
     if (orgModel &&
-      Array.isArray(orgModel) && (orgModel.length > 0) &&
-      Array.isArray(orgModel[0].value)) {
+      Array.isArray(orgModel) &&
+      orgModel.length > 0 &&
+      Array.isArray(orgModel[0].children) &&
+      orgModel[0].children.length > 0) {
       // 走堆叠柱状图
       return (
         <ChartBarStack
