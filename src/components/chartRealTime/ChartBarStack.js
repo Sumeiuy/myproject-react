@@ -9,8 +9,7 @@ import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 
 import { AxisOptions, gridOptions, barColor, barShadow } from './ChartGeneralOptions';
-import { getLevelName, getStackSeries } from './chartData';
-// import {  } from './FixNumber';
+import { getLevelName, getStackSeries, dealStackSeriesMoney } from './chartData';
 import IECharts from '../IECharts';
 import { iconTypeMap } from '../../config';
 import Icon from '../common/Icon';
@@ -52,6 +51,16 @@ export default class ChartBarStack extends PureComponent {
     }));
   }
 
+  @autobind
+  toFixedPercentOrPermillage(v) {
+    return (item) => {
+      const newItem = item;
+      const data = item.data;
+      newItem.data = data.map(n => (n * v));
+      return newItem;
+    };
+  }
+
   render() {
     const {
       chartData: { name, key, orgModel = [] },
@@ -69,28 +78,29 @@ export default class ChartBarStack extends PureComponent {
     const levelStoreArr = getLevelName(orgModel, 'level3Name');
     // 此处为y轴刻度值
     const yAxisLabels = getLevelName(orgModel, levelName);
-    // 获取stackSeries
-    let seriesData = getStackSeries(orgModel, 'value', key);
-    seriesData = seriesData.map(item => Number(item));
-    const padLength = 10 - seriesData.length;
+    // 对Y轴刻度不足刻度
+    const padLength = 10 - yAxisLabels.length;
     if (padLength > 0) {
       for (let i = 0; i < padLength; i++) {
         yAxisLabels.push('--');
-        seriesData.push(0);
       }
     }
-
+    // 获取stackSeries
+    let stackSeries = getStackSeries(orgModel, 'value', key);
+    console.log('chartBarStack===stackSeries>>>', stackSeries);
+    const seriesData = [];
+    // 此处需要进行对stackSeries中的每一个data根据单位来进行特殊处理
     if (unit === '%') {
-      seriesData = seriesData.map(item => (item * 100));
+      stackSeries = stackSeries.map(this.toFixedPercentOrPermillage(100));
     } else if (unit === '\u2030') {
-      seriesData = seriesData.map(item => (item * 1000));
+      stackSeries = stackSeries.map(this.toFixedPercentOrPermillage(1000));
     } else if (unit === '元') {
       // 如果图表中的数据表示的是金额的话，需要对其进行单位识别和重构
-      const tempSeries = this.toFixedMoney(seriesData);
-      seriesData = tempSeries.newSeries;
-      unit = tempSeries.newUnit;
+      const tempStackSeries = dealStackSeriesMoney(stackSeries);
+      stackSeries = tempStackSeries.newStackSeries;
+      unit = tempStackSeries.newUnit;
     }
-    const seriesDataLen = seriesData.length;
+
     // 数据中最大的值
     const xMax = Math.max(...seriesData);
     // 图表边界值,如果xMax是0的话则最大值为1
@@ -118,9 +128,9 @@ export default class ChartBarStack extends PureComponent {
     const medianValue = (gridXAxisMax + gridXaxisMin) / 2;
     // 需要针对不同的值编写不同的柱状图Label样式
     const newSeriesData = this.createNewSeriesData(seriesData, medianValue, unit, padLength);
-    // 柱状图阴影
+    // 柱状图阴影的数据series
     const dataShadow = [];
-    for (let i = 0; i < seriesDataLen; i++) {
+    for (let i = 0; i < 10; i++) {
       dataShadow.push(gridXAxisMax);
     }
     // tooltip 配置项
