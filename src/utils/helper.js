@@ -188,53 +188,30 @@ const helper = {
     };
   },
 
-  getDurationString(flag) {
-    const durationObj = {};
-    const year = moment().format('YYYY');
-    const month = moment().format('MM');
-    // 当前年月日
-    const nowTime = moment().format('YYYYMMDD');
-    // 当前月日
-    const nowMonthDay = moment().format('MM/DD');
-    // 当前季度开始月
-    const qStartMonth = moment().startOf('quarter').format('MM');
-    if (flag === 'beforeLastMonth') {
-      // 上上月的起始日期
-      const durationStart = moment().subtract(2, 'month').startOf('month').format('MM/DD');
-      const durationEnd = moment().subtract(2, 'month').endOf('month').format('MM/DD');
-      const pre2monthBegin = moment().subtract(2, 'month').startOf('month').format('YYYYMMDD');
-      const pre2monthEnd = moment().subtract(2, 'month').endOf('month').format('YYYYMMDD');
-      durationObj.durationStr = `${durationStart}-${durationEnd}`;
-      durationObj.cycleType = 'beforeLastMonth';
-      durationObj.begin = pre2monthBegin;
-      durationObj.end = pre2monthEnd;
-    } else if (flag === 'lastMonth') {
-      // 上个月的起始日期
-      const durationStart = moment().subtract(1, 'month').startOf('month').format('MM/DD');
-      const durationEnd = moment().subtract(1, 'month').endOf('month').format('MM/DD');
-      const pre2monthBegin = moment().subtract(1, 'month').startOf('month').format('YYYYMMDD');
-      const pre2monthEnd = moment().subtract(1, 'month').endOf('month').format('YYYYMMDD');
-      durationObj.durationStr = `${durationStart}-${durationEnd}`;
-      durationObj.cycleType = 'lastMonth';
-      durationObj.begin = pre2monthBegin;
-      durationObj.end = pre2monthEnd;
-    } else if (flag === 'month') {
-      durationObj.durationStr = `${month}/01-${nowMonthDay}`;
-      durationObj.cycleType = 'month';
-      durationObj.begin = `${year}${month}01`;
-      durationObj.end = nowTime;
-    } else if (flag === 'quarter') {
-      durationObj.durationStr = `${qStartMonth}/01-${nowMonthDay}`;
-      durationObj.cycleType = 'quarter';
-      durationObj.begin = `${year}${qStartMonth}01`;
-      durationObj.end = nowTime;
-    } else if (flag === 'year') {
-      durationObj.durationStr = `01/01-${nowMonthDay}`;
-      durationObj.cycleType = 'year';
-      durationObj.begin = `${year}0101`;
-      durationObj.end = nowTime;
+  getDurationString(cycleType) {
+    let durationEnd = '';
+    let durationStart = '';
+    switch (cycleType) {
+      case 'beforeLastMonth':
+        durationStart = moment().subtract(2, 'month').startOf('month');
+        durationEnd = moment().subtract(2, 'month').endOf('month');
+        break;
+      case 'lastMonth':
+        durationStart = moment().subtract(1, 'month').startOf('month');
+        durationEnd = moment().subtract(1, 'month').endOf('month');
+        break;
+      default:
+        durationStart = moment().startOf(cycleType);
+        durationEnd = moment();
+        break;
     }
-    return durationObj;
+    const duration = {
+      cycleType,
+      durationStr: `${durationStart.format('YYYY/MM/DD')}-${durationEnd.format('YYYY/MM/DD')}`,
+      begin: durationStart.format('YYYYMMDD'),
+      end: durationEnd.format('YYYYMMDD'),
+    };
+    return duration;
   },
 };
 
