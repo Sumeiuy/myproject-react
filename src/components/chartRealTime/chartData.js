@@ -27,6 +27,34 @@ function toFixedMoney(v) {
   };
 }
 
+function padFixedMoney(m, method) {
+  const money = Math.abs(m);
+  let value = 0;
+  if (money >= 10000) {
+    value = Math[method](m / 1000) * 1000;
+  } else if (money >= 1000) {
+    value = Math[method](m / 1000) * 1000;
+  } else if (money >= 100) {
+    value = Math[method](m / 100) * 100;
+  } else if (money >= 10) {
+    value = Math[method](m / 10) * 10;
+  }
+  return value;
+}
+
+function padFixedPeople(people, method) {
+  const money = Math.abs(people);
+  let value = 0;
+  if (money >= 10000) {
+    value = Math[method](people / 1000) * 1000;
+  } else if (money >= 100) {
+    value = Math[method](people / 100) * 100;
+  } else if (money < 100) {
+    value = Math[method](people / 10) * 10;
+  }
+  return value;
+}
+
 const chartData = {
   // 取出orgModel中分公司、营业部、的名称数组
   // 用于Y轴刻度值，或者tooltip提示信息
@@ -167,12 +195,103 @@ const chartData = {
       minusMerge.push(_.sum(allData[j].minus));
       plusMerge.push(_.sum(allData[j].plus));
     }
-    const max = Math.max(...plusMerge);
-    const min = Math.min(...minusMerge);
+    const plusMax = Math.max(...plusMerge);
+    const plusMin = Math.min(...plusMerge);
+    const minusMax = Math.max(...minusMerge);
+    const minusMin = Math.min(...minusMerge);
+    return {
+      plus: { max: plusMax, min: plusMin },
+      minus: { max: minusMax, min: minusMin },
+    };
+  },
+
+  fixedPercentMaxMin(percent) {
+    const plus = percent.plus;
+    const minus = percent.mnus;
+    // 首先判断正值的最大值和负值的最小值是否为0
+    let max = 100;
+    let min = -100;
+    if (plus.max === 0 && minus.min !== 0) {
+      // 当正值的最大值是0的时候，只存在负值
+      max = Math.ceil((minus.max / 10)) * 10;
+      min = Math.floor((minus.min / 10)) * 10;
+    } else if (minus.min === 0 && plus.max !== 0) {
+      // 当负值的最小值为0的时候，只存在正值
+      max = Math.ceil((plus.max / 10)) * 10;
+      min = Math.floor((plus.min / 10)) * 10;
+    } else if (plus.max !== 0 && minus.min !== 0) {
+      // 其余有正有负的情况，均是0的情况为默认值
+      max = Math.ceil((plus.max / 10)) * 10;
+      min = Math.floor((minus.min / 10)) * 10;
+    }
+
     return {
       max,
       min,
     };
+  },
+
+  fixedPermillageMaxMin(permillage) {
+    const plus = permillage.plus;
+    const minus = permillage.minus;
+    let max = 10;
+    let min = -10;
+    if (plus.max === 0 && minus.min !== 0) {
+       // 当正值的最大值是0的时候，只存在负值
+      max = Math.ceil(minus.max);
+      min = Math.floor(minus.min);
+    } else if (minus.min === 0 && plus.max !== 0) {
+      // 当负值的最小值为0的时候，只存在正值
+      max = Math.ceil(plus.max);
+      min = Math.floor(plus.min);
+    } else if (plus.max !== 0 && minus.min !== 0) {
+      // 其余有正有负的情况，均是0的情况为默认值
+      max = Math.ceil(plus.max);
+      min = Math.floor(minus.min);
+    }
+    return { max, min };
+  },
+
+  fixedMoneyMaxMin(money) {
+    const plus = money.plus;
+    const minus = money.minus;
+    let max = 10;
+    let min = -10;
+    if (plus.max === 0 && minus.min !== 0) {
+      // 当正值的最大值是0的时候，只存在负值
+      max = padFixedMoney(minus.max, 'ceil');
+      min = padFixedMoney(minus.min, 'floor');
+    } else if (minus.min === 0 && plus.max !== 0) {
+      // 当负值的最小值为0的时候，只存在正值
+      max = padFixedMoney(plus.max, 'ceil');
+      min = padFixedMoney(plus.min, 'floor');
+    } else if (plus.max !== 0 && minus.min !== 0) {
+      // 其余有正有负的情况，均是0的情况为默认值
+      max = padFixedMoney(plus.max, 'ceil');
+      min = padFixedMoney(minus.min, 'floor');
+    }
+    return { max, min };
+  },
+
+  fixedPeopleMaxMin(people) {
+    const plus = people.plus;
+    const minus = people.minus;
+    let max = 10;
+    let min = -10;
+    if (plus.max === 0 && minus.min !== 0) {
+      // 当正值的最大值是0的时候，只存在负值
+      max = padFixedPeople(minus.max, 'ceil');
+      min = padFixedPeople(minus.min, 'floor');
+    } else if (minus.min === 0 && plus.max !== 0) {
+      // 当负值的最小值为0的时候，只存在正值
+      max = padFixedPeople(plus.max, 'ceil');
+      min = padFixedPeople(plus.min, 'floor');
+    } else if (plus.max !== 0 && minus.min !== 0) {
+      // 其余有正有负的情况，均是0的情况为默认值
+      max = padFixedPeople(plus.max, 'ceil');
+      min = padFixedPeople(minus.min, 'floor');
+    }
+    return { max, min };
   },
 };
 
