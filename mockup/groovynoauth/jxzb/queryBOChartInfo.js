@@ -508,10 +508,10 @@ exports.response = function (req, res) {
         ],
       },
       {
-        name: '资产明细',
+        title: '资产明细',
         id: 'bo-2',
         key: '1-bo-2',
-        indexData: [
+        data: [
           {
             key: 'totAset',
             name: '托管总资产',
@@ -872,10 +872,10 @@ exports.response = function (req, res) {
         ],
       },
       {
-        name: '交易量明细',
+        title: '交易量明细',
         id: 'bo-3',
         key: '1-bo-3',
-        indexData: [
+        data: [
           {
             key: 'purInteIncome',
             name: '净利息收入',
@@ -1236,10 +1236,10 @@ exports.response = function (req, res) {
         ],
       },
       {
-        name: '产品明细',
+        title: '产品明细',
         id: 'bo-4',
         key: '1-bo-4',
-        indexData: [
+        data: [
           {
             key: 'infoCompPercent',
             name: '高净值客户信息完善率',
@@ -1600,10 +1600,10 @@ exports.response = function (req, res) {
         ],
       },
       {
-        name: '开通业务明细',
+        title: '开通业务明细',
         id: 'bo-5',
         key: '1-bo-5',
-        indexData: [
+        data: [
           {
             key: 'currSignCustNum',
             name: '签约客户数',
@@ -1964,10 +1964,10 @@ exports.response = function (req, res) {
         ],
       },
       {
-        name: '净收入明细',
+        title: '净收入明细',
         id: 'bo-6',
         key: '1-bo-6',
-        indexData: [
+        data: [
           {
             key: 'purInteIncome',
             name: '净利息收入',
@@ -2328,10 +2328,10 @@ exports.response = function (req, res) {
         ],
       },
       {
-        name: '高净值客户服务明细',
+        title: '高净值客户服务明细',
         id: 'bo-7',
         key: '1-bo-7',
-        indexData: [
+        data: [
           {
             key: 'purInteIncome',
             name: '净利息收入',
