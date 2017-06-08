@@ -5,30 +5,13 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import { autobind } from 'core-decorators';
-import { Row, Radio } from 'antd';
+import { Row } from 'antd';
 
-import { getDurationString } from '../../utils/helper';
 import CustRange from './CustRange2';
 import BoardSelect from './BoardSelect';
+import DurationSelect from './DurationSelect';
 // 选择项字典
-import { optionsMap } from '../../config';
 import styles from './PageHeader.less';
-
-
-// 需要用到的常量
-// RadioButton
-const RadioButton = Radio.Button;
-const RadioGroup = Radio.Group;
-
-// 时间筛选条件
-const timeOptions = optionsMap.time;
-// 渲染5个头部期间Radio
-const timeRadios = timeOptions.map((item, index) => {
-  const timeIndex = `Timeradio${index}`;
-  return React.createElement(RadioButton, { key: timeIndex, value: `${item.key}` }, `${item.name}`);
-});
-
 
 export default class PageHeader extends PureComponent {
   static propTypes = {
@@ -42,40 +25,7 @@ export default class PageHeader extends PureComponent {
     custRange: [],
   }
 
-  constructor(props) {
-    super(props);
-    const { location: { query } } = this.props;
-    const value = query.cycleType || 'month';
-    const obj = getDurationString(value);
-    this.state = {
-      ...obj,
-    };
-  }
-
-   // 期间变化
-  @autobind
-  handleDurationChange(e) {
-    const value = e.target.value;
-    const obj = getDurationString(value);
-    const { replace, location: { query } } = this.props;
-    this.setState({
-      ...obj,
-    });
-    // 需要改变query中的查询变量
-    replace({
-      pathname: '/invest',
-      query: {
-        ...query,
-        begin: obj.begin,
-        end: obj.end,
-        cycleType: obj.cycleType,
-        page: 1,
-      },
-    });
-  }
-
   render() {
-    const duration = this.state;
     const { replace, custRange, location, selectDefault } = this.props;
 
     return (
@@ -88,13 +38,10 @@ export default class PageHeader extends PureComponent {
             />
           </div>
           <div className={styles.reportHeaderRight}>
-            <div className={styles.dateFilter}>{duration.durationStr}</div>
-            <RadioGroup
-              defaultValue={duration.cycleType || 'month'}
-              onChange={this.handleDurationChange}
-            >
-              {timeRadios}
-            </RadioGroup>
+            <DurationSelect
+              location={location}
+              replace={replace}
+            />
             <div className={styles.vSplit} />
             {/* 营业地址选择项 */}
             <CustRange

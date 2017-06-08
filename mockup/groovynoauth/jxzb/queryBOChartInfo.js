@@ -4,10 +4,10 @@ exports.response = function (req, res) {
     msg: 'OK',
     resultData: [
       {
-        name: '客户数明细',
+        title: '客户数明细',
         id: 'bo-1',
         key: '1-bo-1',
-        indexData: [
+        data: [
           {
             key: 'tgInNum',
             name: '投顾入岗人数',
@@ -24,18 +24,19 @@ exports.response = function (req, res) {
                 level3Name: null,
                 level4Id: null,
                 level4Name: null,
-                value: [
+                value: '34',
+                children: [
                     {
                         value: '11',
-                        legend: 'a',
+                        name: 'a',
                     },
                     {
                         value: '11',
-                        legend: 'b',
+                        name: 'b',
                     },
                     {
                         value: '11',
-                        legend: 'c',
+                        name: 'c',
                     },
                 ],
               },
@@ -48,18 +49,19 @@ exports.response = function (req, res) {
                 level3Name: null,
                 level4Id: null,
                 level4Name: null,
-                  value: [
+                value: '34',
+                  children: [
                     {
                         value: '20',
-                        legend: 'a',
+                        name: 'a',
                     },
                     {
                         value: '1',
-                        legend: 'b',
+                        name: 'b',
                     },
                     {
                         value: '11',
-                        legend: 'c',
+                        name: 'c',
                     },
                 ],
               },
@@ -72,18 +74,19 @@ exports.response = function (req, res) {
                 level3Name: null,
                 level4Id: null,
                 level4Name: null,
-                  value: [
+                value: '25',
+                  children: [
                     {
                         value: '1',
-                        legend: 'a',
+                        name: 'a',
                     },
                     {
                         value: '11',
-                        legend: 'b',
+                        name: 'b',
                     },
                     {
                         value: '10',
-                        legend: 'c',
+                        name: 'c',
                     },
                 ],
               },
@@ -96,18 +99,19 @@ exports.response = function (req, res) {
                 level3Name: null,
                 level4Id: null,
                 level4Name: null,
-                value: [
+                value: '15',
+                children: [
                     {
                         value: '5',
-                        legend: 'a',
+                        name: 'a',
                     },
                     {
                         value: '5',
-                        legend: 'b',
+                        name: 'b',
                     },
                     {
                         value: '5',
-                        legend: 'c',
+                        name: 'c',
                     },
                 ],
               },
@@ -120,18 +124,19 @@ exports.response = function (req, res) {
                 level3Name: null,
                 level4Id: null,
                 level4Name: null,
-                value: [
+                value: '23',
+                children: [
                     {
                         value: '7',
-                        legend: 'a',
+                        name: 'a',
                     },
                     {
                         value: '11',
-                        legend: 'b',
+                        name: 'b',
                     },
                     {
                         value: '5',
-                        legend: 'c',
+                        name: 'c',
                     },
                 ],
               },
@@ -144,18 +149,19 @@ exports.response = function (req, res) {
                 level3Name: null,
                 level4Id: null,
                 level4Name: null,
-                  value: [
+                value: '24',
+                children: [
                     {
                         value: '23',
-                        legend: 'a',
+                        name: 'a',
                     },
                     {
                         value: '1',
-                        legend: 'b',
+                        name: 'b',
                     },
                     {
                         value: '0',
-                        legend: 'c',
+                        name: 'c',
                     },
                 ],
               },
@@ -168,18 +174,19 @@ exports.response = function (req, res) {
                 level3Name: null,
                 level4Id: null,
                 level4Name: null,
-                  value: [
+                value: '0',
+                  children: [
                     {
                         value: '0',
-                        legend: 'a',
+                        name: 'a',
                     },
                     {
                         value: '0',
-                        legend: 'b',
+                        name: 'b',
                     },
                     {
                         value: '11',
-                        legend: 'c',
+                        name: 'c',
                     },
                 ],
               },
@@ -192,18 +199,19 @@ exports.response = function (req, res) {
                 level3Name: null,
                 level4Id: null,
                 level4Name: null,
-                  value: [
+                value: '0',
+                  children: [
                     {
                         value: '0',
-                        legend: 'a',
+                        name: 'a',
                     },
                     {
                         value: '0',
-                        legend: 'b',
+                        name: 'b',
                     },
                     {
                         value: '0',
-                        legend: 'c',
+                        name: 'c',
                     },
                 ],
               },
@@ -216,18 +224,19 @@ exports.response = function (req, res) {
                 level3Name: null,
                 level4Id: null,
                 level4Name: null,
-                 value: [
+                value: '22',
+                 children: [
                     {
                         value: '11',
-                        legend: 'a',
+                        name: 'a',
                     },
                     {
                         value: '4',
-                        legend: 'b',
+                        name: 'b',
                     },
                     {
                         value: '7',
-                        legend: 'c',
+                        name: 'c',
                     },
                 ],
               },
@@ -240,18 +249,19 @@ exports.response = function (req, res) {
                 level3Name: null,
                 level4Id: null,
                 level4Name: null,
-                 value: [
+                value: '0',
+                 children: [
                     {
                         value: '0',
-                        legend: 'a',
+                        name: 'a',
                     },
                     {
                         value: '0',
-                        legend: 'b',
+                        name: 'b',
                     },
                     {
                         value: '0',
-                        legend: 'c',
+                        name: 'c',
                     },
                 ],
               },
@@ -498,10 +508,10 @@ exports.response = function (req, res) {
         ],
       },
       {
-        name: '资产明细',
+        title: '资产明细',
         id: 'bo-2',
         key: '1-bo-2',
-        indexData: [
+        data: [
           {
             key: 'totAset',
             name: '托管总资产',
@@ -862,10 +872,10 @@ exports.response = function (req, res) {
         ],
       },
       {
-        name: '交易量明细',
+        title: '交易量明细',
         id: 'bo-3',
         key: '1-bo-3',
-        indexData: [
+        data: [
           {
             key: 'purInteIncome',
             name: '净利息收入',
@@ -1226,10 +1236,10 @@ exports.response = function (req, res) {
         ],
       },
       {
-        name: '产品明细',
+        title: '产品明细',
         id: 'bo-4',
         key: '1-bo-4',
-        indexData: [
+        data: [
           {
             key: 'infoCompPercent',
             name: '高净值客户信息完善率',
@@ -1590,10 +1600,10 @@ exports.response = function (req, res) {
         ],
       },
       {
-        name: '开通业务明细',
+        title: '开通业务明细',
         id: 'bo-5',
         key: '1-bo-5',
-        indexData: [
+        data: [
           {
             key: 'currSignCustNum',
             name: '签约客户数',
@@ -1954,10 +1964,10 @@ exports.response = function (req, res) {
         ],
       },
       {
-        name: '净收入明细',
+        title: '净收入明细',
         id: 'bo-6',
         key: '1-bo-6',
-        indexData: [
+        data: [
           {
             key: 'purInteIncome',
             name: '净利息收入',
@@ -2318,10 +2328,10 @@ exports.response = function (req, res) {
         ],
       },
       {
-        name: '高净值客户服务明细',
+        title: '高净值客户服务明细',
         id: 'bo-7',
         key: '1-bo-7',
-        indexData: [
+        data: [
           {
             key: 'purInteIncome',
             name: '净利息收入',

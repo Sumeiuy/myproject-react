@@ -128,7 +128,6 @@ const FixNumber = {
     }
     return { max, min };
   },
-
 };
 
 export default FixNumber;

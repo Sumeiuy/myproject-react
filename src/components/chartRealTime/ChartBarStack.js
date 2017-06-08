@@ -5,12 +5,11 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-// import ReactEcharts from 'echarts-for-react';
 import { autobind } from 'core-decorators';
 
-import { AxisOptions, gridOptions, barColor, barShadow } from './ChartGeneralOptions';
-import { getLevelName, getStackSeries } from './chartData';
-// import {  } from './FixNumber';
+import { AxisOptions, gridOptions, stackBarColors, barShadow } from './ChartGeneralOptions';
+import { getLevelName, getStackSeries, dealStackSeriesMoney, dealStackData } from './chartData';
+import { getMaxAndMinPercent, getMaxAndMinPermillage, getMaxAndMinMoney, getMaxAndMinCust } from './FixNumber';
 import IECharts from '../IECharts';
 import { iconTypeMap } from '../../config';
 import Icon from '../common/Icon';
@@ -52,6 +51,16 @@ export default class ChartBarStack extends PureComponent {
     }));
   }
 
+  @autobind
+  toFixedPercentOrPermillage(v) {
+    return (item) => {
+      const newItem = item;
+      const data = item.data;
+      newItem.data = data.map(n => (n * v));
+      return newItem;
+    };
+  }
+
   render() {
     const {
       chartData: { name, key, orgModel = [] },
@@ -69,58 +78,60 @@ export default class ChartBarStack extends PureComponent {
     const levelStoreArr = getLevelName(orgModel, 'level3Name');
     // 此处为y轴刻度值
     const yAxisLabels = getLevelName(orgModel, levelName);
-    // 获取stackSeries
-    let seriesData = getStackSeries(orgModel, 'value', key);
-    seriesData = seriesData.map(item => Number(item));
-    const padLength = 10 - seriesData.length;
+    // 对Y轴刻度不足刻度
+    const padLength = 10 - yAxisLabels.length;
     if (padLength > 0) {
       for (let i = 0; i < padLength; i++) {
         yAxisLabels.push('--');
-        seriesData.push(0);
       }
     }
-
+    // 获取stackSeries
+    let stackSeries = getStackSeries(orgModel, 'children', key);
+    console.log('chartBarStack===stackSeries>>>', stackSeries);
+    // const seriesData = [];
+    // 此处需要进行对stackSeries中的每一个data根据单位来进行特殊处理
     if (unit === '%') {
-      seriesData = seriesData.map(item => (item * 100));
+      stackSeries = stackSeries.map(this.toFixedPercentOrPermillage(100));
     } else if (unit === '\u2030') {
-      seriesData = seriesData.map(item => (item * 1000));
+      stackSeries = stackSeries.map(this.toFixedPercentOrPermillage(1000));
     } else if (unit === '元') {
       // 如果图表中的数据表示的是金额的话，需要对其进行单位识别和重构
-      const tempSeries = this.toFixedMoney(seriesData);
-      seriesData = tempSeries.newSeries;
-      unit = tempSeries.newUnit;
+      const tempStackSeries = dealStackSeriesMoney(stackSeries);
+      stackSeries = tempStackSeries.newStackSeries;
+      unit = tempStackSeries.newUnit;
     }
-    const seriesDataLen = seriesData.length;
-    // 数据中最大的值
-    const xMax = Math.max(...seriesData);
+    // stackSeries的data中
+    const gridAxisTick = dealStackData(stackSeries);
     // 图表边界值,如果xMax是0的话则最大值为1
-    let gridXAxisMax = xMax * 1.1 || 1;
+    let gridXAxisMax = 1;
     let gridXaxisMin = 0;
     if (unit === '%') {
       // TODO 此处需要对
-      const maxAndMinPercent = this.getMaxAndMinPercent(seriesData);
+      const maxAndMinPercent = getMaxAndMinPercent(gridAxisTick.allData);
       gridXAxisMax = maxAndMinPercent.max;
       gridXaxisMin = maxAndMinPercent.min;
     } else if (unit === '\u2030') {
-      const maxAndMinPermillage = this.getMaxAndMinPermillage(seriesData);
+      const maxAndMinPermillage = getMaxAndMinPermillage(gridAxisTick.allData);
       gridXAxisMax = maxAndMinPermillage.max;
       gridXaxisMin = maxAndMinPermillage.min;
     } else if (unit.indexOf('元') > -1) {
-      const maxAndMinMoney = this.getMaxAndMinMoney(seriesData);
+      const maxAndMinMoney = getMaxAndMinMoney(gridAxisTick.allData);
       gridXAxisMax = maxAndMinMoney.max;
       gridXaxisMin = maxAndMinMoney.min;
     } else if (unit === '户' || unit === '人') {
-      const maxAndMinPeople = this.getMaxAndMinCust(seriesData);
+      const maxAndMinPeople = getMaxAndMinCust(gridAxisTick.allData);
       gridXAxisMax = maxAndMinPeople.max;
       gridXaxisMin = maxAndMinPeople.min;
     }
+    // TODO 因为stack柱状图暂时不用显示Label,所以以下可以暂时不用
     // 计算出所有值的中间值
-    const medianValue = (gridXAxisMax + gridXaxisMin) / 2;
+    // const medianValue = (gridXAxisMax + gridXaxisMin) / 2;
     // 需要针对不同的值编写不同的柱状图Label样式
-    const newSeriesData = this.createNewSeriesData(seriesData, medianValue, unit, padLength);
-    // 柱状图阴影
+    // const newSeriesData = this.createNewSeriesData(seriesData, medianValue, unit, padLength);
+
+    // 柱状图阴影的数据series
     const dataShadow = [];
-    for (let i = 0; i < seriesDataLen; i++) {
+    for (let i = 0; i < 10; i++) {
       dataShadow.push(gridXAxisMax);
     }
     // tooltip 配置项
@@ -155,7 +166,7 @@ export default class ChartBarStack extends PureComponent {
     };
     // eCharts的配置项
     const options = {
-      color: [barColor],
+      color: [...stackBarColors],
       tooltip: {
         ...tooltipOtions,
       },
@@ -207,20 +218,9 @@ export default class ChartBarStack extends PureComponent {
           ...barShadow,
           data: dataShadow,
         },
-        {
-          name,
-          type: 'bar',
-          silent: true,
-          label: {
-            normal: {
-              show: false,
-            },
-          },
-          data: newSeriesData,
-        },
+        ...stackSeries,
       ],
     };
-
     return (
       <div className={styles.chartMain}>
         <div className={styles.chartHeader}>

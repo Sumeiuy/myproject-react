@@ -1,5 +1,5 @@
 /**
- * @file invest/Home.js
+ * @file business/Home.js
  *  投顾业绩汇总首页
  * @author sunweibin
  */
@@ -92,7 +92,7 @@ export default class BusinessHome extends PureComponent {
     };
     this.getInfo({
       ...query,
-      scope: Number(query.custRangeLevel) + 1,
+      scope: query.scope || Number(query.custRangeLevel) + 1,
     });
   }
 
@@ -314,10 +314,12 @@ export default class BusinessHome extends PureComponent {
       chartInfo,
       chartTableInfo,
       location,
+      location: { query },
       replace,
       custRange,
     } = this.props;
-    const selScope = location.query.custRangeLevel || (custRange[0] && custRange[0].level);
+    const level = location.query.custRangeLevel || (custRange[0] && custRange[0].level);
+    const scope = Number(query.scope) || (custRange[0] && Number(custRange[0].level) + 1);
     if (!custRange || !custRange.length) {
       return null;
     }
@@ -344,7 +346,7 @@ export default class BusinessHome extends PureComponent {
           */}
           {
             chartInfo.map((item) => {
-              const { name, id, key, indexData } = item;
+              const { title, id, key, data } = item;
               const time = new Date().getTime();
               const uniqueID = `${id}-${time}`;
               // TODO chartTableInfo的值通过index来获取和传递
@@ -354,15 +356,16 @@ export default class BusinessHome extends PureComponent {
                   key={uniqueID}
                 >
                   <PreformanceChartBoard
-                    chartData={indexData}
+                    chartData={data}
                     indexID={id}
                     indexKey={key}
                     chartTableInfo={chartTableInfo}
                     postExcelInfo={this.handleExportExcel}
-                    level={selScope}
+                    level={level}
+                    scope={scope}
                     location={location}
                     replace={replace}
-                    boardTitle={name}
+                    boardTitle={title}
                     showScopeOrder={false}
                   />
                 </div>
