@@ -8,8 +8,16 @@ import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 
 import { AxisOptions, gridOptions, stackBarColors, barShadow } from './ChartGeneralOptions';
-import { getLevelName, getStackSeries, dealStackSeriesMoney, dealStackData } from './chartData';
-import { getMaxAndMinPercent, getMaxAndMinPermillage, getMaxAndMinMoney, getMaxAndMinCust } from './FixNumber';
+import {
+  getLevelName,
+  getStackSeries,
+  dealStackSeriesMoney,
+  dealStackData,
+  fixedPercentMaxMin,
+  fixedPermillageMaxMin,
+  fixedMoneyMaxMin,
+  fixedPeopleMaxMin,
+} from './chartData';
 import IECharts from '../IECharts';
 import { iconTypeMap } from '../../config';
 import Icon from '../common/Icon';
@@ -107,19 +115,19 @@ export default class ChartBarStack extends PureComponent {
     let gridXaxisMin = 0;
     if (unit === '%') {
       // TODO 此处需要对
-      const maxAndMinPercent = getMaxAndMinPercent(gridAxisTick.allData);
+      const maxAndMinPercent = fixedPercentMaxMin(gridAxisTick);
       gridXAxisMax = maxAndMinPercent.max;
       gridXaxisMin = maxAndMinPercent.min;
     } else if (unit === '\u2030') {
-      const maxAndMinPermillage = getMaxAndMinPermillage(gridAxisTick.allData);
+      const maxAndMinPermillage = fixedPermillageMaxMin(gridAxisTick);
       gridXAxisMax = maxAndMinPermillage.max;
       gridXaxisMin = maxAndMinPermillage.min;
     } else if (unit.indexOf('元') > -1) {
-      const maxAndMinMoney = getMaxAndMinMoney(gridAxisTick.allData);
+      const maxAndMinMoney = fixedMoneyMaxMin(gridAxisTick);
       gridXAxisMax = maxAndMinMoney.max;
       gridXaxisMin = maxAndMinMoney.min;
     } else if (unit === '户' || unit === '人') {
-      const maxAndMinPeople = getMaxAndMinCust(gridAxisTick.allData);
+      const maxAndMinPeople = fixedPeopleMaxMin(gridAxisTick);
       gridXAxisMax = maxAndMinPeople.max;
       gridXaxisMin = maxAndMinPeople.min;
     }
@@ -141,6 +149,15 @@ export default class ChartBarStack extends PureComponent {
         type: 'shadow',
       },
       formatter(params) {
+        // 堆叠柱状图上因为有多系列的值
+        // 所有此处需要做处理
+        // const series = params;
+        // const len = series.length;
+        // const tips = [];
+        // // 因为第一个series是阴影
+        // for (let i = 1; i < len; i++) {
+        //   tips.push();
+        // }
         const item = params[1];
         const axisValue = item.axisValue;
         const seriesName = item.seriesName;
