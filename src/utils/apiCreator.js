@@ -46,7 +46,6 @@ export default function createApi() {
         `${finalUrl}?${queryString}`,
         {
           method: 'GET',
-          empId: '002332',
         },
       );
     },

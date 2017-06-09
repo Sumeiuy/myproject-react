@@ -9,6 +9,17 @@ exports.response = function (req, res) {
             "id": "ZZ001041120",
             "name": "四川分公司",
             "level": "2",
+            "orgModel": {
+                "level1Id": "ZZ001041",
+                "level1Name": "测试-经纪业务总部",
+                "level2Id": "ZZ001041093",
+                "level2Name": "测试-南京分公司",
+                "level3Id": "ZZ1093892023",
+                "level3Name": "测试-解放路营业部",
+                "level4Id": "ZZ10000999",
+                "level4Name": "测试-人员",
+                "value": "34"
+            },
             "indicatorDataList": [
               {
                 "key": "tgInNum",
@@ -86,8 +97,19 @@ exports.response = function (req, res) {
             ]
           }, {
             "id": "ZZ001041106",
-            "name": "南通分公司",
-            "level": "2",
+            "name": "营业部",
+            "level": "3",
+            "orgModel": {
+                "level1Id": "ZZ001041",
+                "level1Name": "测试-经纪业务总部",
+                "level2Id": "ZZ001041093",
+                "level2Name": "测试-南京分公司",
+                "level3Id": "ZZ1093892023",
+                "level3Name": "测试-解放路营业部",
+                "level4Id": "ZZ10000999",
+                "level4Name": "测试-人员",
+                "value": "34"
+            },
             "indicatorDataList": [
               {
                 "key": "tgInNum",
@@ -165,8 +187,19 @@ exports.response = function (req, res) {
             ]
           }, {
             "id": "ZZ323270",
-            "name": "盐城分公司",
-            "level": "2",
+            "name": "投顾",
+            "level": "4",
+            "orgModel": {
+                "level1Id": "ZZ001041",
+                "level1Name": "测试-经纪业务总部",
+                "level2Id": "ZZ001041093",
+                "level2Name": "测试-南京分公司",
+                "level3Id": "ZZ1093892023",
+                "level3Name": "测试-解放路营业部",
+                "level4Id": "ZZ10000999",
+                "level4Name": "测试-人员",
+                "value": "34"
+            },
             "indicatorDataList": [
               {
                 "key": "tgInNum",

@@ -22,6 +22,14 @@ function getOS() {
 
 const helper = {
 
+  // 获取 empId
+  getEmpId() {
+    // 临时 ID
+    const tempId = '002727';
+    const nativeQuery = helper.getQuery(window.location.search);
+    const empId = window.curUserCode || (nativeQuery.empId || tempId);
+    return empId;
+  },
   /**
    * 将{ a: 1, b: 2 } => a=1&b=2
    * @param {object} query

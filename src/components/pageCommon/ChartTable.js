@@ -7,7 +7,7 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
-import { Table, Pagination } from 'antd';
+import { Table, Pagination, Tooltip } from 'antd';
 import _ from 'lodash';
 
 import { optionsMap } from '../../config';
@@ -66,9 +66,9 @@ export default class ChartTable extends PureComponent {
   // 分页事件
   @autobind
   handlePaginationChange(page, pageSize) {
-    const { replace, location: { query } } = this.props;
+    const { replace, location: { query, pathname } } = this.props;
     replace({
-      pathname: '/invest',
+      pathname,
       query: {
         ...query,
         page,
@@ -137,8 +137,32 @@ export default class ChartTable extends PureComponent {
     });
   }
 
+  @autobind
+  toolTipHandle(record) {
+    let toolTipTittle;
+    if (record.orgModel) {
+      if (record.level === '3') {
+        toolTipTittle = record.orgModel.level2Name;
+      } else if (record.level === '4') {
+        toolTipTittle = `${record.orgModel.level2Name} - ${record.orgModel.level3Name}`;
+      } else {
+        toolTipTittle = '';
+      }
+    } else {
+      toolTipTittle = '';
+    }
+    return toolTipTittle ? <Tooltip placement="right" title={`${record.orgModel.level2Name} - ${record.orgModel.level3Name}`}>
+      <div className={styles.tdWrapperDiv}>
+        {record.city}
+      </div>
+    </Tooltip>
+    :
+    <div className={styles.tdWrapperDiv}>{record.city}</div>;
+  }
+
   render() {
     const { chartTableInfo, location: { query }, level, style } = this.props;
+    console.log('chartTableInfo', chartTableInfo);
     const columns = chartTableInfo.titleList;
     const data = chartTableInfo.indicatorSummuryRecordDtos;
     const temp = [];
@@ -147,7 +171,9 @@ export default class ChartTable extends PureComponent {
     if (data && data.length) {
       data.map((item, index) => {
         const testArr = this.unitChange(item.indicatorDataList, item.name);
-        return temp.push(Object.assign({ key: index }, ...testArr));
+        return temp.push(Object.assign(
+          { key: index, level: item.level, orgModel: item.orgModel }, ...testArr,
+        ));
       });
       allWidth = _.sum(columnWidth);
       arr = columns.map((item, index) => (
@@ -188,6 +214,11 @@ export default class ChartTable extends PureComponent {
             </span>
           ),
           width: columnWidth[index],
+          render: text => (
+            <div className={styles.tdWrapperDiv}>
+              {text}
+            </div>
+          ),
         }
       ));
       const tempScope = query.scope || Number(level) + 1;
@@ -204,6 +235,9 @@ export default class ChartTable extends PureComponent {
         key: 'city',
         width: 170,
         fixed: 'left',
+        render: (text, record) => (
+          this.toolTipHandle(record)
+        ),
       });
     }
     return (
