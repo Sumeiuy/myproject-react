@@ -91,7 +91,8 @@ function getLogData(action) {
   // 事件类型 { type, event= }
   const eventType = getEventType(action);
   // 系统变量
-  const env = eventType.type === EVENT_PROFILE_KEY ? {} : helper.getEnv();
+  const env = eventType.type === EVENT_PROFILE_KEY
+    ? { empId: helper.getEmpId() } : helper.getEnv();
   const extraData = getExtraData(action);
 
   return {

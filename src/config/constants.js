@@ -7,5 +7,5 @@
 export default {
   container: '.react-app',
   logoText: '华泰证券',
-  version: '0.0.1',
+  version: '1.6.2',
 };
