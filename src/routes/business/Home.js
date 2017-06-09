@@ -10,14 +10,11 @@ import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
-import { queryToString, getQuery, getDurationString } from '../../utils/helper';
+import { getEmpId, queryToString, getDurationString } from '../../utils/helper';
 import PerformanceItem from '../../components/pageCommon/PerformanceItem';
 import PreformanceChartBoard from '../../components/pageCommon/PerformanceChartBoard';
 import PageHeader from '../../components/pageCommon/PageHeader';
 import styles from './Home.less';
-
-let empId;
-const eid = '002727';
 
 const effects = {
   allInfo: 'business/getAllInfo',
@@ -255,8 +252,6 @@ export default class BusinessHome extends PureComponent {
   @autobind
   getInfo(queryObj) {
     const { getAllInfo, location: { query } } = this.props;
-    const nativeQuery = getQuery(window.location.search);
-    empId = window.curUserCode || (nativeQuery.empId || eid);
     const obj = this.state;
     const payload = {
       orgId: queryObj.orgId || '',
@@ -267,7 +262,7 @@ export default class BusinessHome extends PureComponent {
     };
     getAllInfo({
       custRange: {
-        empId,
+        empId: getEmpId(),
       },
       performance: {
         scope: queryObj.custRangeLevel,

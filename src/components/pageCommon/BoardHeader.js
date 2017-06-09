@@ -76,13 +76,14 @@ export default class BoardHeader extends PureComponent {
   // 柱状图与表格切换
   @autobind
   handleIconClick(type) {
-    const { replace, location: { query, pathname }, changeBoard } = this.props;
+    const { replace, location: { query, pathname }, changeBoard, indexID } = this.props;
     replace({
       pathname,
       query: {
         ...query,
         showChart: type,
         page: type !== 'tables' ? '1' : query.page,
+        indexID,
       },
     });
     this.setState({

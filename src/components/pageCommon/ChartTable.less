@@ -1,4 +1,6 @@
 .columnsTitle{
+  display: block;
+  padding: 12px 8px;
   cursor: pointer;
 }
 .tableDiv{
@@ -14,7 +16,6 @@
       }
     }
     tr{
-      height: 26px;
       font-size: 12px;
     }
     tr:nth-child(even){
@@ -31,6 +32,9 @@
         cursor: pointer;
       }
     }
+    .ant-table-thead > tr > th, .ant-table-tbody > tr > td{
+      padding: 0;
+    }
   }
 }
 :global {
@@ -42,4 +46,7 @@
       color: #f8ac59;
     }
   }
+}
+.tdWrapperDiv{
+  padding: 10px 8px;
 }

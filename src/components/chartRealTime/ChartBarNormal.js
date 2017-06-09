@@ -354,12 +354,17 @@ export default class ChartBarNormal extends PureComponent {
         const axisValue = item.axisValue;
         const seriesName = item.seriesName;
         let value = item.data.value;
+
         if (axisValue === '--') {
           value = '--';
         }
         if (levelAndScope === 4 && axisValue !== '--') {
-          const seriesIndex = item.seriesIndex;
-          return `${levelCompanyArr[seriesIndex]} - ${levelStoreArr[seriesIndex]}<br />${axisValue}<br /> ${seriesName}: <span style="color:#f8ac59; font-size: 15px;">${value}</span>${unit}`;
+          const dataIndex = item.dataIndex;
+          return `${levelCompanyArr[dataIndex]} - ${levelStoreArr[dataIndex]}<br />${axisValue}<br /> ${seriesName}: <span style="color:#f8ac59; font-size: 15px;">${value}</span>${unit}`;
+        }
+        if (levelAndScope === 3 && axisValue !== '--') {
+          const dataIndex = item.dataIndex;
+          return `${levelCompanyArr[dataIndex]}<br />${axisValue}<br /> ${seriesName}: <span style="color:#f8ac59; font-size: 15px;">${value}</span>${unit}`;
         }
         return `${axisValue}<br /> ${seriesName}: <span style="color:#f8ac59; font-size: 15px;">${value}</span>${unit}`;
       },

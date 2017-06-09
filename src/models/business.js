@@ -14,7 +14,7 @@ export default {
     performance: [],
     chartInfo: [],
     custRange: [],
-    chartTableInfo: {},
+    chartTableInfo: [],
   },
   reducers: {
     getPerformanceSuccess(state, action) {
@@ -35,7 +35,7 @@ export default {
     },
     getChartTableInfoSuccess(state, action) {
       const { payload: { resChartTableInfo } } = action;
-      const chartTableInfo = resChartTableInfo.resultData.data;
+      const chartTableInfo = resChartTableInfo.resultData;
       return {
         ...state,
         chartTableInfo,
