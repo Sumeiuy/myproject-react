@@ -27,6 +27,25 @@ const config = {
       ],
     },
   },
+  // 神策系统保留属性，未避免冲突，对这些属性+后缀处理
+  // 如 time ==> time_0
+  mapFiledList: [
+    'time',
+    'date',
+    'datetime',
+    'distinct_id',
+    'event',
+    'events',
+    'first_id',
+    'id',
+    'original_id',
+    'device_id',
+    'properties',
+    'second_id',
+    'time',
+    'user_id',
+    'users',
+  ],
 };
 
 export default config;

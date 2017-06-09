@@ -15,6 +15,7 @@ import {
   interval,
   whitelist,
   blacklist,
+  mapFiledList,
 } from '../config/log';
 import helper from '../utils/helper';
 
@@ -84,7 +85,19 @@ function getExtraData(action) {
       );
     }
   }
-  return _.omitBy(data, item => _.isObject(item) || _.isArray(item));
+  data = _.omitBy(
+    data,
+    item => _.isObject(item) || _.isArray(item),
+  );
+  return _.mapKeys(
+    data,
+    (item, key) => {
+      if (_.includes(mapFiledList, key)) {
+        return `${key}_0`;
+      }
+      return key;
+    },
+  );
 }
 
 function getLogData(action) {
