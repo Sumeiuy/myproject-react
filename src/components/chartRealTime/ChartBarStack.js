@@ -98,10 +98,9 @@ export default class ChartBarStack extends PureComponent {
     // 获取stackSeries
     const stack = getStackSeries(orgModel, 'children', key);
     const stackLegend = fixedStackLegendData(stack.legends);
+    let stackGridTop = '30px';
     if (stackLegend.length > 3) {
-      gridOptions.top = '50px';
-    } else {
-      gridOptions.top = '30px';
+      stackGridTop = '50px';
     }
     let stackSeries = stack.series;
     // 此处需要进行对stackSeries中的每一个data根据单位来进行特殊处理
@@ -213,6 +212,7 @@ export default class ChartBarStack extends PureComponent {
       },
       grid: {
         ...gridOptions,
+        top: stackGridTop,
       },
       xAxis: {
         type: 'value',
