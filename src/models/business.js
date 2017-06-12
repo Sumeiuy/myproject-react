@@ -14,7 +14,7 @@ export default {
     performance: [],
     chartInfo: [],
     custRange: [],
-    chartTableInfo: [],
+    chartTableInfo: {},
   },
   reducers: {
     getPerformanceSuccess(state, action) {

@@ -28,15 +28,27 @@ exports.response = function (req, res) {
                 children: [
                     {
                         value: '11',
-                        name: 'a',
+                        name: '个人',
                     },
                     {
                         value: '11',
-                        name: 'b',
+                        name: '机构',
                     },
                     {
                         value: '11',
-                        name: 'c',
+                        name: '组织',
+                    },
+                    {
+                        value: '11',
+                        name: '天天发布市值',
+                    },
+                    {
+                        value: '11',
+                        name: '流通股市',
+                    },
+                    {
+                        value: '11',
+                        name: '限售市值',
                     },
                 ],
               },
@@ -53,15 +65,27 @@ exports.response = function (req, res) {
                   children: [
                     {
                         value: '20',
-                        name: 'a',
+                        name: '个人',
                     },
                     {
                         value: '1',
-                        name: 'b',
+                        name: '机构',
                     },
                     {
                         value: '11',
-                        name: 'c',
+                        name: '组织',
+                    },
+                    {
+                        value: '11',
+                        name: '天天发布市值',
+                    },
+                    {
+                        value: '11',
+                        name: '流通股市',
+                    },
+                    {
+                        value: '11',
+                        name: '限售市值',
                     },
                 ],
               },
@@ -78,15 +102,27 @@ exports.response = function (req, res) {
                   children: [
                     {
                         value: '1',
-                        name: 'a',
+                        name: '个人',
                     },
                     {
                         value: '11',
-                        name: 'b',
+                        name: '机构',
                     },
                     {
                         value: '10',
-                        name: 'c',
+                        name: '组织',
+                    },
+                    {
+                        value: '11',
+                        name: '天天发布市值',
+                    },
+                    {
+                        value: '11',
+                        name: '流通股市',
+                    },
+                    {
+                        value: '11',
+                        name: '限售市值',
                     },
                 ],
               },
@@ -103,15 +139,27 @@ exports.response = function (req, res) {
                 children: [
                     {
                         value: '5',
-                        name: 'a',
+                        name: '个人',
                     },
                     {
                         value: '5',
-                        name: 'b',
+                        name: '机构',
                     },
                     {
                         value: '5',
-                        name: 'c',
+                        name: '组织',
+                    },
+                    {
+                        value: '11',
+                        name: '天天发布市值',
+                    },
+                    {
+                        value: '11',
+                        name: '流通股市',
+                    },
+                    {
+                        value: '11',
+                        name: '限售市值',
                     },
                 ],
               },
@@ -128,15 +176,27 @@ exports.response = function (req, res) {
                 children: [
                     {
                         value: '7',
-                        name: 'a',
+                        name: '个人',
                     },
                     {
                         value: '11',
-                        name: 'b',
+                        name: '机构',
                     },
                     {
                         value: '5',
-                        name: 'c',
+                        name: '组织',
+                    },
+                    {
+                        value: '11',
+                        name: '天天发布市值',
+                    },
+                    {
+                        value: '11',
+                        name: '流通股市',
+                    },
+                    {
+                        value: '11',
+                        name: '限售市值',
                     },
                 ],
               },
@@ -153,15 +213,27 @@ exports.response = function (req, res) {
                 children: [
                     {
                         value: '23',
-                        name: 'a',
+                        name: '个人',
                     },
                     {
                         value: '1',
-                        name: 'b',
+                        name: '机构',
                     },
                     {
                         value: '0',
-                        name: 'c',
+                        name: '组织',
+                    },
+                    {
+                        value: '11',
+                        name: '天天发布市值',
+                    },
+                    {
+                        value: '11',
+                        name: '流通股市',
+                    },
+                    {
+                        value: '11',
+                        name: '限售市值',
                     },
                 ],
               },
@@ -178,15 +250,27 @@ exports.response = function (req, res) {
                   children: [
                     {
                         value: '0',
-                        name: 'a',
+                        name: '个人',
                     },
                     {
                         value: '0',
-                        name: 'b',
+                        name: '机构',
                     },
                     {
                         value: '11',
-                        name: 'c',
+                        name: '组织',
+                    },
+                    {
+                        value: '11',
+                        name: '天天发布市值',
+                    },
+                    {
+                        value: '11',
+                        name: '流通股市',
+                    },
+                    {
+                        value: '11',
+                        name: '限售市值',
                     },
                 ],
               },
@@ -203,15 +287,27 @@ exports.response = function (req, res) {
                   children: [
                     {
                         value: '0',
-                        name: 'a',
+                        name: '个人',
                     },
                     {
                         value: '0',
-                        name: 'b',
+                        name: '机构',
                     },
                     {
                         value: '0',
-                        name: 'c',
+                        name: '组织',
+                    },
+                    {
+                        value: '11',
+                        name: '天天发布市值',
+                    },
+                    {
+                        value: '11',
+                        name: '流通股市',
+                    },
+                    {
+                        value: '11',
+                        name: '限售市值',
                     },
                 ],
               },
@@ -228,15 +324,27 @@ exports.response = function (req, res) {
                  children: [
                     {
                         value: '11',
-                        name: 'a',
+                        name: '个人',
                     },
                     {
                         value: '4',
-                        name: 'b',
+                        name: '机构',
                     },
                     {
                         value: '7',
-                        name: 'c',
+                        name: '组织',
+                    },
+                    {
+                        value: '11',
+                        name: '天天发布市值',
+                    },
+                    {
+                        value: '11',
+                        name: '流通股市',
+                    },
+                    {
+                        value: '11',
+                        name: '限售市值',
                     },
                 ],
               },
@@ -253,15 +361,27 @@ exports.response = function (req, res) {
                  children: [
                     {
                         value: '0',
-                        name: 'a',
+                        name: '个人',
                     },
                     {
                         value: '0',
-                        name: 'b',
+                        name: '机构',
                     },
                     {
                         value: '0',
-                        name: 'c',
+                        name: '组织',
+                    },
+                    {
+                        value: '11',
+                        name: '天天发布市值',
+                    },
+                    {
+                        value: '11',
+                        name: '流通股市',
+                    },
+                    {
+                        value: '11',
+                        name: '限售市值',
                     },
                 ],
               },
