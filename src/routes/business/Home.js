@@ -334,18 +334,9 @@ export default class BusinessHome extends PureComponent {
               data={performance}
             />
           </div>
-          {/*
-            TODO此处需要进行经营业绩的修改
-            1.修改数据获取的类型为分类指标的数组
-            2.进行数据修改
-          */}
           {
             chartInfo.map((item) => {
-              const { title, id, key, data } = item;
-              // const time = new Date().getTime();
-              // const uniqueID = `${id}-${time}`;
-              //  key={uniqueID}
-              // TODO chartTableInfo的值通过index来获取和传递
+              const { title, id, data } = item;
               return (
                 <div
                   className={styles.reportPart}
@@ -353,7 +344,6 @@ export default class BusinessHome extends PureComponent {
                   <PreformanceChartBoard
                     chartData={data}
                     indexID={id}
-                    indexKey={key}
                     chartTableInfo={chartTableInfo}
                     postExcelInfo={this.handleExportExcel}
                     level={level}

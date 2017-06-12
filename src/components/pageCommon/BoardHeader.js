@@ -35,14 +35,12 @@ export default class BoardHeader extends PureComponent {
     showScopeOrder: PropTypes.bool.isRequired,
     level: PropTypes.string,
     indexID: PropTypes.string,
-    indexKey: PropTypes.string,
     scope: PropTypes.number.isRequired,
   }
 
   static defaultProps = {
     level: '',
     indexID: '',
-    indexKey: '',
   }
 
   constructor(props) {
@@ -94,13 +92,12 @@ export default class BoardHeader extends PureComponent {
 
   @autobind
   handleSortChange(column, value) {
-    const { replace, location: { query }, indexKey, indexID } = this.props;
+    const { replace, location: { query }, indexID } = this.props;
     replace({
       pathname: '/invest',
       query: {
         ...query,
         [column]: value,
-        indexKey,
         indexID,
       },
     });
