@@ -6,6 +6,7 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
 
 import { AxisOptions, gridOptions, stackBarColors, barShadow } from './ChartGeneralOptions';
 import {
@@ -17,6 +18,7 @@ import {
   fixedPermillageMaxMin,
   fixedMoneyMaxMin,
   fixedPeopleMaxMin,
+  fixedStackLegendData,
 } from './chartData';
 import IECharts from '../IECharts';
 import { iconTypeMap } from '../../config';
@@ -81,9 +83,9 @@ export default class ChartBarStack extends PureComponent {
     const levelAndScope = query.scope ? Number(query.scope) : Number(level) + 1;
     const levelName = `level${levelAndScope}Name`;
     // 分公司名称数组
-    const levelCompanyArr = getLevelName(orgModel, 'level2Name');
+    // const levelCompanyArr = getLevelName(orgModel, 'level2Name');
     // 营业部名称数组
-    const levelStoreArr = getLevelName(orgModel, 'level3Name');
+    // const levelStoreArr = getLevelName(orgModel, 'level3Name');
     // 此处为y轴刻度值
     const yAxisLabels = getLevelName(orgModel, levelName);
     // 对Y轴刻度不足刻度
@@ -94,9 +96,14 @@ export default class ChartBarStack extends PureComponent {
       }
     }
     // 获取stackSeries
-    let stackSeries = getStackSeries(orgModel, 'children', key);
-    console.log('chartBarStack===stackSeries>>>', stackSeries);
-    // const seriesData = [];
+    const stack = getStackSeries(orgModel, 'children', key);
+    const stackLegend = fixedStackLegendData(stack.legends);
+    if (stackLegend.length > 3) {
+      gridOptions.top = '50px';
+    } else {
+      gridOptions.top = '30px';
+    }
+    let stackSeries = stack.series;
     // 此处需要进行对stackSeries中的每一个data根据单位来进行特殊处理
     if (unit === '%') {
       stackSeries = stackSeries.map(this.toFixedPercentOrPermillage(100));
@@ -151,29 +158,37 @@ export default class ChartBarStack extends PureComponent {
       formatter(params) {
         // 堆叠柱状图上因为有多系列的值
         // 所有此处需要做处理
-        // const series = params;
-        // const len = series.length;
-        // const tips = [];
-        // // 因为第一个series是阴影
-        // for (let i = 1; i < len; i++) {
-        //   tips.push();
-        // }
-        const item = params[1];
-        const axisValue = item.axisValue;
-        const seriesName = item.seriesName;
-        let value = item.data.value;
-        if (axisValue === '--') {
-          value = '--';
-        }
-        if (levelAndScope === 4 && axisValue !== '--') {
-          const seriesIndex = item.seriesIndex;
-          return `${levelCompanyArr[seriesIndex]} - ${levelStoreArr[seriesIndex]}<br />${axisValue}<br /> ${seriesName}: <span style="color:#f8ac59; font-size: 15px;">${value}</span>${unit}`;
-        }
-        return `${axisValue}<br /> ${seriesName}: <span style="color:#f8ac59; font-size: 15px;">${value}</span>${unit}`;
+        const series = params;
+        const tips = [];
+        const total = [];
+        let hasPushedAxis = false;
+        // 因为第一个series是阴影
+        series.forEach((item, index) => {
+          if (index > 0) {
+            const axisValue = item.axisValue;
+            const seriesName = item.seriesName;
+            const value = item.value;
+            total.push(value);
+            if (!hasPushedAxis) {
+              hasPushedAxis = true;
+              tips.push(`${axisValue}<br/>`);
+            }
+            tips.push(`<span style="display:inline-block;width: 10px;height: 10px;margin-right:4px;border-radius:100%;background-color:${stackBarColors[index - 1]}"></span>`);
+            tips.push(`${seriesName} : <span style="color:#ffd92a; font-size:14px;">${value}</span>`);
+            tips.push(`${unit}<br/>`);
+          }
+        });
+        tips.push(`共 <span style="color:#ffd92a; font-size:14px;">${_.sum(total)}</span> ${unit}`);
+        return tips.join('');
       },
       position(pos, params, dom, rect, size) {
         // 鼠标在左侧时 tooltip 显示到右侧，鼠标在右侧时 tooltip 显示到左侧。
-        const obj = { top: (pos[1] - size.contentSize[1]) };
+        const obj = {};
+        if (pos[1] > (size.viewSize[1] / 2)) {
+          obj.top = pos[1] - size.contentSize[1];
+        } else {
+          obj.top = pos[1];
+        }
         obj[['left', 'right'][+(pos[0] < size.viewSize[0] / 2)]] = 5;
         return obj;
       },
@@ -186,6 +201,15 @@ export default class ChartBarStack extends PureComponent {
       color: [...stackBarColors],
       tooltip: {
         ...tooltipOtions,
+      },
+      legend: {
+        width: '95%',
+        left: '0',
+        selectedMode: false,
+        data: stackLegend,
+        textStyle: {
+          color: '#777',
+        },
       },
       grid: {
         ...gridOptions,
