@@ -18,6 +18,7 @@ const sortByType = optionsMap.sortByType;
 const revert = { asc: 'desc', desc: 'asc' };
 // 表格标题宽度
 const columnWidth = [180, 180, 180, 210, 180, 170, 170, 210, 210, 210, 180, 150];
+const allWidth = _.sum(columnWidth);
 
 export default class ChartTable extends PureComponent {
   static propTypes = {
@@ -27,6 +28,7 @@ export default class ChartTable extends PureComponent {
     style: PropTypes.object,
     sourceData: PropTypes.array,
     data: PropTypes.object,
+    getTableInfo: PropTypes.func,
     replace: PropTypes.func.isRequired,
   }
 
@@ -37,6 +39,7 @@ export default class ChartTable extends PureComponent {
     chartTableInfo: {},
     sourceData: [],
     data: {},
+    getTableInfo: () => {},
     repalce: () => {},
   }
   constructor(props) {
@@ -46,39 +49,41 @@ export default class ChartTable extends PureComponent {
       loading: false,
       pagination: false,
       sortedInfo: null,
+      // url 中会存放的值
+      orderIndicatorId: '',
+      orderType: '',
+      pageNum: 1,
+      pageSize: 10,
     };
   }
-
-  // @autobind
-  // handleChange(e, pagination, sorter) {
-  //   // 表格排序方式
-  //   const tableOrderType = sorter.order === 'ascend' ? 'asc' : 'desc';
-  //   const { replace, location: { query } } = this.props;
-  //   replace({
-  //     pathname: '/invest',
-  //     query: {
-  //       ...query,
-  //       orderIndicatorId: sorter.field || '',
-  //       tableOrderType,
-  //     },
-  //   });
-  // }
   // 分页事件
   @autobind
   handlePaginationChange(page, pageSize) {
-    const { replace, location: { query, pathname } } = this.props;
-    replace({
-      pathname,
-      query: {
-        ...query,
-        page,
-        pageSize,
-      },
-    });
+    const { replace, location: { query, pathname }, getTableInfo } = this.props;
+    const { orderIndicatorId, orderType } = this.state;
+    if (pathname.indexOf('invest') > -1) {
+      replace({
+        pathname,
+        query: {
+          ...query,
+          page,
+          pageSize,
+        },
+      });
+    } else {
+      this.setState({
+        pageNum: page,
+      });
+      getTableInfo({
+        pageNum: page,
+        orderIndicatorId,
+        orderType,
+      });
+    }
   }
 
   @autobind
-  unitChange(arr, name) {
+  unitChange(arr) {
     let value;
     const newArr = arr.map((item) => {
       const itemValue = Number(item.value);
@@ -98,7 +103,6 @@ export default class ChartTable extends PureComponent {
       }
       return {
         [item.key]: value,
-        city: name,
       };
     });
     return newArr;
@@ -106,37 +110,68 @@ export default class ChartTable extends PureComponent {
 
   @autobind
   handleTitleClick(item) {
-    const { replace, location: { query } } = this.props;
+    const { replace, location: { query, pathname }, getTableInfo } = this.props;
+    const { orderIndicatorId, orderType, pageNum } = this.state;
     let tableOrderType;
-    if (query.orderIndicatorId === item.key) {
-      tableOrderType = revert[query.tableOrderType] || 'desc';
+    if (pathname.indexOf('invest') > -1) {
+      if (query.orderIndicatorId === item.key) {
+        tableOrderType = revert[query.tableOrderType] || 'desc';
+      } else {
+        tableOrderType = 'asc';
+      }
+      replace({
+        pathname,
+        query: {
+          ...query,
+          orderIndicatorId: item.key || '',
+          tableOrderType,
+        },
+      });
     } else {
-      tableOrderType = 'asc';
+      if (orderIndicatorId === item.key) {
+        tableOrderType = revert[orderType] || 'desc';
+      } else {
+        tableOrderType = 'asc';
+      }
+      this.setState({
+        orderIndicatorId: item.key,
+        orderType: tableOrderType,
+      });
+      getTableInfo({
+        orderIndicatorId: item.key,
+        orderType: tableOrderType,
+        pageNum,
+      });
     }
-    replace({
-      pathname: '/invest',
-      query: {
-        ...query,
-        orderIndicatorId: item.key || '',
-        tableOrderType,
-      },
-    });
   }
-
+  // 表格标题排序箭头事件
   @autobind
   arrowHandle(e, item, type) {
-    const { replace, location: { query } } = this.props;
+    const { replace, location: { query, pathname }, getTableInfo } = this.props;
+    const { pageNum } = this.state;
     e.stopPropagation();
-    replace({
-      pathname: '/invest',
-      query: {
-        ...query,
-        orderIndicatorId: item.key || '',
-        tableOrderType: type,
-      },
-    });
+    if (pathname.indexOf('invest') > -1) {
+      replace({
+        pathname,
+        query: {
+          ...query,
+          orderIndicatorId: item.key || '',
+          tableOrderType: type,
+        },
+      });
+    } else {
+      this.setState({
+        orderIndicatorId: item.key,
+        orderType: type,
+      });
+      getTableInfo({
+        orderIndicatorId: item.key,
+        orderType: type,
+        pageNum,
+      });
+    }
   }
-
+  // 表格第一列 tooltip 处理事件
   @autobind
   toolTipHandle(record) {
     let toolTipTittle;
@@ -162,20 +197,19 @@ export default class ChartTable extends PureComponent {
 
   render() {
     const { chartTableInfo, location: { query }, level, style } = this.props;
-    console.log('chartTableInfo', chartTableInfo);
+    const { orderIndicatorId, orderType } = this.state;
     const columns = chartTableInfo.titleList;
     const data = chartTableInfo.indicatorSummuryRecordDtos;
     const temp = [];
-    let allWidth = 0;
     let arr = [];
     if (data && data.length) {
       data.map((item, index) => {
-        const testArr = this.unitChange(item.indicatorDataList, item.name);
+        const testArr = this.unitChange(item.indicatorDataList);
+        const { id, level: itemLevel, name, orgModel = {} } = item;
         return temp.push(Object.assign(
-          { key: index, level: item.level, orgModel: item.orgModel }, ...testArr,
+          { key: index, city: name, level: itemLevel, id, orgModel }, ...testArr,
         ));
       });
-      allWidth = _.sum(columnWidth);
       arr = columns.map((item, index) => (
         {
           dataIndex: item.key,
@@ -184,12 +218,12 @@ export default class ChartTable extends PureComponent {
               className={styles.columnsTitle}
               onClick={() => { this.handleTitleClick(item); }}
             >
-              {`${item.name}(${item.unit === '元' ? '万元' : item.unit})`}
+              {`${item.name}(${encodeURIComponent(item.unit) === encodeURIComponent('元') ? '万元' : item.unit})`}
               <span className={'ant-table-column-sorter'}>
                 <span
                   className={`
                     ant-table-column-sorter-up
-                    ${(query.orderIndicatorId === item.key && query.tableOrderType !== 'desc') ? 'on' : 'off'}
+                    ${((query.orderIndicatorId || orderIndicatorId) === item.key && ((query.tableOrderType || orderType) !== 'desc')) ? 'on' : 'off'}
                   `}
                   title="↑"
                   onClick={(e) => {
@@ -201,7 +235,7 @@ export default class ChartTable extends PureComponent {
                 <span
                   className={`
                     ant-table-column-sorter-up
-                    ${(query.orderIndicatorId === item.key && query.tableOrderType !== 'asc') ? 'on' : 'off'}
+                    ${((query.orderIndicatorId || orderIndicatorId) === item.key && ((query.tableOrderType || orderType) !== 'asc')) ? 'on' : 'off'}
                   `}
                   title="↓"
                   onClick={(e) => {

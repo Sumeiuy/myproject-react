@@ -27,7 +27,7 @@ const helper = {
     // 临时 ID
     const tempId = '002727';
     const nativeQuery = helper.getQuery(window.location.search);
-    const empId = window.curUserCode || (nativeQuery.empId || tempId);
+    const empId = window.curUserCode || nativeQuery.empId || tempId;
     return empId;
   },
   /**
