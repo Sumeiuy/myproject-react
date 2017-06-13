@@ -36,12 +36,12 @@ export default {
     getClassifyIndexSuccess(state, action) {
       const { payload: { response } } = action;
       const singleChartData = response.resultData;
-      const indicatorId = singleChartData.id;
+      const indicatorId = singleChartData.key;
       // 找到需要修改的那个分类
       const preChartInfo = state.chartInfo;
       const newChartInfo = preChartInfo.map((item) => {
-        const { id } = item;
-        if (id === indicatorId) {
+        const { key } = item;
+        if (key === indicatorId) {
           return singleChartData;
         }
         return item;
@@ -53,11 +53,17 @@ export default {
     },
     getChartTableInfoSuccess(state, action) {
       const { payload: { resChartTableInfo } } = action;
-      const chartTableInfo = resChartTableInfo.resultData.data;
+      const chartTable = resChartTableInfo.resultData;
+      const newChartTableInfo = chartTable.data;
       // todo 按照 ID 来存储相应数据
+      const chartTableId = chartTable.key;
+      const preChartTableInfo = state.chartTableInfo;
       return {
         ...state,
-        chartTableInfo,
+        chartTableInfo: {
+          ...preChartTableInfo,
+          [chartTableId]: newChartTableInfo,
+        },
       };
     },
     getCustRangeSuccess(state, action) {
@@ -128,20 +134,6 @@ export default {
         type: 'getChartInfoSuccess',
         payload: { resChartInfo },
       });
-      // } else if (payload.showChart === 'tables') {
-      //   // 表格
-      //   const resChartTableInfo = yield call(api.getBOChartTableInfo, {
-      //     ...payload.chartTableInfo,
-      //     localScope: payload.chartTableInfo.localScope || firstCust.level,
-      //     orgId: payload.chartTableInfo.orgId || firstCust.id,
-      //     scope: payload.chartTableInfo.scope || parseInt(firstCust.level, 10) + 1,
-      //     pageSize: 10,
-      //   });
-      //   yield put({
-      //     type: 'getChartTableInfoSuccess',
-      //     payload: { resChartTableInfo },
-      //   });
-      // }
     },
     // 获取投顾图表数据
     * getChartInfo({ payload }, { call, put }) {

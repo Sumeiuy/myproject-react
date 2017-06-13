@@ -3,6 +3,8 @@ exports.response = function (req, res) {
     "code": "0",
     "msg": "OK",
     "resultData": {
+       "key": "b0-1",
+       "name": "客户数明细", 
       "data": {
         "indicatorSummuryRecordDtos": [
           {

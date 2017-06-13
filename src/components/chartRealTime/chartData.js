@@ -101,10 +101,10 @@ const chartData = {
     const uniqueStack = `${stack}-${now}`;
     if (orgModel) {
       // 首先确定stackSeries的长度
-      const stackLen = orgModel[0].children.length;
+      const stackLen = orgModel[0][key].length;
       // 取出stackSeries数组
       for (let i = 0; i < stackLen; i++) {
-        const name = orgModel[0].children[i].name;
+        const name = orgModel[0][key][i].name;
         stackLegend.push(name);
         const stackObj = {
           label: {
@@ -118,7 +118,7 @@ const chartData = {
         };
         const data = [];
         orgModel.forEach((item) => {
-          let stackValue = item.children[i].value;
+          let stackValue = item[key][i].value;
           if (stackValue === '' || stackValue === 'null' || stackValue === null || stackValue === undefined) {
             stackValue = 0;
           }

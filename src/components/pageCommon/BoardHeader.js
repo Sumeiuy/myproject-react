@@ -103,7 +103,9 @@ export default class BoardHeader extends PureComponent {
           orderType,
         });
       } else {
-        getTableInfo({});
+        getTableInfo({
+          indicatorId: indexID,
+        });
       }
     } else {
       // 在绩效视图页面里的时候，更改 url

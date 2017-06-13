@@ -4,8 +4,8 @@ exports.response = function (req, res) {
     msg: 'OK',
     resultData: [
       {
-        title: '客户数明细',
-        id: 'bo-1',
+        name: '客户数明细',
+        key: 'bo-1',
         data: [
           {
             key: 'tgInNum',
@@ -24,7 +24,7 @@ exports.response = function (req, res) {
                 level4Id: null,
                 level4Name: null,
                 value: '34',
-                children: [
+                indiModelList: [
                     {
                         value: '11',
                         name: '个人',
@@ -61,7 +61,7 @@ exports.response = function (req, res) {
                 level4Id: null,
                 level4Name: null,
                 value: '34',
-                  children: [
+                indiModelList: [
                     {
                         value: '20',
                         name: '个人',
@@ -98,7 +98,7 @@ exports.response = function (req, res) {
                 level4Id: null,
                 level4Name: null,
                 value: '25',
-                  children: [
+                indiModelList: [
                     {
                         value: '1',
                         name: '个人',
@@ -135,7 +135,7 @@ exports.response = function (req, res) {
                 level4Id: null,
                 level4Name: null,
                 value: '15',
-                children: [
+                indiModelList: [
                     {
                         value: '5',
                         name: '个人',
@@ -172,7 +172,7 @@ exports.response = function (req, res) {
                 level4Id: null,
                 level4Name: null,
                 value: '23',
-                children: [
+                indiModelList: [
                     {
                         value: '7',
                         name: '个人',
@@ -209,7 +209,7 @@ exports.response = function (req, res) {
                 level4Id: null,
                 level4Name: null,
                 value: '24',
-                children: [
+                indiModelList: [
                     {
                         value: '23',
                         name: '个人',
@@ -246,7 +246,7 @@ exports.response = function (req, res) {
                 level4Id: null,
                 level4Name: null,
                 value: '0',
-                  children: [
+                indiModelList: [
                     {
                         value: '0',
                         name: '个人',
@@ -283,7 +283,7 @@ exports.response = function (req, res) {
                 level4Id: null,
                 level4Name: null,
                 value: '0',
-                  children: [
+                indiModelList: [
                     {
                         value: '0',
                         name: '个人',
@@ -320,7 +320,7 @@ exports.response = function (req, res) {
                 level4Id: null,
                 level4Name: null,
                 value: '22',
-                 children: [
+                indiModelList: [
                     {
                         value: '11',
                         name: '个人',
@@ -357,7 +357,7 @@ exports.response = function (req, res) {
                 level4Id: null,
                 level4Name: null,
                 value: '0',
-                 children: [
+                indiModelList: [
                     {
                         value: '0',
                         name: '个人',
@@ -627,8 +627,8 @@ exports.response = function (req, res) {
         ],
       },
       {
-        title: '资产明细',
-        id: 'bo-2',
+        name: '资产明细',
+        key: 'bo-2',
         data: [
           {
             key: 'totAset',
@@ -990,8 +990,8 @@ exports.response = function (req, res) {
         ],
       },
       {
-        title: '交易量明细',
-        id: 'bo-3',
+        name: '交易量明细',
+        key: 'bo-3',
         data: [
           {
             key: 'purInteIncome',
@@ -1353,8 +1353,8 @@ exports.response = function (req, res) {
         ],
       },
       {
-        title: '产品明细',
-        id: 'bo-4',
+        name: '产品明细',
+        key: 'bo-4',
         data: [
           {
             key: 'infoCompPercent',
@@ -1716,8 +1716,8 @@ exports.response = function (req, res) {
         ],
       },
       {
-        title: '开通业务明细',
-        id: 'bo-5',
+        name: '开通业务明细',
+        key: 'bo-5',
         data: [
           {
             key: 'currSignCustNum',
@@ -2079,8 +2079,8 @@ exports.response = function (req, res) {
         ],
       },
       {
-        title: '净收入明细',
-        id: 'bo-6',
+        name: '净收入明细',
+        key: 'bo-6',
         data: [
           {
             key: 'purInteIncome',
@@ -2442,8 +2442,8 @@ exports.response = function (req, res) {
         ],
       },
       {
-        title: '高净值客户服务明细',
-        id: 'bo-7',
+        name: '高净值客户服务明细',
+        key: 'bo-7',
         data: [
           {
             key: 'purInteIncome',

@@ -273,6 +273,7 @@ export default class InvestHome extends PureComponent {
       end: queryObj.end || obj.end,
       cycleType: queryObj.cycleType || obj.cycleType,
       localScope: queryObj.custRangeLevel,
+      boardId: queryObj.boardId || query.boardId || '1',
     };
     getAllInfo({
       custRange: {
@@ -280,15 +281,15 @@ export default class InvestHome extends PureComponent {
       },
       performance: {
         scope: queryObj.custRangeLevel,
-        ..._.pick(payload, ['orgId', 'begin', 'end', 'cycleType', 'localScope']),
+        ..._.pick(payload, ['orgId', 'begin', 'end', 'cycleType', 'localScope', 'boardId']),
       },
       chartInfo: {
         scope: queryObj.scope || Number(queryObj.custRangeLevel) + 1,
         orderType: queryObj.orderType || '',
-        ..._.pick(payload, ['orgId', 'begin', 'end', 'cycleType', 'localScope']),
+        ..._.pick(payload, ['orgId', 'begin', 'end', 'cycleType', 'localScope', 'boardId']),
       },
       chartTableInfo: {
-        ..._.pick(payload, ['orgId', 'localScope', 'begin', 'end', 'cycleType']),
+        ..._.pick(payload, ['orgId', 'localScope', 'begin', 'end', 'cycleType', 'boardId']),
         scope: queryObj.scope || Number(queryObj.custRangeLevel) + 1,
         orderType: queryObj.orderType || '',
         pageSize: 10,

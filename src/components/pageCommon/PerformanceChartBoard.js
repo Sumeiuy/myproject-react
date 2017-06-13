@@ -72,7 +72,6 @@ export default class PerformanceChartBoard extends PureComponent {
     if (!(chartData && chartData.length) && showChart !== 'tables') {
       return null;
     }
-
     return (
       <div className="investPerformanceBoard">
         <BoardHeader
@@ -98,6 +97,7 @@ export default class PerformanceChartBoard extends PureComponent {
               replace={replace}
               level={level}
               location={location}
+              indexID={indexID}
             />
           )
           :
