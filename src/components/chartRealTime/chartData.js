@@ -43,13 +43,13 @@ function padFixedMoney(m, method) {
 }
 
 function padFixedPeople(people, method) {
-  const money = Math.abs(people);
+  const p = Math.abs(people);
   let value = 0;
-  if (money >= 10000) {
+  if (p >= 10000) {
     value = Math[method](people / 1000) * 1000;
-  } else if (money >= 100) {
+  } else if (p > 200) {
     value = Math[method](people / 100) * 100;
-  } else if (money < 100) {
+  } else if (p <= 200) {
     value = Math[method](people / 10) * 10;
   }
   return value;

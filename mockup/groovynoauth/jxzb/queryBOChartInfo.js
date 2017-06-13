@@ -6,7 +6,6 @@ exports.response = function (req, res) {
       {
         title: '客户数明细',
         id: 'bo-1',
-        key: '1-bo-1',
         data: [
           {
             key: 'tgInNum',
@@ -630,7 +629,6 @@ exports.response = function (req, res) {
       {
         title: '资产明细',
         id: 'bo-2',
-        key: '1-bo-2',
         data: [
           {
             key: 'totAset',
@@ -994,7 +992,6 @@ exports.response = function (req, res) {
       {
         title: '交易量明细',
         id: 'bo-3',
-        key: '1-bo-3',
         data: [
           {
             key: 'purInteIncome',
@@ -1358,7 +1355,6 @@ exports.response = function (req, res) {
       {
         title: '产品明细',
         id: 'bo-4',
-        key: '1-bo-4',
         data: [
           {
             key: 'infoCompPercent',
@@ -1722,7 +1718,6 @@ exports.response = function (req, res) {
       {
         title: '开通业务明细',
         id: 'bo-5',
-        key: '1-bo-5',
         data: [
           {
             key: 'currSignCustNum',
@@ -2086,7 +2081,6 @@ exports.response = function (req, res) {
       {
         title: '净收入明细',
         id: 'bo-6',
-        key: '1-bo-6',
         data: [
           {
             key: 'purInteIncome',
@@ -2450,7 +2444,6 @@ exports.response = function (req, res) {
       {
         title: '高净值客户服务明细',
         id: 'bo-7',
-        key: '1-bo-7',
         data: [
           {
             key: 'purInteIncome',

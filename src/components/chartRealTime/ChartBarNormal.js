@@ -8,56 +8,20 @@ import React, { PropTypes, PureComponent } from 'react';
 // import ReactEcharts from 'echarts-for-react';
 import { autobind } from 'core-decorators';
 
+import { AxisOptions, gridOptions, barColor, barShadow } from './ChartGeneralOptions';
+import {
+  getMaxAndMinPercent,
+  getMaxAndMinPermillage,
+  getMaxAndMinMoney,
+  getMaxAndMinCust,
+  toFixedMoney,
+} from './FixNumber';
 import IECharts from '../IECharts';
 import { iconTypeMap } from '../../config';
 import Icon from '../common/Icon';
 import styles from './ChartBar.less';
 
 import imgSrc from './noChart.png';
-
-// Y轴通用样式
-const AxisOptions = {
-  axisLine: {
-    lineStyle: {
-      color: '#e7eaec',
-    },
-  },
-  axisTick: {
-    show: false,
-  },
-  axisLabel: {
-    textStyle: {
-      color: '#999',
-    },
-  },
-};
-
-// eCharts图表表格基础样式
-const gridOptions = {
-  show: true,
-  top: '0',
-  left: '0',
-  right: '40px',
-  bottom: '20px',
-  containLabel: true,
-  borderWidth: '1',
-  borderColor: '#e7eaec',
-};
-// 柱状图颜色
-const barColor = '#4bbbf4';
-
-// 柱状图的阴影
-const barShadow = {
-  type: 'bar',
-  itemStyle: {
-    normal: {
-      color: 'rgba(0,0,0,0.05)',
-    },
-  },
-  barGap: '-100%',
-  barCategoryGap: '30%',
-  animation: false,
-};
 
 export default class ChartBarNormal extends PureComponent {
 
@@ -94,130 +58,6 @@ export default class ChartBarNormal extends PureComponent {
     return yAxisLabels;
   }
 
-  // 针对百分比的数字来确认图表坐标轴的最大和最小值
-  @autobind
-  getMaxAndMinPercent(series) {
-    let max = Math.max(...series);
-    let min = Math.min(...series);
-    max = Math.ceil((max / 10)) * 10;
-    min = Math.floor((min / 10)) * 10;
-    if (max === 0) {
-      max = 100;
-    }
-    if (min === 100) {
-      min = 0;
-    }
-    return {
-      max,
-      min,
-    };
-  }
-
-  // 针对千分比确认图表最大和最小值
-  @autobind
-  getMaxAndMinPermillage(series) {
-    let max = Math.max(...series);
-    let min = Math.min(...series);
-    max = Math.ceil(max);
-    min = Math.floor(min);
-    if (max === 0) {
-      max = 1;
-    }
-    return {
-      max,
-      min,
-    };
-  }
-
-  // 针对金额确认图表最大和最小值
-  @autobind
-  getMaxAndMinMoney(series) {
-    let max = Math.max(...series);
-    let min = Math.min(...series);
-    if (max >= 10000) {
-      max = Math.ceil(max / 1000) * 1000;
-    } else if (max >= 1000) {
-      max = Math.ceil(max / 1000) * 1000;
-    } else if (max >= 100) {
-      max = Math.ceil(max / 100) * 100;
-    } else if (max < 100) {
-      max = Math.ceil(max / 10) * 10;
-    }
-    if (max === 0) {
-      max = 1;
-    }
-    if (min >= 10000) {
-      min = Math.floor(min / 1000) * 1000;
-    } else if (min >= 1000) {
-      min = Math.floor(min / 1000) * 1000;
-    } else if (min >= 100) {
-      min = Math.floor(min / 100) * 100;
-    } else if (min < 100) {
-      min = Math.floor(min / 10) * 10;
-    }
-    if (min <= 0 || min >= max) {
-      min = 0;
-    }
-    return { max, min };
-  }
-
-  // 针对户获取图表最大和最小值
-  @autobind
-  getMaxAndMinCust(series) {
-    let max = Math.max(...series);
-    let min = Math.min(...series);
-    if (max >= 10000) {
-      max = Math.ceil(max / 1000) * 1000;
-    } else if (max >= 100) {
-      max = Math.ceil(max / 100) * 100;
-    } else if (max < 100) {
-      max = Math.ceil(max / 10) * 10;
-    }
-    if (max === 0) {
-      max = 10;
-    }
-    if (min >= 10000) {
-      min = Math.floor(min / 1000) * 1000;
-    } else if (min >= 100) {
-      min = Math.floor(min / 100) * 100;
-    } else if (min < 100) {
-      min = Math.floor(min / 10) * 10;
-    }
-    if (min <= 0 || min >= max) {
-      min = 0;
-    }
-    return { max, min };
-  }
-
-  @autobind
-  createBarLinear(input) {
-    const output = [];
-    input.forEach((item) => {
-      const bar = {
-        name: 'no',
-        value: item,
-        itemStyle: {
-          normal: {
-            color: {
-              type: 'linear',
-              x: 0,
-              y: 0,
-              x2: 1,
-              y2: 1,
-              colorStops: [{
-                offset: 0, color: 'rgb(136,214,254)',
-              }, {
-                offset: 1, color: 'rgb(24,141,240)',
-              }],
-            },
-          },
-        },
-      };
-      output.push(bar);
-    });
-    return output;
-  }
-
   @autobind
   createNewSeriesData(series, medianValue, unit, padLength) {
     let maxIndex = 10;
@@ -234,41 +74,6 @@ export default class ChartBarNormal extends PureComponent {
         },
       },
     }));
-  }
-
-  // 对小数进行处理
-  @autobind
-  toFixedDecimal(value) {
-    if (value > 10000) {
-      return Number.parseFloat(value.toFixed(0));
-    }
-    if (value > 1000) {
-      return Number.parseFloat(value.toFixed(1));
-    }
-    return Number.parseFloat(value.toFixed(2));
-  }
-
-  // 对金额进行特殊处理的函数
-  @autobind
-  toFixedMoney(series) {
-    let newUnit = '元';
-    let newSeries = series;
-    const MaxMoney = Math.max(...series);
-    // 1. 全部在万元以下的数据不做处理
-    // 2.超过万元的，以‘万元’为单位
-    // 3.超过亿元的，以‘亿元’为单位
-    if (MaxMoney > 100000000) {
-      newUnit = '亿元';
-      newSeries = series.map(item => this.toFixedDecimal(item / 100000000));
-    } else if (MaxMoney > 10000) {
-      newUnit = '万元';
-      newSeries = series.map(item => this.toFixedDecimal(item / 10000));
-    }
-
-    return {
-      newUnit,
-      newSeries,
-    };
   }
 
   render() {
@@ -306,7 +111,7 @@ export default class ChartBarNormal extends PureComponent {
       seriesData = seriesData.map(item => (item * 1000));
     } else if (unit === '元') {
       // 如果图表中的数据表示的是金额的话，需要对其进行单位识别和重构
-      const tempSeries = this.toFixedMoney(seriesData);
+      const tempSeries = toFixedMoney(seriesData);
       seriesData = tempSeries.newSeries;
       unit = tempSeries.newUnit;
     }
@@ -318,19 +123,19 @@ export default class ChartBarNormal extends PureComponent {
     let gridXaxisMin = 0;
     if (unit === '%') {
       // TODO 此处需要对
-      const maxAndMinPercent = this.getMaxAndMinPercent(seriesData);
+      const maxAndMinPercent = getMaxAndMinPercent(seriesData);
       gridXAxisMax = maxAndMinPercent.max;
       gridXaxisMin = maxAndMinPercent.min;
     } else if (unit === '\u2030') {
-      const maxAndMinPermillage = this.getMaxAndMinPermillage(seriesData);
+      const maxAndMinPermillage = getMaxAndMinPermillage(seriesData);
       gridXAxisMax = maxAndMinPermillage.max;
       gridXaxisMin = maxAndMinPermillage.min;
     } else if (unit.indexOf('元') > -1) {
-      const maxAndMinMoney = this.getMaxAndMinMoney(seriesData);
+      const maxAndMinMoney = getMaxAndMinMoney(seriesData);
       gridXAxisMax = maxAndMinMoney.max;
       gridXaxisMin = maxAndMinMoney.min;
     } else if (unit === '户' || unit === '人') {
-      const maxAndMinPeople = this.getMaxAndMinCust(seriesData);
+      const maxAndMinPeople = getMaxAndMinCust(seriesData);
       gridXAxisMax = maxAndMinPeople.max;
       gridXaxisMin = maxAndMinPeople.min;
     }
