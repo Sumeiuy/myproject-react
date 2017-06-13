@@ -37,12 +37,14 @@ export default class BoardHeader extends PureComponent {
     level: PropTypes.string,
     indexID: PropTypes.string,
     scope: PropTypes.number.isRequired,
+    getTableInfo: PropTypes.func,
   }
 
   static defaultProps = {
     level: '',
     indexID: '',
     selfRequestData: () => {},
+    getTableInfo: () => {},
   }
 
   constructor(props) {
@@ -84,8 +86,26 @@ export default class BoardHeader extends PureComponent {
   // 柱状图与表格切换
   @autobind
   handleIconClick(type) {
-    const { replace, location: { query, pathname }, changeBoard, indexID } = this.props;
-    if (pathname === 'invest') {
+    const {
+      replace,
+      location: { query, pathname },
+      changeBoard,
+      indexID,
+      selfRequestData,
+      getTableInfo,
+    } = this.props;
+    const { orderType } = this.state;
+    // 判断是否在 invest 页面
+    if (pathname.indexOf('invest') === -1) {
+      if (type === 'zhuzhuangtu') {
+        selfRequestData({
+          indicatorId: indexID,
+          orderType,
+        });
+      } else {
+        getTableInfo({});
+      }
+    } else {
       // 在绩效视图页面里的时候，更改 url
       replace({
         pathname,
@@ -96,8 +116,6 @@ export default class BoardHeader extends PureComponent {
           indexID,
         },
       });
-    } else {
-      console.log(111111111111111111);
     }
     this.setState({
       showChart: type,
@@ -119,6 +137,9 @@ export default class BoardHeader extends PureComponent {
       });
     } else {
       // business页面需要的逻辑处理
+      this.setState({
+        orderType: value,
+      });
       selfRequestData({
         indicatorId: indexID,
         orderType: value,

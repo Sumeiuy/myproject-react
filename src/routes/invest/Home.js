@@ -139,6 +139,10 @@ export default class InvestHome extends PureComponent {
           ...query,
         });
       }
+      // const tempArr = ['bo-1', 'bo-2', 'bo-3'];
+      // const showChartArr = [];
+      // tempArr.map(item => showChartArr.push(`showChart${item}`));
+      // console.warn('showChartArr', showChartArr);
       const nowShowChart = query.showChart;
       const preShowChart = preQuery.showChart;
       // 如果切换 柱状图或者表格
@@ -345,6 +349,7 @@ export default class InvestHome extends PureComponent {
               scope={scope}
               location={location}
               replace={replace}
+              indexID={'a'}
               loading={false}
               boardTitle={'指标分布'}
               showScopeOrder

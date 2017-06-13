@@ -165,13 +165,18 @@ export default class ChartBarNormal extends PureComponent {
         }
         if (levelAndScope === 4 && axisValue !== '--') {
           const dataIndex = item.dataIndex;
-          return `${levelCompanyArr[dataIndex]} - ${levelStoreArr[dataIndex]}<br />${axisValue}<br /> ${seriesName}: <span style="color:#f8ac59; font-size: 15px;">${value}</span>${unit}`;
+          return `${levelCompanyArr[dataIndex]} - ${levelStoreArr[dataIndex]}<br />
+            ${axisValue}<br />
+            ${seriesName}: <span style="color:#f8ac59; font-size: 15px;">${value}</span>${unit}`;
         }
         if (levelAndScope === 3 && axisValue !== '--') {
           const dataIndex = item.dataIndex;
-          return `${levelCompanyArr[dataIndex]}<br />${axisValue}<br /> ${seriesName}: <span style="color:#f8ac59; font-size: 15px;">${value}</span>${unit}`;
+          return `${levelCompanyArr[dataIndex]}<br />
+            ${axisValue}<br />
+            ${seriesName}: <span style="color:#f8ac59; font-size: 15px;">${value}</span>${unit}`;
         }
-        return `${axisValue}<br /> ${seriesName}: <span style="color:#f8ac59; font-size: 15px;">${value}</span>${unit}`;
+        return `${axisValue}<br />
+          ${seriesName}: <span style="color:#f8ac59; font-size: 15px;">${value}</span>${unit}`;
       },
       position(pos, params, dom, rect, size) {
         // 鼠标在左侧时 tooltip 显示到右侧，鼠标在右侧时 tooltip 显示到左侧。

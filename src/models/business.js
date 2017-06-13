@@ -53,7 +53,8 @@ export default {
     },
     getChartTableInfoSuccess(state, action) {
       const { payload: { resChartTableInfo } } = action;
-      const chartTableInfo = resChartTableInfo.resultData;
+      const chartTableInfo = resChartTableInfo.resultData.data;
+      // todo 按照 ID 来存储相应数据
       return {
         ...state,
         chartTableInfo,
