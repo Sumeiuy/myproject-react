@@ -6,7 +6,6 @@ exports.response = function (req, res) {
       {
         title: '客户数明细',
         id: 'bo-1',
-        key: '1-bo-1',
         data: [
           {
             key: 'tgInNum',
@@ -28,15 +27,27 @@ exports.response = function (req, res) {
                 children: [
                     {
                         value: '11',
-                        name: 'a',
+                        name: '个人',
                     },
                     {
                         value: '11',
-                        name: 'b',
+                        name: '机构',
                     },
                     {
                         value: '11',
-                        name: 'c',
+                        name: '组织',
+                    },
+                    {
+                        value: '11',
+                        name: '天天发布市值',
+                    },
+                    {
+                        value: '11',
+                        name: '流通股市',
+                    },
+                    {
+                        value: '11',
+                        name: '限售市值',
                     },
                 ],
               },
@@ -53,15 +64,27 @@ exports.response = function (req, res) {
                   children: [
                     {
                         value: '20',
-                        name: 'a',
+                        name: '个人',
                     },
                     {
                         value: '1',
-                        name: 'b',
+                        name: '机构',
                     },
                     {
                         value: '11',
-                        name: 'c',
+                        name: '组织',
+                    },
+                    {
+                        value: '11',
+                        name: '天天发布市值',
+                    },
+                    {
+                        value: '11',
+                        name: '流通股市',
+                    },
+                    {
+                        value: '11',
+                        name: '限售市值',
                     },
                 ],
               },
@@ -78,15 +101,27 @@ exports.response = function (req, res) {
                   children: [
                     {
                         value: '1',
-                        name: 'a',
+                        name: '个人',
                     },
                     {
                         value: '11',
-                        name: 'b',
+                        name: '机构',
                     },
                     {
                         value: '10',
-                        name: 'c',
+                        name: '组织',
+                    },
+                    {
+                        value: '11',
+                        name: '天天发布市值',
+                    },
+                    {
+                        value: '11',
+                        name: '流通股市',
+                    },
+                    {
+                        value: '11',
+                        name: '限售市值',
                     },
                 ],
               },
@@ -103,15 +138,27 @@ exports.response = function (req, res) {
                 children: [
                     {
                         value: '5',
-                        name: 'a',
+                        name: '个人',
                     },
                     {
                         value: '5',
-                        name: 'b',
+                        name: '机构',
                     },
                     {
                         value: '5',
-                        name: 'c',
+                        name: '组织',
+                    },
+                    {
+                        value: '11',
+                        name: '天天发布市值',
+                    },
+                    {
+                        value: '11',
+                        name: '流通股市',
+                    },
+                    {
+                        value: '11',
+                        name: '限售市值',
                     },
                 ],
               },
@@ -128,15 +175,27 @@ exports.response = function (req, res) {
                 children: [
                     {
                         value: '7',
-                        name: 'a',
+                        name: '个人',
                     },
                     {
                         value: '11',
-                        name: 'b',
+                        name: '机构',
                     },
                     {
                         value: '5',
-                        name: 'c',
+                        name: '组织',
+                    },
+                    {
+                        value: '11',
+                        name: '天天发布市值',
+                    },
+                    {
+                        value: '11',
+                        name: '流通股市',
+                    },
+                    {
+                        value: '11',
+                        name: '限售市值',
                     },
                 ],
               },
@@ -153,15 +212,27 @@ exports.response = function (req, res) {
                 children: [
                     {
                         value: '23',
-                        name: 'a',
+                        name: '个人',
                     },
                     {
                         value: '1',
-                        name: 'b',
+                        name: '机构',
                     },
                     {
                         value: '0',
-                        name: 'c',
+                        name: '组织',
+                    },
+                    {
+                        value: '11',
+                        name: '天天发布市值',
+                    },
+                    {
+                        value: '11',
+                        name: '流通股市',
+                    },
+                    {
+                        value: '11',
+                        name: '限售市值',
                     },
                 ],
               },
@@ -178,15 +249,27 @@ exports.response = function (req, res) {
                   children: [
                     {
                         value: '0',
-                        name: 'a',
+                        name: '个人',
                     },
                     {
                         value: '0',
-                        name: 'b',
+                        name: '机构',
                     },
                     {
                         value: '11',
-                        name: 'c',
+                        name: '组织',
+                    },
+                    {
+                        value: '11',
+                        name: '天天发布市值',
+                    },
+                    {
+                        value: '11',
+                        name: '流通股市',
+                    },
+                    {
+                        value: '11',
+                        name: '限售市值',
                     },
                 ],
               },
@@ -203,15 +286,27 @@ exports.response = function (req, res) {
                   children: [
                     {
                         value: '0',
-                        name: 'a',
+                        name: '个人',
                     },
                     {
                         value: '0',
-                        name: 'b',
+                        name: '机构',
                     },
                     {
                         value: '0',
-                        name: 'c',
+                        name: '组织',
+                    },
+                    {
+                        value: '11',
+                        name: '天天发布市值',
+                    },
+                    {
+                        value: '11',
+                        name: '流通股市',
+                    },
+                    {
+                        value: '11',
+                        name: '限售市值',
                     },
                 ],
               },
@@ -228,15 +323,27 @@ exports.response = function (req, res) {
                  children: [
                     {
                         value: '11',
-                        name: 'a',
+                        name: '个人',
                     },
                     {
                         value: '4',
-                        name: 'b',
+                        name: '机构',
                     },
                     {
                         value: '7',
-                        name: 'c',
+                        name: '组织',
+                    },
+                    {
+                        value: '11',
+                        name: '天天发布市值',
+                    },
+                    {
+                        value: '11',
+                        name: '流通股市',
+                    },
+                    {
+                        value: '11',
+                        name: '限售市值',
                     },
                 ],
               },
@@ -253,15 +360,27 @@ exports.response = function (req, res) {
                  children: [
                     {
                         value: '0',
-                        name: 'a',
+                        name: '个人',
                     },
                     {
                         value: '0',
-                        name: 'b',
+                        name: '机构',
                     },
                     {
                         value: '0',
-                        name: 'c',
+                        name: '组织',
+                    },
+                    {
+                        value: '11',
+                        name: '天天发布市值',
+                    },
+                    {
+                        value: '11',
+                        name: '流通股市',
+                    },
+                    {
+                        value: '11',
+                        name: '限售市值',
                     },
                 ],
               },
@@ -510,7 +629,6 @@ exports.response = function (req, res) {
       {
         title: '资产明细',
         id: 'bo-2',
-        key: '1-bo-2',
         data: [
           {
             key: 'totAset',
@@ -874,7 +992,6 @@ exports.response = function (req, res) {
       {
         title: '交易量明细',
         id: 'bo-3',
-        key: '1-bo-3',
         data: [
           {
             key: 'purInteIncome',
@@ -1238,7 +1355,6 @@ exports.response = function (req, res) {
       {
         title: '产品明细',
         id: 'bo-4',
-        key: '1-bo-4',
         data: [
           {
             key: 'infoCompPercent',
@@ -1602,7 +1718,6 @@ exports.response = function (req, res) {
       {
         title: '开通业务明细',
         id: 'bo-5',
-        key: '1-bo-5',
         data: [
           {
             key: 'currSignCustNum',
@@ -1966,7 +2081,6 @@ exports.response = function (req, res) {
       {
         title: '净收入明细',
         id: 'bo-6',
-        key: '1-bo-6',
         data: [
           {
             key: 'purInteIncome',
@@ -2330,7 +2444,6 @@ exports.response = function (req, res) {
       {
         title: '高净值客户服务明细',
         id: 'bo-7',
-        key: '1-bo-7',
         data: [
           {
             key: 'purInteIncome',

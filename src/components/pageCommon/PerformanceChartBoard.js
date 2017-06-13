@@ -23,17 +23,17 @@ export default class PerformanceChartBoard extends PureComponent {
     showScopeOrder: PropTypes.bool.isRequired,
     location: PropTypes.object.isRequired,
     indexID: PropTypes.string,
-    indexKey: PropTypes.string,
+    selfRequestData: PropTypes.func,
   }
 
   static defaultProps = {
     indexID: '',
-    indexKey: '',
     location: {},
     chartData: [],
     chartTableInfo: {},
     level: '',
     repalce: () => {},
+    selfRequestData: () => {},
   }
 
   constructor(props) {
@@ -63,8 +63,8 @@ export default class PerformanceChartBoard extends PureComponent {
       postExcelInfo,
       boardTitle,
       showScopeOrder,
-      indexKey,
       indexID,
+      selfRequestData,
     } = this.props;
     if (!(chartData && chartData.length) && showChart !== 'tables') {
       return null;
@@ -82,7 +82,7 @@ export default class PerformanceChartBoard extends PureComponent {
           changeBoard={this.changeBoard}
           showScopeOrder={showScopeOrder}
           indexID={indexID}
-          indexKey={indexKey}
+          selfRequestData={selfRequestData}
         />
         {/* 根据 url 里的 showChart 来显示不同的组件 */}
         {

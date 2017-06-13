@@ -22,6 +22,7 @@ const effects = {
   chartInfo: 'business/getChartInfo',
   custRange: 'business/getCustRange',
   chartTableInfo: 'business/getChartTableInfo',
+  getClassifyIndex: 'business/getClassifyIndex',
   exportExcel: 'business/exportExcel',
 };
 
@@ -44,6 +45,7 @@ const mapDispatchToProps = {
   getAllInfo: fectchDataFunction(true, effects.allInfo),
   getPerformance: fectchDataFunction(true, effects.performance),
   getChartInfo: fectchDataFunction(true, effects.chartInfo),
+  getClassifyIndex: fectchDataFunction(true, effects.getClassifyIndex),
   getChartTableInfo: fectchDataFunction(true, effects.chartTableInfo),
   getCustRange: fectchDataFunction(false, effects.custRange),
   exportExcel: fectchDataFunction(true, effects.exportExcel),
@@ -67,6 +69,7 @@ export default class BusinessHome extends PureComponent {
     exportExcel: PropTypes.func.isRequired,
     globalLoading: PropTypes.bool,
     getCustRange: PropTypes.func.isRequired,
+    getClassifyIndex: PropTypes.func.isRequired,
     custRange: PropTypes.array,
     replace: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
@@ -95,27 +98,27 @@ export default class BusinessHome extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     // 判断props是否变化
-    const { custRange, location: { query } } = nextProps;
-    const duration = this.state;
+    const { location: { query } } = nextProps;
+    // const duration = this.state;
     const {
       location: { query: preQuery },
-      getChartInfo,
-      getChartTableInfo,
+      // getChartInfo,
+      // getChartTableInfo,
     } = this.props;
 
-    const payload = {
-      ...query,
-      orgId: query.orgId || (custRange[0] && custRange[0].id),
-      scope: query.scope ||
-      (query.custRangeLevel
-      ? Number(query.custRangeLevel) + 1
-      : Number(custRange[0] && custRange[0].level) + 1),
-      orderType: query.orderType || '',
-      begin: query.begin || duration.begin,
-      end: query.end || duration.end,
-      cycleType: query.cycleType || duration.cycleType,
-      localScope: query.custRangeLevel || (custRange[0] && custRange[0].level),
-    };
+    // const payload = {
+    //   ...query,
+    //   orgId: query.orgId || (custRange[0] && custRange[0].id),
+    //   scope: query.scope ||
+    //   (query.custRangeLevel
+    //   ? Number(query.custRangeLevel) + 1
+    //   : Number(custRange[0] && custRange[0].level) + 1),
+    //   orderType: query.orderType || '',
+    //   begin: query.begin || duration.begin,
+    //   end: query.end || duration.end,
+    //   cycleType: query.cycleType || duration.cycleType,
+    //   localScope: query.custRangeLevel || (custRange[0] && custRange[0].level),
+    // };
     // 还是chart部分的数据
     if (!_.isEqual(query, preQuery)) {
       // 如果切换 时间段
@@ -135,123 +138,118 @@ export default class BusinessHome extends PureComponent {
           ...query,
         });
       }
-      const nowShowChart = query.showChart;
-      const preShowChart = preQuery.showChart;
+      // const nowShowChart = query.showChart;
+      // const preShowChart = preQuery.showChart;
       // 如果切换 柱状图或者表格
-      if (nowShowChart !== preShowChart) {
-        if (nowShowChart === 'zhuzhuangtu' || !nowShowChart) {
-          getChartInfo({
-            ..._.pick(payload,
-              [
-                'scope',
-                'localScope',
-                'orgId',
-                'begin',
-                'end',
-                'cycleType',
-                'orderType',
-              ]),
-          });
-        } else {
-          getChartTableInfo({
-            ..._.pick(payload,
-              [
-                'scope',
-                'localScope',
-                'orgId',
-                'begin',
-                'end',
-                'cycleType',
-              ]),
-            pageNum: '1',
-            pageSize: 10,
-            orderIndicatorId: query.orderIndicatorId || '',
-            orderType: query.tableOrderType || '',
-          });
-        }
-      }
+      // if (nowShowChart !== preShowChart) {
+      //   if (nowShowChart === 'zhuzhuangtu' || !nowShowChart) {
+      //     getChartInfo({
+      //       ..._.pick(payload,
+      //         [
+      //           'scope',
+      //           'localScope',
+      //           'orgId',
+      //           'begin',
+      //           'end',
+      //           'cycleType',
+      //           'orderType',
+      //         ]),
+      //     });
+      //   } else {
+      //     getChartTableInfo({
+      //       ..._.pick(payload,
+      //         [
+      //           'scope',
+      //           'localScope',
+      //           'orgId',
+      //           'begin',
+      //           'end',
+      //           'cycleType',
+      //         ]),
+      //       pageNum: '1',
+      //       pageSize: 10,
+      //       orderIndicatorId: query.orderIndicatorId || '',
+      //       orderType: query.tableOrderType || '',
+      //     });
+      //   }
+      // }
 
       // 如果切换层级维度排序
-      const nowScope = query.scope;
-      const preScope = preQuery.scope;
-      if (nowScope !== preScope && nowOrgId === preOrgId) {
-        // 如果当前是柱状图
-        if (query.showChart === 'zhuzhuangtu' || !query.showChart) {
-          getChartInfo({
-            ..._.pick(payload,
-              [
-                'scope',
-                'localScope',
-                'orgId',
-                'begin',
-                'end',
-                'cycleType',
-                'orderType',
-              ]),
-          });
-        } else {
-          // 否则则是表格
-          getChartTableInfo({
-            ..._.pick(payload,
-              [
-                'scope',
-                'localScope',
-                'orgId',
-                'begin',
-                'end',
-                'cycleType',
-              ]),
-            pageNum: '1',
-            pageSize: 10,
-            orderIndicatorId: query.orderIndicatorId || '',
-            orderType: query.tableOrderType || '',
-          });
-        }
-      }
+      // const nowScope = query.scope;
+      // const preScope = preQuery.scope;
+      // if (nowScope !== preScope && nowOrgId === preOrgId) {
+      //   // 如果当前是柱状图
+      //   if (query.showChart === 'zhuzhuangtu' || !query.showChart) {
+      //     getChartInfo({
+      //       ..._.pick(payload,
+      //         [
+      //           'scope',
+      //           'localScope',
+      //           'orgId',
+      //           'begin',
+      //           'end',
+      //           'cycleType',
+      //           'orderType',
+      //         ]),
+      //     });
+      //   } else {
+      //     // 否则则是表格
+      //     getChartTableInfo({
+      //       ..._.pick(payload,
+      //         [
+      //           'scope',
+      //           'localScope',
+      //           'orgId',
+      //           'begin',
+      //           'end',
+      //           'cycleType',
+      //         ]),
+      //       pageNum: '1',
+      //       pageSize: 10,
+      //       orderIndicatorId: query.orderIndicatorId || '',
+      //       orderType: query.tableOrderType || '',
+      //     });
+      //   }
+      // }
 
       // 如果切换升降序方式，只要新的与旧的不想等，则请求图表接口
-      const nowOrderType = query.orderType;
-      const preOrderType = preQuery.orderType;
-      if (nowOrderType !== preOrderType) {
-        getChartInfo({
-          ..._.pick(payload,
-            [
-              'scope',
-              'localScope',
-              'orgId',
-              'begin',
-              'end',
-              'cycleType',
-              'orderType',
-            ]),
-        });
-      }
+      // const nowOrderType = query.orderType;
+      // const preOrderType = preQuery.orderType;
+      // if (nowOrderType !== preOrderType) {
+      //   getChartInfo({
+      //     ..._.pick(payload,
+      //       [
+      //         'scope',
+      //         'localScope',
+      //         'orgId',
+      //         'begin',
+      //         'end',
+      //         'cycleType',
+      //         'orderType',
+      //       ]),
+      //   });
+      // }
 
       // 如果切换页面、表格字段排序，则请求表格接口
-      const nowPageAndOrderType = _.pick(query, ['page', 'tableOrderType', 'orderIndicatorId']);
-      const prePageAndOrderType = _.pick(preQuery, ['page', 'tableOrderType', 'orderIndicatorId']);
-      if (!_.isEqual(nowPageAndOrderType, prePageAndOrderType) && nowOrgId === preOrgId && query.showChart === 'tables') {
-        getChartTableInfo({
-          ..._.pick(payload, ['scope', 'localScope', 'orgId', 'begin', 'end', 'cycleType']),
-          pageNum: query.page || '1',
-          orderIndicatorId: query.orderIndicatorId || '',
-          orderType: query.tableOrderType || '',
-          pageSize: 10,
-        });
-      }
+      // const nowPageAndOrderType = _.pick(query, ['page', 'tableOrderType', 'orderIndicatorId']);
+      // const prePageAndOrderType =
+      // _.pick(preQuery, ['page', 'tableOrderType', 'orderIndicatorId']);
+      // if (!_.isEqual(nowPageAndOrderType, prePageAndOrderType) &&
+      //  nowOrgId === preOrgId && query.showChart === 'tables') {
+      //   getChartTableInfo({
+      //     ..._.pick(payload, ['scope', 'localScope', 'orgId', 'begin', 'end', 'cycleType']),
+      //     pageNum: query.page || '1',
+      //     orderIndicatorId: query.orderIndicatorId || '',
+      //     orderType: query.tableOrderType || '',
+      //     pageSize: 10,
+      //   });
+      // }
     }
   }
 
   @autobind
-  setGlobalState(obj) {
-    this.setState({
-      ...obj,
-    });
-  }
-
-  @autobind
   getInfo(queryObj) {
-    const { getAllInfo, location: { query } } = this.props;
+    const { getAllInfo } = this.props;
     const obj = this.state;
     const payload = {
       orgId: queryObj.orgId || '',
@@ -273,14 +271,14 @@ export default class BusinessHome extends PureComponent {
         orderType: queryObj.orderType || '',
         ..._.pick(payload, ['orgId', 'begin', 'end', 'cycleType', 'localScope']),
       },
-      chartTableInfo: {
-        ..._.pick(payload, ['orgId', 'localScope', 'begin', 'end', 'cycleType']),
-        scope: queryObj.scope || Number(queryObj.custRangeLevel) + 1,
-        orderType: queryObj.orderType || '',
-        pageSize: 10,
-        pageNum: queryObj.page || '1',
-      },
-      showChart: query.showChart,
+      // chartTableInfo: {
+      //   ..._.pick(payload, ['orgId', 'localScope', 'begin', 'end', 'cycleType']),
+      //   scope: queryObj.scope || Number(queryObj.custRangeLevel) + 1,
+      //   orderType: queryObj.orderType || '',
+      //   pageSize: 10,
+      //   pageNum: queryObj.page || '1',
+      // },
+      // showChart: query.showChart,
     });
   }
 
@@ -303,6 +301,27 @@ export default class BusinessHome extends PureComponent {
     exportExcel({ query: queryToString(data) });
   }
 
+  @autobind
+  selfRequestData(param) {
+    const { custRange, location: { query }, getClassifyIndex } = this.props;
+    const duration = this.state;
+    const payload = {
+      ...query,
+      orgId: query.orgId || (custRange[0] && custRange[0].id),
+      scope: query.scope ||
+      (query.custRangeLevel
+      ? Number(query.custRangeLevel) + 1
+      : Number(custRange[0] && custRange[0].level) + 1),
+      orderType: query.orderType || '',
+      begin: query.begin || duration.begin,
+      end: query.end || duration.end,
+      cycleType: query.cycleType || duration.cycleType,
+      localScope: query.custRangeLevel || (custRange[0] && custRange[0].level),
+      ...param,
+    };
+    getClassifyIndex(payload);
+  }
+
   render() {
     const {
       performance,
@@ -318,15 +337,13 @@ export default class BusinessHome extends PureComponent {
     if (!custRange || !custRange.length) {
       return null;
     }
-    // 新增报表看板名称
-    const boardName = location.query.boardName;
+
     return (
       <div className="page-invest content-inner">
         <PageHeader
           location={location}
           replace={replace}
           custRange={custRange}
-          selectDefault={boardName}
         />
         <div className={styles.reportBody}>
           <div className={styles.reportPart}>
@@ -334,26 +351,16 @@ export default class BusinessHome extends PureComponent {
               data={performance}
             />
           </div>
-          {/*
-            TODO此处需要进行经营业绩的修改
-            1.修改数据获取的类型为分类指标的数组
-            2.进行数据修改
-          */}
           {
             chartInfo.map((item) => {
-              const { title, id, key, data } = item;
-              const time = new Date().getTime();
-              const uniqueID = `${id}-${time}`;
-              // TODO chartTableInfo的值通过index来获取和传递
+              const { title, id, data } = item;
               return (
                 <div
                   className={styles.reportPart}
-                  key={uniqueID}
                 >
                   <PreformanceChartBoard
                     chartData={data}
                     indexID={id}
-                    indexKey={key}
                     chartTableInfo={chartTableInfo}
                     postExcelInfo={this.handleExportExcel}
                     level={level}
@@ -362,6 +369,7 @@ export default class BusinessHome extends PureComponent {
                     replace={replace}
                     boardTitle={title}
                     showScopeOrder={false}
+                    selfRequestData={this.selfRequestData}
                   />
                 </div>
               );
