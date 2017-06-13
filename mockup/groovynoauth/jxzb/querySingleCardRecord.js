@@ -25,7 +25,7 @@ exports.response = function (req, res) {
                 value: '34',
                 children: [
                     {
-                        value: '20',
+                        value: '-20',
                         name: '个人',
                     },
                     {
@@ -66,7 +66,7 @@ exports.response = function (req, res) {
                         name: '个人',
                     },
                     {
-                        value: '1',
+                        value: '-1',
                         name: '机构',
                     },
                     {
@@ -107,7 +107,7 @@ exports.response = function (req, res) {
                         name: '机构',
                     },
                     {
-                        value: '10',
+                        value: '-10',
                         name: '组织',
                     },
                     {
@@ -144,7 +144,7 @@ exports.response = function (req, res) {
                         name: '机构',
                     },
                     {
-                        value: '5',
+                        value: '-5',
                         name: '组织',
                     },
                     {

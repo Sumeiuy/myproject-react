@@ -83,9 +83,9 @@ export default class ChartBarStack extends PureComponent {
     const levelAndScope = query.scope ? Number(query.scope) : Number(level) + 1;
     const levelName = `level${levelAndScope}Name`;
     // 分公司名称数组
-    // const levelCompanyArr = getLevelName(orgModel, 'level2Name');
+    const levelCompanyArr = getLevelName(orgModel, 'level2Name');
     // 营业部名称数组
-    // const levelStoreArr = getLevelName(orgModel, 'level3Name');
+    const levelStoreArr = getLevelName(orgModel, 'level3Name');
     // 此处为y轴刻度值
     const yAxisLabels = getLevelName(orgModel, levelName);
     // 对Y轴刻度不足刻度
@@ -137,11 +137,6 @@ export default class ChartBarStack extends PureComponent {
       gridXAxisMax = maxAndMinPeople.max;
       gridXaxisMin = maxAndMinPeople.min;
     }
-    // TODO 因为stack柱状图暂时不用显示Label,所以以下可以暂时不用
-    // 计算出所有值的中间值
-    // const medianValue = (gridXAxisMax + gridXaxisMin) / 2;
-    // 需要针对不同的值编写不同的柱状图Label样式
-    // const newSeriesData = this.createNewSeriesData(seriesData, medianValue, unit, padLength);
 
     // 柱状图阴影的数据series
     const dataShadow = [];
@@ -166,10 +161,27 @@ export default class ChartBarStack extends PureComponent {
           if (index > 0) {
             const axisValue = item.axisValue;
             const seriesName = item.seriesName;
-            const value = item.value;
-            total.push(value);
+            let value = item.value;
+            if (axisValue === '--') {
+              // 无数据的情况
+              value = '--';
+            }
+            if (axisValue !== '--') {
+              total.push(value);
+            }
             if (!hasPushedAxis) {
               hasPushedAxis = true;
+              // TODO 针对不同的机构级别需要显示不同的分类
+              if (levelAndScope === 3 && axisValue !== '--') {
+                // 营业部，需要显示分公司名称
+                const dataIndex = item.dataIndex;
+                tips.push(`${levelCompanyArr[dataIndex]}-`);
+              }
+              if (levelAndScope === 4 && axisValue !== '--') {
+                // 投顾，需要显示分公司，营业部名称
+                const dataIndex = item.dataIndex;
+                tips.push(`${levelCompanyArr[dataIndex]} - ${levelStoreArr[dataIndex]}<br />`);
+              }
               tips.push(`${axisValue}<br/>`);
             }
             tips.push(`<span style="display:inline-block;width: 10px;height: 10px;margin-right:4px;border-radius:100%;background-color:${stackBarColors[index - 1]}"></span>`);
@@ -177,7 +189,11 @@ export default class ChartBarStack extends PureComponent {
             tips.push(`${unit}<br/>`);
           }
         });
-        tips.push(`共 <span style="color:#ffd92a; font-size:14px;">${_.sum(total)}</span> ${unit}`);
+        if (total.length > 0) {
+          tips.push(`共 <span style="color:#ffd92a; font-size:14px;">${_.sum(total)}</span> ${unit}`);
+        } else {
+          tips.push(`共 <span style="color:#ffd92a; font-size:14px;">--</span> ${unit}`);
+        }
         return tips.join('');
       },
       position(pos, params, dom, rect, size) {
