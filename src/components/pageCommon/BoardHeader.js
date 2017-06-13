@@ -32,6 +32,7 @@ export default class BoardHeader extends PureComponent {
     postExcelInfo: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
     changeBoard: PropTypes.func.isRequired,
+    selfRequestData: PropTypes.func,
     showScopeOrder: PropTypes.bool.isRequired,
     level: PropTypes.string,
     indexID: PropTypes.string,
@@ -41,16 +42,25 @@ export default class BoardHeader extends PureComponent {
   static defaultProps = {
     level: '',
     indexID: '',
+    selfRequestData: () => {},
   }
 
   constructor(props) {
     super(props);
-    const { location: { query }, scope } = this.props;
-    this.state = {
-      scopeSelectValue: String(scope),
-      showChart: query.showChart || 'zhuzhuangtu',
-      orderType: query.orderType || 'desc',
-    };
+    const { location: { query, pathname }, scope } = this.props;
+    if (pathname.indexOf('invest') > -1) {
+      this.state = {
+        scopeSelectValue: String(scope),
+        showChart: query.showChart || 'zhuzhuangtu',
+        orderType: query.orderType || 'desc',
+      };
+    } else {
+      this.state = {
+        scopeSelectValue: String(scope),
+        showChart: 'zhuzhuangtu',
+        orderType: 'desc',
+      };
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -75,32 +85,45 @@ export default class BoardHeader extends PureComponent {
   @autobind
   handleIconClick(type) {
     const { replace, location: { query, pathname }, changeBoard, indexID } = this.props;
-    replace({
-      pathname,
-      query: {
-        ...query,
-        showChart: type,
-        page: type !== 'tables' ? '1' : query.page,
-        indexID,
-      },
-    });
+    if (pathname === 'invest') {
+      // 在绩效视图页面里的时候，更改 url
+      replace({
+        pathname,
+        query: {
+          ...query,
+          showChart: type,
+          page: type !== 'tables' ? '1' : query.page,
+          indexID,
+        },
+      });
+    } else {
+      console.log(111111111111111111);
+    }
     this.setState({
       showChart: type,
     });
     changeBoard(type);
   }
 
+
   @autobind
   handleSortChange(column, value) {
-    const { replace, location: { query }, indexID } = this.props;
-    replace({
-      pathname: '/invest',
-      query: {
-        ...query,
-        [column]: value,
-        indexID,
-      },
-    });
+    const { replace, location: { query, pathname }, indexID, selfRequestData } = this.props;
+    if (pathname.indexOf('invest') > -1) {
+      replace({
+        pathname,
+        query: {
+          ...query,
+          [column]: value,
+        },
+      });
+    } else {
+      // business页面需要的逻辑处理
+      selfRequestData({
+        indicatorId: indexID,
+        orderType: value,
+      });
+    }
   }
 
   @autobind

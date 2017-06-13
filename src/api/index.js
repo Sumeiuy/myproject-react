@@ -28,5 +28,7 @@ export default {
   getBOChartInfo: query => api.get('/groovynoauth/jxzb/queryBOChartInfo', query),
 
   getBOChartTableInfo: query => api.get('/groovynoauth/jxzb/queryBOChartTableInfo', query),
+
+  getBOClassifyIndex: query => api.get('/groovynoauth/jxzb/querySingleCardRecord', query),
   // ==========business数据接口end
 };

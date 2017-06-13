@@ -33,6 +33,24 @@ export default {
         chartInfo,
       };
     },
+    getClassifyIndexSuccess(state, action) {
+      const { payload: { response } } = action;
+      const singleChartData = response.resultData;
+      const indicatorId = singleChartData.id;
+      // 找到需要修改的那个分类
+      const preChartInfo = state.chartInfo;
+      const newChartInfo = preChartInfo.map((item) => {
+        const { id } = item;
+        if (id === indicatorId) {
+          return singleChartData;
+        }
+        return item;
+      });
+      return {
+        ...state,
+        chartInfo: newChartInfo,
+      };
+    },
     getChartTableInfoSuccess(state, action) {
       const { payload: { resChartTableInfo } } = action;
       const chartTableInfo = resChartTableInfo.resultData;
@@ -98,31 +116,31 @@ export default {
       });
       // 判断柱状图或者表格
       // 柱状图
-      if (!payload.showChart || payload.showChart === 'zhuzhuangtu') {
-        const resChartInfo = yield call(api.getBOChartInfo, {
-          ...payload.chartInfo,
-          localScope: payload.chartInfo.localScope || firstCust.level,
-          orgId: payload.chartInfo.orgId || firstCust.id,
-          scope: payload.chartInfo.scope || parseInt(firstCust.level, 10) + 1,
-        });
-        yield put({
-          type: 'getChartInfoSuccess',
-          payload: { resChartInfo },
-        });
-      } else if (payload.showChart === 'tables') {
-        // 表格
-        const resChartTableInfo = yield call(api.getBOChartTableInfo, {
-          ...payload.chartTableInfo,
-          localScope: payload.chartTableInfo.localScope || firstCust.level,
-          orgId: payload.chartTableInfo.orgId || firstCust.id,
-          scope: payload.chartTableInfo.scope || parseInt(firstCust.level, 10) + 1,
-          pageSize: 10,
-        });
-        yield put({
-          type: 'getChartTableInfoSuccess',
-          payload: { resChartTableInfo },
-        });
-      }
+      // if (!payload.showChart || payload.showChart === 'zhuzhuangtu') {
+      const resChartInfo = yield call(api.getBOChartInfo, {
+        ...payload.chartInfo,
+        localScope: payload.chartInfo.localScope || firstCust.level,
+        orgId: payload.chartInfo.orgId || firstCust.id,
+        scope: payload.chartInfo.scope || parseInt(firstCust.level, 10) + 1,
+      });
+      yield put({
+        type: 'getChartInfoSuccess',
+        payload: { resChartInfo },
+      });
+      // } else if (payload.showChart === 'tables') {
+      //   // 表格
+      //   const resChartTableInfo = yield call(api.getBOChartTableInfo, {
+      //     ...payload.chartTableInfo,
+      //     localScope: payload.chartTableInfo.localScope || firstCust.level,
+      //     orgId: payload.chartTableInfo.orgId || firstCust.id,
+      //     scope: payload.chartTableInfo.scope || parseInt(firstCust.level, 10) + 1,
+      //     pageSize: 10,
+      //   });
+      //   yield put({
+      //     type: 'getChartTableInfoSuccess',
+      //     payload: { resChartTableInfo },
+      //   });
+      // }
     },
     // 获取投顾图表数据
     * getChartInfo({ payload }, { call, put }) {
@@ -130,6 +148,15 @@ export default {
       yield put({
         type: 'getChartInfoSuccess',
         payload: { resChartInfo },
+      });
+    },
+
+    // 获取分类指标的数据
+    * getClassifyIndex({ payload }, { call, put }) {
+      const response = yield call(api.getBOClassifyIndex, payload);
+      yield put({
+        type: 'getClassifyIndexSuccess',
+        payload: { response },
       });
     },
 
