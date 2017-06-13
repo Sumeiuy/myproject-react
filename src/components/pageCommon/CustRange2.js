@@ -157,8 +157,10 @@ export default class CustRange extends PureComponent {
   @autobind
   addDropDownMouseWheel() {
     const elem = document.querySelector('.ant-select-tree-dropdown');
-    elem.addEventListener('mousewheel', this.handleDropDownMousewheel, false);
-    elem.addEventListener('DOMMouseScroll', this.handleDropDownMousewheel, false);
+    if (elem) {
+      elem.addEventListener('mousewheel', this.handleDropDownMousewheel, false);
+      elem.addEventListener('DOMMouseScroll', this.handleDropDownMousewheel, false);
+    }
   }
 
   render() {

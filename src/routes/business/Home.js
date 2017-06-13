@@ -337,15 +337,13 @@ export default class BusinessHome extends PureComponent {
     if (!custRange || !custRange.length) {
       return null;
     }
-    // 新增报表看板名称
-    const boardName = location.query.boardName;
+
     return (
       <div className="page-invest content-inner">
         <PageHeader
           location={location}
           replace={replace}
           custRange={custRange}
-          selectDefault={boardName}
         />
         <div className={styles.reportBody}>
           <div className={styles.reportPart}>
