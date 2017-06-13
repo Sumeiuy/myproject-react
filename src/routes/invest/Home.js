@@ -108,6 +108,7 @@ export default class InvestHome extends PureComponent {
 
     const payload = {
       ...query,
+      boardId: query.boardId || '1',
       orgId: query.orgId || (custRange[0] && custRange[0].id),
       // scope: query.scope || Number(custRange[0] && custRange[0].level) + 1,
       scope: query.scope ||
@@ -158,6 +159,7 @@ export default class InvestHome extends PureComponent {
                 'end',
                 'cycleType',
                 'orderType',
+                'boardId',
               ]),
           });
         } else {
@@ -170,6 +172,7 @@ export default class InvestHome extends PureComponent {
                 'begin',
                 'end',
                 'cycleType',
+                'boardId',
               ]),
             pageNum: '1',
             pageSize: 10,
@@ -195,6 +198,7 @@ export default class InvestHome extends PureComponent {
                 'end',
                 'cycleType',
                 'orderType',
+                'boardId',
               ]),
           });
         } else {
@@ -208,6 +212,7 @@ export default class InvestHome extends PureComponent {
                 'begin',
                 'end',
                 'cycleType',
+                'boardId',
               ]),
             pageNum: '1',
             pageSize: 10,
@@ -231,6 +236,7 @@ export default class InvestHome extends PureComponent {
               'end',
               'cycleType',
               'orderType',
+              'boardId',
             ]),
         });
       }
@@ -240,7 +246,7 @@ export default class InvestHome extends PureComponent {
       const prePageAndOrderType = _.pick(preQuery, ['page', 'tableOrderType', 'orderIndicatorId']);
       if (!_.isEqual(nowPageAndOrderType, prePageAndOrderType) && nowOrgId === preOrgId && query.showChart === 'tables') {
         getChartTableInfo({
-          ..._.pick(payload, ['scope', 'localScope', 'orgId', 'begin', 'end', 'cycleType']),
+          ..._.pick(payload, ['scope', 'localScope', 'orgId', 'begin', 'end', 'cycleType', 'boardId']),
           pageNum: query.page || '1',
           orderIndicatorId: query.orderIndicatorId || '',
           orderType: query.tableOrderType || '',
