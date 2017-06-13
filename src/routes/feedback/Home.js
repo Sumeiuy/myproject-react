@@ -6,6 +6,7 @@
 
 import React, { PureComponent } from 'react';
 import { Row, Col } from 'antd';
+import Detail from '../../components/feedback/Detail';
 import styles from './home.less';
 
 export default class FeedBack extends PureComponent {
@@ -31,8 +32,7 @@ export default class FeedBack extends PureComponent {
             </ul>
           </Col>
           <Col span="14">
-            <h3>【问题】MCRM/100001</h3>
-            <div>问题内容</div>
+            <Detail />
           </Col>
         </Row>
       </div>

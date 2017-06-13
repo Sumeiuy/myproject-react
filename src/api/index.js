@@ -29,4 +29,8 @@ export default {
 
   getBOChartTableInfo: query => api.get('/groovynoauth/jxzb/queryBOChartTableInfo', query),
   // ==========business数据接口end
+
+  // ----------以下是feedback的数据接口
+
+  // ==========feedback的数据接口end
 };
