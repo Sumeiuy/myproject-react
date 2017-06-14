@@ -9,8 +9,22 @@ import { autobind } from 'core-decorators';
 import { Dropdown, Menu, Icon, Button } from 'antd';
 import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 
 import './BoardSelect.less';
+
+const boards = [
+  {
+    boardName: '投顾业绩汇总',
+    boardId: '1',
+    url: 'invest',
+  },
+  {
+    boardName: '经营业绩汇总',
+    boardId: '2',
+    url: 'business',
+  },
+];
 
 const mapStateToProps = state => ({
   boards: state.app.boards,
@@ -26,7 +40,6 @@ export default class BoardSelect extends PureComponent {
 
   static propTypes = {
     location: PropTypes.object.isRequired,
-    selectDefault: PropTypes.string.isRequired,
     push: PropTypes.func.isRequired,
     boards: PropTypes.array,
   }
@@ -37,17 +50,10 @@ export default class BoardSelect extends PureComponent {
 
   constructor(props) {
     super(props);
-    // const { location: { query: { boradId } } } = this.props;
+    const { location: { query: { boardId } } } = this.props;
     // TODO:此处在后期迭代时需要与后端确认接口以及数据结构
-    const { selectDefault } = this.props;
-    let initialBoardName = '';
-    if (selectDefault === 'invest') {
-      initialBoardName = '投顾业绩汇总';
-    } else if (selectDefault === 'business') {
-      initialBoardName = '经营业绩汇总';
-    }
     this.state = {
-      boardName: initialBoardName,
+      boardId: boardId || '1',
     };
   }
 
@@ -60,20 +66,23 @@ export default class BoardSelect extends PureComponent {
   handleMenuClick(MenuItem) {
     const { push } = this.props;
     const { key } = MenuItem;
+    const path = _.filter(boards, { boardId: key })[0].url;
     console.log('handleMenuClick>>key>>', key);
     // TODO 此处后期迭代中需要做跳转页面逻辑处理
-    const url = `/${key}?boardName=${key}`;
+    const url = `/${path}?boardId=${key}`;
     push(url);
   }
 
   render() {
-    const { boardName } = this.state;
+    const { boardId } = this.state;
+    const boardName = _.filter(boards, { boardId })[0].boardName;
 
     const menu = (
       <Menu onClick={this.handleMenuClick}>
         <Menu.ItemGroup>
-          <Menu.Item key="invest">投顾业绩汇总</Menu.Item>
-          <Menu.Item key="business">经营业绩汇总</Menu.Item>
+          {
+            boards.map(item => (<Menu.Item key={item.boardId}>{item.boardName}</Menu.Item>))
+          }
         </Menu.ItemGroup>
         <Menu.Divider />
         <Menu.Item key="default3">看板管理</Menu.Item>

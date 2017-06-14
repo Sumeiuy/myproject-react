@@ -30,8 +30,8 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/fspa/mcrm/api': {
-        target: 'http://192.168.71.26:9084', // SIT
-        // target: 'http://192.168.71.29:9082', // UAT
+        // target: 'http://192.168.71.26:9084', // SIT
+        target: 'http://192.168.71.29:9084', // UAT
         secure: false,
       },
     },

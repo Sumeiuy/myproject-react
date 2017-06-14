@@ -6,6 +6,7 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
 
 import { AxisOptions, gridOptions, stackBarColors, barShadow } from './ChartGeneralOptions';
 import {
@@ -17,6 +18,7 @@ import {
   fixedPermillageMaxMin,
   fixedMoneyMaxMin,
   fixedPeopleMaxMin,
+  fixedStackLegendData,
 } from './chartData';
 import IECharts from '../IECharts';
 import { iconTypeMap } from '../../config';
@@ -29,13 +31,13 @@ export default class ChartBarStack extends PureComponent {
 
   static propTypes = {
     location: PropTypes.object,
-    level: PropTypes.string,
+    level: PropTypes.string.isRequired,
+    scope: PropTypes.number.isRequired,
     chartData: PropTypes.object,
     iconType: PropTypes.string,
   }
 
   static defaultProps = {
-    level: '',
     location: {},
     chartData: {},
     iconType: 'zichan',
@@ -70,15 +72,11 @@ export default class ChartBarStack extends PureComponent {
   }
 
   render() {
-    const {
-      chartData: { name, key, orgModel = [] },
-      location: { query },
-      level,
-    } = this.props;
+    const { scope, chartData: { indiModel: { name, key }, orgModel = [] } } = this.props;
     // 获取本图表的单位,
-    let { chartData: { unit } } = this.props;
+    let { chartData: { indiModel: { unit } } } = this.props;
     // 查询当前需要的Y轴字段名称
-    const levelAndScope = query.scope ? Number(query.scope) : Number(level) + 1;
+    const levelAndScope = Number(scope);
     const levelName = `level${levelAndScope}Name`;
     // 分公司名称数组
     const levelCompanyArr = getLevelName(orgModel, 'level2Name');
@@ -94,9 +92,13 @@ export default class ChartBarStack extends PureComponent {
       }
     }
     // 获取stackSeries
-    let stackSeries = getStackSeries(orgModel, 'children', key);
-    console.log('chartBarStack===stackSeries>>>', stackSeries);
-    // const seriesData = [];
+    const stack = getStackSeries(orgModel, 'indiModelList', key);
+    const stackLegend = fixedStackLegendData(stack.legends);
+    let stackGridTop = '30px';
+    if (stackLegend.length > 3) {
+      stackGridTop = '50px';
+    }
+    let stackSeries = stack.series;
     // 此处需要进行对stackSeries中的每一个data根据单位来进行特殊处理
     if (unit === '%') {
       stackSeries = stackSeries.map(this.toFixedPercentOrPermillage(100));
@@ -131,11 +133,6 @@ export default class ChartBarStack extends PureComponent {
       gridXAxisMax = maxAndMinPeople.max;
       gridXaxisMin = maxAndMinPeople.min;
     }
-    // TODO 因为stack柱状图暂时不用显示Label,所以以下可以暂时不用
-    // 计算出所有值的中间值
-    // const medianValue = (gridXAxisMax + gridXaxisMin) / 2;
-    // 需要针对不同的值编写不同的柱状图Label样式
-    // const newSeriesData = this.createNewSeriesData(seriesData, medianValue, unit, padLength);
 
     // 柱状图阴影的数据series
     const dataShadow = [];
@@ -151,29 +148,58 @@ export default class ChartBarStack extends PureComponent {
       formatter(params) {
         // 堆叠柱状图上因为有多系列的值
         // 所有此处需要做处理
-        // const series = params;
-        // const len = series.length;
-        // const tips = [];
-        // // 因为第一个series是阴影
-        // for (let i = 1; i < len; i++) {
-        //   tips.push();
-        // }
-        const item = params[1];
-        const axisValue = item.axisValue;
-        const seriesName = item.seriesName;
-        let value = item.data.value;
-        if (axisValue === '--') {
-          value = '--';
+        const series = params;
+        const tips = [];
+        const total = [];
+        let hasPushedAxis = false;
+        // 因为第一个series是阴影
+        series.forEach((item, index) => {
+          if (index > 0) {
+            const axisValue = item.axisValue;
+            const seriesName = item.seriesName;
+            let value = item.value;
+            if (axisValue === '--') {
+              // 无数据的情况
+              value = '--';
+            }
+            if (axisValue !== '--') {
+              total.push(value);
+            }
+            if (!hasPushedAxis) {
+              hasPushedAxis = true;
+              // TODO 针对不同的机构级别需要显示不同的分类
+              if (levelAndScope === 3 && axisValue !== '--') {
+                // 营业部，需要显示分公司名称
+                const dataIndex = item.dataIndex;
+                tips.push(`${levelCompanyArr[dataIndex]}-`);
+              }
+              if (levelAndScope === 4 && axisValue !== '--') {
+                // 投顾，需要显示分公司，营业部名称
+                const dataIndex = item.dataIndex;
+                tips.push(`${levelCompanyArr[dataIndex]} - ${levelStoreArr[dataIndex]}<br />`);
+              }
+              tips.push(`${axisValue}<br/>`);
+            }
+            tips.push(`<span style="display:inline-block;width: 10px;height: 10px;margin-right:4px;border-radius:100%;background-color:${stackBarColors[index - 1]}"></span>`);
+            tips.push(`${seriesName} : <span style="color:#ffd92a; font-size:14px;">${value}</span>`);
+            tips.push(`${unit}<br/>`);
+          }
+        });
+        if (total.length > 0) {
+          tips.push(`共 <span style="color:#ffd92a; font-size:14px;">${_.sum(total)}</span> ${unit}`);
+        } else {
+          tips.push(`共 <span style="color:#ffd92a; font-size:14px;">--</span> ${unit}`);
         }
-        if (levelAndScope === 4 && axisValue !== '--') {
-          const seriesIndex = item.seriesIndex;
-          return `${levelCompanyArr[seriesIndex]} - ${levelStoreArr[seriesIndex]}<br />${axisValue}<br /> ${seriesName}: <span style="color:#f8ac59; font-size: 15px;">${value}</span>${unit}`;
-        }
-        return `${axisValue}<br /> ${seriesName}: <span style="color:#f8ac59; font-size: 15px;">${value}</span>${unit}`;
+        return tips.join('');
       },
       position(pos, params, dom, rect, size) {
         // 鼠标在左侧时 tooltip 显示到右侧，鼠标在右侧时 tooltip 显示到左侧。
-        const obj = { top: (pos[1] - size.contentSize[1]) };
+        const obj = {};
+        if (pos[1] > (size.viewSize[1] / 2)) {
+          obj.top = pos[1] - size.contentSize[1];
+        } else {
+          obj.top = pos[1];
+        }
         obj[['left', 'right'][+(pos[0] < size.viewSize[0] / 2)]] = 5;
         return obj;
       },
@@ -187,8 +213,18 @@ export default class ChartBarStack extends PureComponent {
       tooltip: {
         ...tooltipOtions,
       },
+      legend: {
+        width: '95%',
+        left: '0',
+        selectedMode: false,
+        data: stackLegend,
+        textStyle: {
+          color: '#777',
+        },
+      },
       grid: {
         ...gridOptions,
+        top: stackGridTop,
       },
       xAxis: {
         type: 'value',

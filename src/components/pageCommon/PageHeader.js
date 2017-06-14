@@ -17,7 +17,6 @@ export default class PageHeader extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
-    selectDefault: PropTypes.string.isRequired,
     custRange: PropTypes.array,
   }
 
@@ -26,7 +25,7 @@ export default class PageHeader extends PureComponent {
   }
 
   render() {
-    const { replace, custRange, location, selectDefault } = this.props;
+    const { replace, custRange, location } = this.props;
 
     return (
       <div className="reportHeader">
@@ -34,7 +33,6 @@ export default class PageHeader extends PureComponent {
           <div className="reportName">
             <BoardSelect
               location={location}
-              selectDefault={selectDefault}
             />
           </div>
           <div className={styles.reportHeaderRight}>

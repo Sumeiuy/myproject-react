@@ -13,7 +13,7 @@ localForage.config({
 });
 
 const config = {
-  active: isLocalStorageSupport(),
+  active: false && isLocalStorageSupport(),
   storeConfig: {
     storage: localForage,
   },
