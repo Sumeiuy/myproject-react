@@ -1,17 +1,23 @@
+/**
+ * 查询单个分类指标的图表数据
+ */
 exports.response = function (req, res) {
   return {
     code: '0',
     msg: 'OK',
-    resultData: {
+    resultData: [
+      {
         name: '客户数明细',
         key: 'bo-1',
         data: [
-          {
-            key: 'tgInNum',
-            name: '投顾入岗人数',
-            value: null,
-            unit: '人',
-            description: null,
+          { 
+            indiModel: {
+                key: 'tgInNum',
+                name: '投顾入岗人数',
+                value: null,
+                unit: '人',
+                description: null,
+            },
             orgModel: [
               {
                 level1Id: 'ZZ001041',
@@ -25,27 +31,27 @@ exports.response = function (req, res) {
                 value: '34',
                 indiModelList: [
                     {
-                        value: '-20',
+                        value: '11',
                         name: '个人',
                     },
                     {
-                        value: '20',
+                        value: '11',
                         name: '机构',
                     },
                     {
-                        value: '20',
+                        value: '11',
                         name: '组织',
                     },
                     {
-                        value: '20',
+                        value: '11',
                         name: '天天发布市值',
                     },
                     {
-                        value: '20',
+                        value: '11',
                         name: '流通股市',
                     },
                     {
-                        value: '20',
+                        value: '11',
                         name: '限售市值',
                     },
                 ],
@@ -60,13 +66,13 @@ exports.response = function (req, res) {
                 level4Id: null,
                 level4Name: null,
                 value: '34',
-                  indiModelList: [
+                indiModelList: [
                     {
                         value: '20',
                         name: '个人',
                     },
                     {
-                        value: '-1',
+                        value: '1',
                         name: '机构',
                     },
                     {
@@ -97,7 +103,7 @@ exports.response = function (req, res) {
                 level4Id: null,
                 level4Name: null,
                 value: '25',
-                  indiModelList: [
+                indiModelList: [
                     {
                         value: '1',
                         name: '个人',
@@ -107,7 +113,7 @@ exports.response = function (req, res) {
                         name: '机构',
                     },
                     {
-                        value: '-10',
+                        value: '10',
                         name: '组织',
                     },
                     {
@@ -144,7 +150,7 @@ exports.response = function (req, res) {
                         name: '机构',
                     },
                     {
-                        value: '-5',
+                        value: '5',
                         name: '组织',
                     },
                     {
@@ -245,7 +251,7 @@ exports.response = function (req, res) {
                 level4Id: null,
                 level4Name: null,
                 value: '0',
-                  indiModelList: [
+                indiModelList: [
                     {
                         value: '0',
                         name: '个人',
@@ -282,7 +288,7 @@ exports.response = function (req, res) {
                 level4Id: null,
                 level4Name: null,
                 value: '0',
-                  indiModelList: [
+                indiModelList: [
                     {
                         value: '0',
                         name: '个人',
@@ -319,7 +325,7 @@ exports.response = function (req, res) {
                 level4Id: null,
                 level4Name: null,
                 value: '22',
-                 indiModelList: [
+                indiModelList: [
                     {
                         value: '11',
                         name: '个人',
@@ -356,7 +362,7 @@ exports.response = function (req, res) {
                 level4Id: null,
                 level4Name: null,
                 value: '0',
-                 indiModelList: [
+                indiModelList: [
                     {
                         value: '0',
                         name: '个人',
@@ -386,11 +392,13 @@ exports.response = function (req, res) {
             ],
           },
           {
-            key: 'currSignCustNum',
-            name: '签约客户数',
-            value: null,
-            unit: '户',
-            description: '当前签约客户数',
+            indiModel: {
+                name: '签约客户数',
+                value: null,
+                unit: '户',
+                description: '当前签约客户数',
+                key: 'currSignCustNum',
+            },
             orgModel: [
               {
                 level1Id: 'ZZ001041',
@@ -504,12 +512,14 @@ exports.response = function (req, res) {
               },
             ],
           },
-          {
-            key: 'currSignCustAset',
-            name: '签约总资产',
-            value: null,
-            unit: '元',
-            description: null,
+          { 
+            indiModel: {
+                key: 'currSignCustAset',
+                name: '签约总资产',
+                value: null,
+                unit: '元',
+                description: null,
+            },
             orgModel: [
               {
                 level1Id: 'ZZ001041',
@@ -624,6 +634,7 @@ exports.response = function (req, res) {
             ],
           },
         ],
-    },
+      },
+    ],
   };
 }
