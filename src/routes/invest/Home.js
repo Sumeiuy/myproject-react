@@ -83,13 +83,20 @@ export default class InvestHome extends PureComponent {
     custRange: [],
   }
 
-  componentWillMount() {
-    const { location: { query } } = this.props;
-    const value = query.cycleType || 'month';
+  constructor(props) {
+    super(props);
+    const { location: { query: { cycleType, boardId } } } = this.props;
+    const value = cycleType || 'month';
     const obj = getDurationString(value);
     this.state = {
       ...obj,
+      boardId: boardId || '1',
+      showCharts: {},
     };
+  }
+
+  componentWillMount() {
+    const { location: { query } } = this.props;
     this.getInfo({
       ...query,
       scope: query.scope || Number(query.custRangeLevel) + 1,
@@ -98,29 +105,11 @@ export default class InvestHome extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     // 判断props是否变化
-    const { custRange, location: { query } } = nextProps;
-    const duration = this.state;
+    const { location: { query } } = nextProps;
     const {
       location: { query: preQuery },
-      getChartInfo,
-      getChartTableInfo,
     } = this.props;
 
-    const payload = {
-      ...query,
-      boardId: query.boardId || '1',
-      orgId: query.orgId || (custRange[0] && custRange[0].id),
-      // scope: query.scope || Number(custRange[0] && custRange[0].level) + 1,
-      scope: query.scope ||
-      (query.custRangeLevel
-      ? Number(query.custRangeLevel) + 1
-      : Number(custRange[0] && custRange[0].level) + 1),
-      orderType: query.orderType || '',
-      begin: query.begin || duration.begin,
-      end: query.end || duration.end,
-      cycleType: query.cycleType || duration.cycleType,
-      localScope: query.custRangeLevel || (custRange[0] && custRange[0].level),
-    };
     // 还是chart部分的数据
     if (!_.isEqual(query, preQuery)) {
       // 如果切换 时间段
@@ -140,119 +129,10 @@ export default class InvestHome extends PureComponent {
           ...query,
         });
       }
-      // const tempArr = ['bo-1', 'bo-2', 'bo-3'];
-      // const showChartArr = [];
-      // tempArr.map(item => showChartArr.push(`showChart${item}`));
-      // console.warn('showChartArr', showChartArr);
-      const nowShowChart = query.showChart;
-      const preShowChart = preQuery.showChart;
-      // 如果切换 柱状图或者表格
-      if (nowShowChart !== preShowChart) {
-        if (nowShowChart === 'zhuzhuangtu' || !nowShowChart) {
-          getChartInfo({
-            ..._.pick(payload,
-              [
-                'scope',
-                'localScope',
-                'orgId',
-                'begin',
-                'end',
-                'cycleType',
-                'orderType',
-                'boardId',
-              ]),
-          });
-        } else {
-          getChartTableInfo({
-            ..._.pick(payload,
-              [
-                'scope',
-                'localScope',
-                'orgId',
-                'begin',
-                'end',
-                'cycleType',
-                'boardId',
-              ]),
-            pageNum: '1',
-            pageSize: 10,
-            orderIndicatorId: query.orderIndicatorId || '',
-            orderType: query.tableOrderType || '',
-          });
-        }
-      }
-
-      // 如果切换层级维度排序
-      const nowScope = query.scope;
-      const preScope = preQuery.scope;
-      if (nowScope !== preScope && nowOrgId === preOrgId) {
-        // 如果当前是柱状图
-        if (query.showChart === 'zhuzhuangtu' || !query.showChart) {
-          getChartInfo({
-            ..._.pick(payload,
-              [
-                'scope',
-                'localScope',
-                'orgId',
-                'begin',
-                'end',
-                'cycleType',
-                'orderType',
-                'boardId',
-              ]),
-          });
-        } else {
-          // 否则则是表格
-          getChartTableInfo({
-            ..._.pick(payload,
-              [
-                'scope',
-                'localScope',
-                'orgId',
-                'begin',
-                'end',
-                'cycleType',
-                'boardId',
-              ]),
-            pageNum: '1',
-            pageSize: 10,
-            orderIndicatorId: query.orderIndicatorId || '',
-            orderType: query.tableOrderType || '',
-          });
-        }
-      }
-
-      // 如果切换升降序方式，只要新的与旧的不想等，则请求图表接口
-      const nowOrderType = query.orderType;
-      const preOrderType = preQuery.orderType;
-      if (nowOrderType !== preOrderType) {
-        getChartInfo({
-          ..._.pick(payload,
-            [
-              'scope',
-              'localScope',
-              'orgId',
-              'begin',
-              'end',
-              'cycleType',
-              'orderType',
-              'boardId',
-            ]),
-        });
-      }
-
-      // 如果切换页面、表格字段排序，则请求表格接口
-      const nowPageAndOrderType = _.pick(query, ['page', 'tableOrderType', 'orderIndicatorId']);
-      const prePageAndOrderType = _.pick(preQuery, ['page', 'tableOrderType', 'orderIndicatorId']);
-      if (!_.isEqual(nowPageAndOrderType, prePageAndOrderType) && nowOrgId === preOrgId && query.showChart === 'tables') {
-        getChartTableInfo({
-          ..._.pick(payload, ['scope', 'localScope', 'orgId', 'begin', 'end', 'cycleType', 'boardId']),
-          pageNum: query.page || '1',
-          orderIndicatorId: query.orderIndicatorId || '',
-          orderType: query.tableOrderType || '',
-          pageSize: 10,
-        });
-      }
+      // 修改state
+      this.setState({
+        showCharts: {},
+      });
     }
   }
 
@@ -261,6 +141,40 @@ export default class InvestHome extends PureComponent {
     this.setState({
       ...obj,
     });
+  }
+  @autobind
+  getApiParams(param) {
+    const { custRange, location: { query } } = this.props;
+    const duration = this.state;
+    const payload = {
+      ...query,
+      orgId: query.orgId || (custRange[0] && custRange[0].id),
+      scope: query.scope ||
+      (query.custRangeLevel
+      ? Number(query.custRangeLevel) + 1
+      : Number(custRange[0] && custRange[0].level) + 1),
+      orderType: query.orderType || '',
+      begin: query.begin || duration.begin,
+      end: query.end || duration.end,
+      cycleType: query.cycleType || duration.cycleType,
+      localScope: query.custRangeLevel || (custRange[0] && custRange[0].level),
+      ...param,
+    };
+    return payload;
+  }
+  // 投递到子组件的方法，只接收参数，实际请求在此发出
+  @autobind
+  getTableInfo(obj) {
+    const { getChartTableInfo } = this.props;
+    const params = {
+      pageSize: 10,
+      orderIndicatorId: obj.orderIndicatorId || '',
+      orderType: obj.orderType || '',
+      pageNum: obj.pageNum || 1,
+      ...obj,
+    };
+    const payload = this.getApiParams(params);
+    getChartTableInfo(payload);
   }
 
   @autobind
@@ -317,7 +231,17 @@ export default class InvestHome extends PureComponent {
     };
     exportExcel({ query: queryToString(data) });
   }
-
+  // 更新 showChart
+  @autobind
+  updateShowCharts(categoryId, type) {
+    const { showCharts } = this.state;
+    this.setState({
+      showCharts: {
+        ...showCharts,
+        [categoryId]: type,
+      },
+    });
+  }
   render() {
     const {
       performance,
@@ -328,7 +252,8 @@ export default class InvestHome extends PureComponent {
       replace,
       custRange,
     } = this.props;
-    const level = location.query.custRangeLevel || (custRange[0] && custRange[0].level);
+    const { showCharts } = this.state;
+    const level = query.custRangeLevel || (custRange[0] && custRange[0].level);
     const scope = Number(query.scope) || (custRange[0] && Number(custRange[0].level) + 1);
     if (!custRange || !custRange.length) {
       return null;
@@ -347,7 +272,38 @@ export default class InvestHome extends PureComponent {
               data={performance}
             />
           </div>
-          <div className={styles.reportPart}>
+          {
+            chartInfo.map((item) => {
+              const { key, name, data } = item;
+              const newChartTable = chartTableInfo[key] || {};
+              const showChart = showCharts[key] || 'zhuzhuangtu';
+              return (
+                <div
+                  className={styles.reportPart}
+                >
+                  <PreformanceChartBoard
+                    showChart={showChart}
+                    updateShowCharts={this.updateShowCharts}
+                    chartData={data}
+                    indexID={key}
+                    chartTableInfo={newChartTable}
+                    getTableInfo={this.getTableInfo}
+                    postExcelInfo={this.handleExportExcel}
+                    level={level}
+                    scope={scope}
+                    location={location}
+                    replace={replace}
+                    boardTitle={name}
+                    showScopeOrder
+                    selfRequestData={this.selfRequestData}
+                  />
+                </div>
+              );
+            })
+          }
+          {
+            /**
+             * <div className={styles.reportPart}>
             <PreformanceChartBoard
               chartData={chartInfo}
               chartTableInfo={chartTableInfo}
@@ -362,6 +318,8 @@ export default class InvestHome extends PureComponent {
               showScopeOrder
             />
           </div>
+             */
+          }
         </div>
       </div>
     );
