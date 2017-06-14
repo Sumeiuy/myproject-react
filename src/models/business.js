@@ -33,6 +33,10 @@ export default {
         chartInfo,
       };
     },
+    getOneChartInfoSuccess(state, action) {
+      const { payload: { oneChart } } = action;
+      console.log(oneChart);
+    },
     getClassifyIndexSuccess(state, action) {
       const { payload: { response } } = action;
       const singleChartData = response.resultData;
@@ -97,6 +101,8 @@ export default {
         payload: { resPerformance },
       });
     },
+    // 初始化只需要取总量指标和该报表下的所有分类指标数据
+    // 以及用户组织机构树
     * getAllInfo({ payload }, { call, put, select }) {
       const cust = yield select(state => state.business.custRange);
       let firstCust;
@@ -121,9 +127,7 @@ export default {
         type: 'getPerformanceSuccess',
         payload: { resPerformance },
       });
-      // 判断柱状图或者表格
-      // 柱状图
-      // if (!payload.showChart || payload.showChart === 'zhuzhuangtu') {
+      // 所有分类指标的数据
       const resChartInfo = yield call(api.getBOChartInfo, {
         ...payload.chartInfo,
         localScope: payload.chartInfo.localScope || firstCust.level,
@@ -135,23 +139,24 @@ export default {
         payload: { resChartInfo },
       });
     },
-    // 获取投顾图表数据
-    * getChartInfo({ payload }, { call, put }) {
-      const resChartInfo = yield call(api.getBOChartInfo, payload);
+
+    // 根据某一个分类指标的ID查询该分类指标下数据
+    * getOneChartInfo({ payload }, { call, put }) {
+      const oneChart = yield call(api.getOneChartInfo, payload);
       yield put({
-        type: 'getChartInfoSuccess',
-        payload: { resChartInfo },
+        type: 'getOneChartInfoSuccess',
+        payload: { oneChart },
       });
     },
 
     // 获取分类指标的数据
-    * getClassifyIndex({ payload }, { call, put }) {
-      const response = yield call(api.getBOClassifyIndex, payload);
-      yield put({
-        type: 'getClassifyIndexSuccess',
-        payload: { response },
-      });
-    },
+    // * getClassifyIndex({ payload }, { call, put }) {
+    //   const response = yield call(api.getBOClassifyIndex, payload);
+    //   yield put({
+    //     type: 'getClassifyIndexSuccess',
+    //     payload: { response },
+    //   });
+    // },
 
     // 获取图表表格视图数据
     * getChartTableInfo({ payload }, { call, put }) {
@@ -163,13 +168,13 @@ export default {
     },
 
     // 获取客户范围
-    * getCustRange({ payload }, { call, put }) {
-      const response = yield call(api.getCustRange, payload);
-      yield put({
-        type: 'getCustRangeSuccess',
-        response,
-      });
-    },
+    // * getCustRange({ payload }, { call, put }) {
+    //   const response = yield call(api.getCustRange, payload);
+    //   yield put({
+    //     type: 'getCustRangeSuccess',
+    //     response,
+    //   });
+    // },
   },
   subscriptions: {},
 };
