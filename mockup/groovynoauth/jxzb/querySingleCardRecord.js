@@ -3,8 +3,8 @@ exports.response = function (req, res) {
     code: '0',
     msg: 'OK',
     resultData: {
-        title: '客户数明细',
-        id: 'bo-1',
+        name: '客户数明细',
+        key: 'bo-1',
         data: [
           {
             key: 'tgInNum',
@@ -23,7 +23,7 @@ exports.response = function (req, res) {
                 level4Id: null,
                 level4Name: null,
                 value: '34',
-                children: [
+                indiModelList: [
                     {
                         value: '-20',
                         name: '个人',
@@ -60,7 +60,7 @@ exports.response = function (req, res) {
                 level4Id: null,
                 level4Name: null,
                 value: '34',
-                  children: [
+                  indiModelList: [
                     {
                         value: '20',
                         name: '个人',
@@ -97,7 +97,7 @@ exports.response = function (req, res) {
                 level4Id: null,
                 level4Name: null,
                 value: '25',
-                  children: [
+                  indiModelList: [
                     {
                         value: '1',
                         name: '个人',
@@ -134,7 +134,7 @@ exports.response = function (req, res) {
                 level4Id: null,
                 level4Name: null,
                 value: '15',
-                children: [
+                indiModelList: [
                     {
                         value: '5',
                         name: '个人',
@@ -171,7 +171,7 @@ exports.response = function (req, res) {
                 level4Id: null,
                 level4Name: null,
                 value: '23',
-                children: [
+                indiModelList: [
                     {
                         value: '7',
                         name: '个人',
@@ -208,7 +208,7 @@ exports.response = function (req, res) {
                 level4Id: null,
                 level4Name: null,
                 value: '24',
-                children: [
+                indiModelList: [
                     {
                         value: '23',
                         name: '个人',
@@ -245,7 +245,7 @@ exports.response = function (req, res) {
                 level4Id: null,
                 level4Name: null,
                 value: '0',
-                  children: [
+                  indiModelList: [
                     {
                         value: '0',
                         name: '个人',
@@ -282,7 +282,7 @@ exports.response = function (req, res) {
                 level4Id: null,
                 level4Name: null,
                 value: '0',
-                  children: [
+                  indiModelList: [
                     {
                         value: '0',
                         name: '个人',
@@ -319,7 +319,7 @@ exports.response = function (req, res) {
                 level4Id: null,
                 level4Name: null,
                 value: '22',
-                 children: [
+                 indiModelList: [
                     {
                         value: '11',
                         name: '个人',
@@ -356,7 +356,7 @@ exports.response = function (req, res) {
                 level4Id: null,
                 level4Name: null,
                 value: '0',
-                 children: [
+                 indiModelList: [
                     {
                         value: '0',
                         name: '个人',

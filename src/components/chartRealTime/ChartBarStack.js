@@ -96,7 +96,7 @@ export default class ChartBarStack extends PureComponent {
       }
     }
     // 获取stackSeries
-    const stack = getStackSeries(orgModel, 'children', key);
+    const stack = getStackSeries(orgModel, 'indiModelList', key);
     const stackLegend = fixedStackLegendData(stack.legends);
     let stackGridTop = '30px';
     if (stackLegend.length > 3) {

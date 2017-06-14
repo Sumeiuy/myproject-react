@@ -30,8 +30,8 @@ export default class ChartBar extends PureComponent {
     if (orgModel &&
       Array.isArray(orgModel) &&
       orgModel.length > 0 &&
-      Array.isArray(orgModel[0].children) &&
-      orgModel[0].children.length > 0) {
+      Array.isArray(orgModel[0].indiModelList) &&
+      orgModel[0].indiModelList.length > 0) {
       // 走堆叠柱状图
       return (
         <ChartBarStack

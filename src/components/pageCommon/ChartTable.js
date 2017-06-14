@@ -30,12 +30,14 @@ export default class ChartTable extends PureComponent {
     data: PropTypes.object,
     getTableInfo: PropTypes.func,
     replace: PropTypes.func.isRequired,
+    indexID: PropTypes.string,
   }
 
   static defaultProps = {
     location: {},
     style: {},
     level: '',
+    indexID: '',
     chartTableInfo: {},
     sourceData: [],
     data: {},
@@ -56,10 +58,11 @@ export default class ChartTable extends PureComponent {
       pageSize: 10,
     };
   }
+
   // 分页事件
   @autobind
   handlePaginationChange(page, pageSize) {
-    const { replace, location: { query, pathname }, getTableInfo } = this.props;
+    const { replace, location: { query, pathname }, getTableInfo, indexID } = this.props;
     const { orderIndicatorId, orderType } = this.state;
     if (pathname.indexOf('invest') > -1) {
       replace({
@@ -78,6 +81,7 @@ export default class ChartTable extends PureComponent {
         pageNum: page,
         orderIndicatorId,
         orderType,
+        indicatorId: indexID,
       });
     }
   }
@@ -110,7 +114,7 @@ export default class ChartTable extends PureComponent {
 
   @autobind
   handleTitleClick(item) {
-    const { replace, location: { query, pathname }, getTableInfo } = this.props;
+    const { replace, location: { query, pathname }, getTableInfo, indexID } = this.props;
     const { orderIndicatorId, orderType, pageNum } = this.state;
     let tableOrderType;
     if (pathname.indexOf('invest') > -1) {
@@ -141,13 +145,14 @@ export default class ChartTable extends PureComponent {
         orderIndicatorId: item.key,
         orderType: tableOrderType,
         pageNum,
+        indicatorId: indexID,
       });
     }
   }
   // 表格标题排序箭头事件
   @autobind
   arrowHandle(e, item, type) {
-    const { replace, location: { query, pathname }, getTableInfo } = this.props;
+    const { replace, location: { query, pathname }, getTableInfo, indexID } = this.props;
     const { pageNum } = this.state;
     e.stopPropagation();
     if (pathname.indexOf('invest') > -1) {
@@ -168,6 +173,7 @@ export default class ChartTable extends PureComponent {
         orderIndicatorId: item.key,
         orderType: type,
         pageNum,
+        indicatorId: indexID,
       });
     }
   }
@@ -196,6 +202,7 @@ export default class ChartTable extends PureComponent {
   }
 
   render() {
+    // chartTableInfo使用state中的值
     const { chartTableInfo, location: { query }, level, style } = this.props;
     const { orderIndicatorId, orderType } = this.state;
     const columns = chartTableInfo.titleList;

@@ -155,6 +155,7 @@ export default class BusinessHome extends PureComponent {
       orderIndicatorId: obj.orderIndicatorId || '',
       orderType: obj.orderType || '',
       pageNum: obj.pageNum || 1,
+      ...obj,
     };
     const payload = this.getApiParams(params);
     getChartTableInfo(payload);
@@ -246,22 +247,23 @@ export default class BusinessHome extends PureComponent {
           </div>
           {
             chartInfo.map((item) => {
-              const { title, id, data } = item;
+              const { key, name, data } = item;
+              const newChartTable = chartTableInfo[key] || {};
               return (
                 <div
                   className={styles.reportPart}
                 >
                   <PreformanceChartBoard
                     chartData={data}
-                    indexID={id}
-                    chartTableInfo={chartTableInfo}
+                    indexID={key}
+                    chartTableInfo={newChartTable}
                     getTableInfo={this.getTableInfo}
                     postExcelInfo={this.handleExportExcel}
                     level={level}
                     scope={scope}
                     location={location}
                     replace={replace}
-                    boardTitle={title}
+                    boardTitle={name}
                     showScopeOrder={false}
                     selfRequestData={this.selfRequestData}
                   />
