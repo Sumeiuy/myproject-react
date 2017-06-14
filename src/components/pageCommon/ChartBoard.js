@@ -12,7 +12,8 @@ import styles from './ChartBoard.less';
 export default class ChartBoard extends PureComponent {
 
   static propTypes = {
-    level: PropTypes.string,
+    level: PropTypes.string.isRequired,
+    scope: PropTypes.number.isRequired,
     location: PropTypes.object,
     style: PropTypes.object,
     chartData: PropTypes.array,
@@ -20,7 +21,6 @@ export default class ChartBoard extends PureComponent {
   }
 
   static defaultProps = {
-    level: '',
     location: {},
     style: {},
     chartData: [],
@@ -28,7 +28,7 @@ export default class ChartBoard extends PureComponent {
   }
 
   render() {
-    const { chartData, location, level, style } = this.props;
+    const { chartData, location, level, style, scope } = this.props;
     return (
       <div className={styles.board} style={style}>
         {/* <Loading loading={loading} /> */}
@@ -46,6 +46,7 @@ export default class ChartBoard extends PureComponent {
                     chartData={item}
                     location={location}
                     level={location.query.level || level}
+                    scope={scope}
                   />
                 </Col>
               );

@@ -40,9 +40,8 @@ export default class PerformanceChartBoard extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { location: { query } } = this.props;
     this.state = {
-      showChart: query.showChart || 'zhuzhuangtu',
+      showChart: 'zhuzhuangtu',
     };
   }
 
@@ -106,6 +105,7 @@ export default class PerformanceChartBoard extends PureComponent {
               chartData={chartData}
               location={location}
               level={level}
+              scope={scope}
             />
           )
         }

@@ -27,13 +27,13 @@ export default class ChartBarNormal extends PureComponent {
 
   static propTypes = {
     location: PropTypes.object,
-    level: PropTypes.string,
+    level: PropTypes.string.isRequired,
+    scope: PropTypes.number.isRequired,
     chartData: PropTypes.object,
     iconType: PropTypes.string,
   }
 
   static defaultProps = {
-    level: '',
     location: {},
     chartData: {},
     iconType: 'zichan',
@@ -77,15 +77,9 @@ export default class ChartBarNormal extends PureComponent {
   }
 
   render() {
-    // todo未对数据为空进行判断，导致初始页面不渲染
-    // const { chartData } = this.props;
-    const {
-      chartData: { name, key, orgModel = [] },
-      location: { query },
-      level,
-    } = this.props;
-    let { chartData: { unit } } = this.props;
-    const levelAndScope = query.scope ? Number(query.scope) : Number(level) + 1;
+    const { scope, chartData: { indiModel: { name, key }, orgModel = [] } } = this.props;
+    let { chartData: { indiModel: { unit } } } = this.props;
+    const levelAndScope = Number(scope);
 
     const levelName = `level${levelAndScope}Name`;
     // 分公司名称数组

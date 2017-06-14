@@ -31,13 +31,13 @@ export default class ChartBarStack extends PureComponent {
 
   static propTypes = {
     location: PropTypes.object,
-    level: PropTypes.string,
+    level: PropTypes.string.isRequired,
+    scope: PropTypes.number.isRequired,
     chartData: PropTypes.object,
     iconType: PropTypes.string,
   }
 
   static defaultProps = {
-    level: '',
     location: {},
     chartData: {},
     iconType: 'zichan',
@@ -72,15 +72,11 @@ export default class ChartBarStack extends PureComponent {
   }
 
   render() {
-    const {
-      chartData: { name, key, orgModel = [] },
-      location: { query },
-      level,
-    } = this.props;
+    const { scope, chartData: { indiModel: { name, key }, orgModel = [] } } = this.props;
     // 获取本图表的单位,
-    let { chartData: { unit } } = this.props;
+    let { chartData: { indiModel: { unit } } } = this.props;
     // 查询当前需要的Y轴字段名称
-    const levelAndScope = query.scope ? Number(query.scope) : Number(level) + 1;
+    const levelAndScope = Number(scope);
     const levelName = `level${levelAndScope}Name`;
     // 分公司名称数组
     const levelCompanyArr = getLevelName(orgModel, 'level2Name');
