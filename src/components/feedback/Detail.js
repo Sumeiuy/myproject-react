@@ -4,7 +4,7 @@
  * @author yangquanjian
  */
 
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
 import { Row, Col, Modal } from 'antd';
 import ProblemHandling from './ProblemHandling';
 import styles from './detail.less';

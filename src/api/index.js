@@ -32,5 +32,7 @@ export default {
 
   // ----------以下是feedback的数据接口
 
+  getFeedbackList: query => api.post('/groovynoauth/feedback/queryFeedbackList', query),
+
   // ==========feedback的数据接口end
 };

@@ -4,14 +4,60 @@
  * @author yangquanjian
  */
 
-import React, { PureComponent } from 'react';
+import React, { PureComponent, PropTypes } from 'react';
+import { connect } from 'react-redux';
+import { withRouter, routerRedux } from 'dva/router';
 import { Row, Col } from 'antd';
+// import _ from 'lodash';
 import Detail from '../../components/feedback/Detail';
+import FeedbackList from '../../components/feedback/FeedbackList';
 import styles from './home.less';
 
+const mapStateToProps = state => ({
+  list: state.feedback.list,
+});
+
+const getDataFunction = loading => query => ({
+  type: 'feedback/getFeedbackList',
+  payload: query || {},
+  loading,
+});
+
+const mapDispatchToProps = {
+  getFeedbackList: getDataFunction(true),
+  push: routerRedux.push,
+};
+
+@connect(mapStateToProps, mapDispatchToProps)
+@withRouter
 export default class FeedBack extends PureComponent {
+  static propTypes = {
+    list: PropTypes.object.isRequired,
+    getFeedbackList: PropTypes.func.isRequired,
+    location: PropTypes.object.isRequired,
+    push: PropTypes.func.isRequired,
+  }
+
+  static defaultProps = {
+
+  }
+
+  // constructor(props) {
+  //   super(props);
+  // }
+
+  componentWillMount() {
+    const { getFeedbackList, location: { query } } = this.props;
+    // 默认筛选条件
+    getFeedbackList({
+      ...query,
+      pageNum: 1,
+      pageSize: 10,
+    });
+  }
 
   render() {
+    const { list, location, getFeedbackList } = this.props;
     return (
       <div className={styles.feedbackbox}>
         <div className="tab-box">
@@ -19,17 +65,11 @@ export default class FeedBack extends PureComponent {
         </div>
         <Row>
           <Col span="10">
-            <h3>列表</h3>
-            <ul>
-              <li>最好能看到流失客户的信息，方便及时维护，最好能看到流...</li>
-              <li>最好能看到流失客户的信息，方便及时维护，最好能看到流...</li>
-              <li>最好能看到流失客户的信息，方便及时维护，最好能看到流...</li>
-              <li>最好能看到流失客户的信息，方便及时维护，最好能看到流...</li>
-              <li>最好能看到流失客户的信息，方便及时维护，最好能看到流...</li>
-              <li>最好能看到流失客户的信息，方便及时维护，最好能看到流...</li>
-              <li>最好能看到流失客户的信息，方便及时维护，最好能看到流...</li>
-              <li>最好能看到流失客户的信息，方便及时维护，最好能看到流...</li>
-            </ul>
+            <FeedbackList
+              list={list}
+              location={location}
+              getFeedbackList={getFeedbackList}
+            />
           </Col>
           <Col span="14">
             <Detail />
