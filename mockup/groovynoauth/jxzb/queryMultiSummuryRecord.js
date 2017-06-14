@@ -22,11 +22,17 @@ exports.response = function (req, res) {
             },
             "indicatorDataList": [
               {
-                "key": "tgInNum",
-                "name": "投顾入岗人数",
-                "value": "0",
+                "key": "keya",
+                "name": "a",
+                "value": "10",
                 "unit": "人",
-                "description": null
+                "description": null,
+              },{
+                "key": "keyb",
+                "name": "b",
+                "value": "20",
+                "unit": "人",
+                "description": null,
               }, {
                 "key": "currSignCustNum",
                 "name": "签约客户数",
@@ -836,7 +842,20 @@ exports.response = function (req, res) {
             "name": "投顾入岗人数",
             "value": null,
             "unit": "人",
-            "description": null
+            "description": null,
+            "children": [{
+              "key": "keya",
+              "name": "a",
+              "value": null,
+              "unit": "人",
+              "description": null,
+            },{
+              "key": "keyb",
+              "name": "b",
+              "value": null,
+              "unit": "人",
+              "description": null,
+            }]
           }, {
             "key": "currSignCustNum",
             "name": "签约客户数",

@@ -92,11 +92,7 @@ export default class BusinessHome extends PureComponent {
   }
 
   componentWillMount() {
-    const { location: { query }, getAllCategorys } = this.props;
-    const { boardId } = this.state;
-    getAllCategorys({
-      boardId,
-    });
+    const { location: { query } } = this.props;
     this.getInfo({
       ...query,
       scope: query.scope || Number(query.custRangeLevel) + 1,
@@ -259,7 +255,7 @@ export default class BusinessHome extends PureComponent {
       custRange,
     } = this.props;
     const { showCharts } = this.state;
-    const level = location.query.custRangeLevel || (custRange[0] && custRange[0].level);
+    const level = query.custRangeLevel || (custRange[0] && custRange[0].level);
     const scope = Number(query.scope) || (custRange[0] && Number(custRange[0].level) + 1);
     if (!custRange || !custRange.length) {
       return null;

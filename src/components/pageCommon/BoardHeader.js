@@ -38,6 +38,7 @@ export default class BoardHeader extends PureComponent {
     indexID: PropTypes.string,
     scope: PropTypes.number.isRequired,
     getTableInfo: PropTypes.func,
+    showChart: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -49,32 +50,27 @@ export default class BoardHeader extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { location: { query, pathname }, scope } = this.props;
-    if (pathname.indexOf('invest') > -1) {
-      this.state = {
-        scopeSelectValue: String(scope),
-        showChart: query.showChart || 'zhuzhuangtu',
-        orderType: query.orderType || 'desc',
-      };
-    } else {
-      this.state = {
-        scopeSelectValue: String(scope),
-        showChart: 'zhuzhuangtu',
-        orderType: 'desc',
-      };
-    }
+    const { scope, showChart } = this.props;
+    this.state = {
+      scopeSelectValue: String(scope),
+      showChart: showChart || 'zhuzhuangtu',
+      orderType: 'desc',
+    };
   }
 
   componentWillReceiveProps(nextProps) {
     const { location: { query: { orgId } } } = nextProps;
     const { location: { query: { orgId: preOrgId } } } = this.props;
-    const { level } = nextProps;
+    const { level, showChart } = nextProps;
     const { level: preLevel } = this.props;
     if (preLevel !== level || orgId !== preOrgId) {
       this.setState({
         scopeSelectValue: String(Number(level) + 1),
       });
     }
+    this.setState({
+      showChart,
+    });
   }
 
   @autobind
@@ -87,36 +83,20 @@ export default class BoardHeader extends PureComponent {
   @autobind
   handleIconClick(type) {
     const {
-      replace,
-      location: { query, pathname },
       updateShowCharts,
       indexID,
       selfRequestData,
       getTableInfo,
     } = this.props;
     const { orderType } = this.state;
-    // 判断是否在 invest 页面
-    if (pathname.indexOf('invest') === -1) {
-      if (type === 'zhuzhuangtu') {
-        selfRequestData({
-          categoryKey: indexID,
-          orderType,
-        });
-      } else {
-        getTableInfo({
-          categoryKey: indexID,
-        });
-      }
+    if (type === 'zhuzhuangtu') {
+      selfRequestData({
+        categoryKey: indexID,
+        orderType,
+      });
     } else {
-      // 在绩效视图页面里的时候，更改 url
-      replace({
-        pathname,
-        query: {
-          ...query,
-          showChart: type,
-          page: type !== 'tables' ? '1' : query.page,
-          indexID,
-        },
+      getTableInfo({
+        categoryKey: indexID,
       });
     }
     this.setState({
@@ -128,23 +108,17 @@ export default class BoardHeader extends PureComponent {
 
   @autobind
   handleSortChange(column, value) {
-    const { replace, location: { query, pathname }, indexID, selfRequestData } = this.props;
-    if (pathname.indexOf('invest') > -1) {
-      replace({
-        pathname,
-        query: {
-          ...query,
-          [column]: value,
-        },
-      });
-    } else {
-      // business页面需要的逻辑处理
-      this.setState({
-        orderType: value,
-      });
+    const { indexID, selfRequestData, getTableInfo } = this.props;
+    const { showChart } = this.state;
+    if (showChart === 'zhuzhuangtu') {
       selfRequestData({
         categoryKey: indexID,
-        orderType: value,
+        [column]: value,
+      });
+    } else {
+      getTableInfo({
+        categoryKey: indexID,
+        [column]: value,
       });
     }
   }

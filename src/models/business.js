@@ -64,11 +64,11 @@ export default {
       };
     },
     getChartTableInfoSuccess(state, action) {
-      const { payload: { resChartTableInfo } } = action;
+      const { payload: { resChartTableInfo, categoryKey } } = action;
       const chartTable = resChartTableInfo.resultData;
       const newChartTableInfo = chartTable.data;
       // todo 按照 ID 来存储相应数据
-      const chartTableId = chartTable.key;
+      const chartTableId = categoryKey;
       const preChartTableInfo = state.chartTableInfo;
       return {
         ...state,
@@ -160,9 +160,10 @@ export default {
     // 获取图表表格视图数据
     * getChartTableInfo({ payload }, { call, put }) {
       const resChartTableInfo = yield call(api.getChartTableInfo, payload);
+      const categoryKey = payload.categoryKey;
       yield put({
         type: 'getChartTableInfoSuccess',
-        payload: { resChartTableInfo },
+        payload: { resChartTableInfo, categoryKey },
       });
     },
   },

@@ -61,29 +61,18 @@ export default class ChartTable extends PureComponent {
 
   // 分页事件
   @autobind
-  handlePaginationChange(page, pageSize) {
-    const { replace, location: { query, pathname }, getTableInfo, indexID } = this.props;
+  handlePaginationChange(page) {
+    const { getTableInfo, indexID } = this.props;
     const { orderIndicatorId, orderType } = this.state;
-    if (pathname.indexOf('invest') > -1) {
-      replace({
-        pathname,
-        query: {
-          ...query,
-          page,
-          pageSize,
-        },
-      });
-    } else {
-      this.setState({
-        pageNum: page,
-      });
-      getTableInfo({
-        pageNum: page,
-        orderIndicatorId,
-        orderType,
-        indicatorId: indexID,
-      });
-    }
+    this.setState({
+      pageNum: page,
+    });
+    getTableInfo({
+      pageNum: page,
+      orderIndicatorId,
+      orderType,
+      categoryKey: indexID,
+    });
   }
 
   @autobind
@@ -114,68 +103,41 @@ export default class ChartTable extends PureComponent {
 
   @autobind
   handleTitleClick(item) {
-    const { replace, location: { query, pathname }, getTableInfo, indexID } = this.props;
+    const { getTableInfo, indexID } = this.props;
     const { orderIndicatorId, orderType, pageNum } = this.state;
     let tableOrderType;
-    if (pathname.indexOf('invest') > -1) {
-      if (query.orderIndicatorId === item.key) {
-        tableOrderType = revert[query.tableOrderType] || 'desc';
-      } else {
-        tableOrderType = 'asc';
-      }
-      replace({
-        pathname,
-        query: {
-          ...query,
-          orderIndicatorId: item.key || '',
-          tableOrderType,
-        },
-      });
+    if (orderIndicatorId === item.key) {
+      tableOrderType = revert[orderType] || 'desc';
     } else {
-      if (orderIndicatorId === item.key) {
-        tableOrderType = revert[orderType] || 'desc';
-      } else {
-        tableOrderType = 'asc';
-      }
-      this.setState({
-        orderIndicatorId: item.key,
-        orderType: tableOrderType,
-      });
-      getTableInfo({
-        orderIndicatorId: item.key,
-        orderType: tableOrderType,
-        pageNum,
-        indicatorId: indexID,
-      });
+      tableOrderType = 'asc';
     }
+    this.setState({
+      orderIndicatorId: item.key,
+      orderType: tableOrderType,
+    });
+    getTableInfo({
+      orderIndicatorId: item.key,
+      orderType: tableOrderType,
+      pageNum,
+      categoryKey: indexID,
+    });
   }
   // 表格标题排序箭头事件
   @autobind
   arrowHandle(e, item, type) {
-    const { replace, location: { query, pathname }, getTableInfo, indexID } = this.props;
+    const { getTableInfo, indexID } = this.props;
     const { pageNum } = this.state;
     e.stopPropagation();
-    if (pathname.indexOf('invest') > -1) {
-      replace({
-        pathname,
-        query: {
-          ...query,
-          orderIndicatorId: item.key || '',
-          tableOrderType: type,
-        },
-      });
-    } else {
-      this.setState({
-        orderIndicatorId: item.key,
-        orderType: type,
-      });
-      getTableInfo({
-        orderIndicatorId: item.key,
-        orderType: type,
-        pageNum,
-        indicatorId: indexID,
-      });
-    }
+    this.setState({
+      orderIndicatorId: item.key,
+      orderType: type,
+    });
+    getTableInfo({
+      orderIndicatorId: item.key,
+      orderType: type,
+      pageNum,
+      categoryKey: indexID,
+    });
   }
   // 表格第一列 tooltip 处理事件
   @autobind
