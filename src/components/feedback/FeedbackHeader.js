@@ -31,38 +31,43 @@ export default class PageHeader extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
-  }
-
-  constructor(props) {
-    super(props);
-    const { location } = this.props;
-    this.state = {
-      // url
-      url: location,
-    };
-    console.log('this.state', this.state);
+    replace: PropTypes.func.isRequired,
   }
 
   @autobind
-  handleTypeChange(value) {
-    const { push } = this.props;
-    // const { key } = value;
-    console.log('value', value);
+  handleTypeChange(key) {
+    console.log('key', key);
+    const { replace, location: { query } } = this.props;
     // 做跳转页面逻辑处理
-    const url = '?typeName=key[0]';
-    push(url);
-    console.log(`selected ${value}`);
+    // const url = '?typeKey=${key}';
+    // push(url);
+    const typeName = `${key}`;
+    console.log(`selected ${key}`);
+    replace({
+      pathname: '/feedback',
+      query: {
+        ...query,
+        typeName,
+      },
+    });
   }
 
   @autobind
-  handleQuestionChange(value) {
-    const { push } = this.props;
-    // const { key } = value;
-    console.log('value', value);
+  handleQuestionChange(key) {
+    console.log('key', key);
+    const { replace, location: { query } } = this.props;
     // 做跳转页面逻辑处理
-    const url = '?QuestionName=key[0]';
-    push(url);
-    console.log(`selected ${value}`);
+    // const url = '?typeKey=${key}';
+    // push(url);
+    const QuestionName = `${key}`;
+    console.log(`selected ${key}`);
+    replace({
+      pathname: '/feedback',
+      query: {
+        ...query,
+        QuestionName,
+      },
+    });
   }
 
   @autobind
@@ -80,6 +85,8 @@ export default class PageHeader extends PureComponent {
     const getSelectOption = item => item.map(i =>
       <Option key={i.value}>{i.label}</Option>,
     );
+
+
     return (
       <div className="feedbackHeader">
         模块: <Cascader options={channelOptions} onChange={this.handleChange} changeOnSelect />
