@@ -21,14 +21,14 @@ const optionsMap = {
   ],
   // 时间选择
   time: [
-    /** {
+    {
       key: 'beforeLastMonth',
       name: '上上月',
     },
     {
       key: 'lastMonth',
       name: '上月',
-    }, */
+    },
     {
       key: 'month',
       name: '本月',

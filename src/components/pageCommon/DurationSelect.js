@@ -48,14 +48,14 @@ export default class DurationSelect extends PureComponent {
   handleDurationChange(e) {
     const value = e.target.value;
     const obj = getDurationString(value);
-    const { replace, location: { query } } = this.props;
+    const { replace, location: { query, pathname } } = this.props;
     this.setState({
       open: false,
       ...obj,
     });
     // 需要改变query中的查询变量
     replace({
-      pathname: '/invest',
+      pathname,
       query: {
         ...query,
         begin: obj.begin,

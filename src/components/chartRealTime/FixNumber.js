@@ -26,10 +26,10 @@ const FixNumber = {
     // 3.超过亿元的，以‘亿元’为单位
     if (MaxMoney > 100000000) {
       newUnit = '亿元';
-      newSeries = series.map(item => this.toFixedDecimal(item / 100000000));
+      newSeries = series.map(item => FixNumber.toFixedDecimal(item / 100000000));
     } else if (MaxMoney > 10000) {
       newUnit = '万元';
-      newSeries = series.map(item => this.toFixedDecimal(item / 10000));
+      newSeries = series.map(item => FixNumber.toFixedDecimal(item / 10000));
     }
 
     return {

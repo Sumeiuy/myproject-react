@@ -43,13 +43,13 @@ function padFixedMoney(m, method) {
 }
 
 function padFixedPeople(people, method) {
-  const money = Math.abs(people);
+  const p = Math.abs(people);
   let value = 0;
-  if (money >= 10000) {
+  if (p >= 10000) {
     value = Math[method](people / 1000) * 1000;
-  } else if (money >= 100) {
+  } else if (p > 200) {
     value = Math[method](people / 100) * 100;
-  } else if (money < 100) {
+  } else if (p <= 200) {
     value = Math[method](people / 10) * 10;
   }
   return value;
@@ -95,14 +95,17 @@ const chartData = {
    */
   getStackSeries(orgModel, key, stack) {
     const stackSeries = [];
+    const stackLegend = [];
     // 设置一个uniqueStack值
     const now = moment().format('x');
     const uniqueStack = `${stack}-${now}`;
     if (orgModel) {
       // 首先确定stackSeries的长度
-      const stackLen = orgModel[0].children.length;
+      const stackLen = orgModel[0][key].length;
       // 取出stackSeries数组
       for (let i = 0; i < stackLen; i++) {
+        const name = orgModel[0][key][i].name;
+        stackLegend.push(name);
         const stackObj = {
           label: {
             normal: {
@@ -111,11 +114,11 @@ const chartData = {
           },
           stack: uniqueStack,
           type: 'bar',
-          name: orgModel[0].children[i].name,
+          name,
         };
         const data = [];
         orgModel.forEach((item) => {
-          let stackValue = item.children[i].value;
+          let stackValue = item[key][i].value;
           if (stackValue === '' || stackValue === 'null' || stackValue === null || stackValue === undefined) {
             stackValue = 0;
           }
@@ -130,7 +133,10 @@ const chartData = {
         stackSeries.push(stackObj);
       }
     }
-    return stackSeries;
+    return {
+      series: stackSeries,
+      legends: stackLegend,
+    };
   },
 
   /**
@@ -213,12 +219,12 @@ const chartData = {
     let min = -100;
     if (plus.max === 0 && minus.min !== 0) {
       // 当正值的最大值是0的时候，只存在负值
-      max = Math.ceil((minus.max / 10)) * 10;
+      max = 0;
       min = Math.floor((minus.min / 10)) * 10;
     } else if (minus.min === 0 && plus.max !== 0) {
       // 当负值的最小值为0的时候，只存在正值
       max = Math.ceil((plus.max / 10)) * 10;
-      min = Math.floor((plus.min / 10)) * 10;
+      min = 0;
     } else if (plus.max !== 0 && minus.min !== 0) {
       // 其余有正有负的情况，均是0的情况为默认值
       max = Math.ceil((plus.max / 10)) * 10;
@@ -238,12 +244,12 @@ const chartData = {
     let min = -10;
     if (plus.max === 0 && minus.min !== 0) {
        // 当正值的最大值是0的时候，只存在负值
-      max = Math.ceil(minus.max);
+      max = 0;
       min = Math.floor(minus.min);
     } else if (minus.min === 0 && plus.max !== 0) {
       // 当负值的最小值为0的时候，只存在正值
       max = Math.ceil(plus.max);
-      min = Math.floor(plus.min);
+      min = 0;
     } else if (plus.max !== 0 && minus.min !== 0) {
       // 其余有正有负的情况，均是0的情况为默认值
       max = Math.ceil(plus.max);
@@ -259,12 +265,12 @@ const chartData = {
     let min = -10;
     if (plus.max === 0 && minus.min !== 0) {
       // 当正值的最大值是0的时候，只存在负值
-      max = padFixedMoney(minus.max, 'ceil');
+      max = 0;
       min = padFixedMoney(minus.min, 'floor');
     } else if (minus.min === 0 && plus.max !== 0) {
       // 当负值的最小值为0的时候，只存在正值
       max = padFixedMoney(plus.max, 'ceil');
-      min = padFixedMoney(plus.min, 'floor');
+      min = 0;
     } else if (plus.max !== 0 && minus.min !== 0) {
       // 其余有正有负的情况，均是0的情况为默认值
       max = padFixedMoney(plus.max, 'ceil');
@@ -280,18 +286,29 @@ const chartData = {
     let min = -10;
     if (plus.max === 0 && minus.min !== 0) {
       // 当正值的最大值是0的时候，只存在负值
-      max = padFixedPeople(minus.max, 'ceil');
+      max = 0;
       min = padFixedPeople(minus.min, 'floor');
     } else if (minus.min === 0 && plus.max !== 0) {
       // 当负值的最小值为0的时候，只存在正值
       max = padFixedPeople(plus.max, 'ceil');
-      min = padFixedPeople(plus.min, 'floor');
+      min = 0;
     } else if (plus.max !== 0 && minus.min !== 0) {
       // 其余有正有负的情况，均是0的情况为默认值
       max = padFixedPeople(plus.max, 'ceil');
       min = padFixedPeople(minus.min, 'floor');
     }
     return { max, min };
+  },
+
+  fixedStackLegendData(legends) {
+    const newLegends = legends.map((item) => {
+      const obj = {
+        icon: 'circle',
+        name: item,
+      };
+      return obj;
+    });
+    return newLegends;
   },
 };
 

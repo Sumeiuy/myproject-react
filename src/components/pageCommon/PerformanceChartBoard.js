@@ -18,29 +18,30 @@ export default class PerformanceChartBoard extends PureComponent {
     replace: PropTypes.func.isRequired,
     level: PropTypes.string,
     scope: PropTypes.number.isRequired,
+    getTableInfo: PropTypes.func,
     boardTitle: PropTypes.string.isRequired,
     postExcelInfo: PropTypes.func.isRequired,
     showScopeOrder: PropTypes.bool.isRequired,
     location: PropTypes.object.isRequired,
     indexID: PropTypes.string,
-    indexKey: PropTypes.string,
+    selfRequestData: PropTypes.func,
   }
 
   static defaultProps = {
     indexID: '',
-    indexKey: '',
     location: {},
     chartData: [],
     chartTableInfo: {},
     level: '',
+    getTableInfo: () => {},
     repalce: () => {},
+    selfRequestData: () => {},
   }
 
   constructor(props) {
     super(props);
-    const { location: { query } } = this.props;
     this.state = {
-      showChart: query.showChart || 'zhuzhuangtu',
+      showChart: 'zhuzhuangtu',
     };
   }
 
@@ -63,13 +64,13 @@ export default class PerformanceChartBoard extends PureComponent {
       postExcelInfo,
       boardTitle,
       showScopeOrder,
-      indexKey,
       indexID,
+      selfRequestData,
+      getTableInfo,
     } = this.props;
     if (!(chartData && chartData.length) && showChart !== 'tables') {
       return null;
     }
-
     return (
       <div className="investPerformanceBoard">
         <BoardHeader
@@ -82,7 +83,8 @@ export default class PerformanceChartBoard extends PureComponent {
           changeBoard={this.changeBoard}
           showScopeOrder={showScopeOrder}
           indexID={indexID}
-          indexKey={indexKey}
+          selfRequestData={selfRequestData}
+          getTableInfo={getTableInfo}
         />
         {/* 根据 url 里的 showChart 来显示不同的组件 */}
         {
@@ -90,9 +92,11 @@ export default class PerformanceChartBoard extends PureComponent {
           (
             <ChartTable
               chartTableInfo={chartTableInfo}
+              getTableInfo={getTableInfo}
               replace={replace}
               level={level}
               location={location}
+              indexID={indexID}
             />
           )
           :
@@ -101,6 +105,7 @@ export default class PerformanceChartBoard extends PureComponent {
               chartData={chartData}
               location={location}
               level={level}
+              scope={scope}
             />
           )
         }

@@ -145,6 +145,7 @@ export default class CustRange extends PureComponent {
     document.querySelector(constants.container).dispatchEvent(evt);
   }
 
+  @autobind
   handleDropDownMousewheel(e = window.event) {
     if (e.stopPropagation) {
       e.stopPropagation();
@@ -153,10 +154,13 @@ export default class CustRange extends PureComponent {
     }
   }
 
+  @autobind
   addDropDownMouseWheel() {
     const elem = document.querySelector('.ant-select-tree-dropdown');
-    elem.addEventListener('mousewheel', this.handleDropDownMousewheel, false);
-    elem.addEventListener('DOMMouseScroll', this.handleDropDownMousewheel, false);
+    if (elem) {
+      elem.addEventListener('mousewheel', this.handleDropDownMousewheel, false);
+      elem.addEventListener('DOMMouseScroll', this.handleDropDownMousewheel, false);
+    }
   }
 
   render() {
