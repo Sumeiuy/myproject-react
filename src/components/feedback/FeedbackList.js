@@ -1,4 +1,5 @@
 import React, { PropTypes, PureComponent } from 'react';
+import ReactDOM from 'react-dom';
 import { autobind } from 'core-decorators';
 import { Table } from 'antd';
 import classnames from 'classnames';
@@ -63,8 +64,29 @@ export default class FeedbackList extends PureComponent {
   @autobind
   handleRowClick(record, index) {
     console.log('record---->', record, 'index---->', index);
+    const { curSelectedRow: prevSelectedRow } = this.state;
+    /* eslint-disable */
+    const prevRowElem =
+      ReactDOM.findDOMNode(document.querySelector(`.feedbackTable table > tbody > tr:nth-child(${prevSelectedRow + 1})`));
+    /* eslint-enable */
+    if (prevRowElem) {
+      // 偶数行
+      if (prevSelectedRow % 2 === 0) {
+        prevRowElem.style.backgroundColor = '#f9f9f9';
+      } else {
+        prevRowElem.style.backgroundColor = '#ffffff';
+      }
+    }
     this.setState({
       curSelectedRow: index,
+    }, () => {
+      /* eslint-disable */
+      const currentRowElem =
+        ReactDOM.findDOMNode(document.querySelector(`.feedbackTable table > tbody > tr:nth-child(${index + 1})`));
+      /* eslint-enable */
+      if (currentRowElem) {
+        currentRowElem.style.backgroundColor = '#e4eef8';
+      }
     });
   }
 
