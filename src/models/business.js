@@ -2,9 +2,6 @@
  * @file models/business.js
  * @author sunweibin
  */
-
-// import { routerRedux } from 'dva/router';
-
 import api from '../api';
 import config from '../config/request';
 
@@ -132,7 +129,7 @@ export default {
         ...payload.chartInfo,
         localScope: payload.chartInfo.localScope || firstCust.level,
         orgId: payload.chartInfo.orgId || firstCust.id,
-        scope: payload.chartInfo.scope || parseInt(firstCust.level, 10) + 1,
+        scope: payload.chartInfo.scope || String(Number(firstCust.level) + 1),
       });
       yield put({
         type: 'getChartInfoSuccess',

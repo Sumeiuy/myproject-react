@@ -18,10 +18,8 @@ import styles from './Home.less';
 
 const effects = {
   allInfo: 'invest/getAllInfo',
-  performance: 'invest/getPerformance',
-  chartInfo: 'invest/getChartInfo',
-  custRange: 'invest/getCustRange',
   chartTableInfo: 'invest/getChartTableInfo',
+  oneChartInfo: 'invest/getOneChartInfo',
   exportExcel: 'invest/exportExcel',
 };
 
@@ -35,18 +33,14 @@ const mapStateToProps = state => ({
   performance: state.invest.performance,
   chartInfo: state.invest.chartInfo,
   chartTableInfo: state.invest.chartTableInfo,
-  // chartLoading: state.loading.effects[effects.chartInfo],
   custRange: state.invest.custRange,
-  excelInfo: state.invest.excelInfo,
   globalLoading: state.activity.global,
 });
 
 const mapDispatchToProps = {
   getAllInfo: fectchDataFunction(true, effects.allInfo),
-  getPerformance: fectchDataFunction(true, effects.performance),
-  getChartInfo: fectchDataFunction(true, effects.chartInfo),
   getChartTableInfo: fectchDataFunction(true, effects.chartTableInfo),
-  getCustRange: fectchDataFunction(false, effects.custRange),
+  getOneChartInfo: fectchDataFunction(true, effects.oneChartInfo),
   exportExcel: fectchDataFunction(true, effects.exportExcel),
   push: routerRedux.push,
   replace: routerRedux.replace,
@@ -59,16 +53,13 @@ export default class InvestHome extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
     getAllInfo: PropTypes.func.isRequired,
-    getPerformance: PropTypes.func.isRequired,
     performance: PropTypes.array,
-    getChartInfo: PropTypes.func.isRequired,
     chartInfo: PropTypes.array,
     getChartTableInfo: PropTypes.func.isRequired,
     chartTableInfo: PropTypes.object,
+    getOneChartInfo: PropTypes.func.isRequired,
     exportExcel: PropTypes.func.isRequired,
-    // chartLoading: PropTypes.bool,
     globalLoading: PropTypes.bool,
-    getCustRange: PropTypes.func.isRequired,
     custRange: PropTypes.array,
     replace: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
@@ -78,7 +69,6 @@ export default class InvestHome extends PureComponent {
     performance: [],
     chartInfo: [],
     chartTableInfo: {},
-    // chartLoading: false,
     globalLoading: false,
     custRange: [],
   }
@@ -99,7 +89,6 @@ export default class InvestHome extends PureComponent {
     const { location: { query } } = this.props;
     this.getInfo({
       ...query,
-      scope: query.scope || Number(query.custRangeLevel) + 1,
     });
   }
 
@@ -137,12 +126,6 @@ export default class InvestHome extends PureComponent {
   }
 
   @autobind
-  setGlobalState(obj) {
-    this.setState({
-      ...obj,
-    });
-  }
-  @autobind
   getApiParams(param) {
     const { custRange, location: { query } } = this.props;
     const duration = this.state;
@@ -179,40 +162,51 @@ export default class InvestHome extends PureComponent {
 
   @autobind
   getInfo(queryObj) {
-    const { getAllInfo, location: { query } } = this.props;
-    const obj = this.state;
+    const { getAllInfo } = this.props;
+    const { begin, cycleType, end, boardId } = this.state;
+    const {
+      begin: qBegin,
+      cycleType: qCycleType,
+      end: qEnd,
+      orgId,
+      custRangeLevel,
+      scope,
+    } = queryObj;
+
     const payload = {
-      orgId: queryObj.orgId || '',
-      begin: queryObj.begin || obj.begin,
-      end: queryObj.end || obj.end,
-      cycleType: queryObj.cycleType || obj.cycleType,
-      localScope: queryObj.custRangeLevel,
-      boardId: queryObj.boardId || query.boardId || '1',
+      orgId: orgId || '',
+      begin: qBegin || begin,
+      end: qEnd || end,
+      cycleType: qCycleType || cycleType,
+      localScope: custRangeLevel,
+      boardId,
+      scope,
     };
+    const empId = getEmpId();
     getAllInfo({
       custRange: {
-        empId: getEmpId(),
+        empId,
       },
       performance: {
-        scope: queryObj.custRangeLevel,
-        ..._.pick(payload, ['orgId', 'begin', 'end', 'cycleType', 'localScope', 'boardId']),
+        ...payload,
+        scope: custRangeLevel,
       },
       chartInfo: {
-        scope: queryObj.scope || Number(queryObj.custRangeLevel) + 1,
-        orderType: queryObj.orderType || '',
-        ..._.pick(payload, ['orgId', 'begin', 'end', 'cycleType', 'localScope', 'boardId']),
+        ...payload,
       },
-      chartTableInfo: {
-        ..._.pick(payload, ['orgId', 'localScope', 'begin', 'end', 'cycleType', 'boardId']),
-        scope: queryObj.scope || Number(queryObj.custRangeLevel) + 1,
-        orderType: queryObj.orderType || '',
-        pageSize: 10,
-        pageNum: queryObj.page || '1',
-      },
-      showChart: query.showChart,
     });
   }
 
+  @autobind
+  updateShowCharts(categoryId, type) {
+    const { showCharts } = this.state;
+    this.setState({
+      showCharts: {
+        ...showCharts,
+        [categoryId]: type,
+      },
+    });
+  }
   // 导出 excel 文件
   @autobind
   handleExportExcel() {
@@ -231,17 +225,15 @@ export default class InvestHome extends PureComponent {
     };
     exportExcel({ query: queryToString(data) });
   }
-  // 更新 showChart
+
+  // 获取单个卡片接口
   @autobind
-  updateShowCharts(categoryId, type) {
-    const { showCharts } = this.state;
-    this.setState({
-      showCharts: {
-        ...showCharts,
-        [categoryId]: type,
-      },
-    });
+  selfRequestData(param) {
+    const { getOneChartInfo } = this.props;
+    const payload = this.getApiParams(param);
+    getOneChartInfo(payload);
   }
+
   render() {
     const {
       performance,
@@ -264,7 +256,6 @@ export default class InvestHome extends PureComponent {
           location={location}
           replace={replace}
           custRange={custRange}
-          selectDefault="invest"
         />
         <div className={styles.reportBody}>
           <div className={styles.reportPart}>
@@ -300,25 +291,6 @@ export default class InvestHome extends PureComponent {
                 </div>
               );
             })
-          }
-          {
-            /**
-             * <div className={styles.reportPart}>
-            <PreformanceChartBoard
-              chartData={chartInfo}
-              chartTableInfo={chartTableInfo}
-              postExcelInfo={this.handleExportExcel}
-              level={level}
-              scope={scope}
-              location={location}
-              replace={replace}
-              indexID={'a'}
-              loading={false}
-              boardTitle={'指标分布'}
-              showScopeOrder
-            />
-          </div>
-             */
           }
         </div>
       </div>

@@ -53,6 +53,7 @@ export default class BoardHeader extends PureComponent {
     const { scope, showChart } = this.props;
     this.state = {
       scopeSelectValue: String(scope),
+      scope: String(scope),
       showChart: showChart || 'zhuzhuangtu',
       orderType: 'desc',
     };
@@ -61,11 +62,12 @@ export default class BoardHeader extends PureComponent {
   componentWillReceiveProps(nextProps) {
     const { location: { query: { orgId } } } = nextProps;
     const { location: { query: { orgId: preOrgId } } } = this.props;
-    const { level, showChart } = nextProps;
+    const { level, showChart, scope } = nextProps;
     const { level: preLevel } = this.props;
     if (preLevel !== level || orgId !== preOrgId) {
       this.setState({
         scopeSelectValue: String(Number(level) + 1),
+        scope,
       });
     }
     this.setState({
@@ -88,15 +90,17 @@ export default class BoardHeader extends PureComponent {
       selfRequestData,
       getTableInfo,
     } = this.props;
-    const { orderType } = this.state;
+    const { orderType, scope } = this.state;
     if (type === 'zhuzhuangtu') {
       selfRequestData({
         categoryKey: indexID,
         orderType,
+        scope,
       });
     } else {
       getTableInfo({
         categoryKey: indexID,
+        scope,
       });
     }
     this.setState({
@@ -121,6 +125,9 @@ export default class BoardHeader extends PureComponent {
         [column]: value,
       });
     }
+    this.setState({
+      [column]: value,
+    });
   }
 
   @autobind

@@ -19,7 +19,6 @@ import styles from './Home.less';
 const effects = {
   allInfo: 'business/getAllInfo',
   chartTableInfo: 'business/getChartTableInfo',
-  allCategorys: 'business/getAllCategorys',
   oneChartInfo: 'business/getOneChartInfo',
   exportExcel: 'business/exportExcel',
 };
@@ -33,7 +32,6 @@ const fectchDataFunction = (globalLoading, type) => query => ({
 const mapStateToProps = state => ({
   performance: state.business.performance,
   chartInfo: state.business.chartInfo,
-  allCategory: state.business.allCategory,
   chartTableInfo: state.business.chartTableInfo,
   custRange: state.business.custRange,
   globalLoading: state.activity.global,
@@ -43,7 +41,6 @@ const mapDispatchToProps = {
   getAllInfo: fectchDataFunction(true, effects.allInfo),
   getOneChartInfo: fectchDataFunction(true, effects.oneChartInfo),
   getChartTableInfo: fectchDataFunction(true, effects.chartTableInfo),
-  getAllCategorys: fectchDataFunction(false, effects.allCategorys),
   exportExcel: fectchDataFunction(true, effects.exportExcel),
   push: routerRedux.push,
   replace: routerRedux.replace,
@@ -58,9 +55,7 @@ export default class BusinessHome extends PureComponent {
     getAllInfo: PropTypes.func.isRequired,
     performance: PropTypes.array,
     chartInfo: PropTypes.array,
-    allCategory: PropTypes.array,
     getChartTableInfo: PropTypes.func.isRequired,
-    getAllCategorys: PropTypes.func.isRequired,
     chartTableInfo: PropTypes.object,
     exportExcel: PropTypes.func.isRequired,
     globalLoading: PropTypes.bool,
@@ -73,7 +68,6 @@ export default class BusinessHome extends PureComponent {
   static defaultProps = {
     performance: [],
     chartInfo: [],
-    allCategory: [],
     chartTableInfo: {},
     globalLoading: false,
     custRange: [],
@@ -95,17 +89,16 @@ export default class BusinessHome extends PureComponent {
     const { location: { query } } = this.props;
     this.getInfo({
       ...query,
-      scope: query.scope || Number(query.custRangeLevel) + 1,
     });
   }
 
   componentWillReceiveProps(nextProps) {
     // 判断props是否变化
     const { location: { query } } = nextProps;
-    // const duration = this.state;
     const {
       location: { query: preQuery },
     } = this.props;
+
     // 还是chart部分的数据
     if (!_.isEqual(query, preQuery)) {
       // 如果切换 时间段
@@ -179,7 +172,6 @@ export default class BusinessHome extends PureComponent {
       orgId,
       custRangeLevel,
       scope,
-      orderType,
     } = queryObj;
 
     const payload = {
@@ -189,20 +181,19 @@ export default class BusinessHome extends PureComponent {
       cycleType: qCycleType || cycleType,
       localScope: custRangeLevel,
       boardId,
+      scope,
     };
-    const pickProps = ['orgId', 'begin', 'end', 'cycleType', 'localScope', 'boardId'];
+    const empId = getEmpId();
     getAllInfo({
       custRange: {
-        empId: getEmpId(),
+        empId,
       },
       performance: {
+        ...payload,
         scope: custRangeLevel,
-        ..._.pick(payload, pickProps),
       },
       chartInfo: {
-        scope: scope || Number(custRangeLevel) + 1,
-        orderType: orderType || '',
-        ..._.pick(payload, pickProps),
+        ...payload,
       },
     });
   }
