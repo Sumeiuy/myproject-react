@@ -8,10 +8,11 @@ import React, { PureComponent, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { withRouter, routerRedux } from 'dva/router';
 import { Row, Col } from 'antd';
-// import _ from 'lodash';
 import Detail from '../../components/feedback/Detail';
 import FeedbackList from '../../components/feedback/FeedbackList';
+import FeedbackHeader from '../../components/feedback/FeedbackHeader';
 import styles from './home.less';
+// import _ from 'lodash';
 
 const mapStateToProps = state => ({
   list: state.feedback.list,
@@ -24,8 +25,9 @@ const getDataFunction = loading => query => ({
 });
 
 const mapDispatchToProps = {
-  getFeedbackList: getDataFunction(true),
   push: routerRedux.push,
+  replace: routerRedux.replace,
+  getFeedbackList: getDataFunction(true),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -36,6 +38,7 @@ export default class FeedBack extends PureComponent {
     getFeedbackList: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
+    replace: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -57,12 +60,14 @@ export default class FeedBack extends PureComponent {
   }
 
   render() {
-    const { list, location, getFeedbackList } = this.props;
+    const { list, location, getFeedbackList, push, replace } = this.props;
     return (
       <div className={styles.feedbackbox}>
-        <div className="tab-box">
-          <h3>tab</h3>
-        </div>
+        <FeedbackHeader
+          location={location}
+          push={push}
+          replace={replace}
+        />
         <Row>
           <Col span="10">
             <FeedbackList
