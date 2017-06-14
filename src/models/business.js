@@ -15,6 +15,7 @@ export default {
     chartInfo: [],
     custRange: [],
     chartTableInfo: {},
+    allCategory: [],
   },
   reducers: {
     getPerformanceSuccess(state, action) {
@@ -31,6 +32,17 @@ export default {
       return {
         ...state,
         chartInfo,
+      };
+    },
+    getAllCategorysSuccess(state, action) {
+      const { payload: { allCategorys } } = action;
+      const newAll = allCategorys.resultData.map((item) => {
+        const { key, name } = item;
+        return { key, name };
+      });
+      return {
+        ...state,
+        allCategory: newAll,
       };
     },
     getOneChartInfoSuccess(state, action) {
@@ -127,7 +139,15 @@ export default {
         payload: { resChartInfo },
       });
     },
-
+    // 获取所有分类
+    * getAllCategorys({ payload }, { call, put }) {
+      // 获取所有分类指标信息
+      const allCategorys = yield call(api.getAllClassifyIndex, payload);
+      yield put({
+        type: 'getAllCategorysSuccess',
+        payload: { allCategorys },
+      });
+    },
     // 根据某一个分类指标的ID查询该分类指标下数据
     * getOneChartInfo({ payload }, { call, put }) {
       const oneChart = yield call(api.getOneChartInfo, payload);

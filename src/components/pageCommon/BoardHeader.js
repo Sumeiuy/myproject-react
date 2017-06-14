@@ -31,7 +31,7 @@ export default class BoardHeader extends PureComponent {
     title: PropTypes.string.isRequired,
     postExcelInfo: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
-    changeBoard: PropTypes.func.isRequired,
+    updateShowCharts: PropTypes.func.isRequired,
     selfRequestData: PropTypes.func,
     showScopeOrder: PropTypes.bool.isRequired,
     level: PropTypes.string,
@@ -89,7 +89,7 @@ export default class BoardHeader extends PureComponent {
     const {
       replace,
       location: { query, pathname },
-      changeBoard,
+      updateShowCharts,
       indexID,
       selfRequestData,
       getTableInfo,
@@ -99,12 +99,12 @@ export default class BoardHeader extends PureComponent {
     if (pathname.indexOf('invest') === -1) {
       if (type === 'zhuzhuangtu') {
         selfRequestData({
-          indicatorId: indexID,
+          categoryKey: indexID,
           orderType,
         });
       } else {
         getTableInfo({
-          indicatorId: indexID,
+          categoryKey: indexID,
         });
       }
     } else {
@@ -122,7 +122,7 @@ export default class BoardHeader extends PureComponent {
     this.setState({
       showChart: type,
     });
-    changeBoard(type);
+    updateShowCharts(indexID, type);
   }
 
 
@@ -143,7 +143,7 @@ export default class BoardHeader extends PureComponent {
         orderType: value,
       });
       selfRequestData({
-        indicatorId: indexID,
+        categoryKey: indexID,
         orderType: value,
       });
     }

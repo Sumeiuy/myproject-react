@@ -19,6 +19,7 @@ import styles from './Home.less';
 const effects = {
   allInfo: 'business/getAllInfo',
   chartTableInfo: 'business/getChartTableInfo',
+  allCategorys: 'business/getAllCategorys',
   oneChartInfo: 'business/getOneChartInfo',
   exportExcel: 'business/exportExcel',
 };
@@ -32,6 +33,7 @@ const fectchDataFunction = (globalLoading, type) => query => ({
 const mapStateToProps = state => ({
   performance: state.business.performance,
   chartInfo: state.business.chartInfo,
+  allCategory: state.business.allCategory,
   chartTableInfo: state.business.chartTableInfo,
   custRange: state.business.custRange,
   globalLoading: state.activity.global,
@@ -41,6 +43,7 @@ const mapDispatchToProps = {
   getAllInfo: fectchDataFunction(true, effects.allInfo),
   getOneChartInfo: fectchDataFunction(true, effects.oneChartInfo),
   getChartTableInfo: fectchDataFunction(true, effects.chartTableInfo),
+  getAllCategorys: fectchDataFunction(false, effects.allCategorys),
   exportExcel: fectchDataFunction(true, effects.exportExcel),
   push: routerRedux.push,
   replace: routerRedux.replace,
@@ -55,7 +58,9 @@ export default class BusinessHome extends PureComponent {
     getAllInfo: PropTypes.func.isRequired,
     performance: PropTypes.array,
     chartInfo: PropTypes.array,
+    allCategory: PropTypes.array,
     getChartTableInfo: PropTypes.func.isRequired,
+    getAllCategorys: PropTypes.func.isRequired,
     chartTableInfo: PropTypes.object,
     exportExcel: PropTypes.func.isRequired,
     globalLoading: PropTypes.bool,
@@ -68,6 +73,7 @@ export default class BusinessHome extends PureComponent {
   static defaultProps = {
     performance: [],
     chartInfo: [],
+    allCategory: [],
     chartTableInfo: {},
     globalLoading: false,
     custRange: [],
@@ -81,11 +87,16 @@ export default class BusinessHome extends PureComponent {
     this.state = {
       ...obj,
       boardId: boardId || '2',
+      showCharts: {},
     };
   }
 
   componentWillMount() {
-    const { location: { query } } = this.props;
+    const { location: { query }, getAllCategorys } = this.props;
+    const { boardId } = this.state;
+    getAllCategorys({
+      boardId,
+    });
     this.getInfo({
       ...query,
       scope: query.scope || Number(query.custRangeLevel) + 1,
@@ -118,6 +129,10 @@ export default class BusinessHome extends PureComponent {
           ...query,
         });
       }
+      // 修改state
+      this.setState({
+        showCharts: {},
+      });
     }
   }
 
@@ -196,6 +211,16 @@ export default class BusinessHome extends PureComponent {
     });
   }
 
+  @autobind
+  updateShowCharts(categoryId, type) {
+    const { showCharts } = this.state;
+    this.setState({
+      showCharts: {
+        ...showCharts,
+        [categoryId]: type,
+      },
+    });
+  }
   // 导出 excel 文件
   @autobind
   handleExportExcel() {
@@ -233,6 +258,7 @@ export default class BusinessHome extends PureComponent {
       replace,
       custRange,
     } = this.props;
+    const { showCharts } = this.state;
     const level = location.query.custRangeLevel || (custRange[0] && custRange[0].level);
     const scope = Number(query.scope) || (custRange[0] && Number(custRange[0].level) + 1);
     if (!custRange || !custRange.length) {
@@ -256,11 +282,14 @@ export default class BusinessHome extends PureComponent {
             chartInfo.map((item) => {
               const { key, name, data } = item;
               const newChartTable = chartTableInfo[key] || {};
+              const showChart = showCharts[key] || 'zhuzhuangtu';
               return (
                 <div
                   className={styles.reportPart}
                 >
                   <PreformanceChartBoard
+                    showChart={showChart}
+                    updateShowCharts={this.updateShowCharts}
                     chartData={data}
                     indexID={key}
                     chartTableInfo={newChartTable}
