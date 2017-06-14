@@ -1,3 +1,5 @@
+
+// 修改头部Select样式
 :global {
   .feedbackHeader {
     padding:0 20px;
@@ -5,16 +7,6 @@
     height: 55px;
     line-height: 55px;
     background-color: #fff;
-  }
-}
-
-
-
-// 
-// 
-// 修改头部Select样式
-:global {
-  .feedbackHeader {
     .ant-select {
       color:#33393c;
       font-size: 12px;
@@ -22,6 +14,7 @@
     .ant-select-selection,
     .ant-calendar-picker-input,
     .ant-input.ant-cascader-input  {
+      height: 20px;
       background-color: transparent;
       border-color: transparent;
       .ant-select-selection__choice{
@@ -30,9 +23,6 @@
         //   display: none;
         // }
       }
-    }
-    .ant-select-selection--multiple .ant-select-selection__choice__remove:before{
-      // content: "\E636";
     }
     .ant-select-open .ant-select-selection,
     .ant-select-focused .ant-select-selection,
