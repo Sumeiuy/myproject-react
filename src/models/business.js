@@ -33,16 +33,16 @@ export default {
         chartInfo,
       };
     },
-    getClassifyIndexSuccess(state, action) {
-      const { payload: { response } } = action;
-      const singleChartData = response.resultData;
-      const indicatorId = singleChartData.key;
-      // 找到需要修改的那个分类
-      const preChartInfo = state.chartInfo;
-      const newChartInfo = preChartInfo.map((item) => {
+    getOneChartInfoSuccess(state, action) {
+      const { payload: { oneChart } } = action;
+      const { chartInfo } = state;
+      const resultData = oneChart.resultData;
+      const newChart = resultData[0];
+      const categoryKey = newChart.key;
+      const newChartInfo = chartInfo.map((item) => {
         const { key } = item;
-        if (key === indicatorId) {
-          return singleChartData;
+        if (key === categoryKey) {
+          return newChart;
         }
         return item;
       });
@@ -89,14 +89,8 @@ export default {
       const { prefix } = config;
       yield window.location.href = `${prefix}/excel/jxzb/exportExcel?${query}`;
     },
-    // 获取业绩指标
-    * getPerformance({ payload }, { call, put }) {
-      const resPerformance = yield call(api.getBOPerformance, payload);
-      yield put({
-        type: 'getPerformanceSuccess',
-        payload: { resPerformance },
-      });
-    },
+    // 初始化只需要取总量指标和该报表下的所有分类指标数据
+    // 以及用户组织机构树
     * getAllInfo({ payload }, { call, put, select }) {
       const cust = yield select(state => state.business.custRange);
       let firstCust;
@@ -111,7 +105,7 @@ export default {
         firstCust = response.resultData;
       }
       // 总量指标
-      const resPerformance = yield call(api.getBOPerformance, {
+      const resPerformance = yield call(api.getPerformance, {
         ...payload.performance,
         localScope: payload.performance.localScope || firstCust.level,
         orgId: payload.performance.orgId || firstCust.id,
@@ -121,10 +115,8 @@ export default {
         type: 'getPerformanceSuccess',
         payload: { resPerformance },
       });
-      // 判断柱状图或者表格
-      // 柱状图
-      // if (!payload.showChart || payload.showChart === 'zhuzhuangtu') {
-      const resChartInfo = yield call(api.getBOChartInfo, {
+      // 所有分类指标的数据
+      const resChartInfo = yield call(api.getChartInfo, {
         ...payload.chartInfo,
         localScope: payload.chartInfo.localScope || firstCust.level,
         orgId: payload.chartInfo.orgId || firstCust.id,
@@ -135,39 +127,22 @@ export default {
         payload: { resChartInfo },
       });
     },
-    // 获取投顾图表数据
-    * getChartInfo({ payload }, { call, put }) {
-      const resChartInfo = yield call(api.getBOChartInfo, payload);
-      yield put({
-        type: 'getChartInfoSuccess',
-        payload: { resChartInfo },
-      });
-    },
 
-    // 获取分类指标的数据
-    * getClassifyIndex({ payload }, { call, put }) {
-      const response = yield call(api.getBOClassifyIndex, payload);
+    // 根据某一个分类指标的ID查询该分类指标下数据
+    * getOneChartInfo({ payload }, { call, put }) {
+      const oneChart = yield call(api.getOneChartInfo, payload);
       yield put({
-        type: 'getClassifyIndexSuccess',
-        payload: { response },
+        type: 'getOneChartInfoSuccess',
+        payload: { oneChart },
       });
     },
 
     // 获取图表表格视图数据
     * getChartTableInfo({ payload }, { call, put }) {
-      const resChartTableInfo = yield call(api.getBOChartTableInfo, payload);
+      const resChartTableInfo = yield call(api.getChartTableInfo, payload);
       yield put({
         type: 'getChartTableInfoSuccess',
         payload: { resChartTableInfo },
-      });
-    },
-
-    // 获取客户范围
-    * getCustRange({ payload }, { call, put }) {
-      const response = yield call(api.getCustRange, payload);
-      yield put({
-        type: 'getCustRangeSuccess',
-        response,
       });
     },
   },

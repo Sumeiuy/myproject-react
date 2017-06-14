@@ -31,7 +31,7 @@ exports.response = function (req, res) {
                 value: '34',
                 indiModelList: [
                     {
-                        value: '11',
+                        value: '-11',
                         name: '个人',
                     },
                     {
@@ -68,7 +68,7 @@ exports.response = function (req, res) {
                 value: '34',
                 indiModelList: [
                     {
-                        value: '20',
+                        value: '-20',
                         name: '个人',
                     },
                     {
@@ -113,7 +113,7 @@ exports.response = function (req, res) {
                         name: '机构',
                     },
                     {
-                        value: '10',
+                        value: '-10',
                         name: '组织',
                     },
                     {
@@ -146,7 +146,7 @@ exports.response = function (req, res) {
                         name: '个人',
                     },
                     {
-                        value: '5',
+                        value: '-5',
                         name: '机构',
                     },
                     {

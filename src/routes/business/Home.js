@@ -18,11 +18,8 @@ import styles from './Home.less';
 
 const effects = {
   allInfo: 'business/getAllInfo',
-  performance: 'business/getPerformance',
-  chartInfo: 'business/getChartInfo',
-  custRange: 'business/getCustRange',
   chartTableInfo: 'business/getChartTableInfo',
-  getClassifyIndex: 'business/getClassifyIndex',
+  oneChartInfo: 'business/getOneChartInfo',
   exportExcel: 'business/exportExcel',
 };
 
@@ -37,17 +34,13 @@ const mapStateToProps = state => ({
   chartInfo: state.business.chartInfo,
   chartTableInfo: state.business.chartTableInfo,
   custRange: state.business.custRange,
-  excelInfo: state.business.excelInfo,
   globalLoading: state.activity.global,
 });
 
 const mapDispatchToProps = {
   getAllInfo: fectchDataFunction(true, effects.allInfo),
-  getPerformance: fectchDataFunction(true, effects.performance),
-  getChartInfo: fectchDataFunction(true, effects.chartInfo),
-  getClassifyIndex: fectchDataFunction(true, effects.getClassifyIndex),
+  getOneChartInfo: fectchDataFunction(true, effects.oneChartInfo),
   getChartTableInfo: fectchDataFunction(true, effects.chartTableInfo),
-  getCustRange: fectchDataFunction(false, effects.custRange),
   exportExcel: fectchDataFunction(true, effects.exportExcel),
   push: routerRedux.push,
   replace: routerRedux.replace,
@@ -60,16 +53,13 @@ export default class BusinessHome extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
     getAllInfo: PropTypes.func.isRequired,
-    getPerformance: PropTypes.func.isRequired,
     performance: PropTypes.array,
-    getChartInfo: PropTypes.func.isRequired,
     chartInfo: PropTypes.array,
     getChartTableInfo: PropTypes.func.isRequired,
     chartTableInfo: PropTypes.object,
     exportExcel: PropTypes.func.isRequired,
     globalLoading: PropTypes.bool,
-    getCustRange: PropTypes.func.isRequired,
-    getClassifyIndex: PropTypes.func.isRequired,
+    getOneChartInfo: PropTypes.func.isRequired,
     custRange: PropTypes.array,
     replace: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
@@ -83,14 +73,19 @@ export default class BusinessHome extends PureComponent {
     custRange: [],
   }
 
-  componentWillMount() {
-    const { location: { query } } = this.props;
-    // todo-获取 url 里的多个参数，发送多个请求，请求数据
-    const value = query.cycleType || 'month';
+  constructor(props) {
+    super(props);
+    const { location: { query: { cycleType, boardId } } } = this.props;
+    const value = cycleType || 'month';
     const obj = getDurationString(value);
     this.state = {
       ...obj,
+      boardId: boardId || '2',
     };
+  }
+
+  componentWillMount() {
+    const { location: { query } } = this.props;
     this.getInfo({
       ...query,
       scope: query.scope || Number(query.custRangeLevel) + 1,
@@ -125,6 +120,7 @@ export default class BusinessHome extends PureComponent {
       }
     }
   }
+
   @autobind
   getApiParams(param) {
     const { custRange, location: { query } } = this.props;
@@ -164,27 +160,38 @@ export default class BusinessHome extends PureComponent {
   @autobind
   getInfo(queryObj) {
     const { getAllInfo } = this.props;
-    const obj = this.state;
+    const { begin, cycleType, end, boardId } = this.state;
+    const {
+      begin: qBegin,
+      cycleType: qCycleType,
+      end: qEnd,
+      orgId,
+      custRangeLevel,
+      scope,
+      orderType,
+    } = queryObj;
+
     const payload = {
-      orgId: queryObj.orgId || '',
-      begin: queryObj.begin || obj.begin,
-      end: queryObj.end || obj.end,
-      cycleType: queryObj.cycleType || obj.cycleType,
-      localScope: queryObj.custRangeLevel,
-      boardId: queryObj.boardId || '1',
+      orgId: orgId || '',
+      begin: qBegin || begin,
+      end: qEnd || end,
+      cycleType: qCycleType || cycleType,
+      localScope: custRangeLevel,
+      boardId,
     };
+    const pickProps = ['orgId', 'begin', 'end', 'cycleType', 'localScope', 'boardId'];
     getAllInfo({
       custRange: {
         empId: getEmpId(),
       },
       performance: {
-        scope: queryObj.custRangeLevel,
-        ..._.pick(payload, ['orgId', 'begin', 'end', 'cycleType', 'localScope', 'boardId']),
+        scope: custRangeLevel,
+        ..._.pick(payload, pickProps),
       },
       chartInfo: {
-        scope: queryObj.scope || Number(queryObj.custRangeLevel) + 1,
-        orderType: queryObj.orderType || '',
-        ..._.pick(payload, ['orgId', 'begin', 'end', 'cycleType', 'localScope', 'boardId']),
+        scope: scope || Number(custRangeLevel) + 1,
+        orderType: orderType || '',
+        ..._.pick(payload, pickProps),
       },
     });
   }
@@ -211,9 +218,9 @@ export default class BusinessHome extends PureComponent {
   // 获取单个卡片接口
   @autobind
   selfRequestData(param) {
-    const { getClassifyIndex } = this.props;
+    const { getOneChartInfo } = this.props;
     const payload = this.getApiParams(param);
-    getClassifyIndex(payload);
+    getOneChartInfo(payload);
   }
 
   render() {
