@@ -72,6 +72,7 @@ export default class FeedBack extends PureComponent {
               list={list}
               location={location}
               getFeedbackList={getFeedbackList}
+              replace={replace}
             />
           </Col>
           <Col span="14">
