@@ -7,9 +7,6 @@ import React, { PropTypes, PureComponent } from 'react';
 import ChartBarStack from '../chartRealTime/ChartBarStack';
 import ChartBarNormal from '../chartRealTime/ChartBarNormal';
 
-import styles from './ChartBar.less';
-import imgSrc from '../chartRealTime/noChart.png';
-
 export default class ChartBar extends PureComponent {
 
   static propTypes = {
@@ -26,7 +23,7 @@ export default class ChartBar extends PureComponent {
 
 
   render() {
-    const { chartData: { orgModel, indiModel } } = this.props;
+    const { chartData: { orgModel } } = this.props;
     const { chartData, level, location, scope } = this.props;
     // 增加判断走堆叠还是普通柱状图
     if (orgModel
@@ -43,24 +40,14 @@ export default class ChartBar extends PureComponent {
           scope={scope}
         />
       );
-    } else if (orgModel && indiModel) {
-      return (
-        <ChartBarNormal
-          location={location}
-          chartData={chartData}
-          level={level}
-          scope={scope}
-        />
-      );
     }
     return (
-      <div className={styles.chartMain}>
-        <div className={styles.chartWrapper}>
-          <div className={styles.noChart}>
-            <img src={imgSrc} alt="图表不可见" />
-          </div>
-        </div>
-      </div>
+      <ChartBarNormal
+        location={location}
+        chartData={chartData}
+        level={level}
+        scope={scope}
+      />
     );
   }
 }

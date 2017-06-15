@@ -24,6 +24,7 @@ import IECharts from '../IECharts';
 import { iconTypeMap } from '../../config';
 import Icon from '../common/Icon';
 import styles from './ChartBar.less';
+import imgSrc from '../chartRealTime/noChart.png';
 
 export default class ChartBarStack extends PureComponent {
 
@@ -287,10 +288,22 @@ export default class ChartBarStack extends PureComponent {
           </div>
         </div>
         <div className={styles.chartWrapper}>
-          <IECharts
-            option={options}
-            resizable
-          />
+          {
+            (orgModel && orgModel.length > 0)
+            ?
+            (
+              <IECharts
+                option={options}
+                resizable
+              />
+            )
+            :
+            (
+              <div className={styles.noChart}>
+                <img src={imgSrc} alt="图表不可见" />
+              </div>
+            )
+          }
         </div>
       </div>
     );

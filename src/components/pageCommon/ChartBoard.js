@@ -36,6 +36,10 @@ export default class ChartBoard extends PureComponent {
           {
             chartData.map((item, index) => {
               const chartDataIndex = `chartData${index}`;
+              const { indiModel } = item;
+              if (!indiModel) {
+                return '';
+              }
               return (
                 <Col
                   span={8}
