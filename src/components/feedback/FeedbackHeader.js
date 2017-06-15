@@ -142,8 +142,8 @@ export default class PageHeader extends PureComponent {
         状态: <Select
           mode="multiple"
           style={{ width: '10%' }}
-          placeholder="全部"
-          value={!stateName ? [] : stateName.split(',')}
+          defaultValue={['solve']}
+          value={!stateName ? ['solve'] : stateName.split(',')}
           onChange={key => this.handleSelectChange('stateName', key)}
           allowClear="true"
         >
