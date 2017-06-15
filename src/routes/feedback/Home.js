@@ -25,7 +25,6 @@ const getDataFunction = loading => query => ({
 });
 
 const mapDispatchToProps = {
-  push: routerRedux.push,
   replace: routerRedux.replace,
   getFeedbackList: getDataFunction(true),
 };
@@ -37,7 +36,6 @@ export default class FeedBack extends PureComponent {
     list: PropTypes.object.isRequired,
     getFeedbackList: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
-    push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
   }
 
@@ -59,17 +57,13 @@ export default class FeedBack extends PureComponent {
     });
   }
 
+
   render() {
-    const { list,
-      location,
-      getFeedbackList,
-      push,
-      replace } = this.props;
+    const { list, location, getFeedbackList, replace } = this.props;
     return (
       <div className={styles.feedbackbox}>
         <FeedbackHeader
           location={location}
-          push={push}
           replace={replace}
         />
         <Row>
