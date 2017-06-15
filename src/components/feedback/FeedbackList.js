@@ -15,6 +15,7 @@ export default class FeedbackList extends PureComponent {
     list: PropTypes.object.isRequired,
     getFeedbackList: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
+    saveSelectedRowData: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -33,11 +34,14 @@ export default class FeedbackList extends PureComponent {
       totalPageNum,
       curPageSize: 10,
       curSelectedRow: 0,
+      isShouldUpdate: true,
     };
   }
 
   componentDidMount() {
-
+    // setTimeout(() => {
+    this.setDefaultRow();
+    // }, 1000);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -52,8 +56,47 @@ export default class FeedbackList extends PureComponent {
         totalRecordNum,
         totalPageNum,
         curPageNum,
+        // 恢复isShouldUpdate
+        isShouldUpdate: true,
+        curPageSize: 10,
+        curSelectedRow: 0,
       });
     }
+  }
+
+  // shouldComponentUpdate(nextState) {
+  //   const { isShouldUpdate } = nextState;
+  //   return isShouldUpdate;
+  // }
+
+  componentDidUpdate() {
+    const { isShouldUpdate } = this.state;
+    if (isShouldUpdate) {
+      this.setDefaultRow();
+    }
+  }
+
+  @autobind
+  setDefaultRow() {
+    // 默认选中第一行
+    const { saveSelectedRowData } = this.props;
+    const { dataSource } = this.state;
+    const firstRowData = dataSource[0] || EMPTY_OBJECT;
+    /* eslint-disable */
+    const rowElem =
+      ReactDOM.findDOMNode(document.querySelectorAll('.feedbackTable table > tbody > tr')[0]);
+    /* eslint-enable */
+    if (rowElem) {
+      rowElem.style.backgroundColor = 'rgb(237, 246, 252)';
+    }
+
+    console.log('firstRowData---->', firstRowData);
+
+
+    /* 传递数据给反馈详情页面 */
+    saveSelectedRowData({
+      data: firstRowData.code,
+    });
   }
 
   /**
@@ -64,29 +107,40 @@ export default class FeedbackList extends PureComponent {
   @autobind
   handleRowClick(record, index) {
     console.log('record---->', record, 'index---->', index);
-    const { curSelectedRow: prevSelectedRow } = this.state;
+    const { curSelectedRow: prevSelectedRow, dataSource } = this.state;
+    const { saveSelectedRowData } = this.props;
     /* eslint-disable */
     const prevRowElem =
-      ReactDOM.findDOMNode(document.querySelector(`.feedbackTable table > tbody > tr:nth-child(${prevSelectedRow + 1})`));
+      ReactDOM.findDOMNode(document.querySelectorAll('.feedbackTable table > tbody > tr')[prevSelectedRow]);
     /* eslint-enable */
+
     if (prevRowElem) {
       // 偶数行
       if (prevSelectedRow % 2 === 0) {
-        prevRowElem.style.backgroundColor = '#f9f9f9';
+        prevRowElem.style.backgroundColor = 'rgb(255, 255, 255)';
       } else {
-        prevRowElem.style.backgroundColor = '#ffffff';
+        prevRowElem.style.backgroundColor = 'rgb(249, 249, 249)';
       }
     }
     this.setState({
       curSelectedRow: index,
+      isShouldUpdate: false,
     }, () => {
       /* eslint-disable */
       const currentRowElem =
-        ReactDOM.findDOMNode(document.querySelector(`.feedbackTable table > tbody > tr:nth-child(${index + 1})`));
+        ReactDOM.findDOMNode(document.querySelectorAll('.feedbackTable table > tbody > tr')[index]);
       /* eslint-enable */
       if (currentRowElem) {
-        currentRowElem.style.backgroundColor = '#e4eef8';
+        currentRowElem.style.backgroundColor = 'rgb(237, 246, 252)';
       }
+    });
+
+    const curRowData = dataSource[index] || EMPTY_OBJECT;
+    console.log('curRowData', curRowData);
+
+    /* 传递当前行数据给反馈详情页面 */
+    saveSelectedRowData({
+      data: curRowData.code,
     });
   }
 
@@ -96,16 +150,16 @@ export default class FeedbackList extends PureComponent {
    * @param {*} curPageSize 当前页
    */
   @autobind
-  handlePageChange(nextPage, curPageSize) {
-    console.log(nextPage, curPageSize);
+  handlePageChange(nextPage, currentPageSize) {
+    console.log(nextPage, currentPageSize);
     this.setState({
       curPageNum: nextPage,
     });
-    const { getFeedbackList, location: { query } } = this.props;
+    const { getFeedbackList, location: { query: curQuery } } = this.props;
     getFeedbackList({
-      ...query,
+      ...curQuery,
       pageNum: nextPage,
-      pageSize: curPageSize,
+      pageSize: currentPageSize,
     });
   }
 
@@ -197,7 +251,7 @@ export default class FeedbackList extends PureComponent {
   }
 
   render() {
-    const { dataSource, curPageNum, totalRecordNum } = this.state;
+    const { dataSource, curPageNum, totalRecordNum, curPageSize } = this.state;
     if (!dataSource) {
       return null;
     }
@@ -208,8 +262,9 @@ export default class FeedbackList extends PureComponent {
       current: curPageNum,
       defaultCurrent: 1,
       total: totalRecordNum,
+      pageSize: curPageSize,
       defaultPageSize: 10,
-      onChange: (nextPage, curPageSize) => this.handlePageChange(nextPage, curPageSize),
+      onChange: (nextPage, currentPageSize) => this.handlePageChange(nextPage, currentPageSize),
       showTotal: total => `总共${total}个`,
       showSizeChanger: true,
       onShowSizeChange: (currentPageNum, changedPageSize) =>

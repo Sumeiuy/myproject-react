@@ -24,10 +24,16 @@ const getDataFunction = loading => query => ({
   loading,
 });
 
+const saveSelectedRowDataFunction = query => ({
+  type: 'feedback/saveSelectedRowData',
+  payload: query || {},
+});
+
 const mapDispatchToProps = {
   push: routerRedux.push,
   replace: routerRedux.replace,
   getFeedbackList: getDataFunction(true),
+  saveSelectedRowData: saveSelectedRowDataFunction,
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -39,6 +45,7 @@ export default class FeedBack extends PureComponent {
     location: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
+    saveSelectedRowData: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -60,7 +67,12 @@ export default class FeedBack extends PureComponent {
   }
 
   render() {
-    const { list, location, getFeedbackList, push, replace } = this.props;
+    const { list,
+      location,
+      getFeedbackList,
+      push,
+      replace,
+      saveSelectedRowData } = this.props;
     return (
       <div className={styles.feedbackbox}>
         <FeedbackHeader
@@ -74,6 +86,7 @@ export default class FeedBack extends PureComponent {
               list={list}
               location={location}
               getFeedbackList={getFeedbackList}
+              saveSelectedRowData={saveSelectedRowData}
             />
           </Col>
           <Col span="14">
