@@ -25,8 +25,6 @@ import { iconTypeMap } from '../../config';
 import Icon from '../common/Icon';
 import styles from './ChartBar.less';
 
-import imgSrc from './noChart.png';
-
 export default class ChartBarStack extends PureComponent {
 
   static propTypes = {
@@ -186,7 +184,8 @@ export default class ChartBarStack extends PureComponent {
           }
         });
         if (total.length > 0) {
-          tips.push(`共 <span style="color:#ffd92a; font-size:14px;">${_.sum(total)}</span> ${unit}`);
+          const totalV = Number.parseFloat(_.sum(total).toFixed(2));
+          tips.push(`共 <span style="color:#ffd92a; font-size:14px;">${totalV}</span> ${unit}`);
         } else {
           tips.push(`共 <span style="color:#ffd92a; font-size:14px;">--</span> ${unit}`);
         }
@@ -283,17 +282,10 @@ export default class ChartBarStack extends PureComponent {
           </div>
         </div>
         <div className={styles.chartWrapper}>
-          {
-            (orgModel && orgModel.length) ?
-              (<IECharts
-                option={options}
-                resizable
-              />)
-            :
-              (<div className={styles.noChart}>
-                <img src={imgSrc} alt="图表不可见" />
-              </div>)
-          }
+          <IECharts
+            option={options}
+            resizable
+          />
         </div>
       </div>
     );

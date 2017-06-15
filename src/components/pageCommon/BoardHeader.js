@@ -32,6 +32,7 @@ export default class BoardHeader extends PureComponent {
     postExcelInfo: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
     updateShowCharts: PropTypes.func.isRequired,
+    updateCategoryScope: PropTypes.func.isRequired,
     selfRequestData: PropTypes.func,
     showScopeOrder: PropTypes.bool.isRequired,
     level: PropTypes.string,
@@ -112,7 +113,7 @@ export default class BoardHeader extends PureComponent {
 
   @autobind
   handleSortChange(column, value) {
-    const { indexID, selfRequestData, getTableInfo } = this.props;
+    const { indexID, selfRequestData, getTableInfo, updateCategoryScope } = this.props;
     const { showChart } = this.state;
     if (showChart === 'zhuzhuangtu') {
       selfRequestData({
@@ -124,6 +125,9 @@ export default class BoardHeader extends PureComponent {
         categoryKey: indexID,
         [column]: value,
       });
+    }
+    if (column === 'scope') {
+      updateCategoryScope(indexID, value);
     }
     this.setState({
       [column]: value,

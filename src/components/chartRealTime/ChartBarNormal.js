@@ -21,8 +21,6 @@ import { iconTypeMap } from '../../config';
 import Icon from '../common/Icon';
 import styles from './ChartBar.less';
 
-import imgSrc from './noChart.png';
-
 export default class ChartBarNormal extends PureComponent {
 
   static propTypes = {
@@ -80,10 +78,10 @@ export default class ChartBarNormal extends PureComponent {
     const { scope, chartData: { indiModel: { name, key }, orgModel = [] } } = this.props;
     let { chartData: { indiModel: { unit } } } = this.props;
     const levelAndScope = Number(scope);
-
     const levelName = `level${levelAndScope}Name`;
     // 分公司名称数组
     const levelCompanyArr = this.getChartData(orgModel, 'level2Name', 'yAxis');
+    // 营业部
     const levelStoreArr = this.getChartData(orgModel, 'level3Name', 'yAxis');
 
     // 此处为y轴刻度值
@@ -259,17 +257,10 @@ export default class ChartBarNormal extends PureComponent {
           </div>
         </div>
         <div className={styles.chartWrapper}>
-          {
-            (orgModel && orgModel.length) ?
-              (<IECharts
-                option={options}
-                resizable
-              />)
-            :
-              (<div className={styles.noChart}>
-                <img src={imgSrc} alt="图表不可见" />
-              </div>)
-          }
+          <IECharts
+            option={options}
+            resizable
+          />
         </div>
       </div>
     );
