@@ -4,26 +4,133 @@
  * @author yangquanjian
  */
 
-import React, { PureComponent } from 'react';
-import { Row, Col, Button } from 'antd';
+import React, { PropTypes, PureComponent } from 'react';
+import { Row, Col, Button, message, Upload } from 'antd';
+import classnames from 'classnames';
+import { connect } from 'react-redux';
+import { withRouter, routerRedux } from 'dva/router';
 import ProblemHandling from './ProblemHandling';
-import styles from './detail.less';
+import Remark from './Remark';
+import './detail.less';
 
+const Dragger = Upload.Dragger;
+const EMPTY_OBJECT = {};
+const GETDETAIL = 'feedback/getFeedbackDetail';
+const GETRECORDLIST = 'feedback/getFeedbackRecordList';
+const mapStateToProps = state => ({
+  fbDetail: state.feedback.fbDetail,
+  recordList: state.feedback.recordList,
+});
+const getDataFunction = loading => totype => query => ({
+  type: totype,
+  payload: query || {},
+  loading,
+});
+const mapDispatchToProps = {
+  push: routerRedux.push,
+  replace: routerRedux.replace,
+  getFeedbackDetail: getDataFunction(true)(GETDETAIL),
+  getFeedbackRecordList: getDataFunction(true)(GETRECORDLIST),
+};
+@connect(mapStateToProps, mapDispatchToProps)
+@withRouter
 export default class FeedBack extends PureComponent {
-  state = {
-    visible: false,
-    title: '处理问题',
+  static propTypes = {
+    fbDetail: PropTypes.object.isRequired,
+    recordList: PropTypes.object.isRequired,
+    getFeedbackDetail: PropTypes.func.isRequired,
+    getFeedbackRecordList: PropTypes.func.isRequired,
+    location: PropTypes.object.isRequired,
+    push: PropTypes.func.isRequired,
   }
-  showModal = () => {
+  static defaultProps = {
+  }
+  constructor(props) {
+    super(props);
+    const { resultData = EMPTY_OBJECT } = this.props.fbDetail || EMPTY_OBJECT;
+    const { resultData: recordData = EMPTY_OBJECT } = this.props.recordList || EMPTY_OBJECT;
     this.setState({
-      visible: true,
+      dataSource: resultData,
+      recordListSource: recordData,
+      uploadPops: {
+        name: 'file',
+        multiple: true,
+        showUploadList: true,
+        action: '//jsonplaceholder.typicode.com/posts/',
+        onChange(info) {
+          const status = info.file.status;
+          if (status !== 'uploading') {
+            console.log(info.file, info.fileList);
+          }
+          if (status === 'done') {
+            message.success(`${info.file.name} file uploaded successfully.`);
+          } else if (status === 'error') {
+            message.error(`${info.file.name} file upload failed.`);
+          }
+        },
+      },
     });
   }
+  state = {
+    visible: false,
+    remarkVisible: false,
+    title: '处理问题',
+    uploadPops: {},
+  }
+  componentWillMount() {
+    const { getFeedbackDetail, getFeedbackRecordList, location: { query } } = this.props;
+    getFeedbackRecordList({
+      ...query,
+      code: '1111',
+    });
+    getFeedbackDetail({
+      ...query,
+      code: '2222',
+    });
+  }
+  componentWillReceiveProps(nextProps) {
+    const { fbDetail: nextDetail = EMPTY_OBJECT,
+      recordList: nextRecordList = EMPTY_OBJECT } = nextProps;
+    const { fbDetail: preDetail = EMPTY_OBJECT } = this.props;
+    const { resultData: nextResultData = EMPTY_OBJECT } = nextDetail;
+    const { resultData: preResultData = EMPTY_OBJECT } = preDetail;
+    // debugger;
+    if (preResultData !== nextResultData) {
+      this.setState({
+        dataSource: nextDetail,
+        recordListSource: nextRecordList,
+      });
+    }
+  }
+  /**
+   * 弹窗处理（开启）
+  */
+  showModal = () => {
+    this.setState({ visible: true });
+  }
+  /**
+   * 弹窗处理（关闭）
+  */
   handleCancel = () => {
     this.setState({ visible: false });
   }
+  /**
+   * 备注显示
+  */
+  showRemark = () => {
+    this.setState({ remarkVisible: true });
+  }
+  /**
+   * 备注隐藏
+  */
+  remarkCancel = () => {
+    this.setState({ remarkVisible: false });
+  }
+  /**
+   * 问题处理提交
+  */
   handleCreate = () => {
-    const form = this.form;
+    const form = this.handlingForm;
     form.validateFields((err, values) => {
       console.log(err);
       if (err) {
@@ -35,173 +142,275 @@ export default class FeedBack extends PureComponent {
       this.setState({ visible: false });
     });
   }
+  /**
+   * 备注提交
+  */
+  saveFromRemark = () => {
+    const form = this.remarkForm;
+    form.validateFields((err, values) => {
+      console.log(err);
+      if (err) {
+        console.log(11);
+        return;
+      }
+      console.log('Remark values of form: ', values);
+      form.resetFields();
+      this.setState({ remarkVisible: false });
+    });
+  }
+  /**
+   * 解决状态
+  */
+  handleStatus = (pop) => {
+    if (pop === '解决中') {
+      return (
+        <b className="toSolve">解决中</b>
+      );
+    } else if (pop === '关闭') {
+      return (
+        <b className="close">关闭</b>
+      );
+    }
+    return '--';
+  }
+  /**
+   * 构建备注信息
+  */
+  createRecordList = (list) => {
+    if (list.length > 0) {
+      return (
+        list.map((item, i) => (
+          <li className="item" rel={i}>
+            <div className="wrap">
+              <div className="info_dv">
+                <span>{item.department}-{item.userName}</span><span>于{item.date}，添加了备注：</span>
+              </div>
+              <div className="txt">
+                {item.contentlist.length > 0 ? item.contentlist.map((inneritem, l) => (
+                  <p rel={l}>{inneritem}</p>)) : '暂无数据'
+                }
+              </div>
+            </div>
+          </li>
+          ))
+      );
+    }
+    return '暂无数据';
+  }
+  /**
+   * 存储处理问题form
+  */
   saveFormRef = (form) => {
-    this.form = form;
+    this.handlingForm = form;
+  }
+  /**
+   * 存储备注form
+  */
+  saveRemarkFormRef = (form) => {
+    this.remarkForm = form;
   }
   render() {
+    const { resultData = EMPTY_OBJECT } = this.state.dataSource || EMPTY_OBJECT;
+    const { detail = EMPTY_OBJECT } = resultData;
+    const {
+      type,
+      code,
+      status,
+      description,
+      phoneNum,
+      email,
+      manager,
+      userName,
+      userNum,
+      userDepartment,
+      jiraNum,
+      approach,
+      questionType,
+      date,
+      module,
+      version } = detail;
+    const { resultData: recordData = EMPTY_OBJECT } = this.state.recordListSource || EMPTY_OBJECT;
+    const { recordList = EMPTY_OBJECT } = recordData;
+    const remarkbtn = classnames({
+      btnhidden: this.state.remarkVisible,
+    });
     return (
-      <div className={styles.detail_box}>
-        <div className={styles.inner}>
-          <h1 className={styles.bugtitle}>【问题】FSP/100001</h1>
-          <div className={styles.row_box}>
+      <div className="detail_box">
+        <div className="inner">
+          <h1 className="bugtitle">【问题】{type}/{code}</h1>
+          <div className="row_box">
             <Row gutter={16}>
               <Col span="16">
-                <div id={styles.detail_module} className={styles.module}>
-                  <div className={styles.mod_header}>
-                    <h2 className={styles.toogle_title}>问题详情</h2>
+                <div id="detail_module" className="module">
+                  <div className="mod_header">
+                    <h2 className="toogle_title">问题详情</h2>
                   </div>
-                  <div className={styles.mod_content}>
-                    <ul className={styles.property_list}>
-                      <li className={styles.item}>
-                        <div className={styles.wrap}>
-                          <strong className={styles.name}>模块：</strong>
-                          <span className={styles.value}>任务中心</span>
+                  <div className="mod_content">
+                    <ul className="property_list">
+                      <li className="item">
+                        <div className="wrap">
+                          <strong className="name">模块：</strong>
+                          <span className="value">{module}</span>
                         </div>
                       </li>
-                      <li className={styles.item}>
-                        <div className={styles.wrap}>
-                          <strong className={styles.name}>反馈时间：</strong>
-                          <span className={styles.value}>2017/03/23</span>
+                      <li className="item">
+                        <div className="wrap">
+                          <strong className="name">反馈时间：</strong>
+                          <span className="value">{date}</span>
                         </div>
                       </li>
-                      <li className={styles.item}>
-                        <div className={styles.wrap}>
-                          <strong className={styles.name}>系统版本号：</strong>
-                          <span className={styles.value}>1.0.0</span>
+                      <li className="item">
+                        <div className="wrap">
+                          <strong className="name">系统版本号：</strong>
+                          <span className="value">{version}</span>
                         </div>
                       </li>
-                      <li className={styles.item}>
-                        <div className={styles.wrap}>
-                          <strong className={styles.name}>状态：</strong>
-                          <span className={styles.value}>解决中</span>
+                      <li className="item">
+                        <div className="wrap">
+                          <strong className="name">状态：</strong>
+                          <span className="value">
+                            {this.handleStatus(status)}
+                          </span>
                         </div>
                       </li>
-                      <li className={styles.item}>
-                        <div className={styles.wrap}>
-                          <strong className={styles.name}>问题类型：</strong>
-                          <span className={styles.value}>无</span>
+                      <li className="item">
+                        <div className="wrap">
+                          <strong className="name">问题类型：</strong>
+                          <span className="value">{questionType}</span>
                         </div>
                       </li>
-                      <li className={styles.item}>
-                        <div className={styles.wrap}>
-                          <strong className={styles.name}>处理方法：</strong>
-                          <span className={styles.value}>无</span>
+                      <li className="item">
+                        <div className="wrap">
+                          <strong className="name">处理方法：</strong>
+                          <span className="value">{approach}</span>
                         </div>
                       </li>
-                      <li className={styles.item}>
-                        <div className={styles.wrap}>
-                          <strong className={styles.name}>经办人：</strong>
-                          <span className={styles.value}>赵云龙</span>
+                      <li className="item">
+                        <div className="wrap">
+                          <strong className="name">经办人：</strong>
+                          <span className="value">{userName}</span>
                         </div>
                       </li>
-                      <li className={styles.item}>
-                        <div className={styles.wrap}>
-                          <strong className={styles.name}>Jira编号：</strong>
-                          <span className={styles.value}>无</span>
+                      <li className="item">
+                        <div className="wrap">
+                          <strong className="name">Jira编号：</strong>
+                          <span className="value">{jiraNum}</span>
                         </div>
                       </li>
                     </ul>
                   </div>
                 </div>
-                <div id={styles.descriptionmodule} className={styles.module}>
-                  <div className={styles.mod_header}>
-                    <h2 className={styles.toogle_title}>描述</h2>
+                <div id="descriptionmodule" className="module">
+                  <div className="mod_header">
+                    <h2 className="toogle_title">描述</h2>
                   </div>
-                  <div className={styles.mod_content}>
-                    <div className={styles.des_txt}>
-                      最好能看到流失客户的信息，方便及时维护流失客户信息，最好能看到流失客户的信息，方便及时维护流失客户信息，最好能看到流失客户的信息，方便及时维护流失客户信息。
+                  <div className="mod_content">
+                    <div className="des_txt">
+                      {description}
                     </div>
-                    <div className={styles.btn_dv}>
-                      <Button onClick={this.showModal}>处理问题</Button>
+                    <div className="btn_dv">
+                      <Button type="primary" onClick={this.showModal}>处理问题</Button>
                     </div>
                   </div>
                 </div>
               </Col>
               <Col span="8">
-                <div className={styles.imgbox}>
+                <div className="imgbox">
                   <img src="" alt="" />
                 </div>
               </Col>
             </Row>
           </div>
-          <div id={styles.peoplemodule} className={styles.module}>
-            <div className={styles.mod_header}>
-              <h2 className={styles.toogle_title}>反馈用户</h2>
+          <div id="peoplemodule" className="module">
+            <div className="mod_header">
+              <h2 className="toogle_title">反馈用户</h2>
             </div>
-            <div className={styles.mod_content}>
-              <ul className={styles.property_list}>
-                <li className={styles.item}>
-                  <div className={styles.wrap}>
-                    <strong className={styles.name}>员工号：</strong>
-                    <span className={styles.value}>673920</span>
+            <div className="mod_content">
+              <ul className="property_list">
+                <li className="item">
+                  <div className="wrap">
+                    <strong className="name">员工号：</strong>
+                    <span className="value">{userNum}</span>
                   </div>
                 </li>
-                <li className={styles.item}>
-                  <div className={styles.wrap}>
-                    <strong className={styles.name}>用户：</strong>
-                    <span className={styles.value}>王强</span>
+                <li className="item">
+                  <div className="wrap">
+                    <strong className="name">用户：</strong>
+                    <span className="value">{manager}</span>
                   </div>
                 </li>
-                <li className={styles.item}>
-                  <div className={styles.wrap}>
-                    <strong className={styles.name}>部门：</strong>
-                    <span className={styles.value}>南京市建邺区中山中山中山中32222222山东路营业部</span>
+                <li className="item">
+                  <div className="wrap">
+                    <strong className="name">部门：</strong>
+                    <span className="value">{userDepartment}</span>
                   </div>
                 </li>
-                <li className={styles.item}>
-                  <div className={styles.wrap}>
-                    <strong className={styles.name}>联系电话：</strong>
-                    <span className={styles.value}>13827382927</span>
+                <li className="item">
+                  <div className="wrap">
+                    <strong className="name">联系电话：</strong>
+                    <span className="value">{phoneNum}</span>
                   </div>
                 </li>
-                <li className={styles.item}>
-                  <div className={styles.wrap}>
-                    <strong className={styles.name}>邮箱：</strong>
-                    <span className={styles.value}>wangqiang@htsc.com.cn</span>
+                <li className="item">
+                  <div className="wrap">
+                    <strong className="name">邮箱：</strong>
+                    <span className="value">{email}</span>
                   </div>
                 </li>
               </ul>
             </div>
           </div>
-          <div id={styles.processing} className={styles.module}>
-            <div className={styles.mod_header}>
-              <h2 className={styles.toogle_title}>处理记录</h2>
+          <div id="annex" className="module">
+            <div className="mod_header">
+              <h2 className="toogle_title">附件</h2>
             </div>
-            <div className={styles.mod_content}>
-              <ul className={styles.record_list}>
-                <li className={styles.item}>
-                  <div className={styles.wrap}>
-                    <div className={styles.txt}>
-                      此问题业务已确认解决。
-                    </div>
-                    <div className={styles.info_dv}>
-                      <span>经纪业务总部</span><span>王溪</span><span>2017-1-3 11:30</span>
-                    </div>
+            <div className="mod_content">
+              <Row>
+                <Col span="12">
+                  <ul id="filelist" className="filelist">
+                    <li>
+                      <a href="##">客户中心问题反馈.doc</a>
+                    </li>
+                  </ul>
+                </Col>
+                <Col span="12">
+                  <div className="upload_dv">
+                    <Dragger {...this.state.uploadPops}>
+                      <div className="upload_txt">
+                        + 上传附件
+                      </div>
+                    </Dragger>
                   </div>
-                </li>
-                <li className={styles.item}>
-                  <div className={styles.wrap}>
-                    <div className={styles.txt}>
-                      此问题业务已确认解决。
-                    </div>
-                    <div className={styles.info_dv}>
-                      <span>经纪业务总部</span><span>王溪</span><span>2017-1-3 11:30</span>
-                    </div>
-                  </div>
-                </li>
+                </Col>
+              </Row>
+            </div>
+          </div>
+          <div id="processing" className="module">
+            <div className="mod_header">
+              <h2 className="toogle_title">处理记录</h2>
+            </div>
+            <div className="mod_content">
+              <ul className="record_list">
+                {this.createRecordList(recordList)}
               </ul>
-              <div className={styles.remarks_box}>
-                <Button icon="edit">备注</Button>
+              <div className="remarks_box">
+                <Button icon="edit" className={remarkbtn} onClick={this.showRemark}>备注</Button>
+                <Remark
+                  visible={this.state.remarkVisible}
+                  ref={this.saveRemarkFormRef}
+                  onCancel={this.remarkCancel}
+                  onCreate={this.saveFromRemark}
+                />
               </div>
             </div>
           </div>
-          <ProblemHandling
-            ref={this.saveFormRef}
-            visible={this.state.visible}
-            onCancel={this.handleCancel}
-            onCreate={this.handleCreate}
-          />
         </div>
+        <ProblemHandling
+          ref={this.saveFormRef}
+          visible={this.state.visible}
+          onCancel={this.handleCancel}
+          onCreate={this.handleCreate}
+        />
       </div>
     );
   }

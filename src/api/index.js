@@ -29,8 +29,12 @@ export default {
 
   getFeedbackList: query => api.post('/groovynoauth/feedback/queryFeedbackList', query),
 
+  getFeedbackDetail: query => api.post('/groovynoauth/feedback/queryFeedbackDetail', query),
+
+  getFeedbackRecordList: query => api.post('/groovynoauth/feedback/queryFeedbackRecordList', query),
   // ==========feedback的数据接口end
 
   // 获取报表下所有的分类信息
   getAllClassifyIndex: query => api.get('/groovynoauth/jxzb/queryCategoryRecord', query),
+
 };

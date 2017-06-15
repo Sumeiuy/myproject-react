@@ -17,6 +17,8 @@ export default {
       popVisible: false,
     },
     list: EMPTY_OBJECT,
+    fbDetail: EMPTY_OBJECT,
+    recordList: EMPTY_OBJECT,
   },
   reducers: {
     changeProblemVisible(state, action) {
@@ -36,12 +38,44 @@ export default {
           : { page, resultData: [...preListData, ...listData] },
       };
     },
+    getFeedbackDetailSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        fbDetail: {
+          resultData,
+        },
+      };
+    },
+    getFeedbackRecordListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        recordList: {
+          resultData,
+        },
+      };
+    },
   },
   effects: {
     * getFeedbackList({ payload }, { call, put }) {
       const response = yield call(api.getFeedbackList, payload);
       yield put({
         type: 'getFeedbackListSuccess',
+        payload: response,
+      });
+    },
+    * getFeedbackDetail({ payload }, { call, put }) {
+      const response = yield call(api.getFeedbackDetail, payload);
+      yield put({
+        type: 'getFeedbackDetailSuccess',
+        payload: response,
+      });
+    },
+    * getFeedbackRecordList({ payload }, { call, put }) {
+      const response = yield call(api.getFeedbackRecordList, payload);
+      yield put({
+        type: 'getFeedbackRecordListSuccess',
         payload: response,
       });
     },

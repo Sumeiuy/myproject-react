@@ -75,7 +75,9 @@ export default class FeedBack extends PureComponent {
             />
           </Col>
           <Col span="14">
-            <Detail />
+            <Detail
+              location={location}
+            />
           </Col>
         </Row>
       </div>
