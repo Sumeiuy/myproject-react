@@ -118,10 +118,6 @@ const feedbackOptions = {
       label: '解决中',
     },
     {
-      value: 'validate',
-      label: '待验证',
-    },
-    {
       value: 'close',
       label: '关闭',
     },

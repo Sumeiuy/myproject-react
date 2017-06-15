@@ -114,47 +114,50 @@ export default class PageHeader extends PureComponent {
         模块: <Cascader
           options={channelOptions}
           style={{ width: '11%' }}
-          placeholder="请选择"
+          changeOnSelect
+          placeholder="全部"
           value={!moduleName ? [] : moduleName.split(',')}
           onChange={key => this.handleSelectChange('moduleName', key)}
-          changeOnSelect
         />
         类型: <Select
           mode="multiple"
           style={{ width: '10%' }}
-          placeholder="请选择"
+          placeholder="全部"
           value={!typeName ? [] : typeName.split(',')}
           onChange={key => this.handleSelectChange('typeName', key)}
+          allowClear="true"
         >
           {getSelectOption(typeOptions)}
         </Select>
         问题标签: <Select
           mode="multiple"
           style={{ width: '11%' }}
-          placeholder="请选择"
+          placeholder="全部"
           value={!questionName ? [] : questionName.split(',')}
           onChange={key => this.handleSelectChange('questionName', key)}
+          allowClear="true"
         >
           {getSelectOption(questionTagOptions)}
         </Select>
         状态: <Select
           mode="multiple"
           style={{ width: '10%' }}
-          placeholder="请选择"
+          placeholder="全部"
           value={!stateName ? [] : stateName.split(',')}
           onChange={key => this.handleSelectChange('stateName', key)}
+          allowClear="true"
         >
           {getSelectOption(stateOptions)}
         </Select>
         反馈时间:<RangePicker
-          style={{ width: '15%' }}
+          style={{ width: '16%' }}
           ranges={{ Today: [moment(), moment()], 'This Month': [moment(), moment().endOf('month')] }}
           onChange={this.handleDateChange}
         />
         经办人: <Select
           defaultValue="all"
           style={{ width: '6%' }}
-          value={!operatorName ? '' : operatorName}
+          value={!operatorName ? 'all' : operatorName}
           onChange={key => this.handleSelectChange('operatorName', key)}
         >
           {getSelectOption(operatorOptions)}
