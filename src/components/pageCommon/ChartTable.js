@@ -126,7 +126,7 @@ export default class ChartTable extends PureComponent {
     } else {
       toolTipTittle = '';
     }
-    return toolTipTittle ? <Tooltip placement="right" title={`${record.orgModel.level2Name} - ${record.orgModel.level3Name}`}>
+    return toolTipTittle ? <Tooltip placement="right" title={toolTipTittle}>
       <div className={styles.tdWrapperDiv}>
         {record.city}
       </div>
@@ -180,8 +180,8 @@ export default class ChartTable extends PureComponent {
       children: value,
       props: {},
     };
-    if (index === 1) {
-      obj.props.colSpan = 0;
+    if (index === 0) {
+      obj.props.colSpan = 2;
     }
     return obj;
   }
@@ -247,11 +247,11 @@ export default class ChartTable extends PureComponent {
             </div>
           ),
         };
-        const hasChildren = item.children;
-        if (hasChildren) {
-          column.children = this.getChildren(item);
-          column.render = this.renderContent;
-        }
+        // const hasChildren = item.children;
+        // if (hasChildren) {
+        //   column.children = this.getChildren(item);
+        //   // column.render = this.renderContent;
+        // }
         return column;
       });
       const tempScope = query.scope || Number(level) + 1;
@@ -274,19 +274,19 @@ export default class ChartTable extends PureComponent {
       });
       // 表格汇总 显示 colspan
       // arr[1].render = (text, row, index) => {
-      //   if (index < 1) {
+      //   if (index > 1) {
       //     return (
       //       <div className={styles.tdWrapperDiv}>
       //         {text}
       //       </div>
       //     );
       //   }
-      //   return {
+      //   return ({
       //     children: <div className={styles.tdWrapperDiv}>{text}</div>,
       //     props: {
       //       colSpan: 2,
       //     },
-      //   };
+      //   });
       // };
     }
     return (
