@@ -82,6 +82,7 @@ export default class InvestHome extends PureComponent {
       ...obj,
       boardId: boardId || '1',
       showCharts: {},
+      classifyScope: {},
     };
   }
 
@@ -121,6 +122,7 @@ export default class InvestHome extends PureComponent {
       // 修改state
       this.setState({
         showCharts: {},
+        classifyScope: {},
       });
     }
   }
@@ -207,6 +209,16 @@ export default class InvestHome extends PureComponent {
       },
     });
   }
+  @autobind
+  updateCategoryScope(categoryId, v) {
+    const { classifyScope } = this.state;
+    this.setState({
+      classifyScope: {
+        ...classifyScope,
+        [categoryId]: v,
+      },
+    });
+  }
   // 导出 excel 文件
   @autobind
   handleExportExcel() {
@@ -244,9 +256,9 @@ export default class InvestHome extends PureComponent {
       replace,
       custRange,
     } = this.props;
-    const { showCharts } = this.state;
+    const { showCharts, classifyScope } = this.state;
     const level = query.custRangeLevel || (custRange[0] && custRange[0].level);
-    const scope = Number(query.scope) || (custRange[0] && Number(custRange[0].level) + 1);
+    const newscope = custRange[0] && Number(custRange[0].level) + 1;
     if (!custRange || !custRange.length) {
       return null;
     }
@@ -268,20 +280,24 @@ export default class InvestHome extends PureComponent {
               const { key, name, data } = item;
               const newChartTable = chartTableInfo[key] || {};
               const showChart = showCharts[key] || 'zhuzhuangtu';
+              const categoryScope = Number(classifyScope[key]) || newscope;
               return (
                 <div
+                  key={key}
                   className={styles.reportPart}
                 >
                   <PreformanceChartBoard
                     showChart={showChart}
                     updateShowCharts={this.updateShowCharts}
+                    categoryScope={categoryScope}
+                    updateCategoryScope={this.updateCategoryScope}
                     chartData={data}
                     indexID={key}
                     chartTableInfo={newChartTable}
                     getTableInfo={this.getTableInfo}
                     postExcelInfo={this.handleExportExcel}
                     level={level}
-                    scope={scope}
+                    scope={newscope}
                     location={location}
                     replace={replace}
                     boardTitle={name}
