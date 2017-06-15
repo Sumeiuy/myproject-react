@@ -72,6 +72,7 @@ export default class PerformanceChartBoard extends PureComponent {
           replace={replace}
           level={level}
           scope={scope}
+          categoryScope={categoryScope}
           showChart={showChart}
           showScopeOrder={showScopeOrder}
           indexID={indexID}
@@ -89,6 +90,7 @@ export default class PerformanceChartBoard extends PureComponent {
               getTableInfo={getTableInfo}
               replace={replace}
               level={level}
+              scope={categoryScope}
               location={location}
               indexID={indexID}
             />

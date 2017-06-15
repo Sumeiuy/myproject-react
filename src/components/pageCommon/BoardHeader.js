@@ -37,6 +37,7 @@ export default class BoardHeader extends PureComponent {
     showScopeOrder: PropTypes.bool.isRequired,
     level: PropTypes.string,
     indexID: PropTypes.string,
+    categoryScope: PropTypes.number.isRequired,
     scope: PropTypes.number.isRequired,
     getTableInfo: PropTypes.func,
     showChart: PropTypes.string.isRequired,
@@ -63,8 +64,14 @@ export default class BoardHeader extends PureComponent {
   componentWillReceiveProps(nextProps) {
     const { location: { query: { orgId } } } = nextProps;
     const { location: { query: { orgId: preOrgId } } } = this.props;
-    const { level, showChart, scope } = nextProps;
-    const { level: preLevel } = this.props;
+    const { level, showChart, scope, categoryScope } = nextProps;
+    const { level: preLevel, categoryScope: preCategoryScope } = this.props;
+    if (preCategoryScope !== categoryScope) {
+      this.setState({
+        scopeSelectValue: String(categoryScope),
+        scope,
+      });
+    }
     if (preLevel !== level || orgId !== preOrgId) {
       this.setState({
         scopeSelectValue: String(Number(level) + 1),

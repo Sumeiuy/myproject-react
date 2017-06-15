@@ -21,6 +21,12 @@ exports.response = function (req, res) {
             },
             "indicatorDataList": [
               {
+                "key": "total",
+                "name": "投顾入岗人数",
+                "value": "100",
+                "unit": "人",
+                "description": null,
+              }, {
                 "key": "keya",
                 "name": "投顾入岗人数",
                 "value": "100",
@@ -123,6 +129,12 @@ exports.response = function (req, res) {
             },
             "indicatorDataList": [
               {
+                "key": "total",
+                "name": "投顾入岗人数",
+                "value": "100",
+                "unit": "人",
+                "description": null,
+              }, {
                 "key": "tgInNum",
                 "name": "a",
                 "value": "10",
@@ -225,6 +237,12 @@ exports.response = function (req, res) {
             },
             "indicatorDataList": [
               {
+                "key": "total",
+                "name": "投顾入岗人数",
+                "value": "100",
+                "unit": "人",
+                "description": null,
+              }, {
                 "key": "tgInNum",
                 "name": "a",
                 "value": "10",
@@ -327,6 +345,12 @@ exports.response = function (req, res) {
             },
             "indicatorDataList": [
               {
+                "key": "total",
+                "name": "投顾入岗人数",
+                "value": "100",
+                "unit": "人",
+                "description": null,
+              }, {
                 "key": "tgInNum",
                 "name": "a",
                 "value": "10",
@@ -418,6 +442,12 @@ exports.response = function (req, res) {
             "level": "2",
             "indicatorDataList": [
               {
+                "key": "total",
+                "name": "投顾入岗人数",
+                "value": "100",
+                "unit": "人",
+                "description": null,
+              }, {
                 "key": "tgInNum",
                 "name": "a",
                 "value": "10",
@@ -503,553 +533,554 @@ exports.response = function (req, res) {
                 "description": null
               }
             ]
-          }, {
-            "id": "ZZ001041107",
-            "name": "上海分公司",
-            "level": "2",
-            "indicatorDataList": [
-              {
-                "key": "tgInNum",
-                "name": "a",
-                "value": "10",
-                "unit": "人",
-                "description": null,
-              }, {
-                "key": "keya",
-                "name": "a",
-                "value": "10",
-                "unit": "人",
-                "description": null,
-              },{
-                "key": "keyb",
-                "name": "b",
-                "value": "20",
-                "unit": "人",
-                "description": null,
-              }, {
-                "key": "currSignCustNum",
-                "name": "签约客户数",
-                "value": "0",
-                "unit": "户",
-                "description": "当前签约客户数"
-              }, {
-                "key": "currSignCustAset",
-                "name": "签约总资产",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "totAset",
-                "name": "托管总资产",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "gjAvgPercent",
-                "name": "股基平均佣金率",
-                "value": "0",
-                "unit": "‰",
-                "description": null
-              }, {
-                "key": "purRake",
-                "name": "净佣金收入",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "purInteIncome",
-                "name": "净利息收入",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "prdtPurFee",
-                "name": "产品净手续费收入",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "feeConfigPercent",
-                "name": "资产配置覆盖率",
-                "value": "0",
-                "unit": "%",
-                "description": null
-              }, {
-                "key": "infoCompPercent",
-                "name": "高净值客户信息完善率",
-                "value": "0",
-                "unit": "%",
-                "description": null
-              }, {
-                "key": "motCompletePercent",
-                "name": "MOT任务完成率",
-                "value": "0",
-                "unit": "%",
-                "description": null
-              }, {
-                "key": "serviceCompPercent",
-                "name": "服务覆盖率",
-                "value": "0",
-                "unit": "%",
-                "description": null
-              }
-            ]
-          }, {
-            "id": "ZZ001041109",
-            "name": "天津分公司",
-            "level": "2",
-            "indicatorDataList": [
-              {
-                "key": "tgInNum",
-                "name": "a",
-                "value": "10",
-                "unit": "人",
-                "description": null,
-              }, {
-                "key": "keya",
-                "name": "a",
-                "value": "10",
-                "unit": "人",
-                "description": null,
-              },{
-                "key": "keyb",
-                "name": "b",
-                "value": "20",
-                "unit": "人",
-                "description": null,
-              }, {
-                "key": "currSignCustNum",
-                "name": "签约客户数",
-                "value": "0",
-                "unit": "户",
-                "description": "当前签约客户数"
-              }, {
-                "key": "currSignCustAset",
-                "name": "签约总资产",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "totAset",
-                "name": "托管总资产",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "gjAvgPercent",
-                "name": "股基平均佣金率",
-                "value": "0",
-                "unit": "‰",
-                "description": null
-              }, {
-                "key": "purRake",
-                "name": "净佣金收入",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "purInteIncome",
-                "name": "净利息收入",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "prdtPurFee",
-                "name": "产品净手续费收入",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "feeConfigPercent",
-                "name": "资产配置覆盖率",
-                "value": "0",
-                "unit": "%",
-                "description": null
-              }, {
-                "key": "infoCompPercent",
-                "name": "高净值客户信息完善率",
-                "value": "0",
-                "unit": "%",
-                "description": null
-              }, {
-                "key": "motCompletePercent",
-                "name": "MOT任务完成率",
-                "value": "0",
-                "unit": "%",
-                "description": null
-              }, {
-                "key": "serviceCompPercent",
-                "name": "服务覆盖率",
-                "value": "0",
-                "unit": "%",
-                "description": null
-              }
-            ]
-          }, {
-            "id": "ZZ001041116",
-            "name": "辽宁分公司",
-            "level": "2",
-            "indicatorDataList": [
-              {
-                "key": "tgInNum",
-                "name": "a",
-                "value": "10",
-                "unit": "人",
-                "description": null,
-              }, {
-                "key": "keya",
-                "name": "a",
-                "value": "10",
-                "unit": "人",
-                "description": null,
-              },{
-                "key": "keyb",
-                "name": "b",
-                "value": "20",
-                "unit": "人",
-                "description": null,
-              }, {
-                "key": "currSignCustNum",
-                "name": "签约客户数",
-                "value": "0",
-                "unit": "户",
-                "description": "当前签约客户数"
-              }, {
-                "key": "currSignCustAset",
-                "name": "签约总资产",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "totAset",
-                "name": "托管总资产",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "gjAvgPercent",
-                "name": "股基平均佣金率",
-                "value": "0",
-                "unit": "‰",
-                "description": null
-              }, {
-                "key": "purRake",
-                "name": "净佣金收入",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "purInteIncome",
-                "name": "净利息收入",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "prdtPurFee",
-                "name": "产品净手续费收入",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "feeConfigPercent",
-                "name": "资产配置覆盖率",
-                "value": "0",
-                "unit": "%",
-                "description": null
-              }, {
-                "key": "infoCompPercent",
-                "name": "高净值客户信息完善率",
-                "value": "0",
-                "unit": "%",
-                "description": null
-              }, {
-                "key": "motCompletePercent",
-                "name": "MOT任务完成率",
-                "value": "0",
-                "unit": "%",
-                "description": null
-              }, {
-                "key": "serviceCompPercent",
-                "name": "服务覆盖率",
-                "value": "0",
-                "unit": "%",
-                "description": null
-              }
-            ]
-          }, {
-            "id": "ZZ323268",
-            "name": "山东分公司",
-            "level": "2",
-            "indicatorDataList": [
-              {
-                "key": "tgInNum",
-                "name": "a",
-                "value": "10",
-                "unit": "人",
-                "description": null,
-              }, {
-                "key": "keya",
-                "name": "a",
-                "value": "10",
-                "unit": "人",
-                "description": null,
-              },{
-                "key": "keyb",
-                "name": "b",
-                "value": "20",
-                "unit": "人",
-                "description": null,
-              }, {
-                "key": "currSignCustNum",
-                "name": "签约客户数",
-                "value": "0",
-                "unit": "户",
-                "description": "当前签约客户数"
-              }, {
-                "key": "currSignCustAset",
-                "name": "签约总资产",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "totAset",
-                "name": "托管总资产",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "gjAvgPercent",
-                "name": "股基平均佣金率",
-                "value": "0",
-                "unit": "‰",
-                "description": null
-              }, {
-                "key": "purRake",
-                "name": "净佣金收入",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "purInteIncome",
-                "name": "净利息收入",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "prdtPurFee",
-                "name": "产品净手续费收入",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "feeConfigPercent",
-                "name": "资产配置覆盖率",
-                "value": "0",
-                "unit": "%",
-                "description": null
-              }, {
-                "key": "infoCompPercent",
-                "name": "高净值客户信息完善率",
-                "value": "0",
-                "unit": "%",
-                "description": null
-              }, {
-                "key": "motCompletePercent",
-                "name": "MOT任务完成率",
-                "value": "0",
-                "unit": "%",
-                "description": null
-              }, {
-                "key": "serviceCompPercent",
-                "name": "服务覆盖率",
-                "value": "0",
-                "unit": "%",
-                "description": null
-              }
-            ]
-          }, {
-            "id": "ZZ323264",
-            "name": "河南分公司",
-            "level": "2",
-            "indicatorDataList": [
-              {
-                "key": "tgInNum",
-                "name": "a",
-                "value": "10",
-                "unit": "人",
-                "description": null,
-              }, {
-                "key": "keya",
-                "name": "a",
-                "value": "10",
-                "unit": "人",
-                "description": null,
-              },{
-                "key": "keyb",
-                "name": "b",
-                "value": "20",
-                "unit": "人",
-                "description": null,
-              }, {
-                "key": "currSignCustNum",
-                "name": "签约客户数",
-                "value": "0",
-                "unit": "户",
-                "description": "当前签约客户数"
-              }, {
-                "key": "currSignCustAset",
-                "name": "签约总资产",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "totAset",
-                "name": "托管总资产",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "gjAvgPercent",
-                "name": "股基平均佣金率",
-                "value": "0",
-                "unit": "‰",
-                "description": null
-              }, {
-                "key": "purRake",
-                "name": "净佣金收入",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "purInteIncome",
-                "name": "净利息收入",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "prdtPurFee",
-                "name": "产品净手续费收入",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "feeConfigPercent",
-                "name": "资产配置覆盖率",
-                "value": "0",
-                "unit": "%",
-                "description": null
-              }, {
-                "key": "infoCompPercent",
-                "name": "高净值客户信息完善率",
-                "value": "0",
-                "unit": "%",
-                "description": null
-              }, {
-                "key": "motCompletePercent",
-                "name": "MOT任务完成率",
-                "value": "0",
-                "unit": "%",
-                "description": null
-              }, {
-                "key": "serviceCompPercent",
-                "name": "服务覆盖率",
-                "value": "0",
-                "unit": "%",
-                "description": null
-              }
-            ]
-          }, {
-            "id": "ZZ323273",
-            "name": "江阴分公司",
-            "level": "2",
-            "indicatorDataList": [
-              {
-                "key": "tgInNum",
-                "name": "a",
-                "value": "10",
-                "unit": "人",
-                "description": null,
-              }, {
-                "key": "keya",
-                "name": "a",
-                "value": "10",
-                "unit": "人",
-                "description": null,
-              },{
-                "key": "keyb",
-                "name": "b",
-                "value": "20",
-                "unit": "人",
-                "description": null,
-              }, {
-                "key": "currSignCustNum",
-                "name": "签约客户数",
-                "value": "0",
-                "unit": "户",
-                "description": "当前签约客户数"
-              }, {
-                "key": "currSignCustAset",
-                "name": "签约总资产",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "totAset",
-                "name": "托管总资产",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "gjAvgPercent",
-                "name": "股基平均佣金率",
-                "value": "0",
-                "unit": "‰",
-                "description": null
-              }, {
-                "key": "purRake",
-                "name": "净佣金收入",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "purInteIncome",
-                "name": "净利息收入",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "prdtPurFee",
-                "name": "产品净手续费收入",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "feeConfigPercent",
-                "name": "资产配置覆盖率",
-                "value": "0",
-                "unit": "%",
-                "description": null
-              }, {
-                "key": "infoCompPercent",
-                "name": "高净值客户信息完善率",
-                "value": "0",
-                "unit": "%",
-                "description": null
-              }, {
-                "key": "motCompletePercent",
-                "name": "MOT任务完成率",
-                "value": "0",
-                "unit": "%",
-                "description": null
-              }, {
-                "key": "serviceCompPercent",
-                "name": "服务覆盖率",
-                "value": "0",
-                "unit": "%",
-                "description": null
-              }
-            ]
-          }
+          },
+          // {
+          //   "id": "ZZ001041107",
+          //   "name": "上海分公司",
+          //   "level": "2",
+          //   "indicatorDataList": [
+          //     {
+          //       "key": "tgInNum",
+          //       "name": "a",
+          //       "value": "10",
+          //       "unit": "人",
+          //       "description": null,
+          //     }, {
+          //       "key": "keya",
+          //       "name": "a",
+          //       "value": "10",
+          //       "unit": "人",
+          //       "description": null,
+          //     },{
+          //       "key": "keyb",
+          //       "name": "b",
+          //       "value": "20",
+          //       "unit": "人",
+          //       "description": null,
+          //     }, {
+          //       "key": "currSignCustNum",
+          //       "name": "签约客户数",
+          //       "value": "0",
+          //       "unit": "户",
+          //       "description": "当前签约客户数"
+          //     }, {
+          //       "key": "currSignCustAset",
+          //       "name": "签约总资产",
+          //       "value": "0",
+          //       "unit": "元",
+          //       "description": null
+          //     }, {
+          //       "key": "totAset",
+          //       "name": "托管总资产",
+          //       "value": "0",
+          //       "unit": "元",
+          //       "description": null
+          //     }, {
+          //       "key": "gjAvgPercent",
+          //       "name": "股基平均佣金率",
+          //       "value": "0",
+          //       "unit": "‰",
+          //       "description": null
+          //     }, {
+          //       "key": "purRake",
+          //       "name": "净佣金收入",
+          //       "value": "0",
+          //       "unit": "元",
+          //       "description": null
+          //     }, {
+          //       "key": "purInteIncome",
+          //       "name": "净利息收入",
+          //       "value": "0",
+          //       "unit": "元",
+          //       "description": null
+          //     }, {
+          //       "key": "prdtPurFee",
+          //       "name": "产品净手续费收入",
+          //       "value": "0",
+          //       "unit": "元",
+          //       "description": null
+          //     }, {
+          //       "key": "feeConfigPercent",
+          //       "name": "资产配置覆盖率",
+          //       "value": "0",
+          //       "unit": "%",
+          //       "description": null
+          //     }, {
+          //       "key": "infoCompPercent",
+          //       "name": "高净值客户信息完善率",
+          //       "value": "0",
+          //       "unit": "%",
+          //       "description": null
+          //     }, {
+          //       "key": "motCompletePercent",
+          //       "name": "MOT任务完成率",
+          //       "value": "0",
+          //       "unit": "%",
+          //       "description": null
+          //     }, {
+          //       "key": "serviceCompPercent",
+          //       "name": "服务覆盖率",
+          //       "value": "0",
+          //       "unit": "%",
+          //       "description": null
+          //     }
+          //   ]
+          // }, {
+          //   "id": "ZZ001041109",
+          //   "name": "天津分公司",
+          //   "level": "2",
+          //   "indicatorDataList": [
+          //     {
+          //       "key": "tgInNum",
+          //       "name": "a",
+          //       "value": "10",
+          //       "unit": "人",
+          //       "description": null,
+          //     }, {
+          //       "key": "keya",
+          //       "name": "a",
+          //       "value": "10",
+          //       "unit": "人",
+          //       "description": null,
+          //     },{
+          //       "key": "keyb",
+          //       "name": "b",
+          //       "value": "20",
+          //       "unit": "人",
+          //       "description": null,
+          //     }, {
+          //       "key": "currSignCustNum",
+          //       "name": "签约客户数",
+          //       "value": "0",
+          //       "unit": "户",
+          //       "description": "当前签约客户数"
+          //     }, {
+          //       "key": "currSignCustAset",
+          //       "name": "签约总资产",
+          //       "value": "0",
+          //       "unit": "元",
+          //       "description": null
+          //     }, {
+          //       "key": "totAset",
+          //       "name": "托管总资产",
+          //       "value": "0",
+          //       "unit": "元",
+          //       "description": null
+          //     }, {
+          //       "key": "gjAvgPercent",
+          //       "name": "股基平均佣金率",
+          //       "value": "0",
+          //       "unit": "‰",
+          //       "description": null
+          //     }, {
+          //       "key": "purRake",
+          //       "name": "净佣金收入",
+          //       "value": "0",
+          //       "unit": "元",
+          //       "description": null
+          //     }, {
+          //       "key": "purInteIncome",
+          //       "name": "净利息收入",
+          //       "value": "0",
+          //       "unit": "元",
+          //       "description": null
+          //     }, {
+          //       "key": "prdtPurFee",
+          //       "name": "产品净手续费收入",
+          //       "value": "0",
+          //       "unit": "元",
+          //       "description": null
+          //     }, {
+          //       "key": "feeConfigPercent",
+          //       "name": "资产配置覆盖率",
+          //       "value": "0",
+          //       "unit": "%",
+          //       "description": null
+          //     }, {
+          //       "key": "infoCompPercent",
+          //       "name": "高净值客户信息完善率",
+          //       "value": "0",
+          //       "unit": "%",
+          //       "description": null
+          //     }, {
+          //       "key": "motCompletePercent",
+          //       "name": "MOT任务完成率",
+          //       "value": "0",
+          //       "unit": "%",
+          //       "description": null
+          //     }, {
+          //       "key": "serviceCompPercent",
+          //       "name": "服务覆盖率",
+          //       "value": "0",
+          //       "unit": "%",
+          //       "description": null
+          //     }
+          //   ]
+          // }, {
+          //   "id": "ZZ001041116",
+          //   "name": "辽宁分公司",
+          //   "level": "2",
+          //   "indicatorDataList": [
+          //     {
+          //       "key": "tgInNum",
+          //       "name": "a",
+          //       "value": "10",
+          //       "unit": "人",
+          //       "description": null,
+          //     }, {
+          //       "key": "keya",
+          //       "name": "a",
+          //       "value": "10",
+          //       "unit": "人",
+          //       "description": null,
+          //     },{
+          //       "key": "keyb",
+          //       "name": "b",
+          //       "value": "20",
+          //       "unit": "人",
+          //       "description": null,
+          //     }, {
+          //       "key": "currSignCustNum",
+          //       "name": "签约客户数",
+          //       "value": "0",
+          //       "unit": "户",
+          //       "description": "当前签约客户数"
+          //     }, {
+          //       "key": "currSignCustAset",
+          //       "name": "签约总资产",
+          //       "value": "0",
+          //       "unit": "元",
+          //       "description": null
+          //     }, {
+          //       "key": "totAset",
+          //       "name": "托管总资产",
+          //       "value": "0",
+          //       "unit": "元",
+          //       "description": null
+          //     }, {
+          //       "key": "gjAvgPercent",
+          //       "name": "股基平均佣金率",
+          //       "value": "0",
+          //       "unit": "‰",
+          //       "description": null
+          //     }, {
+          //       "key": "purRake",
+          //       "name": "净佣金收入",
+          //       "value": "0",
+          //       "unit": "元",
+          //       "description": null
+          //     }, {
+          //       "key": "purInteIncome",
+          //       "name": "净利息收入",
+          //       "value": "0",
+          //       "unit": "元",
+          //       "description": null
+          //     }, {
+          //       "key": "prdtPurFee",
+          //       "name": "产品净手续费收入",
+          //       "value": "0",
+          //       "unit": "元",
+          //       "description": null
+          //     }, {
+          //       "key": "feeConfigPercent",
+          //       "name": "资产配置覆盖率",
+          //       "value": "0",
+          //       "unit": "%",
+          //       "description": null
+          //     }, {
+          //       "key": "infoCompPercent",
+          //       "name": "高净值客户信息完善率",
+          //       "value": "0",
+          //       "unit": "%",
+          //       "description": null
+          //     }, {
+          //       "key": "motCompletePercent",
+          //       "name": "MOT任务完成率",
+          //       "value": "0",
+          //       "unit": "%",
+          //       "description": null
+          //     }, {
+          //       "key": "serviceCompPercent",
+          //       "name": "服务覆盖率",
+          //       "value": "0",
+          //       "unit": "%",
+          //       "description": null
+          //     }
+          //   ]
+          // }, {
+          //   "id": "ZZ323268",
+          //   "name": "山东分公司",
+          //   "level": "2",
+          //   "indicatorDataList": [
+          //     {
+          //       "key": "tgInNum",
+          //       "name": "a",
+          //       "value": "10",
+          //       "unit": "人",
+          //       "description": null,
+          //     }, {
+          //       "key": "keya",
+          //       "name": "a",
+          //       "value": "10",
+          //       "unit": "人",
+          //       "description": null,
+          //     },{
+          //       "key": "keyb",
+          //       "name": "b",
+          //       "value": "20",
+          //       "unit": "人",
+          //       "description": null,
+          //     }, {
+          //       "key": "currSignCustNum",
+          //       "name": "签约客户数",
+          //       "value": "0",
+          //       "unit": "户",
+          //       "description": "当前签约客户数"
+          //     }, {
+          //       "key": "currSignCustAset",
+          //       "name": "签约总资产",
+          //       "value": "0",
+          //       "unit": "元",
+          //       "description": null
+          //     }, {
+          //       "key": "totAset",
+          //       "name": "托管总资产",
+          //       "value": "0",
+          //       "unit": "元",
+          //       "description": null
+          //     }, {
+          //       "key": "gjAvgPercent",
+          //       "name": "股基平均佣金率",
+          //       "value": "0",
+          //       "unit": "‰",
+          //       "description": null
+          //     }, {
+          //       "key": "purRake",
+          //       "name": "净佣金收入",
+          //       "value": "0",
+          //       "unit": "元",
+          //       "description": null
+          //     }, {
+          //       "key": "purInteIncome",
+          //       "name": "净利息收入",
+          //       "value": "0",
+          //       "unit": "元",
+          //       "description": null
+          //     }, {
+          //       "key": "prdtPurFee",
+          //       "name": "产品净手续费收入",
+          //       "value": "0",
+          //       "unit": "元",
+          //       "description": null
+          //     }, {
+          //       "key": "feeConfigPercent",
+          //       "name": "资产配置覆盖率",
+          //       "value": "0",
+          //       "unit": "%",
+          //       "description": null
+          //     }, {
+          //       "key": "infoCompPercent",
+          //       "name": "高净值客户信息完善率",
+          //       "value": "0",
+          //       "unit": "%",
+          //       "description": null
+          //     }, {
+          //       "key": "motCompletePercent",
+          //       "name": "MOT任务完成率",
+          //       "value": "0",
+          //       "unit": "%",
+          //       "description": null
+          //     }, {
+          //       "key": "serviceCompPercent",
+          //       "name": "服务覆盖率",
+          //       "value": "0",
+          //       "unit": "%",
+          //       "description": null
+          //     }
+          //   ]
+          // }, {
+          //   "id": "ZZ323264",
+          //   "name": "河南分公司",
+          //   "level": "2",
+          //   "indicatorDataList": [
+          //     {
+          //       "key": "tgInNum",
+          //       "name": "a",
+          //       "value": "10",
+          //       "unit": "人",
+          //       "description": null,
+          //     }, {
+          //       "key": "keya",
+          //       "name": "a",
+          //       "value": "10",
+          //       "unit": "人",
+          //       "description": null,
+          //     },{
+          //       "key": "keyb",
+          //       "name": "b",
+          //       "value": "20",
+          //       "unit": "人",
+          //       "description": null,
+          //     }, {
+          //       "key": "currSignCustNum",
+          //       "name": "签约客户数",
+          //       "value": "0",
+          //       "unit": "户",
+          //       "description": "当前签约客户数"
+          //     }, {
+          //       "key": "currSignCustAset",
+          //       "name": "签约总资产",
+          //       "value": "0",
+          //       "unit": "元",
+          //       "description": null
+          //     }, {
+          //       "key": "totAset",
+          //       "name": "托管总资产",
+          //       "value": "0",
+          //       "unit": "元",
+          //       "description": null
+          //     }, {
+          //       "key": "gjAvgPercent",
+          //       "name": "股基平均佣金率",
+          //       "value": "0",
+          //       "unit": "‰",
+          //       "description": null
+          //     }, {
+          //       "key": "purRake",
+          //       "name": "净佣金收入",
+          //       "value": "0",
+          //       "unit": "元",
+          //       "description": null
+          //     }, {
+          //       "key": "purInteIncome",
+          //       "name": "净利息收入",
+          //       "value": "0",
+          //       "unit": "元",
+          //       "description": null
+          //     }, {
+          //       "key": "prdtPurFee",
+          //       "name": "产品净手续费收入",
+          //       "value": "0",
+          //       "unit": "元",
+          //       "description": null
+          //     }, {
+          //       "key": "feeConfigPercent",
+          //       "name": "资产配置覆盖率",
+          //       "value": "0",
+          //       "unit": "%",
+          //       "description": null
+          //     }, {
+          //       "key": "infoCompPercent",
+          //       "name": "高净值客户信息完善率",
+          //       "value": "0",
+          //       "unit": "%",
+          //       "description": null
+          //     }, {
+          //       "key": "motCompletePercent",
+          //       "name": "MOT任务完成率",
+          //       "value": "0",
+          //       "unit": "%",
+          //       "description": null
+          //     }, {
+          //       "key": "serviceCompPercent",
+          //       "name": "服务覆盖率",
+          //       "value": "0",
+          //       "unit": "%",
+          //       "description": null
+          //     }
+          //   ]
+          // }, {
+          //   "id": "ZZ323273",
+          //   "name": "江阴分公司",
+          //   "level": "2",
+          //   "indicatorDataList": [
+          //     {
+          //       "key": "tgInNum",
+          //       "name": "a",
+          //       "value": "10",
+          //       "unit": "人",
+          //       "description": null,
+          //     }, {
+          //       "key": "keya",
+          //       "name": "a",
+          //       "value": "10",
+          //       "unit": "人",
+          //       "description": null,
+          //     },{
+          //       "key": "keyb",
+          //       "name": "b",
+          //       "value": "20",
+          //       "unit": "人",
+          //       "description": null,
+          //     }, {
+          //       "key": "currSignCustNum",
+          //       "name": "签约客户数",
+          //       "value": "0",
+          //       "unit": "户",
+          //       "description": "当前签约客户数"
+          //     }, {
+          //       "key": "currSignCustAset",
+          //       "name": "签约总资产",
+          //       "value": "0",
+          //       "unit": "元",
+          //       "description": null
+          //     }, {
+          //       "key": "totAset",
+          //       "name": "托管总资产",
+          //       "value": "0",
+          //       "unit": "元",
+          //       "description": null
+          //     }, {
+          //       "key": "gjAvgPercent",
+          //       "name": "股基平均佣金率",
+          //       "value": "0",
+          //       "unit": "‰",
+          //       "description": null
+          //     }, {
+          //       "key": "purRake",
+          //       "name": "净佣金收入",
+          //       "value": "0",
+          //       "unit": "元",
+          //       "description": null
+          //     }, {
+          //       "key": "purInteIncome",
+          //       "name": "净利息收入",
+          //       "value": "0",
+          //       "unit": "元",
+          //       "description": null
+          //     }, {
+          //       "key": "prdtPurFee",
+          //       "name": "产品净手续费收入",
+          //       "value": "0",
+          //       "unit": "元",
+          //       "description": null
+          //     }, {
+          //       "key": "feeConfigPercent",
+          //       "name": "资产配置覆盖率",
+          //       "value": "0",
+          //       "unit": "%",
+          //       "description": null
+          //     }, {
+          //       "key": "infoCompPercent",
+          //       "name": "高净值客户信息完善率",
+          //       "value": "0",
+          //       "unit": "%",
+          //       "description": null
+          //     }, {
+          //       "key": "motCompletePercent",
+          //       "name": "MOT任务完成率",
+          //       "value": "0",
+          //       "unit": "%",
+          //       "description": null
+          //     }, {
+          //       "key": "serviceCompPercent",
+          //       "name": "服务覆盖率",
+          //       "value": "0",
+          //       "unit": "%",
+          //       "description": null
+          //     }
+          //   ]
+          // }
         ],
         "titleList": [
           {
@@ -1059,12 +1090,18 @@ exports.response = function (req, res) {
             "unit": "人",
             "description": null,
             "children": [{
+              "key": "total",
+              "name": "总计",
+              "value": null,
+              "unit": "人",
+              "description": null,
+            }, {
               "key": "keya",
               "name": "a",
               "value": null,
               "unit": "人",
               "description": null,
-            },{
+            }, {
               "key": "keyb",
               "name": "b",
               "value": null,
