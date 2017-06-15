@@ -58,49 +58,21 @@ export default class ChartTable extends PureComponent {
       pageSize: 10,
     };
   }
-
-  // 分页事件
   @autobind
-  handlePaginationChange(page) {
-    const { getTableInfo, indexID } = this.props;
-    const { orderIndicatorId, orderType } = this.state;
-    this.setState({
-      pageNum: page,
-    });
-    getTableInfo({
-      pageNum: page,
-      orderIndicatorId,
-      orderType,
-      categoryKey: indexID,
-    });
+  getChildren(item) {
+    const childrenArr = [];
+    if (item.children) {
+      item.children.map(child =>
+        childrenArr.push({
+          title: child.name,
+          dataIndex: child.key,
+          key: `key${child.key}`,
+          width: 100,
+        }));
+    }
+    console.log('childrenArr', childrenArr);
+    return childrenArr;
   }
-
-  @autobind
-  unitChange(arr) {
-    let value;
-    const newArr = arr.map((item) => {
-      const itemValue = Number(item.value);
-      switch (item.unit) {
-        case '%':
-          value = Number.parseFloat((itemValue * 100).toFixed(2));
-          break;
-        case '\u2030':
-          value = Number.parseFloat((itemValue * 1000).toFixed(2));
-          break;
-        case '元':
-          value = `${Number.parseFloat((itemValue / 10000).toFixed(2))}`;
-          break;
-        default:
-          value = Number.parseFloat(itemValue.toFixed(2));
-          break;
-      }
-      return {
-        [item.key]: value,
-      };
-    });
-    return newArr;
-  }
-
   @autobind
   handleTitleClick(item) {
     const { getTableInfo, indexID } = this.props;
@@ -154,13 +126,64 @@ export default class ChartTable extends PureComponent {
     } else {
       toolTipTittle = '';
     }
-    return toolTipTittle ? <Tooltip placement="right" title={`${record.orgModel.level2Name} - ${record.orgModel.level3Name}`}>
+    return toolTipTittle ? <Tooltip placement="right" title={toolTipTittle}>
       <div className={styles.tdWrapperDiv}>
         {record.city}
       </div>
     </Tooltip>
     :
     <div className={styles.tdWrapperDiv}>{record.city}</div>;
+  }
+  @autobind
+  unitChange(arr) {
+    let value;
+    const newArr = arr.map((item) => {
+      const itemValue = Number(item.value);
+      switch (item.unit) {
+        case '%':
+          value = Number.parseFloat((itemValue * 100).toFixed(2));
+          break;
+        case '\u2030':
+          value = Number.parseFloat((itemValue * 1000).toFixed(2));
+          break;
+        case '元':
+          value = `${Number.parseFloat((itemValue / 10000).toFixed(2))}`;
+          break;
+        default:
+          value = Number.parseFloat(itemValue.toFixed(2));
+          break;
+      }
+      return {
+        [item.key]: value,
+      };
+    });
+    return newArr;
+  }
+  // 分页事件
+  @autobind
+  handlePaginationChange(page) {
+    const { getTableInfo, indexID } = this.props;
+    const { orderIndicatorId, orderType } = this.state;
+    this.setState({
+      pageNum: page,
+    });
+    getTableInfo({
+      pageNum: page,
+      orderIndicatorId,
+      orderType,
+      categoryKey: indexID,
+    });
+  }
+  @autobind
+  renderContent(value, row, index) {
+    const obj = {
+      children: value,
+      props: {},
+    };
+    if (index === 0) {
+      obj.props.colSpan = 2;
+    }
+    return obj;
   }
 
   render() {
@@ -179,8 +202,8 @@ export default class ChartTable extends PureComponent {
           { key: index, city: name, level: itemLevel, id, orgModel }, ...testArr,
         ));
       });
-      arr = columns.map((item, index) => (
-        {
+      arr = columns.map((item, index) => {
+        const column = {
           dataIndex: item.key,
           title: (
             <span
@@ -217,13 +240,20 @@ export default class ChartTable extends PureComponent {
             </span>
           ),
           width: columnWidth[index],
+          // render: this.renderContent,
           render: text => (
             <div className={styles.tdWrapperDiv}>
               {text}
             </div>
           ),
-        }
-      ));
+        };
+        // const hasChildren = item.children;
+        // if (hasChildren) {
+        //   column.children = this.getChildren(item);
+        //   // column.render = this.renderContent;
+        // }
+        return column;
+      });
       const tempScope = query.scope || Number(level) + 1;
       // 匹配第一列标题文字，分公司、营业部、投顾
       let keyName = '';
@@ -242,6 +272,22 @@ export default class ChartTable extends PureComponent {
           this.toolTipHandle(record)
         ),
       });
+      // 表格汇总 显示 colspan
+      // arr[1].render = (text, row, index) => {
+      //   if (index > 1) {
+      //     return (
+      //       <div className={styles.tdWrapperDiv}>
+      //         {text}
+      //       </div>
+      //     );
+      //   }
+      //   return ({
+      //     children: <div className={styles.tdWrapperDiv}>{text}</div>,
+      //     props: {
+      //       colSpan: 2,
+      //     },
+      //   });
+      // };
     }
     return (
       <div className={styles.tableDiv} style={style}>
