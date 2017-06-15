@@ -33,77 +33,30 @@ export default class PageHeader extends PureComponent {
     replace: PropTypes.func.isRequired,
   }
 
-  @autobind
-  handleModuleChange(key) {
-    console.log('key', key);
-    const { replace, location: { pathname, query } } = this.props;
-    // 做跳转页面逻辑处理
-    // const url = '?typeKey=${key}';
-    // push(url);
-    const moduleName = `${key}`;
-    console.log(`selected ${key}`);
-    replace({
-      pathname,
-      query: {
-        ...query,
-        moduleName,
-      },
-    });
+  constructor(props) {
+    super(props);
+    this.state = {
+      value: undefined,
+    };
   }
 
-  @autobind
-  handleTypeChange(key) {
-    console.log('key', key);
-    const { replace, location: { pathname, query } } = this.props;
-    // 做跳转页面逻辑处理
-    // const url = '?typeKey=${key}';
-    // push(url);
-    const typeName = `${key}`;
-    console.log(`selected ${key}`);
-    replace({
-      pathname,
-      query: {
-        ...query,
-        typeName,
-      },
-    });
-  }
-
-  @autobind
-  handleQuestionChange(key) {
-    console.log('key', key);
-    const { replace, location: { pathname, query } } = this.props;
-    // 做跳转页面逻辑处理
-    // const url = '?typeKey=${key}';
-    // push(url);
-    const questionName = `${key}`;
-    console.log(`selected ${key}`);
-    replace({
-      pathname,
-      query: {
-        ...query,
-        questionName,
-      },
-    });
-  }
-
-  @autobind
-  handleStateChange(key) {
-    console.log('key', key);
-    const { replace, location: { pathname, query } } = this.props;
-    // 做跳转页面逻辑处理
-    // const url = '?typeKey=${key}';
-    // push(url);
-    const stateName = `${key}`;
-    console.log(`selected ${key}`);
-    replace({
-      pathname,
-      query: {
-        ...query,
-        stateName,
-      },
-    });
-  }
+  // @autobind
+  // handleModuleChange(key) {
+  //   console.log('key', key);
+  //   const { replace, location: { pathname, query } } = this.props;
+  //   // 做跳转页面逻辑处理
+  //   // const url = '?typeKey=${key}';
+  //   // push(url);
+  //   const moduleName = `${key}`;
+  //   console.log(`selected ${key}`);
+  //   replace({
+  //     pathname,
+  //     query: {
+  //       ...query,
+  //       moduleName,
+  //     },
+  //   });
+  // }
 
   @autobind
   handleDateChange(dateStrings) {
@@ -124,21 +77,16 @@ export default class PageHeader extends PureComponent {
     });
   }
 
+
   @autobind
-  handleOperatorChange(key) {
-    console.log('key', key);
+  handleSelectChange(name, key) {
     const { replace, location: { pathname, query } } = this.props;
-    console.log('location', this.props.location);
-    // 做跳转页面逻辑处理
-    // const url = '?typeKey=${key}';
-    // push(url);
-    const operatorName = `${key}`;
-    console.log(`selected ${key}`);
+    console.log('key>>', key);
     replace({
       pathname,
       query: {
         ...query,
-        operatorName,
+        [name]: key instanceof Array ? key.join(',') : key,
       },
     });
   }
@@ -153,50 +101,61 @@ export default class PageHeader extends PureComponent {
     const getSelectOption = item => item.map(i =>
       <Option key={i.value}>{i.label}</Option>,
     );
-
+    const { location: { query: {
+      moduleName,
+      typeName,
+      questionName,
+      stateName,
+      operatorName,
+    } } } = this.props;
 
     return (
       <div className="feedbackHeader">
         模块: <Cascader
           options={channelOptions}
-          style={{ width: '10%' }}
-          onChange={this.handleModuleChange}
+          style={{ width: '11%' }}
+          placeholder="请选择"
+          value={!moduleName ? [] : moduleName.split(',')}
+          onChange={key => this.handleSelectChange('moduleName', key)}
           changeOnSelect
         />
         类型: <Select
           mode="multiple"
-          tokenSeparators={[',']}
           style={{ width: '10%' }}
-          placeholder="全部"
-          onChange={this.handleTypeChange}
+          placeholder="请选择"
+          value={!typeName ? [] : typeName.split(',')}
+          onChange={key => this.handleSelectChange('typeName', key)}
         >
           {getSelectOption(typeOptions)}
         </Select>
         问题标签: <Select
           mode="multiple"
-          style={{ width: '10%' }}
-          placeholder="全部"
-          onChange={this.handleQuestionChange}
+          style={{ width: '11%' }}
+          placeholder="请选择"
+          value={!questionName ? [] : questionName.split(',')}
+          onChange={key => this.handleSelectChange('questionName', key)}
         >
           {getSelectOption(questionTagOptions)}
         </Select>
         状态: <Select
           mode="multiple"
           style={{ width: '10%' }}
-          placeholder="全部"
-          onChange={this.handleStateChange}
+          placeholder="请选择"
+          value={!stateName ? [] : stateName.split(',')}
+          onChange={key => this.handleSelectChange('stateName', key)}
         >
           {getSelectOption(stateOptions)}
         </Select>
         反馈时间:<RangePicker
-          style={{ width: '20%' }}
+          style={{ width: '15%' }}
           ranges={{ Today: [moment(), moment()], 'This Month': [moment(), moment().endOf('month')] }}
           onChange={this.handleDateChange}
         />
         经办人: <Select
           defaultValue="all"
-          style={{ width: '10%' }}
-          onChange={this.handleOperatorChange}
+          style={{ width: '6%' }}
+          value={!operatorName ? '' : operatorName}
+          onChange={key => this.handleSelectChange('operatorName', key)}
         >
           {getSelectOption(operatorOptions)}
         </Select>

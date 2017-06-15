@@ -4,17 +4,19 @@
   .feedbackHeader {
     padding:0 20px;
     width: 100%;
-    height: 55px;
-    line-height: 55px;
+    height: 54px;
+    line-height: 54px;
     background-color: #fff;
+    font-size: 14px;
+    color: #c2c2c2;
     .ant-select {
       color:#33393c;
-      font-size: 12px;
+      font-size: 14px;
+      margin-right: 20px;
     }
     .ant-select-selection,
     .ant-calendar-picker-input,
     .ant-input.ant-cascader-input  {
-      height: 20px;
       background-color: transparent;
       border-color: transparent;
       .ant-select-selection__choice{
@@ -24,10 +26,6 @@
         // }
       }
     }
-    .ant-select-open .ant-select-selection,
-    .ant-select-focused .ant-select-selection,
-    .ant-select-selection:focus,
-    .ant-select-selection:active,
     .ant-cascader-picker:hover,
     .ant-cascader-picker:active,
     .ant-cascader-picker:focus,
@@ -45,11 +43,70 @@
     .ant-select-selection--multiple .ant-select-selection__rendered > ul > li {
         margin-bottom: 3px;
         margin-top: 1.2px;
+        &:nth-last-child(2) {
+          &:after{
+            display: none;
+          }
+        }
     }
     .ant-select-selection--multiple .ant-select-selection__choice{
       margin-right: 0;
-      padding: 0 15px 0 0px;
+      padding: 0 10px 0 0px;
+      position: relative;
+      &:after{
+        content: "，";
+        position: absolute;
+        top: 0;
+        right: -1px;
+      }
     }
+    .ant-select-selection__placeholder,
+    .ant-select-search__field__placeholder{
+      color: #33393c;
+    }
+    .ant-select-selection--multiple .ant-select-selection__choice__remove {
+      display: none;
+    }
+    .ant-select-selection__rendered ul{
+      clear: both;
+      height: 22px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      &:after {
+      border: 4px solid transparent;
+      border-top-color: #111;
+      content: "";
+      height: 0;
+      position: absolute;
+      right: 8px;
+      top: 9px;
+      width: 0;
+      }
+    }
+    .ant-select-selection,
+    .ant-select-selection--multiple .ant-select-selection__rendered{
+      height: 22px;
+    }
+    .ant-select-selection.ant-select-selection--multiple{
+      width: 100%;
+      height: 22px;
+      position: absolute;
+      left: 0;
+      top: -18px;
+    } 
+    .ant-cascader-picker .anticon-down:before,
+    .ant-select-arrow:before {
+      border: 4px solid transparent;
+      border-top-color: #111;
+      content: "";
+      height: 0;
+      position: absolute;
+      right: 8px;
+      top: 5px;
+      width: 10px;
+    }
+
   }
 }
 // end
