@@ -1,5 +1,4 @@
 import React, { PropTypes, PureComponent } from 'react';
-import ReactDOM from 'react-dom';
 import { autobind } from 'core-decorators';
 import { Table } from 'antd';
 import classnames from 'classnames';
@@ -15,7 +14,7 @@ export default class FeedbackList extends PureComponent {
     list: PropTypes.object.isRequired,
     getFeedbackList: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
-    saveSelectedRowData: PropTypes.func.isRequired,
+    replace: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -34,69 +33,44 @@ export default class FeedbackList extends PureComponent {
       totalPageNum,
       curPageSize: 10,
       curSelectedRow: 0,
-      isShouldUpdate: true,
     };
   }
 
-  componentDidMount() {
-    // setTimeout(() => {
-    this.setDefaultRow();
-    // }, 1000);
-  }
-
   componentWillReceiveProps(nextProps) {
-    const { list: nextList = EMPTY_OBJECT } = nextProps;
-    const { list: preList = EMPTY_OBJECT } = this.props;
+    const { list: nextList = EMPTY_OBJECT,
+      location: { query: nextQuery = EMPTY_OBJECT } } = nextProps;
+    const { list: prevList = EMPTY_OBJECT, location: { query: prevQuery = EMPTY_OBJECT },
+      getFeedbackList } = this.props;
     const { resultData: nextResultData = EMPTY_LIST, page = EMPTY_OBJECT } = nextList;
-    const { resultData: preResultData = EMPTY_LIST } = preList;
+    const { resultData: prevResultData = EMPTY_LIST } = prevList;
     const { curPageNum = 1, totalPageNum = 1, totalRecordNum = 1 } = page;
-    if (preResultData !== nextResultData) {
+    const { currentId = 0 } = nextQuery;
+    if (prevResultData !== nextResultData) {
       this.setState({
         dataSource: nextResultData,
         totalRecordNum,
         totalPageNum,
         curPageNum,
-        // 恢复isShouldUpdate
-        isShouldUpdate: true,
-        curPageSize: 10,
-        curSelectedRow: 0,
+        curSelectedRow: _.findIndex(nextResultData, item => item.code === currentId),
+      });
+    }
+    // 浅比较值是否相等
+    if (!_.isEqual(prevQuery, nextQuery)) {
+      // url发生变化，检测是否改变了筛选条件
+      console.log(nextQuery);
+      const { curPageNum: newPageNum, curPageSize: newPageSize } = this.state;
+      getFeedbackList({
+        ...nextQuery,
+        curPageNum: newPageNum,
+        curPageSize: newPageSize,
       });
     }
   }
 
-  // shouldComponentUpdate(nextState) {
-  //   const { isShouldUpdate } = nextState;
-  //   return isShouldUpdate;
-  // }
-
   componentDidUpdate() {
-    const { isShouldUpdate } = this.state;
-    if (isShouldUpdate) {
-      this.setDefaultRow();
-    }
-  }
+    const { curSelectedRow } = this.state;
 
-  @autobind
-  setDefaultRow() {
-    // 默认选中第一行
-    const { saveSelectedRowData } = this.props;
-    const { dataSource } = this.state;
-    const firstRowData = dataSource[0] || EMPTY_OBJECT;
-    /* eslint-disable */
-    const rowElem =
-      ReactDOM.findDOMNode(document.querySelectorAll('.feedbackTable table > tbody > tr')[0]);
-    /* eslint-enable */
-    if (rowElem) {
-      rowElem.style.backgroundColor = 'rgb(237, 246, 252)';
-    }
-
-    console.log('firstRowData---->', firstRowData);
-
-
-    /* 传递数据给反馈详情页面 */
-    saveSelectedRowData({
-      data: firstRowData.code,
-    });
+    console.log('curSelectedRow', curSelectedRow);
   }
 
   /**
@@ -107,40 +81,15 @@ export default class FeedbackList extends PureComponent {
   @autobind
   handleRowClick(record, index) {
     console.log('record---->', record, 'index---->', index);
-    const { curSelectedRow: prevSelectedRow, dataSource } = this.state;
-    const { saveSelectedRowData } = this.props;
-    /* eslint-disable */
-    const prevRowElem =
-      ReactDOM.findDOMNode(document.querySelectorAll('.feedbackTable table > tbody > tr')[prevSelectedRow]);
-    /* eslint-enable */
 
-    if (prevRowElem) {
-      // 偶数行
-      if (prevSelectedRow % 2 === 0) {
-        prevRowElem.style.backgroundColor = 'rgb(255, 255, 255)';
-      } else {
-        prevRowElem.style.backgroundColor = 'rgb(249, 249, 249)';
-      }
-    }
-    this.setState({
-      curSelectedRow: index,
-      isShouldUpdate: false,
-    }, () => {
-      /* eslint-disable */
-      const currentRowElem =
-        ReactDOM.findDOMNode(document.querySelectorAll('.feedbackTable table > tbody > tr')[index]);
-      /* eslint-enable */
-      if (currentRowElem) {
-        currentRowElem.style.backgroundColor = 'rgb(237, 246, 252)';
-      }
-    });
-
-    const curRowData = dataSource[index] || EMPTY_OBJECT;
-    console.log('curRowData', curRowData);
-
-    /* 传递当前行数据给反馈详情页面 */
-    saveSelectedRowData({
-      data: curRowData.code,
+    const { location: { pathname, query }, replace } = this.props;
+    const { dataSource = EMPTY_LIST } = this.state;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        currentId: dataSource[index].code,
+      },
     });
   }
 
@@ -178,18 +127,17 @@ export default class FeedbackList extends PureComponent {
    * 构造表格的列数据
    */
   @autobind
-  constructorTableColumns() {
+  constructTableColumns() {
     const columns = [{
       dataIndex: 'type.code.description.userName.userDepartment',
       width: '80%',
-      className: 'tdLeft',
-      render: (text, record) => {
+      render: (text, record, index) => {
         // 当前行记录
-        console.log(text, record);
+        console.log(text, record, index);
         return (
           <div className="leftSection">
             <div className="code">
-              <Icon type="renyuan" className="" />
+              <Icon type="renyuan" />
               <span className={styles.feedbackId}>{record.code}</span>
             </div>
             <div className="description">{record.description}</div>
@@ -200,10 +148,9 @@ export default class FeedbackList extends PureComponent {
     }, {
       dataIndex: 'status.manager.date',
       width: '20%',
-      className: 'tdLeft',
-      render: (text, record) => {
+      render: (text, record, index) => {
         // 当前行记录
-        console.log(text, record);
+        console.log(text, record, index);
         const stateClass = classnames({
           'state-resolve': record.status === '解决中',
           'state-close': record.status === '关闭',
@@ -224,7 +171,7 @@ export default class FeedbackList extends PureComponent {
   /**
    * 构造数据源
    */
-  constructorTableDatas() {
+  constructTableDatas() {
     const { dataSource } = this.state;
     const newDataSource = [];
     if (dataSource.length > 0) {
@@ -251,12 +198,12 @@ export default class FeedbackList extends PureComponent {
   }
 
   render() {
-    const { dataSource, curPageNum, totalRecordNum, curPageSize } = this.state;
+    const { dataSource, curPageNum, totalRecordNum, curPageSize, curSelectedRow } = this.state;
     if (!dataSource) {
       return null;
     }
 
-    const columns = this.constructorTableColumns();
+    const columns = this.constructTableColumns();
 
     const paginationOptions = {
       current: curPageNum,
@@ -276,11 +223,17 @@ export default class FeedbackList extends PureComponent {
         <Table
           className="feedbackTable"
           columns={columns}
-          dataSource={this.constructorTableDatas()}
+          dataSource={this.constructTableDatas()}
           onRowClick={this.handleRowClick}
           showHeader={false}
           pagination={paginationOptions}
           bordered={false}
+          rowClassName={(record, index) => {
+            if (curSelectedRow === index) {
+              return 'active';
+            }
+            return '';
+          }}
         />
       </div >
     );
