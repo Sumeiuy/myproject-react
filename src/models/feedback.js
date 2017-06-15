@@ -17,7 +17,6 @@ export default {
       popVisible: false,
     },
     list: EMPTY_OBJECT,
-    selectedRowData: EMPTY_OBJECT,
   },
   reducers: {
     changeProblemVisible(state, action) {
@@ -35,15 +34,6 @@ export default {
         ...state,
         list: page.curPageNum === 1 ? { page, resultData: listData }
           : { page, resultData: [...preListData, ...listData] },
-      };
-    },
-    saveSelectedRowData(state, action) {
-      const { payload: { data } } = action;
-      return {
-        ...state,
-        selectedRowData: {
-          selectedId: data,
-        },
       };
     },
   },
