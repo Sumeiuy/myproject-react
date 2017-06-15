@@ -69,7 +69,7 @@ export default class BoardHeader extends PureComponent {
     if (preCategoryScope !== categoryScope) {
       this.setState({
         scopeSelectValue: String(categoryScope),
-        scope,
+        scope: categoryScope,
       });
     }
     if (preLevel !== level || orgId !== preOrgId) {
