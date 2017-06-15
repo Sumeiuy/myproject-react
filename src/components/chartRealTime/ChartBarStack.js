@@ -133,9 +133,11 @@ export default class ChartBarStack extends PureComponent {
     }
 
     // 柱状图阴影的数据series
-    const dataShadow = [];
+    const maxDataShadow = [];
+    const minDataShadow = [];
     for (let i = 0; i < 10; i++) {
-      dataShadow.push(gridXAxisMax);
+      maxDataShadow.push(gridXAxisMax);
+      minDataShadow.push(gridXaxisMin);
     }
     // tooltip 配置项
     const tooltipOtions = {
@@ -152,7 +154,7 @@ export default class ChartBarStack extends PureComponent {
         let hasPushedAxis = false;
         // 因为第一个series是阴影
         series.forEach((item, index) => {
-          if (index > 0) {
+          if (index > 1) {
             const axisValue = item.axisValue;
             const seriesName = item.seriesName;
             let value = item.value;
@@ -178,7 +180,7 @@ export default class ChartBarStack extends PureComponent {
               }
               tips.push(`${axisValue}<br/>`);
             }
-            tips.push(`<span style="display:inline-block;width: 10px;height: 10px;margin-right:4px;border-radius:100%;background-color:${stackBarColors[index - 1]}"></span>`);
+            tips.push(`<span style="display:inline-block;width: 10px;height: 10px;margin-right:4px;border-radius:100%;background-color:${stackBarColors[index - 2]}"></span>`);
             tips.push(`${seriesName} : <span style="color:#ffd92a; font-size:14px;">${value}</span>`);
             tips.push(`${unit}<br/>`);
           }
@@ -268,7 +270,11 @@ export default class ChartBarStack extends PureComponent {
       series: [
         {
           ...barShadow,
-          data: dataShadow,
+          data: maxDataShadow,
+        },
+        {
+          ...barShadow,
+          data: minDataShadow,
         },
         ...stackSeries,
       ],
