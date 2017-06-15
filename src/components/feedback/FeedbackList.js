@@ -192,9 +192,29 @@ export default class FeedbackList extends PureComponent {
   @autobind
   handleShowSizeChange(currentPageNum, changedPageSize) {
     console.log(currentPageNum, changedPageSize);
-    this.setState({
-      curPageSize: changedPageSize,
-    });
+    const { totalRecordNum, curPageSize } = this.state;
+    if (changedPageSize / totalRecordNum > 1) {
+      // 当前选择分页条目大于两倍的记录数
+      // 则不生效，恢复当前分页条目
+      this.setState({
+        curPageSize,
+      });
+    } else {
+      this.setState({
+        curPageSize: changedPageSize,
+      });
+    }
+  }
+
+  constructPageSizeOptions() {
+    const { totalRecordNum } = this.state;
+    const pageSizeOption = ['10'];
+    const maxPage = Math.ceil(totalRecordNum / 10);
+    for (let i = 1; i < maxPage; i++) {
+      pageSizeOption.push((10 * ++i).toString());
+    }
+    console.log('pageSizeOption', pageSizeOption);
+    return pageSizeOption;
   }
 
   render() {
@@ -216,6 +236,7 @@ export default class FeedbackList extends PureComponent {
       showSizeChanger: true,
       onShowSizeChange: (currentPageNum, changedPageSize) =>
         this.handleShowSizeChange(currentPageNum, changedPageSize),
+      pageSizeOptions: this.constructPageSizeOptions(),
     };
 
     return (
