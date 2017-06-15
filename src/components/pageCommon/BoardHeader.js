@@ -78,8 +78,12 @@ export default class BoardHeader extends PureComponent {
 
   @autobind
   handleDataExportClick() {
-    const { postExcelInfo } = this.props;
-    postExcelInfo();
+    const { postExcelInfo, indexID } = this.props;
+    const { scope } = this.state;
+    postExcelInfo({
+      categoryKey: indexID,
+      scope,
+    });
   }
 
   // 柱状图与表格切换
@@ -114,11 +118,12 @@ export default class BoardHeader extends PureComponent {
   @autobind
   handleSortChange(column, value) {
     const { indexID, selfRequestData, getTableInfo, updateCategoryScope } = this.props;
-    const { showChart } = this.state;
+    const { showChart, scope, orderType } = this.state;
     if (showChart === 'zhuzhuangtu') {
       selfRequestData({
         categoryKey: indexID,
-        [column]: value,
+        scope: column === 'scope' ? value : scope,
+        orderType: column === 'orderType' ? value : orderType,
       });
     } else {
       getTableInfo({

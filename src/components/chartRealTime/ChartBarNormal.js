@@ -63,12 +63,29 @@ export default class ChartBarNormal extends PureComponent {
       maxIndex = 10 - padLength;
     }
 
+    const judge = (item) => {
+      if (item > 0) {
+        return medianValue.plus > item ? 'right' : 'insideRight';
+      } else if (item < 0) {
+        return medianValue.minus < item ? 'left' : 'insideLeft';
+      }
+      const plusMax = medianValue.plus * 2;
+      const minusMax = medianValue.minus * 2;
+      if (plusMax === 0) {
+        return 'left';
+      }
+      if (minusMax === 0) {
+        return 'right';
+      }
+      return 'right';
+    };
+
     return series.map((item, index) => ({
       value: (unit === '%' || unit === '\u2030') ? Number(item.toFixed(2)) : item,
       label: {
         normal: {
           show: index < maxIndex,
-          position: (medianValue > item || item === 0) ? 'right' : 'insideRight',
+          position: judge(item),
         },
       },
     }));
@@ -132,13 +149,22 @@ export default class ChartBarNormal extends PureComponent {
       gridXaxisMin = maxAndMinPeople.min;
     }
     // 计算出所有值的中间值
-    const medianValue = (gridXAxisMax + gridXaxisMin) / 2;
+    const medianValue = {};
+    if (gridXAxisMax < 0 || gridXaxisMin > 0) {
+      medianValue.plus = (gridXAxisMax + gridXaxisMin) / 2;
+      medianValue.minus = (gridXAxisMax + gridXaxisMin) / 2;
+    } else {
+      medianValue.plus = gridXAxisMax / 2;
+      medianValue.minus = gridXaxisMin / 2;
+    }
     // 需要针对不同的值编写不同的柱状图Label样式
     const newSeriesData = this.createNewSeriesData(seriesData, medianValue, unit, padLength);
     // 柱状图阴影
-    const dataShadow = [];
+    const maxDataShadow = [];
+    const minDataShadow = [];
     for (let i = 0; i < seriesDataLen; i++) {
-      dataShadow.push(gridXAxisMax);
+      maxDataShadow.push(gridXAxisMax);
+      minDataShadow.push(gridXaxisMin);
     }
     // tooltip 配置项
     const tooltipOtions = {
@@ -147,7 +173,7 @@ export default class ChartBarNormal extends PureComponent {
         type: 'shadow',
       },
       formatter(params) {
-        const item = params[1];
+        const item = params[2];
         const axisValue = item.axisValue;
         const seriesName = item.seriesName;
         let value = item.data.value;
@@ -232,7 +258,11 @@ export default class ChartBarNormal extends PureComponent {
       series: [
         {
           ...barShadow,
-          data: dataShadow,
+          data: maxDataShadow,
+        },
+        {
+          ...barShadow,
+          data: minDataShadow,
         },
         {
           name,

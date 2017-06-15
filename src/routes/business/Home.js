@@ -222,21 +222,11 @@ export default class BusinessHome extends PureComponent {
   }
   // 导出 excel 文件
   @autobind
-  handleExportExcel() {
-    const { custRange, location: { query }, exportExcel } = this.props;
-    const duration = this.state;
-    const data = {
-      orgId: query.orgId || (custRange[0] && custRange[0].id),
-      localScope: query.custRangeLevel || (custRange[0] && custRange[0].level),
-      scope: query.scope ||
-      (query.custRangeLevel
-      ? Number(query.custRangeLevel) + 1
-      : Number(custRange[0] && custRange[0].level) + 1),
-      begin: query.begin || duration.begin,
-      end: query.end || duration.end,
-      cycleType: query.cycleType || duration.cycleType,
-    };
-    exportExcel({ query: queryToString(data) });
+  handleExportExcel(param) {
+    const { exportExcel } = this.props;
+    const payload = this.getApiParams(param);
+    console.log('handleExportExcel', payload);
+    exportExcel({ query: queryToString(payload) });
   }
 
   // 获取单个卡片接口
@@ -259,7 +249,7 @@ export default class BusinessHome extends PureComponent {
     } = this.props;
     const { showCharts, classifyScope } = this.state;
     const level = query.custRangeLevel || (custRange[0] && custRange[0].level);
-    const newscope = custRange[0] && Number(custRange[0].level) + 1;
+    const newscope = Number(query.scope) || (custRange[0] && Number(custRange[0].level) + 1);
     if (!custRange || !custRange.length) {
       return null;
     }
