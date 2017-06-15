@@ -64,7 +64,7 @@ export default {
       const { payload: { resChartTableInfo, categoryKey } } = action;
       const chartTable = resChartTableInfo.resultData;
       const newChartTableInfo = chartTable.data;
-      // todo 按照 ID 来存储相应数据
+      // 按照 ID 来存储相应数据
       const chartTableId = categoryKey;
       const preChartTableInfo = state.chartTableInfo;
       return {

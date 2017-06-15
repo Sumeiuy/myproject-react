@@ -114,7 +114,6 @@ export default class ChartBarStack extends PureComponent {
     let gridXAxisMax = 1;
     let gridXaxisMin = 0;
     if (unit === '%') {
-      // TODO 此处需要对
       const maxAndMinPercent = fixedPercentMaxMin(gridAxisTick);
       gridXAxisMax = maxAndMinPercent.max;
       gridXaxisMin = maxAndMinPercent.min;
@@ -167,7 +166,7 @@ export default class ChartBarStack extends PureComponent {
             }
             if (!hasPushedAxis) {
               hasPushedAxis = true;
-              // TODO 针对不同的机构级别需要显示不同的分类
+              // 针对不同的机构级别需要显示不同的分类
               if (levelAndScope === 3 && axisValue !== '--') {
                 // 营业部，需要显示分公司名称
                 const dataIndex = item.dataIndex;

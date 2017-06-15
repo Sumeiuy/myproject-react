@@ -224,7 +224,6 @@ export default class InvestHome extends PureComponent {
   handleExportExcel(param) {
     const { exportExcel } = this.props;
     const payload = this.getApiParams(param);
-    console.log('handleExportExcel', payload);
     exportExcel({ query: queryToString(payload) });
   }
 

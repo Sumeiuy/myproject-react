@@ -26,7 +26,6 @@ export default class ChartBar extends PureComponent {
 
 
   render() {
-    // todo未对数据为空进行判断，导致初始页面不渲染
     const { chartData: { orgModel, indiModel } } = this.props;
     const { chartData, level, location, scope } = this.props;
     // 增加判断走堆叠还是普通柱状图

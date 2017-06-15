@@ -30,6 +30,7 @@ export default class ChartTable extends PureComponent {
     data: PropTypes.object,
     getTableInfo: PropTypes.func,
     replace: PropTypes.func.isRequired,
+    scope: PropTypes.string.isRequired,
     indexID: PropTypes.string,
   }
 
@@ -55,27 +56,69 @@ export default class ChartTable extends PureComponent {
       orderIndicatorId: '',
       orderType: '',
       pageNum: 1,
-      pageSize: 10,
     };
   }
+  // 组合表格头部 排序 html
+  @autobind
+  getTitleHtml(item, flag = true) {
+    const { orderIndicatorId, orderType } = this.state;
+    let titleHtml = '';
+    if (flag) {
+      titleHtml = (<span
+        className={styles.columnsTitle}
+        onClick={() => { this.handleTitleClick(item); }}
+      >
+        {item.name}
+        <span className={'ant-table-column-sorter'}>
+          <span
+            className={`
+              ant-table-column-sorter-up
+              ${(orderIndicatorId === item.key && (orderType !== 'desc')) ? 'on' : 'off'}
+            `}
+            title="↑"
+            onClick={(e) => {
+              this.arrowHandle(e, item, 'asc');
+            }}
+          >
+            <i className={'anticon anticon-caret-up'} />
+          </span>
+          <span
+            className={`
+              ant-table-column-sorter-up
+              ${(orderIndicatorId === item.key && (orderType !== 'asc')) ? 'on' : 'off'}
+            `}
+            title="↓"
+            onClick={(e) => {
+              this.arrowHandle(e, item, 'desc');
+            }}
+          >
+            <i className={'anticon anticon-caret-down'} />
+          </span>
+        </span>
+      </span>);
+    } else {
+      titleHtml = `${item.name}(${encodeURIComponent(item.unit) === encodeURIComponent('元') ? '万元' : item.unit})`;
+    }
+    return titleHtml;
+  }
+  // 获取表格头部子元素
   @autobind
   getChildren(item) {
     const childrenArr = [];
     if (item.children) {
       item.children.map(child =>
         childrenArr.push({
-          title: child.name,
+          title: this.getTitleHtml(child),
           dataIndex: child.key,
           key: `key${child.key}`,
-          width: 100,
+          width: 150,
         }));
     }
-    console.log('childrenArr', childrenArr);
     return childrenArr;
   }
   @autobind
   handleTitleClick(item) {
-    const { getTableInfo, indexID } = this.props;
+    const { getTableInfo, indexID, scope } = this.props;
     const { orderIndicatorId, orderType, pageNum } = this.state;
     let tableOrderType;
     if (orderIndicatorId === item.key) {
@@ -91,13 +134,14 @@ export default class ChartTable extends PureComponent {
       orderIndicatorId: item.key,
       orderType: tableOrderType,
       pageNum,
+      scope,
       categoryKey: indexID,
     });
   }
   // 表格标题排序箭头事件
   @autobind
   arrowHandle(e, item, type) {
-    const { getTableInfo, indexID } = this.props;
+    const { getTableInfo, indexID, scope } = this.props;
     const { pageNum } = this.state;
     e.stopPropagation();
     this.setState({
@@ -108,6 +152,7 @@ export default class ChartTable extends PureComponent {
       orderIndicatorId: item.key,
       orderType: type,
       pageNum,
+      scope,
       categoryKey: indexID,
     });
   }
@@ -162,7 +207,7 @@ export default class ChartTable extends PureComponent {
   // 分页事件
   @autobind
   handlePaginationChange(page) {
-    const { getTableInfo, indexID } = this.props;
+    const { getTableInfo, indexID, scope } = this.props;
     const { orderIndicatorId, orderType } = this.state;
     this.setState({
       pageNum: page,
@@ -171,6 +216,7 @@ export default class ChartTable extends PureComponent {
       pageNum: page,
       orderIndicatorId,
       orderType,
+      scope,
       categoryKey: indexID,
     });
   }
@@ -188,8 +234,7 @@ export default class ChartTable extends PureComponent {
 
   render() {
     // chartTableInfo使用state中的值
-    const { chartTableInfo, location: { query }, level, style } = this.props;
-    const { orderIndicatorId, orderType } = this.state;
+    const { chartTableInfo, style, scope } = this.props;
     const columns = chartTableInfo.titleList;
     const data = chartTableInfo.indicatorSummuryRecordDtos;
     const temp = [];
@@ -205,63 +250,24 @@ export default class ChartTable extends PureComponent {
       arr = columns.map((item, index) => {
         const column = {
           dataIndex: item.key,
-          title: (
-            <span
-              className={styles.columnsTitle}
-              onClick={() => { this.handleTitleClick(item); }}
-            >
-              {`${item.name}(${encodeURIComponent(item.unit) === encodeURIComponent('元') ? '万元' : item.unit})`}
-              <span className={'ant-table-column-sorter'}>
-                <span
-                  className={`
-                    ant-table-column-sorter-up
-                    ${((query.orderIndicatorId || orderIndicatorId) === item.key && ((query.tableOrderType || orderType) !== 'desc')) ? 'on' : 'off'}
-                  `}
-                  title="↑"
-                  onClick={(e) => {
-                    this.arrowHandle(e, item, 'asc');
-                  }}
-                >
-                  <i className={'anticon anticon-caret-up'} />
-                </span>
-                <span
-                  className={`
-                    ant-table-column-sorter-up
-                    ${((query.orderIndicatorId || orderIndicatorId) === item.key && ((query.tableOrderType || orderType) !== 'asc')) ? 'on' : 'off'}
-                  `}
-                  title="↓"
-                  onClick={(e) => {
-                    this.arrowHandle(e, item, 'desc');
-                  }}
-                >
-                  <i className={'anticon anticon-caret-down'} />
-                </span>
-              </span>
-            </span>
-          ),
+          title: this.getTitleHtml(item),
           width: columnWidth[index],
-          // render: this.renderContent,
           render: text => (
             <div className={styles.tdWrapperDiv}>
               {text}
             </div>
           ),
         };
-        // const hasChildren = item.children;
-        // if (hasChildren) {
-        //   column.children = this.getChildren(item);
-        //   // column.render = this.renderContent;
-        // }
+        const hasChildren = item.children;
+        if (hasChildren) {
+          column.children = this.getChildren(item);
+          column.title = `${item.name}(${encodeURIComponent(item.unit) === encodeURIComponent('元') ? '万元' : item.unit})`;
+        }
         return column;
       });
-      const tempScope = query.scope || Number(level) + 1;
       // 匹配第一列标题文字，分公司、营业部、投顾
-      let keyName = '';
-      for (let i = 0; i < sortByType.length; i++) {
-        if (Number(tempScope) === Number(sortByType[i].scope)) {
-          keyName = sortByType[i].name;
-        }
-      }
+      // sortByType 初始的 scope 为 2，所以减去两个前面对象，得出最后与实际 scope 相等的索引
+      const keyName = sortByType[Number(scope) - 2].name;
       arr.unshift({
         title: keyName,
         dataIndex: 'city',
@@ -272,22 +278,6 @@ export default class ChartTable extends PureComponent {
           this.toolTipHandle(record)
         ),
       });
-      // 表格汇总 显示 colspan
-      // arr[1].render = (text, row, index) => {
-      //   if (index > 1) {
-      //     return (
-      //       <div className={styles.tdWrapperDiv}>
-      //         {text}
-      //       </div>
-      //     );
-      //   }
-      //   return ({
-      //     children: <div className={styles.tdWrapperDiv}>{text}</div>,
-      //     props: {
-      //       colSpan: 2,
-      //     },
-      //   });
-      // };
     }
     return (
       <div className={styles.tableDiv} style={style}>
@@ -302,7 +292,7 @@ export default class ChartTable extends PureComponent {
           defaultCurrent={1}
           current={chartTableInfo.curPageNum || 1}
           total={chartTableInfo.totalCnt || 1}
-          pageSize={10}
+          pageSize={chartTableInfo.pageSize}
           onChange={this.handlePaginationChange}
         />
       </div>

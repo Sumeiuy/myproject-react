@@ -67,7 +67,6 @@ export default class BoardSelect extends PureComponent {
     const { push } = this.props;
     const { key } = MenuItem;
     const path = _.filter(boards, { boardId: key })[0].url;
-    console.log('handleMenuClick>>key>>', key);
     // TODO 此处后期迭代中需要做跳转页面逻辑处理
     const url = `/${path}?boardId=${key}`;
     push(url);

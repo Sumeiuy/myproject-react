@@ -131,7 +131,6 @@ export default class ChartBarNormal extends PureComponent {
     let gridXAxisMax = xMax * 1.1 || 1;
     let gridXaxisMin = 0;
     if (unit === '%') {
-      // TODO 此处需要对
       const maxAndMinPercent = getMaxAndMinPercent(seriesData);
       gridXAxisMax = maxAndMinPercent.max;
       gridXaxisMin = maxAndMinPercent.min;
