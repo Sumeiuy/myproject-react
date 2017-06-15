@@ -207,11 +207,11 @@ export default class FeedbackList extends PureComponent {
   }
 
   constructPageSizeOptions() {
-    const { totalRecordNum } = this.state;
-    const pageSizeOption = ['10'];
-    const maxPage = Math.ceil(totalRecordNum / 10);
-    for (let i = 1; i < maxPage; i++) {
-      pageSizeOption.push((10 * ++i).toString());
+    const { totalRecordNum, curPageSize } = this.state;
+    const pageSizeOption = [];
+    const maxPage = Math.ceil(totalRecordNum / curPageSize);
+    for (let i = 1; i <= maxPage; i++) {
+      pageSizeOption.push((10 * i).toString());
     }
     console.log('pageSizeOption', pageSizeOption);
     return pageSizeOption;
