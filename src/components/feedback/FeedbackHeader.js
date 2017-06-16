@@ -47,13 +47,13 @@ export default class PageHeader extends PureComponent {
   //   // 做跳转页面逻辑处理
   //   // const url = '?typeKey=${key}';
   //   // push(url);
-  //   const moduleName = `${key}`;
+  //   const appId = `${key}`;
   //   console.log(`selected ${key}`);
   //   replace({
   //     pathname,
   //     query: {
   //       ...query,
-  //       moduleName,
+  //       appId,
   //     },
   //   });
   // }
@@ -65,14 +65,14 @@ export default class PageHeader extends PureComponent {
     // 做跳转页面逻辑处理
     // const url = '?typeKey=${key}';
     // push(url);
-    const startTime = dateStrings[0];
-    const endTime = dateStrings[1];
+    const feedbackCreateTimeFrom = dateStrings[0];
+    const feedbackCreateTimeTo = dateStrings[1];
     replace({
       pathname,
       query: {
         ...query,
-        startTime,
-        endTime,
+        feedbackCreateTimeFrom,
+        feedbackCreateTimeTo,
       },
     });
   }
@@ -102,11 +102,11 @@ export default class PageHeader extends PureComponent {
       <Option key={i.value}>{i.label}</Option>,
     );
     const { location: { query: {
-      moduleName,
-      typeName,
-      questionName,
-      stateName,
-      operatorName,
+      appId,
+      issueType,
+      feedbackTagEnum,
+      feedbackStatusEnum,
+      processer,
     } } } = this.props;
 
     return (
@@ -114,48 +114,51 @@ export default class PageHeader extends PureComponent {
         模块: <Cascader
           options={channelOptions}
           style={{ width: '11%' }}
-          placeholder="请选择"
-          value={!moduleName ? [] : moduleName.split(',')}
-          onChange={key => this.handleSelectChange('moduleName', key)}
           changeOnSelect
+          placeholder="全部"
+          value={!appId ? [] : appId.split(',')}
+          onChange={key => this.handleSelectChange('appId', key)}
         />
         类型: <Select
           mode="multiple"
           style={{ width: '10%' }}
-          placeholder="请选择"
-          value={!typeName ? [] : typeName.split(',')}
-          onChange={key => this.handleSelectChange('typeName', key)}
+          placeholder="全部"
+          value={!issueType ? [] : issueType.split(',')}
+          onChange={key => this.handleSelectChange('issueType', key)}
+          allowClear="true"
         >
           {getSelectOption(typeOptions)}
         </Select>
         问题标签: <Select
           mode="multiple"
-          style={{ width: '11%' }}
-          placeholder="请选择"
-          value={!questionName ? [] : questionName.split(',')}
-          onChange={key => this.handleSelectChange('questionName', key)}
+          style={{ width: '12%' }}
+          placeholder="全部"
+          value={!feedbackTagEnum ? [] : feedbackTagEnum.split(',')}
+          onChange={key => this.handleSelectChange('feedbackTagEnum', key)}
+          allowClear="true"
         >
           {getSelectOption(questionTagOptions)}
         </Select>
         状态: <Select
           mode="multiple"
           style={{ width: '10%' }}
-          placeholder="请选择"
-          value={!stateName ? [] : stateName.split(',')}
-          onChange={key => this.handleSelectChange('stateName', key)}
+          defaultValue={['PROCESSING']}
+          value={!feedbackStatusEnum ? ['PROCESSING'] : feedbackStatusEnum.split(',')}
+          onChange={key => this.handleSelectChange('feedbackStatusEnum', key)}
+          allowClear="true"
         >
           {getSelectOption(stateOptions)}
         </Select>
         反馈时间:<RangePicker
-          style={{ width: '15%' }}
+          style={{ width: '16%' }}
           ranges={{ Today: [moment(), moment()], 'This Month': [moment(), moment().endOf('month')] }}
           onChange={this.handleDateChange}
         />
         经办人: <Select
-          defaultValue="all"
+          defaultValue="ALL"
           style={{ width: '6%' }}
-          value={!operatorName ? '' : operatorName}
-          onChange={key => this.handleSelectChange('operatorName', key)}
+          value={!processer ? 'ALL' : processer}
+          onChange={key => this.handleSelectChange('processer', key)}
         >
           {getSelectOption(operatorOptions)}
         </Select>

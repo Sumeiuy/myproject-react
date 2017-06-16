@@ -11,15 +11,17 @@ import { connect } from 'react-redux';
 import { withRouter, routerRedux } from 'dva/router';
 import ProblemHandling from './ProblemHandling';
 import Remark from './Remark';
+import RemarkList from './RemarkList';
+import Problemdetails from './ProblemDetails';
+import FeedbackUser from './FeedbackUser';
 import './detail.less';
 
 const Dragger = Upload.Dragger;
 const EMPTY_OBJECT = {};
+// const EMPTY_LIST = [];
 const GETDETAIL = 'feedback/getFeedbackDetail';
-const GETRECORDLIST = 'feedback/getFeedbackRecordList';
 const mapStateToProps = state => ({
   fbDetail: state.feedback.fbDetail,
-  recordList: state.feedback.recordList,
 });
 const getDataFunction = loading => totype => query => ({
   type: totype,
@@ -30,16 +32,13 @@ const mapDispatchToProps = {
   push: routerRedux.push,
   replace: routerRedux.replace,
   getFeedbackDetail: getDataFunction(true)(GETDETAIL),
-  getFeedbackRecordList: getDataFunction(true)(GETRECORDLIST),
 };
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 export default class FeedBack extends PureComponent {
   static propTypes = {
     fbDetail: PropTypes.object.isRequired,
-    recordList: PropTypes.object.isRequired,
     getFeedbackDetail: PropTypes.func.isRequired,
-    getFeedbackRecordList: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
   }
@@ -48,10 +47,8 @@ export default class FeedBack extends PureComponent {
   constructor(props) {
     super(props);
     const { resultData = EMPTY_OBJECT } = this.props.fbDetail || EMPTY_OBJECT;
-    const { resultData: recordData = EMPTY_OBJECT } = this.props.recordList || EMPTY_OBJECT;
     this.setState({
       dataSource: resultData,
-      recordListSource: recordData,
       uploadPops: {
         name: 'file',
         multiple: true,
@@ -78,27 +75,20 @@ export default class FeedBack extends PureComponent {
     uploadPops: {},
   }
   componentWillMount() {
-    const { getFeedbackDetail, getFeedbackRecordList, location: { query } } = this.props;
-    getFeedbackRecordList({
-      ...query,
-      code: '1111',
-    });
+    const { getFeedbackDetail, location: { query } } = this.props;
     getFeedbackDetail({
       ...query,
-      code: '2222',
+      feedbackId: '2222',
     });
   }
   componentWillReceiveProps(nextProps) {
-    const { fbDetail: nextDetail = EMPTY_OBJECT,
-      recordList: nextRecordList = EMPTY_OBJECT } = nextProps;
+    const { fbDetail: nextDetail = EMPTY_OBJECT } = nextProps;
     const { fbDetail: preDetail = EMPTY_OBJECT } = this.props;
     const { resultData: nextResultData = EMPTY_OBJECT } = nextDetail;
     const { resultData: preResultData = EMPTY_OBJECT } = preDetail;
-    // debugger;
     if (preResultData !== nextResultData) {
       this.setState({
         dataSource: nextDetail,
-        recordListSource: nextRecordList,
       });
     }
   }
@@ -159,45 +149,6 @@ export default class FeedBack extends PureComponent {
     });
   }
   /**
-   * 解决状态
-  */
-  handleStatus = (pop) => {
-    if (pop === '解决中') {
-      return (
-        <b className="toSolve">解决中</b>
-      );
-    } else if (pop === '关闭') {
-      return (
-        <b className="close">关闭</b>
-      );
-    }
-    return '--';
-  }
-  /**
-   * 构建备注信息
-  */
-  createRecordList = (list) => {
-    if (list.length > 0) {
-      return (
-        list.map((item, i) => (
-          <li className="item" rel={i}>
-            <div className="wrap">
-              <div className="info_dv">
-                <span>{item.department}-{item.userName}</span><span>于{item.date}，添加了备注：</span>
-              </div>
-              <div className="txt">
-                {item.contentlist.length > 0 ? item.contentlist.map((inneritem, l) => (
-                  <p rel={l}>{inneritem}</p>)) : '暂无数据'
-                }
-              </div>
-            </div>
-          </li>
-          ))
-      );
-    }
-    return '暂无数据';
-  }
-  /**
    * 存储处理问题form
   */
   saveFormRef = (form) => {
@@ -211,33 +162,38 @@ export default class FeedBack extends PureComponent {
   }
   render() {
     const { resultData = EMPTY_OBJECT } = this.state.dataSource || EMPTY_OBJECT;
-    const { detail = EMPTY_OBJECT } = resultData;
+    const { feedbackDTO: feedbackDetail = EMPTY_OBJECT } = resultData || EMPTY_OBJECT;
+    const { feedbackRecord = EMPTY_OBJECT } = resultData || EMPTY_OBJECT; // 处理记录
     const {
-      type,
-      code,
-      status,
+      id,
       description,
-      phoneNum,
-      email,
-      manager,
-      userName,
-      userNum,
-      userDepartment,
-      jiraNum,
+      userInfo,
+      functionName,
+      createTime,
+      version,
+      status,
+      issueType,
       approach,
-      questionType,
-      date,
-      module,
-      version } = detail;
-    const { resultData: recordData = EMPTY_OBJECT } = this.state.recordListSource || EMPTY_OBJECT;
-    const { recordList = EMPTY_OBJECT } = recordData;
+      processer,
+      jiraId } = feedbackDetail;
+    const problemDetails = {
+      functionName,
+      createTime,
+      version,
+      status,
+      issueType,
+      approach,
+      processer,
+      jiraId }; // 问题详情
+    const { rowId, name, department, cellPhone, eMailAddr } = userInfo || EMPTY_OBJECT; // 反馈用户解构
+    const feedbackUser = { rowId, name, department, cellPhone, eMailAddr }; // 反馈用户
     const remarkbtn = classnames({
       btnhidden: this.state.remarkVisible,
     });
     return (
       <div className="detail_box">
         <div className="inner">
-          <h1 className="bugtitle">【问题】{type}/{code}</h1>
+          <h1 className="bugtitle">【问题】{issueType}/{id}</h1>
           <div className="row_box">
             <Row gutter={16}>
               <Col span="16">
@@ -246,58 +202,12 @@ export default class FeedBack extends PureComponent {
                     <h2 className="toogle_title">问题详情</h2>
                   </div>
                   <div className="mod_content">
-                    <ul className="property_list">
-                      <li className="item">
-                        <div className="wrap">
-                          <strong className="name">模块：</strong>
-                          <span className="value">{module}</span>
-                        </div>
-                      </li>
-                      <li className="item">
-                        <div className="wrap">
-                          <strong className="name">反馈时间：</strong>
-                          <span className="value">{date}</span>
-                        </div>
-                      </li>
-                      <li className="item">
-                        <div className="wrap">
-                          <strong className="name">系统版本号：</strong>
-                          <span className="value">{version}</span>
-                        </div>
-                      </li>
-                      <li className="item">
-                        <div className="wrap">
-                          <strong className="name">状态：</strong>
-                          <span className="value">
-                            {this.handleStatus(status)}
-                          </span>
-                        </div>
-                      </li>
-                      <li className="item">
-                        <div className="wrap">
-                          <strong className="name">问题类型：</strong>
-                          <span className="value">{questionType}</span>
-                        </div>
-                      </li>
-                      <li className="item">
-                        <div className="wrap">
-                          <strong className="name">处理方法：</strong>
-                          <span className="value">{approach}</span>
-                        </div>
-                      </li>
-                      <li className="item">
-                        <div className="wrap">
-                          <strong className="name">经办人：</strong>
-                          <span className="value">{userName}</span>
-                        </div>
-                      </li>
-                      <li className="item">
-                        <div className="wrap">
-                          <strong className="name">Jira编号：</strong>
-                          <span className="value">{jiraNum}</span>
-                        </div>
-                      </li>
-                    </ul>
+                    <Problemdetails
+                      problemDetails={problemDetails}
+                      ref={this.saveRemarkFormRef}
+                      onCancel={this.remarkCancel}
+                      onCreate={this.saveFromRemark}
+                    />
                   </div>
                 </div>
                 <div id="descriptionmodule" className="module">
@@ -326,38 +236,9 @@ export default class FeedBack extends PureComponent {
               <h2 className="toogle_title">反馈用户</h2>
             </div>
             <div className="mod_content">
-              <ul className="property_list">
-                <li className="item">
-                  <div className="wrap">
-                    <strong className="name">员工号：</strong>
-                    <span className="value">{userNum}</span>
-                  </div>
-                </li>
-                <li className="item">
-                  <div className="wrap">
-                    <strong className="name">用户：</strong>
-                    <span className="value">{manager}</span>
-                  </div>
-                </li>
-                <li className="item">
-                  <div className="wrap">
-                    <strong className="name">部门：</strong>
-                    <span className="value">{userDepartment}</span>
-                  </div>
-                </li>
-                <li className="item">
-                  <div className="wrap">
-                    <strong className="name">联系电话：</strong>
-                    <span className="value">{phoneNum}</span>
-                  </div>
-                </li>
-                <li className="item">
-                  <div className="wrap">
-                    <strong className="name">邮箱：</strong>
-                    <span className="value">{email}</span>
-                  </div>
-                </li>
-              </ul>
+              <FeedbackUser
+                fbuser={feedbackUser}
+              />
             </div>
           </div>
           <div id="annex" className="module">
@@ -390,9 +271,9 @@ export default class FeedBack extends PureComponent {
               <h2 className="toogle_title">处理记录</h2>
             </div>
             <div className="mod_content">
-              <ul className="record_list">
-                {this.createRecordList(recordList)}
-              </ul>
+              <RemarkList
+                remarkList={feedbackRecord}
+              />
               <div className="remarks_box">
                 <Button icon="edit" className={remarkbtn} onClick={this.showRemark}>备注</Button>
                 <Remark
