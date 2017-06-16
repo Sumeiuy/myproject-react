@@ -19,11 +19,11 @@ const boards = [
     boardId: '1',
     url: 'invest',
   },
-  {
-    boardName: '经营业绩汇总',
-    boardId: '2',
-    url: 'business',
-  },
+  // {
+  //   boardName: '经营业绩汇总',
+  //   boardId: '2',
+  //   url: 'business',
+  // },
 ];
 
 const mapStateToProps = state => ({
@@ -83,8 +83,8 @@ export default class BoardSelect extends PureComponent {
             boards.map(item => (<Menu.Item key={item.boardId}>{item.boardName}</Menu.Item>))
           }
         </Menu.ItemGroup>
-        <Menu.Divider />
-        <Menu.Item key="default3">看板管理</Menu.Item>
+        {/* <Menu.Divider /> */}
+        {/* <Menu.Item key="default3">看板管理</Menu.Item> */}
       </Menu>
     );
 
