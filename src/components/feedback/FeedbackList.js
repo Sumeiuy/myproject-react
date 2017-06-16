@@ -50,12 +50,8 @@ export default class FeedbackList extends PureComponent {
       totalPageNum,
       curPageSize: 10,
       curSelectedRow: 0,
-      currentId: undefined,
+      currentId: '',
     };
-  }
-
-  componentDidMount() {
-    // this.setDefault();
   }
 
   componentWillReceiveProps(nextProps) {
