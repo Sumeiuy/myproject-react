@@ -106,7 +106,7 @@ export default class PageHeader extends PureComponent {
       issueType,
       feedbackTagEnum,
       feedbackStatusEnum,
-      operatorName,
+      processer,
     } } } = this.props;
 
     return (
@@ -142,8 +142,8 @@ export default class PageHeader extends PureComponent {
         状态: <Select
           mode="multiple"
           style={{ width: '10%' }}
-          defaultValue={['solve']}
-          value={!feedbackStatusEnum ? ['solve'] : feedbackStatusEnum.split(',')}
+          defaultValue={['PROCESSING']}
+          value={!feedbackStatusEnum ? ['PROCESSING'] : feedbackStatusEnum.split(',')}
           onChange={key => this.handleSelectChange('feedbackStatusEnum', key)}
           allowClear="true"
         >
@@ -155,10 +155,10 @@ export default class PageHeader extends PureComponent {
           onChange={this.handleDateChange}
         />
         经办人: <Select
-          defaultValue="all"
+          defaultValue="ALL"
           style={{ width: '6%' }}
-          value={!operatorName ? 'all' : operatorName}
-          onChange={key => this.handleSelectChange('operatorName', key)}
+          value={!processer ? 'ALL' : processer}
+          onChange={key => this.handleSelectChange('processer', key)}
         >
           {getSelectOption(operatorOptions)}
         </Select>
