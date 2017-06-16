@@ -8,7 +8,7 @@ const feedbackOptions = {
   // 头部查询条件-渠道
   feedbackChannel: [
     {
-      value: 'mcrm',
+      value: 'MCRM',
       label: 'MCRM',
       children: [
         {
@@ -30,7 +30,7 @@ const feedbackOptions = {
       ],
     },
     {
-      value: 'fsp',
+      value: 'FSP',
       label: 'FSP',
       children: [
         {
@@ -74,61 +74,61 @@ const feedbackOptions = {
   ],
   typeOptions: [
     {
-      value: 'question',
+      value: 'DEFECT',
       label: '问题',
     },
     {
-      value: 'suggestion',
+      value: 'SUGGESTION',
       label: '建议',
     },
   ],
   questionTagOptions: [
     {
-      value: 'syff',
+      value: 'USE',
       label: '使用方法',
     },
     {
-      value: 'gjjy',
+      value: 'SUGGEST',
       label: '改进建议',
     },
     {
-      value: 'cpggxz',
+      value: 'SPECIFICATION',
       label: '产品规格限制',
     },
     {
-      value: 'cpgnqx',
+      value: 'FUNCTION',
       label: '产品功能缺陷',
     },
     {
-      value: 'yhtywt',
+      value: 'EXPERIENCE',
       label: '用户体验问题',
     },
     {
-      value: 'qtcpwt',
+      value: 'OTHER',
       label: '其他产品问题',
     },
     {
-      value: 'none',
+      value: 'NONE',
       label: '无',
     },
   ],
   stateOptions: [
     {
-      value: 'solve',
+      value: 'PROCESSING',
       label: '解决中',
     },
     {
-      value: 'close',
+      value: 'CLOSED',
       label: '关闭',
     },
   ],
   operatorOptions: [
     {
-      value: 'all',
+      value: 'ALL',
       label: '全部',
     },
     {
-      value: 'self',
+      value: 'SELF',
       label: '本人',
     },
   ],

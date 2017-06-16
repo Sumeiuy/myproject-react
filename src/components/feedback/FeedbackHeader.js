@@ -47,13 +47,13 @@ export default class PageHeader extends PureComponent {
   //   // 做跳转页面逻辑处理
   //   // const url = '?typeKey=${key}';
   //   // push(url);
-  //   const moduleName = `${key}`;
+  //   const appId = `${key}`;
   //   console.log(`selected ${key}`);
   //   replace({
   //     pathname,
   //     query: {
   //       ...query,
-  //       moduleName,
+  //       appId,
   //     },
   //   });
   // }
@@ -65,14 +65,14 @@ export default class PageHeader extends PureComponent {
     // 做跳转页面逻辑处理
     // const url = '?typeKey=${key}';
     // push(url);
-    const startTime = dateStrings[0];
-    const endTime = dateStrings[1];
+    const feedbackCreateTimeFrom = dateStrings[0];
+    const feedbackCreateTimeTo = dateStrings[1];
     replace({
       pathname,
       query: {
         ...query,
-        startTime,
-        endTime,
+        feedbackCreateTimeFrom,
+        feedbackCreateTimeTo,
       },
     });
   }
@@ -102,10 +102,10 @@ export default class PageHeader extends PureComponent {
       <Option key={i.value}>{i.label}</Option>,
     );
     const { location: { query: {
-      moduleName,
-      typeName,
-      questionName,
-      stateName,
+      appId,
+      issueType,
+      feedbackTagEnum,
+      feedbackStatusEnum,
       operatorName,
     } } } = this.props;
 
@@ -116,25 +116,25 @@ export default class PageHeader extends PureComponent {
           style={{ width: '11%' }}
           changeOnSelect
           placeholder="全部"
-          value={!moduleName ? [] : moduleName.split(',')}
-          onChange={key => this.handleSelectChange('moduleName', key)}
+          value={!appId ? [] : appId.split(',')}
+          onChange={key => this.handleSelectChange('appId', key)}
         />
         类型: <Select
           mode="multiple"
           style={{ width: '10%' }}
           placeholder="全部"
-          value={!typeName ? [] : typeName.split(',')}
-          onChange={key => this.handleSelectChange('typeName', key)}
+          value={!issueType ? [] : issueType.split(',')}
+          onChange={key => this.handleSelectChange('issueType', key)}
           allowClear="true"
         >
           {getSelectOption(typeOptions)}
         </Select>
         问题标签: <Select
           mode="multiple"
-          style={{ width: '11%' }}
+          style={{ width: '12%' }}
           placeholder="全部"
-          value={!questionName ? [] : questionName.split(',')}
-          onChange={key => this.handleSelectChange('questionName', key)}
+          value={!feedbackTagEnum ? [] : feedbackTagEnum.split(',')}
+          onChange={key => this.handleSelectChange('feedbackTagEnum', key)}
           allowClear="true"
         >
           {getSelectOption(questionTagOptions)}
@@ -143,8 +143,8 @@ export default class PageHeader extends PureComponent {
           mode="multiple"
           style={{ width: '10%' }}
           defaultValue={['solve']}
-          value={!stateName ? ['solve'] : stateName.split(',')}
-          onChange={key => this.handleSelectChange('stateName', key)}
+          value={!feedbackStatusEnum ? ['solve'] : feedbackStatusEnum.split(',')}
+          onChange={key => this.handleSelectChange('feedbackStatusEnum', key)}
           allowClear="true"
         >
           {getSelectOption(stateOptions)}
