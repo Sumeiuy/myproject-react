@@ -1,5 +1,4 @@
 import React, { PropTypes, PureComponent } from 'react';
-import ReactDOM from 'react-dom';
 import { autobind } from 'core-decorators';
 import { Table } from 'antd';
 import classnames from 'classnames';
@@ -15,6 +14,7 @@ export default class FeedbackList extends PureComponent {
     list: PropTypes.object.isRequired,
     getFeedbackList: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
+    replace: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -36,24 +36,41 @@ export default class FeedbackList extends PureComponent {
     };
   }
 
-  componentDidMount() {
-
-  }
-
   componentWillReceiveProps(nextProps) {
-    const { list: nextList = EMPTY_OBJECT } = nextProps;
-    const { list: preList = EMPTY_OBJECT } = this.props;
+    const { list: nextList = EMPTY_OBJECT,
+      location: { query: nextQuery = EMPTY_OBJECT } } = nextProps;
+    const { list: prevList = EMPTY_OBJECT, location: { query: prevQuery = EMPTY_OBJECT },
+      getFeedbackList } = this.props;
     const { resultData: nextResultData = EMPTY_LIST, page = EMPTY_OBJECT } = nextList;
-    const { resultData: preResultData = EMPTY_LIST } = preList;
+    const { resultData: prevResultData = EMPTY_LIST } = prevList;
     const { curPageNum = 1, totalPageNum = 1, totalRecordNum = 1 } = page;
-    if (preResultData !== nextResultData) {
+    const { currentId = 0 } = nextQuery;
+    if (prevResultData !== nextResultData) {
       this.setState({
         dataSource: nextResultData,
         totalRecordNum,
         totalPageNum,
         curPageNum,
+        curSelectedRow: _.findIndex(nextResultData, item => item.code === currentId),
       });
     }
+    // 浅比较值是否相等
+    if (!_.isEqual(prevQuery, nextQuery)) {
+      // url发生变化，检测是否改变了筛选条件
+      console.log(nextQuery);
+      const { curPageNum: newPageNum, curPageSize: newPageSize } = this.state;
+      getFeedbackList({
+        ...nextQuery,
+        curPageNum: newPageNum,
+        curPageSize: newPageSize,
+      });
+    }
+  }
+
+  componentDidUpdate() {
+    const { curSelectedRow } = this.state;
+
+    console.log('curSelectedRow', curSelectedRow);
   }
 
   /**
@@ -64,29 +81,15 @@ export default class FeedbackList extends PureComponent {
   @autobind
   handleRowClick(record, index) {
     console.log('record---->', record, 'index---->', index);
-    const { curSelectedRow: prevSelectedRow } = this.state;
-    /* eslint-disable */
-    const prevRowElem =
-      ReactDOM.findDOMNode(document.querySelector(`.feedbackTable table > tbody > tr:nth-child(${prevSelectedRow + 1})`));
-    /* eslint-enable */
-    if (prevRowElem) {
-      // 偶数行
-      if (prevSelectedRow % 2 === 0) {
-        prevRowElem.style.backgroundColor = '#f9f9f9';
-      } else {
-        prevRowElem.style.backgroundColor = '#ffffff';
-      }
-    }
-    this.setState({
-      curSelectedRow: index,
-    }, () => {
-      /* eslint-disable */
-      const currentRowElem =
-        ReactDOM.findDOMNode(document.querySelector(`.feedbackTable table > tbody > tr:nth-child(${index + 1})`));
-      /* eslint-enable */
-      if (currentRowElem) {
-        currentRowElem.style.backgroundColor = '#e4eef8';
-      }
+
+    const { location: { pathname, query }, replace } = this.props;
+    const { dataSource = EMPTY_LIST } = this.state;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        currentId: dataSource[index].code,
+      },
     });
   }
 
@@ -96,16 +99,16 @@ export default class FeedbackList extends PureComponent {
    * @param {*} curPageSize 当前页
    */
   @autobind
-  handlePageChange(nextPage, curPageSize) {
-    console.log(nextPage, curPageSize);
+  handlePageChange(nextPage, currentPageSize) {
+    console.log(nextPage, currentPageSize);
     this.setState({
       curPageNum: nextPage,
     });
-    const { getFeedbackList, location: { query } } = this.props;
+    const { getFeedbackList, location: { query: curQuery } } = this.props;
     getFeedbackList({
-      ...query,
+      ...curQuery,
       pageNum: nextPage,
-      pageSize: curPageSize,
+      pageSize: currentPageSize,
     });
   }
 
@@ -124,18 +127,17 @@ export default class FeedbackList extends PureComponent {
    * 构造表格的列数据
    */
   @autobind
-  constructorTableColumns() {
+  constructTableColumns() {
     const columns = [{
       dataIndex: 'type.code.description.userName.userDepartment',
       width: '80%',
-      className: 'tdLeft',
-      render: (text, record) => {
+      render: (text, record, index) => {
         // 当前行记录
-        console.log(text, record);
+        console.log(text, record, index);
         return (
           <div className="leftSection">
             <div className="code">
-              <Icon type="renyuan" className="" />
+              <Icon type="renyuan" />
               <span className={styles.feedbackId}>{record.code}</span>
             </div>
             <div className="description">{record.description}</div>
@@ -146,10 +148,9 @@ export default class FeedbackList extends PureComponent {
     }, {
       dataIndex: 'status.manager.date',
       width: '20%',
-      className: 'tdLeft',
-      render: (text, record) => {
+      render: (text, record, index) => {
         // 当前行记录
-        console.log(text, record);
+        console.log(text, record, index);
         const stateClass = classnames({
           'state-resolve': record.status === '解决中',
           'state-close': record.status === '关闭',
@@ -170,7 +171,7 @@ export default class FeedbackList extends PureComponent {
   /**
    * 构造数据源
    */
-  constructorTableDatas() {
+  constructTableDatas() {
     const { dataSource } = this.state;
     const newDataSource = [];
     if (dataSource.length > 0) {
@@ -191,29 +192,51 @@ export default class FeedbackList extends PureComponent {
   @autobind
   handleShowSizeChange(currentPageNum, changedPageSize) {
     console.log(currentPageNum, changedPageSize);
-    this.setState({
-      curPageSize: changedPageSize,
-    });
+    const { totalRecordNum, curPageSize } = this.state;
+    if (changedPageSize / totalRecordNum > 1) {
+      // 当前选择分页条目大于两倍的记录数
+      // 则不生效，恢复当前分页条目
+      this.setState({
+        curPageSize,
+      });
+    } else {
+      this.setState({
+        curPageSize: changedPageSize,
+      });
+    }
+  }
+
+  constructPageSizeOptions() {
+    const { totalRecordNum, curPageSize } = this.state;
+    const pageSizeOption = [];
+    const maxPage = Math.ceil(totalRecordNum / curPageSize);
+    for (let i = 1; i <= maxPage; i++) {
+      pageSizeOption.push((10 * i).toString());
+    }
+    console.log('pageSizeOption', pageSizeOption);
+    return pageSizeOption;
   }
 
   render() {
-    const { dataSource, curPageNum, totalRecordNum } = this.state;
+    const { dataSource, curPageNum, totalRecordNum, curPageSize, curSelectedRow } = this.state;
     if (!dataSource) {
       return null;
     }
 
-    const columns = this.constructorTableColumns();
+    const columns = this.constructTableColumns();
 
     const paginationOptions = {
       current: curPageNum,
       defaultCurrent: 1,
       total: totalRecordNum,
+      pageSize: curPageSize,
       defaultPageSize: 10,
-      onChange: (nextPage, curPageSize) => this.handlePageChange(nextPage, curPageSize),
+      onChange: (nextPage, currentPageSize) => this.handlePageChange(nextPage, currentPageSize),
       showTotal: total => `总共${total}个`,
       showSizeChanger: true,
       onShowSizeChange: (currentPageNum, changedPageSize) =>
         this.handleShowSizeChange(currentPageNum, changedPageSize),
+      pageSizeOptions: this.constructPageSizeOptions(),
     };
 
     return (
@@ -221,11 +244,17 @@ export default class FeedbackList extends PureComponent {
         <Table
           className="feedbackTable"
           columns={columns}
-          dataSource={this.constructorTableDatas()}
+          dataSource={this.constructTableDatas()}
           onRowClick={this.handleRowClick}
           showHeader={false}
           pagination={paginationOptions}
           bordered={false}
+          rowClassName={(record, index) => {
+            if (curSelectedRow === index) {
+              return 'active';
+            }
+            return '';
+          }}
         />
       </div >
     );
