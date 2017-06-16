@@ -33,11 +33,13 @@ export default class BoardHeader extends PureComponent {
     replace: PropTypes.func.isRequired,
     updateShowCharts: PropTypes.func.isRequired,
     updateCategoryScope: PropTypes.func.isRequired,
+    updateCategoryOrder: PropTypes.func.isRequired,
     selfRequestData: PropTypes.func,
     showScopeOrder: PropTypes.bool.isRequired,
     level: PropTypes.string,
     indexID: PropTypes.string,
     categoryScope: PropTypes.number.isRequired,
+    categoryOrder: PropTypes.string.isRequired,
     scope: PropTypes.number.isRequired,
     getTableInfo: PropTypes.func,
     showChart: PropTypes.string.isRequired,
@@ -62,20 +64,17 @@ export default class BoardHeader extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { location: { query: { orgId } } } = nextProps;
-    const { location: { query: { orgId: preOrgId } } } = this.props;
-    const { level, showChart, scope, categoryScope } = nextProps;
-    const { level: preLevel, categoryScope: preCategoryScope } = this.props;
+    const { showChart, categoryScope, categoryOrder } = nextProps;
+    const { categoryScope: preCategoryScope, categoryOrder: preCategoryOrder } = this.props;
     if (preCategoryScope !== categoryScope) {
       this.setState({
         scopeSelectValue: String(categoryScope),
         scope: categoryScope,
       });
     }
-    if (preLevel !== level || orgId !== preOrgId) {
+    if (categoryOrder !== preCategoryOrder) {
       this.setState({
-        scopeSelectValue: String(Number(level) + 1),
-        scope,
+        orderType: categoryOrder,
       });
     }
     this.setState({
@@ -124,7 +123,13 @@ export default class BoardHeader extends PureComponent {
 
   @autobind
   handleSortChange(column, value) {
-    const { indexID, selfRequestData, getTableInfo, updateCategoryScope } = this.props;
+    const {
+      indexID,
+      selfRequestData,
+      getTableInfo,
+      updateCategoryScope,
+      updateCategoryOrder,
+    } = this.props;
     const { showChart, scope, orderType } = this.state;
     if (showChart === 'zhuzhuangtu') {
       selfRequestData({
@@ -140,6 +145,8 @@ export default class BoardHeader extends PureComponent {
     }
     if (column === 'scope') {
       updateCategoryScope(indexID, value);
+    } else {
+      updateCategoryOrder(indexID, value);
     }
     this.setState({
       [column]: value,
@@ -245,7 +252,7 @@ export default class BoardHeader extends PureComponent {
               }
             </Select>
             <Select
-              defaultValue={orderType}
+              value={orderType}
               className={toggleOrderTypeSelect}
               onChange={this.handleOrderTypeChange}
             >
