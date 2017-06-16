@@ -83,6 +83,7 @@ export default class BusinessHome extends PureComponent {
       boardId: boardId || '2',
       showCharts: {},
       classifyScope: {},
+      classifyOrder: {},
     };
   }
 
@@ -123,6 +124,7 @@ export default class BusinessHome extends PureComponent {
       this.setState({
         showCharts: {},
         classifyScope: {},
+        classifyOrder: {},
       });
     }
   }
@@ -220,6 +222,16 @@ export default class BusinessHome extends PureComponent {
       },
     });
   }
+  @autobind
+  updateCategoryOrder(categoryId, v) {
+    const { classifyOrder } = this.state;
+    this.setState({
+      classifyOrder: {
+        ...classifyOrder,
+        [categoryId]: v,
+      },
+    });
+  }
   // 导出 excel 文件
   @autobind
   handleExportExcel(param) {
@@ -246,7 +258,7 @@ export default class BusinessHome extends PureComponent {
       replace,
       custRange,
     } = this.props;
-    const { showCharts, classifyScope } = this.state;
+    const { showCharts, classifyScope, classifyOrder } = this.state;
     const level = query.custRangeLevel || (custRange[0] && custRange[0].level);
     const newscope = Number(query.scope) || (custRange[0] && Number(custRange[0].level) + 1);
     if (!custRange || !custRange.length) {
@@ -272,6 +284,7 @@ export default class BusinessHome extends PureComponent {
               const newChartTable = chartTableInfo[key] || {};
               const showChart = showCharts[key] || 'zhuzhuangtu';
               const categoryScope = Number(classifyScope[key]) || newscope;
+              const categoryOrder = classifyOrder[key] || 'desc';
               return (
                 <div
                   key={key}
@@ -281,7 +294,9 @@ export default class BusinessHome extends PureComponent {
                     showChart={showChart}
                     updateShowCharts={this.updateShowCharts}
                     categoryScope={categoryScope}
+                    categoryOrder={categoryOrder}
                     updateCategoryScope={this.updateCategoryScope}
+                    updateCategoryOrder={this.updateCategoryOrder}
                     chartData={data}
                     indexID={key}
                     chartTableInfo={newChartTable}
