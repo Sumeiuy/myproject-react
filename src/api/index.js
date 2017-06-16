@@ -31,7 +31,6 @@ export default {
 
   getFeedbackDetail: query => api.post('/groovynoauth/feedback/queryFeedbackDetail', query),
 
-  getFeedbackRecordList: query => api.post('/groovynoauth/feedback/queryFeedbackRecordList', query),
   // ==========feedback的数据接口end
 
   // 获取报表下所有的分类信息
