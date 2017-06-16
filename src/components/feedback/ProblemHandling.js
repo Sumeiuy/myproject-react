@@ -7,6 +7,7 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { Select, Row, Col, Input, Form, Modal, message, Upload } from 'antd';
 import { createForm } from 'rc-form';
+import { feedbackOptions } from '../../config';
 import './problemHandling.less';
 
 const FormItem = Form.Item;
@@ -56,6 +57,11 @@ export default class ProblemHandling extends PureComponent {
   render() {
     const { visible, title, onCancel, onCreate, width, form } = this.props;
     const { getFieldDecorator } = form;
+    const questionTagOptions = feedbackOptions.questionTagOptions;
+    console.log(questionTagOptions.pop(), '-------------22222');
+    const getSelectOption = item => item.map(i =>
+      <Option key={i.value}>{i.label}</Option>,
+    );
     return (
       <Modal
         title={title}
@@ -77,12 +83,7 @@ export default class ProblemHandling extends PureComponent {
                   <FormItem>
                     {getFieldDecorator('qutable', { initialValue: '使用方法' })(
                       <Select style={{ width: 220 }} onChange={this.handleChange}>
-                        <Option value="使用方法">使用方法</Option>
-                        <Option value="改进建议">改进建议</Option>
-                        <Option value="产品规格限制">产品规格限制</Option>
-                        <Option value="产品功能缺陷">产品功能缺陷</Option>
-                        <Option value="用户体验问题">用户体验问题</Option>
-                        <Option value="其他产品问题">其他产品问题</Option>
+                        {getSelectOption(questionTagOptions)}
                       </Select>,
                     )}
                   </FormItem>
