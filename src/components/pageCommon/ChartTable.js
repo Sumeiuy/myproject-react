@@ -8,7 +8,6 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import { Table, Pagination, Tooltip } from 'antd';
-import _ from 'lodash';
 
 import { optionsMap } from '../../config';
 import styles from './ChartTable.less';
@@ -16,9 +15,25 @@ import styles from './ChartTable.less';
 // 按类别排序
 const sortByType = optionsMap.sortByType;
 const revert = { asc: 'desc', desc: 'asc' };
-// 表格标题宽度
-const columnWidth = [180, 180, 180, 210, 180, 170, 170, 210, 210, 210, 180, 150];
-const allWidth = _.sum(columnWidth);
+const widthObj = {
+  invest: '320%',
+  business: [{
+    KHSMX: '100%',
+  }, {
+    ZCMX: '100%',
+  }, {
+    JYLMX: '100%',
+  }, {
+    CPMX: '100%',
+  }, {
+    KTYWMX: '100%',
+  }, {
+    JSRMX: '100%',
+  }, {
+    GJZKHFWMX: '100%',
+  }],
+};
+// const widthArr = ['260%', '100%'];
 
 export default class ChartTable extends PureComponent {
   static propTypes = {
@@ -68,7 +83,7 @@ export default class ChartTable extends PureComponent {
         className={styles.columnsTitle}
         onClick={() => { this.handleTitleClick(item); }}
       >
-        {item.name}
+        {`${item.name}(${encodeURIComponent(item.unit) === encodeURIComponent('元') ? '万元' : item.unit})`}
         <span className={'ant-table-column-sorter'}>
           <span
             className={`
@@ -234,10 +249,18 @@ export default class ChartTable extends PureComponent {
 
   render() {
     // chartTableInfo使用state中的值
-    const { chartTableInfo, style, scope } = this.props;
+    const { chartTableInfo, style, scope, location: { pathname }, indexID } = this.props;
     const columns = chartTableInfo.titleList;
     const data = chartTableInfo.indicatorSummuryRecordDtos;
     const temp = [];
+    let width = '';
+    if (pathname.indexOf('invest') > -1) {
+      // 在 invest 页面
+      width = widthObj.invest;
+    } else {
+      width = widthObj.business[indexID];
+    }
+    // const width = widthObj[pathnam]
     let arr = [];
     if (data && data.length) {
       data.map((item, index) => {
@@ -247,11 +270,10 @@ export default class ChartTable extends PureComponent {
           { key: index, city: name, level: itemLevel, id, orgModel }, ...testArr,
         ));
       });
-      arr = columns.map((item, index) => {
+      arr = columns.map((item) => {
         const column = {
           dataIndex: item.key,
           title: this.getTitleHtml(item),
-          width: columnWidth[index],
           render: text => (
             <div className={styles.tdWrapperDiv}>
               {text}
@@ -286,7 +308,7 @@ export default class ChartTable extends PureComponent {
           columns={arr}
           dataSource={temp}
           onChange={this.handleChange}
-          scroll={{ x: allWidth }}
+          scroll={{ x: width }}
         />
         <Pagination
           defaultCurrent={1}
