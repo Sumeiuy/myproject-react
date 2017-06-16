@@ -15,6 +15,7 @@ import {
   getMaxAndMinMoney,
   getMaxAndMinCust,
   toFixedMoney,
+  toFixedCust,
 } from './FixNumber';
 import IECharts from '../IECharts';
 import { iconTypeMap } from '../../config';
@@ -124,6 +125,10 @@ export default class ChartBarNormal extends PureComponent {
       const tempSeries = toFixedMoney(seriesData);
       seriesData = tempSeries.newSeries;
       unit = tempSeries.newUnit;
+    } else if (unit === '户') {
+      const tempSeries = toFixedCust(seriesData);
+      seriesData = tempSeries.newSeries;
+      unit = tempSeries.newUnit;
     }
     const seriesDataLen = seriesData.length;
     // 数据中最大的值
@@ -143,7 +148,7 @@ export default class ChartBarNormal extends PureComponent {
       const maxAndMinMoney = getMaxAndMinMoney(seriesData);
       gridXAxisMax = maxAndMinMoney.max;
       gridXaxisMin = maxAndMinMoney.min;
-    } else if (unit === '户' || unit === '人') {
+    } else if (unit === '人' || unit.indexOf('户') > -1) {
       const maxAndMinPeople = getMaxAndMinCust(seriesData);
       gridXAxisMax = maxAndMinPeople.max;
       gridXaxisMin = maxAndMinPeople.min;

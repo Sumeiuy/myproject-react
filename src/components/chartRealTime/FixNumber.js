@@ -28,8 +28,10 @@ function padFixedCust(m, method) {
     value = Math[method](m / 1000) * 1000;
   } else if (cust >= 100) {
     value = Math[method](m / 100) * 100;
-  } else if (cust < 100) {
+  } else if (cust >= 10) {
     value = Math[method](m / 10) * 10;
+  } else if (cust < 10) {
+    value = Math[method](m);
   }
   return value;
 }
@@ -72,12 +74,42 @@ const FixNumber = {
     };
   },
 
+  toFixedCust(series) {
+    let newUnit = '户';
+    const tempSeries = series.map(n => Math.abs(n));
+    let newSeries = series;
+    const max = Math.max(...tempSeries);
+    // 1. 全部在万元以下的数据不做处理
+    // 2.超过万元的，以‘万元’为单位
+    // 3.超过亿元的，以‘亿元’为单位
+    if (max >= 10000) {
+      newUnit = '万户';
+      newSeries = series.map(item => FixNumber.toFixedDecimal(item / 10000));
+    } else {
+      newUnit = '户';
+      newSeries = series.map(item => FixNumber.toFixedDecimal(item));
+    }
+
+    return {
+      newUnit,
+      newSeries,
+    };
+  },
+
   // 针对百分比的数字来确认图表坐标轴的最大和最小值
   getMaxAndMinPercent(series) {
     let max = Math.max(...series);
     let min = Math.min(...series);
-    max = Math.ceil((max / 10)) * 10;
-    min = Math.floor((min / 10)) * 10;
+    if (max >= 10) {
+      max = Math.ceil((max / 10)) * 10;
+    } else {
+      max = Math.ceil(max);
+    }
+    if (min >= 10) {
+      min = Math.floor((min / 10)) * 10;
+    } else {
+      min = 0;
+    }
     if (max === 0) {
       max = 100;
     }
@@ -126,26 +158,6 @@ const FixNumber = {
     if (max === 0 && min === 0) {
       max = 10;
     }
-    // if (max >= 10000) {
-    //   max = Math.ceil(max / 1000) * 1000;
-    // } else if (max >= 100) {
-    //   max = Math.ceil(max / 100) * 100;
-    // } else if (max < 100) {
-    //   max = Math.ceil(max / 10) * 10;
-    // }
-    // if (max === 0) {
-    //   max = 10;
-    // }
-    // if (min >= 10000) {
-    //   min = Math.floor(min / 1000) * 1000;
-    // } else if (min >= 100) {
-    //   min = Math.floor(min / 100) * 100;
-    // } else if (min < 100) {
-    //   min = Math.floor(min / 10) * 10;
-    // }
-    // if (min <= 0 || min >= max) {
-    //   min = 0;
-    // }
     return { max, min };
   },
 };
