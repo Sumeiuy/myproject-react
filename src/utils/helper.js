@@ -6,6 +6,7 @@
 
 import bowser from 'bowser';
 import moment from 'moment';
+import _ from 'lodash';
 
 import constants from '../config/constants';
 
@@ -151,6 +152,50 @@ const helper = {
       obj.unit = '';
     }
     return obj;
+  },
+
+  /**
+   * 构造入参
+   * @param {*} query 查询
+   * @param {*} newPageNum 当前页
+   * @param {*} newPageSize 当前分页条目数
+   */
+  constructPostBody(query, newPageNum, newPageSize) {
+    let finalPostData = {
+      page: {
+        curPageNum: newPageNum,
+        pageSize: newPageSize,
+      },
+    };
+    /* eslint-disable */
+    for (let i in query) {
+      if (query.hasOwnProperty(i) && i !== 'currentId'
+        && i !== 'feedbackCreateTimeFrom' && i !== 'feedbackCreateTimeTo') {
+        finalPostData = _.merge(finalPostData, { [i]: query[i] });
+      }
+    }
+    /* eslint-enable */
+
+    const { feedbackCreateTimeTo, feedbackCreateTimeFrom } = query;
+    const formatedTime = {
+      feedbackCreateTimeFrom: helper.formatTime(feedbackCreateTimeFrom),
+      feedbackCreateTimeTo: helper.formatTime(feedbackCreateTimeTo),
+    };
+
+    if (!_.includes(finalPostData.getOwnPropertyNames, 'status')) {
+      finalPostData = _.merge(finalPostData, { status: 'PROCESSING' });
+    }
+
+    return _.merge(finalPostData, formatedTime);
+  },
+
+  /**
+   * 格式化时间戳
+   * @param {*} time 中国标准时间
+   */
+  formatTime(time) {
+    console.log(moment(time).format('YYYY-MM-DD HH:mm:ss'));
+    return moment(time).format('YYYY-MM-DD HH:mm:ss');
   },
 
   /**

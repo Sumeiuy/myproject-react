@@ -11,6 +11,7 @@ import { Row, Col } from 'antd';
 import Detail from '../../components/feedback/Detail';
 import FeedbackList from '../../components/feedback/FeedbackList';
 import FeedbackHeader from '../../components/feedback/FeedbackHeader';
+import { constructPostBody } from '../../utils/helper';
 import styles from './home.less';
 // import _ from 'lodash';
 
@@ -50,11 +51,7 @@ export default class FeedBack extends PureComponent {
   componentWillMount() {
     const { getFeedbackList, location: { query } } = this.props;
     // 默认筛选条件
-    getFeedbackList({
-      ...query,
-      pageNum: 1,
-      pageSize: 10,
-    });
+    getFeedbackList(constructPostBody(query, 1, 10));
   }
 
 
