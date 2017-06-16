@@ -61,6 +61,9 @@ const FixNumber = {
     } else if (MaxMoney > 10000) {
       newUnit = '万元';
       newSeries = series.map(item => FixNumber.toFixedDecimal(item / 10000));
+    } else {
+      newUnit = '元';
+      newSeries = series.map(item => FixNumber.toFixedDecimal(item));
     }
 
     return {
