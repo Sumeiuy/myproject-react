@@ -20,7 +20,34 @@ var assetsRoot = config.build.assetsRoot;
 // 生成chcp配置文件的路径
 var assetsPath = path.join(assetsRoot, 'assets.js');
 
+// /fspa/static/js/app.80c9a4be20138c8ebf6f.js --> app
+function getName(asset) {
+  return asset.slice(asset.lastIndexOf('/') + 1, asset.indexOf('.'));
+}
+
+function getPriority(asset) {
+  var priority = {
+    manifest: 0,
+    vendor: 1,
+    app: 2
+  };
+  return priority[getName(asset)];
+}
+
+function suffix(asset) {
+  return asset.slice(asset.lastIndexOf('.') + 1);
+}
+
 module.exports = function (assets) {
+
+  assets.sort(
+    function (a, b) {
+      if (suffix(a) === 'css') {
+        return -1;
+      }
+      return getPriority(a) < getPriority(b) ? -1 : 1;
+    }
+  );
 
   var html = assets.map(
     function (asset) {
