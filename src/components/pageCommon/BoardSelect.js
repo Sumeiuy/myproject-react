@@ -19,11 +19,11 @@ const boards = [
     boardId: '1',
     url: 'invest',
   },
-  // {
-  //   boardName: '经营业绩汇总',
-  //   boardId: '2',
-  //   url: 'business',
-  // },
+  {
+    boardName: '经营业绩汇总',
+    boardId: '2',
+    url: 'business',
+  },
 ];
 
 const mapStateToProps = state => ({
