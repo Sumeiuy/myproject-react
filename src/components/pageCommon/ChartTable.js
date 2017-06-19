@@ -8,6 +8,7 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import { Table, Pagination, Tooltip } from 'antd';
+import _ from 'lodash';
 
 import { optionsMap } from '../../config';
 import styles from './ChartTable.less';
@@ -15,25 +16,6 @@ import styles from './ChartTable.less';
 // 按类别排序
 const sortByType = optionsMap.sortByType;
 const revert = { asc: 'desc', desc: 'asc' };
-const widthObj = {
-  invest: '320%',
-  business: [{
-    KHSMX: '100%',
-  }, {
-    ZCMX: '100%',
-  }, {
-    JYLMX: '100%',
-  }, {
-    CPMX: '100%',
-  }, {
-    KTYWMX: '100%',
-  }, {
-    JSRMX: '100%',
-  }, {
-    GJZKHFWMX: '100%',
-  }],
-};
-// const widthArr = ['260%', '100%'];
 
 export default class ChartTable extends PureComponent {
   static propTypes = {
@@ -249,19 +231,12 @@ export default class ChartTable extends PureComponent {
 
   render() {
     // chartTableInfo使用state中的值
-    const { chartTableInfo, style, scope, location: { pathname }, indexID } = this.props;
+    const { chartTableInfo, style, scope } = this.props;
     const columns = chartTableInfo.titleList;
     const data = chartTableInfo.indicatorSummuryRecordDtos;
     const temp = [];
-    let width = '';
-    if (pathname.indexOf('invest') > -1) {
-      // 在 invest 页面
-      width = widthObj.invest;
-    } else {
-      width = widthObj.business[indexID];
-    }
-    // const width = widthObj[pathnam]
     let arr = [];
+    let allWidth = '';
     if (data && data.length) {
       data.map((item, index) => {
         const testArr = this.unitChange(item.indicatorDataList);
@@ -271,15 +246,23 @@ export default class ChartTable extends PureComponent {
         ));
       });
       arr = columns.map((item) => {
+        console.warn(item.name);
+        const tempName = `${item.name}(${encodeURIComponent(item.unit) === encodeURIComponent('元') ? '万元' : item.unit})`;
         const column = {
           dataIndex: item.key,
           title: this.getTitleHtml(item),
+          // width: (tempName.length * 15) + 20,
           render: text => (
             <div className={styles.tdWrapperDiv}>
               {text}
             </div>
           ),
         };
+        // 如果表格标题超过 9 个，则每个设置对应的宽度
+        if (columns.length > 9) {
+          column.width = (tempName.length * 15) + 20;
+        }
+        // 如果表格标题包含 children，则给每个 child 设置排序事件
         const hasChildren = item.children;
         if (hasChildren) {
           column.children = this.getChildren(item);
@@ -287,20 +270,24 @@ export default class ChartTable extends PureComponent {
         }
         return column;
       });
-      // 匹配第一列标题文字，分公司、营业部、投顾
-      // sortByType 初始的 scope 为 2，所以减去两个前面对象，得出最后与实际 scope 相等的索引
-      const keyName = sortByType[Number(scope) - 2].name;
-      arr.unshift({
-        title: keyName,
-        dataIndex: 'city',
-        key: 'city',
-        width: 170,
-        fixed: 'left',
-        render: (text, record) => (
-          this.toolTipHandle(record)
-        ),
-      });
+      allWidth = _.sumBy(arr, 'width');
+      allWidth = allWidth > 900 ? allWidth : '100%';
     }
+
+    console.warn('allWidth', allWidth);
+    // 匹配第一列标题文字，分公司、营业部、投顾
+    // sortByType 初始的 scope 为 2，所以减去两个前面对象，得出最后与实际 scope 相等的索引
+    const keyName = sortByType[Number(scope) - 2].name;
+    arr.unshift({
+      title: keyName,
+      dataIndex: 'city',
+      key: 'city',
+      width: 170,
+      fixed: 'left',
+      render: (text, record) => (
+        this.toolTipHandle(record)
+      ),
+    });
     return (
       <div className={styles.tableDiv} style={style}>
         <Table
@@ -308,7 +295,7 @@ export default class ChartTable extends PureComponent {
           columns={arr}
           dataSource={temp}
           onChange={this.handleChange}
-          scroll={{ x: width }}
+          scroll={{ x: allWidth }}
         />
         <Pagination
           defaultCurrent={1}
