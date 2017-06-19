@@ -182,8 +182,9 @@ const helper = {
       feedbackCreateTimeTo: helper.formatTime(feedbackCreateTimeTo),
     };
 
-    if (!_.includes(Object.getOwnPropertyNames(finalPostData), 'status')) {
-      finalPostData = _.merge(finalPostData, { status: 'PROCESSING' });
+    if (!_.includes(Object.getOwnPropertyNames(finalPostData), 'feedbackStatusEnum')
+      || _.isEmpty(finalPostData.feedbackStatusEnum)) {
+      finalPostData = _.merge(finalPostData, { feedbackStatusEnum: 'PROCESSING' });
     }
 
     return _.merge(finalPostData, formatedTime);

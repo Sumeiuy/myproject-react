@@ -11,13 +11,16 @@ const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
 // 筛选条件字典
 const ENUM_DICTIONARY = [
-  'endTime',
-  'moduleName',
-  'operatorName',
-  'questionName',
-  'startTime',
-  'stateName',
-  'typeName',
+  'appId',
+  'userId',
+  'userType',
+  'issueType',
+  'feedbackStatusEnum',
+  'feedbackTagEnum',
+  'functionName',
+  'feedbackCreateTimeFrom',
+  'feedbackCreateTimeTo',
+  'processer',
 ];
 
 // 状态字典
