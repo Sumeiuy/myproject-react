@@ -167,14 +167,10 @@ const helper = {
         pageSize: newPageSize,
       },
     };
-    /* eslint-disable */
-    for (let i in query) {
-      if (query.hasOwnProperty(i) && i !== 'currentId'
-        && i !== 'feedbackCreateTimeFrom' && i !== 'feedbackCreateTimeTo') {
-        finalPostData = _.merge(finalPostData, { [i]: query[i] });
-      }
-    }
-    /* eslint-enable */
+
+    _.each(_.omit(query, ['currentId', 'feedbackCreateTimeFrom', 'feedbackCreateTimeTo']), (i) => {
+      finalPostData = _.merge(finalPostData, { [i]: query[i] });
+    });
 
     const { feedbackCreateTimeTo, feedbackCreateTimeFrom } = query;
     const formatedTime = {
@@ -182,7 +178,7 @@ const helper = {
       feedbackCreateTimeTo: helper.formatTime(feedbackCreateTimeTo),
     };
 
-    if (!_.includes(Object.getOwnPropertyNames(finalPostData), 'feedbackStatusEnum')
+    if (!('feedbackStatusEnum' in finalPostData)
       || _.isEmpty(finalPostData.feedbackStatusEnum)) {
       finalPostData = _.merge(finalPostData, { feedbackStatusEnum: 'PROCESSING' });
     }
@@ -195,7 +191,6 @@ const helper = {
    * @param {*} time 中国标准时间
    */
   formatTime(time) {
-    console.log(moment(time).format('YYYY-MM-DD HH:mm:ss'));
     return moment(time).format('YYYY-MM-DD HH:mm:ss');
   },
 
