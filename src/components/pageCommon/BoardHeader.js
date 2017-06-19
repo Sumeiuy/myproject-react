@@ -31,18 +31,13 @@ export default class BoardHeader extends PureComponent {
     title: PropTypes.string.isRequired,
     postExcelInfo: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
-    updateShowCharts: PropTypes.func.isRequired,
-    updateCategoryScope: PropTypes.func.isRequired,
-    updateCategoryOrder: PropTypes.func.isRequired,
+    changeBoard: PropTypes.func.isRequired,
     selfRequestData: PropTypes.func,
     showScopeOrder: PropTypes.bool.isRequired,
     level: PropTypes.string,
     indexID: PropTypes.string,
-    categoryScope: PropTypes.number.isRequired,
-    categoryOrder: PropTypes.string.isRequired,
     scope: PropTypes.number.isRequired,
     getTableInfo: PropTypes.func,
-    showChart: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -54,103 +49,104 @@ export default class BoardHeader extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { scope, showChart } = this.props;
-    this.state = {
-      scopeSelectValue: String(scope),
-      scope: String(scope),
-      showChart: showChart || 'zhuzhuangtu',
-      orderType: 'desc',
-    };
+    const { location: { query, pathname }, scope } = this.props;
+    if (pathname.indexOf('invest') > -1) {
+      this.state = {
+        scopeSelectValue: String(scope),
+        showChart: query.showChart || 'zhuzhuangtu',
+        orderType: query.orderType || 'desc',
+      };
+    } else {
+      this.state = {
+        scopeSelectValue: String(scope),
+        showChart: 'zhuzhuangtu',
+        orderType: 'desc',
+      };
+    }
   }
 
   componentWillReceiveProps(nextProps) {
-    const { showChart, categoryScope, categoryOrder } = nextProps;
-    const { categoryScope: preCategoryScope, categoryOrder: preCategoryOrder } = this.props;
-    if (preCategoryScope !== categoryScope) {
+    const { location: { query: { orgId } } } = nextProps;
+    const { location: { query: { orgId: preOrgId } } } = this.props;
+    const { level } = nextProps;
+    const { level: preLevel } = this.props;
+    if (preLevel !== level || orgId !== preOrgId) {
       this.setState({
-        scopeSelectValue: String(categoryScope),
-        scope: categoryScope,
+        scopeSelectValue: String(Number(level) + 1),
       });
     }
-    if (categoryOrder !== preCategoryOrder) {
-      this.setState({
-        orderType: categoryOrder,
-      });
-    }
-    this.setState({
-      showChart,
-    });
   }
 
   @autobind
   handleDataExportClick() {
-    const { postExcelInfo, indexID } = this.props;
-    const { scope } = this.state;
-    postExcelInfo({
-      categoryKey: indexID,
-      scope,
-    });
+    const { postExcelInfo } = this.props;
+    postExcelInfo();
   }
 
   // 柱状图与表格切换
   @autobind
   handleIconClick(type) {
     const {
-      updateShowCharts,
+      replace,
+      location: { query, pathname },
+      changeBoard,
       indexID,
       selfRequestData,
       getTableInfo,
     } = this.props;
-    const { orderType, scope } = this.state;
-    if (type === 'zhuzhuangtu') {
-      selfRequestData({
-        categoryKey: indexID,
-        orderType,
-        scope,
-      });
+    const { orderType } = this.state;
+    // 判断是否在 invest 页面
+    if (pathname.indexOf('invest') === -1) {
+      if (type === 'zhuzhuangtu') {
+        selfRequestData({
+          indicatorId: indexID,
+          orderType,
+        });
+      } else {
+        getTableInfo({
+          indicatorId: indexID,
+        });
+      }
     } else {
-      getTableInfo({
-        categoryKey: indexID,
-        scope,
+      // 在绩效视图页面里的时候，更改 url
+      replace({
+        pathname,
+        query: {
+          ...query,
+          showChart: type,
+          page: type !== 'tables' ? '1' : query.page,
+          indexID,
+        },
       });
     }
     this.setState({
       showChart: type,
     });
-    updateShowCharts(indexID, type);
+    changeBoard(type);
   }
 
 
   @autobind
   handleSortChange(column, value) {
-    const {
-      indexID,
-      selfRequestData,
-      getTableInfo,
-      updateCategoryScope,
-      updateCategoryOrder,
-    } = this.props;
-    const { showChart, scope, orderType } = this.state;
-    if (showChart === 'zhuzhuangtu') {
+    const { replace, location: { query, pathname }, indexID, selfRequestData } = this.props;
+    if (pathname.indexOf('invest') > -1) {
+      replace({
+        pathname,
+        query: {
+          ...query,
+          [column]: value,
+        },
+      });
+    } else {
+      // business页面需要的逻辑处理
+      this.setState({
+        orderType: value,
+      });
       selfRequestData({
-        categoryKey: indexID,
-        scope: column === 'scope' ? value : scope,
-        orderType: column === 'orderType' ? value : orderType,
-      });
-    } else {
-      getTableInfo({
-        categoryKey: indexID,
-        [column]: value,
+        indicatorId: indexID,
+        orderType: value,
       });
     }
-    if (column === 'scope') {
-      updateCategoryScope(indexID, value);
-    } else {
-      updateCategoryOrder(indexID, value);
-    }
-    this.setState({
-      [column]: value,
-    });
   }
 
   @autobind
@@ -252,7 +248,7 @@ export default class BoardHeader extends PureComponent {
               }
             </Select>
             <Select
-              value={orderType}
+              defaultValue={orderType}
               className={toggleOrderTypeSelect}
               onChange={this.handleOrderTypeChange}
             >

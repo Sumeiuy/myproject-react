@@ -110,7 +110,7 @@ function getLogData(action) {
 
   return {
     ...eventType,
-    distinct_id: helper.getEmpId(),
+    distinct_id: window.curUserCode,
     project: projectName,
     properties: {
       ...env,

@@ -38,8 +38,6 @@ function padFixedMoney(m, method) {
     value = Math[method](m / 100) * 100;
   } else if (money >= 10) {
     value = Math[method](m / 10) * 10;
-  } else {
-    value = Math[method](m);
   }
   return value;
 }
