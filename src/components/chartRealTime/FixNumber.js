@@ -82,7 +82,7 @@ const FixNumber = {
     // 1. 全部在万元以下的数据不做处理
     // 2.超过万元的，以‘万元’为单位
     // 3.超过亿元的，以‘亿元’为单位
-    if (max >= 10000) {
+    if (max >= 5000) {
       newUnit = '万户';
       newSeries = series.map(item => FixNumber.toFixedDecimal(item / 10000));
     } else {

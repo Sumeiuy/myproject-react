@@ -11,6 +11,7 @@ const generalOptions = {
   barColor: '#4bbbf4',
   // 坐标轴的通用样式
   AxisOptions: {
+    // splitNumber: 4,
     axisLine: {
       lineStyle: {
         color: '#e7eaec',
