@@ -2,9 +2,6 @@
  * @file models/business.js
  * @author sunweibin
  */
-
-// import { routerRedux } from 'dva/router';
-
 import api from '../api';
 import config from '../config/request';
 
@@ -15,6 +12,7 @@ export default {
     chartInfo: [],
     custRange: [],
     chartTableInfo: {},
+    allCategory: [],
   },
   reducers: {
     getPerformanceSuccess(state, action) {
@@ -31,6 +29,17 @@ export default {
       return {
         ...state,
         chartInfo,
+      };
+    },
+    getAllCategorysSuccess(state, action) {
+      const { payload: { allCategorys } } = action;
+      const newAll = allCategorys.resultData.map((item) => {
+        const { key, name } = item;
+        return { key, name };
+      });
+      return {
+        ...state,
+        allCategory: newAll,
       };
     },
     getOneChartInfoSuccess(state, action) {
@@ -52,11 +61,11 @@ export default {
       };
     },
     getChartTableInfoSuccess(state, action) {
-      const { payload: { resChartTableInfo } } = action;
+      const { payload: { resChartTableInfo, categoryKey } } = action;
       const chartTable = resChartTableInfo.resultData;
       const newChartTableInfo = chartTable.data;
-      // todo 按照 ID 来存储相应数据
-      const chartTableId = chartTable.key;
+      // 按照 ID 来存储相应数据
+      const chartTableId = categoryKey;
       const preChartTableInfo = state.chartTableInfo;
       return {
         ...state,
@@ -120,14 +129,22 @@ export default {
         ...payload.chartInfo,
         localScope: payload.chartInfo.localScope || firstCust.level,
         orgId: payload.chartInfo.orgId || firstCust.id,
-        scope: payload.chartInfo.scope || parseInt(firstCust.level, 10) + 1,
+        scope: payload.chartInfo.scope || String(Number(firstCust.level) + 1),
       });
       yield put({
         type: 'getChartInfoSuccess',
         payload: { resChartInfo },
       });
     },
-
+    // 获取所有分类
+    * getAllCategorys({ payload }, { call, put }) {
+      // 获取所有分类指标信息
+      const allCategorys = yield call(api.getAllClassifyIndex, payload);
+      yield put({
+        type: 'getAllCategorysSuccess',
+        payload: { allCategorys },
+      });
+    },
     // 根据某一个分类指标的ID查询该分类指标下数据
     * getOneChartInfo({ payload }, { call, put }) {
       const oneChart = yield call(api.getOneChartInfo, payload);
@@ -140,9 +157,10 @@ export default {
     // 获取图表表格视图数据
     * getChartTableInfo({ payload }, { call, put }) {
       const resChartTableInfo = yield call(api.getChartTableInfo, payload);
+      const categoryKey = payload.categoryKey;
       yield put({
         type: 'getChartTableInfoSuccess',
-        payload: { resChartTableInfo },
+        payload: { resChartTableInfo, categoryKey },
       });
     },
   },

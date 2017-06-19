@@ -5,7 +5,8 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { Row, Col } from 'antd';
-// import Loading from '../../layouts/Loading';
+import _ from 'lodash';
+
 import ChartBar from './ChartBar';
 import styles from './ChartBoard.less';
 
@@ -34,12 +35,18 @@ export default class ChartBoard extends PureComponent {
         {/* <Loading loading={loading} /> */}
         <Row type="flex">
           {
-            chartData.map((item, index) => {
-              const chartDataIndex = `chartData${index}`;
+            chartData.map((item) => {
+              if (!_.isObject(item)) {
+                return null;
+              }
+              const { indiModel } = item;
+              if (!indiModel) {
+                return null;
+              }
               return (
                 <Col
                   span={8}
-                  key={chartDataIndex}
+                  key={indiModel.key}
                   className={styles.colWrapper}
                 >
                   <ChartBar
