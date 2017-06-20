@@ -5,7 +5,7 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import { Row, Col, Button, message, Upload } from 'antd';
+import { Row, Col, Button } from 'antd';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { withRouter, routerRedux } from 'dva/router';
@@ -14,9 +14,9 @@ import Remark from './Remark';
 import RemarkList from './RemarkList';
 import Problemdetails from './ProblemDetails';
 import FeedbackUser from './FeedbackUser';
+import UploadFiles from './UploadFiles';
 import './detail.less';
 
-const Dragger = Upload.Dragger;
 const EMPTY_OBJECT = {};
 // const EMPTY_LIST = [];
 const GETDETAIL = 'feedback/getFeedbackDetail';
@@ -49,23 +49,6 @@ export default class FeedBack extends PureComponent {
     const { resultData = EMPTY_OBJECT } = this.props.fbDetail || EMPTY_OBJECT;
     this.setState({
       dataSource: resultData,
-      uploadPops: {
-        name: 'file',
-        multiple: true,
-        showUploadList: true,
-        action: '//jsonplaceholder.typicode.com/posts/',
-        onChange(info) {
-          const status = info.file.status;
-          if (status !== 'uploading') {
-            console.log(info.file, info.fileList);
-          }
-          if (status === 'done') {
-            message.success(`${info.file.name} file uploaded successfully.`);
-          } else if (status === 'error') {
-            message.error(`${info.file.name} file upload failed.`);
-          }
-        },
-      },
     });
   }
   state = {
@@ -175,7 +158,9 @@ export default class FeedBack extends PureComponent {
       issueType,
       approach,
       processer,
-      jiraId } = feedbackDetail;
+      jiraId,
+      mediaUrls,
+      attachModelList } = feedbackDetail;
     const problemDetails = {
       functionName,
       createTime,
@@ -226,7 +211,7 @@ export default class FeedBack extends PureComponent {
               </Col>
               <Col span="8">
                 <div className="imgbox">
-                  <img src="" alt="" />
+                  <img src={mediaUrls} alt="图片" />
                 </div>
               </Col>
             </Row>
@@ -246,24 +231,9 @@ export default class FeedBack extends PureComponent {
               <h2 className="toogle_title">附件</h2>
             </div>
             <div className="mod_content">
-              <Row>
-                <Col span="12">
-                  <ul id="filelist" className="filelist">
-                    <li>
-                      <a href="##">客户中心问题反馈.doc</a>
-                    </li>
-                  </ul>
-                </Col>
-                <Col span="12">
-                  <div className="upload_dv">
-                    <Dragger {...this.state.uploadPops}>
-                      <div className="upload_txt">
-                        + 上传附件
-                      </div>
-                    </Dragger>
-                  </div>
-                </Col>
-              </Row>
+              <UploadFiles
+                attachModelList={attachModelList}
+              />
             </div>
           </div>
           <div id="processing" className="module">

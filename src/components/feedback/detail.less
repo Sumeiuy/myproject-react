@@ -1,4 +1,5 @@
 :global{
+  .clear{clear:both; height: 0; line-height: 0; font-size: 0}
   .detail_box{
     padding:10px 10px 10px 0;
     h1,h2,h3{
@@ -58,8 +59,9 @@
         .mod_content{
           padding: 5px 0;
           .property_list{
-            overflow: hidden;
             li{
+              padding: 5px 0;
+              height: 40px;
               .wrap {
                 padding: 0 10px 0 90px;
               }
@@ -90,6 +92,8 @@
                 padding-top: 2px;
                 position: relative;
                 vertical-align: top;
+                box-sizing: border-box;
+                padding-right:30px;
                 b{
                   font-weight: normal;
                 }
@@ -99,6 +103,9 @@
                 .close{
                   color:#5fc554;
                 }
+              }
+              .value_hide{
+                display: none;
               }
             }
           }
@@ -113,19 +120,16 @@
           .remarks_box{
             padding:20px 0;
           }
-          .filelist{
-            li{
-              padding:5px 0;
-            }
-          }
-          .upload_dv{
-            .upload_txt{
-              font-size: 14px;
-              padding:5px 0;
-            }
-          }
         }
       }
     }
+  }
+  .clearfix:after{
+    content:" ";
+    height:0;
+    line-height:0;
+    display:block;
+    visibility:hidden;
+    clear:both;
   }
 }

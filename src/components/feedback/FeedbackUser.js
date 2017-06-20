@@ -35,7 +35,7 @@ export default class FeedbackUser extends PureComponent {
     const { rowId, name, department, cellPhone, eMailAddr } = data;
     return (
       <div>
-        <ul className="property_list">
+        <ul className="property_list clearfix">
           <li className="item">
             <div className="wrap">
               <strong className="name">员工号：</strong>
