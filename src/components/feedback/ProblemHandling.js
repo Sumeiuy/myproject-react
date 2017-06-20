@@ -7,12 +7,14 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { Select, Row, Col, Input, Form, Modal, message, Upload } from 'antd';
 import { createForm } from 'rc-form';
+import Icon from '../../components/common/Icon';
 import { feedbackOptions } from '../../config';
 import './problemHandling.less';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
 const Dragger = Upload.Dragger;
+const EMPTY_LIST = [];
 @createForm()
 export default class ProblemHandling extends PureComponent {
   static propTypes = {
@@ -31,7 +33,12 @@ export default class ProblemHandling extends PureComponent {
   }
   constructor(props) {
     super(props);
-    this.setState({
+    const questionTagOptions = feedbackOptions.questionTagOptions || EMPTY_LIST;
+    const stateOptions = feedbackOptions.stateOptions || EMPTY_LIST;
+    questionTagOptions.pop();
+    this.state = {
+      popQuestionTagOptions: questionTagOptions,
+      stateOptions,
       uploadPops: {
         name: 'file',
         multiple: true,
@@ -49,18 +56,21 @@ export default class ProblemHandling extends PureComponent {
           }
         },
       },
-    });
+    };
   }
   state = {
     uploadPops: {},
+    popQuestionTagOptions: [],
+    stateOptions: [],
   }
   render() {
     const { visible, title, onCancel, onCreate, width, form } = this.props;
     const { getFieldDecorator } = form;
-    const questionTagOptions = feedbackOptions.questionTagOptions;
-    console.log(questionTagOptions.pop(), '-------------22222');
+    const { popQuestionTagOptions = EMPTY_LIST,
+      stateOptions = EMPTY_LIST,
+      uploadPops } = this.state;
     const getSelectOption = item => item.map(i =>
-      <Option key={i.value}>{i.label}</Option>,
+      <Option key={i.value} value={i.value}>{i.label}</Option>,
     );
     return (
       <Modal
@@ -73,7 +83,7 @@ export default class ProblemHandling extends PureComponent {
       >
         <div className="problembox">
           <div className="pro_title">
-            <i>!</i>处理问题表示对此问题做出判断处理。
+            <Icon type="tishi" className="tishi" />处理问题表示对此问题做出判断处理。
           </div>
           <div className="list_box">
             <Form layout="vertical">
@@ -83,7 +93,7 @@ export default class ProblemHandling extends PureComponent {
                   <FormItem>
                     {getFieldDecorator('qutable', { initialValue: '使用方法' })(
                       <Select style={{ width: 220 }} onChange={this.handleChange}>
-                        {getSelectOption(questionTagOptions)}
+                        {getSelectOption(popQuestionTagOptions)}
                       </Select>,
                     )}
                   </FormItem>
@@ -95,8 +105,7 @@ export default class ProblemHandling extends PureComponent {
                   <FormItem>
                     {getFieldDecorator('status', { initialValue: '解决中' })(
                       <Select style={{ width: 220 }}>
-                        <Option value="解决中">解决中</Option>
-                        <Option value="关闭">关闭</Option>
+                        {getSelectOption(stateOptions)}
                       </Select>,
                     )}
                   </FormItem>
@@ -130,7 +139,7 @@ export default class ProblemHandling extends PureComponent {
                 <Col span="19" offset={1}>
                   <FormItem>
                     {getFieldDecorator('file')(
-                      <Dragger {...this.state.uploadPops}>
+                      <Dragger {...uploadPops}>
                         <div className="upload_txt">
                           + 上传附件
                         </div>

@@ -7,10 +7,15 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { Input, Form, Select } from 'antd';
 import { createForm } from 'rc-form';
-// import classnames from 'classnames';
+import { autobind } from 'core-decorators';
+import classnames from 'classnames';
+import Icon from '../../components/common/Icon';
+import { feedbackOptions } from '../../config';
+import './problemDetails.less';
 
 const FormItem = Form.Item;
 const EMPTY_OBJECT = {};
+const EMPTY_LIST = [];
 @createForm()
 export default class ProblemDetail extends PureComponent {
   static propTypes = {
@@ -24,13 +29,25 @@ export default class ProblemDetail extends PureComponent {
   static defaultProps = {
     id: '0',
     visible: false,
+    qtab: false,
+    qtabHV: false,
+    jira: false,
+    jiraHV: false,
+    processerV: false,
+    processerHV: false,
   }
   constructor(props) {
     super(props);
     const { problemDetails = EMPTY_OBJECT } = this.props.problemDetails || EMPTY_OBJECT;
+    const questionTagOptions = feedbackOptions.questionTagOptions || EMPTY_LIST;
     this.state = {
       data: problemDetails,
+      popQuestionTagOptions: questionTagOptions,
     };
+  }
+  componentDidMount() {
+    // To disabled submit button at the beginning.
+    this.props.form.validateFields();
   }
   componentWillReceiveProps(nextProps) {
     const { problemDetails: preVisible } = this.props;
@@ -56,22 +73,117 @@ export default class ProblemDetail extends PureComponent {
     }
     return '--';
   }
+  /**
+   * 修改提交
+  */
+  @autobind
+  handleCreate(e) {
+    e.preventDefault();
+    const form = this.props.form;
+    form.validateFields((err, values) => {
+      console.log(err);
+      if (err) {
+        console.log(11);
+        return;
+      }
+      console.log('Received values of form: ', values);
+      form.resetFields();
+      this.setState({ visible: false });
+    });
+    this.handleClose();
+  }
+  /**
+   * 问题详情编辑
+  */
+  @autobind
+  handleShowEdit(type) {
+    this.handleClose();
+    if (type === 'qt') {
+      this.setState({
+        qtab: true,
+        qtabHV: true,
+      });
+      return true;
+    } else if (type === 'jira') {
+      this.setState({
+        jira: true,
+        jiraHV: true,
+      });
+      return true;
+    } else if (type === 'processer') {
+      this.setState({
+        processerV: true,
+        processerHV: true,
+      });
+      return true;
+    }
+    return true;
+  }
+  @autobind
+  handleSub() {
+    this.handleClose();
+    // 提交数据
+  }
+  /**
+   * 数据为空处理
+  */
+  dataNull(data) {
+    if (data !== null || data !== '') {
+      return data;
+    }
+    return '无';
+  }
+  @autobind
+  handleClose() {
+    this.setState({
+      qtab: false,
+      qtabHV: false,
+      jira: false,
+      jiraHV: false,
+      processerV: false,
+      processerHV: false,
+    });
+  }
   render() {
     const { form } = this.props;
-    const { data = EMPTY_OBJECT } = this.state;
+    const { data = EMPTY_OBJECT, qtab, qtabHV, jira, jiraHV, processerV, processerHV } = this.state;
     const { functionName,
       createTime,
       version,
       status, issueType, processer, jiraId } = data;
     const { getFieldDecorator } = form;
-    // const remarkVisible = classnames({
-    //   remarkbox: true,
-    //   isShow,
-    // });
+    const qtValue = classnames({
+      value: true,
+      value_hide: qtab,
+    });
+    const qtHiddenValue = classnames({
+      hidden_value: true,
+      edit_show: qtabHV,
+    });
+    const jiraValue = classnames({
+      value: true,
+      value_hide: jira,
+    });
+    const jiraHiddenValue = classnames({
+      hidden_value: true,
+      edit_show: jiraHV,
+    });
+    const processerValue = classnames({
+      value: true,
+      value_hide: processerV,
+    });
+    const processerHiddenValue = classnames({
+      hidden_value: true,
+      edit_show: processerHV,
+    });
+    const { popQuestionTagOptions = EMPTY_LIST } = this.state;
+    const getSelectOption = item => item.map(i =>
+      <Option key={i.value} value={i.value}>{i.label}</Option>,
+    );
     return (
       <div>
         <Form layout="vertical">
-          <ul className="property_list">
+          <ul className="property_list clearfix">
             <li className="item">
               <div className="wrap">
                 <strong className="name">模块：</strong>
@@ -101,32 +213,72 @@ export default class ProblemDetail extends PureComponent {
             <li className="item">
               <div className="wrap">
                 <strong className="name">问题标签：</strong>
-                <span className="value">
-                  {issueType}
-                  <FormItem style={{ display: 'none' }}>
+                <span className={qtValue} onClick={() => this.handleShowEdit('qt')}>
+                  <span className="value editable-field inactive" title="点击编辑">
+                    {issueType}
+                    <Icon type="edit" className="anticon-edit" />
+                  </span>
+                </span>
+                <div className={qtHiddenValue}>
+                  <FormItem>
                     {getFieldDecorator('status', { initialValue: '解决中' })(
-                      <Select style={{ width: 220 }}>
-                        <Option value="解决中">解决中</Option>
-                        <Option value="关闭">关闭</Option>
+                      <Select style={{ width: 140 }} className="qtSelect" id="qtSelect" onBlur={this.handleClose}>
+                        {getSelectOption(popQuestionTagOptions)}
                       </Select>,
                     )}
+                    <div className="btn">
+                      <a onClick={this.handleCreate}><Icon type="success" /></a>
+                      <a onClick={this.handleClose}><Icon type="close" /></a>
+                    </div>
                   </FormItem>
-                </span>
+                </div>
               </div>
             </li>
             <li className="item">
               <div className="wrap">
                 <strong className="name">Jira编号：</strong>
-                <span className="value">{jiraId}</span>
+                <span className={jiraValue} onClick={() => this.handleShowEdit('jira')}>
+                  <span className="value editable-field inactive" title="点击编辑">
+                    {jiraId}
+                    <Icon type="edit" className="anticon-edit" />
+                  </span>
+                </span>
+                <div className={jiraHiddenValue}>
+                  <FormItem>
+                    {getFieldDecorator('jiraNum')(
+                      <Input style={{ width: 140 }} defaultValue={jiraId} />,
+                    )}
+                    <div className="btn">
+                      <a onClick={this.handleCreate}><Icon type="success" /></a>
+                      <a onClick={this.handleClose}><Icon type="close" /></a>
+                    </div>
+                  </FormItem>
+                </div>
               </div>
             </li>
             <li className="item">
               <div className="wrap">
                 <strong className="name">经办人：</strong>
-                <span className="value">
-                  {processer}
-                  <Input style={{ display: 'none' }} />
+                <span className={processerValue} onClick={() => this.handleShowEdit('processer')}>
+                  <span className="value editable-field inactive" title="点击编辑">
+                    {processer}
+                    <Icon type="edit" className="anticon-edit" />
+                  </span>
                 </span>
+                <div className={processerHiddenValue}>
+                  <FormItem>
+                    {getFieldDecorator('processer', { initialValue: '信息技术部运维人员' })(
+                      <Select style={{ width: 140 }} className="qtSelect" onBlur={this.handleClose}>
+                        <Option value="信息技术部运维人员">信息技术部运维人员</Option>
+                        <Option value="金基业务总部运维人员">金基业务总部运维人员</Option>
+                      </Select>,
+                    )}
+                    <div className="btn">
+                      <a onClick={this.handleCreate}><Icon type="success" /></a>
+                      <a onClick={this.handleClose}><Icon type="close" /></a>
+                    </div>
+                  </FormItem>
+                </div>
               </div>
             </li>
           </ul>
