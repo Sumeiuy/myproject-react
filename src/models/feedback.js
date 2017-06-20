@@ -29,12 +29,14 @@ export default {
     },
     getFeedbackListSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
-      const { page, listData } = resultData;
+      const { pageDTO: page, feedbackList } = resultData;
       const { listData: preListData = EMPTY_LIST } = state.list;
       return {
         ...state,
-        list: page.curPageNum === 1 ? { page, resultData: listData }
-          : { page, resultData: [...preListData, ...listData] },
+        list: {
+          page,
+          resultData: page.curPageNum === 1 ? feedbackList : [...preListData, ...feedbackList],
+        },
       };
     },
     getFeedbackDetailSuccess(state, action) {
