@@ -6,6 +6,7 @@
 
 import bowser from 'bowser';
 import moment from 'moment';
+import _ from 'lodash';
 
 import constants from '../config/constants';
 
@@ -155,6 +156,46 @@ const helper = {
       obj.unit = '';
     }
     return obj;
+  },
+
+  /**
+   * 构造入参
+   * @param {*} query 查询
+   * @param {*} newPageNum 当前页
+   * @param {*} newPageSize 当前分页条目数
+   */
+  constructPostBody(query, newPageNum, newPageSize) {
+    let finalPostData = {
+      page: {
+        curPageNum: newPageNum,
+        pageSize: newPageSize,
+      },
+    };
+
+    _.each(_.omit(query, ['currentId', 'feedbackCreateTimeFrom', 'feedbackCreateTimeTo']), (i) => {
+      finalPostData = _.merge(finalPostData, { [i]: query[i] });
+    });
+
+    const { feedbackCreateTimeTo, feedbackCreateTimeFrom } = query;
+    const formatedTime = {
+      feedbackCreateTimeFrom: helper.formatTime(feedbackCreateTimeFrom),
+      feedbackCreateTimeTo: helper.formatTime(feedbackCreateTimeTo),
+    };
+
+    if (!('feedbackStatusEnum' in finalPostData)
+      || _.isEmpty(finalPostData.feedbackStatusEnum)) {
+      finalPostData = _.merge(finalPostData, { feedbackStatusEnum: 'PROCESSING' });
+    }
+
+    return _.merge(finalPostData, formatedTime);
+  },
+
+  /**
+   * 格式化时间戳
+   * @param {*} time 中国标准时间
+   */
+  formatTime(time) {
+    return moment(time).format('YYYY-MM-DD HH:mm:ss');
   },
 
   /**

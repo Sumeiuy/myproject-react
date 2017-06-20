@@ -22,6 +22,18 @@ export default {
   // 获取某一个分类指标下的表格数据
   getChartTableInfo: query => api.post('/groovynoauth/jxzb/queryMultiSummuryRecord', query),
 
+  getBOChartTableInfo: query => api.get('/groovynoauth/jxzb/queryBOChartTableInfo', query),
+  // ==========business数据接口end
+
+  // ----------以下是feedback的数据接口
+
+  getFeedbackList: query => api.post('/groovynoauth/feedback/queryFeedbackList', query),
+
+  getFeedbackDetail: query => api.post('/groovynoauth/feedback/queryFeedbackDetail', query),
+
+  // ==========feedback的数据接口end
+
   // 获取报表下所有的分类信息
   getAllClassifyIndex: query => api.get('/groovynoauth/jxzb/queryCategoryRecord', query),
+
 };

@@ -24,7 +24,8 @@ import IECharts from '../IECharts';
 import { iconTypeMap } from '../../config';
 import Icon from '../common/Icon';
 import styles from './ChartBar.less';
-import imgSrc from '../chartRealTime/noChart.png';
+
+import imgSrc from './noChart.png';
 
 export default class ChartBarStack extends PureComponent {
 
@@ -115,6 +116,7 @@ export default class ChartBarStack extends PureComponent {
     let gridXAxisMax = 1;
     let gridXaxisMin = 0;
     if (unit === '%') {
+      // TODO 此处需要对
       const maxAndMinPercent = fixedPercentMaxMin(gridAxisTick);
       gridXAxisMax = maxAndMinPercent.max;
       gridXaxisMin = maxAndMinPercent.min;
@@ -133,11 +135,9 @@ export default class ChartBarStack extends PureComponent {
     }
 
     // 柱状图阴影的数据series
-    const maxDataShadow = [];
-    const minDataShadow = [];
+    const dataShadow = [];
     for (let i = 0; i < 10; i++) {
-      maxDataShadow.push(gridXAxisMax);
-      minDataShadow.push(gridXaxisMin);
+      dataShadow.push(gridXAxisMax);
     }
     // tooltip 配置项
     const tooltipOtions = {
@@ -154,7 +154,7 @@ export default class ChartBarStack extends PureComponent {
         let hasPushedAxis = false;
         // 因为第一个series是阴影
         series.forEach((item, index) => {
-          if (index > 1) {
+          if (index > 0) {
             const axisValue = item.axisValue;
             const seriesName = item.seriesName;
             let value = item.value;
@@ -167,7 +167,7 @@ export default class ChartBarStack extends PureComponent {
             }
             if (!hasPushedAxis) {
               hasPushedAxis = true;
-              // 针对不同的机构级别需要显示不同的分类
+              // TODO 针对不同的机构级别需要显示不同的分类
               if (levelAndScope === 3 && axisValue !== '--') {
                 // 营业部，需要显示分公司名称
                 const dataIndex = item.dataIndex;
@@ -180,14 +180,13 @@ export default class ChartBarStack extends PureComponent {
               }
               tips.push(`${axisValue}<br/>`);
             }
-            tips.push(`<span style="display:inline-block;width: 10px;height: 10px;margin-right:4px;border-radius:100%;background-color:${stackBarColors[index - 2]}"></span>`);
+            tips.push(`<span style="display:inline-block;width: 10px;height: 10px;margin-right:4px;border-radius:100%;background-color:${stackBarColors[index - 1]}"></span>`);
             tips.push(`${seriesName} : <span style="color:#ffd92a; font-size:14px;">${value}</span>`);
             tips.push(`${unit}<br/>`);
           }
         });
         if (total.length > 0) {
-          const totalV = Number.parseFloat(_.sum(total).toFixed(2));
-          tips.push(`共 <span style="color:#ffd92a; font-size:14px;">${totalV}</span> ${unit}`);
+          tips.push(`共 <span style="color:#ffd92a; font-size:14px;">${_.sum(total)}</span> ${unit}`);
         } else {
           tips.push(`共 <span style="color:#ffd92a; font-size:14px;">--</span> ${unit}`);
         }
@@ -270,11 +269,7 @@ export default class ChartBarStack extends PureComponent {
       series: [
         {
           ...barShadow,
-          data: maxDataShadow,
-        },
-        {
-          ...barShadow,
-          data: minDataShadow,
+          data: dataShadow,
         },
         ...stackSeries,
       ],
@@ -289,20 +284,15 @@ export default class ChartBarStack extends PureComponent {
         </div>
         <div className={styles.chartWrapper}>
           {
-            (orgModel && orgModel.length > 0)
-            ?
-            (
-              <IECharts
+            (orgModel && orgModel.length) ?
+              (<IECharts
                 option={options}
                 resizable
-              />
-            )
+              />)
             :
-            (
-              <div className={styles.noChart}>
+              (<div className={styles.noChart}>
                 <img src={imgSrc} alt="图表不可见" />
-              </div>
-            )
+              </div>)
           }
         </div>
       </div>
