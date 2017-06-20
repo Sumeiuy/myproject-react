@@ -58,7 +58,6 @@ export default class ProblemHandling extends PureComponent {
     const { visible, title, onCancel, onCreate, width, form } = this.props;
     const { getFieldDecorator } = form;
     const questionTagOptions = feedbackOptions.questionTagOptions;
-    console.log(questionTagOptions.pop(), '-------------22222');
     const getSelectOption = item => item.map(i =>
       <Option key={i.value}>{i.label}</Option>,
     );
