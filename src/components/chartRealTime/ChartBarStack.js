@@ -199,7 +199,7 @@ export default class ChartBarStack extends PureComponent {
         if (pos[1] > (size.viewSize[1] / 2)) {
           obj.top = pos[1] - size.contentSize[1];
         } else {
-          obj.top = pos[1];
+          obj.top = pos[1] - 20;
         }
         obj[['left', 'right'][+(pos[0] < size.viewSize[0] / 2)]] = 5;
         return obj;
