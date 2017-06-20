@@ -18,15 +18,13 @@
     z-index: -1;
     text-align:center;
   }
-  .value:hover{
-    .editable-field{
+  .editable_field:hover{
       box-shadow: 0 0 0 1px #CCC;
       z-index: 1;
-    }
-    .anticon-edit{
-      // display: inline-block;
-      opacity: 1;
-    }
+      .anticon-edit{
+        // display: inline-block;
+        opacity: 1;
+      }
   }
   .hidden_value{
     display: none;
@@ -44,22 +42,28 @@
     }
     .btn{
       position:absolute;
-      bottom:-27px;
+      top:27px;
       right:0px;
       left:0;
       width:100%;
       text-align:right;
+      z-index: 3;
+      height: 40px;
+      // background:red;
       a{
         display: inline-block;
         border:1px solid #CCC;
         color:#ccc;
-        margin-left:10px;
+        margin-left:5px;
         width:25px;
         height: 20px;
         line-height:20px;
         text-align:center;
       }
     }
+  }
+  .eitbox{
+    display: none;
   }
   .edit_show{
     display: inline-block;

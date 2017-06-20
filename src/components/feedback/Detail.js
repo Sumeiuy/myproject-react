@@ -55,7 +55,13 @@ export default class FeedBack extends PureComponent {
     visible: false,
     remarkVisible: false,
     title: '处理问题',
+    messageBtnValue: '处理问题',
     uploadPops: {},
+    colSpans: {
+      left: 16,
+      right: 8,
+    },
+    nowStatus: true, // PROCESSING / CLOSED
   }
   componentWillMount() {
     const { getFeedbackDetail, location: { query } } = this.props;
@@ -72,8 +78,26 @@ export default class FeedBack extends PureComponent {
     if (preResultData !== nextResultData) {
       this.setState({
         dataSource: nextDetail,
+      }, () => {
+        const { resultData = EMPTY_OBJECT } = nextDetail || EMPTY_OBJECT;
+        const { feedbackDTO: feedbackDetail = EMPTY_OBJECT } = resultData || EMPTY_OBJECT;
+        const { mediaUrls, feedbackStatusEnum } = feedbackDetail;
+        if (mediaUrls === null || mediaUrls === '') {
+          this.setState({
+            hasImgUrl: false,
+          });
+        }
+        if (feedbackStatusEnum === 'CLOSED') {
+          this.setState({
+            nowStatus: false,
+            messageBtnValue: '重新打开',
+          });
+        }
       });
     }
+  }
+  componentDidUpdate() {
+    // const { feedbackDTO: { mediaUrls } } = this.state.dataSource || [];
   }
   /**
    * 弹窗处理（开启）
@@ -154,7 +178,7 @@ export default class FeedBack extends PureComponent {
       functionName,
       createTime,
       version,
-      status,
+      feedbackStatusEnum,
       issueType,
       approach,
       processer,
@@ -165,56 +189,92 @@ export default class FeedBack extends PureComponent {
       functionName,
       createTime,
       version,
-      status,
+      feedbackStatusEnum,
       issueType,
       approach,
       processer,
-      jiraId }; // 问题详情
+      jiraId,
+    }; // 问题详情
     const { rowId, name, department, cellPhone, eMailAddr } = userInfo || EMPTY_OBJECT; // 反馈用户解构
     const feedbackUser = { rowId, name, department, cellPhone, eMailAddr }; // 反馈用户
     const remarkbtn = classnames({
       btnhidden: this.state.remarkVisible,
     });
+    const { hasImgUrl, nowStatus, messageBtnValue } = this.state;
     return (
       <div className="detail_box">
         <div className="inner">
           <h1 className="bugtitle">【问题】{issueType}/{id}</h1>
           <div className="row_box">
-            <Row gutter={16}>
-              <Col span="16">
-                <div id="detail_module" className="module">
-                  <div className="mod_header">
-                    <h2 className="toogle_title">问题详情</h2>
-                  </div>
-                  <div className="mod_content">
-                    <Problemdetails
-                      problemDetails={problemDetails}
-                      ref={this.saveRemarkFormRef}
-                      onCancel={this.remarkCancel}
-                      onCreate={this.saveFromRemark}
-                    />
-                  </div>
-                </div>
-                <div id="descriptionmodule" className="module">
-                  <div className="mod_header">
-                    <h2 className="toogle_title">描述</h2>
-                  </div>
-                  <div className="mod_content">
-                    <div className="des_txt">
-                      {description}
+            {hasImgUrl ?
+              <Row gutter={16}>
+                <Col span="16">
+                  <div id="detail_module" className="module">
+                    <div className="mod_header">
+                      <h2 className="toogle_title">问题详情</h2>
                     </div>
-                    <div className="btn_dv">
-                      <Button type="primary" onClick={this.showModal}>处理问题</Button>
+                    <div className="mod_content">
+                      <Problemdetails
+                        problemDetails={problemDetails}
+                        ref={this.saveRemarkFormRef}
+                        onCancel={this.remarkCancel}
+                        onCreate={this.saveFromRemark}
+                        nowStatus={nowStatus}
+                      />
                     </div>
                   </div>
-                </div>
-              </Col>
-              <Col span="8">
-                <div className="imgbox">
-                  <img src={mediaUrls} alt="图片" />
-                </div>
-              </Col>
-            </Row>
+                  <div id="descriptionmodule" className="module">
+                    <div className="mod_header">
+                      <h2 className="toogle_title">描述</h2>
+                    </div>
+                    <div className="mod_content">
+                      <div className="des_txt">
+                        {description}
+                      </div>
+                      <div className="btn_dv">
+                        <Button type="primary" onClick={this.showModal}>处理问题</Button>
+                      </div>
+                    </div>
+                  </div>
+                </Col>
+                <Col span="8">
+                  <div className="imgbox">
+                    <img src={mediaUrls} alt="图片" />
+                  </div>
+                </Col>
+              </Row> :
+              <Row>
+                <Col span="24">
+                  <div id="detail_module" className="module">
+                    <div className="mod_header">
+                      <h2 className="toogle_title">问题详情</h2>
+                    </div>
+                    <div className="mod_content">
+                      <Problemdetails
+                        problemDetails={problemDetails}
+                        ref={this.saveRemarkFormRef}
+                        onCancel={this.remarkCancel}
+                        onCreate={this.saveFromRemark}
+                        nowStatus={nowStatus}
+                      />
+                    </div>
+                  </div>
+                  <div id="descriptionmodule" className="module">
+                    <div className="mod_header">
+                      <h2 className="toogle_title">描述</h2>
+                    </div>
+                    <div className="mod_content">
+                      <div className="des_txt">
+                        {description}
+                      </div>
+                      <div className="btn_dv">
+                        <Button type="primary" onClick={this.showModal}>{messageBtnValue}</Button>
+                      </div>
+                    </div>
+                  </div>
+                </Col>
+              </Row>
+            }
           </div>
           <div id="peoplemodule" className="module">
             <div className="mod_header">

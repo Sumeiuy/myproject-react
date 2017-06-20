@@ -35,7 +35,6 @@ export default class ProblemHandling extends PureComponent {
     super(props);
     const questionTagOptions = feedbackOptions.questionTagOptions || EMPTY_LIST;
     const stateOptions = feedbackOptions.stateOptions || EMPTY_LIST;
-    questionTagOptions.pop();
     this.state = {
       popQuestionTagOptions: questionTagOptions,
       stateOptions,
@@ -103,7 +102,7 @@ export default class ProblemHandling extends PureComponent {
                 <Col span="4"><div className="label">状态：</div></Col>
                 <Col span="19" offset={1}>
                   <FormItem>
-                    {getFieldDecorator('status', { initialValue: '解决中' })(
+                    {getFieldDecorator('status', { initialValue: '关闭' })(
                       <Select style={{ width: 220 }}>
                         {getSelectOption(stateOptions)}
                       </Select>,

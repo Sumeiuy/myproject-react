@@ -26,7 +26,7 @@ exports.response = function (req, res) {
         "version": "1.1.2", // 版本
         "functionName": "页面模块", // 功能模块
         "goodRate": "是", // 是否好评
-        "status": "2", // 问题状态
+        "feedbackStatusEnum": "CLOSED", // 问题状态 PROCESSING CLOSED
         "processer": "011105", // 处理问题的员工
         "tag": "5", // 问题标签
         "processTime": "2017-12-13", //处理问题时间
