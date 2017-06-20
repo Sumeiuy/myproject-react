@@ -101,7 +101,7 @@ export default class ChartBarNormal extends PureComponent {
       label: {
         normal: {
           show: index < maxIndex,
-          position: (medianValue > item || item === 0) ? 'right' : 'insideRight',
+          position: judge(item),
         },
       },
     }));

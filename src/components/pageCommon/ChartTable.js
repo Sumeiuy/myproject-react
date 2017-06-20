@@ -27,6 +27,7 @@ export default class ChartTable extends PureComponent {
     data: PropTypes.object,
     getTableInfo: PropTypes.func,
     replace: PropTypes.func.isRequired,
+    scope: PropTypes.number.isRequired,
     indexID: PropTypes.string,
   }
 
