@@ -66,18 +66,32 @@ export default class ChartBarNormal extends PureComponent {
     }
 
     const judge = (item) => {
+      // 正数最大值
+      const plusMax = medianValue.plus * 2;
+      // 负数最大值
+      const minusMax = medianValue.minus * 2;
+      if (minusMax >= 0) {
+        // 全是正数
+        return medianValue.plus > item ? 'right' : 'insideRight';
+      } else if (plusMax <= 0) {
+        // 全是负数
+        return medianValue.minus < item ? 'left' : 'insideLeft';
+      }
+      // 有正有负
+      // 判断正负所占比例
+      const axisGap = plusMax - minusMax;
+      const plusPercent = (plusMax / axisGap) * 100;
+      const minusPercent = (Math.abs(minusMax) / axisGap) * 100;
+      if (plusPercent < 20 && item >= 0) {
+        return 'left';
+      }
+      if (minusPercent < 20 && item <= 0) {
+        return 'right';
+      }
       if (item > 0) {
         return medianValue.plus > item ? 'right' : 'insideRight';
       } else if (item < 0) {
         return medianValue.minus < item ? 'left' : 'insideLeft';
-      }
-      const plusMax = medianValue.plus * 2;
-      const minusMax = medianValue.minus * 2;
-      if (plusMax === 0) {
-        return 'left';
-      }
-      if (minusMax === 0) {
-        return 'right';
       }
       return 'right';
     };
@@ -156,6 +170,7 @@ export default class ChartBarNormal extends PureComponent {
     // 计算出所有值的中间值
     const medianValue = {};
     if (gridXAxisMax < 0 || gridXaxisMin > 0) {
+      // 要么全是正数，要么全是负数
       medianValue.plus = (gridXAxisMax + gridXaxisMin) / 2;
       medianValue.minus = (gridXAxisMax + gridXaxisMin) / 2;
     } else {
@@ -164,6 +179,12 @@ export default class ChartBarNormal extends PureComponent {
     }
     // 需要针对不同的值编写不同的柱状图Label样式
     const newSeriesData = this.createNewSeriesData(seriesData, medianValue, unit, padLength);
+
+    // TODO 此处当 gridXAxisMax 和 gridXaxisMin都是负数的时候后，eChart会出现布局错乱
+    // 因此需要改变
+    if (gridXaxisMin < 0 && gridXAxisMax < 0) {
+      gridXAxisMax = 0;
+    }
     // 柱状图阴影
     const maxDataShadow = [];
     const minDataShadow = [];
