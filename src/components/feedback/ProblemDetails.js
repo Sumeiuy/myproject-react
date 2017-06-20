@@ -25,6 +25,7 @@ export default class ProblemDetail extends PureComponent {
     form: PropTypes.object.isRequired,
     onCancel: PropTypes.func.isRequired,
     onCreate: PropTypes.func.isRequired,
+    nowStatus: PropTypes.bool.isRequired,
   }
   static defaultProps = {
     id: '0',
@@ -51,10 +52,11 @@ export default class ProblemDetail extends PureComponent {
   }
   componentWillReceiveProps(nextProps) {
     const { problemDetails: preVisible } = this.props;
-    const { problemDetails } = nextProps;
+    const { problemDetails, nowStatus } = nextProps;
     if (problemDetails !== preVisible) {
       this.setState({
         data: problemDetails,
+        canBeEdited: nowStatus,
       });
     }
   }
@@ -62,11 +64,11 @@ export default class ProblemDetail extends PureComponent {
    * 解决状态
   */
   handleStatus = (pop) => {
-    if (pop === '2') {
+    if (pop === 'PROCESSING') {
       return (
         <b className="toSolve">解决中</b>
       );
-    } else if (pop === '1') {
+    } else if (pop === 'CLOSED') {
       return (
         <b className="close">关闭</b>
       );
@@ -146,14 +148,19 @@ export default class ProblemDetail extends PureComponent {
   }
   render() {
     const { form } = this.props;
-    const { data = EMPTY_OBJECT, qtab, qtabHV, jira, jiraHV, processerV, processerHV } = this.state;
+    const { data = EMPTY_OBJECT,
+      qtab,
+      qtabHV,
+      jira,
+      jiraHV, processerV, processerHV, canBeEdited } = this.state;
     const { functionName,
       createTime,
       version,
-      status, issueType, processer, jiraId } = data;
+      feedbackStatusEnum, issueType, processer, jiraId } = data;
     const { getFieldDecorator } = form;
     const qtValue = classnames({
       value: true,
+      editable_field: true,
       value_hide: qtab,
     });
     const qtHiddenValue = classnames({
@@ -162,6 +169,7 @@ export default class ProblemDetail extends PureComponent {
     });
     const jiraValue = classnames({
       value: true,
+      editable_field: true,
       value_hide: jira,
     });
     const jiraHiddenValue = classnames({
@@ -170,11 +178,20 @@ export default class ProblemDetail extends PureComponent {
     });
     const processerValue = classnames({
       value: true,
+      editable_field: true,
       value_hide: processerV,
     });
     const processerHiddenValue = classnames({
       hidden_value: true,
       edit_show: processerHV,
+    });
+    const valueIsVisibel = classnames({
+      value: true,
+      value_hide: canBeEdited,
+    });
+    const editIsVisibel = classnames({
+      eitbox: true,
+      edit_show: canBeEdited,
     });
     const { popQuestionTagOptions = EMPTY_LIST } = this.state;
     const getSelectOption = item => item.map(i =>
@@ -206,19 +223,24 @@ export default class ProblemDetail extends PureComponent {
               <div className="wrap">
                 <strong className="name">状态：</strong>
                 <span className="value">
-                  {this.handleStatus(status)}
+                  <span className="value" >
+                    {this.handleStatus(feedbackStatusEnum)}
+                  </span>
                 </span>
               </div>
             </li>
             <li className="item">
               <div className="wrap">
                 <strong className="name">问题标签：</strong>
-                <span className={qtValue} onClick={() => this.handleShowEdit('qt')}>
-                  <span className="value editable-field inactive" title="点击编辑">
+                <span className={valueIsVisibel}>
+                  {issueType}
+                </span>
+                <div className={editIsVisibel}>
+                  <span className={qtValue} onClick={() => this.handleShowEdit('qt')} title="点击编辑">
                     {issueType}
                     <Icon type="edit" className="anticon-edit" />
                   </span>
-                </span>
+                </div>
                 <div className={qtHiddenValue}>
                   <FormItem>
                     {getFieldDecorator('status', { initialValue: '解决中' })(
@@ -237,12 +259,15 @@ export default class ProblemDetail extends PureComponent {
             <li className="item">
               <div className="wrap">
                 <strong className="name">Jira编号：</strong>
-                <span className={jiraValue} onClick={() => this.handleShowEdit('jira')}>
-                  <span className="value editable-field inactive" title="点击编辑">
+                <span className={valueIsVisibel}>
+                  {jiraId}
+                </span>
+                <div className={editIsVisibel}>
+                  <span className={jiraValue} onClick={() => this.handleShowEdit('jira')} title="点击编辑">
                     {jiraId}
                     <Icon type="edit" className="anticon-edit" />
                   </span>
-                </span>
+                </div>
                 <div className={jiraHiddenValue}>
                   <FormItem>
                     {getFieldDecorator('jiraNum')(
@@ -259,12 +284,15 @@ export default class ProblemDetail extends PureComponent {
             <li className="item">
               <div className="wrap">
                 <strong className="name">经办人：</strong>
-                <span className={processerValue} onClick={() => this.handleShowEdit('processer')}>
-                  <span className="value editable-field inactive" title="点击编辑">
+                <span className={valueIsVisibel}>
+                  {jiraId}
+                </span>
+                <div className={editIsVisibel}>
+                  <span className={processerValue} onClick={() => this.handleShowEdit('processer')} title="点击编辑">
                     {processer}
                     <Icon type="edit" className="anticon-edit" />
                   </span>
-                </span>
+                </div>
                 <div className={processerHiddenValue}>
                   <FormItem>
                     {getFieldDecorator('processer', { initialValue: '信息技术部运维人员' })(
