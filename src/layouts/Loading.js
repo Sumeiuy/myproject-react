@@ -5,8 +5,11 @@
 
 import React, { PropTypes } from 'react';
 import { Spin } from 'antd';
-
+import { getCssStyle } from '../utils/helper';
 import styles from './Loading.less';
+
+// 首先判断wrap存在与否
+const contentWrapper = document.getElementById('workspace-content');
 
 function Loading({
   loading,
@@ -19,7 +22,7 @@ function Loading({
     <div
       className={styles.popmask}
       style={{
-        height: document.documentElement.clientHeight,
+        left: contentWrapper ? getCssStyle(contentWrapper, 'left') : '0',
       }}
     >
       <Spin tip="Loading" spinning={loading} />
