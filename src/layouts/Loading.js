@@ -22,6 +22,7 @@ function Loading({
     <div
       className={styles.popmask}
       style={{
+        top: contentWrapper ? '55px' : '0',
         left: contentWrapper ? getCssStyle(contentWrapper, 'left') : '0',
       }}
     >
