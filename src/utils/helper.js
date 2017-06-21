@@ -22,10 +22,6 @@ function getOS() {
 }
 
 const helper = {
-  // 获取元素CSS的样式
-  getCssStyle(ele, css) {
-    return window.getComputedStyle(ele, null).getPropertyValue(css);
-  },
 
   // 获取 empId
   getEmpId() {
@@ -172,9 +168,8 @@ const helper = {
       },
     };
 
-    _.each(_.omit(query, ['currentId', 'feedbackCreateTimeFrom', 'feedbackCreateTimeTo']), (i) => {
-      finalPostData = _.merge(finalPostData, { [i]: query[i] });
-    });
+    const omitData = _.omit(query, ['currentId', 'feedbackCreateTimeFrom', 'feedbackCreateTimeTo']);
+    finalPostData = _.merge(finalPostData, omitData);
 
     const { feedbackCreateTimeTo, feedbackCreateTimeFrom } = query;
     const formatedTime = {
