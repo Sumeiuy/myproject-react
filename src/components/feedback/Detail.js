@@ -67,7 +67,7 @@ export default class FeedBack extends PureComponent {
     const { getFeedbackDetail, location: { query } } = this.props;
     getFeedbackDetail({
       ...query,
-      feedbackId: '2222',
+      id: '267',
     });
   }
   componentWillReceiveProps(nextProps) {
