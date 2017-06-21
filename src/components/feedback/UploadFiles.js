@@ -38,11 +38,8 @@ export default class UploadFiles extends PureComponent {
           }
         },
       },
+      dataSource: [],
     };
-  }
-  state = {
-    uploadPops: {},
-    dataSource: [],
   }
   componentWillReceiveProps(nextProps) {
     const { attachModelList: nextFileList = EMPTY_LIST } = nextProps;
