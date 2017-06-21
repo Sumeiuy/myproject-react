@@ -102,6 +102,17 @@ export default class PageHeader extends PureComponent {
       processer,
     } } } = this.props;
 
+    // 级联选择的value
+    let cascaderVale = [];
+    if (appId) {
+      cascaderVale = [appId];
+      if (functionName) {
+        cascaderVale = [appId, functionName];
+      } else {
+        cascaderVale = [appId];
+      }
+    }
+
     return (
       <div className="feedbackHeader">
         模块: <Cascader
@@ -109,7 +120,7 @@ export default class PageHeader extends PureComponent {
           style={{ width: '11%' }}
           changeOnSelect
           placeholder="全部"
-          value={!appId || !functionName ? [] : [appId, functionName]}
+          value={cascaderVale}
           onChange={key => this.handleCascaderSelectChange('appId', 'functionName', key)}
         />
         类型: <Select
