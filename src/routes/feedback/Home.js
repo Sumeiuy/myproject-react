@@ -13,7 +13,6 @@ import FeedbackList from '../../components/feedback/FeedbackList';
 import FeedbackHeader from '../../components/feedback/FeedbackHeader';
 import { constructPostBody } from '../../utils/helper';
 import styles from './home.less';
-// import _ from 'lodash';
 
 const mapStateToProps = state => ({
   list: state.feedback.list,
@@ -43,10 +42,6 @@ export default class FeedBack extends PureComponent {
   static defaultProps = {
 
   }
-
-  // constructor(props) {
-  //   super(props);
-  // }
 
   componentWillMount() {
     const { getFeedbackList, location: { query } } = this.props;

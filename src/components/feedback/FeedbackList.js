@@ -61,11 +61,11 @@ export default class FeedbackList extends PureComponent {
         totalPageNum,
         curPageNum,
         currentId: currentId || this.state.currentId
-        || (nextResultData[0] && nextResultData[0].id),
+        || (nextResultData[0] && nextResultData[0].id.toString()),
       }, () => {
         this.setState({
           curSelectedRow: _.findIndex(this.state.dataSource,
-            item => item.id === this.state.currentId),
+            item => item.id.toString() === this.state.currentId),
         });
       });
     }
@@ -75,7 +75,8 @@ export default class FeedbackList extends PureComponent {
       // 改变了选中的行
       if (currentId && prevCurrentId !== currentId) {
         this.setState({
-          curSelectedRow: _.findIndex(this.state.dataSource, item => item.id === currentId),
+          curSelectedRow: _.findIndex(this.state.dataSource,
+            item => item.id.toString() === currentId),
           currentId,
         });
       }
@@ -133,9 +134,56 @@ export default class FeedbackList extends PureComponent {
       curPageNum: nextPage,
     });
     const { getFeedbackList, location: { query } } = this.props;
-    constructPostBody(query, nextPage, currentPageSize);
     getFeedbackList(constructPostBody(query, nextPage, currentPageSize));
   }
+
+  // {"appId":"MCRM",
+  // "createTime":"2017-06-08 16:41:25",
+  // "description":" ",
+  // "id":248,
+  // "issueType":"DEFECT",
+  // "mediaUrls":"{\"imageUrls\":
+  // [\"/apigateway/upload/dd3a4e1d-b3ce-4f35-b88e-dfdf3f206034.jpg\"]}",
+  // "pageName":null,
+  // "title":"ios",
+  // "userId":"002332",
+  // "userType":null,
+  // "version":"1.6.1(1t)",
+  // "functionName":"product",
+  // "goodRate":"GOOD",
+  // "status":"PROCESSING",
+  // "processer":"002332",
+  // "tag":null,
+  // "processTime":null,
+  // "feedId":"10248",
+  // "jiraId":null,
+  // "attachmentJson":null,
+  // "attachModelList":null,
+  // "feedEmpInfo":{
+  //   "empId":"002332",
+  //   "name":"王华",
+  //   "gender":"女",
+  //   "eMailAddr":"weiwei@htsc.com",
+  //   "cellPhone":"18951810511",
+  //   "rowId":null,
+  //   "l0":null,
+  //   "l1":null,
+  //   "l2":"南京分公司",
+  //   "l3":"南京长江路证券营业部"
+  // },
+  // "processerEmpInfo":{
+  //   "empId":"002332",
+  //   "name":"王华",
+  //   "gender":"女",
+  //   "eMailAddr":"weiwei@htsc.com",
+  //   "cellPhone":"18951810511",
+  //   "rowId":null,
+  //   "l0":null,
+  //   "l1":null,
+  //   "l2":"南京分公司",
+  //   "l3":"南京长江路证券营业部"
+  // },
+  // "key":0}
 
   /**
    * 构造表格的列数据
@@ -143,24 +191,24 @@ export default class FeedbackList extends PureComponent {
   @autobind
   constructTableColumns() {
     const columns = [{
-      dataIndex: 'issueType.id.description.userInfo.userDepartment',
+      dataIndex: 'issueType.feedId.description.feedEmpInfo',
       width: '80%',
       render: (text, record) => {
         // 当前行记录
-        const { userInfo = EMPTY_OBJECT, issueType } = record;
-        const { name = '--' } = userInfo;
+        const { feedEmpInfo = EMPTY_OBJECT, issueType } = record;
+        const { name = '--', l1 = '', l2 = '', l3 = '' } = feedEmpInfo;
         const typeIcon = {
-          type: issueType === 'D' ? 'wenti' : 'jianyi',
-          className: issueType === 'D' ? 'wenti' : 'jianyi',
+          type: issueType === 'DEFECT' ? 'wenti' : 'jianyi',
+          className: issueType === 'DEFECT' ? 'wenti' : 'jianyi',
         };
         return (
           <div className="leftSection">
             <div className="id">
               <Icon {...typeIcon} />
-              <span className={styles.feedbackId}>{record.id || '--'}</span>
+              <span className={styles.feedbackId}>{record.feedId || '--'}</span>
             </div>
             <div className="description">{record.description || '问问群二23带我去二多群二群翁31带我去二无群二321第五期电位器21而我却二无群二'}</div>
-            <div className="address">来自：{name}，{record.userDepartment || '南京市长江路营业厅'}</div>
+            <div className="address">来自：{name}，{`${l1 || ''}${l2 || ''}${l3 || ''}` || '--'}</div>
           </div>
         );
       },
@@ -172,15 +220,15 @@ export default class FeedbackList extends PureComponent {
         let statusClass;
         let statusLabel;
         if (record.status) {
-          statusLabel = STATUS_MAP[parseInt(record.status, 10) - 1].label;
           statusClass = classnames({
-            'state-resolve': statusLabel === '解决中',
-            'state-close': statusLabel === '关闭',
+            'state-resolve': record.status === STATUS_MAP[0].value,
+            'state-close': record.status === STATUS_MAP[1].value,
           });
+          statusLabel = STATUS_MAP.filter(item => item.value === record.status);
         }
         return (
           <div className="rightSection">
-            <div className={statusClass}>{statusLabel}</div>
+            <div className={statusClass}>{(statusLabel && statusLabel[0].label) || '--'}</div>
             <div className="name">{record.processer || '--'}</div>
             <div className="date">{record.processTime || '--'}</div>
           </div>
@@ -226,6 +274,10 @@ export default class FeedbackList extends PureComponent {
         curPageSize: changedPageSize,
         curPageNum: currentPageNum,
       });
+      // 每页条目变化
+      // 重新请求数据
+      const { getFeedbackList, location: { query } } = this.props;
+      getFeedbackList(constructPostBody(query, currentPageNum, changedPageSize));
     }
   }
 
