@@ -7,7 +7,7 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
-import { Table, Pagination, Tooltip } from 'antd';
+import { Table, Pagination, Popover } from 'antd';
 import _ from 'lodash';
 
 import { optionsMap } from '../../config';
@@ -159,22 +159,34 @@ export default class ChartTable extends PureComponent {
     let toolTipTittle;
     if (record.orgModel) {
       if (record.level === '3') {
-        toolTipTittle = record.orgModel.level2Name;
+        toolTipTittle = (<div>
+          <p>{record.orgModel.level2Name}</p><p>{record.orgModel.level3Name}</p>
+        </div>);
       } else if (record.level === '4') {
-        toolTipTittle = `${record.orgModel.level2Name} - ${record.orgModel.level3Name}`;
+        toolTipTittle = (<div>
+          <p>{record.orgModel.level2Name} - {record.orgModel.level3Name}</p>
+          <p>{record.orgModel.level4Name}</p>
+        </div>);
       } else {
         toolTipTittle = '';
       }
     } else {
       toolTipTittle = '';
     }
-    return toolTipTittle ? <Tooltip placement="right" title={toolTipTittle}>
+    return toolTipTittle ? <Popover placement="right" content={toolTipTittle} trigger="hover">
       <div className={styles.tdWrapperDiv}>
         {record.city}
       </div>
-    </Tooltip>
+    </Popover>
     :
     <div className={styles.tdWrapperDiv}>{record.city}</div>;
+    // return toolTipTittle ? <Tooltip placement="right" title={toolTipTittle}>
+    //   <div className={styles.tdWrapperDiv}>
+    //     {record.city}
+    //   </div>
+    // </Tooltip>
+    // :
+    // <div className={styles.tdWrapperDiv}>{record.city}</div>;
   }
   @autobind
   unitChange(arr) {
@@ -246,12 +258,10 @@ export default class ChartTable extends PureComponent {
         ));
       });
       arr = columns.map((item) => {
-        console.warn(item.name);
         const tempName = `${item.name}(${encodeURIComponent(item.unit) === encodeURIComponent('元') ? '万元' : item.unit})`;
         const column = {
           dataIndex: item.key,
           title: this.getTitleHtml(item),
-          // width: (tempName.length * 15) + 20,
           render: text => (
             <div className={styles.tdWrapperDiv}>
               {text}
@@ -260,7 +270,7 @@ export default class ChartTable extends PureComponent {
         };
         // 如果表格标题超过 9 个，则每个设置对应的宽度
         if (columns.length > 9) {
-          column.width = (tempName.length * 15) + 20;
+          column.width = (tempName.length * 16) + 20;
         }
         // 如果表格标题包含 children，则给每个 child 设置排序事件
         const hasChildren = item.children;
@@ -273,8 +283,6 @@ export default class ChartTable extends PureComponent {
       allWidth = _.sumBy(arr, 'width');
       allWidth = allWidth > 900 ? allWidth : '100%';
     }
-
-    console.warn('allWidth', allWidth);
     // 匹配第一列标题文字，分公司、营业部、投顾
     // sortByType 初始的 scope 为 2，所以减去两个前面对象，得出最后与实际 scope 相等的索引
     const keyName = sortByType[Number(scope) - 2].name;
