@@ -9,19 +9,6 @@ import { constructPostBody } from '../../utils/helper';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
-// 筛选条件字典
-const ENUM_DICTIONARY = [
-  'appId',
-  'userId',
-  'userType',
-  'issueType',
-  'feedbackStatusEnum',
-  'feedbackTagEnum',
-  'functionName',
-  'feedbackCreateTimeFrom',
-  'feedbackCreateTimeTo',
-  'processer',
-];
 
 // 状态字典
 const STATUS_MAP = [
@@ -93,42 +80,13 @@ export default class FeedbackList extends PureComponent {
         });
       }
 
-      if (!this.checkObjectPropertyValue(ENUM_DICTIONARY, prevQuery, nextQuery)) {
+      if (!this.diffObject(prevQuery, nextQuery)) {
         const { curPageNum: newPageNum, curPageSize: newPageSize } = this.state;
-
-        // "appId": "MCRM", // FSP
-        // "userId": "002332", //提问题的员工号
-        // "userType": "EMP", //固定值
-        // "issueType": "DEFECT", // 建议SUGGESTION
-        // "feedbackStatusEnum": "CLOSED",
-        // "feedbackTagEnum": "EXPERIENCE",
-        // "functionName": "functionname",
-        // "feedbackCreateTimeFrom": "2017-06-15",
-        // "feedbackCreateTimeTo": "2017-06-15",
-        // "processer": "011105",//处理问题的员工
-        // "page": {
-        // "curPageNum": 1,
-        // "pageSize": 10
-        // }
-
-        console.log(
-          constructPostBody(nextQuery, newPageNum, newPageSize),
-        );
 
         // 只监测筛选条件是否变化
         getFeedbackList(constructPostBody(nextQuery, newPageNum, newPageSize));
       }
     }
-  }
-
-  componentDidUpdate() {
-    const { curSelectedRow, curPageNum, currentId } = this.state;
-
-    console.log('curSelectedRow------->', curSelectedRow);
-
-    console.log('currentId------->', currentId);
-
-    console.log('curPageNum------->', curPageNum);
   }
 
   /**
@@ -137,13 +95,11 @@ export default class FeedbackList extends PureComponent {
    * @param {*} prevQuery 上一次query
    * @param {*} nextQuery 下一次query
    */
-  checkObjectPropertyValue(dic, prevQuery, nextQuery) {
-    const len = dic.length;
-    for (let i = 0; i < len; i++) {
-      const value = dic[i];
-      if (prevQuery[value] && nextQuery[value] && prevQuery[value] !== nextQuery[value]) {
-        return false;
-      }
+  diffObject(prevQuery, nextQuery) {
+    const prevQueryData = _.omit(prevQuery, ['currentId']);
+    const nextQueryData = _.omit(nextQuery, ['currentId']);
+    if (!_.isEqual(prevQueryData, nextQueryData)) {
+      return false;
     }
     return true;
   }
@@ -155,8 +111,6 @@ export default class FeedbackList extends PureComponent {
    */
   @autobind
   handleRowClick(record, index) {
-    console.log('record---->', record, 'index---->', index);
-
     const { location: { pathname, query }, replace } = this.props;
     const { dataSource = EMPTY_LIST } = this.state;
     replace({
@@ -175,7 +129,6 @@ export default class FeedbackList extends PureComponent {
    */
   @autobind
   handlePageChange(nextPage, currentPageSize) {
-    console.log(nextPage, currentPageSize);
     this.setState({
       curPageNum: nextPage,
     });
@@ -183,37 +136,6 @@ export default class FeedbackList extends PureComponent {
     constructPostBody(query, nextPage, currentPageSize);
     getFeedbackList(constructPostBody(query, nextPage, currentPageSize));
   }
-
-  // {
-  // "appId": "MCRM",
-  // "createTime": "2017-06-15 12:23:10",
-  // "description": null, //问题描述
-  // "id": null, //问题数据库id
-  // "issueType": "D", //问题类型 故障建议
-  // "mediaUrls": null, //上传的图片列表
-  // "pageName": null, //问题所在页面
-  // "title": null, //问题标题
-  // "userId": "002332", //提交问题员工
-  // "userInfo": { //提交问题的员工信息
-  // "name": "1-OH2N",
-  // "rowId": "1-OH2N",
-  // "gender": "女",
-  // "eMailAddr": "example@htsc.com",
-  // "cellPhone": "18969025699"
-  // },
-  // "userType": "emp",
-  // "version": null,//版本
-  // "functionName": "functionName",//功能模块
-  // "goodRate": null,//是否好评
-  // "status": "2",//问题状态
-  // "processer": "011105",//处理问题的员工
-  // "tag": "5",//问题标签
-  // "processTime": null,//处理问题时间
-  // "feedId": null,//问题逻辑id
-  // "jiraId": null,//对应的jiraId
-  // "attachmentJson": null,//
-  // "attachModelList": null//上传的附件列表
-  // }
 
   /**
    * 构造表格的列数据
@@ -223,9 +145,8 @@ export default class FeedbackList extends PureComponent {
     const columns = [{
       dataIndex: 'issueType.id.description.userInfo.userDepartment',
       width: '80%',
-      render: (text, record, index) => {
+      render: (text, record) => {
         // 当前行记录
-        console.log(text, record, index);
         const { userInfo = EMPTY_OBJECT, issueType } = record;
         const { name = '--' } = userInfo;
         const typeIcon = {
@@ -246,9 +167,8 @@ export default class FeedbackList extends PureComponent {
     }, {
       dataIndex: 'status.processer.processTime',
       width: '20%',
-      render: (text, record, index) => {
+      render: (text, record) => {
         // 当前行记录
-        console.log(text, record, index);
         let statusClass;
         let statusLabel;
         if (record.status) {
@@ -283,7 +203,6 @@ export default class FeedbackList extends PureComponent {
       );
     }
 
-    console.log('constructor dataSource', newDataSource);
     return newDataSource;
   }
 
@@ -294,7 +213,6 @@ export default class FeedbackList extends PureComponent {
    */
   @autobind
   handleShowSizeChange(currentPageNum, changedPageSize) {
-    console.log(currentPageNum, changedPageSize);
     const { totalRecordNum, curPageSize, curPageNum } = this.state;
     if (changedPageSize / totalRecordNum > 1) {
       // 当前选择分页条目大于两倍的记录数
@@ -318,7 +236,7 @@ export default class FeedbackList extends PureComponent {
     for (let i = 1; i <= maxPage; i++) {
       pageSizeOption.push((10 * i).toString());
     }
-    console.log('pageSizeOption', pageSizeOption);
+
     return pageSizeOption;
   }
 
