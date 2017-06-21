@@ -11,4 +11,3 @@ iconfont.css
 .vscode
 *.sublime-project
 *.sublime-workspace
-.package-lock.json
