@@ -4,8 +4,8 @@
  * @author maoquan(maoquan@htsc.com)
  */
 
-import bowser from 'bowser';
 import moment from 'moment';
+import bowser from 'bowser';
 import _ from 'lodash';
 
 import constants from '../config/constants';
@@ -26,7 +26,7 @@ const helper = {
   // 获取 empId
   getEmpId() {
     // 临时 ID
-    const tempId = '002727';
+    const tempId = '002332';
     const nativeQuery = helper.getQuery(window.location.search);
     const empId = window.curUserCode || nativeQuery.empId || tempId;
     return empId;
@@ -166,6 +166,7 @@ const helper = {
         curPageNum: newPageNum,
         pageSize: newPageSize,
       },
+      userId: helper.getEmpId(), // 反馈问题用户Id
     };
 
     const omitData = _.omit(query, ['currentId', 'feedbackCreateTimeFrom', 'feedbackCreateTimeTo']);
@@ -177,9 +178,19 @@ const helper = {
       feedbackCreateTimeTo: helper.formatTime(feedbackCreateTimeTo),
     };
 
+    // 对反馈状态做处理
     if (!('feedbackStatusEnum' in finalPostData)
       || _.isEmpty(finalPostData.feedbackStatusEnum)) {
       finalPostData = _.merge(finalPostData, { feedbackStatusEnum: 'PROCESSING' });
+    }
+
+    // 对经办人做过滤处理
+    if ('processer' in finalPostData) {
+      if (finalPostData.processer === 'ALL') {
+        finalPostData.processer = '';
+      } else if (finalPostData.processer === 'SELF') {
+        finalPostData.processer = helper.getEmpId();
+      }
     }
 
     return _.merge(finalPostData, formatedTime);
@@ -190,7 +201,7 @@ const helper = {
    * @param {*} time 中国标准时间
    */
   formatTime(time) {
-    return moment(time).format('YYYY-MM-DD HH:mm:ss');
+    return moment(time).format('YYYY/MM/DD');
   },
 
   /**
