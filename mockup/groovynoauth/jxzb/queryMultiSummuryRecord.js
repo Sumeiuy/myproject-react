@@ -4,19 +4,20 @@ exports.response = function (req, res) {
     "msg": "OK",
     "resultData": {
       "data": {
-        "indicatorSummuryRecordDtos": [{
+        "indicatorSummuryRecordDtos": [
+          {
             "id": "ZZ001041120",
             "name": "合计",
             "level": "2",
             "orgModel": {
                 "level1Id": "ZZ001041",
-                "level1Name": "测试-经纪业务总部",
+                "level1Name": "测试经纪业务总部",
                 "level2Id": "ZZ001041093",
-                "level2Name": "测试-南京分公司",
+                "level2Name": "测试南京分公司",
                 "level3Id": "ZZ1093892023",
-                "level3Name": "测试-解放路营业部",
+                "level3Name": "测试解放路营业部",
                 "level4Id": "ZZ10000999",
-                "level4Name": "测试-人员",
+                "level4Name": "测试人员",
                 "value": "34"
             },
             "indicatorDataList": [
@@ -114,17 +115,17 @@ exports.response = function (req, res) {
             ]
           }, {
             "id": "ZZ001041120",
-            "name": "四川分公司",
+            "name": "经纪业务总部",
             "level": "2",
             "orgModel": {
                 "level1Id": "ZZ001041",
-                "level1Name": "测试-经纪业务总部",
+                "level1Name": "测试经纪业务总部",
                 "level2Id": "ZZ001041093",
-                "level2Name": "测试-南京分公司",
+                "level2Name": "测试南京分公司",
                 "level3Id": "ZZ1093892023",
-                "level3Name": "测试-解放路营业部",
+                "level3Name": "测试解放路营业部",
                 "level4Id": "ZZ10000999",
-                "level4Name": "测试-人员",
+                "level4Name": "测试人员",
                 "value": "34"
             },
             "indicatorDataList": [
@@ -222,17 +223,17 @@ exports.response = function (req, res) {
             ]
           }, {
             "id": "ZZ001041106",
-            "name": "营业部",
+            "name": "江苏省南京市建邺区华泰证券广场三号楼三楼营业部",
             "level": "3",
             "orgModel": {
                 "level1Id": "ZZ001041",
-                "level1Name": "测试-经纪业务总部",
+                "level1Name": "测试经纪业务总部",
                 "level2Id": "ZZ001041093",
-                "level2Name": "测试-南京分公司",
+                "level2Name": "南京分公司",
                 "level3Id": "ZZ1093892023",
-                "level3Name": "测试-解放路营业部",
+                "level3Name": "江苏省南京市建邺区华泰证券广场三号楼三楼营业部",
                 "level4Id": "ZZ10000999",
-                "level4Name": "测试-人员",
+                "level4Name": "测试人员",
                 "value": "34"
             },
             "indicatorDataList": [
@@ -330,17 +331,17 @@ exports.response = function (req, res) {
             ]
           }, {
             "id": "ZZ323270",
-            "name": "投顾",
+            "name": "张三",
             "level": "4",
             "orgModel": {
                 "level1Id": "ZZ001041",
-                "level1Name": "测试-经纪业务总部",
+                "level1Name": "测试经纪业务总部",
                 "level2Id": "ZZ001041093",
-                "level2Name": "测试-南京分公司",
+                "level2Name": "南京分公司",
                 "level3Id": "ZZ1093892023",
-                "level3Name": "测试-解放路营业部",
+                "level3Name": "江苏省南京市建邺区华泰证券广场三号楼三楼营业部",
                 "level4Id": "ZZ10000999",
-                "level4Name": "测试-人员",
+                "level4Name": "张三",
                 "value": "34"
             },
             "indicatorDataList": [
