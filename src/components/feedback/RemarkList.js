@@ -15,7 +15,6 @@ export default class RemarkList extends PureComponent {
   static propTypes = {
     remarkList: PropTypes.object.isRequired,
   }
-  static defaultProps = {}
   constructor(props) {
     super(props);
     const { resultData = EMPTY_OBJECT } = props.remarkList || EMPTY_OBJECT;

@@ -47,21 +47,19 @@ export default class FeedBack extends PureComponent {
   constructor(props) {
     super(props);
     const { resultData = EMPTY_OBJECT } = this.props.fbDetail || EMPTY_OBJECT;
-    this.setState({
+    this.state = {
       dataSource: resultData,
-    });
-  }
-  state = {
-    visible: false,
-    remarkVisible: false,
-    title: '处理问题',
-    messageBtnValue: '处理问题',
-    uploadPops: {},
-    colSpans: {
-      left: 16,
-      right: 8,
-    },
-    nowStatus: true, // PROCESSING / CLOSED
+      visible: false,
+      remarkVisible: false,
+      title: '处理问题',
+      messageBtnValue: '处理问题',
+      uploadPops: {},
+      colSpans: {
+        left: 16,
+        right: 8,
+      },
+      nowStatus: true, // PROCESSING / CLOSED
+    };
   }
   componentWillMount() {
     const { getFeedbackDetail, location: { query } } = this.props;
