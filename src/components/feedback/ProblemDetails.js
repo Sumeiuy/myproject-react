@@ -158,8 +158,9 @@ export default class ProblemDetail extends PureComponent {
       version,
       feedbackStatusEnum, issueType, processer, jiraId } = data;
     const { getFieldDecorator } = form;
+    const value = true;
     const qtValue = classnames({
-      value: true,
+      value,
       editable_field: true,
       value_hide: qtab,
     });
@@ -168,7 +169,7 @@ export default class ProblemDetail extends PureComponent {
       edit_show: qtabHV,
     });
     const jiraValue = classnames({
-      value: true,
+      value,
       editable_field: true,
       value_hide: jira,
     });
@@ -177,7 +178,7 @@ export default class ProblemDetail extends PureComponent {
       edit_show: jiraHV,
     });
     const processerValue = classnames({
-      value: true,
+      value,
       editable_field: true,
       value_hide: processerV,
     });
@@ -186,7 +187,7 @@ export default class ProblemDetail extends PureComponent {
       edit_show: processerHV,
     });
     const valueIsVisibel = classnames({
-      value: true,
+      value,
       value_hide: canBeEdited,
     });
     const editIsVisibel = classnames({
@@ -271,7 +272,7 @@ export default class ProblemDetail extends PureComponent {
                 <div className={jiraHiddenValue}>
                   <FormItem>
                     {getFieldDecorator('jiraNum')(
-                      <Input style={{ width: 140 }} defaultValue={jiraId} />,
+                      <Input style={{ width: 140 }} />,
                     )}
                     <div className="btn">
                       <a onClick={this.handleCreate}><Icon type="success" /></a>
