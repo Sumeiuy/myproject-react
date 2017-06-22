@@ -89,7 +89,7 @@ export default class FeedbackList extends PureComponent {
       return;
     }
 
-    this.setState({
+    this.setState({ // eslint-disable-line
       curSelectedRow: _.findIndex(dataSource,
         item => item.id.toString() === currentId),
     });
