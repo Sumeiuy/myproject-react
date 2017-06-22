@@ -180,7 +180,7 @@ export default class Detail extends PureComponent {
   */
   saveFromRemark = () => {
     const form = this.remarkForm;
-    const { userId, location: { query }, updateFeedback } = this.props;    
+    const { userId, location: { query }, updateFeedback } = this.props;
     const { currentId } = query;
     form.validateFields((err, values) => {
       console.log(err);
