@@ -180,6 +180,8 @@ export default class Detail extends PureComponent {
   */
   saveFromRemark = () => {
     const form = this.remarkForm;
+    const { userId, location: { query }, updateFeedback } = this.props;    
+    const { currentId } = query;
     form.validateFields((err, values) => {
       console.log(err);
       if (err) {
@@ -187,6 +189,12 @@ export default class Detail extends PureComponent {
         return;
       }
       console.log('Remark values of form: ', values);
+      updateFeedback({
+        remark: values.remarkContent,
+        id: currentId,
+        processerEmpId: userId,
+        feedbackId: currentId,
+      });
       form.resetFields();
       this.setState({ remarkVisible: false });
     });
