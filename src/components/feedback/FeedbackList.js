@@ -52,29 +52,18 @@ export default class FeedbackList extends PureComponent {
     const { resultData: nextResultData = EMPTY_LIST, page = EMPTY_OBJECT } = nextList;
     const { resultData: prevResultData = EMPTY_LIST } = prevList;
     const { curPageNum = 1, totalPageNum = 1, totalRecordNum = 1 } = page;
-    const { currentId } = nextQuery;
-    const { currentId: prevCurrentId } = prevQuery;
+
     if (prevResultData !== nextResultData) {
       this.setState({
         dataSource: nextResultData,
         totalRecordNum,
         totalPageNum,
         curPageNum,
-        curSelectedRow: _.findIndex(this.state.dataSource,
-          item => item.id.toString() === currentId),
       });
     }
     // 深比较值是否相等
     // url发生变化，检测是否改变了筛选条件
     if (!_.isEqual(prevQuery, nextQuery)) {
-      // 改变了选中的行
-      if (currentId && (prevCurrentId !== currentId)) {
-        this.setState({
-          curSelectedRow: _.findIndex(this.state.dataSource,
-            item => item.id.toString() === currentId),
-        });
-      }
-
       if (!this.diffObject(prevQuery, nextQuery)) {
         const { curPageNum: newPageNum, curPageSize: newPageSize } = this.state;
         // 只监测筛选条件是否变化
@@ -124,10 +113,12 @@ export default class FeedbackList extends PureComponent {
   handleRowClick(record, index) {
     const { location: { pathname, query }, replace } = this.props;
     const { dataSource = EMPTY_LIST } = this.state;
+
     // 设置当前选中行
     this.setState({
       curSelectedRow: index,
     });
+
     // 替换currentId
     replace({
       pathname,
