@@ -28,7 +28,7 @@ export default function createApi() {
   // const authInfo = {
   //   empId: '002332',
   //   deviceId: '1002',
-  //   token: 'PO0BYN4OCISTE0H2U09PC8DRE5IAOU3A',
+  //   token: 'LKOP1SLGT3PPB9ZAV47YAF2WPEJUKZG4',
   // };
 
   return {

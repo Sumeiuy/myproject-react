@@ -40,7 +40,7 @@ export default class FeedbackList extends PureComponent {
       totalPageNum,
       curPageSize: 10,
       curSelectedRow: 0,
-      currentId: '',
+      // currentId: '',
     };
   }
 
@@ -52,38 +52,21 @@ export default class FeedbackList extends PureComponent {
     const { resultData: nextResultData = EMPTY_LIST, page = EMPTY_OBJECT } = nextList;
     const { resultData: prevResultData = EMPTY_LIST } = prevList;
     const { curPageNum = 1, totalPageNum = 1, totalRecordNum = 1 } = page;
-    const { currentId } = nextQuery;
-    const { currentId: prevCurrentId } = prevQuery;
+    // const { currentId } = nextQuery;
+
     if (prevResultData !== nextResultData) {
       this.setState({
         dataSource: nextResultData,
         totalRecordNum,
         totalPageNum,
         curPageNum,
-        currentId: currentId || this.state.currentId
-        || (nextResultData[0] && nextResultData[0].id.toString()),
-      }, () => {
-        this.setState({
-          curSelectedRow: _.findIndex(this.state.dataSource,
-            item => item.id.toString() === this.state.currentId),
-        });
       });
     }
     // 深比较值是否相等
     // url发生变化，检测是否改变了筛选条件
     if (!_.isEqual(prevQuery, nextQuery)) {
-      // 改变了选中的行
-      if (currentId && prevCurrentId !== currentId) {
-        this.setState({
-          curSelectedRow: _.findIndex(this.state.dataSource,
-            item => item.id.toString() === currentId),
-          currentId,
-        });
-      }
-
       if (!this.diffObject(prevQuery, nextQuery)) {
         const { curPageNum: newPageNum, curPageSize: newPageSize } = this.state;
-
         // 只监测筛选条件是否变化
         getFeedbackList(constructPostBody(nextQuery, newPageNum, newPageSize));
       }
@@ -103,7 +86,13 @@ export default class FeedbackList extends PureComponent {
           currentId: dataSource[0] && dataSource[0].id,
         },
       });
+      return;
     }
+
+    this.setState({ // eslint-disable-line
+      curSelectedRow: _.findIndex(dataSource,
+        item => item.id.toString() === currentId),
+    });
   }
 
 
@@ -131,6 +120,13 @@ export default class FeedbackList extends PureComponent {
   handleRowClick(record, index) {
     const { location: { pathname, query }, replace } = this.props;
     const { dataSource = EMPTY_LIST } = this.state;
+
+    // 设置当前选中行
+    this.setState({
+      curSelectedRow: index,
+    });
+
+    // 替换currentId
     replace({
       pathname,
       query: {
@@ -154,54 +150,6 @@ export default class FeedbackList extends PureComponent {
     getFeedbackList(constructPostBody(query, nextPage, currentPageSize));
   }
 
-  // {"appId":"MCRM",
-  // "createTime":"2017-06-08 16:41:25",
-  // "description":" ",
-  // "id":248,
-  // "issueType":"DEFECT",
-  // "mediaUrls":"{\"imageUrls\":
-  // [\"/apigateway/upload/dd3a4e1d-b3ce-4f35-b88e-dfdf3f206034.jpg\"]}",
-  // "pageName":null,
-  // "title":"ios",
-  // "userId":"002332",
-  // "userType":null,
-  // "version":"1.6.1(1t)",
-  // "functionName":"product",
-  // "goodRate":"GOOD",
-  // "status":"PROCESSING",
-  // "processer":"002332",
-  // "tag":null,
-  // "processTime":null,
-  // "feedId":"10248",
-  // "jiraId":null,
-  // "attachmentJson":null,
-  // "attachModelList":null,
-  // "feedEmpInfo":{
-  //   "empId":"002332",
-  //   "name":"王华",
-  //   "gender":"女",
-  //   "eMailAddr":"weiwei@htsc.com",
-  //   "cellPhone":"18951810511",
-  //   "rowId":null,
-  //   "l0":null,
-  //   "l1":null,
-  //   "l2":"南京分公司",
-  //   "l3":"南京长江路证券营业部"
-  // },
-  // "processerEmpInfo":{
-  //   "empId":"002332",
-  //   "name":"王华",
-  //   "gender":"女",
-  //   "eMailAddr":"weiwei@htsc.com",
-  //   "cellPhone":"18951810511",
-  //   "rowId":null,
-  //   "l0":null,
-  //   "l1":null,
-  //   "l2":"南京分公司",
-  //   "l3":"南京长江路证券营业部"
-  // },
-  // "key":0}
-
   /**
    * 构造表格的列数据
    */
@@ -213,7 +161,7 @@ export default class FeedbackList extends PureComponent {
       render: (text, record) => {
         // 当前行记录
         const { feedEmpInfo = EMPTY_OBJECT, issueType } = record;
-        const { name = '--', l1 = '', l2 = '', l3 = '' } = feedEmpInfo;
+        const { name = '无', l1 = '', l2 = '', l3 = '' } = feedEmpInfo;
         const typeIcon = {
           type: issueType === 'DEFECT' ? 'wenti' : 'jianyi',
           className: issueType === 'DEFECT' ? 'wenti' : 'jianyi',
@@ -222,10 +170,10 @@ export default class FeedbackList extends PureComponent {
           <div className="leftSection">
             <div className="id">
               <Icon {...typeIcon} />
-              <span className={styles.feedbackId}>{record.feedId || '--'}</span>
+              <span className={styles.feedbackId}>{record.feedId || '无'}</span>
             </div>
-            <div className="description">{record.description || '问问群二23带我去二多群二群翁31带我去二无群二321第五期电位器21而我却二无群二'}</div>
-            <div className="address">来自：{name}，{`${l1 || ''}${l2 || ''}${l3 || ''}` || '--'}</div>
+            <div className="description">{record.description || '无'}</div>
+            <div className="address">来自：{name}，{`${l1 || ''}${l2 || ''}${l3 || ''}` || '无'}</div>
           </div>
         );
       },
@@ -245,9 +193,9 @@ export default class FeedbackList extends PureComponent {
         }
         return (
           <div className="rightSection">
-            <div className={statusClass}>{(statusLabel && statusLabel[0].label) || '--'}</div>
-            <div className="name">{record.processer || '--'}</div>
-            <div className="date">{record.processTime || '--'}</div>
+            <div className={statusClass}>{(statusLabel && statusLabel[0].label) || '无无'}</div>
+            <div className="name">{record.processer || '无'}</div>
+            <div className="date">{record.processTime || '无'}</div>
           </div>
         );
       },
