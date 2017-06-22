@@ -131,7 +131,6 @@ export default class ProblemDetail extends PureComponent {
   */
   dataNull(data) {
     if (data !== null && data !== 'null') {
-      // debugger;
       console.log(data);
       return data;
     }

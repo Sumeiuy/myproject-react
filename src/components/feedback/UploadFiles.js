@@ -6,7 +6,9 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { Row, Col, message, Upload } from 'antd';
 // import { autobind } from 'core-decorators';
+import _ from 'lodash';
 import './uploadFiles.less';
+import { helper } from '../../utils';
 
 // const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -52,18 +54,28 @@ export default class UploadFiles extends PureComponent {
       });
     }
   }
-  render() {
-    const { fileList } = this.state || EMPTY_LIST;
-    const userId = '002332';
-    const getFileList = item => item.map(i =>
-      <li className={`${userId === i.attachUploader ? 'userfile' : 'noUserfile'}`}><a href={i.attachUrl}>{i.attachName}</a> <a className="removeFile">X</a></li>,
+
+  getFileList(item) {
+    const userId = helper.getEmpId();
+    if (_.isEmpty(item)) {
+      return null;
+    }
+    return item.map(i =>
+      <li className={`${i.attachUploader && userId === i.attachUploader ? 'userfile' : 'noUserfile'}`}>
+        <a href={i.attachUrl}>{i.attachName}</a>
+        <a className="removeFile">X</a>
+      </li>,
     );
-    // debugger;
+  }
+
+  render() {
+    const { fileList } = this.state;
+
     return (
       <Row>
         <Col span="12">
           <ul id="filelist" className="filelist">
-            {getFileList(fileList)}
+            {this.getFileList(fileList)}
           </ul>
         </Col>
         <Col span="12">
