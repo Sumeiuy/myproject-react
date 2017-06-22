@@ -9,6 +9,7 @@ import { Input, Form, Select } from 'antd';
 import { createForm } from 'rc-form';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
+import _ from 'lodash';
 import Icon from '../../components/common/Icon';
 import { feedbackOptions } from '../../config';
 import './problemDetails.less';
@@ -136,6 +137,19 @@ export default class ProblemDetail extends PureComponent {
     }
     return '无';
   }
+  
+  /**
+   * 问题标签显示转换
+  */
+  changeTag(st) {
+    if (st) {
+      const { popQuestionTagOptions } = this.state;
+      const nowStatus = _.find(popQuestionTagOptions, o => o.value === st);
+    }
+    return '';
+    debugger;
+  }
+
   @autobind
   handleClose() {
     this.setState({
@@ -235,11 +249,11 @@ export default class ProblemDetail extends PureComponent {
               <div className="wrap">
                 <strong className="name">问题标签：</strong>
                 <span className={valueIsVisibel}>
-                  {this.dataNull(tag)}
+                  {this.changeTag(tag)}
                 </span>
                 <div className={editIsVisibel}>
                   <span className={qtValue} onClick={() => this.handleShowEdit('qt')} title="点击编辑">
-                    {this.dataNull(tag)}
+                    {this.changeTag(tag)}
                     <Icon type="edit" className="anticon-edit" />
                   </span>
                 </div>

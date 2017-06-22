@@ -8,7 +8,7 @@ import React, { PropTypes, PureComponent } from 'react';
 import { Row, Col, Button, message } from 'antd';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-// import { autobind } from 'core-decorators';
+import { autobind } from 'core-decorators';
 import { routerRedux } from 'dva/router';
 import ProblemHandling from './ProblemHandling';
 import Remark from './Remark';
@@ -120,7 +120,10 @@ export default class Detail extends PureComponent {
       this.handlegetData(currentId);
     }
   }
-
+  componentWillMount(){
+    const { location: { query: { currentId } } } = this.props;
+    this.handlegetData(currentId);
+  }
   /**
    * 数据加载
    */
@@ -160,8 +163,10 @@ export default class Detail extends PureComponent {
   /**
    * 问题处理提交
   */
-  handleCreate = () => {
+  @autobind
+  handleCreate() {
     const form = this.handlingForm;
+    const { updateFeedback } = this.props;
     form.validateFields((err, values) => {
       console.log(err);
       if (err) {
@@ -169,6 +174,22 @@ export default class Detail extends PureComponent {
         return;
       }
       console.log('Received values of form: ', values);
+      const removeEmpty = (obj) => {
+        Object.keys(obj).forEach((key) => (obj[key] == null) && delete obj[key]);
+        return obj;
+      }
+      if (values.uploadedFiles && values.uploadedFiles.fileList) {
+        const files = values.uploadedFiles.fileList.map(item => 
+          item.response.resultData,
+        )
+        // debugger;
+        values.uploadedFiles = files;
+      }
+      
+      
+      updateFeedback({
+        ...values,
+      });
       form.resetFields();
       this.setState({ visible: false });
     });
@@ -235,6 +256,7 @@ export default class Detail extends PureComponent {
       tag,
       processer,
       jiraId,
+      id
     } = resultData || EMPTY_OBJECT; // 反馈用户
     const feedbackDetail = {
       functionName,
@@ -244,6 +266,7 @@ export default class Detail extends PureComponent {
       tag,
       processer,
       jiraId,
+      id
     };
 
     const remarkbtn = classnames({
@@ -370,6 +393,7 @@ export default class Detail extends PureComponent {
           visible={this.state.visible}
           onCancel={this.handleCancel}
           onCreate={this.handleCreate}
+          problemDetails={feedbackDetail}
         />
       </div>
     );
