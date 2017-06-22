@@ -14,9 +14,8 @@ import _ from 'lodash';
 import { feedbackOptions } from '../../config';
 import './feedbackHeader.less';
 
-const RangePicker = DatePicker.RangePicker;
 const Option = Select.Option;
-
+const { RangePicker } = DatePicker;
 const mapStateToProps = state => ({
   boards: state.app.boards,
 });
@@ -157,7 +156,6 @@ export default class PageHeader extends PureComponent {
         </Select>
         反馈时间:<RangePicker
           style={{ width: '16%' }}
-          ranges={{ Today: [moment(), moment()], 'This Month': [moment(), moment().endOf('month')] }}
           value={[startTime, endTime]}
           onChange={this.handleDateChange}
           placeholder={['开始时间', '结束时间']}
