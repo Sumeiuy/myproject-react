@@ -9,7 +9,7 @@ import { Row, Col, Button } from 'antd';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 // import { autobind } from 'core-decorators';
-import { withRouter, routerRedux } from 'dva/router';
+import { routerRedux } from 'dva/router';
 import ProblemHandling from './ProblemHandling';
 import Remark from './Remark';
 import RemarkList from './RemarkList';
@@ -23,16 +23,19 @@ const EMPTY_LIST = [];
 const GETDETAIL = 'feedback/getFeedbackDetail';
 const GETRECORDLIST = 'feedback/getFeedbackRecordList';
 const UPDATEQUESTION = 'feedback/updateFeedback';
+
 const mapStateToProps = state => ({
   fbDetail: state.feedback.fbDetail,
   recordList: state.feedback.recordList,
   updateQuestion: state.feedback.updateQuestion,
 });
+
 const getDataFunction = loading => totype => query => ({
   type: totype,
   payload: query || {},
   loading,
 });
+
 const mapDispatchToProps = {
   push: routerRedux.push,
   replace: routerRedux.replace,
@@ -40,8 +43,8 @@ const mapDispatchToProps = {
   getFeedbackRecordList: getDataFunction(true)(GETRECORDLIST),
   updateFeedback: getDataFunction(true)(UPDATEQUESTION),
 };
+
 @connect(mapStateToProps, mapDispatchToProps)
-@withRouter
 export default class Detail extends PureComponent {
   static propTypes = {
     fbDetail: PropTypes.object.isRequired,
@@ -52,11 +55,11 @@ export default class Detail extends PureComponent {
     updateFeedback: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
-    userId: PropTypes.string,
   }
+
   static defaultProps = {
-    userId: '002332',
   }
+
   constructor(props) {
     super(props);
     const { fbDetail, recordList } = this.props;
@@ -78,22 +81,23 @@ export default class Detail extends PureComponent {
       currentId: '',
     };
   }
+
   componentWillMount() {
     const { location: { query } } = this.props;
     const { currentId } = query;
     this.handlegetData(currentId);
   }
+
   componentWillReceiveProps(nextProps) {
     const { fbDetail: nextDetail = EMPTY_OBJECT,
-      location: { query: nextQuery = EMPTY_OBJECT },
+      location: { query: { currentId } },
       recordList: nextVOList = EMPTY_OBJECT } = nextProps;
     const { fbDetail: preDetail = EMPTY_OBJECT,
-      location: { query: prevQuery = EMPTY_OBJECT },
+      location: { query: { currentId: prevCurrentId } },
       recordList: preVOList = EMPTY_OBJECT } = this.props;
     const { resultData: nextResultData = EMPTY_OBJECT } = nextDetail;
     const { resultData: preResultData = EMPTY_OBJECT } = preDetail;
-    const { currentId } = nextQuery;
-    const { currentId: prevCurrentId } = prevQuery;
+
     if (preResultData !== nextResultData || nextVOList !== preVOList) {
       this.setState({
         voDataSource: nextVOList,
@@ -102,7 +106,7 @@ export default class Detail extends PureComponent {
       }, () => {
         const { resultData = EMPTY_OBJECT } = nextDetail || EMPTY_OBJECT;
         const { attachmentJson = EMPTY_LIST, status } = resultData || EMPTY_OBJECT;
-        if (attachmentJson.length < 1) {
+        if (attachmentJson && attachmentJson.length < 1) {
           this.setState({
             hasImgUrl: false,
           });
@@ -115,14 +119,13 @@ export default class Detail extends PureComponent {
         }
       });
     }
-    // currentId变化重新请求
+
+    /* currentId变化重新请求 */
     if (currentId !== prevCurrentId) {
       this.handlegetData(currentId);
     }
   }
-  componentDidUpdate() {
-    // const { feedbackDTO: { mediaUrls } } = this.state.dataSource || [];
-  }
+
   /**
    * 数据加载
    */
@@ -204,7 +207,6 @@ export default class Detail extends PureComponent {
     this.remarkForm = form;
   }
   render() {
-    const { userId } = this.props;
     const { dataSource, voDataSource } = this.state;
     const { resultData = EMPTY_OBJECT } = dataSource || EMPTY_OBJECT;
     const { resultData: voList = EMPTY_OBJECT } = voDataSource || EMPTY_OBJECT;
@@ -228,7 +230,9 @@ export default class Detail extends PureComponent {
       status,
       tag,
       processer,
-      jiraId };
+      jiraId,
+    };
+
     const remarkbtn = classnames({
       btnhidden: this.state.remarkVisible,
     });
@@ -283,7 +287,6 @@ export default class Detail extends PureComponent {
                     </div>
                     <div className="mod_content">
                       <Problemdetails
-                        userId={userId}
                         problemDetails={resultData}
                         ref={this.saveRemarkFormRef}
                         onCancel={this.remarkCancel}
@@ -325,7 +328,6 @@ export default class Detail extends PureComponent {
             </div>
             <div className="mod_content">
               <UploadFiles
-                userId={userId}
                 attachModelList={attachModelList}
               />
             </div>

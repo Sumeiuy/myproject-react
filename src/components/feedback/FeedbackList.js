@@ -60,30 +60,23 @@ export default class FeedbackList extends PureComponent {
         totalRecordNum,
         totalPageNum,
         curPageNum,
-        currentId: currentId || this.state.currentId
-        || (nextResultData[0] && nextResultData[0].id.toString()),
-      }, () => {
-        this.setState({
-          curSelectedRow: _.findIndex(this.state.dataSource,
-            item => item.id.toString() === this.state.currentId),
-        });
+        curSelectedRow: _.findIndex(this.state.dataSource,
+          item => item.id.toString() === currentId),
       });
     }
     // 深比较值是否相等
     // url发生变化，检测是否改变了筛选条件
     if (!_.isEqual(prevQuery, nextQuery)) {
       // 改变了选中的行
-      if (currentId && prevCurrentId !== currentId) {
+      if (currentId && (prevCurrentId !== currentId)) {
         this.setState({
           curSelectedRow: _.findIndex(this.state.dataSource,
             item => item.id.toString() === currentId),
-          currentId,
         });
       }
 
       if (!this.diffObject(prevQuery, nextQuery)) {
         const { curPageNum: newPageNum, curPageSize: newPageSize } = this.state;
-
         // 只监测筛选条件是否变化
         getFeedbackList(constructPostBody(nextQuery, newPageNum, newPageSize));
       }
@@ -131,6 +124,11 @@ export default class FeedbackList extends PureComponent {
   handleRowClick(record, index) {
     const { location: { pathname, query }, replace } = this.props;
     const { dataSource = EMPTY_LIST } = this.state;
+    // 设置当前选中行
+    this.setState({
+      curSelectedRow: index,
+    });
+    // 替换currentId
     replace({
       pathname,
       query: {
@@ -213,7 +211,7 @@ export default class FeedbackList extends PureComponent {
       render: (text, record) => {
         // 当前行记录
         const { feedEmpInfo = EMPTY_OBJECT, issueType } = record;
-        const { name = '--', l1 = '', l2 = '', l3 = '' } = feedEmpInfo;
+        const { name = '无', l1 = '', l2 = '', l3 = '' } = feedEmpInfo;
         const typeIcon = {
           type: issueType === 'DEFECT' ? 'wenti' : 'jianyi',
           className: issueType === 'DEFECT' ? 'wenti' : 'jianyi',
@@ -222,10 +220,10 @@ export default class FeedbackList extends PureComponent {
           <div className="leftSection">
             <div className="id">
               <Icon {...typeIcon} />
-              <span className={styles.feedbackId}>{record.feedId || '--'}</span>
+              <span className={styles.feedbackId}>{record.feedId || '无'}</span>
             </div>
-            <div className="description">{record.description || '问问群二23带我去二多群二群翁31带我去二无群二321第五期电位器21而我却二无群二'}</div>
-            <div className="address">来自：{name}，{`${l1 || ''}${l2 || ''}${l3 || ''}` || '--'}</div>
+            <div className="description">{record.description || '无'}</div>
+            <div className="address">来自：{name}，{`${l1 || ''}${l2 || ''}${l3 || ''}` || '无'}</div>
           </div>
         );
       },
@@ -245,9 +243,9 @@ export default class FeedbackList extends PureComponent {
         }
         return (
           <div className="rightSection">
-            <div className={statusClass}>{(statusLabel && statusLabel[0].label) || '--'}</div>
-            <div className="name">{record.processer || '--'}</div>
-            <div className="date">{record.processTime || '--'}</div>
+            <div className={statusClass}>{(statusLabel && statusLabel[0].label) || '无无'}</div>
+            <div className="name">{record.processer || '无'}</div>
+            <div className="date">{record.processTime || '无'}</div>
           </div>
         );
       },
