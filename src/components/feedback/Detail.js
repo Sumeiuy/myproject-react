@@ -83,6 +83,14 @@ export default class Detail extends PureComponent {
     };
   }
 
+  componentWillMount() {
+    const { location: { query } } = this.props;
+    const { currentId } = query;
+    if (currentId) {
+      this.handlegetData(currentId);
+    }
+  }
+
   componentWillReceiveProps(nextProps) {
     const { fbDetail: nextDetail = EMPTY_OBJECT,
       location: { query: { currentId } },
@@ -118,7 +126,23 @@ export default class Detail extends PureComponent {
     /* currentId变化重新请求 */
     if (currentId && (currentId !== prevCurrentId)) {
       this.handlegetData(currentId);
+      this.setState({
+        currentId,
+      });
     }
+  }
+
+  componentDidUpdate() {
+    const { location: { query } } = this.props;
+    const { currentId } = query;
+    const { currentId: id } = this.state;
+
+    if (!id && currentId) {
+      this.handlegetData(currentId);
+    }
+    this.setState({ //eslint-disable-line
+      currentId,
+    });
   }
 
   /**
