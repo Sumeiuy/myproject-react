@@ -24,7 +24,6 @@ export default class RemarkList extends PureComponent {
   componentWillReceiveProps(nextProps) {
     const { remarkList: nextList = EMPTY_LIST } = nextProps;
     const { remarkList: prevList = EMPTY_LIST } = this.props;
-    debugger;
     if (nextList !== prevList) {
       this.setState({
         dataSource: nextList,

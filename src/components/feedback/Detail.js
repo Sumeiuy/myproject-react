@@ -8,7 +8,7 @@ import React, { PropTypes, PureComponent } from 'react';
 import { Row, Col, Button } from 'antd';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { autobind } from 'core-decorators';
+// import { autobind } from 'core-decorators';
 import { withRouter, routerRedux } from 'dva/router';
 import ProblemHandling from './ProblemHandling';
 import Remark from './Remark';
@@ -22,9 +22,11 @@ const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
 const GETDETAIL = 'feedback/getFeedbackDetail';
 const GETRECORDLIST = 'feedback/getFeedbackRecordList';
+const UPDATEQUESTION = 'feedback/updateFeedback';
 const mapStateToProps = state => ({
   fbDetail: state.feedback.fbDetail,
   recordList: state.feedback.recordList,
+  updateQuestion: state.feedback.updateQuestion,
 });
 const getDataFunction = loading => totype => query => ({
   type: totype,
@@ -36,6 +38,7 @@ const mapDispatchToProps = {
   replace: routerRedux.replace,
   getFeedbackDetail: getDataFunction(true)(GETDETAIL),
   getFeedbackRecordList: getDataFunction(true)(GETRECORDLIST),
+  updateFeedback: getDataFunction(true)(UPDATEQUESTION),
 };
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
@@ -43,18 +46,20 @@ export default class Detail extends PureComponent {
   static propTypes = {
     fbDetail: PropTypes.object.isRequired,
     recordList: PropTypes.object.isRequired,
+    updateQuestion: PropTypes.object.isRequired,
     getFeedbackDetail: PropTypes.func.isRequired,
     getFeedbackRecordList: PropTypes.func.isRequired,
+    updateFeedback: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
-    usreId: PropTypes.string,
+    userId: PropTypes.string,
   }
   static defaultProps = {
-    usreId: '002332',
+    userId: '002332',
   }
   constructor(props) {
     super(props);
-    const { fbDetail, location, recordList } = this.props;
+    const { fbDetail, recordList } = this.props;
     const { resultData = EMPTY_OBJECT } = fbDetail || EMPTY_OBJECT;
     const { resultData: voResultData } = recordList || EMPTY_OBJECT;
     this.state = {
@@ -83,7 +88,7 @@ export default class Detail extends PureComponent {
       location: { query: nextQuery = EMPTY_OBJECT },
       recordList: nextVOList = EMPTY_OBJECT } = nextProps;
     const { fbDetail: preDetail = EMPTY_OBJECT,
-      location: { query: prevQuery = EMPTY_OBJECT  },
+      location: { query: prevQuery = EMPTY_OBJECT },
       recordList: preVOList = EMPTY_OBJECT } = this.props;
     const { resultData: nextResultData = EMPTY_OBJECT } = nextDetail;
     const { resultData: preResultData = EMPTY_OBJECT } = preDetail;
@@ -110,7 +115,7 @@ export default class Detail extends PureComponent {
         }
       });
     }
-    //currentId变化重新请求
+    // currentId变化重新请求
     if (currentId !== prevCurrentId) {
       this.handlegetData(currentId);
     }
@@ -204,7 +209,7 @@ export default class Detail extends PureComponent {
     const { resultData = EMPTY_OBJECT } = dataSource || EMPTY_OBJECT;
     const { resultData: voList = EMPTY_OBJECT } = voDataSource || EMPTY_OBJECT;
     const { feedbackVOList = EMPTY_LIST } = voList; // 处理记录
-    const { appId, feedId, description, mediaUrls } = resultData || EMPTY_OBJECT; 
+    const { appId, feedId, description, mediaUrls } = resultData || EMPTY_OBJECT;
     const {
       feedEmpInfo = EMPTY_OBJECT,
       attachModelList = EMPTY_LIST,
@@ -214,13 +219,16 @@ export default class Detail extends PureComponent {
       status,
       tag,
       processer,
-      jiraId
+      jiraId,
     } = resultData || EMPTY_OBJECT; // 反馈用户
     const feedbackDetail = {
       functionName,
       createTime,
       version,
-      status, tag, processer, jiraId };
+      status,
+      tag,
+      processer,
+      jiraId };
     const remarkbtn = classnames({
       btnhidden: this.state.remarkVisible,
     });
