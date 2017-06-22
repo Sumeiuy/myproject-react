@@ -32,27 +32,27 @@ exports.response = function (req, res) {
                 value: '34',
                 indiModelList: [
                     {
-                        value: '11',
+                        value: '-11',
                         name: '个人',
                     },
                     {
-                        value: '11',
+                        value: '-11',
                         name: '机构',
                     },
                     {
-                        value: '11',
+                        value: '-11',
                         name: '组织',
                     },
                     {
-                        value: '11',
+                        value: '-11',
                         name: '天天发布市值',
                     },
                     {
-                        value: '11',
+                        value: '-11',
                         name: '流通股市',
                     },
                     {
-                        value: '11',
+                        value: '-1',
                         name: '限售市值',
                     },
                 ],
@@ -69,27 +69,27 @@ exports.response = function (req, res) {
                 value: '34',
                 indiModelList: [
                     {
-                        value: '20',
+                        value: '-20',
                         name: '个人',
                     },
                     {
-                        value: '1',
+                        value: '-1',
                         name: '机构',
                     },
                     {
-                        value: '11',
+                        value: '-11',
                         name: '组织',
                     },
                     {
-                        value: '11',
+                        value: '-11',
                         name: '天天发布市值',
                     },
                     {
-                        value: '11',
+                        value: '-11',
                         name: '流通股市',
                     },
                     {
-                        value: '11',
+                        value: '-11',
                         name: '限售市值',
                     },
                 ],
@@ -106,27 +106,27 @@ exports.response = function (req, res) {
                 value: '25',
                 indiModelList: [
                     {
-                        value: '1',
+                        value: '-1',
                         name: '个人',
                     },
                     {
-                        value: '11',
+                        value: '-11',
                         name: '机构',
                     },
                     {
-                        value: '10',
+                        value: '-10',
                         name: '组织',
                     },
                     {
-                        value: '11',
+                        value: '-11',
                         name: '天天发布市值',
                     },
                     {
-                        value: '11',
+                        value: '-11',
                         name: '流通股市',
                     },
                     {
-                        value: '11',
+                        value: '-11',
                         name: '限售市值',
                     },
                 ],
@@ -143,27 +143,27 @@ exports.response = function (req, res) {
                 value: '15',
                 indiModelList: [
                     {
-                        value: '5',
+                        value: '-5',
                         name: '个人',
                     },
                     {
-                        value: '5',
+                        value: '-5',
                         name: '机构',
                     },
                     {
-                        value: '5',
+                        value: '-5',
                         name: '组织',
                     },
                     {
-                        value: '11',
+                        value: '-11',
                         name: '天天发布市值',
                     },
                     {
-                        value: '11',
+                        value: '-1',
                         name: '流通股市',
                     },
                     {
-                        value: '11',
+                        value: '-11',
                         name: '限售市值',
                     },
                 ],
@@ -180,27 +180,27 @@ exports.response = function (req, res) {
                 value: '23',
                 indiModelList: [
                     {
-                        value: '7',
+                        value: '-7',
                         name: '个人',
                     },
                     {
-                        value: '11',
+                        value: '-11',
                         name: '机构',
                     },
                     {
-                        value: '5',
+                        value: '-5',
                         name: '组织',
                     },
                     {
-                        value: '11',
+                        value: '-11',
                         name: '天天发布市值',
                     },
                     {
-                        value: '11',
+                        value: '-11',
                         name: '流通股市',
                     },
                     {
-                        value: '11',
+                        value: '-11',
                         name: '限售市值',
                     },
                 ],
@@ -217,11 +217,11 @@ exports.response = function (req, res) {
                 value: '24',
                 indiModelList: [
                     {
-                        value: '23',
+                        value: '-23',
                         name: '个人',
                     },
                     {
-                        value: '1',
+                        value: '-1',
                         name: '机构',
                     },
                     {
@@ -229,15 +229,15 @@ exports.response = function (req, res) {
                         name: '组织',
                     },
                     {
-                        value: '11',
+                        value: '-11',
                         name: '天天发布市值',
                     },
                     {
-                        value: '11',
+                        value: '-11',
                         name: '流通股市',
                     },
                     {
-                        value: '11',
+                        value: '-11',
                         name: '限售市值',
                     },
                 ],
@@ -262,19 +262,19 @@ exports.response = function (req, res) {
                         name: '机构',
                     },
                     {
-                        value: '11',
+                        value: '-11',
                         name: '组织',
                     },
                     {
-                        value: '11',
+                        value: '-11',
                         name: '天天发布市值',
                     },
                     {
-                        value: '11',
+                        value: '-11',
                         name: '流通股市',
                     },
                     {
-                        value: '11',
+                        value: '-11',
                         name: '限售市值',
                     },
                 ],
@@ -303,15 +303,15 @@ exports.response = function (req, res) {
                         name: '组织',
                     },
                     {
-                        value: '11',
+                        value: '-11',
                         name: '天天发布市值',
                     },
                     {
-                        value: '11',
+                        value: '-11',
                         name: '流通股市',
                     },
                     {
-                        value: '11',
+                        value: '-11',
                         name: '限售市值',
                     },
                 ],
@@ -328,27 +328,27 @@ exports.response = function (req, res) {
                 value: '22',
                 indiModelList: [
                     {
-                        value: '11',
+                        value: '-11',
                         name: '个人',
                     },
                     {
-                        value: '4',
+                        value: '-4',
                         name: '机构',
                     },
                     {
-                        value: '7',
+                        value: '-7',
                         name: '组织',
                     },
                     {
-                        value: '11',
+                        value: '-11',
                         name: '天天发布市值',
                     },
                     {
-                        value: '11',
+                        value: '-11',
                         name: '流通股市',
                     },
                     {
-                        value: '11',
+                        value: '-11',
                         name: '限售市值',
                     },
                 ],
@@ -377,15 +377,15 @@ exports.response = function (req, res) {
                         name: '组织',
                     },
                     {
-                        value: '11',
+                        value: '-11',
                         name: '天天发布市值',
                     },
                     {
-                        value: '11',
+                        value: '-11',
                         name: '流通股市',
                     },
                     {
-                        value: '11',
+                        value: '-11',
                         name: '限售市值',
                     },
                 ],
