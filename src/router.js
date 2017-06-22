@@ -21,7 +21,7 @@ import FeedBack from './routes/feedback/Home';
 const routes = ({ history }) => (// eslint-disable-line
   <Router history={history}>
     <Route path="/" component={Main}>
-      <IndexRedirect to="/feedback" />
+      <IndexRedirect to="/invest" />
       <Route path="empty">
         <IndexRoute component={Empty} />
       </Route>
