@@ -14,7 +14,7 @@ const Dragger = Upload.Dragger;
 export default class UploadFiles extends PureComponent {
   static propTypes = {
     attachModelList: PropTypes.array,
-    userId: PropTypes.string,    
+    userId: PropTypes.string,
   }
   static defaultProps = {
     attachModelList: EMPTY_LIST,

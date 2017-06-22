@@ -148,7 +148,8 @@ export default class PageHeader extends PureComponent {
         状态: <Select
           style={{ width: '10%' }}
           placeholder="全部"
-          value={feedbackStatusEnum}
+          defaultValue="PROCESSING"
+          value={feedbackStatusEnum || 'PROCESSING'}
           onChange={key => this.handleSelectChange('feedbackStatusEnum', key)}
           allowClear
         >

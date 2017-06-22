@@ -33,6 +33,9 @@ export default {
 
   getFeedbackRecordList: query => api.post('/groovy/feedback/feedbackRecordList', query),
 
+  // 处理或更新反馈问题
+  updateFeedback: query => api.post('/groovy/feedback/updateFeedback', query),
+
   // ==========feedback的数据接口end
 
   // 获取报表下所有的分类信息
