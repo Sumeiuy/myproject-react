@@ -4,7 +4,6 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import { autobind } from 'core-decorators';
 
 import ChartBoard from './ChartBoard';
 import ChartTable from './ChartTable';
@@ -16,11 +15,17 @@ export default class PerformanceChartBoard extends PureComponent {
     chartData: PropTypes.array,
     chartTableInfo: PropTypes.object,
     replace: PropTypes.func.isRequired,
+    showChart: PropTypes.string.isRequired,
     level: PropTypes.string,
     scope: PropTypes.number.isRequired,
+    categoryScope: PropTypes.number.isRequired,
+    categoryOrder: PropTypes.string.isRequired,
     getTableInfo: PropTypes.func,
     boardTitle: PropTypes.string.isRequired,
     postExcelInfo: PropTypes.func.isRequired,
+    updateShowCharts: PropTypes.func.isRequired,
+    updateCategoryScope: PropTypes.func.isRequired,
+    updateCategoryOrder: PropTypes.func.isRequired,
     showScopeOrder: PropTypes.bool.isRequired,
     location: PropTypes.object.isRequired,
     indexID: PropTypes.string,
@@ -38,23 +43,9 @@ export default class PerformanceChartBoard extends PureComponent {
     selfRequestData: () => {},
   }
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      showChart: 'zhuzhuangtu',
-    };
-  }
-
-  @autobind
-  changeBoard(showChart) {
-    this.setState({
-      showChart,
-    });
-  }
-
   render() {
-    const { showChart } = this.state;
     const {
+      showChart,
       chartData,
       chartTableInfo,
       replace,
@@ -67,6 +58,11 @@ export default class PerformanceChartBoard extends PureComponent {
       indexID,
       selfRequestData,
       getTableInfo,
+      updateShowCharts,
+      categoryScope,
+      categoryOrder,
+      updateCategoryScope,
+      updateCategoryOrder,
     } = this.props;
     if (!(chartData && chartData.length) && showChart !== 'tables') {
       return null;
@@ -80,11 +76,16 @@ export default class PerformanceChartBoard extends PureComponent {
           replace={replace}
           level={level}
           scope={scope}
-          changeBoard={this.changeBoard}
+          categoryScope={categoryScope}
+          categoryOrder={categoryOrder}
+          showChart={showChart}
           showScopeOrder={showScopeOrder}
           indexID={indexID}
           selfRequestData={selfRequestData}
           getTableInfo={getTableInfo}
+          updateShowCharts={updateShowCharts}
+          updateCategoryScope={updateCategoryScope}
+          updateCategoryOrder={updateCategoryOrder}
         />
         {/* 根据 url 里的 showChart 来显示不同的组件 */}
         {
@@ -95,6 +96,7 @@ export default class PerformanceChartBoard extends PureComponent {
               getTableInfo={getTableInfo}
               replace={replace}
               level={level}
+              scope={categoryScope}
               location={location}
               indexID={indexID}
             />
@@ -105,7 +107,7 @@ export default class PerformanceChartBoard extends PureComponent {
               chartData={chartData}
               location={location}
               level={level}
-              scope={scope}
+              scope={categoryScope}
             />
           )
         }

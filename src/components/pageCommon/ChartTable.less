@@ -27,6 +27,9 @@
       margin: 10px auto;
       text-align: center;
     }
+    .ant-table-fixed-left .ant-table-body-inner{
+      // padding-right: 0;
+    }
     .ant-table-fixed-left{
       .ant-table-tbody{
         cursor: pointer;
@@ -34,6 +37,9 @@
     }
     .ant-table-thead > tr > th, .ant-table-tbody > tr > td{
       padding: 0;
+    }
+    .ant-table-thead > tr:first-child{
+      height: 40px;
     }
   }
 }
@@ -46,6 +52,26 @@
       color: #f8ac59;
     }
   }
+  .ant-popover-placement-right > .ant-popover-content > .ant-popover-arrow, .ant-popover-placement-rightTop > .ant-popover-content > .ant-popover-arrow, .ant-popover-placement-rightBottom > .ant-popover-content > .ant-popover-arrow {
+    border-right-color: rgba(0, 0, 0, 0.56);
+  }
+  .ant-popover-placement-right > .ant-popover-content > .ant-popover-arrow:after, .ant-popover-placement-rightTop > .ant-popover-content > .ant-popover-arrow:after, .ant-popover-placement-rightBottom > .ant-popover-content > .ant-popover-arrow:after {
+    border-right-color: transparent;
+  }
+  .ant-popover-inner {
+    background-color: rgba(0, 0, 0, 0.56);
+  }
+  .ant-popover-inner-content{
+    color: rgb(255, 255, 255);
+    line-height: 21px;
+    border-radius: 6px;
+  }
+}
+tr td:first-child .tdWrapperDiv{
+  width: 170px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .tdWrapperDiv{
   padding: 10px 8px;

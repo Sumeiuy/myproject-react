@@ -34,6 +34,16 @@ const iconTypeMap = {
   addressEffRate: 'xinyonghucanyuzhanbi',
   configReportNum: 'xinyonghucanyuzhanbi',
   prdtTranAmt: 'xinyonghucanyuzhanbi',
+  hignCustInfoCompletePercent: 'xinyonghucanyuzhanbi',
+
+  getIcon(unit) {
+    if (unit === '%' || unit === '\u2030') {
+      return 'xinyonghucanyuzhanbi';
+    } else if (unit === '户' || unit === '人') {
+      return 'renyuan';
+    }
+    return 'zichan';
+  },
 };
 
 export default iconTypeMap;

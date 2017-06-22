@@ -81,6 +81,9 @@ export default class BusinessHome extends PureComponent {
     this.state = {
       ...obj,
       boardId: boardId || '2',
+      showCharts: {},
+      classifyScope: {},
+      classifyOrder: {},
     };
   }
 
@@ -88,17 +91,16 @@ export default class BusinessHome extends PureComponent {
     const { location: { query } } = this.props;
     this.getInfo({
       ...query,
-      scope: query.scope || Number(query.custRangeLevel) + 1,
     });
   }
 
   componentWillReceiveProps(nextProps) {
     // 判断props是否变化
     const { location: { query } } = nextProps;
-    // const duration = this.state;
     const {
       location: { query: preQuery },
     } = this.props;
+
     // 还是chart部分的数据
     if (!_.isEqual(query, preQuery)) {
       // 如果切换 时间段
@@ -118,6 +120,12 @@ export default class BusinessHome extends PureComponent {
           ...query,
         });
       }
+      // 修改state
+      this.setState({
+        showCharts: {},
+        classifyScope: {},
+        classifyOrder: {},
+      });
     }
   }
 
@@ -168,7 +176,6 @@ export default class BusinessHome extends PureComponent {
       orgId,
       custRangeLevel,
       scope,
-      orderType,
     } = queryObj;
 
     const payload = {
@@ -178,41 +185,59 @@ export default class BusinessHome extends PureComponent {
       cycleType: qCycleType || cycleType,
       localScope: custRangeLevel,
       boardId,
+      scope,
     };
-    const pickProps = ['orgId', 'begin', 'end', 'cycleType', 'localScope', 'boardId'];
+    const empId = getEmpId();
     getAllInfo({
       custRange: {
-        empId: getEmpId(),
+        empId,
       },
       performance: {
+        ...payload,
         scope: custRangeLevel,
-        ..._.pick(payload, pickProps),
       },
       chartInfo: {
-        scope: scope || Number(custRangeLevel) + 1,
-        orderType: orderType || '',
-        ..._.pick(payload, pickProps),
+        ...payload,
       },
     });
   }
 
+  @autobind
+  updateShowCharts(categoryId, type) {
+    const { showCharts } = this.state;
+    this.setState({
+      showCharts: {
+        ...showCharts,
+        [categoryId]: type,
+      },
+    });
+  }
+  @autobind
+  updateCategoryScope(categoryId, v) {
+    const { classifyScope } = this.state;
+    this.setState({
+      classifyScope: {
+        ...classifyScope,
+        [categoryId]: v,
+      },
+    });
+  }
+  @autobind
+  updateCategoryOrder(categoryId, v) {
+    const { classifyOrder } = this.state;
+    this.setState({
+      classifyOrder: {
+        ...classifyOrder,
+        [categoryId]: v,
+      },
+    });
+  }
   // 导出 excel 文件
   @autobind
-  handleExportExcel() {
-    const { custRange, location: { query }, exportExcel } = this.props;
-    const duration = this.state;
-    const data = {
-      orgId: query.orgId || (custRange[0] && custRange[0].id),
-      localScope: query.custRangeLevel || (custRange[0] && custRange[0].level),
-      scope: query.scope ||
-      (query.custRangeLevel
-      ? Number(query.custRangeLevel) + 1
-      : Number(custRange[0] && custRange[0].level) + 1),
-      begin: query.begin || duration.begin,
-      end: query.end || duration.end,
-      cycleType: query.cycleType || duration.cycleType,
-    };
-    exportExcel({ query: queryToString(data) });
+  handleExportExcel(param) {
+    const { exportExcel } = this.props;
+    const payload = this.getApiParams(param);
+    exportExcel({ query: queryToString(payload) });
   }
 
   // 获取单个卡片接口
@@ -233,8 +258,9 @@ export default class BusinessHome extends PureComponent {
       replace,
       custRange,
     } = this.props;
-    const level = location.query.custRangeLevel || (custRange[0] && custRange[0].level);
-    const scope = Number(query.scope) || (custRange[0] && Number(custRange[0].level) + 1);
+    const { showCharts, classifyScope, classifyOrder } = this.state;
+    const level = query.custRangeLevel || (custRange[0] && custRange[0].level);
+    const newscope = Number(query.scope) || (custRange[0] && Number(custRange[0].level) + 1);
     if (!custRange || !custRange.length) {
       return null;
     }
@@ -256,18 +282,28 @@ export default class BusinessHome extends PureComponent {
             chartInfo.map((item) => {
               const { key, name, data } = item;
               const newChartTable = chartTableInfo[key] || {};
+              const showChart = showCharts[key] || 'zhuzhuangtu';
+              const categoryScope = Number(classifyScope[key]) || newscope;
+              const categoryOrder = classifyOrder[key] || 'desc';
               return (
                 <div
+                  key={key}
                   className={styles.reportPart}
                 >
                   <PreformanceChartBoard
+                    showChart={showChart}
+                    updateShowCharts={this.updateShowCharts}
+                    categoryScope={categoryScope}
+                    categoryOrder={categoryOrder}
+                    updateCategoryScope={this.updateCategoryScope}
+                    updateCategoryOrder={this.updateCategoryOrder}
                     chartData={data}
                     indexID={key}
                     chartTableInfo={newChartTable}
                     getTableInfo={this.getTableInfo}
                     postExcelInfo={this.handleExportExcel}
                     level={level}
-                    scope={scope}
+                    scope={newscope}
                     location={location}
                     replace={replace}
                     boardTitle={name}
