@@ -18,14 +18,15 @@ import {
   fixedPermillageMaxMin,
   fixedMoneyMaxMin,
   fixedPeopleMaxMin,
-  fixedStackLegendData,
+  dealStackSeiesHu,
 } from './chartData';
 import IECharts from '../IECharts';
 import { iconTypeMap } from '../../config';
 import Icon from '../common/Icon';
 import styles from './ChartBar.less';
+import imgSrc from '../chartRealTime/noChart.png';
 
-import imgSrc from './noChart.png';
+const getIcon = iconTypeMap.getIcon;
 
 export default class ChartBarStack extends PureComponent {
 
@@ -75,6 +76,7 @@ export default class ChartBarStack extends PureComponent {
     const { scope, chartData: { indiModel: { name, key }, orgModel = [] } } = this.props;
     // 获取本图表的单位,
     let { chartData: { indiModel: { unit } } } = this.props;
+    const IndexIcon = getIcon(unit);
     // 查询当前需要的Y轴字段名称
     const levelAndScope = Number(scope);
     const levelName = `level${levelAndScope}Name`;
@@ -93,11 +95,7 @@ export default class ChartBarStack extends PureComponent {
     }
     // 获取stackSeries
     const stack = getStackSeries(orgModel, 'indiModelList', key);
-    const stackLegend = fixedStackLegendData(stack.legends);
-    let stackGridTop = '30px';
-    if (stackLegend.length > 3) {
-      stackGridTop = '50px';
-    }
+    const stackLegend = stack.legends;
     let stackSeries = stack.series;
     // 此处需要进行对stackSeries中的每一个data根据单位来进行特殊处理
     if (unit === '%') {
@@ -109,6 +107,10 @@ export default class ChartBarStack extends PureComponent {
       const tempStackSeries = dealStackSeriesMoney(stackSeries);
       stackSeries = tempStackSeries.newStackSeries;
       unit = tempStackSeries.newUnit;
+    } else if (unit === '户') {
+      const tempStackSeries = dealStackSeiesHu(stackSeries);
+      stackSeries = tempStackSeries.newStackSeries;
+      unit = tempStackSeries.newUnit;
     }
     // stackSeries的data中
     const gridAxisTick = dealStackData(stackSeries);
@@ -116,7 +118,6 @@ export default class ChartBarStack extends PureComponent {
     let gridXAxisMax = 1;
     let gridXaxisMin = 0;
     if (unit === '%') {
-      // TODO 此处需要对
       const maxAndMinPercent = fixedPercentMaxMin(gridAxisTick);
       gridXAxisMax = maxAndMinPercent.max;
       gridXaxisMin = maxAndMinPercent.min;
@@ -128,16 +129,18 @@ export default class ChartBarStack extends PureComponent {
       const maxAndMinMoney = fixedMoneyMaxMin(gridAxisTick);
       gridXAxisMax = maxAndMinMoney.max;
       gridXaxisMin = maxAndMinMoney.min;
-    } else if (unit === '户' || unit === '人') {
+    } else if (unit.indexOf('户') > -1 || unit === '人') {
       const maxAndMinPeople = fixedPeopleMaxMin(gridAxisTick);
       gridXAxisMax = maxAndMinPeople.max;
       gridXaxisMin = maxAndMinPeople.min;
     }
 
     // 柱状图阴影的数据series
-    const dataShadow = [];
+    const maxDataShadow = [];
+    const minDataShadow = [];
     for (let i = 0; i < 10; i++) {
-      dataShadow.push(gridXAxisMax);
+      maxDataShadow.push(gridXAxisMax);
+      minDataShadow.push(gridXaxisMin);
     }
     // tooltip 配置项
     const tooltipOtions = {
@@ -154,7 +157,7 @@ export default class ChartBarStack extends PureComponent {
         let hasPushedAxis = false;
         // 因为第一个series是阴影
         series.forEach((item, index) => {
-          if (index > 0) {
+          if (index > 1) {
             const axisValue = item.axisValue;
             const seriesName = item.seriesName;
             let value = item.value;
@@ -167,7 +170,7 @@ export default class ChartBarStack extends PureComponent {
             }
             if (!hasPushedAxis) {
               hasPushedAxis = true;
-              // TODO 针对不同的机构级别需要显示不同的分类
+              // 针对不同的机构级别需要显示不同的分类
               if (levelAndScope === 3 && axisValue !== '--') {
                 // 营业部，需要显示分公司名称
                 const dataIndex = item.dataIndex;
@@ -180,13 +183,14 @@ export default class ChartBarStack extends PureComponent {
               }
               tips.push(`${axisValue}<br/>`);
             }
-            tips.push(`<span style="display:inline-block;width: 10px;height: 10px;margin-right:4px;border-radius:100%;background-color:${stackBarColors[index - 1]}"></span>`);
+            tips.push(`<span style="display:inline-block;width: 10px;height: 10px;margin-right:4px;border-radius:100%;background-color:${stackBarColors[index - 2]}"></span>`);
             tips.push(`${seriesName} : <span style="color:#ffd92a; font-size:14px;">${value}</span>`);
             tips.push(`${unit}<br/>`);
           }
         });
         if (total.length > 0) {
-          tips.push(`共 <span style="color:#ffd92a; font-size:14px;">${_.sum(total)}</span> ${unit}`);
+          const totalV = Number.parseFloat(_.sum(total).toFixed(2));
+          tips.push(`共 <span style="color:#ffd92a; font-size:14px;">${totalV}</span> ${unit}`);
         } else {
           tips.push(`共 <span style="color:#ffd92a; font-size:14px;">--</span> ${unit}`);
         }
@@ -207,24 +211,15 @@ export default class ChartBarStack extends PureComponent {
       padding: [12, 11, 13, 13],
       extraCssText: 'border-radius: 8px;',
     };
+
     // eCharts的配置项
     const options = {
       color: [...stackBarColors],
       tooltip: {
         ...tooltipOtions,
       },
-      legend: {
-        width: '95%',
-        left: '0',
-        selectedMode: false,
-        data: stackLegend,
-        textStyle: {
-          color: '#777',
-        },
-      },
       grid: {
         ...gridOptions,
-        top: stackGridTop,
       },
       xAxis: {
         type: 'value',
@@ -269,7 +264,11 @@ export default class ChartBarStack extends PureComponent {
       series: [
         {
           ...barShadow,
-          data: dataShadow,
+          data: maxDataShadow,
+        },
+        {
+          ...barShadow,
+          data: minDataShadow,
         },
         ...stackSeries,
       ],
@@ -278,21 +277,44 @@ export default class ChartBarStack extends PureComponent {
       <div className={styles.chartMain}>
         <div className={styles.chartHeader}>
           <div className={styles.chartTitle}>
-            <Icon type={iconTypeMap[key]} className={styles.chartTiltleTextIcon} />
+            <Icon type={IndexIcon} className={styles.chartTiltleTextIcon} />
             <span className={styles.chartTitleText}>{`${name}(${unit})`}</span>
           </div>
         </div>
+        <div className={styles.chartLegend}>
+          {
+            stackLegend.map((item, index) => {
+              const backgroundColor = stackBarColors[index];
+              return (
+                <div className={styles.oneLegend}>
+                  <div
+                    className={styles.legendIcon}
+                    style={{
+                      backgroundColor,
+                    }}
+                  />
+                  {item}
+                </div>
+              );
+            })
+          }
+        </div>
         <div className={styles.chartWrapper}>
           {
-            (orgModel && orgModel.length) ?
-              (<IECharts
+            (orgModel && orgModel.length > 0)
+            ?
+            (
+              <IECharts
                 option={options}
                 resizable
-              />)
+              />
+            )
             :
-              (<div className={styles.noChart}>
+            (
+              <div className={styles.noChart}>
                 <img src={imgSrc} alt="图表不可见" />
-              </div>)
+              </div>
+            )
           }
         </div>
       </div>

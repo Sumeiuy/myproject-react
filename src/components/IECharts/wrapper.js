@@ -170,7 +170,7 @@ function wrapECharts(ECharts) {
     @autobind
     mygetInstance() {
       // console.log('_getInstance');
-      console.log('IECharts', this.chartBox);
+      // console.log('IECharts', this.chartBox);
       return ECharts.getInstanceByDom(this.chartBox);
       // return ECharts.getInstanceByDom(ReactDOM.findDOMNode(that));
     }

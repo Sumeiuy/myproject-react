@@ -1,6 +1,8 @@
 @import '../common/shadow.less';
 
 .chartMain{
+  display: flex;
+  flex-direction: column;
   height: 340px;
   min-width: 247px;
   background: #fff;
@@ -14,8 +16,28 @@
   background: #fff;
 }
 .chartHeader {
+  flex-grow: 0;
   width: 100%;
   height: 45px;
+}
+.chartLegend {
+  flex-grow: 0;
+  height: auto;
+  margin-bottom: 5px;
+}
+.oneLegend {
+  display: inline-block;
+  margin-right: 10px;
+  font-size: 12px;
+  margin-bottom: 5px;
+  color: #777;
+}
+.legendIcon {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 100%;
+  margin-right: 5px;
 }
 .chartTitle {
   float: left;
@@ -45,7 +67,7 @@
   cursor: pointer;
 }
 .chartWrapper {
-  height: 290px;
+  flex: 0 1 290px;
   width: 100%;
 }
 .noChart{

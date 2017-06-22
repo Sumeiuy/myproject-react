@@ -65,7 +65,6 @@ export default function createApi() {
           headers: {
             'Content-Type': 'application/json',
             empId: '002332',
-            // ...authInfo,
           },
           body: JSON.stringify(query),
         },

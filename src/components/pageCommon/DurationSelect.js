@@ -61,7 +61,6 @@ export default class DurationSelect extends PureComponent {
         begin: obj.begin,
         end: obj.end,
         cycleType: obj.cycleType,
-        page: 1,
       },
     });
   }

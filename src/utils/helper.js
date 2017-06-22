@@ -22,6 +22,10 @@ function getOS() {
 }
 
 const helper = {
+  // 获取元素CSS的样式
+  getCssStyle(ele, css) {
+    return window.getComputedStyle(ele, null).getPropertyValue(css);
+  },
 
   // 获取 empId
   getEmpId() {
