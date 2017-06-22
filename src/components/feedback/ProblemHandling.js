@@ -8,13 +8,14 @@ import React, { PropTypes, PureComponent } from 'react';
 import { Select, Row, Col, Input, Form, Modal, message, Upload } from 'antd';
 import { createForm } from 'rc-form';
 import Icon from '../../components/common/Icon';
-import { feedbackOptions } from '../../config';
+import { feedbackOptions, request } from '../../config';
 import './problemHandling.less';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
 const Dragger = Upload.Dragger;
 const EMPTY_LIST = [];
+const EMPTY_OBJECT = {};
 @createForm()
 export default class ProblemHandling extends PureComponent {
   static propTypes = {
@@ -25,24 +26,27 @@ export default class ProblemHandling extends PureComponent {
     onCancel: PropTypes.func.isRequired,
     onCreate: PropTypes.func.isRequired,
     width: PropTypes.string,
+    problemDetails: PropTypes.object.isRequired,
   }
   static defaultProps = {
     popContent: ' ',
-    title: '问题反馈',
+    title: '问题处理',
     width: '620px',
   }
   constructor(props) {
     super(props);
     const questionTagOptions = feedbackOptions.questionTagOptions || EMPTY_LIST;
     const stateOptions = feedbackOptions.stateOptions || EMPTY_LIST;
+    const { problemDetails = EMPTY_OBJECT } = props;
     this.state = {
+      newDetails: problemDetails,
       popQuestionTagOptions: questionTagOptions,
       stateOptions,
       uploadPops: {
         name: 'file',
         multiple: true,
         showUploadList: true,
-        action: '//jsonplaceholder.typicode.com/posts/',
+        action: `${request.prefix}/file/feedbackFileUpload`,
         onChange(info) {
           const status = info.file.status;
           if (status !== 'uploading') {
@@ -57,17 +61,35 @@ export default class ProblemHandling extends PureComponent {
       },
     };
   }
-  state = {
-    uploadPops: {},
-    popQuestionTagOptions: [],
-    stateOptions: [],
+  componentWillReceiveProps(nextProps) {
+    const { problemDetails: preData = EMPTY_OBJECT } = this.props;
+    const { problemDetails: nextData = EMPTY_OBJECT } = nextProps;
+    if (nextData !== preData) {
+      this.setState({
+        newDetails: nextData,
+      });
+    }
   }
   render() {
-    const { visible, title, onCancel, onCreate, width, form } = this.props;
+    const {
+      visible,
+      title,
+      onCancel,
+      onCreate,
+      width,
+      form,
+    } = this.props;
+    const {
+      processer,
+      status,
+      tag,
+      id,
+    } = this.state.newDetails;
     const { getFieldDecorator } = form;
-    const { popQuestionTagOptions = EMPTY_LIST,
-      stateOptions = EMPTY_LIST,
-      uploadPops } = this.state;
+    const {
+      popQuestionTagOptions = EMPTY_LIST,
+      uploadPops,
+    } = this.state;
     const getSelectOption = item => item.map(i =>
       <Option key={i.value} value={i.value}>{i.label}</Option>,
     );
@@ -90,7 +112,7 @@ export default class ProblemHandling extends PureComponent {
                 <Col span="4"><div className="label">问题标签：</div></Col>
                 <Col span="19" offset={1}>
                   <FormItem>
-                    {getFieldDecorator('qutable', { initialValue: '使用方法' })(
+                    {getFieldDecorator('tag', { initialValue: `${tag || '无'}` })(
                       <Select style={{ width: 220 }} onChange={this.handleChange}>
                         {getSelectOption(popQuestionTagOptions)}
                       </Select>,
@@ -102,9 +124,10 @@ export default class ProblemHandling extends PureComponent {
                 <Col span="4"><div className="label">状态：</div></Col>
                 <Col span="19" offset={1}>
                   <FormItem>
-                    {getFieldDecorator('status', { initialValue: '关闭' })(
+                    {getFieldDecorator('status', { initialValue: `${status}` })(
                       <Select style={{ width: 220 }}>
-                        {getSelectOption(stateOptions)}
+                        <Option value="PROCESSING">解决中</Option>
+                        <Option value="CLOSED">关闭</Option>
                       </Select>,
                     )}
                   </FormItem>
@@ -114,10 +137,11 @@ export default class ProblemHandling extends PureComponent {
                 <Col span="4"><div className="label">经办人：</div></Col>
                 <Col span="19" offset={1}>
                   <FormItem>
-                    {getFieldDecorator('message', { initialValue: '信息技术部运维人员' })(
+                    {getFieldDecorator('processerEmpId', { initialValue: `${processer}` })(
                       <Select style={{ width: 220 }}>
-                        <Option value="信息技术部运维人员">信息技术部运维人员</Option>
-                        <Option value="金基业务总部运维人员">金基业务总部运维人员</Option>
+                        <Option value="002332">经办人1</Option>
+                        <Option value="002333">经办人2</Option>
+                        <Option value="002334">经办人3</Option>
                       </Select>,
                     )}
                   </FormItem>
@@ -127,7 +151,7 @@ export default class ProblemHandling extends PureComponent {
                 <Col span="4"><div className="label">处理意见：</div></Col>
                 <Col span="19" offset={1}>
                   <FormItem>
-                    {getFieldDecorator('content')(
+                    {getFieldDecorator('processSuggest')(
                       <Input type="textarea" rows={5} style={{ width: '100%' }} />,
                     )}
                   </FormItem>
@@ -137,7 +161,7 @@ export default class ProblemHandling extends PureComponent {
                 <Col span="4"><div className="label">附件：</div></Col>
                 <Col span="19" offset={1}>
                   <FormItem>
-                    {getFieldDecorator('file')(
+                    {getFieldDecorator('uploadedFiles')(
                       <Dragger {...uploadPops}>
                         <div className="upload_txt">
                           + 上传附件
@@ -147,6 +171,11 @@ export default class ProblemHandling extends PureComponent {
                   </FormItem>
                 </Col>
               </Row>
+              <FormItem>
+                {getFieldDecorator('id', { initialValue: `${id}` })(
+                  <Input type="hidden" />,
+                )}
+              </FormItem>
             </Form>
           </div>
         </div>

@@ -97,17 +97,17 @@ export default {
         type: 'updateFeedbackSuccess',
         payload: response,
       });
-
-      const recordListResponse = yield call(api.getFeedbackRecordList, payload);
       yield put({
-        type: 'getFeedbackRecordListSuccess',
-        payload: recordListResponse,
+        type: 'getFeedbackRecordList',
+        payload: {
+          feedbackId: payload.id,
+        },
       });
-
-      const fbDetailResponse = yield call(api.getFeedbackDetail, payload);
       yield put({
-        type: 'getFeedbackDetailSuccess',
-        payload: fbDetailResponse,
+        type: 'getFeedbackDetail',
+        payload: {
+          id: payload.id,
+        },
       });
     },
   },
