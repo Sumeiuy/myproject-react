@@ -18,10 +18,8 @@ import styles from './Home.less';
 
 const effects = {
   allInfo: 'invest/getAllInfo',
-  performance: 'invest/getPerformance',
-  chartInfo: 'invest/getChartInfo',
-  custRange: 'invest/getCustRange',
   chartTableInfo: 'invest/getChartTableInfo',
+  oneChartInfo: 'invest/getOneChartInfo',
   exportExcel: 'invest/exportExcel',
 };
 
@@ -35,18 +33,14 @@ const mapStateToProps = state => ({
   performance: state.invest.performance,
   chartInfo: state.invest.chartInfo,
   chartTableInfo: state.invest.chartTableInfo,
-  // chartLoading: state.loading.effects[effects.chartInfo],
   custRange: state.invest.custRange,
-  excelInfo: state.invest.excelInfo,
   globalLoading: state.activity.global,
 });
 
 const mapDispatchToProps = {
   getAllInfo: fectchDataFunction(true, effects.allInfo),
-  getPerformance: fectchDataFunction(true, effects.performance),
-  getChartInfo: fectchDataFunction(true, effects.chartInfo),
   getChartTableInfo: fectchDataFunction(true, effects.chartTableInfo),
-  getCustRange: fectchDataFunction(false, effects.custRange),
+  getOneChartInfo: fectchDataFunction(true, effects.oneChartInfo),
   exportExcel: fectchDataFunction(true, effects.exportExcel),
   push: routerRedux.push,
   replace: routerRedux.replace,
@@ -59,16 +53,13 @@ export default class InvestHome extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
     getAllInfo: PropTypes.func.isRequired,
-    getPerformance: PropTypes.func.isRequired,
     performance: PropTypes.array,
-    getChartInfo: PropTypes.func.isRequired,
     chartInfo: PropTypes.array,
     getChartTableInfo: PropTypes.func.isRequired,
     chartTableInfo: PropTypes.object,
+    getOneChartInfo: PropTypes.func.isRequired,
     exportExcel: PropTypes.func.isRequired,
-    // chartLoading: PropTypes.bool,
     globalLoading: PropTypes.bool,
-    getCustRange: PropTypes.func.isRequired,
     custRange: PropTypes.array,
     replace: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
@@ -78,49 +69,40 @@ export default class InvestHome extends PureComponent {
     performance: [],
     chartInfo: [],
     chartTableInfo: {},
-    // chartLoading: false,
     globalLoading: false,
     custRange: [],
   }
 
-  componentWillMount() {
-    const { location: { query } } = this.props;
-    const value = query.cycleType || 'month';
+  constructor(props) {
+    super(props);
+    console.warn(document.querySelector('#exApp').clientWidth);
+    // alert(window.document.body.offsetWidth);
+    const { location: { query: { cycleType, boardId } } } = this.props;
+    const value = cycleType || 'month';
     const obj = getDurationString(value);
     this.state = {
       ...obj,
+      boardId: boardId || '1',
+      showCharts: {},
+      classifyScope: {},
+      classifyOrder: {},
     };
+  }
+
+  componentWillMount() {
+    const { location: { query } } = this.props;
     this.getInfo({
       ...query,
-      scope: query.scope || Number(query.custRangeLevel) + 1,
     });
   }
 
   componentWillReceiveProps(nextProps) {
     // 判断props是否变化
-    const { custRange, location: { query } } = nextProps;
-    const duration = this.state;
+    const { location: { query } } = nextProps;
     const {
       location: { query: preQuery },
-      getChartInfo,
-      getChartTableInfo,
     } = this.props;
 
-    const payload = {
-      ...query,
-      boardId: query.boardId || '1',
-      orgId: query.orgId || (custRange[0] && custRange[0].id),
-      // scope: query.scope || Number(custRange[0] && custRange[0].level) + 1,
-      scope: query.scope ||
-      (query.custRangeLevel
-      ? Number(query.custRangeLevel) + 1
-      : Number(custRange[0] && custRange[0].level) + 1),
-      orderType: query.orderType || '',
-      begin: query.begin || duration.begin,
-      end: query.end || duration.end,
-      cycleType: query.cycleType || duration.cycleType,
-      localScope: query.custRangeLevel || (custRange[0] && custRange[0].level),
-    };
     // 还是chart部分的数据
     if (!_.isEqual(query, preQuery)) {
       // 如果切换 时间段
@@ -140,182 +122,131 @@ export default class InvestHome extends PureComponent {
           ...query,
         });
       }
-      // const tempArr = ['bo-1', 'bo-2', 'bo-3'];
-      // const showChartArr = [];
-      // tempArr.map(item => showChartArr.push(`showChart${item}`));
-      // console.warn('showChartArr', showChartArr);
-      const nowShowChart = query.showChart;
-      const preShowChart = preQuery.showChart;
-      // 如果切换 柱状图或者表格
-      if (nowShowChart !== preShowChart) {
-        if (nowShowChart === 'zhuzhuangtu' || !nowShowChart) {
-          getChartInfo({
-            ..._.pick(payload,
-              [
-                'scope',
-                'localScope',
-                'orgId',
-                'begin',
-                'end',
-                'cycleType',
-                'orderType',
-                'boardId',
-              ]),
-          });
-        } else {
-          getChartTableInfo({
-            ..._.pick(payload,
-              [
-                'scope',
-                'localScope',
-                'orgId',
-                'begin',
-                'end',
-                'cycleType',
-                'boardId',
-              ]),
-            pageNum: '1',
-            pageSize: 10,
-            orderIndicatorId: query.orderIndicatorId || '',
-            orderType: query.tableOrderType || '',
-          });
-        }
-      }
-
-      // 如果切换层级维度排序
-      const nowScope = query.scope;
-      const preScope = preQuery.scope;
-      if (nowScope !== preScope && nowOrgId === preOrgId) {
-        // 如果当前是柱状图
-        if (query.showChart === 'zhuzhuangtu' || !query.showChart) {
-          getChartInfo({
-            ..._.pick(payload,
-              [
-                'scope',
-                'localScope',
-                'orgId',
-                'begin',
-                'end',
-                'cycleType',
-                'orderType',
-                'boardId',
-              ]),
-          });
-        } else {
-          // 否则则是表格
-          getChartTableInfo({
-            ..._.pick(payload,
-              [
-                'scope',
-                'localScope',
-                'orgId',
-                'begin',
-                'end',
-                'cycleType',
-                'boardId',
-              ]),
-            pageNum: '1',
-            pageSize: 10,
-            orderIndicatorId: query.orderIndicatorId || '',
-            orderType: query.tableOrderType || '',
-          });
-        }
-      }
-
-      // 如果切换升降序方式，只要新的与旧的不想等，则请求图表接口
-      const nowOrderType = query.orderType;
-      const preOrderType = preQuery.orderType;
-      if (nowOrderType !== preOrderType) {
-        getChartInfo({
-          ..._.pick(payload,
-            [
-              'scope',
-              'localScope',
-              'orgId',
-              'begin',
-              'end',
-              'cycleType',
-              'orderType',
-              'boardId',
-            ]),
-        });
-      }
-
-      // 如果切换页面、表格字段排序，则请求表格接口
-      const nowPageAndOrderType = _.pick(query, ['page', 'tableOrderType', 'orderIndicatorId']);
-      const prePageAndOrderType = _.pick(preQuery, ['page', 'tableOrderType', 'orderIndicatorId']);
-      if (!_.isEqual(nowPageAndOrderType, prePageAndOrderType) && nowOrgId === preOrgId && query.showChart === 'tables') {
-        getChartTableInfo({
-          ..._.pick(payload, ['scope', 'localScope', 'orgId', 'begin', 'end', 'cycleType', 'boardId']),
-          pageNum: query.page || '1',
-          orderIndicatorId: query.orderIndicatorId || '',
-          orderType: query.tableOrderType || '',
-          pageSize: 10,
-        });
-      }
+      // 修改state
+      this.setState({
+        showCharts: {},
+        classifyScope: {},
+        classifyOrder: {},
+      });
     }
   }
 
   @autobind
-  setGlobalState(obj) {
-    this.setState({
-      ...obj,
-    });
-  }
-
-  @autobind
-  getInfo(queryObj) {
-    const { getAllInfo, location: { query } } = this.props;
-    const obj = this.state;
-    const payload = {
-      orgId: queryObj.orgId || '',
-      begin: queryObj.begin || obj.begin,
-      end: queryObj.end || obj.end,
-      cycleType: queryObj.cycleType || obj.cycleType,
-      localScope: queryObj.custRangeLevel,
-      boardId: queryObj.boardId || query.boardId || '1',
-    };
-    getAllInfo({
-      custRange: {
-        empId: getEmpId(),
-      },
-      performance: {
-        scope: queryObj.custRangeLevel,
-        ..._.pick(payload, ['orgId', 'begin', 'end', 'cycleType', 'localScope', 'boardId']),
-      },
-      chartInfo: {
-        scope: queryObj.scope || Number(queryObj.custRangeLevel) + 1,
-        orderType: queryObj.orderType || '',
-        ..._.pick(payload, ['orgId', 'begin', 'end', 'cycleType', 'localScope', 'boardId']),
-      },
-      chartTableInfo: {
-        ..._.pick(payload, ['orgId', 'localScope', 'begin', 'end', 'cycleType', 'boardId']),
-        scope: queryObj.scope || Number(queryObj.custRangeLevel) + 1,
-        orderType: queryObj.orderType || '',
-        pageSize: 10,
-        pageNum: queryObj.page || '1',
-      },
-      showChart: query.showChart,
-    });
-  }
-
-  // 导出 excel 文件
-  @autobind
-  handleExportExcel() {
-    const { custRange, location: { query }, exportExcel } = this.props;
+  getApiParams(param) {
+    const { custRange, location: { query } } = this.props;
     const duration = this.state;
-    const data = {
+    const payload = {
+      ...query,
       orgId: query.orgId || (custRange[0] && custRange[0].id),
-      localScope: query.custRangeLevel || (custRange[0] && custRange[0].level),
       scope: query.scope ||
       (query.custRangeLevel
       ? Number(query.custRangeLevel) + 1
       : Number(custRange[0] && custRange[0].level) + 1),
+      orderType: query.orderType || '',
       begin: query.begin || duration.begin,
       end: query.end || duration.end,
       cycleType: query.cycleType || duration.cycleType,
+      localScope: query.custRangeLevel || (custRange[0] && custRange[0].level),
+      ...param,
     };
-    exportExcel({ query: queryToString(data) });
+    return payload;
+  }
+  // 投递到子组件的方法，只接收参数，实际请求在此发出
+  @autobind
+  getTableInfo(obj) {
+    const { getChartTableInfo } = this.props;
+    const params = {
+      pageSize: 10,
+      orderIndicatorId: obj.orderIndicatorId || '',
+      orderType: obj.orderType || '',
+      pageNum: obj.pageNum || 1,
+      ...obj,
+    };
+    const payload = this.getApiParams(params);
+    getChartTableInfo(payload);
+  }
+
+  @autobind
+  getInfo(queryObj) {
+    const { getAllInfo } = this.props;
+    const { begin, cycleType, end, boardId } = this.state;
+    const {
+      begin: qBegin,
+      cycleType: qCycleType,
+      end: qEnd,
+      orgId,
+      custRangeLevel,
+      scope,
+    } = queryObj;
+
+    const payload = {
+      orgId: orgId || '',
+      begin: qBegin || begin,
+      end: qEnd || end,
+      cycleType: qCycleType || cycleType,
+      localScope: custRangeLevel,
+      boardId,
+      scope,
+    };
+    const empId = getEmpId();
+    getAllInfo({
+      custRange: {
+        empId,
+      },
+      performance: {
+        ...payload,
+        scope: custRangeLevel,
+      },
+      chartInfo: {
+        ...payload,
+      },
+    });
+  }
+
+  @autobind
+  updateShowCharts(categoryId, type) {
+    const { showCharts } = this.state;
+    this.setState({
+      showCharts: {
+        ...showCharts,
+        [categoryId]: type,
+      },
+    });
+  }
+  @autobind
+  updateCategoryScope(categoryId, v) {
+    const { classifyScope } = this.state;
+    this.setState({
+      classifyScope: {
+        ...classifyScope,
+        [categoryId]: v,
+      },
+    });
+  }
+  @autobind
+  updateCategoryOrder(categoryId, v) {
+    const { classifyOrder } = this.state;
+    this.setState({
+      classifyOrder: {
+        ...classifyOrder,
+        [categoryId]: v,
+      },
+    });
+  }
+  // 导出 excel 文件
+  @autobind
+  handleExportExcel(param) {
+    const { exportExcel } = this.props;
+    const payload = this.getApiParams(param);
+    exportExcel({ query: queryToString(payload) });
+  }
+
+  // 获取单个卡片接口
+  @autobind
+  selfRequestData(param) {
+    const { getOneChartInfo } = this.props;
+    const payload = this.getApiParams(param);
+    getOneChartInfo(payload);
   }
 
   render() {
@@ -328,8 +259,9 @@ export default class InvestHome extends PureComponent {
       replace,
       custRange,
     } = this.props;
-    const level = location.query.custRangeLevel || (custRange[0] && custRange[0].level);
-    const scope = Number(query.scope) || (custRange[0] && Number(custRange[0].level) + 1);
+    const { showCharts, classifyScope, classifyOrder } = this.state;
+    const level = query.custRangeLevel || (custRange[0] && custRange[0].level);
+    const newscope = Number(query.scope) || (custRange[0] && Number(custRange[0].level) + 1);
     if (!custRange || !custRange.length) {
       return null;
     }
@@ -339,7 +271,6 @@ export default class InvestHome extends PureComponent {
           location={location}
           replace={replace}
           custRange={custRange}
-          selectDefault="invest"
         />
         <div className={styles.reportBody}>
           <div className={styles.reportPart}>
@@ -347,21 +278,42 @@ export default class InvestHome extends PureComponent {
               data={performance}
             />
           </div>
-          <div className={styles.reportPart}>
-            <PreformanceChartBoard
-              chartData={chartInfo}
-              chartTableInfo={chartTableInfo}
-              postExcelInfo={this.handleExportExcel}
-              level={level}
-              scope={scope}
-              location={location}
-              replace={replace}
-              indexID={'a'}
-              loading={false}
-              boardTitle={'指标分布'}
-              showScopeOrder
-            />
-          </div>
+          {
+            chartInfo.map((item) => {
+              const { key, name, data } = item;
+              const newChartTable = chartTableInfo[key] || {};
+              const showChart = showCharts[key] || 'zhuzhuangtu';
+              const categoryScope = Number(classifyScope[key]) || newscope;
+              const categoryOrder = classifyOrder[key] || 'desc';
+              return (
+                <div
+                  key={key}
+                  className={styles.reportPart}
+                >
+                  <PreformanceChartBoard
+                    showChart={showChart}
+                    updateShowCharts={this.updateShowCharts}
+                    categoryScope={categoryScope}
+                    categoryOrder={categoryOrder}
+                    updateCategoryScope={this.updateCategoryScope}
+                    updateCategoryOrder={this.updateCategoryOrder}
+                    chartData={data}
+                    indexID={key}
+                    chartTableInfo={newChartTable}
+                    getTableInfo={this.getTableInfo}
+                    postExcelInfo={this.handleExportExcel}
+                    level={level}
+                    scope={newscope}
+                    location={location}
+                    replace={replace}
+                    boardTitle={name}
+                    showScopeOrder
+                    selfRequestData={this.selfRequestData}
+                  />
+                </div>
+              );
+            })
+          }
         </div>
       </div>
     );

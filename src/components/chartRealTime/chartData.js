@@ -18,7 +18,7 @@ function toFixedDecimal(value) {
   return Number.parseFloat(value.toFixed(2));
 }
 
-function toFixedMoney(v) {
+function toFixedData(v) {
   return (item) => {
     const newItem = item;
     const data = item.data;
@@ -38,6 +38,8 @@ function padFixedMoney(m, method) {
     value = Math[method](m / 100) * 100;
   } else if (money >= 10) {
     value = Math[method](m / 10) * 10;
+  } else {
+    value = Math[method](m);
   }
   return value;
 }
@@ -49,8 +51,10 @@ function padFixedPeople(people, method) {
     value = Math[method](people / 1000) * 1000;
   } else if (p > 200) {
     value = Math[method](people / 100) * 100;
-  } else if (p <= 200) {
+  } else if (p <= 200 && p > 10) {
     value = Math[method](people / 10) * 10;
+  } else {
+    value = Math[method](people);
   }
   return value;
 }
@@ -157,11 +161,10 @@ const chartData = {
     // 3.超过亿元的，以‘亿元’为单位
     if (maxMoney > 100000000) {
       newUnit = '亿元';
-      // newStackSeries = newStackSeries.map(item => this.toFixedDecimal(item / 100000000));
-      newStackSeries = newStackSeries.map(toFixedMoney(100000000));
+      newStackSeries = newStackSeries.map(toFixedData(100000000));
     } else if (maxMoney > 10000) {
       newUnit = '万元';
-      newStackSeries = newStackSeries.map(toFixedMoney(10000));
+      newStackSeries = newStackSeries.map(toFixedData(10000));
     }
     return {
       newStackSeries,
@@ -169,15 +172,41 @@ const chartData = {
     };
   },
   /**
-   * 处理StackData数据
+   * 处理stackSeries中的户单位
+   */
+  dealStackSeiesHu(stackSeries) {
+    let newUnit = '户';
+    let newStackSeries = stackSeries;
+     // 判断stackSeries中最大值是多少
+    let allData = [];
+    const len = newStackSeries.length;
+    for (let i = 0; i < len; i++) {
+      allData = _.concat(allData, newStackSeries[i].data);
+    }
+    const maxHu = Math.max(...allData);
+     // 1. 全部在万元以下的数据不做处理
+    // 2.超过万元的，以‘万元’为单位
+    // 3.超过亿元的，以‘亿元’为单位
+    if (maxHu > 5000) {
+      newUnit = '万户';
+      newStackSeries = newStackSeries.map(toFixedData(10000));
+    }
+    return {
+      newStackSeries,
+      newUnit,
+    };
+  },
+
+  /**
+   * 处理StackData数据,返回stack轴上正数和负数的最大最小值
    * @return {[type]} [description]
    */
   dealStackData(stackSeries) {
     const newStackSeries = stackSeries;
     // 判断stackSeries中最大值是多少
     const allData = [];
-    const len = newStackSeries.length;
-    const dataLen = newStackSeries[0].data.length;
+    const len = newStackSeries.length; // 3
+    const dataLen = newStackSeries[0].data.length; // 10
     for (let i = 0; i < dataLen; i++) {
       const stackSingleValue = {
         plus: [],
@@ -280,8 +309,11 @@ const chartData = {
   },
 
   fixedPeopleMaxMin(people) {
+    // 正向柱条
     const plus = people.plus;
+    // 负向柱条
     const minus = people.minus;
+
     let max = 10;
     let min = -10;
     if (plus.max === 0 && minus.min !== 0) {

@@ -127,9 +127,6 @@ export default class CustRange extends PureComponent {
         custRangeLevel,
         level: custRangeLevel,
         scope: Number(custRangeLevel) + 1,
-        orderIndicatorId: '',
-        orderType: '',
-        page: 1,
       },
     });
   }

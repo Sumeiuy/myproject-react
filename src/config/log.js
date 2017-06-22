@@ -10,6 +10,8 @@ const config = {
   interval: 1 * 60 * 1000,
   // 开启日志监控
   enable: true,
+  projectName: location.hostname.indexOf('htsc.com.cn') > -1
+      ? 'FSP_1' : 'FSP_1',
   blacklist: [
     '@@DVA_LOADING/HIDE',
     '@@DVA_LOADING/SHOW',

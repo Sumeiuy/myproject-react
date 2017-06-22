@@ -22,8 +22,6 @@ export default {
   // 获取某一个分类指标下的表格数据
   getChartTableInfo: query => api.post('/groovynoauth/jxzb/queryMultiSummuryRecord', query),
 
-  getBOChartTableInfo: query => api.get('/groovynoauth/jxzb/queryBOChartTableInfo', query),
-  // ==========business数据接口end
 
   // ----------以下是feedback的数据接口
 
