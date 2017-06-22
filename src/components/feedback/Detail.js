@@ -52,10 +52,10 @@ export default class Detail extends PureComponent {
     updateFeedback: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
-    usreId: PropTypes.string,
+    userId: PropTypes.string,
   }
   static defaultProps = {
-    usreId: '002332',
+    userId: '002332',
   }
   constructor(props) {
     super(props);
