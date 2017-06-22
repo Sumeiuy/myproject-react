@@ -293,7 +293,7 @@ export default class FeedbackList extends PureComponent {
             if (curSelectedRow === index) {
               return 'active';
             }
-            return 'inactive';
+            return '';
           }}
         />
       </div >
