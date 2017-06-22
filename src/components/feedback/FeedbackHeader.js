@@ -40,31 +40,10 @@ export default class PageHeader extends PureComponent {
     };
   }
 
-  // @autobind
-  // handleModuleChange(key) {
-  //   console.log('key', key);
-  //   const { replace, location: { pathname, query } } = this.props;
-  //   // 做跳转页面逻辑处理
-  //   // const url = '?typeKey=${key}';
-  //   // push(url);
-  //   const appId = `${key}`;
-  //   console.log(`selected ${key}`);
-  //   replace({
-  //     pathname,
-  //     query: {
-  //       ...query,
-  //       appId,
-  //     },
-  //   });
-  // }
-
   @autobind
   handleDateChange(dateStrings) {
     console.log('From: ', dateStrings[0], ', to: ', dateStrings[1]);
     const { replace, location: { pathname, query } } = this.props;
-    // 做跳转页面逻辑处理
-    // const url = '?typeKey=${key}';
-    // push(url);
     const feedbackCreateTimeFrom = dateStrings[0];
     const feedbackCreateTimeTo = dateStrings[1];
     replace({
@@ -78,6 +57,19 @@ export default class PageHeader extends PureComponent {
   }
 
 
+  @autobind
+  handleCascaderSelectChange(name, funcName, key) {
+    const { replace, location: { pathname, query } } = this.props;
+    console.log('key>>', key);
+    replace({
+      pathname,
+      query: {
+        ...query,
+        [name]: key instanceof Array ? key[0] : key,
+        [funcName]: key instanceof Array ? key[1] : key,
+      },
+    });
+  }
   @autobind
   handleSelectChange(name, key) {
     const { replace, location: { pathname, query } } = this.props;
@@ -103,6 +95,7 @@ export default class PageHeader extends PureComponent {
     );
     const { location: { query: {
       appId,
+      functionName,
       issueType,
       feedbackTagEnum,
       feedbackStatusEnum,
@@ -116,8 +109,8 @@ export default class PageHeader extends PureComponent {
           style={{ width: '11%' }}
           changeOnSelect
           placeholder="全部"
-          value={!appId ? [] : appId.split(',')}
-          onChange={key => this.handleSelectChange('appId', key)}
+          value={!appId || !functionName ? [] : [appId, functionName]}
+          onChange={key => this.handleCascaderSelectChange('appId', 'functionName', key)}
         />
         类型: <Select
           mode="multiple"
@@ -125,7 +118,7 @@ export default class PageHeader extends PureComponent {
           placeholder="全部"
           value={!issueType ? [] : issueType.split(',')}
           onChange={key => this.handleSelectChange('issueType', key)}
-          allowClear="true"
+          allowClear
         >
           {getSelectOption(typeOptions)}
         </Select>
@@ -135,7 +128,7 @@ export default class PageHeader extends PureComponent {
           placeholder="全部"
           value={!feedbackTagEnum ? [] : feedbackTagEnum.split(',')}
           onChange={key => this.handleSelectChange('feedbackTagEnum', key)}
-          allowClear="true"
+          allowClear
         >
           {getSelectOption(questionTagOptions)}
         </Select>
@@ -145,7 +138,7 @@ export default class PageHeader extends PureComponent {
           defaultValue={['PROCESSING']}
           value={!feedbackStatusEnum ? ['PROCESSING'] : feedbackStatusEnum.split(',')}
           onChange={key => this.handleSelectChange('feedbackStatusEnum', key)}
-          allowClear="true"
+          allowClear
         >
           {getSelectOption(stateOptions)}
         </Select>
