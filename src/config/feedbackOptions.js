@@ -107,10 +107,6 @@ const feedbackOptions = {
       value: 'OTHER',
       label: '其他产品问题',
     },
-    {
-      value: 'NONE',
-      label: '无',
-    },
   ],
   stateOptions: [
     {
