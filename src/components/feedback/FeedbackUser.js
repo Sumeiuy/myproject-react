@@ -32,14 +32,14 @@ export default class FeedbackUser extends PureComponent {
   }
   render() {
     const { data = EMPTY_OBJECT } = this.state;
-    const { rowId, name, department, cellPhone, eMailAddr } = data;
+    const { empId, name, l1, l2, l3, cellPhone, eMailAddr } = data;
     return (
       <div>
         <ul className="property_list clearfix">
           <li className="item">
             <div className="wrap">
               <strong className="name">员工号：</strong>
-              <span className="value">{rowId}</span>
+              <span className="value">{empId}</span>
             </div>
           </li>
           <li className="item">
@@ -51,7 +51,7 @@ export default class FeedbackUser extends PureComponent {
           <li className="item">
             <div className="wrap">
               <strong className="name">部门：</strong>
-              <span className="value">{department}</span>
+              <span className="value">{l1}{l2}{l3}</span>
             </div>
           </li>
           <li className="item">

@@ -14,9 +14,11 @@ const Dragger = Upload.Dragger;
 export default class UploadFiles extends PureComponent {
   static propTypes = {
     attachModelList: PropTypes.array,
+    userId: PropTypes.string,    
   }
   static defaultProps = {
     attachModelList: EMPTY_LIST,
+    userId: '002332',
   }
   constructor(props) {
     super(props);
@@ -38,7 +40,7 @@ export default class UploadFiles extends PureComponent {
           }
         },
       },
-      dataSource: [],
+      fileList: [],
     };
   }
   componentWillReceiveProps(nextProps) {
@@ -46,26 +48,22 @@ export default class UploadFiles extends PureComponent {
     const { attachModelList: prevFileList = EMPTY_LIST } = this.props;
     if (nextFileList !== prevFileList) {
       this.setState({
-        dataSource: nextFileList,
+        fileList: nextFileList,
       });
     }
   }
   render() {
+    const { fileList } = this.state || EMPTY_LIST;
+    const userId = '002332';
+    const getFileList = item => item.map(i =>
+      <li className={`${userId === i.attachUploader ? 'userfile' : 'noUserfile'}`}><a href={i.attachUrl}>{i.attachName}</a> <a className="removeFile">X</a></li>,
+    );
+    // debugger;
     return (
       <Row>
         <Col span="12">
           <ul id="filelist" className="filelist">
-            <li>
-              <a href="##">客户中心问题反馈.doc</a>
-            </li>
-            <li>
-              <a href="##">客户中心问题反馈.doc</a>
-              <a className="removeFile">X</a>
-            </li>
-            <li>
-              <a href="##">客户中心问题反馈.doc</a>
-              <a className="removeFile">X</a>
-            </li>
+            {getFileList(fileList)}
           </ul>
         </Col>
         <Col span="12">

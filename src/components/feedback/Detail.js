@@ -1,5 +1,5 @@
 /**
- * @file components/feedback/Home.js
+ * @file components/feedback/Detail.js
  *  问题反馈
  * @author yangquanjian
  */
@@ -8,6 +8,7 @@ import React, { PropTypes, PureComponent } from 'react';
 import { Row, Col, Button } from 'antd';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
+import { autobind } from 'core-decorators';
 import { withRouter, routerRedux } from 'dva/router';
 import ProblemHandling from './ProblemHandling';
 import Remark from './Remark';
@@ -18,10 +19,12 @@ import UploadFiles from './UploadFiles';
 import './detail.less';
 
 const EMPTY_OBJECT = {};
-// const EMPTY_LIST = [];
+const EMPTY_LIST = [];
 const GETDETAIL = 'feedback/getFeedbackDetail';
+const GETRECORDLIST = 'feedback/getFeedbackRecordList';
 const mapStateToProps = state => ({
   fbDetail: state.feedback.fbDetail,
+  recordList: state.feedback.recordList,
 });
 const getDataFunction = loading => totype => query => ({
   type: totype,
@@ -32,23 +35,31 @@ const mapDispatchToProps = {
   push: routerRedux.push,
   replace: routerRedux.replace,
   getFeedbackDetail: getDataFunction(true)(GETDETAIL),
+  getFeedbackRecordList: getDataFunction(true)(GETRECORDLIST),
 };
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
-export default class FeedBack extends PureComponent {
+export default class Detail extends PureComponent {
   static propTypes = {
     fbDetail: PropTypes.object.isRequired,
+    recordList: PropTypes.object.isRequired,
     getFeedbackDetail: PropTypes.func.isRequired,
+    getFeedbackRecordList: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
+    usreId: PropTypes.string,
   }
   static defaultProps = {
+    usreId: '002332',
   }
   constructor(props) {
     super(props);
-    const { resultData = EMPTY_OBJECT } = this.props.fbDetail || EMPTY_OBJECT;
+    const { fbDetail, location, recordList } = this.props;
+    const { resultData = EMPTY_OBJECT } = fbDetail || EMPTY_OBJECT;
+    const { resultData: voResultData } = recordList || EMPTY_OBJECT;
     this.state = {
       dataSource: resultData,
+      voDataSource: voResultData,
       visible: false,
       remarkVisible: false,
       title: '处理问题',
@@ -59,33 +70,39 @@ export default class FeedBack extends PureComponent {
         right: 8,
       },
       nowStatus: true, // PROCESSING / CLOSED
+      currentId: '',
     };
   }
   componentWillMount() {
-    const { getFeedbackDetail, location: { query } } = this.props;
-    getFeedbackDetail({
-      ...query,
-      id: '267',
-    });
+    const { location: { query } } = this.props;
+    const { currentId } = query;
+    this.handlegetData(currentId);
   }
   componentWillReceiveProps(nextProps) {
-    const { fbDetail: nextDetail = EMPTY_OBJECT } = nextProps;
-    const { fbDetail: preDetail = EMPTY_OBJECT } = this.props;
+    const { fbDetail: nextDetail = EMPTY_OBJECT,
+      location: { query: nextQuery = EMPTY_OBJECT },
+      recordList: nextVOList = EMPTY_OBJECT } = nextProps;
+    const { fbDetail: preDetail = EMPTY_OBJECT,
+      location: { query: prevQuery = EMPTY_OBJECT  },
+      recordList: preVOList = EMPTY_OBJECT } = this.props;
     const { resultData: nextResultData = EMPTY_OBJECT } = nextDetail;
     const { resultData: preResultData = EMPTY_OBJECT } = preDetail;
-    if (preResultData !== nextResultData) {
+    const { currentId } = nextQuery;
+    const { currentId: prevCurrentId } = prevQuery;
+    if (preResultData !== nextResultData || nextVOList !== preVOList) {
       this.setState({
+        voDataSource: nextVOList,
         dataSource: nextDetail,
+        currentId,
       }, () => {
         const { resultData = EMPTY_OBJECT } = nextDetail || EMPTY_OBJECT;
-        const { feedbackDTO: feedbackDetail = EMPTY_OBJECT } = resultData || EMPTY_OBJECT;
-        const { mediaUrls, feedbackStatusEnum } = feedbackDetail;
-        if (mediaUrls === null || mediaUrls === '') {
+        const { attachmentJson = EMPTY_LIST, status } = resultData || EMPTY_OBJECT;
+        if (attachmentJson.length < 1) {
           this.setState({
             hasImgUrl: false,
           });
         }
-        if (feedbackStatusEnum === 'CLOSED') {
+        if (status === 'CLOSED') {
           this.setState({
             nowStatus: false,
             messageBtnValue: '重新打开',
@@ -93,9 +110,25 @@ export default class FeedBack extends PureComponent {
         }
       });
     }
+    //currentId变化重新请求
+    if (currentId !== prevCurrentId) {
+      this.handlegetData(currentId);
+    }
   }
   componentDidUpdate() {
     // const { feedbackDTO: { mediaUrls } } = this.state.dataSource || [];
+  }
+  /**
+   * 数据加载
+   */
+  handlegetData = (cid) => {
+    const { getFeedbackDetail, getFeedbackRecordList } = this.props;
+    getFeedbackRecordList({
+      feedbackId: cid,
+    });
+    getFeedbackDetail({
+      id: cid,
+    });
   }
   /**
    * 弹窗处理（开启）
@@ -166,35 +199,28 @@ export default class FeedBack extends PureComponent {
     this.remarkForm = form;
   }
   render() {
-    const { resultData = EMPTY_OBJECT } = this.state.dataSource || EMPTY_OBJECT;
-    const { feedbackDTO: feedbackDetail = EMPTY_OBJECT } = resultData || EMPTY_OBJECT;
-    const { feedbackRecord = EMPTY_OBJECT } = resultData || EMPTY_OBJECT; // 处理记录
+    const { userId } = this.props;
+    const { dataSource, voDataSource } = this.state;
+    const { resultData = EMPTY_OBJECT } = dataSource || EMPTY_OBJECT;
+    const { resultData: voList = EMPTY_OBJECT } = voDataSource || EMPTY_OBJECT;
+    const { feedbackVOList = EMPTY_LIST } = voList; // 处理记录
+    const { appId, feedId, description, mediaUrls } = resultData || EMPTY_OBJECT; 
     const {
-      id,
-      description,
-      userInfo,
+      feedEmpInfo = EMPTY_OBJECT,
+      attachModelList = EMPTY_LIST,
       functionName,
       createTime,
       version,
-      feedbackStatusEnum,
-      issueType,
-      approach,
+      status,
+      tag,
       processer,
-      jiraId,
-      mediaUrls,
-      attachModelList } = feedbackDetail;
-    const problemDetails = {
+      jiraId
+    } = resultData || EMPTY_OBJECT; // 反馈用户
+    const feedbackDetail = {
       functionName,
       createTime,
       version,
-      feedbackStatusEnum,
-      issueType,
-      approach,
-      processer,
-      jiraId,
-    }; // 问题详情
-    const { rowId, name, department, cellPhone, eMailAddr } = userInfo || EMPTY_OBJECT; // 反馈用户解构
-    const feedbackUser = { rowId, name, department, cellPhone, eMailAddr }; // 反馈用户
+      status, tag, processer, jiraId };
     const remarkbtn = classnames({
       btnhidden: this.state.remarkVisible,
     });
@@ -202,7 +228,7 @@ export default class FeedBack extends PureComponent {
     return (
       <div className="detail_box">
         <div className="inner">
-          <h1 className="bugtitle">【问题】{issueType}/{id}</h1>
+          <h1 className="bugtitle">【问题】{appId}/{feedId}</h1>
           <div className="row_box">
             {hasImgUrl ?
               <Row gutter={16}>
@@ -213,7 +239,7 @@ export default class FeedBack extends PureComponent {
                     </div>
                     <div className="mod_content">
                       <Problemdetails
-                        problemDetails={problemDetails}
+                        problemDetails={feedbackDetail}
                         ref={this.saveRemarkFormRef}
                         onCancel={this.remarkCancel}
                         onCreate={this.saveFromRemark}
@@ -249,7 +275,8 @@ export default class FeedBack extends PureComponent {
                     </div>
                     <div className="mod_content">
                       <Problemdetails
-                        problemDetails={problemDetails}
+                        userId={userId}
+                        problemDetails={resultData}
                         ref={this.saveRemarkFormRef}
                         onCancel={this.remarkCancel}
                         onCreate={this.saveFromRemark}
@@ -280,7 +307,7 @@ export default class FeedBack extends PureComponent {
             </div>
             <div className="mod_content">
               <FeedbackUser
-                fbuser={feedbackUser}
+                fbuser={feedEmpInfo}
               />
             </div>
           </div>
@@ -290,6 +317,7 @@ export default class FeedBack extends PureComponent {
             </div>
             <div className="mod_content">
               <UploadFiles
+                userId={userId}
                 attachModelList={attachModelList}
               />
             </div>
@@ -300,7 +328,7 @@ export default class FeedBack extends PureComponent {
             </div>
             <div className="mod_content">
               <RemarkList
-                remarkList={feedbackRecord}
+                remarkList={feedbackVOList}
               />
               <div className="remarks_box">
                 <Button icon="edit" className={remarkbtn} onClick={this.showRemark}>备注</Button>
