@@ -98,15 +98,15 @@ export default {
         payload: response,
       });
       yield put({
-        type: 'getFeedbackRecordListSuccess',
+        type: 'getFeedbackRecordList',
         payload: {
-          id: response.id,
+          feedbackId: payload.id,
         },
       });
       yield put({
-        type: 'getFeedbackDetailSuccess',
+        type: 'getFeedbackDetail',
         payload: {
-          feedbackId: response.id,
+          id: payload.id,
         },
       });
     },

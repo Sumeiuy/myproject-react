@@ -8,9 +8,7 @@ import React, { PropTypes, PureComponent } from 'react';
 import { Select, Row, Col, Input, Form, Modal, message, Upload } from 'antd';
 import { createForm } from 'rc-form';
 import Icon from '../../components/common/Icon';
-import { feedbackOptions } from '../../config';
-import { helper } from '../../utils';
-import { request } from '../../config';
+import { feedbackOptions, request } from '../../config';
 import './problemHandling.less';
 
 const FormItem = Form.Item;
@@ -51,7 +49,6 @@ export default class ProblemHandling extends PureComponent {
         action: `${request.prefix}/file/feedbackFileUpload`,
         onChange(info) {
           const status = info.file.status;
-          console.log(info,'999999999');
           if (status !== 'uploading') {
             console.log(info.file, info.fileList);
           }
@@ -66,7 +63,7 @@ export default class ProblemHandling extends PureComponent {
   }
   componentWillReceiveProps(nextProps) {
     const { problemDetails: preData = EMPTY_OBJECT } = this.props;
-    const { problemDetails: nextData = EMPTY_OBJECT, nowStatus } = nextProps;
+    const { problemDetails: nextData = EMPTY_OBJECT } = nextProps;
     if (nextData !== preData) {
       this.setState({
         newDetails: nextData,
@@ -74,7 +71,7 @@ export default class ProblemHandling extends PureComponent {
     }
   }
   render() {
-    const { 
+    const {
       visible,
       title,
       onCancel,
@@ -83,18 +80,16 @@ export default class ProblemHandling extends PureComponent {
       form,
     } = this.props;
     const {
-      functionName,
-      createTime,
       processer,
-      version,
       status,
       tag,
-      id
+      id,
     } = this.state.newDetails;
     const { getFieldDecorator } = form;
-    const { popQuestionTagOptions = EMPTY_LIST,
-      stateOptions = EMPTY_LIST,
-      uploadPops } = this.state;
+    const {
+      popQuestionTagOptions = EMPTY_LIST,
+      uploadPops,
+    } = this.state;
     const getSelectOption = item => item.map(i =>
       <Option key={i.value} value={i.value}>{i.label}</Option>,
     );
@@ -131,8 +126,8 @@ export default class ProblemHandling extends PureComponent {
                   <FormItem>
                     {getFieldDecorator('status', { initialValue: `${status}` })(
                       <Select style={{ width: 220 }}>
-                        <Option  value='PROCESSING'>解决中</Option>
-                        <Option  value='CLOSED'>关闭</Option>
+                        <Option value="PROCESSING">解决中</Option>
+                        <Option value="CLOSED">关闭</Option>
                       </Select>,
                     )}
                   </FormItem>
@@ -144,9 +139,9 @@ export default class ProblemHandling extends PureComponent {
                   <FormItem>
                     {getFieldDecorator('processerEmpId', { initialValue: `${processer}` })(
                       <Select style={{ width: 220 }}>
-                        <Option  value='002332'>经办人1</Option>
-                        <Option  value='002333'>经办人2</Option>
-                        <Option  value='002334'>经办人3</Option>
+                        <Option value="002332">经办人1</Option>
+                        <Option value="002333">经办人2</Option>
+                        <Option value="002334">经办人3</Option>
                       </Select>,
                     )}
                   </FormItem>

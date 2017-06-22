@@ -47,10 +47,6 @@ export default class ProblemDetail extends PureComponent {
       popQuestionTagOptions: questionTagOptions,
     };
   }
-  componentDidMount() {
-    // To disabled submit button at the beginning.
-    this.props.form.validateFields();
-  }
   componentWillReceiveProps(nextProps) {
     const { problemDetails: preVisible } = this.props;
     const { problemDetails, nowStatus } = nextProps;
@@ -60,6 +56,7 @@ export default class ProblemDetail extends PureComponent {
         canBeEdited: nowStatus,
       });
     }
+    this.handleClose();
   }
   /**
    * 解决状态
@@ -76,25 +73,7 @@ export default class ProblemDetail extends PureComponent {
     }
     return '--';
   }
-  /**
-   * 修改提交
-  */
-  @autobind
-  handleCreate(e) {
-    e.preventDefault();
-    const form = this.props.form;
-    form.validateFields((err, values) => {
-      console.log(err);
-      if (err) {
-        console.log(11);
-        return;
-      }
-      console.log('Received values of form: ', values);
-      form.resetFields();
-      this.setState({ visible: false });
-    });
-    this.handleClose();
-  }
+
   /**
    * 问题详情编辑
   */
@@ -137,7 +116,7 @@ export default class ProblemDetail extends PureComponent {
     }
     return '无';
   }
-  
+
   /**
    * 问题标签显示转换
   */
@@ -145,9 +124,9 @@ export default class ProblemDetail extends PureComponent {
     if (st) {
       const { popQuestionTagOptions } = this.state;
       const nowStatus = _.find(popQuestionTagOptions, o => o.value === st);
+      return nowStatus.label;
     }
     return '';
-    debugger;
   }
 
   @autobind
@@ -162,7 +141,7 @@ export default class ProblemDetail extends PureComponent {
     });
   }
   render() {
-    const { form } = this.props;
+    const { form, onCreate } = this.props;
     const { data = EMPTY_OBJECT,
       qtab,
       qtabHV,
@@ -259,13 +238,13 @@ export default class ProblemDetail extends PureComponent {
                 </div>
                 <div className={qtHiddenValue}>
                   <FormItem>
-                    {getFieldDecorator('status', { initialValue: '解决中' })(
+                    {getFieldDecorator('tag', { initialValue: `${tag}` })(
                       <Select style={{ width: 140 }} className="qtSelect" id="qtSelect" onBlur={this.handleClose}>
                         {getSelectOption(popQuestionTagOptions)}
                       </Select>,
                     )}
                     <div className="btn">
-                      <a onClick={this.handleCreate}><Icon type="success" /></a>
+                      <a onClick={onCreate}><Icon type="success" /></a>
                       <a onClick={this.handleClose}><Icon type="close" /></a>
                     </div>
                   </FormItem>
@@ -286,11 +265,11 @@ export default class ProblemDetail extends PureComponent {
                 </div>
                 <div className={jiraHiddenValue}>
                   <FormItem>
-                    {getFieldDecorator('jiraNum')(
+                    {getFieldDecorator('jiraId', { initialValue: `${jiraId || ''}` })(
                       <Input style={{ width: 140 }} />,
                     )}
                     <div className="btn">
-                      <a onClick={this.handleCreate}><Icon type="success" /></a>
+                      <a onClick={onCreate}><Icon type="success" /></a>
                       <a onClick={this.handleClose}><Icon type="close" /></a>
                     </div>
                   </FormItem>
@@ -311,14 +290,15 @@ export default class ProblemDetail extends PureComponent {
                 </div>
                 <div className={processerHiddenValue}>
                   <FormItem>
-                    {getFieldDecorator('processer', { initialValue: '信息技术部运维人员' })(
+                    {getFieldDecorator('processerEmpId', { initialValue: `${this.dataNull(processer)}` })(
                       <Select style={{ width: 140 }} className="qtSelect" onBlur={this.handleClose}>
-                        <Option value="信息技术部运维人员">信息技术部运维人员</Option>
-                        <Option value="金基业务总部运维人员">金基业务总部运维人员</Option>
+                        <Option value="002332">经办人1</Option>
+                        <Option value="002333">经办人2</Option>
+                        <Option value="002334">经办人3</Option>
                       </Select>,
                     )}
                     <div className="btn">
-                      <a onClick={this.handleCreate}><Icon type="success" /></a>
+                      <a onClick={onCreate}><Icon type="success" /></a>
                       <a onClick={this.handleClose}><Icon type="close" /></a>
                     </div>
                   </FormItem>

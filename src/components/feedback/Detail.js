@@ -9,6 +9,7 @@ import { Row, Col, Button, message } from 'antd';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
 import { routerRedux } from 'dva/router';
 import ProblemHandling from './ProblemHandling';
 import Remark from './Remark';
@@ -191,25 +192,50 @@ export default class Detail extends PureComponent {
     form.validateFields((err, values) => {
       console.log(err);
       if (err) {
-        console.log(11);
+        message.error(err);
         return;
       }
-      console.log('Received values of form: ', values);
+      let detail = values;
       const removeEmpty = (obj) => {
-        Object.keys(obj).forEach((key) => (obj[key] == null) && delete obj[key]);
-        return obj;
-      }
-      if (values.uploadedFiles && values.uploadedFiles.fileList) {
-        const files = values.uploadedFiles.fileList.map(item => 
+        const objs = obj;
+        Object.keys(objs).forEach(key => _.isEmpty(objs[key]) && delete objs[key]);
+        return objs;
+      };
+      detail = removeEmpty(detail);
+      if (detail.uploadedFiles && detail.uploadedFiles.fileList) {
+        const files = detail.uploadedFiles.fileList.map(item =>
           item.response.resultData,
-        )
-        // debugger;
-        values.uploadedFiles = files;
+        );
+        detail.uploadedFiles = files;
       }
-      
-      
       updateFeedback({
-        ...values,
+        ...detail,
+      });
+      form.resetFields();
+      this.setState({ visible: false });
+    });
+  }
+  @autobind
+  handleEdit() {
+    const form = this.editForm;
+    const { location: { query }, updateFeedback } = this.props;
+    const { currentId } = query;
+    form.validateFields((err, values) => {
+      console.log(err);
+      if (err) {
+        message.error(err);
+        return;
+      }
+      let detail = values;
+      const removeEmpty = (obj) => {
+        const objs = obj;
+        Object.keys(objs).forEach(key => _.isEmpty(objs[key]) && delete objs[key]);
+        return objs;
+      };
+      detail = removeEmpty(detail);
+      updateFeedback({
+        ...detail,
+        id: currentId,
       });
       form.resetFields();
       this.setState({ visible: false });
@@ -261,6 +287,12 @@ export default class Detail extends PureComponent {
   saveRemarkFormRef = (form) => {
     this.remarkForm = form;
   }
+  /**
+   * 详情编辑form
+  */
+  saveEditForm = (form) => {
+    this.editForm = form;
+  }
   render() {
     const { dataSource, voDataSource } = this.state;
     const { resultData = EMPTY_OBJECT } = dataSource || EMPTY_OBJECT;
@@ -277,7 +309,7 @@ export default class Detail extends PureComponent {
       tag,
       processer,
       jiraId,
-      id
+      id,
     } = resultData || EMPTY_OBJECT; // 反馈用户
     const feedbackDetail = {
       functionName,
@@ -287,7 +319,7 @@ export default class Detail extends PureComponent {
       tag,
       processer,
       jiraId,
-      id
+      id,
     };
 
     const remarkbtn = classnames({
@@ -309,9 +341,9 @@ export default class Detail extends PureComponent {
                     <div className="mod_content">
                       <Problemdetails
                         problemDetails={feedbackDetail}
-                        ref={this.saveRemarkFormRef}
+                        ref={this.saveEditForm}
                         onCancel={this.remarkCancel}
-                        onCreate={this.saveFromRemark}
+                        onCreate={this.handleEdit}
                         nowStatus={nowStatus}
                       />
                     </div>
@@ -345,9 +377,9 @@ export default class Detail extends PureComponent {
                     <div className="mod_content">
                       <Problemdetails
                         problemDetails={resultData}
-                        ref={this.saveRemarkFormRef}
+                        ref={this.saveEditForm}
                         onCancel={this.remarkCancel}
-                        onCreate={this.saveFromRemark}
+                        onCreate={this.handleEdit}
                         nowStatus={nowStatus}
                       />
                     </div>
