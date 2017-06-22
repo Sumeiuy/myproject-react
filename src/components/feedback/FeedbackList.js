@@ -91,7 +91,7 @@ export default class FeedbackList extends PureComponent {
   }
 
   componentDidUpdate() {
-    // 
+    //
     const { location: { query, pathname, query: { currentId } }, replace } = this.props;
     const { dataSource = EMPTY_LIST } = this.state;
     if (!currentId) {
