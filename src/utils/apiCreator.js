@@ -25,11 +25,11 @@ export default function createApi() {
   };
 
   // 授权信息: empId, deviceId, token
-  // const authInfo = {
-  //   empId: '002332',
-  //   deviceId: '1002',
-  //   token: 'UAL9EZFG7ZGI4HJ6XXGG8GUMZU3Q6TYX',
-  // };
+  const authInfo = {
+    empId: '002332',
+    deviceId: '1002',
+    token: '75HS855DHMHBEHADVVEP85AI077AEH2J',
+  };
 
   return {
 
@@ -65,7 +65,7 @@ export default function createApi() {
           headers: {
             'Content-Type': 'application/json',
             empId: '002332',
-            // ...authInfo,
+            ...authInfo,
           },
           body: JSON.stringify(query),
         },
