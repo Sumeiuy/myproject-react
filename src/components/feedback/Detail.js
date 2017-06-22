@@ -5,7 +5,7 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import { Row, Col, Button } from 'antd';
+import { Row, Col, Button, message } from 'antd';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 // import { autobind } from 'core-decorators';
@@ -183,18 +183,19 @@ export default class Detail extends PureComponent {
     const { userId, location: { query }, updateFeedback } = this.props;
     const { currentId } = query;
     form.validateFields((err, values) => {
-      console.log(err);
-      if (err) {
-        console.log(11);
-        return;
+      if (values.remarkContent) {
+        if (!err) {
+          console.log('Remark values of form: ', values);
+          updateFeedback({
+            remark: values.remarkContent,
+            id: currentId,
+            processerEmpId: userId,
+            feedbackId: currentId,
+          });
+        }
+      } else {
+        message.error('您还未填写备注信息');
       }
-      console.log('Remark values of form: ', values);
-      updateFeedback({
-        remark: values.remarkContent,
-        id: currentId,
-        processerEmpId: userId,
-        feedbackId: currentId,
-      });
       form.resetFields();
       this.setState({ remarkVisible: false });
     });
