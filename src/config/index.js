@@ -5,5 +5,6 @@ import persist from './persist';
 import request from './request';
 import iconTypeMap from './iconTypeMap';
 import optionsMap from './optionsMap';
+import zhUnicode from './unicode';
 
-export default { constants, log, menu, persist, request, iconTypeMap, optionsMap };
+export default { constants, log, menu, persist, request, iconTypeMap, optionsMap, zhUnicode };
