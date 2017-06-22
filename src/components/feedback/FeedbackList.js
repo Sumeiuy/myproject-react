@@ -90,6 +90,22 @@ export default class FeedbackList extends PureComponent {
     }
   }
 
+  componentDidUpdate() {
+    // 
+    const { location: { query, pathname, query: { currentId } }, replace } = this.props;
+    const { dataSource = EMPTY_LIST } = this.state;
+    if (!currentId) {
+      replace({
+        pathname,
+        query: {
+          ...query,
+          currentId: dataSource[0] && dataSource[0].id,
+        },
+      });
+    }
+  }
+
+
   /**
    * 检查两个对象部分属性是否完全相同
    * @param {*} dic 字典
