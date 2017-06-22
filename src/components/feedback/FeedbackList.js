@@ -52,6 +52,7 @@ export default class FeedbackList extends PureComponent {
     const { resultData: nextResultData = EMPTY_LIST, page = EMPTY_OBJECT } = nextList;
     const { resultData: prevResultData = EMPTY_LIST } = prevList;
     const { curPageNum = 1, totalPageNum = 1, totalRecordNum = 1 } = page;
+    const { currentId } = nextQuery;
 
     if (prevResultData !== nextResultData) {
       this.setState({
@@ -59,6 +60,12 @@ export default class FeedbackList extends PureComponent {
         totalRecordNum,
         totalPageNum,
         curPageNum,
+        currentId,
+      }, () => {
+        this.setState({
+          curSelectedRow: _.findIndex(this.state.dataSource,
+            item => item.id.toString() === this.state.currentId),
+        });
       });
     }
     // 深比较值是否相等
@@ -142,54 +149,6 @@ export default class FeedbackList extends PureComponent {
     const { getFeedbackList, location: { query } } = this.props;
     getFeedbackList(constructPostBody(query, nextPage, currentPageSize));
   }
-
-  // {"appId":"MCRM",
-  // "createTime":"2017-06-08 16:41:25",
-  // "description":" ",
-  // "id":248,
-  // "issueType":"DEFECT",
-  // "mediaUrls":"{\"imageUrls\":
-  // [\"/apigateway/upload/dd3a4e1d-b3ce-4f35-b88e-dfdf3f206034.jpg\"]}",
-  // "pageName":null,
-  // "title":"ios",
-  // "userId":"002332",
-  // "userType":null,
-  // "version":"1.6.1(1t)",
-  // "functionName":"product",
-  // "goodRate":"GOOD",
-  // "status":"PROCESSING",
-  // "processer":"002332",
-  // "tag":null,
-  // "processTime":null,
-  // "feedId":"10248",
-  // "jiraId":null,
-  // "attachmentJson":null,
-  // "attachModelList":null,
-  // "feedEmpInfo":{
-  //   "empId":"002332",
-  //   "name":"王华",
-  //   "gender":"女",
-  //   "eMailAddr":"weiwei@htsc.com",
-  //   "cellPhone":"18951810511",
-  //   "rowId":null,
-  //   "l0":null,
-  //   "l1":null,
-  //   "l2":"南京分公司",
-  //   "l3":"南京长江路证券营业部"
-  // },
-  // "processerEmpInfo":{
-  //   "empId":"002332",
-  //   "name":"王华",
-  //   "gender":"女",
-  //   "eMailAddr":"weiwei@htsc.com",
-  //   "cellPhone":"18951810511",
-  //   "rowId":null,
-  //   "l0":null,
-  //   "l1":null,
-  //   "l2":"南京分公司",
-  //   "l3":"南京长江路证券营业部"
-  // },
-  // "key":0}
 
   /**
    * 构造表格的列数据
@@ -334,7 +293,7 @@ export default class FeedbackList extends PureComponent {
             if (curSelectedRow === index) {
               return 'active';
             }
-            return '';
+            return 'inactive';
           }}
         />
       </div >

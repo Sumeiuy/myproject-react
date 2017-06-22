@@ -121,7 +121,7 @@ export default class Detail extends PureComponent {
     }
 
     /* currentId变化重新请求 */
-    if (currentId !== prevCurrentId) {
+    if (currentId && (currentId !== prevCurrentId)) {
       this.handlegetData(currentId);
     }
   }
