@@ -83,12 +83,6 @@ export default class Detail extends PureComponent {
     };
   }
 
-  componentWillMount() {
-    const { location: { query } } = this.props;
-    const { currentId } = query;
-    this.handlegetData(currentId);
-  }
-
   componentWillReceiveProps(nextProps) {
     const { fbDetail: nextDetail = EMPTY_OBJECT,
       location: { query: { currentId } },

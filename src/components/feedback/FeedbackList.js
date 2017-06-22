@@ -40,7 +40,7 @@ export default class FeedbackList extends PureComponent {
       totalPageNum,
       curPageSize: 10,
       curSelectedRow: 0,
-      currentId: '',
+      // currentId: '',
     };
   }
 
@@ -52,7 +52,7 @@ export default class FeedbackList extends PureComponent {
     const { resultData: nextResultData = EMPTY_LIST, page = EMPTY_OBJECT } = nextList;
     const { resultData: prevResultData = EMPTY_LIST } = prevList;
     const { curPageNum = 1, totalPageNum = 1, totalRecordNum = 1 } = page;
-    const { currentId } = nextQuery;
+    // const { currentId } = nextQuery;
 
     if (prevResultData !== nextResultData) {
       this.setState({
@@ -60,12 +60,6 @@ export default class FeedbackList extends PureComponent {
         totalRecordNum,
         totalPageNum,
         curPageNum,
-        currentId,
-      }, () => {
-        this.setState({
-          curSelectedRow: _.findIndex(this.state.dataSource,
-            item => item.id.toString() === this.state.currentId),
-        });
       });
     }
     // 深比较值是否相等
@@ -92,7 +86,13 @@ export default class FeedbackList extends PureComponent {
           currentId: dataSource[0] && dataSource[0].id,
         },
       });
+      return;
     }
+
+    this.setState({
+      curSelectedRow: _.findIndex(dataSource,
+        item => item.id.toString() === currentId),
+    });
   }
 
 
