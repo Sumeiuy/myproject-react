@@ -10,6 +10,7 @@ import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import { Cascader, Select, DatePicker } from 'antd';
 import moment from 'moment';
+import _ from 'lodash';
 import { feedbackOptions } from '../../config';
 import './feedbackHeader.less';
 
@@ -42,7 +43,6 @@ export default class PageHeader extends PureComponent {
 
   @autobind
   handleDateChange(dateStrings) {
-    console.log('From: ', dateStrings[0], ', to: ', dateStrings[1]);
     const { replace, location: { pathname, query } } = this.props;
     const feedbackCreateTimeFrom = dateStrings[0];
     const feedbackCreateTimeTo = dateStrings[1];
@@ -60,25 +60,23 @@ export default class PageHeader extends PureComponent {
   @autobind
   handleCascaderSelectChange(name, funcName, key) {
     const { replace, location: { pathname, query } } = this.props;
-    console.log('key>>', key);
     replace({
       pathname,
       query: {
         ...query,
-        [name]: key instanceof Array ? key[0] : key,
-        [funcName]: key instanceof Array ? key[1] : key,
+        [name]: _.isArray(key) ? key[0] : key,
+        [funcName]: _.isArray(key) ? key[1] : key,
       },
     });
   }
   @autobind
   handleSelectChange(name, key) {
     const { replace, location: { pathname, query } } = this.props;
-    console.log('key>>', key);
     replace({
       pathname,
       query: {
         ...query,
-        [name]: key instanceof Array ? key.join(',') : key,
+        [name]: _.isArray(key) ? key.join(',') : key,
       },
     });
   }
@@ -100,7 +98,24 @@ export default class PageHeader extends PureComponent {
       feedbackTagEnum,
       feedbackStatusEnum,
       processer,
+      feedbackCreateTimeFrom,
+      feedbackCreateTimeTo,
     } } } = this.props;
+
+    // 级联选择的value
+    let cascaderVale = [];
+    if (appId) {
+      cascaderVale = [appId];
+      if (functionName) {
+        cascaderVale = [appId, functionName];
+      } else {
+        cascaderVale = [appId];
+      }
+    }
+
+    // 默认时间
+    const startTime = feedbackCreateTimeFrom ? moment(feedbackCreateTimeFrom) : null;
+    const endTime = feedbackCreateTimeTo ? moment(feedbackCreateTimeTo) : null;
 
     return (
       <div className="feedbackHeader">
@@ -109,7 +124,7 @@ export default class PageHeader extends PureComponent {
           style={{ width: '11%' }}
           changeOnSelect
           placeholder="全部"
-          value={!appId || !functionName ? [] : [appId, functionName]}
+          value={cascaderVale}
           onChange={key => this.handleCascaderSelectChange('appId', 'functionName', key)}
         />
         类型: <Select
@@ -145,7 +160,9 @@ export default class PageHeader extends PureComponent {
         反馈时间:<RangePicker
           style={{ width: '16%' }}
           ranges={{ Today: [moment(), moment()], 'This Month': [moment(), moment().endOf('month')] }}
+          value={[startTime, endTime]}
           onChange={this.handleDateChange}
+          placeholder={['开始时间', '结束时间']}
         />
         经办人: <Select
           defaultValue="ALL"
