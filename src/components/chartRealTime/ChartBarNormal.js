@@ -23,6 +23,8 @@ import Icon from '../common/Icon';
 import styles from './ChartBar.less';
 import imgSrc from './noChart.png';
 
+const getIcon = iconTypeMap.getIcon;
+
 export default class ChartBarNormal extends PureComponent {
 
   static propTypes = {
@@ -108,8 +110,9 @@ export default class ChartBarNormal extends PureComponent {
   }
 
   render() {
-    const { scope, chartData: { indiModel: { name, key }, orgModel = [] } } = this.props;
+    const { scope, chartData: { indiModel: { name }, orgModel = [] } } = this.props;
     let { chartData: { indiModel: { unit } } } = this.props;
+    const IndexIcon = getIcon(unit);
     const levelAndScope = Number(scope);
     const levelName = `level${levelAndScope}Name`;
     // 分公司名称数组
@@ -308,7 +311,7 @@ export default class ChartBarNormal extends PureComponent {
       <div className={styles.chartMain}>
         <div className={styles.chartHeader}>
           <div className={styles.chartTitle}>
-            <Icon type={iconTypeMap[key]} className={styles.chartTiltleTextIcon} />
+            <Icon type={IndexIcon} className={styles.chartTiltleTextIcon} />
             <span className={styles.chartTitleText}>{`${name}(${unit})`}</span>
           </div>
         </div>

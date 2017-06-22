@@ -18,13 +18,15 @@ import {
   fixedPermillageMaxMin,
   fixedMoneyMaxMin,
   fixedPeopleMaxMin,
-  fixedStackLegendData,
+  dealStackSeiesHu,
 } from './chartData';
 import IECharts from '../IECharts';
 import { iconTypeMap } from '../../config';
 import Icon from '../common/Icon';
 import styles from './ChartBar.less';
 import imgSrc from '../chartRealTime/noChart.png';
+
+const getIcon = iconTypeMap.getIcon;
 
 export default class ChartBarStack extends PureComponent {
 
@@ -74,6 +76,7 @@ export default class ChartBarStack extends PureComponent {
     const { scope, chartData: { indiModel: { name, key }, orgModel = [] } } = this.props;
     // 获取本图表的单位,
     let { chartData: { indiModel: { unit } } } = this.props;
+    const IndexIcon = getIcon(unit);
     // 查询当前需要的Y轴字段名称
     const levelAndScope = Number(scope);
     const levelName = `level${levelAndScope}Name`;
@@ -92,11 +95,7 @@ export default class ChartBarStack extends PureComponent {
     }
     // 获取stackSeries
     const stack = getStackSeries(orgModel, 'indiModelList', key);
-    const stackLegend = fixedStackLegendData(stack.legends);
-    let stackGridTop = '30px';
-    if (stackLegend.length > 3) {
-      stackGridTop = '50px';
-    }
+    const stackLegend = stack.legends;
     let stackSeries = stack.series;
     // 此处需要进行对stackSeries中的每一个data根据单位来进行特殊处理
     if (unit === '%') {
@@ -106,6 +105,10 @@ export default class ChartBarStack extends PureComponent {
     } else if (unit === '元') {
       // 如果图表中的数据表示的是金额的话，需要对其进行单位识别和重构
       const tempStackSeries = dealStackSeriesMoney(stackSeries);
+      stackSeries = tempStackSeries.newStackSeries;
+      unit = tempStackSeries.newUnit;
+    } else if (unit === '户') {
+      const tempStackSeries = dealStackSeiesHu(stackSeries);
       stackSeries = tempStackSeries.newStackSeries;
       unit = tempStackSeries.newUnit;
     }
@@ -126,7 +129,7 @@ export default class ChartBarStack extends PureComponent {
       const maxAndMinMoney = fixedMoneyMaxMin(gridAxisTick);
       gridXAxisMax = maxAndMinMoney.max;
       gridXaxisMin = maxAndMinMoney.min;
-    } else if (unit === '户' || unit === '人') {
+    } else if (unit.indexOf('户') > -1 || unit === '人') {
       const maxAndMinPeople = fixedPeopleMaxMin(gridAxisTick);
       gridXAxisMax = maxAndMinPeople.max;
       gridXaxisMin = maxAndMinPeople.min;
@@ -208,24 +211,15 @@ export default class ChartBarStack extends PureComponent {
       padding: [12, 11, 13, 13],
       extraCssText: 'border-radius: 8px;',
     };
+
     // eCharts的配置项
     const options = {
       color: [...stackBarColors],
       tooltip: {
         ...tooltipOtions,
       },
-      legend: {
-        width: '95%',
-        left: '0',
-        selectedMode: false,
-        data: stackLegend,
-        textStyle: {
-          color: '#777',
-        },
-      },
       grid: {
         ...gridOptions,
-        top: stackGridTop,
       },
       xAxis: {
         type: 'value',
@@ -283,9 +277,27 @@ export default class ChartBarStack extends PureComponent {
       <div className={styles.chartMain}>
         <div className={styles.chartHeader}>
           <div className={styles.chartTitle}>
-            <Icon type={iconTypeMap[key]} className={styles.chartTiltleTextIcon} />
+            <Icon type={IndexIcon} className={styles.chartTiltleTextIcon} />
             <span className={styles.chartTitleText}>{`${name}(${unit})`}</span>
           </div>
+        </div>
+        <div className={styles.chartLegend}>
+          {
+            stackLegend.map((item, index) => {
+              const backgroundColor = stackBarColors[index];
+              return (
+                <div className={styles.oneLegend}>
+                  <div
+                    className={styles.legendIcon}
+                    style={{
+                      backgroundColor,
+                    }}
+                  />
+                  {item}
+                </div>
+              );
+            })
+          }
         </div>
         <div className={styles.chartWrapper}>
           {

@@ -2,9 +2,21 @@
   background: #f3f3f4;
   padding-bottom: 8px;
 }
-.colWrapper:nth-child(n+4) div{
-  margin-top: 8px;
+@media (max-width:1579px) {
+  .colWrapper:nth-child(n+4) > div{
+    margin-top: 8px;
+  }
+  .colWrapper:nth-child(3n) > div{
+    margin-right: 0;
+  }
+
 }
-.colWrapper:nth-child(3n) div{
-  margin-right: 0;
+@media (min-width: 1600px) {
+  .colWrapper:nth-child(n+5) > div{
+    margin-top: 8px;
+  }
+  .colWrapper:nth-child(4n) > div{
+    margin-right: 0;
+  }
 }
+
