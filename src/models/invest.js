@@ -2,9 +2,6 @@
  * @file models/invest.js
  * @author sunweibin
  */
-
-// import { routerRedux } from 'dva/router';
-
 import api from '../api';
 import config from '../config/request';
 
@@ -15,6 +12,7 @@ export default {
     chartInfo: [],
     custRange: [],
     chartTableInfo: {},
+    allCategory: [],
   },
   reducers: {
     getPerformanceSuccess(state, action) {
@@ -33,12 +31,48 @@ export default {
         chartInfo,
       };
     },
-    getChartTableInfoSuccess(state, action) {
-      const { payload: { resChartTableInfo } } = action;
-      const chartTableInfo = resChartTableInfo.resultData.data;
+    getAllCategorysSuccess(state, action) {
+      const { payload: { allCategorys } } = action;
+      const newAll = allCategorys.resultData.map((item) => {
+        const { key, name } = item;
+        return { key, name };
+      });
       return {
         ...state,
-        chartTableInfo,
+        allCategory: newAll,
+      };
+    },
+    getOneChartInfoSuccess(state, action) {
+      const { payload: { oneChart } } = action;
+      const { chartInfo } = state;
+      const resultData = oneChart.resultData;
+      const newChart = resultData[0];
+      const categoryKey = newChart.key;
+      const newChartInfo = chartInfo.map((item) => {
+        const { key } = item;
+        if (key === categoryKey) {
+          return newChart;
+        }
+        return item;
+      });
+      return {
+        ...state,
+        chartInfo: newChartInfo,
+      };
+    },
+    getChartTableInfoSuccess(state, action) {
+      const { payload: { resChartTableInfo, categoryKey } } = action;
+      const chartTable = resChartTableInfo.resultData;
+      const newChartTableInfo = chartTable.data;
+      // 按照 ID 来存储相应数据
+      const chartTableId = categoryKey;
+      const preChartTableInfo = state.chartTableInfo;
+      return {
+        ...state,
+        chartTableInfo: {
+          ...preChartTableInfo,
+          [chartTableId]: newChartTableInfo,
+        },
       };
     },
     getCustRangeSuccess(state, action) {
@@ -64,14 +98,8 @@ export default {
       const { prefix } = config;
       yield window.location.href = `${prefix}/excel/jxzb/exportExcel?${query}`;
     },
-    // 获取业绩指标
-    * getPerformance({ payload }, { call, put }) {
-      const resPerformance = yield call(api.getPerformance, payload);
-      yield put({
-        type: 'getPerformanceSuccess',
-        payload: { resPerformance },
-      });
-    },
+    // 初始化只需要取总量指标和该报表下的所有分类指标数据
+    // 以及用户组织机构树
     * getAllInfo({ payload }, { call, put, select }) {
       const cust = yield select(state => state.invest.custRange);
       let firstCust;
@@ -96,58 +124,43 @@ export default {
         type: 'getPerformanceSuccess',
         payload: { resPerformance },
       });
-      // 判断柱状图或者表格
-      // 柱状图
-      if (!payload.showChart || payload.showChart === 'zhuzhuangtu') {
-        const resChartInfo = yield call(api.getChartInfo, {
-          ...payload.chartInfo,
-          localScope: payload.chartInfo.localScope || firstCust.level,
-          orgId: payload.chartInfo.orgId || firstCust.id,
-          scope: payload.chartInfo.scope || parseInt(firstCust.level, 10) + 1,
-        });
-        yield put({
-          type: 'getChartInfoSuccess',
-          payload: { resChartInfo },
-        });
-      } else if (payload.showChart === 'tables') {
-        // 表格
-        const resChartTableInfo = yield call(api.getChartTableInfo, {
-          ...payload.chartTableInfo,
-          localScope: payload.chartTableInfo.localScope || firstCust.level,
-          orgId: payload.chartTableInfo.orgId || firstCust.id,
-          scope: payload.chartTableInfo.scope || parseInt(firstCust.level, 10) + 1,
-          pageSize: 10,
-        });
-        yield put({
-          type: 'getChartTableInfoSuccess',
-          payload: { resChartTableInfo },
-        });
-      }
-    },
-    // 获取投顾图表数据
-    * getChartInfo({ payload }, { call, put }) {
-      const resChartInfo = yield call(api.getChartInfo, payload);
+      // 所有分类指标的数据
+      const resChartInfo = yield call(api.getChartInfo, {
+        ...payload.chartInfo,
+        localScope: payload.chartInfo.localScope || firstCust.level,
+        orgId: payload.chartInfo.orgId || firstCust.id,
+        scope: payload.chartInfo.scope || String(Number(firstCust.level) + 1),
+      });
       yield put({
         type: 'getChartInfoSuccess',
         payload: { resChartInfo },
+      });
+    },
+    // 获取所有分类
+    * getAllCategorys({ payload }, { call, put }) {
+      // 获取所有分类指标信息
+      const allCategorys = yield call(api.getAllClassifyIndex, payload);
+      yield put({
+        type: 'getAllCategorysSuccess',
+        payload: { allCategorys },
+      });
+    },
+    // 根据某一个分类指标的ID查询该分类指标下数据
+    * getOneChartInfo({ payload }, { call, put }) {
+      const oneChart = yield call(api.getOneChartInfo, payload);
+      yield put({
+        type: 'getOneChartInfoSuccess',
+        payload: { oneChart },
       });
     },
 
     // 获取图表表格视图数据
     * getChartTableInfo({ payload }, { call, put }) {
       const resChartTableInfo = yield call(api.getChartTableInfo, payload);
+      const categoryKey = payload.categoryKey;
       yield put({
         type: 'getChartTableInfoSuccess',
-        payload: { resChartTableInfo },
-      });
-    },
-
-    // 获取客户范围
-    * getCustRange({ payload }, { call, put }) {
-      const response = yield call(api.getCustRange, payload);
-      yield put({
-        type: 'getCustRangeSuccess',
-        response,
+        payload: { resChartTableInfo, categoryKey },
       });
     },
   },
