@@ -4,8 +4,9 @@
  * @author maoquan(maoquan@htsc.com)
  */
 
-import bowser from 'bowser';
 import moment from 'moment';
+import bowser from 'bowser';
+import _ from 'lodash';
 
 import constants from '../config/constants';
 
@@ -21,15 +22,11 @@ function getOS() {
 }
 
 const helper = {
-  // 获取元素CSS的样式
-  getCssStyle(ele, css) {
-    return window.getComputedStyle(ele, null).getPropertyValue(css);
-  },
 
   // 获取 empId
   getEmpId() {
     // 临时 ID
-    const tempId = '002727';
+    const tempId = '002332';
     const nativeQuery = helper.getQuery(window.location.search);
     const empId = window.curUserCode || nativeQuery.empId || tempId;
     return empId;
@@ -155,6 +152,56 @@ const helper = {
       obj.unit = '';
     }
     return obj;
+  },
+
+  /**
+   * 构造入参
+   * @param {*} query 查询
+   * @param {*} newPageNum 当前页
+   * @param {*} newPageSize 当前分页条目数
+   */
+  constructPostBody(query, newPageNum, newPageSize) {
+    let finalPostData = {
+      page: {
+        curPageNum: newPageNum,
+        pageSize: newPageSize,
+      },
+      userId: helper.getEmpId(), // 反馈问题用户Id
+    };
+
+    const omitData = _.omit(query, ['currentId', 'feedbackCreateTimeFrom', 'feedbackCreateTimeTo']);
+    finalPostData = _.merge(finalPostData, omitData);
+
+    const { feedbackCreateTimeTo, feedbackCreateTimeFrom } = query;
+    const formatedTime = {
+      feedbackCreateTimeFrom: helper.formatTime(feedbackCreateTimeFrom),
+      feedbackCreateTimeTo: helper.formatTime(feedbackCreateTimeTo),
+    };
+
+    // 对反馈状态做处理
+    if (!('feedbackStatusEnum' in finalPostData)
+      || _.isEmpty(finalPostData.feedbackStatusEnum)) {
+      finalPostData = _.merge(finalPostData, { feedbackStatusEnum: 'PROCESSING' });
+    }
+
+    // 对经办人做过滤处理
+    if ('processer' in finalPostData) {
+      if (finalPostData.processer === 'ALL') {
+        finalPostData.processer = '';
+      } else if (finalPostData.processer === 'SELF') {
+        finalPostData.processer = helper.getEmpId();
+      }
+    }
+
+    return _.merge(finalPostData, formatedTime);
+  },
+
+  /**
+   * 格式化时间戳
+   * @param {*} time 中国标准时间
+   */
+  formatTime(time) {
+    return moment(time).format('YYYY/MM/DD');
   },
 
   /**

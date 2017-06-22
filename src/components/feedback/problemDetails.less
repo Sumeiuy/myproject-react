@@ -1,0 +1,71 @@
+:global{
+  .anticon-edit{
+    margin-left:10px;
+    box-sizing: border-box;
+    opacity: 0;
+    color:#333;
+    background-color: #f0f0f0;
+    background-repeat: no-repeat;
+    background-position: 4px 4px;
+    border-left: 1px solid #ccc;
+    bottom: 0;
+    height: auto;
+    margin: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 24px;
+    z-index: -1;
+    text-align:center;
+  }
+  .editable_field:hover{
+      box-shadow: 0 0 0 1px #CCC;
+      z-index: 1;
+      .anticon-edit{
+        // display: inline-block;
+        opacity: 1;
+      }
+  }
+  .hidden_value{
+    display: none;
+    word-wrap: break-word;
+    word-break: break-word;
+    max-width: 100%;
+    padding-bottom: 2px;
+    padding-left: 5px;
+    padding-top: 2px;
+    position: relative;
+    vertical-align: top;
+    .ant-form-item{
+      margin-bottom:0;
+      position: absolute;
+    }
+    .btn{
+      position:absolute;
+      top:27px;
+      right:0px;
+      left:0;
+      width:100%;
+      text-align:right;
+      z-index: 3;
+      height: 40px;
+      // background:red;
+      a{
+        display: inline-block;
+        border:1px solid #CCC;
+        color:#ccc;
+        margin-left:5px;
+        width:25px;
+        height: 20px;
+        line-height:20px;
+        text-align:center;
+      }
+    }
+  }
+  .eitbox{
+    display: none;
+  }
+  .edit_show{
+    display: inline-block;
+  }
+}

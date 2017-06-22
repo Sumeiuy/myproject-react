@@ -15,12 +15,12 @@ import {
   getMaxAndMinMoney,
   getMaxAndMinCust,
   toFixedMoney,
-  toFixedCust,
 } from './FixNumber';
 import IECharts from '../IECharts';
 import { iconTypeMap } from '../../config';
 import Icon from '../common/Icon';
 import styles from './ChartBar.less';
+
 import imgSrc from './noChart.png';
 
 export default class ChartBarNormal extends PureComponent {
@@ -111,10 +111,10 @@ export default class ChartBarNormal extends PureComponent {
     const { scope, chartData: { indiModel: { name, key }, orgModel = [] } } = this.props;
     let { chartData: { indiModel: { unit } } } = this.props;
     const levelAndScope = Number(scope);
+
     const levelName = `level${levelAndScope}Name`;
     // 分公司名称数组
     const levelCompanyArr = this.getChartData(orgModel, 'level2Name', 'yAxis');
-    // 营业部
     const levelStoreArr = this.getChartData(orgModel, 'level3Name', 'yAxis');
 
     // 此处为y轴刻度值
@@ -139,10 +139,6 @@ export default class ChartBarNormal extends PureComponent {
       const tempSeries = toFixedMoney(seriesData);
       seriesData = tempSeries.newSeries;
       unit = tempSeries.newUnit;
-    } else if (unit === '户') {
-      const tempSeries = toFixedCust(seriesData);
-      seriesData = tempSeries.newSeries;
-      unit = tempSeries.newUnit;
     }
     const seriesDataLen = seriesData.length;
     // 数据中最大的值
@@ -151,6 +147,7 @@ export default class ChartBarNormal extends PureComponent {
     let gridXAxisMax = xMax * 1.1 || 1;
     let gridXaxisMin = 0;
     if (unit === '%') {
+      // TODO 此处需要对
       const maxAndMinPercent = getMaxAndMinPercent(seriesData);
       gridXAxisMax = maxAndMinPercent.max;
       gridXaxisMin = maxAndMinPercent.min;
@@ -162,7 +159,7 @@ export default class ChartBarNormal extends PureComponent {
       const maxAndMinMoney = getMaxAndMinMoney(seriesData);
       gridXAxisMax = maxAndMinMoney.max;
       gridXaxisMin = maxAndMinMoney.min;
-    } else if (unit === '人' || unit.indexOf('户') > -1) {
+    } else if (unit === '户' || unit === '人') {
       const maxAndMinPeople = getMaxAndMinCust(seriesData);
       gridXAxisMax = maxAndMinPeople.max;
       gridXaxisMin = maxAndMinPeople.min;
@@ -186,11 +183,9 @@ export default class ChartBarNormal extends PureComponent {
       gridXAxisMax = 0;
     }
     // 柱状图阴影
-    const maxDataShadow = [];
-    const minDataShadow = [];
+    const dataShadow = [];
     for (let i = 0; i < seriesDataLen; i++) {
-      maxDataShadow.push(gridXAxisMax);
-      minDataShadow.push(gridXaxisMin);
+      dataShadow.push(gridXAxisMax);
     }
     // tooltip 配置项
     const tooltipOtions = {
@@ -199,7 +194,7 @@ export default class ChartBarNormal extends PureComponent {
         type: 'shadow',
       },
       formatter(params) {
-        const item = params[2];
+        const item = params[1];
         const axisValue = item.axisValue;
         const seriesName = item.seriesName;
         let value = item.data.value;
@@ -284,11 +279,7 @@ export default class ChartBarNormal extends PureComponent {
       series: [
         {
           ...barShadow,
-          data: maxDataShadow,
-        },
-        {
-          ...barShadow,
-          data: minDataShadow,
+          data: dataShadow,
         },
         {
           name,
@@ -314,20 +305,15 @@ export default class ChartBarNormal extends PureComponent {
         </div>
         <div className={styles.chartWrapper}>
           {
-            (orgModel && orgModel.length > 0)
-            ?
-            (
-              <IECharts
+            (orgModel && orgModel.length) ?
+              (<IECharts
                 option={options}
                 resizable
-              />
-            )
+              />)
             :
-            (
-              <div className={styles.noChart}>
+              (<div className={styles.noChart}>
                 <img src={imgSrc} alt="图表不可见" />
-              </div>
-            )
+              </div>)
           }
         </div>
       </div>

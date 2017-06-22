@@ -53,105 +53,127 @@ export default class ChartTable extends PureComponent {
       orderIndicatorId: '',
       orderType: '',
       pageNum: 1,
+      pageSize: 10,
     };
   }
-  // 组合表格头部 排序 html
+
+  // 分页事件
   @autobind
-  getTitleHtml(item, flag = true) {
+  handlePaginationChange(page, pageSize) {
+    const { replace, location: { query, pathname }, getTableInfo, indexID } = this.props;
     const { orderIndicatorId, orderType } = this.state;
-    let titleHtml = '';
-    if (flag) {
-      titleHtml = (<span
-        className={styles.columnsTitle}
-        onClick={() => { this.handleTitleClick(item); }}
-      >
-        {`${item.name}(${encodeURIComponent(item.unit) === encodeURIComponent('元') ? '万元' : item.unit})`}
-        <span className={'ant-table-column-sorter'}>
-          <span
-            className={`
-              ant-table-column-sorter-up
-              ${(orderIndicatorId === item.key && (orderType !== 'desc')) ? 'on' : 'off'}
-            `}
-            title="↑"
-            onClick={(e) => {
-              this.arrowHandle(e, item, 'asc');
-            }}
-          >
-            <i className={'anticon anticon-caret-up'} />
-          </span>
-          <span
-            className={`
-              ant-table-column-sorter-up
-              ${(orderIndicatorId === item.key && (orderType !== 'asc')) ? 'on' : 'off'}
-            `}
-            title="↓"
-            onClick={(e) => {
-              this.arrowHandle(e, item, 'desc');
-            }}
-          >
-            <i className={'anticon anticon-caret-down'} />
-          </span>
-        </span>
-      </span>);
+    if (pathname.indexOf('invest') > -1) {
+      replace({
+        pathname,
+        query: {
+          ...query,
+          page,
+          pageSize,
+        },
+      });
     } else {
-      titleHtml = `${item.name}(${encodeURIComponent(item.unit) === encodeURIComponent('元') ? '万元' : item.unit})`;
+      this.setState({
+        pageNum: page,
+      });
+      getTableInfo({
+        pageNum: page,
+        orderIndicatorId,
+        orderType,
+        indicatorId: indexID,
+      });
     }
-    return titleHtml;
   }
-  // 获取表格头部子元素
+
   @autobind
-  getChildren(item) {
-    const childrenArr = [];
-    if (item.children) {
-      item.children.map(child =>
-        childrenArr.push({
-          title: this.getTitleHtml(child),
-          dataIndex: child.key,
-          key: `key${child.key}`,
-          width: 150,
-        }));
-    }
-    return childrenArr;
+  unitChange(arr) {
+    let value;
+    const newArr = arr.map((item) => {
+      const itemValue = Number(item.value);
+      switch (item.unit) {
+        case '%':
+          value = Number.parseFloat((itemValue * 100).toFixed(2));
+          break;
+        case '\u2030':
+          value = Number.parseFloat((itemValue * 1000).toFixed(2));
+          break;
+        case '元':
+          value = `${Number.parseFloat((itemValue / 10000).toFixed(2))}`;
+          break;
+        default:
+          value = Number.parseFloat(itemValue.toFixed(2));
+          break;
+      }
+      return {
+        [item.key]: value,
+      };
+    });
+    return newArr;
   }
+
   @autobind
   handleTitleClick(item) {
-    const { getTableInfo, indexID, scope } = this.props;
+    const { replace, location: { query, pathname }, getTableInfo, indexID } = this.props;
     const { orderIndicatorId, orderType, pageNum } = this.state;
     let tableOrderType;
-    if (orderIndicatorId === item.key) {
-      tableOrderType = revert[orderType] || 'desc';
+    if (pathname.indexOf('invest') > -1) {
+      if (query.orderIndicatorId === item.key) {
+        tableOrderType = revert[query.tableOrderType] || 'desc';
+      } else {
+        tableOrderType = 'asc';
+      }
+      replace({
+        pathname,
+        query: {
+          ...query,
+          orderIndicatorId: item.key || '',
+          tableOrderType,
+        },
+      });
     } else {
-      tableOrderType = 'asc';
+      if (orderIndicatorId === item.key) {
+        tableOrderType = revert[orderType] || 'desc';
+      } else {
+        tableOrderType = 'asc';
+      }
+      this.setState({
+        orderIndicatorId: item.key,
+        orderType: tableOrderType,
+      });
+      getTableInfo({
+        orderIndicatorId: item.key,
+        orderType: tableOrderType,
+        pageNum,
+        indicatorId: indexID,
+      });
     }
-    this.setState({
-      orderIndicatorId: item.key,
-      orderType: tableOrderType,
-    });
-    getTableInfo({
-      orderIndicatorId: item.key,
-      orderType: tableOrderType,
-      pageNum,
-      scope,
-      categoryKey: indexID,
-    });
   }
   // 表格标题排序箭头事件
   @autobind
   arrowHandle(e, item, type) {
-    const { getTableInfo, indexID, scope } = this.props;
+    const { replace, location: { query, pathname }, getTableInfo, indexID } = this.props;
     const { pageNum } = this.state;
     e.stopPropagation();
-    this.setState({
-      orderIndicatorId: item.key,
-      orderType: type,
-    });
-    getTableInfo({
-      orderIndicatorId: item.key,
-      orderType: type,
-      pageNum,
-      scope,
-      categoryKey: indexID,
-    });
+    if (pathname.indexOf('invest') > -1) {
+      replace({
+        pathname,
+        query: {
+          ...query,
+          orderIndicatorId: item.key || '',
+          tableOrderType: type,
+        },
+      });
+    } else {
+      this.setState({
+        orderIndicatorId: item.key,
+        orderType: type,
+      });
+      getTableInfo({
+        orderIndicatorId: item.key,
+        orderType: type,
+        pageNum,
+        indicatorId: indexID,
+      });
+    }
   }
   // 表格第一列 tooltip 处理事件
   @autobind
@@ -187,58 +209,6 @@ export default class ChartTable extends PureComponent {
     // </Tooltip>
     // :
     // <div className={styles.tdWrapperDiv}>{record.city}</div>;
-  }
-  @autobind
-  unitChange(arr) {
-    let value;
-    const newArr = arr.map((item) => {
-      const itemValue = Number(item.value);
-      switch (item.unit) {
-        case '%':
-          value = Number.parseFloat((itemValue * 100).toFixed(2));
-          break;
-        case '\u2030':
-          value = Number.parseFloat((itemValue * 1000).toFixed(2));
-          break;
-        case '元':
-          value = `${Number.parseFloat((itemValue / 10000).toFixed(2))}`;
-          break;
-        default:
-          value = Number.parseFloat(itemValue.toFixed(2));
-          break;
-      }
-      return {
-        [item.key]: value,
-      };
-    });
-    return newArr;
-  }
-  // 分页事件
-  @autobind
-  handlePaginationChange(page) {
-    const { getTableInfo, indexID, scope } = this.props;
-    const { orderIndicatorId, orderType } = this.state;
-    this.setState({
-      pageNum: page,
-    });
-    getTableInfo({
-      pageNum: page,
-      orderIndicatorId,
-      orderType,
-      scope,
-      categoryKey: indexID,
-    });
-  }
-  @autobind
-  renderContent(value, row, index) {
-    const obj = {
-      children: value,
-      props: {},
-    };
-    if (index === 0) {
-      obj.props.colSpan = 2;
-    }
-    return obj;
   }
 
   render() {
@@ -309,7 +279,7 @@ export default class ChartTable extends PureComponent {
           defaultCurrent={1}
           current={chartTableInfo.curPageNum || 1}
           total={chartTableInfo.totalCnt || 1}
-          pageSize={chartTableInfo.pageSize}
+          pageSize={10}
           onChange={this.handlePaginationChange}
         />
       </div>

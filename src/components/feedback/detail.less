@@ -1,0 +1,135 @@
+:global{
+  .clear{clear:both; height: 0; line-height: 0; font-size: 0}
+  .detail_box{
+    padding:10px 10px 10px 0;
+    h1,h2,h3{
+      color:#33393c;
+      font-size: 14px;
+    }
+    #remak h3{
+      color:#777777;
+      font-weight: normal
+    }
+    .btnhidden{
+      display: none;
+    }
+    .inner{
+      background-color:#FFF;
+      padding:20px;
+      .mod_header{
+        position: relative;
+        padding-left:10px;
+        &:before{
+          content: '';
+          position: absolute;
+          left:0;
+          top:3px;
+          bottom: 3px;
+          width:4px;
+          background-color: #108ee9;
+        }
+      }
+      .bugtitle{
+        border-bottom:1px solid #c2c2c2;
+        padding:0 0 15px 0;
+        text-indent:-8px;
+      }
+      .row_box{
+        // padding:15px 0;
+        border-bottom:1px solid #f3f3f4;
+        .module:last-child{
+          border:0;
+        }
+      }
+      .imgbox{
+        padding:20px 0 0 0;
+        img{
+          width: 100%;
+          min-height: 300px;
+          display: block;
+          background: #ccc;
+        }
+      }
+      .module{
+        padding:15px 0;
+        border-bottom:1px solid #f3f3f4;
+        h2{
+          font-weight: normal
+        }
+        .mod_content{
+          padding: 5px 0;
+          .property_list{
+            li{
+              padding: 5px 0;
+              height: 40px;
+              .wrap {
+                padding: 0 10px 0 90px;
+              }
+              width: 50%;
+              float:left;
+              box-sizing: border-box;
+              .name{
+                float: left;
+                margin-left: -90px;
+                color:#c2c2c2;
+                box-sizing: border-box;
+                word-wrap: break-word;
+                word-break: break-word;
+                display: inline-block;
+                font-weight: normal;
+                padding: 2px 5px 2px 0;
+                padding-right: 5px;
+                text-align: right;
+                width: 90px;
+              }
+              .value{
+                word-wrap: break-word;
+                word-break: break-word;
+                display: inline-block;
+                max-width: 100%;
+                padding-bottom: 2px;
+                padding-left: 5px;
+                padding-top: 2px;
+                position: relative;
+                vertical-align: top;
+                box-sizing: border-box;
+                padding-right:30px;
+                b{
+                  font-weight: normal;
+                }
+                .toSolve{
+                  color:#fdd02b;
+                }
+                .close{
+                  color:#5fc554;
+                }
+              }
+              .value_hide{
+                display: none;
+              }
+            }
+          }
+          .des_txt{
+            color:#828282;
+          }
+          .btn_dv{
+            padding:25px 0 0 0;
+          }
+        }
+        .mod_content{
+          .remarks_box{
+            padding:20px 0;
+          }
+        }
+      }
+    }
+  }
+  .clearfix:after{
+    content:" ";
+    height:0;
+    line-height:0;
+    display:block;
+    visibility:hidden;
+    clear:both;
+  }
+}
