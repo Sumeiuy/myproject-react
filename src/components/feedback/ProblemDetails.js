@@ -19,16 +19,15 @@ const EMPTY_LIST = [];
 @createForm()
 export default class ProblemDetail extends PureComponent {
   static propTypes = {
-    id: PropTypes.string,
     visible: PropTypes.bool,
     problemDetails: PropTypes.object.isRequired,
     form: PropTypes.object.isRequired,
     onCancel: PropTypes.func.isRequired,
     onCreate: PropTypes.func.isRequired,
     nowStatus: PropTypes.bool.isRequired,
+    userId: PropTypes.string,
   }
   static defaultProps = {
-    id: '0',
     visible: false,
     qtab: false,
     qtabHV: false,
@@ -36,6 +35,7 @@ export default class ProblemDetail extends PureComponent {
     jiraHV: false,
     processerV: false,
     processerHV: false,
+    userId: '002332',
   }
   constructor(props) {
     super(props);
@@ -130,7 +130,9 @@ export default class ProblemDetail extends PureComponent {
    * 数据为空处理
   */
   dataNull(data) {
-    if (data !== null || data !== '') {
+    if (data !== null && data !== 'null') {
+      // debugger;
+      console.log(data);
       return data;
     }
     return '无';
@@ -156,7 +158,7 @@ export default class ProblemDetail extends PureComponent {
     const { functionName,
       createTime,
       version,
-      feedbackStatusEnum, issueType, processer, jiraId } = data;
+      status, tag, processer, jiraId } = data;
     const { getFieldDecorator } = form;
     const value = true;
     const qtValue = classnames({
@@ -205,19 +207,19 @@ export default class ProblemDetail extends PureComponent {
             <li className="item">
               <div className="wrap">
                 <strong className="name">模块：</strong>
-                <span className="value">{functionName}</span>
+                <span className="value">{this.dataNull(functionName)}</span>
               </div>
             </li>
             <li className="item">
               <div className="wrap">
                 <strong className="name">反馈时间：</strong>
-                <span className="value">{createTime}</span>
+                <span className="value">{this.dataNull(createTime)}</span>
               </div>
             </li>
             <li className="item">
               <div className="wrap">
                 <strong className="name">系统版本号：</strong>
-                <span className="value">{version}</span>
+                <span className="value">{this.dataNull(version)}</span>
               </div>
             </li>
             <li className="item">
@@ -225,7 +227,7 @@ export default class ProblemDetail extends PureComponent {
                 <strong className="name">状态：</strong>
                 <span className="value">
                   <span className="value" >
-                    {this.handleStatus(feedbackStatusEnum)}
+                    {this.dataNull(this.handleStatus(status))}
                   </span>
                 </span>
               </div>
@@ -234,11 +236,11 @@ export default class ProblemDetail extends PureComponent {
               <div className="wrap">
                 <strong className="name">问题标签：</strong>
                 <span className={valueIsVisibel}>
-                  {issueType}
+                  {this.dataNull(tag)}
                 </span>
                 <div className={editIsVisibel}>
                   <span className={qtValue} onClick={() => this.handleShowEdit('qt')} title="点击编辑">
-                    {issueType}
+                    {this.dataNull(tag)}
                     <Icon type="edit" className="anticon-edit" />
                   </span>
                 </div>
@@ -261,11 +263,11 @@ export default class ProblemDetail extends PureComponent {
               <div className="wrap">
                 <strong className="name">Jira编号：</strong>
                 <span className={valueIsVisibel}>
-                  {jiraId}
+                  {this.dataNull(jiraId)}
                 </span>
                 <div className={editIsVisibel}>
                   <span className={jiraValue} onClick={() => this.handleShowEdit('jira')} title="点击编辑">
-                    {jiraId}
+                    {this.dataNull(jiraId)}
                     <Icon type="edit" className="anticon-edit" />
                   </span>
                 </div>
@@ -286,11 +288,11 @@ export default class ProblemDetail extends PureComponent {
               <div className="wrap">
                 <strong className="name">经办人：</strong>
                 <span className={valueIsVisibel}>
-                  {jiraId}
+                  {this.dataNull(processer)}
                 </span>
                 <div className={editIsVisibel}>
                   <span className={processerValue} onClick={() => this.handleShowEdit('processer')} title="点击编辑">
-                    {processer}
+                    {this.dataNull(processer)}
                     <Icon type="edit" className="anticon-edit" />
                   </span>
                 </div>
