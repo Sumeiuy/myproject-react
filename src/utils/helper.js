@@ -26,6 +26,21 @@ const helper = {
     return window.getComputedStyle(ele, null).getPropertyValue(css);
   },
 
+  // 计算字符串长度
+  getStrLen(str) {
+    let len = 0;
+    for (let i = 0; i < str.length; i++) {
+      const c = str.charCodeAt(i);
+        // 单字节加1
+      if ((c >= 0x0001 && c <= 0x007e) || (c >= 0xff60 && c <= 0xff9f)) {
+        len++;
+      } else {
+        len += 2;
+      }
+    }
+    return len;
+  },
+
   // 获取 empId
   getEmpId() {
     // 临时 ID
