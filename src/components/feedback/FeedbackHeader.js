@@ -128,30 +128,27 @@ export default class PageHeader extends PureComponent {
           onChange={key => this.handleCascaderSelectChange('appId', 'functionName', key)}
         />
         类型: <Select
-          mode="multiple"
           style={{ width: '10%' }}
           placeholder="全部"
-          value={!issueType ? [] : issueType.split(',')}
+          value={issueType}
           onChange={key => this.handleSelectChange('issueType', key)}
           allowClear
         >
           {getSelectOption(typeOptions)}
         </Select>
         问题标签: <Select
-          mode="multiple"
-          style={{ width: '12%' }}
+          style={{ width: '10%' }}
           placeholder="全部"
-          value={!feedbackTagEnum ? [] : feedbackTagEnum.split(',')}
+          value={feedbackTagEnum}
           onChange={key => this.handleSelectChange('feedbackTagEnum', key)}
           allowClear
         >
           {getSelectOption(questionTagOptions)}
         </Select>
         状态: <Select
-          mode="multiple"
           style={{ width: '10%' }}
-          defaultValue={['PROCESSING']}
-          value={!feedbackStatusEnum ? ['PROCESSING'] : feedbackStatusEnum.split(',')}
+          placeholder="全部"
+          value={feedbackStatusEnum}
           onChange={key => this.handleSelectChange('feedbackStatusEnum', key)}
           allowClear
         >
@@ -165,10 +162,11 @@ export default class PageHeader extends PureComponent {
           placeholder={['开始时间', '结束时间']}
         />
         经办人: <Select
-          defaultValue="ALL"
           style={{ width: '6%' }}
-          value={!processer ? 'ALL' : processer}
+          placeholder="全部"
+          value={processer}
           onChange={key => this.handleSelectChange('processer', key)}
+          allowClear
         >
           {getSelectOption(operatorOptions)}
         </Select>
