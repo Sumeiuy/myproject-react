@@ -9,26 +9,25 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import './remarkList.less';
 
-const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
 export default class RemarkList extends PureComponent {
   static propTypes = {
-    remarkList: PropTypes.object.isRequired,
+    remarkList: PropTypes.array.isRequired,
   }
   constructor(props) {
     super(props);
-    const { resultData = EMPTY_OBJECT } = props.remarkList || EMPTY_OBJECT;
+    const { remarkList = EMPTY_LIST } = props;
     this.state = {
-      dataSource: resultData || EMPTY_OBJECT,
+      dataSource: remarkList,
     };
   }
   componentWillReceiveProps(nextProps) {
-    const { remarkList: nextList = EMPTY_OBJECT } = nextProps;
-    const { remarkList: prevList = EMPTY_OBJECT } = this.props;
+    const { remarkList: nextList = EMPTY_LIST } = nextProps;
+    const { remarkList: prevList = EMPTY_LIST } = this.props;
+    debugger;
     if (nextList !== prevList) {
-      const { returnList = EMPTY_LIST } = nextList;
       this.setState({
-        dataSource: returnList,
+        dataSource: nextList,
       });
     }
   }
@@ -44,8 +43,10 @@ export default class RemarkList extends PureComponent {
           <div className="item">
             <div className="wrap">
               <div className="info_dv">
-                <span>{record.department}-{record.empId}
-                </span><span>于{record.createTime}，添加了{record.processSuggest}：</span>
+                <span>
+                  {record.processerEmpInfo.name}-{record.processerEmpInfo.empId}
+                </span>
+                <span>{record.title}：</span>
               </div>
               <div className="txt">
                 {record.description}
