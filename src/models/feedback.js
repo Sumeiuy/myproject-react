@@ -31,8 +31,9 @@ export default {
     },
     getFeedbackListSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
-      const { page, feedbackVOList } = resultData;
+      const { page = EMPTY_OBJECT, feedbackVOList = EMPTY_LIST } = resultData;
       const { listData: preListData = EMPTY_LIST } = state.list;
+
       return {
         ...state,
         list: {
