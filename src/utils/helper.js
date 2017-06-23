@@ -178,8 +178,8 @@ const helper = {
 
     const { feedbackCreateTimeTo, feedbackCreateTimeFrom } = query;
     const formatedTime = {
-      feedbackCreateTimeFrom: helper.formatTime(feedbackCreateTimeFrom),
-      feedbackCreateTimeTo: helper.formatTime(feedbackCreateTimeTo),
+      feedbackCreateTimeFrom: feedbackCreateTimeFrom && helper.formatTime(feedbackCreateTimeFrom),
+      feedbackCreateTimeTo: feedbackCreateTimeTo && helper.formatTime(feedbackCreateTimeTo),
     };
 
     // 对反馈状态做处理
