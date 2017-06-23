@@ -1,4 +1,12 @@
 @import "../../css/variable.less";
+html {
+  overflow: hidden;
+}
+
+::-webkit-scrollbar { 
+    display: none; 
+}
+
 .feedbackbox{
   color:#666666;
   font-size: 14px;
@@ -6,5 +14,13 @@
     .ant-row{
       padding-top: 55px;
     }
+  }
+  .leftSection {
+    overflow: auto;
+    height: 800px;
+  }
+  .rightSection {
+    overflow: auto;
+    height: 800px;
   }
 }
