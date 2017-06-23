@@ -27,11 +27,14 @@ import styles from './ChartBar.less';
 import imgSrc from '../chartRealTime/noChart.png';
 
 const getIcon = iconTypeMap.getIcon;
+<<<<<<< HEAD
+=======
 const percent = zhUnicode.percent;
 const permillage = zhUnicode.permillage;
 const ren = zhUnicode.ren;
 const hu = zhUnicode.hu;
 const yuan = zhUnicode.yuan;
+>>>>>>> develop
 
 export default class ChartBarStack extends PureComponent {
 
@@ -112,7 +115,11 @@ export default class ChartBarStack extends PureComponent {
       const tempStackSeries = dealStackSeriesMoney(stackSeries);
       stackSeries = tempStackSeries.newStackSeries;
       unit = tempStackSeries.newUnit;
+<<<<<<< HEAD
+    } else if (unit === '户') {
+=======
     } else if (unit === hu) {
+>>>>>>> develop
       const tempStackSeries = dealStackSeiesHu(stackSeries);
       stackSeries = tempStackSeries.newStackSeries;
       unit = tempStackSeries.newUnit;
@@ -134,7 +141,11 @@ export default class ChartBarStack extends PureComponent {
       const maxAndMinMoney = fixedMoneyMaxMin(gridAxisTick);
       gridXAxisMax = maxAndMinMoney.max;
       gridXaxisMin = maxAndMinMoney.min;
+<<<<<<< HEAD
+    } else if (unit.indexOf('户') > -1 || unit === '人') {
+=======
     } else if (unit.indexOf(hu) > -1 || unit === ren) {
+>>>>>>> develop
       const maxAndMinPeople = fixedPeopleMaxMin(gridAxisTick);
       gridXAxisMax = maxAndMinPeople.max;
       gridXaxisMin = maxAndMinPeople.min;

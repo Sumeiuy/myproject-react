@@ -291,6 +291,10 @@ export default class ChartTable extends PureComponent {
         }
         return column;
       });
+<<<<<<< HEAD
+      allWidth = _.sumBy(arr, 'width');
+      // allWidth = allWidth > 900 ? allWidth : '100%';
+=======
       // 匹配第一列标题文字，分公司、营业部、投顾
       // sortByType 初始的 scope 为 2，所以减去两个前面对象，得出最后与实际 scope 相等的索引
       const keyName = sortByType[Number(scope) - 2].name;
@@ -322,6 +326,7 @@ export default class ChartTable extends PureComponent {
       } else {
         newArr = tempArr;
       }
+>>>>>>> develop
     }
     this.setState({
       arr: newArr,
