@@ -21,17 +21,17 @@ import {
   dealStackSeiesHu,
 } from './chartData';
 import IECharts from '../IECharts';
-import { iconTypeMap, zhUnicode } from '../../config';
+import { iconTypeMap, ZHUNICODE } from '../../config';
 import Icon from '../common/Icon';
 import styles from './ChartBar.less';
 import imgSrc from '../chartRealTime/noChart.png';
 
 const getIcon = iconTypeMap.getIcon;
-const percent = zhUnicode.percent;
-const permillage = zhUnicode.permillage;
-const ren = zhUnicode.ren;
-const hu = zhUnicode.hu;
-const yuan = zhUnicode.yuan;
+const PERCENT = ZHUNICODE.PERCENT;
+const PERMILLAGE = ZHUNICODE.PERMILLAGE;
+const REN = ZHUNICODE.REN;
+const HU = ZHUNICODE.HU;
+const YUAN = ZHUNICODE.YUAN;
 
 export default class ChartBarStack extends PureComponent {
 
@@ -57,7 +57,7 @@ export default class ChartBarStack extends PureComponent {
     }
 
     return series.map((item, index) => ({
-      value: (unit === percent || unit === permillage) ? Number(item.toFixed(2)) : item,
+      value: (unit === PERCENT || unit === PERMILLAGE) ? Number(item.toFixed(2)) : item,
       label: {
         normal: {
           show: index < maxIndex,
@@ -103,16 +103,16 @@ export default class ChartBarStack extends PureComponent {
     const stackLegend = stack.legends;
     let stackSeries = stack.series;
     // 此处需要进行对stackSeries中的每一个data根据单位来进行特殊处理
-    if (unit === percent) {
+    if (unit === PERCENT) {
       stackSeries = stackSeries.map(this.toFixedPercentOrPermillage(100));
-    } else if (unit === permillage) {
+    } else if (unit === PERMILLAGE) {
       stackSeries = stackSeries.map(this.toFixedPercentOrPermillage(1000));
-    } else if (unit === yuan) {
+    } else if (unit === YUAN) {
       // 如果图表中的数据表示的是金额的话，需要对其进行单位识别和重构
       const tempStackSeries = dealStackSeriesMoney(stackSeries);
       stackSeries = tempStackSeries.newStackSeries;
       unit = tempStackSeries.newUnit;
-    } else if (unit === hu) {
+    } else if (unit === HU) {
       const tempStackSeries = dealStackSeiesHu(stackSeries);
       stackSeries = tempStackSeries.newStackSeries;
       unit = tempStackSeries.newUnit;
@@ -122,19 +122,19 @@ export default class ChartBarStack extends PureComponent {
     // 图表边界值,如果xMax是0的话则最大值为1
     let gridXAxisMax = 1;
     let gridXaxisMin = 0;
-    if (unit === percent) {
+    if (unit === PERCENT) {
       const maxAndMinPercent = fixedPercentMaxMin(gridAxisTick);
       gridXAxisMax = maxAndMinPercent.max;
       gridXaxisMin = maxAndMinPercent.min;
-    } else if (unit === permillage) {
+    } else if (unit === PERMILLAGE) {
       const maxAndMinPermillage = fixedPermillageMaxMin(gridAxisTick);
       gridXAxisMax = maxAndMinPermillage.max;
       gridXaxisMin = maxAndMinPermillage.min;
-    } else if (unit.indexOf(yuan) > -1) {
+    } else if (unit.indexOf(YUAN) > -1) {
       const maxAndMinMoney = fixedMoneyMaxMin(gridAxisTick);
       gridXAxisMax = maxAndMinMoney.max;
       gridXaxisMin = maxAndMinMoney.min;
-    } else if (unit.indexOf(hu) > -1 || unit === ren) {
+    } else if (unit.indexOf(HU) > -1 || unit === REN) {
       const maxAndMinPeople = fixedPeopleMaxMin(gridAxisTick);
       gridXAxisMax = maxAndMinPeople.max;
       gridXaxisMin = maxAndMinPeople.min;
@@ -290,8 +290,9 @@ export default class ChartBarStack extends PureComponent {
           {
             stackLegend.map((item, index) => {
               const backgroundColor = stackBarColors[index];
+              const uniqueKey = `${key}-legend-${index}`;
               return (
-                <div className={styles.oneLegend}>
+                <div className={styles.oneLegend} key={uniqueKey}>
                   <div
                     className={styles.legendIcon}
                     style={{
