@@ -58,7 +58,7 @@ export default class FeedBack extends PureComponent {
           location={location}
           replace={replace}
         />
-        <Row>
+        <Row className="feedbackRow">
           <Col span="10">
             <FeedbackList
               list={list}
