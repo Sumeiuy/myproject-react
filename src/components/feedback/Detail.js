@@ -251,7 +251,6 @@ export default class Detail extends PureComponent {
     form.validateFields((err, values) => {
       if (values.remarkContent) {
         if (!err) {
-          console.log('Remark values of form: ', values);
           updateFeedback({
             remark: values.remarkContent,
             id: currentId,
