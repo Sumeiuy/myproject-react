@@ -78,7 +78,8 @@ export default class FeedbackList extends PureComponent {
     // 添加currentId
     const { location: { query, pathname, query: { currentId } }, replace } = this.props;
     const { dataSource = EMPTY_LIST } = this.state;
-    if (!currentId) {
+    // 只有当有数据，并且当前没有选中项的时候，设置初始值
+    if (!currentId && !_.isEmpty(dataSource)) {
       replace({
         pathname,
         query: {
