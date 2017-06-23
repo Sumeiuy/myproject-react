@@ -16,6 +16,7 @@ import Main from './layouts/Main';
 import Empty from './routes/empty/Home';
 import InvestHome from './routes/invest/Home';
 import BusinessHome from './routes/business/Home';
+import BoardManageHome from './routes/boardManage/Home';
 
 const routes = ({ history }) => (// eslint-disable-line
   <Router history={history}>
@@ -29,6 +30,9 @@ const routes = ({ history }) => (// eslint-disable-line
       </Route>
       <Route path="business">
         <IndexRoute component={BusinessHome} />
+      </Route>
+      <Route path="boardManage">
+        <IndexRoute component={BoardManageHome} />
       </Route>
     </Route>
   </Router>
