@@ -7,6 +7,7 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { Select, Row, Col, Input, Form, Modal, message, Upload } from 'antd';
 import { createForm } from 'rc-form';
+import { helper } from '../../utils';
 import Icon from '../../components/common/Icon';
 import { feedbackOptions, request } from '../../config';
 import './problemHandling.less';
@@ -46,6 +47,9 @@ export default class ProblemHandling extends PureComponent {
         name: 'file',
         multiple: true,
         showUploadList: true,
+        data: {
+          empId: helper.getEmpId(),
+        },
         action: `${request.prefix}/file/feedbackFileUpload`,
         onChange(info) {
           const status = info.file.status;
@@ -97,7 +101,7 @@ export default class ProblemHandling extends PureComponent {
       <Modal
         title={title}
         visible={visible}
-        onOk={onCreate}
+        onOk={(from) => {onCreate(form)}}
         onCancel={onCancel}
         width={width}
         className="problemwrap"

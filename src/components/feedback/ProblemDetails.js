@@ -228,23 +228,23 @@ export default class ProblemDetail extends PureComponent {
               <div className="wrap">
                 <strong className="name">问题标签：</strong>
                 <span className={valueIsVisibel}>
-                  {this.changeTag(tag)}
+                  {this.dataNull(tag)}
                 </span>
                 <div className={editIsVisibel}>
                   <span className={qtValue} onClick={() => this.handleShowEdit('qt')} title="点击编辑">
-                    {this.changeTag(tag)}
+                    {this.dataNull(tag)}
                     <Icon type="edit" className="anticon-edit" />
                   </span>
                 </div>
                 <div className={qtHiddenValue}>
                   <FormItem>
-                    {getFieldDecorator('tag', { initialValue: `${tag}` })(
+                    {getFieldDecorator('tag', { initialValue: `${this.dataNull(tag)}` })(
                       <Select style={{ width: 140 }} className="qtSelect" id="qtSelect" onBlur={this.handleClose}>
                         {getSelectOption(popQuestionTagOptions)}
                       </Select>,
                     )}
                     <div className="btn">
-                      <a onClick={onCreate}><Icon type="success" /></a>
+                      <a onClick={(from) => {onCreate(form)}}><Icon type="success" /></a>
                       <a onClick={this.handleClose}><Icon type="close" /></a>
                     </div>
                   </FormItem>
@@ -269,7 +269,7 @@ export default class ProblemDetail extends PureComponent {
                       <Input style={{ width: 140 }} />,
                     )}
                     <div className="btn">
-                      <a onClick={onCreate}><Icon type="success" /></a>
+                      <a onClick={(from) => {onCreate(form)}}><Icon type="success" /></a>
                       <a onClick={this.handleClose}><Icon type="close" /></a>
                     </div>
                   </FormItem>
@@ -298,7 +298,7 @@ export default class ProblemDetail extends PureComponent {
                       </Select>,
                     )}
                     <div className="btn">
-                      <a onClick={onCreate}><Icon type="success" /></a>
+                      <a onClick={(from) => {onCreate(form)}}><Icon type="success" /></a>
                       <a onClick={this.handleClose}><Icon type="close" /></a>
                     </div>
                   </FormItem>
