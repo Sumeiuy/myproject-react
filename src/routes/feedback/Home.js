@@ -44,9 +44,12 @@ export default class FeedBack extends PureComponent {
   }
 
   componentWillMount() {
-    const { getFeedbackList, location: { query } } = this.props;
+    const { getFeedbackList, location: { query, query: {
+      curPageNum,
+      curPageSize,
+     } } } = this.props;
     // 默认筛选条件
-    getFeedbackList(constructPostBody(query, 1, 10));
+    getFeedbackList(constructPostBody(query, curPageNum || 1, curPageSize || 10));
   }
 
 

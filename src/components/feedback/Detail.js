@@ -91,6 +91,9 @@ export default class Detail extends PureComponent {
     const { location: { query } } = this.props;
     const { currentId } = query;
     if (currentId) {
+      this.setState({
+        currentId,
+      });
       this.handlegetData(currentId);
     }
   }
@@ -141,6 +144,9 @@ export default class Detail extends PureComponent {
     const { currentId } = query;
     const { currentId: id } = this.state;
 
+    // 只有当前state里面有currentId
+    // 并且当前query里面有currentId
+    // 才发起初始化请求
     if (!id && currentId) {
       this.handlegetData(currentId);
     }
@@ -191,7 +197,7 @@ export default class Detail extends PureComponent {
   @autobind
   handleCreate() {
     const form = this.handlingForm;
-    const { updateFeedback } = this.props;
+    const { updateFeedback, location: { query } } = this.props;
     form.validateFields((err, values) => {
       console.log(err);
       if (err) {
@@ -212,7 +218,8 @@ export default class Detail extends PureComponent {
         detail.uploadedFiles = files;
       }
       updateFeedback({
-        ...detail,
+        request: detail,
+        currentQuery: query,
       });
       form.resetFields();
       this.setState({ visible: false });
@@ -237,8 +244,11 @@ export default class Detail extends PureComponent {
       };
       detail = removeEmpty(detail);
       updateFeedback({
-        ...detail,
-        id: currentId,
+        request: {
+          ...detail,
+          id: currentId,
+        },
+        currentQuery: query,
       });
       form.resetFields();
       this.setState({ visible: false });
@@ -255,9 +265,12 @@ export default class Detail extends PureComponent {
       if (values.remarkContent) {
         if (!err) {
           updateFeedback({
-            remark: values.remarkContent,
-            id: currentId,
-            processerEmpId: helper.getEmpId(),
+            request: {
+              remark: values.remarkContent,
+              id: currentId,
+              processerEmpId: helper.getEmpId(),
+            },
+            currentQuery: query,
           });
         } else {
           message.error(err);

@@ -45,13 +45,13 @@ export default class FeedbackList extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { list: nextList = EMPTY_OBJECT,
-      location: { query: nextQuery = EMPTY_OBJECT } } = nextProps;
+    const { list: nextList = EMPTY_OBJECT, replace,
+      location: { query: nextQuery = EMPTY_OBJECT, pathname } } = nextProps;
     const { list: prevList = EMPTY_OBJECT, location: { query: prevQuery = EMPTY_OBJECT },
       getFeedbackList } = this.props;
     const { resultData: nextResultData = EMPTY_LIST, page = EMPTY_OBJECT } = nextList;
     const { resultData: prevResultData = EMPTY_LIST } = prevList;
-    const { curPageNum = 1, totalPageNum = 1, totalRecordNum = 1 } = page;
+    const { curPageNum = 1, totalPageNum, totalRecordNum, pageSize } = page;
     // const { currentId } = nextQuery;
 
     if (prevResultData !== nextResultData) {
@@ -60,6 +60,15 @@ export default class FeedbackList extends PureComponent {
         totalRecordNum,
         totalPageNum,
         curPageNum,
+      });
+
+      replace({
+        pathname,
+        query: {
+          ...nextQuery,
+          curPageNum,
+          curPageSize: pageSize,
+        },
       });
     }
     // 深比较值是否相等
@@ -77,14 +86,20 @@ export default class FeedbackList extends PureComponent {
     // 第一次替换query
     // 添加currentId
     const { location: { query, pathname, query: { currentId } }, replace } = this.props;
-    const { dataSource = EMPTY_LIST } = this.state;
-    // 只有当有数据，并且当前没有选中项的时候，设置初始值
-    if (!currentId && !_.isEmpty(dataSource)) {
+    const { dataSource = EMPTY_LIST, curPageNum, curPageSize } = this.state;
+    // 只有当有数据，并且当前没有选中项的时候，设置第一条初始值
+    // 或者当有数据，但是当前选中项在数据中，没有匹配时，设置第一条初始值
+    if (!_.isEmpty(dataSource) && (!currentId || (
+      dataSource && currentId &&
+      _.isEmpty(_.find(dataSource, item => item.id.toString() === currentId))
+    ))) {
       replace({
         pathname,
         query: {
           ...query,
           currentId: dataSource[0] && dataSource[0].id,
+          curPageSize,
+          curPageNum,
         },
       });
       return;
@@ -104,8 +119,8 @@ export default class FeedbackList extends PureComponent {
    * @param {*} nextQuery 下一次query
    */
   diffObject(prevQuery, nextQuery) {
-    const prevQueryData = _.omit(prevQuery, ['currentId']);
-    const nextQueryData = _.omit(nextQuery, ['currentId']);
+    const prevQueryData = _.omit(prevQuery, ['currentId', 'curPageSize', 'curPageNum']);
+    const nextQueryData = _.omit(nextQuery, ['currentId', 'curPageSize', 'curPageNum']);
     if (!_.isEqual(prevQueryData, nextQueryData)) {
       return false;
     }
@@ -147,7 +162,15 @@ export default class FeedbackList extends PureComponent {
     this.setState({
       curPageNum: nextPage,
     });
-    const { getFeedbackList, location: { query } } = this.props;
+    const { location: { query }, getFeedbackList } = this.props;
+    // replace({
+    //   pathname,
+    //   query: {
+    //     ...query,
+    //     curPageNum: nextPage,
+    //   },
+    // });
+
     getFeedbackList(constructPostBody(query, nextPage, currentPageSize));
   }
 
@@ -228,6 +251,7 @@ export default class FeedbackList extends PureComponent {
   @autobind
   handleShowSizeChange(currentPageNum, changedPageSize) {
     const { totalRecordNum, curPageSize, curPageNum } = this.state;
+    const { location: { query }, getFeedbackList } = this.props;
     if (changedPageSize / totalRecordNum > 1) {
       // 当前选择分页条目大于两倍的记录数
       // 则不生效，恢复当前分页条目
@@ -235,14 +259,29 @@ export default class FeedbackList extends PureComponent {
         curPageSize,
         curPageNum,
       });
+      // replace({
+      //   pathname,
+      //   query: {
+      //     ...query,
+      //     curPageNum,
+      //     curPageSize,
+      //   },
+      // });
     } else {
       this.setState({
         curPageSize: changedPageSize,
         curPageNum: currentPageNum,
       });
+      // replace({
+      //   pathname,
+      //   query: {
+      //     ...query,
+      //     curPageNum: currentPageNum,
+      //     curPageSize: changedPageSize,
+      //   },
+      // });
       // 每页条目变化
       // 重新请求数据
-      const { getFeedbackList, location: { query } } = this.props;
       getFeedbackList(constructPostBody(query, currentPageNum, changedPageSize));
     }
   }
