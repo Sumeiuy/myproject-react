@@ -258,19 +258,13 @@ export default class Detail extends PureComponent {
             processerEmpId: helper.getEmpId(),
             feedbackId: currentId,
           });
+        } else {
+          message.error(err);
+          return;
         }
       } else {
         message.error('您还未填写备注信息');
       }
-
-      console.log('Remark values of form: ', values);
-      updateFeedback({
-        remark: values.remarkContent,
-        id: currentId,
-        processerEmpId: helper.getEmpId(),
-        feedbackId: currentId,
-      });
-
       form.resetFields();
       this.setState({ remarkVisible: false });
     });
