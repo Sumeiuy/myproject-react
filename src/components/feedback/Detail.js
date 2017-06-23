@@ -258,7 +258,6 @@ export default class Detail extends PureComponent {
             remark: values.remarkContent,
             id: currentId,
             processerEmpId: helper.getEmpId(),
-            feedbackId: currentId,
           });
         } else {
           message.error(err);
