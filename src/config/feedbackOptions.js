@@ -128,6 +128,20 @@ const feedbackOptions = {
       label: '本人',
     },
   ],
+  allOperatorOptions: [
+    {
+      value: '002332',
+      label: '经办人1',
+    },
+    {
+      value: '002333',
+      label: '经办人2',
+    },
+    {
+      value: '002334',
+      label: '经办人2',
+    }
+  ]
 };
 
 export default feedbackOptions;
