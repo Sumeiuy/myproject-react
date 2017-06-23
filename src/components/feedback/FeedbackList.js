@@ -78,7 +78,8 @@ export default class FeedbackList extends PureComponent {
     // 添加currentId
     const { location: { query, pathname, query: { currentId } }, replace } = this.props;
     const { dataSource = EMPTY_LIST } = this.state;
-    if (!currentId) {
+    // 只有当有数据，并且当前没有选中项的时候，设置初始值
+    if (!currentId && !_.isEmpty(dataSource)) {
       replace({
         pathname,
         query: {
@@ -178,7 +179,7 @@ export default class FeedbackList extends PureComponent {
         );
       },
     }, {
-      dataIndex: 'status.processer.processTime',
+      dataIndex: 'status.processer.createTime',
       width: '20%',
       render: (text, record) => {
         // 当前行记录
@@ -195,7 +196,7 @@ export default class FeedbackList extends PureComponent {
           <div className="rightSection">
             <div className={statusClass}>{(statusLabel && statusLabel[0].label) || '无'}</div>
             <div className="name">{record.processer || '无'}</div>
-            <div className="date">{record.processTime || '无'}</div>
+            <div className="date">{(record.createTime && record.createTime.slice(0, 10)) || '无'}</div>
           </div>
         );
       },

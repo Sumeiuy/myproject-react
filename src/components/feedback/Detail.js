@@ -18,6 +18,7 @@ import Problemdetails from './ProblemDetails';
 import FeedbackUser from './FeedbackUser';
 import UploadFiles from './UploadFiles';
 import { helper } from '../../utils';
+import { feedbackOptions } from '../../config';
 import './detail.less';
 
 const EMPTY_OBJECT = {};
@@ -25,6 +26,8 @@ const EMPTY_LIST = [];
 const GETDETAIL = 'feedback/getFeedbackDetail';
 const GETRECORDLIST = 'feedback/getFeedbackRecordList';
 const UPDATEQUESTION = 'feedback/updateFeedback';
+
+const issueTypeOptions = feedbackOptions.typeOptions;
 
 const mapStateToProps = state => ({
   fbDetail: state.feedback.fbDetail,
@@ -243,26 +246,18 @@ export default class Detail extends PureComponent {
     form.validateFields((err, values) => {
       if (values.remarkContent) {
         if (!err) {
-          console.log('Remark values of form: ', values);
           updateFeedback({
             remark: values.remarkContent,
             id: currentId,
             processerEmpId: helper.getEmpId(),
-            feedbackId: currentId,
           });
+        } else {
+          message.error(err);
+          return;
         }
       } else {
         message.error('您还未填写备注信息');
       }
-
-      console.log('Remark values of form: ', values);
-      updateFeedback({
-        remark: values.remarkContent,
-        id: currentId,
-        processerEmpId: helper.getEmpId(),
-        feedbackId: currentId,
-      });
-
       form.resetFields();
       this.setState({ remarkVisible: false });
     });
@@ -302,6 +297,7 @@ export default class Detail extends PureComponent {
       processer,
       jiraId,
       id,
+      issueType,
     } = resultData || EMPTY_OBJECT; // 反馈用户
     const feedbackDetail = {
       functionName,
@@ -318,10 +314,12 @@ export default class Detail extends PureComponent {
       btnhidden: this.state.remarkVisible,
     });
     const { hasImgUrl, nowStatus, messageBtnValue } = this.state;
+    const type = _.find(issueTypeOptions, item => item.value === issueType);
+
     return (
       <div className="detail_box">
         <div className="inner">
-          <h1 className="bugtitle">【问题】{appId}/{feedId}</h1>
+          <h1 className="bugtitle">【{type && type.label}】{appId}/{feedId}</h1>
           <div className="row_box">
             {hasImgUrl ?
               <Row gutter={16}>

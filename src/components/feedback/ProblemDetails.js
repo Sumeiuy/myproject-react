@@ -17,6 +17,8 @@ import './problemDetails.less';
 const FormItem = Form.Item;
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
+const feedbackChannel = feedbackOptions.feedbackChannel;
+
 @createForm()
 export default class ProblemDetail extends PureComponent {
   static propTypes = {
@@ -192,6 +194,10 @@ export default class ProblemDetail extends PureComponent {
     const getSelectOption = item => item.map(i =>
       <Option key={i.value} value={i.value}>{i.label}</Option>,
     );
+
+    const channel = _.find(_.omit(feedbackChannel[0], ['value', 'lable']).children,
+      item => item.value === functionName);
+
     return (
       <div>
         <Form layout="vertical">
@@ -199,7 +205,7 @@ export default class ProblemDetail extends PureComponent {
             <li className="item">
               <div className="wrap">
                 <strong className="name">模块：</strong>
-                <span className="value">{this.dataNull(functionName)}</span>
+                <span className="value">{this.dataNull(channel && channel.label)}</span>
               </div>
             </li>
             <li className="item">
