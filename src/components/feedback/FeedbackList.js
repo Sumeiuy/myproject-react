@@ -193,7 +193,7 @@ export default class FeedbackList extends PureComponent {
         }
         return (
           <div className="rightSection">
-            <div className={statusClass}>{(statusLabel && statusLabel[0].label) || '无无'}</div>
+            <div className={statusClass}>{(statusLabel && statusLabel[0].label) || '无'}</div>
             <div className="name">{record.processer || '无'}</div>
             <div className="date">{record.processTime || '无'}</div>
           </div>
