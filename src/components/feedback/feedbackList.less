@@ -1,8 +1,11 @@
 :global {
   .feedbackList {
     padding: 10px 10px 0px 10px;
-    .feedbackTable .ant-table .ant-table-tbody > tr > td{
-      text-align: left;
+    .feedbackTable .ant-table .ant-table-tbody > tr{
+      cursor: pointer;
+      & > td {
+        text-align: left;
+      }
     }
     .feedbackTable table {
       width: 100%;

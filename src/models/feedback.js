@@ -7,6 +7,7 @@
 
 import { message } from 'antd';
 import api from '../api';
+import { helper } from '../utils';
 // import config from '../config/request';
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -94,7 +95,9 @@ export default {
       });
     },
     * updateFeedback({ payload }, { call, put }) {
-      const response = yield call(api.updateFeedback, payload);
+      const { currentQuery, request, currentQuery: { curPageNum, curPageSize } } = payload;
+      const response = yield call(api.updateFeedback, request);
+
       yield put({
         type: 'updateFeedbackSuccess',
         payload: response,
@@ -103,14 +106,19 @@ export default {
       yield put({
         type: 'getFeedbackRecordList',
         payload: {
-          feedbackId: payload.id,
+          feedbackId: request.id,
         },
       });
       yield put({
         type: 'getFeedbackDetail',
         payload: {
-          id: payload.id,
+          id: request.id,
         },
+      });
+      // 刷新反馈列表
+      yield put({
+        type: 'getFeedbackList',
+        payload: helper.constructPostBody(currentQuery, curPageNum, curPageSize),
       });
     },
   },
