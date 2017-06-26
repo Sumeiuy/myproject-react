@@ -11,7 +11,9 @@ import './uploadFiles.less';
 const EMPTY_OBJECT = {};
 export default class FileItem extends PureComponent {
   static propTypes = {
-    fileItem: PropTypes.object.isRequired,
+    attachName: PropTypes.string.isRequired,
+    attachUploader: PropTypes.string.isRequired,
+    attachUrl: PropTypes.string.isRequired,
     onRemoveFile: PropTypes.func.isRequired,
   }
   constructor(props) {
@@ -22,26 +24,27 @@ export default class FileItem extends PureComponent {
     };
   }
   componentWillReceiveProps(nextProps) {
-    const { fileItem: nextFile = EMPTY_OBJECT } = nextProps;
-    const { fileItem: prevFile = EMPTY_OBJECT } = this.props;
-    if (nextFile !== prevFile) {
-      this.setState({
-        file: nextFile,
-      });
-    }
+    // const { fileItem: nextFile = EMPTY_OBJECT } = nextProps;
+    // const { fileItem: prevFile = EMPTY_OBJECT } = this.props;
+    // debugger;
+    // if (nextFile !== prevFile) {
+    //   this.setState({
+    //     file: nextFile,
+    //   });
+    // }
   }
   @autobind
   handleClick() {
-    const { onRemoveFile } = this.props;
-    const { file } = this.state;
+    const { attachUploader, attachName, attachUrl, onRemoveFile } = this.props;
+    const file = {attachUploader, attachName, attachUrl};
     onRemoveFile(file);
   }
   render() {
-    const { file } = this.state;
+    const { attachUploader, attachName, attachUrl } = this.props;
     const empId = helper.getEmpId();
     return (
-      <li className={`${file.attachUploader && empId === file.attachUploader ? 'userfile' : 'noUserfile'}`}>
-        <a href={file.attachUrl}>{file.attachName}</a>
+      <li className={`${attachUploader && empId === attachUploader ? 'userfile' : 'noUserfile'}`}>
+        <a href={attachUrl}>{attachName}</a>
         <a className="removeFile" onClick={this.handleClick}>X</a>
       </li>
     );

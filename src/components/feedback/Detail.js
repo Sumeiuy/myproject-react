@@ -123,6 +123,11 @@ export default class Detail extends PureComponent {
             nowStatus: false,
             messageBtnValue: '重新打开',
           });
+        } else if ( status === 'PROCESSING') {
+          this.setState({
+            nowStatus: true,
+            messageBtnValue: '处理问题',
+          });
         }
       });
     }
@@ -211,7 +216,7 @@ export default class Detail extends PureComponent {
         );
         detail.uploadedFiles = files;
       }
-      debugger;
+      // debugger;
       updateFeedback({
         ...detail,
         id: currentId,
@@ -291,22 +296,22 @@ export default class Detail extends PureComponent {
       attachModelList = EMPTY_LIST,
       functionName,
       createTime,
+      processer,
       version,
       status,
-      tag,
-      processer,
       jiraId,
+      tag,
       id,
       issueType,
     } = resultData || EMPTY_OBJECT; // 反馈用户
     const feedbackDetail = {
       functionName,
       createTime,
+      processer,
       version,
       status,
-      tag,
-      processer,
       jiraId,
+      tag,
       id,
     };
 

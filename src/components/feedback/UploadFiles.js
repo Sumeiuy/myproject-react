@@ -13,6 +13,7 @@ import { request } from '../../config';
 import { helper } from '../../utils';
 import './uploadFiles.less';
 
+let COUNT = 0;
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
 const Dragger = Upload.Dragger;
@@ -33,6 +34,7 @@ export default class UploadFiles extends PureComponent {
     super(props);
     const { onCreate, form } = props;
     this.state = {
+      formKey:`formKey${COUNT}`,
       uploadPops: {
         name: 'file',
         multiple: true,
@@ -47,7 +49,7 @@ export default class UploadFiles extends PureComponent {
             console.log(info.file, info.fileList);
           }
           if (status === 'done') {
-            message.success(`${info.file.name} file uploaded successfully.`);
+            // message.success(`${info.file.name} file uploaded successfully.`);
             onCreate(form);
           } else if (status === 'error') {
             message.error(`${info.file.name} file upload failed.`);
@@ -61,17 +63,9 @@ export default class UploadFiles extends PureComponent {
     const { attachModelList: nextFileList = EMPTY_LIST } = nextProps;
     const { attachModelList: prevFileList = EMPTY_LIST } = this.props;
     if (nextFileList !== prevFileList) {
-      const fileArray = nextFileList.map((item,i) => ({
-        uid: item.attachUploader,
-        key: i,
-        name: item.attachName,
-        status: 'done',
-        url: item.attachUrl,
-        thumbUrl: item.attachUrl,
-      }));
       this.setState({
         fileList: nextFileList,
-        changeFileList: fileArray,
+        formKey:`formKey${COUNT++}`,
       });
     }
   }
@@ -85,47 +79,34 @@ export default class UploadFiles extends PureComponent {
     return items.map((item, i) => (
       <FileItem
         key={i}
-        fileItem={item}
+        attachName={item.attachName || ''}
+        attachUploader={item.attachUploader || ''}
+        attachUrl={item.attachUrl || ''}
         onRemoveFile={removeFile}
       />
     ));
   }
-  //附件上传
-  @autobind
-  fileUpdate(info) {
-    const status = info.file.status;
-    const { form, onCreate } = this.props;
-    console.log(status);
-    if (status !== 'uploading') {
-      console.log(info.file, info.fileList);
-    }
-    if (status === 'done') {
-      message.success(`${info.file.name} file uploaded successfully.`);
-      onCreate(form);
-    } else if (status === 'error') {
-      message.error(`${info.file.name} file upload failed.`);
-    }
-    debugger;
-  }
+
   render() {
-    const { fileList, uploadPops } = this.state;
+    const { fileList, uploadPops, formKey } = this.state;
     const { form } = this.props;
     const { getFieldDecorator } = form;
     return (
-      <Form layout="vertical">
         <Row>
           <Col span="12">
             <ul id="filelist" className="filelist">
               {this.getFileList(fileList)}
             </ul>
           </Col>
-          <Col span="12">
-            <div className="upload_dv">
+          <Col span="12" className="upload_dv">
+            <Form 
+              layout="vertical"
+              key={formKey}
+            >
               <FormItem>
                 {getFieldDecorator('uploadedFiles')(
                     <Dragger 
                       {...uploadPops}
-                      key="draggerOne"
                     >
                       <div className="upload_txt">
                         + 上传附件
@@ -133,10 +114,9 @@ export default class UploadFiles extends PureComponent {
                     </Dragger>,
                 )},
               </FormItem>
-            </div>
+            </Form>
           </Col>
         </Row>
-      </Form>
     );
   }
 }

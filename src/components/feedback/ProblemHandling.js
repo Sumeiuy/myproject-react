@@ -12,6 +12,7 @@ import Icon from '../../components/common/Icon';
 import { feedbackOptions, request } from '../../config';
 import './problemHandling.less';
 
+let COUNT = 0;
 const FormItem = Form.Item;
 const Option = Select.Option;
 const Dragger = Upload.Dragger;
@@ -40,6 +41,7 @@ export default class ProblemHandling extends PureComponent {
     const stateOptions = feedbackOptions.stateOptions || EMPTY_LIST;
     const { problemDetails = EMPTY_OBJECT } = props;
     this.state = {
+      uploadKey:`uploadHandkey${COUNT++}`,
       newDetails: problemDetails,
       popQuestionTagOptions: questionTagOptions,
       stateOptions,
@@ -71,6 +73,7 @@ export default class ProblemHandling extends PureComponent {
     if (nextData !== preData) {
       this.setState({
         newDetails: nextData,
+        uploadKey:`uploadHandkey${COUNT++}`,
       });
     }
   }
@@ -91,8 +94,9 @@ export default class ProblemHandling extends PureComponent {
     } = this.state.newDetails;
     const { getFieldDecorator } = form;
     const {
-      popQuestionTagOptions = EMPTY_LIST,
+      popQuestionTagOptions,
       uploadPops,
+      uploadKey,
     } = this.state;
     const getSelectOption = item => item.map(i =>
       <Option key={i.value} value={i.value}>{i.label}</Option>,
@@ -105,6 +109,7 @@ export default class ProblemHandling extends PureComponent {
         onCancel={onCancel}
         width={width}
         className="problemwrap"
+        key={uploadKey}
       >
         <div className="problembox">
           <div className="pro_title">
@@ -117,7 +122,7 @@ export default class ProblemHandling extends PureComponent {
                 <Col span="19" offset={1}>
                   <FormItem>
                     {getFieldDecorator('tag', { initialValue: `${tag || '无'}` })(
-                      <Select style={{ width: 220 }} onChange={this.handleChange}>
+                      <Select style={{ width: 220 }}>
                         {getSelectOption(popQuestionTagOptions)}
                       </Select>,
                     )}
@@ -166,7 +171,9 @@ export default class ProblemHandling extends PureComponent {
                 <Col span="19" offset={1}>
                   <FormItem>
                     {getFieldDecorator('uploadedFiles')(
-                      <Dragger {...uploadPops}>
+                      <Dragger
+                        {...uploadPops}
+                      >
                         <div className="upload_txt">
                           + 上传附件
                         </div>
