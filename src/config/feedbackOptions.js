@@ -140,8 +140,8 @@ const feedbackOptions = {
     {
       value: '002334',
       label: '经办人2',
-    }
-  ]
+    },
+  ],
 };
 
 export default feedbackOptions;
