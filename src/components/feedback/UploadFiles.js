@@ -47,7 +47,7 @@ export default class UploadFiles extends PureComponent {
         onChange(info) {
           const status = info.file.status;
           if (status !== 'uploading') {
-            console.log(info.file, info.fileList);
+            // console.log(info.file, info.fileList);
           }
           if (status === 'done') {
             // message.success(`${info.file.name} file uploaded successfully.`);

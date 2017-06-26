@@ -17,7 +17,6 @@ import './problemDetails.less';
 const FormItem = Form.Item;
 const EMPTY_OBJECT = {};
 const feedbackChannel = feedbackOptions.feedbackChannel;
-const popQuestionTagOptions = feedbackOptions.questionTagOptions;
 @createForm()
 export default class ProblemDetail extends PureComponent {
   static propTypes = {
@@ -118,18 +117,17 @@ export default class ProblemDetail extends PureComponent {
    * 数据为空处理
   */
   dataNull(data) {
-    if (data !== null && data !== 'null' && data !== undefined) {
+    if (_.isEmpty(data) && data !== 'null') {
       return data;
     }
     return '无';
   }
-
   /**
-   * 问题标签显示转换
+   * value和label显示转换
   */
-  changeTag(st) {
+  changeDisplay(st, options) {
     if (st) {
-      const nowStatus = _.find(popQuestionTagOptions, o => o.value === st) || EMPTY_OBJECT;
+      const nowStatus = _.find(options, o => o.value === st) || EMPTY_OBJECT;
       return nowStatus.label || '无';
     }
     return '无';
@@ -206,12 +204,16 @@ export default class ProblemDetail extends PureComponent {
       eitbox: true,
       edit_show: canBeEdited,
     });
+
+    const allOperatorOptions = feedbackOptions.allOperatorOptions;
+    const questionTagOptions = feedbackOptions.questionTagOptions;
     const getSelectOption = item => item.map(i =>
       <Option key={i.value} value={i.value}>{i.label}</Option>,
     );
 
     const channel = _.find(_.omit(feedbackChannel[0], ['value', 'lable']).children,
       item => item.value === functionName);
+
     return (
       <div>
         <Form layout="vertical">
@@ -219,7 +221,7 @@ export default class ProblemDetail extends PureComponent {
             <li className="item">
               <div className="wrap">
                 <strong className="name">模块：</strong>
-                <span className="value">{this.dataNull(channel && channel.label)}</span>
+                <span className="value">{this.dataNull(this.changeDisplay(functionName, channel))}</span>
               </div>
             </li>
             <li className="item">
@@ -248,11 +250,11 @@ export default class ProblemDetail extends PureComponent {
               <div className="wrap">
                 <strong className="name">问题标签：</strong>
                 <span className={valueIsVisibel}>
-                  {this.changeTag(this.dataNull(tag))}
+                  {this.dataNull(this.changeDisplay(tag, questionTagOptions))}
                 </span>
                 <div className={editIsVisibel}>
                   <span className={qtValue} onClick={event => this.handleShowEdit(event, 'qt')} title="点击编辑">
-                    {this.changeTag(this.dataNull(tag))}
+                    {this.dataNull(this.changeDisplay(tag, questionTagOptions))}
                     <Icon type="edit" className="anticon-edit" />
                   </span>
                 </div>
@@ -260,7 +262,7 @@ export default class ProblemDetail extends PureComponent {
                   <FormItem>
                     {getFieldDecorator('tag', { initialValue: `${this.dataNull(tag)}` })(
                       <Select style={{ width: 140 }} className="qtSelect" id="qtSelect" onBlur={this.handleClose}>
-                        {getSelectOption(popQuestionTagOptions)}
+                        {getSelectOption(questionTagOptions)}
                       </Select>,
                     )}
                     <div className="btn">
@@ -300,11 +302,11 @@ export default class ProblemDetail extends PureComponent {
               <div className="wrap">
                 <strong className="name">经办人：</strong>
                 <span className={valueIsVisibel}>
-                  {this.dataNull(processer)}
+                  {this.dataNull(this.changeDisplay(processer, allOperatorOptions))}
                 </span>
                 <div className={editIsVisibel}>
                   <span className={processerValue} onClick={event => this.handleShowEdit(event, 'processer')} title="点击编辑">
-                    {this.dataNull(processer)}
+                    {this.dataNull(this.changeDisplay(processer, allOperatorOptions))}
                     <Icon type="edit" className="anticon-edit" />
                   </span>
                 </div>
@@ -312,9 +314,7 @@ export default class ProblemDetail extends PureComponent {
                   <FormItem>
                     {getFieldDecorator('processerEmpId', { initialValue: `${this.dataNull(processer)}` })(
                       <Select style={{ width: 140 }} className="qtSelect" onBlur={this.handleClose}>
-                        <Option value="002332">经办人1</Option>
-                        <Option value="002333">经办人2</Option>
-                        <Option value="002334">经办人3</Option>
+                        {getSelectOption(allOperatorOptions)}
                       </Select>,
                     )}
                     <div className="btn">

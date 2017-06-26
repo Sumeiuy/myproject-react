@@ -107,6 +107,7 @@ export default class ProblemHandling extends PureComponent {
     const getSelectOption = item => item.map(i =>
       <Option key={i.value} value={i.value}>{i.label}</Option>,
     );
+    const allOperatorOptions = feedbackOptions.allOperatorOptions;
     return (
       <Modal
         title={title}
@@ -154,9 +155,7 @@ export default class ProblemHandling extends PureComponent {
                   <FormItem>
                     {getFieldDecorator('processerEmpId', { initialValue: `${processer}` })(
                       <Select style={{ width: 220 }}>
-                        <Option value="002332">经办人1</Option>
-                        <Option value="002333">经办人2</Option>
-                        <Option value="002334">经办人3</Option>
+                        {getSelectOption(allOperatorOptions)}
                       </Select>,
                     )}
                   </FormItem>
