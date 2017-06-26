@@ -34,7 +34,6 @@ export default class Remark extends PureComponent {
     const { visible: preVisible } = this.props;
     const { visible } = nextProps;
     if (preVisible !== visible) {
-      console.log({ visible }, '---------');
       this.setState({
         isShow: visible,
       });

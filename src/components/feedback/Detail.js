@@ -123,6 +123,11 @@ export default class Detail extends PureComponent {
             nowStatus: false,
             messageBtnValue: '重新打开',
           });
+        } else if (status === 'PROCESSING') {
+          this.setState({
+            nowStatus: true,
+            messageBtnValue: '处理问题',
+          });
         }
       });
     }
@@ -189,11 +194,11 @@ export default class Detail extends PureComponent {
    * 问题处理提交
   */
   @autobind
-  handleCreate() {
-    const form = this.handlingForm;
-    const { updateFeedback } = this.props;
+  handleCreate(f) {
+    const form = f;
+    const { location: { query }, updateFeedback } = this.props;
+    const { currentId } = query;
     form.validateFields((err, values) => {
-      console.log(err);
       if (err) {
         message.error(err);
         return;
@@ -201,7 +206,7 @@ export default class Detail extends PureComponent {
       let detail = values;
       const removeEmpty = (obj) => {
         const objs = obj;
-        Object.keys(objs).forEach(key => _.isEmpty(objs[key]) && delete objs[key]);
+        Object.keys(objs).forEach(key => (_.isEmpty(objs[key]) || objs[key] === '无') && delete objs[key]);
         return objs;
       };
       detail = removeEmpty(detail);
@@ -211,39 +216,31 @@ export default class Detail extends PureComponent {
         );
         detail.uploadedFiles = files;
       }
-      updateFeedback({
-        ...detail,
-      });
-      form.resetFields();
-      this.setState({ visible: false });
-    });
-  }
-  @autobind
-  handleEdit() {
-    const form = this.editForm;
-    const { location: { query }, updateFeedback } = this.props;
-    const { currentId } = query;
-    form.validateFields((err, values) => {
-      console.log(err);
-      if (err) {
-        message.error(err);
-        return;
-      }
-      let detail = values;
-      const removeEmpty = (obj) => {
-        const objs = obj;
-        Object.keys(objs).forEach(key => _.isEmpty(objs[key]) && delete objs[key]);
-        return objs;
-      };
-      detail = removeEmpty(detail);
+      // debugger;
       updateFeedback({
         ...detail,
         id: currentId,
+        feedbackId: currentId,
+        processerEmpId: helper.getEmpId(),
       });
       form.resetFields();
       this.setState({ visible: false });
     });
   }
+
+  // 删除附件
+  @autobind
+  handleRemoveFile(item) {
+    const { location: { query }, updateFeedback } = this.props;
+    const { currentId } = query;
+    updateFeedback({
+      deletedFiles: [item],
+      id: currentId,
+      processerEmpId: helper.getEmpId(),
+      feedbackId: currentId,
+    });
+  }
+
   /**
    * 备注提交
   */
@@ -299,22 +296,22 @@ export default class Detail extends PureComponent {
       attachModelList = EMPTY_LIST,
       functionName,
       createTime,
+      processer,
       version,
       status,
-      tag,
-      processer,
       jiraId,
+      tag,
       id,
       issueType,
     } = resultData || EMPTY_OBJECT; // 反馈用户
     const feedbackDetail = {
       functionName,
       createTime,
+      processer,
       version,
       status,
-      tag,
-      processer,
       jiraId,
+      tag,
       id,
     };
 
@@ -339,9 +336,8 @@ export default class Detail extends PureComponent {
                     <div className="mod_content">
                       <Problemdetails
                         problemDetails={feedbackDetail}
-                        ref={this.saveEditForm}
                         onCancel={this.remarkCancel}
-                        onCreate={this.handleEdit}
+                        onCreate={this.handleCreate}
                         nowStatus={nowStatus}
                       />
                     </div>
@@ -375,9 +371,8 @@ export default class Detail extends PureComponent {
                     <div className="mod_content">
                       <Problemdetails
                         problemDetails={resultData}
-                        ref={this.saveEditForm}
                         onCancel={this.remarkCancel}
-                        onCreate={this.handleEdit}
+                        onCreate={this.handleCreate}
                         nowStatus={nowStatus}
                       />
                     </div>
@@ -415,7 +410,9 @@ export default class Detail extends PureComponent {
             </div>
             <div className="mod_content">
               <UploadFiles
+                onCreate={this.handleCreate}
                 attachModelList={attachModelList}
+                removeFile={this.handleRemoveFile}
               />
             </div>
           </div>

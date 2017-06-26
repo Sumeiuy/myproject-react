@@ -5,6 +5,7 @@
 
 // import { routerRedux } from 'dva/router';
 
+import { message } from 'antd';
 import api from '../api';
 // import config from '../config/request';
 const EMPTY_OBJECT = {};
@@ -98,6 +99,7 @@ export default {
         type: 'updateFeedbackSuccess',
         payload: response,
       });
+      message.success('操作成功！');
       yield put({
         type: 'getFeedbackRecordList',
         payload: {
