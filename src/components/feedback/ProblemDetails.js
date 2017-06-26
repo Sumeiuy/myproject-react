@@ -110,7 +110,6 @@ export default class ProblemDetail extends PureComponent {
   */
   dataNull(data) {
     if (data !== '' && data !== null && data !== 'null') {
-      console.log(data);
       return data;
     }
     return '无';
