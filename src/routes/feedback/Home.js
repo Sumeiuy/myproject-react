@@ -55,16 +55,16 @@ export default class FeedBack extends PureComponent {
   }
 
   componentDidMount() {
-    this.setDocumentScroll();
-    window.addEventListener('resize', this.onResizeChange, false);
+    // this.setDocumentScroll();
+    // window.addEventListener('resize', this.onResizeChange, false);
   }
 
   componentDidUpdate() {
-    this.setDocumentScroll();
+    // this.setDocumentScroll();
   }
 
   componentWillUnmount() {
-    window.removeEventListener('resize', this.onResizeChange, false);
+    // window.removeEventListener('resize', this.onResizeChange, false);
   }
 
   @autobind
