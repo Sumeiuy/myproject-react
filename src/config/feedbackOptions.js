@@ -137,10 +137,6 @@ const feedbackOptions = {
       value: '002727',
       label: '经办人2',
     },
-    {
-      value: '002334',
-      label: '经办人2',
-    },
   ],
 };
 
