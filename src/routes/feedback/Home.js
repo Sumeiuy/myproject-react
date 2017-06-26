@@ -61,7 +61,7 @@ export default class FeedBack extends PureComponent {
           location={location}
           replace={replace}
         />
-        <Row>
+        <Row className={styles.feedbackRow}>
           <Col span="10" className={styles.leftSection}>
             <FeedbackList
               list={list}
