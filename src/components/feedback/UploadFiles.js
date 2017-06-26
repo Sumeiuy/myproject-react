@@ -35,7 +35,7 @@ export default class UploadFiles extends PureComponent {
     super(props);
     const { onCreate, form } = props;
     this.state = {
-      formKey: `formKey${COUNT}`,
+      formKey: `formKey${COUNT++}`,
       uploadPops: {
         name: 'file',
         multiple: true,
@@ -68,6 +68,9 @@ export default class UploadFiles extends PureComponent {
       this.setState({
         fileList: nextFileList,
         formKey: `formKey${COUNT++}`,
+        uploadPops: { ...this.state.uploadPops },
+      }, () => {
+        // console.log(this.state.formKey, '11111111111111111111');
       });
     }
   }
@@ -91,10 +94,11 @@ export default class UploadFiles extends PureComponent {
 
   render() {
     const { fileList, uploadPops, formKey } = this.state;
+    // console.log(formKey, '0000000000000000000');
     const { form } = this.props;
     const { getFieldDecorator } = form;
     return (
-      <Row>
+      <Row key={formKey}>
         <Col span="12">
           <ul id="filelist" className="filelist">
             {this.getFileList(fileList)}
@@ -103,7 +107,6 @@ export default class UploadFiles extends PureComponent {
         <Col span="12" className="upload_dv">
           <Form
             layout="vertical"
-            key={formKey}
           >
             <FormItem>
               {getFieldDecorator('uploadedFiles')(
@@ -111,11 +114,11 @@ export default class UploadFiles extends PureComponent {
                   {...uploadPops}
                 >
                   <div className="upload_txt">
-                        + 上传附件
+                    + 上传附件
                       </div>
                 </Dragger>,
-                )},
-              </FormItem>
+              )},
+            </FormItem>
           </Form>
         </Col>
       </Row>

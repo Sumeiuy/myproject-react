@@ -18,7 +18,7 @@ import Problemdetails from './ProblemDetails';
 import FeedbackUser from './FeedbackUser';
 import UploadFiles from './UploadFiles';
 import { helper } from '../../utils';
-import { feedbackOptions } from '../../config';
+import { feedbackOptions, request } from '../../config';
 import './detail.less';
 
 const EMPTY_OBJECT = {};
@@ -115,8 +115,8 @@ export default class Detail extends PureComponent {
         currentId,
       }, () => {
         const { resultData = EMPTY_OBJECT } = nextDetail || EMPTY_OBJECT;
-        const { attachmentJson = EMPTY_LIST, status } = resultData || EMPTY_OBJECT;
-        if (attachmentJson && attachmentJson.length < 1) {
+        const { mediaUrls = '', status } = resultData || EMPTY_OBJECT;
+        if (mediaUrls && mediaUrls.length < 1) {
           this.setState({
             hasImgUrl: false,
           });
@@ -222,7 +222,6 @@ export default class Detail extends PureComponent {
         );
         detail.uploadedFiles = files;
       }
-      // debugger;
       updateFeedback({
         request: {
           ...detail,
@@ -306,6 +305,7 @@ export default class Detail extends PureComponent {
     const { resultData: voList = EMPTY_OBJECT } = voDataSource || EMPTY_OBJECT;
     const { feedbackVOList = EMPTY_LIST } = voList; // 处理记录
     const { appId, feedId, description, mediaUrls } = resultData || EMPTY_OBJECT;
+    const imgUrl = _.isEmpty(mediaUrls) ? EMPTY_OBJECT : JSON.parse(mediaUrls);
     const {
       feedEmpInfo = EMPTY_OBJECT,
       attachModelList = EMPTY_LIST,
@@ -373,7 +373,7 @@ export default class Detail extends PureComponent {
                 </Col>
                 <Col span="8">
                   <div className="imgbox">
-                    <img src={mediaUrls} alt="图片" />
+                    <img src={`${request.prefix}${imgUrl.imageUrls}`} alt="图片" />
                   </div>
                 </Col>
               </Row> :

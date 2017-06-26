@@ -33,7 +33,7 @@ export default class RemarkList extends PureComponent {
   @autobind
   constructTableColumns() {
     const columns = [{
-      dataIndex: 'type.code.description.userName.userDepartment',
+      dataIndex: 'title.description',
       width: '100%',
       render: (text, record) =>
         // 当前行记录
@@ -45,9 +45,6 @@ export default class RemarkList extends PureComponent {
               </div>
               <div className="txt">
                 {record.description}
-                {/* {record.contentlist.length > 0 ? record.contentlist.map((inneritem, l) => (
-                  <p rel={l}>{inneritem}</p>)) : '暂无数据'
-                }*/}
               </div>
             </div>
           </div>

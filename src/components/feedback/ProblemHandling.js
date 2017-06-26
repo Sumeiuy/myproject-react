@@ -155,7 +155,7 @@ export default class ProblemHandling extends PureComponent {
                 <Col span="4"><div className="label">经办人：</div></Col>
                 <Col span="19" offset={1}>
                   <FormItem>
-                    {getFieldDecorator('processerEmpId', { initialValue: `${processer}` })(
+                    {getFieldDecorator('processer', { initialValue: `${processer}` })(
                       <Select style={{ width: 220 }}>
                         {getSelectOption(allOperatorOptions)}
                       </Select>,
