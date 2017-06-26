@@ -16,7 +16,6 @@ import './problemDetails.less';
 
 const FormItem = Form.Item;
 const EMPTY_OBJECT = {};
-const EMPTY_LIST = [];
 const feedbackChannel = feedbackOptions.feedbackChannel;
 const popQuestionTagOptions = feedbackOptions.questionTagOptions;
 @createForm()
@@ -30,10 +29,12 @@ export default class ProblemDetail extends PureComponent {
     nowStatus: PropTypes.bool.isRequired,
     userId: PropTypes.string,
   }
+
   static defaultProps = {
     visible: false,
     userId: '002332',
   }
+
   constructor(props) {
     super(props);
     const { problemDetails = EMPTY_OBJECT } = this.props.problemDetails || EMPTY_OBJECT;
@@ -48,6 +49,7 @@ export default class ProblemDetail extends PureComponent {
       data: problemDetails,
     };
   }
+
   componentWillReceiveProps(nextProps) {
     const { problemDetails: preVisible } = this.props;
     const { problemDetails, nowStatus } = nextProps;
@@ -59,6 +61,7 @@ export default class ProblemDetail extends PureComponent {
       this.handleClose();
     }
   }
+
   /**
    * 解决状态
   */
@@ -79,7 +82,7 @@ export default class ProblemDetail extends PureComponent {
    * 问题详情编辑
   */
   @autobind
-  handleShowEdit(event,type) {
+  handleShowEdit(event, type) {
     this.handleClose();
     if (type === 'qt') {
       this.setState({
@@ -102,11 +105,15 @@ export default class ProblemDetail extends PureComponent {
     }
     return true;
   }
+
+  // 提交数据
   @autobind
   handleSub() {
-    //this.handleClose();
-    // 提交数据
+    const { form, onCreate } = this.props;
+    // this.handleClose();
+    onCreate(form);
   }
+
   /**
    * 数据为空处理
   */
@@ -139,8 +146,14 @@ export default class ProblemDetail extends PureComponent {
       processerHV: false,
     });
   }
-  render() {
+
+  handleSubChange() {
     const { form, onCreate } = this.props;
+    onCreate(form);
+  }
+
+  render() {
+    const { form } = this.props;
     const { data = EMPTY_OBJECT,
       editValue,
       qtab,
@@ -161,7 +174,7 @@ export default class ProblemDetail extends PureComponent {
       value,
       editable_field: true,
       value_hide: qtab,
-      editValue
+      editValue,
     });
     const qtHiddenValue = classnames({
       hidden_value: true,
@@ -238,7 +251,7 @@ export default class ProblemDetail extends PureComponent {
                   {this.changeTag(this.dataNull(tag))}
                 </span>
                 <div className={editIsVisibel}>
-                  <span className={qtValue} onClick={(event) => this.handleShowEdit(event, 'qt')} title="点击编辑">
+                  <span className={qtValue} onClick={event => this.handleShowEdit(event, 'qt')} title="点击编辑">
                     {this.changeTag(this.dataNull(tag))}
                     <Icon type="edit" className="anticon-edit" />
                   </span>
@@ -246,12 +259,12 @@ export default class ProblemDetail extends PureComponent {
                 <div className={qtHiddenValue}>
                   <FormItem>
                     {getFieldDecorator('tag', { initialValue: `${this.dataNull(tag)}` })(
-                      <Select style={{ width: 140 }} className="qtSelect" id="qtSelect">
+                      <Select style={{ width: 140 }} className="qtSelect" id="qtSelect" onBlur={this.handleClose}>
                         {getSelectOption(popQuestionTagOptions)}
                       </Select>,
                     )}
                     <div className="btn">
-                      <a onClick={(from) => {onCreate(form)}}><Icon type="success" /></a>
+                      <a onClick={this.handleSubChange}><Icon type="success" /></a>
                       <a onClick={this.handleClose}><Icon type="close" /></a>
                     </div>
                   </FormItem>
@@ -265,7 +278,7 @@ export default class ProblemDetail extends PureComponent {
                   {this.dataNull(jiraId)}
                 </span>
                 <div className={editIsVisibel}>
-                  <span className={jiraValue} onClick={() => this.handleShowEdit('jira')} title="点击编辑">
+                  <span className={jiraValue} onClick={event => this.handleShowEdit(event, 'jira')} title="点击编辑">
                     {this.dataNull(jiraId)}
                     <Icon type="edit" className="anticon-edit" />
                   </span>
@@ -273,10 +286,10 @@ export default class ProblemDetail extends PureComponent {
                 <div className={jiraHiddenValue}>
                   <FormItem>
                     {getFieldDecorator('jiraId', { initialValue: `${jiraId || ''}` })(
-                      <Input style={{ width: 140 }} />,
+                      <Input style={{ width: 140 }} onBlur={this.handleClose} />,
                     )}
                     <div className="btn">
-                      <a onClick={(from) => {onCreate(form)}}><Icon type="success" /></a>
+                      <a onClick={this.handleSubChange}><Icon type="success" /></a>
                       <a onClick={this.handleClose}><Icon type="close" /></a>
                     </div>
                   </FormItem>
@@ -290,7 +303,7 @@ export default class ProblemDetail extends PureComponent {
                   {this.dataNull(processer)}
                 </span>
                 <div className={editIsVisibel}>
-                  <span className={processerValue} onClick={() => this.handleShowEdit('processer')} title="点击编辑">
+                  <span className={processerValue} onClick={event => this.handleShowEdit(event, 'processer')} title="点击编辑">
                     {this.dataNull(processer)}
                     <Icon type="edit" className="anticon-edit" />
                   </span>
@@ -298,14 +311,14 @@ export default class ProblemDetail extends PureComponent {
                 <div className={processerHiddenValue}>
                   <FormItem>
                     {getFieldDecorator('processerEmpId', { initialValue: `${this.dataNull(processer)}` })(
-                      <Select style={{ width: 140 }} className="qtSelect">
+                      <Select style={{ width: 140 }} className="qtSelect" onBlur={this.handleClose}>
                         <Option value="002332">经办人1</Option>
                         <Option value="002333">经办人2</Option>
                         <Option value="002334">经办人3</Option>
                       </Select>,
                     )}
                     <div className="btn">
-                      <a onClick={(from) => {onCreate(form)}}><Icon type="success" /></a>
+                      <a onClick={this.handleSubChange}><Icon type="success" /></a>
                       <a onClick={this.handleClose}><Icon type="close" /></a>
                     </div>
                   </FormItem>

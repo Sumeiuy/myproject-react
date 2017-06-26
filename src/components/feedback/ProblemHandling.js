@@ -41,7 +41,7 @@ export default class ProblemHandling extends PureComponent {
     const stateOptions = feedbackOptions.stateOptions || EMPTY_LIST;
     const { problemDetails = EMPTY_OBJECT } = props;
     this.state = {
-      uploadKey:`uploadHandkey${COUNT++}`,
+      uploadKey: `uploadHandkey${COUNT++}`,
       newDetails: problemDetails,
       popQuestionTagOptions: questionTagOptions,
       stateOptions,
@@ -73,16 +73,22 @@ export default class ProblemHandling extends PureComponent {
     if (nextData !== preData) {
       this.setState({
         newDetails: nextData,
-        uploadKey:`uploadHandkey${COUNT++}`,
+        uploadKey: `uploadHandkey${COUNT++}`,
       });
     }
   }
+
+  // 数据提交
+  handleSubChange() {
+    const { form, onCreate } = this.props;
+    onCreate(form);
+  }
+
   render() {
     const {
       visible,
       title,
       onCancel,
-      onCreate,
       width,
       form,
     } = this.props;
@@ -105,7 +111,7 @@ export default class ProblemHandling extends PureComponent {
       <Modal
         title={title}
         visible={visible}
-        onOk={(from) => {onCreate(form)}}
+        onOk={this.handleSubChange}
         onCancel={onCancel}
         width={width}
         className="problemwrap"

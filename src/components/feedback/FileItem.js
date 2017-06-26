@@ -8,7 +8,6 @@ import { autobind } from 'core-decorators';
 import { helper } from '../../utils';
 import './uploadFiles.less';
 
-const EMPTY_OBJECT = {};
 export default class FileItem extends PureComponent {
   static propTypes = {
     attachName: PropTypes.string.isRequired,
@@ -16,27 +15,11 @@ export default class FileItem extends PureComponent {
     attachUrl: PropTypes.string.isRequired,
     onRemoveFile: PropTypes.func.isRequired,
   }
-  constructor(props) {
-    super(props);
-    const { fileItem = EMPTY_OBJECT } = props;
-    this.state = {
-      file: fileItem,
-    };
-  }
-  componentWillReceiveProps(nextProps) {
-    // const { fileItem: nextFile = EMPTY_OBJECT } = nextProps;
-    // const { fileItem: prevFile = EMPTY_OBJECT } = this.props;
-    // debugger;
-    // if (nextFile !== prevFile) {
-    //   this.setState({
-    //     file: nextFile,
-    //   });
-    // }
-  }
+
   @autobind
   handleClick() {
     const { attachUploader, attachName, attachUrl, onRemoveFile } = this.props;
-    const file = {attachUploader, attachName, attachUrl};
+    const file = { attachUploader, attachName, attachUrl };
     onRemoveFile(file);
   }
   render() {

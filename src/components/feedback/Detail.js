@@ -123,7 +123,7 @@ export default class Detail extends PureComponent {
             nowStatus: false,
             messageBtnValue: '重新打开',
           });
-        } else if ( status === 'PROCESSING') {
+        } else if (status === 'PROCESSING') {
           this.setState({
             nowStatus: true,
             messageBtnValue: '处理问题',
@@ -227,14 +227,14 @@ export default class Detail extends PureComponent {
       this.setState({ visible: false });
     });
   }
-  
-  //删除附件
+
+  // 删除附件
   @autobind
   handleRemoveFile(item) {
     const { location: { query }, updateFeedback } = this.props;
     const { currentId } = query;
     updateFeedback({
-      deletedFiles:[item],
+      deletedFiles: [item],
       id: currentId,
       processerEmpId: helper.getEmpId(),
       feedbackId: currentId,
