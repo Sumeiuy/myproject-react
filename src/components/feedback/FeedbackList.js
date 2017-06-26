@@ -16,6 +16,8 @@ const STATUS_MAP = [
   { value: 'CLOSED', label: '关闭' },
 ];
 
+const OMIT_ARRAY = ['currentId', 'curPageSize', 'curPageNum'];
+
 export default class FeedbackList extends PureComponent {
   static propTypes = {
     list: PropTypes.object.isRequired,
@@ -40,7 +42,6 @@ export default class FeedbackList extends PureComponent {
       totalPageNum,
       curPageSize: 10,
       curSelectedRow: 0,
-      // currentId: '',
     };
   }
 
@@ -52,7 +53,6 @@ export default class FeedbackList extends PureComponent {
     const { resultData: nextResultData = EMPTY_LIST, page = EMPTY_OBJECT } = nextList;
     const { resultData: prevResultData = EMPTY_LIST } = prevList;
     const { curPageNum = 1, totalPageNum, totalRecordNum, pageSize } = page;
-    // const { currentId } = nextQuery;
 
     if (prevResultData !== nextResultData) {
       this.setState({
@@ -90,7 +90,7 @@ export default class FeedbackList extends PureComponent {
     // 只有当有数据，并且当前没有选中项的时候，设置第一条初始值
     // 或者当有数据，但是当前选中项在数据中，没有匹配时，设置第一条初始值
     if (!_.isEmpty(dataSource) && (!currentId || (
-      dataSource && currentId &&
+      currentId &&
       _.isEmpty(_.find(dataSource, item => item.id.toString() === currentId))
     ))) {
       replace({
@@ -119,8 +119,8 @@ export default class FeedbackList extends PureComponent {
    * @param {*} nextQuery 下一次query
    */
   diffObject(prevQuery, nextQuery) {
-    const prevQueryData = _.omit(prevQuery, ['currentId', 'curPageSize', 'curPageNum']);
-    const nextQueryData = _.omit(nextQuery, ['currentId', 'curPageSize', 'curPageNum']);
+    const prevQueryData = _.omit(prevQuery, OMIT_ARRAY);
+    const nextQueryData = _.omit(nextQuery, OMIT_ARRAY);
     if (!_.isEqual(prevQueryData, nextQueryData)) {
       return false;
     }
@@ -163,14 +163,6 @@ export default class FeedbackList extends PureComponent {
       curPageNum: nextPage,
     });
     const { location: { query }, getFeedbackList } = this.props;
-    // replace({
-    //   pathname,
-    //   query: {
-    //     ...query,
-    //     curPageNum: nextPage,
-    //   },
-    // });
-
     getFeedbackList(constructPostBody(query, nextPage, currentPageSize));
   }
 
@@ -219,7 +211,9 @@ export default class FeedbackList extends PureComponent {
           <div className="rightSection">
             <div className={statusClass}>{(statusLabel && statusLabel[0].label) || '无'}</div>
             <div className="name">{record.processer || '无'}</div>
-            <div className="date">{(record.createTime && record.createTime.slice(0, 10)) || '无'}</div>
+            <div className="date">{(record.createTime &&
+              record.createTime.length >= 10 &&
+              record.createTime.slice(0, 10)) || '无'}</div>
           </div>
         );
       },
@@ -259,27 +253,11 @@ export default class FeedbackList extends PureComponent {
         curPageSize,
         curPageNum,
       });
-      // replace({
-      //   pathname,
-      //   query: {
-      //     ...query,
-      //     curPageNum,
-      //     curPageSize,
-      //   },
-      // });
     } else {
       this.setState({
         curPageSize: changedPageSize,
         curPageNum: currentPageNum,
       });
-      // replace({
-      //   pathname,
-      //   query: {
-      //     ...query,
-      //     curPageNum: currentPageNum,
-      //     curPageSize: changedPageSize,
-      //   },
-      // });
       // 每页条目变化
       // 重新请求数据
       getFeedbackList(constructPostBody(query, currentPageNum, changedPageSize));
