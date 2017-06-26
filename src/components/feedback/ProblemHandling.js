@@ -7,6 +7,7 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { Select, Row, Col, Input, Form, Modal, message, Upload } from 'antd';
 import { createForm } from 'rc-form';
+import { autobind } from 'core-decorators';
 import { helper } from '../../utils';
 import Icon from '../../components/common/Icon';
 import { feedbackOptions, request } from '../../config';
@@ -79,6 +80,7 @@ export default class ProblemHandling extends PureComponent {
   }
 
   // 数据提交
+  @autobind
   handleSubChange() {
     const { form, onCreate } = this.props;
     onCreate(form);
