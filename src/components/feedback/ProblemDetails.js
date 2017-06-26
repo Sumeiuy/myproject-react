@@ -17,6 +17,8 @@ import './problemDetails.less';
 const FormItem = Form.Item;
 const EMPTY_OBJECT = {};
 const feedbackChannel = feedbackOptions.feedbackChannel;
+let OPTIONKEY = 0;
+
 @createForm()
 export default class ProblemDetail extends PureComponent {
   static propTypes = {
@@ -145,6 +147,7 @@ export default class ProblemDetail extends PureComponent {
     });
   }
 
+  @autobind
   handleSubChange() {
     const { form, onCreate } = this.props;
     onCreate(form);
@@ -212,7 +215,7 @@ export default class ProblemDetail extends PureComponent {
     const allOperatorOptions = feedbackOptions.allOperatorOptions;
     const questionTagOptions = feedbackOptions.questionTagOptions;
     const getSelectOption = item => item.map(i =>
-      <Option key={i.value} value={i.value}>{i.label}</Option>,
+      <Option key={`optionKey${OPTIONKEY++}`} value={i.value}>{i.label}</Option>,
     );
 
     const channel = _.find(_.omit(feedbackChannel[0], ['value', 'lable']).children,
