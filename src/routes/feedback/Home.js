@@ -5,7 +5,9 @@
  */
 
 import React, { PureComponent, PropTypes } from 'react';
+import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
+import { autobind } from 'core-decorators';
 import { withRouter, routerRedux } from 'dva/router';
 import { Row, Col } from 'antd';
 import Detail from '../../components/feedback/Detail';
@@ -44,11 +46,49 @@ export default class FeedBack extends PureComponent {
   }
 
   componentWillMount() {
-    const { getFeedbackList, location: { query } } = this.props;
+    const { getFeedbackList, location: { query, query: {
+      curPageNum,
+      curPageSize,
+     } } } = this.props;
     // 默认筛选条件
-    getFeedbackList(constructPostBody(query, 1, 10));
+    getFeedbackList(constructPostBody(query, curPageNum || 1, curPageSize || 10));
   }
 
+  componentDidMount() {
+    this.setDocumentScroll();
+    window.addEventListener('resize', this.onResizeChange, false);
+  }
+
+  componentDidUpdate() {
+    this.setDocumentScroll();
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.onResizeChange, false);
+  }
+
+  @autobind
+  onResizeChange() {
+    this.setDocumentScroll();
+  }
+
+  setDocumentScroll() {
+    const docElemHeight = document.documentElement.clientHeight;
+    /* eslint-disable */
+    const leftSectionElem = ReactDOM.findDOMNode(document.getElementsByClassName('feedbackList')[0]);
+    const rightSectionElem = ReactDOM.findDOMNode(document.getElementsByClassName('detail_box')[0]);
+    /* eslint-enable */
+    let topDistance = 0;
+    const bottomDistance = 48;
+    if (leftSectionElem) {
+      topDistance = leftSectionElem.getBoundingClientRect().top;
+      leftSectionElem.style.height = `${docElemHeight - topDistance - bottomDistance}px`;
+    }
+    if (rightSectionElem) {
+      rightSectionElem.style.height = `${docElemHeight - topDistance - bottomDistance}px`;
+    }
+    document.documentElement.style.overflow = 'hidden';
+  }
 
   render() {
     const { list, location, getFeedbackList, replace } = this.props;
