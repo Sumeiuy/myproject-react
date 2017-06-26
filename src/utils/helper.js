@@ -170,7 +170,6 @@ const helper = {
         curPageNum: newPageNum,
         pageSize: newPageSize,
       },
-      userId: helper.getEmpId(), // 反馈问题用户Id
     };
 
     const omitData = _.omit(query, ['currentId', 'feedbackCreateTimeFrom', 'feedbackCreateTimeTo', 'curPageNum', 'curPageSize']);
