@@ -214,9 +214,7 @@ export default class ProblemDetail extends PureComponent {
     const getSelectOption = item => item.map(i =>
       <Option key={i.value} value={i.value}>{i.label}</Option>,
     );
-
-    const channel = _.find(_.omit(feedbackChannel[0], ['value', 'lable']).children,
-      item => item.value === functionName);
+    const channel = _.omit(feedbackChannel[0].children, ['value', 'lable']);
 
     return (
       <div>
@@ -225,7 +223,7 @@ export default class ProblemDetail extends PureComponent {
             <li className="item">
               <div className="wrap">
                 <strong className="name">模块：</strong>
-                <span className="value">{this.dataNull(this.changeDisplay(functionName, channel))}</span>
+                <span className="value">{this.changeDisplay(functionName, channel)}</span>
               </div>
             </li>
             <li className="item">
@@ -252,11 +250,11 @@ export default class ProblemDetail extends PureComponent {
               <div className="wrap">
                 <strong className="name">问题标签：</strong>
                 <span className={valueIsVisibel}>
-                  {this.dataNull(this.changeDisplay(tag, questionTagOptions))}
+                  {this.changeDisplay(tag, questionTagOptions)}
                 </span>
                 <div className={editIsVisibel}>
                   <span className={qtValue} onClick={event => this.handleShowEdit(event, 'qt')} title="点击编辑">
-                    {this.dataNull(this.changeDisplay(tag, questionTagOptions))}
+                    {this.changeDisplay(tag, questionTagOptions)}
                     <Icon type="edit" className="anticon-edit" />
                   </span>
                 </div>
@@ -304,11 +302,11 @@ export default class ProblemDetail extends PureComponent {
               <div className="wrap">
                 <strong className="name">经办人：</strong>
                 <span className={valueIsVisibel}>
-                  {this.dataNull(this.changeDisplay(processer, allOperatorOptions))}
+                  {this.changeDisplay(processer, allOperatorOptions)}
                 </span>
                 <div className={editIsVisibel}>
                   <span className={processerValue} onClick={event => this.handleShowEdit(event, 'processer')} title="点击编辑">
-                    {this.dataNull(this.changeDisplay(processer, allOperatorOptions))}
+                    {this.changeDisplay(processer, allOperatorOptions)}
                     <Icon type="edit" className="anticon-edit" />
                   </span>
                 </div>

@@ -383,7 +383,7 @@ export default class Detail extends PureComponent {
                     </div>
                     <div className="mod_content">
                       <div className="des_txt">
-                        {description}
+                        {description !== ' ' ? description : '暂无描述'}
                       </div>
                       <div className="btn_dv">
                         <Button type="primary" onClick={this.showModal}>{messageBtnValue}</Button>
