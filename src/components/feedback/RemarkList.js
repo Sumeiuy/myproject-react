@@ -35,10 +35,9 @@ export default class RemarkList extends PureComponent {
     const columns = [{
       dataIndex: 'type.code.description.userName.userDepartment',
       width: '100%',
-      render: (text, record, index) => {
+      render: (text, record) =>
         // 当前行记录
-        console.log(text, record, index);
-        return (
+        (
           <div className="item">
             <div className="wrap">
               <div className="info_dv">
@@ -52,8 +51,7 @@ export default class RemarkList extends PureComponent {
               </div>
             </div>
           </div>
-        );
-      },
+        ),
     }];
     return columns;
   }

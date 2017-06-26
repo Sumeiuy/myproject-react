@@ -5,6 +5,7 @@
 
 // import { routerRedux } from 'dva/router';
 
+import { message } from 'antd';
 import api from '../api';
 import { helper } from '../utils';
 // import config from '../config/request';
@@ -101,6 +102,7 @@ export default {
         type: 'updateFeedbackSuccess',
         payload: response,
       });
+      message.success('操作成功！');
       yield put({
         type: 'getFeedbackRecordList',
         payload: {

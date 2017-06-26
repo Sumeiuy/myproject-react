@@ -4,39 +4,54 @@
  * @author yangquanjian
  */
 import React, { PropTypes, PureComponent } from 'react';
-import { Row, Col, message, Upload } from 'antd';
-// import { autobind } from 'core-decorators';
+import { Row, Col, message, Upload, Form } from 'antd';
+import { autobind } from 'core-decorators';
+import { createForm } from 'rc-form';
 import _ from 'lodash';
-import './uploadFiles.less';
+import FileItem from './FileItem';
+import { request } from '../../config';
 import { helper } from '../../utils';
+import './uploadFiles.less';
 
-// const EMPTY_OBJECT = {};
+let COUNT = 0;
 const EMPTY_LIST = [];
 const Dragger = Upload.Dragger;
+const FormItem = Form.Item;
+
+@createForm()
 export default class UploadFiles extends PureComponent {
   static propTypes = {
     attachModelList: PropTypes.array,
-    userId: PropTypes.string,
+    form: PropTypes.object.isRequired,
+    onCreate: PropTypes.func.isRequired,
+    removeFile: PropTypes.func.isRequired,
   }
+
   static defaultProps = {
     attachModelList: EMPTY_LIST,
-    userId: '002332',
   }
+
   constructor(props) {
     super(props);
+    const { onCreate, form } = props;
     this.state = {
+      formKey: `formKey${COUNT}`,
       uploadPops: {
         name: 'file',
         multiple: true,
-        showUploadList: false,
-        action: '//jsonplaceholder.typicode.com/posts/',
+        showUploadList: true,
+        data: {
+          empId: helper.getEmpId(),
+        },
+        action: `${request.prefix}/file/feedbackFileUpload`,
         onChange(info) {
           const status = info.file.status;
           if (status !== 'uploading') {
-            console.log(info.file, info.fileList);
+            // console.log(info.file, info.fileList);
           }
           if (status === 'done') {
-            message.success(`${info.file.name} file uploaded successfully.`);
+            // message.success(`${info.file.name} file uploaded successfully.`);
+            onCreate(form);
           } else if (status === 'error') {
             message.error(`${info.file.name} file upload failed.`);
           }
@@ -45,32 +60,39 @@ export default class UploadFiles extends PureComponent {
       fileList: [],
     };
   }
+
   componentWillReceiveProps(nextProps) {
     const { attachModelList: nextFileList = EMPTY_LIST } = nextProps;
     const { attachModelList: prevFileList = EMPTY_LIST } = this.props;
     if (nextFileList !== prevFileList) {
       this.setState({
         fileList: nextFileList,
+        formKey: `formKey${COUNT++}`,
       });
     }
   }
 
-  getFileList(item) {
-    const userId = helper.getEmpId();
-    if (_.isEmpty(item)) {
+  @autobind
+  getFileList(items) {
+    const { removeFile } = this.props;
+    if (_.isEmpty(items)) {
       return null;
     }
-    return item.map(i =>
-      <li className={`${i.attachUploader && userId === i.attachUploader ? 'userfile' : 'noUserfile'}`}>
-        <a href={i.attachUrl}>{i.attachName}</a>
-        <a className="removeFile">X</a>
-      </li>,
-    );
+    return items.map(item => (
+      <FileItem
+        key={`k${COUNT++}`}
+        attachName={item.attachName || ''}
+        attachUploader={item.attachUploader || ''}
+        attachUrl={item.attachUrl || ''}
+        onRemoveFile={removeFile}
+      />
+    ));
   }
 
   render() {
-    const { fileList } = this.state;
-
+    const { fileList, uploadPops, formKey } = this.state;
+    const { form } = this.props;
+    const { getFieldDecorator } = form;
     return (
       <Row>
         <Col span="12">
@@ -78,14 +100,23 @@ export default class UploadFiles extends PureComponent {
             {this.getFileList(fileList)}
           </ul>
         </Col>
-        <Col span="12">
-          <div className="upload_dv">
-            <Dragger {...this.state.uploadPos}>
-              <div className="upload_txt">
-                + 上传附件
-              </div>
-            </Dragger>
-          </div>
+        <Col span="12" className="upload_dv">
+          <Form
+            layout="vertical"
+            key={formKey}
+          >
+            <FormItem>
+              {getFieldDecorator('uploadedFiles')(
+                <Dragger
+                  {...uploadPops}
+                >
+                  <div className="upload_txt">
+                        + 上传附件
+                      </div>
+                </Dragger>,
+                )},
+              </FormItem>
+          </Form>
         </Col>
       </Row>
     );
