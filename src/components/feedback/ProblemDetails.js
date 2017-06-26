@@ -17,6 +17,8 @@ import './problemDetails.less';
 const FormItem = Form.Item;
 const EMPTY_OBJECT = {};
 const feedbackChannel = feedbackOptions.feedbackChannel;
+let OPTIONKEY = 0;
+
 @createForm()
 export default class ProblemDetail extends PureComponent {
   static propTypes = {
@@ -145,6 +147,7 @@ export default class ProblemDetail extends PureComponent {
     });
   }
 
+  @autobind
   handleSubChange() {
     const { form, onCreate } = this.props;
     onCreate(form);
@@ -212,7 +215,7 @@ export default class ProblemDetail extends PureComponent {
     const allOperatorOptions = feedbackOptions.allOperatorOptions;
     const questionTagOptions = feedbackOptions.questionTagOptions;
     const getSelectOption = item => item.map(i =>
-      <Option key={i.value} value={i.value}>{i.label}</Option>,
+      <Option key={`optionKey${OPTIONKEY++}`} value={i.value}>{i.label}</Option>,
     );
     const channel = _.omit(feedbackChannel[0].children, ['value', 'lable']);
 
@@ -261,7 +264,7 @@ export default class ProblemDetail extends PureComponent {
                 <div className={qtHiddenValue}>
                   <FormItem>
                     {getFieldDecorator('tag', { initialValue: `${this.dataNull(tag)}` })(
-                      <Select style={{ width: 140 }} className="qtSelect" id="qtSelect" onBlur={this.handleClose}>
+                      <Select style={{ width: 140 }} className="qtSelect" id="qtSelect">
                         {getSelectOption(questionTagOptions)}
                       </Select>,
                     )}
@@ -288,7 +291,7 @@ export default class ProblemDetail extends PureComponent {
                 <div className={jiraHiddenValue}>
                   <FormItem>
                     {getFieldDecorator('jiraId', { initialValue: `${jiraId || ''}` })(
-                      <Input style={{ width: 140 }} onBlur={this.handleClose} />,
+                      <Input style={{ width: 140 }} />,
                     )}
                     <div className="btn">
                       <a onClick={this.handleSubChange}><Icon type="success" /></a>
@@ -312,8 +315,8 @@ export default class ProblemDetail extends PureComponent {
                 </div>
                 <div className={processerHiddenValue}>
                   <FormItem>
-                    {getFieldDecorator('processerEmpId', { initialValue: `${this.dataNull(processer)}` })(
-                      <Select style={{ width: 140 }} className="qtSelect" onBlur={this.handleClose}>
+                    {getFieldDecorator('processer', { initialValue: `${this.dataNull(processer)}` })(
+                      <Select style={{ width: 140 }} className="qtSelect">
                         {getSelectOption(allOperatorOptions)}
                       </Select>,
                     )}
