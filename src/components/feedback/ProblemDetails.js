@@ -191,7 +191,6 @@ export default class ProblemDetail extends PureComponent {
       <Option key={i.value} value={i.value}>{i.label}</Option>,
     );
     const channel = _.omit(feedbackChannel[0].children, ['value', 'lable']);
-    
     return (
       <div>
         <Form layout="vertical">
