@@ -190,12 +190,8 @@ export default class ProblemDetail extends PureComponent {
     const getSelectOption = item => item.map(i =>
       <Option key={i.value} value={i.value}>{i.label}</Option>,
     );
-
-
-    const channel = _.find(_.omit(feedbackChannel[0], ['value', 'lable']).children,
-      item => item.value === functionName);
-
-
+    const channel = _.omit(feedbackChannel[0].children, ['value', 'lable']);
+    
     return (
       <div>
         <Form layout="vertical">
