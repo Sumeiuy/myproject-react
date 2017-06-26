@@ -111,10 +111,10 @@ export default class UploadFiles extends PureComponent {
                   {...uploadPops}
                 >
                   <div className="upload_txt">
-                        + 上传附件
+                    + 上传附件
                       </div>
                 </Dragger>,
-                )},
+              )},
               </FormItem>
           </Form>
         </Col>
