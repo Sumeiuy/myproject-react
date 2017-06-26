@@ -54,7 +54,7 @@ export default class ProblemDetail extends PureComponent {
     const { problemDetails, nowStatus } = nextProps;
     if (problemDetails !== preVisible) {
       this.setState({
-        data: problemDetails,
+        data: preVisible,
         canBeEdited: nowStatus,
       });
       this.handleClose();
@@ -117,7 +117,7 @@ export default class ProblemDetail extends PureComponent {
    * 数据为空处理
   */
   dataNull(data) {
-    if (_.isEmpty(data) && data !== 'null') {
+    if (!_.isEmpty(data) && data !== 'null') {
       return data;
     }
     return '无';
@@ -151,8 +151,8 @@ export default class ProblemDetail extends PureComponent {
   }
 
   render() {
-    const { form } = this.props;
-    const { data = EMPTY_OBJECT,
+    const { form, problemDetails } = this.props;
+    const {
       editValue,
       qtab,
       qtabHV,
@@ -165,7 +165,11 @@ export default class ProblemDetail extends PureComponent {
     const { functionName,
       createTime,
       version,
-      status, tag, processer, jiraId } = data;
+      status,
+      tag,
+      processer,
+      jiraId,
+    } = problemDetails;
     const { getFieldDecorator } = form;
     const value = true;
     const qtValue = classnames({
@@ -240,9 +244,7 @@ export default class ProblemDetail extends PureComponent {
               <div className="wrap">
                 <strong className="name">状态：</strong>
                 <span className="value">
-                  <span className="value" >
-                    {this.dataNull(this.handleStatus(status))}
-                  </span>
+                  {this.dataNull(this.handleStatus(status))}
                 </span>
               </div>
             </li>
