@@ -16,9 +16,7 @@ import './problemDetails.less';
 
 const FormItem = Form.Item;
 const EMPTY_OBJECT = {};
-const EMPTY_LIST = [];
 const feedbackChannel = feedbackOptions.feedbackChannel;
-
 @createForm()
 export default class ProblemDetail extends PureComponent {
   static propTypes = {
@@ -30,25 +28,27 @@ export default class ProblemDetail extends PureComponent {
     nowStatus: PropTypes.bool.isRequired,
     userId: PropTypes.string,
   }
+
   static defaultProps = {
     visible: false,
-    qtab: false,
-    qtabHV: false,
-    jira: false,
-    jiraHV: false,
-    processerV: false,
-    processerHV: false,
     userId: '002332',
   }
+
   constructor(props) {
     super(props);
     const { problemDetails = EMPTY_OBJECT } = this.props.problemDetails || EMPTY_OBJECT;
-    const questionTagOptions = feedbackOptions.questionTagOptions || EMPTY_LIST;
     this.state = {
+      editValue: true,
+      qtab: false,
+      qtabHV: false,
+      jira: false,
+      jiraHV: false,
+      processerV: false,
+      processerHV: false,
       data: problemDetails,
-      popQuestionTagOptions: questionTagOptions,
     };
   }
+
   componentWillReceiveProps(nextProps) {
     const { problemDetails: preVisible } = this.props;
     const { problemDetails, nowStatus } = nextProps;
@@ -57,9 +57,10 @@ export default class ProblemDetail extends PureComponent {
         data: problemDetails,
         canBeEdited: nowStatus,
       });
+      this.handleClose();
     }
-    this.handleClose();
   }
+
   /**
    * 解决状态
   */
@@ -80,7 +81,7 @@ export default class ProblemDetail extends PureComponent {
    * 问题详情编辑
   */
   @autobind
-  handleShowEdit(type) {
+  handleShowEdit(event, type) {
     this.handleClose();
     if (type === 'qt') {
       this.setState({
@@ -103,32 +104,33 @@ export default class ProblemDetail extends PureComponent {
     }
     return true;
   }
+
+  // 提交数据
   @autobind
   handleSub() {
-    this.handleClose();
-    // 提交数据
+    const { form, onCreate } = this.props;
+    // this.handleClose();
+    onCreate(form);
   }
+
   /**
    * 数据为空处理
   */
   dataNull(data) {
-    if (data !== null && data !== 'null') {
-      console.log(data);
+    if (_.isEmpty(data) && data !== 'null') {
       return data;
     }
     return '无';
   }
-
   /**
-   * 问题标签显示转换
+   * value和label显示转换
   */
-  changeTag(st) {
+  changeDisplay(st, options) {
     if (st) {
-      const { popQuestionTagOptions } = this.state;
-      const nowStatus = _.find(popQuestionTagOptions, o => o.value === st);
-      return nowStatus.label;
+      const nowStatus = _.find(options, o => o.value === st) || EMPTY_OBJECT;
+      return nowStatus.label || '无';
     }
-    return '';
+    return '无';
   }
 
   @autobind
@@ -142,13 +144,24 @@ export default class ProblemDetail extends PureComponent {
       processerHV: false,
     });
   }
-  render() {
+
+  handleSubChange() {
     const { form, onCreate } = this.props;
+    onCreate(form);
+  }
+
+  render() {
+    const { form } = this.props;
     const { data = EMPTY_OBJECT,
+      editValue,
       qtab,
       qtabHV,
       jira,
-      jiraHV, processerV, processerHV, canBeEdited } = this.state;
+      jiraHV,
+      processerV,
+      processerHV,
+      canBeEdited,
+    } = this.state;
     const { functionName,
       createTime,
       version,
@@ -159,6 +172,7 @@ export default class ProblemDetail extends PureComponent {
       value,
       editable_field: true,
       value_hide: qtab,
+      editValue,
     });
     const qtHiddenValue = classnames({
       hidden_value: true,
@@ -190,7 +204,9 @@ export default class ProblemDetail extends PureComponent {
       eitbox: true,
       edit_show: canBeEdited,
     });
-    const { popQuestionTagOptions = EMPTY_LIST } = this.state;
+
+    const allOperatorOptions = feedbackOptions.allOperatorOptions;
+    const questionTagOptions = feedbackOptions.questionTagOptions;
     const getSelectOption = item => item.map(i =>
       <Option key={i.value} value={i.value}>{i.label}</Option>,
     );
@@ -205,7 +221,7 @@ export default class ProblemDetail extends PureComponent {
             <li className="item">
               <div className="wrap">
                 <strong className="name">模块：</strong>
-                <span className="value">{this.dataNull(channel && channel.label)}</span>
+                <span className="value">{this.dataNull(this.changeDisplay(functionName, channel))}</span>
               </div>
             </li>
             <li className="item">
@@ -234,23 +250,23 @@ export default class ProblemDetail extends PureComponent {
               <div className="wrap">
                 <strong className="name">问题标签：</strong>
                 <span className={valueIsVisibel}>
-                  {this.changeTag(tag)}
+                  {this.dataNull(this.changeDisplay(tag, questionTagOptions))}
                 </span>
                 <div className={editIsVisibel}>
-                  <span className={qtValue} onClick={() => this.handleShowEdit('qt')} title="点击编辑">
-                    {this.changeTag(tag)}
+                  <span className={qtValue} onClick={event => this.handleShowEdit(event, 'qt')} title="点击编辑">
+                    {this.dataNull(this.changeDisplay(tag, questionTagOptions))}
                     <Icon type="edit" className="anticon-edit" />
                   </span>
                 </div>
                 <div className={qtHiddenValue}>
                   <FormItem>
-                    {getFieldDecorator('tag', { initialValue: `${tag}` })(
+                    {getFieldDecorator('tag', { initialValue: `${this.dataNull(tag)}` })(
                       <Select style={{ width: 140 }} className="qtSelect" id="qtSelect" onBlur={this.handleClose}>
-                        {getSelectOption(popQuestionTagOptions)}
+                        {getSelectOption(questionTagOptions)}
                       </Select>,
                     )}
                     <div className="btn">
-                      <a onClick={onCreate}><Icon type="success" /></a>
+                      <a onClick={this.handleSubChange}><Icon type="success" /></a>
                       <a onClick={this.handleClose}><Icon type="close" /></a>
                     </div>
                   </FormItem>
@@ -264,7 +280,7 @@ export default class ProblemDetail extends PureComponent {
                   {this.dataNull(jiraId)}
                 </span>
                 <div className={editIsVisibel}>
-                  <span className={jiraValue} onClick={() => this.handleShowEdit('jira')} title="点击编辑">
+                  <span className={jiraValue} onClick={event => this.handleShowEdit(event, 'jira')} title="点击编辑">
                     {this.dataNull(jiraId)}
                     <Icon type="edit" className="anticon-edit" />
                   </span>
@@ -272,10 +288,10 @@ export default class ProblemDetail extends PureComponent {
                 <div className={jiraHiddenValue}>
                   <FormItem>
                     {getFieldDecorator('jiraId', { initialValue: `${jiraId || ''}` })(
-                      <Input style={{ width: 140 }} />,
+                      <Input style={{ width: 140 }} onBlur={this.handleClose} />,
                     )}
                     <div className="btn">
-                      <a onClick={onCreate}><Icon type="success" /></a>
+                      <a onClick={this.handleSubChange}><Icon type="success" /></a>
                       <a onClick={this.handleClose}><Icon type="close" /></a>
                     </div>
                   </FormItem>
@@ -286,11 +302,11 @@ export default class ProblemDetail extends PureComponent {
               <div className="wrap">
                 <strong className="name">经办人：</strong>
                 <span className={valueIsVisibel}>
-                  {this.dataNull(processer)}
+                  {this.dataNull(this.changeDisplay(processer, allOperatorOptions))}
                 </span>
                 <div className={editIsVisibel}>
-                  <span className={processerValue} onClick={() => this.handleShowEdit('processer')} title="点击编辑">
-                    {this.dataNull(processer)}
+                  <span className={processerValue} onClick={event => this.handleShowEdit(event, 'processer')} title="点击编辑">
+                    {this.dataNull(this.changeDisplay(processer, allOperatorOptions))}
                     <Icon type="edit" className="anticon-edit" />
                   </span>
                 </div>
@@ -298,13 +314,11 @@ export default class ProblemDetail extends PureComponent {
                   <FormItem>
                     {getFieldDecorator('processerEmpId', { initialValue: `${this.dataNull(processer)}` })(
                       <Select style={{ width: 140 }} className="qtSelect" onBlur={this.handleClose}>
-                        <Option value="002332">经办人1</Option>
-                        <Option value="002333">经办人2</Option>
-                        <Option value="002334">经办人3</Option>
+                        {getSelectOption(allOperatorOptions)}
                       </Select>,
                     )}
                     <div className="btn">
-                      <a onClick={onCreate}><Icon type="success" /></a>
+                      <a onClick={this.handleSubChange}><Icon type="success" /></a>
                       <a onClick={this.handleClose}><Icon type="close" /></a>
                     </div>
                   </FormItem>
