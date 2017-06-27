@@ -8,6 +8,7 @@ import React, { PropTypes, PureComponent } from 'react';
 import { Icon, Radio } from 'antd';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
+import _ from 'lodash';
 
 import { getDurationString } from '../../utils/helper';
 import { optionsMap } from '../../config';
@@ -83,6 +84,7 @@ export default class DurationSelect extends PureComponent {
 
   render() {
     const { cycleType, durationStr, open } = this.state;
+    const durationTip = _.filter(timeOptions, { key: cycleType })[0].name;
     const toggleDurationPicker = classnames({
       durationPicker: true,
       hide: !open,
@@ -90,7 +92,7 @@ export default class DurationSelect extends PureComponent {
     return (
       <div className="durationSelect">
         <div className="duration" onClick={this.handleDurationClick}>
-          <div className="text">{durationStr}</div>
+          <div className="text">{`${durationStr}(${durationTip})`}</div>
           <Icon type="calendar" />
         </div>
         <div className={toggleDurationPicker} onMouseEnter={this.handleMouseEnter}>
