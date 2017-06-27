@@ -35,7 +35,7 @@ export default class UploadFiles extends PureComponent {
     super(props);
     const { onCreate, form } = props;
     this.state = {
-      formKey: `formKey${COUNT++}`,
+      // formKey: `formKey${COUNT++}`,
       uploadPops: {
         name: 'file',
         multiple: true,
@@ -52,6 +52,7 @@ export default class UploadFiles extends PureComponent {
           if (status === 'done') {
             // message.success(`${info.file.name} file uploaded successfully.`);
             onCreate(form);
+            window.location.reload();
           } else if (status === 'error') {
             message.error(`${info.file.name} file upload failed.`);
           }
@@ -93,12 +94,12 @@ export default class UploadFiles extends PureComponent {
   }
 
   render() {
-    const { fileList, uploadPops, formKey } = this.state;
+    const { fileList, uploadPops } = this.state;
     // console.log(formKey, '0000000000000000000');
     const { form } = this.props;
     const { getFieldDecorator } = form;
     return (
-      <Row key={formKey}>
+      <Row>
         <Col span="12">
           <ul id="filelist" className="filelist">
             {this.getFileList(fileList)}

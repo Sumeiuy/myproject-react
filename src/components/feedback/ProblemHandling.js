@@ -56,7 +56,7 @@ export default class ProblemHandling extends PureComponent {
         data: {
           empId: helper.getEmpId(),
         },
-        action: `${request.prefix}/file/feedbackFileUpload`,
+        action: `${request.prefix}/file/feedbackFileUpload2`,
         onChange(info) {
           const status = info.file.status;
           if (status !== 'uploading') {

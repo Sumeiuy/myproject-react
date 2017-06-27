@@ -5,9 +5,21 @@
       a{
         color: #666666;
       }
+      a:first-child{
+        display: inline-block;
+        width:200px;
+        overflow : hidden;
+        text-overflow: ellipsis;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+      }
+      a:first-child:hover{
+        cursor:default;
+      }
       .removeFile{
         display: none;
-        margin-left:10px;
+        margin-left:30px;
+        font-weight: bold;
       }
     }
     .userfile:hover{

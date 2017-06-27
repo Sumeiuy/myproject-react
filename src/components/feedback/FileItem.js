@@ -7,6 +7,8 @@ import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import { Modal } from 'antd';
 import { helper } from '../../utils';
+import { request } from '../../config';
+import Icon from '../../components/common/Icon';
 import './uploadFiles.less';
 
 const confirm = Modal.confirm;
@@ -36,8 +38,10 @@ export default class FileItem extends PureComponent {
     const empId = helper.getEmpId();
     return (
       <li className={`${attachUploader && empId === attachUploader ? 'userfile' : 'noUserfile'}`}>
-        <a href={attachUrl} title="点击下载">{attachName}</a>
-        <a className="removeFile" onClick={this.handleClick} title="点击删除">X</a>
+        <a href={`${request.prefix}/file/${attachUrl}`} title="点击下载" download={attachName}>{attachName}</a>
+        <a className="removeFile" onClick={this.handleClick} title="点击删除">
+          <Icon type="close" />
+        </a>
       </li>
     );
   }
