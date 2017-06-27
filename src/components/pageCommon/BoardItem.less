@@ -1,0 +1,113 @@
+.boardItem{
+  display: block;
+  min-height: 270px;
+  color: #fff;
+  margin-top: 20px;
+  &:link, &:hover, &:active, &:visited{
+    color: #fff;
+  }
+  .boardImg {
+    line-height: 0;
+    position: relative;
+    img{
+      width: 100%;
+      height: 100%;
+    }
+  }
+  .boardBtnGroup{
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    span{
+      display: inline-block;
+      padding: 0 8px;
+      line-height: 14px;
+      color: #f3f3f4;
+      font-size: 14px;
+      cursor: pointer;
+      &:hover{
+        text-decoration: underline;
+      }
+      &:first-child{
+        border-right: 1px solid #f3f3f4;
+      }
+    }
+  }
+  .boardStatusPublish, .boardStatusUnPublish{
+    position: absolute;
+    top: 15px;
+    right: 0;
+    background: #d8b05c;
+    height: 36px;
+    width: 65px;
+    text-indent: 14px;
+    line-height: 36px;
+    color: #fff;
+    font-size: 15px;
+    border-radius: 18px 0 0 18px;
+    transition: .2s;
+  }
+  .boardStatusUnPublish{
+    background: #108ee9;
+  }
+  &:hover .boardStatusUnPublish{
+    width: 80px;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+    text-indent: 0;
+    right: 7px;
+    color: #fff;
+    border-radius: 6px 6px 6px 6px;
+    transition: .2s;
+  }
+  &:hover .boardStatusPublish{
+    background: #ab9360;
+    color: #c0c0c0;
+    transition: .2s;
+  }
+  .boardInfo{
+    position: absolute;
+    width: 100%;
+    left: 10px;
+    bottom: 10px;
+    h3{
+      display: inline-block;
+      width: 100% - 8px;
+      line-height: 30px;
+      color: #b7b7b8;
+      font-size: 15px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+}
+.boardTitle{
+  background: #fff;
+  height: 50px;
+  border-radius: 0 0 8px 8px;
+  position: relative;
+  h2{
+    display: inline-block;
+    max-width: 100% - 20px;
+    line-height: 50px;
+    color: #333;
+    font-size: 16px;
+    text-indent: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  span{
+    font-weight: normal;
+    font-size: 14px;
+    padding: 4px 6px;
+    background: #e8e8e8;
+    color: #666;
+    margin: 0 0 0 10px;
+    position: absolute;
+    top: 12px;
+    border-radius: 4px;
+  }
+}
