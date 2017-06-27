@@ -229,7 +229,7 @@ const helper = {
         break;
       default:
         durationStart = moment().startOf(cycleType);
-        durationEnd = moment();
+        durationEnd = moment().subtract(1, 'days');
         break;
     }
     const duration = {

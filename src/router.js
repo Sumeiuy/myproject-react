@@ -16,6 +16,7 @@ import Main from './layouts/Main';
 import Empty from './routes/empty/Home';
 import InvestHome from './routes/invest/Home';
 import BusinessHome from './routes/business/Home';
+import TemplModal from './routes/templeModal/Home';
 import BoardManageHome from './routes/boardManage/Home';
 
 const routes = ({ history }) => (// eslint-disable-line
@@ -30,6 +31,9 @@ const routes = ({ history }) => (// eslint-disable-line
       </Route>
       <Route path="business">
         <IndexRoute component={BusinessHome} />
+      </Route>
+      <Route path="modal">
+        <IndexRoute component={TemplModal} />
       </Route>
       <Route path="boardManage">
         <IndexRoute component={BoardManageHome} />
