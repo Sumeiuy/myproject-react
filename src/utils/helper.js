@@ -185,10 +185,9 @@ const helper = {
         curPageNum: newPageNum,
         pageSize: newPageSize,
       },
-      userId: helper.getEmpId(), // 反馈问题用户Id
     };
 
-    const omitData = _.omit(query, ['currentId', 'feedbackCreateTimeFrom', 'feedbackCreateTimeTo']);
+    const omitData = _.omit(query, ['currentId', 'feedbackCreateTimeFrom', 'feedbackCreateTimeTo', 'curPageNum', 'curPageSize']);
     finalPostData = _.merge(finalPostData, omitData);
 
     const { feedbackCreateTimeTo, feedbackCreateTimeFrom } = query;

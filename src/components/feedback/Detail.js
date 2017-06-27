@@ -18,7 +18,7 @@ import Problemdetails from './ProblemDetails';
 import FeedbackUser from './FeedbackUser';
 import UploadFiles from './UploadFiles';
 import { helper } from '../../utils';
-import { feedbackOptions } from '../../config';
+import { feedbackOptions, request } from '../../config';
 import './detail.less';
 
 const EMPTY_OBJECT = {};
@@ -75,8 +75,9 @@ export default class Detail extends PureComponent {
       voDataSource: voResultData,
       visible: false,
       remarkVisible: false,
-      title: '处理问题',
-      messageBtnValue: '处理问题',
+      title: '',
+      messageBtnValue: '',
+      inforTxt: '',
       uploadPops: {},
       colSpans: {
         left: 16,
@@ -91,6 +92,9 @@ export default class Detail extends PureComponent {
     const { location: { query } } = this.props;
     const { currentId } = query;
     if (currentId) {
+      this.setState({
+        currentId,
+      });
       this.handlegetData(currentId);
     }
   }
@@ -112,8 +116,8 @@ export default class Detail extends PureComponent {
         currentId,
       }, () => {
         const { resultData = EMPTY_OBJECT } = nextDetail || EMPTY_OBJECT;
-        const { attachmentJson = EMPTY_LIST, status } = resultData || EMPTY_OBJECT;
-        if (attachmentJson && attachmentJson.length < 1) {
+        const { mediaUrls = '', status } = resultData || EMPTY_OBJECT;
+        if (mediaUrls && mediaUrls.length < 1) {
           this.setState({
             hasImgUrl: false,
           });
@@ -122,11 +126,13 @@ export default class Detail extends PureComponent {
           this.setState({
             nowStatus: false,
             messageBtnValue: '重新打开',
+            inforTxt: '重新打开表示此问题没有解决，需要继续关注。',
           });
         } else if (status === 'PROCESSING') {
           this.setState({
             nowStatus: true,
             messageBtnValue: '处理问题',
+            inforTxt: '处理问题表示对此问题做出判断处理。',
           });
         }
       });
@@ -146,6 +152,9 @@ export default class Detail extends PureComponent {
     const { currentId } = query;
     const { currentId: id } = this.state;
 
+    // 只有当前state里面有currentId
+    // 并且当前query里面有currentId
+    // 才发起初始化请求
     if (!id && currentId) {
       this.handlegetData(currentId);
     }
@@ -216,12 +225,14 @@ export default class Detail extends PureComponent {
         );
         detail.uploadedFiles = files;
       }
-      // debugger;
       updateFeedback({
-        ...detail,
-        id: currentId,
-        feedbackId: currentId,
-        processerEmpId: helper.getEmpId(),
+        request: {
+          ...detail,
+          id: currentId,
+          feedbackId: currentId,
+          processerEmpId: helper.getEmpId(),
+        },
+        currentQuery: query,
       });
       form.resetFields();
       this.setState({ visible: false });
@@ -234,10 +245,13 @@ export default class Detail extends PureComponent {
     const { location: { query }, updateFeedback } = this.props;
     const { currentId } = query;
     updateFeedback({
-      deletedFiles: [item],
-      id: currentId,
-      processerEmpId: helper.getEmpId(),
-      feedbackId: currentId,
+      request: {
+        deletedFiles: [item],
+        id: currentId,
+        processerEmpId: helper.getEmpId(),
+        feedbackId: currentId,
+      },
+      currentQuery: query,
     });
   }
 
@@ -252,9 +266,12 @@ export default class Detail extends PureComponent {
       if (values.remarkContent) {
         if (!err) {
           updateFeedback({
-            remark: values.remarkContent,
-            id: currentId,
-            processerEmpId: helper.getEmpId(),
+            request: {
+              remark: values.remarkContent,
+              id: currentId,
+              processerEmpId: helper.getEmpId(),
+            },
+            currentQuery: query,
           });
         } else {
           message.error(err);
@@ -286,11 +303,19 @@ export default class Detail extends PureComponent {
     this.editForm = form;
   }
   render() {
-    const { dataSource, voDataSource } = this.state;
+    const {
+      dataSource,
+      voDataSource,
+      hasImgUrl,
+      nowStatus,
+      messageBtnValue,
+      inforTxt,
+    } = this.state;
     const { resultData = EMPTY_OBJECT } = dataSource || EMPTY_OBJECT;
     const { resultData: voList = EMPTY_OBJECT } = voDataSource || EMPTY_OBJECT;
     const { feedbackVOList = EMPTY_LIST } = voList; // 处理记录
     const { appId, feedId, description, mediaUrls } = resultData || EMPTY_OBJECT;
+    const imgUrl = _.isEmpty(mediaUrls) ? EMPTY_OBJECT : JSON.parse(mediaUrls);
     const {
       feedEmpInfo = EMPTY_OBJECT,
       attachModelList = EMPTY_LIST,
@@ -318,7 +343,6 @@ export default class Detail extends PureComponent {
     const remarkbtn = classnames({
       btnhidden: this.state.remarkVisible,
     });
-    const { hasImgUrl, nowStatus, messageBtnValue } = this.state;
     const type = _.find(issueTypeOptions, item => item.value === issueType);
 
     return (
@@ -358,7 +382,7 @@ export default class Detail extends PureComponent {
                 </Col>
                 <Col span="8">
                   <div className="imgbox">
-                    <img src={mediaUrls} alt="图片" />
+                    <img src={`${request.prefix}${imgUrl.imageUrls}`} alt="图片" />
                   </div>
                 </Col>
               </Row> :
@@ -383,7 +407,7 @@ export default class Detail extends PureComponent {
                     </div>
                     <div className="mod_content">
                       <div className="des_txt">
-                        {description}
+                        {description !== ' ' ? description : '暂无描述'}
                       </div>
                       <div className="btn_dv">
                         <Button type="primary" onClick={this.showModal}>{messageBtnValue}</Button>
@@ -442,6 +466,8 @@ export default class Detail extends PureComponent {
           onCancel={this.handleCancel}
           onCreate={this.handleCreate}
           problemDetails={feedbackDetail}
+          title={messageBtnValue}
+          inforTxt={inforTxt}
         />
       </div>
     );

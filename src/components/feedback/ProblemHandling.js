@@ -7,6 +7,8 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { Select, Row, Col, Input, Form, Modal, message, Upload } from 'antd';
 import { createForm } from 'rc-form';
+import { autobind } from 'core-decorators';
+import _ from 'lodash';
 import { helper } from '../../utils';
 import Icon from '../../components/common/Icon';
 import { feedbackOptions, request } from '../../config';
@@ -29,10 +31,12 @@ export default class ProblemHandling extends PureComponent {
     onCreate: PropTypes.func.isRequired,
     width: PropTypes.string,
     problemDetails: PropTypes.object.isRequired,
+    inforTxt: PropTypes.string,
   }
   static defaultProps = {
     popContent: ' ',
     title: '问题处理',
+    inforTxt: '处理问题表示对此问题做出判断处理。',
     width: '620px',
   }
   constructor(props) {
@@ -79,6 +83,7 @@ export default class ProblemHandling extends PureComponent {
   }
 
   // 数据提交
+  @autobind
   handleSubChange() {
     const { form, onCreate } = this.props;
     onCreate(form);
@@ -86,24 +91,26 @@ export default class ProblemHandling extends PureComponent {
 
   render() {
     const {
+      inforTxt,
+      onCancel,
       visible,
       title,
-      onCancel,
       width,
       form,
     } = this.props;
+    const {
+      popQuestionTagOptions,
+      uploadPops,
+      uploadKey,
+      newDetails,
+    } = this.state;
     const {
       processer,
       status,
       tag,
       id,
-    } = this.state.newDetails;
+    } = newDetails;
     const { getFieldDecorator } = form;
-    const {
-      popQuestionTagOptions,
-      uploadPops,
-      uploadKey,
-    } = this.state;
     const getSelectOption = item => item.map(i =>
       <Option key={i.value} value={i.value}>{i.label}</Option>,
     );
@@ -117,10 +124,12 @@ export default class ProblemHandling extends PureComponent {
         width={width}
         className="problemwrap"
         key={uploadKey}
+        okText="提交"
       >
         <div className="problembox">
           <div className="pro_title">
-            <Icon type="tishi" className="tishi" />处理问题表示对此问题做出判断处理。
+            <Icon type="tishi" className="tishi" />
+            {inforTxt}
           </div>
           <div className="list_box">
             <Form layout="vertical">
@@ -140,7 +149,7 @@ export default class ProblemHandling extends PureComponent {
                 <Col span="4"><div className="label">状态：</div></Col>
                 <Col span="19" offset={1}>
                   <FormItem>
-                    {getFieldDecorator('status', { initialValue: `${status}` })(
+                    {getFieldDecorator('status', { initialValue: `${title === '重新打开' ? 'PROCESSING' : status}` })(
                       <Select style={{ width: 220 }}>
                         <Option value="PROCESSING">解决中</Option>
                         <Option value="CLOSED">关闭</Option>
@@ -153,7 +162,7 @@ export default class ProblemHandling extends PureComponent {
                 <Col span="4"><div className="label">经办人：</div></Col>
                 <Col span="19" offset={1}>
                   <FormItem>
-                    {getFieldDecorator('processerEmpId', { initialValue: `${processer}` })(
+                    {getFieldDecorator('processer', { initialValue: `${_.isEmpty(processer) ? helper.getEmpId() : processer}` })(
                       <Select style={{ width: 220 }}>
                         {getSelectOption(allOperatorOptions)}
                       </Select>,
@@ -187,11 +196,13 @@ export default class ProblemHandling extends PureComponent {
                   </FormItem>
                 </Col>
               </Row>
-              <FormItem>
-                {getFieldDecorator('id', { initialValue: `${id}` })(
-                  <Input type="hidden" />,
-                )}
-              </FormItem>
+              <div style={{ display: 'none' }}>
+                <FormItem>
+                  {getFieldDecorator('id', { initialValue: `${id}` })(
+                    <Input type="hidden" />,
+                  )}
+                </FormItem>
+              </div>
             </Form>
           </div>
         </div>

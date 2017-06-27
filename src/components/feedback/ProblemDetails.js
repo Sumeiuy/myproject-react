@@ -17,6 +17,8 @@ import './problemDetails.less';
 const FormItem = Form.Item;
 const EMPTY_OBJECT = {};
 const feedbackChannel = feedbackOptions.feedbackChannel;
+let OPTIONKEY = 0;
+
 @createForm()
 export default class ProblemDetail extends PureComponent {
   static propTypes = {
@@ -54,7 +56,7 @@ export default class ProblemDetail extends PureComponent {
     const { problemDetails, nowStatus } = nextProps;
     if (problemDetails !== preVisible) {
       this.setState({
-        data: problemDetails,
+        data: preVisible,
         canBeEdited: nowStatus,
       });
       this.handleClose();
@@ -117,7 +119,7 @@ export default class ProblemDetail extends PureComponent {
    * 数据为空处理
   */
   dataNull(data) {
-    if (_.isEmpty(data) && data !== 'null') {
+    if (!_.isEmpty(data) && data !== 'null') {
       return data;
     }
     return '无';
@@ -145,14 +147,15 @@ export default class ProblemDetail extends PureComponent {
     });
   }
 
+  @autobind
   handleSubChange() {
     const { form, onCreate } = this.props;
     onCreate(form);
   }
 
   render() {
-    const { form } = this.props;
-    const { data = EMPTY_OBJECT,
+    const { form, problemDetails } = this.props;
+    const {
       editValue,
       qtab,
       qtabHV,
@@ -165,7 +168,11 @@ export default class ProblemDetail extends PureComponent {
     const { functionName,
       createTime,
       version,
-      status, tag, processer, jiraId } = data;
+      status,
+      tag,
+      processer,
+      jiraId,
+    } = problemDetails;
     const { getFieldDecorator } = form;
     const value = true;
     const qtValue = classnames({
@@ -208,11 +215,9 @@ export default class ProblemDetail extends PureComponent {
     const allOperatorOptions = feedbackOptions.allOperatorOptions;
     const questionTagOptions = feedbackOptions.questionTagOptions;
     const getSelectOption = item => item.map(i =>
-      <Option key={i.value} value={i.value}>{i.label}</Option>,
+      <Option key={`optionKey${OPTIONKEY++}`} value={i.value}>{i.label}</Option>,
     );
-
-    const channel = _.find(_.omit(feedbackChannel[0], ['value', 'lable']).children,
-      item => item.value === functionName);
+    const channel = _.omit(feedbackChannel[0].children, ['value', 'lable']);
 
     return (
       <div>
@@ -221,7 +226,7 @@ export default class ProblemDetail extends PureComponent {
             <li className="item">
               <div className="wrap">
                 <strong className="name">模块：</strong>
-                <span className="value">{this.dataNull(this.changeDisplay(functionName, channel))}</span>
+                <span className="value">{this.changeDisplay(functionName, channel)}</span>
               </div>
             </li>
             <li className="item">
@@ -240,9 +245,7 @@ export default class ProblemDetail extends PureComponent {
               <div className="wrap">
                 <strong className="name">状态：</strong>
                 <span className="value">
-                  <span className="value" >
-                    {this.dataNull(this.handleStatus(status))}
-                  </span>
+                  {this.dataNull(this.handleStatus(status))}
                 </span>
               </div>
             </li>
@@ -250,18 +253,18 @@ export default class ProblemDetail extends PureComponent {
               <div className="wrap">
                 <strong className="name">问题标签：</strong>
                 <span className={valueIsVisibel}>
-                  {this.dataNull(this.changeDisplay(tag, questionTagOptions))}
+                  {this.changeDisplay(tag, questionTagOptions)}
                 </span>
                 <div className={editIsVisibel}>
                   <span className={qtValue} onClick={event => this.handleShowEdit(event, 'qt')} title="点击编辑">
-                    {this.dataNull(this.changeDisplay(tag, questionTagOptions))}
+                    {this.changeDisplay(tag, questionTagOptions)}
                     <Icon type="edit" className="anticon-edit" />
                   </span>
                 </div>
                 <div className={qtHiddenValue}>
                   <FormItem>
                     {getFieldDecorator('tag', { initialValue: `${this.dataNull(tag)}` })(
-                      <Select style={{ width: 140 }} className="qtSelect" id="qtSelect" onBlur={this.handleClose}>
+                      <Select style={{ width: 140 }} className="qtSelect" id="qtSelect">
                         {getSelectOption(questionTagOptions)}
                       </Select>,
                     )}
@@ -288,7 +291,7 @@ export default class ProblemDetail extends PureComponent {
                 <div className={jiraHiddenValue}>
                   <FormItem>
                     {getFieldDecorator('jiraId', { initialValue: `${jiraId || ''}` })(
-                      <Input style={{ width: 140 }} onBlur={this.handleClose} />,
+                      <Input style={{ width: 140 }} />,
                     )}
                     <div className="btn">
                       <a onClick={this.handleSubChange}><Icon type="success" /></a>
@@ -302,18 +305,18 @@ export default class ProblemDetail extends PureComponent {
               <div className="wrap">
                 <strong className="name">经办人：</strong>
                 <span className={valueIsVisibel}>
-                  {this.dataNull(this.changeDisplay(processer, allOperatorOptions))}
+                  {this.changeDisplay(processer, allOperatorOptions)}
                 </span>
                 <div className={editIsVisibel}>
                   <span className={processerValue} onClick={event => this.handleShowEdit(event, 'processer')} title="点击编辑">
-                    {this.dataNull(this.changeDisplay(processer, allOperatorOptions))}
+                    {this.changeDisplay(processer, allOperatorOptions)}
                     <Icon type="edit" className="anticon-edit" />
                   </span>
                 </div>
                 <div className={processerHiddenValue}>
                   <FormItem>
-                    {getFieldDecorator('processerEmpId', { initialValue: `${this.dataNull(processer)}` })(
-                      <Select style={{ width: 140 }} className="qtSelect" onBlur={this.handleClose}>
+                    {getFieldDecorator('processer', { initialValue: `${this.dataNull(processer)}` })(
+                      <Select style={{ width: 140 }} className="qtSelect">
                         {getSelectOption(allOperatorOptions)}
                       </Select>,
                     )}
