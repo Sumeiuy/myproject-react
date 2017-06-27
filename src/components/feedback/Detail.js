@@ -10,6 +10,7 @@ import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import Lightense from 'lightense-images';
 import { routerRedux } from 'dva/router';
 import ProblemHandling from './ProblemHandling';
 import Remark from './Remark';
@@ -97,6 +98,18 @@ export default class Detail extends PureComponent {
       this.handlegetData(currentId);
     }
   }
+
+  componentDidMount() {
+    Lightense(document.querySelector('img'), {
+      time: 300,
+      padding: 40,
+      offset: 40,
+      keyboard: false,
+      cubicBezier: 'cubic-bezier(.2, 0, .1, 1)',
+      zIndex: 100,
+    });
+  }
+
 
   componentWillReceiveProps(nextProps) {
     const { fbDetail: nextDetail = EMPTY_OBJECT,
@@ -373,7 +386,7 @@ export default class Detail extends PureComponent {
                 </Col>
                 <Col span="8">
                   <div className="imgbox">
-                    <img src={`${request.prefix}${imgUrl.imageUrls}`} alt="图片" />
+                    <img src={`${request.prefix}${imgUrl.imageUrls}`} data-background="rgba(0, 0, 0, .96)" alt="图片" />
                   </div>
                 </Col>
               </Row> :
