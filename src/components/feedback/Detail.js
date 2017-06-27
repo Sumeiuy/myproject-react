@@ -75,8 +75,9 @@ export default class Detail extends PureComponent {
       voDataSource: voResultData,
       visible: false,
       remarkVisible: false,
-      title: '处理问题',
-      messageBtnValue: '处理问题',
+      title: '',
+      messageBtnValue: '',
+      inforTxt: '',
       uploadPops: {},
       colSpans: {
         left: 16,
@@ -125,11 +126,13 @@ export default class Detail extends PureComponent {
           this.setState({
             nowStatus: false,
             messageBtnValue: '重新打开',
+            inforTxt: '重新打开表示此问题没有解决，需要继续关注。',
           });
         } else if (status === 'PROCESSING') {
           this.setState({
             nowStatus: true,
             messageBtnValue: '处理问题',
+            inforTxt: '处理问题表示对此问题做出判断处理。',
           });
         }
       });
@@ -300,7 +303,14 @@ export default class Detail extends PureComponent {
     this.editForm = form;
   }
   render() {
-    const { dataSource, voDataSource } = this.state;
+    const {
+      dataSource,
+      voDataSource,
+      hasImgUrl,
+      nowStatus,
+      messageBtnValue,
+      inforTxt,
+    } = this.state;
     const { resultData = EMPTY_OBJECT } = dataSource || EMPTY_OBJECT;
     const { resultData: voList = EMPTY_OBJECT } = voDataSource || EMPTY_OBJECT;
     const { feedbackVOList = EMPTY_LIST } = voList; // 处理记录
@@ -333,7 +343,6 @@ export default class Detail extends PureComponent {
     const remarkbtn = classnames({
       btnhidden: this.state.remarkVisible,
     });
-    const { hasImgUrl, nowStatus, messageBtnValue } = this.state;
     const type = _.find(issueTypeOptions, item => item.value === issueType);
 
     return (
@@ -457,6 +466,8 @@ export default class Detail extends PureComponent {
           onCancel={this.handleCancel}
           onCreate={this.handleCreate}
           problemDetails={feedbackDetail}
+          title={messageBtnValue}
+          inforTxt={inforTxt}
         />
       </div>
     );
