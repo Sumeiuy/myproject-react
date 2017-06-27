@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-06-23 13:30:03
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-06-27 09:48:24
+ * @Last Modified time: 2017-06-27 10:06:17
  */
 
 import React, { PropTypes, PureComponent } from 'react';
@@ -75,7 +75,7 @@ export default class BoardManageHome extends PureComponent {
                   <h3>创建看板</h3>
                 </div>
                 <div className={styles.boardImg}>
-                  <img src="/static/images/bg_tgyj.png" alt="" />
+                  <img src="/static/images/bg_tgjx.png" alt="" />
                 </div>
                 <div className={styles.boardTitle} />
               </a>
