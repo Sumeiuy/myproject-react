@@ -215,20 +215,24 @@ export default class ChartTable extends PureComponent {
   unitChange(arr) {
     let value;
     const newArr = arr.map((item) => {
-      const itemValue = Number(item.value);
-      switch (item.unit) {
-        case '%':
-          value = Number.parseFloat((itemValue * 100).toFixed(2));
-          break;
-        case '\u2030':
-          value = Number.parseFloat((itemValue * 1000).toFixed(2));
-          break;
-        case '元':
-          value = `${Number.parseFloat((itemValue / 10000).toFixed(2))}`;
-          break;
-        default:
-          value = Number.parseFloat(itemValue.toFixed(2));
-          break;
+      if (item.value) {
+        const itemValue = Number(item.value);
+        switch (item.unit) {
+          case '%':
+            value = Number.parseFloat((itemValue * 100).toFixed(2));
+            break;
+          case '\u2030':
+            value = Number.parseFloat((itemValue * 1000).toFixed(2));
+            break;
+          case '元':
+            value = `${Number.parseFloat((itemValue / 10000).toFixed(2))}`;
+            break;
+          default:
+            value = Number.parseFloat(itemValue.toFixed(2));
+            break;
+        }
+      } else {
+        value = '暂无';
       }
       return {
         [item.key]: value,
