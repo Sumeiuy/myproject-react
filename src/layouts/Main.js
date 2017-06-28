@@ -35,7 +35,7 @@ export default class Main extends Component {
       <div>
         <div className={styles.layout}>
           <div className={styles.main}>
-            <div className={styles.container}>
+            <div className={styles.container} id="container">
               <div className={styles.content}>
                 <Loading loading={loading} />
                 {children}
