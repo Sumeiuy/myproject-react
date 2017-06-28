@@ -48,7 +48,14 @@ export default class UploadFiles extends PureComponent {
     if (nextFileList !== prevFileList) {
       let fileList = [];
       if (nextFileList && nextFileList.length > 0) {
-        fileList = nextFileList.map((item, i) => ({
+        /* eslint-disable */
+        const removeEmpty = (obj) => {
+          const objs = obj;
+          Object.keys(objs).forEach(key => (_.isEmpty(objs[key]) || objs[key] === 'undefined') && delete objs[key]);
+          return objs;
+        };
+        const filesList =  removeEmpty(nextFileList);
+        fileList = filesList.map((item, i) => ({
           uid: `${item.attachUploader || ''}afiles${i}`,
           name: item.attachName,
           status: 'done',

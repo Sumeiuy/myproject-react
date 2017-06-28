@@ -43,9 +43,9 @@ export default class RemarkList extends PureComponent {
               <div className="info_dv">
                 <span>{record.title}</span>
               </div>
-              <div className="txt">
+              <pre className="txt">
                 {record.description}
-              </div>
+              </pre>
             </div>
           </div>
         ),
