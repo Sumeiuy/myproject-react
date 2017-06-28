@@ -10,6 +10,7 @@ import { createForm } from 'rc-form';
 import _ from 'lodash';
 import { request } from '../../config';
 import { helper } from '../../utils';
+import uploadRequest from '../../utils/uploadRequest';
 import './uploadFiles.less';
 
 let COUNT = 0;
@@ -32,6 +33,8 @@ export default class UploadFiles extends PureComponent {
 
   constructor(props) {
     super(props);
+    console.warn('helper', helper);
+    console.warn('uploadRequest', uploadRequest);
     this.state = {
       // formKey: `formKey${COUNT++}`,
       previewImage: '',
@@ -63,33 +66,24 @@ export default class UploadFiles extends PureComponent {
           thumbUrl: item.attachUrl,
         }));
       }
-      console.log(fileList);
       this.setState({
         formKey: `formKey${COUNT++}`,
         fList: fileList,
       });
     }
   }
-
   @autobind
-  handlePreview(file) {
-    this.setState({
-      previewImage: file.url || file.thumbUrl,
-    });
+  fileCustomRequest(option) {
+    return uploadRequest(option);
   }
 
   @autobind
   fileOnChange({ file }) {
     const status = file.status;
     const response = file.response || {};
-    const { code, msg } = response;
     const { onCreate } = this.props;
     if (status !== 'uploading') {
       // console.log(info.file, info.fileList);
-    }
-    if (code && code !== '0') {
-      message.error(msg);
-      return false;
     }
     if (status === 'done') {
       onCreate(response.resultData, 'ADD');
@@ -141,6 +135,7 @@ export default class UploadFiles extends PureComponent {
         defaultFileList={fList}
         onRemove={this.fileOnRemove}
         onChange={this.fileOnChange}
+        customRequest={this.fileCustomRequest}
       >
         <div className="upload_txt">
           + 上传附件
