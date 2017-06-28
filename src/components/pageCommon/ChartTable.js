@@ -217,14 +217,14 @@ export default class ChartTable extends PureComponent {
     const newArr = arr.map((item) => {
       if (item.value) {
         const itemValue = Number(item.value);
-        switch (item.unit) {
-          case '%':
+        switch (encodeURIComponent(item.unit)) {
+          case encodeURIComponent('%'):
             value = Number.parseFloat((itemValue * 100).toFixed(2));
             break;
-          case '\u2030':
+          case encodeURIComponent('‰'):
             value = Number.parseFloat((itemValue * 1000).toFixed(2));
             break;
-          case '元':
+          case encodeURIComponent('元'):
             value = `${Number.parseFloat((itemValue / 10000).toFixed(2))}`;
             break;
           default:
