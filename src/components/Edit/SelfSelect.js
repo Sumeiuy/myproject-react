@@ -15,10 +15,17 @@ const CheckboxGroup = Checkbox.Group;
 
 export default class SelfSelect extends PureComponent {
   static propTypes = {
-    value: PropTypes.array.isRequired, // 初始值
+    value: PropTypes.array, // 初始值
     options: PropTypes.array.isRequired, // 全部的选项
-    onChange: PropTypes.func.isRequired, // 改版form表单的值得方法
+    onChange: PropTypes.func, // 改版form表单的值得方法
     level: PropTypes.string.isRequired, // 用户的级别
+    style: PropTypes.object, // 用户的级别
+  }
+
+  static defaultProps = {
+    style: { height: '35px' },
+    onChange: () => {},
+    value: [],
   }
 
   constructor(props) {
@@ -161,7 +168,7 @@ export default class SelfSelect extends PureComponent {
   }
 
   render() {
-    const { options } = this.props;
+    const { options, style } = this.props;
     const firstRequiredCheck = options[0];
     const { expand, checkAll, groupCheckedList, visibleRangeNames } = this.state;
     const iconType = expand ? 'up' : 'down';
@@ -173,11 +180,16 @@ export default class SelfSelect extends PureComponent {
       [styles.show]: expand,
       [styles.selfSelectBody]: true,
     });
+
+    const selectHDLineHeight = Number.parseFloat(style.height) - 2;
     return (
-      <div className={styles.selfSelect}>
+      <div className={styles.selfSelect} style={style}>
         <div
           className={selfSelectHd}
           onClick={this.expandSelect}
+          style={{
+            lineHeight: `${selectHDLineHeight}px`,
+          }}
         >
           <div className={styles.selectNames}>{visibleRangeNames}</div>
           <span className={styles.selfSelectArrow}><Icon type={iconType} /></span>
