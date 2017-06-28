@@ -7,16 +7,138 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
-import { Col, Row } from 'antd';
+import { Tree } from 'antd';
+// import { Tree, Col, Row } from 'antd';
+// import _ from 'lodash';
 
-import BoardSelect from '../../components/pageCommon/BoardSelect';
-import BoardItem from '../../components/pageCommon/BoardItem';
+// import BoardSelect from '../../components/pageCommon/BoardSelect';
+// import BoardItem from '../../components/pageCommon/BoardItem';
 import styles from './Home.less';
 
+
+const TreeNode = Tree.TreeNode;
+const checkTreeArr = [
+  {
+    id: '1',
+    name: '客户明细数',
+    key: 'khmxs',
+    children: [
+      {
+        id: '1-1',
+        name: '有效客户数',
+        key: 'yxkhs',
+      }, {
+        id: '1-2',
+        name: '高净值客户数',
+        key: 'gjzkhs',
+      }, {
+        id: '1-3',
+        name: '新开客户数',
+        key: 'xkkhs',
+      }, {
+        id: '1-4',
+        name: '高净值客户流失率',
+        key: 'gjzkhlsl',
+      },
+    ],
+  }, {
+    id: '2',
+    name: '交易量明细',
+    key: 'jylmx',
+    children: [
+      {
+        id: '2-1',
+        name: '资产配置报告完成数',
+        key: 'zcpzbgwcs',
+        children: [
+          {
+            id: '2-1-1',
+            name: '测试数据一',
+            key: 'cssj',
+          }, {
+            id: '2-1-2',
+            name: '测试数据二',
+            key: 'cssje',
+          },
+        ],
+      }, {
+        id: '2-2',
+        name: '配置两种风险属性客户',
+        key: 'zcpzbgwcs',
+      },
+    ],
+  },
+];
+// 根据数组组成 treeNode
+function getTreeNode(arr) {
+  const html = arr.map(item => (
+    <TreeNode title={item.name} key={item.id}>
+      {
+        item.children && item.children.map(child => (
+          <TreeNode title={child.name} key={child.id}>
+            {
+              child.children ? <span className={styles.arrow} /> : ''
+            }
+          </TreeNode>
+        ))
+      }
+    </TreeNode>
+  ));
+  return html;
+}
+const treeNodeHtml = getTreeNode(checkTreeArr);
 export default class BoardManageHome extends PureComponent {
   static propTypes = {
     boardManage: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
+  }
+  constructor(props) {
+    super(props);
+    this.state = {
+      expandedKeys: ['1', '2'],
+      autoExpandParent: true,
+      checkedKeys: ['1'],
+      selectedKeys: [],
+    };
+  }
+  @autobind
+  onExpand(expandedKeys) {
+    console.log('onExpand', expandedKeys);
+    // if not set autoExpandParent to false, if children expanded, parent can not collapse.
+    // or, you can remove all expanded children keys.
+    this.setState({
+      expandedKeys,
+      autoExpandParent: false,
+    });
+  }
+  @autobind
+  onCheck(checkedKeys) {
+    console.log('onCheck', checkedKeys);
+    this.setState({
+      checkedKeys,
+    });
+  }
+  @autobind
+  // :{ selected: bool, selectedNodes, node, event }
+  onSelect(selectedKeys, e) {
+    console.log('onSelect', e);
+    console.log('onSelect', selectedKeys);
+    console.log('onSelect', e.selectedNodes);
+    console.log('onSelect', e.node);
+    console.log('onSelect', e.event);
+    // 点击文字可选中
+    // let newArr = [];
+    // newArr = newArr.concat(selectedKeys);
+    // if (info.selectedNodes) {
+    //   info.selectedNodes.map(item => {
+    //     if (item.props.children) {
+    //       item.props.children.map(child => {
+    //         newArr.push(child.key);
+    //       });
+    //     }
+    //   });
+    // }
+    this.setState({ selectedKeys });
   }
   // 新建看板事件
   @autobind
@@ -24,70 +146,24 @@ export default class BoardManageHome extends PureComponent {
     console.warn('新建看板事件');
   }
   render() {
-    const {
-      location,
-    } = this.props;
-    const dataArr = [{
-      id: 1,
-      type: 'jyyj',
-      title: '总部绩效看板',
-      status: '未发布',
-      seeAllow: ['经纪业务总部', '分公司'],
-      editTime: '2017-05-06 15:40',
-      published: false,
-    }, {
-      id: 2,
-      type: 'tgjx',
-      title: '分公司客户绩效看板',
-      status: '已发布',
-      seeAllow: ['经纪业务总部', '分公司', '分公司', '分公司', '分公司', '分公司', '分公司', '分公司', '分公司', '分公司', '分公司', '分公司'],
-      editTime: '2017-05-06 15:40',
-      published: true,
-    }, {
-      id: 3,
-      type: 'jyyj',
-      title: '营业部客户绩效看板',
-      status: '未发布',
-      seeAllow: ['经纪业务总部', '分公司'],
-      editTime: '2017-05-06 15:40',
-      published: false,
-    }];
     return (
       <div className="page-invest content-inner">
-        <div className="reportHeader">
-          <Row type="flex" justify="start" align="middle">
-            <div className="reportName">
-              <BoardSelect
-                location={location}
-              />
-            </div>
-          </Row>
-        </div>
-        <div className={styles.boardList}>
-          <Row gutter={19}>
-            <Col span={8} className={styles.test}>
-              <a
-                className={styles.boardItem}
-                onClick={this.createBoardHandle}
-              >
-                <div className={styles.boardAdd}>
-                  <img src="/static/images/bg_add.png" alt="" />
-                  <h3>创建看板</h3>
-                </div>
-                <div className={styles.boardImg}>
-                  <img src="/static/images/bg_tgjx.png" alt="" />
-                </div>
-                <div className={styles.boardTitle} />
-              </a>
-            </Col>
-            {
-              dataArr.map(item => (
-                <Col span={8} key={item.id}>
-                  <BoardItem boardData={item} />
-                </Col>
-              ))
-            }
-          </Row>
+        <div>
+          <Tree
+            checkable
+            onExpand={this.onExpand}
+            expandedKeys={this.state.expandedKeys}
+            autoExpandParent={this.state.autoExpandParent}
+            onCheck={this.onCheck}
+            checkedKeys={this.state.checkedKeys}
+            onSelect={this.onSelect}
+            selectedKeys={this.state.selectedKeys}
+          >
+            {treeNodeHtml}
+          </Tree>
+          <div style={{ width: '500px', height: '400px', position: 'absolute', left: '400px', top: '10px', border: '1px solid red' }}>
+            123
+          </div>
         </div>
       </div>
     );
