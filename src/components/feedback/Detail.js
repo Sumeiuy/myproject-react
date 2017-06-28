@@ -264,20 +264,15 @@ export default class Detail extends PureComponent {
       let detail = values;
       const removeEmpty = (obj) => {
         const objs = obj;
-        Object.keys(objs).forEach(key => (_.isEmpty(objs[key]) || objs[key] === '无') && delete objs[key]);
+        Object.keys(objs).forEach(key => (_.isEmpty(objs[key]) || objs[key] === '无' || objs[key] === 'undefined') && delete objs[key]);
         return objs;
       };
       detail = removeEmpty(detail);
-      /* eslint-disable */
-      const filterFun = (objs) => {
-        objs.filter(x => true)
-      };
-      /* eslint-enable */
       if (detail.uploadedFiles && detail.uploadedFiles.fileList) {
         const files = detail.uploadedFiles.fileList.map(item =>
           item.response.resultData || {},
         );
-        detail.uploadedFiles = filterFun(files) || [];
+        detail.uploadedFiles = removeEmpty(files) || [];
       }
       updateFeedback({
         request: {
@@ -343,18 +338,22 @@ export default class Detail extends PureComponent {
     const { currentId } = query;
     form.validateFields((err, values) => {
       if (values.remarkContent) {
-        if (!err) {
-          updateFeedback({
-            request: {
-              remark: values.remarkContent,
-              id: currentId,
-              processerEmpId: helper.getEmpId(),
-            },
-            currentQuery: query,
-          });
+        if (values.remarkContent.length < 1000) {
+          if (!err) {
+            updateFeedback({
+              request: {
+                remark: values.remarkContent,
+                id: currentId,
+                processerEmpId: helper.getEmpId(),
+              },
+              currentQuery: query,
+            });
+          } else {
+            message.error(err);
+            return;
+          }
         } else {
-          message.error(err);
-          return;
+          message.error('最大字数限制为1000');
         }
       } else {
         message.error('您还未填写备注信息');
