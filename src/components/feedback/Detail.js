@@ -215,20 +215,15 @@ export default class Detail extends PureComponent {
       let detail = values;
       const removeEmpty = (obj) => {
         const objs = obj;
-        Object.keys(objs).forEach(key => (_.isEmpty(objs[key]) || objs[key] === '无') && delete objs[key]);
+        Object.keys(objs).forEach(key => (_.isEmpty(objs[key]) || objs[key] === '无' || objs[key] === 'undefined') && delete objs[key]);
         return objs;
       };
       detail = removeEmpty(detail);
-      /* eslint-disable */
-      const filterFun = (objs) => {
-        objs.filter(x => true)
-      };
-      /* eslint-enable */
       if (detail.uploadedFiles && detail.uploadedFiles.fileList) {
         const files = detail.uploadedFiles.fileList.map(item =>
           item.response.resultData || {},
         );
-        detail.uploadedFiles = filterFun(files) || [];
+        detail.uploadedFiles = removeEmpty(files) || [];
       }
       updateFeedback({
         request: {
