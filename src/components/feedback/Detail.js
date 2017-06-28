@@ -259,11 +259,16 @@ export default class Detail extends PureComponent {
         return objs;
       };
       detail = removeEmpty(detail);
+      /* eslint-disable */
+      const filterFun = (objs) => {
+        objs.filter(x => true)
+      };
+      /* eslint-enable */
       if (detail.uploadedFiles && detail.uploadedFiles.fileList) {
         const files = detail.uploadedFiles.fileList.map(item =>
-          item.response.resultData,
+          item.response.resultData || {},
         );
-        detail.uploadedFiles = files;
+        detail.uploadedFiles = filterFun(files) || [];
       }
       updateFeedback({
         request: {
@@ -278,7 +283,32 @@ export default class Detail extends PureComponent {
       this.setState({ visible: false });
     });
   }
-
+  // 图片上传直接提交
+  @autobind
+  fileUploadData(file, type) {
+    const { location: { query }, updateFeedback } = this.props;
+    const { currentId } = query;
+    let fileStatus = {};
+    if (type === 'ADD') {
+      fileStatus = {
+        uploadedFiles: [file],
+      };
+    } else if (type === 'DELETE') {
+      fileStatus = {
+        deletedFiles: [file],
+      };
+    }
+    updateFeedback({
+      request: {
+        ...fileStatus,
+        id: currentId,
+        processer: helper.getEmpId(),
+        feedbackId: currentId,
+        processerEmpId: helper.getEmpId(),
+      },
+      currentQuery: query,
+    });
+  }
   // 删除附件
   @autobind
   handleRemoveFile(item) {
@@ -467,7 +497,12 @@ export default class Detail extends PureComponent {
                     </div>
                     <div className="mod_content">
                       <div className="des_txt">
-                        {description !== ' ' ? description : '暂无描述'}
+                        {description !== ' ' ? description :
+                        <div className="nodescription">
+                          <span>
+                            <i className="anticon anticon-frown-o" />暂无描述
+                          </span>
+                        </div>}
                       </div>
                       <div className="btn_dv">
                         <Button type="primary" onClick={this.showModal}>{messageBtnValue}</Button>
@@ -494,7 +529,7 @@ export default class Detail extends PureComponent {
             </div>
             <div className="mod_content">
               <UploadFiles
-                onCreate={this.handleCreate}
+                onCreate={this.fileUploadData}
                 attachModelList={attachModelList}
                 removeFile={this.handleRemoveFile}
               />
