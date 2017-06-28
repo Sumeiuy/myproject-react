@@ -28,6 +28,7 @@ const GETRECORDLIST = 'feedback/getFeedbackRecordList';
 const UPDATEQUESTION = 'feedback/updateFeedback';
 
 const issueTypeOptions = feedbackOptions.typeOptions;
+// const TabPane = Tabs.TabPane;
 
 const mapStateToProps = state => ({
   fbDetail: state.feedback.fbDetail,
@@ -215,6 +216,14 @@ export default class Detail extends PureComponent {
       id: cid,
     });
   }
+
+  /**
+   * tab切换
+   */
+  handleTabChange(key) {
+    console.log(key);
+  }
+
   /**
    * 弹窗处理（开启）
   */
@@ -500,9 +509,11 @@ export default class Detail extends PureComponent {
                         {description !== ' ' ? description :
                         <div className="nodescription">
                           <span>
-                            <i className="anticon anticon-frown-o" />暂无描述
+                            <i className="anticon anticon-frown-o" />
+                            暂无描述
                           </span>
-                        </div>}
+                        </div>
+                        }
                       </div>
                       <div className="btn_dv">
                         <Button type="primary" onClick={this.showModal}>{messageBtnValue}</Button>

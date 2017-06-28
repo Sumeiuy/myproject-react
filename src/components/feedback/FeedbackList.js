@@ -326,7 +326,7 @@ export default class FeedbackList extends PureComponent {
       pageSize: curPageSize,
       defaultPageSize: 10,
       onChange: (nextPage, currentPageSize) => this.handlePageChange(nextPage, currentPageSize),
-      showTotal: total => `总共${total}个`,
+      showTotal: total => `共${total}个`,
       showSizeChanger: true,
       onShowSizeChange: (currentPageNum, changedPageSize) =>
         this.handleShowSizeChange(currentPageNum, changedPageSize),
