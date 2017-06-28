@@ -289,18 +289,22 @@ export default class Detail extends PureComponent {
     const { currentId } = query;
     form.validateFields((err, values) => {
       if (values.remarkContent) {
-        if (!err) {
-          updateFeedback({
-            request: {
-              remark: values.remarkContent,
-              id: currentId,
-              processerEmpId: helper.getEmpId(),
-            },
-            currentQuery: query,
-          });
+        if (values.remarkContent.length < 1000) {
+          if (!err) {
+            updateFeedback({
+              request: {
+                remark: values.remarkContent,
+                id: currentId,
+                processerEmpId: helper.getEmpId(),
+              },
+              currentQuery: query,
+            });
+          } else {
+            message.error(err);
+            return;
+          }
         } else {
-          message.error(err);
-          return;
+          message.error('最大字数限制为1000');
         }
       } else {
         message.error('您还未填写备注信息');
