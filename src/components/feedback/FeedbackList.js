@@ -6,6 +6,7 @@ import _ from 'lodash';
 import styles from './feedbackList.less';
 import Icon from '../common/Icon';
 import { constructPostBody } from '../../utils/helper';
+import { feedbackOptions } from '../../config';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -16,7 +17,7 @@ const STATUS_MAP = [
   { value: 'CLOSED', label: '关闭' },
 ];
 
-const OMIT_ARRAY = ['currentId', 'curPageSize', 'curPageNum'];
+const OMIT_ARRAY = ['currentId', 'curPageSize', 'curPageNum', 'isResetPageNum'];
 
 export default class FeedbackList extends PureComponent {
   static propTypes = {
@@ -42,6 +43,7 @@ export default class FeedbackList extends PureComponent {
       totalPageNum,
       curPageSize: 10,
       curSelectedRow: 0,
+      // pageSizeOptions: '',
     };
   }
 
@@ -53,13 +55,15 @@ export default class FeedbackList extends PureComponent {
     const { resultData: nextResultData = EMPTY_LIST, page = EMPTY_OBJECT } = nextList;
     const { resultData: prevResultData = EMPTY_LIST } = prevList;
     const { curPageNum = 1, totalPageNum, totalRecordNum, pageSize } = page;
+    const { isResetPageNum = 'N' } = nextQuery;
 
-    if (prevResultData !== nextResultData) {
+    if (!_.isEqual(prevResultData, nextResultData)) {
       this.setState({
         dataSource: nextResultData,
         totalRecordNum,
         totalPageNum,
         curPageNum,
+        curPageSize: pageSize,
       });
 
       replace({
@@ -77,7 +81,12 @@ export default class FeedbackList extends PureComponent {
       if (!this.diffObject(prevQuery, nextQuery)) {
         const { curPageNum: newPageNum, curPageSize: newPageSize } = this.state;
         // 只监测筛选条件是否变化
-        getFeedbackList(constructPostBody(nextQuery, newPageNum, newPageSize));
+        getFeedbackList(
+          constructPostBody(
+            nextQuery,
+            isResetPageNum === 'Y' ? 1 : newPageNum,
+            isResetPageNum === 'Y' ? 10 : newPageSize,
+          ));
       }
     }
   }
@@ -85,7 +94,8 @@ export default class FeedbackList extends PureComponent {
   componentDidUpdate() {
     // 第一次替换query
     // 添加currentId
-    const { location: { query, pathname, query: { currentId } }, replace } = this.props;
+    const { location: { query, pathname, query: { currentId,
+      isResetPageNum } }, replace } = this.props;
     const { dataSource = EMPTY_LIST, curPageNum, curPageSize } = this.state;
     // 只有当有数据，并且当前没有选中项的时候，设置第一条初始值
     // 或者当有数据，但是当前选中项在数据中，没有匹配时，设置第一条初始值
@@ -103,6 +113,17 @@ export default class FeedbackList extends PureComponent {
         },
       });
       return;
+    }
+
+    // 重置pageNum
+    if (isResetPageNum === 'Y') {
+      replace({
+        pathname,
+        query: {
+          ...query,
+          isResetPageNum: 'N',
+        },
+      });
     }
 
     this.setState({ // eslint-disable-line
@@ -200,6 +221,7 @@ export default class FeedbackList extends PureComponent {
         // 当前行记录
         let statusClass;
         let statusLabel;
+        let processerLabel;
         if (record.status) {
           statusClass = classnames({
             'state-resolve': record.status === STATUS_MAP[0].value,
@@ -207,10 +229,16 @@ export default class FeedbackList extends PureComponent {
           });
           statusLabel = STATUS_MAP.filter(item => item.value === record.status);
         }
+        if (!_.isEmpty(record.processer)
+          && record.processer !== '无'
+          && record.processer !== 'null') {
+          processerLabel = feedbackOptions.allOperatorOptions.filter(item =>
+            item.value === record.processer);
+        }
         return (
           <div className="rightSection">
-            <div className={statusClass}>{(statusLabel && statusLabel[0].label) || '无'}</div>
-            <div className="name">{record.processer || '无'}</div>
+            <div className={statusClass}>{(!_.isEmpty(statusLabel) && statusLabel[0].label) || '无'}</div>
+            <div className="name">{(!_.isEmpty(processerLabel) && processerLabel[0].label) || '无'}</div>
             <div className="date">{(record.createTime &&
               record.createTime.length >= 10 &&
               record.createTime.slice(0, 10)) || '无'}</div>
@@ -246,6 +274,7 @@ export default class FeedbackList extends PureComponent {
   handleShowSizeChange(currentPageNum, changedPageSize) {
     const { totalRecordNum, curPageSize, curPageNum } = this.state;
     const { location: { query }, getFeedbackList } = this.props;
+
     if (changedPageSize / totalRecordNum > 1) {
       // 当前选择分页条目大于两倍的记录数
       // 则不生效，恢复当前分页条目
@@ -265,9 +294,9 @@ export default class FeedbackList extends PureComponent {
   }
 
   constructPageSizeOptions() {
-    const { totalRecordNum, curPageSize } = this.state;
+    const { totalRecordNum } = this.state;
     const pageSizeOption = [];
-    const maxPage = Math.ceil(totalRecordNum / curPageSize);
+    const maxPage = Math.ceil(totalRecordNum / 10);
     for (let i = 1; i <= maxPage; i++) {
       pageSizeOption.push((10 * i).toString());
     }
@@ -276,7 +305,14 @@ export default class FeedbackList extends PureComponent {
   }
 
   render() {
-    const { dataSource, curPageNum, totalRecordNum, curPageSize, curSelectedRow } = this.state;
+    const {
+      dataSource,
+      curPageNum,
+      totalRecordNum,
+      curPageSize,
+      curSelectedRow,
+    } = this.state;
+
     if (!dataSource) {
       return null;
     }
@@ -290,7 +326,7 @@ export default class FeedbackList extends PureComponent {
       pageSize: curPageSize,
       defaultPageSize: 10,
       onChange: (nextPage, currentPageSize) => this.handlePageChange(nextPage, currentPageSize),
-      showTotal: total => `总共${total}个`,
+      showTotal: total => `共${total}个`,
       showSizeChanger: true,
       onShowSizeChange: (currentPageNum, changedPageSize) =>
         this.handleShowSizeChange(currentPageNum, changedPageSize),

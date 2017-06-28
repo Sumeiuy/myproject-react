@@ -45,9 +45,20 @@
         padding:20px 0 0 0;
         img{
           width: 100%;
-          min-height: 300px;
+          max-height: 300px;
           display: block;
           background: #ccc;
+          cursor: pointer;
+        }
+      }
+      .imgbox_2{
+        padding:20px 0 0 0;
+        img{
+          width: 100%;
+          max-height: 300px;
+          display: block;
+          background: #ccc;
+          cursor: pointer;
         }
       }
       .module{
@@ -140,5 +151,12 @@
     display:block;
     visibility:hidden;
     clear:both;
+  }
+  .ant-modal-content {
+    background-color: transparent;
+    box-shadow: 0 0 0;
+  }
+  .ant-modal-body {
+    padding: 0;
   }
 }

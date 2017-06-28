@@ -29,48 +29,48 @@ const feedbackOptions = {
         },
       ],
     },
-    // {
-    //   value: 'FSP',
-    //   label: 'FSP',
-    //   children: [
-    //     {
-    //       value: 'jxst',
-    //       label: '绩效视图',
-    //     },
-    //     {
-    //       value: 'khzx',
-    //       label: '客户中心',
-    //     },
-    //     {
-    //       value: 'zwzx',
-    //       label: '任务中心',
-    //     },
-    //     {
-    //       value: 'cpxs',
-    //       label: '产品销售',
-    //     },
-    //     {
-    //       value: 'zcpz',
-    //       label: '资产配置',
-    //     },
-    //     {
-    //       value: 'tjcx',
-    //       label: '统计查询',
-    //     },
-    //     {
-    //       value: 'zxzx',
-    //       label: '资讯中心',
-    //     },
-    //     {
-    //       value: 'zsk',
-    //       label: '知识库',
-    //     },
-    //     {
-    //       value: 'ywsq',
-    //       label: '业务申请',
-    //     },
-    //   ],
-    // },
+    {
+      value: 'FSP',
+      label: 'FSP',
+      children: [
+        {
+          value: 'JXST',
+          label: '绩效视图',
+        },
+        {
+          value: 'KHZX',
+          label: '客户中心',
+        },
+        {
+          value: 'RWZX',
+          label: '任务中心',
+        },
+        {
+          value: 'CPXS',
+          label: '产品销售',
+        },
+        {
+          value: 'ZCPZ',
+          label: '资产配置',
+        },
+        {
+          value: 'TJCX',
+          label: '统计查询',
+        },
+        {
+          value: 'ZXZX',
+          label: '资讯中心',
+        },
+        {
+          value: 'ZSK',
+          label: '知识库',
+        },
+        {
+          value: 'YWSQ',
+          label: '业务申请',
+        },
+      ],
+    },
   ],
   typeOptions: [
     {
