@@ -1,9 +1,9 @@
-const zhUnicode = {
-  ren: '\u4eba',
-  hu: '\u6237',
-  yuan: '\u5143',
-  percent: '%',
-  permillage: '\u2030',
+const ZHUNICODE = {
+  REN: '\u4eba',
+  HU: '\u6237',
+  YUAN: '\u5143',
+  PERCENT: '%',
+  PERMILLAGE: '\u2030',
 };
 
-export default zhUnicode;
+export default ZHUNICODE;
