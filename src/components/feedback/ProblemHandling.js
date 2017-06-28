@@ -56,17 +56,28 @@ export default class ProblemHandling extends PureComponent {
         data: {
           empId: helper.getEmpId(),
         },
-        action: `${request.prefix}/file/feedbackFileUpload2`,
+        action: `${request.prefix}/file/feedbackFileUpload`,
         onChange(info) {
-          const status = info.file.status;
+          const file = info.file;
+          const status = file.status;
+          const response = file.response || {};
+          const { code, msg } = response;
           if (status !== 'uploading') {
-            console.log(info.file, info.fileList);
+            // console.log(info.file, info.fileList);
+          }
+          if (status === 'removed') {
+            return true;
+          }
+          if (code && code !== '0') {
+            message.error(msg);
+            return false;
           }
           if (status === 'done') {
             message.success(`${info.file.name} file uploaded successfully.`);
           } else if (status === 'error') {
             message.error(`${info.file.name} file upload failed.`);
           }
+          return true;
         },
       },
     };
