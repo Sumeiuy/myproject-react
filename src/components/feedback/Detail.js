@@ -5,12 +5,11 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import { Row, Col, Button, message } from 'antd';
+import { Row, Col, Button, message, Modal } from 'antd';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import Lightense from 'lightense-images';
 import { routerRedux } from 'dva/router';
 import ProblemHandling from './ProblemHandling';
 import Remark from './Remark';
@@ -86,6 +85,8 @@ export default class Detail extends PureComponent {
       },
       nowStatus: true, // PROCESSING / CLOSED
       currentId: '',
+      previewVisible: false,
+      newWidth: 520,
     };
   }
 
@@ -101,16 +102,11 @@ export default class Detail extends PureComponent {
   }
 
   componentDidMount() {
-    Lightense(document.querySelector('img'), {
-      time: 300,
-      padding: 40,
-      offset: 40,
-      keyboard: false,
-      cubicBezier: 'cubic-bezier(.2, 0, .1, 1)',
-      zIndex: 100,
-    });
+    // const img = new Image();
+    // img.src = '../../static/images/2.png';
+    // const that = img;
+    // img.onload = this.loadImg(that);
   }
-
 
   componentWillReceiveProps(nextProps) {
     const { fbDetail: nextDetail = EMPTY_OBJECT,
@@ -133,6 +129,7 @@ export default class Detail extends PureComponent {
         if (mediaUrls && mediaUrls.length < 1) {
           this.setState({
             hasImgUrl: false,
+            previewVisible: true,
           });
         }
         if (status === 'CLOSED') {
@@ -174,6 +171,36 @@ export default class Detail extends PureComponent {
     this.setState({ //eslint-disable-line
       currentId,
     });
+  }
+
+  /**
+   * 获取原始图片的宽，高
+   * @param {*} img 图片对象
+   */
+  @autobind
+  loadImg() {
+    // const originalWidth = img.width;
+    // const originalHeight = img.height;
+    // const imgElem = document.createElement('img');
+    // imgElem.setAttribute('src', '../../static/images/2.png');
+    // imgElem.setAttribute('alt', '图片');
+    // const imgBox = document.querySelector('.imgbox_2');
+    // imgBox.appendChild(imgElem);
+
+    // const layout = document.querySelector('img');
+    // const originalAspectRatio = originalWidth / originalHeight;
+    // const currentAspectRatio = layout.width / layout.height;
+    // const clientWidth = document.documentElement.clientWidth;
+    // const clientHeight = document.documentElement.clientHeight;
+    // if (originalHeight > clientHeight || originalWidth > clientWidth) {
+    //   const rate = (originalHeight / clientHeight) - 1;
+    //   const newHeight = originalHeight - (rate * originalHeight);
+    //   const newWidth = originalWidth - (rate * originalWidth);
+    //   this.setState({
+    //     newHeight,
+    //     newWidth,
+    //   });
+    // }
   }
 
   /**
@@ -315,6 +342,23 @@ export default class Detail extends PureComponent {
   saveEditForm = (form) => {
     this.editForm = form;
   }
+  /**
+   * 缩略图预览
+   */
+  @autobind
+  handlePreview() {
+    // this.setState({
+    //   previewVisible: true,
+    // });
+  }
+
+  @autobind
+  handlePreviewCancel() {
+    // this.setState({
+    //   previewVisible: false,
+    // });
+  }
+
   render() {
     const {
       dataSource,
@@ -323,6 +367,9 @@ export default class Detail extends PureComponent {
       nowStatus,
       messageBtnValue,
       inforTxt,
+      previewVisible,
+      newWidth,
+      // newHeight,
     } = this.state;
     const { resultData = EMPTY_OBJECT } = dataSource || EMPTY_OBJECT;
     const { resultData: voList = EMPTY_OBJECT } = voDataSource || EMPTY_OBJECT;
@@ -394,8 +441,8 @@ export default class Detail extends PureComponent {
                   </div>
                 </Col>
                 <Col span="8">
-                  <div className="imgbox">
-                    <img src={`${request.prefix}${imgUrl.imageUrls}`} data-background="rgba(0, 0, 0, .96)" alt="图片" />
+                  <div className="imgbox" onClick={this.handlePreview}>
+                    <img src={`${request.prefix}${imgUrl.imageUrls}`} alt="图片" />
                   </div>
                 </Col>
               </Row> :
@@ -482,6 +529,14 @@ export default class Detail extends PureComponent {
           title={messageBtnValue}
           inforTxt={inforTxt}
         />
+        <Modal
+          visible={previewVisible}
+          width={newWidth}
+          footer={null}
+          onCancel={this.handlePreviewCancel}
+        >
+          <img alt="图片" style={{ width: '100%' }} src="../../static/images/2.png" />
+        </Modal>
       </div>
     );
   }
