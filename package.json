@@ -16,7 +16,7 @@
   },
   "keywords": [],
   "dependencies": {
-    "antd": "^2.8.3",
+    "antd": "^2.11.2",
     "bowser": "^1.6.1",
     "classnames": "^2.2.5",
     "core-decorators": "^0.15.0",
