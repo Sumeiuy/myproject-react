@@ -5,9 +5,21 @@
       a{
         color: #666666;
       }
+      a:first-child{
+        display: inline-block;
+        width:200px;
+        overflow : hidden;
+        text-overflow: ellipsis;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+      }
+      a:first-child:hover{
+        cursor:default;
+      }
       .removeFile{
         display: none;
-        margin-left:10px;
+        margin-left:30px;
+        font-weight: bold;
       }
     }
     .userfile:hover{
@@ -16,10 +28,15 @@
         }
       }
   }
-  .upload_dv{
-    .upload_txt{
-      font-size: 14px;
-      padding:5px 0;
-    }
+  .uploadBox{
+    padding: 20px 0;
+    width: 50%;
+  }
+  .upload_txt{
+    font-size: 14px;
+    padding:10px 0;
+  }
+  .upload_txt:hover{
+    color:#108ee9;
   }
 }
