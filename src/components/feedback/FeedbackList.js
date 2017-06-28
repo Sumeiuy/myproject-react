@@ -206,7 +206,7 @@ export default class FeedbackList extends PureComponent {
         return (
           <div className="leftSection">
             <div className="id">
-              <Icon {...typeIcon} />
+              {issueType ? <Icon {...typeIcon} /> : <Icon className="emptyIcon" />}
               <span className={styles.feedbackId}>{record.feedId || '无'}</span>
             </div>
             <div className="description">{record.description || '无'}</div>
