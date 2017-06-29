@@ -53,10 +53,14 @@ const checkTreeArr = [
         children: [
           {
             id: '2-1-1',
-            name: '测试数据一',
+            name: '合计',
             key: 'cssj',
           }, {
             id: '2-1-2',
+            name: '测试数据一',
+            key: 'cssje',
+          }, {
+            id: '2-1-3',
             name: '测试数据二',
             key: 'cssje',
           },
@@ -116,7 +120,7 @@ export default class BoardManageHome extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      expandedKeys: ['1', '2'],
+      expandedKeys: ['1', '2', '2-1'],
       autoExpandParent: true,
       checkedKeys: [],
       selectedKeys: [],

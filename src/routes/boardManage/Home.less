@@ -46,7 +46,13 @@
   width: 200px;
   :global{
     .ant-tree > li > ul li .ant-tree-switcher{
-      // visibility: hidden;
+      visibility: hidden;
+    }
+    .ant-tree ul.ant-tree-child-tree ul.ant-tree-child-tree{
+      position: absolute;
+      left: 500px;
+      top: 20px;
+      z-index: 2;
     }
   }
 }
