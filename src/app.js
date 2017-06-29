@@ -11,6 +11,7 @@ import createLogger from 'redux-logger';
 import { persistStore, autoRehydrate } from 'redux-persist';
 import { message } from 'antd';
 
+import './utils/es5-polyfill';
 import createSensorsLogger from './middlewares/sensorsLogger';
 import createActivityIndicator from './middlewares/createActivityIndicator';
 import routerConfig from './router';
