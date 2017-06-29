@@ -46,7 +46,6 @@ export default class ChartBoard extends PureComponent {
               return (
                 <Col
                   span={8}
-                  xl={{ span: 6 }}
                   key={indiModel.key}
                   className={styles.colWrapper}
                 >
