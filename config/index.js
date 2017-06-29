@@ -34,7 +34,7 @@ module.exports = {
         // target: 'http://168.168.71.29:9084', // UAT
         secure: false,
       },
-      '/feedback': {
+      '/screenshot': {
         target: 'http://127.0.0.1:7080', // SIT
         secure: false,
       },
