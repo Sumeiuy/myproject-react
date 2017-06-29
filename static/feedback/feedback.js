@@ -9,7 +9,7 @@
 	$.feedback = function(options) {
 
     var settings = $.extend({
-			ajaxURL: 				'http://localhost:8082/mcrm/api/groovy/feedback/saveFeedback',
+			ajaxURL: 				'/fspa/mcrm/api/groovynoauth/feedback/saveFeedback',
 			postBrowserInfo: 		false,
 			postHTML:				false,
 			postURL:				false,
@@ -32,8 +32,8 @@
 				// description:	'<div id="feedback-welcome"><div class="feedback-logo">Feedback</div><p>Feedback lets you send us suggestions about our products. We welcome problem reports, feature ideas and general comments.</p><p>Start by writing a brief description:</p><textarea id="feedback-note-tmp"></textarea><p>Next we\'ll let you identify areas of the page related to your description.</p><button id="feedback-welcome-nexst" class="feedback-next-btn feedback-btn-gray">Next</button><div id="feedback-welcome-error">请输入反馈内容</div><div class="feedback-wizard-close"></div></div>',
 				highlighter:	'<div id="feedback-highlighter"><button class="feedback-sethighlight feedback-active"><div class="ico"></div></button><label>点击您想反馈问题的区域</label><div class="feedback-buttons"><button id="feedback-highlighter-back" class="feedback-back-btn feedback-btn-gray">Back</button></div><div class="feedback-wizard-close"></div></div>',
 				overview:		'<div id="feedback-overview"><div id="evaluate"><div class="rate-btn good active"><div class="good-icon"></div><div>好评</div></div><div class="rate-btn bad"><div class="bad-icon"></div><div>差评</div></div></div><div id="feedback-type">反馈类型<button class="active">问题</button><button>建议</button></div><div id="feedback-overview-description"><div id="feedback-overview-description-text"><h3><textarea id="feedback-overview-note"  placeholder="请输入反馈内容"></textarea></h3></div></div><div id="feedback-overview-screenshot"><h3>已截图</h3></div><div class="feedback-buttons"><button id="feedback-submit" class="feedback-submit-btn feedback-btn-blue">提交</button><button id="feedback-overview-back" class="feedback-back-btn feedback-btn-gray">重新截图</button></div><div id="feedback-overview-error">请输入反馈内容</div><div class="feedback-wizard-close"></div></div>',
-				submitSuccess:	'<div id="feedback-submit-success"><div class="feedback-logo">Feedback</div><p>Thank you for your feedback. We value every piece of feedback we receive.</p><p>We cannot respond individually to every one, but we will use your comments as we strive to improve your experience.</p><button class="feedback-close-btn feedback-btn-blue">OK</button><div class="feedback-wizard-close"></div></div>',
-				submitError:	'<div id="feedback-submit-error"><div class="feedback-logo">Feedback</div><p>Sadly an error occured while sending your feedback. Please try again.</p><button class="feedback-close-btn feedback-btn-blue">OK</button><div class="feedback-wizard-close"></div></div>'
+				submitSuccess:	'<div id="feedback-submit-success"><div class="feedback-logo">反馈成功</div><p>感谢您的提交反馈</p><button class="feedback-close-btn feedback-btn-blue">OK</button><div class="feedback-wizard-close"></div></div>',
+				// submitError:	'<div id="feedback-submit-error"><div class="feedback-logo">反馈失败</div><p>反馈失败</p><button class="feedback-close-btn feedback-btn-blue">OK</button><div class="feedback-wizard-close"></div></div>'
 			},
 			onClose: 				function() {},
 			screenshotStroke:		true,
@@ -88,7 +88,7 @@
 				if (!settings.initialBox) {
 					$('#feedback-highlighter-back').remove();
 					// canDraw = false;
-					$('#feedback-canvas').css('cursor', 'crosshair');
+					$('#feedback-canvas').css('cursor', 'default');
 					$('#feedback-helpers').show();
 					$('#feedback-welcome').hide();
 					$('#feedback-highlighter').show();
@@ -190,46 +190,22 @@
 
 				});
 
-				$(document).on('mousemove', function(e) {
-					if (canDraw && drag) {
-						$('#feedback-highlighter').css('cursor', 'default');
-
-						rect.w = (e.pageX - $('#feedback-canvas').offset().left) - rect.startX;
-						rect.h = (e.pageY - $('#feedback-canvas').offset().top) - rect.startY;
-
-						ctx.clearRect(0, 0, $('#feedback-canvas').width(), $('#feedback-canvas').height());
-						ctx.fillStyle = 'rgba(102,102,102,0.5)';
-						ctx.fillRect(0, 0, $('#feedback-canvas').width(), $('#feedback-canvas').height());
-						$('.feedback-helper').each(function() {
-							if ($(this).attr('data-type') == 'highlight')
-								drawlines(ctx, parseInt($(this).css('left'), 10), parseInt($(this).css('top'), 10), $(this).width(), $(this).height());
-						});
-						if (highlight==1) {
-							drawlines(ctx, rect.startX, rect.startY, rect.w, rect.h);
-							ctx.clearRect(rect.startX, rect.startY, rect.w, rect.h);
-						}
-						$('.feedback-helper').each(function() {
-							if ($(this).attr('data-type') == 'highlight')
-								ctx.clearRect(parseInt($(this).css('left'), 10), parseInt($(this).css('top'), 10), $(this).width(), $(this).height());
-						});
-						if (highlight == 0) {
-							ctx.fillStyle = 'rgba(0,0,0,0.5)';
-							ctx.fillRect(rect.startX, rect.startY, rect.w, rect.h);
-						}
-					}
-				});
-
 				if (settings.highlightElement) {
 					var highlighted = [],
 						tmpHighlighted = [],
 						hidx = 0;
 
 					$(document).on('mousemove click', '#feedback-canvas',function(e) {
+						if (e.type == 'click'){
+							$('#feedback-overview').hide();
+							$('#feedback-highlighter').hide();
+							canDraw = true;
+						}
 						if (canDraw) {
 							redraw(ctx);
 							tmpHighlighted = [];
 
-							$('#feedback-canvas').css('cursor', 'crosshair');
+							$('#feedback-canvas').css('cursor', 'default');
 
 							$('* :not(body,script,iframe,div,section,.feedback-btn,#feedback-module *)').each(function(){
 								if ($(this).attr('data-highlighted') === 'true')
@@ -279,19 +255,6 @@
 
 				$(document).on('mouseenter', '.feedback-helper', function() {
 					redraw(ctx);
-				});
-
-				$(document).on('click', '#feedback-welcome-next', function() {
-					if ($('#feedback-note').val().length > 0) {
-						canDraw = true;
-						$('#feedback-canvas').css('cursor', 'crosshair');
-						$('#feedback-helpers').show();
-						$('#feedback-welcome').hide();
-						$('#feedback-highlighter').show();
-					}
-					else {
-						$('#feedback-welcome-error').show();
-					}
 				});
 
 				$(document).on('mouseleave mouseenter', '.feedback-helper', function(e) {
@@ -457,23 +420,54 @@
 						$('#feedback-overview').hide();
 						description = $('#feedback-note').val();
 						post.img = img;
-						if(img == ''){
+						if(post.img == ''){
 							canDraw = false;
 							$('#feedback-canvas').css('cursor', 'default');
 							var dh = $(window).height();
+							$('#feedback-helpers').hide();
+							$('#feedback-highlighter').hide();
 							html2canvas($('body'), {
-								onrendered: function(canvas) {	
-									_canvas = $('<canvas id="feedback-canvas-tmp" width="'+ w +'" height="'+ dh +'"/>').hide().appendTo('body');			
-									img = _canvas.get(0).toDataURL();							
-									post.img = img;	
-									console.log(post.img);							
-								},
+								onrendered: function(canvas) {
+									_canvas = $('<canvas id="feedback-canvas-tmp" width="'+ w +'" height="'+ dh +'"/>').hide().appendTo('body');
+									img = _canvas.get(0).toDataURL();
+									post.img = img;
+									settings.onScreenshotTaken(post.img);
+								}
 							});
 						}
 						post.note = $('#feedback-note').val();
+						/**
+					   * 由?a=1&b=2 ==> {a:1, b:2}
+					   * @param {string} search 一般取自location.search
+					   */
+					  function getQuery(search) {
+					    const query = {};
+					    // 去掉`?`
+					    const searchString = search.slice(1);
+					    if (searchString) {
+					      searchString.split('&').map(
+					      	function (item){
+					      		return item.split('=');
+					      	}
+					      ).forEach(
+					      	function (item){
+					      		return query[item[0]] = item[1];
+					      	}
+					      );
+					    }
+					    return query;
+					  }
+						function  getEmpId() {
+					    // 临时 ID
+					    const tempId = '002332';
+					    const nativeQuery = getQuery(window.location.search);
+					    const empId = window.curUserCode || nativeQuery.empId || tempId;
+					    return empId;
+					  }
+					  var userId = getEmpId();
             var data = {
             	"appId":"FSP",
-							"userId":"002332",
+							"userId": userId,
             	"description":description,
 							"goodRate":rateValue,
 							"issueType":typeValue, 
@@ -492,7 +486,8 @@
 								$('#feedback-module').append(settings.tpl.submitSuccess);
 							},
 							error: function(){
-								$('#feedback-module').append(settings.tpl.submitError);
+								close();
+								// $('#feedback-module').append(settings.tpl.submitError);
 							}
 						});
 					}
