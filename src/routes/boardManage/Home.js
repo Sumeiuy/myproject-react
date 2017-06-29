@@ -7,7 +7,7 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
-import { Tree } from 'antd';
+import { Tree, Checkbox } from 'antd';
 // import { Tree, Col, Row } from 'antd';
 // import _ from 'lodash';
 
@@ -61,7 +61,8 @@ const checkTreeArr = [
             key: 'cssje',
           },
         ],
-      }, {
+      },
+      {
         id: '2-2',
         name: '配置两种风险属性客户',
         key: 'zcpzbgwcs',
@@ -74,18 +75,38 @@ function getTreeNode(arr) {
   const html = arr.map(item => (
     <TreeNode title={item.name} key={item.id}>
       {
-        item.children && item.children.map(child => (
-          <TreeNode title={child.name} key={child.id}>
-            {
-              child.children ? <span className={styles.arrow} /> : ''
-            }
-          </TreeNode>
-        ))
+        item.children && getTreeNode(item.children)
       }
     </TreeNode>
   ));
   return html;
 }
+let selectNode = {};
+function walk(orgArr, func) {
+  func(orgArr);
+  if (Array.isArray(orgArr)) {
+    const childrenLen = orgArr.length;
+    let i = 0;
+    while (i < childrenLen) {
+      const children = orgArr[i].children;
+      walk(children, func);
+      i++;
+    }
+  }
+}
+
+function findChildren(key) {
+  return (orgArr) => {
+    if (Array.isArray(orgArr)) {
+      orgArr.forEach((item) => {
+        if (item.id === key) {
+          selectNode = item;
+        }
+      });
+    }
+  };
+}
+
 const treeNodeHtml = getTreeNode(checkTreeArr);
 export default class BoardManageHome extends PureComponent {
   static propTypes = {
@@ -97,13 +118,14 @@ export default class BoardManageHome extends PureComponent {
     this.state = {
       expandedKeys: ['1', '2'],
       autoExpandParent: true,
-      checkedKeys: ['1'],
+      checkedKeys: [],
       selectedKeys: [],
+      thirdChildren: [],
     };
   }
   @autobind
   onExpand(expandedKeys) {
-    console.log('onExpand', expandedKeys);
+    console.warn('onExpand', expandedKeys);
     // if not set autoExpandParent to false, if children expanded, parent can not collapse.
     // or, you can remove all expanded children keys.
     this.setState({
@@ -112,33 +134,60 @@ export default class BoardManageHome extends PureComponent {
     });
   }
   @autobind
-  onCheck(checkedKeys) {
-    console.log('onCheck', checkedKeys);
+  onCheck(checkedKeys, e) {
+    // e:{checked: bool, checkedNodes, node, event}
+    console.warn('onCheck', checkedKeys);
+    console.warn('onCheck', e);
+    console.warn('onCheck', e.node.props.eventKey);
+    const eventKey = e.node.props.eventKey;
+    if (eventKey.indexOf('-') > 0) {
+      walk(checkTreeArr, findChildren(eventKey));
+      if (selectNode.children) {
+        console.warn(selectNode.children);
+        this.setState({
+          thirdChildren: selectNode.children,
+        });
+      } else {
+        this.setState({
+          thirdChildren: [],
+        });
+      }
+    }
     this.setState({
       checkedKeys,
     });
   }
   @autobind
-  // :{ selected: bool, selectedNodes, node, event }
-  onSelect(selectedKeys, e) {
-    console.log('onSelect', e);
-    console.log('onSelect', selectedKeys);
-    console.log('onSelect', e.selectedNodes);
-    console.log('onSelect', e.node);
-    console.log('onSelect', e.event);
-    // 点击文字可选中
-    // let newArr = [];
-    // newArr = newArr.concat(selectedKeys);
-    // if (info.selectedNodes) {
-    //   info.selectedNodes.map(item => {
-    //     if (item.props.children) {
-    //       item.props.children.map(child => {
-    //         newArr.push(child.key);
-    //       });
-    //     }
-    //   });
-    // }
+  onSelect(selectedKeys) {
     this.setState({ selectedKeys });
+    if (selectedKeys.length) {
+      if (selectedKeys[0].indexOf('-') > 0) {
+        walk(checkTreeArr, findChildren(selectedKeys[0]));
+        if (selectNode.children) {
+          console.warn(selectNode.children);
+          this.setState({
+            thirdChildren: selectNode.children,
+          });
+        } else {
+          this.setState({
+            thirdChildren: [],
+          });
+        }
+      }
+    } else {
+      this.setState({
+        thirdChildren: [],
+      });
+    }
+  }
+  @autobind
+  onChange(e) {
+    // this.setState({
+    //   ...this.state,
+    //   checkedKeys: this.state.checkedKeys.concat(e),
+    // });
+    console.warn(e);
+    console.warn(this.state.checkedKeys);
   }
   // 新建看板事件
   @autobind
@@ -148,7 +197,7 @@ export default class BoardManageHome extends PureComponent {
   render() {
     return (
       <div className="page-invest content-inner">
-        <div>
+        <div className={styles.treeDiv}>
           <Tree
             checkable
             onExpand={this.onExpand}
@@ -162,7 +211,15 @@ export default class BoardManageHome extends PureComponent {
             {treeNodeHtml}
           </Tree>
           <div style={{ width: '500px', height: '400px', position: 'absolute', left: '400px', top: '10px', border: '1px solid red' }}>
-            123
+            {
+              this.state.thirdChildren.map(item => (
+                <div>
+                  <Checkbox.Group onChange={this.onChange}>
+                    <Checkbox value={item.id}>{item.name}</Checkbox>
+                  </Checkbox.Group>
+                </div>
+              ))
+            }
           </div>
         </div>
       </div>
