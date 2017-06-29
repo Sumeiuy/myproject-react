@@ -34,6 +34,10 @@ module.exports = {
         // target: 'http://168.168.71.29:9084', // UAT
         secure: false,
       },
+      '/feedback': {
+        target: 'http://127.0.0.1:7080', // SIT
+        secure: false,
+      },
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README
