@@ -6,7 +6,7 @@ import request from './request';
 import iconTypeMap from './iconTypeMap';
 import optionsMap from './optionsMap';
 import feedbackOptions from './feedbackOptions';
-import zhUnicode from './unicode';
+import ZHUNICODE from './unicode';
 
 export default {
   constants,
@@ -17,5 +17,5 @@ export default {
   iconTypeMap,
   optionsMap,
   feedbackOptions,
-  zhUnicode,
+  ZHUNICODE,
 };
