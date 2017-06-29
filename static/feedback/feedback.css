@@ -138,7 +138,6 @@
   display: none;
 }
 #feedback-overview {
-  display: none;
   right: 10%;
   bottom: 10%;
   position: fixed;
@@ -284,10 +283,14 @@
  margin-top: 22px;
 }
 #feedback-overview-screenshot h3{
+  display: none;
   font-size: 13px;
   color: #5fc554;
   background: url(icon.png) 0px -114px no-repeat;
   padding-left: 17px;
+}
+#feedback-overview-back{
+  display: none;
 }
 .feedback-screenshot {
   display: none;
