@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 /* eslint-disable */
 (function() {
-  if (_.isFunction(Object.asign) != 'function') {
+  if (_.isFunction(Object.asign)) {
     Object.assign = function(target, varArgs) { // .length of function is 2
       'use strict';
       if (target == null) { // TypeError if undefined or null
