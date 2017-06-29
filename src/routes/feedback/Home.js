@@ -64,8 +64,8 @@ export default class FeedBack extends PureComponent {
   }
 
   componentDidMount() {
-    // this.setDocumentScroll();
-    // window.addEventListener('resize', this.onResizeChange, false);
+    this.setDocumentScroll();
+    window.addEventListener('resize', this.onResizeChange, false);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -80,11 +80,11 @@ export default class FeedBack extends PureComponent {
   }
 
   componentDidUpdate() {
-    // this.setDocumentScroll();
+    this.setDocumentScroll();
   }
 
   componentWillUnmount() {
-    // window.removeEventListener('resize', this.onResizeChange, false);
+    window.removeEventListener('resize', this.onResizeChange, false);
   }
 
   @autobind
@@ -95,19 +95,26 @@ export default class FeedBack extends PureComponent {
   setDocumentScroll() {
     const docElemHeight = document.documentElement.clientHeight;
     /* eslint-disable */
-    const leftSectionElem = ReactDOM.findDOMNode(document.getElementsByClassName('feedbackList')[0]);
-    const rightSectionElem = ReactDOM.findDOMNode(document.getElementsByClassName('detail_box')[0]);
+    const containerElem = ReactDOM.findDOMNode(document.getElementById('container'));
+    const leftSectionElem = ReactDOM.findDOMNode(document.getElementById('leftSection'));
+    const rightSectionElem = ReactDOM.findDOMNode(document.getElementById('rightSection'));
     /* eslint-enable */
+
     let topDistance = 0;
     const bottomDistance = 48;
+    topDistance = leftSectionElem.getBoundingClientRect().top;
+    const sectionHeight = docElemHeight - topDistance - bottomDistance - 10 - 10 - 10;
+
     if (leftSectionElem) {
-      topDistance = leftSectionElem.getBoundingClientRect().top;
-      leftSectionElem.style.height = `${docElemHeight - topDistance - bottomDistance}px`;
+      leftSectionElem.style.height = `${sectionHeight}px`;
     }
+
     if (rightSectionElem) {
-      rightSectionElem.style.height = `${docElemHeight - topDistance - bottomDistance}px`;
+      rightSectionElem.style.height = `${sectionHeight}px`;
     }
-    document.documentElement.style.overflow = 'hidden';
+
+    containerElem.style.overflow = 'auto';
+    containerElem.style.height = `${docElemHeight - leftSectionElem.getBoundingClientRect().top - 10}px`;
   }
 
   render() {
@@ -135,7 +142,7 @@ export default class FeedBack extends PureComponent {
             </Row>
             :
             <Row className={styles.feedbackRow}>
-              <Col span="10" className={styles.leftSection}>
+              <Col span="10" className={styles.leftSection} id="leftSection">
                 <FeedbackList
                   list={list}
                   location={location}
@@ -143,7 +150,7 @@ export default class FeedBack extends PureComponent {
                   replace={replace}
                 />
               </Col>
-              <Col span="14" className={styles.rightSection}>
+              <Col span="14" className={styles.rightSection} id="rightSection">
                 <Detail
                   location={location}
                 />

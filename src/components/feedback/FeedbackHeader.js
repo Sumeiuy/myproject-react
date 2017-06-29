@@ -51,6 +51,7 @@ export default class PageHeader extends PureComponent {
         ...query,
         feedbackCreateTimeFrom,
         feedbackCreateTimeTo,
+        isResetPageNum: 'Y',
       },
     });
   }
@@ -65,6 +66,7 @@ export default class PageHeader extends PureComponent {
         ...query,
         [name]: _.isArray(key) ? key[0] : key,
         [funcName]: _.isArray(key) ? key[1] : key,
+        isResetPageNum: 'Y',
       },
     });
   }
@@ -76,6 +78,7 @@ export default class PageHeader extends PureComponent {
       query: {
         ...query,
         [name]: _.isArray(key) ? key.join(',') : key,
+        isResetPageNum: 'Y',
       },
     });
   }
