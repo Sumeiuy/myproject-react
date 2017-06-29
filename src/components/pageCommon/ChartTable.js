@@ -335,13 +335,13 @@ export default class ChartTable extends PureComponent {
   }
   render() {
     const { chartTableInfo, style } = this.props;
-
     return (
       <div className={styles.tableDiv} style={style}>
         <Table
           {...this.state.table}
           columns={this.state.arr}
           dataSource={this.state.temp}
+          className={chartTableInfo.curPageNum === 1 ? styles.firstPage : ''}
           onChange={this.handleChange}
           scroll={{ x: this.state.allWidth }}
         />
