@@ -29,9 +29,9 @@
 			isDraggable: 			false,
 			onScreenshotTaken: 		function(){},
 			tpl: {
-				// description:	'<div id="feedback-welcome"><div class="feedback-logo">Feedback</div><p>Feedback lets you send us suggestions about our products. We welcome problem reports, feature ideas and general comments.</p><p>Start by writing a brief description:</p><textarea id="feedback-note-tmp"></textarea><p>Next we\'ll let you identify areas of the page related to your description.</p><button id="feedback-welcome-next" class="feedback-next-btn feedback-btn-gray">Next</button><div id="feedback-welcome-error">请输入反馈内容</div><div class="feedback-wizard-close"></div></div>',
+				// description:	'<div id="feedback-welcome"><div class="feedback-logo">Feedback</div><p>Feedback lets you send us suggestions about our products. We welcome problem reports, feature ideas and general comments.</p><p>Start by writing a brief description:</p><textarea id="feedback-note-tmp"></textarea><p>Next we\'ll let you identify areas of the page related to your description.</p><button id="feedback-welcome-nexst" class="feedback-next-btn feedback-btn-gray">Next</button><div id="feedback-welcome-error">请输入反馈内容</div><div class="feedback-wizard-close"></div></div>',
 				highlighter:	'<div id="feedback-highlighter"><button class="feedback-sethighlight feedback-active"><div class="ico"></div></button><label>点击您想反馈问题的区域</label><div class="feedback-buttons"><button id="feedback-highlighter-back" class="feedback-back-btn feedback-btn-gray">Back</button></div><div class="feedback-wizard-close"></div></div>',
-				overview:		'<div id="feedback-overview"><div id="evaluate"><div class="rate-btn good active"><div class="good-icon"></div><div>好评</div></div><div class="rate-btn bad"><div class="bad-icon"></div><div>差评</div></div></div><div id="feedback-type">反馈类型<button class="active">问题</button><button>建议</button></div><div id="feedback-overview-description"><div id="feedback-overview-description-text"><h3></h3></div></div><div id="feedback-overview-screenshot"><h3>已截图</h3></div><div class="feedback-buttons"><button id="feedback-submit" class="feedback-submit-btn feedback-btn-blue">提交</button><button id="feedback-overview-back" class="feedback-back-btn feedback-btn-gray">重新截图</button></div><div id="feedback-overview-error">请输入反馈内容</div><div class="feedback-wizard-close"></div></div>',
+				overview:		'<div id="feedback-overview"><div id="evaluate"><div class="rate-btn good active"><div class="good-icon"></div><div>好评</div></div><div class="rate-btn bad"><div class="bad-icon"></div><div>差评</div></div></div><div id="feedback-type">反馈类型<button class="active">问题</button><button>建议</button></div><div id="feedback-overview-description"><div id="feedback-overview-description-text"><h3><textarea id="feedback-overview-note"  placeholder="请输入反馈内容"></textarea></h3></div></div><div id="feedback-overview-screenshot"><h3>已截图</h3></div><div class="feedback-buttons"><button id="feedback-submit" class="feedback-submit-btn feedback-btn-blue">提交</button><button id="feedback-overview-back" class="feedback-back-btn feedback-btn-gray">重新截图</button></div><div id="feedback-overview-error">请输入反馈内容</div><div class="feedback-wizard-close"></div></div>',
 				submitSuccess:	'<div id="feedback-submit-success"><div class="feedback-logo">Feedback</div><p>Thank you for your feedback. We value every piece of feedback we receive.</p><p>We cannot respond individually to every one, but we will use your comments as we strive to improve your experience.</p><button class="feedback-close-btn feedback-btn-blue">OK</button><div class="feedback-wizard-close"></div></div>',
 				submitError:	'<div id="feedback-submit-error"><div class="feedback-logo">Feedback</div><p>Sadly an error occured while sending your feedback. Please try again.</p><button class="feedback-close-btn feedback-btn-blue">OK</button><div class="feedback-wizard-close"></div></div>'
 			},
@@ -87,7 +87,7 @@
 
 				if (!settings.initialBox) {
 					$('#feedback-highlighter-back').remove();
-					canDraw = true;
+					// canDraw = false;
 					$('#feedback-canvas').css('cursor', 'crosshair');
 					$('#feedback-helpers').show();
 					$('#feedback-welcome').hide();
@@ -96,6 +96,8 @@
 
 				$('#feedback-highlighter').on('mousedown', function(e) {
 					$(this).hide();
+					$('#feedback-overview').hide();
+					canDraw = true;
 				})
 
 				var ctx = $('#feedback-canvas')[0].getContext('2d');
@@ -150,7 +152,8 @@
 				});
 
 				$(document).on('mouseup', function(){
-					$('#feedback-highlighter').hide();
+					// $('#feedback-highlighter').hide();
+
 					if (canDraw) {
 						drag = false;
 
@@ -360,6 +363,8 @@
 				});
 
 				$(document).on('click', '#feedback-highlighter-next', function() {
+					$('#feedback-overview-screenshot h3').show();
+					$('#feedback-overview-back').show();
 					canDraw = false;
 					$('#feedback-canvas').css('cursor', 'default');
 					var sy = $(document).scrollTop(),
@@ -386,7 +391,6 @@
 								$('#feedback-overview').show();
 								$('#feedback-overview-description-text>textarea').remove();
 								$('#feedback-overview-screenshot>img').remove();
-								$('<textarea id="feedback-overview-note"  placeholder="请输入反馈内容">' + $('#feedback-note').val() + '</textarea>').insertAfter('#feedback-overview-description-text h3:eq(0)');
 								$('#feedback-overview-screenshot').append('<img class="feedback-screenshot" src="' + img + '" />');
 							}
 							else {
@@ -405,7 +409,7 @@
 					$('#feedback-canvas').css('cursor', 'crosshair');
 					$('#feedback-overview').hide();
 					$('#feedback-helpers').show();
-					$('#feedback-highlighter').show();
+					$('#feedback-highlighter').hide();
 					$('#feedback-overview-error').hide();
 				});
 
@@ -453,7 +457,19 @@
 						$('#feedback-overview').hide();
 						description = $('#feedback-note').val();
 						post.img = img;
-						console.log(post.img)
+						if(img == ''){
+							canDraw = false;
+							$('#feedback-canvas').css('cursor', 'default');
+							var dh = $(window).height();
+							html2canvas($('body'), {
+								onrendered: function(canvas) {	
+									_canvas = $('<canvas id="feedback-canvas-tmp" width="'+ w +'" height="'+ dh +'"/>').hide().appendTo('body');			
+									img = _canvas.get(0).toDataURL();							
+									post.img = img;	
+									console.log(post.img);							
+								},
+							});
+						}
 						post.note = $('#feedback-note').val();
             var data = {
             	"appId":"FSP",

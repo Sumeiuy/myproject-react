@@ -412,22 +412,25 @@ export default class Detail extends PureComponent {
     const { resultData = EMPTY_OBJECT } = dataSource || EMPTY_OBJECT;
     const { resultData: voList = EMPTY_OBJECT } = voDataSource || EMPTY_OBJECT;
     const { feedbackVOList = EMPTY_LIST } = voList; // 处理记录
-    const { appId, feedId, description, mediaUrls } = resultData || EMPTY_OBJECT;
-    const imgUrl = _.isEmpty(mediaUrls) ? EMPTY_OBJECT : JSON.parse(mediaUrls);
     const {
-      feedEmpInfo = EMPTY_OBJECT,
-      attachModelList = EMPTY_LIST,
+      attachModelList,
       functionName,
+      feedEmpInfo,
+      description,
       createTime,
+      mediaUrls,
       processer,
+      issueType,
       version,
+      feedId,
       status,
       jiraId,
+      appId,
       tag,
       id,
-      issueType,
     } = resultData || EMPTY_OBJECT; // 反馈用户
-    const feedbackDetail = {
+    const imgUrl = _.isEmpty(mediaUrls) ? EMPTY_OBJECT : JSON.parse(mediaUrls);
+    let feedbackDetail = {
       functionName,
       createTime,
       processer,
@@ -437,7 +440,9 @@ export default class Detail extends PureComponent {
       tag,
       id,
     };
-
+    if (!feedbackDetail) {
+      feedbackDetail = EMPTY_OBJECT;
+    }
     const remarkbtn = classnames({
       btnhidden: this.state.remarkVisible,
     });
@@ -482,6 +487,14 @@ export default class Detail extends PureComponent {
                   <div className="imgbox" onClick={this.handlePreview}>
                     <img src={`${request.prefix}${imgUrl.imageUrls}`} alt="图片" />
                   </div>
+                  <Modal
+                    visible={previewVisible}
+                    width={newWidth}
+                    footer={null}
+                    onCancel={this.handlePreviewCancel}
+                  >
+                    <img alt="图片" style={{ width: '100%' }} src="../../static/images/2.png" />
+                  </Modal>
                 </Col>
               </Row> :
               <Row>
@@ -515,7 +528,7 @@ export default class Detail extends PureComponent {
                         }
                       </div>
                       <div className="btn_dv">
-                        <Button type="primary" onClick={this.showModal}>{messageBtnValue}</Button>
+                        <Button type="primary" onClick={this.showModal}>{messageBtnValue || '处理问题'}</Button>
                       </div>
                     </div>
                   </div>
@@ -574,14 +587,6 @@ export default class Detail extends PureComponent {
           title={messageBtnValue}
           inforTxt={inforTxt}
         />
-        <Modal
-          visible={previewVisible}
-          width={newWidth}
-          footer={null}
-          onCancel={this.handlePreviewCancel}
-        >
-          <img alt="图片" style={{ width: '100%' }} src="../../static/images/2.png" />
-        </Modal>
       </div>
     );
   }
