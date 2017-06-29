@@ -50,7 +50,6 @@ export default function uploadRequest(option) {
   }
 
   const formData = new FormData();
-  console.warn('data', option.data);
   if (option.data) {
     Object.keys(option.data).map(key => (
       formData.append(key, option.data[key])

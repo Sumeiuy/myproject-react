@@ -23,7 +23,7 @@ let OPTIONKEY = 0;
 export default class ProblemDetail extends PureComponent {
   static propTypes = {
     visible: PropTypes.bool,
-    problemDetails: PropTypes.object.isRequired,
+    problemDetails: PropTypes.object,
     form: PropTypes.object.isRequired,
     onCancel: PropTypes.func.isRequired,
     onCreate: PropTypes.func.isRequired,
@@ -34,6 +34,7 @@ export default class ProblemDetail extends PureComponent {
   static defaultProps = {
     visible: false,
     userId: '002332',
+    problemDetails: EMPTY_OBJECT,
   }
 
   constructor(props) {
@@ -128,7 +129,7 @@ export default class ProblemDetail extends PureComponent {
    * value和label显示转换
   */
   changeDisplay(st, options) {
-    if (st) {
+    if (st && !_.isEmpty(st)) {
       const nowStatus = _.find(options, o => o.value === st) || EMPTY_OBJECT;
       return nowStatus.label || '无';
     }
@@ -156,23 +157,24 @@ export default class ProblemDetail extends PureComponent {
   render() {
     const { form, problemDetails } = this.props;
     const {
-      editValue,
       qtab,
-      qtabHV,
       jira,
+      qtabHV,
       jiraHV,
+      editValue,
       processerV,
       processerHV,
       canBeEdited,
     } = this.state;
-    const { functionName,
+    const {
+      functionName,
       createTime,
+      processer,
       version,
+      jiraId,
       status,
       tag,
-      processer,
-      jiraId,
-    } = problemDetails;
+    } = problemDetails || EMPTY_OBJECT;
     const { getFieldDecorator } = form;
     const value = true;
     const qtValue = classnames({
