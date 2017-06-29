@@ -92,7 +92,7 @@ export default class DurationSelect extends PureComponent {
     return (
       <div className="durationSelect">
         <div className="duration" onClick={this.handleDurationClick}>
-          <div className="text">{`${durationStr}(${durationTip})`}</div>
+          <div className="text">{`${durationStr}`}<span>{`(${durationTip})`}</span></div>
           <Icon type="calendar" />
         </div>
         <div className={toggleDurationPicker} onMouseEnter={this.handleMouseEnter}>
