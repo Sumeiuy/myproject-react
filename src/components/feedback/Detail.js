@@ -306,8 +306,6 @@ export default class Detail extends PureComponent {
       request: {
         ...fileStatus,
         id: currentId,
-        processer: helper.getEmpId(),
-        feedbackId: currentId,
         processerEmpId: helper.getEmpId(),
       },
       currentQuery: query,
@@ -444,6 +442,7 @@ export default class Detail extends PureComponent {
       feedbackDetail = EMPTY_OBJECT;
     }
     const remarkbtn = classnames({
+      bzBtn: true,
       btnhidden: this.state.remarkVisible,
     });
     const type = _.find(issueTypeOptions, item => item.value === issueType);
