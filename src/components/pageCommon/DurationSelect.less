@@ -4,11 +4,11 @@
     box-sizing: border-box;
     display: inline-block;
     height: 24px;
-    width: 220px;
+    width: auto;
     vertical-align: middle;
 
     .duration {
-      width: 220px;
+      width: auto;
       height: 24px;
       cursor: pointer;
       line-height: 24px;
@@ -19,13 +19,16 @@
         vertical-align: middle;
       }
       .text {
-        width: 200px;
+        width: auto;
         height: 24px;
         display: inline-block;
         color:#4c4c4c;
         font-size: 14px;
         text-align: left;
         vertical-align: middle;
+        span {
+          margin: 0 5px;
+        }
       }
     }
 
@@ -100,6 +103,9 @@
       z-index: 2;
       color:@invest-btn-text-hvr-color;
       border-color:@invest-btn-border-hvr-color;
+    }
+    &:not(:first-child):before {
+      display: none;
     }
   }
   .ant-radio-button-wrapper-checked {

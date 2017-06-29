@@ -3,17 +3,82 @@
  * @author sunweibin
  */
 
-import React, { PureComponent } from 'react';
+import React, { PropTypes, PureComponent } from 'react';
 import { Input } from 'antd';
+import { autobind } from 'core-decorators';
 import SimpleEditor from '../../components/Edit/SimpleEditor';
 import SelfSelect from '../../components/Edit/SelfSelect';
 import { VisibleRangeAll } from '../../components/Edit/VisibleRange';
 import styles from './Home.less';
 
-const visibleRange = VisibleRangeAll;
+const visibleRangeAll = VisibleRangeAll;
 
-export default class BoardManageHome extends PureComponent {
+export default class BoardEditHome extends PureComponent {
+
+  static propTypes = {
+    boardName: PropTypes.string,
+    visibleRange: PropTypes.array,
+  }
+
+  static defaultProps = {
+    boardName: '分公司经营业绩看板',
+    visibleRange: ['nj'],
+  }
+
+  constructor(props) {
+    super(props);
+    const { boardName, visibleRange } = this.props;
+    this.state = {
+      boardNameEditor: false,
+      visibleRangeEditor: false,
+      bNEditorOriginal: boardName,
+      vROriginal: '经营业务总部/南京分公司',
+      vREditorOriginal: visibleRange,
+    };
+  }
+
+  @autobind
+  editorStateController(editor, flag) {
+    if (flag) {
+      // 如果是打开某一个,其余需要关闭
+      this.setState({
+        boardNameEditor: false,
+        visibleRangeEditor: false,
+        [editor]: true,
+      });
+    } else {
+      // 如果是关闭则只是关闭
+      this.setState({
+        [editor]: false,
+      });
+    }
+  }
+
+  // editor按确认按钮的处理程序
+  @autobind
+  editorConfirm(obj) {
+    const { key, value } = obj;
+    if (key === 'boardNameEditor') {
+      this.setState({
+        bNEditorOriginal: value,
+      });
+    }
+    if (key === 'visibleRangeEditor') {
+      this.setState({
+        vROriginal: value.label,
+        vREditorOriginal: value.currency,
+      });
+    }
+  }
+
   render() {
+    const {
+      boardNameEditor,
+      visibleRangeEditor,
+      bNEditorOriginal,
+      vROriginal,
+      vREditorOriginal,
+    } = this.state;
     return (
       <div className="page-invest content-inner">
         <div className={styles.editPageHd}>
@@ -33,12 +98,15 @@ export default class BoardManageHome extends PureComponent {
               <div className={styles.title}>看板名称:</div>
               <SimpleEditor
                 editable
-                originalValue="分公司经营业绩看板分公司经营业绩看板分公司经营业绩看板"
+                originalValue={bNEditorOriginal}
                 style={{
                   maxWidth: '350px',
                 }}
-                editorValue="分公司经营业绩看板"
-                editorName="boardName"
+                editorValue={bNEditorOriginal}
+                editorName="boardNameEditor"
+                controller={this.editorStateController}
+                editorState={boardNameEditor}
+                confirm={this.editorConfirm}
               >
                 <Input />
               </SimpleEditor>
@@ -48,14 +116,24 @@ export default class BoardManageHome extends PureComponent {
               <div className={styles.title}>可见范围:</div>
               <SimpleEditor
                 editable
-                originalValue="经济业务总部/南京分公司/北京分公司/经济业务总部/南京分公司/北京分公司/经济业务总部/南京分公司/北京分公司"
+                originalValue={vROriginal}
                 style={{
                   maxWidth: '450px',
                 }}
-                editorValue={['zong']}
-                editorName="visibleRange"
+                editorValue={{
+                  currency: vREditorOriginal,
+                  label: vROriginal,
+                }}
+                editorName="visibleRangeEditor"
+                controller={this.editorStateController}
+                editorState={visibleRangeEditor}
+                confirm={this.editorConfirm}
               >
-                <SelfSelect options={visibleRange} level="1" style={{ height: '30px' }} />
+                <SelfSelect
+                  options={visibleRangeAll}
+                  level="1"
+                  style={{ height: '30px' }}
+                />
               </SimpleEditor>
             </div>
           </div>

@@ -9,13 +9,14 @@ import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
 
+import selectHandlers from './selectHelper';
 import styles from './SelfSelect.less';
 
 const CheckboxGroup = Checkbox.Group;
 
 export default class SelfSelect extends PureComponent {
   static propTypes = {
-    value: PropTypes.array, // 初始值
+    // value: PropTypes.object, // 初始值
     options: PropTypes.array.isRequired, // 全部的选项
     onChange: PropTypes.func, // 改版form表单的值得方法
     level: PropTypes.string.isRequired, // 用户的级别
@@ -25,85 +26,60 @@ export default class SelfSelect extends PureComponent {
   static defaultProps = {
     style: { height: '35px' },
     onChange: () => {},
-    value: [],
+    // value: {},
   }
 
   constructor(props) {
     super(props);
     // 此value为Form组件使用getFieldDecorator方式的initialValue传递过来的初始值
-    const value = props.value || [];
-
+    // value为一个对象,{ label, currency }
+    const newProps = this.props;
+    const value = newProps.value || {};
+    const allCheckedNode = selectHandlers.getAllCheckboxNode(props.level);
+    // const chldrenOptions = props.options.slice(1);
     this.state = {
-      visibleRangeNames: this.getVisibleRangeNames(value, true),
+      visibleRangeNames: value.label, // 显示的Label文本
       expand: false,
-      groupCheckedList: value, // 所有分公司/营业部，选中的checkbox的列表
+      groupCheckedList: value.currency, // 所有分公司/营业部，选中的checkbox的列表
       checkAll: false, // 全选按钮的状态
+      getFinalLabel: selectHandlers.afterSelected(props.options, allCheckedNode),
+      allCheckedNode,
     };
   }
 
   componentWillReceiveProps(nextProps) {
     // 此处需要将恢复到默认值状态
-    const { value } = nextProps;
-    const { value: preValue } = this.props;
+    const newNextProps = nextProps;
+    const newThisProps = this.props;
+    const { value: { currency, label } } = newNextProps;
+    const { value: { currency: preCurrency }, options } = newThisProps;
+    const chldrenOptions = options.slice(1);
     // 通过判断当前选中的值的变化
-    if ('value' in nextProps && _.isEqual(value, preValue)) {
+    if ('value' in nextProps && !_.isEqual(currency, preCurrency)) {
       // const value = nextProps.value;
       this.setState({
-        groupCheckedList: value,
-        checkAll: false,
-        visibleRangeNames: this.getVisibleRangeNames(value, true),
+        groupCheckedList: currency,
+        checkAll: chldrenOptions.length === currency.length,
+        visibleRangeNames: label,
       });
     }
   }
 
   @autobind
-  getAllCheckboxObj() {
-    const { level } = this.props;
-    if (level === '1') {
-      return {
-        id: 'all',
-        name: '所有分公司',
-      };
-    } else if (level === '2') {
-      return {
-        id: 'all',
-        name: '所有营业部',
-      };
-    }
-    return {
-      id: 'all',
-      name: '',
-    };
-  }
-
-  @autobind
-  getVisibleRangeNames(groupCheckedList, flag) {
-    const { options } = this.props;
-    const names = [options[0].name];
-    if (options.length > 1 && Array.isArray(groupCheckedList)) {
-      const chldrenOptions = options.slice(1);
-      if (groupCheckedList.length === chldrenOptions.length) {
-        names.push(this.getAllCheckboxObj().name);
-      } else {
-        const filterNames = _.filter(options, o => _.includes(groupCheckedList, o.id));
-        filterNames.forEach(item => names.push(item.name));
-      }
-    }
-    const labelShowName = names.join('/');
-    if (flag) {
-      return labelShowName;
-    }
+  setVisibleRangeNames(groupCheckedList) {
+    const { getFinalLabel } = this.state;
+    const visibleRangeNames = getFinalLabel(groupCheckedList);
     this.setState({
-      visibleRangeNames: labelShowName,
+      visibleRangeNames,
     });
-    return '';
+    return visibleRangeNames;
   }
 
   @autobind
-  triggerChange(groupCheckedList) {
+  triggerChange(v) {
     const onChange = this.props.onChange;
     if (onChange) {
-      onChange(groupCheckedList);
+      onChange(v);
     }
   }
 
@@ -117,9 +93,12 @@ export default class SelfSelect extends PureComponent {
     },
     () => {
       const { groupCheckedList } = this.state;
-      this.getVisibleRangeNames(groupCheckedList);
+      const label = this.setVisibleRangeNames(groupCheckedList);
       // 需要触发Form组件getFieldDecorator方式设置的onChange方式
-      this.triggerChange(groupCheckedList);
+      this.triggerChange({
+        label,
+        currency: groupCheckedList,
+      });
     });
   }
 
@@ -131,9 +110,12 @@ export default class SelfSelect extends PureComponent {
       groupCheckedList,
       checkAll: groupCheckedList.length === childrenOptions.length,
     });
-    this.getVisibleRangeNames(groupCheckedList);
+    const label = this.setVisibleRangeNames(groupCheckedList);
     // 需要触发Form组件getFieldDecorator方式设置的onChange方式
-    this.triggerChange(groupCheckedList);
+    this.triggerChange({
+      label,
+      currency: groupCheckedList,
+    });
   }
 
   @autobind
@@ -170,7 +152,7 @@ export default class SelfSelect extends PureComponent {
   render() {
     const { options, style } = this.props;
     const firstRequiredCheck = options[0];
-    const { expand, checkAll, groupCheckedList, visibleRangeNames } = this.state;
+    const { expand, checkAll, groupCheckedList, visibleRangeNames, allCheckedNode } = this.state;
     const iconType = expand ? 'up' : 'down';
     const selfSelectHd = classnames({
       [styles.selfSelectHeader]: true,
@@ -207,7 +189,7 @@ export default class SelfSelect extends PureComponent {
             onChange={this.handleAllCheckboxChange}
             checked={checkAll}
           >
-            {this.getAllCheckboxObj().name}
+            {allCheckedNode.name}
           </Checkbox>
           <CheckboxGroup
             value={groupCheckedList}

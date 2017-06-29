@@ -1,7 +1,34 @@
+.padMB {
+  margin-bottom: 40px;
+}
+.textCenter {
+  text-align: center;
+}
+.textLeft {
+  text-align: left;
+}
+.modalTipsText {
+  font-size: 15px;
+  line-height: 30px;
+  color: #666;
+}
+.modalDelTips {
+  composes: textLeft;
+  composes: modalTipsText;
+  margin-bottom: 20px;
+}
+.delModalName {
+  color: #e52e2e;
+}
+.modalPureTips {
+  composes: textCenter;
+  composes: padMB;
+  composes: modalTipsText;
+}
 .boardManageModal {
   // background-color: blue;
   .tooltipTop {
-    top:55px !important;
+    top:-35px !important;
   }
   :global {
     .ant-form-item {
@@ -58,7 +85,7 @@
       }
     }
     .ant-modal-body {
-      padding: 40px 24px 0 40px;
+      padding: 40px 50px 0 50px;
     }
   }
 }
