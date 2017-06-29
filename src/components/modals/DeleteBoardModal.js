@@ -113,8 +113,8 @@ export default class DeleteBoardModal extends PureComponent {
         maskClosable={false}
         footer={[
           <Button key="back" size="large" onClick={this.closeCreateModal}>取消</Button>,
-          <Button key="submit" type="primary" size="large" onClick={this.confirmCreateModal}>
-            确认
+          <Button key="del" className={styles.delDanger} size="large" onClick={this.confirmCreateModal}>
+            删除
           </Button>,
         ]}
       >
