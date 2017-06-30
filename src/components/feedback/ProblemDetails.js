@@ -23,7 +23,7 @@ let OPTIONKEY = 0;
 export default class ProblemDetail extends PureComponent {
   static propTypes = {
     visible: PropTypes.bool,
-    problemDetails: PropTypes.object.isRequired,
+    problemDetails: PropTypes.object,
     form: PropTypes.object.isRequired,
     onCancel: PropTypes.func.isRequired,
     onCreate: PropTypes.func.isRequired,
@@ -34,6 +34,7 @@ export default class ProblemDetail extends PureComponent {
   static defaultProps = {
     visible: false,
     userId: '002332',
+    problemDetails: '',
   }
 
   constructor(props) {
@@ -165,6 +166,12 @@ export default class ProblemDetail extends PureComponent {
       processerHV,
       canBeEdited,
     } = this.state;
+
+    let a = problemDetails;
+    if (!a) {
+      a = EMPTY_OBJECT;
+    }
+
     const { functionName,
       createTime,
       version,
@@ -172,7 +179,7 @@ export default class ProblemDetail extends PureComponent {
       tag,
       processer,
       jiraId,
-    } = problemDetails;
+    } = a;
     const { getFieldDecorator } = form;
     const value = true;
     const qtValue = classnames({

@@ -7,6 +7,8 @@
 import React, { PureComponent, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
+import _ from 'lodash';
+import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import { withRouter, routerRedux } from 'dva/router';
 import { Row, Col } from 'antd';
@@ -15,9 +17,11 @@ import Detail from '../../components/feedback/Detail';
 import FeedbackList from '../../components/feedback/FeedbackList';
 import FeedbackHeader from '../../components/feedback/FeedbackHeader';
 import { constructPostBody } from '../../utils/helper';
-import styles from './home.less';
+import './home.less';
 
 const EMPTY_LIST = [];
+const EMPTY_OBJECT = {};
+const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
 const mapStateToProps = state => ({
   list: state.feedback.list,
 });
@@ -50,7 +54,7 @@ export default class FeedBack extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      isNull: false,
+      isEmpty: true,
     };
   }
 
@@ -69,18 +73,49 @@ export default class FeedBack extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { list: nextList } = nextProps;
-    const { list: preList } = this.props;
-    if (nextList !== preList) {
-      const { resultData = EMPTY_LIST } = nextList;
-      this.setState({
-        isNull: !(resultData.length > 0),
-      });
+    const { location: { query: nextQuery = EMPTY_OBJECT } } = nextProps;
+    const { location: { query: prevQuery = EMPTY_OBJECT }, getFeedbackList } = this.props;
+    const { isResetPageNum = 'N', curPageNum, curPageSize } = nextQuery;
+
+    // 深比较值是否相等
+    // url发生变化，检测是否改变了筛选条件
+    if (!_.isEqual(prevQuery, nextQuery)) {
+      if (!this.diffObject(prevQuery, nextQuery)) {
+        // 只监测筛选条件是否变化
+        getFeedbackList(constructPostBody(
+          nextQuery,
+          isResetPageNum === 'Y' ? 1 : curPageNum,
+          isResetPageNum === 'Y' ? 10 : curPageSize,
+        ));
+      }
     }
   }
 
   componentDidUpdate() {
     this.setDocumentScroll();
+
+    const { location: { pathname, query, query: { isResetPageNum } }, replace,
+      list: { resultData = EMPTY_LIST } } = this.props;
+    // 重置pageNum和pageSize
+    if (isResetPageNum === 'Y') {
+      replace({
+        pathname,
+        query: {
+          ...query,
+          isResetPageNum: 'N',
+        },
+      });
+    }
+
+    if (_.isEmpty(resultData)) {
+      this.setState({ // eslint-disable-line
+        isEmpty: true,
+      });
+    } else {
+      this.setState({ // eslint-disable-line
+        isEmpty: false,
+      });
+    }
   }
 
   componentWillUnmount() {
@@ -98,65 +133,99 @@ export default class FeedBack extends PureComponent {
     const containerElem = ReactDOM.findDOMNode(document.getElementById('container'));
     const leftSectionElem = ReactDOM.findDOMNode(document.getElementById('leftSection'));
     const rightSectionElem = ReactDOM.findDOMNode(document.getElementById('rightSection'));
+    const nullElem = ReactDOM.findDOMNode(document.getElementById('empty'));
+    const workspaceElem = ReactDOM.findDOMNode(document.getElementById('workspace-content'));
     /* eslint-enable */
 
     let topDistance = 0;
+    const padding = 10;
+    const boxPadding = 12;
     const bottomDistance = 48;
-    topDistance = leftSectionElem.getBoundingClientRect().top;
-    const sectionHeight = docElemHeight - topDistance - bottomDistance - 10 - 10 - 10;
 
-    if (leftSectionElem) {
+    if (leftSectionElem && rightSectionElem) {
+      topDistance = leftSectionElem.getBoundingClientRect().top;
+      const sectionHeight = docElemHeight - topDistance -
+        bottomDistance - padding - boxPadding;
       leftSectionElem.style.height = `${sectionHeight}px`;
-    }
-
-    if (rightSectionElem) {
       rightSectionElem.style.height = `${sectionHeight}px`;
     }
 
-    containerElem.style.overflow = 'auto';
-    containerElem.style.height = `${docElemHeight - leftSectionElem.getBoundingClientRect().top - 10}px`;
+    if (containerElem) {
+      containerElem.style.overflow = 'auto';
+      if (workspaceElem) {
+        // FSP内嵌里面
+        containerElem.style.height = `${docElemHeight - bottomDistance - padding - top}px`;
+      } else {
+        containerElem.style.height = `${docElemHeight - bottomDistance - padding}px`;
+      }
+    }
+
+    if (nullElem) {
+      const top = nullElem.getBoundingClientRect().top;
+      nullElem.style.height = `${docElemHeight - top - bottomDistance - (2 * padding)}px`;
+    }
+  }
+
+  /**
+  * 检查两个对象部分属性是否完全相同
+  * @param {*} dic 字典
+  * @param {*} prevQuery 上一次query
+  * @param {*} nextQuery 下一次query
+  */
+  diffObject(prevQuery, nextQuery) {
+    const prevQueryData = _.omit(prevQuery, OMIT_ARRAY);
+    const nextQueryData = _.omit(nextQuery, OMIT_ARRAY);
+    if (!_.isEqual(prevQueryData, nextQueryData)) {
+      return false;
+    }
+    return true;
   }
 
   render() {
-    const { list, location, getFeedbackList, replace } = this.props;
-    const { isNull } = this.state;
+    const { list, location, replace } = this.props;
+    const { isEmpty } = this.state;
+    const emptyClass = classnames({
+      none: !isEmpty,
+      feedbackRow: true,
+    });
+    const existClass = classnames({
+      none: isEmpty,
+      feedbackRow: true,
+    });
     return (
-      <div className={styles.feedbackbox}>
+      <div className="feedbackbox">
         <FeedbackHeader
           location={location}
           replace={replace}
         />
-        {
-          isNull ?
-            <Row className={styles.feedbackRow}>
-              <Col span="24" className={styles.rightSection}>
-                <div className="feedbackList">
-                  <div className={styles.isnull_dv}>
-                    <div className={styles.inner_dv}>
-                      <Icon type="meiyouxiangguanjieguo" className={styles.myxgjg} />
-                      <p>抱歉！没有找到相关结果</p>
-                    </div>
-                  </div>
+        <Row className={emptyClass}>
+          <Col span="24" className="rightSection" id="empty">
+            <div className="feedbackList">
+              <div className="isnull_dv">
+                <div className="inner_dv">
+                  <Icon type="meiyouxiangguanjieguo" className="myxgjg" />
+                  <p>抱歉！没有找到相关结果</p>
                 </div>
-              </Col>
-            </Row>
-            :
-            <Row className={styles.feedbackRow}>
-              <Col span="10" className={styles.leftSection} id="leftSection">
-                <FeedbackList
-                  list={list}
-                  location={location}
-                  getFeedbackList={getFeedbackList}
-                  replace={replace}
-                />
-              </Col>
-              <Col span="14" className={styles.rightSection} id="rightSection">
-                <Detail
-                  location={location}
-                />
-              </Col>
-            </Row>
-        }
+              </div>
+            </div>
+          </Col>
+        </Row>
+
+        <Row className={existClass}>
+          <Col span="10" className="leftSection" id="leftSection">
+            <FeedbackList
+              list={list}
+              replace={replace}
+              location={location}
+            />
+          </Col>
+          <Col span="14" className="rightSection" id="rightSection">
+            <Detail
+              location={location}
+            />
+          </Col>
+        </Row>
+
       </div>
     );
   }

@@ -5,7 +5,6 @@ import classnames from 'classnames';
 import _ from 'lodash';
 import styles from './feedbackList.less';
 import Icon from '../common/Icon';
-import { constructPostBody } from '../../utils/helper';
 import { feedbackOptions } from '../../config';
 
 const EMPTY_OBJECT = {};
@@ -17,12 +16,9 @@ const STATUS_MAP = [
   { value: 'CLOSED', label: '关闭' },
 ];
 
-const OMIT_ARRAY = ['currentId', 'curPageSize', 'curPageNum', 'isResetPageNum'];
-
 export default class FeedbackList extends PureComponent {
   static propTypes = {
     list: PropTypes.object.isRequired,
-    getFeedbackList: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
   };
@@ -33,119 +29,63 @@ export default class FeedbackList extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { page = EMPTY_OBJECT, resultData = EMPTY_LIST,
-    } = props.list || EMPTY_OBJECT;
-    const { curPageNum = 1, totalPageNum = 1, totalRecordNum = 1 } = page;
     this.state = {
-      curPageNum,
-      dataSource: resultData || EMPTY_LIST,
-      totalRecordNum,
-      totalPageNum,
-      curPageSize: 10,
       curSelectedRow: 0,
-      // pageSizeOptions: '',
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    const { list: nextList = EMPTY_OBJECT, replace,
-      location: { query: nextQuery = EMPTY_OBJECT, pathname } } = nextProps;
-    const { list: prevList = EMPTY_OBJECT, location: { query: prevQuery = EMPTY_OBJECT },
-      getFeedbackList } = this.props;
-    const { resultData: nextResultData = EMPTY_LIST, page = EMPTY_OBJECT } = nextList;
-    const { resultData: prevResultData = EMPTY_LIST } = prevList;
-    const { curPageNum = 1, totalPageNum, totalRecordNum, pageSize } = page;
-    const { isResetPageNum = 'N' } = nextQuery;
-
-    if (!_.isEqual(prevResultData, nextResultData)) {
-      this.setState({
-        dataSource: nextResultData,
-        totalRecordNum,
-        totalPageNum,
-        curPageNum,
-        curPageSize: pageSize,
-      });
-
-      replace({
-        pathname,
-        query: {
-          ...nextQuery,
-          curPageNum,
-          curPageSize: pageSize,
-        },
-      });
-    }
-    // 深比较值是否相等
-    // url发生变化，检测是否改变了筛选条件
-    if (!_.isEqual(prevQuery, nextQuery)) {
-      if (!this.diffObject(prevQuery, nextQuery)) {
-        const { curPageNum: newPageNum, curPageSize: newPageSize } = this.state;
-        // 只监测筛选条件是否变化
-        getFeedbackList(
-          constructPostBody(
-            nextQuery,
-            isResetPageNum === 'Y' ? 1 : newPageNum,
-            isResetPageNum === 'Y' ? 10 : newPageSize,
-          ));
-      }
-    }
-  }
-
-  componentDidUpdate() {
     // 第一次替换query
     // 添加currentId
-    const { location: { query, pathname, query: { currentId,
-      isResetPageNum } }, replace } = this.props;
-    const { dataSource = EMPTY_LIST, curPageNum, curPageSize } = this.state;
-    // 只有当有数据，并且当前没有选中项的时候，设置第一条初始值
-    // 或者当有数据，但是当前选中项在数据中，没有匹配时，设置第一条初始值
-    if (!_.isEmpty(dataSource) && (!currentId || (
-      currentId &&
-      _.isEmpty(_.find(dataSource, item => item.id.toString() === currentId))
-    ))) {
-      replace({
-        pathname,
-        query: {
-          ...query,
-          currentId: dataSource[0] && dataSource[0].id,
-          curPageSize,
-          curPageNum,
-        },
-      });
-      return;
+    const { list: { resultData: prevResultData = EMPTY_LIST } } = this.props;
+    const {
+      location: { query, pathname, query: { currentId } },
+      replace,
+      list: { resultData = EMPTY_LIST, page = EMPTY_OBJECT } } = nextProps;
+    const { curPageNum, pageSize } = page;
+
+    // 只有当有数据，
+    // 当前没有选中项currentId
+    // 或者query上存在currentId，但是数据没有匹配时
+    // 默认设置第一条初始值
+    if (prevResultData !== resultData) {
+      if (!_.isEmpty(resultData)) {
+        if ((!currentId || (
+          currentId &&
+          _.isEmpty(_.find(resultData, item => item.id.toString() === currentId))
+        ))) {
+          replace({
+            pathname,
+            query: {
+              ...query,
+              currentId: resultData[0] && resultData[0].id,
+              curPageNum,
+              curPageSize: pageSize,
+            },
+          });
+          // 选中第一行
+          this.setState({ // eslint-disable-line
+            curSelectedRow: 0,
+          });
+        } else {
+          // query上存在正确的currentId
+          // 设置当前选中行
+          this.setState({ // eslint-disable-line
+            curSelectedRow: _.findIndex(resultData,
+              item => item.id.toString() === currentId),
+          });
+
+          replace({
+            pathname,
+            query: {
+              ...query,
+              // curPageNum,
+              // curPageSize: pageSize,
+            },
+          });
+        }
+      }
     }
-
-    // 重置pageNum
-    if (isResetPageNum === 'Y') {
-      replace({
-        pathname,
-        query: {
-          ...query,
-          isResetPageNum: 'N',
-        },
-      });
-    }
-
-    this.setState({ // eslint-disable-line
-      curSelectedRow: _.findIndex(dataSource,
-        item => item.id.toString() === currentId),
-    });
-  }
-
-
-  /**
-   * 检查两个对象部分属性是否完全相同
-   * @param {*} dic 字典
-   * @param {*} prevQuery 上一次query
-   * @param {*} nextQuery 下一次query
-   */
-  diffObject(prevQuery, nextQuery) {
-    const prevQueryData = _.omit(prevQuery, OMIT_ARRAY);
-    const nextQueryData = _.omit(nextQuery, OMIT_ARRAY);
-    if (!_.isEqual(prevQueryData, nextQueryData)) {
-      return false;
-    }
-    return true;
   }
 
   /**
@@ -155,8 +95,11 @@ export default class FeedbackList extends PureComponent {
    */
   @autobind
   handleRowClick(record, index) {
-    const { location: { pathname, query }, replace } = this.props;
-    const { dataSource = EMPTY_LIST } = this.state;
+    const {
+      location: { pathname, query },
+      replace,
+      list: { resultData = EMPTY_LIST },
+    } = this.props;
 
     // 设置当前选中行
     this.setState({
@@ -168,7 +111,7 @@ export default class FeedbackList extends PureComponent {
       pathname,
       query: {
         ...query,
-        currentId: dataSource[index].id,
+        currentId: resultData[index].id,
       },
     });
   }
@@ -180,11 +123,16 @@ export default class FeedbackList extends PureComponent {
    */
   @autobind
   handlePageChange(nextPage, currentPageSize) {
-    this.setState({
-      curPageNum: nextPage,
+    const { location: { query, pathname }, replace } = this.props;
+    // 替换当前页码和分页条目
+    replace({
+      pathname,
+      query: {
+        ...query,
+        curPageNum: nextPage,
+        curPageSize: currentPageSize,
+      },
     });
-    const { location: { query }, getFeedbackList } = this.props;
-    getFeedbackList(constructPostBody(query, nextPage, currentPageSize));
   }
 
   /**
@@ -253,8 +201,7 @@ export default class FeedbackList extends PureComponent {
   /**
    * 构造数据源
    */
-  constructTableDatas() {
-    const { dataSource } = this.state;
+  constructTableDatas(dataSource) {
     const newDataSource = [];
     if (dataSource.length > 0) {
       dataSource.forEach((currentValue, index) =>
@@ -271,30 +218,28 @@ export default class FeedbackList extends PureComponent {
    * @param {*} changedPageSize 当前每页条目
    */
   @autobind
-  handleShowSizeChange(currentPageNum, changedPageSize) {
-    const { totalRecordNum, curPageSize, curPageNum } = this.state;
-    const { location: { query }, getFeedbackList } = this.props;
+  handleShowSizeChange(currentPageNum, changedPageSize, totalRecordNum) {
+    const {
+      location: { query, pathname },
+      replace,
+    } = this.props;
 
-    if (changedPageSize / totalRecordNum > 1) {
-      // 当前选择分页条目大于两倍的记录数
-      // 则不生效，恢复当前分页条目
-      this.setState({
-        curPageSize,
-        curPageNum,
+    // 只有当分页条目小于2倍总条目
+    // 每页条目才允许发生变化
+    if (changedPageSize / totalRecordNum <= 1) {
+      // 替换当前页码和分页条目
+      replace({
+        pathname,
+        query: {
+          ...query,
+          curPageNum: currentPageNum,
+          curPageSize: changedPageSize,
+        },
       });
-    } else {
-      this.setState({
-        curPageSize: changedPageSize,
-        curPageNum: currentPageNum,
-      });
-      // 每页条目变化
-      // 重新请求数据
-      getFeedbackList(constructPostBody(query, currentPageNum, changedPageSize));
     }
   }
 
-  constructPageSizeOptions() {
-    const { totalRecordNum } = this.state;
+  constructPageSizeOptions(totalRecordNum) {
     const pageSizeOption = [];
     const maxPage = Math.ceil(totalRecordNum / 10);
     for (let i = 1; i <= maxPage; i++) {
@@ -305,32 +250,29 @@ export default class FeedbackList extends PureComponent {
   }
 
   render() {
-    const {
-      dataSource,
-      curPageNum,
-      totalRecordNum,
-      curPageSize,
-      curSelectedRow,
-    } = this.state;
+    const { list: { resultData = EMPTY_LIST, page = EMPTY_OBJECT },
+      location: { query: { curPageNum, curPageSize } } } = this.props;
+    const { totalRecordNum } = page;
+    const { curSelectedRow } = this.state;
 
-    if (!dataSource) {
+    if (!resultData) {
       return null;
     }
 
     const columns = this.constructTableColumns();
 
     const paginationOptions = {
-      current: curPageNum,
+      current: parseInt(curPageNum, 10),
       defaultCurrent: 1,
       total: totalRecordNum,
-      pageSize: curPageSize,
+      pageSize: parseInt(curPageSize, 10),
       defaultPageSize: 10,
       onChange: (nextPage, currentPageSize) => this.handlePageChange(nextPage, currentPageSize),
       showTotal: total => `共${total}个`,
       showSizeChanger: true,
       onShowSizeChange: (currentPageNum, changedPageSize) =>
-        this.handleShowSizeChange(currentPageNum, changedPageSize),
-      pageSizeOptions: this.constructPageSizeOptions(),
+        this.handleShowSizeChange(currentPageNum, changedPageSize, totalRecordNum),
+      pageSizeOptions: this.constructPageSizeOptions(totalRecordNum),
     };
 
     return (
@@ -338,7 +280,7 @@ export default class FeedbackList extends PureComponent {
         <Table
           className="feedbackTable"
           columns={columns}
-          dataSource={this.constructTableDatas()}
+          dataSource={this.constructTableDatas(resultData)}
           onRowClick={this.handleRowClick}
           showHeader={false}
           pagination={paginationOptions}
