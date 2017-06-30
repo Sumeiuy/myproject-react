@@ -127,10 +127,9 @@ export default class Detail extends PureComponent {
       }, () => {
         const { resultData = EMPTY_OBJECT } = nextDetail || EMPTY_OBJECT;
         const { mediaUrls = '', status } = resultData || EMPTY_OBJECT;
-        if (mediaUrls && mediaUrls.length < 1) {
+        if (mediaUrls && mediaUrls.length >= 1) {
           this.setState({
-            hasImgUrl: false,
-            previewVisible: true,
+            hasImgUrl: true,
           });
         }
         if (status === 'CLOSED') {
@@ -427,7 +426,7 @@ export default class Detail extends PureComponent {
       tag,
       id,
     } = resultData || EMPTY_OBJECT; // 反馈用户
-    const imgUrl = _.isEmpty(mediaUrls) ? EMPTY_OBJECT : JSON.parse(mediaUrls);
+    const imageUrls = _.isEmpty(mediaUrls) ? EMPTY_OBJECT : JSON.parse(mediaUrls);
     let feedbackDetail = {
       functionName,
       createTime,
@@ -484,7 +483,7 @@ export default class Detail extends PureComponent {
                 </Col>
                 <Col span="8">
                   <div className="imgbox" onClick={this.handlePreview}>
-                    <img src={`${request.prefix}${imgUrl.imageUrls}`} alt="图片" />
+                    <img src={`${request.prefix}/file/${imageUrls[0]}`} alt="图片" />
                   </div>
                   <Modal
                     visible={previewVisible}
@@ -492,7 +491,7 @@ export default class Detail extends PureComponent {
                     footer={null}
                     onCancel={this.handlePreviewCancel}
                   >
-                    <img alt="图片" style={{ width: '100%' }} src={`${request.prefix}${imgUrl.imageUrls}`} />
+                    <img alt="图片" style={{ width: '100%' }} src={`${request.prefix}/file/${imageUrls[0]}`} />
                   </Modal>
                 </Col>
               </Row> :
