@@ -1,5 +1,6 @@
-:global{
+:global{ 
   .Resizer {
+      height:100%;
       -moz-box-sizing: border-box;
       -webkit-box-sizing: border-box;
       box-sizing: border-box;
@@ -42,7 +43,6 @@
       border-left: 5px solid rgba(0, 0, 0, 0.5);
       border-right: 5px solid rgba(0, 0, 0, 0.5);
   }
-
   .vertical section {
       width: 100vh;
       height: 100vh;
@@ -130,4 +130,16 @@
           -ms-flex: 1;
               flex: 1;
   }
+  @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {  
+    /* IE10-specific styles go here */
+    .SplitPane {
+      .Pane1{
+        float: left;
+      }
+      .Pane2{
+        margin-top:-20px;
+        padding-left:700px;
+      }
+    }
+  }  
 }

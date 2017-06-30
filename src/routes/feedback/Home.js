@@ -12,11 +12,13 @@ import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import { withRouter, routerRedux } from 'dva/router';
 import { Row, Col } from 'antd';
+import SplitPane from 'react-split-pane';
 import Icon from '../../components/common/Icon';
 import Detail from '../../components/feedback/Detail';
 import FeedbackList from '../../components/feedback/FeedbackList';
 import FeedbackHeader from '../../components/feedback/FeedbackHeader';
 import { constructPostBody } from '../../utils/helper';
+import '../../css/react-split-pane-master.less';
 import './home.less';
 
 const EMPTY_LIST = [];
@@ -215,22 +217,24 @@ export default class FeedBack extends PureComponent {
             </div>
           </Col>
         </Row>
-
-        <Row className={existClass}>
-          <Col span="10" className="leftSection" id="leftSection">
-            <FeedbackList
-              list={list}
-              replace={replace}
-              location={location}
-            />
-          </Col>
-          <Col span="14" className="rightSection" id="rightSection">
-            <Detail
-              location={location}
-            />
-          </Col>
-        </Row>
-
+        <SplitPane split="vertical" minSize={518} maxSize={700} defaultSize={700} className="primary">
+          <Row className={existClass}>
+            <Col span="24" className="leftSection" id="leftSection">
+              <FeedbackList
+                list={list}
+                replace={replace}
+                location={location}
+              />
+            </Col>
+          </Row>
+          <Row className={existClass}>
+            <Col span="24" className="rightSection" id="rightSection">
+              <Detail
+                location={location}
+              />
+            </Col>
+          </Row>
+        </SplitPane>
       </div>
     );
   }
