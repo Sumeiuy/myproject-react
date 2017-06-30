@@ -44,6 +44,19 @@ export default class DurationSelect extends PureComponent {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    const { location: { query: { boardId, begin, cycleType, end } } } = nextProps;
+    const { location: { query: { boardId: preBId } } } = this.props;
+    if ((boardId || '1') !== preBId || !begin || !cycleType || !end) {
+      const obj = getDurationString('month');
+      // 切换报表了，则需要将时间恢复默认值
+      this.setState({
+        open: false,
+        ...obj,
+      });
+    }
+  }
+
    // 期间变化
   @autobind
   handleDurationChange(e) {
@@ -95,12 +108,12 @@ export default class DurationSelect extends PureComponent {
           <div className="text">{`${durationStr}`}<span>{`(${durationTip})`}</span></div>
           <Icon type="calendar" />
         </div>
-        <div className={toggleDurationPicker} onMouseEnter={this.handleMouseEnter}>
+        <div className={toggleDurationPicker}>
           <div className="pickerHead">{durationStr}</div>
           <div className="divider" />
           <div className="pickerFoot">
             <RadioGroup
-              defaultValue={cycleType || 'month'}
+              value={cycleType || 'month'}
               onChange={this.handleDurationChange}
             >
               {timeRadios}

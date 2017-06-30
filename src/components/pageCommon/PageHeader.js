@@ -17,22 +17,29 @@ export default class PageHeader extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
+    push: PropTypes.func.isRequired,
     custRange: PropTypes.array,
+    visibleBoards: PropTypes.array,
   }
 
   static defaultProps = {
     custRange: [],
+    visibleBoards: [],
   }
 
   render() {
-    const { replace, custRange, location } = this.props;
+    const { replace, push, custRange, location, visibleBoards } = this.props;
 
     return (
       <div className="reportHeader">
         <Row type="flex" justify="start" align="middle">
           <div className="reportName">
+            {/* 需要针对预览页面做调整 */}
             <BoardSelect
               location={location}
+              push={push}
+              replace={replace}
+              visibleBoards={visibleBoards}
             />
           </div>
           <div className={styles.reportHeaderRight}>
