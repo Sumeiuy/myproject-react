@@ -28,7 +28,8 @@
           width:4px;
           background-color: #108ee9;
         }
-      }      .bugtitle{
+      }      
+      .bugtitle{
         border-bottom:1px solid #c2c2c2;
         padding:0 0 15px 0;
         text-indent:-8px;
@@ -41,20 +42,11 @@
         }
       }
       .imgbox{
-        padding:20px 0 0 0;
+        padding:41px 0 0 0;
         img{
           width: 100%;
-          max-height: 300px;
-          display: block;
-          background: #ccc;
-          cursor: pointer;
-        }
-      }
-      .imgbox_2{
-        padding:20px 0 0 0;
-        img{
-          width: 100%;
-          max-height: 300px;
+          max-width: 180px;
+          max-height: 180px;
           display: block;
           background: #ccc;
           cursor: pointer;
@@ -78,6 +70,9 @@
         .mod_content{
           padding: 5px 0;
           .property_list{
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
             li{
               padding: 5px 0;
               height: 40px;
@@ -160,13 +155,6 @@
         }
       }
     }
-    .ant-modal-content {
-      background-color: transparent;
-      box-shadow: 0 0 0;
-    }
-    .ant-modal-body {
-      padding: 0;
-    }
   }
   .clearfix:after{
     content:" ";
@@ -197,5 +185,15 @@
   }
   #processing{
     border:0;
+  }
+  .imgModal {
+    .ant-modal-content {
+      background-color: transparent;
+      box-shadow: 0 0 0;
+      border: 1px solid #dddddd;
+    }
+    .ant-modal-body {
+      padding: 0px;
+    }
   }
 }
