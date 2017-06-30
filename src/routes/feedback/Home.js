@@ -217,7 +217,7 @@ export default class FeedBack extends PureComponent {
             </div>
           </Col>
         </Row>
-        <SplitPane split="vertical" minSize={518} maxSize={700} defaultSize={700} className="primary">
+        <SplitPane split="vertical" minSize={518} maxSize={700} defaultSize={520} className="primary">
           <Row className={existClass}>
             <Col span="24" className="leftSection" id="leftSection">
               <FeedbackList
