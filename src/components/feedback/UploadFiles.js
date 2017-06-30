@@ -78,11 +78,6 @@ export default class UploadFiles extends PureComponent {
   }
 
   @autobind
-  handlePreview(file) {
-    console.log(file);
-  }
-
-  @autobind
   fileOnChange({ file }) {
     const status = file.status;
     const response = file.response || {};
@@ -141,7 +136,6 @@ export default class UploadFiles extends PureComponent {
         onRemove={this.fileOnRemove}
         onChange={this.fileOnChange}
         customRequest={this.fileCustomRequest}
-        onPreview={this.handlePreview}
       >
         <div className="upload_txt">
           + 上传附件

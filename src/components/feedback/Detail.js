@@ -5,7 +5,7 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import { Row, Col, Button, message, Modal } from 'antd';
+import { Row, Col, Button, message, Modal, Tabs } from 'antd';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
@@ -28,7 +28,7 @@ const GETRECORDLIST = 'feedback/getFeedbackRecordList';
 const UPDATEQUESTION = 'feedback/updateFeedback';
 
 const issueTypeOptions = feedbackOptions.typeOptions;
-// const TabPane = Tabs.TabPane;
+const TabPane = Tabs.TabPane;
 
 const mapStateToProps = state => ({
   fbDetail: state.feedback.fbDetail,
@@ -127,10 +127,9 @@ export default class Detail extends PureComponent {
       }, () => {
         const { resultData = EMPTY_OBJECT } = nextDetail || EMPTY_OBJECT;
         const { mediaUrls = '', status } = resultData || EMPTY_OBJECT;
-        if (mediaUrls && mediaUrls.length < 1) {
+        if (mediaUrls && mediaUrls.length >= 1) {
           this.setState({
-            hasImgUrl: false,
-            previewVisible: true,
+            hasImgUrl: true,
           });
         }
         if (status === 'CLOSED') {
@@ -383,16 +382,16 @@ export default class Detail extends PureComponent {
    */
   @autobind
   handlePreview() {
-    // this.setState({
-    //   previewVisible: true,
-    // });
+    this.setState({
+      previewVisible: true,
+    });
   }
 
   @autobind
   handlePreviewCancel() {
-    // this.setState({
-    //   previewVisible: false,
-    // });
+    this.setState({
+      previewVisible: false,
+    });
   }
 
   render() {
@@ -427,7 +426,7 @@ export default class Detail extends PureComponent {
       tag,
       id,
     } = resultData || EMPTY_OBJECT; // 反馈用户
-    const imgUrl = _.isEmpty(mediaUrls) ? EMPTY_OBJECT : JSON.parse(mediaUrls);
+    const imageUrls = _.isEmpty(mediaUrls) ? EMPTY_OBJECT : JSON.parse(mediaUrls);
     let feedbackDetail = {
       functionName,
       createTime,
@@ -484,7 +483,7 @@ export default class Detail extends PureComponent {
                 </Col>
                 <Col span="8">
                   <div className="imgbox" onClick={this.handlePreview}>
-                    <img src={`${request.prefix}${imgUrl.imageUrls}`} alt="图片" />
+                    <img src={`${request.prefix}/file/${imageUrls[0]}`} alt="图片" />
                   </div>
                   <Modal
                     visible={previewVisible}
@@ -492,7 +491,7 @@ export default class Detail extends PureComponent {
                     footer={null}
                     onCancel={this.handlePreviewCancel}
                   >
-                    <img alt="图片" style={{ width: '100%' }} src="../../static/images/2.png" />
+                    <img alt="图片" style={{ width: '100%' }} src={`${request.prefix}/file/${imageUrls[0]}`} />
                   </Modal>
                 </Col>
               </Row> :
@@ -558,23 +557,29 @@ export default class Detail extends PureComponent {
             </div>
           </div>
           <div id="processing" className="module">
-            <div className="mod_header">
-              <h2 className="toogle_title">处理记录</h2>
-            </div>
-            <div className="mod_content">
-              <RemarkList
-                remarkList={feedbackVOList}
-              />
-              <div className="remarks_box">
-                <Button icon="edit" className={remarkbtn} onClick={this.showRemark}>备注</Button>
-                <Remark
-                  visible={this.state.remarkVisible}
-                  ref={this.saveRemarkFormRef}
-                  onCancel={this.remarkCancel}
-                  onCreate={this.saveFromRemark}
+            <Tabs onChange={this.handleTabChange} type="card">
+              <TabPane tab="处理意见" key="1">
+                <RemarkList
+                  remarkList={feedbackVOList}
                 />
-              </div>
-            </div>
+                <div className="mod_content">
+                  <div className="remarks_box">
+                    <Button icon="edit" className={remarkbtn} onClick={this.showRemark}>备注</Button>
+                    <Remark
+                      visible={this.state.remarkVisible}
+                      ref={this.saveRemarkFormRef}
+                      onCancel={this.remarkCancel}
+                      onCreate={this.saveFromRemark}
+                    />
+                  </div>
+                </div>
+              </TabPane>
+              <TabPane tab="操作记录" key="2">
+                <RemarkList
+                  remarkList={feedbackVOList}
+                />
+              </TabPane>
+            </Tabs>
           </div>
         </div>
         <ProblemHandling
