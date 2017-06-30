@@ -10,6 +10,7 @@ import { createForm } from 'rc-form';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { helper } from '../../utils';
+import uploadRequest from '../../utils/uploadRequest';
 import Icon from '../../components/common/Icon';
 import { feedbackOptions, request } from '../../config';
 import './problemHandling.less';
@@ -60,18 +61,6 @@ export default class ProblemHandling extends PureComponent {
         onChange(info) {
           const file = info.file;
           const status = file.status;
-          const response = file.response || {};
-          const { code, msg } = response;
-          if (status !== 'uploading') {
-            // console.log(info.file, info.fileList);
-          }
-          if (status === 'removed') {
-            return true;
-          }
-          if (code && code !== '0') {
-            message.error(msg);
-            return false;
-          }
           if (status === 'done') {
             message.success(`${info.file.name} file uploaded successfully.`);
           } else if (status === 'error') {
@@ -79,6 +68,7 @@ export default class ProblemHandling extends PureComponent {
           }
           return true;
         },
+        customRequest: this.fileCustomRequest,
       },
     };
   }
@@ -100,6 +90,10 @@ export default class ProblemHandling extends PureComponent {
     onCreate(form);
   }
 
+  @autobind
+  fileCustomRequest(option) {
+    return uploadRequest(option);
+  }
   render() {
     const {
       inforTxt,
