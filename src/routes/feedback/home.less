@@ -3,6 +3,15 @@
 // }
 
 :global {
+  .feedbackbox::-webkit-scrollbar {
+    display: none;  
+  }
+
+  .feedbackbox { 
+    -ms-overflow-style: none; 
+    overflow: auto; 
+  }
+  
   .feedbackbox{
     color:#666666;
     font-size: 14px;
@@ -12,6 +21,7 @@
     #leftSection {
       overflow: auto;
       background-color: white;
+      overflow-x: hidden;
     }
     & > .feedbackTable {
       background-color: white;
