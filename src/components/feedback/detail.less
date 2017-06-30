@@ -28,8 +28,7 @@
           width:4px;
           background-color: #108ee9;
         }
-      }
-      .bugtitle{
+      }      .bugtitle{
         border-bottom:1px solid #c2c2c2;
         padding:0 0 15px 0;
         text-indent:-8px;
@@ -139,9 +138,34 @@
         .mod_content{
           .remarks_box{
             padding:20px 0;
+            .bzBtn{
+              span{
+                margin-left:0;
+              }
+              .anticon-edit{
+                opacity: 1;
+                margin:0;
+                position: static;
+                background:transparent;
+                border:0;
+                width: auto;
+              }
+              &:hover{
+                .anticon-edit{
+                  color:#108ee9;
+                }
+              }
+            }
           }
         }
       }
+    }
+    .ant-modal-content {
+      background-color: transparent;
+      box-shadow: 0 0 0;
+    }
+    .ant-modal-body {
+      padding: 0;
     }
   }
   .clearfix:after{
@@ -152,11 +176,26 @@
     visibility:hidden;
     clear:both;
   }
-  .ant-modal-content {
-    background-color: transparent;
-    box-shadow: 0 0 0;
+  .detail_wrap{
+    height: 100%;
   }
-  .ant-modal-body {
-    padding: 0;
+  .isnull_dv{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    margin-bottom: -130px;
+    text-align: center;
+    font-size: 18px;
+    background: #FFF;
+    .myxgjg{
+      color:#bfdaed;
+      font-size: 100px;
+      margin:auto;
+    }
+  }
+  #processing{
+    border:0;
   }
 }

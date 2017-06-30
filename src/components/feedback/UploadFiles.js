@@ -107,8 +107,8 @@ export default class UploadFiles extends PureComponent {
         attachUrl: file.thumbUrl,
       };
       confirm({
-        title: '您确定删除?',
-        content: '点击确定删除附件',
+        title: '您确定删除该文件?',
+        content: '点击确定删除文件',
         onOk() {
           onCreate(delData, 'DELETE');
         },

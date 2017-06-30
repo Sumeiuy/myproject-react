@@ -166,6 +166,7 @@ export default class ProblemDetail extends PureComponent {
       processerHV,
       canBeEdited,
     } = this.state;
+
     const {
       functionName,
       createTime,
@@ -175,6 +176,7 @@ export default class ProblemDetail extends PureComponent {
       status,
       tag,
     } = problemDetails || EMPTY_OBJECT;
+
     const { getFieldDecorator } = form;
     const value = true;
     const qtValue = classnames({

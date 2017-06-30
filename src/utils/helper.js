@@ -172,7 +172,7 @@ const helper = {
       },
     };
 
-    const omitData = _.omit(query, ['currentId', 'feedbackCreateTimeFrom', 'feedbackCreateTimeTo', 'curPageNum', 'curPageSize']);
+    const omitData = _.omit(query, ['currentId', 'feedbackCreateTimeFrom', 'feedbackCreateTimeTo', 'curPageNum', 'curPageSize', 'isResetPageNum']);
     finalPostData = _.merge(finalPostData, omitData);
 
     const { feedbackCreateTimeTo, feedbackCreateTimeFrom } = query;

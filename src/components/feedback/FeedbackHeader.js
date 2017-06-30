@@ -6,8 +6,6 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
-import { withRouter, routerRedux } from 'dva/router';
-import { connect } from 'react-redux';
 import { Cascader, Select, DatePicker } from 'antd';
 import moment from 'moment';
 import _ from 'lodash';
@@ -16,16 +14,7 @@ import './feedbackHeader.less';
 
 const Option = Select.Option;
 const { RangePicker } = DatePicker;
-const mapStateToProps = state => ({
-  boards: state.app.boards,
-});
 
-const mapDispatchToProps = {
-  push: routerRedux.push,
-};
-
-@connect(mapStateToProps, mapDispatchToProps)
-@withRouter
 export default class PageHeader extends PureComponent {
 
   static propTypes = {
