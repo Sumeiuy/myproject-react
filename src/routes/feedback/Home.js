@@ -128,8 +128,13 @@ export default class FeedBack extends PureComponent {
   }
 
   setDocumentScroll() {
-    const docElemHeight = document.documentElement.clientHeight;
     /* eslint-disable */
+    const UTBContentElem = ReactDOM.findDOMNode(document.getElementById('UTBContent'));
+    if (UTBContentElem) {
+      UTBContentElem.style.marginRight = '0px';
+    }
+
+    const docElemHeight = document.documentElement.clientHeight;
     const containerElem = ReactDOM.findDOMNode(document.getElementById('container'));
     const leftSectionElem = ReactDOM.findDOMNode(document.getElementById('leftSection'));
     const rightSectionElem = ReactDOM.findDOMNode(document.getElementById('rightSection'));
