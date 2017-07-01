@@ -69,45 +69,48 @@
   .boardInfo{
     position: absolute;
     width: 100%;
-    left: 10px;
+    left: 0;
     bottom: 10px;
-    h3{
-      display: inline-block;
-      width: 100% - 8px;
+    .text{
+      padding: 0 15px;
       line-height: 30px;
-      color: #b7b7b8;
+      color: #fff;
       font-size: 15px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      box-sizing: border-box;
     }
   }
 }
 .boardTitle{
+  padding: 0 10px;
   background: #fff;
   height: 50px;
   border-radius: 0 0 8px 8px;
-  position: relative;
-  h2{
-    display: inline-block;
-    max-width: 100% - 20px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  .title{
+    flex-grow: 0;
     line-height: 50px;
     color: #333;
     font-size: 16px;
-    text-indent: 10px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    font-weight: bold;
   }
-  span{
-    font-weight: normal;
+  .type{
+    flex-grow: 0;
+    width: 70px;
     font-size: 14px;
     padding: 4px 6px;
     background: #e8e8e8;
     color: #666;
-    margin: 0 0 0 10px;
-    position: absolute;
-    top: 12px;
+    box-sizing: border-box;
     border-radius: 4px;
+    white-space: nowrap;
+    margin-left: 10px;
   }
 }

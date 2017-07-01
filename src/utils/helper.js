@@ -230,6 +230,7 @@ const helper = {
       default:
         durationStart = moment().startOf(cycleType);
         durationEnd = moment().subtract(1, 'days');
+        // TODO 需要对本月第一天的情况惊醒特殊处理
         break;
     }
     const duration = {

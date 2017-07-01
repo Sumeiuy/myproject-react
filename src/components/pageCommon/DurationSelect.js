@@ -31,12 +31,12 @@ export default class DurationSelect extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
+    updateQueryState: PropTypes.func.isRequired,
   }
 
   constructor(props) {
     super(props);
-    const { location: { query } } = props;
-    const value = query.cycleType || 'month';
+    const value = 'month';
     const obj = getDurationString(value);
     this.state = {
       open: false,
@@ -45,14 +45,14 @@ export default class DurationSelect extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { location: { query: { boardId, begin, cycleType, end } } } = nextProps;
+    // 因为Url中只有boardId会变化
+    const { location: { query: { boardId } } } = nextProps;
     const { location: { query: { boardId: preBId } } } = this.props;
-    if ((boardId || '1') !== preBId || !begin || !cycleType || !end) {
-      const obj = getDurationString('month');
-      // 切换报表了，则需要将时间恢复默认值
+    if (Number(boardId || '1') !== Number(preBId || '1')) {
+      const duration = getDurationString('month');
       this.setState({
         open: false,
-        ...obj,
+        ...duration,
       });
     }
   }
@@ -61,21 +61,19 @@ export default class DurationSelect extends PureComponent {
   @autobind
   handleDurationChange(e) {
     const value = e.target.value;
-    const obj = getDurationString(value);
-    const { replace, location: { query, pathname } } = this.props;
+    const duration = getDurationString(value);
+    // const { replace, location: { query, pathname } } = this.props;
+    const { updateQueryState } = this.props;
     this.setState({
       open: false,
-      ...obj,
+      ...duration,
     });
     // 需要改变query中的查询变量
-    replace({
-      pathname,
-      query: {
-        ...query,
-        begin: obj.begin,
-        end: obj.end,
-        cycleType: obj.cycleType,
-      },
+    // 修改查询使用参数
+    updateQueryState({
+      begin: duration.begin,
+      end: duration.end,
+      cycleType: duration.cycleType,
     });
   }
   @autobind

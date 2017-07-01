@@ -16,7 +16,7 @@ const create = Form.create;
 @create()
 export default class DeleteBoardModal extends PureComponent {
   static propTypes = {
-    modalName: PropTypes.string.isRequired,
+    boardName: PropTypes.string,
     modalCaption: PropTypes.string.isRequired,
     modalKey: PropTypes.string.isRequired,
     visible: PropTypes.bool,
@@ -26,22 +26,25 @@ export default class DeleteBoardModal extends PureComponent {
 
   static defaultProps = {
     visible: false,
+    boardName: '',
   }
 
   constructor(props) {
     super(props);
-    const { visible } = props;
+    const { visible, boardName } = props;
     this.state = {
+      boardName,
       modalVisible: visible,
       boardnamettVisible: false, // 看板名称Tooltip显示与否
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    const { visible } = nextProps;
+    const { visible, boardName } = nextProps;
     const { visible: preVisible } = this.props;
     if (!_.isEqual(visible, preVisible)) {
       this.setState({
+        boardName,
         modalVisible: visible,
       });
     }
@@ -73,11 +76,12 @@ export default class DeleteBoardModal extends PureComponent {
 
   @autobind
   confirmCreateModal() {
-    const { form, modalName } = this.props;
+    const { form } = this.props;
+    const { boardName } = this.state;
     // TODO 添加确认按钮处理程序
     const delModalName = form.getFieldValue('delModalName');
     // 判断看板名称
-    if (_.isEqual(delModalName, modalName)) {
+    if (_.isEqual(delModalName, boardName)) {
       // 如果相同，则删除看板
       // TODO 调用删除看板接口
       // 隐藏Modal
@@ -89,8 +93,8 @@ export default class DeleteBoardModal extends PureComponent {
   }
 
   render() {
-    const { modalVisible, boardnamettVisible } = this.state;
-    const { modalName, modalCaption } = this.props;
+    const { modalVisible, boardnamettVisible, boardName } = this.state;
+    const { modalCaption } = this.props;
     const { getFieldDecorator } = this.props.form;
     // 表单布局
     const formItemLayout = {
@@ -120,7 +124,7 @@ export default class DeleteBoardModal extends PureComponent {
       >
         <div className={styles.modalDelTips}>
           <span>您选择删除的看板为“</span>
-          <span className={styles.delModalName}>{modalName}</span>
+          <span className={styles.delModalName}>{boardName}</span>
           <span>”。删除后，可见范围权限的用户将无法查看，且不能恢复，请再次输入看板名称确认：</span>
         </div>
         <Form>

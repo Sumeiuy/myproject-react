@@ -6,7 +6,7 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
-import { Dropdown, Menu, Icon, Button } from 'antd';
+import { Dropdown, Menu, Icon } from 'antd';
 import _ from 'lodash';
 
 import './BoardSelect.less';
@@ -22,12 +22,14 @@ export default class BoardSelect extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { visibleBoards, location: { query: { boardId } } } = this.props;
+    const { visibleBoards, location: { query: { boardId }, pathname } } = this.props;
     const bId = boardId || (visibleBoards.length && String(visibleBoards[0].id)) || '1';
-    const boardName = this.findBoardBy(bId).name;
+    let boardName = '看板管理';
+    if (pathname !== '/boardManage') {
+      boardName = this.findBoardBy(bId).name;
+    }
     this.state = {
       dropdownVisible: false,
-      boardId: bId,
       boardName,
     };
   }
@@ -35,12 +37,10 @@ export default class BoardSelect extends PureComponent {
   componentWillReceiveProps(nextProps) {
     const { location: { query: { boardId: preId } } } = this.props;
     const { visibleBoards, location: { query: { boardId } } } = nextProps;
-    if (boardId !== preId) {
+    if (Number(boardId || '1') !== Number(preId || '1')) {
       const bId = boardId || (visibleBoards.length && String(visibleBoards[0].id)) || '1';
       const boardName = this.findBoardBy(bId).name;
       this.setState({
-        dropdownVisible: false,
-        boardId: bId,
         boardName,
       });
     }
@@ -60,43 +60,32 @@ export default class BoardSelect extends PureComponent {
   }
 
   @autobind
-  hideDropDown() {
-    this.setState({
-      dropdownVisible: false,
-    });
-  }
-  @autobind
   handleVisibleChange(flag) {
     this.setState({ dropdownVisible: flag });
   }
 
   @autobind
   handleMenuClick(MenuItem) {
-    this.hideDropDown();
-    const { push, location: { pathname }, replace } = this.props;
+    this.handleVisibleChange(false);
+    const { push } = this.props;
     const { key } = MenuItem;
-    if (key === 'boardManage') {
+    if (key === '0') {
       push('/boardManage');
     } else {
-      replace({
-        pathname,
-        query: {
-          boardId: key,
-        },
-      });
+      push(`/report?boardId=${key}`);
     }
   }
 
   render() {
     const { visibleBoards } = this.props;
-    const { boardId, dropdownVisible, boardName } = this.state;
+    const { dropdownVisible, boardName } = this.state;
     const menu = (
-      <Menu onClick={this.handleMenuClick} selectedKeys={[`${boardId}`]}>
+      <Menu onClick={this.handleMenuClick}>
         {
           visibleBoards.map(item => (<Menu.Item key={String(item.id)}>{item.name}</Menu.Item>))
         }
         <Menu.Divider />
-        <Menu.Item key="boardManage">看板管理</Menu.Item>
+        <Menu.Item key="0">看板管理</Menu.Item>
       </Menu>
     );
 
@@ -108,9 +97,9 @@ export default class BoardSelect extends PureComponent {
         visible={dropdownVisible}
         onVisibleChange={this.handleVisibleChange}
       >
-        <Button>
+        <div className="selfDropDownName">
           {boardName}<Icon type="down" />
-        </Button>
+        </div>
       </Dropdown>
     );
   }

@@ -9,6 +9,9 @@ import { autobind } from 'core-decorators';
 import SimpleEditor from '../../components/Edit/SimpleEditor';
 import SelfSelect from '../../components/Edit/SelfSelect';
 import { VisibleRangeAll } from '../../components/Edit/VisibleRange';
+
+import PreviewReport from '../reports/PreviewReport';
+
 import styles from './Home.less';
 
 const visibleRangeAll = VisibleRangeAll;
@@ -16,6 +19,7 @@ const visibleRangeAll = VisibleRangeAll;
 export default class BoardEditHome extends PureComponent {
 
   static propTypes = {
+    location: PropTypes.object.isRequired,
     boardName: PropTypes.string,
     visibleRange: PropTypes.array,
   }
@@ -34,6 +38,7 @@ export default class BoardEditHome extends PureComponent {
       bNEditorOriginal: boardName,
       vROriginal: '经营业务总部/南京分公司',
       vREditorOriginal: visibleRange,
+      preview: false,
     };
   }
 
@@ -71,6 +76,13 @@ export default class BoardEditHome extends PureComponent {
     }
   }
 
+  @autobind
+  showPreview() {
+    this.setState({
+      preview: true,
+    });
+  }
+
   render() {
     const {
       boardNameEditor,
@@ -78,11 +90,20 @@ export default class BoardEditHome extends PureComponent {
       bNEditorOriginal,
       vROriginal,
       vREditorOriginal,
+      preview,
     } = this.state;
-    return (
+    const { location } = this.props;
+    return preview ?
+    (
+      <PreviewReport
+        location={location}
+      />
+    )
+    :
+    (
       <div className="page-invest content-inner">
         <div className={styles.editPageHd}>
-          <div className={styles.HdName}>看板编辑</div>
+          <div className={styles.HdName} onClick={this.showPreview}>看板编辑</div>
         </div>
         <div className={styles.editBasicHd}>
           <div className={styles.editBasic}>
