@@ -4,7 +4,7 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import { Input } from 'antd';
+import { Input, Tooltip } from 'antd';
 import { autobind } from 'core-decorators';
 import SimpleEditor from '../../components/Edit/SimpleEditor';
 import SelfSelect from '../../components/Edit/SelfSelect';
@@ -32,14 +32,26 @@ export default class BoardEditHome extends PureComponent {
   constructor(props) {
     super(props);
     const { boardName, visibleRange } = this.props;
+    const tempName = '经营业务总部/南京分公司';
     this.state = {
       boardNameEditor: false,
       visibleRangeEditor: false,
       bNEditorOriginal: boardName,
-      vROriginal: '经营业务总部/南京分公司',
+      vROriginal: tempName,
       vREditorOriginal: visibleRange,
       preview: false,
+      visibleRangeTip: this.getTooltipHtml(tempName),
     };
+  }
+
+  @autobind
+  getTooltipHtml(label) {
+    return (
+      <div className="vrlabel">
+        <div className="title">可见范围</div>
+        <div className="label">{label}</div>
+      </div>
+    );
   }
 
   @autobind
@@ -72,6 +84,7 @@ export default class BoardEditHome extends PureComponent {
       this.setState({
         vROriginal: value.label,
         vREditorOriginal: value.currency,
+        visibleRangeTip: value.label,
       });
     }
   }
@@ -91,6 +104,7 @@ export default class BoardEditHome extends PureComponent {
       vROriginal,
       vREditorOriginal,
       preview,
+      visibleRangeTip,
     } = this.state;
     const { location } = this.props;
     return preview ?
@@ -133,30 +147,37 @@ export default class BoardEditHome extends PureComponent {
               </SimpleEditor>
             </div>
             <div className={styles.hDivider} />
-            <div className={styles.basicInfo}>
-              <div className={styles.title}>可见范围:</div>
-              <SimpleEditor
-                editable
-                originalValue={vROriginal}
-                style={{
-                  maxWidth: '450px',
-                }}
-                editorValue={{
-                  currency: vREditorOriginal,
-                  label: vROriginal,
-                }}
-                editorName="visibleRangeEditor"
-                controller={this.editorStateController}
-                editorState={visibleRangeEditor}
-                confirm={this.editorConfirm}
-              >
-                <SelfSelect
-                  options={visibleRangeAll}
-                  level="1"
-                  style={{ height: '30px' }}
-                />
-              </SimpleEditor>
-            </div>
+            <Tooltip
+              placement="bottom"
+              title={visibleRangeTip}
+              trigger="hover"
+              overlayClassName="visibleRangeToolTip"
+            >
+              <div className={styles.basicInfo}>
+                <div className={styles.title}>可见范围:</div>
+                <SimpleEditor
+                  editable
+                  originalValue={vROriginal}
+                  style={{
+                    maxWidth: '450px',
+                  }}
+                  editorValue={{
+                    currency: vREditorOriginal,
+                    label: vROriginal,
+                  }}
+                  editorName="visibleRangeEditor"
+                  controller={this.editorStateController}
+                  editorState={visibleRangeEditor}
+                  confirm={this.editorConfirm}
+                >
+                  <SelfSelect
+                    options={visibleRangeAll}
+                    level="1"
+                    style={{ height: '30px' }}
+                  />
+                </SimpleEditor>
+              </div>
+            </Tooltip>
           </div>
         </div>
       </div>
