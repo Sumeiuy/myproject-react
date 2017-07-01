@@ -93,7 +93,7 @@ export default class BoardManageHome extends PureComponent {
     });
   }
 
-  // 新建看板事件
+  // 新建看板
   @autobind
   createBoardHandle() {
     this.openModal('createBoardModal');
@@ -112,7 +112,14 @@ export default class BoardManageHome extends PureComponent {
     });
   }
 
-  // 删除看板
+  // 确认删除Board
+  @autobind
+  deleteBoardConfirm() {
+    const { delBoard: { orgId, boardId } } = this.state;
+    this.props.deleteBoard({ orgId, boardId });
+  }
+
+  // 发布看板
   @autobind
   publishBoardHandle(board) {
     console.log('publishBoardHandle', board);
@@ -124,13 +131,22 @@ export default class BoardManageHome extends PureComponent {
     });
   }
 
+  @autobind
+  publishBoardCofirm() {
+    const { publishBoard } = this.state;
+    this.props.publishBoard({
+      ...publishBoard,
+      isPublished: 'Y',
+    });
+  }
+
   render() {
     const {
       createBoardModal,
       deleteBoardModal,
       publishConfirmModal,
     } = this.state;
-    const { location, replace, push } = this.props;
+    const { location, replace, push, createBoard } = this.props;
     const { visibleRanges, visibleBoards, editableBoards } = this.props;
     // 做容错处理
     if (!visibleRanges || !visibleRanges.length) {
@@ -150,6 +166,8 @@ export default class BoardManageHome extends PureComponent {
       closeModal: this.closeModal,
       level: visibleRanges[0].level,
       allOptions: visibleRanges,
+      confirm: createBoard,
+      ownerOrgId: visibleRanges[0].id,
     };
     // 删除共同配置项
     const deleteBMProps = {
@@ -157,6 +175,7 @@ export default class BoardManageHome extends PureComponent {
       modalCaption: '提示',
       visible: deleteBoardModal,
       closeModal: this.closeModal,
+      confirm: this.deleteBoardConfirm,
     };
     // 发布共同配置项
     const publishConfirmMProps = {
@@ -164,6 +183,7 @@ export default class BoardManageHome extends PureComponent {
       modalCaption: '提示',
       visible: publishConfirmModal,
       closeModal: this.closeModal,
+      confirm: this.publishBoardCofirm,
     };
 
     return (
@@ -205,6 +225,7 @@ export default class BoardManageHome extends PureComponent {
                     boardData={item}
                     delete={this.deleteBoardHandle}
                     publish={this.publishBoardHandle}
+                    push={push}
                   />
                 </Col>
               ))

@@ -16,6 +16,7 @@ export default class BoardItem extends PureComponent {
     boardData: PropTypes.object.isRequired,
     delete: PropTypes.func.isRequired,
     publish: PropTypes.func.isRequired,
+    push: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -51,9 +52,11 @@ export default class BoardItem extends PureComponent {
       });
     }
   }
+  // 进入编辑页面
   @autobind
   editBoardHandle() {
-    console.warn('点击了编辑按钮');
+    const { id, ownerOrgId } = this.props.boardData;
+    this.props.push(`/boardEdit?boardId=${id}&orgId=${ownerOrgId}`);
   }
   @autobind
   deleteBoardHandle() {

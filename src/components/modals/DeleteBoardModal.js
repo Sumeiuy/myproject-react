@@ -22,6 +22,7 @@ export default class DeleteBoardModal extends PureComponent {
     visible: PropTypes.bool,
     form: PropTypes.object.isRequired,
     closeModal: PropTypes.func.isRequired,
+    confirm: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -76,15 +77,15 @@ export default class DeleteBoardModal extends PureComponent {
 
   @autobind
   confirmCreateModal() {
-    const { form } = this.props;
+    const { form, confirm } = this.props;
     const { boardName } = this.state;
     // TODO 添加确认按钮处理程序
     const delModalName = form.getFieldValue('delModalName');
     // 判断看板名称
     if (_.isEqual(delModalName, boardName)) {
       // 如果相同，则删除看板
-      // TODO 调用删除看板接口
       // 隐藏Modal
+      confirm();
       this.closeCreateModal();
     } else {
       // 不同则显示提示框
@@ -124,7 +125,7 @@ export default class DeleteBoardModal extends PureComponent {
       >
         <div className={styles.modalDelTips}>
           <span>您选择删除的看板为“</span>
-          <span className={styles.delModalName}>{boardName}</span>
+          <strong className={styles.delModalName}>{boardName}</strong>
           <span>”。删除后，可见范围权限的用户将无法查看，且不能恢复，请再次输入看板名称确认：</span>
         </div>
         <Form>
