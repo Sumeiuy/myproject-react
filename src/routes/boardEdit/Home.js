@@ -9,10 +9,12 @@ import { autobind } from 'core-decorators';
 import SimpleEditor from '../../components/Edit/SimpleEditor';
 import SelfSelect from '../../components/Edit/SelfSelect';
 import { VisibleRangeAll } from '../../components/Edit/VisibleRange';
+import BoardSelectTree from '../../components/Edit/BoardSelectTree';
 
 import PreviewReport from '../reports/PreviewReport';
 
 import styles from './Home.less';
+import { checkTreeObj, checkTreeObj1 } from './tempData';
 
 const visibleRangeAll = VisibleRangeAll;
 
@@ -179,6 +181,10 @@ export default class BoardEditHome extends PureComponent {
               </div>
             </Tooltip>
           </div>
+        </div>
+        <div className={styles.editPageMain}>
+          <BoardSelectTree key={1} data={checkTreeObj} />
+          <BoardSelectTree key={2} data={checkTreeObj1} />
         </div>
       </div>
     );

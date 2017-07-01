@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-06-26 17:00:40
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-06-27 09:52:08
+ * @Last Modified time: 2017-07-01 21:18:29
  */
 
 import React, { PropTypes, PureComponent } from 'react';
@@ -96,7 +96,7 @@ export default class BoardItem extends PureComponent {
         onMouseLeave={this.mouseLeaveHandle}
       >
         <div className={styles.boardImg}>
-          <img src="/static/images/bg_tgyj.png" alt="" />
+          <img src="/static/images/bg_tgjx.png" alt="" />
           <div className={styles[publish]} onClick={this.publishHandle}>
             {statusText}
           </div>

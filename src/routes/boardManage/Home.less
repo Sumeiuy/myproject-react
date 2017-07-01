@@ -1,4 +1,7 @@
 @calc-width: (370px + 19px) * 3;
+body{
+  background: #fff;
+}
 .boardList{
   // padding: 10px;
   min-width: @calc-width;
@@ -11,6 +14,7 @@
   border-radius: 8px;
   margin-top: 20px;
   border: 1px dashed #333;
+  box-sizing: border-box;
   .boardAdd{
     position: absolute;
     top: 50% + 8px;
@@ -36,7 +40,7 @@
     }
   }
   .boardTitle{
-    height: 49px;
+    height: 48px;
     position: relative;
   }
 }
