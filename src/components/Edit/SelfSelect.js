@@ -26,7 +26,6 @@ export default class SelfSelect extends PureComponent {
   static defaultProps = {
     style: { height: '35px' },
     onChange: () => {},
-    // value: {},
   }
 
   constructor(props) {
@@ -36,7 +35,6 @@ export default class SelfSelect extends PureComponent {
     const newProps = this.props;
     const value = newProps.value || {};
     const allCheckedNode = selectHandlers.getAllCheckboxNode(props.level);
-    // const chldrenOptions = props.options.slice(1);
     this.state = {
       visibleRangeNames: value.label, // 显示的Label文本
       expand: false,

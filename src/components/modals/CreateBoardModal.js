@@ -23,7 +23,9 @@ export default class CreateBoardModal extends PureComponent {
     visible: PropTypes.bool,
     form: PropTypes.object.isRequired,
     level: PropTypes.string.isRequired,
+    ownerOrgId: PropTypes.string.isRequired,
     closeModal: PropTypes.func.isRequired,
+    confirm: PropTypes.func.isRequired,
     allOptions: PropTypes.array.isRequired,
   }
 
@@ -75,14 +77,13 @@ export default class CreateBoardModal extends PureComponent {
 
   @autobind
   confirmCreateModal() {
-    const { form } = this.props;
+    const { form, confirm, ownerOrgId } = this.props;
     // TODO 添加确认按钮处理程序
     const boardname = form.getFieldValue('boardname');
-    const boardtype = form.getFieldValue('boardtype');
-    const visibleRangeConfirm = form.getFieldValue('visibleRange');
-    console.log('confirmCreateModal>boardname', boardname);
-    console.log('confirmCreateModal>boardtype', boardtype);
-    console.log('confirmCreateModal>visibleRangeConfirm', visibleRangeConfirm);
+    const boardType = form.getFieldValue('boardtype');
+    const permitOrgIds = form.getFieldValue('visibleRange').currency;
+    // 此处的currecy中只有下级，没有本机机构ID
+    permitOrgIds.unshift(ownerOrgId);
     // 判断看板名称
     if (boardname === '') {
       // 看板名称不能为空
@@ -90,7 +91,14 @@ export default class CreateBoardModal extends PureComponent {
       return;
     }
     // TODO 调用创建看板接口
+    confirm({
+      ownerOrgId,
+      name: boardname,
+      boardType,
+      permitOrgIds,
+    });
     // 隐藏Modal
+    // TODO 此处是否需要进行特殊的异步处理
     this.closeCreateModal();
   }
 
@@ -104,8 +112,6 @@ export default class CreateBoardModal extends PureComponent {
       wrapperCol: { span: 18 },
       layout: 'horizontal',
     };
-    // 设置表单选项的默认值
-    const boardTypeInitial = 'invest';
 
     const createBoard = classnames({
       [styles.boardManageModal]: true,
@@ -156,11 +162,11 @@ export default class CreateBoardModal extends PureComponent {
             {getFieldDecorator(
               'boardtype',
               {
-                initialValue: boardTypeInitial,
+                initialValue: 'TYPE_TGJX',
               })(
                 <Select>
-                  <Option value="invest">投顾业绩</Option>
-                  <Option value="business">经营业绩</Option>
+                  <Option value="TYPE_TGJX">投顾业绩</Option>
+                  <Option value="TYPE_JYYJ">经营业绩</Option>
                 </Select>,
             )}
           </FormItem>
