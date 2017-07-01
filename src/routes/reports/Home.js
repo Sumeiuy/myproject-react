@@ -14,7 +14,6 @@ import { getEmpId, queryToString, getDurationString } from '../../utils/helper';
 import PerformanceItem from '../../components/pageCommon/PerformanceItem';
 import PreformanceChartBoard from '../../components/pageCommon/PerformanceChartBoard';
 import PageHeader from '../../components/pageCommon/PageHeader';
-import { BoardBasic } from '../../config';
 import styles from './Home.less';
 
 const effects = {
@@ -54,18 +53,22 @@ export default class ReportHome extends PureComponent {
 
   static propTypes = {
     location: PropTypes.object.isRequired,
+    push: PropTypes.func.isRequired,
+    replace: PropTypes.func.isRequired,
     getAllInfo: PropTypes.func.isRequired,
-    performance: PropTypes.array,
-    chartInfo: PropTypes.array,
-    getChartTableInfo: PropTypes.func.isRequired,
-    chartTableInfo: PropTypes.object,
-    exportExcel: PropTypes.func.isRequired,
-    globalLoading: PropTypes.bool,
     getOneChartInfo: PropTypes.func.isRequired,
+    getChartTableInfo: PropTypes.func.isRequired,
+    performance: PropTypes.array,
+    exportExcel: PropTypes.func.isRequired,
+    chartInfo: PropTypes.array,
+    chartTableInfo: PropTypes.object,
     custRange: PropTypes.array,
     visibleBoards: PropTypes.array,
-    replace: PropTypes.func.isRequired,
-    push: PropTypes.func.isRequired,
+    globalLoading: PropTypes.bool,
+    preView: PropTypes.bool,
+    reportName: PropTypes.string,
+    boardId: PropTypes.number,
+    boardType: PropTypes.string,
   }
 
   static defaultProps = {
@@ -75,16 +78,36 @@ export default class ReportHome extends PureComponent {
     globalLoading: false,
     custRange: [],
     visibleBoards: [],
+    preView: false,
+    reportName: '',
+    boardId: 1,
+    boardType: 'TYPE_TGJX',
   }
 
   constructor(props) {
     super(props);
-    const { location: { query: { cycleType, boardId } } } = this.props;
-    const value = cycleType || 'month';
-    const obj = getDurationString(value);
+    // 页面初始化的时候，后续将不再Url中获取到Duration & org
+    // 只会传递一个boardId和boardType过来
+    // 1.首先判断是否预览页面
+    const { preView } = this.props;
+    // 时间段默认值为 'month'
+    const duration = getDurationString('month');
+    const initialState = {};
+    if (!preView) {
+      // 正常普通页面，从页面中获取boardId
+      const { location: { query: { boardId, boardType } } } = this.props;
+      initialState.boardId = boardId || 1; // 默认取第一个看板，目前是 1
+      initialState.boardType = boardType || 'TYPE_TGJX'; // 如果用户手动输入boardId，而没有boardType咋办
+    } else {
+      // 预览页面，值会传递过来
+      const { boardId, boardType } = this.props;
+      initialState.boardId = boardId;
+      initialState.boardType = boardType;
+    }
+    // 刚进入页面的时候用户的组织机构树还没获取到
     this.state = {
-      ...obj,
-      boardId: boardId || '1',
+      ...duration,
+      ...initialState,
       showCharts: {},
       classifyScope: {},
       classifyOrder: {},
@@ -92,62 +115,60 @@ export default class ReportHome extends PureComponent {
   }
 
   componentWillMount() {
-    const { location: { query } } = this.props;
-    this.getInfo({
-      ...query,
-    });
+    // 初始化的时候state里面还无参数
+    this.getInfo();
   }
 
   componentWillReceiveProps(nextProps) {
     // 判断props是否变化
-    const { location: { query } } = nextProps;
+    // 因为新的参数存放在state里面，所以props只有咋boarId变化时候，才会查询数据
+    // 此处不需要担心预览也蛮
+    const { location: { query: { boardId } } } = nextProps;
     const {
-      location: { query: preQuery },
+      location: { query: { boardId: preBoardId } },
     } = this.props;
 
     // 还是chart部分的数据
-    if (!_.isEqual(query, preQuery)) {
-      const boardId = query.boardId;
-      const preBoardId = preQuery.boardId;
-      let newState = {
+    if (!_.isEqual(preBoardId, boardId)) {
+      const { custRange } = this.props;
+      const { begin, end, cycleType } = getDurationString('month');
+      // 修改state
+      this.setState({
         showCharts: {},
         classifyScope: {},
         classifyOrder: {},
-      };
-      if (boardId !== preBoardId) {
-        newState = {
-          ...newState,
-          boardId,
-        };
-      }
-      // 修改state
-      this.setState({
-        ...newState,
+        boardId,
+        begin,
+        end,
+        cycleType,
+        orgId: custRange[0].id,
+        scope: (Number(custRange[0].level) + 1),
+        custRangeLevel: custRange[0].level,
       },
       () => {
-        this.getInfo({
-          ...query,
-        });
+        this.getInfo();
       });
     }
   }
 
   @autobind
   getApiParams(param) {
-    const { custRange, location: { query } } = this.props;
-    const duration = this.state;
+    // 所有查询参数全部放入到state里面来维护
+    // 调用该方法的时候，数据全部已经取到了
+    const { custRange } = this.props;
+    const { begin, cycleType, end, boardId } = this.state;
+    const { orgId, custRangeLevel, scope } = this.state;
+    // 整理参数数据，如果么有数据，全部使用默认的值
     const payload = {
-      ...query,
-      orgId: query.orgId || (custRange[0] && custRange[0].id),
-      scope: query.scope ||
-      (query.custRangeLevel
-      ? Number(query.custRangeLevel) + 1
-      : Number(custRange[0] && custRange[0].level) + 1),
-      orderType: query.orderType || '',
-      begin: query.begin || duration.begin,
-      end: query.end || duration.end,
-      cycleType: query.cycleType || duration.cycleType,
-      localScope: query.custRangeLevel || (custRange[0] && custRange[0].level),
+      orgId: orgId || (custRange[0] && custRange[0].id),
+      scope: scope ||
+      (custRangeLevel ? (Number(custRangeLevel) + 1) : (Number(custRange[0].level) + 1)),
+      orderType: 'desc',
+      begin,
+      end,
+      cycleType,
+      localScope: custRangeLevel || (custRange[0] && custRange[0].level),
+      boardId,
       ...param,
     };
     return payload;
@@ -169,29 +190,21 @@ export default class ReportHome extends PureComponent {
   }
 
   @autobind
-  getInfo(queryObj) {
+  getInfo() {
     const { getAllInfo } = this.props;
-    const { begin, cycleType, end } = this.state;
-    const {
-      begin: qBegin,
-      cycleType: qCycleType,
-      end: qEnd,
-      orgId,
-      custRangeLevel,
-      scope,
-      boardId,
-    } = queryObj;
-
+    const { boardId, begin, end, cycleType, orgId, custRangeLevel, scope } = this.state;
+    const empId = getEmpId(); // 用户ID
+    // 整理数据
     const payload = {
-      orgId: orgId || '',
-      begin: qBegin || begin,
-      end: qEnd || end,
-      cycleType: qCycleType || cycleType,
+      orgId,
+      begin,
+      end,
+      cycleType,
       localScope: custRangeLevel,
-      boardId: boardId || '1',
+      boardId,
       scope,
     };
-    const empId = getEmpId();
+
     getAllInfo({
       custRange: {
         empId,
@@ -206,6 +219,18 @@ export default class ReportHome extends PureComponent {
     });
   }
 
+  // 获取分类明细指标数据的方法
+  @autobind
+  selfRequestData(param) {
+    const { getOneChartInfo } = this.props;
+    const payload = this.getApiParams(param);
+    getOneChartInfo(payload);
+  }
+
+  // 以下3个方法是用来控制：
+  // 表格/柱状图切换
+  // 排序的切换
+  // 维度的切换
   @autobind
   updateShowCharts(categoryId, type) {
     const { showCharts } = this.state;
@@ -236,20 +261,28 @@ export default class ReportHome extends PureComponent {
       },
     });
   }
+
+  // 此方法用来修改Duration 和 Org数据
+  @autobind
+  updateQueryState(state) {
+    // 切换Duration和Orig时候，需要将数据全部恢复到默认值
+    this.setState({
+      ...state,
+      showCharts: {},
+      classifyScope: {},
+      classifyOrder: {},
+    },
+    () => {
+      this.getInfo();
+    });
+  }
+
   // 导出 excel 文件
   @autobind
   handleExportExcel(param) {
     const { exportExcel } = this.props;
     const payload = this.getApiParams(param);
     exportExcel({ query: queryToString(payload) });
-  }
-
-  // 获取单个卡片接口
-  @autobind
-  selfRequestData(param) {
-    const { getOneChartInfo } = this.props;
-    const payload = this.getApiParams(param);
-    getOneChartInfo(payload);
   }
 
   @autobind
@@ -261,24 +294,23 @@ export default class ReportHome extends PureComponent {
   }
 
   render() {
-    const {
-      performance,
-      chartInfo,
-      chartTableInfo,
-      location,
-      location: { query },
-      replace,
-      push,
-      custRange,
-      visibleBoards,
-    } = this.props;
-    const { showCharts, classifyScope, classifyOrder, boardId } = this.state;
-    const level = query.custRangeLevel || (custRange[0] && custRange[0].level);
-    const newscope = Number(query.scope) || (custRange[0] && Number(custRange[0].level) + 1);
+    // 本页面必须在渠道custRange和visibleBoards后才能展示
+    const { custRange, visibleBoards } = this.props;
     if (!custRange || !custRange.length || !visibleBoards || !visibleBoards.length) {
       return null;
     }
-    const showScopeOrder = this.findBoardBy(boardId || '1').boardType === BoardBasic.types[0].key;
+    const { performance, chartInfo, chartTableInfo } = this.props;
+    const { location, replace, push, reportName, preView } = this.props;
+    // 因为新的数据查询参数全部存放在了state里面
+    const { showCharts, classifyScope, classifyOrder } = this.state;
+    const { boardId, custRangeLevel, scope, boardType } = this.state;
+    const level = custRangeLevel || (custRange[0] && custRange[0].level);
+    const newscope = Number(scope) || (custRange[0] && Number(custRange[0].level) + 1);
+    // 用来判断是否投顾绩效,
+    let showScopeOrder = this.findBoardBy(boardId).boardType === 'TYPE_TGJX';
+    if (preView) {
+      showScopeOrder = boardType === 'TYPE_TGJX';
+    }
 
     return (
       <div className="page-invest content-inner">
@@ -288,6 +320,9 @@ export default class ReportHome extends PureComponent {
           push={push}
           custRange={custRange}
           visibleBoards={visibleBoards}
+          preView={preView}
+          reportName={reportName}
+          updateQueryState={this.updateQueryState}
         />
         <div className={styles.reportBody}>
           <div className={styles.reportPart}>

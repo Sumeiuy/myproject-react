@@ -18,7 +18,7 @@ export default {
   reducers: {
     getAllVisibleReportsSuccess(state, action) {
       const { payload: { allVisibleReports } } = action;
-      const visibleBoards = allVisibleReports.resultData;
+      const visibleBoards = allVisibleReports.resultData || [];
       return {
         ...state,
         visibleBoards: [
@@ -126,16 +126,13 @@ export default {
         firstCust = response.resultData;
       }
       // 查询当前用户所能够看到的看板报表
-      const reports = yield select(state => state.report.visibleBoards);
-      if (!reports.length) {
-        const allVisibleReports = yield call(api.getAllVisibleReports, {
-          orgId: firstCust.id,
-        });
-        yield put({
-          type: 'getAllVisibleReportsSuccess',
-          payload: { allVisibleReports },
-        });
-      }
+      const allVisibleReports = yield call(api.getAllVisibleReports, {
+        orgId: firstCust.id,
+      });
+      yield put({
+        type: 'getAllVisibleReportsSuccess',
+        payload: { allVisibleReports },
+      });
 
       // 总量指标
       const resPerformance = yield call(api.getPerformance, {

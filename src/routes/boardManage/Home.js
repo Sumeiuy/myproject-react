@@ -7,51 +7,165 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
+import { withRouter, routerRedux } from 'dva/router';
+import { connect } from 'react-redux';
 import { Col, Row } from 'antd';
 
+import { getEmpId } from '../../utils/helper';
 import BoardSelect from '../../components/pageCommon/BoardSelect';
 import BoardItem from '../../components/pageCommon/BoardItem';
+import { CreateBoardModal, DeleteBoardModal, PublishConfirmModal } from '../../components/modals';
+
 import styles from './Home.less';
 
+const fectchDataFunction = (globalLoading, type) => query => ({
+  type,
+  payload: query || {},
+  loading: globalLoading,
+});
+
+
+const mapStateToProps = state => ({
+  visibleBoards: state.manage.visibleBoards,
+  editableBoards: state.manage.editableBoards,
+  visibleRanges: state.manage.visibleRanges,
+  globalLoading: state.activity.global,
+});
+
+const mapDispatchToProps = {
+  push: routerRedux.push,
+  replace: routerRedux.replace,
+  getInitial: fectchDataFunction(true, 'manage/getAllInfo'),
+  createBoard: fectchDataFunction(true, 'manage/createBoard'),
+  deleteBoard: fectchDataFunction(true, 'manage/deleteBoard'),
+  publishBoard: fectchDataFunction(true, 'manage/publishBoard'),
+};
+
+@connect(mapStateToProps, mapDispatchToProps)
+@withRouter
 export default class BoardManageHome extends PureComponent {
   static propTypes = {
-    boardManage: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
+    push: PropTypes.func.isRequired,
+    replace: PropTypes.func.isRequired,
+    getInitial: PropTypes.func.isRequired,
+    createBoard: PropTypes.func.isRequired,
+    deleteBoard: PropTypes.func.isRequired,
+    publishBoard: PropTypes.func.isRequired,
+    visibleBoards: PropTypes.array,
+    editableBoards: PropTypes.array,
+    visibleRanges: PropTypes.array,
+    globalLoading: PropTypes.bool,
   }
+
+  static defaultProps = {
+    globalLoading: false,
+    visibleBoards: [],
+    editableBoards: [],
+    visibleRanges: [],
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      createBoardModal: false,
+      deleteBoardModal: false,
+      publishConfirmModal: false,
+    };
+  }
+
+  componentWillMount() {
+    const empId = getEmpId();
+    this.props.getInitial({ empId });
+  }
+
+  @autobind
+  closeModal(modal) {
+    this.setState({
+      [modal]: false,
+    });
+  }
+
+  @autobind
+  openModal(modal) {
+    this.setState({
+      [modal]: true,
+    });
+  }
+
   // 新建看板事件
   @autobind
   createBoardHandle() {
-    console.warn('新建看板事件');
+    this.openModal('createBoardModal');
   }
+
+  // 删除看板
+  @autobind
+  deleteBoardHandle(board) {
+    console.log('deleteBoardHandle', board);
+    this.setState({
+      delBoard: board,
+      delBoardName: board.name,
+    },
+    () => {
+      this.openModal('deleteBoardModal');
+    });
+  }
+
+  // 删除看板
+  @autobind
+  publishBoardHandle(board) {
+    console.log('publishBoardHandle', board);
+    this.setState({
+      publishBoard: board,
+    },
+    () => {
+      this.openModal('publishConfirmModal');
+    });
+  }
+
   render() {
     const {
-      location,
-    } = this.props;
-    const dataArr = [{
-      id: 1,
-      type: 'jyyj',
-      title: '总部绩效看板',
-      status: '未发布',
-      seeAllow: ['经纪业务总部', '分公司'],
-      editTime: '2017-05-06 15:40',
-      published: false,
-    }, {
-      id: 2,
-      type: 'tgjx',
-      title: '分公司客户绩效看板',
-      status: '已发布',
-      seeAllow: ['经纪业务总部', '分公司', '分公司', '分公司', '分公司', '分公司', '分公司', '分公司', '分公司', '分公司', '分公司', '分公司'],
-      editTime: '2017-05-06 15:40',
-      published: true,
-    }, {
-      id: 3,
-      type: 'jyyj',
-      title: '营业部客户绩效看板',
-      status: '未发布',
-      seeAllow: ['经纪业务总部', '分公司'],
-      editTime: '2017-05-06 15:40',
-      published: false,
-    }];
+      createBoardModal,
+      deleteBoardModal,
+      publishConfirmModal,
+    } = this.state;
+    const { location, replace, push } = this.props;
+    const { visibleRanges, visibleBoards, editableBoards } = this.props;
+    // 做容错处理
+    if (!visibleRanges || !visibleRanges.length) {
+      return null;
+    }
+    if (!visibleBoards || !visibleBoards.length) {
+      return null;
+    }
+    if (!editableBoards || !editableBoards.length) {
+      return null;
+    }
+    // 创建共同配置项
+    const createBMProps = {
+      modalKey: 'createBoardModal',
+      modalCaption: '创建绩效看板',
+      visible: createBoardModal,
+      closeModal: this.closeModal,
+      level: visibleRanges[0].level,
+      allOptions: visibleRanges,
+    };
+    // 删除共同配置项
+    const deleteBMProps = {
+      modalKey: 'deleteBoardModal',
+      modalCaption: '提示',
+      visible: deleteBoardModal,
+      closeModal: this.closeModal,
+    };
+    // 发布共同配置项
+    const publishConfirmMProps = {
+      modalKey: 'publishConfirmModal',
+      modalCaption: '提示',
+      visible: publishConfirmModal,
+      closeModal: this.closeModal,
+    };
+
     return (
       <div className="page-invest content-inner">
         <div className="reportHeader">
@@ -59,6 +173,9 @@ export default class BoardManageHome extends PureComponent {
             <div className="reportName">
               <BoardSelect
                 location={location}
+                push={push}
+                replace={replace}
+                visibleBoards={visibleBoards}
               />
             </div>
           </Row>
@@ -81,14 +198,22 @@ export default class BoardManageHome extends PureComponent {
               </a>
             </Col>
             {
-              dataArr.map(item => (
+              editableBoards.map(item => (
                 <Col span={8} key={item.id}>
-                  <BoardItem boardData={item} />
+                  {/* 此处需要传递相关方法 */}
+                  <BoardItem
+                    boardData={item}
+                    delete={this.deleteBoardHandle}
+                    publish={this.publishBoardHandle}
+                  />
                 </Col>
               ))
             }
           </Row>
         </div>
+        <CreateBoardModal {...createBMProps} />
+        <DeleteBoardModal {...deleteBMProps} boardName={this.state.delBoardName} />
+        <PublishConfirmModal {...publishConfirmMProps} />
       </div>
     );
   }

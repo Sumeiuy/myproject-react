@@ -20,6 +20,7 @@ import TemplModal from './routes/templeModal/Home';
 import BoardManageHome from './routes/boardManage/Home';
 import BoardEditHome from './routes/boardEdit/Home';
 import ReportHome from './routes/reports/Home';
+import PreviewReport from './routes/reports/PreviewReport';
 
 const routes = ({ history }) => (// eslint-disable-line
   <Router history={history}>
@@ -28,14 +29,17 @@ const routes = ({ history }) => (// eslint-disable-line
       <Route path="empty">
         <IndexRoute component={Empty} />
       </Route>
+      <Route path="report">
+        <IndexRoute component={ReportHome} />
+      </Route>
+      <Route path="preview">
+        <IndexRoute component={PreviewReport} />
+      </Route>
       <Route path="invest">
         <IndexRoute component={InvestHome} />
       </Route>
       <Route path="business">
         <IndexRoute component={BusinessHome} />
-      </Route>
-      <Route path="report">
-        <IndexRoute component={ReportHome} />
       </Route>
       <Route path="modal">
         <IndexRoute component={TemplModal} />
