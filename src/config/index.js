@@ -6,5 +6,16 @@ import request from './request';
 import iconTypeMap from './iconTypeMap';
 import optionsMap from './optionsMap';
 import ZHUNICODE from './unicode';
+import BoardBasic from './BoardBasic';
 
-export default { constants, log, menu, persist, request, iconTypeMap, optionsMap, ZHUNICODE };
+export default {
+  constants,
+  log,
+  menu,
+  persist,
+  request,
+  iconTypeMap,
+  optionsMap,
+  ZHUNICODE,
+  BoardBasic,
+};

@@ -93,6 +93,27 @@ export default class CustRange extends PureComponent {
     app.addEventListener('DOMMouseScroll', this.handleMousewheel, false);
   }
 
+  componentWillReceiveProps(nextProps) {
+    const {
+      custRange,
+      location: { query: { boardId, custRangeLevel, level, orgId, scope } },
+    } = nextProps;
+    const { location: { query: { boardId: preBId } } } = this.props;
+    const { formatCustRange } = this.state;
+    if ((boardId || '1') !== preBId || !custRangeLevel || !level || !orgId || !scope) {
+      walk(formatCustRange, findOrgNameByOrgId(custRange[0].id), '');
+      const initValue = {
+        label: custRangeNameDedault,
+        value: custRange[0].id,
+      };
+      // 切换报表了，恢复默认值
+      this.setState({
+        value: initValue,
+        open: false,
+      });
+    }
+  }
+
   @autobind
   onChange(value) {
     if (!value) {

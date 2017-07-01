@@ -19,11 +19,12 @@ import BusinessHome from './routes/business/Home';
 import TemplModal from './routes/templeModal/Home';
 import BoardManageHome from './routes/boardManage/Home';
 import BoardEditHome from './routes/boardEdit/Home';
+import ReportHome from './routes/reports/Home';
 
 const routes = ({ history }) => (// eslint-disable-line
   <Router history={history}>
     <Route path="/" component={Main}>
-      <IndexRedirect to="/invest" />
+      <IndexRedirect to="/report" />
       <Route path="empty">
         <IndexRoute component={Empty} />
       </Route>
@@ -32,6 +33,9 @@ const routes = ({ history }) => (// eslint-disable-line
       </Route>
       <Route path="business">
         <IndexRoute component={BusinessHome} />
+      </Route>
+      <Route path="report">
+        <IndexRoute component={ReportHome} />
       </Route>
       <Route path="modal">
         <IndexRoute component={TemplModal} />

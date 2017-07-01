@@ -24,4 +24,7 @@ export default {
 
   // 获取报表下所有的分类信息
   getAllClassifyIndex: query => api.get('/groovynoauth/jxzb/queryCategoryRecord', query),
+
+  // 获取用户有权限查看(无编辑权限)的看板基本信息
+  getAllVisibleReports: query => api.post('/groovynoauth/jxzb/queryVisibleBoard', query),
 };
