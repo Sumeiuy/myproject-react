@@ -2,230 +2,237 @@
  * @Author: LiuJianShu
  * @Date: 2017-06-23 13:30:03
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-06-27 10:06:17
+ * @Last Modified time: 2017-07-01 21:15:46
  */
 
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
-import { Tree, Checkbox } from 'antd';
-// import { Tree, Col, Row } from 'antd';
-// import _ from 'lodash';
+import { withRouter, routerRedux } from 'dva/router';
+import { connect } from 'react-redux';
+import { Col, Row } from 'antd';
 
-// import BoardSelect from '../../components/pageCommon/BoardSelect';
-// import BoardItem from '../../components/pageCommon/BoardItem';
+import { getEmpId } from '../../utils/helper';
+import BoardSelect from '../../components/pageCommon/BoardSelect';
+import BoardItem from '../../components/pageCommon/BoardItem';
+import { CreateBoardModal, DeleteBoardModal, PublishConfirmModal } from '../../components/modals';
+
 import styles from './Home.less';
 
+const fectchDataFunction = (globalLoading, type) => query => ({
+  type,
+  payload: query || {},
+  loading: globalLoading,
+});
 
-const TreeNode = Tree.TreeNode;
-const checkTreeArr = [
-  {
-    id: '1',
-    name: '客户明细数',
-    key: 'khmxs',
-    children: [
-      {
-        id: '1-1',
-        name: '有效客户数',
-        key: 'yxkhs',
-      }, {
-        id: '1-2',
-        name: '高净值客户数',
-        key: 'gjzkhs',
-      }, {
-        id: '1-3',
-        name: '新开客户数',
-        key: 'xkkhs',
-      }, {
-        id: '1-4',
-        name: '高净值客户流失率',
-        key: 'gjzkhlsl',
-      },
-    ],
-  }, {
-    id: '2',
-    name: '交易量明细',
-    key: 'jylmx',
-    children: [
-      {
-        id: '2-1',
-        name: '资产配置报告完成数',
-        key: 'zcpzbgwcs',
-        children: [
-          {
-            id: '2-1-1',
-            name: '合计',
-            key: 'cssj',
-          }, {
-            id: '2-1-2',
-            name: '测试数据一',
-            key: 'cssje',
-          }, {
-            id: '2-1-3',
-            name: '测试数据二',
-            key: 'cssje',
-          },
-        ],
-      },
-      {
-        id: '2-2',
-        name: '配置两种风险属性客户',
-        key: 'zcpzbgwcs',
-      },
-    ],
-  },
-];
-// 根据数组组成 treeNode
-function getTreeNode(arr) {
-  const html = arr.map(item => (
-    <TreeNode title={item.name} key={item.id}>
-      {
-        item.children && getTreeNode(item.children)
-      }
-    </TreeNode>
-  ));
-  return html;
-}
-let selectNode = {};
-function walk(orgArr, func) {
-  func(orgArr);
-  if (Array.isArray(orgArr)) {
-    const childrenLen = orgArr.length;
-    let i = 0;
-    while (i < childrenLen) {
-      const children = orgArr[i].children;
-      walk(children, func);
-      i++;
-    }
-  }
-}
+const mapStateToProps = state => ({
+  visibleBoards: state.manage.visibleBoards,
+  editableBoards: state.manage.editableBoards,
+  visibleRanges: state.manage.visibleRanges,
+  globalLoading: state.activity.global,
+});
 
-function findChildren(key) {
-  return (orgArr) => {
-    if (Array.isArray(orgArr)) {
-      orgArr.forEach((item) => {
-        if (item.id === key) {
-          selectNode = item;
-        }
-      });
-    }
-  };
-}
+const mapDispatchToProps = {
+  push: routerRedux.push,
+  replace: routerRedux.replace,
+  getInitial: fectchDataFunction(true, 'manage/getAllInfo'),
+  createBoard: fectchDataFunction(true, 'manage/createBoard'),
+  deleteBoard: fectchDataFunction(true, 'manage/deleteBoard'),
+  publishBoard: fectchDataFunction(true, 'manage/publishBoard'),
+};
 
-const treeNodeHtml = getTreeNode(checkTreeArr);
+@connect(mapStateToProps, mapDispatchToProps)
+@withRouter
 export default class BoardManageHome extends PureComponent {
   static propTypes = {
-    boardManage: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
+    push: PropTypes.func.isRequired,
+    replace: PropTypes.func.isRequired,
+    getInitial: PropTypes.func.isRequired,
+    createBoard: PropTypes.func.isRequired,
+    deleteBoard: PropTypes.func.isRequired,
+    publishBoard: PropTypes.func.isRequired,
+    visibleBoards: PropTypes.array,
+    editableBoards: PropTypes.array,
+    visibleRanges: PropTypes.array,
+    globalLoading: PropTypes.bool,
   }
+
+  static defaultProps = {
+    globalLoading: false,
+    visibleBoards: [],
+    editableBoards: [],
+    visibleRanges: [],
+  }
+
   constructor(props) {
     super(props);
     this.state = {
-      expandedKeys: ['1', '2', '2-1'],
-      autoExpandParent: true,
-      checkedKeys: [],
-      selectedKeys: [],
-      thirdChildren: [],
+      createBoardModal: false,
+      deleteBoardModal: false,
+      publishConfirmModal: false,
     };
   }
+
+  componentWillMount() {
+    const empId = getEmpId();
+    this.props.getInitial({ empId });
+  }
+
   @autobind
-  onExpand(expandedKeys) {
-    console.warn('onExpand', expandedKeys);
-    // if not set autoExpandParent to false, if children expanded, parent can not collapse.
-    // or, you can remove all expanded children keys.
+  closeModal(modal) {
     this.setState({
-      expandedKeys,
-      autoExpandParent: false,
+      [modal]: false,
     });
   }
+
   @autobind
-  onCheck(checkedKeys, e) {
-    // e:{checked: bool, checkedNodes, node, event}
-    console.warn('onCheck', checkedKeys);
-    console.warn('onCheck', e);
-    console.warn('onCheck', e.node.props.eventKey);
-    const eventKey = e.node.props.eventKey;
-    if (eventKey.indexOf('-') > 0) {
-      walk(checkTreeArr, findChildren(eventKey));
-      if (selectNode.children) {
-        console.warn(selectNode.children);
-        this.setState({
-          thirdChildren: selectNode.children,
-        });
-      } else {
-        this.setState({
-          thirdChildren: [],
-        });
-      }
-    }
+  openModal(modal) {
     this.setState({
-      checkedKeys,
+      [modal]: true,
     });
   }
-  @autobind
-  onSelect(selectedKeys) {
-    this.setState({ selectedKeys });
-    if (selectedKeys.length) {
-      if (selectedKeys[0].indexOf('-') > 0) {
-        walk(checkTreeArr, findChildren(selectedKeys[0]));
-        if (selectNode.children) {
-          console.warn(selectNode.children);
-          this.setState({
-            thirdChildren: selectNode.children,
-          });
-        } else {
-          this.setState({
-            thirdChildren: [],
-          });
-        }
-      }
-    } else {
-      this.setState({
-        thirdChildren: [],
-      });
-    }
-  }
-  @autobind
-  onChange(e) {
-    // this.setState({
-    //   ...this.state,
-    //   checkedKeys: this.state.checkedKeys.concat(e),
-    // });
-    console.warn(e);
-    console.warn(this.state.checkedKeys);
-  }
-  // 新建看板事件
+
   @autobind
   createBoardHandle() {
-    console.warn('新建看板事件');
+    this.openModal('createBoardModal');
   }
+
+  // 删除看板
+  @autobind
+  deleteBoardHandle(board) {
+    console.log('deleteBoardHandle', board);
+    this.setState({
+      delBoard: board,
+      delBoardName: board.name,
+    },
+    () => {
+      this.openModal('deleteBoardModal');
+    });
+  }
+
+  // 确认删除Board
+  @autobind
+  deleteBoardConfirm() {
+    const { delBoard: { orgId, boardId } } = this.state;
+    this.props.deleteBoard({ orgId, boardId });
+  }
+
+  // 发布看板
+  @autobind
+  publishBoardHandle(board) {
+    console.log('publishBoardHandle', board);
+    this.setState({
+      publishBoard: board,
+    },
+    () => {
+      this.openModal('publishConfirmModal');
+    });
+  }
+
+  @autobind
+  publishBoardCofirm() {
+    const { publishBoard } = this.state;
+    this.props.publishBoard({
+      ...publishBoard,
+      isPublished: 'Y',
+    });
+  }
+
   render() {
+    const {
+      createBoardModal,
+      deleteBoardModal,
+      publishConfirmModal,
+    } = this.state;
+    const { location, replace, push, createBoard } = this.props;
+    const { visibleRanges, visibleBoards, editableBoards } = this.props;
+    // 做容错处理
+    if (!visibleRanges || !visibleRanges.length) {
+      return null;
+    }
+    if (!visibleBoards || !visibleBoards.length) {
+      return null;
+    }
+    if (!editableBoards || !editableBoards.length) {
+      return null;
+    }
+    // 创建共同配置项
+    const createBMProps = {
+      modalKey: 'createBoardModal',
+      modalCaption: '创建绩效看板',
+      visible: createBoardModal,
+      closeModal: this.closeModal,
+      level: visibleRanges[0].level,
+      allOptions: visibleRanges,
+      confirm: createBoard,
+      ownerOrgId: visibleRanges[0].id,
+    };
+    // 删除共同配置项
+    const deleteBMProps = {
+      modalKey: 'deleteBoardModal',
+      modalCaption: '提示',
+      visible: deleteBoardModal,
+      closeModal: this.closeModal,
+      confirm: this.deleteBoardConfirm,
+    };
+    // 发布共同配置项
+    const publishConfirmMProps = {
+      modalKey: 'publishConfirmModal',
+      modalCaption: '提示',
+      visible: publishConfirmModal,
+      closeModal: this.closeModal,
+      confirm: this.publishBoardCofirm,
+    };
+
     return (
       <div className="page-invest content-inner">
-        <div className={styles.treeDiv}>
-          <Tree
-            checkable
-            onExpand={this.onExpand}
-            expandedKeys={this.state.expandedKeys}
-            autoExpandParent={this.state.autoExpandParent}
-            onCheck={this.onCheck}
-            checkedKeys={this.state.checkedKeys}
-            onSelect={this.onSelect}
-            selectedKeys={this.state.selectedKeys}
-          >
-            {treeNodeHtml}
-          </Tree>
-          <div style={{ width: '500px', height: '400px', position: 'absolute', left: '400px', top: '10px', border: '1px solid red' }}>
-            {
-              this.state.thirdChildren.map(item => (
-                <div>
-                  <Checkbox.Group onChange={this.onChange}>
-                    <Checkbox value={item.id}>{item.name}</Checkbox>
-                  </Checkbox.Group>
+        <div className="reportHeader">
+          <Row type="flex" justify="start" align="middle">
+            <div className="reportName">
+              <BoardSelect
+                location={location}
+                push={push}
+                replace={replace}
+                visibleBoards={visibleBoards}
+              />
+            </div>
+          </Row>
+        </div>
+        <div className={styles.boardList}>
+          <Row gutter={19}>
+            <Col span={8} className={styles.test}>
+              <a
+                className={styles.boardItem}
+                onClick={this.createBoardHandle}
+              >
+                <div className={styles.boardAdd}>
+                  <img src="/static/images/bg_add.png" alt="" />
+                  <h3>创建看板</h3>
                 </div>
+                <div className={styles.boardImg}>
+                  <img src="/static/images/bg_tgjx.png" alt="" />
+                </div>
+                <div className={styles.boardTitle} />
+              </a>
+            </Col>
+            {
+              editableBoards.map(item => (
+                <Col span={8} key={item.id}>
+                  {/* 此处需要传递相关方法 */}
+                  <BoardItem
+                    boardData={item}
+                    delete={this.deleteBoardHandle}
+                    publish={this.publishBoardHandle}
+                    push={push}
+                  />
+                </Col>
               ))
             }
-          </div>
+          </Row>
         </div>
+        <CreateBoardModal {...createBMProps} />
+        <DeleteBoardModal {...deleteBMProps} boardName={this.state.delBoardName} />
+        <PublishConfirmModal {...publishConfirmMProps} />
       </div>
     );
   }

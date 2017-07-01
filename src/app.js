@@ -49,8 +49,10 @@ app.use(createActivityIndicator());
 
 // 3. Model
 app.model(require('./models/app'));
-app.model(require('./models/invest'));
-app.model(require('./models/business'));
+// app.model(require('./models/invest'));
+// app.model(require('./models/business'));
+app.model(require('./models/report'));
+app.model(require('./models/manage'));
 
 // 4. Router
 app.router(routerConfig);

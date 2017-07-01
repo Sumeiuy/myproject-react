@@ -1,4 +1,7 @@
 @calc-width: (370px + 19px) * 3;
+body{
+  background: #fff;
+}
 .boardList{
   // padding: 10px;
   min-width: @calc-width;
@@ -11,6 +14,7 @@
   border-radius: 8px;
   margin-top: 20px;
   border: 1px dashed #333;
+  box-sizing: border-box;
   .boardAdd{
     position: absolute;
     top: 50% + 8px;
@@ -36,38 +40,7 @@
     }
   }
   .boardTitle{
-    height: 49px;
+    height: 48px;
     position: relative;
-  }
-}
-
-
-.treeDiv{
-  width: 200px;
-  :global{
-    .ant-tree > li > ul li .ant-tree-switcher{
-      visibility: hidden;
-    }
-    .ant-tree ul.ant-tree-child-tree ul.ant-tree-child-tree{
-      position: absolute;
-      left: 500px;
-      top: 20px;
-      z-index: 2;
-    }
-  }
-}
-.arrow{
-  width: 100%;
-  position: relative;
-  &:after{
-    position: absolute;
-    top: 10px;
-    right: -10px;
-    display: inline-block;
-    width: 0;
-    height: 0;
-    border-top: 4px solid transparent;
-    border-left: 8px solid #acacac;
-    border-bottom: 4px solid transparent;
   }
 }

@@ -15,35 +15,43 @@ const CheckboxGroup = Checkbox.Group;
 
 export default class SelfSelect extends PureComponent {
   static propTypes = {
-    value: PropTypes.array.isRequired, // 初始值
+    value: PropTypes.array, // 初始值
     options: PropTypes.array.isRequired, // 全部的选项
-    onChange: PropTypes.func.isRequired, // 改版form表单的值得方法
+    onChange: PropTypes.func, // 改版form表单的值得方法
     level: PropTypes.string.isRequired, // 用户的级别
+    style: PropTypes.object, // 用户的级别
+  }
+
+  static defaultProps = {
+    style: { height: '35px' },
+    onChange: () => {},
+    value: [],
   }
 
   constructor(props) {
     super(props);
     // 此value为Form组件使用getFieldDecorator方式的initialValue传递过来的初始值
     const value = props.value || [];
-
+    const chldrenOptions = props.options.slice(1);
     this.state = {
       visibleRangeNames: this.getVisibleRangeNames(value, true),
       expand: false,
       groupCheckedList: value, // 所有分公司/营业部，选中的checkbox的列表
-      checkAll: false, // 全选按钮的状态
+      checkAll: value.length === chldrenOptions.length, // 全选按钮的状态
     };
   }
 
   componentWillReceiveProps(nextProps) {
     // 此处需要将恢复到默认值状态
     const { value } = nextProps;
-    const { value: preValue } = this.props;
+    const { value: preValue, options } = this.props;
+    const chldrenOptions = options.slice(1);
     // 通过判断当前选中的值的变化
-    if ('value' in nextProps && _.isEqual(value, preValue)) {
+    if ('value' in nextProps && !_.isEqual(value, preValue)) {
       // const value = nextProps.value;
       this.setState({
         groupCheckedList: value,
-        checkAll: false,
+        checkAll: chldrenOptions.length === value,
         visibleRangeNames: this.getVisibleRangeNames(value, true),
       });
     }
@@ -161,7 +169,7 @@ export default class SelfSelect extends PureComponent {
   }
 
   render() {
-    const { options } = this.props;
+    const { options, style } = this.props;
     const firstRequiredCheck = options[0];
     const { expand, checkAll, groupCheckedList, visibleRangeNames } = this.state;
     const iconType = expand ? 'up' : 'down';
@@ -173,13 +181,18 @@ export default class SelfSelect extends PureComponent {
       [styles.show]: expand,
       [styles.selfSelectBody]: true,
     });
+
+    const selectHDLineHeight = Number.parseFloat(style.height) - 2;
     return (
-      <div className={styles.selfSelect}>
+      <div className={styles.selfSelect} style={style}>
         <div
           className={selfSelectHd}
           onClick={this.expandSelect}
+          style={{
+            lineHeight: `${selectHDLineHeight}px`,
+          }}
         >
-          <div>{visibleRangeNames}</div>
+          <div className={styles.selectNames}>{visibleRangeNames}</div>
           <span className={styles.selfSelectArrow}><Icon type={iconType} /></span>
         </div>
         <div className={selfSelectBd}>
