@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-07-01 16:06:50
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-07-01 21:39:02
+ * @Last Modified time: 2017-07-02 18:41:33
  */
 
 import React, { PropTypes, PureComponent } from 'react';
@@ -13,14 +13,23 @@ import _ from 'lodash';
 
 import styles from './BoardSelectTree.less';
 
+const boardName = {
+  summury: '总量指标',
+  detail: '分类指标',
+};
 const TreeNode = Tree.TreeNode;
-function getChildTree(arr) {
-  const html = arr.map(item => (
-    <TreeNode
-      title={item.name}
-      key={item.key}
-    />
-  ));
+function getChildTree(key, name, arr) {
+  let html;
+  if (Array.isArray(arr)) {
+    html = arr.map(item => (
+      <TreeNode
+        title={item.name}
+        key={item.key}
+        parentKey={key}
+        parentName={name}
+      />
+    ));
+  }
   return html;
 }
 // 根据数组组成 treeNode
@@ -35,9 +44,11 @@ function getTreeNode(arr) {
           <TreeNode
             title={child.name}
             key={child.key}
+            className={child.hasChildren ? styles.arrow : ''}
+            parentKey={item.indicatorCategoryDto.categoryKey}
           >
             {
-              child.hasChildren && getChildTree(child.children)
+              child.hasChildren && getChildTree(child.key, child.name, child.children)
             }
           </TreeNode>
         ))
@@ -105,33 +116,25 @@ export default class BoardSelectTree extends PureComponent {
     });
   }
   @autobind
-  onCheck(checkedKeys, { checkedNodes, node: { props } }) {
-    // 触发选中事件时，将所有选中的节点取出来生成生的数组，放到最终传值的数组中
-    const newArr = checkedNodes.map((item) => {
-      const temp = {
-        key: item.key,
-        title: item.props.title,
-      };
-      return temp;
-    });
+  onCheck(checkedKeys, { node: { props: { eventKey, checked } } }) {
     // 当前选中的 key
-    const eventKey = props.eventKey;
-    this.checkOrSelect(eventKey);
-    this.setState({
-      selfCheckedKeys: newArr,
-      selectedKeys: [],
-      checkedKeys,
-    }, () => {
-      // 返回数据
-      this.getStateTree();
-    });
+    const obj = {
+      keyArr: checkedKeys,
+      key: eventKey,
+      checked,
+      type: 'onCheck',
+    };
+    this.checkOrSelect(obj);
   }
   @autobind
-  onSelect(selectedKeys) {
-    if (selectedKeys.length) {
-      this.checkOrSelect(selectedKeys[0]);
-    }
-    this.setState({ selectedKeys });
+  onSelect(selectedKeys, { node: { props: { eventKey, selected } } }) {
+    const obj = {
+      keyArr: selectedKeys,
+      key: eventKey,
+      selected,
+      type: 'onSelect',
+    };
+    this.checkOrSelect(obj);
   }
   @autobind
   onRemove(item) {
@@ -151,16 +154,36 @@ export default class BoardSelectTree extends PureComponent {
   getStateTree() {
     const selfCheckedKeys = this.state.selfCheckedKeys;
     const type = this.props.data.type;
-    console.warn(selfCheckedKeys);
-    console.warn(type);
+    if (type === 'summury') {
+      const summuryArr = selfCheckedKeys.map(item => item.key);
+      // 输出总量指标
+      console.warn('summuryArr', summuryArr);
+    } else {
+      // 取出点击节点的父节点 key
+      const parentKeyArr = _.uniq(selfCheckedKeys.map(item => item.parentKey));
+      // 循环父节点 key
+      const detailArr = parentKeyArr.map((item) => {
+        // 取出所有 parentKey 与父节点 key 相等的选中项
+        const categoryKeyChildren = _.filter(selfCheckedKeys, o => (o.parentKey === item));
+        // 从上一步取出的数组中取出所有的 key
+        const categoryKeyChildrenKey = _.uniq(categoryKeyChildren.map(child => child.key));
+        const temp = {
+          categoryKey: item,
+          detailIndicatorIds: categoryKeyChildrenKey,
+        };
+        return temp;
+      });
+      // 输出明细指标
+      console.warn('detailArr', detailArr);
+    }
   }
   // 点击或者选择的相同操作
   @autobind
-  checkOrSelect(key) {
+  checkOrSelect(obj) {
     // 找出当前点击或者选择的节点信息，并存到 state 中
     const oldSelectNode = this.state.nowSelectNode;
     const checkTreeArr = this.props.data.checkTreeArr;
-    const nowSelectNode = findSelectNodeChild(checkTreeArr, key);
+    const nowSelectNode = findSelectNodeChild(checkTreeArr, obj.key);
     if (_.isEqual(oldSelectNode, nowSelectNode)) {
       this.setState({
         nowSelectNode: {},
@@ -173,7 +196,7 @@ export default class BoardSelectTree extends PureComponent {
     // 如果找到当前节点，并且当前节点有 子元素，展开子元素并且更新 已展开子元素 的 state
     const oldExpandedKeys = this.props.data.expandedKeys;
     if (nowSelectNode && nowSelectNode.hasChildren) {
-      this.onExpand(_.union([], _.concat(oldExpandedKeys, key)));
+      this.onExpand(_.uniq(_.concat(oldExpandedKeys, obj.key)));
         // 更新已展开的子元素 state
       this.setState({
         expandedChildren: nowSelectNode.children,
@@ -185,7 +208,7 @@ export default class BoardSelectTree extends PureComponent {
       let flag = false;
       // 循环展开的子元素数组，判断出是否包含当前点击的节点
       oldExpandedChildren.forEach((item) => {
-        if (item.key === key) {
+        if (item.key === obj.key) {
           flag = true;
         }
       });
@@ -198,26 +221,58 @@ export default class BoardSelectTree extends PureComponent {
         });
       }
     }
+
+    // 触发选中事件时，将所有选中的节点取出来生成生的数组，放到最终传值的数组中
+    let selfCheckedKeys = this.state.selfCheckedKeys;
+    if (obj.type === 'onCheck') {
+      // 如果是选中状态，添加进去
+      if (!obj.checked) {
+        selfCheckedKeys.push(nowSelectNode);
+      } else {
+      // 否则删除
+        selfCheckedKeys = _.remove(selfCheckedKeys, n => (n.key !== obj.key));
+      }
+      this.setState({
+        selfCheckedKeys,
+        selectedKeys: [],
+        checkedKeys: obj.keyArr,
+      }, () => {
+        // 返回数据
+        this.getStateTree();
+      });
+    } else {
+      this.setState({
+        selectedKeys: obj.keyArr,
+      }, () => {
+        // 返回数据
+        this.getStateTree();
+      });
+    }
   }
   render() {
     const checkTreeArr = this.props.data.checkTreeArr;
     const type = this.state.type;
     treeNodeHtml = getTreeNode(checkTreeArr);
     return (
+      // 树结构整体
       <div className={styles.treeBody}>
+        {/* 树结构总标题 */}
         <div className={styles.treeTitle}>
           <h2 className={styles[`treeTitle${type}`]}>
-            总量指标
+            {boardName[type]}
             <Tooltip placement="topLeft" title={'23232323233232323'}>
               <span className={styles.treeTitleSpan} />
             </Tooltip>
           </h2>
         </div>
-        <div className={styles.treeDiv}>
-          <div className={styles.treeDivNode}>
-            <div className={styles.firstColumn}>
-              <h3 className={styles.treeDivNodeTitle}>请选择指标</h3>
-              <div className={styles.firstColumnChildren}>
+        {/* 树结构主干布局 */}
+        <div className={styles.treeMain}>
+          {/* 树结构左边部分 */}
+          <div className={styles.treeMainLeft}>
+            <h3 className={styles.treeDivNodeTitle}>请选择指标</h3>
+            {/* 树结构左边部分子元素 */}
+            <div className={styles.treeMainLeftContent}>
+              <div className={styles.treeMainLeftChild}>
                 <Tree
                   checkable
                   checkStrictly
@@ -234,7 +289,7 @@ export default class BoardSelectTree extends PureComponent {
               </div>
               {
                 this.state.type === 'summury' ?
-                  <div className={styles.firstColumnChildren}>
+                  <div className={styles.treeMainLeftChild}>
                     <div />
                   </div>
                 :
@@ -242,22 +297,27 @@ export default class BoardSelectTree extends PureComponent {
               }
             </div>
           </div>
-          <div className={styles.treeDivNode}>
-            <div className={styles.secondColumn}>
-              <h3 className={styles.treeDivNodeTitle}>
-                已选择指标
-                <span>(对已选择指标拖动可以改变指标的前后顺序)</span>
-              </h3>
-              <div className={styles.secondColumnChildren}>
-                {
-                  this.state.selfCheckedKeys.map(item => (
-                    <span className={styles.selectItem} key={`${item.key}Key`}>
-                      {item.title}
-                      <Icon type="close" onClick={() => this.onRemove(item)} />
-                    </span>
-                  ))
-                }
-              </div>
+          {/* 树结构右边部分 */}
+          <div className={styles.treeMainRight}>
+            <h3 className={styles.treeDivNodeTitle}>
+              已选择指标
+              <span>(对已选择指标拖动可以改变指标的前后顺序)</span>
+            </h3>
+            <div className={styles.treeMainRightChild}>
+              {
+                this.state.selfCheckedKeys.map(item => (
+                  <span className={styles.selectItem} key={`${item.key}Key`}>
+                    {
+                      item.parentName ?
+                        `${item.parentName} -`
+                      :
+                        ''
+                    }
+                    {item.name}
+                    <Icon type="close" onClick={() => this.onRemove(item)} />
+                  </span>
+                ))
+              }
             </div>
           </div>
         </div>
@@ -266,7 +326,7 @@ export default class BoardSelectTree extends PureComponent {
             (this.state.nowSelectNode && this.state.nowSelectNode.key) ?
               <div>
                 <h4>
-                  <span>{this.state.nowSelectNode.name}:</span>
+                  <span>{this.state.nowSelectNode.name}：</span>
                   {this.state.nowSelectNode.description}
                 </h4>
                 {
