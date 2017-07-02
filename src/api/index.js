@@ -45,4 +45,7 @@ export default {
 
   // 发布看板
   publishBoard: query => api.post('/groovynoauth/jxzb/updateBoard', query),
+
+  // 查询单个看板的信息
+  getOneBoardInfo: query => api.post('/groovynoauth/jxzb/querySingleBoard', query),
 };
