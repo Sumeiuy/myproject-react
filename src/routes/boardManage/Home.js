@@ -10,6 +10,7 @@ import { autobind } from 'core-decorators';
 import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import { Col, Row } from 'antd';
+import _ from 'lodash';
 
 import { getEmpId } from '../../utils/helper';
 import BoardSelect from '../../components/pageCommon/BoardSelect';
@@ -147,13 +148,13 @@ export default class BoardManageHome extends PureComponent {
     const { location, replace, push, createBoard } = this.props;
     const { visibleRanges, visibleBoards, editableBoards } = this.props;
     // 做容错处理
-    if (!visibleRanges || !visibleRanges.length) {
+    if (_.isEmpty(visibleRanges)) {
       return null;
     }
-    if (!visibleBoards || !visibleBoards.length) {
+    if (_.isEmpty(visibleBoards)) {
       return null;
     }
-    if (!editableBoards || !editableBoards.length) {
+    if (!editableBoards) {
       return null;
     }
     // 创建共同配置项

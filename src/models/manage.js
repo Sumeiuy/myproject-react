@@ -12,6 +12,10 @@ export default {
     visibleBoards: [], // 可见看板
     editableBoards: [], // 可编辑看板
     visibleRanges: [], // 可见范围
+    createLoading: false, // 创建看板成功与否
+    deleteLoading: false, // 删除看板成功与否
+    publishLoading: false, // 发布看板成功与否
+    message: '', // 各种操作的提示信息
   },
   reducers: {
     getAllVisibleReportsSuccess(state, action) {
@@ -67,6 +71,15 @@ export default {
         custRange,
       };
     },
+    // 各种操作的状态
+    opertateBoardState(state, action) {
+      const { payload: { name, value, message } } = action;
+      return {
+        ...state,
+        [name]: value,
+        message,
+      };
+    },
   },
   effects: {
     // 看板管理页面初始化需要 visibleRange, visibleBoards, editableBoards,
@@ -120,7 +133,16 @@ export default {
     // 创建看板
     // 此时看板还未发布
     * createBoard({ payload }, { call, put, select }) {
+      yield put({
+        type: 'opertateBoardState',
+        payload: {
+          name: 'createLoading',
+          value: true,
+          message: '开始创建',
+        },
+      });
       const createBoardResult = yield call(api.createBoard, payload);
+      console.log('createBoard>Result', createBoardResult);
       const board = createBoardResult.resultData;
       // 如果创建成功
       // 则需要刷新，可编辑看板
@@ -136,11 +158,28 @@ export default {
           payload: { allEditableBoards },
         });
       }
+      yield put({
+        type: 'opertateBoardState',
+        payload: {
+          name: 'createLoading',
+          value: false,
+          message: '创建完成',
+        },
+      });
     },
 
     // 删除看板
     * deleteBoard({ payload }, { call, put, select }) {
+      yield put({
+        type: 'opertateBoardState',
+        payload: {
+          name: 'deleteLoading',
+          value: true,
+          message: '开始删除',
+        },
+      });
       const deleteResult = yield call(api.deleteBoard, payload);
+      console.log('deleteBoard>Result', deleteResult);
       const result = deleteResult.resultData;
       if (result) {
         const cust = yield select(state => state.manage.custRange);
@@ -152,19 +191,36 @@ export default {
           payload: { allEditableBoards },
         });
       }
-    },
-
-    // 更新看板
-    * updateBoard({ payload }, { call }) {
-      const updateResult = yield call(api.updateBoard, payload);
-      // 更新是在Edit页面，所以暂时不需要刷新
-      console.log('updateBoard', updateResult);
+      yield put({
+        type: 'opertateBoardState',
+        payload: {
+          name: 'deleteLoading',
+          value: false,
+          message: '删除完成',
+        },
+      });
     },
 
     // 发布看板
-    * publishBoard({ payload }, { call }) {
+    * publishBoard({ payload }, { call, put }) {
+      yield put({
+        type: 'opertateBoardState',
+        payload: {
+          name: 'publishLoading',
+          value: true,
+          message: '开始发布',
+        },
+      });
       const publishResult = yield call(api.updateBoard, payload);
-      console.log(publishResult);
+      console.log('publishBoard>Result', publishResult);
+      yield put({
+        type: 'opertateBoardState',
+        payload: {
+          name: 'publishLoading',
+          value: false,
+          message: '发布完成',
+        },
+      });
     },
   },
   subscriptions: {},
