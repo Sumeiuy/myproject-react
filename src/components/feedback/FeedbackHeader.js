@@ -110,14 +110,17 @@ export default class PageHeader extends PureComponent {
 
     return (
       <div className="feedbackHeader">
-        模块: <Cascader
-          options={channelOptions}
-          style={{ width: '9%' }}
-          changeOnSelect
-          placeholder="全部"
-          value={cascaderVale}
-          onChange={key => this.handleCascaderSelectChange('appId', 'functionName', key)}
-        />
+        模块:
+        <div className="cascader_box">
+          <Cascader
+            options={channelOptions}
+            style={{ width: '90%' }}
+            changeOnSelect
+            placeholder="全部"
+            value={cascaderVale}
+            onChange={key => this.handleCascaderSelectChange('appId', 'functionName', key)}
+          />
+        </div>
         类型: <Select
           style={{ width: '6%' }}
           placeholder="全部"

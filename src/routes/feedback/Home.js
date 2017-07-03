@@ -17,12 +17,13 @@ import Icon from '../../components/common/Icon';
 import Detail from '../../components/feedback/Detail';
 import FeedbackList from '../../components/feedback/FeedbackList';
 import FeedbackHeader from '../../components/feedback/FeedbackHeader';
-import { constructPostBody } from '../../utils/helper';
+import { constructPostBody, getEnv } from '../../utils/helper';
 import '../../css/react-split-pane-master.less';
 import './home.less';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
+const BROWSER = getEnv();
 const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
 const mapStateToProps = state => ({
   list: state.feedback.list,
@@ -72,6 +73,7 @@ export default class FeedBack extends PureComponent {
   componentDidMount() {
     this.setDocumentScroll();
     window.addEventListener('resize', this.onResizeChange, false);
+    this.panMov(520);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -204,6 +206,20 @@ export default class FeedBack extends PureComponent {
     return true;
   }
 
+  // splitPan onChange回调函数
+  @autobind
+  panchange(size) {
+    this.panMov(size);
+  }
+
+  // 重新给pan2样式赋值
+  panMov(size) {
+    if (BROWSER.$browser === 'Internet Explorer') {
+      const node = ReactDOM.findDOMNode(document.querySelector('.Pane2')); // eslint-disable-line
+      node.style.paddingLeft = `${size + 20}px`;
+    }
+  }
+
   render() {
     const { list, location, replace } = this.props;
     const { isEmpty } = this.state;
@@ -233,7 +249,14 @@ export default class FeedBack extends PureComponent {
             </div>
           </Col>
         </Row>
-        <SplitPane split="vertical" minSize={518} maxSize={700} defaultSize={520} className="primary">
+        <SplitPane
+          onChange={this.panchange}
+          split="vertical"
+          minSize={518}
+          maxSize={700}
+          defaultSize={520}
+          className="primary"
+        >
           <Row className={existClass}>
             <Col span="24" className="leftSection" id="leftSection">
               <FeedbackList

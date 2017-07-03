@@ -77,7 +77,7 @@ export default class Detail extends PureComponent {
       visible: false,
       remarkVisible: false,
       title: '',
-      messageBtnValue: '',
+      messageBtnValue: '处理问题',
       inforTxt: '',
       uploadPops: {},
       colSpans: {
@@ -477,7 +477,7 @@ export default class Detail extends PureComponent {
                         {description}
                       </div>
                       <div className="btn_dv">
-                        <Button type="primary" onClick={this.showModal}>处理问题</Button>
+                        <Button type="primary" onClick={this.showModal}>{messageBtnValue}</Button>
                       </div>
                     </div>
                   </div>
@@ -528,7 +528,7 @@ export default class Detail extends PureComponent {
                         }
                       </div>
                       <div className="btn_dv">
-                        <Button type="primary" onClick={this.showModal}>{messageBtnValue || '处理问题'}</Button>
+                        <Button type="primary" onClick={this.showModal}>{messageBtnValue}</Button>
                       </div>
                     </div>
                   </div>
