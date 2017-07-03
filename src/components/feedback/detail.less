@@ -2,7 +2,10 @@
   .react-app{
     .clear{clear:both; height: 0; line-height: 0; font-size: 0}
     .detail_box{
-      padding:10px 10px 10px 0;
+      background-color: #f3f3f4;
+      padding: 10px 10px 10px 0;
+      height: 100%;
+      box-shadow: 5px 5px 5px #ededee;
       h1,h2,h3{
         color:#33393c;
         font-size: 14px;
@@ -15,8 +18,10 @@
         display: none;
       }
       .inner{
+        border-radius: 5px; 
         background-color:#FFF;
         padding:20px;
+        height: 100%;
         .mod_header{
           position: relative;
           padding-left:10px;
@@ -71,6 +76,9 @@
           .mod_content{
             padding: 5px 0;
             .property_list{
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
               li{
                 padding: 5px 0;
                 height: 40px;

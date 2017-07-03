@@ -146,6 +146,8 @@ export default class FeedBack extends PureComponent {
     const rightSectionElem = ReactDOM.findDOMNode(document.getElementById('rightSection'));
     const nullElem = ReactDOM.findDOMNode(document.getElementById('empty'));
     const workspaceElem = ReactDOM.findDOMNode(document.getElementById('workspace-content'));
+    const innerElem = ReactDOM.findDOMNode(document.querySelector('.inner'));
+    const resizerElem = ReactDOM.findDOMNode(document.querySelector('.Resizer'));
     /* eslint-enable */
 
     let topDistance = 0;
@@ -166,12 +168,18 @@ export default class FeedBack extends PureComponent {
     if (leftSectionElem && rightSectionElem) {
       topDistance = leftSectionElem.getBoundingClientRect().top;
       const sectionHeight = docElemHeight - topDistance -
-        bottomDistance - padding - boxPadding;
-      leftSectionElem.style.height = `${sectionHeight}px`;
+        bottomDistance - padding;
+      leftSectionElem.style.height = `${sectionHeight - boxPadding}px`;
       rightSectionElem.style.height = `${sectionHeight}px`;
       if (tableElem) {
-        tableElem.style.height = `${sectionHeight - paginationElemHeight}px`;
+        tableElem.style.height = `${sectionHeight - boxPadding - paginationElemHeight}px`;
         tableElem.style.overflow = 'auto';
+      }
+      if (innerElem) {
+        innerElem.style.overflow = 'auto';
+      }
+      if (resizerElem) {
+        resizerElem.style.height = `${sectionHeight}px`;
       }
     }
 
