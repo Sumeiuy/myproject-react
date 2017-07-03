@@ -351,9 +351,11 @@ export default class Detail extends PureComponent {
           }
         } else {
           message.error('最大字数限制为1000');
+          return;
         }
       } else {
         message.error('您还未填写备注信息');
+        return;
       }
       form.resetFields();
       this.setState({ remarkVisible: false });
@@ -370,12 +372,6 @@ export default class Detail extends PureComponent {
   */
   saveRemarkFormRef = (form) => {
     this.remarkForm = form;
-  }
-  /**
-   * 详情编辑form
-  */
-  saveEditForm = (form) => {
-    this.editForm = form;
   }
   /**
    * 缩略图预览
@@ -408,7 +404,12 @@ export default class Detail extends PureComponent {
     } = this.state;
     const { resultData = EMPTY_OBJECT } = dataSource || EMPTY_OBJECT;
     const { resultData: voList = EMPTY_OBJECT } = voDataSource || EMPTY_OBJECT;
-    const { feedbackVOList = EMPTY_LIST } = voList; // 处理记录
+    const { remarkList = EMPTY_LIST,
+      processList = EMPTY_LIST,
+      suggestList = EMPTY_LIST,
+     } = voList; // 处理记录
+    const processRecordList = _.concat(remarkList, suggestList);
+    const handleRecordList = _.concat(remarkList, suggestList, processList);
     const {
       attachModelList,
       functionName,
@@ -452,8 +453,8 @@ export default class Detail extends PureComponent {
           <h1 className="bugtitle">【{type && type.label}】{appId}/{feedId}</h1>
           <div className="row_box">
             {hasImgUrl ?
-              <Row gutter={16}>
-                <Col span="16">
+              <Row gutter={18}>
+                <Col span="18">
                   <div id="detail_module" className="module">
                     <div className="mod_header">
                       <h2 className="toogle_title">问题详情</h2>
@@ -481,7 +482,7 @@ export default class Detail extends PureComponent {
                     </div>
                   </div>
                 </Col>
-                <Col span="8">
+                <Col span="6">
                   <div className="imgbox" onClick={this.handlePreview}>
                     <img src={`${request.prefix}/file/${imageUrls[0]}`} alt="图片" />
                   </div>
@@ -490,6 +491,7 @@ export default class Detail extends PureComponent {
                     width={newWidth}
                     footer={null}
                     onCancel={this.handlePreviewCancel}
+                    wrapClassName="imgModal"
                   >
                     <img alt="图片" style={{ width: '100%' }} src={`${request.prefix}/file/${imageUrls[0]}`} />
                   </Modal>
@@ -521,7 +523,7 @@ export default class Detail extends PureComponent {
                           <span>
                             <i className="anticon anticon-frown-o" />
                             暂无描述
-                          </span>
+                        </span>
                         </div>
                         }
                       </div>
@@ -560,7 +562,7 @@ export default class Detail extends PureComponent {
             <Tabs onChange={this.handleTabChange} type="card">
               <TabPane tab="处理意见" key="1">
                 <RemarkList
-                  remarkList={feedbackVOList}
+                  remarkList={processRecordList}
                 />
                 <div className="mod_content">
                   <div className="remarks_box">
@@ -576,7 +578,7 @@ export default class Detail extends PureComponent {
               </TabPane>
               <TabPane tab="操作记录" key="2">
                 <RemarkList
-                  remarkList={feedbackVOList}
+                  remarkList={handleRecordList}
                 />
               </TabPane>
             </Tabs>

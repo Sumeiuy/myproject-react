@@ -12,11 +12,13 @@ import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import { withRouter, routerRedux } from 'dva/router';
 import { Row, Col } from 'antd';
+import SplitPane from 'react-split-pane';
 import Icon from '../../components/common/Icon';
 import Detail from '../../components/feedback/Detail';
 import FeedbackList from '../../components/feedback/FeedbackList';
 import FeedbackHeader from '../../components/feedback/FeedbackHeader';
 import { constructPostBody } from '../../utils/helper';
+import '../../css/react-split-pane-master.less';
 import './home.less';
 
 const EMPTY_LIST = [];
@@ -128,8 +130,15 @@ export default class FeedBack extends PureComponent {
   }
 
   setDocumentScroll() {
-    const docElemHeight = document.documentElement.clientHeight;
     /* eslint-disable */
+    const UTBContentElem = ReactDOM.findDOMNode(document.getElementById('UTBContent'));
+    if (UTBContentElem) {
+      UTBContentElem.style.marginRight = '0px';
+    }
+
+    const docElemHeight = document.documentElement.clientHeight;
+    const paginationElem = document.querySelector('.ant-pagination');
+    const tableElem = ReactDOM.findDOMNode(document.querySelector('.ant-table'));
     const containerElem = ReactDOM.findDOMNode(document.getElementById('container'));
     const leftSectionElem = ReactDOM.findDOMNode(document.getElementById('leftSection'));
     const rightSectionElem = ReactDOM.findDOMNode(document.getElementById('rightSection'));
@@ -141,6 +150,16 @@ export default class FeedBack extends PureComponent {
     const padding = 10;
     const boxPadding = 12;
     const bottomDistance = 48;
+    let paginationElemHeight = 0;
+
+    if (paginationElem) {
+      const computedStyle = window.getComputedStyle(paginationElem, null);
+      paginationElemHeight = parseFloat(computedStyle.getPropertyValue('height'), 10) +
+        parseFloat(computedStyle.paddingTop) +
+        parseFloat(computedStyle.paddingBottom) +
+        parseFloat(computedStyle.marginTop) +
+        parseFloat(computedStyle.marginBottom);
+    }
 
     if (leftSectionElem && rightSectionElem) {
       topDistance = leftSectionElem.getBoundingClientRect().top;
@@ -148,6 +167,10 @@ export default class FeedBack extends PureComponent {
         bottomDistance - padding - boxPadding;
       leftSectionElem.style.height = `${sectionHeight}px`;
       rightSectionElem.style.height = `${sectionHeight}px`;
+      if (tableElem) {
+        tableElem.style.height = `${sectionHeight - paginationElemHeight}px`;
+        tableElem.style.overflow = 'auto';
+      }
     }
 
     if (containerElem) {
@@ -210,22 +233,24 @@ export default class FeedBack extends PureComponent {
             </div>
           </Col>
         </Row>
-
-        <Row className={existClass}>
-          <Col span="10" className="leftSection" id="leftSection">
-            <FeedbackList
-              list={list}
-              replace={replace}
-              location={location}
-            />
-          </Col>
-          <Col span="14" className="rightSection" id="rightSection">
-            <Detail
-              location={location}
-            />
-          </Col>
-        </Row>
-
+        <SplitPane split="vertical" minSize={518} maxSize={700} defaultSize={520} className="primary">
+          <Row className={existClass}>
+            <Col span="24" className="leftSection" id="leftSection">
+              <FeedbackList
+                list={list}
+                replace={replace}
+                location={location}
+              />
+            </Col>
+          </Row>
+          <Row className={existClass}>
+            <Col span="24" className="rightSection" id="rightSection">
+              <Detail
+                location={location}
+              />
+            </Col>
+          </Row>
+        </SplitPane>
       </div>
     );
   }
