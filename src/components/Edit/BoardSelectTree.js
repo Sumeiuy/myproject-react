@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-07-01 16:06:50
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-07-02 18:41:33
+ * @Last Modified time: 2017-07-03 09:42:48
  */
 
 import React, { PropTypes, PureComponent } from 'react';
@@ -13,9 +13,15 @@ import _ from 'lodash';
 
 import styles from './BoardSelectTree.less';
 
-const boardName = {
-  summury: '总量指标',
-  detail: '分类指标',
+const boardKeyName = {
+  summury: {
+    key: 'summury',
+    name: '总量指标',
+  },
+  detail: {
+    key: 'detail',
+    name: '分类指标',
+  },
 };
 const TreeNode = Tree.TreeNode;
 function getChildTree(key, name, arr) {
@@ -98,6 +104,9 @@ export default class BoardSelectTree extends PureComponent {
   }
   constructor(props) {
     super(props);
+    const type = props.data.type;
+    // 是否是总量指标
+    const isSummury = type === boardKeyName.summury.key;
     this.state = {
       expandedKeys: props.data.expandedKeys,
       autoExpandParent: true,
@@ -105,7 +114,8 @@ export default class BoardSelectTree extends PureComponent {
       selectedKeys: [],
       selfCheckedKeys: [],
       expandedChildren: [],
-      type: props.data.type,
+      type,
+      isSummury,
     };
   }
   @autobind
@@ -153,8 +163,8 @@ export default class BoardSelectTree extends PureComponent {
   @autobind
   getStateTree() {
     const selfCheckedKeys = this.state.selfCheckedKeys;
-    const type = this.props.data.type;
-    if (type === 'summury') {
+    const isSummury = this.state.isSummury;
+    if (isSummury) {
       const summuryArr = selfCheckedKeys.map(item => item.key);
       // 输出总量指标
       console.warn('summuryArr', summuryArr);
@@ -252,6 +262,7 @@ export default class BoardSelectTree extends PureComponent {
   render() {
     const checkTreeArr = this.props.data.checkTreeArr;
     const type = this.state.type;
+    const isSummury = this.state.isSummury;
     treeNodeHtml = getTreeNode(checkTreeArr);
     return (
       // 树结构整体
@@ -259,7 +270,7 @@ export default class BoardSelectTree extends PureComponent {
         {/* 树结构总标题 */}
         <div className={styles.treeTitle}>
           <h2 className={styles[`treeTitle${type}`]}>
-            {boardName[type]}
+            {boardKeyName[type].name}
             <Tooltip placement="topLeft" title={'23232323233232323'}>
               <span className={styles.treeTitleSpan} />
             </Tooltip>
@@ -288,7 +299,7 @@ export default class BoardSelectTree extends PureComponent {
                 </Tree>
               </div>
               {
-                this.state.type === 'summury' ?
+                isSummury ?
                   <div className={styles.treeMainLeftChild}>
                     <div />
                   </div>
@@ -330,7 +341,7 @@ export default class BoardSelectTree extends PureComponent {
                   {this.state.nowSelectNode.description}
                 </h4>
                 {
-                  this.state.type === 'detail' ?
+                  !isSummury ?
                     <h4>{this.state.nowSelectNode.description}</h4>
                   :
                     ''
