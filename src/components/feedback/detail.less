@@ -28,7 +28,7 @@
           width:4px;
           background-color: #108ee9;
         }
-      }
+      }      
       .bugtitle{
         border-bottom:1px solid #c2c2c2;
         padding:0 0 15px 0;
@@ -42,12 +42,14 @@
         }
       }
       .imgbox{
-        padding:20px 0 0 0;
+        padding:41px 0 0 0;
         img{
           width: 100%;
-          min-height: 300px;
+          max-width: 180px;
+          max-height: 180px;
           display: block;
           background: #ccc;
+          cursor: pointer;
         }
       }
       .module{
@@ -56,9 +58,21 @@
         h2{
           font-weight: normal
         }
+        .nodescription{
+          text-align: center;
+          padding:10px 0;
+          font-size: 12px;
+          color: rgba(0, 0, 0, 0.43);
+          i{
+            margin-right: 10px;
+          }
+        }
         .mod_content{
           padding: 5px 0;
           .property_list{
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
             li{
               padding: 5px 0;
               height: 40px;
@@ -119,6 +133,24 @@
         .mod_content{
           .remarks_box{
             padding:20px 0;
+            .bzBtn{
+              span{
+                margin-left:0;
+              }
+              .anticon-edit{
+                opacity: 1;
+                margin:0;
+                position: static;
+                background:transparent;
+                border:0;
+                width: auto;
+              }
+              &:hover{
+                .anticon-edit{
+                  color:#108ee9;
+                }
+              }
+            }
           }
         }
       }
@@ -131,5 +163,37 @@
     display:block;
     visibility:hidden;
     clear:both;
+  }
+  .detail_wrap{
+    height: 100%;
+  }
+  .isnull_dv{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    margin-bottom: -130px;
+    text-align: center;
+    font-size: 18px;
+    background: #FFF;
+    .myxgjg{
+      color:#bfdaed;
+      font-size: 100px;
+      margin:auto;
+    }
+  }
+  #processing{
+    border:0;
+  }
+  .imgModal {
+    .ant-modal-content {
+      background-color: transparent;
+      box-shadow: 0 0 0;
+      border: 1px solid #dddddd;
+    }
+    .ant-modal-body {
+      padding: 0px;
+    }
   }
 }

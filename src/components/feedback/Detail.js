@@ -5,7 +5,7 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import { Row, Col, Button, message } from 'antd';
+import { Row, Col, Button, message, Modal, Tabs } from 'antd';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
@@ -28,6 +28,7 @@ const GETRECORDLIST = 'feedback/getFeedbackRecordList';
 const UPDATEQUESTION = 'feedback/updateFeedback';
 
 const issueTypeOptions = feedbackOptions.typeOptions;
+const TabPane = Tabs.TabPane;
 
 const mapStateToProps = state => ({
   fbDetail: state.feedback.fbDetail,
@@ -75,8 +76,9 @@ export default class Detail extends PureComponent {
       voDataSource: voResultData,
       visible: false,
       remarkVisible: false,
-      title: '处理问题',
-      messageBtnValue: '处理问题',
+      title: '',
+      messageBtnValue: '',
+      inforTxt: '',
       uploadPops: {},
       colSpans: {
         left: 16,
@@ -84,6 +86,8 @@ export default class Detail extends PureComponent {
       },
       nowStatus: true, // PROCESSING / CLOSED
       currentId: '',
+      previewVisible: false,
+      newWidth: 520,
     };
   }
 
@@ -96,6 +100,13 @@ export default class Detail extends PureComponent {
       });
       this.handlegetData(currentId);
     }
+  }
+
+  componentDidMount() {
+    // const img = new Image();
+    // img.src = '../../static/images/2.png';
+    // const that = img;
+    // img.onload = this.loadImg(that);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -116,20 +127,22 @@ export default class Detail extends PureComponent {
       }, () => {
         const { resultData = EMPTY_OBJECT } = nextDetail || EMPTY_OBJECT;
         const { mediaUrls = '', status } = resultData || EMPTY_OBJECT;
-        if (mediaUrls && mediaUrls.length < 1) {
+        if (mediaUrls && mediaUrls.length >= 1) {
           this.setState({
-            hasImgUrl: false,
+            hasImgUrl: true,
           });
         }
         if (status === 'CLOSED') {
           this.setState({
             nowStatus: false,
             messageBtnValue: '重新打开',
+            inforTxt: '重新打开表示此问题没有解决，需要继续关注。',
           });
         } else if (status === 'PROCESSING') {
           this.setState({
             nowStatus: true,
             messageBtnValue: '处理问题',
+            inforTxt: '处理问题表示对此问题做出判断处理。',
           });
         }
       });
@@ -161,6 +174,36 @@ export default class Detail extends PureComponent {
   }
 
   /**
+   * 获取原始图片的宽，高
+   * @param {*} img 图片对象
+   */
+  @autobind
+  loadImg() {
+    // const originalWidth = img.width;
+    // const originalHeight = img.height;
+    // const imgElem = document.createElement('img');
+    // imgElem.setAttribute('src', '../../static/images/2.png');
+    // imgElem.setAttribute('alt', '图片');
+    // const imgBox = document.querySelector('.imgbox_2');
+    // imgBox.appendChild(imgElem);
+
+    // const layout = document.querySelector('img');
+    // const originalAspectRatio = originalWidth / originalHeight;
+    // const currentAspectRatio = layout.width / layout.height;
+    // const clientWidth = document.documentElement.clientWidth;
+    // const clientHeight = document.documentElement.clientHeight;
+    // if (originalHeight > clientHeight || originalWidth > clientWidth) {
+    //   const rate = (originalHeight / clientHeight) - 1;
+    //   const newHeight = originalHeight - (rate * originalHeight);
+    //   const newWidth = originalWidth - (rate * originalWidth);
+    //   this.setState({
+    //     newHeight,
+    //     newWidth,
+    //   });
+    // }
+  }
+
+  /**
    * 数据加载
    */
   handlegetData = (cid) => {
@@ -172,6 +215,14 @@ export default class Detail extends PureComponent {
       id: cid,
     });
   }
+
+  /**
+   * tab切换
+   */
+  handleTabChange(key) {
+    console.log(key);
+  }
+
   /**
    * 弹窗处理（开启）
   */
@@ -212,15 +263,15 @@ export default class Detail extends PureComponent {
       let detail = values;
       const removeEmpty = (obj) => {
         const objs = obj;
-        Object.keys(objs).forEach(key => (_.isEmpty(objs[key]) || objs[key] === '无') && delete objs[key]);
+        Object.keys(objs).forEach(key => (_.isEmpty(objs[key]) || objs[key] === '无' || objs[key] === 'undefined') && delete objs[key]);
         return objs;
       };
       detail = removeEmpty(detail);
       if (detail.uploadedFiles && detail.uploadedFiles.fileList) {
         const files = detail.uploadedFiles.fileList.map(item =>
-          item.response.resultData,
+          item.response.resultData || {},
         );
-        detail.uploadedFiles = files;
+        detail.uploadedFiles = removeEmpty(files) || [];
       }
       updateFeedback({
         request: {
@@ -235,7 +286,30 @@ export default class Detail extends PureComponent {
       this.setState({ visible: false });
     });
   }
-
+  // 图片上传直接提交
+  @autobind
+  fileUploadData(file, type) {
+    const { location: { query }, updateFeedback } = this.props;
+    const { currentId } = query;
+    let fileStatus = {};
+    if (type === 'ADD') {
+      fileStatus = {
+        uploadedFiles: [file],
+      };
+    } else if (type === 'DELETE') {
+      fileStatus = {
+        deletedFiles: [file],
+      };
+    }
+    updateFeedback({
+      request: {
+        ...fileStatus,
+        id: currentId,
+        processerEmpId: helper.getEmpId(),
+      },
+      currentQuery: query,
+    });
+  }
   // 删除附件
   @autobind
   handleRemoveFile(item) {
@@ -261,21 +335,27 @@ export default class Detail extends PureComponent {
     const { currentId } = query;
     form.validateFields((err, values) => {
       if (values.remarkContent) {
-        if (!err) {
-          updateFeedback({
-            request: {
-              remark: values.remarkContent,
-              id: currentId,
-              processerEmpId: helper.getEmpId(),
-            },
-            currentQuery: query,
-          });
+        if (values.remarkContent.length < 1000) {
+          if (!err) {
+            updateFeedback({
+              request: {
+                remark: values.remarkContent,
+                id: currentId,
+                processerEmpId: helper.getEmpId(),
+              },
+              currentQuery: query,
+            });
+          } else {
+            message.error(err);
+            return;
+          }
         } else {
-          message.error(err);
+          message.error('最大字数限制为1000');
           return;
         }
       } else {
         message.error('您还未填写备注信息');
+        return;
       }
       form.resetFields();
       this.setState({ remarkVisible: false });
@@ -294,32 +374,61 @@ export default class Detail extends PureComponent {
     this.remarkForm = form;
   }
   /**
-   * 详情编辑form
-  */
-  saveEditForm = (form) => {
-    this.editForm = form;
+   * 缩略图预览
+   */
+  @autobind
+  handlePreview() {
+    this.setState({
+      previewVisible: true,
+    });
   }
+
+  @autobind
+  handlePreviewCancel() {
+    this.setState({
+      previewVisible: false,
+    });
+  }
+
   render() {
-    const { dataSource, voDataSource } = this.state;
+    const {
+      dataSource,
+      voDataSource,
+      hasImgUrl,
+      nowStatus,
+      messageBtnValue,
+      inforTxt,
+      previewVisible,
+      newWidth,
+      // newHeight,
+    } = this.state;
     const { resultData = EMPTY_OBJECT } = dataSource || EMPTY_OBJECT;
     const { resultData: voList = EMPTY_OBJECT } = voDataSource || EMPTY_OBJECT;
-    const { feedbackVOList = EMPTY_LIST } = voList; // 处理记录
-    const { appId, feedId, description, mediaUrls } = resultData || EMPTY_OBJECT;
-    const imgUrl = _.isEmpty(mediaUrls) ? EMPTY_OBJECT : JSON.parse(mediaUrls);
+    const { remarkList = EMPTY_LIST,
+      processList = EMPTY_LIST,
+      suggestList = EMPTY_LIST,
+     } = voList; // 处理记录
+    const processRecordList = _.concat(remarkList, suggestList);
+    const handleRecordList = _.concat(remarkList, suggestList, processList);
     const {
-      feedEmpInfo = EMPTY_OBJECT,
-      attachModelList = EMPTY_LIST,
+      attachModelList,
       functionName,
+      feedEmpInfo,
+      description,
       createTime,
+      mediaUrls,
       processer,
+      issueType,
       version,
+      feedId,
       status,
       jiraId,
+      appId,
       tag,
       id,
-      issueType,
     } = resultData || EMPTY_OBJECT; // 反馈用户
-    const feedbackDetail = {
+    const imageUrls = _.isEmpty(mediaUrls) ? EMPTY_OBJECT : JSON.parse(mediaUrls);
+    let feedbackDetail = {
       functionName,
       createTime,
       processer,
@@ -329,11 +438,13 @@ export default class Detail extends PureComponent {
       tag,
       id,
     };
-
+    if (!feedbackDetail) {
+      feedbackDetail = EMPTY_OBJECT;
+    }
     const remarkbtn = classnames({
+      bzBtn: true,
       btnhidden: this.state.remarkVisible,
     });
-    const { hasImgUrl, nowStatus, messageBtnValue } = this.state;
     const type = _.find(issueTypeOptions, item => item.value === issueType);
 
     return (
@@ -342,8 +453,8 @@ export default class Detail extends PureComponent {
           <h1 className="bugtitle">【{type && type.label}】{appId}/{feedId}</h1>
           <div className="row_box">
             {hasImgUrl ?
-              <Row gutter={16}>
-                <Col span="16">
+              <Row gutter={18}>
+                <Col span="18">
                   <div id="detail_module" className="module">
                     <div className="mod_header">
                       <h2 className="toogle_title">问题详情</h2>
@@ -371,10 +482,19 @@ export default class Detail extends PureComponent {
                     </div>
                   </div>
                 </Col>
-                <Col span="8">
-                  <div className="imgbox">
-                    <img src={`${request.prefix}${imgUrl.imageUrls}`} alt="图片" />
+                <Col span="6">
+                  <div className="imgbox" onClick={this.handlePreview}>
+                    <img src={`${request.prefix}/file/${imageUrls[0]}`} alt="图片" />
                   </div>
+                  <Modal
+                    visible={previewVisible}
+                    width={newWidth}
+                    footer={null}
+                    onCancel={this.handlePreviewCancel}
+                    wrapClassName="imgModal"
+                  >
+                    <img alt="图片" style={{ width: '100%' }} src={`${request.prefix}/file/${imageUrls[0]}`} />
+                  </Modal>
                 </Col>
               </Row> :
               <Row>
@@ -398,10 +518,17 @@ export default class Detail extends PureComponent {
                     </div>
                     <div className="mod_content">
                       <div className="des_txt">
-                        {description !== ' ' ? description : '暂无描述'}
+                        {description !== ' ' ? description :
+                        <div className="nodescription">
+                          <span>
+                            <i className="anticon anticon-frown-o" />
+                            暂无描述
+                        </span>
+                        </div>
+                        }
                       </div>
                       <div className="btn_dv">
-                        <Button type="primary" onClick={this.showModal}>{messageBtnValue}</Button>
+                        <Button type="primary" onClick={this.showModal}>{messageBtnValue || '处理问题'}</Button>
                       </div>
                     </div>
                   </div>
@@ -425,30 +552,36 @@ export default class Detail extends PureComponent {
             </div>
             <div className="mod_content">
               <UploadFiles
-                onCreate={this.handleCreate}
+                onCreate={this.fileUploadData}
                 attachModelList={attachModelList}
                 removeFile={this.handleRemoveFile}
               />
             </div>
           </div>
           <div id="processing" className="module">
-            <div className="mod_header">
-              <h2 className="toogle_title">处理记录</h2>
-            </div>
-            <div className="mod_content">
-              <RemarkList
-                remarkList={feedbackVOList}
-              />
-              <div className="remarks_box">
-                <Button icon="edit" className={remarkbtn} onClick={this.showRemark}>备注</Button>
-                <Remark
-                  visible={this.state.remarkVisible}
-                  ref={this.saveRemarkFormRef}
-                  onCancel={this.remarkCancel}
-                  onCreate={this.saveFromRemark}
+            <Tabs onChange={this.handleTabChange} type="card">
+              <TabPane tab="处理意见" key="1">
+                <RemarkList
+                  remarkList={processRecordList}
                 />
-              </div>
-            </div>
+                <div className="mod_content">
+                  <div className="remarks_box">
+                    <Button icon="edit" className={remarkbtn} onClick={this.showRemark}>备注</Button>
+                    <Remark
+                      visible={this.state.remarkVisible}
+                      ref={this.saveRemarkFormRef}
+                      onCancel={this.remarkCancel}
+                      onCreate={this.saveFromRemark}
+                    />
+                  </div>
+                </div>
+              </TabPane>
+              <TabPane tab="操作记录" key="2">
+                <RemarkList
+                  remarkList={handleRecordList}
+                />
+              </TabPane>
+            </Tabs>
           </div>
         </div>
         <ProblemHandling
@@ -457,6 +590,8 @@ export default class Detail extends PureComponent {
           onCancel={this.handleCancel}
           onCreate={this.handleCreate}
           problemDetails={feedbackDetail}
+          title={messageBtnValue}
+          inforTxt={inforTxt}
         />
       </div>
     );

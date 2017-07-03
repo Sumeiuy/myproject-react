@@ -10,20 +10,21 @@ import React, { PropTypes, PureComponent } from 'react';
 const EMPTY_OBJECT = {};
 export default class FeedbackUser extends PureComponent {
   static propTypes = {
-    fbuser: PropTypes.object.isRequired,
+    fbuser: PropTypes.object,
   }
   static defaultProps = {
+    fbuser: EMPTY_OBJECT,
   }
   constructor(props) {
     super(props);
-    const { fbuser = EMPTY_OBJECT } = this.props.fbuser || EMPTY_OBJECT;
+    const { fbuser = EMPTY_OBJECT } = this.props || EMPTY_OBJECT;
     this.state = {
       data: fbuser,
     };
   }
   componentWillReceiveProps(nextProps) {
     const { fbuser: preData } = this.props;
-    const { fbuser } = nextProps;
+    const { fbuser = EMPTY_OBJECT } = nextProps;
     if (fbuser !== preData) {
       this.setState({
         data: fbuser,
@@ -39,13 +40,13 @@ export default class FeedbackUser extends PureComponent {
           <li className="item">
             <div className="wrap">
               <strong className="name">员工号：</strong>
-              <span className="value">{empId}</span>
+              <span className="value">{empId || '无'}</span>
             </div>
           </li>
           <li className="item">
             <div className="wrap">
               <strong className="name">用户：</strong>
-              <span className="value">{name}</span>
+              <span className="value">{name || '无'}</span>
             </div>
           </li>
           <li className="item">
@@ -57,13 +58,13 @@ export default class FeedbackUser extends PureComponent {
           <li className="item">
             <div className="wrap">
               <strong className="name">联系电话：</strong>
-              <span className="value">{cellPhone}</span>
+              <span className="value">{cellPhone || '无'}</span>
             </div>
           </li>
           <li className="item">
             <div className="wrap">
               <strong className="name">邮箱：</strong>
-              <span className="value">{eMailAddr}</span>
+              <span className="value">{eMailAddr || '无'}</span>
             </div>
           </li>
         </ul>

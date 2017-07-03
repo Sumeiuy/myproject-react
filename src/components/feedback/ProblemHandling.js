@@ -8,7 +8,9 @@ import React, { PropTypes, PureComponent } from 'react';
 import { Select, Row, Col, Input, Form, Modal, message, Upload } from 'antd';
 import { createForm } from 'rc-form';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
 import { helper } from '../../utils';
+import uploadRequest from '../../utils/uploadRequest';
 import Icon from '../../components/common/Icon';
 import { feedbackOptions, request } from '../../config';
 import './problemHandling.less';
@@ -30,10 +32,12 @@ export default class ProblemHandling extends PureComponent {
     onCreate: PropTypes.func.isRequired,
     width: PropTypes.string,
     problemDetails: PropTypes.object.isRequired,
+    inforTxt: PropTypes.string,
   }
   static defaultProps = {
     popContent: ' ',
     title: '问题处理',
+    inforTxt: '处理问题表示对此问题做出判断处理。',
     width: '620px',
   }
   constructor(props) {
@@ -55,16 +59,16 @@ export default class ProblemHandling extends PureComponent {
         },
         action: `${request.prefix}/file/feedbackFileUpload`,
         onChange(info) {
-          const status = info.file.status;
-          if (status !== 'uploading') {
-            console.log(info.file, info.fileList);
-          }
+          const file = info.file;
+          const status = file.status;
           if (status === 'done') {
             message.success(`${info.file.name} file uploaded successfully.`);
           } else if (status === 'error') {
             message.error(`${info.file.name} file upload failed.`);
           }
+          return true;
         },
+        customRequest: this.fileCustomRequest,
       },
     };
   }
@@ -86,26 +90,32 @@ export default class ProblemHandling extends PureComponent {
     onCreate(form);
   }
 
+  @autobind
+  fileCustomRequest(option) {
+    return uploadRequest(option);
+  }
   render() {
     const {
+      inforTxt,
+      onCancel,
       visible,
       title,
-      onCancel,
       width,
       form,
     } = this.props;
+    const {
+      popQuestionTagOptions,
+      uploadPops,
+      uploadKey,
+      newDetails,
+    } = this.state;
     const {
       processer,
       status,
       tag,
       id,
-    } = this.state.newDetails;
+    } = newDetails;
     const { getFieldDecorator } = form;
-    const {
-      popQuestionTagOptions,
-      uploadPops,
-      uploadKey,
-    } = this.state;
     const getSelectOption = item => item.map(i =>
       <Option key={i.value} value={i.value}>{i.label}</Option>,
     );
@@ -119,10 +129,12 @@ export default class ProblemHandling extends PureComponent {
         width={width}
         className="problemwrap"
         key={uploadKey}
+        okText="提交"
       >
         <div className="problembox">
           <div className="pro_title">
-            <Icon type="tishi" className="tishi" />处理问题表示对此问题做出判断处理。
+            <Icon type="tishi" className="tishi" />
+            {inforTxt}
           </div>
           <div className="list_box">
             <Form layout="vertical">
@@ -142,7 +154,7 @@ export default class ProblemHandling extends PureComponent {
                 <Col span="4"><div className="label">状态：</div></Col>
                 <Col span="19" offset={1}>
                   <FormItem>
-                    {getFieldDecorator('status', { initialValue: `${status}` })(
+                    {getFieldDecorator('status', { initialValue: `${title === '重新打开' ? 'PROCESSING' : status}` })(
                       <Select style={{ width: 220 }}>
                         <Option value="PROCESSING">解决中</Option>
                         <Option value="CLOSED">关闭</Option>
@@ -155,7 +167,7 @@ export default class ProblemHandling extends PureComponent {
                 <Col span="4"><div className="label">经办人：</div></Col>
                 <Col span="19" offset={1}>
                   <FormItem>
-                    {getFieldDecorator('processer', { initialValue: `${processer}` })(
+                    {getFieldDecorator('processer', { initialValue: `${_.isEmpty(processer) ? helper.getEmpId() : processer}` })(
                       <Select style={{ width: 220 }}>
                         {getSelectOption(allOperatorOptions)}
                       </Select>,
@@ -189,11 +201,13 @@ export default class ProblemHandling extends PureComponent {
                   </FormItem>
                 </Col>
               </Row>
-              <FormItem>
-                {getFieldDecorator('id', { initialValue: `${id}` })(
-                  <Input type="hidden" />,
-                )}
-              </FormItem>
+              <div style={{ display: 'none' }}>
+                <FormItem>
+                  {getFieldDecorator('id', { initialValue: `${id}` })(
+                    <Input type="hidden" />,
+                  )}
+                </FormItem>
+              </div>
             </Form>
           </div>
         </div>

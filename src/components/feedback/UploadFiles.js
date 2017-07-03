@@ -4,19 +4,19 @@
  * @author yangquanjian
  */
 import React, { PropTypes, PureComponent } from 'react';
-import { Row, Col, message, Upload, Form } from 'antd';
+import { Upload, message, Modal } from 'antd';
 import { autobind } from 'core-decorators';
 import { createForm } from 'rc-form';
 import _ from 'lodash';
-import FileItem from './FileItem';
 import { request } from '../../config';
 import { helper } from '../../utils';
+import uploadRequest from '../../utils/uploadRequest';
 import './uploadFiles.less';
 
 let COUNT = 0;
 const EMPTY_LIST = [];
+const confirm = Modal.confirm;
 const Dragger = Upload.Dragger;
-const FormItem = Form.Item;
 
 @createForm()
 export default class UploadFiles extends PureComponent {
@@ -33,31 +33,15 @@ export default class UploadFiles extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { onCreate, form } = props;
+    console.warn('helper', helper);
+    console.warn('uploadRequest', uploadRequest);
     this.state = {
-      formKey: `formKey${COUNT++}`,
-      uploadPops: {
-        name: 'file',
-        multiple: true,
-        showUploadList: true,
-        data: {
-          empId: helper.getEmpId(),
-        },
-        action: `${request.prefix}/file/feedbackFileUpload`,
-        onChange(info) {
-          const status = info.file.status;
-          if (status !== 'uploading') {
-            // console.log(info.file, info.fileList);
-          }
-          if (status === 'done') {
-            // message.success(`${info.file.name} file uploaded successfully.`);
-            onCreate(form);
-          } else if (status === 'error') {
-            message.error(`${info.file.name} file upload failed.`);
-          }
-        },
+      // formKey: `formKey${COUNT++}`,
+      previewImage: '',
+      fList: [],
+      upData: {
+        empId: helper.getEmpId(),
       },
-      fileList: [],
     };
   }
 
@@ -65,63 +49,104 @@ export default class UploadFiles extends PureComponent {
     const { attachModelList: nextFileList = EMPTY_LIST } = nextProps;
     const { attachModelList: prevFileList = EMPTY_LIST } = this.props;
     if (nextFileList !== prevFileList) {
+      let fileList = [];
+      if (nextFileList && nextFileList.length > 0) {
+        /* eslint-disable */
+        const removeEmpty = (obj) => {
+          const objs = obj;
+          Object.keys(objs).forEach(key => (_.isEmpty(objs[key]) || objs[key] === 'undefined') && delete objs[key]);
+          return objs;
+        };
+        const filesList =  removeEmpty(nextFileList);
+        fileList = filesList.map((item, i) => ({
+          uid: `${item.attachUploader || ''}afiles${i}`,
+          name: item.attachName,
+          status: 'done',
+          url: `${request.prefix}/file/${item.attachUrl}`,
+          thumbUrl: item.attachUrl,
+        }));
+      }
       this.setState({
-        fileList: nextFileList,
         formKey: `formKey${COUNT++}`,
-        uploadPops: { ...this.state.uploadPops },
-      }, () => {
-        // console.log(this.state.formKey, '11111111111111111111');
+        fList: fileList,
       });
     }
   }
-
   @autobind
-  getFileList(items) {
-    const { removeFile } = this.props;
-    if (_.isEmpty(items)) {
-      return null;
-    }
-    return items.map(item => (
-      <FileItem
-        key={`k${COUNT++}`}
-        attachName={item.attachName || ''}
-        attachUploader={item.attachUploader || ''}
-        attachUrl={item.attachUrl || ''}
-        onRemoveFile={removeFile}
-      />
-    ));
+  fileCustomRequest(option) {
+    return uploadRequest(option);
   }
 
-  render() {
-    const { fileList, uploadPops, formKey } = this.state;
-    // console.log(formKey, '0000000000000000000');
-    const { form } = this.props;
-    const { getFieldDecorator } = form;
+  @autobind
+  fileOnChange({ file }) {
+    const status = file.status;
+    const response = file.response || {};
+    const { onCreate } = this.props;
+    if (status !== 'uploading') {
+      // console.log(info.file, info.fileList);
+    }
+    if (status === 'done') {
+      onCreate(response.resultData, 'ADD');
+    } else if (status === 'error') {
+      message.error(`${file.name} 上传失败.`);
+    }
+    return true;
+  }
+
+  @autobind
+  fileOnRemove(file) {
+    const { onCreate } = this.props;
+    const nowUserId = helper.getEmpId();
+    const uids = file.uid || '';
+    let uid = uids.split('a');
+    uid = uid.length > 1 ? uid[0] : '';
+    if (!_.isEmpty(uid) && uid === nowUserId) {
+      let delData = {};
+      delData = {
+        attachName: file.name,
+        attachUrl: file.thumbUrl,
+      };
+      confirm({
+        title: '您确定删除该文件?',
+        content: '点击确定删除文件',
+        onOk() {
+          onCreate(delData, 'DELETE');
+        },
+      });
+    } else if (_.isEmpty(uid) || uid === 'rc-uplo') {
+      // message.error(`${file.name} 并未上传成功`);
+      return true;
+    } else {
+      message.warning(`您无权限删除文件${file.name}`);
+    }
+    return false;
+  }
+
+  @autobind
+  createUpload() {
+    const { fList = EMPTY_LIST, upData } = this.state;
+    const uploadKey = `uploadKey${COUNT++}`;
     return (
-      <Row key={formKey}>
-        <Col span="12">
-          <ul id="filelist" className="filelist">
-            {this.getFileList(fileList)}
-          </ul>
-        </Col>
-        <Col span="12" className="upload_dv">
-          <Form
-            layout="vertical"
-          >
-            <FormItem>
-              {getFieldDecorator('uploadedFiles')(
-                <Dragger
-                  {...uploadPops}
-                >
-                  <div className="upload_txt">
-                    + 上传附件
-                      </div>
-                </Dragger>,
-              )},
-            </FormItem>
-          </Form>
-        </Col>
-      </Row>
+      <Dragger
+        key={uploadKey}
+        name="file"
+        data={upData}
+        action={`${request.prefix}/file/feedbackFileUpload`}
+        defaultFileList={fList}
+        onRemove={this.fileOnRemove}
+        onChange={this.fileOnChange}
+        customRequest={this.fileCustomRequest}
+      >
+        <div className="upload_txt">
+          + 上传附件
+        </div>
+      </Dragger>);
+  }
+  render() {
+    return (
+      <div className="uploadBox">
+        {this.createUpload()}
+      </div>
     );
   }
 }

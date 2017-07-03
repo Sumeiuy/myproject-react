@@ -6,8 +6,6 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
-import { withRouter, routerRedux } from 'dva/router';
-import { connect } from 'react-redux';
 import { Cascader, Select, DatePicker } from 'antd';
 import moment from 'moment';
 import _ from 'lodash';
@@ -16,16 +14,7 @@ import './feedbackHeader.less';
 
 const Option = Select.Option;
 const { RangePicker } = DatePicker;
-const mapStateToProps = state => ({
-  boards: state.app.boards,
-});
 
-const mapDispatchToProps = {
-  push: routerRedux.push,
-};
-
-@connect(mapStateToProps, mapDispatchToProps)
-@withRouter
 export default class PageHeader extends PureComponent {
 
   static propTypes = {
@@ -51,6 +40,7 @@ export default class PageHeader extends PureComponent {
         ...query,
         feedbackCreateTimeFrom,
         feedbackCreateTimeTo,
+        isResetPageNum: 'Y',
       },
     });
   }
@@ -65,6 +55,7 @@ export default class PageHeader extends PureComponent {
         ...query,
         [name]: _.isArray(key) ? key[0] : key,
         [funcName]: _.isArray(key) ? key[1] : key,
+        isResetPageNum: 'Y',
       },
     });
   }
@@ -76,6 +67,7 @@ export default class PageHeader extends PureComponent {
       query: {
         ...query,
         [name]: _.isArray(key) ? key.join(',') : key,
+        isResetPageNum: 'Y',
       },
     });
   }
@@ -120,14 +112,14 @@ export default class PageHeader extends PureComponent {
       <div className="feedbackHeader">
         模块: <Cascader
           options={channelOptions}
-          style={{ width: '11%' }}
+          style={{ width: '9%' }}
           changeOnSelect
           placeholder="全部"
           value={cascaderVale}
           onChange={key => this.handleCascaderSelectChange('appId', 'functionName', key)}
         />
         类型: <Select
-          style={{ width: '10%' }}
+          style={{ width: '6%' }}
           placeholder="全部"
           value={issueType}
           onChange={key => this.handleSelectChange('issueType', key)}
@@ -136,7 +128,7 @@ export default class PageHeader extends PureComponent {
           {getSelectOption(typeOptions)}
         </Select>
         问题标签: <Select
-          style={{ width: '10%' }}
+          style={{ width: '8%' }}
           placeholder="全部"
           value={feedbackTagEnum}
           onChange={key => this.handleSelectChange('feedbackTagEnum', key)}
@@ -145,7 +137,7 @@ export default class PageHeader extends PureComponent {
           {getSelectOption(questionTagOptions)}
         </Select>
         状态: <Select
-          style={{ width: '10%' }}
+          style={{ width: '6%' }}
           placeholder="解决中"
           value={feedbackStatusEnum}
           onChange={key => this.handleSelectChange('feedbackStatusEnum', key)}
@@ -154,7 +146,7 @@ export default class PageHeader extends PureComponent {
           {getSelectOption(stateOptions)}
         </Select>
         反馈时间:<RangePicker
-          style={{ width: '16%' }}
+          style={{ width: '14%' }}
           value={[startTime, endTime]}
           onChange={this.handleDateChange}
           placeholder={['开始时间', '结束时间']}
