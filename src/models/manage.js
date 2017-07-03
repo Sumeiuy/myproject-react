@@ -16,6 +16,7 @@ export default {
     deleteLoading: false, // 删除看板成功与否
     publishLoading: false, // 发布看板成功与否
     message: '', // 各种操作的提示信息
+    operateData: {}, // 各种操作后，返回的数据集
   },
   reducers: {
     getAllVisibleReportsSuccess(state, action) {
@@ -73,11 +74,12 @@ export default {
     },
     // 各种操作的状态
     opertateBoardState(state, action) {
-      const { payload: { name, value, message } } = action;
+      const { payload: { name, value, message, operateData } } = action;
       return {
         ...state,
         [name]: value,
         message,
+        operateData,
       };
     },
   },
@@ -132,7 +134,7 @@ export default {
 
     // 创建看板
     // 此时看板还未发布
-    * createBoard({ payload }, { call, put, select }) {
+    * createBoard({ payload }, { call, put }) {
       yield put({
         type: 'opertateBoardState',
         payload: {
@@ -146,24 +148,26 @@ export default {
       const board = createBoardResult.resultData;
       // 如果创建成功
       // 则需要刷新，可编辑看板
-      const boardId = board && board.id;
-      if (boardId > -1) {
-        // 则创建成功，刷新看板
-        const cust = yield select(state => state.manage.custRange);
-        const allEditableBoards = yield call(api.getAllEditableReports, {
-          orgId: cust[0].id,
-        });
-        yield put({
-          type: 'getAllEditableReportsSucess',
-          payload: { allEditableBoards },
-        });
-      }
+      // 此步骤暂时不需要
+      // const boardId = board && board.id;
+      // if (boardId > -1) {
+      //   // 则创建成功，刷新看板
+      //   const cust = yield select(state => state.manage.custRange);
+      //   const allEditableBoards = yield call(api.getAllEditableReports, {
+      //     orgId: cust[0].id,
+      //   });
+      //   yield put({
+      //     type: 'getAllEditableReportsSucess',
+      //     payload: { allEditableBoards },
+      //   });
+      // }
       yield put({
         type: 'opertateBoardState',
         payload: {
           name: 'createLoading',
           value: false,
           message: '创建完成',
+          operateData: board,
         },
       });
     },

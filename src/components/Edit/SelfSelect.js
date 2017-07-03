@@ -147,10 +147,27 @@ export default class SelfSelect extends PureComponent {
     document.addEventListener('click', this.unExpandSelfSelect, false);
   }
 
+  @autobind
+  showAllCheckNode() {
+    const { allCheckedNode, checkAll } = this.state;
+    if (allCheckedNode) {
+      return (
+        <Checkbox
+          value="all"
+          onChange={this.handleAllCheckboxChange}
+          checked={checkAll}
+        >
+          {allCheckedNode.name}
+        </Checkbox>
+      );
+    }
+    return null;
+  }
+
   render() {
     const { options, style } = this.props;
     const firstRequiredCheck = options[0];
-    const { expand, checkAll, groupCheckedList, visibleRangeNames, allCheckedNode } = this.state;
+    const { expand, groupCheckedList, visibleRangeNames } = this.state;
     const iconType = expand ? 'up' : 'down';
     const selfSelectHd = classnames({
       [styles.selfSelectHeader]: true,
@@ -182,13 +199,16 @@ export default class SelfSelect extends PureComponent {
           >
             {firstRequiredCheck.name}
           </Checkbox>
-          <Checkbox
-            value="all"
-            onChange={this.handleAllCheckboxChange}
-            checked={checkAll}
-          >
-            {allCheckedNode.name}
-          </Checkbox>
+          {this.showAllCheckNode() }
+          {/*
+            <Checkbox
+              value="all"
+              onChange={this.handleAllCheckboxChange}
+              checked={checkAll}
+            >
+              {allCheckedNode.name}
+            </Checkbox>
+          */}
           <CheckboxGroup
             value={groupCheckedList}
             onChange={this.handleCheckboxGroupChange}

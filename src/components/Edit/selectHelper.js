@@ -14,6 +14,7 @@ const selfSelectAllCheckNodes = {
     id: 'all',
     name: '所有营业部',
   },
+  other: null,
 };
 
 const selectHandlers = {
@@ -21,9 +22,11 @@ const selectHandlers = {
    * 获取SelfSelect的所有分公司/所有营业部的checkbox节点
    */
   getAllCheckboxNode(userLevel) {
-    let key = 'company';
+    let key = 'other';
     if (userLevel === '2') {
       key = 'store';
+    } else if (userLevel === '1') {
+      key = 'company';
     }
     return selfSelectAllCheckNodes[key];
   },
