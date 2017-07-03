@@ -18,17 +18,17 @@ const contentWrapper = document.getElementById('workspace-content');
 export default class PreviewReport extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
-    reportName: PropTypes.string,
-    boardId: PropTypes.number,
-    boardType: PropTypes.string,
+    reportName: PropTypes.string.isRequired,
+    boardId: PropTypes.number.isRequired,
+    boardType: PropTypes.string.isRequired,
     previewBack: PropTypes.func.isRequired,
     previewPublish: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
-    reportName: '预览报表临时名称哈哈哈哈哈哈哈哈哈',
-    boardId: 2,
-    boardType: 'TYPE_JYYJ',
+    reportName: '',
+    boardId: 1,
+    boardType: 'TYPE_TGJX',
   }
 
   constructor(props) {

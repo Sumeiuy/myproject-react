@@ -53,27 +53,29 @@
   }
 }
 :global {
-  .ant-table-column-sorter{
-    span:before{
-      background: #f8ac59;
+  .react-app {
+    .ant-table-column-sorter{
+      span:before{
+        background: #f8ac59;
+      }
+      .ant-table-column-sorter-up.on .anticon-caret-up, .ant-table-column-sorter-down.on .anticon-caret-up, .ant-table-column-sorter-up.on .anticon-caret-down, .ant-table-column-sorter-down.on .anticon-caret-down {
+        color: #f8ac59;
+      }
     }
-    .ant-table-column-sorter-up.on .anticon-caret-up, .ant-table-column-sorter-down.on .anticon-caret-up, .ant-table-column-sorter-up.on .anticon-caret-down, .ant-table-column-sorter-down.on .anticon-caret-down {
-      color: #f8ac59;
+    .ant-popover-placement-right > .ant-popover-content > .ant-popover-arrow, .ant-popover-placement-rightTop > .ant-popover-content > .ant-popover-arrow, .ant-popover-placement-rightBottom > .ant-popover-content > .ant-popover-arrow {
+      border-right-color: rgba(0, 0, 0, 0.56);
     }
-  }
-  .ant-popover-placement-right > .ant-popover-content > .ant-popover-arrow, .ant-popover-placement-rightTop > .ant-popover-content > .ant-popover-arrow, .ant-popover-placement-rightBottom > .ant-popover-content > .ant-popover-arrow {
-    border-right-color: rgba(0, 0, 0, 0.56);
-  }
-  .ant-popover-placement-right > .ant-popover-content > .ant-popover-arrow:after, .ant-popover-placement-rightTop > .ant-popover-content > .ant-popover-arrow:after, .ant-popover-placement-rightBottom > .ant-popover-content > .ant-popover-arrow:after {
-    border-right-color: transparent;
-  }
-  .ant-popover-inner {
-    background-color: rgba(0, 0, 0, 0.56);
-  }
-  .ant-popover-inner-content{
-    color: rgb(255, 255, 255);
-    line-height: 21px;
-    border-radius: 6px;
+    .ant-popover-placement-right > .ant-popover-content > .ant-popover-arrow:after, .ant-popover-placement-rightTop > .ant-popover-content > .ant-popover-arrow:after, .ant-popover-placement-rightBottom > .ant-popover-content > .ant-popover-arrow:after {
+      border-right-color: transparent;
+    }
+    .ant-popover-inner {
+      background-color: rgba(0, 0, 0, 0.56);
+    }
+    .ant-popover-inner-content{
+      color: rgb(255, 255, 255);
+      line-height: 21px;
+      border-radius: 6px;
+    }
   }
 }
 tr td:first-child .tdWrapperDiv{

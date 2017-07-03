@@ -7,6 +7,7 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
+import classnames from 'classnames';
 
 import styles from './BoardItem.less';
 
@@ -43,9 +44,9 @@ export default class BoardItem extends PureComponent {
   // 发布按钮点击事件
   @autobind
   publishHandle() {
-    const { publish, boardData: { boardStatus, id, ownerOrgId } } = this.props;
+    const { publish, boardData: { boardStatus, id, ownerOrgId, isPublishable } } = this.props;
     const hover = this.state.hover;
-    if (hover && (boardStatus === 'UNRELEASE')) {
+    if ((isPublishable === 'Y') && hover && (boardStatus === 'UNRELEASE')) {
       publish({
         ownerOrgId,
         boardId: id,
@@ -75,19 +76,23 @@ export default class BoardItem extends PureComponent {
       boardStatus,
       createTime,
       updateTime,
-      orgItemDtos,
+      orgModel,
+      isPublishable,
     } = this.props.boardData;
     const hover = this.state.hover;
-    const seeAllow = orgItemDtos.map(o => o.name).join('/');
-    let publish = '';
+    const seeAllow = orgModel.map(o => o.name).join('/');
     let statusText = '';
     if (boardStatus === 'RELEASE') {
-      publish = 'boardStatusPublish';
       statusText = '已发布';
     } else {
-      publish = 'boardStatusUnPublish';
       statusText = hover ? '发布' : '未发布';
     }
+
+    const publishBtnClass = classnames({
+      [styles.boardStatusPublish]: boardStatus === 'RELEASE',
+      [styles.boardStatusUnPublish]: boardStatus === 'UNRELEASE',
+      [styles.boardStatusPublishDisable]: isPublishable === 'N',
+    });
 
     return (
       <a
@@ -97,7 +102,7 @@ export default class BoardItem extends PureComponent {
       >
         <div className={styles.boardImg}>
           <img src="/static/images/bg_tgjx.png" alt="" />
-          <div className={styles[publish]} onClick={this.publishHandle}>
+          <div className={publishBtnClass} onClick={this.publishHandle}>
             {statusText}
           </div>
           <div className={styles.boardInfo}>

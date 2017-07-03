@@ -1,51 +1,53 @@
 :global {
-  .reportName {
-    .ant-dropdown {
-      width: 150px !important;
+  .react-app {
+    .reportName {
+      .ant-dropdown {
+        width: 150px !important;
+        .ant-dropdown-menu-item {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+      .ant-btn {
+        border:none;
+        font-size: 18px;
+        color:#33393c;
+      }
+      .ant-btn-clicked:after {
+        display: none;
+      }
       .ant-dropdown-menu-item {
-        white-space: nowrap;
+        font-size: 12px;
+        color:#404a59;
+        &:hover {
+          background-color: #ececec;
+        }
+      }
+      .ant-dropdown-menu-item-selected {
+        background-color: #fff;
+        &:hover {
+          background-color: #ececec;
+        }
+      }
+      .ant-dropdown-menu-item:last-child {
+        border-radius: 0 0 4px 4px;
+      }
+      .selfDropDownName {
+        position: relative;
+        cursor: pointer;
+        padding: 0 15px;
+        max-width: 300px;
+        min-width: 140px;
         overflow: hidden;
         text-overflow: ellipsis;
-      }
-    }
-    .ant-btn {
-      border:none;
-      font-size: 18px;
-      color:#33393c;
-    }
-    .ant-btn-clicked:after {
-      display: none;
-    }
-    .ant-dropdown-menu-item {
-      font-size: 12px;
-      color:#404a59;
-      &:hover {
-        background-color: #ececec;
-      }
-    }
-    .ant-dropdown-menu-item-selected {
-      background-color: #fff;
-      &:hover {
-        background-color: #ececec;
-      }
-    }
-    .ant-dropdown-menu-item:last-child {
-      border-radius: 0 0 4px 4px;
-    }
-    .selfDropDownName {
-      position: relative;
-      cursor: pointer;
-      padding: 0 15px;
-      max-width: 300px;
-      min-width: 140px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      & > .anticon {
-        position: absolute;
-        top:22px;
-        right: 0;
-        margin-left: 5px;
+        white-space: nowrap;
+        & > .anticon {
+          position: absolute;
+          top:22px;
+          right: 0;
+          margin-left: 5px;
+        }
       }
     }
   }
