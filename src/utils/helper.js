@@ -181,6 +181,12 @@ const helper = {
       feedbackCreateTimeTo: feedbackCreateTimeTo && helper.formatTime(feedbackCreateTimeTo),
     };
 
+    if (formatedTime.feedbackCreateTimeFrom &&
+      formatedTime.feedbackCreateTimeTo
+      && (formatedTime.feedbackCreateTimeFrom === formatedTime.feedbackCreateTimeTo)) {
+      delete formatedTime.feedbackCreateTimeTo;
+    }
+
     // 对反馈状态做处理
     if (!('feedbackStatusEnum' in finalPostData)
       || _.isEmpty(finalPostData.feedbackStatusEnum)) {
