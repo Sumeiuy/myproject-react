@@ -137,6 +137,8 @@ export default class FeedBack extends PureComponent {
     }
 
     const docElemHeight = document.documentElement.clientHeight;
+    const paginationElem = document.querySelector('.ant-pagination');
+    const tableElem = ReactDOM.findDOMNode(document.querySelector('.ant-table'));
     const containerElem = ReactDOM.findDOMNode(document.getElementById('container'));
     const leftSectionElem = ReactDOM.findDOMNode(document.getElementById('leftSection'));
     const rightSectionElem = ReactDOM.findDOMNode(document.getElementById('rightSection'));
@@ -148,6 +150,16 @@ export default class FeedBack extends PureComponent {
     const padding = 10;
     const boxPadding = 12;
     const bottomDistance = 48;
+    let paginationElemHeight = 0;
+
+    if (paginationElem) {
+      const computedStyle = window.getComputedStyle(paginationElem, null);
+      paginationElemHeight = parseFloat(computedStyle.getPropertyValue('height'), 10) +
+        parseFloat(computedStyle.paddingTop) +
+        parseFloat(computedStyle.paddingBottom) +
+        parseFloat(computedStyle.marginTop) +
+        parseFloat(computedStyle.marginBottom);
+    }
 
     if (leftSectionElem && rightSectionElem) {
       topDistance = leftSectionElem.getBoundingClientRect().top;
@@ -155,6 +167,10 @@ export default class FeedBack extends PureComponent {
         bottomDistance - padding - boxPadding;
       leftSectionElem.style.height = `${sectionHeight}px`;
       rightSectionElem.style.height = `${sectionHeight}px`;
+      if (tableElem) {
+        tableElem.style.height = `${sectionHeight - paginationElemHeight}px`;
+        tableElem.style.overflow = 'auto';
+      }
     }
 
     if (containerElem) {
