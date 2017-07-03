@@ -2,13 +2,16 @@
   #content{
     height: 100%;
   }
-  .feedbackbox::-webkit-scrollbar {
+  ::-webkit-scrollbar {
     display: none;  
   }
-  .feedbackbox { 
-    -ms-overflow-style: none; 
-    overflow: auto; 
+  html {
+    -ms-overflow-style: none;
   }
+  // .feedbackbox { 
+  //   -ms-overflow-style: none; 
+  //   overflow: auto; 
+  // }
   .feedbackbox{
     color:#666666;
     font-size: 14px;
@@ -24,7 +27,7 @@
       background-color: white;
     }
     #rightSection {
-      overflow: auto;
+      overflow: hidden;
       background-color: white;
     }
     .isnull_dv{

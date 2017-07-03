@@ -17,12 +17,13 @@ import Icon from '../../components/common/Icon';
 import Detail from '../../components/feedback/Detail';
 import FeedbackList from '../../components/feedback/FeedbackList';
 import FeedbackHeader from '../../components/feedback/FeedbackHeader';
-import { constructPostBody } from '../../utils/helper';
+import { constructPostBody, getEnv } from '../../utils/helper';
 import '../../css/react-split-pane-master.less';
 import './home.less';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
+const BROWSER = getEnv();
 const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
 const mapStateToProps = state => ({
   list: state.feedback.list,
@@ -72,6 +73,7 @@ export default class FeedBack extends PureComponent {
   componentDidMount() {
     this.setDocumentScroll();
     window.addEventListener('resize', this.onResizeChange, false);
+    this.panMov(520);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -144,6 +146,8 @@ export default class FeedBack extends PureComponent {
     const rightSectionElem = ReactDOM.findDOMNode(document.getElementById('rightSection'));
     const nullElem = ReactDOM.findDOMNode(document.getElementById('empty'));
     const workspaceElem = ReactDOM.findDOMNode(document.getElementById('workspace-content'));
+    const innerElem = ReactDOM.findDOMNode(document.querySelector('.inner'));
+    const resizerElem = ReactDOM.findDOMNode(document.querySelector('.Resizer'));
     /* eslint-enable */
 
     let topDistance = 0;
@@ -164,12 +168,18 @@ export default class FeedBack extends PureComponent {
     if (leftSectionElem && rightSectionElem) {
       topDistance = leftSectionElem.getBoundingClientRect().top;
       const sectionHeight = docElemHeight - topDistance -
-        bottomDistance - padding - boxPadding;
-      leftSectionElem.style.height = `${sectionHeight}px`;
+        bottomDistance - padding;
+      leftSectionElem.style.height = `${sectionHeight - boxPadding}px`;
       rightSectionElem.style.height = `${sectionHeight}px`;
       if (tableElem) {
-        tableElem.style.height = `${sectionHeight - paginationElemHeight}px`;
+        tableElem.style.height = `${sectionHeight - boxPadding - paginationElemHeight}px`;
         tableElem.style.overflow = 'auto';
+      }
+      if (innerElem) {
+        innerElem.style.overflow = 'auto';
+      }
+      if (resizerElem) {
+        resizerElem.style.height = `${sectionHeight}px`;
       }
     }
 
@@ -204,6 +214,20 @@ export default class FeedBack extends PureComponent {
     return true;
   }
 
+  // splitPan onChange回调函数
+  @autobind
+  panchange(size) {
+    this.panMov(size);
+  }
+
+  // 重新给pan2样式赋值
+  panMov(size) {
+    if (BROWSER.$browser === 'Internet Explorer') {
+      const node = ReactDOM.findDOMNode(document.querySelector('.Pane2')); // eslint-disable-line
+      node.style.paddingLeft = `${size + 20}px`;
+    }
+  }
+
   render() {
     const { list, location, replace } = this.props;
     const { isEmpty } = this.state;
@@ -233,7 +257,14 @@ export default class FeedBack extends PureComponent {
             </div>
           </Col>
         </Row>
-        <SplitPane split="vertical" minSize={518} maxSize={700} defaultSize={520} className="primary">
+        <SplitPane
+          onChange={this.panchange}
+          split="vertical"
+          minSize={518}
+          maxSize={700}
+          defaultSize={520}
+          className="primary"
+        >
           <Row className={existClass}>
             <Col span="24" className="leftSection" id="leftSection">
               <FeedbackList
