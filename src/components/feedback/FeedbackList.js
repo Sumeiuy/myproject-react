@@ -3,7 +3,7 @@ import { autobind } from 'core-decorators';
 import { Table } from 'antd';
 import classnames from 'classnames';
 import _ from 'lodash';
-import styles from './feedbackList.less';
+import './feedbackList.less';
 import Icon from '../common/Icon';
 import { feedbackOptions } from '../../config';
 
@@ -155,7 +155,7 @@ export default class FeedbackList extends PureComponent {
           <div className="leftSection">
             <div className="id">
               {issueType ? <Icon {...typeIcon} /> : <Icon className="emptyIcon" />}
-              <span className={styles.feedbackId}>{record.feedId || '无'}</span>
+              <span className="feedbackId">{record.feedId || '无'}</span>
             </div>
             <div className="description">{record.description || '无'}</div>
             <div className="address">来自：{name}，{`${l1 || ''}${l2 || ''}${l3 || ''}` || '无'}</div>
@@ -264,6 +264,7 @@ export default class FeedbackList extends PureComponent {
     const paginationOptions = {
       current: parseInt(curPageNum, 10),
       defaultCurrent: 1,
+      size: 'small', // 迷你版
       total: totalRecordNum,
       pageSize: parseInt(curPageSize, 10),
       defaultPageSize: 10,
