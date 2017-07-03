@@ -351,9 +351,11 @@ export default class Detail extends PureComponent {
           }
         } else {
           message.error('最大字数限制为1000');
+          return;
         }
       } else {
         message.error('您还未填写备注信息');
+        return;
       }
       form.resetFields();
       this.setState({ remarkVisible: false });
@@ -370,12 +372,6 @@ export default class Detail extends PureComponent {
   */
   saveRemarkFormRef = (form) => {
     this.remarkForm = form;
-  }
-  /**
-   * 详情编辑form
-  */
-  saveEditForm = (form) => {
-    this.editForm = form;
   }
   /**
    * 缩略图预览
