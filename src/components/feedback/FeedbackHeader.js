@@ -7,7 +7,7 @@
 import React, { PropTypes, PureComponent } from 'react';
 import ReactDOM from 'react-dom';
 import { autobind } from 'core-decorators';
-import { Cascader, Select, DatePicker } from 'antd';
+import { Cascader, Select, DatePicker, message } from 'antd';
 import moment from 'moment';
 import _ from 'lodash';
 import { getEnv } from '../../utils/helper';
@@ -44,15 +44,34 @@ export default class PageHeader extends PureComponent {
     const { replace, location: { pathname, query } } = this.props;
     const feedbackCreateTimeFrom = dateStrings[0];
     const feedbackCreateTimeTo = dateStrings[1];
+    const startDate = feedbackCreateTimeFrom && moment(feedbackCreateTimeFrom).format('YYYY-MM-DD');
+    const endDate = feedbackCreateTimeTo && moment(feedbackCreateTimeTo).format('YYYY-MM-DD');
+    if (endDate && startDate) {
+      if (endDate > startDate) {
+        replace({
+          pathname,
+          query: {
+            ...query,
+            feedbackCreateTimeFrom,
+            feedbackCreateTimeTo,
+            isResetPageNum: 'Y',
+          },
+        });
+        return true;
+      }
+      message.error('开始时间与结束时间不能为同一天', 1);
+      return false;
+    }
     replace({
       pathname,
       query: {
         ...query,
-        feedbackCreateTimeFrom,
-        feedbackCreateTimeTo,
+        feedbackCreateTimeFrom: '',
+        feedbackCreateTimeTo: '',
         isResetPageNum: 'Y',
       },
     });
+    return false;
   }
 
 
@@ -178,7 +197,7 @@ export default class PageHeader extends PureComponent {
         </Select>
         反馈时间:<RangePicker
           style={{ width: '14%' }}
-          value={[startTime, endTime]}
+          defaultValue={[startTime, endTime]}
           onChange={this.handleDateChange}
           placeholder={['开始时间', '结束时间']}
         />
