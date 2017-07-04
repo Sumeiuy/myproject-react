@@ -5,10 +5,12 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
+import ReactDOM from 'react-dom';
 import { autobind } from 'core-decorators';
 import { Cascader, Select, DatePicker } from 'antd';
 import moment from 'moment';
 import _ from 'lodash';
+import { getEnv } from '../../utils/helper';
 import { feedbackOptions } from '../../config';
 import './feedbackHeader.less';
 
@@ -27,6 +29,14 @@ export default class PageHeader extends PureComponent {
     this.state = {
       value: undefined,
     };
+  }
+
+  componentDidMount() {
+    this.addIeInputListener();
+  }
+
+  componentWillUnmount() {
+    this.removeIeInputListener();
   }
 
   @autobind
@@ -59,6 +69,7 @@ export default class PageHeader extends PureComponent {
       },
     });
   }
+
   @autobind
   handleSelectChange(name, key) {
     const { replace, location: { pathname, query } } = this.props;
@@ -72,6 +83,23 @@ export default class PageHeader extends PureComponent {
     });
   }
 
+  // 解决IE下readonly无效
+  @autobind
+  addIeInputListener() {
+    if (getEnv().$browser === 'Internet Explorer') {
+      const node = ReactDOM.findDOMNode(document.querySelector('.cascader_box input')); // eslint-disable-line
+      node.addEventListener('focus', () => node.blur());
+    }
+  }
+
+  // 销毁监听
+  @autobind
+  removeIeInputListener() {
+    if (getEnv().$browser === 'Internet Explorer') {
+      const node = ReactDOM.findDOMNode(document.querySelector('.cascader_box input')); // eslint-disable-line
+      node.removeEventListener('focus', () => node.blur());
+    }
+  }
 
   render() {
     const channelOptions = feedbackOptions.feedbackChannel;
@@ -103,7 +131,7 @@ export default class PageHeader extends PureComponent {
         cascaderVale = [appId];
       }
     }
-
+    // debugger;
     // 默认时间
     const startTime = feedbackCreateTimeFrom ? moment(feedbackCreateTimeFrom) : null;
     const endTime = feedbackCreateTimeTo ? moment(feedbackCreateTimeTo) : null;
