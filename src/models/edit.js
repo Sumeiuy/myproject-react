@@ -12,8 +12,18 @@ export default {
     updateLoading: false, // 保存看板状态
     publishLoading: false, // 发布看板状态
     message: '', // 改变状态的信息
+    indicatorLib: [], // 指标库
   },
   reducers: {
+    // 成功获取指标库
+    getIndicatorLibSuccess(state, action) {
+      const { payload: { indicatorResult } } = action;
+      const indicatorLib = indicatorResult.resultData || [];
+      return {
+        ...state,
+        indicatorLib,
+      };
+    },
     getOneBoardInfoSuccess(state, action) {
       const { payload: { boardInfoResult } } = action;
       const boardInfo = boardInfoResult.resultData || {};
@@ -67,6 +77,14 @@ export default {
       yield put({
         type: 'getAllVisibleRangeSuccess',
         payload: { allVisibleRange },
+      });
+    },
+
+    * getIndicatorLib({ payload }, { call, put }) {
+      const indicatorResult = yield call(api.getIndicators, payload);
+      yield put({
+        type: 'getIndicatorLibSuccess',
+        payload: { indicatorResult },
       });
     },
 

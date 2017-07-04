@@ -18,7 +18,6 @@ import PreviewReport from '../reports/PreviewReport';
 import { BackConfirmModal, PublishConfirmModal } from '../../components/modals';
 
 import styles from './Home.less';
-import { checkTreeObj, checkTreeObj1 } from './tempData';
 
 const fectchDataFunction = (globalLoading, type) => query => ({
   type,
@@ -32,6 +31,7 @@ const mapStateToProps = state => ({
   updateLoading: state.edit.updateLoading,
   publishLoading: state.edit.publishLoading,
   message: state.edit.message,
+  indicatorLib: state.edit.indicatorLib,
   globalLoading: state.activity.global,
 });
 
@@ -40,6 +40,7 @@ const mapDispatchToProps = {
   replace: routerRedux.replace,
   getBoardInfo: fectchDataFunction(true, 'edit/getBoardInfo'),
   getVisibleRange: fectchDataFunction(false, 'edit/getVisibleRange'),
+  getIndicatorLib: fectchDataFunction(false, 'edit/getIndicatorLib'),
   updateBoard: fectchDataFunction(false, 'edit/updateBoard'),
   publishBoard: fectchDataFunction(true, 'edit/publishBoard'),
 };
@@ -52,6 +53,7 @@ export default class BoardEditHome extends PureComponent {
     location: PropTypes.object.isRequired,
     boardInfo: PropTypes.object.isRequired,
     visibleRanges: PropTypes.array.isRequired,
+    indicatorLib: PropTypes.array.isRequired,
     message: PropTypes.string.isRequired,
     globalLoading: PropTypes.bool.isRequired,
     updateLoading: PropTypes.bool.isRequired,
@@ -60,6 +62,7 @@ export default class BoardEditHome extends PureComponent {
     replace: PropTypes.func.isRequired,
     getBoardInfo: PropTypes.func.isRequired,
     getVisibleRange: PropTypes.func.isRequired,
+    getIndicatorLib: PropTypes.func.isRequired,
     updateBoard: PropTypes.func.isRequired,
     publishBoard: PropTypes.func.isRequired,
   }
@@ -75,22 +78,28 @@ export default class BoardEditHome extends PureComponent {
       preview: false,
       vrTipVisible: false,
       visibleRangeTip: '',
-      publishBt: false, // 发布按钮状态
+      publishBt: false, // 发布按钮状态, 默认为false，即可用状态
       previewBt: false, // 预览按钮状态
       saveBt: false, // 保存按钮状态，false为已经保存过了的状态
       publishConfirmModal: false,
       backConfirmModal: false,
+      hasPublished: false, // 看板是否已经发布
+      saveBtnType: 'default', // 按钮样式
     };
   }
 
   componentWillMount() {
-    const { location: { query: { boardId, orgId } } } = this.props;
-    this.props.getBoardInfo({
+    const { location: { query: { boardId, orgId, boardType } } } = this.props;
+    const { getBoardInfo, getVisibleRange, getIndicatorLib } = this.props;
+    getBoardInfo({
       boardId,
       orgId,
     });
-    this.props.getVisibleRange({
+    getVisibleRange({
       orgId,
+    });
+    getIndicatorLib({
+      type: boardType,
     });
   }
 
@@ -98,12 +107,18 @@ export default class BoardEditHome extends PureComponent {
     const { visibleRanges, boardInfo } = nextProps;
     if (!_.isEmpty(visibleRanges) && !_.isEmpty(boardInfo)) {
       const userVR = boardInfo.orgModel; // 只出现下级选项
+      const hasPublished = boardInfo.boardStatus === 'RELEASE';
+      const summury = boardInfo.summury;// 用户选择的总量指标
+      const detail = boardInfo.detail; // 用户选择的分类指标
       const finalLabel = this.getVRLabel(userVR, visibleRanges);
       this.setState({
         bNEditorOriginal: boardInfo.name, // 看板名称
         vROriginal: finalLabel, // 可见范围的显示label
         vREditorOriginal: userVR.splice(0, 1), // 选择的可见范围
         visibleRangeTip: this.getTooltipHtml(finalLabel),
+        hasPublished,
+        publishBt: !summury && !detail,
+        previewBt: !summury && !detail,
       });
     }
     const { publishLoading: prePL, updateLoading: preUL } = this.props;
@@ -136,6 +151,13 @@ export default class BoardEditHome extends PureComponent {
   }
 
   @autobind
+  changeBtnState(button) {
+    this.setState({
+      ...button,
+    });
+  }
+
+  @autobind
   editorStateController(editor, flag) {
     if (flag) {
       // 如果是打开某一个,其余需要关闭
@@ -161,6 +183,7 @@ export default class BoardEditHome extends PureComponent {
       // 发布
       publishBoard(board);
     } else {
+      // 更新
       updateBoard(board);
     }
   }
@@ -169,10 +192,11 @@ export default class BoardEditHome extends PureComponent {
   @autobind
   editorConfirm(obj) {
     const { key, value } = obj;
-    // const { id, ownerOrgId } = this.props.boardInfo;
     if (key === 'boardNameEditor') {
       this.setState({
         bNEditorOriginal: value,
+        saveBtnType: 'primary',
+        saveBt: true,
       });
     }
     if (key === 'visibleRangeEditor') {
@@ -181,6 +205,8 @@ export default class BoardEditHome extends PureComponent {
         vROriginal: value.label,
         vREditorOriginal: value.currency,
         visibleRangeTip: tip,
+        saveBtnType: 'primary',
+        saveBt: true,
       });
     }
   }
@@ -256,6 +282,11 @@ export default class BoardEditHome extends PureComponent {
   }
 
   @autobind
+  backModalConfirm() {
+    this.props.push('/boardManage');
+  }
+
+  @autobind
   handleBackBtnClick() {
     // 需要判断，是否进行了指标选择
     const { saveBt } = this.state;
@@ -268,7 +299,9 @@ export default class BoardEditHome extends PureComponent {
 
   @autobind
   handlePreviewBtnClick() {
-    this.showPreview();
+    // 预览按钮点击之后，需要先保存
+    this.saveBoard({});
+    // this.showPreview();
   }
 
   @autobind
@@ -277,13 +310,16 @@ export default class BoardEditHome extends PureComponent {
   }
 
   render() {
-    const { boardInfo, visibleRanges } = this.props;
+    const { boardInfo, visibleRanges, indicatorLib } = this.props;
     const { vROriginal, vREditorOriginal, bNEditorOriginal } = this.state;
     // 做初始化容错处理
     if (_.isEmpty(visibleRanges)) {
       return null;
     }
     if (_.isEmpty(boardInfo)) {
+      return null;
+    }
+    if (_.isEmpty(indicatorLib)) {
       return null;
     }
     const {
@@ -294,9 +330,10 @@ export default class BoardEditHome extends PureComponent {
       vrTipVisible,
       publishBt,
       previewBt,
-      saveBt,
       publishConfirmModal,
       backConfirmModal,
+      hasPublished,
+      saveBtnType,
     } = this.state;
     const { location } = this.props;
     // 发布共同配置项
@@ -313,6 +350,18 @@ export default class BoardEditHome extends PureComponent {
       modalCaption: '提示',
       visible: backConfirmModal,
       closeModal: this.closeModal,
+      confirm: this.backModalConfirm,
+    };
+
+    // 总量指标库
+    const summuryLib = {
+      type: 'summury',
+      checkTreeArr: indicatorLib,
+    };
+    // 分类明细指标库
+    const detailLib = {
+      type: 'detail',
+      checkTreeArr: indicatorLib,
     };
 
     const { boardTypeDesc, boardType, id } = this.props.boardInfo;
@@ -369,6 +418,7 @@ export default class BoardEditHome extends PureComponent {
               visible={vrTipVisible}
               onVisibleChange={this.vrTipVisibleHandle}
               overlayClassName="visibleRangeToolTip"
+              getPopupContainer={() => document.querySelector('.react-app')}
             >
               <div className={styles.basicInfo}>
                 <div className={styles.title}>可见范围:</div>
@@ -398,17 +448,57 @@ export default class BoardEditHome extends PureComponent {
           </div>
         </div>
         <div className={styles.editPageMain}>
-          <BoardSelectTree key={1} data={checkTreeObj} />
-          <BoardSelectTree key={2} data={checkTreeObj1} />
+          <BoardSelectTree key="summuryLib" data={summuryLib} />
+          <BoardSelectTree key="detailLib" data={detailLib} />
         </div>
         <div className={styles.editPageFoot}>
           <div className={styles.buttonGroup}>
-            <Button disabled={publishBt} className={styles.editBt} onClick={this.handlePublishBtnClick} key="editPubl" size="large" type="primary">发布</Button>
-            <Button className={styles.editBt} onClick={this.handleBackBtnClick} key="editBack" size="large">返回</Button>
+            <Button
+              disabled={publishBt}
+              className={styles.editBt}
+              onClick={this.handlePublishBtnClick}
+              key="editPubl"
+              size="large"
+              type="primary"
+            >
+              发布
+            </Button>
+            <Button
+              className={styles.editBt}
+              onClick={this.handleBackBtnClick}
+              key="editBack"
+              size="large"
+            >
+              返回
+            </Button>
           </div>
           <div className={styles.buttonGroup}>
-            <Button disabled={previewBt} className={styles.editBt} onClick={this.handlePreviewBtnClick} key="editPrev" size="large">预览</Button>
-            <Button disabled={saveBt} className={styles.editBt} onClick={this.handleSaveBtnClick} key="editSave" size="large">保存</Button>
+            <Button
+              disabled={previewBt}
+              className={styles.editBt}
+              onClick={this.handlePreviewBtnClick}
+              key="editPrev"
+              size="large"
+            >
+              预览
+            </Button>
+            {/* 对于已经发布的看板不需要保存 */}
+            {
+              hasPublished ?
+              null
+              :
+              (
+                <Button
+                  className={styles.editBt}
+                  onClick={this.handleSaveBtnClick}
+                  key="editSave"
+                  size="large"
+                  type={saveBtnType}
+                >
+                  保存
+                </Button>
+              )
+            }
           </div>
         </div>
         <PublishConfirmModal {...publishConfirmMProps} />
