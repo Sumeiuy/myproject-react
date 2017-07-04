@@ -273,10 +273,10 @@ export default class ProblemDetail extends PureComponent {
                     <Icon type="edit" className="anticon-edit" />
                   </span>
                 </div>
-                <div className={qtHiddenValue}>
+                <div className={qtHiddenValue} id="select-tag">
                   <FormItem>
                     {getFieldDecorator('tag', { initialValue: `${this.dataNull(tag)}` })(
-                      <Select style={{ width: 140 }} className="qtSelect" id="qtSelect">
+                      <Select style={{ width: 140 }} className="qtSelect" id="qtSelect" getPopupContainer={() => document.getElementById('select-tag')}>
                         {getSelectOption(questionTagOptions)}
                       </Select>,
                     )}
@@ -325,10 +325,10 @@ export default class ProblemDetail extends PureComponent {
                     <Icon type="edit" className="anticon-edit" />
                   </span>
                 </div>
-                <div className={processerHiddenValue}>
+                <div className={processerHiddenValue} id="select-processer">
                   <FormItem>
                     {getFieldDecorator('processer', { initialValue: `${this.dataNull(processer)}` })(
-                      <Select style={{ width: 140 }} className="qtSelect">
+                      <Select style={{ width: 140 }} className="qtSelect" getPopupContainer={() => document.getElementById('select-processer')}>
                         {getSelectOption(allOperatorOptions)}
                       </Select>,
                     )}
