@@ -106,8 +106,8 @@ export default class BoardEditHome extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { visibleRanges, boardInfo } = nextProps;
-    if (!_.isEmpty(visibleRanges) && !_.isEmpty(boardInfo)) {
+    const { visibleRanges, boardInfo, indicatorLib } = nextProps;
+    if (!_.isEmpty(visibleRanges) && !_.isEmpty(boardInfo) && !_.isEmpty(indicatorLib)) {
       const userVR = this.getAllUserVRKeys(boardInfo.orgModel);
       const hasPublished = boardInfo.boardStatus === 'RELEASE';
       // 转化总量指标和分类指标
