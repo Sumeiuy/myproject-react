@@ -85,6 +85,8 @@ export default class BoardEditHome extends PureComponent {
       backConfirmModal: false,
       hasPublished: false, // 看板是否已经发布
       saveBtnType: 'default', // 按钮样式
+      summuryIndicator: [], // 用户选中的总量指标
+      detailIndicator: [], // 用户选中的分类明细指标
     };
   }
 
@@ -108,8 +110,9 @@ export default class BoardEditHome extends PureComponent {
     if (!_.isEmpty(visibleRanges) && !_.isEmpty(boardInfo)) {
       const userVR = boardInfo.orgModel; // 只出现下级选项
       const hasPublished = boardInfo.boardStatus === 'RELEASE';
-      const summury = boardInfo.summury;// 用户选择的总量指标
-      const detail = boardInfo.detail; // 用户选择的分类指标
+      const summury = this.getUserSummuryKeys(boardInfo.summury);// 用户选择的总量指标
+      const detail = this.initialDetailIndcators(boardInfo.detail); // 用户选择的分类指标
+      // 转化总量指标和分类指标
       const finalLabel = this.getVRLabel(userVR, visibleRanges);
       this.setState({
         bNEditorOriginal: boardInfo.name, // 看板名称
@@ -117,8 +120,10 @@ export default class BoardEditHome extends PureComponent {
         vREditorOriginal: userVR.splice(0, 1), // 选择的可见范围
         visibleRangeTip: this.getTooltipHtml(finalLabel),
         hasPublished,
-        publishBt: !summury && !detail,
-        previewBt: !summury && !detail,
+        publishBt: _.isEmpty(summury) && _.isEmpty(detail),
+        previewBt: _.isEmpty(summury) && _.isEmpty(detail),
+        summuryIndicator: summury,
+        detailIndicator: detail,
       });
     }
     const { publishLoading: prePL, updateLoading: preUL } = this.props;
@@ -127,6 +132,9 @@ export default class BoardEditHome extends PureComponent {
       message.success('发布成功');
     }
     if (preUL && !updateLoading) {
+      this.setState({
+        saveBt: false,
+      });
       message.success('保存成功');
     }
   }
@@ -149,13 +157,47 @@ export default class BoardEditHome extends PureComponent {
       </div>
     );
   }
+  @autobind
+  getUserSummuryKeys(summury) {
+    if (!_.isEmpty(summury)) {
+      return summury.map(o => o.key);
+    }
+    return [];
+  }
 
   @autobind
-  changeBtnState(button) {
-    this.setState({
-      ...button,
-    });
+  getDetailCheckedKeys(detail) {
+    if (Array.isArray(detail)) {
+      const detailCheckedKeys = [];
+      detail.forEach((item) => {
+        const children = item.detailIndicators || [];
+        children.forEach(o => detailCheckedKeys.push(o.key));
+      });
+      return detailCheckedKeys;
+    }
+    return [];
   }
+
+  @autobind
+  initialDetailIndcators(detail) {
+    if (_.isEmpty(detail)) {
+      return [];
+    }
+    const result = [];
+    detail.forEach((item) => {
+      const children = item.detailIndicators;
+      const category = item.indicatorCategoryDto;
+      const detailIndicatorIds = [];
+      children.forEach(child => detailIndicatorIds.push(child.key));
+      const single = {
+        categoryKey: category.categoryKey,
+        detailIndicatorIds,
+      };
+      result.push(single);
+    });
+    return result;
+  }
+
 
   @autobind
   editorStateController(editor, flag) {
@@ -262,7 +304,7 @@ export default class BoardEditHome extends PureComponent {
 
   @autobind
   saveBoard(extraParam) {
-    const { bNEditorOriginal, vREditorOriginal } = this.state;
+    const { bNEditorOriginal, vREditorOriginal, summuryIndicator, detailIndicator } = this.state;
     const { id, ownerOrgId } = this.props.boardInfo;
     // 后面新增指标库
     this.saveBoardChange({
@@ -270,6 +312,8 @@ export default class BoardEditHome extends PureComponent {
       ownerOrgId,
       name: bNEditorOriginal,
       permitOrgIds: vREditorOriginal,
+      summuryIndicator,
+      detailIndicator,
       ...extraParam,
     });
   }
@@ -301,12 +345,34 @@ export default class BoardEditHome extends PureComponent {
   handlePreviewBtnClick() {
     // 预览按钮点击之后，需要先保存
     this.saveBoard({});
-    // this.showPreview();
+    this.showPreview();
   }
 
   @autobind
   handleSaveBtnClick() {
     this.saveBoard({});
+  }
+
+  @autobind
+  changeBtnState(button) {
+    this.setState({
+      ...button,
+    });
+  }
+
+  @autobind
+  saveUserCheckedIndicators(type, indicators) {
+    if (type === 'summury') {
+      this.setState({
+        summuryIndicator: indicators,
+        saveBtnType: 'primary',
+      });
+    } else {
+      this.setState({
+        detailIndicator: indicators,
+        saveBtnType: 'primary',
+      });
+    }
   }
 
   render() {
@@ -353,20 +419,21 @@ export default class BoardEditHome extends PureComponent {
       confirm: this.backModalConfirm,
     };
 
+    const { summury, detail } = boardInfo;
     // 总量指标库
+    const summuryCheckedKeys = this.getUserSummuryKeys(summury);
     const summuryLib = {
       type: 'summury',
-      checkedKeys: [],
       checkTreeArr: indicatorLib,
+      checkedKeys: summuryCheckedKeys,
     };
     // 分类明细指标库
+    const detailCheckedKeys = this.getDetailCheckedKeys(detail);
     const detailLib = {
       type: 'detail',
-      checkedKeys: [],
       checkTreeArr: indicatorLib,
+      checkedKeys: detailCheckedKeys,
     };
-    console.warn('summuryLib', summuryLib);
-    console.warn('detailLib', detailLib);
 
     const { boardTypeDesc, boardType, id } = this.props.boardInfo;
     // 初始化的时候还没有值
@@ -452,8 +519,16 @@ export default class BoardEditHome extends PureComponent {
           </div>
         </div>
         <div className={styles.editPageMain}>
-          <BoardSelectTree key="summuryLib" data={summuryLib} />
-          <BoardSelectTree key="detailLib" data={detailLib} />
+          <BoardSelectTree
+            key="summuryLib"
+            data={summuryLib}
+            saveIndcator={this.saveUserCheckedIndicators}
+          />
+          <BoardSelectTree
+            key="detailLib"
+            data={detailLib}
+            saveIndcator={this.saveUserCheckedIndicators}
+          />
         </div>
         <div className={styles.editPageFoot}>
           <div className={styles.buttonGroup}>
