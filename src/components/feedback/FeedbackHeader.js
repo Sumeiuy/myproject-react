@@ -62,6 +62,15 @@ export default class PageHeader extends PureComponent {
       message.error('开始时间与结束时间不能为同一天', 1);
       return false;
     }
+    replace({
+      pathname,
+      query: {
+        ...query,
+        feedbackCreateTimeFrom: '',
+        feedbackCreateTimeTo: '',
+        isResetPageNum: 'Y',
+      },
+    });
     return false;
   }
 
