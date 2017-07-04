@@ -108,16 +108,16 @@ export default class BoardEditHome extends PureComponent {
   componentWillReceiveProps(nextProps) {
     const { visibleRanges, boardInfo } = nextProps;
     if (!_.isEmpty(visibleRanges) && !_.isEmpty(boardInfo)) {
-      const userVR = boardInfo.orgModel; // 只出现下级选项
+      const userVR = this.getAllUserVRKeys(boardInfo.orgModel);
       const hasPublished = boardInfo.boardStatus === 'RELEASE';
+      // 转化总量指标和分类指标
       const summury = this.getUserSummuryKeys(boardInfo.summury);// 用户选择的总量指标
       const detail = this.initialDetailIndcators(boardInfo.detail); // 用户选择的分类指标
-      // 转化总量指标和分类指标
-      const finalLabel = this.getVRLabel(userVR, visibleRanges);
+      const finalLabel = this.getVRLabel(userVR.slice(1), visibleRanges);
       this.setState({
         bNEditorOriginal: boardInfo.name, // 看板名称
         vROriginal: finalLabel, // 可见范围的显示label
-        vREditorOriginal: userVR.splice(0, 1), // 选择的可见范围
+        vREditorOriginal: userVR.slice(1), // 选择的可见范围
         visibleRangeTip: this.getTooltipHtml(finalLabel),
         hasPublished,
         publishBt: _.isEmpty(summury) && _.isEmpty(detail),
@@ -137,6 +137,10 @@ export default class BoardEditHome extends PureComponent {
       });
       message.success('保存成功');
     }
+  }
+  @autobind
+  getAllUserVRKeys(orgModel) {
+    return orgModel.map(o => o.id);
   }
 
   @autobind
@@ -262,7 +266,6 @@ export default class BoardEditHome extends PureComponent {
 
   @autobind
   hidePreview() {
-    console.log('hidePreview');
     this.setState({
       preview: false,
     });
@@ -452,7 +455,7 @@ export default class BoardEditHome extends PureComponent {
     (
       <div className="page-invest content-inner">
         <div className={styles.editPageHd}>
-          <div className={styles.HdName} onClick={this.showPreview}>看板编辑</div>
+          <div className={styles.HdName}>看板编辑</div>
         </div>
         <div className={styles.editBasicHd}>
           <div className={styles.editBasic}>
