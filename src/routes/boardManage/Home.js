@@ -16,6 +16,8 @@ import { getEmpId } from '../../utils/helper';
 import BoardSelect from '../../components/pageCommon/BoardSelect';
 import BoardItem from '../../components/pageCommon/BoardItem';
 import { CreateBoardModal, DeleteBoardModal, PublishConfirmModal } from '../../components/modals';
+import ImgAdd from '../../../static/images/bg_add.png';
+import ImgTGJX from '../../../static/images/bg_tgjx.png';
 
 import styles from './Home.less';
 
@@ -238,11 +240,11 @@ export default class BoardManageHome extends PureComponent {
                 onClick={this.createBoardHandle}
               >
                 <div className={styles.boardAdd}>
-                  <img src="/static/images/bg_add.png" alt="" />
+                  <img src={ImgAdd} alt="" />
                   <h3>创建看板</h3>
                 </div>
                 <div className={styles.boardImg}>
-                  <img src="/static/images/bg_tgjx.png" alt="" />
+                  <img src={ImgTGJX} alt="" />
                 </div>
                 <div className={styles.boardTitle} />
               </a>
