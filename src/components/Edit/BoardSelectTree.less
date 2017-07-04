@@ -44,18 +44,34 @@
     .treeMainRight{
       -webkit-box-flex: 1;
       margin-left: 16px;
-      div{
+      min-width: 470px;
+      &>div{
         height: 400px;
+        overflow-y: auto;
         box-sizing: border-box;
         border: 1px solid #dfdfdf;
+        padding: 10px 20px;
         .selectItem{
           display: inline-block;
           padding: 4px 7px 4px 15px;
+          margin: 10px 10px 0 0;
           background: #f0f0f0;
-          margin: 10px 0 0 10px;
           border-radius: 4px;
           &:hover{
             box-shadow: 0.5px 0.866px 3px 0px rgb( 173, 173, 173 );
+          }
+        }
+        .treeMainRigthChildTitle{
+          margin-top: 20px;
+          &:first-child{
+            margin-top: 0;
+          }
+          h3{
+            height: 30px;
+            line-height: 30px;
+            text-indent: 22px;
+            background: url('/static/images/icon-title.png') no-repeat 0 center;
+            background-size: 14px 16px;
           }
         }
         :global {
