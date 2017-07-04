@@ -136,6 +136,7 @@ export default class FeedBack extends PureComponent {
     const UTBContentElem = ReactDOM.findDOMNode(document.getElementById('UTBContent'));
     if (UTBContentElem) {
       UTBContentElem.style.marginRight = '0px';
+      UTBContentElem.style.marginBottom = '0px';
     }
 
     const docElemHeight = document.documentElement.clientHeight;
@@ -148,6 +149,7 @@ export default class FeedBack extends PureComponent {
     const workspaceElem = ReactDOM.findDOMNode(document.getElementById('workspace-content'));
     const innerElem = ReactDOM.findDOMNode(document.querySelector('.inner'));
     const resizerElem = ReactDOM.findDOMNode(document.querySelector('.Resizer'));
+    const feedbackHeaderElem = document.querySelector('.feedbackHeader');
     /* eslint-enable */
 
     let topDistance = 0;
@@ -155,6 +157,7 @@ export default class FeedBack extends PureComponent {
     const boxPadding = 12;
     const bottomDistance = 48;
     let paginationElemHeight = 0;
+    let headerHeight = 0;
 
     if (paginationElem) {
       const computedStyle = window.getComputedStyle(paginationElem, null);
@@ -164,6 +167,9 @@ export default class FeedBack extends PureComponent {
         parseFloat(computedStyle.marginTop) +
         parseFloat(computedStyle.marginBottom);
     }
+    if (feedbackHeaderElem) {
+      headerHeight = feedbackHeaderElem.getBoundingClientRect().height;
+    }
 
     if (leftSectionElem && rightSectionElem) {
       topDistance = leftSectionElem.getBoundingClientRect().top;
@@ -171,6 +177,7 @@ export default class FeedBack extends PureComponent {
         bottomDistance - padding;
       leftSectionElem.style.height = `${sectionHeight - boxPadding}px`;
       rightSectionElem.style.height = `${sectionHeight}px`;
+
       if (tableElem) {
         tableElem.style.height = `${sectionHeight - boxPadding - paginationElemHeight}px`;
         tableElem.style.overflow = 'auto';
@@ -184,10 +191,9 @@ export default class FeedBack extends PureComponent {
     }
 
     if (containerElem) {
-      containerElem.style.overflow = 'auto';
       if (workspaceElem) {
         // FSP内嵌里面
-        containerElem.style.height = `${docElemHeight - bottomDistance - padding - top}px`;
+        containerElem.style.height = `${(docElemHeight - bottomDistance - topDistance) + headerHeight}px`;
       } else {
         containerElem.style.height = `${docElemHeight - bottomDistance - padding}px`;
       }
