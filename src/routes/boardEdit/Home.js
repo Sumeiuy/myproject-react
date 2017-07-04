@@ -149,13 +149,27 @@ export default class BoardEditHome extends PureComponent {
       </div>
     );
   }
+  @autobind
+  getUserSummuryKeys(summury) {
+    if (!_.isEmpty(summury)) {
+      return summury.map(o => o.key);
+    }
+    return [];
+  }
 
   @autobind
-  changeBtnState(button) {
-    this.setState({
-      ...button,
-    });
+  getDetailCheckedKeys(detail) {
+    if (Array.isArray(detail)) {
+      const detailCheckedKeys = [];
+      detail.forEach((item) => {
+        const children = item.detailIndicators || [];
+        children.forEach(o => detailCheckedKeys.push(o.key));
+      });
+      return detailCheckedKeys;
+    }
+    return [];
   }
+
 
   @autobind
   editorStateController(editor, flag) {
@@ -309,6 +323,13 @@ export default class BoardEditHome extends PureComponent {
     this.saveBoard({});
   }
 
+  @autobind
+  changeBtnState(button) {
+    this.setState({
+      ...button,
+    });
+  }
+
   render() {
     const { boardInfo, visibleRanges, indicatorLib } = this.props;
     const { vROriginal, vREditorOriginal, bNEditorOriginal } = this.state;
@@ -353,15 +374,20 @@ export default class BoardEditHome extends PureComponent {
       confirm: this.backModalConfirm,
     };
 
+    const { summury, detail } = boardInfo;
     // 总量指标库
+    const summuryCheckedKeys = this.getUserSummuryKeys(summury);
     const summuryLib = {
       type: 'summury',
       checkTreeArr: indicatorLib,
+      checkedKeys: summuryCheckedKeys,
     };
     // 分类明细指标库
+    const detailCheckedKeys = this.getDetailCheckedKeys(detail);
     const detailLib = {
       type: 'detail',
       checkTreeArr: indicatorLib,
+      checkedKeys: detailCheckedKeys,
     };
 
     const { boardTypeDesc, boardType, id } = this.props.boardInfo;
