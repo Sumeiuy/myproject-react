@@ -126,6 +126,7 @@ export default class BoardSelectTree extends PureComponent {
     });
     const checkedKeys = data.checkedKeys;
     const checkTreeArr = data.checkTreeArr;
+    // treeNodeHtml = getTreeNode(checkTreeArr);
     let selfCheckedNodes;
     if (!isSummury) {
       selfCheckedNodes = checkedKeys.map((item) => {
@@ -348,11 +349,18 @@ export default class BoardSelectTree extends PureComponent {
     }
   }
   render() {
-    const checkTreeArr = this.state.checkTreeArr;
-    const type = this.state.type;
-    const isSummury = this.state.isSummury;
-    const selfCheckedNodes = this.state.selfCheckedNodes;
-    const allParentNodes = this.state.allParentNodes;
+    const {
+      checkTreeArr,
+      type,
+      isSummury,
+      selectedKeys,
+      selfCheckedNodes,
+      allParentNodes,
+      checkedKeys,
+      autoExpandParent,
+      expandedKeys,
+      nowSelectNode,
+    } = this.state;
     treeNodeHtml = getTreeNode(checkTreeArr);
     return (
       // 树结构整体
@@ -377,13 +385,13 @@ export default class BoardSelectTree extends PureComponent {
                 <Tree
                   checkable
                   checkStrictly
-                  onExpand={this.onExpand}
-                  expandedKeys={this.state.expandedKeys}
-                  autoExpandParent={this.state.autoExpandParent}
-                  onCheck={this.onCheck}
-                  checkedKeys={this.state.checkedKeys}
+                  expandedKeys={expandedKeys}
+                  autoExpandParent={autoExpandParent}
+                  checkedKeys={checkedKeys}
+                  selectedKeys={selectedKeys}
                   onSelect={this.onSelect}
-                  selectedKeys={this.state.selectedKeys}
+                  onCheck={this.onCheck}
+                  onExpand={this.onExpand}
                 >
                   {treeNodeHtml}
                 </Tree>
@@ -448,15 +456,15 @@ export default class BoardSelectTree extends PureComponent {
         </div>
         <div className={styles.treeNodeInfo}>
           {
-            (this.state.nowSelectNode && this.state.nowSelectNode.key) ?
+            (nowSelectNode && nowSelectNode.key) ?
               <div>
                 <h4>
-                  <span>{this.state.nowSelectNode.name}：</span>
-                  {this.state.nowSelectNode.description}
+                  <span>{nowSelectNode.name}：</span>
+                  {nowSelectNode.description}
                 </h4>
                 {
                   !isSummury ?
-                    <h4>{this.state.nowSelectNode.description}</h4>
+                    <h4>{nowSelectNode.description}</h4>
                   :
                     ''
                 }
