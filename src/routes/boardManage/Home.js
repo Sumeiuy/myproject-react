@@ -101,8 +101,8 @@ export default class BoardManageHome extends PureComponent {
     const { push, operateData, createLoading, deleteLoading } = nextProps;
     if (preCL && !createLoading) {
       // 创建完成后，需要跳转到Edit
-      const { id, ownerOrgId } = operateData;
-      push(`/boardEdit?boardId=${id}&orgId=${ownerOrgId}`);
+      const { id, ownerOrgId, boardType } = operateData;
+      push(`/boardEdit?boardId=${id}&orgId=${ownerOrgId}&boardType=${boardType}`);
     }
     if (preDL && !deleteLoading) {
       // 删除成功
