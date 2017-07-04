@@ -62,8 +62,8 @@ export default class BoardItem extends PureComponent {
   // 进入编辑页面
   @autobind
   editBoardHandle() {
-    const { id, ownerOrgId } = this.props.boardData;
-    this.props.push(`/boardEdit?boardId=${id}&orgId=${ownerOrgId}`);
+    const { id, ownerOrgId, boardType } = this.props.boardData;
+    this.props.push(`/boardEdit?boardId=${id}&orgId=${ownerOrgId}&boardType=${boardType}`);
   }
   @autobind
   deleteBoardHandle() {

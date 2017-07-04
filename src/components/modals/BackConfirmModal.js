@@ -16,6 +16,7 @@ export default class BackConfirmModal extends PureComponent {
     modalKey: PropTypes.string.isRequired,
     visible: PropTypes.bool,
     closeModal: PropTypes.func.isRequired,
+    confirm: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -48,6 +49,7 @@ export default class BackConfirmModal extends PureComponent {
 
   @autobind
   confirmCreateModal() {
+    this.props.confirm();
     // 隐藏Modal
     this.closeCreateModal();
   }
