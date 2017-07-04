@@ -9,7 +9,7 @@ const checkTreeObj = {
       indicatorCategoryDto: {
         categoryKey: 'custAmountDetail',
         categoryName: '客户数明细',
-        parentCateKey: 'managementIndicator',
+        parentCateKey: null,
         level: '2',
         remark: null,
       },

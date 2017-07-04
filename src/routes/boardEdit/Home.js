@@ -356,13 +356,17 @@ export default class BoardEditHome extends PureComponent {
     // 总量指标库
     const summuryLib = {
       type: 'summury',
+      checkedKeys: [],
       checkTreeArr: indicatorLib,
     };
     // 分类明细指标库
     const detailLib = {
       type: 'detail',
+      checkedKeys: [],
       checkTreeArr: indicatorLib,
     };
+    console.warn('summuryLib', summuryLib);
+    console.warn('detailLib', detailLib);
 
     const { boardTypeDesc, boardType, id } = this.props.boardInfo;
     // 初始化的时候还没有值
