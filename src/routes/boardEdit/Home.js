@@ -106,8 +106,8 @@ export default class BoardEditHome extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { visibleRanges, boardInfo } = nextProps;
-    if (!_.isEmpty(visibleRanges) && !_.isEmpty(boardInfo)) {
+    const { visibleRanges, boardInfo, indicatorLib } = nextProps;
+    if (!_.isEmpty(visibleRanges) && !_.isEmpty(boardInfo) && !_.isEmpty(indicatorLib)) {
       const userVR = this.getAllUserVRKeys(boardInfo.orgModel);
       const hasPublished = boardInfo.boardStatus === 'RELEASE';
       // 转化总量指标和分类指标
@@ -423,10 +423,12 @@ export default class BoardEditHome extends PureComponent {
     };
 
     const { summury, detail } = boardInfo;
+    const { boardTypeDesc, boardType, id } = this.props.boardInfo;
     // 总量指标库
     const summuryCheckedKeys = this.getUserSummuryKeys(summury);
     const summuryLib = {
       type: 'summury',
+      boardType,
       checkTreeArr: indicatorLib,
       checkedKeys: summuryCheckedKeys,
     };
@@ -434,11 +436,11 @@ export default class BoardEditHome extends PureComponent {
     const detailCheckedKeys = this.getDetailCheckedKeys(detail);
     const detailLib = {
       type: 'detail',
+      boardType,
       checkTreeArr: indicatorLib,
       checkedKeys: detailCheckedKeys,
     };
 
-    const { boardTypeDesc, boardType, id } = this.props.boardInfo;
     // 初始化的时候还没有值
     return preview ?
     (
@@ -523,12 +525,12 @@ export default class BoardEditHome extends PureComponent {
         </div>
         <div className={styles.editPageMain}>
           <BoardSelectTree
-            key="summuryLib"
+            key={`summuryLib${boardInfo.id}`}
             data={summuryLib}
             saveIndcator={this.saveUserCheckedIndicators}
           />
           <BoardSelectTree
-            key="detailLib"
+            key={`detailLib${boardInfo.id}`}
             data={detailLib}
             saveIndcator={this.saveUserCheckedIndicators}
           />

@@ -7,20 +7,25 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
-// import { Tree } from 'antd';
 import { Tree, Icon, Tooltip } from 'antd';
 import _ from 'lodash';
 
 import styles from './BoardSelectTree.less';
 
+const boardTypeMap = {
+  tgjx: 'TYPE_TGJX',
+  jyyj: 'TYPE_JYYJ',
+};
 const boardKeyName = {
   summury: {
     key: 'summury',
     name: '总量指标',
+    title: '总量指标是该指标针对当前组织在指定时间范围内的汇总值',
   },
   detail: {
     key: 'detail',
     name: '分类指标',
+    title: '分类指标是该指标针对当前组织在指定时间范围内的汇总值',
   },
 };
 const TreeNode = Tree.TreeNode;
@@ -39,7 +44,7 @@ function getChildTree(key, name, arr) {
   return html;
 }
 // 根据数组组成 treeNode
-function getTreeNode(arr) {
+function getTreeNode(arr, showThirdColumn) {
   const html = arr.map(item => (
     <TreeNode
       title={item.indicatorCategoryDto.categoryName}
@@ -50,11 +55,12 @@ function getTreeNode(arr) {
           <TreeNode
             title={child.name}
             key={child.key}
-            className={child.hasChildren ? styles.arrow : ''}
+            className={(child.hasChildren && showThirdColumn) ? styles.arrow : ''}
             parentKey={item.indicatorCategoryDto.categoryKey}
           >
             {
-              child.hasChildren && getChildTree(child.key, child.name, child.children)
+              (showThirdColumn && child.hasChildren)
+              && getChildTree(child.key, child.name, child.children)
             }
           </TreeNode>
         ))
@@ -114,6 +120,14 @@ export default class BoardSelectTree extends PureComponent {
     super(props);
     const data = props.data;
     const type = data.type;
+    console.warn('data.boardType', data.boardType);
+    // 是否显示子元素列
+    const boardType = data.boardType;
+    let showThirdColumn = false;
+    // 如果看板是 经营业绩 类型 并且 指标是 总量指标 类型
+    if (boardType === boardTypeMap.jyyj && type === boardKeyName.summury.key) {
+      showThirdColumn = true;
+    }
     // 是否是总量指标
     const isSummury = type === boardKeyName.summury.key;
     // 取出分类明细下的所有标题
@@ -128,28 +142,29 @@ export default class BoardSelectTree extends PureComponent {
     const checkedKeys = data.checkedKeys;
     const checkTreeArr = data.checkTreeArr;
     const expandedKeys = [checkTreeArr[0].indicatorCategoryDto.categoryKey];
-    // treeNodeHtml = getTreeNode(checkTreeArr);
-    let selfCheckedNodes;
-    if (!isSummury) {
-      selfCheckedNodes = checkedKeys.map((item) => {
-        const obj = {
-          ...findSelectNodeChild(checkTreeArr, item).node,
-          belongKey: findSelectNodeChild(checkTreeArr, item).belong.key,
-        };
-        return obj;
-      });
-      allParentNodes.map((item) => {
-        const newItem = item;
-        selfCheckedNodes.forEach((child) => {
-          if (newItem.key === child.belongKey) {
-            newItem.children.push(child);
-          }
+    let selfCheckedNodes = [];
+    if (checkedKeys.length) {
+      if (!isSummury) {
+        selfCheckedNodes = checkedKeys.map((item) => {
+          const obj = {
+            ...findSelectNodeChild(checkTreeArr, item).node,
+            belongKey: findSelectNodeChild(checkTreeArr, item).belong.key,
+          };
+          return obj;
         });
-        return newItem;
-      });
-    } else {
-      selfCheckedNodes = checkedKeys.map(item =>
-      findSelectNodeChild(checkTreeArr, item).node);
+        allParentNodes.map((item) => {
+          const newItem = item;
+          selfCheckedNodes.forEach((child) => {
+            if (newItem.key === child.belongKey) {
+              newItem.children.push(child);
+            }
+          });
+          return newItem;
+        });
+      } else {
+        selfCheckedNodes = checkedKeys.map(item =>
+        findSelectNodeChild(checkTreeArr, item).node);
+      }
     }
     this.state = {
       checkTreeArr,
@@ -162,6 +177,7 @@ export default class BoardSelectTree extends PureComponent {
       type,
       isSummury,
       allParentNodes,
+      showThirdColumn,
     };
   }
   @autobind
@@ -173,6 +189,7 @@ export default class BoardSelectTree extends PureComponent {
   }
   @autobind
   onCheck(checkedKeys, { node: { props: { eventKey, checked } } }) {
+    console.warn('checkKeys', checkedKeys);
     // 当前选中的 key
     const obj = {
       keyArr: checkedKeys,
@@ -221,7 +238,9 @@ export default class BoardSelectTree extends PureComponent {
   getStateTree() {
     const selfCheckedNodes = this.state.selfCheckedNodes;
     const checkTreeArr = this.state.checkTreeArr;
-
+    // 测试
+    const checkedKeys = this.state.checkedKeys;
+    console.warn('checkedKeys', checkedKeys);
     const isSummury = this.state.isSummury;
     if (isSummury) {
       const summuryArr = selfCheckedNodes.map(item => item.key);
@@ -327,6 +346,8 @@ export default class BoardSelectTree extends PureComponent {
         });
       }
       // 如果是选中状态，添加进去
+      console.warn('obj', obj);
+      console.warn('nowSelectNode', nowSelectNode);
       if (!obj.checked) {
         selfCheckedNodes.push(nowSelectNode);
       } else {
@@ -363,8 +384,11 @@ export default class BoardSelectTree extends PureComponent {
       autoExpandParent,
       expandedKeys,
       nowSelectNode,
+      showThirdColumn,
     } = this.state;
-    treeNodeHtml = getTreeNode(checkTreeArr);
+    console.warn('render');
+    console.warn('checkedKeys', checkedKeys);
+    treeNodeHtml = getTreeNode(checkTreeArr, showThirdColumn);
     return (
       // 树结构整体
       <div className={styles.treeBody}>
@@ -372,7 +396,7 @@ export default class BoardSelectTree extends PureComponent {
         <div className={styles.treeTitle}>
           <h2 className={styles[`treeTitle${type}`]}>
             {boardKeyName[type].name}
-            <Tooltip placement="topLeft" title={'23232323233232323'}>
+            <Tooltip placement="topLeft" title={boardKeyName[type].title}>
               <span className={styles.treeTitleSpan} />
             </Tooltip>
           </h2>
@@ -400,7 +424,7 @@ export default class BoardSelectTree extends PureComponent {
                 </Tree>
               </div>
               {
-                isSummury ?
+                (isSummury && showThirdColumn) ?
                   <div className={styles.treeMainLeftChild}>
                     <div />
                   </div>
@@ -434,7 +458,13 @@ export default class BoardSelectTree extends PureComponent {
                   allParentNodes.map(item => (
                     item.children.length ?
                       <div key={item.key} className={styles.treeMainRigthChildTitle}>
-                        <h3>{item.name}</h3>
+                        {
+                          showThirdColumn
+                          ?
+                            <h3>{item.name}</h3>
+                          :
+                            ''
+                        }
                         {
                           item.children.map(child => (
                             <span className={styles.selectItem} key={child.key}>
