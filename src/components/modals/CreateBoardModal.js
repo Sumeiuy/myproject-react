@@ -83,7 +83,7 @@ export default class CreateBoardModal extends PureComponent {
     const boardType = form.getFieldValue('boardtype');
     const permitOrgIds = form.getFieldValue('visibleRange').currency;
     // 此处的currecy中只有下级，没有本机机构ID
-    permitOrgIds.unshift(ownerOrgId);
+    // permitOrgIds.unshift(ownerOrgId);
     // 判断看板名称
     if (boardname === '') {
       // 看板名称不能为空
@@ -104,7 +104,7 @@ export default class CreateBoardModal extends PureComponent {
 
   render() {
     const { modalVisible, boardnamettVisible } = this.state;
-    const { modalCaption, allOptions } = this.props;
+    const { modalCaption, allOptions, level } = this.props;
     const { getFieldDecorator } = this.props.form;
     // 表单布局
     const formItemLayout = {
@@ -184,7 +184,7 @@ export default class CreateBoardModal extends PureComponent {
                     currency: [],
                     label: allOptions[0].name,
                   },
-                })(<SelfSelect options={allOptions} level="1" />)
+                })(<SelfSelect options={allOptions} level={level} />)
             }
           </FormItem>
         </Form>

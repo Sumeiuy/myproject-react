@@ -216,28 +216,30 @@ const helper = {
   },
 
   getDurationString(cycleType) {
+    const fomater = 'YYYY/MM/DD';
     let durationEnd = '';
     let durationStart = '';
+    const temp = moment().subtract(1, 'days');
+    const dateText = temp.format('YYYY/MM/DD');
     switch (cycleType) {
       case 'beforeLastMonth':
-        durationStart = moment().subtract(2, 'month').startOf('month');
-        durationEnd = moment().subtract(2, 'month').endOf('month');
+        durationStart = moment(dateText, fomater).subtract(2, 'month').startOf('month');
+        durationEnd = moment(dateText, fomater).subtract(2, 'month').endOf('month');
         break;
       case 'lastMonth':
-        durationStart = moment().subtract(1, 'month').startOf('month');
-        durationEnd = moment().subtract(1, 'month').endOf('month');
+        durationStart = moment(dateText, fomater).subtract(1, 'month').startOf('month');
+        durationEnd = moment(dateText, fomater).subtract(1, 'month').endOf('month');
         break;
       default:
-        durationStart = moment().startOf(cycleType);
-        durationEnd = moment().subtract(1, 'days');
-        // TODO 需要对本月第一天的情况惊醒特殊处理
+        durationStart = moment(dateText, fomater).startOf(cycleType);
+        durationEnd = moment(dateText, fomater);
         break;
     }
     const duration = {
       cycleType,
-      durationStr: `${durationStart.format('YYYY/MM/DD')}-${durationEnd.format('YYYY/MM/DD')}`,
-      begin: durationStart.format('YYYYMMDD'),
-      end: durationEnd.format('YYYYMMDD'),
+      durationStr: `${durationStart.format(fomater)}-${durationEnd.format(fomater)}`,
+      begin: durationStart.format(fomater),
+      end: durationEnd.format(fomater),
     };
     return duration;
   },

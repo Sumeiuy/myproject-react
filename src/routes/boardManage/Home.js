@@ -9,7 +9,7 @@ import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
-import { Col, Row } from 'antd';
+import { Col, Row, message } from 'antd';
 import _ from 'lodash';
 
 import { getEmpId } from '../../utils/helper';
@@ -29,6 +29,11 @@ const mapStateToProps = state => ({
   visibleBoards: state.manage.visibleBoards,
   editableBoards: state.manage.editableBoards,
   visibleRanges: state.manage.visibleRanges,
+  createLoading: state.manage.createLoading,
+  deleteLoading: state.manage.deleteLoading,
+  publishLoading: state.manage.publishLoading,
+  message: state.manage.message,
+  operateData: state.manage.operateData,
   globalLoading: state.activity.global,
 });
 
@@ -55,11 +60,21 @@ export default class BoardManageHome extends PureComponent {
     visibleBoards: PropTypes.array,
     editableBoards: PropTypes.array,
     visibleRanges: PropTypes.array,
+    createLoading: PropTypes.bool,
+    deleteLoading: PropTypes.bool,
+    publishLoading: PropTypes.bool,
+    message: PropTypes.string,
+    operateData: PropTypes.object,
     globalLoading: PropTypes.bool,
   }
 
   static defaultProps = {
     globalLoading: false,
+    createLoading: false,
+    publishLoading: false,
+    deleteLoading: false,
+    message: '',
+    operateData: {},
     visibleBoards: [],
     editableBoards: [],
     visibleRanges: [],
@@ -79,6 +94,20 @@ export default class BoardManageHome extends PureComponent {
     this.props.getInitial({ empId });
   }
 
+  componentWillReceiveProps(nextProps) {
+    const { createLoading: preCL, deleteLoading: preDL } = this.props;
+    const { push, operateData, createLoading, deleteLoading } = nextProps;
+    if (preCL && !createLoading) {
+      // 创建完成后，需要跳转到Edit
+      const { id, ownerOrgId } = operateData;
+      push(`/boardEdit?boardId=${id}&orgId=${ownerOrgId}`);
+    }
+    if (preDL && !deleteLoading) {
+      // 删除成功
+      message.success('删除成功');
+    }
+  }
+
   @autobind
   closeModal(modal) {
     this.setState({
@@ -96,6 +125,11 @@ export default class BoardManageHome extends PureComponent {
   @autobind
   createBoardHandle() {
     this.openModal('createBoardModal');
+  }
+
+  @autobind
+  createBoardConfirm(board) {
+    this.props.createBoard(board);
   }
 
   // 删除看板
@@ -145,7 +179,7 @@ export default class BoardManageHome extends PureComponent {
       deleteBoardModal,
       publishConfirmModal,
     } = this.state;
-    const { location, replace, push, createBoard } = this.props;
+    const { location, replace, push } = this.props;
     const { visibleRanges, visibleBoards, editableBoards } = this.props;
     // 做容错处理
     if (_.isEmpty(visibleRanges)) {
@@ -154,18 +188,15 @@ export default class BoardManageHome extends PureComponent {
     if (_.isEmpty(visibleBoards)) {
       return null;
     }
-    if (!editableBoards) {
-      return null;
-    }
     // 创建共同配置项
     const createBMProps = {
       modalKey: 'createBoardModal',
       modalCaption: '创建绩效看板',
       visible: createBoardModal,
       closeModal: this.closeModal,
-      level: visibleRanges[0].level,
+      level: visibleRanges[0].level || '3',
       allOptions: visibleRanges,
-      confirm: createBoard,
+      confirm: this.createBoardConfirm,
       ownerOrgId: visibleRanges[0].id,
     };
     // 删除共同配置项

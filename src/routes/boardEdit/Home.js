@@ -4,7 +4,7 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import { Input, Tooltip, Button } from 'antd';
+import { Input, Tooltip, Button, message } from 'antd';
 import { autobind } from 'core-decorators';
 import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
@@ -39,8 +39,8 @@ const mapDispatchToProps = {
   push: routerRedux.push,
   replace: routerRedux.replace,
   getBoardInfo: fectchDataFunction(true, 'edit/getBoardInfo'),
-  getVisibleRange: fectchDataFunction(true, 'edit/getVisibleRange'),
-  updateBoard: fectchDataFunction(true, 'edit/updateBoard'),
+  getVisibleRange: fectchDataFunction(false, 'edit/getVisibleRange'),
+  updateBoard: fectchDataFunction(false, 'edit/updateBoard'),
   publishBoard: fectchDataFunction(true, 'edit/publishBoard'),
 };
 
@@ -54,6 +54,8 @@ export default class BoardEditHome extends PureComponent {
     visibleRanges: PropTypes.array.isRequired,
     message: PropTypes.string.isRequired,
     globalLoading: PropTypes.bool.isRequired,
+    updateLoading: PropTypes.bool.isRequired,
+    publishLoading: PropTypes.bool.isRequired,
     push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
     getBoardInfo: PropTypes.func.isRequired,
@@ -75,7 +77,7 @@ export default class BoardEditHome extends PureComponent {
       visibleRangeTip: '',
       publishBt: false, // 发布按钮状态
       previewBt: false, // 预览按钮状态
-      saveBt: false, // 保存按钮状态
+      saveBt: false, // 保存按钮状态，false为已经保存过了的状态
       publishConfirmModal: false,
       backConfirmModal: false,
     };
@@ -94,16 +96,24 @@ export default class BoardEditHome extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { visibleRanges, boardInfo } = nextProps;
-    this.setState({
-      bNEditorOriginal: boardInfo.name, // 看板名称
-    });
-    const userVR = ['ZZ001041093']; // 只出现下级选项
-    const finalLabel = this.getVRLabel(userVR, visibleRanges);
-    this.setState({
-      vROriginal: finalLabel, // 可见范围的显示label
-      vREditorOriginal: userVR, // 选择的可见范围
-      visibleRangeTip: this.getTooltipHtml(finalLabel),
-    });
+    if (!_.isEmpty(visibleRanges) && !_.isEmpty(boardInfo)) {
+      const userVR = boardInfo.orgModel; // 只出现下级选项
+      const finalLabel = this.getVRLabel(userVR, visibleRanges);
+      this.setState({
+        bNEditorOriginal: boardInfo.name, // 看板名称
+        vROriginal: finalLabel, // 可见范围的显示label
+        vREditorOriginal: userVR.splice(0, 1), // 选择的可见范围
+        visibleRangeTip: this.getTooltipHtml(finalLabel),
+      });
+    }
+    const { publishLoading: prePL, updateLoading: preUL } = this.props;
+    const { publishLoading, updateLoading } = nextProps;
+    if (prePL && !publishLoading) {
+      message.success('发布成功');
+    }
+    if (preUL && !updateLoading) {
+      message.success('保存成功');
+    }
   }
 
   @autobind
@@ -145,23 +155,24 @@ export default class BoardEditHome extends PureComponent {
 
   @autobind
   saveBoardChange(board) {
-    const { updateBoard } = this.props;
-    updateBoard(board);
+    const { updateBoard, publishBoard } = this.props;
+    const { isPublished } = board;
+    if (isPublished === 'Y') {
+      // 发布
+      publishBoard(board);
+    } else {
+      updateBoard(board);
+    }
   }
 
   // editor按确认按钮的处理程序
   @autobind
   editorConfirm(obj) {
     const { key, value } = obj;
-    const { id, ownerOrgId } = this.props.boardInfo;
+    // const { id, ownerOrgId } = this.props.boardInfo;
     if (key === 'boardNameEditor') {
       this.setState({
         bNEditorOriginal: value,
-      });
-      this.saveBoardChange({
-        ownerOrgId,
-        boardId: id,
-        name: value,
       });
     }
     if (key === 'visibleRangeEditor') {
@@ -170,11 +181,6 @@ export default class BoardEditHome extends PureComponent {
         vROriginal: value.label,
         vREditorOriginal: value.currency,
         visibleRangeTip: tip,
-      });
-      // TODO 此处数据缺少
-      this.saveBoardChange({
-        ownerOrgId,
-        boardId: id,
       });
     }
   }
@@ -229,14 +235,35 @@ export default class BoardEditHome extends PureComponent {
   }
 
   @autobind
+  saveBoard(extraParam) {
+    const { bNEditorOriginal, vREditorOriginal } = this.state;
+    const { id, ownerOrgId } = this.props.boardInfo;
+    // 后面新增指标库
+    this.saveBoardChange({
+      boardId: id,
+      ownerOrgId,
+      name: bNEditorOriginal,
+      permitOrgIds: vREditorOriginal,
+      ...extraParam,
+    });
+  }
+  // 发布就是保存并将isPublished: '设置成Y',
+  @autobind
   publishBoardCofirm() {
-
+    this.saveBoard({
+      isPublished: 'Y',
+    });
   }
 
   @autobind
   handleBackBtnClick() {
-    this.openBackConfirmModal();
-    // this.props.push('/boardManage');
+    // 需要判断，是否进行了指标选择
+    const { saveBt } = this.state;
+    if (saveBt) {
+      this.openBackConfirmModal();
+    } else {
+      this.props.push('/boardManage');
+    }
   }
 
   @autobind
@@ -246,7 +273,7 @@ export default class BoardEditHome extends PureComponent {
 
   @autobind
   handleSaveBtnClick() {
-    this.saveBoardChange();
+    this.saveBoard({});
   }
 
   render() {
@@ -288,7 +315,7 @@ export default class BoardEditHome extends PureComponent {
       closeModal: this.closeModal,
     };
 
-    const { boardTypeDesc } = this.props.boardInfo; // 此处目前缺少看板选择的可见范围
+    const { boardTypeDesc, boardType, id } = this.props.boardInfo;
     // 初始化的时候还没有值
     return preview ?
     (
@@ -296,6 +323,9 @@ export default class BoardEditHome extends PureComponent {
         location={location}
         previewBack={this.hidePreview}
         previewPublish={this.publishBoardCofirm}
+        reportName={bNEditorOriginal}
+        boardId={id}
+        boardType={boardType}
       />
     )
     :
@@ -359,7 +389,7 @@ export default class BoardEditHome extends PureComponent {
                 >
                   <SelfSelect
                     options={visibleRanges}
-                    level={visibleRanges[0].level}
+                    level={visibleRanges[0].level || '3'}
                     style={{ height: '30px' }}
                   />
                 </SimpleEditor>

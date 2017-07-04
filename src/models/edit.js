@@ -73,7 +73,7 @@ export default {
     // 更新看板基本信息数据，如名称、可见范围
     * updateBoard({ payload }, { call, put }) {
       yield put({
-        type: 'opertateBoardState',
+        type: 'operateBoardState',
         payload: {
           name: 'updateLoading',
           value: true,
@@ -82,9 +82,12 @@ export default {
       });
       const updateResult = yield call(api.updateBoard, payload);
       // 此处要判断是否保存成功
-      console.log('updateBoardBasic>Result', updateResult);
       yield put({
-        type: 'opertateBoardState',
+        type: 'getOneBoardInfoSuccess',
+        payload: { boardInfoResult: updateResult },
+      });
+      yield put({
+        type: 'operateBoardState',
         payload: {
           name: 'updateLoading',
           value: false,
@@ -96,7 +99,7 @@ export default {
     // 发布看板
     * publishBoard({ payload }, { call, put }) {
       yield put({
-        type: 'opertateBoardState',
+        type: 'operateBoardState',
         payload: {
           name: 'publishLoading',
           value: true,
@@ -104,9 +107,9 @@ export default {
         },
       });
       const publishResult = yield call(api.updateBoard, payload);
-      console.log(publishResult);
+      console.log('publishBoard>Result', publishResult);
       yield put({
-        type: 'opertateBoardState',
+        type: 'operateBoardState',
         payload: {
           name: 'publishLoading',
           value: false,
