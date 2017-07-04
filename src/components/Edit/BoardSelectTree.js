@@ -120,13 +120,16 @@ export default class BoardSelectTree extends PureComponent {
     super(props);
     const data = props.data;
     const type = data.type;
-    console.warn('data.boardType', data.boardType);
     // 是否显示子元素列
     const boardType = data.boardType;
     let showThirdColumn = false;
+    let showTitle = false;
     // 如果看板是 经营业绩 类型 并且 指标是 总量指标 类型
     if (boardType === boardTypeMap.jyyj && type === boardKeyName.summury.key) {
       showThirdColumn = true;
+    }
+    if (boardType === boardTypeMap.jyyj && type === boardKeyName.detail.key) {
+      showTitle = true;
     }
     // 是否是总量指标
     const isSummury = type === boardKeyName.summury.key;
@@ -178,6 +181,7 @@ export default class BoardSelectTree extends PureComponent {
       isSummury,
       allParentNodes,
       showThirdColumn,
+      showTitle,
     };
   }
   @autobind
@@ -385,6 +389,7 @@ export default class BoardSelectTree extends PureComponent {
       expandedKeys,
       nowSelectNode,
       showThirdColumn,
+      showTitle,
     } = this.state;
     console.warn('render');
     console.warn('checkedKeys', checkedKeys);
@@ -459,8 +464,7 @@ export default class BoardSelectTree extends PureComponent {
                     item.children.length ?
                       <div key={item.key} className={styles.treeMainRigthChildTitle}>
                         {
-                          showThirdColumn
-                          ?
+                          showTitle ?
                             <h3>{item.name}</h3>
                           :
                             ''

@@ -483,7 +483,7 @@ export default class BoardEditHome extends PureComponent {
                 editorState={boardNameEditor}
                 confirm={this.editorConfirm}
               >
-                <Input />
+                <Input autocomplete="off" />
               </SimpleEditor>
             </div>
             <div className={styles.hDivider} />
