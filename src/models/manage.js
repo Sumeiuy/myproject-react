@@ -185,7 +185,7 @@ export default {
       const deleteResult = yield call(api.deleteBoard, payload);
       console.log('deleteBoard>Result', deleteResult);
       const result = deleteResult.resultData;
-      if (result) {
+      if (Number(result.code)) {
         const cust = yield select(state => state.manage.custRange);
         const allEditableBoards = yield call(api.getAllEditableReports, {
           orgId: cust[0].id,
@@ -206,7 +206,7 @@ export default {
     },
 
     // 发布看板
-    * publishBoard({ payload }, { call, put }) {
+    * publishBoard({ payload }, { call, put, select }) {
       yield put({
         type: 'opertateBoardState',
         payload: {
@@ -216,7 +216,17 @@ export default {
         },
       });
       const publishResult = yield call(api.updateBoard, payload);
-      console.log('publishBoard>Result', publishResult);
+      const result = publishResult.resultData;
+      if (result.boardStatus === 'RELEASE') {
+        const cust = yield select(state => state.manage.custRange);
+        const allEditableBoards = yield call(api.getAllEditableReports, {
+          orgId: cust[0].id,
+        });
+        yield put({
+          type: 'getAllEditableReportsSucess',
+          payload: { allEditableBoards },
+        });
+      }
       yield put({
         type: 'opertateBoardState',
         payload: {

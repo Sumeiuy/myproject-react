@@ -108,6 +108,7 @@ let treeNodeHtml;
 export default class BoardSelectTree extends PureComponent {
   static propTypes = {
     data: PropTypes.object.isRequired,
+    saveIndcator: PropTypes.func.isRequired,
   }
   constructor(props) {
     super(props);
@@ -153,7 +154,7 @@ export default class BoardSelectTree extends PureComponent {
     }
     this.state = {
       checkTreeArr,
-      expandedKeys: checkTreeArr[0].indicatorCategoryDto.categoryKey,
+      expandedKeys: [checkTreeArr[0].indicatorCategoryDto.categoryKey],
       autoExpandParent: true,
       selectedKeys: [],
       selfCheckedNodes,
@@ -227,6 +228,7 @@ export default class BoardSelectTree extends PureComponent {
       const summuryArr = selfCheckedNodes.map(item => item.key);
       // 输出总量指标
       console.warn('summuryArr', summuryArr);
+      this.props.saveIndcator('summury', summuryArr);
     } else {
       // 取出所有选中节点的归属点 key
       const tempBelongKeyArr = selfCheckedNodes.map((item) => {
@@ -256,6 +258,7 @@ export default class BoardSelectTree extends PureComponent {
       });
       // 输出明细指标
       console.warn('detailArr', detailArr);
+      this.props.saveIndcator('detail', detailArr);
     }
   }
   // 点击或者选择的相同操作
