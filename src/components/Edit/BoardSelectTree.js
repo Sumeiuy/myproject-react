@@ -127,10 +127,9 @@ export default class BoardSelectTree extends PureComponent {
     });
     const checkedKeys = data.checkedKeys;
     const checkTreeArr = data.checkTreeArr;
+    const expandedKeys = [checkTreeArr[0].indicatorCategoryDto.categoryKey];
     // treeNodeHtml = getTreeNode(checkTreeArr);
     let selfCheckedNodes;
-    console.warn('-----data-----', data);
-    console.warn('isSummury', isSummury);
     if (!isSummury) {
       selfCheckedNodes = checkedKeys.map((item) => {
         const obj = {
@@ -154,7 +153,7 @@ export default class BoardSelectTree extends PureComponent {
     }
     this.state = {
       checkTreeArr,
-      expandedKeys: [checkTreeArr[0].indicatorCategoryDto.categoryKey],
+      expandedKeys,
       autoExpandParent: true,
       selectedKeys: [],
       selfCheckedNodes,
@@ -279,7 +278,7 @@ export default class BoardSelectTree extends PureComponent {
       });
     }
     // 如果找到当前节点，并且当前节点有 子元素，展开子元素并且更新 已展开子元素 的 state
-    const oldExpandedKeys = this.props.data.expandedKeys;
+    const oldExpandedKeys = this.state.expandedKeys;
     if (nowSelectNode && nowSelectNode.hasChildren) {
       this.onExpand(_.uniq(_.concat(oldExpandedKeys, obj.key)));
         // 更新已展开的子元素 state
