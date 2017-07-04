@@ -379,6 +379,7 @@ export default class BoardEditHome extends PureComponent {
     const summuryCheckedKeys = this.getUserSummuryKeys(summury);
     const summuryLib = {
       type: 'summury',
+      checkedKeys: [],
       checkTreeArr: indicatorLib,
       checkedKeys: summuryCheckedKeys,
     };
@@ -386,9 +387,12 @@ export default class BoardEditHome extends PureComponent {
     const detailCheckedKeys = this.getDetailCheckedKeys(detail);
     const detailLib = {
       type: 'detail',
+      checkedKeys: [],
       checkTreeArr: indicatorLib,
       checkedKeys: detailCheckedKeys,
     };
+    console.warn('summuryLib', summuryLib);
+    console.warn('detailLib', detailLib);
 
     const { boardTypeDesc, boardType, id } = this.props.boardInfo;
     // 初始化的时候还没有值
