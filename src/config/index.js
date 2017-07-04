@@ -7,6 +7,7 @@ import iconTypeMap from './iconTypeMap';
 import optionsMap from './optionsMap';
 import feedbackOptions from './feedbackOptions';
 import ZHUNICODE from './unicode';
+import BoardBasic from './BoardBasic';
 
 export default {
   constants,
@@ -18,4 +19,5 @@ export default {
   optionsMap,
   feedbackOptions,
   ZHUNICODE,
+  BoardBasic,
 };
