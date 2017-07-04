@@ -10,7 +10,13 @@ import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 
 import styles from './BoardItem.less';
+import ImgTGJX from '../../../static/images/bg_tgjx.png';
+import ImgJYYJ from '../../../static/images/bg_jyyj.png';
 
+const boardTypeMap = {
+  tgjx: 'TYPE_TGJX',
+  jyyj: 'TYPE_JYYJ',
+};
 export default class BoardItem extends PureComponent {
 
   static propTypes = {
@@ -78,7 +84,9 @@ export default class BoardItem extends PureComponent {
       updateTime,
       orgModel,
       isPublishable,
+      boardType,
     } = this.props.boardData;
+    const ImgBg = boardType === boardTypeMap.tgjx ? ImgTGJX : ImgJYYJ;
     const hover = this.state.hover;
     const seeAllow = orgModel.map(o => o.name).join('/');
     let statusText = '';
@@ -101,7 +109,7 @@ export default class BoardItem extends PureComponent {
         onMouseLeave={this.mouseLeaveHandle}
       >
         <div className={styles.boardImg}>
-          <img src="/static/images/bg_tgjx.png" alt="" />
+          <img src={ImgBg} alt="" />
           <div className={publishBtnClass} onClick={this.publishHandle}>
             {statusText}
           </div>
@@ -109,11 +117,9 @@ export default class BoardItem extends PureComponent {
             <div className={styles.text}>可见范围：{seeAllow}</div>
             <div className={styles.text}>修改时间：{updateTime || createTime}</div>
           </div>
-          <div style={{ display: hover ? 'block' : 'none' }} >
-            <div className={styles.boardBtnGroup}>
-              <span onClick={this.editBoardHandle}>编辑</span>
-              <span onClick={this.deleteBoardHandle}>删除</span>
-            </div>
+          <div className={styles.boardBtnGroup}>
+            <span onClick={this.editBoardHandle}>编辑</span>
+            <span onClick={this.deleteBoardHandle}>删除</span>
           </div>
         </div>
         <div className={styles.boardTitle}>

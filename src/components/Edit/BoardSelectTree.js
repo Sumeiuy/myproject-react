@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-07-01 16:06:50
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-07-03 09:42:48
+ * @Last Modified time: 2017-07-04 09:38:32
  */
 
 import React, { PropTypes, PureComponent } from 'react';
@@ -63,7 +63,6 @@ function getTreeNode(arr) {
   ));
   return html;
 }
-
 function findNode(arr, key) {
   let node;
   if (Array.isArray(arr)) {
@@ -78,16 +77,24 @@ function findNode(arr, key) {
   return node;
 }
 function findSelectNodeChild(arr, key) {
-  let selectNodeChildren;
+  let selectNodeChildren = null;
   if (Array.isArray(arr)) {
     arr.forEach((item) => {
       item.detailIndicators.forEach((child) => {
         if (child.key === key) {
-          selectNodeChildren = child;
+          selectNodeChildren = {
+            node: child,
+            belong: {
+              key: item.indicatorCategoryDto.categoryKey,
+              name: item.indicatorCategoryDto.categoryName,
+            },
+          };
           return false;
         }
-        if (!selectNodeChildren) {
-          selectNodeChildren = findNode(child.children, key);
+        if (!selectNodeChildren && child.children) {
+          selectNodeChildren = {
+            node: findNode(child.children, key),
+          };
         }
         return selectNodeChildren;
       });
@@ -104,18 +111,55 @@ export default class BoardSelectTree extends PureComponent {
   }
   constructor(props) {
     super(props);
-    const type = props.data.type;
+    const data = props.data;
+    const type = data.type;
     // 是否是总量指标
     const isSummury = type === boardKeyName.summury.key;
+    // 取出分类明细下的所有标题
+    const allParentNodes = data.checkTreeArr.map((item) => {
+      const obj = {
+        key: item.indicatorCategoryDto.categoryKey,
+        name: item.indicatorCategoryDto.categoryName,
+        children: [],
+      };
+      return obj;
+    });
+    const checkedKeys = data.checkedKeys;
+    const checkTreeArr = data.checkTreeArr;
+    // treeNodeHtml = getTreeNode(checkTreeArr);
+    let selfCheckedNodes;
+    if (!isSummury) {
+      selfCheckedNodes = checkedKeys.map((item) => {
+        const obj = {
+          ...findSelectNodeChild(checkTreeArr, item).node,
+          belongKey: findSelectNodeChild(checkTreeArr, item).belong.key,
+        };
+        return obj;
+      });
+      allParentNodes.map((item) => {
+        const newItem = item;
+        selfCheckedNodes.forEach((child) => {
+          if (newItem.key === child.belongKey) {
+            newItem.children.push(child);
+          }
+        });
+        return newItem;
+      });
+    } else {
+      selfCheckedNodes = checkedKeys.map(item =>
+      findSelectNodeChild(checkTreeArr, item).node);
+    }
     this.state = {
-      expandedKeys: props.data.expandedKeys,
+      checkTreeArr,
+      expandedKeys: data.expandedKeys,
       autoExpandParent: true,
-      checkedKeys: [],
       selectedKeys: [],
-      selfCheckedKeys: [],
+      selfCheckedNodes,
       expandedChildren: [],
+      checkedKeys,
       type,
       isSummury,
+      allParentNodes,
     };
   }
   @autobind
@@ -148,13 +192,24 @@ export default class BoardSelectTree extends PureComponent {
   }
   @autobind
   onRemove(item) {
+    const checkTreeArr = this.state.checkTreeArr;
+    const nowSelectNodeBelong = findSelectNodeChild(checkTreeArr, item.key).belong;
     const oldCheckedKeys = this.state.checkedKeys;
-    const newCheckedKeys = _.remove(oldCheckedKeys, n => (n !== String(item.key)));
-    const oldSelfCheckedKeys = this.state.selfCheckedKeys;
-    const newSelfCheckedKeys = _.remove(oldSelfCheckedKeys, n => (n.key !== item.key));
+    const oldSelfCheckedNodes = this.state.selfCheckedNodes;
+    const allParentNodes = this.state.allParentNodes;
+    const newCheckedKeys = _.remove(oldCheckedKeys, n => (n !== item.key));
+    const newSelfCheckedNodes = _.remove(oldSelfCheckedNodes, n => (n.key !== item.key));
+    allParentNodes.map((child) => {
+      let newItem = child;
+      if (nowSelectNodeBelong.key === newItem.key) {
+        newItem = _.remove(newItem.children, n => (n.key === item.key));
+      }
+      return newItem;
+    });
     this.setState({
+      allParentNodes,
       checkedKeys: newCheckedKeys,
-      selfCheckedKeys: newSelfCheckedKeys,
+      selfCheckedNodes: newSelfCheckedNodes,
     }, () => {
       // 返回数据
       this.getStateTree();
@@ -162,19 +217,33 @@ export default class BoardSelectTree extends PureComponent {
   }
   @autobind
   getStateTree() {
-    const selfCheckedKeys = this.state.selfCheckedKeys;
+    const selfCheckedNodes = this.state.selfCheckedNodes;
+    const checkTreeArr = this.state.checkTreeArr;
+
     const isSummury = this.state.isSummury;
     if (isSummury) {
-      const summuryArr = selfCheckedKeys.map(item => item.key);
+      const summuryArr = selfCheckedNodes.map(item => item.key);
       // 输出总量指标
       console.warn('summuryArr', summuryArr);
     } else {
-      // 取出点击节点的父节点 key
-      const parentKeyArr = _.uniq(selfCheckedKeys.map(item => item.parentKey));
+      // 取出所有选中节点的归属点 key
+      const tempBelongKeyArr = selfCheckedNodes.map((item) => {
+        const itemBelong = findSelectNodeChild(checkTreeArr, item.key).belong;
+        return itemBelong.key;
+      });
+      // 去重
+      const belongKeyArr = _.uniq(tempBelongKeyArr);
+      // 将选中的数组项循环，每一项赋值一个 归属 key ，生成新数组
+      const newSelfeCheckedNodes = selfCheckedNodes.map((item) => {
+        const newItem = item;
+        const itemBelongKey = findSelectNodeChild(checkTreeArr, item.key).belong.key;
+        newItem.belongKey = itemBelongKey;
+        return newItem;
+      });
       // 循环父节点 key
-      const detailArr = parentKeyArr.map((item) => {
+      const detailArr = belongKeyArr.map((item) => {
         // 取出所有 parentKey 与父节点 key 相等的选中项
-        const categoryKeyChildren = _.filter(selfCheckedKeys, o => (o.parentKey === item));
+        const categoryKeyChildren = _.filter(newSelfeCheckedNodes, o => (o.belongKey === item));
         // 从上一步取出的数组中取出所有的 key
         const categoryKeyChildrenKey = _.uniq(categoryKeyChildren.map(child => child.key));
         const temp = {
@@ -192,8 +261,9 @@ export default class BoardSelectTree extends PureComponent {
   checkOrSelect(obj) {
     // 找出当前点击或者选择的节点信息，并存到 state 中
     const oldSelectNode = this.state.nowSelectNode;
-    const checkTreeArr = this.props.data.checkTreeArr;
-    const nowSelectNode = findSelectNodeChild(checkTreeArr, obj.key);
+    const checkTreeArr = this.state.checkTreeArr;
+    const nowSelectNode = findSelectNodeChild(checkTreeArr, obj.key).node;
+    const nowSelectNodeBelong = findSelectNodeChild(checkTreeArr, obj.key).belong;
     if (_.isEqual(oldSelectNode, nowSelectNode)) {
       this.setState({
         nowSelectNode: {},
@@ -213,6 +283,7 @@ export default class BoardSelectTree extends PureComponent {
       });
     }
     const oldExpandedChildren = this.state.expandedChildren;
+    console.warn('nowSelectNode', nowSelectNode);
     // 如果 已经展开的子元素 state 有值，并且当前点击的节点没有子元素
     if (oldExpandedChildren && !nowSelectNode.hasChildren) {
       let flag = false;
@@ -232,18 +303,36 @@ export default class BoardSelectTree extends PureComponent {
       }
     }
 
+    const isSummury = this.state.isSummury;
     // 触发选中事件时，将所有选中的节点取出来生成生的数组，放到最终传值的数组中
-    let selfCheckedKeys = this.state.selfCheckedKeys;
+    let selfCheckedNodes = this.state.selfCheckedNodes;
+    const allParentNodes = this.state.allParentNodes;
+    // 如果是选中事件
     if (obj.type === 'onCheck') {
+      // 如果是明细指标，则将选中的节点信息存放到 相应的 父节点下
+      if (!isSummury) {
+        allParentNodes.map((item) => {
+          let newItem = item;
+          if (newItem.key === nowSelectNodeBelong.key) {
+            if (!obj.checked) {
+              newItem.children.push(nowSelectNode);
+            } else {
+              newItem = _.remove(newItem.children, n => (n.key === obj.key));
+            }
+          }
+          return newItem;
+        });
+      }
       // 如果是选中状态，添加进去
       if (!obj.checked) {
-        selfCheckedKeys.push(nowSelectNode);
+        selfCheckedNodes.push(nowSelectNode);
       } else {
       // 否则删除
-        selfCheckedKeys = _.remove(selfCheckedKeys, n => (n.key !== obj.key));
+        selfCheckedNodes = _.remove(selfCheckedNodes, n => (n.key !== obj.key));
       }
       this.setState({
-        selfCheckedKeys,
+        allParentNodes,
+        selfCheckedNodes,
         selectedKeys: [],
         checkedKeys: obj.keyArr,
       }, () => {
@@ -260,9 +349,18 @@ export default class BoardSelectTree extends PureComponent {
     }
   }
   render() {
-    const checkTreeArr = this.props.data.checkTreeArr;
-    const type = this.state.type;
-    const isSummury = this.state.isSummury;
+    const {
+      checkTreeArr,
+      type,
+      isSummury,
+      selectedKeys,
+      selfCheckedNodes,
+      allParentNodes,
+      checkedKeys,
+      autoExpandParent,
+      expandedKeys,
+      nowSelectNode,
+    } = this.state;
     treeNodeHtml = getTreeNode(checkTreeArr);
     return (
       // 树结构整体
@@ -287,13 +385,13 @@ export default class BoardSelectTree extends PureComponent {
                 <Tree
                   checkable
                   checkStrictly
-                  onExpand={this.onExpand}
-                  expandedKeys={this.state.expandedKeys}
-                  autoExpandParent={this.state.autoExpandParent}
-                  onCheck={this.onCheck}
-                  checkedKeys={this.state.checkedKeys}
+                  expandedKeys={expandedKeys}
+                  autoExpandParent={autoExpandParent}
+                  checkedKeys={checkedKeys}
+                  selectedKeys={selectedKeys}
                   onSelect={this.onSelect}
-                  selectedKeys={this.state.selectedKeys}
+                  onCheck={this.onCheck}
+                  onExpand={this.onExpand}
                 >
                   {treeNodeHtml}
                 </Tree>
@@ -316,33 +414,57 @@ export default class BoardSelectTree extends PureComponent {
             </h3>
             <div className={styles.treeMainRightChild}>
               {
-                this.state.selfCheckedKeys.map(item => (
-                  <span className={styles.selectItem} key={`${item.key}Key`}>
-                    {
-                      item.parentName ?
-                        `${item.parentName} -`
-                      :
-                        ''
-                    }
-                    {item.name}
-                    <Icon type="close" onClick={() => this.onRemove(item)} />
-                  </span>
-                ))
+                isSummury ?
+                  selfCheckedNodes.map(item => (
+                    <span className={styles.selectItem} key={`${item.key}Key`}>
+                      {
+                        (item.parentName && isSummury) ?
+                          `${item.parentName} -`
+                        :
+                          ''
+                      }
+                      {item.name}
+                      <Icon type="close" onClick={() => this.onRemove(item)} />
+                    </span>
+                  ))
+                :
+                  allParentNodes.map(item => (
+                    item.children.length ?
+                      <div key={item.key} className={styles.treeMainRigthChildTitle}>
+                        <h3>{item.name}</h3>
+                        {
+                          item.children.map(child => (
+                            <span className={styles.selectItem} key={child.key}>
+                              {
+                                (item.parentName && isSummury) ?
+                                  `${item.parentName} -`
+                                :
+                                  ''
+                              }
+                              {child.name}
+                              <Icon type="close" onClick={() => this.onRemove(child)} />
+                            </span>
+                          ))
+                        }
+                      </div>
+                    :
+                      ''
+                  ))
               }
             </div>
           </div>
         </div>
         <div className={styles.treeNodeInfo}>
           {
-            (this.state.nowSelectNode && this.state.nowSelectNode.key) ?
+            (nowSelectNode && nowSelectNode.key) ?
               <div>
                 <h4>
-                  <span>{this.state.nowSelectNode.name}：</span>
-                  {this.state.nowSelectNode.description}
+                  <span>{nowSelectNode.name}：</span>
+                  {nowSelectNode.description}
                 </h4>
                 {
                   !isSummury ?
-                    <h4>{this.state.nowSelectNode.description}</h4>
+                    <h4>{nowSelectNode.description}</h4>
                   :
                     ''
                 }
