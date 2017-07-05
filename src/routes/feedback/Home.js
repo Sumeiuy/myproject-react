@@ -245,6 +245,9 @@ export default class FeedBack extends PureComponent {
       none: isEmpty,
       feedbackRow: true,
     });
+    const splitPaneClass = classnames({
+      none: isEmpty,
+    });
     return (
       <div className="feedbackbox">
         <FeedbackHeader
@@ -263,31 +266,33 @@ export default class FeedBack extends PureComponent {
             </div>
           </Col>
         </Row>
-        <SplitPane
-          onChange={this.panchange}
-          split="vertical"
-          minSize={518}
-          maxSize={700}
-          defaultSize={520}
-          className="primary"
-        >
-          <Row className={existClass}>
-            <Col span="24" className="leftSection" id="leftSection">
-              <FeedbackList
-                list={list}
-                replace={replace}
-                location={location}
-              />
-            </Col>
-          </Row>
-          <Row className={existClass}>
-            <Col span="24" className="rightSection" id="rightSection">
-              <Detail
-                location={location}
-              />
-            </Col>
-          </Row>
-        </SplitPane>
+        <div className={splitPaneClass}>
+          <SplitPane
+            onChange={this.panchange}
+            split="vertical"
+            minSize={518}
+            maxSize={700}
+            defaultSize={520}
+            className="primary"
+          >
+            <Row className={existClass}>
+              <Col span="24" className="leftSection" id="leftSection">
+                <FeedbackList
+                  list={list}
+                  replace={replace}
+                  location={location}
+                />
+              </Col>
+            </Row>
+            <Row className={existClass}>
+              <Col span="24" className="rightSection" id="rightSection">
+                <Detail
+                  location={location}
+                />
+              </Col>
+            </Row>
+          </SplitPane>
+        </div>
       </div>
     );
   }
