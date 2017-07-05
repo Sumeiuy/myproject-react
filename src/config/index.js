@@ -6,5 +6,18 @@ import request from './request';
 import iconTypeMap from './iconTypeMap';
 import optionsMap from './optionsMap';
 import feedbackOptions from './feedbackOptions';
+import ZHUNICODE from './unicode';
+import BoardBasic from './BoardBasic';
 
-export default { constants, log, menu, persist, request, iconTypeMap, optionsMap, feedbackOptions };
+export default {
+  constants,
+  log,
+  menu,
+  persist,
+  request,
+  iconTypeMap,
+  optionsMap,
+  feedbackOptions,
+  ZHUNICODE,
+  BoardBasic,
+};

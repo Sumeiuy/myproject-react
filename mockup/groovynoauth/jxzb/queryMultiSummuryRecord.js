@@ -4,1178 +4,1313 @@ exports.response = function (req, res) {
     "msg": "OK",
     "resultData": {
       "data": {
-        "indicatorSummuryRecordDtos": [
-          {
-            "id": "ZZ001041120",
-            "name": "合计",
-            "level": "2",
-            "orgModel": {
-                "level1Id": "ZZ001041",
-                "level1Name": "测试经纪业务总部",
-                "level2Id": "ZZ001041093",
-                "level2Name": "测试南京分公司",
-                "level3Id": "ZZ1093892023",
-                "level3Name": "测试解放路营业部",
-                "level4Id": "ZZ10000999",
-                "level4Name": "测试人员",
-                "value": "34"
+          "indicatorSummuryRecordDtos": [
+            {
+                "id": null,
+                "name": "合计",
+                "level": null,
+                "orgModel": null,
+                "indicatorDataList": [
+                    {
+                      "key": "effCustNum",
+                      "name": "有效客户数",
+                      "value": "0",
+                      "unit": "户",
+                      "description": null,
+                      "categoryKey": null,
+                      "isBelongsSummury": null,
+                      "hasChildren": null,
+                      "parentKey": null,
+                      "parentName": null,
+                      "children": null
+                    },
+                    {
+                      "key": "InminorCustNum",
+                      "name": "高净值客户数",
+                      "value": "626370",
+                      "unit": "户",
+                      "description": null,
+                      "categoryKey": null,
+                      "isBelongsSummury": null,
+                      "hasChildren": null,
+                      "parentKey": null,
+                      "parentName": null,
+                      "children": null
+                    },
+                    {
+                      "key": "newCustNum",
+                      "name": "新开客户数",
+                      "value": null,
+                      "unit": "户",
+                      "description": "我认为这个指标就是三个子指标的和",
+                      "categoryKey": null,
+                      "isBelongsSummury": null,
+                      "hasChildren": null,
+                      "parentKey": null,
+                      "parentName": null,
+                      "children": null
+                    },
+                    {
+                      "key": "pNewCustNum",
+                      "name": "个人新开客户数",
+                      "value": "140805",
+                      "unit": "户",
+                      "description": null,
+                      "categoryKey": null,
+                      "isBelongsSummury": null,
+                      "hasChildren": null,
+                      "parentKey": null,
+                      "parentName": "新开客户数",
+                      "children": null
+                    },
+                    {
+                        "key": "oNewCustNum",
+                        "name": "机构新开客户数",
+                        "value": "74860",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": "新开客户数",
+                        "children": null
+                    },
+                    {
+                        "key": "oNewPrdtCustNum",
+                        "name": "产品新开客户数",
+                        "value": "640106",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": "新开客户数",
+                        "children": null
+                    },
+                    {
+                        "key": "hignLoseCustPercent",
+                        "name": "高净值客户流失率",
+                        "value": "640106",
+                        "unit": "%",
+                        "description": "这个指标不知取哪个字段",
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": null,
+                        "children": null
+                    }
+                ]
             },
-            "indicatorDataList": [
-              {
-                "key": "total",
-                "name": "投顾入岗人数",
-                "value": "100",
-                "unit": "人",
-                "description": null,
-              }, {
-                "key": "keya",
-                "name": "投顾入岗人数",
-                "value": "100",
-                "unit": "人",
-                "description": null,
-              }, {
-                "key": "keyb",
-                "name": "投顾入岗人数",
-                "value": "100",
-                "unit": "人",
-                "description": null,
-              }, {
-                "key": "tgInNum",
-                "name": "投顾入岗人数",
-                "value": "200",
-                "unit": "人",
-                "description": null,
-              }, {
-                "key": "currSignCustNum",
-                "name": "签约客户数",
-                "value": "0",
-                "unit": "户",
-                "description": "当前签约客户数"
-              }, {
-                "key": "currSignCustAset",
-                "name": "签约总资产",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "totAset",
-                "name": "托管总资产",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "gjAvgPercent",
-                "name": "股基平均佣金率",
-                "value": "0",
-                "unit": "‰",
-                "description": null
-              }, {
-                "key": "purRake",
-                "name": "净佣金收入",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "purInteIncome",
-                "name": "净利息收入",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "prdtPurFee",
-                "name": "产品净手续费收入",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "feeConfigPercent",
-                "name": "资产配置覆盖率",
-                "value": "0",
-                "unit": "%",
-                "description": null
-              }, {
-                "key": "infoCompPercent",
-                "name": "高净值客户信息完善率",
-                "value": "0",
-                "unit": "%",
-                "description": null
-              }, {
-                "key": "motCompletePercent",
-                "name": "MOT任务完成率",
-                "value": "0",
-                "unit": "%",
-                "description": null
-              }, {
-                "key": "serviceCompPercent",
-                "name": "服务覆盖率",
-                "value": "0",
-                "unit": "%",
-                "description": null
-              }
-            ]
-          }, {
-            "id": "ZZ001041120",
-            "name": "经纪业务总部",
-            "level": "2",
-            "orgModel": {
-                "level1Id": "ZZ001041",
-                "level1Name": "测试经纪业务总部",
-                "level2Id": "ZZ001041093",
-                "level2Name": "测试南京分公司",
-                "level3Id": "ZZ1093892023",
-                "level3Name": "测试解放路营业部",
-                "level4Id": "ZZ10000999",
-                "level4Name": "测试人员",
-                "value": "34"
+            {
+                "id": "ZZ323270",
+                "name": "盐城分公司",
+                "level": "2",
+                "orgModel": {
+                    "level1Id": "ZZ001041",
+                    "level1Name": "经纪业务总部",
+                    "level2Id": "ZZ323270",
+                    "level2Name": "盐城分公司",
+                    "level3Id": null,
+                    "level3Name": null,
+                    "level4Id": null,
+                    "level4Name": null,
+                    "value": null,
+                    "indiModelList": null
+                },
+                "indicatorDataList": [
+                    {
+                        "key": "effCustNum",
+                        "name": "有效客户数",
+                        "value": "0",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": null,
+                        "children": null
+                    },
+                    {
+                        "key": "InminorCustNum",
+                        "name": "高净值客户数",
+                        "value": "7540",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": null,
+                        "children": null
+                    },
+                    {
+                        "key": "newCustNum",
+                        "name": "新开客户数",
+                        "value": "11219",
+                        "unit": "户",
+                        "description": "我认为这个指标就是三个子指标的和",
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": null,
+                        "children": null
+                    },
+                    {
+                        "key": "pNewCustNum",
+                        "name": "个人新开客户数",
+                        "value": "1805",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": "新开客户数",
+                        "children": null
+                    },
+                    {
+                        "key": "oNewCustNum",
+                        "name": "机构新开客户数",
+                        "value": "980",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": "新开客户数",
+                        "children": null
+                    },
+                    {
+                        "key": "oNewPrdtCustNum",
+                        "name": "产品新开客户数",
+                        "value": "8434",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": "新开客户数",
+                        "children": null
+                    },
+                    {
+                        "key": "hignLoseCustPercent",
+                        "name": "高净值客户流失率",
+                        "value": "8434",
+                        "unit": "%",
+                        "description": "这个指标不知取哪个字段",
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": null,
+                        "children": null
+                    }
+                ]
             },
-            "indicatorDataList": [
-              {
-                "key": "total",
-                "name": "投顾入岗人数",
-                "value": "100",
-                "unit": "人",
-                "description": null,
-              }, {
-                "key": "tgInNum",
-                "name": "a",
-                "value": "10",
-                "unit": "人",
-                "description": null,
-              }, {
-                "key": "keya",
-                "name": "a",
-                "value": "10",
-                "unit": "人",
-                "description": null,
-              }, {
-                "key": "keyb",
-                "name": "b",
-                "value": "20",
-                "unit": "人",
-                "description": null,
-              }, {
-                "key": "currSignCustNum",
-                "name": "签约客户数",
-                "value": "0",
-                "unit": "户",
-                "description": "当前签约客户数"
-              }, {
-                "key": "currSignCustAset",
-                "name": "签约总资产",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "totAset",
-                "name": "托管总资产",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "gjAvgPercent",
-                "name": "股基平均佣金率",
-                "value": "0",
-                "unit": "‰",
-                "description": null
-              }, {
-                "key": "purRake",
-                "name": "净佣金收入",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "purInteIncome",
-                "name": "净利息收入",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "prdtPurFee",
-                "name": "产品净手续费收入",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "feeConfigPercent",
-                "name": "资产配置覆盖率",
-                "value": "0",
-                "unit": "%",
-                "description": null
-              }, {
-                "key": "infoCompPercent",
-                "name": "高净值客户信息完善率",
-                "value": "0",
-                "unit": "%",
-                "description": null
-              }, {
-                "key": "motCompletePercent",
-                "name": "MOT任务完成率",
-                "value": "0",
-                "unit": "%",
-                "description": null
-              }, {
-                "key": "serviceCompPercent",
-                "name": "服务覆盖率",
-                "value": "0",
-                "unit": "%",
-                "description": null
-              }
-            ]
-          }, {
-            "id": "ZZ001041106",
-            "name": "江苏省南京市建邺区华泰证券广场三号楼三楼营业部",
-            "level": "3",
-            "orgModel": {
-                "level1Id": "ZZ001041",
-                "level1Name": "测试经纪业务总部",
-                "level2Id": "ZZ001041093",
-                "level2Name": "南京分公司",
-                "level3Id": "ZZ1093892023",
-                "level3Name": "江苏省南京市建邺区华泰证券广场三号楼三楼营业部",
-                "level4Id": "ZZ10000999",
-                "level4Name": "测试人员",
-                "value": "34"
+            {
+                "id": "ZZ323274",
+                "name": "湖南分公司",
+                "level": "2",
+                "orgModel": {
+                    "level1Id": "ZZ001041",
+                    "level1Name": "经纪业务总部",
+                    "level2Id": "ZZ323274",
+                    "level2Name": "湖南分公司",
+                    "level3Id": null,
+                    "level3Name": null,
+                    "level4Id": null,
+                    "level4Name": null,
+                    "value": null,
+                    "indiModelList": null
+                },
+                "indicatorDataList": [
+                    {
+                        "key": "effCustNum",
+                        "name": "有效客户数",
+                        "value": "0",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": null,
+                        "children": null
+                    },
+                    {
+                        "key": "InminorCustNum",
+                        "name": "高净值客户数",
+                        "value": "14360",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": null,
+                        "children": null
+                    },
+                    {
+                        "key": "newCustNum",
+                        "name": "新开客户数",
+                        "value": "23701",
+                        "unit": "户",
+                        "description": "我认为这个指标就是三个子指标的和",
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": null,
+                        "children": null
+                    },
+                    {
+                        "key": "pNewCustNum",
+                        "name": "个人新开客户数",
+                        "value": "3979",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": "新开客户数",
+                        "children": null
+                    },
+                    {
+                        "key": "oNewCustNum",
+                        "name": "机构新开客户数",
+                        "value": "2076",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": "新开客户数",
+                        "children": null
+                    },
+                    {
+                        "key": "oNewPrdtCustNum",
+                        "name": "产品新开客户数",
+                        "value": "17646",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": "新开客户数",
+                        "children": null
+                    },
+                    {
+                        "key": "hignLoseCustPercent",
+                        "name": "高净值客户流失率",
+                        "value": "17646",
+                        "unit": "%",
+                        "description": "这个指标不知取哪个字段",
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": null,
+                        "children": null
+                    }
+                ]
             },
-            "indicatorDataList": [
-              {
-                "key": "total",
-                "name": "投顾入岗人数",
-                "value": "100",
-                "unit": "人",
-                "description": null,
-              }, {
-                "key": "tgInNum",
-                "name": "a",
-                "value": "10",
-                "unit": "人",
-                "description": null,
-              }, {
-                "key": "keya",
-                "name": "a",
-                "value": "10",
-                "unit": "人",
-                "description": null,
-              },{
-                "key": "keyb",
-                "name": "b",
-                "value": "20",
-                "unit": "人",
-                "description": null,
-              }, {
-                "key": "currSignCustNum",
-                "name": "签约客户数",
-                "value": "0",
-                "unit": "户",
-                "description": "当前签约客户数"
-              }, {
-                "key": "currSignCustAset",
-                "name": "签约总资产",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "totAset",
-                "name": "托管总资产",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "gjAvgPercent",
-                "name": "股基平均佣金率",
-                "value": "0",
-                "unit": "‰",
-                "description": null
-              }, {
-                "key": "purRake",
-                "name": "净佣金收入",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "purInteIncome",
-                "name": "净利息收入",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "prdtPurFee",
-                "name": "产品净手续费收入",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "feeConfigPercent",
-                "name": "资产配置覆盖率",
-                "value": "0",
-                "unit": "%",
-                "description": null
-              }, {
-                "key": "infoCompPercent",
-                "name": "高净值客户信息完善率",
-                "value": "0",
-                "unit": "%",
-                "description": null
-              }, {
-                "key": "motCompletePercent",
-                "name": "MOT任务完成率",
-                "value": "0",
-                "unit": "%",
-                "description": null
-              }, {
-                "key": "serviceCompPercent",
-                "name": "服务覆盖率",
-                "value": "0",
-                "unit": "%",
-                "description": null
-              }
-            ]
-          }, {
-            "id": "ZZ323270",
-            "name": "张三",
-            "level": "4",
-            "orgModel": {
-                "level1Id": "ZZ001041",
-                "level1Name": "测试经纪业务总部",
-                "level2Id": "ZZ001041093",
-                "level2Name": "南京分公司",
-                "level3Id": "ZZ1093892023",
-                "level3Name": "江苏省南京市建邺区华泰证券广场三号楼三楼营业部",
-                "level4Id": "ZZ10000999",
-                "level4Name": "张三",
-                "value": "34"
+            {
+                "id": "ZZ001041120",
+                "name": "四川分公司",
+                "level": "2",
+                "orgModel": {
+                    "level1Id": "ZZ001041",
+                    "level1Name": "经纪业务总部",
+                    "level2Id": "ZZ001041120",
+                    "level2Name": "四川分公司",
+                    "level3Id": null,
+                    "level3Name": null,
+                    "level4Id": null,
+                    "level4Name": null,
+                    "value": null,
+                    "indiModelList": null
+                },
+                "indicatorDataList": [
+                    {
+                        "key": "effCustNum",
+                        "name": "有效客户数",
+                        "value": "0",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": null,
+                        "children": null
+                    },
+                    {
+                        "key": "InminorCustNum",
+                        "name": "高净值客户数",
+                        "value": "23974",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": null,
+                        "children": null
+                    },
+                    {
+                        "key": "newCustNum",
+                        "name": "新开客户数",
+                        "value": "34250",
+                        "unit": "户",
+                        "description": "我认为这个指标就是三个子指标的和",
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": null,
+                        "children": null
+                    },
+                    {
+                        "key": "pNewCustNum",
+                        "name": "个人新开客户数",
+                        "value": "5750",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": "新开客户数",
+                        "children": null
+                    },
+                    {
+                        "key": "oNewCustNum",
+                        "name": "机构新开客户数",
+                        "value": "3000",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": "新开客户数",
+                        "children": null
+                    },
+                    {
+                        "key": "oNewPrdtCustNum",
+                        "name": "产品新开客户数",
+                        "value": "25500",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": "新开客户数",
+                        "children": null
+                    },
+                    {
+                        "key": "hignLoseCustPercent",
+                        "name": "高净值客户流失率",
+                        "value": "25500",
+                        "unit": "%",
+                        "description": "这个指标不知取哪个字段",
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": null,
+                        "children": null
+                    }
+                ]
             },
-            "indicatorDataList": [
-              {
-                "key": "total",
-                "name": "投顾入岗人数",
-                "value": "100",
-                "unit": "人",
-                "description": null,
-              }, {
-                "key": "tgInNum",
-                "name": "a",
-                "value": "10",
-                "unit": "人",
-                "description": null,
-              }, {
-                "key": "keya",
-                "name": "a",
-                "value": "10",
-                "unit": "人",
-                "description": null,
-              }, {
-                "key": "keyb",
-                "name": "b",
-                "value": "20",
-                "unit": "人",
-                "description": null,
-              }, {
-                "key": "currSignCustNum",
-                "name": "签约客户数",
-                "value": "0",
-                "unit": "户",
-                "description": "当前签约客户数"
-              }, {
-                "key": "currSignCustAset",
-                "name": "签约总资产",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "totAset",
-                "name": "托管总资产",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "gjAvgPercent",
-                "name": "股基平均佣金率",
-                "value": "0",
-                "unit": "‰",
-                "description": null
-              }, {
-                "key": "purRake",
-                "name": "净佣金收入",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "purInteIncome",
-                "name": "净利息收入",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "prdtPurFee",
-                "name": "产品净手续费收入",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "feeConfigPercent",
-                "name": "资产配置覆盖率",
-                "value": "0",
-                "unit": "%",
-                "description": null
-              }, {
-                "key": "infoCompPercent",
-                "name": "高净值客户信息完善率",
-                "value": "0",
-                "unit": "%",
-                "description": null
-              }, {
-                "key": "motCompletePercent",
-                "name": "MOT任务完成率",
-                "value": "0",
-                "unit": "%",
-                "description": null
-              }, {
-                "key": "serviceCompPercent",
-                "name": "服务覆盖率",
-                "value": "0",
-                "unit": "%",
-                "description": null
-              }
-            ]
-          }, {
-            "id": "ZZ323274",
-            "name": "湖南分公司",
-            "level": "2",
-            "indicatorDataList": [
-              {
-                "key": "total",
-                "name": "投顾入岗人数",
-                "value": "100",
-                "unit": "人",
-                "description": null,
-              }, {
-                "key": "tgInNum",
-                "name": "a",
-                "value": "10",
-                "unit": "人",
-                "description": null,
-              }, {
-                "key": "keya",
-                "name": "a",
-                "value": "10",
-                "unit": "人",
-                "description": null,
-              },{
-                "key": "keyb",
-                "name": "b",
-                "value": "20",
-                "unit": "人",
-                "description": null,
-              }, {
-                "key": "currSignCustNum",
-                "name": "签约客户数",
-                "value": "0",
-                "unit": "户",
-                "description": "当前签约客户数"
-              }, {
-                "key": "currSignCustAset",
-                "name": "签约总资产",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "totAset",
-                "name": "托管总资产",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "gjAvgPercent",
-                "name": "股基平均佣金率",
-                "value": "0",
-                "unit": "‰",
-                "description": null
-              }, {
-                "key": "purRake",
-                "name": "净佣金收入",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "purInteIncome",
-                "name": "净利息收入",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "prdtPurFee",
-                "name": "产品净手续费收入",
-                "value": "0",
-                "unit": "元",
-                "description": null
-              }, {
-                "key": "feeConfigPercent",
-                "name": "资产配置覆盖率",
-                "value": "0",
-                "unit": "%",
-                "description": null
-              }, {
-                "key": "infoCompPercent",
-                "name": "高净值客户信息完善率",
-                "value": "0",
-                "unit": "%",
-                "description": null
-              }, {
-                "key": "motCompletePercent",
-                "name": "MOT任务完成率",
-                "value": "0",
-                "unit": "%",
-                "description": null
-              }, {
-                "key": "serviceCompPercent",
-                "name": "服务覆盖率",
-                "value": "0",
-                "unit": "%",
-                "description": null
-              }
-            ]
-          },
-          // {
-          //   "id": "ZZ001041107",
-          //   "name": "上海分公司",
-          //   "level": "2",
-          //   "indicatorDataList": [
-          //     {
-          //       "key": "tgInNum",
-          //       "name": "a",
-          //       "value": "10",
-          //       "unit": "人",
-          //       "description": null,
-          //     }, {
-          //       "key": "keya",
-          //       "name": "a",
-          //       "value": "10",
-          //       "unit": "人",
-          //       "description": null,
-          //     },{
-          //       "key": "keyb",
-          //       "name": "b",
-          //       "value": "20",
-          //       "unit": "人",
-          //       "description": null,
-          //     }, {
-          //       "key": "currSignCustNum",
-          //       "name": "签约客户数",
-          //       "value": "0",
-          //       "unit": "户",
-          //       "description": "当前签约客户数"
-          //     }, {
-          //       "key": "currSignCustAset",
-          //       "name": "签约总资产",
-          //       "value": "0",
-          //       "unit": "元",
-          //       "description": null
-          //     }, {
-          //       "key": "totAset",
-          //       "name": "托管总资产",
-          //       "value": "0",
-          //       "unit": "元",
-          //       "description": null
-          //     }, {
-          //       "key": "gjAvgPercent",
-          //       "name": "股基平均佣金率",
-          //       "value": "0",
-          //       "unit": "‰",
-          //       "description": null
-          //     }, {
-          //       "key": "purRake",
-          //       "name": "净佣金收入",
-          //       "value": "0",
-          //       "unit": "元",
-          //       "description": null
-          //     }, {
-          //       "key": "purInteIncome",
-          //       "name": "净利息收入",
-          //       "value": "0",
-          //       "unit": "元",
-          //       "description": null
-          //     }, {
-          //       "key": "prdtPurFee",
-          //       "name": "产品净手续费收入",
-          //       "value": "0",
-          //       "unit": "元",
-          //       "description": null
-          //     }, {
-          //       "key": "feeConfigPercent",
-          //       "name": "资产配置覆盖率",
-          //       "value": "0",
-          //       "unit": "%",
-          //       "description": null
-          //     }, {
-          //       "key": "infoCompPercent",
-          //       "name": "高净值客户信息完善率",
-          //       "value": "0",
-          //       "unit": "%",
-          //       "description": null
-          //     }, {
-          //       "key": "motCompletePercent",
-          //       "name": "MOT任务完成率",
-          //       "value": "0",
-          //       "unit": "%",
-          //       "description": null
-          //     }, {
-          //       "key": "serviceCompPercent",
-          //       "name": "服务覆盖率",
-          //       "value": "0",
-          //       "unit": "%",
-          //       "description": null
-          //     }
-          //   ]
-          // }, {
-          //   "id": "ZZ001041109",
-          //   "name": "天津分公司",
-          //   "level": "2",
-          //   "indicatorDataList": [
-          //     {
-          //       "key": "tgInNum",
-          //       "name": "a",
-          //       "value": "10",
-          //       "unit": "人",
-          //       "description": null,
-          //     }, {
-          //       "key": "keya",
-          //       "name": "a",
-          //       "value": "10",
-          //       "unit": "人",
-          //       "description": null,
-          //     },{
-          //       "key": "keyb",
-          //       "name": "b",
-          //       "value": "20",
-          //       "unit": "人",
-          //       "description": null,
-          //     }, {
-          //       "key": "currSignCustNum",
-          //       "name": "签约客户数",
-          //       "value": "0",
-          //       "unit": "户",
-          //       "description": "当前签约客户数"
-          //     }, {
-          //       "key": "currSignCustAset",
-          //       "name": "签约总资产",
-          //       "value": "0",
-          //       "unit": "元",
-          //       "description": null
-          //     }, {
-          //       "key": "totAset",
-          //       "name": "托管总资产",
-          //       "value": "0",
-          //       "unit": "元",
-          //       "description": null
-          //     }, {
-          //       "key": "gjAvgPercent",
-          //       "name": "股基平均佣金率",
-          //       "value": "0",
-          //       "unit": "‰",
-          //       "description": null
-          //     }, {
-          //       "key": "purRake",
-          //       "name": "净佣金收入",
-          //       "value": "0",
-          //       "unit": "元",
-          //       "description": null
-          //     }, {
-          //       "key": "purInteIncome",
-          //       "name": "净利息收入",
-          //       "value": "0",
-          //       "unit": "元",
-          //       "description": null
-          //     }, {
-          //       "key": "prdtPurFee",
-          //       "name": "产品净手续费收入",
-          //       "value": "0",
-          //       "unit": "元",
-          //       "description": null
-          //     }, {
-          //       "key": "feeConfigPercent",
-          //       "name": "资产配置覆盖率",
-          //       "value": "0",
-          //       "unit": "%",
-          //       "description": null
-          //     }, {
-          //       "key": "infoCompPercent",
-          //       "name": "高净值客户信息完善率",
-          //       "value": "0",
-          //       "unit": "%",
-          //       "description": null
-          //     }, {
-          //       "key": "motCompletePercent",
-          //       "name": "MOT任务完成率",
-          //       "value": "0",
-          //       "unit": "%",
-          //       "description": null
-          //     }, {
-          //       "key": "serviceCompPercent",
-          //       "name": "服务覆盖率",
-          //       "value": "0",
-          //       "unit": "%",
-          //       "description": null
-          //     }
-          //   ]
-          // }, {
-          //   "id": "ZZ001041116",
-          //   "name": "辽宁分公司",
-          //   "level": "2",
-          //   "indicatorDataList": [
-          //     {
-          //       "key": "tgInNum",
-          //       "name": "a",
-          //       "value": "10",
-          //       "unit": "人",
-          //       "description": null,
-          //     }, {
-          //       "key": "keya",
-          //       "name": "a",
-          //       "value": "10",
-          //       "unit": "人",
-          //       "description": null,
-          //     },{
-          //       "key": "keyb",
-          //       "name": "b",
-          //       "value": "20",
-          //       "unit": "人",
-          //       "description": null,
-          //     }, {
-          //       "key": "currSignCustNum",
-          //       "name": "签约客户数",
-          //       "value": "0",
-          //       "unit": "户",
-          //       "description": "当前签约客户数"
-          //     }, {
-          //       "key": "currSignCustAset",
-          //       "name": "签约总资产",
-          //       "value": "0",
-          //       "unit": "元",
-          //       "description": null
-          //     }, {
-          //       "key": "totAset",
-          //       "name": "托管总资产",
-          //       "value": "0",
-          //       "unit": "元",
-          //       "description": null
-          //     }, {
-          //       "key": "gjAvgPercent",
-          //       "name": "股基平均佣金率",
-          //       "value": "0",
-          //       "unit": "‰",
-          //       "description": null
-          //     }, {
-          //       "key": "purRake",
-          //       "name": "净佣金收入",
-          //       "value": "0",
-          //       "unit": "元",
-          //       "description": null
-          //     }, {
-          //       "key": "purInteIncome",
-          //       "name": "净利息收入",
-          //       "value": "0",
-          //       "unit": "元",
-          //       "description": null
-          //     }, {
-          //       "key": "prdtPurFee",
-          //       "name": "产品净手续费收入",
-          //       "value": "0",
-          //       "unit": "元",
-          //       "description": null
-          //     }, {
-          //       "key": "feeConfigPercent",
-          //       "name": "资产配置覆盖率",
-          //       "value": "0",
-          //       "unit": "%",
-          //       "description": null
-          //     }, {
-          //       "key": "infoCompPercent",
-          //       "name": "高净值客户信息完善率",
-          //       "value": "0",
-          //       "unit": "%",
-          //       "description": null
-          //     }, {
-          //       "key": "motCompletePercent",
-          //       "name": "MOT任务完成率",
-          //       "value": "0",
-          //       "unit": "%",
-          //       "description": null
-          //     }, {
-          //       "key": "serviceCompPercent",
-          //       "name": "服务覆盖率",
-          //       "value": "0",
-          //       "unit": "%",
-          //       "description": null
-          //     }
-          //   ]
-          // }, {
-          //   "id": "ZZ323268",
-          //   "name": "山东分公司",
-          //   "level": "2",
-          //   "indicatorDataList": [
-          //     {
-          //       "key": "tgInNum",
-          //       "name": "a",
-          //       "value": "10",
-          //       "unit": "人",
-          //       "description": null,
-          //     }, {
-          //       "key": "keya",
-          //       "name": "a",
-          //       "value": "10",
-          //       "unit": "人",
-          //       "description": null,
-          //     },{
-          //       "key": "keyb",
-          //       "name": "b",
-          //       "value": "20",
-          //       "unit": "人",
-          //       "description": null,
-          //     }, {
-          //       "key": "currSignCustNum",
-          //       "name": "签约客户数",
-          //       "value": "0",
-          //       "unit": "户",
-          //       "description": "当前签约客户数"
-          //     }, {
-          //       "key": "currSignCustAset",
-          //       "name": "签约总资产",
-          //       "value": "0",
-          //       "unit": "元",
-          //       "description": null
-          //     }, {
-          //       "key": "totAset",
-          //       "name": "托管总资产",
-          //       "value": "0",
-          //       "unit": "元",
-          //       "description": null
-          //     }, {
-          //       "key": "gjAvgPercent",
-          //       "name": "股基平均佣金率",
-          //       "value": "0",
-          //       "unit": "‰",
-          //       "description": null
-          //     }, {
-          //       "key": "purRake",
-          //       "name": "净佣金收入",
-          //       "value": "0",
-          //       "unit": "元",
-          //       "description": null
-          //     }, {
-          //       "key": "purInteIncome",
-          //       "name": "净利息收入",
-          //       "value": "0",
-          //       "unit": "元",
-          //       "description": null
-          //     }, {
-          //       "key": "prdtPurFee",
-          //       "name": "产品净手续费收入",
-          //       "value": "0",
-          //       "unit": "元",
-          //       "description": null
-          //     }, {
-          //       "key": "feeConfigPercent",
-          //       "name": "资产配置覆盖率",
-          //       "value": "0",
-          //       "unit": "%",
-          //       "description": null
-          //     }, {
-          //       "key": "infoCompPercent",
-          //       "name": "高净值客户信息完善率",
-          //       "value": "0",
-          //       "unit": "%",
-          //       "description": null
-          //     }, {
-          //       "key": "motCompletePercent",
-          //       "name": "MOT任务完成率",
-          //       "value": "0",
-          //       "unit": "%",
-          //       "description": null
-          //     }, {
-          //       "key": "serviceCompPercent",
-          //       "name": "服务覆盖率",
-          //       "value": "0",
-          //       "unit": "%",
-          //       "description": null
-          //     }
-          //   ]
-          // }, {
-          //   "id": "ZZ323264",
-          //   "name": "河南分公司",
-          //   "level": "2",
-          //   "indicatorDataList": [
-          //     {
-          //       "key": "tgInNum",
-          //       "name": "a",
-          //       "value": "10",
-          //       "unit": "人",
-          //       "description": null,
-          //     }, {
-          //       "key": "keya",
-          //       "name": "a",
-          //       "value": "10",
-          //       "unit": "人",
-          //       "description": null,
-          //     },{
-          //       "key": "keyb",
-          //       "name": "b",
-          //       "value": "20",
-          //       "unit": "人",
-          //       "description": null,
-          //     }, {
-          //       "key": "currSignCustNum",
-          //       "name": "签约客户数",
-          //       "value": "0",
-          //       "unit": "户",
-          //       "description": "当前签约客户数"
-          //     }, {
-          //       "key": "currSignCustAset",
-          //       "name": "签约总资产",
-          //       "value": "0",
-          //       "unit": "元",
-          //       "description": null
-          //     }, {
-          //       "key": "totAset",
-          //       "name": "托管总资产",
-          //       "value": "0",
-          //       "unit": "元",
-          //       "description": null
-          //     }, {
-          //       "key": "gjAvgPercent",
-          //       "name": "股基平均佣金率",
-          //       "value": "0",
-          //       "unit": "‰",
-          //       "description": null
-          //     }, {
-          //       "key": "purRake",
-          //       "name": "净佣金收入",
-          //       "value": "0",
-          //       "unit": "元",
-          //       "description": null
-          //     }, {
-          //       "key": "purInteIncome",
-          //       "name": "净利息收入",
-          //       "value": "0",
-          //       "unit": "元",
-          //       "description": null
-          //     }, {
-          //       "key": "prdtPurFee",
-          //       "name": "产品净手续费收入",
-          //       "value": "0",
-          //       "unit": "元",
-          //       "description": null
-          //     }, {
-          //       "key": "feeConfigPercent",
-          //       "name": "资产配置覆盖率",
-          //       "value": "0",
-          //       "unit": "%",
-          //       "description": null
-          //     }, {
-          //       "key": "infoCompPercent",
-          //       "name": "高净值客户信息完善率",
-          //       "value": "0",
-          //       "unit": "%",
-          //       "description": null
-          //     }, {
-          //       "key": "motCompletePercent",
-          //       "name": "MOT任务完成率",
-          //       "value": "0",
-          //       "unit": "%",
-          //       "description": null
-          //     }, {
-          //       "key": "serviceCompPercent",
-          //       "name": "服务覆盖率",
-          //       "value": "0",
-          //       "unit": "%",
-          //       "description": null
-          //     }
-          //   ]
-          // }, {
-          //   "id": "ZZ323273",
-          //   "name": "江阴分公司",
-          //   "level": "2",
-          //   "indicatorDataList": [
-          //     {
-          //       "key": "tgInNum",
-          //       "name": "a",
-          //       "value": "10",
-          //       "unit": "人",
-          //       "description": null,
-          //     }, {
-          //       "key": "keya",
-          //       "name": "a",
-          //       "value": "10",
-          //       "unit": "人",
-          //       "description": null,
-          //     },{
-          //       "key": "keyb",
-          //       "name": "b",
-          //       "value": "20",
-          //       "unit": "人",
-          //       "description": null,
-          //     }, {
-          //       "key": "currSignCustNum",
-          //       "name": "签约客户数",
-          //       "value": "0",
-          //       "unit": "户",
-          //       "description": "当前签约客户数"
-          //     }, {
-          //       "key": "currSignCustAset",
-          //       "name": "签约总资产",
-          //       "value": "0",
-          //       "unit": "元",
-          //       "description": null
-          //     }, {
-          //       "key": "totAset",
-          //       "name": "托管总资产",
-          //       "value": "0",
-          //       "unit": "元",
-          //       "description": null
-          //     }, {
-          //       "key": "gjAvgPercent",
-          //       "name": "股基平均佣金率",
-          //       "value": "0",
-          //       "unit": "‰",
-          //       "description": null
-          //     }, {
-          //       "key": "purRake",
-          //       "name": "净佣金收入",
-          //       "value": "0",
-          //       "unit": "元",
-          //       "description": null
-          //     }, {
-          //       "key": "purInteIncome",
-          //       "name": "净利息收入",
-          //       "value": "0",
-          //       "unit": "元",
-          //       "description": null
-          //     }, {
-          //       "key": "prdtPurFee",
-          //       "name": "产品净手续费收入",
-          //       "value": "0",
-          //       "unit": "元",
-          //       "description": null
-          //     }, {
-          //       "key": "feeConfigPercent",
-          //       "name": "资产配置覆盖率",
-          //       "value": "0",
-          //       "unit": "%",
-          //       "description": null
-          //     }, {
-          //       "key": "infoCompPercent",
-          //       "name": "高净值客户信息完善率",
-          //       "value": "0",
-          //       "unit": "%",
-          //       "description": null
-          //     }, {
-          //       "key": "motCompletePercent",
-          //       "name": "MOT任务完成率",
-          //       "value": "0",
-          //       "unit": "%",
-          //       "description": null
-          //     }, {
-          //       "key": "serviceCompPercent",
-          //       "name": "服务覆盖率",
-          //       "value": "0",
-          //       "unit": "%",
-          //       "description": null
-          //     }
-          //   ]
-          // }
-        ],
+            {
+                "id": "ZZ001041106",
+                "name": "南通分公司",
+                "level": "2",
+                "orgModel": {
+                    "level1Id": "ZZ001041",
+                    "level1Name": "经纪业务总部",
+                    "level2Id": "ZZ001041106",
+                    "level2Name": "南通分公司",
+                    "level3Id": null,
+                    "level3Name": null,
+                    "level4Id": null,
+                    "level4Name": null,
+                    "value": null,
+                    "indiModelList": null
+                },
+                "indicatorDataList": [
+                    {
+                        "key": "effCustNum",
+                        "name": "有效客户数",
+                        "value": "0",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": null,
+                        "children": null
+                    },
+                    {
+                        "key": "InminorCustNum",
+                        "name": "高净值客户数",
+                        "value": "27722",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": null,
+                        "children": null
+                    },
+                    {
+                        "key": "newCustNum",
+                        "name": "新开客户数",
+                        "value": "32964",
+                        "unit": "户",
+                        "description": "我认为这个指标就是三个子指标的和",
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": null,
+                        "children": null
+                    },
+                    {
+                        "key": "pNewCustNum",
+                        "name": "个人新开客户数",
+                        "value": "5436",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": "新开客户数",
+                        "children": null
+                    },
+                    {
+                        "key": "oNewCustNum",
+                        "name": "机构新开客户数",
+                        "value": "2884",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": "新开客户数",
+                        "children": null
+                    },
+                    {
+                        "key": "oNewPrdtCustNum",
+                        "name": "产品新开客户数",
+                        "value": "24644",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": "新开客户数",
+                        "children": null
+                    },
+                    {
+                        "key": "hignLoseCustPercent",
+                        "name": "高净值客户流失率",
+                        "value": "24644",
+                        "unit": "%",
+                        "description": "这个指标不知取哪个字段",
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": null,
+                        "children": null
+                    }
+                ]
+            },
+            {
+                "id": "ZZ001041109",
+                "name": "天津分公司",
+                "level": "2",
+                "orgModel": {
+                    "level1Id": "ZZ001041",
+                    "level1Name": "经纪业务总部",
+                    "level2Id": "ZZ001041109",
+                    "level2Name": "天津分公司",
+                    "level3Id": null,
+                    "level3Name": null,
+                    "level4Id": null,
+                    "level4Name": null,
+                    "value": null,
+                    "indiModelList": null
+                },
+                "indicatorDataList": [
+                    {
+                        "key": "effCustNum",
+                        "name": "有效客户数",
+                        "value": "0",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": null,
+                        "children": null
+                    },
+                    {
+                        "key": "InminorCustNum",
+                        "name": "高净值客户数",
+                        "value": "15696",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": null,
+                        "children": null
+                    },
+                    {
+                        "key": "newCustNum",
+                        "name": "新开客户数",
+                        "value": "19591",
+                        "unit": "户",
+                        "description": "我认为这个指标就是三个子指标的和",
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": null,
+                        "children": null
+                    },
+                    {
+                        "key": "pNewCustNum",
+                        "name": "个人新开客户数",
+                        "value": "3289",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": "新开客户数",
+                        "children": null
+                    },
+                    {
+                        "key": "oNewCustNum",
+                        "name": "机构新开客户数",
+                        "value": "1716",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": "新开客户数",
+                        "children": null
+                    },
+                    {
+                        "key": "oNewPrdtCustNum",
+                        "name": "产品新开客户数",
+                        "value": "14586",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": "新开客户数",
+                        "children": null
+                    },
+                    {
+                        "key": "hignLoseCustPercent",
+                        "name": "高净值客户流失率",
+                        "value": "14586",
+                        "unit": "%",
+                        "description": "这个指标不知取哪个字段",
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": null,
+                        "children": null
+                    }
+                ]
+            },
+            {
+                "id": "ZZ001041107",
+                "name": "上海分公司",
+                "level": "2",
+                "orgModel": {
+                    "level1Id": "ZZ001041",
+                    "level1Name": "经纪业务总部",
+                    "level2Id": "ZZ001041107",
+                    "level2Name": "上海分公司",
+                    "level3Id": null,
+                    "level3Name": null,
+                    "level4Id": null,
+                    "level4Name": null,
+                    "value": null,
+                    "indiModelList": null
+                },
+                "indicatorDataList": [
+                    {
+                        "key": "effCustNum",
+                        "name": "有效客户数",
+                        "value": "0",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": null,
+                        "children": null
+                    },
+                    {
+                        "key": "InminorCustNum",
+                        "name": "高净值客户数",
+                        "value": "71206",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": null,
+                        "children": null
+                    },
+                    {
+                        "key": "newCustNum",
+                        "name": "新开客户数",
+                        "value": "73908",
+                        "unit": "户",
+                        "description": "我认为这个指标就是三个子指标的和",
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": null,
+                        "children": null
+                    },
+                    {
+                        "key": "pNewCustNum",
+                        "name": "个人新开客户数",
+                        "value": "12300",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": "新开客户数",
+                        "children": null
+                    },
+                    {
+                        "key": "oNewCustNum",
+                        "name": "机构新开客户数",
+                        "value": "6470",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": "新开客户数",
+                        "children": null
+                    },
+                    {
+                        "key": "oNewPrdtCustNum",
+                        "name": "产品新开客户数",
+                        "value": "55138",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": "新开客户数",
+                        "children": null
+                    },
+                    {
+                        "key": "hignLoseCustPercent",
+                        "name": "高净值客户流失率",
+                        "value": "55138",
+                        "unit": "%",
+                        "description": "这个指标不知取哪个字段",
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": null,
+                        "children": null
+                    }
+                ]
+            },
+            {
+                "id": "ZZ323264",
+                "name": "河南分公司",
+                "level": "2",
+                "orgModel": {
+                    "level1Id": "ZZ001041",
+                    "level1Name": "经纪业务总部",
+                    "level2Id": "ZZ323264",
+                    "level2Name": "河南分公司",
+                    "level3Id": null,
+                    "level3Name": null,
+                    "level4Id": null,
+                    "level4Name": null,
+                    "value": null,
+                    "indiModelList": null
+                },
+                "indicatorDataList": [
+                    {
+                        "key": "effCustNum",
+                        "name": "有效客户数",
+                        "value": "0",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": null,
+                        "children": null
+                    },
+                    {
+                        "key": "InminorCustNum",
+                        "name": "高净值客户数",
+                        "value": "11597",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": null,
+                        "children": null
+                    },
+                    {
+                        "key": "newCustNum",
+                        "name": "新开客户数",
+                        "value": "22057",
+                        "unit": "户",
+                        "description": "我认为这个指标就是三个子指标的和",
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": null,
+                        "children": null
+                    },
+                    {
+                        "key": "pNewCustNum",
+                        "name": "个人新开客户数",
+                        "value": "3703",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": "新开客户数",
+                        "children": null
+                    },
+                    {
+                        "key": "oNewCustNum",
+                        "name": "机构新开客户数",
+                        "value": "1932",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": "新开客户数",
+                        "children": null
+                    },
+                    {
+                        "key": "oNewPrdtCustNum",
+                        "name": "产品新开客户数",
+                        "value": "16422",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": "新开客户数",
+                        "children": null
+                    },
+                    {
+                        "key": "hignLoseCustPercent",
+                        "name": "高净值客户流失率",
+                        "value": "16422",
+                        "unit": "%",
+                        "description": "这个指标不知取哪个字段",
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": null,
+                        "children": null
+                    }
+                ]
+            },
+            {
+                "id": "ZZ323268",
+                "name": "山东分公司",
+                "level": "2",
+                "orgModel": {
+                    "level1Id": "ZZ001041",
+                    "level1Name": "经纪业务总部",
+                    "level2Id": "ZZ323268",
+                    "level2Name": "山东分公司",
+                    "level3Id": null,
+                    "level3Name": null,
+                    "level4Id": null,
+                    "level4Name": null,
+                    "value": null,
+                    "indiModelList": null
+                },
+                "indicatorDataList": [
+                    {
+                        "key": "effCustNum",
+                        "name": "有效客户数",
+                        "value": "0",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": null,
+                        "children": null
+                    },
+                    {
+                        "key": "InminorCustNum",
+                        "name": "高净值客户数",
+                        "value": "8352",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": null,
+                        "children": null
+                    },
+                    {
+                        "key": "newCustNum",
+                        "name": "新开客户数",
+                        "value": "13015",
+                        "unit": "户",
+                        "description": "我认为这个指标就是三个子指标的和",
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": null,
+                        "children": null
+                    },
+                    {
+                        "key": "pNewCustNum",
+                        "name": "个人新开客户数",
+                        "value": "2185",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": "新开客户数",
+                        "children": null
+                    },
+                    {
+                        "key": "oNewCustNum",
+                        "name": "机构新开客户数",
+                        "value": "1140",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": "新开客户数",
+                        "children": null
+                    },
+                    {
+                        "key": "oNewPrdtCustNum",
+                        "name": "产品新开客户数",
+                        "value": "9690",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": "新开客户数",
+                        "children": null
+                    },
+                    {
+                        "key": "hignLoseCustPercent",
+                        "name": "高净值客户流失率",
+                        "value": "9690",
+                        "unit": "%",
+                        "description": "这个指标不知取哪个字段",
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": null,
+                        "children": null
+                    }
+                ]
+            },
+            {
+                "id": "ZZ323273",
+                "name": "江阴分公司",
+                "level": "2",
+                "orgModel": {
+                    "level1Id": "ZZ001041",
+                    "level1Name": "经纪业务总部",
+                    "level2Id": "ZZ323273",
+                    "level2Name": "江阴分公司",
+                    "level3Id": null,
+                    "level3Name": null,
+                    "level4Id": null,
+                    "level4Name": null,
+                    "value": null,
+                    "indiModelList": null
+                },
+                "indicatorDataList": [
+                    {
+                        "key": "effCustNum",
+                        "name": "有效客户数",
+                        "value": "0",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": null,
+                        "children": null
+                    },
+                    {
+                        "key": "InminorCustNum",
+                        "name": "高净值客户数",
+                        "value": "15811",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": null,
+                        "children": null
+                    },
+                    {
+                        "key": "newCustNum",
+                        "name": "新开客户数",
+                        "value": "7124",
+                        "unit": "户",
+                        "description": "我认为这个指标就是三个子指标的和",
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": null,
+                        "children": null
+                    },
+                    {
+                        "key": "pNewCustNum",
+                        "name": "个人新开客户数",
+                        "value": "1196",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": "新开客户数",
+                        "children": null
+                    },
+                    {
+                        "key": "oNewCustNum",
+                        "name": "机构新开客户数",
+                        "value": "624",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": "新开客户数",
+                        "children": null
+                    },
+                    {
+                        "key": "oNewPrdtCustNum",
+                        "name": "产品新开客户数",
+                        "value": "5304",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": "新开客户数",
+                        "children": null
+                    },
+                    {
+                        "key": "hignLoseCustPercent",
+                        "name": "高净值客户流失率",
+                        "value": "5304",
+                        "unit": "%",
+                        "description": "这个指标不知取哪个字段",
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": null,
+                        "children": null
+                    }
+                ]
+            },
+            {
+                "id": "ZZ001041116",
+                "name": "辽宁分公司",
+                "level": "2",
+                "orgModel": {
+                    "level1Id": "ZZ001041",
+                    "level1Name": "经纪业务总部",
+                    "level2Id": "ZZ001041116",
+                    "level2Name": "辽宁分公司",
+                    "level3Id": null,
+                    "level3Name": null,
+                    "level4Id": null,
+                    "level4Name": null,
+                    "value": null,
+                    "indiModelList": null
+                },
+                "indicatorDataList": [
+                    {
+                        "key": "effCustNum",
+                        "name": "有效客户数",
+                        "value": "0",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": null,
+                        "children": null
+                    },
+                    {
+                        "key": "InminorCustNum",
+                        "name": "高净值客户数",
+                        "value": "13494",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": null,
+                        "children": null
+                    },
+                    {
+                        "key": "newCustNum",
+                        "name": "新开客户数",
+                        "value": "18221",
+                        "unit": "户",
+                        "description": "我认为这个指标就是三个子指标的和",
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": null,
+                        "children": null
+                    },
+                    {
+                        "key": "pNewCustNum",
+                        "name": "个人新开客户数",
+                        "value": "3059",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": "新开客户数",
+                        "children": null
+                    },
+                    {
+                        "key": "oNewCustNum",
+                        "name": "机构新开客户数",
+                        "value": "1596",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": "新开客户数",
+                        "children": null
+                    },
+                    {
+                        "key": "oNewPrdtCustNum",
+                        "name": "产品新开客户数",
+                        "value": "13566",
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": "新开客户数",
+                        "children": null
+                    },
+                    {
+                        "key": "hignLoseCustPercent",
+                        "name": "高净值客户流失率",
+                        "value": "13566",
+                        "unit": "%",
+                        "description": "这个指标不知取哪个字段",
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": null,
+                        "parentName": null,
+                        "children": null
+                    }
+                ]
+            }
+          ],
         "titleList": [
-          {
-            "key": "tgInNum",
-            "name": "投顾入岗人数",
-            "value": null,
-            "unit": "人",
-            "description": null,
-            "children": [{
-              "key": "total",
-              "name": "总计",
-              "value": null,
-              "unit": "人",
-              "description": null,
-            }, {
-              "key": "keya",
-              "name": "a",
-              "value": null,
-              "unit": "人",
-              "description": null,
-            }, {
-              "key": "keyb",
-              "name": "b",
-              "value": null,
-              "unit": "人",
-              "description": null,
-            }]
-          }, {
-            "key": "currSignCustNum",
-            "name": "签约客户数",
-            "value": null,
-            "unit": "户",
-            "description": "当前签约客户数"
-          }, {
-            "key": "currSignCustAset",
-            "name": "签约总资产",
-            "value": null,
-            "unit": "元",
-            "description": null
-          }, {
-            "key": "totAset",
-            "name": "托管总资产",
-            "value": null,
-            "unit": "元",
-            "description": null
-          }, {
-            "key": "gjAvgPercent",
-            "name": "股基平均佣金率",
-            "value": null,
-            "unit": "‰",
-            "description": null
-          }, {
-            "key": "purRake",
-            "name": "净佣金收入",
-            "value": null,
-            "unit": "元",
-            "description": null
-          }, {
-            "key": "purInteIncome",
-            "name": "净利息收入",
-            "value": null,
-            "unit": "元",
-            "description": null
-          }, {
-            "key": "prdtPurFee",
-            "name": "产品净手续费收入",
-            "value": null,
-            "unit": "元",
-            "description": null
-          }, {
-            "key": "feeConfigPercent",
-            "name": "资产配置覆盖率",
-            "value": null,
-            "unit": "%",
-            "description": null
-          }, {
-            "key": "infoCompPercent",
-            "name": "高净值客户信息完善率",
-            "value": null,
-            "unit": "%",
-            "description": null
-          }, {
-            "key": "motCompletePercent",
-            "name": "MOT任务完成率",
-            "value": null,
-            "unit": "%",
-            "description": null
-          }, {
-            "key": "serviceCompPercent",
-            "name": "服务覆盖率",
-            "value": null,
-            "unit": "%",
-            "description": null
-          }
+            {
+                "key": "effCustNum",
+                "name": "有效客户数",
+                "value": null,
+                "unit": "户",
+                "description": null,
+                "categoryKey": null,
+                "isBelongsSummury": null,
+                "hasChildren": null,
+                "parentKey": null,
+                "parentName": null,
+                "children": null
+            },
+            {
+                "key": "InminorCustNum",
+                "name": "高净值客户数",
+                "value": null,
+                "unit": "户",
+                "description": null,
+                "categoryKey": null,
+                "isBelongsSummury": null,
+                "hasChildren": null,
+                "parentKey": null,
+                "parentName": null,
+                "children": null
+            },
+            {
+                "key": "newCustNum",
+                "name": "新开客户数",
+                "value": null,
+                "unit": "户",
+                "description": "我认为这个指标就是三个子指标的和",
+                "categoryKey": null,
+                "isBelongsSummury": null,
+                "hasChildren": "Y",
+                "parentKey": null,
+                "parentName": null,
+                "children": [
+                    {
+                        "key": "newCustNum",
+                        "name": "合计",
+                        "value": null,
+                        "unit": "户",
+                        "description": "我认为这个指标就是三个子指标的和",
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": "Y",
+                        "parentKey": null,
+                        "parentName": null,
+                        "children": null
+                    },
+                    {
+                        "key": "pNewCustNum",
+                        "name": "个人新开客户数",
+                        "value": null,
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": "newCustNum",
+                        "parentName": null,
+                        "children": null
+                    },
+                    {
+                        "key": "oNewCustNum",
+                        "name": "机构新开客户数",
+                        "value": null,
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": "newCustNum",
+                        "parentName": null,
+                        "children": null
+                    },
+                    {
+                        "key": "oNewPrdtCustNum",
+                        "name": "产品新开客户数",
+                        "value": null,
+                        "unit": "户",
+                        "description": null,
+                        "categoryKey": null,
+                        "isBelongsSummury": null,
+                        "hasChildren": null,
+                        "parentKey": "newCustNum",
+                        "parentName": null,
+                        "children": null
+                    }
+                ]
+            },
+            {
+                "key": "hignLoseCustPercent",
+                "name": "高净值客户流失率",
+                "value": null,
+                "unit": "%",
+                "description": "这个指标不知取哪个字段",
+                "categoryKey": null,
+                "isBelongsSummury": null,
+                "hasChildren": null,
+                "parentKey": null,
+                "parentName": null,
+                "children": null
+            }
         ],
         "totalCnt": 30,
         "pageSize": 10,

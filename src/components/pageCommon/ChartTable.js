@@ -10,6 +10,7 @@ import { autobind } from 'core-decorators';
 import { Table, Pagination, Popover } from 'antd';
 import _ from 'lodash';
 
+import { getStrLen } from '../../utils/helper';
 import { optionsMap } from '../../config';
 import styles from './ChartTable.less';
 
@@ -45,71 +46,93 @@ export default class ChartTable extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      bordered: true,
-      loading: false,
-      pagination: false,
-      sortedInfo: null,
+      table: {
+        bordered: true,
+        loading: false,
+        pagination: false,
+        sortedInfo: null,
+      },
       // url 中会存放的值
       orderIndicatorId: '',
       orderType: '',
       pageNum: 1,
+      arr: [],
+      temp: [],
+      allWidth: 100,
     };
+  }
+  componentWillReceiveProps(nextProps) {
+    // TODO 根据 nextProps 的值是否变化来判断是否调用此方法
+    this.changeTableData(nextProps);
   }
   // 组合表格头部 排序 html
   @autobind
-  getTitleHtml(item, flag = true) {
+  getTitleHtml(item, unitFlag = true) {
     const { orderIndicatorId, orderType } = this.state;
     let titleHtml = '';
-    if (flag) {
-      titleHtml = (<span
-        className={styles.columnsTitle}
-        onClick={() => { this.handleTitleClick(item); }}
-      >
-        {`${item.name}(${encodeURIComponent(item.unit) === encodeURIComponent('元') ? '万元' : item.unit})`}
-        <span className={'ant-table-column-sorter'}>
-          <span
-            className={`
-              ant-table-column-sorter-up
-              ${(orderIndicatorId === item.key && (orderType !== 'desc')) ? 'on' : 'off'}
-            `}
-            title="↑"
-            onClick={(e) => {
-              this.arrowHandle(e, item, 'asc');
-            }}
-          >
-            <i className={'anticon anticon-caret-up'} />
-          </span>
-          <span
-            className={`
-              ant-table-column-sorter-up
-              ${(orderIndicatorId === item.key && (orderType !== 'asc')) ? 'on' : 'off'}
-            `}
-            title="↓"
-            onClick={(e) => {
-              this.arrowHandle(e, item, 'desc');
-            }}
-          >
-            <i className={'anticon anticon-caret-down'} />
-          </span>
+    titleHtml = (<span
+      className={styles.columnsTitle}
+      onClick={() => { this.handleTitleClick(item); }}
+    >
+      {unitFlag ?
+      `${item.name}(${encodeURIComponent(item.unit) === encodeURIComponent('元') ? '万元' : item.unit})`
+      :
+      item.name
+      }
+      <span className={'ant-table-column-sorter'}>
+        <span
+          className={`
+            ant-table-column-sorter-up
+            ${(orderIndicatorId === item.key && (orderType !== 'desc')) ? 'on' : 'off'}
+          `}
+          title="↑"
+          onClick={(e) => {
+            this.arrowHandle(e, item, 'asc');
+          }}
+        >
+          <i className={'anticon anticon-caret-up'} />
         </span>
-      </span>);
-    } else {
-      titleHtml = `${item.name}(${encodeURIComponent(item.unit) === encodeURIComponent('元') ? '万元' : item.unit})`;
-    }
+        <span
+          className={`
+            ant-table-column-sorter-up
+            ${(orderIndicatorId === item.key && (orderType !== 'asc')) ? 'on' : 'off'}
+          `}
+          title="↓"
+          onClick={(e) => {
+            this.arrowHandle(e, item, 'desc');
+          }}
+        >
+          <i className={'anticon anticon-caret-down'} />
+        </span>
+      </span>
+    </span>);
     return titleHtml;
+  }
+  // 根据 column 的 name 计算 column 的宽度
+  @autobind
+  getColumnWidth(str) {
+    // 取出字符串对应的字节长度，汉字为 2，英文符号为 1，最终除以 2 当做字符串长度
+    const length = getStrLen(str) / 2;
+    // TODO，取出每个文字的实际字体大小
+    // 设定每个 column 的宽度，16 为每个字的假想大小，20 为后面的箭头宽度
+    const width = (length * 16) + 20;
+    // 设定最小宽度，以防 name 太短，而对应的值过大，标题会换行
+    return width < 80 ? 80 : width;
   }
   // 获取表格头部子元素
   @autobind
   getChildren(item) {
     const childrenArr = [];
     if (item.children) {
-      item.children.map(child =>
-        childrenArr.push({
-          title: this.getTitleHtml(child),
+      item.children.map((child) => {
+        const childObj = {
+          title: this.getTitleHtml(child, false),
           dataIndex: child.key,
+          width: this.getColumnWidth(child.name),
           key: `key${child.key}`,
-          width: 150,
-        }));
+        };
+        return childrenArr.push(childObj);
+      });
     }
     return childrenArr;
   }
@@ -192,20 +215,24 @@ export default class ChartTable extends PureComponent {
   unitChange(arr) {
     let value;
     const newArr = arr.map((item) => {
-      const itemValue = Number(item.value);
-      switch (item.unit) {
-        case '%':
-          value = Number.parseFloat((itemValue * 100).toFixed(2));
-          break;
-        case '\u2030':
-          value = Number.parseFloat((itemValue * 1000).toFixed(2));
-          break;
-        case '元':
-          value = `${Number.parseFloat((itemValue / 10000).toFixed(2))}`;
-          break;
-        default:
-          value = Number.parseFloat(itemValue.toFixed(2));
-          break;
+      if (item.value) {
+        const itemValue = Number(item.value);
+        switch (encodeURIComponent(item.unit)) {
+          case encodeURIComponent('%'):
+            value = Number.parseFloat((itemValue * 100).toFixed(2));
+            break;
+          case encodeURIComponent('‰'):
+            value = Number.parseFloat((itemValue * 1000).toFixed(2));
+            break;
+          case encodeURIComponent('元'):
+            value = `${Number.parseFloat((itemValue / 10000).toFixed(2))}`;
+            break;
+          default:
+            value = Number.parseFloat(itemValue.toFixed(2));
+            break;
+        }
+      } else {
+        value = '暂无';
       }
       return {
         [item.key]: value,
@@ -230,24 +257,13 @@ export default class ChartTable extends PureComponent {
     });
   }
   @autobind
-  renderContent(value, row, index) {
-    const obj = {
-      children: value,
-      props: {},
-    };
-    if (index === 0) {
-      obj.props.colSpan = 2;
-    }
-    return obj;
-  }
-
-  render() {
-    // chartTableInfo使用state中的值
-    const { chartTableInfo, style, scope } = this.props;
+  changeTableData(nextProps) {
+    const { chartTableInfo, scope } = nextProps;
     const columns = chartTableInfo.titleList;
     const data = chartTableInfo.indicatorSummuryRecordDtos;
     const temp = [];
-    let arr = [];
+    let newArr = [];
+    let tempArr = [];
     let allWidth = '';
     if (data && data.length) {
       data.map((item, index) => {
@@ -257,53 +273,77 @@ export default class ChartTable extends PureComponent {
           { key: index, city: name, level: itemLevel, id, orgModel }, ...testArr,
         ));
       });
-      arr = columns.map((item) => {
+      tempArr = columns.map((item) => {
         const tempName = `${item.name}(${encodeURIComponent(item.unit) === encodeURIComponent('元') ? '万元' : item.unit})`;
         const column = {
           dataIndex: item.key,
           title: this.getTitleHtml(item),
+          width: this.getColumnWidth(tempName),
           render: text => (
             <div className={styles.tdWrapperDiv}>
               {text}
             </div>
           ),
         };
-        // 如果表格标题超过 9 个，则每个设置对应的宽度
-        if (columns.length > 9) {
-          column.width = (tempName.length * 16) + 20;
-        }
         // 如果表格标题包含 children，则给每个 child 设置排序事件
         const hasChildren = item.children;
         if (hasChildren) {
-          column.children = this.getChildren(item);
-          column.title = `${item.name}(${encodeURIComponent(item.unit) === encodeURIComponent('元') ? '万元' : item.unit})`;
+          const childArr = this.getChildren(item);
+          column.children = childArr;
+          column.title = tempName;
+          column.width = _.sumBy(childArr, 'width');
         }
         return column;
       });
-      allWidth = _.sumBy(arr, 'width');
-      // allWidth = allWidth > 900 ? allWidth : '100%';
+      // 匹配第一列标题文字，分公司、营业部、投顾
+      // sortByType 初始的 scope 为 2，所以减去两个前面对象，得出最后与实际 scope 相等的索引
+      const keyName = sortByType[Number(scope) - 2].name;
+      tempArr.unshift({
+        title: keyName,
+        dataIndex: 'city',
+        key: 'city',
+        width: 170,
+        fixed: 'left',
+        render: (text, record) => (
+          this.toolTipHandle(record)
+        ),
+      });
+      allWidth = _.sumBy(tempArr, 'width');
+      // 最外层容器的宽度， 40 为 reportBody 的 margin 值
+      const clientWidth = document.querySelector('#exApp').clientWidth - 40;
+      // 如果表格的总宽度小于最外层容器的宽度，则删除设定好的 column 宽度，让其自适应
+      // 否则按设定的宽度处理
+      if (allWidth < clientWidth) {
+        newArr = tempArr.map((item, index) => {
+          let newItem = {};
+          if (index !== 0) {
+            newItem = { ...item, width: null };
+          } else {
+            newItem = item;
+          }
+          return newItem;
+        });
+      } else {
+        newArr = tempArr;
+      }
     }
-    // 匹配第一列标题文字，分公司、营业部、投顾
-    // sortByType 初始的 scope 为 2，所以减去两个前面对象，得出最后与实际 scope 相等的索引
-    const keyName = sortByType[Number(scope) - 2].name;
-    arr.unshift({
-      title: keyName,
-      dataIndex: 'city',
-      key: 'city',
-      width: 170,
-      fixed: 'left',
-      render: (text, record) => (
-        this.toolTipHandle(record)
-      ),
+    this.setState({
+      arr: newArr,
+      temp,
+      allWidth,
     });
+  }
+  render() {
+    const { chartTableInfo, style } = this.props;
+
     return (
       <div className={styles.tableDiv} style={style}>
         <Table
-          {...this.state}
-          columns={arr}
-          dataSource={temp}
+          {...this.state.table}
+          columns={this.state.arr}
+          dataSource={this.state.temp}
           onChange={this.handleChange}
-          scroll={{ x: allWidth }}
+          scroll={{ x: this.state.allWidth }}
         />
         <Pagination
           defaultCurrent={1}

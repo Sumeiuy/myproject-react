@@ -65,6 +65,7 @@ export default class CustRange extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
+    updateQueryState: PropTypes.func.isRequired,
     custRange: PropTypes.array.isRequired,
   }
 
@@ -73,12 +74,12 @@ export default class CustRange extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { custRange, location: { query: { orgId } } } = this.props;
+    const { custRange } = this.props;
     const formatCustRange = transformCustRangeData(custRange);
-    walk(formatCustRange, findOrgNameByOrgId(orgId || custRange[0].id), '');
+    walk(formatCustRange, findOrgNameByOrgId(custRange[0].id), '');
     const initValue = {
       label: custRangeNameDedault,
-      value: orgId || custRange[0].id,
+      value: custRange[0].id,
     };
     this.state = {
       formatCustRange,
@@ -93,21 +94,34 @@ export default class CustRange extends PureComponent {
     app.addEventListener('DOMMouseScroll', this.handleMousewheel, false);
   }
 
+  componentWillReceiveProps(nextProps) {
+    const { location: { query: { boardId } }, custRange } = nextProps;
+    const { location: { query: { boardId: preBId } } } = this.props;
+    const { formatCustRange } = this.state;
+    if (Number(boardId || '1') !== Number(preBId || '1')) {
+      walk(formatCustRange, findOrgNameByOrgId(custRange[0].id), '');
+      const initValue = {
+        label: custRangeNameDedault,
+        value: custRange[0].id,
+      };
+      // 切换报表了，恢复默认值
+      this.setState({
+        value: initValue,
+        open: false,
+      });
+    }
+  }
+
   @autobind
   onChange(value) {
     if (!value) {
       return;
     }
-    const { replace, location: { query, pathname }, custRange } = this.props;
+    const { updateQueryState, custRange } = this.props;
     const tmpArr = value.value.split('-');
     const custRangeLevel = tmpArr[0];
     const orgId = tmpArr[1];
     const custRangeName = tmpArr.slice(2).join('/');
-    if (!query.custRangeLevel &&
-      custRange &&
-      custRange[0].level === tmpArr[0]) {
-      return;
-    }
     const changedValue = {
       label: custRangeName,
       value: custRangeName
@@ -118,16 +132,11 @@ export default class CustRange extends PureComponent {
     this.setState({
       value: changedValue,
     });
-
-    replace({
-      pathname,
-      query: {
-        ...query,
-        orgId,
-        custRangeLevel,
-        level: custRangeLevel,
-        scope: Number(custRangeLevel) + 1,
-      },
+    updateQueryState({
+      orgId,
+      custRangeLevel,
+      level: custRangeLevel,
+      scope: Number(custRangeLevel) + 1,
     });
   }
 

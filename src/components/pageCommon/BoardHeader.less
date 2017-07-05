@@ -62,42 +62,39 @@
   composes: iconBtn;
   composes: fixIconBtnBorder;
 }
-
 :global {
-  .iconColor {
-    color: #ffd92a;
-  }
-}
-:global{
-  .hideOption,
-  .hideSelect {
-    display: none;
+  .react-app {
+    .iconColor {
+      color: #ffd92a;
+    }
+    .hideOption,
+    .hideSelect {
+      display: none;
+    }
+    .investPerformanceBoard {
+      position: relative;
+      .ant-select {
+        color:#fff;
+      }
+      .ant-select-selection {
+        background-color: transparent;
+        border-color: transparent;
+      }
+      .ant-select-open .ant-select-selection,
+      .ant-select-focused .ant-select-selection,
+      .ant-select-selection:focus,
+      .ant-select-selection:active {
+        border-color: transparent;
+        box-shadow: none;
+      }
+      .ant-select-selection--single {
+        height: 24px;
+      }
+      .ant-select-selection__rendered {
+        line-height: 22px;
+      }
+    }
   }
 }
 // 修改antd上Select样式
-:global {
-  .investPerformanceBoard {
-    position: relative;
-    .ant-select {
-      color:#fff;
-    }
-    .ant-select-selection {
-      background-color: transparent;
-      border-color: transparent;
-    }
-    .ant-select-open .ant-select-selection,
-    .ant-select-focused .ant-select-selection,
-    .ant-select-selection:focus,
-    .ant-select-selection:active {
-      border-color: transparent;
-      box-shadow: none;
-    }
-    .ant-select-selection--single {
-      height: 24px;
-    }
-    .ant-select-selection__rendered {
-      line-height: 22px;
-    }
-  }
-}
 // end
