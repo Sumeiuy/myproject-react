@@ -17,28 +17,62 @@ export default class PageHeader extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
+    push: PropTypes.func.isRequired,
+    updateQueryState: PropTypes.func.isRequired,
     custRange: PropTypes.array,
+    visibleBoards: PropTypes.array,
+    preView: PropTypes.bool,
+    reportName: PropTypes.string,
   }
 
   static defaultProps = {
     custRange: [],
+    visibleBoards: [],
+    preView: false,
+    reportName: '',
   }
 
   render() {
-    const { replace, custRange, location } = this.props;
+    const {
+      preView,
+      reportName,
+      replace,
+      push,
+      custRange,
+      location,
+      visibleBoards,
+      updateQueryState,
+    } = this.props;
 
     return (
       <div className="reportHeader">
         <Row type="flex" justify="start" align="middle">
           <div className="reportName">
-            <BoardSelect
-              location={location}
-            />
+            {/* 需要针对预览页面做调整 */}
+            {
+              preView
+              ?
+              (
+                <div className="preView">
+                  {reportName}
+                </div>
+              )
+              :
+              (
+                <BoardSelect
+                  location={location}
+                  push={push}
+                  replace={replace}
+                  visibleBoards={visibleBoards}
+                />
+              )
+            }
           </div>
           <div className={styles.reportHeaderRight}>
             <DurationSelect
               location={location}
               replace={replace}
+              updateQueryState={updateQueryState}
             />
             <div className={styles.vSplit} />
             {/* 营业地址选择项 */}
@@ -46,6 +80,7 @@ export default class PageHeader extends PureComponent {
               custRange={custRange}
               location={location}
               replace={replace}
+              updateQueryState={updateQueryState}
             />
           </div>
         </Row>

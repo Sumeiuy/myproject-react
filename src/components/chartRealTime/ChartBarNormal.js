@@ -18,12 +18,17 @@ import {
   toFixedCust,
 } from './FixNumber';
 import IECharts from '../IECharts';
-import { iconTypeMap } from '../../config';
+import { iconTypeMap, ZHUNICODE } from '../../config';
 import Icon from '../common/Icon';
 import styles from './ChartBar.less';
 import imgSrc from './noChart.png';
 
 const getIcon = iconTypeMap.getIcon;
+const PERCENT = ZHUNICODE.PERCENT;
+const PERMILLAGE = ZHUNICODE.PERMILLAGE;
+const REN = ZHUNICODE.REN;
+const HU = ZHUNICODE.HU;
+const YUAN = ZHUNICODE.YUAN;
 
 export default class ChartBarNormal extends PureComponent {
 
@@ -99,7 +104,7 @@ export default class ChartBarNormal extends PureComponent {
     };
 
     return series.map((item, index) => ({
-      value: (unit === '%' || unit === '\u2030') ? Number(item.toFixed(2)) : item,
+      value: (unit === PERCENT || unit === PERMILLAGE) ? Number(item.toFixed(2)) : item,
       label: {
         normal: {
           show: index < maxIndex,
@@ -133,16 +138,16 @@ export default class ChartBarNormal extends PureComponent {
       }
     }
 
-    if (unit === '%') {
+    if (unit === PERCENT) {
       seriesData = seriesData.map(item => (item * 100));
-    } else if (unit === '\u2030') {
+    } else if (unit === PERMILLAGE) {
       seriesData = seriesData.map(item => (item * 1000));
-    } else if (unit === '元') {
+    } else if (unit === YUAN) {
       // 如果图表中的数据表示的是金额的话，需要对其进行单位识别和重构
       const tempSeries = toFixedMoney(seriesData);
       seriesData = tempSeries.newSeries;
       unit = tempSeries.newUnit;
-    } else if (unit === '户') {
+    } else if (unit === HU) {
       const tempSeries = toFixedCust(seriesData);
       seriesData = tempSeries.newSeries;
       unit = tempSeries.newUnit;
@@ -153,19 +158,19 @@ export default class ChartBarNormal extends PureComponent {
     // 图表边界值,如果xMax是0的话则最大值为1
     let gridXAxisMax = xMax * 1.1 || 1;
     let gridXaxisMin = 0;
-    if (unit === '%') {
+    if (unit === PERCENT) {
       const maxAndMinPercent = getMaxAndMinPercent(seriesData);
       gridXAxisMax = maxAndMinPercent.max;
       gridXaxisMin = maxAndMinPercent.min;
-    } else if (unit === '\u2030') {
+    } else if (unit === PERMILLAGE) {
       const maxAndMinPermillage = getMaxAndMinPermillage(seriesData);
       gridXAxisMax = maxAndMinPermillage.max;
       gridXaxisMin = maxAndMinPermillage.min;
-    } else if (unit.indexOf('元') > -1) {
+    } else if (unit.indexOf(YUAN) > -1) {
       const maxAndMinMoney = getMaxAndMinMoney(seriesData);
       gridXAxisMax = maxAndMinMoney.max;
       gridXaxisMin = maxAndMinMoney.min;
-    } else if (unit === '人' || unit.indexOf('户') > -1) {
+    } else if (unit === REN || unit.indexOf(HU) > -1) {
       const maxAndMinPeople = getMaxAndMinCust(seriesData);
       gridXAxisMax = maxAndMinPeople.max;
       gridXaxisMin = maxAndMinPeople.min;
@@ -183,7 +188,7 @@ export default class ChartBarNormal extends PureComponent {
     // 需要针对不同的值编写不同的柱状图Label样式
     const newSeriesData = this.createNewSeriesData(seriesData, medianValue, unit, padLength);
 
-    // TODO 此处当 gridXAxisMax 和 gridXaxisMin都是负数的时候后，eChart会出现布局错乱
+    // 此处当 gridXAxisMax 和 gridXaxisMin都是负数的时候后，eChart会出现布局错乱
     // 因此需要改变
     if (gridXaxisMin < 0 && gridXAxisMax < 0) {
       gridXAxisMax = 0;
