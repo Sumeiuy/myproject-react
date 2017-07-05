@@ -9,7 +9,7 @@ import { feedbackOptions } from '../../config';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
-
+let COUNT = 0;
 // 状态字典
 const STATUS_MAP = [
   { value: 'PROCESSING', label: '解决中' },
@@ -31,6 +31,7 @@ export default class FeedbackList extends PureComponent {
     super(props);
     this.state = {
       curSelectedRow: 0,
+      fbTableKey: `fbTableKey${COUNT}`,
     };
   }
 
@@ -73,6 +74,7 @@ export default class FeedbackList extends PureComponent {
           this.setState({ // eslint-disable-line
             curSelectedRow: _.findIndex(resultData,
               item => item.id.toString() === currentId),
+            fbTableKey: `fbTableKey${COUNT++}`,
           });
 
           replace({
@@ -253,7 +255,7 @@ export default class FeedbackList extends PureComponent {
     const { list: { resultData = EMPTY_LIST, page = EMPTY_OBJECT },
       location: { query: { curPageNum, curPageSize } } } = this.props;
     const { totalRecordNum } = page;
-    const { curSelectedRow } = this.state;
+    const { curSelectedRow, fbTableKey } = this.state;
 
     if (!resultData) {
       return null;
@@ -279,6 +281,7 @@ export default class FeedbackList extends PureComponent {
     return (
       <div className="feedbackList">
         <Table
+          key={fbTableKey}
           className="feedbackTable"
           columns={columns}
           dataSource={this.constructTableDatas(resultData)}
