@@ -3,6 +3,7 @@
  * @author maoquan(maoquan@htsc.com)
  */
 
+import 'babel-polyfill';
 import dva from 'dva';
 import { hashHistory, routerRedux } from 'dva/router';
 
@@ -10,6 +11,7 @@ import createLoading from 'dva-loading';
 import createLogger from 'redux-logger';
 import { persistStore, autoRehydrate } from 'redux-persist';
 import { message } from 'antd';
+import _ from 'lodash';
 
 import createSensorsLogger from './middlewares/sensorsLogger';
 import createActivityIndicator from './middlewares/createActivityIndicator';
@@ -49,8 +51,7 @@ app.use(createActivityIndicator());
 
 // 3. Model
 app.model(require('./models/app'));
-// app.model(require('./models/invest'));
-// app.model(require('./models/business'));
+app.model(require('./models/feedback'));
 app.model(require('./models/report'));
 app.model(require('./models/manage'));
 app.model(require('./models/edit'));
@@ -69,6 +70,13 @@ if (persistConfig.active) {
   persistStore(store, persistConfig);
 }
 
-window.navTo = (url) => {
+window.navTo = (url, query) => {
+  const state = store.getState();
+  const tmpLocation = state.routing.locationBeforeTransitions;
+  if (tmpLocation && tmpLocation.pathname === url
+    && _.isEqual(tmpLocation.query, query)
+  ) {
+    return;
+  }
   store.dispatch(routerRedux.push(url));
 };

@@ -6,7 +6,7 @@
 
 const config = {
   url: process.env.NODE_ENV === 'development1'
-    ? '/' : '/abtest/pass/mc/sensors',
+    ? '/' : '/fspa/abtest/pass/mc/sensors',
   interval: 1 * 60 * 1000,
   // 开启日志监控
   enable: true,

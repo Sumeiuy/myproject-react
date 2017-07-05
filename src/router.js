@@ -7,15 +7,14 @@ import React from 'react';
 import {
   Router,
   Route,
-  IndexRoute,
   IndexRedirect,
 } from 'dva/router';
 
 import Main from './layouts/Main';
 
 import Empty from './routes/empty/Home';
-import InvestHome from './routes/invest/Home';
 import BusinessHome from './routes/business/Home';
+import FeedBack from './routes/feedback/Home';
 import TemplModal from './routes/templeModal/Home';
 import BoardManageHome from './routes/boardManage/Home';
 import BoardEditHome from './routes/boardEdit/Home';
@@ -25,31 +24,16 @@ import PreviewReport from './routes/reports/PreviewReport';
 const routes = ({ history }) => (// eslint-disable-line
   <Router history={history}>
     <Route path="/" component={Main}>
-      <IndexRedirect to="/report" />
-      <Route path="empty">
-        <IndexRoute component={Empty} />
-      </Route>
-      <Route path="report">
-        <IndexRoute component={ReportHome} />
-      </Route>
-      <Route path="preview">
-        <IndexRoute component={PreviewReport} />
-      </Route>
-      <Route path="invest">
-        <IndexRoute component={InvestHome} />
-      </Route>
-      <Route path="business">
-        <IndexRoute component={BusinessHome} />
-      </Route>
-      <Route path="modal">
-        <IndexRoute component={TemplModal} />
-      </Route>
-      <Route path="boardManage">
-        <IndexRoute component={BoardManageHome} />
-      </Route>
-      <Route path="boardEdit">
-        <IndexRoute component={BoardEditHome} />
-      </Route>
+      <IndexRedirect to="/empty" />
+      <Route path="empty" component={Empty} />
+      <Route path="report" component={ReportHome} />
+      <Route path="preview" component={PreviewReport} />
+      <Route path="invest" component={ReportHome} />
+      <Route path="business" component={BusinessHome} />
+      <Route path="feedback" component={FeedBack} />
+      <Route path="modal" component={TemplModal} />
+      <Route path="boardManage" component={BoardManageHome} />
+      <Route path="boardEdit" component={BoardEditHome} />
     </Route>
   </Router>
 );
