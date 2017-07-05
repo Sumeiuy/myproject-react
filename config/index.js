@@ -35,7 +35,7 @@ module.exports = {
         secure: false,
       },
       '/feedback': {
-        target: 'http://127.0.0.1:7080', // SIT
+        target: 'http://168.168.71.26:9084', // SIT
         secure: false,
       },
     },
