@@ -281,7 +281,7 @@ export default class ProblemDetail extends PureComponent {
                         {getSelectOption(questionTagOptions)}
                       </Select>,
                     )}
-                    <div className="btn">
+                    <div className="edit-btn">
                       <a onClick={this.handleSubChange}><Icon type="success" /></a>
                       <a onClick={this.handleClose}><Icon type="close" /></a>
                     </div>
@@ -306,7 +306,7 @@ export default class ProblemDetail extends PureComponent {
                     {getFieldDecorator('jiraId', { initialValue: `${jiraId || ''}` })(
                       <Input style={{ width: 120 }} />,
                     )}
-                    <div className="btn">
+                    <div className="edit-btn">
                       <a onClick={this.handleSubChange}><Icon type="success" /></a>
                       <a onClick={this.handleClose}><Icon type="close" /></a>
                     </div>
@@ -333,7 +333,7 @@ export default class ProblemDetail extends PureComponent {
                         {getSelectOption(allOperatorOptions)}
                       </Select>,
                     )}
-                    <div className="btn">
+                    <div className="edit-btn">
                       <a onClick={this.handleSubChange}><Icon type="success" /></a>
                       <a onClick={this.handleClose}><Icon type="close" /></a>
                     </div>
