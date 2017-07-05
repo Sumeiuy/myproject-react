@@ -24,8 +24,8 @@ const boardKeyName = {
   },
   detail: {
     key: 'detail',
-    name: '分类指标',
-    title: '分类指标是该指标针对当前组织在指定时间范围内的汇总值',
+    name: '明细指标',
+    title: '明细指标展示在选定时间范围内针对该项指标的业绩排序图',
   },
 };
 const TreeNode = Tree.TreeNode;
