@@ -10,8 +10,8 @@ import { createForm } from 'rc-form';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { helper } from '../../utils';
+import Icon from '../common/Icon';
 import uploadRequest from '../../utils/uploadRequest';
-import Icon from '../../components/common/Icon';
 import { feedbackOptions, request } from '../../config';
 import './problemHandling.less';
 
@@ -131,7 +131,7 @@ export default class ProblemHandling extends PureComponent {
         key={uploadKey}
         okText="提交"
       >
-        <div className="problembox">
+        <div className="problembox react-app">
           <div className="pro_title">
             <Icon type="tishi" className="tishi" />
             {inforTxt}
