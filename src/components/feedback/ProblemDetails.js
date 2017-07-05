@@ -74,11 +74,12 @@ export default class ProblemDetail extends PureComponent {
       );
     } else if (pop === 'CLOSED') {
       return (
-        <b className="close">关闭</b>
+        <b className="react-close">关闭</b>
       );
     }
     return '--';
   }
+
 
   /**
    * 问题详情编辑
