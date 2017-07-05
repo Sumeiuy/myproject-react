@@ -270,8 +270,8 @@ export default class FeedBack extends PureComponent {
           <SplitPane
             onChange={this.panchange}
             split="vertical"
-            minSize={518}
-            maxSize={700}
+            minSize={218}
+            maxSize={650}
             defaultSize={520}
             className="primary"
           >
