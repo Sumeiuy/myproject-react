@@ -77,13 +77,13 @@ export default class FeedBack extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { location: { query: nextQuery = EMPTY_OBJECT } } = nextProps;
+    const { location: { query: nextQuery = EMPTY_OBJECT, pathname } } = nextProps;
     const { location: { query: prevQuery = EMPTY_OBJECT }, getFeedbackList } = this.props;
     const { isResetPageNum = 'N', curPageNum, curPageSize } = nextQuery;
 
     // 深比较值是否相等
     // url发生变化，检测是否改变了筛选条件
-    if (!_.isEqual(prevQuery, nextQuery)) {
+    if (!_.isEqual(prevQuery, nextQuery) && pathname.indexOf('feedback') !== -1) {
       if (!this.diffObject(prevQuery, nextQuery)) {
         // 只监测筛选条件是否变化
         getFeedbackList(constructPostBody(
