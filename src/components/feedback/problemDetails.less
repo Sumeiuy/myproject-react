@@ -18,6 +18,9 @@
       width: 24px;
       z-index: -1;
       text-align:center;
+      .ant-form-item-control{
+        z-index: 2;
+      }
     }
     .editable_field:hover{
         box-shadow: 0 0 0 1px #CCC;
@@ -80,6 +83,14 @@
           text-decoration: none;
         }
       }
+    }
+    .tiem-orient{
+      text-overflow: ellipsis;
+      overflow: hidden;
+      max-width: 380px;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 1;
     }
     .eitbox{
       display: none;
