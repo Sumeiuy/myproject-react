@@ -5,10 +5,12 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
+import ReactDOM from 'react-dom';
 import { autobind } from 'core-decorators';
-import { Cascader, Select, DatePicker } from 'antd';
+import { Cascader, Select, DatePicker, message } from 'antd';
 import moment from 'moment';
 import _ from 'lodash';
+import { getEnv } from '../../utils/helper';
 import { feedbackOptions } from '../../config';
 import './feedbackHeader.less';
 
@@ -29,20 +31,47 @@ export default class PageHeader extends PureComponent {
     };
   }
 
+  componentDidMount() {
+    this.addIeInputListener();
+  }
+
+  componentWillUnmount() {
+    this.removeIeInputListener();
+  }
+
   @autobind
   handleDateChange(dateStrings) {
     const { replace, location: { pathname, query } } = this.props;
     const feedbackCreateTimeFrom = dateStrings[0];
     const feedbackCreateTimeTo = dateStrings[1];
+    const startDate = feedbackCreateTimeFrom && moment(feedbackCreateTimeFrom).format('YYYY-MM-DD');
+    const endDate = feedbackCreateTimeTo && moment(feedbackCreateTimeTo).format('YYYY-MM-DD');
+    if (endDate && startDate) {
+      if (endDate > startDate) {
+        replace({
+          pathname,
+          query: {
+            ...query,
+            feedbackCreateTimeFrom,
+            feedbackCreateTimeTo,
+            isResetPageNum: 'Y',
+          },
+        });
+        return true;
+      }
+      message.error('开始时间与结束时间不能为同一天', 1);
+      return false;
+    }
     replace({
       pathname,
       query: {
         ...query,
-        feedbackCreateTimeFrom,
-        feedbackCreateTimeTo,
+        feedbackCreateTimeFrom: '',
+        feedbackCreateTimeTo: '',
         isResetPageNum: 'Y',
       },
     });
+    return false;
   }
 
 
@@ -59,6 +88,7 @@ export default class PageHeader extends PureComponent {
       },
     });
   }
+
   @autobind
   handleSelectChange(name, key) {
     const { replace, location: { pathname, query } } = this.props;
@@ -72,6 +102,23 @@ export default class PageHeader extends PureComponent {
     });
   }
 
+  // 解决IE下readonly无效
+  @autobind
+  addIeInputListener() {
+    if (getEnv().$browser === 'Internet Explorer') {
+      const node = ReactDOM.findDOMNode(document.querySelector('.cascader_box input')); // eslint-disable-line
+      node.addEventListener('focus', () => node.blur());
+    }
+  }
+
+  // 销毁监听
+  @autobind
+  removeIeInputListener() {
+    if (getEnv().$browser === 'Internet Explorer') {
+      const node = ReactDOM.findDOMNode(document.querySelector('.cascader_box input')); // eslint-disable-line
+      node.removeEventListener('focus', () => node.blur());
+    }
+  }
 
   render() {
     const channelOptions = feedbackOptions.feedbackChannel;
@@ -103,23 +150,26 @@ export default class PageHeader extends PureComponent {
         cascaderVale = [appId];
       }
     }
-
+    // debugger;
     // 默认时间
     const startTime = feedbackCreateTimeFrom ? moment(feedbackCreateTimeFrom) : null;
     const endTime = feedbackCreateTimeTo ? moment(feedbackCreateTimeTo) : null;
 
     return (
       <div className="feedbackHeader">
-        模块: <Cascader
-          options={channelOptions}
-          style={{ width: '11%' }}
-          changeOnSelect
-          placeholder="全部"
-          value={cascaderVale}
-          onChange={key => this.handleCascaderSelectChange('appId', 'functionName', key)}
-        />
+        模块:
+        <div className="cascader_box">
+          <Cascader
+            options={channelOptions}
+            style={{ width: '90%' }}
+            changeOnSelect
+            placeholder="全部"
+            value={cascaderVale}
+            onChange={key => this.handleCascaderSelectChange('appId', 'functionName', key)}
+          />
+        </div>
         类型: <Select
-          style={{ width: '10%' }}
+          style={{ width: '6%' }}
           placeholder="全部"
           value={issueType}
           onChange={key => this.handleSelectChange('issueType', key)}
@@ -128,7 +178,7 @@ export default class PageHeader extends PureComponent {
           {getSelectOption(typeOptions)}
         </Select>
         问题标签: <Select
-          style={{ width: '10%' }}
+          style={{ width: '8%' }}
           placeholder="全部"
           value={feedbackTagEnum}
           onChange={key => this.handleSelectChange('feedbackTagEnum', key)}
@@ -137,7 +187,7 @@ export default class PageHeader extends PureComponent {
           {getSelectOption(questionTagOptions)}
         </Select>
         状态: <Select
-          style={{ width: '10%' }}
+          style={{ width: '6%' }}
           placeholder="解决中"
           value={feedbackStatusEnum}
           onChange={key => this.handleSelectChange('feedbackStatusEnum', key)}
@@ -146,8 +196,8 @@ export default class PageHeader extends PureComponent {
           {getSelectOption(stateOptions)}
         </Select>
         反馈时间:<RangePicker
-          style={{ width: '16%' }}
-          value={[startTime, endTime]}
+          style={{ width: '14%' }}
+          defaultValue={[startTime, endTime]}
           onChange={this.handleDateChange}
           placeholder={['开始时间', '结束时间']}
         />

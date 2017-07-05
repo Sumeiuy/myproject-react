@@ -12,15 +12,18 @@ import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import { withRouter, routerRedux } from 'dva/router';
 import { Row, Col } from 'antd';
+import SplitPane from 'react-split-pane';
 import Icon from '../../components/common/Icon';
 import Detail from '../../components/feedback/Detail';
 import FeedbackList from '../../components/feedback/FeedbackList';
 import FeedbackHeader from '../../components/feedback/FeedbackHeader';
-import { constructPostBody } from '../../utils/helper';
+import { constructPostBody, getEnv } from '../../utils/helper';
+import '../../css/react-split-pane-master.less';
 import './home.less';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
+const BROWSER = getEnv();
 const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
 const mapStateToProps = state => ({
   list: state.feedback.list,
@@ -70,6 +73,7 @@ export default class FeedBack extends PureComponent {
   componentDidMount() {
     this.setDocumentScroll();
     window.addEventListener('resize', this.onResizeChange, false);
+    this.panMov(520);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -128,33 +132,68 @@ export default class FeedBack extends PureComponent {
   }
 
   setDocumentScroll() {
-    const docElemHeight = document.documentElement.clientHeight;
     /* eslint-disable */
+    const UTBContentElem = ReactDOM.findDOMNode(document.getElementById('UTBContent'));
+    if (UTBContentElem) {
+      UTBContentElem.style.marginRight = '0px';
+      UTBContentElem.style.marginBottom = '0px';
+    }
+
+    const docElemHeight = document.documentElement.clientHeight;
+    const paginationElem = document.querySelector('.ant-pagination');
+    const tableElem = ReactDOM.findDOMNode(document.querySelector('.ant-table'));
     const containerElem = ReactDOM.findDOMNode(document.getElementById('container'));
     const leftSectionElem = ReactDOM.findDOMNode(document.getElementById('leftSection'));
     const rightSectionElem = ReactDOM.findDOMNode(document.getElementById('rightSection'));
     const nullElem = ReactDOM.findDOMNode(document.getElementById('empty'));
     const workspaceElem = ReactDOM.findDOMNode(document.getElementById('workspace-content'));
+    const innerElem = ReactDOM.findDOMNode(document.querySelector('.inner'));
+    const resizerElem = ReactDOM.findDOMNode(document.querySelector('.Resizer'));
+    const feedbackHeaderElem = document.querySelector('.feedbackHeader');
     /* eslint-enable */
 
     let topDistance = 0;
     const padding = 10;
     const boxPadding = 12;
     const bottomDistance = 48;
+    let paginationElemHeight = 0;
+    let headerHeight = 0;
+
+    if (paginationElem) {
+      const computedStyle = window.getComputedStyle(paginationElem, null);
+      paginationElemHeight = parseFloat(computedStyle.getPropertyValue('height'), 10) +
+        parseFloat(computedStyle.paddingTop) +
+        parseFloat(computedStyle.paddingBottom) +
+        parseFloat(computedStyle.marginTop) +
+        parseFloat(computedStyle.marginBottom);
+    }
+    if (feedbackHeaderElem) {
+      headerHeight = feedbackHeaderElem.getBoundingClientRect().height;
+    }
 
     if (leftSectionElem && rightSectionElem) {
       topDistance = leftSectionElem.getBoundingClientRect().top;
       const sectionHeight = docElemHeight - topDistance -
-        bottomDistance - padding - boxPadding;
-      leftSectionElem.style.height = `${sectionHeight}px`;
+        bottomDistance - padding;
+      leftSectionElem.style.height = `${sectionHeight - boxPadding}px`;
       rightSectionElem.style.height = `${sectionHeight}px`;
+
+      if (tableElem) {
+        tableElem.style.height = `${sectionHeight - boxPadding - paginationElemHeight}px`;
+        tableElem.style.overflow = 'auto';
+      }
+      if (innerElem) {
+        innerElem.style.overflow = 'auto';
+      }
+      if (resizerElem) {
+        resizerElem.style.height = `${sectionHeight}px`;
+      }
     }
 
     if (containerElem) {
-      containerElem.style.overflow = 'auto';
       if (workspaceElem) {
         // FSP内嵌里面
-        containerElem.style.height = `${docElemHeight - bottomDistance - padding - top}px`;
+        containerElem.style.height = `${(docElemHeight - bottomDistance - topDistance) + headerHeight}px`;
       } else {
         containerElem.style.height = `${docElemHeight - bottomDistance - padding}px`;
       }
@@ -179,6 +218,20 @@ export default class FeedBack extends PureComponent {
       return false;
     }
     return true;
+  }
+
+  // splitPan onChange回调函数
+  @autobind
+  panchange(size) {
+    this.panMov(size);
+  }
+
+  // 重新给pan2样式赋值
+  panMov(size) {
+    if (BROWSER.$browser === 'Internet Explorer') {
+      const node = ReactDOM.findDOMNode(document.querySelector('.Pane2')); // eslint-disable-line
+      node.style.paddingLeft = `${size + 20}px`;
+    }
   }
 
   render() {
@@ -210,22 +263,31 @@ export default class FeedBack extends PureComponent {
             </div>
           </Col>
         </Row>
-
-        <Row className={existClass}>
-          <Col span="10" className="leftSection" id="leftSection">
-            <FeedbackList
-              list={list}
-              replace={replace}
-              location={location}
-            />
-          </Col>
-          <Col span="14" className="rightSection" id="rightSection">
-            <Detail
-              location={location}
-            />
-          </Col>
-        </Row>
-
+        <SplitPane
+          onChange={this.panchange}
+          split="vertical"
+          minSize={518}
+          maxSize={700}
+          defaultSize={520}
+          className="primary"
+        >
+          <Row className={existClass}>
+            <Col span="24" className="leftSection" id="leftSection">
+              <FeedbackList
+                list={list}
+                replace={replace}
+                location={location}
+              />
+            </Col>
+          </Row>
+          <Row className={existClass}>
+            <Col span="24" className="rightSection" id="rightSection">
+              <Detail
+                location={location}
+              />
+            </Col>
+          </Row>
+        </SplitPane>
       </div>
     );
   }
