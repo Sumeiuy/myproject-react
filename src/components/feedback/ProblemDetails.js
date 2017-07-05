@@ -244,7 +244,7 @@ export default class ProblemDetail extends PureComponent {
             <li className="item">
               <div className="wrap">
                 <strong className="name">反馈时间：</strong>
-                <span className="value">{this.dataNull(this.overflowTime(createTime))}</span>
+                <span className="value tiem-orient">{this.dataNull(this.overflowTime(createTime))}</span>
               </div>
             </li>
             <li className="item">
@@ -276,7 +276,7 @@ export default class ProblemDetail extends PureComponent {
                 <div className={qtHiddenValue} id="select-tag">
                   <FormItem>
                     {getFieldDecorator('tag', { initialValue: `${this.dataNull(tag)}` })(
-                      <Select style={{ width: 140 }} className="qtSelect" id="qtSelect" getPopupContainer={() => document.getElementById('select-tag')}>
+                      <Select style={{ width: 110 }} className="qtSelect" id="qtSelect" getPopupContainer={() => document.getElementById('select-tag')}>
                         {getSelectOption(questionTagOptions)}
                       </Select>,
                     )}
@@ -303,7 +303,7 @@ export default class ProblemDetail extends PureComponent {
                 <div className={jiraHiddenValue}>
                   <FormItem>
                     {getFieldDecorator('jiraId', { initialValue: `${jiraId || ''}` })(
-                      <Input style={{ width: 140 }} />,
+                      <Input style={{ width: 120 }} />,
                     )}
                     <div className="btn">
                       <a onClick={this.handleSubChange}><Icon type="success" /></a>
@@ -328,7 +328,7 @@ export default class ProblemDetail extends PureComponent {
                 <div className={processerHiddenValue} id="select-processer">
                   <FormItem>
                     {getFieldDecorator('processer', { initialValue: `${this.dataNull(processer)}` })(
-                      <Select style={{ width: 140 }} className="qtSelect" getPopupContainer={() => document.getElementById('select-processer')}>
+                      <Select style={{ width: 110 }} className="qtSelect" getPopupContainer={() => document.getElementById('select-processer')}>
                         {getSelectOption(allOperatorOptions)}
                       </Select>,
                     )}
