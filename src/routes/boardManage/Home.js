@@ -16,6 +16,8 @@ import { getEmpId } from '../../utils/helper';
 import BoardSelect from '../../components/pageCommon/BoardSelect';
 import BoardItem from '../../components/pageCommon/BoardItem';
 import { CreateBoardModal, DeleteBoardModal, PublishConfirmModal } from '../../components/modals';
+import ImgAdd from '../../../static/images/bg_add.png';
+import ImgTGJX from '../../../static/images/bg_tgjx.png';
 
 import styles from './Home.less';
 
@@ -99,8 +101,8 @@ export default class BoardManageHome extends PureComponent {
     const { push, operateData, createLoading, deleteLoading } = nextProps;
     if (preCL && !createLoading) {
       // 创建完成后，需要跳转到Edit
-      const { id, ownerOrgId } = operateData;
-      push(`/boardEdit?boardId=${id}&orgId=${ownerOrgId}`);
+      const { id, ownerOrgId, boardType } = operateData;
+      push(`/boardEdit?boardId=${id}&orgId=${ownerOrgId}&boardType=${boardType}`);
     }
     if (preDL && !deleteLoading) {
       // 删除成功
@@ -238,11 +240,11 @@ export default class BoardManageHome extends PureComponent {
                 onClick={this.createBoardHandle}
               >
                 <div className={styles.boardAdd}>
-                  <img src="/static/images/bg_add.png" alt="" />
+                  <img src={ImgAdd} alt="" />
                   <h3>创建看板</h3>
                 </div>
                 <div className={styles.boardImg}>
-                  <img src="/static/images/bg_tgjx.png" alt="" />
+                  <img src={ImgTGJX} alt="" />
                 </div>
                 <div className={styles.boardTitle} />
               </a>

@@ -37,7 +37,7 @@ export default {
     },
     getChartInfoSuccess(state, action) {
       const { payload: { resChartInfo } } = action;
-      const chartInfo = resChartInfo.resultData;
+      const chartInfo = resChartInfo.resultData || [];
       return {
         ...state,
         chartInfo,

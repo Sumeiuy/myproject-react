@@ -62,4 +62,7 @@ export default {
 
   // 查询单个看板的信息
   getOneBoardInfo: query => api.post('/groovynoauth/jxzb/querySingleBoard', query),
+
+  // 查询指标库数据
+  getIndicators: query => api.post('/groovynoauth/jxzb/queryCategoryAndIndicators', query),
 };

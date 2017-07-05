@@ -294,8 +294,8 @@ const helper = {
     const duration = {
       cycleType,
       durationStr: `${durationStart.format(fomater)}-${durationEnd.format(fomater)}`,
-      begin: durationStart.format(fomater),
-      end: durationEnd.format(fomater),
+      begin: durationStart.format('YYYYMMDD'),
+      end: durationEnd.format('YYYYMMDD'),
     };
     return duration;
   },
