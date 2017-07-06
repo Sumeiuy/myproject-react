@@ -127,9 +127,10 @@ export default class BoardEditHome extends PureComponent {
       });
     }
     const { publishLoading: prePL, updateLoading: preUL } = this.props;
-    const { publishLoading, updateLoading } = nextProps;
+    const { publishLoading, updateLoading, boardInfo: { id }, push } = nextProps;
     if (prePL && !publishLoading) {
       message.success('发布成功');
+      push(`/report?boardId=${id}`);
     }
     if (preUL && !updateLoading) {
       this.setState({
@@ -353,6 +354,9 @@ export default class BoardEditHome extends PureComponent {
 
   @autobind
   handleSaveBtnClick() {
+    this.setState({
+      saveBt: false,
+    });
     this.saveBoard({});
   }
 
@@ -369,11 +373,13 @@ export default class BoardEditHome extends PureComponent {
       this.setState({
         summuryIndicator: indicators,
         saveBtnType: 'primary',
+        saveBt: true,
       });
     } else {
       this.setState({
         detailIndicator: indicators,
         saveBtnType: 'primary',
+        saveBt: true,
       });
     }
   }
@@ -475,7 +481,7 @@ export default class BoardEditHome extends PureComponent {
                 editable
                 originalValue={bNEditorOriginal}
                 style={{
-                  maxWidth: '350px',
+                  maxWidth: '260px',
                 }}
                 editorValue={bNEditorOriginal}
                 editorName="boardNameEditor"
@@ -483,7 +489,7 @@ export default class BoardEditHome extends PureComponent {
                 editorState={boardNameEditor}
                 confirm={this.editorConfirm}
               >
-                <Input autocomplete="off" />
+                <Input autoComplete="off" />
               </SimpleEditor>
             </div>
             <div className={styles.hDivider} />
@@ -502,7 +508,7 @@ export default class BoardEditHome extends PureComponent {
                   editable
                   originalValue={vROriginal}
                   style={{
-                    maxWidth: '450px',
+                    maxWidth: '260px',
                   }}
                   editorValue={{
                     currency: vREditorOriginal,
