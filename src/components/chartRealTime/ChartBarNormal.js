@@ -14,8 +14,10 @@ import {
   getMaxAndMinPermillage,
   getMaxAndMinMoney,
   getMaxAndMinCust,
+  getMaxAndMinCi,
   toFixedMoney,
   toFixedCust,
+  toFixedCI,
 } from './FixNumber';
 import IECharts from '../IECharts';
 import { iconTypeMap, ZHUNICODE } from '../../config';
@@ -28,6 +30,7 @@ const PERCENT = ZHUNICODE.PERCENT;
 const PERMILLAGE = ZHUNICODE.PERMILLAGE;
 const REN = ZHUNICODE.REN;
 const HU = ZHUNICODE.HU;
+const CI = ZHUNICODE.CI;
 const YUAN = ZHUNICODE.YUAN;
 
 export default class ChartBarNormal extends PureComponent {
@@ -153,6 +156,10 @@ export default class ChartBarNormal extends PureComponent {
       const tempSeries = toFixedCust(seriesData);
       seriesData = tempSeries.newSeries;
       unit = tempSeries.newUnit;
+    } else if (unit === CI) {
+      const tempSeries = toFixedCI(seriesData);
+      seriesData = tempSeries.newSeries;
+      unit = tempSeries.newUnit;
     }
     const seriesDataLen = seriesData.length;
     // 数据中最大的值
@@ -174,6 +181,10 @@ export default class ChartBarNormal extends PureComponent {
       gridXaxisMin = maxAndMinMoney.min;
     } else if (unit === REN || unit.indexOf(HU) > -1) {
       const maxAndMinPeople = getMaxAndMinCust(seriesData);
+      gridXAxisMax = maxAndMinPeople.max;
+      gridXaxisMin = maxAndMinPeople.min;
+    } else if (unit === CI) {
+      const maxAndMinPeople = getMaxAndMinCi(seriesData);
       gridXAxisMax = maxAndMinPeople.max;
       gridXaxisMin = maxAndMinPeople.min;
     }

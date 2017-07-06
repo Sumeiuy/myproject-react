@@ -177,6 +177,13 @@ export default {
           type: 'getAllEditableReportsSucess',
           payload: { allEditableBoards },
         });
+        const allVisibleReports = yield call(api.getAllVisibleReports, {
+          orgId: cust[0].id,
+        });
+        yield put({
+          type: 'getAllVisibleReportsSuccess',
+          payload: { allVisibleReports },
+        });
       }
       yield put({
         type: 'opertateBoardState',
@@ -208,6 +215,13 @@ export default {
         yield put({
           type: 'getAllEditableReportsSucess',
           payload: { allEditableBoards },
+        });
+        const allVisibleReports = yield call(api.getAllVisibleReports, {
+          orgId: cust[0].id,
+        });
+        yield put({
+          type: 'getAllVisibleReportsSuccess',
+          payload: { allVisibleReports },
         });
       }
       yield put({
