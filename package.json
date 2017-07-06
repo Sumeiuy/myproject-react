@@ -32,7 +32,6 @@
     "react": "^15.1.0",
     "react-dom": "^15.4.1",
     "react-helmet": "^5.0.3",
-    "react-image-gallery": "^0.8.3",
     "react-redux": "4.4.x",
     "react-router-scroll": "^0.4.1",
     "react-split-pane": "^0.1.63",
