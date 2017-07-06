@@ -1,4 +1,7 @@
 .treeBody{
+  ::-webkit-scrollbar{
+    display: block;
+  }
   position: relative;
   .arrow{
     width: 100%;
@@ -37,6 +40,7 @@
           overflow-y: auto;
           &:nth-child(2){
             border-left: 0;
+            -webkit-box-flex: 1;
           }
         }
       }
