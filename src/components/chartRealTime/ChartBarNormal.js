@@ -127,9 +127,10 @@ export default class ChartBarNormal extends PureComponent {
 
     // 此处为y轴刻度值
     const yAxisLabels = this.getChartData(orgModel, levelName, 'yAxis');
-    // 此处为数据,此数据在百分比的情况下,全部都是小数，需要乘以100
+    // 取出所有的value,并将value转化成数字
     let seriesData = this.getChartData(orgModel, 'value', 'xAxis');
     seriesData = seriesData.map(item => Number(item));
+    // 补足10位数字
     const padLength = 10 - seriesData.length;
     if (padLength > 0) {
       for (let i = 0; i < padLength; i++) {
@@ -138,6 +139,7 @@ export default class ChartBarNormal extends PureComponent {
       }
     }
 
+    // 根据单位进行数字转换
     if (unit === PERCENT) {
       seriesData = seriesData.map(item => (item * 100));
     } else if (unit === PERMILLAGE) {
