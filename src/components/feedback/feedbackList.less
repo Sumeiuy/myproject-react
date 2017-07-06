@@ -2,9 +2,13 @@
   .react-app{
     .feedbackList {
       background-color: #f3f3f4;
-      padding: 10px 0 0px 10px;
+      padding: 10px 0 0px 0;
       height: 100%;
       box-shadow: 5px 5px 5px #ededee;
+      .ant-table-tbody>tr,
+      .ant-table-thead>tr {
+          transition: initial;
+      }
       .feedbackTable {
         background: white;
         border-radius: 5px;
@@ -41,13 +45,13 @@
         padding-bottom: 5px;
       }
       .address, .description {
-        text-overflow: ellipsis;
-        overflow: hidden;
-        max-width: 380px;
+        max-width: 480px;
+        width: 100%;
         // 超过一行则打点显示
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 1;
+        display:block;
+        white-space:nowrap;
+        overflow:hidden; 
+        text-overflow:ellipsis;
       }
       .address, .state-resolve, .state-close, .name, .date {
         color: #a2a2a2;

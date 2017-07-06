@@ -77,13 +77,13 @@ export default class FeedBack extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { location: { query: nextQuery = EMPTY_OBJECT } } = nextProps;
+    const { location: { query: nextQuery = EMPTY_OBJECT, pathname } } = nextProps;
     const { location: { query: prevQuery = EMPTY_OBJECT }, getFeedbackList } = this.props;
     const { isResetPageNum = 'N', curPageNum, curPageSize } = nextQuery;
 
     // 深比较值是否相等
     // url发生变化，检测是否改变了筛选条件
-    if (!_.isEqual(prevQuery, nextQuery)) {
+    if (!_.isEqual(prevQuery, nextQuery) && pathname.indexOf('feedback') !== -1) {
       if (!this.diffObject(prevQuery, nextQuery)) {
         // 只监测筛选条件是否变化
         getFeedbackList(constructPostBody(
@@ -245,6 +245,9 @@ export default class FeedBack extends PureComponent {
       none: isEmpty,
       feedbackRow: true,
     });
+    const splitPaneClass = classnames({
+      none: isEmpty,
+    });
     return (
       <div className="feedbackbox">
         <FeedbackHeader
@@ -263,31 +266,33 @@ export default class FeedBack extends PureComponent {
             </div>
           </Col>
         </Row>
-        <SplitPane
-          onChange={this.panchange}
-          split="vertical"
-          minSize={518}
-          maxSize={700}
-          defaultSize={520}
-          className="primary"
-        >
-          <Row className={existClass}>
-            <Col span="24" className="leftSection" id="leftSection">
-              <FeedbackList
-                list={list}
-                replace={replace}
-                location={location}
-              />
-            </Col>
-          </Row>
-          <Row className={existClass}>
-            <Col span="24" className="rightSection" id="rightSection">
-              <Detail
-                location={location}
-              />
-            </Col>
-          </Row>
-        </SplitPane>
+        <div className={splitPaneClass}>
+          <SplitPane
+            onChange={this.panchange}
+            split="vertical"
+            minSize={218}
+            maxSize={650}
+            defaultSize={520}
+            className="primary"
+          >
+            <Row className={existClass}>
+              <Col span="24" className="leftSection" id="leftSection">
+                <FeedbackList
+                  list={list}
+                  replace={replace}
+                  location={location}
+                />
+              </Col>
+            </Row>
+            <Row className={existClass}>
+              <Col span="24" className="rightSection" id="rightSection">
+                <Detail
+                  location={location}
+                />
+              </Col>
+            </Row>
+          </SplitPane>
+        </div>
       </div>
     );
   }

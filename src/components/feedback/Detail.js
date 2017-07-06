@@ -468,19 +468,6 @@ export default class Detail extends PureComponent {
                       />
                     </div>
                   </div>
-                  <div id="descriptionmodule" className="module">
-                    <div className="mod_header">
-                      <h2 className="toogle_title">描述</h2>
-                    </div>
-                    <div className="mod_content">
-                      <div className="des_txt">
-                        {description}
-                      </div>
-                      <div className="btn_dv">
-                        <Button type="primary" onClick={this.showModal}>{messageBtnValue}</Button>
-                      </div>
-                    </div>
-                  </div>
                 </Col>
                 <Col span="6">
                   <div className="imgbox" onClick={this.handlePreview}>
@@ -512,29 +499,27 @@ export default class Detail extends PureComponent {
                       />
                     </div>
                   </div>
-                  <div id="descriptionmodule" className="module">
-                    <div className="mod_header">
-                      <h2 className="toogle_title">描述</h2>
-                    </div>
-                    <div className="mod_content">
-                      <div className="des_txt">
-                        {description !== ' ' ? description :
-                        <div className="nodescription">
-                          <span>
-                            <i className="anticon anticon-frown-o" />
-                            暂无描述
-                        </span>
-                        </div>
-                        }
-                      </div>
-                      <div className="btn_dv">
-                        <Button type="primary" onClick={this.showModal}>{messageBtnValue}</Button>
-                      </div>
-                    </div>
-                  </div>
                 </Col>
               </Row>
             }
+          </div>
+          <div id="descriptionmodule" className="module">
+            <div className="mod_header">
+              <h2 className="toogle_title">描述</h2>
+            </div>
+            <div className="mod_content">
+              <div className="des_txt">
+                {
+                  description ||
+                  <div className="nodescription">
+                    <i className="anticon anticon-frown-o" />暂无描述
+                  </div>
+                }
+              </div>
+              <div className="btn_dv">
+                <Button type="primary" onClick={this.showModal}>{messageBtnValue}</Button>
+              </div>
+            </div>
           </div>
           <div id="peoplemodule" className="module">
             <div className="mod_header">
