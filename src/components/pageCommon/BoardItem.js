@@ -8,7 +8,8 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
-
+import _ from 'lodash';
+import selectHandlers from '../Edit/selectHelper';
 import styles from './BoardItem.less';
 import ImgTGJX from '../../../static/images/bg_tgjx.png';
 import ImgJYYJ from '../../../static/images/bg_jyyj.png';
@@ -21,6 +22,7 @@ export default class BoardItem extends PureComponent {
 
   static propTypes = {
     boardData: PropTypes.object.isRequired,
+    visibleRanges: PropTypes.array.isRequired,
     delete: PropTypes.func.isRequired,
     publish: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
@@ -31,6 +33,15 @@ export default class BoardItem extends PureComponent {
     this.state = {
       hover: false,
     };
+  }
+
+  @autobind
+  setVRnames(user, all) {
+    // 首先判断
+    const selfOrg = all[0].level;
+    const allNode = selectHandlers.getAllCheckboxNode(selfOrg);
+    const getVRnames = selectHandlers.afterSelected(all, allNode);
+    return getVRnames(user);
   }
 
   // 鼠标移入事件
@@ -74,7 +85,12 @@ export default class BoardItem extends PureComponent {
       name,
     });
   }
+
   render() {
+    const { visibleRanges } = this.props;
+    if (_.isEmpty(visibleRanges)) {
+      return null;
+    }
     // 获取看板信息数据
     const {
       name,
@@ -88,7 +104,7 @@ export default class BoardItem extends PureComponent {
     } = this.props.boardData;
     const ImgBg = boardType === boardTypeMap.tgjx ? ImgTGJX : ImgJYYJ;
     const hover = this.state.hover;
-    const seeAllow = orgModel.map(o => o.name).join('/');
+    const seeAllow = this.setVRnames(orgModel.slice(1), visibleRanges);
     let statusText = '';
     if (boardStatus === 'RELEASE') {
       statusText = '已发布';

@@ -142,7 +142,6 @@ export default class BoardManageHome extends PureComponent {
   // 删除看板
   @autobind
   deleteBoardHandle(board) {
-    console.log('deleteBoardHandle', board);
     this.setState({
       delBoard: board,
       delBoardName: board.name,
@@ -259,6 +258,7 @@ export default class BoardManageHome extends PureComponent {
                   {/* 此处需要传递相关方法 */}
                   <BoardItem
                     boardData={item}
+                    visibleRanges={visibleRanges}
                     delete={this.deleteBoardHandle}
                     publish={this.publishBoardHandle}
                     push={push}

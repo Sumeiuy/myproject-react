@@ -7,7 +7,6 @@ import React, { PropTypes, PureComponent } from 'react';
 import { Icon, Checkbox, Row, Col } from 'antd';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
-import _ from 'lodash';
 
 import selectHandlers from './selectHelper';
 import styles from './SelfSelect.less';
@@ -50,10 +49,10 @@ export default class SelfSelect extends PureComponent {
     const newNextProps = nextProps;
     const newThisProps = this.props;
     const { value: { currency, label } } = newNextProps;
-    const { value: { currency: preCurrency }, options } = newThisProps;
+    const { options } = newThisProps;
     const chldrenOptions = options.slice(1);
     // 通过判断当前选中的值的变化
-    if ('value' in nextProps && !_.isEqual(currency, preCurrency)) {
+    if ('value' in nextProps) {
       // const value = nextProps.value;
       this.setState({
         groupCheckedList: currency,
