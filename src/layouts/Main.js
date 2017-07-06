@@ -7,7 +7,6 @@ import React, { Component, PropTypes } from 'react';
 import { withRouter } from 'dva/router';
 import { connect } from 'dva';
 import Loading from './Loading';
-import Footer from './Footer';
 
 import styles from './main.less';
 import '../css/skin.less';
@@ -41,7 +40,6 @@ export default class Main extends Component {
                 {children}
               </div>
             </div>
-            <Footer />
           </div>
         </div>
       </div>
