@@ -24,6 +24,7 @@ import './home.less';
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const BROWSER = getEnv();
+const DEFAULTSIZE = 450;
 const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
 const mapStateToProps = state => ({
   list: state.feedback.list,
@@ -73,17 +74,17 @@ export default class FeedBack extends PureComponent {
   componentDidMount() {
     this.setDocumentScroll();
     window.addEventListener('resize', this.onResizeChange, false);
-    this.panMov(520);
+    this.panMov(DEFAULTSIZE);
   }
 
   componentWillReceiveProps(nextProps) {
-    const { location: { query: nextQuery = EMPTY_OBJECT, pathname } } = nextProps;
+    const { location: { query: nextQuery = EMPTY_OBJECT } } = nextProps;
     const { location: { query: prevQuery = EMPTY_OBJECT }, getFeedbackList } = this.props;
     const { isResetPageNum = 'N', curPageNum, curPageSize } = nextQuery;
 
     // 深比较值是否相等
     // url发生变化，检测是否改变了筛选条件
-    if (!_.isEqual(prevQuery, nextQuery) && pathname.indexOf('feedback') !== -1) {
+    if (!_.isEqual(prevQuery, nextQuery)) {
       if (!this.diffObject(prevQuery, nextQuery)) {
         // 只监测筛选条件是否变化
         getFeedbackList(constructPostBody(
@@ -153,9 +154,7 @@ export default class FeedBack extends PureComponent {
     /* eslint-enable */
 
     let topDistance = 0;
-    const padding = 10;
     const boxPadding = 12;
-    const bottomDistance = 48;
     let paginationElemHeight = 0;
     let headerHeight = 0;
 
@@ -173,8 +172,7 @@ export default class FeedBack extends PureComponent {
 
     if (leftSectionElem && rightSectionElem) {
       topDistance = leftSectionElem.getBoundingClientRect().top;
-      const sectionHeight = docElemHeight - topDistance -
-        bottomDistance - padding;
+      const sectionHeight = docElemHeight - topDistance;
       leftSectionElem.style.height = `${sectionHeight - boxPadding}px`;
       rightSectionElem.style.height = `${sectionHeight}px`;
 
@@ -193,15 +191,15 @@ export default class FeedBack extends PureComponent {
     if (containerElem) {
       if (workspaceElem) {
         // FSP内嵌里面
-        containerElem.style.height = `${(docElemHeight - bottomDistance - topDistance) + headerHeight}px`;
+        containerElem.style.height = `${(docElemHeight - topDistance) + headerHeight}px`;
       } else {
-        containerElem.style.height = `${docElemHeight - bottomDistance - padding}px`;
+        containerElem.style.height = `${docElemHeight}px`;
       }
     }
 
     if (nullElem) {
       const top = nullElem.getBoundingClientRect().top;
-      nullElem.style.height = `${docElemHeight - top - bottomDistance - (2 * padding)}px`;
+      nullElem.style.height = `${docElemHeight - top}px`;
     }
   }
 
@@ -271,8 +269,8 @@ export default class FeedBack extends PureComponent {
             onChange={this.panchange}
             split="vertical"
             minSize={218}
-            maxSize={650}
-            defaultSize={520}
+            maxSize={500}
+            defaultSize={DEFAULTSIZE}
             className="primary"
           >
             <Row className={existClass}>

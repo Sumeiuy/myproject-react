@@ -1,4 +1,10 @@
 :global{
+  ::-webkit-scrollbar {
+    display: none;  
+  }
+  html {
+    -ms-overflow-style: none;
+  }
   .react-app{
     .clear{clear:both; height: 0; line-height: 0; font-size: 0}
     .detail_box{
@@ -13,6 +19,11 @@
       #remak h3{
         color:#777777;
         font-weight: normal
+      }
+      #peoplemodule{
+        li:last-child{
+          width:100%;
+        }
       }
       .btnhidden{
         display: none;
@@ -52,6 +63,17 @@
           img{
             width: auto;
             max-width: 100%;
+            max-height: 150px;
+            display: block;
+            background: #ccc;
+            cursor: pointer;
+            margin: auto;
+          }
+        }
+        #lightgallery {
+          img {
+            width: auto;
+            max-width: 100%;
             max-height: 180px;
             display: block;
             background: #ccc;
@@ -63,7 +85,8 @@
           padding:15px 0;
           border-bottom:1px solid #f3f3f4;
           h2{
-            font-weight: normal
+            font-weight: normal;
+            line-height: 1.5;
           }
           .nodescription{
             text-align: center;
@@ -77,9 +100,20 @@
           .mod_content{
             padding: 5px 0;
             .property_list{
+              .value_word{
+                .value{
+                  word-wrap: break-word;
+                  word-break: break-word;
+                  white-space:nowrap;
+                  overflow:hidden; 
+                  text-overflow:ellipsis;
+                  max-width: 98%;
+                  min-width: 120px;
+                }
+              }
               li.item{
                 padding: 5px 0;
-                height: 40px;
+                height: 30px;
                 .wrap {
                   padding: 0 10px 0 90px;
                 }
@@ -101,14 +135,7 @@
                   width: 90px;
                 }
                 .value{
-                  word-wrap: break-word;
-                  word-break: break-word;
                   display: inline-block;
-                  white-space:nowrap;
-                  overflow:hidden; 
-                  text-overflow:ellipsis;
-                  max-width: 98%;
-                  min-width: 100px;
                   padding-bottom: 2px;
                   padding-left: 5px;
                   padding-top: 2px;
