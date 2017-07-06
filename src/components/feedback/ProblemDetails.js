@@ -237,13 +237,13 @@ export default class ProblemDetail extends PureComponent {
         <Form layout="vertical">
           <ul className="property_list clearfix">
             <li className="item">
-              <div className="wrap">
+              <div className="wrap value_word">
                 <strong className="name">模块：</strong>
                 <span className="value">{this.changeDisplay(functionName, channel)}</span>
               </div>
             </li>
             <li className="item">
-              <div className="wrap">
+              <div className="wrap value_word">
                 <strong className="name">反馈时间：</strong>
                 <span className="value tiem-orient">{this.dataNull(this.overflowTime(createTime))}</span>
               </div>
@@ -255,7 +255,7 @@ export default class ProblemDetail extends PureComponent {
               </div>
             </li>
             <li className="item">
-              <div className="wrap">
+              <div className="wrap value_word">
                 <strong className="name">状态：</strong>
                 <span className="value">
                   {this.dataNull(this.handleStatus(status))}
