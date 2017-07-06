@@ -24,6 +24,7 @@ import './home.less';
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const BROWSER = getEnv();
+const DEFAULTSIZE = 450;
 const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
 const mapStateToProps = state => ({
   list: state.feedback.list,
@@ -73,7 +74,7 @@ export default class FeedBack extends PureComponent {
   componentDidMount() {
     this.setDocumentScroll();
     window.addEventListener('resize', this.onResizeChange, false);
-    this.panMov(520);
+    this.panMov(DEFAULTSIZE);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -268,8 +269,8 @@ export default class FeedBack extends PureComponent {
             onChange={this.panchange}
             split="vertical"
             minSize={218}
-            maxSize={650}
-            defaultSize={520}
+            maxSize={500}
+            defaultSize={DEFAULTSIZE}
             className="primary"
           >
             <Row className={existClass}>

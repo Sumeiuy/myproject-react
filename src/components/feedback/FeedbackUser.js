@@ -38,31 +38,31 @@ export default class FeedbackUser extends PureComponent {
       <div>
         <ul className="property_list clearfix">
           <li className="item">
-            <div className="wrap">
+            <div className="wrap value_word">
               <strong className="name">员工号：</strong>
               <span className="value">{empId || '无'}</span>
             </div>
           </li>
           <li className="item">
-            <div className="wrap">
+            <div className="wrap value_word">
               <strong className="name">用户：</strong>
               <span className="value">{name || '无'}</span>
             </div>
           </li>
           <li className="item">
-            <div className="wrap">
+            <div className="wrap value_word">
               <strong className="name">部门：</strong>
               <span className="value">{l1}{l2}{l3}</span>
             </div>
           </li>
           <li className="item">
-            <div className="wrap">
+            <div className="wrap value_word">
               <strong className="name">联系电话：</strong>
               <span className="value">{cellPhone || '无'}</span>
             </div>
           </li>
           <li className="item">
-            <div className="wrap">
+            <div className="wrap value_word">
               <strong className="name">邮箱：</strong>
               <span className="value">{eMailAddr || '无'}</span>
             </div>
