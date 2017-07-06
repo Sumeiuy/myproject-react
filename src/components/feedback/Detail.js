@@ -5,13 +5,13 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import { Row, Col, Button, message, Tabs } from 'antd';
+import ReactDOM from 'react-dom';
+import { Row, Col, Button, message, Modal, Tabs } from 'antd';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { routerRedux } from 'dva/router';
-import ImageGallery from 'lightgallery';
 import ProblemHandling from './ProblemHandling';
 import Remark from './Remark';
 import RemarkList from './RemarkList';
@@ -104,10 +104,7 @@ export default class Detail extends PureComponent {
   }
 
   componentDidMount() {
-    // const img = new Image();
-    // const that = img;
-    // img.onload = this.loadImg(that);
-    ImageGallery(document.getElementById('lightgallery'));
+    window.addEventListener('resize', this.handleResize, false);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -146,6 +143,25 @@ export default class Detail extends PureComponent {
             inforTxt: '处理问题表示对此问题做出判断处理。',
           });
         }
+
+        let imageURL;
+        if (!_.isEmpty(mediaUrls)) {
+          imageURL = JSON.parse(mediaUrls);
+        }
+
+        const newImg = new Image();
+
+        newImg.onload = () => {
+          const imgHeight = newImg.height;
+          const imgWidth = newImg.width;
+
+          this.setState({
+            imgHeight,
+            imgWidth,
+          });
+        };
+
+        newImg.src = `${request.prefix}/file/${imageURL && imageURL[0]}`; // this must be done AFTER setting onload
       });
     }
 
@@ -172,6 +188,72 @@ export default class Detail extends PureComponent {
     this.setState({ //eslint-disable-line
       currentId,
     });
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.handleResize, false);
+  }
+
+  /**
+   * 设置弹出框图片的宽度和高度
+   * @param {*} newHeight 新的高度
+   * @param {*} newWidth 新的宽度
+   */
+  setDOMStyle(newHeight, newWidth) {
+    /* eslint-disable */
+    const modalElem = ReactDOM.findDOMNode(document.querySelector('.imgModal'));
+    const childrenElem = modalElem.children[0];
+    /* eslint-enable */
+    modalElem.style.height = newHeight === 'auto' ? 'auto' : `${newHeight}px`;
+    modalElem.style.width = `${newWidth}px`;
+    modalElem.style.margin = 'auto';
+    modalElem.style.overflow = 'hidden';
+    childrenElem.style.top = '0px';
+    childrenElem.style.paddingBottom = '0px';
+  }
+
+  /**
+ * 计算图片在页面需要展示的宽度，并设置弹框样式
+ */
+  calculateRealSize() {
+    const containerHeight = document.documentElement.clientHeight - (50 * 2);
+    const containerWidth = document.documentElement.clientWidth - (100 * 2);
+    let newHeight = 'auto';
+    let newWidth = 520;
+    const { imgHeight, imgWidth } = this.state;
+    // 如果图片宽度超出容器宽度--
+    if (imgWidth > containerWidth) {
+      newHeight = (containerWidth * imgHeight) / imgWidth; // 高度等比缩放
+      newWidth = containerWidth;
+    }
+    // 如果图片高度超出容器宽度--
+    if (imgHeight > containerHeight) {
+      newHeight = containerHeight;
+      newWidth = (containerHeight * imgWidth) / imgHeight; // 宽度等比缩放
+    }
+
+    this.setState({
+      newHeight,
+      newWidth,
+    }, () => {
+      if (!this.state.previewVisible) {
+        this.setState({
+          previewVisible: true,
+        }, () => {
+          this.setDOMStyle(newHeight, newWidth);
+        });
+      } else {
+        this.setDOMStyle(newHeight, newWidth);
+      }
+    });
+  }
+
+  @autobind
+  handleResize() {
+    const { previewVisible } = this.state;
+    if (previewVisible) {
+      this.calculateRealSize();
+    }
   }
 
   /**
@@ -349,9 +431,7 @@ export default class Detail extends PureComponent {
    */
   @autobind
   handlePreview() {
-    this.setState({
-      previewVisible: true,
-    });
+    this.calculateRealSize();
   }
 
   @autobind
@@ -380,10 +460,6 @@ export default class Detail extends PureComponent {
   //   return this.sortProcessList(left).concat([pivotObject], this.sortProcessList(right));
   // }
 
-  handleImageLoad(event) {
-    console.log('Image loaded ', event.target);
-  }
-
   render() {
     const {
       dataSource,
@@ -392,6 +468,8 @@ export default class Detail extends PureComponent {
       nowStatus,
       messageBtnValue,
       inforTxt,
+      previewVisible,
+      newWidth,
     } = this.state;
     const { resultData = EMPTY_OBJECT } = dataSource || EMPTY_OBJECT;
     const { resultData: voList = EMPTY_OBJECT } = voDataSource || EMPTY_OBJECT;
@@ -461,11 +539,18 @@ export default class Detail extends PureComponent {
                   </div>
                 </Col>
                 <Col span="6">
-                  <div id="lightgallery">
-                    <a href={`${request.prefix}/file/${imageUrls[0]}`}>
-                      <img src={`${request.prefix}/file/${imageUrls[0]}`} alt="图片" />
-                    </a>
+                  <div className="imgbox" onClick={this.handlePreview}>
+                    <img src={`${request.prefix}/file/${imageUrls[0]}`} alt="图片" />
                   </div>
+                  <Modal
+                    visible={previewVisible}
+                    width={newWidth}
+                    footer={null}
+                    onCancel={this.handlePreviewCancel}
+                    wrapClassName="imgModal"
+                  >
+                    <img alt="图片" style={{ width: '100%' }} src={`${request.prefix}/file/${imageUrls[0]}`} />
+                  </Modal>
                 </Col>
               </Row> :
               <Row>
