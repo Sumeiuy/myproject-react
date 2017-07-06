@@ -11,7 +11,6 @@ import createLoading from 'dva-loading';
 import createLogger from 'redux-logger';
 import { persistStore, autoRehydrate } from 'redux-persist';
 import { message } from 'antd';
-import _ from 'lodash';
 
 import createSensorsLogger from './middlewares/sensorsLogger';
 import createActivityIndicator from './middlewares/createActivityIndicator';
@@ -70,11 +69,12 @@ if (persistConfig.active) {
   persistStore(store, persistConfig);
 }
 
-window.navTo = (url, query) => {
+window.navTo = (url) => {
   const state = store.getState();
   const tmpLocation = state.routing.locationBeforeTransitions;
-  if (tmpLocation && tmpLocation.pathname === url
-    && _.isEqual(tmpLocation.query, query)
+  if (tmpLocation
+    && tmpLocation.pathname === url
+    // && _.isEqual(tmpLocation.query, query)
   ) {
     return;
   }
