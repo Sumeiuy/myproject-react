@@ -22,7 +22,7 @@ import ReportHome from './routes/reports/Home';
 import PreviewReport from './routes/reports/PreviewReport';
 
 const routes = ({ history }) => (// eslint-disable-line
-  <Router history={history}>
+  <Router onUpdate={() => window.scrollTo(0, 0)} history={history}>
     <Route path="/" component={Main}>
       <IndexRedirect to="/empty" />
       <Route path="empty" component={Empty} />

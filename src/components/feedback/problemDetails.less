@@ -1,23 +1,28 @@
 :global{
   .react-app{
-    .anticon-edit{
-      margin-left:10px;
-      box-sizing: border-box;
-      opacity: 0;
-      color:#333;
-      background-color: #f0f0f0;
-      background-repeat: no-repeat;
-      background-position: 4px 4px;
-      border-left: 1px solid #ccc;
-      bottom: 0;
-      height: auto;
-      margin: 0;
-      position: absolute;
-      right: 0;
-      top: 0;
-      width: 24px;
-      z-index: -1;
-      text-align:center;
+    .property_list {
+      .anticon-edit{
+        margin-left:10px;
+        box-sizing: border-box;
+        opacity: 0;
+        color:#333;
+        background-color: #f0f0f0;
+        background-repeat: no-repeat;
+        background-position: 4px 4px;
+        border-left: 1px solid #ccc;
+        bottom: 0;
+        height: auto;
+        margin: 0;
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: 24px;
+        z-index: -1;
+        text-align:center;
+        .ant-form-item-control{
+          z-index: 2;
+        }
+      }
     }
     .editable_field:hover{
         box-shadow: 0 0 0 1px #CCC;
@@ -40,8 +45,10 @@
       .ant-form-item{
         margin-bottom:0;
         position: absolute;
+        left: 0;
+        top: 0;
       }
-      .btn{
+      .edit-btn{
         position:absolute;
         top:100%;
         right:3px;
@@ -80,6 +87,14 @@
           text-decoration: none;
         }
       }
+    }
+    .tiem-orient{
+      text-overflow: ellipsis;
+      overflow: hidden;
+      max-width: 380px;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 1;
     }
     .eitbox{
       display: none;

@@ -33,10 +33,7 @@ export default class UploadFiles extends PureComponent {
 
   constructor(props) {
     super(props);
-    console.warn('helper', helper);
-    console.warn('uploadRequest', uploadRequest);
     this.state = {
-      // formKey: `formKey${COUNT++}`,
       previewImage: '',
       fList: [],
       upData: {

@@ -26,7 +26,7 @@ export default class BoardSelect extends PureComponent {
     const bId = boardId || (visibleBoards.length && String(visibleBoards[0].id)) || '1';
     let boardName = '看板管理';
     if (pathname !== '/boardManage') {
-      boardName = this.findBoardBy(bId).name;
+      boardName = this.findBoardBy(bId, visibleBoards).name;
     }
     this.state = {
       dropdownVisible: false,
@@ -35,11 +35,11 @@ export default class BoardSelect extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { location: { query: { boardId: preId } } } = this.props;
     const { visibleBoards, location: { query: { boardId } } } = nextProps;
-    if (Number(boardId || '1') !== Number(preId || '1')) {
+    const { visibleBoards: preVB, location: { query: { boardId: preId } } } = this.props;
+    if (!_.isEqual(visibleBoards, preVB) || !_.isEqual(boardId, preId)) {
       const bId = boardId || (visibleBoards.length && String(visibleBoards[0].id)) || '1';
-      const boardName = this.findBoardBy(bId).name;
+      const boardName = this.findBoardBy(bId, visibleBoards).name;
       this.setState({
         boardName,
       });
@@ -52,11 +52,10 @@ export default class BoardSelect extends PureComponent {
   }
 
   @autobind
-  findBoardBy(id) {
-    const { visibleBoards } = this.props;
+  findBoardBy(id, vr) {
     const newId = Number.parseInt(id, 10);
-    const board = _.find(visibleBoards, { id: newId });
-    return board || visibleBoards[0];
+    const board = _.find(vr, { id: newId });
+    return board || vr[0];
   }
 
   @autobind
@@ -80,9 +79,19 @@ export default class BoardSelect extends PureComponent {
     const { visibleBoards } = this.props;
     const { dropdownVisible, boardName } = this.state;
     const menu = (
-      <Menu onClick={this.handleMenuClick}>
+      <Menu
+        onClick={this.handleMenuClick}
+        onMouseEnter={this.handleMenuScroll}
+        style={{
+          width: '200px',
+          maxHeight: '400px',
+          overflowY: 'scroll',
+        }}
+      >
         {
-          visibleBoards.map(item => (<Menu.Item key={String(item.id)}>{item.name}</Menu.Item>))
+          visibleBoards.map(item =>
+            (<Menu.Item key={String(item.id)} title={item.name}>{item.name}</Menu.Item>),
+          )
         }
         <Menu.Divider />
         <Menu.Item key="0">看板管理</Menu.Item>

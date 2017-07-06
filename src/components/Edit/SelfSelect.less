@@ -79,12 +79,18 @@
     }  
     :global {
       & .ant-checkbox-wrapper {
+        margin: 0;
+        padding: 0 10px;
         font-size: 12px;
-        margin-left: 10px;
-        width: 95%;
+        width: 100%;
         height: 25px;
         line-height: 25px;
         box-sizing: border-box;
+        span:last-child {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
         &:hover {
           background-color: #f7f7f7;
         }

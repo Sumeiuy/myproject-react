@@ -14,7 +14,6 @@ import SimpleEditor from '../../components/Edit/SimpleEditor';
 import SelfSelect from '../../components/Edit/SelfSelect';
 import BoardSelectTree from '../../components/Edit/BoardSelectTree';
 import selectHandlers from '../../components/Edit/selectHelper';
-import PreviewReport from '../reports/PreviewReport';
 import { BackConfirmModal, PublishConfirmModal } from '../../components/modals';
 
 import styles from './Home.less';
@@ -77,7 +76,9 @@ export default class BoardEditHome extends PureComponent {
       vREditorOriginal: [],
       preview: false,
       vrTipVisible: false,
+      nameTipVisible: false,
       visibleRangeTip: '',
+      nameTip: '',
       publishBt: false, // 发布按钮状态, 默认为false，即可用状态
       previewBt: false, // 预览按钮状态
       saveBt: false, // 保存按钮状态，false为已经保存过了的状态
@@ -119,6 +120,7 @@ export default class BoardEditHome extends PureComponent {
         vROriginal: finalLabel, // 可见范围的显示label
         vREditorOriginal: userVR.slice(1), // 选择的可见范围
         visibleRangeTip: this.getTooltipHtml(finalLabel),
+        nameTip: boardInfo.name,
         hasPublished,
         publishBt: _.isEmpty(summury) && _.isEmpty(detail),
         previewBt: _.isEmpty(summury) && _.isEmpty(detail),
@@ -127,9 +129,10 @@ export default class BoardEditHome extends PureComponent {
       });
     }
     const { publishLoading: prePL, updateLoading: preUL } = this.props;
-    const { publishLoading, updateLoading } = nextProps;
+    const { publishLoading, updateLoading, boardInfo: { id }, push } = nextProps;
     if (prePL && !publishLoading) {
       message.success('发布成功');
+      push(`/report?boardId=${id}`);
     }
     if (preUL && !updateLoading) {
       this.setState({
@@ -161,6 +164,12 @@ export default class BoardEditHome extends PureComponent {
       </div>
     );
   }
+
+  @autobind
+  getTooltipContainer() {
+    return document.querySelector('.react-app');
+  }
+
   @autobind
   getUserSummuryKeys(summury) {
     if (!_.isEmpty(summury)) {
@@ -212,6 +221,7 @@ export default class BoardEditHome extends PureComponent {
         visibleRangeEditor: false,
         [editor]: true,
         vrTipVisible: false,
+        nameTipVisible: false,
       });
     } else {
       // 如果是关闭则只是关闭
@@ -241,6 +251,7 @@ export default class BoardEditHome extends PureComponent {
     if (key === 'boardNameEditor') {
       this.setState({
         bNEditorOriginal: value,
+        nameTip: value,
         saveBtnType: 'primary',
         saveBt: true,
       });
@@ -289,6 +300,14 @@ export default class BoardEditHome extends PureComponent {
   openBackConfirmModal() {
     this.setState({
       backConfirmModal: true,
+    });
+  }
+
+  @autobind
+  nameTipVisibleHandle(flag) {
+    const { boardNameEditor } = this.state;
+    this.setState({
+      nameTipVisible: !boardNameEditor && flag,
     });
   }
 
@@ -348,11 +367,15 @@ export default class BoardEditHome extends PureComponent {
   handlePreviewBtnClick() {
     // 预览按钮点击之后，需要先保存
     this.saveBoard({});
-    this.showPreview();
+    // this.showPreview();
+    this.props.push('/preview');
   }
 
   @autobind
   handleSaveBtnClick() {
+    this.setState({
+      saveBt: false,
+    });
     this.saveBoard({});
   }
 
@@ -369,11 +392,13 @@ export default class BoardEditHome extends PureComponent {
       this.setState({
         summuryIndicator: indicators,
         saveBtnType: 'primary',
+        saveBt: true,
       });
     } else {
       this.setState({
         detailIndicator: indicators,
         saveBtnType: 'primary',
+        saveBt: true,
       });
     }
   }
@@ -394,9 +419,10 @@ export default class BoardEditHome extends PureComponent {
     const {
       boardNameEditor,
       visibleRangeEditor,
-      preview,
       visibleRangeTip,
+      nameTip,
       vrTipVisible,
+      nameTipVisible,
       publishBt,
       previewBt,
       publishConfirmModal,
@@ -404,7 +430,6 @@ export default class BoardEditHome extends PureComponent {
       hasPublished,
       saveBtnType,
     } = this.state;
-    const { location } = this.props;
     // 发布共同配置项
     const publishConfirmMProps = {
       modalKey: 'publishConfirmModal',
@@ -420,10 +445,12 @@ export default class BoardEditHome extends PureComponent {
       visible: backConfirmModal,
       closeModal: this.closeModal,
       confirm: this.backModalConfirm,
+      tip: hasPublished ? 'publish' : 'save',
     };
+    console.log('backConfirmMProps', backConfirmMProps);
 
     const { summury, detail } = boardInfo;
-    const { boardTypeDesc, boardType, id } = this.props.boardInfo;
+    const { boardTypeDesc, boardType } = this.props.boardInfo;
     // 总量指标库
     const summuryCheckedKeys = this.getUserSummuryKeys(summury);
     const summuryLib = {
@@ -441,20 +468,7 @@ export default class BoardEditHome extends PureComponent {
       checkedKeys: detailCheckedKeys,
     };
 
-    // 初始化的时候还没有值
-    return preview ?
-    (
-      <PreviewReport
-        location={location}
-        previewBack={this.hidePreview}
-        previewPublish={this.publishBoardCofirm}
-        reportName={bNEditorOriginal}
-        boardId={id}
-        boardType={boardType}
-      />
-    )
-    :
-    (
+    return (
       <div className="page-invest content-inner">
         <div className={styles.editPageHd}>
           <div className={styles.HdName}>看板编辑</div>
@@ -469,23 +483,33 @@ export default class BoardEditHome extends PureComponent {
               />
             </div>
             <div className={styles.hDivider} />
-            <div className={styles.basicInfo}>
-              <div className={styles.title}>看板名称:</div>
-              <SimpleEditor
-                editable
-                originalValue={bNEditorOriginal}
-                style={{
-                  maxWidth: '350px',
-                }}
-                editorValue={bNEditorOriginal}
-                editorName="boardNameEditor"
-                controller={this.editorStateController}
-                editorState={boardNameEditor}
-                confirm={this.editorConfirm}
-              >
-                <Input autocomplete="off" />
-              </SimpleEditor>
-            </div>
+            <Tooltip
+              placement="bottom"
+              title={nameTip}
+              trigger="hover"
+              visible={nameTipVisible}
+              onVisibleChange={this.nameTipVisibleHandle}
+              overlayClassName="visibleRangeToolTip"
+              getPopupContainer={this.getTooltipContainer}
+            >
+              <div className={styles.basicInfo}>
+                <div className={styles.title}>看板名称:</div>
+                <SimpleEditor
+                  editable
+                  originalValue={bNEditorOriginal}
+                  style={{
+                    maxWidth: '260px',
+                  }}
+                  editorValue={bNEditorOriginal}
+                  editorName="boardNameEditor"
+                  controller={this.editorStateController}
+                  editorState={boardNameEditor}
+                  confirm={this.editorConfirm}
+                >
+                  <Input autoComplete="off" style={{ paddingRight: '30px' }} />
+                </SimpleEditor>
+              </div>
+            </Tooltip>
             <div className={styles.hDivider} />
             <Tooltip
               placement="bottom"
@@ -494,7 +518,7 @@ export default class BoardEditHome extends PureComponent {
               visible={vrTipVisible}
               onVisibleChange={this.vrTipVisibleHandle}
               overlayClassName="visibleRangeToolTip"
-              getPopupContainer={() => document.querySelector('.react-app')}
+              getPopupContainer={this.getTooltipContainer}
             >
               <div className={styles.basicInfo}>
                 <div className={styles.title}>可见范围:</div>
@@ -502,7 +526,8 @@ export default class BoardEditHome extends PureComponent {
                   editable
                   originalValue={vROriginal}
                   style={{
-                    maxWidth: '450px',
+                    maxWidth: '260px',
+                    minWidth: '180px',
                   }}
                   editorValue={{
                     currency: vREditorOriginal,

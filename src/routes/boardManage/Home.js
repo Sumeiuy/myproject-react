@@ -97,8 +97,8 @@ export default class BoardManageHome extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { createLoading: preCL, deleteLoading: preDL } = this.props;
-    const { push, operateData, createLoading, deleteLoading } = nextProps;
+    const { createLoading: preCL, deleteLoading: preDL, publishLoading: prePL } = this.props;
+    const { push, operateData, createLoading, deleteLoading, publishLoading } = nextProps;
     if (preCL && !createLoading) {
       // 创建完成后，需要跳转到Edit
       const { id, ownerOrgId, boardType } = operateData;
@@ -107,6 +107,11 @@ export default class BoardManageHome extends PureComponent {
     if (preDL && !deleteLoading) {
       // 删除成功
       message.success('删除成功');
+    }
+    if (!publishLoading && prePL) {
+      message.success('发布成功');
+      const { id } = operateData;
+      push(`/report?boardId=${id}`);
     }
   }
 
@@ -137,7 +142,6 @@ export default class BoardManageHome extends PureComponent {
   // 删除看板
   @autobind
   deleteBoardHandle(board) {
-    console.log('deleteBoardHandle', board);
     this.setState({
       delBoard: board,
       delBoardName: board.name,
@@ -157,7 +161,6 @@ export default class BoardManageHome extends PureComponent {
   // 发布看板
   @autobind
   publishBoardHandle(board) {
-    console.log('publishBoardHandle', board);
     this.setState({
       publishBoard: board,
     },
@@ -255,6 +258,7 @@ export default class BoardManageHome extends PureComponent {
                   {/* 此处需要传递相关方法 */}
                   <BoardItem
                     boardData={item}
+                    visibleRanges={visibleRanges}
                     delete={this.deleteBoardHandle}
                     publish={this.publishBoardHandle}
                     push={push}
