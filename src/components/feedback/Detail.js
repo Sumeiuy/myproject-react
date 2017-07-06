@@ -5,12 +5,13 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import { Row, Col, Button, message, Modal, Tabs } from 'antd';
+import { Row, Col, Button, message, Tabs } from 'antd';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { routerRedux } from 'dva/router';
+import ImageGallery from 'lightgallery';
 import ProblemHandling from './ProblemHandling';
 import Remark from './Remark';
 import RemarkList from './RemarkList';
@@ -104,9 +105,9 @@ export default class Detail extends PureComponent {
 
   componentDidMount() {
     // const img = new Image();
-    // img.src = '../../static/images/2.png';
     // const that = img;
     // img.onload = this.loadImg(that);
+    ImageGallery(document.getElementById('lightgallery'));
   }
 
   componentWillReceiveProps(nextProps) {
@@ -171,36 +172,6 @@ export default class Detail extends PureComponent {
     this.setState({ //eslint-disable-line
       currentId,
     });
-  }
-
-  /**
-   * 获取原始图片的宽，高
-   * @param {*} img 图片对象
-   */
-  @autobind
-  loadImg() {
-    // const originalWidth = img.width;
-    // const originalHeight = img.height;
-    // const imgElem = document.createElement('img');
-    // imgElem.setAttribute('src', '../../static/images/2.png');
-    // imgElem.setAttribute('alt', '图片');
-    // const imgBox = document.querySelector('.imgbox_2');
-    // imgBox.appendChild(imgElem);
-
-    // const layout = document.querySelector('img');
-    // const originalAspectRatio = originalWidth / originalHeight;
-    // const currentAspectRatio = layout.width / layout.height;
-    // const clientWidth = document.documentElement.clientWidth;
-    // const clientHeight = document.documentElement.clientHeight;
-    // if (originalHeight > clientHeight || originalWidth > clientWidth) {
-    //   const rate = (originalHeight / clientHeight) - 1;
-    //   const newHeight = originalHeight - (rate * originalHeight);
-    //   const newWidth = originalWidth - (rate * originalWidth);
-    //   this.setState({
-    //     newHeight,
-    //     newWidth,
-    //   });
-    // }
   }
 
   /**
@@ -390,6 +361,29 @@ export default class Detail extends PureComponent {
     });
   }
 
+  // sortProcessList(arr) {
+  //   if (arr.length <= 1) {
+  //     return arr;
+  //   }
+  //   const pivotIndex = Math.floor(arr.length / 2);
+  //   const pivotObject = arr.splice(pivotIndex, 1)[0];
+  //   const pivot = pivotObject.createTime;
+  //   const left = [];
+  //   const right = [];
+  //   for (let i = 0; i < arr.length; i++) {
+  //     if (arr[i].createTime < pivot) {
+  //       left.push(arr[i]);
+  //     } else {
+  //       right.push(arr[i]);
+  //     }
+  //   }
+  //   return this.sortProcessList(left).concat([pivotObject], this.sortProcessList(right));
+  // }
+
+  handleImageLoad(event) {
+    console.log('Image loaded ', event.target);
+  }
+
   render() {
     const {
       dataSource,
@@ -398,9 +392,6 @@ export default class Detail extends PureComponent {
       nowStatus,
       messageBtnValue,
       inforTxt,
-      previewVisible,
-      newWidth,
-      // newHeight,
     } = this.state;
     const { resultData = EMPTY_OBJECT } = dataSource || EMPTY_OBJECT;
     const { resultData: voList = EMPTY_OBJECT } = voDataSource || EMPTY_OBJECT;
@@ -470,18 +461,11 @@ export default class Detail extends PureComponent {
                   </div>
                 </Col>
                 <Col span="6">
-                  <div className="imgbox" onClick={this.handlePreview}>
-                    <img src={`${request.prefix}/file/${imageUrls[0]}`} alt="图片" />
+                  <div id="lightgallery">
+                    <a href={`${request.prefix}/file/${imageUrls[0]}`}>
+                      <img src={`${request.prefix}/file/${imageUrls[0]}`} alt="图片" />
+                    </a>
                   </div>
-                  <Modal
-                    visible={previewVisible}
-                    width={newWidth}
-                    footer={null}
-                    onCancel={this.handlePreviewCancel}
-                    wrapClassName="imgModal"
-                  >
-                    <img alt="图片" style={{ width: '100%' }} src={`${request.prefix}/file/${imageUrls[0]}`} />
-                  </Modal>
                 </Col>
               </Row> :
               <Row>
