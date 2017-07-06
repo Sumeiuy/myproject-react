@@ -390,6 +390,25 @@ export default class Detail extends PureComponent {
     });
   }
 
+  @autobind
+  handleDesciption(txt) {
+    if (!_.isEmpty(txt)) {
+      const dataTrim = txt.replace(/(^\s*)|(\s*$)/g, '');
+      if (dataTrim.length < 1) {
+        return (
+          <div className="nodescription">
+            <i className="anticon anticon-frown-o" />暂无描述
+          </div>);
+      }
+    } else {
+      return (
+        <div className="nodescription">
+          <i className="anticon anticon-frown-o" />暂无描述
+        </div>);
+    }
+    return txt;
+  }
+
   render() {
     const {
       dataSource,
@@ -508,12 +527,7 @@ export default class Detail extends PureComponent {
             </div>
             <div className="mod_content">
               <div className="des_txt">
-                {
-                  description ||
-                  <div className="nodescription">
-                    <i className="anticon anticon-frown-o" />暂无描述
-                  </div>
-                }
+                {this.handleDesciption(description)}
               </div>
               <div className="btn_dv">
                 <Button type="primary" onClick={this.showModal}>{messageBtnValue}</Button>
