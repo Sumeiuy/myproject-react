@@ -199,15 +199,6 @@ export default class SelfSelect extends PureComponent {
             {firstRequiredCheck.name}
           </Checkbox>
           {this.showAllCheckNode() }
-          {/*
-            <Checkbox
-              value="all"
-              onChange={this.handleAllCheckboxChange}
-              checked={checkAll}
-            >
-              {allCheckedNode.name}
-            </Checkbox>
-          */}
           <CheckboxGroup
             value={groupCheckedList}
             onChange={this.handleCheckboxGroupChange}
