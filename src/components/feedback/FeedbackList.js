@@ -219,22 +219,16 @@ export default class FeedbackList extends PureComponent {
    */
   @autobind
   handleShowSizeChange(currentPageNum, changedPageSize) {
-    const { list: { page = EMPTY_OBJECT }, location: { query, pathname }, replace } = this.props;
-    const { totalRecordNum } = page;
-
-    // 只有当分页条目小于2倍总条目
-    // 每页条目才允许发生变化
-    if (changedPageSize / totalRecordNum <= 1) {
-      // 替换当前页码和分页条目
-      replace({
-        pathname,
-        query: {
-          ...query,
-          curPageNum: currentPageNum,
-          curPageSize: changedPageSize,
-        },
-      });
-    }
+    const { location: { query, pathname }, replace } = this.props;
+    // 替换当前页码和分页条目
+    replace({
+      pathname,
+      query: {
+        ...query,
+        curPageNum: 1,
+        curPageSize: changedPageSize,
+      },
+    });
   }
 
   constructPageSizeOptions(totalRecordNum) {
