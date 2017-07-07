@@ -89,6 +89,7 @@ export default class Detail extends PureComponent {
       currentId: '',
       previewVisible: false,
       newWidth: 520,
+      hasImgUrl: false,
     };
   }
 
@@ -142,6 +143,10 @@ export default class Detail extends PureComponent {
             };
 
             newImg.src = `${request.prefix}/file/${feedbackFileUrls[0]}`; // this must be done AFTER setting onload
+          });
+        } else {
+          this.setState({
+            hasImgUrl: false,
           });
         }
         if (status === 'CLOSED') {
