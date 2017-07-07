@@ -130,6 +130,19 @@ export default class FeedBack extends PureComponent {
   }
 
   componentWillUnmount() {
+    // 重置外层容器样式
+    // 防止影响其他界面
+    /* eslint-disable */
+    const UTBContentElem = ReactDOM.findDOMNode(document.getElementById('UTBContent'));
+    if (UTBContentElem) {
+      UTBContentElem.style.marginRight = '30px';
+      UTBContentElem.style.marginBottom = '10px';
+    }
+    const containerElem = ReactDOM.findDOMNode(document.getElementById('container'));
+    /* eslint-enable */
+    containerElem.style.height = 'auto';
+
+    // 取消事件监听
     window.removeEventListener('resize', this.onResizeChange, false);
   }
 
@@ -157,7 +170,8 @@ export default class FeedBack extends PureComponent {
     const workspaceElem = ReactDOM.findDOMNode(document.getElementById('workspace-content'));
     const innerElem = ReactDOM.findDOMNode(document.querySelector('.inner'));
     const resizerElem = ReactDOM.findDOMNode(document.querySelector('.Resizer'));
-    const feedbackHeaderElem = document.querySelector('.feedbackHeader');
+    const feedbackHeaderElem = ReactDOM.findDOMNode(document.querySelector('.feedbackHeader'));
+    const feedbackListElem = ReactDOM.findDOMNode(document.querySelector('.feedbackList'));
     /* eslint-enable */
 
     let topDistance = 0;
@@ -206,7 +220,8 @@ export default class FeedBack extends PureComponent {
 
     if (nullElem) {
       const top = nullElem.getBoundingClientRect().top;
-      nullElem.style.height = `${docElemHeight - top}px`;
+      containerElem.style.height = `${docElemHeight - top}px`;
+      feedbackListElem.style.height = `${docElemHeight - top}px`;
     }
   }
 
