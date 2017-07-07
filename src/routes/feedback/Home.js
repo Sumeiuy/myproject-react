@@ -191,6 +191,10 @@ export default class FeedBack extends PureComponent {
       headerHeight = feedbackHeaderElem.getBoundingClientRect().height;
     }
 
+    if (feedbackListElem) {
+      feedbackListElem.style.paddingLeft = '10px';
+    }
+
     if (leftSectionElem && rightSectionElem) {
       topDistance = leftSectionElem.getBoundingClientRect().top;
       const sectionHeight = docElemHeight - topDistance;
@@ -212,13 +216,13 @@ export default class FeedBack extends PureComponent {
     if (containerElem) {
       if (workspaceElem) {
         // FSP内嵌里面
-        containerElem.style.height = `${(docElemHeight - topDistance) + headerHeight}px`;
+        containerElem.style.height = `${docElemHeight - headerHeight - boxPadding}px`;
       } else {
         containerElem.style.height = `${docElemHeight}px`;
       }
     }
 
-    if (nullElem) {
+    if (nullElem && this.state.isEmpty) {
       const top = nullElem.getBoundingClientRect().top;
       containerElem.style.height = `${docElemHeight - top}px`;
       feedbackListElem.style.height = `${docElemHeight - top}px`;
@@ -226,11 +230,10 @@ export default class FeedBack extends PureComponent {
   }
 
   /**
-  * 检查两个对象部分属性是否完全相同
-  * @param {*} dic 字典
-  * @param {*} prevQuery 上一次query
-  * @param {*} nextQuery 下一次query
-  */
+   * 检查部分属性是否相同
+   * @param {*} prevQuery 前一次query
+   * @param {*} nextQuery 后一次query
+   */
   diffObject(prevQuery, nextQuery) {
     const prevQueryData = _.omit(prevQuery, OMIT_ARRAY);
     const nextQueryData = _.omit(nextQuery, OMIT_ARRAY);
