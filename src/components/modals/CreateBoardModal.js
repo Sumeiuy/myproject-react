@@ -37,6 +37,7 @@ export default class CreateBoardModal extends PureComponent {
     super(props);
     const { visible } = props;
     this.state = {
+      nameHelp: '不可以为空',
       modalVisible: visible,
       boardnamettVisible: false, // 看板名称Tooltip显示与否
     };
@@ -87,7 +88,21 @@ export default class CreateBoardModal extends PureComponent {
     // 判断看板名称
     if (boardname === '') {
       // 看板名称不能为空
-      this.setTooltipVisible(true);
+      this.setState({
+        nameHelp: '名称不能为空',
+      },
+      () => {
+        this.setTooltipVisible(true);
+      });
+      return;
+    }
+    if (/\s+/.test(boardname)) {
+      this.setState({
+        nameHelp: '名称不能含空格',
+      },
+      () => {
+        this.setTooltipVisible(true);
+      });
       return;
     }
     // TODO 调用创建看板接口
@@ -103,7 +118,7 @@ export default class CreateBoardModal extends PureComponent {
   }
 
   render() {
-    const { modalVisible, boardnamettVisible } = this.state;
+    const { modalVisible, boardnamettVisible, nameHelp } = this.state;
     const { modalCaption, allOptions, level } = this.props;
     const { getFieldDecorator } = this.props.form;
     // 表单布局
@@ -135,7 +150,7 @@ export default class CreateBoardModal extends PureComponent {
       >
         <Form>
           <Tooltip
-            title="不可以为空"
+            title={nameHelp}
             visible={boardnamettVisible}
             getPopupContainer={this.getTootipPopContainer}
             overlayClassName={styles.tooltipTop}

@@ -6,6 +6,9 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { Button } from 'antd';
 import { autobind } from 'core-decorators';
+import { connect } from 'react-redux';
+import { withRouter, routerRedux } from 'dva/router';
+
 import ReportHome from './Home';
 import { getCssStyle } from '../../utils/helper';
 import { PublishConfirmModal } from '../../components/modals';
@@ -15,24 +18,48 @@ import styles from './PreviewReport.less';
 // 首先判断wrap存在与否
 const contentWrapper = document.getElementById('workspace-content');
 
+const fectchDataFunction = (globalLoading, type) => query => ({
+  type,
+  payload: query || {},
+  loading: globalLoading,
+});
+
+const mapStateToProps = state => ({
+  boardInfo: state.edit.boardInfo,
+  publishLoading: state.edit.publishLoading,
+  globalLoading: state.activity.global,
+});
+
+const mapDispatchToProps = {
+  push: routerRedux.push,
+  goBack: routerRedux.goBack,
+  publishBoard: fectchDataFunction(true, 'edit/publishBoard'),
+};
+
+@connect(mapStateToProps, mapDispatchToProps)
+@withRouter
 export default class PreviewReport extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
-    reportName: PropTypes.string.isRequired,
-    boardId: PropTypes.number.isRequired,
-    boardType: PropTypes.string.isRequired,
-    previewBack: PropTypes.func.isRequired,
-    previewPublish: PropTypes.func.isRequired,
+    boardInfo: PropTypes.object.isRequired,
+    publishBoard: PropTypes.func.isRequired,
+    goBack: PropTypes.func.isRequired,
+    // reportName: PropTypes.string.isRequired,
+    // boardId: PropTypes.number.isRequired,
+    // boardType: PropTypes.string.isRequired,
+    // previewBack: PropTypes.func.isRequired,
+    // previewPublish: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
-    reportName: '',
-    boardId: 1,
-    boardType: 'TYPE_TGJX',
+    // reportName: '',
+    // boardId: 1,
+    // boardType: 'TYPE_TGJX',
   }
 
   constructor(props) {
     super(props);
+    // 新的页面需要
     this.state = {
       publishConfirmModal: false,
     };
@@ -54,7 +81,8 @@ export default class PreviewReport extends PureComponent {
 
   @autobind
   handleBackClick() {
-    this.props.previewBack();
+    this.props.goBack();
+    // this.props.previewBack();
   }
 
   @autobind
@@ -64,12 +92,19 @@ export default class PreviewReport extends PureComponent {
 
   @autobind
   publishBoardCofirm() {
-    this.props.previewPublish();
+    const { id, ownerOrgId } = this.props.boardInfo;
+    this.props.publishBoard({
+      boardId: id,
+      ownerOrgId,
+      isPublished: 'Y',
+    });
+    // this.props.previewPublish();
   }
 
   render() {
     const { publishConfirmModal } = this.state;
-    const { location, reportName, boardId, boardType } = this.props;
+    const { location } = this.props;
+    const { name, id, boardType } = this.props.boardInfo;
     // 发布共同配置项
     const publishConfirmMProps = {
       modalKey: 'publishConfirmModal',
@@ -82,9 +117,9 @@ export default class PreviewReport extends PureComponent {
       <div className={styles.previewReport}>
         <ReportHome
           preView
-          reportName={reportName}
+          reportName={name}
           location={location}
-          boardId={boardId}
+          boardId={id}
           boardType={boardType}
         />
         <div

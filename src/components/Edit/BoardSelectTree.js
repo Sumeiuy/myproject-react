@@ -69,48 +69,89 @@ function getTreeNode(arr, showThirdColumn) {
   ));
   return html;
 }
-function findNode(arr, key) {
-  let node;
-  if (Array.isArray(arr)) {
-    arr.forEach((item) => {
-      if (item.key === key) {
-        node = item;
+
+let testNode = null;
+function walk(orgArr, func) {
+  func(orgArr);
+  if (Array.isArray(orgArr)) {
+    const childrenLen = orgArr.length;
+    let i = 0;
+    while (i < childrenLen) {
+      const children = orgArr[i].children;
+      walk(children, func);
+      i++;
+    }
+  }
+}
+function findSelectNodeByKey(key) {
+  return (orgArr) => {
+    if (Array.isArray(orgArr)) {
+      for (let i = 0; i < orgArr.length; i++) {
+        if (orgArr[i].key === key) {
+          testNode = orgArr[i];
+        }
       }
-    });
-  } else {
-    node = null;
+    }
+  };
+}
+
+function findSelectNode(orgArr, key) {
+  console.warn('findSelectNode 方法第一步时', key);
+  let node = null;
+  for (let i = 0; i < orgArr.length; i++) {
+    walk(orgArr[i].detailIndicators, findSelectNodeByKey(key));
+    node = {
+      node: testNode,
+      belong: {
+        key: orgArr[i].indicatorCategoryDto.categoryKey,
+        name: orgArr[i].indicatorCategoryDto.categoryName,
+      },
+    };
   }
   return node;
 }
-function findSelectNodeChild(arr, key) {
-  let selectNodeChildren = null;
-  if (Array.isArray(arr)) {
-    arr.forEach((item) => {
-      item.detailIndicators.forEach((child) => {
-        if (child.key === key) {
-          selectNodeChildren = {
-            node: child,
-            belong: {
-              key: item.indicatorCategoryDto.categoryKey,
-              name: item.indicatorCategoryDto.categoryName,
-            },
-          };
-          return false;
-        }
-        if (!selectNodeChildren && child.children) {
-          selectNodeChildren = {
-            node: findNode(child.children, key),
-          };
-        }
-        return selectNodeChildren;
-      });
-    });
-  } else {
-    selectNodeChildren = null;
-  }
-  return selectNodeChildren;
-}
-let treeNodeHtml;
+
+// 找到三级节点
+// function findNode(arr, key) {
+//   let node;
+//   if (Array.isArray(arr)) {
+//     arr.forEach((item) => {
+//       if (item.key === key) {
+//         node = item;
+//       }
+//     });
+//   } else {
+//     node = null;
+//   }
+//   return node;
+// }
+// 找到二级节点
+// function findSelectNodeChild(arr, key) {
+//   let selectNodeChildren = null;
+//   if (Array.isArray(arr)) {
+//     arr.forEach((item) => {
+//       item.detailIndicators.forEach((child) => {
+//         if (child.key === key) {
+//           selectNodeChildren = {
+//             node: child,
+//             belong: {
+//               key: item.indicatorCategoryDto.categoryKey,
+//               name: item.indicatorCategoryDto.categoryName,
+//             },
+//           };
+//           return false;
+//         }
+//         if (!selectNodeChildren && child.children) {
+//           selectNodeChildren = {
+//             node: findNode(child.children, key),
+//           };
+//         }
+//         return selectNodeChildren;
+//       });
+//     });
+//   }
+//   return selectNodeChildren;
+// }
 export default class BoardSelectTree extends PureComponent {
   static propTypes = {
     data: PropTypes.object.isRequired,
@@ -118,10 +159,7 @@ export default class BoardSelectTree extends PureComponent {
   }
   constructor(props) {
     super(props);
-    const data = props.data;
-    const type = data.type;
-    // 是否显示子元素列
-    const boardType = data.boardType;
+    const { data: { type, boardType, checkTreeArr, checkedKeys } } = props;
     let showThirdColumn = false;
     let showTitle = false;
     // 如果看板是 经营业绩 类型 并且 指标是 总量指标 类型
@@ -134,27 +172,20 @@ export default class BoardSelectTree extends PureComponent {
     // 是否是总量指标
     const isSummury = type === boardKeyName.summury.key;
     // 取出分类明细下的所有标题
-    const allParentNodes = data.checkTreeArr.map((item) => {
-      const obj = {
-        key: item.indicatorCategoryDto.categoryKey,
-        name: item.indicatorCategoryDto.categoryName,
-        children: [],
-      };
-      return obj;
-    });
-    const checkedKeys = data.checkedKeys;
-    const checkTreeArr = data.checkTreeArr;
+    const allParentNodes = checkTreeArr.map(item => ({
+      key: item.indicatorCategoryDto.categoryKey,
+      name: item.indicatorCategoryDto.categoryName,
+      children: [],
+    }));
+    // 默认展开项为指标树的第一项
     const expandedKeys = [checkTreeArr[0].indicatorCategoryDto.categoryKey];
     let selfCheckedNodes = [];
     if (checkedKeys.length) {
       if (!isSummury) {
-        selfCheckedNodes = checkedKeys.map((item) => {
-          const obj = {
-            ...findSelectNodeChild(checkTreeArr, item).node,
-            belongKey: findSelectNodeChild(checkTreeArr, item).belong.key,
-          };
-          return obj;
-        });
+        selfCheckedNodes = checkedKeys.map(item => ({
+          ...findSelectNode(checkTreeArr, item).node,
+          belongKey: findSelectNode(checkTreeArr, item).belong.key,
+        }));
         allParentNodes.map((item) => {
           const newItem = item;
           selfCheckedNodes.forEach((child) => {
@@ -166,7 +197,7 @@ export default class BoardSelectTree extends PureComponent {
         });
       } else {
         selfCheckedNodes = checkedKeys.map(item =>
-        findSelectNodeChild(checkTreeArr, item).node);
+        findSelectNode(checkTreeArr, item).node);
       }
     }
     this.state = {
@@ -184,6 +215,7 @@ export default class BoardSelectTree extends PureComponent {
       showTitle,
     };
   }
+
   @autobind
   onExpand(expandedKeys) {
     this.setState({
@@ -193,8 +225,6 @@ export default class BoardSelectTree extends PureComponent {
   }
   @autobind
   onCheck(checkedKeys, { node: { props: { eventKey, checked } } }) {
-    console.warn('checkKeys', checkedKeys);
-    // 当前选中的 key
     const obj = {
       keyArr: checkedKeys,
       key: eventKey,
@@ -215,20 +245,25 @@ export default class BoardSelectTree extends PureComponent {
   }
   @autobind
   onRemove(item) {
-    const checkTreeArr = this.state.checkTreeArr;
-    const nowSelectNodeBelong = findSelectNodeChild(checkTreeArr, item.key).belong;
-    const oldCheckedKeys = this.state.checkedKeys;
-    const oldSelfCheckedNodes = this.state.selfCheckedNodes;
-    const allParentNodes = this.state.allParentNodes;
-    const newCheckedKeys = _.remove(oldCheckedKeys, n => (n !== item.key));
-    const newSelfCheckedNodes = _.remove(oldSelfCheckedNodes, n => (n.key !== item.key));
-    allParentNodes.map((child) => {
-      let newItem = child;
-      if (nowSelectNodeBelong.key === newItem.key) {
-        newItem = _.remove(newItem.children, n => (n.key === item.key));
-      }
-      return newItem;
-    });
+    const {
+      checkTreeArr,
+      isSummury,
+      allParentNodes,
+      checkedKeys,
+      selfCheckedNodes,
+    } = this.state;
+    const nowSelectNodeBelong = findSelectNode(checkTreeArr, item.key).belong;
+    const newCheckedKeys = _.remove(checkedKeys, n => (n !== item.key));
+    const newSelfCheckedNodes = _.remove(selfCheckedNodes, n => (n.key !== item.key));
+    if (!isSummury) {
+      allParentNodes.map((child) => {
+        let newItem = child;
+        if (nowSelectNodeBelong.key === newItem.key) {
+          newItem = _.remove(newItem.children, n => (n.key === item.key));
+        }
+        return newItem;
+      });
+    }
     this.setState({
       allParentNodes,
       checkedKeys: newCheckedKeys,
@@ -239,12 +274,13 @@ export default class BoardSelectTree extends PureComponent {
     });
   }
   @autobind
+  getTooltipContainer() {
+    return document.querySelector('.react-app');
+  }
+  @autobind
   getStateTree() {
     const selfCheckedNodes = this.state.selfCheckedNodes;
     const checkTreeArr = this.state.checkTreeArr;
-    // 测试
-    const checkedKeys = this.state.checkedKeys;
-    console.warn('checkedKeys', checkedKeys);
     const isSummury = this.state.isSummury;
     if (isSummury) {
       const summuryArr = selfCheckedNodes.map(item => item.key);
@@ -254,7 +290,7 @@ export default class BoardSelectTree extends PureComponent {
     } else {
       // 取出所有选中节点的归属点 key
       const tempBelongKeyArr = selfCheckedNodes.map((item) => {
-        const itemBelong = findSelectNodeChild(checkTreeArr, item.key).belong;
+        const itemBelong = findSelectNode(checkTreeArr, item.key).belong;
         return itemBelong.key;
       });
       // 去重
@@ -262,7 +298,7 @@ export default class BoardSelectTree extends PureComponent {
       // 将选中的数组项循环，每一项赋值一个 归属 key ，生成新数组
       const newSelfeCheckedNodes = selfCheckedNodes.map((item) => {
         const newItem = item;
-        const itemBelongKey = findSelectNodeChild(checkTreeArr, item.key).belong.key;
+        const itemBelongKey = findSelectNode(checkTreeArr, item.key).belong.key;
         newItem.belongKey = itemBelongKey;
         return newItem;
       });
@@ -289,8 +325,15 @@ export default class BoardSelectTree extends PureComponent {
     // 找出当前点击或者选择的节点信息，并存到 state 中
     const oldSelectNode = this.state.nowSelectNode;
     const checkTreeArr = this.state.checkTreeArr;
-    const nowSelectNode = findSelectNodeChild(checkTreeArr, obj.key).node;
-    const nowSelectNodeBelong = findSelectNodeChild(checkTreeArr, obj.key).belong;
+    const isSummury = this.state.isSummury;
+    let selfCheckedNodes = this.state.selfCheckedNodes;
+    const allParentNodes = this.state.allParentNodes;
+    console.warn('点击了 obj', obj);
+    console.warn('点击了 obj.key', obj.key);
+    const nowSelectNode = findSelectNode(checkTreeArr, obj.key).node;
+    const nowSelectNodeBelong = findSelectNode(checkTreeArr, obj.key).belong;
+    // console.warn('递归结果', walk(checkTreeArr, findOrgNameByOrgId(obj.key)));
+    console.warn('递归', findSelectNode(checkTreeArr, obj.key));
     if (_.isEqual(oldSelectNode, nowSelectNode)) {
       this.setState({
         nowSelectNode: {},
@@ -302,16 +345,17 @@ export default class BoardSelectTree extends PureComponent {
     }
     // 如果找到当前节点，并且当前节点有 子元素，展开子元素并且更新 已展开子元素 的 state
     const oldExpandedKeys = this.state.expandedKeys;
+    const oldExpandedChildren = this.state.expandedChildren;
+    const allParentNodesKeys = allParentNodes.map(item => (item.key));
+    // 取出旧的展开项与二级节点的交集
+    const newExpandedKeys = _.intersection(oldExpandedKeys, allParentNodesKeys);
     if (nowSelectNode && nowSelectNode.hasChildren) {
-      this.onExpand(_.uniq(_.concat(oldExpandedKeys, obj.key)));
-        // 更新已展开的子元素 state
+      this.onExpand(_.uniq(_.concat(newExpandedKeys, obj.key)));
+      // 更新已展开的子元素 state
       this.setState({
         expandedChildren: nowSelectNode.children,
       });
-    }
-    const oldExpandedChildren = this.state.expandedChildren;
-    // 如果 已经展开的子元素 state 有值，并且当前点击的节点没有子元素
-    if (oldExpandedChildren && !nowSelectNode.hasChildren) {
+    } else {
       let flag = false;
       // 循环展开的子元素数组，判断出是否包含当前点击的节点
       oldExpandedChildren.forEach((item) => {
@@ -321,18 +365,14 @@ export default class BoardSelectTree extends PureComponent {
       });
       // 如果不包含，则将展开节点设置为默认值
       if (!flag) {
-        this.onExpand(oldExpandedKeys);
+        this.onExpand(newExpandedKeys);
         // 将已展开的子元素设为空
         this.setState({
           expandedChildren: [],
         });
       }
     }
-
-    const isSummury = this.state.isSummury;
     // 触发选中事件时，将所有选中的节点取出来生成生的数组，放到最终传值的数组中
-    let selfCheckedNodes = this.state.selfCheckedNodes;
-    const allParentNodes = this.state.allParentNodes;
     // 如果是选中事件
     if (obj.type === 'onCheck') {
       // 如果是明细指标，则将选中的节点信息存放到 相应的 父节点下
@@ -350,8 +390,6 @@ export default class BoardSelectTree extends PureComponent {
         });
       }
       // 如果是选中状态，添加进去
-      console.warn('obj', obj);
-      console.warn('nowSelectNode', nowSelectNode);
       if (!obj.checked) {
         selfCheckedNodes.push(nowSelectNode);
       } else {
@@ -391,9 +429,7 @@ export default class BoardSelectTree extends PureComponent {
       showThirdColumn,
       showTitle,
     } = this.state;
-    console.warn('render');
-    console.warn('checkedKeys', checkedKeys);
-    treeNodeHtml = getTreeNode(checkTreeArr, showThirdColumn);
+    const treeNodeHtml = getTreeNode(checkTreeArr, showThirdColumn);
     return (
       // 树结构整体
       <div className={styles.treeBody}>
@@ -401,7 +437,12 @@ export default class BoardSelectTree extends PureComponent {
         <div className={styles.treeTitle}>
           <h2 className={styles[`treeTitle${type}`]}>
             {boardKeyName[type].name}
-            <Tooltip placement="topLeft" title={boardKeyName[type].title}>
+            <Tooltip
+              placement="topLeft"
+              title={boardKeyName[type].title}
+              overlayClassName="visibleRangeToolTip"
+              getPopupContainer={this.getTooltipContainer}
+            >
               <span className={styles.treeTitleSpan} />
             </Tooltip>
           </h2>
@@ -462,7 +503,7 @@ export default class BoardSelectTree extends PureComponent {
                 :
                   allParentNodes.map(item => (
                     item.children.length ?
-                      <div key={item.key} className={styles.treeMainRigthChildTitle}>
+                      <div key={`${item.key}Key`} className={styles.treeMainRigthChildTitle}>
                         {
                           showTitle ?
                             <h3>{item.name}</h3>
