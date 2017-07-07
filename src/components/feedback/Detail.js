@@ -217,13 +217,6 @@ export default class Detail extends PureComponent {
   }
 
   /**
-   * tab切换
-   */
-  handleTabChange(key) {
-    console.log(key);
-  }
-
-  /**
    * 弹窗处理（开启）
   */
   showModal = () => {
@@ -392,21 +385,15 @@ export default class Detail extends PureComponent {
 
   @autobind
   handleDesciption(txt) {
-    if (!_.isEmpty(txt)) {
-      const dataTrim = txt.replace(/(^\s*)|(\s*$)/g, '');
-      if (dataTrim.length < 1) {
-        return (
-          <div className="nodescription">
-            <i className="anticon anticon-frown-o" />暂无描述
-          </div>);
-      }
-    } else {
+    const dataTxt = _.isEmpty(txt) ? '' : txt;
+    const dataTrim = dataTxt.replace(/(^\s*)|(\s*$)/g, '');
+    if (dataTrim.length < 1) {
       return (
         <div className="nodescription">
           <i className="anticon anticon-frown-o" />暂无描述
         </div>);
     }
-    return txt;
+    return dataTxt;
   }
 
   render() {
@@ -557,7 +544,7 @@ export default class Detail extends PureComponent {
             </div>
           </div>
           <div id="processing" className="module">
-            <Tabs onChange={this.handleTabChange} type="card">
+            <Tabs type="card">
               <TabPane tab="处理意见" key="1">
                 <RemarkList
                   remarkList={processRecordList}

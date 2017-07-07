@@ -59,6 +59,8 @@ export default class FeedBack extends PureComponent {
     super(props);
     this.state = {
       isEmpty: true,
+      paneMinSize: 200,
+      paneMaxSize: 600,
     };
   }
 
@@ -75,6 +77,7 @@ export default class FeedBack extends PureComponent {
     this.setDocumentScroll();
     window.addEventListener('resize', this.onResizeChange, false);
     this.panMov(DEFAULTSIZE);
+    this.initPane();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -98,7 +101,8 @@ export default class FeedBack extends PureComponent {
 
   componentDidUpdate() {
     this.setDocumentScroll();
-
+    this.panMov(DEFAULTSIZE);
+    this.initPane();
     const { location: { pathname, query, query: { isResetPageNum } }, replace,
       list: { resultData = EMPTY_LIST } } = this.props;
     // 重置pageNum和pageSize
@@ -222,6 +226,14 @@ export default class FeedBack extends PureComponent {
   @autobind
   panchange(size) {
     this.panMov(size);
+    const splitPane = ReactDOM.findDOMNode(document.querySelector('.SplitPane'));// eslint-disable-line
+    const node = ReactDOM.findDOMNode(document.querySelector('.Pane2'));// eslint-disable-line
+    const boxWidth = splitPane.getBoundingClientRect().width;
+    if (size > boxWidth * 0.5) {
+      node.className = 'Pane vertical Pane2 allWidth';
+    } else {
+      node.className = 'Pane vertical Pane2';
+    }
   }
 
   // 重新给pan2样式赋值
@@ -232,9 +244,22 @@ export default class FeedBack extends PureComponent {
     }
   }
 
+  // 动态配置pane参数
+  @autobind
+  initPane() {
+    const node = ReactDOM.findDOMNode(document.querySelector('.SplitPane')); // eslint-disable-line
+    const boxWidth = node.getBoundingClientRect().width;
+    const minsize = boxWidth * 0.3 || 200;
+    const maxsize = boxWidth * 0.6 || 600;
+    this.setState({
+      paneMaxSize: maxsize,
+      paneMinSize: minsize,
+    });
+  }
+
   render() {
     const { list, location, replace } = this.props;
-    const { isEmpty } = this.state;
+    const { isEmpty, paneMaxSize, paneMinSize } = this.state;
     const emptyClass = classnames({
       none: !isEmpty,
       feedbackRow: true,
@@ -268,8 +293,8 @@ export default class FeedBack extends PureComponent {
           <SplitPane
             onChange={this.panchange}
             split="vertical"
-            minSize={218}
-            maxSize={500}
+            minSize={paneMinSize}
+            maxSize={paneMaxSize}
             defaultSize={DEFAULTSIZE}
             className="primary"
           >
