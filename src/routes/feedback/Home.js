@@ -24,7 +24,7 @@ import './home.less';
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const BROWSER = getEnv();
-const DEFAULTSIZE = 450;
+const DEFAULTSIZE = 430;
 let splitPane;
 let Pane;
 const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
@@ -171,7 +171,7 @@ export default class FeedBack extends PureComponent {
     const innerElem = ReactDOM.findDOMNode(document.querySelector('.inner'));
     const resizerElem = ReactDOM.findDOMNode(document.querySelector('.Resizer'));
     const feedbackHeaderElem = ReactDOM.findDOMNode(document.querySelector('.feedbackHeader'));
-    const feedbackListElem = ReactDOM.findDOMNode(document.querySelector('.feedbackList'));
+    const feedbackListElem = ReactDOM.findDOMNode(document.querySelectorAll('.feedbackList')[1]);
     /* eslint-enable */
 
     let topDistance = 0;
