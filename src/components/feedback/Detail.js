@@ -89,6 +89,7 @@ export default class Detail extends PureComponent {
       currentId: '',
       previewVisible: false,
       newWidth: 520,
+      hasImgUrl: false,
     };
   }
 
@@ -141,6 +142,10 @@ export default class Detail extends PureComponent {
             };
 
             newImg.src = `${request.prefix}/file/${feedbackFileUrls[0]}`; // this must be done AFTER setting onload
+          });
+        } else {
+          this.setState({
+            hasImgUrl: false,
           });
         }
         if (status === 'CLOSED') {
@@ -517,6 +522,10 @@ export default class Detail extends PureComponent {
     if (!feedbackDetail) {
       feedbackDetail = EMPTY_OBJECT;
     }
+    let imgUrl = feedbackFileUrls;
+    if (!imgUrl) {
+      imgUrl = EMPTY_LIST;
+    }
     const remarkbtn = classnames({
       bzBtn: true,
       btnhidden: this.state.remarkVisible,
@@ -547,7 +556,7 @@ export default class Detail extends PureComponent {
                 </Col>
                 <Col span="6">
                   <div className="imgbox" onClick={this.handlePreview}>
-                    <img src={`${request.prefix}/file/${feedbackFileUrls[0]}`} alt="图片" />
+                    <img src={`${request.prefix}/file/${imgUrl[0]}`} alt="图片" />
                   </div>
                   <Modal
                     visible={previewVisible}
@@ -556,7 +565,7 @@ export default class Detail extends PureComponent {
                     onCancel={this.handlePreviewCancel}
                     wrapClassName="imgModal"
                   >
-                    <img alt="图片" style={{ width: '100%' }} src={`${request.prefix}/file/${feedbackFileUrls[0]}`} />
+                    <img alt="图片" style={{ width: '100%' }} src={`${request.prefix}/file/${imgUrl[0]}`} />
                   </Modal>
                 </Col>
               </Row> :
