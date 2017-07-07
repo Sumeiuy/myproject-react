@@ -130,7 +130,6 @@ export default class Detail extends PureComponent {
             hasImgUrl: true,
           }, () => {
             const newImg = new Image();
-
             newImg.onload = () => {
               const imgHeight = newImg.height;
               const imgWidth = newImg.width;
@@ -198,12 +197,14 @@ export default class Detail extends PureComponent {
     /* eslint-disable */
     const modalElem = ReactDOM.findDOMNode(document.querySelector('.imgModal'));
     const childrenElem = modalElem.children[0];
+    // let marginTop = 0;
     /* eslint-enable */
-    modalElem.style.height = newHeight === 'auto' ? 'auto' : `${newHeight}px`;
+    modalElem.style.height = `${newHeight}px`;
     modalElem.style.width = `${newWidth}px`;
     modalElem.style.margin = 'auto';
     modalElem.style.overflow = 'hidden';
-    childrenElem.style.top = '0px';
+    childrenElem.style.top = '50%';
+    childrenElem.style.marginTop = `-${newHeight / 2}px`;
     childrenElem.style.paddingBottom = '0px';
   }
 
@@ -213,32 +214,38 @@ export default class Detail extends PureComponent {
   calculateRealSize() {
     const containerHeight = document.documentElement.clientHeight - (50 * 2);
     const containerWidth = document.documentElement.clientWidth - (100 * 2);
-    let newHeight = 'auto';
-    let newWidth = 520;
     const { imgHeight, imgWidth } = this.state;
-    // 如果图片宽度超出容器宽度--
-    if (imgWidth > containerWidth) {
-      newHeight = (containerWidth * imgHeight) / imgWidth; // 高度等比缩放
-      newWidth = containerWidth;
+    let w = imgWidth;
+    let h = imgHeight;
+    const hRatio = containerHeight / h;
+    const wRatio = containerWidth / w;
+    let Ratio = 1;
+    if (containerWidth === 0 && containerHeight === 0) {
+      Ratio = 1;
+    } else if (containerWidth === 0) {
+      if (hRatio < 1) { Ratio = hRatio; }
+    } else if (containerHeight === 0) {
+      if (wRatio < 1) { Ratio = wRatio; }
+    } else if (wRatio < 1 || hRatio < 1) {
+      Ratio = (wRatio <= hRatio ? wRatio : hRatio);
     }
-    // 如果图片高度超出容器宽度--
-    if (imgHeight > containerHeight) {
-      newHeight = containerHeight;
-      newWidth = (containerHeight * imgWidth) / imgHeight; // 宽度等比缩放
+    if (Ratio < 1) {
+      w *= Ratio;
+      h *= Ratio;
     }
 
     this.setState({
-      newHeight,
-      newWidth,
+      newHeight: h,
+      newWidth: w,
     }, () => {
       if (!this.state.previewVisible) {
         this.setState({
           previewVisible: true,
         }, () => {
-          this.setDOMStyle(newHeight, newWidth);
+          this.setDOMStyle(h, w);
         });
       } else {
-        this.setDOMStyle(newHeight, newWidth);
+        this.setDOMStyle(h, w);
       }
     });
   }
