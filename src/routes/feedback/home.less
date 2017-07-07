@@ -1,54 +1,55 @@
 :global {
-  #content{
-    height: 100%;
-  }
-  ::-webkit-scrollbar {
-    display: none;  
-  }
-  html {
-    -ms-overflow-style: none;
-  }
-  // .feedbackbox { 
-  //   -ms-overflow-style: none; 
-  //   overflow: auto; 
-  // }
-  .feedbackbox{
-    color:#666666;
-    font-size: 14px;
-    .feedbackRow{
-      padding-top: 55px;
+  .react-app {
+    div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fieldset, legend, input, textarea, p, blockquote, th, td {
+      font-family: "Microsoft YaHei", Helvetica, Tahoma, Arial, "Hiragino Sans GB", "Hiragino Sans GB W3", STXihei, STHeiti, Heiti, SimSun, sans-serif;
     }
-    #leftSection {
-      overflow: hidden;
-      background-color: white;
-      overflow-x: hidden;
-    }
-    & > .feedbackTable {
-      background-color: white;
-    }
-    #rightSection {
-      overflow: hidden;
-      background-color: white;
-    }
-    .isnull_dv{
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
+    #content{
       height: 100%;
-      text-align: center;
-      font-size: 18px;
-      .myxgjg{
-        color:#bfdaed;
-        font-size: 100px;
-        margin:auto;
+    }
+    ::-webkit-scrollbar {
+      display: none;  
+    }
+    html {
+      -ms-overflow-style: none;
+    }
+    .feedbackbox{
+      color:#666666;
+      font-size: 14px;
+      .feedbackRow{
+        padding-top: 55px;
       }
-    }
-    .none {
-      display: none;
-    }
-    .block {
-      display: block;
+      #leftSection {
+        overflow: hidden;
+        background-color: white;
+        overflow-x: hidden;
+      }
+      & > .feedbackTable {
+        background-color: white;
+      }
+      #rightSection {
+        overflow: hidden;
+        background-color: white;
+      }
+      .isnull_dv{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        font-size: 18px;
+        .myxgjg{
+          color:#bfdaed;
+          font-size: 100px;
+          margin:auto;
+        }
+      }
+      .none {
+        display: none;
+      }
+      .block {
+        display: block;
+      }
     }
   }
 }

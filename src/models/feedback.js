@@ -6,6 +6,7 @@
 // import { routerRedux } from 'dva/router';
 
 import { message } from 'antd';
+import _ from 'lodash';
 import api from '../api';
 import { helper } from '../utils';
 // import config from '../config/request';
@@ -74,11 +75,14 @@ export default {
   },
   effects: {
     * getFeedbackList({ payload }, { call, put }) {
-      const response = yield call(api.getFeedbackList, payload);
-      yield put({
-        type: 'getFeedbackListSuccess',
-        payload: response,
-      });
+      const { page } = payload;
+      if (!_.isEmpty(page)) {
+        const response = yield call(api.getFeedbackList, payload);
+        yield put({
+          type: 'getFeedbackListSuccess',
+          payload: response,
+        });
+      }
     },
     * getFeedbackDetail({ payload }, { call, put }) {
       const response = yield call(api.getFeedbackDetail, payload);

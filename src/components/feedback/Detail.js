@@ -5,6 +5,7 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
+import ReactDOM from 'react-dom';
 import { Row, Col, Button, message, Modal, Tabs } from 'antd';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
@@ -103,10 +104,7 @@ export default class Detail extends PureComponent {
   }
 
   componentDidMount() {
-    // const img = new Image();
-    // img.src = '../../static/images/2.png';
-    // const that = img;
-    // img.onload = this.loadImg(that);
+    window.addEventListener('resize', this.handleResize, false);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -126,10 +124,24 @@ export default class Detail extends PureComponent {
         currentId,
       }, () => {
         const { resultData = EMPTY_OBJECT } = nextDetail || EMPTY_OBJECT;
-        const { mediaUrls = '', status } = resultData || EMPTY_OBJECT;
-        if (mediaUrls && mediaUrls.length >= 1) {
+        const { feedbackFileUrls = EMPTY_LIST, status } = resultData || EMPTY_OBJECT;
+        if (feedbackFileUrls && feedbackFileUrls.length >= 1) {
           this.setState({
             hasImgUrl: true,
+          }, () => {
+            const newImg = new Image();
+
+            newImg.onload = () => {
+              const imgHeight = newImg.height;
+              const imgWidth = newImg.width;
+
+              this.setState({
+                imgHeight,
+                imgWidth,
+              });
+            };
+
+            newImg.src = `${request.prefix}/file/${feedbackFileUrls[0]}`; // this must be done AFTER setting onload
           });
         }
         if (status === 'CLOSED') {
@@ -173,34 +185,70 @@ export default class Detail extends PureComponent {
     });
   }
 
-  /**
-   * 获取原始图片的宽，高
-   * @param {*} img 图片对象
-   */
-  @autobind
-  loadImg() {
-    // const originalWidth = img.width;
-    // const originalHeight = img.height;
-    // const imgElem = document.createElement('img');
-    // imgElem.setAttribute('src', '../../static/images/2.png');
-    // imgElem.setAttribute('alt', '图片');
-    // const imgBox = document.querySelector('.imgbox_2');
-    // imgBox.appendChild(imgElem);
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.handleResize, false);
+  }
 
-    // const layout = document.querySelector('img');
-    // const originalAspectRatio = originalWidth / originalHeight;
-    // const currentAspectRatio = layout.width / layout.height;
-    // const clientWidth = document.documentElement.clientWidth;
-    // const clientHeight = document.documentElement.clientHeight;
-    // if (originalHeight > clientHeight || originalWidth > clientWidth) {
-    //   const rate = (originalHeight / clientHeight) - 1;
-    //   const newHeight = originalHeight - (rate * originalHeight);
-    //   const newWidth = originalWidth - (rate * originalWidth);
-    //   this.setState({
-    //     newHeight,
-    //     newWidth,
-    //   });
-    // }
+  /**
+   * 设置弹出框图片的宽度和高度
+   * @param {*} newHeight 新的高度
+   * @param {*} newWidth 新的宽度
+   */
+  setDOMStyle(newHeight, newWidth) {
+    /* eslint-disable */
+    const modalElem = ReactDOM.findDOMNode(document.querySelector('.imgModal'));
+    const childrenElem = modalElem.children[0];
+    /* eslint-enable */
+    modalElem.style.height = newHeight === 'auto' ? 'auto' : `${newHeight}px`;
+    modalElem.style.width = `${newWidth}px`;
+    modalElem.style.margin = 'auto';
+    modalElem.style.overflow = 'hidden';
+    childrenElem.style.top = '0px';
+    childrenElem.style.paddingBottom = '0px';
+  }
+
+  /**
+ * 计算图片在页面需要展示的宽度，并设置弹框样式
+ */
+  calculateRealSize() {
+    const containerHeight = document.documentElement.clientHeight - (50 * 2);
+    const containerWidth = document.documentElement.clientWidth - (100 * 2);
+    let newHeight = 'auto';
+    let newWidth = 520;
+    const { imgHeight, imgWidth } = this.state;
+    // 如果图片宽度超出容器宽度--
+    if (imgWidth > containerWidth) {
+      newHeight = (containerWidth * imgHeight) / imgWidth; // 高度等比缩放
+      newWidth = containerWidth;
+    }
+    // 如果图片高度超出容器宽度--
+    if (imgHeight > containerHeight) {
+      newHeight = containerHeight;
+      newWidth = (containerHeight * imgWidth) / imgHeight; // 宽度等比缩放
+    }
+
+    this.setState({
+      newHeight,
+      newWidth,
+    }, () => {
+      if (!this.state.previewVisible) {
+        this.setState({
+          previewVisible: true,
+        }, () => {
+          this.setDOMStyle(newHeight, newWidth);
+        });
+      } else {
+        this.setDOMStyle(newHeight, newWidth);
+      }
+    });
+  }
+
+  @autobind
+  handleResize() {
+    const { previewVisible } = this.state;
+    if (previewVisible) {
+      this.calculateRealSize();
+    }
   }
 
   /**
@@ -214,13 +262,6 @@ export default class Detail extends PureComponent {
     getFeedbackDetail({
       id: cid,
     });
-  }
-
-  /**
-   * tab切换
-   */
-  handleTabChange(key) {
-    console.log(key);
   }
 
   /**
@@ -378,9 +419,7 @@ export default class Detail extends PureComponent {
    */
   @autobind
   handlePreview() {
-    this.setState({
-      previewVisible: true,
-    });
+    this.calculateRealSize();
   }
 
   @autobind
@@ -388,6 +427,38 @@ export default class Detail extends PureComponent {
     this.setState({
       previewVisible: false,
     });
+  }
+
+  // sortProcessList(arr) {
+  //   if (arr.length <= 1) {
+  //     return arr;
+  //   }
+  //   const pivotIndex = Math.floor(arr.length / 2);
+  //   const pivotObject = arr.splice(pivotIndex, 1)[0];
+  //   const pivot = pivotObject.createTime;
+  //   const left = [];
+  //   const right = [];
+  //   for (let i = 0; i < arr.length; i++) {
+  //     if (arr[i].createTime < pivot) {
+  //       left.push(arr[i]);
+  //     } else {
+  //       right.push(arr[i]);
+  //     }
+  //   }
+  //   return this.sortProcessList(left).concat([pivotObject], this.sortProcessList(right));
+  // }
+
+  @autobind
+  handleDesciption(txt) {
+    const dataTxt = _.isEmpty(txt) ? '' : txt;
+    const dataTrim = dataTxt.replace(/(^\s*)|(\s*$)/g, '');
+    if (dataTrim.length < 1) {
+      return (
+        <div className="nodescription">
+          <i className="anticon anticon-frown-o" />暂无描述
+        </div>);
+    }
+    return dataTxt;
   }
 
   render() {
@@ -400,7 +471,6 @@ export default class Detail extends PureComponent {
       inforTxt,
       previewVisible,
       newWidth,
-      // newHeight,
     } = this.state;
     const { resultData = EMPTY_OBJECT } = dataSource || EMPTY_OBJECT;
     const { resultData: voList = EMPTY_OBJECT } = voDataSource || EMPTY_OBJECT;
@@ -416,7 +486,7 @@ export default class Detail extends PureComponent {
       feedEmpInfo,
       description,
       createTime,
-      mediaUrls,
+      feedbackFileUrls,
       processer,
       issueType,
       version,
@@ -427,7 +497,6 @@ export default class Detail extends PureComponent {
       tag,
       id,
     } = resultData || EMPTY_OBJECT; // 反馈用户
-    const imageUrls = _.isEmpty(mediaUrls) ? EMPTY_OBJECT : JSON.parse(mediaUrls);
     let feedbackDetail = {
       functionName,
       createTime,
@@ -468,23 +537,10 @@ export default class Detail extends PureComponent {
                       />
                     </div>
                   </div>
-                  <div id="descriptionmodule" className="module">
-                    <div className="mod_header">
-                      <h2 className="toogle_title">描述</h2>
-                    </div>
-                    <div className="mod_content">
-                      <div className="des_txt">
-                        {description}
-                      </div>
-                      <div className="btn_dv">
-                        <Button type="primary" onClick={this.showModal}>{messageBtnValue}</Button>
-                      </div>
-                    </div>
-                  </div>
                 </Col>
                 <Col span="6">
                   <div className="imgbox" onClick={this.handlePreview}>
-                    <img src={`${request.prefix}/file/${imageUrls[0]}`} alt="图片" />
+                    <img src={`${request.prefix}/file/${feedbackFileUrls[0]}`} alt="图片" />
                   </div>
                   <Modal
                     visible={previewVisible}
@@ -493,7 +549,7 @@ export default class Detail extends PureComponent {
                     onCancel={this.handlePreviewCancel}
                     wrapClassName="imgModal"
                   >
-                    <img alt="图片" style={{ width: '100%' }} src={`${request.prefix}/file/${imageUrls[0]}`} />
+                    <img alt="图片" style={{ width: '100%' }} src={`${request.prefix}/file/${feedbackFileUrls[0]}`} />
                   </Modal>
                 </Col>
               </Row> :
@@ -512,29 +568,22 @@ export default class Detail extends PureComponent {
                       />
                     </div>
                   </div>
-                  <div id="descriptionmodule" className="module">
-                    <div className="mod_header">
-                      <h2 className="toogle_title">描述</h2>
-                    </div>
-                    <div className="mod_content">
-                      <div className="des_txt">
-                        {description !== ' ' ? description :
-                        <div className="nodescription">
-                          <span>
-                            <i className="anticon anticon-frown-o" />
-                            暂无描述
-                        </span>
-                        </div>
-                        }
-                      </div>
-                      <div className="btn_dv">
-                        <Button type="primary" onClick={this.showModal}>{messageBtnValue}</Button>
-                      </div>
-                    </div>
-                  </div>
                 </Col>
               </Row>
             }
+          </div>
+          <div id="descriptionmodule" className="module">
+            <div className="mod_header">
+              <h2 className="toogle_title">描述</h2>
+            </div>
+            <div className="mod_content">
+              <div className="des_txt">
+                {this.handleDesciption(description)}
+              </div>
+              <div className="btn_dv">
+                <Button type="primary" onClick={this.showModal}>{messageBtnValue}</Button>
+              </div>
+            </div>
           </div>
           <div id="peoplemodule" className="module">
             <div className="mod_header">
@@ -559,7 +608,7 @@ export default class Detail extends PureComponent {
             </div>
           </div>
           <div id="processing" className="module">
-            <Tabs onChange={this.handleTabChange} type="card">
+            <Tabs type="card">
               <TabPane tab="处理意见" key="1">
                 <RemarkList
                   remarkList={processRecordList}

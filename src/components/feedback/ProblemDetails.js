@@ -74,11 +74,12 @@ export default class ProblemDetail extends PureComponent {
       );
     } else if (pop === 'CLOSED') {
       return (
-        <b className="close">关闭</b>
+        <b className="react-close">关闭</b>
       );
     }
     return '--';
   }
+
 
   /**
    * 问题详情编辑
@@ -236,15 +237,15 @@ export default class ProblemDetail extends PureComponent {
         <Form layout="vertical">
           <ul className="property_list clearfix">
             <li className="item">
-              <div className="wrap">
+              <div className="wrap value_word">
                 <strong className="name">模块：</strong>
                 <span className="value">{this.changeDisplay(functionName, channel)}</span>
               </div>
             </li>
             <li className="item">
-              <div className="wrap">
+              <div className="wrap value_word">
                 <strong className="name">反馈时间：</strong>
-                <span className="value">{this.dataNull(this.overflowTime(createTime))}</span>
+                <span className="value tiem-orient">{this.dataNull(this.overflowTime(createTime))}</span>
               </div>
             </li>
             <li className="item">
@@ -254,7 +255,7 @@ export default class ProblemDetail extends PureComponent {
               </div>
             </li>
             <li className="item">
-              <div className="wrap">
+              <div className="wrap value_word">
                 <strong className="name">状态：</strong>
                 <span className="value">
                   {this.dataNull(this.handleStatus(status))}
@@ -276,11 +277,11 @@ export default class ProblemDetail extends PureComponent {
                 <div className={qtHiddenValue} id="select-tag">
                   <FormItem>
                     {getFieldDecorator('tag', { initialValue: `${this.dataNull(tag)}` })(
-                      <Select style={{ width: 140 }} className="qtSelect" id="qtSelect" getPopupContainer={() => document.getElementById('select-tag')}>
+                      <Select style={{ width: 110 }} className="qtSelect" id="qtSelect" getPopupContainer={() => document.getElementById('select-tag')}>
                         {getSelectOption(questionTagOptions)}
                       </Select>,
                     )}
-                    <div className="btn">
+                    <div className="edit-btn">
                       <a onClick={this.handleSubChange}><Icon type="success" /></a>
                       <a onClick={this.handleClose}><Icon type="close" /></a>
                     </div>
@@ -303,9 +304,9 @@ export default class ProblemDetail extends PureComponent {
                 <div className={jiraHiddenValue}>
                   <FormItem>
                     {getFieldDecorator('jiraId', { initialValue: `${jiraId || ''}` })(
-                      <Input style={{ width: 140 }} />,
+                      <Input style={{ width: 120 }} />,
                     )}
-                    <div className="btn">
+                    <div className="edit-btn">
                       <a onClick={this.handleSubChange}><Icon type="success" /></a>
                       <a onClick={this.handleClose}><Icon type="close" /></a>
                     </div>
@@ -328,11 +329,11 @@ export default class ProblemDetail extends PureComponent {
                 <div className={processerHiddenValue} id="select-processer">
                   <FormItem>
                     {getFieldDecorator('processer', { initialValue: `${this.dataNull(processer)}` })(
-                      <Select style={{ width: 140 }} className="qtSelect" getPopupContainer={() => document.getElementById('select-processer')}>
+                      <Select style={{ width: 110 }} className="qtSelect" getPopupContainer={() => document.getElementById('select-processer')}>
                         {getSelectOption(allOperatorOptions)}
                       </Select>,
                     )}
-                    <div className="btn">
+                    <div className="edit-btn">
                       <a onClick={this.handleSubChange}><Icon type="success" /></a>
                       <a onClick={this.handleClose}><Icon type="close" /></a>
                     </div>
