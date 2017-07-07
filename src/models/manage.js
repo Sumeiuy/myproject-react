@@ -144,23 +144,7 @@ export default {
         },
       });
       const createBoardResult = yield call(api.createBoard, payload);
-      console.log('createBoard>Result', createBoardResult);
       const board = createBoardResult.resultData;
-      // 如果创建成功
-      // 则需要刷新，可编辑看板
-      // 此步骤暂时不需要
-      // const boardId = board && board.id;
-      // if (boardId > -1) {
-      //   // 则创建成功，刷新看板
-      //   const cust = yield select(state => state.manage.custRange);
-      //   const allEditableBoards = yield call(api.getAllEditableReports, {
-      //     orgId: cust[0].id,
-      //   });
-      //   yield put({
-      //     type: 'getAllEditableReportsSucess',
-      //     payload: { allEditableBoards },
-      //   });
-      // }
       yield put({
         type: 'opertateBoardState',
         payload: {
@@ -183,7 +167,6 @@ export default {
         },
       });
       const deleteResult = yield call(api.deleteBoard, payload);
-      console.log('deleteBoard>Result', deleteResult);
       const result = deleteResult.resultData;
       if (Number(result.code)) {
         const cust = yield select(state => state.manage.custRange);
@@ -193,6 +176,13 @@ export default {
         yield put({
           type: 'getAllEditableReportsSucess',
           payload: { allEditableBoards },
+        });
+        const allVisibleReports = yield call(api.getAllVisibleReports, {
+          orgId: cust[0].id,
+        });
+        yield put({
+          type: 'getAllVisibleReportsSuccess',
+          payload: { allVisibleReports },
         });
       }
       yield put({
@@ -216,8 +206,8 @@ export default {
         },
       });
       const publishResult = yield call(api.updateBoard, payload);
-      const result = publishResult.resultData;
-      if (result.boardStatus === 'RELEASE') {
+      const board = publishResult.resultData;
+      if (board.boardStatus === 'RELEASE') {
         const cust = yield select(state => state.manage.custRange);
         const allEditableBoards = yield call(api.getAllEditableReports, {
           orgId: cust[0].id,
@@ -226,6 +216,13 @@ export default {
           type: 'getAllEditableReportsSucess',
           payload: { allEditableBoards },
         });
+        const allVisibleReports = yield call(api.getAllVisibleReports, {
+          orgId: cust[0].id,
+        });
+        yield put({
+          type: 'getAllVisibleReportsSuccess',
+          payload: { allVisibleReports },
+        });
       }
       yield put({
         type: 'opertateBoardState',
@@ -233,6 +230,7 @@ export default {
           name: 'publishLoading',
           value: false,
           message: '发布完成',
+          operateData: board,
         },
       });
     },

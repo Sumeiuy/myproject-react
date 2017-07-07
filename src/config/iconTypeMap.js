@@ -1,3 +1,7 @@
+import ZHUNICODE from './unicode';
+
+const { REN, HU, PERCENT, PERMILLAGE, CI } = ZHUNICODE;
+
 const iconTypeMap = {
   gjPurRake: 'zichan',
   kh: 'kehu-copy',
@@ -37,9 +41,9 @@ const iconTypeMap = {
   hignCustInfoCompletePercent: 'xinyonghucanyuzhanbi',
 
   getIcon(unit) {
-    if (unit === '%' || unit === '\u2030') {
+    if (unit === PERCENT || unit === PERMILLAGE) {
       return 'xinyonghucanyuzhanbi';
-    } else if (unit === '户' || unit === '人') {
+    } else if (unit === HU || unit === REN || unit === CI) {
       return 'renyuan';
     }
     return 'zichan';

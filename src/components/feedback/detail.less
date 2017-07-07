@@ -1,4 +1,10 @@
 :global{
+  ::-webkit-scrollbar {
+    display: none;  
+  }
+  html {
+    -ms-overflow-style: none;
+  }
   .react-app{
     .detail_box{
       .clear{clear:both; height: 0; line-height: 0; font-size: 0}
@@ -58,6 +64,17 @@
             width: auto;
             max-width: 100%;
             max-height: 150px;
+            display: block;
+            background: #ccc;
+            cursor: pointer;
+            margin: auto;
+          }
+        }
+        #lightgallery {
+          img {
+            width: auto;
+            max-width: 100%;
+            max-height: 180px;
             display: block;
             background: #ccc;
             cursor: pointer;
