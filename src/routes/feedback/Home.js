@@ -173,6 +173,7 @@ export default class FeedBack extends PureComponent {
     const feedbackHeaderElem = ReactDOM.findDOMNode(document.querySelector('.feedbackHeader'));
     const feedbackListElem = ReactDOM.findDOMNode(document.querySelectorAll('.feedbackList')[1]);
     const nullDivSectionElem = ReactDOM.findDOMNode(document.querySelector('.null_dv_section'));
+    const contentSectionElem = ReactDOM.findDOMNode(document.getElementById('content'));
     /* eslint-enable */
 
     let topDistance = 0;
@@ -221,6 +222,10 @@ export default class FeedBack extends PureComponent {
       } else {
         containerElem.style.height = `${docElemHeight}px`;
       }
+    }
+
+    if (contentSectionElem) {
+      contentSectionElem.style.height = '100%';
     }
 
     if (nullElem && this.state.isEmpty) {

@@ -218,11 +218,9 @@ export default class FeedbackList extends PureComponent {
    * @param {*} changedPageSize 当前每页条目
    */
   @autobind
-  handleShowSizeChange(currentPageNum, changedPageSize, totalRecordNum) {
-    const {
-      location: { query, pathname },
-      replace,
-    } = this.props;
+  handleShowSizeChange(currentPageNum, changedPageSize) {
+    const { list: { page = EMPTY_OBJECT }, location: { query, pathname }, replace } = this.props;
+    const { totalRecordNum } = page;
 
     // 只有当分页条目小于2倍总条目
     // 每页条目才允许发生变化
@@ -268,11 +266,10 @@ export default class FeedbackList extends PureComponent {
       total: totalRecordNum,
       pageSize: parseInt(curPageSize, 10),
       defaultPageSize: 10,
-      onChange: (nextPage, currentPageSize) => this.handlePageChange(nextPage, currentPageSize),
+      onChange: this.handlePageChange,
       showTotal: total => `共${total}个`,
       showSizeChanger: true,
-      onShowSizeChange: (currentPageNum, changedPageSize) =>
-        this.handleShowSizeChange(currentPageNum, changedPageSize, totalRecordNum),
+      onShowSizeChange: this.handleShowSizeChange,
       pageSizeOptions: this.constructPageSizeOptions(totalRecordNum),
     };
 
