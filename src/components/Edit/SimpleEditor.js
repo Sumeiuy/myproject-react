@@ -157,7 +157,7 @@ export default class SimpleEditor extends PureComponent {
     });
     const editIconClass = classnames({
       [styles.editIcon]: true,
-      [styles.showIcon]: editable,
+      [styles.showIcon]: editable && !editing,
     });
 
     const editContentClass = classnames({
