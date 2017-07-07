@@ -83,6 +83,11 @@ export default class BoardHeader extends PureComponent {
   }
 
   @autobind
+  getPopupContainer() {
+    return document.querySelector('.react-app');
+  }
+
+  @autobind
   handleDataExportClick() {
     const { postExcelInfo, indexID } = this.props;
     const { scope } = this.state;
@@ -228,6 +233,7 @@ export default class BoardHeader extends PureComponent {
               value={scopeSelectValue}
               className={toggleScopeSelect}
               onChange={this.handleScopeChange}
+              getPopupContainer={this.getPopupContainer}
             >
               {
                 sortByType.map((item, index) => {
@@ -255,6 +261,7 @@ export default class BoardHeader extends PureComponent {
               value={orderType}
               className={toggleOrderTypeSelect}
               onChange={this.handleOrderTypeChange}
+              getPopupContainer={this.getPopupContainer}
             >
               {sortByOrderSelect}
             </Select>
