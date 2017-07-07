@@ -25,6 +25,8 @@ const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const BROWSER = getEnv();
 const DEFAULTSIZE = 450;
+let splitPane;
+let Pane;
 const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
 const mapStateToProps = state => ({
   list: state.feedback.list,
@@ -59,6 +61,8 @@ export default class FeedBack extends PureComponent {
     super(props);
     this.state = {
       isEmpty: true,
+      paneMinSize: 200,
+      paneMaxSize: 600,
     };
   }
 
@@ -75,6 +79,7 @@ export default class FeedBack extends PureComponent {
     this.setDocumentScroll();
     window.addEventListener('resize', this.onResizeChange, false);
     this.panMov(DEFAULTSIZE);
+    this.initPane();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -98,7 +103,8 @@ export default class FeedBack extends PureComponent {
 
   componentDidUpdate() {
     this.setDocumentScroll();
-
+    this.panMov(DEFAULTSIZE);
+    this.initPane();
     const { location: { pathname, query, query: { isResetPageNum } }, replace,
       list: { resultData = EMPTY_LIST } } = this.props;
     // 重置pageNum和pageSize
@@ -124,12 +130,26 @@ export default class FeedBack extends PureComponent {
   }
 
   componentWillUnmount() {
+    // 重置外层容器样式
+    // 防止影响其他界面
+    /* eslint-disable */
+    const UTBContentElem = ReactDOM.findDOMNode(document.getElementById('UTBContent'));
+    if (UTBContentElem) {
+      UTBContentElem.style.marginRight = '30px';
+      UTBContentElem.style.marginBottom = '10px';
+    }
+    const containerElem = ReactDOM.findDOMNode(document.getElementById('container'));
+    /* eslint-enable */
+    containerElem.style.height = 'auto';
+
+    // 取消事件监听
     window.removeEventListener('resize', this.onResizeChange, false);
   }
 
   @autobind
   onResizeChange() {
     this.setDocumentScroll();
+    this.initPane();
   }
 
   setDocumentScroll() {
@@ -150,7 +170,8 @@ export default class FeedBack extends PureComponent {
     const workspaceElem = ReactDOM.findDOMNode(document.getElementById('workspace-content'));
     const innerElem = ReactDOM.findDOMNode(document.querySelector('.inner'));
     const resizerElem = ReactDOM.findDOMNode(document.querySelector('.Resizer'));
-    const feedbackHeaderElem = document.querySelector('.feedbackHeader');
+    const feedbackHeaderElem = ReactDOM.findDOMNode(document.querySelector('.feedbackHeader'));
+    const feedbackListElem = ReactDOM.findDOMNode(document.querySelector('.feedbackList'));
     /* eslint-enable */
 
     let topDistance = 0;
@@ -199,7 +220,8 @@ export default class FeedBack extends PureComponent {
 
     if (nullElem) {
       const top = nullElem.getBoundingClientRect().top;
-      nullElem.style.height = `${docElemHeight - top}px`;
+      containerElem.style.height = `${docElemHeight - top}px`;
+      feedbackListElem.style.height = `${docElemHeight - top}px`;
     }
   }
 
@@ -222,19 +244,43 @@ export default class FeedBack extends PureComponent {
   @autobind
   panchange(size) {
     this.panMov(size);
+    this.initPane();
+    const boxWidth = splitPane.getBoundingClientRect().width;
+    if (size > boxWidth * 0.5) {
+      Pane.className = 'Pane vertical Pane2 allWidth';
+    } else {
+      Pane.className = 'Pane vertical Pane2';
+    }
   }
 
   // 重新给pan2样式赋值
   panMov(size) {
+    splitPane = ReactDOM.findDOMNode(document.querySelector('.SplitPane'));// eslint-disable-line
+    Pane = ReactDOM.findDOMNode(document.querySelector('.Pane2'));// eslint-disable-line
     if (BROWSER.$browser === 'Internet Explorer') {
-      const node = ReactDOM.findDOMNode(document.querySelector('.Pane2')); // eslint-disable-line
-      node.style.paddingLeft = `${size + 20}px`;
+      Pane.style.paddingLeft = `${size + 20}px`;
+    }
+  }
+
+  // 动态配置pane参数
+  @autobind
+  initPane() {
+    const boxWidth = splitPane.getBoundingClientRect().width;
+    const minsize = boxWidth * 0.3 || 200;
+    const maxsize = boxWidth * 0.6 || 600;
+    const { paneboxWidth } = this.state;
+    if (paneboxWidth !== boxWidth) {
+      this.setState({
+        paneboxWidth: boxWidth,
+        paneMaxSize: maxsize,
+        paneMinSize: minsize,
+      });
     }
   }
 
   render() {
     const { list, location, replace } = this.props;
-    const { isEmpty } = this.state;
+    const { isEmpty, paneMaxSize, paneMinSize } = this.state;
     const emptyClass = classnames({
       none: !isEmpty,
       feedbackRow: true,
@@ -268,8 +314,8 @@ export default class FeedBack extends PureComponent {
           <SplitPane
             onChange={this.panchange}
             split="vertical"
-            minSize={218}
-            maxSize={500}
+            minSize={paneMinSize}
+            maxSize={paneMaxSize}
             defaultSize={DEFAULTSIZE}
             className="primary"
           >
