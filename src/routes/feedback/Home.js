@@ -25,6 +25,8 @@ const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const BROWSER = getEnv();
 const DEFAULTSIZE = 450;
+let splitPane;
+let Pane;
 const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
 const mapStateToProps = state => ({
   list: state.feedback.list,
@@ -134,6 +136,7 @@ export default class FeedBack extends PureComponent {
   @autobind
   onResizeChange() {
     this.setDocumentScroll();
+    this.initPane();
   }
 
   setDocumentScroll() {
@@ -226,35 +229,38 @@ export default class FeedBack extends PureComponent {
   @autobind
   panchange(size) {
     this.panMov(size);
-    const splitPane = ReactDOM.findDOMNode(document.querySelector('.SplitPane'));// eslint-disable-line
-    const node = ReactDOM.findDOMNode(document.querySelector('.Pane2'));// eslint-disable-line
+    this.initPane();
     const boxWidth = splitPane.getBoundingClientRect().width;
     if (size > boxWidth * 0.5) {
-      node.className = 'Pane vertical Pane2 allWidth';
+      Pane.className = 'Pane vertical Pane2 allWidth';
     } else {
-      node.className = 'Pane vertical Pane2';
+      Pane.className = 'Pane vertical Pane2';
     }
   }
 
   // 重新给pan2样式赋值
   panMov(size) {
+    splitPane = ReactDOM.findDOMNode(document.querySelector('.SplitPane'));// eslint-disable-line
+    Pane = ReactDOM.findDOMNode(document.querySelector('.Pane2'));// eslint-disable-line
     if (BROWSER.$browser === 'Internet Explorer') {
-      const node = ReactDOM.findDOMNode(document.querySelector('.Pane2')); // eslint-disable-line
-      node.style.paddingLeft = `${size + 20}px`;
+      Pane.style.paddingLeft = `${size + 20}px`;
     }
   }
 
   // 动态配置pane参数
   @autobind
   initPane() {
-    const node = ReactDOM.findDOMNode(document.querySelector('.SplitPane')); // eslint-disable-line
-    const boxWidth = node.getBoundingClientRect().width;
+    const boxWidth = splitPane.getBoundingClientRect().width;
     const minsize = boxWidth * 0.3 || 200;
     const maxsize = boxWidth * 0.6 || 600;
-    this.setState({
-      paneMaxSize: maxsize,
-      paneMinSize: minsize,
-    });
+    const { paneboxWidth } = this.state;
+    if (paneboxWidth !== boxWidth) {
+      this.setState({
+        paneboxWidth: boxWidth,
+        paneMaxSize: maxsize,
+        paneMinSize: minsize,
+      });
+    }
   }
 
   render() {
