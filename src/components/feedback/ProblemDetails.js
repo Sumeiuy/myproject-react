@@ -242,7 +242,7 @@ export default class ProblemDetail extends PureComponent {
                 <span className="value">{this.changeDisplay(functionName, channel)}</span>
               </div>
             </li>
-            <li className="item">
+            <li className="item item-right">
               <div className="wrap value_word">
                 <strong className="name">反馈时间：</strong>
                 <span className="value tiem-orient">{this.dataNull(this.overflowTime(createTime))}</span>
@@ -254,7 +254,7 @@ export default class ProblemDetail extends PureComponent {
                 <span className="value">{this.dataNull(version)}</span>
               </div>
             </li>
-            <li className="item">
+            <li className="item item-right">
               <div className="wrap value_word">
                 <strong className="name">状态：</strong>
                 <span className="value">
@@ -289,7 +289,7 @@ export default class ProblemDetail extends PureComponent {
                 </div>
               </div>
             </li>
-            <li className="item">
+            <li className="item item-right">
               <div className="wrap">
                 <strong className="name">Jira编号：</strong>
                 <span className={valueIsVisibel}>

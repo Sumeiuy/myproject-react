@@ -43,7 +43,7 @@ export default class FeedbackUser extends PureComponent {
               <span className="value">{empId || '无'}</span>
             </div>
           </li>
-          <li className="item">
+          <li className="item item-right">
             <div className="wrap value_word">
               <strong className="name">用户：</strong>
               <span className="value">{name || '无'}</span>
@@ -55,7 +55,7 @@ export default class FeedbackUser extends PureComponent {
               <span className="value">{l1}{l2}{l3}</span>
             </div>
           </li>
-          <li className="item">
+          <li className="item item-right">
             <div className="wrap value_word">
               <strong className="name">联系电话：</strong>
               <span className="value">{cellPhone || '无'}</span>

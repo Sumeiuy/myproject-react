@@ -130,12 +130,28 @@ const feedbackOptions = {
   ],
   allOperatorOptions: [
     {
-      value: '002332',
-      label: '经办人1',
+      value: '011105',
+      label: '李定国',
     },
     {
-      value: '002727',
-      label: '经办人2',
+      value: '011200',
+      label: '毛权',
+    },
+    {
+      value: '011199',
+      label: '赵洪兵',
+    },
+    {
+      value: '010490',
+      label: '王可',
+    },
+    {
+      value: '004790',
+      label: '王娟',
+    },
+    {
+      value: '006073',
+      label: '赵国辉',
     },
   ],
 };

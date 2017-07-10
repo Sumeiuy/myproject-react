@@ -89,6 +89,7 @@ export default class Detail extends PureComponent {
       currentId: '',
       previewVisible: false,
       newWidth: 520,
+      hasImgUrl: false,
     };
   }
 
@@ -130,7 +131,6 @@ export default class Detail extends PureComponent {
             hasImgUrl: true,
           }, () => {
             const newImg = new Image();
-
             newImg.onload = () => {
               const imgHeight = newImg.height;
               const imgWidth = newImg.width;
@@ -142,6 +142,10 @@ export default class Detail extends PureComponent {
             };
 
             newImg.src = `${request.prefix}/file/${feedbackFileUrls[0]}`; // this must be done AFTER setting onload
+          });
+        } else {
+          this.setState({
+            hasImgUrl: false,
           });
         }
         if (status === 'CLOSED') {
@@ -198,12 +202,14 @@ export default class Detail extends PureComponent {
     /* eslint-disable */
     const modalElem = ReactDOM.findDOMNode(document.querySelector('.imgModal'));
     const childrenElem = modalElem.children[0];
+    // let marginTop = 0;
     /* eslint-enable */
-    modalElem.style.height = newHeight === 'auto' ? 'auto' : `${newHeight}px`;
+    modalElem.style.height = `${newHeight}px`;
     modalElem.style.width = `${newWidth}px`;
     modalElem.style.margin = 'auto';
     modalElem.style.overflow = 'hidden';
-    childrenElem.style.top = '0px';
+    childrenElem.style.top = '50%';
+    childrenElem.style.marginTop = `-${newHeight / 2}px`;
     childrenElem.style.paddingBottom = '0px';
   }
 
@@ -213,32 +219,38 @@ export default class Detail extends PureComponent {
   calculateRealSize() {
     const containerHeight = document.documentElement.clientHeight - (50 * 2);
     const containerWidth = document.documentElement.clientWidth - (100 * 2);
-    let newHeight = 'auto';
-    let newWidth = 520;
     const { imgHeight, imgWidth } = this.state;
-    // 如果图片宽度超出容器宽度--
-    if (imgWidth > containerWidth) {
-      newHeight = (containerWidth * imgHeight) / imgWidth; // 高度等比缩放
-      newWidth = containerWidth;
+    let w = imgWidth;
+    let h = imgHeight;
+    const hRatio = containerHeight / h;
+    const wRatio = containerWidth / w;
+    let Ratio = 1;
+    if (containerWidth === 0 && containerHeight === 0) {
+      Ratio = 1;
+    } else if (containerWidth === 0) {
+      if (hRatio < 1) { Ratio = hRatio; }
+    } else if (containerHeight === 0) {
+      if (wRatio < 1) { Ratio = wRatio; }
+    } else if (wRatio < 1 || hRatio < 1) {
+      Ratio = (wRatio <= hRatio ? wRatio : hRatio);
     }
-    // 如果图片高度超出容器宽度--
-    if (imgHeight > containerHeight) {
-      newHeight = containerHeight;
-      newWidth = (containerHeight * imgWidth) / imgHeight; // 宽度等比缩放
+    if (Ratio < 1) {
+      w *= Ratio;
+      h *= Ratio;
     }
 
     this.setState({
-      newHeight,
-      newWidth,
+      newHeight: h,
+      newWidth: w,
     }, () => {
       if (!this.state.previewVisible) {
         this.setState({
           previewVisible: true,
         }, () => {
-          this.setDOMStyle(newHeight, newWidth);
+          this.setDOMStyle(h, w);
         });
       } else {
-        this.setDOMStyle(newHeight, newWidth);
+        this.setDOMStyle(h, w);
       }
     });
   }
@@ -262,13 +274,6 @@ export default class Detail extends PureComponent {
     getFeedbackDetail({
       id: cid,
     });
-  }
-
-  /**
-   * tab切换
-   */
-  handleTabChange(key) {
-    console.log(key);
   }
 
   /**
@@ -457,21 +462,15 @@ export default class Detail extends PureComponent {
 
   @autobind
   handleDesciption(txt) {
-    if (!_.isEmpty(txt)) {
-      const dataTrim = txt.replace(/(^\s*)|(\s*$)/g, '');
-      if (dataTrim.length < 1) {
-        return (
-          <div className="nodescription">
-            <i className="anticon anticon-frown-o" />暂无描述
-          </div>);
-      }
-    } else {
+    const dataTxt = _.isEmpty(txt) ? '' : txt;
+    const dataTrim = dataTxt.replace(/(^\s*)|(\s*$)/g, '');
+    if (dataTrim.length < 1) {
       return (
         <div className="nodescription">
           <i className="anticon anticon-frown-o" />暂无描述
         </div>);
     }
-    return txt;
+    return dataTxt;
   }
 
   render() {
@@ -523,6 +522,10 @@ export default class Detail extends PureComponent {
     if (!feedbackDetail) {
       feedbackDetail = EMPTY_OBJECT;
     }
+    let imgUrl = feedbackFileUrls;
+    if (!imgUrl) {
+      imgUrl = EMPTY_LIST;
+    }
     const remarkbtn = classnames({
       bzBtn: true,
       btnhidden: this.state.remarkVisible,
@@ -553,7 +556,7 @@ export default class Detail extends PureComponent {
                 </Col>
                 <Col span="6">
                   <div className="imgbox" onClick={this.handlePreview}>
-                    <img src={`${request.prefix}/file/${feedbackFileUrls[0]}`} alt="图片" />
+                    <img src={`${request.prefix}/file/${imgUrl[0]}`} alt="图片" />
                   </div>
                   <Modal
                     visible={previewVisible}
@@ -562,7 +565,7 @@ export default class Detail extends PureComponent {
                     onCancel={this.handlePreviewCancel}
                     wrapClassName="imgModal"
                   >
-                    <img alt="图片" style={{ width: '100%' }} src={`${request.prefix}/file/${feedbackFileUrls[0]}`} />
+                    <img alt="图片" style={{ width: '100%' }} src={`${request.prefix}/file/${imgUrl[0]}`} />
                   </Modal>
                 </Col>
               </Row> :
@@ -621,7 +624,7 @@ export default class Detail extends PureComponent {
             </div>
           </div>
           <div id="processing" className="module">
-            <Tabs onChange={this.handleTabChange} type="card">
+            <Tabs type="card">
               <TabPane tab="处理意见" key="1">
                 <RemarkList
                   remarkList={processRecordList}
