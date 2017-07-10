@@ -4,7 +4,7 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import { Button } from 'antd';
+import { Button, message } from 'antd';
 import { autobind } from 'core-decorators';
 import { connect } from 'react-redux';
 import { withRouter, routerRedux } from 'dva/router';
@@ -44,6 +44,8 @@ export default class PreviewReport extends PureComponent {
     boardInfo: PropTypes.object.isRequired,
     publishBoard: PropTypes.func.isRequired,
     goBack: PropTypes.func.isRequired,
+    push: PropTypes.func.isRequired,
+    publishLoading: PropTypes.bool.isRequired,
     // reportName: PropTypes.string.isRequired,
     // boardId: PropTypes.number.isRequired,
     // boardType: PropTypes.string.isRequired,
@@ -63,6 +65,16 @@ export default class PreviewReport extends PureComponent {
     this.state = {
       publishConfirmModal: false,
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { publishLoading: prePL } = this.props;
+    const { push, publishLoading } = nextProps;
+    if (!publishLoading && prePL) {
+      const { id } = this.props.boardInfo;
+      message.success('保存成功');
+      push(`/report?boardId=${id}`);
+    }
   }
 
   @autobind
