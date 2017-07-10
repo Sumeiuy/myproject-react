@@ -31,13 +31,13 @@ module.exports = {
     proxyTable: {
       '/fspa/mcrm/api': {
         target: 'http://168.168.71.29:9084', // SIT
-        // target: 'http://168.168.71.29:9084', // UAT
+        // target: 'http://168.168.18.6:5084', // UAT
         secure: false,
       },
       '/screenshot': {
         target: 'http://127.0.0.1:7080', // SIT
       '/feedback': {
-        target: 'http://168.168.71.29:9084', // SIT
+        target: 'http://192.168.71.29:9084', // SIT
         secure: false,
       },
     },

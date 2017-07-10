@@ -24,7 +24,7 @@ import './home.less';
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const BROWSER = getEnv();
-const DEFAULTSIZE = 450;
+const DEFAULTSIZE = 430;
 let splitPane;
 let Pane;
 const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
@@ -171,7 +171,9 @@ export default class FeedBack extends PureComponent {
     const innerElem = ReactDOM.findDOMNode(document.querySelector('.inner'));
     const resizerElem = ReactDOM.findDOMNode(document.querySelector('.Resizer'));
     const feedbackHeaderElem = ReactDOM.findDOMNode(document.querySelector('.feedbackHeader'));
-    const feedbackListElem = ReactDOM.findDOMNode(document.querySelector('.feedbackList'));
+    const feedbackListElem = ReactDOM.findDOMNode(document.querySelectorAll('.feedbackList')[1]);
+    const nullDivSectionElem = ReactDOM.findDOMNode(document.querySelector('.null_dv_section'));
+    const contentSectionElem = ReactDOM.findDOMNode(document.getElementById('content'));
     /* eslint-enable */
 
     let topDistance = 0;
@@ -222,10 +224,14 @@ export default class FeedBack extends PureComponent {
       }
     }
 
+    if (contentSectionElem) {
+      contentSectionElem.style.height = '100%';
+    }
+
     if (nullElem && this.state.isEmpty) {
       const top = nullElem.getBoundingClientRect().top;
       containerElem.style.height = `${docElemHeight - top}px`;
-      feedbackListElem.style.height = `${docElemHeight - top}px`;
+      nullDivSectionElem.style.height = `${docElemHeight - top}px`; // eslint-disable-line
     }
   }
 
@@ -303,7 +309,7 @@ export default class FeedBack extends PureComponent {
         />
         <Row className={emptyClass}>
           <Col span="24" className="rightSection" id="empty">
-            <div className="feedbackList">
+            <div className="feedbackList null_dv_section">
               <div className="isnull_dv">
                 <div className="inner_dv">
                   <Icon type="meiyouxiangguanjieguo" className="myxgjg" />
