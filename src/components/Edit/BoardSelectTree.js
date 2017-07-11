@@ -256,7 +256,7 @@ export default class BoardSelectTree extends PureComponent {
     if (isSummury) {
       const summuryArr = selfCheckedNodes.map(item => item.key);
       // 输出总量指标
-      console.warn('summuryArr', summuryArr);
+      // console.warn('summuryArr', summuryArr);
       this.props.saveIndcator('summury', summuryArr);
     } else {
       // 取出所有选中节点的归属点 key
@@ -286,7 +286,7 @@ export default class BoardSelectTree extends PureComponent {
         return temp;
       });
       // 输出明细指标
-      console.warn('detailArr', detailArr);
+      // console.warn('detailArr', detailArr);
       this.props.saveIndcator('detail', detailArr);
     }
   }
@@ -294,7 +294,6 @@ export default class BoardSelectTree extends PureComponent {
   // 点击或者选择的相同操作
   @autobind
   checkOrSelect(obj) {
-    console.warn('obj.active', obj.active);
     // 找出当前点击或者选择的节点信息，并存到 state 中
     const oldSelectNode = this.state.nowSelectNode;
     const checkTreeArr = this.state.checkTreeArr;
@@ -365,6 +364,7 @@ export default class BoardSelectTree extends PureComponent {
       // 否则删除
         selfCheckedNodes = _.remove(selfCheckedNodes, n => (n.key !== obj.key));
       }
+      console.warn('check 事件时的 obj', obj);
       this.setState({
         allParentNodes,
         selfCheckedNodes,
@@ -376,6 +376,7 @@ export default class BoardSelectTree extends PureComponent {
         this.getStateTree();
       });
     } else {
+      console.warn('select 事件时的 obj', obj);
       this.setState({
         selectedKeys: obj.keyArr,
         checkedOrSelected: obj.active,
