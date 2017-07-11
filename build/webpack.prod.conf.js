@@ -145,8 +145,14 @@ var webpackConfig = merge(baseWebpackConfig, {
       {
         from: path.resolve(__dirname, '../static'),
         to: config.build.assetsSubDirectory,
-        ignore: ['.*', 'img/*', 'font/iconfont/*']
+        ignore: ['.*', 'img/*', 'font/iconfont/*', 'screenshot/*']
       }
+    ]),
+    new CopyWebpackPlugin([
+      {
+        from: path.resolve(__dirname, '../static/screenshot'),
+        to: config.build.assetsRoot,
+      },
     ]),
     new ScriptExtHtmlWebpackPlugin({
       async: 'app',
