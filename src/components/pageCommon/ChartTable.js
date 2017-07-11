@@ -215,7 +215,7 @@ export default class ChartTable extends PureComponent {
   unitChange(arr) {
     let value;
     const newArr = arr.map((item) => {
-      if (item.value) {
+      if (item.value && item.value !== 'null') {
         const itemValue = Number(item.value);
         switch (encodeURIComponent(item.unit)) {
           case encodeURIComponent('%'):

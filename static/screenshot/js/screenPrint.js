@@ -1,0 +1,1 @@
+$(function(){$.feedback({ajaxURL:"/fspa/mcrm/api/groovynoauth/feedback/saveFeedback",html2canvasURL:!1,onClose:function(){window.location.reload()}})});
