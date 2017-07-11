@@ -4,8 +4,9 @@
  * @author maoquan(maoquan@htsc.com)
  */
 
-import bowser from 'bowser';
 import moment from 'moment';
+import bowser from 'bowser';
+import _ from 'lodash';
 
 import constants from '../config/constants';
 
@@ -44,7 +45,7 @@ const helper = {
   // 获取 empId
   getEmpId() {
     // 临时 ID
-    const tempId = '002727';
+    const tempId = '002332';
     const nativeQuery = helper.getQuery(window.location.search);
     const empId = window.curUserCode || nativeQuery.empId || tempId;
     return empId;
@@ -173,6 +174,61 @@ const helper = {
   },
 
   /**
+   * 构造入参
+   * @param {*} query 查询
+   * @param {*} newPageNum 当前页
+   * @param {*} newPageSize 当前分页条目数
+   */
+  constructPostBody(query, newPageNum, newPageSize) {
+    let finalPostData = {
+      page: {
+        curPageNum: newPageNum,
+        pageSize: newPageSize,
+      },
+    };
+
+    const omitData = _.omit(query, ['currentId', 'feedbackCreateTimeFrom', 'feedbackCreateTimeTo', 'curPageNum', 'curPageSize', 'isResetPageNum']);
+    finalPostData = _.merge(finalPostData, omitData);
+
+    const { feedbackCreateTimeTo, feedbackCreateTimeFrom } = query;
+    const formatedTime = {
+      feedbackCreateTimeFrom: feedbackCreateTimeFrom && helper.formatTime(feedbackCreateTimeFrom),
+      feedbackCreateTimeTo: feedbackCreateTimeTo && helper.formatTime(feedbackCreateTimeTo),
+    };
+
+    if (formatedTime.feedbackCreateTimeFrom &&
+      formatedTime.feedbackCreateTimeTo
+      && (formatedTime.feedbackCreateTimeFrom === formatedTime.feedbackCreateTimeTo)) {
+      delete formatedTime.feedbackCreateTimeTo;
+    }
+
+    // 对反馈状态做处理
+    if (!('feedbackStatusEnum' in finalPostData)
+      || _.isEmpty(finalPostData.feedbackStatusEnum)) {
+      finalPostData = _.merge(finalPostData, { feedbackStatusEnum: 'PROCESSING' });
+    }
+
+    // 对经办人做过滤处理
+    if ('processer' in finalPostData) {
+      if (finalPostData.processer === 'ALL') {
+        finalPostData.processer = '';
+      } else if (finalPostData.processer === 'SELF') {
+        finalPostData.processer = helper.getEmpId();
+      }
+    }
+
+    return _.merge(finalPostData, formatedTime);
+  },
+
+  /**
+   * 格式化时间戳
+   * @param {*} time 中国标准时间
+   */
+  formatTime(time) {
+    return moment(time).format('YYYY/MM/DD');
+  },
+
+  /**
    * 将字符串添加到剪贴板中
    * @param  {string} value 需要将复制的字符串
    */
@@ -216,25 +272,28 @@ const helper = {
   },
 
   getDurationString(cycleType) {
+    const fomater = 'YYYY/MM/DD';
     let durationEnd = '';
     let durationStart = '';
+    const temp = moment().subtract(1, 'days');
+    const dateText = temp.format('YYYY/MM/DD');
     switch (cycleType) {
       case 'beforeLastMonth':
-        durationStart = moment().subtract(2, 'month').startOf('month');
-        durationEnd = moment().subtract(2, 'month').endOf('month');
+        durationStart = moment(dateText, fomater).subtract(2, 'month').startOf('month');
+        durationEnd = moment(dateText, fomater).subtract(2, 'month').endOf('month');
         break;
       case 'lastMonth':
-        durationStart = moment().subtract(1, 'month').startOf('month');
-        durationEnd = moment().subtract(1, 'month').endOf('month');
+        durationStart = moment(dateText, fomater).subtract(1, 'month').startOf('month');
+        durationEnd = moment(dateText, fomater).subtract(1, 'month').endOf('month');
         break;
       default:
-        durationStart = moment().startOf(cycleType);
-        durationEnd = moment().subtract(1, 'days');
+        durationStart = moment(dateText, fomater).startOf(cycleType);
+        durationEnd = moment(dateText, fomater);
         break;
     }
     const duration = {
       cycleType,
-      durationStr: `${durationStart.format('YYYY/MM/DD')}-${durationEnd.format('YYYY/MM/DD')}`,
+      durationStr: `${durationStart.format(fomater)}-${durationEnd.format(fomater)}`,
       begin: durationStart.format('YYYYMMDD'),
       end: durationEnd.format('YYYYMMDD'),
     };

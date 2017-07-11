@@ -4,6 +4,7 @@ const ZHUNICODE = {
   YUAN: '\u5143',
   PERCENT: '%',
   PERMILLAGE: '\u2030',
+  CI: '\u6b21',
 };
 
 export default ZHUNICODE;

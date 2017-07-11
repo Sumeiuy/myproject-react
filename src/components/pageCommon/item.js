@@ -8,6 +8,8 @@ import Icon from '../common/Icon';
 import styles from './item.less';
 import { toUnit } from '../../utils/helper';
 
+const getIcon = iconTypeMap.getIcon;
+
 export default class Item extends PureComponent {
 
   static propTypes = {
@@ -19,13 +21,15 @@ export default class Item extends PureComponent {
   }
 
   render() {
-    const { data: { key, unit, value, name } } = this.props;
+    const { data: { unit, value, name, parentName } } = this.props;
     const data = toUnit(value, unit, 5);
+    const IndexIcon = getIcon(unit);
+    const newName = parentName ? `${parentName}-${name}` : name;
     return (
       <div className={styles.content}>
-        <h3 className={styles.title} title={name}>
-          <Icon type={iconTypeMap[key]} />
-          {name}
+        <h3 className={styles.title} title={newName}>
+          <Icon type={IndexIcon} />
+          {newName}
         </h3>
         <h4 className={styles.num}>
           {data.value}

@@ -24,14 +24,18 @@ module.exports = {
   },
   dev: {
     env: require('./dev.env'),
-    port: 9081,
+    port: 9083,
     autoOpenBrowser: true,
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
       '/fspa/mcrm/api': {
-        // target: 'http://168.168.71.26:9084', // SIT
-        target: 'http://168.168.71.29:9084', // UAT
+        target: 'http://192.168.71.29:9084', // SIT
+        // target: 'http://168.168.18.6:5084', // UAT
+        secure: false,
+      },
+      '/feedback': {
+        target: 'http://192.168.71.29:9084', // SIT
         secure: false,
       },
     },

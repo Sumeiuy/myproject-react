@@ -6,55 +6,44 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
-import { Dropdown, Menu, Icon, Button } from 'antd';
-import { withRouter, routerRedux } from 'dva/router';
-import { connect } from 'react-redux';
+import { Dropdown, Menu, Icon } from 'antd';
 import _ from 'lodash';
 
 import './BoardSelect.less';
 
-const boards = [
-  {
-    boardName: '投顾业绩汇总',
-    boardId: '1',
-    url: 'invest',
-  },
-  {
-    boardName: '经营业绩汇总',
-    boardId: '2',
-    url: 'business',
-  },
-];
-
-const mapStateToProps = state => ({
-  boards: state.app.boards,
-});
-
-const mapDispatchToProps = {
-  push: routerRedux.push,
-};
-
-@connect(mapStateToProps, mapDispatchToProps)
-@withRouter
 export default class BoardSelect extends PureComponent {
 
   static propTypes = {
     location: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
-    boards: PropTypes.array,
-  }
-
-  static defaultProps = {
-    boards: [],
+    replace: PropTypes.func.isRequired,
+    visibleBoards: PropTypes.array.isRequired,
   }
 
   constructor(props) {
     super(props);
-    const { location: { query: { boardId } } } = this.props;
-    // TODO:此处在后期迭代时需要与后端确认接口以及数据结构
+    const { visibleBoards, location: { query: { boardId }, pathname } } = this.props;
+    const bId = boardId || (visibleBoards.length && String(visibleBoards[0].id)) || '1';
+    let boardName = '看板管理';
+    if (pathname !== '/boardManage') {
+      boardName = this.findBoardBy(bId, visibleBoards).name;
+    }
     this.state = {
-      boardId: boardId || '1',
+      dropdownVisible: false,
+      boardName,
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { visibleBoards, location: { query: { boardId } } } = nextProps;
+    const { visibleBoards: preVB, location: { query: { boardId: preId } } } = this.props;
+    if (!_.isEqual(visibleBoards, preVB) || !_.isEqual(boardId, preId)) {
+      const bId = boardId || (visibleBoards.length && String(visibleBoards[0].id)) || '1';
+      const boardName = this.findBoardBy(bId, visibleBoards).name;
+      this.setState({
+        boardName,
+      });
+    }
   }
 
   @autobind
@@ -63,41 +52,65 @@ export default class BoardSelect extends PureComponent {
   }
 
   @autobind
+  findBoardBy(id, vr) {
+    const newId = Number.parseInt(id, 10);
+    const board = _.find(vr, { id: newId });
+    return board || vr[0];
+  }
+
+  @autobind
+  handleVisibleChange(flag) {
+    this.setState({ dropdownVisible: flag });
+  }
+
+  @autobind
   handleMenuClick(MenuItem) {
+    this.handleVisibleChange(false);
     const { push } = this.props;
     const { key } = MenuItem;
-    const path = _.filter(boards, { boardId: key })[0].url;
-    // TODO 此处后期迭代中需要做跳转页面逻辑处理
-    const url = `/${path}?boardId=${key}`;
-    push(url);
+    if (key === '0') {
+      push('/boardManage');
+    } else {
+      push(`/report?boardId=${key}`);
+    }
   }
 
   render() {
-    const { boardId } = this.state;
-    const boardName = _.filter(boards, { boardId })[0].boardName;
-
+    const { visibleBoards } = this.props;
+    const { dropdownVisible, boardName } = this.state;
     const menu = (
-      <Menu onClick={this.handleMenuClick}>
-        <Menu.ItemGroup>
-          {
-            boards.map(item => (<Menu.Item key={item.boardId}>{item.boardName}</Menu.Item>))
-          }
-        </Menu.ItemGroup>
-        {/* <Menu.Divider /> */}
-        {/* <Menu.Item key="default3">看板管理</Menu.Item> */}
+      <Menu
+        onClick={this.handleMenuClick}
+        onMouseEnter={this.handleMenuScroll}
+        style={{
+          width: '200px',
+          maxHeight: '400px',
+          overflowY: 'scroll',
+        }}
+      >
+        {/* 投顾绩效汇总 */}
+        <Menu.Item key="1" title="投顾业绩汇总">投顾业绩汇总</Menu.Item>
+        {
+          visibleBoards.map(item =>
+            (<Menu.Item key={String(item.id)} title={item.name}>{item.name}</Menu.Item>),
+          )
+        }
+        <Menu.Divider />
+        <Menu.Item key="0">看板管理</Menu.Item>
       </Menu>
     );
-
 
     return (
       <Dropdown
         overlay={menu}
         placement="bottomLeft"
         getPopupContainer={this.getPopupContainer}
+        visible={dropdownVisible}
+        onVisibleChange={this.handleVisibleChange}
       >
-        <Button>
+        <div className="selfDropDownName">
           {boardName}<Icon type="down" />
-        </Button>
+        </div>
       </Dropdown>
     );
   }

@@ -74,6 +74,7 @@ const FixNumber = {
     };
   },
 
+  // 对用户数进行特殊处理
   toFixedCust(series) {
     let newUnit = '户';
     const tempSeries = series.map(n => Math.abs(n));
@@ -90,6 +91,17 @@ const FixNumber = {
       newSeries = series.map(item => FixNumber.toFixedDecimal(item));
     }
 
+    return {
+      newUnit,
+      newSeries,
+    };
+  },
+
+  // 对登录次数进行特殊处理
+  toFixedCI(series) {
+    const newUnit = '次';
+    let newSeries = series;
+    newSeries = series.map(n => Number.parseFloat(n.toFixed(2)));
     return {
       newUnit,
       newSeries,
@@ -157,6 +169,19 @@ const FixNumber = {
     min = padFixedCust(min, 'floor');
     if (max === 0 && min === 0) {
       max = 10;
+    }
+    return { max, min };
+  },
+
+  // 针对次数获取图标最大和最小值
+  getMaxAndMinCi(series) {
+    let max = Math.max(...series);
+    let min = Math.min(...series);
+    // 次数肯定都是正数
+    max = padFixedCust(max, 'ceil');
+    min = padFixedCust(min, 'floor');
+    if ((max === 0 && min === 0) || (max < 1 && min < 1)) {
+      max = 1;
     }
     return { max, min };
   },

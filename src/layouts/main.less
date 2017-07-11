@@ -21,55 +21,61 @@
     }
   }
 }
-
-:global .ant-menu-dark {
-  color: #999;
-  background-color: #3e3e3e;
-
-  .ant-menu-submenu-title:hover,
-  .ant-menu-submenu:hover {
-    color: @primary-color;
-  }
-
-  .ant-menu-sub {
-    color: #999;
-  }
-
-  .ant-menu-submenu-selected {
-    color: @primary-color;
-
-    &:not(.ant-menu-submenu-open) {
-      background-color: @dark-half;
+:global {
+  .react-app {
+    div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fieldset, legend, input, textarea, p, blockquote, th, td {
+      font-family: "Microsoft YaHei", Helvetica, Tahoma, Arial, "Hiragino Sans GB", "Hiragino Sans GB W3", STXihei, STHeiti, Heiti, SimSun, sans-serif;
     }
-  }
-
-  .ant-menu-item,
-  .ant-menu-submenu-title {
-    & > a {
+    .ant-menu-dark {
       color: #999;
-    }
+      background-color: #3e3e3e;
 
-    &:hover > a {
-      color: @primary-color;
-    }
-  }
+      .ant-menu-submenu-title:hover,
+      .ant-menu-submenu:hover {
+        color: @primary-color;
+      }
 
-  &.ant-menu-inline {
-    .ant-menu-item-selected {
-      background-color: @dark-half;
-    }
-  }
+      .ant-menu-sub {
+        color: #999;
+      }
 
-  .ant-menu-item-selected {
-    color: @primary-color;
-    background-color: @dark-half;
+      .ant-menu-submenu-selected {
+        color: @primary-color;
 
-    & > a {
-      color: @primary-color;
-    }
+        &:not(.ant-menu-submenu-open) {
+          background-color: @dark-half;
+        }
+      }
 
-    &:hover {
-      background-color: @dark-half;
+      .ant-menu-item,
+      .ant-menu-submenu-title {
+        & > a {
+          color: #999;
+        }
+
+        &:hover > a {
+          color: @primary-color;
+        }
+      }
+
+      &.ant-menu-inline {
+        .ant-menu-item-selected {
+          background-color: @dark-half;
+        }
+      }
+
+      .ant-menu-item-selected {
+        color: @primary-color;
+        background-color: @dark-half;
+
+        & > a {
+          color: @primary-color;
+        }
+
+        &:hover {
+          background-color: @dark-half;
+        }
+      }
     }
   }
 }
