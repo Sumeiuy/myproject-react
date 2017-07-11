@@ -9,6 +9,7 @@ import { autobind } from 'core-decorators';
 import { Dropdown, Menu, Icon } from 'antd';
 import _ from 'lodash';
 
+import Scroll from '../common/Scroll';
 import './BoardSelect.less';
 
 export default class BoardSelect extends PureComponent {
@@ -53,15 +54,38 @@ export default class BoardSelect extends PureComponent {
   }
 
   @autobind
+  getScrollRef() {
+    const scrollBd = document.querySelector('.reportName .ant-dropdown-menu');
+    return scrollBd;
+  }
+
+  @autobind
+  registerScrollEvent() {
+    const scrollBd = this.getScrollRef();
+    const scrollInstance = new Scroll(scrollBd);
+    return scrollInstance;
+  }
+
+
+  @autobind
   findBoardBy(id, vr) {
     const newId = Number.parseInt(id, 10);
-    const board = _.find(vr, { id: newId });
+    let board = _.find(vr, { id: newId });
+    const { location: { pathname } } = this.props;
+    if (pathname === '/boardManage') {
+      board = {
+        name: '看板管理',
+      };
+    }
     return board || vr[0];
   }
 
   @autobind
   handleVisibleChange(flag) {
     this.setState({ dropdownVisible: flag });
+    if (flag) {
+      this.registerScrollEvent();
+    }
   }
 
   @autobind
@@ -92,7 +116,6 @@ export default class BoardSelect extends PureComponent {
     const menu = (
       <Menu
         onClick={this.handleMenuClick}
-        onMouseEnter={this.handleMenuScroll}
         style={{
           width: '200px',
           maxHeight: '400px',

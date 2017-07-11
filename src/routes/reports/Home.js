@@ -85,6 +85,7 @@ export default class ReportHome extends PureComponent {
     reportName: '',
     boardId: 1,
     boardType: 'TYPE_TGJX',
+    collectData: () => {},
   }
 
   constructor(props) {

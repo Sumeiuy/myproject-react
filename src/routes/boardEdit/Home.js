@@ -102,6 +102,7 @@ export default class BoardEditHome extends PureComponent {
       orgId,
     });
     getIndicatorLib({
+      orgId,
       type: boardType,
     });
   }
