@@ -17,6 +17,7 @@ export default class BoardSelect extends PureComponent {
     location: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
+    collectData: PropTypes.func.isRequired,
     visibleBoards: PropTypes.array.isRequired,
   }
 
@@ -66,17 +67,27 @@ export default class BoardSelect extends PureComponent {
   @autobind
   handleMenuClick(MenuItem) {
     this.handleVisibleChange(false);
-    const { push } = this.props;
+    const { push, collectData } = this.props;
     const { key } = MenuItem;
     if (key === '0') {
+      collectData({
+        type: 'boardSelect',
+        text: '看板管理',
+      });
       push('/boardManage');
     } else {
+      const { visibleBoards } = this.props;
+      const boardname = _.find(visibleBoards, { id: Number(key) }).name;
+      collectData({
+        type: 'boardSelect',
+        text: boardname,
+      });
       push(`/report?boardId=${key}`);
     }
   }
 
   render() {
-    // const { visibleBoards } = this.props;
+    const { visibleBoards } = this.props;
     const { dropdownVisible, boardName } = this.state;
     const menu = (
       <Menu
@@ -88,17 +99,13 @@ export default class BoardSelect extends PureComponent {
           overflowY: 'scroll',
         }}
       >
-        {/* 投顾绩效汇总 */}
-        <Menu.Item key="1" title="投顾业绩汇总">投顾业绩汇总</Menu.Item>
-        {/*
+        {
           visibleBoards.map(item =>
             (<Menu.Item key={String(item.id)} title={item.name}>{item.name}</Menu.Item>),
           )
-        */}
-        {/*
-          <Menu.Divider />
-          <Menu.Item key="0">看板管理</Menu.Item>
-        */}
+        }
+        <Menu.Divider />
+        <Menu.Item key="0">看板管理</Menu.Item>
       </Menu>
     );
 

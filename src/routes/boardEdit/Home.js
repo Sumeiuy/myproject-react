@@ -447,7 +447,6 @@ export default class BoardEditHome extends PureComponent {
       confirm: this.backModalConfirm,
       tip: hasPublished ? 'publish' : 'save',
     };
-    console.log('backConfirmMProps', backConfirmMProps);
 
     const { summury, detail } = boardInfo;
     const { boardTypeDesc, boardType } = this.props.boardInfo;
