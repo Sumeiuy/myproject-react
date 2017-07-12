@@ -46,6 +46,7 @@ const mapDispatchToProps = {
   createBoard: fectchDataFunction(true, 'manage/createBoard'),
   deleteBoard: fectchDataFunction(true, 'manage/deleteBoard'),
   publishBoard: fectchDataFunction(true, 'manage/publishBoard'),
+  collectData: fectchDataFunction(false, 'report/collectData'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -59,6 +60,7 @@ export default class BoardManageHome extends PureComponent {
     createBoard: PropTypes.func.isRequired,
     deleteBoard: PropTypes.func.isRequired,
     publishBoard: PropTypes.func.isRequired,
+    collectData: PropTypes.func.isRequired,
     visibleBoards: PropTypes.array,
     editableBoards: PropTypes.array,
     visibleRanges: PropTypes.array,
@@ -80,6 +82,7 @@ export default class BoardManageHome extends PureComponent {
     visibleBoards: [],
     editableBoards: [],
     visibleRanges: [],
+    collectData: () => {},
   }
 
   constructor(props) {
@@ -184,7 +187,7 @@ export default class BoardManageHome extends PureComponent {
       deleteBoardModal,
       publishConfirmModal,
     } = this.state;
-    const { location, replace, push } = this.props;
+    const { location, replace, push, collectData } = this.props;
     const { visibleRanges, visibleBoards, editableBoards } = this.props;
     // 做容错处理
     if (_.isEmpty(visibleRanges)) {
@@ -231,6 +234,7 @@ export default class BoardManageHome extends PureComponent {
                 push={push}
                 replace={replace}
                 visibleBoards={visibleBoards}
+                collectData={collectData}
               />
             </div>
           </Row>

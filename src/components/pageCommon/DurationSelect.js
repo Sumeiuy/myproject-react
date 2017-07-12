@@ -31,6 +31,7 @@ export default class DurationSelect extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
+    collectData: PropTypes.func.isRequired,
     updateQueryState: PropTypes.func.isRequired,
   }
 
@@ -63,7 +64,11 @@ export default class DurationSelect extends PureComponent {
     const value = e.target.value;
     const duration = getDurationString(value);
     // const { replace, location: { query, pathname } } = this.props;
-    const { updateQueryState } = this.props;
+    const { updateQueryState, collectData } = this.props;
+    collectData({
+      type: 'durationSelect',
+      text: duration.cycleType,
+    });
     this.setState({
       open: false,
       ...duration,

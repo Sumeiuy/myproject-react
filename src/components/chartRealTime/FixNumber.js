@@ -167,9 +167,11 @@ const FixNumber = {
     let min = Math.min(...series);
     max = padFixedCust(max, 'ceil');
     min = padFixedCust(min, 'floor');
-    if (max === 0 && min === 0) {
+    if (max < 10) {
       max = 10;
+      min = 0;
     }
+
     return { max, min };
   },
 

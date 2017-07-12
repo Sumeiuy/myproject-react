@@ -65,6 +65,7 @@ export default class CustRange extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
+    collectData: PropTypes.func.isRequired,
     updateQueryState: PropTypes.func.isRequired,
     custRange: PropTypes.array.isRequired,
   }
@@ -117,7 +118,7 @@ export default class CustRange extends PureComponent {
     if (!value) {
       return;
     }
-    const { updateQueryState, custRange } = this.props;
+    const { updateQueryState, custRange, collectData } = this.props;
     const tmpArr = value.value.split('-');
     const custRangeLevel = tmpArr[0];
     const orgId = tmpArr[1];
@@ -131,6 +132,10 @@ export default class CustRange extends PureComponent {
     };
     this.setState({
       value: changedValue,
+    });
+    collectData({
+      type: 'curstRangeSelect',
+      text: custRangeName,
     });
     updateQueryState({
       orgId,
