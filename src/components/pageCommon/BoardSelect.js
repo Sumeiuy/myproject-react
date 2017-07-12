@@ -93,6 +93,7 @@ export default class BoardSelect extends PureComponent {
     this.handleVisibleChange(false);
     const { push, collectData } = this.props;
     const { key } = MenuItem;
+    // 当点击的是看板管理选项的时候
     if (key === '0') {
       collectData({
         type: 'boardSelect',
