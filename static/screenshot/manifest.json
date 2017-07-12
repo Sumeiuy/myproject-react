@@ -1,9 +1,9 @@
 {
+  "html/feedback.html": "html/feedback.html",
   "css/feedback.css": "css/feedback.css",
   "img/icon.png": "img/icon.png",
   "js/feedback.js": "js/feedback.js",
   "js/functionNameConst.js": "js/functionNameConst.js",
   "js/html2canvas.js": "js/html2canvas.js",
-  "js/screenPrint.js": "js/screenPrint.js",
-  "html/feedback.html": "html/feedback.html"
+  "js/screenPrint.js": "js/screenPrint.js"
 }
