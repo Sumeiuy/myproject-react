@@ -9,6 +9,7 @@ import { autobind } from 'core-decorators';
 import { Dropdown, Menu, Icon } from 'antd';
 import _ from 'lodash';
 
+import Scroll from '../common/Scroll';
 import './BoardSelect.less';
 
 export default class BoardSelect extends PureComponent {
@@ -17,6 +18,7 @@ export default class BoardSelect extends PureComponent {
     location: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
+    collectData: PropTypes.func.isRequired,
     visibleBoards: PropTypes.array.isRequired,
   }
 
@@ -52,25 +54,58 @@ export default class BoardSelect extends PureComponent {
   }
 
   @autobind
+  getScrollRef() {
+    const scrollBd = document.querySelector('.reportName .ant-dropdown-menu');
+    return scrollBd;
+  }
+
+  @autobind
+  registerScrollEvent() {
+    const scrollBd = this.getScrollRef();
+    const scrollInstance = new Scroll(scrollBd);
+    return scrollInstance;
+  }
+
+
+  @autobind
   findBoardBy(id, vr) {
     const newId = Number.parseInt(id, 10);
-    const board = _.find(vr, { id: newId });
+    let board = _.find(vr, { id: newId });
+    const { location: { pathname } } = this.props;
+    if (pathname === '/boardManage') {
+      board = {
+        name: '看板管理',
+      };
+    }
     return board || vr[0];
   }
 
   @autobind
   handleVisibleChange(flag) {
     this.setState({ dropdownVisible: flag });
+    if (flag) {
+      this.registerScrollEvent();
+    }
   }
 
   @autobind
   handleMenuClick(MenuItem) {
     this.handleVisibleChange(false);
-    const { push } = this.props;
+    const { push, collectData } = this.props;
     const { key } = MenuItem;
     if (key === '0') {
+      collectData({
+        type: 'boardSelect',
+        text: '看板管理',
+      });
       push('/boardManage');
     } else {
+      const { visibleBoards } = this.props;
+      const boardname = _.find(visibleBoards, { id: Number(key) }).name;
+      collectData({
+        type: 'boardSelect',
+        text: boardname,
+      });
       push(`/report?boardId=${key}`);
     }
   }
@@ -81,15 +116,12 @@ export default class BoardSelect extends PureComponent {
     const menu = (
       <Menu
         onClick={this.handleMenuClick}
-        onMouseEnter={this.handleMenuScroll}
         style={{
           width: '200px',
           maxHeight: '400px',
           overflowY: 'scroll',
         }}
       >
-        {/* 投顾绩效汇总 */}
-        <Menu.Item key="1" title="投顾业绩汇总">投顾业绩汇总</Menu.Item>
         {
           visibleBoards.map(item =>
             (<Menu.Item key={String(item.id)} title={item.name}>{item.name}</Menu.Item>),

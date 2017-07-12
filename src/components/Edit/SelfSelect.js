@@ -8,6 +8,7 @@ import { Icon, Checkbox, Row, Col } from 'antd';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 
+import Scroll from '../common/Scroll';
 import selectHandlers from './selectHelper';
 import styles from './SelfSelect.less';
 
@@ -44,6 +45,10 @@ export default class SelfSelect extends PureComponent {
     };
   }
 
+  componentDidMount() {
+    this.registerScrollEvent();
+  }
+
   componentWillReceiveProps(nextProps) {
     // 此处需要将恢复到默认值状态
     const newNextProps = nextProps;
@@ -70,6 +75,23 @@ export default class SelfSelect extends PureComponent {
       visibleRangeNames,
     });
     return visibleRangeNames;
+  }
+
+  @autobind
+  setScrollRef(dom) {
+    this.scrollBd = dom;
+  }
+
+  @autobind
+  getScrollRef() {
+    return this.scrollBd;
+  }
+
+  @autobind
+  registerScrollEvent() {
+    const scrollBd = this.getScrollRef();
+    const scrollInstance = new Scroll(scrollBd);
+    return scrollInstance;
   }
 
   @autobind
@@ -190,7 +212,7 @@ export default class SelfSelect extends PureComponent {
           <div className={styles.selectNames}>{visibleRangeNames}</div>
           <span className={styles.selfSelectArrow}><Icon type={iconType} /></span>
         </div>
-        <div className={selfSelectBd}>
+        <div className={selfSelectBd} ref={this.setScrollRef}>
           <Checkbox
             value={firstRequiredCheck.id}
             defaultChecked
