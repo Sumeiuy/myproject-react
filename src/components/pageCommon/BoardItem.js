@@ -28,35 +28,13 @@ export default class BoardItem extends PureComponent {
     push: PropTypes.func.isRequired,
   }
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      hover: false,
-    };
-  }
-
   @autobind
   setVRnames(user, all) {
     // 首先判断
     const selfOrg = all[0].level;
     const allNode = selectHandlers.getAllCheckboxNode(selfOrg);
     const getVRnames = selectHandlers.afterSelected(all, allNode);
-    return getVRnames(user);
-  }
-
-  // 鼠标移入事件
-  @autobind
-  mouseEnterHandle() {
-    this.setState({
-      hover: !this.state.hover,
-    });
-  }
-  // 鼠标移除事件
-  @autobind
-  mouseLeaveHandle() {
-    this.setState({
-      hover: !this.state.hover,
-    });
+    return getVRnames(user, true);
   }
   // 发布按钮点击事件
   @autobind
@@ -117,11 +95,7 @@ export default class BoardItem extends PureComponent {
     });
 
     return (
-      <a
-        className={styles.boardItem}
-        onMouseEnter={this.mouseEnterHandle}
-        onMouseLeave={this.mouseLeaveHandle}
-      >
+      <a className={styles.boardItem}>
         <div className={styles.boardImg}>
           <img src={ImgBg} alt="" />
           <div className={publishBtnClass}>

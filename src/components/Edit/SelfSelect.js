@@ -8,7 +8,7 @@ import { Icon, Checkbox, Row, Col } from 'antd';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 
-import Scroll from '../common/Scroll';
+// import Scroll from '../common/Scroll';
 import selectHandlers from './selectHelper';
 import styles from './SelfSelect.less';
 
@@ -88,10 +88,21 @@ export default class SelfSelect extends PureComponent {
   }
 
   @autobind
+  stopSpread(e = window.event) {
+    if (e.stopPropagation) {
+      e.stopPropagation();
+    } else {
+      e.cancelBubble = true;
+    }
+  }
+
+  @autobind
   registerScrollEvent() {
     const scrollBd = this.getScrollRef();
-    const scrollInstance = new Scroll(scrollBd);
-    return scrollInstance;
+    // const scrollInstance = new Scroll(scrollBd);
+    // return scrollInstance;
+    scrollBd.addEventListener('mousewheel', this.stopSpread, false);
+    scrollBd.addEventListener('DOMMouseScroll', this.stopSpread, false);
   }
 
   @autobind

@@ -26,14 +26,14 @@ class Scroll {
   // 滚动
   doScroll() {
     const dom = this.dom;
-    window.clearInterval(this.intervalID);
+    clearInterval(this.intervalID);
     // 目标位置
     const tar = dom.scrollTop + (this.step * (this.upOrDown === 'up' ? -1 : 1));
     this.intervalID = setInterval(() => {
       // 缓动
       this.dom.scrollTop += (tar - dom.scrollTop) * this.f;
       if (tar === dom.scrollTop) {
-        window.clearInterval(this.intervalID);
+        clearInterval(this.intervalID);
       }
     }, this.interval);
   }
@@ -46,11 +46,16 @@ class Scroll {
       this.upOrDown = e.wheelDelta > 0 ? 'up' : 'down';
     }
     this.doScroll();
-    if (e.preventDefault) {
-      e.preventDefault();
+    if (e.stopPropagation) {
+      e.stopPropagation();
     } else {
-      e.returnValue = false;
+      e.cancelBubble = true;
     }
+    // if (e.preventDefault) {
+    //   e.preventDefault();
+    // } else {
+    //   e.returnValue = false;
+    // }
   }
 
   // 添加事件处理

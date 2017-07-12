@@ -21,8 +21,17 @@ import BoardEditHome from './routes/boardEdit/Home';
 import ReportHome from './routes/reports/Home';
 import PreviewReport from './routes/reports/PreviewReport';
 
+function switchRouter() {
+  const fsp = document.querySelector('#workspace-content>.wrapper');
+  if (fsp) {
+    fsp.scrollTop = 0;
+  } else {
+    window.scrollTo(0, 0);
+  }
+}
+
 const routes = ({ history }) => (// eslint-disable-line
-  <Router onUpdate={() => window.scrollTo(0, 0)} history={history}>
+  <Router onUpdate={switchRouter} history={history}>
     <Route path="/" component={Main}>
       <IndexRedirect to="/empty" />
       <Route path="empty" component={Empty} />
