@@ -7,7 +7,7 @@ import React, { PropTypes, PureComponent } from 'react';
 import classnames from 'classnames';
 // import { createForm } from 'rc-form';
 import { autobind } from 'core-decorators';
-import { Form, Icon } from 'antd';
+import { Form, Icon, Tooltip } from 'antd';
 import _ from 'lodash';
 
 import styles from './SimpleEditor.less';
@@ -51,6 +51,8 @@ export default class SimpleEditor extends PureComponent {
       originalValue,
       editorValue,
       editing: editorState,
+      editTipVisible: false,
+      nameHelp: '不可以为空',
     };
   }
 
@@ -87,14 +89,53 @@ export default class SimpleEditor extends PureComponent {
   }
 
   @autobind
+  getTootipPopContainer() {
+    const wrapper = styles.editWrapper;
+    return document.querySelector(`.react-app .${wrapper}`);
+  }
+
+  @autobind
+  setTooltipVisible(editTipVisible) {
+    this.setState({
+      editTipVisible,
+    });
+  }
+
+  @autobind
   editorConfirm(e) {
     const { controller, confirm, editorName, form } = this.props;
     const newValue = form.getFieldValue(editorName);
-    confirm({
-      key: editorName,
-      value: newValue,
-    });
-    controller(editorName, false);
+    let canUpdate = true;
+    if (editorName === 'boardNameEditor') {
+      // 如果是修改看板名称，则需要验证
+      if (newValue === '') {
+        // 看板名称不能为空
+        this.setState({
+          nameHelp: '名称不能为空',
+        },
+        () => {
+          this.setTooltipVisible(true);
+        });
+        canUpdate = false;
+      }
+      if (/\s+/.test(newValue)) {
+        this.setState({
+          nameHelp: '名称不能含空格',
+        },
+        () => {
+          this.setTooltipVisible(true);
+        });
+        canUpdate = false;
+      }
+    }
+    if (canUpdate) {
+      this.setTooltipVisible(false);
+      confirm({
+        key: editorName,
+        value: newValue,
+      });
+      controller(editorName, false);
+    }
     // 阻止React合成事件传播
     e.stopPropagation();
     // 阻止原生事件传播
@@ -104,6 +145,7 @@ export default class SimpleEditor extends PureComponent {
   @autobind
   editorCancel(e) {
     const { controller, editorName, form } = this.props;
+    this.setTooltipVisible(false);
     form.resetFields();
     controller(editorName, false);
     // 阻止React合成事件传播
@@ -147,7 +189,7 @@ export default class SimpleEditor extends PureComponent {
   render() {
     const { editable, style, children, editorName } = this.props;
     const { getFieldDecorator } = this.props.form;
-    const { originalValue, editing, editorValue } = this.state;
+    const { originalValue, editing, editorValue, editTipVisible, nameHelp } = this.state;
     const editWrapperClass = classnames({
       [styles.editWrapper]: true,
       [styles.editable]: editable,
@@ -181,11 +223,18 @@ export default class SimpleEditor extends PureComponent {
         {
           React.Children.map(children, child =>
             (<Form>
-              <FormItem>
-                {
-                  getFieldDecorator(editorName, { initialValue: editorValue })(child)
-                }
-              </FormItem>
+              <Tooltip
+                title={nameHelp}
+                visible={editTipVisible}
+                overlayClassName={styles.tooltipTop}
+                getPopupContainer={this.getTootipPopContainer}
+              >
+                <FormItem>
+                  {
+                    getFieldDecorator(editorName, { initialValue: editorValue })(child)
+                  }
+                </FormItem>
+              </Tooltip>
             </Form>))
         }
       </div>
