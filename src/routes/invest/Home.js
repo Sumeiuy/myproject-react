@@ -75,8 +75,6 @@ export default class InvestHome extends PureComponent {
 
   constructor(props) {
     super(props);
-    console.warn(document.querySelector('#exApp').clientWidth);
-    // alert(window.document.body.offsetWidth);
     const { location: { query: { cycleType, boardId } } } = this.props;
     const value = cycleType || 'month';
     const obj = getDurationString(value);

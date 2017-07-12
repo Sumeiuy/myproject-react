@@ -62,8 +62,7 @@ export default class BoardItem extends PureComponent {
   @autobind
   publishHandle() {
     const { publish, boardData: { boardStatus, id, ownerOrgId, isPublishable } } = this.props;
-    const hover = this.state.hover;
-    if ((isPublishable === 'Y') && hover && (boardStatus === 'UNRELEASE')) {
+    if ((isPublishable === 'Y') && (boardStatus === 'UNRELEASE')) {
       publish({
         ownerOrgId,
         boardId: id,
@@ -103,19 +102,18 @@ export default class BoardItem extends PureComponent {
       boardType,
     } = this.props.boardData;
     const ImgBg = boardType === boardTypeMap.tgjx ? ImgTGJX : ImgJYYJ;
-    const hover = this.state.hover;
     const seeAllow = this.setVRnames(orgModel.slice(1), visibleRanges);
     let statusText = '';
     if (boardStatus === 'RELEASE') {
       statusText = '已发布';
     } else {
-      statusText = hover ? '发布' : '未发布';
+      statusText = '未发布';
     }
 
     const publishBtnClass = classnames({
       [styles.boardStatusPublish]: boardStatus === 'RELEASE',
-      [styles.boardStatusUnPublish]: boardStatus === 'UNRELEASE',
-      [styles.boardStatusPublishDisable]: isPublishable === 'N',
+      [styles.boardStatusUnPublish]: (boardStatus === 'UNRELEASE' && isPublishable === 'Y'),
+      [styles.boardStatusPublishDisable]: (boardStatus === 'UNRELEASE' && isPublishable === 'N'),
     });
 
     return (
@@ -126,8 +124,11 @@ export default class BoardItem extends PureComponent {
       >
         <div className={styles.boardImg}>
           <img src={ImgBg} alt="" />
-          <div className={publishBtnClass} onClick={this.publishHandle}>
-            {statusText}
+          <div className={publishBtnClass}>
+            <div className={styles.boardStatusBtn}>
+              <span>{statusText}</span>
+              <span onClick={this.publishHandle}>发布</span>
+            </div>
           </div>
           <div className={styles.boardInfo}>
             <div className={styles.text}>可见范围：{seeAllow}</div>
