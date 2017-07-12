@@ -149,7 +149,7 @@ var webpackConfig = merge(baseWebpackConfig, {
         flatten: true,
         transform: function (content, path) {
           if (path.slice(path.lastIndexOf('.') + 1) === 'css') {
-            return content.toString().replace(/\.\.\/img\//, '');
+            return content.toString().replace(/\.\.\/img\//g, '');
           }
           return content;
         }
