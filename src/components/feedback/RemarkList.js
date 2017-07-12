@@ -63,7 +63,6 @@ export default class RemarkList extends PureComponent {
         newDataSource.push(_.merge(currentValue, { key: index })),
       );
     }
-    console.log('constructor dataSource', newDataSource);
     return newDataSource;
   }
   render() {

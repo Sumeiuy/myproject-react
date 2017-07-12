@@ -71,8 +71,6 @@ export default class SimpleEditor extends PureComponent {
       });
     }
     if (!_.isEqual(editorValue, preEditor)) {
-      console.warn('editorValue>>>', editorValue);
-      console.warn('preEditor>>>', preEditor);
       this.setState({
         editorValue,
       });
