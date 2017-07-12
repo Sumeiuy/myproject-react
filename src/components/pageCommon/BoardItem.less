@@ -5,11 +5,6 @@
   &:link, &:hover, &:active, &:visited{
     color: #fff;
   }
-  &:hover{
-    .boardBtnGroup{
-      display: block;
-    }
-  }
   .boardImg {
     line-height: 0;
     position: relative;
@@ -18,6 +13,34 @@
       height: 100%;
     }
   }
+  .boardStatusPublish .boardStatusBtn,
+  .boardStatusUnPublish .boardStatusBtn,
+  .boardStatusPublishDisable .boardStatusBtn{
+    position: absolute;
+    top: 15px;
+    right: 0;
+    span{
+      display: block;
+      height: 36px;
+      width: 68px;
+      line-height: 36px;
+      background: #d8b05c;
+      color: #fff;
+      font-size: 15px;
+      border-radius: 18px 0 0 18px;
+      text-align: right;
+      padding-right: 10px;
+      transition: .2s;
+    }
+    span:nth-child(2) {
+      display: none;
+    }
+  }
+  .boardStatusUnPublish .boardStatusBtn span,
+  .boardStatusPublishDisable .boardStatusBtn span{
+    background: #1c80c9;
+  }
+
   .boardBtnGroup{
     position: absolute;
     top: 20px;
@@ -38,42 +61,49 @@
       }
     }
   }
-  .boardStatusPublish, .boardStatusUnPublish{
-    position: absolute;
-    top: 15px;
-    right: 0;
-    background: #d8b05c;
-    height: 36px;
-    width: 65px;
-    text-indent: 14px;
-    line-height: 36px;
-    color: #fff;
-    font-size: 15px;
-    border-radius: 18px 0 0 18px;
-    transition: .2s;
-  }
-  .boardStatusUnPublish{
-    background: #108ee9;
-  }
-  &:hover .boardStatusUnPublish{
-    width: 80px;
-    height: 32px;
-    line-height: 32px;
-    text-align: center;
-    text-indent: 0;
-    right: 7px;
-    color: #fff;
-    border-radius: 6px 6px 6px 6px;
-    transition: .2s;
-    &.boardStatusPublishDisable {
-      background-color: #c9c9c9;
-      color: #666;
+  &:hover{
+    .boardBtnGroup{
+      display: block;
     }
-  }
-  &:hover .boardStatusPublish{
-    background: #ab9360;
-    color: #c0c0c0;
-    transition: .2s;
+    .boardStatusPublish{
+      .boardStatusBtn{
+        span{
+          background: #ab9360;
+          color: #c0c0c0;
+        }
+      }
+    }
+    .boardStatusUnPublish{
+      .boardStatusBtn{
+        span:first-child{
+          display: none;
+        }
+        span:nth-child(2) {
+          display: block;
+          background: #108ee9;
+          border-radius: 4px;
+          margin-right: 10px;
+          text-align: center;
+          padding-right: 0;
+        }
+      }
+    }
+    .boardStatusPublishDisable{
+      .boardStatusBtn{
+        span:first-child{
+          display: none;
+        }
+        span:nth-child(2) {
+          display: block;
+          background: #ccc;
+          color: #666;
+          border-radius: 4px;
+          margin-right: 10px;
+          text-align: center;
+          padding-right: 0;
+        }
+      }
+    }
   }
   .boardInfo{
     position: absolute;
