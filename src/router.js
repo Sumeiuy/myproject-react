@@ -22,8 +22,12 @@ import ReportHome from './routes/reports/Home';
 import PreviewReport from './routes/reports/PreviewReport';
 
 function switchRouter() {
-  const fsp = document.querySelector('#workspace-content>.wrapper') || window;
-  fsp.scrollTop = 0;
+  const fsp = document.querySelector('#workspace-content>.wrapper');
+  if (fsp) {
+    fsp.scrollTop = 0;
+  } else {
+    window.scrollTo(0, 0);
+  }
 }
 
 const routes = ({ history }) => (// eslint-disable-line
