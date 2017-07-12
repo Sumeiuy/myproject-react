@@ -46,16 +46,16 @@ const feedbackOptions = {
           label: '任务中心',
         },
         {
-          value: '产品销售',
-          label: '产品销售',
-        },
-        {
           value: '资产配置',
           label: '资产配置',
         },
         {
           value: '统计查询',
           label: '统计查询',
+        },
+        {
+          value: '产品中心',
+          label: '产品中心',
         },
         {
           value: '资讯中心',
@@ -68,6 +68,14 @@ const feedbackOptions = {
         {
           value: '业务申请',
           label: '业务申请',
+        },
+        {
+          value: '反馈管理',
+          label: '反馈管理',
+        },
+        {
+          value: '其他类别',
+          label: '其他类别',
         },
       ],
     },
