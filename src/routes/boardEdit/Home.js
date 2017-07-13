@@ -38,6 +38,7 @@ const mapDispatchToProps = {
   push: routerRedux.push,
   replace: routerRedux.replace,
   getBoardInfo: fectchDataFunction(true, 'edit/getBoardInfo'),
+  delBoardInfo: fectchDataFunction(true, 'edit/delBoardInfo'),
   getVisibleRange: fectchDataFunction(false, 'edit/getVisibleRange'),
   getIndicatorLib: fectchDataFunction(false, 'edit/getIndicatorLib'),
   updateBoard: fectchDataFunction(false, 'edit/updateBoard'),
@@ -60,6 +61,7 @@ export default class BoardEditHome extends PureComponent {
     push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
     getBoardInfo: PropTypes.func.isRequired,
+    delBoardInfo: PropTypes.func.isRequired,
     getVisibleRange: PropTypes.func.isRequired,
     getIndicatorLib: PropTypes.func.isRequired,
     updateBoard: PropTypes.func.isRequired,
@@ -141,6 +143,11 @@ export default class BoardEditHome extends PureComponent {
       });
       message.success('保存成功');
     }
+  }
+
+  componentWillUnmount() {
+    const { delBoardInfo } = this.props;
+    delBoardInfo();
   }
   @autobind
   getAllUserVRKeys(orgModel) {

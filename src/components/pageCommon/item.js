@@ -45,7 +45,7 @@ export default class Item extends PureComponent {
     return (
       <div className={styles.content}>
         <Tooltip
-          placement="bottom"
+          placement="bottomLeft"
           title={toolTipHtnml}
           overlayClassName="visibleRangeToolTip"
           getPopupContainer={this.getTooltipContainer}
