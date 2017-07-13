@@ -52,7 +52,7 @@ export default class BoardEditHome extends PureComponent {
     location: PropTypes.object.isRequired,
     boardInfo: PropTypes.object.isRequired,
     visibleRanges: PropTypes.array.isRequired,
-    indicatorLib: PropTypes.array.isRequired,
+    indicatorLib: PropTypes.object.isRequired,
     message: PropTypes.string.isRequired,
     globalLoading: PropTypes.bool.isRequired,
     updateLoading: PropTypes.bool.isRequired,
@@ -456,7 +456,7 @@ export default class BoardEditHome extends PureComponent {
     const summuryLib = {
       type: 'summury',
       boardType,
-      checkTreeArr: indicatorLib,
+      checkTreeArr: indicatorLib.summury,
       checkedKeys: summuryCheckedKeys,
     };
     // 分类明细指标库
@@ -464,7 +464,7 @@ export default class BoardEditHome extends PureComponent {
     const detailLib = {
       type: 'detail',
       boardType,
-      checkTreeArr: indicatorLib,
+      checkTreeArr: indicatorLib.detail,
       checkedKeys: detailCheckedKeys,
     };
 
