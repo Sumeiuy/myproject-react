@@ -110,16 +110,6 @@ var webpackConfig = merge(baseWebpackConfig, {
       // necessary to consistently work with multiple chunks via CommonsChunkPlugin
       chunksSortMode: 'dependency'
     }),
-    new HtmlWebpackPlugin({
-      filename: config.build.fragment,
-      template: 'fragment.html',
-      inject: true,
-      minify: {
-        removeComments: true,
-        removeAttributeQuotes: true
-      },
-      chunksSortMode: 'dependency'
-    }),
     // split vendor js into its own file
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
@@ -145,13 +135,24 @@ var webpackConfig = merge(baseWebpackConfig, {
       {
         from: path.resolve(__dirname, '../static'),
         to: config.build.assetsSubDirectory,
-        ignore: ['.*', 'img/*', 'font/iconfont/*', 'screenshot/*']
+        ignore: ['.*', 'img/*', 'font/iconfont/*', 'screenshot/**']
       }
     ]),
+    // 因为缓存策略不一致
+    // screenshot单独复制到dist/screenshot下
     new CopyWebpackPlugin([
       {
-        from: path.resolve(__dirname, '../static/screenshot'),
-        to: config.build.assetsRoot,
+        from: path.resolve(__dirname, '../static/screenshot/**'),
+        to: config.build.assetsRoot + '/screenshot',
+        ignore: ['*.html', '*.json'],
+        toType: 'dir',
+        flatten: true,
+        transform: function (content, path) {
+          if (path.slice(path.lastIndexOf('.') + 1) === 'css') {
+            return content.toString().replace(/\.\.\/img\//g, '');
+          }
+          return content;
+        }
       },
     ]),
     new ScriptExtHtmlWebpackPlugin({

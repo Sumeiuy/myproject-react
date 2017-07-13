@@ -1,6 +1,9 @@
 {
-  "css/feedback.css": "css/feedback.css",
   "html/feedback.html": "html/feedback.html",
+<<<<<<< HEAD
+=======
+  "css/feedback.css": "css/feedback.css",
+>>>>>>> e82c59bd63419efc7c1383eed718f19d5702be3a
   "img/icon.png": "img/icon.png",
   "js/feedback.js": "js/feedback.js",
   "js/functionNameConst.js": "js/functionNameConst.js",
