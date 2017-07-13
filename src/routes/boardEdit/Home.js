@@ -456,7 +456,7 @@ export default class BoardEditHome extends PureComponent {
     const summuryLib = {
       type: 'summury',
       boardType,
-      checkTreeArr: indicatorLib,
+      checkTreeArr: indicatorLib.summury,
       checkedKeys: summuryCheckedKeys,
     };
     // 分类明细指标库
@@ -464,7 +464,7 @@ export default class BoardEditHome extends PureComponent {
     const detailLib = {
       type: 'detail',
       boardType,
-      checkTreeArr: indicatorLib,
+      checkTreeArr: indicatorLib.detail,
       checkedKeys: detailCheckedKeys,
     };
 
