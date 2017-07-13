@@ -34,7 +34,7 @@ const selectHandlers = {
    * 获取SelfSelect选择后显示的Label文本
    */
   afterSelected(options, allCheckedNode) {
-    return (groupCheckedList) => {
+    return (groupCheckedList, isObjArray) => {
       // 第一项永远选中
       const checkedLabels = [options[0].name];
       const chldrenOptions = options.slice(1);
@@ -42,7 +42,12 @@ const selectHandlers = {
         if (groupCheckedList.length === chldrenOptions.length) {
           checkedLabels.push(allCheckedNode.name);
         } else {
-          const filterNames = _.filter(options, o => _.includes(groupCheckedList, o.id));
+          let filterNames = [];
+          if (isObjArray) {
+            filterNames = groupCheckedList;
+          } else {
+            filterNames = _.filter(options, o => _.includes(groupCheckedList, o.id));
+          }
           filterNames.forEach(item => checkedLabels.push(item.name));
         }
       }

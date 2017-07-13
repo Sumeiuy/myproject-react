@@ -34,40 +34,48 @@ const feedbackOptions = {
       label: 'FSP',
       children: [
         {
-          value: 'JXST',
+          value: '绩效视图',
           label: '绩效视图',
         },
         {
-          value: 'KHZX',
+          value: '客户中心',
           label: '客户中心',
         },
         {
-          value: 'RWZX',
+          value: '任务中心',
           label: '任务中心',
         },
         {
-          value: 'CPXS',
-          label: '产品销售',
-        },
-        {
-          value: 'ZCPZ',
+          value: '资产配置',
           label: '资产配置',
         },
         {
-          value: 'TJCX',
+          value: '统计查询',
           label: '统计查询',
         },
         {
-          value: 'ZXZX',
+          value: '产品中心',
+          label: '产品中心',
+        },
+        {
+          value: '资讯中心',
           label: '资讯中心',
         },
         {
-          value: 'ZSK',
+          value: '知识库',
           label: '知识库',
         },
         {
-          value: 'YWSQ',
+          value: '业务申请',
           label: '业务申请',
+        },
+        {
+          value: '反馈管理',
+          label: '反馈管理',
+        },
+        {
+          value: '其他类别',
+          label: '其他类别',
         },
       ],
     },

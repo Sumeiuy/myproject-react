@@ -9,7 +9,7 @@ import { autobind } from 'core-decorators';
 import { Dropdown, Menu, Icon } from 'antd';
 import _ from 'lodash';
 
-import Scroll from '../common/Scroll';
+// import Scroll from '../common/Scroll';
 import './BoardSelect.less';
 
 export default class BoardSelect extends PureComponent {
@@ -33,6 +33,7 @@ export default class BoardSelect extends PureComponent {
     this.state = {
       dropdownVisible: false,
       boardName,
+      hasRegisterWheel: false,
     };
   }
 
@@ -60,10 +61,24 @@ export default class BoardSelect extends PureComponent {
   }
 
   @autobind
+  stopSpread(e = window.event) {
+    if (e.stopPropagation) {
+      e.stopPropagation();
+    } else {
+      e.cancelBubble = true;
+    }
+  }
+
+  @autobind
   registerScrollEvent() {
+    this.setState({
+      hasRegisterWheel: true,
+    });
     const scrollBd = this.getScrollRef();
-    const scrollInstance = new Scroll(scrollBd);
-    return scrollInstance;
+    // const scrollInstance = new Scroll(scrollBd);
+    // return scrollInstance;
+    scrollBd.addEventListener('mousewheel', this.stopSpread, false);
+    scrollBd.addEventListener('DOMMouseScroll', this.stopSpread, false);
   }
 
 
@@ -83,8 +98,11 @@ export default class BoardSelect extends PureComponent {
   @autobind
   handleVisibleChange(flag) {
     this.setState({ dropdownVisible: flag });
+    const { hasRegisterWheel } = this.state;
     if (flag) {
-      this.registerScrollEvent();
+      if (!hasRegisterWheel) {
+        this.registerScrollEvent();
+      }
     }
   }
 
@@ -93,6 +111,7 @@ export default class BoardSelect extends PureComponent {
     this.handleVisibleChange(false);
     const { push, collectData } = this.props;
     const { key } = MenuItem;
+    // 当点击的是看板管理选项的时候
     if (key === '0') {
       collectData({
         type: 'boardSelect',

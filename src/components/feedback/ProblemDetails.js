@@ -230,7 +230,7 @@ export default class ProblemDetail extends PureComponent {
     const getSelectOption = item => item.map(i =>
       <Option key={`optionKey${OPTIONKEY++}`} value={i.value}>{i.label}</Option>,
     );
-    const channel = _.omit(feedbackChannel[0].children, ['value', 'lable']);
+    const channel = _.flattenDeep(_.map(feedbackChannel, obj => obj.children));
 
     return (
       <div>
