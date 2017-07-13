@@ -12,7 +12,7 @@ export default {
     updateLoading: false, // 保存看板状态
     publishLoading: false, // 发布看板状态
     message: '', // 改变状态的信息
-    indicatorLib: [], // 指标库
+    indicatorLib: {}, // 指标库
   },
   reducers: {
     // 成功获取指标库
