@@ -122,6 +122,7 @@ export default class BoardSelectTree extends PureComponent {
   constructor(props) {
     super(props);
     const { data: { type, boardType, checkTreeArr, checkedKeys } } = props;
+    console.warn('constructor 的 props', props);
     let showThirdColumn = false;
     let showTitle = false;
     // 如果看板是 经营业绩 类型 并且 指标是 总量指标 类型

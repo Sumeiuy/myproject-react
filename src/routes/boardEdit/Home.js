@@ -550,12 +550,10 @@ export default class BoardEditHome extends PureComponent {
         </div>
         <div className={styles.editPageMain}>
           <BoardSelectTree
-            key={`summuryLib${boardInfo.id}`}
             data={summuryLib}
             saveIndcator={this.saveUserCheckedIndicators}
           />
           <BoardSelectTree
-            key={`detailLib${boardInfo.id}`}
             data={detailLib}
             saveIndcator={this.saveUserCheckedIndicators}
           />
