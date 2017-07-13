@@ -32,6 +32,20 @@ export default {
         boardInfo,
       };
     },
+    delIndicatorLib(state) {
+      const indicatorLib = {};
+      return {
+        ...state,
+        indicatorLib,
+      };
+    },
+    delOneBoardInfoSuccess(state) {
+      const boardInfo = {};
+      return {
+        ...state,
+        boardInfo,
+      };
+    },
     // 获取可见范围筛选项
     getAllVisibleRangeSuccess(state, action) {
       const { payload: { allVisibleRange } } = action;
@@ -60,6 +74,19 @@ export default {
     },
   },
   effects: {
+    // 删除 boardInfo
+    * delBoardInfo({ payload }, { put }) {
+      const nullResult = {};
+      yield put({
+        type: 'delOneBoardInfoSuccess',
+        payload: { nullResult },
+      });
+      yield put({
+        type: 'delIndicatorLib',
+        payload: { nullResult },
+      });
+    },
+
     * getBoardInfo({ payload }, { call, put }) {
       // 获取某个看板信息，需要orgId和BoardId
       const boardInfoResult = yield call(api.getOneBoardInfo, payload);
