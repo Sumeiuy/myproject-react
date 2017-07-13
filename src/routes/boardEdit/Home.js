@@ -52,7 +52,7 @@ export default class BoardEditHome extends PureComponent {
     location: PropTypes.object.isRequired,
     boardInfo: PropTypes.object.isRequired,
     visibleRanges: PropTypes.array.isRequired,
-    indicatorLib: PropTypes.array.isRequired,
+    indicatorLib: PropTypes.object.isRequired,
     message: PropTypes.string.isRequired,
     globalLoading: PropTypes.bool.isRequired,
     updateLoading: PropTypes.bool.isRequired,
