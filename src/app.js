@@ -11,7 +11,6 @@ import createLoading from 'dva-loading';
 import createLogger from 'redux-logger';
 import { persistStore, autoRehydrate } from 'redux-persist';
 import { message } from 'antd';
-import _ from 'lodash';
 
 import createSensorsLogger from './middlewares/sensorsLogger';
 import createActivityIndicator from './middlewares/createActivityIndicator';
@@ -78,12 +77,6 @@ window.navTo = (url) => {
     // && _.isEqual(tmpLocation.query, query)
   ) {
     return;
-  }
-  // 切换页面的时候，关闭反馈表单
-  if (_.isFunction(window.$)
-    && $.feedback
-    && _.isFunction($.feedback.close)) {
-    $.feedback.close();
   }
   store.dispatch(routerRedux.push(url));
 };
