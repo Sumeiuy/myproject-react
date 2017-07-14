@@ -341,6 +341,9 @@ export default class ChartBarNormal extends PureComponent {
               <IECharts
                 option={options}
                 resizable
+                style={{
+                  height: '325px',
+                }}
               />
             )
             :
