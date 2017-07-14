@@ -243,7 +243,7 @@ export default class BoardHeader extends PureComponent {
         <div className={styles.titleText}>{title}</div>
         <div className={styles.titleBarRight}>
           <div className={toggleSortText}>
-            <span>排序方式:</span>
+            <span className={styles.orderLabel}>排序方式:</span>
             <Select
               value={scopeSelectValue}
               className={toggleScopeSelect}
