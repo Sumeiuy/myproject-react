@@ -399,6 +399,23 @@ export default class BoardSelectTree extends PureComponent {
     }
   }
 
+  @autobind
+  stopSpread(e = window.event) {
+    if (e.stopPropagation) {
+      e.stopPropagation();
+    } else {
+      e.cancelBubble = true;
+    }
+  }
+
+  @autobind
+  registerScrollEvent() {
+    const scrollBd = this.ref.treeMainLeftChild;
+    // const scrollInstance = new Scroll(scrollBd);
+    // return scrollInstance;
+    scrollBd.addEventListener('mousewheel', this.stopSpread, false);
+    scrollBd.addEventListener('DOMMouseScroll', this.stopSpread, false);
+  }
   render() {
     const {
       checkTreeArr,
@@ -448,7 +465,7 @@ export default class BoardSelectTree extends PureComponent {
             <h3 className={styles.treeDivNodeTitle}>请选择指标</h3>
             {/* 树结构左边部分子元素 */}
             <div className={styles.treeMainLeftContent}>
-              <div className={styles.treeMainLeftChild}>
+              <div refs="treeMainLeftChild" className={styles.treeMainLeftChild}>
                 <Tree
                   checkable
                   checkStrictly
