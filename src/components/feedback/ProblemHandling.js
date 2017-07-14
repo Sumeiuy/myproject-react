@@ -168,7 +168,7 @@ export default class ProblemHandling extends PureComponent {
                 <Col span="19" offset={1}>
                   <FormItem>
                     {getFieldDecorator('processer', {
-                      initialValue: `${_.isEmpty(processer) ? allOperatorOptions[0].label : processer}`,
+                      initialValue: `${_.isEmpty(processer) ? '请选择' : processer}`,
                     })(
                       <Select style={{ width: 220 }}>
                         {getSelectOption(allOperatorOptions)}
