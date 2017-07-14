@@ -143,16 +143,11 @@ export default class BoardSelectTree extends PureComponent {
     const expandedKeys = [checkTreeArr[0].indicatorCategoryDto.categoryKey];
     let selfCheckedNodes = [];
     if (checkedKeys.length) {
-      console.warn(props.data);
       if (!isSummury) {
         selfCheckedNodes = checkedKeys.map(item => ({
           ...findSelectNode(checkTreeArr, item).node,
           belongKey: findSelectNode(checkTreeArr, item).belong.key,
         }));
-        // selfCheckedNodes = checkedKeys.map(item => {
-        //   const node = findSelectNode(checkTreeArr, item);
-        //   console.warn('node', node);
-        // });
         allParentNodes.map((item) => {
           const newItem = item;
           selfCheckedNodes.forEach((child) => {
@@ -279,7 +274,7 @@ export default class BoardSelectTree extends PureComponent {
     if (isSummury) {
       const summuryArr = selfCheckedNodes.map(item => item.key);
       // 输出总量指标
-      console.warn('summuryArr', summuryArr);
+      // console.warn('summuryArr', summuryArr);
       this.props.saveIndcator('summury', summuryArr);
     } else {
       // 取出所有选中节点的归属点 key
@@ -309,7 +304,7 @@ export default class BoardSelectTree extends PureComponent {
         return temp;
       });
       // 输出明细指标
-      console.warn('detailArr', detailArr);
+      // console.warn('detailArr', detailArr);
       this.props.saveIndcator('detail', detailArr);
     }
   }
@@ -329,7 +324,6 @@ export default class BoardSelectTree extends PureComponent {
     let newSelfCheckedNodes = selfCheckedNodes;
     let newExpandedChildren;
     const nowSelectNode = findSelectNode(checkTreeArr, obj.key).node;
-    console.warn('nowSelectNode', nowSelectNode);
     const nowSelectNodeBelong = findSelectNode(checkTreeArr, obj.key).belong;
 
     // 如果找到当前节点，并且当前节点有 子元素，展开子元素并且更新 已展开子元素 的 state

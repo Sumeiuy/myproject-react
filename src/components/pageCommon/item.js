@@ -37,7 +37,7 @@ export default class Item extends PureComponent {
       <h3>{newName}</h3>
       {
         description ?
-          <h4>{newName}</h4>
+          <h4>{description}</h4>
         :
           ''
       }
@@ -45,7 +45,7 @@ export default class Item extends PureComponent {
     return (
       <div className={styles.content}>
         <Tooltip
-          placement="bottom"
+          placement="bottomLeft"
           title={toolTipHtnml}
           overlayClassName="visibleRangeToolTip"
           getPopupContainer={this.getTooltipContainer}
