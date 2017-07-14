@@ -14,7 +14,6 @@ import { getEmpId, queryToString, getDurationString } from '../../utils/helper';
 import PerformanceItem from '../../components/pageCommon/PerformanceItem';
 import PreformanceChartBoard from '../../components/pageCommon/PerformanceChartBoard';
 import PageHeader from '../../components/pageCommon/PageHeader';
-import ScrollBar from '../../components/pageCommon/ScrollBar';
 import styles from './Home.less';
 
 const effects = {
@@ -374,7 +373,6 @@ export default class ReportHome extends PureComponent {
             })
           }
         </div>
-        <ScrollBar />
       </div>
     );
   }
