@@ -28,6 +28,8 @@ const DEFAULTSIZE = 530;
 let splitPane;
 let PaneLeft;
 let Pane;
+let sildebarHide;
+let sildebarShow;
 const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
 const mapStateToProps = state => ({
   list: state.feedback.list,
@@ -81,6 +83,7 @@ export default class FeedBack extends PureComponent {
     window.addEventListener('resize', this.onResizeChange, false);
     this.panMov(DEFAULTSIZE);
     this.initPane();
+    this.listenerLeftMenu();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -143,6 +146,7 @@ export default class FeedBack extends PureComponent {
 
     // 取消事件监听
     window.removeEventListener('resize', this.onResizeChange, false);
+    this.removeListenerLeftMenu();
   }
 
   @autobind
@@ -294,6 +298,26 @@ export default class FeedBack extends PureComponent {
       } else {
         Pane.className = 'Pane vertical Pane2';
       }
+    }
+  }
+  /**
+   *  嵌入FSP监听左侧菜单栏状态变化
+   *  解决点击左侧菜单栏拖拽在达到最大值后列表宽度无法自动适应问题
+   */
+  listenerLeftMenu() {
+    sildebarHide = ReactDOM.findDOMNode(document.querySelector('#sidebar-hide-btn'));// eslint-disable-line
+    sildebarShow = ReactDOM.findDOMNode(document.querySelector('#sidebar-show-btn'));// eslint-disable-line
+    if (!_.isEmpty(sildebarShow) && !_.isEmpty(sildebarShow)) {
+      sildebarHide.addEventListener('click', this.initPane, false);
+      sildebarShow.addEventListener('click', this.initPane, false);
+    }
+  }
+
+  // 取消左侧菜单控制按键事件监听
+  removeListenerLeftMenu() {
+    if (!_.isEmpty(sildebarShow) && !_.isEmpty(sildebarShow)) {
+      sildebarHide.removeEventListener('click', this.initPane, false);
+      sildebarShow.removeEventListener('click', this.initPane, false);
     }
   }
 
