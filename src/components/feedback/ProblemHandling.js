@@ -61,10 +61,12 @@ export default class ProblemHandling extends PureComponent {
         onChange(info) {
           const file = info.file;
           const status = file.status;
+          const response = file.response || {};
           if (status === 'done') {
             message.success(`${info.file.name} 文件上传成功.`);
           } else if (status === 'error') {
-            message.error(`${info.file.name} 文件上传失败.`);
+            const msg = _.isEmpty(response.msg) ? '文件上传失败' : response.msg;
+            message.error(`${msg}.`);
           }
           return true;
         },
