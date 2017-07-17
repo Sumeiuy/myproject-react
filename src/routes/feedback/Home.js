@@ -103,8 +103,6 @@ export default class FeedBack extends PureComponent {
 
   componentDidUpdate() {
     this.setDocumentScroll();
-    this.panMov(DEFAULTSIZE);
-    this.initPane();
     const { location: { pathname, query, query: { isResetPageNum } }, replace,
       list: { resultData = EMPTY_LIST } } = this.props;
     // 重置pageNum和pageSize

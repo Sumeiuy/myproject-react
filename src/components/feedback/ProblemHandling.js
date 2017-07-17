@@ -139,7 +139,7 @@ export default class ProblemHandling extends PureComponent {
           <div className="list_box">
             <Form layout="vertical">
               <Row>
-                <Col span="4"><div className="label">问题标签：</div></Col>
+                <Col span="4"><div className="am_label">问题标签：</div></Col>
                 <Col span="19" offset={1}>
                   <FormItem>
                     {getFieldDecorator('tag', { initialValue: `${tag || '无'}` })(
@@ -151,7 +151,7 @@ export default class ProblemHandling extends PureComponent {
                 </Col>
               </Row>
               <Row>
-                <Col span="4"><div className="label">状态：</div></Col>
+                <Col span="4"><div className="am_label">状态：</div></Col>
                 <Col span="19" offset={1}>
                   <FormItem>
                     {getFieldDecorator('status', { initialValue: `${title === '重新打开' ? 'PROCESSING' : status}` })(
@@ -164,7 +164,7 @@ export default class ProblemHandling extends PureComponent {
                 </Col>
               </Row>
               <Row>
-                <Col span="4"><div className="label">经办人：</div></Col>
+                <Col span="4"><div className="am_label">经办人：</div></Col>
                 <Col span="19" offset={1}>
                   <FormItem>
                     {getFieldDecorator('processer', { initialValue: `${_.isEmpty(processer) ? helper.getEmpId() : processer}` })(
@@ -176,7 +176,7 @@ export default class ProblemHandling extends PureComponent {
                 </Col>
               </Row>
               <Row>
-                <Col span="4"><div className="label">处理意见：</div></Col>
+                <Col span="4"><div className="am_label">处理意见：</div></Col>
                 <Col span="19" offset={1}>
                   <FormItem>
                     {getFieldDecorator('processSuggest')(
@@ -186,7 +186,7 @@ export default class ProblemHandling extends PureComponent {
                 </Col>
               </Row>
               <Row>
-                <Col span="4"><div className="label">附件：</div></Col>
+                <Col span="4"><div className="am_label">附件：</div></Col>
                 <Col span="19" offset={1}>
                   <FormItem>
                     {getFieldDecorator('uploadedFiles')(
