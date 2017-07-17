@@ -24,8 +24,9 @@ import './home.less';
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const BROWSER = getEnv();
-const DEFAULTSIZE = 430;
+const DEFAULTSIZE = 530;
 let splitPane;
+let PaneLeft;
 let Pane;
 const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
 const mapStateToProps = state => ({
@@ -263,6 +264,7 @@ export default class FeedBack extends PureComponent {
   // 重新给pan2样式赋值
   panMov(size) {
     splitPane = ReactDOM.findDOMNode(document.querySelector('.SplitPane'));// eslint-disable-line
+    PaneLeft = ReactDOM.findDOMNode(document.querySelector('.Pane1'));// eslint-disable-line
     Pane = ReactDOM.findDOMNode(document.querySelector('.Pane2'));// eslint-disable-line
     if (BROWSER.$browser === 'Internet Explorer') {
       Pane.style.paddingLeft = `${size + 20}px`;
@@ -273,15 +275,25 @@ export default class FeedBack extends PureComponent {
   @autobind
   initPane() {
     const boxWidth = splitPane.getBoundingClientRect().width;
+    const paneaWidth = PaneLeft.getBoundingClientRect().width;
     const minsize = boxWidth * 0.3 || 200;
     const maxsize = boxWidth * 0.6 || 600;
     const { paneboxWidth } = this.state;
     if (paneboxWidth !== boxWidth) {
+      if (paneaWidth > maxsize) {
+        PaneLeft.style.width = `${maxsize}px`;
+        this.panMov(maxsize);
+      }
       this.setState({
         paneboxWidth: boxWidth,
         paneMaxSize: maxsize,
         paneMinSize: minsize,
       });
+      if (paneaWidth > boxWidth * 0.5) {
+        Pane.className = 'Pane vertical Pane2 allWidth';
+      } else {
+        Pane.className = 'Pane vertical Pane2';
+      }
     }
   }
 
