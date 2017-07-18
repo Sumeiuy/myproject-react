@@ -7,9 +7,10 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
-import { Tree, Icon, Tooltip } from 'antd';
+import { Tree, Tooltip } from 'antd';
 import _ from 'lodash';
 
+import MoveContainer from './MoveContainer';
 import styles from './BoardSelectTree.less';
 
 const boardTypeMap = {
@@ -91,7 +92,10 @@ function findSelectNodeByKey(key, obj) {
     if (Array.isArray(orgArr)) {
       for (let i = 0; i < orgArr.length; i++) {
         if (orgArr[i].key === key) {
-          testNode = orgArr[i];
+          testNode = {
+            ...orgArr[i],
+            belongKey: obj.categoryKey,
+          };
           belong = {
             key: obj.categoryKey,
             name: obj.categoryName,
@@ -261,6 +265,36 @@ export default class BoardSelectTree extends PureComponent {
     });
   }
 
+  // 拖拽事件
+  @autobind
+  onDnd(data) {
+    const {
+      isSummury,
+      allParentNodes,
+    } = this.state;
+    if (!isSummury) {
+      allParentNodes.map((item) => {
+        const newItem = item;
+        console.warn('newItem.key', newItem.key);
+        if (newItem.key === data[0].belongKey) {
+          newItem.children = data;
+        }
+        return newItem;
+      });
+      this.setState({
+        allParentNodes,
+      }, () => {
+        this.getStateTree();
+      });
+    } else {
+      this.setState({
+        selfCheckedNodes: data,
+      }, () => {
+        this.getStateTree();
+      });
+    }
+  }
+
   // tooltip
   @autobind
   getTooltipContainer() {
@@ -270,40 +304,19 @@ export default class BoardSelectTree extends PureComponent {
   // 获取出最终选择树的值，传递给外层方法
   @autobind
   getStateTree() {
-    const { selfCheckedNodes, checkTreeArr, isSummury } = this.state;
+    const { selfCheckedNodes, isSummury, allParentNodes } = this.state;
     if (isSummury) {
       const summuryArr = selfCheckedNodes.map(item => item.key);
       // 输出总量指标
-      // console.warn('summuryArr', summuryArr);
+      console.warn('summuryArr', summuryArr);
       this.props.saveIndcator('summury', summuryArr);
     } else {
-      // 取出所有选中节点的归属点 key
-      const tempBelongKeyArr = selfCheckedNodes.map((item) => {
-        const itemBelong = findSelectNode(checkTreeArr, item.key).belong;
-        return itemBelong.key;
-      });
-      // 去重
-      const belongKeyArr = _.uniq(tempBelongKeyArr);
-      // 将选中的数组项循环，每一项赋值一个 归属 key ，生成新数组
-      const newSelfeCheckedNodes = selfCheckedNodes.map((item) => {
-        const newItem = item;
-        const itemBelongKey = findSelectNode(checkTreeArr, item.key).belong.key;
-        newItem.belongKey = itemBelongKey;
-        return newItem;
-      });
-      // 循环父节点 key
-      const detailArr = belongKeyArr.map((item) => {
-        // 取出所有 parentKey 与父节点 key 相等的选中项
-        const categoryKeyChildren = _.filter(newSelfeCheckedNodes, o => (o.belongKey === item));
-        // 从上一步取出的数组中取出所有的 key
-        const categoryKeyChildrenKey = _.uniq(categoryKeyChildren.map(child => child.key));
-        const temp = {
-          categoryKey: item,
-          detailIndicatorIds: categoryKeyChildrenKey,
-        };
-        return temp;
-      });
-      // 输出明细指标
+      const newTemp = _.filter(allParentNodes, o => (o.children.length));
+      const detailArr = newTemp.map(item => ({
+        categoryKey: item.key,
+        detailIndicatorIds: item.children.map(child => child.key),
+      }));
+      console.warn('detailArr', detailArr);
       // console.warn('detailArr', detailArr);
       this.props.saveIndcator('detail', detailArr);
     }
@@ -410,7 +423,7 @@ export default class BoardSelectTree extends PureComponent {
 
   @autobind
   registerScrollEvent() {
-    const scrollBd = this.ref.treeMainLeftChild;
+    const scrollBd = this.treeMainLeftChild;
     // const scrollInstance = new Scroll(scrollBd);
     // return scrollInstance;
     scrollBd.addEventListener('mousewheel', this.stopSpread, false);
@@ -465,7 +478,10 @@ export default class BoardSelectTree extends PureComponent {
             <h3 className={styles.treeDivNodeTitle}>请选择指标</h3>
             {/* 树结构左边部分子元素 */}
             <div className={styles.treeMainLeftContent}>
-              <div refs="treeMainLeftChild" className={styles.treeMainLeftChild}>
+              <div
+                ref={(treeMainLeftChild) => { this.treeMainLeftChild = treeMainLeftChild; }}
+                className={styles.treeMainLeftChild}
+              >
                 <Tree
                   checkable
                   checkStrictly
@@ -499,18 +515,12 @@ export default class BoardSelectTree extends PureComponent {
             <div className={styles.treeMainRightChild}>
               {
                 isSummury ?
-                  selfCheckedNodes.map(item => (
-                    <span className={styles.selectItem} key={`${item.key}Key`}>
-                      {
-                        (item.parentName && isSummury) ?
-                          `${item.parentName} -`
-                        :
-                          ''
-                      }
-                      {item.name}
-                      <Icon type="close" onClick={() => this.onRemove(item)} />
-                    </span>
-                  ))
+                  <MoveContainer
+                    data={selfCheckedNodes}
+                    isSum={isSummury}
+                    onRemove={this.onRemove}
+                    onDnd={this.onDnd}
+                  />
                 :
                   allParentNodes.map(item => (
                     item.children.length ?
@@ -522,18 +532,13 @@ export default class BoardSelectTree extends PureComponent {
                             ''
                         }
                         {
-                          item.children.map(child => (
-                            <span className={styles.selectItem} key={child.key}>
-                              {
-                                (item.parentName && isSummury) ?
-                                  `${item.parentName} -`
-                                :
-                                  ''
-                              }
-                              {child.name}
-                              <Icon type="close" onClick={() => this.onRemove(child)} />
-                            </span>
-                          ))
+                          <MoveContainer
+                            key={`${item.key}Move`}
+                            data={item.children}
+                            isSum={isSummury}
+                            onRemove={this.onRemove}
+                            onDnd={this.onDnd}
+                          />
                         }
                       </div>
                     :
