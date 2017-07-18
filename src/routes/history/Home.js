@@ -8,8 +8,8 @@ import React, { PropTypes, PureComponent } from 'react';
 import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 
-// import styles from './Home.less';
-import './Home.less';
+import HisDivider from '../../components/history/HisDivider';
+import styles from './Home.less';
 
 const effects = {
   allInfo: 'history/getAllInfo',
@@ -55,7 +55,27 @@ export default class HistoryHome extends PureComponent {
 
   render() {
     return (
-      <div />
+      <div className="pageHistory">
+        <div className={styles.historyhd}>
+          {/* 头部时间组织机构选择区域 */}
+        </div>
+        <div className={styles.historybd}>
+          <div className={styles.analyticalCaption}>核心指标</div>
+          <div className={styles.indicatorOverview}>
+            {/* 指标概览区域 */}
+          </div>
+          <div className={styles.indicatorAnalyse}>
+            <div className={styles.caption}>核心指标分析-总交易量</div>
+            <div className={styles.polyArea}>
+              {/* 历史对比折线图和排名图 */}
+            </div>
+            <HisDivider />
+            <div className={styles.scatterArea}>
+              {/* 散点图 */}
+            </div>
+          </div>
+        </div>
+      </div>
     );
   }
 }
