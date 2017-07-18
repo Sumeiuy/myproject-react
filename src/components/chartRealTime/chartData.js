@@ -145,10 +145,15 @@ const chartData = {
 
   /**
    * 处理stackSeries中的金额数据以及单位
+   * 此处需要新增对总数的处理
+   * 总数的单位由各项来决定
    */
-  dealStackSeriesMoney(stackSeries) {
+  dealStackSeriesMoney(stackSeries, totals) {
     let newUnit = '元';
     let newStackSeries = stackSeries;
+    console.log('totals', totals);
+    let newTotals = totals.map(item => Number(item));
+    console.log('newTotals', newTotals);
     // 判断stackSeries中最大值是多少
     let allData = [];
     const len = newStackSeries.length;
@@ -162,13 +167,16 @@ const chartData = {
     if (maxMoney > 100000000) {
       newUnit = '亿元';
       newStackSeries = newStackSeries.map(toFixedData(100000000));
+      newTotals = newTotals.map(item => toFixedDecimal(item / 100000000));
     } else if (maxMoney > 10000) {
       newUnit = '万元';
       newStackSeries = newStackSeries.map(toFixedData(10000));
+      newTotals = newTotals.map(item => toFixedDecimal(item / 10000));
     }
     return {
       newStackSeries,
       newUnit,
+      newTotals,
     };
   },
   /**
