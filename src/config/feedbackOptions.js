@@ -138,6 +138,10 @@ const feedbackOptions = {
   ],
   allOperatorOptions: [
     {
+      value: '010780',
+      label: '孙明昊',
+    },
+    {
       value: '011105',
       label: '李定国',
     },
