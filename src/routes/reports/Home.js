@@ -21,7 +21,11 @@ const effects = {
   chartTableInfo: 'report/getChartTableInfo',
   oneChartInfo: 'report/getOneChartInfo',
   exportExcel: 'report/exportExcel',
-  collectData: 'report/collectData',
+  collectBoardSelect: 'report/collectBoardSelect',
+  collectCustRange: 'report/collectCustRange',
+  collectDurationSelect: 'report/collectDurationSelect',
+  collectScopeSelect: 'report/collectScopeSelect',
+  collectOrderTypeSelect: 'report/collectOrderTypeSelect',
 };
 
 const fectchDataFunction = (globalLoading, type) => query => ({
@@ -44,7 +48,11 @@ const mapDispatchToProps = {
   getOneChartInfo: fectchDataFunction(true, effects.oneChartInfo),
   getChartTableInfo: fectchDataFunction(true, effects.chartTableInfo),
   exportExcel: fectchDataFunction(true, effects.exportExcel),
-  collectData: fectchDataFunction(false, effects.collectData),
+  collectBoardSelect: fectchDataFunction(false, effects.collectData),
+  collectCustRange: fectchDataFunction(false, effects.collectData),
+  collectDurationSelect: fectchDataFunction(false, effects.collectData),
+  collectScopeSelect: fectchDataFunction(false, effects.collectData),
+  collectOrderTypeSelect: fectchDataFunction(false, effects.collectData),
   push: routerRedux.push,
   replace: routerRedux.replace,
 };
@@ -62,7 +70,11 @@ export default class ReportHome extends PureComponent {
     getChartTableInfo: PropTypes.func.isRequired,
     performance: PropTypes.array,
     exportExcel: PropTypes.func.isRequired,
-    collectData: PropTypes.func.isRequired,
+    collectBoardSelect: PropTypes.func.isRequired,
+    collectCustRange: PropTypes.func.isRequired,
+    collectDurationSelect: PropTypes.func.isRequired,
+    collectScopeSelect: PropTypes.func.isRequired,
+    collectOrderTypeSelect: PropTypes.func.isRequired,
     chartInfo: PropTypes.array,
     chartTableInfo: PropTypes.object,
     custRange: PropTypes.array,
@@ -85,7 +97,11 @@ export default class ReportHome extends PureComponent {
     reportName: '',
     boardId: 1,
     boardType: 'TYPE_TGJX',
-    collectData: () => {},
+    collectBoardSelect: () => {},
+    collectCustRange: () => {},
+    collectDurationSelect: () => {},
+    collectScopeSelect: () => {},
+    collectOrderTypeSelect: () => {},
   }
 
   constructor(props) {
@@ -304,7 +320,15 @@ export default class ReportHome extends PureComponent {
       return null;
     }
     const { performance, chartInfo, chartTableInfo } = this.props;
-    const { location, replace, push, reportName, preView, collectData } = this.props;
+    const { location, replace, push, reportName, preView } = this.props;
+    // 收集用户信息的方法
+    const {
+      collectBoardSelect,
+      collectCustRange,
+      collectDurationSelect,
+      collectScopeSelect,
+      collectOrderTypeSelect,
+    } = this.props;
     // 因为新的数据查询参数全部存放在了state里面
     const { showCharts, classifyScope, classifyOrder } = this.state;
     const { boardId, custRangeLevel, scope, boardType } = this.state;
@@ -327,7 +351,9 @@ export default class ReportHome extends PureComponent {
           preView={preView}
           reportName={reportName}
           updateQueryState={this.updateQueryState}
-          collectData={collectData}
+          collectBoardSelect={collectBoardSelect}
+          collectCustRange={collectCustRange}
+          collectDurationSelect={collectDurationSelect}
         />
         <div className={styles.reportBody}>
           <div className={styles.reportPart}>
@@ -366,7 +392,8 @@ export default class ReportHome extends PureComponent {
                     boardTitle={name}
                     showScopeOrder={showScopeOrder}
                     selfRequestData={this.selfRequestData}
-                    collectData={collectData}
+                    collectScopeSelect={collectScopeSelect}
+                    collectOrderTypeSelect={collectOrderTypeSelect}
                   />
                 </div>
               );

@@ -35,7 +35,8 @@ export default class BoardHeader extends PureComponent {
     updateShowCharts: PropTypes.func.isRequired,
     updateCategoryScope: PropTypes.func.isRequired,
     updateCategoryOrder: PropTypes.func.isRequired,
-    collectData: PropTypes.func.isRequired,
+    collectScopeSelect: PropTypes.func.isRequired,
+    collectOrderTypeSelect: PropTypes.func.isRequired,
     selfRequestData: PropTypes.func,
     showScopeOrder: PropTypes.bool.isRequired,
     level: PropTypes.string,
@@ -165,21 +166,19 @@ export default class BoardHeader extends PureComponent {
     this.setState({
       scopeSelectValue: v,
     });
-    const { collectData } = this.props;
+    const { collectScopeSelect } = this.props;
     const scopeText = _.find(sortByType, { scope: String(v) }).name;
     const text = `按${scopeText}`;
-    collectData({
-      type: 'scopeSelect',
+    collectScopeSelect({
       text,
     });
     this.handleSortChange('scope', v);
   }
   @autobind
   handleOrderTypeChange(v) {
-    const { collectData } = this.props;
+    const { collectOrderTypeSelect } = this.props;
     const orderText = _.find(sortByOrder, { key: String(v) }).name;
-    collectData({
-      type: 'orderSelect',
+    collectOrderTypeSelect({
       text: orderText,
     });
     this.handleSortChange('orderType', v);
