@@ -129,6 +129,17 @@
             -ms-flex: 1;
                 flex: 1;
     }
+    .SplitPane {
+      .Resizer,
+      .Pane1{
+        float: left\9;
+      }
+      .Pane2{
+        position: static\9!important;
+        margin-top: 0\9;
+        padding-left:530px\9;
+      }
+    }
     @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {  
       /* IE10-specific styles go here */
       .SplitPane {
@@ -139,7 +150,7 @@
         .Pane2{
           position: static!important;
           margin-top: 0;
-          padding-left:450px;
+          padding-left:530px;
         }
       }
     }  
