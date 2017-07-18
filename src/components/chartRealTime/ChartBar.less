@@ -16,15 +16,13 @@
   background: #fff;
 }
 .chartHeader {
-  flex-grow: 0;
-  width: 100%;
-  height: 45px;
+  flex: 0 0 45px;
 }
 .chartLegend {
   padding-right: 20px;
-  flex-grow: 0;
-  height: auto;
   margin-bottom: 5px;
+  flex-grow: 0;
+  flex-shrink: 0;
 }
 .oneLegend {
   display: inline-block;
@@ -68,8 +66,8 @@
   cursor: pointer;
 }
 .chartWrapper {
-  flex: 0 1 325px;
-  width: 100%;
+  // height: 200px;
+  flex: 0 1 500px;
 }
 .noChart{
   width: 100%;
