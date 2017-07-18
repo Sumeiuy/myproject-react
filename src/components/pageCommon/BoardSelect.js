@@ -114,7 +114,6 @@ export default class BoardSelect extends PureComponent {
     // 当点击的是看板管理选项的时候
     if (key === '0') {
       collectData({
-        type: 'boardSelect',
         text: '看板管理',
       });
       push('/boardManage');
@@ -122,7 +121,6 @@ export default class BoardSelect extends PureComponent {
       const { visibleBoards } = this.props;
       const boardname = _.find(visibleBoards, { id: Number(key) }).name;
       collectData({
-        type: 'boardSelect',
         text: boardname,
       });
       push(`/report?boardId=${key}`);
