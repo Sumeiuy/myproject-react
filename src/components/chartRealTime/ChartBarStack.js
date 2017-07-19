@@ -6,6 +6,7 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
+import Resize from 'element-resize-detector';
 // import _ from 'lodash';
 
 import { AxisOptions, gridOptions, stackBarColors, barShadow } from './ChartGeneralOptions';
@@ -57,19 +58,48 @@ export default class ChartBarStack extends PureComponent {
   }
 
   componentDidMount() {
-    const wrapper = this.wrapper;
-    this.setHeight(wrapper.clientHeight);
+    // 此处需要对legend进行宽高进行监测
+    // 先进行初始化的处理
+    this.handleResize();
+    this.registerResizeListener();
+  }
+
+  componentWillUnmount() {
+    const { resize } = this.state;
+    if (resize && resize.uninstall) {
+      const dom = this.legendDom;
+      resize.uninstall(dom);
+    }
   }
 
   @autobind
-  setWrapperRef(input) {
-    this.wrapper = input;
+  setLegendRef(input) {
+    this.legendDom = input;
   }
 
   @autobind
   setHeight(wrapperH) {
     this.setState({
       wrapperH,
+    });
+  }
+
+  @autobind
+  handleResize() {
+    const legend = this.legendDom;
+    const legendH = legend.clientHeight;
+    const echartH = 370 - 45 - legendH - 5;
+    this.setHeight(echartH);
+  }
+
+  @autobind
+  registerResizeListener() {
+    const dom = this.legendDom;
+    const resize = this.state.resize || Resize({ strategy: 'scroll' });
+    resize.listenTo(dom, () => this.handleResize());
+    // 此处需要将resize记住，后面需要将其注销掉
+    this.setState({
+      resize,
     });
   }
 
@@ -305,7 +335,7 @@ export default class ChartBarStack extends PureComponent {
             <span className={styles.chartTitleText}>{`${name}(${unit})`}</span>
           </div>
         </div>
-        <div className={styles.chartLegend}>
+        <div className={styles.chartLegend} ref={this.setLegendRef}>
           {
             stackLegend.map((item, index) => {
               const backgroundColor = stackBarColors[index];
@@ -324,7 +354,7 @@ export default class ChartBarStack extends PureComponent {
             })
           }
         </div>
-        <div className={styles.chartWrapper} ref={this.setWrapperRef}>
+        <div className={styles.chartWrapper}>
           {
             (orgModel && orgModel.length > 0)
             ?
