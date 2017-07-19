@@ -31,6 +31,8 @@ export default class PerformanceChartBoard extends PureComponent {
     location: PropTypes.object.isRequired,
     indexID: PropTypes.string,
     selfRequestData: PropTypes.func,
+    custRange: PropTypes.array.isRequired,
+    updateQueryState: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -65,6 +67,8 @@ export default class PerformanceChartBoard extends PureComponent {
       updateCategoryScope,
       updateCategoryOrder,
       collectData,
+      custRange,
+      updateQueryState,
     } = this.props;
     if (!(chartData && chartData.length) && showChart !== 'tables') {
       return null;
@@ -111,6 +115,8 @@ export default class PerformanceChartBoard extends PureComponent {
               location={location}
               level={level}
               scope={categoryScope}
+              custRange={custRange}
+              updateQueryState={updateQueryState}
             />
           )
         }

@@ -24,6 +24,7 @@ export default class PageHeader extends PureComponent {
     visibleBoards: PropTypes.array,
     preView: PropTypes.bool,
     reportName: PropTypes.string,
+    orgId: PropTypes.string,
   }
 
   static defaultProps = {
@@ -31,6 +32,7 @@ export default class PageHeader extends PureComponent {
     visibleBoards: [],
     preView: false,
     reportName: '',
+    orgId: '',
   }
 
   render() {
@@ -44,6 +46,7 @@ export default class PageHeader extends PureComponent {
       visibleBoards,
       updateQueryState,
       collectData,
+      orgId,
     } = this.props;
 
     return (
@@ -86,6 +89,7 @@ export default class PageHeader extends PureComponent {
               replace={replace}
               updateQueryState={updateQueryState}
               collectData={collectData}
+              orgId={orgId}
             />
           </div>
         </Row>
