@@ -66,7 +66,6 @@ export default class DurationSelect extends PureComponent {
     // const { replace, location: { query, pathname } } = this.props;
     const { updateQueryState, collectData } = this.props;
     collectData({
-      type: 'durationSelect',
       text: duration.cycleType,
     });
     this.setState({
