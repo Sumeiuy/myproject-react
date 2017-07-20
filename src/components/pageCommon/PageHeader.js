@@ -19,7 +19,9 @@ export default class PageHeader extends PureComponent {
     replace: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
     updateQueryState: PropTypes.func.isRequired,
-    collectData: PropTypes.func.isRequired,
+    collectBoardSelect: PropTypes.func.isRequired,
+    collectCustRange: PropTypes.func.isRequired,
+    collectDurationSelect: PropTypes.func.isRequired,
     custRange: PropTypes.array,
     visibleBoards: PropTypes.array,
     preView: PropTypes.bool,
@@ -45,8 +47,10 @@ export default class PageHeader extends PureComponent {
       location,
       visibleBoards,
       updateQueryState,
-      collectData,
       orgId,
+      collectBoardSelect,
+      collectCustRange,
+      collectDurationSelect,
     } = this.props;
 
     return (
@@ -69,7 +73,7 @@ export default class PageHeader extends PureComponent {
                   push={push}
                   replace={replace}
                   visibleBoards={visibleBoards}
-                  collectData={collectData}
+                  collectData={collectBoardSelect}
                 />
               )
             }
@@ -79,7 +83,7 @@ export default class PageHeader extends PureComponent {
               location={location}
               replace={replace}
               updateQueryState={updateQueryState}
-              collectData={collectData}
+              collectData={collectDurationSelect}
             />
             <div className={styles.vSplit} />
             {/* 营业地址选择项 */}
@@ -88,8 +92,8 @@ export default class PageHeader extends PureComponent {
               location={location}
               replace={replace}
               updateQueryState={updateQueryState}
-              collectData={collectData}
               orgId={orgId}
+              collectData={collectCustRange}
             />
           </div>
         </Row>
