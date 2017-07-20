@@ -111,10 +111,9 @@ export default class ChartTable extends PureComponent {
     console.log('docElemHeight', docElemHeight);
     console.log('elemClientHeight', elemClientHeight);
     console.log('topDistance', topDistance);
-
     const visible = docElemHeight - elemClientHeight - topDistance;
     console.log('visible', visible);
-    if (visible < 0 && topDistance > 0) {
+    if (visible < 0 && topDistance > 0 && topDistance < docElemHeight) {
       this.setState({ scrollDisplay: true });
     } else {
       this.setState({ scrollDisplay: false });
