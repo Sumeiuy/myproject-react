@@ -6,6 +6,7 @@ import request from './request';
 import iconTypeMap from './iconTypeMap';
 import optionsMap from './optionsMap';
 import feedbackOptions from './feedbackOptions';
+import reportAnchorOptions from './reportAnchorOptions';
 import ZHUNICODE from './unicode';
 import BoardBasic from './BoardBasic';
 
@@ -20,4 +21,5 @@ export default {
   feedbackOptions,
   ZHUNICODE,
   BoardBasic,
+  reportAnchorOptions,
 };

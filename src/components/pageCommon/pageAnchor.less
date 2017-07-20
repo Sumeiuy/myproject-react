@@ -1,0 +1,38 @@
+.pageAnchor{
+  position: fixed;
+  top: 40%;
+  right: 0;
+  background-color: transparent!important;
+  :global{
+    .ant-anchor{
+      -moz-box-shadow: 0px 0px 10px rgba(173,173,173, 0,5); 
+      -webkit-box-shadow: 0px 0px 10px rgba(173,173,173, 0,5);
+      box-shadow: 0px 0px 10px rgba(173,173,173, 0,5);
+      background-color: rgba(100,100,100,0.2);
+      &:hover{
+        background-color: rgba(2555,255,255,1);
+      }
+      .ant-anchor-ink{
+        display: none;
+      }
+      .ant-anchor-link{
+        width: 60px;
+        height: 40px;
+        line-height: 40px;
+        padding: 0 0 0 16px;
+        a{
+          text-decoration: none;
+          font-size: 15px;
+          color: #333;
+        }
+      }
+      .ant-anchor-link-active{
+        background-color: #dfeafc;
+        a{
+          font-size: 15px;
+          color: #3983ff;
+        }
+      }
+    }
+  }
+}
