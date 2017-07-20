@@ -5,12 +5,14 @@
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
-import { Anchor } from 'antd';
 import _ from 'lodash';
+
+import Anchor from '../../components/common/anchor';
 import { reportAnchorOptions } from '../../config';
 import styles from './pageAnchor.less';
 
 const { Link } = Anchor;
+
 export default class PageAnchor extends PureComponent {
 
   static propTypes = {
@@ -24,7 +26,9 @@ export default class PageAnchor extends PureComponent {
   changeDisplay(st, options) {
     if (st) {
       const nowStatus = _.find(options, o => o.key === st);
-      return nowStatus.value;
+      if (nowStatus) {
+        return nowStatus.value;
+      }
     }
     return '其他';
   }
