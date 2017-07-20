@@ -6,9 +6,11 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
+import ReactDOM from 'react-dom';
 import { autobind } from 'core-decorators';
 import { Table, Pagination, Popover } from 'antd';
 import _ from 'lodash';
+import ScrollBar from './ScrollBar';
 
 import { getStrLen } from '../../utils/helper';
 import { optionsMap } from '../../config';
@@ -17,6 +19,8 @@ import styles from './ChartTable.less';
 // 按类别排序
 const sortByType = optionsMap.sortByType;
 const revert = { asc: 'desc', desc: 'asc' };
+const fsp = document.querySelector('#workspace-content>.wrapper');
+
 
 export default class ChartTable extends PureComponent {
   static propTypes = {
@@ -59,11 +63,70 @@ export default class ChartTable extends PureComponent {
       arr: [],
       temp: [],
       allWidth: 100,
+      scrollDisplay: false,
     };
   }
+
+  componentDidMount() {
+    console.warn('44444444');
+    this.onScrollFunc();
+    window.addEventListener('resize', this.onScrollFunc, false);
+    if (fsp) {
+      document.addEventListener('mousewheel', this.onScrollFunc, false);
+    } else {
+      document.addEventListener('scroll', this.onScrollFunc, false);
+    }
+  }
+
   componentWillReceiveProps(nextProps) {
     // TODO 根据 nextProps 的值是否变化来判断是否调用此方法
     this.changeTableData(nextProps);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    console.warn('5555555555');
+    this.onScrollFunc();
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.onScrollFunc);
+    if (fsp) {
+      document.removeEventListener('mousewheel', this.onScrollFunc);
+    } else {
+      document.removeEventListener('scroll', this.onScrollFunc);
+    }
+  }
+
+  @autobind
+  saveTableWrapper(dom) {
+    this.currentTable = dom;
+  }
+
+
+  @autobind
+  onScrollFunc() {
+    const { scrollDisplay } = this.state;
+    const currentTable = this.currentTable;
+    const tableDiv = ReactDOM.findDOMNode(currentTable.querySelector('.ant-table'));
+    // 窗口可视高度
+    const docElemHeight = document.documentElement.clientHeight;
+    // 元素高度
+    const elemClientHeight = tableDiv.clientHeight;
+    // 元素距离顶部距离
+    const topDistance = tableDiv.getBoundingClientRect().top;
+    // 如果窗口可视高度大于元素高度和元素距离顶部距离之和，此时表格全部显示出来，此时是不需要显示滚动条的，否则显示
+    console.log('tableDiv', tableDiv);
+    console.log('docElemHeight', docElemHeight);
+    console.log('elemClientHeight', elemClientHeight);
+    console.log('topDistance', topDistance);
+
+    const visible = docElemHeight - elemClientHeight - topDistance;
+    console.log('visible', visible);
+    if (visible < 0 && topDistance > 0) {
+      this.setState({ scrollDisplay: true });
+    } else {
+      this.setState({ scrollDisplay: false });
+    }
   }
   // 组合表格头部 排序 html
   @autobind
@@ -333,10 +396,20 @@ export default class ChartTable extends PureComponent {
       allWidth,
     });
   }
+
+  @autobind
+  getScrollLeft(scrollLeftValue) {
+    console.log('scrollLeftValue', scrollLeftValue);
+    const currentTable = this.currentTable;
+    const tableBody = ReactDOM.findDOMNode(currentTable.querySelector('.ant-table-body'));
+    tableBody.scrollLeft = scrollLeftValue;
+  }
+
   render() {
     const { chartTableInfo, style } = this.props;
+    const { allWidth, scrollDisplay } = this.state;
     return (
-      <div className={styles.tableDiv} style={style}>
+      <div className={styles.tableDiv} style={style} ref={this.saveTableWrapper}>
         <Table
           {...this.state.table}
           columns={this.state.arr}
@@ -352,6 +425,15 @@ export default class ChartTable extends PureComponent {
           pageSize={chartTableInfo.pageSize}
           onChange={this.handlePaginationChange}
         />
+        {
+          scrollDisplay ?
+            <ScrollBar
+              allWidth={allWidth}
+              getScrollLeft={this.getScrollLeft}
+            />
+          :
+            <div />
+        }
       </div>
     );
   }
