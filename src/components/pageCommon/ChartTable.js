@@ -6,7 +6,6 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import ReactDOM from 'react-dom';
 import { autobind } from 'core-decorators';
 import { Table, Pagination, Popover } from 'antd';
 import _ from 'lodash';
@@ -83,7 +82,7 @@ export default class ChartTable extends PureComponent {
     this.changeTableData(nextProps);
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate() {
     console.warn('5555555555');
     this.onScrollFunc();
   }
@@ -98,16 +97,9 @@ export default class ChartTable extends PureComponent {
   }
 
   @autobind
-  saveTableWrapper(dom) {
-    this.currentTable = dom;
-  }
-
-
-  @autobind
   onScrollFunc() {
-    const { scrollDisplay } = this.state;
     const currentTable = this.currentTable;
-    const tableDiv = ReactDOM.findDOMNode(currentTable.querySelector('.ant-table'));
+    const tableDiv = currentTable.querySelector('.ant-table');
     // 窗口可视高度
     const docElemHeight = document.documentElement.clientHeight;
     // 元素高度
@@ -128,6 +120,15 @@ export default class ChartTable extends PureComponent {
       this.setState({ scrollDisplay: false });
     }
   }
+
+  @autobind
+  getScrollLeft(scrollLeftValue) {
+    console.log('scrollLeftValue', scrollLeftValue);
+    const currentTable = this.currentTable;
+    const tableBody = currentTable.querySelector('.ant-table-body');
+    tableBody.scrollLeft = scrollLeftValue;
+  }
+
   // 组合表格头部 排序 html
   @autobind
   getTitleHtml(item, unitFlag = true) {
@@ -398,11 +399,8 @@ export default class ChartTable extends PureComponent {
   }
 
   @autobind
-  getScrollLeft(scrollLeftValue) {
-    console.log('scrollLeftValue', scrollLeftValue);
-    const currentTable = this.currentTable;
-    const tableBody = ReactDOM.findDOMNode(currentTable.querySelector('.ant-table-body'));
-    tableBody.scrollLeft = scrollLeftValue;
+  saveTableWrapper(dom) {
+    this.currentTable = dom;
   }
 
   render() {

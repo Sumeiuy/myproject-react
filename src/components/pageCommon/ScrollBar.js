@@ -35,7 +35,6 @@ export default class ScrollBar extends PureComponent {
 
   @autobind
   onWindowResize() {
-    const { clientWidth } = this.state;
     this.setState({ clientWidth: document.querySelector('#exApp').clientWidth - 40 });
   }
 
@@ -52,7 +51,11 @@ export default class ScrollBar extends PureComponent {
     const { allWidth } = this.props;
     console.warn('allWidth', allWidth);
     return (
-      <div className={styles.reportScrollBar} style={{ width: clientWidth }} onScroll={this.handleScroll}>
+      <div
+        className={styles.reportScrollBar}
+        style={{ width: clientWidth }}
+        onScroll={this.handleScroll}
+      >
         <div className={styles.reportScrollBarInner} style={{ width: allWidth }} />
       </div>
     );
