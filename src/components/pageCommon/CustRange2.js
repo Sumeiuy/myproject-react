@@ -134,7 +134,6 @@ export default class CustRange extends PureComponent {
       value: changedValue,
     });
     collectData({
-      type: 'curstRangeSelect',
       text: custRangeName,
     });
     updateQueryState({
