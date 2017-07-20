@@ -67,13 +67,12 @@ export default class ChartTable extends PureComponent {
   }
 
   componentDidMount() {
-    console.warn('44444444');
-    this.onScrollFunc();
-    window.addEventListener('resize', this.onScrollFunc, false);
+    this.onScroll();
+    window.addEventListener('resize', this.onScroll, false);
     if (fsp) {
-      document.addEventListener('mousewheel', this.onScrollFunc, false);
+      document.addEventListener('mousewheel', this.onScroll, false);
     } else {
-      document.addEventListener('scroll', this.onScrollFunc, false);
+      document.addEventListener('scroll', this.onScroll, false);
     }
   }
 
@@ -83,21 +82,20 @@ export default class ChartTable extends PureComponent {
   }
 
   componentDidUpdate() {
-    console.warn('5555555555');
-    this.onScrollFunc();
+    this.onScroll();
   }
 
   componentWillUnmount() {
-    window.removeEventListener('resize', this.onScrollFunc);
+    window.removeEventListener('resize', this.onScroll);
     if (fsp) {
-      document.removeEventListener('mousewheel', this.onScrollFunc);
+      document.removeEventListener('mousewheel', this.onScroll);
     } else {
-      document.removeEventListener('scroll', this.onScrollFunc);
+      document.removeEventListener('scroll', this.onScroll);
     }
   }
 
   @autobind
-  onScrollFunc() {
+  onScroll() {
     const currentTable = this.currentTable;
     const tableDiv = currentTable.querySelector('.ant-table');
     // 窗口可视高度
@@ -121,8 +119,7 @@ export default class ChartTable extends PureComponent {
   }
 
   @autobind
-  getScrollLeft(scrollLeftValue) {
-    console.log('scrollLeftValue', scrollLeftValue);
+  setScrollLeft(scrollLeftValue) {
     const currentTable = this.currentTable;
     const tableBody = currentTable.querySelector('.ant-table-body');
     tableBody.scrollLeft = scrollLeftValue;
@@ -426,7 +423,7 @@ export default class ChartTable extends PureComponent {
           scrollDisplay ?
             <ScrollBar
               allWidth={allWidth}
-              getScrollLeft={this.getScrollLeft}
+              setScrollLeft={this.setScrollLeft}
             />
           :
             <div />

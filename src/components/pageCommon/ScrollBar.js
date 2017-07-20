@@ -12,7 +12,7 @@ export default class ScrollBar extends PureComponent {
 
   static propTypes = {
     allWidth: PropTypes.string.isRequired,
-    getScrollLeft: PropTypes.func.isRequired,
+    setScrollLeft: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -40,10 +40,10 @@ export default class ScrollBar extends PureComponent {
 
   @autobind
   handleScroll(e) {
-    const { getScrollLeft } = this.props;
+    const { setScrollLeft } = this.props;
     const scrollLeft = e.target.scrollLeft;
     // 滚动条向左滚动距离的传递函数
-    getScrollLeft(scrollLeft);
+    setScrollLeft(scrollLeft);
   }
 
   render() {
