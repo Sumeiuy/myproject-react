@@ -69,9 +69,8 @@ export default function uploadRequest(option) {
     let code = 0;
     if (!_.isEmpty(response)) {
       code = JSON.parse(response).code || 400;
-      code = parseInt(code, 10);
     }
-    if (xhr.status < 200 || xhr.status >= 300 || code > 0) {
+    if (xhr.status < 200 || xhr.status >= 300 || code !== '0') {
       return option.onError(getError(option, xhr), getBody(xhr));
     }
 

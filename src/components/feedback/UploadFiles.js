@@ -85,7 +85,8 @@ export default class UploadFiles extends PureComponent {
     if (status === 'done') {
       onCreate(response.resultData, 'ADD');
     } else if (status === 'error') {
-      message.error(`${file.name} 上传失败.`);
+      const msg = _.isEmpty(response.msg) ? '文件上传失败' : response.msg;
+      message.error(`${msg}.`);
     }
     return true;
   }
