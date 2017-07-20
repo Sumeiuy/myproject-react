@@ -285,14 +285,14 @@ export default class BoardHeader extends PureComponent {
           </div>
           <div className={toggleIconBtn}>
             <Icon
-              title={'表格视图'}
-              type={'tables'}
+              title="表格视图"
+              type="biaoge"
               className={toggleTableIconColor}
               onClick={this.handleTablesIconClick}
             />
             <Icon
-              title={'柱状视图'}
-              type={'zhuzhuangtu'}
+              title="柱状视图"
+              type="bar"
               className={toggleBarIconColor}
               onClick={this.handleBarIconClick}
             />
@@ -300,7 +300,7 @@ export default class BoardHeader extends PureComponent {
           <div className={styles.iconBtn}>
             <Icon
               title="导出到文件"
-              type="daochu"
+              type="export"
               onClick={this.handleDataExportClick}
             />
           </div>
