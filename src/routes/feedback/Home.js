@@ -24,9 +24,12 @@ import './home.less';
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const BROWSER = getEnv();
-const DEFAULTSIZE = 430;
+const DEFAULTSIZE = 530;
 let splitPane;
+let PaneLeft;
 let Pane;
+let sildebarHide;
+let sildebarShow;
 const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
 const mapStateToProps = state => ({
   list: state.feedback.list,
@@ -80,6 +83,7 @@ export default class FeedBack extends PureComponent {
     window.addEventListener('resize', this.onResizeChange, false);
     this.panMov(DEFAULTSIZE);
     this.initPane();
+    this.listenerLeftMenu();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -103,8 +107,6 @@ export default class FeedBack extends PureComponent {
 
   componentDidUpdate() {
     this.setDocumentScroll();
-    this.panMov(DEFAULTSIZE);
-    this.initPane();
     const { location: { pathname, query, query: { isResetPageNum } }, replace,
       list: { resultData = EMPTY_LIST } } = this.props;
     // 重置pageNum和pageSize
@@ -144,6 +146,7 @@ export default class FeedBack extends PureComponent {
 
     // 取消事件监听
     window.removeEventListener('resize', this.onResizeChange, false);
+    this.removeListenerLeftMenu();
   }
 
   @autobind
@@ -265,6 +268,7 @@ export default class FeedBack extends PureComponent {
   // 重新给pan2样式赋值
   panMov(size) {
     splitPane = ReactDOM.findDOMNode(document.querySelector('.SplitPane'));// eslint-disable-line
+    PaneLeft = ReactDOM.findDOMNode(document.querySelector('.Pane1'));// eslint-disable-line
     Pane = ReactDOM.findDOMNode(document.querySelector('.Pane2'));// eslint-disable-line
     if (BROWSER.$browser === 'Internet Explorer') {
       Pane.style.paddingLeft = `${size + 20}px`;
@@ -275,15 +279,45 @@ export default class FeedBack extends PureComponent {
   @autobind
   initPane() {
     const boxWidth = splitPane.getBoundingClientRect().width;
+    const paneaWidth = PaneLeft.getBoundingClientRect().width;
     const minsize = boxWidth * 0.3 || 200;
     const maxsize = boxWidth * 0.6 || 600;
     const { paneboxWidth } = this.state;
     if (paneboxWidth !== boxWidth) {
+      if (paneaWidth > maxsize) {
+        PaneLeft.style.width = `${maxsize}px`;
+        this.panMov(maxsize);
+      }
       this.setState({
         paneboxWidth: boxWidth,
         paneMaxSize: maxsize,
         paneMinSize: minsize,
       });
+      if (paneaWidth > boxWidth * 0.5) {
+        Pane.className = 'Pane vertical Pane2 allWidth';
+      } else {
+        Pane.className = 'Pane vertical Pane2';
+      }
+    }
+  }
+  /**
+   *  嵌入FSP监听左侧菜单栏状态变化
+   *  解决点击左侧菜单栏拖拽在达到最大值后列表宽度无法自动适应问题
+   */
+  listenerLeftMenu() {
+    sildebarHide = ReactDOM.findDOMNode(document.querySelector('#sidebar-hide-btn'));// eslint-disable-line
+    sildebarShow = ReactDOM.findDOMNode(document.querySelector('#sidebar-show-btn'));// eslint-disable-line
+    if (!_.isEmpty(sildebarShow) && !_.isEmpty(sildebarShow)) {
+      sildebarHide.addEventListener('click', this.initPane, false);
+      sildebarShow.addEventListener('click', this.initPane, false);
+    }
+  }
+
+  // 取消左侧菜单控制按键事件监听
+  removeListenerLeftMenu() {
+    if (!_.isEmpty(sildebarShow) && !_.isEmpty(sildebarShow)) {
+      sildebarHide.removeEventListener('click', this.initPane, false);
+      sildebarShow.removeEventListener('click', this.initPane, false);
     }
   }
 
