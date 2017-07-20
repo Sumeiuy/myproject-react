@@ -287,6 +287,7 @@ export default class ReportHome extends PureComponent {
   @autobind
   updateQueryState(state) {
     // 切换Duration和Orig时候，需要将数据全部恢复到默认值
+    console.log('up', state);
     this.setState({
       ...state,
       showCharts: {},
@@ -332,7 +333,7 @@ export default class ReportHome extends PureComponent {
     } = this.props;
     // 因为新的数据查询参数全部存放在了state里面
     const { showCharts, classifyScope, classifyOrder } = this.state;
-    const { boardId, custRangeLevel, scope, boardType } = this.state;
+    const { boardId, custRangeLevel, scope, boardType, orgId } = this.state;
     const level = custRangeLevel || (custRange[0] && custRange[0].level);
     const newscope = Number(scope) || (custRange[0] && Number(custRange[0].level) + 1);
     // 用来判断是否投顾绩效,
@@ -352,6 +353,7 @@ export default class ReportHome extends PureComponent {
           preView={preView}
           reportName={reportName}
           updateQueryState={this.updateQueryState}
+          orgId={orgId}
           collectBoardSelect={collectBoardSelect}
           collectCustRange={collectCustRange}
           collectDurationSelect={collectDurationSelect}
@@ -394,6 +396,8 @@ export default class ReportHome extends PureComponent {
                     boardTitle={name}
                     showScopeOrder={showScopeOrder}
                     selfRequestData={this.selfRequestData}
+                    custRange={custRange}
+                    updateQueryState={this.updateQueryState}
                     collectScopeSelect={collectScopeSelect}
                     collectOrderTypeSelect={collectOrderTypeSelect}
                   />
