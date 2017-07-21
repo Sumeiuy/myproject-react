@@ -7,7 +7,7 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
-
+import IndicatorOverview from '../../components/history/IndicatorOverview';
 import HisDivider from '../../components/history/HisDivider';
 import styles from './Home.less';
 
@@ -22,6 +22,7 @@ const fectchDataFunction = (globalLoading, type) => query => ({
 });
 
 const mapStateToProps = state => ({
+  historyCore: state.history.historyCore,
   custRange: state.report.custRange,
   visibleBoards: state.report.visibleBoards,
   globalLoading: state.activity.global,
@@ -45,15 +46,25 @@ export default class HistoryHome extends PureComponent {
     custRange: PropTypes.array,
     visibleBoards: PropTypes.array,
     globalLoading: PropTypes.bool,
+    historyCore: PropTypes.array,
   }
 
   static defaultProps = {
     globalLoading: false,
     custRange: [],
     visibleBoards: [],
+    historyCore: [],
+  }
+
+  componentWillMount() {
+    const { location: { query }, getAllInfo } = this.props;
+    getAllInfo({
+      ...query,
+    });
   }
 
   render() {
+    const { historyCore } = this.props;
     return (
       <div className="pageHistory">
         <div className={styles.historyhd}>
@@ -63,6 +74,9 @@ export default class HistoryHome extends PureComponent {
           <div className={styles.analyticalCaption}>核心指标</div>
           <div className={styles.indicatorOverview}>
             {/* 指标概览区域 */}
+            <IndicatorOverview
+              data={historyCore}
+            />
           </div>
           <div className={styles.indicatorAnalyse}>
             <div className={styles.caption}>核心指标分析-总交易量</div>
