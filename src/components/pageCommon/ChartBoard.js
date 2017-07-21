@@ -18,6 +18,8 @@ export default class ChartBoard extends PureComponent {
     location: PropTypes.object,
     style: PropTypes.object,
     chartData: PropTypes.array,
+    custRange: PropTypes.array.isRequired,
+    updateQueryState: PropTypes.func.isRequired,
     // loading: PropTypes.bool.isRequired,
   }
 
@@ -29,7 +31,7 @@ export default class ChartBoard extends PureComponent {
   }
 
   render() {
-    const { chartData, location, level, style, scope } = this.props;
+    const { chartData, location, level, style, scope, custRange, updateQueryState } = this.props;
     return (
       <div className={styles.board} style={style}>
         {/* <Loading loading={loading} /> */}
@@ -58,6 +60,8 @@ export default class ChartBoard extends PureComponent {
                     location={location}
                     level={location.query.level || level}
                     scope={scope}
+                    custRange={custRange}
+                    updateQueryState={updateQueryState}
                   />
                 </Col>
               );

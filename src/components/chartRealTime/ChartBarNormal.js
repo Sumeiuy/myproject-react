@@ -36,6 +36,16 @@ const CI = ZHUNICODE.CI;
 const YUAN = ZHUNICODE.YUAN;
 const GE = ZHUNICODE.GE;
 
+const arrayTransform = (arr) => {
+  let tmpArr = arr.slice();
+  arr.forEach((v) => {
+    if (v.children) {
+      tmpArr = [...tmpArr, ...v.children];
+    }
+  });
+  return tmpArr;
+};
+
 export default class ChartBarNormal extends PureComponent {
 
   static propTypes = {
@@ -44,12 +54,36 @@ export default class ChartBarNormal extends PureComponent {
     scope: PropTypes.number.isRequired,
     chartData: PropTypes.object,
     iconType: PropTypes.string,
+    custRange: PropTypes.array,
+    updateQueryState: PropTypes.func,
   }
 
   static defaultProps = {
     location: {},
     chartData: {},
     iconType: 'zichan',
+    updateQueryState: () => { },
+    custRange: [],
+  }
+
+  componentDidMount() {
+    this.custRange = arrayTransform(this.props.custRange);
+  }
+
+  @autobind
+  onReady(instance) {
+    instance.on('click', (arg) => {
+      this.custRange.forEach((item) => {
+        if (arg.name === item.name) {
+          this.props.updateQueryState({
+            orgId: item.id,
+            custRangeLevel: item.level,
+            level: item.level,
+            scope: Number(item.level) + 1,
+          });
+        }
+      });
+    });
   }
 
   @autobind
@@ -352,6 +386,7 @@ export default class ChartBarNormal extends PureComponent {
             ?
             (
               <IECharts
+                onReady={this.onReady}
                 option={options}
                 resizable
                 style={{
