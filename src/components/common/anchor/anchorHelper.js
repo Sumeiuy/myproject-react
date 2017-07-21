@@ -52,7 +52,14 @@ export function scrollTo(href, offsetTop = 0, target = getDefaultTarget, callbac
   const frameFunc = () => {
     const timestamp = Date.now();
     const time = timestamp - startTime;
-    window.scrollTo(window.pageXOffset, easeInOutCubic(time, scrollTop, targetScrollTop, 450));
+    // 搬了antd/Anchor判断是否在fsp中，因为fsp是自己做的滚动条
+    const fsp = document.querySelector('#workspace-content>.wrapper');
+    if (fsp) {
+      fsp.scrollTop = easeInOutCubic(time, scrollTop, targetScrollTop, 450);
+    } else {
+      window.scrollTo(window.pageXOffset, easeInOutCubic(time, scrollTop, targetScrollTop, 450));
+    }
+    
     if (time < 450) {
       reqAnimFrame(frameFunc);
     } else {
@@ -60,7 +67,7 @@ export function scrollTo(href, offsetTop = 0, target = getDefaultTarget, callbac
     }
   };
   reqAnimFrame(frameFunc);
-  // 搬了antd/Anchor就是为了去掉这一行
+  // 搬了antd/Anchor去掉这一行
   // history.pushState(null, '', href);
 }
 
