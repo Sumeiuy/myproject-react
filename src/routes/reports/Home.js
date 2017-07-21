@@ -15,6 +15,7 @@ import PerformanceItem from '../../components/pageCommon/PerformanceItem';
 import PreformanceChartBoard from '../../components/pageCommon/PerformanceChartBoard';
 import PageHeader from '../../components/pageCommon/PageHeader';
 import PageAnchor from '../../components/pageCommon/PageAnchor';
+
 import styles from './Home.less';
 
 const effects = {
