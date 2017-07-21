@@ -196,6 +196,10 @@ export default class BoardSelectTree extends PureComponent {
     };
   }
 
+  componentDidMount() {
+    this.registerScrollEvent();
+  }
+
   // 展开子选项的事件
   @autobind
   onExpand(expandedKeys) {
@@ -259,10 +263,7 @@ export default class BoardSelectTree extends PureComponent {
       allParentNodes,
       checkedKeys: newCheckedKeys,
       selfCheckedNodes: newSelfCheckedNodes,
-    }, () => {
-      // 返回数据
-      this.getStateTree();
-    });
+    }, this.transferTreeState);
   }
 
   // 拖拽事件
@@ -283,15 +284,11 @@ export default class BoardSelectTree extends PureComponent {
       });
       this.setState({
         allParentNodes,
-      }, () => {
-        this.getStateTree();
-      });
+      }, this.transferTreeState);
     } else {
       this.setState({
         selfCheckedNodes: data,
-      }, () => {
-        this.getStateTree();
-      });
+      }, this.transferTreeState);
     }
   }
 
@@ -303,7 +300,7 @@ export default class BoardSelectTree extends PureComponent {
 
   // 获取出最终选择树的值，传递给外层方法
   @autobind
-  getStateTree() {
+  transferTreeState() {
     const { selfCheckedNodes, isSummury, allParentNodes } = this.state;
     if (isSummury) {
       const summuryArr = selfCheckedNodes.map(item => item.key);
@@ -395,20 +392,14 @@ export default class BoardSelectTree extends PureComponent {
         checkedKeys: obj.keyArr,
         checkedOrSelected: obj.active,
         expandedChildren: newExpandedChildren || expandedChildren,
-      }, () => {
-        // 返回数据
-        this.getStateTree();
-      });
+      }, this.transferTreeState);
     } else {
       this.setState({
         nowSelectNode,
         selectedKeys: obj.keyArr,
         checkedOrSelected: obj.active,
         expandedChildren: newExpandedChildren || expandedChildren,
-      }, () => {
-        // 返回数据
-        this.getStateTree();
-      });
+      }, this.transferTreeState);
     }
   }
 
@@ -424,8 +415,6 @@ export default class BoardSelectTree extends PureComponent {
   @autobind
   registerScrollEvent() {
     const scrollBd = this.treeMainLeftChild;
-    // const scrollInstance = new Scroll(scrollBd);
-    // return scrollInstance;
     scrollBd.addEventListener('mousewheel', this.stopSpread, false);
     scrollBd.addEventListener('DOMMouseScroll', this.stopSpread, false);
   }

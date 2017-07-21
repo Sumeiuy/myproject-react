@@ -3,9 +3,14 @@
  * @author LiuJianShu
  */
 import React, { PropTypes, PureComponent } from 'react';
-import { Row, Col } from 'antd';
+import { Row, Col, Pagination } from 'antd';
+import { autobind } from 'core-decorators';
+import _ from 'lodash';
+
 import Item from './item';
 import styles from './PerformanceItem.less';
+
+const pageSize = 8;
 
 export default class PerformanceItem extends PureComponent {
 
@@ -17,36 +22,56 @@ export default class PerformanceItem extends PureComponent {
     data: [],
   }
 
-  render() {
+  constructor(props) {
+    super(props);
+    const { data } = props;
+    console.warn('data', data);
+    // 取出第一页的数据
+    const firstPage = _.slice(data, 0, pageSize);
+    this.state = {
+      totalLength: data.length,
+      performanceData: firstPage,
+    };
+  }
+
+  @autobind
+  onChange(pageNumber) {
     const { data } = this.props;
-    // 数据的长度
-    const length = data.length;
-    // 每行项目个数
-    const num = 8;
-    // 数据的行数
-    const lines = Math.ceil(length / num);
-    // 一行时无边框
-    const borderName = lines === 1 ? styles.noBorder : '';
-    // 最后一行开始的索引
-    const lastLineFirst = ((lines - 1) * num) - 1;
+    // 计算出开始截取的索引位置
+    const beginIndex = (pageNumber - 1) * pageSize;
+    // 计算出结束截取的索引位置
+    const endIndex = pageNumber * pageSize;
+    // 取出下一页的数据
+    const newPage = _.slice(data, beginIndex, endIndex);
+    // 更新 state
+    this.setState({
+      performanceData: newPage,
+    });
+  }
+
+  render() {
+    const { performanceData, totalLength } = this.state;
+    console.warn();
     return (
       <div>
         <div className={styles.titleText}>总量指标</div>
-        <div className={`${borderName} ${styles.items}`}>
+        <div className={styles.items}>
           <Row>
+            <Pagination
+              simple
+              defaultCurrent={1}
+              defaultPageSize={pageSize}
+              total={totalLength}
+              onChange={this.onChange}
+            />
             {
-              data.map((item, index) => {
-                const uniqueKey = `investIndex${index}`;
-                // 索引大于最后一行开始的索引 则 无边框，否则有边框
-                const itemBorder = index > lastLineFirst ? styles.noBorder : '';
-                return (
-                  <a className={styles.hover} key={uniqueKey}>
-                    <Col span={3} className={`${itemBorder} ${styles.itemWrap}`}>
-                      <Item data={item} />
-                    </Col>
-                  </a>
-                );
-              })
+              performanceData.map(item => (
+                <a className={styles.hover} key={`${item.key}Key`}>
+                  <Col span={3} className={styles.itemWrap}>
+                    <Item data={item} />
+                  </Col>
+                </a>
+              ))
             }
           </Row>
         </div>

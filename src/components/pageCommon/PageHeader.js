@@ -5,7 +5,7 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import { Row } from 'antd';
+import { Row, Affix } from 'antd';
 
 import CustRange from './CustRange2';
 import BoardSelect from './BoardSelect';
@@ -47,49 +47,51 @@ export default class PageHeader extends PureComponent {
     } = this.props;
 
     return (
-      <div className="reportHeader">
-        <Row type="flex" justify="start" align="middle">
-          <div className="reportName">
-            {/* 需要针对预览页面做调整 */}
-            {
-              preView
-              ?
-              (
-                <div className="preView">
-                  {reportName}
-                </div>
-              )
-              :
-              (
-                <BoardSelect
-                  location={location}
-                  push={push}
-                  replace={replace}
-                  visibleBoards={visibleBoards}
-                  collectData={collectData}
-                />
-              )
-            }
-          </div>
-          <div className={styles.reportHeaderRight}>
-            <DurationSelect
-              location={location}
-              replace={replace}
-              updateQueryState={updateQueryState}
-              collectData={collectData}
-            />
-            <div className={styles.vSplit} />
-            {/* 营业地址选择项 */}
-            <CustRange
-              custRange={custRange}
-              location={location}
-              replace={replace}
-              updateQueryState={updateQueryState}
-              collectData={collectData}
-            />
-          </div>
-        </Row>
-      </div>
+      <Affix>
+        <div className="reportHeader">
+          <Row type="flex" justify="start" align="middle">
+            <div className="reportName">
+              {/* 需要针对预览页面做调整 */}
+              {
+                preView
+                ?
+                (
+                  <div className="preView">
+                    {reportName}
+                  </div>
+                )
+                :
+                (
+                  <BoardSelect
+                    location={location}
+                    push={push}
+                    replace={replace}
+                    visibleBoards={visibleBoards}
+                    collectData={collectData}
+                  />
+                )
+              }
+            </div>
+            <div className={styles.reportHeaderRight}>
+              <DurationSelect
+                location={location}
+                replace={replace}
+                updateQueryState={updateQueryState}
+                collectData={collectData}
+              />
+              <div className={styles.vSplit} />
+              {/* 营业地址选择项 */}
+              <CustRange
+                custRange={custRange}
+                location={location}
+                replace={replace}
+                updateQueryState={updateQueryState}
+                collectData={collectData}
+              />
+            </div>
+          </Row>
+        </div>
+      </Affix>
     );
   }
 }

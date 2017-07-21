@@ -2,15 +2,22 @@
   padding:0 18px;
   height: 40px;
   line-height: 40px;
-  color: #fff;
+  color: #000;
   font-size: 15px;
-  font-weight: 100;
-  background-color: #f78e3d;
+  font-weight: bold;
+  // background-color: #f78e3d;
 }
 .items {
-  background-color: #fff;
+  background: url('../../../static/images/bg_summury.jpg') no-repeat center center;
+  background-size: cover;
+  margin-bottom: 25px;
+  :global {
+    .ant-pagination-simple .ant-pagination-simple-pager {
+      display: none;
+    }
+  }
 }
-.itemWrap:nth-child(8n) div{
+.itemWrap:nth-child(8n) div .contentBorder{
   border-right: none;
 }
 .noBorder{

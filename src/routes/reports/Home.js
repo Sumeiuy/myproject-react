@@ -330,11 +330,9 @@ export default class ReportHome extends PureComponent {
           collectData={collectData}
         />
         <div className={styles.reportBody}>
-          <div className={styles.reportPart}>
-            <PerformanceItem
-              data={performance}
-            />
-          </div>
+          <PerformanceItem
+            data={performance}
+          />
           {
             chartInfo.map((item) => {
               const { key, name, data } = item;
