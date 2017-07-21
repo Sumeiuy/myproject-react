@@ -4,8 +4,10 @@
  * @author hongguangqing
  */
 import React, { PureComponent, PropTypes } from 'react';
+import { BackTop } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import Icon from '../common/Icon';
 
 import Anchor from '../../components/common/anchor';
 import { reportAnchorOptions } from '../../config';
@@ -34,11 +36,16 @@ export default class PageAnchor extends PureComponent {
   }
 
   /**
-   * 点击锚点滚动到对应的位置
+   * 点击返回顶部图标滚动顶部
   */
   @autobind
-  anchorScrollFunc(e) {
-    e.preventDefault();
+  handleGotoTop() {
+    const fsp = document.querySelector('#workspace-content>.wrapper');
+    if (fsp) {
+      fsp.scrollTop = 0;
+    } else {
+      window.scrollTo(0, 0);
+    }
   }
 
   render() {
@@ -48,20 +55,21 @@ export default class PageAnchor extends PureComponent {
       <div>
         {
           charInfoLength >= 3 ?
-            <Anchor className={styles.pageAnchor} offsetTop={65} >
+            <Anchor className={styles.pageAnchor} offsetTop={80} >
               {
-              chartInfo.map((item) => {
-                const { key } = item;
-                const href = `#${key}`;
-                return (
-                  <Link
-                    key={key}
-                    href={href}
-                    title={this.changeDisplay(key, reportAnchorOptions)}
-                  />
-                );
-              })
-            }
+                chartInfo.map((item) => {
+                  const { key } = item;
+                  const href = `#${key}`;
+                  return (
+                    <Link
+                      key={key}
+                      href={href}
+                      title={this.changeDisplay(key, reportAnchorOptions)}
+                    />
+                  );
+                })
+              }
+              <Link><BackTop visibilityHeight={0}><div><Icon type="fanhuidingbu" /></div></BackTop></Link>
             </Anchor>
           :
             <div />
