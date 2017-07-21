@@ -6,12 +6,13 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import styles from './scrollBar.less';
+import { getCssStyle } from '../../utils/helper';
 
 const clientWidthValue = document.querySelector('#exApp').clientWidth - 40;
 export default class ScrollBar extends PureComponent {
 
   static propTypes = {
-    allWidth: PropTypes.string.isRequired,
+    allWidth: PropTypes.number.isRequired,
     setScrollLeft: PropTypes.func.isRequired,
   }
 
@@ -45,16 +46,19 @@ export default class ScrollBar extends PureComponent {
     // 滚动条向左滚动距离的传递函数
     setScrollLeft(scrollLeft);
   }
-
   render() {
     const { clientWidth } = this.state;
     const { allWidth } = this.props;
-    console.warn('allWidth', allWidth);
+    // 首先判断wrap存在与否即是否在fsp中
+    const fsp = document.getElementById('workspace-content');
     return (
       <div
         className={styles.reportScrollBar}
-        style={{ width: clientWidth }}
         onScroll={this.handleScroll}
+        style={{
+          width: clientWidth,
+          left: fsp ? getCssStyle(fsp, 'left') : '20',
+        }}
       >
         <div className={styles.reportScrollBarInner} style={{ width: allWidth }} />
       </div>
