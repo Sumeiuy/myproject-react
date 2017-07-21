@@ -163,6 +163,7 @@ export default class SimpleEditor extends PureComponent {
   @autobind
   exitEditState() {
     const { controller, editorName, form } = this.props;
+    this.setTooltipVisible(false);
     form.resetFields();
     controller(editorName, false);
   }

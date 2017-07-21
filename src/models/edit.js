@@ -151,8 +151,7 @@ export default {
           message: '发布开始',
         },
       });
-      const publishResult = yield call(api.updateBoard, payload);
-      console.log('publishBoard>Result', publishResult);
+      yield call(api.updateBoard, payload);
       yield put({
         type: 'operateBoardState',
         payload: {

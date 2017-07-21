@@ -80,7 +80,7 @@ function padFixedPeople(people, method) {
 const chartData = {
   // 取出orgModel中分公司、营业部、的名称数组
   // 用于Y轴刻度值，或者tooltip提示信息
-  getLevelName(orgModel, key) {
+  filterOrgModelData(orgModel, key) {
     const yAxisLabels = [];
     if (orgModel) {
       orgModel.forEach((item) => {
