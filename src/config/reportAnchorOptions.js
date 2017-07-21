@@ -19,7 +19,7 @@ const reportAnchorOptions = [
   },
   {
     key: 'productDetail',
-    value: '产品',
+    value: '销售',
   },
   {
     key: 'newBusinessDetail',
@@ -28,6 +28,10 @@ const reportAnchorOptions = [
   {
     key: 'pureIncomeDetail',
     value: '收入',
+  },
+  {
+    key: 'hignCustServiceDetail',
+    value: '服务',
   },
 ];
 
