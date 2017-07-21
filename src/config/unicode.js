@@ -5,6 +5,7 @@ const ZHUNICODE = {
   PERCENT: '%',
   PERMILLAGE: '\u2030',
   CI: '\u6b21',
+  GE: '\u4e2a',
 };
 
 export default ZHUNICODE;

@@ -45,6 +45,10 @@ export default class ChartBoard extends PureComponent {
               if (!indiModel) {
                 return null;
               }
+              if (indiModel.key === 'gjzServiceCompPercent') {
+                // TODO 此处线针对高净值客户服务覆盖率chart做隐藏处理
+                return null;
+              }
               return (
                 <Col
                   span={8}

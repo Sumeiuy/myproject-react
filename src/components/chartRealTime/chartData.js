@@ -7,6 +7,8 @@
 import moment from 'moment';
 import _ from 'lodash';
 
+import { stackBarColors } from './ChartGeneralOptions';
+
 function convert2number(v) {
   if (v === null || v === 'null') {
     return '--';
@@ -125,7 +127,10 @@ const chartData = {
       // 取出stackSeries数组
       for (let i = 0; i < stackLen; i++) {
         const name = orgModel[0][key][i].name;
-        stackLegend.push(name);
+        stackLegend.push({
+          legendName: name,
+          backgroundColor: stackBarColors[i],
+        });
         const stackObj = {
           label: {
             normal: {

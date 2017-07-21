@@ -108,6 +108,26 @@ const FixNumber = {
     };
   },
 
+  // 针对任务完成数进行处理
+  toFixedGE(series) {
+    let newUnit = '个';
+    const tempSeries = series.map(n => Math.abs(n));
+    let newSeries = series;
+    const max = Math.max(...tempSeries);
+    if (max >= 5000) {
+      newUnit = '万个';
+      newSeries = series.map(item => FixNumber.toFixedDecimal(item / 10000));
+    } else {
+      newUnit = '个';
+      newSeries = series.map(item => FixNumber.toFixedDecimal(item));
+    }
+
+    return {
+      newUnit,
+      newSeries,
+    };
+  },
+
   // 针对百分比的数字来确认图表坐标轴的最大和最小值
   getMaxAndMinPercent(series) {
     let max = Math.max(...series);
@@ -184,6 +204,20 @@ const FixNumber = {
     min = padFixedCust(min, 'floor');
     if ((max === 0 && min === 0) || (max < 1 && min < 1)) {
       max = 1;
+    }
+    return { max, min };
+  },
+
+  // 针对任务完成数的最大和最小值
+  getMaxAndMinGE(series) {
+    let max = Math.max(...series);
+    let min = Math.min(...series);
+    // 次数肯定都是正数
+    max = padFixedCust(max, 'ceil');
+    min = padFixedCust(min, 'floor');
+    if ((max === 0 && min === 0) || (max < 10 && min < 10)) {
+      max = 10;
+      min = 0;
     }
     return { max, min };
   },

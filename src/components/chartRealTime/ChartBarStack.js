@@ -113,9 +113,18 @@ export default class ChartBarStack extends PureComponent {
     };
   }
 
+  @autobind
+  handleLegendClick(e) {
+    const current = e.currentTarget;
+    const legend = current.dataset.legend;
+    const legendIcon = current.querySelector(`.${styles.legendIcon}`);
+    console.warn(legend);
+    console.warn(legendIcon);
+  }
+
   render() {
     const { scope, chartData: { indiModel: { name, key }, orgModel = [] } } = this.props;
-    // 获取本图表的单位,
+    // 获取本图表的单位,以及图表Icon
     let { chartData: { indiModel: { unit } } } = this.props;
     const IndexIcon = getIcon(unit);
     // 查询当前需要的Y轴字段名称
@@ -338,17 +347,22 @@ export default class ChartBarStack extends PureComponent {
         <div className={styles.chartLegend} ref={this.setLegendRef}>
           {
             stackLegend.map((item, index) => {
-              const backgroundColor = stackBarColors[index];
+              const { legendName, backgroundColor } = item;
               const uniqueKey = `${key}-legend-${index}`;
               return (
-                <div className={styles.oneLegend} key={uniqueKey}>
+                <div
+                  className={styles.oneLegend}
+                  key={uniqueKey}
+                  data-legend={index}
+                  onClick={this.handleLegendClick}
+                >
                   <div
                     className={styles.legendIcon}
                     style={{
                       backgroundColor,
                     }}
                   />
-                  {item}
+                  {legendName}
                 </div>
               );
             })

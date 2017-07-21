@@ -15,9 +15,11 @@ import {
   getMaxAndMinMoney,
   getMaxAndMinCust,
   getMaxAndMinCi,
+  getMaxAndMinGE,
   toFixedMoney,
   toFixedCust,
   toFixedCI,
+  toFixedGE,
 } from './FixNumber';
 import IECharts from '../IECharts';
 import { iconTypeMap, ZHUNICODE } from '../../config';
@@ -32,6 +34,7 @@ const REN = ZHUNICODE.REN;
 const HU = ZHUNICODE.HU;
 const CI = ZHUNICODE.CI;
 const YUAN = ZHUNICODE.YUAN;
+const GE = ZHUNICODE.GE;
 
 const arrayTransform = (arr) => {
   let tmpArr = arr.slice();
@@ -152,16 +155,18 @@ export default class ChartBarNormal extends PureComponent {
   }
 
   render() {
+    // 取出需要处理的数据
     const { scope, chartData: { indiModel: { name }, orgModel = [] } } = this.props;
     let { chartData: { indiModel: { unit } } } = this.props;
+    // 获取指标ICON
     const IndexIcon = getIcon(unit);
     const levelAndScope = Number(scope);
+    // 得到y轴在数据结构中的key名
     const levelName = `level${levelAndScope}Name`;
     // 分公司名称数组
     const levelCompanyArr = this.getChartData(orgModel, 'level2Name', 'yAxis');
     // 营业部
     const levelStoreArr = this.getChartData(orgModel, 'level3Name', 'yAxis');
-
     // 此处为y轴刻度值
     const yAxisLabels = this.getChartData(orgModel, levelName, 'yAxis');
     // 取出所有的value,并将value转化成数字
@@ -194,6 +199,10 @@ export default class ChartBarNormal extends PureComponent {
       const tempSeries = toFixedCI(seriesData);
       seriesData = tempSeries.newSeries;
       unit = tempSeries.newUnit;
+    } else if (unit === GE) {
+      const tempSeries = toFixedGE(seriesData);
+      seriesData = tempSeries.newSeries;
+      unit = tempSeries.newUnit;
     }
     const seriesDataLen = seriesData.length;
     // 数据中最大的值
@@ -221,6 +230,10 @@ export default class ChartBarNormal extends PureComponent {
       const maxAndMinPeople = getMaxAndMinCi(seriesData);
       gridXAxisMax = maxAndMinPeople.max;
       gridXaxisMin = maxAndMinPeople.min;
+    } else if (unit === GE) {
+      const maxAndMinGE = getMaxAndMinGE(seriesData);
+      gridXAxisMax = maxAndMinGE.max;
+      gridXaxisMin = maxAndMinGE.min;
     }
     // 计算出所有值的中间值
     const medianValue = {};
