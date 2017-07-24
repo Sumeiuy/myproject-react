@@ -341,6 +341,7 @@ export default class ReportHome extends PureComponent {
     if (preView) {
       showScopeOrder = boardType === 'TYPE_TGJX';
     }
+    showScopeOrder = true;
 
     return (
       <div className="page-invest content-inner">

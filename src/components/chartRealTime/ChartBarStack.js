@@ -49,8 +49,48 @@ export default class ChartBarStack extends PureComponent {
     super(props);
     // 堆数据进行初步的分析
     // 初始化的时候，可能不存在值
-    const { scope, chartData: { indiModel: { name, key }, orgModel = [] } } = this.props;
-    let { chartData: { indiModel: { unit } } } = this.props;
+    this.initialData(props, true);
+  }
+
+  componentDidMount() {
+    // 此处需要对legend进行宽高进行监测
+    // 先进行初始化的处理
+    this.handleResize();
+    this.registerResizeListener();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { scope: preScope, chartData: preData } = this.props;
+    const { scope, chartData } = nextProps;
+    if (!_.isEqual(scope, preScope) || !_.isEqual(chartData, preData)) {
+      this.initialData(nextProps);
+    }
+  }
+
+  componentWillUnmount() {
+    const { resize } = this.state;
+    if (resize && resize.uninstall) {
+      const dom = this.legendDom;
+      resize.uninstall(dom);
+    }
+  }
+
+  @autobind
+  setLegendRef(input) {
+    this.legendDom = input;
+  }
+
+  @autobind
+  setHeight(wrapperH) {
+    this.setState({
+      wrapperH,
+    });
+  }
+
+  @autobind
+  initialData(props, flag) {
+    const { scope, chartData: { indiModel: { name, key }, orgModel = [] } } = props;
+    let { chartData: { indiModel: { unit } } } = props;
     const iconType = getIcon(unit);
     // 查询当前需要的Y轴字段名称
     const levelAndScope = Number(scope);
@@ -91,57 +131,48 @@ export default class ChartBarStack extends PureComponent {
 
     // 初始化所有的数据，并存入state
     // 此为后面需要修改echarts的series做准备
-    this.state = {
-      wrapperH: 0,
-      chartName: name,
-      iconType,
-      unit,
-      key,
-      levelAndScope,
-      levelCompanyArr,
-      levelStoreArr,
-      yAxisLabels,
-      stackLegend,
-      stackSeries, // Echarts图表绘制需要的数据
-      originalStackSeries: _.cloneDeep(stackSeries), // 保存计算后的原始数据,必须深度拷贝
-      totals,
-      grid,
-      legendState: {},
-    };
-  }
-
-  componentDidMount() {
-    // 此处需要对legend进行宽高进行监测
-    // 先进行初始化的处理
-    this.handleResize();
-    this.registerResizeListener();
-  }
-
-  componentWillUnmount() {
-    const { resize } = this.state;
-    if (resize && resize.uninstall) {
-      const dom = this.legendDom;
-      resize.uninstall(dom);
+    if (flag) {
+      this.state = {
+        wrapperH: 0,
+        chartName: name,
+        iconType,
+        unit,
+        key,
+        levelAndScope,
+        levelCompanyArr,
+        levelStoreArr,
+        yAxisLabels,
+        stackLegend,
+        stackSeries, // Echarts图表绘制需要的数据
+        originalStackSeries: _.cloneDeep(stackSeries), // 保存计算后的原始数据,必须深度拷贝
+        totals,
+        grid,
+        legendState: {},
+      };
+    } else {
+      this.setState({
+        iconType,
+        unit,
+        key,
+        levelAndScope,
+        levelCompanyArr,
+        levelStoreArr,
+        yAxisLabels,
+        stackLegend,
+        stackSeries, // Echarts图表绘制需要的数据
+        originalStackSeries: _.cloneDeep(stackSeries), // 保存计算后的原始数据,必须深度拷贝
+        totals,
+        grid,
+        legendState: {},
+      });
     }
-  }
-
-  @autobind
-  setLegendRef(input) {
-    this.legendDom = input;
-  }
-
-  @autobind
-  setHeight(wrapperH) {
-    this.setState({
-      wrapperH,
-    });
   }
 
   @autobind
   handleResize() {
     const legend = this.legendDom;
     const legendH = legend.clientHeight;
-    const echartH = 370 - 45 - legendH - 5;
+    const echartH = 380 - 45 - legendH - 5;
     this.setHeight(echartH);
   }
 
@@ -189,74 +220,6 @@ export default class ChartBarStack extends PureComponent {
       gridXaxisMin,
       maxDataShadow,
       minDataShadow,
-    };
-  }
-
-  @autobind
-  createTooltipFormatterFunc(general) {
-    const { levelAndScope, levelCompanyArr, levelStoreArr, stackLegend, unit } = general;
-    return (params) => {
-      // 堆叠柱状图上因为有多系列的值
-      // 所有此处需要做处理
-      // 需要对总计进行新的处理
-      const series = params;
-      const tips = [];
-      const total = [];
-      // const total = statckTotal;
-      // 判断有没有讲y轴的名称放入到tooltip中
-      let hasPushedAxis = false;
-      // 因为第一个series是阴影
-      series.forEach((item, index) => {
-        if (index > 1) {
-          const axisValue = item.axisValue;
-          const seriesName = item.seriesName;
-          const dataIndex = item.dataIndex;
-          let value = item.value;
-          if (axisValue === '--') {
-            // 无数据的情况
-            value = '--';
-          }
-          if (axisValue !== '--') {
-            total.push(value);
-          }
-          if (!hasPushedAxis) {
-            hasPushedAxis = true;
-            // 针对不同的机构级别需要显示不同的分类
-            if (levelAndScope === 3 && axisValue !== '--') {
-              // 营业部，需要显示分公司名称
-              tips.push(`${levelCompanyArr[dataIndex]}-`);
-            }
-            if (levelAndScope === 4 && axisValue !== '--') {
-              // 投顾，需要显示分公司，营业部名称
-              tips.push(`${levelCompanyArr[dataIndex]} - ${levelStoreArr[dataIndex]}<br />`);
-            }
-            tips.push(`${axisValue}<br/>`);
-          }
-          // 此处需要将取消掉的Legend的tooltip隐藏掉
-          const legend = index - 2;
-          const legendStateKey = `legend${legend}`;
-          const { legendState } = this.state;
-          if (!legendState[legendStateKey]) {
-            tips.push(`<span class="echartTooltip" style="background-color:${stackLegend[legend].backgroundColor}"></span>`);
-            tips.push(`${seriesName} : <span style="color:#ffd92a; font-size:14px;">${value}</span>`);
-            tips.push(`${unit}<br/>`);
-          }
-          // // 判断是否到最后一个了
-          // if ((series.length - 1) === index) {
-          //   // 如果到了最后一个
-          //   tips.push(`共 <span style="color:#ffd92a; font-size:14px;">
-          //   ${total[dataIndex]}</span> ${unit}`);
-          // }
-        }
-      });
-      // 此处为新增对共计数据的处理，因为他们要求直接使用提供的值
-      if (total.length > 0) {
-        const totalV = Number.parseFloat(_.sum(total).toFixed(2));
-        tips.push(`共 <span style="color:#ffd92a; font-size:14px;">${totalV}</span> ${unit}`);
-      } else {
-        tips.push(`共 <span style="color:#ffd92a; font-size:14px;">--</span> ${unit}`);
-      }
-      return tips.join('');
     };
   }
 
@@ -346,20 +309,111 @@ export default class ChartBarStack extends PureComponent {
       legendState,
     } = this.state;
 
-    const formatter = this.createTooltipFormatterFunc({
-      levelAndScope,
-      levelCompanyArr,
-      levelStoreArr,
-      stackLegend,
-      unit,
-    });
-
     // eCharts的配置项
     const options = {
       color: [...stackBarColors],
       tooltip: {
         ...stackTooltip,
-        formatter,
+        formatter(params) {
+          // 堆叠柱状图上因为有多系列的值
+          // 所有此处需要做处理
+          // 需要对总计进行新的处理
+          const series = params;
+          const tips = ['<table class="echartTooltipTable">'];
+          const total = [];
+          // const total = statckTotal;
+          // 判断有没有讲y轴的名称放入到tooltip中
+          let hasPushedAxis = false;
+          // 因为第一个series是阴影
+          series.forEach((item, index) => {
+            if (index > 1) {
+              const axisValue = item.axisValue;
+              const seriesName = item.seriesName;
+              const dataIndex = item.dataIndex;
+              let value = item.value;
+              if (axisValue === '--') {
+                // 无数据的情况
+                value = '--';
+              }
+              if (axisValue !== '--') {
+                total.push(value);
+              }
+              if (!hasPushedAxis) {
+                hasPushedAxis = true;
+                // 针对不同的机构级别需要显示不同的分类
+                if (levelAndScope === 3 && axisValue !== '--') {
+                  tips.push('<tr>');
+                  tips.push('<td colspan="4">');
+                  // 营业部，需要显示分公司名称
+                  tips.push(`${levelCompanyArr[dataIndex]}`);
+                  tips.push('</td>');
+                  tips.push('</tr>');
+                } else if (levelAndScope === 4 && axisValue !== '--') {
+                  tips.push('<tr>');
+                  tips.push('<td colspan="4">');
+                  // 投顾，需要显示分公司，营业部名称
+                  tips.push(`${levelCompanyArr[dataIndex]} - ${levelStoreArr[dataIndex]}`);
+                  tips.push('</td>');
+                  tips.push('</tr>');
+                }
+                tips.push('<tr>');
+                tips.push('<td colspan="4">');
+                tips.push(`${axisValue}`);
+                tips.push('</td>');
+                tips.push('</tr>');
+              }
+              // 此处需要将取消掉的Legend的tooltip隐藏掉
+              const legend = index - 2;
+              const legendStateKey = `legend${legend}`;
+              if (!legendState[legendStateKey]) {
+                tips.push('<tr>');
+                tips.push('<td>');
+                tips.push(`<span class="echartTooltip" style="background-color:${stackLegend[legend].backgroundColor}"></span>`);
+                tips.push('</td>');
+                tips.push('<td class="tooltipItem">');
+                tips.push('<div>');
+                tips.push(`${seriesName}`);
+                tips.push('</div>');
+                tips.push('</td>');
+                tips.push('<td class="itemValue" colspan="2">');
+                tips.push(`: <span>${value}</span>`);
+                tips.push('</td>');
+                tips.push('</tr>');
+              }
+              // // 判断是否到最后一个了
+              // if ((series.length - 1) === index) {
+              //   // 如果到了最后一个
+              //   tips.push(`共 <span style="color:#ffd92a; font-size:14px;">
+              //   ${total[dataIndex]}</span> ${unit}`);
+              // }
+            }
+          });
+          // 此处为新增对共计数据的处理，因为他们要求直接使用提供的值
+          tips.push('<tr>');
+          tips.push('<td>');
+          tips.push('</td>');
+          tips.push('<td class="tooltipItem">');
+          tips.push('<div>');
+          tips.push('合计');
+          tips.push('</div>');
+          tips.push('</td>');
+          if (total.length > 0) {
+            const totalV = Number.parseFloat(_.sum(total).toFixed(2));
+            tips.push('<td class="itemValue">');
+            tips.push(`: <span>${totalV}</span>`);
+            tips.push('</td>');
+          } else {
+            tips.push('<td class="itemValue">');
+            tips.push('<span>--</span>');
+            tips.push('</td>');
+          }
+          tips.push('<td>');
+          tips.push(` (${unit})`);
+          tips.push('</td>');
+          tips.push('</tr>');
+          tips.push('</table>');
+          return tips.join('');
+        },
       },
       grid: {
         ...gridOptions,
@@ -420,7 +474,9 @@ export default class ChartBarStack extends PureComponent {
       <div className={styles.chartMain}>
         <div className={styles.chartHeader}>
           <div className={styles.chartTitle}>
-            <Icon type={iconType} className={styles.chartTiltleTextIcon} />
+            <span className={styles.chartIcon}>
+              <Icon type={iconType} className={styles.chartTiltleTextIcon} />
+            </span>
             <span className={styles.chartTitleText}>{`${chartName}(${unit})`}</span>
           </div>
         </div>
