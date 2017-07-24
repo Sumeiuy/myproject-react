@@ -1,12 +1,30 @@
 /**
  * @fileOverview chartRealTime/chartData.js
  * @author sunweibin
- * @description 图表数据相关方法
+ * @description 堆叠图表数据相关方法
  */
 
 import moment from 'moment';
 import _ from 'lodash';
 
+import { stackBarColors } from './ChartGeneralOptions';
+
+function convert2number(v) {
+  if (v === null || v === 'null') {
+    return '--';
+  }
+  return Number(v);
+}
+
+function toFixedTotals(v) {
+  return (item) => {
+    const newItem = item;
+    if (newItem === '--') {
+      return '--';
+    }
+    return Number.parseFloat((item / v).toFixed(2));
+  };
+}
 
 function toFixedDecimal(value) {
   if (value > 10000) {
@@ -109,7 +127,10 @@ const chartData = {
       // 取出stackSeries数组
       for (let i = 0; i < stackLen; i++) {
         const name = orgModel[0][key][i].name;
-        stackLegend.push(name);
+        stackLegend.push({
+          legendName: name,
+          backgroundColor: stackBarColors[i],
+        });
         const stackObj = {
           label: {
             normal: {
@@ -151,9 +172,8 @@ const chartData = {
   dealStackSeriesMoney(stackSeries, totals) {
     let newUnit = '元';
     let newStackSeries = stackSeries;
-    console.log('totals', totals);
-    let newTotals = totals.map(item => Number(item));
-    console.log('newTotals', newTotals);
+    // 合计值
+    let newTotals = totals.map(convert2number);
     // 判断stackSeries中最大值是多少
     let allData = [];
     const len = newStackSeries.length;
@@ -167,11 +187,11 @@ const chartData = {
     if (maxMoney > 100000000) {
       newUnit = '亿元';
       newStackSeries = newStackSeries.map(toFixedData(100000000));
-      newTotals = newTotals.map(item => toFixedDecimal(item / 100000000));
+      newTotals = newTotals.map(toFixedTotals(100000000));
     } else if (maxMoney > 10000) {
       newUnit = '万元';
       newStackSeries = newStackSeries.map(toFixedData(10000));
-      newTotals = newTotals.map(item => toFixedDecimal(item / 10000));
+      newTotals = newTotals.map(toFixedTotals(10000));
     }
     return {
       newStackSeries,
@@ -182,9 +202,11 @@ const chartData = {
   /**
    * 处理stackSeries中的户单位
    */
-  dealStackSeiesHu(stackSeries) {
+  dealStackSeiesHu(stackSeries, totals) {
     let newUnit = '户';
     let newStackSeries = stackSeries;
+    // 合计值
+    let newTotals = totals.map(convert2number);
      // 判断stackSeries中最大值是多少
     let allData = [];
     const len = newStackSeries.length;
@@ -198,10 +220,12 @@ const chartData = {
     if (maxHu > 5000) {
       newUnit = '万户';
       newStackSeries = newStackSeries.map(toFixedData(10000));
+      newTotals = newTotals.map(toFixedTotals(10000));
     }
     return {
       newStackSeries,
       newUnit,
+      newTotals,
     };
   },
 

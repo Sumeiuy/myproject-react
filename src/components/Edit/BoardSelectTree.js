@@ -276,7 +276,6 @@ export default class BoardSelectTree extends PureComponent {
     if (!isSummury) {
       allParentNodes.map((item) => {
         const newItem = item;
-        console.warn('newItem.key', newItem.key);
         if (newItem.key === data[0].belongKey) {
           newItem.children = data;
         }
@@ -313,8 +312,8 @@ export default class BoardSelectTree extends PureComponent {
         categoryKey: item.key,
         detailIndicatorIds: item.children.map(child => child.key),
       }));
+      // 输出分类指标
       console.warn('detailArr', detailArr);
-      // console.warn('detailArr', detailArr);
       this.props.saveIndcator('detail', detailArr);
     }
   }

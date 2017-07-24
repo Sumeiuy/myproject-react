@@ -117,6 +117,7 @@ export default class PreviewReport extends PureComponent {
     const { publishConfirmModal } = this.state;
     const { location } = this.props;
     const { name, id, boardType } = this.props.boardInfo;
+    console.warn('boardInfo', this.props.boardInfo);
     // 发布共同配置项
     const publishConfirmMProps = {
       modalKey: 'publishConfirmModal',

@@ -3,19 +3,13 @@
  * @author sunweibin
  * @description 看板切换Select
  */
-
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import { Dropdown, Menu, Icon } from 'antd';
 import _ from 'lodash';
 
-
-import { BoardBasic } from '../../config';
 // import Scroll from '../common/Scroll';
 import './BoardSelect.less';
-
-const sliceLength = BoardBasic.regular.length;
-const SubMenu = Menu.SubMenu;
 
 export default class BoardSelect extends PureComponent {
 
@@ -29,9 +23,7 @@ export default class BoardSelect extends PureComponent {
 
   constructor(props) {
     super(props);
-    // _.slice(array, [start=0], [end=array.length])
     const { visibleBoards, location: { query: { boardId }, pathname } } = this.props;
-    console.warn('props.visibleBoards', visibleBoards);
     const bId = boardId || (visibleBoards.length && String(visibleBoards[0].id)) || '1';
     let boardName = '看板管理';
     if (pathname !== '/boardManage') {
@@ -121,7 +113,6 @@ export default class BoardSelect extends PureComponent {
     // 当点击的是看板管理选项的时候
     if (key === '0') {
       collectData({
-        type: 'boardSelect',
         text: '看板管理',
       });
       push('/boardManage');
@@ -129,7 +120,6 @@ export default class BoardSelect extends PureComponent {
       const { visibleBoards } = this.props;
       const boardname = _.find(visibleBoards, { id: Number(key) }).name;
       collectData({
-        type: 'boardSelect',
         text: boardname,
       });
       push(`/report?boardId=${key}`);
@@ -139,32 +129,20 @@ export default class BoardSelect extends PureComponent {
   render() {
     const { visibleBoards } = this.props;
     const { dropdownVisible, boardName } = this.state;
-
-    const staticBorads = _.slice(visibleBoards, [0], [sliceLength]);
-    const apiBorads = _.slice(visibleBoards, [sliceLength], [visibleBoards.length]);
     const menu = (
       <Menu
         onClick={this.handleMenuClick}
+        style={{
+          width: '200px',
+          maxHeight: '400px',
+          overflowY: 'scroll',
+        }}
       >
         {
-          staticBorads.map(item =>
+          visibleBoards.map(item =>
             (<Menu.Item key={String(item.id)} title={item.name}>{item.name}</Menu.Item>),
           )
         }
-        <SubMenu
-          title="我的看板"
-          style={{
-            width: '200px',
-            maxHeight: '400px',
-            overflowY: 'scroll',
-          }}
-        >
-          {
-            apiBorads.map(item =>
-              (<Menu.Item key={String(item.id)} title={item.name}>{item.name}</Menu.Item>),
-            )
-          }
-        </SubMenu>
         <Menu.Divider />
         <Menu.Item key="0">看板管理</Menu.Item>
       </Menu>

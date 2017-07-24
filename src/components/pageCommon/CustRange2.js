@@ -68,9 +68,11 @@ export default class CustRange extends PureComponent {
     collectData: PropTypes.func.isRequired,
     updateQueryState: PropTypes.func.isRequired,
     custRange: PropTypes.array.isRequired,
+    orgId: PropTypes.string,
   }
 
   static defaultProps = {
+    orgId: '',
   }
 
   constructor(props) {
@@ -96,11 +98,23 @@ export default class CustRange extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { location: { query: { boardId } }, custRange } = nextProps;
-    const { location: { query: { boardId: preBId } } } = this.props;
+    const { location: { query: { boardId } }, custRange, orgId } = nextProps;
+    const { location: { query: { boardId: preBId } }, orgId: preOrgId } = this.props;
     const { formatCustRange } = this.state;
     if (Number(boardId || '1') !== Number(preBId || '1')) {
       walk(formatCustRange, findOrgNameByOrgId(custRange[0].id), '');
+      const initValue = {
+        label: custRangeNameDedault,
+        value: custRange[0].id,
+      };
+      // 切换报表了，恢复默认值
+      this.setState({
+        value: initValue,
+        open: false,
+      });
+    }
+    if (orgId !== preOrgId) {
+      walk(formatCustRange, findOrgNameByOrgId(orgId), '');
       const initValue = {
         label: custRangeNameDedault,
         value: custRange[0].id,
@@ -134,7 +148,6 @@ export default class CustRange extends PureComponent {
       value: changedValue,
     });
     collectData({
-      type: 'curstRangeSelect',
       text: custRangeName,
     });
     updateQueryState({
