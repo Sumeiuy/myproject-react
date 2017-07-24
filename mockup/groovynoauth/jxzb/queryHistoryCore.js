@@ -1,0 +1,98 @@
+exports.response = function (req, res) {
+  return {
+    "code": "0",
+    "msg": "OK",
+    "resultData": [
+      {
+        "key": "totAset",
+        "name": "托管总资产",
+        "value": "123843766254.2054",
+        "historyValue": null,
+        "unit": "元",
+        "description": "upd入岗投顾人员名下客户总资产",
+        "categoryKey": null,
+        "isBelongsSummury": null,
+        "hasChildren": null,
+        "parentKey": null,
+        "parentName": null,
+        "incrementRate": "100%",
+        "children": null
+      },
+      {
+        "key": "currSignCustAset",
+        "name": "签约总资产",
+        "value": "0",
+        "historyValue": null,
+        "unit": "元",
+        "description": "upd入岗投顾统计期末时点签约客户的资产总额",
+        "categoryKey": null,
+        "isBelongsSummury": null,
+        "hasChildren": null,
+        "parentKey": null,
+        "parentName": null,
+        "incrementRate": "0%",
+        "children": null
+      },
+      {
+        "key": "gjAvgPercent",
+        "name": "股基平均佣金率",
+        "value": "0.00020188691598765480855513449290596506308",
+        "historyValue": "0.00020673137315242374417737387555148682927",
+        "unit": "‰",
+        "description": "upd统计期间股基净佣金收入/股基交易量",
+        "categoryKey": null,
+        "isBelongsSummury": null,
+        "hasChildren": null,
+        "parentKey": null,
+        "parentName": null,
+        "incrementRate": "-3%",
+        "children": null
+      },
+      {
+        "key": "purRake",
+        "name": "净佣金收入",
+        "value": "5895322.0449",
+        "historyValue": "689768.9645",
+        "unit": "元",
+        "description": "upd入岗投顾统计期间名下客户产生的全部品种的净佣金收入合计。",
+        "categoryKey": null,
+        "isBelongsSummury": null,
+        "hasChildren": null,
+        "parentKey": null,
+        "parentName": null,
+        "incrementRate": "755%",
+        "children": null
+      },
+      {
+        "key": "prdtPurFee",
+        "name": "产品手续费净收入",
+        "value": "11762.54",
+        "historyValue": "2499.56",
+        "unit": "元",
+        "description": "upd入岗投顾统计期间名下客户产生【公募+紫金（剔除天天发940018、940028、940038）+OTC+私募】产品（场外认购+场外申购+场内认购）的净手续费收入",
+        "categoryKey": null,
+        "isBelongsSummury": null,
+        "hasChildren": null,
+        "parentKey": null,
+        "parentName": null,
+        "incrementRate": "371%",
+        "children": null
+      },
+      {
+        "key": "purInteIncome",
+        "name": "利息净收入",
+        "value": "4619605.6332",
+        "historyValue": "332777.7558",
+        "unit": "元",
+        "description": "upd入岗投顾统计期间名下客户产生的【融资净利息+融券净利息+股票质押净利息+融资打新净利息+小额贷净利息+限制性股票融资净利息+股权激励行权融资净利息】",
+        "categoryKey": null,
+        "isBelongsSummury": null,
+        "hasChildren": null,
+        "parentKey": null,
+        "parentName": null,
+        "incrementRate": "1,289%",
+        "children": null
+      },
+    ]
+  }
+}

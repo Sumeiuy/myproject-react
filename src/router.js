@@ -20,6 +20,7 @@ import BoardManageHome from './routes/boardManage/Home';
 import BoardEditHome from './routes/boardEdit/Home';
 import ReportHome from './routes/reports/Home';
 import PreviewReport from './routes/reports/PreviewReport';
+import HistoryHome from './routes/history/Home';
 
 function switchRouter() {
   const fsp = document.querySelector('#workspace-content>.wrapper');
@@ -37,6 +38,7 @@ const routes = ({ history }) => (// eslint-disable-line
       <Route path="empty" component={Empty} />
       <Route path="report" component={ReportHome} />
       <Route path="preview" component={PreviewReport} />
+      <Route path="history" component={HistoryHome} />
       <Route path="invest" component={ReportHome} />
       <Route path="business" component={BusinessHome} />
       <Route path="feedback" component={FeedBack} />

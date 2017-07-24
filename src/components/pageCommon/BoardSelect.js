@@ -128,7 +128,7 @@ export default class BoardSelect extends PureComponent {
   }
 
   render() {
-    // const { visibleBoards } = this.props;
+    const { visibleBoards } = this.props;
     const { dropdownVisible, boardName } = this.state;
     const menu = (
       <Menu
@@ -139,16 +139,13 @@ export default class BoardSelect extends PureComponent {
           overflowY: 'scroll',
         }}
       >
-        <Menu.Item key="1" title="投顾业绩汇总">投顾业绩汇总</Menu.Item>
-        {/*
+        {
           visibleBoards.map(item =>
             (<Menu.Item key={String(item.id)} title={item.name}>{item.name}</Menu.Item>),
           )
-        */}
-        {/*
+        }
         <Menu.Divider />
         <Menu.Item key="0">看板管理</Menu.Item>
-        */}
       </Menu>
     );
 
