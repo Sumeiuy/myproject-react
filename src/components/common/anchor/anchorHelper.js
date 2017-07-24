@@ -44,7 +44,7 @@ export function scrollTo(href, offsetTop = 0, target = getDefaultTarget, callbac
   const fsp = document.querySelector('#workspace-content>.wrapper');
   let scrollTopValue;
   if (fsp) {
-    scrollTopValue = fsp.scrollTop();
+    scrollTopValue = fsp.scrollTop;
   } else {
     scrollTopValue = getScroll(target(), true);
     console.warn('scrollTopValue', scrollTopValue);
@@ -58,7 +58,7 @@ export function scrollTo(href, offsetTop = 0, target = getDefaultTarget, callbac
   const targetScrollTop = scrollTopValue + eleOffsetTop - offsetTop;
   console.warn('eleOffsetTop', eleOffsetTop);
   console.warn('offsetTop', offsetTop);
-  
+
   const startTime = Date.now();
   const frameFunc = () => {
     const timestamp = Date.now();
