@@ -101,22 +101,26 @@ export default class ChartTable extends PureComponent {
     }
   }
 
+  // 表格滚动条显示
   @autobind
   onScroll() {
     const currentTable = this.currentTable;
-    const tableDiv = currentTable.querySelector('.ant-table');
+    // 表格tbody
+    const tableTbody = currentTable.querySelector('.ant-table-tbody');
     // 窗口可视高度
     const docElemHeight = document.documentElement.clientHeight;
-    // 元素高度
-    const elemClientHeight = tableDiv.clientHeight;
-    // 元素距离顶部距离
-    const topDistance = tableDiv.getBoundingClientRect().top;
-    // 如果窗口可视高度大于元素高度和元素距离顶部距离之和，此时表格全部显示出来，此时是不需要显示滚动条的，否则显示
-    const visible = docElemHeight - elemClientHeight - topDistance;
-    if (visible < 0 && topDistance > 0 && topDistance < docElemHeight) {
-      this.setState({ scrollDisplay: true });
-    } else {
-      this.setState({ scrollDisplay: false });
+    // 表格tbody距离顶部距离
+    const topDistance = tableTbody.getBoundingClientRect().top;
+    // 表格tbody的高度
+    const tableTbodyHeight = tableTbody.clientHeight;
+    if (tableTbody) {
+      // 如果窗口可视高度大于表格tbody高度、元素距离顶部距离之和，此时表格全部显示出来，此时是不需要显示滚动条的，否则显示
+      const visible = docElemHeight - tableTbodyHeight - topDistance;
+      if (visible < 0 && topDistance > 0 && topDistance < docElemHeight) {
+        this.setState({ scrollDisplay: true });
+      } else {
+        this.setState({ scrollDisplay: false });
+      }
     }
   }
 
