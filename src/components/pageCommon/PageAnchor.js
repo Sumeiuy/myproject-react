@@ -4,7 +4,6 @@
  * @author hongguangqing
  */
 import React, { PureComponent, PropTypes } from 'react';
-import { BackTop } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import Icon from '../common/Icon';
@@ -69,7 +68,7 @@ export default class PageAnchor extends PureComponent {
                   );
                 })
               }
-              <Link><BackTop visibilityHeight={0}><div><Icon type="fanhuidingbu" /></div></BackTop></Link>
+              <Link><div className={styles.gotoTop} onClick={this.handleGotoTop}><Icon type="fanhuidingbu" /></div></Link>
             </Anchor>
           :
             <div />

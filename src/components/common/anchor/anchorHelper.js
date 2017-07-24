@@ -41,25 +41,41 @@ export function getOffsetTop(element) {
 }
 
 export function scrollTo(href, offsetTop = 0, target = getDefaultTarget, callback = () => { }) {
-  const scrollTop = getScroll(target(), true);
+  const fsp = document.querySelector('#workspace-content>.wrapper');
+  let scrollTopValue;
+  if (fsp) {
+    scrollTopValue = fsp.scrollTop();
+  } else {
+    scrollTopValue = getScroll(target(), true);
+    console.warn('scrollTopValue', scrollTopValue);
+  }
+  
   const targetElement = document.getElementById(href.substring(1));
   if (!targetElement) {
     return;
   }
   const eleOffsetTop = getOffsetTop(targetElement);
-  const targetScrollTop = scrollTop + eleOffsetTop - offsetTop;
+  const targetScrollTop = scrollTopValue + eleOffsetTop - offsetTop;
+  console.warn('eleOffsetTop', eleOffsetTop);
+  console.warn('offsetTop', offsetTop);
+  
   const startTime = Date.now();
   const frameFunc = () => {
     const timestamp = Date.now();
     const time = timestamp - startTime;
+    console.warn('time', time);
     // 搬了antd/Anchor判断是否在fsp中，因为fsp是自己做的滚动条
-    const fsp = document.querySelector('#workspace-content>.wrapper');
+    
     if (fsp) {
-      console.warn('easeInOutCubic', easeInOutCubic(time, scrollTop, targetScrollTop, 450));
-      fsp.scrollTop = easeInOutCubic(time, scrollTop, targetScrollTop, 450);
+      console.warn('scrollTopValue', scrollTopValue);
+      console.warn('targetScrollTop', targetScrollTop);
+      console.warn('easeInOutCubic', easeInOutCubic(time, scrollTopValue, targetScrollTop, 450));
+      fsp.scrollTop = easeInOutCubic(time, scrollTopValue, targetScrollTop, 450);
     } else {
-      console.warn('easeInOutCubic', easeInOutCubic(time, scrollTop, targetScrollTop, 450));
-      window.scrollTo(window.pageXOffset, easeInOutCubic(time, scrollTop, targetScrollTop, 450));
+      console.warn('scrollTopValue', scrollTopValue);
+      console.warn('targetScrollTop', targetScrollTop);
+      console.warn('easeInOutCubic', easeInOutCubic(time, scrollTopValue, targetScrollTop, 450));
+      window.scrollTo(window.pageXOffset, easeInOutCubic(time, scrollTopValue, targetScrollTop, 450));
     }
     
     if (time < 450) {
