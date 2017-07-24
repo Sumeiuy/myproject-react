@@ -55,8 +55,10 @@ export function scrollTo(href, offsetTop = 0, target = getDefaultTarget, callbac
     // 搬了antd/Anchor判断是否在fsp中，因为fsp是自己做的滚动条
     const fsp = document.querySelector('#workspace-content>.wrapper');
     if (fsp) {
+      console.warn('easeInOutCubic', easeInOutCubic(time, scrollTop, targetScrollTop, 450));
       fsp.scrollTop = easeInOutCubic(time, scrollTop, targetScrollTop, 450);
     } else {
+      console.warn('easeInOutCubic', easeInOutCubic(time, scrollTop, targetScrollTop, 450));
       window.scrollTo(window.pageXOffset, easeInOutCubic(time, scrollTop, targetScrollTop, 450));
     }
     

@@ -57,7 +57,7 @@ export default class ScrollBar extends PureComponent {
         onScroll={this.handleScroll}
         style={{
           width: clientWidth,
-          left: fsp ? getCssStyle(fsp, 'left') : '20',
+          left: fsp ? getCssStyle(fsp, 'left') + 45 : '20',
         }}
       >
         <div className={styles.reportScrollBarInner} style={{ width: allWidth }} />
