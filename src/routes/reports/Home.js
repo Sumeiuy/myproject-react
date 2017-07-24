@@ -288,7 +288,6 @@ export default class ReportHome extends PureComponent {
   @autobind
   updateQueryState(state) {
     // 切换Duration和Orig时候，需要将数据全部恢复到默认值
-    console.log('up', state);
     this.setState({
       ...state,
       showCharts: {},
@@ -360,11 +359,9 @@ export default class ReportHome extends PureComponent {
           collectDurationSelect={collectDurationSelect}
         />
         <div className={styles.reportBody}>
-          <div className={styles.reportPart}>
-            <PerformanceItem
-              data={performance}
-            />
-          </div>
+          <PerformanceItem
+            data={performance}
+          />
           {
             chartInfo.map((item) => {
               const { key, name, data } = item;
