@@ -132,6 +132,11 @@ const chartData = {
           backgroundColor: stackBarColors[i],
         });
         const stackObj = {
+          itemStyle: {
+            normal: {
+              barBorderRadius: 3,
+            },
+          },
           label: {
             normal: {
               show: false,
@@ -140,6 +145,7 @@ const chartData = {
           stack: uniqueStack,
           type: 'bar',
           name,
+          barWidth: 6,
         };
         const data = [];
         orgModel.forEach((item) => {

@@ -67,6 +67,9 @@ export default class ChartTable extends PureComponent {
   }
 
   componentDidMount() {
+    if (!_.isEmpty(this.props.chartTableInfo)) {
+      this.changeTableData(this.props);
+    }
     this.onScroll();
     window.addEventListener('resize', this.onScroll, false);
     if (fsp) {
@@ -77,8 +80,12 @@ export default class ChartTable extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    // TODO 根据 nextProps 的值是否变化来判断是否调用此方法
-    this.changeTableData(nextProps);
+    // 根据 nextProps 的值是否变化来判断是否调用此方法
+    const props = this.props;
+    if (!_.isEqual(props.chartTableInfo, nextProps.chartTableInfo)
+    || !_.isEqual(props.scope, nextProps.scope)) {
+      this.changeTableData(nextProps);
+    }
   }
 
   componentDidUpdate() {
@@ -321,7 +328,7 @@ export default class ChartTable extends PureComponent {
     const temp = [];
     let newArr = [];
     let tempArr = [];
-    let allWidth = '';
+    let allWidth;
     if (data && data.length) {
       data.map((item, index) => {
         const testArr = this.unitChange(item.indicatorDataList);

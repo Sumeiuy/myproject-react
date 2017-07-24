@@ -9,7 +9,7 @@ import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
-import { Col, Row, message } from 'antd';
+import { Col, Row, message, Affix } from 'antd';
 import _ from 'lodash';
 
 import { getEmpId } from '../../utils/helper';
@@ -226,19 +226,21 @@ export default class BoardManageHome extends PureComponent {
 
     return (
       <div className="page-invest content-inner">
-        <div className="reportHeader">
-          <Row type="flex" justify="start" align="middle">
-            <div className="reportName">
-              <BoardSelect
-                location={location}
-                push={push}
-                replace={replace}
-                visibleBoards={visibleBoards}
-                collectData={collectData}
-              />
-            </div>
-          </Row>
-        </div>
+        <Affix>
+          <div className="reportHeader">
+            <Row type="flex" justify="start" align="middle">
+              <div className="reportName">
+                <BoardSelect
+                  location={location}
+                  push={push}
+                  replace={replace}
+                  visibleBoards={visibleBoards}
+                  collectData={collectData}
+                />
+              </div>
+            </Row>
+          </div>
+        </Affix>
         <div className={styles.boardList}>
           <Row gutter={19}>
             <Col span={8} className={styles.test}>
