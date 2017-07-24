@@ -6,9 +6,9 @@
 
 const generalOptions = {
   // 堆叠柱状图使用的颜色
-  stackBarColors: ['#e0695c', '#fcd459', '#69ddd5', '#508dc8', '#7cc9ec', '#b2dff4', '#ff7f50', '#ffa500', '#038387', '#00b294'],
+  stackBarColors: ['#3983ff', '#4adad5', '#756fb8', '#ff4e7b', '#ff784e', '#7f1de5', '#70c381', '#789262', '#70c381'],
   // 柱状图颜色
-  barColor: '#4bbbf4',
+  barColor: '#108ee9',
   // 坐标轴的通用样式
   AxisOptions: {
     // splitNumber: 4,
@@ -50,6 +50,7 @@ const generalOptions = {
     barGap: '-100%',
     barCategoryGap: '30%',
     animation: false,
+    barWidth: 6,
   },
 
   // 配置柱状图渐变

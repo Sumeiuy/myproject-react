@@ -112,43 +112,48 @@ export default class ChartBarNormal extends PureComponent {
       maxIndex = 10 - padLength;
     }
 
-    const judge = (item) => {
-      // 正数最大值
-      const plusMax = medianValue.plus * 2;
-      // 负数最大值
-      const minusMax = medianValue.minus * 2;
-      if (minusMax >= 0) {
-        // 全是正数
-        return medianValue.plus > item ? 'right' : 'insideRight';
-      } else if (plusMax <= 0) {
-        // 全是负数
-        return medianValue.minus < item ? 'left' : 'insideLeft';
-      }
-      // 有正有负
-      // 判断正负所占比例
-      const axisGap = plusMax - minusMax;
-      const plusPercent = (plusMax / axisGap) * 100;
-      const minusPercent = (Math.abs(minusMax) / axisGap) * 100;
-      if (plusPercent < 20 && item >= 0) {
-        return 'left';
-      }
-      if (minusPercent < 20 && item <= 0) {
-        return 'right';
-      }
-      if (item > 0) {
-        return medianValue.plus > item ? 'right' : 'insideRight';
-      } else if (item < 0) {
-        return medianValue.minus < item ? 'left' : 'insideLeft';
-      }
-      return 'right';
-    };
+    // const judge = (item) => {
+    //   // 正数最大值
+    //   const plusMax = medianValue.plus * 2;
+    //   // 负数最大值
+    //   const minusMax = medianValue.minus * 2;
+    //   if (minusMax >= 0) {
+    //     // 全是正数
+    //     return medianValue.plus > item ? 'right' : 'insideRight';
+    //   } else if (plusMax <= 0) {
+    //     // 全是负数
+    //     return medianValue.minus < item ? 'left' : 'insideLeft';
+    //   }
+    //   // 有正有负
+    //   // 判断正负所占比例
+    //   const axisGap = plusMax - minusMax;
+    //   const plusPercent = (plusMax / axisGap) * 100;
+    //   const minusPercent = (Math.abs(minusMax) / axisGap) * 100;
+    //   if (plusPercent < 20 && item >= 0) {
+    //     return 'left';
+    //   }
+    //   if (minusPercent < 20 && item <= 0) {
+    //     return 'right';
+    //   }
+    //   if (item > 0) {
+    //     return medianValue.plus > item ? 'right' : 'insideRight';
+    //   } else if (item < 0) {
+    //     return medianValue.minus < item ? 'left' : 'insideLeft';
+    //   }
+    //   return 'right';
+    // };
 
     return series.map((item, index) => ({
       value: (unit === PERCENT || unit === PERMILLAGE) ? Number(item.toFixed(2)) : item,
       label: {
         normal: {
+          textStyle: {
+            color: '#666',
+          },
           show: index < maxIndex,
-          position: judge(item),
+          // position: judge(item),
+          position: ['85%', '-250%'],
+          // position: 'right',
         },
       },
     }));
@@ -271,24 +276,36 @@ export default class ChartBarNormal extends PureComponent {
         const axisValue = item.axisValue;
         const seriesName = item.seriesName;
         let value = item.data.value;
-
+        const tips = ['<table class="echartTooltipTable">'];
+        const dataIndex = item.dataIndex;
         if (axisValue === '--') {
           value = '--';
         }
         if (levelAndScope === 4 && axisValue !== '--') {
-          const dataIndex = item.dataIndex;
-          return `${levelCompanyArr[dataIndex]} - ${levelStoreArr[dataIndex]}<br />
-            ${axisValue}<br />
-            ${seriesName}: <span style="color:#f8ac59; font-size: 15px;">${value}</span>${unit}`;
+          tips.push('<tr>');
+          tips.push('<td>');
+          tips.push(`${levelCompanyArr[dataIndex]} - ${levelStoreArr[dataIndex]}`);
+          tips.push('</td>');
+          tips.push('</tr>');
+        } else if (levelAndScope === 3 && axisValue !== '--') {
+          tips.push('<tr>');
+          tips.push('<td>');
+          tips.push(`${levelCompanyArr[dataIndex]} - ${levelStoreArr[dataIndex]}`);
+          tips.push('</td>');
+          tips.push('</tr>');
         }
-        if (levelAndScope === 3 && axisValue !== '--') {
-          const dataIndex = item.dataIndex;
-          return `${levelCompanyArr[dataIndex]}<br />
-            ${axisValue}<br />
-            ${seriesName}: <span style="color:#f8ac59; font-size: 15px;">${value}</span>${unit}`;
-        }
-        return `${axisValue}<br />
-          ${seriesName}: <span style="color:#f8ac59; font-size: 15px;">${value}</span>${unit}`;
+        tips.push('<tr>');
+        tips.push('<td>');
+        tips.push(axisValue);
+        tips.push('</td>');
+        tips.push('</tr>');
+        tips.push('<tr>');
+        tips.push('<td class="itemValue">');
+        tips.push(`${seriesName}: <span>${value}</span> (${unit})`);
+        tips.push('</td>');
+        tips.push('</tr>');
+        tips.push('</table>');
+        return tips.join('');
       },
       position(pos, params, dom, rect, size) {
         // 鼠标在左侧时 tooltip 显示到右侧，鼠标在右侧时 tooltip 显示到左侧。
@@ -296,9 +313,13 @@ export default class ChartBarNormal extends PureComponent {
         obj[['left', 'right'][+(pos[0] < size.viewSize[0] / 2)]] = 5;
         return obj;
       },
-      backgroundColor: 'rgba(0, 0, 0, .56)',
+      backgroundColor: 'rgba(255, 255, 255, .9)',
       padding: [12, 11, 13, 13],
-      extraCssText: 'border-radius: 8px;',
+      extraCssText:
+        `border-radius: 8px;
+         box-shadow: 0 6px 10px 0 rgba(0,0,0,0.14),
+                  0 1px 18px 0 rgba(0,0,0,0.12),
+                  0 3px 5px -1px rgba(0,0,0,0.3);`,
     };
     // eCharts的配置项
     const options = {
@@ -362,11 +383,17 @@ export default class ChartBarNormal extends PureComponent {
           name,
           type: 'bar',
           silent: true,
+          itemStyle: {
+            normal: {
+              barBorderRadius: 3,
+            },
+          },
           label: {
             normal: {
               show: false,
             },
           },
+          barWidth: 6,
           data: newSeriesData,
         },
       ],
@@ -376,7 +403,9 @@ export default class ChartBarNormal extends PureComponent {
       <div className={styles.chartMain}>
         <div className={styles.chartHeader}>
           <div className={styles.chartTitle}>
-            <Icon type={IndexIcon} className={styles.chartTiltleTextIcon} />
+            <span className={styles.chartIcon}>
+              <Icon type={IndexIcon} className={styles.chartTiltleTextIcon} />
+            </span>
             <span className={styles.chartTitleText}>{`${name}(${unit})`}</span>
           </div>
         </div>
@@ -390,7 +419,7 @@ export default class ChartBarNormal extends PureComponent {
                 option={options}
                 resizable
                 style={{
-                  height: '325px',
+                  height: '335px',
                 }}
               />
             )
