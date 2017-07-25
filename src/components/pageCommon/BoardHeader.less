@@ -27,6 +27,7 @@
 }
 
 .titleBar {
+  margin-bottom: 1px;
   padding:0 18px;
   height: 40px;
   background-color: #fff;
@@ -34,6 +35,11 @@
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
   border-bottom: 1px solid #bfbfbf;
+  &:after {
+    content: " ";
+    display: table;
+    clear:both;
+  }
 }
 .titleText {
   composes: floatLeft;
