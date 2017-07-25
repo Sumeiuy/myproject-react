@@ -6,7 +6,7 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
-import _ from 'lodash';
+// import _ from 'lodash';
 
 import { AxisOptions, gridOptions, stackBarColors, barShadow } from './ChartGeneralOptions';
 import {
@@ -49,22 +49,28 @@ export default class ChartBarStack extends PureComponent {
     iconType: 'zichan',
   }
 
-  @autobind
-  createNewSeriesData(series, medianValue, unit, padLength) {
-    let maxIndex = 10;
-    if (padLength !== 0) {
-      maxIndex = 10 - padLength;
-    }
+  constructor(props) {
+    super(props);
+    this.state = {
+      wrapperH: 0,
+    };
+  }
 
-    return series.map((item, index) => ({
-      value: (unit === PERCENT || unit === PERMILLAGE) ? Number(item.toFixed(2)) : item,
-      label: {
-        normal: {
-          show: index < maxIndex,
-          position: (medianValue > item || item === 0) ? 'right' : 'insideRight',
-        },
-      },
-    }));
+  componentDidMount() {
+    const wrapper = this.wrapper;
+    this.setHeight(wrapper.clientHeight);
+  }
+
+  @autobind
+  setWrapperRef(input) {
+    this.wrapper = input;
+  }
+
+  @autobind
+  setHeight(wrapperH) {
+    this.setState({
+      wrapperH,
+    });
   }
 
   @autobind
@@ -91,6 +97,8 @@ export default class ChartBarStack extends PureComponent {
     const levelStoreArr = getLevelName(orgModel, 'level3Name');
     // 此处为y轴刻度值
     const yAxisLabels = getLevelName(orgModel, levelName);
+    // 获取合计的值
+    const totals = getLevelName(orgModel, 'value');
     // 对Y轴刻度不足刻度
     const padLength = 10 - yAxisLabels.length;
     if (padLength > 0) {
@@ -102,6 +110,7 @@ export default class ChartBarStack extends PureComponent {
     const stack = getStackSeries(orgModel, 'indiModelList', key);
     const stackLegend = stack.legends;
     let stackSeries = stack.series;
+    let statckTotal = totals;
     // 此处需要进行对stackSeries中的每一个data根据单位来进行特殊处理
     if (unit === PERCENT) {
       stackSeries = stackSeries.map(this.toFixedPercentOrPermillage(100));
@@ -109,14 +118,17 @@ export default class ChartBarStack extends PureComponent {
       stackSeries = stackSeries.map(this.toFixedPercentOrPermillage(1000));
     } else if (unit === YUAN) {
       // 如果图表中的数据表示的是金额的话，需要对其进行单位识别和重构
-      const tempStackSeries = dealStackSeriesMoney(stackSeries);
+      const tempStackSeries = dealStackSeriesMoney(stackSeries, statckTotal);
       stackSeries = tempStackSeries.newStackSeries;
       unit = tempStackSeries.newUnit;
+      statckTotal = tempStackSeries.newTotals;
     } else if (unit === HU) {
-      const tempStackSeries = dealStackSeiesHu(stackSeries);
+      const tempStackSeries = dealStackSeiesHu(stackSeries, statckTotal);
       stackSeries = tempStackSeries.newStackSeries;
       unit = tempStackSeries.newUnit;
+      statckTotal = tempStackSeries.newTotals;
     }
+    // 此处处理图表中的数据，与tooltip中的数据无关
     // stackSeries的data中
     const gridAxisTick = dealStackData(stackSeries);
     // 图表边界值,如果xMax是0的话则最大值为1
@@ -156,34 +168,39 @@ export default class ChartBarStack extends PureComponent {
       formatter(params) {
         // 堆叠柱状图上因为有多系列的值
         // 所有此处需要做处理
+        // 需要对总计进行新的处理
         const series = params;
         const tips = [];
-        const total = [];
+        // const total = [];
+        const total = statckTotal;
+
+        // 判断有没有讲y轴的名称放入到tooltip中
         let hasPushedAxis = false;
         // 因为第一个series是阴影
         series.forEach((item, index) => {
           if (index > 1) {
             const axisValue = item.axisValue;
             const seriesName = item.seriesName;
+            const dataIndex = item.dataIndex;
             let value = item.value;
             if (axisValue === '--') {
               // 无数据的情况
               value = '--';
             }
-            if (axisValue !== '--') {
-              total.push(value);
-            }
+            // if (axisValue !== '--') {
+            //   total.push(value);
+            // }
             if (!hasPushedAxis) {
               hasPushedAxis = true;
               // 针对不同的机构级别需要显示不同的分类
               if (levelAndScope === 3 && axisValue !== '--') {
                 // 营业部，需要显示分公司名称
-                const dataIndex = item.dataIndex;
+                // const dataIndex = item.dataIndex;
                 tips.push(`${levelCompanyArr[dataIndex]}-`);
               }
               if (levelAndScope === 4 && axisValue !== '--') {
                 // 投顾，需要显示分公司，营业部名称
-                const dataIndex = item.dataIndex;
+                // const dataIndex = item.dataIndex;
                 tips.push(`${levelCompanyArr[dataIndex]} - ${levelStoreArr[dataIndex]}<br />`);
               }
               tips.push(`${axisValue}<br/>`);
@@ -191,14 +208,20 @@ export default class ChartBarStack extends PureComponent {
             tips.push(`<span style="display:inline-block;width: 10px;height: 10px;margin-right:4px;border-radius:100%;background-color:${stackBarColors[index - 2]}"></span>`);
             tips.push(`${seriesName} : <span style="color:#ffd92a; font-size:14px;">${value}</span>`);
             tips.push(`${unit}<br/>`);
+            // 判断是否到最后一个了
+            if ((series.length - 1) === index) {
+              // 如果到了最后一个
+              tips.push(`共 <span style="color:#ffd92a; font-size:14px;">${total[dataIndex]}</span> ${unit}`);
+            }
           }
         });
-        if (total.length > 0) {
-          const totalV = Number.parseFloat(_.sum(total).toFixed(2));
-          tips.push(`共 <span style="color:#ffd92a; font-size:14px;">${totalV}</span> ${unit}`);
-        } else {
-          tips.push(`共 <span style="color:#ffd92a; font-size:14px;">--</span> ${unit}`);
-        }
+        // 此处为新增对共计数据的处理，因为他们要求直接使用提供的值
+        // if (total.length > 0) {
+        //   const totalV = Number.parseFloat(_.sum(total).toFixed(2));
+        //   tips.push(`共 <span style="color:#ffd92a; font-size:14px;">${totalV}</span> ${unit}`);
+        // } else {
+        //   tips.push(`共 <span style="color:#ffd92a; font-size:14px;">--</span> ${unit}`);
+        // }
         return tips.join('');
       },
       position(pos, params, dom, rect, size) {
@@ -301,7 +324,7 @@ export default class ChartBarStack extends PureComponent {
             })
           }
         </div>
-        <div className={styles.chartWrapper}>
+        <div className={styles.chartWrapper} ref={this.setWrapperRef}>
           {
             (orgModel && orgModel.length > 0)
             ?
@@ -309,6 +332,9 @@ export default class ChartBarStack extends PureComponent {
               <IECharts
                 option={options}
                 resizable
+                style={{
+                  height: this.state.wrapperH,
+                }}
               />
             )
             :

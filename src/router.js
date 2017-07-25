@@ -8,6 +8,7 @@ import {
   Router,
   Route,
   IndexRedirect,
+  IndexRoute,
 } from 'dva/router';
 
 import Main from './layouts/Main';
@@ -20,6 +21,10 @@ import BoardManageHome from './routes/boardManage/Home';
 import BoardEditHome from './routes/boardEdit/Home';
 import ReportHome from './routes/reports/Home';
 import PreviewReport from './routes/reports/PreviewReport';
+import HistoryHome from './routes/history/Home';
+import CustomerPoolHome from './routes/customerPool/Home';
+import CanDoToday from './routes/customerPool/CanDoToday';
+import ToDo from './routes/customerPool/ToDo';
 
 function switchRouter() {
   const fsp = document.querySelector('#workspace-content>.wrapper');
@@ -37,12 +42,18 @@ const routes = ({ history }) => (// eslint-disable-line
       <Route path="empty" component={Empty} />
       <Route path="report" component={ReportHome} />
       <Route path="preview" component={PreviewReport} />
+      <Route path="history" component={HistoryHome} />
       <Route path="invest" component={ReportHome} />
       <Route path="business" component={BusinessHome} />
       <Route path="feedback" component={FeedBack} />
       <Route path="modal" component={TemplModal} />
       <Route path="boardManage" component={BoardManageHome} />
       <Route path="boardEdit" component={BoardEditHome} />
+      <Route path="customerPool">
+        <IndexRoute component={CustomerPoolHome} />
+        <Route path="canDoToday" component={CanDoToday} />
+        <Route path="todo" component={ToDo} />
+      </Route>
     </Route>
   </Router>
 );
