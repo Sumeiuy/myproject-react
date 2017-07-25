@@ -73,7 +73,7 @@ export default class ChartTable extends PureComponent {
     this.onScroll();
     window.addEventListener('resize', this.onScroll, false);
     if (fsp) {
-      document.addEventListener('mousewheel', this.onScroll, false);
+      $(fsp).on('scroll', this.onScroll);
     } else {
       document.addEventListener('scroll', this.onScroll, false);
     }
@@ -95,7 +95,7 @@ export default class ChartTable extends PureComponent {
   componentWillUnmount() {
     window.removeEventListener('resize', this.onScroll);
     if (fsp) {
-      document.removeEventListener('mousewheel', this.onScroll);
+      $(fsp).off('scroll', this.onScroll);
     } else {
       document.removeEventListener('scroll', this.onScroll);
     }
