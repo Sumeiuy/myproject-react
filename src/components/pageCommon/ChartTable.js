@@ -94,7 +94,9 @@ export default class ChartTable extends PureComponent {
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.onScroll);
-    if (!fsp) {
+    if (fsp) {
+      $(fsp).off('scroll', this.onScroll);
+    } else {
       document.removeEventListener('scroll', this.onScroll);
     }
   }

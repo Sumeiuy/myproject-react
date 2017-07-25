@@ -56,8 +56,6 @@ export function scrollTo(href, offsetTop = 0, target = getDefaultTarget, callbac
   }
   const eleOffsetTop = getOffsetTop(targetElement);
   const targetScrollTop = scrollTopValue + eleOffsetTop - offsetTop;
-  console.warn('eleOffsetTop', eleOffsetTop);
-  console.warn('offsetTop', offsetTop);
 
   const startTime = Date.now();
   const frameFunc = () => {
@@ -67,14 +65,8 @@ export function scrollTo(href, offsetTop = 0, target = getDefaultTarget, callbac
     // 搬了antd/Anchor判断是否在fsp中，因为fsp是自己做的滚动条
     
     if (fsp) {
-      console.warn('scrollTopValue', scrollTopValue);
-      console.warn('targetScrollTop', targetScrollTop);
-      console.warn('easeInOutCubic', easeInOutCubic(time, scrollTopValue, targetScrollTop, 450));
       fsp.scrollTop = easeInOutCubic(time, scrollTopValue, targetScrollTop, 450);
     } else {
-      console.warn('scrollTopValue', scrollTopValue);
-      console.warn('targetScrollTop', targetScrollTop);
-      console.warn('easeInOutCubic', easeInOutCubic(time, scrollTopValue, targetScrollTop, 450));
       window.scrollTo(window.pageXOffset, easeInOutCubic(time, scrollTopValue, targetScrollTop, 450));
     }
     
