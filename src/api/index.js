@@ -70,4 +70,7 @@ export default {
   queryContrastAnalyze: query => api.post('groovynoauth/jxzb/queryContrastAnalyze', query),
   // 查询历史指标概览数据
   getHistoryCore: query => api.post('/groovynoauth/jxzb/queryHistoryCore', query),
+
+  // 查询强弱指示分析数据接口
+  getCurrentRankingRecord: query => api.post('/groovynoauth/jxzb/queryCurrentRankingRecord', query),
 };

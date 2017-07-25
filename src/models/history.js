@@ -15,6 +15,7 @@ export default {
     contributionAnalysis: {},
     reviewAnalysis: {},
     historyCore: [], // 概览列表
+    currentRankingRecord: {}, // 强弱指示分析
   },
   reducers: {
     // 概览数据列表
@@ -56,6 +57,7 @@ export default {
         custRange,
       };
     },
+
     // 存贮散点图数据
     queryContrastAnalyzeSuccess(state, action) {
       const { payload: { response, type } } = action;
@@ -71,6 +73,16 @@ export default {
         ...state,
         contributionAnalysis,
         reviewAnalysis,
+      };
+    },
+
+    // 概览数据列表
+    getCurrentRankingRecordSuccess(state, action) {
+      const { payload: { currentRanking } } = action;
+      const currentRankingRecord = currentRanking.resultData;
+      return {
+        ...state,
+        currentRankingRecord,
       };
     },
   },
@@ -104,6 +116,14 @@ export default {
       yield put({
         type: 'getHistoryCoreSuccess',
         payload: { resHistoryCore },
+      });
+      // 强弱指示分析
+      const currentRanking = yield call(api.getCurrentRankingRecord, {
+        orgId: firstCust.id,
+      });
+      yield put({
+        type: 'getCurrentRankingRecordSuccess',
+        payload: { currentRanking },
       });
     },
     // 获取客户贡献分析与入岗投顾能力散点图数据

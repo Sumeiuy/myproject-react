@@ -25,6 +25,7 @@ const fectchDataFunction = (globalLoading, type) => query => ({
 
 const mapStateToProps = state => ({
   historyCore: state.history.historyCore,
+  crrData: state.history.currentRankingRecord,
   custRange: state.report.custRange,
   visibleBoards: state.report.visibleBoards,
   globalLoading: state.activity.global,
@@ -54,7 +55,8 @@ export default class HistoryHome extends PureComponent {
     queryContrastAnalyze: PropTypes.func.isRequired,
     contributionAnalysis: PropTypes.object.isRequired,
     reviewAnalysis: PropTypes.object.isRequired,
-    historyCore: PropTypes.array,
+    historyCore: PropTypes.array, // 概览
+    crrData: PropTypes.object, // 强弱指示分析
   }
 
   static defaultProps = {
@@ -62,6 +64,7 @@ export default class HistoryHome extends PureComponent {
     custRange: [],
     visibleBoards: [],
     historyCore: [],
+    crrData: {},
   }
 
   componentWillMount() {
@@ -103,10 +106,9 @@ export default class HistoryHome extends PureComponent {
       contributionAnalysis,
       queryContrastAnalyze,
       custRange,
+      historyCore,
+      crrData,
     } = this.props;
-
-
-    const { historyCore } = this.props;
 
     return (
       <div className="pageHistory">
@@ -118,7 +120,8 @@ export default class HistoryHome extends PureComponent {
           <div className={styles.indicatorOverview}>
             {/* 指标概览区域 */}
             <IndicatorOverview
-              data={historyCore}
+              overviewData={historyCore}
+              indexData={crrData}
             />
           </div>
           <div className={styles.indicatorAnalyse}>
