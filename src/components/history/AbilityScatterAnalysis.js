@@ -23,6 +23,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
     data: PropTypes.object.isRequired,
     queryContrastAnalyze: PropTypes.func.isRequired,
     custRange: PropTypes.array.isRequired,
+    title: PropTypes.string.isRequired,
   };
 
   static defaultProps = {
@@ -258,6 +259,8 @@ export default class AbilityScatterAnalysis extends PureComponent {
       // currentPayload,
     } = this.state;
 
+    const { title } = this.props;
+
     if (_.isEmpty(finalData)) {
       return null;
     }
@@ -280,7 +283,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
     return (
       <div className={styles.abilityScatterAnalysis}>
         <div className={styles.abilityHeader}>
-          <div className={styles.title}>客户贡献分析</div>
+          <div className={styles.title}>{title}</div>
           <div className={styles.compare}>对比</div>
           <div className={styles.customerDimensionSelect}>
             <Select
