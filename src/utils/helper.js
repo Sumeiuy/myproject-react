@@ -32,7 +32,7 @@ const helper = {
     let len = 0;
     for (let i = 0; i < str.length; i++) {
       const c = str.charCodeAt(i);
-        // 单字节加1
+      // 单字节加1
       if ((c >= 0x0001 && c <= 0x007e) || (c >= 0xff60 && c <= 0xff9f)) {
         len++;
       } else {
@@ -226,6 +226,36 @@ const helper = {
    */
   formatTime(time) {
     return moment(time).format('YYYY/MM/DD');
+  },
+
+  // 格式化数字，逢三位加一个逗号
+  formatNum(num) {
+    let newStr = '';
+    let count = 0;
+    let str = num.toString();
+
+    if (str.indexOf('.') === -1) {
+      for (let i = str.length - 1; i >= 0; i--) {
+        if (count % 3 === 0 && count !== 0) {
+          newStr = `${str.charAt(i)},${newStr}`;
+        } else {
+          newStr = `${str.charAt(i)}${newStr}`;
+        }
+        count++;
+      }
+      str = newStr;
+    } else {
+      for (let i = str.indexOf('.') - 1; i >= 0; i--) {
+        if (count % 3 === 0 && count !== 0) {
+          newStr = `${str.charAt(i)},${newStr}`;
+        } else {
+          newStr = `${str.charAt(i)}${newStr}`; // 逐个字符相接起来
+        }
+        count++;
+      }
+      str = `${newStr}${str.substr(str.indexOf('.'), 3)}`;
+    }
+    return str;
   },
 
   /**
