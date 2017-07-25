@@ -23,7 +23,6 @@ import ReportHome from './routes/reports/Home';
 import PreviewReport from './routes/reports/PreviewReport';
 import HistoryHome from './routes/history/Home';
 import CustomerPoolHome from './routes/customerPool/Home';
-import CanDoToday from './routes/customerPool/CanDoToday';
 import ToDo from './routes/customerPool/ToDo';
 
 function switchRouter() {
@@ -51,7 +50,6 @@ const routes = ({ history }) => (// eslint-disable-line
       <Route path="boardEdit" component={BoardEditHome} />
       <Route path="customerPool">
         <IndexRoute component={CustomerPoolHome} />
-        <Route path="canDoToday" component={CanDoToday} />
         <Route path="todo" component={ToDo} />
       </Route>
     </Route>
