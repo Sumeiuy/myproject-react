@@ -276,36 +276,36 @@ export default class ChartBarNormal extends PureComponent {
         const axisValue = item.axisValue;
         const seriesName = item.seriesName;
         let value = item.data.value;
-        const tips = ['<table class="echartTooltipTable">'];
         const dataIndex = item.dataIndex;
         if (axisValue === '--') {
           value = '--';
         }
+        let tooltipHead = '';
         if (levelAndScope === 4 && axisValue !== '--') {
-          tips.push('<tr>');
-          tips.push('<td>');
-          tips.push(`${levelCompanyArr[dataIndex]} - ${levelStoreArr[dataIndex]}`);
-          tips.push('</td>');
-          tips.push('</tr>');
+          tooltipHead = `
+            <tr>
+              <td>${levelCompanyArr[dataIndex]} - ${levelStoreArr[dataIndex]}</td>
+            </tr>
+          `;
         } else if (levelAndScope === 3 && axisValue !== '--') {
-          tips.push('<tr>');
-          tips.push('<td>');
-          tips.push(`${levelCompanyArr[dataIndex]} - ${levelStoreArr[dataIndex]}`);
-          tips.push('</td>');
-          tips.push('</tr>');
+          tooltipHead = `
+            <tr>
+              <td>${levelCompanyArr[dataIndex]}</td>
+            </tr>
+          `;
         }
-        tips.push('<tr>');
-        tips.push('<td>');
-        tips.push(axisValue);
-        tips.push('</td>');
-        tips.push('</tr>');
-        tips.push('<tr>');
-        tips.push('<td class="itemValue">');
-        tips.push(`${seriesName}: <span>${value}</span> (${unit})`);
-        tips.push('</td>');
-        tips.push('</tr>');
-        tips.push('</table>');
-        return tips.join('');
+        const tips = `
+          <table class="echartTooltipTable">
+            ${tooltipHead}
+            <tr>
+              <td>${axisValue}</td>
+            </tr>
+            <tr>
+              <td class="itemValue">${seriesName}: <span>${value}</span> (${unit})</td>
+            </tr>
+          </table>
+        `;
+        return tips;
       },
       position(pos, params, dom, rect, size) {
         // 鼠标在左侧时 tooltip 显示到右侧，鼠标在右侧时 tooltip 显示到左侧。

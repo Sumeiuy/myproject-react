@@ -319,12 +319,12 @@ export default class ChartBarStack extends PureComponent {
           // 所有此处需要做处理
           // 需要对总计进行新的处理
           const series = params;
-          const tips = ['<table class="echartTooltipTable">'];
           const total = [];
           // const total = statckTotal;
           // 判断有没有讲y轴的名称放入到tooltip中
           let hasPushedAxis = false;
           // 因为第一个series是阴影
+          const seriesTips = [];
           series.forEach((item, index) => {
             if (index > 1) {
               const axisValue = item.axisValue;
@@ -340,45 +340,41 @@ export default class ChartBarStack extends PureComponent {
               }
               if (!hasPushedAxis) {
                 hasPushedAxis = true;
+                let title = '';
                 // 针对不同的机构级别需要显示不同的分类
                 if (levelAndScope === 3 && axisValue !== '--') {
-                  tips.push('<tr>');
-                  tips.push('<td colspan="4">');
                   // 营业部，需要显示分公司名称
-                  tips.push(`${levelCompanyArr[dataIndex]}`);
-                  tips.push('</td>');
-                  tips.push('</tr>');
+                  title = `${levelCompanyArr[dataIndex]}`;
                 } else if (levelAndScope === 4 && axisValue !== '--') {
-                  tips.push('<tr>');
-                  tips.push('<td colspan="4">');
                   // 投顾，需要显示分公司，营业部名称
-                  tips.push(`${levelCompanyArr[dataIndex]} - ${levelStoreArr[dataIndex]}`);
-                  tips.push('</td>');
-                  tips.push('</tr>');
+                  title = `${levelCompanyArr[dataIndex]} - ${levelStoreArr[dataIndex]}`;
                 }
-                tips.push('<tr>');
-                tips.push('<td colspan="4">');
-                tips.push(`${axisValue}`);
-                tips.push('</td>');
-                tips.push('</tr>');
+                seriesTips.push(`
+                  <tr>
+                    <td colspan="4">${title}</td>
+                  <tr>
+                  <tr>
+                    <td colspan="4">${axisValue}</td>
+                  </tr>
+                `);
               }
               // 此处需要将取消掉的Legend的tooltip隐藏掉
               const legend = index - 2;
               const legendStateKey = `legend${legend}`;
               if (!legendState[legendStateKey]) {
-                tips.push('<tr>');
-                tips.push('<td>');
-                tips.push(`<span class="echartTooltip" style="background-color:${stackLegend[legend].backgroundColor}"></span>`);
-                tips.push('</td>');
-                tips.push('<td class="tooltipItem">');
-                tips.push('<div>');
-                tips.push(`${seriesName}`);
-                tips.push('</div>');
-                tips.push('</td>');
-                tips.push('<td class="itemValue" colspan="2">');
-                tips.push(`: <span>${value}</span>`);
-                tips.push('</td>');
-                tips.push('</tr>');
+                seriesTips.push(`
+                  <tr>
+                    <td>
+                      <span class="echartTooltip" style="background-color:${stackLegend[legend].backgroundColor}"></span>
+                    </td>
+                    <td class="tooltipItem">
+                      <div>${seriesName}</div>
+                    </td>
+                    <td class="itemValue" colspan="2">
+                      : <span>${value}</span>
+                    </td>
+                  <tr>
+                `);
               }
               // // 判断是否到最后一个了
               // if ((series.length - 1) === index) {
@@ -388,31 +384,31 @@ export default class ChartBarStack extends PureComponent {
               // }
             }
           });
-          // 此处为新增对共计数据的处理，因为他们要求直接使用提供的值
-          tips.push('<tr>');
-          tips.push('<td>');
-          tips.push('</td>');
-          tips.push('<td class="tooltipItem">');
-          tips.push('<div>');
-          tips.push('合计');
-          tips.push('</div>');
-          tips.push('</td>');
+          let totalV = '';
           if (total.length > 0) {
-            const totalV = Number.parseFloat(_.sum(total).toFixed(2));
-            tips.push('<td class="itemValue">');
-            tips.push(`: <span>${totalV}</span>`);
-            tips.push('</td>');
+            totalV = Number.parseFloat(_.sum(total).toFixed(2));
           } else {
-            tips.push('<td class="itemValue">');
-            tips.push('<span>--</span>');
-            tips.push('</td>');
+            totalV = '--';
           }
-          tips.push('<td>');
-          tips.push(` (${unit})`);
-          tips.push('</td>');
-          tips.push('</tr>');
-          tips.push('</table>');
-          return tips.join('');
+          // 此处为新增对共计数据的处理，因为他们要求直接使用提供的值
+          const tips = `
+            <table class="echartTooltipTable">
+              ${seriesTips.join('')}
+              <tr>
+                <td></td>
+                <td class="tooltipItem">
+                  <div>合计</div>
+                </td>
+                <td class="itemValue">
+                  : <span>${totalV}</span>
+                </td>
+                <td>
+                   (${unit})
+                </td>
+              </tr>
+            </table>
+          `;
+          return tips;
         },
       },
       grid: {
