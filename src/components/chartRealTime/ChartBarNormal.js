@@ -336,22 +336,22 @@ export default class ChartBarNormal extends PureComponent {
         <div className={styles.chartWrapper}>
           {
             (orgModel && orgModel.length > 0)
-            ?
-            (
-              <IECharts
-                option={options}
-                resizable
-                style={{
-                  height: '325px',
-                }}
-              />
-            )
-            :
-            (
-              <div className={styles.noChart}>
-                <img src={imgSrc} alt="图表不可见" />
-              </div>
-            )
+              ?
+              (
+                <IECharts
+                  option={options}
+                  resizable
+                  style={{
+                    height: '325px',
+                  }}
+                />
+              )
+              :
+              (
+                <div className={styles.noChart}>
+                  <img src={imgSrc} alt="图表不可见" />
+                </div>
+              )
           }
         </div>
       </div>

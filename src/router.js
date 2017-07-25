@@ -34,7 +34,7 @@ function switchRouter() {
 const routes = ({ history }) => (// eslint-disable-line
   <Router onUpdate={switchRouter} history={history}>
     <Route path="/" component={Main}>
-      <IndexRedirect to="/empty" />
+      <IndexRedirect to="/history" />
       <Route path="empty" component={Empty} />
       <Route path="report" component={ReportHome} />
       <Route path="preview" component={PreviewReport} />
