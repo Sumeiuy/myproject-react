@@ -7,6 +7,7 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { Row, Col, Button } from 'antd';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
 import Icon from '../common/Icon';
 import PickIndicators from './PickIndicators';
 import ChartRadar from '../chartRealTime/ChartRadar';
@@ -15,19 +16,162 @@ import styles from './indicatorOverview.less';
 
 export default class IndicatorOverview extends PureComponent {
   static propTypes = {
-    data: PropTypes.array,
+    overviewData: PropTypes.array,
+    indexData: PropTypes.object,
   }
 
   static defaultProps = {
-    data: [],
+    overviewData: [],
+    indexData: {},
   }
 
   constructor(props) {
     super(props);
+    const { indexData } = this.props;
     this.state = {
       visible: false,
       selectIndex: 'select0', // 默认选中项
+      indexData,
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { indexData: preIndexData } = this.props;
+    const { indexData: nextIndexData } = nextProps;
+    if (preIndexData !== nextIndexData) {
+      const { scopeNum, data } = nextIndexData;
+      const cOptions = this.createOption(scopeNum, data);
+      this.setState({
+        options: cOptions,
+      });
+    }
+  }
+
+  /**
+   * options
+  */
+  @autobind
+  createOption(scopeNum, data) {
+    const indicatorData = [];// name
+    const period = []; // 本期数据值
+    const PreviousPeriod = []; // 上期
+    _.each(data, (item) => {
+      indicatorData.push({ name: item.indicator_name, max: scopeNum });
+      period.push(scopeNum - item.rank_current);
+      PreviousPeriod.push(scopeNum - item.rank_contrast);
+    });
+    const options = {
+      title: {
+        show: false,
+        text: '强弱指示分析',
+      },
+      gird: { x: '7%', y: '7%', width: '38%', height: '38%' },
+      legend: {
+        data: [
+          { name: '本期', icon: 'square' },
+          { name: '上期', icon: 'square' },
+        ],
+        bottom: 0,
+        left: '10%',
+        itemGap: 20,
+      },
+      radar: {
+        shape: 'circle',
+        splitNumber: 6,
+        // polarIndex: 1,
+        center: ['50%', '45%'],
+        name: {
+          textStyle: {
+            color: '#666666',
+          },
+        },
+        splitLine: {
+          lineStyle: {
+            color: [
+              '#ebf2ff',
+            ].reverse(),
+          },
+        },
+        splitArea: {
+          show: false,
+        },
+        axisLine: {
+          lineStyle: {
+            color: '#b9e7fd',
+          },
+        },
+        indicator: indicatorData,
+      },
+      series: [{
+        name: '本期 vs 上期',
+        type: 'radar',
+        smooth: true,
+        symbolSize: 1,
+        data: [
+          {
+            value: period,
+            name: '本期',
+            areaStyle: {
+              normal: {
+                color: 'rgba(117, 111,184, 0.5)',
+              },
+            },
+            itemStyle: {
+              normal: {
+                color: '#38d8e8',
+              },
+            },
+            label: {
+              normal: {
+                show: true,
+                formatter: this.labelShow,
+                textStyle: {
+                  color: '#ff7a39',
+                },
+              },
+            },
+            // symbolSize: 5,
+            // syboml: 'circle',
+          },
+          {
+            value: PreviousPeriod,
+            name: '上期',
+            areaStyle: {
+              normal: {
+                color: 'rgba(58, 216,232, 0.5)',
+              },
+            },
+            itemStyle: {
+              normal: {
+                color: '#756fb8',
+              },
+            },
+            label: {
+              normal: {
+                show: true,
+                formatter: this.labelShow,
+                textStyle: {
+                  color: '#3983ff',
+                },
+              },
+            },
+          },
+        ],
+      }],
+    };
+    return options;
+  }
+
+  @autobind
+  labelShow(params) {
+    const dataMode = [2, 1]; // 选中项的排名
+    const dataIndex = params.dataIndex; // 图标数据下标 本期、上期
+    const preValue = params.value; // 当先图标数值
+    const gcount = 32; // 总公司数
+    if (preValue === (gcount - dataMode[dataIndex])) {
+      return dataMode[dataIndex];
+    }
+    return '';
   }
 
   /**
@@ -67,7 +211,8 @@ export default class IndicatorOverview extends PureComponent {
   }
 
   render() {
-    const { data } = this.props;
+    const { overviewData } = this.props;
+    const { options } = this.state;
     return (
       <div className={styles.overviewBox}>
         <Row>
@@ -94,7 +239,7 @@ export default class IndicatorOverview extends PureComponent {
                 {/* 交易：icon-test 客户：kehu 指标：iczhibiao24px 钱袋：qiandai*/}
                 <ul>
                   {
-                    data.map((item, index) => {
+                    overviewData.map((item, index) => {
                       const selectIndex = `select${index}`;
                       return (
                         <li
@@ -129,7 +274,9 @@ export default class IndicatorOverview extends PureComponent {
                 强弱指示分析
               </div>
               <div className={styles.radar}>
-                <ChartRadar />
+                {!_.isEmpty(options) ? <ChartRadar
+                  options={options}
+                /> : null}
               </div>
               <div className={styles.radarInfo}>
                 <i />新开客户：本期排名：
