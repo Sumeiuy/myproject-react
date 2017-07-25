@@ -12,13 +12,13 @@ import _ from 'lodash';
 import ScrollBar from './ScrollBar';
 
 import { getStrLen } from '../../utils/helper';
-import { optionsMap } from '../../config';
+import { fspContainer, optionsMap } from '../../config';
 import styles from './ChartTable.less';
 
 // 按类别排序
 const sortByType = optionsMap.sortByType;
 const revert = { asc: 'desc', desc: 'asc' };
-const fsp = document.querySelector('#workspace-content>.wrapper');
+const fsp = document.querySelector(fspContainer.container);
 
 
 export default class ChartTable extends PureComponent {
