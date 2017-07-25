@@ -9,10 +9,12 @@ import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import IndicatorOverview from '../../components/history/IndicatorOverview';
 import HisDivider from '../../components/history/HisDivider';
+import ScatterAnalysis from '../../components/history/ScatterAnalysis';
 import styles from './Home.less';
 
 const effects = {
   allInfo: 'history/getAllInfo',
+  queryContrastAnalyze: 'history/queryContrastAnalyze',
 };
 
 const fectchDataFunction = (globalLoading, type) => query => ({
@@ -27,10 +29,13 @@ const mapStateToProps = state => ({
   custRange: state.report.custRange,
   visibleBoards: state.report.visibleBoards,
   globalLoading: state.activity.global,
+  contributionAnalysis: state.history.contributionAnalysis,
+  reviewAnalysis: state.history.reviewAnalysis,
 });
 
 const mapDispatchToProps = {
   getAllInfo: fectchDataFunction(true, effects.allInfo),
+  queryContrastAnalyze: fectchDataFunction(true, effects.queryContrastAnalyze),
   push: routerRedux.push,
   replace: routerRedux.replace,
 };
@@ -47,6 +52,9 @@ export default class HistoryHome extends PureComponent {
     custRange: PropTypes.array,
     visibleBoards: PropTypes.array,
     globalLoading: PropTypes.bool,
+    queryContrastAnalyze: PropTypes.func.isRequired,
+    contributionAnalysis: PropTypes.object.isRequired,
+    reviewAnalysis: PropTypes.object.isRequired,
     historyCore: PropTypes.array, // 概览
     crrData: PropTypes.object, // 强弱指示分析
   }
@@ -60,14 +68,48 @@ export default class HistoryHome extends PureComponent {
   }
 
   componentWillMount() {
-    const { location: { query }, getAllInfo } = this.props;
+    const { location: { query }, getAllInfo, queryContrastAnalyze } = this.props;
     getAllInfo({
       ...query,
+    });
+
+    queryContrastAnalyze({
+      boardId: '3',
+      type: 'cust',
+      orgId: 'ZZ001041',
+      localScope: '1',
+      scope: '2',
+      begin: '20170601',
+      end: '20170630',
+      cycleType: 'month',
+      // coreIndicatorId: '',
+      // contrastIndicatorId: '',
+    });
+    queryContrastAnalyze({
+      boardId: '3',
+      type: 'invest',
+      orgId: 'ZZ001041',
+      localScope: '1',
+      scope: '2',
+      begin: '20170601',
+      end: '20170630',
+      cycleType: 'month',
+      // coreIndicatorId: '',
+      // contrastIndicatorId: '',
     });
   }
 
   render() {
-    const { historyCore, crrData } = this.props;
+    const {
+      location,
+      reviewAnalysis,
+      contributionAnalysis,
+      queryContrastAnalyze,
+      custRange,
+      historyCore,
+      crrData,
+    } = this.props;
+
     return (
       <div className="pageHistory">
         <div className={styles.historyhd}>
@@ -89,7 +131,13 @@ export default class HistoryHome extends PureComponent {
             </div>
             <HisDivider />
             <div className={styles.scatterArea}>
-              {/* 散点图 */}
+              <ScatterAnalysis
+                location={location}
+                contributionAnalysisData={contributionAnalysis}
+                reviewAnalysisData={reviewAnalysis}
+                queryContrastAnalyze={queryContrastAnalyze}
+                custRange={custRange}
+              />
             </div>
           </div>
         </div>

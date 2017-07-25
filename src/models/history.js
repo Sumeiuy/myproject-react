@@ -5,11 +5,15 @@
 import api from '../api';
 import { BoardBasic } from '../config';
 
+// const EMPTY_OBJECT = {};
+
 export default {
   namespace: 'history',
   state: {
     custRange: [],
     visibleBoards: [], // 可见看板
+    contributionAnalysis: {},
+    reviewAnalysis: {},
     historyCore: [], // 概览列表
     currentRankingRecord: {}, // 强弱指示分析
   },
@@ -53,6 +57,25 @@ export default {
         custRange,
       };
     },
+
+    // 存贮散点图数据
+    queryContrastAnalyzeSuccess(state, action) {
+      const { payload: { response, type } } = action;
+      let contributionAnalysis = state.contributionAnalysis;
+      let reviewAnalysis = state.reviewAnalysis;
+
+      if (type === 'invest') {
+        contributionAnalysis = response;
+      } else if (type === 'cust') {
+        reviewAnalysis = response;
+      }
+      return {
+        ...state,
+        contributionAnalysis,
+        reviewAnalysis,
+      };
+    },
+
     // 概览数据列表
     getCurrentRankingRecordSuccess(state, action) {
       const { payload: { currentRanking } } = action;
@@ -101,6 +124,16 @@ export default {
       yield put({
         type: 'getCurrentRankingRecordSuccess',
         payload: { currentRanking },
+      });
+    },
+    // 获取客户贡献分析与入岗投顾能力散点图数据
+    * queryContrastAnalyze({ payload }, { call, put }) {
+      const { type } = payload;
+      const response = yield call(api.queryContrastAnalyze, payload);
+      const { resultData } = response;
+      yield put({
+        type: 'queryContrastAnalyzeSuccess',
+        payload: { response: resultData, type },
       });
     },
   },

@@ -66,6 +66,8 @@ export default {
   // 查询指标库数据
   getIndicators: query => api.post('/groovynoauth/jxzb/queryCategoryAndIndicators', query),
 
+  // 查询散点图
+  queryContrastAnalyze: query => api.post('groovynoauth/jxzb/queryContrastAnalyze', query),
   // 查询历史指标概览数据
   getHistoryCore: query => api.post('/groovynoauth/jxzb/queryHistoryCore', query),
 
