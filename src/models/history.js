@@ -14,8 +14,18 @@ export default {
     visibleBoards: [], // 可见看板
     contributionAnalysis: {},
     reviewAnalysis: {},
+    historyCore: [], // 概览列表
   },
   reducers: {
+    // 概览数据列表
+    getHistoryCoreSuccess(state, action) {
+      const { payload: { resHistoryCore } } = action;
+      const historyCore = resHistoryCore.resultData;
+      return {
+        ...state,
+        historyCore,
+      };
+    },
     // 获取左上角可见看板
     getAllVisibleReportsSuccess(state, action) {
       const { payload: { allVisibleReports } } = action;
@@ -86,6 +96,14 @@ export default {
       yield put({
         type: 'getAllVisibleReportsSuccess',
         payload: { allVisibleReports },
+      });
+      // 历史指标概览
+      const resHistoryCore = yield call(api.getHistoryCore, {
+        orgId: firstCust.id,
+      });
+      yield put({
+        type: 'getHistoryCoreSuccess',
+        payload: { resHistoryCore },
       });
     },
     // 获取客户贡献分析与入岗投顾能力散点图数据
