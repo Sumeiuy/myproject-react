@@ -11,6 +11,7 @@ export default {
     custRange: [],
     visibleBoards: [], // 可见看板
     historyCore: [], // 概览列表
+    currentRankingRecord: {}, // 强弱指示分析
   },
   reducers: {
     // 概览数据列表
@@ -52,6 +53,15 @@ export default {
         custRange,
       };
     },
+    // 概览数据列表
+    getCurrentRankingRecordSuccess(state, action) {
+      const { payload: { currentRanking } } = action;
+      const currentRankingRecord = currentRanking.resultData;
+      return {
+        ...state,
+        currentRankingRecord,
+      };
+    },
   },
   effects: {
     // 初始化获取数据
@@ -83,6 +93,14 @@ export default {
       yield put({
         type: 'getHistoryCoreSuccess',
         payload: { resHistoryCore },
+      });
+      // 强弱指示分析
+      const currentRanking = yield call(api.getCurrentRankingRecord, {
+        orgId: firstCust.id,
+      });
+      yield put({
+        type: 'getCurrentRankingRecordSuccess',
+        payload: { currentRanking },
       });
     },
   },
