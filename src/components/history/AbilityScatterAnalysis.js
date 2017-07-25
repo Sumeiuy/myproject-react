@@ -106,10 +106,61 @@ export default class AbilityScatterAnalysis extends PureComponent {
     }
   }
 
+  getAnyPoint(seriesData) {
+    const { xAxisMin, yAxisMin, yAxisMax, xAxisMax } = seriesData;
+
+    return {
+      startCoord: [xAxisMin, yAxisMin],
+      endCoord: [xAxisMax, yAxisMax],
+    };
+  }
+
   /**
-   * 处理鼠标悬浮事件
-   * @param {*} params 当前点的数据
-   */
+ * 构造tooltip的信息
+ * @param {*} currentItemInfo 当前鼠标悬浮的点数据
+ */
+  constructTooltipInfo(currentItemInfo) {
+    const {
+      currentSelectX,
+      currentSelectY,
+      xAxisName,
+      xAxisUnit,
+      yAxisName,
+      yAxisUnit,
+      yAxisMin,
+      slope,
+    } = currentItemInfo;
+    let newXData = '';
+    let newYData = '';
+    if (xAxisUnit.indexOf('万') !== -1) {
+      // 万户
+      newXData = helper.formatNum((currentSelectX * 10000).toFixed(0));
+    } else {
+      // 户
+      newXData = currentSelectX;
+    }
+
+    if (yAxisUnit.indexOf('亿') !== -1) {
+      // 亿元
+      newYData = helper.formatNum((currentSelectY * 100000000).toFixed(0));
+    } else if (yAxisUnit.indexOf('万') !== -1) {
+      // 万元
+      newYData = helper.formatNum((currentSelectY * 10000).toFixed(0));
+    } else {
+      newYData = currentSelectY;
+    }
+
+    const currentSlope = (currentSelectY - yAxisMin) / currentSelectX;
+
+    this.setState({
+      tooltipInfo: `${yAxisName}：${newYData}元 / ${xAxisName}：${newXData}户。每客户贡献的交易量${currentSlope > slope ? '优' : '低'}于平均水平。`,
+    });
+  }
+
+  /**
+ * 处理鼠标悬浮事件
+ * @param {*} params 当前点的数据
+ */
   @autobind
   handleScatterHover(params) {
     const { isShowTooltip,
@@ -160,57 +211,6 @@ export default class AbilityScatterAnalysis extends PureComponent {
     //   // 可选，数据的 名称
     //   name,
     // });
-  }
-
-  /**
-   * 构造tooltip的信息
-   * @param {*} currentItemInfo 当前鼠标悬浮的点数据
-   */
-  constructTooltipInfo(currentItemInfo) {
-    const {
-      currentSelectX,
-      currentSelectY,
-      xAxisName,
-      xAxisUnit,
-      yAxisName,
-      yAxisUnit,
-      yAxisMin,
-      slope,
-    } = currentItemInfo;
-    let newXData = '';
-    let newYData = '';
-    if (xAxisUnit.indexOf('万') !== -1) {
-      // 万户
-      newXData = helper.formatNum((currentSelectX * 10000).toFixed(0));
-    } else {
-      // 户
-      newXData = currentSelectX;
-    }
-
-    if (yAxisUnit.indexOf('亿') !== -1) {
-      // 亿元
-      newYData = helper.formatNum((currentSelectY * 100000000).toFixed(0));
-    } else if (yAxisUnit.indexOf('万') !== -1) {
-      // 万元
-      newYData = helper.formatNum((currentSelectY * 10000).toFixed(0));
-    } else {
-      newYData = currentSelectY;
-    }
-
-    const currentSlope = (currentSelectY - yAxisMin) / currentSelectX;
-
-    this.setState({
-      tooltipInfo: `${yAxisName}：${newYData}元 / ${xAxisName}：${newXData}户。每客户贡献的交易量${currentSlope > slope ? '优' : '低'}于平均水平。`,
-    });
-  }
-
-  getAnyPoint(seriesData) {
-    const { xAxisMin, yAxisMin, yAxisMax, xAxisMax } = seriesData;
-
-    return {
-      startCoord: [xAxisMin, yAxisMin],
-      endCoord: [xAxisMax, yAxisMax],
-    };
   }
 
   @autobind
