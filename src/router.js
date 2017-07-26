@@ -21,10 +21,9 @@ import BoardEditHome from './routes/boardEdit/Home';
 import ReportHome from './routes/reports/Home';
 import PreviewReport from './routes/reports/PreviewReport';
 import HistoryHome from './routes/history/Home';
-import { fspContainer } from '../config';
 
 function switchRouter() {
-  const fsp = document.querySelector(fspContainer.container);
+  const fsp = document.querySelector('#workspace-content>.wrapper');
   if (fsp) {
     fsp.scrollTop = 0;
   } else {

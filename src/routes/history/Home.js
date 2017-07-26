@@ -7,6 +7,8 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
+
+import IndicatorOverviewHeader from '../../components/history/IndicatorOverviewHeader';
 import IndicatorOverview from '../../components/history/IndicatorOverview';
 import HisDivider from '../../components/history/HisDivider';
 import ScatterAnalysis from '../../components/history/ScatterAnalysis';
@@ -116,8 +118,11 @@ export default class HistoryHome extends PureComponent {
           {/* 头部时间组织机构选择区域 */}
         </div>
         <div className={styles.historybd}>
-          <div className={styles.analyticalCaption}>核心指标</div>
           <div className={styles.indicatorOverview}>
+            <IndicatorOverviewHeader
+              location={location}
+            />
+
             {/* 指标概览区域 */}
             <IndicatorOverview
               overviewData={historyCore}
