@@ -10,6 +10,8 @@ import { connect } from 'react-redux';
 import IndicatorOverview from '../../components/history/IndicatorOverview';
 import HisDivider from '../../components/history/HisDivider';
 import ScatterAnalysis from '../../components/history/ScatterAnalysis';
+import HistoryComparePolyChart from '../../components/history/HistoryComparePolyChart';
+import HistoryCompareRankChart from '../../components/history/HistoryCompareRankChart';
 import styles from './Home.less';
 
 const effects = {
@@ -127,7 +129,8 @@ export default class HistoryHome extends PureComponent {
           <div className={styles.indicatorAnalyse}>
             <div className={styles.caption}>核心指标分析-总交易量</div>
             <div className={styles.polyArea}>
-              {/* 历史对比折线图和排名图 */}
+              <HistoryComparePolyChart />
+              <HistoryCompareRankChart />
             </div>
             <HisDivider />
             <div className={styles.scatterArea}>
