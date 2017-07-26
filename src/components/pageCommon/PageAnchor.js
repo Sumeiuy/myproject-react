@@ -54,7 +54,7 @@ export default class PageAnchor extends PureComponent {
       <div>
         {
           charInfoLength >= 3 ?
-            <Anchor className={styles.pageAnchor} offsetTop={115} >
+            <Anchor className={styles.pageAnchor} offsetTop={130} >
               {
                 chartInfo.map((item) => {
                   const { key } = item;
