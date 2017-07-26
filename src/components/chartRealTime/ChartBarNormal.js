@@ -8,7 +8,7 @@ import React, { PropTypes, PureComponent } from 'react';
 // import ReactEcharts from 'echarts-for-react';
 import { autobind } from 'core-decorators';
 
-import { AxisOptions, gridOptions, barColor, barShadow } from './ChartGeneralOptions';
+import { AxisOptions, gridOptions, barShadow } from './ChartGeneralOptions';
 import {
   getMaxAndMinPercent,
   getMaxAndMinPermillage,
@@ -54,6 +54,7 @@ export default class ChartBarNormal extends PureComponent {
     scope: PropTypes.number.isRequired,
     chartData: PropTypes.object,
     iconType: PropTypes.string,
+    barColor: PropTypes.string.isRequired,
     custRange: PropTypes.array,
     updateQueryState: PropTypes.func,
   }
@@ -161,7 +162,7 @@ export default class ChartBarNormal extends PureComponent {
 
   render() {
     // 取出需要处理的数据
-    const { scope, chartData: { indiModel: { name }, orgModel = [] } } = this.props;
+    const { barColor, scope, chartData: { indiModel: { name }, orgModel = [] } } = this.props;
     let { chartData: { indiModel: { unit } } } = this.props;
     // 获取指标ICON
     const IndexIcon = getIcon(unit);
@@ -383,11 +384,11 @@ export default class ChartBarNormal extends PureComponent {
           name,
           type: 'bar',
           silent: true,
-          itemStyle: {
-            normal: {
-              barBorderRadius: 3,
-            },
-          },
+          // itemStyle: {
+          //   normal: {
+          //     barBorderRadius: 3,
+          //   },
+          // },
           label: {
             normal: {
               show: false,

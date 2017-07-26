@@ -10,6 +10,8 @@ import _ from 'lodash';
 import ChartBar from './ChartBar';
 import styles from './ChartBoard.less';
 
+const barColors = ['#3983ff', '#4adad5', '#756fb8', '#4adad5', '#756fb8'];
+
 export default class ChartBoard extends PureComponent {
 
   static propTypes = {
@@ -37,7 +39,8 @@ export default class ChartBoard extends PureComponent {
         {/* <Loading loading={loading} /> */}
         <Row type="flex">
           {
-            chartData.map((item) => {
+            chartData.map((item, index) => {
+              const barColor = barColors[(index % 5)];
               if (!_.isObject(item)) {
                 return null;
               }
@@ -45,10 +48,10 @@ export default class ChartBoard extends PureComponent {
               if (!indiModel) {
                 return null;
               }
-              if (indiModel.key === 'gjzServiceCompPercent') {
-                // TODO 此处线针对高净值客户服务覆盖率chart做隐藏处理
-                return null;
-              }
+              // if (indiModel.key === 'gjzServiceCompPercent') {
+              //   // TODO 此处线针对高净值客户服务覆盖率chart做隐藏处理
+              //   return null;
+              // }
               return (
                 <Col
                   span={8}
@@ -62,6 +65,7 @@ export default class ChartBoard extends PureComponent {
                     scope={scope}
                     custRange={custRange}
                     updateQueryState={updateQueryState}
+                    barColor={barColor}
                   />
                 </Col>
               );

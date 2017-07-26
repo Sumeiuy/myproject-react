@@ -93,6 +93,11 @@ export default class DeleteBoardModal extends PureComponent {
     }
   }
 
+  @autobind
+  hideTooltip() {
+    this.setTooltipVisible(false);
+  }
+
   render() {
     const { modalVisible, boardnamettVisible, boardName } = this.state;
     const { modalCaption } = this.props;
@@ -143,7 +148,12 @@ export default class DeleteBoardModal extends PureComponent {
                   'delModalName',
                   {
                     initialValue: '',
-                  })(<Input type="text" placeholder="请输入看板名称" />)
+                  })(
+                    <Input
+                      type="text"
+                      placeholder="请输入看板名称"
+                      onFocus={this.hideTooltip}
+                    />)
               }
             </FormItem>
           </Tooltip>
