@@ -1,0 +1,42 @@
+.todo {
+	background-color: #fff;
+	:global {
+		.total-num {
+			padding-top: 28px;
+			font-size: 14px;
+			 em {
+			 	font-style: normal;
+			 	color: #f00;
+			 }
+		}
+		.search-box {
+			margin-top: 15px;
+			width: 305px;
+			height: 30px;
+			position: relative;
+			.search-input {
+				height: 30px;
+				padding-right: 30px;
+			}
+			.btn-search {
+				position: absolute;
+				right: 0;
+				top: 0;
+				bottom: 0;
+				display: inline-block;
+				width: 28px;
+				background-color: #7698f7;
+				border-radius: 5px;
+				cursor: pointer;
+			}
+		}
+    .todoList {
+      margin-top: 28px;
+      .ant-table-pagination {
+      	.ant-pagination-item {
+      		margin-top: 8px;
+      	}
+      }
+    }
+	}
+}

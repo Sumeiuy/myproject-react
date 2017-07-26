@@ -65,4 +65,7 @@ export default {
 
   // 查询指标库数据
   getIndicators: query => api.post('/groovynoauth/jxzb/queryCategoryAndIndicators', query),
+
+  // 查询待办流程记录列表
+  getToDoList: query => api.get('/groovy/customerPool/todolist', query),
 };

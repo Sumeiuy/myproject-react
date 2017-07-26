@@ -4,30 +4,74 @@
  * @author wangjunjun
  */
 
-import React, { PureComponent } from 'react';
-import { withRouter } from 'dva/router';
-// import { connect } from 'react-redux';
+import React, { PureComponent, PropTypes } from 'react';
+import { autobind } from 'core-decorators';
+import { withRouter, routerRedux } from 'dva/router';
+import { connect } from 'react-redux';
 
-// const mapStateToProps = state => ({
-// });
+import ToDoList from '../../components/customerPool/ToDoList';
 
-// const mapDispatchToProps = {
-//   push: routerRedux.push,
-//   replace: routerRedux.replace,
-// };
+import styles from './todo.less';
 
-// @connect(mapStateToProps, mapDispatchToProps)
+const mapStateToProps = state => ({
+  data: state.customerPool.todolist,
+  page: state.customerPool.todolistPage,
+});
+
+const mapDispatchToProps = {
+  push: routerRedux.push,
+  replace: routerRedux.replace,
+  getToDoList: query => ({
+    type: 'customerPool/getToDoList',
+    payload: query,
+  }),
+};
+
+@connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 export default class ToDo extends PureComponent {
 
-  // static propTypes = {
-  //   push: PropTypes.func.isRequired,
-  //   replace: PropTypes.func.isRequired,
-  // }
+  static propTypes = {
+    push: PropTypes.func.isRequired,
+    replace: PropTypes.func.isRequired,
+    location: PropTypes.object.isRequired,
+    getToDoList: PropTypes.func.isRequired,
+    data: PropTypes.array.isRequired,
+    page: PropTypes.object.isRequired,
+  }
+
+  componentDidMount() {
+    this.props.getToDoList();
+  }
+
+  @autobind
+  handleTableChange(options) {
+    const { getToDoList, replace, location: { pathname, query } } = this.props;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        ...options,
+      },
+    });
+    getToDoList({
+      ...query,
+      ...options,
+    });
+  }
 
   render() {
+    const { data, page } = this.props;
     return (
-      <div>todo</div>
+      <div className={styles.todo}>
+        <p className="total-num">找到待办流程任务<em>{page.totalRecordNum}</em>个</p>
+        <ToDoList
+          className="todoList"
+          data={data}
+          page={page}
+          onChange={this.handleTableChange}
+        />
+      </div>
     );
   }
 }
