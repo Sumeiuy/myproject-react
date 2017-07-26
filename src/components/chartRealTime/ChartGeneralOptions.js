@@ -6,7 +6,7 @@
 
 const generalOptions = {
   // 堆叠柱状图使用的颜色
-  stackBarColors: ['#3983ff', '#4adad5', '#756fb8', '#ff4e7b', '#ff784e', '#7f1de5', '#70c381', '#789262', '#70c381'],
+  stackBarColors: ['#3983ff', '#4adad5', '#756fb8', '#ff4e7b', '#ff784e', '#ffb24e', '#7f1de5', '#70c381', '#789262', '#70c381'],
   // 柱状图颜色
   barColor: '#108ee9',
   // 坐标轴的通用样式
