@@ -367,11 +367,9 @@ export default class ChartBarStack extends PureComponent {
                     <td>
                       <span class="echartTooltip" style="background-color:${stackLegend[legend].backgroundColor}"></span>
                     </td>
-                    <td class="tooltipItem">
-                      <div>${seriesName}</div>
-                    </td>
+                    <td class="tooltipItem">${seriesName}:</td>
                     <td class="itemValue" colspan="2">
-                      : <span>${value}</span>
+                      <span>${value}</span>
                     </td>
                   <tr>
                 `);
@@ -396,11 +394,9 @@ export default class ChartBarStack extends PureComponent {
               ${seriesTips.join('')}
               <tr>
                 <td></td>
-                <td class="tooltipItem">
-                  <div>合计</div>
-                </td>
+                <td class="tooltipItem">合计:</td>
                 <td class="itemValue">
-                  : <span>${totalV}</span>
+                  <span>${totalV}</span>
                 </td>
                 <td>
                    (${unit})
