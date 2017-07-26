@@ -10,7 +10,7 @@ import _ from 'lodash';
 import ChartBar from './ChartBar';
 import styles from './ChartBoard.less';
 
-const barColors = ['#3983ff', '#4adad5', '#756fb8', '#4adad5', '#756fb8'];
+const barColors = ['#3983ff', '#ffb24e', '#756fb8', '#ff784e'];
 
 export default class ChartBoard extends PureComponent {
 
@@ -40,7 +40,7 @@ export default class ChartBoard extends PureComponent {
         <Row type="flex">
           {
             chartData.map((item, index) => {
-              const barColor = barColors[(index % 5)];
+              const barColor = barColors[(index % 4)];
               if (!_.isObject(item)) {
                 return null;
               }
