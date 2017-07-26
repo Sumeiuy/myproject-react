@@ -3,6 +3,7 @@
 
 import getScroll from 'antd/lib/_util/getScroll';
 import getRequestAnimationFrame from 'antd/lib/_util/getRequestAnimationFrame';
+import { fspContainer } from '../../../config';
 
 export const reqAnimFrame = getRequestAnimationFrame();
 
@@ -41,13 +42,12 @@ export function getOffsetTop(element) {
 }
 
 export function scrollTo(href, offsetTop = 0, target = getDefaultTarget, callback = () => { }) {
-  const fsp = document.querySelector('#workspace-content>.wrapper');
+  const fsp = document.querySelector(fspContainer.container);
   let scrollTopValue;
   if (fsp) {
     scrollTopValue = fsp.scrollTop;
   } else {
     scrollTopValue = getScroll(target(), true);
-    console.warn('scrollTopValue', scrollTopValue);
   }
   
   const targetElement = document.getElementById(href.substring(1));
@@ -61,7 +61,6 @@ export function scrollTo(href, offsetTop = 0, target = getDefaultTarget, callbac
   const frameFunc = () => {
     const timestamp = Date.now();
     const time = timestamp - startTime;
-    console.warn('time', time);
     // 搬了antd/Anchor判断是否在fsp中，因为fsp是自己做的滚动条
     
     if (fsp) {
