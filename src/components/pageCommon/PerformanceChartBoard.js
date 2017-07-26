@@ -23,7 +23,8 @@ export default class PerformanceChartBoard extends PureComponent {
     getTableInfo: PropTypes.func,
     boardTitle: PropTypes.string.isRequired,
     postExcelInfo: PropTypes.func.isRequired,
-    collectData: PropTypes.func.isRequired,
+    collectScopeSelect: PropTypes.func.isRequired,
+    collectOrderTypeSelect: PropTypes.func.isRequired,
     updateShowCharts: PropTypes.func.isRequired,
     updateCategoryScope: PropTypes.func.isRequired,
     updateCategoryOrder: PropTypes.func.isRequired,
@@ -64,7 +65,8 @@ export default class PerformanceChartBoard extends PureComponent {
       categoryOrder,
       updateCategoryScope,
       updateCategoryOrder,
-      collectData,
+      collectScopeSelect,
+      collectOrderTypeSelect,
     } = this.props;
     if (!(chartData && chartData.length) && showChart !== 'tables') {
       return null;
@@ -88,7 +90,8 @@ export default class PerformanceChartBoard extends PureComponent {
           updateShowCharts={updateShowCharts}
           updateCategoryScope={updateCategoryScope}
           updateCategoryOrder={updateCategoryOrder}
-          collectData={collectData}
+          collectScopeSelect={collectScopeSelect}
+          collectOrderTypeSelect={collectOrderTypeSelect}
         />
         {/* 根据 url 里的 showChart 来显示不同的组件 */}
         {
