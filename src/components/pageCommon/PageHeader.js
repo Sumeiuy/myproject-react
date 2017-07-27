@@ -5,16 +5,19 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import { Row, Affix } from 'antd';
+import { autobind } from 'core-decorators';
+import { Row } from 'antd';
 
 import CustRange from './CustRange2';
 import BoardSelect from './BoardSelect';
 import DurationSelect from './DurationSelect';
+import { getCssStyle } from '../../utils/helper';
 // 选择项字典
 import styles from './PageHeader.less';
 
 const fsp = document.querySelector('#workspace-content>.wrapper');
-
+// 首先判断wrap存在与否
+const contentWrapper = document.getElementById('workspace-content');
 export default class PageHeader extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -38,7 +41,32 @@ export default class PageHeader extends PureComponent {
     reportName: '',
     orgId: '',
   }
+  constructor(props) {
+    super(props);
+    this.state = {
+      top: fsp ? '55px' : 0,
+      left: fsp ? '248px' : 0,
+    };
+  }
 
+  componentDidMount() {
+    this.addEventListenerClick();
+  }
+
+  @autobind
+  addEventListenerClick() {
+    const showBtn = document.querySelector('#sidebar-show-btn');
+    const hideBtn = document.querySelector('#sidebar-hide-btn');
+
+    showBtn.addEventListener('click', this.toggleLeft, false);
+    hideBtn.addEventListener('click', this.toggleLeft, false);
+  }
+  @autobind
+  toggleLeft() {
+    this.setState({
+      left: getCssStyle(contentWrapper, 'left'),
+    });
+  }
   render() {
     const {
       preView,
@@ -54,10 +82,18 @@ export default class PageHeader extends PureComponent {
       collectCustRange,
       collectDurationSelect,
     } = this.props;
-
+    const { top, left } = this.state;
     return (
-      <div className={fsp ? styles.testAffix : ''}>
-        <Affix>
+      <div>
+        <div
+          style={{
+            position: 'fixed',
+            zIndex: 999,
+            right: 0,
+            top,
+            left,
+          }}
+        >
           <div className="reportHeader">
             <Row type="flex" justify="start" align="middle">
               <div className="reportName">
@@ -102,7 +138,8 @@ export default class PageHeader extends PureComponent {
               </div>
             </Row>
           </div>
-        </Affix>
+        </div>
+        <div style={{ height: '55px' }} />
       </div>
     );
   }
