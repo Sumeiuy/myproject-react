@@ -1,24 +1,33 @@
 .todo {
-	background-color: #fff;
+	margin: 15px 20px 20px 20px;
+
 	:global {
 		.total-num {
-			padding-top: 28px;
 			font-size: 14px;
+			color: #666;
 			 em {
 			 	font-style: normal;
-			 	color: #f00;
+			 	color: #fdb02b;
 			 }
 		}
 		.search-box {
-			margin-top: 15px;
-			width: 305px;
-			height: 30px;
+			float: right;
+			width: 320px;
+			height: 32px;
 			position: relative;
 			.search-input {
-				height: 30px;
-				padding-right: 30px;
+				height: 100%;
+				.ant-input {
+					border: 1px solid #ddd;
+					padding-right: 30px;
+				}
 			}
-			.btn-search {
+			.ant-input-affix-wrapper {
+				.ant-input-suffix {
+					right: 14px;
+				}
+		  }
+			.search-btn {
 				position: absolute;
 				right: 0;
 				top: 0;
