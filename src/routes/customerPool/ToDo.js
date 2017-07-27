@@ -8,6 +8,7 @@ import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
 import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
+import { Input, Row, Col } from 'antd';
 
 import ToDoList from '../../components/customerPool/ToDoList';
 
@@ -41,7 +42,30 @@ export default class ToDo extends PureComponent {
   }
 
   componentDidMount() {
-    this.props.getToDoList();
+    const { getToDoList, location: { query: { currentPage } } } = this.props;
+    getToDoList({
+      currentPage: currentPage || 1,
+    });
+  }
+
+  @autobind
+  onSearch(value) {
+    const { getToDoList, replace, location: { pathname, query } } = this.props;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        keyword: value,
+        currentPage: 1,
+        pageSize: 10,
+      },
+    });
+    getToDoList({
+      ...query,
+      keyword: value,
+      currentPage: 1,
+      pageSize: 10,
+    });
   }
 
   @autobind
@@ -64,7 +88,20 @@ export default class ToDo extends PureComponent {
     const { data, page } = this.props;
     return (
       <div className={styles.todo}>
-        <p className="total-num">找到待办流程任务<em>{page.totalRecordNum}</em>个</p>
+        <Row type="flex" justify="space-between" align="middle">
+          <Col span={12}>
+            <p className="total-num">找到待办流程任务<em>&nbsp;{page.totalRecordNum}&nbsp;</em>个</p>
+          </Col>
+          <Col span={12}>
+            <div className="search-box">
+              <Input.Search
+                className="search-input"
+                placeholder="请输入任务名称"
+                onSearch={this.onSearch}
+              />
+            </div>
+          </Col>
+        </Row>
         <ToDoList
           className="todoList"
           data={data}
