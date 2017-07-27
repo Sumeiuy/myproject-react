@@ -48,6 +48,11 @@ export default class ToDoList extends PureComponent {
   }
 
   @autobind
+  onShowSizeChange(current, pageSize) {  // eslint-disable-line
+
+  }
+
+  @autobind
   handlePageChange(page) {
     this.props.onChange({
       currentPage: page,
@@ -57,6 +62,7 @@ export default class ToDoList extends PureComponent {
   render() {
     const { className, data, page } = this.props;
     const handlePageChange = this.handlePageChange;
+    const onShowSizeChange = this.onShowSizeChange;
     return (
       <Table
         className={className}
@@ -67,6 +73,8 @@ export default class ToDoList extends PureComponent {
           current: page.curPageNum,
           total: page.totalRecordNum,
           pageSize: page.pageSize,
+          showSizeChanger: true,
+          onShowSizeChange,
           onChange: handlePageChange,
         }}
       />
