@@ -20,6 +20,7 @@ import styles from './Home.less';
 
 const effects = {
   allInfo: 'report/getAllInfo',
+  delReportData: 'report/delReportData',
   chartTableInfo: 'report/getChartTableInfo',
   oneChartInfo: 'report/getOneChartInfo',
   exportExcel: 'report/exportExcel',
@@ -46,6 +47,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
+  delReportData: fectchDataFunction(false, effects.delReportData),
   getAllInfo: fectchDataFunction(true, effects.allInfo),
   getOneChartInfo: fectchDataFunction(true, effects.oneChartInfo),
   getChartTableInfo: fectchDataFunction(true, effects.chartTableInfo),
@@ -67,6 +69,7 @@ export default class ReportHome extends PureComponent {
     location: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
+    delReportData: PropTypes.func.isRequired,
     getAllInfo: PropTypes.func.isRequired,
     getOneChartInfo: PropTypes.func.isRequired,
     getChartTableInfo: PropTypes.func.isRequired,
@@ -171,6 +174,11 @@ export default class ReportHome extends PureComponent {
         this.getInfo();
       });
     }
+  }
+
+  // 销毁页面的时候，清楚相关数据
+  componentWillUnmount() {
+    this.props.delReportData();
   }
 
   @autobind
