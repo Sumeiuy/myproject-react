@@ -44,12 +44,12 @@ export default class Item extends PureComponent {
           title={toolTipHtnml}
           overlayClassName="visibleRangeToolTip"
           getPopupContainer={this.getTooltipContainer}
-        >*/}
+        > */}
         <div className={styles.contentBorder}>
           <h3 className={styles.title} title={newName}>
             {newName}
           </h3>
-          {/* </Tooltip>*/}
+          {/* </Tooltip> */}
           <h4 className={styles.num}>
             {data.value}
             <span className={styles.span}>
