@@ -1,4 +1,5 @@
 import constants from './constants';
+import fspContainer from './fspContainer';
 import log from './log';
 import menu from './menu';
 import persist from './persist';
@@ -12,6 +13,7 @@ import BoardBasic from './BoardBasic';
 
 export default {
   constants,
+  fspContainer,
   log,
   menu,
   persist,

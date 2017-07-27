@@ -7,7 +7,9 @@ import classNames from 'classnames';
 import addEventListener from 'rc-util/lib/Dom/addEventListener';
 import AnchorLink from 'antd/lib/anchor/AnchorLink';
 import { Affix } from 'antd';
+import { fspContainer } from '../../../config';
 
+const fsp = document.querySelector(fspContainer.container);
 import AnchorHelper, { getDefaultTarget } from './anchorHelper';
 import './index.less';
 
@@ -59,7 +61,13 @@ export default class Anchor extends PureComponent {
   componentDidMount() {
     this.handleScroll();
     this.updateInk();
-    this.scrollEvent = addEventListener((this.props.target || getDefaultTarget)(), 'scroll', this.handleScroll);
+    // 搬了antd/Anchor判断是否在fsp中，控制scroll
+    if (fsp) {
+      this.scrollEvent = $(fsp).on('scroll', this.handleScroll);
+    } else {
+      this.scrollEvent = addEventListener((this.props.target || getDefaultTarget)(), 'scroll', this.handleScroll);
+    }
+    
   }
 
   componentWillUnmount() {

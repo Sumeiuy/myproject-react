@@ -9,7 +9,7 @@ import _ from 'lodash';
 import Icon from '../common/Icon';
 
 import Anchor from '../../components/common/anchor';
-import { reportAnchorOptions } from '../../config';
+import { fspContainer, reportAnchorOptions } from '../../config';
 import styles from './pageAnchor.less';
 
 const { Link } = Anchor;
@@ -39,7 +39,7 @@ export default class PageAnchor extends PureComponent {
   */
   @autobind
   handleGotoTop() {
-    const fsp = document.querySelector('#workspace-content>.wrapper');
+    const fsp = document.querySelector(fspContainer.container);
     if (fsp) {
       fsp.scrollTop = 0;
     } else {
@@ -54,7 +54,7 @@ export default class PageAnchor extends PureComponent {
       <div>
         {
           charInfoLength >= 3 ?
-            <Anchor className={styles.pageAnchor} offsetTop={80} >
+            <Anchor className={styles.pageAnchor} offsetTop={130} >
               {
                 chartInfo.map((item) => {
                   const { key } = item;
