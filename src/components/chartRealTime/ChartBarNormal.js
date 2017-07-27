@@ -116,36 +116,57 @@ export default class ChartBarNormal extends PureComponent {
       maxIndex = 10 - padLength;
     }
 
-    // const judge = (item) => {
-    //   // 正数最大值
-    //   const plusMax = medianValue.plus * 2;
-    //   // 负数最大值
-    //   const minusMax = medianValue.minus * 2;
-    //   if (minusMax >= 0) {
-    //     // 全是正数
-    //     return medianValue.plus > item ? 'right' : 'insideRight';
-    //   } else if (plusMax <= 0) {
-    //     // 全是负数
-    //     return medianValue.minus < item ? 'left' : 'insideLeft';
-    //   }
-    //   // 有正有负
-    //   // 判断正负所占比例
-    //   const axisGap = plusMax - minusMax;
-    //   const plusPercent = (plusMax / axisGap) * 100;
-    //   const minusPercent = (Math.abs(minusMax) / axisGap) * 100;
-    //   if (plusPercent < 20 && item >= 0) {
-    //     return 'left';
-    //   }
-    //   if (minusPercent < 20 && item <= 0) {
-    //     return 'right';
-    //   }
-    //   if (item > 0) {
-    //     return medianValue.plus > item ? 'right' : 'insideRight';
-    //   } else if (item < 0) {
-    //     return medianValue.minus < item ? 'left' : 'insideLeft';
-    //   }
-    //   return 'right';
-    // };
+    const positions = {
+      topRight: ['85%', -14],
+      topLeft: [8, -14],
+    };
+
+    const howmanyno = (no) => {
+      const l = String(no).length;
+      const m = no < 0 ? 1 : 0;
+      const d = String(no).indexOf('.') > -1 ? 1 : 0;
+      const x = (m * 5) + (d * 3) + ((l - m - d) * 8);
+      return x;
+    };
+
+    const judge = (item) => {
+      // 正数最大值
+      const plusMax = medianValue.plus * 2;
+      // 负数最大值
+      const minusMax = medianValue.minus * 2;
+      if (minusMax >= 0) {
+        // 全是正数
+        // return medianValue.plus > item ? 'right' : 'insideRight';
+        return positions.topRight;
+      } else if (plusMax <= 0) {
+        // 全是负数
+        // return medianValue.minus < item ? 'left' : 'insideLeft';
+        return medianValue.minus < item ? [-howmanyno(item), -14] : [8, -14];
+      }
+      // 有正有负
+      // 判断正负所占比例
+      const axisGap = plusMax - minusMax;
+      const plusPercent = (plusMax / axisGap) * 100;
+      const minusPercent = (Math.abs(minusMax) / axisGap) * 100;
+      if (plusPercent < 20 && item >= 0) {
+        // return 'left';
+        // 此处需要判断有几个数字
+        return [-howmanyno(item), -14];
+      }
+      if (minusPercent < 20 && item <= 0) {
+        // return 'right';
+        return ['100%', -14];
+      }
+      if (item > 0) {
+        // return medianValue.plus > item ? 'right' : 'insideRight';
+        return medianValue.plus > item ? [8, -14] : ['60%', -14];
+        // return ['60%', -14];
+      } else if (item < 0) {
+        // return medianValue.minus < item ? 'left' : 'insideLeft';
+        return medianValue.minus < item ? [-howmanyno(item), -14] : [8, -14];
+      }
+      return 'right';
+    };
 
     return series.map((item, index) => ({
       value: (unit === PERCENT || unit === PERMILLAGE) ? Number(item.toFixed(2)) : item,
@@ -155,9 +176,9 @@ export default class ChartBarNormal extends PureComponent {
             color: '#666',
           },
           show: index < maxIndex,
-          // position: judge(item),
-          position: ['85%', '-250%'],
-          // position: 'right',
+          position: judge(item),
+          // position: ['85%', '-250%'],
+          // position: 'top',
         },
       },
     }));
