@@ -2,19 +2,46 @@
   padding:0 18px;
   height: 40px;
   line-height: 40px;
-  color: #fff;
-  font-size: 15px;
-  font-weight: 100;
-  background-color: #f78e3d;
+  color: #000;
+  font-size: 18px;
+  // font-weight: bold;
+  // background-color: #f78e3d;
 }
 .items {
-  background-color: #fff;
-}
-.itemWrap:nth-child(8n) div{
-  border-right: none;
-}
-.noBorder{
-  div{
-    border-bottom: none;
+  background: url('../../../static/images/bg_summury.jpg') no-repeat center center;
+  background-size: cover;
+  margin-bottom: 25px;
+  position: relative;
+  .preBtn, .nextBtn{
+    position: absolute;
+    display: inline-block;
+    font-size: 40px;
+    font-weight: bold;
+    height: 100%;
+    color: #999;
+    line-height: 105px;
+    cursor: pointer;
+    z-index: 2;
+    i{
+      font-size: 28px;
+    }
   }
+  .preBtn{
+    transform: rotate(180deg);
+    line-height: 85px;
+  }
+  .nextBtn{
+    right: 0;
+  }
+  :global {
+    .ant-pagination-simple .ant-pagination-simple-pager {
+      display: none;
+    }
+  }
+}
+.itemWrap:nth-child(8n) div div{
+  border-right: 0;
+}
+.itemWrap:last-child div div{
+  border-right: 0;
 }

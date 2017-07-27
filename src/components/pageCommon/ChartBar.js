@@ -16,6 +16,7 @@ export default class ChartBar extends PureComponent {
     chartData: PropTypes.object,
     custRange: PropTypes.array.isRequired,
     updateQueryState: PropTypes.func.isRequired,
+    barColor: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -26,7 +27,7 @@ export default class ChartBar extends PureComponent {
 
   render() {
     const { chartData: { orgModel } } = this.props;
-    const { chartData, level, location, scope, custRange, updateQueryState } = this.props;
+    const { chartData, level, location, scope, custRange, updateQueryState, barColor } = this.props;
     // 增加判断走堆叠还是普通柱状图
     if (orgModel
       && Array.isArray(orgModel)
@@ -51,6 +52,7 @@ export default class ChartBar extends PureComponent {
         scope={scope}
         custRange={custRange}
         updateQueryState={updateQueryState}
+        barColor={barColor}
       />
     );
   }

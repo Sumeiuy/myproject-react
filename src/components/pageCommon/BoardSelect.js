@@ -3,7 +3,6 @@
  * @author sunweibin
  * @description 看板切换Select
  */
-
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import { Dropdown, Menu, Icon } from 'antd';

@@ -3,6 +3,7 @@
 
 import getScroll from 'antd/lib/_util/getScroll';
 import getRequestAnimationFrame from 'antd/lib/_util/getRequestAnimationFrame';
+import { fspContainer } from '../../../config';
 
 export const reqAnimFrame = getRequestAnimationFrame();
 
@@ -41,18 +42,33 @@ export function getOffsetTop(element) {
 }
 
 export function scrollTo(href, offsetTop = 0, target = getDefaultTarget, callback = () => { }) {
-  const scrollTop = getScroll(target(), true);
+  const fsp = document.querySelector(fspContainer.container);
+  let scrollTopValue;
+  if (fsp) {
+    scrollTopValue = fsp.scrollTop;
+  } else {
+    scrollTopValue = getScroll(target(), true);
+  }
+  
   const targetElement = document.getElementById(href.substring(1));
   if (!targetElement) {
     return;
   }
   const eleOffsetTop = getOffsetTop(targetElement);
-  const targetScrollTop = scrollTop + eleOffsetTop - offsetTop;
+  const targetScrollTop = scrollTopValue + eleOffsetTop - offsetTop;
+
   const startTime = Date.now();
   const frameFunc = () => {
     const timestamp = Date.now();
     const time = timestamp - startTime;
-    window.scrollTo(window.pageXOffset, easeInOutCubic(time, scrollTop, targetScrollTop, 450));
+    // 搬了antd/Anchor判断是否在fsp中，因为fsp是自己做的滚动条
+    
+    if (fsp) {
+      fsp.scrollTop = easeInOutCubic(time, scrollTopValue, targetScrollTop, 450);
+    } else {
+      window.scrollTo(window.pageXOffset, easeInOutCubic(time, scrollTopValue, targetScrollTop, 450));
+    }
+    
     if (time < 450) {
       reqAnimFrame(frameFunc);
     } else {
@@ -60,7 +76,7 @@ export function scrollTo(href, offsetTop = 0, target = getDefaultTarget, callbac
     }
   };
   reqAnimFrame(frameFunc);
-  // 搬了antd/Anchor就是为了去掉这一行
+  // 搬了antd/Anchor去掉这一行
   // history.pushState(null, '', href);
 }
 

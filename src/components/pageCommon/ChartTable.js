@@ -12,13 +12,13 @@ import _ from 'lodash';
 import ScrollBar from './ScrollBar';
 
 import { getStrLen } from '../../utils/helper';
-import { optionsMap } from '../../config';
+import { fspContainer, optionsMap } from '../../config';
 import styles from './ChartTable.less';
 
 // 按类别排序
 const sortByType = optionsMap.sortByType;
 const revert = { asc: 'desc', desc: 'asc' };
-const fsp = document.querySelector('#workspace-content>.wrapper');
+const fsp = document.querySelector(fspContainer.container);
 
 
 export default class ChartTable extends PureComponent {
@@ -67,18 +67,25 @@ export default class ChartTable extends PureComponent {
   }
 
   componentDidMount() {
+    if (!_.isEmpty(this.props.chartTableInfo)) {
+      this.changeTableData(this.props);
+    }
     this.onScroll();
     window.addEventListener('resize', this.onScroll, false);
     if (fsp) {
-      document.addEventListener('mousewheel', this.onScroll, false);
+      $(fsp).on('scroll', this.onScroll);
     } else {
       document.addEventListener('scroll', this.onScroll, false);
     }
   }
 
   componentWillReceiveProps(nextProps) {
-    // TODO 根据 nextProps 的值是否变化来判断是否调用此方法
-    this.changeTableData(nextProps);
+    // 根据 nextProps 的值是否变化来判断是否调用此方法
+    const props = this.props;
+    if (!_.isEqual(props.chartTableInfo, nextProps.chartTableInfo)
+    || !_.isEqual(props.scope, nextProps.scope)) {
+      this.changeTableData(nextProps);
+    }
   }
 
   componentDidUpdate() {
@@ -88,33 +95,32 @@ export default class ChartTable extends PureComponent {
   componentWillUnmount() {
     window.removeEventListener('resize', this.onScroll);
     if (fsp) {
-      document.removeEventListener('mousewheel', this.onScroll);
+      $(fsp).off('scroll', this.onScroll);
     } else {
       document.removeEventListener('scroll', this.onScroll);
     }
   }
 
+  // 表格滚动条显示
   @autobind
   onScroll() {
     const currentTable = this.currentTable;
-    const tableDiv = currentTable.querySelector('.ant-table');
+    // 表格tbody
+    const tableTbody = currentTable.querySelector('.ant-table-tbody');
     // 窗口可视高度
     const docElemHeight = document.documentElement.clientHeight;
-    // 元素高度
-    const elemClientHeight = tableDiv.clientHeight;
-    // 元素距离顶部距离
-    const topDistance = tableDiv.getBoundingClientRect().top;
-    // 如果窗口可视高度大于元素高度和元素距离顶部距离之和，此时表格全部显示出来，此时是不需要显示滚动条的，否则显示
-    console.log('tableDiv', tableDiv);
-    console.log('docElemHeight', docElemHeight);
-    console.log('elemClientHeight', elemClientHeight);
-    console.log('topDistance', topDistance);
-    const visible = docElemHeight - elemClientHeight - topDistance;
-    console.log('visible', visible);
-    if (visible < 0 && topDistance > 0 && topDistance < docElemHeight) {
-      this.setState({ scrollDisplay: true });
-    } else {
-      this.setState({ scrollDisplay: false });
+    // 表格tbody距离顶部距离
+    const topDistance = tableTbody.getBoundingClientRect().top;
+    // 表格tbody的高度
+    const tableTbodyHeight = tableTbody.clientHeight;
+    if (tableTbody) {
+      // 如果窗口可视高度大于表格tbody高度、元素距离顶部距离之和，此时表格全部显示出来，此时是不需要显示滚动条的，否则显示
+      const visible = docElemHeight - tableTbodyHeight - topDistance;
+      if (visible < 0 && topDistance > 0 && topDistance < docElemHeight) {
+        this.setState({ scrollDisplay: true });
+      } else {
+        this.setState({ scrollDisplay: false });
+      }
     }
   }
 
@@ -324,7 +330,7 @@ export default class ChartTable extends PureComponent {
     const temp = [];
     let newArr = [];
     let tempArr = [];
-    let allWidth = '';
+    let allWidth;
     if (data && data.length) {
       data.map((item, index) => {
         const testArr = this.unitChange(item.indicatorDataList);
