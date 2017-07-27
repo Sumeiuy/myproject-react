@@ -5,19 +5,22 @@
  */
 
 import React, { PureComponent } from 'react';
-import { withRouter, Link } from 'dva/router';
-
+import { withRouter } from 'dva/router';
+// import { Row, Col } from 'antd';
+import PerformanceIndicators from '../../components/customerPool/PerformanceIndicators';
+import ToBeDone from '../../components/customerPool/ToBeDone';
+import Search from '../../components/customerPool/Search';
 import styles from './home.less';
 
 @withRouter
 export default class Home extends PureComponent {
   render() {
     return (
-      <div>
-        <div className={styles.quickEntry}>
-          <Link className="item" to="/customerPool/canDoToday">今日可做任务</Link>
-          <Link className="item" to="">满足业务条件办理客户</Link>
-          <Link className="item" to="/customerPool/todo">待办流程</Link>
+      <div className={styles.customerPoolWrap}>
+        <Search />
+        <div className={styles.content}>
+          <ToBeDone />
+          <PerformanceIndicators />
         </div>
       </div>
     );

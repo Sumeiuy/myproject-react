@@ -1,0 +1,53 @@
+.searchBox{
+  background: #FFF;
+  .inner{
+    padding: 40px 0 0;
+  }
+  .inputBox{
+    width: 60%;
+    margin:auto;
+  }
+  :global{
+    .global-search-wrapper {
+      padding-right: 50px;
+    }
+    .ant-select-lg .ant-select-selection--single,
+    .ant-select-auto-complete.ant-select-lg .ant-input,
+    .ant-btn-lg{
+      height: 45px;
+    }
+    .global-search {
+      width: 100%;
+    }
+    .global-search.ant-select-auto-complete .ant-select-selection--single {
+      margin-right: -46px;
+    }
+    .global-search.ant-select-auto-complete .ant-input-affix-wrapper .ant-input:not(:last-child) {
+      padding-right: 62px;
+    }
+    .ant-input-affix-wrapper .ant-input-suffix{
+      right: 0;
+    }
+  }
+  .historyList{
+    width: 60%;
+    margin: auto;
+    padding: 0 0 10px 0;
+    .inner{
+      padding: 10px 0;
+      line-height: 30px;
+      font-size: 14px;
+      a{
+        text-decoration: underline;
+        color:#1486d8;
+      }
+      .bd{
+        display: inline-block;
+        width: 1px;
+        background: #1486d8;
+        height:12px;
+        margin: 0 10px;
+      }
+    }
+  }
+}
