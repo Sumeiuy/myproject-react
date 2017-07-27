@@ -73,8 +73,11 @@ export default class ChartBarNormal extends PureComponent {
   @autobind
   onReady(instance) {
     instance.on('click', (arg) => {
+      if (arg.componentType !== 'yAxis') {
+        return;
+      }
       this.custRange.forEach((item) => {
-        if (arg.name === item.name) {
+        if (arg.value === item.name) {
           this.props.updateQueryState({
             orgId: item.id,
             custRangeLevel: item.level,
@@ -337,6 +340,7 @@ export default class ChartBarNormal extends PureComponent {
         ...AxisOptions,
         axisLabel: {
           ...AxisOptions.axisLabel,
+          clickable: true,
           formatter(value) {
             if (!value) {
               return '--';
@@ -348,19 +352,23 @@ export default class ChartBarNormal extends PureComponent {
           },
         },
         data: yAxisLabels,
+        triggerEvent: true,
       },
       series: [
         {
           ...barShadow,
+          clickable: false,
           data: maxDataShadow,
         },
         {
           ...barShadow,
+          clickable: false,
           data: minDataShadow,
         },
         {
           name,
           type: 'bar',
+          clickable: false,
           silent: true,
           label: {
             normal: {
