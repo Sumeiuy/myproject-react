@@ -42,7 +42,30 @@ export default class ToDo extends PureComponent {
   }
 
   componentDidMount() {
-    this.props.getToDoList();
+    const { getToDoList, location: { query: { currentPage } } } = this.props;
+    getToDoList({
+      currentPage: currentPage || 1,
+    });
+  }
+
+  @autobind
+  onSearch(value) {
+    const { getToDoList, replace, location: { pathname, query } } = this.props;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        keyword: value,
+        currentPage: 1,
+        pageSize: 10,
+      },
+    });
+    getToDoList({
+      ...query,
+      keyword: value,
+      currentPage: 1,
+      pageSize: 10,
+    });
   }
 
   @autobind
@@ -74,6 +97,7 @@ export default class ToDo extends PureComponent {
               <Input.Search
                 className="search-input"
                 placeholder="请输入任务名称"
+                onSearch={this.onSearch}
               />
             </div>
           </Col>

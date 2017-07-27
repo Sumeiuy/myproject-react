@@ -48,8 +48,12 @@ export default class ToDoList extends PureComponent {
   }
 
   @autobind
-  onShowSizeChange(current, pageSize) {  // eslint-disable-line
-
+  onShowSizeChange(current, pageSize) {
+    console.log(current, pageSize);
+    this.props.onChange({
+      currentPage: current,
+      pageSize,
+    });
   }
 
   @autobind
@@ -70,6 +74,8 @@ export default class ToDoList extends PureComponent {
         columns={columns}
         dataSource={data}
         pagination={{
+          size: 'small',
+          showTotal: () => (`共${page.totalRecordNum}项`),
           current: page.curPageNum,
           total: page.totalRecordNum,
           pageSize: page.pageSize,
