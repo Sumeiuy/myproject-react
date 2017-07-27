@@ -1,0 +1,175 @@
+/**
+ * 历史对比折线图mock数据
+ */
+exports.response = function (req, res) {
+  return {
+    code: '0',
+    msg: 'OK',
+    resultData: {
+      current: [
+        {
+          indicatorMetaDto: {
+            key: 'totAset',
+            name: '托管总资产',
+            value: null,
+            unit: '元',
+            description: 'upd入岗投顾人员名下客户总资产',
+            categoryKey: null,
+            isBelongsSummury: null,
+            hasChildren: null,
+            parentKey: null,
+            parentName: null,
+            children: null,
+          },
+          timeModel: {
+            year: '2017',
+            month: '3',
+            day: null,
+          },
+        },
+        {
+          indicatorMetaDto: {
+            key: 'totAset',
+            name: '托管总资产',
+            value: null,
+            unit: '元',
+            description: 'upd入岗投顾人员名下客户总资产',
+            categoryKey: null,
+            isBelongsSummury: null,
+            hasChildren: null,
+            parentKey: null,
+            parentName: null,
+            children: null,
+          },
+          timeModel: {
+            year: '2017',
+            month: '4',
+            day: null,
+          },
+        },
+        {
+          indicatorMetaDto: {
+            key: 'totAset',
+            name: '托管总资产',
+            value: '88490055743.0378',
+            unit: '元',
+            description: 'upd入岗投顾人员名下客户总资产',
+            categoryKey: null,
+            isBelongsSummury: null,
+            hasChildren: null,
+            parentKey: null,
+            parentName: null,
+            children: null,
+          },
+          timeModel: {
+            year: '2017',
+            month: '5',
+            day: null,
+          },
+        },
+        {
+          indicatorMetaDto: {
+            key: 'totAset',
+            name: '托管总资产',
+            value: '224428448617.8616',
+            unit: '元',
+            description: 'upd入岗投顾人员名下客户总资产',
+            categoryKey: null,
+            isBelongsSummury: null,
+            hasChildren: null,
+            parentKey: null,
+            parentName: null,
+            children: null,
+          },
+          timeModel: {
+            year: '2017',
+            month: '6',
+            day: null,
+          },
+        },
+      ],
+      previous: [
+        {
+          indicatorMetaDto: {
+            key: 'totAset',
+            name: '托管总资产',
+            value: null,
+            unit: '元',
+            description: 'upd入岗投顾人员名下客户总资产',
+            categoryKey: null,
+            isBelongsSummury: null,
+            hasChildren: null,
+            parentKey: null,
+            parentName: null,
+            children: null,
+          },
+          timeModel: {
+            year: '2016',
+            month: '3',
+            day: null,
+          },
+        },
+        {
+          indicatorMetaDto: {
+            key: 'totAset',
+            name: '托管总资产',
+            value: null,
+            unit: '元',
+            description: 'upd入岗投顾人员名下客户总资产',
+            categoryKey: null,
+            isBelongsSummury: null,
+            hasChildren: null,
+            parentKey: null,
+            parentName: null,
+            children: null,
+          },
+          timeModel: {
+            year: '2016',
+            month: '4',
+            day: null,
+          },
+        },
+        {
+          indicatorMetaDto: {
+            key: 'totAset',
+            name: '托管总资产',
+            value: null,
+            unit: '元',
+            description: 'upd入岗投顾人员名下客户总资产',
+            categoryKey: null,
+            isBelongsSummury: null,
+            hasChildren: null,
+            parentKey: null,
+            parentName: null,
+            children: null,
+          },
+          timeModel: {
+            year: '2016',
+            month: '5',
+            day: null,
+          },
+        },
+        {
+          indicatorMetaDto: {
+            key: 'totAset',
+            name: '托管总资产',
+            value: null,
+            unit: '元',
+            description: 'upd入岗投顾人员名下客户总资产',
+            categoryKey: null,
+            isBelongsSummury: null,
+            hasChildren: null,
+            parentKey: null,
+            parentName: null,
+            children: null,
+          },
+          timeModel: {
+            year: '2016',
+            month: '6',
+            day: null,
+          },
+        },
+      ],
+    },
+  };
+};
