@@ -31,6 +31,16 @@ const REN = ZHUNICODE.REN;
 const HU = ZHUNICODE.HU;
 const YUAN = ZHUNICODE.YUAN;
 
+const arrayTransform = (arr) => {
+  let tmpArr = arr.slice();
+  arr.forEach((v) => {
+    if (v.children) {
+      tmpArr = [...tmpArr, ...v.children];
+    }
+  });
+  return tmpArr;
+};
+
 export default class ChartBarStack extends PureComponent {
 
   static propTypes = {
@@ -38,11 +48,15 @@ export default class ChartBarStack extends PureComponent {
     level: PropTypes.string.isRequired,
     scope: PropTypes.number.isRequired,
     chartData: PropTypes.object,
+    custRange: PropTypes.array,
+    updateQueryState: PropTypes.func,
   }
 
   static defaultProps = {
     location: {},
     chartData: {},
+    updateQueryState: () => { },
+    custRange: [],
   }
 
   constructor(props) {
@@ -57,6 +71,7 @@ export default class ChartBarStack extends PureComponent {
     // 先进行初始化的处理
     this.handleResize();
     this.registerResizeListener();
+    this.custRange = arrayTransform(this.props.custRange);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -73,6 +88,25 @@ export default class ChartBarStack extends PureComponent {
       const dom = this.legendDom;
       resize.uninstall(dom);
     }
+  }
+
+  @autobind
+  onReady(instance) {
+    instance.on('click', (arg) => {
+      if (arg.componentType !== 'yAxis') {
+        return;
+      }
+      this.custRange.forEach((item) => {
+        if (arg.value === item.name) {
+          this.props.updateQueryState({
+            orgId: item.id,
+            custRangeLevel: item.level,
+            level: item.level,
+            scope: Number(item.level) + 1,
+          });
+        }
+      });
+    });
   }
 
   @autobind
@@ -448,15 +482,18 @@ export default class ChartBarStack extends PureComponent {
             return value;
           },
         },
+        triggerEvent: true,
         data: yAxisLabels,
       },
       series: [
         {
           ...barShadow,
+          clickable: false,
           data: grid.maxDataShadow,
         },
         {
           ...barShadow,
+          clickable: false,
           data: grid.minDataShadow,
         },
         ...stackSeries,
@@ -507,6 +544,7 @@ export default class ChartBarStack extends PureComponent {
             ?
             (
               <IECharts
+                onReady={this.onReady}
                 option={options}
                 resizable
                 style={{
