@@ -41,6 +41,8 @@ export default class ChartBar extends PureComponent {
           chartData={chartData}
           level={level}
           scope={scope}
+          custRange={custRange}
+          updateQueryState={updateQueryState}
         />
       );
     }
