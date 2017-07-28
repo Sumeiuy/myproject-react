@@ -17,6 +17,7 @@ import styles from './Home.less';
 const effects = {
   allInfo: 'history/getAllInfo',
   queryContrastAnalyze: 'history/queryContrastAnalyze',
+  getContrastData: 'history/getContrastData',
 };
 
 const fectchDataFunction = (globalLoading, type) => query => ({
@@ -33,11 +34,13 @@ const mapStateToProps = state => ({
   globalLoading: state.activity.global,
   contributionAnalysis: state.history.contributionAnalysis,
   reviewAnalysis: state.history.reviewAnalysis,
+  contrastData: state.history.contrastData,
 });
 
 const mapDispatchToProps = {
   getAllInfo: fectchDataFunction(true, effects.allInfo),
   queryContrastAnalyze: fectchDataFunction(true, effects.queryContrastAnalyze),
+  getContrastData: fectchDataFunction(true, effects.getContrastData),
   push: routerRedux.push,
   replace: routerRedux.replace,
 };
@@ -50,11 +53,13 @@ export default class HistoryHome extends PureComponent {
     location: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
+    contrastData: PropTypes.object.isRequired,
     getAllInfo: PropTypes.func.isRequired,
-    custRange: PropTypes.array,
-    visibleBoards: PropTypes.array,
+    custRange: PropTypes.arrayisRequired,
+    visibleBoards: PropTypes.arrayisRequired,
     globalLoading: PropTypes.bool,
     queryContrastAnalyze: PropTypes.func.isRequired,
+    getContrastData: PropTypes.func.isRequired,
     contributionAnalysis: PropTypes.object.isRequired,
     reviewAnalysis: PropTypes.object.isRequired,
     historyCore: PropTypes.array, // 概览
@@ -70,7 +75,12 @@ export default class HistoryHome extends PureComponent {
   }
 
   componentWillMount() {
-    const { location: { query }, getAllInfo, queryContrastAnalyze } = this.props;
+    const {
+      location: { query },
+      getAllInfo,
+      queryContrastAnalyze,
+      getContrastData,
+    } = this.props;
     getAllInfo({
       ...query,
     });
@@ -99,6 +109,8 @@ export default class HistoryHome extends PureComponent {
       // coreIndicatorId: '',
       // contrastIndicatorId: '',
     });
+    // 暂时不写参数
+    getContrastData();
   }
 
   render() {
@@ -110,6 +122,7 @@ export default class HistoryHome extends PureComponent {
       custRange,
       historyCore,
       crrData,
+      contrastData,
     } = this.props;
 
     return (
@@ -129,7 +142,7 @@ export default class HistoryHome extends PureComponent {
           <div className={styles.indicatorAnalyse}>
             <div className={styles.caption}>核心指标分析-总交易量</div>
             <div className={styles.polyArea}>
-              <HistoryComparePolyChart />
+              <HistoryComparePolyChart data={contrastData} />
               <HistoryCompareRankChart />
             </div>
             <HisDivider />
