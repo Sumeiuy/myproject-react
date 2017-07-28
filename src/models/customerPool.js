@@ -9,17 +9,10 @@ export default {
   namespace: 'customerPool',
   state: {
     todolist: [],
-    todolistPage: {
-      pageSize: 10,
-      curPageNum: 1,
-      totalPageNum: 1,
-      totalRecordNum: 0,
-    },
   },
   subscriptions: {},
   effects: {
     * getToDoList({ payload }, { call, put }) {
-      console.log('payload', payload);
       const response = yield call(api.getToDoList, payload);
       yield put({
         type: 'getToDoListSuccess',
@@ -29,11 +22,16 @@ export default {
   },
   reducers: {
     getToDoListSuccess(state, action) {
-      const { payload: { data: { todolist, page } } } = action;
+      const { payload: { resultData: { data } } } = action;
+      data.forEach((item) => {
+        item.task = {  //eslint-disable-line
+          text: item.subject,
+          dispatchUri: item.dispatchUri,
+        };
+      });
       return {
         ...state,
-        todolist,
-        todolistPage: page,
+        todolist: data,
       };
     },
   },

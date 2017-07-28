@@ -5,16 +5,15 @@
  */
 
 import React, { PureComponent, PropTypes } from 'react';
-import { autobind } from 'core-decorators';
-import { Link } from 'dva/router';
 import { Table } from 'antd';
+import { openAuditPage } from '../../utils/fspGlobal';
 
 const columns = [
   {
     title: '任务名称',
-    dataIndex: 'subject',
-    key: 'subject',
-    render: text => <Link to="#">{text}</Link>,
+    dataIndex: 'task',
+    key: 'task',
+    render: item => <a href="javascript:void(0);" onClick={() => openAuditPage(item.dispatchUri)}>{item.text}</a>, // eslint-disable-line
   },
   {
     title: '当前步骤',
@@ -42,46 +41,21 @@ export default class ToDoList extends PureComponent {
 
   static propTypes = {
     data: PropTypes.array.isRequired,
-    page: PropTypes.object.isRequired,
-    onChange: PropTypes.func.isRequired,
     className: PropTypes.string.isRequired,
   }
 
-  @autobind
-  onShowSizeChange(current, pageSize) {
-    console.log(current, pageSize);
-    this.props.onChange({
-      currentPage: current,
-      pageSize,
-    });
-  }
-
-  @autobind
-  handlePageChange(page) {
-    this.props.onChange({
-      currentPage: page,
-    });
-  }
-
   render() {
-    const { className, data, page } = this.props;
-    const handlePageChange = this.handlePageChange;
-    const onShowSizeChange = this.onShowSizeChange;
+    const { className, data } = this.props;
     return (
       <Table
         className={className}
-        rowKey={record => record.taskName}
+        rowKey={record => record.applyId}
         columns={columns}
         dataSource={data}
         pagination={{
           size: 'small',
-          showTotal: () => (`共${page.totalRecordNum}项`),
-          current: page.curPageNum,
-          total: page.totalRecordNum,
-          pageSize: page.pageSize,
+          showTotal: total => (`共${total}项`),
           showSizeChanger: true,
-          onShowSizeChange,
-          onChange: handlePageChange,
         }}
       />
     );

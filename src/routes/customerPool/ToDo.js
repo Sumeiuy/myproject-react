@@ -16,7 +16,6 @@ import styles from './todo.less';
 
 const mapStateToProps = state => ({
   data: state.customerPool.todolist,
-  page: state.customerPool.todolistPage,
 });
 
 const mapDispatchToProps = {
@@ -38,13 +37,13 @@ export default class ToDo extends PureComponent {
     location: PropTypes.object.isRequired,
     getToDoList: PropTypes.func.isRequired,
     data: PropTypes.array.isRequired,
-    page: PropTypes.object.isRequired,
   }
 
   componentDidMount() {
     const { getToDoList, location: { query: { currentPage } } } = this.props;
     getToDoList({
-      currentPage: currentPage || 1,
+      curPageNum: currentPage || 1,
+      pageSize: 100000,
     });
   }
 
@@ -55,42 +54,24 @@ export default class ToDo extends PureComponent {
       pathname,
       query: {
         ...query,
-        keyword: value,
-        currentPage: 1,
-        pageSize: 10,
+        taskName: value,
       },
     });
     getToDoList({
       ...query,
-      keyword: value,
-      currentPage: 1,
-      pageSize: 10,
-    });
-  }
-
-  @autobind
-  handleTableChange(options) {
-    const { getToDoList, replace, location: { pathname, query } } = this.props;
-    replace({
-      pathname,
-      query: {
-        ...query,
-        ...options,
-      },
-    });
-    getToDoList({
-      ...query,
-      ...options,
+      taskName: value,
+      curPageNum: 0,
+      pageSize: 10000,
     });
   }
 
   render() {
-    const { data, page } = this.props;
+    const { data } = this.props;
     return (
       <div className={styles.todo}>
         <Row type="flex" justify="space-between" align="middle">
           <Col span={12}>
-            <p className="total-num">找到待办流程任务<em>&nbsp;{page.totalRecordNum}&nbsp;</em>个</p>
+            <p className="total-num">找到待办流程任务<em>&nbsp;{data.length}&nbsp;</em>个</p>
           </Col>
           <Col span={12}>
             <div className="search-box">
@@ -105,8 +86,6 @@ export default class ToDo extends PureComponent {
         <ToDoList
           className="todoList"
           data={data}
-          page={page}
-          onChange={this.handleTableChange}
         />
       </div>
     );
