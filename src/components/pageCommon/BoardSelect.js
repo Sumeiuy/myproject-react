@@ -9,7 +9,11 @@ import { Dropdown, Menu, Icon } from 'antd';
 import _ from 'lodash';
 
 // import Scroll from '../common/Scroll';
+import { constants } from '../../config';
 import './BoardSelect.less';
+
+const defaultBoardId = constants.boardId;
+// const defaultBoardType = constants.boardType;
 
 export default class BoardSelect extends PureComponent {
 
@@ -24,7 +28,7 @@ export default class BoardSelect extends PureComponent {
   constructor(props) {
     super(props);
     const { visibleBoards, location: { query: { boardId }, pathname } } = this.props;
-    const bId = boardId || (visibleBoards.length && String(visibleBoards[0].id)) || '1';
+    const bId = boardId || (visibleBoards.length && String(visibleBoards[0].id)) || defaultBoardId;
     let boardName = '看板管理';
     if (pathname !== '/boardManage') {
       boardName = this.findBoardBy(bId, visibleBoards).name;
@@ -40,7 +44,9 @@ export default class BoardSelect extends PureComponent {
     const { visibleBoards, location: { query: { boardId } } } = nextProps;
     const { visibleBoards: preVB, location: { query: { boardId: preId } } } = this.props;
     if (!_.isEqual(visibleBoards, preVB) || !_.isEqual(boardId, preId)) {
-      const bId = boardId || (visibleBoards.length && String(visibleBoards[0].id)) || '1';
+      const bId = boardId
+        || (visibleBoards.length && String(visibleBoards[0].id))
+        || defaultBoardId;
       const boardName = this.findBoardBy(bId, visibleBoards).name;
       this.setState({
         boardName,

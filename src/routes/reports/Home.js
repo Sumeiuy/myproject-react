@@ -16,7 +16,11 @@ import PreformanceChartBoard from '../../components/pageCommon/PerformanceChartB
 import PageHeader from '../../components/pageCommon/PageHeader';
 import PageAnchor from '../../components/pageCommon/PageAnchor';
 
+import { constants } from '../../config';
 import styles from './Home.less';
+
+const defaultBoardId = constants.boardId;
+const defaultBoardType = constants.boardType;
 
 const effects = {
   allInfo: 'report/getAllInfo',
@@ -100,8 +104,8 @@ export default class ReportHome extends PureComponent {
     visibleBoards: [],
     preView: false,
     reportName: '',
-    boardId: 1,
-    boardType: 'TYPE_TGJX',
+    boardId: defaultBoardId,
+    boardType: defaultBoardType,
     collectBoardSelect: () => {},
     collectCustRange: () => {},
     collectDurationSelect: () => {},
@@ -121,8 +125,8 @@ export default class ReportHome extends PureComponent {
     if (!preView) {
       // 正常普通页面，从页面中获取boardId
       const { location: { query: { boardId, boardType } } } = this.props;
-      initialState.boardId = boardId || 1; // 默认取第一个看板，目前是 1
-      initialState.boardType = boardType || 'TYPE_TGJX'; // 如果用户手动输入boardId，而没有boardType咋办
+      initialState.boardId = boardId || defaultBoardId; // 默认取第一个看板，目前是 1
+      initialState.boardType = boardType || defaultBoardType; // 如果用户手动输入boardId，而没有boardType咋办
     } else {
       // 预览页面，值会传递过来
       const { boardId, boardType } = this.props;
