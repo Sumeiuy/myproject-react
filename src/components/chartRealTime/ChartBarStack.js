@@ -277,7 +277,7 @@ export default class ChartBarStack extends PureComponent {
     this.changeLegendState({
       [legendStateKey]: true,
     });
-    const { stackSeries } = this.state;
+    const { stackSeries, unit } = this.state;
     const newStackSeeries = stackSeries.map((item, index) => {
       const newItem = item;
       if (index === legend) {
@@ -285,8 +285,10 @@ export default class ChartBarStack extends PureComponent {
       }
       return newItem;
     });
+    const grid = this.calculateBarChartXaxisTick(stackSeries, unit);
     this.setState({
       stackSeries: newStackSeeries,
+      grid,
     });
   }
 
@@ -298,7 +300,8 @@ export default class ChartBarStack extends PureComponent {
     this.changeLegendState({
       [legendStateKey]: false,
     });
-    const { stackSeries, originalStackSeries } = this.state;
+    const { stackSeries, originalStackSeries, unit } = this.state;
+    // 需要进行新的数据图表切换
     const newStackSeeries = stackSeries.map((item, index) => {
       const newItem = item;
       if (index === legend) {
@@ -306,8 +309,10 @@ export default class ChartBarStack extends PureComponent {
       }
       return newItem;
     });
+    const grid = this.calculateBarChartXaxisTick(stackSeries, unit);
     this.setState({
       stackSeries: newStackSeeries,
+      grid,
     });
   }
 
