@@ -50,7 +50,9 @@ export default class PageHeader extends PureComponent {
   }
 
   componentDidMount() {
-    this.addEventListenerClick();
+    if (fsp) {
+      this.addEventListenerClick();
+    }
   }
 
   @autobind
