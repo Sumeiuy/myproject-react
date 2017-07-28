@@ -196,9 +196,13 @@ export default class BoardHeader extends PureComponent {
 
   render() {
     // 取出相关变量
-    const { title, level, showScopeOrder } = this.props;
+    const { level, showScopeOrder, indexID } = this.props;
     const { showChart, orderType, scopeSelectValue } = this.state;
-
+    let { title } = this.props;
+    // 针对开通业务明细，名称进行修改
+    if (indexID === 'newBusinessDetail') {
+      title = `${title}(新开)`;
+    }
     // 首先通过showScopeOrder来判断当前页面在invest还是在其他页面中
     const toggleSortText = classnames({
       [styles.iconBtn1]: true,

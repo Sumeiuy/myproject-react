@@ -175,7 +175,7 @@ export default class ChartBarNormal extends PureComponent {
           textStyle: {
             color: '#666',
           },
-          show: index < maxIndex,
+          show: false && index < maxIndex,
           position: judge(item),
           // position: ['85%', '-250%'],
           // position: 'top',
@@ -433,7 +433,7 @@ export default class ChartBarNormal extends PureComponent {
       <div className={styles.chartMain}>
         <div className={styles.chartHeader}>
           <div className={styles.chartTitle}>
-            <span className={styles.chartIcon}>
+            <span className={styles.chartIcon} style={{ backgroundColor: barColor }}>
               <Icon type={IndexIcon} className={styles.chartTiltleTextIcon} />
             </span>
             <span className={styles.chartTitleText}>{`${name}(${unit})`}</span>

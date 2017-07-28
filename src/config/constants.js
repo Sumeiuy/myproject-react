@@ -8,4 +8,6 @@ export default {
   container: '.react-app',
   logoText: '华泰证券',
   version: '1.6.2',
+  boardId: 1,
+  boardType: 'TYPE_TGJX',
 };
