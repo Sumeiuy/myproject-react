@@ -4,13 +4,14 @@
  * @fileOverview history/HistoryComparePolyChart.js
  */
 
-import React, { /* PropTypes, */ PureComponent } from 'react';
+import React, { PropTypes, PureComponent } from 'react';
 
+// import IECharts from '../IECharts';
 import styles from './HistoryComparePolyChart.less';
 
 export default class HistoryComparePolyChart extends PureComponent {
   static propTypes = {
-    // name: React.PropTypes.string,
+    data: PropTypes.object.isRequired,
   };
 
   // constructor(props) {
@@ -18,6 +19,45 @@ export default class HistoryComparePolyChart extends PureComponent {
   // }
 
   render() {
+    console.warn('HistoryComparePolyChart', this.props.data);
+    // 折线图配置项
+    // const options = {
+    //   animation: true,
+    //   xAxis: {
+    //     type: 'category',
+    //     splitLine: {
+    //       show: false,
+    //     },
+    //     axisPointer: {
+    //         value: '2016-10-7',
+    //         snap: true,
+    //         lineStyle: {
+    //             color: '#004E52',
+    //             opacity: 0.5,
+    //             width: 2
+    //         },
+    //         label: {
+    //             show: false,
+    //         },
+    //         handle: {
+    //             show: true,
+    //             icon:'circle',
+    //             color: '#004E52'
+    //         }
+    //     },
+    //   },
+    //   yAxis: {
+    //     type: 'value',
+    //     axisTick: {
+    //       inside: true,
+    //     },
+    //     splitLine: {
+    //       show: false,
+    //     },
+    //     z: 10,
+    //   },
+    //   series: [],
+    // };
     return (
       <div className={styles.historyPoly}>
         <div className={styles.chartHd}>
@@ -27,7 +67,15 @@ export default class HistoryComparePolyChart extends PureComponent {
           </div>
         </div>
         <div className={styles.chartMain}>
-          1
+          {/*
+            <IECharts
+              option={options}
+              resizable
+              style={{
+                height: '325px',
+              }}
+            />
+          */}
         </div>
         <div className={styles.chartFoot}>
           <span className={styles.tipDot} />
