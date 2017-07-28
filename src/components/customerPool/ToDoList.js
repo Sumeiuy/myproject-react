@@ -6,14 +6,18 @@
 
 import React, { PureComponent, PropTypes } from 'react';
 import { Table } from 'antd';
-import { openAuditPage } from '../../utils/fspGlobal';
+import { fspGlobal } from '../../utils';
 
 const columns = [
   {
     title: '任务名称',
     dataIndex: 'task',
     key: 'task',
-    render: item => <a href="javascript:void(0);" onClick={() => openAuditPage(item.dispatchUri)}>{item.text}</a>, // eslint-disable-line
+    render: item => <a
+      onClick={() => fspGlobal.openAuditPage(item.dispatchUri)}
+    >
+      {item.text}
+    </a>,
   },
   {
     title: '当前步骤',
