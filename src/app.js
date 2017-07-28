@@ -30,6 +30,8 @@ const onError = (e) => {
     message.error('登录超时，请重新登录！');
   } else if (e.name === 'SyntaxError' && (msg.indexOf('<') > -1 || msg.indexOf('JSON') > -1)) {
     window.location.reload();
+  } else if (e.stack && e.stack.indexOf('SyntaxError') > -1) {
+    window.location.reload();
   } else {
     message.error(msg);
   }
