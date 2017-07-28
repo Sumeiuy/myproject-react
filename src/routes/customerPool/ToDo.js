@@ -15,8 +15,8 @@ import ToDoList from '../../components/customerPool/ToDoList';
 import styles from './todo.less';
 
 const mapStateToProps = state => ({
-  data: state.customerPool.todolist,
-  page: state.customerPool.todolistPage,
+  data: state.customerPool.todolistRecord,
+  todoPage: state.customerPool.todoPage,
 });
 
 const mapDispatchToProps = {
@@ -24,6 +24,14 @@ const mapDispatchToProps = {
   replace: routerRedux.replace,
   getToDoList: query => ({
     type: 'customerPool/getToDoList',
+    payload: query,
+  }),
+  search: query => ({
+    type: 'customerPool/search',
+    payload: query,
+  }),
+  pageChange: query => ({
+    type: 'customerPool/pageChange',
     payload: query,
   }),
 };
@@ -38,59 +46,32 @@ export default class ToDo extends PureComponent {
     location: PropTypes.object.isRequired,
     getToDoList: PropTypes.func.isRequired,
     data: PropTypes.array.isRequired,
-    page: PropTypes.object.isRequired,
+    search: PropTypes.func.isRequired,
+    todoPage: PropTypes.object.isRequired,
+    pageChange: PropTypes.func.isRequired,
   }
 
   componentDidMount() {
-    const { getToDoList, location: { query: { currentPage } } } = this.props;
-    getToDoList({
-      currentPage: currentPage || 1,
-    });
+    this.props.getToDoList();
   }
 
   @autobind
   onSearch(value) {
-    const { getToDoList, replace, location: { pathname, query } } = this.props;
-    replace({
-      pathname,
-      query: {
-        ...query,
-        keyword: value,
-        currentPage: 1,
-        pageSize: 10,
-      },
-    });
-    getToDoList({
-      ...query,
-      keyword: value,
-      currentPage: 1,
-      pageSize: 10,
-    });
+    this.props.search(value);
   }
 
   @autobind
-  handleTableChange(options) {
-    const { getToDoList, replace, location: { pathname, query } } = this.props;
-    replace({
-      pathname,
-      query: {
-        ...query,
-        ...options,
-      },
-    });
-    getToDoList({
-      ...query,
-      ...options,
-    });
+  pageChange(obj) {
+    this.props.pageChange(obj);
   }
 
   render() {
-    const { data, page } = this.props;
+    const { data, todoPage } = this.props;
     return (
       <div className={styles.todo}>
         <Row type="flex" justify="space-between" align="middle">
           <Col span={12}>
-            <p className="total-num">找到待办流程任务<em>&nbsp;{page.totalRecordNum}&nbsp;</em>个</p>
+            <p className="total-num">找到待办流程任务<em>&nbsp;{data.length}&nbsp;</em>个</p>
           </Col>
           <Col span={12}>
             <div className="search-box">
@@ -105,8 +86,8 @@ export default class ToDo extends PureComponent {
         <ToDoList
           className="todoList"
           data={data}
-          page={page}
-          onChange={this.handleTableChange}
+          todoPage={todoPage}
+          onChange={this.pageChange}
         />
       </div>
     );
