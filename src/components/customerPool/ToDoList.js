@@ -5,6 +5,7 @@
  */
 
 import React, { PureComponent, PropTypes } from 'react';
+import { autobind } from 'core-decorators';
 import { Table } from 'antd';
 import { fspGlobal } from '../../utils';
 
@@ -46,10 +47,19 @@ export default class ToDoList extends PureComponent {
   static propTypes = {
     data: PropTypes.array.isRequired,
     className: PropTypes.string.isRequired,
+    todoPage: PropTypes.object.isRequired,
+    onChange: PropTypes.func.isRequired,
+  }
+
+  @autobind
+  handleChange(page) {
+    this.props.onChange({
+      curPageNum: page,
+    });
   }
 
   render() {
-    const { className, data } = this.props;
+    const { className, data, todoPage } = this.props;
     return (
       <Table
         className={className}
@@ -58,6 +68,8 @@ export default class ToDoList extends PureComponent {
         dataSource={data}
         pagination={{
           size: 'small',
+          current: +todoPage.curPageNum,
+          onChange: this.handleChange,
           showTotal: total => (`共${total}项`),
           showSizeChanger: true,
         }}
