@@ -8,7 +8,10 @@ import {
   Router,
   Route,
   IndexRedirect,
+  Redirect,
 } from 'dva/router';
+
+import { fspContainer } from './config';
 
 import Main from './layouts/Main';
 
@@ -23,7 +26,7 @@ import PreviewReport from './routes/reports/PreviewReport';
 import HistoryHome from './routes/history/Home';
 
 function switchRouter() {
-  const fsp = document.querySelector('#workspace-content>.wrapper');
+  const fsp = document.querySelector(fspContainer.container);
   if (fsp) {
     fsp.scrollTop = 0;
   } else {
@@ -35,11 +38,11 @@ const routes = ({ history }) => (// eslint-disable-line
   <Router onUpdate={switchRouter} history={history}>
     <Route path="/" component={Main}>
       <IndexRedirect to="/empty" />
+      <Redirect from="invest" to="report" />
       <Route path="empty" component={Empty} />
       <Route path="report" component={ReportHome} />
       <Route path="preview" component={PreviewReport} />
       <Route path="history" component={HistoryHome} />
-      <Route path="invest" component={ReportHome} />
       <Route path="business" component={BusinessHome} />
       <Route path="feedback" component={FeedBack} />
       <Route path="modal" component={TemplModal} />
