@@ -87,7 +87,6 @@ export default class PerformanceIndicators extends PureComponent {
               <Icon type="renyuan" />
               <Select
                 style={{ width: 120 }}
-                defaultValue={customersData[0].value || 0}
                 onChange={this.handleChange}
               >
                 {this.createCustomerOption(customersData)}

@@ -9,20 +9,17 @@ export default {
   namespace: 'customerPool',
   state: {
     todolist: [],
-    todolistPage: {
-      pageSize: 10,
+    todolistRecord: [],
+    todoPage: {
       curPageNum: 1,
-      totalPageNum: 1,
-      totalRecordNum: 0,
     },
     performanceIndicators: {},
     custRange: [],
   },
   subscriptions: {},
   effects: {
-    * getToDoList({ payload }, { call, put }) {
-      console.log('payload', payload);
-      const response = yield call(api.getToDoList, payload);
+    * getToDoList({ }, { call, put }) {  //eslint-disable-line
+      const response = yield call(api.getToDoList, { empid: '002332' });
       yield put({
         type: 'getToDoListSuccess',
         payload: response,
@@ -50,14 +47,53 @@ export default {
         payload: { Indicators },
       });
     },
+    * search({ payload }, { put, select }) {
+      const todolist = yield select(state => state.customerPool.todolist);
+      yield put({
+        type: 'searchSuccess',
+        payload: todolist.filter(v => v.subject.indexOf(payload) > -1),
+      });
+    },
+    * pageChange({ payload }, { put, select }) {
+      const todoPage = yield select(state => state.customerPool.todoPage);
+      const newPage = {
+        ...todoPage,
+        ...payload,
+      };
+      yield put({
+        type: 'pageChangeSuccess',
+        payload: newPage,
+      });
+    },
   },
   reducers: {
     getToDoListSuccess(state, action) {
-      const { payload: { data: { todolist, page } } } = action;
+      const { payload: { resultData: { data } } } = action;
+      data.forEach((item) => {
+        item.task = {  //eslint-disable-line
+          text: item.subject,
+          dispatchUri: item.dispatchUri,
+        };
+      });
       return {
         ...state,
-        todolist,
-        todolistPage: page,
+        todolist: data,
+        todolistRecord: data,
+      };
+    },
+    searchSuccess(state, action) {
+      return {
+        ...state,
+        todolistRecord: action.payload,
+        todoPage: {
+          curPageNum: 1,
+        },
+      };
+    },
+    pageChangeSuccess(state, action) {
+      return {
+        ...state,
+        todoPage: action.payload,
       };
     },
     getCustomerRangeSuccess(state, action) {
