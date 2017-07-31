@@ -20,6 +20,9 @@ const fsp = document.querySelector(fspContainer.container);
 const showBtn = document.querySelector(fspContainer.showBtn);
 const hideBtn = document.querySelector(fspContainer.hideBtn);
 const contentWrapper = document.getElementById('workspace-content');
+const marginWidth = fspContainer.marginWdith;
+let leftWidth = fspContainer.leftWidth;
+
 
 export default class PageHeader extends PureComponent {
   static propTypes = {
@@ -46,9 +49,16 @@ export default class PageHeader extends PureComponent {
   }
   constructor(props) {
     super(props);
+    let contentWidth;
+    let scrollX;
+    if (fsp) {
+      contentWidth = getCssStyle(contentWrapper, 'width');
+      scrollX = window.scrollX;
+    }
     this.state = {
+      width: fsp ? `${parseInt(contentWidth, 10) - marginWidth}px` : '100%',
       top: fsp ? '55px' : 0,
-      left: fsp ? '248px' : 0,
+      left: fsp ? `${parseInt(leftWidth, 10) - scrollX}px` : 0,
     };
   }
 
@@ -56,9 +66,34 @@ export default class PageHeader extends PureComponent {
     // 如果在 FSP 里，则添加监听事件
     if (fsp) {
       this.addEventListenerClick();
+      window.addEventListener('scroll', this.onScroll, false);
+      window.addEventListener('resize', this.onWindowResize, false);
     }
   }
-
+  componentWillUnmount() {
+    if (fsp) {
+      window.removeEventListener('scroll', this.onScroll);
+      window.removeEventListener('resize', this.onWindowResize);
+      showBtn.removeEventListener('click', this.toggleLeft);
+      hideBtn.removeEventListener('click', this.toggleLeft);
+    }
+  }
+  // resize 事件
+  @autobind
+  onWindowResize() {
+    const contentWidth = getCssStyle(contentWrapper, 'width');
+    this.setState({
+      width: fsp ? contentWidth : 0,
+    });
+  }
+  // 监听页面滚动事件，设置头部的 left 值
+  @autobind
+  onScroll() {
+    const scrollX = window.scrollX;
+    this.setState({
+      left: parseInt(leftWidth, 10) - scrollX,
+    });
+  }
   // 监听 FSP 侧边栏显示隐藏按钮点击事件
   @autobind
   addEventListenerClick() {
@@ -68,8 +103,10 @@ export default class PageHeader extends PureComponent {
   // 检测到 FSP 侧边栏显示隐藏按钮点击事件后，根据项目的容器改变 left 值
   @autobind
   toggleLeft() {
+    leftWidth = getCssStyle(contentWrapper, 'left');
+    this.onWindowResize();
     this.setState({
-      left: getCssStyle(contentWrapper, 'left'),
+      left: leftWidth,
     });
   }
   render() {
@@ -87,13 +124,15 @@ export default class PageHeader extends PureComponent {
       collectCustRange,
       collectDurationSelect,
     } = this.props;
-    const { top, left } = this.state;
+    const { top, left, width } = this.state;
     return (
       <div>
         <div
           style={{
             position: 'fixed',
+            marginLeft: fsp ? '25px' : '0',
             zIndex: 30,
+            width,
             right: 0,
             top,
             left,
