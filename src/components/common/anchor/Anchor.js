@@ -152,7 +152,7 @@ export default class Anchor extends PureComponent {
     const getTarget = this.props.target || getDefaultTarget;
     // 搬了antd/Anchor判断是否在fsp中，控制scroll
     if (fsp) {
-      this.scrollEvent = $(fsp).on('scroll', this.handleScroll);
+      $(fsp).on('scroll', this.handleScroll);
     } else {
       this.scrollEvent = addEventListener((this.props.target || getDefaultTarget)(), 'scroll', this.handleScroll);
     }
@@ -160,7 +160,9 @@ export default class Anchor extends PureComponent {
   }
 
   componentWillUnmount() {
-    if (this.scrollEvent) {
+    if (fsp) {
+      $(fsp).off('scroll', this.onScroll);
+    } else {
       this.scrollEvent.remove();
     }
   }
