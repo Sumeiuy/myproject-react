@@ -68,4 +68,11 @@ export default {
 
   // 查询待办流程记录列表
   getToDoList: query => api.get('/groovy/customerPool/todolist', query),
+
+  // 获取客户池客户范围
+  getCustomerRange: query => api.post('/groovy/customerPool/queryEmporgs', query),
+
+  // 获取客户池绩效指标
+  getPerformanceIndicators: query => api.get('/groovy/customerPool/queryPerformanceIndicators', query),
+
 };
