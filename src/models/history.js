@@ -12,10 +12,11 @@ export default {
   state: {
     custRange: [],
     visibleBoards: [], // 可见看板
-    contributionAnalysis: {},
-    reviewAnalysis: {},
+    contributionAnalysis: {}, // 贡献能力分析数据
+    reviewAnalysis: {}, // 入岗投顾能力分析数据
     historyCore: [], // 概览列表
     currentRankingRecord: {}, // 强弱指示分析
+    historyContrastDic: {}, // 字典
   },
   reducers: {
     // 概览数据列表
@@ -85,6 +86,15 @@ export default {
         currentRankingRecord,
       };
     },
+
+    // 获取字典数据成功
+    queryHistoryContrastSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        historyContrastDic: resultData,
+      };
+    },
   },
   effects: {
     // 初始化获取数据
@@ -134,6 +144,14 @@ export default {
       yield put({
         type: 'queryContrastAnalyzeSuccess',
         payload: { response: resultData, type },
+      });
+    },
+    // 获取对比数据
+    * queryHistoryContrast({ payload }, { call, put }) {
+      const response = yield call(api.queryHistoryContrast, payload);
+      yield put({
+        type: 'queryHistoryContrastSuccess',
+        payload: response,
       });
     },
   },
