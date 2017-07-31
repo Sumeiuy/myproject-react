@@ -10,14 +10,17 @@ import { Row } from 'antd';
 
 import CustRange from './CustRange2';
 import BoardSelect from './BoardSelect';
+import { fspContainer } from '../../config';
 import DurationSelect from './DurationSelect';
 import { getCssStyle } from '../../utils/helper';
 // 选择项字典
 import styles from './PageHeader.less';
 
-const fsp = document.querySelector('#workspace-content>.wrapper');
-// 首先判断wrap存在与否
+const fsp = document.querySelector(fspContainer.container);
+const showBtn = document.querySelector(fspContainer.showBtn);
+const hideBtn = document.querySelector(fspContainer.hideBtn);
 const contentWrapper = document.getElementById('workspace-content');
+
 export default class PageHeader extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -50,17 +53,19 @@ export default class PageHeader extends PureComponent {
   }
 
   componentDidMount() {
-    this.addEventListenerClick();
+    // 如果在 FSP 里，则添加监听事件
+    if (fsp) {
+      this.addEventListenerClick();
+    }
   }
 
+  // 监听 FSP 侧边栏显示隐藏按钮点击事件
   @autobind
   addEventListenerClick() {
-    const showBtn = document.querySelector('#sidebar-show-btn');
-    const hideBtn = document.querySelector('#sidebar-hide-btn');
-
     showBtn.addEventListener('click', this.toggleLeft, false);
     hideBtn.addEventListener('click', this.toggleLeft, false);
   }
+  // 检测到 FSP 侧边栏显示隐藏按钮点击事件后，根据项目的容器改变 left 值
   @autobind
   toggleLeft() {
     this.setState({
@@ -88,7 +93,7 @@ export default class PageHeader extends PureComponent {
         <div
           style={{
             position: 'fixed',
-            zIndex: 999,
+            zIndex: 30,
             right: 0,
             top,
             left,
@@ -139,7 +144,7 @@ export default class PageHeader extends PureComponent {
             </Row>
           </div>
         </div>
-        <div style={{ height: '55px' }} />
+        <div style={{ height: '40px' }} />
       </div>
     );
   }
