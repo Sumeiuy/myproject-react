@@ -16,6 +16,8 @@ import createSensorsLogger from './middlewares/sensorsLogger';
 import createActivityIndicator from './middlewares/createActivityIndicator';
 import routerConfig from './router';
 import persistConfig from './config/persist';
+import { initFspMethod } from './utils/fspGlobal';
+
 
 const extraEnhancers = [];
 if (persistConfig.active) {
@@ -31,7 +33,7 @@ const onError = (e) => {
   } else if (e.name === 'SyntaxError' && (msg.indexOf('<') > -1 || msg.indexOf('JSON') > -1)) {
     window.location.reload();
   } else {
-    message.error(msg);
+    message.error(msg, 3000);
   }
 };
 
@@ -65,6 +67,9 @@ app.start('#exApp');
 
 // start后_store才被初始化
 const store = app._store; // eslint-disable-line
+
+// 暴露给fsp方法
+initFspMethod(store); // eslint-disable-line
 
 // 6. redux-persist
 if (persistConfig.active) {
