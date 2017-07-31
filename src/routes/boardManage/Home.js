@@ -29,7 +29,6 @@ const showBtn = document.querySelector(fspContainer.showBtn);
 const hideBtn = document.querySelector(fspContainer.hideBtn);
 const contentWrapper = document.getElementById('workspace-content');
 const marginWidth = fspContainer.marginWidth;
-let leftWidth = fspContainer.leftWidth;
 
 const fectchDataFunction = (globalLoading, type) => query => ({
   type,
@@ -99,9 +98,11 @@ export default class BoardManageHome extends PureComponent {
     super(props);
     let contentWidth;
     let scrollX;
+    let leftWidth;
     if (fsp) {
       contentWidth = getCssStyle(contentWrapper, 'width');
       scrollX = window.scrollX;
+      leftWidth = getCssStyle(contentWrapper, 'left');
     }
     this.state = {
       width: fsp ? `${parseInt(contentWidth, 10) - marginWidth}px` : '100%',
@@ -119,12 +120,7 @@ export default class BoardManageHome extends PureComponent {
   }
 
   componentDidMount() {
-    // 如果在 FSP 里，则添加监听事件
-    if (fsp) {
-      this.addEventListenerClick();
-      window.addEventListener('scroll', this.onScroll, false);
-      window.addEventListener('resize', this.onWindowResize, false);
-    }
+    this.didMountAddEventListener();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -165,9 +161,25 @@ export default class BoardManageHome extends PureComponent {
   @autobind
   onScroll() {
     const scrollX = window.scrollX;
+    const leftWidth = getCssStyle(contentWrapper, 'left');
     this.setState({
       left: parseInt(leftWidth, 10) - scrollX,
     });
+  }
+  // didmount 时添加监听事件
+  @autobind
+  didMountAddEventListener() {
+    this.onWindowResize();
+    // 如果在 FSP 里，则添加监听事件
+    if (fsp) {
+      this.addEventListenerClick();
+      window.addEventListener('scroll', this.onScroll, false);
+      window.addEventListener('resize', this.onWindowResize, false);
+      const leftWidth = getCssStyle(contentWrapper, 'left');
+      this.setState({
+        left: leftWidth,
+      });
+    }
   }
   // 监听 FSP 侧边栏显示隐藏按钮点击事件
   @autobind
@@ -177,7 +189,7 @@ export default class BoardManageHome extends PureComponent {
   }
   @autobind
   toggleLeft() {
-    leftWidth = getCssStyle(contentWrapper, 'left');
+    const leftWidth = getCssStyle(contentWrapper, 'left');
     this.onWindowResize();
     this.setState({
       left: leftWidth,
