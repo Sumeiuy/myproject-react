@@ -9,17 +9,25 @@ import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
-import { Col, Row, message, Affix } from 'antd';
+import { Col, Row, message } from 'antd';
 import _ from 'lodash';
 
-import { getEmpId } from '../../utils/helper';
+import { getEmpId, getCssStyle } from '../../utils/helper';
 import BoardSelect from '../../components/pageCommon/BoardSelect';
 import BoardItem from '../../components/pageCommon/BoardItem';
 import { CreateBoardModal, DeleteBoardModal, PublishConfirmModal } from '../../components/modals';
 import ImgAdd from '../../../static/images/bg_add.png';
 import ImgTGJX from '../../../static/images/bg_tgjx.png';
 
+import { fspContainer } from '../../config';
+
 import styles from './Home.less';
+
+
+const fsp = document.querySelector(fspContainer.container);
+const showBtn = document.querySelector(fspContainer.showBtn);
+const hideBtn = document.querySelector(fspContainer.hideBtn);
+const contentWrapper = document.getElementById('workspace-content');
 
 const fectchDataFunction = (globalLoading, type) => query => ({
   type,
@@ -88,6 +96,8 @@ export default class BoardManageHome extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
+      top: fsp ? '55px' : 0,
+      left: fsp ? '248px' : 0,
       createBoardModal: false,
       deleteBoardModal: false,
       publishConfirmModal: false,
@@ -97,6 +107,13 @@ export default class BoardManageHome extends PureComponent {
   componentWillMount() {
     const empId = getEmpId();
     this.props.getInitial({ empId });
+  }
+
+  componentDidMount() {
+    // // 如果在 FSP 里，则添加监听事件
+    if (fsp) {
+      this.addEventListenerClick();
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -116,6 +133,19 @@ export default class BoardManageHome extends PureComponent {
       const { id } = operateData;
       push(`/report?boardId=${id}`);
     }
+  }
+
+  // 监听 FSP 侧边栏显示隐藏按钮点击事件
+  @autobind
+  addEventListenerClick() {
+    showBtn.addEventListener('click', this.toggleLeft, false);
+    hideBtn.addEventListener('click', this.toggleLeft, false);
+  }
+  @autobind
+  toggleLeft() {
+    this.setState({
+      left: getCssStyle(contentWrapper, 'left'),
+    });
   }
 
   @autobind
@@ -224,23 +254,35 @@ export default class BoardManageHome extends PureComponent {
       confirm: this.publishBoardCofirm,
     };
 
+    const { top, left } = this.state;
     return (
       <div className="page-invest content-inner">
-        <Affix>
-          <div className="reportHeader">
-            <Row type="flex" justify="start" align="middle">
-              <div className="reportName">
-                <BoardSelect
-                  location={location}
-                  push={push}
-                  replace={replace}
-                  visibleBoards={visibleBoards}
-                  collectData={collectData}
-                />
-              </div>
-            </Row>
+        <div>
+          <div
+            style={{
+              position: 'fixed',
+              zIndex: 30,
+              right: 0,
+              top,
+              left,
+            }}
+          >
+            <div className="reportHeader">
+              <Row type="flex" justify="start" align="middle">
+                <div className="reportName">
+                  <BoardSelect
+                    location={location}
+                    push={push}
+                    replace={replace}
+                    visibleBoards={visibleBoards}
+                    collectData={collectData}
+                  />
+                </div>
+              </Row>
+            </div>
           </div>
-        </Affix>
+          <div style={{ height: '40px' }} />
+        </div>
         <div className={styles.boardList}>
           <Row gutter={19}>
             <Col span={8} className={styles.test}>

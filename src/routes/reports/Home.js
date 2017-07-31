@@ -349,7 +349,8 @@ export default class ReportHome extends PureComponent {
     const level = custRangeLevel || (custRange[0] && custRange[0].level);
     const newscope = Number(scope) || (custRange[0] && Number(custRange[0].level) + 1);
     // 用来判断是否投顾绩效,
-    let showScopeOrder = this.findBoardBy(boardId).boardType === 'TYPE_TGJX';
+    const tempType = this.findBoardBy(boardId).boardType;
+    let showScopeOrder = tempType === 'TYPE_TGJX';
     if (preView) {
       showScopeOrder = boardType === 'TYPE_TGJX';
     }
@@ -389,6 +390,7 @@ export default class ReportHome extends PureComponent {
                   id={key}
                 >
                   <PreformanceChartBoard
+                    boardType={tempType}
                     showChart={showChart}
                     updateShowCharts={this.updateShowCharts}
                     categoryScope={categoryScope}

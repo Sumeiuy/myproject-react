@@ -183,7 +183,7 @@ export default class ChartTable extends PureComponent {
     // 设定每个 column 的宽度，16 为每个字的假想大小，20 为后面的箭头宽度
     const width = (length * 16) + 20;
     // 设定最小宽度，以防 name 太短，而对应的值过大，标题会换行
-    return width < 80 ? 80 : width;
+    return width < 120 ? 120 : width;
   }
   // 获取表格头部子元素
   @autobind
