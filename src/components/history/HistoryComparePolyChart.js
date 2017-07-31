@@ -4,20 +4,28 @@
  * @fileOverview history/HistoryComparePolyChart.js
  */
 
-import React, { /* PropTypes, */ PureComponent } from 'react';
+import React, { PropTypes, PureComponent } from 'react';
 
+import IECharts from '../IECharts';
+import historyPolyChartOptions from '../chartRealTime/historyPolyChartOptions';
 import styles from './HistoryComparePolyChart.less';
 
 export default class HistoryComparePolyChart extends PureComponent {
   static propTypes = {
-    // name: React.PropTypes.string,
+    data: PropTypes.object.isRequired,
   };
 
-  // constructor(props) {
-  //   super(props);
-  // }
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
 
   render() {
+    // 折线图配置项
+    const options = {
+      ...historyPolyChartOptions,
+    };
+
     return (
       <div className={styles.historyPoly}>
         <div className={styles.chartHd}>
@@ -27,7 +35,13 @@ export default class HistoryComparePolyChart extends PureComponent {
           </div>
         </div>
         <div className={styles.chartMain}>
-          1
+          <IECharts
+            option={options}
+            resizable
+            style={{
+              height: '325px',
+            }}
+          />
         </div>
         <div className={styles.chartFoot}>
           <span className={styles.tipDot} />
