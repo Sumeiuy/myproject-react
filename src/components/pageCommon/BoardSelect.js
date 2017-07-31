@@ -66,12 +66,13 @@ export default class BoardSelect extends PureComponent {
   }
 
   @autobind
-  stopSpread(e = window.event) {
+  stopSpread(e) {
     if (e.stopPropagation) {
       e.stopPropagation();
     } else {
       e.cancelBubble = true;
     }
+    // e.nativeEvent.stopImmediatePropagation();
   }
 
   @autobind
@@ -80,8 +81,7 @@ export default class BoardSelect extends PureComponent {
       hasRegisterWheel: true,
     });
     const scrollBd = this.getScrollRef();
-    // const scrollInstance = new Scroll(scrollBd);
-    // return scrollInstance;
+    scrollBd.addEventListener('wheel', this.stopSpread, false);
     scrollBd.addEventListener('mousewheel', this.stopSpread, false);
     scrollBd.addEventListener('DOMMouseScroll', this.stopSpread, false);
   }
