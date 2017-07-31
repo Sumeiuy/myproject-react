@@ -6,17 +6,18 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { Row, Col } from 'antd';
+import _ from 'lodash';
 import IECharts from '../IECharts';
 import styles from './customerService.less';
 
 export default class CustomerService extends PureComponent {
 
   static propTypes = {
-    data: PropTypes.array,
+    data: PropTypes.object,
   }
 
   static defaultProps = {
-    data: [],
+    data: {},
   }
 
   constructor(props) {
@@ -31,12 +32,17 @@ export default class CustomerService extends PureComponent {
     console.log(nextProps);
   }
 
-  render() {
-    const data = 80;
-    const rest = 100 - 80;
+  // 创建option
+  createOption(okData, toData) {
+    let data = 0;
+    let rest = 0;
+    if (!_.isEmpty(okData) && !_.isEmpty(toData)) {
+      data = (okData / toData) * 100;
+      rest = ((toData - okData) / toData) * 100;
+    }
     const options = {
       series: [{
-        name: '访问来源',
+        // name: '访问来源',
         type: 'pie',
         radius: ['70%', '80%'], // 这里是控制环形内半径和外半径
         avoidLabelOverlap: false,
@@ -71,6 +77,11 @@ export default class CustomerService extends PureComponent {
       }],
       color: ['#60bbea', '#f2f2f2'], // 38d8e8
     };
+    return options;
+  }
+  render() {
+    const { data } = this.props;
+    const { motOkMnt, motTotMnt, taskCust, totCust } = data;
     return (
       <div className={styles.serviceBox}>
         <div className={styles.chartBox}>
@@ -78,7 +89,7 @@ export default class CustomerService extends PureComponent {
             <Col span={12}>
               <div className={styles.chartItem}>
                 <IECharts
-                  option={options}
+                  option={this.createOption(motOkMnt, motTotMnt)}
                   resizable
                   style={{
                     height: '180px',
@@ -91,7 +102,7 @@ export default class CustomerService extends PureComponent {
             <Col span={12}>
               <div className={styles.chartItem}>
                 <IECharts
-                  option={options}
+                  option={this.createOption(taskCust, totCust)}
                   resizable
                   style={{
                     height: '180px',

@@ -6,17 +6,19 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { Progress } from 'antd';
+import { autobind } from 'core-decorators';
+// import _ from 'lodash';
 import { getMaxAndMinMoney } from '../chartRealTime/FixNumber';
 import styles from './productSales.less';
 
 export default class ProductSales extends PureComponent {
 
   static propTypes = {
-    data: PropTypes.array,
+    data: PropTypes.object,
   }
 
   static defaultProps = {
-    data: [],
+    data: {},
   }
 
   constructor(props) {
@@ -46,46 +48,51 @@ export default class ProductSales extends PureComponent {
   }
 
   // 百分比计算
+  @autobind
   handleDataShadow(num) {
-    const data = [18203, 23489, 29034, 104970];
-    const maxAndMin = getMaxAndMinMoney(data);
+    const { data } = this.props;
+    const { fundTranAmt = 0, privateTranAmt = 0, finaTranAmt = 0, otcTranAmt = 0 } = data;
+    const datas = [];
+    datas.push(fundTranAmt, privateTranAmt, finaTranAmt, otcTranAmt);
+    const maxAndMin = getMaxAndMinMoney(datas);
     const maxX = this.padFixedMoney(maxAndMin.max, 'ceil');
     const percentage = (num / maxX) * 100;
-    // debugger;
     return percentage;
   }
 
   render() {
+    const { data } = this.props;
+    const { fundTranAmt = 0, privateTranAmt = 0, finaTranAmt = 0, otcTranAmt = 0 } = data;
     return (
       <div className={styles.productBox}>
         <div className={styles.product}>
           <div className={styles.productItem}>
             <span className={styles.name}>公募基金</span>
             <div className={styles.Progressbox}>
-              <Progress percent={this.handleDataShadow(18203)} showInfo={false} status="active" />
+              <Progress percent={this.handleDataShadow(fundTranAmt)} showInfo={false} status="active" />
             </div>
-            <span className={styles.num}>18203</span>
+            <span className={styles.num}>{fundTranAmt}</span>
           </div>
           <div className={styles.productItem}>
             <span className={styles.name}>证券投资</span>
             <div className={styles.Progressbox}>
-              <Progress percent={this.handleDataShadow(23489)} showInfo={false} status="active" />
+              <Progress percent={this.handleDataShadow(privateTranAmt)} showInfo={false} status="active" />
             </div>
-            <span className={styles.num}>23489</span>
+            <span className={styles.num}>{privateTranAmt}</span>
           </div>
           <div className={styles.productItem}>
             <span className={styles.name}>紫金产品</span>
             <div className={styles.Progressbox}>
-              <Progress percent={this.handleDataShadow(29034)} showInfo={false} status="active" />
+              <Progress percent={this.handleDataShadow(finaTranAmt)} showInfo={false} status="active" />
             </div>
-            <span className={styles.num}>29034</span>
+            <span className={styles.num}>{finaTranAmt}</span>
           </div>
           <div className={styles.productItem}>
             <span className={styles.name}>OTC</span>
             <div className={styles.Progressbox}>
-              <Progress percent={this.handleDataShadow(104970)} showInfo={false} status="active" />
+              <Progress percent={this.handleDataShadow(otcTranAmt)} showInfo={false} status="active" />
             </div>
-            <span className={styles.num}>104970</span>
+            <span className={styles.num}>{otcTranAmt}</span>
           </div>
         </div>
       </div>

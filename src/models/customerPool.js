@@ -13,14 +13,38 @@ export default {
     todoPage: {
       curPageNum: 1,
     },
+    performanceIndicators: {},
+    custRange: [],
   },
   subscriptions: {},
   effects: {
-    * getToDoList({}, { call, put }) {  //eslint-disable-line
+    * getToDoList({ }, { call, put }) {  //eslint-disable-line
       const response = yield call(api.getToDoList, { empid: '002332' });
       yield put({
         type: 'getToDoListSuccess',
         payload: response,
+      });
+    },
+    // 初始化获取数据
+    * getAllInfo({ payload }, { call, put, select }) {
+      const cust = yield select(state => state.customerPool.custRange);
+      const { request } = payload;
+      let firstCust;
+      if (cust.length) {
+        firstCust = cust[0];
+      } else {
+        const response = yield call(api.getCustomerRange, { empId: request.empId });
+        yield put({
+          type: 'getCustomerRangeSuccess',
+          response,
+        });
+        firstCust = response.resultData;
+      }
+      // 绩效指标
+      const Indicators = yield call(api.getPerformanceIndicators, { request, cycle: firstCust });
+      yield put({
+        type: 'getHistoryCoreSuccess',
+        payload: { Indicators },
       });
     },
     * search({ payload }, { put, select }) {
@@ -70,6 +94,22 @@ export default {
       return {
         ...state,
         todoPage: action.payload,
+      };
+    },
+    getCustomerRangeSuccess(state, action) {
+      const { response: { resultData } } = action;
+      return {
+        ...state,
+        custRange: resultData,
+      };
+    },
+    // 绩效指标
+    getHistoryCoreSuccess(state, action) {
+      const { payload: { Indicators } } = action;
+      const performanceIndicators = Indicators.resultData;
+      return {
+        ...state,
+        performanceIndicators,
       };
     },
   },
