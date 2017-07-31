@@ -141,7 +141,7 @@ export default class BoardSelect extends PureComponent {
         style={{
           width: '200px',
           maxHeight: '400px',
-          overflowY: 'scroll',
+          overflowY: 'auto',
         }}
       >
         {
