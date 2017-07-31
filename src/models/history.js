@@ -17,6 +17,7 @@ export default {
     historyCore: [], // 概览列表
     currentRankingRecord: {}, // 强弱指示分析
     historyContrastDic: {}, // 字典
+    contrastData: {}, // 历史对比数据
   },
   reducers: {
     // 概览数据列表
@@ -95,6 +96,15 @@ export default {
         historyContrastDic: resultData,
       };
     },
+
+    // 历史对比数据
+    getContrastDataSuccess(state, action) {
+      const { payload: { contrastData } } = action;
+      return {
+        ...state,
+        contrastData,
+      };
+    },
   },
   effects: {
     // 初始化获取数据
@@ -152,6 +162,15 @@ export default {
       yield put({
         type: 'queryHistoryContrastSuccess',
         payload: response,
+      });
+    },
+    // 获取历史对比数据
+    * getContrastData({ payload }, { call, put }) {
+      const response = yield call(api.getHistoryContrastLineChartData, payload);
+      const { resultData } = response;
+      yield put({
+        type: 'getContrastDataSuccess',
+        payload: { contrastData: resultData },
       });
     },
   },

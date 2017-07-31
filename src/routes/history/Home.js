@@ -18,6 +18,7 @@ const effects = {
   allInfo: 'history/getAllInfo',
   queryContrastAnalyze: 'history/queryContrastAnalyze',
   queryHistoryContrast: 'history/queryHistoryContrast',
+  getContrastData: 'history/getContrastData',
 };
 
 const fectchDataFunction = (globalLoading, type) => query => ({
@@ -35,12 +36,14 @@ const mapStateToProps = state => ({
   contributionAnalysis: state.history.contributionAnalysis, // 贡献分析
   reviewAnalysis: state.history.reviewAnalysis, // 入岗投顾
   historyContrastDic: state.history.historyContrastDic, // 字典数据
+  contrastData: state.history.contrastData,
 });
 
 const mapDispatchToProps = {
   getAllInfo: fectchDataFunction(true, effects.allInfo),
   queryContrastAnalyze: fectchDataFunction(true, effects.queryContrastAnalyze),
   queryHistoryContrast: fectchDataFunction(true, effects.queryHistoryContrast),
+  getContrastData: fectchDataFunction(true, effects.getContrastData),
   push: routerRedux.push,
   replace: routerRedux.replace,
 };
@@ -55,11 +58,13 @@ export default class HistoryHome extends PureComponent {
     location: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
+    contrastData: PropTypes.object.isRequired,
     getAllInfo: PropTypes.func.isRequired,
-    custRange: PropTypes.array,
-    visibleBoards: PropTypes.array,
+    custRange: PropTypes.array.isRequired,
+    visibleBoards: PropTypes.array.isRequired,
     globalLoading: PropTypes.bool,
     queryContrastAnalyze: PropTypes.func.isRequired,
+    getContrastData: PropTypes.func.isRequired,
     contributionAnalysis: PropTypes.object.isRequired,
     reviewAnalysis: PropTypes.object.isRequired,
     historyCore: PropTypes.array, // 概览
@@ -82,6 +87,7 @@ export default class HistoryHome extends PureComponent {
       getAllInfo,
       queryHistoryContrast,
       queryContrastAnalyze,
+      getContrastData,
     } = this.props;
 
     getAllInfo({
@@ -117,6 +123,9 @@ export default class HistoryHome extends PureComponent {
     queryHistoryContrast({
       boardId: '3',
     });
+
+    // 暂时不写参数
+    getContrastData();
   }
 
   render() {
@@ -129,6 +138,7 @@ export default class HistoryHome extends PureComponent {
       historyCore,
       crrData,
       historyContrastDic,
+      contrastData,
     } = this.props;
 
     const { cust = EMPTY_LIST, invest = EMPTY_LIST } = historyContrastDic;
@@ -150,7 +160,7 @@ export default class HistoryHome extends PureComponent {
           <div className={styles.indicatorAnalyse}>
             <div className={styles.caption}>核心指标分析-总交易量</div>
             <div className={styles.polyArea}>
-              <HistoryComparePolyChart />
+              <HistoryComparePolyChart data={contrastData} />
               <HistoryCompareRankChart />
             </div>
             <HisDivider />

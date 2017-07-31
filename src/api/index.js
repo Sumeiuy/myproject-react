@@ -76,4 +76,7 @@ export default {
 
   // 查询字典数据
   queryHistoryContrast: query => api.post('/groovynoauth/jxzb/queryHistoryContrast', query),
+
+  // 查询历史对比折线图数据
+  getHistoryContrastLineChartData: query => api.post('/groovynoauth/jxzb/queeryContrastLineChart', query),
 };
