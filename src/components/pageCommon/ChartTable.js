@@ -33,6 +33,7 @@ export default class ChartTable extends PureComponent {
     replace: PropTypes.func.isRequired,
     scope: PropTypes.number.isRequired,
     indexID: PropTypes.string,
+    boardType: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -324,7 +325,7 @@ export default class ChartTable extends PureComponent {
   }
   @autobind
   changeTableData(nextProps) {
-    const { chartTableInfo, scope } = nextProps;
+    const { chartTableInfo, scope, boardType } = nextProps;
     const columns = chartTableInfo.titleList;
     const data = chartTableInfo.indicatorSummuryRecordDtos;
     const temp = [];
@@ -363,7 +364,7 @@ export default class ChartTable extends PureComponent {
       });
       // 匹配第一列标题文字，分公司、营业部、投顾
       // sortByType 初始的 scope 为 2，所以减去两个前面对象，得出最后与实际 scope 相等的索引
-      const keyName = sortByType[Number(scope) - 2].name;
+      const keyName = sortByType[boardType][Number(scope) - 2].name;
       tempArr.unshift({
         title: keyName,
         dataIndex: 'city',

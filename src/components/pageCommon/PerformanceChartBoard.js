@@ -113,6 +113,7 @@ export default class PerformanceChartBoard extends PureComponent {
               scope={categoryScope}
               location={location}
               indexID={indexID}
+              boardType={boardType}
             />
           )
           :
