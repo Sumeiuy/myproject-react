@@ -14,6 +14,8 @@ import { getEmpId, queryToString, getDurationString } from '../../utils/helper';
 import PerformanceItem from '../../components/pageCommon/PerformanceItem';
 import PreformanceChartBoard from '../../components/pageCommon/PerformanceChartBoard';
 import PageHeader from '../../components/pageCommon/PageHeader';
+import PageAnchor from '../../components/pageCommon/PageAnchor';
+
 import styles from './Home.less';
 
 const effects = {
@@ -331,7 +333,7 @@ export default class ReportHome extends PureComponent {
     } = this.props;
     // 因为新的数据查询参数全部存放在了state里面
     const { showCharts, classifyScope, classifyOrder } = this.state;
-    const { boardId, custRangeLevel, scope, boardType } = this.state;
+    const { boardId, custRangeLevel, scope, boardType, orgId } = this.state;
     const level = custRangeLevel || (custRange[0] && custRange[0].level);
     const newscope = Number(scope) || (custRange[0] && Number(custRange[0].level) + 1);
     // 用来判断是否投顾绩效,
@@ -339,6 +341,7 @@ export default class ReportHome extends PureComponent {
     if (preView) {
       showScopeOrder = boardType === 'TYPE_TGJX';
     }
+    showScopeOrder = true;
 
     return (
       <div className="page-invest content-inner">
@@ -351,16 +354,15 @@ export default class ReportHome extends PureComponent {
           preView={preView}
           reportName={reportName}
           updateQueryState={this.updateQueryState}
+          orgId={orgId}
           collectBoardSelect={collectBoardSelect}
           collectCustRange={collectCustRange}
           collectDurationSelect={collectDurationSelect}
         />
         <div className={styles.reportBody}>
-          <div className={styles.reportPart}>
-            <PerformanceItem
-              data={performance}
-            />
-          </div>
+          <PerformanceItem
+            data={performance}
+          />
           {
             chartInfo.map((item) => {
               const { key, name, data } = item;
@@ -372,6 +374,7 @@ export default class ReportHome extends PureComponent {
                 <div
                   key={key}
                   className={styles.reportPart}
+                  id={key}
                 >
                   <PreformanceChartBoard
                     showChart={showChart}
@@ -392,6 +395,8 @@ export default class ReportHome extends PureComponent {
                     boardTitle={name}
                     showScopeOrder={showScopeOrder}
                     selfRequestData={this.selfRequestData}
+                    custRange={custRange}
+                    updateQueryState={this.updateQueryState}
                     collectScopeSelect={collectScopeSelect}
                     collectOrderTypeSelect={collectOrderTypeSelect}
                   />
@@ -400,6 +405,9 @@ export default class ReportHome extends PureComponent {
             })
           }
         </div>
+        <PageAnchor
+          chartInfo={chartInfo}
+        />
       </div>
     );
   }

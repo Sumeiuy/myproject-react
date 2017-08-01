@@ -5,7 +5,7 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import { Row } from 'antd';
+import { Row, Affix } from 'antd';
 
 import CustRange from './CustRange2';
 import BoardSelect from './BoardSelect';
@@ -26,6 +26,7 @@ export default class PageHeader extends PureComponent {
     visibleBoards: PropTypes.array,
     preView: PropTypes.bool,
     reportName: PropTypes.string,
+    orgId: PropTypes.string,
   }
 
   static defaultProps = {
@@ -33,6 +34,7 @@ export default class PageHeader extends PureComponent {
     visibleBoards: [],
     preView: false,
     reportName: '',
+    orgId: '',
   }
 
   render() {
@@ -45,55 +47,59 @@ export default class PageHeader extends PureComponent {
       location,
       visibleBoards,
       updateQueryState,
+      orgId,
       collectBoardSelect,
       collectCustRange,
       collectDurationSelect,
     } = this.props;
 
     return (
-      <div className="reportHeader">
-        <Row type="flex" justify="start" align="middle">
-          <div className="reportName">
-            {/* 需要针对预览页面做调整 */}
-            {
-              preView
-              ?
-              (
-                <div className="preView">
-                  {reportName}
-                </div>
-              )
-              :
-              (
-                <BoardSelect
-                  location={location}
-                  push={push}
-                  replace={replace}
-                  visibleBoards={visibleBoards}
-                  collectData={collectBoardSelect}
-                />
-              )
-            }
-          </div>
-          <div className={styles.reportHeaderRight}>
-            <DurationSelect
-              location={location}
-              replace={replace}
-              updateQueryState={updateQueryState}
-              collectData={collectDurationSelect}
-            />
-            <div className={styles.vSplit} />
-            {/* 营业地址选择项 */}
-            <CustRange
-              custRange={custRange}
-              location={location}
-              replace={replace}
-              updateQueryState={updateQueryState}
-              collectData={collectCustRange}
-            />
-          </div>
-        </Row>
-      </div>
+      <Affix>
+        <div className="reportHeader">
+          <Row type="flex" justify="start" align="middle">
+            <div className="reportName">
+              {/* 需要针对预览页面做调整 */}
+              {
+                preView
+                ?
+                (
+                  <div className="preView">
+                    {reportName}
+                  </div>
+                )
+                :
+                (
+                  <BoardSelect
+                    location={location}
+                    push={push}
+                    replace={replace}
+                    visibleBoards={visibleBoards}
+                    collectData={collectBoardSelect}
+                  />
+                )
+              }
+            </div>
+            <div className={styles.reportHeaderRight}>
+              <DurationSelect
+                location={location}
+                replace={replace}
+                updateQueryState={updateQueryState}
+                collectData={collectDurationSelect}
+              />
+              <div className={styles.vSplit} />
+              {/* 营业地址选择项 */}
+              <CustRange
+                custRange={custRange}
+                location={location}
+                replace={replace}
+                updateQueryState={updateQueryState}
+                orgId={orgId}
+                collectData={collectCustRange}
+              />
+            </div>
+          </Row>
+        </div>
+      </Affix>
     );
   }
 }

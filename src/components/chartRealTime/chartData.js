@@ -7,6 +7,8 @@
 import moment from 'moment';
 import _ from 'lodash';
 
+import { stackBarColors } from './ChartGeneralOptions';
+
 function convert2number(v) {
   if (v === null || v === 'null') {
     return '--';
@@ -78,7 +80,7 @@ function padFixedPeople(people, method) {
 const chartData = {
   // 取出orgModel中分公司、营业部、的名称数组
   // 用于Y轴刻度值，或者tooltip提示信息
-  getLevelName(orgModel, key) {
+  filterOrgModelData(orgModel, key) {
     const yAxisLabels = [];
     if (orgModel) {
       orgModel.forEach((item) => {
@@ -125,8 +127,16 @@ const chartData = {
       // 取出stackSeries数组
       for (let i = 0; i < stackLen; i++) {
         const name = orgModel[0][key][i].name;
-        stackLegend.push(name);
+        stackLegend.push({
+          legendName: name,
+          backgroundColor: stackBarColors[i],
+        });
         const stackObj = {
+          itemStyle: {
+            normal: {
+              barBorderRadius: 3,
+            },
+          },
           label: {
             normal: {
               show: false,
@@ -135,6 +145,7 @@ const chartData = {
           stack: uniqueStack,
           type: 'bar',
           name,
+          barWidth: 6,
         };
         const data = [];
         orgModel.forEach((item) => {

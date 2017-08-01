@@ -1,0 +1,33 @@
+.indicatorOverviewHeader{
+  padding: 0 15px;
+  height: 70px;
+  line-height: 69px;
+  background-color: #fff;
+  border-bottom: 1px solid #bfbfbf;
+  box-sizing: border-box;
+  .analyticalCaption{
+    float: left;
+    font-size: 18px;
+    font-weight: bold;
+    color: #666;
+    padding: 0 15px;
+  }
+  .overviewHeaderRight{
+    float: right;  
+    :global{
+      .ant-btn{
+        width: 95px;
+        margin-left: 20px;
+      }
+      .ant-btn-background-ghost{
+        border-color: #aaa; 
+        color: #aaa; 
+      }
+      .ant-btn-background-ghost.ant-btn-primary,
+      .ant-btn:hover, .ant-btn:focus, .ant-btn:active, .ant-btn.active{
+        color: #108ee9;
+        border-color: #108ee9;
+      }
+    }
+  }
+}
