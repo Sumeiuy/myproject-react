@@ -29,6 +29,7 @@ const showBtn = document.querySelector(fspContainer.showBtn);
 const hideBtn = document.querySelector(fspContainer.hideBtn);
 const contentWrapper = document.getElementById('workspace-content');
 const marginWidth = fspContainer.marginWidth;
+const marginLeftWidth = fspContainer.marginLeftWidth;
 
 const fectchDataFunction = (globalLoading, type) => query => ({
   type,
@@ -102,12 +103,12 @@ export default class BoardManageHome extends PureComponent {
     if (fsp) {
       contentWidth = getCssStyle(contentWrapper, 'width');
       scrollX = window.scrollX;
-      leftWidth = getCssStyle(contentWrapper, 'left');
+      leftWidth = parseInt(getCssStyle(contentWrapper, 'left'), 10) + marginLeftWidth;
     }
     this.state = {
       width: fsp ? `${parseInt(contentWidth, 10) - marginWidth}px` : '100%',
       top: fsp ? '55px' : 0,
-      left: fsp ? `${parseInt(leftWidth, 10) - scrollX}px` : 0,
+      left: fsp ? `${leftWidth - scrollX}px` : 0,
       createBoardModal: false,
       deleteBoardModal: false,
       publishConfirmModal: false,
@@ -154,16 +155,16 @@ export default class BoardManageHome extends PureComponent {
   onWindowResize() {
     const contentWidth = getCssStyle(contentWrapper, 'width');
     this.setState({
-      width: fsp ? contentWidth : 0,
+      width: fsp ? `${parseInt(contentWidth, 10) - marginWidth}px` : '100%',
     });
   }
   // 监听页面滚动事件，设置头部的 left 值
   @autobind
   onScroll() {
     const scrollX = window.scrollX;
-    const leftWidth = getCssStyle(contentWrapper, 'left');
+    const leftWidth = parseInt(getCssStyle(contentWrapper, 'left'), 10) + marginLeftWidth;
     this.setState({
-      left: parseInt(leftWidth, 10) - scrollX,
+      left: leftWidth - scrollX,
     });
   }
   // didmount 时添加监听事件
@@ -175,7 +176,7 @@ export default class BoardManageHome extends PureComponent {
       this.addEventListenerClick();
       window.addEventListener('scroll', this.onScroll, false);
       window.addEventListener('resize', this.onWindowResize, false);
-      const leftWidth = getCssStyle(contentWrapper, 'left');
+      const leftWidth = parseInt(getCssStyle(contentWrapper, 'left'), 10) + marginLeftWidth;
       this.setState({
         left: leftWidth,
       });
@@ -189,7 +190,7 @@ export default class BoardManageHome extends PureComponent {
   }
   @autobind
   toggleLeft() {
-    const leftWidth = getCssStyle(contentWrapper, 'left');
+    const leftWidth = parseInt(getCssStyle(contentWrapper, 'left'), 10) + marginLeftWidth;
     this.onWindowResize();
     this.setState({
       left: leftWidth,
@@ -309,10 +310,9 @@ export default class BoardManageHome extends PureComponent {
           <div
             style={{
               position: 'fixed',
-              marginLeft: fsp ? '25px' : '0',
+              textIndent: fsp ? '0' : '20px',
               zIndex: 30,
               width,
-              right: 0,
               top,
               left,
             }}
