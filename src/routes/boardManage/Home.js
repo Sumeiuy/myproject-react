@@ -170,9 +170,9 @@ export default class BoardManageHome extends PureComponent {
   // didmount 时添加监听事件
   @autobind
   didMountAddEventListener() {
-    this.onWindowResize();
     // 如果在 FSP 里，则添加监听事件
     if (fsp) {
+      this.onWindowResize();
       this.addEventListenerClick();
       window.addEventListener('scroll', this.onScroll, false);
       window.addEventListener('resize', this.onWindowResize, false);
