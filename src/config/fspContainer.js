@@ -14,7 +14,7 @@ export default {
   // FSP 侧边栏宽度
   leftWidth: 248,
   // FSP 右边容器的 margin 和
-  marginWdith: 55,
+  marginWidth: 55,
   // FSP 右边容器距离侧边栏的 marginLeft 值
   marginLeftWidth: 25,
 };
