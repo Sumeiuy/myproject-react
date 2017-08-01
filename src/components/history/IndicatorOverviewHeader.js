@@ -5,9 +5,9 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-// import { autobind } from 'core-decorators';
-import { Icon, Button } from 'antd';
-import { DeleteHistoryBoardModal } from '../../components/modals';
+import { autobind } from 'core-decorators';
+import { Icon, Button, message } from 'antd';
+import { CreateHistoryBoardModal, DeleteHistoryBoardModal } from '../../components/modals';
 // import Icon from '../common/Icon';
 
 // 选择项字典
@@ -21,36 +21,58 @@ export default class PageHeader extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      visible: false,
+      createHistoryBoardModal: false,
+      deleteHistoryBoardModal: false,
+      saveHistoryBoardModal: false,
     };
   }
 
-  showModal = () => {
-    this.setState({ visible: true });
-  }
-
-  handleCancel = () => {
-    this.setState({ visible: false });
-  }
-
-  handleCreate = () => {
-    const form = this.form;
-    form.validateFields((err, values) => {
-      if (err) {
-        return;
-      }
-
-      console.log('Received values of form: ', values);
-      form.resetFields();
-      this.setState({ visible: false });
+  @autobind
+  closeModal(modal) {
+    this.setState({
+      [modal]: false,
     });
   }
 
-  saveFormRef = (form) => {
-    this.form = form;
+  @autobind
+  openModal(modal) {
+    this.setState({
+      [modal]: true,
+    });
+  }
+
+  @autobind
+  createHistoryBoardHandle() {
+    this.openModal('createHistoryBoardModal');
+  }
+
+  @autobind
+  deleteHistoryBoardHandle() {
+    this.openModal('deleteHistoryBoardModal');
+  }
+
+  @autobind
+  saveHistoryBoardHandle() {
+    message.success('保存成功', 3);
   }
 
   render() {
+    const { createHistoryBoardModal, deleteHistoryBoardModal } = this.state;
+    // 创建（另存为）共同配置项
+    const createHistoryBMProps = {
+      modalKey: 'createHistoryBoardModal',
+      modalCaption: '提示',
+      visible: createHistoryBoardModal,
+      closeModal: this.closeModal,
+    };
+    // 删除共同配置项
+    const deleteHistoryBMProps = {
+      modalKey: 'deleteHistoryBoardModal',
+      modalCaption: '提示',
+      visible: deleteHistoryBoardModal,
+      closeModal: this.closeModal,
+    };
+
     return (
       <div className={styles.indicatorOverviewHeader}>
         <div className={styles.analyticalCaption}>核心指标</div>
@@ -58,29 +80,31 @@ export default class PageHeader extends PureComponent {
           <Button
             type="primary"
             ghost
-            onClick={this.showModal}
+            onClick={this.saveHistoryBoardHandle}
           >
             <Icon type="delete" />
             保存
           </Button>
-          <DeleteHistoryBoardModal
-            ref={this.saveFormRef}
-            visible={this.state.visible}
-            onCancel={this.handleCancel}
-            onCreate={this.handleCreate}
-          />
           <Button
             ghost
+            onClick={this.createHistoryBoardHandle}
           >
             <Icon type="delete" />
             另存为
           </Button>
+          <CreateHistoryBoardModal
+            {...createHistoryBMProps}
+          />
           <Button
             ghost
+            onClick={this.deleteHistoryBoardHandle}
           >
             <Icon type="delete" />
             删除
           </Button>
+          <DeleteHistoryBoardModal
+            {...deleteHistoryBMProps}
+          />
         </div>
       </div>
     );

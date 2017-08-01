@@ -3,48 +3,87 @@
  * @author hongguangqing
  */
 import React, { PropTypes, PureComponent } from 'react';
-import { Modal, Form, Input } from 'antd';
-// import { autobind } from 'core-decorators';
-// import _ from 'lodash';
+import { Button, Modal, Form } from 'antd';
+import classnames from 'classnames';
+import { autobind } from 'core-decorators';
+import _ from 'lodash';
 
-import './modalCommon.less';
+import styles from './modalCommon.less';
 
-const FormItem = Form.Item;
 const create = Form.create;
 
 @create()
 export default class DeleteHistoryBoardModal extends PureComponent {
   static propTypes = {
     visible: PropTypes.bool,
+    modalKey: PropTypes.string.isRequired,
+    closeModal: PropTypes.func.isRequired,
+    modalCaption: PropTypes.string.isRequired,
     form: PropTypes.object.isRequired,
-    onCancel: PropTypes.func.isRequired,
-    onCreate: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
     visible: false,
   }
 
+  constructor(props) {
+    super(props);
+    const { visible } = props;
+    this.state = {
+      modalVisible: visible,
+    };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { visible } = nextProps;
+    const { visible: preVisible } = this.props;
+    if (!_.isEqual(visible, preVisible)) {
+      this.setState({
+        modalVisible: visible,
+      });
+    }
+  }
+
+  @autobind
+  closeDeleteModal() {
+    const { closeModal, modalKey } = this.props;
+    // 此处需要将form重置
+    this.props.form.resetFields();
+    // 隐藏Modal
+    closeModal(modalKey);
+  }
+
+  @autobind
+  confirmDeleteModal() {
+    this.closeDeleteModal();
+  }
+
   render() {
-    const { visible, onCancel, onCreate, form } = this.props;
-    const { getFieldDecorator } = form;
+    const { modalCaption } = this.props;
+    const { modalVisible } = this.state;
+
+    const deleteBoard = classnames({
+      [styles.boardManageModal]: true,
+      deleteBoard: true,
+    });
     return (
       <Modal
-        visible={visible}
-        title="提示"
-        okText="提交"
-        onCancel={onCancel}
-        onOk={onCreate}
+        visible={modalVisible}
+        title={modalCaption}
+        closeable
+        onCancel={this.closeDeleteModal}
+        wrapClassName={deleteBoard}
+        maskClosable={false}
+        footer={[
+          <Button key="back" size="large" onClick={this.closeDeleteModal}>取消</Button>,
+          <Button key="submit" type="primary" size="large" onClick={this.confirmDeleteModal}>
+            确认
+          </Button>,
+        ]}
       >
-        <Form layout="vertical">
-          <FormItem label="将挑选的指标结果保存为新的看板，请在以下输入框设置新看板名称：">
-            {getFieldDecorator('title', {
-              rules: [{ required: true, message: '请输入看板名称' }],
-            })(
-              <Input placeholder="请输入看板名称" />,
-            )}
-          </FormItem>
-        </Form>
+        <div className={styles.modalDelTips}>
+          <span>删除后，当前看板将无法查看，确认删除？</span>
+        </div>
       </Modal>
     );
   }
