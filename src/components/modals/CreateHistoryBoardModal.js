@@ -1,5 +1,5 @@
 /**
- * @description 删除历史看板的Modal
+ * @description 另存为历史看板的Modal
  * @author hongguangqing
  */
 import React, { PropTypes, PureComponent } from 'react';

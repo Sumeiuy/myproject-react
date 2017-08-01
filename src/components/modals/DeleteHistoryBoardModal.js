@@ -47,8 +47,6 @@ export default class DeleteHistoryBoardModal extends PureComponent {
   @autobind
   closeDeleteModal() {
     const { closeModal, modalKey } = this.props;
-    // 此处需要将form重置
-    this.props.form.resetFields();
     // 隐藏Modal
     closeModal(modalKey);
   }
