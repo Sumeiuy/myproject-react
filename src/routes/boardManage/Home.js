@@ -105,6 +105,8 @@ export default class BoardManageHome extends PureComponent {
       scrollX = window.scrollX;
       leftWidth = parseInt(getCssStyle(contentWrapper, 'left'), 10) + marginLeftWidth;
     }
+    console.warn('constructor', contentWidth);
+    console.warn('constructor', parseInt(contentWidth, 10));
     this.state = {
       width: fsp ? `${parseInt(contentWidth, 10) - marginWidth}px` : '100%',
       top: fsp ? '55px' : 0,
@@ -170,9 +172,9 @@ export default class BoardManageHome extends PureComponent {
   // didmount 时添加监听事件
   @autobind
   didMountAddEventListener() {
-    this.onWindowResize();
     // 如果在 FSP 里，则添加监听事件
     if (fsp) {
+      this.onWindowResize();
       this.addEventListenerClick();
       window.addEventListener('scroll', this.onScroll, false);
       window.addEventListener('resize', this.onWindowResize, false);
@@ -304,6 +306,7 @@ export default class BoardManageHome extends PureComponent {
     };
 
     const { top, left, width } = this.state;
+    console.warn('width', width);
     return (
       <div className="page-invest content-inner">
         <div>

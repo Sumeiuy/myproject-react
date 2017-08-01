@@ -20,7 +20,7 @@ const fsp = document.querySelector(fspContainer.container);
 const showBtn = document.querySelector(fspContainer.showBtn);
 const hideBtn = document.querySelector(fspContainer.hideBtn);
 const contentWrapper = document.getElementById('workspace-content');
-const marginWidth = fspContainer.marginWdith;
+const marginWidth = fspContainer.marginWidth;
 const marginLeftWidth = fspContainer.marginLeftWidth;
 
 
@@ -96,8 +96,8 @@ export default class PageHeader extends PureComponent {
   @autobind
   didMountAddEventListener() {
     // 如果在 FSP 里，则添加监听事件
-    this.onWindowResize();
     if (fsp) {
+      this.onWindowResize();
       this.addEventListenerClick();
       window.addEventListener('scroll', this.onScroll, false);
       window.addEventListener('resize', this.onWindowResize, false);
