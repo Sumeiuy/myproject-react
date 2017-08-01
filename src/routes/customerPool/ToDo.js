@@ -15,6 +15,7 @@ import ToDoList from '../../components/customerPool/ToDoList';
 import styles from './todo.less';
 
 const mapStateToProps = state => ({
+  todolist: state.customerPool.todolist,
   data: state.customerPool.todolistRecord,
   todoPage: state.customerPool.todoPage,
 });
@@ -46,6 +47,7 @@ export default class ToDo extends PureComponent {
     location: PropTypes.object.isRequired,
     getToDoList: PropTypes.func.isRequired,
     data: PropTypes.array.isRequired,
+    todolist: PropTypes.array.isRequired,
     search: PropTypes.func.isRequired,
     todoPage: PropTypes.object.isRequired,
     pageChange: PropTypes.func.isRequired,
@@ -66,7 +68,7 @@ export default class ToDo extends PureComponent {
   }
 
   render() {
-    const { data, todoPage } = this.props;
+    const { data, todoPage, todolist } = this.props;
     return (
       <div className={styles.todo}>
         <Row type="flex" justify="space-between" align="middle">
@@ -86,6 +88,7 @@ export default class ToDo extends PureComponent {
         <ToDoList
           className="todoList"
           data={data}
+          todolist={todolist}
           todoPage={todoPage}
           onChange={this.pageChange}
         />
