@@ -9,7 +9,7 @@ import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import PerformanceIndicators from '../../components/customerPool/PerformanceIndicators';
 import ToBeDone from '../../components/customerPool/ToBeDone';
-import { helper } from '../../utils';
+// import { helper } from '../../utils';
 // import Search from '../../components/customerPool/Search';
 import styles from './home.less';
 
@@ -26,6 +26,7 @@ const fectchDataFunction = (globalLoading, type) => query => ({
 const mapStateToProps = state => ({
   performanceIndicators: state.customerPool.performanceIndicators,
   custRange: state.customerPool.custRange,
+  cycle: state.customerPool.cycle,
 });
 
 const mapDispatchToProps = {
@@ -45,18 +46,19 @@ export default class Home extends PureComponent {
     getAllInfo: PropTypes.func.isRequired,
     performanceIndicators: PropTypes.object,
     custRange: PropTypes.array,
+    cycle: PropTypes.array,
   }
 
   static defaultProps = {
     performanceIndicators: {},
     custRange: [],
+    cycle: [],
   }
 
   componentWillMount() {
     const { location: { query }, getAllInfo } = this.props;
     getAllInfo({
       request: {
-        empId: helper.getEmpId(),
         cycle: '518004',
         cusId: '002322',
       },

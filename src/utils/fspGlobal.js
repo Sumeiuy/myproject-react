@@ -22,6 +22,15 @@ const fspGlobal = {
   myMotTask: (args) => {
     exec('myMotTask', args);
   },
+  /**
+   * 初始化暴露给fsp的方法
+   * @param  {object} store app.store
+   */
+  initFspMethod(store) {
+    window.dispatch = (action) => {
+      store.dispatch(action);
+    };
+  },
 };
 
 export default fspGlobal;

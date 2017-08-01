@@ -15,6 +15,8 @@ export default {
     },
     performanceIndicators: {},
     custRange: [],
+    cycle: [],
+    position: '',
   },
   subscriptions: {},
   effects: {
@@ -40,11 +42,17 @@ export default {
         });
         firstCust = response.resultData;
       }
+      // 统计周期
+      const statisticalPeriod = yield call(api.getStatisticalPeriod);
+      yield put({
+        type: 'getStatisticalPeriodSuccess',
+        payload: { statisticalPeriod },
+      });
       // 绩效指标
-      const Indicators = yield call(api.getPerformanceIndicators, { request, cycle: firstCust });
+      const indicators = yield call(api.getPerformanceIndicators, { request, cycle: firstCust });
       yield put({
         type: 'getHistoryCoreSuccess',
-        payload: { Indicators },
+        payload: { indicators },
       });
     },
     * search({ payload }, { put, select }) {
@@ -105,11 +113,27 @@ export default {
     },
     // 绩效指标
     getHistoryCoreSuccess(state, action) {
-      const { payload: { Indicators } } = action;
-      const performanceIndicators = Indicators.resultData;
+      const { payload: { indicators } } = action;
+      const performanceIndicators = indicators.resultData;
       return {
         ...state,
         performanceIndicators,
+      };
+    },
+    // 统计周期
+    getStatisticalPeriodSuccess(state, action) {
+      const { payload: { statisticalPeriod } } = action;
+      const cycle = statisticalPeriod.resultData;
+      return {
+        ...state,
+        cycle,
+      };
+    },
+    // 职责切换
+    getPositionSuccess(state, action) {
+      const { payload } = action;
+      return {
+        position: payload,
       };
     },
   },
