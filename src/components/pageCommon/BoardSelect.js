@@ -9,7 +9,11 @@ import { Dropdown, Menu, Icon } from 'antd';
 import _ from 'lodash';
 
 // import Scroll from '../common/Scroll';
+import { constants } from '../../config';
 import './BoardSelect.less';
+
+const defaultBoardId = constants.boardId;
+// const defaultBoardType = constants.boardType;
 
 export default class BoardSelect extends PureComponent {
 
@@ -24,7 +28,7 @@ export default class BoardSelect extends PureComponent {
   constructor(props) {
     super(props);
     const { visibleBoards, location: { query: { boardId }, pathname } } = this.props;
-    const bId = boardId || (visibleBoards.length && String(visibleBoards[0].id)) || '1';
+    const bId = boardId || (visibleBoards.length && String(visibleBoards[0].id)) || defaultBoardId;
     let boardName = '看板管理';
     if (pathname !== '/boardManage') {
       boardName = this.findBoardBy(bId, visibleBoards).name;
@@ -40,7 +44,9 @@ export default class BoardSelect extends PureComponent {
     const { visibleBoards, location: { query: { boardId } } } = nextProps;
     const { visibleBoards: preVB, location: { query: { boardId: preId } } } = this.props;
     if (!_.isEqual(visibleBoards, preVB) || !_.isEqual(boardId, preId)) {
-      const bId = boardId || (visibleBoards.length && String(visibleBoards[0].id)) || '1';
+      const bId = boardId
+        || (visibleBoards.length && String(visibleBoards[0].id))
+        || defaultBoardId;
       const boardName = this.findBoardBy(bId, visibleBoards).name;
       this.setState({
         boardName,
@@ -60,12 +66,13 @@ export default class BoardSelect extends PureComponent {
   }
 
   @autobind
-  stopSpread(e = window.event) {
+  stopSpread(e) {
     if (e.stopPropagation) {
       e.stopPropagation();
     } else {
       e.cancelBubble = true;
     }
+    // e.nativeEvent.stopImmediatePropagation();
   }
 
   @autobind
@@ -74,8 +81,7 @@ export default class BoardSelect extends PureComponent {
       hasRegisterWheel: true,
     });
     const scrollBd = this.getScrollRef();
-    // const scrollInstance = new Scroll(scrollBd);
-    // return scrollInstance;
+    scrollBd.addEventListener('wheel', this.stopSpread, false);
     scrollBd.addEventListener('mousewheel', this.stopSpread, false);
     scrollBd.addEventListener('DOMMouseScroll', this.stopSpread, false);
   }
@@ -135,7 +141,7 @@ export default class BoardSelect extends PureComponent {
         style={{
           width: '200px',
           maxHeight: '400px',
-          overflowY: 'scroll',
+          overflowY: 'auto',
         }}
       >
         {

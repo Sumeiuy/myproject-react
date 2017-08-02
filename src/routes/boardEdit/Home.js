@@ -433,6 +433,7 @@ export default class BoardEditHome extends PureComponent {
       nameTipVisible,
       publishBt,
       previewBt,
+      saveBt,
       publishConfirmModal,
       backConfirmModal,
       hasPublished,
@@ -603,6 +604,7 @@ export default class BoardEditHome extends PureComponent {
               :
               (
                 <Button
+                  disabled={!saveBt}
                   className={styles.editBt}
                   onClick={this.handleSaveBtnClick}
                   key="editSave"

@@ -8,7 +8,7 @@ import React, { PropTypes, PureComponent } from 'react';
 // import ReactEcharts from 'echarts-for-react';
 import { autobind } from 'core-decorators';
 
-import { AxisOptions, gridOptions, barColor, barShadow } from './ChartGeneralOptions';
+import { AxisOptions, gridOptions, barShadow } from './ChartGeneralOptions';
 import {
   getMaxAndMinPercent,
   getMaxAndMinPermillage,
@@ -54,6 +54,7 @@ export default class ChartBarNormal extends PureComponent {
     scope: PropTypes.number.isRequired,
     chartData: PropTypes.object,
     iconType: PropTypes.string,
+    barColor: PropTypes.string.isRequired,
     custRange: PropTypes.array,
     updateQueryState: PropTypes.func,
   }
@@ -73,8 +74,11 @@ export default class ChartBarNormal extends PureComponent {
   @autobind
   onReady(instance) {
     instance.on('click', (arg) => {
+      if (arg.componentType !== 'yAxis') {
+        return;
+      }
       this.custRange.forEach((item) => {
-        if (arg.name === item.name) {
+        if (arg.value === item.name) {
           this.props.updateQueryState({
             orgId: item.id,
             custRangeLevel: item.level,
@@ -112,36 +116,57 @@ export default class ChartBarNormal extends PureComponent {
       maxIndex = 10 - padLength;
     }
 
-    // const judge = (item) => {
-    //   // 正数最大值
-    //   const plusMax = medianValue.plus * 2;
-    //   // 负数最大值
-    //   const minusMax = medianValue.minus * 2;
-    //   if (minusMax >= 0) {
-    //     // 全是正数
-    //     return medianValue.plus > item ? 'right' : 'insideRight';
-    //   } else if (plusMax <= 0) {
-    //     // 全是负数
-    //     return medianValue.minus < item ? 'left' : 'insideLeft';
-    //   }
-    //   // 有正有负
-    //   // 判断正负所占比例
-    //   const axisGap = plusMax - minusMax;
-    //   const plusPercent = (plusMax / axisGap) * 100;
-    //   const minusPercent = (Math.abs(minusMax) / axisGap) * 100;
-    //   if (plusPercent < 20 && item >= 0) {
-    //     return 'left';
-    //   }
-    //   if (minusPercent < 20 && item <= 0) {
-    //     return 'right';
-    //   }
-    //   if (item > 0) {
-    //     return medianValue.plus > item ? 'right' : 'insideRight';
-    //   } else if (item < 0) {
-    //     return medianValue.minus < item ? 'left' : 'insideLeft';
-    //   }
-    //   return 'right';
-    // };
+    const positions = {
+      topRight: ['85%', -14],
+      topLeft: [8, -14],
+    };
+
+    const howmanyno = (no) => {
+      const l = String(no).length;
+      const m = no < 0 ? 1 : 0;
+      const d = String(no).indexOf('.') > -1 ? 1 : 0;
+      const x = (m * 5) + (d * 3) + ((l - m - d) * 8);
+      return x;
+    };
+
+    const judge = (item) => {
+      // 正数最大值
+      const plusMax = medianValue.plus * 2;
+      // 负数最大值
+      const minusMax = medianValue.minus * 2;
+      if (minusMax >= 0) {
+        // 全是正数
+        // return medianValue.plus > item ? 'right' : 'insideRight';
+        return positions.topRight;
+      } else if (plusMax <= 0) {
+        // 全是负数
+        // return medianValue.minus < item ? 'left' : 'insideLeft';
+        return medianValue.minus < item ? [-howmanyno(item), -14] : [8, -14];
+      }
+      // 有正有负
+      // 判断正负所占比例
+      const axisGap = plusMax - minusMax;
+      const plusPercent = (plusMax / axisGap) * 100;
+      const minusPercent = (Math.abs(minusMax) / axisGap) * 100;
+      if (plusPercent < 20 && item >= 0) {
+        // return 'left';
+        // 此处需要判断有几个数字
+        return [-howmanyno(item), -14];
+      }
+      if (minusPercent < 20 && item <= 0) {
+        // return 'right';
+        return ['100%', -14];
+      }
+      if (item > 0) {
+        // return medianValue.plus > item ? 'right' : 'insideRight';
+        return medianValue.plus > item ? [8, -14] : ['60%', -14];
+        // return ['60%', -14];
+      } else if (item < 0) {
+        // return medianValue.minus < item ? 'left' : 'insideLeft';
+        return medianValue.minus < item ? [-howmanyno(item), -14] : [8, -14];
+      }
+      return 'right';
+    };
 
     return series.map((item, index) => ({
       value: (unit === PERCENT || unit === PERMILLAGE) ? Number(item.toFixed(2)) : item,
@@ -150,10 +175,10 @@ export default class ChartBarNormal extends PureComponent {
           textStyle: {
             color: '#666',
           },
-          show: index < maxIndex,
-          // position: judge(item),
-          position: ['85%', '-250%'],
-          // position: 'right',
+          show: false && index < maxIndex,
+          position: judge(item),
+          // position: ['85%', '-250%'],
+          // position: 'top',
         },
       },
     }));
@@ -161,7 +186,7 @@ export default class ChartBarNormal extends PureComponent {
 
   render() {
     // 取出需要处理的数据
-    const { scope, chartData: { indiModel: { name }, orgModel = [] } } = this.props;
+    const { barColor, scope, chartData: { indiModel: { name }, orgModel = [] } } = this.props;
     let { chartData: { indiModel: { unit } } } = this.props;
     // 获取指标ICON
     const IndexIcon = getIcon(unit);
@@ -358,6 +383,7 @@ export default class ChartBarNormal extends PureComponent {
         ...AxisOptions,
         axisLabel: {
           ...AxisOptions.axisLabel,
+          clickable: true,
           formatter(value) {
             if (!value) {
               return '--';
@@ -369,25 +395,29 @@ export default class ChartBarNormal extends PureComponent {
           },
         },
         data: yAxisLabels,
+        triggerEvent: true,
       },
       series: [
         {
           ...barShadow,
+          clickable: false,
           data: maxDataShadow,
         },
         {
           ...barShadow,
+          clickable: false,
           data: minDataShadow,
         },
         {
           name,
           type: 'bar',
+          clickable: false,
           silent: true,
-          itemStyle: {
-            normal: {
-              barBorderRadius: 3,
-            },
-          },
+          // itemStyle: {
+          //   normal: {
+          //     barBorderRadius: 3,
+          //   },
+          // },
           label: {
             normal: {
               show: false,
@@ -403,7 +433,7 @@ export default class ChartBarNormal extends PureComponent {
       <div className={styles.chartMain}>
         <div className={styles.chartHeader}>
           <div className={styles.chartTitle}>
-            <span className={styles.chartIcon}>
+            <span className={styles.chartIcon} style={{ backgroundColor: barColor }}>
               <Icon type={IndexIcon} className={styles.chartTiltleTextIcon} />
             </span>
             <span className={styles.chartTitleText}>{`${name}(${unit})`}</span>

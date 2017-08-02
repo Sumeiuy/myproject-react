@@ -3,7 +3,7 @@
  * @author LiuJianShu
  */
 import React, { PureComponent, PropTypes } from 'react';
-// import { Tooltip } from 'antd';
+import { Tooltip } from 'antd';
 import { autobind } from 'core-decorators';
 
 import styles from './item.less';
@@ -25,10 +25,10 @@ export default class Item extends PureComponent {
   }
 
   render() {
-    const { data: { unit, value, name, parentName } } = this.props;
+    const { data: { unit, value, name, parentName, description } } = this.props;
     const data = toUnit(value, unit, 5);
     const newName = parentName ? `${parentName}-${name}` : name;
-    /* const toolTipHtnml = (<div className={styles.summuryToolTip}>
+    const toolTipHtnml = (<div className={styles.summuryToolTip}>
       <h3>{newName}</h3>
       {
         description ?
@@ -36,20 +36,21 @@ export default class Item extends PureComponent {
         :
           ''
       }
-    </div>); */
+    </div>);
     return (
       <div className={styles.content}>
-        {/* <Tooltip
-          placement="bottomLeft"
-          title={toolTipHtnml}
-          overlayClassName="visibleRangeToolTip"
-          getPopupContainer={this.getTooltipContainer}
-        > */}
         <div className={styles.contentBorder}>
-          <h3 className={styles.title} title={newName}>
-            {newName}
-          </h3>
-          {/* </Tooltip> */}
+          <Tooltip
+            placement="bottom"
+            title={toolTipHtnml}
+            autoAdjustOverflow={false}
+            overlayClassName="visibleRangeToolTip"
+            getPopupContainer={this.getTooltipContainer}
+          >
+            <h3 className={styles.title}>
+              {newName}
+            </h3>
+          </Tooltip>
           <h4 className={styles.num}>
             {data.value}
             <span className={styles.span}>

@@ -304,7 +304,7 @@ export default class BoardSelectTree extends PureComponent {
     if (isSummury) {
       const summuryArr = selfCheckedNodes.map(item => item.key);
       // 输出总量指标
-      console.warn('summuryArr', summuryArr);
+      // console.warn('summuryArr', summuryArr);
       this.props.saveIndcator('summury', summuryArr);
     } else {
       const newTemp = _.filter(allParentNodes, o => (o.children.length));
@@ -313,7 +313,7 @@ export default class BoardSelectTree extends PureComponent {
         detailIndicatorIds: item.children.map(child => child.key),
       }));
       // 输出分类指标
-      console.warn('detailArr', detailArr);
+      // console.warn('detailArr', detailArr);
       this.props.saveIndcator('detail', detailArr);
     }
   }
@@ -413,9 +413,12 @@ export default class BoardSelectTree extends PureComponent {
 
   @autobind
   registerScrollEvent() {
-    const scrollBd = this.treeMainLeftChild;
-    scrollBd.addEventListener('mousewheel', this.stopSpread, false);
-    scrollBd.addEventListener('DOMMouseScroll', this.stopSpread, false);
+    const leftChild = this.treeMainLeftChild;
+    const rightChild = this.treeMainRightChild;
+    leftChild.addEventListener('mousewheel', this.stopSpread, false);
+    leftChild.addEventListener('DOMMouseScroll', this.stopSpread, false);
+    rightChild.addEventListener('mousewheel', this.stopSpread, false);
+    rightChild.addEventListener('DOMMouseScroll', this.stopSpread, false);
   }
   render() {
     const {
@@ -500,7 +503,10 @@ export default class BoardSelectTree extends PureComponent {
               已选择指标
               <span>(对已选择指标拖动可以改变指标的前后顺序)</span>
             </h3>
-            <div className={styles.treeMainRightChild}>
+            <div
+              className={styles.treeMainRightChild}
+              ref={(treeMainRightChild) => { this.treeMainRightChild = treeMainRightChild; }}
+            >
               {
                 isSummury ?
                   <MoveContainer

@@ -16,7 +16,7 @@
   },
   "keywords": [],
   "dependencies": {
-    "antd": "^2.11.2",
+    "antd": "2.12.2",
     "babel-polyfill": "^6.23.0",
     "bowser": "^1.6.1",
     "classnames": "^2.2.5",
