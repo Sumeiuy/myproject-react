@@ -67,6 +67,11 @@ export default class CreateBoardModal extends PureComponent {
   }
 
   @autobind
+  hideToolTip() {
+    this.setTooltipVisible(false);
+  }
+
+  @autobind
   closeCreateModal() {
     const { modalKey, closeModal } = this.props;
     // 此处需要将form重置
@@ -165,7 +170,7 @@ export default class CreateBoardModal extends PureComponent {
                   'boardname',
                   {
                     initialValue: '',
-                  })(<Input type="text" placeholder="请输入看板名称" />)
+                  })(<Input type="text" placeholder="请输入看板名称" onFocus={this.hideToolTip} />)
               }
             </FormItem>
           </Tooltip>

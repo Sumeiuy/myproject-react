@@ -236,7 +236,7 @@ export default class IndicatorOverview extends PureComponent {
                 onCreate={this.handleCreate}
               />
               <div className={styles.content}>
-                {/* 交易：icon-test 客户：kehu 指标：iczhibiao24px 钱袋：qiandai*/}
+                {/* 交易：icon-test 客户：kehu 指标：iczhibiao24px 钱袋：qiandai */}
                 <ul>
                   {
                     overviewData.map((item, index) => {

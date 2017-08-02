@@ -3,15 +3,11 @@
  * @author LiuJianShu
  */
 import React, { PureComponent, PropTypes } from 'react';
-// import { Tooltip } from 'antd';
+import { Tooltip } from 'antd';
 import { autobind } from 'core-decorators';
 
-import { iconTypeMap } from '../../config';
-import Icon from '../common/Icon';
 import styles from './item.less';
 import { toUnit } from '../../utils/helper';
-
-const getIcon = iconTypeMap.getIcon;
 
 export default class Item extends PureComponent {
 
@@ -29,11 +25,10 @@ export default class Item extends PureComponent {
   }
 
   render() {
-    const { data: { unit, value, name, parentName } } = this.props;
+    const { data: { unit, value, name, parentName, description } } = this.props;
     const data = toUnit(value, unit, 5);
-    const IndexIcon = getIcon(unit);
     const newName = parentName ? `${parentName}-${name}` : name;
-    /* const toolTipHtnml = (<div className={styles.summuryToolTip}>
+    const toolTipHtnml = (<div className={styles.summuryToolTip}>
       <h3>{newName}</h3>
       {
         description ?
@@ -41,26 +36,28 @@ export default class Item extends PureComponent {
         :
           ''
       }
-    </div>); */
+    </div>);
     return (
       <div className={styles.content}>
-        {/* <Tooltip
-          placement="bottomLeft"
-          title={toolTipHtnml}
-          overlayClassName="visibleRangeToolTip"
-          getPopupContainer={this.getTooltipContainer}
-        >*/}
-        <h3 className={styles.title} title={newName}>
-          <Icon type={IndexIcon} />
-          {newName}
-        </h3>
-        {/* </Tooltip>*/}
-        <h4 className={styles.num}>
-          {data.value}
-          <span className={styles.span}>
-            {data.unit}
-          </span>
-        </h4>
+        <div className={styles.contentBorder}>
+          <Tooltip
+            placement="bottom"
+            title={toolTipHtnml}
+            autoAdjustOverflow={false}
+            overlayClassName="visibleRangeToolTip"
+            getPopupContainer={this.getTooltipContainer}
+          >
+            <h3 className={styles.title}>
+              {newName}
+            </h3>
+          </Tooltip>
+          <h4 className={styles.num}>
+            {data.value}
+            <span className={styles.span}>
+              {data.unit}
+            </span>
+          </h4>
+        </div>
       </div>
     );
   }
