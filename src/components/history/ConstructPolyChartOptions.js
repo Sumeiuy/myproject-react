@@ -21,9 +21,8 @@ export const constructPolyChartOptions = (option = {}) => {
       axisPointer: {
         type: 'line',
         label: {
-          backgroundColor: '#6a7985',
           formatter(params) {
-            console.log(params);
+            // console.log(params);
             onAxisPointerMouseMove(params);
           },
         },
@@ -46,7 +45,7 @@ export const constructPolyChartOptions = (option = {}) => {
         },
       ],
       bottom: 0,
-      left: '9%',
+      left: '10%',
       itemGap: 10,
     },
     grid: {
@@ -54,6 +53,7 @@ export const constructPolyChartOptions = (option = {}) => {
       right: '4%',
       top: '5%',
       bottom: '12%',
+      width: '90%',
       containLabel: true,
     },
     xAxis: [
@@ -70,7 +70,9 @@ export const constructPolyChartOptions = (option = {}) => {
           textStyle: {
             color: '#777777',
             fontSize: 12,
+            // align: 'left',
           },
+          margin: 15,
         },
         splitLine: {
           show: false,
@@ -95,6 +97,7 @@ export const constructPolyChartOptions = (option = {}) => {
             color: '#777777',
             fontSize: 12,
           },
+          margin: 15,
         },
         min: yAxisMin,
         max: yAxisMax,
@@ -119,6 +122,7 @@ export const constructPolyChartOptions = (option = {}) => {
         itemStyle: {
           normal: {
             opacity: 0,
+            color: '#38d8e8',
           },
           emphasis: {
             color: '#38d8e8',
@@ -126,7 +130,7 @@ export const constructPolyChartOptions = (option = {}) => {
             borderColor: '#ffffff',
           },
         },
-        symbolSize: 8,
+        symbolSize: 6,
         data: current,
         stack: null,
       },
@@ -148,6 +152,7 @@ export const constructPolyChartOptions = (option = {}) => {
         itemStyle: {
           normal: {
             opacity: 0,
+            color: '#756fb8',
           },
           emphasis: {
             color: '#756fb8',
@@ -155,7 +160,7 @@ export const constructPolyChartOptions = (option = {}) => {
             borderColor: '#ffffff',
           },
         },
-        symbolSize: 8,
+        symbolSize: 6,
         smooth: true,
         data: previous,
       },
