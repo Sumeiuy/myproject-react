@@ -6,7 +6,7 @@ import React, { PureComponent, PropTypes } from 'react';
 import { Tooltip } from 'antd';
 import { autobind } from 'core-decorators';
 
-import styles from './item.less';
+import styles from './Item.less';
 import { fspContainer } from '../../config';
 import { toUnit } from '../../utils/helper';
 
