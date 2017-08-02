@@ -123,6 +123,7 @@ export default class HistoryHome extends PureComponent {
       // contrastIndicatorId: '',
     });
 
+    // 先写一个假参数
     queryHistoryContrast({
       boardId: '3',
     });
@@ -172,6 +173,7 @@ export default class HistoryHome extends PureComponent {
             </div>
             <HisDivider />
             <div className={styles.scatterArea}>
+              {/* 散点图区域 */}
               <ScatterAnalysis
                 location={location}
                 contributionAnalysisData={contributionAnalysis}

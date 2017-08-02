@@ -268,7 +268,7 @@ export default class HistoryComparePolyChart extends PureComponent {
         <div className={styles.chartHd}>
           <div className={styles.headerLeft}>
             <span className={styles.chartHdCaption}>历史对比</span>
-            <span className={styles.chartUnit}>(万元)</span>
+            <span className={styles.chartUnit}>({unit})</span>
           </div>
         </div>
         <div className={styles.chartMain}>
