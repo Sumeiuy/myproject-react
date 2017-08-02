@@ -13,6 +13,14 @@ function exec(method, ...args) {
   }
 }
 
+function execOpenTab(method, ...args) {
+  try {
+    window.eb.app[method].run.apply(null, args);
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 const fspGlobal = {
   // 待办流程列表中进入详情页
   openAuditPage: (args) => {
@@ -30,6 +38,18 @@ const fspGlobal = {
     window.dispatch = (action) => {
       store.dispatch(action);
     };
+  },
+  /**
+   *  在fsp中新开一个tab
+   */
+  openFspTab(obj) {
+    execOpenTab('loadPageInTab', obj.url, obj.param);
+  },
+  /**
+   *  在fsp中新开一个react的tab
+   */
+  openRctTab(obj) {
+    execOpenTab('loadPageInTabnavTo', obj.url, obj.param);
   },
 };
 

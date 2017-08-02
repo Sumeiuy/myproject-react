@@ -30,6 +30,14 @@ export default class PerformanceIndicators extends PureComponent {
   }
   render() {
     const { processData: { empWorkFlowCount = '0' }, motTaskCountData } = this.props;
+    const url = '/customerPool/todo';
+    const param = {
+      closable: true,
+      forceRefresh: true,
+      isSpecialTab: true,
+      id: 'FSP_TODOLIST',
+      title: '待办流程列表',
+    };
     return (
       <div className={styles.toBeDoneBox}>
         <div className={styles.inner}>
@@ -59,12 +67,12 @@ export default class PerformanceIndicators extends PureComponent {
             </Col>
             <Col span={8}>
               <div className={`${styles.item} ${styles.item_c}`}>
-                <Link className="item" to="/customerPool/todo">
+                <a className="item" onClick={() => fspGlobal.openRctTab({ url, param })}>
                   <div className={styles.content}>
                     <h1>{this.processNum(empWorkFlowCount)}</h1>
                     <p>待办流程</p>
                   </div>
-                </Link>
+                </a>
               </div>
             </Col>
           </Row>
