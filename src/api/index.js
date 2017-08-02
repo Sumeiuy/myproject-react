@@ -73,8 +73,12 @@ export default {
   getCustomerRange: query => api.post('/groovy/customerPool/queryEmporgs', query),
 
   // 获取客户池绩效指标
-  getPerformanceIndicators: query => api.post('/groovy/customerPool/queryPerformanceIndicators', query),
+  getPerformanceIndicators: query => api.post('/groovy/customerPool/queryEmpKPIs', query),
 
   // 统计周期
   getStatisticalPeriod: query => api.post('/groovy/customerPool/queryStatisticalPeriod', query),
+
+  // 代办流程(首页总数)
+  getWorkFlowTaskCount: query => api.post('/groovy/customerPool/queryWorkFlowTaskCount', query),
+
 };

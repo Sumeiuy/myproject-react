@@ -11,12 +11,24 @@ import Loading from './Loading';
 import styles from './main.less';
 import '../css/skin.less';
 
+const effects = {
+  customerScope: 'customerPool/getCustomerScope',
+};
+
+const fectchDataFunction = (globalLoading, type) => query => ({
+  type,
+  payload: query || {},
+  loading: globalLoading,
+});
+
 const mapStateToProps = state => ({
   ...state.app,
   loading: state.activity.global,
+  custRange: state.customerPool.custRange,
 });
 
 const mapDispatchToProps = {
+  getCustomerScope: fectchDataFunction(false, effects.customerScope),
 };
 
 @withRouter
@@ -26,6 +38,15 @@ export default class Main extends Component {
   static propTypes = {
     children: PropTypes.node.isRequired,
     loading: PropTypes.bool.isRequired,
+    getCustomerScope: PropTypes.func.isRequired,
+  }
+
+  static defaultProps = {
+  }
+
+  componentWillMount() {
+    const { getCustomerScope } = this.props;
+    getCustomerScope(); // 加载客户池客户范围
   }
 
   render() {

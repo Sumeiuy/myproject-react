@@ -35,7 +35,7 @@ const onError = (e) => {
   } else if (e.stack && e.stack.indexOf('SyntaxError') > -1) {
     window.location.reload();
   } else {
-    message.error(msg, 3000);
+    message.error(msg);
   }
 };
 
