@@ -12,7 +12,7 @@ import IECharts from '../IECharts';
 import FixNumber from '../chartRealTime/FixNumber';
 import styles from './HistoryComparePolyChart.less';
 
-// const EMPTY_OBJECT = {};
+const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
 
 export default class HistoryComparePolyChart extends PureComponent {
@@ -146,6 +146,8 @@ export default class HistoryComparePolyChart extends PureComponent {
       xAxisData = _.pick(timeModel, ['year', 'month', 'day']);
       if (!_.isEmpty(yAxisData.value) && yAxisData.value !== 0 && yAxisData.value !== '0') {
         newYSeries.push(yAxisData.value);
+      } else {
+        newYSeries.push(0);
       }
       if (_.isEmpty(xAxisData.day)) {
         xSeries.push(xAxisData.month);
@@ -227,22 +229,53 @@ export default class HistoryComparePolyChart extends PureComponent {
 
   @autobind
   handlePloyChartMove(params) {
-    console.log(params);
-    const { value: currentDate, seriesData:
-      [
-        { data: { name, unit, year, value: currentValue } },
+    const { seriesData } = params;
+    let comparePoly = EMPTY_OBJECT;
+    if (seriesData.length === 1) {
+      const [{ seriesName }] = seriesData;
+      if (seriesName === '本期') {
+        const [
+          { data: { value: currentValue, date: currentDate } },
+        ] = seriesData;
+        comparePoly = {
+          currentValue,
+          currentDate,
+          previousValue: '',
+          previousDate: '',
+        };
+      } else {
+        const [
+          { data: { value: previousValue, date: previousDate } },
+        ] = seriesData;
+        comparePoly = {
+          currentValue: '',
+          currentDate: '',
+          previousValue,
+          previousDate,
+        };
+      }
+    } else if (seriesData.length === 2) {
+      const [
+        { data: { value: currentValue, date: currentDate } },
         { data: { value: previousValue, date: previousDate } },
-      ],
-    } = params;
+      ] = seriesData;
 
+      comparePoly = {
+        currentValue,
+        previousValue,
+        currentDate,
+        previousDate,
+      };
+    } else {
+      comparePoly = {
+        currentValue: '',
+        currentDate: '',
+        previousValue: '',
+        previousDate: '',
+      };
+    }
     this.setState({
-      name,
-      unit,
-      year,
-      currentValue,
-      previousValue,
-      currentDate,
-      previousDate,
+      ...comparePoly,
     });
   }
 
@@ -283,12 +316,12 @@ export default class HistoryComparePolyChart extends PureComponent {
         <div className={styles.chartFoot}>
           <span className={styles.tipDot} />
           <span className={styles.tipIndicator}>{name}</span>
-          <span className={styles.tipTime}>{year}{currentDate}:</span>
-          <span className={styles.currentValue}>{currentValue}</span>
-          <span className={styles.tipUnit}>{unit}</span>
-          <span className={styles.tipTime}>{year}{previousDate}:</span>
-          <span className={styles.contrastValue}>{previousValue}</span>
-          <span className={styles.tipUnit}>{unit}</span>
+          <span className={styles.tipTime}>{currentDate ? `${year}${currentDate}:` : ''}</span>
+          <span className={styles.currentValue}>{currentValue ? `${currentValue}` : ''}</span>
+          <span className={styles.tipUnit}>{currentValue ? `${unit}` : ''}</span>
+          <span className={styles.tipTime}>{previousDate ? `${year}${previousDate}:` : ''}</span>
+          <span className={styles.contrastValue}>{previousValue ? `${previousValue}` : ''}</span>
+          <span className={styles.tipUnit}>{previousValue ? `${unit}` : ''}</span>
         </div>
       </div>
     );
