@@ -31,12 +31,14 @@ export default class HistoryCompareRankChart extends PureComponent {
   static propTypes = {
     level: PropTypes.string,
     scope: PropTypes.string,
+    boardType: PropTypes.string,
     data: PropTypes.array.isRequired,
   };
 
   static defaultProps = {
     level: '1', // 当前组织结构级别
     scope: '2', // 查询数据的维度
+    boardType: 'TYPE_TGJX', // 维度下拉框选项配置的默认值
   }
 
   constructor(props) {
@@ -93,7 +95,7 @@ export default class HistoryCompareRankChart extends PureComponent {
   }
 
   render() {
-    const { level, data, scope } = this.props;
+    const { level, data, scope, boardType } = this.props;
     const { orderType, scopeSelectValue, rankPage, totalPage } = this.state;
     // 隐藏选项
     const toggleScope2Option = classnames({
@@ -138,7 +140,7 @@ export default class HistoryCompareRankChart extends PureComponent {
               getPopupContainer={this.getPopupContainer}
             >
               {
-                sortByType.map((item, index) => {
+                sortByType[boardType].map((item, index) => {
                   const sortByTypeIndex = index;
                   let optionClass = '';
                   // 按投顾所有级别均存在
