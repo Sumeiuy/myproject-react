@@ -16,7 +16,8 @@ export default {
     performanceIndicators: {},
     custRange: [],
     cycle: [],
-    position: '',
+    position: {},
+    process: {},
   },
   subscriptions: {},
   effects: {
@@ -27,31 +28,34 @@ export default {
         payload: response,
       });
     },
-    // 初始化获取数据
-    * getAllInfo({ payload }, { call, put, select }) {
-      const cust = yield select(state => state.customerPool.custRange);
-      const { request } = payload;
-      let firstCust;
-      if (cust.length) {
-        firstCust = cust[0];
-      } else {
-        const response = yield call(api.getCustomerRange, { empId: request.empId });
-        yield put({
-          type: 'getCustomerRangeSuccess',
-          response,
-        });
-        firstCust = response.resultData;
-      }
+    // 获取客户池客户范围
+    * getCustomerScope({ payload }, { call, put }) {
+      const resultData = yield call(api.getCustomerRange);
+      yield put({
+        type: 'getCustomerScopeSuccess',
+        response: resultData,
+      });
+    },
+    * getStatisticalPeriod({ payload }, { call, put }) {
       // 统计周期
       const statisticalPeriod = yield call(api.getStatisticalPeriod);
       yield put({
         type: 'getStatisticalPeriodSuccess',
         payload: { statisticalPeriod },
       });
-      // 绩效指标
-      const indicators = yield call(api.getPerformanceIndicators, { request, cycle: firstCust });
+    },
+    // 初始化获取数据
+    * getAllInfo({ payload }, { call, put }) {
+      // 代办流程(首页总数)
+      const agentProcess = yield call(api.getWorkFlowTaskCount);
       yield put({
-        type: 'getHistoryCoreSuccess',
+        type: 'getWorkFlowTaskCountSuccess',
+        payload: { agentProcess },
+      });
+      // 绩效指标
+      const indicators = yield call(api.getPerformanceIndicators);
+      yield put({
+        type: 'getPerformanceIndicatorsSuccess',
         payload: { indicators },
       });
     },
@@ -104,15 +108,20 @@ export default {
         todoPage: action.payload,
       };
     },
-    getCustomerRangeSuccess(state, action) {
+    // 客户池用户范围
+    getCustomerScopeSuccess(state, action) {
       const { response: { resultData } } = action;
+      const custRange = [
+        { id: resultData.id, name: resultData.name, level: resultData.level },
+        ...resultData.children,
+      ];
       return {
         ...state,
-        custRange: resultData,
+        custRange,
       };
     },
     // 绩效指标
-    getHistoryCoreSuccess(state, action) {
+    getPerformanceIndicatorsSuccess(state, action) {
       const { payload: { indicators } } = action;
       const performanceIndicators = indicators.resultData;
       return {
@@ -129,10 +138,20 @@ export default {
         cycle,
       };
     },
+    // 代办流程(首页总数)
+    getWorkFlowTaskCountSuccess(state, action) {
+      const { payload: { agentProcess } } = action;
+      const process = agentProcess.resultData;
+      return {
+        ...state,
+        process,
+      };
+    },
     // 职责切换
     getPositionSuccess(state, action) {
       const { payload } = action;
       return {
+        ...state,
         position: payload,
       };
     },

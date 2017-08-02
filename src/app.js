@@ -33,7 +33,7 @@ const onError = (e) => {
   } else if (e.name === 'SyntaxError' && (msg.indexOf('<') > -1 || msg.indexOf('JSON') > -1)) {
     window.location.reload();
   } else {
-    message.error(msg, 3000);
+    message.error(msg);
   }
 };
 

@@ -5,10 +5,19 @@ exports.response = function (req, res) {
   return {
   "code": "0",
   "msg": "OK",
-  "resultData": {
-    "518005":"按年",
-    "518004":"按季度",
-    "518003":"按月"
+  "resultData": [
+    {
+      key: "518005",
+      name: "按年",
+    },
+    {
+      key: "518004",
+      name: "按季度",
+    },
+    {
+      key: "518003",
+      name: "按月",
     }
+  ]
   }
 }

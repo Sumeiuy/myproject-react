@@ -39,8 +39,9 @@ export default class ProductSales extends PureComponent {
     const mLength = money.toString().length || 0;
     let value = 0;
     const powm = Math.pow(10, mLength - 1);  // eslint-disable-line
+    const addwm = Math.pow(10, mLength - 2);  // eslint-disable-line
     if (mLength > 0 && money >= powm) {
-      value = Math[method](m / powm) * powm;
+      value = (Math[method](m / powm) * powm) + addwm;
     } else {
       value = Math[method](m);
     }
