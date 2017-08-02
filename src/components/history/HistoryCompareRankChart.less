@@ -5,6 +5,16 @@
   float: right;
 }
 
+:global {
+  .react-app {
+    .hideEle,
+    .hideOption,
+    .hideSelect {
+      display: none;
+    }
+  }
+}
+
 .chartHd {
   height: 65px;
   padding-left: 40px;
@@ -18,6 +28,10 @@
     margin-top: 28px;
     float: left;
   }
+  .headerRight {
+    margin-top: 24px;
+    float: right;
+  }
   .chartHdCaption {
     color: #666;
     font-size: 18px;
@@ -27,4 +41,37 @@
     font-size: 12px;
     color: #777;
   }
+  .newSelect {
+    margin-left: 10px;
+    width: 90px;
+  }
+  .newSelect1 {
+    margin-left: 10px;
+    width: 90px;
+    margin-right:40px;
+  }
+  .pageFlip {
+    display: inline-block;
+    width: 90px;
+    height: 28px;
+    box-sizing: border-box;
+  }
+  .pageDivider,
+  .pageBtn {
+    font-size: 14px;
+    color: #b2b7ba;
+    user-select: none;
+  }
+  .pageBtn {
+    margin: 0 8px;
+    &:hover {
+      color: #108ee9;
+    }
+  }
 }
+
+.chartBd {
+  height: 380px;
+  padding-left: 40px;
+}
+
