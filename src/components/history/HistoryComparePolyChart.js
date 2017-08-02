@@ -201,10 +201,12 @@ export default class HistoryComparePolyChart extends PureComponent {
     //       const currentDate = parseInt(item.substring(3, 5), 10) + xAxisArea;
     //       const formatedMaxDate = parseInt(maxDate.substring(3, 5), 10);
     //       if (currentDate < formatedMaxDate) {
-    //         item = `${item.substring(0, 3)}${currentDate < 10 ? `0${currentDate}` : currentDate}`;
+    //         item = `${item.substring(0, 3)}
+    // ${currentDate < 10 ? `0${currentDate}` : currentDate}`;
     //         newSeries.push(item);
     //       } else {
-    //         item = `${item.substring(0, 3)}${formatedMaxDate < 10 ? `0${formatedMaxDate}` : formatedMaxDate}`;
+    //         item = `${item.substring(0, 3)}
+    // ${formatedMaxDate < 10 ? `0${formatedMaxDate}` : formatedMaxDate}`;
     //         newSeries.push(item);
     //         break;
     //       }
