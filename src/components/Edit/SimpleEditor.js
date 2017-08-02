@@ -103,7 +103,8 @@ export default class SimpleEditor extends PureComponent {
 
   @autobind
   editorConfirm(e) {
-    const { controller, confirm, editorName, form } = this.props;
+    // TODO 判断是否进行了修改
+    const { controller, confirm, editorName, form, editorValue } = this.props;
     const newValue = form.getFieldValue(editorName);
     let canUpdate = true;
     if (editorName === 'boardNameEditor') {
@@ -130,10 +131,13 @@ export default class SimpleEditor extends PureComponent {
     }
     if (canUpdate) {
       this.setTooltipVisible(false);
-      confirm({
-        key: editorName,
-        value: newValue,
-      });
+      // TODO 判断进行了修改没
+      if (!_.isEqual(editorValue, newValue)) {
+        confirm({
+          key: editorName,
+          value: newValue,
+        });
+      }
       controller(editorName, false);
     }
     // 阻止React合成事件传播
@@ -163,6 +167,7 @@ export default class SimpleEditor extends PureComponent {
   @autobind
   exitEditState() {
     const { controller, editorName, form } = this.props;
+    this.setTooltipVisible(false);
     form.resetFields();
     controller(editorName, false);
   }

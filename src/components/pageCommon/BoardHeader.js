@@ -28,6 +28,7 @@ const sortByType = optionsMap.sortByType;
 export default class BoardHeader extends PureComponent {
 
   static propTypes = {
+    boardType: PropTypes.string.isRequired,
     location: PropTypes.object.isRequired,
     title: PropTypes.string.isRequired,
     postExcelInfo: PropTypes.func.isRequired,
@@ -57,7 +58,7 @@ export default class BoardHeader extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { scope, showChart } = this.props;
+    const { scope, showChart } = props;
     this.state = {
       scopeSelectValue: String(scope),
       scope: String(scope),
@@ -166,8 +167,8 @@ export default class BoardHeader extends PureComponent {
     this.setState({
       scopeSelectValue: v,
     });
-    const { collectScopeSelect } = this.props;
-    const scopeText = _.find(sortByType, { scope: String(v) }).name;
+    const { collectScopeSelect, boardType } = this.props;
+    const scopeText = _.find(sortByType[boardType], { scope: String(v) }).name;
     const text = `按${scopeText}`;
     collectScopeSelect({
       text,
@@ -196,9 +197,13 @@ export default class BoardHeader extends PureComponent {
 
   render() {
     // 取出相关变量
-    const { title, level, showScopeOrder } = this.props;
+    const { level, showScopeOrder, indexID, boardType } = this.props;
     const { showChart, orderType, scopeSelectValue } = this.state;
-
+    let { title } = this.props;
+    // 针对开通业务明细，名称进行修改
+    if (indexID === 'newBusinessDetail') {
+      title = `${title}(新开)`;
+    }
     // 首先通过showScopeOrder来判断当前页面在invest还是在其他页面中
     const toggleSortText = classnames({
       [styles.iconBtn1]: true,
@@ -250,7 +255,7 @@ export default class BoardHeader extends PureComponent {
               getPopupContainer={this.getPopupContainer}
             >
               {
-                sortByType.map((item, index) => {
+                sortByType[boardType].map((item, index) => {
                   const sortByTypeIndex = index;
                   let optionClass = '';
                   // 按投顾所有级别均存在
@@ -285,14 +290,14 @@ export default class BoardHeader extends PureComponent {
           </div>
           <div className={toggleIconBtn}>
             <Icon
-              title={'表格视图'}
-              type={'tables'}
+              title="表格视图"
+              type="biaoge"
               className={toggleTableIconColor}
               onClick={this.handleTablesIconClick}
             />
             <Icon
-              title={'柱状视图'}
-              type={'zhuzhuangtu'}
+              title="柱状视图"
+              type="bar"
               className={toggleBarIconColor}
               onClick={this.handleBarIconClick}
             />
@@ -300,7 +305,7 @@ export default class BoardHeader extends PureComponent {
           <div className={styles.iconBtn}>
             <Icon
               title="导出到文件"
-              type="daochu"
+              type="export"
               onClick={this.handleDataExportClick}
             />
           </div>

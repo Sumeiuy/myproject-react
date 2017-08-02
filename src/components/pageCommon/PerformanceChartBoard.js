@@ -12,6 +12,7 @@ import BoardHeader from './BoardHeader';
 export default class PerformanceChartBoard extends PureComponent {
 
   static propTypes = {
+    boardType: PropTypes.string.isRequired,
     chartData: PropTypes.array,
     chartTableInfo: PropTypes.object,
     replace: PropTypes.func.isRequired,
@@ -32,9 +33,12 @@ export default class PerformanceChartBoard extends PureComponent {
     location: PropTypes.object.isRequired,
     indexID: PropTypes.string,
     selfRequestData: PropTypes.func,
+    custRange: PropTypes.array.isRequired,
+    updateQueryState: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
+    boardType: 'TYPE_TGJX',
     indexID: '',
     location: {},
     chartData: [],
@@ -65,8 +69,11 @@ export default class PerformanceChartBoard extends PureComponent {
       categoryOrder,
       updateCategoryScope,
       updateCategoryOrder,
+      custRange,
+      updateQueryState,
       collectScopeSelect,
       collectOrderTypeSelect,
+      boardType,
     } = this.props;
     if (!(chartData && chartData.length) && showChart !== 'tables') {
       return null;
@@ -74,6 +81,7 @@ export default class PerformanceChartBoard extends PureComponent {
     return (
       <div className="investPerformanceBoard">
         <BoardHeader
+          boardType={boardType}
           location={location}
           title={boardTitle}
           postExcelInfo={postExcelInfo}
@@ -105,6 +113,7 @@ export default class PerformanceChartBoard extends PureComponent {
               scope={categoryScope}
               location={location}
               indexID={indexID}
+              boardType={boardType}
             />
           )
           :
@@ -114,6 +123,8 @@ export default class PerformanceChartBoard extends PureComponent {
               location={location}
               level={level}
               scope={categoryScope}
+              custRange={custRange}
+              updateQueryState={updateQueryState}
             />
           )
         }

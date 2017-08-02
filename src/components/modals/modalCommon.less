@@ -1,3 +1,4 @@
+@import "../../css/variable.less";
 .padMB {
   margin-bottom: 40px;
 }
@@ -31,6 +32,8 @@
   color: #fff;
   border-color: #e52e2e;
   background-color: #e52e2e;
+  &:active,
+  &:focus,
   &:hover {
     color: #fff;
     border-color: lighten(#e52e2e, 10%);
@@ -38,6 +41,9 @@
   }
 }
 .boardManageModal {
+  div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fieldset, legend, input, textarea, p, blockquote, th, td, strong, .ant-form {
+    font-family: @font-family;
+  }
   // background-color: blue;
   .tooltipTop {
     top:-35px !important;
@@ -75,13 +81,23 @@
       width: 600px !important;
     }
     .ant-modal-header {
-      background-color: #2a3f51;
+      // background-color: #2a3f51;
+      background-color: #fff;
     }
     .ant-modal-close-x {
-      color: #fff;
+      color: #333;
+      font-size: 30px;
+      font-weight: normal;
+      &:before {
+        content: "\e601";
+        font-family: "iconfont" !important;
+      }
     }
     .ant-modal-title {
-      color: #fff;
+      // color: #fff;
+      font-size: 18px;
+      color: #333;
+      text-align: center;
     }
     .ant-modal-footer {
       border-top: none;
@@ -90,7 +106,6 @@
       padding-bottom: 40px;
       .ant-btn-lg{
         width: 120px;
-        height: 39px;
       }
       & button + button {
         margin-left: 70px;

@@ -7,6 +7,7 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { Row, Col } from 'antd';
 import { Link } from 'dva/router';
+import { fspGlobal } from '../../utils';
 import styles from './toBeDone.less';
 
 export default class PerformanceIndicators extends PureComponent {
@@ -36,12 +37,12 @@ export default class PerformanceIndicators extends PureComponent {
           <Row gutter={35}>
             <Col span={8}>
               <div className={`${styles.item} ${styles.item_a}`}>
-                <Link className="item" to="/customerPool/canDoToday">
+                <a className="item" onClick={() => fspGlobal.myMotTask()}>
                   <div className={styles.content}>
                     <h1>25</h1>
                     <p>今日可做任务</p>
                   </div>
-                </Link>
+                </a>
               </div>
             </Col>
             <Col span={8}>

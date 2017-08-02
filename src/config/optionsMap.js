@@ -43,20 +43,36 @@ const optionsMap = {
     },
   ],
   // 按类别排序
-  sortByType: [
-    {
-      scope: '2',
-      name: '分公司',
-    },
-    {
-      scope: '3',
-      name: '营业部',
-    },
-    {
-      scope: '4',
-      name: '投顾',
-    },
-  ],
+  sortByType: {
+    TYPE_TGJX: [
+      {
+        scope: '2',
+        name: '分公司',
+      },
+      {
+        scope: '3',
+        name: '营业部',
+      },
+      {
+        scope: '4',
+        name: '投顾',
+      },
+    ],
+    TYPE_JYYJ: [
+      {
+        scope: '2',
+        name: '分公司',
+      },
+      {
+        scope: '3',
+        name: '营业部',
+      },
+      {
+        scope: '4',
+        name: '服务经理',
+      },
+    ],
+  },
   // 按顺序排序
   sortByOrder: [
     {

@@ -8,6 +8,7 @@ import { Button, message } from 'antd';
 import { autobind } from 'core-decorators';
 import { connect } from 'react-redux';
 import { withRouter, routerRedux } from 'dva/router';
+import _ from 'lodash';
 
 import ReportHome from './Home';
 import { getCssStyle } from '../../utils/helper';
@@ -25,7 +26,7 @@ const fectchDataFunction = (globalLoading, type) => query => ({
 });
 
 const mapStateToProps = state => ({
-  boardInfo: state.edit.boardInfo,
+  boardInfo: state.preview.boardInfo,
   publishLoading: state.edit.publishLoading,
   globalLoading: state.activity.global,
 });
@@ -34,6 +35,8 @@ const mapDispatchToProps = {
   push: routerRedux.push,
   goBack: routerRedux.goBack,
   publishBoard: fectchDataFunction(true, 'edit/publishBoard'),
+  getBoardInfo: fectchDataFunction(true, 'preview/getBoardInfo'),
+  delBoardInfo: fectchDataFunction(true, 'preview/delBoardInfo'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -45,18 +48,9 @@ export default class PreviewReport extends PureComponent {
     publishBoard: PropTypes.func.isRequired,
     goBack: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
+    getBoardInfo: PropTypes.func.isRequired,
+    delBoardInfo: PropTypes.func.isRequired,
     publishLoading: PropTypes.bool.isRequired,
-    // reportName: PropTypes.string.isRequired,
-    // boardId: PropTypes.number.isRequired,
-    // boardType: PropTypes.string.isRequired,
-    // previewBack: PropTypes.func.isRequired,
-    // previewPublish: PropTypes.func.isRequired,
-  }
-
-  static defaultProps = {
-    // reportName: '',
-    // boardId: 1,
-    // boardType: 'TYPE_TGJX',
   }
 
   constructor(props) {
@@ -64,18 +58,47 @@ export default class PreviewReport extends PureComponent {
     // 新的页面需要
     this.state = {
       publishConfirmModal: false,
+      boardInfo: {},
     };
   }
 
+  componentWillMount() {
+    const { location: { query: { boardId, orgId } } } = this.props;
+    const { getBoardInfo } = this.props;
+    getBoardInfo({
+      boardId,
+      orgId,
+    });
+  }
+
   componentWillReceiveProps(nextProps) {
+    const { boardInfo: preboard } = this.props;
+    const { boardInfo } = nextProps;
+    if (!_.isEqual(preboard, boardInfo)) {
+      // const boardInfo = this.findBoardById(boardId);
+      this.setState({
+        boardInfo,
+      });
+    }
     const { publishLoading: prePL } = this.props;
     const { push, publishLoading } = nextProps;
     if (!publishLoading && prePL) {
-      const { id } = this.props.boardInfo;
-      message.success('保存成功');
-      push(`/report?boardId=${id}`);
+      message.success('发布成功');
+      const { location: { query: { boardId } } } = this.props;
+      push(`/report?boardId=${boardId}`);
     }
   }
+
+  componentWillUnmount() {
+    this.props.delBoardInfo();
+  }
+
+  // @autobind
+  // findBoardById(boardId) {
+  //   const { editableBoards } = this.props;
+  //   const boardInfo = _.find(editableBoards, o => o.id === Number.parseInt(boardId, 10));
+  //   return boardInfo;
+  // }
 
   @autobind
   closeModal(modal) {
@@ -94,7 +117,6 @@ export default class PreviewReport extends PureComponent {
   @autobind
   handleBackClick() {
     this.props.goBack();
-    // this.props.previewBack();
   }
 
   @autobind
@@ -104,19 +126,21 @@ export default class PreviewReport extends PureComponent {
 
   @autobind
   publishBoardCofirm() {
-    const { id, ownerOrgId } = this.props.boardInfo;
+    const { id, ownerOrgId } = this.state.boardInfo;
     this.props.publishBoard({
       boardId: id,
       ownerOrgId,
       isPublished: 'Y',
     });
-    // this.props.previewPublish();
   }
 
   render() {
+    if (_.isEmpty(this.state.boardInfo)) {
+      return null;
+    }
     const { publishConfirmModal } = this.state;
     const { location } = this.props;
-    const { name, id, boardType } = this.props.boardInfo;
+    const { name, id, boardType } = this.state.boardInfo;
     // 发布共同配置项
     const publishConfirmMProps = {
       modalKey: 'publishConfirmModal',

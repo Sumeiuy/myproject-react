@@ -14,10 +14,17 @@ import { getEmpId, queryToString, getDurationString } from '../../utils/helper';
 import PerformanceItem from '../../components/pageCommon/PerformanceItem';
 import PreformanceChartBoard from '../../components/pageCommon/PerformanceChartBoard';
 import PageHeader from '../../components/pageCommon/PageHeader';
+import PageAnchor from '../../components/pageCommon/PageAnchor';
+
+import { constants } from '../../config';
 import styles from './Home.less';
+
+const defaultBoardId = constants.boardId;
+const defaultBoardType = constants.boardType;
 
 const effects = {
   allInfo: 'report/getAllInfo',
+  delReportData: 'report/delReportData',
   chartTableInfo: 'report/getChartTableInfo',
   oneChartInfo: 'report/getOneChartInfo',
   exportExcel: 'report/exportExcel',
@@ -44,6 +51,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
+  delReportData: fectchDataFunction(false, effects.delReportData),
   getAllInfo: fectchDataFunction(true, effects.allInfo),
   getOneChartInfo: fectchDataFunction(true, effects.oneChartInfo),
   getChartTableInfo: fectchDataFunction(true, effects.chartTableInfo),
@@ -65,6 +73,7 @@ export default class ReportHome extends PureComponent {
     location: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
+    delReportData: PropTypes.func.isRequired,
     getAllInfo: PropTypes.func.isRequired,
     getOneChartInfo: PropTypes.func.isRequired,
     getChartTableInfo: PropTypes.func.isRequired,
@@ -95,8 +104,8 @@ export default class ReportHome extends PureComponent {
     visibleBoards: [],
     preView: false,
     reportName: '',
-    boardId: 1,
-    boardType: 'TYPE_TGJX',
+    boardId: defaultBoardId,
+    boardType: defaultBoardType,
     collectBoardSelect: () => {},
     collectCustRange: () => {},
     collectDurationSelect: () => {},
@@ -116,8 +125,8 @@ export default class ReportHome extends PureComponent {
     if (!preView) {
       // 正常普通页面，从页面中获取boardId
       const { location: { query: { boardId, boardType } } } = this.props;
-      initialState.boardId = boardId || 1; // 默认取第一个看板，目前是 1
-      initialState.boardType = boardType || 'TYPE_TGJX'; // 如果用户手动输入boardId，而没有boardType咋办
+      initialState.boardId = boardId || defaultBoardId; // 默认取第一个看板，目前是 1
+      initialState.boardType = boardType || defaultBoardType; // 如果用户手动输入boardId，而没有boardType咋办
     } else {
       // 预览页面，值会传递过来
       const { boardId, boardType } = this.props;
@@ -169,6 +178,11 @@ export default class ReportHome extends PureComponent {
         this.getInfo();
       });
     }
+  }
+
+  // 销毁页面的时候，清楚相关数据
+  componentWillUnmount() {
+    this.props.delReportData();
   }
 
   @autobind
@@ -331,14 +345,16 @@ export default class ReportHome extends PureComponent {
     } = this.props;
     // 因为新的数据查询参数全部存放在了state里面
     const { showCharts, classifyScope, classifyOrder } = this.state;
-    const { boardId, custRangeLevel, scope, boardType } = this.state;
+    const { boardId, custRangeLevel, scope, boardType, orgId } = this.state;
     const level = custRangeLevel || (custRange[0] && custRange[0].level);
     const newscope = Number(scope) || (custRange[0] && Number(custRange[0].level) + 1);
     // 用来判断是否投顾绩效,
-    let showScopeOrder = this.findBoardBy(boardId).boardType === 'TYPE_TGJX';
+    const tempType = this.findBoardBy(boardId).boardType;
+    let showScopeOrder = tempType === 'TYPE_TGJX';
     if (preView) {
       showScopeOrder = boardType === 'TYPE_TGJX';
     }
+    showScopeOrder = true;
 
     return (
       <div className="page-invest content-inner">
@@ -351,16 +367,15 @@ export default class ReportHome extends PureComponent {
           preView={preView}
           reportName={reportName}
           updateQueryState={this.updateQueryState}
+          orgId={orgId}
           collectBoardSelect={collectBoardSelect}
           collectCustRange={collectCustRange}
           collectDurationSelect={collectDurationSelect}
         />
         <div className={styles.reportBody}>
-          <div className={styles.reportPart}>
-            <PerformanceItem
-              data={performance}
-            />
-          </div>
+          <PerformanceItem
+            data={performance}
+          />
           {
             chartInfo.map((item) => {
               const { key, name, data } = item;
@@ -372,8 +387,10 @@ export default class ReportHome extends PureComponent {
                 <div
                   key={key}
                   className={styles.reportPart}
+                  id={key}
                 >
                   <PreformanceChartBoard
+                    boardType={tempType}
                     showChart={showChart}
                     updateShowCharts={this.updateShowCharts}
                     categoryScope={categoryScope}
@@ -392,6 +409,8 @@ export default class ReportHome extends PureComponent {
                     boardTitle={name}
                     showScopeOrder={showScopeOrder}
                     selfRequestData={this.selfRequestData}
+                    custRange={custRange}
+                    updateQueryState={this.updateQueryState}
                     collectScopeSelect={collectScopeSelect}
                     collectOrderTypeSelect={collectOrderTypeSelect}
                   />
@@ -400,6 +419,9 @@ export default class ReportHome extends PureComponent {
             })
           }
         </div>
+        <PageAnchor
+          chartInfo={chartInfo}
+        />
       </div>
     );
   }
