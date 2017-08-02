@@ -6,6 +6,7 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { Row, Col, Select } from 'antd';
+import _ from 'lodash';
 import Icon from '../../components/common/Icon';
 import CustomerService from './CustomerService';
 import ProductSales from './ProductSales';
@@ -33,8 +34,9 @@ export default class PerformanceIndicators extends PureComponent {
 
   constructor(props) {
     super(props);
+    const { cycle } = props;
     this.state = {
-      defaultSelectValue: '',
+      defaultSelectValue: _.isEmpty(cycle) ? '' : cycle[0].key,
     };
   }
 
@@ -56,7 +58,7 @@ export default class PerformanceIndicators extends PureComponent {
   creatTimeSelectOptions(cycle) {
     return cycle.map((item, index) => {
       const itemKey = `timeOption${index}`;
-      return <Option key={itemKey} value={item.key}>{item.name}</Option>;
+      return <Option key={itemKey} value={item.key}>{item.value}</Option>;
     });
   }
 
@@ -98,9 +100,10 @@ export default class PerformanceIndicators extends PureComponent {
     const productSalesData = { fundTranAmt, privateTranAmt, finaTranAmt, otcTranAmt };
     const customerServiceData = { motOkMnt, motTotMnt, taskCust, totCust };
     const { defaultSelectValue } = this.state;
-    if (!custRange || !custRange.length || !cycle || !cycle.length) {
+    if (_.isEmpty(custRange) || _.isEmpty(cycle)) {
       return null;
     }
+    // debugger;
     return (
       <div className={styles.indexBox}>
         <div>
