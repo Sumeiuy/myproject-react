@@ -7,7 +7,10 @@ import { Tooltip } from 'antd';
 import { autobind } from 'core-decorators';
 
 import styles from './item.less';
+import { fspContainer } from '../../config';
 import { toUnit } from '../../utils/helper';
+
+const reactApp = fspContainer.reactApp;
 
 export default class Item extends PureComponent {
 
@@ -21,7 +24,7 @@ export default class Item extends PureComponent {
   // tooltip
   @autobind
   getTooltipContainer() {
-    return document.querySelector('.react-app');
+    return document.querySelector(reactApp);
   }
 
   render() {

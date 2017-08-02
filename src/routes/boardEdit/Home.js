@@ -10,6 +10,7 @@ import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
+import { fspContainer } from '../../config';
 import SimpleEditor from '../../components/Edit/SimpleEditor';
 import SelfSelect from '../../components/Edit/SelfSelect';
 import BoardSelectTree from '../../components/Edit/BoardSelectTree';
@@ -17,6 +18,8 @@ import selectHandlers from '../../components/Edit/selectHelper';
 import { BackConfirmModal, PublishConfirmModal } from '../../components/modals';
 
 import styles from './Home.less';
+
+const reactApp = fspContainer.reactApp;
 
 const fectchDataFunction = (globalLoading, type) => query => ({
   type,
@@ -175,7 +178,7 @@ export default class BoardEditHome extends PureComponent {
 
   @autobind
   getTooltipContainer() {
-    return document.querySelector('.react-app');
+    return document.querySelector(reactApp);
   }
 
   @autobind
