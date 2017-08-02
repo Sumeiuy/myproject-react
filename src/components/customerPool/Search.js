@@ -85,16 +85,13 @@ export default class Search extends PureComponent {
   renderOption(item) {
     return (
       <Option key={item.category} text={item.category}>
-        {item.query} 在
         <a
           href={`https://s.taobao.com/search?q=${item.query}`}
           target="_blank"
           rel="noopener noreferrer"
         >
-          {item.category}
+          {item.query}
         </a>
-        区块中
-        <span className="global-search-item-count">约 {item.count} 个结果</span>
       </Option>
     );
   }
@@ -111,13 +108,7 @@ export default class Search extends PureComponent {
           </Option>
         ))}
       </OptGroup>
-    )).concat([
-      <Option disabled key="removeHistory" className="removeHistory">
-        <a>
-          清除历史记录
-        </a>
-      </Option>,
-    ]);
+    ));
     return options;
   }
 
@@ -125,6 +116,11 @@ export default class Search extends PureComponent {
     return (
       <span>
         {title}
+        <a
+          className={styles.delHistory_a}
+          rel="noopener noreferrer"
+        ><Icon type="delete" />清除历史记录
+      </a>
       </span>
     );
   }

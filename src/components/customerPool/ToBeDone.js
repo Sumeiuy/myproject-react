@@ -1,17 +1,31 @@
 /**
- * @file customerPool/Home.js
- *  目标客户池首页
- * @author wangjunjun
+ * @file customerPool/ToBeDone.js
+ *  目标客户池首页-代办流程总数
+ * @author yangquanjian
  */
 
-import React, { PureComponent } from 'react';
+import React, { PropTypes, PureComponent } from 'react';
 import { Row, Col } from 'antd';
 import { Link } from 'dva/router';
 import { fspGlobal } from '../../utils';
 import styles from './toBeDone.less';
 
 export default class PerformanceIndicators extends PureComponent {
+  static propTypes = {
+    processData: PropTypes.object,
+  }
 
+  static defaultProps = {
+    processData: {},
+  }
+
+  // 处理数值（大于99+）
+  processNum(num) {
+    if (parseInt(num) > 99) { // eslint-disable-line
+      return <span>99<sup>+</sup></span>;
+    }
+    return <span>{num}</span>;
+  }
   render() {
     const url = '/customerPool/todo';
     const param = {
@@ -21,6 +35,7 @@ export default class PerformanceIndicators extends PureComponent {
       id: 'FSP_TODOLIST',
       title: '待办流程列表',
     };
+    const { processData: { empWorkFlowCount } } = this.props;
     return (
       <div className={styles.toBeDoneBox}>
         <div className={styles.inner}>
@@ -52,7 +67,7 @@ export default class PerformanceIndicators extends PureComponent {
               <div className={`${styles.item} ${styles.item_c}`}>
                 <a className="item" onClick={() => fspGlobal.openRctTab({ url, param })}>
                   <div className={styles.content}>
-                    <h1>99<sup>+</sup></h1>
+                    <h1>{this.processNum(empWorkFlowCount)}</h1>
                     <p>待办流程</p>
                   </div>
                 </a>
