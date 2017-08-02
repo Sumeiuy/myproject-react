@@ -36,7 +36,7 @@ export const constructScatterOptions = (option = {}) => {
 
   const scatterOptions = {
     grid: [
-      { x: '10%', y: '-10%', width: '80%', height: '90%' },
+      { x: '12%', y: '-10%', width: '80%', height: '90%' },
       { x2: '10%', y2: '10%', width: '80%', height: '90%' },
     ],
     tooltip: {
@@ -112,8 +112,8 @@ export const constructScatterOptions = (option = {}) => {
           },
         },
         symbol: 'circle',
-        // symbolSize: 15,
-        symbolSize: item => Math.sqrt(item[1]) / 0.5,
+        symbolSize: 15,
+        // symbolSize: item => Math.sqrt(item[1]) / 0.5,
       },
     ],
   };

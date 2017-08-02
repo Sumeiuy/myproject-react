@@ -74,6 +74,9 @@ export default {
   // 查询强弱指示分析数据接口
   getCurrentRankingRecord: query => api.post('/groovynoauth/jxzb/queryCurrentRankingRecord', query),
 
+  // 查询字典数据
+  queryHistoryContrast: query => api.post('/groovynoauth/jxzb/queryHistoryContrast', query),
+
   // 查询历史对比折线图数据
-  getHistoryContrastLineChartData: query => api.post('/groovynoauth/jxzb/queeryContrastLineChart', query),
+  getHistoryContrastLineChartData: query => api.post('/groovynoauth/jxzb/queryContrastLineChart', query),
 };

@@ -24,6 +24,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
     queryContrastAnalyze: PropTypes.func.isRequired,
     custRange: PropTypes.array.isRequired,
     title: PropTypes.string.isRequired,
+    optionsData: PropTypes.array.isRequired,
   };
 
   static defaultProps = {
@@ -172,6 +173,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
       // 设置state，切换tooltip的显示信息
       this.setState({
         isShowTooltip: !isShowTooltip,
+        // isShowTooltip: true,
         orgName,
         parentOrgName,
       });
@@ -259,17 +261,32 @@ export default class AbilityScatterAnalysis extends PureComponent {
       // currentPayload,
     } = this.state;
 
-    const { title } = this.props;
+    const { title, optionsData } = this.props;
 
     if (_.isEmpty(finalData)) {
       return null;
     }
 
-    const optionData = [
-      { value: '总客户', label: '总客户' },
-      { value: '一般客户', label: '一般客户' },
-      { value: '机构客户', label: '机构客户' },
-    ];
+    // "key": "custNum",
+    // "name": "服务客户数",
+    // "value": null,
+    // "unit": "户",
+    // "description": "upd入岗投顾人员服务的客户数",
+    // "categoryKey": null,
+    // "isBelongsSummury": null,
+    // "hasChildren": null,
+    // "parentKey": null,
+    // "parentName": null,
+    // "children": null
+
+    let finalOptions = [];
+    if (!_.isEmpty(optionsData)) {
+      finalOptions = optionsData.map(item => ({
+        key: item.key,
+        value: item.key,
+        label: item.name,
+      }));
+    }
 
     const { xAxisName, yAxisName, xAxisUnit, yAxisUnit } = finalData;
 
@@ -287,15 +304,15 @@ export default class AbilityScatterAnalysis extends PureComponent {
           <div className={styles.compare}>对比</div>
           <div className={styles.customerDimensionSelect}>
             <Select
-              defaultValue="总客户"
               onChange={this.handleChange}
               allowClear={false}
               placeholder="无"
+              defaultValue={finalOptions[0] && finalOptions[0].value} // 默认选中项
               dropdownClassName={styles.custDimenSelect}
             >
               {
-                optionData.map(item =>
-                  <Option value={item.value} key={item.value}>{item.label}</Option>)
+                finalOptions.map(item =>
+                  <Option value={item.value} key={item.key}>{item.label}</Option>)
               }
             </Select>
           </div>
@@ -323,7 +340,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
               <span>{tooltipInfo}</span>
             </div>
           </div>
-          : null
+          : <div className={styles.noneTooltip} />
         }
       </div>
     );

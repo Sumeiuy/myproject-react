@@ -19,6 +19,7 @@ import styles from './Home.less';
 const effects = {
   allInfo: 'history/getAllInfo',
   queryContrastAnalyze: 'history/queryContrastAnalyze',
+  queryHistoryContrast: 'history/queryHistoryContrast',
   getContrastData: 'history/getContrastData',
 };
 
@@ -34,18 +35,22 @@ const mapStateToProps = state => ({
   custRange: state.report.custRange,
   visibleBoards: state.report.visibleBoards,
   globalLoading: state.activity.global,
-  contributionAnalysis: state.history.contributionAnalysis,
-  reviewAnalysis: state.history.reviewAnalysis,
+  contributionAnalysis: state.history.contributionAnalysis, // 贡献分析
+  reviewAnalysis: state.history.reviewAnalysis, // 入岗投顾
+  historyContrastDic: state.history.historyContrastDic, // 字典数据
   contrastData: state.history.contrastData,
 });
 
 const mapDispatchToProps = {
   getAllInfo: fectchDataFunction(true, effects.allInfo),
   queryContrastAnalyze: fectchDataFunction(true, effects.queryContrastAnalyze),
+  queryHistoryContrast: fectchDataFunction(true, effects.queryHistoryContrast),
   getContrastData: fectchDataFunction(true, effects.getContrastData),
   push: routerRedux.push,
   replace: routerRedux.replace,
 };
+
+const EMPTY_LIST = [];
 
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
@@ -66,6 +71,8 @@ export default class HistoryHome extends PureComponent {
     reviewAnalysis: PropTypes.object.isRequired,
     historyCore: PropTypes.array, // 概览
     crrData: PropTypes.object, // 强弱指示分析
+    historyContrastDic: PropTypes.object.isRequired,
+    queryHistoryContrast: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -81,9 +88,11 @@ export default class HistoryHome extends PureComponent {
     const {
       location: { query },
       getAllInfo,
+      queryHistoryContrast,
       queryContrastAnalyze,
       getContrastData,
     } = this.props;
+
     getAllInfo({
       ...query,
     });
@@ -100,6 +109,7 @@ export default class HistoryHome extends PureComponent {
       // coreIndicatorId: '',
       // contrastIndicatorId: '',
     });
+
     queryContrastAnalyze({
       boardId: '3',
       type: 'invest',
@@ -112,6 +122,12 @@ export default class HistoryHome extends PureComponent {
       // coreIndicatorId: '',
       // contrastIndicatorId: '',
     });
+
+    // 先写一个假参数
+    queryHistoryContrast({
+      boardId: '3',
+    });
+
     // 暂时不写参数
     getContrastData();
   }
@@ -125,8 +141,11 @@ export default class HistoryHome extends PureComponent {
       custRange,
       historyCore,
       crrData,
+      historyContrastDic,
       contrastData,
     } = this.props;
+
+    const { cust = EMPTY_LIST, invest = EMPTY_LIST } = historyContrastDic;
 
     return (
       <div className="pageHistory">
@@ -154,12 +173,15 @@ export default class HistoryHome extends PureComponent {
             </div>
             <HisDivider />
             <div className={styles.scatterArea}>
+              {/* 散点图区域 */}
               <ScatterAnalysis
                 location={location}
                 contributionAnalysisData={contributionAnalysis}
                 reviewAnalysisData={reviewAnalysis}
                 queryContrastAnalyze={queryContrastAnalyze}
                 custRange={custRange}
+                cust={cust}
+                invest={invest}
               />
             </div>
           </div>
