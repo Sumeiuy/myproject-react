@@ -9,6 +9,10 @@ import { autobind } from 'core-decorators';
 import { Table } from 'antd';
 import { fspGlobal } from '../../utils';
 
+import styles from './toDoList.less';
+
+import emptyImg from './empty.png';
+
 const columns = [
   {
     title: '任务名称',
@@ -46,9 +50,31 @@ export default class ToDoList extends PureComponent {
 
   static propTypes = {
     data: PropTypes.array.isRequired,
+    todolist: PropTypes.array.isRequired,
     className: PropTypes.string.isRequired,
     todoPage: PropTypes.object.isRequired,
     onChange: PropTypes.func.isRequired,
+  }
+
+  componentDidMount() {
+    this.updateEmptyHeight();
+  }
+
+  componentDidUpdate() {
+    this.updateEmptyHeight();
+  }
+
+  updateEmptyHeight() {
+    let topBarHeight = 0;
+    const winHeight = document.body.clientHeight || document.documentElement.clientHeight;
+    const topBar = document.getElementById('workspace-taskbar');
+    if (topBar) {
+      topBarHeight = topBar.offsetHeight;
+    }
+    const emptyTip = document.querySelector('.ant-table-placeholder');
+    if (emptyTip) {
+      emptyTip.style.height = `${winHeight - topBarHeight - 127}px`;
+    }
   }
 
   @autobind
@@ -59,7 +85,43 @@ export default class ToDoList extends PureComponent {
   }
 
   render() {
-    const { className, data, todoPage } = this.props;
+    const { className, data, todoPage, todolist } = this.props;
+    // 没有待办流程
+    if (todolist.length === 0) {
+      return (<div className={styles.empty}>
+        <Table
+          className={`${className} ${styles.todoListEmpty}`}
+          rowKey={record => record.applyId}
+          columns={columns}
+          dataSource={todolist}
+          locale={{ emptyText: '' }}
+        />
+        <div className={styles.emptyWrapper}>
+          <div className="empty-container">
+            <img src={emptyImg} alt="" />
+            <p>暂无待办流程</p>
+          </div>
+        </div>
+      </div>);
+    }
+    // 搜索结果为空
+    if (data.length === 0) {
+      return (<div className={styles.empty}>
+        <Table
+          className={`${className} ${styles.todoListEmpty}`}
+          rowKey={record => record.applyId}
+          columns={columns}
+          dataSource={data}
+          locale={{ emptyText: '' }}
+        />
+        <div className={styles.emptyWrapper}>
+          <div className="empty-container">
+            <img src={emptyImg} alt="" />
+            <p>抱歉！没有找到相关结果</p>
+          </div>
+        </div>
+      </div>);
+    }
     return (
       <Table
         className={className}
