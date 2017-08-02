@@ -84,7 +84,7 @@ export default class HistoryComparePolyChart extends PureComponent {
       });
 
       // 默认选中第一条展示信息
-      const { date: currentDate, value: currentValue, year } = curSeries[0] || EMPTY_ARRAY;
+      const { date: currentDate, value: currentValue, year, name } = curSeries[0] || EMPTY_ARRAY;
       const { date: previousDate, value: previousValue } = curSeries[0] || EMPTY_ARRAY;
 
       this.setState({
@@ -286,7 +286,7 @@ export default class HistoryComparePolyChart extends PureComponent {
           <span className={styles.tipTime}>{year}{currentDate}:</span>
           <span className={styles.currentValue}>{currentValue}</span>
           <span className={styles.tipUnit}>{unit}</span>
-          <span className={styles.tipTime}>{year}{previousDate}</span>
+          <span className={styles.tipTime}>{year}{previousDate}:</span>
           <span className={styles.contrastValue}>{previousValue}</span>
           <span className={styles.tipUnit}>{unit}</span>
         </div>
