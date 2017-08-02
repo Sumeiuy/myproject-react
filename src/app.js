@@ -32,6 +32,8 @@ const onError = (e) => {
     message.error('登录超时，请重新登录！');
   } else if (e.name === 'SyntaxError' && (msg.indexOf('<') > -1 || msg.indexOf('JSON') > -1)) {
     window.location.reload();
+  } else if (e.stack && e.stack.indexOf('SyntaxError') > -1) {
+    window.location.reload();
   } else {
     message.error(msg, 3000);
   }
@@ -56,6 +58,7 @@ app.model(require('./models/feedback'));
 app.model(require('./models/report'));
 app.model(require('./models/manage'));
 app.model(require('./models/edit'));
+app.model(require('./models/preview'));
 app.model(require('./models/history'));
 app.model(require('./models/customerPool'));
 

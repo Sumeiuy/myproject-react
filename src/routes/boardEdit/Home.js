@@ -375,8 +375,8 @@ export default class BoardEditHome extends PureComponent {
   handlePreviewBtnClick() {
     // 预览按钮点击之后，需要先保存
     this.saveBoard({});
-    // this.showPreview();
-    this.props.push('/preview');
+    const { boardInfo: { id, ownerOrgId } } = this.props;
+    this.props.push(`/preview?boardId=${id}&orgId=${ownerOrgId}`);
   }
 
   @autobind
@@ -433,6 +433,7 @@ export default class BoardEditHome extends PureComponent {
       nameTipVisible,
       publishBt,
       previewBt,
+      saveBt,
       publishConfirmModal,
       backConfirmModal,
       hasPublished,
@@ -603,6 +604,7 @@ export default class BoardEditHome extends PureComponent {
               :
               (
                 <Button
+                  disabled={!saveBt}
                   className={styles.editBt}
                   onClick={this.handleSaveBtnClick}
                   key="editSave"

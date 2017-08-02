@@ -10,6 +10,8 @@ import _ from 'lodash';
 import ChartBar from './ChartBar';
 import styles from './ChartBoard.less';
 
+const barColors = ['#3983ff', '#ffb24e', '#756fb8', '#ff784e'];
+
 export default class ChartBoard extends PureComponent {
 
   static propTypes = {
@@ -18,6 +20,8 @@ export default class ChartBoard extends PureComponent {
     location: PropTypes.object,
     style: PropTypes.object,
     chartData: PropTypes.array,
+    custRange: PropTypes.array.isRequired,
+    updateQueryState: PropTypes.func.isRequired,
     // loading: PropTypes.bool.isRequired,
   }
 
@@ -29,13 +33,14 @@ export default class ChartBoard extends PureComponent {
   }
 
   render() {
-    const { chartData, location, level, style, scope } = this.props;
+    const { chartData, location, level, style, scope, custRange, updateQueryState } = this.props;
     return (
       <div className={styles.board} style={style}>
         {/* <Loading loading={loading} /> */}
         <Row type="flex">
           {
-            chartData.map((item) => {
+            chartData.map((item, index) => {
+              const barColor = barColors[(index % 4)];
               if (!_.isObject(item)) {
                 return null;
               }
@@ -43,6 +48,10 @@ export default class ChartBoard extends PureComponent {
               if (!indiModel) {
                 return null;
               }
+              // if (indiModel.key === 'gjzServiceCompPercent') {
+              //   // TODO 此处线针对高净值客户服务覆盖率chart做隐藏处理
+              //   return null;
+              // }
               return (
                 <Col
                   span={8}
@@ -54,6 +63,9 @@ export default class ChartBoard extends PureComponent {
                     location={location}
                     level={location.query.level || level}
                     scope={scope}
+                    custRange={custRange}
+                    updateQueryState={updateQueryState}
+                    barColor={barColor}
                   />
                 </Col>
               );
