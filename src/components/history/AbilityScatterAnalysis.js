@@ -307,7 +307,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
               onChange={this.handleChange}
               allowClear={false}
               placeholder="无"
-              defaultValue={finalOptions[0].value} // 默认选中项
+              defaultValue={finalOptions[0] && finalOptions[0].value} // 默认选中项
               dropdownClassName={styles.custDimenSelect}
             >
               {
