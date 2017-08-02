@@ -77,6 +77,7 @@ export default class HistoryHome extends PureComponent {
   }
 
   componentWillMount() {
+    // 本页面初始化的时候，只能获取boardId,已经empId
     const {
       location: { query },
       getAllInfo,
@@ -148,7 +149,8 @@ export default class HistoryHome extends PureComponent {
             <div className={styles.caption}>核心指标分析-总交易量</div>
             <div className={styles.polyArea}>
               <HistoryComparePolyChart data={contrastData} />
-              <HistoryCompareRankChart />
+              {/* 假定数据 */}
+              <HistoryCompareRankChart level="1" scope="2" data={[]} />
             </div>
             <HisDivider />
             <div className={styles.scatterArea}>
