@@ -5,13 +5,14 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import { Icon, Radio } from 'antd';
+import { Radio } from 'antd';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
 
 import { getDurationString } from '../../utils/helper';
 import { optionsMap } from '../../config';
+import Icon from '../common/Icon';
 import './DurationSelect.less';
 
 // 需要用到的常量
@@ -108,7 +109,7 @@ export default class DurationSelect extends PureComponent {
       <div className="durationSelect">
         <div className="duration" onClick={this.handleDurationClick}>
           <div className="text">{`${durationStr}`}<span>{`(${durationTip})`}</span></div>
-          <Icon type="calendar" />
+          <Icon type="rili" />
         </div>
         <div className={toggleDurationPicker}>
           <div className="pickerHead">{durationStr}</div>

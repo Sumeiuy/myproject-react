@@ -103,6 +103,14 @@ export default {
         custRange,
       };
     },
+    delReportDataSuccess(state) {
+      return {
+        ...state,
+        performance: [],
+        chartInfo: [],
+        chartTableInfo: {},
+      };
+    },
   },
   effects: {
     // 导出Excel表格
@@ -174,7 +182,6 @@ export default {
         payload: { oneChart },
       });
     },
-
     // 获取图表表格视图数据
     * getChartTableInfo({ payload }, { call, put }) {
       const resChartTableInfo = yield call(api.getChartTableInfo, payload);
@@ -182,6 +189,13 @@ export default {
       yield put({
         type: 'getChartTableInfoSuccess',
         payload: { resChartTableInfo, categoryKey },
+      });
+    },
+    // 清除数据
+    * delReportData({ payload }, { put }) {
+      yield put({
+        type: 'delReportDataSuccess',
+        payload: {},
       });
     },
   },

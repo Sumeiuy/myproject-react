@@ -13,7 +13,6 @@ import Item from './item';
 import styles from './PerformanceItem.less';
 
 const pageSize = 8;
-
 export default class PerformanceItem extends PureComponent {
 
   static propTypes = {

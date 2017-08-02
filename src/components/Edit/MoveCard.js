@@ -33,25 +33,31 @@ const cardTarget = {
       component.decoratedComponentInstance.findNodeRef().getBoundingClientRect();
 
     // Get vertical middle
-    const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+    // const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
 
     // Determine mouse position
     const clientOffset = monitor.getClientOffset();
 
     // Get pixels to the top
-    const hoverClientY = clientOffset.y - hoverBoundingRect.top;
+    // const hoverClientY = clientOffset.y - hoverBoundingRect.top;
 
     // Only perform the move when the mouse has crossed half of the items height
     // When dragging downwards, only move when the cursor is below 50%
     // When dragging upwards, only move when the cursor is above 50%
 
+    // 取出移动的左右距离
+    const hoverClientX = clientOffset.x - hoverBoundingRect.left;
+    // 取出中间值
+    const hoverMiddleX = (hoverBoundingRect.right - hoverBoundingRect.left) / 2;
+    // 用左右移动的距离来进行排序
+    // console.warn('hoverClientY', `${hoverClientX} , ${hoverMiddleX}`);
     // Dragging downwards
-    if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
+    if (dragIndex < hoverIndex && hoverClientX < hoverMiddleX) {
       return;
     }
 
     // Dragging upwards
-    if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
+    if (dragIndex > hoverIndex && hoverClientX > hoverMiddleX) {
       return;
     }
 

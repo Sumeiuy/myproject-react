@@ -132,11 +132,11 @@ const chartData = {
           backgroundColor: stackBarColors[i],
         });
         const stackObj = {
-          itemStyle: {
-            normal: {
-              barBorderRadius: 3,
-            },
-          },
+          // itemStyle: {
+          //   normal: {
+          //     barBorderRadius: 3,
+          //   },
+          // },
           label: {
             normal: {
               show: false,

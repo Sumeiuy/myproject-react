@@ -9,17 +9,27 @@ import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
-import { Col, Row, message, Affix } from 'antd';
+import { Col, Row, message } from 'antd';
 import _ from 'lodash';
 
-import { getEmpId } from '../../utils/helper';
+import { getEmpId, getCssStyle } from '../../utils/helper';
 import BoardSelect from '../../components/pageCommon/BoardSelect';
 import BoardItem from '../../components/pageCommon/BoardItem';
 import { CreateBoardModal, DeleteBoardModal, PublishConfirmModal } from '../../components/modals';
 import ImgAdd from '../../../static/images/bg_add.png';
 import ImgTGJX from '../../../static/images/bg_tgjx.png';
 
+import { fspContainer } from '../../config';
+
 import styles from './Home.less';
+
+
+const fsp = document.querySelector(fspContainer.container);
+const showBtn = document.querySelector(fspContainer.showBtn);
+const hideBtn = document.querySelector(fspContainer.hideBtn);
+const contentWrapper = document.getElementById('workspace-content');
+const marginWidth = fspContainer.marginWidth;
+const marginLeftWidth = fspContainer.marginLeftWidth;
 
 const fectchDataFunction = (globalLoading, type) => query => ({
   type,
@@ -87,7 +97,18 @@ export default class BoardManageHome extends PureComponent {
 
   constructor(props) {
     super(props);
+    let contentWidth;
+    let scrollX;
+    let leftWidth;
+    if (fsp) {
+      contentWidth = getCssStyle(contentWrapper, 'width');
+      scrollX = window.scrollX;
+      leftWidth = parseInt(getCssStyle(contentWrapper, 'left'), 10) + marginLeftWidth;
+    }
     this.state = {
+      width: fsp ? `${parseInt(contentWidth, 10) - marginWidth}px` : '100%',
+      top: fsp ? '55px' : 0,
+      left: fsp ? `${leftWidth - scrollX}px` : 0,
       createBoardModal: false,
       deleteBoardModal: false,
       publishConfirmModal: false,
@@ -97,6 +118,10 @@ export default class BoardManageHome extends PureComponent {
   componentWillMount() {
     const empId = getEmpId();
     this.props.getInitial({ empId });
+  }
+
+  componentDidMount() {
+    this.didMountAddEventListener();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -116,6 +141,60 @@ export default class BoardManageHome extends PureComponent {
       const { id } = operateData;
       push(`/report?boardId=${id}`);
     }
+  }
+  componentWillUnmount() {
+    if (fsp) {
+      window.removeEventListener('scroll', this.onScroll);
+      window.removeEventListener('resize', this.onWindowResize);
+      showBtn.removeEventListener('click', this.toggleLeft);
+      hideBtn.removeEventListener('click', this.toggleLeft);
+    }
+  }
+  // resize 事件
+  @autobind
+  onWindowResize() {
+    const contentWidth = getCssStyle(contentWrapper, 'width');
+    this.setState({
+      width: fsp ? `${parseInt(contentWidth, 10) - marginWidth}px` : '100%',
+    });
+  }
+  // 监听页面滚动事件，设置头部的 left 值
+  @autobind
+  onScroll() {
+    const scrollX = window.scrollX;
+    const leftWidth = parseInt(getCssStyle(contentWrapper, 'left'), 10) + marginLeftWidth;
+    this.setState({
+      left: leftWidth - scrollX,
+    });
+  }
+  // didmount 时添加监听事件
+  @autobind
+  didMountAddEventListener() {
+    // 如果在 FSP 里，则添加监听事件
+    if (fsp) {
+      this.onWindowResize();
+      this.addEventListenerClick();
+      window.addEventListener('scroll', this.onScroll, false);
+      window.addEventListener('resize', this.onWindowResize, false);
+      const leftWidth = parseInt(getCssStyle(contentWrapper, 'left'), 10) + marginLeftWidth;
+      this.setState({
+        left: leftWidth,
+      });
+    }
+  }
+  // 监听 FSP 侧边栏显示隐藏按钮点击事件
+  @autobind
+  addEventListenerClick() {
+    showBtn.addEventListener('click', this.toggleLeft, false);
+    hideBtn.addEventListener('click', this.toggleLeft, false);
+  }
+  @autobind
+  toggleLeft() {
+    const leftWidth = parseInt(getCssStyle(contentWrapper, 'left'), 10) + marginLeftWidth;
+    this.onWindowResize();
+    this.setState({
+      left: leftWidth,
+    });
   }
 
   @autobind
@@ -224,23 +303,36 @@ export default class BoardManageHome extends PureComponent {
       confirm: this.publishBoardCofirm,
     };
 
+    const { top, left, width } = this.state;
     return (
       <div className="page-invest content-inner">
-        <Affix>
-          <div className="reportHeader">
-            <Row type="flex" justify="start" align="middle">
-              <div className="reportName">
-                <BoardSelect
-                  location={location}
-                  push={push}
-                  replace={replace}
-                  visibleBoards={visibleBoards}
-                  collectData={collectData}
-                />
-              </div>
-            </Row>
+        <div>
+          <div
+            style={{
+              position: 'fixed',
+              textIndent: fsp ? '0' : '20px',
+              zIndex: 30,
+              width,
+              top,
+              left,
+            }}
+          >
+            <div className="reportHeader">
+              <Row type="flex" justify="start" align="middle">
+                <div className="reportName">
+                  <BoardSelect
+                    location={location}
+                    push={push}
+                    replace={replace}
+                    visibleBoards={visibleBoards}
+                    collectData={collectData}
+                  />
+                </div>
+              </Row>
+            </div>
           </div>
-        </Affix>
+          <div style={{ height: '40px' }} />
+        </div>
         <div className={styles.boardList}>
           <Row gutter={19}>
             <Col span={8} className={styles.test}>

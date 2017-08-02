@@ -31,6 +31,16 @@ const REN = ZHUNICODE.REN;
 const HU = ZHUNICODE.HU;
 const YUAN = ZHUNICODE.YUAN;
 
+const arrayTransform = (arr) => {
+  let tmpArr = arr.slice();
+  arr.forEach((v) => {
+    if (v.children) {
+      tmpArr = [...tmpArr, ...v.children];
+    }
+  });
+  return tmpArr;
+};
+
 export default class ChartBarStack extends PureComponent {
 
   static propTypes = {
@@ -38,11 +48,15 @@ export default class ChartBarStack extends PureComponent {
     level: PropTypes.string.isRequired,
     scope: PropTypes.number.isRequired,
     chartData: PropTypes.object,
+    custRange: PropTypes.array,
+    updateQueryState: PropTypes.func,
   }
 
   static defaultProps = {
     location: {},
     chartData: {},
+    updateQueryState: () => { },
+    custRange: [],
   }
 
   constructor(props) {
@@ -57,6 +71,7 @@ export default class ChartBarStack extends PureComponent {
     // 先进行初始化的处理
     this.handleResize();
     this.registerResizeListener();
+    this.custRange = arrayTransform(this.props.custRange);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -73,6 +88,25 @@ export default class ChartBarStack extends PureComponent {
       const dom = this.legendDom;
       resize.uninstall(dom);
     }
+  }
+
+  @autobind
+  onReady(instance) {
+    instance.on('click', (arg) => {
+      if (arg.componentType !== 'yAxis') {
+        return;
+      }
+      this.custRange.forEach((item) => {
+        if (arg.value === item.name) {
+          this.props.updateQueryState({
+            orgId: item.id,
+            custRangeLevel: item.level,
+            level: item.level,
+            scope: Number(item.level) + 1,
+          });
+        }
+      });
+    });
   }
 
   @autobind
@@ -243,7 +277,7 @@ export default class ChartBarStack extends PureComponent {
     this.changeLegendState({
       [legendStateKey]: true,
     });
-    const { stackSeries } = this.state;
+    const { stackSeries, unit } = this.state;
     const newStackSeeries = stackSeries.map((item, index) => {
       const newItem = item;
       if (index === legend) {
@@ -251,8 +285,10 @@ export default class ChartBarStack extends PureComponent {
       }
       return newItem;
     });
+    const grid = this.calculateBarChartXaxisTick(stackSeries, unit);
     this.setState({
       stackSeries: newStackSeeries,
+      grid,
     });
   }
 
@@ -264,7 +300,8 @@ export default class ChartBarStack extends PureComponent {
     this.changeLegendState({
       [legendStateKey]: false,
     });
-    const { stackSeries, originalStackSeries } = this.state;
+    const { stackSeries, originalStackSeries, unit } = this.state;
+    // 需要进行新的数据图表切换
     const newStackSeeries = stackSeries.map((item, index) => {
       const newItem = item;
       if (index === legend) {
@@ -272,8 +309,10 @@ export default class ChartBarStack extends PureComponent {
       }
       return newItem;
     });
+    const grid = this.calculateBarChartXaxisTick(stackSeries, unit);
     this.setState({
       stackSeries: newStackSeeries,
+      grid,
     });
   }
 
@@ -367,11 +406,9 @@ export default class ChartBarStack extends PureComponent {
                     <td>
                       <span class="echartTooltip" style="background-color:${stackLegend[legend].backgroundColor}"></span>
                     </td>
-                    <td class="tooltipItem">
-                      <div>${seriesName}</div>
-                    </td>
+                    <td class="tooltipItem">${seriesName}:</td>
                     <td class="itemValue" colspan="2">
-                      : <span>${value}</span>
+                      <span>${value}</span>
                     </td>
                   <tr>
                 `);
@@ -396,11 +433,9 @@ export default class ChartBarStack extends PureComponent {
               ${seriesTips.join('')}
               <tr>
                 <td></td>
-                <td class="tooltipItem">
-                  <div>合计</div>
-                </td>
+                <td class="tooltipItem">合计:</td>
                 <td class="itemValue">
-                  : <span>${totalV}</span>
+                  <span>${totalV}</span>
                 </td>
                 <td>
                    (${unit})
@@ -452,15 +487,18 @@ export default class ChartBarStack extends PureComponent {
             return value;
           },
         },
+        triggerEvent: true,
         data: yAxisLabels,
       },
       series: [
         {
           ...barShadow,
+          clickable: false,
           data: grid.maxDataShadow,
         },
         {
           ...barShadow,
+          clickable: false,
           data: grid.minDataShadow,
         },
         ...stackSeries,
@@ -511,6 +549,7 @@ export default class ChartBarStack extends PureComponent {
             ?
             (
               <IECharts
+                onReady={this.onReady}
                 option={options}
                 resizable
                 style={{
