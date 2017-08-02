@@ -58,12 +58,18 @@ export default class ToDoList extends PureComponent {
 
   componentDidMount() {
     this.updateEmptyHeight();
+    window.addEventListener('resize', () => this.updateEmptyHeight());
   }
 
   componentDidUpdate() {
     this.updateEmptyHeight();
   }
 
+  componentWillUnmount() {
+    window.removeEventListener('resize', () => this.updateEmptyHeight());
+  }
+
+  // 空列表时空数据样式的盒子的高度
   updateEmptyHeight() {
     let topBarHeight = 0;
     const winHeight = document.body.clientHeight || document.documentElement.clientHeight;
