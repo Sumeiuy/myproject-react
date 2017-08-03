@@ -67,7 +67,7 @@ export default {
   getIndicators: query => api.post('/groovynoauth/jxzb/queryCategoryAndIndicators', query),
 
   // 查询待办流程记录列表
-  getToDoList: query => api.get('/groovy/customerPool/todolist', query),
+  getToDoList: query => api.post('/groovynoauth/fsp/emp/workflow/queryWorkFlowTaskList', query),
 
   // 获取客户池客户范围
   getCustomerRange: query => api.post('/groovy/customerPool/queryEmporgs', query),
