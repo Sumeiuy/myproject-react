@@ -7,6 +7,8 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
+import { autobind } from 'core-decorators';
+import _ from 'lodash';
 
 import IndicatorOverviewHeader from '../../components/history/IndicatorOverviewHeader';
 import IndicatorOverview from '../../components/history/IndicatorOverview';
@@ -21,6 +23,7 @@ const effects = {
   queryContrastAnalyze: 'history/queryContrastAnalyze',
   queryHistoryContrast: 'history/queryHistoryContrast',
   getContrastData: 'history/getContrastData',
+  getIndicatorLib: 'history/getIndicatorLib',
 };
 
 const fectchDataFunction = (globalLoading, type) => query => ({
@@ -39,6 +42,7 @@ const mapStateToProps = state => ({
   reviewAnalysis: state.history.reviewAnalysis, // 入岗投顾
   historyContrastDic: state.history.historyContrastDic, // 字典数据
   contrastData: state.history.contrastData,
+  indicatorLib: state.history.indicatorLib,
 });
 
 const mapDispatchToProps = {
@@ -46,6 +50,7 @@ const mapDispatchToProps = {
   queryContrastAnalyze: fectchDataFunction(true, effects.queryContrastAnalyze),
   queryHistoryContrast: fectchDataFunction(true, effects.queryHistoryContrast),
   getContrastData: fectchDataFunction(true, effects.getContrastData),
+  getIndicatorLib: fectchDataFunction(false, effects.getIndicatorLib),
   push: routerRedux.push,
   replace: routerRedux.replace,
 };
@@ -71,6 +76,8 @@ export default class HistoryHome extends PureComponent {
     reviewAnalysis: PropTypes.object.isRequired,
     historyCore: PropTypes.array, // 概览
     crrData: PropTypes.object, // 强弱指示分析
+    indicatorLib: PropTypes.object.isRequired,
+    getIndicatorLib: PropTypes.func.isRequired,
     historyContrastDic: PropTypes.object.isRequired,
     queryHistoryContrast: PropTypes.func.isRequired,
   }
@@ -91,6 +98,7 @@ export default class HistoryHome extends PureComponent {
       queryHistoryContrast,
       queryContrastAnalyze,
       getContrastData,
+      getIndicatorLib,
     } = this.props;
 
     getAllInfo({
@@ -122,6 +130,10 @@ export default class HistoryHome extends PureComponent {
       // coreIndicatorId: '',
       // contrastIndicatorId: '',
     });
+    getIndicatorLib({
+      orgId: 'ZZ001041',
+      type: 'TYPE_TGYJ',
+    });
 
     // 先写一个假参数
     queryHistoryContrast({
@@ -143,6 +155,22 @@ export default class HistoryHome extends PureComponent {
     });
   }
 
+  @autobind
+  getUserSummuryKeys(summury) {
+    if (!_.isEmpty(summury)) {
+      return summury.map(o => o.key);
+    }
+    return [];
+  }
+  // 从弹出层取出挑选的指标数组
+  @autobind
+  saveIndcatorToHome(array) {
+    console.warn('history home', array);
+    // 根据 array 发出请求
+    this.setState({
+      selectKeys: array,
+    });
+  }
   render() {
     const {
       location,
@@ -154,7 +182,17 @@ export default class HistoryHome extends PureComponent {
       crrData,
       historyContrastDic,
       contrastData,
+      indicatorLib,
     } = this.props;
+    console.warn('historyCore', historyCore);
+    // 总量指标库
+    const summuryCheckedKeys = this.getUserSummuryKeys(historyCore);
+    const summuryLib = {
+      type: 'summury',
+      boardType: 'TYPE_TGJX',
+      checkTreeArr: indicatorLib.summury,
+      checkedKeys: summuryCheckedKeys,
+    };
 
     const { cust = EMPTY_LIST, invest = EMPTY_LIST } = historyContrastDic;
 
@@ -173,6 +211,8 @@ export default class HistoryHome extends PureComponent {
             <IndicatorOverview
               overviewData={historyCore}
               indexData={crrData}
+              summuryLib={summuryLib}
+              saveIndcatorToHome={this.saveIndcatorToHome}
             />
           </div>
           <div className={styles.indicatorAnalyse}>
