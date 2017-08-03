@@ -52,7 +52,6 @@ export default class AbilityScatterAnalysis extends PureComponent {
     const { data: prevData, queryContrastAnalyze,
       custRange: prevCustRange = EMPTY_LIST } = this.props;
 
-    // const { currentSelectedContrast } = nextState;
     const { currentSelectedContrast } = this.state;
 
     const {
@@ -173,7 +172,6 @@ export default class AbilityScatterAnalysis extends PureComponent {
       // 设置state，切换tooltip的显示信息
       this.setState({
         isShowTooltip: !isShowTooltip,
-        // isShowTooltip: true,
         orgName,
         parentOrgName,
       });
@@ -188,37 +186,10 @@ export default class AbilityScatterAnalysis extends PureComponent {
         yAxisMin,
       });
     }
-
-    // this.setState({
-    //   currentPayload: {
-    //     type: 'highlight',
-    //     // 可选，系列 index，可以是一个数组指定多个系列
-    //     seriesIndex,
-    //     // 可选，系列名称，可以是一个数组指定多个系列
-    //     seriesName,
-    //     // 可选，数据的 index
-    //     dataIndex,
-    //     // 可选，数据的 名称
-    //     name,
-    //   },
-    // });
-
-    // console.log({
-    //   type: 'highlight',
-    //   // 可选，系列 index，可以是一个数组指定多个系列
-    //   seriesIndex,
-    //   // 可选，系列名称，可以是一个数组指定多个系列
-    //   seriesName,
-    //   // 可选，数据的 index
-    //   dataIndex,
-    //   // 可选，数据的 名称
-    //   name,
-    // });
   }
 
   @autobind
   handleChange(value) {
-    console.log(`selected ${value}`);
     const { queryContrastAnalyze } = this.props;
     queryContrastAnalyze({
       boardId: '3',
@@ -258,7 +229,6 @@ export default class AbilityScatterAnalysis extends PureComponent {
       parentOrgName,
       tooltipInfo,
       finalData,
-      // currentPayload,
     } = this.state;
 
     const { title, optionsData } = this.props;
@@ -266,18 +236,6 @@ export default class AbilityScatterAnalysis extends PureComponent {
     if (_.isEmpty(finalData)) {
       return null;
     }
-
-    // "key": "custNum",
-    // "name": "服务客户数",
-    // "value": null,
-    // "unit": "户",
-    // "description": "upd入岗投顾人员服务的客户数",
-    // "categoryKey": null,
-    // "isBelongsSummury": null,
-    // "hasChildren": null,
-    // "parentKey": null,
-    // "parentName": null,
-    // "children": null
 
     let finalOptions = [];
     if (!_.isEmpty(optionsData)) {
