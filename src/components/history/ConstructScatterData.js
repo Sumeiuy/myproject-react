@@ -10,7 +10,7 @@ export default {};
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
 
-export const constructScatterData = (options) => {
+export const constructScatterData = (options = {}) => {
   const { core = EMPTY_OBJECT, contrast = EMPTY_OBJECT,
     scatterDiagramModels = EMPTY_LIST } = options;
   // const core = {

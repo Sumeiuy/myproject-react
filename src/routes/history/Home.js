@@ -21,6 +21,7 @@ import styles from './Home.less';
 const effects = {
   allInfo: 'history/getAllInfo',
   queryContrastAnalyze: 'history/queryContrastAnalyze',
+  queryHistoryContrast: 'history/queryHistoryContrast',
   getContrastData: 'history/getContrastData',
 };
 
@@ -36,8 +37,9 @@ const mapStateToProps = state => ({
   custRange: state.report.custRange,
   visibleBoards: state.report.visibleBoards,
   globalLoading: state.activity.global,
-  contributionAnalysis: state.history.contributionAnalysis,
-  reviewAnalysis: state.history.reviewAnalysis,
+  contributionAnalysis: state.history.contributionAnalysis, // 贡献分析
+  reviewAnalysis: state.history.reviewAnalysis, // 入岗投顾
+  historyContrastDic: state.history.historyContrastDic, // 字典数据
   contrastData: state.history.contrastData,
   createLoading: state.history.createLoading,
   deleteLoading: state.history.deleteLoading,
@@ -49,6 +51,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   getAllInfo: fectchDataFunction(true, effects.allInfo),
   queryContrastAnalyze: fectchDataFunction(true, effects.queryContrastAnalyze),
+  queryHistoryContrast: fectchDataFunction(true, effects.queryHistoryContrast),
   getContrastData: fectchDataFunction(true, effects.getContrastData),
   createHistoryBoard: fectchDataFunction(true, 'history/createHistoryBoard'),
   deleteHistoryBoard: fectchDataFunction(true, 'history/deleteHistoryBoard'),
@@ -56,6 +59,8 @@ const mapDispatchToProps = {
   push: routerRedux.push,
   replace: routerRedux.replace,
 };
+
+const EMPTY_LIST = [];
 
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
@@ -84,6 +89,8 @@ export default class HistoryHome extends PureComponent {
     createLoading: PropTypes.bool,
     deleteLoading: PropTypes.bool,
     updateLoading: PropTypes.bool,
+    historyContrastDic: PropTypes.object.isRequired,
+    queryHistoryContrast: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -103,6 +110,7 @@ export default class HistoryHome extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
+      selectKeys: ['hignCustInfoCompletePercent', 'gjTranAmt', 'platformSignAvgAmt'],
     };
   }
 
@@ -111,9 +119,11 @@ export default class HistoryHome extends PureComponent {
     const {
       location: { query },
       getAllInfo,
+      queryHistoryContrast,
       queryContrastAnalyze,
       getContrastData,
     } = this.props;
+
     getAllInfo({
       ...query,
     });
@@ -130,6 +140,7 @@ export default class HistoryHome extends PureComponent {
       // coreIndicatorId: '',
       // contrastIndicatorId: '',
     });
+
     queryContrastAnalyze({
       boardId: '3',
       type: 'invest',
@@ -142,6 +153,12 @@ export default class HistoryHome extends PureComponent {
       // coreIndicatorId: '',
       // contrastIndicatorId: '',
     });
+
+    // 先写一个假参数
+    queryHistoryContrast({
+      boardId: '3',
+    });
+
     // 暂时不写参数
     getContrastData();
   }
@@ -150,13 +167,19 @@ export default class HistoryHome extends PureComponent {
     const { createLoading: preCL, deleteLoading: preDL, updateLoading: prePL } = this.props;
     const { push, operateData, createLoading, deleteLoading, updateLoading } = nextProps;
     if (preCL && !createLoading) {
-      // 创建完成后，需要跳转到Edit
+      // 创建完成后，需要跳转到新建看板
       const { id, ownerOrgId, boardType } = operateData;
       push(`/history?boardId=${id}&orgId=${ownerOrgId}&boardType=${boardType}`);
     }
     if (preDL && !deleteLoading) {
       // 删除成功
       message.success('删除成功');
+      const { boardType } = operateData;
+      if (boardType === 'TYPE_LSDB_TGJX') {
+        push('/history?boardId=3');
+      } else if (boardType === 'TYPE_LSDB_JYYJ') {
+        push('/history?boardId=4');
+      }
     }
     if (!updateLoading && prePL) {
       message.success('保存成功');
@@ -192,8 +215,12 @@ export default class HistoryHome extends PureComponent {
       custRange,
       historyCore,
       crrData,
+      historyContrastDic,
       contrastData,
     } = this.props;
+
+    const { cust = EMPTY_LIST, invest = EMPTY_LIST } = historyContrastDic;
+    const { selectKeys } = this.state;
     return (
       <div className="pageHistory">
         <div className={styles.historyhd}>
@@ -209,7 +236,7 @@ export default class HistoryHome extends PureComponent {
               updateBoardConfirm={this.updateBoardConfirm}
               ownerOrgId={'ZZ001041'}
               orgId={'ZZ001041'}
-              boardId={'830'}
+              selectKeys={selectKeys}
             />
 
             {/* 指标概览区域 */}
@@ -227,12 +254,15 @@ export default class HistoryHome extends PureComponent {
             </div>
             <HisDivider />
             <div className={styles.scatterArea}>
+              {/* 散点图区域 */}
               <ScatterAnalysis
                 location={location}
                 contributionAnalysisData={contributionAnalysis}
                 reviewAnalysisData={reviewAnalysis}
                 queryContrastAnalyze={queryContrastAnalyze}
                 custRange={custRange}
+                cust={cust}
+                invest={invest}
               />
             </div>
           </div>

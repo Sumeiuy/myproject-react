@@ -102,7 +102,7 @@ export default class CreateHistoryBoardModal extends PureComponent {
     createBoardConfirm({
       ownerOrgId,
       name: boardname,
-      boardType: 'TYPE_JYYJ',
+      boardType: 'TYPE_LSDB_JYYJ',
     });
     this.closeCreateModal();
   }

@@ -8,8 +8,9 @@ import React, { PropTypes, PureComponent } from 'react';
 import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import { Icon, Button } from 'antd';
+import _ from 'lodash';
 import { CreateHistoryBoardModal, DeleteHistoryBoardModal } from '../../components/modals';
-// import _ from 'lodash';
+
 // import Icon from '../common/Icon';
 
 // 选择项字典
@@ -24,6 +25,7 @@ export default class PageHeader extends PureComponent {
     ownerOrgId: PropTypes.string.isRequired,
     boardId: PropTypes.string.isRequired,
     orgId: PropTypes.string.isRequired,
+    selectKeys: PropTypes.array.isRequired,
   }
 
   constructor(props) {
@@ -98,11 +100,12 @@ export default class PageHeader extends PureComponent {
       orgId,
       boardId,
     };
-    const createBtnClass = classnames({
-      [styles.createBtnUnshowClass]: (this.state.selectKey && boardId === '3') || (this.state.selectKey && boardId === '4'),
+    console.warn('this.props.selectKeys', this.props.selectKeys);
+    const deleteBtnClass = classnames({
+      [styles.deleteBtnUnshowClass]: boardId === '3' || boardId === '4',
     });
     const btnUnshowClass = classnames({
-      [styles.btnUnshowClass]: boardId === '3' || boardId === '4',
+      [styles.btnUnshowClass]: (_.isEmpty(this.props.selectKeys) && boardId === '3') || (_.isEmpty(this.props.selectKeys) && boardId === '4'),
     });
 
     return (
@@ -121,7 +124,7 @@ export default class PageHeader extends PureComponent {
           <Button
             ghost
             onClick={this.createHistoryBoardHandle}
-            className={createBtnClass}
+            className={btnUnshowClass}
           >
             <Icon type="delete" />
             另存为
@@ -132,7 +135,7 @@ export default class PageHeader extends PureComponent {
           <Button
             ghost
             onClick={this.deleteHistoryBoardHandle}
-            className={btnUnshowClass}
+            className={deleteBtnClass}
           >
             <Icon type="delete" />
             删除

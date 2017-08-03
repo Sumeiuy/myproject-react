@@ -12,10 +12,11 @@ export default {
   state: {
     custRange: [],
     visibleBoards: [], // 可见看板
-    contributionAnalysis: {},
-    reviewAnalysis: {},
+    contributionAnalysis: {}, // 贡献能力分析数据
+    reviewAnalysis: {}, // 入岗投顾能力分析数据
     historyCore: [], // 概览列表
     currentRankingRecord: {}, // 强弱指示分析
+    historyContrastDic: {}, // 字典
     contrastData: {}, // 历史对比数据
     createLoading: false, // 创建历史对比看板成功与否
     deleteLoading: false, // 删除历史对比看板成功与否
@@ -92,6 +93,15 @@ export default {
       };
     },
 
+    // 获取字典数据成功
+    queryHistoryContrastSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        historyContrastDic: resultData,
+      };
+    },
+
     // 历史对比数据
     getContrastDataSuccess(state, action) {
       const { payload: { contrastData } } = action;
@@ -162,7 +172,14 @@ export default {
         payload: { response: resultData, type },
       });
     },
-
+    // 获取对比数据
+    * queryHistoryContrast({ payload }, { call, put }) {
+      const response = yield call(api.queryHistoryContrast, payload);
+      yield put({
+        type: 'queryHistoryContrastSuccess',
+        payload: response,
+      });
+    },
     // 获取历史对比数据
     * getContrastData({ payload }, { call, put }) {
       const response = yield call(api.getHistoryContrastLineChartData, payload);
