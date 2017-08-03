@@ -4,10 +4,7 @@
  */
 import React, { PropTypes, PureComponent } from 'react';
 import { Row, Col } from 'antd';
-// import { autobind } from 'core-decorators';
-// import _ from 'lodash';
 import AbilityScatterAnalysis from './AbilityScatterAnalysis';
-// import StaffScatterAnalysis from './StaffScatterAnalysis';
 import styles from './scatterAnalysis.less';
 
 export default class ScatterAnalysis extends PureComponent {
