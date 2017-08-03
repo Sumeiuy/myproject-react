@@ -12,10 +12,11 @@ export default {
   state: {
     custRange: [],
     visibleBoards: [], // 可见看板
-    contributionAnalysis: {},
-    reviewAnalysis: {},
+    contributionAnalysis: {}, // 贡献能力分析数据
+    reviewAnalysis: {}, // 入岗投顾能力分析数据
     historyCore: [], // 概览列表
     currentRankingRecord: {}, // 强弱指示分析
+    historyContrastDic: {}, // 字典
     contrastData: {}, // 历史对比数据
     indicatorLib: {}, // 指标库
   },
@@ -74,9 +75,9 @@ export default {
       let contributionAnalysis = state.contributionAnalysis;
       let reviewAnalysis = state.reviewAnalysis;
 
-      if (type === 'invest') {
+      if (type === 'cust') {
         contributionAnalysis = response;
-      } else if (type === 'cust') {
+      } else if (type === 'invest') {
         reviewAnalysis = response;
       }
       return {
@@ -93,6 +94,15 @@ export default {
       return {
         ...state,
         currentRankingRecord,
+      };
+    },
+
+    // 获取字典数据成功
+    queryHistoryContrastSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        historyContrastDic: resultData,
       };
     },
 
@@ -162,7 +172,14 @@ export default {
         payload: { response: resultData, type },
       });
     },
-
+    // 获取对比数据
+    * queryHistoryContrast({ payload }, { call, put }) {
+      const response = yield call(api.queryHistoryContrast, payload);
+      yield put({
+        type: 'queryHistoryContrastSuccess',
+        payload: response,
+      });
+    },
     // 获取历史对比数据
     * getContrastData({ payload }, { call, put }) {
       const response = yield call(api.getHistoryContrastLineChartData, payload);

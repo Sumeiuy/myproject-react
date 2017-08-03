@@ -10,79 +10,13 @@ export default {};
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
 
-export const constructScatterData = (options) => {
+export const constructScatterData = (options = {}) => {
   const { core = EMPTY_OBJECT, contrast = EMPTY_OBJECT,
     scatterDiagramModels = EMPTY_LIST } = options;
-  // const core = {
-  //   "key": "totAset",
-  //   "name": "托管总资产",
-  //   "value": "224428448617.8616",
-  //   "unit": "元",
-  //   "description": null,
-  //   "categoryKey": null,
-  //   "isBelongsSummury": null,
-  //   "hasChildren": null,
-  //   "parentKey": null,
-  //   "parentName": null,
-  //   "children": null
-  // };
 
   const xAxisOption = _.pick(contrast, ['key', 'name', 'value', 'unit']);
 
-  // const contrast = {
-  //   "key": "custNum",
-  //   "name": "服务客户数",
-  //   "value": "342913",
-  //   "unit": "户",
-  //   "description": null,
-  //   "categoryKey": null,
-  //   "isBelongsSummury": null,
-  //   "hasChildren": null,
-  //   "parentKey": null,
-  //   "parentName": null,
-  //   "children": null
-  // };
-
   const yAxisOption = _.pick(core, ['key', 'name', 'value', 'unit']);
-
-  // const scatterDiagramModels = [
-  //   {
-  //     "coreIndicator": {
-  //       "key": "totAset",
-  //       "name": "托管总资产",
-  //       "value": "20002769068.3283",
-  //       "unit": "元",
-  //       "description": null,
-  //       "categoryKey": null,
-  //       "isBelongsSummury": null,
-  //       "hasChildren": null,
-  //       "parentKey": null,
-  //       "parentName": null,
-  //       "children": null
-  //     },
-  //     "contrastIndicator": {
-  //       "key": "custNum",
-  //       "name": "服务客户数",
-  //       "value": "21394",
-  //       "unit": "户",
-  //       "description": null,
-  //       "categoryKey": null,
-  //       "isBelongsSummury": null,
-  //       "hasChildren": null,
-  //       "parentKey": null,
-  //       "parentName": null,
-  //       "children": null
-  //     },
-  //     "orgItemDto": {
-  //       "id": "ZZ001041106",
-  //       "name": "南通分公司",
-  //       "level": "2",
-  //       "pid": null,
-  //       "pname": null,
-  //       "children": null
-  //     },
-  //   }
-  // ];
 
   let finalData = [];
   const xAxisDataArray = [];
@@ -145,24 +79,6 @@ export const constructScatterData = (options) => {
         xAxisMax,
         yAxisMax,
       } = xyAxisData;
-      // let newXAxisRate;
-      // let newYAxisRate;
-      // if (_.isNumber(xAxisTotal) && _.isNumber(yAxisTotal)) {
-      //   if (yAxisTotal >= 100000000) {
-      //     newYAxisRate = yAxisTotal / 100000000;
-      //   } else if (yAxisTotal > 10000) {
-      //     newYAxisRate = yAxisTotal / 10000;
-      //   } else {
-      //     newYAxisRate = yAxisTotal;
-      //   }
-
-      //   if (xAxisTotal >= 5000) {
-      //     newXAxisRate = xAxisTotal / 10000;
-      //   } else {
-      //     newXAxisRate = xAxisTotal;
-      //   }
-      //   return newYAxisRate / newXAxisRate;
-      // }
       return (yAxisMax - yAxisMin) / (xAxisMax - xAxisMin);
     },
   };
@@ -176,8 +92,8 @@ export const constructScatterData = (options) => {
       && !_.isEmpty(yPointerData.value)
       && xPointerData.value !== '0'
       && yPointerData.value !== '0') {
-      xAxisDataArray.push(xPointerData.value);
-      yAxisDataArray.push(yPointerData.value);
+      xAxisDataArray.push(parseFloat(xPointerData.value));
+      yAxisDataArray.push(parseFloat(yPointerData.value));
       orgItemArray.push(orgItem);
     }
   }));
@@ -209,13 +125,6 @@ export const constructScatterData = (options) => {
       parentOrgId: orgItemArray[index].pid,
       parentOrgName: orgItemArray[index].pname,
     },
-    // {
-    //   xAxisName: xAxisOption.name,
-    //   xAxisUnit: xAxisUnit.newUnit,
-    //   yAxisName: yAxisOption.name,
-    //   yAxisUnit: yAxisUnit.newUnit,
-    //   slope,
-    // },
   ]);
 
   const aixsData = {

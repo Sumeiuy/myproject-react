@@ -24,6 +24,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
     queryContrastAnalyze: PropTypes.func.isRequired,
     custRange: PropTypes.array.isRequired,
     title: PropTypes.string.isRequired,
+    optionsData: PropTypes.array.isRequired,
   };
 
   static defaultProps = {
@@ -51,7 +52,6 @@ export default class AbilityScatterAnalysis extends PureComponent {
     const { data: prevData, queryContrastAnalyze,
       custRange: prevCustRange = EMPTY_LIST } = this.props;
 
-    // const { currentSelectedContrast } = nextState;
     const { currentSelectedContrast } = this.state;
 
     const {
@@ -186,37 +186,10 @@ export default class AbilityScatterAnalysis extends PureComponent {
         yAxisMin,
       });
     }
-
-    // this.setState({
-    //   currentPayload: {
-    //     type: 'highlight',
-    //     // 可选，系列 index，可以是一个数组指定多个系列
-    //     seriesIndex,
-    //     // 可选，系列名称，可以是一个数组指定多个系列
-    //     seriesName,
-    //     // 可选，数据的 index
-    //     dataIndex,
-    //     // 可选，数据的 名称
-    //     name,
-    //   },
-    // });
-
-    // console.log({
-    //   type: 'highlight',
-    //   // 可选，系列 index，可以是一个数组指定多个系列
-    //   seriesIndex,
-    //   // 可选，系列名称，可以是一个数组指定多个系列
-    //   seriesName,
-    //   // 可选，数据的 index
-    //   dataIndex,
-    //   // 可选，数据的 名称
-    //   name,
-    // });
   }
 
   @autobind
   handleChange(value) {
-    console.log(`selected ${value}`);
     const { queryContrastAnalyze } = this.props;
     queryContrastAnalyze({
       boardId: '3',
@@ -256,20 +229,22 @@ export default class AbilityScatterAnalysis extends PureComponent {
       parentOrgName,
       tooltipInfo,
       finalData,
-      // currentPayload,
     } = this.state;
 
-    const { title } = this.props;
+    const { title, optionsData } = this.props;
 
     if (_.isEmpty(finalData)) {
       return null;
     }
 
-    const optionData = [
-      { value: '总客户', label: '总客户' },
-      { value: '一般客户', label: '一般客户' },
-      { value: '机构客户', label: '机构客户' },
-    ];
+    let finalOptions = [];
+    if (!_.isEmpty(optionsData)) {
+      finalOptions = optionsData.map(item => ({
+        key: item.key,
+        value: item.key,
+        label: item.name,
+      }));
+    }
 
     const { xAxisName, yAxisName, xAxisUnit, yAxisUnit } = finalData;
 
@@ -287,15 +262,15 @@ export default class AbilityScatterAnalysis extends PureComponent {
           <div className={styles.compare}>对比</div>
           <div className={styles.customerDimensionSelect}>
             <Select
-              defaultValue="总客户"
               onChange={this.handleChange}
               allowClear={false}
               placeholder="无"
+              defaultValue={finalOptions[0] && finalOptions[0].value} // 默认选中项
               dropdownClassName={styles.custDimenSelect}
             >
               {
-                optionData.map(item =>
-                  <Option value={item.value} key={item.value}>{item.label}</Option>)
+                finalOptions.map(item =>
+                  <Option value={item.value} key={item.key}>{item.label}</Option>)
               }
             </Select>
           </div>
@@ -323,7 +298,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
               <span>{tooltipInfo}</span>
             </div>
           </div>
-          : null
+          : <div className={styles.noneTooltip} />
         }
       </div>
     );

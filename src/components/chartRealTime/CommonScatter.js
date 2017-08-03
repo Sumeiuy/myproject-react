@@ -3,7 +3,7 @@
  * CommonScatter.js
  */
 import React, { PropTypes } from 'react';
-import _ from 'lodash';
+// import _ from 'lodash';
 import IECharts from '../IECharts';
 
 export default function CommonScatter(props) {
@@ -14,10 +14,6 @@ export default function CommonScatter(props) {
     scatterOptions,
     onDispatch,
   } = props;
-
-  if (_.isEmpty(scatterElemHeight.toString())) {
-    return null;
-  }
 
   return (
     <IECharts

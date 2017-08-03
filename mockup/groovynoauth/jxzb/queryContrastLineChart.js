@@ -393,7 +393,7 @@ exports.response = function (req, res) {
           indicatorMetaDto: {
             key: 'totAset',
             name: '托管总资产',
-            value: '0',
+            value: '143098414792.6887',
             unit: '元',
             description: null,
             categoryKey: null,
@@ -404,7 +404,7 @@ exports.response = function (req, res) {
             children: null,
           },
           timeModel: {
-            year: '2016',
+            year: '2017',
             month: '07',
             day: '05',
           },
@@ -413,7 +413,7 @@ exports.response = function (req, res) {
           indicatorMetaDto: {
             key: 'totAset',
             name: '托管总资产',
-            value: '0',
+            value: '143098414792.6887',
             unit: '元',
             description: null,
             categoryKey: null,
@@ -424,7 +424,7 @@ exports.response = function (req, res) {
             children: null,
           },
           timeModel: {
-            year: '2016',
+            year: '2017',
             month: '07',
             day: '06',
           },
@@ -433,7 +433,7 @@ exports.response = function (req, res) {
           indicatorMetaDto: {
             key: 'totAset',
             name: '托管总资产',
-            value: '0',
+            value: '143098414792.6887',
             unit: '元',
             description: null,
             categoryKey: null,
@@ -444,7 +444,7 @@ exports.response = function (req, res) {
             children: null,
           },
           timeModel: {
-            year: '2016',
+            year: '2017',
             month: '07',
             day: '07',
           },
@@ -453,7 +453,7 @@ exports.response = function (req, res) {
           indicatorMetaDto: {
             key: 'totAset',
             name: '托管总资产',
-            value: '0',
+            value: '143098414792.6887',
             unit: '元',
             description: null,
             categoryKey: null,
@@ -464,7 +464,7 @@ exports.response = function (req, res) {
             children: null,
           },
           timeModel: {
-            year: '2016',
+            year: '2017',
             month: '07',
             day: '08',
           },
@@ -473,7 +473,7 @@ exports.response = function (req, res) {
           indicatorMetaDto: {
             key: 'totAset',
             name: '托管总资产',
-            value: '0',
+            value: '143098414792.6887',
             unit: '元',
             description: null,
             categoryKey: null,
@@ -484,7 +484,7 @@ exports.response = function (req, res) {
             children: null,
           },
           timeModel: {
-            year: '2016',
+            year: '2017',
             month: '07',
             day: '09',
           },
@@ -493,7 +493,7 @@ exports.response = function (req, res) {
           indicatorMetaDto: {
             key: 'totAset',
             name: '托管总资产',
-            value: '0',
+            value: '143098414792.6887',
             unit: '元',
             description: null,
             categoryKey: null,
@@ -504,7 +504,7 @@ exports.response = function (req, res) {
             children: null,
           },
           timeModel: {
-            year: '2016',
+            year: '2017',
             month: '07',
             day: '10',
           },
@@ -513,7 +513,7 @@ exports.response = function (req, res) {
           indicatorMetaDto: {
             key: 'totAset',
             name: '托管总资产',
-            value: '0',
+            value: '143098414792.6887',
             unit: '元',
             description: null,
             categoryKey: null,
@@ -524,7 +524,7 @@ exports.response = function (req, res) {
             children: null,
           },
           timeModel: {
-            year: '2016',
+            year: '2017',
             month: '07',
             day: '11',
           },
@@ -533,7 +533,7 @@ exports.response = function (req, res) {
           indicatorMetaDto: {
             key: 'totAset',
             name: '托管总资产',
-            value: '0',
+            value: '143098414792.6887',
             unit: '元',
             description: null,
             categoryKey: null,
@@ -544,7 +544,7 @@ exports.response = function (req, res) {
             children: null,
           },
           timeModel: {
-            year: '2016',
+            year: '2017',
             month: '07',
             day: '12',
           },
@@ -553,7 +553,7 @@ exports.response = function (req, res) {
           indicatorMetaDto: {
             key: 'totAset',
             name: '托管总资产',
-            value: '0',
+            value: '143098414792.6887',
             unit: '元',
             description: null,
             categoryKey: null,
@@ -564,7 +564,7 @@ exports.response = function (req, res) {
             children: null,
           },
           timeModel: {
-            year: '2016',
+            year: '2017',
             month: '07',
             day: '13',
           },
@@ -573,7 +573,7 @@ exports.response = function (req, res) {
           indicatorMetaDto: {
             key: 'totAset',
             name: '托管总资产',
-            value: '0',
+            value: '143098414792.6887',
             unit: '元',
             description: null,
             categoryKey: null,
@@ -584,7 +584,7 @@ exports.response = function (req, res) {
             children: null,
           },
           timeModel: {
-            year: '2016',
+            year: '2017',
             month: '07',
             day: '14',
           },
@@ -593,7 +593,7 @@ exports.response = function (req, res) {
           indicatorMetaDto: {
             key: 'totAset',
             name: '托管总资产',
-            value: '0',
+            value: '143098414792.6887',
             unit: '元',
             description: null,
             categoryKey: null,
@@ -604,7 +604,7 @@ exports.response = function (req, res) {
             children: null,
           },
           timeModel: {
-            year: '2016',
+            year: '2017',
             month: '07',
             day: '15',
           },
@@ -613,7 +613,7 @@ exports.response = function (req, res) {
           indicatorMetaDto: {
             key: 'totAset',
             name: '托管总资产',
-            value: '0',
+            value: '143098414792.6887',
             unit: '元',
             description: null,
             categoryKey: null,
@@ -624,7 +624,7 @@ exports.response = function (req, res) {
             children: null,
           },
           timeModel: {
-            year: '2016',
+            year: '2017',
             month: '07',
             day: '16',
           },
@@ -633,7 +633,7 @@ exports.response = function (req, res) {
           indicatorMetaDto: {
             key: 'totAset',
             name: '托管总资产',
-            value: '0',
+            value: '143098414792.6887',
             unit: '元',
             description: null,
             categoryKey: null,
@@ -644,7 +644,7 @@ exports.response = function (req, res) {
             children: null,
           },
           timeModel: {
-            year: '2016',
+            year: '2017',
             month: '07',
             day: '17',
           },
@@ -653,7 +653,7 @@ exports.response = function (req, res) {
           indicatorMetaDto: {
             key: 'totAset',
             name: '托管总资产',
-            value: '0',
+            value: '143098414792.6887',
             unit: '元',
             description: null,
             categoryKey: null,
@@ -664,7 +664,7 @@ exports.response = function (req, res) {
             children: null,
           },
           timeModel: {
-            year: '2016',
+            year: '2017',
             month: '07',
             day: '18',
           },
@@ -673,7 +673,7 @@ exports.response = function (req, res) {
           indicatorMetaDto: {
             key: 'totAset',
             name: '托管总资产',
-            value: '0',
+            value: '143098414792.6887',
             unit: '元',
             description: null,
             categoryKey: null,
@@ -684,7 +684,7 @@ exports.response = function (req, res) {
             children: null,
           },
           timeModel: {
-            year: '2016',
+            year: '2017',
             month: '07',
             day: '19',
           },
@@ -693,7 +693,7 @@ exports.response = function (req, res) {
           indicatorMetaDto: {
             key: 'totAset',
             name: '托管总资产',
-            value: '0',
+            value: '143098414792.6887',
             unit: '元',
             description: null,
             categoryKey: null,
@@ -704,7 +704,7 @@ exports.response = function (req, res) {
             children: null,
           },
           timeModel: {
-            year: '2016',
+            year: '2017',
             month: '07',
             day: '20',
           },
@@ -713,7 +713,7 @@ exports.response = function (req, res) {
           indicatorMetaDto: {
             key: 'totAset',
             name: '托管总资产',
-            value: '0',
+            value: '143098414792.6887',
             unit: '元',
             description: null,
             categoryKey: null,
@@ -724,7 +724,7 @@ exports.response = function (req, res) {
             children: null,
           },
           timeModel: {
-            year: '2016',
+            year: '2017',
             month: '07',
             day: '21',
           },
@@ -733,7 +733,7 @@ exports.response = function (req, res) {
           indicatorMetaDto: {
             key: 'totAset',
             name: '托管总资产',
-            value: '0',
+            value: '143098414792.6887',
             unit: '元',
             description: null,
             categoryKey: null,
@@ -744,7 +744,7 @@ exports.response = function (req, res) {
             children: null,
           },
           timeModel: {
-            year: '2016',
+            year: '2017',
             month: '07',
             day: '22',
           },
@@ -753,7 +753,7 @@ exports.response = function (req, res) {
           indicatorMetaDto: {
             key: 'totAset',
             name: '托管总资产',
-            value: '0',
+            value: '143098414792.6887',
             unit: '元',
             description: null,
             categoryKey: null,
@@ -764,7 +764,7 @@ exports.response = function (req, res) {
             children: null,
           },
           timeModel: {
-            year: '2016',
+            year: '2017',
             month: '07',
             day: '23',
           },
