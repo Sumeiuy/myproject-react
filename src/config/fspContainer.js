@@ -11,6 +11,8 @@ export default {
   showBtn: '#sidebar-show-btn',
   // FSP 侧边栏隐藏按钮
   hideBtn: '#sidebar-hide-btn',
+  // 项目容器
+  reactApp: '.react-app',
   // FSP 侧边栏宽度
   leftWidth: 248,
   // FSP 右边容器的 margin 和
