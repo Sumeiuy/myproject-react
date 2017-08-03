@@ -2,12 +2,12 @@
  * @Author: LiuJianShu
  * @Date: 2017-07-01 16:06:50
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-07-04 09:38:32
+ * @Last Modified time: 2017-08-02 17:45:29
  */
 
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
-import { Tree, Tooltip } from 'antd';
+import { Tree, Tooltip, message } from 'antd';
 import _ from 'lodash';
 
 import MoveContainer from './MoveContainer';
@@ -122,6 +122,10 @@ export default class BoardSelectTree extends PureComponent {
   static propTypes = {
     data: PropTypes.object.isRequired,
     saveIndcator: PropTypes.func.isRequired,
+    lengthLimit: PropTypes.bool,
+  }
+  static defaultProps = {
+    lengthLimit: false,
   }
   constructor(props) {
     super(props);
@@ -180,6 +184,7 @@ export default class BoardSelectTree extends PureComponent {
       // showThirdColumn,            // 是否显示第三列
       // showTitle,                  // 是否显示右边标题
       // checkedOrSelected: false,   // 选中或 选择时的状态
+      // length: 0,                  // 已经选中的个数
       checkTreeArr,
       expandedKeys,
       autoExpandParent: true,
@@ -193,6 +198,7 @@ export default class BoardSelectTree extends PureComponent {
       showThirdColumn,
       showTitle,
       checkedOrSelected: false,
+      length: 0,
     };
   }
 
@@ -305,6 +311,9 @@ export default class BoardSelectTree extends PureComponent {
       const summuryArr = selfCheckedNodes.map(item => item.key);
       // 输出总量指标
       // console.warn('summuryArr', summuryArr);
+      this.setState({
+        length: summuryArr.length,
+      });
       this.props.saveIndcator('summury', summuryArr);
     } else {
       const newTemp = _.filter(allParentNodes, o => (o.children.length));
@@ -329,7 +338,9 @@ export default class BoardSelectTree extends PureComponent {
       selfCheckedNodes,
       expandedKeys,
       expandedChildren,
+      length,
     } = this.state;
+    const { lengthLimit } = this.props;
     let newSelfCheckedNodes = selfCheckedNodes;
     let newExpandedChildren;
     const nowSelectNode = findSelectNode(checkTreeArr, obj.key).node;
@@ -378,9 +389,19 @@ export default class BoardSelectTree extends PureComponent {
       }
       // 如果是选中状态，添加进去
       if (obj.active) {
+        // 如果有长度限制
+        if (lengthLimit) {
+          // console.warn('length', length);
+          if (length >= 9) {
+            // console.warn('最多 9 个');
+            message.error('最多只能选择 9 个指标');
+            return;
+          }
+        }
         newSelfCheckedNodes.push(nowSelectNode);
       } else {
       // 否则删除
+        // console.warn('length', length);
         newSelfCheckedNodes = _.remove(newSelfCheckedNodes, n => (n.key !== obj.key));
       }
       this.setState({

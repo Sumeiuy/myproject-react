@@ -23,7 +23,7 @@ export default {
         ...state,
         visibleBoards: [
           ...BoardBasic.regular,
-          ...visibleBoards,
+          visibleBoards,
         ],
       };
     },
