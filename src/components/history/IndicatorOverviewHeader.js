@@ -24,7 +24,6 @@ export default class PageHeader extends PureComponent {
     updateBoardConfirm: PropTypes.func.isRequired,
     ownerOrgId: PropTypes.string.isRequired,
     boardId: PropTypes.string.isRequired,
-    ownerOrgId: PropTypes.string.isRequired,
     orgId: PropTypes.string.isRequired,
     selectKeys: PropTypes.array.isRequired,
   }
@@ -65,7 +64,7 @@ export default class PageHeader extends PureComponent {
 
   @autobind
   saveHistoryBoardHandle() {
-    const { 
+    const {
       location: { query: { boardId } },
       updateBoardConfirm,
       ownerOrgId,
@@ -76,7 +75,7 @@ export default class PageHeader extends PureComponent {
       ownerOrgId,
       boardId,
       coreIndicator: selectKeys,
-      investContrastIndicator: [ 'tgInNum' ],
+      investContrastIndicator: ['tgInNum'],
       custContrastIndicator: ['custNum'],
     });
   }
@@ -121,7 +120,7 @@ export default class PageHeader extends PureComponent {
     });
     const updateBtnClass = classnames({
       [styles.updateBtnUnshowClass]: boardId === '3' || boardId === '4' || (_.isEmpty(this.props.selectKeys) && boardId !== '3' && boardId !== '4'),
-    })
+    });
 
     return (
       <div className={styles.indicatorOverviewHeader}>

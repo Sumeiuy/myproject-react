@@ -225,16 +225,16 @@ export default {
       });
       const deleteResult = yield call(api.deleteHistoryBoard, payload);
       const result = deleteResult.resultData;
-      // if (Number(result.code)) {
-      //   const cust = yield select(state => state.history.custRange);
-      //   const allVisibleReports = yield call(api.getAllVisibleReports, {
-      //     orgId: cust[0].id,
-      //   });
-      //   yield put({
-      //     type: 'getAllVisibleReportsSuccess',
-      //     payload: { allVisibleReports },
-      //   });
-      // }
+      if (Number(result.code)) {
+        const cust = yield select(state => state.history.custRange);
+        const allVisibleReports = yield call(api.getAllVisibleReports, {
+          orgId: cust[0].id,
+        });
+        yield put({
+          type: 'getAllVisibleReportsSuccess',
+          payload: { allVisibleReports },
+        });
+      }
       yield put({
         type: 'opertateBoardState',
         payload: {

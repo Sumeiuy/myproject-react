@@ -102,9 +102,9 @@ export default class CreateHistoryBoardModal extends PureComponent {
       return;
     }
     let boardTypeValue;
-    if(boardType==='' && boardId==='3'){
+    if (boardType === '' && boardId === '3') {
       boardTypeValue = 'TYPE_LSDB_TGJX';
-    } else if (boardType==='' && boardId==='4'){
+    } else if (boardType === '' && boardId === '4') {
       boardTypeValue = 'TYPE_LSDB_JYYJ';
     } else {
       boardTypeValue = boardType;
