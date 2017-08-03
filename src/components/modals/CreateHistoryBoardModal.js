@@ -25,6 +25,7 @@ export default class CreateHistoryBoardModal extends PureComponent {
     ownerOrgId: PropTypes.string.isRequired,
     boardId: PropTypes.string.isRequired,
     boardType: PropTypes.string,
+    selectKeys: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -77,7 +78,7 @@ export default class CreateHistoryBoardModal extends PureComponent {
 
   @autobind
   confirmCreateModal() {
-    const { form, createBoardConfirm, ownerOrgId, boardId, boardType } = this.props;
+    const { form, createBoardConfirm, ownerOrgId, boardId, boardType, selectKeys } = this.props;
     // TODO 添加确认按钮处理程序
     const boardname = form.getFieldValue('boardname');
     console.warn('boardname', boardname);
@@ -114,6 +115,9 @@ export default class CreateHistoryBoardModal extends PureComponent {
       ownerOrgId,
       name: boardname,
       boardType: boardTypeValue,
+      coreIndicator: selectKeys,
+      investContrastIndicator: ['tgInNum'],
+      custContrastIndicator: ['custNum'],
     });
     this.closeCreateModal();
   }

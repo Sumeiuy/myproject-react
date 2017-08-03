@@ -8,16 +8,19 @@ import React, { PropTypes, PureComponent } from 'react';
 import { Row, Col, Button } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+
 import Icon from '../common/Icon';
-import PickIndicators from './PickIndicators';
 import ChartRadar from '../chartRealTime/ChartRadar';
 import IndexItem from './IndexItem';
 import styles from './indicatorOverview.less';
+import { SelectTreeModal } from '../modals';
 
 export default class IndicatorOverview extends PureComponent {
   static propTypes = {
     overviewData: PropTypes.array,
     indexData: PropTypes.object,
+    summuryLib: PropTypes.object.isRequired,
+    saveIndcatorToHome: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -30,7 +33,8 @@ export default class IndicatorOverview extends PureComponent {
     const { indexData } = this.props;
     this.state = {
       visible: false,
-      selectIndex: 'select0', // 默认选中项
+      selectTreeModal: false,
+      selectIndex: 0, // 默认选中项
       indexData,
     };
   }
@@ -41,6 +45,7 @@ export default class IndicatorOverview extends PureComponent {
     if (preIndexData !== nextIndexData) {
       const { scopeNum, data } = nextIndexData;
       const cOptions = this.createOption(scopeNum, data);
+      // console.warn('cOptions', cOptions);
       this.setState({
         options: cOptions,
       });
@@ -52,6 +57,10 @@ export default class IndicatorOverview extends PureComponent {
   */
   @autobind
   createOption(scopeNum, data) {
+    // console.warn('进入组织 option 方法');
+    // const { selectIndex } = this.state;
+    // const current = data[selectIndex].rank_current;
+    // const contrast = data[selectIndex].rank_contrast;
     const indicatorData = [];// name
     const period = []; // 本期数据值
     const PreviousPeriod = []; // 上期
@@ -60,10 +69,11 @@ export default class IndicatorOverview extends PureComponent {
       period.push(scopeNum - item.rank_current);
       PreviousPeriod.push(scopeNum - item.rank_contrast);
     });
+    // console.warn('PreviousPeriod', PreviousPeriod);
     const options = {
       title: {
         show: false,
-        text: '强弱指示分析',
+        text: '指示分析',
       },
       gird: { x: '7%', y: '7%', width: '38%', height: '38%' },
       legend: {
@@ -124,7 +134,7 @@ export default class IndicatorOverview extends PureComponent {
             label: {
               normal: {
                 show: true,
-                formatter: this.labelShow,
+                formatter: '{a},{b},{c}',
                 textStyle: {
                   color: '#ff7a39',
                 },
@@ -149,7 +159,12 @@ export default class IndicatorOverview extends PureComponent {
             label: {
               normal: {
                 show: true,
-                formatter: this.labelShow,
+                // formatter: function(params) {
+                //   if (params.value === (scopeNum - contrast)) {
+                //     return contrast;
+                //   }
+                //   return '';
+                // },
                 textStyle: {
                   color: '#3983ff',
                 },
@@ -164,10 +179,16 @@ export default class IndicatorOverview extends PureComponent {
 
   @autobind
   labelShow(params) {
-    const dataMode = [2, 1]; // 选中项的排名
+    // console.warn('params', params);
+    const { selectIndex } = this.state;
+    const { indexData } = this.props;
+    const current = indexData.data[selectIndex].rank_current;
+    const contrast = indexData.data[selectIndex].rank_contrast;
+    const dataMode = [current, contrast]; // 选中项的排名
+    // console.warn('dataMode', dataMode);
     const dataIndex = params.dataIndex; // 图标数据下标 本期、上期
     const preValue = params.value; // 当先图标数值
-    const gcount = 32; // 总公司数
+    const gcount = indexData.scopeNum; // 总公司数
     if (preValue === (gcount - dataMode[dataIndex])) {
       return dataMode[dataIndex];
     }
@@ -175,44 +196,51 @@ export default class IndicatorOverview extends PureComponent {
   }
 
   /**
-   * 问题处理提交
-  */
-  @autobind
-  handleCreate(f) {
-    const form = f;
-    console.log(form);
-  }
-  /**
-   * 存储处理问题form
-  */
-  saveFormRef = (form) => {
-    this.handlingForm = form;
-  }
-  /**
    * 弹窗处理（关闭）
   */
   handleCancel = () => {
-    this.setState({ visible: false });
+    this.setState({ selectTreeModal: false });
   }
   /**
    * 弹窗处理（开启）
   */
   showModal = () => {
-    this.setState({ visible: true });
+    this.setState({ selectTreeModal: true });
   }
 
   // 概览项选中
   @autobind
-  handleClick(event) {
-    const dataKey = event.currentTarget.getAttribute('data-key');
+  handleClick(event, index) {
+    const { indexData } = this.props;
+    const { scopeNum, data } = indexData;
+    const cOptions = this.createOption(scopeNum, data);
+    // console.warn('cOptions', cOptions);
     this.setState({
-      selectIndex: `select${dataKey}`,
+      selectIndex: index,
+      options: cOptions,
+    });
+  }
+
+  @autobind
+  closeModal(modal) {
+    this.setState({
+      [modal]: false,
     });
   }
 
   render() {
-    const { overviewData } = this.props;
-    const { options } = this.state;
+    const { overviewData, indexData, summuryLib, saveIndcatorToHome } = this.props;
+    const { options, selectIndex, selectTreeModal } = this.state;
+    // 创建共同配置项
+    const selectTreeProps = {
+      modalKey: 'selectTreeModal',
+      modalCaption: '挑选指标（挑选您向要查看的指标名称，最少选择 4 项，最多选择 9 项）',
+      closeModal: this.closeModal,
+      summuryLib,
+      visible: selectTreeModal,
+      saveIndcatorToHome,
+    };
+
     return (
       <div className={styles.overviewBox}>
         <Row>
@@ -229,28 +257,21 @@ export default class IndicatorOverview extends PureComponent {
                 </Button>
                 指标概览
               </div>
-              <PickIndicators
-                ref={this.saveFormRef}
-                visible={this.state.visible}
-                onCancel={this.handleCancel}
-                onCreate={this.handleCreate}
-              />
               <div className={styles.content}>
-                {/* 交易：icon-test 客户：kehu 指标：iczhibiao24px 钱袋：qiandai */}
+                { /* 交易：icon-test 客户：kehu 指标：iczhibiao24px 钱袋：qiandai */ }
                 <ul>
                   {
                     overviewData.map((item, index) => {
-                      const selectIndex = `select${index}`;
+                      const itemIndex = `select${index}`;
+                      const active = selectIndex === index;
                       return (
                         <li
-                          onClick={event => this.handleClick(event)}
-                          key={selectIndex}
-                          data-key={index}
+                          onClick={event => this.handleClick(event, index)}
+                          key={itemIndex}
                         >
                           <IndexItem
                             itemData={item}
-                            active={this.state.selectIndex}
-                            itemIndex={selectIndex}
+                            active={active}
                           />
                         </li>
                       );
@@ -261,10 +282,15 @@ export default class IndicatorOverview extends PureComponent {
               </div>
               <div className={styles.bottomInfo}>
                 <i />
-                <p>
-                  <span>资产交易量：</span>
-                  资产交易量资产交易量资产交易量资产交易量资产交易量资产交易量资产交易量资产交易量资产交易量资产交易量资
-产交易量资产交易量资产交易量资产交易量资产交易量资产交易量资产交易量资产交易量资产交易量资产交易量。</p>
+                {
+                  overviewData.length ?
+                    <p>
+                      <span>{overviewData[selectIndex].name}：</span>
+                      <span>{overviewData[selectIndex].description}</span>
+                    </p>
+                  :
+                    ''
+                }
               </div>
             </div>
           </Col>
@@ -278,15 +304,26 @@ export default class IndicatorOverview extends PureComponent {
                   options={options}
                 /> : null}
               </div>
-              <div className={styles.radarInfo}>
-                <i />新开客户：本期排名：
-                <span className={styles.now}>3</span>
-                上期排名：<span className={styles.before}>4</span>
-                共 <span className={styles.all}>9</span> 家营业
-              </div>
+              {
+                indexData.data ?
+                  <div className={styles.radarInfo}>
+                    <i />{indexData.data[selectIndex].indicator_name}：本期排名：
+                    <span className={styles.now}>
+                      {indexData.data[selectIndex].rank_current}
+                    </span>
+                    上期排名：
+                    <span className={styles.before}>
+                      {indexData.data[selectIndex].rank_contrast}
+                    </span>
+                    共 <span className={styles.all}>{indexData.scopeNum}</span> 家营业
+                  </div>
+                :
+                  ''
+              }
             </div>
           </Col>
         </Row>
+        <SelectTreeModal {...selectTreeProps} />
       </div>
     );
   }

@@ -1,8 +1,8 @@
 /*
 * @Author: LiuJianShu
 * @Date:   2017-04-26 11:17:08
-* @Last Modified by:   LiuJianShu
-* @Last Modified time: 2017-04-26 15:35:45
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2017-08-03 10:54:41
 */
 
 const optionsMap = {
@@ -42,6 +42,56 @@ const optionsMap = {
       name: '本年',
     },
   ],
+  historyTime: [
+    {
+      key: 'month',
+      name: '本月',
+    },
+    {
+      key: 'quarter',
+      name: '本季',
+    },
+    {
+      key: 'year',
+      name: '本年',
+    },
+    {
+      key: 'lastMonth',
+      name: '上月',
+    },
+    {
+      key: 'lastQuarter',
+      name: '上季',
+    },
+    {
+      key: 'lastYear',
+      name: '去年',
+    },
+  ],
+  compare: [
+    {
+      key: 'MoM',
+      name: '环比',
+    },
+    {
+      key: 'YoY',
+      name: '同比',
+    },
+  ],
+  visibleBoardType: {
+    ordinary: {
+      key: 'ordinary',
+      name: '普通看板',
+    },
+    history: {
+      key: 'history',
+      name: '历史对比看板',
+    },
+    manage: {
+      key: 'manage',
+      name: '看板管理',
+    },
+  },
   // 按类别排序
   sortByType: {
     TYPE_TGJX: [

@@ -9,10 +9,13 @@ import { Dropdown, Menu, Icon } from 'antd';
 import _ from 'lodash';
 
 // import Scroll from '../common/Scroll';
-import { constants } from '../../config';
+import { constants, BoardBasic, optionsMap } from '../../config';
 import './BoardSelect.less';
 
 const defaultBoardId = constants.boardId;
+const sliceLength = BoardBasic.regular.length;
+const visibleBoardType = optionsMap.visibleBoardType;
+const SubMenu = Menu.SubMenu;
 // const defaultBoardType = constants.boardType;
 
 export default class BoardSelect extends PureComponent {
@@ -29,7 +32,7 @@ export default class BoardSelect extends PureComponent {
     super(props);
     const { visibleBoards, location: { query: { boardId }, pathname } } = this.props;
     const bId = boardId || (visibleBoards.length && String(visibleBoards[0].id)) || defaultBoardId;
-    let boardName = '看板管理';
+    let boardName = visibleBoardType.manage.name;
     if (pathname !== '/boardManage') {
       boardName = this.findBoardBy(bId, visibleBoards).name;
     }
@@ -94,7 +97,7 @@ export default class BoardSelect extends PureComponent {
     const { location: { pathname } } = this.props;
     if (pathname === '/boardManage') {
       board = {
-        name: '看板管理',
+        name: visibleBoardType.manage.name,
       };
     }
     return board || vr[0];
@@ -115,42 +118,109 @@ export default class BoardSelect extends PureComponent {
   handleMenuClick(MenuItem) {
     this.handleVisibleChange(false);
     const { push, collectData } = this.props;
-    const { key } = MenuItem;
-    // 当点击的是看板管理选项的时候
-    if (key === '0') {
-      collectData({
-        text: '看板管理',
-      });
-      push('/boardManage');
-    } else {
-      const { visibleBoards } = this.props;
-      const boardname = _.find(visibleBoards, { id: Number(key) }).name;
-      collectData({
-        text: boardname,
-      });
-      push(`/report?boardId=${key}`);
+    const { key, item: { props: { type } } } = MenuItem;
+    const { visibleBoards } = this.props;
+    let boardname;
+    console.warn('MenuItem', type);
+    switch (type) {
+      case visibleBoardType.manage.key:
+        collectData({
+          text: '看板管理',
+        });
+        push('/boardManage');
+        break;
+      case visibleBoardType.ordinary.key:
+        boardname = _.find(visibleBoards, { id: Number(key) }).name;
+        collectData({
+          text: boardname,
+        });
+        push(`/report?boardId=${key}`);
+        break;
+      case visibleBoardType.history.key:
+        boardname = _.find(visibleBoards, { id: Number(key) }).name;
+        collectData({
+          text: boardname,
+        });
+        push(`/history?boardId=${key}`);
+        break;
+      default:
+        break;
     }
   }
 
   render() {
     const { visibleBoards } = this.props;
     const { dropdownVisible, boardName } = this.state;
+
+    const staticBorads = _.slice(visibleBoards, [0], [sliceLength]);
+    const ordinaryStaticBoards = _.slice(staticBorads, 0, 2);
+    const historyStaticBoards = _.slice(staticBorads, 2, 4);
     const menu = (
       <Menu
         onClick={this.handleMenuClick}
-        style={{
-          width: '200px',
-          maxHeight: '400px',
-          overflowY: 'auto',
-        }}
       >
         {
-          visibleBoards.map(item =>
-            (<Menu.Item key={String(item.id)} title={item.name}>{item.name}</Menu.Item>),
+          ordinaryStaticBoards.map(item =>
+            (<Menu.Item
+              key={String(item.id)}
+              type={visibleBoardType.ordinary.key}
+              title={item.name}
+            >
+              {item.name}
+            </Menu.Item>),
+          )
+        }
+        {
+          historyStaticBoards.map(item =>
+            (<Menu.Item
+              key={String(item.id)}
+              type={visibleBoardType.history.key}
+              title={item.name}
+            >
+              {item.name}
+            </Menu.Item>),
+          )
+        }
+        {
+          visibleBoards[visibleBoards.length - 1].ordinary.map(item =>
+            (<Menu.Item
+              key={String(item.id)}
+              type={visibleBoardType.ordinary.key}
+              title={item.name}
+            >
+              {item.name}
+            </Menu.Item>),
           )
         }
         <Menu.Divider />
-        <Menu.Item key="0">看板管理</Menu.Item>
+        <SubMenu
+          title="自定义看板"
+          style={{
+            width: '200px',
+            maxHeight: '400px',
+            overflowY: 'scroll',
+            border: '1px solid red',
+          }}
+        >
+          {
+            visibleBoards[visibleBoards.length - 1].history.map(item =>
+              (<Menu.Item
+                key={String(item.id)}
+                type={visibleBoardType.history.key}
+                title={item.name}
+              >
+                {item.name}
+              </Menu.Item>),
+            )
+          }
+        </SubMenu>
+        <Menu.Divider />
+        <Menu.Item
+          key="0"
+          type={visibleBoardType.manage.key}
+        >
+          {visibleBoardType.manage.name}
+        </Menu.Item>
       </Menu>
     );
 

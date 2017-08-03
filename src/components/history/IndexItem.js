@@ -5,6 +5,7 @@
  */
 import React, { PropTypes, PureComponent } from 'react';
 import _ from 'lodash';
+
 import Icon from '../common/Icon';
 import { iconTypeMap } from '../../config';
 import { toUnit } from '../../utils/helper';
@@ -16,7 +17,7 @@ export default class IndexItem extends PureComponent {
   static propTypes = {
     itemIndex: PropTypes.string,
     itemData: PropTypes.object,
-    active: PropTypes.string,
+    active: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -44,12 +45,12 @@ export default class IndexItem extends PureComponent {
   render() {
     const {
       itemData:
-      { unit, value, name, parentName, incrementRate }, itemIndex, active } = this.props;
+      { unit, value, name, parentName, incrementRate }, active } = this.props;
     const data = toUnit(value, unit, 5);
     const IndexIcon = getIcon(unit);
     const newName = parentName ? `${parentName}-${name}` : name;
     return (
-      <div className={active === itemIndex ? 'active am-bd-dv' : 'am-bd-dv'}>
+      <div className={active ? 'active am-bd-dv' : 'am-bd-dv'}>
         <div className={styles.innderDv}>
           <span className={styles.iconBox}>
             <Icon type={IndexIcon} />

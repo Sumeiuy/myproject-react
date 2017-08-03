@@ -23,8 +23,17 @@ export default {
     updateLoading: false, // 保存历史对比看板成功与否
     message: '', // 各种操作的提示信息
     operateData: {}, // 各种操作后，返回的数据集
+    indicatorLib: {}, // 指标库
   },
-  reducers: {
+  reducers: {// 成功获取指标库
+    getIndicatorLibSuccess(state, action) {
+      const { payload: { indicatorResult } } = action;
+      const indicatorLib = indicatorResult.resultData || [];
+      return {
+        ...state,
+        indicatorLib,
+      };
+    },
     // 概览数据列表
     getHistoryCoreSuccess(state, action) {
       const { payload: { resHistoryCore } } = action;
@@ -160,6 +169,13 @@ export default {
       yield put({
         type: 'getCurrentRankingRecordSuccess',
         payload: { currentRanking },
+      });
+    },
+    * getIndicatorLib({ payload }, { call, put }) {
+      const indicatorResult = yield call(api.getIndicators, payload);
+      yield put({
+        type: 'getIndicatorLibSuccess',
+        payload: { indicatorResult },
       });
     },
     // 获取客户贡献分析与入岗投顾能力散点图数据

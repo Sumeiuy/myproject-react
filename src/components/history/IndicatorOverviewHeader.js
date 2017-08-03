@@ -88,6 +88,7 @@ export default class PageHeader extends PureComponent {
       deleteBoardConfirm,
       ownerOrgId,
       orgId,
+      selectKeys,
     } = this.props;
     // 创建（另存为）共同配置项
     const createHistoryBMProps = {
@@ -99,6 +100,7 @@ export default class PageHeader extends PureComponent {
       ownerOrgId,
       boardId,
       boardType,
+      selectKeys,
     };
     // 删除共同配置项
     const deleteHistoryBMProps = {
