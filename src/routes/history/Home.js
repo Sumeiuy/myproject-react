@@ -175,21 +175,21 @@ export default class HistoryHome extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { createLoading: preCL, deleteLoading: preDL, updateLoading: prePL } = this.props;
+    const { createLoading: preCL, deleteLoading: preDL, updateLoading: prePL, location: { query: { boardType } } } = this.props;
     const { push, operateData, createLoading, deleteLoading, updateLoading } = nextProps;
     if (preCL && !createLoading) {
       // 创建完成后，需要跳转到新建看板
       const { id, ownerOrgId, boardType } = operateData;
+      console.warn('operateData', operateData);
       push(`/history?boardId=${id}&orgId=${ownerOrgId}&boardType=${boardType}`);
     }
     if (preDL && !deleteLoading) {
       // 删除成功
       message.success('删除成功');
-      const { boardType } = operateData;
-      if (boardType === 'TYPE_LSDB_TGJX') {
-        push('/history?boardId=3');
-      } else if (boardType === 'TYPE_LSDB_JYYJ') {
+      if(boardType === 'TYPE_LSDB_JYYJ'){
         push('/history?boardId=4');
+      } else if(boardType === 'TYPE_LSDB_TGJX') {
+        push('/history?boardId=3');
       }
     }
     if (!updateLoading && prePL) {

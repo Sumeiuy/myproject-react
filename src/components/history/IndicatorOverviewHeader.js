@@ -24,6 +24,7 @@ export default class PageHeader extends PureComponent {
     updateBoardConfirm: PropTypes.func.isRequired,
     ownerOrgId: PropTypes.string.isRequired,
     boardId: PropTypes.string.isRequired,
+    ownerOrgId: PropTypes.string.isRequired,
     orgId: PropTypes.string.isRequired,
     selectKeys: PropTypes.array.isRequired,
   }
@@ -64,18 +65,26 @@ export default class PageHeader extends PureComponent {
 
   @autobind
   saveHistoryBoardHandle() {
-    const { updateBoardConfirm, orgId, boardId } = this.props;
+    const { 
+      location: { query: { boardId } },
+      updateBoardConfirm,
+      ownerOrgId,
+      selectKeys,
+    } = this.props;
     // TODO 调用更新(保存)历史看板接口
     updateBoardConfirm({
-      orgId,
+      ownerOrgId,
       boardId,
+      coreIndicator: selectKeys,
+      investContrastIndicator: [ 'tgInNum' ],
+      custContrastIndicator: ['custNum'],
     });
   }
 
   render() {
     const { createHistoryBoardModal, deleteHistoryBoardModal } = this.state;
     const {
-      location: { query: { boardId } },
+      location: { query: { boardId, boardType } },
       createBoardConfirm,
       deleteBoardConfirm,
       ownerOrgId,
@@ -89,6 +98,8 @@ export default class PageHeader extends PureComponent {
       closeModal: this.closeModal,
       createBoardConfirm,
       ownerOrgId,
+      boardId,
+      boardType,
     };
     // 删除共同配置项
     const deleteHistoryBMProps = {
@@ -99,14 +110,18 @@ export default class PageHeader extends PureComponent {
       deleteBoardConfirm,
       orgId,
       boardId,
+      boardType,
     };
     console.warn('this.props.selectKeys', this.props.selectKeys);
     const deleteBtnClass = classnames({
       [styles.deleteBtnUnshowClass]: boardId === '3' || boardId === '4',
     });
-    const btnUnshowClass = classnames({
-      [styles.btnUnshowClass]: (_.isEmpty(this.props.selectKeys) && boardId === '3') || (_.isEmpty(this.props.selectKeys) && boardId === '4'),
+    const createBtnClass = classnames({
+      [styles.createBtnUnshowClass]: (_.isEmpty(this.props.selectKeys) && boardId === '3') || (_.isEmpty(this.props.selectKeys) && boardId === '4'),
     });
+    const updateBtnClass = classnames({
+      [styles.updateBtnUnshowClass]: boardId === '3' || boardId === '4' || (_.isEmpty(this.props.selectKeys) && boardId !== '3' && boardId !== '4'),
+    })
 
     return (
       <div className={styles.indicatorOverviewHeader}>
@@ -116,7 +131,7 @@ export default class PageHeader extends PureComponent {
             type="primary"
             ghost
             onClick={this.saveHistoryBoardHandle}
-            className={btnUnshowClass}
+            className={updateBtnClass}
           >
             <Icon type="delete" />
             保存
@@ -124,7 +139,7 @@ export default class PageHeader extends PureComponent {
           <Button
             ghost
             onClick={this.createHistoryBoardHandle}
-            className={btnUnshowClass}
+            className={createBtnClass}
           >
             <Icon type="delete" />
             另存为

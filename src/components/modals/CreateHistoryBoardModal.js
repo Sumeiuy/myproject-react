@@ -23,10 +23,13 @@ export default class CreateHistoryBoardModal extends PureComponent {
     form: PropTypes.object.isRequired,
     createBoardConfirm: PropTypes.func.isRequired,
     ownerOrgId: PropTypes.string.isRequired,
+    boardId: PropTypes.string.isRequired,
+    boardType: PropTypes.string,
   }
 
   static defaultProps = {
     visible: false,
+    boardType: '',
   }
 
   constructor(props) {
@@ -74,7 +77,7 @@ export default class CreateHistoryBoardModal extends PureComponent {
 
   @autobind
   confirmCreateModal() {
-    const { form, createBoardConfirm, ownerOrgId } = this.props;
+    const { form, createBoardConfirm, ownerOrgId, boardId, boardType } = this.props;
     // TODO 添加确认按钮处理程序
     const boardname = form.getFieldValue('boardname');
     console.warn('boardname', boardname);
@@ -98,11 +101,19 @@ export default class CreateHistoryBoardModal extends PureComponent {
       });
       return;
     }
+    let boardTypeValue;
+    if(boardType==='' && boardId==='3'){
+      boardTypeValue = 'TYPE_LSDB_TGJX';
+    } else if (boardType==='' && boardId==='4'){
+      boardTypeValue = 'TYPE_LSDB_JYYJ';
+    } else {
+      boardTypeValue = boardType;
+    }
     // 调用创建历史对比看板接口
     createBoardConfirm({
       ownerOrgId,
       name: boardname,
-      boardType: 'TYPE_LSDB_JYYJ',
+      boardType: boardTypeValue,
     });
     this.closeCreateModal();
   }
