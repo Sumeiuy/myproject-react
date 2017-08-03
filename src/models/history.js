@@ -66,9 +66,9 @@ export default {
       let contributionAnalysis = state.contributionAnalysis;
       let reviewAnalysis = state.reviewAnalysis;
 
-      if (type === 'invest') {
+      if (type === 'cust') {
         contributionAnalysis = response;
-      } else if (type === 'cust') {
+      } else if (type === 'invest') {
         reviewAnalysis = response;
       }
       return {
