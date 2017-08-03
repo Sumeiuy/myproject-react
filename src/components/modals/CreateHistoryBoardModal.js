@@ -14,13 +14,15 @@ const FormItem = Form.Item;
 const create = Form.create;
 
 @create()
-export default class DeleteHistoryBoardModal extends PureComponent {
+export default class CreateHistoryBoardModal extends PureComponent {
   static propTypes = {
     visible: PropTypes.bool,
     modalKey: PropTypes.string.isRequired,
     closeModal: PropTypes.func.isRequired,
     modalCaption: PropTypes.string.isRequired,
     form: PropTypes.object.isRequired,
+    createBoardConfirm: PropTypes.func.isRequired,
+    ownerOrgId: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -72,7 +74,7 @@ export default class DeleteHistoryBoardModal extends PureComponent {
 
   @autobind
   confirmCreateModal() {
-    const { form } = this.props;
+    const { form, createBoardConfirm, ownerOrgId } = this.props;
     // TODO 添加确认按钮处理程序
     const boardname = form.getFieldValue('boardname');
     console.warn('boardname', boardname);
@@ -96,6 +98,12 @@ export default class DeleteHistoryBoardModal extends PureComponent {
       });
       return;
     }
+    // 调用创建历史对比看板接口
+    createBoardConfirm({
+      ownerOrgId,
+      name: boardname,
+      boardType: 'TYPE_JYYJ',
+    });
     this.closeCreateModal();
   }
 
