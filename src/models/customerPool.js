@@ -80,8 +80,8 @@ export default {
   },
   reducers: {
     getToDoListSuccess(state, action) {
-      const { payload: { resultData: { data } } } = action;
-      data.forEach((item) => {
+      const { payload: { resultData: { empWorkFlowList } } } = action;
+      empWorkFlowList.forEach((item) => {
         item.task = {  //eslint-disable-line
           text: item.subject,
           dispatchUri: item.dispatchUri,
@@ -89,8 +89,8 @@ export default {
       });
       return {
         ...state,
-        todolist: data,
-        todolistRecord: data,
+        todolist: empWorkFlowList,
+        todolistRecord: empWorkFlowList,
       };
     },
     searchSuccess(state, action) {
