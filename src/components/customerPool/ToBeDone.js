@@ -12,12 +12,12 @@ import styles from './toBeDone.less';
 
 export default class PerformanceIndicators extends PureComponent {
   static propTypes = {
-    processData: PropTypes.object,
+    processData: PropTypes.number,
     motTaskCountData: PropTypes.string,
   }
 
   static defaultProps = {
-    processData: {},
+    processData: 0,
     motTaskCountData: '0',
   }
 
@@ -29,7 +29,7 @@ export default class PerformanceIndicators extends PureComponent {
     return <span>{num}</span>;
   }
   render() {
-    const { processData: { empWorkFlowCount = '0' }, motTaskCountData } = this.props;
+    const { processData, motTaskCountData } = this.props;
     const url = '/customerPool/todo';
     const param = {
       closable: true,
@@ -69,7 +69,7 @@ export default class PerformanceIndicators extends PureComponent {
               <div className={`${styles.item} ${styles.item_c}`}>
                 <a className="item" onClick={() => fspGlobal.openRctTab({ url, param })}>
                   <div className={styles.content}>
-                    <h1>{this.processNum(empWorkFlowCount)}</h1>
+                    <h1>{this.processNum(processData)}</h1>
                     <p>待办流程</p>
                   </div>
                 </a>

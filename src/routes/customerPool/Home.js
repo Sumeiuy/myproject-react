@@ -36,6 +36,7 @@ const mapStateToProps = state => ({
   position: state.customerPool.position, // 职责切换
   process: state.customerPool.process, // 代办流程(首页总数)
   motTaskCount: state.customerPool.motTaskCount, // 今日可做任务总数
+  empInfo: state.customerPool.empInfo, // 职位信息
 });
 
 const mapDispatchToProps = {
@@ -60,8 +61,9 @@ export default class Home extends PureComponent {
     custRange: PropTypes.array,
     cycle: PropTypes.array,
     position: PropTypes.object,
-    process: PropTypes.object,
+    process: PropTypes.number,
     motTaskCount: PropTypes.string,
+    empInfo: PropTypes.object,
   }
 
   static defaultProps = {
@@ -70,8 +72,9 @@ export default class Home extends PureComponent {
     cycle: [],
     collectCustRange: () => { },
     position: {},
-    process: {},
+    process: '',
     motTaskCount: '0',
+    empInfo: {},
   }
 
   constructor(props) {
@@ -83,38 +86,34 @@ export default class Home extends PureComponent {
   }
 
   componentWillMount() {
-    const { getAllInfo, custRange, cycle } = this.props;
     const orgid = _.isEmpty(window.forReactPosition) ? 'ZZ001041' : window.forReactPosition.orgId;
-    let custType = ORG;
-    const orgsId = !_.isEmpty(custRange[0]) ? custRange[0].id : '';
-    if (orgid === orgsId) { // 判断客户范围类型
-      custType = ORG;
-    } else {
-      custType = CUST_MANAGER;
-    }
     this.setState({
-      cycle: _.isEmpty(cycle) ? '' : cycle[0].key,
-    });
-    getAllInfo({
-      request: {
-        custTypes: custType, // 客户范围类型
-        // dateType: '', // 周期类型
-        orgId: orgid, // 组织ID
-      },
+      fspOrgId: orgid,
+      orgId: orgid, // 组织ID
     });
   }
+
   componentWillReceiveProps(nextProps) {
-    const { position: prePosition } = this.props;
-    const { position: nextPosition } = nextProps;
+    const { position: prePosition, custRange: preCustRange, cycle: preCycle } = this.props;
+    const { position: nextPosition, custRange: nextCustRange, cycle: nextCycle } = nextProps;
     const { orgId: preOrgId } = prePosition;
     const { orgId: nextOrgId } = nextPosition;
     if (preOrgId !== nextOrgId) {
       this.setState({
-        orgid: nextOrgId,
+        orgId: nextOrgId,
       });
       this.getIndicators();
     }
+    if (preCycle !== nextCycle) {
+      this.setState({
+        cycle: nextCycle[0].key,
+      });
+    }
+    if (preCustRange !== nextCustRange) {
+      this.handleGetAllInfo();
+    }
   }
+
   @autobind
   getIndicators() {
     const { getPerformanceIndicators, custRange } = this.props;
@@ -132,6 +131,29 @@ export default class Home extends PureComponent {
     });
   }
 
+  @autobind
+  handleGetAllInfo() {
+    const { getAllInfo, custRange, cycle } = this.props;
+    const { orgId } = this.state;
+    let custType = ORG;
+    const orgsId = !_.isEmpty(custRange[0]) ? custRange[0].id : '';
+    if (orgId === orgsId) { // 判断客户范围类型
+      custType = ORG;
+    } else {
+      custType = CUST_MANAGER;
+    }
+    this.setState({
+      cycle: _.isEmpty(cycle) ? '' : cycle[0].key,
+    });
+    getAllInfo({
+      request: {
+        custTypes: custType, // 客户范围类型
+        // dateType: '', // 周期类型
+        orgId, // 组织ID
+      },
+    });
+  }
+
   // 此方法用来修改Duration 和 Org数据
   @autobind
   updateQueryState(state) {
@@ -144,17 +166,54 @@ export default class Home extends PureComponent {
       });
   }
 
+  @autobind
+  createCustRange() {
+    const { empInfo, custRange } = this.props;
+    const { empPostnDTOList } = empInfo;
+    const { fspOrgId } = this.state;
+    let orgNewCustRange = [];
+    const newCustRrange = [];
+    if (fspOrgId === custRange[0].id) {
+      return custRange;
+    }
+    orgNewCustRange = _.findIndex(custRange, item => item.id === fspOrgId);
+    let newData;
+    if (orgNewCustRange > -1) { // 总机构内
+      newData = custRange[orgNewCustRange];
+      newCustRrange.push(newData);
+    } else { // 职位中去查找
+      orgNewCustRange = _.findIndex(empPostnDTOList, item => item.orgId === fspOrgId);
+      if (orgNewCustRange > -1) {
+        const org = {
+          id: empPostnDTOList[orgNewCustRange].orgId,
+          name: empPostnDTOList[orgNewCustRange].orgName,
+        };
+        newData = org;
+        newCustRrange.push(newData);
+      }
+    }
+    const myCustomer = {
+      id: '',
+      name: '我的客户',
+    };
+    newCustRrange.push(myCustomer);
+    return newCustRrange;
+  }
+
   render() {
     const {
       performanceIndicators,
-      custRange,
       location,
       replace,
       collectCustRange,
       process,
       cycle,
       motTaskCount,
+      custRange,
     } = this.props;
+    if (_.isEmpty(custRange[0])) {
+      return null;
+    }
     return (
       <div className={styles.customerPoolWrap}>
         <Search />
@@ -165,7 +224,7 @@ export default class Home extends PureComponent {
           />
           <PerformanceIndicators
             indicators={performanceIndicators}
-            custRange={custRange}
+            custRange={this.createCustRange()}
             updateQueryState={this.updateQueryState}
             collectCustRange={collectCustRange}
             location={location}

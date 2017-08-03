@@ -5,10 +5,11 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import { Icon, Button, Input, AutoComplete } from 'antd';
+import { Icon as AntdIcon, Button, Input, AutoComplete } from 'antd';
 import { autobind } from 'core-decorators';
 // import _ from 'lodash';
 import { Link } from 'dva/router';
+import Icon from '../../components/common/Icon';
 import styles from './search.less';
 
 const Option = AutoComplete.Option;
@@ -119,7 +120,7 @@ export default class Search extends PureComponent {
         <a
           className={styles.delHistory_a}
           rel="noopener noreferrer"
-        ><Icon type="delete" />清除历史记录
+        ><AntdIcon type="delete" />清除历史记录
       </a>
       </span>
     );
@@ -145,7 +146,7 @@ export default class Search extends PureComponent {
                 <Input
                   suffix={(
                     <Button className="search-btn" size="large" type="primary">
-                      <Icon type="search" />
+                      <AntdIcon type="search" />
                     </Button>
                   )}
                 />
@@ -154,7 +155,9 @@ export default class Search extends PureComponent {
           </div>
           <div className={styles.historyList}>
             <div className={styles.inner}>
-              <span className={styles.s_title}><Icon type="search" />猜你感兴趣：</span>
+              <span className={styles.s_title}>
+                <Icon type="dengpao" />猜你感兴趣：
+              </span>
               <Link className="item" to="/customerPool/canDoToday">
                 过去30天有大额资金转出客户
               </Link>

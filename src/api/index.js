@@ -69,20 +69,17 @@ export default {
   // 查询待办流程记录列表
   getToDoList: query => api.post('/groovynoauth/fsp/emp/workflow/queryWorkFlowTaskList', query),
 
-  // 获取客户池客户范围
-  getCustomerRange: query => api.post('/groovy/customerPool/queryEmporgs', query),
-
   // 获取客户池绩效指标
-  getPerformanceIndicators: query => api.post('/groovy/customerPool/queryEmpKPIs', query),
+  getPerformanceIndicators: query => api.post('/groovynoauth/fsp/emp/kpi/queryEmpKPIs', query),
 
   // 统计周期
   getStatisticalPeriod: query => api.post('/groovynoauth/fsp/dictionary', query),
 
   // 代办流程(首页总数)
-  getWorkFlowTaskCount: query => api.post('/groovy/customerPool/queryWorkFlowTaskCount', query),
+  getWorkFlowTaskCount: query => api.post('groovynoauth/fsp/emp/workflow/queryWorkFlowTaskCount', query),
 
   // 员工职责与职位
-  getEmpInfo: query => api.post('/groovynoauth/fsp/emp/queryEmpInfo', query),
+  getEmpInfo: query => api.post('/groovynoauth/fsp/emp/info/queryEmpInfo', query),
 
   // 今日可做任务总数
   getMotTaskCount: query => api.post('/groovynoauth/fsp/queryMotTaskCount', query),

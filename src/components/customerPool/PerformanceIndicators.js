@@ -7,13 +7,16 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { Row, Col, Select } from 'antd';
 import _ from 'lodash';
+import { autobind } from 'core-decorators';
 import Icon from '../../components/common/Icon';
 import CustomerService from './CustomerService';
 import ProductSales from './ProductSales';
+import TradingVolume from './TradingVolume';
 import Income from './Income';
 import CustRange from './CustRange';
 import styles from './performanceIndicators.less';
 
+const Option = Select.Option;
 export default class PerformanceIndicators extends PureComponent {
   static propTypes = {
     indicators: PropTypes.object,
@@ -50,15 +53,11 @@ export default class PerformanceIndicators extends PureComponent {
     }
   }
 
+  @autobind
   handleChange(value) {
-    console.log(`selected ${value}`);
-  }
-
-  // 时间筛选条件
-  creatTimeSelectOptions(cycle) {
-    return cycle.map((item, index) => {
-      const itemKey = `timeOption${index}`;
-      return <Option key={itemKey} value={item.key}>{item.value}</Option>;
+    const { updateQueryState } = this.props;
+    updateQueryState({
+      cycle: value,
     });
   }
 
@@ -97,20 +96,17 @@ export default class PerformanceIndicators extends PureComponent {
       taskCust,
       totCust,
     } = indicators;
+    const tradingVolume = { purAddCustaset, purRakeGjpdt, tranAmtBasicpdt, tranAmtTotpdt };
     const productSalesData = { fundTranAmt, privateTranAmt, finaTranAmt, otcTranAmt };
     const customerServiceData = { motOkMnt, motTotMnt, taskCust, totCust };
     const { defaultSelectValue } = this.state;
-    if (_.isEmpty(custRange) || _.isEmpty(cycle)) {
-      return null;
-    }
-    // debugger;
     return (
       <div className={styles.indexBox}>
         <div>
           <div className={styles.title}>
             <span className={styles.name}>绩效指标</span>
             <div className={styles.timeBox}>
-              <Icon type="user" />
+              <Icon type="kehu" />
               <CustRange
                 custRange={custRange}
                 location={location}
@@ -119,14 +115,16 @@ export default class PerformanceIndicators extends PureComponent {
                 collectData={collectCustRange}
               />
               <i className={styles.bd} />
-              <Icon type="calendar" />
-              <Select
-                style={{ width: 120 }}
-                defaultValue={defaultSelectValue}
-                onChange={this.handleChange}
-              >
-                {this.creatTimeSelectOptions(cycle)}
-              </Select>
+              <Icon type="rili" />
+              {
+                defaultSelectValue ? <Select
+                  style={{ width: 80 }}
+                  defaultValue={defaultSelectValue}
+                  onChange={this.handleChange}
+                >
+                  {cycle.map(item => <Option key={item.key} value={item.key}>{item.value}</Option>)}
+                </Select> : null
+              }
             </div>
           </div>
           <div className={`${styles.listItem} ${styles.firstListItem}`}>
@@ -135,7 +133,7 @@ export default class PerformanceIndicators extends PureComponent {
                 <div className={styles.indexItemBox}>
                   <div className={styles.inner}>
                     <div className={styles.title}>
-                      <Icon type="renyuan" />客户指标（人）
+                      <Icon type="kehuzhibiao" />客户指标（人）
                       <div className={styles.rightInfo}>
                         客户总数：<span>{346}</span>
                       </div>
@@ -167,7 +165,7 @@ export default class PerformanceIndicators extends PureComponent {
                 <div className={styles.indexItemBox}>
                   <div className={styles.inner}>
                     <div className={styles.title}>
-                      <Icon type="renyuan" />业务办理（人）
+                      <Icon type="yewubanli" />业务办理（人）
                     </div>
                     <div className={`${styles.content} ${styles.ywContent}`}>
                       <ul>
@@ -197,33 +195,9 @@ export default class PerformanceIndicators extends PureComponent {
                 </div>
               </Col>
               <Col span={8}>
-                <div className={styles.indexItemBox}>
-                  <div className={styles.inner}>
-                    <div className={styles.title}>
-                      <Icon type="renyuan" />交易量（万）
-                    </div>
-                    <div className={`${styles.content} ${styles.jyContent}`}>
-                      <ul>
-                        <li>
-                          <p>{purAddCustaset || '--'}</p>
-                          <div>净新增客户资产</div>
-                        </li>
-                        <li>
-                          <p>{tranAmtBasicpdt || '--'}</p>
-                          <div>累计基础交易量</div>
-                        </li>
-                        <li>
-                          <p>{tranAmtTotpdt || '--'}</p>
-                          <div>累计综合交易量</div>
-                        </li>
-                        <li>
-                          <p>{purRakeGjpdt || '--'}</p>
-                          <div>股基累计净佣金</div>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
+                <TradingVolume
+                  data={tradingVolume}
+                />
               </Col>
             </Row>
           </div>
@@ -233,7 +207,7 @@ export default class PerformanceIndicators extends PureComponent {
                 <div className={styles.indexItemBox}>
                   <div className={styles.inner}>
                     <div className={styles.title}>
-                      <Icon type="renyuan" />产品销售
+                      <Icon type="chanpinxiaoshou" />产品销售
                   </div>
                     <div className={styles.content}>
                       <ProductSales
@@ -247,7 +221,7 @@ export default class PerformanceIndicators extends PureComponent {
                 <div className={styles.indexItemBox}>
                   <div className={styles.inner}>
                     <div className={styles.title}>
-                      <Icon type="renyuan" />收入
+                      <Icon type="shouru" />收入
                   </div>
                     <div className={styles.content}>
                       <Income />
@@ -259,7 +233,7 @@ export default class PerformanceIndicators extends PureComponent {
                 <div className={styles.indexItemBox}>
                   <div className={styles.inner}>
                     <div className={styles.title}>
-                      <Icon type="renyuan" />客户服务
+                      <Icon type="kehufuwu" />客户服务
                   </div>
                     <div className={`${styles.content} ${styles.jyContent}`}>
                       <CustomerService
