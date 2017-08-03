@@ -76,9 +76,15 @@ export default {
   getPerformanceIndicators: query => api.post('/groovy/customerPool/queryEmpKPIs', query),
 
   // 统计周期
-  getStatisticalPeriod: query => api.post('/groovy/customerPool/queryStatisticalPeriod', query),
+  getStatisticalPeriod: query => api.post('/groovynoauth/fsp/dictionary', query),
 
   // 代办流程(首页总数)
   getWorkFlowTaskCount: query => api.post('/groovy/customerPool/queryWorkFlowTaskCount', query),
+
+  // 员工职责与职位
+  getEmpInfo: query => api.post('/groovynoauth/fsp/emp/queryEmpInfo', query),
+
+  // 今日可做任务总数
+  getMotTaskCount: query => api.post('/groovynoauth/fsp/queryMotTaskCount', query),
 
 };

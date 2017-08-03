@@ -13,10 +13,12 @@ import styles from './toBeDone.less';
 export default class PerformanceIndicators extends PureComponent {
   static propTypes = {
     processData: PropTypes.object,
+    motTaskCountData: PropTypes.string,
   }
 
   static defaultProps = {
     processData: {},
+    motTaskCountData: '0',
   }
 
   // 处理数值（大于99+）
@@ -27,6 +29,7 @@ export default class PerformanceIndicators extends PureComponent {
     return <span>{num}</span>;
   }
   render() {
+    const { processData: { empWorkFlowCount = '0' }, motTaskCountData } = this.props;
     const url = '/customerPool/todo';
     const param = {
       closable: true,
@@ -35,7 +38,6 @@ export default class PerformanceIndicators extends PureComponent {
       id: 'FSP_TODOLIST',
       title: '待办流程列表',
     };
-    const { processData: { empWorkFlowCount } } = this.props;
     return (
       <div className={styles.toBeDoneBox}>
         <div className={styles.inner}>
@@ -47,7 +49,7 @@ export default class PerformanceIndicators extends PureComponent {
               <div className={`${styles.item} ${styles.item_a}`}>
                 <a className="item" onClick={() => fspGlobal.myMotTask()}>
                   <div className={styles.content}>
-                    <h1>25</h1>
+                    <h1>{motTaskCountData === '' ? '0' : motTaskCountData}</h1>
                     <p>今日可做任务</p>
                   </div>
                 </a>

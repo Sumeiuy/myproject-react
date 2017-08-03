@@ -8,15 +8,19 @@ import React, { PropTypes, PureComponent } from 'react';
 import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
 import PerformanceIndicators from '../../components/customerPool/PerformanceIndicators';
 import ToBeDone from '../../components/customerPool/ToBeDone';
 // import { helper } from '../../utils';
 import Search from '../../components/customerPool/Search';
 import styles from './home.less';
 
+const CUST_MANAGER = 1; // 客户经理
+// const CUST_MANAGER_TEAM = 2; // 客户经理团队
+const ORG = 3; // 组织机构
 const effects = {
   allInfo: 'customerPool/getAllInfo',
-  statisticalPeriod: 'customerPool/getStatisticalPeriod',
+  performanceIndicators: 'customerPool/getPerformanceIndicators',
 };
 
 const fectchDataFunction = (globalLoading, type) => query => ({
@@ -31,11 +35,12 @@ const mapStateToProps = state => ({
   cycle: state.customerPool.cycle,  // 统计周期
   position: state.customerPool.position, // 职责切换
   process: state.customerPool.process, // 代办流程(首页总数)
+  motTaskCount: state.customerPool.motTaskCount, // 今日可做任务总数
 });
 
 const mapDispatchToProps = {
   getAllInfo: fectchDataFunction(true, effects.allInfo),
-  getStatisticalPeriod: fectchDataFunction(true, effects.statisticalPeriod),
+  getPerformanceIndicators: fectchDataFunction(true, effects.performanceIndicators),
   push: routerRedux.push,
   replace: routerRedux.replace,
 };
@@ -49,58 +54,81 @@ export default class Home extends PureComponent {
     push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
     getAllInfo: PropTypes.func.isRequired,
-    getStatisticalPeriod: PropTypes.func.isRequired,
     performanceIndicators: PropTypes.object,
     collectCustRange: PropTypes.func.isRequired,
+    getPerformanceIndicators: PropTypes.func.isRequired,
     custRange: PropTypes.array,
     cycle: PropTypes.array,
     position: PropTypes.object,
     process: PropTypes.object,
+    motTaskCount: PropTypes.string,
   }
 
   static defaultProps = {
     performanceIndicators: {},
     custRange: [],
     cycle: [],
-    collectCustRange: () => {},
+    collectCustRange: () => { },
     position: {},
     process: {},
+    motTaskCount: '0',
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      cycle: '',
+      orgId: '',
+    };
   }
 
   componentWillMount() {
-    const { getAllInfo, getStatisticalPeriod } = this.props;
-    getStatisticalPeriod(); // 查询周期
+    const { getAllInfo, custRange, cycle } = this.props;
+    const orgid = _.isEmpty(window.forReactPosition) ? 'ZZ001041' : window.forReactPosition.orgId;
+    let custType = ORG;
+    const orgsId = !_.isEmpty(custRange[0]) ? custRange[0].id : '';
+    if (orgid === orgsId) { // 判断客户范围类型
+      custType = ORG;
+    } else {
+      custType = CUST_MANAGER;
+    }
+    this.setState({
+      cycle: _.isEmpty(cycle) ? '' : cycle[0].key,
+    });
     getAllInfo({
       request: {
-        custTypes: '', // 客户范围类型
-        dateType: '', // 周期类型
-        orgId: 'ZZ001041', // 组织ID
+        custTypes: custType, // 客户范围类型
+        // dateType: '', // 周期类型
+        orgId: orgid, // 组织ID
       },
     });
   }
   componentWillReceiveProps(nextProps) {
     const { position: prePosition } = this.props;
     const { position: nextPosition } = nextProps;
-    if (prePosition !== nextPosition) {
+    const { orgId: preOrgId } = prePosition;
+    const { orgId: nextOrgId } = nextPosition;
+    if (preOrgId !== nextOrgId) {
       this.setState({
-        orgId: '00232',
+        orgid: nextOrgId,
       });
-      // this.getInfo();
+      this.getIndicators();
     }
   }
   @autobind
-  getInfo() {
-    const { getAllInfo } = this.props;
+  getIndicators() {
+    const { getPerformanceIndicators, custRange } = this.props;
     const { orgId, cycle } = this.state;
-    // 整理数据
-    const payload = {
-      orgId,
-      cycle,
-    };
-    getAllInfo({
-      request: {
-        ...payload,
-      },
+    let custType = ORG;
+    if (orgId === custRange[0].id) { // 判断客户范围类型
+      custType = ORG;
+    } else {
+      custType = CUST_MANAGER;
+    }
+    getPerformanceIndicators({
+      custTypes: custType, // 客户范围类型
+      dateType: cycle, // 周期类型
+      orgId, // 组织ID
     });
   }
 
@@ -110,13 +138,10 @@ export default class Home extends PureComponent {
     // 切换Duration和Orig时候，需要将数据全部恢复到默认值
     this.setState({
       ...state,
-      showCharts: {},
-      classifyScope: {},
-      classifyOrder: {},
     },
-    () => {
-      this.getInfo();
-    });
+      () => {
+        this.getIndicators();
+      });
   }
 
   render() {
@@ -128,6 +153,7 @@ export default class Home extends PureComponent {
       collectCustRange,
       process,
       cycle,
+      motTaskCount,
     } = this.props;
     return (
       <div className={styles.customerPoolWrap}>
@@ -135,6 +161,7 @@ export default class Home extends PureComponent {
         <div className={styles.content}>
           <ToBeDone
             processData={process}
+            motTaskCountData={motTaskCount}
           />
           <PerformanceIndicators
             indicators={performanceIndicators}

@@ -18,6 +18,8 @@ export default {
     cycle: [],
     position: {},
     process: {},
+    empInfo: {},
+    motTaskCount: '',
   },
   subscriptions: {},
   effects: {
@@ -28,6 +30,14 @@ export default {
         payload: response,
       });
     },
+    // 获取员工职责与职位
+    * getEmpInfo({ payload }, { call, put }) {
+      const resultData = yield call(api.getEmpInfo);
+      yield put({
+        type: 'getEmpInfoSuccess',
+        response: resultData,
+      });
+    },
     // 获取客户池客户范围
     * getCustomerScope({ payload }, { call, put }) {
       const resultData = yield call(api.getCustomerRange);
@@ -36,24 +46,40 @@ export default {
         response: resultData,
       });
     },
-    * getStatisticalPeriod({ payload }, { call, put }) {
+    // 绩效指标
+    * getPerformanceIndicators({ payload }, { call, put }) {
+      const indicators =
+      yield call(api.getPerformanceIndicators, payload);
+      yield put({
+        type: 'getPerformanceIndicatorsSuccess',
+        payload: { indicators },
+      });
+    },
+    // 初始化获取数据
+    * getAllInfo({ payload }, { call, put, select }) {
       // 统计周期
       const statisticalPeriod = yield call(api.getStatisticalPeriod);
       yield put({
         type: 'getStatisticalPeriodSuccess',
         payload: { statisticalPeriod },
       });
-    },
-    // 初始化获取数据
-    * getAllInfo({ payload }, { call, put }) {
       // 代办流程(首页总数)
       const agentProcess = yield call(api.getWorkFlowTaskCount);
       yield put({
         type: 'getWorkFlowTaskCountSuccess',
         payload: { agentProcess },
       });
+      // 今日可做任务总数
+      const motTaskcount = yield call(api.getMotTaskCount);
+      yield put({
+        type: 'getMotTaskCountSuccess',
+        payload: { motTaskcount },
+      });
+      const defaultCycle = yield select(state => state.customerPool.cycle);
       // 绩效指标
-      const indicators = yield call(api.getPerformanceIndicators);
+      const indicators =
+      yield call(api.getPerformanceIndicators,
+      { ...payload.request, dateType: defaultCycle[0].key });
       yield put({
         type: 'getPerformanceIndicatorsSuccess',
         payload: { indicators },
@@ -120,6 +146,14 @@ export default {
         custRange,
       };
     },
+    // 获取员工职责与职位
+    getEmpInfoSuccess(state, action) {
+      const { response: { resultData } } = action;
+      return {
+        ...state,
+        empInfo: resultData,
+      };
+    },
     // 绩效指标
     getPerformanceIndicatorsSuccess(state, action) {
       const { payload: { indicators } } = action;
@@ -132,7 +166,7 @@ export default {
     // 统计周期
     getStatisticalPeriodSuccess(state, action) {
       const { payload: { statisticalPeriod } } = action;
-      const cycle = statisticalPeriod.resultData;
+      const cycle = statisticalPeriod.resultData.kPIDataScopeType;
       return {
         ...state,
         cycle,
@@ -145,6 +179,15 @@ export default {
       return {
         ...state,
         process,
+      };
+    },
+    // 今日可做任务总数
+    getMotTaskCountSuccess(state, action) {
+      const { payload: { motTaskcount } } = action;
+      const motTaskCount = motTaskcount.resultData;
+      return {
+        ...state,
+        motTaskCount,
       };
     },
     // 职责切换
