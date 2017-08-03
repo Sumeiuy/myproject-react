@@ -9,7 +9,7 @@ import _ from 'lodash';
 
 
 import Icon from '../common/Icon';
-import Item from './item';
+import Item from './Item';
 import styles from './PerformanceItem.less';
 
 const pageSize = 8;

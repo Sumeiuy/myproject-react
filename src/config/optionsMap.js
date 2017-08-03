@@ -84,6 +84,7 @@ const optionsMap = {
       name: '自低到高',
     },
   ],
+  // 显示类型
   showType: [
     {
       key: '1',
@@ -98,6 +99,24 @@ const optionsMap = {
       active: '',
     },
   ],
+  // 看板类型
+  boardTypeMap: {
+    tgjx: 'TYPE_TGJX',
+    jyyj: 'TYPE_JYYJ',
+  },
+  // 指标类型
+  boardKeyName: {
+    summury: {
+      key: 'summury',
+      name: '总量指标',
+      title: '总量指标是该指标针对当前组织在指定时间范围内的汇总值',
+    },
+    detail: {
+      key: 'detail',
+      name: '明细指标',
+      title: '明细指标展示在选定时间范围内针对该项指标的业绩排序图',
+    },
+  },
 };
 
 export default optionsMap;
