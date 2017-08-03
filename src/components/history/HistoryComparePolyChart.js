@@ -85,7 +85,7 @@ export default class HistoryComparePolyChart extends PureComponent {
 
       // 默认选中第一条展示信息
       const { date: currentDate, value: currentValue, year, name } = curSeries[0] || EMPTY_ARRAY;
-      const { date: previousDate, value: previousValue } = curSeries[0] || EMPTY_ARRAY;
+      const { date: previousDate, value: previousValue } = previousSeries[0] || EMPTY_ARRAY;
 
       this.setState({
         chartOptions: options, // 折线图配置项
@@ -178,44 +178,6 @@ export default class HistoryComparePolyChart extends PureComponent {
   }
 
   formatDate(xSeries, newSeries, newUnit, newYAxisTickArea) {
-    // const areaLen = xSeries.length;
-    // const newSeries = [];
-    // if (areaLen > 7) {
-    //   const maxDate = xSeries[areaLen - 1];
-    //   const xAxisArea = Math.ceil(areaLen / 7);
-    //   let item = xSeries.shift();
-    //   newSeries.push(item);
-    //   for (let i = 0; i < 7; i++) {
-    //     if (item.length === 2) {
-    //       // 月
-    //       const currentDate = parseInt(item, 10) + xAxisArea;
-    //       const formatedMaxDate = parseInt(maxDate, 10);
-    //       if (currentDate < formatedMaxDate) {
-    //         item = `${currentDate < 10 ? `0${currentDate}` : currentDate}`;
-    //         newSeries.push(item);
-    //       } else {
-    //         item = `${formatedMaxDate < 10 ? `0${formatedMaxDate}` : formatedMaxDate}`;
-    //         newSeries.push(item);
-    //         break;
-    //       }
-    //     } else {
-    //       // 天
-    //       const currentDate = parseInt(item.substring(3, 5), 10) + xAxisArea;
-    //       const formatedMaxDate = parseInt(maxDate.substring(3, 5), 10);
-    //       if (currentDate < formatedMaxDate) {
-    //         item = `${item.substring(0, 3)}
-    // ${currentDate < 10 ? `0${currentDate}` : currentDate}`;
-    //         newSeries.push(item);
-    //       } else {
-    //         item = `${item.substring(0, 3)}
-    // ${formatedMaxDate < 10 ? `0${formatedMaxDate}` : formatedMaxDate}`;
-    //         newSeries.push(item);
-    //         break;
-    //       }
-    //     }
-    //   }
-    // }
-
     const finalData = {
       series: newSeries,
       yAxisUnit: newUnit,
@@ -317,11 +279,11 @@ export default class HistoryComparePolyChart extends PureComponent {
           <span className={styles.tipDot} />
           <span className={styles.tipIndicator}>{name}</span>
           <span className={styles.tipTime}>{currentDate ? `${year}${currentDate}:` : ''}</span>
-          <span className={styles.currentValue}>{currentValue ? `${currentValue}` : ''}</span>
-          <span className={styles.tipUnit}>{currentValue ? `${unit}` : ''}</span>
+          <span className={styles.currentValue}>{(currentValue === 0 || currentValue) ? `${currentValue}` : ''}</span>
+          <span className={styles.tipUnit}>{(currentValue === 0 || currentValue) ? `${unit}` : ''}</span>
           <span className={styles.tipTime}>{previousDate ? `${year}${previousDate}:` : ''}</span>
-          <span className={styles.contrastValue}>{previousValue ? `${previousValue}` : ''}</span>
-          <span className={styles.tipUnit}>{previousValue ? `${unit}` : ''}</span>
+          <span className={styles.contrastValue}>{(previousValue === 0 || previousValue) ? `${previousValue}` : ''}</span>
+          <span className={styles.tipUnit}>{(previousValue === 0 || previousValue) ? `${unit}` : ''}</span>
         </div>
       </div>
     );

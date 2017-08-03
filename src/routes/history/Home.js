@@ -159,8 +159,19 @@ export default class HistoryHome extends PureComponent {
       boardId: '3',
     });
 
-    // 暂时不写参数
-    getContrastData();
+    // 参数需要动态变
+    // 暂时先写死
+    getContrastData({
+      boardId: 3,
+      scope: '1',
+      coreIndicatorId: '',
+      orgId: 'ZZ001041',
+      begin: '20170705',
+      end: '20170723',
+      contrastBegin: '20160605',
+      contrastEnd: '20160623',
+      cycleType: 'month',
+    });
   }
 
   componentWillReceiveProps(nextProps) {
