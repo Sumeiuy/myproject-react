@@ -175,6 +175,7 @@ export default class SelfDatePicker extends PureComponent {
         onChange={this.rangePickerChange}
         showToday={false}
         showTime
+        open
       />
     );
   }
