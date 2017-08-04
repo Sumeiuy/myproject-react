@@ -19,6 +19,11 @@ import HistoryComparePolyChart from '../../components/history/HistoryComparePoly
 import HistoryCompareRankChart from '../../components/history/HistoryCompareRankChart';
 import styles from './Home.less';
 
+// 投顾绩效历史对比的borderId
+const TYPE_LSDB_TGJX = '3';
+// 经营业绩历史对比的boardId
+const TYPE_LSDB_JYYJ = '4';
+
 const effects = {
   allInfo: 'history/getAllInfo',
   queryContrastAnalyze: 'history/queryContrastAnalyze',
@@ -232,9 +237,9 @@ export default class HistoryHome extends PureComponent {
       // 删除成功
       message.success('删除成功');
       if (boardType === 'TYPE_LSDB_JYYJ') {
-        push('/history?boardId=4');
+        push(`/history?boardId=${TYPE_LSDB_JYYJ}`);
       } else if (boardType === 'TYPE_LSDB_TGJX') {
-        push('/history?boardId=3');
+        push(`/history?boardId=${TYPE_LSDB_TGJX}`);
       }
     }
     if (!updateLoading && prePL) {

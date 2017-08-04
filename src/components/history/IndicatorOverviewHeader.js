@@ -9,7 +9,7 @@ import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import { Icon, Button } from 'antd';
 import _ from 'lodash';
-import { CreateHistoryBoardModal, DeleteHistoryBoardModal } from '../../components/modals';
+import { CreateHistoryBoardModal, DeleteHistoryBoardModal, BackHistoryBoardModal } from '../modals';
 
 // import Icon from '../common/Icon';
 
@@ -39,6 +39,7 @@ export default class PageHeader extends PureComponent {
       createHistoryBoardModal: false,
       deleteHistoryBoardModal: false,
       saveHistoryBoardModal: false,
+      backHistoryBoardModal: false,
     };
   }
 
@@ -67,6 +68,12 @@ export default class PageHeader extends PureComponent {
     this.openModal('deleteHistoryBoardModal');
   }
 
+  // 浏览器直接返回
+  @autobind
+  backHistoryBoardHandle() {
+    this.openModal('backHistoryBoardModal');
+  }
+
   @autobind
   saveHistoryBoardHandle() {
     const {
@@ -85,8 +92,9 @@ export default class PageHeader extends PureComponent {
     });
   }
 
+
   render() {
-    const { createHistoryBoardModal, deleteHistoryBoardModal } = this.state;
+    const { createHistoryBoardModal, deleteHistoryBoardModal, backHistoryBoardModal } = this.state;
     const {
       location: { query: { boardId, boardType } },
       createBoardConfirm,
@@ -117,6 +125,14 @@ export default class PageHeader extends PureComponent {
       orgId,
       boardId,
       boardType,
+    };
+
+    // 浏览器返回
+    const backHistoryBMProps = {
+      modalKey: 'backHistoryBoardModal',
+      modalCaption: '提示',
+      visible: backHistoryBoardModal,
+      closeModal: this.closeModal,
     };
     console.warn('this.props.selectKeys', this.props.selectKeys);
     const deleteBtnClass = classnames({
@@ -167,6 +183,9 @@ export default class PageHeader extends PureComponent {
           </Button>
           <DeleteHistoryBoardModal
             {...deleteHistoryBMProps}
+          />
+          <BackHistoryBoardModal
+            {...backHistoryBMProps}
           />
         </div>
       </div>
