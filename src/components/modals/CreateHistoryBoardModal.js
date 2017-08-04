@@ -1,5 +1,5 @@
 /**
- * @description 删除历史看板的Modal
+ * @description 另存为历史看板的Modal
  * @author hongguangqing
  */
 import React, { PropTypes, PureComponent } from 'react';
@@ -13,18 +13,28 @@ import styles from './modalCommon.less';
 const FormItem = Form.Item;
 const create = Form.create;
 
+// 投顾绩效历史对比的borderId
+const TYPE_LSDB_TGJX = '3';
+// 经营业绩历史对比的boardId
+const TYPE_LSDB_JYYJ = '4';
 @create()
-export default class DeleteHistoryBoardModal extends PureComponent {
+export default class CreateHistoryBoardModal extends PureComponent {
   static propTypes = {
     visible: PropTypes.bool,
     modalKey: PropTypes.string.isRequired,
     closeModal: PropTypes.func.isRequired,
     modalCaption: PropTypes.string.isRequired,
     form: PropTypes.object.isRequired,
+    createBoardConfirm: PropTypes.func.isRequired,
+    ownerOrgId: PropTypes.string.isRequired,
+    boardId: PropTypes.string.isRequired,
+    boardType: PropTypes.string,
+    selectKeys: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
     visible: false,
+    boardType: '',
   }
 
   constructor(props) {
@@ -72,7 +82,7 @@ export default class DeleteHistoryBoardModal extends PureComponent {
 
   @autobind
   confirmCreateModal() {
-    const { form } = this.props;
+    const { form, createBoardConfirm, ownerOrgId, boardId, boardType, selectKeys } = this.props;
     // TODO 添加确认按钮处理程序
     const boardname = form.getFieldValue('boardname');
     console.warn('boardname', boardname);
@@ -96,6 +106,23 @@ export default class DeleteHistoryBoardModal extends PureComponent {
       });
       return;
     }
+    let boardTypeValue;
+    if (boardType === '' && boardId === TYPE_LSDB_TGJX) {
+      boardTypeValue = 'TYPE_LSDB_TGJX';
+    } else if (boardType === '' && boardId === TYPE_LSDB_JYYJ) {
+      boardTypeValue = 'TYPE_LSDB_JYYJ';
+    } else {
+      boardTypeValue = boardType;
+    }
+    // 调用创建历史对比看板接口
+    createBoardConfirm({
+      ownerOrgId,
+      name: boardname,
+      boardType: boardTypeValue,
+      coreIndicator: selectKeys,
+      investContrastIndicator: ['tgInNum'],
+      custContrastIndicator: ['custNum'],
+    });
     this.closeCreateModal();
   }
 

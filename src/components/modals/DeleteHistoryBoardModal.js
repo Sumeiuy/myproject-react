@@ -20,6 +20,9 @@ export default class DeleteHistoryBoardModal extends PureComponent {
     closeModal: PropTypes.func.isRequired,
     modalCaption: PropTypes.string.isRequired,
     form: PropTypes.object.isRequired,
+    deleteBoardConfirm: PropTypes.func.isRequired,
+    boardId: PropTypes.string.isRequired,
+    orgId: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -47,14 +50,18 @@ export default class DeleteHistoryBoardModal extends PureComponent {
   @autobind
   closeDeleteModal() {
     const { closeModal, modalKey } = this.props;
-    // 此处需要将form重置
-    this.props.form.resetFields();
     // 隐藏Modal
     closeModal(modalKey);
   }
 
   @autobind
   confirmDeleteModal() {
+    const { deleteBoardConfirm, orgId, boardId } = this.props;
+    // TODO 调用删除历史看板接口
+    deleteBoardConfirm({
+      orgId,
+      boardId,
+    });
     this.closeDeleteModal();
   }
 
