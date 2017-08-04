@@ -24,6 +24,7 @@ export default {
     message: '', // 各种操作的提示信息
     operateData: {}, // 各种操作后，返回的数据集
     indicatorLib: {}, // 指标库
+    rankData: {}, // 历史对比排名数据
   },
   reducers: {// 成功获取指标库
     getIndicatorLibSuccess(state, action) {
@@ -128,6 +129,14 @@ export default {
         [name]: value,
         message,
         operateData,
+      };
+    },
+    // 历史对比排名
+    getRankDataSuccess(state, action) {
+      const { payload: { rankData } } = action;
+      return {
+        ...state,
+        rankData,
       };
     },
   },
@@ -290,6 +299,16 @@ export default {
           message: '保存完成',
           operateData: board,
         },
+      });
+    },
+
+    // 获取历史排名数据
+    * getRankData({ payload }, { call, put }) {
+      const response = yield call(api.getHistoryRankChartData, payload);
+      const { resultData } = response;
+      yield put({
+        type: 'getRankDataSuccess',
+        payload: { rankData: resultData },
       });
     },
   },

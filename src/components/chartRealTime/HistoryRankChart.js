@@ -10,14 +10,15 @@ import RankStackChart from './historyRank/RankStackChart';
 
 export default class HistoryRankChart extends PureComponent {
   static propTypes = {
-    data: PropTypes.array.isRequired,
+    data: PropTypes.object.isRequired,
     level: PropTypes.string.isRequired,
     scope: PropTypes.string.isRequired,
+    showChartUnit: PropTypes.func.isRequired,
   };
 
   render() {
     const { data: { orgModel } } = this.props;
-    const { data, level, scope } = this.props;
+    const { data, level, scope, showChartUnit } = this.props;
      // 增加判断走堆叠还是普通柱状图
     if (orgModel
       && Array.isArray(orgModel)
@@ -30,6 +31,7 @@ export default class HistoryRankChart extends PureComponent {
           chartData={data}
           level={level}
           scope={scope}
+          showChartUnit={showChartUnit}
         />
       );
     }
@@ -38,6 +40,7 @@ export default class HistoryRankChart extends PureComponent {
         chartData={data}
         level={level}
         scope={scope}
+        showChartUnit={showChartUnit}
       />
     );
   }

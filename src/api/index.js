@@ -88,4 +88,7 @@ export default {
 
   // 更新历史对比看板
   updateHistoryBoard: query => api.post('/groovynoauth/jxzb/updateBoard', query),
+
+  // 查询历史对比排名数据
+  getHistoryRankChartData: query => api.post('/groovynoauth/jxzb/queryHistoryCardRecord', query),
 };
