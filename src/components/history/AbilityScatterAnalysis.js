@@ -19,10 +19,8 @@ const EMPTY_OBJECT = {};
 
 export default class AbilityScatterAnalysis extends PureComponent {
   static propTypes = {
-    location: PropTypes.object.isRequired,
     data: PropTypes.object.isRequired,
     queryContrastAnalyze: PropTypes.func.isRequired,
-    custRange: PropTypes.array.isRequired,
     title: PropTypes.string.isRequired,
     optionsData: PropTypes.array.isRequired,
   };

@@ -9,11 +9,9 @@ import styles from './scatterAnalysis.less';
 
 export default class ScatterAnalysis extends PureComponent {
   static propTypes = {
-    location: PropTypes.object.isRequired,
     contributionAnalysisData: PropTypes.object.isRequired,
     reviewAnalysisData: PropTypes.object.isRequired,
     queryContrastAnalyze: PropTypes.func.isRequired,
-    custRange: PropTypes.array.isRequired,
     cust: PropTypes.array.isRequired,
     invest: PropTypes.array.isRequired,
   };
@@ -23,11 +21,9 @@ export default class ScatterAnalysis extends PureComponent {
 
   render() {
     const {
-      location,
       queryContrastAnalyze,
       contributionAnalysisData,
       reviewAnalysisData,
-      custRange,
       cust,
       invest,
     } = this.props;
@@ -37,20 +33,16 @@ export default class ScatterAnalysis extends PureComponent {
         <Row type="flex">
           <Col span={12} className={styles.leftScatterSection}>
             <AbilityScatterAnalysis
-              location={location}
               data={contributionAnalysisData}
               queryContrastAnalyze={queryContrastAnalyze}
-              custRange={custRange}
               title={'客户贡献分析'}
               optionsData={{ data: cust, type: 'cust' }}
             />
           </Col>
           <Col span={12} className={styles.rightScatterSection}>
             <AbilityScatterAnalysis
-              location={location}
               data={reviewAnalysisData}
               queryContrastAnalyze={queryContrastAnalyze}
-              custRange={custRange}
               title={'入岗投顾能力分析'}
               optionsData={{ data: invest, type: 'invest' }}
             />

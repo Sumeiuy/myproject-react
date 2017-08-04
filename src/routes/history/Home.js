@@ -221,11 +221,11 @@ export default class HistoryHome extends PureComponent {
       this.setState({
         selectKeys: [],
       },
-      () => {
-        const { selectKeys } = this.state;
-        console.warn('selectKeys+++++', selectKeys);
-        push(`/history?boardId=${id}&orgId=${ownerOrgId}&boardType=${boardType}`);
-      });
+        () => {
+          const { selectKeys } = this.state;
+          console.warn('selectKeys+++++', selectKeys);
+          push(`/history?boardId=${id}&orgId=${ownerOrgId}&boardType=${boardType}`);
+        });
     }
     if (preDL && !deleteLoading) {
       const { location: { query: { boardType } } } = this.props;
@@ -243,9 +243,9 @@ export default class HistoryHome extends PureComponent {
       this.setState({
         selectKeys: [],
       },
-      () => {
-        push(`/history?boardId=${id}&orgId=${ownerOrgId}&boardType=${boardType}`);
-      });
+        () => {
+          push(`/history?boardId=${id}&orgId=${ownerOrgId}&boardType=${boardType}`);
+        });
     }
   }
 
@@ -290,7 +290,6 @@ export default class HistoryHome extends PureComponent {
       reviewAnalysis,
       contributionAnalysis,
       queryContrastAnalyze,
-      custRange,
       historyCore,
       crrData,
       historyContrastDic,
@@ -343,28 +342,26 @@ export default class HistoryHome extends PureComponent {
               {/* 假定数据 */}
               {
                 _.isEmpty(rankData)
-                ?
-                null
-                :
-                (
-                  <HistoryCompareRankChart
-                    level="1"
-                    scope="2"
-                    data={rankData}
-                    boardType="TYPE_TGJX"
-                  />
-                )
+                  ?
+                  null
+                  :
+                  (
+                    <HistoryCompareRankChart
+                      level="1"
+                      scope="2"
+                      data={rankData}
+                      boardType="TYPE_TGJX"
+                    />
+                  )
               }
             </div>
             <HisDivider />
             <div className={styles.scatterArea}>
               {/* 散点图区域 */}
               <ScatterAnalysis
-                location={location}
                 contributionAnalysisData={contributionAnalysis}
                 reviewAnalysisData={reviewAnalysis}
                 queryContrastAnalyze={queryContrastAnalyze}
-                custRange={custRange}
                 cust={cust}
                 invest={invest}
               />
