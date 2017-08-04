@@ -24,6 +24,7 @@ const effects = {
   queryHistoryContrast: 'history/queryHistoryContrast',
   getContrastData: 'history/getContrastData',
   getIndicatorLib: 'history/getIndicatorLib',
+  queryCurrentRankingRecord: 'history/queryCurrentRankingRecord',
 };
 
 const fectchDataFunction = (globalLoading, type) => query => ({
@@ -43,6 +44,7 @@ const mapStateToProps = state => ({
   historyContrastDic: state.history.historyContrastDic, // 字典数据
   contrastData: state.history.contrastData,
   indicatorLib: state.history.indicatorLib,
+  queryCurrentRankingRecord: state.history.queryCurrentRankingRecord,
 });
 
 const mapDispatchToProps = {
@@ -51,6 +53,7 @@ const mapDispatchToProps = {
   queryHistoryContrast: fectchDataFunction(true, effects.queryHistoryContrast),
   getContrastData: fectchDataFunction(true, effects.getContrastData),
   getIndicatorLib: fectchDataFunction(false, effects.getIndicatorLib),
+  queryCurrentRankingRecord: fectchDataFunction(false, effects.queryCurrentRankingRecord),
   push: routerRedux.push,
   replace: routerRedux.replace,
 };
@@ -80,6 +83,7 @@ export default class HistoryHome extends PureComponent {
     getIndicatorLib: PropTypes.func.isRequired,
     historyContrastDic: PropTypes.object.isRequired,
     queryHistoryContrast: PropTypes.func.isRequired,
+    queryCurrentRankingRecord: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -99,10 +103,24 @@ export default class HistoryHome extends PureComponent {
       queryContrastAnalyze,
       getContrastData,
       getIndicatorLib,
+      queryCurrentRankingRecord,
     } = this.props;
 
     getAllInfo({
       ...query,
+    });
+
+    queryCurrentRankingRecord({
+      begin: '20170701',
+      boardId: '3',
+      cycleType: 'month',
+      end: '20170719',
+      scope: '2',
+      orgId: 'ZZ001041093',
+      contrastBegin: '20170601',
+      contrastEnd: '20170619',
+      localScope: '2',
+      isMultiple: '0',
     });
 
     queryContrastAnalyze({

@@ -19,6 +19,7 @@ export default {
     historyContrastDic: {}, // 字典
     contrastData: {}, // 历史对比数据
     indicatorLib: {}, // 指标库
+    rankingRecord: {},
   },
   reducers: {// 成功获取指标库
     getIndicatorLibSuccess(state, action) {
@@ -66,6 +67,17 @@ export default {
       return {
         ...state,
         custRange,
+      };
+    },
+
+    // 存雷达图数据
+    queryCurrentRankingRecordSuccess(state, action) {
+      const { payload: { response } } = action;
+      const rankingRecord = response.currentRankingRecordVo || {};
+      console.warn('rankingRecord', rankingRecord);
+      return {
+        ...state,
+        rankingRecord,
       };
     },
 
@@ -160,6 +172,16 @@ export default {
       yield put({
         type: 'getIndicatorLibSuccess',
         payload: { indicatorResult },
+      });
+    },
+    // 雷达图
+    * queryCurrentRankingRecord({ payload }, { call, put }) {
+      const { type } = payload;
+      const response = yield call(api.queryCurrentRankingRecord, payload);
+      const { resultData } = response;
+      yield put({
+        type: 'queryCurrentRankingRecordSuccess',
+        payload: { response: resultData, type },
       });
     },
     // 获取客户贡献分析与入岗投顾能力散点图数据
