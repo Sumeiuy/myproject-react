@@ -192,7 +192,7 @@ export default class HistoryHome extends PureComponent {
       updateLoading: prePL,
     } = this.props;
     const { push, operateData, createLoading, deleteLoading, updateLoading } = nextProps;
-    if (preCL && !createLoading) {      
+    if (preCL && !createLoading) {
       // 创建完成后，需要跳转到新建看板
       const { id, ownerOrgId, boardType } = operateData;
       this.setState({
@@ -202,7 +202,7 @@ export default class HistoryHome extends PureComponent {
         const { selectKeys } = this.state;
         console.warn('selectKeys+++++', selectKeys);
         push(`/history?boardId=${id}&orgId=${ownerOrgId}&boardType=${boardType}`);
-      })
+      });
     }
     if (preDL && !deleteLoading) {
       const { location: { query: { boardType } } } = this.props;
@@ -222,7 +222,7 @@ export default class HistoryHome extends PureComponent {
       },
       () => {
         push(`/history?boardId=${id}&orgId=${ownerOrgId}&boardType=${boardType}`);
-      })     
+      });
     }
   }
 
