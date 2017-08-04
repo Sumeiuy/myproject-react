@@ -22,10 +22,11 @@ export const constructScatterData = (options = {}) => {
   const xAxisDataArray = [];
   const yAxisDataArray = [];
   const orgItemArray = [];
+  let currentUnit = '';
 
   const constructHelper = {
     // 计算y轴的刻度范围
-    getYAxisTickMinAndMax(array) {
+    getYAxisTickMinAndMax(array, curUnit) {
       if (_.isEmpty(array)) {
         return {
           min: 0,
@@ -33,7 +34,18 @@ export const constructScatterData = (options = {}) => {
         };
       }
 
-      const { max, min } = FixNumber.getMaxAndMinMoney(array);
+      let minAndMax;
+      if (curUnit === '户') {
+        minAndMax = FixNumber.getMaxAndMinCust(array);
+      } else if (curUnit === '次') {
+        minAndMax = FixNumber.getMaxAndMinCi(array);
+      } else if (curUnit === '个') {
+        minAndMax = FixNumber.getMaxAndMinGE(array);
+      } else if (curUnit === '元') {
+        minAndMax = FixNumber.getMaxAndMinMoney(array);
+      }
+
+      const { max, min } = minAndMax;
       let newMax = 0;
       // 对于金额y轴，需要给最大刻度多加一个刻度，
       // 不然最大值z在散点图上显示不全
@@ -64,8 +76,20 @@ export const constructScatterData = (options = {}) => {
       return FixNumber.getMaxAndMinCust(array);
     },
     // 获取y轴的单位和格式化后的数据源
-    getYAxisUnit(array) {
-      return FixNumber.toFixedMoney(array);
+    getYAxisUnit(array, unit) {
+      if (unit === '元') {
+        return FixNumber.toFixedMoney(array);
+      } else if (unit === '次') {
+        return FixNumber.toFixedCI(array);
+      } else if (unit === '个') {
+        return FixNumber.toFixedGE(array);
+      } else if (unit === '户') {
+        return FixNumber.toFixedCust(array);
+      }
+      return {
+        newSeries: [],
+        newUnit: '',
+      };
     },
     // 获取x轴的单位和格式化后的数据源
     getXAxisUnit(array) {
@@ -98,13 +122,15 @@ export const constructScatterData = (options = {}) => {
     }
   }));
 
+  currentUnit = scatterDiagramModels[0].coreIndicator.unit;
+
   // 拿到x轴与y轴的单位与转换后的元数据
   const xAxisUnit = constructHelper.getXAxisUnit(xAxisDataArray);
-  const yAxisUnit = constructHelper.getYAxisUnit(yAxisDataArray);
+  const yAxisUnit = constructHelper.getYAxisUnit(yAxisDataArray, currentUnit);
 
   // 拿到x轴与y轴转换后的具体刻度最大值与最小值
   const xAxisTickArea = constructHelper.getXAxisTickMinAndMax(xAxisUnit.newSeries);
-  const yAxisTickArea = constructHelper.getYAxisTickMinAndMax(yAxisUnit.newSeries);
+  const yAxisTickArea = constructHelper.getYAxisTickMinAndMax(yAxisUnit.newSeries, currentUnit);
 
   // 斜率
   const slope = constructHelper.getSlope({
