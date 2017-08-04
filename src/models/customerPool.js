@@ -17,7 +17,7 @@ export default {
     custRange: [],
     cycle: [],
     position: {},
-    process: {},
+    process: 0,
     empInfo: {},
     motTaskCount: '',
   },
@@ -38,9 +38,9 @@ export default {
         response: resultData,
       });
     },
-    // 获取客户池客户范围
+    // 获取客户范围
     * getCustomerScope({ payload }, { call, put }) {
-      const resultData = yield call(api.getCustomerRange);
+      const resultData = yield call(api.getCustRange);
       yield put({
         type: 'getCustomerScopeSuccess',
         response: resultData,
@@ -49,7 +49,7 @@ export default {
     // 绩效指标
     * getPerformanceIndicators({ payload }, { call, put }) {
       const indicators =
-      yield call(api.getPerformanceIndicators, payload);
+        yield call(api.getPerformanceIndicators, payload);
       yield put({
         type: 'getPerformanceIndicatorsSuccess',
         payload: { indicators },
@@ -57,12 +57,19 @@ export default {
     },
     // 初始化获取数据
     * getAllInfo({ payload }, { call, put, select }) {
-      // 统计周期
-      const statisticalPeriod = yield call(api.getStatisticalPeriod);
-      yield put({
-        type: 'getStatisticalPeriodSuccess',
-        payload: { statisticalPeriod },
-      });
+      const cycle = yield select(state => state.customerPool.cycle);
+      let firstCycle;
+      if (cycle.length) {
+        firstCycle = cycle;
+      } else {
+        // 统计周期
+        const statisticalPeriod = yield call(api.getStatisticalPeriod);
+        yield put({
+          type: 'getStatisticalPeriodSuccess',
+          payload: { statisticalPeriod },
+        });
+        firstCycle = statisticalPeriod.resultData.kPIDataScopeType;
+      }
       // 代办流程(首页总数)
       const agentProcess = yield call(api.getWorkFlowTaskCount);
       yield put({
@@ -75,11 +82,10 @@ export default {
         type: 'getMotTaskCountSuccess',
         payload: { motTaskcount },
       });
-      const defaultCycle = yield select(state => state.customerPool.cycle);
       // 绩效指标
       const indicators =
-      yield call(api.getPerformanceIndicators,
-      { ...payload.request, dateType: defaultCycle[0].key });
+        yield call(api.getPerformanceIndicators,
+          { ...payload.request, dateType: firstCycle[0].key });
       yield put({
         type: 'getPerformanceIndicatorsSuccess',
         payload: { indicators },
