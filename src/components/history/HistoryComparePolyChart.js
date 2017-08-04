@@ -103,7 +103,7 @@ export default class HistoryComparePolyChart extends PureComponent {
 
   // 当前单位为元时
   // 计算y轴的刻度范围
-  getYAxisTickMinAndMax(array) {
+  getYAxisTickMinAndMax(array, curUnit) {
     if (_.isEmpty(array)) {
       return {
         min: 0,
@@ -111,8 +111,18 @@ export default class HistoryComparePolyChart extends PureComponent {
       };
     }
 
-    const { max, min } = FixNumber.getMaxAndMinMoney(array);
+    let minAndMax;
+    if (curUnit.indexOf('元') !== -1) {
+      minAndMax = FixNumber.getMaxAndMinMoney(array);
+    } else if (curUnit.indexOf('户') !== -1) {
+      minAndMax = FixNumber.getMaxAndMinCust(array);
+    } else if (curUnit.indexOf('个') !== -1) {
+      minAndMax = FixNumber.getMaxAndMinGE(array);
+    } else if (curUnit.indexOf('次') !== -1) {
+      minAndMax = FixNumber.getMaxAndMinCi(array);
+    }
 
+    const { max, min } = minAndMax;
     return {
       max,
       min,
@@ -126,8 +136,13 @@ export default class HistoryComparePolyChart extends PureComponent {
         return FixNumber.toFixedMoney(array);
       } else if (yAxisUnit.indexOf('户') !== -1) {
         return FixNumber.toFixedCust(array);
+      } else if (yAxisUnit.indexOf('个') !== -1) {
+        return FixNumber.toFixedGE(array);
+      } else if (yAxisUnit.indexOf('次') !== -1) {
+        return FixNumber.toFixedCI(array);
       }
     }
+
     return {
       newUnit: '',
       newSeries: [],
@@ -157,7 +172,7 @@ export default class HistoryComparePolyChart extends PureComponent {
     });
 
     const newYAxisUnit = this.getYAxisUnit(newYSeries, yAxisData.unit);
-    const yAxisTickArea = this.getYAxisTickMinAndMax(newYAxisUnit.newSeries);
+    const yAxisTickArea = this.getYAxisTickMinAndMax(newYAxisUnit.newSeries, yAxisData.unit);
 
     const itemDataArray = newYAxisUnit.newSeries.map((item, index) => (
       {
