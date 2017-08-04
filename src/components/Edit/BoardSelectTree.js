@@ -180,6 +180,7 @@ export default class BoardSelectTree extends PureComponent {
       isSummury,
       allParentNodes,
       showThirdColumn,
+      boardType,
       showTitle,
       checkedOrSelected: false,
     };
@@ -193,8 +194,10 @@ export default class BoardSelectTree extends PureComponent {
   componentWillUnmount() {
     const rightChild = this.treeMainRightChild;
     const leftChild = this.treeMainLeftChild;
+    leftChild.removeEventListener('wheel', this.stopSpread);
     leftChild.removeEventListener('mousewheel', this.stopSpread);
     leftChild.removeEventListener('DOMMouseScroll', this.stopSpread);
+    rightChild.removeEventListener('wheel', this.stopSpread);
     rightChild.removeEventListener('mousewheel', this.stopSpread);
     rightChild.removeEventListener('DOMMouseScroll', this.stopSpread);
   }
@@ -407,9 +410,11 @@ export default class BoardSelectTree extends PureComponent {
     const rightChild = this.treeMainRightChild;
     const rcScrollHeight = rightChild.scrollHeight;
     if (rcScrollHeight > rcHieght) {
+      rightChild.addEventListener('wheel', this.stopSpread, false);
       rightChild.addEventListener('mousewheel', this.stopSpread, false);
       rightChild.addEventListener('DOMMouseScroll', this.stopSpread, false);
     } else {
+      rightChild.addEventListener('wheel', this.stopSpread);
       rightChild.removeEventListener('mousewheel', this.stopSpread);
       rightChild.removeEventListener('DOMMouseScroll', this.stopSpread);
     }
@@ -417,6 +422,7 @@ export default class BoardSelectTree extends PureComponent {
 
   @autobind
   stopSpread(e = window.event) {
+    console.log('滚动');
     if (e.stopPropagation) {
       e.stopPropagation();
     } else {
@@ -427,6 +433,7 @@ export default class BoardSelectTree extends PureComponent {
   @autobind
   registerScrollEvent() {
     const leftChild = this.treeMainLeftChild;
+    leftChild.addEventListener('wheel', this.stopSpread, false);
     leftChild.addEventListener('mousewheel', this.stopSpread, false);
     leftChild.addEventListener('DOMMouseScroll', this.stopSpread, false);
   }
@@ -445,6 +452,7 @@ export default class BoardSelectTree extends PureComponent {
       showThirdColumn,
       showTitle,
       checkedOrSelected,
+      boardType,
     } = this.state;
     const treeNodeHtml = getTreeNode(checkTreeArr, showThirdColumn);
     // 组成分类下面的父指标的说明文字
@@ -478,7 +486,7 @@ export default class BoardSelectTree extends PureComponent {
           <div className={styles.treeMainLeft}>
             <h3 className={styles.treeDivNodeTitle}>请选择指标</h3>
             {/* 树结构左边部分子元素 */}
-            <div className={styles.treeMainLeftContent}>
+            <div className={[styles[`treeMainLeftContent${boardType}${type}`]]}>
               <div
                 ref={(treeMainLeftChild) => { this.treeMainLeftChild = treeMainLeftChild; }}
                 className={styles.treeMainLeftChild}
