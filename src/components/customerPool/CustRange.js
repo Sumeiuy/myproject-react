@@ -8,7 +8,7 @@ import React, { PureComponent, PropTypes } from 'react';
 import { TreeSelect } from 'antd';
 import { autobind } from 'core-decorators';
 // import _ from 'lodash';
-
+import mouseWheel from '../common/mouseWheel';
 import { constants } from '../../config';
 import styles from './custRange.less';
 
@@ -60,6 +60,7 @@ function findOrgNameByOrgId(orgId) {
   };
 }
 
+@mouseWheel({ eventDom: '.ant-select-dropdown' })
 export default class CustRange extends PureComponent {
 
   static propTypes = {
@@ -90,14 +91,7 @@ export default class CustRange extends PureComponent {
   }
 
   componentDidMount() {
-    const app = document.querySelector(constants.container);
-    app.addEventListener('mousewheel', this.handleMousewheel, false);
-    app.addEventListener('DOMMouseScroll', this.handleMousewheel, false);
   }
-
-  // componentWillReceiveProps(nextProps) {
-  //   console.log(nextProps);
-  // }
 
   @autobind
   onChange(value) {
@@ -128,35 +122,6 @@ export default class CustRange extends PureComponent {
       level: custRangeLevel,
       scope: Number(custRangeLevel) + 1,
     });
-  }
-
-  @autobind
-  handleMousewheel() {
-    const dropDown = document.querySelector('.ant-select-dropdown');
-    if (!dropDown) {
-      return;
-    }
-    this.addDropDownMouseWheel();
-    const evt = new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window });
-    document.querySelector(constants.container).dispatchEvent(evt);
-  }
-
-  @autobind
-  handleDropDownMousewheel(e = window.event) {
-    if (e.stopPropagation) {
-      e.stopPropagation();
-    } else {
-      e.cancelBubble = true;
-    }
-  }
-
-  @autobind
-  addDropDownMouseWheel() {
-    const elem = document.querySelector('.ant-select-tree-dropdown');
-    if (elem) {
-      elem.addEventListener('mousewheel', this.handleDropDownMousewheel, false);
-      elem.addEventListener('DOMMouseScroll', this.handleDropDownMousewheel, false);
-    }
   }
 
   render() {

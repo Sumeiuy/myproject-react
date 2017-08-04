@@ -123,7 +123,13 @@ export default class PerformanceIndicators extends PureComponent {
                   onChange={this.handleChange}
                 >
                   {cycle.map(item => <Option key={item.key} value={item.key}>{item.value}</Option>)}
-                </Select> : null
+                </Select> :
+                <Select
+                  style={{ width: 80, color: '#CCC' }}
+                  defaultValue="暂无数据"
+                >
+                  <Option value="暂无数据">暂无数据</Option>
+                </Select>
               }
             </div>
           </div>

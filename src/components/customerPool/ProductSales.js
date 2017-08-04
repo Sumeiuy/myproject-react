@@ -63,37 +63,37 @@ export default class ProductSales extends PureComponent {
 
   render() {
     const { data } = this.props;
-    const { fundTranAmt = 0, privateTranAmt = 0, finaTranAmt = 0, otcTranAmt = 0 } = data;
+    const { fundTranAmt, privateTranAmt, finaTranAmt, otcTranAmt } = data;
     return (
       <div className={styles.productBox}>
         <div className={styles.product}>
           <div className={styles.productItem}>
             <span className={styles.name}>公募基金</span>
             <div className={styles.Progressbox}>
-              <Progress percent={this.handleDataShadow(fundTranAmt)} showInfo={false} status="active" />
+              <Progress percent={this.handleDataShadow(fundTranAmt || 0)} showInfo={false} status="active" />
             </div>
-            <span className={styles.num}>{fundTranAmt}</span>
+            <span className={styles.num}>{fundTranAmt || '--'}</span>
           </div>
           <div className={styles.productItem}>
             <span className={styles.name}>证券投资</span>
             <div className={styles.Progressbox}>
-              <Progress percent={this.handleDataShadow(privateTranAmt)} showInfo={false} status="active" />
+              <Progress percent={this.handleDataShadow(privateTranAmt || 0)} showInfo={false} status="active" />
             </div>
-            <span className={styles.num}>{privateTranAmt}</span>
+            <span className={styles.num}>{privateTranAmt || '--'}</span>
           </div>
           <div className={styles.productItem}>
             <span className={styles.name}>紫金产品</span>
             <div className={styles.Progressbox}>
-              <Progress percent={this.handleDataShadow(finaTranAmt)} showInfo={false} status="active" />
+              <Progress percent={this.handleDataShadow(finaTranAmt || 0)} showInfo={false} status="active" />
             </div>
-            <span className={styles.num}>{finaTranAmt}</span>
+            <span className={styles.num}>{finaTranAmt || '--'}</span>
           </div>
           <div className={styles.productItem}>
             <span className={styles.name}>OTC</span>
             <div className={styles.Progressbox}>
-              <Progress percent={this.handleDataShadow(otcTranAmt)} showInfo={false} status="active" />
+              <Progress percent={this.handleDataShadow(otcTranAmt || 0)} showInfo={false} status="active" />
             </div>
-            <span className={styles.num}>{otcTranAmt}</span>
+            <span className={styles.num}>{otcTranAmt || '--'}</span>
           </div>
         </div>
       </div>
