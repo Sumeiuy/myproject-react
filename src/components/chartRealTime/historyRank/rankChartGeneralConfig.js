@@ -5,9 +5,9 @@
 
 const chartOptions = {
   // 堆叠柱状图使用的颜色
-  stackBarColors: ['#e0695c', '#fcd459', '#69ddd5', '#508dc8', '#7cc9ec', '#b2dff4', '#ff7f50', '#ffa500', '#038387', '#00b294'],
+  stackBarColors: ['#3983ff', '#4adad5', '#756fb8', '#ff4e7b', '#ff784e', '#ffb24e', '#7f1de5', '#70c381', '#789262', '#70c381'],
   // 柱状图颜色
-  barColor: '#4bbbf4',
+  barColor: '#108ee9',
   // y轴样式
   yAxis: {
     type: 'category',
@@ -15,22 +15,19 @@ const chartOptions = {
     show: true,
     axisLabel: {
       show: false,
-      textStyle: {
-        color: '#999',
-      },
     },
     axisTick: { show: false },
     axisLine: {
-      onZero: true,
+      onZero: false,
       lineStyle: {
         color: '#e7eaec',
       },
     },
-    data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日', '周末', '周1', '周2'],
   },
   // x轴样式
   xAxis: {
     type: 'value',
+    scale: true,
     axisLine: {
       lineStyle: {
         color: '#e7eaec',
@@ -49,38 +46,72 @@ const chartOptions = {
     },
     splitLine: {
       show: false,
-      lineStyle: {
-        color: '#e7eaec',
-      },
     },
   },
   // 坐标轴样式
-  grid: {
-    show: false,
-    top: '0',
-    left: '20px',
-    right: '40px',
-    bottom: '20px',
-    containLabel: false,
-    borderWidth: '1',
-    borderColor: '#e7eaec',
-  },
-  // 柱状图每一项用于提示名称，数值所在的项的样式
-  itemInfo: {},
-  // 柱状阴影
-  barShadow: {
-    type: 'bar',
-    itemStyle: {
-      normal: {
-        color: 'rgba(0,0,0,0.05)',
-      },
+  chartGrid: [
+    {
+      show: false,
+      top: '0',
+      left: '20px',
+      right: '40px',
+      bottom: '20px',
+      containLabel: false,
+      borderWidth: '1',
+      borderColor: '#e7eaec',
     },
-    // barGap: '-100%',
-    barGap: '0',
-    barCategoryGap: '30%',
-    animation: false,
-    barWidth: '50%',
+    {
+      show: false,
+      top: '0',
+      left: '20px',
+      right: '40px',
+      bottom: '20px',
+      containLabel: false,
+      borderWidth: '1',
+      borderColor: '#e7eaec',
+      z: 10,
+    },
+  ],
+  chartTooltip: {
+    show: true,
+    trigger: 'axis',
+    axisPointer: {
+      type: 'shadow',
+    },
+    backgroundColor: 'rgba(255, 255, 255, .9)',
+    padding: [12, 11, 13, 13],
+    position(pos, params, dom, rect, size) {
+      // 鼠标在左侧时 tooltip 显示到右侧，鼠标在右侧时 tooltip 显示到左侧。
+      const obj = { top: (pos[1] - size.contentSize[1]) };
+      obj[['left', 'right'][+(pos[0] < size.viewSize[0] / 2)]] = 5;
+      return obj;
+    },
+    extraCssText:
+      `border-radius: 8px;
+       box-shadow: 0 6px 10px 0 rgba(0,0,0,0.14),
+                0 1px 18px 0 rgba(0,0,0,0.12),
+                0 3px 5px -1px rgba(0,0,0,0.3);`,
   },
 };
 
-export default chartOptions;
+const stackTootip = {
+  ...chartOptions.chartTooltip,
+  position(pos, params, dom, rect, size) {
+    // 鼠标在左侧时 tooltip 显示到右侧，鼠标在右侧时 tooltip 显示到左侧。
+    const obj = {};
+    const ch = size.contentSize[1];
+    const y = pos[1];
+    const vh = size.viewSize[1];
+    let top = y - (ch / 2);
+    if (y < ch) {
+      top = 0;
+    } else if (y > (vh - ch)) {
+      top = vh - ch;
+    }
+    obj.top = top;
+    obj[['left', 'right'][+(pos[0] < size.viewSize[0] / 2)]] = 5;
+    return obj;
+  },
+};
+
+export default { ...chartOptions, stackTootip };

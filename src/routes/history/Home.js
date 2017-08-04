@@ -5,9 +5,10 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
+import { autobind } from 'core-decorators';
 import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
-import { autobind } from 'core-decorators';
+import { message } from 'antd';
 import _ from 'lodash';
 
 import IndicatorOverviewHeader from '../../components/history/IndicatorOverviewHeader';
@@ -25,6 +26,7 @@ const effects = {
   getContrastData: 'history/getContrastData',
   getIndicatorLib: 'history/getIndicatorLib',
   queryCurrentRankingRecord: 'history/queryCurrentRankingRecord',
+  getRankData: 'history/getRankData',
 };
 
 const fectchDataFunction = (globalLoading, type) => query => ({
@@ -43,8 +45,14 @@ const mapStateToProps = state => ({
   reviewAnalysis: state.history.reviewAnalysis, // 入岗投顾
   historyContrastDic: state.history.historyContrastDic, // 字典数据
   contrastData: state.history.contrastData,
+  createLoading: state.history.createLoading,
+  deleteLoading: state.history.deleteLoading,
+  updateLoading: state.history.updateLoading,
+  operateData: state.history.operateData,
+  message: state.history.message,
   indicatorLib: state.history.indicatorLib,
   queryCurrentRankingRecord: state.history.queryCurrentRankingRecord,
+  rankData: state.history.rankData,
 });
 
 const mapDispatchToProps = {
@@ -52,8 +60,12 @@ const mapDispatchToProps = {
   queryContrastAnalyze: fectchDataFunction(true, effects.queryContrastAnalyze),
   queryHistoryContrast: fectchDataFunction(true, effects.queryHistoryContrast),
   getContrastData: fectchDataFunction(true, effects.getContrastData),
+  createHistoryBoard: fectchDataFunction(true, 'history/createHistoryBoard'),
+  deleteHistoryBoard: fectchDataFunction(true, 'history/deleteHistoryBoard'),
+  updateHistoryBoard: fectchDataFunction(true, 'history/updateHistoryBoard'),
   getIndicatorLib: fectchDataFunction(false, effects.getIndicatorLib),
   queryCurrentRankingRecord: fectchDataFunction(false, effects.queryCurrentRankingRecord),
+  getRankData: fectchDataFunction(true, effects.getRankData),
   push: routerRedux.push,
   replace: routerRedux.replace,
 };
@@ -79,19 +91,42 @@ export default class HistoryHome extends PureComponent {
     reviewAnalysis: PropTypes.object.isRequired,
     historyCore: PropTypes.array, // 概览
     crrData: PropTypes.object, // 强弱指示分析
+    createHistoryBoard: PropTypes.func.isRequired, // 创建(另存为)
+    deleteHistoryBoard: PropTypes.func.isRequired, // 删除
+    updateHistoryBoard: PropTypes.func.isRequired, // 更新(保存)
+    operateData: PropTypes.object,
+    message: PropTypes.string,
+    createLoading: PropTypes.bool,
+    deleteLoading: PropTypes.bool,
+    updateLoading: PropTypes.bool,
     indicatorLib: PropTypes.object.isRequired,
     getIndicatorLib: PropTypes.func.isRequired,
     historyContrastDic: PropTypes.object.isRequired,
     queryHistoryContrast: PropTypes.func.isRequired,
     queryCurrentRankingRecord: PropTypes.func.isRequired,
+    getRankData: PropTypes.func.isRequired,
+    rankData: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
+    createLoading: false,
+    deleteLoading: false,
+    updateLoading: false,
     globalLoading: false,
     custRange: [],
     visibleBoards: [],
     historyCore: [],
     crrData: {},
+    operateData: {},
+    message: '',
+  }
+
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      selectKeys: [],
+    };
   }
 
   componentWillMount() {
@@ -104,6 +139,7 @@ export default class HistoryHome extends PureComponent {
       getContrastData,
       getIndicatorLib,
       queryCurrentRankingRecord,
+      getRankData,
     } = this.props;
 
     getAllInfo({
@@ -157,7 +193,6 @@ export default class HistoryHome extends PureComponent {
     queryHistoryContrast({
       boardId: '3',
     });
-
     // 参数需要动态变
     // 暂时先写死
     getContrastData({
@@ -171,6 +206,65 @@ export default class HistoryHome extends PureComponent {
       contrastEnd: '20160623',
       cycleType: 'month',
     });
+
+    // 获取历史排名数据
+    getRankData({
+      indicatorId: 'tgInNum', // 指标ID
+      begin: '20170701', // 本期开始日期
+      cycleType: 'month', // 周期类型
+      end: '20170719', // 本期结束日期
+      scope: '3', // 查询层级
+      orgId: 'ZZ001041093', // 机关ID
+      contrastBegin: '20170601', // 上期开始日期
+      contrastEnd: '20170619', // 上期结束日期
+      localScope: '2', // 当前所在层级
+      pageSize: 10, // 每页显示条数
+      pageNum: 1, // 页码
+      orderIndicatorId: 'currSignCustAset', // 排序指标ID
+      orderType: 'desc', // 排序方式
+      isMultiple: '1', // 此处写死“1”
+    });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const {
+      createLoading: preCL,
+      deleteLoading: preDL,
+      updateLoading: prePL,
+    } = this.props;
+    const { push, operateData, createLoading, deleteLoading, updateLoading } = nextProps;
+    if (preCL && !createLoading) {
+      // 创建完成后，需要跳转到新建看板
+      const { id, ownerOrgId, boardType } = operateData;
+      this.setState({
+        selectKeys: [],
+      },
+      () => {
+        const { selectKeys } = this.state;
+        console.warn('selectKeys+++++', selectKeys);
+        push(`/history?boardId=${id}&orgId=${ownerOrgId}&boardType=${boardType}`);
+      });
+    }
+    if (preDL && !deleteLoading) {
+      const { location: { query: { boardType } } } = this.props;
+      // 删除成功
+      message.success('删除成功');
+      if (boardType === 'TYPE_LSDB_JYYJ') {
+        push('/history?boardId=4');
+      } else if (boardType === 'TYPE_LSDB_TGJX') {
+        push('/history?boardId=3');
+      }
+    }
+    if (!updateLoading && prePL) {
+      message.success('保存成功');
+      const { id, ownerOrgId, boardType } = operateData;
+      this.setState({
+        selectKeys: [],
+      },
+      () => {
+        push(`/history?boardId=${id}&orgId=${ownerOrgId}&boardType=${boardType}`);
+      });
+    }
   }
 
   @autobind
@@ -189,6 +283,25 @@ export default class HistoryHome extends PureComponent {
       selectKeys: array,
     });
   }
+
+  // 另存为新的历史对比看板
+  @autobind
+  createBoardConfirm(board) {
+    this.props.createHistoryBoard(board);
+  }
+
+  // 确认删除历史对比的看板
+  @autobind
+  deleteBoardConfirm(board) {
+    this.props.deleteHistoryBoard(board);
+  }
+
+  // 更新(保存)历史记录看板
+  @autobind
+  updateBoardConfirm(border) {
+    this.props.updateHistoryBoard(border);
+  }
+
   render() {
     const {
       location,
@@ -201,6 +314,7 @@ export default class HistoryHome extends PureComponent {
       historyContrastDic,
       contrastData,
       indicatorLib,
+      rankData,
     } = this.props;
     console.warn('historyCore', historyCore);
     // 总量指标库
@@ -213,7 +327,7 @@ export default class HistoryHome extends PureComponent {
     };
 
     const { cust = EMPTY_LIST, invest = EMPTY_LIST } = historyContrastDic;
-
+    const { selectKeys } = this.state;
     return (
       <div className="pageHistory">
         <div className={styles.historyhd}>
@@ -221,8 +335,15 @@ export default class HistoryHome extends PureComponent {
         </div>
         <div className={styles.historybd}>
           <div className={styles.indicatorOverview}>
+            {/* 核心指标头部区域---假定数据 */}
             <IndicatorOverviewHeader
               location={location}
+              createBoardConfirm={this.createBoardConfirm}
+              deleteBoardConfirm={this.deleteBoardConfirm}
+              updateBoardConfirm={this.updateBoardConfirm}
+              ownerOrgId={'ZZ001041'}
+              orgId={'ZZ001041'}
+              selectKeys={selectKeys}
             />
 
             {/* 指标概览区域 */}
@@ -238,7 +359,20 @@ export default class HistoryHome extends PureComponent {
             <div className={styles.polyArea}>
               <HistoryComparePolyChart data={contrastData} />
               {/* 假定数据 */}
-              <HistoryCompareRankChart level="1" scope="2" data={[]} />
+              {
+                _.isEmpty(rankData)
+                ?
+                null
+                :
+                (
+                  <HistoryCompareRankChart
+                    level="1"
+                    scope="2"
+                    data={rankData}
+                    boardType="TYPE_TGJX"
+                  />
+                )
+              }
             </div>
             <HisDivider />
             <div className={styles.scatterArea}>

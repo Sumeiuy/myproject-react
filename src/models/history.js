@@ -18,8 +18,14 @@ export default {
     currentRankingRecord: {}, // 强弱指示分析
     historyContrastDic: {}, // 字典
     contrastData: {}, // 历史对比数据
+    createLoading: false, // 创建历史对比看板成功与否
+    deleteLoading: false, // 删除历史对比看板成功与否
+    updateLoading: false, // 保存历史对比看板成功与否
+    message: '', // 各种操作的提示信息
+    operateData: {}, // 各种操作后，返回的数据集
     indicatorLib: {}, // 指标库
     rankingRecord: {},
+    rankData: {}, // 历史对比排名数据
   },
   reducers: {// 成功获取指标库
     getIndicatorLibSuccess(state, action) {
@@ -126,6 +132,25 @@ export default {
         contrastData,
       };
     },
+
+    // 各种操作的状态
+    opertateBoardState(state, action) {
+      const { payload: { name, value, message, operateData } } = action;
+      return {
+        ...state,
+        [name]: value,
+        message,
+        operateData,
+      };
+    },
+    // 历史对比排名
+    getRankDataSuccess(state, action) {
+      const { payload: { rankData } } = action;
+      return {
+        ...state,
+        rankData,
+      };
+    },
   },
   effects: {
     // 初始化获取数据
@@ -209,6 +234,103 @@ export default {
       yield put({
         type: 'getContrastDataSuccess',
         payload: { contrastData: resultData },
+      });
+    },
+
+    // 创建历史对比看板
+    * createHistoryBoard({ payload }, { call, put }) {
+      yield put({
+        type: 'opertateBoardState',
+        payload: {
+          name: 'createLoading',
+          value: true,
+          message: '开始创建',
+        },
+      });
+      const createBoardResult = yield call(api.createHistoryBoard, payload);
+      const board = createBoardResult.resultData;
+      // const cust = yield select(state => state.history.custRange);
+      // const allVisibleReports = yield call(api.getAllVisibleReports, {
+      //   orgId: cust[0].id,
+      // });
+      // yield put({
+      //   type: 'getAllVisibleReportsSuccess',
+      //   payload: { allVisibleReports },
+      // });
+      yield put({
+        type: 'opertateBoardState',
+        payload: {
+          name: 'createLoading',
+          value: false,
+          message: '创建完成',
+          operateData: board,
+        },
+      });
+    },
+
+    // 删除历史对比看板
+    * deleteHistoryBoard({ payload }, { call, put }) {
+      yield put({
+        type: 'opertateBoardState',
+        payload: {
+          name: 'deleteLoading',
+          value: true,
+          message: '开始删除',
+        },
+      });
+      // const deleteResult = yield call(api.deleteHistoryBoard, payload);
+      yield call(api.deleteHistoryBoard, payload);
+      // const result = deleteResult.resultData;
+      // if (Number(result.code)) {
+      //   const cust = yield select(state => state.history.custRange);
+      //   const allVisibleReports = yield call(api.getAllVisibleReports, {
+      //     orgId: cust[0].id,
+      //   });
+      //   yield put({
+      //     type: 'getAllVisibleReportsSuccess',
+      //     payload: { allVisibleReports },
+      //   });
+      // }
+      yield put({
+        type: 'opertateBoardState',
+        payload: {
+          name: 'deleteLoading',
+          value: false,
+          message: '删除完成',
+        },
+      });
+    },
+
+    // 保存(更新)历史对比看板
+    * updateHistoryBoard({ payload }, { call, put }) {
+      yield put({
+        type: 'opertateBoardState',
+        payload: {
+          name: 'updateLoading',
+          value: true,
+          message: '开始保存',
+        },
+      });
+      const publishResult = yield call(api.updateHistoryBoard, payload);
+      const board = publishResult.resultData;
+      yield put({
+        type: 'opertateBoardState',
+        payload: {
+          name: 'updateLoading',
+          value: false,
+          message: '保存完成',
+          operateData: board,
+        },
+      });
+    },
+
+    // 获取历史排名数据
+    * getRankData({ payload }, { call, put }) {
+      const response = yield call(api.getHistoryRankChartData, payload);
+      const { resultData } = response;
+      yield put({
+        type: 'getRankDataSuccess',
+        payload: { rankData: resultData },
       });
     },
   },

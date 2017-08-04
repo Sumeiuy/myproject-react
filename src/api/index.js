@@ -82,4 +82,16 @@ export default {
 
   // 查询历史对比折线图数据
   getHistoryContrastLineChartData: query => api.post('/groovynoauth/jxzb/queryContrastLineChart', query),
+
+  // 保存用户创建的历史对比看板
+  createHistoryBoard: query => api.post('/groovynoauth/jxzb/saveBoard', query),
+
+  // 删除历史对比看板
+  deleteHistoryBoard: query => api.post('/groovynoauth/jxzb/deleteBoard', query),
+
+  // 更新历史对比看板
+  updateHistoryBoard: query => api.post('/groovynoauth/jxzb/updateBoard', query),
+
+  // 查询历史对比排名数据
+  getHistoryRankChartData: query => api.post('/groovynoauth/jxzb/queryHistoryCardRecord', query),
 };
