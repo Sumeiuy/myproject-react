@@ -42,7 +42,7 @@ export default class ScatterAnalysis extends PureComponent {
               queryContrastAnalyze={queryContrastAnalyze}
               custRange={custRange}
               title={'客户贡献分析'}
-              optionsData={cust}
+              optionsData={{ data: cust, type: 'cust' }}
             />
           </Col>
           <Col span={12} className={styles.rightScatterSection}>
@@ -52,7 +52,7 @@ export default class ScatterAnalysis extends PureComponent {
               queryContrastAnalyze={queryContrastAnalyze}
               custRange={custRange}
               title={'入岗投顾能力分析'}
-              optionsData={invest}
+              optionsData={{ data: invest, type: 'invest' }}
             />
           </Col>
         </Row>
