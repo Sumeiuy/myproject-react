@@ -76,7 +76,7 @@ export default {
   getStatisticalPeriod: query => api.post('/groovynoauth/fsp/dictionary', query),
 
   // 代办流程(首页总数)
-  getWorkFlowTaskCount: query => api.post('groovynoauth/fsp/emp/workflow/queryWorkFlowTaskCount', query),
+  getWorkFlowTaskCount: query => api.post('/groovynoauth/fsp/emp/workflow/queryWorkFlowTaskCount', query),
 
   // 员工职责与职位
   getEmpInfo: query => api.post('/groovynoauth/fsp/emp/info/queryEmpInfo', query),
