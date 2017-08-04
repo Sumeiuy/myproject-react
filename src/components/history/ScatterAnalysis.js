@@ -5,7 +5,11 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { Row, Col } from 'antd';
 import AbilityScatterAnalysis from './AbilityScatterAnalysis';
+import { scatterType } from '../../config';
 import styles from './scatterAnalysis.less';
+
+const custScatter = scatterType[0];
+const investScatter = scatterType[1];
 
 export default class ScatterAnalysis extends PureComponent {
   static propTypes = {
@@ -35,16 +39,18 @@ export default class ScatterAnalysis extends PureComponent {
             <AbilityScatterAnalysis
               data={contributionAnalysisData}
               queryContrastAnalyze={queryContrastAnalyze}
-              title={'客户贡献分析'}
-              optionsData={{ data: cust, type: 'cust' }}
+              title={custScatter.title}
+              optionsData={cust}
+              type={custScatter.type}
             />
           </Col>
           <Col span={12} className={styles.rightScatterSection}>
             <AbilityScatterAnalysis
               data={reviewAnalysisData}
               queryContrastAnalyze={queryContrastAnalyze}
-              title={'入岗投顾能力分析'}
-              optionsData={{ data: invest, type: 'invest' }}
+              title={investScatter.title}
+              optionsData={invest}
+              type={investScatter.type}
             />
           </Col>
         </Row>
@@ -52,4 +58,3 @@ export default class ScatterAnalysis extends PureComponent {
     );
   }
 }
-

@@ -23,6 +23,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
     queryContrastAnalyze: PropTypes.func.isRequired,
     title: PropTypes.string.isRequired,
     optionsData: PropTypes.array.isRequired,
+    type: PropTypes.string.isRequired,
   };
 
   static defaultProps = {
@@ -48,7 +49,6 @@ export default class AbilityScatterAnalysis extends PureComponent {
   componentWillReceiveProps(nextProps) {
     const { data: nextData } = nextProps;
     const { data: prevData } = this.props;
-
     const {
       core = EMPTY_OBJECT,
       contrast = EMPTY_OBJECT,
@@ -86,7 +86,6 @@ export default class AbilityScatterAnalysis extends PureComponent {
 
   getAnyPoint(seriesData) {
     const { xAxisMin, yAxisMin, yAxisMax, xAxisMax } = seriesData;
-
     return {
       startCoord: [xAxisMin, yAxisMin],
       endCoord: [xAxisMax, yAxisMax],
@@ -166,11 +165,14 @@ export default class AbilityScatterAnalysis extends PureComponent {
   }
 
   @autobind
-  handleChange(value, type) {
-    const { queryContrastAnalyze } = this.props;
+  handleChange(value) {
+    this.setState({
+      currentSelectedContrast: value,
+    });
+    const { queryContrastAnalyze, type } = this.props;
     queryContrastAnalyze({
       type,
-      coreIndicatorId: value, // x轴
+      contrastIndicatorId: value, // y轴
     });
   }
 
@@ -199,7 +201,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
 
     const {
       title,
-      optionsData: { data = '', type },
+      optionsData: { data = '' },
     } = this.props;
 
     if (_.isEmpty(finalData)) {
@@ -232,7 +234,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
           <div className={styles.compare}>对比</div>
           <div className={styles.customerDimensionSelect}>
             <Select
-              onChange={value => this.handleChange(value, type)}
+              onChange={this.handleChange}
               allowClear={false}
               placeholder="无"
               defaultValue={finalOptions[0] && finalOptions[0].value} // 默认选中项

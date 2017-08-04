@@ -122,6 +122,34 @@ const optionsMap = {
         name: '服务经理',
       },
     ],
+    TYPE_LSDB_TGJX: [
+      {
+        scope: '2',
+        name: '分公司',
+      },
+      {
+        scope: '3',
+        name: '营业部',
+      },
+      {
+        scope: '4',
+        name: '投顾',
+      },
+    ],
+    TYPE_LSDB_JYYJ: [
+      {
+        scope: '2',
+        name: '分公司',
+      },
+      {
+        scope: '3',
+        name: '营业部',
+      },
+      {
+        scope: '4',
+        name: '服务经理',
+      },
+    ],
   },
   // 按顺序排序
   sortByOrder: [
