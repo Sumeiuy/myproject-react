@@ -38,7 +38,7 @@ exports.response = function (req, res) {
               rank: '1',
               rank_current: '1',
               rank_contrast: '2',
-              rand_change: '1',
+              rand_change: '-99',
               changeRate: null,
               indiModelList: [
                 {

@@ -10,7 +10,7 @@ import { BoardBasic } from '../config';
 export default {
   namespace: 'history',
   state: {
-    custRange: [],
+    custRange: [], // 组织机构树
     visibleBoards: [], // 可见看板
     contributionAnalysis: {}, // 贡献能力分析数据
     reviewAnalysis: {}, // 入岗投顾能力分析数据
@@ -143,12 +143,12 @@ export default {
   effects: {
     // 初始化获取数据
     * getAllInfo({ payload }, { call, put, select }) {
-      const cust = yield select(state => state.report.custRange);
+      const cust = yield select(state => state.history.custRange);
       let firstCust;
       if (cust.length) {
         firstCust = cust[0];
       } else {
-        const response = yield call(api.getCustRange, payload.custRange);
+        const response = yield call(api.getCustRange, payload);
         yield put({
           type: 'getCustRangeSuccess',
           response,
@@ -163,23 +163,28 @@ export default {
         type: 'getAllVisibleReportsSuccess',
         payload: { allVisibleReports },
       });
-      // 历史指标概览
-      const resHistoryCore = yield call(api.getHistoryCore, {
-        orgId: firstCust.id,
-      });
+    },
+
+    // 获取历史对比核心指标
+    * getHistoryCore({ payload }, { call, put }) {
+      const resHistoryCore = yield call(api.getHistoryCore, payload);
       yield put({
         type: 'getHistoryCoreSuccess',
         payload: { resHistoryCore },
       });
+    },
+
+    // 获取雷达图数据
+    * getRadarData({ payload }, { call, put }) {
       // 强弱指示分析
-      const currentRanking = yield call(api.getCurrentRankingRecord, {
-        orgId: firstCust.id,
-      });
+      const currentRanking = yield call(api.getCurrentRankingRecord, payload);
       yield put({
         type: 'getCurrentRankingRecordSuccess',
         payload: { currentRanking },
       });
     },
+
+    // 获取指标库
     * getIndicatorLib({ payload }, { call, put }) {
       const indicatorResult = yield call(api.getIndicators, payload);
       yield put({

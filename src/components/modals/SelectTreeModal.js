@@ -20,13 +20,12 @@ export default class SelectTreeModal extends PureComponent {
 
   static defaultProps = {
     visible: false,
+    confirm: () => {},
   }
 
   constructor(props) {
     super(props);
     const { visible, summuryLib } = props;
-    // console.warn('summuryIndicator', summuryIndicator);
-    console.warn('constructor summuryLib', summuryLib);
     this.state = {
       modalVisible: visible,
       summuryLib,
@@ -35,7 +34,6 @@ export default class SelectTreeModal extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.warn('进入 componentWillReceiveProps', nextProps.summuryLib);
     const { visible, summuryLib } = nextProps;
     const { visible: preVisible, summuryLib: preSummuryLib } = this.props;
     if (!_.isEqual(visible, preVisible)) {
@@ -44,7 +42,6 @@ export default class SelectTreeModal extends PureComponent {
       });
     }
     if (!_.isEqual(summuryLib, preSummuryLib)) {
-      console.warn('summuryLib 不相等');
       this.setState({
         summuryLib,
         summuryKeys: summuryLib.checkedKeys,
@@ -61,7 +58,6 @@ export default class SelectTreeModal extends PureComponent {
 
   @autobind
   saveSelectTreeModal() {
-    console.warn('点击了确认按钮');
     const { summuryIndicator } = this.state;
     const { saveIndcatorToHome } = this.props;
     saveIndcatorToHome(summuryIndicator);

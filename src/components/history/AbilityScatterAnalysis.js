@@ -19,12 +19,11 @@ const EMPTY_OBJECT = {};
 
 export default class AbilityScatterAnalysis extends PureComponent {
   static propTypes = {
-    location: PropTypes.object.isRequired,
     data: PropTypes.object.isRequired,
     queryContrastAnalyze: PropTypes.func.isRequired,
-    custRange: PropTypes.array.isRequired,
     title: PropTypes.string.isRequired,
     optionsData: PropTypes.array.isRequired,
+    type: PropTypes.string.isRequired,
   };
 
   static defaultProps = {
@@ -48,12 +47,8 @@ export default class AbilityScatterAnalysis extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { data: nextData, custRange = EMPTY_LIST } = nextProps;
-    const { data: prevData, queryContrastAnalyze,
-      custRange: prevCustRange = EMPTY_LIST } = this.props;
-
-    const { currentSelectedContrast } = this.state;
-
+    const { data: nextData } = nextProps;
+    const { data: prevData } = this.props;
     const {
       core = EMPTY_OBJECT,
       contrast = EMPTY_OBJECT,
@@ -71,24 +66,6 @@ export default class AbilityScatterAnalysis extends PureComponent {
       const finalData = constructScatterData({ core, contrast, scatterDiagramModels });
       this.setState({
         finalData,
-      });
-    }
-
-    if (custRange !== prevCustRange) {
-      // 当前指标变化
-      // x轴变化
-      // 请求数据
-      queryContrastAnalyze({
-        boardId: '3',
-        type: 'invest',
-        orgId: 'ZZ001041',
-        localScope: '1',
-        scope: '2',
-        begin: '20170601',
-        end: '20170630',
-        cycleType: 'month',
-        coreIndicatorId: '', // x轴
-        contrastIndicatorId: currentSelectedContrast, // y轴
       });
     }
   }
@@ -109,7 +86,6 @@ export default class AbilityScatterAnalysis extends PureComponent {
 
   getAnyPoint(seriesData) {
     const { xAxisMin, yAxisMin, yAxisMax, xAxisMax } = seriesData;
-
     return {
       startCoord: [xAxisMin, yAxisMin],
       endCoord: [xAxisMax, yAxisMax],
@@ -190,21 +166,13 @@ export default class AbilityScatterAnalysis extends PureComponent {
 
   @autobind
   handleChange(value) {
-    const { queryContrastAnalyze } = this.props;
-    queryContrastAnalyze({
-      boardId: '3',
-      type: 'invest',
-      orgId: 'ZZ001041',
-      localScope: '1',
-      scope: '2',
-      begin: '20170601',
-      end: '20170630',
-      cycleType: 'month',
-      coreIndicatorId: '', // x轴
-      contrastIndicatorId: value, // y轴
-    });
     this.setState({
       currentSelectedContrast: value,
+    });
+    const { queryContrastAnalyze, type } = this.props;
+    queryContrastAnalyze({
+      type,
+      contrastIndicatorId: value, // y轴
     });
   }
 

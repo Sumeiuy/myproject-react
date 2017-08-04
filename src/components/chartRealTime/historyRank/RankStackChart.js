@@ -17,6 +17,7 @@ import {
   filterRankData,
   dealStackSeriesData,
   designStackGrid,
+  getStackSummury,
 } from './rankDataHandle';
 import styles from './RankChart.less';
 
@@ -76,6 +77,7 @@ export default class RankStackChart extends PureComponent {
     const dealResult = dealStackSeriesData(stackSeries, unit, summury);
     stackSeries = dealResult.newStackSeries;
     unit = dealResult.newUnit;
+    const custSummury = getStackSummury(stackSeries);
     // 设计直角坐标系
     const newGrid = designStackGrid(stackSeries, unit);
     // 改变头部的单位显示
@@ -90,7 +92,7 @@ export default class RankStackChart extends PureComponent {
       grid: newGrid,
       stackSeries,
       rank,
-      summury,
+      summury: custSummury,
       legends,
     });
   }
