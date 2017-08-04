@@ -16,6 +16,11 @@ import { CreateHistoryBoardModal, DeleteHistoryBoardModal } from '../../componen
 // 选择项字典
 import styles from './indicatorOverviewHeader.less';
 
+// 投顾绩效历史对比的borderId
+const TYPE_LSDB_TGJX = '3';
+// 经营业绩历史对比的boardId
+const TYPE_LSDB_JYYJ = '4';
+
 export default class PageHeader extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -115,13 +120,13 @@ export default class PageHeader extends PureComponent {
     };
     console.warn('this.props.selectKeys', this.props.selectKeys);
     const deleteBtnClass = classnames({
-      [styles.deleteBtnUnshowClass]: boardId === '3' || boardId === '4',
+      [styles.deleteBtnUnshowClass]: boardId === TYPE_LSDB_TGJX || boardId === TYPE_LSDB_JYYJ,
     });
     const createBtnClass = classnames({
-      [styles.createBtnUnshowClass]: (_.isEmpty(this.props.selectKeys) && boardId === '3') || (_.isEmpty(this.props.selectKeys) && boardId === '4'),
+      [styles.createBtnUnshowClass]: _.isEmpty(this.props.selectKeys),
     });
     const updateBtnClass = classnames({
-      [styles.updateBtnUnshowClass]: boardId === '3' || boardId === '4' || (_.isEmpty(this.props.selectKeys) && boardId !== '3' && boardId !== '4'),
+      [styles.updateBtnUnshowClass]: boardId === TYPE_LSDB_TGJX || boardId === TYPE_LSDB_JYYJ || (_.isEmpty(this.props.selectKeys) && boardId !== TYPE_LSDB_TGJX && boardId !== TYPE_LSDB_JYYJ),
     });
 
     return (

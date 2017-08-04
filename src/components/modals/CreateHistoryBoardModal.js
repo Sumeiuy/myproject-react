@@ -13,6 +13,10 @@ import styles from './modalCommon.less';
 const FormItem = Form.Item;
 const create = Form.create;
 
+// 投顾绩效历史对比的borderId
+const TYPE_LSDB_TGJX = '3';
+// 经营业绩历史对比的boardId
+const TYPE_LSDB_JYYJ = '4';
 @create()
 export default class CreateHistoryBoardModal extends PureComponent {
   static propTypes = {
@@ -103,9 +107,9 @@ export default class CreateHistoryBoardModal extends PureComponent {
       return;
     }
     let boardTypeValue;
-    if (boardType === '' && boardId === '3') {
+    if (boardType === '' && boardId === TYPE_LSDB_TGJX) {
       boardTypeValue = 'TYPE_LSDB_TGJX';
-    } else if (boardType === '' && boardId === '4') {
+    } else if (boardType === '' && boardId === TYPE_LSDB_JYYJ) {
       boardTypeValue = 'TYPE_LSDB_JYYJ';
     } else {
       boardTypeValue = boardType;

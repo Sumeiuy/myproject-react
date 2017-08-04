@@ -78,7 +78,7 @@ export default {
   queryHistoryContrast: query => api.post('/groovynoauth/jxzb/queryHistoryContrast', query),
 
   // 查询历史对比折线图数据
-  getHistoryContrastLineChartData: query => api.post('/groovynoauth/jxzb/queeryContrastLineChart', query),
+  getHistoryContrastLineChartData: query => api.post('/groovynoauth/jxzb/queryContrastLineChart', query),
 
   // 保存用户创建的历史对比看板
   createHistoryBoard: query => api.post('/groovynoauth/jxzb/saveBoard', query),
