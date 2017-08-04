@@ -414,7 +414,7 @@ export default class BoardSelectTree extends PureComponent {
       rightChild.addEventListener('mousewheel', this.stopSpread, false);
       rightChild.addEventListener('DOMMouseScroll', this.stopSpread, false);
     } else {
-      rightChild.addEventListener('wheel', this.stopSpread);
+      rightChild.removeEventListener('wheel', this.stopSpread);
       rightChild.removeEventListener('mousewheel', this.stopSpread);
       rightChild.removeEventListener('DOMMouseScroll', this.stopSpread);
     }
