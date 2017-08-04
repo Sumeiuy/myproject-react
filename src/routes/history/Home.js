@@ -24,6 +24,7 @@ const effects = {
   queryHistoryContrast: 'history/queryHistoryContrast',
   getContrastData: 'history/getContrastData',
   getIndicatorLib: 'history/getIndicatorLib',
+  getRankData: 'history/getRankData',
 };
 
 const fectchDataFunction = (globalLoading, type) => query => ({
@@ -43,6 +44,7 @@ const mapStateToProps = state => ({
   historyContrastDic: state.history.historyContrastDic, // 字典数据
   contrastData: state.history.contrastData,
   indicatorLib: state.history.indicatorLib,
+  rankData: state.history.rankData,
 });
 
 const mapDispatchToProps = {
@@ -51,6 +53,7 @@ const mapDispatchToProps = {
   queryHistoryContrast: fectchDataFunction(true, effects.queryHistoryContrast),
   getContrastData: fectchDataFunction(true, effects.getContrastData),
   getIndicatorLib: fectchDataFunction(false, effects.getIndicatorLib),
+  getRankData: fectchDataFunction(true, effects.getRankData),
   push: routerRedux.push,
   replace: routerRedux.replace,
 };
@@ -80,6 +83,8 @@ export default class HistoryHome extends PureComponent {
     getIndicatorLib: PropTypes.func.isRequired,
     historyContrastDic: PropTypes.object.isRequired,
     queryHistoryContrast: PropTypes.func.isRequired,
+    getRankData: PropTypes.func.isRequired,
+    rankData: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -99,6 +104,7 @@ export default class HistoryHome extends PureComponent {
       queryContrastAnalyze,
       getContrastData,
       getIndicatorLib,
+      getRankData,
     } = this.props;
 
     getAllInfo({
@@ -139,7 +145,6 @@ export default class HistoryHome extends PureComponent {
     queryHistoryContrast({
       boardId: '3',
     });
-
     // 参数需要动态变
     // 暂时先写死
     getContrastData({
@@ -152,6 +157,24 @@ export default class HistoryHome extends PureComponent {
       contrastBegin: '20160605',
       contrastEnd: '20160623',
       cycleType: 'month',
+    });
+
+    // 获取历史排名数据
+    getRankData({
+      indicatorId: 'tgInNum', // 指标ID
+      begin: '20170701', // 本期开始日期
+      cycleType: 'month', // 周期类型
+      end: '20170719', // 本期结束日期
+      scope: '3', // 查询层级
+      orgId: 'ZZ001041093', // 机关ID
+      contrastBegin: '20170601', // 上期开始日期
+      contrastEnd: '20170619', // 上期结束日期
+      localScope: '2', // 当前所在层级
+      pageSize: 10, // 每页显示条数
+      pageNum: 1, // 页码
+      orderIndicatorId: 'currSignCustAset', // 排序指标ID
+      orderType: 'desc', // 排序方式
+      isMultiple: '1', // 此处写死“1”
     });
   }
 
@@ -183,6 +206,7 @@ export default class HistoryHome extends PureComponent {
       historyContrastDic,
       contrastData,
       indicatorLib,
+      rankData,
     } = this.props;
     console.warn('historyCore', historyCore);
     // 总量指标库
@@ -220,7 +244,20 @@ export default class HistoryHome extends PureComponent {
             <div className={styles.polyArea}>
               <HistoryComparePolyChart data={contrastData} />
               {/* 假定数据 */}
-              <HistoryCompareRankChart level="1" scope="2" data={[]} />
+              {
+                _.isEmpty(rankData)
+                ?
+                null
+                :
+                (
+                  <HistoryCompareRankChart
+                    level="1"
+                    scope="2"
+                    data={rankData}
+                    boardType="TYPE_TGJX"
+                  />
+                )
+              }
             </div>
             <HisDivider />
             <div className={styles.scatterArea}>

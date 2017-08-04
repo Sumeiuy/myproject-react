@@ -8,7 +8,7 @@ import React, { PropTypes, PureComponent } from 'react';
 import { Select } from 'antd';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
-// import _ from 'lodash';
+import _ from 'lodash';
 
 import { optionsMap } from '../../config';
 import Icon from '../common/Icon';
@@ -32,7 +32,7 @@ export default class HistoryCompareRankChart extends PureComponent {
     level: PropTypes.string,
     scope: PropTypes.string,
     boardType: PropTypes.string,
-    data: PropTypes.array.isRequired,
+    data: PropTypes.object.isRequired,
   };
 
   static defaultProps = {
@@ -43,19 +43,27 @@ export default class HistoryCompareRankChart extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { scope } = props; // scope为维度
+    const { scope, data: { historyCardRecordVo } } = props; // scope为维度
+    const rankPage = Number.parseInt(historyCardRecordVo.current_page, 10);
+    const totalPage = Math.ceil(Number.parseInt(historyCardRecordVo.total_num, 10) / 10);
     this.state = {
       scopeSelectValue: scope,
       scope,
       orderType: 'desc',
-      rankPage: 1,
-      totalPage: 10,
+      rankPage,
+      totalPage,
+      unit: '',
     };
   }
 
   @autobind
   getPopupContainer() {
     return document.querySelector('.react-app');
+  }
+
+  @autobind
+  showChartUnit(unit) {
+    this.setState({ unit });
   }
 
   @autobind
@@ -95,8 +103,11 @@ export default class HistoryCompareRankChart extends PureComponent {
   }
 
   render() {
-    const { level, data, scope, boardType } = this.props;
-    const { orderType, scopeSelectValue, rankPage, totalPage } = this.state;
+    if (_.isEmpty(this.props.data)) {
+      return null;
+    }
+    const { level, scope, boardType, data: { historyCardRecordVo: { data } } } = this.props;
+    const { orderType, scopeSelectValue, rankPage, totalPage, unit } = this.state;
     // 隐藏选项
     const toggleScope2Option = classnames({
       hideOption: Number(level) !== 1,
@@ -130,7 +141,7 @@ export default class HistoryCompareRankChart extends PureComponent {
         <div className={styles.chartHd}>
           <div className={styles.headerLeft}>
             <span className={styles.chartHdCaption}>排名</span>
-            <span className={styles.chartUnit}>(万元)</span>
+            <span className={styles.chartUnit}>{`(${unit})`}</span>
           </div>
           <div className={styles.headerRight}>
             <Select
@@ -180,7 +191,12 @@ export default class HistoryCompareRankChart extends PureComponent {
           </div>
         </div>
         <div className={styles.chartBd}>
-          <HistoryRankChart data={data} level={level} scope={scope} />
+          <HistoryRankChart
+            data={data}
+            level={level}
+            scope={scope}
+            showChartUnit={this.showChartUnit}
+          />
         </div>
       </div>
     );

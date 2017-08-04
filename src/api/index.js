@@ -79,4 +79,7 @@ export default {
 
   // 查询历史对比折线图数据
   getHistoryContrastLineChartData: query => api.post('/groovynoauth/jxzb/queryContrastLineChart', query),
+
+  // 查询历史对比排名数据
+  getHistoryRankChartData: query => api.post('/groovynoauth/jxzb/queryHistoryCardRecord', query),
 };

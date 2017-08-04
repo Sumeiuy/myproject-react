@@ -19,6 +19,7 @@ export default {
     historyContrastDic: {}, // 字典
     contrastData: {}, // 历史对比数据
     indicatorLib: {}, // 指标库
+    rankData: {}, // 历史对比排名数据
   },
   reducers: {// 成功获取指标库
     getIndicatorLibSuccess(state, action) {
@@ -114,6 +115,15 @@ export default {
         contrastData,
       };
     },
+
+    // 历史对比排名
+    getRankDataSuccess(state, action) {
+      const { payload: { rankData } } = action;
+      return {
+        ...state,
+        rankData,
+      };
+    },
   },
   effects: {
     // 初始化获取数据
@@ -187,6 +197,16 @@ export default {
       yield put({
         type: 'getContrastDataSuccess',
         payload: { contrastData: resultData },
+      });
+    },
+
+    // 获取历史排名数据
+    * getRankData({ payload }, { call, put }) {
+      const response = yield call(api.getHistoryRankChartData, payload);
+      const { resultData } = response;
+      yield put({
+        type: 'getRankDataSuccess',
+        payload: { rankData: resultData },
       });
     },
   },

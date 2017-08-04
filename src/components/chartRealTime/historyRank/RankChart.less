@@ -3,6 +3,42 @@
   display: flex;
   width: 100%;
   height: 100%;
+
+   :global {
+    & .echartTooltipTable {
+      color: #777;
+      .tooltipItem {
+        &>div {
+          display: inline-block;
+          width: 100%;
+          height: 100%;
+          text-align: justify;
+          text-justify: distribute-all-lines;
+          text-align-last: justify;
+          -moz-text-align-last: justify;
+          -webkit-text-align-last: justify;
+        }
+      }
+      .itemValue {
+        &>span {
+          margin-left: 8px;
+          margin-right: 8px;
+          color:#000;
+          font-size: 16px;
+        }
+      }
+    }
+    & .echartTooltip {
+      display:inline-block;
+      width: 10px;
+      height: 10px;
+      margin-right:4px;
+      border-radius:100%;
+    }
+    & .echartTooltipHD {
+      color:#4f596a;      
+    }
+  }
 }
 .ranking {
   flex: 0 0 auto;
