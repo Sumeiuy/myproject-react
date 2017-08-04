@@ -8,6 +8,7 @@ import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import { Row } from 'antd';
 
+import SelfDatePicker from './SelfDatePicker';
 import CustRange from './CustRange2';
 import BoardSelect from './BoardSelect';
 import { fspContainer } from '../../config';
@@ -181,6 +182,7 @@ export default class PageHeader extends PureComponent {
                   updateQueryState={updateQueryState}
                   collectData={collectDurationSelect}
                 />
+                <SelfDatePicker />
                 <div className={styles.vSplit} />
                 {/* 营业地址选择项 */}
                 <CustRange
