@@ -29,6 +29,10 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
+      '/fspa/mcrm/api/groovynoauth/fsp': {
+        target: 'http://168.61.8.82:9090', // SIT
+        secure: false,
+      },
       '/fspa/mcrm/api': {
         target: 'http://168.168.71.29:9084', // SIT
         secure: false,
@@ -47,7 +51,7 @@ module.exports = {
     // In our experience, they generally work as expected,
     // just be aware of this issue when enabling this option.
     cssSourceMap: false,
-    mock: true,
+    mock: false,
   },
   cssModules: true,
   appSrc: path.resolve(__dirname, '../src'),
