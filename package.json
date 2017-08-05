@@ -28,7 +28,6 @@
     "localforage": "^1.4.3",
     "lodash": "^4.17.4",
     "moment": "^2.18.1",
-    "moment-transform": "^1.0.1",
     "rc-form": "^1.4.3",
     "react": "^15.1.0",
     "react-dnd": "^2.4.0",
