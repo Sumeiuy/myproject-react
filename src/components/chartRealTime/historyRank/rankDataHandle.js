@@ -206,6 +206,24 @@ const dataHandle = {
       min,
     };
   },
+
+  // 计算出stack的合计值
+  getStackSummury(stackSeries) {
+    const summury = [];
+    if (stackSeries.length) {
+      const totalData = stackSeries.map(item => item.data);
+      const jlen = totalData[0].length;
+      const ilen = totalData.length;
+      for (let i = 0; i < jlen; i++) {
+        let subsummury = 0;
+        for (let j = 0; j < ilen; j++) {
+          subsummury += totalData[j][i];
+        }
+        summury.push(Number.parseFloat(subsummury.toFixed(2)));
+      }
+    }
+    return summury;
+  },
 };
 
 export default dataHandle;

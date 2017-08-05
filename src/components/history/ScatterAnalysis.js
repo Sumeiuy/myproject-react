@@ -5,15 +5,17 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { Row, Col } from 'antd';
 import AbilityScatterAnalysis from './AbilityScatterAnalysis';
+import { scatterType } from '../../config';
 import styles from './scatterAnalysis.less';
+
+const custScatter = scatterType[0];
+const investScatter = scatterType[1];
 
 export default class ScatterAnalysis extends PureComponent {
   static propTypes = {
-    location: PropTypes.object.isRequired,
     contributionAnalysisData: PropTypes.object.isRequired,
     reviewAnalysisData: PropTypes.object.isRequired,
     queryContrastAnalyze: PropTypes.func.isRequired,
-    custRange: PropTypes.array.isRequired,
     cust: PropTypes.array.isRequired,
     invest: PropTypes.array.isRequired,
   };
@@ -23,11 +25,9 @@ export default class ScatterAnalysis extends PureComponent {
 
   render() {
     const {
-      location,
       queryContrastAnalyze,
       contributionAnalysisData,
       reviewAnalysisData,
-      custRange,
       cust,
       invest,
     } = this.props;
@@ -37,22 +37,20 @@ export default class ScatterAnalysis extends PureComponent {
         <Row type="flex">
           <Col span={12} className={styles.leftScatterSection}>
             <AbilityScatterAnalysis
-              location={location}
               data={contributionAnalysisData}
               queryContrastAnalyze={queryContrastAnalyze}
-              custRange={custRange}
-              title={'客户贡献分析'}
+              title={custScatter.title}
               optionsData={cust}
+              type={custScatter.type}
             />
           </Col>
           <Col span={12} className={styles.rightScatterSection}>
             <AbilityScatterAnalysis
-              location={location}
               data={reviewAnalysisData}
               queryContrastAnalyze={queryContrastAnalyze}
-              custRange={custRange}
-              title={'入岗投顾能力分析'}
+              title={investScatter.title}
               optionsData={invest}
+              type={investScatter.type}
             />
           </Col>
         </Row>
@@ -60,4 +58,3 @@ export default class ScatterAnalysis extends PureComponent {
     );
   }
 }
-
