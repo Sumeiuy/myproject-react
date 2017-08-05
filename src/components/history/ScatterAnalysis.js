@@ -31,7 +31,6 @@ export default class ScatterAnalysis extends PureComponent {
       cust,
       invest,
     } = this.props;
-
     return (
       <div className={styles.scatterSection}>
         <Row type="flex">

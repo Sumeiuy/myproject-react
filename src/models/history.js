@@ -141,14 +141,15 @@ export default {
     },
   },
   effects: {
-    // 初始化获取数据
+    // 初始化获取数据，初始化时候需要优先获取核心指标
     * getAllInfo({ payload }, { call, put, select }) {
+      // 组织机构树
       const cust = yield select(state => state.history.custRange);
       let firstCust;
       if (cust.length) {
         firstCust = cust[0];
       } else {
-        const response = yield call(api.getCustRange, payload);
+        const response = yield call(api.getCustRange, payload.custRang);
         yield put({
           type: 'getCustRangeSuccess',
           response,
@@ -162,6 +163,21 @@ export default {
       yield put({
         type: 'getAllVisibleReportsSuccess',
         payload: { allVisibleReports },
+      });
+      // 获取散点图字典
+      const dicResponse = yield call(api.queryHistoryContrast, payload.dic);
+      yield put({
+        type: 'queryHistoryContrastSuccess',
+        payload: dicResponse,
+      });
+      // 获取指标树数据
+      const indicatorResult = yield call(api.getIndicators, {
+        ...payload.lib,
+        orgId: firstCust.id,
+      });
+      yield put({
+        type: 'getIndicatorLibSuccess',
+        payload: { indicatorResult },
       });
     },
 
@@ -202,15 +218,15 @@ export default {
         payload: { response: resultData, type },
       });
     },
-    // 获取对比数据
+    // 获取对比字典数据
     * queryHistoryContrast({ payload }, { call, put }) {
-      const response = yield call(api.queryHistoryContrast, payload);
+      const dicResponse = yield call(api.queryHistoryContrast, payload);
       yield put({
         type: 'queryHistoryContrastSuccess',
-        payload: response,
+        payload: dicResponse,
       });
     },
-    // 获取历史对比数据
+    // 获取历史对比折线图数据
     * getContrastData({ payload }, { call, put }) {
       const response = yield call(api.getHistoryContrastLineChartData, payload);
       const { resultData } = response;

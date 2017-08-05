@@ -47,14 +47,14 @@ const mapStateToProps = state => ({
   contributionAnalysis: state.history.contributionAnalysis, // 贡献分析
   reviewAnalysis: state.history.reviewAnalysis, // 入岗投顾
   historyContrastDic: state.history.historyContrastDic, // 字典数据
+  contrastData: state.history.contrastData, // 历史对比折线图数据
+  indicatorLib: state.history.indicatorLib, // 指标树
+  rankData: state.history.rankData, // 历史对比排名柱状图数据
   createLoading: state.history.createLoading,
   deleteLoading: state.history.deleteLoading,
   updateLoading: state.history.updateLoading,
   operateData: state.history.operateData,
   message: state.history.message,
-  contrastData: state.history.contrastData, // 历史对比折线图数据
-  indicatorLib: state.history.indicatorLib, // 指标树
-  rankData: state.history.rankData, // 历史对比排名柱状图数据
 });
 
 const mapDispatchToProps = {
@@ -131,12 +131,12 @@ export default class HistoryHome extends PureComponent {
     this.state = {
       boardId,
       boardType,
-      begin: '20170611', // 本期开始时间
-      end: '20170620', // 本期结束时间
+      begin: '20170701', // 本期开始时间
+      end: '20170719', // 本期结束时间
       cycleType: 'month', // 时间段周期类型
       contrastBegin: '20170601', // 上期开始时间
-      contrastEnd: '20170610', // 上期结束时间
-      selectKeys: [], // 弹出层挑选的指标
+      contrastEnd: '20170619', // 上期结束时间
+      coreIndicatorIds: [], // 弹出层挑选的指标
       indicatorId: '', // 当前选中的核心指标key
       orgId: '', // 用户的组织机构Id
       empId, // 用户ID
@@ -239,19 +239,12 @@ export default class HistoryHome extends PureComponent {
       // 必须要有orgId才能有数据，否则页面所有元素均不能渲染
       // 查询相关数据
       this.queryAllData();
-       // 获取指标树
-      this.props.getIndicatorLib({
-        orgId,
-        type: boardType,
-      });
     } else {
       // 初始化的时候必须先查询到组织机构树和可见看板
       this.props.getAllInfo({
-        empId,
-      });
-      // 获取散点图的对比指标
-      this.props.queryHistoryContrast({
-        boardId,
+        custRang: { empId },
+        lib: { boardType },
+        dic: { boardId },
       });
     }
   }
@@ -259,7 +252,6 @@ export default class HistoryHome extends PureComponent {
   @autobind
   queryAllData() {
     // 取数据前先将参数进行一下整理
-    // 初始化
     const {
       getHistoryCore,
       getRadarData,
@@ -267,16 +259,16 @@ export default class HistoryHome extends PureComponent {
       getRankData,
       queryContrastAnalyze,
     } = this.props;
-    const { localScope, indicatorId } = this.state;
+    const { localScope } = this.state;
     // 因为接口的原因，其请求的参数中scope的值其实是localScope
-    const coreQuery = this.makeQueryParams({ scope: localScope });
+    const coreQuery = this.makeQueryParams({ scope: localScope }, ['boardId']);
     // 获取历史对比核心指标数据
     getHistoryCore(coreQuery);
     // 获取雷达图数据
-    const radarQuery = this.makeQueryParams({ isMultiple: 0 });
+    const radarQuery = this.makeQueryParams({ isMultiple: 0 }, ['boardId']);
     getRadarData(radarQuery);
     // 获取折线图数据
-    const contrastQuery = this.makeQueryParams({ scope: localScope });
+    const contrastQuery = this.makeQueryParams({ scope: localScope }, ['boardId']);
     getContrastData(contrastQuery);
     // 获取对比排名数据
     // orderIndicatorId与indicatorId一致，必须要传
@@ -285,35 +277,37 @@ export default class HistoryHome extends PureComponent {
       pageNum: 1,
       isMultiple: 1,
       orderType: 'desc',
-      orderIndicatorId: indicatorId,
     });
     getRankData(rankQuery);
     // 获取散点图数据
-    const scatterCustQuery = this.makeQueryParams({
-      type: 'cust',
-    });
-    const scatterInvestQuery = this.makeQueryParams({
-      type: 'invest',
-    });
+    const scatterCustQuery = this.makeQueryParams({ type: 'cust' }, ['boardId']);
+    const scatterInvestQuery = this.makeQueryParams({ type: 'invest' }, ['boardId']);
     queryContrastAnalyze(scatterCustQuery);
     queryContrastAnalyze(scatterInvestQuery);
   }
 
   @autobind
-  makeQueryParams(params) {
-    const defaultParams = this.state;
+  makeQueryParams(special, selfNeed) {
+    let privateParams = selfNeed;
+    if (!selfNeed) { privateParams = []; }
+    // 时间段是共同的参数
+    const duration = _.pick(this.state, ['begin', 'end', 'cycleType', 'contrastBegin', 'contrastEnd']);
+    // 组织机构信息
+    const org = _.pick(this.state, ['orgId', 'scope', 'localScope']);
+    const selfParam = _.pick(this.state, privateParams);
     return {
-      ...defaultParams,
-      ...params,
+      ...duration,
+      ...org,
+      ...selfParam,
+      ...special,
     };
   }
 
   // 从弹出层取出挑选的指标数组
   @autobind
   saveIndcatorToHome(array) {
-    // 根据 array 发出请求
     this.setState({
-      selectKeys: array,
+      coreIndicatorIds: array,
     });
   }
 
@@ -379,9 +373,10 @@ export default class HistoryHome extends PureComponent {
       contrastData,
       indicatorLib,
       rankData,
+      location,
     } = this.props;
 
-    const { scope, localScope, boardType } = this.state;
+    const { scope, localScope, boardType, coreIndicatorIds, orgId } = this.state;
 
     // 总量指标库
     const summuryCheckedKeys = this.getUserSummuryKeys(historyCore);
@@ -393,7 +388,6 @@ export default class HistoryHome extends PureComponent {
     };
 
     const { cust = EMPTY_LIST, invest = EMPTY_LIST } = historyContrastDic;
-    const { selectKeys } = this.state;
     return (
       <div className="pageHistory">
         <div className={styles.historyhd}>
@@ -407,9 +401,9 @@ export default class HistoryHome extends PureComponent {
               createBoardConfirm={this.createBoardConfirm}
               deleteBoardConfirm={this.deleteBoardConfirm}
               updateBoardConfirm={this.updateBoardConfirm}
-              ownerOrgId={'ZZ001041'}
-              orgId={'ZZ001041'}
-              selectKeys={selectKeys}
+              ownerOrgId={orgId}
+              orgId={orgId}
+              selectKeys={coreIndicatorIds}
             />
             {/* 指标概览区域 */}
             <IndicatorOverview
