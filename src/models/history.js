@@ -176,8 +176,22 @@ export default {
         type: 'getAllVisibleReportsSuccess',
         payload: { allVisibleReports },
       });
+      // 初始化优先查询下核心指标
+      const resHistoryCore = yield call(api.getHistoryCore, {
+        ...payload.core,
+        localScope: payload.core.localScope || firstCust.level,
+        orgId: payload.core.orgId || firstCust.id,
+        scope: payload.core.scope || firstCust.level,
+      });
+      yield put({
+        type: 'getHistoryCoreSuccess',
+        payload: { resHistoryCore },
+      });
       // 获取散点图字典
-      const dicResponse = yield call(api.queryHistoryContrast, payload.dic);
+      const dicResponse = yield call(api.queryHistoryContrast, {
+        ...payload.dic,
+        orgId: payload.dic.orgId || firstCust.id,
+      });
       yield put({
         type: 'queryHistoryContrastSuccess',
         payload: dicResponse,

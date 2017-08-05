@@ -162,14 +162,14 @@ export default class HistoryHome extends PureComponent {
     const { historyCore: preCore } = this.props;
     const { historyCore } = nextProps;
     // 初始化进入页面后，记录第一个核心指标
-    if (!_.isEqual(preCore, historyCore) && _.isEmpty(preCore)) {
-      this.setState({
-        indicatorId: historyCore[0].key,
-      });
-    }
-    const { custRange: preCR } = this.props;
+    // if (!_.isEqual(preCore, historyCore) && _.isEmpty(preCore)) {
+    //   this.setState({
+    //     indicatorId: historyCore[0].key,
+    //   });
+    // }
+    // const { custRange: preCR } = this.props;
     const { custRange } = nextProps;
-    if (!_.isEqual(preBoardId, boardId) || !_.isEqual(preCR, custRange)) {
+    if (!_.isEqual(preBoardId, boardId) || !_.isEqual(preCore, historyCore)) {
       const currentOrg = custRange[0];
       // 必须要要有orgId,否则所有数据均为空
       // TODO 此处需要等到时间选择器完成提供方法
@@ -177,6 +177,7 @@ export default class HistoryHome extends PureComponent {
       this.setState({
         boardId,
         boardType,
+        indicatorId: historyCore[0].key,
         orgId: currentOrg.id,
         scope: (Number(currentOrg.level) + 1),
         localScope: currentOrg.level,
@@ -241,10 +242,14 @@ export default class HistoryHome extends PureComponent {
       this.queryAllData();
     } else {
       // 初始化的时候必须先查询到组织机构树和可见看板
+      // TODO 接口初始化的时候，顺带查下核心指标
+      // 因为接口的原因，其请求的参数中scope的值其实是localScope
+      const coreQuery = this.makeQueryParams({}, ['boardId']);
       this.props.getAllInfo({
         custRang: { empId },
         lib: { boardType },
         dic: { boardId },
+        core: coreQuery,
       });
     }
   }
@@ -253,17 +258,12 @@ export default class HistoryHome extends PureComponent {
   queryAllData() {
     // 取数据前先将参数进行一下整理
     const {
-      getHistoryCore,
       getRadarData,
       getContrastData,
       getRankData,
       queryContrastAnalyze,
     } = this.props;
-    const { localScope } = this.state;
-    // 因为接口的原因，其请求的参数中scope的值其实是localScope
-    const coreQuery = this.makeQueryParams({ scope: localScope }, ['boardId']);
-    // 获取历史对比核心指标数据
-    getHistoryCore(coreQuery);
+    const { localScope, indicatorId } = this.state;
     // 获取雷达图数据
     const radarQuery = this.makeQueryParams({ isMultiple: 0 }, ['boardId']);
     getRadarData(radarQuery);
@@ -277,6 +277,8 @@ export default class HistoryHome extends PureComponent {
       pageNum: 1,
       isMultiple: 1,
       orderType: 'desc',
+      orderIndicatorId: indicatorId,
+      indicatorId,
     });
     getRankData(rankQuery);
     // 获取散点图数据
@@ -350,9 +352,13 @@ export default class HistoryHome extends PureComponent {
   // 柱状图维度，排序，页码变化
   @autobind
   changeRankBar(rankQuery) {
+    const { indicatorId } = this.state;
     const query = this.makeQueryParams({
+      isMultiple: 1,
+      pageSize: 10,
       ...rankQuery,
-      orderIndicatorId: this.state.indicatorId,
+      orderIndicatorId: indicatorId,
+      indicatorId,
     });
     this.props.getRankData(query);
   }
@@ -424,9 +430,10 @@ export default class HistoryHome extends PureComponent {
                 : (
                   <HistoryCompareRankChart
                     level={localScope}
-                    scope={scope}
+                    scope={`${scope}`}
                     data={rankData}
                     boardType={boardType}
+                    changeRankBar={this.changeRankBar}
                   />
                 )
               }
