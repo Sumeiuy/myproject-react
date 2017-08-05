@@ -49,11 +49,10 @@ export const constructPolyChartOptions = (option = {}) => {
       itemGap: 10,
     },
     grid: {
-      left: '3%',
-      right: '4%',
-      top: '5%',
-      bottom: '12%',
-      width: '90%',
+      top: '20px',
+      left: '20px',
+      right: '40px',
+      bottom: '20px',
       containLabel: true,
     },
     xAxis: [

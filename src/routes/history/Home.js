@@ -265,8 +265,11 @@ export default class HistoryHome extends PureComponent {
     } = this.props;
     const { localScope, indicatorId } = this.state;
     // 获取雷达图数据
-    const radarQuery = this.makeQueryParams({ isMultiple: 0 }, ['boardId']);
-    getRadarData(radarQuery);
+    // localScope=1时，不查询雷达图数据
+    if (Number(localScope) > 1) {
+      const radarQuery = this.makeQueryParams({ isMultiple: 0 }, ['boardId']);
+      getRadarData(radarQuery);
+    }
     // 获取折线图数据
     const contrastQuery = this.makeQueryParams({ scope: localScope }, ['boardId']);
     getContrastData(contrastQuery);

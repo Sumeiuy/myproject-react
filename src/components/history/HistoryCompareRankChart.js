@@ -162,9 +162,6 @@ export default class HistoryCompareRankChart extends PureComponent {
   }
 
   render() {
-    if (_.isEmpty(this.props.data)) {
-      return null;
-    }
     const { level, scope, boardType, data: { historyCardRecordVo: { data } } } = this.props;
     const { orderType, scopeSelectValue, rankPage, totalPage, unit } = this.state;
     // 隐藏选项

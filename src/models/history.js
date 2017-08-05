@@ -24,7 +24,6 @@ export default {
     message: '', // 各种操作的提示信息
     operateData: {}, // 各种操作后，返回的数据集
     indicatorLib: {}, // 指标库
-    rankingRecord: {},
     rankData: {}, // 历史对比排名数据
   },
   reducers: {// 成功获取指标库
@@ -76,17 +75,6 @@ export default {
       };
     },
 
-    // 存雷达图数据
-    queryCurrentRankingRecordSuccess(state, action) {
-      const { payload: { response } } = action;
-      const rankingRecord = response.currentRankingRecordVo || {};
-      console.warn('rankingRecord', rankingRecord);
-      return {
-        ...state,
-        rankingRecord,
-      };
-    },
-
     // 存贮散点图数据
     queryContrastAnalyzeSuccess(state, action) {
       const { payload: { response, type } } = action;
@@ -105,10 +93,10 @@ export default {
       };
     },
 
-    // 概览数据列表
+    // 雷达数据列表
     getCurrentRankingRecordSuccess(state, action) {
       const { payload: { currentRanking } } = action;
-      const currentRankingRecord = currentRanking.resultData;
+      const currentRankingRecord = currentRanking.resultData.currentRankingRecordVo;
       return {
         ...state,
         currentRankingRecord,
@@ -225,23 +213,12 @@ export default {
         payload: { currentRanking },
       });
     },
-
     // 获取指标库
     * getIndicatorLib({ payload }, { call, put }) {
       const indicatorResult = yield call(api.getIndicators, payload);
       yield put({
         type: 'getIndicatorLibSuccess',
         payload: { indicatorResult },
-      });
-    },
-    // 雷达图
-    * queryCurrentRankingRecord({ payload }, { call, put }) {
-      const { type } = payload;
-      const response = yield call(api.queryCurrentRankingRecord, payload);
-      const { resultData } = response;
-      yield put({
-        type: 'queryCurrentRankingRecordSuccess',
-        payload: { response: resultData, type },
       });
     },
     // 获取客户贡献分析与入岗投顾能力散点图数据
@@ -271,7 +248,6 @@ export default {
         payload: { contrastData: resultData },
       });
     },
-
     // 创建历史对比看板
     * createHistoryBoard({ payload }, { call, put }) {
       yield put({
@@ -302,7 +278,6 @@ export default {
         },
       });
     },
-
     // 删除历史对比看板
     * deleteHistoryBoard({ payload }, { call, put }) {
       yield put({
@@ -335,7 +310,6 @@ export default {
         },
       });
     },
-
     // 保存(更新)历史对比看板
     * updateHistoryBoard({ payload }, { call, put }) {
       yield put({
@@ -358,7 +332,6 @@ export default {
         },
       });
     },
-
     // 获取历史排名数据
     * getRankData({ payload }, { call, put }) {
       const response = yield call(api.getHistoryRankChartData, payload);

@@ -41,6 +41,9 @@ export default class ScatterAnalysis extends PureComponent {
               title={custScatter.title}
               optionsData={cust}
               type={custScatter.type}
+              style={{
+                left: '-85px',
+              }}
             />
           </Col>
           <Col span={12} className={styles.rightScatterSection}>
@@ -50,6 +53,9 @@ export default class ScatterAnalysis extends PureComponent {
               title={investScatter.title}
               optionsData={invest}
               type={investScatter.type}
+              style={{
+                left: '-45px',
+              }}
             />
           </Col>
         </Row>
