@@ -27,6 +27,7 @@ const effects = {
   queryContrastAnalyze: 'history/queryContrastAnalyze',
   queryHistoryContrast: 'history/queryHistoryContrast',
   getIndicatorLib: 'history/getIndicatorLib',
+  queryCurrentRankingRecord: 'history/queryCurrentRankingRecord',
   getRankData: 'history/getRankData',
   getContrastData: 'history/getContrastData',
 };
@@ -52,6 +53,7 @@ const mapStateToProps = state => ({
   updateLoading: state.history.updateLoading,
   operateData: state.history.operateData,
   message: state.history.message,
+  queryCurrentRankingRecord: state.history.queryCurrentRankingRecord,
   contrastData: state.history.contrastData, // 历史对比折线图数据
   indicatorLib: state.history.indicatorLib, // 指标树
   rankData: state.history.rankData, // 历史对比排名柱状图数据
@@ -66,7 +68,8 @@ const mapDispatchToProps = {
   deleteHistoryBoard: fectchDataFunction(true, 'history/deleteHistoryBoard'),
   updateHistoryBoard: fectchDataFunction(true, 'history/updateHistoryBoard'),
   getIndicatorLib: fectchDataFunction(false, effects.getIndicatorLib),
-  getRankData: fectchDataFunction(false, effects.getRankData),
+  queryCurrentRankingRecord: fectchDataFunction(false, effects.queryCurrentRankingRecord),
+  getRankData: fectchDataFunction(true, effects.getRankData),
   getRadarData: fectchDataFunction(false, effects.getRadarData),
   getHistoryCore: fectchDataFunction(true, effects.getHistoryCore),
   push: routerRedux.push,
@@ -105,6 +108,7 @@ export default class HistoryHome extends PureComponent {
     getIndicatorLib: PropTypes.func.isRequired,
     historyContrastDic: PropTypes.object.isRequired,
     queryHistoryContrast: PropTypes.func.isRequired,
+    queryCurrentRankingRecord: PropTypes.func.isRequired,
     getContrastData: PropTypes.func.isRequired,
     getRankData: PropTypes.func.isRequired,
     getRadarData: PropTypes.func.isRequired,
