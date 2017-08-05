@@ -150,6 +150,99 @@ export default class HistoryHome extends PureComponent {
 
   componentWillMount() {
     // 本页面初始化的时候，只能获取boardId,已经empId
+    const {
+      location: { query },
+      getAllInfo,
+      queryHistoryContrast,
+      queryContrastAnalyze,
+      getContrastData,
+      getIndicatorLib,
+      queryCurrentRankingRecord,
+      getRankData,
+    } = this.props;
+
+    getAllInfo({
+      ...query,
+    });
+
+    queryCurrentRankingRecord({
+      begin: '20170701',
+      boardId: '3',
+      cycleType: 'month',
+      end: '20170719',
+      scope: '2',
+      orgId: 'ZZ001041093',
+      contrastBegin: '20170601',
+      contrastEnd: '20170619',
+      localScope: '2',
+      isMultiple: '0',
+    });
+
+    queryContrastAnalyze({
+      boardId: '3',
+      type: 'cust',
+      orgId: 'ZZ001041',
+      localScope: '1',
+      scope: '2',
+      begin: '20170601',
+      end: '20170630',
+      cycleType: 'month',
+      // coreIndicatorId: '',
+      // contrastIndicatorId: '',
+    });
+
+    queryContrastAnalyze({
+      boardId: '3',
+      type: 'invest',
+      orgId: 'ZZ001041',
+      localScope: '1',
+      scope: '2',
+      begin: '20170601',
+      end: '20170630',
+      cycleType: 'month',
+      // coreIndicatorId: '',
+      // contrastIndicatorId: '',
+    });
+    getIndicatorLib({
+      orgId: 'ZZ001041',
+      type: 'TYPE_TGYJ',
+    });
+
+    // 先写一个假参数
+    queryHistoryContrast({
+      boardId: '3',
+    });
+    // 参数需要动态变
+    // 暂时先写死
+    getContrastData({
+      boardId: 3,
+      scope: '1',
+      coreIndicatorId: '',
+      orgId: 'ZZ001041',
+      begin: '20170705',
+      end: '20170723',
+      contrastBegin: '20160605',
+      contrastEnd: '20160623',
+      cycleType: 'month',
+    });
+
+    // 获取历史排名数据
+    getRankData({
+      indicatorId: 'tgInNum', // 指标ID
+      begin: '20170701', // 本期开始日期
+      cycleType: 'month', // 周期类型
+      end: '20170719', // 本期结束日期
+      scope: '3', // 查询层级
+      orgId: 'ZZ001041093', // 机关ID
+      contrastBegin: '20170601', // 上期开始日期
+      contrastEnd: '20170619', // 上期结束日期
+      localScope: '2', // 当前所在层级
+      pageSize: 10, // 每页显示条数
+      pageNum: 1, // 页码
+      orderIndicatorId: 'currSignCustAset', // 排序指标ID
+      orderType: 'desc', // 排序方式
+      isMultiple: '1', // 此处写死“1”
+    });
     // 初始化取数据
     this.getInitialInfo();
   }

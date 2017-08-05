@@ -97,27 +97,22 @@ export default class SelfDatePicker extends PureComponent {
     const lastYear = year - 1;
     let lastQuarter = quarter - 1;
 
+    console.warn('moment duration', moment.duration(2, 'years'));
     let newBegin;
     let newEnd;
     let newDurationStr;
     let newLastBegin;
     let newLastEnd;
     let newLastDurationStr;
-
-    const { compare } = this.state;
     switch (duration) {
       case 'month':
-        if (compare === compareArray[0].key) {
-          console.warn('同比 月');
-          newBegin = moment(now.begin);
-          newEnd = moment(now.end);
-          newDurationStr = now.durationStr;
-          newLastBegin = moment(now.begin).subtract(1, 'year');
-          newLastEnd = moment(now.end).subtract(1, 'year');
-          newLastDurationStr = `${newLastBegin.format('YYYY/MM/DD')}-${newLastEnd.format('YYYY/MM/DD')}`;
-        } else {
-          console.warn('环比 月');
-        }
+        console.warn('月');
+        newBegin = moment(now.begin);
+        newEnd = moment(now.end);
+        newDurationStr = now.durationStr;
+        newLastBegin = moment(now.begin).subtract(1, 'year');
+        newLastEnd = moment(now.end).subtract(1, 'year');
+        newLastDurationStr = `${newLastBegin.format('YYYY/MM/DD')}-${newLastEnd.format('YYYY/MM/DD')}`;
         break;
       case 'quarter':
         console.warn('季');
