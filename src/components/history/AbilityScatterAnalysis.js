@@ -201,14 +201,13 @@ export default class AbilityScatterAnalysis extends PureComponent {
 
     const {
       title,
-      optionsData: { data = '' },
+      optionsData,
     } = this.props;
 
     if (_.isEmpty(finalData)) {
       return null;
     }
 
-    const optionsData = data;
     let finalOptions = [];
     if (!_.isEmpty(optionsData)) {
       finalOptions = optionsData.map(item => ({

@@ -21,14 +21,13 @@ const TYPE_LSDB_TGJX = '3';
 // 经营业绩历史对比的boardId
 const TYPE_LSDB_JYYJ = '4';
 
-export default class PageHeader extends PureComponent {
+export default class IndicatorOverviewHeader extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
     createBoardConfirm: PropTypes.func.isRequired,
     deleteBoardConfirm: PropTypes.func.isRequired,
     updateBoardConfirm: PropTypes.func.isRequired,
     ownerOrgId: PropTypes.string.isRequired,
-    boardId: PropTypes.string.isRequired,
     orgId: PropTypes.string.isRequired,
     selectKeys: PropTypes.array.isRequired,
   }
