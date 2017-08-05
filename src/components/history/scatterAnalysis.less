@@ -1,9 +1,19 @@
 .scatterSection {
   display: block;
-  & > .leftScatterSection {
-    display: block;
-  }
-  & > .rightScatterSection {
-    display: block;
-  }
+}
+.leftScatterSection:after {
+  content: '';
+  display: block;
+  border-right: 1px solid #ddd;
+  width: 1px;
+  position: absolute;
+  top: 40px;
+  bottom: 80px;
+  right: 0;
+}
+.leftScatterSection {
+  padding-left: 0;
+}
+.rightScatterSection {
+  padding-left: 40px;
 }
