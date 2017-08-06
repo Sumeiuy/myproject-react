@@ -34,7 +34,6 @@ export default class SelectTreeModal extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.warn('componentWillReceiveProps', nextProps);
     const { visible, summuryLib } = nextProps;
     const { visible: preVisible, summuryLib: preSummuryLib } = this.props;
     if (!_.isEqual(visible, preVisible)) {
@@ -67,7 +66,6 @@ export default class SelectTreeModal extends PureComponent {
   }
   @autobind
   saveIndcator(type, indicators) {
-    console.warn('删除后的值', indicators);
     if (type === 'summury') {
       const btnStatus = indicators.length < 4;
       // console.warn('save summuryKeys', summuryKeys);
