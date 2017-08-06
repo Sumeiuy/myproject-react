@@ -41,11 +41,18 @@ export default class IndicatorOverview extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { indexData: preIndexData } = this.props;
-    const { indexData: nextIndexData } = nextProps;
-    if (preIndexData !== nextIndexData) {
+    const { indexData: preIndexData, overviewData: preCore } = this.props;
+    const { indexData: nextIndexData, overviewData: nextCore } = nextProps;
+    console.warn('will nextIndexData', nextIndexData);
+    if (!_.isEqual(preCore, nextCore)) {
+      this.setState({
+        selectIndex: 0,
+      });
+    }
+    if (!_.isEqual(preIndexData, nextIndexData)) {
       const { scopeNum, data } = nextIndexData;
       const cOptions = this.createOption(scopeNum, data);
+      console.warn('cOptions', cOptions);
       // console.warn('cOptions', cOptions);
       this.setState({
         options: cOptions,
@@ -250,6 +257,8 @@ export default class IndicatorOverview extends PureComponent {
       visible: selectTreeModal,
       saveIndcatorToHome,
     };
+    console.warn('options', options);
+    console.warn('indexData', indexData);
     return (
       <div className={styles.overviewBox}>
         <Row>

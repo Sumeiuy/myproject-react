@@ -28,12 +28,13 @@ export default class SelectTreeModal extends PureComponent {
     const { visible, summuryLib } = props;
     this.state = {
       modalVisible: visible,
-      summuryLib,
+      summuryLib: _.cloneDeep(summuryLib),
       btnStatus: true,
     };
   }
 
   componentWillReceiveProps(nextProps) {
+    console.warn('componentWillReceiveProps', nextProps);
     const { visible, summuryLib } = nextProps;
     const { visible: preVisible, summuryLib: preSummuryLib } = this.props;
     if (!_.isEqual(visible, preVisible)) {
@@ -43,7 +44,7 @@ export default class SelectTreeModal extends PureComponent {
     }
     if (!_.isEqual(summuryLib, preSummuryLib)) {
       this.setState({
-        summuryLib,
+        summuryLib: _.cloneDeep(summuryLib),
         summuryKeys: summuryLib.checkedKeys,
       });
     }
@@ -52,7 +53,6 @@ export default class SelectTreeModal extends PureComponent {
   @autobind
   closeSelectTreeModal() {
     const { modalKey, closeModal } = this.props;
-    // TODO 清空已选择的指标
     closeModal(modalKey);
   }
 
@@ -60,13 +60,14 @@ export default class SelectTreeModal extends PureComponent {
   saveSelectTreeModal() {
     const { summuryIndicator } = this.state;
     const { saveIndcatorToHome } = this.props;
+    // 调用接口保存数据
     saveIndcatorToHome(summuryIndicator);
-    // todo 调用接口保存数据
     // 隐藏Modal
     this.closeSelectTreeModal();
   }
   @autobind
   saveIndcator(type, indicators) {
+    console.warn('删除后的值', indicators);
     if (type === 'summury') {
       const btnStatus = indicators.length < 4;
       // console.warn('save summuryKeys', summuryKeys);
@@ -87,6 +88,7 @@ export default class SelectTreeModal extends PureComponent {
   render() {
     const { modalVisible, summuryLib, btnStatus } = this.state;
     const { modalCaption } = this.props;
+    const newSummury = _.cloneDeep(summuryLib);
     return (
       <Modal
         title={modalCaption}
@@ -96,7 +98,13 @@ export default class SelectTreeModal extends PureComponent {
         maskClosable={false}
         wrapClassName={styles.selectTreeModal}
         footer={[
-          <Button key="back" size="large" onClick={this.closeSelectTreeModal}>取消</Button>,
+          <Button
+            key="back"
+            size="large"
+            onClick={this.closeSelectTreeModal}
+          >
+            取消
+          </Button>,
           <Button
             key="submit"
             type="primary"
@@ -111,7 +119,7 @@ export default class SelectTreeModal extends PureComponent {
         {
           modalVisible ?
             <BoardSelectTree
-              data={summuryLib}
+              data={newSummury}
               lengthLimit
               saveIndcator={this.saveIndcator}
             />

@@ -34,8 +34,6 @@ export default class BoardSelect extends PureComponent {
     const { visibleBoards, location: { query: { boardId }, pathname } } = this.props;
     const bId = boardId || (visibleBoards.length && String(visibleBoards[0].id)) || defaultBoardId;
     let boardName = visibleBoardType.manage.name;
-    console.warn('bid', bId);
-    console.warn('visibleBoards', visibleBoards);
     if (pathname !== '/boardManage') {
       boardName = this.findBoardBy(bId, visibleBoards).name;
     }
@@ -124,7 +122,6 @@ export default class BoardSelect extends PureComponent {
     const { key, item: { props: { type, boardType } } } = MenuItem;
     const { visibleBoards } = this.props;
     let boardname;
-    console.warn('MenuItem', MenuItem);
     switch (type) {
       case visibleBoardType.manage.key:
         collectData({
