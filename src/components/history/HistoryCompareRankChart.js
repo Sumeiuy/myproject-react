@@ -162,7 +162,7 @@ export default class HistoryCompareRankChart extends PureComponent {
   }
 
   render() {
-    const { level, scope, boardType, data: { historyCardRecordVo: { data } } } = this.props;
+    const { level, boardType, data: { historyCardRecordVo: { data } } } = this.props;
     const { orderType, scopeSelectValue, rankPage, totalPage, unit } = this.state;
     // 隐藏选项
     const toggleScope2Option = classnames({
@@ -250,7 +250,7 @@ export default class HistoryCompareRankChart extends PureComponent {
           <HistoryRankChart
             data={data}
             level={level}
-            scope={scope}
+            scope={scopeSelectValue}
             showChartUnit={this.showChartUnit}
           />
         </div>
