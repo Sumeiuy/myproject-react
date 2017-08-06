@@ -300,11 +300,16 @@ const helper = {
       $browser_version: `${bowser.name} ${bowser.version}`,
     };
   },
-
+  // 获取事件段事件
   getDurationString(cycleType) {
     const fomater = 'YYYY/MM/DD';
     let durationEnd = '';
     let durationStart = '';
+    const quarter = moment().quarter();
+    let lastQuarter = quarter - 1;
+    let year = moment().year();
+    const lastYear = year - 1;
+
     const temp = moment().subtract(1, 'days');
     const dateText = temp.format('YYYY/MM/DD');
     switch (cycleType) {
@@ -315,6 +320,18 @@ const helper = {
       case 'lastMonth':
         durationStart = moment(dateText, fomater).subtract(1, 'month').startOf('month');
         durationEnd = moment(dateText, fomater).subtract(1, 'month').endOf('month');
+        break;
+      case 'lastQuarter':
+        if (quarter <= 1) {
+          year--;
+          lastQuarter = 4;
+        }
+        durationStart = moment(moment().year(year).startOf('quarter').quarter(lastQuarter));
+        durationEnd = moment(moment().year(year).endOf('quarter').quarter(lastQuarter));
+        break;
+      case 'lastYear':
+        durationStart = moment(moment().year(lastYear).startOf('year'));
+        durationEnd = moment(moment().year(lastYear).endOf('year'));
         break;
       default:
         durationStart = moment(dateText, fomater).startOf(cycleType);
@@ -328,6 +345,43 @@ const helper = {
       end: durationEnd.format('YYYYMMDD'),
     };
     return duration;
+  },
+  // 获取环比时间段事件
+  queryMoMDuration(begin, end, duration) {
+    let tempDuration;
+    if (duration === 'month' || duration === 'lastMonth') {
+      tempDuration = 'month';
+    } else if (duration === 'quarter' || duration === 'lastQuarter') {
+      tempDuration = 'quarter';
+    } else if (duration === 'year' || duration === 'lastYear') {
+      tempDuration = 'year';
+    } else {
+      tempDuration = 'null';
+    }
+    let lastBeginMoment;
+    let lastEndMoment;
+    let lastDurationStr;
+    if (tempDuration !== 'null') {
+      lastBeginMoment = moment(begin).subtract(1, tempDuration);
+      lastEndMoment = moment(end).subtract(1, tempDuration);
+      lastDurationStr = `${lastBeginMoment.format('YYYY/MM/DD')}-${lastEndMoment.format('YYYY/MM/DD')}`;
+    } else {
+      console.warn('用户自己选择的时间段');
+      console.warn('begin', begin);
+      console.warn('end', end);
+      console.warn(moment(end).diff(moment(begin)));
+      // const distanceYear = moment(end).diff(moment(begin), 'years');
+      console.warn(moment(end).diff(moment(begin), 'years'));
+      console.warn(moment(end).diff(moment(begin), 'months'));
+      console.warn(moment(end).diff(moment(begin), 'days'));
+    }
+
+    const compareDuration = {
+      durationStr: lastDurationStr,
+      begin: lastBeginMoment,
+      end: lastEndMoment,
+    };
+    return compareDuration;
   },
 };
 

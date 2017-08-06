@@ -7,7 +7,16 @@
 :global {
   .react-app{
     .ant-calendar-footer-btn{
-      display: none !important;
+      height: 0;
+      border: 0;
+      .ant-calendar-ok-btn{
+        width: 60px;
+        height: 28px;
+        line-height: 28px;
+        position: absolute;
+        top: 115px;
+        right: 20px;
+      }
     }
   }
 }
@@ -26,10 +35,8 @@
       }
     }
     .bottomBtn{
-      width: 160px;
-      button{
-        margin-right: 10px;
-      }
+      width: 70px;
+      margin-right: 70px;
     }
   }
   :global{

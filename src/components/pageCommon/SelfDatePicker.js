@@ -11,7 +11,7 @@ import { autobind } from 'core-decorators';
 import { Row, Col, DatePicker, Radio, Button } from 'antd';
 
 import { constants, optionsMap } from '../../config';
-import { getDurationString } from '../../utils/helper';
+import { getDurationString, queryMoMDuration } from '../../utils/helper';
 
 // 选择项字典
 import styles from './SelfDatePicker.less';
@@ -23,7 +23,6 @@ const reactApp = document.querySelectorAll(constants.container)[0];
 
 const historyTime = optionsMap.historyTime;
 const compareArray = optionsMap.compare;
-const currentMoment = moment();
 
 const defaultCycleType = historyTime[0].key;
 // const dateFormat = 'YYYY/MM/DD';
@@ -36,158 +35,49 @@ export default class SelfDatePicker extends PureComponent {
   // }
   constructor(props) {
     super(props);
-    // const yearStart = moment().startOf('year').format('YYYY-MM-DD');
-    // const monthStart = moment().startOf('month').format('YYYY-MM-DD');
-    // const quarterStart = moment().startOf('quarter').format('YYYY-MM-DD');
-    // const yearEnd = moment().endOf('year').format('YYYY-MM-DD');
-    // const monthEnd = moment().endOf('month').format('YYYY-MM-DD');
-    // const quarterEnd = moment().endOf('quarter').format('YYYY-MM-DD');
 
-    // const lastCycleType = historyTime[3].key;
-    const now = getDurationString(defaultCycleType);
-    // const last = getDurationString(lastCycleType);
-    // .subtract(distance, 'days')
-    const beginMoment = moment(now.begin);
-    const endMoment = moment(now.end);
-    const nowDurationStr = now.durationStr;
+    const nowDuration = getDurationString(defaultCycleType);
+    const beginMoment = moment(nowDuration.begin);
+    const endMoment = moment(nowDuration.end);
+    const nowDurationStr = nowDuration.durationStr;
 
-    const lastBeginMoment = moment(now.begin).subtract(1, 'year');
-    const lastEndMoment = moment(now.end).subtract(1, 'year');
+    const lastBeginMoment = moment(nowDuration.begin).subtract(1, 'year');
+    const lastEndMoment = moment(nowDuration.end).subtract(1, 'year');
     const lastDurationStr = `${lastBeginMoment.format('YYYY/MM/DD')}-${lastEndMoment.format('YYYY/MM/DD')}`;
-    // const lastBeginMoment = moment(last.begin);
-    // const lastEndMoment = moment(last.end);
-    // const lastDurationStr = last.durationStr;
 
-    // const quarter = moment().quarter();
-    // console.warn('quarter', quarter);
-    // console.warn(moment(moment().format('YYYY-MM-DD')).startOf('quarter').quarter(1).format());
-    // console.warn('yearStart', yearStart);
-    // console.warn('monthStart', monthStart);
-    // console.warn('quarterStart', quarterStart);
-    // console.warn('yearEnd', yearEnd);
-    // console.warn('monthEnd', monthEnd);
-    // console.warn('quarterEnd', quarterEnd);
-    // console.warn('moment', moment().startOf('year'));
     this.state = {
       compare: compareArray[0].key,
       duration: historyTime[0].key,
+      open: false,
+      disabled: false,
       beginMoment,
       endMoment,
       nowDurationStr,
       lastBeginMoment,
       lastEndMoment,
       lastDurationStr,
+      oldState: {
+        compare: compareArray[0].key,
+        duration: historyTime[0].key,
+        beginMoment,
+        endMoment,
+        nowDurationStr,
+        lastBeginMoment,
+        lastEndMoment,
+        lastDurationStr,
+      },
     };
   }
 
   @autobind
-  compareChangeHandle(e) {
-    this.setState({
-      compare: e.target.value,
-    });
-  }
-  // 事件范围切换
-  @autobind
-  handleDurationChange(e) {
-    const duration = e.target.value;
-    const now = getDurationString(defaultCycleType);
-    const preMonth = getDurationString('lastMonth');
-    let year = currentMoment.year();
-    const quarter = currentMoment.quarter();
-    const lastYear = year - 1;
-    let lastQuarter = quarter - 1;
-
-    console.warn('moment duration', moment.duration(2, 'years'));
-    let newBegin;
-    let newEnd;
-    let newDurationStr;
-    let newLastBegin;
-    let newLastEnd;
-    let newLastDurationStr;
-    switch (duration) {
-      case 'month':
-        console.warn('月');
-        newBegin = moment(now.begin);
-        newEnd = moment(now.end);
-        newDurationStr = now.durationStr;
-        newLastBegin = moment(now.begin).subtract(1, 'year');
-        newLastEnd = moment(now.end).subtract(1, 'year');
-        newLastDurationStr = `${newLastBegin.format('YYYY/MM/DD')}-${newLastEnd.format('YYYY/MM/DD')}`;
-        break;
-      case 'quarter':
-        console.warn('季');
-        newBegin = moment(moment().startOf('quarter').quarter(quarter));
-        newEnd = moment().subtract(1, 'days');
-        newDurationStr = `${newBegin.format('YYYY/MM/DD')}-${newEnd.format('YYYY/MM/DD')}`;
-        newLastBegin = newBegin.subtract(1, 'year');
-        newLastEnd = newEnd.subtract(1, 'year');
-        newLastDurationStr = `${newLastBegin.format('YYYY/MM/DD')}-${newLastEnd.format('YYYY/MM/DD')}`;
-        break;
-      case 'year':
-        console.warn('年');
-        newBegin = moment(moment().startOf('year'));
-        newEnd = moment().subtract(1, 'days');
-        newDurationStr = `${newBegin.format('YYYY/MM/DD')}-${newEnd.format('YYYY/MM/DD')}`;
-        newLastBegin = newBegin.subtract(1, 'year');
-        newLastEnd = newEnd.subtract(1, 'year');
-        newLastDurationStr = `${newLastBegin.format('YYYY/MM/DD')}-${newLastEnd.format('YYYY/MM/DD')}`;
-        break;
-      case 'lastMonth':
-        console.warn('上月');
-        newBegin = moment(preMonth.begin);
-        newEnd = moment(preMonth.end);
-        newDurationStr = preMonth.durationStr;
-        newLastBegin = newBegin.subtract(1, 'year');
-        newLastEnd = newEnd.subtract(1, 'year');
-        newLastDurationStr = `${newLastBegin.format('YYYY/MM/DD')}-${newLastEnd.format('YYYY/MM/DD')}`;
-        break;
-      case 'lastQuarter':
-        console.warn('上季');
-        if (quarter <= 1) {
-          year--;
-          lastQuarter = 4;
-        }
-        newBegin = moment(moment().year(year).startOf('quarter').quarter(lastQuarter));
-        newEnd = moment(moment().year(year).endOf('quarter').quarter(lastQuarter));
-        newDurationStr = `${newBegin.format('YYYY/MM/DD')}-${newEnd.format('YYYY/MM/DD')}`;
-        newLastBegin = newBegin.subtract(1, 'year');
-        newLastEnd = newEnd.subtract(1, 'year');
-        newLastDurationStr = `${newLastBegin.format('YYYY/MM/DD')}-${newLastEnd.format('YYYY/MM/DD')}`;
-        break;
-      case 'lastYear':
-        console.warn('去年');
-        // lastYear
-        newBegin = moment(moment().year(lastYear).startOf('year'));
-        // newBegin = moment(moment().startOf('quarter').quarter(quarter - 1));
-        newEnd = moment(moment().year(year).endOf('year'));
-        newDurationStr = `${newBegin.format('YYYY/MM/DD')}-${newEnd.format('YYYY/MM/DD')}`;
-        newLastBegin = newBegin.subtract(1, 'year');
-        newLastEnd = newEnd.subtract(1, 'year');
-        newLastDurationStr = `${newLastBegin.format('YYYY/MM/DD')}-${newLastEnd.format('YYYY/MM/DD')}`;
-        break;
-      default:
-        console.warn('默认');
-        break;
-    }
-    this.setState({
-      duration,
-      beginMoment: newBegin,
-      endMoment: newEnd,
-      nowDurationStr: newDurationStr,
-      lastBeginMoment: newLastBegin,
-      lastEndMoment: newLastEnd,
-      lastDurationStr: newLastDurationStr,
-    });
-  }
-  @autobind
   makeExtraFooter() {
-    const { nowDurationStr, lastDurationStr } = this.state;
+    const { nowDurationStr, lastDurationStr, disabled } = this.state;
     return (
       <div className={styles.extraFooter}>
         <h4>时间范围</h4>
         <RadioGroup
           value={this.state.duration}
-          onChange={this.handleDurationChange}
+          onChange={this.changeDuration}
         >
           <Row>
             {
@@ -207,7 +97,13 @@ export default class SelfDatePicker extends PureComponent {
             compareArray.map((item) => {
               const compareKey = `compare${item.key}`;
               return (
-                <Radio key={compareKey} value={item.key}>{item.name}</Radio>
+                <Radio
+                  key={compareKey}
+                  value={item.key}
+                  disabled={item.key === compareArray[1].key ? disabled : false}
+                >
+                  {item.name}
+                </Radio>
               );
             })
           }
@@ -218,55 +114,197 @@ export default class SelfDatePicker extends PureComponent {
             <h4>上期：{lastDurationStr}</h4>
           </div>
           <div className={styles.bottomBtn}>
-            <Button>取消</Button>
-            <Button type="primary">确定</Button>
+            <Button onClick={this.cancelHanle}>取消</Button>
           </div>
         </div>
       </div>
     );
   }
 
+  // 环比同比切换事件
   @autobind
-  timeChangeHandle() {
-    console.warn(111111111111111111111);
+  compareChangeHandle(e) {
+    const compare = e.target.value;
+    const { duration } = this.state;
+    if (compare === 'MoM') {
+      const { beginMoment, endMoment } = this.state;
+      const begin = beginMoment.format('YYYYMMDD');
+      const end = endMoment.format('YYYYMMDD');
+      const compareDuration = queryMoMDuration(begin, end, duration);
+      this.setState({
+        open: true,
+        compare,
+        lastBeginMoment: compareDuration.begin,
+        lastEndMoment: compareDuration.end,
+        lastDurationStr: compareDuration.durationStr,
+      });
+    } else {
+      const nowDuration = getDurationString(duration);
+      const beginMoment = moment(nowDuration.begin);
+      const endMoment = moment(nowDuration.end);
+      const nowDurationStr = nowDuration.durationStr;
+      const lastBeginMoment = moment(nowDuration.begin).subtract(1, 'year');
+      const lastEndMoment = moment(nowDuration.end).subtract(1, 'year');
+      const lastDurationStr = `${lastBeginMoment.format('YYYY/MM/DD')}-${lastEndMoment.format('YYYY/MM/DD')}`;
+      this.setState({
+        compare,
+        open: true,
+        beginMoment,
+        endMoment,
+        nowDurationStr,
+        lastBeginMoment,
+        lastEndMoment,
+        lastDurationStr,
+      });
+    }
   }
+  // 预定义时间范围切换事件
+  @autobind
+  changeDuration(e) {
+    console.warn('事件范围切换');
+    const { compare } = this.state;
+    const duration = e.target.value;
+    const nowDuration = getDurationString(duration);
+    const beginMoment = moment(nowDuration.begin);
+    const endMoment = moment(nowDuration.end);
+    const nowDurationStr = nowDuration.durationStr;
+    // 环比
+    if (compare === 'MoM') {
+      console.warn('环比');
+      const begin = beginMoment.format('YYYYMMDD');
+      const end = endMoment.format('YYYYMMDD');
+      const compareDuration = queryMoMDuration(begin, end, duration);
+      this.setState({
+        duration,
+        open: true,
+        disabled: false,
+        beginMoment,
+        endMoment,
+        nowDurationStr,
+        lastBeginMoment: compareDuration.begin,
+        lastEndMoment: compareDuration.end,
+        lastDurationStr: compareDuration.durationStr,
+      });
+    } else {
+      const lastBeginMoment = moment(nowDuration.begin).subtract(1, 'year');
+      const lastEndMoment = moment(nowDuration.end).subtract(1, 'year');
+      const lastDurationStr = `${lastBeginMoment.format('YYYY/MM/DD')}-${lastEndMoment.format('YYYY/MM/DD')}`;
+      this.setState({
+        duration,
+        open: true,
+        disabled: false,
+        beginMoment,
+        endMoment,
+        nowDurationStr,
+        lastBeginMoment,
+        lastEndMoment,
+        lastDurationStr,
+      });
+    }
+  }
+  // 确认事件
+  @autobind
+  okHandle() {
+    this.saveMoment('ok');
+  }
+  // 取消事件
+  @autobind
+  cancelHanle() {
+    this.saveMoment('cancel');
+  }
+  // 给 DatePicker 添加 wrapper
   @autobind
   findContainer() {
     return reactApp;
   }
   @autobind
   disabledDate(current) {
-    // Can not select days before today and today
+    // 不能选择大于今天的日期
     return current && current.valueOf() > Date.now();
   }
+  // 用户自己选的时间段事件
   @autobind
   rangePickerChange(dates, dateStrings) {
-    let { lastDurationStr } = this.state;
-    console.warn('dates', dates);
-    console.warn('dateStrings', dateStrings);
-    const dateArrar = dateStrings.map(item => moment(item));
-    const distance = dateArrar[1].diff(dateArrar[0], 'days') + 1;
-    const distanceBeginDay = dateArrar[0].subtract(distance, 'days').format('YYYY/MM/DD');
-    const distanceEndDay = dateArrar[1].subtract(distance, 'days').format('YYYY/MM/DD');
-    lastDurationStr = `${distanceBeginDay}-${distanceEndDay}`;
+    const { compare } = this.state;
+    const beginMoment = dates[0];
+    const endMoment = dates[1];
+    const nowDurationStr = `${beginMoment.format('YYYY/MM/DD')}-${endMoment.format('YYYY/MM/DD')}`;
 
+    let lastBegin;
+    let lastEnd;
+    let lastDurationStr;
+    if (compare === compareArray[0].key) {
+      lastBegin = moment(dateStrings[0]).subtract(1, 'year');
+      lastEnd = moment(dateStrings[1]).subtract(1, 'year');
+      lastDurationStr = `${lastBegin.format('YYYY/MM/DD')}-${lastEnd.format('YYYY/MM/DD')}`;
+    } else {
+      console.warn('环比');
+    }
     this.setState({
-      nowDurationStr: dateStrings.join('-'),
+      compare: compareArray[0].key,
+      duration: null,
+      open: true,
+      disabled: true,
+      beginMoment,
+      endMoment,
+      nowDurationStr,
       lastDurationStr,
+      oldBeginMoment: beginMoment,
+      oldEndMoment: endMoment,
+      oldDurationStr: nowDurationStr,
+      oldLastDurationStr: lastDurationStr,
     });
   }
+  // 保存选择的时间
+  @autobind
+  saveMoment(type) {
+    if (type === 'cancel') {
+      const { oldState } = this.state;
+      this.setState({
+        open: false,
+        disabled: false,
+        ...oldState,
+      });
+    } else {
+      const {
+        beginMoment,
+        endMoment,
+        nowDurationStr,
+        compare,
+        duration,
+        lastBeginMoment,
+        lastEndMoment,
+        lastDurationStr,
+      } = this.state;
+      this.setState({
+        open: false,
+        disabled: false,
+        oldState: {
+          beginMoment,
+          endMoment,
+          nowDurationStr,
+          compare,
+          duration,
+          lastBeginMoment,
+          lastEndMoment,
+          lastDurationStr,
+        },
+      });
+    }
+  }
   render() {
-    const { beginMoment, endMoment } = this.state;
+    const { beginMoment, endMoment, open } = this.state;
     return (
       <RangePicker
+        allowClear={false}
         renderExtraFooter={() => this.makeExtraFooter()}
         disabledDate={this.disabledDate}
         value={[beginMoment, endMoment]}
         getCalendarContainer={this.findContainer}
         onChange={this.rangePickerChange}
-        showToday={false}
+        open={open}
+        onOk={this.okHandle}
         showTime
-        open
       />
     );
   }
