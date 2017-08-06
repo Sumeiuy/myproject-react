@@ -360,10 +360,15 @@ export default class HistoryHome extends PureComponent {
   // 从弹出层取出挑选的指标数组
   @autobind
   saveIndcatorToHome(coreIndicatorIds) {
+    const indicatorId = coreIndicatorIds[0];
     this.setState({
       coreIndicatorIds,
+      indicatorId,
+    },
+    () => {
+      this.freshAllCore();
+      this.queryOneCoreIndicator();
     });
-    // TODO 变换后，需要重新查询所有的数据
   }
 
   // 另存为新的历史对比看板
@@ -387,10 +392,32 @@ export default class HistoryHome extends PureComponent {
   // 切换时间段和组织机构
   @autobind
   updateQueryState(query) {
+    let durationOrg = query;
+    if (query.orgId) {
+      const { scope, orgId, level } = query;
+      durationOrg = {
+        scope: String(scope),
+        orgId,
+        localScope: level,
+      };
+    }
+    // 此时需要确认indicatorId
+    let indicatorId = '';
+    const { coreIndicatorIds } = this.state;
+    const { historyCore } = this.props;
+    if (_.isEmpty(coreIndicatorIds)) {
+      indicatorId = historyCore[0].key;
+    } else {
+      indicatorId = coreIndicatorIds[0];
+    }
     this.setState({
-      ...query,
+      ...durationOrg,
+      indicatorId,
+    },
+    () => {
+      this.freshAllCore();
+      this.queryOneCoreIndicator();
     });
-    // TODO 变换后，需要重新查询所有的数据
   }
 
   // 切换当前核心指标

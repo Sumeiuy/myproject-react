@@ -270,8 +270,15 @@ export default {
       });
     },
     // 获取历史对比核心指标
-    * getHistoryCore({ payload }, { call, put }) {
-      const resHistoryCore = yield call(api.getHistoryCore, payload);
+    * getHistoryCore({ payload }, { call, put, select }) {
+      const custRange = yield select(state => state.history.custRange);
+      const firstCust = custRange[0];
+      const resHistoryCore = yield call(api.getHistoryCore, {
+        ...payload,
+        scope: payload.scope || firstCust.level,
+        localScope: payload.localScope || firstCust.level,
+        orgId: payload.orgId || firstCust.id,
+      });
       yield put({
         type: 'getHistoryCoreSuccess',
         payload: { resHistoryCore },
