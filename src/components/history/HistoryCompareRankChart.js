@@ -32,6 +32,7 @@ export default class HistoryCompareRankChart extends PureComponent {
     level: PropTypes.string,
     scope: PropTypes.string,
     boardType: PropTypes.string,
+    swtichDefault: PropTypes.string.isRequired,
     data: PropTypes.object.isRequired,
     changeRankBar: PropTypes.func.isRequired,
   };
@@ -56,15 +57,15 @@ export default class HistoryCompareRankChart extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { data: preData, scope: preScope } = this.props;
-    const { data, scope } = nextProps;
+    const { data: preData, scope: preScope, swtichDefault: oldSwitch } = this.props;
+    const { data, scope, swtichDefault } = nextProps;
     if (!_.isEqual(preData, data)) {
       const page = this.getpagination(data.historyCardRecordVo);
       this.setState({
         ...page,
       });
     }
-    if (!_.isEqual(preScope, scope)) {
+    if (!_.isEqual(preScope, scope) || !_.isEqual(swtichDefault, oldSwitch)) {
       const page = this.getpagination(data.historyCardRecordVo);
       this.setState({
         ...page,
@@ -162,7 +163,7 @@ export default class HistoryCompareRankChart extends PureComponent {
   }
 
   render() {
-    const { level, scope, boardType, data: { historyCardRecordVo: { data } } } = this.props;
+    const { level, boardType, data: { historyCardRecordVo: { data } } } = this.props;
     const { orderType, scopeSelectValue, rankPage, totalPage, unit } = this.state;
     // 隐藏选项
     const toggleScope2Option = classnames({
@@ -250,7 +251,7 @@ export default class HistoryCompareRankChart extends PureComponent {
           <HistoryRankChart
             data={data}
             level={level}
-            scope={scope}
+            scope={scopeSelectValue}
             showChartUnit={this.showChartUnit}
           />
         </div>

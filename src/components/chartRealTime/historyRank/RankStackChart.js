@@ -18,6 +18,7 @@ import {
   dealStackSeriesData,
   designStackGrid,
   getStackSummury,
+  optimizeGrid,
 } from './rankDataHandle';
 import styles from './RankChart.less';
 
@@ -308,8 +309,9 @@ export default class RankStackChart extends PureComponent {
       legends,
     } = this.state;
     // 生成最大值数组和最小值数组
-    const maxData = this.makeDataArray(grid.max);
-    const minData = this.makeDataArray(grid.min);
+    const realGrid = optimizeGrid(grid);
+    const maxData = this.makeDataArray(realGrid.max);
+    const minData = this.makeDataArray(realGrid.min);
 
     const options = {
       color: [...stackBarColors],

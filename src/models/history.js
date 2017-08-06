@@ -147,13 +147,13 @@ export default {
     },
   },
   effects: {
-    // 初始化获取数据，初始化时候需要优先获取核心指标
-    * getAllInfo({ payload }, { call, put, select }) {
+    // 加载页面，提前需要获取的数据
+    * getInitial({ payload }, { call, put, select }) {
       // 组织机构树
-      const cust = yield select(state => state.history.custRange);
+      const custRange = yield select(state => state.history.custRange);
       let firstCust;
-      if (cust.length) {
-        firstCust = cust[0];
+      if (custRange.length) {
+        firstCust = custRange[0];
       } else {
         const response = yield call(api.getCustRange, payload.custRang);
         yield put({
@@ -170,26 +170,95 @@ export default {
         type: 'getAllVisibleReportsSuccess',
         payload: { allVisibleReports },
       });
-      // 初始化优先查询下核心指标
-      const resHistoryCore = yield call(api.getHistoryCore, {
-        ...payload.core,
-        localScope: payload.core.localScope || firstCust.level,
-        orgId: payload.core.orgId || firstCust.id,
-        scope: payload.core.scope || firstCust.level,
-      });
-      yield put({
-        type: 'getHistoryCoreSuccess',
-        payload: { resHistoryCore },
-      });
-      // 获取散点图字典
+      // 获取散点图对比值字典
       const dicResponse = yield call(api.queryHistoryContrast, {
         ...payload.dic,
-        orgId: payload.dic.orgId || firstCust.id,
+        orgId: firstCust.id,
       });
       yield put({
         type: 'queryHistoryContrastSuccess',
         payload: dicResponse,
       });
+      // 查询HistoryCore
+      const resHistoryCore = yield call(api.getHistoryCore, {
+        ...payload.core,
+        orgId: firstCust.id,
+        scope: firstCust.level,
+        localScope: firstCust.level,
+      });
+      yield put({
+        type: 'getHistoryCoreSuccess',
+        payload: { resHistoryCore },
+      });
+      const firstCore = resHistoryCore.resultData[0];
+      // 查询雷达图, 因为雷达图只有在localScope>1时候才会有值
+      if (firstCust.level !== '1') {
+        const currentRanking = yield call(api.getCurrentRankingRecord, {
+          ...payload.radar,
+          orgId: firstCust.id,
+          scope: firstCust.level,
+          localScope: firstCust.level,
+        });
+        yield put({
+          type: 'getCurrentRankingRecordSuccess',
+          payload: { currentRanking },
+        });
+      }
+      // 历史对比折线图
+      const polyResponse = yield call(api.getHistoryContrastLineChartData, {
+        ...payload.poly,
+        coreIndicatorId: firstCore.key,
+        orgId: firstCust.id,
+        scope: firstCust.level,
+        localScope: firstCust.level,
+      });
+      yield put({
+        type: 'getContrastDataSuccess',
+        payload: { contrastData: polyResponse.resultData },
+      });
+      // 查询排名柱状图数据
+      const barResponse = yield call(api.getHistoryRankChartData, {
+        ...payload.bar,
+        indicatorId: firstCore.key,
+        orderIndicatorId: firstCore.key,
+        orgId: firstCust.id,
+        localScope: firstCust.level,
+        scope: String(Number(firstCust.level) + 1),
+      });
+      yield put({
+        type: 'getRankDataSuccess',
+        payload: { rankData: barResponse.resultData },
+      });
+
+      // 散点图数据
+      const { cust, invest } = yield select(state => state.history.historyContrastDic);
+      const scatterCommon = {
+        orgId: firstCust.id,
+        localScope: firstCust.level,
+        scope: String(Number(firstCust.level) + 1),
+        coreIndicatorId: firstCore.key,
+      };
+      // 客户散点
+      const custScatterRes = yield call(api.queryContrastAnalyze, {
+        ...payload.custScatter,
+        ...scatterCommon,
+        contrastIndicatorId: cust[0].key,
+      });
+      yield put({
+        type: 'queryContrastAnalyzeSuccess',
+        payload: { response: custScatterRes.resultData, type: 'cust' },
+      });
+      // 投顾散点
+      const investScatterRes = yield call(api.queryContrastAnalyze, {
+        ...payload.investScatter,
+        ...scatterCommon,
+        contrastIndicatorId: invest[0].key,
+      });
+      yield put({
+        type: 'queryContrastAnalyzeSuccess',
+        payload: { response: investScatterRes.resultData, type: 'invest' },
+      });
+
       // 获取指标树数据
       const indicatorResult = yield call(api.getIndicators, {
         ...payload.lib,
@@ -200,7 +269,6 @@ export default {
         payload: { indicatorResult },
       });
     },
-
     // 获取历史对比核心指标
     * getHistoryCore({ payload }, { call, put }) {
       const resHistoryCore = yield call(api.getHistoryCore, payload);
@@ -246,8 +314,15 @@ export default {
       });
     },
     // 获取历史对比折线图数据
-    * getContrastData({ payload }, { call, put }) {
-      const response = yield call(api.getHistoryContrastLineChartData, payload);
+    * getContrastData({ payload }, { call, put, select }) {
+      const custRange = yield select(state => state.history.custRange);
+      const firstCust = custRange[0];
+      const response = yield call(api.getHistoryContrastLineChartData, {
+        ...payload,
+        scope: payload.scope || firstCust.level,
+        localScope: payload.localScope || firstCust.level,
+        orgId: payload.orgId || firstCust.id,
+      });
       const { resultData } = response;
       yield put({
         type: 'getContrastDataSuccess',
@@ -266,14 +341,6 @@ export default {
       });
       const createBoardResult = yield call(api.createHistoryBoard, payload);
       const board = createBoardResult.resultData;
-      // const cust = yield select(state => state.history.custRange);
-      // const allVisibleReports = yield call(api.getAllVisibleReports, {
-      //   orgId: cust[0].id,
-      // });
-      // yield put({
-      //   type: 'getAllVisibleReportsSuccess',
-      //   payload: { allVisibleReports },
-      // });
       yield put({
         type: 'opertateBoardState',
         payload: {
@@ -294,19 +361,7 @@ export default {
           message: '开始删除',
         },
       });
-      // const deleteResult = yield call(api.deleteHistoryBoard, payload);
       yield call(api.deleteHistoryBoard, payload);
-      // const result = deleteResult.resultData;
-      // if (Number(result.code)) {
-      //   const cust = yield select(state => state.history.custRange);
-      //   const allVisibleReports = yield call(api.getAllVisibleReports, {
-      //     orgId: cust[0].id,
-      //   });
-      //   yield put({
-      //     type: 'getAllVisibleReportsSuccess',
-      //     payload: { allVisibleReports },
-      //   });
-      // }
       yield put({
         type: 'opertateBoardState',
         payload: {

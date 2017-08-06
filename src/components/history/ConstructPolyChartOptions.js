@@ -52,7 +52,7 @@ export const constructPolyChartOptions = (option = {}) => {
       top: '20px',
       left: '20px',
       right: '40px',
-      bottom: '20px',
+      bottom: '40px',
       containLabel: true,
     },
     xAxis: [

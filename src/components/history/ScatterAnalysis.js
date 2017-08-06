@@ -4,6 +4,7 @@
  */
 import React, { PropTypes, PureComponent } from 'react';
 import { Row, Col } from 'antd';
+import _ from 'lodash';
 import AbilityScatterAnalysis from './AbilityScatterAnalysis';
 import { scatterType } from '../../config';
 import styles from './scatterAnalysis.less';
@@ -18,6 +19,7 @@ export default class ScatterAnalysis extends PureComponent {
     queryContrastAnalyze: PropTypes.func.isRequired,
     cust: PropTypes.array.isRequired,
     invest: PropTypes.array.isRequired,
+    swtichDefault: PropTypes.string.isRequired,
   };
 
   static defaultProps = {
@@ -30,7 +32,11 @@ export default class ScatterAnalysis extends PureComponent {
       reviewAnalysisData,
       cust,
       invest,
+      swtichDefault,
     } = this.props;
+    if (_.isEmpty(cust) || _.isEmpty(invest)) {
+      return null;
+    }
     return (
       <div className={styles.scatterSection}>
         <Row type="flex">
@@ -41,6 +47,7 @@ export default class ScatterAnalysis extends PureComponent {
               title={custScatter.title}
               optionsData={cust}
               type={custScatter.type}
+              swtichDefault={swtichDefault}
               style={{
                 left: '-85px',
               }}
@@ -53,6 +60,7 @@ export default class ScatterAnalysis extends PureComponent {
               title={investScatter.title}
               optionsData={invest}
               type={investScatter.type}
+              swtichDefault={swtichDefault}
               style={{
                 left: '-45px',
               }}
