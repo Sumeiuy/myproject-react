@@ -286,7 +286,7 @@ export default class HistoryComparePolyChart extends PureComponent {
             option={chartOptions}
             resizable
             style={{
-              height: '325px',
+              height: '335px',
             }}
           />
         </div>
