@@ -20,6 +20,7 @@ const EMPTY_OBJECT = {};
 export default class AbilityScatterAnalysis extends PureComponent {
   static propTypes = {
     data: PropTypes.object.isRequired,
+    style: PropTypes.object.isRequired,
     queryContrastAnalyze: PropTypes.func.isRequired,
     title: PropTypes.string.isRequired,
     optionsData: PropTypes.array.isRequired,
@@ -202,6 +203,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
     const {
       title,
       optionsData,
+      style,
     } = this.props;
 
     if (_.isEmpty(finalData)) {
@@ -246,7 +248,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
             </Select>
           </div>
         </div>
-        <div className={styles.yAxisName}>{yAxisName}（{yAxisUnit}）</div>
+        <div className={styles.yAxisName} style={style}>{yAxisName}（{yAxisUnit}）</div>
         <div
           className={styles.abilityScatter}
           ref={ref => (this.abilityScatterElem = ref)}

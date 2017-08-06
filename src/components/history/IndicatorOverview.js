@@ -57,10 +57,6 @@ export default class IndicatorOverview extends PureComponent {
   */
   @autobind
   createOption(scopeNum, data) {
-    // console.warn('进入组织 option 方法');
-    // const { selectIndex } = this.state;
-    // const current = data[selectIndex].rank_current;
-    // const contrast = data[selectIndex].rank_contrast;
     const indicatorData = [];// name
     const period = []; // 本期数据值
     const PreviousPeriod = []; // 上期
@@ -179,13 +175,11 @@ export default class IndicatorOverview extends PureComponent {
 
   @autobind
   labelShow(params) {
-    // console.warn('params', params);
     const { selectIndex } = this.state;
     const { indexData } = this.props;
     const current = indexData.data[selectIndex].rank_current;
     const contrast = indexData.data[selectIndex].rank_contrast;
     const dataMode = [current, contrast]; // 选中项的排名
-    // console.warn('dataMode', dataMode);
     const dataIndex = params.dataIndex; // 图标数据下标 本期、上期
     const preValue = params.value; // 当先图标数值
     const gcount = indexData.scopeNum; // 总公司数
@@ -198,13 +192,15 @@ export default class IndicatorOverview extends PureComponent {
   /**
    * 弹窗处理（关闭）
   */
-  handleCancel = () => {
+  @autobind
+  handleCancel() {
     this.setState({ selectTreeModal: false });
   }
   /**
    * 弹窗处理（开启）
   */
-  showModal = () => {
+  @autobind
+  showModal() {
     this.setState({ selectTreeModal: true });
   }
 
@@ -214,7 +210,6 @@ export default class IndicatorOverview extends PureComponent {
     const { indexData } = this.props;
     const { scopeNum, data } = indexData;
     const cOptions = this.createOption(scopeNum, data);
-    // console.warn('cOptions', cOptions);
     this.setState({
       selectIndex: index,
       options: cOptions,
@@ -230,6 +225,9 @@ export default class IndicatorOverview extends PureComponent {
 
   render() {
     const { overviewData, indexData, summuryLib, saveIndcatorToHome } = this.props;
+    if (_.isEmpty(overviewData)) {
+      return null;
+    }
     const { options, selectIndex, selectTreeModal } = this.state;
     // 创建共同配置项
     const selectTreeProps = {
@@ -240,7 +238,6 @@ export default class IndicatorOverview extends PureComponent {
       visible: selectTreeModal,
       saveIndcatorToHome,
     };
-
     return (
       <div className={styles.overviewBox}>
         <Row>
@@ -300,9 +297,15 @@ export default class IndicatorOverview extends PureComponent {
                 强弱指示分析
               </div>
               <div className={styles.radar}>
-                {!_.isEmpty(options) ? <ChartRadar
-                  options={options}
-                /> : null}
+                {
+                  _.isEmpty(options)
+                  ? null
+                  : (
+                    <ChartRadar
+                      options={options}
+                    />
+                  )
+                }
               </div>
               {
                 indexData.data ?
