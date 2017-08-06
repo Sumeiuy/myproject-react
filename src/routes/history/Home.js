@@ -540,6 +540,7 @@ export default class HistoryHome extends PureComponent {
               summuryLib={summuryLib}
               saveIndcatorToHome={this.saveIndcatorToHome}
               changeCore={this.changeCore}
+              level={level}
             />
           </div>
           <div className={styles.indicatorAnalyse}>
