@@ -39,6 +39,7 @@ export default class PageHeader extends PureComponent {
     preView: PropTypes.bool,
     reportName: PropTypes.string,
     orgId: PropTypes.string,
+    showSelfDatePicker: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -47,6 +48,7 @@ export default class PageHeader extends PureComponent {
     preView: false,
     reportName: '',
     orgId: '',
+    showSelfDatePicker: false,
   }
   constructor(props) {
     super(props);
@@ -137,6 +139,7 @@ export default class PageHeader extends PureComponent {
       collectBoardSelect,
       collectCustRange,
       collectDurationSelect,
+      showSelfDatePicker,
     } = this.props;
     const { top, left, width } = this.state;
     return (
@@ -176,13 +179,19 @@ export default class PageHeader extends PureComponent {
                 }
               </div>
               <div className={styles.reportHeaderRight}>
-                <DurationSelect
-                  location={location}
-                  replace={replace}
-                  updateQueryState={updateQueryState}
-                  collectData={collectDurationSelect}
-                />
-                <SelfDatePicker />
+                {
+                  showSelfDatePicker ?
+                    <span className={styles.reportHeaderRightSpan}>
+                      <SelfDatePicker />
+                    </span>
+                  :
+                    <DurationSelect
+                      location={location}
+                      replace={replace}
+                      updateQueryState={updateQueryState}
+                      collectData={collectDurationSelect}
+                    />
+                }
                 <div className={styles.vSplit} />
                 {/* 营业地址选择项 */}
                 <CustRange
