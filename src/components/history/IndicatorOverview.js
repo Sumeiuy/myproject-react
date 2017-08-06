@@ -21,6 +21,7 @@ export default class IndicatorOverview extends PureComponent {
     indexData: PropTypes.object,
     summuryLib: PropTypes.object.isRequired,
     saveIndcatorToHome: PropTypes.func.isRequired,
+    changeCore: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -57,6 +58,9 @@ export default class IndicatorOverview extends PureComponent {
   */
   @autobind
   createOption(scopeNum, data) {
+    if (data) {
+      return null;
+    }
     const indicatorData = [];// name
     const period = []; // 本期数据值
     const PreviousPeriod = []; // 上期
@@ -65,7 +69,6 @@ export default class IndicatorOverview extends PureComponent {
       period.push(scopeNum - item.rank_current);
       PreviousPeriod.push(scopeNum - item.rank_contrast);
     });
-    // console.warn('PreviousPeriod', PreviousPeriod);
     const options = {
       title: {
         show: false,
@@ -204,16 +207,19 @@ export default class IndicatorOverview extends PureComponent {
     this.setState({ selectTreeModal: true });
   }
 
-  // 概览项选中
+  // 选中Core指标
   @autobind
-  handleClick(event, index) {
-    const { indexData } = this.props;
-    const { scopeNum, data } = indexData;
-    const cOptions = this.createOption(scopeNum, data);
-    this.setState({
-      selectIndex: index,
-      options: cOptions,
-    });
+  handleCoreClick(index, key) {
+    return () => {
+      const { indexData, changeCore } = this.props;
+      const { scopeNum, data } = indexData;
+      const cOptions = this.createOption(scopeNum, data);
+      this.setState({
+        selectIndex: index,
+        options: cOptions,
+      });
+      changeCore(key);
+    };
   }
 
   @autobind
@@ -224,7 +230,13 @@ export default class IndicatorOverview extends PureComponent {
   }
 
   render() {
-    const { overviewData, indexData, summuryLib, saveIndcatorToHome } = this.props;
+    const {
+      overviewData,
+      indexData,
+      indexData: { data },
+      summuryLib,
+      saveIndcatorToHome,
+    } = this.props;
     if (_.isEmpty(overviewData)) {
       return null;
     }
@@ -261,9 +273,10 @@ export default class IndicatorOverview extends PureComponent {
                     overviewData.map((item, index) => {
                       const itemIndex = `select${index}`;
                       const active = selectIndex === index;
+                      const key = item.key;
                       return (
                         <li
-                          onClick={event => this.handleClick(event, index)}
+                          onClick={this.handleCoreClick(index, key)}
                           key={itemIndex}
                         >
                           <IndexItem
@@ -296,32 +309,33 @@ export default class IndicatorOverview extends PureComponent {
               <div className={styles.titleDv}>
                 强弱指示分析
               </div>
-              <div className={styles.radar}>
-                {
-                  _.isEmpty(options)
-                  ? null
-                  : (
+              {
+                _.isEmpty(data)
+                ? null
+                : (
+                  <div className={styles.radar}>
                     <ChartRadar
                       options={options}
                     />
-                  )
-                }
-              </div>
+                  </div>
+                )
+              }
               {
-                indexData.data ?
+                _.isEmpty(data)
+                ? null
+                : (
                   <div className={styles.radarInfo}>
-                    <i />{indexData.data[selectIndex].indicator_name}：本期排名：
+                    <i />{data[selectIndex].indicator_name}：本期排名：
                     <span className={styles.now}>
-                      {indexData.data[selectIndex].rank_current}
+                      {data[selectIndex].rank_current}
                     </span>
                     上期排名：
                     <span className={styles.before}>
-                      {indexData.data[selectIndex].rank_contrast}
+                      {data[selectIndex].rank_contrast}
                     </span>
                     共 <span className={styles.all}>{indexData.scopeNum}</span> 家营业
                   </div>
-                :
-                  ''
+                )
               }
             </div>
           </Col>

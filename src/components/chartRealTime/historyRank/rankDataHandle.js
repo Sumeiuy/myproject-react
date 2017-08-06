@@ -116,13 +116,13 @@ const dataHandle = {
     switch (unit) {
       case PERCENT:
         result = {
-          newSeries: seriesData.map(item => (item * 100)),
+          newSeries: seriesData.map(item => toFixedDecimal(item * 100)),
           newUnit: unit,
         };
         break;
       case PERMILLAGE:
         result = {
-          newSeries: seriesData.map(item => (item * 1000)),
+          newSeries: seriesData.map(item => toFixedDecimal(item * 1000)),
           newUnit: unit,
         };
         break;
@@ -228,6 +228,23 @@ const dataHandle = {
       }
     }
     return summury;
+  },
+  // 优化Grid
+  optimizeGrid(grid) {
+    const gridHelper = _.cloneDeep(grid);
+    let { max } = gridHelper;
+    const { min } = gridHelper;
+    if (max > 0 && min > 0) {
+      max -= min;
+    }
+    if (max < 0 && min < 0) {
+      // TODO 不存在两者都小于零的情况
+      max = 0;
+    }
+    return {
+      max,
+      min,
+    };
   },
 };
 

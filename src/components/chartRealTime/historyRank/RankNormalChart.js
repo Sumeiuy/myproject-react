@@ -10,7 +10,7 @@ import _ from 'lodash';
 
 import IECharts from '../../IECharts';
 import { barColor, yAxis, xAxis, chartGrid, chartTooltip } from './rankChartGeneralConfig';
-import { filterData, filterRankData, dealNormalData, designGrid } from './rankDataHandle';
+import { filterData, filterRankData, dealNormalData, designGrid, optimizeGrid } from './rankDataHandle';
 import styles from './RankChart.less';
 
 export default class RankNormalChart extends PureComponent {
@@ -29,8 +29,17 @@ export default class RankNormalChart extends PureComponent {
     const { scope: preScope, chartData: preData } = this.props;
     const { scope, chartData } = nextProps;
     if (!_.isEqual(scope, preScope) || !_.isEqual(chartData, preData)) {
+      this.state.echart.clear();
       this.initialChartData(nextProps);
     }
+  }
+
+  // Echarts渲染后onReady
+  @autobind
+  onReady(echart) {
+    this.setState({
+      echart,
+    });
   }
 
   // 初始化图表数据，
@@ -150,6 +159,7 @@ export default class RankNormalChart extends PureComponent {
     const flag = name === 'max-label';
     const position = flag ? 'insideRight' : 'insideLeft';
     const textColor = flag ? '#999' : '#333';
+    const itemColor = flag ? 'transparent' : 'green';
     return {
       name,
       data,
@@ -160,7 +170,7 @@ export default class RankNormalChart extends PureComponent {
       barWidth: '20',
       animation: false,
       itemStyle: {
-        normal: { color: 'transparent' },
+        normal: { color: itemColor },
       },
       label: {
         normal: {
@@ -209,13 +219,13 @@ export default class RankNormalChart extends PureComponent {
           value = '--';
         }
         let tooltipHead = '';
-        if (scope === 4 && axisValue !== '--') {
+        if (scope === '4' && axisValue !== '--') {
           tooltipHead = `
             <tr>
               <td>${company[dataIndex]} - ${store[dataIndex]}</td>
             </tr>
           `;
-        } else if (scope === 3 && axisValue !== '--') {
+        } else if (scope === '3' && axisValue !== '--') {
           tooltipHead = `
             <tr>
               <td>${company[dataIndex]}</td>
@@ -238,6 +248,11 @@ export default class RankNormalChart extends PureComponent {
     };
   }
 
+  @autobind
+  makeOptions() {
+
+  }
+
   render() {
     const {
       unit,
@@ -251,8 +266,9 @@ export default class RankNormalChart extends PureComponent {
       rank,
     } = this.state;
     // 生成最大值数组和最小值数组
-    const maxData = this.makeDataArray(grid.max);
-    const minData = this.makeDataArray(grid.min);
+    const realGrid = optimizeGrid(grid);
+    const maxData = this.makeDataArray(realGrid.max);
+    const minData = this.makeDataArray(realGrid.min);
     // 普通视图配置项
     // TODO 当最小值和最大值是相同单位的时候，需要做特殊处理
     const options = {
@@ -306,6 +322,7 @@ export default class RankNormalChart extends PureComponent {
           <IECharts
             option={options}
             resizable
+            onReady={this.onReady}
             style={{
               height: '360px',
             }}
