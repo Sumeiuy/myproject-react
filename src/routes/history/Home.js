@@ -454,7 +454,7 @@ export default class HistoryHome extends PureComponent {
       collectDurationSelect,
     } = this.props;
 
-    if (_.isEmpty(custRange)) {
+    if (_.isEmpty(custRange) || _.isEmpty(visibleBoards)) {
       return null;
     }
     const {

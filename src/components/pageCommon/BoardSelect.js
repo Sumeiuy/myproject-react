@@ -35,6 +35,7 @@ export default class BoardSelect extends PureComponent {
     const bId = boardId || (visibleBoards.length && String(visibleBoards[0].id)) || defaultBoardId;
     let boardName = visibleBoardType.manage.name;
     console.warn('bid', bId);
+    console.warn('visibleBoards', visibleBoards);
     if (pathname !== '/boardManage') {
       boardName = this.findBoardBy(bId, visibleBoards).name;
     }
