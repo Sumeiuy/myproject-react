@@ -5,7 +5,7 @@
  * @Last Modified time: 2017-08-04 09:06:43
  */
 
-import React, { PureComponent } from 'react';
+import React, { PropTypes, PureComponent } from 'react';
 import moment from 'moment';
 import { autobind } from 'core-decorators';
 import { Row, Col, DatePicker, Radio, Button } from 'antd';
@@ -28,11 +28,10 @@ const defaultCycleType = historyTime[0].key;
 // const dateFormat = 'YYYY/MM/DD';
 
 export default class SelfDatePicker extends PureComponent {
-  // static propTypes = {
-  // }
+  static propTypes = {
+    updateQueryState: PropTypes.func.isRequired,
+  }
 
-  // static defaultProps = {
-  // }
   constructor(props) {
     super(props);
 
@@ -290,7 +289,33 @@ export default class SelfDatePicker extends PureComponent {
           lastDurationStr,
         },
       });
+      this.saveDurationToHome();
     }
+  }
+
+  @autobind
+  saveDurationToHome() {
+    const { updateQueryState } = this.props;
+    const {
+      beginMoment,
+      endMoment,
+      lastBeginMoment,
+      lastEndMoment,
+      duration,
+    } = this.state;
+    let newDuration;
+    if (duration === 'null') {
+      newDuration = 'month';
+    } else {
+      newDuration = duration;
+    }
+    updateQueryState({
+      begin: moment(beginMoment).format('YYYYMMDD'),
+      end: moment(endMoment).format('YYYYMMDD'),
+      cycleType: newDuration,
+      contrastBegin: moment(lastBeginMoment).format('YYYYMMDD'), // 上期开始时间
+      contrastEnd: moment(lastEndMoment).format('YYYYMMDD'), // 上期结束时间
+    });
   }
   render() {
     const { beginMoment, endMoment, open } = this.state;

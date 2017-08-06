@@ -186,7 +186,7 @@ export default class PageHeader extends PureComponent {
                 {
                   showSelfDatePicker ?
                     <span className={styles.reportHeaderRightSpan}>
-                      <SelfDatePicker />
+                      <SelfDatePicker updateQueryState={updateQueryState} />
                     </span>
                   :
                     <DurationSelect

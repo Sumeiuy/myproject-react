@@ -367,13 +367,13 @@ const helper = {
       lastDurationStr = `${lastBeginMoment.format('YYYY/MM/DD')}-${lastEndMoment.format('YYYY/MM/DD')}`;
     } else {
       console.warn('用户自己选择的时间段');
-      console.warn('begin', begin);
-      console.warn('end', end);
-      console.warn(moment(end).diff(moment(begin)));
-      // const distanceYear = moment(end).diff(moment(begin), 'years');
-      console.warn(moment(end).diff(moment(begin), 'years'));
-      console.warn(moment(end).diff(moment(begin), 'months'));
-      console.warn(moment(end).diff(moment(begin), 'days'));
+      // console.warn('begin', begin);
+      // console.warn('end', end);
+      // console.warn(moment(end).diff(moment(begin)));
+      // // const distanceYear = moment(end).diff(moment(begin), 'years');
+      // console.warn(moment(end).diff(moment(begin), 'years'));
+      // console.warn(moment(end).diff(moment(begin), 'months'));
+      // console.warn(moment(end).diff(moment(begin), 'days'));
     }
 
     const compareDuration = {

@@ -130,6 +130,8 @@ export default class BoardSelectTree extends PureComponent {
   constructor(props) {
     super(props);
     const { data: { type, boardType, checkTreeArr, checkedKeys } } = props;
+
+    console.warn('constructor', props.data);
     let showThirdColumn = false;
     let showTitle = false;
     // 如果看板是 经营业绩 类型 并且 指标是 总量指标 类型
@@ -204,6 +206,10 @@ export default class BoardSelectTree extends PureComponent {
 
   componentDidMount() {
     this.registerScrollEvent();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    console.warn('nextProps', nextProps);
   }
 
   // 展开子选项的事件
