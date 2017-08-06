@@ -10,6 +10,7 @@ export default {
   state: {
     custRange: [],
     visibleBoards: [], // 可见看板
+    newVisibleBoards: [], // 新可见看板
     editableBoards: [], // 可编辑看板
     visibleRanges: [], // 可见范围
     createLoading: false, // 创建看板成功与否
@@ -25,6 +26,11 @@ export default {
       return {
         ...state,
         visibleBoards: [
+          ...BoardBasic.regular,
+          ...visibleBoards.history,
+          ...visibleBoards.ordinary,
+        ],
+        newVisibleBoards: [
           ...BoardBasic.regular,
           visibleBoards,
         ],

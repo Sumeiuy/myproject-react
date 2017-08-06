@@ -14,6 +14,7 @@ export default {
     chartTableInfo: {},
     allCategory: [],
     visibleBoards: [], // 可见看板
+    newVisibleBoards: [], // 新可见看板
   },
   reducers: {
     getAllVisibleReportsSuccess(state, action) {
@@ -22,6 +23,11 @@ export default {
       return {
         ...state,
         visibleBoards: [
+          ...BoardBasic.regular,
+          ...visibleBoards.history,
+          ...visibleBoards.ordinary,
+        ],
+        newVisibleBoards: [
           ...BoardBasic.regular,
           visibleBoards,
         ],

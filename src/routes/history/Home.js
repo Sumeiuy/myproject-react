@@ -18,6 +18,7 @@ import HisDivider from '../../components/history/HisDivider';
 import ScatterAnalysis from '../../components/history/ScatterAnalysis';
 import HistoryComparePolyChart from '../../components/history/HistoryComparePolyChart';
 import HistoryCompareRankChart from '../../components/history/HistoryCompareRankChart';
+import PageHeader from '../../components/pageCommon/PageHeader';
 import styles from './Home.less';
 
 const effects = {
@@ -29,6 +30,9 @@ const effects = {
   getIndicatorLib: 'history/getIndicatorLib',
   getRankData: 'history/getRankData',
   getContrastData: 'history/getContrastData',
+  collectBoardSelect: 'report/collectBoardSelect',
+  collectCustRange: 'report/collectCustRange',
+  collectDurationSelect: 'report/collectDurationSelect',
 };
 
 const fectchDataFunction = (globalLoading, type) => query => ({
@@ -44,6 +48,7 @@ const mapStateToProps = state => ({
   crrData: state.history.currentRankingRecord, // 雷达图数据
   custRange: state.history.custRange, // 页面右上角组织机构树
   visibleBoards: state.history.visibleBoards, // 页面左上角可见看板数据
+  newVisibleBoards: state.history.newVisibleBoards, // 新可见看板数据
   contributionAnalysis: state.history.contributionAnalysis, // 贡献分析
   reviewAnalysis: state.history.reviewAnalysis, // 入岗投顾
   historyContrastDic: state.history.historyContrastDic, // 字典数据
@@ -69,6 +74,9 @@ const mapDispatchToProps = {
   getRankData: fectchDataFunction(false, effects.getRankData),
   getRadarData: fectchDataFunction(false, effects.getRadarData),
   getHistoryCore: fectchDataFunction(true, effects.getHistoryCore),
+  collectBoardSelect: fectchDataFunction(false, effects.collectBoardSelect),
+  collectCustRange: fectchDataFunction(false, effects.collectCustRange),
+  collectDurationSelect: fectchDataFunction(false, effects.collectDurationSelect),
   push: routerRedux.push,
   replace: routerRedux.replace,
 };
@@ -87,6 +95,7 @@ export default class HistoryHome extends PureComponent {
     getInitial: PropTypes.func.isRequired,
     custRange: PropTypes.array.isRequired,
     visibleBoards: PropTypes.array.isRequired,
+    newVisibleBoards: PropTypes.array.isRequired,
     globalLoading: PropTypes.bool,
     queryContrastAnalyze: PropTypes.func.isRequired,
     contributionAnalysis: PropTypes.object.isRequired,
@@ -110,6 +119,9 @@ export default class HistoryHome extends PureComponent {
     getRadarData: PropTypes.func.isRequired,
     getHistoryCore: PropTypes.func.isRequired,
     rankData: PropTypes.object.isRequired,
+    collectBoardSelect: PropTypes.func.isRequired,
+    collectCustRange: PropTypes.func.isRequired,
+    collectDurationSelect: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -431,11 +443,18 @@ export default class HistoryHome extends PureComponent {
       contrastData,
       indicatorLib,
       rankData,
-      location,
       custRange,
+      visibleBoards,
+      newVisibleBoards,
+      location,
+      replace,
+      push,
+      collectBoardSelect,
+      collectCustRange,
+      collectDurationSelect,
     } = this.props;
 
-    if (_.isEmpty(custRange)) {
+    if (_.isEmpty(custRange) || _.isEmpty(visibleBoards)) {
       return null;
     }
     const {
@@ -461,9 +480,20 @@ export default class HistoryHome extends PureComponent {
     const { cust = EMPTY_LIST, invest = EMPTY_LIST } = historyContrastDic;
     return (
       <div className="pageHistory">
-        <div className={styles.historyhd}>
-          {/* 头部时间组织机构选择区域 */}
-        </div>
+        <PageHeader
+          location={location}
+          replace={replace}
+          push={push}
+          custRange={custRange}
+          visibleBoards={visibleBoards}
+          newVisibleBoards={newVisibleBoards}
+          updateQueryState={this.updateQueryState}
+          orgId={'ZZ001041'}
+          collectBoardSelect={collectBoardSelect}
+          collectCustRange={collectCustRange}
+          collectDurationSelect={collectDurationSelect}
+          showSelfDatePicker
+        />
         <div className={styles.historybd}>
           <div className={styles.indicatorOverview}>
             {/* 核心指标头部区域---假定数据 */}

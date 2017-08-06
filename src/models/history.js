@@ -12,6 +12,7 @@ export default {
   state: {
     custRange: [], // 组织机构树
     visibleBoards: [], // 可见看板
+    newVisibleBoards: [], // 新可见看板
     contributionAnalysis: {}, // 贡献能力分析数据
     reviewAnalysis: {}, // 入岗投顾能力分析数据
     historyCore: [], // 概览列表
@@ -52,7 +53,12 @@ export default {
         ...state,
         visibleBoards: [
           ...BoardBasic.regular,
-          ...visibleBoards,
+          ...visibleBoards.history,
+          ...visibleBoards.ordinary,
+        ],
+        newVisibleBoards: [
+          ...BoardBasic.regular,
+          visibleBoards,
         ],
       };
     },
