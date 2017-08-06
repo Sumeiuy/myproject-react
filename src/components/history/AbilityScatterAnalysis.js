@@ -25,6 +25,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
     title: PropTypes.string.isRequired,
     optionsData: PropTypes.array.isRequired,
     type: PropTypes.string.isRequired,
+    swtichDefault: PropTypes.string.isRequired,
   };
 
   static defaultProps = {
@@ -32,6 +33,8 @@ export default class AbilityScatterAnalysis extends PureComponent {
 
   constructor(props) {
     super(props);
+    const options = this.makeOptions(props.optionsData);
+    // 默认第一个选项
     this.state = {
       scatterElemHeight: 360,
       finalData: {},
@@ -39,6 +42,8 @@ export default class AbilityScatterAnalysis extends PureComponent {
       orgName: '',
       parentOrgName: '',
       currentPayload: {},
+      finalOptions: options,
+      selectValue: options[0].value,
     };
   }
 
@@ -69,6 +74,15 @@ export default class AbilityScatterAnalysis extends PureComponent {
         finalData,
       });
     }
+    // 恢复默认选项
+    const { swtichDefault: oldSwitch } = this.props;
+    const { swtichDefault: newSwitch } = nextProps;
+    if (oldSwitch !== newSwitch) {
+      const options = this.state.finalOptions;
+      this.setState({
+        selectValue: options[0].value,
+      });
+    }
   }
 
   componentDidUpdate() {
@@ -91,6 +105,15 @@ export default class AbilityScatterAnalysis extends PureComponent {
       startCoord: [xAxisMin, yAxisMin],
       endCoord: [xAxisMax, yAxisMax],
     };
+  }
+
+  @autobind
+  makeOptions(optionsData) {
+    return optionsData.map(item => ({
+      key: item.key,
+      value: item.key,
+      label: item.name,
+    }));
   }
 
   /**
@@ -198,25 +221,17 @@ export default class AbilityScatterAnalysis extends PureComponent {
       parentOrgName,
       tooltipInfo,
       finalData,
+      selectValue,
+      finalOptions,
     } = this.state;
 
     const {
       title,
-      optionsData,
       style,
     } = this.props;
 
     if (_.isEmpty(finalData)) {
       return null;
-    }
-
-    let finalOptions = [];
-    if (!_.isEmpty(optionsData)) {
-      finalOptions = optionsData.map(item => ({
-        key: item.key,
-        value: item.key,
-        label: item.name,
-      }));
     }
 
     const { xAxisName, yAxisName, xAxisUnit, yAxisUnit } = finalData;
@@ -238,7 +253,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
               onChange={this.handleChange}
               allowClear={false}
               placeholder="无"
-              defaultValue={finalOptions[0] && finalOptions[0].value} // 默认选中项
+              value={selectValue} // 默认选中项
               dropdownClassName={styles.custDimenSelect}
             >
               {

@@ -308,8 +308,15 @@ export default {
       });
     },
     // 获取历史对比折线图数据
-    * getContrastData({ payload }, { call, put }) {
-      const response = yield call(api.getHistoryContrastLineChartData, payload);
+    * getContrastData({ payload }, { call, put, select }) {
+      const custRange = yield select(state => state.history.custRange);
+      const firstCust = custRange[0];
+      const response = yield call(api.getHistoryContrastLineChartData, {
+        ...payload,
+        scope: payload.scope || firstCust.level,
+        localScope: payload.localScope || firstCust.level,
+        orgId: payload.orgId || firstCust.id,
+      });
       const { resultData } = response;
       yield put({
         type: 'getContrastDataSuccess',
