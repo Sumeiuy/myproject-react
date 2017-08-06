@@ -6,51 +6,206 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
+
 import IECharts from '../IECharts';
 import styles from './chartRadar.less';
+
+const orgClass = {
+  level2: '分公司',
+  level3: '营业部',
+};
 
 export default class ChartRadar extends PureComponent {
 
   static propTypes = {
-    location: PropTypes.object,
-    options: PropTypes.object,
-  }
-
-  static defaultProps = {
-    location: {},
-    options: {},
+    radarData: PropTypes.array.isRequired,
+    total: PropTypes.string.isRequired,
+    localScope: PropTypes.string.isRequired,
+    selectCore: PropTypes.number.isRequired,
   }
 
   constructor(props) {
     super(props);
+    const { localScope } = props;
     this.state = {
-      wrapperH: 0,
+      levelName: orgClass[`level${localScope}`],
     };
   }
 
-  componentDidMount() {
-    const element = this.getElement;
-    this.getEmelHeight(element);
+  componentWillReceiveProps(nextProps) {
+    const { localScope: preLevel } = this.props;
+    const { localScope } = nextProps;
+    if (preLevel !== localScope) {
+      this.setState({
+        levelName: orgClass[`level${localScope}`],
+      });
+    }
   }
 
   @autobind
-  getEmelHeight(element) {
-    this.setState({
-      wrapperH: element.clientHeight,
+  createOption(scopeNum, data) {
+    const indicatorData = [];// name
+    const period = []; // 本期数据值
+    const PreviousPeriod = []; // 上期
+    _.each(data, (item) => {
+      indicatorData.push({ name: item.indicator_name, max: scopeNum });
+      period.push(scopeNum - item.rank_current);
+      PreviousPeriod.push(scopeNum - item.rank_contrast);
     });
+    const options = {
+      title: {
+        show: false,
+        text: '指示分析',
+      },
+      gird: { x: '7%', y: '7%', width: '38%', height: '38%' },
+      legend: {
+        data: [
+          { name: '本期', icon: 'square' },
+          { name: '上期', icon: 'square' },
+        ],
+        bottom: 0,
+        left: '10%',
+        itemGap: 20,
+      },
+      radar: {
+        shape: 'circle',
+        splitNumber: 6,
+        // polarIndex: 1,
+        center: ['50%', '45%'],
+        name: {
+          textStyle: {
+            color: '#666666',
+          },
+        },
+        splitLine: {
+          lineStyle: {
+            color: [
+              '#ebf2ff',
+            ].reverse(),
+          },
+        },
+        splitArea: {
+          show: false,
+        },
+        axisLine: {
+          lineStyle: {
+            color: '#b9e7fd',
+          },
+        },
+        indicator: indicatorData,
+      },
+      series: [{
+        name: '本期 vs 上期',
+        type: 'radar',
+        smooth: true,
+        symbolSize: 1,
+        data: [
+          {
+            value: period,
+            name: '本期',
+            areaStyle: {
+              normal: {
+                color: 'rgba(117, 111,184, 0.5)',
+              },
+            },
+            itemStyle: {
+              normal: {
+                color: '#38d8e8',
+              },
+            },
+            label: {
+              normal: {
+                show: true,
+                formatter: '{a},{b},{c}',
+                textStyle: {
+                  color: '#ff7a39',
+                },
+              },
+            },
+            // symbolSize: 5,
+            // syboml: 'circle',
+          },
+          {
+            value: PreviousPeriod,
+            name: '上期',
+            areaStyle: {
+              normal: {
+                color: 'rgba(58, 216,232, 0.5)',
+              },
+            },
+            itemStyle: {
+              normal: {
+                color: '#756fb8',
+              },
+            },
+            label: {
+              normal: {
+                show: true,
+                // formatter: function(params) {
+                //   if (params.value === (scopeNum - contrast)) {
+                //     return contrast;
+                //   }
+                //   return '';
+                // },
+                textStyle: {
+                  color: '#3983ff',
+                },
+              },
+            },
+          },
+        ],
+      }],
+    };
+    return options;
   }
 
+  // @autobind
+  // labelShow(params) {
+  //   // const { selectIndex } = this.state;
+  //   // const { indexData } = this.props;
+  //   // const current = indexData.data[selectIndex].rank_current;
+  //   // const contrast = indexData.data[selectIndex].rank_contrast;
+  //   // const dataMode = [current, contrast]; // 选中项的排名
+  //   // const dataIndex = params.dataIndex; // 图标数据下标 本期、上期
+  //   // const preValue = params.value; // 当先图标数值
+  //   // const gcount = indexData.scopeNum; // 总公司数
+  //   // if (preValue === (gcount - dataMode[dataIndex])) {
+  //   //   return dataMode[dataIndex];
+  //   // }
+  //   // return '';
+  // }
+
   render() {
-    const { options } = this.props;
+    const { radarData, total, selectCore, localScope } = this.props;
+    if (localScope === '1') {
+      return null;
+    }
+    const { levelName } = this.state;
+    const options = this.createOption(total, radarData);
     return (
-      <div ref={ref => (this.getElement = ref)} className={styles.radarBox}>
-        <IECharts
-          option={options}
-          resizable
-          style={{
-            height: this.state.wrapperH,
-          }}
-        />
+      <div className={styles.radarBox}>
+        <div className={styles.titleDv}>强弱指示分析</div>
+        <div className={styles.radar}>
+          <IECharts
+            option={options}
+            resizable
+            style={{
+              height: '380px',
+            }}
+          />
+        </div>
+        <div className={styles.radarInfo}>
+          <i />{radarData[selectCore].indicator_name}：本期排名：
+            <span className={styles.now}>
+              {radarData[selectCore].rank_current}
+            </span>
+            上期排名：
+            <span className={styles.before}>
+              {radarData[selectCore].rank_contrast}
+            </span>
+            共 <span className={styles.all}>{total}</span> 家{levelName}
+        </div>
       </div>
     );
   }
