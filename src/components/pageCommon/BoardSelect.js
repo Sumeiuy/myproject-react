@@ -198,10 +198,8 @@ export default class BoardSelect extends PureComponent {
         <SubMenu
           title="自定义看板"
           style={{
-            width: '200px',
             maxHeight: '400px',
             overflowY: 'scroll',
-            border: '1px solid red',
           }}
         >
           {

@@ -41,6 +41,7 @@ const mapStateToProps = state => ({
   visibleBoards: state.manage.visibleBoards,
   editableBoards: state.manage.editableBoards,
   visibleRanges: state.manage.visibleRanges,
+  newVisibleBoards: state.manage.newVisibleBoards,
   createLoading: state.manage.createLoading,
   deleteLoading: state.manage.deleteLoading,
   publishLoading: state.manage.publishLoading,
@@ -74,6 +75,7 @@ export default class BoardManageHome extends PureComponent {
     visibleBoards: PropTypes.array,
     editableBoards: PropTypes.array,
     visibleRanges: PropTypes.array,
+    newVisibleBoards: PropTypes.array,
     createLoading: PropTypes.bool,
     deleteLoading: PropTypes.bool,
     publishLoading: PropTypes.bool,
@@ -90,6 +92,7 @@ export default class BoardManageHome extends PureComponent {
     message: '',
     operateData: {},
     visibleBoards: [],
+    newVisibleBoards: [],
     editableBoards: [],
     visibleRanges: [],
     collectData: () => {},
@@ -267,7 +270,7 @@ export default class BoardManageHome extends PureComponent {
       publishConfirmModal,
     } = this.state;
     const { location, replace, push, collectData } = this.props;
-    const { visibleRanges, visibleBoards, editableBoards } = this.props;
+    const { visibleRanges, visibleBoards, newVisibleBoards, editableBoards } = this.props;
     // 做容错处理
     if (_.isEmpty(visibleRanges)) {
       return null;
@@ -325,6 +328,7 @@ export default class BoardManageHome extends PureComponent {
                     push={push}
                     replace={replace}
                     visibleBoards={visibleBoards}
+                    newVisibleBoards={newVisibleBoards}
                     collectData={collectData}
                   />
                 </div>

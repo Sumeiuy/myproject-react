@@ -128,7 +128,7 @@ export default class ChartRadar extends PureComponent {
             label: {
               normal: {
                 show: true,
-                formatter: '{a},{b},{c}',
+                formatter: '{c}',
                 textStyle: {
                   color: '#ff7a39',
                 },
@@ -153,12 +153,7 @@ export default class ChartRadar extends PureComponent {
             label: {
               normal: {
                 show: true,
-                // formatter: function(params) {
-                //   if (params.value === (scopeNum - contrast)) {
-                //     return contrast;
-                //   }
-                //   return '';
-                // },
+                formatter: '{c}',
                 textStyle: {
                   color: '#3983ff',
                 },
