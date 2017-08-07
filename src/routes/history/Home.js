@@ -500,7 +500,7 @@ export default class HistoryHome extends PureComponent {
     const summuryLib = {
       type: 'summury',
       boardType: 'TYPE_TGJX',
-      checkTreeArr: indicatorLib.summury,
+      checkTreeArr: indicatorLib.core,
       checkedKeys: summuryCheckedKeys,
     };
 
