@@ -25,12 +25,13 @@ export default class HistoryComparePolyChart extends PureComponent {
     this.state = {
       name: '',
       unit: '',
-      year: '',
+      curYear: '',
+      prevYear: '',
       currentValue: '',
       previousValue: '',
       currentDate: '',
       previousDate: '',
-      chartOptions: '',
+      chartOptions: EMPTY_OBJECT,
     };
   }
 
@@ -84,14 +85,17 @@ export default class HistoryComparePolyChart extends PureComponent {
       });
 
       // 默认选中第一条展示信息
-      const { date: currentDate, value: currentValue, year, name } = curSeries[0] || EMPTY_ARRAY;
-      const { date: previousDate, value: previousValue } = previousSeries[0] || EMPTY_ARRAY;
+      const { date: currentDate, value: currentValue,
+        year: curYear, name } = curSeries[0] || EMPTY_ARRAY;
+      const { date: previousDate, value: previousValue,
+        year: prevYear } = previousSeries[0] || EMPTY_ARRAY;
 
       this.setState({
         chartOptions: options, // 折线图配置项
         name,
         unit,
-        year,
+        curYear,
+        prevYear,
         currentValue,
         previousValue,
         currentDate,
@@ -120,6 +124,10 @@ export default class HistoryComparePolyChart extends PureComponent {
       minAndMax = FixNumber.getMaxAndMinGE(array);
     } else if (curUnit.indexOf('次') !== -1) {
       minAndMax = FixNumber.getMaxAndMinCi(array);
+    } else if (curUnit.indexOf('%') !== -1) {
+      minAndMax = FixNumber.getMaxAndMinPercent(array);
+    } else if (curUnit.indexOf('‰') !== -1) {
+      minAndMax = FixNumber.getMaxAndMinPermillage(array);
     }
 
     const { max, min } = minAndMax;
@@ -140,6 +148,12 @@ export default class HistoryComparePolyChart extends PureComponent {
         return FixNumber.toFixedGE(array);
       } else if (yAxisUnit.indexOf('次') !== -1) {
         return FixNumber.toFixedCI(array);
+      } else if (yAxisUnit.indexOf('%') !== -1
+        || yAxisUnit.indexOf('‰') !== -1) {
+        return {
+          newSeries: array,
+          newUnit: yAxisUnit,
+        };
       }
     }
 
@@ -257,19 +271,19 @@ export default class HistoryComparePolyChart extends PureComponent {
   }
 
   render() {
-    const { data } = this.props;
     const {
       chartOptions,
       name,
       unit,
-      year,
+      curYear,
+      prevYear,
       currentValue,
       previousValue,
       currentDate,
       previousDate,
      } = this.state;
 
-    if (_.isEmpty(data)) {
+    if (_.isEmpty(chartOptions)) {
       return null;
     }
 
@@ -293,10 +307,10 @@ export default class HistoryComparePolyChart extends PureComponent {
         <div className={styles.chartFoot}>
           <span className={styles.tipDot} />
           <span className={styles.tipIndicator}>{name}</span>
-          <span className={styles.tipTime}>{currentDate ? `${year}${currentDate}:` : ''}</span>
+          <span className={styles.tipTime}>{currentDate ? `${curYear}/${currentDate}:` : ''}</span>
           <span className={styles.currentValue}>{(currentValue === 0 || currentValue) ? `${currentValue}` : ''}</span>
           <span className={styles.tipUnit}>{(currentValue === 0 || currentValue) ? `${unit}` : ''}</span>
-          <span className={styles.tipTime}>{previousDate ? `${year}${previousDate}:` : ''}</span>
+          <span className={styles.tipTime}>{previousDate ? `${prevYear}/${previousDate}:` : ''}</span>
           <span className={styles.contrastValue}>{(previousValue === 0 || previousValue) ? `${previousValue}` : ''}</span>
           <span className={styles.tipUnit}>{(previousValue === 0 || previousValue) ? `${unit}` : ''}</span>
         </div>

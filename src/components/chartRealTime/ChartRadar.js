@@ -34,12 +34,23 @@ export default class ChartRadar extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { localScope: preLevel } = this.props;
-    const { localScope } = nextProps;
+    const { localScope: preLevel, radarData: preRadar } = this.props;
+    const { localScope, radarData } = nextProps;
     if (preLevel !== localScope) {
       this.setState({
         levelName: orgClass[`level${localScope}`],
       });
+    }
+    if (!_.isEqual(radarData, preRadar)) {
+      this.state.radar.clear();
+      // TODO 当数据变化的时候，需要修改options
+    }
+  }
+
+  componentWillUnmount() {
+    const { radar } = this.state;
+    if (radar && radar.clear) {
+      radar.clear();
     }
   }
 
@@ -117,7 +128,7 @@ export default class ChartRadar extends PureComponent {
             label: {
               normal: {
                 show: true,
-                formatter: '{a},{b},{c}',
+                formatter: '{c}',
                 textStyle: {
                   color: '#ff7a39',
                 },
@@ -142,12 +153,7 @@ export default class ChartRadar extends PureComponent {
             label: {
               normal: {
                 show: true,
-                // formatter: function(params) {
-                //   if (params.value === (scopeNum - contrast)) {
-                //     return contrast;
-                //   }
-                //   return '';
-                // },
+                formatter: '{c}',
                 textStyle: {
                   color: '#3983ff',
                 },
@@ -158,6 +164,13 @@ export default class ChartRadar extends PureComponent {
       }],
     };
     return options;
+  }
+
+  @autobind
+  radarOnReady(instance) {
+    this.setState({
+      radar: instance,
+    });
   }
 
   // @autobind
@@ -190,6 +203,7 @@ export default class ChartRadar extends PureComponent {
           <IECharts
             option={options}
             resizable
+            onReady={this.radarOnReady}
             style={{
               height: '380px',
             }}

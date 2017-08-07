@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 import { message } from 'antd';
 import _ from 'lodash';
 
-import { getEmpId } from '../../utils/helper';
+import { getEmpId, getDurationString, queryMoMDuration } from '../../utils/helper';
 import IndicatorOverviewHeader from '../../components/history/IndicatorOverviewHeader';
 import IndicatorOverview from '../../components/history/IndicatorOverview';
 import HisDivider from '../../components/history/HisDivider';
@@ -20,6 +20,11 @@ import HistoryComparePolyChart from '../../components/history/HistoryComparePoly
 import HistoryCompareRankChart from '../../components/history/HistoryCompareRankChart';
 import PageHeader from '../../components/pageCommon/PageHeader';
 import styles from './Home.less';
+
+// 投顾绩效历史对比的borderId
+const TYPE_LSDB_TGJX = '3';
+// 经营业绩历史对比的boardId
+const TYPE_LSDB_JYYJ = '4';
 
 const effects = {
   getInitial: 'history/getInitial',
@@ -145,14 +150,19 @@ export default class HistoryHome extends PureComponent {
     const ownerOrg = custRange[0];
     // TODO 此处需要等到时间选择器完成提供方法
     // const duration = {};
+    // queryMoMDuration(begin, end, duration)
+
+    const nowDuration = getDurationString('month');
+
+    const compareDuration = queryMoMDuration(nowDuration.begin, nowDuration.end, 'month');
     this.state = {
       boardId,
       boardType,
-      begin: '20170701', // 本期开始时间
-      end: '20170719', // 本期结束时间
+      begin: nowDuration.begin, // 本期开始时间
+      end: nowDuration.end, // 本期结束时间
       cycleType: 'month', // 时间段周期类型
-      contrastBegin: '20170601', // 上期开始时间
-      contrastEnd: '20170619', // 上期结束时间
+      contrastBegin: compareDuration.begin.format('YYYYMMDD'), // 上期开始时间
+      contrastEnd: compareDuration.end.format('YYYYMMDD'), // 上期结束时间
       coreIndicatorIds: [], // 弹出层挑选的指标
       indicatorId: '', // 当前选中的核心指标key
       orgId: ownerOrg && ownerOrg.id, // 用户当前选择的组织机构Id
@@ -184,18 +194,23 @@ export default class HistoryHome extends PureComponent {
     const {
       location: { query: { boardId: preBoardId } },
     } = this.props;
-
     const differentId = !_.isEqual(preBoardId, boardId);
     if (differentId) {
+      const { custRange } = nextProps;
+      const ownerOrg = custRange[0];
       // TODO 此处需要等到时间选择器完成提供方法
       // const { begin, end, cycleType } = getDurationString('month');
       this.setState({
         boardId,
         boardType,
+        scope: ownerOrg && String(Number(ownerOrg.level) + 1),
+        localScope: ownerOrg && ownerOrg.level,
+        orgId: ownerOrg && ownerOrg.id, // 用户当前选择的组织机构Id
+        ownerOrgId: ownerOrg && ownerOrg.id, // 用户所属的组织机构Id
       },
-      () => {
-        this.queryInitial();
-      });
+        () => {
+          this.queryInitial();
+        });
     }
 
     const {
@@ -203,26 +218,30 @@ export default class HistoryHome extends PureComponent {
       deleteLoading: preDL,
       updateLoading: prePL,
     } = this.props;
-    const { push, createLoading, deleteLoading, updateLoading } = nextProps;
+    const { push, createLoading, deleteLoading, updateLoading, operateData } = nextProps;
     if (preCL && !createLoading) {
       // 创建完成后，需要跳转到新建看板
       this.setState({
         coreIndicatorIds: [],
       },
       () => {
-        // const { selectKeys } = this.state;
-        // console.warn('selectKeys+++++', selectKeys);
-        // push(`/history?boardId=${id}&orgId=${ownerOrgId}&boardType=${boardType}`);
+        const { id } = operateData;
+        push(`/history?boardId=${id}&boardType=${boardType}`);
       });
     }
     if (preDL && !deleteLoading) {
       // 删除成功
       message.success('删除成功');
-      if (boardType === 'TYPE_LSDB_JYYJ') {
-        push('/history?boardId=4');
-      } else if (boardType === 'TYPE_LSDB_TGJX') {
-        push('/history?boardId=3');
-      }
+      this.setState({
+        coreIndicatorIds: [],
+      },
+      () => {
+        if (boardType === 'TYPE_LSDB_JYYJ') {
+          push(`/history?boardId=${TYPE_LSDB_JYYJ}&boardType=TYPE_LSDB_JYYJ`);
+        } else if (boardType === 'TYPE_LSDB_TGJX') {
+          push(`/history?boardId=${TYPE_LSDB_TGJX}&boardType=TYPE_LSDB_TGJX`);
+        }
+      });
     }
     if (!updateLoading && prePL) {
       message.success('保存成功');
@@ -230,7 +249,7 @@ export default class HistoryHome extends PureComponent {
         coreIndicatorIds: [],
       },
       () => {
-        // push(`/history?boardId=${id}&orgId=${ownerOrgId}&boardType=${boardType}`);
+        push(`/history?boardId=${boardId}&boardType=${boardType}`);
       });
     }
   }
@@ -385,10 +404,10 @@ export default class HistoryHome extends PureComponent {
       coreIndicatorIds,
       indicatorId,
     },
-    () => {
-      this.freshAllCore();
-      this.queryOneCoreIndicator();
-    });
+      () => {
+        this.freshAllCore();
+        this.queryOneCoreIndicator();
+      });
   }
 
   // 另存为新的历史对比看板
@@ -434,10 +453,10 @@ export default class HistoryHome extends PureComponent {
       ...durationOrg,
       indicatorId,
     },
-    () => {
-      this.freshAllCore();
-      this.queryOneCoreIndicator();
-    });
+      () => {
+        this.freshAllCore();
+        this.queryOneCoreIndicator();
+      });
   }
 
   // 切换当前核心指标
@@ -447,9 +466,9 @@ export default class HistoryHome extends PureComponent {
       indicatorId,
       swtichDefault: indicatorId,
     },
-    () => {
-      this.queryOneCoreIndicator();
-    });
+      () => {
+        this.queryOneCoreIndicator();
+      });
   }
 
   // 柱状图维度，排序，页码变化
@@ -552,6 +571,7 @@ export default class HistoryHome extends PureComponent {
               ownerOrgId={custOrg}
               orgId={custOrg}
               selectKeys={coreIndicatorIds}
+              boardType={boardType}
             />
             {/* 指标概览区域 */}
             <IndicatorOverview
@@ -570,17 +590,17 @@ export default class HistoryHome extends PureComponent {
               {/* 假定数据 */}
               {
                 _.isEmpty(rankData)
-                ? null
-                : (
-                  <HistoryCompareRankChart
-                    level={level}
-                    scope={newScope}
-                    data={rankData}
-                    boardType={boardType}
-                    changeRankBar={this.changeRankBar}
-                    swtichDefault={swtichDefault}
-                  />
-                )
+                  ? null
+                  : (
+                    <HistoryCompareRankChart
+                      level={level}
+                      scope={newScope}
+                      data={rankData}
+                      boardType={boardType}
+                      changeRankBar={this.changeRankBar}
+                      swtichDefault={swtichDefault}
+                    />
+                  )
               }
             </div>
             <HisDivider />

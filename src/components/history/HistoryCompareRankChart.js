@@ -180,16 +180,18 @@ export default class HistoryCompareRankChart extends PureComponent {
     // 上一页按钮显示状态
     const toggleLastPage = classnames({
       [styles.pageBtn]: true,
-      hideEle: rankPage === 1,
+      hideEle: false,
+      [styles.pageBtnDis]: rankPage === 1,
     });
     // 分割线显示状态
     const toggleDivider = classnames({
-      hideEle: rankPage === 1 || rankPage === totalPage,
+      hideEle: false,
     });
     // 下一页按钮显示状态
     const toggleNextPage = classnames({
       [styles.pageBtn]: true,
-      hideEle: rankPage === totalPage,
+      hideEle: false,
+      [styles.pageBtnDis]: rankPage === totalPage,
     });
 
 
