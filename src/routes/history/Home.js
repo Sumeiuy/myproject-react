@@ -179,9 +179,9 @@ export default class HistoryHome extends PureComponent {
         boardId,
         boardType,
       },
-      () => {
-        this.queryInitial();
-      });
+        () => {
+          this.queryInitial();
+        });
     }
 
     const {
@@ -195,11 +195,11 @@ export default class HistoryHome extends PureComponent {
       this.setState({
         coreIndicatorIds: [],
       },
-      () => {
-        // const { selectKeys } = this.state;
-        // console.warn('selectKeys+++++', selectKeys);
-        // push(`/history?boardId=${id}&orgId=${ownerOrgId}&boardType=${boardType}`);
-      });
+        () => {
+          // const { selectKeys } = this.state;
+          // console.warn('selectKeys+++++', selectKeys);
+          // push(`/history?boardId=${id}&orgId=${ownerOrgId}&boardType=${boardType}`);
+        });
     }
     if (preDL && !deleteLoading) {
       // 删除成功
@@ -215,9 +215,9 @@ export default class HistoryHome extends PureComponent {
       this.setState({
         coreIndicatorIds: [],
       },
-      () => {
-        // push(`/history?boardId=${id}&orgId=${ownerOrgId}&boardType=${boardType}`);
-      });
+        () => {
+          // push(`/history?boardId=${id}&orgId=${ownerOrgId}&boardType=${boardType}`);
+        });
     }
   }
 
@@ -365,10 +365,10 @@ export default class HistoryHome extends PureComponent {
       coreIndicatorIds,
       indicatorId,
     },
-    () => {
-      this.freshAllCore();
-      this.queryOneCoreIndicator();
-    });
+      () => {
+        this.freshAllCore();
+        this.queryOneCoreIndicator();
+      });
   }
 
   // 另存为新的历史对比看板
@@ -414,10 +414,10 @@ export default class HistoryHome extends PureComponent {
       ...durationOrg,
       indicatorId,
     },
-    () => {
-      this.freshAllCore();
-      this.queryOneCoreIndicator();
-    });
+      () => {
+        this.freshAllCore();
+        this.queryOneCoreIndicator();
+      });
   }
 
   // 切换当前核心指标
@@ -427,9 +427,9 @@ export default class HistoryHome extends PureComponent {
       indicatorId,
       swtichDefault: indicatorId,
     },
-    () => {
-      this.queryOneCoreIndicator();
-    });
+      () => {
+        this.queryOneCoreIndicator();
+      });
   }
 
   // 柱状图维度，排序，页码变化
@@ -550,17 +550,17 @@ export default class HistoryHome extends PureComponent {
               {/* 假定数据 */}
               {
                 _.isEmpty(rankData)
-                ? null
-                : (
-                  <HistoryCompareRankChart
-                    level={level}
-                    scope={newScope}
-                    data={rankData}
-                    boardType={boardType}
-                    changeRankBar={this.changeRankBar}
-                    swtichDefault={swtichDefault}
-                  />
-                )
+                  ? null
+                  : (
+                    <HistoryCompareRankChart
+                      level={level}
+                      scope={newScope}
+                      data={rankData}
+                      boardType={boardType}
+                      changeRankBar={this.changeRankBar}
+                      swtichDefault={swtichDefault}
+                    />
+                  )
               }
             </div>
             <HisDivider />
