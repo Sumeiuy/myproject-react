@@ -59,13 +59,22 @@
   .pageDivider,
   .pageBtn {
     font-size: 14px;
-    color: #b2b7ba;
+    // color: #b2b7ba;
+    color: #108ee9;
     user-select: none;
   }
   .pageBtn {
     margin: 0 8px;
+    cursor: default;
+    user-select: none;
     &:hover {
-      color: #108ee9;
+      color: lighten(#108ee9, 10%);
+    }
+  }
+  .pageBtnDis {
+    color: #b2b7ba;
+    &:hover {
+      color: #b2b7ba;
     }
   }
 }
