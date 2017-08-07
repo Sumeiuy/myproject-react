@@ -10,9 +10,11 @@ import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
 
-import { optionsMap } from '../../config';
+import { fspContainer, optionsMap } from '../../config';
 import Icon from '../common/Icon';
 import styles from './BoardHeader.less';
+
+const reactApp = fspContainer.reactApp;
 
 // Select的选项组件
 const Option = Select.Option;
@@ -88,7 +90,7 @@ export default class BoardHeader extends PureComponent {
 
   @autobind
   getPopupContainer() {
-    return document.querySelector('.react-app');
+    return document.querySelector(reactApp);
   }
 
   @autobind

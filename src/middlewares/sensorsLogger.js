@@ -111,6 +111,7 @@ function getLogData(action) {
   return {
     ...eventType,
     distinct_id: helper.getEmpId(),
+    time: new Date().getTime(),
     project: projectName,
     properties: {
       ...env,
