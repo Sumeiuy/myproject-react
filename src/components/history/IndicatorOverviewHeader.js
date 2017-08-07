@@ -133,7 +133,6 @@ export default class IndicatorOverviewHeader extends PureComponent {
       visible: backHistoryBoardModal,
       closeModal: this.closeModal,
     };
-    console.warn('this.props.selectKeys', this.props.selectKeys);
     const deleteBtnClass = classnames({
       [styles.deleteBtnUnshowClass]: boardId === TYPE_LSDB_TGJX || boardId === TYPE_LSDB_JYYJ,
     });
