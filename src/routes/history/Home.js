@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 import { message } from 'antd';
 import _ from 'lodash';
 
-import { getEmpId } from '../../utils/helper';
+import { getEmpId, getDurationString, queryMoMDuration } from '../../utils/helper';
 import IndicatorOverviewHeader from '../../components/history/IndicatorOverviewHeader';
 import IndicatorOverview from '../../components/history/IndicatorOverview';
 import HisDivider from '../../components/history/HisDivider';
@@ -146,14 +146,19 @@ export default class HistoryHome extends PureComponent {
     const ownerOrg = custRange[0];
     // TODO 此处需要等到时间选择器完成提供方法
     // const duration = {};
+    // queryMoMDuration(begin, end, duration)
+
+    const nowDuration = getDurationString('month');
+
+    const compareDuration = queryMoMDuration(nowDuration.begin, nowDuration.end, 'month');
     this.state = {
       boardId,
       boardType,
-      begin: '20170701', // 本期开始时间
-      end: '20170719', // 本期结束时间
+      begin: nowDuration.begin, // 本期开始时间
+      end: nowDuration.end, // 本期结束时间
       cycleType: 'month', // 时间段周期类型
-      contrastBegin: '20170601', // 上期开始时间
-      contrastEnd: '20170619', // 上期结束时间
+      contrastBegin: compareDuration.begin.format('YYYYMMDD'), // 上期开始时间
+      contrastEnd: compareDuration.end.format('YYYYMMDD'), // 上期结束时间
       coreIndicatorIds: [], // 弹出层挑选的指标
       indicatorId: '', // 当前选中的核心指标key
       orgId: ownerOrg && ownerOrg.id, // 用户当前选择的组织机构Id
