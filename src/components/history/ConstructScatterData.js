@@ -43,6 +43,10 @@ export const constructScatterData = (options = {}) => {
         minAndMax = FixNumber.getMaxAndMinGE(array);
       } else if (curUnit === '元') {
         minAndMax = FixNumber.getMaxAndMinMoney(array);
+      } else if (curUnit === '%') {
+        minAndMax = FixNumber.getMaxAndMinPercent(array);
+      } else if (curUnit === '‰') {
+        minAndMax = FixNumber.getMaxAndMinPermillage(array);
       }
 
       const { max, min } = minAndMax;
@@ -85,6 +89,11 @@ export const constructScatterData = (options = {}) => {
         return FixNumber.toFixedGE(array);
       } else if (unit === '户') {
         return FixNumber.toFixedCust(array);
+      } else if (unit === '%' || unit === '‰') {
+        return {
+          newSeries: array,
+          newUnit: unit,
+        };
       }
       return {
         newSeries: [],
