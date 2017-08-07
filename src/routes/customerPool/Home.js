@@ -15,9 +15,9 @@ import ToBeDone from '../../components/customerPool/ToBeDone';
 import Search from '../../components/customerPool/Search';
 import styles from './home.less';
 
-const CUST_MANAGER = 1; // 客户经理
+const CUST_MANAGER = '1'; // 客户经理
 // const CUST_MANAGER_TEAM = 2; // 客户经理团队
-const ORG = 3; // 组织机构
+const ORG = '3'; // 组织机构
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const effects = {
