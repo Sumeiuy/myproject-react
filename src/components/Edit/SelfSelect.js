@@ -101,6 +101,7 @@ export default class SelfSelect extends PureComponent {
     const scrollBd = this.getScrollRef();
     // const scrollInstance = new Scroll(scrollBd);
     // return scrollInstance;
+    scrollBd.addEventListener('wheel', this.stopSpread, false);
     scrollBd.addEventListener('mousewheel', this.stopSpread, false);
     scrollBd.addEventListener('DOMMouseScroll', this.stopSpread, false);
   }
