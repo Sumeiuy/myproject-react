@@ -31,7 +31,7 @@ export default class HistoryComparePolyChart extends PureComponent {
       previousValue: '',
       currentDate: '',
       previousDate: '',
-      chartOptions: '',
+      chartOptions: EMPTY_OBJECT,
     };
   }
 
@@ -271,7 +271,6 @@ export default class HistoryComparePolyChart extends PureComponent {
   }
 
   render() {
-    const { data } = this.props;
     const {
       chartOptions,
       name,
@@ -284,7 +283,7 @@ export default class HistoryComparePolyChart extends PureComponent {
       previousDate,
      } = this.state;
 
-    if (_.isEmpty(data)) {
+    if (_.isEmpty(chartOptions)) {
       return null;
     }
 
