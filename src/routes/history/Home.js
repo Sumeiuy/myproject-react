@@ -194,26 +194,30 @@ export default class HistoryHome extends PureComponent {
       deleteLoading: preDL,
       updateLoading: prePL,
     } = this.props;
-    const { push, createLoading, deleteLoading, updateLoading } = nextProps;
+    const { push, createLoading, deleteLoading, updateLoading, operateData } = nextProps;
     if (preCL && !createLoading) {
       // 创建完成后，需要跳转到新建看板
       this.setState({
         coreIndicatorIds: [],
       },
       () => {
-        // const { selectKeys } = this.state;
-        // console.warn('selectKeys+++++', selectKeys);
-        // push(`/history?boardId=${id}&orgId=${ownerOrgId}&boardType=${boardType}`);
+        const { id } = operateData;
+        push(`/history?boardId=${id}&boardType=${boardType}`);
       });
     }
     if (preDL && !deleteLoading) {
       // 删除成功
       message.success('删除成功');
-      if (boardType === 'TYPE_LSDB_JYYJ') {
-        push(`/history?boardId=${TYPE_LSDB_JYYJ}`);
-      } else if (boardType === 'TYPE_LSDB_TGJX') {
-        push(`/history?boardId=${TYPE_LSDB_TGJX}`);
-      }
+      this.setState({
+        coreIndicatorIds: [],
+      },
+      () => {
+        if (boardType === 'TYPE_LSDB_JYYJ') {
+          push(`/history?boardId=${TYPE_LSDB_JYYJ}&boardType=TYPE_LSDB_JYYJ`);
+        } else if (boardType === 'TYPE_LSDB_TGJX') {
+          push(`/history?boardId=${TYPE_LSDB_TGJX}&boardType=TYPE_LSDB_TGJX`);
+        }
+      });
     }
     if (!updateLoading && prePL) {
       message.success('保存成功');
@@ -221,7 +225,7 @@ export default class HistoryHome extends PureComponent {
         coreIndicatorIds: [],
       },
       () => {
-        // push(`/history?boardId=${id}&orgId=${ownerOrgId}&boardType=${boardType}`);
+        push(`/history?boardId=${boardId}&boardType=${boardType}`);
       });
     }
   }
