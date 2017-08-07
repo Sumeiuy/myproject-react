@@ -9,15 +9,15 @@ import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
+
 import selectHandlers from '../Edit/selectHelper';
 import styles from './BoardItem.less';
 import ImgTGJX from '../../../static/images/bg_tgjx.png';
 import ImgJYYJ from '../../../static/images/bg_jyyj.png';
+import { optionsMap } from '../../config';
 
-const boardTypeMap = {
-  tgjx: 'TYPE_TGJX',
-  jyyj: 'TYPE_JYYJ',
-};
+const boardTypeMap = optionsMap.boardTypeMap;
+
 export default class BoardItem extends PureComponent {
 
   static propTypes = {
