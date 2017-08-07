@@ -133,6 +133,10 @@ export default class HistoryHome extends PureComponent {
     message: '',
   }
 
+  static contextTypes = {
+    history: PropTypes.object.isRequired,
+  }
+
   constructor(props) {
     super(props);
     // 此处针对一些常用参数，存放在stata里面
@@ -160,6 +164,16 @@ export default class HistoryHome extends PureComponent {
 
   componentWillMount() {
     this.queryInitial();
+  }
+
+  componentDidMount() {
+    const { history } = this.context;
+    this.removeHistoryListener = history.listenBefore(
+      ({ pathname, query, search }) => {
+        console.log('before transition', pathname, query, search);
+        // return '确认离开?';
+      },
+    );
   }
 
   componentWillReceiveProps(nextProps) {
@@ -218,6 +232,12 @@ export default class HistoryHome extends PureComponent {
       () => {
         // push(`/history?boardId=${id}&orgId=${ownerOrgId}&boardType=${boardType}`);
       });
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.removeHistoryListener) {
+      this.removeHistoryListener();
     }
   }
 
