@@ -106,8 +106,8 @@ export default class CreateHistoryBoardModal extends PureComponent {
         name: boardname,
         boardType,
         coreIndicator: selectKeys,
-        investContrastIndicator: ['custNum'],
-        custContrastIndicator: ['totCustNum', 'pCustNum', 'oCustNum', 'oNewCustNum', 'oNewPrdtCustNum', 'InminorCustNum'],
+        investContrastIndicator: ['tgNum', 'tgInNum'],
+        custContrastIndicator: ['custNum', 'currSignCustNum'],
       });
     } else {
       createBoardConfirm({
@@ -115,8 +115,8 @@ export default class CreateHistoryBoardModal extends PureComponent {
         name: boardname,
         boardType,
         coreIndicator: selectKeys,
-        investContrastIndicator: ['tgNum', 'tgInNum'],
-        custContrastIndicator: ['custNum', 'currSignCustNum'],
+        investContrastIndicator: ['custNum'],
+        custContrastIndicator: ['totCustNum', 'pCustNum', 'oCustNum', 'oNewCustNum', 'oNewPrdtCustNum', 'InminorCustNum'],
       });
     }
 
