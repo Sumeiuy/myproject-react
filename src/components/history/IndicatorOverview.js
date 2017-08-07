@@ -8,6 +8,7 @@ import React, { PropTypes, PureComponent } from 'react';
 import { Row, Col, Button } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import classnames from 'classnames';
 
 import Icon from '../common/Icon';
 import ChartRadar from '../chartRealTime/ChartRadar';
@@ -104,10 +105,16 @@ export default class IndicatorOverview extends PureComponent {
       visible: selectTreeModal,
       saveIndcatorToHome,
     };
+    const radarHide = _.isEmpty(indexData) || level === '1';
+    const overviewBoxSpan = radarHide ? '24' : '14';
+    const ulClass = classnames({
+      [styles.content]: !radarHide,
+      [styles.contentNoRadar]: radarHide,
+    });
     return (
       <div className={styles.overviewBox}>
         <Row>
-          <Col span="14">
+          <Col span={overviewBoxSpan}>
             <div className={styles.overview}>
               <div className={styles.titleDv}>
                 <Button
@@ -120,7 +127,7 @@ export default class IndicatorOverview extends PureComponent {
                 </Button>
                 指标概览
               </div>
-              <div className={styles.content}>
+              <div className={ulClass}>
                 <ul>
                   {
                     overviewData.map((item, index) => {
@@ -157,20 +164,20 @@ export default class IndicatorOverview extends PureComponent {
               </div>
             </div>
           </Col>
-          <Col span="10">
-            {
-              _.isEmpty(indexData)
-              ? null
-              : (
+          {
+            radarHide
+            ? null
+            : (
+              <Col span="10">
                 <ChartRadar
                   radarData={indexData.data}
                   total={indexData.scopeNum}
                   selectCore={selectIndex}
                   localScope={level}
                 />
-              )
-            }
-          </Col>
+              </Col>
+            )
+          }
         </Row>
         <SelectTreeModal {...selectTreeProps} />
       </div>
