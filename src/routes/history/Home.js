@@ -175,18 +175,23 @@ export default class HistoryHome extends PureComponent {
     const {
       location: { query: { boardId: preBoardId } },
     } = this.props;
-
     const differentId = !_.isEqual(preBoardId, boardId);
     if (differentId) {
+      const { custRange } = nextProps;
+      const ownerOrg = custRange[0];
       // TODO 此处需要等到时间选择器完成提供方法
       // const { begin, end, cycleType } = getDurationString('month');
       this.setState({
         boardId,
         boardType,
+        scope: ownerOrg && String(Number(ownerOrg.level) + 1),
+        localScope: ownerOrg && ownerOrg.level,
+        orgId: ownerOrg && ownerOrg.id, // 用户当前选择的组织机构Id
+        ownerOrgId: ownerOrg && ownerOrg.id, // 用户所属的组织机构Id
       },
-      () => {
-        this.queryInitial();
-      });
+        () => {
+          this.queryInitial();
+        });
     }
 
     const {
@@ -374,10 +379,10 @@ export default class HistoryHome extends PureComponent {
       coreIndicatorIds,
       indicatorId,
     },
-    () => {
-      this.freshAllCore();
-      this.queryOneCoreIndicator();
-    });
+      () => {
+        this.freshAllCore();
+        this.queryOneCoreIndicator();
+      });
   }
 
   // 另存为新的历史对比看板
@@ -423,10 +428,10 @@ export default class HistoryHome extends PureComponent {
       ...durationOrg,
       indicatorId,
     },
-    () => {
-      this.freshAllCore();
-      this.queryOneCoreIndicator();
-    });
+      () => {
+        this.freshAllCore();
+        this.queryOneCoreIndicator();
+      });
   }
 
   // 切换当前核心指标
@@ -436,9 +441,9 @@ export default class HistoryHome extends PureComponent {
       indicatorId,
       swtichDefault: indicatorId,
     },
-    () => {
-      this.queryOneCoreIndicator();
-    });
+      () => {
+        this.queryOneCoreIndicator();
+      });
   }
 
   // 柱状图维度，排序，页码变化
@@ -541,6 +546,7 @@ export default class HistoryHome extends PureComponent {
               ownerOrgId={custOrg}
               orgId={custOrg}
               selectKeys={coreIndicatorIds}
+              boardType={boardType}
             />
             {/* 指标概览区域 */}
             <IndicatorOverview
@@ -559,17 +565,17 @@ export default class HistoryHome extends PureComponent {
               {/* 假定数据 */}
               {
                 _.isEmpty(rankData)
-                ? null
-                : (
-                  <HistoryCompareRankChart
-                    level={level}
-                    scope={newScope}
-                    data={rankData}
-                    boardType={boardType}
-                    changeRankBar={this.changeRankBar}
-                    swtichDefault={swtichDefault}
-                  />
-                )
+                  ? null
+                  : (
+                    <HistoryCompareRankChart
+                      level={level}
+                      scope={newScope}
+                      data={rankData}
+                      boardType={boardType}
+                      changeRankBar={this.changeRankBar}
+                      swtichDefault={swtichDefault}
+                    />
+                  )
               }
             </div>
             <HisDivider />

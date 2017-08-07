@@ -8,8 +8,8 @@ const scatterType = [
     type: 'cust',
   },
   {
-    title: '入岗投顾能力分析',
-    type: 'ivest',
+    title: '服务经理能力分析',
+    type: 'invest',
   },
 ];
 
