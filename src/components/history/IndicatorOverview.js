@@ -21,6 +21,8 @@ export default class IndicatorOverview extends PureComponent {
     indexData: PropTypes.object,
     summuryLib: PropTypes.object.isRequired,
     saveIndcatorToHome: PropTypes.func.isRequired,
+    changeCore: PropTypes.func.isRequired,
+    level: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -30,195 +32,48 @@ export default class IndicatorOverview extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { indexData } = this.props;
     this.state = {
       visible: false,
       selectTreeModal: false,
       selectIndex: 0, // 默认选中项
-      indexData,
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    const { indexData: preIndexData } = this.props;
-    const { indexData: nextIndexData } = nextProps;
-    if (preIndexData !== nextIndexData) {
-      const { scopeNum, data } = nextIndexData;
-      const cOptions = this.createOption(scopeNum, data);
-      // console.warn('cOptions', cOptions);
+    const { overviewData: preCore } = this.props;
+    const { overviewData: nextCore } = nextProps;
+    if (!_.isEqual(preCore, nextCore)) {
       this.setState({
-        options: cOptions,
+        selectIndex: 0,
       });
     }
   }
 
   /**
-   * options
-  */
-  @autobind
-  createOption(scopeNum, data) {
-    // console.warn('进入组织 option 方法');
-    // const { selectIndex } = this.state;
-    // const current = data[selectIndex].rank_current;
-    // const contrast = data[selectIndex].rank_contrast;
-    const indicatorData = [];// name
-    const period = []; // 本期数据值
-    const PreviousPeriod = []; // 上期
-    _.each(data, (item) => {
-      indicatorData.push({ name: item.indicator_name, max: scopeNum });
-      period.push(scopeNum - item.rank_current);
-      PreviousPeriod.push(scopeNum - item.rank_contrast);
-    });
-    // console.warn('PreviousPeriod', PreviousPeriod);
-    const options = {
-      title: {
-        show: false,
-        text: '指示分析',
-      },
-      gird: { x: '7%', y: '7%', width: '38%', height: '38%' },
-      legend: {
-        data: [
-          { name: '本期', icon: 'square' },
-          { name: '上期', icon: 'square' },
-        ],
-        bottom: 0,
-        left: '10%',
-        itemGap: 20,
-      },
-      radar: {
-        shape: 'circle',
-        splitNumber: 6,
-        // polarIndex: 1,
-        center: ['50%', '45%'],
-        name: {
-          textStyle: {
-            color: '#666666',
-          },
-        },
-        splitLine: {
-          lineStyle: {
-            color: [
-              '#ebf2ff',
-            ].reverse(),
-          },
-        },
-        splitArea: {
-          show: false,
-        },
-        axisLine: {
-          lineStyle: {
-            color: '#b9e7fd',
-          },
-        },
-        indicator: indicatorData,
-      },
-      series: [{
-        name: '本期 vs 上期',
-        type: 'radar',
-        smooth: true,
-        symbolSize: 1,
-        data: [
-          {
-            value: period,
-            name: '本期',
-            areaStyle: {
-              normal: {
-                color: 'rgba(117, 111,184, 0.5)',
-              },
-            },
-            itemStyle: {
-              normal: {
-                color: '#38d8e8',
-              },
-            },
-            label: {
-              normal: {
-                show: true,
-                formatter: '{a},{b},{c}',
-                textStyle: {
-                  color: '#ff7a39',
-                },
-              },
-            },
-            // symbolSize: 5,
-            // syboml: 'circle',
-          },
-          {
-            value: PreviousPeriod,
-            name: '上期',
-            areaStyle: {
-              normal: {
-                color: 'rgba(58, 216,232, 0.5)',
-              },
-            },
-            itemStyle: {
-              normal: {
-                color: '#756fb8',
-              },
-            },
-            label: {
-              normal: {
-                show: true,
-                // formatter: function(params) {
-                //   if (params.value === (scopeNum - contrast)) {
-                //     return contrast;
-                //   }
-                //   return '';
-                // },
-                textStyle: {
-                  color: '#3983ff',
-                },
-              },
-            },
-          },
-        ],
-      }],
-    };
-    return options;
-  }
-
-  @autobind
-  labelShow(params) {
-    // console.warn('params', params);
-    const { selectIndex } = this.state;
-    const { indexData } = this.props;
-    const current = indexData.data[selectIndex].rank_current;
-    const contrast = indexData.data[selectIndex].rank_contrast;
-    const dataMode = [current, contrast]; // 选中项的排名
-    // console.warn('dataMode', dataMode);
-    const dataIndex = params.dataIndex; // 图标数据下标 本期、上期
-    const preValue = params.value; // 当先图标数值
-    const gcount = indexData.scopeNum; // 总公司数
-    if (preValue === (gcount - dataMode[dataIndex])) {
-      return dataMode[dataIndex];
-    }
-    return '';
-  }
-
-  /**
    * 弹窗处理（关闭）
   */
-  handleCancel = () => {
+  @autobind
+  handleCancel() {
     this.setState({ selectTreeModal: false });
   }
   /**
    * 弹窗处理（开启）
   */
-  showModal = () => {
+  @autobind
+  showModal() {
     this.setState({ selectTreeModal: true });
   }
 
-  // 概览项选中
+  // 选中Core指标
   @autobind
-  handleClick(event, index) {
-    const { indexData } = this.props;
-    const { scopeNum, data } = indexData;
-    const cOptions = this.createOption(scopeNum, data);
-    // console.warn('cOptions', cOptions);
-    this.setState({
-      selectIndex: index,
-      options: cOptions,
-    });
+  handleCoreClick(index, key) {
+    return () => {
+      const { changeCore } = this.props;
+      this.setState({
+        selectIndex: index,
+      });
+      changeCore(key);
+    };
   }
 
   @autobind
@@ -229,8 +84,17 @@ export default class IndicatorOverview extends PureComponent {
   }
 
   render() {
-    const { overviewData, indexData, summuryLib, saveIndcatorToHome } = this.props;
-    const { options, selectIndex, selectTreeModal } = this.state;
+    const {
+      overviewData,
+      indexData,
+      summuryLib,
+      saveIndcatorToHome,
+      level,
+    } = this.props;
+    if (_.isEmpty(overviewData)) {
+      return null;
+    }
+    const { selectIndex, selectTreeModal } = this.state;
     // 创建共同配置项
     const selectTreeProps = {
       modalKey: 'selectTreeModal',
@@ -240,7 +104,6 @@ export default class IndicatorOverview extends PureComponent {
       visible: selectTreeModal,
       saveIndcatorToHome,
     };
-
     return (
       <div className={styles.overviewBox}>
         <Row>
@@ -258,15 +121,15 @@ export default class IndicatorOverview extends PureComponent {
                 指标概览
               </div>
               <div className={styles.content}>
-                { /* 交易：icon-test 客户：kehu 指标：iczhibiao24px 钱袋：qiandai */ }
                 <ul>
                   {
                     overviewData.map((item, index) => {
                       const itemIndex = `select${index}`;
                       const active = selectIndex === index;
+                      const key = item.key;
                       return (
                         <li
-                          onClick={event => this.handleClick(event, index)}
+                          onClick={this.handleCoreClick(index, key)}
                           key={itemIndex}
                         >
                           <IndexItem
@@ -295,32 +158,18 @@ export default class IndicatorOverview extends PureComponent {
             </div>
           </Col>
           <Col span="10">
-            <div className={styles.radarBox}>
-              <div className={styles.titleDv}>
-                强弱指示分析
-              </div>
-              <div className={styles.radar}>
-                {!_.isEmpty(options) ? <ChartRadar
-                  options={options}
-                /> : null}
-              </div>
-              {
-                indexData.data ?
-                  <div className={styles.radarInfo}>
-                    <i />{indexData.data[selectIndex].indicator_name}：本期排名：
-                    <span className={styles.now}>
-                      {indexData.data[selectIndex].rank_current}
-                    </span>
-                    上期排名：
-                    <span className={styles.before}>
-                      {indexData.data[selectIndex].rank_contrast}
-                    </span>
-                    共 <span className={styles.all}>{indexData.scopeNum}</span> 家营业
-                  </div>
-                :
-                  ''
-              }
-            </div>
+            {
+              _.isEmpty(indexData)
+              ? null
+              : (
+                <ChartRadar
+                  radarData={indexData.data}
+                  total={indexData.scopeNum}
+                  selectCore={selectIndex}
+                  localScope={level}
+                />
+              )
+            }
           </Col>
         </Row>
         <SelectTreeModal {...selectTreeProps} />

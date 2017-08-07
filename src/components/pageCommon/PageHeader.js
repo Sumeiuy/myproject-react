@@ -8,6 +8,7 @@ import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import { Row } from 'antd';
 
+import SelfDatePicker from './SelfDatePicker';
 import CustRange from './CustRange2';
 import BoardSelect from './BoardSelect';
 import { fspContainer } from '../../config';
@@ -35,17 +36,21 @@ export default class PageHeader extends PureComponent {
     collectDurationSelect: PropTypes.func.isRequired,
     custRange: PropTypes.array,
     visibleBoards: PropTypes.array,
+    newVisibleBoards: PropTypes.array,
     preView: PropTypes.bool,
     reportName: PropTypes.string,
     orgId: PropTypes.string,
+    showSelfDatePicker: PropTypes.bool,
   }
 
   static defaultProps = {
     custRange: [],
     visibleBoards: [],
+    newVisibleBoards: [],
     preView: false,
     reportName: '',
     orgId: '',
+    showSelfDatePicker: false,
   }
   constructor(props) {
     super(props);
@@ -131,11 +136,13 @@ export default class PageHeader extends PureComponent {
       custRange,
       location,
       visibleBoards,
+      newVisibleBoards,
       updateQueryState,
       orgId,
       collectBoardSelect,
       collectCustRange,
       collectDurationSelect,
+      showSelfDatePicker,
     } = this.props;
     const { top, left, width } = this.state;
     return (
@@ -169,18 +176,26 @@ export default class PageHeader extends PureComponent {
                       push={push}
                       replace={replace}
                       visibleBoards={visibleBoards}
+                      newVisibleBoards={newVisibleBoards}
                       collectData={collectBoardSelect}
                     />
                   )
                 }
               </div>
               <div className={styles.reportHeaderRight}>
-                <DurationSelect
-                  location={location}
-                  replace={replace}
-                  updateQueryState={updateQueryState}
-                  collectData={collectDurationSelect}
-                />
+                {
+                  showSelfDatePicker ?
+                    <span className={styles.reportHeaderRightSpan}>
+                      <SelfDatePicker updateQueryState={updateQueryState} />
+                    </span>
+                  :
+                    <DurationSelect
+                      location={location}
+                      replace={replace}
+                      updateQueryState={updateQueryState}
+                      collectData={collectDurationSelect}
+                    />
+                }
                 <div className={styles.vSplit} />
                 {/* 营业地址选择项 */}
                 <CustRange

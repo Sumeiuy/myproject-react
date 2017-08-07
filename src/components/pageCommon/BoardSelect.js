@@ -26,6 +26,7 @@ export default class BoardSelect extends PureComponent {
     replace: PropTypes.func.isRequired,
     collectData: PropTypes.func.isRequired,
     visibleBoards: PropTypes.array.isRequired,
+    newVisibleBoards: PropTypes.array.isRequired,
   }
 
   constructor(props) {
@@ -118,10 +119,9 @@ export default class BoardSelect extends PureComponent {
   handleMenuClick(MenuItem) {
     this.handleVisibleChange(false);
     const { push, collectData } = this.props;
-    const { key, item: { props: { type } } } = MenuItem;
+    const { key, item: { props: { type, boardType } } } = MenuItem;
     const { visibleBoards } = this.props;
     let boardname;
-    console.warn('MenuItem', type);
     switch (type) {
       case visibleBoardType.manage.key:
         collectData({
@@ -141,7 +141,7 @@ export default class BoardSelect extends PureComponent {
         collectData({
           text: boardname,
         });
-        push(`/history?boardId=${key}`);
+        push(`/history?boardId=${key}&boardType=${boardType}`);
         break;
       default:
         break;
@@ -149,12 +149,13 @@ export default class BoardSelect extends PureComponent {
   }
 
   render() {
-    const { visibleBoards } = this.props;
+    const { newVisibleBoards } = this.props;
     const { dropdownVisible, boardName } = this.state;
 
-    const staticBorads = _.slice(visibleBoards, [0], [sliceLength]);
+    const staticBorads = _.slice(newVisibleBoards, [0], [sliceLength]);
     const ordinaryStaticBoards = _.slice(staticBorads, 0, 2);
     const historyStaticBoards = _.slice(staticBorads, 2, 4);
+    const lastVisibleBoards = newVisibleBoards[newVisibleBoards.length - 1];
     const menu = (
       <Menu
         onClick={this.handleMenuClick}
@@ -175,6 +176,7 @@ export default class BoardSelect extends PureComponent {
             (<Menu.Item
               key={String(item.id)}
               type={visibleBoardType.history.key}
+              boardType={item.boardType}
               title={item.name}
             >
               {item.name}
@@ -182,7 +184,7 @@ export default class BoardSelect extends PureComponent {
           )
         }
         {
-          visibleBoards[visibleBoards.length - 1].ordinary.map(item =>
+          lastVisibleBoards.ordinary.map(item =>
             (<Menu.Item
               key={String(item.id)}
               type={visibleBoardType.ordinary.key}
@@ -203,10 +205,11 @@ export default class BoardSelect extends PureComponent {
           }}
         >
           {
-            visibleBoards[visibleBoards.length - 1].history.map(item =>
+            lastVisibleBoards.history.map(item =>
               (<Menu.Item
                 key={String(item.id)}
                 type={visibleBoardType.history.key}
+                boardType={item.boardType}
                 title={item.name}
               >
                 {item.name}

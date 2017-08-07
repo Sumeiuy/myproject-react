@@ -2,7 +2,7 @@
  * @description 历史排名对比柱状图数据处理程序
  * @author sunweibin
  */
-
+import _ from 'lodash';
 import { ZHUNICODE } from '../../../config';
 import {
   getMaxAndMinPercent,
@@ -92,13 +92,18 @@ const dataHandle = {
     const data = [];
     if (Array.isArray(orgModel) && orgModel.length) {
       orgModel.forEach((item) => {
-        const current = Number.parseInt(item.rank_current, 10);
-        const change = Number.parseInt(item.rand_change, 10);
-        const contrast = Number.parseInt(item.rank_contrast, 10);
+        const {
+          rank_current: current,
+          rand_change: change,
+          rank_contrast: contrast,
+        } = item;
+        const current1 = _.isEmpty(current) ? 0 : Number.parseInt(current, 10);
+        const change1 = _.isEmpty(change) ? 0 : Number.parseInt(change, 10);
+        const contrast1 = _.isEmpty(contrast) ? 0 : Number.parseInt(contrast, 10);
         data.push({
-          current,
-          change,
-          contrast,
+          current: current1,
+          change: change1,
+          contrast: contrast1,
         });
       });
     }
@@ -111,13 +116,13 @@ const dataHandle = {
     switch (unit) {
       case PERCENT:
         result = {
-          newSeries: seriesData.map(item => (item * 100)),
+          newSeries: seriesData.map(item => toFixedDecimal(item * 100)),
           newUnit: unit,
         };
         break;
       case PERMILLAGE:
         result = {
-          newSeries: seriesData.map(item => (item * 1000)),
+          newSeries: seriesData.map(item => toFixedDecimal(item * 1000)),
           newUnit: unit,
         };
         break;
@@ -200,6 +205,41 @@ const dataHandle = {
       const maxAndMinPeople = fixedPeopleMaxMin(gridAxisTick);
       max = maxAndMinPeople.max;
       min = maxAndMinPeople.min;
+    }
+    return {
+      max,
+      min,
+    };
+  },
+
+  // 计算出stack的合计值
+  getStackSummury(stackSeries) {
+    const summury = [];
+    if (stackSeries.length) {
+      const totalData = stackSeries.map(item => item.data);
+      const jlen = totalData[0].length;
+      const ilen = totalData.length;
+      for (let i = 0; i < jlen; i++) {
+        let subsummury = 0;
+        for (let j = 0; j < ilen; j++) {
+          subsummury += totalData[j][i];
+        }
+        summury.push(Number.parseFloat(subsummury.toFixed(2)));
+      }
+    }
+    return summury;
+  },
+  // 优化Grid
+  optimizeGrid(grid) {
+    const gridHelper = _.cloneDeep(grid);
+    let { max } = gridHelper;
+    const { min } = gridHelper;
+    if (max > 0 && min > 0) {
+      max -= min;
+    }
+    if (max < 0 && min < 0) {
+      // TODO 不存在两者都小于零的情况
+      max = 0;
     }
     return {
       max,

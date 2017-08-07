@@ -2,7 +2,7 @@
 * @Author: LiuJianShu
 * @Date:   2017-04-26 11:17:08
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-08-03 10:54:41
+ * @Last Modified time: 2017-08-03 15:41:35
 */
 
 const optionsMap = {
@@ -70,12 +70,12 @@ const optionsMap = {
   ],
   compare: [
     {
-      key: 'MoM',
-      name: '环比',
-    },
-    {
       key: 'YoY',
       name: '同比',
+    },
+    {
+      key: 'MoM',
+      name: '环比',
     },
   ],
   visibleBoardType: {
@@ -109,6 +109,34 @@ const optionsMap = {
       },
     ],
     TYPE_JYYJ: [
+      {
+        scope: '2',
+        name: '分公司',
+      },
+      {
+        scope: '3',
+        name: '营业部',
+      },
+      {
+        scope: '4',
+        name: '服务经理',
+      },
+    ],
+    TYPE_LSDB_TGJX: [
+      {
+        scope: '2',
+        name: '分公司',
+      },
+      {
+        scope: '3',
+        name: '营业部',
+      },
+      {
+        scope: '4',
+        name: '投顾',
+      },
+    ],
+    TYPE_LSDB_JYYJ: [
       {
         scope: '2',
         name: '分公司',

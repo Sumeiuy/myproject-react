@@ -17,6 +17,8 @@ import {
   filterRankData,
   dealStackSeriesData,
   designStackGrid,
+  getStackSummury,
+  optimizeGrid,
 } from './rankDataHandle';
 import styles from './RankChart.less';
 
@@ -76,6 +78,7 @@ export default class RankStackChart extends PureComponent {
     const dealResult = dealStackSeriesData(stackSeries, unit, summury);
     stackSeries = dealResult.newStackSeries;
     unit = dealResult.newUnit;
+    const custSummury = getStackSummury(stackSeries);
     // 设计直角坐标系
     const newGrid = designStackGrid(stackSeries, unit);
     // 改变头部的单位显示
@@ -90,7 +93,7 @@ export default class RankStackChart extends PureComponent {
       grid: newGrid,
       stackSeries,
       rank,
-      summury,
+      summury: custSummury,
       legends,
     });
   }
@@ -306,8 +309,9 @@ export default class RankStackChart extends PureComponent {
       legends,
     } = this.state;
     // 生成最大值数组和最小值数组
-    const maxData = this.makeDataArray(grid.max);
-    const minData = this.makeDataArray(grid.min);
+    const realGrid = optimizeGrid(grid);
+    const maxData = this.makeDataArray(realGrid.max);
+    const minData = this.makeDataArray(realGrid.min);
 
     const options = {
       color: [...stackBarColors],

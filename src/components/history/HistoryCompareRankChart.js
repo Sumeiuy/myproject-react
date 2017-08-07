@@ -32,27 +32,57 @@ export default class HistoryCompareRankChart extends PureComponent {
     level: PropTypes.string,
     scope: PropTypes.string,
     boardType: PropTypes.string,
+    swtichDefault: PropTypes.string.isRequired,
     data: PropTypes.object.isRequired,
+    changeRankBar: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
     level: '1', // 当前组织结构级别
     scope: '2', // 查询数据的维度
-    boardType: 'TYPE_TGJX', // 维度下拉框选项配置的默认值
+    boardType: 'TYPE_LSDB_TGJX', // 维度下拉框选项配置的默认值
   }
 
   constructor(props) {
     super(props);
     const { scope, data: { historyCardRecordVo } } = props; // scope为维度
-    const rankPage = Number.parseInt(historyCardRecordVo.current_page, 10);
-    const totalPage = Math.ceil(Number.parseInt(historyCardRecordVo.total_num, 10) / 10);
+    const page = this.getpagination(historyCardRecordVo);
     this.state = {
+      ...page,
       scopeSelectValue: scope,
       scope,
       orderType: 'desc',
-      rankPage,
-      totalPage,
       unit: '',
+    };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { data: preData, scope: preScope, swtichDefault: oldSwitch } = this.props;
+    const { data, scope, swtichDefault } = nextProps;
+    if (!_.isEqual(preData, data)) {
+      const page = this.getpagination(data.historyCardRecordVo);
+      this.setState({
+        ...page,
+      });
+    }
+    if (!_.isEqual(preScope, scope) || !_.isEqual(swtichDefault, oldSwitch)) {
+      const page = this.getpagination(data.historyCardRecordVo);
+      this.setState({
+        ...page,
+        scopeSelectValue: scope,
+        scope,
+        orderType: 'desc',
+      });
+    }
+  }
+
+  @autobind
+  getpagination(record) {
+    const rankPage = Number.parseInt(record.current_page, 10);
+    const totalPage = Math.ceil(Number.parseInt(record.total_num, 10) / 10);
+    return {
+      totalPage,
+      rankPage,
     };
   }
 
@@ -69,18 +99,48 @@ export default class HistoryCompareRankChart extends PureComponent {
   @autobind
   changeRankPage(rankPage) {
     this.setState({ rankPage });
+    this.updateRankData({
+      pageNum: rankPage,
+    });
+  }
+
+  @autobind
+  updateRankData(query) {
+    const { scopeSelectValue, orderType, rankPage } = this.state;
+    this.props.changeRankBar({
+      scope: scopeSelectValue,
+      orderType,
+      pageNum: rankPage,
+      ...query,
+    });
   }
 
   // 切换维度
   @autobind
-  handleScopeChange() {
-
+  handleScopeChange(v) {
+    // 如果切换维度，则需要页面设置为初始值
+    this.setState({
+      rankPage: 1,
+      scopeSelectValue: v,
+    });
+    this.updateRankData({
+      scope: v,
+      pageNum: 1,
+    });
   }
 
   // 切换排序
   @autobind
-  handleOrderTypeChange() {
-
+  handleOrderTypeChange(v) {
+    // 如果切换维度，则需要将页面设置为初始值
+    this.setState({
+      rankPage: 1,
+      orderType: v,
+    });
+    this.updateRankData({
+      orderType: v,
+      pageNum: 1,
+    });
   }
 
   // 上一页
@@ -103,10 +163,7 @@ export default class HistoryCompareRankChart extends PureComponent {
   }
 
   render() {
-    if (_.isEmpty(this.props.data)) {
-      return null;
-    }
-    const { level, scope, boardType, data: { historyCardRecordVo: { data } } } = this.props;
+    const { level, boardType, data: { historyCardRecordVo: { data } } } = this.props;
     const { orderType, scopeSelectValue, rankPage, totalPage, unit } = this.state;
     // 隐藏选项
     const toggleScope2Option = classnames({
@@ -194,7 +251,7 @@ export default class HistoryCompareRankChart extends PureComponent {
           <HistoryRankChart
             data={data}
             level={level}
-            scope={scope}
+            scope={scopeSelectValue}
             showChartUnit={this.showChartUnit}
           />
         </div>

@@ -8,7 +8,6 @@ import IECharts from '../IECharts';
 
 export default function CommonScatter(props) {
   const {
-    scatterElemHeight,
     onScatterHover,
     onScatterLeave,
     scatterOptions,
@@ -20,7 +19,7 @@ export default function CommonScatter(props) {
       option={scatterOptions}
       resizable
       style={{
-        height: scatterElemHeight,
+        height: '360px',
         width: '100%',
       }}
       onEvents={{

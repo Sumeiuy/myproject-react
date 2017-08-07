@@ -37,6 +37,16 @@
 .reportHeaderRight {
   composes: textAlignRight;
   flex: 1 0 auto;
+  .reportHeaderRightSpan{
+    display: inline-block;
+    width: 200px;
+    :global{
+      .ant-calendar-picker{
+        width: 200px !important;
+        height: 40px !important;
+      }
+    }
+  }
 }
 .dateFilter {
   display: inline-block;
@@ -64,7 +74,6 @@
   top: 0px;
   z-index: 999;
 }
-
 //
 //
 // 修改头部Select样式
