@@ -107,13 +107,17 @@ export default class PerformanceIndicators extends PureComponent {
             <span className={styles.name}>绩效指标</span>
             <div className={styles.timeBox}>
               <Icon type="kehu" />
-              <CustRange
-                custRange={custRange}
-                location={location}
-                replace={replace}
-                updateQueryState={updateQueryState}
-                collectData={collectCustRange}
-              />
+              {
+                custRange ?
+                  <CustRange
+                    custRange={custRange}
+                    location={location}
+                    replace={replace}
+                    updateQueryState={updateQueryState}
+                    collectData={collectCustRange}
+                  /> :
+                  null
+              }
               <i className={styles.bd} />
               <Icon type="rili" />
               {

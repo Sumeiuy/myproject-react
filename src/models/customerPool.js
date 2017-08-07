@@ -68,8 +68,9 @@ export default {
           type: 'getStatisticalPeriodSuccess',
           payload: { statisticalPeriod },
         });
-        firstCycle = statisticalPeriod.resultData.kPIDataScopeType;
+        firstCycle = statisticalPeriod.resultData.kPIDateScopeType;
       }
+      // debugger;
       // 代办流程(首页总数)
       const agentProcess = yield call(api.getWorkFlowTaskCount);
       yield put({
@@ -143,10 +144,13 @@ export default {
     // 客户池用户范围
     getCustomerScopeSuccess(state, action) {
       const { response: { resultData } } = action;
-      const custRange = [
-        { id: resultData.id, name: resultData.name, level: resultData.level },
-        ...resultData.children,
-      ];
+      let custRange = [];
+      if (resultData) {
+        custRange = [
+          { id: resultData.id, name: resultData.name, level: resultData.level },
+          ...resultData.children,
+        ];
+      }
       return {
         ...state,
         custRange,

@@ -18,6 +18,8 @@ import styles from './home.less';
 const CUST_MANAGER = 1; // 客户经理
 // const CUST_MANAGER_TEAM = 2; // 客户经理团队
 const ORG = 3; // 组织机构
+const EMPTY_LIST = [];
+const EMPTY_OBJECT = {};
 const effects = {
   allInfo: 'customerPool/getAllInfo',
   performanceIndicators: 'customerPool/getPerformanceIndicators',
@@ -67,14 +69,14 @@ export default class Home extends PureComponent {
   }
 
   static defaultProps = {
-    performanceIndicators: {},
-    custRange: [],
-    cycle: [],
+    performanceIndicators: EMPTY_OBJECT,
+    custRange: EMPTY_LIST,
+    cycle: EMPTY_LIST,
     collectCustRange: () => { },
-    position: {},
+    position: EMPTY_OBJECT,
     process: '',
     motTaskCount: '0',
-    empInfo: {},
+    empInfo: EMPTY_OBJECT,
   }
 
   constructor(props) {
@@ -104,13 +106,13 @@ export default class Home extends PureComponent {
       });
       this.getIndicators();
     }
-    if (preCycle !== nextCycle) {
+    if (!_.isEqual(preCycle, nextCycle)) {
       this.setState({
         cycle: nextCycle[0].key,
       });
     }
     if (preCustRange !== nextCustRange) {
-      this.handleGetAllInfo();
+      this.handleGetAllInfo(nextCustRange);
     }
   }
 
@@ -132,11 +134,11 @@ export default class Home extends PureComponent {
   }
 
   @autobind
-  handleGetAllInfo() {
-    const { getAllInfo, custRange, cycle } = this.props;
+  handleGetAllInfo(custRangeData) {
+    const { getAllInfo, cycle } = this.props;
     const { orgId } = this.state;
     let custType = ORG;
-    const orgsId = !_.isEmpty(custRange[0]) ? custRange[0].id : '';
+    const orgsId = !_.isEmpty(custRangeData[0]) ? custRangeData[0].id : '';
     if (orgId === orgsId) { // 判断客户范围类型
       custType = ORG;
     } else {
@@ -147,7 +149,7 @@ export default class Home extends PureComponent {
     });
     getAllInfo({
       request: {
-        custTypes: custType, // 客户范围类型
+        custType, // 客户范围类型
         // dateType: '', // 周期类型
         orgId, // 组织ID
       },
@@ -173,6 +175,9 @@ export default class Home extends PureComponent {
     const { fspOrgId } = this.state;
     let orgNewCustRange = [];
     const newCustRrange = [];
+    if (_.isEmpty(custRange)) {
+      return null;
+    }
     if (fspOrgId === custRange[0].id) {
       return custRange;
     }
@@ -212,7 +217,7 @@ export default class Home extends PureComponent {
       custRange,
     } = this.props;
     if (_.isEmpty(custRange[0])) {
-      return null;
+      // return null;
     }
     return (
       <div className={styles.customerPoolWrap}>
