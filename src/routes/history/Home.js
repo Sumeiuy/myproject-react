@@ -170,14 +170,19 @@ export default class HistoryHome extends PureComponent {
     const {
       location: { query: { boardId: preBoardId } },
     } = this.props;
-
     const differentId = !_.isEqual(preBoardId, boardId);
     if (differentId) {
+      const { custRange } = nextProps;
+      const ownerOrg = custRange[0];
       // TODO 此处需要等到时间选择器完成提供方法
       // const { begin, end, cycleType } = getDurationString('month');
       this.setState({
         boardId,
         boardType,
+        scope: ownerOrg && String(Number(ownerOrg.level) + 1),
+        localScope: ownerOrg && ownerOrg.level,
+        orgId: ownerOrg && ownerOrg.id, // 用户当前选择的组织机构Id
+        ownerOrgId: ownerOrg && ownerOrg.id, // 用户所属的组织机构Id
       },
       () => {
         this.queryInitial();
