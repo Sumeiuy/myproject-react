@@ -7,6 +7,9 @@ export default {
   // 暴露api上的几个底层方法: get / post
   ...api,
 
+  // 员工职责与职位
+  getEmpInfo: query => api.post('/groovynoauth/fsp/emp/info/queryEmpInfo', query),
+
   // 获取客户范围
   getCustRange: query => api.post('/groovynoauth/jxzb/empOrgTree', query),
 
