@@ -27,6 +27,7 @@ import PreviewReport from './routes/reports/PreviewReport';
 import HistoryHome from './routes/history/Home';
 import CustomerPoolHome from './routes/customerPool/Home';
 import ToDo from './routes/customerPool/ToDo';
+import CustomerList from './routes/customerPool/CustomerList';
 
 function switchRouter() {
   const fsp = document.querySelector(fspContainer.container);
@@ -54,6 +55,7 @@ const routes = ({ history }) => (// eslint-disable-line
       <Route path="customerPool">
         <IndexRoute component={CustomerPoolHome} />
         <Route path="todo" component={ToDo} />
+        <Route path="list" component={CustomerList} />
       </Route>
     </Route>
   </Router>

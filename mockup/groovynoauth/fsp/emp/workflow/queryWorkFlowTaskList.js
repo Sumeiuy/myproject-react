@@ -3,12 +3,6 @@ exports.response = function (req, res) {
         "code":"0",
         "msg":"OK",
         "resultData":{
-            "page":{
-                "pageSize":2,
-                "curPageNum":0,
-                "totalPageNum":3,
-                "totalRecordName":5
-            },
             "empWorkFlowList":[
                 {
                     "applyDate":"2017-07-07 14:36:35",
