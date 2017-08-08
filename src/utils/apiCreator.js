@@ -6,7 +6,7 @@
 import request from './request';
 
 import config from '../config/request';
-import { queryToString } from './helper';
+import { queryToString, getEmpId } from './helper';
 
 /**
  * api生成器
@@ -43,7 +43,7 @@ export default function createApi() {
       const finalUrl = padPrefix(url);
       const queryString = queryToString(query);
       return request(
-        `${finalUrl}?${queryString}`,
+        `${finalUrl}?${queryString}&empId=${getEmpId()}`,
         {
           method: 'GET',
         },
@@ -64,8 +64,9 @@ export default function createApi() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            empId: getEmpId(),
           },
-          body: JSON.stringify(query),
+          body: JSON.stringify({ ...query, empId: getEmpId() }),
         },
       );
     },
