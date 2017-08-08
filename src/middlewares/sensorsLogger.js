@@ -87,7 +87,7 @@ function getExtraData(action) {
   }
   data = _.omitBy(
     data,
-    item => _.isObject(item) || _.isArray(item),
+    item => _.isNull(item) || _.isObject(item) || _.isArray(item),
   );
   return _.mapKeys(
     data,
@@ -153,10 +153,6 @@ function sendLog(action) {
 }
 
 export default function createSensorsLogger() {
-  // 一进来先发一次用户信息
-  sendLog({
-    type: EVENT_PROFILE_ACTION,
-  });
   /* eslint-disable */
   return ({ getState }) => (next) => (action) => {
     sendLog(action);
