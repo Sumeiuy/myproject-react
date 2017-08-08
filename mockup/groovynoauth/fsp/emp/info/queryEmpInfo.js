@@ -8,580 +8,403 @@ exports.response = function (req, res) {
     "resultData": {
       "empPostnList": [
         {
-          "id": "1-42A8XNG",
-          "rowId": "1-OXZ5",
-          "login": "002332",
-          "loginName": "王华",
-          "postnId": "1-3S0Z4",
-          "postnName": "南京长江路证券营业部服务岗",
+          "id": "1-3NQ97N8",
+          "rowId": "1-E6W8",
+          "login": "001423",
+          "loginName": "1-E6W8",
+          "postnId": "1-3NQ97N7",
+          "postnName": "HTSC001423",
           "isMainPostn": true,
-          "orgId": "ZZ001041051",
-          "orgName": "南京长江路证券营业部"
-        },
-        {
-          "id": "1-42FTX91",
-          "rowId": "1-OXZ5",
-          "login": "002332",
-          "loginName": "王华",
-          "postnId": "1-42FTX90",
-          "postnName": "战略发展部",
-          "isMainPostn": false,
-          "orgId": "ZZ323426",
-          "orgName": "战略发展部"
-        },
-        {
-          "id": "1-42A7ZFO",
-          "rowId": "1-OXZ5",
-          "login": "002332",
-          "loginName": "王华",
-          "postnId": "1-5XND",
-          "postnName": "南京长江路证券营业部",
-          "isMainPostn": false,
-          "orgId": "ZZ001041051",
-          "orgName": "南京长江路证券营业部"
-        },
-        {
-          "id": "1-OXZ9",
-          "rowId": "1-OXZ5",
-          "login": "002332",
-          "loginName": "王华",
-          "postnId": "1-OXZ8",
-          "postnName": "HTSC002332",
-          "isMainPostn": false,
-          "orgId": "ZZ001041051",
-          "orgName": "南京长江路证券营业部"
+          "orgId": "ZZ001041",
+          "orgName": "经纪业务总部"
         }
       ],
       "empRespList": [
         {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "0-30",
-          "respName": "Siebel Administrator"
+          "lastName": "1-E6W8",
+          "loginName": "001423",
+          "respId": "1-1QEF3",
+          "respName": "HTSC 营业部客户分配管理岗"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-12T3QJZ",
-          "respName": "HTSC 融资融券业务管理层"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-1EAJHD7",
-          "respName": "HTSC 营业部理财师"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
+          "lastName": "1-E6W8",
+          "loginName": "001423",
           "respId": "1-1QEF9",
           "respName": "HTSC 营销活动管理"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
+          "lastName": "1-E6W8",
+          "loginName": "001423",
           "respId": "1-1QEFF",
           "respName": "HTSC 高级分析"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-1ZTFW78",
-          "respName": "HTSC 一般型经纪人"
+          "lastName": "1-E6W8",
+          "loginName": "001423",
+          "respId": "1-1QF7Z",
+          "respName": "HTSC 部门系统管理员"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-21BDB4F",
-          "respName": "HTSC 合约分配岗"
+          "lastName": "1-E6W8",
+          "loginName": "001423",
+          "respId": "1-1QF8B",
+          "respName": "HTSC 总部营销活动管理岗"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
+          "lastName": "1-E6W8",
+          "loginName": "001423",
           "respId": "1-21V43AZ",
           "respName": "HTSC 公司融资融券业务查询"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-21V43BL",
-          "respName": "HTSC 分公司融资融券业务查询"
+          "lastName": "1-E6W8",
+          "loginName": "001423",
+          "respId": "1-2323Q4R",
+          "respName": "HTSC 产品库系统管理员"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-21V43BZ",
-          "respName": "HTSC 营业部融资融券业务查询"
+          "lastName": "1-E6W8",
+          "loginName": "001423",
+          "respId": "1-2323Q4X",
+          "respName": "HTSC 产品库一般用户"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
+          "lastName": "1-E6W8",
+          "loginName": "001423",
           "respId": "1-2323Q6N",
           "respName": "HTSC 知识库一般用户"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
+          "lastName": "1-E6W8",
+          "loginName": "001423",
           "respId": "1-243I8T7",
           "respName": "HTSC KPI指标"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-243I8TD",
-          "respName": "HTSC 员工统计"
+          "lastName": "1-E6W8",
+          "loginName": "001423",
+          "respId": "1-25FQA0C",
+          "respName": "HTSC 研究体系客户-总部管理"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-2K5HWDO",
-          "respName": "HTSC 证券管理岗"
+          "lastName": "1-E6W8",
+          "loginName": "001423",
+          "respId": "1-25FQA10",
+          "respName": "HTSC 协议模板-总部管理"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-2K5HWDU",
-          "respName": "HTSC 征信管理岗"
+          "lastName": "1-E6W8",
+          "loginName": "001423",
+          "respId": "1-298ZAOE",
+          "respName": "HTSC 总部投资顾问管理"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-2K5HWE0",
-          "respName": "HTSC 综合风控管理岗"
+          "lastName": "1-E6W8",
+          "loginName": "001423",
+          "respId": "1-2GUPKLJ",
+          "respName": "HTSC 空白产品设置"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
+          "lastName": "1-E6W8",
+          "loginName": "001423",
+          "respId": "1-2GUPKMP",
+          "respName": "HTSC 客户信息屏蔽"
+        },
+        {
+          "lastName": "1-E6W8",
+          "loginName": "001423",
           "respId": "1-2MDA0",
           "respName": "HTSC 案例维护"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-2MEGJ",
-          "respName": "HTSC EIMUSER ALL VIEW"
+          "lastName": "1-E6W8",
+          "loginName": "001423",
+          "respId": "1-2NX942W",
+          "respName": "HTSC 体征服务管理员"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-2P3EZ4B",
-          "respName": "HTSC 融资融券业务分析岗"
+          "lastName": "1-E6W8",
+          "loginName": "001423",
+          "respId": "1-2NX9432",
+          "respName": "HTSC 体征服务资讯设计员"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-2P3EZ4H",
-          "respName": "HTSC 融资融券统计分析岗"
+          "lastName": "1-E6W8",
+          "loginName": "001423",
+          "respId": "1-2QUYHBK",
+          "respName": "HTSC 公司风控管理岗"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-2PCRCYX",
-          "respName": "HTSC 证投部风控专员"
+          "lastName": "1-E6W8",
+          "loginName": "001423",
+          "respId": "1-2UNGX6L",
+          "respName": "HTSC 理财服务中心服务经理"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-2RTQBQ2",
-          "respName": "HTSC 投诉工单处理"
+          "lastName": "1-E6W8",
+          "loginName": "001423",
+          "respId": "1-2WVV7NZ",
+          "respName": "HTSC 产品设置申请管理员"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-2RTQBQE",
-          "respName": "HTSC 投诉工单类型调整岗"
+          "lastName": "1-E6W8",
+          "loginName": "001423",
+          "respId": "1-2X2E6DW",
+          "respName": "HTSC 理财服务中心系统管理员"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-2TX8ER5",
-          "respName": "HTSC HTSC 信用业务专员"
+          "lastName": "1-E6W8",
+          "loginName": "001423",
+          "respId": "1-32ESVRS",
+          "respName": "HTSC 黑名单管理"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-2W42VUA",
-          "respName": "HTSC 信用业务财务岗"
+          "lastName": "1-E6W8",
+          "loginName": "001423",
+          "respId": "1-3DIGVO",
+          "respName": "HTSC 产品管理员"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-2W8GEVH",
-          "respName": "HTSC 资券管理岗"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-2W8GEVN",
-          "respName": "HTSC 转融通岗"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-32RSITG",
-          "respName": "HTSC 股票质押项目管理岗"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-32UXUXB",
-          "respName": "HTSC 理财服务岗"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-3FVD7PB",
-          "respName": "HTSC 分公司衍生品审核岗"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-3FVD7PH",
-          "respName": "HTSC 衍生品受理岗"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-3FVD7ST",
-          "respName": "HTSC 股票质押项目审核岗"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-3LVZOPS",
-          "respName": "HTSC 股票期权申请岗"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-3MYP2RH",
-          "respName": "HTSC 柜台业务服务岗"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
+          "lastName": "1-E6W8",
+          "loginName": "001423",
           "respId": "1-3N2803C",
           "respName": "HTSC 服务记录查询岗"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-3PLDNXR",
-          "respName": "HTSC 股票质押项目查询岗"
+          "lastName": "1-E6W8",
+          "loginName": "001423",
+          "respId": "1-3PDQSG5",
+          "respName": "HTSC CRM系统需求审核员"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-3QROA24",
-          "respName": "HTSC 信用产品管理岗"
+          "lastName": "1-E6W8",
+          "loginName": "001423",
+          "respId": "1-3S9AVBW",
+          "respName": "HTSC 隐私信息查询权限"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-3QROA2A",
-          "respName": "HTSC 信用业务参数管理岗"
+          "lastName": "1-E6W8",
+          "loginName": "001423",
+          "respId": "1-3YND0HA",
+          "respName": "HTSC 互联网产品管理员"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-3S3BAUH",
-          "respName": "HTSC 私密客户审核岗"
+          "lastName": "1-E6W8",
+          "loginName": "001423",
+          "respId": "1-41CXK0L",
+          "respName": "HTSC 投诉工单分配"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-3S9AVC8",
-          "respName": "HTSC 交易信息查询权限（含私密客户）"
+          "lastName": "1-E6W8",
+          "loginName": "001423",
+          "respId": "1-60EQ",
+          "respName": "HTSC 系统管理员"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-3TMIRME",
-          "respName": "HTSC 财富管理部分配岗"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-3TMIRZC",
-          "respName": "HTSC 衍生品经纪业务部负责人"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-3UBMWSW",
-          "respName": "HTSC 衍生品佣金审核岗"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-3UG74HS",
-          "respName": "HTSC 客户预约取现查询"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-3WPMJWE",
-          "respName": "HTSC 差异化定价管理员"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-3YCM7AE",
-          "respName": "HTSC 差异化定价查询岗"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-3Z9Z7US",
-          "respName": "HTSC 服务统计管理岗"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-40PJQPK",
-          "respName": "HTSC 资产配置基础参数管理"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-40WY1VV",
-          "respName": "HTSC 预约取款查询岗"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-41CXK0R",
-          "respName": "HTSC 投诉工单查询"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-41WVH7I",
-          "respName": "HTSC 通道软件总部审批岗"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-420EAZA",
-          "respName": "HTSC 营销活动管理-互联网金融中心"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-43LP940",
-          "respName": "HTSC 营业部融资融券风控岗"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-43LP946",
-          "respName": "HTSC 分公司融资融券风控岗"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-43PZSDR",
-          "respName": "HTSC 衍生品预约取款查询岗"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-45X0P6S",
-          "respName": "HTSC 资产配置质量审核"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-4BYF4WF",
-          "respName": "HTSC 投顾签约查询"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-4EVCDEQ",
-          "respName": "HTSC 首页指标定制"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
+          "lastName": "1-E6W8",
+          "loginName": "001423",
           "respId": "1-6168",
           "respName": "HTSC 华泰用户"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-616H",
-          "respName": "HTSC 零售总部管理层"
+          "lastName": "1-E6W8",
+          "loginName": "001423",
+          "respId": "1-616Q",
+          "respName": "HTSC 服务产品管理专员"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-6188",
-          "respName": "HTSC 客户服务中心管理层"
+          "lastName": "1-E6W8",
+          "loginName": "001423",
+          "respId": "1-6178",
+          "respName": "HTSC 金融产品管理专员"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-618H",
-          "respName": "HTSC 营业部管理层"
+          "lastName": "1-E6W8",
+          "loginName": "001423",
+          "respId": "1-617H",
+          "respName": "HTSC 公司职位维护专员"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
+          "lastName": "1-E6W8",
+          "loginName": "001423",
+          "respId": "1-617Q",
+          "respName": "HTSC 公司渠道管理专员"
+        },
+        {
+          "lastName": "1-E6W8",
+          "loginName": "001423",
+          "respId": "1-618Q",
+          "respName": "HTSC 公司综合服务"
+        },
+        {
+          "lastName": "1-E6W8",
+          "loginName": "001423",
+          "respId": "1-618Z",
+          "respName": "HTSC 部门职位维护专员"
+        },
+        {
+          "lastName": "1-E6W8",
+          "loginName": "001423",
           "respId": "1-6198",
           "respName": "HTSC 服务经理"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
+          "lastName": "1-E6W8",
+          "loginName": "001423",
           "respId": "1-619H",
           "respName": "HTSC 部门渠道管理专员"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-619Q",
-          "respName": "HTSC 营业部服务岗"
+          "lastName": "1-E6W8",
+          "loginName": "001423",
+          "respId": "1-61JG",
+          "respName": "HTSC 人工评级"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-619Z",
-          "respName": "HTSC 分中心管理层"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-61AQ",
-          "respName": "HTSC 公司高管"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
+          "lastName": "1-E6W8",
+          "loginName": "001423",
           "respId": "1-7SEYZG",
           "respName": "HTSC 营业部后备理财师"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-EW3RIQ",
-          "respName": "HTSC 营业部融资融券服务"
+          "lastName": "1-E6W8",
+          "loginName": "001423",
+          "respId": "1-902TEN",
+          "respName": "HTSC 公司洗钱风险审核"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
+          "lastName": "1-E6W8",
+          "loginName": "001423",
+          "respId": "1-ETKI67",
+          "respName": "HTSC 公司产品定价管理"
+        },
+        {
+          "lastName": "1-E6W8",
+          "loginName": "001423",
+          "respId": "1-FCQM-1",
+          "respName": "HTSC 审批执行岗"
+        },
+        {
+          "lastName": "1-E6W8",
+          "loginName": "001423",
+          "respId": "1-FCQM-10",
+          "respName": "HTSC 反洗钱-总部执行岗"
+        },
+        {
+          "lastName": "1-E6W8",
+          "loginName": "001423",
+          "respId": "1-FCQM-12",
+          "respName": "HTSC 开发-营业部执行岗"
+        },
+        {
+          "lastName": "1-E6W8",
+          "loginName": "001423",
           "respId": "1-FCQM-13",
           "respName": "HTSC 渠道-营业部执行岗"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-FCQM-15",
-          "respName": "HTSC 绩效-分中心管理岗"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-FCQM-16",
-          "respName": "HTSC 绩效-营业部执行岗"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-FCQM-17",
-          "respName": "HTSC 绩效-营业部管理岗"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
+          "lastName": "1-E6W8",
+          "loginName": "001423",
           "respId": "1-FCQM-18",
           "respName": "HTSC 产品管理-总部管理岗"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
+          "lastName": "1-E6W8",
+          "loginName": "001423",
+          "respId": "1-FCQM-19",
+          "respName": "HTSC 协议模板-总部执行岗"
+        },
+        {
+          "lastName": "1-E6W8",
+          "loginName": "001423",
           "respId": "1-FCQM-2",
           "respName": "HTSC 华泰公共视图"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-FCQM-23",
-          "respName": "HTSC 客户资料-总部管理岗"
+          "lastName": "1-E6W8",
+          "loginName": "001423",
+          "respId": "1-FCQM-25",
+          "respName": "HTSC 系统管理-总部执行岗"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
+          "lastName": "1-E6W8",
+          "loginName": "001423",
+          "respId": "1-FCQM-26",
+          "respName": "HTSC 综合服务-总部执行岗"
+        },
+        {
+          "lastName": "1-E6W8",
+          "loginName": "001423",
+          "respId": "1-FCQM-27",
+          "respName": "HTSC 营销活动-总部执行岗"
+        },
+        {
+          "lastName": "1-E6W8",
+          "loginName": "001423",
           "respId": "1-FCQM-28",
           "respName": "HTSC 融资融券-总部执行岗"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-FCQM-32",
-          "respName": "HTSC 客户资料-营业部执行岗"
+          "lastName": "1-E6W8",
+          "loginName": "001423",
+          "respId": "1-FCQM-29",
+          "respName": "HTSC 销售服务-总部执行岗"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-FCQM-35",
-          "respName": "HTSC 营销活动-分中心管理岗"
+          "lastName": "1-E6W8",
+          "loginName": "001423",
+          "respId": "1-FCQM-34",
+          "respName": "HTSC 综合服务-营业部执行岗"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
+          "lastName": "1-E6W8",
+          "loginName": "001423",
           "respId": "1-FCQM-36",
           "respName": "HTSC 营销活动-营业部执行岗"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-FCQM-37",
-          "respName": "HTSC 融资融券-营业部执行岗"
+          "lastName": "1-E6W8",
+          "loginName": "001423",
+          "respId": "1-FCQM-41",
+          "respName": "HTSC 客户资料(无隐私)-总部管理岗"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-FCQM-38",
-          "respName": "HTSC 销售服务-分中心管理岗"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-FCQM-7",
-          "respName": "HTSC 理财-总部执行岗"
+          "lastName": "1-E6W8",
+          "loginName": "001423",
+          "respId": "1-FCQM-9",
+          "respName": "HTSC 绩效-总部管理岗"
         }
       ],
       "empInfo": {
-        "rowId": "1-OXZ5",
-        "login": "002332",
-        "empName": "王华",
-        "occupation": "南京长江路证券营业部",
-        "occDivnNum": "ZZ001041051",
+        "rowId": "1-E6W8",
+        "login": "001423",
+        "empName": "1-E6W8",
+        "occupation": "经纪业务总部",
+        "occDivnNum": "ZZ001041",
         "empQualification": null,
         "empStatus": "在职",
-        "sex": "女",
-        "birthDt": "1983-03-16 00:00:00",
+        "sex": "男",
+        "birthDt": "1972-09-08 00:00:00",
         "degree": "学士",
-        "jobTitle": "总经理",
-        "srvRoleCd": null,
+        "jobTitle": "客户系统管理与推广岗",
+        "srvRoleCd": "207999",
         "overtimeCd": null,
-        "empNum": "002332",
-        "socSecurityNum": "320103830316154",
-        "hireDt": "2005-09-19 00:00:00",
+        "empNum": "001423",
+        "socSecurityNum": "320113197210080816",
+        "hireDt": "1994-11-01 00:00:00",
         "terminationDt": null,
         "conAsstName": null,
         "xEmpFrozenCd": null,
-        "addr": "XXM-JM-!XXM-JM-P1-3SOHHPSM-BM-7",
+        "addr": "XXM-JM-!XXM-JM-P1-3QNAY4CM-BM-7",
         "country": "111156",
         "city": null,
         "workPhNum": null,
-        "emailAddr": "weiwei@htsc.com",
+        "emailAddr": "make@htsc.com",
         "state": null,
         "zipcode": null,
-        "cellPhNum": "18951810511",
-        "faxPhNum": "025-84798657",
-        "postnId": "1-3S0Z4",
+        "cellPhNum": "18936880665",
+        "faxPhNum": null,
+        "postnId": "1-3NQ97N7",
         "empTdbm": null,
         "empJb": null
       }
