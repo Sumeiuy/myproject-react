@@ -312,7 +312,7 @@ export default class RankNormalChart extends PureComponent {
                 <div key={key} className={styles.rankNumberAndChange}>
                   <span className={styles.rankNumber}>{current}</span>
                   <span className={rankClass}><Icon type={icon} /></span>
-                  <span className={styles.rankChange}>{`${change}名`}</span>
+                  <span className={styles.rankChange}>{`${Math.abs(change)}名`}</span>
                 </div>
               );
             })

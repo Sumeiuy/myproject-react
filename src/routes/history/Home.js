@@ -21,6 +21,11 @@ import HistoryCompareRankChart from '../../components/history/HistoryCompareRank
 import PageHeader from '../../components/pageCommon/PageHeader';
 import styles from './Home.less';
 
+// 投顾绩效历史对比的borderId
+const TYPE_LSDB_TGJX = '3';
+// 经营业绩历史对比的boardId
+const TYPE_LSDB_JYYJ = '4';
+
 const effects = {
   getInitial: 'history/getInitial',
   getRadarData: 'history/getRadarData',
@@ -133,6 +138,10 @@ export default class HistoryHome extends PureComponent {
     message: '',
   }
 
+  static contextTypes = {
+    history: PropTypes.object.isRequired,
+  }
+
   constructor(props) {
     super(props);
     // 此处针对一些常用参数，存放在stata里面
@@ -167,6 +176,16 @@ export default class HistoryHome extends PureComponent {
     this.queryInitial();
   }
 
+  componentDidMount() {
+    const { history } = this.context;
+    this.removeHistoryListener = history.listenBefore(
+      ({ pathname, query, search }) => {
+        console.log('before transition', pathname, query, search);
+        // return '确认离开?';
+      },
+    );
+  }
+
   componentWillReceiveProps(nextProps) {
     // 判断props是否变化
     // 因为新的参数存放在state里面，所以props只有咋boarId变化时候，才会查询数据
@@ -199,35 +218,45 @@ export default class HistoryHome extends PureComponent {
       deleteLoading: preDL,
       updateLoading: prePL,
     } = this.props;
-    const { push, createLoading, deleteLoading, updateLoading } = nextProps;
+    const { push, createLoading, deleteLoading, updateLoading, operateData } = nextProps;
     if (preCL && !createLoading) {
       // 创建完成后，需要跳转到新建看板
       this.setState({
         coreIndicatorIds: [],
       },
-        () => {
-          // const { selectKeys } = this.state;
-          // console.warn('selectKeys+++++', selectKeys);
-          // push(`/history?boardId=${id}&orgId=${ownerOrgId}&boardType=${boardType}`);
-        });
+      () => {
+        const { id } = operateData;
+        push(`/history?boardId=${id}&boardType=${boardType}`);
+      });
     }
     if (preDL && !deleteLoading) {
       // 删除成功
       message.success('删除成功');
-      if (boardType === 'TYPE_LSDB_JYYJ') {
-        push('/history?boardId=4');
-      } else if (boardType === 'TYPE_LSDB_TGJX') {
-        push('/history?boardId=3');
-      }
+      this.setState({
+        coreIndicatorIds: [],
+      },
+      () => {
+        if (boardType === 'TYPE_LSDB_JYYJ') {
+          push(`/history?boardId=${TYPE_LSDB_JYYJ}&boardType=TYPE_LSDB_JYYJ`);
+        } else if (boardType === 'TYPE_LSDB_TGJX') {
+          push(`/history?boardId=${TYPE_LSDB_TGJX}&boardType=TYPE_LSDB_TGJX`);
+        }
+      });
     }
     if (!updateLoading && prePL) {
       message.success('保存成功');
       this.setState({
         coreIndicatorIds: [],
       },
-        () => {
-          // push(`/history?boardId=${id}&orgId=${ownerOrgId}&boardType=${boardType}`);
-        });
+      () => {
+        push(`/history?boardId=${boardId}&boardType=${boardType}`);
+      });
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.removeHistoryListener) {
+      this.removeHistoryListener();
     }
   }
 
@@ -546,6 +575,7 @@ export default class HistoryHome extends PureComponent {
               ownerOrgId={custOrg}
               orgId={custOrg}
               selectKeys={coreIndicatorIds}
+              boardType={boardType}
             />
             {/* 指标概览区域 */}
             <IndicatorOverview

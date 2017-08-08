@@ -12,11 +12,6 @@ import styles from './modalCommon.less';
 
 const FormItem = Form.Item;
 const create = Form.create;
-
-// 投顾绩效历史对比的borderId
-const TYPE_LSDB_TGJX = '3';
-// 经营业绩历史对比的boardId
-const TYPE_LSDB_JYYJ = '4';
 @create()
 export default class CreateHistoryBoardModal extends PureComponent {
   static propTypes = {
@@ -28,13 +23,12 @@ export default class CreateHistoryBoardModal extends PureComponent {
     createBoardConfirm: PropTypes.func.isRequired,
     ownerOrgId: PropTypes.string.isRequired,
     boardId: PropTypes.string.isRequired,
-    boardType: PropTypes.string,
+    boardType: PropTypes.string.isRequired,
     selectKeys: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
     visible: false,
-    boardType: '',
   }
 
   constructor(props) {
@@ -82,10 +76,9 @@ export default class CreateHistoryBoardModal extends PureComponent {
 
   @autobind
   confirmCreateModal() {
-    const { form, createBoardConfirm, ownerOrgId, boardId, boardType, selectKeys } = this.props;
+    const { form, createBoardConfirm, ownerOrgId, boardType, selectKeys } = this.props;
     // TODO 添加确认按钮处理程序
     const boardname = form.getFieldValue('boardname');
-    console.warn('boardname', boardname);
     // 判断看板名称
     if (boardname === '') {
       // 看板名称不能为空
@@ -106,23 +99,28 @@ export default class CreateHistoryBoardModal extends PureComponent {
       });
       return;
     }
-    let boardTypeValue;
-    if (boardType === '' && boardId === TYPE_LSDB_TGJX) {
-      boardTypeValue = 'TYPE_LSDB_TGJX';
-    } else if (boardType === '' && boardId === TYPE_LSDB_JYYJ) {
-      boardTypeValue = 'TYPE_LSDB_JYYJ';
-    } else {
-      boardTypeValue = boardType;
-    }
     // 调用创建历史对比看板接口
-    createBoardConfirm({
-      ownerOrgId,
-      name: boardname,
-      boardType: boardTypeValue,
-      coreIndicator: selectKeys,
-      investContrastIndicator: ['tgInNum'],
-      custContrastIndicator: ['custNum'],
-    });
+    if (boardType === 'TYPE_LSDB_TGJX') {
+      createBoardConfirm({
+        ownerOrgId,
+        name: boardname,
+        boardType,
+        coreIndicator: selectKeys,
+        investContrastIndicator: ['tgNum', 'tgInNum'],
+        custContrastIndicator: ['custNum', 'currSignCustNum'],
+      });
+    } else {
+      createBoardConfirm({
+        ownerOrgId,
+        name: boardname,
+        boardType,
+        coreIndicator: selectKeys,
+        investContrastIndicator: ['custNum'],
+        custContrastIndicator: ['totCustNum', 'pCustNum', 'oCustNum', 'oNewCustNum', 'oNewPrdtCustNum', 'InminorCustNum'],
+      });
+    }
+
+
     this.closeCreateModal();
   }
 
