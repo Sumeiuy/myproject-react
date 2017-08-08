@@ -138,18 +138,14 @@ export default class AbilityScatterAnalysis extends PureComponent {
     let newXData = currentSelectX;
     let newYData = currentSelectY;
     if (xAxisUnit.indexOf('万') !== -1) {
-      // 万户
       newXData = helper.formatNum((currentSelectX * 10000).toFixed(0));
     } else {
-      // 户
       newXData = currentSelectX;
     }
 
     if (yAxisUnit.indexOf('亿') !== -1) {
-      // 亿元
       newYData = helper.formatNum((currentSelectY * 100000000).toFixed(0));
     } else if (yAxisUnit.indexOf('万') !== -1) {
-      // 万元
       newYData = helper.formatNum((currentSelectY * 10000).toFixed(0));
     } else {
       newYData = currentSelectY;
