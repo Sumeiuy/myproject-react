@@ -3,14 +3,12 @@
  * AbilityScatterAnalysis.js
  */
 import React, { PropTypes, PureComponent } from 'react';
-// import { connect } from 'react-redux';
 import { Select } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import CommonScatter from '../chartRealTime/CommonScatter';
 import { constructScatterData } from './ConstructScatterData';
 import { constructScatterOptions } from './ConstructScatterOptions';
-import helper from '../../utils/helper';
 import styles from './abilityScatterAnalysis.less';
 
 const Option = Select.Option;
@@ -44,8 +42,6 @@ export default class AbilityScatterAnalysis extends PureComponent {
       currentPayload: {},
       finalOptions: options,
       selectValue: options[0].value,
-      originYUnit: '',
-      originXUnit: '',
     };
   }
 
@@ -132,29 +128,12 @@ export default class AbilityScatterAnalysis extends PureComponent {
       yAxisUnit,
       yAxisMin,
       slope,
-      originYUnit,
-      originXUnit,
     } = currentItemInfo;
-    let newXData = currentSelectX;
-    let newYData = currentSelectY;
-    if (xAxisUnit.indexOf('万') !== -1) {
-      newXData = helper.formatNum((currentSelectX * 10000).toFixed(0));
-    } else {
-      newXData = currentSelectX;
-    }
-
-    if (yAxisUnit.indexOf('亿') !== -1) {
-      newYData = helper.formatNum((currentSelectY * 100000000).toFixed(0));
-    } else if (yAxisUnit.indexOf('万') !== -1) {
-      newYData = helper.formatNum((currentSelectY * 10000).toFixed(0));
-    } else {
-      newYData = currentSelectY;
-    }
 
     const currentSlope = (currentSelectY - yAxisMin) / currentSelectX;
 
     this.setState({
-      tooltipInfo: `${yAxisName}：${newYData}${originYUnit} / ${xAxisName}：${newXData}${originXUnit === '人' ? '户' : originXUnit}。每服务经理的交易量${currentSlope > slope ? '优' : '低'}于平均水平。`,
+      tooltipInfo: `${yAxisName}：${currentSelectY}${yAxisUnit} / ${xAxisName}：${currentSelectX}${xAxisUnit}。每服务经理的交易量${currentSlope > slope ? '优' : '低'}于平均水平。`,
     });
   }
 
@@ -166,8 +145,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
   handleScatterHover(params) {
     const { isShowTooltip,
       finalData: { xAxisName, xAxisUnit, yAxisName, yAxisUnit, slope, yAxisMin } } = this.state;
-    const { data: [xAxisData, yAxisData, { orgName, parentOrgName,
-      originYUnit, originXUnit }] } = params;
+    const { data: [xAxisData, yAxisData, { orgName, parentOrgName }] } = params;
 
     if (!isShowTooltip) {
       // 设置state，切换tooltip的显示信息
@@ -185,8 +163,6 @@ export default class AbilityScatterAnalysis extends PureComponent {
         yAxisUnit,
         slope,
         yAxisMin,
-        originYUnit,
-        originXUnit,
       });
     }
   }
