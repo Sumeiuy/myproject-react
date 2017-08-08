@@ -31,7 +31,6 @@ export const constructScatterData = (options = {}) => {
   const yAxisDataArray = [];
   const orgItemArray = [];
   let currentYUnit = '';
-  let currentXUnit = '';
 
   const constructHelper = {
     // 计算y轴的刻度范围
@@ -154,7 +153,6 @@ export const constructScatterData = (options = {}) => {
   }));
 
   currentYUnit = scatterDiagramModels[0].coreIndicator.unit;
-  currentXUnit = scatterDiagramModels[0].contrastIndicator.unit;
 
   // 拿到x轴与y轴的单位与转换后的元数据
   const xAxisUnit = constructHelper.getXAxisUnit(xAxisDataArray);
@@ -182,8 +180,6 @@ export const constructScatterData = (options = {}) => {
       orgName: orgItemArray[index].name,
       parentOrgId: orgItemArray[index].pid,
       parentOrgName: orgItemArray[index].pname,
-      originYUnit: currentYUnit,
-      originXUnit: currentXUnit,
     },
   ]);
 
