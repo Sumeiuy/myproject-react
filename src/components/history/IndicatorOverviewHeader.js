@@ -173,12 +173,11 @@ export default class IndicatorOverviewHeader extends PureComponent {
         <div className={styles.analyticalCaption}>核心指标</div>
         <div className={styles.overviewHeaderRight}>
           <Button
-            type="primary"
             ghost
             onClick={this.saveHistoryBoardHandle}
             className={updateBtnClass}
           >
-            <Icon type="delete" />
+            <Icon type="save" />
             保存
           </Button>
           <Button
@@ -186,7 +185,7 @@ export default class IndicatorOverviewHeader extends PureComponent {
             onClick={this.createHistoryBoardHandle}
             className={createBtnClass}
           >
-            <Icon type="delete" />
+            <Icon type="save" />
             另存为
           </Button>
           <CreateHistoryBoardModal
