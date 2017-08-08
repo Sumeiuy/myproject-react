@@ -51,7 +51,7 @@ export const constructPolyChartOptions = (option = {}) => {
     grid: {
       top: '20px',
       left: '20px',
-      right: '40px',
+      right: '80px',
       bottom: '40px',
       containLabel: true,
     },

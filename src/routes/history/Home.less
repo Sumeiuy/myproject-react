@@ -12,7 +12,7 @@
   background-color: #f3f3f4;
   .indicatorOverview {
     background-color: #fff;
-    min-height: 540px;
+    min-height: 350px;
     margin-bottom: 20px;
   }
   .indicatorAnalyse {
@@ -22,11 +22,10 @@
 
     .caption {
       padding: 0 15px;
-      height: 70px;
-      line-height: 69px;
+      height: 44px;
+      line-height: 44px;
       background-color: #fff;
-      font-size: 18px;
-      font-weight: bold;
+      font-size: 14px;
       color:#333;
       border-bottom: 1px solid #bfbfbf;
       box-sizing: border-box;
@@ -38,9 +37,31 @@
       overflow: hidden;
     }
     .scatterArea {
-      min-height: 460px;
-      padding: 40px 15px;
+      min-height: 400px;
+      padding: 0 15px;
       background-color: #fff;
     }
+  }
+}
+.menuDiv{
+  position: relative;
+  &:hover{
+    .menuUl{
+      display: block;
+    }
+  }
+}
+.menuH3{
+  color: red;
+}
+.menuUl{
+  position: absolute;
+  top: 10px;
+  left: 0;
+  background: red;
+  display: none;
+  li{
+    display: block;
+    width: 100px;
   }
 }

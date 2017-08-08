@@ -142,6 +142,7 @@ export default class ChartRadar extends PureComponent {
             name: '上期',
             areaStyle: {
               normal: {
+                left: '10px',
                 color: 'rgba(58, 216,232, 0.5)',
               },
             },

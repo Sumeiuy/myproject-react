@@ -119,6 +119,7 @@ export default class BoardSelectTree extends PureComponent {
   constructor(props) {
     super(props);
     const { data: { type, boardType, checkTreeArr, checkedKeys } } = props;
+    console.warn('checkedKeys', checkedKeys);
     let showThirdColumn = false;
     let showTitle = false;
     // 如果看板是 经营业绩 类型 并且 指标是 总量指标 类型
@@ -188,7 +189,7 @@ export default class BoardSelectTree extends PureComponent {
       boardType,
       showTitle,
       checkedOrSelected: false,
-      length: 0,
+      length: checkedKeys.length,
     };
   }
 
