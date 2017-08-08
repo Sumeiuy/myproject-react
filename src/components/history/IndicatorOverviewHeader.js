@@ -52,7 +52,7 @@ export default class IndicatorOverviewHeader extends PureComponent {
         if (!_.isEmpty(this.props.selectKeys)) {
           return '您重新挑选的指标看板尚未保存，确认直接返回？';
         }
-        return true;
+        return null;
       },
     );
   }
