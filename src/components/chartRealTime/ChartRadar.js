@@ -59,10 +59,15 @@ export default class ChartRadar extends PureComponent {
     const indicatorData = [];// name
     const period = []; // 本期数据值
     const PreviousPeriod = []; // 上期
+    // const realPeriod = []; // 本期真实数据
+    // const realPrevious = []; // 上期真实数据
     _.each(data, (item) => {
-      indicatorData.push({ name: item.indicator_name, max: scopeNum });
-      period.push(scopeNum - item.rank_current);
-      PreviousPeriod.push(scopeNum - item.rank_contrast);
+      const { indicator_name: name, rank_current: current, rank_contrast: contrast } = item;
+      indicatorData.push({ name, max: scopeNum });
+      period.push(scopeNum - current);
+      // realPeriod.push(current);
+      PreviousPeriod.push(scopeNum - contrast);
+      // realPrevious.push(contrast);
     });
     const options = {
       title: {
@@ -82,7 +87,6 @@ export default class ChartRadar extends PureComponent {
       radar: {
         shape: 'circle',
         splitNumber: 6,
-        // polarIndex: 1,
         center: ['50%', '45%'],
         name: {
           textStyle: {
@@ -117,43 +121,53 @@ export default class ChartRadar extends PureComponent {
             name: '本期',
             areaStyle: {
               normal: {
-                color: 'rgba(117, 111,184, 0.5)',
+                color: 'rgba( 56, 216, 232, 0.2 )',
               },
             },
             itemStyle: {
               normal: {
                 color: '#38d8e8',
+                lineStyle: {
+                  color: 'rgb( 56, 216, 232 )',
+                  width: 1,
+                },
               },
             },
             label: {
               normal: {
                 show: true,
-                formatter: '{c}',
+                formatter(p) {
+                  return scopeNum - p.value;
+                },
                 textStyle: {
                   color: '#ff7a39',
                 },
               },
             },
-            // symbolSize: 5,
-            // syboml: 'circle',
           },
           {
             value: PreviousPeriod,
             name: '上期',
             areaStyle: {
               normal: {
-                color: 'rgba(58, 216,232, 0.5)',
+                color: 'rgba( 117, 111, 184, 0.2 )',
               },
             },
             itemStyle: {
               normal: {
                 color: '#756fb8',
+                lineStyle: {
+                  color: 'rgb( 117, 111, 184 )',
+                  width: 1,
+                },
               },
             },
             label: {
               normal: {
                 show: true,
-                formatter: '{c}',
+                formatter(p) {
+                  return scopeNum - p.value;
+                },
                 textStyle: {
                   color: '#3983ff',
                 },

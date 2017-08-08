@@ -10,10 +10,18 @@ import { autobind } from 'core-decorators';
 import { constructPolyChartOptions } from './ConstructPolyChartOptions';
 import IECharts from '../IECharts';
 import FixNumber from '../chartRealTime/FixNumber';
+import { ZHUNICODE } from '../../config';
 import styles from './HistoryComparePolyChart.less';
 
 const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
+const PERCENT = ZHUNICODE.PERCENT;
+const PERMILLAGE = ZHUNICODE.PERMILLAGE;
+const REN = ZHUNICODE.REN;
+const HU = ZHUNICODE.HU;
+const CI = ZHUNICODE.CI;
+const YUAN = ZHUNICODE.YUAN;
+const GE = ZHUNICODE.GE;
 
 export default class HistoryComparePolyChart extends PureComponent {
   static propTypes = {
@@ -104,9 +112,9 @@ export default class HistoryComparePolyChart extends PureComponent {
     }
   }
 
-
   // 当前单位为元时
   // 计算y轴的刻度范围
+  @autobind
   getYAxisTickMinAndMax(array, curUnit) {
     if (_.isEmpty(array)) {
       return {
@@ -116,17 +124,17 @@ export default class HistoryComparePolyChart extends PureComponent {
     }
 
     let minAndMax;
-    if (curUnit.indexOf('元') !== -1) {
+    if (curUnit.indexOf(YUAN) !== -1) {
       minAndMax = FixNumber.getMaxAndMinMoney(array);
-    } else if (curUnit.indexOf('户') !== -1) {
+    } else if (curUnit.indexOf(HU) !== -1 || curUnit.indexOf(REN) !== -1) {
       minAndMax = FixNumber.getMaxAndMinCust(array);
-    } else if (curUnit.indexOf('个') !== -1) {
+    } else if (curUnit.indexOf(GE) !== -1) {
       minAndMax = FixNumber.getMaxAndMinGE(array);
-    } else if (curUnit.indexOf('次') !== -1) {
+    } else if (curUnit.indexOf(CI) !== -1) {
       minAndMax = FixNumber.getMaxAndMinCi(array);
-    } else if (curUnit.indexOf('%') !== -1) {
+    } else if (curUnit.indexOf(PERCENT) !== -1) {
       minAndMax = FixNumber.getMaxAndMinPercent(array);
-    } else if (curUnit.indexOf('‰') !== -1) {
+    } else if (curUnit.indexOf(PERMILLAGE) !== -1) {
       minAndMax = FixNumber.getMaxAndMinPermillage(array);
     }
 
@@ -138,20 +146,25 @@ export default class HistoryComparePolyChart extends PureComponent {
   }
 
   // 获取y轴的单位和格式化后的数据源
+  @autobind
   getYAxisUnit(array, yAxisUnit) {
     if (!_.isEmpty(array)) {
-      if (yAxisUnit.indexOf('元') !== -1) {
+      if (yAxisUnit.indexOf(YUAN) !== -1) {
         return FixNumber.toFixedMoney(array);
-      } else if (yAxisUnit.indexOf('户') !== -1) {
+      } else if (yAxisUnit.indexOf(HU) !== -1 || yAxisUnit.indexOf(REN) !== -1) {
         return FixNumber.toFixedCust(array);
-      } else if (yAxisUnit.indexOf('个') !== -1) {
+      } else if (yAxisUnit.indexOf(GE) !== -1) {
         return FixNumber.toFixedGE(array);
-      } else if (yAxisUnit.indexOf('次') !== -1) {
+      } else if (yAxisUnit.indexOf(CI) !== -1) {
         return FixNumber.toFixedCI(array);
-      } else if (yAxisUnit.indexOf('%') !== -1
-        || yAxisUnit.indexOf('‰') !== -1) {
+      } else if (yAxisUnit.indexOf(PERCENT) !== -1) {
         return {
-          newSeries: array,
+          newSeries: this.toFixedPercent(array),
+          newUnit: yAxisUnit,
+        };
+      } else if (yAxisUnit.indexOf(PERMILLAGE) !== -1) {
+        return {
+          newSeries: this.toFixedPermillage(array),
           newUnit: yAxisUnit,
         };
       }
@@ -163,6 +176,19 @@ export default class HistoryComparePolyChart extends PureComponent {
     };
   }
 
+  // 针对百分比数据进行处理
+  @autobind
+  toFixedPercent(series) {
+    return series.map(o => FixNumber.toFixedDecimal(o * 100));
+  }
+
+  // 针对千分比数据进行处理
+  @autobind
+  toFixedPermillage(series) {
+    return series.map(o => FixNumber.toFixedDecimal(o * 1000));
+  }
+
+  @autobind
   formatData(data) {
     const newYSeries = [];
     const xSeries = [];
@@ -174,7 +200,7 @@ export default class HistoryComparePolyChart extends PureComponent {
       yAxisData = _.pick(indicatorMeta, ['name', 'value', 'unit']);
       xAxisData = _.pick(timeModel, ['year', 'month', 'day']);
       if (!_.isEmpty(yAxisData.value) && yAxisData.value !== 0 && yAxisData.value !== '0') {
-        newYSeries.push(yAxisData.value);
+        newYSeries.push(Number(yAxisData.value));
       } else {
         newYSeries.push(0);
       }
@@ -206,6 +232,7 @@ export default class HistoryComparePolyChart extends PureComponent {
     };
   }
 
+  @autobind
   formatDate(xSeries, newSeries, newUnit, newYAxisTickArea) {
     const finalData = {
       series: newSeries,
@@ -306,12 +333,19 @@ export default class HistoryComparePolyChart extends PureComponent {
         </div>
         <div className={styles.chartFoot}>
           <span className={styles.tipDot} />
+          {/* 指标名称 */}
           <span className={styles.tipIndicator}>{name}</span>
+          {/* 本期时间 */}
           <span className={styles.tipTime}>{currentDate ? `${curYear}/${currentDate}:` : ''}</span>
+          {/* 本期Value */}
           <span className={styles.currentValue}>{(currentValue === 0 || currentValue) ? `${currentValue}` : ''}</span>
+          {/* 本期Vlaue单位 */}
           <span className={styles.tipUnit}>{(currentValue === 0 || currentValue) ? `${unit}` : ''}</span>
+          {/* 上期时间 */}
           <span className={styles.tipTime}>{previousDate ? `${prevYear}/${previousDate}:` : ''}</span>
+          {/* 本期Vlaue */}
           <span className={styles.contrastValue}>{(previousValue === 0 || previousValue) ? `${previousValue}` : ''}</span>
+          {/* 本期Vlaue单位 */}
           <span className={styles.tipUnit}>{(previousValue === 0 || previousValue) ? `${unit}` : ''}</span>
         </div>
       </div>
