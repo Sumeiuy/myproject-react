@@ -44,6 +44,8 @@ export default class AbilityScatterAnalysis extends PureComponent {
       currentPayload: {},
       finalOptions: options,
       selectValue: options[0].value,
+      originYUnit: '',
+      originXUnit: '',
     };
   }
 
@@ -130,9 +132,11 @@ export default class AbilityScatterAnalysis extends PureComponent {
       yAxisUnit,
       yAxisMin,
       slope,
+      originYUnit,
+      originXUnit,
     } = currentItemInfo;
-    let newXData = '';
-    let newYData = '';
+    let newXData = currentSelectX;
+    let newYData = currentSelectY;
     if (xAxisUnit.indexOf('万') !== -1) {
       // 万户
       newXData = helper.formatNum((currentSelectX * 10000).toFixed(0));
@@ -154,7 +158,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
     const currentSlope = (currentSelectY - yAxisMin) / currentSelectX;
 
     this.setState({
-      tooltipInfo: `${yAxisName}：${newYData}元 / ${xAxisName}：${newXData}户。每客户贡献的交易量${currentSlope > slope ? '优' : '低'}于平均水平。`,
+      tooltipInfo: `${yAxisName}：${newYData}${originYUnit} / ${xAxisName}：${newXData}${originXUnit === '人' ? '户' : originXUnit}。每服务经理的交易量${currentSlope > slope ? '优' : '低'}于平均水平。`,
     });
   }
 
@@ -166,7 +170,8 @@ export default class AbilityScatterAnalysis extends PureComponent {
   handleScatterHover(params) {
     const { isShowTooltip,
       finalData: { xAxisName, xAxisUnit, yAxisName, yAxisUnit, slope, yAxisMin } } = this.state;
-    const { data: [xAxisData, yAxisData, { orgName, parentOrgName }] } = params;
+    const { data: [xAxisData, yAxisData, { orgName, parentOrgName,
+      originYUnit, originXUnit }] } = params;
 
     if (!isShowTooltip) {
       // 设置state，切换tooltip的显示信息
@@ -184,6 +189,8 @@ export default class AbilityScatterAnalysis extends PureComponent {
         yAxisUnit,
         slope,
         yAxisMin,
+        originYUnit,
+        originXUnit,
       });
     }
   }
