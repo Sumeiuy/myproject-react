@@ -39,6 +39,7 @@ export default class ScatterAnalysis extends PureComponent {
     if (_.isEmpty(cust) || _.isEmpty(invest)) {
       return null;
     }
+
     return (
       <div className={styles.scatterSection}>
         <Row type="flex">
@@ -57,20 +58,21 @@ export default class ScatterAnalysis extends PureComponent {
           </Col>
           {
             // 经营绩效不展示投顾维度散点图
-            (boardType === 'TYPE_LSDB_JYYJ' || _.isEmpty(reviewAnalysisData)) ? null :
-            <Col span={12} className={styles.rightScatterSection}>
-              <AbilityScatterAnalysis
-                data={reviewAnalysisData}
-                queryContrastAnalyze={queryContrastAnalyze}
-                title={investScatter.title}
-                optionsData={invest}
-                type={investScatter.type}
-                swtichDefault={swtichDefault}
-                style={{
-                  left: '-45px',
-                }}
-              />
-            </Col>
+            boardType === 'TYPE_LSDB_JYYJ'
+              ? null :
+              <Col span={12} className={styles.rightScatterSection}>
+                <AbilityScatterAnalysis
+                  data={reviewAnalysisData}
+                  queryContrastAnalyze={queryContrastAnalyze}
+                  title={investScatter.title}
+                  optionsData={invest}
+                  type={investScatter.type}
+                  swtichDefault={swtichDefault}
+                  style={{
+                    left: '-45px',
+                  }}
+                />
+              </Col>
           }
         </Row>
       </div>

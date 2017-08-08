@@ -65,8 +65,8 @@ export default class AbilityScatterAnalysis extends PureComponent {
     } = prevData;
 
     // 比较前后两次值是否相同
-    if (core !== prevCore || contrast !== prevContrast
-      || scatterDiagramModels !== prevScatterDiagramModels) {
+    if (!_.isEqual(core, prevCore) || !_.isEqual(contrast, prevContrast)
+      || !_.isEqual(scatterDiagramModels, prevScatterDiagramModels)) {
       const finalData = constructScatterData({ core, contrast, scatterDiagramModels });
       this.setState({
         finalData,
