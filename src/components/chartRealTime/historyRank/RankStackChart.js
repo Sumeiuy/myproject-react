@@ -38,8 +38,17 @@ export default class RankStackChart extends PureComponent {
     const { scope: preScope, chartData: preData } = this.props;
     const { scope, chartData } = nextProps;
     if (!_.isEqual(scope, preScope) || !_.isEqual(chartData, preData)) {
+      this.state.echart.clear();
       this.initialChartData(nextProps);
     }
+  }
+
+  // Echarts渲染后onReady
+  @autobind
+  onReady(echart) {
+    this.setState({
+      echart,
+    });
   }
 
   // 初始化图表数据，
@@ -129,7 +138,7 @@ export default class RankStackChart extends PureComponent {
       itemStyle: {
         normal: { color: 'transparent' },
       },
-      barWidth: '20',
+      barWidth: '22',
     };
   }
   // 柱状图阴影
@@ -153,7 +162,7 @@ export default class RankStackChart extends PureComponent {
         },
       },
       barGap: 0,
-      barWidth: '6',
+      barWidth: '4',
     };
   }
   // 柱状图Label
@@ -169,7 +178,7 @@ export default class RankStackChart extends PureComponent {
       stack: 'label',
       xAxisIndex: 1,
       yAxisIndex: 1,
-      barWidth: '20',
+      barWidth: '22',
       animation: false,
       itemStyle: {
         normal: { color: 'transparent' },
@@ -195,7 +204,7 @@ export default class RankStackChart extends PureComponent {
         xAxisIndex: 1,
         yAxisIndex: 1,
         barGap: 0,
-        barWidth: '6',
+        barWidth: '4',
       };
       return newItem;
     });
@@ -354,7 +363,7 @@ export default class RankStackChart extends PureComponent {
                 <div key={key} className={styles.rankNumberAndChange}>
                   <span className={styles.rankNumber}>{current}</span>
                   <span className={rankClass}><Icon type={icon} /></span>
-                  <span className={styles.rankChange}>{`${change}名`}</span>
+                  <span className={styles.rankChange}>{`${Math.abs(change)}名`}</span>
                 </div>
               );
             })
@@ -364,6 +373,7 @@ export default class RankStackChart extends PureComponent {
           <IECharts
             option={options}
             resizable
+            onReady={this.onReady}
             style={{
               height: '360px',
             }}

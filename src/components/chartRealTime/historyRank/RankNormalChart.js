@@ -126,7 +126,7 @@ export default class RankNormalChart extends PureComponent {
       itemStyle: {
         normal: { color: 'transparent' },
       },
-      barWidth: '20',
+      barWidth: '22',
     };
   }
   // 柱状图阴影
@@ -150,7 +150,7 @@ export default class RankNormalChart extends PureComponent {
         },
       },
       barGap: 0,
-      barWidth: '6',
+      barWidth: '4',
     };
   }
   // 柱状图Label
@@ -167,7 +167,7 @@ export default class RankNormalChart extends PureComponent {
       stack: 'label',
       xAxisIndex: 1,
       yAxisIndex: 1,
-      barWidth: '20',
+      barWidth: '22',
       animation: false,
       itemStyle: {
         normal: { color: itemColor },
@@ -201,7 +201,7 @@ export default class RankNormalChart extends PureComponent {
       },
       data,
       barGap: 0,
-      barWidth: '6',
+      barWidth: '4',
     };
   }
 
@@ -246,11 +246,6 @@ export default class RankNormalChart extends PureComponent {
         return tips;
       },
     };
-  }
-
-  @autobind
-  makeOptions() {
-
   }
 
   render() {
