@@ -144,10 +144,6 @@ export default class HistoryHome extends PureComponent {
     const { custRange, location: { query: { boardId, boardType } } } = props;
     const empId = getEmpId(); // 用户ID
     const ownerOrg = custRange[0];
-    // TODO 此处需要等到时间选择器完成提供方法
-    // const duration = {};
-    // queryMoMDuration(begin, end, duration)
-
     const nowDuration = getDurationString('month');
     const compareDuration = queryMoMDuration(nowDuration.begin, nowDuration.end, 'month');
     this.state = {
@@ -476,7 +472,31 @@ export default class HistoryHome extends PureComponent {
   // 散点图切换对比指标
   @autobind
   changeScatterContrast(query) {
-    this.props.queryContrastAnalyze(query);
+    const { type, contrastIndicatorId } = query;
+    const { coreIndicatorIds } = this.state;
+    let { indicatorId } = this.state;
+    // 判断有无选择core
+    const hasIndicatorId = _.isEmpty(indicatorId);
+    const hasSelectCore = _.isEmpty(coreIndicatorIds);
+    if (hasIndicatorId) {
+      // 初始化indicatorId并么有添加进state
+      if (hasSelectCore) {
+        // 没有选择Core
+        indicatorId = this.props.historyCore[0].key;
+      } else {
+        // 选择了Core
+        indicatorId = coreIndicatorIds[0];
+      }
+      this.setState({
+        indicatorId,
+      });
+    }
+    const scatterQuery = this.makeQueryParams({
+      type,
+      coreIndicatorId: indicatorId,
+      contrastIndicatorId,
+    });
+    this.props.queryContrastAnalyze(scatterQuery);
   }
 
   render() {
