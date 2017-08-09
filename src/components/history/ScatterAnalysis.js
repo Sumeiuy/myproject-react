@@ -49,6 +49,7 @@ export default class ScatterAnalysis extends PureComponent {
               queryContrastAnalyze={queryContrastAnalyze}
               title={custScatter.title}
               optionsData={cust}
+              description={'客户贡献'}
               type={custScatter.type}
               swtichDefault={swtichDefault}
               style={{
@@ -66,6 +67,7 @@ export default class ScatterAnalysis extends PureComponent {
                   queryContrastAnalyze={queryContrastAnalyze}
                   title={investScatter.title}
                   optionsData={invest}
+                  description={'服务经理'}
                   type={investScatter.type}
                   swtichDefault={swtichDefault}
                   style={{

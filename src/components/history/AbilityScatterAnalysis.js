@@ -24,6 +24,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
     optionsData: PropTypes.array.isRequired,
     type: PropTypes.string.isRequired,
     swtichDefault: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
   };
 
   static defaultProps = {
@@ -39,25 +40,23 @@ export default class AbilityScatterAnalysis extends PureComponent {
       isShowTooltip: false,
       orgName: '',
       parentOrgName: '',
-      currentPayload: {},
       finalOptions: options,
       selectValue: options[0].value,
+      averageInfo: '',
+      tooltipInfo: '',
+      scatterOptions: EMPTY_OBJECT,
     };
   }
 
-  componentDidMount() {
-    const scatterElem = this.abilityScatterElem;
-    this.setHeight(scatterElem);
-  }
-
   componentWillReceiveProps(nextProps) {
-    const { data: nextData } = nextProps;
-    const { data: prevData } = this.props;
+    const { data: nextData, swtichDefault: newSwitch } = nextProps;
+    const { data: prevData, swtichDefault: oldSwitch, description } = this.props;
     const {
       core = EMPTY_OBJECT,
       contrast = EMPTY_OBJECT,
       scatterDiagramModels = EMPTY_LIST,
     } = nextData;
+
     const {
       core: prevCore = EMPTY_OBJECT,
       contrast: prevContrast = EMPTY_OBJECT,
@@ -67,14 +66,27 @@ export default class AbilityScatterAnalysis extends PureComponent {
     // 比较前后两次值是否相同
     if (!_.isEqual(core, prevCore) || !_.isEqual(contrast, prevContrast)
       || !_.isEqual(scatterDiagramModels, prevScatterDiagramModels)) {
-      const finalData = constructScatterData({ core, contrast, scatterDiagramModels });
-      this.setState({
-        finalData,
-      });
+      if (!_.isEmpty(scatterDiagramModels)) {
+        const finalData = constructScatterData({
+          core,
+          contrast,
+          scatterDiagramModels,
+          description,
+        });
+        const { averageInfo } = finalData;
+        this.getAnyPoint(finalData);
+        this.setState({
+          finalData,
+          averageInfo,
+        });
+      } else {
+        this.setState({
+          finalData: EMPTY_OBJECT,
+          averageInfo: '',
+        });
+      }
     }
     // 恢复默认选项
-    const { swtichDefault: oldSwitch } = this.props;
-    const { swtichDefault: newSwitch } = nextProps;
     if (oldSwitch !== newSwitch) {
       const options = this.state.finalOptions;
       this.setState({
@@ -83,26 +95,72 @@ export default class AbilityScatterAnalysis extends PureComponent {
     }
   }
 
-  componentDidUpdate() {
-    const scatterElem = this.abilityScatterElem;
-    this.setHeight(scatterElem);
-  }
-
-  @autobind
-  setHeight(scatterElem) {
-    if (scatterElem) {
-      this.setState({
-        scatterElemHeight: scatterElem.clientHeight,
-      });
-    }
-  }
-
+  /**
+   * 根据斜率，计算出一个点，用来画直线，点必须靠近最大值，不然线不能延长
+   * @param {*} seriesData series数据
+   */
   getAnyPoint(seriesData) {
-    const { xAxisMin, yAxisMin, yAxisMax, xAxisMax } = seriesData;
-    return {
+    const { xAxisMin, yAxisMin, yAxisMax, slope, xAxisMax, currentMax } = seriesData;
+    let compare;
+    let current;
+
+    // 比较当前x轴是否比x轴最大值大
+    // 小的话，则取当前值
+    // 不然递归调用
+    if (xAxisMax > yAxisMax) {
+      compare = yAxisMax;
+      current = currentMax || xAxisMax;
+    } else {
+      compare = xAxisMax;
+      current = currentMax || yAxisMax;
+    }
+    const point = (current - yAxisMin) / slope;
+
+    if (point > compare) {
+      if (current / 1000 > 1 && current !== 0) {
+        this.getAnyPoint({
+          ...seriesData,
+          currentMax: current - 500,
+        });
+        return false;
+      } else if (current / 100 > 1 && current !== 0) {
+        this.getAnyPoint({
+          ...seriesData,
+          currentMax: current - 50,
+        });
+        return false;
+      } else if (current / 10 > 1 && current !== 0) {
+        this.getAnyPoint({
+          ...seriesData,
+          currentMax: current - 5,
+        });
+        return false;
+      } else if (current !== 0) {
+        this.getAnyPoint({
+          ...seriesData,
+          currentMax: current - 1,
+        });
+        return false;
+      }
+    }
+
+    let endCoord;
+    if (xAxisMax > yAxisMax) {
+      endCoord = [current, point];
+    } else {
+      endCoord = [point, current];
+    }
+
+    const scatterOptions = constructScatterOptions({
+      ...seriesData,
       startCoord: [xAxisMin, yAxisMin],
-      endCoord: [xAxisMax, yAxisMax],
-    };
+      endCoord,
+    });
+
+    this.setState({
+      scatterOptions,
+    });
+    return true;
   }
 
   @autobind
@@ -115,10 +173,11 @@ export default class AbilityScatterAnalysis extends PureComponent {
   }
 
   /**
- * 构造tooltip的信息
- * @param {*} currentItemInfo 当前鼠标悬浮的点数据
- */
+  * 构造tooltip的信息
+  * @param {*} currentItemInfo 当前鼠标悬浮的点数据
+  */
   constructTooltipInfo(currentItemInfo) {
+    const { description } = this.props;
     const {
       currentSelectX,
       currentSelectY,
@@ -133,14 +192,14 @@ export default class AbilityScatterAnalysis extends PureComponent {
     const currentSlope = (currentSelectY - yAxisMin) / currentSelectX;
 
     this.setState({
-      tooltipInfo: `${yAxisName}：${currentSelectY}${yAxisUnit} / ${xAxisName}：${currentSelectX}${xAxisUnit}。每服务经理的交易量${currentSlope > slope ? '优' : '低'}于平均水平。`,
+      tooltipInfo: `${yAxisName}：${currentSelectY}${yAxisUnit} / ${xAxisName}：${currentSelectX}${xAxisUnit}。每${description}的交易量${currentSlope > slope ? '优' : '低'}于平均水平。`,
     });
   }
 
   /**
- * 处理鼠标悬浮事件
- * @param {*} params 当前点的数据
- */
+  * 处理鼠标悬浮事件
+  * @param {*} params 当前点的数据
+  */
   @autobind
   handleScatterHover(params) {
     const { isShowTooltip,
@@ -171,6 +230,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
   handleChange(value) {
     this.setState({
       currentSelectedContrast: value,
+      selectValue: value,
     });
     const { queryContrastAnalyze, type } = this.props;
     queryContrastAnalyze({
@@ -200,8 +260,11 @@ export default class AbilityScatterAnalysis extends PureComponent {
       parentOrgName,
       tooltipInfo,
       finalData,
+      finalData: { pointerData = EMPTY_LIST },
       selectValue,
       finalOptions,
+      averageInfo,
+      scatterOptions,
     } = this.state;
 
     const {
@@ -209,18 +272,11 @@ export default class AbilityScatterAnalysis extends PureComponent {
       style,
     } = this.props;
 
-    if (_.isEmpty(finalData)) {
+    if (_.isEmpty(pointerData)) {
       return null;
     }
 
     const { xAxisName, yAxisName, xAxisUnit, yAxisUnit } = finalData;
-
-    const point = this.getAnyPoint(finalData);
-
-    const scatterOptions = constructScatterOptions({
-      ...finalData,
-      ...point,
-    });
 
     return (
       <div className={styles.abilityScatterAnalysis}>
@@ -255,6 +311,16 @@ export default class AbilityScatterAnalysis extends PureComponent {
           />
           <div className={styles.xAxisName}>{xAxisName}（{xAxisUnit}）</div>
         </div>
+        {
+          _.isEmpty(pointerData) ?
+            null
+            :
+            <div className={styles.averageDescription}>
+              <div className={styles.averageIcon} />
+              <div className={styles.averageInfo}>{averageInfo}</div>
+            </div>
+        }
+
         {isShowTooltip ?
           <div className={styles.description}>
             <div className={styles.orgDes}>
