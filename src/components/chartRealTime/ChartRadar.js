@@ -59,29 +59,44 @@ export default class ChartRadar extends PureComponent {
     const indicatorData = [];// name
     const period = []; // 本期数据值
     const PreviousPeriod = []; // 上期
-    // const realPeriod = []; // 本期真实数据
-    // const realPrevious = []; // 上期真实数据
+    const currentV = [];
+    const previous = [];
+    let indicatorMax = 0;
+    let indicatorMin = 0;
     _.each(data, (item) => {
-      const { indicator_name: name, rank_current: current, rank_contrast: contrast } = item;
-      indicatorData.push({ name, max: scopeNum });
+      const { rank_current: current, rank_contrast: contrast } = item;
+      currentV.push(current);
       period.push(scopeNum - current);
-      // realPeriod.push(current);
+      previous.push(contrast);
       PreviousPeriod.push(scopeNum - contrast);
-      // realPrevious.push(contrast);
+    });
+    const currMax = Math.max(...currentV);
+    const currMin = Math.min(...currentV);
+    const prevMax = Math.max(...previous);
+    const prevMin = Math.min(...previous);
+    indicatorMax = currMax > prevMax ? currMax : prevMax;
+    indicatorMin = currMin < prevMin ? currMin : prevMin;
+    _.each(data, (item) => {
+      const { indicator_name: name } = item;
+      indicatorData.push({
+        name,
+        min: (scopeNum - indicatorMax),
+        max: (scopeNum - indicatorMin),
+      });
     });
     const options = {
       title: {
         show: false,
         text: '指示分析',
       },
-      gird: { x: '7%', y: '7%', width: '38%', height: '38%' },
+      gird: { x: '7%', y: '0', width: '38%', height: '38%' },
       legend: {
         data: [
           { name: '本期', icon: 'square' },
           { name: '上期', icon: 'square' },
         ],
         bottom: 0,
-        left: '10%',
+        left: 0,
         itemGap: 20,
       },
       radar: {
@@ -136,6 +151,7 @@ export default class ChartRadar extends PureComponent {
             label: {
               normal: {
                 show: true,
+                position: 'top',
                 formatter(p) {
                   return scopeNum - p.value;
                 },
@@ -165,6 +181,7 @@ export default class ChartRadar extends PureComponent {
             label: {
               normal: {
                 show: true,
+                position: 'bottom',
                 formatter(p) {
                   return scopeNum - p.value;
                 },

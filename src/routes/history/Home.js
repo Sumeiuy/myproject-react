@@ -139,22 +139,13 @@ export default class HistoryHome extends PureComponent {
     message: '',
   }
 
-  static contextTypes = {
-    history: PropTypes.object.isRequired,
-  }
-
   constructor(props) {
     super(props);
     // 此处针对一些常用参数，存放在stata里面
     const { custRange, location: { query: { boardId, boardType } } } = props;
     const empId = getEmpId(); // 用户ID
     const ownerOrg = custRange[0];
-    // TODO 此处需要等到时间选择器完成提供方法
-    // const duration = {};
-    // queryMoMDuration(begin, end, duration)
-
     const nowDuration = getDurationString('month');
-
     const compareDuration = queryMoMDuration(nowDuration.begin, nowDuration.end, 'month');
     this.state = {
       boardId,
@@ -175,16 +166,6 @@ export default class HistoryHome extends PureComponent {
 
   componentWillMount() {
     this.queryInitial();
-  }
-
-  componentDidMount() {
-    const { history } = this.context;
-    this.removeHistoryListener = history.listenBefore(
-      ({ pathname, query, search }) => {
-        console.log('before transition', pathname, query, search);
-        // return '确认离开?';
-      },
-    );
   }
 
   componentWillReceiveProps(nextProps) {
@@ -208,6 +189,7 @@ export default class HistoryHome extends PureComponent {
         localScope: ownerOrg && ownerOrg.level,
         orgId: ownerOrg && ownerOrg.id, // 用户当前选择的组织机构Id
         ownerOrgId: ownerOrg && ownerOrg.id, // 用户所属的组织机构Id
+        coreIndicatorIds: [],
       },
         () => {
           this.queryInitial();
@@ -252,12 +234,6 @@ export default class HistoryHome extends PureComponent {
         () => {
           push(`/history?boardId=${boardId}&boardType=${boardType}`);
         });
-    }
-  }
-
-  componentWillUnmount() {
-    if (this.removeHistoryListener) {
-      this.removeHistoryListener();
     }
   }
 
@@ -497,7 +473,31 @@ export default class HistoryHome extends PureComponent {
   // 散点图切换对比指标
   @autobind
   changeScatterContrast(query) {
-    this.props.queryContrastAnalyze(query);
+    const { type, contrastIndicatorId } = query;
+    const { coreIndicatorIds } = this.state;
+    let { indicatorId } = this.state;
+    // 判断有无选择core
+    const hasIndicatorId = _.isEmpty(indicatorId);
+    const hasSelectCore = _.isEmpty(coreIndicatorIds);
+    if (hasIndicatorId) {
+      // 初始化indicatorId并么有添加进state
+      if (hasSelectCore) {
+        // 没有选择Core
+        indicatorId = this.props.historyCore[0].key;
+      } else {
+        // 选择了Core
+        indicatorId = coreIndicatorIds[0];
+      }
+      this.setState({
+        indicatorId,
+      });
+    }
+    const scatterQuery = this.makeQueryParams({
+      type,
+      coreIndicatorId: indicatorId,
+      contrastIndicatorId,
+    });
+    this.props.queryContrastAnalyze(scatterQuery);
   }
 
   render() {
