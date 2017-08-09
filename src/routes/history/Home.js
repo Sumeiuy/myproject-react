@@ -88,6 +88,7 @@ const mapDispatchToProps = {
 };
 
 const EMPTY_LIST = [];
+const EMPTY_OBJECT = {};
 
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
@@ -208,10 +209,10 @@ export default class HistoryHome extends PureComponent {
       this.setState({
         coreIndicatorIds: [],
       },
-      () => {
-        const { id } = operateData;
-        push(`/history?boardId=${id}&boardType=${boardType}`);
-      });
+        () => {
+          const { id } = operateData;
+          push(`/history?boardId=${id}&boardType=${boardType}`);
+        });
     }
     if (preDL && !deleteLoading) {
       // 删除成功
@@ -219,22 +220,22 @@ export default class HistoryHome extends PureComponent {
       this.setState({
         coreIndicatorIds: [],
       },
-      () => {
-        if (boardType === 'TYPE_LSDB_JYYJ') {
-          push(`/history?boardId=${TYPE_LSDB_JYYJ}&boardType=TYPE_LSDB_JYYJ`);
-        } else if (boardType === 'TYPE_LSDB_TGJX') {
-          push(`/history?boardId=${TYPE_LSDB_TGJX}&boardType=TYPE_LSDB_TGJX`);
-        }
-      });
+        () => {
+          if (boardType === 'TYPE_LSDB_JYYJ') {
+            push(`/history?boardId=${TYPE_LSDB_JYYJ}&boardType=TYPE_LSDB_JYYJ`);
+          } else if (boardType === 'TYPE_LSDB_TGJX') {
+            push(`/history?boardId=${TYPE_LSDB_TGJX}&boardType=TYPE_LSDB_TGJX`);
+          }
+        });
     }
     if (!updateLoading && prePL) {
       message.success('保存成功');
       this.setState({
         coreIndicatorIds: [],
       },
-      () => {
-        push(`/history?boardId=${boardId}&boardType=${boardType}`);
-      });
+        () => {
+          push(`/history?boardId=${boardId}&boardType=${boardType}`);
+        });
     }
   }
 
@@ -503,7 +504,7 @@ export default class HistoryHome extends PureComponent {
 
   render() {
     const {
-      reviewAnalysis,
+      reviewAnalysis = EMPTY_OBJECT,
       contributionAnalysis,
       historyCore,
       crrData,
@@ -619,6 +620,7 @@ export default class HistoryHome extends PureComponent {
                 cust={cust}
                 invest={invest}
                 swtichDefault={swtichDefault}
+                location={location}
               />
             </div>
           </div>

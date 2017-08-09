@@ -4,11 +4,19 @@
  */
 import _ from 'lodash';
 import FixNumber from '../chartRealTime/FixNumber';
+import { ZHUNICODE } from '../../config';
 
 export default {};
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
+const PERCENT = ZHUNICODE.PERCENT;
+const PERMILLAGE = ZHUNICODE.PERMILLAGE;
+const REN = ZHUNICODE.REN;
+const HU = ZHUNICODE.HU;
+const CI = ZHUNICODE.CI;
+const YUAN = ZHUNICODE.YUAN;
+const GE = ZHUNICODE.GE;
 
 export const constructScatterData = (options = {}) => {
   const { core = EMPTY_OBJECT, contrast = EMPTY_OBJECT,
@@ -22,7 +30,7 @@ export const constructScatterData = (options = {}) => {
   const xAxisDataArray = [];
   const yAxisDataArray = [];
   const orgItemArray = [];
-  let currentUnit = '';
+  let currentYUnit = '';
 
   const constructHelper = {
     // 计算y轴的刻度范围
@@ -35,17 +43,17 @@ export const constructScatterData = (options = {}) => {
       }
 
       let minAndMax;
-      if (curUnit === '户') {
+      if (curUnit === HU || curUnit === REN) {
         minAndMax = FixNumber.getMaxAndMinCust(array);
-      } else if (curUnit === '次') {
+      } else if (curUnit === CI) {
         minAndMax = FixNumber.getMaxAndMinCi(array);
-      } else if (curUnit === '个') {
+      } else if (curUnit === GE) {
         minAndMax = FixNumber.getMaxAndMinGE(array);
-      } else if (curUnit === '元') {
+      } else if (curUnit === YUAN) {
         minAndMax = FixNumber.getMaxAndMinMoney(array);
-      } else if (curUnit === '%') {
+      } else if (curUnit === PERCENT) {
         minAndMax = FixNumber.getMaxAndMinPercent(array);
-      } else if (curUnit === '‰') {
+      } else if (curUnit === PERMILLAGE) {
         minAndMax = FixNumber.getMaxAndMinPermillage(array);
       }
 
@@ -79,19 +87,32 @@ export const constructScatterData = (options = {}) => {
 
       return FixNumber.getMaxAndMinCust(array);
     },
+    // 针对百分比数据进行处理
+    toFixedPercent(series) {
+      return series.map(o => FixNumber.toFixedDecimal(o * 100));
+    },
+    // 针对千分比数据进行处理
+    toFixedPermillage(series) {
+      return series.map(o => FixNumber.toFixedDecimal(o * 1000));
+    },
     // 获取y轴的单位和格式化后的数据源
     getYAxisUnit(array, unit) {
-      if (unit === '元') {
+      if (unit === YUAN) {
         return FixNumber.toFixedMoney(array);
-      } else if (unit === '次') {
+      } else if (unit === CI) {
         return FixNumber.toFixedCI(array);
-      } else if (unit === '个') {
+      } else if (unit === GE) {
         return FixNumber.toFixedGE(array);
-      } else if (unit === '户') {
+      } else if (unit === HU || unit === REN) {
         return FixNumber.toFixedCust(array);
-      } else if (unit === '%' || unit === '‰') {
+      } else if (unit === PERCENT) {
         return {
-          newSeries: array,
+          newSeries: constructHelper.toFixedPercent(array),
+          newUnit: unit,
+        };
+      } else if (unit === PERMILLAGE) {
+        return {
+          newSeries: constructHelper.toFixedPermillage(array),
           newUnit: unit,
         };
       }
@@ -131,15 +152,15 @@ export const constructScatterData = (options = {}) => {
     }
   }));
 
-  currentUnit = scatterDiagramModels[0].coreIndicator.unit;
+  currentYUnit = scatterDiagramModels[0].coreIndicator.unit;
 
   // 拿到x轴与y轴的单位与转换后的元数据
   const xAxisUnit = constructHelper.getXAxisUnit(xAxisDataArray);
-  const yAxisUnit = constructHelper.getYAxisUnit(yAxisDataArray, currentUnit);
+  const yAxisUnit = constructHelper.getYAxisUnit(yAxisDataArray, currentYUnit);
 
   // 拿到x轴与y轴转换后的具体刻度最大值与最小值
   const xAxisTickArea = constructHelper.getXAxisTickMinAndMax(xAxisUnit.newSeries);
-  const yAxisTickArea = constructHelper.getYAxisTickMinAndMax(yAxisUnit.newSeries, currentUnit);
+  const yAxisTickArea = constructHelper.getYAxisTickMinAndMax(yAxisUnit.newSeries, currentYUnit);
 
   // 斜率
   const slope = constructHelper.getSlope({

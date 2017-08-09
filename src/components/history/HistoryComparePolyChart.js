@@ -327,26 +327,34 @@ export default class HistoryComparePolyChart extends PureComponent {
             option={chartOptions}
             resizable
             style={{
-              height: '335px',
+              height: '305px',
             }}
           />
         </div>
         <div className={styles.chartFoot}>
-          <span className={styles.tipDot} />
-          {/* 指标名称 */}
-          <span className={styles.tipIndicator}>{name}</span>
-          {/* 本期时间 */}
-          <span className={styles.tipTime}>{currentDate ? `${curYear}/${currentDate}:` : ''}</span>
-          {/* 本期Value */}
-          <span className={styles.currentValue}>{(currentValue === 0 || currentValue) ? `${currentValue}` : ''}</span>
-          {/* 本期Vlaue单位 */}
-          <span className={styles.tipUnit}>{(currentValue === 0 || currentValue) ? `${unit}` : ''}</span>
-          {/* 上期时间 */}
-          <span className={styles.tipTime}>{previousDate ? `${prevYear}/${previousDate}:` : ''}</span>
-          {/* 本期Vlaue */}
-          <span className={styles.contrastValue}>{(previousValue === 0 || previousValue) ? `${previousValue}` : ''}</span>
-          {/* 本期Vlaue单位 */}
-          <span className={styles.tipUnit}>{(previousValue === 0 || previousValue) ? `${unit}` : ''}</span>
+          <div className={styles.leftGuide}>
+            <span className={styles.tipDot} />
+            {/* 指标名称 */}
+            <span className={styles.tipIndicator}>{name}</span>
+          </div>
+          <div className={styles.descriptionSection}>
+            <div className={styles.currentDescription}>
+              {/* 本期时间 */}
+              <span className={styles.tipTime}>{currentDate ? `${curYear}/${currentDate}:` : ''}</span>
+              {/* 本期Value */}
+              <span className={styles.currentValue}>{(currentValue === 0 || currentValue) ? `${currentValue}` : ''}</span>
+              {/* 本期Vlaue单位 */}
+              <span className={styles.tipUnit}>{(currentValue === 0 || currentValue) ? `${unit}` : ''}</span>
+            </div>
+            <div className={styles.previousDescription}>
+              {/* 上期时间 */}
+              <span className={styles.tipTime}>{previousDate ? `${prevYear}/${previousDate}:` : ''}</span>
+              {/* 本期Vlaue */}
+              <span className={styles.contrastValue}>{(previousValue === 0 || previousValue) ? `${previousValue}` : ''}</span>
+              {/* 本期Vlaue单位 */}
+              <span className={styles.tipUnit}>{(previousValue === 0 || previousValue) ? `${unit}` : ''}</span>
+            </div>
+          </div>
         </div>
       </div>
     );
