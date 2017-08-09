@@ -26,6 +26,7 @@ export default class SelectTreeModal extends PureComponent {
   constructor(props) {
     super(props);
     const { visible, summuryLib } = props;
+    console.warn('summuryLib', summuryLib);
     this.state = {
       modalVisible: visible,
       summuryLib: _.cloneDeep(summuryLib),
@@ -88,43 +89,46 @@ export default class SelectTreeModal extends PureComponent {
     const { modalCaption } = this.props;
     const newSummury = _.cloneDeep(summuryLib);
     return (
-      <Modal
-        title={modalCaption}
-        visible={modalVisible}
-        closeable
-        onCancel={this.closeSelectTreeModal}
-        maskClosable={false}
-        wrapClassName={styles.selectTreeModal}
-        footer={[
-          <Button
-            key="back"
-            size="large"
-            onClick={this.closeSelectTreeModal}
-          >
-            取消
-          </Button>,
-          <Button
-            key="submit"
-            type="primary"
-            size="large"
-            disabled={btnStatus}
-            onClick={this.saveSelectTreeModal}
-          >
-            确认
-          </Button>,
-        ]}
-      >
-        {
-          modalVisible ?
-            <BoardSelectTree
-              data={newSummury}
-              lengthLimit
-              saveIndcator={this.saveIndcator}
-            />
-          :
-            ''
-        }
-      </Modal>
+      modalVisible ?
+        <Modal
+          title={modalCaption}
+          visible={modalVisible}
+          closeable
+          onCancel={this.closeSelectTreeModal}
+          maskClosable={false}
+          wrapClassName={styles.selectTreeModal}
+          footer={[
+            <Button
+              key="back"
+              size="large"
+              onClick={this.closeSelectTreeModal}
+            >
+              取消
+            </Button>,
+            <Button
+              key="submit"
+              type="primary"
+              size="large"
+              disabled={btnStatus}
+              onClick={this.saveSelectTreeModal}
+            >
+              确认
+            </Button>,
+          ]}
+        >
+          {
+            modalVisible ?
+              <BoardSelectTree
+                data={newSummury}
+                lengthLimit
+                saveIndcator={this.saveIndcator}
+              />
+            :
+              ''
+          }
+        </Modal>
+      :
+        null
     );
   }
 }

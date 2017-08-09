@@ -7,7 +7,7 @@
     width: 100%;
     &:after{
       content: "";
-      float: right;
+      position: absolute;
       margin: 10px 12px 0 0;
       display: inline-block;
       width: 0;
@@ -122,13 +122,18 @@
     }
     .ant-tree li {
       padding: 0;
-      line-height: 25px;
+      line-height: 22px;
       .ant-tree-title{
         display: inline-block;
         width: 160px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+      }
+    }
+    .ant-tree-child-tree{
+      li{
+        padding-left: 23px;
       }
     }
     .ant-tree li span.ant-tree-switcher, .ant-tree li span.ant-tree-iconEle{
@@ -155,7 +160,7 @@
         display: none;
       }
       .ant-tree-checkbox{
-        margin: 0 15px 0 20px;
+        margin: 0 8px 0 20px;
       }
       .ant-tree-node-content-wrapper, .ant-tree-node-content-wrapper-normal{
         font-size: 13px;
@@ -170,6 +175,7 @@
       height: 400px;
       overflow-y: auto;
       li{
+        line-height: 22px;
         margin-left: -20px;
       }
     }
@@ -177,17 +183,16 @@
       border-color: #108ee9;
     }
     .ant-tree-checkbox-inner{
-      width: 21px;
-      height: 21px;
+      width: 14px;
+      height: 14px;
       border-color: #999;
-      border-radius: 21px;
     }
-    .ant-tree-checkbox-inner:after{
-      left: 6px;
-      top: 3px;
-      width: 7px;
-      height: 11px;
-    }
+    // .ant-tree-checkbox-inner:after{
+    //   left: 6px;
+    //   top: 3px;
+    //   width: 7px;
+    //   height: 11px;
+    // }
   }
 }
 .treeTitle{
@@ -201,11 +206,11 @@
     font-size: 16px;
     &.treeTitlesummury{
       background: url('../../../static/images/icon-summury.png') no-repeat 0 center;
-      background-size: 30px 30px;
+      background-size: 22px 22px;
     }
     &.treeTitledetail{
       background: url('../../../static/images/icon-detail.png') no-repeat 0 center;
-      background-size: 30px 30px;
+      background-size: 22px 22px;
     }
     .treeTitleSpan{
       display: inline-block;

@@ -37,7 +37,7 @@ export default class IndexItem extends PureComponent {
       if (num.indexOf('-') !== -1) {
         return (<span className={styles.less}>{num}</span>);
       }
-      return (<span>{num}</span>);
+      return (<span>+{num}</span>);
     }
     return (<span>--%</span>);
   }
