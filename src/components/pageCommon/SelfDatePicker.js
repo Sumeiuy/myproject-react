@@ -162,7 +162,6 @@ export default class SelfDatePicker extends PureComponent {
   // 预定义时间范围切换事件
   @autobind
   changeDuration(e) {
-    console.warn('事件范围切换');
     const { compare } = this.state;
     const duration = e.target.value;
     const nowDuration = getDurationString(duration);
@@ -171,7 +170,6 @@ export default class SelfDatePicker extends PureComponent {
     const nowDurationStr = nowDuration.durationStr;
     // 环比
     if (compare === 'MoM') {
-      console.warn('环比');
       const begin = beginMoment.format('YYYYMMDD');
       const end = endMoment.format('YYYYMMDD');
 
@@ -265,7 +263,6 @@ export default class SelfDatePicker extends PureComponent {
   saveMoment(type) {
     if (type === 'cancel') {
       const { oldState } = this.state;
-      console.warn('oldState', oldState);
       this.setState({
         open: false,
         disabled: false,
@@ -301,7 +298,6 @@ export default class SelfDatePicker extends PureComponent {
   }
   @autobind
   openChange(status) {
-    console.warn('status', status);
     this.setState({
       open: status,
     });

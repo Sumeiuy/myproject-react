@@ -356,12 +356,12 @@ const helper = {
     } else if (duration === 'year' || duration === 'lastYear') {
       tempDuration = 'year';
     } else {
-      tempDuration = 'null';
+      tempDuration = null;
     }
     let lastBeginMoment;
     let lastEndMoment;
     let lastDurationStr;
-    if (tempDuration !== 'null') {
+    if (tempDuration) {
       lastBeginMoment = moment(begin).subtract(1, tempDuration);
       lastEndMoment = moment(end).subtract(1, tempDuration);
       lastDurationStr = `${lastBeginMoment.format('YYYY/MM/DD')}-${lastEndMoment.format('YYYY/MM/DD')}`;
