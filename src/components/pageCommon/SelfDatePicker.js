@@ -7,15 +7,16 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import moment from 'moment';
+import 'moment/locale/zh-cn';
 import { autobind } from 'core-decorators';
 import { Row, Col, DatePicker, Radio, Button } from 'antd';
-
 import { constants, optionsMap } from '../../config';
-import { getDurationString, queryMoMDuration } from '../../utils/helper';
+import { getDurationString } from '../../utils/helper';
 
 // 选择项字典
 import styles from './SelfDatePicker.less';
 
+moment.locale('zh-cn');
 const { RangePicker } = DatePicker;
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -34,7 +35,6 @@ export default class SelfDatePicker extends PureComponent {
 
   constructor(props) {
     super(props);
-
     const nowDuration = getDurationString(defaultCycleType);
     const beginMoment = moment(nowDuration.begin);
     const endMoment = moment(nowDuration.end);
@@ -129,13 +129,15 @@ export default class SelfDatePicker extends PureComponent {
       const { beginMoment, endMoment } = this.state;
       const begin = beginMoment.format('YYYYMMDD');
       const end = endMoment.format('YYYYMMDD');
-      const compareDuration = queryMoMDuration(begin, end, duration);
+      const distanceDays = moment(end).diff(moment(begin), 'days') + 1;
+      const lastBeginMoment = moment(begin).subtract(distanceDays, 'days');
+      const lastEndMoment = moment(end).subtract(distanceDays, 'days');
       this.setState({
         open: true,
         compare,
-        lastBeginMoment: compareDuration.begin,
-        lastEndMoment: compareDuration.end,
-        lastDurationStr: compareDuration.durationStr,
+        lastBeginMoment,
+        lastEndMoment,
+        lastDurationStr: `${lastBeginMoment.format('YYYY/MM/DD')}-${lastEndMoment.format('YYYY/MM/DD')}`,
       });
     } else {
       const nowDuration = getDurationString(duration);
@@ -160,7 +162,6 @@ export default class SelfDatePicker extends PureComponent {
   // 预定义时间范围切换事件
   @autobind
   changeDuration(e) {
-    console.warn('事件范围切换');
     const { compare } = this.state;
     const duration = e.target.value;
     const nowDuration = getDurationString(duration);
@@ -169,10 +170,12 @@ export default class SelfDatePicker extends PureComponent {
     const nowDurationStr = nowDuration.durationStr;
     // 环比
     if (compare === 'MoM') {
-      console.warn('环比');
       const begin = beginMoment.format('YYYYMMDD');
       const end = endMoment.format('YYYYMMDD');
-      const compareDuration = queryMoMDuration(begin, end, duration);
+
+      const distanceDays = moment(end).diff(moment(begin), 'days') + 1;
+      const lastBeginMoment = moment(begin).subtract(distanceDays, 'days');
+      const lastEndMoment = moment(end).subtract(distanceDays, 'days');
       this.setState({
         duration,
         open: true,
@@ -180,9 +183,9 @@ export default class SelfDatePicker extends PureComponent {
         beginMoment,
         endMoment,
         nowDurationStr,
-        lastBeginMoment: compareDuration.begin,
-        lastEndMoment: compareDuration.end,
-        lastDurationStr: compareDuration.durationStr,
+        lastBeginMoment,
+        lastEndMoment,
+        lastDurationStr: `${lastBeginMoment.format('YYYY/MM/DD')}-${lastEndMoment.format('YYYY/MM/DD')}`,
       });
     } else {
       const lastBeginMoment = moment(nowDuration.begin).subtract(1, 'year');
@@ -219,7 +222,7 @@ export default class SelfDatePicker extends PureComponent {
   @autobind
   disabledDate(current) {
     // 不能选择大于今天的日期
-    return current && current.valueOf() > Date.now();
+    return current && current.valueOf() > moment(moment().format('YYYYMMDD')).subtract(1, 'days').valueOf();
   }
   // 用户自己选的时间段事件
   @autobind
@@ -237,13 +240,14 @@ export default class SelfDatePicker extends PureComponent {
       lastEnd = moment(dateStrings[1]).subtract(1, 'year');
       lastDurationStr = `${lastBegin.format('YYYY/MM/DD')}-${lastEnd.format('YYYY/MM/DD')}`;
     } else {
-      console.warn('环比');
+      const distanceDays = moment(dateStrings[1]).diff(moment(dateStrings[0]), 'days') + 1;
+      lastBegin = moment(dateStrings[0]).subtract(distanceDays, 'days');
+      lastEnd = moment(dateStrings[1]).subtract(distanceDays, 'days');
     }
+    lastDurationStr = `${lastBegin.format('YYYY/MM/DD')}-${lastEnd.format('YYYY/MM/DD')}`;
     this.setState({
-      compare: compareArray[0].key,
       duration: null,
       open: true,
-      disabled: true,
       beginMoment,
       endMoment,
       nowDurationStr,
@@ -292,7 +296,12 @@ export default class SelfDatePicker extends PureComponent {
       this.saveDurationToHome();
     }
   }
-
+  @autobind
+  openChange(status) {
+    this.setState({
+      open: status,
+    });
+  }
   @autobind
   saveDurationToHome() {
     const { updateQueryState } = this.props;
@@ -304,10 +313,10 @@ export default class SelfDatePicker extends PureComponent {
       duration,
     } = this.state;
     let newDuration;
-    if (duration === 'null') {
-      newDuration = 'month';
-    } else {
+    if (duration) {
       newDuration = duration;
+    } else {
+      newDuration = 'month';
     }
     updateQueryState({
       begin: moment(beginMoment).format('YYYYMMDD'),
@@ -328,6 +337,7 @@ export default class SelfDatePicker extends PureComponent {
         getCalendarContainer={this.findContainer}
         onChange={this.rangePickerChange}
         open={open}
+        onOpenChange={this.openChange}
         onOk={this.okHandle}
         showTime
       />

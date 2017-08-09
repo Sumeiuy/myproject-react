@@ -6,12 +6,13 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
+import moment from 'moment';
 import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import { message } from 'antd';
 import _ from 'lodash';
 
-import { getEmpId, getDurationString, queryMoMDuration } from '../../utils/helper';
+import { getEmpId, getDurationString } from '../../utils/helper';
 import IndicatorOverviewHeader from '../../components/history/IndicatorOverviewHeader';
 import IndicatorOverview from '../../components/history/IndicatorOverview';
 import HisDivider from '../../components/history/HisDivider';
@@ -146,15 +147,16 @@ export default class HistoryHome extends PureComponent {
     const empId = getEmpId(); // 用户ID
     const ownerOrg = custRange[0];
     const nowDuration = getDurationString('month');
-    const compareDuration = queryMoMDuration(nowDuration.begin, nowDuration.end, 'month');
+    const lastBeginMoment = moment(nowDuration.begin).subtract(1, 'year');
+    const lastEndMoment = moment(nowDuration.end).subtract(1, 'year');
     this.state = {
       boardId,
       boardType,
       begin: nowDuration.begin, // 本期开始时间
       end: nowDuration.end, // 本期结束时间
       cycleType: 'month', // 时间段周期类型
-      contrastBegin: compareDuration.begin.format('YYYYMMDD'), // 上期开始时间
-      contrastEnd: compareDuration.end.format('YYYYMMDD'), // 上期结束时间
+      contrastBegin: lastBeginMoment.format('YYYYMMDD'), // 上期开始时间
+      contrastEnd: lastEndMoment.format('YYYYMMDD'), // 上期结束时间
       coreIndicatorIds: [], // 弹出层挑选的指标
       indicatorId: '', // 当前选中的核心指标key
       orgId: ownerOrg && ownerOrg.id, // 用户当前选择的组织机构Id
@@ -180,9 +182,11 @@ export default class HistoryHome extends PureComponent {
     if (differentId) {
       const { custRange } = nextProps;
       const ownerOrg = custRange[0];
+      const timeStamp = new Date().getTime().toString();
       // TODO 此处需要等到时间选择器完成提供方法
       // const { begin, end, cycleType } = getDurationString('month');
       this.setState({
+        swtichDefault: timeStamp,
         boardId,
         boardType,
         scope: ownerOrg && String(Number(ownerOrg.level) + 1),
@@ -427,6 +431,7 @@ export default class HistoryHome extends PureComponent {
       indicatorId = coreIndicatorIds[0];
     }
     this.setState({
+      swtichDefault: new Date().getTime().toString(),
       ...durationOrg,
       indicatorId,
     },
@@ -531,10 +536,13 @@ export default class HistoryHome extends PureComponent {
       coreIndicatorIds,
       ownerOrgId,
       swtichDefault,
+      orgId,
     } = this.state;
     const level = localScope || custRange[0].level;
     const newScope = scope || String(Number(level) + 1);
     const custOrg = ownerOrgId || custRange[0].id;
+
+    const cOrgId = orgId || custRange[0].id;
     // 总量指标库
     const summuryCheckedKeys = this.getUserSummuryKeys(historyCore);
     const summuryLib = {
@@ -545,6 +553,7 @@ export default class HistoryHome extends PureComponent {
     };
 
     const { cust = EMPTY_LIST, invest = EMPTY_LIST } = historyContrastDic;
+
     return (
       <div className="pageHistory">
         <PageHeader
@@ -555,7 +564,7 @@ export default class HistoryHome extends PureComponent {
           visibleBoards={visibleBoards}
           newVisibleBoards={newVisibleBoards}
           updateQueryState={this.updateQueryState}
-          orgId={'ZZ001041'}
+          orgId={cOrgId}
           collectBoardSelect={collectBoardSelect}
           collectCustRange={collectCustRange}
           collectDurationSelect={collectDurationSelect}
