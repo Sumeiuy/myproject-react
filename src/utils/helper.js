@@ -299,6 +299,22 @@ const helper = {
     };
     return duration;
   },
+  /**
+   * 添加滚动监听
+  */
+  addWheelEvent(obj, handler) {
+    obj.addEventListener('mousewheel', handler, false);
+    obj.addEventListener('DOMMouseScroll', handler, false);
+    obj.addEventListener('wheel', handler, false);
+  },
+  /**
+   * 删除滚动监听
+  */
+  removeWheelEvent(obj, handler) {
+    obj.removeEventListener('mousewheel', handler, false);
+    obj.removeEventListener('DOMMouseScroll', handler, false);
+    obj.removeEventListener('wheel', handler, false);
+  },
 };
 
 export default helper;

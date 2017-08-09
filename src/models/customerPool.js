@@ -34,7 +34,7 @@ export default {
       const resultData = yield call(api.getCustRange);
       yield put({
         type: 'getCustomerScopeSuccess',
-        response: resultData,
+        payload: resultData,
       });
     },
     // 绩效指标
@@ -129,7 +129,7 @@ export default {
     },
     // 客户池用户范围
     getCustomerScopeSuccess(state, action) {
-      const { response: { resultData } } = action;
+      const { payload: { resultData } } = action;
       let custRange = [];
       if (resultData) {
         custRange = [
