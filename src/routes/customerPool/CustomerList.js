@@ -25,6 +25,7 @@ const ORG = 3; // 组织机构
 const effects = {
   allInfo: 'customerPool/getAllInfo',
   getDictionary: 'customerPool/getDictionary',
+  getCustomerList: 'customerPool/getCustomerList',
 };
 
 const fectchDataFunction = (globalLoading, type) => query => ({
@@ -43,6 +44,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   getAllInfo: fectchDataFunction(true, effects.allInfo),
+  getCustomerList: fectchDataFunction(true, effects.getCustomerList),
   push: routerRedux.push,
   replace: routerRedux.replace,
 };
@@ -62,6 +64,7 @@ export default class CustomerList extends PureComponent {
     empInfo: PropTypes.object,
     position: PropTypes.object,
     dict: PropTypes.object.isRequired,
+    getCustomerList: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -86,6 +89,7 @@ export default class CustomerList extends PureComponent {
       fspOrgId: orgid,
       orgId: orgid, // 组织ID
     });
+    this.props.getCustomerList();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -177,7 +181,6 @@ export default class CustomerList extends PureComponent {
     getAllInfo({
       request: {
         custTypes: custType, // 客户范围类型
-        // dateType: '', // 周期类型
         orgId, // 组织ID
       },
     });
@@ -187,12 +190,19 @@ export default class CustomerList extends PureComponent {
   @autobind
   updateQueryState(state) {
     // 切换Duration和Orig时候，需要将数据全部恢复到默认值
+    const { replace, location: { query, pathname } } = this.props;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        ...state,
+      },
+    });
     this.setState({
       ...state,
-    },
-      () => {
-        this.getCustomerList();
-      });
+    }, () => {
+      this.getCustomerList();
+    });
   }
 
   @autobind
@@ -222,6 +232,18 @@ export default class CustomerList extends PureComponent {
 
   render() {
     const { location, replace, collectCustRange, dict } = this.props;
+    const {
+      custNature,
+      custRiskBearing,
+      custBusinessType,
+      sortDirection,
+      sortType,
+    } = location.query;
+    // 排序的默认值 ： 总资产降序
+    let reorderDefaultValue = { sortType: 'totalAssets', sortDirection: 'desc' };
+    if (sortType && sortDirection) {
+      reorderDefaultValue = { sortType, sortDirection };
+    }
     return (
       <div className={styles.customerlist}>
         <Row type="flex" justify="space-between" align="middle">
@@ -243,6 +265,7 @@ export default class CustomerList extends PureComponent {
         </Row>
         <div className="filter">
           <Filter
+            defaultValue={custNature}
             filterLabel="客户性质"
             filter="custNature"
             filterField={dict.custNature}
@@ -255,19 +278,24 @@ export default class CustomerList extends PureComponent {
             onChange={this.filterChange}
           />*/}
           <Filter
+            defaultValue={custRiskBearing}
             filterLabel="风险等级"
             filter="custRiskBearing"
             filterField={dict.custRiskBearing}
             onChange={this.filterChange}
           />
           <Filter
+            defaultValue={custBusinessType}
             filterLabel="已开通业务"
             filter="custBusinessType"
             filterField={dict.custBusinessType}
             onChange={this.filterChange}
           />
         </div>
-        <Reorder onChange={this.orderChange} />
+        <Reorder
+          defaultValue={reorderDefaultValue}
+          onChange={this.orderChange}
+        />
       </div>
     );
   }

@@ -111,6 +111,11 @@ export default {
         payload: { response },
       });
     },
+    // 获取客户列表
+    * getCustomerList({ payload }, { call }) {
+      const response = yield call(api.getCustomerList, payload);
+      console.log('getCustomerList', response);
+    },
   },
   reducers: {
     getToDoListSuccess(state, action) {
@@ -202,8 +207,8 @@ export default {
       };
     },
     getDictionarySuccess(state, action) {
-      const { payload: { statisticalPeriod } } = action;
-      const dict = statisticalPeriod.resultData;
+      const { payload: { response } } = action;
+      const dict = response.resultData;
       return {
         ...state,
         dict,
