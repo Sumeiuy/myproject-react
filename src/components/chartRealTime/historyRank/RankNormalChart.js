@@ -64,7 +64,8 @@ export default class RankNormalChart extends PureComponent {
     seriesData = seriesData.map(item => Number(item));
     // 补足Y轴刻度值不够的情况
     // 补足10位数字
-    const padLength = 10 - seriesData.length;
+    const realLength = seriesData.length;
+    const padLength = 10 - realLength;
     if (padLength > 0) {
       for (let i = 0; i < padLength; i++) {
         yAxisLabels.push('--');
@@ -92,6 +93,7 @@ export default class RankNormalChart extends PureComponent {
       grid: newGrid,
       seriesData,
       rank,
+      realLength,
     });
   }
 
@@ -155,7 +157,7 @@ export default class RankNormalChart extends PureComponent {
   }
   // 柱状图Label
   @autobind
-  makeLabelSeries(name, data, labels) {
+  makeLabelSeries(name, data, labels, realLength) {
     const flag = name === 'max-label';
     const position = flag ? 'insideRight' : 'insideLeft';
     const textColor = flag ? '#999' : '#333';
@@ -178,7 +180,11 @@ export default class RankNormalChart extends PureComponent {
           position,
           textStyle: { color: textColor },
           formatter(p) {
-            return labels[p.dataIndex];
+            const index = p.dataIndex;
+            if (index < realLength) {
+              return labels[p.dataIndex];
+            }
+            return '--';
           },
         },
       },
@@ -259,6 +265,7 @@ export default class RankNormalChart extends PureComponent {
       stores,
       company,
       rank,
+      realLength,
     } = this.state;
     // 生成最大值数组和最小值数组
     const realGrid = optimizeGrid(grid);
@@ -285,8 +292,8 @@ export default class RankNormalChart extends PureComponent {
         this.makeLabelShadowSeries('max-shadow', maxData),
         this.makeDataShadowSeries('data-shadow', minData),
         this.makeDataShadowSeries('data-shadow', maxData),
-        this.makeLabelSeries('min-label', minData, yAxisLabels),
-        this.makeLabelSeries('max-label', maxData, seriesData),
+        this.makeLabelSeries('min-label', minData, yAxisLabels, realLength),
+        this.makeLabelSeries('max-label', maxData, seriesData, realLength),
         this.makeRealSeries(name, seriesData),
       ],
     };

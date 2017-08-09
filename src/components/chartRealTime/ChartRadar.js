@@ -55,6 +55,28 @@ export default class ChartRadar extends PureComponent {
   }
 
   @autobind
+  optimizeIndicator(current, previous, scopeNum) {
+    let max = 0;
+    let min = 0;
+    const currMax = Math.max(...current);
+    const currMin = Math.min(...current);
+    const prevMax = Math.max(...previous);
+    const prevMin = Math.min(...previous);
+    max = currMax > prevMax ? currMax : prevMax;
+    min = currMin < prevMin ? currMin : prevMin;
+    if ((max + 3) > scopeNum) {
+      max = scopeNum;
+    } else {
+      max += 3;
+    }
+    min -= 3;
+    return {
+      max,
+      min,
+    };
+  }
+
+  @autobind
   createOption(scopeNum, data) {
     const indicatorData = [];// name
     const period = []; // 本期数据值
@@ -70,12 +92,9 @@ export default class ChartRadar extends PureComponent {
       previous.push(contrast);
       PreviousPeriod.push(scopeNum - contrast);
     });
-    const currMax = Math.max(...currentV);
-    const currMin = Math.min(...currentV);
-    const prevMax = Math.max(...previous);
-    const prevMin = Math.min(...previous);
-    indicatorMax = currMax > prevMax ? currMax : prevMax;
-    indicatorMin = currMin < prevMin ? currMin : prevMin;
+    const indicator = this.optimizeIndicator(currentV, previous, scopeNum);
+    indicatorMax = indicator.max;
+    indicatorMin = indicator.min;
     _.each(data, (item) => {
       const { indicator_name: name } = item;
       indicatorData.push({
