@@ -20,8 +20,13 @@ export default {
     process: 0,
     empInfo: {},
     motTaskCount: '',
+    dict: {},
   },
-  subscriptions: {},
+  subscriptions: {
+    setup({ dispatch }) {
+      dispatch({ type: 'getDictionary' });
+    },
+  },
   effects: {
     * getToDoList({ }, { call, put }) {  //eslint-disable-line
       const response = yield call(api.getToDoList, { empid: '002332' });
@@ -107,6 +112,15 @@ export default {
       yield put({
         type: 'pageChangeSuccess',
         payload: newPage,
+      });
+    },
+    // 获取字典
+    * getDictionary({ payload }, { call, put }) {
+      const response = yield call(api.getStatisticalPeriod);
+      console.log('dict', response);
+      yield put({
+        type: 'getDictionarySuccess',
+        payload: { response },
       });
     },
   },
@@ -202,6 +216,14 @@ export default {
       return {
         ...state,
         position: payload,
+      };
+    },
+    getDictionarySuccess(state, action) {
+      const { payload: { statisticalPeriod } } = action;
+      const dict = statisticalPeriod.resultData;
+      return {
+        ...state,
+        dict,
       };
     },
   },

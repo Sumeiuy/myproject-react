@@ -1,0 +1,36 @@
+.customerlist {
+  margin: 15px 20px 20px 20px;
+}
+.customerlist :global .total-num {
+  font-size: 14px;
+  color: #666;
+}
+.customerlist :global .total-num em {
+  font-style: normal;
+  color: #7d9be0;
+}
+.customerlist :global .custRange {
+  float: right;
+  padding: 0 20px;
+  border-radius: 5px;
+  background-color: #fff;
+}
+.customerlist :global .custRange i {
+  margin-right: 5px;
+  color: #c2c2c2;
+}
+.customerlist :global .custRange .ant-select-focused > .ant-select-selection,
+.customerlist :global .custRange .ant-select-selection--single {
+  border: 0;
+}
+.customerlist :global .custRange .ant-select-focused .ant-select-selection,
+.customerlist :global .custRange .ant-select-selection:focus,
+.customerlist :global .custRange .ant-select-selection:active {
+  box-shadow: none;
+}
+.customerlist :global .filter {
+  margin-top: 15px;
+  padding: 0 15px;
+  background-color: #fff;
+  border-radius: 5px;
+}
