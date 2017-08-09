@@ -11,6 +11,8 @@ exports.response = function (req, res) {
       "finaTranAmt":"0",
       "fundTranAmt":"1000",
       "hkCust":"1",
+      "shHkCust":"100000",
+      "szHkCust":"10",
       "newProdCust":"9",
       "optCust":"0",
       "otcTranAmt":"0",
@@ -18,7 +20,7 @@ exports.response = function (req, res) {
       "purAddCust":"0",
       "purAddCustaset":"0",
       "purAddHighprodcust":"-9",
-      "purAddNoretailcust":"29",
+      "purAddNoretailcust":"11129",
       "purRakeGjpdt":"0",
       "rzrqCust":"1",
       "staId":"002332",
@@ -26,10 +28,10 @@ exports.response = function (req, res) {
       "tranAmtBasicpdt":"0",
       "tranAmtTotpdt":"0",
       "ttfCust":"4",
-          "motOkMnt":"1",
-          "motTotMnt":"1",
-          "taskCust":"1",
-          "totCust":"1"
+      "motOkMnt":"1",
+      "motTotMnt":"1",
+      "taskCust":"1",
+      "totCust":"1"
     }
   }
 }

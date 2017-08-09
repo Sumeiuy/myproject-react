@@ -28,6 +28,7 @@ export default (options = {}) => (ComposedComponent) => {
       const app = document.querySelector(container);
       app.addEventListener('mousewheel', this.handleMousewheel, false);
       app.addEventListener('DOMMouseScroll', this.handleMousewheel, false);
+      app.addEventListener('wheel', this.handleMousewheel, false);
     }
 
     @autobind
@@ -56,6 +57,7 @@ export default (options = {}) => (ComposedComponent) => {
       if (elem) {
         elem.addEventListener('mousewheel', this.handleDropDownMousewheel, false);
         elem.addEventListener('DOMMouseScroll', this.handleDropDownMousewheel, false);
+        elem.addEventListener('wheel', this.handleDropDownMousewheel, false);
       }
     }
 
@@ -73,6 +75,11 @@ export default (options = {}) => (ComposedComponent) => {
           this.handleDropDownMousewheel,
           false,
         );
+        elem.removeEventListener(
+          'wheel',
+          this.handleDropDownMousewheel,
+          false,
+        );
       }
       if (app) {
         elem.removeEventListener(
@@ -82,6 +89,11 @@ export default (options = {}) => (ComposedComponent) => {
         );
         elem.removeEventListener(
           'DOMMouseScroll',
+          this.handleMousewheel,
+          false,
+        );
+        elem.removeEventListener(
+          'wheel',
           this.handleMousewheel,
           false,
         );

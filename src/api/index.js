@@ -7,6 +7,9 @@ export default {
   // 暴露api上的几个底层方法: get / post
   ...api,
 
+  // 员工职责与职位
+  getEmpInfo: query => api.post('/groovynoauth/fsp/emp/info/queryEmpInfo', query),
+
   // 获取客户范围
   getCustRange: query => api.post('/groovynoauth/jxzb/empOrgTree', query),
 
@@ -78,10 +81,7 @@ export default {
   // 代办流程(首页总数)
   getWorkFlowTaskCount: query => api.post('/groovynoauth/fsp/emp/workflow/queryWorkFlowTaskCount', query),
 
-  // 员工职责与职位
-  getEmpInfo: query => api.post('/groovynoauth/fsp/emp/info/queryEmpInfo', query),
-
   // 今日可做任务总数
-  getMotTaskCount: query => api.post('/groovynoauth/fsp/queryMotTaskCount', query),
+  getMotTaskCount: query => api.post('/groovynoauth/fsp/emp/notification/queryMotTaskCount', query),
 
 };
