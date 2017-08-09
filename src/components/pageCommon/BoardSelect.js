@@ -10,6 +10,7 @@ import _ from 'lodash';
 
 // import Scroll from '../common/Scroll';
 import { constants } from '../../config';
+import { canCustomBoard } from '../../permissions';
 import './BoardSelect.less';
 
 const defaultBoardId = constants.boardId;
@@ -150,7 +151,14 @@ export default class BoardSelect extends PureComponent {
           )
         }
         <Menu.Divider />
-        <Menu.Item key="0">看板管理</Menu.Item>
+        { canCustomBoard() ? (
+          <Menu.Item
+            key="0"
+            type={visibleBoardType.manage.key}
+          >
+            {visibleBoardType.manage.name}
+          </Menu.Item>
+        ) : null }
       </Menu>
     );
 
