@@ -11,12 +11,24 @@ import Loading from './Loading';
 import styles from './main.less';
 import '../css/skin.less';
 
+const effects = {
+  empInfo: 'app/getEmpInfo',
+};
+
+const fectchDataFunction = (globalLoading, type) => query => ({
+  type,
+  payload: query || {},
+  loading: globalLoading,
+});
+
 const mapStateToProps = state => ({
   ...state.app,
   loading: state.activity.global,
+  empInfo: state.app.empInfo,
 });
 
 const mapDispatchToProps = {
+  getEmpInfo: fectchDataFunction(false, effects.empInfo),
 };
 
 @withRouter
@@ -26,6 +38,15 @@ export default class Main extends Component {
   static propTypes = {
     children: PropTypes.node.isRequired,
     loading: PropTypes.bool.isRequired,
+    getEmpInfo: PropTypes.func.isRequired,
+  }
+
+  static defaultProps = {
+  }
+
+  componentWillMount() {
+    const { getEmpInfo } = this.props;
+    getEmpInfo(); // 加载员工职责与职位
   }
 
   render() {
