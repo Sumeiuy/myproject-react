@@ -3,14 +3,12 @@
  * AbilityScatterAnalysis.js
  */
 import React, { PropTypes, PureComponent } from 'react';
-// import { connect } from 'react-redux';
 import { Select } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import CommonScatter from '../chartRealTime/CommonScatter';
 import { constructScatterData } from './ConstructScatterData';
 import { constructScatterOptions } from './ConstructScatterOptions';
-import helper from '../../utils/helper';
 import styles from './abilityScatterAnalysis.less';
 
 const Option = Select.Option;
@@ -67,8 +65,8 @@ export default class AbilityScatterAnalysis extends PureComponent {
     } = prevData;
 
     // 比较前后两次值是否相同
-    if (core !== prevCore || contrast !== prevContrast
-      || scatterDiagramModels !== prevScatterDiagramModels) {
+    if (!_.isEqual(core, prevCore) || !_.isEqual(contrast, prevContrast)
+      || !_.isEqual(scatterDiagramModels, prevScatterDiagramModels)) {
       const finalData = constructScatterData({ core, contrast, scatterDiagramModels });
       this.setState({
         finalData,
@@ -131,30 +129,11 @@ export default class AbilityScatterAnalysis extends PureComponent {
       yAxisMin,
       slope,
     } = currentItemInfo;
-    let newXData = '';
-    let newYData = '';
-    if (xAxisUnit.indexOf('万') !== -1) {
-      // 万户
-      newXData = helper.formatNum((currentSelectX * 10000).toFixed(0));
-    } else {
-      // 户
-      newXData = currentSelectX;
-    }
-
-    if (yAxisUnit.indexOf('亿') !== -1) {
-      // 亿元
-      newYData = helper.formatNum((currentSelectY * 100000000).toFixed(0));
-    } else if (yAxisUnit.indexOf('万') !== -1) {
-      // 万元
-      newYData = helper.formatNum((currentSelectY * 10000).toFixed(0));
-    } else {
-      newYData = currentSelectY;
-    }
 
     const currentSlope = (currentSelectY - yAxisMin) / currentSelectX;
 
     this.setState({
-      tooltipInfo: `${yAxisName}：${newYData}元 / ${xAxisName}：${newXData}户。每客户贡献的交易量${currentSlope > slope ? '优' : '低'}于平均水平。`,
+      tooltipInfo: `${yAxisName}：${currentSelectY}${yAxisUnit} / ${xAxisName}：${currentSelectX}${xAxisUnit}。每服务经理的交易量${currentSlope > slope ? '优' : '低'}于平均水平。`,
     });
   }
 
