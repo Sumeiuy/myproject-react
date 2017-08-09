@@ -13,7 +13,7 @@ import '../css/skin.less';
 
 const effects = {
   customerScope: 'customerPool/getCustomerScope',
-  empInfo: 'customerPool/getEmpInfo',
+  empInfo: 'app/getEmpInfo',
 };
 
 const fectchDataFunction = (globalLoading, type) => query => ({
@@ -26,7 +26,7 @@ const mapStateToProps = state => ({
   ...state.app,
   loading: state.activity.global,
   custRange: state.customerPool.custRange,
-  empInfo: state.customerPool.empInfo,
+  empInfo: state.app.empInfo,
 });
 
 const mapDispatchToProps = {

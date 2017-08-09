@@ -69,9 +69,11 @@ export default class CustRange extends PureComponent {
     collectData: PropTypes.func.isRequired,
     updateQueryState: PropTypes.func.isRequired,
     custRange: PropTypes.array.isRequired,
+    expandAll: PropTypes.bool,
   }
 
   static defaultProps = {
+    expandAll: false,
   }
 
   constructor(props) {
@@ -125,7 +127,7 @@ export default class CustRange extends PureComponent {
   }
 
   render() {
-    const { custRange } = this.props;
+    const { custRange, expandAll } = this.props;
     const { value } = this.state;
     const formatCustRange = transformCustRangeData(custRange);
     return (
@@ -133,6 +135,7 @@ export default class CustRange extends PureComponent {
         notFoundContent="没有结果"
         className={styles.custRang}
         value={value}
+        treeDefaultExpandAll={expandAll}
         treeData={formatCustRange}
         onChange={this.onChange}
         dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}

@@ -13,12 +13,12 @@ import styles from './toBeDone.less';
 export default class PerformanceIndicators extends PureComponent {
   static propTypes = {
     processData: PropTypes.number,
-    motTaskCountData: PropTypes.string,
+    motTaskCountData: PropTypes.number,
   }
 
   static defaultProps = {
     processData: 0,
-    motTaskCountData: '0',
+    motTaskCountData: 0,
   }
 
   // 处理数值（大于99+）
@@ -49,7 +49,7 @@ export default class PerformanceIndicators extends PureComponent {
               <div className={`${styles.item} ${styles.item_a}`}>
                 <a className="item" onClick={() => fspGlobal.myMotTask()}>
                   <div className={styles.content}>
-                    <h1>{motTaskCountData === '' ? '0' : motTaskCountData}</h1>
+                    <h1>{motTaskCountData || '--'}</h1>
                     <p>今日可做任务</p>
                   </div>
                 </a>
@@ -69,7 +69,7 @@ export default class PerformanceIndicators extends PureComponent {
               <div className={`${styles.item} ${styles.item_c}`}>
                 <a className="item" onClick={() => fspGlobal.openRctTab({ url, param })}>
                   <div className={styles.content}>
-                    <h1>{this.processNum(processData)}</h1>
+                    <h1>{this.processNum(processData || '--')}</h1>
                     <p>待办流程</p>
                   </div>
                 </a>

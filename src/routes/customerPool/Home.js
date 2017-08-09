@@ -15,9 +15,11 @@ import ToBeDone from '../../components/customerPool/ToBeDone';
 import Search from '../../components/customerPool/Search';
 import styles from './home.less';
 
-const CUST_MANAGER = 1; // 客户经理
+const CUST_MANAGER = '1'; // 客户经理
 // const CUST_MANAGER_TEAM = 2; // 客户经理团队
-const ORG = 3; // 组织机构
+const ORG = '3'; // 组织机构
+const EMPTY_LIST = [];
+const EMPTY_OBJECT = {};
 const effects = {
   allInfo: 'customerPool/getAllInfo',
   performanceIndicators: 'customerPool/getPerformanceIndicators',
@@ -62,26 +64,28 @@ export default class Home extends PureComponent {
     cycle: PropTypes.array,
     position: PropTypes.object,
     process: PropTypes.number,
-    motTaskCount: PropTypes.string,
+    motTaskCount: PropTypes.number,
     empInfo: PropTypes.object,
   }
 
   static defaultProps = {
-    performanceIndicators: {},
-    custRange: [],
-    cycle: [],
+    performanceIndicators: EMPTY_OBJECT,
+    custRange: EMPTY_LIST,
+    cycle: EMPTY_LIST,
     collectCustRange: () => { },
-    position: {},
-    process: '',
-    motTaskCount: '0',
-    empInfo: {},
+    position: EMPTY_OBJECT,
+    process: 0,
+    motTaskCount: 0,
+    empInfo: EMPTY_OBJECT,
   }
 
   constructor(props) {
     super(props);
     this.state = {
-      cycle: '',
+      cycleSelect: '',
       orgId: '',
+      createCustRange: [],
+      expandAll: false,
     };
   }
 
@@ -100,24 +104,29 @@ export default class Home extends PureComponent {
     const { orgId: nextOrgId } = nextPosition;
     if (preOrgId !== nextOrgId) {
       this.setState({
-        orgId: nextOrgId,
+        fspOrgId: nextOrgId,
+        createCustRange: this.handleCreateCustRange(nextOrgId, nextProps),
+      }, () => {
+        this.getIndicators();
       });
-      this.getIndicators();
     }
-    if (preCycle !== nextCycle) {
+    if (!_.isEqual(preCycle, nextCycle)) {
       this.setState({
-        cycle: nextCycle[0].key,
+        cycleSelect: nextCycle[0].key,
       });
     }
-    if (preCustRange !== nextCustRange) {
-      this.handleGetAllInfo();
+    if (!_.isEqual(preCustRange, nextCustRange)) {
+      this.handleGetAllInfo(nextCustRange);
+      this.setState({
+        createCustRange: this.handleCreateCustRange(null, nextProps),
+      });
     }
   }
 
   @autobind
   getIndicators() {
     const { getPerformanceIndicators, custRange } = this.props;
-    const { orgId, cycle } = this.state;
+    const { orgId, cycleSelect } = this.state;
     let custType = ORG;
     if (orgId === custRange[0].id) { // 判断客户范围类型
       custType = ORG;
@@ -126,28 +135,31 @@ export default class Home extends PureComponent {
     }
     getPerformanceIndicators({
       custTypes: custType, // 客户范围类型
-      dateType: cycle, // 周期类型
+      dateType: cycleSelect, // 周期类型
       orgId, // 组织ID
     });
   }
 
   @autobind
-  handleGetAllInfo() {
-    const { getAllInfo, custRange, cycle } = this.props;
+  handleGetAllInfo(custRangeData) {
+    const { getAllInfo, cycle } = this.props;
     const { orgId } = this.state;
     let custType = ORG;
-    const orgsId = !_.isEmpty(custRange[0]) ? custRange[0].id : '';
+    const orgsId = !_.isEmpty(custRangeData[0]) ? custRangeData[0].id : '';
     if (orgId === orgsId) { // 判断客户范围类型
       custType = ORG;
     } else {
+      this.setState({
+        expandAll: true,
+      });
       custType = CUST_MANAGER;
     }
     this.setState({
-      cycle: _.isEmpty(cycle) ? '' : cycle[0].key,
+      cycleSelect: _.isEmpty(cycle[0]) ? '' : cycle[0].key,
     });
     getAllInfo({
       request: {
-        custTypes: custType, // 客户范围类型
+        custType, // 客户范围类型
         // dateType: '', // 周期类型
         orgId, // 组织ID
       },
@@ -167,26 +179,33 @@ export default class Home extends PureComponent {
   }
 
   @autobind
-  createCustRange() {
-    const { empInfo, custRange } = this.props;
-    const { empPostnDTOList } = empInfo;
+  handleCreateCustRange(orgId, nextProps) {
+    const { empInfo, custRange } = nextProps;
+    const { empPostnList } = empInfo;
     const { fspOrgId } = this.state;
+    let newOrgId = orgId;
+    if (_.isEmpty(orgId)) {
+      newOrgId = fspOrgId;
+    }
     let orgNewCustRange = [];
     const newCustRrange = [];
-    if (fspOrgId === custRange[0].id) {
+    if (_.isEmpty(custRange)) {
+      return null;
+    }
+    if (newOrgId === custRange[0].id) {
       return custRange;
     }
-    orgNewCustRange = _.findIndex(custRange, item => item.id === fspOrgId);
+    orgNewCustRange = _.findIndex(custRange, item => item.id === newOrgId);
     let newData;
     if (orgNewCustRange > -1) { // 总机构内
       newData = custRange[orgNewCustRange];
       newCustRrange.push(newData);
     } else { // 职位中去查找
-      orgNewCustRange = _.findIndex(empPostnDTOList, item => item.orgId === fspOrgId);
+      orgNewCustRange = _.findIndex(empPostnList, item => item.orgId === newOrgId);
       if (orgNewCustRange > -1) {
         const org = {
-          id: empPostnDTOList[orgNewCustRange].orgId,
-          name: empPostnDTOList[orgNewCustRange].orgName,
+          id: empPostnList[orgNewCustRange].orgId,
+          name: empPostnList[orgNewCustRange].orgName,
         };
         newData = org;
         newCustRrange.push(newData);
@@ -209,11 +228,8 @@ export default class Home extends PureComponent {
       process,
       cycle,
       motTaskCount,
-      custRange,
     } = this.props;
-    if (_.isEmpty(custRange[0])) {
-      return null;
-    }
+    const { expandAll, cycleSelect, createCustRange } = this.state;
     return (
       <div className={styles.customerPoolWrap}>
         <Search />
@@ -224,12 +240,14 @@ export default class Home extends PureComponent {
           />
           <PerformanceIndicators
             indicators={performanceIndicators}
-            custRange={this.createCustRange()}
+            custRange={createCustRange}
             updateQueryState={this.updateQueryState}
             collectCustRange={collectCustRange}
             location={location}
             replace={replace}
             cycle={cycle}
+            expandAll={expandAll}
+            selectValue={cycleSelect}
           />
         </div>
       </div>
