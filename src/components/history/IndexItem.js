@@ -11,9 +11,11 @@ import { iconTypeMap } from '../../config';
 import { toUnit } from '../../utils/helper';
 import styles from './indexItem.less';
 
-const getCoreIcon = iconTypeMap.getCoreIcon;
-const getCoreIconColor = iconTypeMap.getCoreIconColor;
-const getCoreIconSize = iconTypeMap.getCoreIconSize;
+const {
+  getCoreIcon,
+  getCoreIconColor,
+  getCoreIconSize,
+} = iconTypeMap;
 
 export default class IndexItem extends PureComponent {
   static propTypes = {
