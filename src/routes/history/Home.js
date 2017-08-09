@@ -182,9 +182,11 @@ export default class HistoryHome extends PureComponent {
     if (differentId) {
       const { custRange } = nextProps;
       const ownerOrg = custRange[0];
+      const timeStamp = new Date().getTime().toString();
       // TODO 此处需要等到时间选择器完成提供方法
       // const { begin, end, cycleType } = getDurationString('month');
       this.setState({
+        swtichDefault: timeStamp,
         boardId,
         boardType,
         scope: ownerOrg && String(Number(ownerOrg.level) + 1),
@@ -429,6 +431,7 @@ export default class HistoryHome extends PureComponent {
       indicatorId = coreIndicatorIds[0];
     }
     this.setState({
+      swtichDefault: new Date().getTime().toString(),
       ...durationOrg,
       indicatorId,
     },

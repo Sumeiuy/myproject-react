@@ -11,7 +11,9 @@ import { iconTypeMap } from '../../config';
 import { toUnit } from '../../utils/helper';
 import styles from './indexItem.less';
 
-const getIcon = iconTypeMap.getIcon;
+const getCoreIcon = iconTypeMap.getCoreIcon;
+const getCoreIconColor = iconTypeMap.getCoreIconColor;
+const getCoreIconSize = iconTypeMap.getCoreIconSize;
 
 export default class IndexItem extends PureComponent {
   static propTypes = {
@@ -37,7 +39,7 @@ export default class IndexItem extends PureComponent {
       if (num.indexOf('-') !== -1) {
         return (<span className={styles.less}>{num}</span>);
       }
-      return (<span>+{num}</span>);
+      return (<span>{num}</span>);
     }
     return (<span>--%</span>);
   }
@@ -47,14 +49,15 @@ export default class IndexItem extends PureComponent {
       itemData:
       { unit, value, name, parentName, incrementRate }, active } = this.props;
     const data = toUnit(value, unit, 5);
-    console.warn(`${value}--${unit}--5`, data);
-    const IndexIcon = getIcon(unit);
+    const IndexIcon = getCoreIcon(unit);
+    const IndexIconColor = getCoreIconColor(unit);
+    const IndexIconSize = getCoreIconSize(unit);
     const newName = parentName ? `${parentName}-${name}` : name;
     return (
       <div className={active ? 'active am-bd-dv' : 'am-bd-dv'}>
         <div className={styles.innderDv}>
-          <span className={styles.iconBox}>
-            <Icon type={IndexIcon} />
+          <span className={styles.iconBox} style={{ color: IndexIconColor }}>
+            <Icon type={IndexIcon} style={{ fontSize: IndexIconSize }} />
           </span>
           <div className={styles.mglDv}>
             <h4>{newName}</h4>
