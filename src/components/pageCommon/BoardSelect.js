@@ -160,6 +160,10 @@ export default class BoardSelect extends PureComponent {
     const menu = (
       <Menu
         onClick={this.handleMenuClick}
+        style={{
+          maxHeight: '300px',
+          overflowY: 'auto',
+        }}
       >
         {
           ordinaryStaticBoards.map(item =>
@@ -196,26 +200,31 @@ export default class BoardSelect extends PureComponent {
           )
         }
         <Menu.Divider />
-        <SubMenu
-          title="自定义看板"
-          style={{
-            maxHeight: '400px',
-            overflowY: 'scroll',
-          }}
-        >
-          {
-            lastVisibleBoards.history.map(item =>
-              (<Menu.Item
-                key={String(item.id)}
-                type={visibleBoardType.history.key}
-                boardType={item.boardType}
-                title={item.name}
-              >
-                {item.name}
-              </Menu.Item>),
-            )
-          }
-        </SubMenu>
+        {
+          lastVisibleBoards.history.length ?
+            <SubMenu
+              title="自定义看板"
+              style={{
+                maxHeight: '400px',
+                overflowY: 'auto',
+              }}
+            >
+              {
+                lastVisibleBoards.history.map(item =>
+                  (<Menu.Item
+                    key={String(item.id)}
+                    type={visibleBoardType.history.key}
+                    boardType={item.boardType}
+                    title={item.name}
+                  >
+                    {item.name}
+                  </Menu.Item>),
+                )
+              }
+            </SubMenu>
+          :
+            null
+        }
         <Menu.Divider />
         { canCustomBoard() ? (
           <Menu.Item

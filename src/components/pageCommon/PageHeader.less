@@ -7,8 +7,8 @@
       background-color: #fff;
     }
     .reportName {
-      font-size: 18px;
-      color:#33393c;
+      font-size: 14px;
+      color:#333;
       .preView {
         padding:0 15px;
         max-width: 300px;
@@ -43,7 +43,23 @@
     :global{
       .ant-calendar-picker{
         width: 200px !important;
-        height: 40px !important;
+        top: 8px;
+        right: 15px;
+        .ant-calendar-range-picker-input{
+          position: absolute;
+          top: 0;
+          right: 18px;
+          &:first-child{
+            left: 0;
+          }
+        }
+        .ant-calendar-range-picker-separator{
+          position: absolute;
+          left: 84px;
+        }
+        .ant-calendar-picker-icon{
+          margin-top: -5px;
+        }
       }
     }
   }

@@ -106,20 +106,19 @@ export default class IndicatorOverview extends PureComponent {
       saveIndcatorToHome,
     };
     const radarHide = _.isEmpty(indexData) || level === '1';
-    const overviewBoxSpan = radarHide ? '24' : '14';
+    const overviewBoxSpan = radarHide ? '24' : '13';
     const ulClass = classnames({
       [styles.content]: !radarHide,
       [styles.contentNoRadar]: radarHide,
     });
     return (
       <div className={styles.overviewBox}>
-        <Row>
+        <Row gutter={10}>
           <Col span={overviewBoxSpan}>
             <div className={styles.overview}>
               <div className={styles.titleDv}>
                 <Button
-                  type="primary"
-                  ghost className={styles.btn_r}
+                  className={styles.btn_r}
                   onClick={this.showModal}
                 >
                   <Icon type="jia" />
@@ -159,7 +158,7 @@ export default class IndicatorOverview extends PureComponent {
                       <span>{overviewData[selectIndex].description}</span>
                     </p>
                   :
-                    ''
+                    null
                 }
               </div>
             </div>
@@ -168,7 +167,7 @@ export default class IndicatorOverview extends PureComponent {
             radarHide
             ? null
             : (
-              <Col span="10">
+              <Col span="11">
                 <ChartRadar
                   radarData={indexData.data}
                   total={indexData.scopeNum}

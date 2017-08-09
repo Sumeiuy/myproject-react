@@ -5,7 +5,6 @@ import PublishConfirmModal from './PublishConfirmModal';
 import CreateHistoryBoardModal from './CreateHistoryBoardModal';
 import DeleteHistoryBoardModal from './DeleteHistoryBoardModal';
 import SelectTreeModal from './SelectTreeModal';
-import BackHistoryBoardModal from './BackHistoryBoardModal';
 
 export default {
   BackConfirmModal,
@@ -15,5 +14,4 @@ export default {
   CreateHistoryBoardModal,
   DeleteHistoryBoardModal,
   SelectTreeModal,
-  BackHistoryBoardModal,
 };

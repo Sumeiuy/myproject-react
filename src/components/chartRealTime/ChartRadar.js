@@ -55,44 +55,79 @@ export default class ChartRadar extends PureComponent {
   }
 
   @autobind
+  optimizeIndicator(current, previous, scopeNum) {
+    let max = 0;
+    let min = 0;
+    const currMax = Math.max(...current);
+    const currMin = Math.min(...current);
+    const prevMax = Math.max(...previous);
+    const prevMin = Math.min(...previous);
+    max = currMax > prevMax ? currMax : prevMax;
+    min = currMin < prevMin ? currMin : prevMin;
+    if ((max + 3) > scopeNum) {
+      max = scopeNum;
+    } else {
+      max += 3;
+    }
+    min -= 3;
+    return {
+      max,
+      min,
+    };
+  }
+
+  @autobind
   createOption(scopeNum, data) {
     const indicatorData = [];// name
     const period = []; // 本期数据值
     const PreviousPeriod = []; // 上期
-    // const realPeriod = []; // 本期真实数据
-    // const realPrevious = []; // 上期真实数据
+    const currentV = [];
+    const previous = [];
+    let indicatorMax = 0;
+    let indicatorMin = 0;
     _.each(data, (item) => {
-      const { indicator_name: name, rank_current: current, rank_contrast: contrast } = item;
-      indicatorData.push({ name, max: scopeNum });
+      const { rank_current: current, rank_contrast: contrast } = item;
+      currentV.push(current);
       period.push(scopeNum - current);
-      // realPeriod.push(current);
+      previous.push(contrast);
       PreviousPeriod.push(scopeNum - contrast);
-      // realPrevious.push(contrast);
+    });
+    const indicator = this.optimizeIndicator(currentV, previous, scopeNum);
+    indicatorMax = indicator.max;
+    indicatorMin = indicator.min;
+    _.each(data, (item) => {
+      const { indicator_name: name } = item;
+      indicatorData.push({
+        name,
+        min: (scopeNum - indicatorMax),
+        max: (scopeNum - indicatorMin),
+      });
     });
     const options = {
       title: {
         show: false,
         text: '指示分析',
       },
-      gird: { x: '7%', y: '7%', width: '38%', height: '38%' },
       legend: {
         data: [
           { name: '本期', icon: 'square' },
           { name: '上期', icon: 'square' },
         ],
         bottom: 0,
-        left: '10%',
+        left: '60px',
         itemGap: 20,
       },
       radar: {
+        radius: '75%',
         shape: 'circle',
         splitNumber: 6,
-        center: ['50%', '45%'],
+        center: ['50%', '50%'],
         name: {
           textStyle: {
             color: '#666666',
           },
         },
+        nameGap: '6',
         splitLine: {
           lineStyle: {
             color: [
@@ -136,6 +171,7 @@ export default class ChartRadar extends PureComponent {
             label: {
               normal: {
                 show: true,
+                position: 'top',
                 formatter(p) {
                   return scopeNum - p.value;
                 },
@@ -150,6 +186,7 @@ export default class ChartRadar extends PureComponent {
             name: '上期',
             areaStyle: {
               normal: {
+                left: '10px',
                 color: 'rgba( 117, 111, 184, 0.2 )',
               },
             },
@@ -165,6 +202,7 @@ export default class ChartRadar extends PureComponent {
             label: {
               normal: {
                 show: true,
+                position: 'bottom',
                 formatter(p) {
                   return scopeNum - p.value;
                 },
@@ -187,22 +225,6 @@ export default class ChartRadar extends PureComponent {
     });
   }
 
-  // @autobind
-  // labelShow(params) {
-  //   // const { selectIndex } = this.state;
-  //   // const { indexData } = this.props;
-  //   // const current = indexData.data[selectIndex].rank_current;
-  //   // const contrast = indexData.data[selectIndex].rank_contrast;
-  //   // const dataMode = [current, contrast]; // 选中项的排名
-  //   // const dataIndex = params.dataIndex; // 图标数据下标 本期、上期
-  //   // const preValue = params.value; // 当先图标数值
-  //   // const gcount = indexData.scopeNum; // 总公司数
-  //   // if (preValue === (gcount - dataMode[dataIndex])) {
-  //   //   return dataMode[dataIndex];
-  //   // }
-  //   // return '';
-  // }
-
   render() {
     const { radarData, total, selectCore, localScope } = this.props;
     if (localScope === '1') {
@@ -219,7 +241,7 @@ export default class ChartRadar extends PureComponent {
             resizable
             onReady={this.radarOnReady}
             style={{
-              height: '380px',
+              height: '320px',
             }}
           />
         </div>

@@ -160,7 +160,13 @@ const helper = {
           // 计算小数部分长度
           // 如果有小数，小数部分取 依据 长度减整数部分长度
           if (arr[1]) {
-            arr[1] = arr[1].substr(0, 2);
+            const allLength = arr[0].length + arr[1].length;
+            if (allLength >= per) {
+              const floatIndex = allLength - per;
+              arr[1] = arr[1].substr(0, floatIndex);
+            } else {
+              arr[1] = arr[1].substr(0, 2);
+            }
           }
           obj.value = arr.join('.');
           obj.unit = unit;
@@ -356,12 +362,12 @@ const helper = {
     } else if (duration === 'year' || duration === 'lastYear') {
       tempDuration = 'year';
     } else {
-      tempDuration = 'null';
+      tempDuration = null;
     }
     let lastBeginMoment;
     let lastEndMoment;
     let lastDurationStr;
-    if (tempDuration !== 'null') {
+    if (tempDuration) {
       lastBeginMoment = moment(begin).subtract(1, tempDuration);
       lastEndMoment = moment(end).subtract(1, tempDuration);
       lastDurationStr = `${lastBeginMoment.format('YYYY/MM/DD')}-${lastEndMoment.format('YYYY/MM/DD')}`;

@@ -51,7 +51,7 @@ export const constructPolyChartOptions = (option = {}) => {
     grid: {
       top: '20px',
       left: '20px',
-      right: '40px',
+      right: '80px',
       bottom: '40px',
       containLabel: true,
     },
@@ -67,7 +67,7 @@ export const constructPolyChartOptions = (option = {}) => {
         },
         axisLabel: {
           textStyle: {
-            color: '#777777',
+            color: '#a1a1a1',
             fontSize: 12,
             // align: 'left',
           },
@@ -93,7 +93,7 @@ export const constructPolyChartOptions = (option = {}) => {
         // },
         axisLabel: {
           textStyle: {
-            color: '#777777',
+            color: '#a1a1a1',
             fontSize: 12,
           },
           margin: 15,

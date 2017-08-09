@@ -1,6 +1,6 @@
 .abilityScatterAnalysis {
   .abilityScatter {
-    height: 360px;
+    height: 400px;
     min-width: 360px;
     position: relative;
   }
@@ -9,11 +9,13 @@
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
+    height: 44px;
+    line-height: 44px;
     min-width: 200px;
     & > .customerDimensionSelect {
       max-width: 90px;
       text-align: center;
-      :global { 
+      :global {
         & .ant-select-selection-selected-value {
           text-overflow: ellipsis;
           white-space: nowrap;
@@ -26,8 +28,8 @@
     & > .title {
       padding-left: 10px;
       padding-right: 10px;
-      font-size: 18px;
-      color: #666;
+      font-size: 14px;
+      color: #333;
     }
     & > .compare {
       padding-right: 10px;
@@ -52,6 +54,26 @@
     bottom: 0;
     font-size: 12px;
     color: #666;
+  }
+  & > .averageDescription {
+    padding-left: 10px;
+    width: 90%;
+    overflow: hidden;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding-bottom: 10px;
+    & > .averageIcon {
+      color: #ffcb77;
+      border-bottom: 1px solid #ffcb77;
+      width: 20px;
+    }
+    & > .averageInfo {
+      font-size: 12px;
+      color: #666;
+      padding-left: 10px;
+      margin-left: -5px;
+    }
   }
   & > .description {
     padding-left: 15px;

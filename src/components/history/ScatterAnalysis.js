@@ -20,6 +20,7 @@ export default class ScatterAnalysis extends PureComponent {
     cust: PropTypes.array.isRequired,
     invest: PropTypes.array.isRequired,
     swtichDefault: PropTypes.string.isRequired,
+    location: PropTypes.object.isRequired,
   };
 
   static defaultProps = {
@@ -33,10 +34,12 @@ export default class ScatterAnalysis extends PureComponent {
       cust,
       invest,
       swtichDefault,
+      location: { query: { boardType } },
     } = this.props;
     if (_.isEmpty(cust) || _.isEmpty(invest)) {
       return null;
     }
+
     return (
       <div className={styles.scatterSection}>
         <Row type="flex">
@@ -46,6 +49,7 @@ export default class ScatterAnalysis extends PureComponent {
               queryContrastAnalyze={queryContrastAnalyze}
               title={custScatter.title}
               optionsData={cust}
+              description={'客户贡献'}
               type={custScatter.type}
               swtichDefault={swtichDefault}
               style={{
@@ -53,19 +57,25 @@ export default class ScatterAnalysis extends PureComponent {
               }}
             />
           </Col>
-          <Col span={12} className={styles.rightScatterSection}>
-            <AbilityScatterAnalysis
-              data={reviewAnalysisData}
-              queryContrastAnalyze={queryContrastAnalyze}
-              title={investScatter.title}
-              optionsData={invest}
-              type={investScatter.type}
-              swtichDefault={swtichDefault}
-              style={{
-                left: '-45px',
-              }}
-            />
-          </Col>
+          {
+            // 经营绩效不展示投顾维度散点图
+            boardType === 'TYPE_LSDB_JYYJ'
+              ? null :
+              <Col span={12} className={styles.rightScatterSection}>
+                <AbilityScatterAnalysis
+                  data={reviewAnalysisData}
+                  queryContrastAnalyze={queryContrastAnalyze}
+                  title={investScatter.title}
+                  optionsData={invest}
+                  description={'服务经理'}
+                  type={investScatter.type}
+                  swtichDefault={swtichDefault}
+                  style={{
+                    left: '-45px',
+                  }}
+                />
+              </Col>
+          }
         </Row>
       </div>
     );

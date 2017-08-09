@@ -188,7 +188,7 @@ export default class BoardSelectTree extends PureComponent {
       boardType,
       showTitle,
       checkedOrSelected: false,
-      length: 0,
+      length: checkedKeys.length,
     };
   }
 
@@ -475,6 +475,7 @@ export default class BoardSelectTree extends PureComponent {
       checkedOrSelected,
       boardType,
     } = this.state;
+    const { lengthLimit } = this.props;
     const treeNodeHtml = getTreeNode(checkTreeArr, showThirdColumn);
     // 组成分类下面的父指标的说明文字
     let description = '';
@@ -488,19 +489,24 @@ export default class BoardSelectTree extends PureComponent {
       // 树结构整体
       <div className={styles.treeBody}>
         {/* 树结构总标题 */}
-        <div className={styles.treeTitle}>
-          <h2 className={styles[`treeTitle${type}`]}>
-            {boardKeyName[type].name}
-            <Tooltip
-              placement="topLeft"
-              title={boardKeyName[type].title}
-              overlayClassName="visibleRangeToolTip"
-              getPopupContainer={this.getTooltipContainer}
-            >
-              <span className={styles.treeTitleSpan} />
-            </Tooltip>
-          </h2>
-        </div>
+        {
+          lengthLimit ?
+            null
+          :
+            <div className={styles.treeTitle}>
+              <h2 className={styles[`treeTitle${type}`]}>
+                {boardKeyName[type].name}
+                <Tooltip
+                  placement="topLeft"
+                  title={boardKeyName[type].title}
+                  overlayClassName="visibleRangeToolTip"
+                  getPopupContainer={this.getTooltipContainer}
+                >
+                  <span className={styles.treeTitleSpan} />
+                </Tooltip>
+              </h2>
+            </div>
+        }
         {/* 树结构主干布局 */}
         <div className={styles.treeMain}>
           {/* 树结构左边部分 */}
@@ -532,7 +538,7 @@ export default class BoardSelectTree extends PureComponent {
                     <div />
                   </div>
                 :
-                  ''
+                  null
               }
             </div>
           </div>
@@ -562,7 +568,7 @@ export default class BoardSelectTree extends PureComponent {
                           showTitle ?
                             <h3>{item.name}</h3>
                           :
-                            ''
+                            null
                         }
                         {
                           <MoveContainer
@@ -575,7 +581,7 @@ export default class BoardSelectTree extends PureComponent {
                         }
                       </div>
                     :
-                      ''
+                      null
                   ))
               }
             </div>
@@ -596,11 +602,11 @@ export default class BoardSelectTree extends PureComponent {
                       当前所选为汇总指标，包含以下子项目：{description}
                     </h4>
                   :
-                    ''
+                    null
                 }
               </div>
             :
-              ''
+              null
           }
         </div>
       </div>

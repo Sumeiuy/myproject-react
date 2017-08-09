@@ -36,7 +36,7 @@ export const constructScatterOptions = (option = {}) => {
 
   const scatterOptions = {
     grid: [
-      { left: '12%', top: '10%', right: '40px', bottom: '40px' },
+      { left: '12%', top: '10%', right: '80px', bottom: '40px' },
       { x2: '10%', y2: '10%', width: '80%', height: '90%' },
     ],
     tooltip: {
