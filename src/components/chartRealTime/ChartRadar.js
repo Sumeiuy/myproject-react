@@ -108,7 +108,6 @@ export default class ChartRadar extends PureComponent {
         show: false,
         text: '指示分析',
       },
-      gird: { x: '7%', y: '0', width: '38%', height: '38%' },
       legend: {
         data: [
           { name: '本期', icon: 'square' },
@@ -119,14 +118,16 @@ export default class ChartRadar extends PureComponent {
         itemGap: 20,
       },
       radar: {
+        radius: '75%',
         shape: 'circle',
         splitNumber: 6,
-        center: ['50%', '45%'],
+        center: ['50%', '50%'],
         name: {
           textStyle: {
             color: '#666666',
           },
         },
+        nameGap: '6',
         splitLine: {
           lineStyle: {
             color: [
@@ -224,22 +225,6 @@ export default class ChartRadar extends PureComponent {
     });
   }
 
-  // @autobind
-  // labelShow(params) {
-  //   // const { selectIndex } = this.state;
-  //   // const { indexData } = this.props;
-  //   // const current = indexData.data[selectIndex].rank_current;
-  //   // const contrast = indexData.data[selectIndex].rank_contrast;
-  //   // const dataMode = [current, contrast]; // 选中项的排名
-  //   // const dataIndex = params.dataIndex; // 图标数据下标 本期、上期
-  //   // const preValue = params.value; // 当先图标数值
-  //   // const gcount = indexData.scopeNum; // 总公司数
-  //   // if (preValue === (gcount - dataMode[dataIndex])) {
-  //   //   return dataMode[dataIndex];
-  //   // }
-  //   // return '';
-  // }
-
   render() {
     const { radarData, total, selectCore, localScope } = this.props;
     if (localScope === '1') {
@@ -256,7 +241,7 @@ export default class ChartRadar extends PureComponent {
             resizable
             onReady={this.radarOnReady}
             style={{
-              height: '380px',
+              height: '320px',
             }}
           />
         </div>
