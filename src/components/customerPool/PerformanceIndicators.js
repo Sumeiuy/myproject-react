@@ -12,11 +12,14 @@ import Icon from '../../components/common/Icon';
 import CustomerService from './CustomerService';
 import ProductSales from './ProductSales';
 import TradingVolume from './TradingVolume';
+import CustomerIndicators from './CustomerIndicators';
+import BusinessProcessing from './BusinessProcessing';
 import Income from './Income';
 import CustRange from './CustRange';
 import styles from './performanceIndicators.less';
 
 const Option = Select.Option;
+let KEYCOUNT = 0;
 export default class PerformanceIndicators extends PureComponent {
   static propTypes = {
     indicators: PropTypes.object,
@@ -26,6 +29,8 @@ export default class PerformanceIndicators extends PureComponent {
     updateQueryState: PropTypes.func.isRequired,
     collectCustRange: PropTypes.func.isRequired,
     cycle: PropTypes.array,
+    expandAll: PropTypes.bool,
+    selectValue: PropTypes.string,
   }
 
   static defaultProps = {
@@ -33,22 +38,23 @@ export default class PerformanceIndicators extends PureComponent {
     customersData: [],
     custRange: [],
     cycle: [],
+    expandAll: false,
+    selectValue: '',
   }
 
   constructor(props) {
     super(props);
-    const { cycle } = props;
     this.state = {
-      defaultSelectValue: _.isEmpty(cycle) ? '' : cycle[0].key,
+      key: KEYCOUNT,
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    const { cycle: preCycle } = this.props;
-    const { cycle: nextCycle } = nextProps;
-    if (preCycle !== nextCycle) {
+    const { custRange: preCustRange } = this.props;
+    const { custRange: nextCustRange } = nextProps;
+    if (!_.isEqual(preCustRange, nextCustRange)) {
       this.setState({
-        defaultSelectValue: nextCycle[0].key,
+        key: ++KEYCOUNT,
       });
     }
   }
@@ -57,7 +63,7 @@ export default class PerformanceIndicators extends PureComponent {
   handleChange(value) {
     const { updateQueryState } = this.props;
     updateQueryState({
-      cycle: value,
+      cycleSelect: value,
     });
   }
 
@@ -69,13 +75,17 @@ export default class PerformanceIndicators extends PureComponent {
       updateQueryState,
       collectCustRange,
       cycle,
+      expandAll,
+      selectValue,
     } = this.props;
     const {
       cftCust,
       // dateType,
       finaTranAmt,
       fundTranAmt,
-      hkCust,
+      // hkCust,
+      szHkCust,
+      shHkCust,
       newProdCust,
       optCust,
       otcTranAmt,
@@ -96,10 +106,30 @@ export default class PerformanceIndicators extends PureComponent {
       taskCust,
       totCust,
     } = indicators;
-    const tradingVolume = { purAddCustaset, purRakeGjpdt, tranAmtBasicpdt, tranAmtTotpdt };
+    const tradingVolume = {
+      purAddCustaset,
+      purRakeGjpdt,
+      tranAmtBasicpdt,
+      tranAmtTotpdt,
+    };
     const productSalesData = { fundTranAmt, privateTranAmt, finaTranAmt, otcTranAmt };
     const customerServiceData = { motOkMnt, motTotMnt, taskCust, totCust };
-    const { defaultSelectValue } = this.state;
+    const customerIndicators = {
+      totCust,
+      purAddCust,
+      purAddNoretailcust,
+      purAddHighprodcust,
+      newProdCust,
+    };
+    const businessProcessing = {
+      cftCust,
+      ttfCust,
+      rzrqCust,
+      shHkCust,
+      szHkCust,
+      optCust,
+    };
+    const { key } = this.state;
     return (
       <div className={styles.indexBox}>
         <div>
@@ -108,101 +138,48 @@ export default class PerformanceIndicators extends PureComponent {
             <div className={styles.timeBox}>
               <Icon type="kehu" />
               {
-                custRange ?
+                !_.isEmpty(custRange) ?
                   <CustRange
                     custRange={custRange}
                     location={location}
                     replace={replace}
                     updateQueryState={updateQueryState}
                     collectData={collectCustRange}
+                    expandAll={expandAll}
+                    key={`selectTree${key}`}
                   /> :
-                  null
+                  <Select
+                    style={{ width: 120, color: '#CCC' }}
+                    defaultValue="暂无数据"
+                    key="seletTreeNull"
+                  >
+                    <Option value="暂无数据">暂无数据</Option>
+                  </Select>
               }
               <i className={styles.bd} />
               <Icon type="rili" />
-              {
-                defaultSelectValue ? <Select
-                  style={{ width: 80 }}
-                  defaultValue={defaultSelectValue}
-                  onChange={this.handleChange}
-                >
-                  {cycle.map(item => <Option key={item.key} value={item.key}>{item.value}</Option>)}
-                </Select> :
-                <Select
-                  style={{ width: 80, color: '#CCC' }}
-                  defaultValue="暂无数据"
-                >
-                  <Option value="暂无数据">暂无数据</Option>
-                </Select>
-              }
+              <Select
+                style={{ width: 80 }}
+                value={selectValue}
+                onChange={this.handleChange}
+                key="dateSelect"
+              >
+                {cycle.map(item =>
+                  <Option key={item.key} value={item.key}>{item.value}</Option>)}
+              </Select>
             </div>
           </div>
           <div className={`${styles.listItem} ${styles.firstListItem}`}>
             <Row gutter={16}>
               <Col span={8}>
-                <div className={styles.indexItemBox}>
-                  <div className={styles.inner}>
-                    <div className={styles.title}>
-                      <Icon type="kehuzhibiao" />客户指标（人）
-                      <div className={styles.rightInfo}>
-                        客户总数：<span>{346}</span>
-                      </div>
-                    </div>
-                    <div className={styles.content}>
-                      <ul>
-                        <li>
-                          <p>{purAddCust || '--'} </p>
-                          <div>净新增有效户</div>
-                        </li>
-                        <li>
-                          <p>{purAddNoretailcust || '--'} </p>
-                          <div>净新增非零售客户</div>
-                        </li>
-                        <li>
-                          <p>{purAddHighprodcust || '--'} </p>
-                          <div>净新增高端产品户</div>
-                        </li>
-                        <li>
-                          <p>{newProdCust || '--'} </p>
-                          <div>新增产品客户</div>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
+                <CustomerIndicators
+                  data={customerIndicators}
+                />
               </Col>
               <Col span={8}>
-                <div className={styles.indexItemBox}>
-                  <div className={styles.inner}>
-                    <div className={styles.title}>
-                      <Icon type="yewubanli" />业务办理（人）
-                    </div>
-                    <div className={`${styles.content} ${styles.ywContent}`}>
-                      <ul>
-                        <li>
-                          <p>{cftCust || '--'}</p>
-                          <div>涨乐财富通</div>
-                        </li>
-                        <li>
-                          <p>{ttfCust || '--'}</p>
-                          <div>天天发</div>
-                        </li>
-                        <li>
-                          <p>{rzrqCust || '--'}</p>
-                          <div>融资融券</div>
-                        </li>
-                        <li>
-                          <p>{hkCust || '--'}</p>
-                          <div>港股通</div>
-                        </li>
-                        <li>
-                          <p>{optCust || '--'}</p>
-                          <div>期权</div>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
+                <BusinessProcessing
+                  data={businessProcessing}
+                />
               </Col>
               <Col span={8}>
                 <TradingVolume

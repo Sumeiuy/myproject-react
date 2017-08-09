@@ -5,11 +5,13 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-// import _ from 'lodash';
-// import { autobind } from 'core-decorators';
+import _ from 'lodash';
+import { autobind } from 'core-decorators';
 import Icon from '../../components/common/Icon';
 import styles from './performanceIndicators.less';
 
+const MILLION = '万';
+const BILLION = '亿';
 export default class TradingVolume extends PureComponent {
   static propTypes = {
     data: PropTypes.object,
@@ -19,15 +21,53 @@ export default class TradingVolume extends PureComponent {
     data: {},
   }
 
-  numFormat(num) {
-    // 默认传递的数字至少都在万元以上
-    let unit = '万元';
-    let newNum = num;
-    if (newNum !== '--') {
+  constructor(props) {
+    super(props);
+    this.state = {
+      unit: MILLION,
+    };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { data: preData } = this.props;
+    const { data: nextData } = nextProps;
+    const { purAddCustaset: prePurAddCustaset } = preData;
+    const { purAddCustaset: nextPurAddCustaset,
+      purRakeGjpdt, tranAmtBasicpdt, tranAmtTotpdt } = nextData;
+    if (prePurAddCustaset !== nextPurAddCustaset) {
+      const data = [nextPurAddCustaset, purRakeGjpdt, tranAmtBasicpdt, tranAmtTotpdt];
+      this.setState({
+        unit: this.basicUnit(data),
+      });
+    }
+  }
+
+  // 计算基本单位
+  @autobind
+  basicUnit(data) {
+    let unit = MILLION;
+    if (!_.isEmpty(data) && data.length > 0) {
+      const newNum = Math.max(...data);
       // 超过1亿
-      if (newNum >= 10000) {
+      if (newNum >= 100000000) {
+        unit = BILLION;
+      }
+    }
+    return unit;
+  }
+
+  @autobind
+  numFormat(num) {
+    const { unit } = this.state;
+    let newNum;
+    if (num !== '--') {
+      if (num === '0') {
+        return '0';
+      }
+      newNum = num / 10000;
+      // 超过1亿
+      if (unit === BILLION) {
         newNum /= 10000;
-        unit = '亿元';
       }
       if (newNum > 1000 || newNum < -1000) {
         newNum = parseFloat(newNum).toFixed(1);
@@ -35,17 +75,10 @@ export default class TradingVolume extends PureComponent {
         newNum = parseFloat(newNum).toFixed(2);
       }
       return (
-        <div className="numLabel">
-          {newNum}
-          <span className="unit">{unit}</span>
-        </div>
+        { newNum }
       );
     }
-    return (
-      <div className="numLabel">
-        {'--'}
-      </div>
-    );
+    return '--';
   }
 
   render() {
@@ -56,28 +89,29 @@ export default class TradingVolume extends PureComponent {
       tranAmtBasicpdt,
       tranAmtTotpdt,
     } = data;
+    const { unit } = this.state;
     return (
       <div className={styles.indexItemBox}>
         <div className={styles.inner}>
           <div className={styles.title}>
-            <Icon type="jiaoyiliang" />交易量（万）
+            <Icon type="jiaoyiliang" />交易量（{unit}元）
                     </div>
           <div className={`${styles.content} ${styles.jyContent}`}>
             <ul>
               <li>
-                <p>{purAddCustaset || '--'}</p>
+                <p>{this.numFormat(purAddCustaset || '--')}</p>
                 <div>净新增客户资产</div>
               </li>
               <li>
-                <p>{tranAmtBasicpdt || '--'}</p>
+                <p>{this.numFormat(tranAmtBasicpdt || '--')}</p>
                 <div>累计基础交易量</div>
               </li>
               <li>
-                <p>{tranAmtTotpdt || '--'}</p>
+                <p>{this.numFormat(tranAmtTotpdt || '--')}</p>
                 <div>累计综合交易量</div>
               </li>
               <li>
-                <p>{purRakeGjpdt || '--'}</p>
+                <p>{this.numFormat(purRakeGjpdt || '--')}</p>
                 <div>股基累计净佣金</div>
               </li>
             </ul>

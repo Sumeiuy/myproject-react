@@ -5,6 +5,6 @@ exports.response = function (req, res) {
   return {
     "code": "0",
     "msg": "OK",
-    "resultData": '20'
+    "resultData": 20
   }
 }

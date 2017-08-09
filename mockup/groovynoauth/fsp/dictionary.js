@@ -6,18 +6,18 @@ exports.response = function (req, res) {
     "code": "0",
     "msg": "OK",
     "resultData": {
-      "kPIDataScopeType": [
+      "kPIDateScopeType": [
         {
           "key": "518005",
-          "value": "按年",
+          "value": "本年",
         },
         {
           "key": "518004",
-          "value": "按季度",
+          "value": "本季",
         },
         {
           "key": "518003",
-          "value": "按月",
+          "value": "本月",
         }
       ]
     }

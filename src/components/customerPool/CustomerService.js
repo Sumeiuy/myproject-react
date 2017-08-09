@@ -20,25 +20,19 @@ export default class CustomerService extends PureComponent {
     data: {},
   }
 
-  constructor(props) {
-    super(props);
-    console.log(props);
-  }
-
-  componentWillMount() {
-  }
-
-  componentWillReceiveProps(nextProps) {
-    console.log(nextProps);
-  }
-
   // 创建option
   createOption(okData, toData) {
     let data = 0;
     let rest = 0;
-    if (!_.isEmpty(okData) && !_.isEmpty(toData)) {
-      data = (okData / toData) * 100;
-      rest = ((toData - okData) / toData) * 100;
+    let dataName = '';
+    if (!_.isEmpty(okData) && !_.isEmpty(toData) && parseInt(toData, 10) > 0) {
+      data = (parseInt(okData, 10) / parseInt(toData, 10)) * 100;
+      rest = ((parseInt(toData, 10) - parseInt(okData, 10)) / parseInt(toData, 10)) * 100;
+      dataName = `${data}%`;
+    } else {
+      data = 0;
+      rest = 100;
+      dataName = '暂无数据';
     }
     const options = {
       series: [{
@@ -61,7 +55,7 @@ export default class CustomerService extends PureComponent {
         selectedOffset: 4,
         data: [{
           value: data,
-          name: `${data}%`,
+          name: dataName,
         },
         {
           value: rest,

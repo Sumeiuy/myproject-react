@@ -18,8 +18,7 @@ export default {
     cycle: [],
     position: {},
     process: 0,
-    empInfo: {},
-    motTaskCount: '',
+    motTaskCount: 0,
   },
   subscriptions: {},
   effects: {
@@ -28,14 +27,6 @@ export default {
       yield put({
         type: 'getToDoListSuccess',
         payload: response,
-      });
-    },
-    // 获取员工职责与职位
-    * getEmpInfo({ payload }, { call, put }) {
-      const resultData = yield call(api.getEmpInfo);
-      yield put({
-        type: 'getEmpInfoSuccess',
-        response: resultData,
       });
     },
     // 获取客户范围
@@ -56,20 +47,15 @@ export default {
       });
     },
     // 初始化获取数据
-    * getAllInfo({ payload }, { call, put, select }) {
-      const cycle = yield select(state => state.customerPool.cycle);
-      let firstCycle;
-      if (cycle.length) {
-        firstCycle = cycle;
-      } else {
-        // 统计周期
-        const statisticalPeriod = yield call(api.getStatisticalPeriod);
-        yield put({
-          type: 'getStatisticalPeriodSuccess',
-          payload: { statisticalPeriod },
-        });
-        firstCycle = statisticalPeriod.resultData.kPIDateScopeType;
-      }
+    * getAllInfo({ payload }, { call, put }) {
+      // 统计周期
+      const statisticalPeriod = yield call(api.getStatisticalPeriod);
+      // debugger;
+      yield put({
+        type: 'getStatisticalPeriodSuccess',
+        payload: { statisticalPeriod },
+      });
+      const firstCycle = statisticalPeriod.resultData.kPIDateScopeType;
       // debugger;
       // 代办流程(首页总数)
       const agentProcess = yield call(api.getWorkFlowTaskCount);
@@ -156,14 +142,6 @@ export default {
         custRange,
       };
     },
-    // 获取员工职责与职位
-    getEmpInfoSuccess(state, action) {
-      const { response: { resultData } } = action;
-      return {
-        ...state,
-        empInfo: resultData,
-      };
-    },
     // 绩效指标
     getPerformanceIndicatorsSuccess(state, action) {
       const { payload: { indicators } } = action;
@@ -176,7 +154,7 @@ export default {
     // 统计周期
     getStatisticalPeriodSuccess(state, action) {
       const { payload: { statisticalPeriod } } = action;
-      const cycle = statisticalPeriod.resultData.kPIDataScopeType;
+      const cycle = statisticalPeriod.resultData.kPIDateScopeType;
       return {
         ...state,
         cycle,
