@@ -124,7 +124,7 @@ export default class SelectTreeModal extends PureComponent {
                 saveIndcator={this.saveIndcator}
               />
             :
-              ''
+              null
           }
         </Modal>
       :

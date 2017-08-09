@@ -26,6 +26,22 @@
     .treeMainLeft{
       display: flex;
       flex-direction: normal;
+      :global{
+        .ant-tree-noline_open{
+          &:after{
+            content: "\E6C1" !important;
+            font-size: 26px !important;
+            color: #108ee9;
+          }
+        }
+        .ant-tree-noline_close{
+          &:after{
+            content: "\E6C0" !important;
+            font-size: 26px !important;
+            color: #108ee9;
+          }
+        }
+      }
       // -webkit-box-orient: horizontal;
       .treeMainLeftContentTYPE_TGJXsummury,
       .treeMainLeftContentTYPE_TGJXdetail,
@@ -138,7 +154,7 @@
     }
     .ant-tree li span.ant-tree-switcher, .ant-tree li span.ant-tree-iconEle{
       width: 30px;
-      margin-left: 15px;
+      margin: 2px 0 0 15px;
     }
     .ant-tree li span.ant-tree-switcher.ant-tree-roots_open:after,
     .ant-tree li span.ant-tree-switcher.ant-tree-center_open:after,
