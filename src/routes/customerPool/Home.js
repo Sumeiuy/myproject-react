@@ -132,6 +132,9 @@ export default class Home extends PureComponent {
     const { getPerformanceIndicators, custRange } = this.props;
     const { orgId, cycleSelect } = this.state;
     let custType = ORG;
+    if (custRange.length < 1) {
+      return null;
+    }
     if (orgId === custRange[0].id) { // 判断客户范围类型
       custType = ORG;
     } else {
@@ -142,6 +145,7 @@ export default class Home extends PureComponent {
       dateType: cycleSelect, // 周期类型
       orgId, // 组织ID
     });
+    return null;
   }
 
   @autobind
@@ -149,7 +153,7 @@ export default class Home extends PureComponent {
     const { getAllInfo, cycle } = this.props;
     const { orgId } = this.state;
     let custType = ORG;
-    const orgsId = !_.isEmpty(custRangeData[0]) ? custRangeData[0].id : '';
+    const orgsId = custRangeData.length > 0 ? custRangeData[0].id : '';
     if (orgId === orgsId) { // 判断客户范围类型
       custType = ORG;
     } else {
@@ -159,7 +163,7 @@ export default class Home extends PureComponent {
       custType = CUST_MANAGER;
     }
     this.setState({
-      cycleSelect: _.isEmpty(cycle[0]) ? '' : cycle[0].key,
+      cycleSelect: cycle.length > 0 ? cycle[0].key : '',
     });
     getAllInfo({
       request: {
