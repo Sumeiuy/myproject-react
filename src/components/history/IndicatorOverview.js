@@ -118,8 +118,7 @@ export default class IndicatorOverview extends PureComponent {
             <div className={styles.overview}>
               <div className={styles.titleDv}>
                 <Button
-                  type="primary"
-                  ghost className={styles.btn_r}
+                  className={styles.btn_r}
                   onClick={this.showModal}
                 >
                   <Icon type="jia" />

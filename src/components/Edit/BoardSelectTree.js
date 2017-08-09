@@ -119,7 +119,6 @@ export default class BoardSelectTree extends PureComponent {
   constructor(props) {
     super(props);
     const { data: { type, boardType, checkTreeArr, checkedKeys } } = props;
-    console.warn('checkedKeys', checkedKeys);
     let showThirdColumn = false;
     let showTitle = false;
     // 如果看板是 经营业绩 类型 并且 指标是 总量指标 类型
@@ -476,6 +475,7 @@ export default class BoardSelectTree extends PureComponent {
       checkedOrSelected,
       boardType,
     } = this.state;
+    const { lengthLimit } = this.props;
     const treeNodeHtml = getTreeNode(checkTreeArr, showThirdColumn);
     // 组成分类下面的父指标的说明文字
     let description = '';
@@ -489,19 +489,24 @@ export default class BoardSelectTree extends PureComponent {
       // 树结构整体
       <div className={styles.treeBody}>
         {/* 树结构总标题 */}
-        <div className={styles.treeTitle}>
-          <h2 className={styles[`treeTitle${type}`]}>
-            {boardKeyName[type].name}
-            <Tooltip
-              placement="topLeft"
-              title={boardKeyName[type].title}
-              overlayClassName="visibleRangeToolTip"
-              getPopupContainer={this.getTooltipContainer}
-            >
-              <span className={styles.treeTitleSpan} />
-            </Tooltip>
-          </h2>
-        </div>
+        {
+          lengthLimit ?
+            ''
+          :
+            <div className={styles.treeTitle}>
+              <h2 className={styles[`treeTitle${type}`]}>
+                {boardKeyName[type].name}
+                <Tooltip
+                  placement="topLeft"
+                  title={boardKeyName[type].title}
+                  overlayClassName="visibleRangeToolTip"
+                  getPopupContainer={this.getTooltipContainer}
+                >
+                  <span className={styles.treeTitleSpan} />
+                </Tooltip>
+              </h2>
+            </div>
+        }
         {/* 树结构主干布局 */}
         <div className={styles.treeMain}>
           {/* 树结构左边部分 */}

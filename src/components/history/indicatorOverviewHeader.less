@@ -7,7 +7,7 @@
   border-bottom: 1px solid #bfbfbf;
   box-sizing: border-box;
   .analyticalCaption{
-    width: 100%;
+    float: left;
     font-size: 14px;
     color: #333;
   }
@@ -21,6 +21,13 @@
       .ant-btn-background-ghost{
         border-color: #aaa;
         color: #aaa;
+        i{
+          vertical-align: middle;
+          &::before{
+            font-size: 15px;
+            vertical-align: middle;
+          }
+        }
       }
       .ant-btn-background-ghost.ant-btn-primary,
       .ant-btn:hover, .ant-btn:focus, .ant-btn:active, .ant-btn.active{

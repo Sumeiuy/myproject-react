@@ -9,7 +9,7 @@ import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import { Icon, Button } from 'antd';
 import _ from 'lodash';
-import { CreateHistoryBoardModal, DeleteHistoryBoardModal, BackHistoryBoardModal } from '../modals';
+import { CreateHistoryBoardModal, DeleteHistoryBoardModal } from '../modals';
 
 // import Icon from '../common/Icon';
 
@@ -32,15 +32,37 @@ export default class IndicatorOverviewHeader extends PureComponent {
     selectKeys: PropTypes.array.isRequired,
   }
 
+  static contextTypes = {
+    history: PropTypes.object.isRequired,
+  }
+
   constructor(props) {
     super(props);
     this.state = {
       createHistoryBoardModal: false,
       deleteHistoryBoardModal: false,
       saveHistoryBoardModal: false,
-      backHistoryBoardModal: false,
     };
   }
+
+  componentDidMount() {
+    const { history } = this.context;
+    this.removeHistoryListener = history.listenBefore(
+      () => {
+        if (!_.isEmpty(this.props.selectKeys)) {
+          return '您重新挑选的指标看板尚未保存，确认直接返回？';
+        }
+        return null;
+      },
+    );
+  }
+
+  componentWillUnmount() {
+    if (this.removeHistoryListener) {
+      this.removeHistoryListener();
+    }
+  }
+
 
   @autobind
   closeModal(modal) {
@@ -67,33 +89,39 @@ export default class IndicatorOverviewHeader extends PureComponent {
     this.openModal('deleteHistoryBoardModal');
   }
 
-  // 浏览器直接返回
-  @autobind
-  backHistoryBoardHandle() {
-    this.openModal('backHistoryBoardModal');
-  }
-
   @autobind
   saveHistoryBoardHandle() {
     const {
-      location: { query: { boardId } },
+      location: { query: { boardId, boardType } },
       updateBoardConfirm,
       ownerOrgId,
       selectKeys,
     } = this.props;
     // TODO 调用更新(保存)历史看板接口
-    updateBoardConfirm({
-      ownerOrgId,
-      boardId,
-      coreIndicator: selectKeys,
-      investContrastIndicator: ['tgInNum'],
-      custContrastIndicator: ['custNum'],
-    });
+    if (boardType === 'TYPE_LSDB_TGJX') {
+      updateBoardConfirm({
+        ownerOrgId,
+        boardId,
+        boardType,
+        coreIndicator: selectKeys,
+        investContrastIndicator: ['tgNum', 'tgInNum'],
+        custContrastIndicator: ['custNum', 'currSignCustNum'],
+      });
+    } else {
+      updateBoardConfirm({
+        ownerOrgId,
+        boardId,
+        boardType,
+        coreIndicator: selectKeys,
+        investContrastIndicator: ['custNum'],
+        custContrastIndicator: ['totCustNum', 'pCustNum', 'oCustNum', 'oNewCustNum', 'oNewPrdtCustNum', 'InminorCustNum'],
+      });
+    }
   }
 
 
   render() {
-    const { createHistoryBoardModal, deleteHistoryBoardModal, backHistoryBoardModal } = this.state;
+    const { createHistoryBoardModal, deleteHistoryBoardModal } = this.state;
     const {
       location: { query: { boardId, boardType } },
       createBoardConfirm,
@@ -126,13 +154,6 @@ export default class IndicatorOverviewHeader extends PureComponent {
       boardType,
     };
 
-    // 浏览器返回
-    const backHistoryBMProps = {
-      modalKey: 'backHistoryBoardModal',
-      modalCaption: '提示',
-      visible: backHistoryBoardModal,
-      closeModal: this.closeModal,
-    };
     const deleteBtnClass = classnames({
       [styles.deleteBtnUnshowClass]: boardId === TYPE_LSDB_TGJX || boardId === TYPE_LSDB_JYYJ,
     });
@@ -152,12 +173,11 @@ export default class IndicatorOverviewHeader extends PureComponent {
         <div className={styles.analyticalCaption}>核心指标</div>
         <div className={styles.overviewHeaderRight}>
           <Button
-            type="primary"
             ghost
             onClick={this.saveHistoryBoardHandle}
             className={updateBtnClass}
           >
-            <Icon type="delete" />
+            <Icon type="save" />
             保存
           </Button>
           <Button
@@ -165,7 +185,7 @@ export default class IndicatorOverviewHeader extends PureComponent {
             onClick={this.createHistoryBoardHandle}
             className={createBtnClass}
           >
-            <Icon type="delete" />
+            <Icon type="save" />
             另存为
           </Button>
           <CreateHistoryBoardModal
@@ -181,9 +201,6 @@ export default class IndicatorOverviewHeader extends PureComponent {
           </Button>
           <DeleteHistoryBoardModal
             {...deleteHistoryBMProps}
-          />
-          <BackHistoryBoardModal
-            {...backHistoryBMProps}
           />
         </div>
       </div>

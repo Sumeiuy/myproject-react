@@ -48,6 +48,8 @@ const config = {
     'user_id',
     'users',
   ],
+  // 发送profile_set的action名称
+  EVENT_PROFILE_ACTION: 'sendProfile',
 };
 
 export default config;

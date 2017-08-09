@@ -75,6 +75,7 @@ const chartOptions = {
   chartTooltip: {
     show: true,
     trigger: 'axis',
+    confine: true,
     axisPointer: {
       type: 'shadow',
     },
@@ -88,7 +89,7 @@ const chartOptions = {
       const vh = size.viewSize[1];
       let top = y - (ch / 2);
       if (y < ch) {
-        top = 0;
+        top = y + 30;
       } else if (y > (vh - ch)) {
         top = vh - ch;
       }
