@@ -47,6 +47,7 @@ export default class IndexItem extends PureComponent {
       itemData:
       { unit, value, name, parentName, incrementRate }, active } = this.props;
     const data = toUnit(value, unit, 5);
+    console.warn(`${value}--${unit}--5`, data);
     const IndexIcon = getIcon(unit);
     const newName = parentName ? `${parentName}-${name}` : name;
     return (

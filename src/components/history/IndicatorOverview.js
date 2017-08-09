@@ -158,7 +158,7 @@ export default class IndicatorOverview extends PureComponent {
                       <span>{overviewData[selectIndex].description}</span>
                     </p>
                   :
-                    ''
+                    null
                 }
               </div>
             </div>

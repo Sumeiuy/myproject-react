@@ -491,7 +491,7 @@ export default class BoardSelectTree extends PureComponent {
         {/* 树结构总标题 */}
         {
           lengthLimit ?
-            ''
+            null
           :
             <div className={styles.treeTitle}>
               <h2 className={styles[`treeTitle${type}`]}>
@@ -538,7 +538,7 @@ export default class BoardSelectTree extends PureComponent {
                     <div />
                   </div>
                 :
-                  ''
+                  null
               }
             </div>
           </div>
@@ -568,7 +568,7 @@ export default class BoardSelectTree extends PureComponent {
                           showTitle ?
                             <h3>{item.name}</h3>
                           :
-                            ''
+                            null
                         }
                         {
                           <MoveContainer
@@ -581,7 +581,7 @@ export default class BoardSelectTree extends PureComponent {
                         }
                       </div>
                     :
-                      ''
+                      null
                   ))
               }
             </div>
@@ -602,11 +602,11 @@ export default class BoardSelectTree extends PureComponent {
                       当前所选为汇总指标，包含以下子项目：{description}
                     </h4>
                   :
-                    ''
+                    null
                 }
               </div>
             :
-              ''
+              null
           }
         </div>
       </div>

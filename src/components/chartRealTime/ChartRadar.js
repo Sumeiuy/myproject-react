@@ -96,7 +96,7 @@ export default class ChartRadar extends PureComponent {
           { name: '上期', icon: 'square' },
         ],
         bottom: 0,
-        left: 0,
+        left: '60px',
         itemGap: 20,
       },
       radar: {

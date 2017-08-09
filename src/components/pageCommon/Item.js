@@ -37,7 +37,7 @@ export default class Item extends PureComponent {
         description ?
           <h4>{description}</h4>
         :
-          ''
+          null
       }
     </div>);
     return (
