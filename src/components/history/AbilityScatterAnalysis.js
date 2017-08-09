@@ -48,11 +48,6 @@ export default class AbilityScatterAnalysis extends PureComponent {
     };
   }
 
-  componentDidMount() {
-    const scatterElem = this.abilityScatterElem;
-    this.setHeight(scatterElem);
-  }
-
   componentWillReceiveProps(nextProps) {
     const { data: nextData, swtichDefault: newSwitch } = nextProps;
     const { data: prevData, swtichDefault: oldSwitch, description } = this.props;
@@ -105,44 +100,61 @@ export default class AbilityScatterAnalysis extends PureComponent {
    * @param {*} seriesData series数据
    */
   getAnyPoint(seriesData) {
-    const { xAxisMin, yAxisMin, yAxisMax, slope, xAxisMax } = seriesData;
-    const xPoint = (yAxisMax - yAxisMin) / slope;
+    const { xAxisMin, yAxisMin, yAxisMax, slope, xAxisMax, currentMax } = seriesData;
+    let compare;
+    let current;
 
     // 比较当前x轴是否比x轴最大值大
     // 小的话，则取当前值
     // 不然递归调用
-    if (xPoint > xAxisMax) {
-      if (yAxisMax / 1000 > 1 && yAxisMax !== 0) {
+    if (xAxisMax > yAxisMax) {
+      compare = yAxisMax;
+      current = currentMax || xAxisMax;
+    } else {
+      compare = xAxisMax;
+      current = currentMax || yAxisMax;
+    }
+    const point = (current - yAxisMin) / slope;
+
+    if (point > compare) {
+      if (current / 1000 > 1 && current !== 0) {
         this.getAnyPoint({
           ...seriesData,
-          yAxisMax: yAxisMax - 500,
+          currentMax: current - 500,
         });
         return false;
-      } else if (yAxisMax / 100 > 1 && yAxisMax !== 0) {
+      } else if (current / 100 > 1 && current !== 0) {
         this.getAnyPoint({
           ...seriesData,
-          yAxisMax: yAxisMax - 50,
+          currentMax: current - 50,
         });
         return false;
-      } else if (yAxisMax / 10 > 1 && yAxisMax !== 0) {
+      } else if (current / 10 > 1 && current !== 0) {
         this.getAnyPoint({
           ...seriesData,
-          yAxisMax: yAxisMax - 5,
+          currentMax: current - 5,
         });
         return false;
-      } else if (yAxisMax !== 0) {
+      } else if (current !== 0) {
         this.getAnyPoint({
           ...seriesData,
-          yAxisMax: yAxisMax - 1,
+          currentMax: current - 1,
         });
         return false;
       }
     }
 
+    let endCoord;
+    if (xAxisMax > yAxisMax) {
+      endCoord = [current, point];
+    } else {
+      endCoord = [point, current];
+    }
+
     const scatterOptions = constructScatterOptions({
       ...seriesData,
       startCoord: [xAxisMin, yAxisMin],
-      endCoord: [xPoint, yAxisMax],
+      endCoord,
     });
 
     this.setState({

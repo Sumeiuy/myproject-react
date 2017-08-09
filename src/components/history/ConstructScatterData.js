@@ -152,15 +152,23 @@ export const constructScatterData = (options = {}) => {
       //   yAxisMax,
       // } = xyAxisData;
       // return (yAxisMax - yAxisMin) / (xAxisMax - xAxisMin);
+
+      const { xAxisUnit, yAxisUnit } = unitInfo;
       const { value: xAxisTotalValue } = xAxisOption;
       const { value: yAxisTotalValue, unit: yAxisOriginUnit } = yAxisOption;
-      const xAxisFormatedValue = FixNumber.toFixedCust([Number(xAxisTotalValue)]).newSeries[0];
+      let xAxisFormatedValue;
+      if (xAxisUnit.indexOf('万') !== -1) {
+        xAxisFormatedValue = FixNumber.toFixedCust([Number(xAxisTotalValue)]).newSeries[0];
+      } else {
+        xAxisFormatedValue = Number(xAxisTotalValue);
+      }
+      // const xAxisFormatedValue = FixNumber.toFixedCust([Number(xAxisTotalValue)]).newSeries[0];
       const yAxisFormatedValue = constructHelper.formatDataSource(yAxisOriginUnit, yAxisTotalValue);
       console.log(yAxisFormatedValue / xAxisFormatedValue);
       const average = yAxisFormatedValue / xAxisFormatedValue;
       return {
         slope: average,
-        averageInfo: `平均每${description}${average.toFixed(2)}${unitInfo.yAxisUnit}/${unitInfo.xAxisUnit}`,
+        averageInfo: `平均每${description}${average.toFixed(2)}${yAxisUnit}/${xAxisUnit}`,
       };
     },
   };
