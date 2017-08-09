@@ -32,10 +32,10 @@ export default {
   reducers: {
     // 获取员工职责与职位
     getEmpInfoSuccess(state, action) {
-      const { payload: { resultData } } = action;
+      const { payload } = action;
       return {
         ...state,
-        empInfo: resultData,
+        empInfo: payload,
       };
     },
   },
