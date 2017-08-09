@@ -6,6 +6,7 @@
 
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
+import { addWheelEvent, removeWheelEvent } from '../../utils/helper';
 
 export default (options = {}) => (ComposedComponent) => {
   const { container = '.react-app', eventDom = '' } = options;
@@ -26,9 +27,7 @@ export default (options = {}) => (ComposedComponent) => {
 
     bindMousewheel() {
       const app = document.querySelector(container);
-      app.addEventListener('mousewheel', this.handleMousewheel, false);
-      app.addEventListener('DOMMouseScroll', this.handleMousewheel, false);
-      app.addEventListener('wheel', this.handleMousewheel, false);
+      addWheelEvent(app, this.handleMousewheel);
     }
 
     @autobind
@@ -55,9 +54,7 @@ export default (options = {}) => (ComposedComponent) => {
     addDropDownMouseWheel() {
       const elem = document.querySelector(eventDom);
       if (elem) {
-        elem.addEventListener('mousewheel', this.handleDropDownMousewheel, false);
-        elem.addEventListener('DOMMouseScroll', this.handleDropDownMousewheel, false);
-        elem.addEventListener('wheel', this.handleDropDownMousewheel, false);
+        addWheelEvent(elem, this.handleDropDownMousewheel);
       }
     }
 
@@ -65,38 +62,10 @@ export default (options = {}) => (ComposedComponent) => {
       const elem = document.querySelector(eventDom);
       const app = document.querySelector(container);
       if (elem) {
-        elem.removeEventListener(
-          'mousewheel',
-          this.handleDropDownMousewheel,
-          false,
-        );
-        elem.removeEventListener(
-          'DOMMouseScroll',
-          this.handleDropDownMousewheel,
-          false,
-        );
-        elem.removeEventListener(
-          'wheel',
-          this.handleDropDownMousewheel,
-          false,
-        );
+        removeWheelEvent(elem, this.handleDropDownMousewheel);
       }
       if (app) {
-        elem.removeEventListener(
-          'mousewheel',
-          this.handleMousewheel,
-          false,
-        );
-        elem.removeEventListener(
-          'DOMMouseScroll',
-          this.handleMousewheel,
-          false,
-        );
-        elem.removeEventListener(
-          'wheel',
-          this.handleMousewheel,
-          false,
-        );
+        removeWheelEvent(app, this.handleMousewheel);
       }
     }
 

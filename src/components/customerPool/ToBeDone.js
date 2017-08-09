@@ -7,6 +7,7 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { Row, Col } from 'antd';
 import { Link } from 'dva/router';
+import _ from 'lodash';
 import { fspGlobal } from '../../utils';
 import styles from './toBeDone.less';
 
@@ -23,10 +24,21 @@ export default class PerformanceIndicators extends PureComponent {
 
   // 处理数值（大于99+）
   processNum(num) {
-    if (parseInt(num) > 99) { // eslint-disable-line
+    const nowNum = parseInt(num); // eslint-disable-line
+    if (_.isNaN(nowNum)) {
+      return '--';
+    }
+    if (nowNum > 99) {
       return <span>99<sup>+</sup></span>;
     }
     return <span>{num}</span>;
+  }
+  // 数据处理
+  farmtNum(num) {
+    if (_.isNaN(parseInt(num))) { // eslint-disable-line
+      return '--';
+    }
+    return num;
   }
   render() {
     const { processData, motTaskCountData } = this.props;
@@ -49,7 +61,7 @@ export default class PerformanceIndicators extends PureComponent {
               <div className={`${styles.item} ${styles.item_a}`}>
                 <a className="item" onClick={() => fspGlobal.myMotTask()}>
                   <div className={styles.content}>
-                    <h1>{motTaskCountData || '--'}</h1>
+                    <h1>{this.farmtNum(motTaskCountData)}</h1>
                     <p>今日可做任务</p>
                   </div>
                 </a>
@@ -69,7 +81,7 @@ export default class PerformanceIndicators extends PureComponent {
               <div className={`${styles.item} ${styles.item_c}`}>
                 <a className="item" onClick={() => fspGlobal.openRctTab({ url, param })}>
                   <div className={styles.content}>
-                    <h1>{this.processNum(processData || '--')}</h1>
+                    <h1>{this.processNum(processData)}</h1>
                     <p>待办流程</p>
                   </div>
                 </a>

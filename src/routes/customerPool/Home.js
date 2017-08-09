@@ -38,7 +38,7 @@ const mapStateToProps = state => ({
   position: state.customerPool.position, // 职责切换
   process: state.customerPool.process, // 代办流程(首页总数)
   motTaskCount: state.customerPool.motTaskCount, // 今日可做任务总数
-  empInfo: state.customerPool.empInfo, // 职位信息
+  empInfo: state.app.empInfo, // 职位信息
 });
 
 const mapDispatchToProps = {
@@ -90,32 +90,36 @@ export default class Home extends PureComponent {
   }
 
   componentWillMount() {
-    const orgid = _.isEmpty(window.forReactPosition) ? 'ZZ001041' : window.forReactPosition.orgId;
+    const orgid = _.isEmpty(window.forReactPosition) ? '' : window.forReactPosition.orgId;
     this.setState({
       fspOrgId: orgid,
       orgId: orgid, // 组织ID
     });
+    const { custRange } = this.props;
+    if (custRange.length > 0) {
+      this.handleGetAllInfo(custRange);
+    }
   }
 
   componentWillReceiveProps(nextProps) {
-    const { position: prePosition, custRange: preCustRange, cycle: preCycle } = this.props;
-    const { position: nextPosition, custRange: nextCustRange, cycle: nextCycle } = nextProps;
+    const { location: preLocation,
+      position: prePosition, custRange: preCustRange, cycle: preCycle } = this.props;
+    const { location: nextLocation,
+      position: nextPosition, custRange: nextCustRange, cycle: nextCycle } = nextProps;
     const { orgId: preOrgId } = prePosition;
     const { orgId: nextOrgId } = nextPosition;
     if (preOrgId !== nextOrgId) {
       this.setState({
         fspOrgId: nextOrgId,
         createCustRange: this.handleCreateCustRange(nextOrgId, nextProps),
-      }, () => {
-        this.getIndicators();
-      });
+      }, this.getIndicators);
     }
     if (!_.isEqual(preCycle, nextCycle)) {
       this.setState({
         cycleSelect: nextCycle[0].key,
       });
     }
-    if (!_.isEqual(preCustRange, nextCustRange)) {
+    if (!_.isEqual(preCustRange, nextCustRange) || preLocation !== nextLocation) {
       this.handleGetAllInfo(nextCustRange);
       this.setState({
         createCustRange: this.handleCreateCustRange(null, nextProps),
@@ -189,7 +193,7 @@ export default class Home extends PureComponent {
     }
     let orgNewCustRange = [];
     const newCustRrange = [];
-    if (_.isEmpty(custRange)) {
+    if (custRange.length < 1) {
       return null;
     }
     if (newOrgId === custRange[0].id) {
