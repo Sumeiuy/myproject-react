@@ -17,7 +17,7 @@ import createActivityIndicator from './middlewares/createActivityIndicator';
 import routerConfig from './router';
 import persistConfig from './config/persist';
 import { initFspMethod } from './utils/fspGlobal';
-
+import permission from './permissions';
 
 const extraEnhancers = [];
 if (persistConfig.active) {
@@ -78,6 +78,9 @@ initFspMethod(store); // eslint-disable-line
 if (persistConfig.active) {
   persistStore(store, persistConfig);
 }
+
+// 7. 初始化权限配置
+permission.init(store);
 
 window.navTo = (url) => {
   const state = store.getState();
