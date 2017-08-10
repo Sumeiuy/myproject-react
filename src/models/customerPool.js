@@ -21,6 +21,12 @@ export default {
     empInfo: {},
     motTaskCount: 0,
     dict: {},
+    custList: [],
+    page: {
+      pageSize: 0,
+      pageNo: 1,
+      total: 0,
+    },
   },
   subscriptions: {
     setup({ dispatch }) {
@@ -105,16 +111,20 @@ export default {
     // 获取字典
     * getDictionary({ payload }, { call, put }) {
       const response = yield call(api.getStatisticalPeriod);
-      console.log('dict', response);
+      // console.log('dict', response);
       yield put({
         type: 'getDictionarySuccess',
         payload: { response },
       });
     },
     // 获取客户列表
-    * getCustomerList({ payload }, { call }) {
+    * getCustomerList({ payload }, { call, put }) {
       const response = yield call(api.getCustomerList, payload);
       console.log('getCustomerList', response);
+      yield put({
+        type: 'getCustomerListSuccess',
+        payload: response,
+      });
     },
   },
   reducers: {
@@ -212,6 +222,19 @@ export default {
       return {
         ...state,
         dict,
+      };
+    },
+    getCustomerListSuccess(state, action) {
+      const { payload: { resultData: { custList } } } = action;
+      const page = {
+        pageSize: custList.pageSize,
+        pageNo: Number(custList.pageNo) + 1,
+        total: custList.totalCount,
+      };
+      return {
+        ...state,
+        custList: custList.eleContents,
+        page,
       };
     },
   },

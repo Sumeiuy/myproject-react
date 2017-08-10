@@ -22,6 +22,10 @@ exports.response = function (req, res) {
       ],
       "custBusinessType":[
         {
+            "key":"",
+            "value":"不限"
+        },
+        {
             "key":"817030",
             "value":"融资融券"
         },
@@ -32,6 +36,10 @@ exports.response = function (req, res) {
       ],
       "custNature":[
         {
+            "key":"",
+            "value":"不限"
+        },
+        {
             "key":"P",
             "value":"个人"
         },
@@ -41,6 +49,10 @@ exports.response = function (req, res) {
         },
       ],
       "custRiskBearing":[
+        {
+            "key":"",
+            "value":"不限"
+        },
         {
             "key":"704040",
             "value":"保守型(最低类别)"
@@ -66,6 +78,20 @@ exports.response = function (req, res) {
             "value":"激进型"
         }
       ],
+      "custType":[
+        {
+            "key":"",
+            "value":"不限"
+        },
+        {
+            "key":"Y",
+            "value":"高净值"
+        },
+        {
+            "key":"N",
+            "value":"零售客户"
+        }
+      ]
     }
   }
 }

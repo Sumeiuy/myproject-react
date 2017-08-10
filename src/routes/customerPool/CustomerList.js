@@ -9,10 +9,11 @@ import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Row, Col } from 'antd';
+import { Row, Col, Pagination } from 'antd';
 
 import Icon from '../../components/common/Icon';
-import CustRange from '../../components/customerPool/CustRange';
+import CustRange from '../../components/pageCommon/CustRange2';
+// import CustRange from '../../components/customerPool/CustRange';
 import CustomerTotal from '../../components/customerPool/CustomerTotal';
 import Filter from '../../components/customerPool/Filter';
 import Reorder from '../../components/customerPool/Reorder';
@@ -40,11 +41,13 @@ const mapStateToProps = state => ({
   empInfo: state.customerPool.empInfo, // 职位信息
   position: state.customerPool.position, // 职责切换
   dict: state.customerPool.dict, // 职责切换
+  custList: state.customerPool.custList,
+  page: state.customerPool.page,
 });
 
 const mapDispatchToProps = {
   getAllInfo: fectchDataFunction(true, effects.allInfo),
-  getCustomerList: fectchDataFunction(true, effects.getCustomerList),
+  getCustomerData: fectchDataFunction(true, effects.getCustomerList),
   push: routerRedux.push,
   replace: routerRedux.replace,
 };
@@ -64,7 +67,9 @@ export default class CustomerList extends PureComponent {
     empInfo: PropTypes.object,
     position: PropTypes.object,
     dict: PropTypes.object.isRequired,
-    getCustomerList: PropTypes.func.isRequired,
+    getCustomerData: PropTypes.func.isRequired,
+    custList: PropTypes.array.isRequired,
+    page: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -89,7 +94,53 @@ export default class CustomerList extends PureComponent {
       fspOrgId: orgid,
       orgId: orgid, // 组织ID
     });
-    this.props.getCustomerList();
+    const { location: { query } } = this.props;
+    const param = {
+      searchTypeReq: 'FromFullTextType',
+      fullTestSearch: '0',
+      // paramsReqList: [
+      //   {key: 'shi_fou_shuang_cheng_shu_xing', value: '35_1'},
+      // ],
+    };
+    const filtersReq = [];
+    const sortsReqList = [];
+    if (query.Rights) {
+      filtersReq.push({
+        filterType: 'Rights',
+        filterContentList: [query.Rights],
+      });
+    }
+    if (query.RiskLvl) {
+      filtersReq.push({
+        filterType: 'RiskLvl',
+        filterContentList: [query.RiskLvl],
+      });
+    }
+    if (query.CustClass) {
+      filtersReq.push({
+        filterType: 'CustClass',
+        filterContentList: [query.CustClass],
+      });
+    }
+    if (query.CustomType) {
+      filtersReq.push({
+        filterType: 'CustomType',
+        filterContentList: [query.CustomType],
+      });
+    }
+    if (query.sortType || query.sortDirection) {
+      sortsReqList.push({
+        sortType: query.sortType,
+        sortDirection: query.sortDirection,
+      });
+    }
+    if (!_.isEmpty(filtersReq)) {
+      param.filtersReq = filtersReq;
+    }
+    if (!_.isEmpty(sortsReqList)) {
+      param.sortsReqList = sortsReqList;
+    }
+    this.props.getCustomerData(param);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -203,6 +254,7 @@ export default class CustomerList extends PureComponent {
     }, () => {
       this.getCustomerList();
     });
+    console.log('update>>>>', state);
   }
 
   @autobind
@@ -231,24 +283,34 @@ export default class CustomerList extends PureComponent {
   }
 
   render() {
-    const { location, replace, collectCustRange, dict } = this.props;
+    const { orgId } = this.state;
     const {
-      custNature,
-      custRiskBearing,
-      custBusinessType,
+      location,
+      replace,
+      collectCustRange,
+      dict,
+      custList,
+      page,
+    } = this.props;
+    const {
+      CustomType,
+      CustClass,
+      RiskLvl,
+      Rights,
       sortDirection,
       sortType,
     } = location.query;
     // 排序的默认值 ： 总资产降序
-    let reorderValue = { sortType: 'totalAssets', sortDirection: 'desc' };
+    let reorderValue = { sortType: 'Aset', sortDirection: 'desc' };
     if (sortType && sortDirection) {
       reorderValue = { sortType, sortDirection };
     }
+    console.log('cust>>>', custList);
     return (
       <div className={styles.customerlist}>
         <Row type="flex" justify="space-between" align="middle">
           <Col span={12}>
-            <CustomerTotal type="search" num={40} />
+            <CustomerTotal type="search" num={page.total} />
           </Col>
           <Col span={12}>
             <div className="custRange">
@@ -257,6 +319,7 @@ export default class CustomerList extends PureComponent {
                 custRange={this.createCustRange()}
                 location={location}
                 replace={replace}
+                orgId={orgId}
                 updateQueryState={this.updateQueryState}
                 collectData={collectCustRange}
               />
@@ -265,29 +328,30 @@ export default class CustomerList extends PureComponent {
         </Row>
         <div className="filter">
           <Filter
-            value={custNature}
+            value={CustomType || ''}
             filterLabel="客户性质"
-            filter="custNature"
+            filter="CustomType"
             filterField={dict.custNature}
             onChange={this.filterChange}
           />
-          {/* <Filter
+          <Filter
+            value={CustClass || ''}
             filterLabel="客户类型"
-            filter="custType"
+            filter="CustClass"
             filterField={dict.custType}
             onChange={this.filterChange}
-          />*/}
+          />
           <Filter
-            value={custRiskBearing}
+            value={RiskLvl || ''}
             filterLabel="风险等级"
-            filter="custRiskBearing"
+            filter="RiskLvl"
             filterField={dict.custRiskBearing}
             onChange={this.filterChange}
           />
           <Filter
-            value={custBusinessType}
+            value={Rights || ''}
             filterLabel="已开通业务"
-            filter="custBusinessType"
+            filter="Rights"
             filterField={dict.custBusinessType}
             onChange={this.filterChange}
           />
@@ -296,6 +360,17 @@ export default class CustomerList extends PureComponent {
           value={reorderValue}
           onChange={this.orderChange}
         />
+        <div className="list-box">
+
+          <div className="list-pagination">
+            <Pagination
+              size="small"
+              total={50}
+              showSizeChanger
+              showTotal={total => `共${total}项`}
+            />
+          </div>
+        </div>
       </div>
     );
   }

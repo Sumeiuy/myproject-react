@@ -15,7 +15,7 @@ export default class Filter extends PureComponent {
     filterLabel: PropTypes.string.isRequired,
     filterField: PropTypes.array,
     onChange: PropTypes.func.isRequired,
-    defaultValue: PropTypes.string.isRequired,
+    value: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -36,7 +36,7 @@ export default class Filter extends PureComponent {
   }
 
   render() {
-    const { filterLabel, filterField, defaultValue } = this.props;
+    const { filterLabel, filterField, value } = this.props;
     return (
       <div className={styles.filter}>
         <span>{filterLabel}:</span>
@@ -45,7 +45,7 @@ export default class Filter extends PureComponent {
             filterField.map(item => (
               <li
                 key={item.key}
-                className={defaultValue === item.key ? 'current' : ''}
+                className={value === item.key ? 'current' : ''}
                 onClick={() => this.handleClick(item.key)}
               >
                 {item.value}
