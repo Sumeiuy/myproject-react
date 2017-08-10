@@ -104,7 +104,22 @@ export default class AbilityScatterAnalysis extends PureComponent {
     let compare;
     let current;
 
-    if (slope <= 1) {
+    if (slope === 0) {
+      // 处理斜率等于0
+      // 画出两个空折线图，平均线横躺
+      const scatterOptions = constructScatterOptions({
+        ...seriesData,
+        startCoord: [0, 0],
+        endCoord: [1, 0],
+      });
+
+      this.setState({
+        scatterOptions,
+      });
+      return true;
+    } else if (slope <= 1) {
+      // 处理斜率小于1的情况
+      // 太小的斜率直接计算坐标
       const scatterOptions = constructScatterOptions({
         ...seriesData,
         startCoord: [xAxisMin, yAxisMin],
@@ -130,19 +145,25 @@ export default class AbilityScatterAnalysis extends PureComponent {
     const point = (current - yAxisMin) / slope;
 
     if (point > compare) {
-      if (current / 1000 > 1 && current !== 0) {
+      if (current / 10000 > 1) {
+        this.getAnyPoint({
+          ...seriesData,
+          currentMax: current - 5000,
+        });
+        return false;
+      } else if (current / 1000 > 1) {
         this.getAnyPoint({
           ...seriesData,
           currentMax: current - 500,
         });
         return false;
-      } else if (current / 100 > 1 && current !== 0) {
+      } else if (current / 100 > 1) {
         this.getAnyPoint({
           ...seriesData,
           currentMax: current - 50,
         });
         return false;
-      } else if (current / 10 > 1 && current !== 0) {
+      } else if (current / 10 > 1) {
         this.getAnyPoint({
           ...seriesData,
           currentMax: current - 5,
@@ -158,14 +179,27 @@ export default class AbilityScatterAnalysis extends PureComponent {
     }
 
     let endCoord;
+    let finalSeriesData = seriesData;
     if (xAxisMax > yAxisMax) {
       endCoord = [current, point];
+      if (point < yAxisMin) {
+        finalSeriesData = {
+          ...seriesData,
+          yAxisMin: point,
+        };
+      }
     } else {
       endCoord = [point, current];
+      if (point < xAxisMin) {
+        finalSeriesData = {
+          ...seriesData,
+          xAxisMin: point,
+        };
+      }
     }
 
     const scatterOptions = constructScatterOptions({
-      ...seriesData,
+      ...finalSeriesData,
       startCoord: [xAxisMin, yAxisMin],
       endCoord,
     });
@@ -283,7 +317,6 @@ export default class AbilityScatterAnalysis extends PureComponent {
       parentOrgName,
       tooltipInfo,
       finalData,
-      finalData: { pointerData = EMPTY_LIST },
       selectValue,
       finalOptions,
       averageInfo,
@@ -295,7 +328,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
       style,
     } = this.props;
 
-    if (_.isEmpty(pointerData)) {
+    if (_.isEmpty(finalData)) {
       return null;
     }
 
@@ -335,7 +368,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
           <div className={styles.xAxisName}>{xAxisName}（{xAxisUnit}）</div>
         </div>
         {
-          _.isEmpty(pointerData) ?
+          _.isEmpty(finalData) ?
             null
             :
             <div className={styles.averageDescription}>

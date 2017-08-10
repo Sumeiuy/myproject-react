@@ -30,7 +30,7 @@ export const constructScatterData = (options = {}) => {
   const xAxisDataArray = [];
   const yAxisDataArray = [];
   const orgItemArray = [];
-  let currentYUnit = '';
+  let axisData;
 
   const constructHelper = {
     // 计算y轴的刻度范围
@@ -145,29 +145,29 @@ export const constructScatterData = (options = {}) => {
     },
     // 计算当前散点图的斜率
     getSlope(unitInfo) {
-      // const {
-      //   xAxisMin,
-      //   yAxisMin,
-      //   xAxisMax,
-      //   yAxisMax,
-      // } = xyAxisData;
-      // return (yAxisMax - yAxisMin) / (xAxisMax - xAxisMin);
       const { xAxisUnit, yAxisUnit } = unitInfo;
       const { value: xAxisTotalValue } = xAxisOption;
       const { value: yAxisTotalValue, unit: yAxisOriginUnit } = yAxisOption;
       let xAxisFormatedValue;
+      let average = 0;
       if (xAxisUnit.indexOf('万') !== -1) {
         xAxisFormatedValue = FixNumber.toFixedCust([Number(xAxisTotalValue)]).newSeries[0];
       } else {
         xAxisFormatedValue = Number(xAxisTotalValue);
       }
-      // const xAxisFormatedValue = FixNumber.toFixedCust([Number(xAxisTotalValue)]).newSeries[0];
       const yAxisFormatedValue = constructHelper.formatDataSource(yAxisOriginUnit, yAxisTotalValue);
-      console.log(yAxisFormatedValue / xAxisFormatedValue);
-      const average = yAxisFormatedValue / xAxisFormatedValue;
+
+      if (xAxisFormatedValue !== 0) {
+        // 保证x不为0，不然得到NaN
+        average = yAxisFormatedValue / xAxisFormatedValue;
+        return {
+          slope: average,
+          averageInfo: `平均每${description}${average.toFixed(2)}${yAxisUnit}/${xAxisUnit}`,
+        };
+      }
       return {
         slope: average,
-        averageInfo: `平均每${description}${average.toFixed(2)}${yAxisUnit}/${xAxisUnit}`,
+        averageInfo: `平均每${description}0${yAxisUnit}/${xAxisUnit}`,
       };
     },
   };
@@ -187,7 +187,28 @@ export const constructScatterData = (options = {}) => {
     }
   }));
 
-  currentYUnit = scatterDiagramModels[0].coreIndicator.unit;
+  // 原始y轴、x轴单位
+  // 后台给的unit有可能是null，所以加上一个默认值
+  const { unit: currentYUnit = '元' } = scatterDiagramModels[0].coreIndicator || EMPTY_OBJECT;
+  const { unit: currentXUnit = '户' } = scatterDiagramModels[0].contrastIndicator || EMPTY_OBJECT;
+
+  if (_.isEmpty(xAxisDataArray) && _.isEmpty(yAxisDataArray)) {
+    // x、y轴数据都是0，则展示空数据折线图
+    axisData = {
+      pointerData: [],
+      xAxisMin: 0,
+      xAxisMax: 1,
+      yAxisMin: 0,
+      yAxisMax: 1,
+      xAxisName: xAxisOption.name,
+      yAxisName: yAxisOption.name,
+      xAxisUnit: currentXUnit,
+      yAxisUnit: currentYUnit,
+      slope: 0,
+      averageInfo: `平均每${description}0${currentYUnit}/${currentXUnit}`,
+    };
+    return axisData;
+  }
 
   // 拿到x轴与y轴的单位与转换后的元数据
   const xAxisUnit = constructHelper.getXAxisUnit(xAxisDataArray);
@@ -220,7 +241,7 @@ export const constructScatterData = (options = {}) => {
     },
   ]);
 
-  const aixsData = {
+  axisData = {
     pointerData: finalData,
     xAxisMin: xAxisTickArea.min,
     xAxisMax: xAxisTickArea.max,
@@ -234,5 +255,5 @@ export const constructScatterData = (options = {}) => {
     averageInfo: slope.averageInfo || '',
   };
 
-  return aixsData;
+  return axisData;
 };

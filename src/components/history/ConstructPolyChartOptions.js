@@ -72,6 +72,7 @@ export const constructPolyChartOptions = (option = {}) => {
             // align: 'left',
           },
           margin: 15,
+          showMinLabel: false,
         },
         splitLine: {
           show: false,
