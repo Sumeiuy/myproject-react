@@ -157,7 +157,7 @@ export default class IndicatorOverview extends PureComponent {
                       <span>{overviewData[selectIndex].name}：</span>
                       <span>{overviewData[selectIndex].description}</span>
                     </p>
-                  :
+                    :
                     null
                 }
               </div>
@@ -165,17 +165,17 @@ export default class IndicatorOverview extends PureComponent {
           </Col>
           {
             radarHide
-            ? null
-            : (
-              <Col span="11">
-                <ChartRadar
-                  radarData={indexData.data}
-                  total={indexData.scopeNum}
-                  selectCore={selectIndex}
-                  localScope={level}
-                />
-              </Col>
-            )
+              ? null
+              : (
+                <Col span="11">
+                  <ChartRadar
+                    radarData={indexData.data}
+                    total={indexData.scopeNum}
+                    selectCore={selectIndex}
+                    localScope={level}
+                  />
+                </Col>
+              )
           }
         </Row>
         <SelectTreeModal {...selectTreeProps} />
