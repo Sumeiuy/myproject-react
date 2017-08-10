@@ -104,6 +104,28 @@ export default class AbilityScatterAnalysis extends PureComponent {
     let compare;
     let current;
 
+    if (slope <= 0.1) {
+      let endCoord;
+      if (xAxisMax > yAxisMax) {
+        // 竖线
+        endCoord = [(xAxisMin / 100) * 110, yAxisMax];
+      } else {
+        // 横线
+        endCoord = [xAxisMax, (yAxisMin / 100) * 110];
+      }
+
+      const scatterOptions = constructScatterOptions({
+        ...seriesData,
+        startCoord: [xAxisMin, yAxisMin],
+        endCoord,
+      });
+
+      this.setState({
+        scatterOptions,
+      });
+      return true;
+    }
+
     // 比较当前x轴是否比x轴最大值大
     // 小的话，则取当前值
     // 不然递归调用
@@ -192,7 +214,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
     const currentSlope = (currentSelectY - yAxisMin) / currentSelectX;
 
     this.setState({
-      tooltipInfo: `${yAxisName}：${currentSelectY}${yAxisUnit} / ${xAxisName}：${currentSelectX}${xAxisUnit}。每${description}的交易量${currentSlope > slope ? '优' : '低'}于平均水平。`,
+      tooltipInfo: `${yAxisName}：${currentSelectY}${yAxisUnit} / ${xAxisName}：${currentSelectX}${xAxisUnit}。每${description}的${yAxisName}${currentSlope > slope ? '优' : '低'}于平均水平。`,
     });
   }
 
