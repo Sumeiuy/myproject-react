@@ -20,7 +20,7 @@ const GE = ZHUNICODE.GE;
 
 export const constructScatterData = (options = {}) => {
   const { core = EMPTY_OBJECT, contrast = EMPTY_OBJECT,
-    scatterDiagramModels = EMPTY_LIST } = options;
+    scatterDiagramModels = EMPTY_LIST, description } = options;
 
   const xAxisOption = _.pick(contrast, ['key', 'name', 'value', 'unit']);
 
@@ -125,15 +125,51 @@ export const constructScatterData = (options = {}) => {
     getXAxisUnit(array) {
       return FixNumber.toFixedCust(array);
     },
+    formatDataSource(yAxisOriginUnit, yAxisTotalValue) {
+      let yAxisFormatedValue;
+      if (yAxisOriginUnit === HU || yAxisOriginUnit === REN) {
+        yAxisFormatedValue = FixNumber.toFixedCust([Number(yAxisTotalValue)]).newSeries[0];
+      } else if (yAxisOriginUnit === YUAN) {
+        yAxisFormatedValue = FixNumber.toFixedMoney([Number(yAxisTotalValue)]).newSeries[0];
+      } else if (yAxisOriginUnit === GE) {
+        yAxisFormatedValue = FixNumber.toFixedGE([Number(yAxisTotalValue)]).newSeries[0];
+      } else if (yAxisOriginUnit === PERCENT) {
+        yAxisFormatedValue = FixNumber.toFixedDecimal(Number(yAxisTotalValue) * 100);
+      } else if (yAxisOriginUnit === PERMILLAGE) {
+        yAxisFormatedValue = FixNumber.toFixedDecimal(Number(yAxisTotalValue) * 1000);
+      } else if (yAxisOriginUnit === CI) {
+        yAxisFormatedValue = FixNumber.toFixedCI([Number(yAxisTotalValue)]).newSeries[0];
+      }
+
+      return yAxisFormatedValue;
+    },
     // 计算当前散点图的斜率
-    getSlope(xyAxisData) {
-      const {
-        xAxisMin,
-        yAxisMin,
-        xAxisMax,
-        yAxisMax,
-      } = xyAxisData;
-      return (yAxisMax - yAxisMin) / (xAxisMax - xAxisMin);
+    getSlope(unitInfo) {
+      // const {
+      //   xAxisMin,
+      //   yAxisMin,
+      //   xAxisMax,
+      //   yAxisMax,
+      // } = xyAxisData;
+      // return (yAxisMax - yAxisMin) / (xAxisMax - xAxisMin);
+
+      const { xAxisUnit, yAxisUnit } = unitInfo;
+      const { value: xAxisTotalValue } = xAxisOption;
+      const { value: yAxisTotalValue, unit: yAxisOriginUnit } = yAxisOption;
+      let xAxisFormatedValue;
+      if (xAxisUnit.indexOf('万') !== -1) {
+        xAxisFormatedValue = FixNumber.toFixedCust([Number(xAxisTotalValue)]).newSeries[0];
+      } else {
+        xAxisFormatedValue = Number(xAxisTotalValue);
+      }
+      // const xAxisFormatedValue = FixNumber.toFixedCust([Number(xAxisTotalValue)]).newSeries[0];
+      const yAxisFormatedValue = constructHelper.formatDataSource(yAxisOriginUnit, yAxisTotalValue);
+      console.log(yAxisFormatedValue / xAxisFormatedValue);
+      const average = yAxisFormatedValue / xAxisFormatedValue;
+      return {
+        slope: average,
+        averageInfo: `平均每${description}${average.toFixed(2)}${yAxisUnit}/${xAxisUnit}`,
+      };
     },
   };
 
@@ -168,6 +204,8 @@ export const constructScatterData = (options = {}) => {
     yAxisMin: yAxisTickArea.min,
     xAxisMax: xAxisTickArea.max,
     yAxisMax: yAxisTickArea.max,
+    xAxisUnit: xAxisUnit.newUnit,
+    yAxisUnit: yAxisUnit.newUnit,
   });
 
   // 构造元数据给series，用来绘制scatter
@@ -193,7 +231,8 @@ export const constructScatterData = (options = {}) => {
     yAxisName: yAxisOption.name,
     xAxisUnit: xAxisUnit.newUnit,
     yAxisUnit: yAxisUnit.newUnit,
-    slope,
+    slope: slope.slope,
+    averageInfo: slope.averageInfo || '',
   };
 
   return aixsData;
