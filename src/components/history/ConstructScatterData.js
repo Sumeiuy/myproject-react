@@ -152,7 +152,6 @@ export const constructScatterData = (options = {}) => {
       //   yAxisMax,
       // } = xyAxisData;
       // return (yAxisMax - yAxisMin) / (xAxisMax - xAxisMin);
-
       const { xAxisUnit, yAxisUnit } = unitInfo;
       const { value: xAxisTotalValue } = xAxisOption;
       const { value: yAxisTotalValue, unit: yAxisOriginUnit } = yAxisOption;
