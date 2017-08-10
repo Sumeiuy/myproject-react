@@ -85,6 +85,6 @@ export default {
   getMotTaskCount: query => api.post('/groovynoauth/fsp/emp/notification/queryMotTaskCount', query),
 
   // 客户列表
-  getCustomerList: query => api.post('/groovynoauth/fsp/customerlist', query),
+  getCustomerList: query => api.post('/groovynoauth/fsp/cust/custlist/queryCustList', query),
 
 };
