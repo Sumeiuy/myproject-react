@@ -181,6 +181,8 @@ const optionsMap = {
   boardTypeMap: {
     tgjx: 'TYPE_TGJX',
     jyyj: 'TYPE_JYYJ',
+    lsdb_jyyj: 'TYPE_LSDB_JYYJ',
+    lsdb_tgjx: 'TYPE_LSDB_TGJX',
   },
   // 指标类型
   boardKeyName: {

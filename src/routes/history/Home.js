@@ -547,7 +547,7 @@ export default class HistoryHome extends PureComponent {
     const summuryCheckedKeys = this.getUserSummuryKeys(historyCore);
     const summuryLib = {
       type: 'summury',
-      boardType: 'TYPE_TGJX',
+      boardType,
       checkTreeArr: indicatorLib.core,
       checkedKeys: summuryCheckedKeys,
     };
