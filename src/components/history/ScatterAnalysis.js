@@ -75,7 +75,7 @@ export default class ScatterAnalysis extends PureComponent {
                   type={investScatter.type}
                   swtichDefault={swtichDefault}
                   style={{
-                    left: '-45px',
+                    left: '-65px',
                   }}
                 />
               </Col>
