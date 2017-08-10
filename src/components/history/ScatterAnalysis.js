@@ -60,7 +60,11 @@ export default class ScatterAnalysis extends PureComponent {
           {
             // 经营绩效不展示投顾维度散点图
             boardType === 'TYPE_LSDB_JYYJ'
-              ? null :
+              ? <div
+                style={{
+                  height: '400px',
+                }}
+              /> :
               <Col span={12} className={styles.rightScatterSection}>
                 <AbilityScatterAnalysis
                   data={reviewAnalysisData}

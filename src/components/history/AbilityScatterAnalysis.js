@@ -104,20 +104,11 @@ export default class AbilityScatterAnalysis extends PureComponent {
     let compare;
     let current;
 
-    if (slope <= 0.1) {
-      let endCoord;
-      if (xAxisMax > yAxisMax) {
-        // 竖线
-        endCoord = [(xAxisMin / 100) * 110, yAxisMax];
-      } else {
-        // 横线
-        endCoord = [xAxisMax, (yAxisMin / 100) * 110];
-      }
-
+    if (slope <= 1) {
       const scatterOptions = constructScatterOptions({
         ...seriesData,
         startCoord: [xAxisMin, yAxisMin],
-        endCoord,
+        endCoord: [xAxisMax, yAxisMin + ((xAxisMax - xAxisMin) * slope)],
       });
 
       this.setState({
@@ -208,10 +199,11 @@ export default class AbilityScatterAnalysis extends PureComponent {
       yAxisName,
       yAxisUnit,
       yAxisMin,
+      xAxisMin,
       slope,
     } = currentItemInfo;
 
-    const currentSlope = (currentSelectY - yAxisMin) / currentSelectX;
+    const currentSlope = (currentSelectY - yAxisMin) / (currentSelectX - xAxisMin);
 
     this.setState({
       tooltipInfo: `${yAxisName}：${currentSelectY}${yAxisUnit} / ${xAxisName}：${currentSelectX}${xAxisUnit}。每${description}的${yAxisName}${currentSlope > slope ? '优' : '低'}于平均水平。`,
@@ -225,7 +217,15 @@ export default class AbilityScatterAnalysis extends PureComponent {
   @autobind
   handleScatterHover(params) {
     const { isShowTooltip,
-      finalData: { xAxisName, xAxisUnit, yAxisName, yAxisUnit, slope, yAxisMin } } = this.state;
+      finalData: {
+        xAxisName,
+        xAxisUnit,
+        yAxisName,
+        yAxisUnit,
+        slope,
+        yAxisMin,
+        xAxisMin,
+      } } = this.state;
     const { data: [xAxisData, yAxisData, { orgName, parentOrgName }] } = params;
 
     if (!isShowTooltip) {
@@ -243,6 +243,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
         yAxisName,
         yAxisUnit,
         slope,
+        xAxisMin,
         yAxisMin,
       });
     }
