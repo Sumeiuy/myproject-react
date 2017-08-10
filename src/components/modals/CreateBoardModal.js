@@ -26,7 +26,10 @@ export default class CreateBoardModal extends PureComponent {
     ownerOrgId: PropTypes.string.isRequired,
     closeModal: PropTypes.func.isRequired,
     confirm: PropTypes.func.isRequired,
+    checkName: PropTypes.func.isRequired,
     allOptions: PropTypes.array.isRequired,
+    distinct: PropTypes.bool.isRequired,
+    operateData: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -44,12 +47,29 @@ export default class CreateBoardModal extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { visible } = nextProps;
-    const { visible: preVisible } = this.props;
+    const { visible, distinct, operateData } = nextProps;
+    const { visible: preVisible, distinct: preDistinct } = this.props;
     if (!_.isEqual(visible, preVisible)) {
       this.setState({
         modalVisible: visible,
       });
+    }
+    // 判断检查看板名称是否已经存在
+    if (!distinct && preDistinct) {
+      // 检查结束
+      const { sameName } = operateData;
+      if (sameName) {
+        // 名称相同，弹提示框
+        this.setState({
+          nameHelp: '名称重复，请更换',
+        },
+        () => {
+          this.setTooltipVisible(true);
+        });
+      } else {
+        // 名称不同，进入创建步骤
+        this.createBoard();
+      }
     }
   }
 
@@ -83,11 +103,10 @@ export default class CreateBoardModal extends PureComponent {
 
   @autobind
   confirmCreateModal() {
-    const { form, confirm, ownerOrgId } = this.props;
+    const { form, ownerOrgId } = this.props;
     // TODO 添加确认按钮处理程序
     const boardname = form.getFieldValue('boardname');
     const boardType = form.getFieldValue('boardtype');
-    const permitOrgIds = form.getFieldValue('visibleRange').currency;
     // 此处的currecy中只有下级，没有本机机构ID
     // permitOrgIds.unshift(ownerOrgId);
     // 判断看板名称
@@ -110,7 +129,21 @@ export default class CreateBoardModal extends PureComponent {
       });
       return;
     }
-    // TODO 调用创建看板接口
+    // TODO 此处需要调用查询看板名称是否重复的接口
+    this.props.checkName({
+      ownerOrgId,
+      name: boardname,
+      boardType,
+    });
+  }
+
+  @autobind
+  createBoard() {
+    const { form, confirm, ownerOrgId } = this.props;
+    const boardname = form.getFieldValue('boardname');
+    const boardType = form.getFieldValue('boardtype');
+    const permitOrgIds = form.getFieldValue('visibleRange').currency;
+    // 调用创建看板接口
     confirm({
       ownerOrgId,
       name: boardname,
@@ -128,8 +161,8 @@ export default class CreateBoardModal extends PureComponent {
     const { getFieldDecorator } = this.props.form;
     // 表单布局
     const formItemLayout = {
-      labelCol: { span: 4 },
-      wrapperCol: { span: 18 },
+      labelCol: { span: 5 },
+      wrapperCol: { span: 17 },
       layout: 'horizontal',
     };
 
