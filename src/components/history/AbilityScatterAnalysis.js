@@ -49,8 +49,13 @@ export default class AbilityScatterAnalysis extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { data: nextData, swtichDefault: newSwitch } = nextProps;
-    const { data: prevData, swtichDefault: oldSwitch, description } = this.props;
+    const { data: nextData, swtichDefault: newSwitch, optionsData: nextOptions } = nextProps;
+    const {
+      data: prevData,
+      swtichDefault: oldSwitch,
+      description,
+      optionsData: prevOptions,
+    } = this.props;
     const {
       core = EMPTY_OBJECT,
       contrast = EMPTY_OBJECT,
@@ -91,6 +96,15 @@ export default class AbilityScatterAnalysis extends PureComponent {
       const options = this.state.finalOptions;
       this.setState({
         selectValue: options[0].value,
+      });
+    }
+
+    // 切换对比数据
+    if (prevOptions !== nextOptions) {
+      const data = this.makeOptions(nextOptions);
+      this.setState({
+        finalOptions: data,
+        selectValue: data[0].value,
       });
     }
   }
