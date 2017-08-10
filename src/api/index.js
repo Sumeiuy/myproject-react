@@ -84,4 +84,7 @@ export default {
   // 今日可做任务总数
   getMotTaskCount: query => api.post('/groovynoauth/fsp/emp/notification/queryMotTaskCount', query),
 
+  // 客户列表
+  getCustomerList: query => api.post('/groovynoauth/fsp/customerlist', query),
+
 };

@@ -7,12 +7,30 @@
 			color: #666;
 			 em {
 			 	font-style: normal;
-			 	color: #fdb02b;
+			 	color: #7d9be0;
 			 }
 		}
     .custRange {
       float: right;
       padding: 0 20px;
+      border-radius: 5px;
+      background-color: #fff;
+      i {
+        margin-right: 5px;
+        color: #c2c2c2;
+      }
+      .ant-select-focused > .ant-select-selection, .ant-select-selection--single {
+        border: 0;
+      }
+      .ant-select-focused .ant-select-selection, .ant-select-selection:focus, .ant-select-selection:active {
+        box-shadow: none;
+      }
+    }
+    .filter {
+      margin-top: 15px;
+      padding: 0 15px;
+      background-color: #fff;
+      border-radius: 5px;
     }
   }
 }

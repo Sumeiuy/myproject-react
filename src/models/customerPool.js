@@ -18,9 +18,15 @@ export default {
     cycle: [],
     position: {},
     process: 0,
+    empInfo: {},
     motTaskCount: 0,
+    dict: {},
   },
-  subscriptions: {},
+  subscriptions: {
+    setup({ dispatch }) {
+      dispatch({ type: 'getDictionary' });
+    },
+  },
   effects: {
     * getToDoList({ }, { call, put }) {  //eslint-disable-line
       const response = yield call(api.getToDoList, { empid: '002332' });
@@ -95,6 +101,20 @@ export default {
         type: 'pageChangeSuccess',
         payload: newPage,
       });
+    },
+    // 获取字典
+    * getDictionary({ payload }, { call, put }) {
+      const response = yield call(api.getStatisticalPeriod);
+      console.log('dict', response);
+      yield put({
+        type: 'getDictionarySuccess',
+        payload: { response },
+      });
+    },
+    // 获取客户列表
+    * getCustomerList({ payload }, { call }) {
+      const response = yield call(api.getCustomerList, payload);
+      console.log('getCustomerList', response);
     },
   },
   reducers: {
@@ -184,6 +204,14 @@ export default {
       return {
         ...state,
         position: payload,
+      };
+    },
+    getDictionarySuccess(state, action) {
+      const { payload: { response } } = action;
+      const dict = response.resultData;
+      return {
+        ...state,
+        dict,
       };
     },
   },

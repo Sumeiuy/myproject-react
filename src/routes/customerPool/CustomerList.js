@@ -13,6 +13,9 @@ import { Row, Col } from 'antd';
 
 import Icon from '../../components/common/Icon';
 import CustRange from '../../components/customerPool/CustRange';
+import CustomerTotal from '../../components/customerPool/CustomerTotal';
+import Filter from '../../components/customerPool/Filter';
+import Reorder from '../../components/customerPool/Reorder';
 
 import styles from './customerlist.less';
 
@@ -21,6 +24,8 @@ const ORG = 3; // 组织机构
 
 const effects = {
   allInfo: 'customerPool/getAllInfo',
+  getDictionary: 'customerPool/getDictionary',
+  getCustomerList: 'customerPool/getCustomerList',
 };
 
 const fectchDataFunction = (globalLoading, type) => query => ({
@@ -34,10 +39,12 @@ const mapStateToProps = state => ({
   custRange: state.customerPool.custRange, // 客户池用户范围
   empInfo: state.customerPool.empInfo, // 职位信息
   position: state.customerPool.position, // 职责切换
+  dict: state.customerPool.dict, // 职责切换
 });
 
 const mapDispatchToProps = {
   getAllInfo: fectchDataFunction(true, effects.allInfo),
+  getCustomerList: fectchDataFunction(true, effects.getCustomerList),
   push: routerRedux.push,
   replace: routerRedux.replace,
 };
@@ -56,6 +63,8 @@ export default class CustomerList extends PureComponent {
     cycle: PropTypes.array,
     empInfo: PropTypes.object,
     position: PropTypes.object,
+    dict: PropTypes.object.isRequired,
+    getCustomerList: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -80,6 +89,7 @@ export default class CustomerList extends PureComponent {
       fspOrgId: orgid,
       orgId: orgid, // 组织ID
     });
+    this.props.getCustomerList();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -171,7 +181,6 @@ export default class CustomerList extends PureComponent {
     getAllInfo({
       request: {
         custTypes: custType, // 客户范围类型
-        // dateType: '', // 周期类型
         orgId, // 组织ID
       },
     });
@@ -181,21 +190,65 @@ export default class CustomerList extends PureComponent {
   @autobind
   updateQueryState(state) {
     // 切换Duration和Orig时候，需要将数据全部恢复到默认值
+    const { replace, location: { query, pathname } } = this.props;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        ...state,
+      },
+    });
     this.setState({
       ...state,
-    },
-      () => {
-        this.getCustomerList();
-      });
+    }, () => {
+      this.getCustomerList();
+    });
+  }
+
+  @autobind
+  filterChange(obj) {
+    const { replace, location: { query, pathname } } = this.props;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        [obj.name]: obj.value,
+      },
+    });
+  }
+
+  @autobind
+  orderChange(obj) {
+    const { replace, location: { query, pathname } } = this.props;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        sortType: obj.sortType,
+        sortDirection: obj.sortDirection,
+      },
+    });
   }
 
   render() {
-    const { location, replace, collectCustRange } = this.props;
+    const { location, replace, collectCustRange, dict } = this.props;
+    const {
+      custNature,
+      custRiskBearing,
+      custBusinessType,
+      sortDirection,
+      sortType,
+    } = location.query;
+    // 排序的默认值 ： 总资产降序
+    let reorderValue = { sortType: 'totalAssets', sortDirection: 'desc' };
+    if (sortType && sortDirection) {
+      reorderValue = { sortType, sortDirection };
+    }
     return (
       <div className={styles.customerlist}>
         <Row type="flex" justify="space-between" align="middle">
           <Col span={12}>
-            <p className="total-num">找到满足业务办理条件的客户<em>&nbsp;{40}&nbsp;</em>户</p>
+            <CustomerTotal type="search" num={40} />
           </Col>
           <Col span={12}>
             <div className="custRange">
@@ -210,6 +263,39 @@ export default class CustomerList extends PureComponent {
             </div>
           </Col>
         </Row>
+        <div className="filter">
+          <Filter
+            value={custNature}
+            filterLabel="客户性质"
+            filter="custNature"
+            filterField={dict.custNature}
+            onChange={this.filterChange}
+          />
+          {/* <Filter
+            filterLabel="客户类型"
+            filter="custType"
+            filterField={dict.custType}
+            onChange={this.filterChange}
+          />*/}
+          <Filter
+            value={custRiskBearing}
+            filterLabel="风险等级"
+            filter="custRiskBearing"
+            filterField={dict.custRiskBearing}
+            onChange={this.filterChange}
+          />
+          <Filter
+            value={custBusinessType}
+            filterLabel="已开通业务"
+            filter="custBusinessType"
+            filterField={dict.custBusinessType}
+            onChange={this.filterChange}
+          />
+        </div>
+        <Reorder
+          value={reorderValue}
+          onChange={this.orderChange}
+        />
       </div>
     );
   }
