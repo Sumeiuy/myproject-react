@@ -313,7 +313,6 @@ export default class BoardManageHome extends PureComponent {
           <div
             style={{
               position: 'fixed',
-              textIndent: fsp ? '0' : '20px',
               zIndex: 30,
               width,
               top,

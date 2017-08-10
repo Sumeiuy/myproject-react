@@ -159,10 +159,6 @@ export default class BoardSelect extends PureComponent {
     const menu = (
       <Menu
         onClick={this.handleMenuClick}
-        style={{
-          maxHeight: '300px',
-          overflowY: 'auto',
-        }}
       >
         {
           ordinaryStaticBoards.map(item =>
