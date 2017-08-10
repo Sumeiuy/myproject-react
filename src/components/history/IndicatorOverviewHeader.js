@@ -7,8 +7,9 @@
 import React, { PropTypes, PureComponent } from 'react';
 import classnames from 'classnames';
 import { autobind } from 'core-decorators';
-import { Icon, Button } from 'antd';
+import { Button } from 'antd';
 import _ from 'lodash';
+import Icon from '../common/Icon';
 import { CreateHistoryBoardModal, DeleteHistoryBoardModal } from '../modals';
 
 // import Icon from '../common/Icon';
@@ -173,11 +174,12 @@ export default class IndicatorOverviewHeader extends PureComponent {
         <div className={styles.analyticalCaption}>核心指标</div>
         <div className={styles.overviewHeaderRight}>
           <Button
+            type="primary"
             ghost
             onClick={this.saveHistoryBoardHandle}
             className={updateBtnClass}
           >
-            <Icon type="save" />
+            <Icon type="save_blue" />
             保存
           </Button>
           <Button
@@ -185,7 +187,7 @@ export default class IndicatorOverviewHeader extends PureComponent {
             onClick={this.createHistoryBoardHandle}
             className={createBtnClass}
           >
-            <Icon type="save" />
+            <Icon type="save_blue" />
             另存为
           </Button>
           <CreateHistoryBoardModal
@@ -196,7 +198,7 @@ export default class IndicatorOverviewHeader extends PureComponent {
             onClick={this.deleteHistoryBoardHandle}
             className={deleteBtnClass}
           >
-            <Icon type="delete" />
+            <Icon type="shanchu" />
             删除
           </Button>
           <DeleteHistoryBoardModal
