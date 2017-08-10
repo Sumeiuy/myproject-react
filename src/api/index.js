@@ -97,4 +97,7 @@ export default {
 
   // 查询历史对比排名数据
   getHistoryRankChartData: query => api.post('/groovynoauth/jxzb/queryHistoryCardRecord', query),
+
+  // 看板名称重复验证
+  distinctBoard: query => api.post('/groovynoauth/jxzb/saveBoard', query),
 };

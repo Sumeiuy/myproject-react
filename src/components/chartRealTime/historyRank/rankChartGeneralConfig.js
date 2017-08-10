@@ -12,13 +12,13 @@ const chartOptions = {
   yAxis: {
     type: 'category',
     inverse: true,
-    show: true,
+    show: false,
     axisLabel: {
       show: false,
     },
     axisTick: { show: false },
     axisLine: {
-      onZero: false,
+      onZero: true,
       lineStyle: {
         color: '#e7eaec',
       },
@@ -28,7 +28,9 @@ const chartOptions = {
   xAxis: {
     type: 'value',
     scale: true,
+    splitNumber: 6,
     axisLine: {
+      onZero: true,
       lineStyle: {
         color: '#e7eaec',
       },

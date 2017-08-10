@@ -18,6 +18,7 @@ export default {
     publishLoading: false, // 发布看板成功与否
     message: '', // 各种操作的提示信息
     operateData: {}, // 各种操作后，返回的数据集
+    distinct: false, // 判断看板名称是否重复
   },
   reducers: {
     getAllVisibleReportsSuccess(state, action) {
@@ -158,6 +159,33 @@ export default {
           value: false,
           message: '创建完成',
           operateData: board,
+        },
+      });
+    },
+
+    // 查询看板名称是否重复
+    * duplicateBoard({ payload }, { call, put }) {
+      yield put({
+        type: 'opertateBoardState',
+        payload: {
+          name: 'distinct',
+          value: true,
+          message: '开始判断',
+        },
+      });
+      const distinctResult = yield call(api.distinctBoard, payload);
+      const code = distinctResult.code;
+      let sameName = false;
+      if (code === '-2') {
+        sameName = true;
+      }
+      yield put({
+        type: 'opertateBoardState',
+        payload: {
+          name: 'distinct',
+          value: false,
+          message: '结束判断',
+          operateData: { sameName },
         },
       });
     },

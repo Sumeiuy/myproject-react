@@ -19,7 +19,8 @@ function parseJSON(response) {
     (res) => {
       // 神策的响应是succeed: true
       const { code, msg, succeed } = res;
-      if (code !== '0' && !succeed) {
+      const { excludeCode } = config;
+      if (code !== '0' && !succeed && !excludeCode.includes(code)) {
         let error;
         if (code === 'MAG0010') {
           // 这里使用code作为message，以便对登录错误做特殊处理

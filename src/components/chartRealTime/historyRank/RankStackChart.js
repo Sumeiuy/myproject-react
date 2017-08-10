@@ -203,6 +203,22 @@ export default class RankStackChart extends PureComponent {
   }
 
   @autobind
+  optimizeLableSeriesOrder(grid, maxLabelSeries, minLabelSeries) {
+    // label显示还跟其在echart中series中的顺序有关
+    const { max } = grid;
+    if (max <= 0) {
+      return [
+        maxLabelSeries,
+        minLabelSeries,
+      ];
+    }
+    return [
+      minLabelSeries,
+      maxLabelSeries,
+    ];
+  }
+
+  @autobind
   makeRealSeries(data) {
     return data.map((item) => {
       const newItem = {
@@ -328,6 +344,9 @@ export default class RankStackChart extends PureComponent {
     const realGrid = optimizeGrid(grid);
     const maxData = this.makeDataArray(realGrid.max);
     const minData = this.makeDataArray(realGrid.min);
+    // Label的series
+    const maxLabelSeries = this.makeLabelSeries('max-label', maxData, summury, realLength);
+    const minLabelSeries = this.makeLabelSeries('min-label', minData, yAxisLabels, realLength);
 
     const options = {
       color: [...stackBarColors],
@@ -348,8 +367,7 @@ export default class RankStackChart extends PureComponent {
         this.makeLabelShadowSeries('max-shadow', maxData),
         this.makeDataShadowSeries('data-shadow', minData),
         this.makeDataShadowSeries('data-shadow', maxData),
-        this.makeLabelSeries('min-label', minData, yAxisLabels, realLength),
-        this.makeLabelSeries('max-label', maxData, summury, realLength),
+        ...this.optimizeLableSeriesOrder(realGrid, maxLabelSeries, minLabelSeries),
         ...this.makeRealSeries(stackSeries),
       ],
     };

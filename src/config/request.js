@@ -7,4 +7,5 @@
 export default {
   timeout: 15000,
   prefix: '/fspa/mcrm/api',
+  excludeCode: ['-2'], // 不需要捕获的错误代码
 };
