@@ -195,8 +195,8 @@ export default class HistoryComparePolyChart extends PureComponent {
     let yAxisData = '';
     let xAxisData = '';
     _.each(data, (item) => {
-      const indicatorMeta = item.indicatorMetaDto;
-      const timeModel = item.timeModel;
+      const indicatorMeta = item.indicatorMetaDto || EMPTY_OBJECT;
+      const timeModel = item.timeModel || EMPTY_OBJECT;
       yAxisData = _.pick(indicatorMeta, ['name', 'value', 'unit']);
       xAxisData = _.pick(timeModel, ['year', 'month', 'day']);
       if (!_.isEmpty(yAxisData.value) && yAxisData.value !== 0 && yAxisData.value !== '0') {
@@ -212,6 +212,7 @@ export default class HistoryComparePolyChart extends PureComponent {
     });
 
     const newYAxisUnit = this.getYAxisUnit(newYSeries, yAxisData.unit);
+    // y轴的刻度范围
     const yAxisTickArea = this.getYAxisTickMinAndMax(newYAxisUnit.newSeries, yAxisData.unit);
 
     const itemDataArray = newYAxisUnit.newSeries.map((item, index) => (
@@ -232,6 +233,13 @@ export default class HistoryComparePolyChart extends PureComponent {
     };
   }
 
+  /**
+   * 格式化
+   * @param {*} xSeries x轴的数据
+   * @param {*} newSeries 新的series
+   * @param {*} newUnit 新的单位
+   * @param {*} newYAxisTickArea y轴刻度
+   */
   @autobind
   formatDate(xSeries, newSeries, newUnit, newYAxisTickArea) {
     const finalData = {
