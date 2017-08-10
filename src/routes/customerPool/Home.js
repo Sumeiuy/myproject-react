@@ -84,21 +84,23 @@ export default class Home extends PureComponent {
     this.state = {
       cycleSelect: '',
       orgId: '',
+      fspOrgId: '',
       createCustRange: [],
       expandAll: false,
     };
   }
 
   componentWillMount() {
-    const orgid = _.isEmpty(window.forReactPosition) ? '' : window.forReactPosition.orgId;
+    const orgid = _.isEmpty(window.forReactPosition) ? 'ZZ001041' : window.forReactPosition.orgId;
+    const { custRange } = this.props;
     this.setState({
       fspOrgId: orgid,
       orgId: orgid, // 组织ID
+    }, () => {
+      if (custRange.length > 0) {
+        this.handleGetAllInfo(custRange);
+      }
     });
-    const { custRange } = this.props;
-    if (custRange.length > 0) {
-      this.handleGetAllInfo(custRange);
-    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -130,18 +132,18 @@ export default class Home extends PureComponent {
   @autobind
   getIndicators() {
     const { getPerformanceIndicators, custRange } = this.props;
-    const { orgId, cycleSelect } = this.state;
+    const { fspOrgId, orgId, cycleSelect } = this.state;
     let custType = ORG;
     if (custRange.length < 1) {
       return null;
     }
-    if (orgId === custRange[0].id) { // 判断客户范围类型
+    if (fspOrgId === custRange[0].id) { // 判断客户范围类型
       custType = ORG;
     } else {
       custType = CUST_MANAGER;
     }
     getPerformanceIndicators({
-      custTypes: custType, // 客户范围类型
+      custType, // 客户范围类型
       dateType: cycleSelect, // 周期类型
       orgId, // 组织ID
     });
@@ -151,10 +153,13 @@ export default class Home extends PureComponent {
   @autobind
   handleGetAllInfo(custRangeData) {
     const { getAllInfo, cycle } = this.props;
-    const { orgId } = this.state;
+    const { fspOrgId } = this.state;
     let custType = ORG;
     const orgsId = custRangeData.length > 0 ? custRangeData[0].id : '';
-    if (orgId === orgsId) { // 判断客户范围类型
+    this.setState({
+      createCustRange: this.handleCreateCustRange(fspOrgId, this.props),
+    });
+    if (fspOrgId === orgsId) { // 判断客户范围类型
       custType = ORG;
     } else {
       this.setState({
@@ -169,7 +174,7 @@ export default class Home extends PureComponent {
       request: {
         custType, // 客户范围类型
         // dateType: '', // 周期类型
-        orgId, // 组织ID
+        orgId: fspOrgId, // 组织ID
       },
     });
   }
@@ -191,9 +196,9 @@ export default class Home extends PureComponent {
     const { empInfo, custRange } = nextProps;
     const { empPostnList } = empInfo;
     const { fspOrgId } = this.state;
-    let newOrgId = orgId;
-    if (_.isEmpty(orgId)) {
-      newOrgId = fspOrgId;
+    let newOrgId = fspOrgId;
+    if (!_.isEmpty(orgId)) {
+      newOrgId = orgId;
     }
     let orgNewCustRange = [];
     const newCustRrange = [];
