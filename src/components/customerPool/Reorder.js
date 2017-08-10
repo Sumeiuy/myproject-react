@@ -24,13 +24,13 @@ export default class Order extends PureComponent {
 
   static propTypes = {
     onChange: PropTypes.func.isRequired,
-    defaultValue: PropTypes.object.isRequired,
+    value: PropTypes.object.isRequired,
   }
 
   // 判断点击的按钮，是否添加 class = active
   @autobind
   getCls(obj) {
-    return _.isEqual(this.props.defaultValue, obj) ? 'active' : '';
+    return _.isEqual(this.props.value, obj) ? 'active' : '';
   }
 
   // 处理点击排序按钮

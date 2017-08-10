@@ -240,9 +240,9 @@ export default class CustomerList extends PureComponent {
       sortType,
     } = location.query;
     // 排序的默认值 ： 总资产降序
-    let reorderDefaultValue = { sortType: 'totalAssets', sortDirection: 'desc' };
+    let reorderValue = { sortType: 'totalAssets', sortDirection: 'desc' };
     if (sortType && sortDirection) {
-      reorderDefaultValue = { sortType, sortDirection };
+      reorderValue = { sortType, sortDirection };
     }
     return (
       <div className={styles.customerlist}>
@@ -265,7 +265,7 @@ export default class CustomerList extends PureComponent {
         </Row>
         <div className="filter">
           <Filter
-            defaultValue={custNature}
+            value={custNature}
             filterLabel="客户性质"
             filter="custNature"
             filterField={dict.custNature}
@@ -278,14 +278,14 @@ export default class CustomerList extends PureComponent {
             onChange={this.filterChange}
           />*/}
           <Filter
-            defaultValue={custRiskBearing}
+            value={custRiskBearing}
             filterLabel="风险等级"
             filter="custRiskBearing"
             filterField={dict.custRiskBearing}
             onChange={this.filterChange}
           />
           <Filter
-            defaultValue={custBusinessType}
+            value={custBusinessType}
             filterLabel="已开通业务"
             filter="custBusinessType"
             filterField={dict.custBusinessType}
@@ -293,7 +293,7 @@ export default class CustomerList extends PureComponent {
           />
         </div>
         <Reorder
-          defaultValue={reorderDefaultValue}
+          value={reorderValue}
           onChange={this.orderChange}
         />
       </div>
