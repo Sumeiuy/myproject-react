@@ -17,6 +17,7 @@ import CustRange from '../../components/pageCommon/CustRange2';
 import CustomerTotal from '../../components/customerPool/CustomerTotal';
 import Filter from '../../components/customerPool/Filter';
 import Reorder from '../../components/customerPool/Reorder';
+import CustomerRow from '../../components/customerPool/CustomerRow';
 
 import styles from './customerlist.less';
 
@@ -96,6 +97,8 @@ export default class CustomerList extends PureComponent {
     });
     const { location: { query } } = this.props;
     const param = {
+      curPageNum: '1',
+      pageSize: '10',
       searchTypeReq: 'FromFullTextType',
       fullTestSearch: '0',
       // paramsReqList: [
@@ -361,7 +364,9 @@ export default class CustomerList extends PureComponent {
           onChange={this.orderChange}
         />
         <div className="list-box">
-
+          <div className="list-wrapper">
+            <CustomerRow />
+          </div>
           <div className="list-pagination">
             <Pagination
               size="small"

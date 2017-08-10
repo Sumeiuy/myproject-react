@@ -225,15 +225,15 @@ export default {
       };
     },
     getCustomerListSuccess(state, action) {
-      const { payload: { resultData: { custList } } } = action;
+      const { payload: { resultData: { custListVO } } } = action;
       const page = {
-        pageSize: custList.pageSize,
-        pageNo: Number(custList.pageNo) + 1,
-        total: custList.totalCount,
+        pageSize: custListVO.pageSize,
+        pageNo: Number(custListVO.pageNo) + 1,
+        total: custListVO.totalCount,
       };
       return {
         ...state,
-        custList: custList.eleContents,
+        custList: custListVO.eleContents,
         page,
       };
     },
