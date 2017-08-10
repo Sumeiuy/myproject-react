@@ -38,7 +38,7 @@ const mapStateToProps = state => ({
   position: state.customerPool.position, // 职责切换
   process: state.customerPool.process, // 代办流程(首页总数)
   motTaskCount: state.customerPool.motTaskCount, // 今日可做任务总数
-  empInfo: state.customerPool.empInfo, // 职位信息
+  empInfo: state.app.empInfo, // 职位信息
 });
 
 const mapDispatchToProps = {
@@ -90,32 +90,36 @@ export default class Home extends PureComponent {
   }
 
   componentWillMount() {
-    const orgid = _.isEmpty(window.forReactPosition) ? 'ZZ001041' : window.forReactPosition.orgId;
+    const orgid = _.isEmpty(window.forReactPosition) ? '' : window.forReactPosition.orgId;
     this.setState({
       fspOrgId: orgid,
       orgId: orgid, // 组织ID
     });
+    const { custRange } = this.props;
+    if (custRange.length > 0) {
+      this.handleGetAllInfo(custRange);
+    }
   }
 
   componentWillReceiveProps(nextProps) {
-    const { position: prePosition, custRange: preCustRange, cycle: preCycle } = this.props;
-    const { position: nextPosition, custRange: nextCustRange, cycle: nextCycle } = nextProps;
+    const { location: preLocation,
+      position: prePosition, custRange: preCustRange, cycle: preCycle } = this.props;
+    const { location: nextLocation,
+      position: nextPosition, custRange: nextCustRange, cycle: nextCycle } = nextProps;
     const { orgId: preOrgId } = prePosition;
     const { orgId: nextOrgId } = nextPosition;
     if (preOrgId !== nextOrgId) {
       this.setState({
         fspOrgId: nextOrgId,
         createCustRange: this.handleCreateCustRange(nextOrgId, nextProps),
-      }, () => {
-        this.getIndicators();
-      });
+      }, this.getIndicators);
     }
     if (!_.isEqual(preCycle, nextCycle)) {
       this.setState({
         cycleSelect: nextCycle[0].key,
       });
     }
-    if (!_.isEqual(preCustRange, nextCustRange)) {
+    if (!_.isEqual(preCustRange, nextCustRange) || preLocation !== nextLocation) {
       this.handleGetAllInfo(nextCustRange);
       this.setState({
         createCustRange: this.handleCreateCustRange(null, nextProps),
@@ -128,6 +132,9 @@ export default class Home extends PureComponent {
     const { getPerformanceIndicators, custRange } = this.props;
     const { orgId, cycleSelect } = this.state;
     let custType = ORG;
+    if (custRange.length < 1) {
+      return null;
+    }
     if (orgId === custRange[0].id) { // 判断客户范围类型
       custType = ORG;
     } else {
@@ -138,6 +145,7 @@ export default class Home extends PureComponent {
       dateType: cycleSelect, // 周期类型
       orgId, // 组织ID
     });
+    return null;
   }
 
   @autobind
@@ -145,7 +153,7 @@ export default class Home extends PureComponent {
     const { getAllInfo, cycle } = this.props;
     const { orgId } = this.state;
     let custType = ORG;
-    const orgsId = !_.isEmpty(custRangeData[0]) ? custRangeData[0].id : '';
+    const orgsId = custRangeData.length > 0 ? custRangeData[0].id : '';
     if (orgId === orgsId) { // 判断客户范围类型
       custType = ORG;
     } else {
@@ -155,7 +163,7 @@ export default class Home extends PureComponent {
       custType = CUST_MANAGER;
     }
     this.setState({
-      cycleSelect: _.isEmpty(cycle[0]) ? '' : cycle[0].key,
+      cycleSelect: cycle.length > 0 ? cycle[0].key : '',
     });
     getAllInfo({
       request: {
@@ -189,7 +197,7 @@ export default class Home extends PureComponent {
     }
     let orgNewCustRange = [];
     const newCustRrange = [];
-    if (_.isEmpty(custRange)) {
+    if (custRange.length < 1) {
       return null;
     }
     if (newOrgId === custRange[0].id) {
