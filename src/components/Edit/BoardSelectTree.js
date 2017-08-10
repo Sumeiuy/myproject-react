@@ -125,6 +125,9 @@ export default class BoardSelectTree extends PureComponent {
     if (boardType === boardTypeMap.jyyj && type === boardKeyName.summury.key) {
       showThirdColumn = true;
     }
+    if (boardType === boardTypeMap.lsdb_jyyj) {
+      showThirdColumn = true;
+    }
     if (boardType === boardTypeMap.jyyj && type === boardKeyName.detail.key) {
       showTitle = true;
     }
