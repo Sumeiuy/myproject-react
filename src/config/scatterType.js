@@ -4,11 +4,11 @@
 
 const scatterType = [
   {
-    title: '客户贡献分析',
+    title: '客户贡献对比',
     type: 'cust',
   },
   {
-    title: '服务经理能力分析',
+    title: '投顾贡献对比',
     type: 'invest',
   },
 ];
