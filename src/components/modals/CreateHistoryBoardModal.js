@@ -25,6 +25,8 @@ export default class CreateHistoryBoardModal extends PureComponent {
     boardId: PropTypes.string.isRequired,
     boardType: PropTypes.string.isRequired,
     selectKeys: PropTypes.array.isRequired,
+    createLoading: PropTypes.bool.isRequired,
+    operateData: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -42,12 +44,30 @@ export default class CreateHistoryBoardModal extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { visible } = nextProps;
-    const { visible: preVisible } = this.props;
+    const { visible, operateData, createLoading: nextCL } = nextProps;
+    const { visible: preVisible, createLoading: prevCL } = this.props;
     if (!_.isEqual(visible, preVisible)) {
       this.setState({
         modalVisible: visible,
       });
+    }
+    if (!nextCL && prevCL) {
+      const { success } = operateData;
+      // 判断检查看板名称是否已经存在
+      if (success) {
+        this.closeCreateModal();
+      } else {
+        // 名称相同，弹提示框
+        const { code } = operateData;
+        if (code === '-2') {
+          this.setState({
+            nameHelp: '看板名称已存在，请重新输入',
+          },
+          () => {
+            this.setTooltipVisible(true);
+          });
+        }
+      }
     }
   }
 
@@ -119,9 +139,6 @@ export default class CreateHistoryBoardModal extends PureComponent {
         custContrastIndicator: ['totCustNum', 'pCustNum', 'oCustNum', 'oNewCustNum', 'oNewPrdtCustNum', 'InminorCustNum'],
       });
     }
-
-
-    this.closeCreateModal();
   }
 
   render() {
