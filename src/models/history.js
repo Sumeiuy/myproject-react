@@ -348,12 +348,14 @@ export default {
       });
       const createBoardResult = yield call(api.createHistoryBoard, payload);
       const code = createBoardResult.code;
+      const msg = createBoardResult.msg;
       let board = {};
       if (code !== '0') {
         // 名称重复
         board = {
           success: false,
           code,
+          msg,
         };
       } else {
         // 成功
