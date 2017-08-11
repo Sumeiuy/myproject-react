@@ -46,7 +46,6 @@ const mapStateToProps = state => ({
   deleteLoading: state.manage.deleteLoading,
   publishLoading: state.manage.publishLoading,
   message: state.manage.message,
-  distinct: state.manage.message,
   operateData: state.manage.operateData,
   globalLoading: state.activity.global,
 });
@@ -58,7 +57,6 @@ const mapDispatchToProps = {
   createBoard: fectchDataFunction(true, 'manage/createBoard'),
   deleteBoard: fectchDataFunction(true, 'manage/deleteBoard'),
   publishBoard: fectchDataFunction(true, 'manage/publishBoard'),
-  checkName: fectchDataFunction(false, 'manage/duplicateBoard'),
   collectData: fectchDataFunction(false, 'report/collectData'),
 };
 
@@ -73,7 +71,6 @@ export default class BoardManageHome extends PureComponent {
     createBoard: PropTypes.func.isRequired,
     deleteBoard: PropTypes.func.isRequired,
     publishBoard: PropTypes.func.isRequired,
-    checkName: PropTypes.func.isRequired,
     collectData: PropTypes.func.isRequired,
     visibleBoards: PropTypes.array,
     editableBoards: PropTypes.array,
@@ -85,7 +82,6 @@ export default class BoardManageHome extends PureComponent {
     message: PropTypes.string,
     operateData: PropTypes.object,
     globalLoading: PropTypes.bool,
-    distinct: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -137,8 +133,12 @@ export default class BoardManageHome extends PureComponent {
     const { push, operateData, createLoading, deleteLoading, publishLoading } = nextProps;
     if (preCL && !createLoading) {
       // 创建完成后，需要跳转到Edit
-      const { id, ownerOrgId, boardType } = operateData;
-      push(`/boardEdit?boardId=${id}&orgId=${ownerOrgId}&boardType=${boardType}`);
+      // 首先判断创建成功与否
+      const { success } = operateData;
+      if (success) {
+        const { id, ownerOrgId, boardType } = operateData;
+        push(`/boardEdit?boardId=${id}&orgId=${ownerOrgId}&boardType=${boardType}`);
+      }
     }
     if (preDL && !deleteLoading) {
       // 删除成功
@@ -274,14 +274,14 @@ export default class BoardManageHome extends PureComponent {
       deleteBoardModal,
       publishConfirmModal,
     } = this.state;
-    const { location, replace, push, collectData, checkName } = this.props;
+    const { location, replace, push, collectData } = this.props;
     const {
       visibleRanges,
       visibleBoards,
       newVisibleBoards,
       editableBoards,
-      distinct,
       operateData,
+      createLoading,
     } = this.props;
     // 做容错处理
     if (_.isEmpty(visibleRanges)) {
@@ -299,9 +299,8 @@ export default class BoardManageHome extends PureComponent {
       level: visibleRanges[0].level || '3',
       allOptions: visibleRanges,
       confirm: this.createBoardConfirm,
-      checkName,
-      distinct,
       operateData,
+      createLoading,
       ownerOrgId: visibleRanges[0].id,
     };
     // 删除共同配置项

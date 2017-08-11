@@ -26,10 +26,9 @@ export default class CreateBoardModal extends PureComponent {
     ownerOrgId: PropTypes.string.isRequired,
     closeModal: PropTypes.func.isRequired,
     confirm: PropTypes.func.isRequired,
-    checkName: PropTypes.func.isRequired,
     allOptions: PropTypes.array.isRequired,
-    distinct: PropTypes.bool.isRequired,
     operateData: PropTypes.object.isRequired,
+    createLoading: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -47,28 +46,29 @@ export default class CreateBoardModal extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { visible, distinct, operateData } = nextProps;
-    const { visible: preVisible, distinct: preDistinct } = this.props;
+    const { visible, operateData, createLoading: nextCL } = nextProps;
+    const { visible: preVisible, createLoading: prevCL } = this.props;
     if (!_.isEqual(visible, preVisible)) {
       this.setState({
         modalVisible: visible,
       });
     }
-    // 判断检查看板名称是否已经存在
-    if (!distinct && preDistinct) {
-      // 检查结束
-      const { sameName } = operateData;
-      if (sameName) {
-        // 名称相同，弹提示框
-        this.setState({
-          nameHelp: '名称重复，请更换',
-        },
-        () => {
-          this.setTooltipVisible(true);
-        });
+    if (!nextCL && prevCL) {
+      const { success } = operateData;
+      // 判断检查看板名称是否已经存在
+      if (success) {
+        this.closeCreateModal();
       } else {
-        // 名称不同，进入创建步骤
-        this.createBoard();
+        // 名称相同，弹提示框
+        const { code } = operateData;
+        if (code === '-2') {
+          this.setState({
+            nameHelp: '名称重复，请更换',
+          },
+          () => {
+            this.setTooltipVisible(true);
+          });
+        }
       }
     }
   }
@@ -103,10 +103,11 @@ export default class CreateBoardModal extends PureComponent {
 
   @autobind
   confirmCreateModal() {
-    const { form, ownerOrgId } = this.props;
+    const { form, ownerOrgId, confirm } = this.props;
     // TODO 添加确认按钮处理程序
     const boardname = form.getFieldValue('boardname');
     const boardType = form.getFieldValue('boardtype');
+    const permitOrgIds = form.getFieldValue('visibleRange').currency;
     // 此处的currecy中只有下级，没有本机机构ID
     // permitOrgIds.unshift(ownerOrgId);
     // 判断看板名称
@@ -129,30 +130,12 @@ export default class CreateBoardModal extends PureComponent {
       });
       return;
     }
-    // TODO 此处需要调用查询看板名称是否重复的接口
-    this.props.checkName({
-      ownerOrgId,
-      name: boardname,
-      boardType,
-    });
-  }
-
-  @autobind
-  createBoard() {
-    const { form, confirm, ownerOrgId } = this.props;
-    const boardname = form.getFieldValue('boardname');
-    const boardType = form.getFieldValue('boardtype');
-    const permitOrgIds = form.getFieldValue('visibleRange').currency;
-    // 调用创建看板接口
     confirm({
       ownerOrgId,
       name: boardname,
       boardType,
       permitOrgIds,
     });
-    // 隐藏Modal
-    // TODO 此处是否需要进行特殊的异步处理
-    this.closeCreateModal();
   }
 
   render() {
