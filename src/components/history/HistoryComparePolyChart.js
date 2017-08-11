@@ -210,7 +210,7 @@ export default class HistoryComparePolyChart extends PureComponent {
         newYSeries.push(0);
       }
       if (_.isEmpty(xAxisData.day)) {
-        xSeries.push(xAxisData.month);
+        xSeries.push(`${Number(xAxisData.month)}月`);
       } else {
         xSeries.push(`${xAxisData.month}/${xAxisData.day}`);
       }
@@ -367,7 +367,7 @@ export default class HistoryComparePolyChart extends PureComponent {
               <i className={styles.currentIndicatior} />
               <span>本期</span>
               {/* 本期时间 */}
-              <span className={styles.tipTime}>{currentDate ? `${currentDate}(${curWeekDay}):` : ''}</span>
+              <span className={styles.tipTime}>{currentDate ? `${currentDate}${curWeekDay ? `(${curWeekDay})` : ''}:` : ''}</span>
               {/* 本期Value */}
               <span className={styles.currentValue}>{(currentValue === 0 || currentValue) ? `${currentValue}` : ''}</span>
               {/* 本期Vlaue单位 */}
@@ -377,7 +377,7 @@ export default class HistoryComparePolyChart extends PureComponent {
               <i className={styles.previousIndicatior} />
               <span>上期</span>
               {/* 上期时间 */}
-              <span className={styles.tipTime}>{previousDate ? `${previousDate}(${prevWeekDay}):` : ''}</span>
+              <span className={styles.tipTime}>{previousDate ? `${previousDate}${prevWeekDay ? `(${prevWeekDay})` : ''}:` : ''}</span>
               {/* 本期Vlaue */}
               <span className={styles.contrastValue}>{(previousValue === 0 || previousValue) ? `${previousValue}` : ''}</span>
               {/* 本期Vlaue单位 */}
