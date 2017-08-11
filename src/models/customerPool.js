@@ -21,6 +21,8 @@ export default {
     empInfo: {},
     motTaskCount: 0,
     dict: {},
+    hotwds: {},
+    hotPossibleWdsList: [],
   },
   subscriptions: {
     setup({ dispatch }) {
@@ -115,6 +117,22 @@ export default {
     * getCustomerList({ payload }, { call }) {
       const response = yield call(api.getCustomerList, payload);
       console.log('getCustomerList', response);
+    },
+    // 默认推荐词及热词推荐列表
+    * getHotWds({ payload }, { call, put }) {
+      const response = yield call(api.getHotWds, payload);
+      yield put({
+        type: 'getHotWdsSuccess',
+        payload: { response },
+      });
+    },
+    // 联想的推荐热词列表
+    * getHotPossibleWds({ payload }, { call, put }) {
+      const response = yield call(api.getHotPossibleWds, payload);
+      yield put({
+        type: 'getHotPossibleWdsSuccess',
+        payload: { response },
+      });
     },
   },
   reducers: {
@@ -212,6 +230,24 @@ export default {
       return {
         ...state,
         dict,
+      };
+    },
+    // getHotWdsSuccess
+    getHotWdsSuccess(state, action) {
+      const { payload: { response } } = action;
+      const hotWds = response.resultData;
+      return {
+        ...state,
+        hotWds,
+      };
+    },
+    // getHotPossibleWds
+    getHotPossibleWdsSuccess(state, action) {
+      const { payload: { response } } = action;
+      const hotPossibleWdsList = response.resultData.hotPossibleWdsList;
+      return {
+        ...state,
+        hotPossibleWdsList,
       };
     },
   },

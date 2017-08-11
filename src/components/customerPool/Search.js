@@ -7,21 +7,29 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { Icon as AntdIcon, Button, Input, AutoComplete } from 'antd';
 import { autobind } from 'core-decorators';
-// import _ from 'lodash';
-import { Link } from 'dva/router';
+import _ from 'lodash';
 import Icon from '../../components/common/Icon';
 import styles from './search.less';
 
 const Option = AutoComplete.Option;
 const OptGroup = AutoComplete.OptGroup;
+const EMPTY_LIST = [];
+const EMPTY_OBJECT = {};
 export default class Search extends PureComponent {
 
   static propTypes = {
-    data: PropTypes.array,
+    data: PropTypes.object,
+    queryHotPossibleWds: PropTypes.func,
+    queryHotWdsData: PropTypes.array,
+    push: PropTypes.func.isRequired,
+    orgId: PropTypes.string,
   }
 
   static defaultProps = {
-    data: [],
+    data: EMPTY_OBJECT,
+    queryHotPossibleWds: () => { },
+    queryHotWdsData: EMPTY_LIST,
+    orgId: '',
   }
 
   constructor(props) {
@@ -47,52 +55,112 @@ export default class Search extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log(nextProps);
+    const { queryHotWdsData: nextQueryHotWdsData } = nextProps;
+    const { inputVal } = this.state;
+    this.setState({
+      dataSource: inputVal ? this.searchResult(inputVal, nextQueryHotWdsData) : [],
+    });
   }
 
-  onSelect(value) {
-    console.log('onSelect', value);
-  }
-
-  getRandomInt(max, min = 0) {
-    return Math.floor(Math.random() * (max - min + 1)) + min; // eslint-disable-line
-  }
-
-  searchResult(query) {
-    return (new Array(this.getRandomInt(5))).join('.').split('.')
-      .map((item, idx) => ({
-        query,
-        category: `${query}${idx}`,
-        count: this.getRandomInt(200, 100),
-      }));
+  componentDidUpdate() {
   }
 
   @autobind
-  handleSearch(value) {
+  onSelect(value) {
     this.setState({
-      dataSource: value ? this.searchResult(value) : [],
+      inputVal: value,
     });
+  }
+
+  searchResult(query, hotList) {
+    return hotList.map((item, index) => ({
+      query,
+      category: `${item.labelNameVal}${index}`,
+      content: item.labelNameVal,
+      desc: item.labelDesc,
+    }));
+  }
+
+  @autobind
+  async handleSearch(value) {
+    if (_.isEmpty(value)) {
+      this.setState({
+        inputVal: value,
+        dataSource: [],
+      });
+      return;
+    }
+    this.setState({
+      inputVal: value,
+    });
+    const { queryHotPossibleWds } = this.props;
+    await queryHotPossibleWds({
+      wd: value,
+    });
+  }
+
+  @autobind
+  handleCreatRecommend(data) {
+    if (data.length <= 0) {
+      return null;
+    }
+    const recommendList = [];
+    data.forEach((item, index) => {
+      recommendList.push(
+        <a
+          target="_blank" // eslint-disable-line
+          className="item" href={`/customerList/list?source=association&labelMapping=
+          ${item.labelMapping}&tagNumId=${item.tagNumId}q=${item.labelNameVal}`}
+          title={item.labelDesc}
+        >
+          {item.labelNameVal}
+        </a>);
+      if (index !== data.length - 1) {
+        recommendList.push(<i className={styles.bd} />);
+      }
+    });
+    return recommendList;
   }
 
   createOption() {
     const { dataSource, historySource } = this.state;
     // debugger;
     const newData = dataSource.map(this.renderOption);
+    if (dataSource.length > 0) {
+      return newData;
+    }
     const history = this.renderGroup(historySource);
     const options = newData.concat(history);
     return options;
   }
 
+  @autobind
+  handleSearchBtn() {
+    const { inputVal } = this.state;
+    const { push } = this.props;
+    push({
+      pathName: `/customerList/list?source=seach&q=${inputVal}`,
+    });
+  }
+
+  @autobind
   renderOption(item) {
+    const { inputVal } = this.state;
+    // debugger;
+    const newContent = item.content.replace(inputVal, `<em>${inputVal}</em>`);
+    // 联想 association
+    // 搜索 search
+    // 标签 tag
     return (
       <Option key={item.category} text={item.category}>
         <a
-          href={`https://s.taobao.com/search?q=${item.query}`}
+          href={`/customerList/list?source=association&labelMapping=
+          ${item.labelMapping}&tagNumId=${item.tagNumId}q=${item.query}`}
           target="_blank"
           rel="noopener noreferrer"
-        >
-          {item.query}
-        </a>
+          dangerouslySetInnerHTML={{ __html: newContent }}
+        />
+        <span>{item.desc}</span>
       </Option>
     );
   }
@@ -127,6 +195,8 @@ export default class Search extends PureComponent {
   }
 
   render() {
+    const { data: { hotWds = EMPTY_OBJECT,
+      hotWdsList = EMPTY_LIST } } = this.props;
     return (
       <div className={styles.searchBox}>
         <div className={styles.inner}>
@@ -140,12 +210,17 @@ export default class Search extends PureComponent {
                 dataSource={this.createOption()}
                 onSelect={this.onSelect}
                 onSearch={this.handleSearch}
-                placeholder="两融业务潜在客户"
+                placeholder={hotWds.labelNameVal || ''}
                 optionLabelProp="text"
               >
                 <Input
                   suffix={(
-                    <Button className="search-btn" size="large" type="primary">
+                    <Button
+                      className="search-btn"
+                      size="large"
+                      type="primary"
+                      onClick={this.handleSearchBtn}
+                    >
                       <AntdIcon type="search" />
                     </Button>
                   )}
@@ -158,17 +233,7 @@ export default class Search extends PureComponent {
               <span className={styles.s_title}>
                 <Icon type="dengpao" />猜你感兴趣：
               </span>
-              <Link className="item" to="/customerPool/canDoToday">
-                过去30天有大额资金转出客户
-              </Link>
-              <i className={styles.bd} />
-              <Link className="item" to="/customerPool/canDoToday">
-                国债逆回购潜在客户
-              </Link>
-              <i className={styles.bd} />
-              <Link className="item" to="/customerPool/canDoToday">
-                理财产品到期客户
-              </Link>
+              <div>{this.handleCreatRecommend(hotWdsList)}</div>
             </div>
           </div>
         </div>
