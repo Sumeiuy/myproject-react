@@ -33,21 +33,21 @@ export const constructPolyChartOptions = (option = {}) => {
       showContent: false,
       snap: true,
     },
-    legend: {
-      data: [
-        {
-          name: '本期',
-          icon: 'square',
-        },
-        {
-          name: '上期',
-          icon: 'square',
-        },
-      ],
-      bottom: 0,
-      left: '10%',
-      itemGap: 10,
-    },
+    // legend: {
+    //   data: [
+    //     {
+    //       name: '本期',
+    //       icon: 'square',
+    //     },
+    //     {
+    //       name: '上期',
+    //       icon: 'square',
+    //     },
+    //   ],
+    //   bottom: 0,
+    //   left: '10%',
+    //   itemGap: 10,
+    // },
     grid: {
       top: '20px',
       left: '20px',

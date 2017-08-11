@@ -39,6 +39,8 @@ export default class HistoryComparePolyChart extends PureComponent {
       previousValue: '',
       currentDate: '',
       previousDate: '',
+      curWeekDay: '',
+      prevWeekDay: '',
       chartOptions: EMPTY_OBJECT,
     };
   }
@@ -94,9 +96,9 @@ export default class HistoryComparePolyChart extends PureComponent {
 
       // 默认选中第一条展示信息
       const { date: currentDate, value: currentValue,
-        year: curYear, name } = curSeries[0] || EMPTY_ARRAY;
+        year: curYear, name, weekDay: curWeekDay } = curSeries[0] || EMPTY_ARRAY;
       const { date: previousDate, value: previousValue,
-        year: prevYear } = previousSeries[0] || EMPTY_ARRAY;
+        year: prevYear, weekDay: prevWeekDay } = previousSeries[0] || EMPTY_ARRAY;
 
       this.setState({
         chartOptions: options, // 折线图配置项
@@ -108,6 +110,8 @@ export default class HistoryComparePolyChart extends PureComponent {
         previousValue,
         currentDate,
         previousDate,
+        curWeekDay,
+        prevWeekDay,
       });
     }
   }
@@ -192,13 +196,14 @@ export default class HistoryComparePolyChart extends PureComponent {
   formatData(data) {
     const newYSeries = [];
     const xSeries = [];
+    const weekDayArray = [];
     let yAxisData = '';
     let xAxisData = '';
     _.each(data, (item) => {
       const indicatorMeta = item.indicatorMetaDto || EMPTY_OBJECT;
       const timeModel = item.timeModel || EMPTY_OBJECT;
       yAxisData = _.pick(indicatorMeta, ['name', 'value', 'unit']);
-      xAxisData = _.pick(timeModel, ['year', 'month', 'day']);
+      xAxisData = _.pick(timeModel, ['year', 'month', 'day', 'weekDay']);
       if (!_.isEmpty(yAxisData.value) && yAxisData.value !== 0 && yAxisData.value !== '0') {
         newYSeries.push(Number(yAxisData.value));
       } else {
@@ -209,6 +214,7 @@ export default class HistoryComparePolyChart extends PureComponent {
       } else {
         xSeries.push(`${xAxisData.month}/${xAxisData.day}`);
       }
+      weekDayArray.push(xAxisData.weekDay);
     });
 
     const newYAxisUnit = this.getYAxisUnit(newYSeries, yAxisData.unit);
@@ -222,6 +228,7 @@ export default class HistoryComparePolyChart extends PureComponent {
         unit: newYAxisUnit.newUnit,
         year: xAxisData.year,
         date: xSeries[index],
+        weekDay: weekDayArray[index],
       }
     ));
 
@@ -261,29 +268,33 @@ export default class HistoryComparePolyChart extends PureComponent {
       const [{ seriesName }] = seriesData;
       if (seriesName === '本期') {
         const [
-          { data: { value: currentValue, date: currentDate } },
+          { data: { value: currentValue, date: currentDate, weekDay: curWeekDay } },
         ] = seriesData;
         comparePoly = {
           currentValue,
           currentDate,
           previousValue: '',
           previousDate: '',
+          curWeekDay,
+          prevWeekDay: '',
         };
       } else {
         const [
-          { data: { value: previousValue, date: previousDate } },
+          { data: { value: previousValue, date: previousDate, weekDay: prevWeekDay } },
         ] = seriesData;
         comparePoly = {
           currentValue: '',
           currentDate: '',
           previousValue,
           previousDate,
+          prevWeekDay,
+          curWeekDay: '',
         };
       }
     } else if (seriesData.length === 2) {
       const [
-        { data: { value: currentValue, date: currentDate } },
-        { data: { value: previousValue, date: previousDate } },
+        { data: { value: currentValue, date: currentDate, weekDay: curWeekDay } },
+        { data: { value: previousValue, date: previousDate, weekDay: prevWeekDay } },
       ] = seriesData;
 
       comparePoly = {
@@ -291,6 +302,8 @@ export default class HistoryComparePolyChart extends PureComponent {
         previousValue,
         currentDate,
         previousDate,
+        curWeekDay,
+        prevWeekDay,
       };
     } else {
       comparePoly = {
@@ -298,6 +311,8 @@ export default class HistoryComparePolyChart extends PureComponent {
         currentDate: '',
         previousValue: '',
         previousDate: '',
+        prevWeekDay: '',
+        curWeekDay: '',
       };
     }
     this.setState({
@@ -310,8 +325,10 @@ export default class HistoryComparePolyChart extends PureComponent {
       chartOptions,
       name,
       unit,
-      curYear,
-      prevYear,
+      // curYear,
+      // prevYear,
+      curWeekDay,
+      prevWeekDay,
       currentValue,
       previousValue,
       currentDate,
@@ -335,7 +352,7 @@ export default class HistoryComparePolyChart extends PureComponent {
             option={chartOptions}
             resizable
             style={{
-              height: '305px',
+              height: '350px',
             }}
           />
         </div>
@@ -343,20 +360,24 @@ export default class HistoryComparePolyChart extends PureComponent {
           <div className={styles.leftGuide}>
             <span className={styles.tipDot} />
             {/* 指标名称 */}
-            <span className={styles.tipIndicator}>{name}</span>
+            <span className={styles.tipIndicator}>{name}对比:</span>
           </div>
           <div className={styles.descriptionSection}>
             <div className={styles.currentDescription}>
+              <i className={styles.currentIndicatior} />
+              <span>本期</span>
               {/* 本期时间 */}
-              <span className={styles.tipTime}>{currentDate ? `${curYear}/${currentDate}:` : ''}</span>
+              <span className={styles.tipTime}>{currentDate ? `${currentDate}(${curWeekDay}):` : ''}</span>
               {/* 本期Value */}
               <span className={styles.currentValue}>{(currentValue === 0 || currentValue) ? `${currentValue}` : ''}</span>
               {/* 本期Vlaue单位 */}
               <span className={styles.tipUnit}>{(currentValue === 0 || currentValue) ? `${unit}` : ''}</span>
             </div>
             <div className={styles.previousDescription}>
+              <i className={styles.previousIndicatior} />
+              <span>上期</span>
               {/* 上期时间 */}
-              <span className={styles.tipTime}>{previousDate ? `${prevYear}/${previousDate}:` : ''}</span>
+              <span className={styles.tipTime}>{previousDate ? `${previousDate}(${prevWeekDay}):` : ''}</span>
               {/* 本期Vlaue */}
               <span className={styles.contrastValue}>{(previousValue === 0 || previousValue) ? `${previousValue}` : ''}</span>
               {/* 本期Vlaue单位 */}

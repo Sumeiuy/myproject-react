@@ -597,7 +597,7 @@ export default class HistoryHome extends PureComponent {
             />
           </div>
           <div className={styles.indicatorAnalyse}>
-            <div className={styles.caption}>核心指标分析-{curNameIndex >= 0 ? historyCore[curNameIndex].name : '托管总资产'}</div>
+            <div className={styles.caption}>{curNameIndex >= 0 ? historyCore[curNameIndex].name : '托管总资产'}-详细分析</div>
             <div className={styles.polyArea}>
               <HistoryComparePolyChart data={contrastData} />
               {/* 假定数据 */}
