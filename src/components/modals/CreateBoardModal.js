@@ -10,6 +10,7 @@ import _ from 'lodash';
 
 import SelfSelect from '../Edit/SelfSelect';
 import styles from './modalCommon.less';
+import { responseCode } from '../../config';
 
 const FormItem = Form.Item;
 const create = Form.create;
@@ -60,10 +61,10 @@ export default class CreateBoardModal extends PureComponent {
         this.closeCreateModal();
       } else {
         // 名称相同，弹提示框
-        const { code } = operateData;
-        if (code === '-2') {
+        const { code, msg } = operateData;
+        if (code === responseCode.DUPLICATE_NAME) {
           this.setState({
-            nameHelp: '名称重复，请更换',
+            nameHelp: msg,
           },
           () => {
             this.setTooltipVisible(true);
@@ -109,7 +110,6 @@ export default class CreateBoardModal extends PureComponent {
     const boardType = form.getFieldValue('boardtype');
     const permitOrgIds = form.getFieldValue('visibleRange').currency;
     // 此处的currecy中只有下级，没有本机机构ID
-    // permitOrgIds.unshift(ownerOrgId);
     // 判断看板名称
     if (boardname === '') {
       // 看板名称不能为空
