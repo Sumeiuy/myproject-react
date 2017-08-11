@@ -31,6 +31,8 @@ export default class IndicatorOverviewHeader extends PureComponent {
     ownerOrgId: PropTypes.string.isRequired,
     orgId: PropTypes.string.isRequired,
     selectKeys: PropTypes.array.isRequired,
+    createLoading: PropTypes.bool.isRequired,
+    operateData: PropTypes.object.isRequired,
   }
 
   static contextTypes = {
@@ -130,6 +132,8 @@ export default class IndicatorOverviewHeader extends PureComponent {
       ownerOrgId,
       orgId,
       selectKeys,
+      createLoading,
+      operateData,
     } = this.props;
     // 创建（另存为）共同配置项
     const createHistoryBMProps = {
@@ -142,6 +146,8 @@ export default class IndicatorOverviewHeader extends PureComponent {
       boardId,
       boardType,
       selectKeys,
+      createLoading,
+      operateData,
     };
     // 删除共同配置项
     const deleteHistoryBMProps = {

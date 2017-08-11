@@ -347,7 +347,21 @@ export default {
         },
       });
       const createBoardResult = yield call(api.createHistoryBoard, payload);
-      const board = createBoardResult.resultData;
+      const code = createBoardResult.code;
+      let board = {};
+      if (code !== '0') {
+        // 名称重复
+        board = {
+          success: false,
+          code,
+        };
+      } else {
+        // 成功
+        board = {
+          success: true,
+          ...createBoardResult.resultData,
+        };
+      }
       yield put({
         type: 'opertateBoardState',
         payload: {
