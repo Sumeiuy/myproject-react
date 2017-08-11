@@ -543,6 +543,7 @@ export default class HistoryHome extends PureComponent {
       ownerOrgId,
       swtichDefault,
       orgId,
+      indicatorId,
     } = this.state;
     const level = localScope || custRange[0].level;
     const newScope = scope || String(Number(level) + 1);
@@ -553,12 +554,14 @@ export default class HistoryHome extends PureComponent {
     const summuryCheckedKeys = this.getUserSummuryKeys(historyCore);
     const summuryLib = {
       type: 'summury',
-      boardType: 'TYPE_TGJX',
+      boardType,
       checkTreeArr: indicatorLib.core,
       checkedKeys: summuryCheckedKeys,
     };
 
     const { cust = EMPTY_LIST, invest = EMPTY_LIST } = historyContrastDic;
+
+    const curNameIndex = _.findIndex(historyCore, item => item.key === indicatorId);
 
     return (
       <div className="pageHistory">
@@ -602,7 +605,7 @@ export default class HistoryHome extends PureComponent {
             />
           </div>
           <div className={styles.indicatorAnalyse}>
-            <div className={styles.caption}>核心指标分析-总交易量</div>
+            <div className={styles.caption}>核心指标分析-{curNameIndex >= 0 ? historyCore[curNameIndex].name : '托管总资产'}</div>
             <div className={styles.polyArea}>
               <HistoryComparePolyChart data={contrastData} />
               {

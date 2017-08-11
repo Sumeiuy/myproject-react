@@ -161,7 +161,7 @@ export default class RankNormalChart extends PureComponent {
     const flag = name === 'max-label';
     const position = flag ? 'insideRight' : 'insideLeft';
     const textColor = flag ? '#999' : '#333';
-    const itemColor = flag ? 'transparent' : 'green';
+    const itemColor = 'transparent';
     return {
       name,
       data,
@@ -189,6 +189,22 @@ export default class RankNormalChart extends PureComponent {
         },
       },
     };
+  }
+
+  @autobind
+  optimizeLableSeriesOrder(grid, maxLabelSeries, minLabelSeries) {
+    // label显示还跟其在echart中series中的顺序有关
+    const { max } = grid;
+    if (max <= 0) {
+      return [
+        maxLabelSeries,
+        minLabelSeries,
+      ];
+    }
+    return [
+      minLabelSeries,
+      maxLabelSeries,
+    ];
   }
 
   // 真实的数据
@@ -271,6 +287,9 @@ export default class RankNormalChart extends PureComponent {
     const realGrid = optimizeGrid(grid);
     const maxData = this.makeDataArray(realGrid.max);
     const minData = this.makeDataArray(realGrid.min);
+    // Label的series
+    const maxLabelSeries = this.makeLabelSeries('max-label', maxData, seriesData, realLength);
+    const minLabelSeries = this.makeLabelSeries('min-label', minData, yAxisLabels, realLength);
     // 普通视图配置项
     // TODO 当最小值和最大值是相同单位的时候，需要做特殊处理
     const options = {
@@ -290,10 +309,9 @@ export default class RankNormalChart extends PureComponent {
       series: [
         this.makeLabelShadowSeries('min-shadow', minData),
         this.makeLabelShadowSeries('max-shadow', maxData),
-        this.makeDataShadowSeries('data-shadow', minData),
-        this.makeDataShadowSeries('data-shadow', maxData),
-        this.makeLabelSeries('min-label', minData, yAxisLabels, realLength),
-        this.makeLabelSeries('max-label', maxData, seriesData, realLength),
+        this.makeDataShadowSeries('data-min-shadow', minData),
+        this.makeDataShadowSeries('data-max-shadow', maxData),
+        ...this.optimizeLableSeriesOrder(realGrid, maxLabelSeries, minLabelSeries),
         this.makeRealSeries(name, seriesData),
       ],
     };

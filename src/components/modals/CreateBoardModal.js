@@ -27,6 +27,8 @@ export default class CreateBoardModal extends PureComponent {
     closeModal: PropTypes.func.isRequired,
     confirm: PropTypes.func.isRequired,
     allOptions: PropTypes.array.isRequired,
+    operateData: PropTypes.object.isRequired,
+    createLoading: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -44,12 +46,30 @@ export default class CreateBoardModal extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { visible } = nextProps;
-    const { visible: preVisible } = this.props;
+    const { visible, operateData, createLoading: nextCL } = nextProps;
+    const { visible: preVisible, createLoading: prevCL } = this.props;
     if (!_.isEqual(visible, preVisible)) {
       this.setState({
         modalVisible: visible,
       });
+    }
+    if (!nextCL && prevCL) {
+      const { success } = operateData;
+      // 判断检查看板名称是否已经存在
+      if (success) {
+        this.closeCreateModal();
+      } else {
+        // 名称相同，弹提示框
+        const { code } = operateData;
+        if (code === '-2') {
+          this.setState({
+            nameHelp: '名称重复，请更换',
+          },
+          () => {
+            this.setTooltipVisible(true);
+          });
+        }
+      }
     }
   }
 
@@ -83,7 +103,7 @@ export default class CreateBoardModal extends PureComponent {
 
   @autobind
   confirmCreateModal() {
-    const { form, confirm, ownerOrgId } = this.props;
+    const { form, ownerOrgId, confirm } = this.props;
     // TODO 添加确认按钮处理程序
     const boardname = form.getFieldValue('boardname');
     const boardType = form.getFieldValue('boardtype');
@@ -110,16 +130,12 @@ export default class CreateBoardModal extends PureComponent {
       });
       return;
     }
-    // TODO 调用创建看板接口
     confirm({
       ownerOrgId,
       name: boardname,
       boardType,
       permitOrgIds,
     });
-    // 隐藏Modal
-    // TODO 此处是否需要进行特殊的异步处理
-    this.closeCreateModal();
   }
 
   render() {
@@ -128,8 +144,8 @@ export default class CreateBoardModal extends PureComponent {
     const { getFieldDecorator } = this.props.form;
     // 表单布局
     const formItemLayout = {
-      labelCol: { span: 4 },
-      wrapperCol: { span: 18 },
+      labelCol: { span: 5 },
+      wrapperCol: { span: 17 },
       layout: 'horizontal',
     };
 

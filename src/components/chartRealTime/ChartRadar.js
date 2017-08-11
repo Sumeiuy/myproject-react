@@ -8,6 +8,15 @@ import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
+import {
+  legend,
+  radarCommon,
+  seriesCommon,
+  currentRadar,
+  contrastRadar,
+  currentLabel,
+  contrastLabel,
+} from './chartRadarOptions';
 import IECharts from '../IECharts';
 import styles from './chartRadar.less';
 
@@ -77,145 +86,112 @@ export default class ChartRadar extends PureComponent {
   }
 
   @autobind
-  createOption(scopeNum, data) {
-    const indicatorData = [];// name
-    const period = []; // 本期数据值
-    const PreviousPeriod = []; // 上期
-    const currentV = [];
-    const previous = [];
-    let indicatorMax = 0;
-    let indicatorMin = 0;
-    _.each(data, (item) => {
-      const { rank_current: current, rank_contrast: contrast } = item;
-      currentV.push(current);
-      period.push(scopeNum - current);
-      previous.push(contrast);
-      PreviousPeriod.push(scopeNum - contrast);
-    });
-    const indicator = this.optimizeIndicator(currentV, previous, scopeNum);
-    indicatorMax = indicator.max;
-    indicatorMin = indicator.min;
-    _.each(data, (item) => {
-      const { indicator_name: name } = item;
-      indicatorData.push({
-        name,
-        min: (scopeNum - indicatorMax),
-        max: (scopeNum - indicatorMin),
+  makeRadarIndicators(current, contrast, scopeNum, indicatorName) {
+    const indicators = [];
+    const indicator = this.optimizeIndicator(current, contrast, scopeNum);
+    const indicatorMax = indicator.max;
+    const indicatorMin = indicator.min;
+    let min = Number(scopeNum) - indicatorMax;
+    let max = Number(scopeNum) - indicatorMin;
+    if (_.isEmpty(current) && _.isEmpty(contrast)) {
+      max = 10;
+      min = 1;
+    }
+    _.each(indicatorName, (item) => {
+      indicators.push({
+        name: item,
+        min,
+        max,
       });
     });
-    const options = {
-      title: {
-        show: false,
-        text: '指示分析',
-      },
-      legend: {
-        data: [
-          { name: '本期', icon: 'square' },
-          { name: '上期', icon: 'square' },
-        ],
-        bottom: 0,
-        left: '60px',
-        itemGap: 20,
+    return indicators;
+  }
+
+  @autobind
+  filterRadarData(radarData, scopeNum) {
+    let originalCurrent = [];
+    let originalContrast = [];
+    let radarCurrent = [];
+    let radarContrast = [];
+    const indicatorName = [];
+    _.each(radarData, (item) => {
+      const {
+        rank_current: currentV,
+        rank_contrast: contrastV,
+        indicator_name: name,
+      } = item;
+
+      indicatorName.push(name);
+      if (scopeNum !== null && scopeNum !== 'null') {
+         // 判断有无值
+        if (currentV !== null && currentV !== 'null') {
+          originalCurrent.push(Number(currentV));
+          radarCurrent.push(Number(scopeNum) - Number(currentV));
+        } else {
+          // 无值时候，确保为空数组
+          originalCurrent = [];
+          radarCurrent = [];
+        }
+        if (contrastV !== null && contrastV !== 'null') {
+          originalContrast.push(Number(contrastV));
+          radarContrast.push(Number(scopeNum) - Number(contrastV));
+        } else {
+          // 无值时候，确保为空数组
+          originalContrast = [];
+          radarContrast = [];
+        }
+      }
+    });
+    return {
+      original: {
+        current: originalCurrent,
+        contrast: originalContrast,
       },
       radar: {
-        radius: '75%',
-        shape: 'circle',
-        splitNumber: 6,
-        center: ['50%', '50%'],
-        name: {
-          textStyle: {
-            color: '#666666',
-          },
-        },
-        nameGap: '6',
-        splitLine: {
-          lineStyle: {
-            color: [
-              '#ebf2ff',
-            ].reverse(),
-          },
-        },
-        splitArea: {
-          show: false,
-        },
-        axisLine: {
-          lineStyle: {
-            color: '#b9e7fd',
-          },
-        },
-        indicator: indicatorData,
+        current: radarCurrent,
+        contrast: radarContrast,
       },
-      series: [{
-        name: '本期 vs 上期',
-        type: 'radar',
-        smooth: true,
-        symbolSize: 1,
-        data: [
-          {
-            value: period,
-            name: '本期',
-            areaStyle: {
-              normal: {
-                color: 'rgba( 56, 216, 232, 0.2 )',
-              },
-            },
-            itemStyle: {
-              normal: {
-                color: '#38d8e8',
-                lineStyle: {
-                  color: 'rgb( 56, 216, 232 )',
-                  width: 1,
-                },
-              },
-            },
-            label: {
-              normal: {
-                show: true,
-                position: 'top',
-                formatter(p) {
-                  return scopeNum - p.value;
-                },
-                textStyle: {
-                  color: '#ff7a39',
-                },
-              },
-            },
-          },
-          {
-            value: PreviousPeriod,
-            name: '上期',
-            areaStyle: {
-              normal: {
-                left: '10px',
-                color: 'rgba( 117, 111, 184, 0.2 )',
-              },
-            },
-            itemStyle: {
-              normal: {
-                color: '#756fb8',
-                lineStyle: {
-                  color: 'rgb( 117, 111, 184 )',
-                  width: 1,
-                },
-              },
-            },
-            label: {
-              normal: {
-                show: true,
-                position: 'bottom',
-                formatter(p) {
-                  return scopeNum - p.value;
-                },
-                textStyle: {
-                  color: '#3983ff',
-                },
-              },
-            },
-          },
-        ],
-      }],
+      indicatorName,
     };
-    return options;
+  }
+
+  @autobind
+  makeRadarSeriesData(radar, scopeNum) {
+    const result = [];
+    const legends = [];
+    const { current, contrast } = radar;
+    if (!_.isEmpty(current)) {
+      const currentData = {
+        ...currentRadar,
+        value: current,
+        label: {
+          normal: {
+            ...currentLabel,
+            formatter: p => (scopeNum - p.value),
+          },
+        },
+      };
+      result.push(currentData);
+      legends.push({ name: '本期', icon: 'square' });
+    }
+    if (!_.isEmpty(contrast)) {
+      const contrastData = {
+        ...contrastRadar,
+        value: contrast,
+        label: {
+          normal: {
+            ...contrastLabel,
+            formatter: p => (scopeNum - p.value),
+          },
+        },
+      };
+      result.push(contrastData);
+      legends.push({ name: '上期', icon: 'square' });
+    }
+    return {
+      series: result,
+      legend: legends,
+    };
   }
 
   @autobind
@@ -227,11 +203,33 @@ export default class ChartRadar extends PureComponent {
 
   render() {
     const { radarData, total, selectCore, localScope } = this.props;
-    if (localScope === '1') {
+    if (localScope === '1' || _.isEmpty(radarData)) {
       return null;
     }
     const { levelName } = this.state;
-    const options = this.createOption(total, radarData);
+    const {
+      original: { current, contrast },
+      radar,
+      indicatorName,
+    } = this.filterRadarData(radarData, total);
+    const indicator = this.makeRadarIndicators(current, contrast, total, indicatorName);
+    const allData = this.makeRadarSeriesData(radar, Number(total));
+    const options = {
+      legend: {
+        ...legend,
+        data: allData.legend,
+      },
+      radar: {
+        ...radarCommon,
+        indicator,
+      },
+      series: [
+        {
+          ...seriesCommon,
+          data: allData.series,
+        },
+      ],
+    };
     return (
       <div className={styles.radarBox}>
         <div className={styles.titleDv}>强弱指示分析</div>
@@ -246,15 +244,15 @@ export default class ChartRadar extends PureComponent {
           />
         </div>
         <div className={styles.radarInfo}>
-          <i />{radarData[selectCore].indicator_name}：本期排名：
+          <i />{indicatorName[selectCore]}：本期排名：
             <span className={styles.now}>
-              {radarData[selectCore].rank_current}
+              {_.isEmpty(current) ? '--' : current[selectCore]}
             </span>
             上期排名：
             <span className={styles.before}>
-              {radarData[selectCore].rank_contrast}
+              {_.isEmpty(contrast) ? '--' : contrast[selectCore]}
             </span>
-            共 <span className={styles.all}>{total}</span> 家{levelName}
+            共 <span className={styles.all}>{total === '0' ? '--' : total}</span> 家{levelName}
         </div>
       </div>
     );

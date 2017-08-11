@@ -88,6 +88,7 @@ export default class SelectTreeModal extends PureComponent {
     const { modalVisible, summuryLib, btnStatus } = this.state;
     const { modalCaption } = this.props;
     const newSummury = _.cloneDeep(summuryLib);
+    console.warn('newSummury', newSummury);
     return (
       modalVisible ?
         <Modal
