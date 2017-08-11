@@ -172,7 +172,7 @@ export default class ChartRadar extends PureComponent {
         },
       };
       result.push(currentData);
-      legend.push({ name: '本期', icon: 'square' });
+      legends.push({ name: '本期', icon: 'square' });
     }
     if (!_.isEmpty(contrast)) {
       const contrastData = {
@@ -186,7 +186,7 @@ export default class ChartRadar extends PureComponent {
         },
       };
       result.push(contrastData);
-      legend.push({ name: '上期', icon: 'square' });
+      legends.push({ name: '上期', icon: 'square' });
     }
     return {
       series: result,
