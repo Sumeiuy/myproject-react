@@ -207,14 +207,18 @@ export default class HistoryHome extends PureComponent {
     } = this.props;
     const { push, createLoading, deleteLoading, updateLoading, operateData } = nextProps;
     if (preCL && !createLoading) {
-      // 创建完成后，需要跳转到新建看板
-      this.setState({
-        coreIndicatorIds: [],
-      },
-        () => {
-          const { id } = operateData;
-          push(`/history?boardId=${id}&boardType=${boardType}`);
-        });
+      // 首先判断创建成功与否
+      const { success } = operateData;
+      if (success) {
+        // 创建完成后，需要跳转到新建看板
+        this.setState({
+          coreIndicatorIds: [],
+        },
+          () => {
+            const { id } = operateData;
+            push(`/history?boardId=${id}&boardType=${boardType}`);
+          });
+      }
     }
     if (preDL && !deleteLoading) {
       // 删除成功
@@ -524,6 +528,8 @@ export default class HistoryHome extends PureComponent {
       collectBoardSelect,
       collectCustRange,
       collectDurationSelect,
+      createLoading,
+      operateData,
     } = this.props;
 
     if (_.isEmpty(custRange) || _.isEmpty(visibleBoards)) {
@@ -575,7 +581,7 @@ export default class HistoryHome extends PureComponent {
         />
         <div className={styles.historybd}>
           <div className={styles.indicatorOverview}>
-            {/* 核心指标头部区域---假定数据 */}
+            {/* 核心指标头部区域 */}
             <IndicatorOverviewHeader
               location={location}
               createBoardConfirm={this.createBoardConfirm}
@@ -585,6 +591,8 @@ export default class HistoryHome extends PureComponent {
               orgId={custOrg}
               selectKeys={coreIndicatorIds}
               boardType={boardType}
+              createLoading={createLoading}
+              operateData={operateData}
             />
             {/* 指标概览区域 */}
             <IndicatorOverview
@@ -600,7 +608,6 @@ export default class HistoryHome extends PureComponent {
             <div className={styles.caption}>{curNameIndex >= 0 ? historyCore[curNameIndex].name : '托管总资产'}-详细分析</div>
             <div className={styles.polyArea}>
               <HistoryComparePolyChart data={contrastData} />
-              {/* 假定数据 */}
               {
                 _.isEmpty(rankData)
                   ? null
