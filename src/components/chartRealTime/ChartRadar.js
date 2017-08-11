@@ -91,11 +91,17 @@ export default class ChartRadar extends PureComponent {
     const indicator = this.optimizeIndicator(current, contrast, scopeNum);
     const indicatorMax = indicator.max;
     const indicatorMin = indicator.min;
+    let min = Number(scopeNum) - indicatorMax;
+    let max = Number(scopeNum) - indicatorMin;
+    if (_.isEmpty(current) && _.isEmpty(contrast)) {
+      max = 10;
+      min = 1;
+    }
     _.each(indicatorName, (item) => {
       indicators.push({
         name: item,
-        min: (Number(scopeNum) - indicatorMax),
-        max: (Number(scopeNum) - indicatorMin),
+        min,
+        max,
       });
     });
     return indicators;
@@ -166,7 +172,7 @@ export default class ChartRadar extends PureComponent {
         },
       };
       result.push(currentData);
-      legend.push({ name: '本期', icon: 'square' });
+      legends.push({ name: '本期', icon: 'square' });
     }
     if (!_.isEmpty(contrast)) {
       const contrastData = {
@@ -180,7 +186,7 @@ export default class ChartRadar extends PureComponent {
         },
       };
       result.push(contrastData);
-      legend.push({ name: '上期', icon: 'square' });
+      legends.push({ name: '上期', icon: 'square' });
     }
     return {
       series: result,
@@ -246,7 +252,7 @@ export default class ChartRadar extends PureComponent {
             <span className={styles.before}>
               {_.isEmpty(contrast) ? '--' : contrast[selectCore]}
             </span>
-            共 <span className={styles.all}>{total}</span> 家{levelName}
+            共 <span className={styles.all}>{total === '0' ? '--' : total}</span> 家{levelName}
         </div>
       </div>
     );
