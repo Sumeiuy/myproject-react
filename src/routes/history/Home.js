@@ -529,7 +529,7 @@ export default class HistoryHome extends PureComponent {
       collectCustRange,
       collectDurationSelect,
       createLoading,
-      operateData
+      operateData,
     } = this.props;
 
     if (_.isEmpty(custRange) || _.isEmpty(visibleBoards)) {
