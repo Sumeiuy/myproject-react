@@ -13,12 +13,12 @@ import Icon from '../../components/common/Icon';
 import styles from './reorder.less';
 
 // 排序的字段配置，方便后面修改
-const openTimeAsc = { sortType: 'openTime', sortDirection: 'asc' };
-const openTimeDesc = { sortType: 'openTime', sortDirection: 'desc' };
-const commissionAsc = { sortType: 'commission', sortDirection: 'asc' };
-const commissionDesc = { sortType: 'commission', sortDirection: 'desc' };
-const totalAssetsAsc = { sortType: 'totalAssets', sortDirection: 'asc' };
-const totalAssetsDesc = { sortType: 'totalAssets', sortDirection: 'desc' };
+const openTimeAsc = { sortType: 'OpenDt', sortDirection: 'asc' };
+const openTimeDesc = { sortType: 'OpenDt', sortDirection: 'desc' };
+const commissionAsc = { sortType: 'Fee', sortDirection: 'asc' };
+const commissionDesc = { sortType: 'Fee', sortDirection: 'desc' };
+const totalAssetsAsc = { sortType: 'Aset', sortDirection: 'asc' };
+const totalAssetsDesc = { sortType: 'Aset', sortDirection: 'desc' };
 
 export default class Order extends PureComponent {
 

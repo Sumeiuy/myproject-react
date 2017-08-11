@@ -85,7 +85,7 @@ export default {
   getMotTaskCount: query => api.post('/groovynoauth/fsp/emp/notification/queryMotTaskCount', query),
 
   // 客户列表
-  getCustomerList: query => api.post('/groovynoauth/fsp/customerlist', query),
+  getCustomerList: query => api.post('/groovynoauth/fsp/cust/custlist/queryCustList', query),
 
   // 默认推荐词及热词推荐列表
   getHotWds: query => api.post('/groovynoauth/fsp/cust/custlabel/queryHotWds', query),

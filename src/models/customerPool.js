@@ -23,6 +23,12 @@ export default {
     dict: {},
     hotwds: {},
     hotPossibleWdsList: [],
+    custList: [],
+    page: {
+      pageSize: 0,
+      pageNo: 1,
+      total: 0,
+    },
   },
   subscriptions: {
     setup({ dispatch }) {
@@ -107,16 +113,20 @@ export default {
     // 获取字典
     * getDictionary({ payload }, { call, put }) {
       const response = yield call(api.getStatisticalPeriod);
-      console.log('dict', response);
+      // console.log('dict', response);
       yield put({
         type: 'getDictionarySuccess',
         payload: { response },
       });
     },
     // 获取客户列表
-    * getCustomerList({ payload }, { call }) {
+    * getCustomerList({ payload }, { call, put }) {
       const response = yield call(api.getCustomerList, payload);
       console.log('getCustomerList', response);
+      yield put({
+        type: 'getCustomerListSuccess',
+        payload: response,
+      });
     },
     // 默认推荐词及热词推荐列表
     * getHotWds({ payload }, { call, put }) {
@@ -248,6 +258,19 @@ export default {
       return {
         ...state,
         hotPossibleWdsList,
+      };
+    },
+    getCustomerListSuccess(state, action) {
+      const { payload: { resultData: { custListVO } } } = action;
+      const page = {
+        pageSize: custListVO.pageSize,
+        pageNo: Number(custListVO.pageNo) + 1,
+        total: custListVO.totalCount,
+      };
+      return {
+        ...state,
+        custList: custListVO.eleContents,
+        page,
       };
     },
   },

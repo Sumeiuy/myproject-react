@@ -140,6 +140,7 @@ export default class Search extends PureComponent {
     const { push } = this.props;
     push({
       pathName: `/customerList/list?source=seach&q=${inputVal}`,
+      query: {},
     });
   }
 
