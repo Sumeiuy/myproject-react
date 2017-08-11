@@ -58,10 +58,10 @@ export default class CreateHistoryBoardModal extends PureComponent {
         this.closeCreateModal();
       } else {
         // 名称相同，弹提示框
-        const { code } = operateData;
+        const { code, msg } = operateData;
         if (code === '-2') {
           this.setState({
-            nameHelp: '看板名称已存在，请重新输入',
+            nameHelp: msg,
           },
           () => {
             this.setTooltipVisible(true);
