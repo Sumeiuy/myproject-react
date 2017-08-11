@@ -48,6 +48,7 @@ export default class ScatterAnalysis extends PureComponent {
               data={contributionAnalysisData}
               queryContrastAnalyze={queryContrastAnalyze}
               title={custScatter.title}
+              contrastType={'客户类型'}
               optionsData={cust}
               description={'客户贡献'}
               type={custScatter.type}
@@ -70,6 +71,7 @@ export default class ScatterAnalysis extends PureComponent {
                   data={reviewAnalysisData}
                   queryContrastAnalyze={queryContrastAnalyze}
                   title={investScatter.title}
+                  contrastType={'投顾类型'}
                   optionsData={invest}
                   description={'服务经理'}
                   type={investScatter.type}

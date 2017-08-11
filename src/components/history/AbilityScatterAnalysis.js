@@ -25,6 +25,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
     type: PropTypes.string.isRequired,
     swtichDefault: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
+    contrastType: PropTypes.string.isRequired,
   };
 
   static defaultProps = {
@@ -51,7 +52,6 @@ export default class AbilityScatterAnalysis extends PureComponent {
   componentWillReceiveProps(nextProps) {
     const { data: nextData, swtichDefault: newSwitch, optionsData: nextOptions } = nextProps;
     const {
-      data: prevData,
       swtichDefault: oldSwitch,
       description,
       optionsData: prevOptions,
@@ -62,35 +62,27 @@ export default class AbilityScatterAnalysis extends PureComponent {
       scatterDiagramModels = EMPTY_LIST,
     } = nextData;
 
-    const {
-      core: prevCore = EMPTY_OBJECT,
-      contrast: prevContrast = EMPTY_OBJECT,
-      scatterDiagramModels: prevScatterDiagramModels = EMPTY_LIST,
-    } = prevData;
-
-    // 比较前后两次值是否相同
-    if (!_.isEqual(core, prevCore) || !_.isEqual(contrast, prevContrast)
-      || !_.isEqual(scatterDiagramModels, prevScatterDiagramModels)) {
-      if (!_.isEmpty(scatterDiagramModels)) {
-        const finalData = constructScatterData({
-          core,
-          contrast,
-          scatterDiagramModels,
-          description,
-        });
-        const { averageInfo } = finalData;
-        this.getAnyPoint(finalData);
-        this.setState({
-          finalData,
-          averageInfo,
-        });
-      } else {
-        this.setState({
-          finalData: EMPTY_OBJECT,
-          averageInfo: '',
-        });
-      }
+    // 有值就构造图表数据
+    if (!_.isEmpty(scatterDiagramModels)) {
+      const finalData = constructScatterData({
+        core,
+        contrast,
+        scatterDiagramModels,
+        description,
+      });
+      const { averageInfo } = finalData;
+      this.getAnyPoint(finalData);
+      this.setState({
+        finalData,
+        averageInfo,
+      });
+    } else {
+      this.setState({
+        finalData: EMPTY_OBJECT,
+        averageInfo: '',
+      });
     }
+
     // 恢复默认选项
     if (oldSwitch !== newSwitch) {
       const options = this.state.finalOptions;
@@ -134,11 +126,30 @@ export default class AbilityScatterAnalysis extends PureComponent {
     } else if (slope <= 1) {
       // 处理斜率小于1的情况
       // 太小的斜率直接计算坐标
-      const scatterOptions = constructScatterOptions({
+      const endYCood = yAxisMin + ((xAxisMax - xAxisMin) * slope);
+      let finalSeriesData = {
         ...seriesData,
         startCoord: [xAxisMin, yAxisMin],
-        endCoord: [xAxisMax, yAxisMin + ((xAxisMax - xAxisMin) * slope)],
+        endCoord: [xAxisMax, endYCood],
+      };
+
+      // 如果算出来的y坐标小于或者大于轴刻度的最小或最大值
+      // 则将计算出来的值，作为刻度边界值，取floor或者ceil
+      if (endYCood < yAxisMin) {
+        finalSeriesData = {
+          ...finalSeriesData,
+          yAxisMin: Math.floor(endYCood),
+        };
+      } else {
+        finalSeriesData = {
+          ...finalSeriesData,
+          yAxisMax: Math.ceil(endYCood),
+        };
+      }
+      const scatterOptions = constructScatterOptions({
+        ...finalSeriesData,
       });
+
 
       this.setState({
         scatterOptions,
@@ -194,12 +205,14 @@ export default class AbilityScatterAnalysis extends PureComponent {
 
     let endCoord;
     let finalSeriesData = seriesData;
+    // 如果算出来的y坐标小于轴刻度的最小
+    // 则将计算出来的值，作为刻度边界值，取floor
     if (xAxisMax > yAxisMax) {
       endCoord = [current, point];
       if (point < yAxisMin) {
         finalSeriesData = {
           ...seriesData,
-          yAxisMin: point,
+          yAxisMin: Math.floor(point),
         };
       }
     } else {
@@ -207,7 +220,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
       if (point < xAxisMin) {
         finalSeriesData = {
           ...seriesData,
-          xAxisMin: point,
+          xAxisMin: Math.floor(point),
         };
       }
     }
@@ -340,6 +353,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
     const {
       title,
       style,
+      contrastType,
     } = this.props;
 
     if (_.isEmpty(finalData)) {
@@ -352,8 +366,8 @@ export default class AbilityScatterAnalysis extends PureComponent {
       <div className={styles.abilityScatterAnalysis}>
         <div className={styles.abilityHeader}>
           <div className={styles.title}>{title}</div>
-          <div className={styles.compare}>对比</div>
           <div className={styles.customerDimensionSelect}>
+            <span className={styles.contrastType}>{contrastType}</span>
             <Select
               onChange={this.handleChange}
               allowClear={false}
