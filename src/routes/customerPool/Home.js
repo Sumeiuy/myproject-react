@@ -243,6 +243,7 @@ export default class Home extends PureComponent {
       motTaskCount,
     } = this.props;
     const { expandAll, cycleSelect, createCustRange } = this.state;
+    console.log('createCustRange>>>', createCustRange);
     return (
       <div className={styles.customerPoolWrap}>
         <Search />

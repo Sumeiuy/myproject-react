@@ -87,4 +87,6 @@ export default {
   // 客户列表
   getCustomerList: query => api.post('/groovynoauth/fsp/cust/custlist/queryCustList', query),
 
+  // 客户列表中的6个月的收益数据
+  getCustIncome: query => api.post('/groovynoauth/fsp/cust/custlist/queryCustIncome', query),
 };
