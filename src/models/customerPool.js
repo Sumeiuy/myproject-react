@@ -22,12 +22,15 @@ export default {
     motTaskCount: 0,
     dict: {},
     monthlyProfits: [],
+    hotwds: {},
+    hotPossibleWdsList: [],
     custList: [],
     custPage: {
       pageSize: 10,
       pageNo: 1,
       total: 0,
     },
+    historyWdsList: [],
   },
   subscriptions: {
     setup({ dispatch }) {
@@ -135,6 +138,35 @@ export default {
         payload: response,
       });
     },
+    // 默认推荐词及热词推荐列表及历史搜索数据
+    * getHotWds({ payload }, { call, put }) {
+      const response = yield call(api.getHotWds, payload);
+      yield put({
+        type: 'getHotWdsSuccess',
+        payload: { response },
+      });
+      const history = yield call(api.getHistoryWdsList, payload);
+      yield put({
+        type: 'getHistoryWdsListSuccess',
+        payload: { history },
+      });
+    },
+    // 联想的推荐热词列表
+    * getHotPossibleWds({ payload }, { call, put }) {
+      const response = yield call(api.getHotPossibleWds, payload);
+      yield put({
+        type: 'getHotPossibleWdsSuccess',
+        payload: { response },
+      });
+    },
+    // 默认推荐词及热词推荐列表及历史搜索数据
+    * getHistoryWdsList({ payload }, { call, put }) {
+      const history = yield call(api.getHistoryWdsList, payload);
+      yield put({
+        type: 'getHistoryWdsListSuccess',
+        payload: { history },
+      });
+    },
   },
   reducers: {
     getToDoListSuccess(state, action) {
@@ -233,6 +265,24 @@ export default {
         dict,
       };
     },
+    // 默认推荐词及热词推荐列表
+    getHotWdsSuccess(state, action) {
+      const { payload: { response } } = action;
+      const hotWds = response.resultData;
+      return {
+        ...state,
+        hotWds,
+      };
+    },
+    // 联想的推荐热词列表
+    getHotPossibleWdsSuccess(state, action) {
+      const { payload: { response } } = action;
+      const hotPossibleWdsList = response.resultData.hotPossibleWdsList;
+      return {
+        ...state,
+        hotPossibleWdsList,
+      };
+    },
     getCustomerListSuccess(state, action) {
       const { payload: { resultData: { custListVO } } } = action;
       const custPage = {
@@ -252,6 +302,14 @@ export default {
       return {
         ...state,
         monthlyProfits,
+      };
+    },
+    // 默认推荐词及热词推荐列表
+    getHistoryWdsListSuccess(state, action) {
+      const { payload: { history: { resultData: { historyWdsList } } } } = action;
+      return {
+        ...state,
+        historyWdsList,
       };
     },
   },

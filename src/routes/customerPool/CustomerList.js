@@ -434,7 +434,7 @@ export default class CustomerList extends PureComponent {
         />
         <CustomerLists
           custList={custList}
-          q={q}
+          q={decodeURIComponent(q)}
           page={page}
           curPageNum={curPageNum}
           pageSize={pageSize}

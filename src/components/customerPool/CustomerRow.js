@@ -117,43 +117,38 @@ export default class CustomerRow extends PureComponent {
     // if (!q) return;
     let rtnEle = '';
     let shortRtnEle = '';
+    let n = 0;
     if (list.name.indexOf(q) > -1) {
-      rtnEle += `<li>
-        <span>
-          姓名：${list.name.replace(new RegExp(q, 'g'), '<em class="mark">q</em>')}
-        </span>
-      </li>`;
-      shortRtnEle += `<li>
-        <span>
-          姓名：${list.name.replace(new RegExp(q, 'g'), '<em class="mark">q</em>')}
-        </span>
-      </li>`;
+      const markedEle = list.name.replace(new RegExp(q, 'g'), `<em class="mark">${q}</em>`);
+      rtnEle += `<li><span>姓名：${markedEle}</span></li>`;
+      n++;
+      if (n <= 2) {
+        shortRtnEle += `<li><span>姓名：${markedEle}</span></li>`;
+      }
     }
     if (list.idNum.indexOf(q) > -1) {
-      rtnEle += `<li>
-        <span>
-          身份证号码：${list.idNum.replace(new RegExp(q, 'g'), '<em class="mark">q</em>')}
-        </span>
-      </li>`;
-      shortRtnEle += `<li>
-        <span>
-          身份证号码：${list.idNum.replace(new RegExp(q, 'g'), '<em class="mark">q</em>')}
-        </span>
-      </li>`;
+      const markedEle = list.idNum.replace(new RegExp(q, 'g'), `<em class="mark">${q}</em>`);
+      rtnEle += `<li><span>身份证号码：${markedEle}</span></li>`;
+      n++;
+      if (n <= 2) {
+        shortRtnEle += `<li><span>身份证号码：${markedEle}</span></li>`;
+      }
     }
     if (list.telephone.indexOf(q) > -1) {
-      rtnEle += `<li>
-        <span>
-          联系电话：${list.telephone.replace(new RegExp(q, 'g'), '<em class="mark">q</em>')}
-        </span>
-      </li>`;
+      const markedEle = list.telephone.replace(new RegExp(q, 'g'), `<em class="mark">${q}</em>`);
+      rtnEle += `<li><span>联系电话：${markedEle}</span></li>`;
+      n++;
+      if (n <= 2) {
+        shortRtnEle += `<li><span>联系电话：${markedEle}</span></li>`;
+      }
     }
     if (list.custId.indexOf(q) > -1) {
-      rtnEle += `<li>
-        <span>
-          经纪客户号：${list.custId.replace(new RegExp(q, 'g'), '<em class="mark">q</em>')}
-        </span>
-      </li>`;
+      const markedEle = list.custId.replace(new RegExp(q, 'g'), `<em class="mark">${q}</em>`);
+      rtnEle += `<li><span>经纪客户号：${markedEle}</span></li>`;
+      n++;
+      if (n <= 2) {
+        shortRtnEle += `<li><span>经纪客户号：${markedEle}</span></li>`;
+      }
     }
     return {
       shortRtnEle: { __html: shortRtnEle },
