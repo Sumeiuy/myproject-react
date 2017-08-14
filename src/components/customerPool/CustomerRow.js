@@ -163,20 +163,6 @@ export default class CustomerRow extends PureComponent {
 
   render() {
     const { q, list } = this.props;
-    // let shortRtnEle;
-    // let rtnEle;
-    // if (list.name.indexOf(q) > -1) {
-    //   rtnEle += `<li>
-    //     <span>
-    //       姓名：${list.name.replace(new RegExp(q, 'g'), '<em class="mark">q</em>')}
-    //     </span>
-    //   </li>`;
-    //   shortRtnEle += `<li>
-    //     <span>
-    //       姓名：${list.name.replace(new RegExp(q, 'g'), '<em class="mark">q</em>')}
-    //     </span>
-    //   </li>`;
-    // }
     return (
       <Row type="flex" className={styles.custoemrRow}>
         <Col span={3} className={styles.avator}>
@@ -267,7 +253,6 @@ export default class CustomerRow extends PureComponent {
               dangerouslySetInnerHTML={this.matchWord(q, list).rtnEle}
             />
           </div>
-
         </Col>
       </Row>
     );
