@@ -282,12 +282,10 @@ export default class ChartLineWidget extends PureComponent {
             opacity: 0,
           },
         },
-        seriesAreaStyle: {
-          areaStyle: {
-            normal: {
-              color: '#ef9e49',
-              opacity: '0.1',
-            },
+        areaStyle: {
+          normal: {
+            color: '#ef9e49',
+            opacity: '0.1',
           },
         },
       },
