@@ -27,6 +27,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
     description: PropTypes.string.isRequired,
     contrastType: PropTypes.string.isRequired,
     headerClass: PropTypes.object,
+    isLvIndicator: PropTypes.bool.isRequired,
   };
 
   static defaultProps = {
@@ -57,6 +58,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
       swtichDefault: oldSwitch,
       description,
       optionsData: prevOptions,
+      isLvIndicator,
     } = this.props;
     const {
       core = EMPTY_OBJECT,
@@ -71,6 +73,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
         contrast,
         scatterDiagramModels,
         description,
+        isLvIndicator,
       });
       const { averageInfo } = finalData;
       this.getAnyPoint(finalData);
