@@ -5,7 +5,7 @@
 
 import 'whatwg-fetch';
 
-import config from '../config/request';
+import { request as config, excludeCode } from '../config';
 
 /**
  * Parses the JSON returned by a network request
@@ -19,8 +19,8 @@ function parseJSON(response) {
     (res) => {
       // 神策的响应是succeed: true
       const { code, msg, succeed } = res;
-      const { excludeCode } = config;
-      if (code !== '0' && !succeed && !excludeCode.includes(code)) {
+      const existExclude = excludeCode.findIndex(o => o.code === code) > -1;
+      if (!existExclude && !succeed) {
         let error;
         if (code === 'MAG0010') {
           // 这里使用code作为message，以便对登录错误做特殊处理

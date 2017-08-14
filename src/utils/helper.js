@@ -79,17 +79,6 @@ const helper = {
     return query;
   },
 
-  isLocalStorageSupport() {
-    const KEY = 'STORAGE_TEST_KEY';
-    try {
-      localStorage.setItem(KEY, KEY);
-      localStorage.removeItem(KEY);
-      return true;
-    } catch (e) {
-      return false;
-    }
-  },
-
   /**
    * 获取属性的属性值
    * 针对类似 `a.b.c` 的命名路径，获取最后的 `c` 的属性
