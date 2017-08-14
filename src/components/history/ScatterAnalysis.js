@@ -22,6 +22,7 @@ export default class ScatterAnalysis extends PureComponent {
     swtichDefault: PropTypes.string.isRequired,
     location: PropTypes.object.isRequired,
     level: PropTypes.string.isRequired,
+    isLvIndicator: PropTypes.bool.isRequired,
   };
 
   static defaultProps = {
@@ -37,6 +38,7 @@ export default class ScatterAnalysis extends PureComponent {
       swtichDefault,
       location: { query: { boardType } },
       level,
+      isLvIndicator,
     } = this.props;
     if (_.isEmpty(cust) || _.isEmpty(invest)) {
       return null;
@@ -54,6 +56,7 @@ export default class ScatterAnalysis extends PureComponent {
               optionsData={cust}
               description={'客户贡献'}
               type={custScatter.type}
+              isLvIndicator={isLvIndicator}
               swtichDefault={swtichDefault}
               style={{
                 left: '-85px',
@@ -79,6 +82,7 @@ export default class ScatterAnalysis extends PureComponent {
                   description={'服务经理'}
                   type={investScatter.type}
                   swtichDefault={swtichDefault}
+                  isLvIndicator={isLvIndicator}
                   headerClass={{
                     marginLeft: '-20px',
                   }}
