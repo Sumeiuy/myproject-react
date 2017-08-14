@@ -93,4 +93,7 @@ export default {
   // 联想的推荐热词列表
   getHotPossibleWds: query => api.post('/groovynoauth/fsp/cust/custlabel/queryPossibleHotWds', query),
 
+  // 历史搜索记录
+  getHistoryWdsList: query => api.post('/groovynoauth/fsp/cust/custlabel/queryHistoryWdsList', query),
+
 };

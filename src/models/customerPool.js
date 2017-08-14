@@ -29,6 +29,7 @@ export default {
       pageNo: 1,
       total: 0,
     },
+    historyWdsList: [],
   },
   subscriptions: {
     setup({ dispatch }) {
@@ -128,12 +129,17 @@ export default {
         payload: response,
       });
     },
-    // 默认推荐词及热词推荐列表
+    // 默认推荐词及热词推荐列表及历史搜索数据
     * getHotWds({ payload }, { call, put }) {
       const response = yield call(api.getHotWds, payload);
       yield put({
         type: 'getHotWdsSuccess',
         payload: { response },
+      });
+      const history = yield call(api.getHistoryWdsList, payload);
+      yield put({
+        type: 'getHistoryWdsListSuccess',
+        payload: { history },
       });
     },
     // 联想的推荐热词列表
@@ -142,6 +148,14 @@ export default {
       yield put({
         type: 'getHotPossibleWdsSuccess',
         payload: { response },
+      });
+    },
+    // 默认推荐词及热词推荐列表及历史搜索数据
+    * getHistoryWdsList({ payload }, { call, put }) {
+      const history = yield call(api.getHistoryWdsList, payload);
+      yield put({
+        type: 'getHistoryWdsListSuccess',
+        payload: { history },
       });
     },
   },
@@ -242,7 +256,7 @@ export default {
         dict,
       };
     },
-    // getHotWdsSuccess
+    // 默认推荐词及热词推荐列表
     getHotWdsSuccess(state, action) {
       const { payload: { response } } = action;
       const hotWds = response.resultData;
@@ -251,7 +265,7 @@ export default {
         hotWds,
       };
     },
-    // getHotPossibleWds
+    // 联想的推荐热词列表
     getHotPossibleWdsSuccess(state, action) {
       const { payload: { response } } = action;
       const hotPossibleWdsList = response.resultData.hotPossibleWdsList;
@@ -271,6 +285,14 @@ export default {
         ...state,
         custList: custListVO.eleContents,
         page,
+      };
+    },
+    // 默认推荐词及热词推荐列表
+    getHistoryWdsListSuccess(state, action) {
+      const { payload: { history: { resultData: { historyWdsList } } } } = action;
+      return {
+        ...state,
+        historyWdsList,
       };
     },
   },

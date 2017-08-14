@@ -25,6 +25,7 @@ const effects = {
   performanceIndicators: 'customerPool/getPerformanceIndicators',
   getHotPossibleWds: 'customerPool/getHotPossibleWds',
   getHotWds: 'customerPool/getHotWds',
+  getHistoryWdsList: 'customerPool/getHistoryWdsList',
 };
 
 const fectchDataFunction = (globalLoading, type) => query => ({
@@ -43,6 +44,7 @@ const mapStateToProps = state => ({
   empInfo: state.app.empInfo, // 职位信息
   hotPossibleWdsList: state.customerPool.hotPossibleWdsList, // 联想的推荐热词列表
   hotWds: state.customerPool.hotWds, // 默认推荐词及热词推荐列表
+  historyWdsList: state.customerPool.historyWdsList, // 历史搜索
 });
 
 const mapDispatchToProps = {
@@ -50,6 +52,7 @@ const mapDispatchToProps = {
   getPerformanceIndicators: fectchDataFunction(true, effects.performanceIndicators),
   getHotPossibleWds: fectchDataFunction(false, effects.getHotPossibleWds),
   getHotWds: fectchDataFunction(true, effects.getHotWds),
+  getHistoryWdsList: fectchDataFunction(false, effects.getHistoryWdsList),
   push: routerRedux.push,
   replace: routerRedux.replace,
 };
@@ -68,6 +71,7 @@ export default class Home extends PureComponent {
     getPerformanceIndicators: PropTypes.func.isRequired,
     getHotPossibleWds: PropTypes.func.isRequired,
     getHotWds: PropTypes.func.isRequired,
+    getHistoryWdsList: PropTypes.func.isRequired,
     custRange: PropTypes.array,
     cycle: PropTypes.array,
     position: PropTypes.object,
@@ -76,6 +80,7 @@ export default class Home extends PureComponent {
     empInfo: PropTypes.object,
     hotPossibleWdsList: PropTypes.array,
     hotWds: PropTypes.object,
+    historyWdsList: PropTypes.array,
   }
 
   static defaultProps = {
@@ -89,6 +94,7 @@ export default class Home extends PureComponent {
     empInfo: EMPTY_OBJECT,
     hotPossibleWdsList: EMPTY_LIST,
     hotWds: EMPTY_OBJECT,
+    historyWdsList: EMPTY_LIST,
   }
 
   constructor(props) {
@@ -164,7 +170,7 @@ export default class Home extends PureComponent {
 
   @autobind
   handleGetAllInfo(custRangeData) {
-    const { getAllInfo, cycle, getHotWds } = this.props;
+    const { getAllInfo, cycle, getHotWds, getHistoryWdsList } = this.props;
     const { fspOrgId } = this.state;
     let custType = ORG;
     const orgsId = custRangeData.length > 0 ? custRangeData[0].id : '';
@@ -183,6 +189,10 @@ export default class Home extends PureComponent {
       cycleSelect: cycle.length > 0 ? cycle[0].key : '',
     });
     getHotWds({
+      orgId: fspOrgId === '' ? null : fspOrgId, // 组织ID
+      empNo: helper.getEmpId(), // 用户ID
+    });
+    getHistoryWdsList({
       orgId: fspOrgId === '' ? null : fspOrgId, // 组织ID
       empNo: helper.getEmpId(), // 用户ID
     });
@@ -219,6 +229,20 @@ export default class Home extends PureComponent {
     getHotPossibleWds({
       ...setData,
       ...state,
+    });
+  }
+
+  // 获取历史搜索
+  @autobind
+  queryHistoryWdsList() {
+    const { getHistoryWdsList } = this.props;
+    const { fspOrgId } = this.state;
+    const setData = {
+      orgId: fspOrgId === '' ? null : fspOrgId, // 组织ID
+      empNo: helper.getEmpId(), // 用户ID
+    };
+    getHistoryWdsList({
+      ...setData,
     });
   }
 
@@ -275,6 +299,7 @@ export default class Home extends PureComponent {
       hotWds,
       hotPossibleWdsList,
       push,
+      historyWdsList,
     } = this.props;
     const { expandAll, cycleSelect, createCustRange, fspOrgId } = this.state;
     return (
@@ -282,9 +307,11 @@ export default class Home extends PureComponent {
         <Search
           data={hotWds}
           queryHotPossibleWds={this.queryHotPossibleWds}
+          queryHistoryWdsList={this.queryHistoryWdsList}
           queryHotWdsData={hotPossibleWdsList}
           push={push}
           orgId={fspOrgId}
+          historyWdsList={historyWdsList}
         />
         <div className={styles.content}>
           <ToBeDone

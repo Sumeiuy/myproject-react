@@ -8,6 +8,7 @@ import React, { PropTypes, PureComponent } from 'react';
 import { Icon as AntdIcon, Button, Input, AutoComplete } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import { Link } from 'dva/router';
 import Icon from '../../components/common/Icon';
 import styles from './search.less';
 
@@ -20,46 +21,55 @@ export default class Search extends PureComponent {
   static propTypes = {
     data: PropTypes.object,
     queryHotPossibleWds: PropTypes.func,
+    queryHistoryWdsList: PropTypes.func,
     queryHotWdsData: PropTypes.array,
     push: PropTypes.func.isRequired,
     orgId: PropTypes.string,
+    historyWdsList: PropTypes.array,
   }
 
   static defaultProps = {
     data: EMPTY_OBJECT,
     queryHotPossibleWds: () => { },
+    queryHistoryWdsList: () => { },
     queryHotWdsData: EMPTY_LIST,
     orgId: '',
+    historyWdsList: EMPTY_LIST,
   }
 
-  constructor(props) {
-    super(props);
-    console.log(props);
-  }
+  // constructor(props) {
+  //   super(props);
+  //   // console.log(props);
+  // }
 
   state = {
-    dataSource: [],
+    dataSource: EMPTY_LIST,
     historySource: [{
       title: '历史搜索',
       children: [{
-        title: 'AntDesign',
-        count: 10000,
-      }, {
-        title: 'AntDesign UI',
-        count: 10600,
+        id: 0,
+        labelNameVal: '暂无数据',
+        labelMapping: '',
+        tagNumId: '',
+        labelDesc: '',
       }],
     }],
   }
 
   componentWillMount() {
+    this.handleCreatHistoryList(this.props.historyWdsList);
   }
 
   componentWillReceiveProps(nextProps) {
-    const { queryHotWdsData: nextQueryHotWdsData } = nextProps;
+    const { historyWdsList: preHistoryWdsList } = this.props;
+    const { queryHotWdsData: nextQueryHotWdsData, historyWdsList: nextHistoryWdsList } = nextProps;
     const { inputVal } = this.state;
     this.setState({
       dataSource: inputVal ? this.searchResult(inputVal, nextQueryHotWdsData) : [],
     });
+    if (!_.isEqual(nextHistoryWdsList, preHistoryWdsList)) {
+      this.handleCreatHistoryList(nextHistoryWdsList);
+    }
   }
 
   componentDidUpdate() {
@@ -72,6 +82,26 @@ export default class Search extends PureComponent {
     });
   }
 
+  // 历史搜索数据集合
+  @autobind
+  handleCreatHistoryList(data) {
+    if (!_.isEmpty(data[0]) && data[0].length > 0) {
+      const historyList = data[0].map(item => ({
+        labelNameVal: item.labelNameVal,
+        labelMapping: item.labelMapping,
+        tagNumId: item.tagNumId,
+        id: item.id,
+        labelDesc: item.labelDesc,
+      }));
+      this.setState({
+        historySource: [{
+          title: '历史搜索',
+          children: historyList,
+        }],
+      });
+    }
+  }
+
   searchResult(query, hotList) {
     return hotList.map((item, index) => ({
       query,
@@ -82,7 +112,7 @@ export default class Search extends PureComponent {
   }
 
   @autobind
-  async handleSearch(value) {
+  handleSearch(value) {
     if (_.isEmpty(value)) {
       this.setState({
         inputVal: value,
@@ -94,7 +124,7 @@ export default class Search extends PureComponent {
       inputVal: value,
     });
     const { queryHotPossibleWds } = this.props;
-    await queryHotPossibleWds({
+    queryHotPossibleWds({
       wd: value,
     });
   }
@@ -107,14 +137,15 @@ export default class Search extends PureComponent {
     const recommendList = [];
     data.forEach((item, index) => {
       recommendList.push(
-        <a
-          target="_blank" // eslint-disable-line
-          className="item" href={`/customerList/list?source=association&labelMapping=
+        <Link
+          target="_blank"
+          className="item"
+          to={`/customerList/list?source=association&labelMapping=
           ${item.labelMapping}&tagNumId=${item.tagNumId}q=${item.labelNameVal}`}
           title={item.labelDesc}
         >
           {item.labelNameVal}
-        </a>);
+        </Link>);
       if (index !== data.length - 1) {
         recommendList.push(<i className={styles.bd} />);
       }
@@ -139,7 +170,7 @@ export default class Search extends PureComponent {
     const { inputVal } = this.state;
     const { push } = this.props;
     push({
-      pathName: `/customerList/list?source=seach&q=${inputVal}`,
+      pathname: `/customerList/list?source=seach&q=${inputVal}`,
       query: {},
     });
   }
@@ -154,8 +185,8 @@ export default class Search extends PureComponent {
     // 标签 tag
     return (
       <Option key={item.category} text={item.category}>
-        <a
-          href={`/customerList/list?source=association&labelMapping=
+        <Link
+          to={`/customerList/list?source=association&labelMapping=
           ${item.labelMapping}&tagNumId=${item.tagNumId}q=${item.query}`}
           target="_blank"
           rel="noopener noreferrer"
@@ -172,10 +203,22 @@ export default class Search extends PureComponent {
         key={group.title}
         label={this.renderTitle(group.title)}
       >
-        {group.children.map(opt => (
-          <Option key={opt.title} value={opt.title}>
-            {opt.title}
-          </Option>
+        {group.children.map(item => (
+          item.title === '暂无数据' ?
+            <Option key={item.id} value={item.labelNameVal} disabled>
+              {item.labelNameVal}
+            </Option> :
+            <Option key={item.labelNameVal} value={item.labelNameVal} >
+              <Link
+                to={`/customerList/list?source=association&labelMapping=
+          ${item.labelMapping}&tagNumId=${item.tagNumId}q=${item.labelNameVal}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {item.labelNameVal}
+                <span className="certain-search-item-count">{item.labelDesc}</span>
+              </Link>
+            </Option>
         ))}
       </OptGroup>
     ));
