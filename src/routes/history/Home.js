@@ -634,6 +634,7 @@ export default class HistoryHome extends PureComponent {
                 invest={invest}
                 swtichDefault={swtichDefault}
                 location={location}
+                level={level}
               />
             </div>
           </div>

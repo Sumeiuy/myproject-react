@@ -142,7 +142,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
           ...finalSeriesData,
           yAxisMin: Math.floor(endYCood),
         };
-      } else {
+      } else if (endYCood > yAxisMax) {
         finalSeriesData = {
           ...finalSeriesData,
           yAxisMax: Math.ceil(endYCood),
@@ -151,7 +151,6 @@ export default class AbilityScatterAnalysis extends PureComponent {
       const scatterOptions = constructScatterOptions({
         ...finalSeriesData,
       });
-
 
       this.setState({
         scatterOptions,
@@ -416,7 +415,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
           <div className={styles.description}>
             <div className={styles.orgDes}>
               <i className={styles.desIcon} />
-              <span>{orgName}{_.isEmpty(parentOrgName) ? '' : `-${parentOrgName}`}:</span>
+              <span>{_.isEmpty(parentOrgName) ? '' : `${parentOrgName}-`}{orgName}:</span>
             </div>
             <div className={styles.detailDesc}>
               <span>{tooltipInfo}</span>
