@@ -11,7 +11,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import PerformanceIndicators from '../../components/customerPool/PerformanceIndicators';
 import ToBeDone from '../../components/customerPool/ToBeDone';
-// import { helper } from '../../utils';
+import { helper } from '../../utils';
 import Search from '../../components/customerPool/Search';
 import styles from './home.less';
 
@@ -23,6 +23,9 @@ const EMPTY_OBJECT = {};
 const effects = {
   allInfo: 'customerPool/getAllInfo',
   performanceIndicators: 'customerPool/getPerformanceIndicators',
+  getHotPossibleWds: 'customerPool/getHotPossibleWds',
+  getHotWds: 'customerPool/getHotWds',
+  getHistoryWdsList: 'customerPool/getHistoryWdsList',
 };
 
 const fectchDataFunction = (globalLoading, type) => query => ({
@@ -39,11 +42,17 @@ const mapStateToProps = state => ({
   process: state.customerPool.process, // 代办流程(首页总数)
   motTaskCount: state.customerPool.motTaskCount, // 今日可做任务总数
   empInfo: state.app.empInfo, // 职位信息
+  hotPossibleWdsList: state.customerPool.hotPossibleWdsList, // 联想的推荐热词列表
+  hotWds: state.customerPool.hotWds, // 默认推荐词及热词推荐列表
+  historyWdsList: state.customerPool.historyWdsList, // 历史搜索
 });
 
 const mapDispatchToProps = {
   getAllInfo: fectchDataFunction(true, effects.allInfo),
   getPerformanceIndicators: fectchDataFunction(true, effects.performanceIndicators),
+  getHotPossibleWds: fectchDataFunction(false, effects.getHotPossibleWds),
+  getHotWds: fectchDataFunction(true, effects.getHotWds),
+  getHistoryWdsList: fectchDataFunction(false, effects.getHistoryWdsList),
   push: routerRedux.push,
   replace: routerRedux.replace,
 };
@@ -60,12 +69,18 @@ export default class Home extends PureComponent {
     performanceIndicators: PropTypes.object,
     collectCustRange: PropTypes.func.isRequired,
     getPerformanceIndicators: PropTypes.func.isRequired,
+    getHotPossibleWds: PropTypes.func.isRequired,
+    getHotWds: PropTypes.func.isRequired,
+    getHistoryWdsList: PropTypes.func.isRequired,
     custRange: PropTypes.array,
     cycle: PropTypes.array,
     position: PropTypes.object,
     process: PropTypes.number,
     motTaskCount: PropTypes.number,
     empInfo: PropTypes.object,
+    hotPossibleWdsList: PropTypes.array,
+    hotWds: PropTypes.object,
+    historyWdsList: PropTypes.array,
   }
 
   static defaultProps = {
@@ -77,6 +92,9 @@ export default class Home extends PureComponent {
     process: 0,
     motTaskCount: 0,
     empInfo: EMPTY_OBJECT,
+    hotPossibleWdsList: EMPTY_LIST,
+    hotWds: EMPTY_OBJECT,
+    historyWdsList: EMPTY_LIST,
   }
 
   constructor(props) {
@@ -152,7 +170,7 @@ export default class Home extends PureComponent {
 
   @autobind
   handleGetAllInfo(custRangeData) {
-    const { getAllInfo, cycle } = this.props;
+    const { getAllInfo, cycle, getHotWds, getHistoryWdsList } = this.props;
     const { fspOrgId } = this.state;
     let custType = ORG;
     const orgsId = custRangeData.length > 0 ? custRangeData[0].id : '';
@@ -169,6 +187,14 @@ export default class Home extends PureComponent {
     }
     this.setState({
       cycleSelect: cycle.length > 0 ? cycle[0].key : '',
+    });
+    getHotWds({
+      orgId: fspOrgId === '' ? null : fspOrgId, // 组织ID
+      empNo: helper.getEmpId(), // 用户ID
+    });
+    getHistoryWdsList({
+      orgId: fspOrgId === '' ? null : fspOrgId, // 组织ID
+      empNo: helper.getEmpId(), // 用户ID
     });
     getAllInfo({
       request: {
@@ -189,6 +215,35 @@ export default class Home extends PureComponent {
       () => {
         this.getIndicators();
       });
+  }
+
+  // 获取联想数据
+  @autobind
+  queryHotPossibleWds(state) {
+    const { getHotPossibleWds } = this.props;
+    const { fspOrgId } = this.state;
+    const setData = {
+      orgId: fspOrgId === '' ? null : fspOrgId, // 组织ID
+      empNo: helper.getEmpId(), // 用户ID
+    };
+    getHotPossibleWds({
+      ...setData,
+      ...state,
+    });
+  }
+
+  // 获取历史搜索
+  @autobind
+  queryHistoryWdsList() {
+    const { getHistoryWdsList } = this.props;
+    const { fspOrgId } = this.state;
+    const setData = {
+      orgId: fspOrgId === '' ? null : fspOrgId, // 组织ID
+      empNo: helper.getEmpId(), // 用户ID
+    };
+    getHistoryWdsList({
+      ...setData,
+    });
   }
 
   @autobind
@@ -241,11 +296,23 @@ export default class Home extends PureComponent {
       process,
       cycle,
       motTaskCount,
+      hotWds,
+      hotPossibleWdsList,
+      push,
+      historyWdsList,
     } = this.props;
-    const { expandAll, cycleSelect, createCustRange } = this.state;
+    const { expandAll, cycleSelect, createCustRange, fspOrgId } = this.state;
     return (
       <div className={styles.customerPoolWrap}>
-        <Search />
+        <Search
+          data={hotWds}
+          queryHotPossibleWds={this.queryHotPossibleWds}
+          queryHistoryWdsList={this.queryHistoryWdsList}
+          queryHotWdsData={hotPossibleWdsList}
+          push={push}
+          orgId={fspOrgId}
+          historyWdsList={historyWdsList}
+        />
         <div className={styles.content}>
           <ToBeDone
             processData={process}
