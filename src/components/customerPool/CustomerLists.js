@@ -49,9 +49,9 @@ export default class CustomerLists extends PureComponent {
         </div>
         <div className="list-pagination">
           <Pagination
-            current={curPageNum || page.pageNo}
-            total={page.total}
-            pageSize={pageSize || page.pageSize}
+            current={+curPageNum || +page.pageNo}
+            total={+page.total}
+            pageSize={+pageSize || +page.pageSize}
             onChange={onPageChange}
             size="small"
             showSizeChanger

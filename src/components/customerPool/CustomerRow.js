@@ -10,7 +10,14 @@ import { Row, Col, Checkbox } from 'antd';
 import { autobind } from 'core-decorators';
 import styles from './customerRow.less';
 import iconavator from '../../../static/images/icon-avator.png';
+import iconGeneralGgency from '../../../static/images/icon-general-agency.png';
+import iconProductAgency from '../../../static/images/icon-product-agency.png';
 import iconMoney from '../../../static/images/icon-money.png';
+import iconDiamond from '../../../static/images/icon-diamond-card.png';
+import iconGold from '../../../static/images/icon-gold-card.png';
+import iconSliver from '../../../static/images/icon-sliver-card.png';
+import iconWhiteGold from '../../../static/images/icon-white-gold.png';
+import iconNone from '../../../static/images/icon-none.png';
 import iconClose from '../../../static/images/icon-close.png';
 import iconOpen from '../../../static/images/icon-open.png';
 // import IECharts from '../IECharts';
@@ -30,8 +37,34 @@ const riskLevelConfig = {
   704015: '积极型',
 };
 const custNature = {
-  P: '个人客户',
-  O: '机构客户',
+  P: {
+    name: '个人客户',
+    imgSrc: iconavator,
+  },
+  O: {
+    name: '一般机构',
+    imgSrc: iconGeneralGgency,
+  },
+  F: {
+    name: '产品机构',
+    imgSrc: iconProductAgency,
+  },
+};
+const rankImgSrcConfig = {
+  // 钻石
+  805010: iconDiamond,
+  // 白金
+  805015: iconWhiteGold,
+  // 金卡
+  805020: iconGold,
+  // 银卡
+  805025: iconSliver,
+  // 理财
+  805030: iconMoney,
+  // 无
+  805040: iconNone,
+  // 其他
+  805999: iconNone,
 };
 @withRouter
 export default class CustomerRow extends PureComponent {
@@ -51,7 +84,8 @@ export default class CustomerRow extends PureComponent {
       hideStyle: hide,
     };
   }
-    @autobind
+
+  @autobind
   handleCollapse(type) {
     if (type === 'open') {
       const prosshow = {
@@ -78,36 +112,80 @@ export default class CustomerRow extends PureComponent {
     }
   }
 
-  matchWord() {
-    const { q, list } = this.props;
-    console.log('q, list', q, list);
-    // if (list.name.indexOf(q) > -1) {
-    //   <li>
-        // <span>
-        // 姓名：{list.name.replace(new RegExp(q, 'g'), `<em class="${styles.mark}">q</em>`)}
-        // </span>
-        // </li>;
-    // }
-    // if (list.idNum.indexOf(q) > -1) {
-    //   <li>
-    // <span>
-    // 姓名：{list.idNum.replace(new RegExp(q, 'g'), `<em class="${styles.mark}">q</em>`)}
-    // </span>
-    // </li>;
-    // }
+  @autobind
+  matchWord(q, list) {
+    // if (!q) return;
+    let rtnEle = '';
+    let shortRtnEle = '';
+    if (list.name.indexOf(q) > -1) {
+      rtnEle += `<li>
+        <span>
+          姓名：${list.name.replace(new RegExp(q, 'g'), '<em class="mark">q</em>')}
+        </span>
+      </li>`;
+      shortRtnEle += `<li>
+        <span>
+          姓名：${list.name.replace(new RegExp(q, 'g'), '<em class="mark">q</em>')}
+        </span>
+      </li>`;
+    }
+    if (list.idNum.indexOf(q) > -1) {
+      rtnEle += `<li>
+        <span>
+          身份证号码：${list.idNum.replace(new RegExp(q, 'g'), '<em class="mark">q</em>')}
+        </span>
+      </li>`;
+      shortRtnEle += `<li>
+        <span>
+          身份证号码：${list.idNum.replace(new RegExp(q, 'g'), '<em class="mark">q</em>')}
+        </span>
+      </li>`;
+    }
+    if (list.telephone.indexOf(q) > -1) {
+      rtnEle += `<li>
+        <span>
+          联系电话：${list.telephone.replace(new RegExp(q, 'g'), '<em class="mark">q</em>')}
+        </span>
+      </li>`;
+    }
+    if (list.custId.indexOf(q) > -1) {
+      rtnEle += `<li>
+        <span>
+          经纪客户号：${list.custId.replace(new RegExp(q, 'g'), '<em class="mark">q</em>')}
+        </span>
+      </li>`;
+    }
+    return {
+      shortRtnEle: { __html: shortRtnEle },
+      rtnEle: { __html: rtnEle },
+    };
   }
 
   render() {
-    const { list } = this.props;
+    const { q, list } = this.props;
+    // let shortRtnEle;
+    // let rtnEle;
+    // if (list.name.indexOf(q) > -1) {
+    //   rtnEle += `<li>
+    //     <span>
+    //       姓名：${list.name.replace(new RegExp(q, 'g'), '<em class="mark">q</em>')}
+    //     </span>
+    //   </li>`;
+    //   shortRtnEle += `<li>
+    //     <span>
+    //       姓名：${list.name.replace(new RegExp(q, 'g'), '<em class="mark">q</em>')}
+    //     </span>
+    //   </li>`;
+    // }
     return (
       <Row type="flex" className={styles.custoemrRow}>
         <Col span={3} className={styles.avator}>
           <Checkbox className={styles.selectIcon} />
           <div>
-            <img className={styles.avatorImage} src={iconavator} alt="avator" />
-            <div className={styles.avatorText}>{custNature[list.pOrO]}</div>
+            {<img className={styles.avatorImage} src={custNature[list.pOrO].imgSrc} alt="avator" />}
+            <div className={styles.avatorText}>{custNature[list.pOrO].name}</div>
             <div className={styles.avatorIconMoney}>
-              <img className={styles.iconMoneyImage} src={iconMoney} alt="icon-money" />
+              <img className={styles.iconMoneyImage} src={rankImgSrcConfig[list.levelCode]} alt="icon-money" />
             </div>
           </div>
         </Col>
@@ -167,25 +245,27 @@ export default class CustomerRow extends PureComponent {
           </div>
           <div className={styles.customerOtherInfo}>
             <div className={styles.collapseItem}>
-              <span style={this.state.showStyle}><a onClick={() => this.handleCollapse('open')}><span className={styles.itemA}>展开</span><img src={iconOpen} alt="open" /></a></span>
-              <span style={this.state.hideStyle}><a onClick={() => this.handleCollapse('close')}><span className={styles.itemA}>收起</span><img src={iconClose} alt="open" /></a></span>
+              <span style={this.state.showStyle}>
+                <a onClick={() => this.handleCollapse('open')}>
+                  <span className={styles.itemA}>展开</span>
+                  <img src={iconOpen} alt="open" />
+                </a>
+              </span>
+              <span style={this.state.hideStyle}>
+                <a onClick={() => this.handleCollapse('close')}>
+                  <span className={styles.itemA}>收起</span>
+                  <img src={iconClose} alt="open" />
+                </a>
+              </span>
             </div>
-            <ul style={this.state.showStyle}>
-              <li><span>姓名：张王者</span></li>
-              <li><span>兴趣爱好：王者荣耀</span></li>
-              <li><span>标签匹配：王者荣耀</span></li>
-            </ul>
-            <ul style={this.state.hideStyle}>
-              <li><span>姓名：张王者</span></li>
-              <li><span>兴趣爱好：王者荣耀</span></li>
-              <li><span>标签匹配：王者荣耀</span></li>
-              <li><span>姓名：张王者</span></li>
-              <li><span>兴趣爱好：王者荣耀</span></li>
-              <li><span>标签匹配：王者荣耀</span></li>
-              <li><span>姓名：张王者</span></li>
-              <li><span>兴趣爱好：王者荣耀</span></li>
-              <li><span>标签匹配：王者荣耀</span></li>
-            </ul>
+            <ul
+              style={this.state.showStyle}
+              dangerouslySetInnerHTML={this.matchWord(q, list).shortRtnEle}
+            />
+            <ul
+              style={this.state.hideStyle}
+              dangerouslySetInnerHTML={this.matchWord(q, list).rtnEle}
+            />
           </div>
 
         </Col>

@@ -109,7 +109,7 @@ export default class CustomerList extends PureComponent {
       }
     });
     this.getCustomerList();
-    getCustIncome({ custMumber: '024000030883' });
+    getCustIncome({ custNumber: '020100053538' });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -135,6 +135,9 @@ export default class CustomerList extends PureComponent {
       this.setState({
         createCustRange: this.handleCreateCustRange(null, nextProps),
       });
+    }
+    if (!_.isEqual(preLocation.query, nextLocation.query)) {
+      this.getCustomerList();
     }
   }
 
@@ -275,7 +278,7 @@ export default class CustomerList extends PureComponent {
       pathname,
       query: {
         ...query,
-        ...state,
+        orgId: state.orgId,
       },
     });
     this.setState({
@@ -314,12 +317,12 @@ export default class CustomerList extends PureComponent {
   @autobind
   handlePageChange(page, pageSize) {
     const { replace, location: { query, pathname } } = this.props;
+    console.log('page, pageSize:', page, pageSize);
     replace({
       pathname,
       query: {
         ...query,
         curPageNum: page,
-        pageSize,
       },
     });
   }
@@ -327,11 +330,11 @@ export default class CustomerList extends PureComponent {
   @autobind
   handleSizeChange(current, size) {
     const { replace, location: { query, pathname } } = this.props;
+    console.log('current, size:', current, size);
     replace({
       pathname,
       query: {
         ...query,
-        curPageNum: current,
         pageSize: size,
       },
     });
