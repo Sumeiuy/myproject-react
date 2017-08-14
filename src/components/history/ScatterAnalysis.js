@@ -21,6 +21,7 @@ export default class ScatterAnalysis extends PureComponent {
     invest: PropTypes.array.isRequired,
     swtichDefault: PropTypes.string.isRequired,
     location: PropTypes.object.isRequired,
+    level: PropTypes.string.isRequired,
   };
 
   static defaultProps = {
@@ -35,6 +36,7 @@ export default class ScatterAnalysis extends PureComponent {
       invest,
       swtichDefault,
       location: { query: { boardType } },
+      level,
     } = this.props;
     if (_.isEmpty(cust) || _.isEmpty(invest)) {
       return null;
@@ -60,7 +62,8 @@ export default class ScatterAnalysis extends PureComponent {
           </Col>
           {
             // 经营绩效不展示投顾维度散点图
-            boardType === 'TYPE_LSDB_JYYJ'
+            // 投顾历史看板下的营业部不展示投顾维度散点图
+            (boardType === 'TYPE_LSDB_JYYJ' || (level === '3' && boardType === 'TYPE_LSDB_TGJX'))
               ? <div
                 style={{
                   height: '400px',
