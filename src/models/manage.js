@@ -3,7 +3,7 @@
  * @author sunweibin
  */
 import api from '../api';
-import { BoardBasic } from '../config';
+import { BoardBasic, responseCode } from '../config';
 
 export default {
   namespace: 'manage',
@@ -151,12 +151,14 @@ export default {
       });
       const createBoardResult = yield call(api.createBoard, payload);
       const code = createBoardResult.code;
+      const msg = createBoardResult.msg;
       let board = {};
-      if (code !== '0') {
+      if (code !== responseCode.SUCCESS) {
         // 名称重复
         board = {
           success: false,
           code,
+          msg,
         };
       } else {
         // 成功

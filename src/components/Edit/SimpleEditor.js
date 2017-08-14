@@ -5,11 +5,11 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import classnames from 'classnames';
-// import { createForm } from 'rc-form';
 import { autobind } from 'core-decorators';
 import { Form, Icon, Tooltip } from 'antd';
 import _ from 'lodash';
 
+import { responseCode } from '../../config';
 import styles from './SimpleEditor.less';
 
 const FormItem = Form.Item;
@@ -20,8 +20,11 @@ export default class SimpleEditor extends PureComponent {
   static propTypes = {
     editable: PropTypes.bool,
     editorState: PropTypes.bool,
+    publishLoading: PropTypes.bool,
+    updateLoading: PropTypes.bool,
     originalValue: PropTypes.string.isRequired,
     style: PropTypes.object,
+    operateData: PropTypes.object,
     children: PropTypes.element,
     editorValue: PropTypes.oneOfType([
       PropTypes.string,
@@ -42,6 +45,9 @@ export default class SimpleEditor extends PureComponent {
     editorValue: '' || {},
     controller: () => {},
     confirm: () => {},
+    publishLoading: false,
+    updateLoading: false,
+    operateData: {},
   }
 
   constructor(props) {
@@ -61,11 +67,20 @@ export default class SimpleEditor extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { editorState, editorValue, originalValue } = nextProps;
+    const {
+      editorState,
+      editorValue,
+      originalValue,
+      operateData,
+      updateLoading: nextUL,
+      publishLoading: nextPL,
+    } = nextProps;
     const {
       editorState: preEditorState,
       editorValue: preEditor,
       originalValue: preOriginal,
+      updateLoading: preUL,
+      publishLoading: prePL,
     } = this.props;
     if (!_.isEqual(preEditorState, editorState)) {
       this.setState({
@@ -81,6 +96,23 @@ export default class SimpleEditor extends PureComponent {
       this.setState({
         originalValue,
       });
+    }
+    if ((!nextUL && preUL) || (prePL && !nextPL)) {
+      // 保存完成
+      // 判断看板名称重复
+      const { success } = operateData;
+      if (!success) {
+        // 保存不成功
+        const { code, msg } = operateData;
+        if (code === responseCode.DUPLICATE_NAME) {
+          this.setState({
+            nameHelp: msg,
+          },
+          () => {
+            this.setTooltipVisible(true);
+          });
+        }
+      }
     }
   }
 
@@ -181,6 +213,7 @@ export default class SimpleEditor extends PureComponent {
     const editor = form.getFieldInstance(editorName);
     if (editor.focus) {
       editor.focus();
+      this.setTooltipVisible(false);
     } else {
       editor.expandSelect();
     }
