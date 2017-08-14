@@ -563,6 +563,9 @@ export default class HistoryHome extends PureComponent {
 
     const curNameIndex = _.findIndex(historyCore, item => item.key === indicatorId);
 
+    // 找出当前是否是以率为结尾的指标
+    const isLvIndicator = curNameIndex > -1 ? historyCore[curNameIndex].name.indexOf('率') !== -1 : false;
+
     return (
       <div className="pageHistory">
         <PageHeader
@@ -635,6 +638,7 @@ export default class HistoryHome extends PureComponent {
                 swtichDefault={swtichDefault}
                 location={location}
                 level={level}
+                isLvIndicator={isLvIndicator}
               />
             </div>
           </div>
