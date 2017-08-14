@@ -3,7 +3,7 @@
 
  *@author zhuyanwen
 
- **/
+ * */
 import React, { PureComponent } from 'react';
 import { withRouter } from 'dva/router';
 import { Row, Col, Radio } from 'antd';
