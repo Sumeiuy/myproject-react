@@ -1,7 +1,7 @@
 /**
  * @file customer/ChartLine.js
  *
- * @author xuxiaoqin
+ * @author zhuyanwen
  */
 
 import React, { PureComponent, PropTypes } from 'react';
