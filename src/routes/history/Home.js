@@ -163,6 +163,8 @@ export default class HistoryHome extends PureComponent {
       ownerOrgId: ownerOrg && ownerOrg.id, // 用户所属的组织机构Id
       empId, // 用户ID
       swtichDefault: '', // 通知相关组件切换回默认状态
+      showMenu: false,
+      showSubMenu: false,
     };
   }
 
@@ -416,6 +418,7 @@ export default class HistoryHome extends PureComponent {
   // 切换时间段和组织机构
   @autobind
   updateQueryState(query) {
+    console.warn('updateQueryState query', query);
     let durationOrg = query;
     if (query.orgId) {
       const { scope, orgId, level } = query;
@@ -532,7 +535,7 @@ export default class HistoryHome extends PureComponent {
       operateData,
     } = this.props;
 
-    if (_.isEmpty(custRange) || _.isEmpty(visibleBoards)) {
+    if (_.isEmpty(custRange) || _.isEmpty(visibleBoards) || _.isEmpty(newVisibleBoards)) {
       return null;
     }
     const {
