@@ -5,19 +5,19 @@
  */
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
-import { Dropdown, Menu, Icon } from 'antd';
+import { Icon } from 'antd';
 import _ from 'lodash';
 
-// import Scroll from '../common/Scroll';
 import { constants, BoardBasic, optionsMap } from '../../config';
+import { getCssStyle } from '../../utils/helper';
 import { canCustomBoard } from '../../permissions';
-import './BoardSelect.less';
+import styles from './BoardSelect.less';
 
 const defaultBoardId = constants.boardId;
 const sliceLength = BoardBasic.regular.length;
 const visibleBoardType = optionsMap.visibleBoardType;
-const SubMenu = Menu.SubMenu;
-// const defaultBoardType = constants.boardType;
+// 超过十个菜单即出现滚动条
+const scrollNum = 9;
 
 export default class BoardSelect extends PureComponent {
 
@@ -42,7 +42,13 @@ export default class BoardSelect extends PureComponent {
       dropdownVisible: false,
       boardName,
       hasRegisterWheel: false,
+      showMenu: false,
+      showSubMenu: false,
     };
+  }
+
+  componentDidMount() {
+    this.registerScrollEvent();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -59,15 +65,32 @@ export default class BoardSelect extends PureComponent {
     }
   }
 
-  @autobind
-  getPopupContainer() {
-    return document.querySelector('.reportHeader .reportName');
+  componentWillUnmount() {
+    const menuUl = this.menuUl;
+    const subMenuUl = this.subMenuUl;
+    menuUl.removeEventListener('wheel', this.stopSpread);
+    menuUl.removeEventListener('mousewheel', this.stopSpread);
+    menuUl.removeEventListener('DOMMouseScroll', this.stopSpread);
+    subMenuUl.removeEventListener('wheel', this.stopSpread);
+    subMenuUl.removeEventListener('mousewheel', this.stopSpread);
+    subMenuUl.removeEventListener('DOMMouseScroll', this.stopSpread);
   }
 
   @autobind
-  getScrollRef() {
-    const scrollBd = document.querySelector('.reportName .ant-dropdown-menu');
-    return scrollBd;
+  setFixedBottomRef(node) {
+    this.fixedBottom = node;
+  }
+  @autobind
+  setMenuUlRef(node) {
+    this.menuUl = node;
+  }
+  @autobind
+  setSubMenuUl(node) {
+    this.subMenuUl = node;
+  }
+  @autobind
+  setMenuTitleRef(node) {
+    this.menuTitle = node;
   }
 
   @autobind
@@ -77,20 +100,32 @@ export default class BoardSelect extends PureComponent {
     } else {
       e.cancelBubble = true;
     }
-    // e.nativeEvent.stopImmediatePropagation();
   }
 
   @autobind
   registerScrollEvent() {
-    this.setState({
-      hasRegisterWheel: true,
-    });
-    const scrollBd = this.getScrollRef();
-    scrollBd.addEventListener('wheel', this.stopSpread, false);
-    scrollBd.addEventListener('mousewheel', this.stopSpread, false);
-    scrollBd.addEventListener('DOMMouseScroll', this.stopSpread, false);
+    const { showMenu, showSubMenu } = this.state;
+    const menuUl = this.menuUl;
+    const subMenuUl = this.subMenuUl;
+    if (showMenu) {
+      menuUl.addEventListener('wheel', this.stopSpread, false);
+      menuUl.addEventListener('mousewheel', this.stopSpread, false);
+      menuUl.addEventListener('DOMMouseScroll', this.stopSpread, false);
+    } else {
+      menuUl.removeEventListener('wheel', this.stopSpread);
+      menuUl.removeEventListener('mousewheel', this.stopSpread);
+      menuUl.removeEventListener('DOMMouseScroll', this.stopSpread);
+    }
+    if (showSubMenu) {
+      subMenuUl.addEventListener('wheel', this.stopSpread, false);
+      subMenuUl.addEventListener('mousewheel', this.stopSpread, false);
+      subMenuUl.addEventListener('DOMMouseScroll', this.stopSpread, false);
+    } else {
+      subMenuUl.removeEventListener('wheel', this.stopSpread);
+      subMenuUl.removeEventListener('mousewheel', this.stopSpread);
+      subMenuUl.removeEventListener('DOMMouseScroll', this.stopSpread);
+    }
   }
-
 
   @autobind
   findBoardBy(id, vr) {
@@ -105,23 +140,89 @@ export default class BoardSelect extends PureComponent {
     return board || vr[0];
   }
 
+  // 鼠标进入
   @autobind
-  handleVisibleChange(flag) {
-    this.setState({ dropdownVisible: flag });
-    const { hasRegisterWheel } = this.state;
-    if (flag) {
-      if (!hasRegisterWheel) {
-        this.registerScrollEvent();
-      }
+  mouseEnter() {
+    // 清除定时器
+    if (this.timer) {
+      clearTimeout(this.timer);
     }
+    // 显示菜单
+    this.setState({
+      showMenu: true,
+      showSubMenu: false,
+    }, () => {
+      this.registerScrollEvent();
+      const height = parseInt(getCssStyle(this.menuUl, 'height'), 10);
+      const titleHeight = parseInt(getCssStyle(this.menuTitle, 'height'), 10);
+      this.fixedBottom.style.top = `${height + titleHeight}px`;
+      this.subMenuUl.style.top = `${height + titleHeight}px`;
+    });
   }
 
+  // 鼠标离开
   @autobind
-  handleMenuClick(MenuItem) {
-    this.handleVisibleChange(false);
-    const { push, collectData } = this.props;
-    const { key, item: { props: { type, boardType } } } = MenuItem;
-    const { visibleBoards } = this.props;
+  mouseLeave() {
+    // 清除定时器
+    if (this.timer) {
+      clearTimeout(this.timer);
+    }
+    // 隐藏菜单
+    this.timer = setTimeout(() => {
+      this.setState({
+        showMenu: false,
+        showSubMenu: false,
+      }, this.registerScrollEvent);
+    }, 500);
+  }
+
+  // 二级菜单鼠标进入
+  @autobind
+  subMouseEnter() {
+    // 清除定时器
+    if (this.timer) {
+      clearTimeout(this.timer);
+    }
+    // 显示二级菜单
+    this.setState({
+      showMenu: true,
+      showSubMenu: true,
+    }, this.registerScrollEvent);
+  }
+
+  // 二级菜单鼠标移出
+  @autobind
+  subMouseLeave() {
+    // 清除定时器
+    if (this.timer) {
+      clearTimeout(this.timer);
+    }
+    // 隐藏二级菜单
+    this.timer = setTimeout(() => {
+      this.setState({
+        showSubMenu: false,
+      }, this.registerScrollEvent);
+    }, 500);
+  }
+
+  // 菜单点击事件
+  @autobind
+  menuClick(e) {
+    const target = e.target;
+    const { push, collectData, visibleBoards } = this.props;
+    let key;
+    let type;
+    let boardType;
+    if (target.dataset) {
+      const dataSet = target.dataset;
+      key = dataSet.key;
+      type = dataSet.type;
+      boardType = dataSet.boardType;
+    } else {
+      key = target.getAttribute('data-key');
+      type = target.getAttribute('data-type');
+      boardType = target.getAttribute('data-board-type');
+    }
     let boardname;
     switch (type) {
       case visibleBoardType.manage.key:
@@ -147,104 +248,144 @@ export default class BoardSelect extends PureComponent {
       default:
         break;
     }
+    this.setState({
+      showMenu: false,
+      showSubMenu: false,
+    });
   }
 
   render() {
+    // 新的可见看板数组
     const { newVisibleBoards } = this.props;
-    const { dropdownVisible, boardName } = this.state;
-
+    const { boardName, showMenu, showSubMenu } = this.state;
+    // 根据 showMenu 来判断是否显示
+    const showOrNot = showMenu ? 'block' : 'none';
+    // 静态的看板数组
     const staticBorads = _.slice(newVisibleBoards, [0], [sliceLength]);
+    // 普通看板的静态数组
     const ordinaryStaticBoards = _.slice(staticBorads, 0, 2);
+    // 历史看板的静态数组
     const historyStaticBoards = _.slice(staticBorads, 2, 4);
+    // 可见看板数组中最后一个对象
     const lastVisibleBoards = newVisibleBoards[newVisibleBoards.length - 1];
-    const menu = (
-      <Menu
-        onClick={this.handleMenuClick}
-      >
-        {
-          ordinaryStaticBoards.map(item =>
-            (<Menu.Item
-              key={String(item.id)}
-              type={visibleBoardType.ordinary.key}
-              title={item.name}
-            >
-              {item.name}
-            </Menu.Item>),
-          )
-        }
-        {
-          historyStaticBoards.map(item =>
-            (<Menu.Item
-              key={String(item.id)}
-              type={visibleBoardType.history.key}
-              boardType={item.boardType}
-              title={item.name}
-            >
-              {item.name}
-            </Menu.Item>),
-          )
-        }
-        {
-          lastVisibleBoards.ordinary.map(item =>
-            (<Menu.Item
-              key={String(item.id)}
-              type={visibleBoardType.ordinary.key}
-              title={item.name}
-            >
-              {item.name}
-            </Menu.Item>),
-          )
-        }
-        <Menu.Divider />
-        {
-          lastVisibleBoards.history.length ?
-            <SubMenu
-              title="自定义看板"
-              style={{
-                maxHeight: '400px',
-                overflowY: 'auto',
-              }}
-            >
-              {
-                lastVisibleBoards.history.map(item =>
-                  (<Menu.Item
-                    key={String(item.id)}
-                    type={visibleBoardType.history.key}
-                    boardType={item.boardType}
-                    title={item.name}
-                  >
-                    {item.name}
-                  </Menu.Item>),
-                )
-              }
-            </SubMenu>
-          :
-            null
-        }
-        <Menu.Divider />
-        { canCustomBoard() ? (
-          <Menu.Item
-            key="0"
-            type={visibleBoardType.manage.key}
-          >
-            {visibleBoardType.manage.name}
-          </Menu.Item>
-        ) : null }
-      </Menu>
+    // 获取一级菜单滚动的长度
+    const scrollUlLength = staticBorads.length + lastVisibleBoards.ordinary.length;
+    // 普通看板的静态数组生成 html
+    const ordinaryHtml = (
+      ordinaryStaticBoards.map(item => (
+        <li
+          onClick={this.menuClick}
+          data-key={item.id}
+          data-type={visibleBoardType.ordinary.key}
+          title={item.name}
+          key={item.id}
+        >
+          {item.name}
+        </li>
+      ))
     );
-
+    // 历史看板的静态数组生成 html
+    const historyHtml = (
+      historyStaticBoards.map(item => (
+        <li
+          onClick={this.menuClick}
+          data-key={item.id}
+          data-type={visibleBoardType.history.key}
+          data-board-type={item.boardType}
+          title={item.name}
+          key={item.id}
+        >
+          {item.name}
+        </li>
+      ))
+    );
+    // 可见看板数组最后一个对象中的普通看板数组生成 html
+    const lastVisibleBoardsOrdinaryHtml = (
+      lastVisibleBoards.ordinary.map(item => (
+        <li
+          onClick={this.menuClick}
+          data-key={item.id}
+          data-type={visibleBoardType.ordinary.key}
+          title={item.name}
+          key={item.id}
+        >
+          {item.name}
+        </li>
+      ))
+    );
+    // 可见看板数组最后一个对象中的历史看板数组生成 html
+    const lastVisibleBoardsHistoryHtml = (
+      lastVisibleBoards.history.map(item => (
+        <li
+          onClick={this.menuClick}
+          data-key={String(item.id)}
+          data-type={visibleBoardType.history.key}
+          data-board-type={item.boardType}
+          key={item.id}
+        >
+          {item.name}
+        </li>
+      ))
+    );
     return (
-      <Dropdown
-        overlay={menu}
-        placement="bottomLeft"
-        getPopupContainer={this.getPopupContainer}
-        visible={dropdownVisible}
-        onVisibleChange={this.handleVisibleChange}
+      <div
+        className={styles.menuDiv}
+        onMouseEnter={this.mouseEnter}
+        onMouseLeave={this.mouseLeave}
       >
-        <div className="selfDropDownName">
-          {boardName}<Icon type="down" />
+        {/* 看板列表名字 */}
+        <h3
+          className={styles.menuH3}
+          ref={this.setMenuTitleRef}
+        >
+          {boardName}<Icon type={showMenu ? 'up' : 'down'} />
+        </h3>
+        {/* 看板整体列表 */}
+        <ul
+          className={styles.menuUl}
+          style={{ display: showOrNot }}
+          ref={this.setMenuUlRef}
+        >
+          {ordinaryHtml}
+          {historyHtml}
+          {lastVisibleBoardsOrdinaryHtml}
+        </ul>
+        {/* 底部固定的选项容器 */}
+        <div
+          className={styles.fixedBottom}
+          style={{ display: showOrNot }}
+          ref={this.setFixedBottomRef}
+        >
+          <ul className={scrollUlLength > scrollNum ? styles.addScrollBar : null}>
+            <li
+              onMouseEnter={this.subMouseEnter}
+              onMouseLeave={this.subMouseLeave}
+            >
+              自定义看板<Icon type="right" />
+            </li>
+            {
+              canCustomBoard() ?
+                <li
+                  data-key="0"
+                  data-type={visibleBoardType.manage.key}
+                >
+                  {visibleBoardType.manage.name}
+                </li>
+              :
+                null
+            }
+          </ul>
         </div>
-      </Dropdown>
+        {/* 二级菜单列表 */}
+        <ul
+          className={styles.subMenuUl}
+          style={{ display: showSubMenu ? 'block' : 'none' }}
+          onMouseEnter={this.subMouseEnter}
+          ref={this.setSubMenuUl}
+        >
+          {lastVisibleBoardsHistoryHtml}
+        </ul>
+      </div>
     );
   }
 }

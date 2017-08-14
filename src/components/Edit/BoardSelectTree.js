@@ -446,7 +446,6 @@ export default class BoardSelectTree extends PureComponent {
 
   @autobind
   stopSpread(e = window.event) {
-    console.log('滚动');
     if (e.stopPropagation) {
       e.stopPropagation();
     } else {

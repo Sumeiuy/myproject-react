@@ -191,60 +191,6 @@ const helper = {
       obj.value = '暂无';
       obj.unit = '';
     }
-
-
-    // if (Number(value)) {
-    //   // 如果是 %
-    //   if (unit === '%') {
-    //     obj.value = Number.parseFloat((value * 100).toFixed(2));
-    //     obj.unit = unit;
-    //   } else if (unit === '\u2030') {
-    //     // 如果是 千分符
-    //     obj.value = Number.parseFloat((value * 1000).toFixed(2));
-    //     obj.unit = unit;
-    //   } else {
-    //     // 分割成数组
-    //     const arr = value.toString().split('.');
-    //     // 取出整数部分长度
-    //     const length = arr[0].length;
-    //     // 整数部分大于等于 依据 长度
-    //     if (length >= per) {
-    //       // 按照依据长度取出 依据 数字，超出长度以 0 补足
-    //       const num = arr[0].substr(0, per) + arr[0].substr(per).replace(/\d/g, '0');
-    //       switch (true) {
-    //         case length < 9:
-    //           obj.value = `${Number.parseFloat((num / 10000).toFixed(2))}`;
-    //           obj.unit = `万${unit}`;
-    //           break;
-    //         case length >= 9 && length < 13:
-    //           obj.value = `${Number.parseFloat((num / 100000000).toFixed(2))}`;
-    //           obj.unit = `亿${unit}`;
-    //           break;
-    //         default:
-    //           obj.value = `${Number.parseFloat((num / 1000000000000).toFixed(2))}`;
-    //           obj.unit = `万亿${unit}`;
-    //           break;
-    //       }
-    //     } else {
-    //       // 计算小数部分长度
-    //       // 如果有小数，小数部分取 依据 长度减整数部分长度
-    //       if (arr[1]) {
-    //         const allLength = arr[0].length + arr[1].length;
-    //         if (allLength >= per) {
-    //           const floatIndex = allLength - per;
-    //           arr[1] = arr[1].substr(0, floatIndex);
-    //         } else {
-    //           arr[1] = arr[1].substr(0, 2);
-    //         }
-    //       }
-    //       obj.value = arr.join('.');
-    //       obj.unit = unit;
-    //     }
-    //   }
-    // } else {
-    //   obj.value = '暂无';
-    //   obj.unit = '';
-    // }
     return obj;
   },
 

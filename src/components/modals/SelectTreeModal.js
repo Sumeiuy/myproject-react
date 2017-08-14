@@ -26,7 +26,6 @@ export default class SelectTreeModal extends PureComponent {
   constructor(props) {
     super(props);
     const { visible, summuryLib } = props;
-    console.warn('summuryLib', summuryLib);
     this.state = {
       modalVisible: visible,
       summuryLib: _.cloneDeep(summuryLib),
@@ -88,7 +87,6 @@ export default class SelectTreeModal extends PureComponent {
     const { modalVisible, summuryLib, btnStatus } = this.state;
     const { modalCaption } = this.props;
     const newSummury = _.cloneDeep(summuryLib);
-    console.warn('newSummury', newSummury);
     return (
       modalVisible ?
         <Modal
