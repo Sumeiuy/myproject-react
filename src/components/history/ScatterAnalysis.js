@@ -76,6 +76,9 @@ export default class ScatterAnalysis extends PureComponent {
                   description={'服务经理'}
                   type={investScatter.type}
                   swtichDefault={swtichDefault}
+                  headerClass={{
+                    marginLeft: '-20px',
+                  }}
                   style={{
                     left: '-65px',
                   }}
