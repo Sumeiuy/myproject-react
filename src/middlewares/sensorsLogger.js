@@ -16,10 +16,10 @@ import {
   whitelist,
   blacklist,
   mapFiledList,
+  EVENT_PROFILE_ACTION,
 } from '../config/log';
 import helper from '../utils/helper';
 
-const EVENT_PROFILE_ACTION = 'sendProfile';
 const EVENT_PROFILE_KEY = 'profile_set';
 
 function format(type) {

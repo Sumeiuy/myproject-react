@@ -42,6 +42,20 @@ const optionsMap = {
       name: '本年',
     },
   ],
+  visibleBoardType: {
+    ordinary: {
+      key: 'ordinary',
+      name: '普通看板',
+    },
+    history: {
+      key: 'history',
+      name: '历史对比看板',
+    },
+    manage: {
+      key: 'manage',
+      name: '看板管理',
+    },
+  },
   // 按类别排序
   sortByType: {
     TYPE_TGJX: [

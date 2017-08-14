@@ -4,6 +4,7 @@
  * @author maoquan(maoquan@htsc.com)
  */
 import api from '../api';
+import { EVENT_PROFILE_ACTION } from '../config/log';
 
 export default {
   namespace: 'app',

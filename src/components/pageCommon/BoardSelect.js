@@ -9,11 +9,14 @@ import { Dropdown, Menu, Icon } from 'antd';
 import _ from 'lodash';
 
 // import Scroll from '../common/Scroll';
-import { constants } from '../../config';
+import { constants, optionsMap } from '../../config';
 import { canCustomBoard } from '../../permissions';
 import './BoardSelect.less';
 
 const defaultBoardId = constants.boardId;
+
+const visibleBoardType = optionsMap.visibleBoardType;
+
 // const defaultBoardType = constants.boardType;
 
 export default class BoardSelect extends PureComponent {
