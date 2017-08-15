@@ -19,7 +19,16 @@ const columns = [
     dataIndex: 'task',
     key: 'task',
     render: item => <a
-      onClick={() => fspGlobal.openAuditPage(item.dispatchUri, item.flowClass)}
+      onClick={() => {
+        const url = `${item.dispatchUri}&workFlowName=${encodeURI(item.flowClass)}`;
+        const param = {
+          closable: true,
+          forceRefresh: true,
+          id: 'FSP_TODOLIST_DETAIL',
+          title: '待办流程详情',
+        };
+        fspGlobal.openFspTab({ url, param });
+      }}
     >
       {item.text}
     </a>,
