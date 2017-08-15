@@ -208,7 +208,7 @@ export default class PerformanceIndicators extends PureComponent {
                 <div className={styles.indexItemBox}>
                   <div className={styles.inner}>
                     <div className={styles.title}>
-                      <Icon type="shouru" />收入
+                      <Icon type="shouru" />净创收
                   </div>
                     <div className={styles.content}>
                       <Income />
