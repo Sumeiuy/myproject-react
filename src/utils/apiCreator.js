@@ -63,6 +63,7 @@ export default function createApi() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            empId: getEmpId(),
           },
           body: JSON.stringify({ ...query, empId: getEmpId() }),
         },
