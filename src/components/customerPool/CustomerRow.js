@@ -2,8 +2,8 @@
  *@file
 
  *@author zhuyanwen
+*/
 
- **/
 import React, { PureComponent, PropTypes } from 'react';
 import { withRouter } from 'dva/router';
 import { Row, Col, Checkbox } from 'antd';
@@ -20,7 +20,8 @@ import iconWhiteGold from '../../../static/images/icon-white-gold.png';
 import iconNone from '../../../static/images/icon-none.png';
 import iconClose from '../../../static/images/icon-close.png';
 import iconOpen from '../../../static/images/icon-open.png';
-// import IECharts from '../IECharts';
+
+import ChartLineWidget from './ChartLine';
 
 const show = {
   display: 'block',
@@ -66,11 +67,14 @@ const rankImgSrcConfig = {
   // 其他
   805999: iconNone,
 };
+
 @withRouter
 export default class CustomerRow extends PureComponent {
   static propTypes = {
     q: PropTypes.string,
     list: PropTypes.object.isRequired,
+    getCustIncome: PropTypes.func.isRequired,
+    monthlyProfits: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -83,7 +87,19 @@ export default class CustomerRow extends PureComponent {
       showStyle: show,
       hideStyle: hide,
     };
-    this.n = 0;
+  }
+
+  componentDidMount() {
+    const { getCustIncome, list } = this.props;
+    // test data empId = 020100053538
+    getCustIncome({ custNumber: list.custId });
+  }
+
+  getLastestData(arr) {
+    if (arr && arr instanceof Array && arr.length !== 0) {
+      return arr[arr.length - 1];
+    }
+    return {};
   }
 
   @autobind
@@ -118,35 +134,36 @@ export default class CustomerRow extends PureComponent {
     // if (!q) return;
     let rtnEle = '';
     let shortRtnEle = '';
+    let n = 0;
     if (list.name.indexOf(q) > -1) {
       const markedEle = list.name.replace(new RegExp(q, 'g'), `<em class="mark">${q}</em>`);
       rtnEle += `<li><span>姓名：${markedEle}</span></li>`;
-      this.n++;
-      if (this.n <= 2) {
+      n++;
+      if (n <= 2) {
         shortRtnEle += `<li><span>姓名：${markedEle}</span></li>`;
       }
     }
     if (list.idNum.indexOf(q) > -1) {
       const markedEle = list.idNum.replace(new RegExp(q, 'g'), `<em class="mark">${q}</em>`);
       rtnEle += `<li><span>身份证号码：${markedEle}</span></li>`;
-      this.n++;
-      if (this.n <= 2) {
+      n++;
+      if (n <= 2) {
         shortRtnEle += `<li><span>身份证号码：${markedEle}</span></li>`;
       }
     }
     if (list.telephone.indexOf(q) > -1) {
       const markedEle = list.telephone.replace(new RegExp(q, 'g'), `<em class="mark">${q}</em>`);
       rtnEle += `<li><span>联系电话：${markedEle}</span></li>`;
-      this.n++;
-      if (this.n <= 2) {
+      n++;
+      if (n <= 2) {
         shortRtnEle += `<li><span>联系电话：${markedEle}</span></li>`;
       }
     }
     if (list.custId.indexOf(q) > -1) {
       const markedEle = list.custId.replace(new RegExp(q, 'g'), `<em class="mark">${q}</em>`);
       rtnEle += `<li><span>经纪客户号：${markedEle}</span></li>`;
-      this.n++;
-      if (this.n <= 2) {
+      n++;
+      if (n <= 2) {
         shortRtnEle += `<li><span>经纪客户号：${markedEle}</span></li>`;
       }
     }
@@ -157,7 +174,7 @@ export default class CustomerRow extends PureComponent {
   }
 
   render() {
-    const { q, list } = this.props;
+    const { q, list, monthlyProfits } = this.props;
     return (
       <Row type="flex" className={styles.custoemrRow}>
         <Col span={3} className={styles.avator}>
@@ -201,10 +218,38 @@ export default class CustomerRow extends PureComponent {
                 <span className={styles.assetsText}>万元</span>
                 <div className={styles.iconschart}>
                   <div className={styles.showCharts}>
+                    <div className={styles.chartsContent}>
+                      <ChartLineWidget chartData={monthlyProfits} />
+                    </div>
                     <div className={styles.chartsText}>
-                      <div><span>年最大时点资产：</span><span className={styles.numA}>1462</span>万元</div>
-                      <div><span>本月收益率：</span><span className={styles.numB}>+5.6%</span></div>
-                      <div><span>本月收益：<span className={styles.numB}>35,672</span>&nbsp;元</span>
+                      {/* <div>
+                        <span>年最大时点资产：</span>
+                        <span className={styles.numA}>1462</span>万元
+                      </div>*/}
+                      <div>
+                        <span>本月收益率：</span>
+                        <span className={styles.numB}>
+                          {
+                            monthlyProfits.length ?
+                            `${this.getLastestData(monthlyProfits).assetProfitRate * 10}%`
+                            :
+                            '--'
+                          }
+                        </span>
+                      </div>
+                      <div>
+                        <span>
+                          本月收益：
+                            <span className={styles.numB}>
+                              {
+                                monthlyProfits.length ?
+                                `${this.getLastestData(monthlyProfits).asset / 10000}`
+                                :
+                                '--'
+                              }
+                            </span>
+                          &nbsp;元
+                        </span>
                       </div>
                     </div>
                   </div>

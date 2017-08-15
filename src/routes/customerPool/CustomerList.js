@@ -97,19 +97,15 @@ export default class CustomerList extends PureComponent {
   }
 
   componentWillMount() {
-    const { custRange, getCustIncome } = this.props;
+    const { location: { query } } = this.props;
     const orgid = _.isEmpty(window.forReactPosition) ? 'ZZ001041' : window.forReactPosition.orgId;
 
     this.setState({
       fspOrgId: orgid,
       orgId: orgid, // 组织ID
-    }, () => {
-      if (custRange.length > 0) {
-        this.handleGetAllInfo(custRange);
-      }
     });
-    this.getCustomerList();
-    getCustIncome({ custNumber: '020100053538' });
+    this.getCustomerList(query);
+    // getCustIncome({ custNumber: '020100053538' });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -137,28 +133,39 @@ export default class CustomerList extends PureComponent {
       });
     }
     if (!_.isEqual(preLocation.query, nextLocation.query)) {
-      this.getCustomerList();
+      this.getCustomerList(nextLocation.query);
     }
   }
 
   @autobind
-  getCustomerList() {
-    const { getCustomerData, location: { query } } = this.props;
+  getCustomerList(query) {
+    const { getCustomerData } = this.props;
     const orgId = _.isEmpty(window.forReactPosition) ? 'ZZ001041' : window.forReactPosition.orgId;
+    const k = decodeURIComponent(query.q);
     const param = {
       // 必传，当前页
-      curPageNum: '1',
+      curPageNum: query.curPageNum || '1',
       // 必传，页大小
-      pageSize: '10',
-      // 必传，从热词列表搜索 :fromWdsListErea, 从联想下拉框搜索: fromAssociatedErea, 匹配的全字符: FromFullTextType
-      searchTypeReq: 'FromFullTextType',
-      // 搜索词
-      fullTestSearch: '0',
-      // 热词
-      // paramsReqList: [
-      //   {key: 'shi_fou_shuang_cheng_shu_xing', value: '35_1'},
-      // ],
+      pageSize: query.pageSize || '10',
     };
+    // 从热词列表搜索 :FromWdsListErea, 从联想下拉框搜索: FromAssociatedErea, 匹配的全字符: FromFullTextType
+    if (query.source === 'search') {
+      param.searchTypeReq = 'FromFullTextType';
+      param.paramsReqList = [
+        { key: 'fullTestSearch', value: k },
+      ];
+    } else if (query.source === 'tag') { // 热词
+      param.searchTypeReq = 'FromWdsListErea';
+      param.paramsReqList = [
+        { key: query.labelMapping, value: query.tagNumId },
+      ];
+    } else if (query.source === 'association') {
+      param.searchTypeReq = 'FromAssociatedErea';
+      param.paramsReqList = [
+        { key: query.labelMapping, value: query.tagNumId },
+      ];
+      // param.fullTestSearch = k;
+    }
     if (orgId) {   // 客户经理机构号
       param.orgId = orgId;
     }
@@ -350,6 +357,7 @@ export default class CustomerList extends PureComponent {
       custList,
       page,
       monthlyProfits,
+      getCustIncome,
     } = this.props;
     const {
       CustomType,
@@ -438,8 +446,10 @@ export default class CustomerList extends PureComponent {
           page={page}
           curPageNum={curPageNum}
           pageSize={pageSize}
+          monthlyProfits={monthlyProfits}
           onPageChange={this.handlePageChange}
           onSizeChange={this.handleSizeChange}
+          getCustIncome={getCustIncome}
         />
       </div>
     );

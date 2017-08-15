@@ -285,6 +285,17 @@ export default {
     },
     getCustomerListSuccess(state, action) {
       const { payload: { resultData: { custListVO } } } = action;
+      if (!custListVO) {
+        return {
+          ...state,
+          custList: [],
+          custPage: {
+            pageSize: 10,
+            pageNo: 1,
+            total: 0,
+          },
+        };
+      }
       const custPage = {
         pageSize: custListVO.pageSize,
         pageNo: Number(custListVO.pageNo) + 1,

@@ -18,7 +18,9 @@ export default class CustomerLists extends PureComponent {
     pageSize: PropTypes.string,
     onPageChange: PropTypes.func.isRequired,
     onSizeChange: PropTypes.func.isRequired,
+    getCustIncome: PropTypes.func.isRequired,
     q: PropTypes.string,
+    monthlyProfits: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -36,6 +38,8 @@ export default class CustomerLists extends PureComponent {
       pageSize,
       onPageChange,
       onSizeChange,
+      getCustIncome,
+      monthlyProfits,
     } = this.props;
     if (custList.length === 0) {
       return <div className="list-box"><NoData /></div>;
@@ -44,7 +48,15 @@ export default class CustomerLists extends PureComponent {
       <div className="list-box">
         <div className="list-wrapper">
           {
-            custList.map(item => <CustomerRow list={item} q={q} key={item.empId} />)
+            custList.map(
+              item => <CustomerRow
+                getCustIncome={getCustIncome}
+                monthlyProfits={monthlyProfits}
+                list={item}
+                q={q}
+                key={`${item.empId}-${item.custId}`}
+              />,
+            )
           }
         </div>
         <div className="list-pagination">
