@@ -16,6 +16,7 @@ const Option = AutoComplete.Option;
 const OptGroup = AutoComplete.OptGroup;
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
+let COUNT = 0;
 export default class Search extends PureComponent {
 
   static propTypes = {
@@ -42,7 +43,7 @@ export default class Search extends PureComponent {
     historySource: [{
       title: '历史搜索',
       children: [{
-        id: 'history_0',
+        id: `history_${COUNT++}`,
         labelNameVal: '暂无数据',
         labelMapping: '',
         tagNumId: '',
@@ -112,13 +113,13 @@ export default class Search extends PureComponent {
   handleCreatHistoryList(data) {
     if (!_.isEmpty(data) && data.length > 0) {
       const historyList = [];
-      data.forEach((item, index) => {
+      data.forEach((item) => {
         if (!_.isEmpty(item)) {
           historyList.push({
             labelNameVal: item,
             labelMapping: '',
             tagNumId: item,
-            id: `historyList${index}`,
+            id: `historyList${COUNT++}`,
             labelDesc: '',
           });
         }
@@ -138,6 +139,7 @@ export default class Search extends PureComponent {
       category: `${item.labelNameVal}${index}`,
       content: item.labelNameVal,
       desc: item.labelDesc,
+      id: `autoList${COUNT++}`,
     }));
   }
 
@@ -217,7 +219,7 @@ export default class Search extends PureComponent {
     // 搜索 search
     // 标签 tag
     return (
-      <Option key={item.category} value={item.content}>
+      <Option key={item.content} text={item.content}>
         <a
           onClick={() => this.handleOpenTab({
             source: 'association',
@@ -235,15 +237,15 @@ export default class Search extends PureComponent {
   renderGroup(dataSource) {
     const options = dataSource.map(group => (
       <OptGroup
-        key={group.title}
+        key={group.id}
         label={this.renderTitle(group.title)}
       >
         {group.children.map(item => (
           item.title === '暂无数据' ?
-            <Option key={item.id} value={item.labelNameVal} disabled>
+            <Option key={item.labelNameVal} text={item.labelNameVal} disabled>
               {item.labelNameVal}
             </Option> :
-            <Option key={item.id} value={item.labelNameVal} >
+            <Option key={item.labelNameVal} text={item.labelNameVal} >
               <a
                 onClick={() => this.handleOpenTab({
                   source: 'association',
