@@ -137,12 +137,37 @@ export default class HistoryComparePolyChart extends PureComponent {
     } else if (curUnit.indexOf(CI) !== -1) {
       minAndMax = FixNumber.getMaxAndMinCi(array);
     } else if (curUnit.indexOf(PERCENT) !== -1) {
-      minAndMax = FixNumber.getMaxAndMinPercent(array);
+      minAndMax = this.getMaxAndMinPercent(array);
     } else if (curUnit.indexOf(PERMILLAGE) !== -1) {
       minAndMax = FixNumber.getMaxAndMinPermillage(array);
     }
 
     const { max, min } = minAndMax;
+    return {
+      max,
+      min,
+    };
+  }
+
+
+  // 针对百分比的数字来确认图表坐标轴的最大和最小值
+  // 不要设置最大值为100，不然会出现折线图很矮
+  getMaxAndMinPercent(series) {
+    let max = Math.max(...series);
+    let min = Math.min(...series);
+    if (max >= 10) {
+      max = Math.ceil((max / 10)) * 10;
+    } else {
+      max = Math.ceil(max);
+    }
+    if (min >= 10) {
+      min = Math.floor((min / 10)) * 10;
+    } else {
+      min = 0;
+    }
+    if (max === 0) {
+      max = 1;
+    }
     return {
       max,
       min,
