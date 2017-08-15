@@ -81,6 +81,7 @@ export default class CustRange extends PureComponent {
   constructor(props) {
     super(props);
     const { custRange, orgId } = this.props;
+    console.log('CustRange>>>>', custRange);
     const formatCustRange = transformCustRangeData(custRange);
     walk(formatCustRange, findOrgNameByOrgId(orgId || custRange[0].id), '');
     const initValue = {

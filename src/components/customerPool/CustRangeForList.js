@@ -18,7 +18,7 @@ export default class CustRangeForList extends PureComponent {
     replace: PropTypes.func.isRequired,
     collectCustRange: PropTypes.func,
     updateQueryState: PropTypes.func.isRequired,
-    custRange: PropTypes.array.isRequired,
+    // custRange: PropTypes.array.isRequired,
     createCustRange: PropTypes.array.isRequired,
     expandAll: PropTypes.bool,
     orgId: PropTypes.string,
@@ -33,7 +33,6 @@ export default class CustRangeForList extends PureComponent {
   render() {
     const {
       source,
-      custRange,
       orgId,
       createCustRange,
       location,
@@ -47,7 +46,7 @@ export default class CustRangeForList extends PureComponent {
       rtnEle = (<div className="custRange">
         <Icon type="kehu" />
         {
-          !_.isEmpty(custRange) ?
+          !_.isEmpty(createCustRange) ?
             <CustRange
               orgId={orgId}
               custRange={createCustRange}

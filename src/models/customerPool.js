@@ -298,10 +298,9 @@ export default {
       }
       const custPage = {
         pageSize: custListVO.pageSize,
-        pageNo: Number(custListVO.pageNo) + 1,
+        pageNo: Number(custListVO.curPageNum) + 1,
         total: custListVO.totalCount,
       };
-      console.log('custListVO>>>>>', custListVO);
       return {
         ...state,
         custList: custListVO.custList,
