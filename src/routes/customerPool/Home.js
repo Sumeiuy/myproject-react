@@ -109,7 +109,7 @@ export default class Home extends PureComponent {
   }
 
   componentWillMount() {
-    const orgid = _.isEmpty(window.forReactPosition) ? 'ZZ001041' : window.forReactPosition.orgId;
+    const orgid = _.isEmpty(window.forReactPosition) ? '' : window.forReactPosition.orgId;
     const { custRange } = this.props;
     this.setState({
       fspOrgId: orgid,
@@ -134,7 +134,7 @@ export default class Home extends PureComponent {
         createCustRange: this.handleCreateCustRange(nextOrgId, nextProps),
       }, this.getIndicators);
     }
-    if (!_.isEqual(preCycle, nextCycle)) {
+    if (preCycle !== nextCycle) {
       this.setState({
         cycleSelect: nextCycle[0].key,
       });

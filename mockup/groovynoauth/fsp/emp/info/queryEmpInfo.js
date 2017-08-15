@@ -98,7 +98,6 @@ exports.response = function (req, res) {
         {
           "lastName": "王华",
           "loginName": "002332",
-          "respId": "1-21V43AZ",
           "respName": "HTSC 公司融资融券业务查询"
         },
         {
@@ -120,8 +119,8 @@ exports.response = function (req, res) {
           "respName": "HTSC 知识库一般用户"
         },
         {
-          "lastName": "王华",
-          "loginName": "002332",
+          "lastName": "1-E6W8",
+          "loginName": "001423",
           "respId": "1-243I8T7",
           "respName": "HTSC KPI指标"
         },

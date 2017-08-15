@@ -8,7 +8,7 @@ import React, { PropTypes, PureComponent } from 'react';
 import { Icon as AntdIcon, Button, Input, AutoComplete } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Link } from 'dva/router';
+import { fspGlobal } from '../../utils';
 import Icon from '../../components/common/Icon';
 import styles from './search.less';
 
@@ -37,17 +37,12 @@ export default class Search extends PureComponent {
     historyWdsList: EMPTY_LIST,
   }
 
-  // constructor(props) {
-  //   super(props);
-  //   // console.log(props);
-  // }
-
   state = {
     dataSource: EMPTY_LIST,
     historySource: [{
       title: '历史搜索',
       children: [{
-        id: 0,
+        id: 'history_0',
         labelNameVal: '暂无数据',
         labelMapping: '',
         tagNumId: '',
@@ -77,32 +72,64 @@ export default class Search extends PureComponent {
 
   @autobind
   onSelect(value) {
+    console.log(value);
     this.setState({
       inputVal: value,
     });
   }
 
+  @autobind
+  handleOpenTab(obj, title, id) {
+    const {
+      source,
+      labelMapping,
+      tagNumId,
+      q } = obj;
+    const { push } = this.props;
+    const url = '/customerPool/list';
+    if (process.env.NODE_ENV === 'production') {
+      const toFspUrl = `${url}?source=${source}&labelMapping=${labelMapping}&tagNumId=${tagNumId}&q=${q}`;
+      fspGlobal.openRctTab(
+        toFspUrl,
+        {
+          closable: true,
+          forceRefresh: true,
+          isSpecialTab: true,
+          id, // 'FSP_SERACH',
+          title, // '搜索目标客户',
+        },
+      );
+    } else {
+      push({
+        pathname: url,
+        query: obj,
+      });
+    }
+  }
+
   // 历史搜索数据集合
   @autobind
   handleCreatHistoryList(data) {
-    console.log(data);
-    // if (!_.isEmpty(data[0]) && data[0].length > 0) {
-    //   console.log(data, '===================');
-    //   const historyList = data.map(item => ({
-    //     labelNameVal: item[0].labelNameVal,
-    //     labelMapping: item[0].labelMapping,
-    //     tagNumId: item[0].tagNumId,
-    //     id: item[0].id,
-    //     labelDesc: item[0].labelDesc,
-    //   }));
-    //   console.log(historyList, '00000000000000000');
-    //   this.setState({
-    //     historySource: [{
-    //       title: '历史搜索',
-    //       children: historyList,
-    //     }],
-    //   });
-    // }
+    if (!_.isEmpty(data) && data.length > 0) {
+      const historyList = [];
+      data.forEach((item, index) => {
+        if (!_.isEmpty(item)) {
+          historyList.push({
+            labelNameVal: item,
+            labelMapping: '',
+            tagNumId: item,
+            id: `historyList${index}`,
+            labelDesc: '',
+          });
+        }
+      });
+      this.setState({
+        historySource: [{
+          title: '历史搜索',
+          children: historyList,
+        }],
+      });
+    }
   }
 
   searchResult(query, hotList) {
@@ -140,14 +167,18 @@ export default class Search extends PureComponent {
     const recommendList = [];
     data.forEach((item, index) => {
       recommendList.push(
-        <Link
-          target="_blank"
+        <a
           className="item"
-          to={`/customerPool/list?source=tag&labelMapping=${item.labelMapping || ''}&tagNumId=${item.tagNumId || ''}&q=${encodeURIComponent(item.labelNameVal)}`} // eslint-disable-line
+          onClick={() => this.handleOpenTab({
+            source: 'tag',
+            labelMapping: item.labelMapping || '',
+            tagNumId: item.tagNumId || '',
+            q: encodeURIComponent(item.labelNameVal),
+          }, '标签目标客户', 'FSP_TAG')}
           title={item.labelDesc}
         >
           {item.labelNameVal}
-        </Link>);
+        </a>);
       if (index !== data.length - 1) {
         recommendList.push(<i className={styles.bd} />);
       }
@@ -157,7 +188,6 @@ export default class Search extends PureComponent {
 
   createOption() {
     const { dataSource, historySource } = this.state;
-    // debugger;
     const newData = dataSource.map(this.renderOption);
     if (dataSource.length > 0) {
       return newData;
@@ -170,11 +200,12 @@ export default class Search extends PureComponent {
   @autobind
   handleSearchBtn() {
     const { inputVal } = this.state;
-    const { push } = this.props;
-    push({
-      pathname: `/customerPool/list?source=search&q=${encodeURIComponent(inputVal)}`,
-      query: {},
-    });
+    this.handleOpenTab({
+      source: 'association',
+      labelMapping: '',
+      tagNumId: '',
+      q: encodeURIComponent(inputVal),
+    }, '搜索目标客户', 'FSP_SEARCH');
   }
 
   @autobind
@@ -186,11 +217,14 @@ export default class Search extends PureComponent {
     // 搜索 search
     // 标签 tag
     return (
-      <Option key={item.category} text={item.category}>
-        <Link
-          to={`/customerPool/list?source=association&labelMapping=${item.labelMapping || ''}&tagNumId=${item.tagNumId || item.content}&q=${encodeURIComponent(item.content)}`}
-          target="_blank"
-          rel="noopener noreferrer"
+      <Option key={item.category} value={item.content}>
+        <a
+          onClick={() => this.handleOpenTab({
+            source: 'association',
+            labelMapping: item.labelMapping || '',
+            tagNumId: item.tagNumId || item.content,
+            q: encodeURIComponent(item.content),
+          }, '搜索目标客户', 'FSP_SEARCH')}
           dangerouslySetInnerHTML={{ __html: newContent }}
         />
         <span>{item.desc}</span>
@@ -199,7 +233,6 @@ export default class Search extends PureComponent {
   }
 
   renderGroup(dataSource) {
-    console.log(dataSource, '9999999999999');
     const options = dataSource.map(group => (
       <OptGroup
         key={group.title}
@@ -210,15 +243,17 @@ export default class Search extends PureComponent {
             <Option key={item.id} value={item.labelNameVal} disabled>
               {item.labelNameVal}
             </Option> :
-            <Option key={item.labelNameVal} value={item.labelNameVal} >
-              <Link
-                to={`/customerPool/list?source=association&labelMapping=${item.labelMapping || ''}&tagNumId=${item.tagNumId || ''}&q=${encodeURIComponent(item.labelNameVal)}`}
-                target="_blank"
-                rel="noopener noreferrer"
+            <Option key={item.id} value={item.labelNameVal} >
+              <a
+                onClick={() => this.handleOpenTab({
+                  source: 'association',
+                  labelMapping: item.labelMapping || '',
+                  tagNumId: item.tagNumId || '',
+                  q: encodeURIComponent(item.labelNameVal),
+                }, '搜索目标客户', 'FSP_SEARCH')}
               >
                 {item.labelNameVal}
-                <span className="certain-search-item-count">{item.labelDesc}</span>
-              </Link>
+              </a>
             </Option>
         ))}
       </OptGroup>
@@ -230,11 +265,11 @@ export default class Search extends PureComponent {
     return (
       <span>
         {title}
-        <a
+        {/* <a
           className={styles.delHistory_a}
           rel="noopener noreferrer"
         ><AntdIcon type="delete" />清除历史记录
-      </a>
+        </a>*/}
       </span>
     );
   }

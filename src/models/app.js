@@ -4,6 +4,7 @@
  * @author maoquan(maoquan@htsc.com)
  */
 import api from '../api';
+import { EVENT_PROFILE_ACTION } from '../config/log';
 
 export default {
   namespace: 'app',
@@ -14,20 +15,27 @@ export default {
   effects: {
     // 获取员工职责与职位
     * getEmpInfo({ payload }, { call, put }) {
-      const resultData = yield call(api.getEmpInfo);
-      yield put({
-        type: 'getEmpInfoSuccess',
-        response: resultData,
-      });
+      const response = yield call(api.getEmpInfo);
+      const data = response.resultData;
+      if (data) {
+        yield put({
+          type: 'getEmpInfoSuccess',
+          payload: data,
+        });
+        yield put({
+          type: EVENT_PROFILE_ACTION,
+          payload: data.empInfo,
+        });
+      }
     },
   },
   reducers: {
     // 获取员工职责与职位
     getEmpInfoSuccess(state, action) {
-      const { response: { resultData } } = action;
+      const { payload } = action;
       return {
         ...state,
-        empInfo: resultData,
+        empInfo: payload,
       };
     },
   },
