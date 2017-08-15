@@ -87,22 +87,20 @@ export default class Search extends PureComponent {
       tagNumId,
       q } = obj;
     const { push } = this.props;
-    const url = '/customerPool/list';
+    const firstUrl = '/customerPool/list';
     if (process.env.NODE_ENV === 'production') {
-      const toFspUrl = `${url}?source=${source}&labelMapping=${labelMapping}&tagNumId=${tagNumId}&q=${q}`;
-      fspGlobal.openRctTab(
-        toFspUrl,
-        {
-          closable: true,
-          forceRefresh: true,
-          isSpecialTab: true,
-          id: ids, // 'FSP_SERACH',
-          title: titles, // '搜索目标客户',
-        },
-      );
+      const url = `${firstUrl}?source=${source}&labelMapping=${labelMapping}&tagNumId=${tagNumId}&q=${q}`;
+      const param = {
+        closable: true,
+        forceRefresh: true,
+        isSpecialTab: true,
+        id: ids, // 'FSP_SERACH',
+        title: titles, // '搜索目标客户',
+      };
+      fspGlobal.openRctTab({ url, param });
     } else {
       push({
-        pathname: url,
+        pathname: firstUrl,
         query: obj,
       });
     }
