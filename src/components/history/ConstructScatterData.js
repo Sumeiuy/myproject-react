@@ -154,10 +154,9 @@ export const constructScatterData = (options = {}) => {
         if (len > 0) {
           average = total / len;
         }
-
         return {
           slope: average,
-          averageInfo: `平均每${description}${average.toFixed(2)}${yAxisUnit}/${xAxisUnit}`,
+          averageInfo: `平均每${description}${average && average.toFixed(2)}${yAxisUnit}/${xAxisUnit}`,
           average, // 平均值，用以区分
         };
       }
