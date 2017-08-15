@@ -9,13 +9,12 @@ import { autobind } from 'core-decorators';
 import moment from 'moment';
 import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
-import { message } from 'antd';
+import { message, Row, Col } from 'antd';
 import _ from 'lodash';
 
 import { getEmpId, getDurationString } from '../../utils/helper';
 import IndicatorOverviewHeader from '../../components/history/IndicatorOverviewHeader';
 import IndicatorOverview from '../../components/history/IndicatorOverview';
-import HisDivider from '../../components/history/HisDivider';
 import ScatterAnalysis from '../../components/history/ScatterAnalysis';
 import HistoryComparePolyChart from '../../components/history/HistoryComparePolyChart';
 import HistoryCompareRankChart from '../../components/history/HistoryCompareRankChart';
@@ -418,7 +417,6 @@ export default class HistoryHome extends PureComponent {
   // 切换时间段和组织机构
   @autobind
   updateQueryState(query) {
-    console.warn('updateQueryState query', query);
     let durationOrg = query;
     if (query.orgId) {
       const { scope, orgId, level } = query;
@@ -611,25 +609,30 @@ export default class HistoryHome extends PureComponent {
             />
           </div>
           <div className={styles.indicatorAnalyse}>
-            <div className={styles.caption}>{curNameIndex >= 0 ? historyCore[curNameIndex].name : '托管总资产'}-详细分析</div>
+            <div className={styles.caption}>{curNameIndex >= 0 ? historyCore[curNameIndex].name : '指标'}-详细分析</div>
             <div className={styles.polyArea}>
-              <HistoryComparePolyChart data={contrastData} />
-              {
-                _.isEmpty(rankData)
-                  ? null
-                  : (
-                    <HistoryCompareRankChart
-                      level={level}
-                      scope={newScope}
-                      data={rankData}
-                      boardType={boardType}
-                      changeRankBar={this.changeRankBar}
-                      swtichDefault={swtichDefault}
-                    />
-                  )
-              }
+              <Row type="flex" gutter={10} >
+                <Col span="12">
+                  <HistoryComparePolyChart data={contrastData} />
+                </Col>
+                <Col span="12">
+                  {
+                    _.isEmpty(rankData)
+                      ? null
+                      : (
+                        <HistoryCompareRankChart
+                          level={level}
+                          scope={newScope}
+                          data={rankData}
+                          boardType={boardType}
+                          changeRankBar={this.changeRankBar}
+                          swtichDefault={swtichDefault}
+                        />
+                      )
+                  }
+                </Col>
+              </Row>
             </div>
-            <HisDivider />
             <div className={styles.scatterArea}>
               {/* 散点图区域 */}
               <ScatterAnalysis

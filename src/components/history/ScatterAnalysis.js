@@ -46,7 +46,7 @@ export default class ScatterAnalysis extends PureComponent {
 
     return (
       <div className={styles.scatterSection}>
-        <Row type="flex">
+        <Row type="flex" gutter={10}>
           <Col span={12} className={styles.leftScatterSection}>
             <AbilityScatterAnalysis
               data={contributionAnalysisData}
@@ -83,9 +83,6 @@ export default class ScatterAnalysis extends PureComponent {
                   type={investScatter.type}
                   swtichDefault={swtichDefault}
                   isLvIndicator={isLvIndicator}
-                  headerClass={{
-                    marginLeft: '-20px',
-                  }}
                   style={{
                     left: '-65px',
                   }}

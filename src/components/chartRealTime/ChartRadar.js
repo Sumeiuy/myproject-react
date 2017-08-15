@@ -9,7 +9,6 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
 import {
-  legend,
   radarCommon,
   seriesCommon,
   currentRadar,
@@ -215,10 +214,10 @@ export default class ChartRadar extends PureComponent {
     const indicator = this.makeRadarIndicators(current, contrast, total, indicatorName);
     const allData = this.makeRadarSeriesData(radar, Number(total));
     const options = {
-      legend: {
-        ...legend,
-        data: allData.legend,
-      },
+      // legend: {
+      //   ...legend,
+      //   data: allData.legend,
+      // },
       radar: {
         ...radarCommon,
         indicator,
@@ -239,20 +238,25 @@ export default class ChartRadar extends PureComponent {
             resizable
             onReady={this.radarOnReady}
             style={{
-              height: '320px',
+              height: '330px',
             }}
           />
         </div>
         <div className={styles.radarInfo}>
-          <i />{indicatorName[selectCore]}：本期排名：
+          <div className={styles.radarDesc}>
+            <span className={styles.name}>{indicatorName[selectCore]}排名</span>
+            <span className={styles.totalDesc}>(共 </span>
+            <span className={styles.totalNo}>{total === '0' ? '--' : total}</span>
+            <span className={styles.totalDesc}> 家{levelName})</span>
+            <span className={styles.radarNowDura}>本期:</span>
             <span className={styles.now}>
               {_.isEmpty(current) ? '--' : current[selectCore]}
             </span>
-            上期排名：
+            <span className={styles.radarLastDura}>上期:</span>
             <span className={styles.before}>
               {_.isEmpty(contrast) ? '--' : contrast[selectCore]}
             </span>
-            共 <span className={styles.all}>{total === '0' ? '--' : total}</span> 家{levelName}
+          </div>
         </div>
       </div>
     );
