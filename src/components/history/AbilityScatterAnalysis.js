@@ -299,6 +299,8 @@ export default class AbilityScatterAnalysis extends PureComponent {
 
     const currentAverageValue = (currentSelectY / currentSelectX).toFixed(2);
 
+    // 经总和分公司下，显示每个点的平均值
+    // 正常显示每个点的x信息和y信息，和每平均信息
     this.setState({
       tooltipInfo: `${yAxisName}：${currentSelectY}${yAxisUnit} / ${xAxisName}：${currentSelectX}${xAxisUnit}。${(level === '1' || level === '2') ? `平均${description}:${currentAverageValue}${yAxisUnit}/${xAxisUnit}，` : ''}每${description}的${yAxisName}${currentSlope > compareSlope ? '优' : '低'}于平均水平。`,
     });
