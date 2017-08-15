@@ -73,7 +73,9 @@ export default class ChartRadar extends PureComponent {
     max = currMax > prevMax ? currMax : prevMax;
     min = currMin < prevMin ? currMin : prevMin;
     max += 10;
-    min -= 3;
+    if (min !== 1) {
+      min -= 3;
+    }
     return {
       max,
       min,

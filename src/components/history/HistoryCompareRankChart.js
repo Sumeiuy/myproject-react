@@ -194,7 +194,6 @@ export default class HistoryCompareRankChart extends PureComponent {
       [styles.pageBtnDis]: rankPage === totalPage,
     });
 
-
     return (
       <div className={styles.historyRange}>
         <div className={styles.chartHd}>
