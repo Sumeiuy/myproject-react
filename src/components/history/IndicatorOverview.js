@@ -36,6 +36,7 @@ export default class IndicatorOverview extends PureComponent {
       visible: false,
       selectTreeModal: false,
       selectIndex: 0, // 默认选中项
+      clickItemIndex: 0, // 默认点击的项索引值
     };
   }
 
@@ -70,6 +71,7 @@ export default class IndicatorOverview extends PureComponent {
     return () => {
       const { changeCore } = this.props;
       this.setState({
+        clickItemIndex: index,
         selectIndex: index,
       });
       changeCore(key);
@@ -80,6 +82,21 @@ export default class IndicatorOverview extends PureComponent {
   closeModal(modal) {
     this.setState({
       [modal]: false,
+    });
+  }
+  @autobind
+  mouseEnter(index) {
+    return () => {
+      this.setState({
+        selectIndex: index,
+      });
+    };
+  }
+  @autobind
+  mouseLeave() {
+    const { clickItemIndex } = this.state;
+    this.setState({
+      selectIndex: clickItemIndex,
     });
   }
 
@@ -94,7 +111,7 @@ export default class IndicatorOverview extends PureComponent {
     if (_.isEmpty(overviewData)) {
       return null;
     }
-    const { selectIndex, selectTreeModal } = this.state;
+    const { selectIndex, selectTreeModal, clickItemIndex } = this.state;
     // 创建共同配置项
     const selectTreeProps = {
       modalKey: 'selectTreeModal',
@@ -137,6 +154,8 @@ export default class IndicatorOverview extends PureComponent {
                           className={coreCard}
                           onClick={this.handleCoreClick(index, key)}
                           key={itemIndex}
+                          onMouseEnter={this.mouseEnter(index)}
+                          onMouseLeave={this.mouseLeave}
                         >
                           <IndexItem
                             itemData={item}
@@ -175,7 +194,7 @@ export default class IndicatorOverview extends PureComponent {
                     <ChartRadar
                       radarData={indexData.data}
                       total={indexData.scopeNum}
-                      selectCore={selectIndex}
+                      selectCore={clickItemIndex}
                       localScope={level}
                     />
                   </div>
