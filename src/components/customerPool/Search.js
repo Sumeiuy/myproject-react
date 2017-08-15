@@ -16,6 +16,7 @@ const Option = AutoComplete.Option;
 const OptGroup = AutoComplete.OptGroup;
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
+let COUNT = 0;
 export default class Search extends PureComponent {
 
   static propTypes = {
@@ -42,7 +43,7 @@ export default class Search extends PureComponent {
     historySource: [{
       title: '历史搜索',
       children: [{
-        id: 'history_0',
+        id: `history_${COUNT++}`,
         labelNameVal: '暂无数据',
         labelMapping: '',
         tagNumId: '',
@@ -79,29 +80,27 @@ export default class Search extends PureComponent {
   }
 
   @autobind
-  handleOpenTab(obj, title, id) {
+  handleOpenTab(obj, titles, ids) {
     const {
       source,
       labelMapping,
       tagNumId,
       q } = obj;
     const { push } = this.props;
-    const url = '/customerPool/list';
+    const firstUrl = '/customerPool/list';
     if (process.env.NODE_ENV === 'production') {
-      const toFspUrl = `${url}?source=${source}&labelMapping=${labelMapping}&tagNumId=${tagNumId}&q=${q}`;
-      fspGlobal.openRctTab(
-        toFspUrl,
-        {
-          closable: true,
-          forceRefresh: true,
-          isSpecialTab: true,
-          id, // 'FSP_SERACH',
-          title, // '搜索目标客户',
-        },
-      );
+      const url = `${firstUrl}?source=${source}&labelMapping=${labelMapping}&tagNumId=${tagNumId}&q=${q}`;
+      const param = {
+        closable: true,
+        forceRefresh: true,
+        isSpecialTab: true,
+        id: ids, // 'FSP_SERACH',
+        title: titles, // '搜索目标客户',
+      };
+      fspGlobal.openRctTab({ url, param });
     } else {
       push({
-        pathname: url,
+        pathname: firstUrl,
         query: obj,
       });
     }
@@ -112,13 +111,13 @@ export default class Search extends PureComponent {
   handleCreatHistoryList(data) {
     if (!_.isEmpty(data) && data.length > 0) {
       const historyList = [];
-      data.forEach((item, index) => {
+      data.forEach((item) => {
         if (!_.isEmpty(item)) {
           historyList.push({
             labelNameVal: item,
             labelMapping: '',
             tagNumId: item,
-            id: `historyList${index}`,
+            id: `historyList${COUNT++}`,
             labelDesc: '',
           });
         }
@@ -138,6 +137,7 @@ export default class Search extends PureComponent {
       category: `${item.labelNameVal}${index}`,
       content: item.labelNameVal,
       desc: item.labelDesc,
+      id: `autoList${COUNT++}`,
     }));
   }
 
@@ -176,6 +176,7 @@ export default class Search extends PureComponent {
             q: encodeURIComponent(item.labelNameVal),
           }, '标签目标客户', 'FSP_TAG')}
           title={item.labelDesc}
+          rel="noopener noreferrer"
         >
           {item.labelNameVal}
         </a>);
@@ -187,9 +188,9 @@ export default class Search extends PureComponent {
   }
 
   createOption() {
-    const { dataSource, historySource } = this.state;
+    const { dataSource, historySource, inputVal } = this.state;
     const newData = dataSource.map(this.renderOption);
-    if (dataSource.length > 0) {
+    if (!_.isEmpty(inputVal)) {
       return newData;
     }
     const history = this.renderGroup(historySource);
@@ -217,7 +218,7 @@ export default class Search extends PureComponent {
     // 搜索 search
     // 标签 tag
     return (
-      <Option key={item.category} value={item.content}>
+      <Option key={item.category} text={item.content}>
         <a
           onClick={() => this.handleOpenTab({
             source: 'association',
@@ -226,6 +227,7 @@ export default class Search extends PureComponent {
             q: encodeURIComponent(item.content),
           }, '搜索目标客户', 'FSP_SEARCH')}
           dangerouslySetInnerHTML={{ __html: newContent }}
+          rel="noopener noreferrer"
         />
         <span>{item.desc}</span>
       </Option>
@@ -235,15 +237,15 @@ export default class Search extends PureComponent {
   renderGroup(dataSource) {
     const options = dataSource.map(group => (
       <OptGroup
-        key={group.title}
+        key={group.id}
         label={this.renderTitle(group.title)}
       >
         {group.children.map(item => (
           item.title === '暂无数据' ?
-            <Option key={item.id} value={item.labelNameVal} disabled>
+            <Option key={item.id} text={item.labelNameVal} disabled>
               {item.labelNameVal}
             </Option> :
-            <Option key={item.id} value={item.labelNameVal} >
+            <Option key={item.labelNameVal} text={item.labelNameVal} >
               <a
                 onClick={() => this.handleOpenTab({
                   source: 'association',
@@ -251,6 +253,7 @@ export default class Search extends PureComponent {
                   tagNumId: item.tagNumId || '',
                   q: encodeURIComponent(item.labelNameVal),
                 }, '搜索目标客户', 'FSP_SEARCH')}
+                rel="noopener noreferrer"
               >
                 {item.labelNameVal}
               </a>
@@ -269,7 +272,7 @@ export default class Search extends PureComponent {
           className={styles.delHistory_a}
           rel="noopener noreferrer"
         ><AntdIcon type="delete" />清除历史记录
-        </a>*/}
+        </a> */}
       </span>
     );
   }

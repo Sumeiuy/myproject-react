@@ -71,7 +71,7 @@ export default class BusinessProcessing extends PureComponent {
       <div className={styles.indexItemBox}>
         <div className={styles.inner}>
           <div className={styles.title}>
-            <Icon type="yewubanli" />业务办理（{unit}人）
+            <Icon type="yewubanli" />业务开通客户数（{unit}人）
                     </div>
           <div className={`${styles.content} ${styles.ywContent}`}>
             <ul>
