@@ -85,23 +85,24 @@ export default class Search extends PureComponent {
   // 历史搜索数据集合
   @autobind
   handleCreatHistoryList(data) {
-    if (!_.isEmpty(data[0]) && data[0].length > 0) {
-      console.log(data, '===================');
-      const historyList = data.map(item => ({
-        labelNameVal: item[0].labelNameVal,
-        labelMapping: item[0].labelMapping,
-        tagNumId: item[0].tagNumId,
-        id: item[0].id,
-        labelDesc: item[0].labelDesc,
-      }));
-      console.log(historyList, '00000000000000000');
-      this.setState({
-        historySource: [{
-          title: '历史搜索',
-          children: historyList,
-        }],
-      });
-    }
+    console.log(data);
+    // if (!_.isEmpty(data[0]) && data[0].length > 0) {
+    //   console.log(data, '===================');
+    //   const historyList = data.map(item => ({
+    //     labelNameVal: item[0].labelNameVal,
+    //     labelMapping: item[0].labelMapping,
+    //     tagNumId: item[0].tagNumId,
+    //     id: item[0].id,
+    //     labelDesc: item[0].labelDesc,
+    //   }));
+    //   console.log(historyList, '00000000000000000');
+    //   this.setState({
+    //     historySource: [{
+    //       title: '历史搜索',
+    //       children: historyList,
+    //     }],
+    //   });
+    // }
   }
 
   searchResult(query, hotList) {

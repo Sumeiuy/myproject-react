@@ -44,6 +44,22 @@ export default class CustomerLists extends PureComponent {
     if (custList.length === 0) {
       return <div className="list-box"><NoData /></div>;
     }
+    let current = 1;
+    let pagesize = 10;
+    let curTotal = 0;
+    if (curPageNum) {
+      current = Number(curPageNum);
+    } else {
+      current = Number(page.pageNo);
+    }
+    if (pageSize) {
+      pagesize = Number(pageSize);
+    } else {
+      pagesize = Number(page.pageSize);
+    }
+    if (page.total) {
+      curTotal = Number(page.total);
+    }
     return (
       <div className="list-box">
         <div className="list-wrapper">
@@ -54,16 +70,16 @@ export default class CustomerLists extends PureComponent {
                 monthlyProfits={monthlyProfits}
                 list={item}
                 q={q}
-                key={`${item.empId}-${item.custId}`}
+                key={`${item.empId}-${item.custId}-${item.idNum}`}
               />,
             )
           }
         </div>
         <div className="list-pagination">
           <Pagination
-            current={+curPageNum || +page.pageNo}
-            total={+page.total}
-            pageSize={+pageSize || +page.pageSize}
+            current={current}
+            total={curTotal}
+            pageSize={pagesize}
             onChange={onPageChange}
             size="small"
             showSizeChanger

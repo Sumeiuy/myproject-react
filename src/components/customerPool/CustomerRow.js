@@ -89,12 +89,6 @@ export default class CustomerRow extends PureComponent {
     };
   }
 
-  componentDidMount() {
-    const { getCustIncome, list } = this.props;
-    // test data empId = 020100053538
-    getCustIncome({ custNumber: list.custId });
-  }
-
   getLastestData(arr) {
     if (arr && arr instanceof Array && arr.length !== 0) {
       return arr[arr.length - 1];
@@ -130,12 +124,22 @@ export default class CustomerRow extends PureComponent {
   }
 
   @autobind
+  handleMouseEnter() {
+    const { getCustIncome, list, monthlyProfits } = this.props;
+    if (monthlyProfits.length !== 0) {
+      return;
+    }
+    // test data empId = 020100053538
+    getCustIncome({ custNumber: list.custId });
+  }
+
+  @autobind
   matchWord(q, list) {
     // if (!q) return;
     let rtnEle = '';
     let shortRtnEle = '';
     let n = 0;
-    if (list.name.indexOf(q) > -1) {
+    if (list.name && list.name.indexOf(q) > -1) {
       const markedEle = list.name.replace(new RegExp(q, 'g'), `<em class="mark">${q}</em>`);
       rtnEle += `<li><span>姓名：${markedEle}</span></li>`;
       n++;
@@ -143,7 +147,7 @@ export default class CustomerRow extends PureComponent {
         shortRtnEle += `<li><span>姓名：${markedEle}</span></li>`;
       }
     }
-    if (list.idNum.indexOf(q) > -1) {
+    if (list.idNum && list.idNum.indexOf(q) > -1) {
       const markedEle = list.idNum.replace(new RegExp(q, 'g'), `<em class="mark">${q}</em>`);
       rtnEle += `<li><span>身份证号码：${markedEle}</span></li>`;
       n++;
@@ -151,7 +155,7 @@ export default class CustomerRow extends PureComponent {
         shortRtnEle += `<li><span>身份证号码：${markedEle}</span></li>`;
       }
     }
-    if (list.telephone.indexOf(q) > -1) {
+    if (list.telephone && list.telephone.indexOf(q) > -1) {
       const markedEle = list.telephone.replace(new RegExp(q, 'g'), `<em class="mark">${q}</em>`);
       rtnEle += `<li><span>联系电话：${markedEle}</span></li>`;
       n++;
@@ -159,7 +163,7 @@ export default class CustomerRow extends PureComponent {
         shortRtnEle += `<li><span>联系电话：${markedEle}</span></li>`;
       }
     }
-    if (list.custId.indexOf(q) > -1) {
+    if (list.custId && list.custId.indexOf(q) > -1) {
       const markedEle = list.custId.replace(new RegExp(q, 'g'), `<em class="mark">${q}</em>`);
       rtnEle += `<li><span>经纪客户号：${markedEle}</span></li>`;
       n++;
@@ -216,7 +220,7 @@ export default class CustomerRow extends PureComponent {
                 <span className={styles.assetsText}>总资产：</span>
                 <sapn className={styles.assetsNum}>{(list.asset / 10000)}</sapn>
                 <span className={styles.assetsText}>万元</span>
-                <div className={styles.iconschart}>
+                <div className={styles.iconschart} onMouseEnter={this.handleMouseEnter}>
                   <div className={styles.showCharts}>
                     <div className={styles.chartsContent}>
                       <ChartLineWidget chartData={monthlyProfits} />
@@ -243,7 +247,7 @@ export default class CustomerRow extends PureComponent {
                             <span className={styles.numB}>
                               {
                                 monthlyProfits.length ?
-                                `${this.getLastestData(monthlyProfits).asset / 10000}`
+                                `${this.getLastestData(monthlyProfits).assetProfit / 10000}`
                                 :
                                 '--'
                               }
