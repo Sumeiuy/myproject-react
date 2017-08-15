@@ -10,6 +10,13 @@ import { Pagination } from 'antd';
 import NoData from './NoData';
 import CustomerRow from './CustomerRow';
 
+// current: 默认第一页
+// pageSize: 默认每页大小10
+// curTotal: 当前列表数据总数
+let current = 1;
+let pagesize = 10;
+let curTotal = 0;
+
 export default class CustomerLists extends PureComponent {
   static propTypes = {
     page: PropTypes.object.isRequired,
@@ -41,12 +48,9 @@ export default class CustomerLists extends PureComponent {
       getCustIncome,
       monthlyProfits,
     } = this.props;
-    if (custList.length === 0) {
+    if (!custList.length) {
       return <div className="list-box"><NoData /></div>;
     }
-    let current = 1;
-    let pagesize = 10;
-    let curTotal = 0;
     if (curPageNum) {
       current = Number(curPageNum);
     } else {
@@ -68,7 +72,7 @@ export default class CustomerLists extends PureComponent {
               item => <CustomerRow
                 getCustIncome={getCustIncome}
                 monthlyProfits={monthlyProfits}
-                list={item}
+                listItem={item}
                 q={q}
                 key={`${item.empId}-${item.custId}-${item.idNum}`}
               />,

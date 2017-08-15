@@ -5,7 +5,7 @@
 */
 
 import React, { PureComponent, PropTypes } from 'react';
-import { withRouter } from 'dva/router';
+// import { withRouter } from 'dva/router';
 import { Row, Col, Checkbox } from 'antd';
 import { autobind } from 'core-decorators';
 import styles from './customerRow.less';
@@ -29,6 +29,7 @@ const show = {
 const hide = {
   display: 'none',
 };
+// 风险等级配置
 const riskLevelConfig = {
   704010: '激进型',
   704040: '保守型（最低类别）',
@@ -37,6 +38,7 @@ const riskLevelConfig = {
   704025: '谨慎型',
   704015: '积极型',
 };
+// 客户性质配置
 const custNature = {
   P: {
     name: '个人客户',
@@ -51,6 +53,7 @@ const custNature = {
     imgSrc: iconProductAgency,
   },
 };
+// 客户等级的图片源
 const rankImgSrcConfig = {
   // 钻石
   805010: iconDiamond,
@@ -68,11 +71,10 @@ const rankImgSrcConfig = {
   805999: iconNone,
 };
 
-@withRouter
 export default class CustomerRow extends PureComponent {
   static propTypes = {
     q: PropTypes.string,
-    list: PropTypes.object.isRequired,
+    listItem: PropTypes.object.isRequired,
     getCustIncome: PropTypes.func.isRequired,
     monthlyProfits: PropTypes.array.isRequired,
   }
@@ -125,46 +127,46 @@ export default class CustomerRow extends PureComponent {
 
   @autobind
   handleMouseEnter() {
-    const { getCustIncome, list, monthlyProfits } = this.props;
+    const { getCustIncome, listItem, monthlyProfits } = this.props;
     if (monthlyProfits.length !== 0) {
       return;
     }
     // test data empId = 01041128、05038222、035000002899、02004642
-    getCustIncome({ custNumber: list.custId });
+    getCustIncome({ custNumber: listItem.custId });
   }
 
   @autobind
-  matchWord(q, list) {
+  matchWord(q, listItem) {
     // if (!q) return;
     let rtnEle = '';
     let shortRtnEle = '';
     let n = 0;
-    if (list.name && list.name.indexOf(q) > -1) {
-      const markedEle = list.name.replace(new RegExp(q, 'g'), `<em class="mark">${q}</em>`);
+    if (listItem.name && listItem.name.indexOf(q) > -1) {
+      const markedEle = listItem.name.replace(new RegExp(q, 'g'), `<em class="mark">${q}</em>`);
       rtnEle += `<li><span>姓名：${markedEle}</span></li>`;
       n++;
       if (n <= 2) {
         shortRtnEle += `<li><span>姓名：${markedEle}</span></li>`;
       }
     }
-    if (list.idNum && list.idNum.indexOf(q) > -1) {
-      const markedEle = list.idNum.replace(new RegExp(q, 'g'), `<em class="mark">${q}</em>`);
+    if (listItem.idNum && listItem.idNum.indexOf(q) > -1) {
+      const markedEle = listItem.idNum.replace(new RegExp(q, 'g'), `<em class="mark">${q}</em>`);
       rtnEle += `<li><span>身份证号码：${markedEle}</span></li>`;
       n++;
       if (n <= 2) {
         shortRtnEle += `<li><span>身份证号码：${markedEle}</span></li>`;
       }
     }
-    if (list.telephone && list.telephone.indexOf(q) > -1) {
-      const markedEle = list.telephone.replace(new RegExp(q, 'g'), `<em class="mark">${q}</em>`);
+    if (listItem.telephone && listItem.telephone.indexOf(q) > -1) {
+      const markedEle = listItem.telephone.replace(new RegExp(q, 'g'), `<em class="mark">${q}</em>`);
       rtnEle += `<li><span>联系电话：${markedEle}</span></li>`;
       n++;
       if (n <= 2) {
         shortRtnEle += `<li><span>联系电话：${markedEle}</span></li>`;
       }
     }
-    if (list.custId && list.custId.indexOf(q) > -1) {
-      const markedEle = list.custId.replace(new RegExp(q, 'g'), `<em class="mark">${q}</em>`);
+    if (listItem.custId && listItem.custId.indexOf(q) > -1) {
+      const markedEle = listItem.custId.replace(new RegExp(q, 'g'), `<em class="mark">${q}</em>`);
       rtnEle += `<li><span>经纪客户号：${markedEle}</span></li>`;
       n++;
       if (n <= 2) {
@@ -178,16 +180,17 @@ export default class CustomerRow extends PureComponent {
   }
 
   render() {
-    const { q, list, monthlyProfits } = this.props;
+    const { q, listItem, monthlyProfits } = this.props;
+    console.log('listItem', listItem);
     return (
       <Row type="flex" className={styles.custoemrRow}>
         <Col span={3} className={styles.avator}>
           <Checkbox className={styles.selectIcon} />
           <div>
-            {<img className={styles.avatorImage} src={custNature[list.pOrO].imgSrc} alt="avator" />}
-            <div className={styles.avatorText}>{custNature[list.pOrO].name}</div>
+            {<img className={styles.avatorImage} src={custNature[listItem.pOrO].imgSrc} alt="avator" />}
+            <div className={styles.avatorText}>{custNature[listItem.pOrO].name}</div>
             <div className={styles.avatorIconMoney}>
-              <img className={styles.iconMoneyImage} src={rankImgSrcConfig[list.levelCode]} alt="icon-money" />
+              <img className={styles.iconMoneyImage} src={rankImgSrcConfig[listItem.levelCode]} alt="icon-money" />
             </div>
           </div>
         </Col>
@@ -195,30 +198,30 @@ export default class CustomerRow extends PureComponent {
           <div className={styles.customerBasicInfo}>
             <div className={styles.basicInfoA}>
               <div className={styles.itemA}>
-                <span>{list.name}</span>
-                <span>{list.custId}</span>
-                <span>{list.genderValue}/{list.age}岁</span>
+                <span>{listItem.name}</span>
+                <span>{listItem.custId}</span>
+                <span>{listItem.genderValue}/{listItem.age}岁</span>
 
               </div>
               <div className={styles.itemB}>
-                <span>服务经理：</span><span>{list.empName}</span>
-                <span>{list.orgName}</span>
+                <span>服务经理：</span><span>{listItem.empName}</span>
+                <span>{listItem.orgName}</span>
               </div>
             </div>
             <div className={styles.basicInfoB}>
               {
-                list.contactFlag ?
+                listItem.contactFlag ?
                   <div className={styles.iconSingnedA}>
                     <div className={styles.itemText}>签约客户</div>
                   </div> : null
               }
-              {list.highWorthFlag ? <div className={styles.tagA}>高净值</div> : null}
-              <div className={styles.tagB}>{riskLevelConfig[list.riskLvl]}</div>
+              {listItem.highWorthFlag ? <div className={styles.tagA}>高净值</div> : null}
+              <div className={styles.tagB}>{riskLevelConfig[listItem.riskLvl]}</div>
             </div>
             <div className={styles.basicInfoC}>
               <div className={styles.itemA}>
                 <span className={styles.assetsText}>总资产：</span>
-                <sapn className={styles.assetsNum}>{(list.asset / 10000)}</sapn>
+                <sapn className={styles.assetsNum}>{(listItem.asset / 10000)}</sapn>
                 <span className={styles.assetsText}>万元</span>
                 <div className={styles.iconschart} onMouseEnter={this.handleMouseEnter}>
                   <div className={styles.showCharts}>
@@ -261,7 +264,7 @@ export default class CustomerRow extends PureComponent {
               </div>
               <div className={styles.itemB}>
                 <span>佣金率：</span>
-                <span>{list.miniFee * 1000}‰</span>
+                <span>{listItem.miniFee * 1000}‰</span>
               </div>
             </div>
             <div className={styles.basicInfoD}>
@@ -290,11 +293,11 @@ export default class CustomerRow extends PureComponent {
             </div>
             <ul
               style={this.state.showStyle}
-              dangerouslySetInnerHTML={this.matchWord(q, list).shortRtnEle}
+              dangerouslySetInnerHTML={this.matchWord(q, listItem).shortRtnEle}
             />
             <ul
               style={this.state.hideStyle}
-              dangerouslySetInnerHTML={this.matchWord(q, list).rtnEle}
+              dangerouslySetInnerHTML={this.matchWord(q, listItem).rtnEle}
             />
           </div>
         </Col>
