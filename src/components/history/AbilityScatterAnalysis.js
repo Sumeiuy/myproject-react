@@ -26,12 +26,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
     swtichDefault: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
     contrastType: PropTypes.string.isRequired,
-    headerClass: PropTypes.object,
     isLvIndicator: PropTypes.bool.isRequired,
-  };
-
-  static defaultProps = {
-    headerClass: {},
   };
 
   constructor(props) {
@@ -358,7 +353,6 @@ export default class AbilityScatterAnalysis extends PureComponent {
       title,
       style,
       contrastType,
-      headerClass,
     } = this.props;
 
 
@@ -372,7 +366,6 @@ export default class AbilityScatterAnalysis extends PureComponent {
       <div className={styles.abilityScatterAnalysis}>
         <div
           className={styles.abilityHeader}
-          style={headerClass}
         >
           <div className={styles.title}>{title}</div>
           <div className={styles.customerDimensionSelect}>
