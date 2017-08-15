@@ -129,7 +129,7 @@ export default class CustomerRow extends PureComponent {
     if (monthlyProfits.length !== 0) {
       return;
     }
-    // test data empId = 020100053538
+    // test data empId = 01041128、05038222、035000002899、02004642
     getCustIncome({ custNumber: list.custId });
   }
 
