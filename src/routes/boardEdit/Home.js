@@ -136,8 +136,18 @@ export default class BoardEditHome extends PureComponent {
     const { publishLoading: prePL, updateLoading: preUL } = this.props;
     const { publishLoading, updateLoading, boardInfo: { id, ownerOrgId }, push } = nextProps;
     if (prePL && !publishLoading) {
-      message.success('发布成功');
-      push(`/report?boardId=${id}`);
+      // 发布按钮
+      const { success, msg /* code */} = nextProps.operateData;
+      if (success) {
+        message.success('发布成功');
+        push(`/report?boardId=${id}`);
+      } else {
+        // if (code === responseCode.DUPLICATE_NAME) {
+        message.error(msg);
+        // } else {
+          // message.error();
+        // }
+      }
     }
     if (preUL && !updateLoading) {
       this.setState({
