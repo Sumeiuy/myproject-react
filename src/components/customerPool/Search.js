@@ -86,13 +86,15 @@ export default class Search extends PureComponent {
   @autobind
   handleCreatHistoryList(data) {
     if (!_.isEmpty(data[0]) && data[0].length > 0) {
-      const historyList = data[0].map(item => ({
-        labelNameVal: item.labelNameVal,
-        labelMapping: item.labelMapping,
-        tagNumId: item.tagNumId,
-        id: item.id,
-        labelDesc: item.labelDesc,
+      console.log(data, '===================');
+      const historyList = data.map(item => ({
+        labelNameVal: item[0].labelNameVal,
+        labelMapping: item[0].labelMapping,
+        tagNumId: item[0].tagNumId,
+        id: item[0].id,
+        labelDesc: item[0].labelDesc,
       }));
+      console.log(historyList, '00000000000000000');
       this.setState({
         historySource: [{
           title: '历史搜索',
@@ -140,8 +142,7 @@ export default class Search extends PureComponent {
         <Link
           target="_blank"
           className="item"
-          to={`/customerList/list?source=association&labelMapping=
-          ${item.labelMapping}&tagNumId=${item.tagNumId}q=${item.labelNameVal}`}
+          to={`/customerPool/list?source=tag&labelMapping=${item.labelMapping || ''}&tagNumId=${item.tagNumId || ''}&q=${encodeURIComponent(item.labelNameVal)}`} // eslint-disable-line
           title={item.labelDesc}
         >
           {item.labelNameVal}
@@ -170,7 +171,7 @@ export default class Search extends PureComponent {
     const { inputVal } = this.state;
     const { push } = this.props;
     push({
-      pathname: `/customerList/list?source=seach&q=${inputVal}`,
+      pathname: `/customerPool/list?source=search&q=${encodeURIComponent(inputVal)}`,
       query: {},
     });
   }
@@ -186,8 +187,7 @@ export default class Search extends PureComponent {
     return (
       <Option key={item.category} text={item.category}>
         <Link
-          to={`/customerList/list?source=association&labelMapping=
-          ${item.labelMapping}&tagNumId=${item.tagNumId}q=${item.query}`}
+          to={`/customerPool/list?source=association&labelMapping=${item.labelMapping || ''}&tagNumId=${item.tagNumId || item.content}&q=${encodeURIComponent(item.content)}`}
           target="_blank"
           rel="noopener noreferrer"
           dangerouslySetInnerHTML={{ __html: newContent }}
@@ -198,6 +198,7 @@ export default class Search extends PureComponent {
   }
 
   renderGroup(dataSource) {
+    console.log(dataSource, '9999999999999');
     const options = dataSource.map(group => (
       <OptGroup
         key={group.title}
@@ -210,8 +211,7 @@ export default class Search extends PureComponent {
             </Option> :
             <Option key={item.labelNameVal} value={item.labelNameVal} >
               <Link
-                to={`/customerList/list?source=association&labelMapping=
-          ${item.labelMapping}&tagNumId=${item.tagNumId}q=${item.labelNameVal}`}
+                to={`/customerPool/list?source=association&labelMapping=${item.labelMapping || ''}&tagNumId=${item.tagNumId || ''}&q=${encodeURIComponent(item.labelNameVal)}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -285,4 +285,3 @@ export default class Search extends PureComponent {
     );
   }
 }
-

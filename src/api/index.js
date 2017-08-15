@@ -87,6 +87,9 @@ export default {
   // 客户列表
   getCustomerList: query => api.post('/groovynoauth/fsp/cust/custlist/queryCustList', query),
 
+  // 客户列表中的6个月的收益数据
+  getCustIncome: query => api.post('/groovynoauth/fsp/cust/custlist/queryCustIncome', query),
+
   // 默认推荐词及热词推荐列表
   getHotWds: query => api.post('/groovynoauth/fsp/cust/custlabel/queryHotWds', query),
 
@@ -95,5 +98,4 @@ export default {
 
   // 历史搜索记录
   getHistoryWdsList: query => api.post('/groovynoauth/fsp/cust/custlabel/queryHistoryWdsList', query),
-
 };

@@ -70,17 +70,19 @@ export default class CustRange extends PureComponent {
     updateQueryState: PropTypes.func.isRequired,
     custRange: PropTypes.array.isRequired,
     expandAll: PropTypes.bool,
+    orgId: PropTypes.string,
   }
 
   static defaultProps = {
     expandAll: false,
+    orgId: null,
   }
 
   constructor(props) {
     super(props);
-    const { custRange } = this.props;
+    const { custRange, orgId } = this.props;
     const formatCustRange = transformCustRangeData(custRange);
-    walk(formatCustRange, findOrgNameByOrgId(custRange[0].id), '');
+    walk(formatCustRange, findOrgNameByOrgId(orgId || custRange[0].id), '');
     const initValue = {
       label: custRangeNameDedault,
       value: custRange[0].id,

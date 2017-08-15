@@ -21,11 +21,12 @@ export default {
     empInfo: {},
     motTaskCount: 0,
     dict: {},
+    monthlyProfits: [],
     hotwds: {},
     hotPossibleWdsList: [],
     custList: [],
-    page: {
-      pageSize: 0,
+    custPage: {
+      pageSize: 10,
       pageNo: 1,
       total: 0,
     },
@@ -126,6 +127,14 @@ export default {
       console.log('getCustomerList', response);
       yield put({
         type: 'getCustomerListSuccess',
+        payload: response,
+      });
+    },
+    // 获取客户列表6个月收益率
+    * getCustIncome({ payload }, { call, put }) {
+      const response = yield call(api.getCustIncome, payload);
+      yield put({
+        type: 'getCustIncomeSuccess',
         payload: response,
       });
     },
@@ -276,15 +285,34 @@ export default {
     },
     getCustomerListSuccess(state, action) {
       const { payload: { resultData: { custListVO } } } = action;
-      const page = {
+      if (!custListVO) {
+        return {
+          ...state,
+          custList: [],
+          custPage: {
+            pageSize: 10,
+            pageNo: 1,
+            total: 0,
+          },
+        };
+      }
+      const custPage = {
         pageSize: custListVO.pageSize,
         pageNo: Number(custListVO.pageNo) + 1,
         total: custListVO.totalCount,
       };
+      console.log('custListVO>>>>>', custListVO);
       return {
         ...state,
-        custList: custListVO.eleContents,
-        page,
+        custList: custListVO.custList,
+        custPage,
+      };
+    },
+    getCustIncomeSuccess(state, action) {
+      const { payload: { resultData: { monthlyProfits } } } = action;
+      return {
+        ...state,
+        monthlyProfits,
       };
     },
     // 默认推荐词及热词推荐列表
