@@ -3,37 +3,21 @@
 */
 exports.response = function (req, res) {
   return {
-  "code": "0",
-  "msg": "OK",
-  "resultData": {
-    "historyWdsList": [
-      [
-        {
-          "id": null,
-          "tagNumId": null,
-          "labelMapping": "brok_id",
-          "labelNameVal": "961156425817",
-          "labelDesc": "经纪客户号"
-        }
-      ],
-      [
-        {
-          "id": null,
-          "tagNumId": null,
-          "labelMapping": "brok_id",
-          "labelNameVal": "961156425817",
-          "labelDesc": "经纪客户号"
-        }
-      ],
-      [
-        {
-          "id": null,
-          "tagNumId": null,
-          "labelMapping": "brok_id",
-          "labelNameVal": "961156425817",
-          "labelDesc": "经纪客户号"
-        }
+    "code": "0",
+    "msg": "OK",
+    "resultData": {
+      "historyWdsList": [
+        "潜在大户",
+        "长期闲置",
+        "长期闲置",
+        "潜在大户",
+        "长期闲置",
+        "潜在大户",
+        "长期闲置",
+        "潜在大户",
+        "长期闲置",
+        "潜在大户",
       ]
-    ]
+    }
   }
 }

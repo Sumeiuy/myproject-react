@@ -287,7 +287,7 @@ export default {
         page,
       };
     },
-    // 默认推荐词及热词推荐列表
+    // 历史搜索列表
     getHistoryWdsListSuccess(state, action) {
       const { payload: { history: { resultData: { historyWdsList } } } } = action;
       return {

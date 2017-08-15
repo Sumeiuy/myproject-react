@@ -8,7 +8,7 @@ import React, { PropTypes, PureComponent } from 'react';
 import { Icon as AntdIcon, Button, Input, AutoComplete } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Link } from 'dva/router';
+import { fspGlobal } from '../../utils';
 import Icon from '../../components/common/Icon';
 import styles from './search.less';
 
@@ -37,17 +37,12 @@ export default class Search extends PureComponent {
     historyWdsList: EMPTY_LIST,
   }
 
-  // constructor(props) {
-  //   super(props);
-  //   // console.log(props);
-  // }
-
   state = {
     dataSource: EMPTY_LIST,
     historySource: [{
       title: '历史搜索',
       children: [{
-        id: 0,
+        id: 'history_0',
         labelNameVal: '暂无数据',
         labelMapping: '',
         tagNumId: '',
@@ -82,16 +77,46 @@ export default class Search extends PureComponent {
     });
   }
 
+  @autobind
+  handleOpenTab(obj, title, id) {
+    const {
+      source,
+      labelMapping,
+      tagNumId,
+      q } = obj;
+    const { push } = this.props;
+    const url = '/customerPool/list';
+    if (process.env.NODE_ENV === 'production') {
+      const toFspUrl = `${url}?source=${source}&labelMapping=${labelMapping}&tagNumId=${tagNumId}&q=${q}`;
+      fspGlobal.openRctTab(
+        toFspUrl,
+        {
+          closable: true,
+          forceRefresh: true,
+          isSpecialTab: true,
+          id, // 'FSP_SERACH',
+          title, // '搜索目标客户',
+        },
+      );
+    } else {
+      push({
+        pathname: url,
+        query: obj,
+      });
+    }
+  }
+
   // 历史搜索数据集合
   @autobind
   handleCreatHistoryList(data) {
-    if (!_.isEmpty(data[0]) && data[0].length > 0) {
-      const historyList = data[0].map(item => ({
-        labelNameVal: item.labelNameVal,
-        labelMapping: item.labelMapping,
-        tagNumId: item.tagNumId,
-        id: item.id,
-        labelDesc: item.labelDesc,
+    console.log(data); // 历史搜索数据接口未好暂时注释
+    if (!_.isEmpty(data) && data.length > 0) {
+      const historyList = data.map((item, index) => ({
+        labelNameVal: item,
+        labelMapping: '',
+        tagNumId: item,
+        id: `historyList${index}`,
+        labelDesc: '',
       }));
       this.setState({
         historySource: [{
@@ -137,15 +162,18 @@ export default class Search extends PureComponent {
     const recommendList = [];
     data.forEach((item, index) => {
       recommendList.push(
-        <Link
-          target="_blank"
+        <a
           className="item"
-          to={`/customerList/list?source=association&labelMapping=
-          ${item.labelMapping}&tagNumId=${item.tagNumId}q=${item.labelNameVal}`}
+          onClick={() => this.handleOpenTab({
+            source: 'tag',
+            labelMapping: item.labelMapping || '',
+            tagNumId: item.tagNumId || '',
+            q: encodeURIComponent(item.labelNameVal),
+          }, '标签目标客户', 'FSP_TAG')}
           title={item.labelDesc}
         >
           {item.labelNameVal}
-        </Link>);
+        </a>);
       if (index !== data.length - 1) {
         recommendList.push(<i className={styles.bd} />);
       }
@@ -155,7 +183,6 @@ export default class Search extends PureComponent {
 
   createOption() {
     const { dataSource, historySource } = this.state;
-    // debugger;
     const newData = dataSource.map(this.renderOption);
     if (dataSource.length > 0) {
       return newData;
@@ -168,11 +195,12 @@ export default class Search extends PureComponent {
   @autobind
   handleSearchBtn() {
     const { inputVal } = this.state;
-    const { push } = this.props;
-    push({
-      pathname: `/customerList/list?source=seach&q=${inputVal}`,
-      query: {},
-    });
+    this.handleOpenTab({
+      source: 'association',
+      labelMapping: '',
+      tagNumId: '',
+      q: encodeURIComponent(inputVal),
+    }, '搜索目标客户', 'FSP_SEARCH');
   }
 
   @autobind
@@ -185,11 +213,13 @@ export default class Search extends PureComponent {
     // 标签 tag
     return (
       <Option key={item.category} text={item.category}>
-        <Link
-          to={`/customerList/list?source=association&labelMapping=
-          ${item.labelMapping}&tagNumId=${item.tagNumId}q=${item.query}`}
-          target="_blank"
-          rel="noopener noreferrer"
+        <a
+          onClick={() => this.handleOpenTab({
+            source: 'association',
+            labelMapping: item.labelMapping || '',
+            tagNumId: item.tagNumId || item.content,
+            q: encodeURIComponent(item.content),
+          }, '搜索目标客户', 'FSP_SEARCH')}
           dangerouslySetInnerHTML={{ __html: newContent }}
         />
         <span>{item.desc}</span>
@@ -209,15 +239,17 @@ export default class Search extends PureComponent {
               {item.labelNameVal}
             </Option> :
             <Option key={item.labelNameVal} value={item.labelNameVal} >
-              <Link
-                to={`/customerList/list?source=association&labelMapping=
-          ${item.labelMapping}&tagNumId=${item.tagNumId}q=${item.labelNameVal}`}
-                target="_blank"
+              <a
                 rel="noopener noreferrer"
+                onClick={() => this.handleOpenTab({
+                  source: 'association',
+                  labelMapping: item.labelMapping || '',
+                  tagNumId: item.tagNumId || '',
+                  q: encodeURIComponent(item.labelNameVal),
+                }, '搜索目标客户', 'FSP_SEARCH')}
               >
                 {item.labelNameVal}
-                <span className="certain-search-item-count">{item.labelDesc}</span>
-              </Link>
+              </a>
             </Option>
         ))}
       </OptGroup>
@@ -229,11 +261,11 @@ export default class Search extends PureComponent {
     return (
       <span>
         {title}
-        <a
+        {/* <a
           className={styles.delHistory_a}
           rel="noopener noreferrer"
         ><AntdIcon type="delete" />清除历史记录
-      </a>
+        </a>*/}
       </span>
     );
   }
@@ -285,4 +317,3 @@ export default class Search extends PureComponent {
     );
   }
 }
-
