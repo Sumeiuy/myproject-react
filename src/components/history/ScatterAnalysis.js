@@ -58,6 +58,7 @@ export default class ScatterAnalysis extends PureComponent {
               type={custScatter.type}
               isLvIndicator={isLvIndicator}
               swtichDefault={swtichDefault}
+              level={level}
               style={{
                 left: '-65px',
               }}
@@ -83,6 +84,7 @@ export default class ScatterAnalysis extends PureComponent {
                   type={investScatter.type}
                   swtichDefault={swtichDefault}
                   isLvIndicator={isLvIndicator}
+                  level={level}
                   style={{
                     left: '-65px',
                   }}

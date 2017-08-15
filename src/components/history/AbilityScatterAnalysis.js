@@ -27,6 +27,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
     description: PropTypes.string.isRequired,
     contrastType: PropTypes.string.isRequired,
     isLvIndicator: PropTypes.bool.isRequired,
+    level: PropTypes.string.isRequired,
   };
 
   constructor(props) {
@@ -269,7 +270,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
   * @param {*} currentItemInfo 当前鼠标悬浮的点数据
   */
   constructTooltipInfo(currentItemInfo) {
-    const { description } = this.props;
+    const { description, level } = this.props;
     const {
       currentSelectX,
       currentSelectY,
@@ -296,8 +297,10 @@ export default class AbilityScatterAnalysis extends PureComponent {
       currentSlope = (currentSelectY - yAxisMin) / (currentSelectX - xAxisMin);
     }
 
+    const currentAverageValue = (currentSelectY / currentSelectX).toFixed(2);
+
     this.setState({
-      tooltipInfo: `${yAxisName}：${currentSelectY}${yAxisUnit} / ${xAxisName}：${currentSelectX}${xAxisUnit}。每${description}的${yAxisName}${currentSlope > compareSlope ? '优' : '低'}于平均水平。`,
+      tooltipInfo: `${yAxisName}：${currentSelectY}${yAxisUnit} / ${xAxisName}：${currentSelectX}${xAxisUnit}。${(level === '1' || level === '2') ? `平均${description}:${currentAverageValue}${yAxisUnit}/${xAxisUnit}，` : ''}每${description}的${yAxisName}${currentSlope > compareSlope ? '优' : '低'}于平均水平。`,
     });
   }
 
