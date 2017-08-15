@@ -33,9 +33,9 @@ export default class Income extends PureComponent {
   render() {
     const options = {
       tooltip: {
-        trigger: 'item',
         formatter: '{a} <br/>{b}: {c} ({d}%)',
       },
+      color: ['#60c1ea', '#756fb8', '#7d9be0'],
       legend: {
         orient: 'vertical',
         x: 'bottom',
@@ -46,11 +46,11 @@ export default class Income extends PureComponent {
           name: '净收入',
           type: 'pie',
           selectedMode: 'single',
-          radius: [0, '50%'],
-
+          radius: ['45%', '60%'],
+          color: ['#ffa800', '#f0ce30', '#fa7911'],
           label: {
             normal: {
-              position: 'inner',
+              position: 'center',
             },
           },
           labelLine: {
@@ -59,7 +59,7 @@ export default class Income extends PureComponent {
             },
           },
           data: [
-            { value: 335, name: '个人', selected: true },
+            { value: 335, name: '个人' },
             { value: 679, name: '一般机构' },
             { value: 1548, name: '产品机构' },
           ],
@@ -67,7 +67,7 @@ export default class Income extends PureComponent {
         {
           name: '收入',
           type: 'pie',
-          radius: ['60%', '85%'],
+          radius: ['70%', '90%'],
 
           data: [
             { value: 335, name: '净手续费' },
