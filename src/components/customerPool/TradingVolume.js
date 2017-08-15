@@ -24,7 +24,7 @@ export default class TradingVolume extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      unit: MILLION,
+      unit: '',
     };
   }
 
@@ -45,11 +45,13 @@ export default class TradingVolume extends PureComponent {
   // 计算基本单位
   @autobind
   basicUnit(data) {
-    let unit = MILLION;
+    let unit = '';
     if (!_.isEmpty(data) && data.length > 0) {
       const newNum = Math.max(...data);
       // 超过1亿
-      if (newNum >= 100000000) {
+      if (newNum >= 10000) {
+        unit = MILLION;
+      } else if (newNum >= 100000000) {
         unit = BILLION;
       }
     }
@@ -64,10 +66,13 @@ export default class TradingVolume extends PureComponent {
       if (num === '0') {
         return '0';
       }
-      newNum = num / 10000;
+      // 超过1万
+      if (unit === MILLION) {
+        newNum /= 10000;
+      }
       // 超过1亿
       if (unit === BILLION) {
-        newNum /= 10000;
+        newNum /= 100000000;
       }
       if (newNum > 1000 || newNum < -1000) {
         newNum = parseFloat(newNum).toFixed(1);
