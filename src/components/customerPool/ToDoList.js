@@ -19,7 +19,7 @@ const columns = [
     dataIndex: 'task',
     key: 'task',
     render: item => <a
-      onClick={() => fspGlobal.openAuditPage(item.dispatchUri)}
+      onClick={() => fspGlobal.openAuditPage(item.dispatchUri, item.flowClass)}
     >
       {item.text}
     </a>,
