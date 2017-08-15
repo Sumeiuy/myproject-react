@@ -232,7 +232,7 @@ export default class CustomerRow extends PureComponent {
                       {/* <div>
                         <span>年最大时点资产：</span>
                         <span className={styles.numA}>1462</span>万元
-                      </div>*/}
+                      </div> */}
                       <div>
                         <span>本月收益率：</span>
                         <span className={styles.numB}>
