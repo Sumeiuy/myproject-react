@@ -23,6 +23,9 @@ import styles from './customerlist.less';
 const CUST_MANAGER = 1; // 客户经理
 const ORG = 3; // 组织机构
 
+const CUR_PAGE = 1; // 默认当前页
+const CUR_PAGESIZE = 10; // 默认页大小
+
 const effects = {
   allInfo: 'customerPool/getAllInfo',
   getDictionary: 'customerPool/getDictionary',
@@ -144,9 +147,9 @@ export default class CustomerList extends PureComponent {
     const k = decodeURIComponent(query.q);
     const param = {
       // 必传，当前页
-      curPageNum: query.curPageNum || '1',
+      curPageNum: query.curPageNum || CUR_PAGE,
       // 必传，页大小
-      pageSize: query.pageSize || '10',
+      pageSize: query.pageSize || CUR_PAGESIZE,
     };
     // 从热词列表搜索 :FromWdsListErea, 从联想下拉框搜索: FromAssociatedErea, 匹配的全字符: FromFullTextType
     if (query.source === 'search') {
