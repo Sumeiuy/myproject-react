@@ -67,7 +67,7 @@ export default class Income extends PureComponent {
         {
           name: '收入',
           type: 'pie',
-          radius: ['70%', '90%'],
+          radius: ['70%', '85%'],
 
           data: [
             { value: 335, name: '净手续费' },
