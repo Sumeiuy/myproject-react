@@ -189,9 +189,9 @@ export default class Search extends PureComponent {
   }
 
   createOption() {
-    const { dataSource, historySource } = this.state;
+    const { dataSource, historySource, inputVal } = this.state;
     const newData = dataSource.map(this.renderOption);
-    if (dataSource.length > 0) {
+    if (!_.isEmpty(inputVal)) {
       return newData;
     }
     const history = this.renderGroup(historySource);
