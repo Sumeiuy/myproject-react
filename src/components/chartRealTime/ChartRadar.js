@@ -63,7 +63,7 @@ export default class ChartRadar extends PureComponent {
   }
 
   @autobind
-  optimizeIndicator(current, previous, scopeNum) {
+  optimizeIndicator(current, previous) {
     let max = 0;
     let min = 0;
     const currMax = Math.max(...current);
@@ -72,12 +72,10 @@ export default class ChartRadar extends PureComponent {
     const prevMin = Math.min(...previous);
     max = currMax > prevMax ? currMax : prevMax;
     min = currMin < prevMin ? currMin : prevMin;
-    if ((max + 3) > scopeNum) {
-      max = scopeNum;
-    } else {
-      max += 3;
+    max += 10;
+    if (min !== 1) {
+      min -= 3;
     }
-    min -= 3;
     return {
       max,
       min,
@@ -87,7 +85,7 @@ export default class ChartRadar extends PureComponent {
   @autobind
   makeRadarIndicators(current, contrast, scopeNum, indicatorName) {
     const indicators = [];
-    const indicator = this.optimizeIndicator(current, contrast, scopeNum);
+    const indicator = this.optimizeIndicator(current, contrast);
     const indicatorMax = indicator.max;
     const indicatorMin = indicator.min;
     let min = Number(scopeNum) - indicatorMax;
@@ -231,7 +229,7 @@ export default class ChartRadar extends PureComponent {
     };
     return (
       <div className={styles.radarBox}>
-        <div className={styles.titleDv}>强弱指示分析</div>
+        <div className={styles.titleDv}>多维排名对比</div>
         <div className={styles.radar}>
           <IECharts
             option={options}
