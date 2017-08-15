@@ -30,13 +30,14 @@ const chartOptions = {
     scale: true,
     splitNumber: 6,
     axisLine: {
+      show: false,
       onZero: true,
       lineStyle: {
         color: '#e7eaec',
       },
     },
     axisTick: {
-      show: true,
+      show: false,
       lineStyle: {
         color: '#e7eaec',
       },

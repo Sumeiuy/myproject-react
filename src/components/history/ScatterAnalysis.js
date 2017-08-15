@@ -59,7 +59,7 @@ export default class ScatterAnalysis extends PureComponent {
               isLvIndicator={isLvIndicator}
               swtichDefault={swtichDefault}
               style={{
-                left: '-85px',
+                left: '-60px',
               }}
             />
           </Col>
@@ -84,7 +84,7 @@ export default class ScatterAnalysis extends PureComponent {
                   swtichDefault={swtichDefault}
                   isLvIndicator={isLvIndicator}
                   style={{
-                    left: '-65px',
+                    left: '-60px',
                   }}
                 />
               </Col>
