@@ -9,15 +9,14 @@ import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Row, Col, Pagination } from 'antd';
+import { Row, Col } from 'antd';
 
-import Icon from '../../components/common/Icon';
-import CustRange from '../../components/pageCommon/CustRange2';
-// import CustRange from '../../components/customerPool/CustRange';
+// import Icon from '../../components/common/Icon';
+import CustRangeForList from '../../components/customerPool/CustRangeForList';
 import CustomerTotal from '../../components/customerPool/CustomerTotal';
 import Filter from '../../components/customerPool/Filter';
 import Reorder from '../../components/customerPool/Reorder';
-import CustomerRow from '../../components/customerPool/CustomerRow';
+import CustomerLists from '../../components/customerPool/CustomerLists';
 
 import styles from './customerlist.less';
 
@@ -28,6 +27,7 @@ const effects = {
   allInfo: 'customerPool/getAllInfo',
   getDictionary: 'customerPool/getDictionary',
   getCustomerList: 'customerPool/getCustomerList',
+  getCustIncome: 'customerPool/getCustIncome',
 };
 
 const fectchDataFunction = (globalLoading, type) => query => ({
@@ -43,12 +43,14 @@ const mapStateToProps = state => ({
   position: state.customerPool.position, // 职责切换
   dict: state.customerPool.dict, // 职责切换
   custList: state.customerPool.custList,
-  page: state.customerPool.page,
+  page: state.customerPool.custPage,
+  monthlyProfits: state.customerPool.monthlyProfits, // 6个月收益数据
 });
 
 const mapDispatchToProps = {
   getAllInfo: fectchDataFunction(true, effects.allInfo),
   getCustomerData: fectchDataFunction(true, effects.getCustomerList),
+  getCustIncome: fectchDataFunction(true, effects.getCustIncome),
   push: routerRedux.push,
   replace: routerRedux.replace,
 };
@@ -69,8 +71,10 @@ export default class CustomerList extends PureComponent {
     position: PropTypes.object,
     dict: PropTypes.object.isRequired,
     getCustomerData: PropTypes.func.isRequired,
+    getCustIncome: PropTypes.func.isRequired,
     custList: PropTypes.array.isRequired,
     page: PropTypes.object.isRequired,
+    monthlyProfits: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -86,26 +90,88 @@ export default class CustomerList extends PureComponent {
     super(props);
     this.state = {
       orgId: '',
+      fspOrgId: '',
+      createCustRange: [],
+      expandAll: false,
     };
   }
 
   componentWillMount() {
+    const { location: { query } } = this.props;
     const orgid = _.isEmpty(window.forReactPosition) ? 'ZZ001041' : window.forReactPosition.orgId;
+
     this.setState({
       fspOrgId: orgid,
       orgId: orgid, // 组织ID
     });
-    const { location: { query } } = this.props;
+    this.getCustomerList(query);
+    // getCustIncome({ custNumber: '020100053538' });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { location: preLocation,
+      position: prePosition, custRange: preCustRange, cycle: preCycle } = this.props;
+    const { location: nextLocation,
+      position: nextPosition, custRange: nextCustRange, cycle: nextCycle } = nextProps;
+    const { orgId: preOrgId } = prePosition;
+    const { orgId: nextOrgId } = nextPosition;
+    if (preOrgId !== nextOrgId) {
+      this.setState({
+        fspOrgId: nextOrgId,
+        createCustRange: this.handleCreateCustRange(nextOrgId, nextProps),
+      }, this.getCustomerList);
+    }
+    if (!_.isEqual(preCycle, nextCycle)) {
+      this.setState({
+        cycleSelect: nextCycle[0].key,
+      });
+    }
+    if (!_.isEqual(preCustRange, nextCustRange) || preLocation !== nextLocation) {
+      this.handleGetAllInfo(nextCustRange);
+      this.setState({
+        createCustRange: this.handleCreateCustRange(null, nextProps),
+      });
+    }
+    if (!_.isEqual(preLocation.query, nextLocation.query)) {
+      this.getCustomerList(nextLocation.query);
+    }
+  }
+
+  @autobind
+  getCustomerList(query) {
+    const { getCustomerData } = this.props;
+    const orgId = _.isEmpty(window.forReactPosition) ? 'ZZ001041' : window.forReactPosition.orgId;
+    const k = decodeURIComponent(query.q);
     const param = {
-      curPageNum: '1',
-      pageSize: '10',
-      searchTypeReq: 'FromFullTextType',
-      fullTestSearch: '0',
-      // paramsReqList: [
-      //   {key: 'shi_fou_shuang_cheng_shu_xing', value: '35_1'},
-      // ],
+      // 必传，当前页
+      curPageNum: query.curPageNum || '1',
+      // 必传，页大小
+      pageSize: query.pageSize || '10',
     };
+    // 从热词列表搜索 :FromWdsListErea, 从联想下拉框搜索: FromAssociatedErea, 匹配的全字符: FromFullTextType
+    if (query.source === 'search') {
+      param.searchTypeReq = 'FromFullTextType';
+      param.paramsReqList = [
+        { key: 'fullTestSearch', value: k },
+      ];
+    } else if (query.source === 'tag') { // 热词
+      param.searchTypeReq = 'FromWdsListErea';
+      param.paramsReqList = [
+        { key: query.labelMapping, value: query.tagNumId },
+      ];
+    } else if (query.source === 'association') {
+      param.searchTypeReq = 'FromAssociatedErea';
+      param.paramsReqList = [
+        { key: query.labelMapping, value: query.tagNumId },
+      ];
+      // param.fullTestSearch = k;
+    }
+    if (orgId) {   // 客户经理机构号
+      param.orgId = orgId;
+    }
+    // 过滤数组
     const filtersReq = [];
+    // 排序条件
     const sortsReqList = [];
     if (query.Rights) {
       filtersReq.push({
@@ -143,68 +209,60 @@ export default class CustomerList extends PureComponent {
     if (!_.isEmpty(sortsReqList)) {
       param.sortsReqList = sortsReqList;
     }
-    this.props.getCustomerData(param);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { position: prePosition, custRange: preCustRange, cycle: preCycle } = this.props;
-    const { position: nextPosition, custRange: nextCustRange, cycle: nextCycle } = nextProps;
-    const { orgId: preOrgId } = prePosition;
-    const { orgId: nextOrgId } = nextPosition;
-    if (preOrgId !== nextOrgId) {
-      this.setState({
-        orgId: nextOrgId,
-      });
-      this.getCustomerList();
-    }
-    if (preCycle !== nextCycle) {
-      this.setState({
-        cycle: nextCycle[0].key,
-      });
-    }
-    if (preCustRange !== nextCustRange) {
-      this.handleGetAllInfo();
-    }
+    getCustomerData(param);
   }
 
   @autobind
-  getCustomerList() {
-    // const { getPerformanceIndicators, custRange } = this.props;
-    // const { orgId, cycle } = this.state;
-    // let custType = ORG;
-    // if (orgId === custRange[0].id) { // 判断客户范围类型
-    //   custType = ORG;
-    // } else {
-    //   custType = CUST_MANAGER;
-    // }
-    // getPerformanceIndicators({
-    //   custTypes: custType, // 客户范围类型
-    //   dateType: cycle, // 周期类型
-    //   orgId, // 组织ID
-    // });
-  }
-
-  @autobind
-  createCustRange() {
-    const { empInfo, custRange } = this.props;
-    const { empPostnDTOList } = empInfo;
+  handleGetAllInfo(custRangeData) {
+    const { cycle } = this.props;
     const { fspOrgId } = this.state;
+    let custType = ORG;
+    const orgsId = custRangeData.length > 0 ? custRangeData[0].id : '';
+    this.setState({
+      createCustRange: this.handleCreateCustRange(fspOrgId, this.props),
+    });
+    if (fspOrgId === orgsId) { // 判断客户范围类型
+      custType = ORG;
+    } else {
+      this.setState({
+        expandAll: true,
+      });
+      custType = CUST_MANAGER;
+    }
+    this.setState({
+      cycleSelect: cycle.length > 0 ? cycle[0].key : '',
+    });
+    console.log('custType', custType);
+  }
+
+  @autobind
+  handleCreateCustRange(orgId, nextProps) {
+    const { empInfo, custRange } = nextProps;
+    const { empPostnList } = empInfo;
+    const { fspOrgId } = this.state;
+    let newOrgId = fspOrgId;
+    if (!_.isEmpty(orgId)) {
+      newOrgId = orgId;
+    }
     let orgNewCustRange = [];
     const newCustRrange = [];
-    if (!_.isEmpty(custRange) && fspOrgId === custRange[0].id) {
+    if (custRange.length < 1) {
+      return null;
+    }
+    if (newOrgId === custRange[0].id) {
       return custRange;
     }
-    orgNewCustRange = _.findIndex(custRange, item => item.id === fspOrgId);
+    orgNewCustRange = _.findIndex(custRange, item => item.id === newOrgId);
     let newData;
     if (orgNewCustRange > -1) { // 总机构内
       newData = custRange[orgNewCustRange];
       newCustRrange.push(newData);
     } else { // 职位中去查找
-      orgNewCustRange = _.findIndex(empPostnDTOList, item => item.orgId === fspOrgId);
+      orgNewCustRange = _.findIndex(empPostnList, item => item.orgId === newOrgId);
       if (orgNewCustRange > -1) {
         const org = {
-          id: empPostnDTOList[orgNewCustRange].orgId,
-          name: empPostnDTOList[orgNewCustRange].orgName,
+          id: empPostnList[orgNewCustRange].orgId,
+          name: empPostnList[orgNewCustRange].orgName,
         };
         newData = org;
         newCustRrange.push(newData);
@@ -218,28 +276,6 @@ export default class CustomerList extends PureComponent {
     return newCustRrange;
   }
 
-  @autobind
-  handleGetAllInfo() {
-    const { getAllInfo, custRange, cycle } = this.props;
-    const { orgId } = this.state;
-    let custType = ORG;
-    const orgsId = !_.isEmpty(custRange[0]) ? custRange[0].id : '';
-    if (orgId === orgsId) { // 判断客户范围类型
-      custType = ORG;
-    } else {
-      custType = CUST_MANAGER;
-    }
-    this.setState({
-      cycle: _.isEmpty(cycle) ? '' : cycle[0].key,
-    });
-    getAllInfo({
-      request: {
-        custTypes: custType, // 客户范围类型
-        orgId, // 组织ID
-      },
-    });
-  }
-
   // 此方法用来修改Duration 和 Org数据
   @autobind
   updateQueryState(state) {
@@ -249,7 +285,7 @@ export default class CustomerList extends PureComponent {
       pathname,
       query: {
         ...query,
-        ...state,
+        orgId: state.orgId,
       },
     });
     this.setState({
@@ -285,15 +321,43 @@ export default class CustomerList extends PureComponent {
     });
   }
 
+  @autobind
+  handlePageChange(page, pageSize) {
+    const { replace, location: { query, pathname } } = this.props;
+    console.log('page, pageSize:', page, pageSize);
+    replace({
+      pathname,
+      query: {
+        ...query,
+        curPageNum: page,
+      },
+    });
+  }
+
+  @autobind
+  handleSizeChange(current, size) {
+    const { replace, location: { query, pathname } } = this.props;
+    console.log('current, size:', current, size);
+    replace({
+      pathname,
+      query: {
+        ...query,
+        pageSize: size,
+      },
+    });
+  }
+
   render() {
-    const { orgId } = this.state;
     const {
+      custRange,
       location,
       replace,
       collectCustRange,
       dict,
       custList,
       page,
+      monthlyProfits,
+      getCustIncome,
     } = this.props;
     const {
       CustomType,
@@ -302,80 +366,91 @@ export default class CustomerList extends PureComponent {
       Rights,
       sortDirection,
       sortType,
+      orgId,
+      source,
+      pageSize,
+      curPageNum,
+      q,
     } = location.query;
     // 排序的默认值 ： 总资产降序
     let reorderValue = { sortType: 'Aset', sortDirection: 'desc' };
     if (sortType && sortDirection) {
       reorderValue = { sortType, sortDirection };
     }
+    const { expandAll, createCustRange } = this.state;
+    console.log('6个月收益数据： ', monthlyProfits);
     console.log('cust>>>', custList);
+    // console.log('createCustRange>>>', createCustRange);
     return (
       <div className={styles.customerlist}>
         <Row type="flex" justify="space-between" align="middle">
           <Col span={12}>
-            <CustomerTotal type="search" num={page.total} />
+            {
+              <CustomerTotal type={source} num={page.total} />
+            }
           </Col>
           <Col span={12}>
-            <div className="custRange">
-              <Icon type="kehu" />
-              <CustRange
-                custRange={this.createCustRange()}
-                location={location}
-                replace={replace}
-                orgId={orgId}
-                updateQueryState={this.updateQueryState}
-                collectData={collectCustRange}
-              />
-            </div>
+            <CustRangeForList
+              location={location}
+              replace={replace}
+              source={source}
+              custRange={custRange}
+              orgId={orgId}
+              createCustRange={createCustRange}
+              updateQueryState={this.updateQueryState}
+              collectCustRange={collectCustRange}
+              expandAll={expandAll}
+            />
           </Col>
         </Row>
-        <div className="filter">
-          <Filter
-            value={CustomType || ''}
-            filterLabel="客户性质"
-            filter="CustomType"
-            filterField={dict.custNature}
-            onChange={this.filterChange}
-          />
-          <Filter
-            value={CustClass || ''}
-            filterLabel="客户类型"
-            filter="CustClass"
-            filterField={dict.custType}
-            onChange={this.filterChange}
-          />
-          <Filter
-            value={RiskLvl || ''}
-            filterLabel="风险等级"
-            filter="RiskLvl"
-            filterField={dict.custRiskBearing}
-            onChange={this.filterChange}
-          />
-          <Filter
-            value={Rights || ''}
-            filterLabel="已开通业务"
-            filter="Rights"
-            filterField={dict.custBusinessType}
-            onChange={this.filterChange}
-          />
-        </div>
+        {
+          (_.includes(['search', 'tag', 'association', 'business'], source)) ?
+            <div className="filter">
+              <Filter
+                value={CustomType || ''}
+                filterLabel="客户性质"
+                filter="CustomType"
+                filterField={dict.custNature}
+                onChange={this.filterChange}
+              />
+              <Filter
+                value={CustClass || ''}
+                filterLabel="客户类型"
+                filter="CustClass"
+                filterField={dict.custType}
+                onChange={this.filterChange}
+              />
+              <Filter
+                value={RiskLvl || ''}
+                filterLabel="风险等级"
+                filter="RiskLvl"
+                filterField={dict.custRiskBearing}
+                onChange={this.filterChange}
+              />
+              <Filter
+                value={Rights || ''}
+                filterLabel="已开通业务"
+                filter="Rights"
+                filterField={dict.custBusinessType}
+                onChange={this.filterChange}
+              />
+            </div> : null
+        }
         <Reorder
           value={reorderValue}
           onChange={this.orderChange}
         />
-        <div className="list-box">
-          <div className="list-wrapper">
-            <CustomerRow />
-          </div>
-          <div className="list-pagination">
-            <Pagination
-              size="small"
-              total={50}
-              showSizeChanger
-              showTotal={total => `共${total}项`}
-            />
-          </div>
-        </div>
+        <CustomerLists
+          custList={custList}
+          q={decodeURIComponent(q)}
+          page={page}
+          curPageNum={curPageNum}
+          pageSize={pageSize}
+          monthlyProfits={monthlyProfits}
+          onPageChange={this.handlePageChange}
+          onSizeChange={this.handleSizeChange}
+          getCustIncome={getCustIncome}
+        />
       </div>
     );
   }

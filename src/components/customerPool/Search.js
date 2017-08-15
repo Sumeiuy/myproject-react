@@ -72,6 +72,7 @@ export default class Search extends PureComponent {
 
   @autobind
   onSelect(value) {
+    console.log(value);
     this.setState({
       inputVal: value,
     });
@@ -109,15 +110,19 @@ export default class Search extends PureComponent {
   // 历史搜索数据集合
   @autobind
   handleCreatHistoryList(data) {
-    console.log(data); // 历史搜索数据接口未好暂时注释
     if (!_.isEmpty(data) && data.length > 0) {
-      const historyList = data.map((item, index) => ({
-        labelNameVal: item,
-        labelMapping: '',
-        tagNumId: item,
-        id: `historyList${index}`,
-        labelDesc: '',
-      }));
+      const historyList = [];
+      data.forEach((item, index) => {
+        if (!_.isEmpty(item)) {
+          historyList.push({
+            labelNameVal: item,
+            labelMapping: '',
+            tagNumId: item,
+            id: `historyList${index}`,
+            labelDesc: '',
+          });
+        }
+      });
       this.setState({
         historySource: [{
           title: '历史搜索',
@@ -212,7 +217,7 @@ export default class Search extends PureComponent {
     // 搜索 search
     // 标签 tag
     return (
-      <Option key={item.category} text={item.category}>
+      <Option key={item.category} value={item.content}>
         <a
           onClick={() => this.handleOpenTab({
             source: 'association',
@@ -238,9 +243,8 @@ export default class Search extends PureComponent {
             <Option key={item.id} value={item.labelNameVal} disabled>
               {item.labelNameVal}
             </Option> :
-            <Option key={item.labelNameVal} value={item.labelNameVal} >
+            <Option key={item.id} value={item.labelNameVal} >
               <a
-                rel="noopener noreferrer"
                 onClick={() => this.handleOpenTab({
                   source: 'association',
                   labelMapping: item.labelMapping || '',

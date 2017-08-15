@@ -1,155 +1,270 @@
-.customerContent {
-	margin: 10px 0 20px 0;
-	background-color: white;
-	.custoemrRow {
-		padding-top: 36px;
-		padding-bottom: 24px;
-		min-height: 180px;
-		border-bottom: 1.5px solid #DDDDDD;
-		:global {
-			.avator {
-				height: 150px;
-				.select-icon{
-					margin-left: 20px;
-					float: left;
-					margin-top: 40px;
-				}
-				.avator-image{
-					width: 35px;
-					height: 35px;
-					margin-top: 23px;
-					margin-left: 43px;
-				}
-				.avator-text{
-					font-size: 10px;
-					margin-left: 33px;
-					text-align: center;
-					color: #B8B8B8;
-					margin-top: -5px;
-				}
+.custoemrRow {
+  min-height: 184px;
+  background-color: white;
+  border-bottom: 1.5px solid #DDDDDD;
+  &:hover {
+    background-color: #F1F8FF;
+  	.customerInfo .customerBasicInfo .basicInfoD{
+      display: inline-block;
+  	}
+  }
+  .avator {
+    height: 150px;
+    .selectIcon {
+      margin-left: 20px;
+      float: left;
+      margin-top: 60px;
+      span {
+        border-radius: 8px;
+      }
+    }
+    .avatorImage {
+      width: 35px;
+      height: 35px;
+      margin-top: 45px;
+      margin-left: 43px;
+    }
+    .avatorText {
+      font-size: 10px;
+      margin-left: 33px;
+      text-align: center;
+      color: #B8B8B8;
+      margin-top: -5px;
+    }
+    .avatorIconMoney {
+      text-align: center;
+      margin-left: 36px;
+      margin-top: 8px;
+      .iconMoneyImage {
+        height: 20px;
+      }
+    }
+  }
+  .customerInfo {
+    .customerBasicInfo {
+      height: 82px;
+      border-bottom: 1px dotted #DDDDDD;
+      .basicInfoA {
+        float: left;
+        font-size: 13px;
+        margin-top: 33px;
+      .itemA {
+      	font-weight: bold;
+      	color: #515151;
+      	span {
+        margin-right: 10px;
+      	}
+      }
+      .itemB {
+      	font-size: 3px;
+      	color: #B9B9B9;
+      	span {
+          margin-right: 5px;
+      	}
+        span:last-child {
+          margin-left: 15px;
+      	}
+      }
+    }
+      .basicInfoB {
+      float: left;
+      .iconSingnedA {
+      	display: inline-block;
+      	margin-top: 30px;
+      	background: url("../../../static/images/icon-signed.png");
+      	width: 28px;
+      	height: 30px;
+      	background-repeat: no-repeat;
+      	background-size:contain;
+      	&:hover{
+          div{display: inline-block}
+      	}
+      	.itemText {
+          display: none;
+          position: absolute;
+          border-radius: 3px;
+          font-size: 1px;
+          padding: 2px 8px;
+          top: 3px;
+          margin-left: 21px;
+          box-shadow: 0 0 15px #EAEBEB;
+          background-color: #FFFFCD;
+      	}
+      }
+      .tagA {
+      	position: absolute;
+      	display: inline-block;
+      	border: 1px solid #7D9BE0;
+      	border-radius: 5px;
+      	color: #7D9BE0;
+      	font-size: 10px;
+      	margin-left: 15px;
+      	margin-top: 32px;
+      	width: 50px;
+      	text-align: center;
+      }
+      .tagB {
+      	width: 40px;
+      	text-align: center;
+      	position: absolute;
+      	display: inline-block;
+      	border-radius: 5px;
+      	color: white;
+      	font-size: 12px;
+      	margin-top: 33px;
+      	margin-left: 70px;
+      	background-color: #60C1EA;
+      }
+    }
+      .basicInfoC {
+      float: right;
+      margin: 30px 20px 0px 0px;
+      .itemA {
+      	.assetsText {
+          font-size: 12px;
+          color: #A1A1A1;
+      	}
+      	.assetsNum {
+          font-size: 20px;
+          color: #7D9BE0;
+      	}
+      	.iconschart {
+          display: inline-block;
+          width: 18px;
+          height: 19px;
+          margin-left: 8px;
+          background: url("../../../static/images/icon-chart.png") no-repeat 0px 5px;
+          background-size: contain;
+          &:hover {
+            div:first-child {
+              display: inline-block;
+            }
+          }
+          .showCharts {
+            display: none;
+            border: 1px solid antiquewhite;
+            height: 135px;
+            width: 500px;
+            position: absolute;
+            right: 20px;
+            top: 57px;
+            background-color: #FFFFFF;
+            .chartsContent {
+              display: inline-block;
+              width:300px;
+              height: 135px;
+            }
+            .chartsText {
+              display: inline-block;
+              width: 190px;
+              font-size: 13px;
+              color:#808080;
+              vertical-align:top;
+              div {
+                margin-top: 10px;
+              }
+              .numA{
+                font-weight: bold;
 
-				.avator-icon-money{
-					text-align: center;
-					margin-left: 36px;
-					margin-top: 8px;
-					.icon-money-image{
-						height: 20px;
-					}
-				}
-			}
-			.customerInfo {
-				.customer-basic-info {
-					height: 70px;
-					border-bottom: 1px dotted #DDDDDD;
-					.customer-basic-info-a {
-						float: left;
-						font-size: 13px;
-						margin-top: 25px;
-						.item-a {
-							font-weight: bold;
-							color: #515151;
-							span {
-								margin-right: 10px;
-							}
-						}
-						.item-b {
-							font-size: 3px;
-							color: #B9B9B9;
-							span {
-								margin-right: 5px;
-							}
-							span:last-child {
-								margin-left: 15px;
-							}
-						}
-					}
-					.customer-basic-info-b {
-						float: left;
-						.icon-singned {
-							margin-top: 26px;
-							width: 28px;
-							height: 28px;
-						}
-						.tag-a {
-							position: absolute;
-							display: inline-block;
-							border: 1px solid #7D9BE0;
-							border-radius: 5px;
-							color: #7D9BE0;
-							font-size: 10px;
-							margin-left: 25px;
-							margin-top: 32px;
-							width: 50px;
-							text-align: center;
-						}
-						.tag-b {
-							width: 40px;
-							text-align: center;
-							position: absolute;
-							display: inline-block;
-							border-radius: 5px;
-							color: white;
-							font-size: 12px;
-							margin-top: 33px;
-							margin-left: 80px;
-							background-color: #60C1EA;
-						}
-					}
-					.customer-basic-info-c {
-						float: right;
-						margin-right: 20px;
-						.item-a {
-							.assets-text {
-								font-size: 12px;
-								color: #A1A1A1;
-							}
-							.assets-num {
-								font-size: 20px;
-								color: #7D9BE0;
-							}
-							.iconschart {
-								width: 18px;
-								height: 18px;
-								margin-left: 8px;
-							}
-						}
-						.item-b{
-							text-align: right;
-							font-size: 12px;
-							color: #A1A1A1;
-							span:last-child{
-								font-weight: bold;
-								color: #515151;
-							}
-						}
-					}
-				}
-				.customer-other-info {
-					clear: both;
-					.collapse-item {
-						float: right;
-						margin-right: 20px;
-						font-size: 12px;
-						.item-a {
-							color: #B9B9B9;
-							cursor:pointer;
-							padding-right: 10px;
-						}
-					}
-					ul {
-						list-style-type: none;
-						font-size: 13px;
-						color: #969696;
-						margin-top: 10px;
-						li {
-							margin-top: 4px;
-						}
-					}
+              }
+              .numB{
+                color: #DA3915;
+                font-size: 14px;
+                font-weight: bold;
+              }
+            }
+          }
+        }
+      }
+      .itemB {
+      	text-align: right;
+      	font-size: 12px;
+      	color: #A1A1A1;
+      	span:last-child{
+        font-weight: bold;
+        color: #515151;
+      	}
+      }
+    }
+      .basicInfoD {
+        display: none;
+        position: absolute;
+        top:10px;
+        right: 10px;
+        font-size: 12px;
+        .operationIcon {
+          padding:0px 0px 0px 10px;
+          li {
+             border-right: 1px solid #DDDDDD;
+             display: inline-block;
+             padding: 0px 10px 0px 10px;
+             height: 13px;
+            .iconIphone {
+               display: inline-block;
+               width: 17px;
+               height: 12px;
+               background: url("../../../static/images/icon-phone.png");
+               background-repeat: no-repeat;
+               background-size:contain;
+           }
+            .iconEmail {
+        	 display: inline-block;
+        	 width: 17px;
+        	 height: 9px;
+        	 background: url("../../../static/images/icon-email.png");
+        	 background-repeat: no-repeat;
+        	 background-size:contain;
 
-				}
-			}
+         }
+            .iconRecordService {
+        	 display: inline-block;
+        	 width: 15px;
+        	 height: 12px;
+        	 background: url("../../../static/images/icon-service-record.png");
+        	 background-repeat: no-repeat;
+        	 background-size:contain;
+         }
+            .iconFocus {
+               display: inline-block;
+               width: 15px;
+               height: 12px;
+               background: url("../../../static/images/icon-focus.png");
+               background-repeat: no-repeat;
+               background-size:contain;
+             }
+      	 }
+      	  li:last-child {
+              border-right: none;
+      	}
 
-		}
-
-	}
+        }
+      }
+    }
+    .customerOtherInfo {
+       clear: both;
+      .collapseItem {
+        float: right;
+        margin-right: 20px;
+        font-size: 12px;
+        .itemA {
+          color: #B9B9B9;
+          cursor:pointer;
+          padding-right: 10px;
+        }
+      }
+      ul {
+        list-style-type: none;
+        font-size: 13px;
+        color: #969696;
+        margin-top: 10px;
+        li {
+          margin-top: 4px;
+          :global .mark {
+            color: #7d9be0;
+            font-style: normal;
+          }
+        }
+      }
+    }
+  }
 }
