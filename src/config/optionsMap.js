@@ -70,12 +70,12 @@ const optionsMap = {
   ],
   compare: [
     {
-      key: 'YoY',
-      name: '同比',
-    },
-    {
       key: 'MoM',
       name: '环比',
+    },
+    {
+      key: 'YoY',
+      name: '同比',
     },
   ],
   visibleBoardType: {

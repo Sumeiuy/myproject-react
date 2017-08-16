@@ -244,9 +244,6 @@ export default class SelfDatePicker extends PureComponent {
       lastBegin = moment(dateStrings[0]).subtract(distanceDays, 'days');
       lastEnd = moment(dateStrings[1]).subtract(distanceDays, 'days');
     }
-    console.warn('用户点击时间', moment(dateStrings[0]).subtract(1, 'years'));
-    console.warn('用户点击时间', moment(dateStrings[1]).subtract(1, 'years'));
-    console.warn('用户点击时间', lastDurationStr);
     lastDurationStr = `${lastBegin.format('YYYY/MM/DD')}-${lastEnd.format('YYYY/MM/DD')}`;
     this.setState({
       duration: null,
@@ -314,7 +311,6 @@ export default class SelfDatePicker extends PureComponent {
       lastEndMoment,
       duration,
     } = this.state;
-    console.warn('saveDurationToHome state', this.state);
     let newDuration;
     if (duration) {
       newDuration = duration;
