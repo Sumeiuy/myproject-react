@@ -381,14 +381,18 @@ export default class RankStackChart extends PureComponent {
               const { current, change } = item;
               const icon = change < 0 ? 'arrow-down' : 'arrow-up';
               const rankClass = classnames({
-                [styles.rankUp]: change >= 0,
+                [styles.rankUp]: change > 0,
                 [styles.rankDown]: change < 0,
+                [styles.rankHold]: change === 0,
               });
+              const changeText = change === 0 ? '不变' : `${Math.abs(change)}名`;
+              const changeIcon = change === 0 ? '--' : (<Icon type={icon} />);
+
               return (
                 <div key={key} className={styles.rankNumberAndChange}>
                   <span className={styles.rankNumber}>{current}</span>
-                  <span className={rankClass}><Icon type={icon} /></span>
-                  <span className={styles.rankChange}>{`${Math.abs(change)}名`}</span>
+                  <span className={rankClass}>{changeIcon}</span>
+                  <span className={styles.rankChange}>{changeText}</span>
                 </div>
               );
             })
