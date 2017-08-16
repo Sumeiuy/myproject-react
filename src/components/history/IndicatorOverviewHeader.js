@@ -11,8 +11,7 @@ import { Button } from 'antd';
 import _ from 'lodash';
 import Icon from '../common/Icon';
 import { CreateHistoryBoardModal, DeleteHistoryBoardModal } from '../modals';
-
-// import Icon from '../common/Icon';
+import { fspContainer } from '../../config';
 
 // 选择项字典
 import styles from './indicatorOverviewHeader.less';
@@ -21,6 +20,7 @@ import styles from './indicatorOverviewHeader.less';
 const TYPE_LSDB_TGJX = '3';
 // 经营业绩历史对比的boardId
 const TYPE_LSDB_JYYJ = '4';
+const fsp = document.querySelector(fspContainer.container);
 
 export default class IndicatorOverviewHeader extends PureComponent {
   static propTypes = {
@@ -53,6 +53,14 @@ export default class IndicatorOverviewHeader extends PureComponent {
     this.removeHistoryListener = history.listenBefore(
       () => {
         if (!_.isEmpty(this.props.selectKeys)) {
+          if (fsp) {
+            window.$confirm = window.confirm;
+            window.confirm = function (...argus) {
+              window.confirm = window.$confirm;
+              return window._confirm.apply(null, argus); // eslint-disable-line
+            };
+            return '您重新挑选的指标看板尚未保存，确认直接返回？';
+          }
           return '您重新挑选的指标看板尚未保存，确认直接返回？';
         }
         return null;
