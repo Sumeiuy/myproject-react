@@ -31,6 +31,7 @@ export default {
       total: 0,
     },
     historyWdsList: [],
+    clearState: {},
   },
   subscriptions: {
     setup({ dispatch }) {
@@ -165,6 +166,14 @@ export default {
       yield put({
         type: 'getHistoryWdsListSuccess',
         payload: { history },
+      });
+    },
+    // 默认推荐词及热词推荐列表及历史搜索数据
+    * clearSearchHistoryList({ payload }, { call, put }) {
+      const clearHistoryState = yield call(api.clearSearchHistoryList, payload);
+      yield put({
+        type: 'clearSearchHistoryListSuccess',
+        payload: { clearHistoryState },
       });
     },
   },
@@ -321,6 +330,14 @@ export default {
       return {
         ...state,
         historyWdsList,
+      };
+    },
+    // 清除历史搜索列表
+    clearSearchHistoryListSuccess(state, action) {
+      const { payload: { clearHistoryState } } = action;
+      return {
+        ...state,
+        clearState: clearHistoryState,
       };
     },
   },

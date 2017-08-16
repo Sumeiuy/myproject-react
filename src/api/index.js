@@ -98,4 +98,7 @@ export default {
 
   // 历史搜索记录
   getHistoryWdsList: query => api.post('/groovynoauth/fsp/cust/custlabel/queryHistoryWdsList', query),
+
+  // 清除历史搜索记录
+  clearSearchHistoryList: query => api.post('/groovynoauth/fsp/cust/custlabel/clearSearchHistoryList', query),
 };
