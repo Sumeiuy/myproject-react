@@ -226,6 +226,7 @@ export default class CustomerRow extends PureComponent {
     return {
       shortRtnEle: { __html: shortRtnEle },
       rtnEle: { __html: rtnEle },
+      n,
     };
   }
 
@@ -234,6 +235,7 @@ export default class CustomerRow extends PureComponent {
     const { unit, newAsset } = this.state;
     const lastestProfit = Number(this.getLastestData(monthlyProfits).assetProfit);
     const lastestProfitRate = Number(this.getLastestData(monthlyProfits).assetProfitRate);
+    const matchedWord = this.matchWord(q, listItem);
     console.log('listItem', listItem);
     return (
       <Row type="flex" className={styles.custoemrRow}>
@@ -331,27 +333,30 @@ export default class CustomerRow extends PureComponent {
             </div>
           </div>
           <div className={styles.customerOtherInfo}>
-            <div className={styles.collapseItem}>
-              <span style={this.state.showStyle}>
-                <a onClick={() => this.handleCollapse('open')}>
-                  <span className={styles.itemA}>展开</span>
-                  <img src={iconOpen} alt="open" />
-                </a>
-              </span>
-              <span style={this.state.hideStyle}>
-                <a onClick={() => this.handleCollapse('close')}>
-                  <span className={styles.itemA}>收起</span>
-                  <img src={iconClose} alt="open" />
-                </a>
-              </span>
-            </div>
+            {
+              matchedWord.n > 2 ?
+                <div className={styles.collapseItem}>
+                  <span style={this.state.showStyle}>
+                    <a onClick={() => this.handleCollapse('open')}>
+                      <span className={styles.itemA}>展开</span>
+                      <img src={iconOpen} alt="open" />
+                    </a>
+                  </span>
+                  <span style={this.state.hideStyle}>
+                    <a onClick={() => this.handleCollapse('close')}>
+                      <span className={styles.itemA}>收起</span>
+                      <img src={iconClose} alt="open" />
+                    </a>
+                  </span>
+                </div> : null
+            }
             <ul
               style={this.state.showStyle}
-              dangerouslySetInnerHTML={this.matchWord(q, listItem).shortRtnEle}
+              dangerouslySetInnerHTML={matchedWord.shortRtnEle}
             />
             <ul
               style={this.state.hideStyle}
-              dangerouslySetInnerHTML={this.matchWord(q, listItem).rtnEle}
+              dangerouslySetInnerHTML={matchedWord.rtnEle}
             />
           </div>
         </Col>

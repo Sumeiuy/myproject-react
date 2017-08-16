@@ -149,7 +149,6 @@ export default class ChartLineWidget extends PureComponent {
     if (_.isEmpty(chartData)) {
       chartDataIsEmpty = true;
       chartData = [];
-      const year = new Date().getFullYear();
       const month = new Date().getMonth() + 1;
       // 设置在无数据情况下的假数据
       const defaultChartItem = {
@@ -167,7 +166,7 @@ export default class ChartLineWidget extends PureComponent {
         } else {
           monthValue = (month - i) < 10 ? `0${month - i}` : month - i;
         }
-        monthFullValue = `${year}${monthValue}`;
+        monthFullValue = `${monthValue}`;
         chartData.unshift(Object.assign({ month: monthFullValue }, defaultChartItem));
       }
     }
