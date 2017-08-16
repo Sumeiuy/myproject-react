@@ -2,6 +2,8 @@
  * @file models/history.js
  * @author sunweibin
  */
+import _ from 'lodash';
+
 import api from '../api';
 import { BoardBasic } from '../config';
 
@@ -252,15 +254,17 @@ export default {
         payload: { response: custScatterRes.resultData, type: 'cust' },
       });
       // 投顾散点
-      const investScatterRes = yield call(api.queryContrastAnalyze, {
-        ...payload.investScatter,
-        ...scatterCommon,
-        contrastIndicatorId: invest && invest[0].key,
-      });
-      yield put({
-        type: 'queryContrastAnalyzeSuccess',
-        payload: { response: investScatterRes.resultData, type: 'invest' },
-      });
+      if (!_.isEmpty(invest)) {
+        const investScatterRes = yield call(api.queryContrastAnalyze, {
+          ...payload.investScatter,
+          ...scatterCommon,
+          contrastIndicatorId: invest[0].key,
+        });
+        yield put({
+          type: 'queryContrastAnalyzeSuccess',
+          payload: { response: investScatterRes.resultData, type: 'invest' },
+        });
+      }
 
       // 获取指标树数据
       const indicatorResult = yield call(api.getIndicators, {

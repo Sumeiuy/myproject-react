@@ -349,13 +349,15 @@ export default class HistoryHome extends PureComponent {
       coreIndicatorId: indicatorId,
       contrastIndicatorId: !_.isEmpty(cust) && cust[0].key,
     }, selfNeed);
-    const scatterInvestQuery = this.makeQueryParams({
-      type: 'invest',
-      coreIndicatorId: indicatorId,
-      contrastIndicatorId: !_.isEmpty(invest) && invest[0].key,
-    }, selfNeed);
     queryContrastAnalyze(scatterCustQuery);
-    queryContrastAnalyze(scatterInvestQuery);
+    if (!_.isEmpty(invest)) {
+      const scatterInvestQuery = this.makeQueryParams({
+        type: 'invest',
+        coreIndicatorId: indicatorId,
+        contrastIndicatorId: invest[0].key,
+      }, selfNeed);
+      queryContrastAnalyze(scatterInvestQuery);
+    }
   }
 
   @autobind
