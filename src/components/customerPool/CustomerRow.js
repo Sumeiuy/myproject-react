@@ -71,9 +71,38 @@ const rankImgSrcConfig = {
   805999: iconNone,
 };
 
+// 数字常量
+const WAN = 10000;
+const YI = 100000000;
+
+// 单位常量
+const UNIT_DEFAULT = '元';
+const UNIT_WAN = '万元';
+const UNIT_YI = '亿元';
+
 const replaceWord = (value, q) => (value.replace(new RegExp(q, 'g'), `<em class="mark">${q}</em>`));
 
 const getNewHtml = (value, k) => (`<li><span>${value}：${k}</span></li>`);
+
+const generateUnit = (num) => {
+  if (num >= YI) {
+    return UNIT_YI;
+  }
+  if (num >= WAN) {
+    return UNIT_WAN;
+  }
+  return UNIT_DEFAULT;
+};
+
+const formatNumber = (num) => {
+  if (num >= YI) {
+    return (num / YI).toFixed(2);
+  }
+  if (num >= WAN) {
+    return (num / WAN).toFixed(2);
+  }
+  return num;
+};
 
 export default class CustomerRow extends PureComponent {
   static propTypes = {
@@ -89,10 +118,23 @@ export default class CustomerRow extends PureComponent {
 
   constructor(props) {
     super(props);
+    const { listItem: { asset } } = props;
     this.state = {
       showStyle: show,
       hideStyle: hide,
+      unit: '元',
+      newAsset: asset,
     };
+  }
+
+  componentWillMount() {
+    const { listItem: { asset } } = this.props;
+    const unit = generateUnit(+asset);
+    const newAsset = formatNumber(+asset);
+    this.setState({
+      unit,
+      newAsset,
+    });
   }
 
   getLastestData(arr) {
@@ -189,6 +231,9 @@ export default class CustomerRow extends PureComponent {
 
   render() {
     const { q, listItem, monthlyProfits } = this.props;
+    const { unit, newAsset } = this.state;
+    const lastestProfit = Number(this.getLastestData(monthlyProfits).assetProfit);
+    const lastestProfitRate = Number(this.getLastestData(monthlyProfits).assetProfitRate);
     console.log('listItem', listItem);
     return (
       <Row type="flex" className={styles.custoemrRow}>
@@ -229,8 +274,8 @@ export default class CustomerRow extends PureComponent {
             <div className={styles.basicInfoC}>
               <div className={styles.itemA}>
                 <span className={styles.assetsText}>总资产：</span>
-                <sapn className={styles.assetsNum}>{(listItem.asset / 10000)}</sapn>
-                <span className={styles.assetsText}>万元</span>
+                <sapn className={styles.assetsNum}>{newAsset}</sapn>
+                <span className={styles.assetsText}>{unit}</span>
                 <div className={styles.iconschart} onMouseEnter={this.handleMouseEnter}>
                   <div className={styles.showCharts}>
                     <div className={styles.chartsContent}>
@@ -246,7 +291,7 @@ export default class CustomerRow extends PureComponent {
                         <span className={styles.numB}>
                           {
                             monthlyProfits.length ?
-                            `${this.getLastestData(monthlyProfits).assetProfitRate * 10}%`
+                            `${lastestProfitRate * 10}%`
                             :
                             '--'
                           }
@@ -255,15 +300,16 @@ export default class CustomerRow extends PureComponent {
                       <div>
                         <span>
                           本月收益：
-                            <span className={styles.numB}>
-                              {
-                                monthlyProfits.length ?
-                                `${this.getLastestData(monthlyProfits).assetProfit / 10000}`
-                                :
-                                '--'
-                              }
-                            </span>
-                          &nbsp;元
+                          <span className={styles.numB}>
+                            {
+                              monthlyProfits.length ?
+                              formatNumber(lastestProfit)
+                              :
+                              '--'
+                            }
+                          </span>
+                          &nbsp;
+                          {monthlyProfits.length ? generateUnit(lastestProfit) : null}
                         </span>
                       </div>
                     </div>
