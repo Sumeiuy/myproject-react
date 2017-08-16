@@ -148,7 +148,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
     } else if (slope <= 1) {
       // 处理斜率小于1的情况
       // 太小的斜率直接计算坐标
-      const endYCood = yAxisMin + ((xAxisMax - xAxisMin) * slope);
+      const endYCood = 0 + ((xAxisMax - 0) * slope);
       let finalSeriesData = {
         ...seriesData,
         startCoord: [xAxisMin, yAxisMin],
@@ -182,14 +182,17 @@ export default class AbilityScatterAnalysis extends PureComponent {
     // 比较当前x轴是否比x轴最大值大
     // 小的话，则取当前值
     // 不然递归调用
+    let point;
     if (xAxisMax > yAxisMax) {
       compare = yAxisMax;
       current = currentMax || xAxisMax;
+      point = current * slope;
     } else {
       compare = xAxisMax;
       current = currentMax || yAxisMax;
+      point = current / slope;
     }
-    const point = (current - yAxisMin) / slope;
+    // const point = (current - 0) / slope;
 
     if (point > compare) {
       if (current / 10000 > 1) {
@@ -286,7 +289,6 @@ export default class AbilityScatterAnalysis extends PureComponent {
       xAxisUnit,
       yAxisName,
       yAxisUnit,
-      yAxisMin,
       xAxisMin,
       slope,
       average,
@@ -302,7 +304,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
       currentSlope = currentSelectY;
     } else {
       compareSlope = slope;
-      currentSlope = (currentSelectY - yAxisMin) / (currentSelectX - xAxisMin);
+      currentSlope = (currentSelectY - 0) / (currentSelectX - xAxisMin);
     }
 
     const currentAverageValue = (currentSelectY / currentSelectX).toFixed(2);

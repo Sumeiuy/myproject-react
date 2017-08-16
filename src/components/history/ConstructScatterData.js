@@ -58,17 +58,19 @@ export const constructScatterData = (options = {}) => {
       }
 
       const { max, min } = minAndMax;
-      let newMax = 0;
-      // 对于金额y轴，需要给最大刻度多加一个刻度，
-      // 不然最大值z在散点图上显示不全
-      if (max % 1000 === 0) {
-        newMax = max + 1000;
-      } else if (max % 100 === 0) {
-        newMax = max + 100;
-      } else if (max % 10 === 0) {
-        newMax = max + 10;
-      } else {
-        newMax = max + 1;
+      let newMax = max;
+      if (curUnit.indexOf('元') !== -1) {
+        // 对于金额y轴，需要给最大刻度多加一个刻度，
+        // 不然最大值z在散点图上显示不全
+        if (max % 1000 === 0) {
+          newMax = max + 1000;
+        } else if (max % 100 === 0) {
+          newMax = max + 100;
+        } else if (max % 10 === 0) {
+          newMax = max + 10;
+        } else {
+          newMax = max + 1;
+        }
       }
 
       return {
