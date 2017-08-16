@@ -165,10 +165,17 @@ export const constructScatterData = (options = {}) => {
       const { value: yAxisTotalValue, unit: yAxisOriginUnit } = yAxisOption;
       let xAxisFormatedValue;
       let average = 0;
-      if (xAxisUnit.indexOf('万') !== -1) {
+      let finalYUnit = yAxisUnit;
+      if (xAxisUnit.indexOf(HU) !== -1) {
         xAxisFormatedValue = FixNumber.toFixedCust([Number(xAxisTotalValue)]).newSeries[0];
       } else {
         xAxisFormatedValue = Number(xAxisTotalValue);
+      }
+      // 对于个数和户数需要特殊处理，因为y轴的单位不一定是平均值的单位
+      if (yAxisUnit.indexOf(HU) !== -1 || yAxisUnit.indexOf(GE) !== -1) {
+        if (yAxisTotalValue >= 10000) {
+          finalYUnit = `万${yAxisUnit}`;
+        }
       }
       const yAxisFormatedValue = constructHelper.formatDataSource(yAxisOriginUnit, yAxisTotalValue);
 
@@ -177,12 +184,12 @@ export const constructScatterData = (options = {}) => {
         average = yAxisFormatedValue / xAxisFormatedValue;
         return {
           slope: average,
-          averageInfo: `平均每${description}${average.toFixed(2)}${yAxisUnit}/${xAxisUnit}`,
+          averageInfo: `平均每${description}${average.toFixed(2)}${finalYUnit}/${xAxisUnit}`,
         };
       }
       return {
         slope: average,
-        averageInfo: `平均每${description}0${yAxisUnit}/${xAxisUnit}`,
+        averageInfo: `平均每${description}0${finalYUnit}/${xAxisUnit}`,
       };
     },
   };
