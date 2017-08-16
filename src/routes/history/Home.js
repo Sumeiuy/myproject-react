@@ -347,12 +347,12 @@ export default class HistoryHome extends PureComponent {
     const scatterCustQuery = this.makeQueryParams({
       type: 'cust',
       coreIndicatorId: indicatorId,
-      contrastIndicatorId: cust[0].key,
+      contrastIndicatorId: !_.isEmpty(cust) && cust[0].key,
     }, selfNeed);
     const scatterInvestQuery = this.makeQueryParams({
       type: 'invest',
       coreIndicatorId: indicatorId,
-      contrastIndicatorId: invest[0].key,
+      contrastIndicatorId: !_.isEmpty(invest) && invest[0].key,
     }, selfNeed);
     queryContrastAnalyze(scatterCustQuery);
     queryContrastAnalyze(scatterInvestQuery);
@@ -385,7 +385,7 @@ export default class HistoryHome extends PureComponent {
   // 从弹出层取出挑选的指标数组
   @autobind
   saveIndcatorToHome(coreIndicatorIds) {
-    const indicatorId = coreIndicatorIds[0];
+    const indicatorId = !_.isEmpty(coreIndicatorIds) && coreIndicatorIds[0];
     this.setState({
       coreIndicatorIds,
       indicatorId,
@@ -431,9 +431,9 @@ export default class HistoryHome extends PureComponent {
     const { coreIndicatorIds } = this.state;
     const { historyCore } = this.props;
     if (_.isEmpty(coreIndicatorIds)) {
-      indicatorId = historyCore[0].key;
+      indicatorId = !_.isEmpty(historyCore) && historyCore[0].key;
     } else {
-      indicatorId = coreIndicatorIds[0];
+      indicatorId = !_.isEmpty(coreIndicatorIds) && coreIndicatorIds[0];
     }
     this.setState({
       swtichDefault: new Date().getTime().toString(),
@@ -496,7 +496,7 @@ export default class HistoryHome extends PureComponent {
         indicatorId = this.props.historyCore[0].key;
       } else {
         // 选择了Core
-        indicatorId = coreIndicatorIds[0];
+        indicatorId = !_.isEmpty(coreIndicatorIds) && coreIndicatorIds[0];
       }
       this.setState({
         indicatorId,

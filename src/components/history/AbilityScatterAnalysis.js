@@ -21,13 +21,17 @@ export default class AbilityScatterAnalysis extends PureComponent {
     style: PropTypes.object.isRequired,
     queryContrastAnalyze: PropTypes.func.isRequired,
     title: PropTypes.string.isRequired,
-    optionsData: PropTypes.array.isRequired,
+    optionsData: PropTypes.array,
     type: PropTypes.string.isRequired,
     swtichDefault: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
     contrastType: PropTypes.string.isRequired,
     isLvIndicator: PropTypes.bool.isRequired,
     level: PropTypes.string.isRequired,
+  };
+
+  static defaultProps = {
+    optionsData: EMPTY_LIST,
   };
 
   constructor(props) {
@@ -41,7 +45,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
       orgName: '',
       parentOrgName: '',
       finalOptions: options,
-      selectValue: options[0].value,
+      selectValue: !_.isEmpty(options) && options[0].value,
       averageInfo: '',
       tooltipInfo: '',
       scatterOptions: EMPTY_OBJECT,
@@ -89,7 +93,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
     if (oldSwitch !== newSwitch) {
       const options = this.state.finalOptions;
       this.setState({
-        selectValue: options[0].value,
+        selectValue: !_.isEmpty(options) && options[0].value,
       });
     }
 
@@ -98,7 +102,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
       const data = this.makeOptions(nextOptions);
       this.setState({
         finalOptions: data,
-        selectValue: data[0].value,
+        selectValue: !_.isEmpty(data) && data[0].value,
       });
     }
   }
@@ -258,6 +262,10 @@ export default class AbilityScatterAnalysis extends PureComponent {
 
   @autobind
   makeOptions(optionsData) {
+    if (_.isEmpty(optionsData)) {
+      return EMPTY_LIST;
+    }
+
     return optionsData.map(item => ({
       key: item.key,
       value: item.key,
