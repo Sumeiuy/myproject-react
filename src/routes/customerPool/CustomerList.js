@@ -373,7 +373,6 @@ export default class CustomerList extends PureComponent {
 
   render() {
     const {
-      custRange,
       location,
       replace,
       collectCustRange,
@@ -417,7 +416,6 @@ export default class CustomerList extends PureComponent {
               location={location}
               replace={replace}
               source={source}
-              custRange={custRange}
               orgId={orgId}
               createCustRange={createCustRange}
               updateQueryState={this.updateQueryState}

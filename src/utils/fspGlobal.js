@@ -46,6 +46,12 @@ const fspGlobal = {
     execOpenTab('loadPageInTab', obj.url, obj.param);
   },
   /**
+   *  在fsp中新开一个iframe的tab
+   */
+  openFspIframeTab(obj) {
+    execOpenTab('loadPageInIframeTab', obj.url, obj.param);
+  },
+  /**
    *  在fsp中新开一个react的tab
    */
   openRctTab(obj) {
