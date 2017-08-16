@@ -71,6 +71,10 @@ const rankImgSrcConfig = {
   805999: iconNone,
 };
 
+const replaceWord = (value, q) => (value.replace(new RegExp(q, 'g'), `<em class="mark">${q}</em>`));
+
+const getNewHtml = (value, k) => (`<li><span>${value}：${k}</span></li>`);
+
 export default class CustomerRow extends PureComponent {
   static propTypes = {
     q: PropTypes.string,
@@ -142,35 +146,39 @@ export default class CustomerRow extends PureComponent {
     let shortRtnEle = '';
     let n = 0;
     if (listItem.name && listItem.name.indexOf(q) > -1) {
-      const markedEle = listItem.name.replace(new RegExp(q, 'g'), `<em class="mark">${q}</em>`);
-      rtnEle += `<li><span>姓名：${markedEle}</span></li>`;
+      const markedEle = replaceWord(listItem.name, q);
+      const domTpl = getNewHtml('姓名', markedEle);
+      rtnEle += domTpl;
       n++;
       if (n <= 2) {
-        shortRtnEle += `<li><span>姓名：${markedEle}</span></li>`;
+        shortRtnEle += domTpl;
       }
     }
     if (listItem.idNum && listItem.idNum.indexOf(q) > -1) {
-      const markedEle = listItem.idNum.replace(new RegExp(q, 'g'), `<em class="mark">${q}</em>`);
-      rtnEle += `<li><span>身份证号码：${markedEle}</span></li>`;
+      const markedEle = replaceWord(listItem.idNum, q);
+      const domTpl = getNewHtml('身份证号码', markedEle);
+      rtnEle += domTpl;
       n++;
       if (n <= 2) {
-        shortRtnEle += `<li><span>身份证号码：${markedEle}</span></li>`;
+        shortRtnEle += domTpl;
       }
     }
     if (listItem.telephone && listItem.telephone.indexOf(q) > -1) {
-      const markedEle = listItem.telephone.replace(new RegExp(q, 'g'), `<em class="mark">${q}</em>`);
-      rtnEle += `<li><span>联系电话：${markedEle}</span></li>`;
+      const markedEle = replaceWord(listItem.telephone, q);
+      const domTpl = getNewHtml('联系电话', markedEle);
+      rtnEle += domTpl;
       n++;
       if (n <= 2) {
-        shortRtnEle += `<li><span>联系电话：${markedEle}</span></li>`;
+        shortRtnEle += domTpl;
       }
     }
     if (listItem.custId && listItem.custId.indexOf(q) > -1) {
-      const markedEle = listItem.custId.replace(new RegExp(q, 'g'), `<em class="mark">${q}</em>`);
-      rtnEle += `<li><span>经纪客户号：${markedEle}</span></li>`;
+      const markedEle = replaceWord(listItem.custId, q);
+      const domTpl = getNewHtml('经纪客户号', markedEle);
+      rtnEle += domTpl;
       n++;
       if (n <= 2) {
-        shortRtnEle += `<li><span>经纪客户号：${markedEle}</span></li>`;
+        shortRtnEle += domTpl;
       }
     }
     return {

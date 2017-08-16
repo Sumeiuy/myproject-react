@@ -28,7 +28,7 @@ export default class CustomerService extends PureComponent {
     if (!_.isEmpty(okData) && !_.isEmpty(toData) && parseInt(toData, 10) > 0) {
       data = (parseInt(okData, 10) / parseInt(toData, 10)) * 100;
       rest = ((parseInt(toData, 10) - parseInt(okData, 10)) / parseInt(toData, 10)) * 100;
-      dataName = `${data}%`;
+      dataName = `${parseFloat(data).toFixed(0)}%`;
     } else {
       data = 0;
       rest = 100;

@@ -5,7 +5,7 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import { Icon as AntdIcon, Button, Input, AutoComplete } from 'antd';
+import { Icon as AntdIcon, Button, Input, AutoComplete, message } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { fspGlobal } from '../../utils';
@@ -16,6 +16,7 @@ const Option = AutoComplete.Option;
 const OptGroup = AutoComplete.OptGroup;
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
+let COUNT = 0;
 export default class Search extends PureComponent {
 
   static propTypes = {
@@ -26,12 +27,16 @@ export default class Search extends PureComponent {
     push: PropTypes.func.isRequired,
     orgId: PropTypes.string,
     historyWdsList: PropTypes.array,
+    clearSeccess: PropTypes.object,
+    clearFun: PropTypes.func,
   }
 
   static defaultProps = {
     data: EMPTY_OBJECT,
     queryHotPossibleWds: () => { },
     queryHistoryWdsList: () => { },
+    clearFun: () => { },
+    clearSeccess: EMPTY_OBJECT,
     queryHotWdsData: EMPTY_LIST,
     orgId: '',
     historyWdsList: EMPTY_LIST,
@@ -42,8 +47,8 @@ export default class Search extends PureComponent {
     historySource: [{
       title: '历史搜索',
       children: [{
-        id: 'history_0',
-        labelNameVal: '暂无数据',
+        id: `history_${COUNT++}`,
+        labelNameVal: '无',
         labelMapping: '',
         tagNumId: '',
         labelDesc: '',
@@ -56,14 +61,22 @@ export default class Search extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { historyWdsList: preHistoryWdsList } = this.props;
-    const { queryHotWdsData: nextQueryHotWdsData, historyWdsList: nextHistoryWdsList } = nextProps;
+    const { historyWdsList: preHistoryWdsList, clearSeccess: preClearSeccess } = this.props;
+    const { queryHotWdsData: nextQueryHotWdsData,
+      historyWdsList: nextHistoryWdsList,
+      clearSeccess: nextClearSeccess } = nextProps;
     const { inputVal } = this.state;
     this.setState({
       dataSource: inputVal ? this.searchResult(inputVal, nextQueryHotWdsData) : [],
     });
     if (!_.isEqual(nextHistoryWdsList, preHistoryWdsList)) {
       this.handleCreatHistoryList(nextHistoryWdsList);
+    }
+    if (nextClearSeccess !== preClearSeccess) {
+      const { code, resultData } = nextClearSeccess;
+      if (code !== '0') {
+        message.error(resultData);
+      }
     }
   }
 
@@ -79,29 +92,27 @@ export default class Search extends PureComponent {
   }
 
   @autobind
-  handleOpenTab(obj, title, id) {
+  handleOpenTab(obj, titles, ids) {
     const {
       source,
       labelMapping,
       tagNumId,
       q } = obj;
     const { push } = this.props;
-    const url = '/customerPool/list';
+    const firstUrl = '/customerPool/list';
     if (process.env.NODE_ENV === 'production') {
-      const toFspUrl = `${url}?source=${source}&labelMapping=${labelMapping}&tagNumId=${tagNumId}&q=${q}`;
-      fspGlobal.openRctTab(
-        toFspUrl,
-        {
-          closable: true,
-          forceRefresh: true,
-          isSpecialTab: true,
-          id, // 'FSP_SERACH',
-          title, // '搜索目标客户',
-        },
-      );
+      const url = `${firstUrl}?source=${source}&labelMapping=${labelMapping}&tagNumId=${tagNumId}&q=${q}`;
+      const param = {
+        closable: true,
+        forceRefresh: true,
+        isSpecialTab: true,
+        id: ids, // 'FSP_SERACH',
+        title: titles, // '搜索目标客户',
+      };
+      fspGlobal.openRctTab({ url, param });
     } else {
       push({
-        pathname: url,
+        pathname: firstUrl,
         query: obj,
       });
     }
@@ -112,13 +123,13 @@ export default class Search extends PureComponent {
   handleCreatHistoryList(data) {
     if (!_.isEmpty(data) && data.length > 0) {
       const historyList = [];
-      data.forEach((item, index) => {
+      data.forEach((item) => {
         if (!_.isEmpty(item)) {
           historyList.push({
             labelNameVal: item,
             labelMapping: '',
             tagNumId: item,
-            id: `historyList${index}`,
+            id: `historyList${COUNT++}`,
             labelDesc: '',
           });
         }
@@ -138,6 +149,7 @@ export default class Search extends PureComponent {
       category: `${item.labelNameVal}${index}`,
       content: item.labelNameVal,
       desc: item.labelDesc,
+      id: `autoList${COUNT++}`,
     }));
   }
 
@@ -176,6 +188,7 @@ export default class Search extends PureComponent {
             q: encodeURIComponent(item.labelNameVal),
           }, '标签目标客户', 'FSP_TAG')}
           title={item.labelDesc}
+          rel="noopener noreferrer"
         >
           {item.labelNameVal}
         </a>);
@@ -187,9 +200,9 @@ export default class Search extends PureComponent {
   }
 
   createOption() {
-    const { dataSource, historySource } = this.state;
+    const { dataSource, historySource, inputVal } = this.state;
     const newData = dataSource.map(this.renderOption);
-    if (dataSource.length > 0) {
+    if (!_.isEmpty(inputVal)) {
       return newData;
     }
     const history = this.renderGroup(historySource);
@@ -200,12 +213,38 @@ export default class Search extends PureComponent {
   @autobind
   handleSearchBtn() {
     const { inputVal } = this.state;
+    const { data: { hotWds = EMPTY_OBJECT } } = this.props;
+    let searchVal = inputVal;
+    if (_.isEmpty(_.trim(inputVal))) {
+      // message.info('搜索内容不能为空', 1);
+      // return;
+      searchVal = hotWds.labelNameVal;
+    }
     this.handleOpenTab({
-      source: 'association',
+      source: 'search',
       labelMapping: '',
       tagNumId: '',
-      q: encodeURIComponent(inputVal),
+      q: encodeURIComponent(searchVal),
     }, '搜索目标客户', 'FSP_SEARCH');
+  }
+
+  // 清除历史搜索
+  @autobind
+  handleClearHistory() {
+    const { clearFun } = this.props;
+    clearFun();
+    this.setState({
+      historySource: [{
+        title: '历史搜索',
+        children: [{
+          id: `history_${COUNT++}`,
+          labelNameVal: '无',
+          labelMapping: '',
+          tagNumId: '',
+          labelDesc: '',
+        }],
+      }],
+    });
   }
 
   @autobind
@@ -217,7 +256,7 @@ export default class Search extends PureComponent {
     // 搜索 search
     // 标签 tag
     return (
-      <Option key={item.category} value={item.content}>
+      <Option key={item.category} text={item.content}>
         <a
           onClick={() => this.handleOpenTab({
             source: 'association',
@@ -226,24 +265,26 @@ export default class Search extends PureComponent {
             q: encodeURIComponent(item.content),
           }, '搜索目标客户', 'FSP_SEARCH')}
           dangerouslySetInnerHTML={{ __html: newContent }}
+          rel="noopener noreferrer"
         />
-        <span>{item.desc}</span>
+        <span className="desc">{item.desc}</span>
       </Option>
     );
   }
 
   renderGroup(dataSource) {
+    // debugger;
     const options = dataSource.map(group => (
       <OptGroup
-        key={group.title}
+        key={group.id}
         label={this.renderTitle(group.title)}
       >
         {group.children.map(item => (
-          item.title === '暂无数据' ?
-            <Option key={item.id} value={item.labelNameVal} disabled>
+          item.labelNameVal === '无' ?
+            <Option key={item.id} text={item.labelNameVal} disabled>
               {item.labelNameVal}
             </Option> :
-            <Option key={item.id} value={item.labelNameVal} >
+            <Option key={item.labelNameVal} text={item.labelNameVal} >
               <a
                 onClick={() => this.handleOpenTab({
                   source: 'association',
@@ -251,6 +292,7 @@ export default class Search extends PureComponent {
                   tagNumId: item.tagNumId || '',
                   q: encodeURIComponent(item.labelNameVal),
                 }, '搜索目标客户', 'FSP_SEARCH')}
+                rel="noopener noreferrer"
               >
                 {item.labelNameVal}
               </a>
@@ -262,14 +304,22 @@ export default class Search extends PureComponent {
   }
 
   renderTitle(title) {
+    const { historySource } = this.state;
+    if (historySource[0].children[0].labelNameVal === '无') {
+      return (<span>
+        {title}
+      </span>);
+    }
     return (
       <span>
         {title}
-        {/* <a
+        <a
           className={styles.delHistory_a}
           rel="noopener noreferrer"
-        ><AntdIcon type="delete" />清除历史记录
-        </a> */}
+          onClick={this.handleClearHistory}
+        >
+          <AntdIcon type="delete" />清除历史记录
+        </a>
       </span>
     );
   }
