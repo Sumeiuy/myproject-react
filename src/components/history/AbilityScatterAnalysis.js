@@ -26,12 +26,8 @@ export default class AbilityScatterAnalysis extends PureComponent {
     swtichDefault: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
     contrastType: PropTypes.string.isRequired,
-    headerClass: PropTypes.object,
     isLvIndicator: PropTypes.bool.isRequired,
-  };
-
-  static defaultProps = {
-    headerClass: {},
+    level: PropTypes.string.isRequired,
   };
 
   constructor(props) {
@@ -49,6 +45,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
       averageInfo: '',
       tooltipInfo: '',
       scatterOptions: EMPTY_OBJECT,
+      average: '',
     };
   }
 
@@ -111,9 +108,24 @@ export default class AbilityScatterAnalysis extends PureComponent {
    * @param {*} seriesData series数据
    */
   getAnyPoint(seriesData) {
-    const { xAxisMin, yAxisMin, yAxisMax, slope, xAxisMax, currentMax } = seriesData;
+    const { xAxisMin, yAxisMin, yAxisMax, slope, xAxisMax, currentMax, average } = seriesData;
     let compare;
     let current;
+    if (average) {
+      // 代表率
+      // 直接画出一条横线，代表平均线
+      const scatterOptions = constructScatterOptions({
+        ...seriesData,
+        startCoord: [xAxisMin, average],
+        endCoord: [xAxisMax, average],
+      });
+
+      this.setState({
+        scatterOptions,
+        average,
+      });
+      return true;
+    }
 
     if (slope === 0) {
       // 处理斜率等于0
@@ -126,6 +138,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
 
       this.setState({
         scatterOptions,
+        average: '',
       });
       return true;
     } else if (slope <= 1) {
@@ -157,6 +170,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
 
       this.setState({
         scatterOptions,
+        average: '',
       });
       return true;
     }
@@ -237,6 +251,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
 
     this.setState({
       scatterOptions,
+      average: '',
     });
     return true;
   }
@@ -255,7 +270,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
   * @param {*} currentItemInfo 当前鼠标悬浮的点数据
   */
   constructTooltipInfo(currentItemInfo) {
-    const { description } = this.props;
+    const { description, level } = this.props;
     const {
       currentSelectX,
       currentSelectY,
@@ -266,12 +281,28 @@ export default class AbilityScatterAnalysis extends PureComponent {
       yAxisMin,
       xAxisMin,
       slope,
+      average,
     } = currentItemInfo;
 
-    const currentSlope = (currentSelectY - yAxisMin) / (currentSelectX - xAxisMin);
 
+    let compareSlope = '';
+    let currentSlope;
+    if (average) {
+      // 对于率的指标作特殊处理
+      // 比较每个点信息与平均值的比较
+      compareSlope = average;
+      currentSlope = currentSelectY;
+    } else {
+      compareSlope = slope;
+      currentSlope = (currentSelectY - yAxisMin) / (currentSelectX - xAxisMin);
+    }
+
+    const currentAverageValue = (currentSelectY / currentSelectX).toFixed(2);
+
+    // 经总和分公司下，显示每个点的平均值
+    // 正常显示每个点的x信息和y信息，和每平均信息
     this.setState({
-      tooltipInfo: `${yAxisName}：${currentSelectY}${yAxisUnit} / ${xAxisName}：${currentSelectX}${xAxisUnit}。每${description}的${yAxisName}${currentSlope > slope ? '优' : '低'}于平均水平。`,
+      tooltipInfo: `${yAxisName}：${currentSelectY}${yAxisUnit} / ${xAxisName}：${currentSelectX}${xAxisUnit}。${(level === '1' || level === '2') ? `平均${description}:${currentAverageValue}${yAxisUnit}/${xAxisUnit}，` : ''}每${description}的${yAxisName}${currentSlope > compareSlope ? '优' : '低'}于平均水平。`,
     });
   }
 
@@ -290,6 +321,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
         slope,
         yAxisMin,
         xAxisMin,
+        average,
       } } = this.state;
     const { data: [xAxisData, yAxisData, { orgName, parentOrgName }] } = params;
 
@@ -310,6 +342,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
         slope,
         xAxisMin,
         yAxisMin,
+        average,
       });
     }
   }
@@ -358,7 +391,6 @@ export default class AbilityScatterAnalysis extends PureComponent {
       title,
       style,
       contrastType,
-      headerClass,
     } = this.props;
 
 
@@ -372,7 +404,6 @@ export default class AbilityScatterAnalysis extends PureComponent {
       <div className={styles.abilityScatterAnalysis}>
         <div
           className={styles.abilityHeader}
-          style={headerClass}
         >
           <div className={styles.title}>{title}</div>
           <div className={styles.customerDimensionSelect}>

@@ -366,6 +366,7 @@ export default class BoardSelect extends PureComponent {
             {
               canCustomBoard() ?
                 <li
+                  onClick={this.menuClick}
                   data-key="0"
                   data-type={visibleBoardType.manage.key}
                 >

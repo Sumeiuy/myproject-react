@@ -194,12 +194,11 @@ export default class HistoryCompareRankChart extends PureComponent {
       [styles.pageBtnDis]: rankPage === totalPage,
     });
 
-
     return (
       <div className={styles.historyRange}>
         <div className={styles.chartHd}>
           <div className={styles.headerLeft}>
-            <span className={styles.chartHdCaption}>排名</span>
+            <span className={styles.chartHdCaption}>成员排名</span>
             <span className={styles.chartUnit}>{`(${unit})`}</span>
           </div>
           <div className={styles.headerRight}>

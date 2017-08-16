@@ -20,7 +20,7 @@ const GE = ZHUNICODE.GE;
 
 export const constructScatterData = (options = {}) => {
   const { core = EMPTY_OBJECT, contrast = EMPTY_OBJECT,
-    scatterDiagramModels = EMPTY_LIST, description } = options;
+    scatterDiagramModels = EMPTY_LIST, description, isLvIndicator } = options;
 
   const xAxisOption = _.pick(contrast, ['key', 'name', 'value', 'unit']);
 
@@ -145,7 +145,22 @@ export const constructScatterData = (options = {}) => {
     },
     // 计算当前散点图的斜率
     getSlope(unitInfo) {
-      const { xAxisUnit, yAxisUnit } = unitInfo;
+      const { xAxisUnit, yAxisUnit, yAxisData } = unitInfo;
+      if (isLvIndicator) {
+        // 包含率
+        const total = _.reduce(yAxisData, (sum, n) => sum + n, 0);
+        const len = yAxisData.length;
+        let average;
+        if (len > 0) {
+          average = total / len;
+        }
+        return {
+          slope: average,
+          averageInfo: `平均每${description}${average && average.toFixed(2)}${yAxisUnit}`,
+          average, // 平均值，用以区分
+        };
+      }
+
       const { value: xAxisTotalValue } = xAxisOption;
       const { value: yAxisTotalValue, unit: yAxisOriginUnit } = yAxisOption;
       let xAxisFormatedValue;
@@ -226,6 +241,7 @@ export const constructScatterData = (options = {}) => {
     yAxisMax: yAxisTickArea.max,
     xAxisUnit: xAxisUnit.newUnit,
     yAxisUnit: yAxisUnit.newUnit,
+    yAxisData: yAxisUnit.newSeries,
   });
 
   // 构造元数据给series，用来绘制scatter
@@ -253,6 +269,7 @@ export const constructScatterData = (options = {}) => {
     yAxisUnit: yAxisUnit.newUnit,
     slope: slope.slope,
     averageInfo: slope.averageInfo || '',
+    average: slope.average,
   };
 
   return axisData;

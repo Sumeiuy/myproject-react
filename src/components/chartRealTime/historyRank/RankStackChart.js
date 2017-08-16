@@ -400,7 +400,7 @@ export default class RankStackChart extends PureComponent {
             resizable
             onReady={this.onReady}
             style={{
-              height: '360px',
+              height: '370px',
             }}
           />
         </div>

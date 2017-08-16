@@ -139,7 +139,10 @@ export default {
     },
     // 历史对比排名
     getRankDataSuccess(state, action) {
-      const { payload: { rankData } } = action;
+      let { payload: { rankData } } = action;
+      if (rankData === null) {
+        rankData = {};
+      }
       return {
         ...state,
         rankData,

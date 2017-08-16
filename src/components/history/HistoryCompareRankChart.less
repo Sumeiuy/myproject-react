@@ -1,8 +1,9 @@
 .historyRange {
   position: relative;
-  width: 50%;
+  width: 100%;
   height: 100%;
-  float: right;
+  background-color: #fff;
+  box-shadow: 0 0 6px #ccc;
 }
 
 :global {
@@ -12,21 +13,14 @@
     .hideSelect {
       display: none;
     }
-    .ant-select-selection--single {
-      .ant-select-arrow {
-        color: #b2b7ba;
-        &:before {
-          content: "\E606";
-        }
-      }
-    }
   }
 }
 
 .chartHd {
-  height: 44px;
-  line-height: 44px;
-  padding-left: 40px;
+  height: 40px;
+  line-height: 40px;
+  padding-left: 15px;
+  background-color: #fafafa;
   &:after {
     content: " ";
     display: table;
@@ -39,13 +33,13 @@
     float: right;
   }
   .chartHdCaption {
-    color: #333;
+    color: #666;
     font-size: 14px;
   }
   .chartUnit {
     margin-left: 10px;
     font-size: 12px;
-    color: #777;
+    color: #666;
   }
   .newSelect {
     margin-left: 10px;
@@ -59,7 +53,7 @@
   .pageFlip {
     display: inline-block;
     width: 90px;
-    height: 28px;
+    height: 40px;
     box-sizing: border-box;
   }
   .pageDivider,
@@ -87,9 +81,33 @@
     }
   }
 }
+.chartHd {
+  :global {
+    .ant-select-selection {
+      background-color: transparent;
+    }
+    .ant-select-selection.ant-select-selection--single {
+      border: none;
+    }
+    .ant-select-selection--single {
+      .ant-select-arrow {
+        color: #b2b7ba;
+        &:before {
+          content: "\E606";
+        }
+      }
+    }
+    .ant-select-open .ant-select-selection {
+      box-shadow: none;
+    }
+    .ant-select-focused .ant-select-selection {
+      box-shadow: none;
+    }
+  }
+}
 
 .chartBd {
   height: 380px;
-  padding-left: 40px;
+  padding-left: 30px;
 }
 

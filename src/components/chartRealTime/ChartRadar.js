@@ -9,7 +9,6 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
 import {
-  legend,
   radarCommon,
   seriesCommon,
   currentRadar,
@@ -64,7 +63,7 @@ export default class ChartRadar extends PureComponent {
   }
 
   @autobind
-  optimizeIndicator(current, previous, scopeNum) {
+  optimizeIndicator(current, previous) {
     let max = 0;
     let min = 0;
     const currMax = Math.max(...current);
@@ -73,12 +72,10 @@ export default class ChartRadar extends PureComponent {
     const prevMin = Math.min(...previous);
     max = currMax > prevMax ? currMax : prevMax;
     min = currMin < prevMin ? currMin : prevMin;
-    if ((max + 3) > scopeNum) {
-      max = scopeNum;
-    } else {
-      max += 3;
+    max += 10;
+    if (min !== 1) {
+      min -= 3;
     }
-    min -= 3;
     return {
       max,
       min,
@@ -88,7 +85,7 @@ export default class ChartRadar extends PureComponent {
   @autobind
   makeRadarIndicators(current, contrast, scopeNum, indicatorName) {
     const indicators = [];
-    const indicator = this.optimizeIndicator(current, contrast, scopeNum);
+    const indicator = this.optimizeIndicator(current, contrast);
     const indicatorMax = indicator.max;
     const indicatorMin = indicator.min;
     let min = Number(scopeNum) - indicatorMax;
@@ -215,10 +212,10 @@ export default class ChartRadar extends PureComponent {
     const indicator = this.makeRadarIndicators(current, contrast, total, indicatorName);
     const allData = this.makeRadarSeriesData(radar, Number(total));
     const options = {
-      legend: {
-        ...legend,
-        data: allData.legend,
-      },
+      // legend: {
+      //   ...legend,
+      //   data: allData.legend,
+      // },
       radar: {
         ...radarCommon,
         indicator,
@@ -232,27 +229,32 @@ export default class ChartRadar extends PureComponent {
     };
     return (
       <div className={styles.radarBox}>
-        <div className={styles.titleDv}>强弱指示分析</div>
+        <div className={styles.titleDv}>多维排名对比</div>
         <div className={styles.radar}>
           <IECharts
             option={options}
             resizable
             onReady={this.radarOnReady}
             style={{
-              height: '320px',
+              height: '330px',
             }}
           />
         </div>
         <div className={styles.radarInfo}>
-          <i />{indicatorName[selectCore]}：本期排名：
+          <div className={styles.radarDesc}>
+            <span className={styles.name}>{indicatorName[selectCore]}排名</span>
+            <span className={styles.totalDesc}>(共 </span>
+            <span className={styles.totalNo}>{total === '0' ? '--' : total}</span>
+            <span className={styles.totalDesc}> 家{levelName})</span>
+            <span className={styles.radarNowDura}>本期:</span>
             <span className={styles.now}>
               {_.isEmpty(current) ? '--' : current[selectCore]}
             </span>
-            上期排名：
+            <span className={styles.radarLastDura}>上期:</span>
             <span className={styles.before}>
               {_.isEmpty(contrast) ? '--' : contrast[selectCore]}
             </span>
-            共 <span className={styles.all}>{total === '0' ? '--' : total}</span> 家{levelName}
+          </div>
         </div>
       </div>
     );

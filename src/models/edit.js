@@ -189,15 +189,34 @@ export default {
           name: 'publishLoading',
           value: true,
           message: '发布开始',
+          operateData: {},
         },
       });
-      yield call(api.updateBoard, payload);
+      const publishResult = yield call(api.updateBoard, payload);
+      const code = publishResult.code;
+      const msg = publishResult.msg;
+      let board = {};
+      if (code !== responseCode.SUCCESS) {
+        // 名称重复
+        board = {
+          success: false,
+          code,
+          msg,
+        };
+      } else {
+        // 成功
+        board = {
+          success: true,
+          ...publishResult.resultData,
+        };
+      }
       yield put({
         type: 'operateBoardState',
         payload: {
           name: 'publishLoading',
           value: false,
           message: '发布完成',
+          operateData: board,
         },
       });
     },

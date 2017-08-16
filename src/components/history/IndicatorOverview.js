@@ -5,12 +5,11 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import { Row, Col, Button } from 'antd';
+import { Row, Col } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import classnames from 'classnames';
 
-import Icon from '../common/Icon';
 import ChartRadar from '../chartRealTime/ChartRadar';
 import IndexItem from './IndexItem';
 import styles from './indicatorOverview.less';
@@ -37,6 +36,7 @@ export default class IndicatorOverview extends PureComponent {
       visible: false,
       selectTreeModal: false,
       selectIndex: 0, // 默认选中项
+      clickItemIndex: 0, // 默认点击的项索引值
     };
   }
 
@@ -71,6 +71,7 @@ export default class IndicatorOverview extends PureComponent {
     return () => {
       const { changeCore } = this.props;
       this.setState({
+        clickItemIndex: index,
         selectIndex: index,
       });
       changeCore(key);
@@ -81,6 +82,21 @@ export default class IndicatorOverview extends PureComponent {
   closeModal(modal) {
     this.setState({
       [modal]: false,
+    });
+  }
+  @autobind
+  mouseEnter(index) {
+    return () => {
+      this.setState({
+        selectIndex: index,
+      });
+    };
+  }
+  @autobind
+  mouseLeave() {
+    const { clickItemIndex } = this.state;
+    this.setState({
+      selectIndex: clickItemIndex,
     });
   }
 
@@ -95,7 +111,7 @@ export default class IndicatorOverview extends PureComponent {
     if (_.isEmpty(overviewData)) {
       return null;
     }
-    const { selectIndex, selectTreeModal } = this.state;
+    const { selectIndex, selectTreeModal, clickItemIndex } = this.state;
     // 创建共同配置项
     const selectTreeProps = {
       modalKey: 'selectTreeModal',
@@ -106,28 +122,28 @@ export default class IndicatorOverview extends PureComponent {
       saveIndcatorToHome,
     };
     const radarHide = _.isEmpty(indexData) || level === '1';
-    const overviewBoxSpan = radarHide ? '24' : '13';
-    const ulClass = classnames({
-      [styles.content]: !radarHide,
-      [styles.contentNoRadar]: radarHide,
+    const overviewBoxSpan = radarHide ? '24' : '12';
+    const coreCard = classnames({
+      [styles.coreCard]: true,
+      [styles.hasRadar]: !radarHide,
+      [styles.noRadar]: radarHide,
+    });
+    const cardBdClass = classnames({
+      [styles.height320]: !radarHide,
+      [styles.height210]: radarHide,
+      [styles.cardBd]: true,
     });
     return (
       <div className={styles.overviewBox}>
-        <Row gutter={10}>
+        <Row gutter={10} type="flex">
           <Col span={overviewBoxSpan}>
-            <div className={styles.overview}>
-              <div className={styles.titleDv}>
-                <Button
-                  className={styles.btn_r}
-                  onClick={this.showModal}
-                >
-                  <Icon type="jia" />
-                  挑选指标
-                </Button>
-                指标概览
+            <div className={styles.viewCard}>
+              <div className={styles.cardHd}>
+                <div className={styles.cardCaption}>指标概览</div>
+                <div onClick={this.showModal} className={styles.pickCore}>指标调整</div>
               </div>
-              <div className={ulClass}>
-                <ul>
+              <div className={cardBdClass}>
+                <ul className={styles.coreCardUl}>
                   {
                     overviewData.map((item, index) => {
                       const itemIndex = `select${index}`;
@@ -135,8 +151,11 @@ export default class IndicatorOverview extends PureComponent {
                       const key = item.key;
                       return (
                         <li
+                          className={coreCard}
                           onClick={this.handleCoreClick(index, key)}
                           key={itemIndex}
+                          onMouseEnter={this.mouseEnter(index)}
+                          onMouseLeave={this.mouseLeave}
                         >
                           <IndexItem
                             itemData={item}
@@ -146,20 +165,23 @@ export default class IndicatorOverview extends PureComponent {
                       );
                     })
                   }
-                  <div className={styles.clear} />
                 </ul>
               </div>
-              <div className={styles.bottomInfo}>
-                <i />
-                {
-                  overviewData.length ?
-                    <p>
-                      <span>{overviewData[selectIndex].name}：</span>
-                      <span>{overviewData[selectIndex].description}</span>
-                    </p>
-                    :
-                    null
-                }
+              <div className={styles.cardFt}>
+                <div className={styles.coreInfo}>
+                  <p>
+                    <span
+                      className={styles.coreName}
+                    >
+                      {overviewData[selectIndex].name}:
+                    </span>
+                    <span
+                      className={styles.coreDesc}
+                    >
+                      {overviewData[selectIndex].description}
+                    </span>
+                  </p>
+                </div>
               </div>
             </div>
           </Col>
@@ -167,13 +189,15 @@ export default class IndicatorOverview extends PureComponent {
             radarHide
               ? null
               : (
-                <Col span="11">
-                  <ChartRadar
-                    radarData={indexData.data}
-                    total={indexData.scopeNum}
-                    selectCore={selectIndex}
-                    localScope={level}
-                  />
+                <Col span="12">
+                  <div className={styles.viewCard}>
+                    <ChartRadar
+                      radarData={indexData.data}
+                      total={indexData.scopeNum}
+                      selectCore={clickItemIndex}
+                      localScope={level}
+                    />
+                  </div>
                 </Col>
               )
           }

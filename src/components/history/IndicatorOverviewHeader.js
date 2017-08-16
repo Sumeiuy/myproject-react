@@ -185,7 +185,7 @@ export default class IndicatorOverviewHeader extends PureComponent {
 
     return (
       <div className={styles.indicatorOverviewHeader}>
-        <div className={styles.analyticalCaption}>核心指标</div>
+        <div className={styles.analyticalCaption}>指标分析</div>
         <div className={styles.overviewHeaderRight}>
           <Button
             type="primary"

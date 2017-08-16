@@ -13,7 +13,7 @@ import _ from 'lodash';
 import { getDurationString } from '../../utils/helper';
 import { optionsMap } from '../../config';
 import Icon from '../common/Icon';
-import './DurationSelect.less';
+import styles from './DurationSelect.less';
 
 // 需要用到的常量
 // RadioButton
@@ -22,6 +22,7 @@ const RadioGroup = Radio.Group;
 
 // 时间筛选条件
 const timeOptions = optionsMap.time;
+const compareArray = optionsMap.compare;
 // 渲染5个头部期间Radio
 const timeRadios = timeOptions.map((item, index) => {
   const timeIndex = `Timeradio${index}`;
@@ -42,6 +43,7 @@ export default class DurationSelect extends PureComponent {
     const obj = getDurationString(value);
     this.state = {
       open: false,
+      compare: compareArray[0].key,
       ...obj,
     };
   }
@@ -58,8 +60,15 @@ export default class DurationSelect extends PureComponent {
       });
     }
   }
-
-   // 期间变化
+  // 环比同比切换事件
+  @autobind
+  compareChangeHandle(e) {
+    const compare = e.target.value;
+    this.setState({
+      compare,
+    });
+  }
+  // 期间变化
   @autobind
   handleDurationChange(e) {
     const value = e.target.value;
@@ -105,11 +114,39 @@ export default class DurationSelect extends PureComponent {
       durationPicker: true,
       hide: !open,
     });
+    const tempAttr = false;
     return (
       <div className="durationSelect">
-        <div className="duration" onClick={this.handleDurationClick}>
-          <div className="text">{`${durationStr}`}<span>{`(${durationTip})`}</span></div>
+        <div className="duration">
           <Icon type="rili" />
+          <div className="text" onClick={this.handleDurationClick}>
+            {`${durationStr}`}
+            <span>
+              {`(${durationTip})`}
+            </span>
+          </div>
+          {
+            tempAttr ?
+              <div className={styles.compareDiv}>
+                <RadioGroup onChange={this.compareChangeHandle} value={this.state.compare}>
+                  {
+                    compareArray.map((item) => {
+                      const compareKey = `compare${item.key}`;
+                      return (
+                        <Radio
+                          key={compareKey}
+                          value={item.key}
+                        >
+                          {item.name}
+                        </Radio>
+                      );
+                    })
+                  }
+                </RadioGroup>
+              </div>
+            :
+              null
+          }
         </div>
         <div className={toggleDurationPicker}>
           <div className="pickerHead">{durationStr}</div>
