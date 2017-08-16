@@ -5,7 +5,7 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import { Icon as AntdIcon, Button, Input, AutoComplete } from 'antd';
+import { Icon as AntdIcon, Button, Input, AutoComplete, message } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { fspGlobal } from '../../utils';
@@ -27,12 +27,16 @@ export default class Search extends PureComponent {
     push: PropTypes.func.isRequired,
     orgId: PropTypes.string,
     historyWdsList: PropTypes.array,
+    clearSuccess: PropTypes.object,
+    clearFun: PropTypes.func,
   }
 
   static defaultProps = {
     data: EMPTY_OBJECT,
     queryHotPossibleWds: () => { },
     queryHistoryWdsList: () => { },
+    clearFun: () => { },
+    clearSuccess: EMPTY_OBJECT,
     queryHotWdsData: EMPTY_LIST,
     orgId: '',
     historyWdsList: EMPTY_LIST,
@@ -44,7 +48,7 @@ export default class Search extends PureComponent {
       title: '历史搜索',
       children: [{
         id: `history_${COUNT++}`,
-        labelNameVal: '暂无数据',
+        labelNameVal: '无',
         labelMapping: '',
         tagNumId: '',
         labelDesc: '',
@@ -57,14 +61,22 @@ export default class Search extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { historyWdsList: preHistoryWdsList } = this.props;
-    const { queryHotWdsData: nextQueryHotWdsData, historyWdsList: nextHistoryWdsList } = nextProps;
+    const { historyWdsList: preHistoryWdsList, clearSuccess: preClearSeccess } = this.props;
+    const { queryHotWdsData: nextQueryHotWdsData,
+      historyWdsList: nextHistoryWdsList,
+      clearSuccess: nextClearSeccess } = nextProps;
     const { inputVal } = this.state;
     this.setState({
       dataSource: inputVal ? this.searchResult(inputVal, nextQueryHotWdsData) : [],
     });
     if (!_.isEqual(nextHistoryWdsList, preHistoryWdsList)) {
       this.handleCreatHistoryList(nextHistoryWdsList);
+    }
+    if (nextClearSeccess !== preClearSeccess) {
+      const { code, resultData } = nextClearSeccess;
+      if (code !== '0') {
+        message.error(resultData);
+      }
     }
   }
 
@@ -201,12 +213,38 @@ export default class Search extends PureComponent {
   @autobind
   handleSearchBtn() {
     const { inputVal } = this.state;
+    const { data: { hotWds = EMPTY_OBJECT } } = this.props;
+    let searchVal = inputVal;
+    if (_.isEmpty(_.trim(inputVal))) {
+      // message.info('搜索内容不能为空', 1);
+      // return;
+      searchVal = hotWds.labelNameVal;
+    }
     this.handleOpenTab({
-      source: 'association',
+      source: 'search',
       labelMapping: '',
       tagNumId: '',
-      q: encodeURIComponent(inputVal),
+      q: encodeURIComponent(searchVal),
     }, '搜索目标客户', 'FSP_SEARCH');
+  }
+
+  // 清除历史搜索
+  @autobind
+  handleClearHistory() {
+    const { clearFun } = this.props;
+    clearFun();
+    this.setState({
+      historySource: [{
+        title: '历史搜索',
+        children: [{
+          id: `history_${COUNT++}`,
+          labelNameVal: '无',
+          labelMapping: '',
+          tagNumId: '',
+          labelDesc: '',
+        }],
+      }],
+    });
   }
 
   @autobind
@@ -229,19 +267,20 @@ export default class Search extends PureComponent {
           dangerouslySetInnerHTML={{ __html: newContent }}
           rel="noopener noreferrer"
         />
-        <span>{item.desc}</span>
+        <span className="desc">{item.desc}</span>
       </Option>
     );
   }
 
   renderGroup(dataSource) {
+    // debugger;
     const options = dataSource.map(group => (
       <OptGroup
         key={group.id}
         label={this.renderTitle(group.title)}
       >
         {group.children.map(item => (
-          item.title === '暂无数据' ?
+          item.labelNameVal === '无' ?
             <Option key={item.id} text={item.labelNameVal} disabled>
               {item.labelNameVal}
             </Option> :
@@ -265,14 +304,22 @@ export default class Search extends PureComponent {
   }
 
   renderTitle(title) {
+    const { historySource } = this.state;
+    if (historySource[0].children[0].labelNameVal === '无') {
+      return (<span>
+        {title}
+      </span>);
+    }
     return (
       <span>
         {title}
-        {/* <a
+        <a
           className={styles.delHistory_a}
           rel="noopener noreferrer"
-        ><AntdIcon type="delete" />清除历史记录
-        </a> */}
+          onClick={this.handleClearHistory}
+        >
+          <AntdIcon type="delete" />清除历史记录
+        </a>
       </span>
     );
   }
