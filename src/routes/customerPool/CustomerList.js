@@ -100,12 +100,16 @@ export default class CustomerList extends PureComponent {
   }
 
   componentWillMount() {
-    const { location: { query } } = this.props;
+    const { custRange, location: { query } } = this.props;
     const orgid = _.isEmpty(window.forReactPosition) ? '' : window.forReactPosition.orgId;
 
     this.setState({
       fspOrgId: orgid,
       orgId: orgid, // 组织ID
+    }, () => {
+      if (custRange.length > 0) {
+        this.handleGetAllInfo(custRange);
+      }
     });
     this.getCustomerList(query);
     // getCustIncome({ custNumber: '020100053538' });
@@ -353,7 +357,6 @@ export default class CustomerList extends PureComponent {
 
   render() {
     const {
-      custRange,
       location,
       replace,
       collectCustRange,
@@ -397,7 +400,6 @@ export default class CustomerList extends PureComponent {
               location={location}
               replace={replace}
               source={source}
-              custRange={custRange}
               orgId={orgId}
               createCustRange={createCustRange}
               updateQueryState={this.updateQueryState}
