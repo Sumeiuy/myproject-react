@@ -101,7 +101,7 @@ export default class CustomerList extends PureComponent {
 
   componentWillMount() {
     const { location: { query } } = this.props;
-    const orgid = _.isEmpty(window.forReactPosition) ? 'ZZ001041' : window.forReactPosition.orgId;
+    const orgid = _.isEmpty(window.forReactPosition) ? '' : window.forReactPosition.orgId;
 
     this.setState({
       fspOrgId: orgid,
@@ -143,7 +143,7 @@ export default class CustomerList extends PureComponent {
   @autobind
   getCustomerList(query) {
     const { getCustomerData } = this.props;
-    const orgId = _.isEmpty(window.forReactPosition) ? 'ZZ001041' : window.forReactPosition.orgId;
+    const orgId = _.isEmpty(window.forReactPosition) ? '' : window.forReactPosition.orgId;
     const k = decodeURIComponent(query.q);
     const param = {
       // 必传，当前页
