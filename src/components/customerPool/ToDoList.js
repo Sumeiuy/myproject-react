@@ -20,6 +20,7 @@ const columns = [
     key: 'task',
     render: item => <a
       onClick={() => {
+        console.log(1);
         const url = `${item.dispatchUri}&workFlowName=${encodeURI(item.flowClass)}`;
         const param = {
           closable: true,
@@ -27,7 +28,7 @@ const columns = [
           id: 'FSP_TODOLIST_DETAIL',
           title: '待办流程详情',
         };
-        fspGlobal.openFspTab({ url, param });
+        fspGlobal.openFspIframeTab({ url, param });
       }}
     >
       {item.text}

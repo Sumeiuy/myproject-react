@@ -175,6 +175,7 @@ export default {
         item.task = {  //eslint-disable-line
           text: item.subject,
           dispatchUri: item.dispatchUri,
+          flowClass: item.flowClass,
         };
       });
       return {
