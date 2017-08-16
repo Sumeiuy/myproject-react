@@ -616,20 +616,14 @@ export default class HistoryHome extends PureComponent {
                   <HistoryComparePolyChart data={contrastData} />
                 </Col>
                 <Col span="12">
-                  {
-                    _.isEmpty(rankData)
-                      ? null
-                      : (
-                        <HistoryCompareRankChart
-                          level={level}
-                          scope={newScope}
-                          data={rankData}
-                          boardType={boardType}
-                          changeRankBar={this.changeRankBar}
-                          swtichDefault={swtichDefault}
-                        />
-                      )
-                  }
+                  <HistoryCompareRankChart
+                    level={level}
+                    scope={newScope}
+                    data={rankData}
+                    boardType={boardType}
+                    changeRankBar={this.changeRankBar}
+                    swtichDefault={swtichDefault}
+                  />
                 </Col>
               </Row>
             </div>

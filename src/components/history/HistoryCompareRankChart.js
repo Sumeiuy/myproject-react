@@ -13,6 +13,7 @@ import _ from 'lodash';
 import { optionsMap } from '../../config';
 import Icon from '../common/Icon';
 import HistoryRankChart from '../chartRealTime/HistoryRankChart';
+import imgStr from '../chartRealTime/noChart.png';
 import styles from './HistoryCompareRankChart.less';
 
 // Select的选项组件
@@ -78,8 +79,12 @@ export default class HistoryCompareRankChart extends PureComponent {
 
   @autobind
   getpagination(record) {
-    const rankPage = Number.parseInt(record.current_page, 10);
-    const totalPage = Math.ceil(Number.parseInt(record.total_num, 10) / 10);
+    let totalPage = 1;
+    let rankPage = 1;
+    if (!_.isEmpty(record)) {
+      rankPage = Number.parseInt(record.current_page, 10);
+      totalPage = Math.ceil(Number.parseInt(record.total_num, 10) / 10);
+    }
     return {
       totalPage,
       rankPage,
@@ -163,8 +168,12 @@ export default class HistoryCompareRankChart extends PureComponent {
   }
 
   render() {
-    const { level, boardType, data: { historyCardRecordVo: { data } } } = this.props;
-    const { orderType, scopeSelectValue, rankPage, totalPage, unit } = this.state;
+    const { level, boardType, data: { historyCardRecordVo } } = this.props;
+    const { orderType, scopeSelectValue, rankPage, totalPage } = this.state;
+    let { unit } = this.state;
+    if (_.isEmpty(historyCardRecordVo)) {
+      unit = '--';
+    }
     // 隐藏选项
     const toggleScope2Option = classnames({
       hideOption: Number(level) !== 1,
@@ -192,6 +201,12 @@ export default class HistoryCompareRankChart extends PureComponent {
       [styles.pageBtn]: true,
       hideEle: false,
       [styles.pageBtnDis]: rankPage === totalPage,
+    });
+
+    // 无数据情况下的chartBd样式
+    const chartBdClass = classnames({
+      [styles.chartBd]: true,
+      [styles.fixPadRight]: _.isEmpty(historyCardRecordVo),
     });
 
     return (
@@ -248,13 +263,25 @@ export default class HistoryCompareRankChart extends PureComponent {
             </div>
           </div>
         </div>
-        <div className={styles.chartBd}>
-          <HistoryRankChart
-            data={data}
-            level={level}
-            scope={scopeSelectValue}
-            showChartUnit={this.showChartUnit}
-          />
+        <div className={chartBdClass}>
+          {
+            _.isEmpty(historyCardRecordVo)
+            ?
+            (
+              <div className={styles.nochart}>
+                <img src={imgStr} alt="无对应数据" />
+              </div>
+            )
+            :
+            (
+              <HistoryRankChart
+                data={historyCardRecordVo.data}
+                level={level}
+                scope={scopeSelectValue}
+                showChartUnit={this.showChartUnit}
+              />
+            )
+          }
         </div>
       </div>
     );
