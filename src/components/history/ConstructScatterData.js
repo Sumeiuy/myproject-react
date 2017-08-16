@@ -103,8 +103,10 @@ export const constructScatterData = (options = {}) => {
         return FixNumber.toFixedCI(array);
       } else if (unit === GE) {
         return FixNumber.toFixedGE(array);
-      } else if (unit === HU || unit === REN) {
+      } else if (unit === HU) {
         return FixNumber.toFixedCust(array);
+      } else if (unit === REN) {
+        return constructHelper.toFixedRen(array);
       } else if (unit === PERCENT) {
         return {
           newSeries: constructHelper.toFixedPercent(array),
@@ -121,14 +123,38 @@ export const constructScatterData = (options = {}) => {
         newUnit: '',
       };
     },
+    // 对人数进行特殊处理
+    toFixedRen(series) {
+      let newUnit = '人';
+      const tempSeries = series.map(n => Math.abs(n));
+      let newSeries = series;
+      const max = Math.max(...tempSeries);
+      // 1. 全部在万元以下的数据不做处理
+      // 2.超过万元的，以‘万元’为单位
+      // 3.超过亿元的，以‘亿元’为单位
+      if (max >= 10000) {
+        newUnit = '万人';
+        newSeries = series.map(item => FixNumber.toFixedDecimal(item / 10000));
+      } else {
+        newUnit = '人';
+        newSeries = series.map(item => FixNumber.toFixedDecimal(item));
+      }
+
+      return {
+        newUnit,
+        newSeries,
+      };
+    },
     // 获取x轴的单位和格式化后的数据源
     getXAxisUnit(array) {
       return FixNumber.toFixedCust(array);
     },
     formatDataSource(yAxisOriginUnit, yAxisTotalValue) {
       let yAxisFormatedValue;
-      if (yAxisOriginUnit === HU || yAxisOriginUnit === REN) {
+      if (yAxisOriginUnit === HU) {
         yAxisFormatedValue = FixNumber.toFixedCust([Number(yAxisTotalValue)]).newSeries[0];
+      } else if (yAxisOriginUnit === REN) {
+        yAxisFormatedValue = constructHelper.toFixedRen([Number(yAxisTotalValue)]).newSeries[0];
       } else if (yAxisOriginUnit === YUAN) {
         yAxisFormatedValue = FixNumber.toFixedMoney([Number(yAxisTotalValue)]).newSeries[0];
       } else if (yAxisOriginUnit === GE) {
@@ -171,11 +197,11 @@ export const constructScatterData = (options = {}) => {
       } else {
         xAxisFormatedValue = Number(xAxisTotalValue);
       }
-      // 对于个数和户数需要特殊处理，因为y轴的单位不一定是平均值的单位
-      if (yAxisUnit.indexOf(HU) !== -1 || yAxisUnit.indexOf(GE) !== -1) {
-        if (yAxisTotalValue >= 10000) {
-          finalYUnit = `万${yAxisUnit}`;
-        }
+      // 需要特殊处理，因为y轴的单位不一定是平均值的单位
+      if (yAxisTotalValue >= 100000000) {
+        finalYUnit = `亿${yAxisOriginUnit}`;
+      } else if (yAxisTotalValue >= 10000) {
+        finalYUnit = `万${yAxisOriginUnit}`;
       }
       const yAxisFormatedValue = constructHelper.formatDataSource(yAxisOriginUnit, yAxisTotalValue);
 
