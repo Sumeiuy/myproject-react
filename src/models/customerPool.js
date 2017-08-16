@@ -146,11 +146,6 @@ export default {
         type: 'getHotWdsSuccess',
         payload: { response },
       });
-      const history = yield call(api.getHistoryWdsList, payload);
-      yield put({
-        type: 'getHistoryWdsListSuccess',
-        payload: { history },
-      });
     },
     // 联想的推荐热词列表
     * getHotPossibleWds({ payload }, { call, put }) {
@@ -168,7 +163,7 @@ export default {
         payload: { history },
       });
     },
-    // 默认推荐词及热词推荐列表及历史搜索数据
+    // 清除历史搜索列表
     * clearSearchHistoryList({ payload }, { call, put }) {
       const clearHistoryState = yield call(api.clearSearchHistoryList, payload);
       yield put({

@@ -115,25 +115,24 @@ export default class Home extends PureComponent {
   }
 
   componentWillMount() {
-    const orgid = _.isEmpty(window.forReactPosition) ? '' : window.forReactPosition.orgId;
     const { custRange } = this.props;
-    this.setState({
-      fspOrgId: orgid,
-      orgId: orgid, // 组织ID
-    }, () => {
-      if (custRange.length > 0) {
-        this.handleGetAllInfo(custRange);
-      }
-    });
+    if (custRange.length > 0) {
+      this.handleSetCustRange(this.props);
+    }
   }
 
   componentWillReceiveProps(nextProps) {
     const { location: preLocation,
-      position: prePosition, custRange: preCustRange, cycle: preCycle } = this.props;
+      position: prePosition,
+      custRange: preCustRange, cycle: preCycle, empInfo: preEmpInfo } = this.props;
     const { location: nextLocation,
-      position: nextPosition, custRange: nextCustRange, cycle: nextCycle } = nextProps;
+      position: nextPosition,
+      custRange: nextCustRange, cycle: nextCycle, empInfo: nextEmpInfo } = nextProps;
     const { orgId: preOrgId } = prePosition;
     const { orgId: nextOrgId } = nextPosition;
+    if (preEmpInfo !== nextEmpInfo) {
+      this.handleSetCustRange(nextProps);
+    }
     if (preOrgId !== nextOrgId) {
       this.setState({
         fspOrgId: nextOrgId,
@@ -172,6 +171,24 @@ export default class Home extends PureComponent {
       orgId, // 组织ID
     });
     return null;
+  }
+
+  @autobind
+  handleSetCustRange(props) {
+    const { custRange, empInfo: { empInfo: { occDivnNum = '' } } } = props;
+    const occ = _.isEmpty(occDivnNum) ? '' : occDivnNum;// orgId取不到的情况下去用户信息中的
+    const orgid = _.isEmpty(window.forReactPosition)
+      ?
+      occ
+      : window.forReactPosition.orgId;
+    this.setState({
+      fspOrgId: orgid,
+      orgId: orgid, // 组织ID
+    }, () => {
+      if (custRange.length > 0) {
+        this.handleGetAllInfo(custRange);
+      }
+    });
   }
 
   @autobind
@@ -333,7 +350,7 @@ export default class Home extends PureComponent {
           push={push}
           orgId={fspOrgId}
           historyWdsList={historyWdsList}
-          clearSeccess={clearState}
+          clearSuccess={clearState}
           clearFun={this.clearHistoryList}
         />
         <div className={styles.content}>
