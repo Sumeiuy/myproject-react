@@ -31,12 +31,36 @@ const hide = {
 };
 // 风险等级配置
 const riskLevelConfig = {
-  704010: '激进型',
-  704040: '保守型（最低类别）',
-  704030: '保守型',
-  704020: '稳健型',
-  704025: '谨慎型',
-  704015: '积极型',
+  704010: {
+    name: '激进',
+    title: '激进型',
+    colorCls: 'jijin',
+  },
+  704040: {
+    name: '最低',
+    title: '保守型（最低类别）',
+    colorCls: 'zuidi',
+  },
+  704030: {
+    name: '保守',
+    title: '保守型',
+    colorCls: 'baoshou',
+  },
+  704020: {
+    name: '稳健',
+    title: '稳健型',
+    colorCls: 'wenjian',
+  },
+  704025: {
+    name: '谨慎',
+    title: '谨慎型',
+    colorCls: 'jinshen',
+  },
+  704015: {
+    name: '积极',
+    title: '积极型',
+    colorCls: 'jiji',
+  },
 };
 // 客户性质配置
 const custNature = {
@@ -240,13 +264,11 @@ export default class CustomerRow extends PureComponent {
     return (
       <Row type="flex" className={styles.custoemrRow}>
         <Col span={3} className={styles.avator}>
-          <Checkbox className={styles.selectIcon} />
-          <div>
-            {<img className={styles.avatorImage} src={custNature[listItem.pOrO].imgSrc} alt="avator" />}
+          <div className={styles.selectIcon}><Checkbox /></div>
+          <div className={styles.avatorContent}>
+            <img className={styles.avatorImage} src={custNature[listItem.pOrO].imgSrc} alt="" />
             <div className={styles.avatorText}>{custNature[listItem.pOrO].name}</div>
-            <div className={styles.avatorIconMoney}>
-              <img className={styles.iconMoneyImage} src={rankImgSrcConfig[listItem.levelCode]} alt="icon-money" />
-            </div>
+            <img className={styles.iconMoneyImage} src={rankImgSrcConfig[listItem.levelCode]} alt="" />
           </div>
         </Col>
         <Col span={21} className={styles.customerInfo}>
@@ -265,13 +287,18 @@ export default class CustomerRow extends PureComponent {
             </div>
             <div className={styles.basicInfoB}>
               {
-                listItem.contactFlag ?
+                !listItem.contactFlag ?
                   <div className={styles.iconSingnedA}>
                     <div className={styles.itemText}>签约客户</div>
                   </div> : null
               }
               {listItem.highWorthFlag ? <div className={styles.tagA}>高净值</div> : null}
-              <div className={styles.tagB}>{riskLevelConfig[listItem.riskLvl]}</div>
+              <div
+                className={`tagB ${riskLevelConfig[listItem.riskLvl].colorCls}`}
+              >
+                <div className="itemText">{riskLevelConfig[listItem.riskLvl].title}</div>
+                {riskLevelConfig[listItem.riskLvl].name}
+              </div>
             </div>
             <div className={styles.basicInfoC}>
               <div className={styles.itemA}>

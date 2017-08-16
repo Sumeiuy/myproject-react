@@ -125,7 +125,6 @@ export default {
     // 获取客户列表
     * getCustomerList({ payload }, { call, put }) {
       const response = yield call(api.getCustomerList, payload);
-      console.log('getCustomerList', response);
       yield put({
         type: 'getCustomerListSuccess',
         payload: response,
