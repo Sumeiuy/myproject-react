@@ -185,13 +185,11 @@ export default class CustomerRow extends PureComponent {
     return (
       <Row type="flex" className={styles.custoemrRow}>
         <Col span={3} className={styles.avator}>
-          <Checkbox className={styles.selectIcon} />
-          <div>
-            {<img className={styles.avatorImage} src={custNature[listItem.pOrO].imgSrc} alt="avator" />}
+          <div className={styles.selectIcon}><Checkbox /></div>
+          <div className={styles.avatorContent}>
+            <img className={styles.avatorImage} src={custNature[listItem.pOrO].imgSrc} alt="" />
             <div className={styles.avatorText}>{custNature[listItem.pOrO].name}</div>
-            <div className={styles.avatorIconMoney}>
-              <img className={styles.iconMoneyImage} src={rankImgSrcConfig[listItem.levelCode]} alt="icon-money" />
-            </div>
+            <img className={styles.iconMoneyImage} src={rankImgSrcConfig[listItem.levelCode]} alt="" />
           </div>
         </Col>
         <Col span={21} className={styles.customerInfo}>
@@ -232,7 +230,7 @@ export default class CustomerRow extends PureComponent {
                       {/* <div>
                         <span>年最大时点资产：</span>
                         <span className={styles.numA}>1462</span>万元
-                      </div>*/}
+                      </div> */}
                       <div>
                         <span>本月收益率：</span>
                         <span className={styles.numB}>

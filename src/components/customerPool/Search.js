@@ -269,7 +269,7 @@ export default class Search extends PureComponent {
           className={styles.delHistory_a}
           rel="noopener noreferrer"
         ><AntdIcon type="delete" />清除历史记录
-        </a>*/}
+        </a> */}
       </span>
     );
   }
