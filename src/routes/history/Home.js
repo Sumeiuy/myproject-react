@@ -146,8 +146,13 @@ export default class HistoryHome extends PureComponent {
     const empId = getEmpId(); // 用户ID
     const ownerOrg = custRange[0];
     const nowDuration = getDurationString('month');
-    const lastBeginMoment = moment(nowDuration.begin).subtract(1, 'year');
-    const lastEndMoment = moment(nowDuration.end).subtract(1, 'year');
+    const begin = nowDuration.begin;
+    const end = nowDuration.end;
+
+    const distanceDays = moment(end).diff(moment(begin), 'days') + 1;
+    const lastBeginMoment = moment(begin).subtract(distanceDays, 'days');
+    const lastEndMoment = moment(end).subtract(distanceDays, 'days');
+
     this.state = {
       boardId,
       boardType,

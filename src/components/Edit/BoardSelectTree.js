@@ -398,7 +398,7 @@ export default class BoardSelectTree extends PureComponent {
         // 如果有长度限制
         if (lengthLimit) {
           // console.warn('length', length);
-          if (length > 9) {
+          if (length >= 9) {
             // console.warn('最多 9 个');
             message.error('最多只能选择 9 个指标');
             return;
