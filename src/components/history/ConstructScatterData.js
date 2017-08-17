@@ -198,6 +198,16 @@ export const constructScatterData = (options = {}) => {
 
       return yAxisFormatedValue;
     },
+    getFormatUnit(value, originUnit) {
+      // 需要特殊处理，因为xy轴的单位不一定是平均值的单位
+      let finalUnit = originUnit;
+      if (value >= 100000000) {
+        finalUnit = `亿${originUnit}`;
+      } else if (value >= 10000) {
+        finalUnit = `万${originUnit}`;
+      }
+      return finalUnit;
+    },
     // 计算当前散点图的斜率
     getSlope(unitInfo) {
       const { xAxisUnit, yAxisUnit, yAxisData } = unitInfo;
@@ -229,19 +239,10 @@ export const constructScatterData = (options = {}) => {
         xAxisFormatedValue = Number(xAxisTotalValue);
       }
 
-      // 需要特殊处理，因为x轴的单位不一定是平均值的单位
-      if (xAxisTotalValue >= 100000000) {
-        finalXUnit = `亿${xAxisOriginUnit}`;
-      } else if (xAxisTotalValue >= 10000) {
-        finalXUnit = `万${xAxisOriginUnit}`;
-      }
+      // 需要特殊处理，因为xy轴的单位不一定是平均值的单位
+      finalXUnit = constructHelper.getFormatUnit(xAxisTotalValue, xAxisOriginUnit);
+      finalYUnit = constructHelper.getFormatUnit(yAxisTotalValue, yAxisOriginUnit);
 
-      // 需要特殊处理，因为y轴的单位不一定是平均值的单位
-      if (yAxisTotalValue >= 100000000) {
-        finalYUnit = `亿${yAxisOriginUnit}`;
-      } else if (yAxisTotalValue >= 10000) {
-        finalYUnit = `万${yAxisOriginUnit}`;
-      }
       const yAxisFormatedValue = constructHelper.formatDataSource(yAxisOriginUnit, yAxisTotalValue);
 
       if (xAxisFormatedValue !== 0) {
