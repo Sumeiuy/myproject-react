@@ -266,21 +266,21 @@ export default class HistoryCompareRankChart extends PureComponent {
         <div className={chartBdClass}>
           {
             _.isEmpty(historyCardRecordVo)
-            ?
-            (
-              <div className={styles.nochart}>
-                <img src={imgStr} alt="无对应数据" />
-              </div>
-            )
-            :
-            (
-              <HistoryRankChart
-                data={historyCardRecordVo.data}
-                level={level}
-                scope={scopeSelectValue}
-                showChartUnit={this.showChartUnit}
-              />
-            )
+              ?
+              (
+                <div className={styles.nochart}>
+                  <img src={imgStr} alt="无对应数据" />
+                </div>
+              )
+              :
+              (
+                <HistoryRankChart
+                  data={historyCardRecordVo.data}
+                  level={level}
+                  scope={scopeSelectValue}
+                  showChartUnit={this.showChartUnit}
+                />
+              )
           }
         </div>
       </div>

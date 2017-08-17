@@ -24,7 +24,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
     title: PropTypes.string.isRequired,
     optionsData: PropTypes.array,
     type: PropTypes.string.isRequired,
-    swtichDefault: PropTypes.string.isRequired,
+    switchDefault: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
     contrastType: PropTypes.string.isRequired,
     isLvIndicator: PropTypes.bool.isRequired,
@@ -58,11 +58,13 @@ export default class AbilityScatterAnalysis extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { data: nextData,
-      optionsData: nextOptions } = nextProps;
+      optionsData: nextOptions,
+      switchDefault: nextSwitch } = nextProps;
     const {
       description,
       optionsData: prevOptions,
       isLvIndicator,
+      switchDefault: prevSwitch,
     } = this.props;
     const {
       core = EMPTY_OBJECT,
@@ -93,12 +95,12 @@ export default class AbilityScatterAnalysis extends PureComponent {
     }
 
     // 恢复默认选项
-    // if (prevDefault !== nextDefault) {
-    // const options = this.state.finalOptions;
-    // this.setState({
-    // selectValue: !_.isEmpty(options) && options[0].value,
-    // });
-    // }
+    if (!_.isEqual(prevSwitch, nextSwitch)) {
+      const options = this.state.finalOptions;
+      this.setState({
+        selectValue: !_.isEmpty(options) && options[0].value,
+      });
+    }
 
     // 切换对比数据
     if (prevOptions !== nextOptions) {

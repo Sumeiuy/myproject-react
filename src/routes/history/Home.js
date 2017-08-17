@@ -645,7 +645,7 @@ export default class HistoryHome extends PureComponent {
                 queryContrastAnalyze={this.changeScatterContrast}
                 cust={cust}
                 invest={invest}
-                swtichDefault={swtichDefault}
+                switchDefault={swtichDefault}
                 location={location}
                 level={level}
                 isLvIndicator={isLvIndicator}
