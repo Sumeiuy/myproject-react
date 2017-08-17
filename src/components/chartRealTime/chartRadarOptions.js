@@ -81,14 +81,14 @@ const radarConfig = {
     },
   },
   currentLabel: {
-    show: true,
+    show: false,
     position: 'top',
     textStyle: {
       color: '#ff7a39',
     },
   },
   contrastLabel: {
-    show: true,
+    show: false,
     position: 'bottom',
     textStyle: {
       color: '#3983ff',

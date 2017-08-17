@@ -2,61 +2,110 @@
  * 查询报表汇总指标数据
  */
 exports.response = function (req, res) {
-    return {
-        "code": "0",
-        "msg": "OK",
-        "resultData": {
-            "singleRecords": [
-                {
-                    "key": "tgInNum",
-                    "name": "投顾入岗人数",
-                    "value": "150",
-                    "unit": "人",
-                    "description": null
-                }, {
-                    "key": "currSignCustNum",
-                    "name": "签约客户数",
-                    "value": "0",
-                    "unit": "户",
-                    "description": "当前签约客户数"
-                }, {
-                    "key": "currSignCustAset",
-                    "name": "签约总资产",
-                    "value": "0",
-                    "unit": "元",
-                    "description": null
-                }, {
-                    "key": "totAset",
-                    "name": "托管总资产",
-                    "value": "90196742300.5894",
-                    "unit": "元",
-                    "description": null
-                }, {
-                    "key": "feeConfigPercent",
-                    "name": "资产配置覆盖率",
-                    "value": "0.3504496502720106583768180304207838347952",
-                    "unit": "%",
-                    "description": null
-                }, {
-                    "key": "infoCompPercent",
-                    "name": "高净值客户信息完善率",
-                    "value": "0.9370525087655394186698726901770091465527",
-                    "unit": "%",
-                    "description": null
-                }, {
-                    "key": "motCompletePercent",
-                    "name": "MOT任务完成率",
-                    "value": null,
-                    "unit": "%",
-                    "description": null
-                }, {
-                    "key": "serviceCompPercent",
-                    "name": "服务覆盖率",
-                    "value": "0.4995225935383590540690573998001554346619",
-                    "unit": "%",
-                    "description": null
-                }
-            ]
-        }
-    }
-}
+  return {
+    code: '0',
+    msg: 'OK',
+    resultData: {
+      singleRecords: [
+        {
+          key: 'totCustNum',
+          name: '总客户数',
+          value: '0',
+          unit: '户',
+          description: '非销户的客户总数',
+          categoryKey: null,
+          isBelongsSummury: null,
+          hasChildren: null,
+          parentKey: null,
+          parentName: null,
+          children: null,
+          isAggressive: null,
+        },
+        {
+          key: 'allTotAset',
+          name: '总资产',
+          value: '0',
+          unit: '元',
+          description: '所有客户普通账户和信用账户内资产总和',
+          categoryKey: null,
+          isBelongsSummury: null,
+          hasChildren: null,
+          parentKey: null,
+          parentName: null,
+          children: null,
+          isAggressive: null,
+        },
+        {
+          key: 'shzNpRate',
+          name: '沪深归集率',
+          value: '0',
+          unit: '%',
+          description: '客户在沪深市场归属华泰的资产总额/所有资产总额',
+          categoryKey: null,
+          isBelongsSummury: null,
+          hasChildren: null,
+          parentKey: null,
+          parentName: null,
+          children: null,
+          isAggressive: null,
+        },
+        {
+          key: 'tradTranAmt',
+          name: '基础股基交易量',
+          value: '854041519967.1319',
+          unit: '元',
+          description: '统计期内股基交易量总和，包括范围：主板+B股+封基+创业板+中小板+场内交易的LOF、ETF+融资融券+根网套利系统中股基交易量，不含场内的交易型货币基金、债券ETF',
+          categoryKey: null,
+          isBelongsSummury: null,
+          hasChildren: null,
+          parentKey: null,
+          parentName: null,
+          children: null,
+          isAggressive: null,
+        },
+        {
+          key: 'avgMktVal',
+          name: '产品日均市值',
+          value: '90553640414.65401875',
+          unit: '元',
+          description: '统计周期期期间产品日均市值，包含：公募基金、紫金产品（剔除天天发）、OTC、证券投资类私募',
+          categoryKey: null,
+          isBelongsSummury: null,
+          hasChildren: null,
+          parentKey: null,
+          parentName: null,
+          children: null,
+          isAggressive: null,
+        },
+        {
+          key: 'allIncomeAmt',
+          name: '净收入',
+          value: '345158989.304',
+          unit: '元',
+          description: '统计期内整体客户金融产品净手续费+资本中介净利息（融券、资管资金融资）+交易净佣金',
+          categoryKey: null,
+          isBelongsSummury: null,
+          hasChildren: null,
+          parentKey: null,
+          parentName: null,
+          children: null,
+          isAggressive: null,
+        },
+        {
+          key: 'gjzServiceCompPercent',
+          name: '高净值客户服务覆盖率',
+          value: '0',
+          unit: '%',
+          description: '已服务高净值客户数/高净值客户总数',
+          categoryKey: null,
+          isBelongsSummury: null,
+          hasChildren: null,
+          parentKey: null,
+          parentName: null,
+          children: null,
+          isAggressive: null,
+        },
+      ],
+    },
+  };
+};
