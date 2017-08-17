@@ -180,8 +180,10 @@ export default class HistoryComparePolyChart extends PureComponent {
     if (!_.isEmpty(array)) {
       if (yAxisUnit.indexOf(YUAN) !== -1) {
         return FixNumber.toFixedMoney(array);
-      } else if (yAxisUnit.indexOf(HU) !== -1 || yAxisUnit.indexOf(REN) !== -1) {
+      } else if (yAxisUnit.indexOf(HU) !== -1) {
         return FixNumber.toFixedCust(array);
+      } else if (yAxisUnit.indexOf(REN) !== -1) {
+        return this.toFixedRen(array);
       } else if (yAxisUnit.indexOf(GE) !== -1) {
         return FixNumber.toFixedGE(array);
       } else if (yAxisUnit.indexOf(CI) !== -1) {
@@ -202,6 +204,29 @@ export default class HistoryComparePolyChart extends PureComponent {
     return {
       newUnit: '',
       newSeries: [],
+    };
+  }
+
+  // 对人数进行特殊处理
+  toFixedRen(series) {
+    let newUnit = '人';
+    const tempSeries = series.map(n => Math.abs(n));
+    let newSeries = series;
+    const max = Math.max(...tempSeries);
+    // 1. 全部在万元以下的数据不做处理
+    // 2.超过万元的，以‘万元’为单位
+    // 3.超过亿元的，以‘亿元’为单位
+    if (max >= 10000) {
+      newUnit = '万人';
+      newSeries = series.map(item => FixNumber.toFixedDecimal(item / 10000));
+    } else {
+      newUnit = '人';
+      newSeries = series.map(item => FixNumber.toFixedDecimal(item));
+    }
+
+    return {
+      newUnit,
+      newSeries,
     };
   }
 

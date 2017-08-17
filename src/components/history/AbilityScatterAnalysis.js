@@ -21,13 +21,17 @@ export default class AbilityScatterAnalysis extends PureComponent {
     style: PropTypes.object.isRequired,
     queryContrastAnalyze: PropTypes.func.isRequired,
     title: PropTypes.string.isRequired,
-    optionsData: PropTypes.array.isRequired,
+    optionsData: PropTypes.array,
     type: PropTypes.string.isRequired,
     swtichDefault: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
     contrastType: PropTypes.string.isRequired,
     isLvIndicator: PropTypes.bool.isRequired,
     level: PropTypes.string.isRequired,
+  };
+
+  static defaultProps = {
+    optionsData: EMPTY_LIST,
   };
 
   constructor(props) {
@@ -41,7 +45,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
       orgName: '',
       parentOrgName: '',
       finalOptions: options,
-      selectValue: options[0].value,
+      selectValue: !_.isEmpty(options) && options[0].value,
       averageInfo: '',
       tooltipInfo: '',
       scatterOptions: EMPTY_OBJECT,
@@ -89,7 +93,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
     if (oldSwitch !== newSwitch) {
       const options = this.state.finalOptions;
       this.setState({
-        selectValue: options[0].value,
+        selectValue: !_.isEmpty(options) && options[0].value,
       });
     }
 
@@ -98,7 +102,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
       const data = this.makeOptions(nextOptions);
       this.setState({
         finalOptions: data,
-        selectValue: data[0].value,
+        selectValue: !_.isEmpty(data) && data[0].value,
       });
     }
   }
@@ -144,7 +148,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
     } else if (slope <= 1) {
       // 处理斜率小于1的情况
       // 太小的斜率直接计算坐标
-      const endYCood = yAxisMin + ((xAxisMax - xAxisMin) * slope);
+      const endYCood = 0 + ((xAxisMax - 0) * slope);
       let finalSeriesData = {
         ...seriesData,
         startCoord: [xAxisMin, yAxisMin],
@@ -178,14 +182,17 @@ export default class AbilityScatterAnalysis extends PureComponent {
     // 比较当前x轴是否比x轴最大值大
     // 小的话，则取当前值
     // 不然递归调用
+    let point;
     if (xAxisMax > yAxisMax) {
       compare = yAxisMax;
       current = currentMax || xAxisMax;
+      point = current * slope;
     } else {
       compare = xAxisMax;
       current = currentMax || yAxisMax;
+      point = current / slope;
     }
-    const point = (current - yAxisMin) / slope;
+    // const point = (current - 0) / slope;
 
     if (point > compare) {
       if (current / 10000 > 1) {
@@ -258,6 +265,10 @@ export default class AbilityScatterAnalysis extends PureComponent {
 
   @autobind
   makeOptions(optionsData) {
+    if (_.isEmpty(optionsData)) {
+      return EMPTY_LIST;
+    }
+
     return optionsData.map(item => ({
       key: item.key,
       value: item.key,
@@ -278,7 +289,6 @@ export default class AbilityScatterAnalysis extends PureComponent {
       xAxisUnit,
       yAxisName,
       yAxisUnit,
-      yAxisMin,
       xAxisMin,
       slope,
       average,
@@ -294,7 +304,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
       currentSlope = currentSelectY;
     } else {
       compareSlope = slope;
-      currentSlope = (currentSelectY - yAxisMin) / (currentSelectX - xAxisMin);
+      currentSlope = (currentSelectY - 0) / (currentSelectX - xAxisMin);
     }
 
     const currentAverageValue = (currentSelectY / currentSelectX).toFixed(2);

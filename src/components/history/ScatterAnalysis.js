@@ -4,21 +4,21 @@
  */
 import React, { PropTypes, PureComponent } from 'react';
 import { Row, Col } from 'antd';
-import _ from 'lodash';
+// import _ from 'lodash';
 import AbilityScatterAnalysis from './AbilityScatterAnalysis';
 import { scatterType } from '../../config';
 import styles from './scatterAnalysis.less';
 
 const custScatter = scatterType[0];
 const investScatter = scatterType[1];
-
+const EMPTY_LIST = [];
 export default class ScatterAnalysis extends PureComponent {
   static propTypes = {
     contributionAnalysisData: PropTypes.object.isRequired,
     reviewAnalysisData: PropTypes.object.isRequired,
     queryContrastAnalyze: PropTypes.func.isRequired,
-    cust: PropTypes.array.isRequired,
-    invest: PropTypes.array.isRequired,
+    cust: PropTypes.array,
+    invest: PropTypes.array,
     swtichDefault: PropTypes.string.isRequired,
     location: PropTypes.object.isRequired,
     level: PropTypes.string.isRequired,
@@ -26,6 +26,8 @@ export default class ScatterAnalysis extends PureComponent {
   };
 
   static defaultProps = {
+    cust: EMPTY_LIST,
+    invest: EMPTY_LIST,
   };
 
   render() {
@@ -40,9 +42,6 @@ export default class ScatterAnalysis extends PureComponent {
       level,
       isLvIndicator,
     } = this.props;
-    if (_.isEmpty(cust) || _.isEmpty(invest)) {
-      return null;
-    }
 
     return (
       <div className={styles.scatterSection}>

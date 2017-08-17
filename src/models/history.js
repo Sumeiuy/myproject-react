@@ -247,7 +247,7 @@ export default {
       const custScatterRes = yield call(api.queryContrastAnalyze, {
         ...payload.custScatter,
         ...scatterCommon,
-        contrastIndicatorId: cust[0].key,
+        contrastIndicatorId: cust && cust[0].key,
       });
       yield put({
         type: 'queryContrastAnalyzeSuccess',
