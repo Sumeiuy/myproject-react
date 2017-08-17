@@ -175,12 +175,14 @@ export default class Home extends PureComponent {
 
   @autobind
   handleSetCustRange(props) {
-    const { custRange, empInfo: { empInfo: { occDivnNum = '' } } } = props;
+    const { location: { query }, custRange, empInfo: { empInfo: { occDivnNum = '' } } } = props;
+    const { orgId } = query;
     const occ = _.isEmpty(occDivnNum) ? '' : occDivnNum;// orgId取不到的情况下去用户信息中的
-    const orgid = _.isEmpty(window.forReactPosition)
+    const fspOrgid = _.isEmpty(window.forReactPosition) ? occ : window.forReactPosition.orgId;
+    const orgid = _.isEmpty(orgId) // window.forReactPosition
       ?
-      occ
-      : window.forReactPosition.orgId;
+      fspOrgid
+      : occ;
     this.setState({
       fspOrgId: orgid,
       orgId: orgid, // 组织ID
