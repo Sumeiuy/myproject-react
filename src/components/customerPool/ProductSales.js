@@ -49,6 +49,7 @@ export default class ProductSales extends PureComponent {
     }
   }
 
+
   // 计算基本单位
   @autobind
   basicUnit(data) {
