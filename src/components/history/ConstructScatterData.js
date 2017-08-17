@@ -209,12 +209,18 @@ export const constructScatterData = (options = {}) => {
     getFormatUnit(value, originUnit) {
       // 需要特殊处理，因为xy轴的单位不一定是平均值的单位
       let finalUnit = originUnit;
+      let finalAxisData = value;
       if (value >= 100000000) {
         finalUnit = `亿${originUnit}`;
+        finalAxisData = value / 100000000;
       } else if (value >= 10000) {
         finalUnit = `万${originUnit}`;
+        finalAxisData = value / 10000;
       }
-      return finalUnit;
+      return {
+        unit: finalUnit,
+        data: finalAxisData,
+      };
     },
     // 计算当前散点图的斜率
     getSlope(unitInfo) {
@@ -236,34 +242,48 @@ export const constructScatterData = (options = {}) => {
         };
       }
 
-      let xAxisFormatedValue;
+      // let xAxisFormatedValue;
       let average = 0;
+      let xValue;
+      let yValue;
       let finalYUnit = yAxisUnit;
       let finalXUnit = xAxisUnit;
-
-      if (xAxisUnit.indexOf(HU) !== -1) {
-        xAxisFormatedValue = FixNumber.toFixedCust([Number(xAxisTotalValue)]).newSeries[0];
-      } else {
-        xAxisFormatedValue = Number(xAxisTotalValue);
-      }
 
       // 需要特殊处理，因为xy轴的单位不一定是平均值的单位
       finalXUnit = constructHelper.getFormatUnit(xAxisTotalValue, xAxisOriginUnit);
       finalYUnit = constructHelper.getFormatUnit(yAxisTotalValue, yAxisOriginUnit);
+      const { unit: xUnit, data: xData } = finalXUnit;
+      const { unit: yUnit, data: yData } = finalYUnit;
+      average = yData / xData;
 
-      const yAxisFormatedValue = constructHelper.formatDataSource(yAxisOriginUnit, yAxisTotalValue);
-
-      if (xAxisFormatedValue !== 0) {
+      if (xAxisTotalValue !== 0) {
         // 保证x不为0，不然得到NaN
-        average = yAxisFormatedValue / xAxisFormatedValue;
+        if (xAxisUnit.indexOf('万') !== -1) {
+          xValue = Number(xAxisTotalValue) / 10000;
+        } else if (xAxisUnit.indexOf('亿') !== -1) {
+          xValue = Number(xAxisTotalValue) / 100000000;
+        } else {
+          xValue = Number(xAxisTotalValue);
+        }
+
+        if (yAxisUnit.indexOf('万') !== -1) {
+          yValue = Number(yAxisTotalValue) / 10000;
+        } else if (yAxisUnit.indexOf('亿') !== -1) {
+          yValue = Number(yAxisTotalValue) / 100000000;
+        } else {
+          yValue = Number(yAxisTotalValue);
+        }
+
+        const slope = yValue / xValue;
+
         return {
-          slope: average,
-          averageInfo: `平均每${description}${average.toFixed(2)}${finalYUnit}/${finalXUnit}`,
+          slope,
+          averageInfo: `平均每${description}${average.toFixed(2)}${yUnit}/${xUnit}`,
         };
       }
       return {
         slope: average,
-        averageInfo: `平均每${description}0${finalYUnit}/${finalXUnit}`,
+        averageInfo: `平均每${description}0${yAxisUnit}/${xAxisUnit}`,
       };
     },
   };
