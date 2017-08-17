@@ -39,6 +39,7 @@ export default class Income extends PureComponent {
       legend: {
         orient: 'left',
         x: 'right',
+        right: 'right',
         data: [
         { name: '个人', icon: 'square' },
         { name: '一般机构', icon: 'square' },
@@ -52,6 +53,7 @@ export default class Income extends PureComponent {
           name: '净收入',
           type: 'pie',
           selectedMode: 'single',
+          center: [120, 100],
           radius: ['45%', '60%'],
           color: ['#ffa800', '#f0ce30', '#fa7911'],
           label: {
@@ -73,7 +75,8 @@ export default class Income extends PureComponent {
         {
           name: '收入',
           type: 'pie',
-          radius: ['65%', '80%'],
+          center: [120, 100],
+          radius: ['70%', '85%'],
           label: {
             normal: {
               show: false,
