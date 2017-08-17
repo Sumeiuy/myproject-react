@@ -113,8 +113,6 @@ export default class AbilityScatterAnalysis extends PureComponent {
    */
   getAnyPoint(seriesData) {
     const { xAxisMin, yAxisMin, yAxisMax, slope, xAxisMax, currentMax, average } = seriesData;
-    let compare;
-    let current;
     if (average) {
       // 代表率
       // 直接画出一条横线，代表平均线
@@ -148,7 +146,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
     } else if (slope <= 1) {
       // 处理斜率小于1的情况
       // 太小的斜率直接计算坐标
-      const endYCood = 0 + ((xAxisMax - 0) * slope);
+      const endYCood = xAxisMax * slope;
       let finalSeriesData = {
         ...seriesData,
         startCoord: [xAxisMin, yAxisMin],
@@ -182,17 +180,9 @@ export default class AbilityScatterAnalysis extends PureComponent {
     // 比较当前x轴是否比x轴最大值大
     // 小的话，则取当前值
     // 不然递归调用
-    let point;
-    if (xAxisMax > yAxisMax) {
-      compare = yAxisMax;
-      current = currentMax || xAxisMax;
-      point = current * slope;
-    } else {
-      compare = xAxisMax;
-      current = currentMax || yAxisMax;
-      point = current / slope;
-    }
-    // const point = (current - 0) / slope;
+    const compare = xAxisMax;
+    const current = currentMax || yAxisMax;
+    const point = current / slope;
 
     if (point > compare) {
       if (current / 10000 > 1) {
@@ -228,26 +218,15 @@ export default class AbilityScatterAnalysis extends PureComponent {
       }
     }
 
-    let endCoord;
     let finalSeriesData = seriesData;
     // 如果算出来的y坐标小于轴刻度的最小
     // 则将计算出来的值，作为刻度边界值，取floor
-    if (xAxisMax > yAxisMax) {
-      endCoord = [current, point];
-      if (point < yAxisMin) {
-        finalSeriesData = {
-          ...seriesData,
-          yAxisMin: Math.floor(point),
-        };
-      }
-    } else {
-      endCoord = [point, current];
-      if (point < xAxisMin) {
-        finalSeriesData = {
-          ...seriesData,
-          xAxisMin: Math.floor(point),
-        };
-      }
+    const endCoord = [point, current];
+    if (point < xAxisMin) {
+      finalSeriesData = {
+        ...seriesData,
+        xAxisMin: Math.floor(point),
+      };
     }
 
     const scatterOptions = constructScatterOptions({
@@ -281,7 +260,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
   * @param {*} currentItemInfo 当前鼠标悬浮的点数据
   */
   constructTooltipInfo(currentItemInfo) {
-    const { description, level } = this.props;
+    const { description } = this.props;
     const {
       currentSelectX,
       currentSelectY,
@@ -297,22 +276,24 @@ export default class AbilityScatterAnalysis extends PureComponent {
 
     let compareSlope = '';
     let currentSlope;
+    let tooltipInfo = '';
+    const currentAverageValue = (currentSelectY / currentSelectX).toFixed(2);
     if (average) {
       // 对于率的指标作特殊处理
       // 比较每个点信息与平均值的比较
       compareSlope = average;
       currentSlope = currentSelectY;
+      tooltipInfo = `${xAxisName}：${currentSelectX}${xAxisUnit}，${yAxisName}：${currentSelectY}${yAxisUnit}，${currentSlope >= compareSlope ? '优' : '低'}于平均水平。`;
     } else {
       compareSlope = slope;
-      currentSlope = (currentSelectY - 0) / (currentSelectX - xAxisMin);
+      currentSlope = currentSelectY / (currentSelectX - xAxisMin);
+      tooltipInfo = `${xAxisName}：${currentSelectX}${xAxisUnit}，${yAxisName}：${currentSelectY}${yAxisUnit}。平均每${description}${currentAverageValue}${yAxisUnit}/${xAxisUnit}，${currentSlope >= compareSlope ? '优' : '低'}于平均水平。`;
     }
-
-    const currentAverageValue = (currentSelectY / currentSelectX).toFixed(2);
 
     // 经总和分公司下，显示每个点的平均值
     // 正常显示每个点的x信息和y信息，和每平均信息
     this.setState({
-      tooltipInfo: `${yAxisName}：${currentSelectY}${yAxisUnit} / ${xAxisName}：${currentSelectX}${xAxisUnit}。${(level === '1' || level === '2') ? `平均${description}:${currentAverageValue}${yAxisUnit}/${xAxisUnit}，` : ''}每${description}的${yAxisName}${currentSlope > compareSlope ? '优' : '低'}于平均水平。`,
+      tooltipInfo,
     });
   }
 

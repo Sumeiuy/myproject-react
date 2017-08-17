@@ -33,6 +33,33 @@ export const constructScatterData = (options = {}) => {
   let axisData;
 
   const constructHelper = {
+    padFixedCust(m, method) {
+      const cust = Math.abs(m);
+      let value = 0;
+      if (cust >= 10000) {
+        value = Math[method](m / 1000) * 1000;
+      } else if (cust >= 100) {
+        value = Math[method](m / 100) * 100;
+      } else if (cust >= 10) {
+        value = Math[method](m / 10) * 10;
+      } else if (cust < 10) {
+        value = Math[method](m);
+      }
+      return value;
+    },
+    // 针对户获取图表最大和最小值
+    getMaxAndMinCust(series) {
+      let max = Math.max(...series);
+      let min = Math.min(...series);
+      max = constructHelper.padFixedCust(max, 'ceil');
+      min = constructHelper.padFixedCust(min, 'floor');
+      if (max <= 10) {
+        max = 10;
+        min = 0;
+      }
+
+      return { max, min };
+    },
     // 计算y轴的刻度范围
     getYAxisTickMinAndMax(array, curUnit) {
       if (_.isEmpty(array)) {
@@ -44,7 +71,7 @@ export const constructScatterData = (options = {}) => {
 
       let minAndMax;
       if (curUnit === HU || curUnit === REN) {
-        minAndMax = FixNumber.getMaxAndMinCust(array);
+        minAndMax = constructHelper.getMaxAndMinCust(array);
       } else if (curUnit === CI) {
         minAndMax = FixNumber.getMaxAndMinCi(array);
       } else if (curUnit === GE) {
@@ -174,6 +201,8 @@ export const constructScatterData = (options = {}) => {
     // 计算当前散点图的斜率
     getSlope(unitInfo) {
       const { xAxisUnit, yAxisUnit, yAxisData } = unitInfo;
+      const { value: xAxisTotalValue, unit: xAxisOriginUnit } = xAxisOption;
+      const { value: yAxisTotalValue, unit: yAxisOriginUnit, name: yAxisName } = yAxisOption;
       if (isLvIndicator) {
         // 包含率
         const total = _.reduce(yAxisData, (sum, n) => sum + n, 0);
@@ -184,21 +213,29 @@ export const constructScatterData = (options = {}) => {
         }
         return {
           slope: average,
-          averageInfo: `平均每${description}${average && average.toFixed(2)}${yAxisUnit}`,
+          averageInfo: `${yAxisName}平均值${average && average.toFixed(2)}${yAxisUnit}`,
           average, // 平均值，用以区分
         };
       }
 
-      const { value: xAxisTotalValue } = xAxisOption;
-      const { value: yAxisTotalValue, unit: yAxisOriginUnit } = yAxisOption;
       let xAxisFormatedValue;
       let average = 0;
       let finalYUnit = yAxisUnit;
+      let finalXUnit = xAxisUnit;
+
       if (xAxisUnit.indexOf(HU) !== -1) {
         xAxisFormatedValue = FixNumber.toFixedCust([Number(xAxisTotalValue)]).newSeries[0];
       } else {
         xAxisFormatedValue = Number(xAxisTotalValue);
       }
+
+      // 需要特殊处理，因为x轴的单位不一定是平均值的单位
+      if (xAxisTotalValue >= 100000000) {
+        finalXUnit = `亿${xAxisOriginUnit}`;
+      } else if (xAxisTotalValue >= 10000) {
+        finalXUnit = `万${xAxisOriginUnit}`;
+      }
+
       // 需要特殊处理，因为y轴的单位不一定是平均值的单位
       if (yAxisTotalValue >= 100000000) {
         finalYUnit = `亿${yAxisOriginUnit}`;
@@ -212,12 +249,12 @@ export const constructScatterData = (options = {}) => {
         average = yAxisFormatedValue / xAxisFormatedValue;
         return {
           slope: average,
-          averageInfo: `平均每${description}${average.toFixed(2)}${finalYUnit}/${xAxisUnit}`,
+          averageInfo: `平均每${description}${average.toFixed(2)}${finalYUnit}/${finalXUnit}`,
         };
       }
       return {
         slope: average,
-        averageInfo: `平均每${description}0${finalYUnit}/${xAxisUnit}`,
+        averageInfo: `平均每${description}0${finalYUnit}/${finalXUnit}`,
       };
     },
   };
