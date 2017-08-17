@@ -130,12 +130,35 @@ export default class CreateBoardModal extends PureComponent {
       });
       return;
     }
+<<<<<<< HEAD:src/components/modals/CreateBoardModal.js
     confirm({
       ownerOrgId,
       name: boardname,
       boardType,
       permitOrgIds,
     });
+=======
+    // 调用创建历史对比看板接口
+    if (boardType === 'TYPE_LSDB_TGJX') {
+      createBoardConfirm({
+        ownerOrgId,
+        name: boardname,
+        boardType,
+        coreIndicator: selectKeys,
+        investContrastIndicator: ['tgInNum'],
+        custContrastIndicator: ['custNum', 'currSignCustNum'],
+      });
+    } else {
+      createBoardConfirm({
+        ownerOrgId,
+        name: boardname,
+        boardType,
+        coreIndicator: selectKeys,
+        investContrastIndicator: ['custNum'],
+        custContrastIndicator: ['totCustNum', 'pCustNum', 'oCustNum', 'oNewCustNum', 'oNewPrdtCustNum', 'InminorCustNum', 'newCustNum'],
+      });
+    }
+>>>>>>> #FSP-4862#修改默认指标:src/components/modals/CreateHistoryBoardModal.js
   }
 
   render() {
