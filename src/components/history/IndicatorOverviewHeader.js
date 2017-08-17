@@ -53,6 +53,7 @@ export default class IndicatorOverviewHeader extends PureComponent {
     this.removeHistoryListener = history.listenBefore(
       () => {
         if (!_.isEmpty(this.props.selectKeys)) {
+          /*eslint-disable*/
           if (fsp) {
             window.$confirm = window.confirm;
             window.confirm = function (...argus) {
@@ -61,6 +62,7 @@ export default class IndicatorOverviewHeader extends PureComponent {
             };
             return '您重新挑选的指标看板尚未保存，确认直接返回？';
           }
+          /*eslint-disable*/
           return '您重新挑选的指标看板尚未保存，确认直接返回？';
         }
         return null;
@@ -115,7 +117,7 @@ export default class IndicatorOverviewHeader extends PureComponent {
         boardId,
         boardType,
         coreIndicator: selectKeys,
-        investContrastIndicator: ['tgNum', 'tgInNum'],
+        investContrastIndicator: ['tgInNum'],
         custContrastIndicator: ['custNum', 'currSignCustNum'],
       });
     } else {
@@ -125,7 +127,7 @@ export default class IndicatorOverviewHeader extends PureComponent {
         boardType,
         coreIndicator: selectKeys,
         investContrastIndicator: ['custNum'],
-        custContrastIndicator: ['totCustNum', 'pCustNum', 'oCustNum', 'oNewCustNum', 'oNewPrdtCustNum', 'InminorCustNum'],
+        custContrastIndicator: ['totCustNum', 'pCustNum', 'oCustNum', 'oNewCustNum', 'oNewPrdtCustNum', 'InminorCustNum', 'newCustNum'],
       });
     }
   }
