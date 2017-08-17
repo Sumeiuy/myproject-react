@@ -222,6 +222,17 @@ export const constructScatterData = (options = {}) => {
         data: finalAxisData,
       };
     },
+    getFormatValue(unit, totalValue) {
+      let value;
+      if (unit.indexOf('万') !== -1) {
+        value = Number(totalValue) / 10000;
+      } else if (unit.indexOf('亿') !== -1) {
+        value = Number(totalValue) / 100000000;
+      } else {
+        value = Number(totalValue);
+      }
+      return value;
+    },
     // 计算当前散点图的斜率
     getSlope(unitInfo) {
       const { xAxisUnit, yAxisUnit, yAxisData } = unitInfo;
@@ -258,22 +269,8 @@ export const constructScatterData = (options = {}) => {
 
       if (xAxisTotalValue !== 0) {
         // 保证x不为0，不然得到NaN
-        if (xAxisUnit.indexOf('万') !== -1) {
-          xValue = Number(xAxisTotalValue) / 10000;
-        } else if (xAxisUnit.indexOf('亿') !== -1) {
-          xValue = Number(xAxisTotalValue) / 100000000;
-        } else {
-          xValue = Number(xAxisTotalValue);
-        }
-
-        if (yAxisUnit.indexOf('万') !== -1) {
-          yValue = Number(yAxisTotalValue) / 10000;
-        } else if (yAxisUnit.indexOf('亿') !== -1) {
-          yValue = Number(yAxisTotalValue) / 100000000;
-        } else {
-          yValue = Number(yAxisTotalValue);
-        }
-
+        xValue = constructHelper.getFormatValue(xAxisUnit, xAxisTotalValue);
+        yValue = constructHelper.getFormatValue(yAxisUnit, yAxisTotalValue);
         const slope = yValue / xValue;
 
         return {
