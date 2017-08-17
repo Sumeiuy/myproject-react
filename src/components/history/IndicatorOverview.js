@@ -46,6 +46,7 @@ export default class IndicatorOverview extends PureComponent {
     if (!_.isEqual(preCore, nextCore)) {
       this.setState({
         selectIndex: 0,
+        clickItemIndex: 0,
       });
     }
   }
