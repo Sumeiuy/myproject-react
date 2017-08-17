@@ -99,16 +99,16 @@ export default class CustomerList extends PureComponent {
     };
   }
 
-  componentWillMount() {
-    const { location: { query }, custRange } = this.props;
+  componentDidMount() {
+    const { custRange } = this.props;
     if (custRange.length > 0) {
       this.handleSetCustRange(this.props);
     }
-    this.getCustomerList(query);
-    // getCustIncome({ custNumber: '020100053538' });
+    this.getCustomerList(this.props);
   }
 
   componentWillReceiveProps(nextProps) {
+    // debugger
     const { location: preLocation,
       position: prePosition,
       custRange: preCustRange, cycle: preCycle, empInfo: preEmpInfo } = this.props;
@@ -124,7 +124,7 @@ export default class CustomerList extends PureComponent {
       this.setState({
         fspOrgId: nextOrgId,
         createCustRange: this.handleCreateCustRange(nextOrgId, nextProps),
-      }, this.getCustomerList);
+      }, this.getCustomerList(nextProps));
     }
     if (!_.isEqual(preCycle, nextCycle)) {
       this.setState({
@@ -138,14 +138,18 @@ export default class CustomerList extends PureComponent {
       });
     }
     if (!_.isEqual(preLocation.query, nextLocation.query)) {
-      this.getCustomerList(nextLocation.query);
+      this.getCustomerList(nextProps);
     }
   }
 
   @autobind
-  getCustomerList(query) {
-    const { getCustomerData } = this.props;
-    const orgId = _.isEmpty(window.forReactPosition) ? '' : window.forReactPosition.orgId;
+  getCustomerList(props) {
+    // const { getCustomerData } = this.props;
+    const { getCustomerData, location: { query } } = props;
+    const orgId = _.isEmpty(window.forReactPosition)
+      ?
+      ''
+      : window.forReactPosition.orgId;
     const k = decodeURIComponent(query.q);
     const param = {
       // 必传，当前页
