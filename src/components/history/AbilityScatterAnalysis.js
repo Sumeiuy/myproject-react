@@ -276,18 +276,18 @@ export default class AbilityScatterAnalysis extends PureComponent {
 
     let compareSlope = '';
     let currentSlope;
-    let tooltipInfo = '';
+    let tooltipInfo = `${xAxisName}：${currentSelectX}${xAxisUnit}，${yAxisName}：${currentSelectY}${yAxisUnit}`;
     const currentAverageValue = (currentSelectY / currentSelectX).toFixed(2);
     if (average) {
       // 对于率的指标作特殊处理
       // 比较每个点信息与平均值的比较
       compareSlope = average;
       currentSlope = currentSelectY;
-      tooltipInfo = `${xAxisName}：${currentSelectX}${xAxisUnit}，${yAxisName}：${currentSelectY}${yAxisUnit}，${currentSlope >= compareSlope ? '优' : '低'}于平均水平。`;
+      tooltipInfo = `${tooltipInfo}。${currentSlope >= compareSlope ? '优' : '低'}于平均水平。`;
     } else {
       compareSlope = slope;
       currentSlope = currentSelectY / (currentSelectX - xAxisMin);
-      tooltipInfo = `${xAxisName}：${currentSelectX}${xAxisUnit}，${yAxisName}：${currentSelectY}${yAxisUnit}。平均每${description}${currentAverageValue}${yAxisUnit}/${xAxisUnit}，${currentSlope >= compareSlope ? '优' : '低'}于平均水平。`;
+      tooltipInfo = `${tooltipInfo}。平均每${description}${currentAverageValue}${yAxisUnit}/${xAxisUnit}，${currentSlope >= compareSlope ? '优' : '低'}于平均水平。`;
     }
 
     // 经总和分公司下，显示每个点的平均值
