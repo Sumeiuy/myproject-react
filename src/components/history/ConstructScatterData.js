@@ -175,8 +175,16 @@ export const constructScatterData = (options = {}) => {
       };
     },
     // 获取x轴的单位和格式化后的数据源
-    getXAxisUnit(array) {
-      return FixNumber.toFixedCust(array);
+    getXAxisUnit(array, currentXUnit) {
+      if (currentXUnit.indexOf(HU) !== -1) {
+        return FixNumber.toFixedCust(array);
+      } else if (currentXUnit.indexOf(REN) !== -1) {
+        return constructHelper.toFixedRen(array);
+      }
+      return {
+        newUnit: currentXUnit,
+        newSeries: array,
+      };
     },
     formatDataSource(yAxisOriginUnit, yAxisTotalValue) {
       let yAxisFormatedValue;
@@ -299,7 +307,7 @@ export const constructScatterData = (options = {}) => {
   }
 
   // 拿到x轴与y轴的单位与转换后的元数据
-  const xAxisUnit = constructHelper.getXAxisUnit(xAxisDataArray);
+  const xAxisUnit = constructHelper.getXAxisUnit(xAxisDataArray, currentXUnit);
   const yAxisUnit = constructHelper.getYAxisUnit(yAxisDataArray, currentYUnit);
 
   // 拿到x轴与y轴转换后的具体刻度最大值与最小值
