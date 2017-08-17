@@ -169,6 +169,7 @@ export default class HistoryHome extends PureComponent {
       swtichDefault: '', // 通知相关组件切换回默认状态
       showMenu: false,
       showSubMenu: false,
+      resetDefault: false,
     };
   }
 
@@ -469,10 +470,11 @@ export default class HistoryHome extends PureComponent {
   @autobind
   changeRankBar(rankQuery) {
     let { indicatorId } = this.state;
+    const { historyCore } = this.props;
     const hasIndicatorId = _.isEmpty(indicatorId);
     if (hasIndicatorId) {
       // 初始化indicatorId并么有添加进state
-      indicatorId = this.props.historyCore[0].key;
+      indicatorId = !_.isEmpty(historyCore) && historyCore[0].key;
       this.setState({
         indicatorId,
       });
@@ -491,6 +493,7 @@ export default class HistoryHome extends PureComponent {
   @autobind
   changeScatterContrast(query) {
     const { type, contrastIndicatorId } = query;
+    const { historyCore } = this.props;
     const { coreIndicatorIds } = this.state;
     let { indicatorId } = this.state;
     // 判断有无选择core
@@ -500,7 +503,7 @@ export default class HistoryHome extends PureComponent {
       // 初始化indicatorId并么有添加进state
       if (hasSelectCore) {
         // 没有选择Core
-        indicatorId = this.props.historyCore[0].key;
+        indicatorId = !_.isEmpty(historyCore) && historyCore[0].key;
       } else {
         // 选择了Core
         indicatorId = !_.isEmpty(coreIndicatorIds) && coreIndicatorIds[0];
@@ -521,7 +524,7 @@ export default class HistoryHome extends PureComponent {
     const {
       reviewAnalysis = EMPTY_OBJECT,
       contributionAnalysis,
-      historyCore,
+      historyCore = EMPTY_LIST,
       crrData,
       historyContrastDic,
       contrastData,
@@ -646,6 +649,7 @@ export default class HistoryHome extends PureComponent {
                 location={location}
                 level={level}
                 isLvIndicator={isLvIndicator}
+                currentSelectIndicatorName={curNameIndex > -1 ? `${historyCore[curNameIndex].parentName || ''}${historyCore[curNameIndex].name}` : ''}
               />
             </div>
           </div>

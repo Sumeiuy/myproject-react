@@ -7,6 +7,7 @@ import { Select } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import CommonScatter from '../chartRealTime/CommonScatter';
+import imgSrc from '../../../static/images/noChart.png';
 import { constructScatterData } from './ConstructScatterData';
 import { constructScatterOptions } from './ConstructScatterOptions';
 import styles from './abilityScatterAnalysis.less';
@@ -28,6 +29,8 @@ export default class AbilityScatterAnalysis extends PureComponent {
     contrastType: PropTypes.string.isRequired,
     isLvIndicator: PropTypes.bool.isRequired,
     level: PropTypes.string.isRequired,
+    boardType: PropTypes.string.isRequired,
+    currentSelectIndicatorName: PropTypes.string.isRequired,
   };
 
   static defaultProps = {
@@ -54,9 +57,9 @@ export default class AbilityScatterAnalysis extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { data: nextData, swtichDefault: newSwitch, optionsData: nextOptions } = nextProps;
+    const { data: nextData,
+      optionsData: nextOptions } = nextProps;
     const {
-      swtichDefault: oldSwitch,
       description,
       optionsData: prevOptions,
       isLvIndicator,
@@ -90,12 +93,12 @@ export default class AbilityScatterAnalysis extends PureComponent {
     }
 
     // 恢复默认选项
-    if (oldSwitch !== newSwitch) {
-      const options = this.state.finalOptions;
-      this.setState({
-        selectValue: !_.isEmpty(options) && options[0].value,
-      });
-    }
+    // if (prevDefault !== nextDefault) {
+    // const options = this.state.finalOptions;
+    // this.setState({
+    // selectValue: !_.isEmpty(options) && options[0].value,
+    // });
+    // }
 
     // 切换对比数据
     if (prevOptions !== nextOptions) {
@@ -364,6 +367,25 @@ export default class AbilityScatterAnalysis extends PureComponent {
     }
   }
 
+  @autobind
+  toggleChart() {
+    const { boardType, currentSelectIndicatorName, contrastType } = this.props;
+    return (boardType === 'TYPE_LSDB_TGJX' &&
+      (currentSelectIndicatorName === '投顾人数'
+        || (contrastType === '客户类型' &&
+          (currentSelectIndicatorName === '投顾入岗人数'
+            || currentSelectIndicatorName === '新开客户净转入资产'))
+      ))
+      || (boardType === 'TYPE_LSDB_JYYJ'
+        && (contrastType === '客户类型' &&
+          (currentSelectIndicatorName === '有效客户数'
+            || currentSelectIndicatorName === '零售客户数'
+            || currentSelectIndicatorName === '高净值客户总数个人'
+            || currentSelectIndicatorName === '高净值客户总数机构'
+          ))
+      );
+  }
+
   render() {
     const {
       scatterElemHeight,
@@ -407,46 +429,56 @@ export default class AbilityScatterAnalysis extends PureComponent {
               dropdownClassName={styles.custDimenSelect}
             >
               {
-                finalOptions.map(item =>
-                  <Option value={item.value} key={item.key}>{item.label}</Option>)
+                !_.isEmpty(finalOptions) ? finalOptions.map(item =>
+                  <Option value={item.value} key={item.key}>{item.label}</Option>) : null
               }
             </Select>
           </div>
         </div>
-        <div className={styles.yAxisName} style={style}>{yAxisName}（{yAxisUnit}）</div>
-        <div
-          className={styles.abilityScatter}
-          ref={ref => (this.abilityScatterElem = ref)}
-        >
-          <CommonScatter
-            onScatterHover={this.handleScatterHover}
-            onScatterLeave={this.handleScatterLeave}
-            scatterOptions={scatterOptions}
-            scatterElemHeight={scatterElemHeight}
-          />
-          <div className={styles.xAxisName}>{xAxisName}（{xAxisUnit}）</div>
-        </div>
         {
-          _.isEmpty(finalData) ?
-            null
-            :
-            <div className={styles.averageDescription}>
-              <div className={styles.averageIcon} />
-              <div className={styles.averageInfo}>{averageInfo}</div>
-            </div>
-        }
+          this.toggleChart() ?
+            <div className={styles.noChart}>
+              <img src={imgSrc} alt="无对比意义" />
+            </div> :
+            (
+              <div>
+                <div className={styles.yAxisName} style={style}>{yAxisName}（{yAxisUnit}）</div>
+                <div
+                  className={styles.abilityScatter}
+                  ref={ref => (this.abilityScatterElem = ref)}
+                >
+                  <CommonScatter
+                    onScatterHover={this.handleScatterHover}
+                    onScatterLeave={this.handleScatterLeave}
+                    scatterOptions={scatterOptions}
+                    scatterElemHeight={scatterElemHeight}
+                  />
+                  <div className={styles.xAxisName}>{xAxisName}（{xAxisUnit}）</div>
+                </div>
+                {
+                  _.isEmpty(finalData) ?
+                    null
+                    :
+                    <div className={styles.averageDescription}>
+                      <div className={styles.averageIcon} />
+                      <div className={styles.averageInfo}>{averageInfo}</div>
+                    </div>
+                }
 
-        {isShowTooltip ?
-          <div className={styles.description}>
-            <div className={styles.orgDes}>
-              <i className={styles.desIcon} />
-              <span>{_.isEmpty(parentOrgName) ? '' : `${parentOrgName}-`}{orgName}:</span>
-            </div>
-            <div className={styles.detailDesc}>
-              <span>{tooltipInfo}</span>
-            </div>
-          </div>
-          : <div className={styles.noneTooltip} />
+                {isShowTooltip ?
+                  <div className={styles.description}>
+                    <div className={styles.orgDes}>
+                      <i className={styles.desIcon} />
+                      <span>{_.isEmpty(parentOrgName) ? '' : `${parentOrgName}-`}{orgName}:</span>
+                    </div>
+                    <div className={styles.detailDesc}>
+                      <span>{tooltipInfo}</span>
+                    </div>
+                  </div>
+                  : <div className={styles.noneTooltip} />
+                }
+              </div>
+            )
         }
       </div>
     );
