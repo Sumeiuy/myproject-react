@@ -265,6 +265,7 @@ export const constructScatterData = (options = {}) => {
       finalYUnit = constructHelper.getFormatUnit(yAxisTotalValue, yAxisOriginUnit);
       const { unit: xUnit, data: xData } = finalXUnit;
       const { unit: yUnit, data: yData } = finalYUnit;
+      // 平均值
       average = yData / xData;
 
       if (xAxisTotalValue !== 0) {
@@ -272,10 +273,27 @@ export const constructScatterData = (options = {}) => {
         xValue = constructHelper.getFormatValue(xAxisUnit, xAxisTotalValue);
         yValue = constructHelper.getFormatValue(yAxisUnit, yAxisTotalValue);
         const slope = yValue / xValue;
+        let newAverage = average;
+        let newYUnit = yUnit;
+        if (newAverage * 100 < 1) {
+          // 如果保留两位小数之后，依旧是0.00，那么转换单位
+          if (yUnit.indexOf('万') !== -1) {
+            newAverage = (Number(newAverage) * 10000).toFixed(2);
+            newYUnit = String(newYUnit).replace('万', '');
+          } else if (yUnit.indexOf('亿') !== -1) {
+            newAverage = (Number(newAverage) * 100000000).toFixed(2);
+            newYUnit = String(newYUnit).replace('亿', '');
+          }
+        }
+
+        if (newAverage > 10000) {
+          newAverage = (Number(newAverage) / 10000).toFixed(2);
+          newYUnit = `万${newYUnit}`;
+        }
 
         return {
           slope,
-          averageInfo: `平均每${description}${average.toFixed(2)}${yUnit}/${xUnit}`,
+          averageInfo: `平均每${description}${Number(newAverage).toFixed(2)}${newYUnit}/${xUnit}`,
         };
       }
       return {
