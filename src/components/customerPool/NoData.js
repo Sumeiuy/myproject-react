@@ -14,7 +14,7 @@ const NoData = () => (
   <div className={styles.nodata}>
     <div className="empty-container">
       <img src={emptyImg} alt="" />
-      <p>抱歉！没有找到相关客户</p>
+      <p>没有找到相关客户</p>
     </div>
   </div>
   );

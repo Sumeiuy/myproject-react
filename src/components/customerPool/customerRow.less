@@ -103,17 +103,60 @@
       	width: 50px;
       	text-align: center;
       }
-      .tagB {
-      	width: 40px;
-      	text-align: center;
-      	position: absolute;
-      	display: inline-block;
-      	border-radius: 5px;
-      	color: white;
-      	font-size: 12px;
-      	margin-top: 33px;
-      	margin-left: 70px;
-      	background-color: #60C1EA;
+      :global .tagB {
+        width: 30px;
+        height: 20px;
+        line-height: 20px;
+        text-align: center;
+        position: absolute;
+        display: inline-block;
+        border-radius: 5px;
+        color: white;
+        font-size: 12px;
+        margin-top: 33px;
+        margin-left: 70px;
+        background-color: #60C1EA;
+        &.zuidi {
+          background-color: #81a3b8;
+          .itemText {
+            width: 120px;
+            right: -48px;
+          }
+        }
+        &.baoshou {
+          background-color: #756fb8;
+        }
+        &.jinshen {
+          background-color: #7d9be0;
+        }
+        &.wenjian {
+          background-color: #60c1ea;
+        }
+        &.jiji {
+          background-color: #fdb02b;
+        }
+        &.jijin {
+          background-color: #fd752b;
+        }
+        &:hover {
+          div {
+            display: inline-block;
+          }
+        }
+        .itemText {
+          display: none;
+          position: absolute;
+          top: -30px;
+          right: 2px;
+          border-radius: 3px;
+          font-size: 1px;
+          width: 48px;
+          height: 26px;
+          line-height: 26px;
+          box-shadow: 0 0 15px #EAEBEB;
+          background-color: #FFFFCD;
+          color: #333;
+        }
       }
     }
       .basicInfoC {
@@ -165,7 +208,6 @@
               }
               .numA{
                 font-weight: bold;
-
               }
               .numB{
                 color: #DA3915;

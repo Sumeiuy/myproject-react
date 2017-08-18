@@ -4,7 +4,6 @@
  * @author wangjunjun
  */
 
-
 function exec(method, ...args) {
   try {
     window[method].apply(null, args);

@@ -51,7 +51,9 @@ export default class TradingVolume extends PureComponent {
     if (!_.isEmpty(data) && data.length > 0) {
       const newNum = Math.max(...data);
       // 超过1亿
-      if (newNum >= 100000000) {
+      if (newNum >= 10000) {
+        unit = MILLION;
+      } else if (newNum >= 100000000) {
         unit = BILLION;
       } else if (newNum >= 10000) {
         unit = MILLION;

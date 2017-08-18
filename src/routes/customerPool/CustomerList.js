@@ -26,6 +26,8 @@ const ORG = 3; // 组织机构
 const CUR_PAGE = 1; // 默认当前页
 const CUR_PAGESIZE = 10; // 默认页大小
 
+const DEFAULT_SORT = { sortType: 'Aset', sortDirection: 'desc' }; // 默认排序方式
+
 const effects = {
   allInfo: 'customerPool/getAllInfo',
   getDictionary: 'customerPool/getDictionary',
@@ -69,7 +71,6 @@ export default class CustomerList extends PureComponent {
     performanceIndicators: PropTypes.object,
     collectCustRange: PropTypes.func.isRequired,
     custRange: PropTypes.array,
-    cycle: PropTypes.array,
     empInfo: PropTypes.object,
     position: PropTypes.object,
     dict: PropTypes.object.isRequired,
@@ -85,7 +86,6 @@ export default class CustomerList extends PureComponent {
     performanceIndicators: {},
     custRange: [],
     position: {},
-    cycle: [],
     empInfo: {},
   }
 
@@ -111,10 +111,10 @@ export default class CustomerList extends PureComponent {
     // debugger
     const { location: preLocation,
       position: prePosition,
-      custRange: preCustRange, cycle: preCycle, empInfo: preEmpInfo } = this.props;
+      custRange: preCustRange, empInfo: preEmpInfo } = this.props;
     const { location: nextLocation,
       position: nextPosition,
-      custRange: nextCustRange, cycle: nextCycle, empInfo: nextEmpInfo } = nextProps;
+      custRange: nextCustRange, empInfo: nextEmpInfo } = nextProps;
     const { orgId: preOrgId } = prePosition;
     const { orgId: nextOrgId } = nextPosition;
     if (preEmpInfo !== nextEmpInfo) {
@@ -125,11 +125,6 @@ export default class CustomerList extends PureComponent {
         fspOrgId: nextOrgId,
         createCustRange: this.handleCreateCustRange(nextOrgId, nextProps),
       }, this.getCustomerList(nextProps));
-    }
-    if (!_.isEqual(preCycle, nextCycle)) {
-      this.setState({
-        cycleSelect: nextCycle[0].key,
-      });
     }
     if (!_.isEqual(preCustRange, nextCustRange) || preLocation !== nextLocation) {
       this.handleGetAllInfo(nextCustRange);
@@ -144,7 +139,6 @@ export default class CustomerList extends PureComponent {
 
   @autobind
   getCustomerList(props) {
-    // const { getCustomerData } = this.props;
     const { getCustomerData, location: { query } } = props;
     const orgId = _.isEmpty(window.forReactPosition)
       ?
@@ -175,7 +169,9 @@ export default class CustomerList extends PureComponent {
       ];
       // param.fullTestSearch = k;
     }
-    if (orgId) {   // 客户经理机构号
+    if (query.orgId) {   // 客户经理机构号
+      param.orgId = query.orgId;
+    } else if (orgId) {
       param.orgId = orgId;
     }
     // 过滤数组
@@ -211,6 +207,8 @@ export default class CustomerList extends PureComponent {
         sortType: query.sortType,
         sortDirection: query.sortDirection,
       });
+    } else {
+      sortsReqList.push(DEFAULT_SORT);
     }
     if (!_.isEmpty(filtersReq)) {
       param.filtersReq = filtersReq;
@@ -241,7 +239,6 @@ export default class CustomerList extends PureComponent {
 
   @autobind
   handleGetAllInfo(custRangeData) {
-    const { cycle } = this.props;
     const { fspOrgId } = this.state;
     let custType = ORG;
     const orgsId = custRangeData.length > 0 ? custRangeData[0].id : '';
@@ -256,9 +253,6 @@ export default class CustomerList extends PureComponent {
       });
       custType = CUST_MANAGER;
     }
-    this.setState({
-      cycleSelect: cycle.length > 0 ? cycle[0].key : '',
-    });
     console.log('custType', custType);
   }
 
@@ -317,8 +311,6 @@ export default class CustomerList extends PureComponent {
     });
     this.setState({
       ...state,
-    }, () => {
-      this.getCustomerList();
     });
     console.log('update>>>>', state);
   }
@@ -393,7 +385,7 @@ export default class CustomerList extends PureComponent {
       Rights,
       sortDirection,
       sortType,
-      orgId,
+      // orgId,
       source,
       pageSize,
       curPageNum,
@@ -420,7 +412,6 @@ export default class CustomerList extends PureComponent {
               location={location}
               replace={replace}
               source={source}
-              orgId={orgId}
               createCustRange={createCustRange}
               updateQueryState={this.updateQueryState}
               collectCustRange={collectCustRange}
