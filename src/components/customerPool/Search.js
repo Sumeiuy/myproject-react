@@ -85,10 +85,10 @@ export default class Search extends PureComponent {
 
   @autobind
   onSelect(value) {
-    console.log(value);
     this.setState({
       inputVal: value,
     });
+    this.handleSearch(value);
   }
 
   @autobind

@@ -31,11 +31,13 @@ export default class TradingVolume extends PureComponent {
   componentWillReceiveProps(nextProps) {
     const { data: preData } = this.props;
     const { data: nextData } = nextProps;
-    const { purAddCustaset: prePurAddCustaset } = preData;
     const { purAddCustaset: nextPurAddCustaset,
       purRakeGjpdt, tranAmtBasicpdt, tranAmtTotpdt } = nextData;
-    if (prePurAddCustaset !== nextPurAddCustaset) {
-      const data = [nextPurAddCustaset, purRakeGjpdt, tranAmtBasicpdt, tranAmtTotpdt];
+    if (!_.isEmpty(preData, nextData)) {
+      const data = [_.parseInt(nextPurAddCustaset, 10),
+        _.parseInt(purRakeGjpdt, 10),
+        _.parseInt(tranAmtBasicpdt, 10),
+        _.parseInt(tranAmtTotpdt, 10)];
       this.setState({
         unit: this.basicUnit(data),
       });
@@ -49,10 +51,10 @@ export default class TradingVolume extends PureComponent {
     if (!_.isEmpty(data) && data.length > 0) {
       const newNum = Math.max(...data);
       // 超过1亿
-      if (newNum >= 10000) {
-        unit = MILLION;
-      } else if (newNum >= 100000000) {
+      if (newNum >= 100000000) {
         unit = BILLION;
+      } else if (newNum >= 10000) {
+        unit = MILLION;
       }
     }
     return unit;
@@ -63,6 +65,7 @@ export default class TradingVolume extends PureComponent {
     const { unit } = this.state;
     let newNum;
     if (num !== '--') {
+      newNum = _.parseInt(num, 10);
       if (num === '0') {
         return '0';
       }
@@ -79,9 +82,7 @@ export default class TradingVolume extends PureComponent {
       } else if (newNum.toString().indexOf('.') > 0 && newNum.toString().split('.')[1].length > 1) {
         newNum = parseFloat(newNum).toFixed(2);
       }
-      return (
-        { newNum }
-      );
+      return newNum;
     }
     return '--';
   }
@@ -100,7 +101,7 @@ export default class TradingVolume extends PureComponent {
         <div className={styles.inner}>
           <div className={styles.title}>
             <Icon type="jiaoyiliang" />交易量（{unit}元）
-                    </div>
+          </div>
           <div className={`${styles.content} ${styles.jyContent}`}>
             <ul>
               <li>

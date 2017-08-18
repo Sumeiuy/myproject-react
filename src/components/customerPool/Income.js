@@ -37,20 +37,28 @@ export default class Income extends PureComponent {
       },
       color: ['#60c1ea', '#756fb8', '#7d9be0'],
       legend: {
-        orient: 'vertical',
-        x: 'bottom',
-        data: ['个人', '一般机构', '产品机构', '净手续费', '净佣金', '净利息'],
+        orient: 'left',
+        x: 'right',
+        right: 'right',
+        data: [
+        { name: '个人', icon: 'square' },
+        { name: '一般机构', icon: 'square' },
+        { name: '产品机构', icon: 'square' },
+        { name: '净手续费', icon: 'square' },
+        { name: '净佣金', icon: 'square' },
+        { name: '净利息', icon: 'square' }],
       },
       series: [
         {
           name: '净收入',
           type: 'pie',
           selectedMode: 'single',
+          center: [120, 100],
           radius: ['45%', '60%'],
           color: ['#ffa800', '#f0ce30', '#fa7911'],
           label: {
             normal: {
-              position: 'center',
+              show: false,
             },
           },
           labelLine: {
@@ -67,8 +75,18 @@ export default class Income extends PureComponent {
         {
           name: '收入',
           type: 'pie',
+          center: [120, 100],
           radius: ['70%', '85%'],
-
+          label: {
+            normal: {
+              show: false,
+            },
+          },
+          labelLine: {
+            normal: {
+              show: false,
+            },
+          },
           data: [
             { value: 335, name: '净手续费' },
             { value: 310, name: '净佣金' },
