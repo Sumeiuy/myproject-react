@@ -145,22 +145,17 @@ export default class HistoryHome extends PureComponent {
     const { custRange, location: { query: { boardId, boardType } } } = props;
     const empId = getEmpId(); // 用户ID
     const ownerOrg = custRange[0];
-    const nowDuration = getDurationString('month');
-    const begin = nowDuration.begin;
-    const end = nowDuration.end;
 
-    const distanceDays = moment(end).diff(moment(begin), 'days') + 1;
-    const lastBeginMoment = moment(begin).subtract(distanceDays, 'days');
-    const lastEndMoment = moment(end).subtract(distanceDays, 'days');
+    const defaultMoment = this.setDefaultMoment();
 
     this.state = {
       boardId,
       boardType,
-      begin: nowDuration.begin, // 本期开始时间
-      end: nowDuration.end, // 本期结束时间
-      cycleType: 'month', // 时间段周期类型
-      contrastBegin: lastBeginMoment.format('YYYYMMDD'), // 上期开始时间
-      contrastEnd: lastEndMoment.format('YYYYMMDD'), // 上期结束时间
+      begin: defaultMoment.begin, // 本期开始时间
+      end: defaultMoment.end, // 本期结束时间
+      cycleType: defaultMoment.cycleType, // 时间段周期类型
+      contrastBegin: defaultMoment.contrastBegin, // 上期开始时间
+      contrastEnd: defaultMoment.contrastEnd, // 上期结束时间
       coreIndicatorIds: [], // 弹出层挑选的指标
       indicatorId: '', // 当前选中的核心指标key
       orgId: ownerOrg && ownerOrg.id, // 用户当前选择的组织机构Id
@@ -192,10 +187,17 @@ export default class HistoryHome extends PureComponent {
       const timeStamp = new Date().getTime().toString();
       // TODO 此处需要等到时间选择器完成提供方法
       // const { begin, end, cycleType } = getDurationString('month');
+
+      const defaultMoment = this.setDefaultMoment();
       this.setState({
         swtichDefault: timeStamp,
         boardId,
         boardType,
+        begin: defaultMoment.begin, // 本期开始时间
+        end: defaultMoment.end, // 本期结束时间
+        cycleType: defaultMoment.cycleType, // 时间段周期类型
+        contrastBegin: defaultMoment.contrastBegin, // 上期开始时间
+        contrastEnd: defaultMoment.contrastEnd, // 上期结束时间
         scope: ownerOrg && String(Number(ownerOrg.level) + 1),
         localScope: ownerOrg && ownerOrg.level,
         orgId: ownerOrg && ownerOrg.id, // 用户当前选择的组织机构Id
@@ -250,6 +252,26 @@ export default class HistoryHome extends PureComponent {
           push(`/history?boardId=${boardId}&boardType=${boardType}`);
         });
     }
+  }
+
+  @autobind
+  setDefaultMoment() {
+    const cycleType = 'month';
+    const nowDuration = getDurationString(cycleType);
+    const begin = nowDuration.begin;
+    const end = nowDuration.end;
+    const distanceDays = moment(end).diff(moment(begin), 'days') + 1;
+    const lastBeginMoment = moment(begin).subtract(distanceDays, 'days');
+    const lastEndMoment = moment(end).subtract(distanceDays, 'days');
+    const contrastBegin = lastBeginMoment.format('YYYYMMDD');
+    const contrastEnd = lastEndMoment.format('YYYYMMDD');
+    return {
+      cycleType,
+      begin,
+      end,
+      contrastBegin,
+      contrastEnd,
+    };
   }
 
   @autobind
