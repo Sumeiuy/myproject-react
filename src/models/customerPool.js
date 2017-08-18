@@ -48,7 +48,7 @@ export default {
     },
     // 获取客户范围
     * getCustomerScope({ payload }, { call, put }) {
-      const resultData = yield call(api.getCustRange);
+      const resultData = yield call(api.getCustRangeAll);
       yield put({
         type: 'getCustomerScopeSuccess',
         payload: resultData,
