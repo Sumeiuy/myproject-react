@@ -19,7 +19,7 @@ export default class ScatterAnalysis extends PureComponent {
     queryContrastAnalyze: PropTypes.func.isRequired,
     cust: PropTypes.array,
     invest: PropTypes.array,
-    swtichDefault: PropTypes.string.isRequired,
+    switchDefault: PropTypes.string.isRequired,
     location: PropTypes.object.isRequired,
     level: PropTypes.string.isRequired,
     isLvIndicator: PropTypes.bool.isRequired,
@@ -38,7 +38,7 @@ export default class ScatterAnalysis extends PureComponent {
       reviewAnalysisData,
       cust,
       invest,
-      swtichDefault,
+      switchDefault,
       location: { query: { boardType } },
       level,
       isLvIndicator,
@@ -58,7 +58,7 @@ export default class ScatterAnalysis extends PureComponent {
               description={'客户贡献'}
               type={custScatter.type}
               isLvIndicator={isLvIndicator}
-              swtichDefault={swtichDefault}
+              switchDefault={switchDefault}
               level={level}
               boardType={boardType}
               currentSelectIndicatorName={currentSelectIndicatorName}
@@ -85,7 +85,7 @@ export default class ScatterAnalysis extends PureComponent {
                   optionsData={invest}
                   description={'服务经理'}
                   type={investScatter.type}
-                  swtichDefault={swtichDefault}
+                  switchDefault={switchDefault}
                   isLvIndicator={isLvIndicator}
                   boardType={boardType}
                   level={level}
