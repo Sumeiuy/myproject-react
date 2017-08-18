@@ -114,7 +114,7 @@ export default class Home extends PureComponent {
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const { custRange } = this.props;
     if (custRange.length > 0) {
       this.handleSetCustRange(this.props);
@@ -124,15 +124,12 @@ export default class Home extends PureComponent {
   componentWillReceiveProps(nextProps) {
     const { location: preLocation,
       position: prePosition,
-      custRange: preCustRange, cycle: preCycle, empInfo: preEmpInfo } = this.props;
+      custRange: preCustRange, cycle: preCycle } = this.props;
     const { location: nextLocation,
       position: nextPosition,
-      custRange: nextCustRange, cycle: nextCycle, empInfo: nextEmpInfo } = nextProps;
+      custRange: nextCustRange, cycle: nextCycle } = nextProps;
     const { orgId: preOrgId } = prePosition;
     const { orgId: nextOrgId } = nextPosition;
-    if (preEmpInfo !== nextEmpInfo) {
-      this.handleSetCustRange(nextProps);
-    }
     if (preOrgId !== nextOrgId) {
       this.setState({
         fspOrgId: nextOrgId,
@@ -145,7 +142,7 @@ export default class Home extends PureComponent {
       });
     }
     if (!_.isEqual(preCustRange, nextCustRange) || preLocation !== nextLocation) {
-      this.handleGetAllInfo(nextCustRange);
+      this.handleSetCustRange(nextProps);
       this.setState({
         createCustRange: this.handleCreateCustRange(null, nextProps),
       });
