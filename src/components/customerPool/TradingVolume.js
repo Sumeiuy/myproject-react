@@ -24,7 +24,11 @@ export default class TradingVolume extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      unit: '',
+      unit: MILLION,
+      purRakeGjpdt: '--',
+      purAddCustaset: '--',
+      tranAmtBasicpdt: '--',
+      tranAmtTotpdt: '--',
     };
   }
 
@@ -38,9 +42,7 @@ export default class TradingVolume extends PureComponent {
         _.parseInt(purRakeGjpdt, 10),
         _.parseInt(tranAmtBasicpdt, 10),
         _.parseInt(tranAmtTotpdt, 10)];
-      this.setState({
-        unit: this.basicUnit(data),
-      });
+      this.basicUnit(data);
     }
   }
 
@@ -49,20 +51,25 @@ export default class TradingVolume extends PureComponent {
   basicUnit(data) {
     let unit = '';
     if (!_.isEmpty(data) && data.length > 0) {
-      const newNum = Math.max(...data);
+      const newNum = Math.min(...data);
       // 超过1亿
       if (newNum >= 100000000) {
         unit = BILLION;
-      } else if (newNum >= 10000) {
+      } else {
         unit = MILLION;
       }
     }
-    return unit;
+    this.setState({
+      unit,
+      purAddCustaset: this.numFormat(unit, data[0] || '--'),
+      purRakeGjpdt: this.numFormat(unit, data[1] || '--'),
+      tranAmtBasicpdt: this.numFormat(unit, data[2] || '--'),
+      tranAmtTotpdt: this.numFormat(unit, data[3] || '--'),
+    });
   }
 
   @autobind
-  numFormat(num) {
-    const { unit } = this.state;
+  numFormat(unit, num) {
     let newNum;
     if (num !== '--') {
       newNum = _.parseInt(num, 10);
@@ -77,9 +84,7 @@ export default class TradingVolume extends PureComponent {
       if (unit === BILLION) {
         newNum /= 100000000;
       }
-      if (newNum > 1000 || newNum < -1000) {
-        newNum = parseFloat(newNum).toFixed(1);
-      } else if (newNum.toString().indexOf('.') > 0 && newNum.toString().split('.')[1].length > 1) {
+      if (newNum.toString().indexOf('.') > 0 && newNum.toString().split('.')[1].length > 1) {
         newNum = parseFloat(newNum).toFixed(2);
       }
       return newNum;
@@ -88,14 +93,13 @@ export default class TradingVolume extends PureComponent {
   }
 
   render() {
-    const { data } = this.props;
     const {
+      unit,
       purRakeGjpdt,
       purAddCustaset,
       tranAmtBasicpdt,
       tranAmtTotpdt,
-    } = data;
-    const { unit } = this.state;
+    } = this.state;
     return (
       <div className={styles.indexItemBox}>
         <div className={styles.inner}>
@@ -105,19 +109,19 @@ export default class TradingVolume extends PureComponent {
           <div className={`${styles.content} ${styles.jyContent}`}>
             <ul>
               <li>
-                <p>{this.numFormat(purAddCustaset || '--')}</p>
+                <p>{purAddCustaset}</p>
                 <div>净新增客户资产</div>
               </li>
               <li>
-                <p>{this.numFormat(tranAmtBasicpdt || '--')}</p>
+                <p>{tranAmtBasicpdt}</p>
                 <div>累计基础交易量</div>
               </li>
               <li>
-                <p>{this.numFormat(tranAmtTotpdt || '--')}</p>
+                <p>{tranAmtTotpdt}</p>
                 <div>累计综合交易量</div>
               </li>
               <li>
-                <p>{this.numFormat(purRakeGjpdt || '--')}</p>
+                <p>{purRakeGjpdt}</p>
                 <div>股基累计净佣金</div>
               </li>
             </ul>
