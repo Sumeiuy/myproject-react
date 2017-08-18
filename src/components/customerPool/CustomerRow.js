@@ -17,7 +17,8 @@ import iconDiamond from '../../../static/images/icon-diamond-card.png';
 import iconGold from '../../../static/images/icon-gold-card.png';
 import iconSliver from '../../../static/images/icon-sliver-card.png';
 import iconWhiteGold from '../../../static/images/icon-white-gold.png';
-import iconNone from '../../../static/images/icon-none.png';
+// import iconNone from '../../../static/images/icon-none.png';
+import iconEmpty from '../../../static/images/icon-empty.png';
 import iconClose from '../../../static/images/icon-close.png';
 import iconOpen from '../../../static/images/icon-open.png';
 
@@ -90,9 +91,9 @@ const rankImgSrcConfig = {
   // 理财
   805030: iconMoney,
   // 无
-  805040: iconNone,
+  805040: iconEmpty,
   // 其他
-  805999: iconNone,
+  805999: '',
 };
 
 // 数字常量

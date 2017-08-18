@@ -7,6 +7,9 @@ export default {
   // 暴露api上的几个底层方法: get / post
   ...api,
 
+  // 获取组织机构树完整版
+  getCustRangeAll: query => api.post('/groovynoauth/fsp/emp/org/queryEmpOrgTree', query),
+
   // 员工职责与职位
   getEmpInfo: query => api.post('/groovynoauth/fsp/emp/info/queryEmpInfo', query),
 

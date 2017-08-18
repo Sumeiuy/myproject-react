@@ -191,18 +191,9 @@ export default class PerformanceIndicators extends PureComponent {
           <div className={styles.listItem}>
             <Row gutter={16}>
               <Col span={8}>
-                <div className={styles.indexItemBox}>
-                  <div className={styles.inner}>
-                    <div className={styles.title}>
-                      <Icon type="chanpinxiaoshou" />产品销售
-                  </div>
-                    <div className={styles.content}>
-                      <ProductSales
-                        data={productSalesData}
-                      />
-                    </div>
-                  </div>
-                </div>
+                <ProductSales
+                  data={productSalesData}
+                />
               </Col>
               <Col span={8}>
                 <div className={styles.indexItemBox}>

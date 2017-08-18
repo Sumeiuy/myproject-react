@@ -88,6 +88,7 @@ export default class Search extends PureComponent {
     this.setState({
       inputVal: value,
     });
+    this.handleSearch(value);
   }
 
   @autobind
@@ -120,7 +121,6 @@ export default class Search extends PureComponent {
   // 历史搜索数据集合
   @autobind
   handleCreatHistoryList(data) {
-    console.log(data); // 历史搜索数据接口未好暂时注释
     if (!_.isEmpty(data) && data.length > 0) {
       const historyList = [];
       data.forEach((item) => {
@@ -286,7 +286,6 @@ export default class Search extends PureComponent {
             </Option> :
             <Option key={item.labelNameVal} text={item.labelNameVal} >
               <a
-                rel="noopener noreferrer"
                 onClick={() => this.handleOpenTab({
                   source: 'association',
                   labelMapping: item.labelMapping || '',

@@ -99,16 +99,16 @@ export default class CustomerList extends PureComponent {
     };
   }
 
-  componentWillMount() {
-    const { location: { query }, custRange } = this.props;
+  componentDidMount() {
+    const { custRange } = this.props;
     if (custRange.length > 0) {
       this.handleSetCustRange(this.props);
     }
-    this.getCustomerList(query);
-    // getCustIncome({ custNumber: '020100053538' });
+    this.getCustomerList(this.props);
   }
 
   componentWillReceiveProps(nextProps) {
+    // debugger
     const { location: preLocation,
       position: prePosition,
       custRange: preCustRange, empInfo: preEmpInfo } = this.props;
@@ -124,9 +124,7 @@ export default class CustomerList extends PureComponent {
       this.setState({
         fspOrgId: nextOrgId,
         createCustRange: this.handleCreateCustRange(nextOrgId, nextProps),
-      }, () => {
-        this.getCustomerList(nextProps);
-      });
+      }, this.getCustomerList(nextProps));
     }
     if (!_.isEqual(preCustRange, nextCustRange) || preLocation !== nextLocation) {
       this.handleGetAllInfo(nextCustRange);
@@ -135,7 +133,7 @@ export default class CustomerList extends PureComponent {
       });
     }
     if (!_.isEqual(preLocation.query, nextLocation.query)) {
-      this.getCustomerList(nextLocation.query);
+      this.getCustomerList(nextProps);
     }
   }
 
