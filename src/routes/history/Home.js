@@ -577,6 +577,16 @@ export default class HistoryHome extends PureComponent {
     // 找出当前是否是以率为结尾的指标
     const isLvIndicator = curNameIndex > -1 ? historyCore[curNameIndex].name.indexOf('率') !== -1 : false;
 
+    // 选出当前选中的指标
+    let defaultInidicator = '';
+    if (!_.isEmpty(historyCore)) {
+      if (curNameIndex > -1) {
+        defaultInidicator = `${historyCore[curNameIndex].parentName || ''}${historyCore[curNameIndex].name || ''}`;
+      } else {
+        defaultInidicator = `${historyCore[0].parentName || ''}${historyCore[0].name || ''}`;
+      }
+    }
+
     return (
       <div className="pageHistory">
         <PageHeader
@@ -619,7 +629,7 @@ export default class HistoryHome extends PureComponent {
             />
           </div>
           <div className={styles.indicatorAnalyse}>
-            <div className={styles.caption}>{curNameIndex >= 0 ? historyCore[curNameIndex].name : '指标'}-详细分析</div>
+            <div className={styles.caption}>{defaultInidicator}-详细分析</div>
             <div className={styles.polyArea}>
               <Row type="flex" gutter={10} >
                 <Col span="12">
@@ -645,11 +655,11 @@ export default class HistoryHome extends PureComponent {
                 queryContrastAnalyze={this.changeScatterContrast}
                 cust={cust}
                 invest={invest}
-                swtichDefault={swtichDefault}
+                switchDefault={swtichDefault}
                 location={location}
                 level={level}
                 isLvIndicator={isLvIndicator}
-                currentSelectIndicatorName={curNameIndex > -1 ? `${historyCore[curNameIndex].parentName || ''}${historyCore[curNameIndex].name}` : ''}
+                currentSelectIndicatorName={defaultInidicator}
               />
             </div>
           </div>
