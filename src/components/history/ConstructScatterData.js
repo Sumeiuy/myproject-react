@@ -333,7 +333,7 @@ export const constructScatterData = (options = {}) => {
       yAxisMax: 1,
       xAxisName: xAxisOption.name,
       yAxisName: yAxisOption.name,
-      xAxisUnit: currentXUnit === REN ? HU : currentXUnit,
+      xAxisUnit: currentXUnit,
       yAxisUnit: currentYUnit,
       slope: 0,
       averageInfo: `平均每${description}0${currentYUnit}/${currentXUnit === REN ? HU : currentXUnit}`,

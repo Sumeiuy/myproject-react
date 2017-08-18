@@ -629,7 +629,7 @@ export default class HistoryHome extends PureComponent {
             />
           </div>
           <div className={styles.indicatorAnalyse}>
-            <div className={styles.caption}>{curNameIndex >= 0 ? historyCore[curNameIndex].name : '指标'}-详细分析</div>
+            <div className={styles.caption}>{defaultInidicator}-详细分析</div>
             <div className={styles.polyArea}>
               <Row type="flex" gutter={10} >
                 <Col span="12">
