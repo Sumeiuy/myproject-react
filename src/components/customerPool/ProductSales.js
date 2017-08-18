@@ -10,7 +10,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import Icon from '../../components/common/Icon';
 import { getMaxAndMinMoney } from '../chartRealTime/FixNumber';
-import styles from './productSales.less';
+import styles from './performanceIndicators.less';
 
 const MILLION = '万';
 const BILLION = '亿';
