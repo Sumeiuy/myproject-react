@@ -287,13 +287,13 @@ export default class CustomerRow extends PureComponent {
               <span style={this.state.showStyle}>
                 <a onClick={() => this.handleCollapse('open')}>
                   <span className={styles.itemA}>展开</span>
-                  <img src={iconOpen} alt="open" />
+                  <img src={iconOpen} alt="" />
                 </a>
               </span>
               <span style={this.state.hideStyle}>
                 <a onClick={() => this.handleCollapse('close')}>
                   <span className={styles.itemA}>收起</span>
-                  <img src={iconClose} alt="open" />
+                  <img src={iconClose} alt="" />
                 </a>
               </span>
             </div>
