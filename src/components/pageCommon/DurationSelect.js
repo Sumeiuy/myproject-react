@@ -74,8 +74,12 @@ export default class DurationSelect extends PureComponent {
     const { location: { query: { boardId: preBId }, pathname: prePathname } } = this.props;
     if (Number(boardId || '1') !== Number(preBId || '1')) {
       const duration = getDurationString('month');
+      const beginMoment = moment(duration.begin);
+      const endMoment = moment(duration.end);
       this.setState({
         open: false,
+        beginMoment,
+        endMoment,
         ...duration,
       });
     }
@@ -90,22 +94,20 @@ export default class DurationSelect extends PureComponent {
   @autobind
   compareChangeHandle(e) {
     const compare = e.target.value;
-    const { cycleType } = this.state;
+    const { beginMoment, endMoment } = this.state;
+    const begin = beginMoment.format('YYYYMMDD');
+    const end = endMoment.format('YYYYMMDD');
     let lastBegin;
     let lastEnd;
     if (compare === 'MoM') {
-      const { beginMoment, endMoment } = this.state;
-      const begin = beginMoment.format('YYYYMMDD');
-      const end = endMoment.format('YYYYMMDD');
       const distanceDays = moment(end).diff(moment(begin), 'days') + 1;
       const lastBeginMoment = moment(begin).subtract(distanceDays, 'days');
       const lastEndMoment = moment(end).subtract(distanceDays, 'days');
       lastBegin = lastBeginMoment.format('YYYYMMDD');
       lastEnd = lastEndMoment.format('YYYYMMDD');
     } else {
-      const nowDuration = getDurationString(cycleType);
-      const lastBeginMoment = moment(nowDuration.begin).subtract(1, 'year');
-      const lastEndMoment = moment(nowDuration.end).subtract(1, 'year');
+      const lastBeginMoment = moment(begin).subtract(1, 'year');
+      const lastEndMoment = moment(end).subtract(1, 'year');
       lastBegin = lastBeginMoment.format('YYYYMMDD');
       lastEnd = lastEndMoment.format('YYYYMMDD');
     }

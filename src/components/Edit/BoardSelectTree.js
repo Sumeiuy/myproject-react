@@ -310,8 +310,17 @@ export default class BoardSelectTree extends PureComponent {
 
   // 获取出最终选择树的值，传递给外层方法
   @autobind
-  transferTreeState() {
+  transferTreeState(itemNodeStr) {
     const { selfCheckedNodes, isSummury, allParentNodes } = this.state;
+    const { saveIndcator } = this.props;
+    if (itemNodeStr) {
+      const itemNode = document.querySelectorAll(itemNodeStr)[0];
+      if (itemNode) {
+        this.treeMainRightChild.scrollTop = itemNode.offsetTop - 34;
+      } else {
+        this.treeMainRightChild.scrollTop = this.treeMainRightChild.scrollHeight;
+      }
+    }
     this.rcRegisterScrollEvent();
     if (isSummury) {
       const summuryArr = selfCheckedNodes.map(item => item.key);
@@ -320,7 +329,7 @@ export default class BoardSelectTree extends PureComponent {
       this.setState({
         length: summuryArr.length,
       });
-      this.props.saveIndcator('summury', summuryArr);
+      saveIndcator('summury', summuryArr);
     } else {
       const newTemp = _.filter(allParentNodes, o => (o.children.length));
       const detailArr = newTemp.map(item => ({
@@ -329,10 +338,9 @@ export default class BoardSelectTree extends PureComponent {
       }));
       // 输出分类指标
       // console.warn('detailArr', detailArr);
-      this.props.saveIndcator('detail', detailArr);
+      saveIndcator('detail', detailArr);
     }
   }
-
   // 点击或者选择的相同操作
   @autobind
   checkOrSelect(obj) {
@@ -348,6 +356,8 @@ export default class BoardSelectTree extends PureComponent {
     } = this.state;
     const { lengthLimit } = this.props;
     let newSelfCheckedNodes = selfCheckedNodes;
+    // 点击的节点信息字符串
+    let itemNodeStr;
     let newExpandedChildren;
     const nowSelectNode = findSelectNode(checkTreeArr, obj.key).node;
     const nowSelectNodeBelong = findSelectNode(checkTreeArr, obj.key).belong;
@@ -384,6 +394,10 @@ export default class BoardSelectTree extends PureComponent {
         allParentNodes.map((item) => {
           let newItem = item;
           if (newItem.key === nowSelectNodeBelong.key) {
+            itemNodeStr = `.${nowSelectNodeBelong.key}Ref`;
+            // 判断是否超过 400
+            // 如果现在有这个 title 的 key，直接滚动到 title 的位置
+            // 没有这个 title 的 key ，直接滚动到最后的位置
             if (obj.active) {
               newItem.children.push(nowSelectNode);
             } else {
@@ -397,9 +411,7 @@ export default class BoardSelectTree extends PureComponent {
       if (obj.active) {
         // 如果有长度限制
         if (lengthLimit) {
-          // console.warn('length', length);
           if (length >= 9) {
-            // console.warn('最多 9 个');
             message.error('最多只能选择 9 个指标');
             return;
           }
@@ -418,7 +430,7 @@ export default class BoardSelectTree extends PureComponent {
         checkedKeys: obj.keyArr,
         checkedOrSelected: obj.active,
         expandedChildren: newExpandedChildren || expandedChildren,
-      }, this.transferTreeState);
+      }, () => this.transferTreeState(itemNodeStr));
     } else {
       this.setState({
         nowSelectNode,
@@ -565,7 +577,10 @@ export default class BoardSelectTree extends PureComponent {
                 :
                   allParentNodes.map(item => (
                     item.children.length ?
-                      <div key={`${item.key}Key`} className={styles.treeMainRigthChildTitle}>
+                      <div
+                        key={`${item.key}Key`}
+                        className={`${item.key}Ref ${styles.treeMainRigthChildTitle}`}
+                      >
                         {
                           showTitle ?
                             <h3>{item.name}</h3>

@@ -71,6 +71,10 @@ export default class IndicatorOverview extends PureComponent {
   handleCoreClick(index, key) {
     return () => {
       const { changeCore } = this.props;
+      const { clickItemIndex } = this.state;
+      if (index === clickItemIndex) {
+        return;
+      }
       this.setState({
         clickItemIndex: index,
         selectIndex: index,

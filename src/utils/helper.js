@@ -321,6 +321,7 @@ const helper = {
       $browser_version: `${bowser.name} ${bowser.version}`,
     };
   },
+
   // 获取事件段事件
   getDurationString(cycleType) {
     const fomater = 'YYYY/MM/DD';
