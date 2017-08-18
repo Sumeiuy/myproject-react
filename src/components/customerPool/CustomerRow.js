@@ -105,7 +105,12 @@ const UNIT_DEFAULT = '元';
 const UNIT_WAN = '万元';
 const UNIT_YI = '亿元';
 
-const replaceWord = (value, q) => (value.replace(new RegExp(q, 'g'), `<em class="mark">${q}</em>`));
+const haveTitle = title => (title ? `<i class="tip">${title}</i>` : null);
+
+const replaceWord = (value, q, title = '') => {
+  const titleDom = haveTitle(title);
+  return value.replace(new RegExp(q, 'g'), `<em class="mark">${q}${titleDom || ''}</em>`);
+};
 
 const getNewHtml = (value, k) => (`<li><span>${value}：${k}</span></li>`);
 
@@ -248,6 +253,32 @@ export default class CustomerRow extends PureComponent {
         shortRtnEle += domTpl;
       }
     }
+    // 匹配标签
+    if (listItem.relatedLabels) {
+      const relatedLabels = listItem.relatedLabels.split(' ').filter((v) => { //eslint-disable-line
+        if (v.indexOf(q) > -1) {
+          return v;
+        }
+      });
+      // 有描述
+      // const markedEle = relatedLabels.map(v => (replaceWord(v, q, listItem.reasonDesc)));
+      const markedEle = relatedLabels.map(v => (replaceWord(v, q)));
+      const domTpl = getNewHtml('匹配标签', markedEle);
+      rtnEle += domTpl;
+      n++;
+      if (n <= 2) {
+        shortRtnEle += domTpl;
+      }
+    }
+    // if (listItem.relatedLabels && listItem.relatedLabels.indexOf(q) > -1) {
+    //   const markedEle = replaceWord(listItem.relatedLabels, q, listItem.reasonDesc);
+    //   const domTpl = getNewHtml('匹配标签', markedEle);
+    //   rtnEle += domTpl;
+    //   n++;
+    //   if (n <= 2) {
+    //     shortRtnEle += domTpl;
+    //   }
+    // }
     return {
       shortRtnEle: { __html: shortRtnEle },
       rtnEle: { __html: rtnEle },
