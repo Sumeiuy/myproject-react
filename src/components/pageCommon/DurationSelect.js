@@ -80,6 +80,7 @@ export default class DurationSelect extends PureComponent {
         open: false,
         beginMoment,
         endMoment,
+        compare: compareArray[0].key,
         ...duration,
       });
     }

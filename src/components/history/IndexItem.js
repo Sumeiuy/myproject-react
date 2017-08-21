@@ -56,20 +56,22 @@ export default class IndexItem extends PureComponent {
     const IndexIconSize = getCoreIconSize(unit);
     const newName = parentName ? `${parentName}-${name}` : name;
     return (
-      <div className={active ? 'active am-bd-dv' : 'am-bd-dv'}>
-        <div className={styles.innderDv}>
-          <span className={styles.iconBox} style={{ color: IndexIconColor }}>
-            <Icon type={IndexIcon} style={{ fontSize: IndexIconSize }} />
-          </span>
-          <div className={styles.mglDv}>
-            <h4>{newName}</h4>
-            <div className={styles.numberDv}>
-              <span>{data.value}</span>
-              {data.unit}
-            </div>
-            <div className={styles.infoDv}>
-              较上期
-              {this.numberComparison(incrementRate)}
+      <div className={styles.indexItem}>
+        <div className={active ? 'active am-bd-dv' : 'am-bd-dv'}>
+          <div className={styles.innderDv}>
+            <span className={styles.iconBox} style={{ color: IndexIconColor }}>
+              <Icon type={IndexIcon} style={{ fontSize: IndexIconSize }} />
+            </span>
+            <div className={styles.mglDv}>
+              <h4>{newName}</h4>
+              <div className={styles.numberDv}>
+                <span>{data.value}</span>
+                {data.unit}
+              </div>
+              <div className={styles.infoDv}>
+                较上期
+                {this.numberComparison(incrementRate)}
+              </div>
             </div>
           </div>
         </div>
