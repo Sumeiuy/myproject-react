@@ -1,6 +1,6 @@
 export default {};
 
-// 检测网络状态
+// 检测提示信息展示状态
 export const checkTooltipStatus = (target, name, descriptor) => {
   const origin = descriptor.value;
 
