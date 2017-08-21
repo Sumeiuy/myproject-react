@@ -15,6 +15,9 @@
     }
   }
 }
+.rankSelectDropdown {
+  width: 90px !important;
+}
 
 .chartHd {
   height: 40px;
@@ -43,16 +46,17 @@
   }
   .newSelect {
     margin-left: 10px;
-    width: 90px;
+    width: auto;
   }
   .newSelect1 {
     margin-left: 10px;
-    width: 90px;
-    margin-right:40px;
+    width: auto;
+    margin-right:20px;
   }
   .pageFlip {
+    padding-right: 15px;
     display: inline-block;
-    width: 90px;
+    // width: 90px;
     height: 40px;
     box-sizing: border-box;
   }
@@ -67,12 +71,17 @@
     }
   }
   .pageBtn {
-    margin: 0 8px;
     cursor: default;
     user-select: none;
     &:hover {
       color: lighten(#108ee9, 10%);
     }
+  }
+  .marginRight {
+    margin-right: 8px;
+  }
+  .marginLeft {
+    margin-left: 8px;
   }
   .pageBtnDis {
     color: #b2b7ba;
@@ -83,6 +92,9 @@
 }
 .chartHd {
   :global {
+    .ant-select-selection-selected-value {
+      padding-right: 15px;
+    }
     .ant-select-selection {
       background-color: transparent;
     }

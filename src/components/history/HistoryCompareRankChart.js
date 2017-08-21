@@ -189,6 +189,7 @@ export default class HistoryCompareRankChart extends PureComponent {
     // 上一页按钮显示状态
     const toggleLastPage = classnames({
       [styles.pageBtn]: true,
+      [styles.marginRight]: true,
       hideEle: false,
       [styles.pageBtnDis]: rankPage === 1,
     });
@@ -199,6 +200,7 @@ export default class HistoryCompareRankChart extends PureComponent {
     // 下一页按钮显示状态
     const toggleNextPage = classnames({
       [styles.pageBtn]: true,
+      [styles.marginLeft]: true,
       hideEle: false,
       [styles.pageBtnDis]: rankPage === totalPage,
     });
@@ -222,6 +224,7 @@ export default class HistoryCompareRankChart extends PureComponent {
               className={styles.newSelect}
               onChange={this.handleScopeChange}
               getPopupContainer={this.getPopupContainer}
+              dropdownClassName={styles.rankSelectDropdown}
             >
               {
                 sortByType[boardType].map((item, index) => {
@@ -253,6 +256,7 @@ export default class HistoryCompareRankChart extends PureComponent {
               className={styles.newSelect1}
               onChange={this.handleOrderTypeChange}
               getPopupContainer={this.getPopupContainer}
+              dropdownClassName={styles.rankSelectDropdown}
             >
               {sortByOrderSelect}
             </Select>

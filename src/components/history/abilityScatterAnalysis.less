@@ -8,7 +8,7 @@
     position: relative;
   }
   .abilityHeader {
-    padding: 0 15px;
+    padding: 0 8px 0 15px;
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
@@ -32,9 +32,10 @@
           text-overflow: ellipsis;
           white-space: nowrap;
           overflow: hidden;
-          max-width: 90px;
+          max-width: 120px;
           font-size: 12px;
           color: #2f2f2f;
+          padding-right: 15px;
         }
         & .ant-select-selection {
           background-color: transparent;
@@ -45,6 +46,14 @@
         }
         & .ant-select-focused .ant-select-selection {
           box-shadow: none;
+        }
+        & .ant-select-selection--single {
+          .ant-select-arrow {
+            color: #b2b7ba;
+            &:before {
+              content: "\E606";
+            }
+          }
         }
       }
     }
