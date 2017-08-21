@@ -63,10 +63,10 @@ export default class TradingVolume extends PureComponent {
     }
     this.setState({
       unit,
-      purAddCustaset: this.numFormat(unit, data[0] || '--'),
-      purRakeGjpdt: this.numFormat(unit, data[1] || '--'),
-      tranAmtBasicpdt: this.numFormat(unit, data[2] || '--'),
-      tranAmtTotpdt: this.numFormat(unit, data[3] || '--'),
+      purAddCustaset: this.numFormat(unit, data[0]),
+      purRakeGjpdt: this.numFormat(unit, data[1]),
+      tranAmtBasicpdt: this.numFormat(unit, data[2]),
+      tranAmtTotpdt: this.numFormat(unit, data[3]),
     });
   }
 
@@ -75,7 +75,7 @@ export default class TradingVolume extends PureComponent {
     let newNum;
     if (num !== '--') {
       newNum = _.parseInt(num, 10);
-      if (num === '0') {
+      if (num === 0) {
         return '0';
       }
       // 超过1万

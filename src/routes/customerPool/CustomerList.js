@@ -25,6 +25,7 @@ const ORG = 3; // 组织机构
 
 const CUR_PAGE = 1; // 默认当前页
 const CUR_PAGESIZE = 10; // 默认页大小
+const HTSC_RESPID = '1-46IDNZI'; // 首页指标查询
 
 const DEFAULT_SORT = { sortType: 'Aset', sortDirection: 'desc' }; // 默认排序方式
 
@@ -44,7 +45,7 @@ const fectchDataFunction = (globalLoading, type) => query => ({
 const mapStateToProps = state => ({
   performanceIndicators: state.customerPool.performanceIndicators, // 绩效指标
   custRange: state.customerPool.custRange, // 客户池用户范围
-  empInfo: state.app.empInfo, // 职位信息
+  empAllInfo: state.app.empAllInfo, // 职位信息
   position: state.customerPool.position, // 职责切换
   dict: state.customerPool.dict, // 职责切换
   custList: state.customerPool.custList,
@@ -71,7 +72,7 @@ export default class CustomerList extends PureComponent {
     performanceIndicators: PropTypes.object,
     collectCustRange: PropTypes.func.isRequired,
     custRange: PropTypes.array,
-    empInfo: PropTypes.object,
+    empAllInfo: PropTypes.object,
     position: PropTypes.object,
     dict: PropTypes.object.isRequired,
     getCustomerData: PropTypes.func.isRequired,
@@ -86,7 +87,7 @@ export default class CustomerList extends PureComponent {
     performanceIndicators: {},
     custRange: [],
     position: {},
-    empInfo: {},
+    empAllInfo: {},
   }
 
   constructor(props) {
@@ -111,15 +112,12 @@ export default class CustomerList extends PureComponent {
     // debugger
     const { location: preLocation,
       position: prePosition,
-      custRange: preCustRange, empInfo: preEmpInfo } = this.props;
+      custRange: preCustRange } = this.props;
     const { location: nextLocation,
       position: nextPosition,
-      custRange: nextCustRange, empInfo: nextEmpInfo } = nextProps;
+      custRange: nextCustRange } = nextProps;
     const { orgId: preOrgId } = prePosition;
     const { orgId: nextOrgId } = nextPosition;
-    if (preEmpInfo !== nextEmpInfo) {
-      this.handleSetCustRange(nextProps);
-    }
     if (preOrgId !== nextOrgId) {
       this.setState({
         fspOrgId: nextOrgId,
@@ -127,10 +125,10 @@ export default class CustomerList extends PureComponent {
       }, this.getCustomerList(nextProps));
     }
     if (!_.isEqual(preCustRange, nextCustRange) || preLocation !== nextLocation) {
-      this.handleGetAllInfo(nextCustRange);
-      this.setState({
-        createCustRange: this.handleCreateCustRange(null, nextProps),
-      });
+      this.handleSetCustRange(nextProps);
+      // this.setState({
+      //   createCustRange: this.handleCreateCustRange(null, nextProps),
+      // });
     }
     if (!_.isEqual(preLocation.query, nextLocation.query)) {
       this.getCustomerList(nextProps);
@@ -221,15 +219,19 @@ export default class CustomerList extends PureComponent {
 
   @autobind
   handleSetCustRange(props) {
-    const { custRange, empInfo: { empInfo: { occDivnNum = '' } } } = props;
+    const { location: { query }, custRange, empAllInfo: { empInfo, empRespList } } = props;
+    const { occDivnNum } = empInfo;
+    const { orgId } = query;
     const occ = _.isEmpty(occDivnNum) ? '' : occDivnNum;// orgId取不到的情况下去用户信息中的
-    const orgid = _.isEmpty(window.forReactPosition)
+    const fspOrgid = _.isEmpty(window.forReactPosition) ? occ : window.forReactPosition.orgId;
+    const orgid = _.isEmpty(orgId) // window.forReactPosition
       ?
-      occ
-      : window.forReactPosition.orgId;
+      fspOrgid
+      : orgId;
+    const respIdOfPosition = _.findIndex(empRespList, item => item.respId === HTSC_RESPID);
     this.setState({
-      fspOrgId: orgid,
-      orgId: orgid, // 组织ID
+      fspOrgId: respIdOfPosition < 0 ? '' : orgid,
+      orgId: respIdOfPosition < 0 ? '' : orgid, // 组织ID
     }, () => {
       if (custRange.length > 0) {
         this.handleGetAllInfo(custRange);
@@ -258,21 +260,36 @@ export default class CustomerList extends PureComponent {
 
   @autobind
   handleCreateCustRange(orgId, nextProps) {
-    const { empInfo, custRange } = nextProps;
-    const { empPostnList } = empInfo;
+    const { empAllInfo, custRange } = nextProps;
+    const { empPostnList, empRespList } = empAllInfo; // 1-46IDNZI HTSC_RESPID
     const { fspOrgId } = this.state;
+    let orgNewCustRange = [];
+    const newCustRrange = [];
+    const myCustomer = {
+      id: '',
+      name: '我的客户',
+    };
+    if (_.isEmpty(empRespList) && empRespList.length < 0) {
+      return null;
+    }
+    const respIdOfPosition = _.findIndex(empRespList, item => item.respId === HTSC_RESPID);
+    if (respIdOfPosition < 0) {
+      newCustRrange.push(myCustomer);
+      return newCustRrange;
+    }
     let newOrgId = fspOrgId;
     if (!_.isEmpty(orgId)) {
       newOrgId = orgId;
     }
-    let orgNewCustRange = [];
-    const newCustRrange = [];
     if (custRange.length < 1) {
       return null;
     }
     if (newOrgId === custRange[0].id) {
       return custRange;
     }
+    this.setState({
+      expandAll: true,
+    });
     orgNewCustRange = _.findIndex(custRange, item => item.id === newOrgId);
     let newData;
     if (orgNewCustRange > -1) { // 总机构内
@@ -289,10 +306,6 @@ export default class CustomerList extends PureComponent {
         newCustRrange.push(newData);
       }
     }
-    const myCustomer = {
-      id: '',
-      name: '我的客户',
-    };
     newCustRrange.push(myCustomer);
     return newCustRrange;
   }

@@ -13,7 +13,7 @@ import '../css/skin.less';
 
 const effects = {
   customerScope: 'customerPool/getCustomerScope',
-  empInfo: 'app/getEmpInfo',
+  empAllInfo: 'app/getEmpInfo',
 };
 
 const fectchDataFunction = (globalLoading, type) => query => ({
@@ -26,12 +26,12 @@ const mapStateToProps = state => ({
   ...state.app,
   loading: state.activity.global,
   custRange: state.customerPool.custRange,
-  empInfo: state.app.empInfo,
+  empAllInfo: state.app.empAllInfo,
 });
 
 const mapDispatchToProps = {
   getCustomerScope: fectchDataFunction(false, effects.customerScope),
-  getEmpInfo: fectchDataFunction(false, effects.empInfo),
+  getEmpAllInfo: fectchDataFunction(false, effects.empAllInfo),
 };
 
 @withRouter
@@ -42,16 +42,16 @@ export default class Main extends Component {
     children: PropTypes.node.isRequired,
     loading: PropTypes.bool.isRequired,
     getCustomerScope: PropTypes.func.isRequired,
-    getEmpInfo: PropTypes.func.isRequired,
+    getEmpAllInfo: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
   }
 
   componentWillMount() {
-    const { getCustomerScope, getEmpInfo } = this.props;
+    const { getCustomerScope, getEmpAllInfo } = this.props;
     getCustomerScope(); // 加载客户池客户范围
-    getEmpInfo(); // 加载员工职责与职位
+    getEmpAllInfo(); // 加载员工职责与职位
   }
 
   render() {
