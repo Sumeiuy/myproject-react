@@ -152,7 +152,7 @@ export default class IndicatorOverview extends PureComponent {
                   {
                     overviewData.map((item, index) => {
                       const itemIndex = `select${index}`;
-                      const active = selectIndex === index;
+                      const active = clickItemIndex === index;
                       const key = item.key;
                       return (
                         <li

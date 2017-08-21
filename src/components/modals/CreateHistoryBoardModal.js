@@ -135,7 +135,7 @@ export default class CreateHistoryBoardModal extends PureComponent {
         name: boardname,
         boardType,
         coreIndicator: selectKeys,
-        investContrastIndicator: ['custNum'],
+        investContrastIndicator: ['ptyMngNum'],
         custContrastIndicator: ['totCustNum', 'pCustNum', 'oCustNum', 'oNewCustNum', 'oNewPrdtCustNum', 'InminorCustNum', 'newCustNum'],
       });
     }
