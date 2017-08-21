@@ -299,12 +299,14 @@ export const constructScatterData = (options = {}) => {
 
         return {
           slope,
-          averageInfo: `平均每${description} ${yAxisName} ${Number(newAverage).toFixed(2)}${newYUnit}/${xUnit}`,
+          averageInfo: `平均${description} ${yAxisName} ${Number(newAverage).toFixed(2)}${newYUnit}/${xUnit}`,
+          averageXUnit: xUnit,
+          averageYUnit: newYUnit,
         };
       }
       return {
         slope: average,
-        averageInfo: `平均每${description}0${yAxisUnit}/${xAxisUnit}`,
+        averageInfo: `平均${description}0${yAxisUnit}/${xAxisUnit}`,
       };
     },
   };
@@ -342,7 +344,7 @@ export const constructScatterData = (options = {}) => {
       xAxisUnit: currentXUnit,
       yAxisUnit: currentYUnit,
       slope: 0,
-      averageInfo: `平均每${description}0${currentYUnit}/${currentXUnit === REN ? HU : currentXUnit}`,
+      averageInfo: `平均${description}0${currentYUnit}/${currentXUnit === REN ? HU : currentXUnit}`,
     };
     return axisData;
   }
@@ -392,6 +394,8 @@ export const constructScatterData = (options = {}) => {
     slope: slope.slope,
     averageInfo: slope.averageInfo || '',
     average: slope.average,
+    averageXUnit: slope.averageXUnit,
+    averageYUnit: slope.averageYUnit,
   };
 
   return axisData;

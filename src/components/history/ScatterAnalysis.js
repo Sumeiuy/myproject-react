@@ -69,7 +69,7 @@ export default class ScatterAnalysis extends PureComponent {
           </Col>
           {
             // 投顾历史看板下的营业部不展示投顾维度散点图
-            (level === '3' && boardType === 'TYPE_LSDB_TGJX')
+            level === '3'
               ? <div
                 style={{
                   height: '400px',
