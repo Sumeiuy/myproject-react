@@ -292,6 +292,16 @@ export default class CustomerRow extends PureComponent {
     };
   }
 
+  renderAgeOrOrgName() {
+    const { listItem } = this.props;
+    if (listItem.pOrO === 'P') {
+      return <span>{listItem.genderValue}/{listItem.age}岁</span>;
+    } else if (listItem.pOrO === 'O' || listItem.pOrO === 'F' || listItem.orgTypeName) {
+      return <span>{listItem.orgTypeName}</span>;
+    }
+    return '';
+  }
+
   render() {
     const { q, listItem, monthlyProfits } = this.props;
     const { unit, newAsset } = this.state;
@@ -316,8 +326,7 @@ export default class CustomerRow extends PureComponent {
               <div className={styles.itemA}>
                 <span>{listItem.name}</span>
                 <span>{listItem.custId}</span>
-                <span>{listItem.genderValue}/{listItem.age}岁</span>
-
+                {this.renderAgeOrOrgName()}
               </div>
               <div className={styles.itemB}>
                 <span>服务经理：</span><span>{listItem.empName}</span>
@@ -326,7 +335,7 @@ export default class CustomerRow extends PureComponent {
             </div>
             <div className={styles.basicInfoB}>
               {
-                !listItem.contactFlag ?
+                listItem.contactFlag ?
                   <div className={styles.iconSingnedA}>
                     <div className={styles.itemText}>签约客户</div>
                   </div> : null
