@@ -22,7 +22,8 @@ export const constructScatterOptions = (option = {}) => {
     lineStyle: {
       normal: {
         type: 'solid',
-        color: '#ffcb77',
+        color: '#ffaa4e',
+        width: 1.3,
       },
     },
     data: [[{
