@@ -105,6 +105,8 @@ const UNIT_DEFAULT = '元';
 const UNIT_WAN = '万元';
 const UNIT_YI = '亿元';
 
+const trim = str => (str.replace(/(^\s+)|(\s+$)/g, ''));
+
 const haveTitle = title => (title ? `<i class="tip">${title}</i>` : null);
 
 const replaceWord = (value, q, title = '') => {
@@ -140,6 +142,7 @@ export default class CustomerRow extends PureComponent {
     listItem: PropTypes.object.isRequired,
     getCustIncome: PropTypes.func.isRequired,
     monthlyProfits: PropTypes.array.isRequired,
+    location: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -214,10 +217,13 @@ export default class CustomerRow extends PureComponent {
   @autobind
   matchWord(q, listItem) {
     // if (!q) return;
+    const { location: { query: { source } } } = this.props;
     let rtnEle = '';
     let shortRtnEle = '';
     let n = 0;
-    if (listItem.name && listItem.name.indexOf(q) > -1) {
+    const isSearch = source === 'search';
+    const isTag = source === 'tag';
+    if (isSearch && listItem.name && listItem.name.indexOf(q) > -1) {
       const markedEle = replaceWord(listItem.name, q);
       const domTpl = getNewHtml('姓名', markedEle);
       rtnEle += domTpl;
@@ -226,7 +232,7 @@ export default class CustomerRow extends PureComponent {
         shortRtnEle += domTpl;
       }
     }
-    if (listItem.idNum && listItem.idNum.indexOf(q) > -1) {
+    if (isSearch && listItem.idNum && listItem.idNum.indexOf(q) > -1) {
       const markedEle = replaceWord(listItem.idNum, q);
       const domTpl = getNewHtml('身份证号码', markedEle);
       rtnEle += domTpl;
@@ -235,7 +241,7 @@ export default class CustomerRow extends PureComponent {
         shortRtnEle += domTpl;
       }
     }
-    if (listItem.telephone && listItem.telephone.indexOf(q) > -1) {
+    if (isSearch && listItem.telephone && listItem.telephone.indexOf(q) > -1) {
       const markedEle = replaceWord(listItem.telephone, q);
       const domTpl = getNewHtml('联系电话', markedEle);
       rtnEle += domTpl;
@@ -244,7 +250,7 @@ export default class CustomerRow extends PureComponent {
         shortRtnEle += domTpl;
       }
     }
-    if (listItem.custId && listItem.custId.indexOf(q) > -1) {
+    if (isSearch && listItem.custId && listItem.custId.indexOf(q) > -1) {
       const markedEle = replaceWord(listItem.custId, q);
       const domTpl = getNewHtml('经纪客户号', markedEle);
       rtnEle += domTpl;
@@ -254,7 +260,7 @@ export default class CustomerRow extends PureComponent {
       }
     }
     // 匹配标签
-    if (listItem.relatedLabels) {
+    if (isTag && isSearch && listItem.relatedLabels) {
       const relatedLabels = listItem.relatedLabels.split(' ').filter((v) => { //eslint-disable-line
         if (v.indexOf(q) > -1) {
           return v;
@@ -292,7 +298,8 @@ export default class CustomerRow extends PureComponent {
     const lastestProfit = Number(this.getLastestData(monthlyProfits).assetProfit);
     const lastestProfitRate = Number(this.getLastestData(monthlyProfits).assetProfitRate);
     const matchedWord = this.matchWord(q, listItem);
-    console.log('listItem', listItem);
+    const rskLev = trim(listItem.riskLvl);
+    console.log('listItem', listItem, listItem.riskLvl);
     return (
       <Row type="flex" className={styles.custoemrRow}>
         <Col span={3} className={styles.avator}>
@@ -325,12 +332,15 @@ export default class CustomerRow extends PureComponent {
                   </div> : null
               }
               {listItem.highWorthFlag ? <div className={styles.tagA}>高净值</div> : null}
-              <div
-                className={`tagB ${riskLevelConfig[listItem.riskLvl].colorCls}`}
-              >
-                <div className="itemText">{riskLevelConfig[listItem.riskLvl].title}</div>
-                {riskLevelConfig[listItem.riskLvl].name}
-              </div>
+              {
+                (rskLev === '' || rskLev === 'null') ? '' :
+                <div
+                  className={`tagB ${riskLevelConfig[rskLev].colorCls}`}
+                >
+                  <div className="itemText">{riskLevelConfig[rskLev].title}</div>
+                  {riskLevelConfig[rskLev].name}
+                </div>
+              }
             </div>
             <div className={styles.basicInfoC}>
               <div className={styles.itemA}>

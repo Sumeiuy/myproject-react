@@ -457,6 +457,7 @@ export default class CustomerList extends PureComponent {
           onChange={this.orderChange}
         />
         <CustomerLists
+          location={location}
           custList={custList}
           q={decodeURIComponent(q)}
           page={page}
