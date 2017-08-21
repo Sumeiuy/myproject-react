@@ -18,6 +18,7 @@ const OptGroup = AutoComplete.OptGroup;
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 let COUNT = 0;
+let searchInput;
 export default class Search extends PureComponent {
 
   static propTypes = {
@@ -59,7 +60,7 @@ export default class Search extends PureComponent {
 
   componentDidMount() {
     this.handleCreatHistoryList(this.props.historyWdsList);
-    const searchInput = ReactDOM.findDOMNode(document.querySelector('.ant-select-search .ant-input'));// eslint-disable-line
+    searchInput = ReactDOM.findDOMNode(document.querySelector('.ant-select-search .ant-input'));// eslint-disable-line
     if (searchInput) {
       searchInput.addEventListener('keydown', this.handleSearchInput, false);
     }
@@ -85,7 +86,10 @@ export default class Search extends PureComponent {
     }
   }
 
-  componentDidUpdate() {
+  componentWillUnmount() {
+    if (searchInput) {
+      searchInput.removeEventListener('keydown', this.handleSearchInput, false);
+    }
   }
 
   @autobind
