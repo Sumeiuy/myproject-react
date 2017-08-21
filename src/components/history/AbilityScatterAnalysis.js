@@ -16,7 +16,7 @@ const Option = Select.Option;
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 
-const EXCEPT_CUST_AREA = [
+const EXCEPT_CUST_JYYJ_AREA = [
   '有效客户数',
   '总客户数',
   '个人客户数',
@@ -29,6 +29,13 @@ const EXCEPT_CUST_AREA = [
   '新开客户数产品',
   '高净值客户总数个人',
   '高净值客户总数机构',
+];
+
+const EXCEPT_CUST_TGJX_AREA = [
+  '新开客户净转入资产',
+  '服务客户数',
+  '签约客户数',
+  '有效签约客户数',
 ];
 
 export default class AbilityScatterAnalysis extends PureComponent {
@@ -410,14 +417,11 @@ export default class AbilityScatterAnalysis extends PureComponent {
       (currentSelectIndicatorName === '投顾人数'
         || currentSelectIndicatorName === '投顾入岗人数'
         || (contrastType === '客户类型' &&
-          (currentSelectIndicatorName === '新开客户净转入资产'
-            || currentSelectIndicatorName === '服务客户数'
-            || currentSelectIndicatorName === '签约客户数'
-            || currentSelectIndicatorName === '有效签约客户数'))
+          (_.includes(EXCEPT_CUST_TGJX_AREA, currentSelectIndicatorName)))
       ))
       || (boardType === 'TYPE_LSDB_JYYJ'
         && ((contrastType === '客户类型' &&
-          _.includes(EXCEPT_CUST_AREA, currentSelectIndicatorName)) || (contrastType === '投顾类型' &&
+          _.includes(EXCEPT_CUST_JYYJ_AREA, currentSelectIndicatorName)) || (contrastType === '投顾类型' &&
             currentSelectIndicatorName === '服务经理数'))
       );
   }
