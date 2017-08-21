@@ -11,6 +11,7 @@ import { constructPolyChartOptions } from './ConstructPolyChartOptions';
 import IECharts from '../IECharts';
 import FixNumber from '../chartRealTime/FixNumber';
 import { ZHUNICODE } from '../../config';
+import { checkTooltipStatus } from '../../decorators/checkTooltipStatus';
 import styles from './HistoryComparePolyChart.less';
 
 const EMPTY_OBJECT = {};
@@ -325,14 +326,8 @@ export default class HistoryComparePolyChart extends PureComponent {
   }
 
   @autobind
+  @checkTooltipStatus
   handlePloyChartMove(params) {
-    const { isShowTooltip } = this.state;
-    if (!isShowTooltip) {
-      this.setState({
-        isShowTooltip: !isShowTooltip,
-      });
-    }
-
     const { seriesData } = params;
     let comparePoly = EMPTY_OBJECT;
     if (seriesData.length === 1) {
