@@ -48,7 +48,7 @@ export default {
     },
     // 获取客户范围
     * getCustomerScope({ payload }, { call, put }) {
-      const resultData = yield call(api.getCustRangeAll);
+      const resultData = yield call(api.getCustRangeAll, { empId: '002332' });
       yield put({
         type: 'getCustomerScopeSuccess',
         payload: resultData,

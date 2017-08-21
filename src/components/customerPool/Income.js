@@ -71,6 +71,7 @@ export default class Income extends PureComponent {
             { value: 679, name: '一般机构' },
             { value: 1548, name: '产品机构' },
           ],
+          selectedOffset: 0,
         },
         {
           name: '收入',

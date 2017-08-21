@@ -9,7 +9,7 @@ import { EVENT_PROFILE_ACTION } from '../config/log';
 export default {
   namespace: 'app',
   state: {
-    empInfo: {},
+    empAllInfo: {},
   },
   subscriptions: {},
   effects: {
@@ -35,7 +35,7 @@ export default {
       const { payload } = action;
       return {
         ...state,
-        empInfo: payload,
+        empAllInfo: payload,
       };
     },
   },

@@ -20,6 +20,7 @@ const CUST_MANAGER = '1'; // 客户经理
 const ORG = '3'; // 组织机构
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
+const HTSC_RESPID = '1-46IDNZI'; // 首页指标查询
 const effects = {
   allInfo: 'customerPool/getAllInfo',
   performanceIndicators: 'customerPool/getPerformanceIndicators',
@@ -42,7 +43,7 @@ const mapStateToProps = state => ({
   position: state.customerPool.position, // 职责切换
   process: state.customerPool.process, // 代办流程(首页总数)
   motTaskCount: state.customerPool.motTaskCount, // 今日可做任务总数
-  empInfo: state.app.empInfo, // 职位信息
+  empAllInfo: state.app.empAllInfo, // 职位信息
   hotPossibleWdsList: state.customerPool.hotPossibleWdsList, // 联想的推荐热词列表
   hotWds: state.customerPool.hotWds, // 默认推荐词及热词推荐列表
   historyWdsList: state.customerPool.historyWdsList, // 历史搜索
@@ -81,7 +82,7 @@ export default class Home extends PureComponent {
     position: PropTypes.object,
     process: PropTypes.number,
     motTaskCount: PropTypes.number,
-    empInfo: PropTypes.object,
+    empAllInfo: PropTypes.object,
     hotPossibleWdsList: PropTypes.array,
     hotWds: PropTypes.object,
     historyWdsList: PropTypes.array,
@@ -96,7 +97,7 @@ export default class Home extends PureComponent {
     position: EMPTY_OBJECT,
     process: 0,
     motTaskCount: 0,
-    empInfo: EMPTY_OBJECT,
+    empAllInfo: EMPTY_OBJECT,
     hotPossibleWdsList: EMPTY_LIST,
     hotWds: EMPTY_OBJECT,
     historyWdsList: EMPTY_LIST,
@@ -141,11 +142,11 @@ export default class Home extends PureComponent {
         cycleSelect: nextCycle[0].key,
       });
     }
-    if (!_.isEqual(preCustRange, nextCustRange) || preLocation !== nextLocation) {
+    if (preCustRange !== nextCustRange || preLocation !== nextLocation) {
       this.handleSetCustRange(nextProps);
-      this.setState({
-        createCustRange: this.handleCreateCustRange(null, nextProps),
-      });
+      // this.setState({
+      //   createCustRange: this.handleCreateCustRange(null, nextProps),
+      // });
     }
   }
 
@@ -172,17 +173,19 @@ export default class Home extends PureComponent {
 
   @autobind
   handleSetCustRange(props) {
-    const { location: { query }, custRange, empInfo: { empInfo: { occDivnNum = '' } } } = props;
+    const { location: { query }, custRange, empAllInfo: { empInfo, empRespList } } = props;
+    const { occDivnNum } = empInfo;
     const { orgId } = query;
     const occ = _.isEmpty(occDivnNum) ? '' : occDivnNum;// orgId取不到的情况下去用户信息中的
     const fspOrgid = _.isEmpty(window.forReactPosition) ? occ : window.forReactPosition.orgId;
     const orgid = _.isEmpty(orgId) // window.forReactPosition
       ?
       fspOrgid
-      : occ;
+      : orgId;
+    const respIdOfPosition = _.findIndex(empRespList, item => item.respId === HTSC_RESPID);
     this.setState({
-      fspOrgId: orgid,
-      orgId: orgid, // 组织ID
+      fspOrgId: respIdOfPosition < 0 ? '' : orgid,
+      orgId: respIdOfPosition < 0 ? '' : orgid, // 组织ID
     }, () => {
       if (custRange.length > 0) {
         this.handleGetAllInfo(custRange);
@@ -284,21 +287,36 @@ export default class Home extends PureComponent {
 
   @autobind
   handleCreateCustRange(orgId, nextProps) {
-    const { empInfo, custRange } = nextProps;
-    const { empPostnList } = empInfo;
+    const { empAllInfo, custRange } = nextProps;
+    const { empPostnList, empRespList } = empAllInfo; // 1-46IDNZI HTSC_RESPID
     const { fspOrgId } = this.state;
+    let orgNewCustRange = [];
+    const newCustRrange = [];
+    const myCustomer = {
+      id: '',
+      name: '我的客户',
+    };
+    if (_.isEmpty(empRespList) && empRespList.length < 0) {
+      return null;
+    }
+    const respIdOfPosition = _.findIndex(empRespList, item => item.respId === HTSC_RESPID);
+    if (respIdOfPosition < 0) {
+      newCustRrange.push(myCustomer);
+      return newCustRrange;
+    }
     let newOrgId = fspOrgId;
     if (!_.isEmpty(orgId)) {
       newOrgId = orgId;
     }
-    let orgNewCustRange = [];
-    const newCustRrange = [];
     if (custRange.length < 1) {
       return null;
     }
     if (newOrgId === custRange[0].id) {
       return custRange;
     }
+    this.setState({
+      expandAll: true,
+    });
     orgNewCustRange = _.findIndex(custRange, item => item.id === newOrgId);
     let newData;
     if (orgNewCustRange > -1) { // 总机构内
@@ -315,10 +333,6 @@ export default class Home extends PureComponent {
         newCustRrange.push(newData);
       }
     }
-    const myCustomer = {
-      id: '',
-      name: '我的客户',
-    };
     newCustRrange.push(myCustomer);
     return newCustRrange;
   }
