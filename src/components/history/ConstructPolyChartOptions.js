@@ -65,6 +65,9 @@ export const constructPolyChartOptions = (option = {}) => {
         axisLine: {
           show: false,
         },
+        // axisPointer: {
+        //   status: true,
+        // },
         axisLabel: {
           textStyle: {
             color: '#a1a1a1',
