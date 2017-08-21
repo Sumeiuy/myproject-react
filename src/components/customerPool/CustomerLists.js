@@ -21,6 +21,7 @@ export default class CustomerLists extends PureComponent {
     getCustIncome: PropTypes.func.isRequired,
     q: PropTypes.string,
     monthlyProfits: PropTypes.array.isRequired,
+    location: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -40,6 +41,7 @@ export default class CustomerLists extends PureComponent {
       onSizeChange,
       getCustIncome,
       monthlyProfits,
+      location,
     } = this.props;
     if (!custList.length) {
       return <div className="list-box"><NoData /></div>;
@@ -69,11 +71,12 @@ export default class CustomerLists extends PureComponent {
           {
             custList.map(
               item => <CustomerRow
+                location={location}
                 getCustIncome={getCustIncome}
                 monthlyProfits={monthlyProfits}
                 listItem={item}
                 q={q}
-                key={`${item.empId}-${item.custId}-${item.idNum}`}
+                key={`${item.empId}-${item.custId}-${item.idNum}-${item.telephone}-${item.asset}`}
               />,
             )
           }
