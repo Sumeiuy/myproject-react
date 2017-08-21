@@ -74,10 +74,10 @@ export default class TradingVolume extends PureComponent {
   numFormat(unit, num) {
     let newNum;
     if (num !== '--') {
-      newNum = _.parseInt(num, 10);
-      if (num === 0) {
+      if (num === '0') {
         return '0';
       }
+      newNum = _.parseInt(num, 10);
       // 超过1万
       if (unit === MILLION) {
         newNum /= 10000;

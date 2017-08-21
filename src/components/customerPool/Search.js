@@ -6,6 +6,7 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { Icon as AntdIcon, Button, Input, AutoComplete, message } from 'antd';
+import ReactDOM from 'react-dom';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { fspGlobal } from '../../utils';
@@ -17,6 +18,7 @@ const OptGroup = AutoComplete.OptGroup;
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 let COUNT = 0;
+let searchInput;
 export default class Search extends PureComponent {
 
   static propTypes = {
@@ -56,8 +58,12 @@ export default class Search extends PureComponent {
     }],
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.handleCreatHistoryList(this.props.historyWdsList);
+    searchInput = ReactDOM.findDOMNode(document.querySelector('.ant-select-search .ant-input'));// eslint-disable-line
+    if (searchInput) {
+      searchInput.addEventListener('keydown', this.handleSearchInput, false);
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -80,7 +86,10 @@ export default class Search extends PureComponent {
     }
   }
 
-  componentDidUpdate() {
+  componentWillUnmount() {
+    if (searchInput) {
+      searchInput.removeEventListener('keydown', this.handleSearchInput, false);
+    }
   }
 
   @autobind
@@ -89,6 +98,32 @@ export default class Search extends PureComponent {
       inputVal: value,
     });
     this.handleSearch(value);
+  }
+
+  @autobind
+  handleSearchInput(event) {
+    const e = event || window.event; // || arguments.callee.caller.arguments[0];
+    const { data: { hotWds = EMPTY_OBJECT } } = this.props;
+    if (e.stopPropagation) {
+      e.stopPropagation();
+    } else {
+      e.cancelBubble = true;
+    }
+    if (e && e.keyCode === 13) {
+      let searchVal = e.target.value;
+      if (_.isEmpty(_.trim(searchVal))) {
+        // message.info('搜索内容不能为空', 1);
+        // return;
+        searchVal = hotWds.labelNameVal;
+      }
+      this.handleOpenTab({
+        source: 'search',
+        labelMapping: '',
+        tagNumId: '',
+        q: encodeURIComponent(searchVal),
+      }, '搜索目标客户', 'FSP_SEARCH');
+    }
+    return true;
   }
 
   @autobind
