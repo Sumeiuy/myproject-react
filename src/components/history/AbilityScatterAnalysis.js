@@ -16,6 +16,21 @@ const Option = Select.Option;
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 
+const EXCEPT_CUST_AREA = [
+  '有效客户数',
+  '总客户数',
+  '个人客户数',
+  '机构客户数一般',
+  '机构客户数产品',
+  '零售客户数',
+  '高净值客户数',
+  '新开客户数个人',
+  '新开客户数一般',
+  '新开客户数产品',
+  '高净值客户总数个人',
+  '高净值客户总数机构',
+];
+
 export default class AbilityScatterAnalysis extends PureComponent {
   static propTypes = {
     data: PropTypes.object.isRequired,
@@ -292,7 +307,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
     } else {
       compareSlope = slope;
       currentSlope = currentSelectY / (currentSelectX - xAxisMin);
-      tooltipInfo = `${tooltipInfo}。平均每${description}${currentAverageValue}${yAxisUnit}/${xAxisUnit}，${currentSlope >= compareSlope ? '优' : '低'}于平均水平。`;
+      tooltipInfo = `${tooltipInfo}。平均每${description} ${yAxisName} ${currentAverageValue}${yAxisUnit}/${xAxisUnit}，${currentSlope >= compareSlope ? '优' : '低'}于平均水平。`;
     }
 
     // 经总和分公司下，显示每个点的平均值
@@ -374,17 +389,16 @@ export default class AbilityScatterAnalysis extends PureComponent {
     const { boardType, currentSelectIndicatorName, contrastType } = this.props;
     return (boardType === 'TYPE_LSDB_TGJX' &&
       (currentSelectIndicatorName === '投顾人数'
+        || currentSelectIndicatorName === '投顾入岗人数'
         || (contrastType === '客户类型' &&
-          (currentSelectIndicatorName === '投顾入岗人数'
-            || currentSelectIndicatorName === '新开客户净转入资产'))
+          (currentSelectIndicatorName === '新开客户净转入资产'
+            || currentSelectIndicatorName === '服务客户数'
+            || currentSelectIndicatorName === '签约客户数'))
       ))
       || (boardType === 'TYPE_LSDB_JYYJ'
-        && (contrastType === '客户类型' &&
-          (currentSelectIndicatorName === '有效客户数'
-            || currentSelectIndicatorName === '零售客户数'
-            || currentSelectIndicatorName === '高净值客户总数个人'
-            || currentSelectIndicatorName === '高净值客户总数机构'
-          ))
+        && ((contrastType === '客户类型' &&
+          _.includes(EXCEPT_CUST_AREA, currentSelectIndicatorName)) || (contrastType === '投顾类型' &&
+            currentSelectIndicatorName === '服务经理人数'))
       );
   }
 

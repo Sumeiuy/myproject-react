@@ -235,16 +235,22 @@ export const constructScatterData = (options = {}) => {
     },
     // 计算当前散点图的斜率
     getSlope(unitInfo) {
-      const { xAxisUnit, yAxisUnit, yAxisData } = unitInfo;
+      const { xAxisUnit, yAxisUnit } = unitInfo;
       const { value: xAxisTotalValue, unit: xAxisOriginUnit } = xAxisOption;
       const { value: yAxisTotalValue, unit: yAxisOriginUnit, name: yAxisName } = yAxisOption;
       if (isLvIndicator) {
         // 包含率
-        const total = _.reduce(yAxisData, (sum, n) => sum + n, 0);
-        const len = yAxisData.length;
+        // const total = _.reduce(yAxisData, (sum, n) => sum + n, 0);
+        // const len = yAxisData.length;
+        // let average;
+        // if (len > 0) {
+        //   average = total / len;
+        // }
         let average;
-        if (len > 0) {
-          average = total / len;
+        if (yAxisOriginUnit === PERCENT) {
+          average = yAxisTotalValue * 100;
+        } else if (yAxisOriginUnit === PERMILLAGE) {
+          average = yAxisTotalValue * 1000;
         }
         return {
           slope: average,
@@ -293,7 +299,7 @@ export const constructScatterData = (options = {}) => {
 
         return {
           slope,
-          averageInfo: `平均每${description}${Number(newAverage).toFixed(2)}${newYUnit}/${xUnit}`,
+          averageInfo: `平均每${description} ${yAxisName} ${Number(newAverage).toFixed(2)}${newYUnit}/${xUnit}`,
         };
       }
       return {
