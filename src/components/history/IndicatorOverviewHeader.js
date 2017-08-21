@@ -126,7 +126,7 @@ export default class IndicatorOverviewHeader extends PureComponent {
         boardId,
         boardType,
         coreIndicator: selectKeys,
-        investContrastIndicator: ['custNum'],
+        investContrastIndicator: ['ptyMngNum'],
         custContrastIndicator: ['totCustNum', 'pCustNum', 'oCustNum', 'oNewCustNum', 'oNewPrdtCustNum', 'InminorCustNum', 'newCustNum'],
       });
     }
