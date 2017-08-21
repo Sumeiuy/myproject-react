@@ -440,6 +440,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
       title,
       style,
       contrastType,
+      isLvIndicator,
     } = this.props;
 
 
@@ -450,7 +451,12 @@ export default class AbilityScatterAnalysis extends PureComponent {
     const { xAxisName, yAxisName, xAxisUnit, yAxisUnit } = finalData;
 
     return (
-      <div className={styles.abilityScatterAnalysis}>
+      <div
+        className={styles.abilityScatterAnalysis}
+        style={{
+          height: isLvIndicator ? '527px' : '540px',
+        }}
+      >
         <div
           className={styles.abilityHeader}
         >
