@@ -5,6 +5,7 @@
  */
 import React, { PropTypes, PureComponent } from 'react';
 import _ from 'lodash';
+import classnames from 'classnames';
 
 import Icon from '../common/Icon';
 import { iconTypeMap } from '../../config';
@@ -55,9 +56,13 @@ export default class IndexItem extends PureComponent {
     const IndexIconColor = getCoreIconColor(unit);
     const IndexIconSize = getCoreIconSize(unit);
     const newName = parentName ? `${parentName}-${name}` : name;
+    const activeClassName = classnames({
+      'am-bd-dv': true,
+      active,
+    });
     return (
       <div className={styles.indexItem}>
-        <div className={active ? 'active am-bd-dv' : 'am-bd-dv'}>
+        <div className={activeClassName}>
           <div className={styles.innderDv}>
             <span className={styles.iconBox} style={{ color: IndexIconColor }}>
               <Icon type={IndexIcon} style={{ fontSize: IndexIconSize }} />
