@@ -173,8 +173,9 @@ export default class Home extends PureComponent {
 
   @autobind
   handleSetCustRange(props) {
-    const { location: { query }, custRange, empAllInfo: { empInfo, empRespList } } = props;
-    const { occDivnNum } = empInfo;
+    const { location: { query }, custRange,
+    empAllInfo: { empInfo = EMPTY_OBJECT, empRespList } } = props;
+    const { occDivnNum = '' } = empInfo;
     const { orgId } = query;
     const occ = _.isEmpty(occDivnNum) ? '' : occDivnNum;// orgId取不到的情况下去用户信息中的
     const fspOrgid = _.isEmpty(window.forReactPosition) ? occ : window.forReactPosition.orgId;
@@ -191,10 +192,11 @@ export default class Home extends PureComponent {
         this.handleGetAllInfo(custRange);
       }
     });
+    return true;
   }
 
   @autobind
-  handleGetAllInfo(custRangeData) {
+  handleGetAllInfo(custRangeData = EMPTY_LIST) {
     const { getAllInfo, cycle, getHotWds, getHistoryWdsList } = this.props;
     const { fspOrgId } = this.state;
     let custType = ORG;
@@ -288,7 +290,8 @@ export default class Home extends PureComponent {
   @autobind
   handleCreateCustRange(orgId, nextProps) {
     const { empAllInfo, custRange } = nextProps;
-    const { empPostnList, empRespList } = empAllInfo; // 1-46IDNZI HTSC_RESPID
+    const { empPostnList = EMPTY_LIST,
+      empRespList = EMPTY_LIST } = empAllInfo; // 1-46IDNZI HTSC_RESPID
     const { fspOrgId } = this.state;
     let orgNewCustRange = [];
     const newCustRrange = [];
@@ -296,9 +299,6 @@ export default class Home extends PureComponent {
       id: '',
       name: '我的客户',
     };
-    if (_.isEmpty(empRespList) && empRespList.length < 0) {
-      return null;
-    }
     const respIdOfPosition = _.findIndex(empRespList, item => item.respId === HTSC_RESPID);
     if (respIdOfPosition < 0) {
       newCustRrange.push(myCustomer);
