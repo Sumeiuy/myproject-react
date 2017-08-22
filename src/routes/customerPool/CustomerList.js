@@ -22,7 +22,7 @@ import styles from './customerlist.less';
 
 const CUST_MANAGER = 1; // 客户经理
 const ORG = 3; // 组织机构
-
+const EMPTY_LIST = [];
 const CUR_PAGE = 1; // 默认当前页
 const CUR_PAGESIZE = 10; // 默认页大小
 const HTSC_RESPID = '1-46IDNZI'; // 首页指标查询
@@ -261,7 +261,8 @@ export default class CustomerList extends PureComponent {
   @autobind
   handleCreateCustRange(orgId, nextProps) {
     const { empAllInfo, custRange } = nextProps;
-    const { empPostnList, empRespList } = empAllInfo; // 1-46IDNZI HTSC_RESPID
+    const { empPostnList = EMPTY_LIST,
+      empRespList = EMPTY_LIST } = empAllInfo; // 1-46IDNZI HTSC_RESPID
     const { fspOrgId } = this.state;
     let orgNewCustRange = [];
     const newCustRrange = [];
@@ -269,9 +270,6 @@ export default class CustomerList extends PureComponent {
       id: '',
       name: '我的客户',
     };
-    if (_.isEmpty(empRespList) && empRespList.length < 0) {
-      return null;
-    }
     const respIdOfPosition = _.findIndex(empRespList, item => item.respId === HTSC_RESPID);
     if (respIdOfPosition < 0) {
       newCustRrange.push(myCustomer);
