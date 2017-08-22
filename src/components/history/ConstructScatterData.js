@@ -256,6 +256,8 @@ export const constructScatterData = (options = {}) => {
           slope: average,
           averageInfo: `${yAxisName}平均值${average && average.toFixed(2)}${yAxisUnit}`,
           average, // 平均值，用以区分
+          averageXUnit: '',
+          averageYUnit: yAxisUnit,
         };
       }
 

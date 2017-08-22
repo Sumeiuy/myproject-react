@@ -38,6 +38,9 @@ const EXCEPT_CUST_TGJX_AREA = [
   '有效签约客户数',
 ];
 
+const YI = '亿';
+const WAN = '万';
+
 export default class AbilityScatterAnalysis extends PureComponent {
   static propTypes = {
     data: PropTypes.object.isRequired,
@@ -312,35 +315,68 @@ export default class AbilityScatterAnalysis extends PureComponent {
     let finalXAxisUnit = xAxisUnit;
     let finalYAxisUnit = yAxisUnit;
 
-    if (averageXUnit !== finalXAxisUnit
-      || averageYUnit !== finalYAxisUnit) {
-      // 0.00这一类的
-      if (finalYAxisUnit.indexOf('亿') !== -1 && finalXAxisUnit.indexOf('万') === -1) {
-        finalXAxisUnit = `万${finalXAxisUnit}`;
-        currentAverageValue *= 10000;
-      } else if (finalYAxisUnit.indexOf('万') !== -1 && finalXAxisUnit.indexOf('万') === -1) {
-        finalYAxisUnit = finalYAxisUnit.replace('万', '亿');
-        finalXAxisUnit = `万${finalXAxisUnit}`;
-      }
-    }
-
     if (average) {
       // 对于率的指标作特殊处理
       // 比较每个点信息与平均值的比较
       compareSlope = average;
       currentSlope = currentSelectY;
-      tooltipInfo = `${tooltipInfo}。${currentSlope >= compareSlope ? '优' : '低'}于平均水平。`;
+      tooltipInfo = `${tooltipInfo}。${this.compareSlope(Number(currentSlope).toFixed(2), Number(compareSlope).toFixed(2))}于平均水平。`;
     } else {
+      if (averageXUnit !== finalXAxisUnit
+        || averageYUnit !== finalYAxisUnit) {
+        // 0.00这一类的
+        if (finalYAxisUnit.indexOf(YI) !== -1 && finalXAxisUnit.indexOf(WAN) === -1) {
+          finalXAxisUnit = `万${finalXAxisUnit}`;
+          currentAverageValue *= 10000;
+        } else if (finalYAxisUnit.indexOf(WAN) !== -1 && finalXAxisUnit.indexOf(WAN) === -1) {
+          finalYAxisUnit = finalYAxisUnit.replace(WAN, YI);
+          if (currentAverageValue / 10000 > 0.01) {
+            currentAverageValue /= 10000;
+          } else {
+            finalXAxisUnit = `万${finalXAxisUnit}`;
+          }
+        } else if (finalYAxisUnit.indexOf(WAN) === -1 && averageYUnit.indexOf(WAN) !== -1
+          && averageXUnit === finalXAxisUnit) {
+          finalYAxisUnit = `万${finalYAxisUnit}`;
+          currentAverageValue /= 10000;
+        }
+
+        // 对于换算之后，是亿元/万户这样的做处理
+        if (finalXAxisUnit !== averageXUnit && finalYAxisUnit !== averageYUnit
+          && finalYAxisUnit.indexOf(YI) !== -1 && finalXAxisUnit.indexOf(WAN) !== -1) {
+          finalYAxisUnit = finalYAxisUnit.replace(YI, WAN);
+          finalXAxisUnit = finalXAxisUnit.replace(WAN, '');
+        }
+      }
+
       compareSlope = slope;
       currentSlope = currentSelectY / (currentSelectX - xAxisMin);
-      tooltipInfo = `${tooltipInfo}。平均${description} ${yAxisName} ${currentAverageValue.toFixed(2)}${finalYAxisUnit}/${finalXAxisUnit}，${currentSlope >= compareSlope ? '优' : '低'}于平均水平。`;
+      tooltipInfo = `${tooltipInfo}。平均${description} ${yAxisName} ${currentAverageValue.toFixed(2)}${finalYAxisUnit}/${finalXAxisUnit}，${this.compareSlope(Number(currentSlope).toFixed(2), Number(compareSlope).toFixed(2))}于平均水平。`;
     }
 
     // 经总和分公司下，显示每个点的平均值
-    // 正常显示每个点的x信息和y信息，和每平均信息
+    // 正常显示每个点的x信息和y信息，和平均信息
     this.setState({
       tooltipInfo,
     });
+  }
+
+  /**
+   * 比较斜率
+   * @param {*} currentSlope 当前斜率
+   * @param {*} compareSlope 比较的斜率
+   */
+  compareSlope(currentSlope, compareSlope) {
+    let rank = '';
+    if (currentSlope > compareSlope) {
+      rank = '优';
+    } else if (currentSlope === compareSlope) {
+      rank = '等';
+    } else {
+      rank = '低';
+    }
+
+    return rank;
   }
 
   /**
@@ -387,7 +423,6 @@ export default class AbilityScatterAnalysis extends PureComponent {
   @autobind
   handleChange(value) {
     this.setState({
-      currentSelectedContrast: value,
       selectValue: value,
     });
     const { queryContrastAnalyze, type } = this.props;

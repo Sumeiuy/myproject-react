@@ -63,7 +63,7 @@ export default class ScatterAnalysis extends PureComponent {
               boardType={boardType}
               currentSelectIndicatorName={currentSelectIndicatorName}
               style={{
-                left: '-60px',
+                left: '-65px',
               }}
             />
           </Col>
@@ -90,7 +90,7 @@ export default class ScatterAnalysis extends PureComponent {
                   level={level}
                   currentSelectIndicatorName={currentSelectIndicatorName}
                   style={{
-                    left: '-60px',
+                    left: '-65px',
                   }}
                 />
               </Col>
