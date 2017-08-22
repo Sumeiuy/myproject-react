@@ -69,10 +69,8 @@
     margin-top: -1px;
     line-height: 34px;
     background: #fff;
-    .addScrollBar{
-      width: 142px;
-      // IE 下滚动条宽度 17px
-      width: 151px \9;
+    ul{
+      width: 134px;
       li {
         width: 100%;
         position: relative;
@@ -88,9 +86,22 @@
     }
   }
   .subMenuUl{
-    left: 154px;
+    left: 134px;
     max-height: 300px;
     border-radius: 4px;
     z-index: 3;
+  }
+}
+.addScrollBar{
+  .fixedBottom{
+    ul{
+      width: 142px;
+      // IE 下滚动条宽度 17px
+      width: 151px \9;
+    }
+  }
+  .subMenuUl{
+    left: 142px;
+    left: 151px \9;
   }
 }
