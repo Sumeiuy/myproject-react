@@ -8,6 +8,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import CommonScatter from '../chartRealTime/CommonScatter';
 import imgSrc from '../../../static/images/noChart.png';
+import { EXCEPT_CUST_JYYJ_MAP, EXCEPT_CUST_TGJX_MAP, EXCEPT_CUST_TOUGU_TGJX_MAP, EXCEPT_TOUGU_JYYJ_MAP } from '../../config/SpecialIndicators';
 import { constructScatterData } from './ConstructScatterData';
 import { constructScatterOptions } from './ConstructScatterOptions';
 import styles from './abilityScatterAnalysis.less';
@@ -16,27 +17,8 @@ const Option = Select.Option;
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 
-const EXCEPT_CUST_JYYJ_AREA = [
-  '有效客户数',
-  '总客户数',
-  '个人客户数',
-  '机构客户数一般',
-  '机构客户数产品',
-  '零售客户数',
-  '高净值客户数',
-  '新开客户数个人',
-  '新开客户数一般',
-  '新开客户数产品',
-  '高净值客户总数个人',
-  '高净值客户总数机构',
-];
-
-const EXCEPT_CUST_TGJX_AREA = [
-  '新开客户净转入资产',
-  '服务客户数',
-  '签约客户数',
-  '有效签约客户数',
-];
+const YI = '亿';
+const WAN = '万';
 
 export default class AbilityScatterAnalysis extends PureComponent {
   static propTypes = {
@@ -52,7 +34,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
     isLvIndicator: PropTypes.bool.isRequired,
     level: PropTypes.string.isRequired,
     boardType: PropTypes.string.isRequired,
-    currentSelectIndicatorName: PropTypes.string.isRequired,
+    currentSelectIndicatorKey: PropTypes.string.isRequired,
   };
 
   static defaultProps = {
@@ -312,35 +294,68 @@ export default class AbilityScatterAnalysis extends PureComponent {
     let finalXAxisUnit = xAxisUnit;
     let finalYAxisUnit = yAxisUnit;
 
-    if (averageXUnit !== finalXAxisUnit
-      || averageYUnit !== finalYAxisUnit) {
-      // 0.00这一类的
-      if (finalYAxisUnit.indexOf('亿') !== -1 && finalXAxisUnit.indexOf('万') === -1) {
-        finalXAxisUnit = `万${finalXAxisUnit}`;
-        currentAverageValue *= 10000;
-      } else if (finalYAxisUnit.indexOf('万') !== -1 && finalXAxisUnit.indexOf('万') === -1) {
-        finalYAxisUnit = finalYAxisUnit.replace('万', '亿');
-        finalXAxisUnit = `万${finalXAxisUnit}`;
-      }
-    }
-
     if (average) {
       // 对于率的指标作特殊处理
       // 比较每个点信息与平均值的比较
       compareSlope = average;
       currentSlope = currentSelectY;
-      tooltipInfo = `${tooltipInfo}。${currentSlope >= compareSlope ? '优' : '低'}于平均水平。`;
+      tooltipInfo = `${tooltipInfo}。${this.compareSlope(Number(currentSlope).toFixed(2), Number(compareSlope).toFixed(2))}于平均水平。`;
     } else {
+      if (averageXUnit !== finalXAxisUnit
+        || averageYUnit !== finalYAxisUnit) {
+        // 0.00这一类的
+        if (finalYAxisUnit.indexOf(YI) !== -1 && finalXAxisUnit.indexOf(WAN) === -1) {
+          finalXAxisUnit = `万${finalXAxisUnit}`;
+          currentAverageValue *= 10000;
+        } else if (finalYAxisUnit.indexOf(WAN) !== -1 && finalXAxisUnit.indexOf(WAN) === -1) {
+          finalYAxisUnit = finalYAxisUnit.replace(WAN, YI);
+          if (currentAverageValue / 10000 > 0.01) {
+            currentAverageValue /= 10000;
+          } else {
+            finalXAxisUnit = `万${finalXAxisUnit}`;
+          }
+        } else if (finalYAxisUnit.indexOf(WAN) === -1 && averageYUnit.indexOf(WAN) !== -1
+          && averageXUnit === finalXAxisUnit) {
+          finalYAxisUnit = `万${finalYAxisUnit}`;
+          currentAverageValue /= 10000;
+        }
+
+        // 对于换算之后，是亿元/万户这样的做处理
+        if (finalXAxisUnit !== averageXUnit && finalYAxisUnit !== averageYUnit
+          && finalYAxisUnit.indexOf(YI) !== -1 && finalXAxisUnit.indexOf(WAN) !== -1) {
+          finalYAxisUnit = finalYAxisUnit.replace(YI, WAN);
+          finalXAxisUnit = finalXAxisUnit.replace(WAN, '');
+        }
+      }
+
       compareSlope = slope;
       currentSlope = currentSelectY / (currentSelectX - xAxisMin);
-      tooltipInfo = `${tooltipInfo}。平均${description} ${yAxisName} ${currentAverageValue.toFixed(2)}${finalYAxisUnit}/${finalXAxisUnit}，${currentSlope >= compareSlope ? '优' : '低'}于平均水平。`;
+      tooltipInfo = `${tooltipInfo}。平均${description} ${yAxisName} ${currentAverageValue.toFixed(2)}${finalYAxisUnit}/${finalXAxisUnit}，${this.compareSlope(Number(currentSlope).toFixed(2), Number(compareSlope).toFixed(2))}于平均水平。`;
     }
 
     // 经总和分公司下，显示每个点的平均值
-    // 正常显示每个点的x信息和y信息，和每平均信息
+    // 正常显示每个点的x信息和y信息，和平均信息
     this.setState({
       tooltipInfo,
     });
+  }
+
+  /**
+   * 比较斜率
+   * @param {*} currentSlope 当前斜率
+   * @param {*} compareSlope 比较的斜率
+   */
+  compareSlope(currentSlope, compareSlope) {
+    let rank = '';
+    if (currentSlope > compareSlope) {
+      rank = '优';
+    } else if (currentSlope === compareSlope) {
+      rank = '等';
+    } else {
+      rank = '低';
+    }
+
+    return rank;
   }
 
   /**
@@ -387,7 +402,6 @@ export default class AbilityScatterAnalysis extends PureComponent {
   @autobind
   handleChange(value) {
     this.setState({
-      currentSelectedContrast: value,
       selectValue: value,
     });
     const { queryContrastAnalyze, type } = this.props;
@@ -410,19 +424,26 @@ export default class AbilityScatterAnalysis extends PureComponent {
     }
   }
 
+  /**
+   * 对特殊的指标作处理，在投顾绩效和经营业绩历史对比下，特殊的指标不展示散点图，展示无意义图
+   */
   @autobind
   toggleChart() {
-    const { boardType, currentSelectIndicatorName, contrastType } = this.props;
+    const { boardType, currentSelectIndicatorKey, contrastType } = this.props;
     return (boardType === 'TYPE_LSDB_TGJX' &&
-      (currentSelectIndicatorName === '投顾人数'
-        || currentSelectIndicatorName === '投顾入岗人数'
+      (_.findIndex(EXCEPT_CUST_TOUGU_TGJX_MAP,
+        item => item.key === currentSelectIndicatorKey) > -1
         || (contrastType === '客户类型' &&
-          (_.includes(EXCEPT_CUST_TGJX_AREA, currentSelectIndicatorName)))
+          (_.findIndex(EXCEPT_CUST_TGJX_MAP,
+            item => item.key === currentSelectIndicatorKey) > -1))
       ))
       || (boardType === 'TYPE_LSDB_JYYJ'
         && ((contrastType === '客户类型' &&
-          _.includes(EXCEPT_CUST_JYYJ_AREA, currentSelectIndicatorName)) || (contrastType === '投顾类型' &&
-            currentSelectIndicatorName === '服务经理数'))
+          (_.findIndex(EXCEPT_CUST_JYYJ_MAP,
+            item => item.key === currentSelectIndicatorKey) > -1))
+          || (contrastType === '投顾类型' &&
+            _.findIndex(EXCEPT_TOUGU_JYYJ_MAP,
+              item => item.key === currentSelectIndicatorKey) > -1))
       );
   }
 

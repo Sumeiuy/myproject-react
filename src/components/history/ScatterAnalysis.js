@@ -23,7 +23,7 @@ export default class ScatterAnalysis extends PureComponent {
     location: PropTypes.object.isRequired,
     level: PropTypes.string.isRequired,
     isLvIndicator: PropTypes.bool.isRequired,
-    currentSelectIndicatorName: PropTypes.string.isRequired,
+    currentSelectIndicatorKey: PropTypes.string.isRequired,
   };
 
   static defaultProps = {
@@ -42,7 +42,7 @@ export default class ScatterAnalysis extends PureComponent {
       location: { query: { boardType } },
       level,
       isLvIndicator,
-      currentSelectIndicatorName,
+      currentSelectIndicatorKey,
     } = this.props;
 
     return (
@@ -61,9 +61,9 @@ export default class ScatterAnalysis extends PureComponent {
               switchDefault={switchDefault}
               level={level}
               boardType={boardType}
-              currentSelectIndicatorName={currentSelectIndicatorName}
+              currentSelectIndicatorKey={currentSelectIndicatorKey}
               style={{
-                left: '-60px',
+                left: '-65px',
               }}
             />
           </Col>
@@ -88,9 +88,9 @@ export default class ScatterAnalysis extends PureComponent {
                   isLvIndicator={isLvIndicator}
                   boardType={boardType}
                   level={level}
-                  currentSelectIndicatorName={currentSelectIndicatorName}
+                  currentSelectIndicatorKey={currentSelectIndicatorKey}
                   style={{
-                    left: '-60px',
+                    left: '-65px',
                   }}
                 />
               </Col>
