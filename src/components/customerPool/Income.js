@@ -103,7 +103,7 @@ export default class Income extends PureComponent {
             option={options}
             resizable
             style={{
-              height: '200px',
+              height: '190px',
               width: '100%',
             }}
           />
