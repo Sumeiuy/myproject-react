@@ -208,10 +208,7 @@ export default class CustomerRow extends PureComponent {
 
   @autobind
   handleMouseEnter() {
-    const { getCustIncome, listItem, monthlyProfits } = this.props;
-    if (monthlyProfits.length !== 0) {
-      return;
-    }
+    const { getCustIncome, listItem } = this.props;
     // test data empId = 01041128、05038222、035000002899、02004642
     getCustIncome({ custNumber: listItem.custId });
   }
@@ -400,7 +397,7 @@ export default class CustomerRow extends PureComponent {
               </div>
               <div className={styles.itemB}>
                 <span>佣金率：</span>
-                <span>{listItem.miniFee * 1000}‰</span>
+                <span>{(listItem.miniFee * 1000).toFixed(2)}‰</span>
               </div>
             </div>
             <div className={styles.basicInfoD}>
