@@ -98,8 +98,13 @@ const dataHandle = {
           rank_contrast: contrast,
         } = item;
         const current1 = _.isEmpty(current) ? 0 : Number.parseInt(current, 10);
-        const change1 = _.isEmpty(change) ? 0 : Number.parseInt(change, 10);
         const contrast1 = _.isEmpty(contrast) ? 0 : Number.parseInt(contrast, 10);
+        let change1;
+        if (_.isEmpty(change)) {
+          change1 = null;
+        } else {
+          change1 = Number.parseInt(change, 10);
+        }
         data.push({
           current: current1,
           change: change1,

@@ -68,9 +68,8 @@ export default class ScatterAnalysis extends PureComponent {
             />
           </Col>
           {
-            // 经营绩效不展示投顾维度散点图
             // 投顾历史看板下的营业部不展示投顾维度散点图
-            (boardType === 'TYPE_LSDB_JYYJ' || (level === '3' && boardType === 'TYPE_LSDB_TGJX'))
+            level === '3'
               ? <div
                 style={{
                   height: '400px',
@@ -83,7 +82,7 @@ export default class ScatterAnalysis extends PureComponent {
                   title={investScatter.title}
                   contrastType={'投顾类型'}
                   optionsData={invest}
-                  description={'服务经理'}
+                  description={boardType === 'TYPE_LSDB_TGJX' ? '入岗投顾贡献' : '服务经理贡献'}
                   type={investScatter.type}
                   switchDefault={switchDefault}
                   isLvIndicator={isLvIndicator}

@@ -16,6 +16,28 @@ const Option = Select.Option;
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 
+const EXCEPT_CUST_JYYJ_AREA = [
+  '有效客户数',
+  '总客户数',
+  '个人客户数',
+  '机构客户数一般',
+  '机构客户数产品',
+  '零售客户数',
+  '高净值客户数',
+  '新开客户数个人',
+  '新开客户数一般',
+  '新开客户数产品',
+  '高净值客户总数个人',
+  '高净值客户总数机构',
+];
+
+const EXCEPT_CUST_TGJX_AREA = [
+  '新开客户净转入资产',
+  '服务客户数',
+  '签约客户数',
+  '有效签约客户数',
+];
+
 export default class AbilityScatterAnalysis extends PureComponent {
   static propTypes = {
     data: PropTypes.object.isRequired,
@@ -53,6 +75,8 @@ export default class AbilityScatterAnalysis extends PureComponent {
       tooltipInfo: '',
       scatterOptions: EMPTY_OBJECT,
       average: '',
+      averageXUnit: '',
+      averageYUnit: '',
     };
   }
 
@@ -81,11 +105,13 @@ export default class AbilityScatterAnalysis extends PureComponent {
         description,
         isLvIndicator,
       });
-      const { averageInfo } = finalData;
+      const { averageInfo, averageXUnit, averageYUnit } = finalData;
       this.getAnyPoint(finalData);
       this.setState({
         finalData,
         averageInfo,
+        averageXUnit,
+        averageYUnit,
       });
     } else {
       this.setState({
@@ -266,6 +292,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
   */
   constructTooltipInfo(currentItemInfo) {
     const { description } = this.props;
+    const { averageXUnit, averageYUnit } = this.state;
     const {
       currentSelectX,
       currentSelectY,
@@ -278,11 +305,25 @@ export default class AbilityScatterAnalysis extends PureComponent {
       average,
     } = currentItemInfo;
 
-
     let compareSlope = '';
     let currentSlope;
     let tooltipInfo = `${xAxisName}：${currentSelectX}${xAxisUnit}，${yAxisName}：${currentSelectY}${yAxisUnit}`;
-    const currentAverageValue = (currentSelectY / currentSelectX).toFixed(2);
+    let currentAverageValue = currentSelectY / currentSelectX;
+    let finalXAxisUnit = xAxisUnit;
+    let finalYAxisUnit = yAxisUnit;
+
+    if (averageXUnit !== finalXAxisUnit
+      || averageYUnit !== finalYAxisUnit) {
+      // 0.00这一类的
+      if (finalYAxisUnit.indexOf('亿') !== -1 && finalXAxisUnit.indexOf('万') === -1) {
+        finalXAxisUnit = `万${finalXAxisUnit}`;
+        currentAverageValue *= 10000;
+      } else if (finalYAxisUnit.indexOf('万') !== -1 && finalXAxisUnit.indexOf('万') === -1) {
+        finalYAxisUnit = finalYAxisUnit.replace('万', '亿');
+        finalXAxisUnit = `万${finalXAxisUnit}`;
+      }
+    }
+
     if (average) {
       // 对于率的指标作特殊处理
       // 比较每个点信息与平均值的比较
@@ -292,7 +333,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
     } else {
       compareSlope = slope;
       currentSlope = currentSelectY / (currentSelectX - xAxisMin);
-      tooltipInfo = `${tooltipInfo}。平均每${description}${currentAverageValue}${yAxisUnit}/${xAxisUnit}，${currentSlope >= compareSlope ? '优' : '低'}于平均水平。`;
+      tooltipInfo = `${tooltipInfo}。平均${description} ${yAxisName} ${currentAverageValue.toFixed(2)}${finalYAxisUnit}/${finalXAxisUnit}，${currentSlope >= compareSlope ? '优' : '低'}于平均水平。`;
     }
 
     // 经总和分公司下，显示每个点的平均值
@@ -374,17 +415,14 @@ export default class AbilityScatterAnalysis extends PureComponent {
     const { boardType, currentSelectIndicatorName, contrastType } = this.props;
     return (boardType === 'TYPE_LSDB_TGJX' &&
       (currentSelectIndicatorName === '投顾人数'
+        || currentSelectIndicatorName === '投顾入岗人数'
         || (contrastType === '客户类型' &&
-          (currentSelectIndicatorName === '投顾入岗人数'
-            || currentSelectIndicatorName === '新开客户净转入资产'))
+          (_.includes(EXCEPT_CUST_TGJX_AREA, currentSelectIndicatorName)))
       ))
       || (boardType === 'TYPE_LSDB_JYYJ'
-        && (contrastType === '客户类型' &&
-          (currentSelectIndicatorName === '有效客户数'
-            || currentSelectIndicatorName === '零售客户数'
-            || currentSelectIndicatorName === '高净值客户总数个人'
-            || currentSelectIndicatorName === '高净值客户总数机构'
-          ))
+        && ((contrastType === '客户类型' &&
+          _.includes(EXCEPT_CUST_JYYJ_AREA, currentSelectIndicatorName)) || (contrastType === '投顾类型' &&
+            currentSelectIndicatorName === '服务经理数'))
       );
   }
 
@@ -406,6 +444,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
       title,
       style,
       contrastType,
+      isLvIndicator,
     } = this.props;
 
 
@@ -416,7 +455,12 @@ export default class AbilityScatterAnalysis extends PureComponent {
     const { xAxisName, yAxisName, xAxisUnit, yAxisUnit } = finalData;
 
     return (
-      <div className={styles.abilityScatterAnalysis}>
+      <div
+        className={styles.abilityScatterAnalysis}
+        style={{
+          height: isLvIndicator ? '527px' : '540px',
+        }}
+      >
         <div
           className={styles.abilityHeader}
         >
