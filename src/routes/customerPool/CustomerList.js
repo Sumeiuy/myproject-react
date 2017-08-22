@@ -137,11 +137,14 @@ export default class CustomerList extends PureComponent {
 
   @autobind
   getCustomerList(props) {
-    const { getCustomerData, location: { query } } = props;
+    const { getCustomerData, location: { query }, empAllInfo: { empInfo, empRespList } } = props;
+    const { occDivnNum } = empInfo;
+    const occ = _.isEmpty(occDivnNum) ? '' : occDivnNum;// orgId取不到的情况下去用户信息中的
     const orgId = _.isEmpty(window.forReactPosition)
       ?
-      ''
+      occ
       : window.forReactPosition.orgId;
+    const respIdOfPosition = _.findIndex(empRespList, item => (item.respId === HTSC_RESPID));
     const k = decodeURIComponent(query.q);
     const param = {
       // 必传，当前页
@@ -167,9 +170,9 @@ export default class CustomerList extends PureComponent {
       ];
       // param.fullTestSearch = k;
     }
-    if (query.orgId) {   // 客户经理机构号
+    if (respIdOfPosition > 0 && query.orgId) {   // 客户经理机构号
       param.orgId = query.orgId;
-    } else if (orgId) {
+    } else if (respIdOfPosition > 0 && orgId) {
       param.orgId = orgId;
     }
     // 过滤数组
@@ -228,7 +231,7 @@ export default class CustomerList extends PureComponent {
       ?
       fspOrgid
       : orgId;
-    const respIdOfPosition = _.findIndex(empRespList, item => item.respId === HTSC_RESPID);
+    const respIdOfPosition = _.findIndex(empRespList, item => (item.respId === HTSC_RESPID));
     this.setState({
       fspOrgId: respIdOfPosition < 0 ? '' : orgid,
       orgId: respIdOfPosition < 0 ? '' : orgid, // 组织ID
