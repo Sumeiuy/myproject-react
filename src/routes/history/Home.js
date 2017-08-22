@@ -600,12 +600,15 @@ export default class HistoryHome extends PureComponent {
     const isLvIndicator = curNameIndex > -1 ? historyCore[curNameIndex].name.indexOf('率') !== -1 : false;
 
     // 选出当前选中的指标
-    let defaultInidicator = '';
+    let defaultIndicatorName = '';
+    let defaultIndicatorKey = '';
     if (!_.isEmpty(historyCore)) {
       if (curNameIndex > -1) {
-        defaultInidicator = `${historyCore[curNameIndex].parentName || ''}${historyCore[curNameIndex].name || ''}`;
+        defaultIndicatorKey = indicatorId;
+        defaultIndicatorName = `${historyCore[curNameIndex].parentName || ''}${historyCore[curNameIndex].name || ''}`;
       } else {
-        defaultInidicator = `${historyCore[0].parentName || ''}${historyCore[0].name || ''}`;
+        defaultIndicatorName = `${historyCore[0].parentName || ''}${historyCore[0].name || ''}`;
+        defaultIndicatorKey = historyCore[0].key;
       }
     }
 
@@ -651,7 +654,7 @@ export default class HistoryHome extends PureComponent {
             />
           </div>
           <div className={styles.indicatorAnalyse}>
-            <div className={styles.caption}>{defaultInidicator}-详细分析</div>
+            <div className={styles.caption}>{defaultIndicatorName}-详细分析</div>
             <div className={styles.polyArea}>
               <Row type="flex" gutter={10} >
                 <Col span="12">
@@ -681,7 +684,7 @@ export default class HistoryHome extends PureComponent {
                 location={location}
                 level={level}
                 isLvIndicator={isLvIndicator}
-                currentSelectIndicatorName={defaultInidicator}
+                currentSelectIndicatorKey={defaultIndicatorKey}
               />
             </div>
           </div>

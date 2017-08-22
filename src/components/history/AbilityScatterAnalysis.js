@@ -8,6 +8,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import CommonScatter from '../chartRealTime/CommonScatter';
 import imgSrc from '../../../static/images/noChart.png';
+import { EXCEPT_CUST_JYYJ_MAP, EXCEPT_CUST_TGJX_MAP, EXCEPT_CUST_TOUGU_TGJX_MAP, EXCEPT_TOUGU_JYYJ_MAP } from '../../config/SpecialIndicators';
 import { constructScatterData } from './ConstructScatterData';
 import { constructScatterOptions } from './ConstructScatterOptions';
 import styles from './abilityScatterAnalysis.less';
@@ -15,28 +16,6 @@ import styles from './abilityScatterAnalysis.less';
 const Option = Select.Option;
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
-
-const EXCEPT_CUST_JYYJ_AREA = [
-  '有效客户数',
-  '总客户数',
-  '个人客户数',
-  '机构客户数一般',
-  '机构客户数产品',
-  '零售客户数',
-  '高净值客户数',
-  '新开客户数个人',
-  '新开客户数一般',
-  '新开客户数产品',
-  '高净值客户总数个人',
-  '高净值客户总数机构',
-];
-
-const EXCEPT_CUST_TGJX_AREA = [
-  '新开客户净转入资产',
-  '服务客户数',
-  '签约客户数',
-  '有效签约客户数',
-];
 
 const YI = '亿';
 const WAN = '万';
@@ -55,7 +34,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
     isLvIndicator: PropTypes.bool.isRequired,
     level: PropTypes.string.isRequired,
     boardType: PropTypes.string.isRequired,
-    currentSelectIndicatorName: PropTypes.string.isRequired,
+    currentSelectIndicatorKey: PropTypes.string.isRequired,
   };
 
   static defaultProps = {
@@ -445,19 +424,26 @@ export default class AbilityScatterAnalysis extends PureComponent {
     }
   }
 
+  /**
+   * 对特殊的指标作处理，在投顾绩效和经营业绩历史对比下，特殊的指标不展示散点图，展示无意义图
+   */
   @autobind
   toggleChart() {
-    const { boardType, currentSelectIndicatorName, contrastType } = this.props;
+    const { boardType, currentSelectIndicatorKey, contrastType } = this.props;
     return (boardType === 'TYPE_LSDB_TGJX' &&
-      (currentSelectIndicatorName === '投顾人数'
-        || currentSelectIndicatorName === '投顾入岗人数'
+      (_.findIndex(EXCEPT_CUST_TOUGU_TGJX_MAP,
+        item => item.key === currentSelectIndicatorKey) > -1
         || (contrastType === '客户类型' &&
-          (_.includes(EXCEPT_CUST_TGJX_AREA, currentSelectIndicatorName)))
+          (_.findIndex(EXCEPT_CUST_TGJX_MAP,
+            item => item.key === currentSelectIndicatorKey) > -1))
       ))
       || (boardType === 'TYPE_LSDB_JYYJ'
         && ((contrastType === '客户类型' &&
-          _.includes(EXCEPT_CUST_JYYJ_AREA, currentSelectIndicatorName)) || (contrastType === '投顾类型' &&
-            currentSelectIndicatorName === '服务经理数'))
+          (_.findIndex(EXCEPT_CUST_JYYJ_MAP,
+            item => item.key === currentSelectIndicatorKey) > -1))
+          || (contrastType === '投顾类型' &&
+            _.findIndex(EXCEPT_TOUGU_JYYJ_MAP,
+              item => item.key === currentSelectIndicatorKey) > -1))
       );
   }
 
