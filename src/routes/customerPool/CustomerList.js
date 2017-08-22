@@ -321,6 +321,7 @@ export default class CustomerList extends PureComponent {
       query: {
         ...query,
         orgId: state.orgId,
+        curPageNum: 1,
       },
     });
     this.setState({
@@ -337,6 +338,7 @@ export default class CustomerList extends PureComponent {
       query: {
         ...query,
         [obj.name]: obj.value,
+        curPageNum: 1,
       },
     });
   }
@@ -350,6 +352,7 @@ export default class CustomerList extends PureComponent {
         ...query,
         sortType: obj.sortType,
         sortDirection: obj.sortDirection,
+        curPageNum: 1,
       },
     });
   }
