@@ -105,7 +105,7 @@ const UNIT_DEFAULT = '元';
 const UNIT_WAN = '万元';
 const UNIT_YI = '亿元';
 
-const trim = str => (str.replace(/(^\s+)|(\s+$)/g, ''));
+const trim = str => (str ? str.replace(/(^\s+)|(\s+$)/g, '') : '');
 
 const haveTitle = title => (title ? `<i class="tip">${title}</i>` : null);
 
