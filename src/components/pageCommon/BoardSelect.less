@@ -105,3 +105,16 @@
     left: 151px \9;
   }
 }
+// IE 10 11 hack
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+  .addScrollBar{
+    .fixedBottom{
+      ul{
+        width: 151px;
+      }
+    }
+    .subMenuUl{
+      left: 151px;
+    }
+  }
+}
