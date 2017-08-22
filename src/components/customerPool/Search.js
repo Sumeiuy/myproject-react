@@ -322,7 +322,7 @@ export default class Search extends PureComponent {
             <Option key={item.labelNameVal} text={item.labelNameVal} >
               <a
                 onClick={() => this.handleOpenTab({
-                  source: 'association',
+                  source: 'search',
                   labelMapping: item.labelMapping || '',
                   tagNumId: item.tagNumId || '',
                   q: encodeURIComponent(item.labelNameVal),

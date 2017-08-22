@@ -105,7 +105,7 @@ const UNIT_DEFAULT = '元';
 const UNIT_WAN = '万元';
 const UNIT_YI = '亿元';
 
-const trim = str => (str.replace(/(^\s+)|(\s+$)/g, ''));
+const trim = str => (str ? str.replace(/(^\s+)|(\s+$)/g, '') : '');
 
 const haveTitle = title => (title ? `<i class="tip">${title}</i>` : null);
 
@@ -117,20 +117,22 @@ const replaceWord = (value, q, title = '') => {
 const getNewHtml = (value, k) => (`<li><span>${value}：${k}</span></li>`);
 
 const generateUnit = (num) => {
-  if (num >= YI) {
+  const absNum = Math.abs(num);
+  if (absNum >= YI) {
     return UNIT_YI;
   }
-  if (num >= WAN) {
+  if (absNum >= WAN) {
     return UNIT_WAN;
   }
   return UNIT_DEFAULT;
 };
 
 const formatNumber = (num) => {
-  if (num >= YI) {
+  const absNum = Math.abs(num);
+  if (absNum >= YI) {
     return (num / YI).toFixed(2);
   }
-  if (num >= WAN) {
+  if (absNum >= WAN) {
     return (num / WAN).toFixed(2);
   }
   return num;
@@ -371,7 +373,7 @@ export default class CustomerRow extends PureComponent {
                         <span className={styles.numB}>
                           {
                             monthlyProfits.length ?
-                            `${lastestProfitRate * 10}%`
+                            `${(lastestProfitRate * 10).toFixed(2)}%`
                             :
                             '--'
                           }
