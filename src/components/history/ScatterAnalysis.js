@@ -79,7 +79,7 @@ export default class ScatterAnalysis extends PureComponent {
                 <AbilityScatterAnalysis
                   data={reviewAnalysisData}
                   queryContrastAnalyze={queryContrastAnalyze}
-                  title={investScatter.title}
+                  title={boardType === 'TYPE_LSDB_TGJX' ? '投顾贡献对比' : '服务经理贡献对比'}
                   contrastType={'投顾类型'}
                   optionsData={invest}
                   description={boardType === 'TYPE_LSDB_TGJX' ? '入岗投顾贡献' : '服务经理贡献'}
