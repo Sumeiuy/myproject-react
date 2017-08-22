@@ -222,19 +222,19 @@ export default class CustomerList extends PureComponent {
 
   @autobind
   handleSetCustRange(props) {
-    const { location: { query }, custRange, empAllInfo: { empInfo, empRespList } } = props;
+    const { custRange, empAllInfo: { empInfo, empRespList } } = props;
     const { occDivnNum } = empInfo;
-    const { orgId } = query;
+    // const { orgId } = query;
     const occ = _.isEmpty(occDivnNum) ? '' : occDivnNum;// orgId取不到的情况下去用户信息中的
     const fspOrgid = _.isEmpty(window.forReactPosition) ? occ : window.forReactPosition.orgId;
-    const orgid = _.isEmpty(orgId) // window.forReactPosition
-      ?
-      fspOrgid
-      : orgId;
+    // const orgid = _.isEmpty(orgId) // window.forReactPosition
+    //   ?
+    //   fspOrgid
+    //   : orgId;
     const respIdOfPosition = _.findIndex(empRespList, item => (item.respId === HTSC_RESPID));
     this.setState({
-      fspOrgId: respIdOfPosition < 0 ? '' : orgid,
-      orgId: respIdOfPosition < 0 ? '' : orgid, // 组织ID
+      fspOrgId: respIdOfPosition < 0 ? '' : fspOrgid,
+      orgId: respIdOfPosition < 0 ? '' : fspOrgid, // 组织ID
     }, () => {
       if (custRange.length > 0) {
         this.handleGetAllInfo(custRange);
