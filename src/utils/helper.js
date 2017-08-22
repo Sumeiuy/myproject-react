@@ -132,13 +132,13 @@ const helper = {
           // 如果 单位是 %
           obj.unit = unit;
           if (unit === PERCENT) {
-            obj.value = (newValue * 100).toFixed(2);
+            obj.value = Number.parseFloat((newValue * 100).toFixed(2));
           } else if (unit === PERMILLAGE) {
             // 如果是 千分符
-            obj.value = (newValue * 1000).toFixed(2);
+            obj.value = Number.parseFloat((newValue * 1000).toFixed(2));
           } else {
             // 其他情况均保留两位小数
-            obj.value = newValue.toFixed(2);
+            obj.value = Number.parseFloat(newValue.toFixed(2));
           }
         } else {
           // 分割成数组
@@ -178,7 +178,7 @@ const helper = {
                 arr[1] = arr[1].substr(0, 2);
               }
               const tempStr = arr.join('.');
-              tempValue = Number(_.trimEnd(tempStr, '.')).toFixed(2);
+              tempValue = Number.parseFloat(Number(_.trimEnd(tempStr, '.')).toFixed(2));
               tempValue = tempValue === 0.00 ? 0 : tempValue;
             }
             obj.value = tempValue || value;

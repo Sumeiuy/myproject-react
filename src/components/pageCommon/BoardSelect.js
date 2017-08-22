@@ -7,6 +7,7 @@ import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import { Icon } from 'antd';
 import _ from 'lodash';
+import classnames from 'classnames';
 
 import { constants, BoardBasic, optionsMap } from '../../config';
 import { getCssStyle } from '../../utils/helper';
@@ -16,8 +17,6 @@ import styles from './BoardSelect.less';
 const defaultBoardId = constants.boardId;
 const sliceLength = BoardBasic.regular.length;
 const visibleBoardType = optionsMap.visibleBoardType;
-// 超过十个菜单即出现滚动条
-const scrollNum = 9;
 
 export default class BoardSelect extends PureComponent {
 
@@ -40,6 +39,7 @@ export default class BoardSelect extends PureComponent {
     }
     this.state = {
       dropdownVisible: false,
+      addScrollBar: false,
       boardName,
       hasRegisterWheel: false,
       showMenu: false,
@@ -155,6 +155,10 @@ export default class BoardSelect extends PureComponent {
       this.registerScrollEvent();
       const height = parseInt(getCssStyle(this.menuUl, 'height'), 10);
       const titleHeight = parseInt(getCssStyle(this.menuTitle, 'height'), 10);
+      const addScrollBar = this.menuUl.scrollHeight > height;
+      this.setState({
+        addScrollBar,
+      });
       this.fixedBottom.style.top = `${height + titleHeight}px`;
       this.subMenuUl.style.top = `${height + titleHeight}px`;
     });
@@ -257,7 +261,7 @@ export default class BoardSelect extends PureComponent {
   render() {
     // 新的可见看板数组
     const { newVisibleBoards } = this.props;
-    const { boardName, showMenu, showSubMenu } = this.state;
+    const { boardName, showMenu, showSubMenu, addScrollBar } = this.state;
     // 根据 showMenu 来判断是否显示
     const showOrNot = showMenu ? 'block' : 'none';
     // 静态的看板数组
@@ -269,7 +273,6 @@ export default class BoardSelect extends PureComponent {
     // 可见看板数组中最后一个对象
     const lastVisibleBoards = newVisibleBoards[newVisibleBoards.length - 1];
     // 获取一级菜单滚动的长度
-    const scrollUlLength = staticBorads.length + lastVisibleBoards.ordinary.length;
     // 普通看板的静态数组生成 html
     const ordinaryHtml = (
       ordinaryStaticBoards.map(item => (
@@ -327,9 +330,13 @@ export default class BoardSelect extends PureComponent {
         </li>
       ))
     );
+    const addScrollBarClassName = classnames({
+      [styles.menuDiv]: true,
+      [styles.addScrollBar]: addScrollBar,
+    });
     return (
       <div
-        className={styles.menuDiv}
+        className={addScrollBarClassName}
         onMouseEnter={this.mouseEnter}
         onMouseLeave={this.mouseLeave}
       >
@@ -356,7 +363,7 @@ export default class BoardSelect extends PureComponent {
           style={{ display: showOrNot }}
           ref={this.setFixedBottomRef}
         >
-          <ul className={scrollUlLength > scrollNum ? styles.addScrollBar : null}>
+          <ul>
             <li
               onMouseEnter={this.subMouseEnter}
               onMouseLeave={this.subMouseLeave}
