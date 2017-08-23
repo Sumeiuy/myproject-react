@@ -13,6 +13,7 @@ import { message, Row, Col } from 'antd';
 import _ from 'lodash';
 
 import { getEmpId, getDurationString } from '../../utils/helper';
+import { COMMISSION_RATE_MAP } from '../../config/SpecialIndicators';
 import IndicatorOverviewHeader from '../../components/history/IndicatorOverviewHeader';
 import IndicatorOverview from '../../components/history/IndicatorOverview';
 import ScatterAnalysis from '../../components/history/ScatterAnalysis';
@@ -599,6 +600,9 @@ export default class HistoryHome extends PureComponent {
     // 找出当前是否是以率为结尾的指标
     const isLvIndicator = curNameIndex > -1 ? historyCore[curNameIndex].name.indexOf('率') !== -1 : false;
 
+    // 是否是佣金率指标
+    let isCommissionRate = false;
+
     // 选出当前选中的指标
     let defaultIndicatorName = '';
     let defaultIndicatorKey = '';
@@ -610,6 +614,8 @@ export default class HistoryHome extends PureComponent {
         defaultIndicatorName = `${historyCore[0].parentName || ''}${historyCore[0].name || ''}`;
         defaultIndicatorKey = historyCore[0].key;
       }
+      isCommissionRate = _.findIndex(COMMISSION_RATE_MAP,
+        item => item.key === defaultIndicatorKey) > -1;
     }
 
     return (
@@ -658,7 +664,7 @@ export default class HistoryHome extends PureComponent {
             <div className={styles.polyArea}>
               <Row type="flex" gutter={10} >
                 <Col span="12">
-                  <HistoryComparePolyChart data={contrastData} />
+                  <HistoryComparePolyChart data={{ ...contrastData, isCommissionRate }} />
                 </Col>
                 <Col span="12">
                   <HistoryCompareRankChart
@@ -685,6 +691,7 @@ export default class HistoryHome extends PureComponent {
                 level={level}
                 isLvIndicator={isLvIndicator}
                 currentSelectIndicatorKey={defaultIndicatorKey}
+                isCommissionRate={isCommissionRate}
               />
             </div>
           </div>

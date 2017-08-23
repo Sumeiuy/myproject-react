@@ -38,12 +38,15 @@ function padFixedCust(m, method) {
 
 const FixNumber = {
   // 对小数点进行处理
-  toFixedDecimal(value) {
+  toFixedDecimal(value, isCommissionRate) {
     if (value > 10000) {
       return Number.parseFloat(value.toFixed(0));
     }
     if (value > 1000) {
       return Number.parseFloat(value.toFixed(1));
+    }
+    if (isCommissionRate) {
+      return Number.parseFloat(value.toFixed(3));
     }
     return Number.parseFloat(value.toFixed(2));
   },

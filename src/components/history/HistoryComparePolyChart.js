@@ -8,8 +8,19 @@ import React, { PropTypes, PureComponent } from 'react';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import { constructPolyChartOptions } from './ConstructPolyChartOptions';
-import IECharts from '../IECharts';
+import {
+  toFixedCust,
+  toFixedPercent,
+  toFixedRen,
+  toFixedPermillage,
+  getMaxAndMinCi,
+  getMaxAndMinCust,
+  getMaxAndMinGE,
+  getMaxAndMinMoney,
+  getMaxAndMinPercentOrPermillage,
+} from './FormatUnitAndSeries';
 import FixNumber from '../chartRealTime/FixNumber';
+import IECharts from '../IECharts';
 import { ZHUNICODE } from '../../config';
 import { checkTooltipStatus } from '../../decorators/checkTooltipStatus';
 import styles from './HistoryComparePolyChart.less';
@@ -34,8 +45,6 @@ export default class HistoryComparePolyChart extends PureComponent {
     this.state = {
       name: '',
       unit: '',
-      curYear: '',
-      prevYear: '',
       currentValue: '',
       previousValue: '',
       currentDate: '',
@@ -50,7 +59,7 @@ export default class HistoryComparePolyChart extends PureComponent {
   componentWillReceiveProps(nextProps) {
     const { data } = nextProps;
     const { data: prevData } = this.props;
-    if (prevData !== data) {
+    if (prevData !== data && !_.isEmpty(prevData) && !_.isEmpty(data)) {
       // 构造数据
       // 构造配置项
       const {
@@ -58,7 +67,7 @@ export default class HistoryComparePolyChart extends PureComponent {
         series,
         unit,
         yAxisTickArea,
-      } = this.formatData(data.current);
+      } = this.formatData(data.current, data.isCommissionRate);
 
       const finalCurrentData = this.formatDate(xSeries, series,
         unit, yAxisTickArea);
@@ -98,16 +107,14 @@ export default class HistoryComparePolyChart extends PureComponent {
 
       // 默认选中第一条展示信息
       const { date: currentDate, value: currentValue,
-        year: curYear, name, weekDay: curWeekDay } = curSeries[0] || EMPTY_ARRAY;
+        name, weekDay: curWeekDay } = curSeries[0] || EMPTY_ARRAY;
       const { date: previousDate, value: previousValue,
-        year: prevYear, weekDay: prevWeekDay } = previousSeries[0] || EMPTY_ARRAY;
+        weekDay: prevWeekDay } = previousSeries[0] || EMPTY_ARRAY;
 
       this.setState({
         chartOptions: options, // 折线图配置项
         name,
         unit,
-        curYear,
-        prevYear,
         currentValue,
         previousValue,
         currentDate,
@@ -131,17 +138,17 @@ export default class HistoryComparePolyChart extends PureComponent {
 
     let minAndMax;
     if (curUnit.indexOf(YUAN) !== -1) {
-      minAndMax = FixNumber.getMaxAndMinMoney(array);
+      minAndMax = getMaxAndMinMoney(array);
     } else if (curUnit.indexOf(HU) !== -1 || curUnit.indexOf(REN) !== -1) {
-      minAndMax = FixNumber.getMaxAndMinCust(array);
+      minAndMax = getMaxAndMinCust(array);
     } else if (curUnit.indexOf(GE) !== -1) {
-      minAndMax = FixNumber.getMaxAndMinGE(array);
+      minAndMax = getMaxAndMinGE(array);
     } else if (curUnit.indexOf(CI) !== -1) {
-      minAndMax = FixNumber.getMaxAndMinCi(array);
+      minAndMax = getMaxAndMinCi(array);
     } else if (curUnit.indexOf(PERCENT) !== -1) {
-      minAndMax = this.getMaxAndMinPercent(array);
+      minAndMax = getMaxAndMinPercentOrPermillage(array);
     } else if (curUnit.indexOf(PERMILLAGE) !== -1) {
-      minAndMax = FixNumber.getMaxAndMinPermillage(array);
+      minAndMax = getMaxAndMinPercentOrPermillage(array);
     }
 
     const { max, min } = minAndMax;
@@ -151,53 +158,28 @@ export default class HistoryComparePolyChart extends PureComponent {
     };
   }
 
-
-  // 针对百分比的数字来确认图表坐标轴的最大和最小值
-  // 不要设置最大值为100，不然会出现折线图很矮
-  getMaxAndMinPercent(series) {
-    let max = Math.max(...series);
-    let min = Math.min(...series);
-    if (max >= 10) {
-      max = Math.ceil((max / 10)) * 10;
-    } else {
-      max = Math.ceil(max);
-    }
-    if (min >= 10) {
-      min = Math.floor((min / 10)) * 10;
-    } else {
-      min = 0;
-    }
-    if (max === 0) {
-      max = 1;
-    }
-    return {
-      max,
-      min,
-    };
-  }
-
   // 获取y轴的单位和格式化后的数据源
   @autobind
-  getYAxisUnit(array, yAxisUnit) {
+  getYAxisUnit(array, yAxisUnit, isCommissionRate) {
     if (!_.isEmpty(array)) {
       if (yAxisUnit.indexOf(YUAN) !== -1) {
         return FixNumber.toFixedMoney(array);
       } else if (yAxisUnit.indexOf(HU) !== -1) {
-        return FixNumber.toFixedCust(array);
+        return toFixedCust(array);
       } else if (yAxisUnit.indexOf(REN) !== -1) {
-        return this.toFixedRen(array);
+        return toFixedRen(array);
       } else if (yAxisUnit.indexOf(GE) !== -1) {
         return FixNumber.toFixedGE(array);
       } else if (yAxisUnit.indexOf(CI) !== -1) {
         return FixNumber.toFixedCI(array);
       } else if (yAxisUnit.indexOf(PERCENT) !== -1) {
         return {
-          newSeries: this.toFixedPercent(array),
+          newSeries: toFixedPercent(array, isCommissionRate),
           newUnit: yAxisUnit,
         };
       } else if (yAxisUnit.indexOf(PERMILLAGE) !== -1) {
         return {
-          newSeries: this.toFixedPermillage(array),
+          newSeries: toFixedPermillage(array, isCommissionRate),
           newUnit: yAxisUnit,
         };
       }
@@ -209,43 +191,8 @@ export default class HistoryComparePolyChart extends PureComponent {
     };
   }
 
-  // 对人数进行特殊处理
-  toFixedRen(series) {
-    let newUnit = '人';
-    const tempSeries = series.map(n => Math.abs(n));
-    let newSeries = series;
-    const max = Math.max(...tempSeries);
-    // 1. 全部在万元以下的数据不做处理
-    // 2.超过万元的，以‘万元’为单位
-    // 3.超过亿元的，以‘亿元’为单位
-    if (max >= 10000) {
-      newUnit = '万人';
-      newSeries = series.map(item => FixNumber.toFixedDecimal(item / 10000));
-    } else {
-      newUnit = '人';
-      newSeries = series.map(item => FixNumber.toFixedDecimal(item));
-    }
-
-    return {
-      newUnit,
-      newSeries,
-    };
-  }
-
-  // 针对百分比数据进行处理
   @autobind
-  toFixedPercent(series) {
-    return series.map(o => FixNumber.toFixedDecimal(o * 100));
-  }
-
-  // 针对千分比数据进行处理
-  @autobind
-  toFixedPermillage(series) {
-    return series.map(o => FixNumber.toFixedDecimal(o * 1000));
-  }
-
-  @autobind
-  formatData(data) {
+  formatData(data, isCommissionRate) {
     const newYSeries = [];
     const xSeries = [];
     const weekDayArray = [];
@@ -262,14 +209,15 @@ export default class HistoryComparePolyChart extends PureComponent {
         newYSeries.push(0);
       }
       if (_.isEmpty(xAxisData.day)) {
-        xSeries.push(`${Number(xAxisData.month)}月`);
+        xSeries.push(`${Number(xAxisData.year)}年${Number(xAxisData.month)}月`);
       } else {
-        xSeries.push(`${xAxisData.month}/${xAxisData.day}`);
+        xSeries.push(`${Number(xAxisData.year)}/${xAxisData.month}/${xAxisData.day}`);
       }
       weekDayArray.push(xAxisData.weekDay);
     });
 
-    const newYAxisUnit = this.getYAxisUnit(newYSeries, yAxisData.unit);
+    const newYAxisUnit = this.getYAxisUnit(newYSeries, yAxisData.unit, isCommissionRate);
+
     // y轴的刻度范围
     const yAxisTickArea = this.getYAxisTickMinAndMax(newYAxisUnit.newSeries, yAxisData.unit);
 
@@ -278,7 +226,6 @@ export default class HistoryComparePolyChart extends PureComponent {
         value: item,
         name: yAxisData.name,
         unit: newYAxisUnit.newUnit,
-        year: xAxisData.year,
         date: xSeries[index],
         weekDay: weekDayArray[index],
       }
@@ -391,8 +338,6 @@ export default class HistoryComparePolyChart extends PureComponent {
       chartOptions,
       name,
       unit,
-      // curYear,
-      // prevYear,
       curWeekDay,
       prevWeekDay,
       currentValue,
