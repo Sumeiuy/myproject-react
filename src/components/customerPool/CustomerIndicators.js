@@ -21,9 +21,14 @@ export default class CustomerIndicators extends PureComponent {
   numFormat(num) {
     let newStr = '';
     let count = 0;
+    let negative = '';
     let str = num.toString();
     if (num === '--') {
       return '--';
+    }
+    if (str.indexOf('-') !== -1) {
+      str = Math.abs(str).toString();
+      negative = '-';
     }
     if (str.indexOf('.') === -1) {
       for (let i = str.length - 1; i >= 0; i--) {
@@ -46,7 +51,7 @@ export default class CustomerIndicators extends PureComponent {
       }
       str = `${newStr}${str.substr(str.indexOf('.'), 3)}`;
     }
-    return (<b title={`${str}`}>{str}</b>);
+    return (<b title={`${negative}${str}`}>{negative}{str}</b>);
   }
 
   render() {
@@ -64,7 +69,7 @@ export default class CustomerIndicators extends PureComponent {
           <div className={styles.title}>
             <Icon type="kehuzhibiao" />客户指标（户）
               <div className={styles.rightInfo}>
-                客户总数：<span>{this.numFormat(totCust || '--')}</span>
+              客户总数：<span>{this.numFormat(totCust || '--')}</span>
               </div>
           </div>
           <div className={styles.content}>

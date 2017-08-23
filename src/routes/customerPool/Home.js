@@ -131,10 +131,12 @@ export default class Home extends PureComponent {
   componentWillReceiveProps(nextProps) {
     const { location: preLocation,
       position: prePosition,
-      custRange: preCustRange, cycle: preCycle } = this.props;
+      cycle: preCycle,
+      empInfo: preEmpInfo } = this.props;
     const { location: nextLocation,
       position: nextPosition,
-      custRange: nextCustRange, cycle: nextCycle } = nextProps;
+      cycle: nextCycle,
+      empInfo: nextEmpInfo } = nextProps;
     const { orgId: preOrgId } = prePosition;
     const { orgId: nextOrgId } = nextPosition;
     if (preOrgId !== nextOrgId) {
@@ -148,11 +150,8 @@ export default class Home extends PureComponent {
         cycleSelect: nextCycle[0].key,
       });
     }
-    if (preCustRange !== nextCustRange || preLocation !== nextLocation) {
+    if (preEmpInfo !== nextEmpInfo || preLocation !== nextLocation) {
       this.handleSetCustRange(nextProps);
-      // this.setState({
-      //   createCustRange: this.handleCreateCustRange(null, nextProps),
-      // });
     }
   }
 
