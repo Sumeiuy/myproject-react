@@ -46,7 +46,7 @@ export default class CustomerIndicators extends PureComponent {
       }
       str = `${newStr}${str.substr(str.indexOf('.'), 3)}`;
     }
-    return str;
+    return (<b title={`${str}`}>{str}</b>);
   }
 
   render() {

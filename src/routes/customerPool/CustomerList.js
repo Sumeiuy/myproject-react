@@ -46,7 +46,7 @@ const fectchDataFunction = (globalLoading, type) => query => ({
 const mapStateToProps = state => ({
   performanceIndicators: state.customerPool.performanceIndicators, // 绩效指标
   custRange: state.customerPool.custRange, // 客户池用户范围
-  empAllInfo: state.app.empAllInfo, // 职位信息
+  empInfo: state.app.empInfo, // 职位信息
   position: state.customerPool.position, // 职责切换
   dict: state.customerPool.dict, // 职责切换
   custList: state.customerPool.custList,
@@ -73,7 +73,7 @@ export default class CustomerList extends PureComponent {
     performanceIndicators: PropTypes.object,
     collectCustRange: PropTypes.func.isRequired,
     custRange: PropTypes.array,
-    empAllInfo: PropTypes.object,
+    empInfo: PropTypes.object,
     position: PropTypes.object,
     dict: PropTypes.object.isRequired,
     getCustomerData: PropTypes.func.isRequired,
@@ -88,7 +88,7 @@ export default class CustomerList extends PureComponent {
     performanceIndicators: {},
     custRange: [],
     position: {},
-    empAllInfo: {},
+    empInfo: {},
   }
 
   constructor(props) {
@@ -139,8 +139,8 @@ export default class CustomerList extends PureComponent {
   @autobind
   getCustomerList(props) {
     const { getCustomerData, location: { query },
-    empAllInfo: { empInfo = EMPTY_OBJECT, empRespList } } = props;
-    const { occDivnNum } = empInfo;
+    empInfo: { empInfo = EMPTY_OBJECT, empRespList = EMPTY_LIST } } = props;
+    const { occDivnNum = '' } = empInfo;
     const occ = _.isEmpty(occDivnNum) ? '' : occDivnNum;// orgId取不到的情况下去用户信息中的
     const orgId = _.isEmpty(window.forReactPosition)
       ?
@@ -225,9 +225,8 @@ export default class CustomerList extends PureComponent {
   @autobind
   handleSetCustRange(props) {
     const { custRange,
-    empAllInfo: { empInfo = EMPTY_OBJECT, empRespList } } = props;
-    const { occDivnNum } = empInfo;
-    // const { orgId } = query;
+    empInfo: { empInfo = EMPTY_OBJECT, empRespList = EMPTY_LIST } } = props;
+    const { occDivnNum = '' } = empInfo;
     const occ = _.isEmpty(occDivnNum) ? '' : occDivnNum;// orgId取不到的情况下去用户信息中的
     const fspOrgid = _.isEmpty(window.forReactPosition) ? occ : window.forReactPosition.orgId;
     // const orgid = _.isEmpty(orgId) // window.forReactPosition
@@ -266,9 +265,9 @@ export default class CustomerList extends PureComponent {
 
   @autobind
   handleCreateCustRange(orgId, nextProps) {
-    const { empAllInfo, custRange } = nextProps;
+    const { empInfo, custRange } = nextProps;
     const { empPostnList = EMPTY_LIST,
-      empRespList = EMPTY_LIST } = empAllInfo; // 1-46IDNZI HTSC_RESPID
+      empRespList = EMPTY_LIST } = empInfo; // 1-46IDNZI HTSC_RESPID
     const { fspOrgId } = this.state;
     let orgNewCustRange = [];
     const newCustRrange = [];
