@@ -259,7 +259,7 @@ export default class CustomerRow extends PureComponent {
       }
     }
     // 匹配标签
-    if (isTag && isSearch && listItem.relatedLabels) {
+    if ((isTag || isSearch) && listItem.relatedLabels) {
       const relatedLabels = listItem.relatedLabels.split(' ').filter((v) => { //eslint-disable-line
         if (v.indexOf(q) > -1) {
           return v;
