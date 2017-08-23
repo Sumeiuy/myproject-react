@@ -88,3 +88,14 @@ export const EXCEPT_TOUGU_JYYJ_MAP = [
     value: '服务经理数',
   },
 ];
+
+export const COMMISSION_RATE_MAP = [
+  {
+    key: 'signPurPercent',
+    value: '签约平均佣金率',
+  },
+  {
+    key: 'gjAvgPercent',
+    value: '股基平均佣金率',
+  },
+];
