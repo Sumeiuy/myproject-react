@@ -111,7 +111,7 @@ const helper = {
      * @param  { string } unit 单位
      * @return { number } per  以显示几位为转换依据，默认 5 位
   */
-  toUnit(value, unit, per = 5) {
+  toUnit(value, unit, per = 5, isCommissionRate) {
     const PERCENT = ZHUNICODE.PERCENT;
     const PERMILLAGE = ZHUNICODE.PERMILLAGE;
     const obj = {};
@@ -132,10 +132,10 @@ const helper = {
           // 如果 单位是 %
           obj.unit = unit;
           if (unit === PERCENT) {
-            obj.value = Number.parseFloat((newValue * 100).toFixed(2));
+            obj.value = Number.parseFloat((newValue * 100).toFixed(isCommissionRate ? 3 : 2));
           } else if (unit === PERMILLAGE) {
             // 如果是 千分符
-            obj.value = Number.parseFloat((newValue * 1000).toFixed(2));
+            obj.value = Number.parseFloat((newValue * 1000).toFixed(isCommissionRate ? 3 : 2));
           } else {
             // 其他情况均保留两位小数
             obj.value = Number.parseFloat(newValue.toFixed(2));

@@ -7,6 +7,7 @@ import React, { PropTypes, PureComponent } from 'react';
 import _ from 'lodash';
 import classnames from 'classnames';
 
+import { COMMISSION_RATE_MAP } from '../../config/SpecialIndicators';
 import Icon from '../common/Icon';
 import { iconTypeMap } from '../../config';
 import { toUnit } from '../../utils/helper';
@@ -50,8 +51,9 @@ export default class IndexItem extends PureComponent {
   render() {
     const {
       itemData:
-      { unit, value, name, parentName, incrementRate }, active } = this.props;
-    const data = toUnit(value, unit, 5);
+    { unit, value, name, parentName, incrementRate, key }, active } = this.props;
+    const data = toUnit(value, unit, 5, _.findIndex(COMMISSION_RATE_MAP,
+      item => item.key === key) > -1);
     const IndexIcon = getCoreIcon(unit);
     const IndexIconColor = getCoreIconColor(unit);
     const IndexIconSize = getCoreIconSize(unit);
