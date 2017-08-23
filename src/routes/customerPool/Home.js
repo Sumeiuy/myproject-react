@@ -28,6 +28,7 @@ const effects = {
   getHotWds: 'customerPool/getHotWds',
   getHistoryWdsList: 'customerPool/getHistoryWdsList',
   clearSearchHistoryList: 'customerPool/clearSearchHistoryList',
+  saveSearchVal: 'customerPool/saveSearchVal',
 };
 
 const fectchDataFunction = (globalLoading, type) => query => ({
@@ -48,6 +49,7 @@ const mapStateToProps = state => ({
   hotWds: state.customerPool.hotWds, // 默认推荐词及热词推荐列表
   historyWdsList: state.customerPool.historyWdsList, // 历史搜索
   clearState: state.customerPool.clearState, // 清除历史列表
+  searchHistoryVal: state.customerPool.searchHistoryVal, // 保存搜索内容
 });
 
 const mapDispatchToProps = {
@@ -57,6 +59,7 @@ const mapDispatchToProps = {
   getHotWds: fectchDataFunction(true, effects.getHotWds),
   getHistoryWdsList: fectchDataFunction(false, effects.getHistoryWdsList),
   clearSearchHistoryList: fectchDataFunction(false, effects.clearSearchHistoryList),
+  saveSearchVal: fectchDataFunction(false, effects.saveSearchVal),
   push: routerRedux.push,
   replace: routerRedux.replace,
 };
@@ -77,6 +80,7 @@ export default class Home extends PureComponent {
     getHotWds: PropTypes.func.isRequired,
     getHistoryWdsList: PropTypes.func.isRequired,
     clearSearchHistoryList: PropTypes.func.isRequired,
+    saveSearchVal: PropTypes.func.isRequired,
     custRange: PropTypes.array,
     cycle: PropTypes.array,
     position: PropTypes.object,
@@ -87,6 +91,7 @@ export default class Home extends PureComponent {
     hotWds: PropTypes.object,
     historyWdsList: PropTypes.array,
     clearState: PropTypes.object,
+    searchHistoryVal: PropTypes.string,
   }
 
   static defaultProps = {
@@ -102,6 +107,7 @@ export default class Home extends PureComponent {
     hotWds: EMPTY_OBJECT,
     historyWdsList: EMPTY_LIST,
     clearState: EMPTY_OBJECT,
+    searchHistoryVal: '',
   }
 
   constructor(props) {
@@ -249,10 +255,18 @@ export default class Home extends PureComponent {
   // 获取联想数据
   @autobind
   queryHotPossibleWds(state) {
-    const { getHotPossibleWds } = this.props;
-    const { fspOrgId } = this.state;
+    const { location: { query },
+      empInfo: { empInfo = EMPTY_OBJECT }, getHotPossibleWds } = this.props;
+    const { occDivnNum = '' } = empInfo;
+    const { orgId } = query;
+    const occ = _.isEmpty(occDivnNum) ? '' : occDivnNum;// orgId取不到的情况下去用户信息中的
+    const fspOrgid = _.isEmpty(window.forReactPosition) ? occ : window.forReactPosition.orgId;
+    const orgid = _.isEmpty(orgId) // window.forReactPosition
+      ?
+      fspOrgid
+      : orgId;
     const setData = {
-      orgId: fspOrgId === '' ? null : fspOrgId, // 组织ID
+      orgId: orgid, // 组织ID
       empNo: helper.getEmpId(), // 用户ID
     };
     getHotPossibleWds({
@@ -339,6 +353,14 @@ export default class Home extends PureComponent {
     return newCustRrange;
   }
 
+  @autobind
+  handleSaveSearchVal(obj) {
+    const { saveSearchVal } = this.props;
+    saveSearchVal(
+      obj,
+    );
+  }
+
   render() {
     const {
       performanceIndicators,
@@ -353,6 +375,7 @@ export default class Home extends PureComponent {
       push,
       historyWdsList,
       clearState,
+      searchHistoryVal,
     } = this.props;
     const { expandAll, cycleSelect, createCustRange, fspOrgId } = this.state;
     return (
@@ -367,6 +390,8 @@ export default class Home extends PureComponent {
           historyWdsList={historyWdsList}
           clearSuccess={clearState}
           clearFun={this.clearHistoryList}
+          searchHistoryVal={searchHistoryVal}
+          saveSearchVal={this.handleSaveSearchVal}
         />
         <div className={styles.content}>
           <ToBeDone

@@ -31,6 +31,8 @@ export default class Search extends PureComponent {
     historyWdsList: PropTypes.array,
     clearSuccess: PropTypes.object,
     clearFun: PropTypes.func,
+    searchHistoryVal: PropTypes.string,
+    saveSearchVal: PropTypes.func,
   }
 
   static defaultProps = {
@@ -38,10 +40,12 @@ export default class Search extends PureComponent {
     queryHotPossibleWds: () => { },
     queryHistoryWdsList: () => { },
     clearFun: () => { },
+    saveSearchVal: () => { },
     clearSuccess: EMPTY_OBJECT,
     queryHotWdsData: EMPTY_LIST,
     orgId: '',
     historyWdsList: EMPTY_LIST,
+    searchHistoryVal: '',
   }
 
   state = {
@@ -64,6 +68,8 @@ export default class Search extends PureComponent {
     if (searchInput) {
       searchInput.addEventListener('keydown', this.handleSearchInput, false);
     }
+    const { searchHistoryVal } = this.props;
+    this.handleSearch(searchHistoryVal);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -116,6 +122,10 @@ export default class Search extends PureComponent {
         // return;
         searchVal = hotWds.labelNameVal;
       }
+      const { saveSearchVal } = this.props;
+      saveSearchVal({
+        searchVal,
+      });
       this.handleOpenTab({
         source: 'search',
         labelMapping: '',
@@ -257,6 +267,10 @@ export default class Search extends PureComponent {
       // return;
       searchVal = hotWds.labelNameVal;
     }
+    const { saveSearchVal } = this.props;
+    saveSearchVal({
+      searchVal,
+    });
     this.handleOpenTab({
       source: 'search',
       labelMapping: '',
@@ -363,7 +377,7 @@ export default class Search extends PureComponent {
 
   render() {
     const { data: { hotWds = EMPTY_OBJECT,
-      hotWdsList = EMPTY_LIST } } = this.props;
+      hotWdsList = EMPTY_LIST }, searchHistoryVal } = this.props;
     return (
       <div className={styles.searchBox}>
         <div className={styles.inner}>
@@ -379,6 +393,7 @@ export default class Search extends PureComponent {
                 onSearch={this.handleSearch}
                 placeholder={hotWds.labelNameVal || ''}
                 optionLabelProp="text"
+                defaultValue={searchHistoryVal}
               >
                 <Input
                   suffix={(

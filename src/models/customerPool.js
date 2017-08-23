@@ -32,6 +32,7 @@ export default {
     },
     historyWdsList: [],
     clearState: {},
+    searchHistoryVal: '',
   },
   subscriptions: {
     setup({ dispatch }) {
@@ -332,6 +333,14 @@ export default {
       return {
         ...state,
         clearState: clearHistoryState,
+      };
+    },
+    // 保存搜索内容
+    saveSearchVal(state, action) {
+      const { payload: { searchVal } } = action;
+      return {
+        ...state,
+        searchHistoryVal: searchVal,
       };
     },
   },
