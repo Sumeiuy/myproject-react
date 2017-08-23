@@ -43,7 +43,7 @@ const mapStateToProps = state => ({
   position: state.customerPool.position, // 职责切换
   process: state.customerPool.process, // 代办流程(首页总数)
   motTaskCount: state.customerPool.motTaskCount, // 今日可做任务总数
-  empAllInfo: state.app.empAllInfo, // 职位信息
+  empInfo: state.app.empInfo, // 职位信息
   hotPossibleWdsList: state.customerPool.hotPossibleWdsList, // 联想的推荐热词列表
   hotWds: state.customerPool.hotWds, // 默认推荐词及热词推荐列表
   historyWdsList: state.customerPool.historyWdsList, // 历史搜索
@@ -82,7 +82,7 @@ export default class Home extends PureComponent {
     position: PropTypes.object,
     process: PropTypes.number,
     motTaskCount: PropTypes.number,
-    empAllInfo: PropTypes.object,
+    empInfo: PropTypes.object,
     hotPossibleWdsList: PropTypes.array,
     hotWds: PropTypes.object,
     historyWdsList: PropTypes.array,
@@ -97,7 +97,7 @@ export default class Home extends PureComponent {
     position: EMPTY_OBJECT,
     process: 0,
     motTaskCount: 0,
-    empAllInfo: EMPTY_OBJECT,
+    empInfo: EMPTY_OBJECT,
     hotPossibleWdsList: EMPTY_LIST,
     hotWds: EMPTY_OBJECT,
     historyWdsList: EMPTY_LIST,
@@ -174,7 +174,7 @@ export default class Home extends PureComponent {
   @autobind
   handleSetCustRange(props) {
     const { location: { query }, custRange,
-      empAllInfo: { empInfo = EMPTY_OBJECT, empRespList = EMPTY_LIST } } = props;
+      empInfo: { empInfo = EMPTY_OBJECT, empRespList = EMPTY_LIST } } = props;
     const { occDivnNum = '' } = empInfo;
     const { orgId } = query;
     const occ = _.isEmpty(occDivnNum) ? '' : occDivnNum;// orgId取不到的情况下去用户信息中的
@@ -291,9 +291,9 @@ export default class Home extends PureComponent {
 
   @autobind
   handleCreateCustRange(orgId, nextProps) {
-    const { empAllInfo, custRange } = nextProps;
+    const { empInfo, custRange } = nextProps;
     const { empPostnList = EMPTY_LIST,
-      empRespList = EMPTY_LIST } = empAllInfo; // 1-46IDNZI HTSC_RESPID
+      empRespList = EMPTY_LIST } = empInfo; // 1-46IDNZI HTSC_RESPID
     const { fspOrgId } = this.state;
     let orgNewCustRange = [];
     const newCustRrange = [];
