@@ -111,19 +111,19 @@ export default class TradingVolume extends PureComponent {
           <div className={`${styles.content} ${styles.jyContent}`}>
             <ul>
               <li>
-                <p>{purAddCustaset}</p>
+                <p>{purAddCustaset || '--'}</p>
                 <div>净新增客户资产</div>
               </li>
               <li>
-                <p>{tranAmtBasicpdt}</p>
+                <p>{tranAmtBasicpdt || '--'}</p>
                 <div>累计基础交易量</div>
               </li>
               <li>
-                <p>{tranAmtTotpdt}</p>
+                <p>{tranAmtTotpdt || '--'}</p>
                 <div>累计综合交易量</div>
               </li>
               <li>
-                <p>{purRakeGjpdt}</p>
+                <p>{purRakeGjpdt || '--'}</p>
                 <div>股基累计净佣金</div>
               </li>
             </ul>

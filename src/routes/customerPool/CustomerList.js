@@ -23,6 +23,7 @@ import styles from './customerlist.less';
 const CUST_MANAGER = 1; // 客户经理
 const ORG = 3; // 组织机构
 const EMPTY_LIST = [];
+const EMPTY_OBJECT = {};
 const CUR_PAGE = 1; // 默认当前页
 const CUR_PAGESIZE = 10; // 默认页大小
 const HTSC_RESPID = '1-46IDNZI'; // 首页指标查询
@@ -137,7 +138,8 @@ export default class CustomerList extends PureComponent {
 
   @autobind
   getCustomerList(props) {
-    const { getCustomerData, location: { query }, empAllInfo: { empInfo, empRespList } } = props;
+    const { getCustomerData, location: { query },
+    empAllInfo: { empInfo = EMPTY_OBJECT, empRespList } } = props;
     const { occDivnNum } = empInfo;
     const occ = _.isEmpty(occDivnNum) ? '' : occDivnNum;// orgId取不到的情况下去用户信息中的
     const orgId = _.isEmpty(window.forReactPosition)
@@ -222,7 +224,8 @@ export default class CustomerList extends PureComponent {
 
   @autobind
   handleSetCustRange(props) {
-    const { custRange, empAllInfo: { empInfo, empRespList } } = props;
+    const { custRange,
+    empAllInfo: { empInfo = EMPTY_OBJECT, empRespList } } = props;
     const { occDivnNum } = empInfo;
     // const { orgId } = query;
     const occ = _.isEmpty(occDivnNum) ? '' : occDivnNum;// orgId取不到的情况下去用户信息中的

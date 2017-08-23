@@ -10,6 +10,9 @@ import _ from 'lodash';
 
 import SingleFilter from './SingleFilter';
 
+// 从搜索、联想词、标签、已开通业务过来的
+const SEARCH_TAG_FILTER = ['search', 'tag', 'association', 'business'];
+
 export default class Filter extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -29,7 +32,7 @@ export default class Filter extends PureComponent {
     return (
       <div className="filter">
         {
-          (_.includes(['search', 'tag', 'association', 'business'], source)) ?
+          (_.includes(SEARCH_TAG_FILTER, source)) ?
             <SingleFilter
               value={CustomType || ''}
               filterLabel="客户性质"
@@ -39,7 +42,7 @@ export default class Filter extends PureComponent {
             /> : null
         }
         {
-          (_.includes(['search', 'tag', 'association', 'business'], source)) ?
+          (_.includes(SEARCH_TAG_FILTER, source)) ?
             <SingleFilter
               value={CustClass || ''}
               filterLabel="客户类型"
@@ -49,7 +52,7 @@ export default class Filter extends PureComponent {
             /> : null
         }
         {
-          (_.includes(['search', 'tag', 'association', 'business'], source)) ?
+          (_.includes(SEARCH_TAG_FILTER, source)) ?
             <SingleFilter
               value={RiskLvl || ''}
               filterLabel="风险等级"
@@ -59,7 +62,7 @@ export default class Filter extends PureComponent {
             /> : null
         }
         {
-          (_.includes(['search', 'tag', 'association', 'business'], source)) ?
+          (_.includes(SEARCH_TAG_FILTER, source)) ?
             <SingleFilter
               value={Rights || ''}
               filterLabel="已开通业务"

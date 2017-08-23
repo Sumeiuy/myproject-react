@@ -1,6 +1,6 @@
 /**
- * @file components/customerPool/Filter.js
- *  客户池-客户列表筛选
+ * @file components/customerPool/SingleFilter.js
+ *  客户池-客户列表单项筛选
  * @author wangjunjun
  */
 
