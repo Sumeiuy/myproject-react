@@ -174,7 +174,7 @@ export default class Home extends PureComponent {
   @autobind
   handleSetCustRange(props) {
     const { location: { query }, custRange,
-      empAllInfo: { empInfo = EMPTY_OBJECT, empRespList } } = props;
+      empAllInfo: { empInfo = EMPTY_OBJECT, empRespList = EMPTY_LIST } } = props;
     const { occDivnNum = '' } = empInfo;
     const { orgId } = query;
     const occ = _.isEmpty(occDivnNum) ? '' : occDivnNum;// orgId取不到的情况下去用户信息中的

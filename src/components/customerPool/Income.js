@@ -53,7 +53,7 @@ export default class Income extends PureComponent {
           name: '净收入',
           type: 'pie',
           selectedMode: 'single',
-          center: [100, 100],
+          center: [90, 100],
           radius: ['45%', '60%'],
           color: ['#ffa800', '#f0ce30', '#fa7911'],
           label: {
@@ -76,7 +76,7 @@ export default class Income extends PureComponent {
         {
           name: '收入',
           type: 'pie',
-          center: [100, 100],
+          center: [90, 100],
           radius: ['70%', '85%'],
           label: {
             normal: {
@@ -103,7 +103,7 @@ export default class Income extends PureComponent {
             option={options}
             resizable
             style={{
-              height: '190px',
+              height: '175px',
               width: '100%',
             }}
           />

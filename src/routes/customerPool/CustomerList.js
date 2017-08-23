@@ -139,8 +139,8 @@ export default class CustomerList extends PureComponent {
   @autobind
   getCustomerList(props) {
     const { getCustomerData, location: { query },
-    empAllInfo: { empInfo = EMPTY_OBJECT, empRespList } } = props;
-    const { occDivnNum } = empInfo;
+    empAllInfo: { empInfo = EMPTY_OBJECT, empRespList = EMPTY_LIST } } = props;
+    const { occDivnNum = '' } = empInfo;
     const occ = _.isEmpty(occDivnNum) ? '' : occDivnNum;// orgId取不到的情况下去用户信息中的
     const orgId = _.isEmpty(window.forReactPosition)
       ?
@@ -225,8 +225,8 @@ export default class CustomerList extends PureComponent {
   @autobind
   handleSetCustRange(props) {
     const { location: { query }, custRange,
-    empAllInfo: { empInfo = EMPTY_OBJECT, empRespList } } = props;
-    const { occDivnNum } = empInfo;
+    empAllInfo: { empInfo = EMPTY_OBJECT, empRespList = EMPTY_LIST } } = props;
+    const { occDivnNum = '' } = empInfo;
     const { orgId } = query;
     const occ = _.isEmpty(occDivnNum) ? '' : occDivnNum;// orgId取不到的情况下去用户信息中的
     const fspOrgid = _.isEmpty(window.forReactPosition) ? occ : window.forReactPosition.orgId;
