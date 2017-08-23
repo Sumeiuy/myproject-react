@@ -153,12 +153,12 @@ export default class Home extends PureComponent {
   @autobind
   getIndicators() {
     const { getPerformanceIndicators, custRange } = this.props;
-    const { fspOrgId, orgId, cycleSelect } = this.state;
+    const { orgId, cycleSelect } = this.state;
     let custType = ORG;
     if (custRange.length < 1) {
       return null;
     }
-    if (fspOrgId === custRange[0].id) { // 判断客户范围类型
+    if (!_.isEmpty(orgId)) { // 判断客户范围类型
       custType = ORG;
     } else {
       custType = CUST_MANAGER;
@@ -174,7 +174,7 @@ export default class Home extends PureComponent {
   @autobind
   handleSetCustRange(props) {
     const { location: { query }, custRange,
-    empAllInfo: { empInfo = EMPTY_OBJECT, empRespList } } = props;
+      empAllInfo: { empInfo = EMPTY_OBJECT, empRespList } } = props;
     const { occDivnNum = '' } = empInfo;
     const { orgId } = query;
     const occ = _.isEmpty(occDivnNum) ? '' : occDivnNum;// orgId取不到的情况下去用户信息中的
@@ -204,12 +204,14 @@ export default class Home extends PureComponent {
     this.setState({
       createCustRange: this.handleCreateCustRange(fspOrgId, this.props),
     });
-    if (fspOrgId === orgsId) { // 判断客户范围类型
-      custType = ORG;
-    } else {
+    if (fspOrgId !== orgsId) {
       this.setState({
         expandAll: true,
       });
+    }
+    if (!_.isEmpty(fspOrgId)) { // 判断客户范围类型
+      custType = ORG;
+    } else {
       custType = CUST_MANAGER;
     }
     this.setState({
