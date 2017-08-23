@@ -110,6 +110,7 @@ const helper = {
      * @param  { string } str  需要转换的字符串数字
      * @param  { string } unit 单位
      * @return { number } per  以显示几位为转换依据，默认 5 位
+     * @return { bool } isCommissionRate  对佣金率指标作特殊处理
   */
   toUnit(value, unit, per = 5, isCommissionRate) {
     const PERCENT = ZHUNICODE.PERCENT;
