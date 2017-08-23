@@ -4,6 +4,17 @@
  */
 import _ from 'lodash';
 import FixNumber from '../chartRealTime/FixNumber';
+import {
+  toFixedCust,
+  toFixedPercent,
+  toFixedRen,
+  toFixedPermillage,
+  getMaxAndMinCi,
+  getMaxAndMinCust,
+  getMaxAndMinGE,
+  getMaxAndMinMoney,
+  getMaxAndMinPercentOrPermillage,
+} from './FormatUnitAndSeries';
 import { ZHUNICODE } from '../../config';
 
 export default {};
@@ -20,7 +31,7 @@ const GE = ZHUNICODE.GE;
 
 export const constructScatterData = (options = {}) => {
   const { core = EMPTY_OBJECT, contrast = EMPTY_OBJECT,
-    scatterDiagramModels = EMPTY_LIST, description, isLvIndicator } = options;
+    scatterDiagramModels = EMPTY_LIST, description, isLvIndicator, isCommissionRate } = options;
 
   const xAxisOption = _.pick(contrast, ['key', 'name', 'value', 'unit']);
 
@@ -47,19 +58,6 @@ export const constructScatterData = (options = {}) => {
       }
       return value;
     },
-    // 针对户获取图表最大和最小值
-    getMaxAndMinCust(series) {
-      let max = Math.max(...series);
-      let min = Math.min(...series);
-      max = constructHelper.padFixedCust(max, 'ceil');
-      min = constructHelper.padFixedCust(min, 'floor');
-      if (max <= 10) {
-        max = 10;
-        min = 0;
-      }
-
-      return { max, min };
-    },
     // 计算y轴的刻度范围
     getYAxisTickMinAndMax(array, curUnit) {
       if (_.isEmpty(array)) {
@@ -71,37 +69,37 @@ export const constructScatterData = (options = {}) => {
 
       let minAndMax;
       if (curUnit === HU || curUnit === REN) {
-        minAndMax = constructHelper.getMaxAndMinCust(array);
+        minAndMax = getMaxAndMinCust(array);
       } else if (curUnit === CI) {
-        minAndMax = FixNumber.getMaxAndMinCi(array);
+        minAndMax = getMaxAndMinCi(array);
       } else if (curUnit === GE) {
-        minAndMax = FixNumber.getMaxAndMinGE(array);
+        minAndMax = getMaxAndMinGE(array);
       } else if (curUnit === YUAN) {
-        minAndMax = FixNumber.getMaxAndMinMoney(array);
+        minAndMax = getMaxAndMinMoney(array);
       } else if (curUnit === PERCENT) {
-        minAndMax = FixNumber.getMaxAndMinPercent(array);
+        minAndMax = getMaxAndMinPercentOrPermillage(array);
       } else if (curUnit === PERMILLAGE) {
-        minAndMax = FixNumber.getMaxAndMinPermillage(array);
+        minAndMax = getMaxAndMinPercentOrPermillage(array);
       }
 
       const { max, min } = minAndMax;
-      let newMax = max;
-      if (curUnit.indexOf('元') !== -1) {
-        // 对于金额y轴，需要给最大刻度多加一个刻度，
-        // 不然最大值z在散点图上显示不全
-        if (max % 1000 === 0) {
-          newMax = max + 1000;
-        } else if (max % 100 === 0) {
-          newMax = max + 100;
-        } else if (max % 10 === 0) {
-          newMax = max + 10;
-        } else {
-          newMax = max + 1;
-        }
-      }
+      // let newMax = max;
+      // if (curUnit.indexOf('元') !== -1) {
+      //   // 对于金额y轴，需要给最大刻度多加一个刻度，
+      //   // 不然最大值z在散点图上显示不全
+      //   if (max % 1000 === 0) {
+      //     newMax = max + 1000;
+      //   } else if (max % 100 === 0) {
+      //     newMax = max + 100;
+      //   } else if (max % 10 === 0) {
+      //     newMax = max + 10;
+      //   } else {
+      //     newMax = max + 1;
+      //   }
+      // }
 
       return {
-        max: newMax,
+        max,
         min,
       };
     },
@@ -114,15 +112,7 @@ export const constructScatterData = (options = {}) => {
         };
       }
 
-      return FixNumber.getMaxAndMinCust(array);
-    },
-    // 针对百分比数据进行处理
-    toFixedPercent(series) {
-      return series.map(o => FixNumber.toFixedDecimal(o * 100));
-    },
-    // 针对千分比数据进行处理
-    toFixedPermillage(series) {
-      return series.map(o => FixNumber.toFixedDecimal(o * 1000));
+      return getMaxAndMinCust(array);
     },
     // 获取y轴的单位和格式化后的数据源
     getYAxisUnit(array, unit) {
@@ -133,17 +123,17 @@ export const constructScatterData = (options = {}) => {
       } else if (unit === GE) {
         return FixNumber.toFixedGE(array);
       } else if (unit === HU) {
-        return FixNumber.toFixedCust(array);
+        return toFixedCust(array);
       } else if (unit === REN) {
-        return constructHelper.toFixedRen(array);
+        return toFixedRen(array);
       } else if (unit === PERCENT) {
         return {
-          newSeries: constructHelper.toFixedPercent(array),
+          newSeries: toFixedPercent(array, isCommissionRate),
           newUnit: unit,
         };
       } else if (unit === PERMILLAGE) {
         return {
-          newSeries: constructHelper.toFixedPermillage(array),
+          newSeries: toFixedPermillage(array, isCommissionRate),
           newUnit: unit,
         };
       }
@@ -152,59 +142,17 @@ export const constructScatterData = (options = {}) => {
         newUnit: '',
       };
     },
-    // 对人数进行特殊处理
-    toFixedRen(series) {
-      let newUnit = '人';
-      const tempSeries = series.map(n => Math.abs(n));
-      let newSeries = series;
-      const max = Math.max(...tempSeries);
-      // 1. 全部在万元以下的数据不做处理
-      // 2.超过万元的，以‘万元’为单位
-      // 3.超过亿元的，以‘亿元’为单位
-      if (max >= 10000) {
-        newUnit = '万人';
-        newSeries = series.map(item => FixNumber.toFixedDecimal(item / 10000));
-      } else {
-        newUnit = '人';
-        newSeries = series.map(item => FixNumber.toFixedDecimal(item));
-      }
-
-      return {
-        newUnit,
-        newSeries,
-      };
-    },
     // 获取x轴的单位和格式化后的数据源
     getXAxisUnit(array, currentXUnit) {
       if (currentXUnit.indexOf(HU) !== -1) {
         return FixNumber.toFixedCust(array);
       } else if (currentXUnit.indexOf(REN) !== -1) {
-        return constructHelper.toFixedRen(array);
+        return toFixedRen(array);
       }
       return {
         newUnit: currentXUnit,
         newSeries: array,
       };
-    },
-    formatDataSource(yAxisOriginUnit, yAxisTotalValue) {
-      let yAxisFormatedValue;
-      if (yAxisOriginUnit === HU) {
-        yAxisFormatedValue = FixNumber.toFixedCust([Number(yAxisTotalValue)]).newSeries[0];
-      } else if (yAxisOriginUnit === REN) {
-        yAxisFormatedValue = constructHelper.toFixedRen([Number(yAxisTotalValue)]).newSeries[0];
-      } else if (yAxisOriginUnit === YUAN) {
-        yAxisFormatedValue = FixNumber.toFixedMoney([Number(yAxisTotalValue)]).newSeries[0];
-      } else if (yAxisOriginUnit === GE) {
-        yAxisFormatedValue = FixNumber.toFixedGE([Number(yAxisTotalValue)]).newSeries[0];
-      } else if (yAxisOriginUnit === PERCENT) {
-        yAxisFormatedValue = FixNumber.toFixedDecimal(Number(yAxisTotalValue) * 100);
-      } else if (yAxisOriginUnit === PERMILLAGE) {
-        yAxisFormatedValue = FixNumber.toFixedDecimal(Number(yAxisTotalValue) * 1000);
-      } else if (yAxisOriginUnit === CI) {
-        yAxisFormatedValue = FixNumber.toFixedCI([Number(yAxisTotalValue)]).newSeries[0];
-      }
-
-      return yAxisFormatedValue;
     },
     getFormatUnit(value, originUnit) {
       // 需要特殊处理，因为xy轴的单位不一定是平均值的单位
@@ -254,7 +202,7 @@ export const constructScatterData = (options = {}) => {
         }
         return {
           slope: average,
-          averageInfo: `${yAxisName}平均值${average && average.toFixed(2)}${yAxisUnit}`,
+          averageInfo: `${yAxisName}平均值${average && (isCommissionRate ? average.toFixed(3) : average.toFixed(2))}${yAxisUnit}`,
           average, // 平均值，用以区分
           averageXUnit: '',
           averageYUnit: yAxisUnit,

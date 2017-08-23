@@ -8,10 +8,16 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import CommonScatter from '../chartRealTime/CommonScatter';
 import imgSrc from '../../../static/images/noChart.png';
-import { EXCEPT_CUST_JYYJ_MAP, EXCEPT_CUST_TGJX_MAP, EXCEPT_CUST_TOUGU_TGJX_MAP, EXCEPT_TOUGU_JYYJ_MAP } from '../../config/SpecialIndicators';
+import {
+  EXCEPT_CUST_JYYJ_MAP,
+  EXCEPT_CUST_TGJX_MAP,
+  EXCEPT_CUST_TOUGU_TGJX_MAP,
+  EXCEPT_TOUGU_JYYJ_MAP,
+} from '../../config/SpecialIndicators';
 import { constructScatterData } from './ConstructScatterData';
 import { constructScatterOptions } from './ConstructScatterOptions';
 import styles from './abilityScatterAnalysis.less';
+import { checkTooltipStatus } from '../../decorators/checkTooltipStatus';
 
 const Option = Select.Option;
 const EMPTY_LIST = [];
@@ -35,6 +41,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
     level: PropTypes.string.isRequired,
     boardType: PropTypes.string.isRequired,
     currentSelectIndicatorKey: PropTypes.string.isRequired,
+    isCommissionRate: PropTypes.bool.isRequired,
   };
 
   static defaultProps = {
@@ -65,11 +72,13 @@ export default class AbilityScatterAnalysis extends PureComponent {
   componentWillReceiveProps(nextProps) {
     const { data: nextData,
       optionsData: nextOptions,
-      switchDefault: nextSwitch } = nextProps;
+      switchDefault: nextSwitch,
+      isLvIndicator,
+      isCommissionRate,
+     } = nextProps;
     const {
       description,
       optionsData: prevOptions,
-      isLvIndicator,
       switchDefault: prevSwitch,
     } = this.props;
     const {
@@ -86,6 +95,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
         scatterDiagramModels,
         description,
         isLvIndicator,
+        isCommissionRate,
       });
       const { averageInfo, averageXUnit, averageYUnit } = finalData;
       this.getAnyPoint(finalData);
@@ -282,7 +292,6 @@ export default class AbilityScatterAnalysis extends PureComponent {
       xAxisUnit,
       yAxisName,
       yAxisUnit,
-      xAxisMin,
       slope,
       average,
     } = currentItemInfo;
@@ -329,7 +338,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
       }
 
       compareSlope = slope;
-      currentSlope = currentSelectY / (currentSelectX - xAxisMin);
+      currentSlope = currentSelectY / currentSelectX;
       tooltipInfo = `${tooltipInfo}。平均${description} ${yAxisName} ${currentAverageValue.toFixed(2)}${finalYAxisUnit}/${finalXAxisUnit}，${this.compareSlope(Number(currentSlope).toFixed(2), Number(compareSlope).toFixed(2))}于平均水平。`;
     }
 
@@ -363,6 +372,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
   * @param {*} params 当前点的数据
   */
   @autobind
+  @checkTooltipStatus
   handleScatterHover(params) {
     const { isShowTooltip,
       finalData: {
@@ -375,12 +385,12 @@ export default class AbilityScatterAnalysis extends PureComponent {
         xAxisMin,
         average,
       } } = this.state;
+
     const { data: [xAxisData, yAxisData, { orgName, parentOrgName }] } = params;
 
-    if (!isShowTooltip) {
+    if (isShowTooltip) {
       // 设置state，切换tooltip的显示信息
       this.setState({
-        isShowTooltip: !isShowTooltip,
         orgName,
         parentOrgName,
       });
