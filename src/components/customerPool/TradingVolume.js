@@ -34,17 +34,14 @@ export default class TradingVolume extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { data: preData } = this.props;
     const { data: nextData } = nextProps;
     const { purAddCustaset: nextPurAddCustaset,
       purRakeGjpdt, tranAmtBasicpdt, tranAmtTotpdt } = nextData;
-    if (!_.isEqual(preData, nextData)) {
-      const data = [_.parseInt(nextPurAddCustaset, 10),
-        _.parseInt(purRakeGjpdt, 10),
-        _.parseInt(tranAmtBasicpdt, 10),
-        _.parseInt(tranAmtTotpdt, 10)];
-      this.basicUnit(data);
-    }
+    const data = [_.parseInt(nextPurAddCustaset, 10),
+      _.parseInt(purRakeGjpdt, 10),
+      _.parseInt(tranAmtBasicpdt, 10),
+      _.parseInt(tranAmtTotpdt, 10)];
+    this.basicUnit(data);
   }
 
   // 计算基本单位
@@ -64,10 +61,10 @@ export default class TradingVolume extends PureComponent {
     }
     this.setState({
       unit,
-      purAddCustaset: this.numFormat(unit, data[0]),
-      purRakeGjpdt: this.numFormat(unit, data[1]),
-      tranAmtBasicpdt: this.numFormat(unit, data[2]),
-      tranAmtTotpdt: this.numFormat(unit, data[3]),
+      purAddCustaset: this.numFormat(unit, data[0] || '--'),
+      purRakeGjpdt: this.numFormat(unit, data[1] || '--'),
+      tranAmtBasicpdt: this.numFormat(unit, data[2] || '--'),
+      tranAmtTotpdt: this.numFormat(unit, data[3] || '--'),
     });
   }
 
