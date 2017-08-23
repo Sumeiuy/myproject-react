@@ -396,10 +396,6 @@ export default class CustomerList extends PureComponent {
       getCustIncome,
     } = this.props;
     const {
-      CustomType,
-      CustClass,
-      RiskLvl,
-      Rights,
       sortDirection,
       sortType,
       // orgId,
@@ -436,39 +432,11 @@ export default class CustomerList extends PureComponent {
             />
           </Col>
         </Row>
-        {
-          (_.includes(['search', 'tag', 'association', 'business'], source)) ?
-            <div className="filter">
-              <Filter
-                value={CustomType || ''}
-                filterLabel="客户性质"
-                filter="CustomType"
-                filterField={dict.custNature}
-                onChange={this.filterChange}
-              />
-              <Filter
-                value={CustClass || ''}
-                filterLabel="客户类型"
-                filter="CustClass"
-                filterField={dict.custType}
-                onChange={this.filterChange}
-              />
-              <Filter
-                value={RiskLvl || ''}
-                filterLabel="风险等级"
-                filter="RiskLvl"
-                filterField={dict.custRiskBearing}
-                onChange={this.filterChange}
-              />
-              <Filter
-                value={Rights || ''}
-                filterLabel="已开通业务"
-                filter="Rights"
-                filterField={dict.custBusinessType}
-                onChange={this.filterChange}
-              />
-            </div> : null
-        }
+        <Filter
+          dict={dict}
+          location={location}
+          onFilterChange={this.filterChange}
+        />
         <Reorder
           value={reorderValue}
           onChange={this.orderChange}

@@ -5,54 +5,69 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import { autobind } from 'core-decorators';
+// import { autobind } from 'core-decorators';
+import _ from 'lodash';
 
-import styles from './filter.less';
+import SingleFilter from './SingleFilter';
 
 export default class Filter extends PureComponent {
   static propTypes = {
-    filter: PropTypes.string.isRequired,
-    filterLabel: PropTypes.string.isRequired,
-    filterField: PropTypes.array,
-    onChange: PropTypes.func.isRequired,
-    value: PropTypes.string.isRequired,
-  }
-
-  static defaultProps = {
-    filterField: [],
-  }
-
-  @autobind
-  handleClick(value) {
-    const { filter, onChange } = this.props;
-    this.setState({
-      key: value,
-    }, () => {
-      onChange({
-        name: filter,
-        value,
-      });
-    });
+    location: PropTypes.object.isRequired,
+    dict: PropTypes.object.isRequired,
+    onFilterChange: PropTypes.func.isRequired,
   }
 
   render() {
-    const { filterLabel, filterField, value } = this.props;
+    const { dict, location, onFilterChange } = this.props;
+    const {
+      CustomType,
+      CustClass,
+      RiskLvl,
+      Rights,
+      source,
+    } = location.query;
     return (
-      <div className={styles.filter}>
-        <span>{filterLabel}:</span>
-        <ul>
-          {
-            filterField.map(item => (
-              <li
-                key={item.key}
-                className={value === item.key ? 'current' : ''}
-                onClick={() => this.handleClick(item.key)}
-              >
-                {item.value}
-              </li>
-            ))
-          }
-        </ul>
+      <div className="filter">
+        {
+          (_.includes(['search', 'tag', 'association', 'business'], source)) ?
+            <SingleFilter
+              value={CustomType || ''}
+              filterLabel="客户性质"
+              filter="CustomType"
+              filterField={dict.custNature}
+              onChange={onFilterChange}
+            /> : null
+        }
+        {
+          (_.includes(['search', 'tag', 'association', 'business'], source)) ?
+            <SingleFilter
+              value={CustClass || ''}
+              filterLabel="客户类型"
+              filter="CustClass"
+              filterField={dict.custType}
+              onChange={onFilterChange}
+            /> : null
+        }
+        {
+          (_.includes(['search', 'tag', 'association', 'business'], source)) ?
+            <SingleFilter
+              value={RiskLvl || ''}
+              filterLabel="风险等级"
+              filter="RiskLvl"
+              filterField={dict.custRiskBearing}
+              onChange={onFilterChange}
+            /> : null
+        }
+        {
+          (_.includes(['search', 'tag', 'association', 'business'], source)) ?
+            <SingleFilter
+              value={Rights || ''}
+              filterLabel="已开通业务"
+              filter="Rights"
+              filterField={dict.custBusinessType}
+              onChange={onFilterChange}
+            /> : null
+        }
       </div>
     );
   }
