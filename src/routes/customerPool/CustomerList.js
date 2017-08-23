@@ -224,20 +224,20 @@ export default class CustomerList extends PureComponent {
 
   @autobind
   handleSetCustRange(props) {
-    const { location: { query }, custRange,
+    const { custRange,
     empAllInfo: { empInfo = EMPTY_OBJECT, empRespList } } = props;
     const { occDivnNum } = empInfo;
-    const { orgId } = query;
+    // const { orgId } = query;
     const occ = _.isEmpty(occDivnNum) ? '' : occDivnNum;// orgId取不到的情况下去用户信息中的
     const fspOrgid = _.isEmpty(window.forReactPosition) ? occ : window.forReactPosition.orgId;
-    const orgid = _.isEmpty(orgId) // window.forReactPosition
-      ?
-      fspOrgid
-      : orgId;
+    // const orgid = _.isEmpty(orgId) // window.forReactPosition
+    //   ?
+    //   fspOrgid
+    //   : orgId;
     const respIdOfPosition = _.findIndex(empRespList, item => (item.respId === HTSC_RESPID));
     this.setState({
-      fspOrgId: respIdOfPosition < 0 ? '' : orgid,
-      orgId: respIdOfPosition < 0 ? '' : orgid, // 组织ID
+      fspOrgId: respIdOfPosition < 0 ? '' : fspOrgid,
+      orgId: respIdOfPosition < 0 ? '' : fspOrgid, // 组织ID
     }, () => {
       if (custRange.length > 0) {
         this.handleGetAllInfo(custRange);
@@ -399,10 +399,6 @@ export default class CustomerList extends PureComponent {
       getCustIncome,
     } = this.props;
     const {
-      CustomType,
-      CustClass,
-      RiskLvl,
-      Rights,
       sortDirection,
       sortType,
       // orgId,
@@ -439,39 +435,11 @@ export default class CustomerList extends PureComponent {
             />
           </Col>
         </Row>
-        {
-          (_.includes(['search', 'tag', 'association', 'business'], source)) ?
-            <div className="filter">
-              <Filter
-                value={CustomType || ''}
-                filterLabel="客户性质"
-                filter="CustomType"
-                filterField={dict.custNature}
-                onChange={this.filterChange}
-              />
-              <Filter
-                value={CustClass || ''}
-                filterLabel="客户类型"
-                filter="CustClass"
-                filterField={dict.custType}
-                onChange={this.filterChange}
-              />
-              <Filter
-                value={RiskLvl || ''}
-                filterLabel="风险等级"
-                filter="RiskLvl"
-                filterField={dict.custRiskBearing}
-                onChange={this.filterChange}
-              />
-              <Filter
-                value={Rights || ''}
-                filterLabel="已开通业务"
-                filter="Rights"
-                filterField={dict.custBusinessType}
-                onChange={this.filterChange}
-              />
-            </div> : null
-        }
+        <Filter
+          dict={dict}
+          location={location}
+          onFilterChange={this.filterChange}
+        />
         <Reorder
           value={reorderValue}
           onChange={this.orderChange}
