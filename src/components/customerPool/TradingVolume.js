@@ -12,13 +12,14 @@ import styles from './performanceIndicators.less';
 
 const MILLION = '万';
 const BILLION = '亿';
+const EMPTY_OBJECT = {};
 export default class TradingVolume extends PureComponent {
   static propTypes = {
     data: PropTypes.object,
   }
 
   static defaultProps = {
-    data: {},
+    data: EMPTY_OBJECT,
   }
 
   constructor(props) {
@@ -37,7 +38,7 @@ export default class TradingVolume extends PureComponent {
     const { data: nextData } = nextProps;
     const { purAddCustaset: nextPurAddCustaset,
       purRakeGjpdt, tranAmtBasicpdt, tranAmtTotpdt } = nextData;
-    if (!_.isEmpty(preData, nextData)) {
+    if (!_.isEqual(preData, nextData)) {
       const data = [_.parseInt(nextPurAddCustaset, 10),
         _.parseInt(purRakeGjpdt, 10),
         _.parseInt(tranAmtBasicpdt, 10),
@@ -89,7 +90,7 @@ export default class TradingVolume extends PureComponent {
       if (newNum.toString().indexOf('.') > 0 && newNum.toString().split('.')[1].length > 1) {
         newNum = parseFloat(newNum).toFixed(2);
       }
-      return newNum;
+      return (<b title={`${newNum}`}>{newNum}</b>);
     }
     return '--';
   }

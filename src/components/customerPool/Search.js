@@ -185,6 +185,8 @@ export default class Search extends PureComponent {
       content: item.labelNameVal,
       desc: item.labelDesc,
       id: `autoList${COUNT++}`,
+      labelMapping: item.labelMapping,
+      tagNumId: item.tagNumId,
     }));
   }
 
