@@ -8,6 +8,7 @@ import React, { PureComponent, PropTypes } from 'react';
 // import { withRouter } from 'dva/router';
 import { Row, Col, Checkbox } from 'antd';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
 import styles from './customerRow.less';
 import iconavator from '../../../static/images/icon-avator.png';
 import iconGeneralGgency from '../../../static/images/icon-general-agency.png';
@@ -267,12 +268,14 @@ export default class CustomerRow extends PureComponent {
       });
       // 有描述
       // const markedEle = relatedLabels.map(v => (replaceWord(v, q, listItem.reasonDesc)));
-      const markedEle = relatedLabels.map(v => (replaceWord(v, q)));
-      const domTpl = getNewHtml('匹配标签', markedEle);
-      rtnEle += domTpl;
-      n++;
-      if (n <= 2) {
-        shortRtnEle += domTpl;
+      if (!_.isEmpty(relatedLabels)) {
+        const markedEle = relatedLabels.map(v => (replaceWord(v, q)));
+        const domTpl = getNewHtml('匹配标签', markedEle);
+        rtnEle += domTpl;
+        n++;
+        if (n <= 2) {
+          shortRtnEle += domTpl;
+        }
       }
     }
     // if (listItem.relatedLabels && listItem.relatedLabels.indexOf(q) > -1) {

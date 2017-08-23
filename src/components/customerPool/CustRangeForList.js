@@ -60,7 +60,7 @@ export default class CustRangeForList extends PureComponent {
       collectCustRange,
       expandAll,
     } = this.props;
-    let rtnEle = '';
+    let rtnEle = null;
     const { key } = this.state;
     if (_.includes(['search', 'tag', 'association'], source)) {
       rtnEle = (<div className="custRange">

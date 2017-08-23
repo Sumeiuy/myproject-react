@@ -146,15 +146,29 @@ export default class Search extends PureComponent {
     const { push } = this.props;
     const firstUrl = '/customerPool/list';
     if (process.env.NODE_ENV === 'production') {
-      const url = `${firstUrl}?source=${source}&labelMapping=${labelMapping}&tagNumId=${tagNumId}&q=${q}`;
-      const param = {
-        closable: true,
-        forceRefresh: true,
-        isSpecialTab: true,
-        id: ids, // 'FSP_SERACH',
-        title: titles, // '搜索目标客户',
-      };
-      fspGlobal.openRctTab({ url, param });
+      if (document.getElementById('exApp_FSP_SEARCH')) {
+        fspGlobal.openRctTabTwo('#exApp_FSP_SEARCH');
+        push({
+          pathname: firstUrl,
+          query: obj,
+        });
+      } else if (document.getElementById('exApp_FSP_TAG')) {
+        fspGlobal.openRctTabTwo('#exApp_FSP_TAG');
+        push({
+          pathname: firstUrl,
+          query: obj,
+        });
+      } else {
+        const url = `${firstUrl}?source=${source}&labelMapping=${labelMapping}&tagNumId=${tagNumId}&q=${q}`;
+        const param = {
+          closable: true,
+          forceRefresh: true,
+          isSpecialTab: true,
+          id: ids, // 'FSP_SERACH',
+          title: titles, // '搜索目标客户',
+        };
+        fspGlobal.openRctTab({ url, param });
+      }
     } else {
       push({
         pathname: firstUrl,

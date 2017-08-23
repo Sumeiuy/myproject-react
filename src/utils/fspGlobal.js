@@ -25,10 +25,12 @@ const fspGlobal = {
   openAuditPage: (args) => {
     exec('openAuditPage', args);
   },
+
   // 打开fsp的mot任务列表的方法
   myMotTask: (args) => {
     exec('myMotTask', args);
   },
+
   /**
    * 初始化暴露给fsp的方法
    * @param  {object} store app.store
@@ -38,23 +40,35 @@ const fspGlobal = {
       store.dispatch(action);
     };
   },
+
   /**
    *  在fsp中新开一个tab
    */
   openFspTab(obj) {
     execOpenTab('loadPageInTab', obj.url, obj.param);
   },
+
   /**
    *  在fsp中新开一个iframe的tab
    */
   openFspIframeTab(obj) {
     execOpenTab('loadPageInIframeTab', obj.url, obj.param);
   },
+
   /**
    *  在fsp中新开一个react的tab
    */
   openRctTab(obj) {
     execOpenTab('loadPageInTabnavTo', obj.url, obj.param);
+  },
+
+  // 第二次打開tab
+  openRctTabTwo(id) {
+    try {
+      window.$(id).tab('show');
+    } catch (e) {
+      console.log(e);
+    }
   },
 };
 
