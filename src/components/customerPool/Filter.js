@@ -28,8 +28,10 @@ export default class Filter extends PureComponent {
       CustClass,
       RiskLvl,
       Rights,
+      business,
       source,
     } = location.query;
+    console.log('Filter>>>', business);
     return (
       <div className="filter">
         {
@@ -75,9 +77,9 @@ export default class Filter extends PureComponent {
         {
           source === 'business' ?
             <MultiFilter
-              value={Rights || ''}
+              value={business || ''}
               filterLabel="可开通业务"
-              filter="Rights22"
+              filter="business"
               filterField={dict.custBusinessType}
               onChange={onFilterChange}
             /> : null

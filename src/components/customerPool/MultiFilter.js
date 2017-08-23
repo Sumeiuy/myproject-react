@@ -13,7 +13,7 @@ import styles from './filter.less';
 const generateCls = (v, k) => {
   if (v === '' && v === k) {
     return 'current';
-  } else if (v.indexOf(k) > -1) {
+  } else if (v.split(',').indexOf(k) > -1) {
     return 'current';
   }
   return '';
@@ -64,24 +64,31 @@ export default class MultiFilter extends PureComponent {
     }
   }
 
+  @autobind
+  renderList() {
+    const { filterField, value } = this.props;
+    return filterField.map(item => (
+      <li
+        key={item.key}
+        className={generateCls(value, item.key)}
+        onClick={() => this.handleClick(item.key)}
+      >
+        {item.value}
+      </li>
+    ));
+  }
+
   render() {
-    const { filterLabel, filterField, value } = this.props;
-    const { keyArr } = this.state;
-    console.log('dsdfsdfsdfdsfsdfds ', keyArr);
+    const { filterLabel, filterField } = this.props;
+    if (_.isEmpty(filterField)) {
+      return null;
+    }
     return (
       <div className={styles.filter}>
         <span>{filterLabel}:</span>
         <ul>
           {
-            filterField.map(item => (
-              <li
-                key={item.key}
-                className={generateCls(value, item.key)}
-                onClick={() => this.handleClick(item.key)}
-              >
-                {item.value}
-              </li>
-            ))
+            this.renderList()
           }
         </ul>
       </div>
