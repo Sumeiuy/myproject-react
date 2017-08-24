@@ -339,7 +339,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
 
       compareSlope = slope;
       currentSlope = currentSelectY / currentSelectX;
-      tooltipInfo = `${tooltipInfo}。平均${description} ${yAxisName} ${currentAverageValue.toFixed(2)}${finalYAxisUnit}/${finalXAxisUnit}，${this.compareSlope(Number(currentSlope).toFixed(2), Number(compareSlope).toFixed(2))}于平均水平。`;
+      tooltipInfo = `${tooltipInfo}。平均${description} ${yAxisName} ${currentAverageValue.toFixed(2)}${finalYAxisUnit}/${finalXAxisUnit}，${this.compareSlope(Number(currentSlope), Number(compareSlope))}于平均水平。`;
     }
 
     // 经总和分公司下，显示每个点的平均值
