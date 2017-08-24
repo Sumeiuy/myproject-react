@@ -225,8 +225,9 @@ export default class HistoryHome extends PureComponent {
           coreIndicatorIds: [],
         },
           () => {
-            const { id } = operateData;
+            const { id, name } = operateData;
             push(`/history?boardId=${id}&boardType=${boardType}`);
+            message.success(`保存成功  可通过"自定义看板-${name}"查看刚保存的看板`, 4);
           });
       }
     }
