@@ -5,10 +5,13 @@
  */
 
 import React, { PureComponent, PropTypes } from 'react';
-import { Pagination } from 'antd';
+import { autobind } from 'core-decorators';
+import { Pagination, Checkbox } from 'antd';
 
 import NoData from './NoData';
 import CustomerRow from './CustomerRow';
+
+import styles from './customerLists.less';
 
 export default class CustomerLists extends PureComponent {
   static propTypes = {
@@ -28,6 +31,11 @@ export default class CustomerLists extends PureComponent {
     pageSize: null,
     curPageNum: null,
     q: '',
+  }
+
+  @autobind
+  handleSingleSelect(id) {
+    console.log('id = ', id);
   }
 
   render() {
@@ -67,6 +75,12 @@ export default class CustomerLists extends PureComponent {
     }
     return (
       <div className="list-box">
+        <div className={styles.selectAllBox}>
+          <div className="selectAll">
+            <Checkbox>全选</Checkbox>
+            <span className="hint">自动选择所有符合条件的客户</span>
+          </div>
+        </div>
         <div className="list-wrapper">
           {
             custList.map(
@@ -76,6 +90,7 @@ export default class CustomerLists extends PureComponent {
                 monthlyProfits={monthlyProfits}
                 listItem={item}
                 q={q}
+                onChange={this.handleSingleSelect}
                 key={`${item.empId}-${item.custId}-${item.idNum}-${item.telephone}-${item.asset}`}
               />,
             )
@@ -92,6 +107,7 @@ export default class CustomerLists extends PureComponent {
             showTotal={total => `共${total}项`}
             onShowSizeChange={onSizeChange}
           />
+          <Checkbox className={styles.selectAllTwo}>全选</Checkbox>
         </div>
       </div>
     );

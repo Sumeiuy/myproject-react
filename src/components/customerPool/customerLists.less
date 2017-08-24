@@ -1,0 +1,42 @@
+.selectAllBox {
+  padding-left: 18px;
+  height: 30px;
+  line-height: 30px;
+  border-top-right-radius: 8px;
+  border-top-left-radius: 8px;
+  border-bottom: 1px solid #ddd;
+  background-color: #fff;
+  :global .selectAll {
+    position: relative;
+    display: inline-block;
+    span.hint {
+      display: none;
+      position: absolute;
+      left: 55px;
+      bottom: 10px;
+      z-index: 2;
+      padding: 0 14px;
+      height: 26px;
+      line-height: 26px;
+      font-size: 13px;
+      color: #333;
+      background-color: #ffffcd;
+      box-shadow: 0px 0px 10px 3px #ededf1;
+      white-space: nowrap;
+    }
+    &:hover {
+      span.hint {
+        display: inline-block;
+      }
+    }
+    .ant-checkbox-inner {
+      width: 15px;
+      height: 15px;
+      border-radius: 3px;
+    }
+  }
+}
+.selectAllTwo {
+  float: left;
+  margin-left: 15px;
+}

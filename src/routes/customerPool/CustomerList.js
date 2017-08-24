@@ -181,10 +181,10 @@ export default class CustomerList extends PureComponent {
     const filtersReq = [];
     // 排序条件
     const sortsReqList = [];
-    if (query.business) {
+    if (query.unright_type) {
       filtersReq.push({
-        filterType: 'business',
-        filterContentList: query.business.split(','),
+        filterType: 'unright_type',
+        filterContentList: query.unright_type.split(','),
       });
     }
     if (query.Rights) {
