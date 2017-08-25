@@ -72,6 +72,7 @@ export default class Income extends PureComponent {
       legend: {
         orient: 'left',
         x: 'right',
+        top: '15px',
         data: [
           { name: '个人', icon: 'square' },
           { name: '一般机构', icon: 'square' },

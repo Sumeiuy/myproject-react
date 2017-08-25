@@ -5,6 +5,7 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
+import { Row, Col } from 'antd';
 import Icon from '../../components/common/Icon';
 import styles from './performanceIndicators.less';
 
@@ -73,33 +74,61 @@ export default class BusinessProcessing extends PureComponent {
           <div className={styles.title}>
             <Icon type="yewubanli" />业务开通客户数（{unit}人）
                     </div>
-          <div className={`${styles.content} ${styles.ywContent}`}>
-            <ul>
-              <li>
-                <p>{this.numFormat(cftCust || '--')}</p>
-                <div>涨乐财富通</div>
-              </li>
-              <li>
-                <p>{this.numFormat(ttfCust || '--')}</p>
-                <div>天天发</div>
-              </li>
-              <li>
-                <p>{this.numFormat(rzrqCust || '--')}</p>
-                <div>融资融券</div>
-              </li>
-              <li>
-                <p>{this.numFormat(shHkCust || '--')}</p>
-                <div>沪港通</div>
-              </li>
-              <li>
-                <p>{this.numFormat(szHkCust || '--')}</p>
-                <div>深港通</div>
-              </li>
-              <li>
-                <p>{this.numFormat(optCust || '--')}</p>
-                <div>期权</div>
-              </li>
-            </ul>
+          <div className={`${styles.content}`}>
+            <div className={styles.rowBox}>
+              <Row gutter={0}>
+                <Col span={9}>
+                  <ul>
+                    <li>
+                      <p>{this.numFormat(cftCust || '--')}</p>
+                      <div>涨乐财富通</div>
+                    </li>
+                  </ul>
+                </Col>
+                <Col span={8}>
+                  <ul>
+                    <li>
+                      <p>{this.numFormat(ttfCust || '--')}</p>
+                      <div>天天发</div>
+                    </li>
+                  </ul>
+                </Col>
+                <Col span={7}>
+                  <ul>
+                    <li className={styles.bd_un_r}>
+                      <p>{this.numFormat(rzrqCust || '--')}</p>
+                      <div>融资融券</div>
+                    </li>
+                  </ul>
+                </Col>
+              </Row>
+              <Row gutter={0} className={styles.bd_un_b}>
+                <Col span={9}>
+                  <ul>
+                    <li>
+                      <p>{this.numFormat(shHkCust || '--')}</p>
+                      <div>沪港通</div>
+                    </li>
+                  </ul>
+                </Col>
+                <Col span={8}>
+                  <ul>
+                    <li>
+                      <p>{this.numFormat(szHkCust || '--')}</p>
+                      <div>深港通</div>
+                    </li>
+                  </ul>
+                </Col>
+                <Col span={7}>
+                  <ul>
+                    <li className={styles.bd_un_r}>
+                      <p>{this.numFormat(optCust || '--')}</p>
+                      <div>期权</div>
+                    </li>
+                  </ul>
+                </Col>
+              </Row>
+            </div>
           </div>
         </div>
       </div>
