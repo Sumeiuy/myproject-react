@@ -6,6 +6,7 @@
 
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
 import { Pagination, Checkbox } from 'antd';
 
 import NoData from './NoData';
@@ -33,9 +34,25 @@ export default class CustomerLists extends PureComponent {
     q: '',
   }
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      ids: [],
+    };
+  }
+
   @autobind
-  handleSingleSelect(obj) {
-    console.log('id = ', obj);
+  handleSingleSelect(id) {
+    const { ids } = this.state;
+    if (_.includes(ids, id)) {
+      this.setState({
+        ids: ids.filter(v => v !== id),
+      });
+    } else {
+      this.setState({
+        ids: [...ids, id],
+      });
+    }
   }
 
   render() {
@@ -73,6 +90,7 @@ export default class CustomerLists extends PureComponent {
     if (page.total) {
       curTotal = Number(page.total);
     }
+    console.log('ids>>>>', this.state.ids);
     return (
       <div className="list-box">
         <div className={styles.selectAllBox}>

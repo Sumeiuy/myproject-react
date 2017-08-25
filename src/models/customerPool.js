@@ -41,7 +41,7 @@ export default {
   },
   effects: {
     * getToDoList({ }, { call, put }) {  //eslint-disable-line
-      const response = yield call(api.getToDoList, { empid: '002332' });
+      const response = yield call(api.getToDoList);
       yield put({
         type: 'getToDoListSuccess',
         payload: response,
@@ -49,7 +49,7 @@ export default {
     },
     // 获取客户范围
     * getCustomerScope({ payload }, { call, put }) {
-      const resultData = yield call(api.getCustRangeAll, { empId: '002332' });
+      const resultData = yield call(api.getCustRangeAll);
       yield put({
         type: 'getCustomerScopeSuccess',
         payload: resultData,
