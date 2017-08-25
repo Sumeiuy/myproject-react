@@ -222,7 +222,7 @@ export default class CustomerRow extends PureComponent {
     let rtnEle = '';
     let shortRtnEle = '';
     let n = 0;
-    const isSearch = source === 'search';
+    const isSearch = source === 'search' || source === 'association';
     const isTag = source === 'tag';
     if (isSearch && listItem.name && listItem.name.indexOf(q) > -1) {
       const markedEle = replaceWord(listItem.name, q);

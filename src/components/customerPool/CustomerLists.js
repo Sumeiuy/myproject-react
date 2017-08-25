@@ -127,6 +127,7 @@ export default class CustomerLists extends PureComponent {
           />
           <Checkbox className={styles.selectAllTwo}>全选</Checkbox>
         </div>
+        <div className={styles.taskAndGroup} />
       </div>
     );
   }
