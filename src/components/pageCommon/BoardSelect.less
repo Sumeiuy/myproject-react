@@ -1,3 +1,6 @@
+@has-scrollbar-width: 151px;
+@ie-hack: ~"\9";
+// 151px
 .menuDiv{
   position: relative;
   font-size: 12px;
@@ -97,12 +100,12 @@
     ul{
       width: 142px;
       // IE 下滚动条宽度 17px
-      width: 151px \9;
+      width: @has-scrollbar-width @ie-hack;
     }
   }
   .subMenuUl{
     left: 142px;
-    left: 151px \9;
+    left: @has-scrollbar-width @ie-hack;
   }
 }
 // IE 10 11 hack
@@ -110,11 +113,11 @@
   .addScrollBar{
     .fixedBottom{
       ul{
-        width: 151px;
+        width: @has-scrollbar-width;
       }
     }
     .subMenuUl{
-      left: 151px;
+      left: @has-scrollbar-width;
     }
   }
 }
