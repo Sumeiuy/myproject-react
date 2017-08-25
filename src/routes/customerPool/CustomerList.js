@@ -27,6 +27,7 @@ const EMPTY_OBJECT = {};
 const CUR_PAGE = 1; // 默认当前页
 const CUR_PAGESIZE = 10; // 默认页大小
 const HTSC_RESPID = '1-46IDNZI'; // 首页指标查询
+const MAIN_MAGEGER_ID = 'msm';
 
 const DEFAULT_SORT = { sortType: 'Aset', sortDirection: 'desc' }; // 默认排序方式
 
@@ -173,7 +174,9 @@ export default class CustomerList extends PureComponent {
       // param.fullTestSearch = k;
     }
     if (respIdOfPosition > 0 && query.orgId) {   // 客户经理机构号
-      param.orgId = query.orgId;
+      if (MAIN_MAGEGER_ID !== query.orgId) {
+        param.orgId = query.orgId;
+      }
     } else if (respIdOfPosition > 0 && orgId) {
       param.orgId = orgId;
     }
@@ -181,10 +184,10 @@ export default class CustomerList extends PureComponent {
     const filtersReq = [];
     // 排序条件
     const sortsReqList = [];
-    if (query.business) {
+    if (query.unright_type) {
       filtersReq.push({
-        filterType: 'business',
-        filterContentList: query.business.split(','),
+        filterType: 'unright_type',
+        filterContentList: query.unright_type.split(','),
       });
     }
     if (query.Rights) {
@@ -278,7 +281,7 @@ export default class CustomerList extends PureComponent {
     let orgNewCustRange = [];
     const newCustRrange = [];
     const myCustomer = {
-      id: '',
+      id: MAIN_MAGEGER_ID,
       name: '我的客户',
     };
     const respIdOfPosition = _.findIndex(empRespList, item => item.respId === HTSC_RESPID);
