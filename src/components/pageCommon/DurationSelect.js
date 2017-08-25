@@ -26,6 +26,8 @@ const RadioGroup = Radio.Group;
 const timeOptions = optionsMap.time;
 const historyTime = optionsMap.historyTime;
 const compareArray = optionsMap.compare;
+// 时间格式化样式
+const formatTxt = 'YYYYMMDD';
 
 // 渲染5个头部期间Radio
 const timeRadios = timeOptions.map((item, index) => {
@@ -91,34 +93,6 @@ export default class DurationSelect extends PureComponent {
       });
     }
   }
-  // 环比同比切换事件
-  @autobind
-  compareChangeHandle(e) {
-    const compare = e.target.value;
-    const { beginMoment, endMoment } = this.state;
-    const begin = beginMoment.format('YYYYMMDD');
-    const end = endMoment.format('YYYYMMDD');
-    let lastBegin;
-    let lastEnd;
-    if (compare === 'MoM') {
-      const distanceDays = moment(end).diff(moment(begin), 'days') + 1;
-      const lastBeginMoment = moment(begin).subtract(distanceDays, 'days');
-      const lastEndMoment = moment(end).subtract(distanceDays, 'days');
-      lastBegin = lastBeginMoment.format('YYYYMMDD');
-      lastEnd = lastEndMoment.format('YYYYMMDD');
-    } else {
-      const lastBeginMoment = moment(begin).subtract(1, 'year');
-      const lastEndMoment = moment(end).subtract(1, 'year');
-      lastBegin = lastBeginMoment.format('YYYYMMDD');
-      lastEnd = lastEndMoment.format('YYYYMMDD');
-    }
-    this.setState({
-      compare,
-      selfDatePickerOpen: false,
-      lastBegin,
-      lastEnd,
-    }, this.saveDurationToHome);
-  }
   // 期间变化
   @autobind
   handleDurationChange(e) {
@@ -140,6 +114,82 @@ export default class DurationSelect extends PureComponent {
       cycleType: duration.cycleType,
     });
   }
+  // 根据同环比来计算不同日期
+  @autobind
+  calcDateByCompare(compare, begin, end) {
+    // 开始与结束日期相距的天数
+    const distanceDays = moment(end).diff(moment(begin), 'days') + 1;
+    // 结束日期的月份
+    const endMonth = moment(end).month() + 1;
+    // 当前日期的月份
+    const nowMonth = moment(new Date()).month() + 1;
+    let newBegin;
+    let newEnd;
+
+    let obj = {};
+
+    // 如果大于 90 天
+    if (distanceDays > 90) {
+      newBegin = moment(begin).startOf('month').format(formatTxt);
+      // 如果包含当前月
+      if (endMonth === nowMonth) {
+        // 取上个月结束日期，因为取月份时候 + 1，所以取上个月的时候 - 2
+        newEnd = moment(end).set('month', endMonth - 2).endOf('month').format(formatTxt);
+      } else {
+        // 否则取选择的结束日期所在月的结束日期
+        newEnd = moment(end).endOf('month').format(formatTxt);
+      }
+      // 开始与结束日期相隔的月份
+      const distanceMonths = moment(newEnd).diff(moment(newBegin), 'months') + 1;
+      // 如果 对比方式是 环比
+      obj = compare === 'MoM'
+      ?
+        ({
+          lastBegin: moment(newBegin).subtract(distanceMonths, 'months').format(formatTxt),
+          lastEnd: moment(newEnd).subtract(distanceMonths, 'months').endOf('month').format(formatTxt),
+        })
+      :
+        ({
+          lastBegin: moment(newBegin).subtract(1, 'year').format(formatTxt),
+          lastEnd: moment(newEnd).subtract(1, 'year').format(formatTxt),
+        });
+    } else {
+      newBegin = moment(begin).format(formatTxt);
+      newEnd = moment(end).format(formatTxt);
+      // 如果对比方式是 环比
+      obj = compare === 'MoM'
+      ?
+        ({
+          lastBegin: moment(newBegin).subtract(distanceDays, 'days').format(formatTxt),
+          lastEnd: moment(newEnd).subtract(distanceDays, 'days').format(formatTxt),
+        })
+      :
+        ({
+          lastBegin: moment(newBegin).subtract(1, 'year').format(formatTxt),
+          lastEnd: moment(newEnd).subtract(1, 'year').format(formatTxt),
+        });
+    }
+
+    obj.newBegin = newBegin;
+    obj.newEnd = newEnd;
+    return obj;
+  }
+  // 环比同比切换事件
+  @autobind
+  compareChangeHandle(e) {
+    const compare = e.target.value;
+    const { beginMoment, endMoment } = this.state;
+    const begin = beginMoment.format(formatTxt);
+    const end = endMoment.format(formatTxt);
+
+    const lastObj = this.calcDateByCompare(compare, begin, end);
+    this.setState({
+      compare,
+      selfDatePickerOpen: false,
+      ...lastObj,
+    }, this.saveDurationToHome);
+  }
+  // 隐藏时间段选择
   @autobind
   hideDurationPicker() {
     this.setState({
@@ -164,7 +214,7 @@ export default class DurationSelect extends PureComponent {
   @autobind
   disabledDate(current) {
     // 不能选择大于今天的日期
-    return current && current.valueOf() > moment(moment().format('YYYYMMDD')).subtract(1, 'days').valueOf();
+    return current && current.valueOf() > moment(moment().format(formatTxt)).subtract(1, 'days').valueOf();
   }
   // 用户自己选的时间段事件
   @autobind
@@ -173,21 +223,10 @@ export default class DurationSelect extends PureComponent {
     const beginMoment = dates[0];
     const endMoment = dates[1];
     const durationStr = `${beginMoment.format('YYYY/MM/DD')}-${endMoment.format('YYYY/MM/DD')}`;
+    const begin = dateStrings[0];
+    const end = dateStrings[1];
 
-    let lastBegin;
-    let lastEnd;
-    if (compare === 'MoM') {
-      const distanceDays = moment(dateStrings[1]).diff(moment(dateStrings[0]), 'days') + 1;
-      const lastBeginMoment = moment(dateStrings[0]).subtract(distanceDays, 'days');
-      const lastEndMoment = moment(dateStrings[1]).subtract(distanceDays, 'days');
-      lastBegin = lastBeginMoment.format('YYYYMMDD');
-      lastEnd = lastEndMoment.format('YYYYMMDD');
-    } else {
-      const lastBeginMoment = moment(dateStrings[0]).subtract(1, 'year');
-      const lastEndMoment = moment(dateStrings[1]).subtract(1, 'year');
-      lastBegin = lastBeginMoment.format('YYYYMMDD');
-      lastEnd = lastEndMoment.format('YYYYMMDD');
-    }
+    const lastObj = this.calcDateByCompare(compare, begin, end);
     this.setState({
       cycleType: null,
       durationStr,
@@ -195,8 +234,7 @@ export default class DurationSelect extends PureComponent {
       selfDatePickerOpen: false,
       beginMoment,
       endMoment,
-      lastBegin,
-      lastEnd,
+      ...lastObj,
     }, this.saveDurationToHome);
   }
   @autobind
@@ -223,21 +261,10 @@ export default class DurationSelect extends PureComponent {
     const begin = nowDuration.begin;
     const end = nowDuration.end;
     const durationStr = nowDuration.durationStr;
-    let lastBegin;
-    let lastEnd;
-    // 环比
-    if (compare === 'MoM') {
-      const distanceDays = moment(end).diff(moment(begin), 'days') + 1;
-      const lastBeginMoment = moment(begin).subtract(distanceDays, 'days');
-      const lastEndMoment = moment(end).subtract(distanceDays, 'days');
-      lastBegin = lastBeginMoment.format('YYYYMMDD');
-      lastEnd = lastEndMoment.format('YYYYMMDD');
-    } else {
-      const lastBeginMoment = moment(begin).subtract(1, 'year');
-      const lastEndMoment = moment(end).subtract(1, 'year');
-      lastBegin = lastBeginMoment.format('YYYYMMDD');
-      lastEnd = lastEndMoment.format('YYYYMMDD');
-    }
+
+
+    const lastObj = this.calcDateByCompare(compare, begin, end);
+
     this.setState({
       cycleType,
       open: false,
@@ -245,8 +272,7 @@ export default class DurationSelect extends PureComponent {
       durationStr,
       beginMoment,
       endMoment,
-      lastBegin,
-      lastEnd,
+      ...lastObj,
     }, this.saveDurationToHome);
   }
 
@@ -255,10 +281,10 @@ export default class DurationSelect extends PureComponent {
     const { updateQueryState } = this.props;
     const {
       cycleType,
-      beginMoment,
-      endMoment,
       lastBegin,
       lastEnd,
+      newBegin,
+      newEnd,
     } = this.state;
     let newDuration;
     if (cycleType) {
@@ -267,8 +293,8 @@ export default class DurationSelect extends PureComponent {
       newDuration = 'month';
     }
     updateQueryState({
-      begin: moment(beginMoment).format('YYYYMMDD'),
-      end: moment(endMoment).format('YYYYMMDD'),
+      begin: newBegin,
+      end: newEnd,
       cycleType: newDuration,
       contrastBegin: lastBegin, // 上期开始时间
       contrastEnd: lastEnd, // 上期结束时间

@@ -241,7 +241,7 @@ exports.response = function (req, res) {
             parentName: null,
             children: null,
             isAggressive: '1'
-          },,
+          },
           timeModel: {
             year: '2017',
             month: '08',
