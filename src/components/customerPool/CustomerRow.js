@@ -147,6 +147,7 @@ export default class CustomerRow extends PureComponent {
     monthlyProfits: PropTypes.array.isRequired,
     location: PropTypes.object.isRequired,
     onChange: PropTypes.func.isRequired,
+    isAllSelect: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -161,6 +162,7 @@ export default class CustomerRow extends PureComponent {
       hideStyle: hide,
       unit: '元',
       newAsset: asset,
+      checked: false,
     };
   }
 
@@ -172,6 +174,19 @@ export default class CustomerRow extends PureComponent {
       unit,
       newAsset,
     });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    console.log('nextProps.isAllSelect>>>', nextProps.isAllSelect);
+    console.log('this.props.isAllSelect>>>', this.props.isAllSelect);
+    if (nextProps.isAllSelect !== this.props.isAllSelect) {
+      this.setState({
+        checked: nextProps.isAllSelect,
+      });
+    }
+    // this.setState({
+    //   checked: nextProps.isAllSelect,
+    // });
   }
 
   getLastestData(arr) {
@@ -297,9 +312,12 @@ export default class CustomerRow extends PureComponent {
 
   @autobind
   handleSelect(e) {
-    console.log(`checked = ${e.target.checked}`);
     const { onChange, listItem: { custId } } = this.props;
-    onChange(custId);
+    this.setState({
+      checked: e.target.checked,
+    }, () => {
+      onChange(custId);
+    });
   }
 
   @autobind
@@ -314,13 +332,13 @@ export default class CustomerRow extends PureComponent {
   }
 
   render() {
-    const { q, listItem, monthlyProfits } = this.props;
-    const { unit, newAsset } = this.state;
+    const { q, listItem, monthlyProfits, isAllSelect } = this.props;
+    const { unit, newAsset, checked } = this.state;
     const lastestProfit = Number(this.getLastestData(monthlyProfits).assetProfit);
     const lastestProfitRate = Number(this.getLastestData(monthlyProfits).assetProfitRate);
     const matchedWord = this.matchWord(q, listItem);
     const rskLev = trim(listItem.riskLvl);
-    console.log('listItem', listItem, listItem.riskLvl);
+    console.log('listItem', checked);
     return (
       <div className={styles.customerRow}>
         <div className={styles.basicInfoD}>
@@ -332,7 +350,13 @@ export default class CustomerRow extends PureComponent {
           </ul>
         </div>
         <div className={`${styles.customerRowLeft} clear`}>
-          <div className={styles.selectIcon}><Checkbox onChange={this.handleSelect} /></div>
+          <div className={styles.selectIcon}>
+            <Checkbox
+              disabled={isAllSelect}
+              checked={isAllSelect || checked}
+              onChange={this.handleSelect}
+            />
+          </div>
           <div className={styles.avatorContent}>
             <img className={styles.avatorImage} src={custNature[listItem.pOrO].imgSrc} alt="" />
             <div className={styles.avatorText}>{custNature[listItem.pOrO].name}</div>

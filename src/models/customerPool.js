@@ -33,6 +33,8 @@ export default {
     historyWdsList: [],
     clearState: {},
     searchHistoryVal: '',
+    isAllSelect: false,
+    selectedIds: [],
   },
   subscriptions: {
     setup({ dispatch }) {
@@ -343,5 +345,22 @@ export default {
         searchHistoryVal: searchVal,
       };
     },
+
+    // 保存是否全选
+    saveIsAllSelect(state, action) {
+      return {
+        ...state,
+        isAllSelect: action.payload,
+      };
+    },
+
+    // 保存选中的数据id
+    saveSelectedIds(state, action) {
+      return {
+        ...state,
+        selectedIds: action.payload,
+      };
+    },
+
   },
 };
