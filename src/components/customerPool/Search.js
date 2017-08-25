@@ -122,10 +122,6 @@ export default class Search extends PureComponent {
         // return;
         searchVal = hotWds.labelNameVal;
       }
-      const { saveSearchVal } = this.props;
-      saveSearchVal({
-        searchVal,
-      });
       this.handleOpenTab({
         source: 'search',
         labelMapping: '',
@@ -145,6 +141,7 @@ export default class Search extends PureComponent {
       q } = obj;
     const { push } = this.props;
     const firstUrl = '/customerPool/list';
+    this.handleSaveSearchVal();
     if (process.env.NODE_ENV === 'production') {
       if (document.getElementById(`exApp_${ids}`)) {
         fspGlobal.openRctTabTwo(`#exApp_${ids}`);
@@ -275,10 +272,6 @@ export default class Search extends PureComponent {
       // return;
       searchVal = hotWds.labelNameVal;
     }
-    const { saveSearchVal } = this.props;
-    saveSearchVal({
-      searchVal,
-    });
     this.handleOpenTab({
       source: 'search',
       labelMapping: '',
@@ -287,6 +280,17 @@ export default class Search extends PureComponent {
     }, '搜索目标客户', 'FSP_SEARCH');
   }
 
+  @autobind
+  handleSaveSearchVal() {
+    const { saveSearchVal } = this.props;
+    let saveVal = '';
+    if (searchInput) {
+      saveVal = searchInput.value;
+    }
+    saveSearchVal({
+      searchVal: saveVal,
+    });
+  }
   // 清除历史搜索
   @autobind
   handleClearHistory() {
