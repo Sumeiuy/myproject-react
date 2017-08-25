@@ -375,10 +375,12 @@ export default class CustomerRow extends PureComponent {
                   <ChartLineWidget chartData={monthlyProfits} />
                 </div>
                 <div className={styles.chartsText}>
-                  <div>
-                    <span>年最大时点资产：</span>
-                    <span className={styles.numA}>--</span>万元
-                  </div>
+                  {/*
+                    <div>
+                      <span>年最大时点资产：</span>
+                      <span className={styles.numA}>--</span>万元
+                    </div>
+                  */}
                   <div>
                     <span>本月收益率：</span>
                     <span className={styles.numB}>
