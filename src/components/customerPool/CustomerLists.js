@@ -34,8 +34,8 @@ export default class CustomerLists extends PureComponent {
   }
 
   @autobind
-  handleSingleSelect(id) {
-    console.log('id = ', id);
+  handleSingleSelect(obj) {
+    console.log('id = ', obj);
   }
 
   render() {

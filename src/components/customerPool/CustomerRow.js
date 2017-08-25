@@ -298,8 +298,9 @@ export default class CustomerRow extends PureComponent {
   @autobind
   handleSelect(e) {
     console.log(`checked = ${e.target.checked}`);
+    const isChecked = e.target.checked;
     const { onChange, listItem: { custId } } = this.props;
-    onChange(custId);
+    onChange({ isChecked, custId });
   }
 
   @autobind
