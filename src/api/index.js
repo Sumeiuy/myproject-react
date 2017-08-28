@@ -106,5 +106,5 @@ export default {
   clearSearchHistoryList: query => api.post('/groovynoauth/fsp/cust/custlabel/clearSearchHistoryList', query),
 
   // 自建任务字典
-  taskDictionary: query => api.post('/groovynoauth/fsp/emp/info/taskDictionary', query),
+  getTaskDictionary: query => api.post('/groovynoauth/fsp/emp/info/taskDictionary', query),
 };

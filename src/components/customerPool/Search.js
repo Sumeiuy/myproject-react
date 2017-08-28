@@ -143,14 +143,8 @@ export default class Search extends PureComponent {
     const firstUrl = '/customerPool/list';
     this.handleSaveSearchVal();
     if (process.env.NODE_ENV === 'production') {
-      if (document.getElementById('exApp_FSP_SEARCH')) {
-        fspGlobal.openRctTabTwo('#exApp_FSP_SEARCH');
-        push({
-          pathname: firstUrl,
-          query: obj,
-        });
-      } else if (document.getElementById('exApp_FSP_TAG')) {
-        fspGlobal.openRctTabTwo('#exApp_FSP_TAG');
+      if (document.getElementById(`exApp_${ids}`)) {
+        fspGlobal.openRctTabTwo(`#exApp_${ids}`);
         push({
           pathname: firstUrl,
           query: obj,

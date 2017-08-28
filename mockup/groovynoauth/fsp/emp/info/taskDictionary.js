@@ -3,7 +3,7 @@
 */
 exports.response = function (req, res) {
   return {
-    "code": 0,
+    "code": "0",
     "msg": "OK",
     "resultData": {
       "missionTypes": [

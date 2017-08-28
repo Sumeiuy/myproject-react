@@ -53,6 +53,8 @@ const mapStateToProps = state => ({
   custList: state.customerPool.custList,
   page: state.customerPool.custPage,
   monthlyProfits: state.customerPool.monthlyProfits, // 6个月收益数据
+  isAllSelect: state.customerPool.isAllSelect, // 是否全选
+  selectedIds: state.customerPool.selectedIds, // 非全选时选中的id数组
 });
 
 const mapDispatchToProps = {
@@ -61,6 +63,14 @@ const mapDispatchToProps = {
   getCustIncome: fectchDataFunction(true, effects.getCustIncome),
   push: routerRedux.push,
   replace: routerRedux.replace,
+  saveIsAllSelect: query => ({
+    type: 'customerPool/saveIsAllSelect',
+    payload: query || false,
+  }),
+  saveSelectedIds: query => ({
+    type: 'customerPool/saveSelectedIds',
+    payload: query || [],
+  }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -82,6 +92,10 @@ export default class CustomerList extends PureComponent {
     custList: PropTypes.array.isRequired,
     page: PropTypes.object.isRequired,
     monthlyProfits: PropTypes.array.isRequired,
+    isAllSelect: PropTypes.bool.isRequired,
+    selectedIds: PropTypes.array.isRequired,
+    saveIsAllSelect: PropTypes.func.isRequired,
+    saveSelectedIds: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -326,7 +340,12 @@ export default class CustomerList extends PureComponent {
   @autobind
   updateQueryState(state) {
     // 切换Duration和Orig时候，需要将数据全部恢复到默认值
-    const { replace, location: { query, pathname } } = this.props;
+    const {
+      saveIsAllSelect,
+      saveSelectedIds,
+      replace,
+      location: { query, pathname },
+    } = this.props;
     replace({
       pathname,
       query: {
@@ -335,15 +354,21 @@ export default class CustomerList extends PureComponent {
         curPageNum: 1,
       },
     });
+    saveIsAllSelect(false);
+    saveSelectedIds(EMPTY_LIST);
     this.setState({
       ...state,
     });
-    console.log('update>>>>', state);
   }
 
   @autobind
   filterChange(obj) {
-    const { replace, location: { query, pathname } } = this.props;
+    const {
+      saveIsAllSelect,
+      saveSelectedIds,
+      replace,
+      location: { query, pathname },
+    } = this.props;
     replace({
       pathname,
       query: {
@@ -352,6 +377,8 @@ export default class CustomerList extends PureComponent {
         curPageNum: 1,
       },
     });
+    saveIsAllSelect(false);
+    saveSelectedIds(EMPTY_LIST);
   }
 
   @autobind
@@ -405,6 +432,10 @@ export default class CustomerList extends PureComponent {
       page,
       monthlyProfits,
       getCustIncome,
+      selectedIds,
+      isAllSelect,
+      saveIsAllSelect,
+      saveSelectedIds,
     } = this.props;
     const {
       sortDirection,
@@ -453,6 +484,7 @@ export default class CustomerList extends PureComponent {
           onChange={this.orderChange}
         />
         <CustomerLists
+          source={source}
           location={location}
           custList={custList}
           q={decodeURIComponent(q)}
@@ -463,6 +495,10 @@ export default class CustomerList extends PureComponent {
           onPageChange={this.handlePageChange}
           onSizeChange={this.handleSizeChange}
           getCustIncome={getCustIncome}
+          saveSelectedIds={saveSelectedIds}
+          saveIsAllSelect={saveIsAllSelect}
+          isAllSelect={isAllSelect}
+          selectedIds={selectedIds}
         />
       </div>
     );

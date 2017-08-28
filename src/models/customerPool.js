@@ -34,6 +34,8 @@ export default {
     clearState: {},
     searchHistoryVal: '',
     taskDictionary: {},
+    isAllSelect: false,
+    selectedIds: [],
   },
   subscriptions: {
     setup({ dispatch }) {
@@ -174,9 +176,9 @@ export default {
     },
     // 自建任务字典
     * getTaskDictionary({ payload }, { call, put }) {
-      const taskDictionary = yield call(api.taskDictionary, payload);
+      const taskDictionary = yield call(api.getTaskDictionary, payload);
       yield put({
-        type: 'clearSearchHistoryListSuccess',
+        type: 'getTaskDictionarySuccess',
         payload: { taskDictionary },
       });
     },
@@ -354,10 +356,25 @@ export default {
     },
     // 自建任务字典
     getTaskDictionarySuccess(state, action) {
-      const { payload: { resultData } } = action;
+      const { payload: { taskDictionary: { resultData } } } = action;
       return {
         ...state,
         taskDictionary: resultData,
+      };
+    },
+    // 保存是否全选
+    saveIsAllSelect(state, action) {
+      return {
+        ...state,
+        isAllSelect: action.payload,
+      };
+    },
+
+    // 保存选中的数据id
+    saveSelectedIds(state, action) {
+      return {
+        ...state,
+        selectedIds: action.payload,
       };
     },
   },
