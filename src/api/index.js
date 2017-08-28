@@ -104,4 +104,7 @@ export default {
 
   // 清除历史搜索记录
   clearSearchHistoryList: query => api.post('/groovynoauth/fsp/cust/custlabel/clearSearchHistoryList', query),
+
+  // 自建任务字典
+  getTaskDictionary: query => api.post('/groovynoauth/fsp/emp/info/taskDictionary', query),
 };

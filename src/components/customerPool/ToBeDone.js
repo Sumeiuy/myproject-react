@@ -92,7 +92,7 @@ export default class PerformanceIndicators extends PureComponent {
                 <a className="item" onClick={() => fspGlobal.openRctTab({ url, param })}>
                   <div className={styles.content}>
                     <h1>{this.processNum(processData)}</h1>
-                    <p>待办流程</p>
+                    <p>消息提醒</p>
                   </div>
                 </a>
               </div>
