@@ -28,6 +28,12 @@ const CUR_PAGE = 1; // 默认当前页
 const CUR_PAGESIZE = 10; // 默认页大小
 const HTSC_RESPID = '1-46IDNZI'; // 首页指标查询
 const MAIN_MAGEGER_ID = 'msm';
+const ENTER_TYPE = {
+  search: 'searchCustPool',
+  tag: 'searchCustPool',
+  association: 'searchCustPool',
+  business: 'businessCustPool',
+};
 
 const DEFAULT_SORT = { sortType: 'Aset', sortDirection: 'desc' }; // 默认排序方式
 
@@ -168,6 +174,8 @@ export default class CustomerList extends PureComponent {
       curPageNum: query.curPageNum || CUR_PAGE,
       // 必传，页大小
       pageSize: query.pageSize || CUR_PAGESIZE,
+      // 不同的入口进入列表页面
+      enterType: ENTER_TYPE[query.source],
     };
     // 从热词列表搜索 :FromWdsListErea, 从联想下拉框搜索: FromAssociatedErea, 匹配的全字符: FromFullTextType
     if (query.source === 'search') {
@@ -424,6 +432,7 @@ export default class CustomerList extends PureComponent {
 
   render() {
     const {
+      push,
       location,
       replace,
       collectCustRange,
@@ -452,8 +461,8 @@ export default class CustomerList extends PureComponent {
       reorderValue = { sortType, sortDirection };
     }
     const { expandAll, createCustRange } = this.state;
-    console.log('6个月收益数据： ', monthlyProfits);
-    console.log('cust>>>', custList);    // console.log('createCustRange>>>', createCustRange);
+    // console.log('6个月收益数据： ', monthlyProfits);
+    // console.log('cust>>>', custList);
     return (
       <div className={styles.customerlist}>
         <Row type="flex" justify="space-between" align="middle">
@@ -486,6 +495,7 @@ export default class CustomerList extends PureComponent {
         <CustomerLists
           source={source}
           location={location}
+          push={push}
           custList={custList}
           q={decodeURIComponent(q)}
           page={page}

@@ -19,4 +19,6 @@ export default {
   marginWidth: 55,
   // FSP 右边容器距离侧边栏的 marginLeft 值
   marginLeftWidth: 25,
+  // FSP左边容器
+  workspaceSidebar: 'workspace-sidebar',
 };

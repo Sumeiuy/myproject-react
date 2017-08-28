@@ -36,6 +36,12 @@ export default class CreateTask extends PureComponent {
   }
 
   componentWillMount() {
+    // const { location: { query } } = this.props;
+    // if (query.ids) {
+    //   console.log('ids: ', decodeURIComponent(query.ids).split(','));
+    // } else if (query.condition) {
+    //   console.log('condition: ', JSON.parse(decodeURIComponent(query.condition)));
+    // }
   }
 
   componentWillReceiveProps(nextProps) {
