@@ -424,6 +424,7 @@ export default class CustomerList extends PureComponent {
 
   render() {
     const {
+      push,
       location,
       replace,
       collectCustRange,
@@ -452,8 +453,8 @@ export default class CustomerList extends PureComponent {
       reorderValue = { sortType, sortDirection };
     }
     const { expandAll, createCustRange } = this.state;
-    console.log('6个月收益数据： ', monthlyProfits);
-    console.log('cust>>>', custList);    // console.log('createCustRange>>>', createCustRange);
+    // console.log('6个月收益数据： ', monthlyProfits);
+    // console.log('cust>>>', custList);
     return (
       <div className={styles.customerlist}>
         <Row type="flex" justify="space-between" align="middle">
@@ -486,6 +487,7 @@ export default class CustomerList extends PureComponent {
         <CustomerLists
           source={source}
           location={location}
+          push={push}
           custList={custList}
           q={decodeURIComponent(q)}
           page={page}

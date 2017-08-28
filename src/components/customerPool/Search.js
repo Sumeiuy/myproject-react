@@ -10,6 +10,7 @@ import ReactDOM from 'react-dom';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { fspGlobal } from '../../utils';
+import { fspContainer } from '../../config';
 import Icon from '../../components/common/Icon';
 import styles from './search.less';
 
@@ -142,7 +143,7 @@ export default class Search extends PureComponent {
     const { push } = this.props;
     const firstUrl = '/customerPool/list';
     this.handleSaveSearchVal();
-    if (process.env.NODE_ENV === 'production') {
+    if (document.querySelector(fspContainer.container)) {
       if (document.getElementById(`exApp_${ids}`)) {
         fspGlobal.openRctTabTwo(`#exApp_${ids}`);
         push({

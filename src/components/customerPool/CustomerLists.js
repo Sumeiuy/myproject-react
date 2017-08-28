@@ -9,6 +9,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { Pagination, Checkbox } from 'antd';
 
+import { fspContainer } from '../../config';
 import NoData from './NoData';
 import CustomerRow from './CustomerRow';
 
@@ -31,6 +32,7 @@ export default class CustomerLists extends PureComponent {
     selectedIds: PropTypes.array.isRequired,
     saveIsAllSelect: PropTypes.func.isRequired,
     saveSelectedIds: PropTypes.func.isRequired,
+    push: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -50,8 +52,12 @@ export default class CustomerLists extends PureComponent {
     this.setTaskAndGroup();
   }
 
+  componentDidUpdate() {
+    this.setTaskAndGroup();
+  }
+
   setTaskAndGroup() {
-    const workspaceSidebar = document.getElementById('workspace-sidebar');
+    const workspaceSidebar = document.getElementById(fspContainer.workspaceSidebar);
     if (workspaceSidebar) {
       this.setState({
         taskAndGroupLeftPos: `${workspaceSidebar.offsetWidth}px`,
@@ -74,8 +80,33 @@ export default class CustomerLists extends PureComponent {
     const isAllSelect = e.target.checked;
     const { saveIsAllSelect, saveSelectedIds, selectedIds } = this.props;
     saveIsAllSelect(isAllSelect);
-    const newSelectedIds = isAllSelect ? selectedIds : [];
+    const newSelectedIds = !isAllSelect ? selectedIds : [];
     saveSelectedIds(newSelectedIds);
+  }
+
+  @autobind
+  handleClick(url) {
+    const {
+      isAllSelect,
+      selectedIds,
+      push,
+      location: { query },
+    } = this.props;
+    if (!_.isEmpty(selectedIds)) {
+      push({
+        pathname: url,
+        query: {
+          ids: encodeURIComponent(selectedIds.join(',')),
+        },
+      });
+    } else if (isAllSelect) {
+      push({
+        pathname: url,
+        query: {
+          condition: encodeURIComponent(JSON.stringify(query)),
+        },
+      });
+    }
   }
 
   // 分组只针对服务经理，也就是说：
@@ -85,10 +116,13 @@ export default class CustomerLists extends PureComponent {
   renderGroup() {
     const { source, location: { query: { orgId } } } = this.props;
     if ((source === 'search' || source === 'tag') && orgId) {
-      return orgId === 'msm' ? <button>用户分组</button> : '';
+      return orgId === 'msm' ?
+        <button onClick={() => { this.handleClick('/customerPool/customerGroup'); }}>用户分组</button>
+        :
+        '';
     }
     if (source === 'business') {
-      return <button>用户分组</button>;
+      return <button onClick={() => { this.handleClick('/customerPool/customerGroup'); }}>用户分组</button>;
     }
     return null;
   }
@@ -199,7 +233,7 @@ export default class CustomerLists extends PureComponent {
           </p>
           <div className="right">
             {this.renderGroup()}
-            <button>发起任务</button>
+            <button onClick={() => { this.handleClick('/customerPool/createTask'); }}>发起任务</button>
           </div>
         </div>
       </div>

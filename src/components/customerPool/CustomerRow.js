@@ -177,8 +177,8 @@ export default class CustomerRow extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log('nextProps.isAllSelect>>>', nextProps.isAllSelect);
-    console.log('this.props.isAllSelect>>>', this.props.isAllSelect);
+    // console.log('nextProps.isAllSelect>>>', nextProps.isAllSelect);
+    // console.log('this.props.isAllSelect>>>', this.props.isAllSelect);
     if (nextProps.isAllSelect !== this.props.isAllSelect) {
       this.setState({
         checked: nextProps.isAllSelect,
@@ -338,7 +338,7 @@ export default class CustomerRow extends PureComponent {
     const lastestProfitRate = Number(this.getLastestData(monthlyProfits).assetProfitRate);
     const matchedWord = this.matchWord(q, listItem);
     const rskLev = trim(listItem.riskLvl);
-    console.log('listItem', checked);
+    // console.log('listItem', checked);
     return (
       <div className={styles.customerRow}>
         <div className={styles.basicInfoD}>
