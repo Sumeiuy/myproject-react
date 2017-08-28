@@ -56,8 +56,8 @@ export default class PerformanceIndicators extends PureComponent {
           <div className={styles.title}>
             <span className={styles.name}>我的待办事项</span>
           </div>
-          <Row gutter={35}>
-            <Col span={8}>
+          <Row gutter={20}>
+            <Col span={6}>
               <div className={`${styles.item} ${styles.item_a}`}>
                 <a className="item" onClick={() => fspGlobal.myMotTask()}>
                   <div className={styles.content}>
@@ -67,7 +67,7 @@ export default class PerformanceIndicators extends PureComponent {
                 </a>
               </div>
             </Col>
-            <Col span={8}>
+            <Col span={6}>
               <div className={`${styles.item} ${styles.item_b}`}>
                 <Link className="item" to="">
                   <div className={styles.content}>
@@ -77,8 +77,18 @@ export default class PerformanceIndicators extends PureComponent {
                 </Link>
               </div>
             </Col>
-            <Col span={8}>
+            <Col span={6}>
               <div className={`${styles.item} ${styles.item_c}`}>
+                <a className="item" onClick={() => fspGlobal.openRctTab({ url, param })}>
+                  <div className={styles.content}>
+                    <h1>{this.processNum(processData)}</h1>
+                    <p>待办流程</p>
+                  </div>
+                </a>
+              </div>
+            </Col>
+            <Col span={6}>
+              <div className={`${styles.item} ${styles.item_d}`}>
                 <a className="item" onClick={() => fspGlobal.openRctTab({ url, param })}>
                   <div className={styles.content}>
                     <h1>{this.processNum(processData)}</h1>

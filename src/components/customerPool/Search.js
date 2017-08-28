@@ -31,6 +31,8 @@ export default class Search extends PureComponent {
     historyWdsList: PropTypes.array,
     clearSuccess: PropTypes.object,
     clearFun: PropTypes.func,
+    searchHistoryVal: PropTypes.string,
+    saveSearchVal: PropTypes.func,
   }
 
   static defaultProps = {
@@ -38,10 +40,12 @@ export default class Search extends PureComponent {
     queryHotPossibleWds: () => { },
     queryHistoryWdsList: () => { },
     clearFun: () => { },
+    saveSearchVal: () => { },
     clearSuccess: EMPTY_OBJECT,
     queryHotWdsData: EMPTY_LIST,
     orgId: '',
     historyWdsList: EMPTY_LIST,
+    searchHistoryVal: '',
   }
 
   state = {
@@ -64,6 +68,8 @@ export default class Search extends PureComponent {
     if (searchInput) {
       searchInput.addEventListener('keydown', this.handleSearchInput, false);
     }
+    const { searchHistoryVal } = this.props;
+    this.handleSearch(searchHistoryVal);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -135,16 +141,25 @@ export default class Search extends PureComponent {
       q } = obj;
     const { push } = this.props;
     const firstUrl = '/customerPool/list';
+    this.handleSaveSearchVal();
     if (process.env.NODE_ENV === 'production') {
-      const url = `${firstUrl}?source=${source}&labelMapping=${labelMapping}&tagNumId=${tagNumId}&q=${q}`;
-      const param = {
-        closable: true,
-        forceRefresh: true,
-        isSpecialTab: true,
-        id: ids, // 'FSP_SERACH',
-        title: titles, // '搜索目标客户',
-      };
-      fspGlobal.openRctTab({ url, param });
+      if (document.getElementById(`exApp_${ids}`)) {
+        fspGlobal.openRctTabTwo(`#exApp_${ids}`);
+        push({
+          pathname: firstUrl,
+          query: obj,
+        });
+      } else {
+        const url = `${firstUrl}?source=${source}&labelMapping=${labelMapping}&tagNumId=${tagNumId}&q=${q}`;
+        const param = {
+          closable: true,
+          forceRefresh: true,
+          isSpecialTab: true,
+          id: ids, // 'FSP_SERACH',
+          title: titles, // '搜索目标客户',
+        };
+        fspGlobal.openRctTab({ url, param });
+      }
     } else {
       push({
         pathname: firstUrl,
@@ -185,6 +200,8 @@ export default class Search extends PureComponent {
       content: item.labelNameVal,
       desc: item.labelDesc,
       id: `autoList${COUNT++}`,
+      labelMapping: item.labelMapping,
+      tagNumId: item.tagNumId,
     }));
   }
 
@@ -263,6 +280,17 @@ export default class Search extends PureComponent {
     }, '搜索目标客户', 'FSP_SEARCH');
   }
 
+  @autobind
+  handleSaveSearchVal() {
+    const { saveSearchVal } = this.props;
+    let saveVal = '';
+    if (searchInput) {
+      saveVal = searchInput.value;
+    }
+    saveSearchVal({
+      searchVal: saveVal,
+    });
+  }
   // 清除历史搜索
   @autobind
   handleClearHistory() {
@@ -361,7 +389,7 @@ export default class Search extends PureComponent {
 
   render() {
     const { data: { hotWds = EMPTY_OBJECT,
-      hotWdsList = EMPTY_LIST } } = this.props;
+      hotWdsList = EMPTY_LIST }, searchHistoryVal } = this.props;
     return (
       <div className={styles.searchBox}>
         <div className={styles.inner}>
@@ -377,6 +405,7 @@ export default class Search extends PureComponent {
                 onSearch={this.handleSearch}
                 placeholder={hotWds.labelNameVal || ''}
                 optionLabelProp="text"
+                defaultValue={searchHistoryVal}
               >
                 <Input
                   suffix={(

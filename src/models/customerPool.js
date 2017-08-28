@@ -32,6 +32,9 @@ export default {
     },
     historyWdsList: [],
     clearState: {},
+    searchHistoryVal: '',
+    isAllSelect: false,
+    selectedIds: [],
   },
   subscriptions: {
     setup({ dispatch }) {
@@ -40,7 +43,7 @@ export default {
   },
   effects: {
     * getToDoList({ }, { call, put }) {  //eslint-disable-line
-      const response = yield call(api.getToDoList, { empid: '002332' });
+      const response = yield call(api.getToDoList);
       yield put({
         type: 'getToDoListSuccess',
         payload: response,
@@ -48,7 +51,7 @@ export default {
     },
     // 获取客户范围
     * getCustomerScope({ payload }, { call, put }) {
-      const resultData = yield call(api.getCustRangeAll, { empId: '002332' });
+      const resultData = yield call(api.getCustRangeAll);
       yield put({
         type: 'getCustomerScopeSuccess',
         payload: resultData,
@@ -334,5 +337,30 @@ export default {
         clearState: clearHistoryState,
       };
     },
+    // 保存搜索内容
+    saveSearchVal(state, action) {
+      const { payload: { searchVal } } = action;
+      return {
+        ...state,
+        searchHistoryVal: searchVal,
+      };
+    },
+
+    // 保存是否全选
+    saveIsAllSelect(state, action) {
+      return {
+        ...state,
+        isAllSelect: action.payload,
+      };
+    },
+
+    // 保存选中的数据id
+    saveSelectedIds(state, action) {
+      return {
+        ...state,
+        selectedIds: action.payload,
+      };
+    },
+
   },
 };

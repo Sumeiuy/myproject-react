@@ -1,5 +1,7 @@
 .indexBox{
   background: #FFF;
+  border:1px solid #ddd;
+  border-radius: 5px;
   padding: 20px;
   .title{
     padding:0 0 10px 0;
@@ -53,6 +55,9 @@
       font-size: 14px;
       font-weight: bold;
       padding:0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
       i{
         color: #FFF;
         background: #108ee9;
@@ -73,15 +78,26 @@
         span{
           color:#108ee9;
         }
+        b{
+          font-weight: normal;
+        }
       }
     }
     .content{
+      .rowBox{
+        padding: 15px 0 0;
+      }
+      .bd_un_r{
+        border-right:0; 
+      }
+      .bd_un_b,.bd_un_b *{
+        border-bottom:0; 
+      }
       ul{
-        padding: 10px 0;
-        overflow: hidden;
+        border-bottom: 1px dotted #ddd;
+        padding-right: 15px;
         li{
-          float:left;
-          width: 50%;
+          border-right: 1px dotted #ddd;
           p{
             color:#108ee9;
             font-size: 20px;
@@ -90,12 +106,22 @@
             span{
               font-size: 12px;
             }
+            width: 95%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            b{
+              font-weight: normal;
+            }
           }
           div{
             font-size: 14px;
             color:#a1a1a1;
             height: 30px;
             line-height: 30px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
           }
         }
       }
@@ -149,6 +175,28 @@
       }
       .Progressbox{
         padding-left: 60px;
+      }
+    }
+  }
+  :global{
+    .Progress_a{
+      .ant-progress-bg{
+        background-color: #38d8e8;
+      }
+    }
+    .Progress_b{
+      .ant-progress-bg{
+        background-color: #60c1ea;
+      }
+    }
+    .Progress_c{
+      .ant-progress-bg{
+        background-color: #7d9be0;
+      }
+    }
+    .Progress_d{
+      .ant-progress-bg{
+        background-color: #756fb8;
       }
     }
   }

@@ -137,28 +137,28 @@ export default class ProductSales extends PureComponent {
                 <div className={styles.productItem}>
                   <span className={styles.name}>公募基金</span>
                   <div className={styles.Progressbox}>
-                    <Progress percent={this.handleDataShadow(fundTranAmt || 0)} showInfo={false} status="active" />
+                    <Progress className="Progress_a" percent={this.handleDataShadow(fundTranAmt || 0)} showInfo={false} status="active" />
                   </div>
                   <span className={styles.num}>{this.numFormat(fundTranAmt || '--')}</span>
                 </div>
                 <div className={styles.productItem}>
                   <span className={styles.name}>证券投资</span>
                   <div className={styles.Progressbox}>
-                    <Progress percent={this.handleDataShadow(privateTranAmt || 0)} showInfo={false} status="active" />
+                    <Progress className="Progress_b" percent={this.handleDataShadow(privateTranAmt || 0)} showInfo={false} status="active" />
                   </div>
                   <span className={styles.num}>{this.numFormat(privateTranAmt || '--')}</span>
                 </div>
                 <div className={styles.productItem}>
                   <span className={styles.name}>紫金产品</span>
                   <div className={styles.Progressbox}>
-                    <Progress percent={this.handleDataShadow(finaTranAmt || 0)} showInfo={false} status="active" />
+                    <Progress className="Progress_c" percent={this.handleDataShadow(finaTranAmt || 0)} showInfo={false} status="active" />
                   </div>
                   <span className={styles.num}>{this.numFormat(finaTranAmt || '--')}</span>
                 </div>
                 <div className={styles.productItem}>
                   <span className={styles.name}>OTC</span>
                   <div className={styles.Progressbox}>
-                    <Progress percent={this.handleDataShadow(otcTranAmt || 0)} showInfo={false} status="active" />
+                    <Progress className="Progress_d" percent={this.handleDataShadow(otcTranAmt || 0)} showInfo={false} status="active" />
                   </div>
                   <span className={styles.num}>{this.numFormat(otcTranAmt || '--')}</span>
                 </div>
