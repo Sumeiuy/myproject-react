@@ -11,7 +11,6 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { fspContainer } from '../../config';
 import { fspGlobal } from '../../utils';
-import { fspContainer } from '../../config';
 import Icon from '../../components/common/Icon';
 import styles from './search.less';
 
