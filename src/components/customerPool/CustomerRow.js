@@ -148,10 +148,12 @@ export default class CustomerRow extends PureComponent {
     location: PropTypes.object.isRequired,
     onChange: PropTypes.func.isRequired,
     isAllSelect: PropTypes.bool.isRequired,
+    selectedIds: PropTypes.array,
   }
 
   static defaultProps = {
     q: '',
+    selectedIds: [],
   }
 
   constructor(props) {
@@ -177,8 +179,8 @@ export default class CustomerRow extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log('nextProps.isAllSelect>>>', nextProps.isAllSelect);
-    console.log('this.props.isAllSelect>>>', this.props.isAllSelect);
+    // console.log('nextProps.isAllSelect>>>', nextProps.isAllSelect);
+    // console.log('this.props.isAllSelect>>>', this.props.isAllSelect);
     if (nextProps.isAllSelect !== this.props.isAllSelect) {
       this.setState({
         checked: nextProps.isAllSelect,
@@ -332,13 +334,14 @@ export default class CustomerRow extends PureComponent {
   }
 
   render() {
-    const { q, listItem, monthlyProfits, isAllSelect } = this.props;
+    const { q, listItem, monthlyProfits, isAllSelect, selectedIds } = this.props;
     const { unit, newAsset, checked } = this.state;
     const lastestProfit = Number(this.getLastestData(monthlyProfits).assetProfit);
     const lastestProfitRate = Number(this.getLastestData(monthlyProfits).assetProfitRate);
     const matchedWord = this.matchWord(q, listItem);
     const rskLev = trim(listItem.riskLvl);
-    console.log('listItem', checked);
+    const isChecked = _.includes(selectedIds, listItem.custId) || isAllSelect || checked;
+    // console.log('listItem', checked);
     return (
       <div className={styles.customerRow}>
         <div className={styles.basicInfoD}>
@@ -353,7 +356,7 @@ export default class CustomerRow extends PureComponent {
           <div className={styles.selectIcon}>
             <Checkbox
               disabled={isAllSelect}
-              checked={isAllSelect || checked}
+              checked={isChecked}
               onChange={this.handleSelect}
             />
           </div>
