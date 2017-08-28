@@ -294,7 +294,7 @@ export const constructScatterData = (options = {}) => {
       xAxisUnit: currentXUnit,
       yAxisUnit: currentYUnit,
       slope: 0,
-      averageInfo: `平均${description}0${currentYUnit}/${currentXUnit === REN ? HU : currentXUnit}`,
+      averageInfo: `平均${description}0${currentYUnit}/${currentXUnit}`,
     };
     return axisData;
   }
