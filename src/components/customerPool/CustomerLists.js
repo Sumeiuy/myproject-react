@@ -194,6 +194,7 @@ export default class CustomerLists extends PureComponent {
                 listItem={item}
                 q={q}
                 isAllSelect={isAllSelect}
+                selectedIds={selectedIds}
                 onChange={this.handleSingleSelect}
                 key={`${item.empId}-${item.custId}-${item.idNum}-${item.telephone}-${item.asset}`}
               />,

@@ -148,10 +148,12 @@ export default class CustomerRow extends PureComponent {
     location: PropTypes.object.isRequired,
     onChange: PropTypes.func.isRequired,
     isAllSelect: PropTypes.bool.isRequired,
+    selectedIds: PropTypes.array,
   }
 
   static defaultProps = {
     q: '',
+    selectedIds: [],
   }
 
   constructor(props) {
@@ -332,12 +334,13 @@ export default class CustomerRow extends PureComponent {
   }
 
   render() {
-    const { q, listItem, monthlyProfits, isAllSelect } = this.props;
+    const { q, listItem, monthlyProfits, isAllSelect, selectedIds } = this.props;
     const { unit, newAsset, checked } = this.state;
     const lastestProfit = Number(this.getLastestData(monthlyProfits).assetProfit);
     const lastestProfitRate = Number(this.getLastestData(monthlyProfits).assetProfitRate);
     const matchedWord = this.matchWord(q, listItem);
     const rskLev = trim(listItem.riskLvl);
+    const isChecked = _.includes(selectedIds, listItem.custId) || isAllSelect || checked;
     // console.log('listItem', checked);
     return (
       <div className={styles.customerRow}>
@@ -353,7 +356,7 @@ export default class CustomerRow extends PureComponent {
           <div className={styles.selectIcon}>
             <Checkbox
               disabled={isAllSelect}
-              checked={isAllSelect || checked}
+              checked={isChecked}
               onChange={this.handleSelect}
             />
           </div>
