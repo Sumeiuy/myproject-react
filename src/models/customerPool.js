@@ -33,6 +33,7 @@ export default {
     historyWdsList: [],
     clearState: {},
     searchHistoryVal: '',
+    taskDictionary: {},
   },
   subscriptions: {
     setup({ dispatch }) {
@@ -169,6 +170,14 @@ export default {
       yield put({
         type: 'clearSearchHistoryListSuccess',
         payload: { clearHistoryState },
+      });
+    },
+    // 自建任务字典
+    * getTaskDictionary({ payload }, { call, put }) {
+      const taskDictionary = yield call(api.taskDictionary, payload);
+      yield put({
+        type: 'clearSearchHistoryListSuccess',
+        payload: { taskDictionary },
       });
     },
   },
@@ -341,6 +350,14 @@ export default {
       return {
         ...state,
         searchHistoryVal: searchVal,
+      };
+    },
+    // 自建任务字典
+    getTaskDictionarySuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        taskDictionary: resultData,
       };
     },
   },

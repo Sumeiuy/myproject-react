@@ -7,6 +7,7 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { Form, Select, Input, Button, DatePicker } from 'antd';
 import { createForm } from 'rc-form';
+import { connect } from 'react-redux';
 import moment from 'moment';
 import { autobind } from 'core-decorators';
 import styles from './createTask.less';
@@ -14,12 +15,33 @@ import styles from './createTask.less';
 const FormItem = Form.Item;
 const Option = Select.Option;
 const { TextArea } = Input;
+const effects = {
+  getTaskDictionary: 'customerPool/getTaskDictionary',
+};
+
+const fectchDataFunction = (globalLoading, type) => query => ({
+  type,
+  payload: query || {},
+  loading: globalLoading,
+});
+
+const mapStateToProps = state => ({
+  taskDictionary: state.customerPool.taskDictionary, // 绩效指标
+});
+
+const mapDispatchToProps = {
+  getTaskDictionary: fectchDataFunction(true, effects.getTaskDictionary),
+};
+
 @createForm()
+@connect(mapStateToProps, mapDispatchToProps)
 export default class CreateTask extends PureComponent {
 
   static propTypes = {
     data: PropTypes.array,
     form: PropTypes.object.isRequired,
+    getTaskDictionary: PropTypes.func.isRequired,
+    taskDictionary: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -36,6 +58,8 @@ export default class CreateTask extends PureComponent {
   }
 
   componentWillMount() {
+    const { getTaskDictionary } = this.props;
+    getTaskDictionary();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -102,7 +126,8 @@ export default class CreateTask extends PureComponent {
 
 
   render() {
-    const { form } = this.props;
+    const { form, taskDictionary } = this.props;
+    console.log(taskDictionary);
     const { getFieldDecorator } = form;
     const { endOpen } = this.state;
     const dateFormat = 'YYYY/MM/DD';
