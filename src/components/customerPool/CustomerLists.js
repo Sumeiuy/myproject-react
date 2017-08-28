@@ -50,18 +50,33 @@ export default class CustomerLists extends PureComponent {
 
   componentDidMount() {
     this.setTaskAndGroup();
+    const sidebarHideBtn = document.getElementById(fspContainer.sidebarHideBtn);
+    const sidebarShowBtn = document.getElementById(fspContainer.sidebarShowBtn);
+    if (sidebarHideBtn && sidebarShowBtn) {
+      sidebarHideBtn.addEventListener('click', this.updateLeftPos);
+      sidebarShowBtn.addEventListener('click', this.updateLeftPos);
+    }
   }
 
   componentDidUpdate() {
     this.setTaskAndGroup();
   }
 
+  @autobind
   setTaskAndGroup() {
     const workspaceSidebar = document.getElementById(fspContainer.workspaceSidebar);
     if (workspaceSidebar) {
       this.setState({
         taskAndGroupLeftPos: `${workspaceSidebar.offsetWidth}px`,
       });
+    }
+  }
+
+  updateLeftPos() {
+    const workspaceSidebar = document.getElementById(fspContainer.workspaceSidebar);
+    const fixedEleDom = document.getElementById('fixedEleDom');
+    if (fixedEleDom && workspaceSidebar) {
+      fixedEleDom.style.left = `${workspaceSidebar.offsetWidth}px`;
     }
   }
 
@@ -221,6 +236,7 @@ export default class CustomerLists extends PureComponent {
           </Checkbox>
         </div>
         <div
+          id="fixedEleDom"
           className={styles.taskAndGroup}
           style={{
             left: taskAndGroupLeftPos,

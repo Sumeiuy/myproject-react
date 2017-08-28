@@ -21,4 +21,8 @@ export default {
   marginLeftWidth: 25,
   // FSP左边容器
   workspaceSidebar: 'workspace-sidebar',
+  // fsp 左边的收齐侧栏按钮
+  sidebarHideBtn: 'sidebar-hide-btn',
+  // fsp 左边的展开侧栏按钮
+  sidebarShowBtn: 'sidebar-show-btn',
 };
