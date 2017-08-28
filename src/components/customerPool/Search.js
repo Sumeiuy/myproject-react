@@ -9,8 +9,8 @@ import { Icon as AntdIcon, Button, Input, AutoComplete, message } from 'antd';
 import ReactDOM from 'react-dom';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { fspGlobal } from '../../utils';
 import { fspContainer } from '../../config';
+import { fspGlobal } from '../../utils';
 import Icon from '../../components/common/Icon';
 import styles from './search.less';
 
@@ -144,23 +144,15 @@ export default class Search extends PureComponent {
     const firstUrl = '/customerPool/list';
     this.handleSaveSearchVal();
     if (document.querySelector(fspContainer.container)) {
-      if (document.getElementById(`exApp_${ids}`)) {
-        fspGlobal.openRctTabTwo(`#exApp_${ids}`);
-        push({
-          pathname: firstUrl,
-          query: obj,
-        });
-      } else {
-        const url = `${firstUrl}?source=${source}&labelMapping=${labelMapping}&tagNumId=${tagNumId}&q=${q}`;
-        const param = {
-          closable: true,
-          forceRefresh: true,
-          isSpecialTab: true,
-          id: ids, // 'FSP_SERACH',
-          title: titles, // '搜索目标客户',
-        };
-        fspGlobal.openRctTab({ url, param });
-      }
+      const url = `${firstUrl}?source=${source}&labelMapping=${labelMapping}&tagNumId=${tagNumId}&q=${q}`;
+      const param = {
+        closable: true,
+        forceRefresh: true,
+        isSpecialTab: true,
+        id: ids, // 'FSP_SERACH',
+        title: titles, // '搜索目标客户',
+      };
+      fspGlobal.openRctTab({ url, param });
     } else {
       push({
         pathname: firstUrl,
