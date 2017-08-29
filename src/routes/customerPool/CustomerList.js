@@ -462,7 +462,7 @@ export default class CustomerList extends PureComponent {
     }
     const { expandAll, createCustRange } = this.state;
     // console.log('6个月收益数据： ', monthlyProfits);
-    // console.log('cust>>>', custList);
+    console.log('createCustRange>>>', createCustRange);
     return (
       <div className={styles.customerlist}>
         <Row type="flex" justify="space-between" align="middle">
@@ -493,7 +493,9 @@ export default class CustomerList extends PureComponent {
           onChange={this.orderChange}
         />
         <CustomerLists
+          custRange={createCustRange}
           source={source}
+          entertype={ENTER_TYPE[source]}
           location={location}
           push={push}
           custList={custList}
