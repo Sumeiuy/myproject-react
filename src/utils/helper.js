@@ -116,6 +116,7 @@ const helper = {
     const PERCENT = ZHUNICODE.PERCENT;
     const PERMILLAGE = ZHUNICODE.PERMILLAGE;
     const obj = {};
+    let minus = '';
     // 如果 value 有值
     if (value) {
       if (value === 'null') {
@@ -123,7 +124,12 @@ const helper = {
         obj.value = '暂无';
         obj.unit = '';
       } else {
-        const newValue = Number(value);
+        let newValue = Number(value);
+        // 如果 newValue 是负数
+        if (newValue < 0) {
+          minus = '-';
+          newValue = Math.abs(newValue);
+        }
         // 如果 value 的值是 0
         if (newValue === 0) {
           obj.value = newValue;
@@ -187,6 +193,7 @@ const helper = {
           }
         }
       }
+      obj.value = minus ? `${minus}${obj.value}` : obj.value;
     } else {
       // value 没值
       obj.value = '暂无';
