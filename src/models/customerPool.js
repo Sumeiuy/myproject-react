@@ -33,6 +33,7 @@ export default {
     historyWdsList: [],
     clearState: {},
     searchHistoryVal: '',
+    taskDictionary: {},
     isAllSelect: false,
     selectedIds: [],
   },
@@ -171,6 +172,14 @@ export default {
       yield put({
         type: 'clearSearchHistoryListSuccess',
         payload: { clearHistoryState },
+      });
+    },
+    // 自建任务字典
+    * getTaskDictionary({ payload }, { call, put }) {
+      const taskDictionary = yield call(api.getTaskDictionary, payload);
+      yield put({
+        type: 'getTaskDictionarySuccess',
+        payload: { taskDictionary },
       });
     },
   },
@@ -345,7 +354,14 @@ export default {
         searchHistoryVal: searchVal,
       };
     },
-
+    // 自建任务字典
+    getTaskDictionarySuccess(state, action) {
+      const { payload: { taskDictionary: { resultData } } } = action;
+      return {
+        ...state,
+        taskDictionary: resultData,
+      };
+    },
     // 保存是否全选
     saveIsAllSelect(state, action) {
       return {
@@ -361,6 +377,5 @@ export default {
         selectedIds: action.payload,
       };
     },
-
   },
 };

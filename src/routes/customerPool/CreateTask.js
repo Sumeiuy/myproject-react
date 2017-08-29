@@ -7,6 +7,8 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { Form, Select, Input, Button, DatePicker } from 'antd';
 import { createForm } from 'rc-form';
+import _ from 'lodash';
+import { connect } from 'react-redux';
 import moment from 'moment';
 import { autobind } from 'core-decorators';
 import styles from './createTask.less';
@@ -14,16 +16,40 @@ import styles from './createTask.less';
 const FormItem = Form.Item;
 const Option = Select.Option;
 const { TextArea } = Input;
+const WEEK = ['日', '一', '二', '三', '四', '五', '六'];
+const effects = {
+  getTaskDictionary: 'customerPool/getTaskDictionary',
+};
+
+const fectchDataFunction = (globalLoading, type) => query => ({
+  type,
+  payload: query || {},
+  loading: globalLoading,
+});
+
+const mapStateToProps = state => ({
+  taskDictionary: state.customerPool.taskDictionary, // 绩效指标
+});
+
+const mapDispatchToProps = {
+  getTaskDictionary: fectchDataFunction(true, effects.getTaskDictionary),
+};
+
+@connect(mapStateToProps, mapDispatchToProps)
 @createForm()
 export default class CreateTask extends PureComponent {
 
   static propTypes = {
+    location: PropTypes.object.isRequired,
     data: PropTypes.array,
     form: PropTypes.object.isRequired,
+    getTaskDictionary: PropTypes.func.isRequired,
+    taskDictionary: PropTypes.object,
   }
 
   static defaultProps = {
     data: [],
+    taskDictionary: {},
   }
 
   constructor(props) {
@@ -32,10 +58,17 @@ export default class CreateTask extends PureComponent {
       startValue: null,
       endValue: null,
       endOpen: false,
+      startFormat: 'YY/MM/DD(E)',
+      endFormat: 'YY/MM/DD(E)',
     };
   }
 
   componentWillMount() {
+    const { getTaskDictionary, location: { query } } = this.props;
+    console.log(query);
+    this.handleCreatAddDate(1, 'start');
+    this.handleCreatAddDate(4, 'end');
+    getTaskDictionary();
     // const { location: { query } } = this.props;
     // if (query.ids) {
     //   console.log('ids: ', decodeURIComponent(query.ids).split(','));
@@ -45,7 +78,11 @@ export default class CreateTask extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log(nextProps);
+    const { location: preLocation } = this.props;
+    const { location: nextLocation } = nextProps;
+    if (preLocation !== nextLocation) {
+      console.log(nextLocation);
+    }
   }
 
   @autobind
@@ -58,12 +95,13 @@ export default class CreateTask extends PureComponent {
   @autobind
   onStartChange(value) {
     this.onChange('startValue', value);
-    console.log(value);
+    this.handleDateFormat(value, 'start');
   }
 
   @autobind
   onEndChange(value) {
     this.onChange('endValue', value);
+    this.handleDateFormat(value, 'end');
   }
 
   @autobind
@@ -106,12 +144,57 @@ export default class CreateTask extends PureComponent {
     });
   }
 
+  @autobind
+  handleCreatAddDate(days, type) {
+    const d = new Date();
+    d.setDate(d.getDate() + days);
+    const m = d.getMonth() + 1;
+    const newDay = `${d.getFullYear()}/${m}/${d.getDate()}`;
+    const e = d.getDay();
+    if (type === 'end') {
+      this.setState({
+        endValue: moment(newDay, `YY/MM/DD(${WEEK[e]})`),
+        endFormat: `YY/MM/DD(${WEEK[e]})`,
+      });
+    } else {
+      this.setState({
+        startValue: moment(newDay, `YY/MM/DD(${WEEK[e]})`),
+        startFormat: `YY/MM/DD(${WEEK[e]})`,
+      });
+    }
+  }
+
+  handleCreatOptions(data) {
+    if (!_.isEmpty(data)) {
+      return data.map(item =>
+        <Option key={`task${item.key}`} value={item.key}>{item.value}</Option>,
+      );
+    }
+    return null;
+  }
+
+  handleDateFormat(value, type) {
+    if (!_.isEmpty(value)) {
+      const { _d } = value;
+      const d = new Date(_d);
+      const e = d.getDay();
+      if (type === 'end') {
+        this.setState({
+          endFormat: `YY/MM/DD(${WEEK[e]})`,
+        });
+      } else {
+        this.setState({
+          startFormat: `YY/MM/DD(${WEEK[e]})`,
+        });
+      }
+    }
+  }
 
   render() {
-    const { form } = this.props;
+    const { form, taskDictionary } = this.props;
+    const { executeType, missionTypes } = taskDictionary;
     const { getFieldDecorator } = form;
-    const { endOpen } = this.state;
-    const dateFormat = 'YYYY/MM/DD';
+    const { endOpen, endFormat, startFormat, startValue, endValue } = this.state;
     return (
       <div className={styles.taskBox}>
         <div className={styles.taskInner}>
@@ -127,7 +210,7 @@ export default class CreateTask extends PureComponent {
                       validateStatus="error"
                       help="任务名称不能为空"
                     >
-                      {getFieldDecorator('note')(
+                      {getFieldDecorator('missionName')(
                         <Input />,
                       )}
                     </FormItem>
@@ -137,10 +220,9 @@ export default class CreateTask extends PureComponent {
                     <FormItem
                       wrapperCol={{ span: 12 }}
                     >
-                      {getFieldDecorator('gender')(
+                      {getFieldDecorator('missionType')(
                         <Select>
-                          <Option value="male">male</Option>
-                          <Option value="female">female</Option>
+                          {this.handleCreatOptions(missionTypes)}
                         </Select>,
                       )}
                     </FormItem>
@@ -150,10 +232,9 @@ export default class CreateTask extends PureComponent {
                     <FormItem
                       wrapperCol={{ span: 12 }}
                     >
-                      {getFieldDecorator('gender')(
+                      {getFieldDecorator('executionType')(
                         <Select>
-                          <Option value="male">male</Option>
-                          <Option value="female">female</Option>
+                          {this.handleCreatOptions(executeType)}
                         </Select>,
                       )}
                     </FormItem>
@@ -163,16 +244,19 @@ export default class CreateTask extends PureComponent {
                     <FormItem
                       wrapperCol={{ span: 12 }}
                     >
-                      {getFieldDecorator('date-picker-start')(
-                        <DatePicker
-                          disabledDate={this.disabledStartDate}
-                          showTime
-                          format="YYYY/MM/DD(E)"
-                          placeholder="开始时间"
-                          onChange={this.onStartChange}
-                          onOpenChange={this.handleStartOpenChange}
-                          style={{ width: '100%' }}
-                        />,
+                      {getFieldDecorator('triggerDate',
+                        {
+                          initialValue: startValue,
+                        })(
+                          <DatePicker
+                            disabledDate={this.disabledStartDate}
+                            showTime
+                            format={startFormat}
+                            placeholder="开始时间"
+                            onChange={this.onStartChange}
+                            onOpenChange={this.handleStartOpenChange}
+                            style={{ width: '100%' }}
+                          />,
                       )}
                     </FormItem>
                   </li>
@@ -181,17 +265,20 @@ export default class CreateTask extends PureComponent {
                     <FormItem
                       wrapperCol={{ span: 12 }}
                     >
-                      {getFieldDecorator('date-picker-end')(
-                        <DatePicker
-                          disabledDate={this.disabledEndDate}
-                          showTime
-                          defaultValue={moment('2015/01/01', dateFormat)} format={dateFormat}
-                          placeholder="结束时间"
-                          onChange={this.onEndChange}
-                          open={endOpen}
-                          onOpenChange={this.handleEndOpenChange}
-                          style={{ width: '100%' }}
-                        />,
+                      {getFieldDecorator('closingDate',
+                        {
+                          initialValue: endValue,
+                        })(
+                          <DatePicker
+                            disabledDate={this.disabledEndDate}
+                            showTime
+                            format={endFormat}
+                            placeholder="结束时间"
+                            onChange={this.onEndChange}
+                            open={endOpen}
+                            onOpenChange={this.handleEndOpenChange}
+                            style={{ width: '100%' }}
+                          />,
                       )}
                     </FormItem>
                   </li>
@@ -201,12 +288,15 @@ export default class CreateTask extends PureComponent {
                     <label htmlFor="desc"><i>*</i>服务策略建议（适用于所有目标客户）</label>
                   </p>
                   <FormItem>
-                    {getFieldDecorator('note')(
-                      <TextArea
-                        id="desc"
-                        rows={5}
-                        style={{ width: '100%' }}
-                      />,
+                    {getFieldDecorator('serviceStrategySuggestion',
+                      {
+                        initialValue: '客户已达到办理 业务的条件，可以联系客户并客户介绍符合开通条件的业务，根据客户的反馈情况决定是否需要向客户推荐开通相关业务。',
+                      })(
+                        <TextArea
+                          id="desc"
+                          rows={5}
+                          style={{ width: '100%' }}
+                        />,
                     )}
                   </FormItem>
                 </div>
@@ -215,12 +305,15 @@ export default class CreateTask extends PureComponent {
                     <label htmlFor="desc"><i>*</i>任务描述</label>
                   </p>
                   <FormItem>
-                    {getFieldDecorator('note')(
-                      <TextArea
-                        id="desc"
-                        rows={5}
-                        style={{ width: '100%' }}
-                      />,
+                    {getFieldDecorator('missionDesc',
+                      {
+                        initialValue: '用户已达到到办理 {可开通业务列表}业务的条件，请联系客户办理相关业务。注意提醒客户准备业务办理必须的文件。',
+                      })(
+                        <TextArea
+                          id="desc"
+                          rows={5}
+                          style={{ width: '100%' }}
+                        />,
                     )}
                   </FormItem>
                 </div>
@@ -229,7 +322,7 @@ export default class CreateTask extends PureComponent {
                     <Button>
                       取消
                     </Button>
-                    <Button type="primary" htmlType="submit" loading>
+                    <Button type="primary" htmlType="submit" > { /* loading */}
                       提交
                     </Button>
                   </FormItem>
