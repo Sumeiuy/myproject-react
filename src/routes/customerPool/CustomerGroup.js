@@ -1,8 +1,8 @@
 /**
- *@file
+ *@file customerPool/customerGroup
+ * 客户分组功能
  *@author zhuyanwen
- * 客户分组功能开发
- * */
+* */
 import React, { PureComponent, PropTypes } from 'react';
 import { withRouter, routerRedux } from 'dva/router';
 import { autobind } from 'core-decorators';
@@ -13,7 +13,7 @@ import CustomerGrouplist from '../../components/customerPool/CustomerGrouplist';
 import AddNewGroup from '../../components/customerPool/addNewGroup';
 import helper from '../../utils/helper';
 
-const CUR_PAGE = 1; // 默认当前页
+const CUR_PAGE = 0; // 默认当前页
 const CUR_PAGESIZE = 10; // 默认页大小
 const TabPane = Tabs.TabPane;
 let groupId = '0';// 默认选择的分组groupId
@@ -22,6 +22,7 @@ let groupId = '0';// 默认选择的分组groupId
 const mapStateToProps = state => ({
   cusgroupList: state.customerPool.cusgroupList,
   cusgroupPage: state.customerPool.cusgroupPage,
+  cusGroupSaveResult: state.customerPool.cusGroupSaveResult,
 
 });
 const mapDispatchToProps = {
@@ -83,6 +84,7 @@ export default class customerGroup extends PureComponent {
     replace: PropTypes.func.isRequired,
     goBack: PropTypes.func.isRequired,
     addCustomerToGroup: PropTypes.func.isRequired,
+    cusGroupSaveResult: PropTypes.string,
 
   }
   componentWillMount() {
@@ -211,7 +213,7 @@ export default class customerGroup extends PureComponent {
                   </div>
                 </Col>
               </Row>
-              <Row className="groupListRow">
+              <Row id="groupListRow" className="groupListRow">
                 <CustomerGrouplist
                   className="CustomerGrouplist"
                   data={cusgroupList}

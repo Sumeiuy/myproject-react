@@ -45,6 +45,7 @@ export default {
     taskDictionary: {},
     isAllSelect: false,
     selectedIds: [],
+    cusGroupSaveResult: '',
   },
   subscriptions: {
     setup({ dispatch }) {
@@ -196,7 +197,11 @@ export default {
     // 添加客户到现有分组
     * addCustomerToGroup({ payload }, { call, put }) {
       if (!_.isEmpty(payload)) {
-        yield call(api.saveCustGroupList, payload);
+        const response = yield call(api.saveCustGroupList, payload);
+        yield put({
+          type: 'addCusToGroupSuccess',
+          payload: response,
+        });
         yield put(routerRedux.push('/customerPool/addCusSuccess'));
       }
     },

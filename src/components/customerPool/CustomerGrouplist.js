@@ -1,8 +1,7 @@
 /**
- *@file
-
+ *@file customerPool/CustomerGrouplist
+ *客户分组列表
  *@author zhuyanwen
-
  * */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
