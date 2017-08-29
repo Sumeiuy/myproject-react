@@ -112,7 +112,7 @@ const haveTitle = title => (title ? `<i class="tip">${title}</i>` : null);
 
 const replaceWord = (value, q, title = '') => {
   const titleDom = haveTitle(title);
-  return value.replace(new RegExp(q, 'g'), `<em class="mark">${q}${titleDom || ''}</em>`);
+  return value.replace(new RegExp(q, 'g'), `<em class="marked">${q}${titleDom || ''}</em>`);
 };
 
 const getNewHtml = (value, k) => (`<li><span><i class="label">${value}：</i>${k}</span></li>`);
@@ -314,11 +314,11 @@ export default class CustomerRow extends PureComponent {
 
   @autobind
   handleSelect(e) {
-    const { onChange, listItem: { custId } } = this.props;
+    const { onChange, listItem: { custId, name } } = this.props;
     this.setState({
       checked: e.target.checked,
     }, () => {
-      onChange(custId);
+      onChange(custId, name);
     });
   }
 
@@ -402,12 +402,13 @@ export default class CustomerRow extends PureComponent {
                   <ChartLineWidget chartData={monthlyProfits} />
                 </div>
                 <div className={styles.chartsText}>
-                  {/*
-                    <div>
-                      <span>年最大时点资产：</span>
-                      <span className={styles.numA}>--</span>万元
-                    </div>
-                  */}
+                  <div>
+                    <span>年最大时点资产：</span>
+                    <span className={styles.numA}>
+                      {listItem.maxTotAsetY ? formatNumber(listItem.maxTotAsetY) : '--'}
+                    </span>
+                    {listItem.maxTotAsetY ? generateUnit(listItem.maxTotAsetY) : ''}
+                  </div>
                   <div>
                     <span>本月收益率：</span>
                     <span className={styles.numB}>
