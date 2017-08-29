@@ -68,6 +68,10 @@ export const padFixedValue = (m, type) => {
 export const getMaxAndMinMoney = (series) => {
   let max = Math.max(...series);
   let min = Math.min(...series);
+  // 处理只有一条数据的情况
+  if (max === min) {
+    min = 0;
+  }
   max = padFixedValue(max, 'max');
   min = padFixedValue(min, 'min');
   if (max === 0 && min === 0) {
@@ -80,6 +84,10 @@ export const getMaxAndMinMoney = (series) => {
 export const getMaxAndMinCust = (series) => {
   let max = Math.max(...series);
   let min = Math.min(...series);
+  // 处理只有一条数据的情况
+  if (max === min) {
+    min = 0;
+  }
   max = padFixedValue(max, 'max');
   min = padFixedValue(min, 'min');
 
@@ -90,6 +98,10 @@ export const getMaxAndMinCust = (series) => {
 export const getMaxAndMinCi = (series) => {
   let max = Math.max(...series);
   let min = Math.min(...series);
+  // 处理只有一条数据的情况
+  if (max === min) {
+    min = 0;
+  }
   // 次数肯定都是正数
   max = padFixedValue(max, 'max');
   min = padFixedValue(min, 'min');
@@ -100,6 +112,10 @@ export const getMaxAndMinCi = (series) => {
 export const getMaxAndMinGE = (series) => {
   let max = Math.max(...series);
   let min = Math.min(...series);
+  // 处理只有一条数据的情况
+  if (max === min) {
+    min = 0;
+  }
   // 个数肯定都是正数
   max = padFixedValue(max, 'max');
   min = padFixedValue(min, 'min');
@@ -112,6 +128,10 @@ export const getMaxAndMinGE = (series) => {
 export const getMaxAndMinPercentOrPermillage = (series) => {
   let max = Math.max(...series);
   let min = Math.min(...series);
+  // 处理只有一条数据的情况
+  if (max === min) {
+    min = 0;
+  }
 
   if (max >= 1) {
     max = Math.ceil(max).toFixed(0);
