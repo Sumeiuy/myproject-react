@@ -178,7 +178,16 @@ export const constructScatterData = (options = {}) => {
       } else {
         value = Number(totalValue);
       }
-      return value;
+
+      // 保留的位数与散点图的每个点保留位数一致
+      // 以便计算某个点斜率时，保证与对比斜率不会相差
+      if (value > 10000) {
+        return Number.parseFloat(value.toFixed(0));
+      }
+      if (value > 1000) {
+        return Number.parseFloat(value.toFixed(1));
+      }
+      return Number.parseFloat(value.toFixed(2));
     },
     // 计算当前散点图的斜率
     getSlope(unitInfo) {
