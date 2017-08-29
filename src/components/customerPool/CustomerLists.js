@@ -10,6 +10,7 @@ import _ from 'lodash';
 import { Pagination, Checkbox } from 'antd';
 
 import { fspContainer } from '../../config';
+import { fspGlobal } from '../../utils';
 import NoData from './NoData';
 import CustomerRow from './CustomerRow';
 
@@ -50,18 +51,42 @@ export default class CustomerLists extends PureComponent {
 
   componentDidMount() {
     this.setTaskAndGroup();
+    const sidebarHideBtn = document.getElementById(fspContainer.sidebarHideBtn);
+    const sidebarShowBtn = document.getElementById(fspContainer.sidebarShowBtn);
+    if (sidebarHideBtn && sidebarShowBtn) {
+      sidebarHideBtn.addEventListener('click', this.updateLeftPos);
+      sidebarShowBtn.addEventListener('click', this.updateLeftPos);
+    }
   }
 
   componentDidUpdate() {
     this.setTaskAndGroup();
   }
 
+  componentWillUnmount() {
+    const sidebarHideBtn = document.getElementById(fspContainer.sidebarHideBtn);
+    const sidebarShowBtn = document.getElementById(fspContainer.sidebarShowBtn);
+    if (sidebarHideBtn && sidebarShowBtn) {
+      sidebarHideBtn.removeEventListener('click', this.updateLeftPos);
+      sidebarShowBtn.removeEventListener('click', this.updateLeftPos);
+    }
+  }
+
+  @autobind
   setTaskAndGroup() {
     const workspaceSidebar = document.getElementById(fspContainer.workspaceSidebar);
     if (workspaceSidebar) {
       this.setState({
         taskAndGroupLeftPos: `${workspaceSidebar.offsetWidth}px`,
       });
+    }
+  }
+
+  updateLeftPos() {
+    const workspaceSidebar = document.getElementById(fspContainer.workspaceSidebar);
+    const fixedEleDom = document.getElementById('fixedEleDom');
+    if (fixedEleDom && workspaceSidebar) {
+      fixedEleDom.style.left = `${workspaceSidebar.offsetWidth}px`;
     }
   }
 
@@ -85,25 +110,64 @@ export default class CustomerLists extends PureComponent {
   }
 
   @autobind
-  handleClick(url) {
+  handleClick(url, title, id) {
+    // debugger
     const {
+      page,
       isAllSelect,
       selectedIds,
-      push,
       location: { query },
     } = this.props;
+    const selectCount = isAllSelect ? page.total : selectedIds.length;
     if (!_.isEmpty(selectedIds)) {
-      push({
+      this.openByIds(url, selectedIds, selectCount, title, id);
+    } else if (isAllSelect) {
+      this.openByAllSelect(url, query, selectCount, title, id);
+    }
+  }
+
+  @autobind
+  openByIds(url, ids, count, title, id) {
+    // debugger
+    if (document.querySelector(fspContainer.container)) {
+      const newurl = `${url}?ids=${encodeURIComponent(ids.join(','))}&count=${count}`;
+      const param = {
+        closable: true,
+        forceRefresh: true,
+        isSpecialTab: true,
+        id, // 'FSP_SERACH',
+        title, // '搜索目标客户',
+      };
+      fspGlobal.openRctTab({ url: newurl, param });
+    } else {
+      this.props.push({
         pathname: url,
         query: {
-          ids: encodeURIComponent(selectedIds.join(',')),
+          ids: encodeURIComponent(ids.join(',')),
+          count,
         },
       });
-    } else if (isAllSelect) {
-      push({
+    }
+  }
+
+  @autobind
+  openByAllSelect(url, query, count, title, id) {
+    if (document.querySelector(fspContainer.container)) {
+      const newurl = `${url}?condition=${encodeURIComponent(JSON.stringify(query))}&count=${count}`;
+      const param = {
+        closable: true,
+        forceRefresh: true,
+        isSpecialTab: true,
+        id, // 'FSP_SERACH',
+        title, // '搜索目标客户',
+      };
+      fspGlobal.openRctTab({ url: newurl, param });
+    } else {
+      this.props.push({
         pathname: url,
         query: {
           condition: encodeURIComponent(JSON.stringify(query)),
+          count,
         },
       });
     }
@@ -117,12 +181,20 @@ export default class CustomerLists extends PureComponent {
     const { source, location: { query: { orgId } } } = this.props;
     if ((source === 'search' || source === 'tag') && orgId) {
       return orgId === 'msm' ?
-        <button onClick={() => { this.handleClick('/customerPool/customerGroup'); }}>用户分组</button>
+        <button
+          onClick={() => { this.handleClick('/customerPool/customerGroup', '新建分组', 'FSP_GROUP'); }}
+        >
+          用户分组
+        </button>
         :
         '';
     }
     if (source === 'business') {
-      return <button onClick={() => { this.handleClick('/customerPool/customerGroup'); }}>用户分组</button>;
+      return (<button
+        onClick={() => { this.handleClick('/customerPool/customerGroup', '新建分组', 'FSP_GROUP'); }}
+      >
+          用户分组
+        </button>);
     }
     return null;
   }
@@ -221,6 +293,7 @@ export default class CustomerLists extends PureComponent {
           </Checkbox>
         </div>
         <div
+          id="fixedEleDom"
           className={styles.taskAndGroup}
           style={{
             left: taskAndGroupLeftPos,
@@ -234,7 +307,11 @@ export default class CustomerLists extends PureComponent {
           </p>
           <div className="right">
             {this.renderGroup()}
-            <button onClick={() => { this.handleClick('/customerPool/createTask'); }}>发起任务</button>
+            <button
+              onClick={() => { this.handleClick('/customerPool/createTask', '发起任务', 'RCT_FSP_TASK'); }}
+            >
+              发起任务
+            </button>
           </div>
         </div>
       </div>
