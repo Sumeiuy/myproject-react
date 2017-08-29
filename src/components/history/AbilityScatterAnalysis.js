@@ -206,7 +206,6 @@ export default class AbilityScatterAnalysis extends PureComponent {
     let point = current / slope;
     let endCoord = [point, current];
     let finalSeriesData = seriesData;
-
     if (point <= compare) {
       // 如果算出来的x坐标小于轴刻度的最小
       // 则将计算出来的值，作为刻度边界值，取floor

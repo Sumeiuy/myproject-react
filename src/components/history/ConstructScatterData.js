@@ -111,7 +111,6 @@ export const constructScatterData = (options = {}) => {
           max: 1,
         };
       }
-
       return getMaxAndMinCust(array);
     },
     // 获取y轴的单位和格式化后的数据源
