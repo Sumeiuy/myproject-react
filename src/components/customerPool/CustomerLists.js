@@ -295,7 +295,7 @@ export default class CustomerLists extends PureComponent {
             current={current}
             total={curTotal}
             pageSize={pagesize}
-            onChange={onPageChange}
+            onChange={{ onPageChange }}
             size="small"
             showSizeChanger
             showTotal={total => `共${total}项`}

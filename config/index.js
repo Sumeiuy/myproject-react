@@ -56,4 +56,4 @@ module.exports = {
   cssModules: true,
   appSrc: path.resolve(__dirname, '../src'),
   appNodeModules: path.resolve(__dirname, '../node_modules'),
-}
+};

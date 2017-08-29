@@ -3,7 +3,10 @@
  *  目标客户池模型管理
  * @author wangjunjun
  */
+import { routerRedux } from 'dva/router';
+import _ from 'lodash';
 import api from '../api';
+
 
 export default {
   namespace: 'customerPool',
@@ -32,10 +35,17 @@ export default {
     },
     historyWdsList: [],
     clearState: {},
+    cusgroupList: [],
+    cusgroupPage: {
+      pageSize: 10,
+      pageNo: 1,
+      total: 0,
+    },
     searchHistoryVal: '',
     taskDictionary: {},
     isAllSelect: false,
     selectedIds: [],
+    cusGroupSaveResult: '',
   },
   subscriptions: {
     setup({ dispatch }) {
@@ -173,6 +183,34 @@ export default {
         type: 'clearSearchHistoryListSuccess',
         payload: { clearHistoryState },
       });
+    },
+    // 获取客户分组列表信息
+    * customerGroupList({ payload }, { call, put }) {
+      if (!_.isEmpty(payload)) {
+        const response = yield call(api.customerGroupList, payload);
+        yield put({
+          type: 'getGroupListSuccess',
+          payload: response,
+        });
+      }
+    },
+    // 添加客户到现有分组
+    * addCustomerToGroup({ payload }, { call, put }) {
+      if (!_.isEmpty(payload)) {
+        const response = yield call(api.saveCustGroupList, payload);
+        yield put({
+          type: 'addCusToGroupSuccess',
+          payload: response,
+        });
+        yield put(routerRedux.push('/customerPool/addCusSuccess'));
+      }
+    },
+    // 添加客户到新的分组
+    * createCustGroup({ payload }, { call, put }) {
+      if (!_.isEmpty(payload)) {
+        yield call(api.createCustGroup, payload);
+        yield put(routerRedux.push('/customerPool/addCusSuccess'));
+      }
     },
     // 自建任务字典
     * getTaskDictionary({ payload }, { call, put }) {
@@ -344,6 +382,27 @@ export default {
       return {
         ...state,
         clearState: clearHistoryState,
+      };
+    },
+      // 获取客户分组列表
+    getGroupListSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      if (!resultData) {
+        return {
+          ...state,
+          cusgroupList: [],
+          cusgroupPage: {
+            total: 0,
+          },
+        };
+      }
+      const cusgroupPage = {
+        total: resultData.totalPageNum,
+      };
+      return {
+        ...state,
+        cusgroupList: resultData.custGroupDtoList,
+        cusgroupPage,
       };
     },
     // 保存搜索内容
