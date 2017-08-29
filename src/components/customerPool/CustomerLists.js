@@ -18,14 +18,6 @@ import styles from './customerLists.less';
 
 const EMPTY_ARRAY = [];
 
-const concatId = (arr) => {
-  const tempArr = [];
-  arr.forEach((v) => {
-    tempArr.push(v.id);
-  });
-  return tempArr.join(',');
-};
-
 export default class CustomerLists extends PureComponent {
   static propTypes = {
     page: PropTypes.object.isRequired,
@@ -148,8 +140,9 @@ export default class CustomerLists extends PureComponent {
   @autobind
   openByIds(url, ids, count, title, id, entertype) {
     // debugger
+    const idStr = _.map(ids, v => (v.id)).join(',');
     if (document.querySelector(fspContainer.container)) {
-      const urlQuery = `ids=${encodeURIComponent(concatId(ids))}&count=${count}&entertype=${entertype}&name=${ids[0].name}`;
+      const urlQuery = `ids=${encodeURIComponent(idStr)}&count=${count}&entertype=${entertype}&name=${ids[0].name}`;
       const newurl = `${url}?${urlQuery}`;
       const param = {
         closable: true,
@@ -163,7 +156,7 @@ export default class CustomerLists extends PureComponent {
       this.props.push({
         pathname: url,
         query: {
-          ids: encodeURIComponent(concatId(ids)),
+          ids: encodeURIComponent(idStr),
           count,
           entertype,
           name: ids[0].name,
