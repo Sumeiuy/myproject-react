@@ -20,6 +20,7 @@ const CUST_MANAGER = '1'; // 客户经理
 const ORG = '3'; // 组织机构
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
+const HTSC_RESPID = '1-46IDNZI'; // 首页指标查询
 const effects = {
   allInfo: 'customerPool/getAllInfo',
   performanceIndicators: 'customerPool/getPerformanceIndicators',
@@ -27,6 +28,7 @@ const effects = {
   getHotWds: 'customerPool/getHotWds',
   getHistoryWdsList: 'customerPool/getHistoryWdsList',
   clearSearchHistoryList: 'customerPool/clearSearchHistoryList',
+  saveSearchVal: 'customerPool/saveSearchVal',
 };
 
 const fectchDataFunction = (globalLoading, type) => query => ({
@@ -47,6 +49,7 @@ const mapStateToProps = state => ({
   hotWds: state.customerPool.hotWds, // 默认推荐词及热词推荐列表
   historyWdsList: state.customerPool.historyWdsList, // 历史搜索
   clearState: state.customerPool.clearState, // 清除历史列表
+  searchHistoryVal: state.customerPool.searchHistoryVal, // 保存搜索内容
 });
 
 const mapDispatchToProps = {
@@ -56,6 +59,7 @@ const mapDispatchToProps = {
   getHotWds: fectchDataFunction(true, effects.getHotWds),
   getHistoryWdsList: fectchDataFunction(false, effects.getHistoryWdsList),
   clearSearchHistoryList: fectchDataFunction(false, effects.clearSearchHistoryList),
+  saveSearchVal: fectchDataFunction(false, effects.saveSearchVal),
   push: routerRedux.push,
   replace: routerRedux.replace,
 };
@@ -76,6 +80,7 @@ export default class Home extends PureComponent {
     getHotWds: PropTypes.func.isRequired,
     getHistoryWdsList: PropTypes.func.isRequired,
     clearSearchHistoryList: PropTypes.func.isRequired,
+    saveSearchVal: PropTypes.func.isRequired,
     custRange: PropTypes.array,
     cycle: PropTypes.array,
     position: PropTypes.object,
@@ -86,6 +91,7 @@ export default class Home extends PureComponent {
     hotWds: PropTypes.object,
     historyWdsList: PropTypes.array,
     clearState: PropTypes.object,
+    searchHistoryVal: PropTypes.string,
   }
 
   static defaultProps = {
@@ -101,6 +107,7 @@ export default class Home extends PureComponent {
     hotWds: EMPTY_OBJECT,
     historyWdsList: EMPTY_LIST,
     clearState: EMPTY_OBJECT,
+    searchHistoryVal: '',
   }
 
   constructor(props) {
@@ -114,7 +121,7 @@ export default class Home extends PureComponent {
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const { custRange } = this.props;
     if (custRange.length > 0) {
       this.handleSetCustRange(this.props);
@@ -124,15 +131,14 @@ export default class Home extends PureComponent {
   componentWillReceiveProps(nextProps) {
     const { location: preLocation,
       position: prePosition,
-      custRange: preCustRange, cycle: preCycle, empInfo: preEmpInfo } = this.props;
+      cycle: preCycle,
+      empInfo: preEmpInfo } = this.props;
     const { location: nextLocation,
       position: nextPosition,
-      custRange: nextCustRange, cycle: nextCycle, empInfo: nextEmpInfo } = nextProps;
+      cycle: nextCycle,
+      empInfo: nextEmpInfo } = nextProps;
     const { orgId: preOrgId } = prePosition;
     const { orgId: nextOrgId } = nextPosition;
-    if (preEmpInfo !== nextEmpInfo) {
-      this.handleSetCustRange(nextProps);
-    }
     if (preOrgId !== nextOrgId) {
       this.setState({
         fspOrgId: nextOrgId,
@@ -144,23 +150,20 @@ export default class Home extends PureComponent {
         cycleSelect: nextCycle[0].key,
       });
     }
-    if (!_.isEqual(preCustRange, nextCustRange) || preLocation !== nextLocation) {
-      this.handleGetAllInfo(nextCustRange);
-      this.setState({
-        createCustRange: this.handleCreateCustRange(null, nextProps),
-      });
+    if (preEmpInfo !== nextEmpInfo || preLocation !== nextLocation) {
+      this.handleSetCustRange(nextProps);
     }
   }
 
   @autobind
   getIndicators() {
     const { getPerformanceIndicators, custRange } = this.props;
-    const { fspOrgId, orgId, cycleSelect } = this.state;
+    const { orgId, cycleSelect } = this.state;
     let custType = ORG;
     if (custRange.length < 1) {
       return null;
     }
-    if (fspOrgId === custRange[0].id) { // 判断客户范围类型
+    if (!_.isEmpty(orgId)) { // 判断客户范围类型
       custType = ORG;
     } else {
       custType = CUST_MANAGER;
@@ -175,26 +178,30 @@ export default class Home extends PureComponent {
 
   @autobind
   handleSetCustRange(props) {
-    const { location: { query }, custRange, empInfo: { empInfo: { occDivnNum = '' } } } = props;
+    const { location: { query }, custRange,
+      empInfo: { empInfo = EMPTY_OBJECT, empRespList = EMPTY_LIST } } = props;
+    const { occDivnNum = '' } = empInfo;
     const { orgId } = query;
     const occ = _.isEmpty(occDivnNum) ? '' : occDivnNum;// orgId取不到的情况下去用户信息中的
     const fspOrgid = _.isEmpty(window.forReactPosition) ? occ : window.forReactPosition.orgId;
     const orgid = _.isEmpty(orgId) // window.forReactPosition
       ?
       fspOrgid
-      : occ;
+      : orgId;
+    const respIdOfPosition = _.findIndex(empRespList, item => item.respId === HTSC_RESPID);
     this.setState({
-      fspOrgId: orgid,
-      orgId: orgid, // 组织ID
+      fspOrgId: respIdOfPosition < 0 ? '' : orgid,
+      orgId: respIdOfPosition < 0 ? '' : orgid, // 组织ID
     }, () => {
       if (custRange.length > 0) {
         this.handleGetAllInfo(custRange);
       }
     });
+    return true;
   }
 
   @autobind
-  handleGetAllInfo(custRangeData) {
+  handleGetAllInfo(custRangeData = EMPTY_LIST) {
     const { getAllInfo, cycle, getHotWds, getHistoryWdsList } = this.props;
     const { fspOrgId } = this.state;
     let custType = ORG;
@@ -202,12 +209,14 @@ export default class Home extends PureComponent {
     this.setState({
       createCustRange: this.handleCreateCustRange(fspOrgId, this.props),
     });
-    if (fspOrgId === orgsId) { // 判断客户范围类型
-      custType = ORG;
-    } else {
+    if (fspOrgId !== orgsId) {
       this.setState({
         expandAll: true,
       });
+    }
+    if (!_.isEmpty(fspOrgId)) { // 判断客户范围类型
+      custType = ORG;
+    } else {
       custType = CUST_MANAGER;
     }
     this.setState({
@@ -245,10 +254,18 @@ export default class Home extends PureComponent {
   // 获取联想数据
   @autobind
   queryHotPossibleWds(state) {
-    const { getHotPossibleWds } = this.props;
-    const { fspOrgId } = this.state;
+    const { location: { query },
+      empInfo: { empInfo = EMPTY_OBJECT }, getHotPossibleWds } = this.props;
+    const { occDivnNum = '' } = empInfo;
+    const { orgId } = query;
+    const occ = _.isEmpty(occDivnNum) ? '' : occDivnNum;// orgId取不到的情况下去用户信息中的
+    const fspOrgid = _.isEmpty(window.forReactPosition) ? occ : window.forReactPosition.orgId;
+    const orgid = _.isEmpty(orgId) // window.forReactPosition
+      ?
+      fspOrgid
+      : orgId;
     const setData = {
-      orgId: fspOrgId === '' ? null : fspOrgId, // 组织ID
+      orgId: orgid, // 组织ID
       empNo: helper.getEmpId(), // 用户ID
     };
     getHotPossibleWds({
@@ -288,20 +305,33 @@ export default class Home extends PureComponent {
   @autobind
   handleCreateCustRange(orgId, nextProps) {
     const { empInfo, custRange } = nextProps;
-    const { empPostnList } = empInfo;
+    const { empPostnList = EMPTY_LIST,
+      empRespList = EMPTY_LIST } = empInfo; // 1-46IDNZI HTSC_RESPID
     const { fspOrgId } = this.state;
+    let orgNewCustRange = [];
+    const newCustRrange = [];
+    const myCustomer = {
+      id: '',
+      name: '我的客户',
+    };
+    const respIdOfPosition = _.findIndex(empRespList, item => item.respId === HTSC_RESPID);
+    if (respIdOfPosition < 0) {
+      newCustRrange.push(myCustomer);
+      return newCustRrange;
+    }
     let newOrgId = fspOrgId;
     if (!_.isEmpty(orgId)) {
       newOrgId = orgId;
     }
-    let orgNewCustRange = [];
-    const newCustRrange = [];
     if (custRange.length < 1) {
       return null;
     }
     if (newOrgId === custRange[0].id) {
       return custRange;
     }
+    this.setState({
+      expandAll: true,
+    });
     orgNewCustRange = _.findIndex(custRange, item => item.id === newOrgId);
     let newData;
     if (orgNewCustRange > -1) { // 总机构内
@@ -318,12 +348,16 @@ export default class Home extends PureComponent {
         newCustRrange.push(newData);
       }
     }
-    const myCustomer = {
-      id: '',
-      name: '我的客户',
-    };
     newCustRrange.push(myCustomer);
     return newCustRrange;
+  }
+
+  @autobind
+  handleSaveSearchVal(obj) {
+    const { saveSearchVal } = this.props;
+    saveSearchVal(
+      obj,
+    );
   }
 
   render() {
@@ -340,6 +374,7 @@ export default class Home extends PureComponent {
       push,
       historyWdsList,
       clearState,
+      searchHistoryVal,
     } = this.props;
     const { expandAll, cycleSelect, createCustRange, fspOrgId } = this.state;
     return (
@@ -354,6 +389,8 @@ export default class Home extends PureComponent {
           historyWdsList={historyWdsList}
           clearSuccess={clearState}
           clearFun={this.clearHistoryList}
+          searchHistoryVal={searchHistoryVal}
+          saveSearchVal={this.handleSaveSearchVal}
         />
         <div className={styles.content}>
           <ToBeDone

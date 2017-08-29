@@ -149,7 +149,7 @@ export default class PerformanceIndicators extends PureComponent {
                     key={`selectTree${key}`}
                   /> :
                   <Select
-                    style={{ width: 120, color: '#CCC' }}
+                    style={{ width: 200, color: '#CCC' }}
                     defaultValue="暂无数据"
                     key="seletTreeNull"
                   >
@@ -159,7 +159,7 @@ export default class PerformanceIndicators extends PureComponent {
               <i className={styles.bd} />
               <Icon type="rili" />
               <Select
-                style={{ width: 80 }}
+                style={{ width: 60 }}
                 value={selectValue}
                 onChange={this.handleChange}
                 key="dateSelect"

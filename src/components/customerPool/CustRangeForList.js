@@ -11,6 +11,8 @@ import { Select } from 'antd';
 import CustRange from './CustRange';
 import Icon from '../../components/common/Icon';
 
+let KEYCOUNT = 0;
+
 export default class CustRangeForList extends PureComponent {
   static propTypes = {
     source: PropTypes.string.isRequired,
@@ -30,6 +32,23 @@ export default class CustRangeForList extends PureComponent {
     collectCustRange: () => { },
   }
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      key: KEYCOUNT,
+    };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { createCustRange: preCustRange } = this.props;
+    const { createCustRange: nextCustRange } = nextProps;
+    if (!_.isEqual(preCustRange, nextCustRange)) {
+      this.setState({
+        key: ++KEYCOUNT,
+      });
+    }
+  }
+
   render() {
     const {
       source,
@@ -41,7 +60,8 @@ export default class CustRangeForList extends PureComponent {
       collectCustRange,
       expandAll,
     } = this.props;
-    let rtnEle = '';
+    let rtnEle = null;
+    const { key } = this.state;
     if (_.includes(['search', 'tag', 'association'], source)) {
       rtnEle = (<div className="custRange">
         <Icon type="kehu" />
@@ -55,6 +75,7 @@ export default class CustRangeForList extends PureComponent {
               updateQueryState={updateQueryState}
               collectData={collectCustRange}
               expandAll={expandAll}
+              key={`selectTree${key}`}
             />
           :
             <Select

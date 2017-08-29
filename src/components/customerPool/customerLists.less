@@ -1,0 +1,82 @@
+.selectAllBox {
+  padding-left: 18px;
+  height: 30px;
+  line-height: 30px;
+  border-top-right-radius: 8px;
+  border-top-left-radius: 8px;
+  border-bottom: 1px solid #ddd;
+  background-color: #fff;
+  :global .selectAll {
+    position: relative;
+    display: inline-block;
+    span.hint {
+      display: none;
+      position: absolute;
+      left: 55px;
+      bottom: 10px;
+      z-index: 2;
+      padding: 0 14px;
+      height: 26px;
+      line-height: 26px;
+      font-size: 13px;
+      color: #333;
+      background-color: #ffffcd;
+      box-shadow: 0px 0px 10px 3px #ededf1;
+      white-space: nowrap;
+    }
+    &:hover {
+      span.hint {
+        display: inline-block;
+      }
+    }
+    .ant-checkbox-inner {
+      width: 15px;
+      height: 15px;
+      border-radius: 3px;
+    }
+  }
+}
+.selectAllTwo {
+  float: left;
+  margin-left: 15px;
+}
+.taskAndGroup {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  height: 80px;
+  line-height: 80px;
+  padding: 0 20px;
+  background-color: rgba(0,0,0,.6);
+  :global {
+    .left {
+      float: left;
+      font-size: 16px;
+      color: #fff;
+      .mark {
+        color: #ff784e;
+        padding: 0;
+        background-color: transparent;
+      }
+    }
+    .right {
+      float: right;
+      button {
+        padding: 9px 14px;
+        margin-left: 30px;
+        border: 1px solid #fff;
+        color: #fff;
+        cursor: pointer;
+        font-size: 13px;
+        border-radius: 4px;
+        background-color: transparent;
+        line-height: initial;
+        &:hover {
+          background-color: #fff;
+          color: #108ee9;
+        }
+      }
+    }
+  }
+}

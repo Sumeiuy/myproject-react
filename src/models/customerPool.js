@@ -41,6 +41,10 @@ export default {
       pageNo: 1,
       total: 0,
     },
+    searchHistoryVal: '',
+    taskDictionary: {},
+    isAllSelect: false,
+    selectedIds: [],
   },
   subscriptions: {
     setup({ dispatch }) {
@@ -49,7 +53,7 @@ export default {
   },
   effects: {
     * getToDoList({ }, { call, put }) {  //eslint-disable-line
-      const response = yield call(api.getToDoList, { empid: '002332' });
+      const response = yield call(api.getToDoList);
       yield put({
         type: 'getToDoListSuccess',
         payload: response,
@@ -57,7 +61,7 @@ export default {
     },
     // 获取客户范围
     * getCustomerScope({ payload }, { call, put }) {
-      const resultData = yield call(api.getCustRange);
+      const resultData = yield call(api.getCustRangeAll);
       yield put({
         type: 'getCustomerScopeSuccess',
         payload: resultData,
@@ -134,7 +138,6 @@ export default {
     // 获取客户列表
     * getCustomerList({ payload }, { call, put }) {
       const response = yield call(api.getCustomerList, payload);
-      console.log('getCustomerList', response);
       yield put({
         type: 'getCustomerListSuccess',
         payload: response,
@@ -203,6 +206,14 @@ export default {
         yield call(api.createCustGroup, payload);
         yield put(routerRedux.push('/customerPool/addCusSuccess'));
       }
+    },
+    // 自建任务字典
+    * getTaskDictionary({ payload }, { call, put }) {
+      const taskDictionary = yield call(api.getTaskDictionary, payload);
+      yield put({
+        type: 'getTaskDictionarySuccess',
+        payload: { taskDictionary },
+      });
     },
   },
   reducers: {
@@ -389,6 +400,36 @@ export default {
         cusgroupPage,
       };
     },
+    // 保存搜索内容
+    saveSearchVal(state, action) {
+      const { payload: { searchVal } } = action;
+      return {
+        ...state,
+        searchHistoryVal: searchVal,
+      };
+    },
+    // 自建任务字典
+    getTaskDictionarySuccess(state, action) {
+      const { payload: { taskDictionary: { resultData } } } = action;
+      return {
+        ...state,
+        taskDictionary: resultData,
+      };
+    },
+    // 保存是否全选
+    saveIsAllSelect(state, action) {
+      return {
+        ...state,
+        isAllSelect: action.payload,
+      };
+    },
 
+    // 保存选中的数据id
+    saveSelectedIds(state, action) {
+      return {
+        ...state,
+        selectedIds: action.payload,
+      };
+    },
   },
 };

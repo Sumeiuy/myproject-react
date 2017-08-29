@@ -6,8 +6,10 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { Icon as AntdIcon, Button, Input, AutoComplete, message } from 'antd';
+import ReactDOM from 'react-dom';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import { fspContainer } from '../../config';
 import { fspGlobal } from '../../utils';
 import Icon from '../../components/common/Icon';
 import styles from './search.less';
@@ -17,6 +19,7 @@ const OptGroup = AutoComplete.OptGroup;
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 let COUNT = 0;
+let searchInput;
 export default class Search extends PureComponent {
 
   static propTypes = {
@@ -29,6 +32,8 @@ export default class Search extends PureComponent {
     historyWdsList: PropTypes.array,
     clearSuccess: PropTypes.object,
     clearFun: PropTypes.func,
+    searchHistoryVal: PropTypes.string,
+    saveSearchVal: PropTypes.func,
   }
 
   static defaultProps = {
@@ -36,10 +41,12 @@ export default class Search extends PureComponent {
     queryHotPossibleWds: () => { },
     queryHistoryWdsList: () => { },
     clearFun: () => { },
+    saveSearchVal: () => { },
     clearSuccess: EMPTY_OBJECT,
     queryHotWdsData: EMPTY_LIST,
     orgId: '',
     historyWdsList: EMPTY_LIST,
+    searchHistoryVal: '',
   }
 
   state = {
@@ -56,8 +63,14 @@ export default class Search extends PureComponent {
     }],
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.handleCreatHistoryList(this.props.historyWdsList);
+    searchInput = ReactDOM.findDOMNode(document.querySelector('.ant-select-search .ant-input'));// eslint-disable-line
+    if (searchInput) {
+      searchInput.addEventListener('keydown', this.handleSearchInput, false);
+    }
+    const { searchHistoryVal } = this.props;
+    this.handleSearch(searchHistoryVal);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -80,7 +93,10 @@ export default class Search extends PureComponent {
     }
   }
 
-  componentDidUpdate() {
+  componentWillUnmount() {
+    if (searchInput) {
+      searchInput.removeEventListener('keydown', this.handleSearchInput, false);
+    }
   }
 
   @autobind
@@ -92,6 +108,32 @@ export default class Search extends PureComponent {
   }
 
   @autobind
+  handleSearchInput(event) {
+    const e = event || window.event; // || arguments.callee.caller.arguments[0];
+    const { data: { hotWds = EMPTY_OBJECT } } = this.props;
+    if (e.stopPropagation) {
+      e.stopPropagation();
+    } else {
+      e.cancelBubble = true;
+    }
+    if (e && e.keyCode === 13) {
+      let searchVal = e.target.value;
+      if (_.isEmpty(_.trim(searchVal))) {
+        // message.info('搜索内容不能为空', 1);
+        // return;
+        searchVal = hotWds.labelNameVal;
+      }
+      this.handleOpenTab({
+        source: 'search',
+        labelMapping: '',
+        tagNumId: '',
+        q: encodeURIComponent(searchVal),
+      }, '搜索目标客户', 'FSP_SEARCH');
+    }
+    return true;
+  }
+
+  @autobind
   handleOpenTab(obj, titles, ids) {
     const {
       source,
@@ -100,7 +142,8 @@ export default class Search extends PureComponent {
       q } = obj;
     const { push } = this.props;
     const firstUrl = '/customerPool/list';
-    if (process.env.NODE_ENV === 'production') {
+    this.handleSaveSearchVal();
+    if (document.querySelector(fspContainer.container)) {
       const url = `${firstUrl}?source=${source}&labelMapping=${labelMapping}&tagNumId=${tagNumId}&q=${q}`;
       const param = {
         closable: true,
@@ -150,6 +193,8 @@ export default class Search extends PureComponent {
       content: item.labelNameVal,
       desc: item.labelDesc,
       id: `autoList${COUNT++}`,
+      labelMapping: item.labelMapping,
+      tagNumId: item.tagNumId,
     }));
   }
 
@@ -228,6 +273,17 @@ export default class Search extends PureComponent {
     }, '搜索目标客户', 'FSP_SEARCH');
   }
 
+  @autobind
+  handleSaveSearchVal() {
+    const { saveSearchVal } = this.props;
+    let saveVal = '';
+    if (searchInput) {
+      saveVal = searchInput.value;
+    }
+    saveSearchVal({
+      searchVal: saveVal,
+    });
+  }
   // 清除历史搜索
   @autobind
   handleClearHistory() {
@@ -287,7 +343,7 @@ export default class Search extends PureComponent {
             <Option key={item.labelNameVal} text={item.labelNameVal} >
               <a
                 onClick={() => this.handleOpenTab({
-                  source: 'association',
+                  source: 'search',
                   labelMapping: item.labelMapping || '',
                   tagNumId: item.tagNumId || '',
                   q: encodeURIComponent(item.labelNameVal),
@@ -326,7 +382,7 @@ export default class Search extends PureComponent {
 
   render() {
     const { data: { hotWds = EMPTY_OBJECT,
-      hotWdsList = EMPTY_LIST } } = this.props;
+      hotWdsList = EMPTY_LIST }, searchHistoryVal } = this.props;
     return (
       <div className={styles.searchBox}>
         <div className={styles.inner}>
@@ -342,6 +398,7 @@ export default class Search extends PureComponent {
                 onSearch={this.handleSearch}
                 placeholder={hotWds.labelNameVal || ''}
                 optionLabelProp="text"
+                defaultValue={searchHistoryVal}
               >
                 <Input
                   suffix={(
