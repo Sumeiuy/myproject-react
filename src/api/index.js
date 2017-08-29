@@ -7,6 +7,9 @@ export default {
   // 暴露api上的几个底层方法: get / post
   ...api,
 
+  // 获取组织机构树完整版
+  getCustRangeAll: query => api.post('/groovynoauth/fsp/emp/org/queryEmpOrgTree', query),
+
   // 员工职责与职位
   getEmpInfo: query => api.post('/groovynoauth/fsp/emp/info/queryEmpInfo', query),
 
@@ -101,4 +104,11 @@ export default {
 
   // 清除历史搜索记录
   clearSearchHistoryList: query => api.post('/groovynoauth/fsp/cust/custlabel/clearSearchHistoryList', query),
+    // 客户分组列表信息
+  customerGroupList: query => api.post('/groovynoauth/fsp/emp/notification/queryCustGroupList', query),
+    // 添加客户到现有分组
+  saveCustGroupList: query => api.post('/groovynoauth/fsp/emp/notification/saveCustGroupList', query),
+    // 添加客户到新建分组
+  createCustGroup: query => api.post('/groovynoauth/fsp/emp/notification/createCustGroup', query),
+
 };

@@ -42,7 +42,7 @@ const fectchDataFunction = (globalLoading, type) => query => ({
 const mapStateToProps = state => ({
   performanceIndicators: state.customerPool.performanceIndicators, // 绩效指标
   custRange: state.customerPool.custRange, // 客户池用户范围
-  empInfo: state.customerPool.empInfo, // 职位信息
+  empInfo: state.app.empInfo, // 职位信息
   position: state.customerPool.position, // 职责切换
   dict: state.customerPool.dict, // 职责切换
   custList: state.customerPool.custList,
@@ -99,34 +99,32 @@ export default class CustomerList extends PureComponent {
     };
   }
 
-  componentWillMount() {
-    const { custRange, location: { query } } = this.props;
-    const orgid = _.isEmpty(window.forReactPosition) ? '' : window.forReactPosition.orgId;
-
-    this.setState({
-      fspOrgId: orgid,
-      orgId: orgid, // 组织ID
-    }, () => {
-      if (custRange.length > 0) {
-        this.handleGetAllInfo(custRange);
-      }
-    });
-    this.getCustomerList(query);
-    // getCustIncome({ custNumber: '020100053538' });
+  componentDidMount() {
+    const { custRange } = this.props;
+    if (custRange.length > 0) {
+      this.handleSetCustRange(this.props);
+    }
+    this.getCustomerList(this.props);
   }
 
   componentWillReceiveProps(nextProps) {
+    // debugger
     const { location: preLocation,
-      position: prePosition, custRange: preCustRange, cycle: preCycle } = this.props;
+      position: prePosition,
+      custRange: preCustRange, cycle: preCycle, empInfo: preEmpInfo } = this.props;
     const { location: nextLocation,
-      position: nextPosition, custRange: nextCustRange, cycle: nextCycle } = nextProps;
+      position: nextPosition,
+      custRange: nextCustRange, cycle: nextCycle, empInfo: nextEmpInfo } = nextProps;
     const { orgId: preOrgId } = prePosition;
     const { orgId: nextOrgId } = nextPosition;
+    if (preEmpInfo !== nextEmpInfo) {
+      this.handleSetCustRange(nextProps);
+    }
     if (preOrgId !== nextOrgId) {
       this.setState({
         fspOrgId: nextOrgId,
         createCustRange: this.handleCreateCustRange(nextOrgId, nextProps),
-      }, this.getCustomerList);
+      }, this.getCustomerList(nextProps));
     }
     if (!_.isEqual(preCycle, nextCycle)) {
       this.setState({
@@ -140,14 +138,18 @@ export default class CustomerList extends PureComponent {
       });
     }
     if (!_.isEqual(preLocation.query, nextLocation.query)) {
-      this.getCustomerList(nextLocation.query);
+      this.getCustomerList(nextProps);
     }
   }
 
   @autobind
-  getCustomerList(query) {
-    const { getCustomerData } = this.props;
-    const orgId = _.isEmpty(window.forReactPosition) ? '' : window.forReactPosition.orgId;
+  getCustomerList(props) {
+    // const { getCustomerData } = this.props;
+    const { getCustomerData, location: { query } } = props;
+    const orgId = _.isEmpty(window.forReactPosition)
+      ?
+      ''
+      : window.forReactPosition.orgId;
     const k = decodeURIComponent(query.q);
     const param = {
       // 必传，当前页
@@ -217,6 +219,24 @@ export default class CustomerList extends PureComponent {
       param.sortsReqList = sortsReqList;
     }
     getCustomerData(param);
+  }
+
+  @autobind
+  handleSetCustRange(props) {
+    const { custRange, empInfo: { empInfo: { occDivnNum = '' } } } = props;
+    const occ = _.isEmpty(occDivnNum) ? '' : occDivnNum;// orgId取不到的情况下去用户信息中的
+    const orgid = _.isEmpty(window.forReactPosition)
+      ?
+      occ
+      : window.forReactPosition.orgId;
+    this.setState({
+      fspOrgId: orgid,
+      orgId: orgid, // 组织ID
+    }, () => {
+      if (custRange.length > 0) {
+        this.handleGetAllInfo(custRange);
+      }
+    });
   }
 
   @autobind

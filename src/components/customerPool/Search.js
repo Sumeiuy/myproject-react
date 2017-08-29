@@ -27,7 +27,7 @@ export default class Search extends PureComponent {
     push: PropTypes.func.isRequired,
     orgId: PropTypes.string,
     historyWdsList: PropTypes.array,
-    clearSeccess: PropTypes.object,
+    clearSuccess: PropTypes.object,
     clearFun: PropTypes.func,
   }
 
@@ -36,7 +36,7 @@ export default class Search extends PureComponent {
     queryHotPossibleWds: () => { },
     queryHistoryWdsList: () => { },
     clearFun: () => { },
-    clearSeccess: EMPTY_OBJECT,
+    clearSuccess: EMPTY_OBJECT,
     queryHotWdsData: EMPTY_LIST,
     orgId: '',
     historyWdsList: EMPTY_LIST,
@@ -61,10 +61,10 @@ export default class Search extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { historyWdsList: preHistoryWdsList, clearSeccess: preClearSeccess } = this.props;
+    const { historyWdsList: preHistoryWdsList, clearSuccess: preClearSeccess } = this.props;
     const { queryHotWdsData: nextQueryHotWdsData,
       historyWdsList: nextHistoryWdsList,
-      clearSeccess: nextClearSeccess } = nextProps;
+      clearSuccess: nextClearSeccess } = nextProps;
     const { inputVal } = this.state;
     this.setState({
       dataSource: inputVal ? this.searchResult(inputVal, nextQueryHotWdsData) : [],
@@ -85,10 +85,10 @@ export default class Search extends PureComponent {
 
   @autobind
   onSelect(value) {
-    console.log(value);
     this.setState({
       inputVal: value,
     });
+    this.handleSearch(value);
   }
 
   @autobind

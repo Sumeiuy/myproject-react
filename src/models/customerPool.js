@@ -3,7 +3,10 @@
  *  目标客户池模型管理
  * @author wangjunjun
  */
+import { routerRedux } from 'dva/router';
+import _ from 'lodash';
 import api from '../api';
+
 
 export default {
   namespace: 'customerPool',
@@ -32,6 +35,12 @@ export default {
     },
     historyWdsList: [],
     clearState: {},
+    cusgroupList: [],
+    cusgroupPage: {
+      pageSize: 10,
+      pageNo: 1,
+      total: 0,
+    },
   },
   subscriptions: {
     setup({ dispatch }) {
@@ -146,11 +155,6 @@ export default {
         type: 'getHotWdsSuccess',
         payload: { response },
       });
-      const history = yield call(api.getHistoryWdsList, payload);
-      yield put({
-        type: 'getHistoryWdsListSuccess',
-        payload: { history },
-      });
     },
     // 联想的推荐热词列表
     * getHotPossibleWds({ payload }, { call, put }) {
@@ -168,13 +172,37 @@ export default {
         payload: { history },
       });
     },
-    // 默认推荐词及热词推荐列表及历史搜索数据
+    // 清除历史搜索列表
     * clearSearchHistoryList({ payload }, { call, put }) {
       const clearHistoryState = yield call(api.clearSearchHistoryList, payload);
       yield put({
         type: 'clearSearchHistoryListSuccess',
         payload: { clearHistoryState },
       });
+    },
+    // 获取客户分组列表信息
+    * customerGroupList({ payload }, { call, put }) {
+      if (!_.isEmpty(payload)) {
+        const response = yield call(api.customerGroupList, payload);
+        yield put({
+          type: 'getGroupListSuccess',
+          payload: response,
+        });
+      }
+    },
+    // 添加客户到现有分组
+    * addCustomerToGroup({ payload }, { call, put }) {
+      if (!_.isEmpty(payload)) {
+        yield call(api.saveCustGroupList, payload);
+        yield put(routerRedux.push('/customerPool/addCusSuccess'));
+      }
+    },
+    // 添加客户到新的分组
+    * createCustGroup({ payload }, { call, put }) {
+      if (!_.isEmpty(payload)) {
+        yield call(api.createCustGroup, payload);
+        yield put(routerRedux.push('/customerPool/addCusSuccess'));
+      }
     },
   },
   reducers: {
@@ -340,5 +368,27 @@ export default {
         clearState: clearHistoryState,
       };
     },
+      // 获取客户分组列表
+    getGroupListSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      if (!resultData) {
+        return {
+          ...state,
+          cusgroupList: [],
+          cusgroupPage: {
+            total: 0,
+          },
+        };
+      }
+      const cusgroupPage = {
+        total: resultData.totalPageNum,
+      };
+      return {
+        ...state,
+        cusgroupList: resultData.custGroupDtoList,
+        cusgroupPage,
+      };
+    },
+
   },
 };
