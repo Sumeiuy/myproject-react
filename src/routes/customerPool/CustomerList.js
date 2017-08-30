@@ -129,6 +129,8 @@ export default class CustomerList extends PureComponent {
       this.handleSetCustRange(this.props);
     }
     this.getCustomerList(this.props);
+    // saveIsAllSelect(false);
+    // saveSelectedIds(EMPTY_LIST);
   }
 
   componentWillReceiveProps(nextProps) {
