@@ -10,12 +10,10 @@ import styles from './addCusSuccess.less';
 
 
 @withRouter
-export default class addCusSuccess extends PureComponent {
+export default class AddCusSuccess extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
-  }
-  componentWillMount() {
-    console.info(this.props);
+    goback: PropTypes.func.isRequired,
   }
   render() {
     return (
@@ -27,7 +25,7 @@ export default class addCusSuccess extends PureComponent {
           <div className={styles.text1}>保存成功，已完成分组添加!</div>
           <div className={styles.text2}>你可以在重点关注客户群查看该分组下所有客户</div>
           <div className={styles.successBtn}>
-            <Button onClick={() => this.handleSuccess()}type="primary">确定</Button>
+            <Button onClick={() => this.props.goback}type="primary">确定</Button>
           </div>
         </div>
       </div>
