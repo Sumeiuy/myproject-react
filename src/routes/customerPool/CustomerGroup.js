@@ -21,7 +21,6 @@ let groupId = '0';// 默认选择的分组groupId
 const controlGroupPane = {
   groupTab: 'customerGroup',
   saveSuccessTab: 'hiddensaveSuccessTab',
-
 };
 const mapStateToProps = state => ({
   cusgroupList: state.customerPool.cusgroupList,
@@ -100,7 +99,6 @@ export default class CustomerGroup extends PureComponent {
   componentWillReceiveProps(nextProps) {
     // 根据分组结果，重新渲染组件
     const { cusGroupSaveResult } = nextProps;
-
     if (cusGroupSaveResult === 'success') {
       controlGroupPane.groupTab = 'hiddencustomerGroup';
       controlGroupPane.saveSuccessTab = 'showsaveSuccessTab';
