@@ -11,7 +11,7 @@ import { Tabs, Input, Row, Col, Button } from 'antd';
 import styles from './customerGroup.less';
 import CustomerGrouplist from '../../components/customerPool/CustomerGrouplist';
 import AddNewGroup from '../../components/customerPool/addNewGroup';
-import AddCusSuccess from '../../components/customerPool/addCusSuccess';
+import AddCusSuccess from '../../components/customerPool/AddCusSuccess';
 import helper from '../../utils/helper';
 
 const CUR_PAGE = 0; // 默认当前页
@@ -21,7 +21,6 @@ let groupId = '0';// 默认选择的分组groupId
 const controlGroupPane = {
   groupTab: 'customerGroup',
   saveSuccessTab: 'hiddensaveSuccessTab',
-
 };
 const mapStateToProps = state => ({
   cusgroupList: state.customerPool.cusgroupList,
@@ -100,7 +99,6 @@ export default class CustomerGroup extends PureComponent {
   componentWillReceiveProps(nextProps) {
     // 根据分组结果，重新渲染组件
     const { cusGroupSaveResult } = nextProps;
-
     if (cusGroupSaveResult === 'success') {
       controlGroupPane.groupTab = 'hiddencustomerGroup';
       controlGroupPane.saveSuccessTab = 'showsaveSuccessTab';
