@@ -4,11 +4,9 @@
   }
   position: relative;
   .arrow{
-    width: 100%;
     &:after{
+      position: relative;
       content: "";
-      float: right;
-      margin: 10px 12px 0 0;
       display: inline-block;
       width: 0;
       height: 0;
@@ -26,11 +24,48 @@
     .treeMainLeft{
       display: flex;
       flex-direction: normal;
+      :global{
+        .ant-tree li span.ant-tree-switcher,
+        .ant-tree li span.ant-tree-iconEle{
+          width: 20px;
+          height: 20px;
+          margin: -2px 4px 0 0;
+          position: relative;
+          box-shadow: 0;
+        }
+        .ant-tree-noline_open,
+        .ant-tree-noline_close{
+          &:after{
+            content: "\E624" !important;
+            font-size: 24px !important;
+            display: block;
+            width: 26px;
+            height: 26px;
+            background: #c0c0c0;
+            color: #fff;
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            box-shadow: 0;
+          }
+        }
+        .ant-tree-noline_close{
+          &:after{
+            content: "\E627" !important;
+            font-size: 22px !important;
+            background: #dfdfdf;
+          }
+        }
+      }
       // -webkit-box-orient: horizontal;
       .treeMainLeftContentTYPE_TGJXsummury,
       .treeMainLeftContentTYPE_TGJXdetail,
       .treeMainLeftContentTYPE_JYYJsummury,
-      .treeMainLeftContentTYPE_JYYJdetail{
+      .treeMainLeftContentTYPE_JYYJdetail,
+      .treeMainLeftContentTYPE_LSDB_TGJXsummury,
+      .treeMainLeftContentTYPE_LSDB_TGJXdetail,
+      .treeMainLeftContentTYPE_LSDB_JYYJsummury,
+      .treeMainLeftContentTYPE_LSDB_JYYJdetail{
         display: flex;
         flex-direction: normal;
         width: 254px;
@@ -48,17 +83,16 @@
           }
         }
       }
-      .treeMainLeftContentTYPE_TGJXsummury{
-        width: 254px;
-      }
-      .treeMainLeftContentTYPE_TGJXdetail{
-        width: 254px;
-      }
-      .treeMainLeftContentTYPE_JYYJsummury{
-        width: 508px;
-      }
+      .treeMainLeftContentTYPE_TGJXsummury,
+      .treeMainLeftContentTYPE_TGJXdetail,
+      .treeMainLeftContentTYPE_LSDB_TGJXsummury,
+      .treeMainLeftContentTYPE_LSDB_TGJXdetail,
       .treeMainLeftContentTYPE_JYYJdetail{
         width: 254px;
+      }
+      .treeMainLeftContentTYPE_JYYJsummury,
+      .treeMainLeftContentTYPE_LSDB_JYYJsummury{
+        width: 508px;
       }
     }
     .treeMainRight{
@@ -70,6 +104,7 @@
         box-sizing: border-box;
         border: 1px solid #dfdfdf;
         padding: 10px 20px;
+        transition: all .3s;
         .selectItem{
           display: inline-block;
           padding: 4px 7px 4px 15px;
@@ -116,78 +151,72 @@
       }
     }
   }
-  :global{
-    .ant-tree{
+}
+:global{
+  .ant-tree li {
+    font-size: 14px;
+    padding-left: 12px;
+    .ant-tree-node-content-wrapper,
+    .ant-tree-node-content-wrapper-normal{
+      width: 170px;
+      height: 22px;
       padding: 0;
     }
-    .ant-tree li {
+    .ant-tree-title{
+      display: inline-block;
+      width: 100%;
+      height: 100%;
+      margin: 0;
       padding: 0;
-      line-height: 25px;
-      .ant-tree-title{
-        display: inline-block;
-        width: 160px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    ul {
+      padding: 0;
+      li {
+        padding-left: 4px;
       }
     }
-    .ant-tree li span.ant-tree-switcher, .ant-tree li span.ant-tree-iconEle{
-      width: 30px;
-      margin-left: 15px;
+  }
+  .ant-tree-child-tree{
+    li{
+      padding-left: 0;
     }
-    .ant-tree li span.ant-tree-switcher.ant-tree-roots_open:after,
-    .ant-tree li span.ant-tree-switcher.ant-tree-center_open:after,
-    .ant-tree li span.ant-tree-switcher.ant-tree-bottom_open:after,
-    .ant-tree li span.ant-tree-switcher.ant-tree-noline_open:after{
-      font-size: 16px;
-    }
-    .ant-tree li .ant-tree-node-content-wrapper{
-      padding: 4px 0;
-    }
-    .ant-tree > li >span.ant-tree-checkbox{
+  }
+  .ant-tree > li >span.ant-tree-checkbox{
+    display: none;
+  }
+  .ant-tree > li > ul li{
+    .ant-tree-switcher{
       display: none;
     }
-    .ant-tree > li > ul.ant-tree-child-tree{
-      padding: 0;
+    .ant-tree-checkbox{
+      margin: 0 8px 0 20px;
     }
-    .ant-tree > li > ul li{
-      .ant-tree-switcher{
-        display: none;
-      }
-      .ant-tree-checkbox{
-        margin: 0 15px 0 20px;
-      }
-      .ant-tree-node-content-wrapper, .ant-tree-node-content-wrapper-normal{
-        font-size: 13px;
-        margin-top: -2px;
-      }
+    .ant-tree-node-content-wrapper, .ant-tree-node-content-wrapper-normal{
+      font-size: 14px;
     }
-    .ant-tree ul.ant-tree-child-tree ul.ant-tree-child-tree{
-      position: absolute;
-      left: 260px;
-      top: 45px;
-      z-index: 2;
-      height: 400px;
-      overflow-y: auto;
-      li{
-        margin-left: -20px;
-      }
+  }
+  .ant-tree ul.ant-tree-child-tree ul.ant-tree-child-tree{
+    position: absolute;
+    left: 280px;
+    top: 45px;
+    z-index: 2;
+    height: 400px;
+    overflow-y: auto;
+    li{
+      // line-height: 22px;
+      margin-left: -20px;
     }
-    .ant-tree-checkbox-checked .ant-tree-checkbox-inner{
-      border-color: #108ee9;
-    }
-    .ant-tree-checkbox-inner{
-      width: 21px;
-      height: 21px;
-      border-color: #999;
-      border-radius: 21px;
-    }
-    .ant-tree-checkbox-inner:after{
-      left: 6px;
-      top: 3px;
-      width: 7px;
-      height: 11px;
-    }
+  }
+  .ant-tree-checkbox-checked .ant-tree-checkbox-inner{
+    border-color: #108ee9;
+  }
+  .ant-tree-checkbox-inner{
+    width: 14px;
+    height: 14px;
+    border-color: #999;
   }
 }
 .treeTitle{
@@ -201,11 +230,11 @@
     font-size: 16px;
     &.treeTitlesummury{
       background: url('../../../static/images/icon-summury.png') no-repeat 0 center;
-      background-size: 30px 30px;
+      background-size: 22px 22px;
     }
     &.treeTitledetail{
       background: url('../../../static/images/icon-detail.png') no-repeat 0 center;
-      background-size: 30px 30px;
+      background-size: 22px 22px;
     }
     .treeTitleSpan{
       display: inline-block;

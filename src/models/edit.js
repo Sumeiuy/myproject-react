@@ -3,6 +3,7 @@
  *  @author sunweibin
  */
 import api from '../api';
+import { responseCode } from '../config';
 
 export default {
   namespace: 'edit',
@@ -13,6 +14,7 @@ export default {
     publishLoading: false, // 发布看板状态
     message: '', // 改变状态的信息
     indicatorLib: {}, // 指标库
+    operateData: {}, // 操作后，缓存的数据
   },
   reducers: {
     // 成功获取指标库
@@ -65,15 +67,34 @@ export default {
 
     // 各种操作
     operateBoardState(state, action) {
-      const { payload: { name, value, message } } = action;
+      const { payload: { name, value, message, operateData } } = action;
       return {
         ...state,
         [name]: value,
         message,
+        operateData,
       };
     },
   },
   effects: {
+    // 初始化数据
+    * getEditInitial({ payload }, { call, put }) {
+      const allVisibleRange = yield call(api.getVisibleRange, payload.vr);
+      yield put({
+        type: 'getAllVisibleRangeSuccess',
+        payload: { allVisibleRange },
+      });
+      const indicatorResult = yield call(api.getIndicators, payload.lib);
+      yield put({
+        type: 'getIndicatorLibSuccess',
+        payload: { indicatorResult },
+      });
+      const boardInfoResult = yield call(api.getOneBoardInfo, payload.board);
+      yield put({
+        type: 'getOneBoardInfoSuccess',
+        payload: { boardInfoResult },
+      });
+    },
     // 删除 boardInfo
     * delBoardInfo({ payload }, { put }) {
       const nullResult = {};
@@ -123,20 +144,39 @@ export default {
           name: 'updateLoading',
           value: true,
           message: '更新开始',
+          operateData: {},
         },
       });
       const updateResult = yield call(api.updateBoard, payload);
-      // 此处要判断是否保存成功
-      yield put({
-        type: 'getOneBoardInfoSuccess',
-        payload: { boardInfoResult: updateResult },
-      });
+      const code = updateResult.code;
+      const msg = updateResult.msg;
+      let board = {};
+      if (code !== responseCode.SUCCESS) {
+        // 名称重复
+        board = {
+          success: false,
+          code,
+          msg,
+        };
+      } else {
+        // 成功
+        board = {
+          success: true,
+          ...updateResult.resultData,
+        };
+        // 此处要判断是否保存成功
+        yield put({
+          type: 'getOneBoardInfoSuccess',
+          payload: { boardInfoResult: updateResult },
+        });
+      }
       yield put({
         type: 'operateBoardState',
         payload: {
           name: 'updateLoading',
           value: false,
           message: '更新完成',
+          operateData: board,
         },
       });
     },
@@ -149,15 +189,34 @@ export default {
           name: 'publishLoading',
           value: true,
           message: '发布开始',
+          operateData: {},
         },
       });
-      yield call(api.updateBoard, payload);
+      const publishResult = yield call(api.updateBoard, payload);
+      const code = publishResult.code;
+      const msg = publishResult.msg;
+      let board = {};
+      if (code !== responseCode.SUCCESS) {
+        // 名称重复
+        board = {
+          success: false,
+          code,
+          msg,
+        };
+      } else {
+        // 成功
+        board = {
+          success: true,
+          ...publishResult.resultData,
+        };
+      }
       yield put({
         type: 'operateBoardState',
         payload: {
           name: 'publishLoading',
           value: false,
           message: '发布完成',
+          operateData: board,
         },
       });
     },

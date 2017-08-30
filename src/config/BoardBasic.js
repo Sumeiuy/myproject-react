@@ -14,6 +14,16 @@ const BoardBasic = {
       name: '经营业绩汇总',
       boardType: 'TYPE_JYYJ',
     },
+    {
+      id: 3,
+      name: '投顾业绩历史对比',
+      boardType: 'TYPE_LSDB_TGJX',
+    },
+    {
+      id: 4,
+      name: '经营业绩历史对比',
+      boardType: 'TYPE_LSDB_JYYJ',
+    },
   ],
   types: [
     {

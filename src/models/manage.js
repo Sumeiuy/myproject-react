@@ -3,13 +3,14 @@
  * @author sunweibin
  */
 import api from '../api';
-import { BoardBasic } from '../config';
+import { BoardBasic, responseCode } from '../config';
 
 export default {
   namespace: 'manage',
   state: {
     custRange: [],
     visibleBoards: [], // 可见看板
+    newVisibleBoards: [], // 新可见看板
     editableBoards: [], // 可编辑看板
     visibleRanges: [], // 可见范围
     createLoading: false, // 创建看板成功与否
@@ -26,7 +27,12 @@ export default {
         ...state,
         visibleBoards: [
           ...BoardBasic.regular,
-          ...visibleBoards,
+          ...visibleBoards.history,
+          ...visibleBoards.ordinary,
+        ],
+        newVisibleBoards: [
+          ...BoardBasic.regular,
+          visibleBoards,
         ],
       };
     },
@@ -144,7 +150,23 @@ export default {
         },
       });
       const createBoardResult = yield call(api.createBoard, payload);
-      const board = createBoardResult.resultData;
+      const code = createBoardResult.code;
+      const msg = createBoardResult.msg;
+      let board = {};
+      if (code !== responseCode.SUCCESS) {
+        // 名称重复
+        board = {
+          success: false,
+          code,
+          msg,
+        };
+      } else {
+        // 成功
+        board = {
+          success: true,
+          ...createBoardResult.resultData,
+        };
+      }
       yield put({
         type: 'opertateBoardState',
         payload: {

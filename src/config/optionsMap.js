@@ -1,8 +1,8 @@
 /*
 * @Author: LiuJianShu
 * @Date:   2017-04-26 11:17:08
-* @Last Modified by:   LiuJianShu
-* @Last Modified time: 2017-04-26 15:35:45
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2017-08-03 15:41:35
 */
 
 const optionsMap = {
@@ -40,6 +40,42 @@ const optionsMap = {
     {
       key: 'year',
       name: '本年',
+    },
+  ],
+  historyTime: [
+    {
+      key: 'month',
+      name: '本月',
+    },
+    {
+      key: 'quarter',
+      name: '本季',
+    },
+    {
+      key: 'year',
+      name: '本年',
+    },
+    {
+      key: 'lastMonth',
+      name: '上月',
+    },
+    {
+      key: 'lastQuarter',
+      name: '上季',
+    },
+    {
+      key: 'lastYear',
+      name: '去年',
+    },
+  ],
+  compare: [
+    {
+      key: 'MoM',
+      name: '环比',
+    },
+    {
+      key: 'YoY',
+      name: '同比',
     },
   ],
   visibleBoardType: {
@@ -86,6 +122,34 @@ const optionsMap = {
         name: '服务经理',
       },
     ],
+    TYPE_LSDB_TGJX: [
+      {
+        scope: '2',
+        name: '分公司',
+      },
+      {
+        scope: '3',
+        name: '营业部',
+      },
+      {
+        scope: '4',
+        name: '投顾',
+      },
+    ],
+    TYPE_LSDB_JYYJ: [
+      {
+        scope: '2',
+        name: '分公司',
+      },
+      {
+        scope: '3',
+        name: '营业部',
+      },
+      {
+        scope: '4',
+        name: '服务经理',
+      },
+    ],
   },
   // 按顺序排序
   sortByOrder: [
@@ -117,6 +181,8 @@ const optionsMap = {
   boardTypeMap: {
     tgjx: 'TYPE_TGJX',
     jyyj: 'TYPE_JYYJ',
+    lsdb_jyyj: 'TYPE_LSDB_JYYJ',
+    lsdb_tgjx: 'TYPE_LSDB_TGJX',
   },
   // 指标类型
   boardKeyName: {

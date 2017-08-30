@@ -10,4 +10,6 @@ export default {
   version: '1.6.2',
   boardId: 1,
   boardType: 'TYPE_TGJX',
+  historyBoardId: 3,
+  historyBoardType: 'TYPE_LSDB_TGJX',
 };

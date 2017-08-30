@@ -10,7 +10,7 @@ import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
-import { fspContainer } from '../../config';
+import { fspContainer /* , responseCode */} from '../../config';
 import SimpleEditor from '../../components/Edit/SimpleEditor';
 import SelfSelect from '../../components/Edit/SelfSelect';
 import BoardSelectTree from '../../components/Edit/BoardSelectTree';
@@ -33,6 +33,7 @@ const mapStateToProps = state => ({
   updateLoading: state.edit.updateLoading,
   publishLoading: state.edit.publishLoading,
   message: state.edit.message,
+  operateData: state.edit.operateData,
   indicatorLib: state.edit.indicatorLib,
   globalLoading: state.activity.global,
 });
@@ -46,6 +47,7 @@ const mapDispatchToProps = {
   getIndicatorLib: fectchDataFunction(false, 'edit/getIndicatorLib'),
   updateBoard: fectchDataFunction(false, 'edit/updateBoard'),
   publishBoard: fectchDataFunction(true, 'edit/publishBoard'),
+  getEditInitial: fectchDataFunction(true, 'edit/getEditInitial'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -55,6 +57,7 @@ export default class BoardEditHome extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
     boardInfo: PropTypes.object.isRequired,
+    operateData: PropTypes.object.isRequired,
     visibleRanges: PropTypes.array.isRequired,
     indicatorLib: PropTypes.object.isRequired,
     message: PropTypes.string.isRequired,
@@ -69,6 +72,7 @@ export default class BoardEditHome extends PureComponent {
     getIndicatorLib: PropTypes.func.isRequired,
     updateBoard: PropTypes.func.isRequired,
     publishBoard: PropTypes.func.isRequired,
+    getEditInitial: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -84,6 +88,7 @@ export default class BoardEditHome extends PureComponent {
       nameTipVisible: false,
       visibleRangeTip: '',
       nameTip: '',
+      clickWhichBtn: '', // 用户点击的是哪一个按钮
       publishBt: false, // 发布按钮状态, 默认为false，即可用状态
       previewBt: false, // 预览按钮状态
       saveBt: false, // 保存按钮状态，false为已经保存过了的状态
@@ -98,23 +103,17 @@ export default class BoardEditHome extends PureComponent {
 
   componentWillMount() {
     const { location: { query: { boardId, orgId, boardType } } } = this.props;
-    const { getBoardInfo, getVisibleRange, getIndicatorLib } = this.props;
-    getBoardInfo({
-      boardId,
-      orgId,
-    });
-    getVisibleRange({
-      orgId,
-    });
-    getIndicatorLib({
-      orgId,
-      type: boardType,
+    this.props.getEditInitial({
+      vr: { orgId },
+      lib: { orgId, type: boardType },
+      board: { boardId, orgId },
     });
   }
 
   componentWillReceiveProps(nextProps) {
-    const { visibleRanges, boardInfo, indicatorLib } = nextProps;
-    if (!_.isEmpty(visibleRanges) && !_.isEmpty(boardInfo) && !_.isEmpty(indicatorLib)) {
+    const { visibleRanges, boardInfo } = nextProps;
+    const { boardInfo: preBoardInfo } = this.props;
+    if (!_.isEqual(boardInfo, preBoardInfo)) {
       const userVR = this.getAllUserVRKeys(boardInfo.orgModel);
       const hasPublished = boardInfo.boardStatus === 'RELEASE';
       // 转化总量指标和分类指标
@@ -135,16 +134,39 @@ export default class BoardEditHome extends PureComponent {
       });
     }
     const { publishLoading: prePL, updateLoading: preUL } = this.props;
-    const { publishLoading, updateLoading, boardInfo: { id }, push } = nextProps;
+    const { publishLoading, updateLoading, boardInfo: { id, ownerOrgId }, push } = nextProps;
     if (prePL && !publishLoading) {
-      message.success('发布成功');
-      push(`/report?boardId=${id}`);
+      // 发布按钮
+      const { success, msg /* code */} = nextProps.operateData;
+      if (success) {
+        message.success('发布成功');
+        push(`/report?boardId=${id}`);
+      } else {
+        // if (code === responseCode.DUPLICATE_NAME) {
+        message.error(msg);
+        // } else {
+          // message.error();
+        // }
+      }
     }
     if (preUL && !updateLoading) {
       this.setState({
         saveBt: false,
       });
-      message.success('保存成功');
+      // 保存和预览按钮
+      const { success, msg /* code */} = nextProps.operateData;
+      if (success) {
+        message.success('保存成功');
+        if (this.state.clickWhichBtn === 'preview') {
+          this.props.push(`/preview?boardId=${id}&orgId=${ownerOrgId}`);
+        }
+      } else {
+        // if (code === responseCode.DUPLICATE_NAME) {
+        message.error(msg);
+        // } else {
+          // message.error();
+        // }
+      }
     }
   }
 
@@ -332,6 +354,7 @@ export default class BoardEditHome extends PureComponent {
 
   @autobind
   handlePublishBtnClick() {
+    this.setState({ clickWhichBtn: 'publish' });
     this.openPublishConfirmModal();
   }
 
@@ -376,16 +399,18 @@ export default class BoardEditHome extends PureComponent {
 
   @autobind
   handlePreviewBtnClick() {
+    this.setState({ clickWhichBtn: 'preview' });
     // 预览按钮点击之后，需要先保存
     this.saveBoard({});
-    const { boardInfo: { id, ownerOrgId } } = this.props;
-    this.props.push(`/preview?boardId=${id}&orgId=${ownerOrgId}`);
+    // const { boardInfo: { id, ownerOrgId } } = this.props;
+    // this.props.push(`/preview?boardId=${id}&orgId=${ownerOrgId}`);
   }
 
   @autobind
   handleSaveBtnClick() {
     this.setState({
       saveBt: false,
+      clickWhichBtn: 'save',
     });
     this.saveBoard({});
   }
@@ -416,6 +441,7 @@ export default class BoardEditHome extends PureComponent {
 
   render() {
     const { boardInfo, visibleRanges, indicatorLib } = this.props;
+    const { publishLoading, updateLoading, operateData } = this.props;
     const { vROriginal, vREditorOriginal, bNEditorOriginal } = this.state;
     // 做初始化容错处理
     if (_.isEmpty(visibleRanges)) {
@@ -516,6 +542,9 @@ export default class BoardEditHome extends PureComponent {
                   controller={this.editorStateController}
                   editorState={boardNameEditor}
                   confirm={this.editorConfirm}
+                  updateLoading={updateLoading}
+                  publishLoading={publishLoading}
+                  operateData={operateData}
                 >
                   <Input autoComplete="off" style={{ paddingRight: '30px' }} />
                 </SimpleEditor>
