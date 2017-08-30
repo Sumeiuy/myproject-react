@@ -28,6 +28,7 @@ function wrapECharts(ECharts) {
       onReady: PropTypes.func,
       resizable: PropTypes.bool,
       onEvents: PropTypes.object,
+      onDispatch: PropTypes.object,
     }
 
     static defaultProps = {
@@ -38,10 +39,11 @@ function wrapECharts(ECharts) {
       },
       notMerge: false,
       lazyUpdate: false,
-      onReady: () => {},
+      onReady: () => { },
       loading: false,
       resizable: false,
       onEvents: {},
+      onDispatch: {},
       initOpts: {},
       optsLoading: {},
       group: '',
@@ -58,8 +60,8 @@ function wrapECharts(ECharts) {
     }
 
     // componentWillMount() {
-      // const that = this;
-      // console.log('componentWillMount', that.props, that.state);
+    // const that = this;
+    // console.log('componentWillMount', that.props, that.state);
     // }
     componentDidMount() {
       this.myInit();
@@ -83,8 +85,8 @@ function wrapECharts(ECharts) {
     }
 
     // componentWillUpdate(nextProps, nextState) {
-      // const that = this;
-      // console.log('componentWillUpdate', that.props, nextProps, that.state, nextState);
+    // const that = this;
+    // console.log('componentWillUpdate', that.props, nextProps, that.state, nextState);
     // }
     componentDidUpdate() {
       if (this.props.option) {
@@ -185,12 +187,18 @@ function wrapECharts(ECharts) {
           instance.on(name, newfunc);
         }
       };
+      const dispatchAction = (payload) => {
+        instance.dispatchAction(payload);
+      };
       const events = Object.keys(that.props.onEvents);
       for (let i = 0; i < events.length; i++) {
         if (Array.hasOwnProperty.call(that.props.onEvents, events[i])) {
           on(events[i].toLowerCase(), that.props.onEvents[events[i]]);
         }
       }
+
+      const payload = that.props.onDispatch;
+      dispatchAction(payload);
     }
     render() {
       const that = this;

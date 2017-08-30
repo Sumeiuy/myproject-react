@@ -1,0 +1,79 @@
+[33mc21281ac812e572cd68cdaec2fc83f33dcf9ca5e[m[33m ([m[1;36mHEAD -> [m[1;32mhistory[m[33m)[m #FSP-5405#修复切换组织机构等字段时，概览指标没有恢复默认索的bug
+[33me8b5332049d493e2851ffa7d661cf42e1a49a212[m[33m ([m[1;31mgroup/history[m[33m)[m Merge branch 'history' into 'history'
+[33m81ffbc107aa8d89734f6856c1fb7f3bf267a61a8[m Merge branch 'history' into 'history'
+[33m65cd57c317eb83a8638a2d54e058f0c33eb6aa58[m #FSP-4862#修改默认指标
+[33m85744bebabada76faeda1870114c6da1684f0344[m #FSP-5362#: 散点图
+[33m0f22dbed489aa425e66d6bb99adebc497ede15f6[m #FSP-5362#: 散点图
+[33mc552f49c63839412ce30d1a31e40abcb0c857bf5[m Merge branch 'history' of gitlab.htzq.htsc.com.cn:crm/performance_report into history
+[33m054525c6ec846d536fe92fd388fc9c1903d47a7a[m #FSP-4814#: 散点图平均值与斜率计算、散点图特殊处理
+[33mc008cbed4f0a87a9c04b9c8ae4eebb22183f83ab[m #FSP-5364#修改雷达图样式
+[33m7953d810397b3dc246856e9ffd5e47e172f69467[m #FSP-5364#修改雷达图样式
+[33mf193f6f143fbda12db56effdfc1aa47d321adb98[m #FSP-5352# : 散点图平均值计算、悬浮信息展示修改 (Merge branch 'history' into 'history') See merge request !464
+[33m2af12f8f4fd784acd2e75f9dd8a93627930dc79a[m #FSP-5364#修改雷达图样式
+[33m1ddd11b2775aa82036675a19a70d4079bb29a223[m #FSP-5352#: 散点图平均值计算、悬浮信息展示修改
+[33me594b552972f714d8865643d9ea997060acd25a3[m #FSP-5352#: 散点图平均值计算、悬浮信息展示修改
+[33mb522c0dfbfbb0394eb310e6ab7698518497883fb[m #FSP-5352#: 散点图平均值计算、悬浮信息展示修改
+[33m3058fed005fa44918f1081015a1cad4d62bfbf99[m #FSP-5352#: 散点图平均值计算、悬浮信息展示修改
+[33m210341a77da547076b8c6605170e4487859dd484[m Merge branch 'history' into 'history'
+[33md8761dfdb3e7e38d9f9cb5a845a675fdcc9d7fbe[m Merge branch 'history' into 'history'
+[33mf2f915eb249ee29e3527f335c7c0c0f28f58a6b3[m[33m ([m[1;31morigin/history[m[33m)[m #FSP-5346#修复文字大小显示错误；修改时间段选择样式
+[33mf7f7e0a030b5cff01c46dbe507b8b99cfa1bec07[m 绩效视图-散点图空数据处理
+[33mba4e54f7fe7d76b4cc8d788d4dc61cd474a7368c[m 绩效视图-散点图空数据处理
+[33mec306b328d8059caf0d6e3f39194a8305f1d2b91[m Merge branch 'history' into 'history'
+[33m117fe9a51db3d5f1aa375b40c7dd883255de21c1[m #FSP-5364#修复在历史排名柱状图堆叠图上排名不变的情况下的样式
+[33m88fb3cf0e85115b1e78c0b5dc9c6b7425e92dac7[m sunweibin:修复BUG:
+[33m48f32898298fad8b5a4ab087bf345fba94d15f22[m Merge branch 'history' of gitlab.htzq.htsc.com.cn:crm/performance_report into history
+[33mb315d8f3d1f9f8bac0afb1bbb011328442a16f63[m 绩效视图-散点图空数据处理
+[33m3a4506acc07c873ae53730347704af45fcf3882d[m Merge branch 'history' into 'history'
+[33m80daacd80d44ed444edbc8dfeb89203367d8dba5[m 绩效视图-对于人数，单位不需要转换成户数
+[33m6715b965485fba6e043e8cc75507f6fcf1ce3649[m #FSP-5352#: 对于户数和个数，算平均值时，单位搞错了
+[33m38d559f83c4611f2c7ac6c44b994805c4fb759f1[m Merge branch 'history' into 'history'
+[33m313b8596112a033d25fc661314ea286bbe6a107a[m Merge branch 'history' into 'history'
+[33m55d3dce8212f9f614e3a65c8ae262d02628f8672[m sunweibin:历史对比排名柱状图在某些指标无数据情况下容错处理
+[33ma62663a0b8ee1174924f7171619d535c553f0027[m Merge branch 'history' of gitlab.htzq.htsc.com.cn:crm/performance_report into history
+[33m44dc8d3485f55b65f4804965ec180985fc3f982a[m 路由监听-浏览器回退
+[33mee29b131f719cb76c25eb68e454839e17b265d2c[m [绩效视图]: 样式
+[33m69076db1119240425aa75127a3a9badee8a4e62f[m Merge branch 'history' into 'history'
+[33m8bf3dc07affb2024c4447f681c438d1c242a8104[m Merge branch 'history' into 'history'
+[33m3c02046101141f6b5d674c05afcb549f84742b1e[m 修复固定头部的菜单 bug；修改挑选指标样式
+[33me9517b6258338a4ed3b3e9c5edfe3651478f07f6[m sunweibin:新UI样式细节优化(2)
+[33mf05cf3a3457a2df114f70fb5ba4e3e67f9a1374f[m Merge branch 'history' into 'history'
+[33m107631a93a7e898afcba981db64e2a3c061d1796[m [绩效视图]: 散点图添加每个营业部和分公司的平均值计算
+[33m606e82cdd2bfc6d8d697933edb0caf6fbd31c7ab[m [绩效视图]: 散点图添加每个营业部和分公司的平均值计算
+[33mec6fb45f815b31f7e870cced1ea1dbfec809fa36[m Merge branch 'history' of gitlab.htzq.htsc.com.cn:crm/performance_report into history
+[33m73602748d26d646146d9e263c23f753f8dcaf295[m [绩效视图]: 某些指标散点图特殊处理
+[33m113704c6ebd3a4e03c3bfcf5864be5a284c6654a[m sunweibin:新UI样式细节优化&&代码冲突解决
+[33m3812bb2f1637e40e2c6fe98b09c45e0137d8a761[m sunweibin:新UI样式细节优化(1)
+[33me4582611bd9062d85fdddc088480d77ac7914841[m Merge branch 'history' into 'history'
+[33m3203a95f88395dc01b5ccc5d5b85b17cc546efad[m [绩效视图]: 某些指标散点图特殊处理
+[33m864bdabd4e5ac2ac10ebca2b67166a51e0d4faf4[m [绩效视图]: 某些指标散点图特殊处理
+[33m3b046a426d72f3a13ef00f8dcec8f98274d07898[m Merge branch 'history' of gitlab.htzq.htsc.com.cn:crm/performance_report into history
+[33m9274a6367bea1dc2313a5bb76dc693745c7158eb[m [绩效视图]: 某些指标散点图特殊处理
+[33m1cdf1eea3c5a006809445dfca2facbe4a616e7aa[m Merge branch 'history' into 'history'
+[33m74e7bd5736048edb8e9c5eb51cd91e4899357e7e[m sunweibin:新UI样式修改
+[33mb9a152dfa44ac7eaf4d904c9c8d773cbbf571a71[m Merge branch 'master' into history
+[33m216a3f8164093902f0fe68c9ec58690e9563063f[m Merge branch 'history' into 'history'
+[33m5b04f2cc35350d1f217ed918b890f5c6d99f81a3[m Merge branch 'history' of gitlab.htzq.htsc.com.cn:crm/performance_report into history
+[33m423f7701ed53fa8855116e1d98af5f15945e3575[m add meta header to force browser render with edge / chrome mode
+[33ma805a2e042ee83d94814a9374665919e62e8ec69[m 刘建树：头部左侧看板列表新组建开发
+[33m440e1cc77bbf48330623e19bf66956168f191e1a[m Merge branch 'history' into 'history'
+[33ma1fe687f892c7c12fe1990e9bb8acd0ae39301f0[m Merge branch 'history' of gitlab.htzq.htsc.com.cn:crm/performance_report into history
+[33m13d5260bcf6e21d67eead6d0a0af8e05f4bebdec[m [绩效视图]: 去除transform时的文字抖动
+[33mb82d8b92f1ea60bda2f08a923d2a73ccd66d0757[m [绩效视图]: 格式
+[33m8277e3015d9609f57fb98a6092e496df2c9cf576[m[33m ([m[1;31mgroup/master[m[33m, [m[1;31mgroup/hotfix20170814[m[33m)[m 1. add user info in sensorlog 2. add permission ontrol for board manage
+[33mfe8663ad5fb0f76072b44113c7eae82212c06fcb[m[33m ([m[1;31mgroup/boardPermission[m[33m)[m add permission control to custom board menu
+[33m0f93c770e0c565a3a67dd5985f4f75c94619f204[m[33m ([m[1;31mgroup/sensorEnhance[m[33m)[m sensors log enhance
+[33m11a2087955130cc64d1d11ab677b5f7e48855c72[m 用户职位信息mock修改
+[33m3b158d161613561ce00db721b2c78922b1ccc2a3[m 获取用户职位信息
+[33mcdc1ad05bc18c30279e61d1c0684101574c0c151[m Merge branch 'history' into 'history'
+[33m953c7af26f844aa1c334d82959fa5ffed61d5264[m Merge branch 'history' of gitlab.htzq.htsc.com.cn:crm/performance_report into history
+[33m8e142212d5abb60b83f69365cc1173ddaa21a60a[m [绩效视图]: 样式问题
+[33meb411e4a5cba3b5d32393ad286338c6a56db3fba[m Merge branch 'history' into 'history'
+[33m330df6b2c0b02ec680ae7ffceacfa9a9ea36ace9[m [绩效视图]: 散点图少写最大值判断处理
+[33m14a06dad169fda7deba2e071632f51b3301f3aa5[m Merge branch 'history' of gitlab.htzq.htsc.com.cn:crm/performance_report into history
+[33m5b5239f1b08e0685091ad29bb23f57bc84e5c54d[m Merge branch 'develop' of gitlab.htzq.htsc.com.cn:crm/performance_report into history
+[33m16ef51b29e3420d55c5064a84feb295bbe69cb5d[m Merge branch 'history' into 'history'
+[33m71ca3bbfb4389c7a4e290ca7fe4618756fd03e63[m Merge branch 'history' into 'history'
+[33mb43c5279aef308e626ab0df614adc7884888a385[m sunweibin:看板名称重复
+[33m99634d30a22d211e3cc0b5508c188e768301da25[m [绩效视图]: 优化点
+[33m21233a58596e481fdb5c29aef5e470d5be2a3cf0[m Merge branch 'history' into 'hist

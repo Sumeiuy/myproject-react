@@ -102,7 +102,7 @@ export default class PerformanceItem extends PureComponent {
                       <Icon type="more" />
                     </a>
                   :
-                    ''
+                    null
                 }
                 {
                   !showNextBtn ?
@@ -110,11 +110,11 @@ export default class PerformanceItem extends PureComponent {
                       <Icon type="more" />
                     </a>
                   :
-                    ''
+                    null
                 }
               </div>
             :
-              ''
+              null
           }
           <Row>
             {

@@ -5,7 +5,6 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-// import ReactEcharts from 'echarts-for-react';
 import { autobind } from 'core-decorators';
 
 import { AxisOptions, gridOptions, barShadow } from './ChartGeneralOptions';
