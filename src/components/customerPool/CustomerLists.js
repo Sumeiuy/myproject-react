@@ -16,6 +16,8 @@ import CustomerRow from './CustomerRow';
 
 import styles from './customerLists.less';
 
+const EMPTY_ARRAY = [];
+
 export default class CustomerLists extends PureComponent {
   static propTypes = {
     page: PropTypes.object.isRequired,
@@ -34,6 +36,8 @@ export default class CustomerLists extends PureComponent {
     saveIsAllSelect: PropTypes.func.isRequired,
     saveSelectedIds: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
+    entertype: PropTypes.string.isRequired,
+    custRange: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -51,8 +55,8 @@ export default class CustomerLists extends PureComponent {
 
   componentDidMount() {
     this.setTaskAndGroup();
-    const sidebarHideBtn = document.getElementById(fspContainer.sidebarHideBtn);
-    const sidebarShowBtn = document.getElementById(fspContainer.sidebarShowBtn);
+    const sidebarHideBtn = document.querySelector(fspContainer.sidebarHideBtn);
+    const sidebarShowBtn = document.querySelector(fspContainer.sidebarShowBtn);
     if (sidebarHideBtn && sidebarShowBtn) {
       sidebarHideBtn.addEventListener('click', this.updateLeftPos);
       sidebarShowBtn.addEventListener('click', this.updateLeftPos);
@@ -64,8 +68,8 @@ export default class CustomerLists extends PureComponent {
   }
 
   componentWillUnmount() {
-    const sidebarHideBtn = document.getElementById(fspContainer.sidebarHideBtn);
-    const sidebarShowBtn = document.getElementById(fspContainer.sidebarShowBtn);
+    const sidebarHideBtn = document.querySelector(fspContainer.sidebarHideBtn);
+    const sidebarShowBtn = document.querySelector(fspContainer.sidebarShowBtn);
     if (sidebarHideBtn && sidebarShowBtn) {
       sidebarHideBtn.removeEventListener('click', this.updateLeftPos);
       sidebarShowBtn.removeEventListener('click', this.updateLeftPos);
@@ -74,7 +78,7 @@ export default class CustomerLists extends PureComponent {
 
   @autobind
   setTaskAndGroup() {
-    const workspaceSidebar = document.getElementById(fspContainer.workspaceSidebar);
+    const workspaceSidebar = document.querySelector(fspContainer.workspaceSidebar);
     if (workspaceSidebar) {
       this.setState({
         taskAndGroupLeftPos: `${workspaceSidebar.offsetWidth}px`,
@@ -83,20 +87,26 @@ export default class CustomerLists extends PureComponent {
   }
 
   updateLeftPos() {
-    const workspaceSidebar = document.getElementById(fspContainer.workspaceSidebar);
-    const fixedEleDom = document.getElementById('fixedEleDom');
+    const workspaceSidebar = document.querySelector(fspContainer.workspaceSidebar);
+    const fixedEleDom = document.querySelector('fixedEleDom');
     if (fixedEleDom && workspaceSidebar) {
       fixedEleDom.style.left = `${workspaceSidebar.offsetWidth}px`;
     }
   }
 
   @autobind
-  handleSingleSelect(id) {
+  handleSingleSelect(id, name) {
     const { selectedIds, saveSelectedIds } = this.props;
-    if (_.includes(selectedIds, id)) {
-      saveSelectedIds(selectedIds.filter(v => v !== id));
+    let flag = false;
+    selectedIds.forEach((v) => {
+      if (v.id === id && v.name === name) {
+        flag = true;
+      }
+    });
+    if (flag) {
+      saveSelectedIds(selectedIds.filter(v => v.id !== id));
     } else {
-      saveSelectedIds([...selectedIds, id]);
+      saveSelectedIds([...selectedIds, { id, name }]);
     }
   }
 
@@ -105,32 +115,35 @@ export default class CustomerLists extends PureComponent {
     const isAllSelect = e.target.checked;
     const { saveIsAllSelect, saveSelectedIds, selectedIds } = this.props;
     saveIsAllSelect(isAllSelect);
-    const newSelectedIds = !isAllSelect ? selectedIds : [];
+    const newSelectedIds = !isAllSelect ? selectedIds : EMPTY_ARRAY;
     saveSelectedIds(newSelectedIds);
   }
 
   @autobind
   handleClick(url, title, id) {
-    // debugger
     const {
       page,
+      entertype,
       isAllSelect,
       selectedIds,
       location: { query },
     } = this.props;
     const selectCount = isAllSelect ? page.total : selectedIds.length;
     if (!_.isEmpty(selectedIds)) {
-      this.openByIds(url, selectedIds, selectCount, title, id);
+      this.openByIds(url, selectedIds, selectCount, title, id, entertype);
     } else if (isAllSelect) {
-      this.openByAllSelect(url, query, selectCount, title, id);
+      this.openByAllSelect(url, query, selectCount, title, id, entertype);
     }
   }
 
+  // 通过单个点击选中
   @autobind
-  openByIds(url, ids, count, title, id) {
+  openByIds(url, ids, count, title, id, entertype) {
     // debugger
+    const idStr = _.map(ids, v => (v.id)).join(',');
     if (document.querySelector(fspContainer.container)) {
-      const newurl = `${url}?ids=${encodeURIComponent(ids.join(','))}&count=${count}`;
+      const urlQuery = `ids=${encodeURIComponent(idStr)}&count=${count}&entertype=${entertype}&name=${ids[0].name}`;
+      const newurl = `${url}?${urlQuery}`;
       const param = {
         closable: true,
         forceRefresh: true,
@@ -143,17 +156,23 @@ export default class CustomerLists extends PureComponent {
       this.props.push({
         pathname: url,
         query: {
-          ids: encodeURIComponent(ids.join(',')),
+          ids: encodeURIComponent(idStr),
           count,
+          entertype,
+          name: ids[0].name,
         },
       });
     }
   }
 
+  // 通过全选按钮选中
   @autobind
-  openByAllSelect(url, query, count, title, id) {
+  openByAllSelect(url, query, count, title, id, entertype) {
+    // 全选时取整个列表的第一个数据的name属性值传给后续页面
+    const name = this.props.custList[0].name;
     if (document.querySelector(fspContainer.container)) {
-      const newurl = `${url}?condition=${encodeURIComponent(JSON.stringify(query))}&count=${count}`;
+      const newQuery = `condition=${encodeURIComponent(JSON.stringify(query))}&count=${count}&entertype=${entertype}&name=${name}`;
+      const newurl = `${url}?${newQuery}`;
       const param = {
         closable: true,
         forceRefresh: true,
@@ -168,6 +187,8 @@ export default class CustomerLists extends PureComponent {
         query: {
           condition: encodeURIComponent(JSON.stringify(query)),
           count,
+          entertype,
+          name,
         },
       });
     }
@@ -178,18 +199,14 @@ export default class CustomerLists extends PureComponent {
   // 2、业务办理客户池：默认是只显示自己负责客户的，所以可以添加用户分组
   // 3、业绩目标客户池：客户列表是“我的客户”时可以添加用户分组
   renderGroup() {
-    const { source, location: { query: { orgId } } } = this.props;
-    if ((source === 'search' || source === 'tag') && orgId) {
-      return orgId === 'msm' ?
-        <button
-          onClick={() => { this.handleClick('/customerPool/customerGroup', '新建分组', 'FSP_GROUP'); }}
-        >
-          用户分组
-        </button>
-        :
-        '';
-    }
-    if (source === 'business') {
+    const { custRange, source, location: { query: { orgId } } } = this.props;
+    // 从搜索和热词进入且只有我的客户
+    const onlyMyCustomer = (source === 'search' || source === 'tag') && custRange.length === 1 && custRange[0].id === 'msm';
+    // 从业务入口进入的
+    const fromBusiness = source === 'business';
+    // 从搜索和热词进入,通过客户范围切换到我的客户
+    const inMyCustomer = (source === 'search' || source === 'tag') && orgId && orgId === 'msm';
+    if (onlyMyCustomer || fromBusiness || inMyCustomer) {
       return (<button
         onClick={() => { this.handleClick('/customerPool/customerGroup', '新建分组', 'FSP_GROUP'); }}
       >
@@ -302,7 +319,7 @@ export default class CustomerLists extends PureComponent {
         >
           <p className="left">
             已选&nbsp;
-            <span className="mark">{selectCount}</span>
+            <span className="marked">{selectCount}</span>
             &nbsp;户，选择目标用户以创建自定义任务，或者把用户加入分组管理
           </p>
           <div className="right">
