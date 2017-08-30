@@ -38,6 +38,7 @@ export default class CustomerLists extends PureComponent {
     push: PropTypes.func.isRequired,
     entertype: PropTypes.string.isRequired,
     custRange: PropTypes.array.isRequired,
+    condition: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -126,13 +127,13 @@ export default class CustomerLists extends PureComponent {
       entertype,
       isAllSelect,
       selectedIds,
-      location: { query },
+      condition,
     } = this.props;
     const selectCount = isAllSelect ? page.total : selectedIds.length;
     if (!_.isEmpty(selectedIds)) {
       this.openByIds(url, selectedIds, selectCount, title, id, entertype);
     } else if (isAllSelect) {
-      this.openByAllSelect(url, query, selectCount, title, id, entertype);
+      this.openByAllSelect(url, condition, selectCount, title, id, entertype);
     }
   }
 
@@ -167,11 +168,11 @@ export default class CustomerLists extends PureComponent {
 
   // 通过全选按钮选中
   @autobind
-  openByAllSelect(url, query, count, title, id, entertype) {
+  openByAllSelect(url, condition, count, title, id, entertype) {
     // 全选时取整个列表的第一个数据的name属性值传给后续页面
     const name = this.props.custList[0].name;
     if (document.querySelector(fspContainer.container)) {
-      const newQuery = `condition=${encodeURIComponent(JSON.stringify(query))}&count=${count}&entertype=${entertype}&name=${name}`;
+      const newQuery = `condition=${encodeURIComponent(JSON.stringify(condition))}&count=${count}&entertype=${entertype}&name=${name}`;
       const newurl = `${url}?${newQuery}`;
       const param = {
         closable: true,
@@ -185,7 +186,7 @@ export default class CustomerLists extends PureComponent {
       this.props.push({
         pathname: url,
         query: {
-          condition: encodeURIComponent(JSON.stringify(query)),
+          condition: encodeURIComponent(JSON.stringify(condition)),
           count,
           entertype,
           name,
@@ -295,7 +296,7 @@ export default class CustomerLists extends PureComponent {
             current={current}
             total={curTotal}
             pageSize={pagesize}
-            onChange={{ onPageChange }}
+            onChange={onPageChange}
             size="small"
             showSizeChanger
             showTotal={total => `共${total}项`}

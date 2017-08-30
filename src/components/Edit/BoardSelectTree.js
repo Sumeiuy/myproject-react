@@ -2,12 +2,12 @@
  * @Author: LiuJianShu
  * @Date: 2017-07-01 16:06:50
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-07-04 09:38:32
+ * @Last Modified time: 2017-08-02 17:45:29
  */
 
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
-import { Tree, Tooltip } from 'antd';
+import { Tree, Tooltip, message } from 'antd';
 import _ from 'lodash';
 
 import { fspContainer, optionsMap } from '../../config';
@@ -111,6 +111,10 @@ export default class BoardSelectTree extends PureComponent {
   static propTypes = {
     data: PropTypes.object.isRequired,
     saveIndcator: PropTypes.func.isRequired,
+    lengthLimit: PropTypes.bool,
+  }
+  static defaultProps = {
+    lengthLimit: false,
   }
   constructor(props) {
     super(props);
@@ -119,6 +123,9 @@ export default class BoardSelectTree extends PureComponent {
     let showTitle = false;
     // 如果看板是 经营业绩 类型 并且 指标是 总量指标 类型
     if (boardType === boardTypeMap.jyyj && type === boardKeyName.summury.key) {
+      showThirdColumn = true;
+    }
+    if (boardType === boardTypeMap.lsdb_jyyj) {
       showThirdColumn = true;
     }
     if (boardType === boardTypeMap.jyyj && type === boardKeyName.detail.key) {
@@ -169,6 +176,7 @@ export default class BoardSelectTree extends PureComponent {
       // showThirdColumn,            // 是否显示第三列
       // showTitle,                  // 是否显示右边标题
       // checkedOrSelected: false,   // 选中或 选择时的状态
+      // length: 0,                  // 已经选中的个数
       checkTreeArr,
       expandedKeys,
       autoExpandParent: true,
@@ -183,6 +191,7 @@ export default class BoardSelectTree extends PureComponent {
       boardType,
       showTitle,
       checkedOrSelected: false,
+      length: checkedKeys.length,
     };
   }
 
@@ -301,14 +310,26 @@ export default class BoardSelectTree extends PureComponent {
 
   // 获取出最终选择树的值，传递给外层方法
   @autobind
-  transferTreeState() {
+  transferTreeState(itemNodeStr) {
     const { selfCheckedNodes, isSummury, allParentNodes } = this.state;
+    const { saveIndcator } = this.props;
+    if (itemNodeStr) {
+      const itemNode = document.querySelectorAll(itemNodeStr)[0];
+      if (itemNode) {
+        this.treeMainRightChild.scrollTop = itemNode.offsetTop - 34;
+      } else {
+        this.treeMainRightChild.scrollTop = this.treeMainRightChild.scrollHeight;
+      }
+    }
     this.rcRegisterScrollEvent();
     if (isSummury) {
       const summuryArr = selfCheckedNodes.map(item => item.key);
       // 输出总量指标
       // console.warn('summuryArr', summuryArr);
-      this.props.saveIndcator('summury', summuryArr);
+      this.setState({
+        length: summuryArr.length,
+      });
+      saveIndcator('summury', summuryArr);
     } else {
       const newTemp = _.filter(allParentNodes, o => (o.children.length));
       const detailArr = newTemp.map(item => ({
@@ -317,10 +338,9 @@ export default class BoardSelectTree extends PureComponent {
       }));
       // 输出分类指标
       // console.warn('detailArr', detailArr);
-      this.props.saveIndcator('detail', detailArr);
+      saveIndcator('detail', detailArr);
     }
   }
-
   // 点击或者选择的相同操作
   @autobind
   checkOrSelect(obj) {
@@ -332,8 +352,12 @@ export default class BoardSelectTree extends PureComponent {
       selfCheckedNodes,
       expandedKeys,
       expandedChildren,
+      length,
     } = this.state;
+    const { lengthLimit } = this.props;
     let newSelfCheckedNodes = selfCheckedNodes;
+    // 点击的节点信息字符串
+    let itemNodeStr;
     let newExpandedChildren;
     const nowSelectNode = findSelectNode(checkTreeArr, obj.key).node;
     const nowSelectNodeBelong = findSelectNode(checkTreeArr, obj.key).belong;
@@ -370,6 +394,10 @@ export default class BoardSelectTree extends PureComponent {
         allParentNodes.map((item) => {
           let newItem = item;
           if (newItem.key === nowSelectNodeBelong.key) {
+            itemNodeStr = `.${nowSelectNodeBelong.key}Ref`;
+            // 判断是否超过 400
+            // 如果现在有这个 title 的 key，直接滚动到 title 的位置
+            // 没有这个 title 的 key ，直接滚动到最后的位置
             if (obj.active) {
               newItem.children.push(nowSelectNode);
             } else {
@@ -381,9 +409,17 @@ export default class BoardSelectTree extends PureComponent {
       }
       // 如果是选中状态，添加进去
       if (obj.active) {
+        // 如果有长度限制
+        if (lengthLimit) {
+          if (length >= 9) {
+            message.error('最多只能选择 9 个指标');
+            return;
+          }
+        }
         newSelfCheckedNodes.push(nowSelectNode);
       } else {
       // 否则删除
+        // console.warn('length', length);
         newSelfCheckedNodes = _.remove(newSelfCheckedNodes, n => (n.key !== obj.key));
       }
       this.setState({
@@ -394,7 +430,7 @@ export default class BoardSelectTree extends PureComponent {
         checkedKeys: obj.keyArr,
         checkedOrSelected: obj.active,
         expandedChildren: newExpandedChildren || expandedChildren,
-      }, this.transferTreeState);
+      }, () => this.transferTreeState(itemNodeStr));
     } else {
       this.setState({
         nowSelectNode,
@@ -422,7 +458,6 @@ export default class BoardSelectTree extends PureComponent {
 
   @autobind
   stopSpread(e = window.event) {
-    console.log('滚动');
     if (e.stopPropagation) {
       e.stopPropagation();
     } else {
@@ -454,6 +489,7 @@ export default class BoardSelectTree extends PureComponent {
       checkedOrSelected,
       boardType,
     } = this.state;
+    const { lengthLimit } = this.props;
     const treeNodeHtml = getTreeNode(checkTreeArr, showThirdColumn);
     // 组成分类下面的父指标的说明文字
     let description = '';
@@ -467,19 +503,24 @@ export default class BoardSelectTree extends PureComponent {
       // 树结构整体
       <div className={styles.treeBody}>
         {/* 树结构总标题 */}
-        <div className={styles.treeTitle}>
-          <h2 className={styles[`treeTitle${type}`]}>
-            {boardKeyName[type].name}
-            <Tooltip
-              placement="topLeft"
-              title={boardKeyName[type].title}
-              overlayClassName="visibleRangeToolTip"
-              getPopupContainer={this.getTooltipContainer}
-            >
-              <span className={styles.treeTitleSpan} />
-            </Tooltip>
-          </h2>
-        </div>
+        {
+          lengthLimit ?
+            null
+          :
+            <div className={styles.treeTitle}>
+              <h2 className={styles[`treeTitle${type}`]}>
+                {boardKeyName[type].name}
+                <Tooltip
+                  placement="topLeft"
+                  title={boardKeyName[type].title}
+                  overlayClassName="visibleRangeToolTip"
+                  getPopupContainer={this.getTooltipContainer}
+                >
+                  <span className={styles.treeTitleSpan} />
+                </Tooltip>
+              </h2>
+            </div>
+        }
         {/* 树结构主干布局 */}
         <div className={styles.treeMain}>
           {/* 树结构左边部分 */}
@@ -511,7 +552,7 @@ export default class BoardSelectTree extends PureComponent {
                     <div />
                   </div>
                 :
-                  ''
+                  null
               }
             </div>
           </div>
@@ -536,12 +577,15 @@ export default class BoardSelectTree extends PureComponent {
                 :
                   allParentNodes.map(item => (
                     item.children.length ?
-                      <div key={`${item.key}Key`} className={styles.treeMainRigthChildTitle}>
+                      <div
+                        key={`${item.key}Key`}
+                        className={`${item.key}Ref ${styles.treeMainRigthChildTitle}`}
+                      >
                         {
                           showTitle ?
                             <h3>{item.name}</h3>
                           :
-                            ''
+                            null
                         }
                         {
                           <MoveContainer
@@ -554,7 +598,7 @@ export default class BoardSelectTree extends PureComponent {
                         }
                       </div>
                     :
-                      ''
+                      null
                   ))
               }
             </div>
@@ -575,11 +619,11 @@ export default class BoardSelectTree extends PureComponent {
                       当前所选为汇总指标，包含以下子项目：{description}
                     </h4>
                   :
-                    ''
+                    null
                 }
               </div>
             :
-              ''
+              null
           }
         </div>
       </div>

@@ -47,6 +47,7 @@ const mapStateToProps = state => ({
   chartTableInfo: state.report.chartTableInfo,
   custRange: state.report.custRange,
   visibleBoards: state.report.visibleBoards,
+  newVisibleBoards: state.report.newVisibleBoards,
   globalLoading: state.activity.global,
 });
 
@@ -88,6 +89,7 @@ export default class ReportHome extends PureComponent {
     chartTableInfo: PropTypes.object,
     custRange: PropTypes.array,
     visibleBoards: PropTypes.array,
+    newVisibleBoards: PropTypes.array,
     globalLoading: PropTypes.bool,
     preView: PropTypes.bool,
     reportName: PropTypes.string,
@@ -102,6 +104,7 @@ export default class ReportHome extends PureComponent {
     globalLoading: false,
     custRange: [],
     visibleBoards: [],
+    newVisibleBoards: [],
     preView: false,
     reportName: '',
     boardId: defaultBoardId,
@@ -329,7 +332,7 @@ export default class ReportHome extends PureComponent {
 
   render() {
     // 本页面必须在渠道custRange和visibleBoards后才能展示
-    const { custRange, visibleBoards } = this.props;
+    const { custRange, visibleBoards, newVisibleBoards } = this.props;
     if (!custRange || !custRange.length || !visibleBoards || !visibleBoards.length) {
       return null;
     }
@@ -364,6 +367,7 @@ export default class ReportHome extends PureComponent {
           push={push}
           custRange={custRange}
           visibleBoards={visibleBoards}
+          newVisibleBoards={newVisibleBoards}
           preView={preView}
           reportName={reportName}
           updateQueryState={this.updateQueryState}

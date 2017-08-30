@@ -9,7 +9,11 @@ import React, { PureComponent, PropTypes } from 'react';
 import { Checkbox } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+
+import { customerPoolBusiness } from '../../config';
+
 import styles from './customerRow.less';
+
 import iconavator from '../../../static/images/icon-avator.png';
 import iconGeneralGgency from '../../../static/images/icon-general-agency.png';
 import iconProductAgency from '../../../static/images/icon-product-agency.png';
@@ -241,6 +245,7 @@ export default class CustomerRow extends PureComponent {
     let n = 0;
     const isSearch = source === 'search' || source === 'association';
     const isTag = source === 'tag';
+    const isBusiness = source === 'business';
     if (isSearch && listItem.name && listItem.name.indexOf(q) > -1) {
       const markedEle = replaceWord(listItem.name, q);
       const domTpl = getNewHtml('姓名', markedEle);
@@ -296,6 +301,36 @@ export default class CustomerRow extends PureComponent {
         }
       }
     }
+    // 匹配可开通业务
+    if (isBusiness && listItem.unrightType) {
+      const unrightTypeArr = listItem.unrightType.split(' ');
+      const tmpArr = [];
+      unrightTypeArr.forEach((v) => {
+        tmpArr.push(customerPoolBusiness[v]);
+      });
+      const domTpl = getNewHtml(`可开通业务(${tmpArr.length})`, tmpArr.join('、'));
+      rtnEle += domTpl;
+      n++;
+      if (n <= 2) {
+        shortRtnEle += domTpl;
+      }
+    }
+    // 匹配已开通业务
+    if (isBusiness && listItem.userRights) {
+      const userRightsArr = listItem.userRights.split(' ');
+      const tmpArr = [];
+      userRightsArr.forEach((v) => {
+        if (customerPoolBusiness[v]) {
+          tmpArr.push(customerPoolBusiness[v]);
+        }
+      });
+      const domTpl = getNewHtml(`已开通业务(${tmpArr.length})`, tmpArr.join('、'));
+      rtnEle += domTpl;
+      n++;
+      if (n <= 2) {
+        shortRtnEle += domTpl;
+      }
+    }
     // if (listItem.relatedLabels && listItem.relatedLabels.indexOf(q) > -1) {
     //   const markedEle = replaceWord(listItem.relatedLabels, q, listItem.reasonDesc);
     //   const domTpl = getNewHtml('匹配标签', markedEle);
@@ -340,7 +375,8 @@ export default class CustomerRow extends PureComponent {
     const lastestProfitRate = Number(this.getLastestData(monthlyProfits).assetProfitRate);
     const matchedWord = this.matchWord(q, listItem);
     const rskLev = trim(listItem.riskLvl);
-    const isChecked = _.includes(selectedIds, listItem.custId) || isAllSelect || checked;
+    const newIdsArr = _.map(selectedIds, v => (v.id));
+    const isChecked = _.includes(newIdsArr, listItem.custId) || isAllSelect || checked;
     // console.log('listItem', checked);
     return (
       <div className={styles.customerRow}>

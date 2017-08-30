@@ -119,6 +119,7 @@ export default class CustomerList extends PureComponent {
       fspOrgId: '',
       createCustRange: [],
       expandAll: false,
+      queryParam: null,
     };
   }
 
@@ -250,6 +251,9 @@ export default class CustomerList extends PureComponent {
     if (!_.isEmpty(sortsReqList)) {
       param.sortsReqList = sortsReqList;
     }
+    this.setState({
+      queryParam: param,
+    });
     getCustomerData(param);
   }
 
@@ -460,7 +464,7 @@ export default class CustomerList extends PureComponent {
     if (sortType && sortDirection) {
       reorderValue = { sortType, sortDirection };
     }
-    const { expandAll, createCustRange } = this.state;
+    const { expandAll, createCustRange, queryParam } = this.state;
     // console.log('6个月收益数据： ', monthlyProfits);
     console.log('createCustRange>>>', createCustRange);
     return (
@@ -493,6 +497,7 @@ export default class CustomerList extends PureComponent {
           onChange={this.orderChange}
         />
         <CustomerLists
+          condition={queryParam}
           custRange={createCustRange}
           source={source}
           entertype={ENTER_TYPE[source]}
