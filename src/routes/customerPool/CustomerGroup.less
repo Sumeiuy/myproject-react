@@ -1,66 +1,65 @@
 /***
-zhuyanwen
+ zhuyanwen
  */
-.customerGroup {
-  background-color: #fff;
-  margin: 15px 20px 20px 20px;
-  padding: 0px 10px 0px 10px;
-  min-height: 800px;
-  .text {
-    font-size: 18px;
-    font-weight: bold;
-    padding: 21px 0px 18px 0px;
-  }
-  hr {
-    background-color: #DDDDDD;
-    height: 2px;
-    border: none;
-  }
-  .Grouplist {
-    .description {
-      font-size: 17px;
-      color: #777474;
-      b {
-        color: #7d9be0;
-        font-size: 16px;
-      }
+:global {
+  .customerGroup {
+    background-color: #fff;
+    margin: 15px 20px 20px 20px;
+    padding: 0px 10px 0px 10px;
+    min-height: 800px;
+    .text {
+      font-size: 18px;
+      font-weight: bold;
+      padding: 21px 0px 18px 0px;
     }
-    .searchBox {
-      width: 320px;
-      height: 32px;
-      position: relative;
-      float: right;
-
+    hr {
+      background-color: #DDDDDD;
+      height: 2px;
+      border: none;
     }
-    .BtnContent {
-      margin-top: 20px;
-      text-align: right;
-      Button{
-        margin-left:25px;
-        height: 30px;
-      }
-    }
-  }
-  .newGroupForm {
-    .description {
-      font-size: 17px;
-      color: #777474;
-      b {
-        color: #7d9be0;
-        font-size: 16px;
-      }
-    }
-    .groupForm {
-      padding-top: 30px;
-      label {
-        font-size: 15px;
+    .Grouplist {
+      .description {
+        font-size: 17px;
         color: #777474;
+        b {
+          color: #7d9be0;
+          font-size: 16px;
+        }
+      }
+      .searchBox {
+        width: 320px;
+        height: 32px;
+        position: relative;
+        float: right;
+
+      }
+      .BtnContent {
+        margin-top: 20px;
+        text-align: right;
+        Button{
+          margin-left:25px;
+          height: 30px;
+        }
       }
     }
-  }
-
-  /*自定义tab切换组件样式*/
-  :global{
+    .newGroupForm {
+      .description {
+        font-size: 17px;
+        color: #777474;
+        b {
+          color: #7d9be0;
+          font-size: 16px;
+        }
+      }
+      .groupForm {
+        padding-top: 30px;
+        label {
+          font-size: 15px;
+          color: #777474;
+        }
+      }
+    }
+    /*自定义tab切换组件样式*/
     .ant-tabs {
       box-sizing: border-box;
       position: relative;
@@ -100,86 +99,94 @@ zhuyanwen
       margin: 0;
       border: 1px solid #d9d9d9;
     }
-  }
- /* 自定义分组列表样式*/
-  :global {
+
+    /* 自定义分组列表样式*/
     .groupListRow {
-      padding-top:20px;
-      .CustomerGrouplist {
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        .groupDescription {
-          width: 30%;
-        }
-        .ant-table {
-          position: static;
-        }
-        .ant-table-thead > tr > th {
-          background-color: #fff;
-          text-align: left;
-          padding: 11px 44px;
-          span {
-            font-size: 13px;
-            color: #333;
-            font-weight: bold;
+        padding-top:20px;
+        .CustomerGrouplist {
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          .groupDescription {
+            width: 30%;
           }
-          .ant-table-selection {
-            display: none;
+          .ant-table {
+            position: static;
           }
-        }
-        .ant-table-tbody {
-          tr > td {
-            padding: 11px 44px;
-            border-bottom: 0;
-            font-size: 14px;
-            color: #666;
+          .ant-table-thead > tr > th {
+            background-color: #fff;
             text-align: left;
-            a {
-              color: #108ee9;
+            padding: 11px 44px;
+            span {
+              font-size: 13px;
+              color: #333;
+              font-weight: bold;
+            }
+            .ant-table-selection {
+              display: none;
             }
           }
-          tr:nth-child(2n+1) > td {
-            background-color: #f9f9f9;
-          }
-          tr:nth-child(2n) > td {
-            background-color: #FFFFFF;
-          }
-          tr > td:nth-child(3) {
-            width: 45%;
-            .groupDescription {
-              &:hover {
+          .ant-table-tbody {
+            tr > td {
+              padding: 11px 44px;
+              border-bottom: 0;
+              font-size: 14px;
+              color: #666;
+              text-align: left;
+              a {
+                color: #108ee9;
+              }
+            }
+            tr:nth-child(2n+1) > td {
+              background-color: #f9f9f9;
+            }
+            tr:nth-child(2n) > td {
+              background-color: #FFFFFF;
+            }
+            tr > td:nth-child(3) {
+              width: 45%;
+              .groupDescription {
+                &:hover {
+                  .hiddentext {
+                    display: block;
+                  }
+                }
+                .showtext {
+                  width: 50%;
+                  overflow: hidden;
+                  height: 22px;
+                }
                 .hiddentext {
-                  display: block;
-                }
-              }
-              .showtext {
-                width: 50%;
-                overflow: hidden;
-                height: 22px;
-              }
-              .hiddentext {
-                display: none;
-                position: absolute;
-                width: 30%;
-                height: 80px;
-                background-color: #ffffcd;
-                div {
-                  padding: 4px 8px 0px 8px;
-                  font-size: 17px;
+                  display: none;
+                  position: absolute;
+                  width: 30%;
+                  height: 80px;
+                  background-color: #ffffcd;
+                  div {
+                    padding: 4px 8px 0px 8px;
+                    font-size: 17px;
+                  }
                 }
               }
             }
+            tr:last-child > td {
+              border-bottom: 1px solid #f2f3f4;
+            }
           }
-          tr:last-child > td {
-            border-bottom: 1px solid #f2f3f4;
+          .ant-table-pagination {
+            float: right !important;
+            margin-top: 45px !important;
+            margin-bottom: 30px !important;
           }
-        }
-        .ant-table-pagination {
-          float: right !important;
-          margin-top: 45px !important;
-          margin-bottom: 30px !important;
         }
       }
-    }
+  }
+  .hiddencustomerGroup {
+    display:none;
+  }
+  .showsaveSuccessTab {
+    display: block;
+  }
+  .hiddensaveSuccessTab {
+    display: none;
   }
 }

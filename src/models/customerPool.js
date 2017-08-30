@@ -202,7 +202,7 @@ export default {
           type: 'addCusToGroupSuccess',
           payload: response,
         });
-        yield put(routerRedux.push('/customerPool/addCusSuccess'));
+        // yield put(routerRedux.push('/customerPool/addCusSuccess'));
       }
     },
     // 添加客户到新的分组
@@ -434,6 +434,14 @@ export default {
       return {
         ...state,
         selectedIds: action.payload,
+      };
+    },
+      // 添加到现有分组保存成功
+    addCusToGroupSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        cusGroupSaveResult: resultData,
       };
     },
   },
