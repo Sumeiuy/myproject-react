@@ -105,11 +105,11 @@ export default {
   // 清除历史搜索记录
   clearSearchHistoryList: query => api.post('/groovynoauth/fsp/cust/custlabel/clearSearchHistoryList', query),
     // 客户分组列表信息
-  customerGroupList: query => api.post('/groovynoauth/fsp/emp/notification/queryCustGroupList', query),
+  customerGroupList: query => api.post('/groovynoauth/fsp/cust/custgroup/queryCustGroupList', query),
     // 添加客户到现有分组
-  saveCustGroupList: query => api.post('/groovynoauth/fsp/emp/notification/saveCustGroupList', query),
+  saveCustGroupList: query => api.post('/groovynoauth/fsp/cust/custgroup/saveCustGroupList', query),
     // 添加客户到新建分组
-  createCustGroup: query => api.post('/groovynoauth/fsp/emp/notification/createCustGroup', query),
+  createCustGroup: query => api.post('/groovynoauth/fsp/cust/custgroup/createCustGroup', query),
   // 自建任务字典
   getTaskDictionary: query => api.post('/groovynoauth/fsp/emp/info/taskDictionary', query),
 };

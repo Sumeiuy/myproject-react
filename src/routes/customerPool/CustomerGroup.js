@@ -7,25 +7,25 @@ import React, { PureComponent, PropTypes } from 'react';
 import { withRouter, routerRedux } from 'dva/router';
 import { autobind } from 'core-decorators';
 import { connect } from 'react-redux';
-import { Tabs, Input, Row, Col, Button } from 'antd';
+import classnames from 'classnames';
+import { Tabs, Input, Row, Col, Button, message } from 'antd';
 import styles from './customerGroup.less';
 import CustomerGrouplist from '../../components/customerPool/CustomerGrouplist';
-import AddNewGroup from '../../components/customerPool/addNewGroup';
+import AddNewGroup from '../../components/customerPool/AddNewGroup';
 import AddCusSuccess from '../../components/customerPool/AddCusSuccess';
 import helper from '../../utils/helper';
+
 
 const CUR_PAGE = 0; // 默认当前页
 const CUR_PAGESIZE = 10; // 默认页大小
 const TabPane = Tabs.TabPane;
-let groupId = '0';// 默认选择的分组groupId
-const controlGroupPane = {
-  groupTab: 'customerGroup',
-  saveSuccessTab: 'hiddensaveSuccessTab',
-};
+let groupId = '';
 const mapStateToProps = state => ({
   cusgroupList: state.customerPool.cusgroupList,
   cusgroupPage: state.customerPool.cusgroupPage,
   cusGroupSaveResult: state.customerPool.cusGroupSaveResult,
+  cusGroupSaveMessage: state.customerPool.cusGroupSaveMessage,
+  resultgroupId: state.customerPool.resultgroupId,
 
 });
 const mapDispatchToProps = {
@@ -88,21 +88,52 @@ export default class CustomerGroup extends PureComponent {
     goBack: PropTypes.func.isRequired,
     addCustomerToGroup: PropTypes.func.isRequired,
     cusGroupSaveResult: PropTypes.string,
+    resultgroupId: PropTypes.string,
+    cusGroupSaveMessage: PropTypes.string,
 
   }
+  constructor(props) {
+    super(props);
+    this.state = {
+      controlGroupPane: '',
+      controlCusSuccess: '',
+      cusgroupId: '',
+    };
+  }
+
   componentWillMount() {
 /* 获取客户分组列表 */
     this.getCustomerGroup();
-    console.info('第一次加载组件');
+    /* 初始化classname,首次渲染显示分组tab,隐藏分组成功组件 */
+    this.state.controlGroupPane = classnames({
+      [styles.customerGroup]: true,
+      [styles.hiddencustomerGroup]: false,
+    });
+    this.state.controlCusSuccess = classnames({
+      [styles.showsaveSuccessTab]: true,
+      [styles.hiddensaveSuccessTab]: false,
+    });
   }
 
   componentWillReceiveProps(nextProps) {
     // 根据分组结果，重新渲染组件
-    const { cusGroupSaveResult } = nextProps;
-    if (cusGroupSaveResult === 'success') {
-      controlGroupPane.groupTab = 'hiddencustomerGroup';
-      controlGroupPane.saveSuccessTab = 'showsaveSuccessTab';
+    const { cusGroupSaveResult, cusGroupSaveMessage, resultgroupId } = nextProps;
+    const controlGroupPane = classnames({
+      [styles.customerGroup]: cusGroupSaveResult !== 'success',
+      [styles.hiddencustomerGroup]: cusGroupSaveResult === 'success',
+    });
+    const controlCusSuccess = classnames({
+      [styles.showsaveSuccessTab]: cusGroupSaveResult === 'success',
+      [styles.hiddensaveSuccessTab]: cusGroupSaveResult !== 'success',
+    });
+    if (cusGroupSaveResult === 'fail') {
+      message.error(cusGroupSaveMessage);
     }
+    this.setState({
+      controlGroupPane,
+      controlCusSuccess,
+      cusgroupId: resultgroupId,
+    });
   }
 
   @autobind
@@ -167,7 +198,8 @@ export default class CustomerGroup extends PureComponent {
 /*  添加到已有分组 */
   @autobind
   handleSubmit() {
-    if (groupId !== '0') {
+      /* groupId不为空，表示已经选中了分组 */
+    if (groupId !== '') {
         /* 获取所选目标分组客户：ids表示选择客户，condition表示全选,将筛选条件传入后台。 */
       const param = {};
       const { location: { query } } = this.props;
@@ -181,6 +213,8 @@ export default class CustomerGroup extends PureComponent {
       param.groupId = groupId;
       param.empId = helper.getEmpId();
       this.props.addCustomerToGroup({ ...param });
+    } else {
+      message.error('请选择分组');
     }
   }
   /* 添加到新建分组 */
@@ -200,6 +234,7 @@ export default class CustomerGroup extends PureComponent {
     this.props.createCustGroup({ ...param });
   }
   @autobind
+  /* 退回 */
   goback() {
     this.props.goBack();
   }
@@ -208,18 +243,18 @@ export default class CustomerGroup extends PureComponent {
     const count = query.count;
     return (
       <div>
-        <div className={controlGroupPane.groupTab}>
-          <div className="text">添加分组</div>
+        <div className={this.state.controlGroupPane}>
+          <div className={styles.text}>添加分组</div>
           <hr />
           <Tabs defaultActiveKey="addhasGroup" type="card">
             <TabPane tab="添加到已有分组" key="addhasGroup">
-              <div className="Grouplist">
+              <div className={styles.Grouplist}>
                 <Row type="flex" justify="space-between" align="middle">
                   <Col span={12}>
-                    <p className="description">已选目标客户<b>&nbsp;{count}&nbsp;</b>户</p>
+                    <p className={styles.description}>已选目标客户<b>&nbsp;{count}&nbsp;</b>户</p>
                   </Col>
                   <Col span={12}>
-                    <div className="searchBox">
+                    <div className={styles.searchBox}>
                       <Input.Search
                         className="search-input"
                         placeholder="请输入分组名称"
@@ -228,7 +263,7 @@ export default class CustomerGroup extends PureComponent {
                     </div>
                   </Col>
                 </Row>
-                <Row id="groupListRow" className="groupListRow">
+                <Row className="groupListRow">
                   <CustomerGrouplist
                     className="CustomerGrouplist"
                     data={cusgroupList}
@@ -239,7 +274,7 @@ export default class CustomerGroup extends PureComponent {
                     rowSelection={rowSelection}
                   />
                 </Row>
-                <Row className="BtnContent">
+                <Row className={styles.BtnContent}>
                   <Button onClick={() => this.goback()}>取消</Button>
                   <Button onClick={() => this.handleSubmit()} type="primary">保存</Button>
                 </Row>
@@ -262,8 +297,8 @@ export default class CustomerGroup extends PureComponent {
             </TabPane>
           </Tabs>
         </div>
-        <div className={controlGroupPane.saveSuccessTab} >
-          <AddCusSuccess goback={this.goback} />
+        <div className={this.state.controlCusSuccess} >
+          <AddCusSuccess goback={this.goback} groupId={this.state.cusgroupId} />
         </div>
       </div>
     );
