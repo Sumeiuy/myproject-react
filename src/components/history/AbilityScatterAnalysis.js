@@ -135,7 +135,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
    * @param {*} seriesData series数据
    */
   getAnyPoint(seriesData) {
-    const { xAxisMin, yAxisMin, yAxisMax, slope, xAxisMax, currentMax, average } = seriesData;
+    const { xAxisMin, yAxisMin, yAxisMax, slope, xAxisMax, average } = seriesData;
     if (average) {
       // 代表率
       // 直接画出一条横线，代表平均线
@@ -200,56 +200,35 @@ export default class AbilityScatterAnalysis extends PureComponent {
       return true;
     }
 
-    // 比较当前x轴是否比x轴最大值大
-    // 小的话，则取当前值
-    // 不然递归调用
-    const compare = xAxisMax;
-    const current = currentMax || yAxisMax;
-    const point = current / slope;
-
-    if (point > compare) {
-      if (current / 10000 > 1) {
-        this.getAnyPoint({
-          ...seriesData,
-          currentMax: current - 5000,
-        });
-        return false;
-      } else if (current / 1000 > 1) {
-        this.getAnyPoint({
-          ...seriesData,
-          currentMax: current - 500,
-        });
-        return false;
-      } else if (current / 100 > 1) {
-        this.getAnyPoint({
-          ...seriesData,
-          currentMax: current - 50,
-        });
-        return false;
-      } else if (current / 10 > 1) {
-        this.getAnyPoint({
-          ...seriesData,
-          currentMax: current - 5,
-        });
-        return false;
-      } else if (current !== 0) {
-        this.getAnyPoint({
-          ...seriesData,
-          currentMax: current - 1,
-        });
-        return false;
-      }
-    }
-
+    // x轴最大值为当前比较值，算出y轴的值
+    let compare = xAxisMax;
+    let current = yAxisMax;
+    let point = current / slope;
+    let endCoord = [point, current];
     let finalSeriesData = seriesData;
-    // 如果算出来的y坐标小于轴刻度的最小
-    // 则将计算出来的值，作为刻度边界值，取floor
-    const endCoord = [point, current];
-    if (point < xAxisMin) {
-      finalSeriesData = {
-        ...seriesData,
-        xAxisMin: Math.floor(point),
-      };
+    if (point <= compare) {
+      // 如果算出来的x坐标小于轴刻度的最小
+      // 则将计算出来的值，作为刻度边界值，取floor
+      if (point < xAxisMin) {
+        finalSeriesData = {
+          ...seriesData,
+          xAxisMin: Math.floor(point),
+        };
+      }
+    } else {
+      // y轴最大值为当前比较值，算出x轴的值
+      compare = yAxisMax;
+      current = xAxisMax;
+      point = current * slope;
+      endCoord = [current, point];
+      // 如果算出来的y坐标小于轴刻度的最小
+      // 则将计算出来的值，作为刻度边界值，取floor
+      if (point < yAxisMin) {
+        finalSeriesData = {
+          ...seriesData,
+          yAxisMin: Math.floor(point),
+        };
+      }
     }
 
     const scatterOptions = constructScatterOptions({
