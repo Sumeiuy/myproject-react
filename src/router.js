@@ -29,7 +29,7 @@ import CustomerPoolHome from './routes/customerPool/Home';
 import ToDo from './routes/customerPool/ToDo';
 import CustomerList from './routes/customerPool/CustomerList';
 import addCusSuccess from './routes/customerPool/addCusSuccess';
-import customerGroup from './routes/customerPool/customerGroup';
+import CustomerGroup from './routes/customerPool/CustomerGroup';
 import CreateTask from './routes/customerPool/CreateTask';
 
 function switchRouter() {
@@ -59,7 +59,7 @@ const routes = ({ history }) => (// eslint-disable-line
         <IndexRoute component={CustomerPoolHome} />
         <Route path="todo" component={ToDo} />
         <Route path="list" component={CustomerList} />
-        <Route path="customerGroup" component={customerGroup} />
+        <Route path="customerGroup" component={CustomerGroup} />
         <Route path="addCusSuccess" component={addCusSuccess} />
         <Route path="createTask" component={CreateTask} />
       </Route>

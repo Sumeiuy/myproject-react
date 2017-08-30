@@ -11,6 +11,7 @@ import reportAnchorOptions from './reportAnchorOptions';
 import ZHUNICODE from './unicode';
 import BoardBasic from './BoardBasic';
 import customerOptionMap from './customerOptionMap';
+import customerPoolBusiness from './customerPoolBusiness';
 
 export default {
   constants,
@@ -26,4 +27,5 @@ export default {
   BoardBasic,
   customerOptionMap,
   reportAnchorOptions,
+  customerPoolBusiness,
 };

@@ -74,7 +74,7 @@ const rowSelection = {
 };
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
-export default class customerGroup extends PureComponent {
+export default class CustomerGroup extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
     cusgroupList: PropTypes.array.isRequired,

@@ -6,7 +6,6 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { Row, Col } from 'antd';
-import { Link } from 'dva/router';
 import _ from 'lodash';
 import { fspGlobal } from '../../utils';
 import styles from './toBeDone.less';
@@ -50,6 +49,14 @@ export default class PerformanceIndicators extends PureComponent {
       id: 'FSP_TODOLIST',
       title: '待办流程列表',
     };
+    const businessUrl = '/customerPool/list?source=business';
+    const businessParam = {
+      closable: true,
+      forceRefresh: true,
+      isSpecialTab: true,
+      id: 'RCT_FSP_BUSINESS',
+      title: '满足业务办理条件的客户列表',
+    };
     return (
       <div className={styles.toBeDoneBox}>
         <div className={styles.inner}>
@@ -69,12 +76,15 @@ export default class PerformanceIndicators extends PureComponent {
             </Col>
             <Col span={6}>
               <div className={`${styles.item} ${styles.item_b}`}>
-                <Link className="item" to="">
+                <a
+                  className="item"
+                  onClick={() => fspGlobal.openRctTab({ url: businessUrl, param: businessParam })}
+                >
                   <div className={styles.content}>
                     <h1>25</h1>
                     <p>满足业务办理条件客户</p>
                   </div>
-                </Link>
+                </a>
               </div>
             </Col>
             <Col span={6}>
