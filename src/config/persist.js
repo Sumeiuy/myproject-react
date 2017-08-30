@@ -6,7 +6,16 @@
 
 import localForage from 'localforage';
 
-import { isLocalStorageSupport } from '../utils/helper';
+function isLocalStorageSupport() {
+  const KEY = 'STORAGE_TEST_KEY';
+  try {
+    localStorage.setItem(KEY, KEY);
+    localStorage.removeItem(KEY);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
 
 localForage.config({
   driver: localForage.LOCALSTORAGE,

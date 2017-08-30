@@ -10,6 +10,8 @@ import feedbackOptions from './feedbackOptions';
 import reportAnchorOptions from './reportAnchorOptions';
 import ZHUNICODE from './unicode';
 import BoardBasic from './BoardBasic';
+import scatterType from './scatterType';
+import { responseCode, excludeCode } from './errorCode';
 
 export default {
   constants,
@@ -24,4 +26,7 @@ export default {
   ZHUNICODE,
   BoardBasic,
   reportAnchorOptions,
+  scatterType,
+  responseCode,
+  excludeCode,
 };
