@@ -6,15 +6,17 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { Row, Col } from 'antd';
-import { Link } from 'dva/router';
+import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { fspGlobal } from '../../utils';
+import { fspContainer } from '../../config';
 import styles from './toBeDone.less';
 
 export default class PerformanceIndicators extends PureComponent {
   static propTypes = {
     processData: PropTypes.number,
     motTaskCountData: PropTypes.number,
+    push: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -40,6 +42,25 @@ export default class PerformanceIndicators extends PureComponent {
     }
     return num;
   }
+
+  // 跳转到满足业务办理客户列表
+  @autobind
+  linkToBusiness() {
+    const url = '/customerPool/list?source=business';
+    const param = {
+      closable: true,
+      forceRefresh: true,
+      isSpecialTab: true,
+      id: 'RCT_FSP_BUSINESS',
+      title: '满足业务办理条件的客户列表',
+    };
+    if (document.querySelector(fspContainer.container)) {
+      fspGlobal.openRctTab({ url, param });
+    } else {
+      this.props.push(url);
+    }
+  }
+
   render() {
     const { processData, motTaskCountData } = this.props;
     const url = '/customerPool/todo';
@@ -69,12 +90,15 @@ export default class PerformanceIndicators extends PureComponent {
             </Col>
             <Col span={6}>
               <div className={`${styles.item} ${styles.item_b}`}>
-                <Link className="item" to="">
+                <a
+                  className="item"
+                  onClick={this.linkToBusiness}
+                >
                   <div className={styles.content}>
                     <h1>25</h1>
                     <p>满足业务办理条件客户</p>
                   </div>
-                </Link>
+                </a>
               </div>
             </Col>
             <Col span={6}>

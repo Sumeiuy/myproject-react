@@ -394,6 +394,7 @@ export default class Home extends PureComponent {
         />
         <div className={styles.content}>
           <ToBeDone
+            push={push}
             processData={process}
             motTaskCountData={motTaskCount}
           />
