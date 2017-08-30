@@ -10,8 +10,8 @@ import { connect } from 'react-redux';
 import { Tabs, Input, Row, Col, Button } from 'antd';
 import styles from './customerGroup.less';
 import CustomerGrouplist from '../../components/customerPool/CustomerGrouplist';
-import AddNewGroup from '../../components/customerPool/addNewGroup';
-import AddCusSuccess from '../../components/customerPool/addCusSuccess';
+import AddNewGroup from '../../components/customerPool/AddNewGroup';
+import AddCusSuccess from '../../components/customerPool/AddCusSuccess';
 import helper from '../../utils/helper';
 
 const CUR_PAGE = 0; // 默认当前页
