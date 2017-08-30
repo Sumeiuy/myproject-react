@@ -320,7 +320,9 @@ export default class CustomerRow extends PureComponent {
       const userRightsArr = listItem.userRights.split(' ');
       const tmpArr = [];
       userRightsArr.forEach((v) => {
-        tmpArr.push(customerPoolBusiness[v]);
+        if (customerPoolBusiness[v]) {
+          tmpArr.push(customerPoolBusiness[v]);
+        }
       });
       const domTpl = getNewHtml(`已开通业务(${tmpArr.length})`, tmpArr.join('、'));
       rtnEle += domTpl;

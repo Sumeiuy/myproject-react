@@ -28,7 +28,6 @@ import HistoryHome from './routes/history/Home';
 import CustomerPoolHome from './routes/customerPool/Home';
 import ToDo from './routes/customerPool/ToDo';
 import CustomerList from './routes/customerPool/CustomerList';
-import addCusSuccess from './routes/customerPool/addCusSuccess';
 import CustomerGroup from './routes/customerPool/CustomerGroup';
 import CreateTask from './routes/customerPool/CreateTask';
 
@@ -60,7 +59,6 @@ const routes = ({ history }) => (// eslint-disable-line
         <Route path="todo" component={ToDo} />
         <Route path="list" component={CustomerList} />
         <Route path="customerGroup" component={CustomerGroup} />
-        <Route path="addCusSuccess" component={addCusSuccess} />
         <Route path="createTask" component={CreateTask} />
       </Route>
     </Route>
