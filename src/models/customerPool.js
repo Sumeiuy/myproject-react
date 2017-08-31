@@ -3,7 +3,6 @@
  *  目标客户池模型管理
  * @author wangjunjun
  */
-import { routerRedux } from 'dva/router';
 import _ from 'lodash';
 import api from '../api';
 
@@ -46,6 +45,8 @@ export default {
     isAllSelect: false,
     selectedIds: [],
     cusGroupSaveResult: '',
+    cusGroupSaveMessage: '',
+    resultgroupId: '',
   },
   subscriptions: {
     setup({ dispatch }) {
@@ -202,14 +203,16 @@ export default {
           type: 'addCusToGroupSuccess',
           payload: response,
         });
-        // yield put(routerRedux.push('/customerPool/addCusSuccess'));
       }
     },
     // 添加客户到新的分组
     * createCustGroup({ payload }, { call, put }) {
       if (!_.isEmpty(payload)) {
-        yield call(api.createCustGroup, payload);
-        yield put(routerRedux.push('/customerPool/addCusSuccess'));
+        const response = yield call(api.createCustGroup, payload);
+        yield put({
+          type: 'addCusToGroupSuccess',
+          payload: response,
+        });
       }
     },
     // 自建任务字典
@@ -394,6 +397,7 @@ export default {
           cusgroupPage: {
             total: 0,
           },
+          cusGroupSaveResult: '',
         };
       }
       const cusgroupPage = {
@@ -401,8 +405,9 @@ export default {
       };
       return {
         ...state,
-        cusgroupList: resultData.custGroupDtoList,
+        cusgroupList: resultData.custGroupDTOList,
         cusgroupPage,
+        cusGroupSaveResult: '',
       };
     },
     // 保存搜索内容
@@ -441,7 +446,9 @@ export default {
       const { payload: { resultData } } = action;
       return {
         ...state,
-        cusGroupSaveResult: resultData,
+        cusGroupSaveResult: resultData.result,
+        resultgroupId: resultData.groupId,
+        cusGroupSaveMessage: resultData.message,
       };
     },
   },
