@@ -20,78 +20,111 @@ exports.response = function (req, res) {
           "value": "本月",
         }
       ],
-      "custBusinessType":[
+      "custBusinessType": [
         {
-            "key":"",
-            "value":"不限"
+          "key": "",
+          "value": "不限"
         },
         {
-            "key":"817030",
-            "value":"融资融券"
+          "key": "817030",
+          "value": "融资融券"
         },
         {
-            "key":"817200",
-            "value":"沪港通"
-        },
-      ],
-      "custNature":[
-        {
-            "key":"",
-            "value":"不限"
-        },
-        {
-            "key":"P",
-            "value":"个人"
-        },
-        {
-            "key":"O",
-            "value":"机构"
+          "key": "817200",
+          "value": "沪港通"
         },
       ],
-      "custRiskBearing":[
+      "custNature": [
         {
-            "key":"",
-            "value":"不限"
+          "key": "",
+          "value": "不限"
         },
         {
-            "key":"704040",
-            "value":"保守型(最低类别)"
+          "key": "P",
+          "value": "个人"
         },
         {
-            "key":"704030",
-            "value":"保守型"
+          "key": "O",
+          "value": "机构"
+        },
+      ],
+      "custRiskBearing": [
+        {
+          "key": "",
+          "value": "不限"
         },
         {
-            "key":"704020",
-            "value":"稳健型"
+          "key": "704040",
+          "value": "保守型(最低类别)"
         },
         {
-            "key":"704015",
-            "value":"积极型"
+          "key": "704030",
+          "value": "保守型"
         },
         {
-            "key":"704025",
-            "value":"谨慎型"
+          "key": "704020",
+          "value": "稳健型"
         },
         {
-            "key":"704010",
-            "value":"激进型"
+          "key": "704015",
+          "value": "积极型"
+        },
+        {
+          "key": "704025",
+          "value": "谨慎型"
+        },
+        {
+          "key": "704010",
+          "value": "激进型"
         }
       ],
-      "custType":[
+      "custType": [
         {
-            "key":"",
-            "value":"不限"
+          "key": "",
+          "value": "不限"
         },
         {
-            "key":"Y",
-            "value":"高净值"
+          "key": "Y",
+          "value": "高净值"
         },
         {
-            "key":"N",
-            "value":"零售客户"
+          "key": "N",
+          "value": "零售客户"
+        }
+      ],
+      "taskTypes": [
+        {
+          "key": "businessRecommend",
+          "value": "业务推荐",
+          "defaultExecuteType": "Mission"
+        },
+        {
+          "key": "other",
+          "value": "其他",
+          "defaultExecuteType": "Chance"
+        },
+        {
+          "key": "stockCustVisit",
+          "value": "存量客户回访",
+          "defaultExecuteType": "Chance"
+        },
+        {
+          "key": "newCustVisit",
+          "value": "新客户回访",
+				"defaultExecuteType": "Chance"
+        }
+      ],
+      "executeTypes": [
+        {
+          "key": "Mission",
+          "value": "必做"
+        },
+        {
+          "key": "Chance",
+          "value": "选做"
         }
       ]
+
     }
   }
 }

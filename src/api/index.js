@@ -110,6 +110,7 @@ export default {
   saveCustGroupList: query => api.post('/groovynoauth/fsp/emp/notification/saveCustGroupList', query),
     // 添加客户到新建分组
   createCustGroup: query => api.post('/groovynoauth/fsp/emp/notification/createCustGroup', query),
-  // 自建任务字典
-  getTaskDictionary: query => api.post('/groovynoauth/fsp/emp/info/taskDictionary', query),
+
+  // 自建任务提交
+  createTask: query => api.post('/groovynoauth/fsp/cust/task/createTask', query),
 };
