@@ -110,8 +110,6 @@ const UNIT_DEFAULT = '元';
 const UNIT_WAN = '万元';
 const UNIT_YI = '亿元';
 
-const trim = str => (str ? str.replace(/(^\s+)|(\s+$)/g, '') : '');
-
 const haveTitle = title => (title ? `<i class="tip">${title}</i>` : null);
 
 const replaceWord = (value, q, title = '') => {
@@ -370,7 +368,7 @@ export default class CustomerRow extends PureComponent {
     const lastestProfit = Number(this.getLastestData(monthlyProfits).assetProfit);
     const lastestProfitRate = Number(this.getLastestData(monthlyProfits).assetProfitRate);
     const matchedWord = this.matchWord(q, listItem);
-    const rskLev = trim(listItem.riskLvl);
+    const rskLev = _.trim(listItem.riskLvl);
     const newIdsArr = _.map(selectedIds, v => (v.id));
     const isChecked = _.includes(newIdsArr, listItem.custId) || isAllSelect || checked;
     // console.log('listItem', checked);
