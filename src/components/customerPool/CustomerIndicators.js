@@ -80,7 +80,7 @@ export default class CustomerIndicators extends PureComponent {
                   <ul>
                     <li>
                       <p>{this.numFormat(purAddCust || '--')} </p>
-                      <div>净新增有效户</div>
+                      <div>新增有效户</div>
                     </li>
                   </ul>
                 </Col>
@@ -88,7 +88,7 @@ export default class CustomerIndicators extends PureComponent {
                   <ul>
                     <li className={styles.bd_un_r}>
                       <p>{this.numFormat(purAddNoretailcust || '--')} </p>
-                      <div>净新增非零售客户</div>
+                      <div>新增非零售客户</div>
                     </li>
                   </ul>
                 </Col>
@@ -98,7 +98,7 @@ export default class CustomerIndicators extends PureComponent {
                   <ul>
                     <li>
                       <p>{this.numFormat(purAddHighprodcust || '--')} </p>
-                      <div>净新增高端产品户</div>
+                      <div>新增高端产品户</div>
                     </li>
                   </ul>
                 </Col>
