@@ -1,7 +1,6 @@
 /***
  zhuyanwen
  */
-:global {
   .customerGroup {
     background-color: #fff;
     margin: 15px 20px 20px 20px;
@@ -19,7 +18,7 @@
     }
     .Grouplist {
       .description {
-        font-size: 17px;
+        font-size: 16px;
         color: #777474;
         b {
           color: #7d9be0;
@@ -44,7 +43,7 @@
     }
     .newGroupForm {
       .description {
-        font-size: 17px;
+        font-size: 16px;
         color: #777474;
         b {
           color: #7d9be0;
@@ -54,55 +53,57 @@
       .groupForm {
         padding-top: 30px;
         label {
-          font-size: 15px;
+          font-size: 14px;
           color: #777474;
         }
       }
     }
     /*自定义tab切换组件样式*/
-    .ant-tabs {
-      box-sizing: border-box;
-      position: relative;
-      overflow: hidden;
-      zoom: 1;
-      color: rgba(0, 0, 0, 0.65);
-      margin-top: 30px;
+    :global {
+      .ant-tabs {
+        box-sizing: border-box;
+        position: relative;
+        overflow: hidden;
+        zoom: 1;
+        color: rgba(0, 0, 0, 0.65);
+        margin-top: 30px;
+      }
+      .ant-tabs-bar {
+        border-bottom: none;
+      }
+      .ant-tabs.ant-tabs-card > .ant-tabs-bar .ant-tabs-nav-container {
+        height: 36px;
+      }
+      .ant-tabs.ant-tabs-card > .ant-tabs-bar .ant-tabs-tab-active {
+        border-color: #d9d9d9;
+        color: #108ee9;
+        padding-bottom: 5px;
+        border: 1px solid #108ee9;
+        background-image: url('../../../static/images/choosed-icon.png');
+        background-repeat: no-repeat;
+        background-size: 15px 15px;
+        background-position: 100% 110%;
+        border-radius: 5px;
+      }
+      .ant-tabs.ant-tabs-card > .ant-tabs-bar .ant-tabs-tab {
+        margin: 0;
+        transition: none;
+        margin-right: 31px;
+        border-radius: 5px;
+        border: 1px solid #d9d9d9;
+        background-color: #fff;
+      }
+      .ant-tabs-nav .ant-tabs-tab {
+        transition: none;
+        border-radius: 5px;
+        margin: 0;
+        border: 1px solid #d9d9d9;
+      }
     }
-    .ant-tabs-bar {
-      border-bottom: none;
-    }
-    .ant-tabs.ant-tabs-card > .ant-tabs-bar .ant-tabs-nav-container {
-      height: 36px;
-    }
-    .ant-tabs.ant-tabs-card > .ant-tabs-bar .ant-tabs-tab-active {
-      border-color: #d9d9d9;
-      color: #108ee9;
-      padding-bottom: 5px;
-      border: 1px solid #108ee9;
-      background-image: url('../../../static/images/choosed-icon.png');
-      background-repeat: no-repeat;
-      background-size: 15px 15px;
-      background-position: 100% 110%;
-      border-radius: 5px;
-    }
-    .ant-tabs.ant-tabs-card > .ant-tabs-bar .ant-tabs-tab {
-      margin: 0;
-      transition: none;
-      margin-right: 31px;
-      border-radius:5px;
-      border: 1px solid #d9d9d9;
-      background-color: #fff;
-    }
-    .ant-tabs-nav .ant-tabs-tab {
-      transition: none;
-      border-radius:5px;
-      margin: 0;
-      border: 1px solid #d9d9d9;
-    }
-
     /* 自定义分组列表样式*/
-    .groupListRow {
-        padding-top:20px;
+    :global {
+      .groupListRow {
+        padding-top: 20px;
         .CustomerGrouplist {
           border: 1px solid #ddd;
           border-radius: 4px;
@@ -179,6 +180,7 @@
           }
         }
       }
+    }
   }
   .hiddencustomerGroup {
     display:none;
@@ -189,4 +191,3 @@
   .hiddensaveSuccessTab {
     display: none;
   }
-}
