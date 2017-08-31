@@ -65,7 +65,7 @@ export default class AddNewGroup extends PureComponent {
         </FormItem>
         <FormItem
           {...formItemLayout2}
-          label="任务描述"
+          label="分组描述"
         >
           {getFieldDecorator('groupDesc', { rules: [{ max: 500, message: '字数限制：0-500字' }], initialValue: '' })(
             <Input type="textarea" placeholder="请输入分组描述（字数限制：0-500字）" rows={5} style={{ width: '100%' }} />,

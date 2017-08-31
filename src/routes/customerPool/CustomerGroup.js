@@ -89,7 +89,6 @@ export default class CustomerGroup extends PureComponent {
     addCustomerToGroup: PropTypes.func.isRequired,
     cusGroupSaveResult: PropTypes.string,
     resultgroupId: PropTypes.string,
-    cusGroupSaveMessage: PropTypes.string,
 
   }
   constructor(props) {
@@ -110,14 +109,14 @@ export default class CustomerGroup extends PureComponent {
       [styles.hiddencustomerGroup]: false,
     });
     this.state.controlCusSuccess = classnames({
-      [styles.showsaveSuccessTab]: true,
-      [styles.hiddensaveSuccessTab]: false,
+      [styles.showsaveSuccessTab]: false,
+      [styles.hiddensaveSuccessTab]: true,
     });
   }
 
   componentWillReceiveProps(nextProps) {
     // 根据分组结果，重新渲染组件
-    const { cusGroupSaveResult, cusGroupSaveMessage, resultgroupId } = nextProps;
+    const { cusGroupSaveResult, resultgroupId } = nextProps;
     const controlGroupPane = classnames({
       [styles.customerGroup]: cusGroupSaveResult !== 'success',
       [styles.hiddencustomerGroup]: cusGroupSaveResult === 'success',
@@ -126,9 +125,6 @@ export default class CustomerGroup extends PureComponent {
       [styles.showsaveSuccessTab]: cusGroupSaveResult === 'success',
       [styles.hiddensaveSuccessTab]: cusGroupSaveResult !== 'success',
     });
-    if (cusGroupSaveResult === 'fail') {
-      message.error(cusGroupSaveMessage);
-    }
     this.setState({
       controlGroupPane,
       controlCusSuccess,
