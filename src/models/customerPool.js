@@ -19,9 +19,8 @@ export default {
     custRange: [],
     cycle: [],
     position: {},
-    process: 0,
+    process: {},
     empInfo: {},
-    motTaskCount: 0,
     dict: {},
     monthlyProfits: [],
     hotwds: {},
@@ -89,17 +88,11 @@ export default {
       });
       const firstCycle = statisticalPeriod.resultData.kPIDateScopeType;
       // debugger;
-      // 代办流程(首页总数)
-      const agentProcess = yield call(api.getWorkFlowTaskCount);
+      // (首页总数)
+      const queryNumbers = yield call(api.getQueryNumbers);
       yield put({
         type: 'getWorkFlowTaskCountSuccess',
-        payload: { agentProcess },
-      });
-      // 今日可做任务总数
-      const motTaskcount = yield call(api.getMotTaskCount);
-      yield put({
-        type: 'getMotTaskCountSuccess',
-        payload: { motTaskcount },
+        payload: { queryNumbers },
       });
       // 绩效指标
       const indicators =
@@ -288,22 +281,13 @@ export default {
         cycle,
       };
     },
-    // 代办流程(首页总数)
+    // (首页总数)
     getWorkFlowTaskCountSuccess(state, action) {
-      const { payload: { agentProcess } } = action;
-      const process = agentProcess.resultData;
+      const { payload: { queryNumbers } } = action;
+      const process = queryNumbers.resultData;
       return {
         ...state,
         process,
-      };
-    },
-    // 今日可做任务总数
-    getMotTaskCountSuccess(state, action) {
-      const { payload: { motTaskcount } } = action;
-      const motTaskCount = motTaskcount.resultData;
-      return {
-        ...state,
-        motTaskCount,
       };
     },
     // 职责切换
@@ -445,10 +429,10 @@ export default {
     },
     // 自建任务提交
     createTaskSuccess(state, action) {
-      const { payload: { resultData } } = action;
+      const { payload } = action;
       return {
         ...state,
-        createTaskResult: resultData,
+        createTaskResult: payload,
       };
     },
   },

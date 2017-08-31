@@ -13,15 +13,15 @@ import imgSrc from '../../../static/images/createTask_success.png';
 
 let successSetInterval;
 let COUNT = 10;
-export default class BusinessProcessing extends PureComponent {
+export default class CreateTaskSuccess extends PureComponent {
   static propTypes = {
     data: PropTypes.object,
-    successType: PropTypes.string,
+    successType: PropTypes.bool,
   }
 
   static defaultProps = {
     data: {},
-    successType: '',
+    successType: false,
   }
 
   constructor(props) {
@@ -43,21 +43,17 @@ export default class BusinessProcessing extends PureComponent {
         taskSuccessBox.style.height = (docElemHeight - 40) + 'px';
       }
     }
+    this.handleShowSuccess(this.props);
   }
 
   componentWillReceiveProps(nextProps) {
-    const { successType: preSuccessType } = this.props;
-    const { successType: nextSuccessType } = nextProps;
-    if (preSuccessType !== nextSuccessType) {
-      this.handleShowSuccess(nextProps);
-    }
   }
 
   @autobind
   handleShowSuccess(props) {
     const { successType } = props;
-    if (successType === 'ok') {
-      successSetInterval = setInterval(() => this.handleMovTime);
+    if (successType) {
+      successSetInterval = setInterval(this.handleMovTime, 1000);
     }
   }
 

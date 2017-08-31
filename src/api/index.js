@@ -115,8 +115,8 @@ export default {
   // 统计周期
   getStatisticalPeriod: query => api.post('/groovynoauth/fsp/dictionary', query),
 
-  // 代办流程(首页总数)
-  getWorkFlowTaskCount: query => api.post('/groovynoauth/fsp/emp/workflow/queryWorkFlowTaskCount', query),
+  // (首页总数)
+  getQueryNumbers: query => api.post('/groovynoauth/fsp/emp/todealwith/queryNumbers', query),
 
   // 今日可做任务总数
   getMotTaskCount: query => api.post('/groovynoauth/fsp/emp/notification/queryMotTaskCount', query),

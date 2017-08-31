@@ -7,6 +7,7 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
 import CreateTaskSuccess from '../../components/customerPool/CreateTaskSuccess';
 import CreateTaskFrom from '../../components/customerPool/CreateTaskForm';
 import styles from './createTask.less';
@@ -50,14 +51,6 @@ export default class CreateTask extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      startValue: null,
-      endValue: null,
-      endOpen: false,
-      startFormat: 'YYYY/MM/DD(E)',
-      endFormat: 'YYYY/MM/DD(E)',
-      fromShow: true,
-      successShow: false,
-      firstUserName: '',
       isSuccess: false,
     };
   }
@@ -75,8 +68,8 @@ export default class CreateTask extends PureComponent {
 
   @autobind
   handleCreateTaskSuccess(result) {
-    const { code } = result;
-    if (code === '0') {
+    const { createTaskResult } = result;
+    if (!_.isEmpty(createTaskResult.code) && createTaskResult.code === '0') {
       this.setState({
         isSuccess: true,
       });
@@ -92,14 +85,19 @@ export default class CreateTask extends PureComponent {
 
   render() {
     const { dict, location } = this.props;
+    const { isSuccess } = this.state;
     return (
       <div className={styles.taskBox}>
-        <CreateTaskFrom
-          location={location}
-          dict={dict}
-          createTask={this.handleCreateTask}
-        />
-        <CreateTaskSuccess />
+        {!isSuccess ?
+          <CreateTaskFrom
+            location={location}
+            dict={dict}
+            createTask={this.handleCreateTask}
+          /> :
+          <CreateTaskSuccess
+            successType={isSuccess}
+          />
+        }
       </div>
     );
   }

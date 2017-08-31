@@ -14,14 +14,12 @@ import styles from './toBeDone.less';
 
 export default class PerformanceIndicators extends PureComponent {
   static propTypes = {
-    processData: PropTypes.number,
-    motTaskCountData: PropTypes.number,
+    data: PropTypes.object,
     push: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
-    processData: 0,
-    motTaskCountData: 0,
+    data: {},
   }
 
   // 处理数值（大于99+）
@@ -62,7 +60,10 @@ export default class PerformanceIndicators extends PureComponent {
   }
 
   render() {
-    const { processData, motTaskCountData } = this.props;
+    const { data: { businessNumbers,
+      notificationNumbers,
+      todayToDoNumbers,
+      workFlowNumbers } } = this.props;
     const url = '/customerPool/todo';
     const param = {
       closable: true,
@@ -82,7 +83,7 @@ export default class PerformanceIndicators extends PureComponent {
               <div className={`${styles.item} ${styles.item_a}`}>
                 <a className="item" onClick={() => fspGlobal.myMotTask()}>
                   <div className={styles.content}>
-                    <h1>{this.farmtNum(motTaskCountData)}</h1>
+                    <h1>{this.farmtNum(todayToDoNumbers)}</h1>
                     <p>今日可做任务</p>
                   </div>
                 </a>
@@ -95,7 +96,7 @@ export default class PerformanceIndicators extends PureComponent {
                   onClick={this.linkToBusiness}
                 >
                   <div className={styles.content}>
-                    <h1>25</h1>
+                    <h1>{this.farmtNum(businessNumbers)}</h1>
                     <p>满足业务办理条件客户</p>
                   </div>
                 </a>
@@ -105,7 +106,7 @@ export default class PerformanceIndicators extends PureComponent {
               <div className={`${styles.item} ${styles.item_c}`}>
                 <a className="item" onClick={() => fspGlobal.openRctTab({ url, param })}>
                   <div className={styles.content}>
-                    <h1>{this.processNum(processData)}</h1>
+                    <h1>{this.processNum(workFlowNumbers)}</h1>
                     <p>待办流程</p>
                   </div>
                 </a>
@@ -115,7 +116,7 @@ export default class PerformanceIndicators extends PureComponent {
               <div className={`${styles.item} ${styles.item_d}`}>
                 <a className="item" onClick={() => fspGlobal.openRctTab({ url, param })}>
                   <div className={styles.content}>
-                    <h1>{this.processNum(processData)}</h1>
+                    <h1>{this.processNum(notificationNumbers)}</h1>
                     <p>消息提醒</p>
                   </div>
                 </a>
