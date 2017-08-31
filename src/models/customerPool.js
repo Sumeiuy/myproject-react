@@ -446,9 +446,7 @@ export default {
       const { payload: { resultData } } = action;
       return {
         ...state,
-        cusGroupSaveResult: resultData.result,
         resultgroupId: resultData.groupId,
-        cusGroupSaveMessage: resultData.message,
       };
     },
   },
