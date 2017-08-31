@@ -12,6 +12,8 @@ import ZHUNICODE from './unicode';
 import BoardBasic from './BoardBasic';
 import customerOptionMap from './customerOptionMap';
 import customerPoolBusiness from './customerPoolBusiness';
+import scatterType from './scatterType';
+import { responseCode, excludeCode } from './errorCode';
 
 export default {
   constants,
@@ -28,4 +30,7 @@ export default {
   customerOptionMap,
   reportAnchorOptions,
   customerPoolBusiness,
+  scatterType,
+  responseCode,
+  excludeCode,
 };

@@ -72,6 +72,40 @@ export default {
   // 查询指标库数据
   getIndicators: query => api.post('/groovynoauth/jxzb/queryCategoryAndIndicators', query),
 
+  // 查询散点图
+  queryContrastAnalyze: query => api.post('/groovynoauth/jxzb/queryContrastAnalyze', query),
+
+  // 查询雷达图
+  queryCurrentRankingRecord: query => api.post('/groovynoauth/jxzb/queryCurrentRankingRecord', query),
+  // 查询历史指标概览数据
+  getHistoryCore: query => api.post('/groovynoauth/jxzb/queryHistoryCore', query),
+
+  // 查询强弱指示分析数据接口
+  getCurrentRankingRecord: query => api.post('/groovynoauth/jxzb/queryCurrentRankingRecord', query),
+
+  // 查询字典数据
+  queryHistoryContrast: query => api.post('/groovynoauth/jxzb/queryHistoryContrast', query),
+
+  // 查询历史对比折线图数据
+  getHistoryContrastLineChartData: query => api.post('/groovynoauth/jxzb/queryContrastLineChart', query),
+
+  // 保存用户创建的历史对比看板
+  createHistoryBoard: query => api.post('/groovynoauth/jxzb/saveBoard', query),
+
+  // 删除历史对比看板
+  deleteHistoryBoard: query => api.post('/groovynoauth/jxzb/deleteBoard', query),
+
+  // 更新历史对比看板
+  updateHistoryBoard: query => api.post('/groovynoauth/jxzb/updateBoard', query),
+
+  // 查询历史对比排名数据
+  getHistoryRankChartData: query => api.post('/groovynoauth/jxzb/queryHistoryCardRecord', query),
+
+  // 看板名称重复验证
+  distinctBoard: query => api.post('/groovynoauth/jxzb/saveBoard', query),
+
+  // ========= 客户资源池相关接口
+
   // 查询待办流程记录列表
   getToDoList: query => api.post('/groovynoauth/fsp/emp/workflow/queryWorkFlowTaskList', query),
 
@@ -105,11 +139,11 @@ export default {
   // 清除历史搜索记录
   clearSearchHistoryList: query => api.post('/groovynoauth/fsp/cust/custlabel/clearSearchHistoryList', query),
     // 客户分组列表信息
-  customerGroupList: query => api.post('/groovynoauth/fsp/emp/notification/queryCustGroupList', query),
+  customerGroupList: query => api.post('/groovynoauth/fsp/cust/custgroup/queryCustGroupList', query),
     // 添加客户到现有分组
-  saveCustGroupList: query => api.post('/groovynoauth/fsp/emp/notification/saveCustGroupList', query),
+  saveCustGroupList: query => api.post('/groovynoauth/fsp/cust/custgroup/saveCustGroupList', query),
     // 添加客户到新建分组
-  createCustGroup: query => api.post('/groovynoauth/fsp/emp/notification/createCustGroup', query),
+  createCustGroup: query => api.post('/groovynoauth/fsp/cust/custgroup/createCustGroup', query),
 
   // 自建任务提交
   createTask: query => api.post('/groovynoauth/fsp/cust/task/createTask', query),
