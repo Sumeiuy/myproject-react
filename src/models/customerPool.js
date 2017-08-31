@@ -422,9 +422,7 @@ export default {
       const { payload: { resultData } } = action;
       return {
         ...state,
-        cusGroupSaveResult: resultData.result,
         resultgroupId: resultData.groupId,
-        cusGroupSaveMessage: resultData.message,
       };
     },
     // 自建任务提交
