@@ -450,7 +450,7 @@ export default class CustomerRow extends PureComponent {
                     <span className={styles.numB}>
                       {
                         monthlyProfits.length ?
-                        `${(lastestProfitRate * 10).toFixed(2)}%`
+                        `${lastestProfitRate.toFixed(2)}%`
                         :
                         '--'
                       }
