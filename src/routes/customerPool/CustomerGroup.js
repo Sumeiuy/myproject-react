@@ -11,8 +11,8 @@ import classnames from 'classnames';
 import { Tabs, Input, Row, Col, Button, message } from 'antd';
 import styles from './customerGroup.less';
 import CustomerGrouplist from '../../components/customerPool/CustomerGrouplist';
-import AddNewGroup from '../../components/customerPool/AddNewGroup';
-import AddCusSuccess from '../../components/customerPool/AddCusSuccess';
+import AddNewGroup from '../../components/customerPool/addNewGroup';
+import AddCusSuccess from '../../components/customerPool/addCusSuccess';
 import helper from '../../utils/helper';
 
 
