@@ -2,7 +2,7 @@
  * @file models/manage.js
  * @author sunweibin
  */
-import { manageApi as api } from '../api';
+import { reportApi as api } from '../api';
 import { BoardBasic, responseCode } from '../config';
 
 export default {

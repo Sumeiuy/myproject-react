@@ -1,8 +1,11 @@
+/**
+ * 用户反馈模块的接口
+ */
 import apiCreator from '../utils/apiCreator';
 
 const api = apiCreator();
 
-const feedbackApi = {
+const reportApi = {
 
   // 暴露api上的几个底层方法: get / post
   ...api,
@@ -18,4 +21,4 @@ const feedbackApi = {
 
 };
 
-export default feedbackApi;
+export default reportApi;

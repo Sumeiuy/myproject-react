@@ -2,7 +2,7 @@
  *  @description 看板预览
  *  @author sunweibin
  */
-import { previewApi as api } from '../api';
+import { reportApi as api } from '../api';
 
 export default {
   namespace: 'preview',

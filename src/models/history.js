@@ -4,7 +4,7 @@
  */
 import _ from 'lodash';
 
-import { historyApi as api } from '../api';
+import { reportApi as api } from '../api';
 import { BoardBasic } from '../config';
 
 // const EMPTY_OBJECT = {};
@@ -353,7 +353,7 @@ export default {
           message: '开始创建',
         },
       });
-      const createBoardResult = yield call(api.createHistoryBoard, payload);
+      const createBoardResult = yield call(api.createBoard, payload);
       const code = createBoardResult.code;
       const msg = createBoardResult.msg;
       let board = {};
@@ -391,7 +391,7 @@ export default {
           message: '开始删除',
         },
       });
-      yield call(api.deleteHistoryBoard, payload);
+      yield call(api.deleteBoard, payload);
       yield put({
         type: 'opertateBoardState',
         payload: {
@@ -411,7 +411,7 @@ export default {
           message: '开始保存',
         },
       });
-      const publishResult = yield call(api.updateHistoryBoard, payload);
+      const publishResult = yield call(api.updateBoard, payload);
       const board = publishResult.resultData;
       yield put({
         type: 'opertateBoardState',
