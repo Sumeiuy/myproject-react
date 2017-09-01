@@ -2,7 +2,7 @@
  * @file models/report.js
  * @author sunweibin
  */
-import api from '../api';
+import { reportApi as api } from '../api';
 import { request, BoardBasic } from '../config';
 
 export default {
