@@ -304,31 +304,27 @@ export default class CustomerRow extends PureComponent {
     // 匹配可开通业务
     if (isBusiness && listItem.unrightType) {
       const unrightTypeArr = listItem.unrightType.split(' ');
-      const tmpArr = [];
-      unrightTypeArr.forEach((v) => {
-        tmpArr.push(customerPoolBusiness[v]);
-      });
-      const domTpl = getNewHtml(`可开通业务(${tmpArr.length})`, tmpArr.join('、'));
-      rtnEle += domTpl;
-      n++;
-      if (n <= 2) {
-        shortRtnEle += domTpl;
+      const tmpArr = _.filter(_.map(unrightTypeArr, v => customerPoolBusiness[v]));
+      if (!_.isEmpty(tmpArr)) {
+        const domTpl = getNewHtml(`可开通业务(${tmpArr.length})`, tmpArr.join('、'));
+        rtnEle += domTpl;
+        n++;
+        if (n <= 2) {
+          shortRtnEle += domTpl;
+        }
       }
     }
     // 匹配已开通业务
     if (isBusiness && listItem.userRights) {
       const userRightsArr = listItem.userRights.split(' ');
-      const tmpArr = [];
-      userRightsArr.forEach((v) => {
-        if (customerPoolBusiness[v]) {
-          tmpArr.push(customerPoolBusiness[v]);
+      const tmpArr = _.filter(_.map(userRightsArr, v => customerPoolBusiness[v]));
+      if (!_.isEmpty(tmpArr)) {
+        const domTpl = getNewHtml(`已开通业务(${tmpArr.length})`, tmpArr.join('、'));
+        rtnEle += domTpl;
+        n++;
+        if (n <= 2) {
+          shortRtnEle += domTpl;
         }
-      });
-      const domTpl = getNewHtml(`已开通业务(${tmpArr.length})`, tmpArr.join('、'));
-      rtnEle += domTpl;
-      n++;
-      if (n <= 2) {
-        shortRtnEle += domTpl;
       }
     }
     // if (listItem.relatedLabels && listItem.relatedLabels.indexOf(q) > -1) {
