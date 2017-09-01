@@ -8,7 +8,7 @@ import React, { PropTypes, PureComponent } from 'react';
 import _ from 'lodash';
 import { Row, Col } from 'antd';
 import { autobind } from 'core-decorators';
-import Icon from '../../components/common/Icon';
+import Icon from '../../common/Icon';
 import styles from './performanceIndicators.less';
 
 const MILLION = '万';

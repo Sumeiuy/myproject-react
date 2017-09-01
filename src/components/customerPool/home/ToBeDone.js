@@ -8,8 +8,8 @@ import React, { PropTypes, PureComponent } from 'react';
 import { Row, Col } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { fspGlobal } from '../../utils';
-import { fspContainer } from '../../config';
+import { fspGlobal } from '../../../utils';
+import { fspContainer } from '../../../config';
 import styles from './toBeDone.less';
 
 export default class PerformanceIndicators extends PureComponent {

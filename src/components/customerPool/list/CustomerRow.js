@@ -10,22 +10,22 @@ import { Checkbox } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
-import { customerPoolBusiness } from '../../config';
+import { customerPoolBusiness } from '../../../config';
 
 import styles from './customerRow.less';
 
-import iconavator from '../../../static/images/icon-avator.png';
-import iconGeneralGgency from '../../../static/images/icon-general-agency.png';
-import iconProductAgency from '../../../static/images/icon-product-agency.png';
-import iconMoney from '../../../static/images/icon-money.png';
-import iconDiamond from '../../../static/images/icon-diamond-card.png';
-import iconGold from '../../../static/images/icon-gold-card.png';
-import iconSliver from '../../../static/images/icon-sliver-card.png';
-import iconWhiteGold from '../../../static/images/icon-white-gold.png';
-// import iconNone from '../../../static/images/icon-none.png';
-import iconEmpty from '../../../static/images/icon-empty.png';
-import iconClose from '../../../static/images/icon-close.png';
-import iconOpen from '../../../static/images/icon-open.png';
+import iconavator from '../../../../static/images/icon-avator.png';
+import iconGeneralGgency from '../../../../static/images/icon-general-agency.png';
+import iconProductAgency from '../../../../static/images/icon-product-agency.png';
+import iconMoney from '../../../../static/images/icon-money.png';
+import iconDiamond from '../../../../static/images/icon-diamond-card.png';
+import iconGold from '../../../../static/images/icon-gold-card.png';
+import iconSliver from '../../../../static/images/icon-sliver-card.png';
+import iconWhiteGold from '../../../../static/images/icon-white-gold.png';
+// import iconNone from '../../../../static/images/icon-none.png';
+import iconEmpty from '../../../../static/images/icon-empty.png';
+import iconClose from '../../../../static/images/icon-close.png';
+import iconOpen from '../../../../static/images/icon-open.png';
 
 import ChartLineWidget from './ChartLine';
 
@@ -109,8 +109,6 @@ const YI = 100000000;
 const UNIT_DEFAULT = '元';
 const UNIT_WAN = '万元';
 const UNIT_YI = '亿元';
-
-const trim = str => (str ? str.replace(/(^\s+)|(\s+$)/g, '') : '');
 
 const haveTitle = title => (title ? `<i class="tip">${title}</i>` : null);
 
@@ -370,7 +368,7 @@ export default class CustomerRow extends PureComponent {
     const lastestProfit = Number(this.getLastestData(monthlyProfits).assetProfit);
     const lastestProfitRate = Number(this.getLastestData(monthlyProfits).assetProfitRate);
     const matchedWord = this.matchWord(q, listItem);
-    const rskLev = trim(listItem.riskLvl);
+    const rskLev = _.trim(listItem.riskLvl);
     const newIdsArr = _.map(selectedIds, v => (v.id));
     const isChecked = _.includes(newIdsArr, listItem.custId) || isAllSelect || checked;
     // console.log('listItem', checked);

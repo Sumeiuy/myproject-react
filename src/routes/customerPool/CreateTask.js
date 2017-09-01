@@ -8,8 +8,8 @@ import React, { PropTypes, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import CreateTaskSuccess from '../../components/customerPool/CreateTaskSuccess';
-import CreateTaskFrom from '../../components/customerPool/CreateTaskForm';
+import CreateTaskSuccess from '../../components/customerPool/createTask/CreateTaskSuccess';
+import CreateTaskFrom from '../../components/customerPool/createTask/CreateTaskForm';
 import styles from './createTask.less';
 
 const effects = {

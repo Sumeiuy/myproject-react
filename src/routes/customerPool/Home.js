@@ -9,10 +9,10 @@ import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import PerformanceIndicators from '../../components/customerPool/PerformanceIndicators';
-import ToBeDone from '../../components/customerPool/ToBeDone';
+import PerformanceIndicators from '../../components/customerPool/home/PerformanceIndicators';
+import ToBeDone from '../../components/customerPool/home/ToBeDone';
 import { helper } from '../../utils';
-import Search from '../../components/customerPool/Search';
+import Search from '../../components/customerPool/home/Search';
 import styles from './home.less';
 
 const CUST_MANAGER = '1'; // 客户经理

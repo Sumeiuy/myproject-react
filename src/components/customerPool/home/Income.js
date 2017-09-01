@@ -7,7 +7,7 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import ReactDOM from 'react-dom';
-import IECharts from '../IECharts';
+import IECharts from '../../IECharts';
 import styles from './customerService.less';
 
 let COUNT = 0;

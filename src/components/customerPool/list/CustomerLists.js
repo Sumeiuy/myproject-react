@@ -9,9 +9,9 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { Pagination, Checkbox } from 'antd';
 
-import { fspContainer } from '../../config';
-import { fspGlobal } from '../../utils';
-import NoData from './NoData';
+import { fspContainer } from '../../../config';
+import { fspGlobal } from '../../../utils';
+import NoData from '../common/NoData';
 import CustomerRow from './CustomerRow';
 
 import styles from './customerLists.less';

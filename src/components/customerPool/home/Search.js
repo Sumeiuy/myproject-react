@@ -9,9 +9,9 @@ import { Icon as AntdIcon, Button, Input, AutoComplete, message } from 'antd';
 import ReactDOM from 'react-dom';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { fspContainer } from '../../config';
-import { fspGlobal } from '../../utils';
-import Icon from '../../components/common/Icon';
+import { fspContainer } from '../../../config';
+import { fspGlobal } from '../../../utils';
+import Icon from '../../common/Icon';
 import styles from './search.less';
 
 const Option = AutoComplete.Option;
