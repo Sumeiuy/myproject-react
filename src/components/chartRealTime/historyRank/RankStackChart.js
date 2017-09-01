@@ -377,7 +377,8 @@ export default class RankStackChart extends PureComponent {
           {
             rank.map((item, index) => {
               const key = `rank-${index}`;
-              const { current, change } = item;
+              const { change } = item;
+              let { current } = item;
               let rankClass;
               let changeText;
               let changeIcon;
@@ -396,6 +397,9 @@ export default class RankStackChart extends PureComponent {
                 });
                 changeText = change === 0 ? '不变' : `${Math.abs(change)}名`;
                 changeIcon = change === 0 ? '--' : (<Icon type={icon} />);
+              }
+              if (current === null) {
+                current = '--';
               }
               return (
                 <div key={key} className={styles.rankNumberAndChange}>
