@@ -3,7 +3,6 @@
  *  目标客户池模型管理
  * @author wangjunjun
  */
-import { routerRedux } from 'dva/router';
 import _ from 'lodash';
 import api from '../api';
 
@@ -20,9 +19,8 @@ export default {
     custRange: [],
     cycle: [],
     position: {},
-    process: 0,
+    process: {},
     empInfo: {},
-    motTaskCount: 0,
     dict: {},
     monthlyProfits: [],
     hotwds: {},
@@ -42,10 +40,12 @@ export default {
       total: 0,
     },
     searchHistoryVal: '',
-    taskDictionary: {},
     isAllSelect: false,
     selectedIds: [],
     cusGroupSaveResult: '',
+    createTaskResult: {},
+    cusGroupSaveMessage: '',
+    resultgroupId: '',
   },
   subscriptions: {
     setup({ dispatch }) {
@@ -88,17 +88,11 @@ export default {
       });
       const firstCycle = statisticalPeriod.resultData.kPIDateScopeType;
       // debugger;
-      // 代办流程(首页总数)
-      const agentProcess = yield call(api.getWorkFlowTaskCount);
+      // (首页总数)
+      const queryNumbers = yield call(api.getQueryNumbers);
       yield put({
         type: 'getWorkFlowTaskCountSuccess',
-        payload: { agentProcess },
-      });
-      // 今日可做任务总数
-      const motTaskcount = yield call(api.getMotTaskCount);
-      yield put({
-        type: 'getMotTaskCountSuccess',
-        payload: { motTaskcount },
+        payload: { queryNumbers },
       });
       // 绩效指标
       const indicators =
@@ -202,22 +196,24 @@ export default {
           type: 'addCusToGroupSuccess',
           payload: response,
         });
-        // yield put(routerRedux.push('/customerPool/addCusSuccess'));
       }
     },
     // 添加客户到新的分组
     * createCustGroup({ payload }, { call, put }) {
       if (!_.isEmpty(payload)) {
-        yield call(api.createCustGroup, payload);
-        yield put(routerRedux.push('/customerPool/addCusSuccess'));
+        const response = yield call(api.createCustGroup, payload);
+        yield put({
+          type: 'addCusToGroupSuccess',
+          payload: response,
+        });
       }
     },
-    // 自建任务字典
-    * getTaskDictionary({ payload }, { call, put }) {
-      const taskDictionary = yield call(api.getTaskDictionary, payload);
+    // 自建任务提交
+    * createTask({ payload }, { call, put }) {
+      const createTaskResult = yield call(api.createTask, payload);
       yield put({
-        type: 'getTaskDictionarySuccess',
-        payload: { taskDictionary },
+        type: 'createTaskSuccess',
+        payload: { createTaskResult },
       });
     },
   },
@@ -285,22 +281,13 @@ export default {
         cycle,
       };
     },
-    // 代办流程(首页总数)
+    // (首页总数)
     getWorkFlowTaskCountSuccess(state, action) {
-      const { payload: { agentProcess } } = action;
-      const process = agentProcess.resultData;
+      const { payload: { queryNumbers } } = action;
+      const process = queryNumbers.resultData;
       return {
         ...state,
         process,
-      };
-    },
-    // 今日可做任务总数
-    getMotTaskCountSuccess(state, action) {
-      const { payload: { motTaskcount } } = action;
-      const motTaskCount = motTaskcount.resultData;
-      return {
-        ...state,
-        motTaskCount,
       };
     },
     // 职责切换
@@ -394,6 +381,7 @@ export default {
           cusgroupPage: {
             total: 0,
           },
+          cusGroupSaveResult: '',
         };
       }
       const cusgroupPage = {
@@ -401,8 +389,9 @@ export default {
       };
       return {
         ...state,
-        cusgroupList: resultData.custGroupDtoList,
+        cusgroupList: resultData.custGroupDTOList,
         cusgroupPage,
+        cusGroupSaveResult: '',
       };
     },
     // 保存搜索内容
@@ -411,14 +400,6 @@ export default {
       return {
         ...state,
         searchHistoryVal: searchVal,
-      };
-    },
-    // 自建任务字典
-    getTaskDictionarySuccess(state, action) {
-      const { payload: { taskDictionary: { resultData } } } = action;
-      return {
-        ...state,
-        taskDictionary: resultData,
       };
     },
     // 保存是否全选
@@ -441,7 +422,15 @@ export default {
       const { payload: { resultData } } = action;
       return {
         ...state,
-        cusGroupSaveResult: resultData,
+        resultgroupId: resultData.groupId,
+      };
+    },
+    // 自建任务提交
+    createTaskSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        createTaskResult: payload,
       };
     },
   },

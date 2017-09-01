@@ -84,7 +84,7 @@ export default class Home extends PureComponent {
     custRange: PropTypes.array,
     cycle: PropTypes.array,
     position: PropTypes.object,
-    process: PropTypes.number,
+    process: PropTypes.object,
     motTaskCount: PropTypes.number,
     empInfo: PropTypes.object,
     hotPossibleWdsList: PropTypes.array,
@@ -100,7 +100,7 @@ export default class Home extends PureComponent {
     cycle: EMPTY_LIST,
     collectCustRange: () => { },
     position: EMPTY_OBJECT,
-    process: 0,
+    process: EMPTY_OBJECT,
     motTaskCount: 0,
     empInfo: EMPTY_OBJECT,
     hotPossibleWdsList: EMPTY_LIST,
@@ -395,7 +395,7 @@ export default class Home extends PureComponent {
         <div className={styles.content}>
           <ToBeDone
             push={push}
-            processData={process}
+            data={process}
             motTaskCountData={motTaskCount}
           />
           <PerformanceIndicators
