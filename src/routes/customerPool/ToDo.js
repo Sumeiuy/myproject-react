@@ -10,7 +10,7 @@ import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import { Input, Row, Col } from 'antd';
 
-import ToDoList from '../../components/customerPool/ToDoList';
+import ToDoList from '../../components/customerPool/todo/ToDoList';
 
 import styles from './todo.less';
 

@@ -7,7 +7,7 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { Row, Col } from 'antd';
 import _ from 'lodash';
-import IECharts from '../IECharts';
+import IECharts from '../../IECharts';
 import styles from './customerService.less';
 
 export default class CustomerService extends PureComponent {

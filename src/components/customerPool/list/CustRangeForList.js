@@ -8,8 +8,8 @@ import React, { PureComponent, PropTypes } from 'react';
 import _ from 'lodash';
 import { Select } from 'antd';
 
-import CustRange from './CustRange';
-import Icon from '../../components/common/Icon';
+import CustRange from '../common/CustRange';
+import Icon from '../../common/Icon';
 
 let KEYCOUNT = 0;
 

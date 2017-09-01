@@ -7,7 +7,7 @@
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import IECharts from '../IECharts';
+import IECharts from '../../IECharts';
 
 // y轴通用配置项
 const yAxisOptions = {

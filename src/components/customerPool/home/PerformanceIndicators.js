@@ -8,14 +8,14 @@ import React, { PropTypes, PureComponent } from 'react';
 import { Row, Col, Select } from 'antd';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
-import Icon from '../../components/common/Icon';
+import Icon from '../../common/Icon';
 import CustomerService from './CustomerService';
 import ProductSales from './ProductSales';
 import TradingVolume from './TradingVolume';
 import CustomerIndicators from './CustomerIndicators';
 import BusinessProcessing from './BusinessProcessing';
 import Income from './Income';
-import CustRange from './CustRange';
+import CustRange from '../common/CustRange';
 import styles from './performanceIndicators.less';
 
 const Option = Select.Option;

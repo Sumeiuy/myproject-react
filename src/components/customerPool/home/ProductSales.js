@@ -8,8 +8,8 @@ import React, { PropTypes, PureComponent } from 'react';
 import { Progress } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import Icon from '../../components/common/Icon';
-import { getMaxAndMinMoney } from '../chartRealTime/FixNumber';
+import Icon from '../../common/Icon';
+import { getMaxAndMinMoney } from '../../chartRealTime/FixNumber';
 import styles from './performanceIndicators.less';
 
 const MILLION = '万';

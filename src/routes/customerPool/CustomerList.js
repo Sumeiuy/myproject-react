@@ -12,11 +12,11 @@ import _ from 'lodash';
 import { Row, Col } from 'antd';
 
 // import Icon from '../../components/common/Icon';
-import CustRangeForList from '../../components/customerPool/CustRangeForList';
-import CustomerTotal from '../../components/customerPool/CustomerTotal';
-import Filter from '../../components/customerPool/Filter';
-import Reorder from '../../components/customerPool/Reorder';
-import CustomerLists from '../../components/customerPool/CustomerLists';
+import CustRangeForList from '../../components/customerPool/list/CustRangeForList';
+import CustomerTotal from '../../components/customerPool/list/CustomerTotal';
+import Filter from '../../components/customerPool/list/Filter';
+import Reorder from '../../components/customerPool/list/Reorder';
+import CustomerLists from '../../components/customerPool/list/CustomerLists';
 
 import styles from './customerlist.less';
 

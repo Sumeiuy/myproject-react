@@ -8,7 +8,7 @@ import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
-import Icon from '../../components/common/Icon';
+import Icon from '../../common/Icon';
 
 import styles from './reorder.less';
 

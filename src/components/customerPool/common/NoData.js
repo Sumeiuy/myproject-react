@@ -8,7 +8,7 @@ import React from 'react';
 
 import styles from './noData.less';
 
-import emptyImg from './empty.png';
+import emptyImg from '../../../../static/images/empty.png';
 
 const NoData = () => (
   <div className={styles.nodata}>

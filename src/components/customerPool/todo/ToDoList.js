@@ -7,11 +7,11 @@
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
 import { Table } from 'antd';
-import { fspGlobal } from '../../utils';
+import { fspGlobal } from '../../../utils';
 
 import styles from './toDoList.less';
 
-import emptyImg from './empty.png';
+import emptyImg from '../../../../static/images/empty.png';
 
 const columns = [
   {
