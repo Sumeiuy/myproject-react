@@ -368,6 +368,7 @@ export default class CustomerList extends PureComponent {
         curPageNum: 1,
       },
     });
+    // 筛选时清空已选中的数据、还原全选的状态
     saveIsAllSelect(false);
     saveSelectedIds(EMPTY_LIST);
     this.setState({
@@ -391,6 +392,7 @@ export default class CustomerList extends PureComponent {
         curPageNum: 1,
       },
     });
+    // 筛选时清空已选中的数据、还原全选的状态
     saveIsAllSelect(false);
     saveSelectedIds(EMPTY_LIST);
   }
