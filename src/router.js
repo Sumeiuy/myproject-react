@@ -16,7 +16,6 @@ import { fspContainer } from './config';
 import Main from './layouts/Main';
 
 import Empty from './routes/empty/Home';
-import BusinessHome from './routes/business/Home';
 import FeedBack from './routes/feedback/Home';
 import TemplModal from './routes/templeModal/Home';
 import BoardManageHome from './routes/boardManage/Home';
@@ -43,7 +42,6 @@ const routes = ({ history }) => (// eslint-disable-line
       <Route path="report" component={ReportHome} />
       <Route path="preview" component={PreviewReport} />
       <Route path="history" component={HistoryHome} />
-      <Route path="business" component={BusinessHome} />
       <Route path="feedback" component={FeedBack} />
       <Route path="modal" component={TemplModal} />
       <Route path="boardManage" component={BoardManageHome} />

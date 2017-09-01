@@ -371,7 +371,7 @@ export default class BoardSelect extends PureComponent {
               自定义看板<Icon type="right" />
             </li>
             {
-              canCustomBoard() ?
+              !canCustomBoard() ?
                 <li
                   onClick={this.menuClick}
                   data-key="0"

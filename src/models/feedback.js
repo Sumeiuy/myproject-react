@@ -7,7 +7,7 @@
 
 import { message } from 'antd';
 import _ from 'lodash';
-import api from '../api';
+import { feedbackApi as api } from '../api';
 import { helper } from '../utils';
 // import config from '../config/request';
 const EMPTY_OBJECT = {};

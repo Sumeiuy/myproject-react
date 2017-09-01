@@ -3,7 +3,7 @@
  *  全局模型管理
  * @author maoquan(maoquan@htsc.com)
  */
-import api from '../api';
+import { appApi as api } from '../api';
 import { EVENT_PROFILE_ACTION } from '../config/log';
 
 export default {

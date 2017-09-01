@@ -2,7 +2,7 @@
  *  @description 看板编辑页面的Model
  *  @author sunweibin
  */
-import api from '../api';
+import { editApi as api } from '../api';
 import { responseCode } from '../config';
 
 export default {
