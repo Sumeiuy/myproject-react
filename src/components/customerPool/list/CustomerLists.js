@@ -31,8 +31,8 @@ export default class CustomerLists extends PureComponent {
     source: PropTypes.string.isRequired,
     monthlyProfits: PropTypes.array.isRequired,
     location: PropTypes.object.isRequired,
-    isAllSelect: PropTypes.bool.isRequired,
-    selectedIds: PropTypes.array.isRequired,
+    isAllSelect: PropTypes.object.isRequired,
+    selectedIds: PropTypes.object.isRequired,
     saveIsAllSelect: PropTypes.func.isRequired,
     saveSelectedIds: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
@@ -97,27 +97,38 @@ export default class CustomerLists extends PureComponent {
 
   @autobind
   handleSingleSelect(id, name) {
-    const { selectedIds, saveSelectedIds } = this.props;
+    const { selectedIds, saveSelectedIds, source } = this.props;
     let flag = false;
-    selectedIds.forEach((v) => {
+    selectedIds[source].forEach((v) => {
       if (v.id === id && v.name === name) {
         flag = true;
       }
     });
     if (flag) {
-      saveSelectedIds(selectedIds.filter(v => v.id !== id));
+      saveSelectedIds({
+        ...selectedIds,
+        [source]: selectedIds[source].filter(v => v.id !== id),
+      });
     } else {
-      saveSelectedIds([...selectedIds, { id, name }]);
+      saveSelectedIds({
+        ...selectedIds,
+        [source]: [...selectedIds[source], { id, name }],
+      });
     }
   }
 
   @autobind
   selectAll(e) {
-    const isAllSelect = e.target.checked;
-    const { saveIsAllSelect, saveSelectedIds, selectedIds } = this.props;
-    saveIsAllSelect(isAllSelect);
-    const newSelectedIds = !isAllSelect ? selectedIds : EMPTY_ARRAY;
-    saveSelectedIds(newSelectedIds);
+    const isSelectAll = e.target.checked;
+    const { saveIsAllSelect, saveSelectedIds, selectedIds, isAllSelect, source } = this.props;
+    // const obj = {};
+    // obj[source] = isSelectAll
+    saveIsAllSelect({ ...isAllSelect, [source]: isSelectAll });
+    // const newSelectedIds = !isSelectAll ? selectedIds : EMPTY_ARRAY;
+    saveSelectedIds({
+      ...selectedIds,
+      [source]: EMPTY_ARRAY,
+    });
   }
 
   @autobind
@@ -128,10 +139,11 @@ export default class CustomerLists extends PureComponent {
       isAllSelect,
       selectedIds,
       condition,
+      source,
     } = this.props;
-    const selectCount = isAllSelect ? page.total : selectedIds.length;
-    if (!_.isEmpty(selectedIds)) {
-      this.openByIds(url, selectedIds, selectCount, title, id, entertype);
+    const selectCount = isAllSelect ? page.total : selectedIds[source].length;
+    if (!_.isEmpty(selectedIds[source])) {
+      this.openByIds(url, selectedIds[source], selectCount, title, id, entertype);
     } else if (isAllSelect) {
       this.openByAllSelect(url, condition, selectCount, title, id, entertype);
     }
@@ -234,6 +246,7 @@ export default class CustomerLists extends PureComponent {
       location,
       selectedIds,
       isAllSelect,
+      source,
     } = this.props;
     if (!custList.length) {
       return <div className="list-box"><NoData /></div>;
@@ -258,9 +271,9 @@ export default class CustomerLists extends PureComponent {
       curTotal = Number(page.total);
     }
     // 是否显示底部的发起任务和分组，全选或者有选中数据时才显示
-    const isShow = (!_.isEmpty(selectedIds) || isAllSelect) ? 'block' : 'none';
+    const isShow = (!_.isEmpty(selectedIds[source]) || isAllSelect) ? 'block' : 'none';
     // 已选中的条数：选择全选显示所有数据量，非全选显示选中的条数
-    const selectCount = isAllSelect ? page.total : selectedIds.length;
+    const selectCount = isAllSelect ? page.total : selectedIds[source].length;
     return (
       <div className="list-box">
         <div className={styles.selectAllBox}>
@@ -284,7 +297,7 @@ export default class CustomerLists extends PureComponent {
                 listItem={item}
                 q={q}
                 isAllSelect={isAllSelect}
-                selectedIds={selectedIds}
+                selectedIds={selectedIds[source]}
                 onChange={this.handleSingleSelect}
                 key={`${item.empId}-${item.custId}-${item.idNum}-${item.telephone}-${item.asset}`}
               />,

@@ -71,11 +71,11 @@ const mapDispatchToProps = {
   replace: routerRedux.replace,
   saveIsAllSelect: query => ({
     type: 'customerPool/saveIsAllSelect',
-    payload: query || false,
+    payload: query || {},
   }),
   saveSelectedIds: query => ({
     type: 'customerPool/saveSelectedIds',
-    payload: query || [],
+    payload: query || {},
   }),
 };
 
@@ -98,8 +98,8 @@ export default class CustomerList extends PureComponent {
     custList: PropTypes.array.isRequired,
     page: PropTypes.object.isRequired,
     monthlyProfits: PropTypes.array.isRequired,
-    isAllSelect: PropTypes.bool.isRequired,
-    selectedIds: PropTypes.array.isRequired,
+    isAllSelect: PropTypes.object.isRequired,
+    selectedIds: PropTypes.object.isRequired,
     saveIsAllSelect: PropTypes.func.isRequired,
     saveSelectedIds: PropTypes.func.isRequired,
   }
@@ -119,7 +119,7 @@ export default class CustomerList extends PureComponent {
       fspOrgId: '',
       createCustRange: [],
       expandAll: false,
-      queryParam: null,
+      queryParam: {},
     };
   }
 
@@ -369,8 +369,8 @@ export default class CustomerList extends PureComponent {
       },
     });
     // 筛选时清空已选中的数据、还原全选的状态
-    saveIsAllSelect(false);
-    saveSelectedIds(EMPTY_LIST);
+    saveIsAllSelect(EMPTY_OBJECT);
+    saveSelectedIds(EMPTY_OBJECT);
     this.setState({
       ...state,
     });
@@ -393,8 +393,8 @@ export default class CustomerList extends PureComponent {
       },
     });
     // 筛选时清空已选中的数据、还原全选的状态
-    saveIsAllSelect(false);
-    saveSelectedIds(EMPTY_LIST);
+    saveIsAllSelect(EMPTY_OBJECT);
+    saveSelectedIds(EMPTY_OBJECT);
   }
 
   @autobind
