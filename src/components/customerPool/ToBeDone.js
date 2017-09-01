@@ -65,12 +65,18 @@ export default class PerformanceIndicators extends PureComponent {
       todayToDoNumbers,
       workFlowNumbers } } = this.props;
     const url = '/customerPool/todo';
+    const notificationUrl = '/messgeCenter';
     const param = {
       closable: true,
       forceRefresh: true,
       isSpecialTab: true,
       id: 'FSP_TODOLIST',
       title: '待办流程列表',
+    };
+    const notificationParam = {
+      forceRefresh: false,
+      id: 'MESSAGE_CENTER',
+      title: '消息中心',
     };
     return (
       <div className={styles.toBeDoneBox}>
@@ -114,7 +120,7 @@ export default class PerformanceIndicators extends PureComponent {
             </Col>
             <Col span={6}>
               <div className={`${styles.item} ${styles.item_d}`}>
-                <a className="item" onClick={() => fspGlobal.openRctTab({ url, param })}>
+                <a className="item" onClick={() => fspGlobal.openRctTab({ notificationUrl, notificationParam })}>
                   <div className={styles.content}>
                     <h1>{this.processNum(notificationNumbers)}</h1>
                     <p>消息提醒</p>
