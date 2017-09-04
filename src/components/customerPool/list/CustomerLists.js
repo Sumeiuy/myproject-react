@@ -31,8 +31,8 @@ export default class CustomerLists extends PureComponent {
     source: PropTypes.string.isRequired,
     monthlyProfits: PropTypes.array.isRequired,
     location: PropTypes.object.isRequired,
-    isAllSelect: PropTypes.bool.isRequired,
-    selectedIds: PropTypes.array.isRequired,
+    isAllSelect: PropTypes.object.isRequired,
+    selectedIds: PropTypes.object.isRequired,
     saveIsAllSelect: PropTypes.func.isRequired,
     saveSelectedIds: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
@@ -97,27 +97,39 @@ export default class CustomerLists extends PureComponent {
 
   @autobind
   handleSingleSelect(id, name) {
-    const { selectedIds, saveSelectedIds } = this.props;
+    const { selectedIds, saveSelectedIds, source } = this.props;
     let flag = false;
-    selectedIds.forEach((v) => {
+    const selectedIdsArr = selectedIds[source] || [];
+    selectedIdsArr.forEach((v) => {
       if (v.id === id && v.name === name) {
         flag = true;
       }
     });
     if (flag) {
-      saveSelectedIds(selectedIds.filter(v => v.id !== id));
+      saveSelectedIds({
+        ...selectedIds,
+        [source]: selectedIdsArr.filter(v => v.id !== id),
+      });
     } else {
-      saveSelectedIds([...selectedIds, { id, name }]);
+      saveSelectedIds({
+        ...selectedIds,
+        [source]: [...selectedIdsArr, { id, name }],
+      });
     }
   }
 
   @autobind
   selectAll(e) {
-    const isAllSelect = e.target.checked;
-    const { saveIsAllSelect, saveSelectedIds, selectedIds } = this.props;
-    saveIsAllSelect(isAllSelect);
-    const newSelectedIds = !isAllSelect ? selectedIds : EMPTY_ARRAY;
-    saveSelectedIds(newSelectedIds);
+    const isSelectAll = e.target.checked;
+    const { saveIsAllSelect, saveSelectedIds, selectedIds, isAllSelect, source } = this.props;
+    // const obj = {};
+    // obj[source] = isSelectAll
+    saveIsAllSelect({ ...isAllSelect, [source]: isSelectAll });
+    // const newSelectedIds = !isSelectAll ? selectedIds : EMPTY_ARRAY;
+    saveSelectedIds({
+      ...selectedIds,
+      [source]: EMPTY_ARRAY,
+    });
   }
 
   @autobind
@@ -128,10 +140,11 @@ export default class CustomerLists extends PureComponent {
       isAllSelect,
       selectedIds,
       condition,
+      source,
     } = this.props;
-    const selectCount = isAllSelect ? page.total : selectedIds.length;
-    if (!_.isEmpty(selectedIds)) {
-      this.openByIds(url, selectedIds, selectCount, title, id, entertype);
+    const selectCount = isAllSelect ? page.total : selectedIds[source].length;
+    if (!_.isEmpty(selectedIds[source])) {
+      this.openByIds(url, selectedIds[source], selectCount, title, id, entertype);
     } else if (isAllSelect) {
       this.openByAllSelect(url, condition, selectCount, title, id, entertype);
     }
@@ -141,9 +154,10 @@ export default class CustomerLists extends PureComponent {
   @autobind
   openByIds(url, ids, count, title, id, entertype) {
     // debugger
-    const idStr = _.map(ids, v => (v.id)).join(',');
+    const idStr = encodeURIComponent(_.map(ids, v => (v.id)).join(','));
+    const name = encodeURIComponent(ids[0].name);
     if (document.querySelector(fspContainer.container)) {
-      const urlQuery = `ids=${encodeURIComponent(idStr)}&count=${count}&entertype=${entertype}&name=${ids[0].name}`;
+      const urlQuery = `ids=${idStr}&count=${count}&entertype=${entertype}&name=${name}`;
       const newurl = `${url}?${urlQuery}`;
       const param = {
         closable: true,
@@ -157,10 +171,10 @@ export default class CustomerLists extends PureComponent {
       this.props.push({
         pathname: url,
         query: {
-          ids: encodeURIComponent(idStr),
+          ids: idStr,
           count,
           entertype,
-          name: ids[0].name,
+          name,
         },
       });
     }
@@ -170,9 +184,10 @@ export default class CustomerLists extends PureComponent {
   @autobind
   openByAllSelect(url, condition, count, title, id, entertype) {
     // 全选时取整个列表的第一个数据的name属性值传给后续页面
-    const name = this.props.custList[0].name;
+    const name = encodeURIComponent(this.props.custList[0].name);
+    const condt = encodeURIComponent(JSON.stringify(condition));
     if (document.querySelector(fspContainer.container)) {
-      const newQuery = `condition=${encodeURIComponent(JSON.stringify(condition))}&count=${count}&entertype=${entertype}&name=${name}`;
+      const newQuery = `condition=${condt}&count=${count}&entertype=${entertype}&name=${name}`;
       const newurl = `${url}?${newQuery}`;
       const param = {
         closable: true,
@@ -186,7 +201,7 @@ export default class CustomerLists extends PureComponent {
       this.props.push({
         pathname: url,
         query: {
-          condition: encodeURIComponent(JSON.stringify(condition)),
+          condition: condt,
           count,
           entertype,
           name,
@@ -234,6 +249,7 @@ export default class CustomerLists extends PureComponent {
       location,
       selectedIds,
       isAllSelect,
+      source,
     } = this.props;
     if (!custList.length) {
       return <div className="list-box"><NoData /></div>;
@@ -257,16 +273,18 @@ export default class CustomerLists extends PureComponent {
     if (page.total) {
       curTotal = Number(page.total);
     }
+    const selectIdsArr = selectedIds[source] || EMPTY_ARRAY;
+    const isAllSelectBool = isAllSelect[source] || false;
     // 是否显示底部的发起任务和分组，全选或者有选中数据时才显示
-    const isShow = (!_.isEmpty(selectedIds) || isAllSelect) ? 'block' : 'none';
+    const isShow = (!_.isEmpty(selectIdsArr) || isAllSelectBool) ? 'block' : 'none';
     // 已选中的条数：选择全选显示所有数据量，非全选显示选中的条数
-    const selectCount = isAllSelect ? page.total : selectedIds.length;
+    const selectCount = isAllSelectBool ? page.total : selectIdsArr.length;
     return (
       <div className="list-box">
         <div className={styles.selectAllBox}>
           <div className="selectAll">
             <Checkbox
-              checked={isAllSelect}
+              checked={isAllSelectBool}
               onChange={this.selectAll}
             >
               全选
@@ -283,8 +301,8 @@ export default class CustomerLists extends PureComponent {
                 monthlyProfits={monthlyProfits}
                 listItem={item}
                 q={q}
-                isAllSelect={isAllSelect}
-                selectedIds={selectedIds}
+                isAllSelect={isAllSelectBool}
+                selectedIds={selectIdsArr}
                 onChange={this.handleSingleSelect}
                 key={`${item.empId}-${item.custId}-${item.idNum}-${item.telephone}-${item.asset}`}
               />,
@@ -303,7 +321,7 @@ export default class CustomerLists extends PureComponent {
             onShowSizeChange={onSizeChange}
           />
           <Checkbox
-            checked={isAllSelect}
+            checked={isAllSelectBool}
             onChange={this.selectAll}
             className={styles.selectAllTwo}
           >
