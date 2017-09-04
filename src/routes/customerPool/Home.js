@@ -112,6 +112,7 @@ export default class Home extends PureComponent {
 
   constructor(props) {
     super(props);
+    this.isGetAllInfo = true;
     this.state = {
       cycleSelect: '',
       orgId: '',
@@ -121,28 +122,35 @@ export default class Home extends PureComponent {
     };
   }
 
-  componentDidMount() {
-    const { custRange } = this.props;
-    if (custRange.length > 0) {
-      this.handleSetCustRange(this.props);
-    }
-  }
-
   componentWillReceiveProps(nextProps) {
-    const { location: preLocation,
+    const {
       position: prePosition,
+      empInfo: { empInfo: prevEmpInfo = EMPTY_OBJECT },
+      location: { query: prevQuery = EMPTY_OBJECT },
       cycle: preCycle,
-      empInfo: preEmpInfo } = this.props;
-    const { location: nextLocation,
+      // custRange: prevCustRange = EMPTY_LIST,
+    } = this.props;
+
+    const {
       position: nextPosition,
       cycle: nextCycle,
-      empInfo: nextEmpInfo } = nextProps;
+      custRange = EMPTY_LIST,
+      location: { query = EMPTY_OBJECT },
+      empInfo: { empInfo: nextEmpInfo = EMPTY_OBJECT, empRespList = EMPTY_LIST },
+   } = nextProps;
+
     const { orgId: preOrgId } = prePosition;
     const { orgId: nextOrgId } = nextPosition;
+
+    // FSP职责切换，position变化
     if (preOrgId !== nextOrgId) {
       this.setState({
         fspOrgId: nextOrgId,
-        createCustRange: this.handleCreateCustRange(nextOrgId, nextProps),
+        createCustRange: this.handleCreateCustRange({
+          orgId: nextOrgId,
+          empInfo: nextEmpInfo,
+          custRange,
+        }),
       }, this.getIndicators);
     }
     if (preCycle !== nextCycle) {
@@ -150,8 +158,17 @@ export default class Home extends PureComponent {
         cycleSelect: nextCycle[0].key,
       });
     }
-    if (preEmpInfo !== nextEmpInfo || preLocation !== nextLocation) {
-      this.handleSetCustRange(nextProps);
+
+    // 问题出在这里，在第一次比较empInfo的时候，custRange有可能还没回来，再等第二次比较
+    // empInfo，这时候empInfo已经相等，所以custRange有值也不走getAllInfo了
+    if (prevEmpInfo !== nextEmpInfo || query !== prevQuery
+      || (!_.isEmpty(custRange) && this.isGetAllInfo)) {
+      this.handleSetCustRange({
+        empInfo: nextEmpInfo,
+        empRespList,
+        query,
+        custRange,
+      });
     }
   }
 
@@ -177,13 +194,18 @@ export default class Home extends PureComponent {
   }
 
   @autobind
-  handleSetCustRange(props) {
-    const { location: { query }, custRange,
-      empInfo: { empInfo = EMPTY_OBJECT, empRespList = EMPTY_LIST } } = props;
+  handleSetCustRange(params) {
+    const {
+      empInfo,
+      empRespList,
+      query,
+      custRange,
+    } = params;
     const { occDivnNum = '' } = empInfo;
     const { orgId } = query;
     const occ = _.isEmpty(occDivnNum) ? '' : occDivnNum;// orgId取不到的情况下去用户信息中的
     const fspOrgid = _.isEmpty(window.forReactPosition) ? occ : window.forReactPosition.orgId;
+    // url中存在orgid，则取url中的orgid，不然取fspOrgid
     const orgid = _.isEmpty(orgId) // window.forReactPosition
       ?
       fspOrgid
@@ -193,22 +215,26 @@ export default class Home extends PureComponent {
       fspOrgId: respIdOfPosition < 0 ? '' : orgid,
       orgId: respIdOfPosition < 0 ? '' : orgid, // 组织ID
     }, () => {
-      if (custRange.length > 0) {
+      if (custRange.length > 0 && this.isGetAllInfo) {
         this.handleGetAllInfo(custRange);
       }
     });
-    return true;
   }
 
   @autobind
   handleGetAllInfo(custRangeData = EMPTY_LIST) {
-    const { getAllInfo, cycle, getHotWds, getHistoryWdsList } = this.props;
+    const { getAllInfo, cycle, getHotWds, getHistoryWdsList, empInfo, custRange } = this.props;
     const { fspOrgId } = this.state;
     let custType = ORG;
     const orgsId = custRangeData.length > 0 ? custRangeData[0].id : '';
     this.setState({
-      createCustRange: this.handleCreateCustRange(fspOrgId, this.props),
+      createCustRange: this.handleCreateCustRange({
+        empInfo,
+        custRange,
+        orgId: fspOrgId,
+      }),
     });
+
     if (fspOrgId !== orgsId) {
       this.setState({
         expandAll: true,
@@ -237,6 +263,9 @@ export default class Home extends PureComponent {
         orgId: fspOrgId, // 组织ID
       },
     });
+
+    // 重置
+    this.isGetAllInfo = false;
   }
 
   // 此方法用来修改Duration 和 Org数据
@@ -302,12 +331,16 @@ export default class Home extends PureComponent {
     });
   }
 
+  /**
+   * 创建客户范围
+   * @param {*} orgId 组织机构Id
+   * @param {*} nextProps 最新的props
+   */
   @autobind
-  handleCreateCustRange(orgId, nextProps) {
-    const { empInfo, custRange } = nextProps;
+  handleCreateCustRange(params) {
+    const { empInfo, custRange, orgId } = params;
     const { empPostnList = EMPTY_LIST,
       empRespList = EMPTY_LIST } = empInfo; // 1-46IDNZI HTSC_RESPID
-    const { fspOrgId } = this.state;
     let orgNewCustRange = [];
     const newCustRrange = [];
     const myCustomer = {
@@ -319,7 +352,7 @@ export default class Home extends PureComponent {
       newCustRrange.push(myCustomer);
       return newCustRrange;
     }
-    let newOrgId = fspOrgId;
+    let newOrgId;
     if (!_.isEmpty(orgId)) {
       newOrgId = orgId;
     }
@@ -329,15 +362,19 @@ export default class Home extends PureComponent {
     if (newOrgId === custRange[0].id) {
       return custRange;
     }
+    // 打开级联下拉框
     this.setState({
       expandAll: true,
     });
     orgNewCustRange = _.findIndex(custRange, item => item.id === newOrgId);
     let newData;
-    if (orgNewCustRange > -1) { // 总机构内
+    if (orgNewCustRange > -1) {
+      // 总机构内
       newData = custRange[orgNewCustRange];
       newCustRrange.push(newData);
-    } else { // 职位中去查找
+    } else {
+      // 职位中去查找
+      // 找到符合的那一条职位
       orgNewCustRange = _.findIndex(empPostnList, item => item.orgId === newOrgId);
       if (orgNewCustRange > -1) {
         const org = {
