@@ -399,6 +399,7 @@ export default class Home extends PureComponent {
             motTaskCountData={motTaskCount}
           />
           <PerformanceIndicators
+            push={push}
             indicators={performanceIndicators}
             custRange={createCustRange}
             updateQueryState={this.updateQueryState}

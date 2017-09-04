@@ -5,6 +5,7 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
+import { autobind } from 'core-decorators';
 import { Row, Col } from 'antd';
 import Icon from '../../common/Icon';
 import styles from './performanceIndicators.less';
@@ -12,6 +13,7 @@ import styles from './performanceIndicators.less';
 export default class BusinessProcessing extends PureComponent {
   static propTypes = {
     data: PropTypes.object,
+    push: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -57,6 +59,18 @@ export default class BusinessProcessing extends PureComponent {
     return (<b title={`${str}`}>{str}</b>);
   }
 
+  @autobind
+  linkTo(Rights) {
+    const { push } = this.props;
+    push({
+      pathname: '/customerPool/list',
+      query: {
+        source: 'business',
+        Rights,
+      },
+    });
+  }
+
   render() {
     const { data } = this.props;
     const {
@@ -80,7 +94,12 @@ export default class BusinessProcessing extends PureComponent {
                 <Col span={9}>
                   <ul>
                     <li>
-                      <p>{this.numFormat(cftCust || '--')}</p>
+                      <p
+                        className={styles.pointer}
+                        onClick={() => { this.linkTo('817170'); }}
+                      >
+                        {this.numFormat(cftCust || '--')}
+                      </p>
                       <div>涨乐财富通</div>
                     </li>
                   </ul>
@@ -88,7 +107,12 @@ export default class BusinessProcessing extends PureComponent {
                 <Col span={8}>
                   <ul>
                     <li>
-                      <p>{this.numFormat(ttfCust || '--')}</p>
+                      <p
+                        className={styles.pointer}
+                        onClick={() => { this.linkTo('817050'); }}
+                      >
+                        {this.numFormat(ttfCust || '--')}
+                      </p>
                       <div>天天发</div>
                     </li>
                   </ul>
@@ -96,7 +120,12 @@ export default class BusinessProcessing extends PureComponent {
                 <Col span={7}>
                   <ul>
                     <li className={styles.bd_un_r}>
-                      <p>{this.numFormat(rzrqCust || '--')}</p>
+                      <p
+                        className={styles.pointer}
+                        onClick={() => { this.linkTo('817030'); }}
+                      >
+                        {this.numFormat(rzrqCust || '--')}
+                      </p>
                       <div>融资融券</div>
                     </li>
                   </ul>
@@ -106,7 +135,12 @@ export default class BusinessProcessing extends PureComponent {
                 <Col span={9}>
                   <ul>
                     <li>
-                      <p>{this.numFormat(shHkCust || '--')}</p>
+                      <p
+                        className={styles.pointer}
+                        onClick={() => { this.linkTo('817200'); }}
+                      >
+                        {this.numFormat(shHkCust || '--')}
+                      </p>
                       <div>沪港通</div>
                     </li>
                   </ul>
@@ -114,7 +148,12 @@ export default class BusinessProcessing extends PureComponent {
                 <Col span={8}>
                   <ul>
                     <li>
-                      <p>{this.numFormat(szHkCust || '--')}</p>
+                      <p
+                        className={styles.pointer}
+                        onClick={() => { this.linkTo('817440'); }}
+                      >
+                        {this.numFormat(szHkCust || '--')}
+                      </p>
                       <div>深港通</div>
                     </li>
                   </ul>
@@ -122,7 +161,12 @@ export default class BusinessProcessing extends PureComponent {
                 <Col span={7}>
                   <ul>
                     <li className={styles.bd_un_r}>
-                      <p>{this.numFormat(optCust || '--')}</p>
+                      <p
+                        className={styles.pointer}
+                        onClick={() => { this.linkTo('817270'); }}
+                      >
+                        {this.numFormat(optCust || '--')}
+                      </p>
                       <div>期权</div>
                     </li>
                   </ul>

@@ -26,6 +26,7 @@ export default class PerformanceIndicators extends PureComponent {
     customersData: PropTypes.array,
     custRange: PropTypes.array,
     replace: PropTypes.func.isRequired,
+    push: PropTypes.func.isRequired,
     updateQueryState: PropTypes.func.isRequired,
     collectCustRange: PropTypes.func.isRequired,
     cycle: PropTypes.array,
@@ -77,6 +78,7 @@ export default class PerformanceIndicators extends PureComponent {
       cycle,
       expandAll,
       selectValue,
+      push,
     } = this.props;
     const {
       cftCust,
@@ -178,6 +180,7 @@ export default class PerformanceIndicators extends PureComponent {
               </Col>
               <Col span={8}>
                 <BusinessProcessing
+                  push={push}
                   data={businessProcessing}
                 />
               </Col>
