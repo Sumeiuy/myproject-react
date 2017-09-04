@@ -161,7 +161,8 @@ export default class Home extends PureComponent {
 
     // 问题出在这里，在第一次比较empInfo的时候，custRange有可能还没回来，再等第二次比较
     // empInfo，这时候empInfo已经相等，所以custRange有值也不走getAllInfo了
-    if ((prevEmpInfo !== nextEmpInfo || query !== prevQuery) && this.isGetAllInfo) {
+    if (prevEmpInfo !== nextEmpInfo || query !== prevQuery
+      || (!_.isEmpty(custRange) && this.isGetAllInfo)) {
       this.handleSetCustRange({
         empInfo: nextEmpInfo,
         empRespList,
@@ -169,10 +170,6 @@ export default class Home extends PureComponent {
         custRange,
       });
     }
-  }
-
-  componentDidUpdate() {
-    this.isGetAllInfo = true;
   }
 
   @autobind
@@ -267,7 +264,7 @@ export default class Home extends PureComponent {
       },
     });
 
-    // 重置获取信息的标记
+    // 重置
     this.isGetAllInfo = false;
   }
 
