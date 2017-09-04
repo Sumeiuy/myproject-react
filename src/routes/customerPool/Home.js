@@ -20,7 +20,6 @@ const CUST_MANAGER = '1'; // 客户经理
 const ORG = '3'; // 组织机构
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
-let isGetAllInfo = true;
 const HTSC_RESPID = '1-46IDNZI'; // 首页指标查询
 const effects = {
   allInfo: 'customerPool/getAllInfo',
@@ -113,6 +112,7 @@ export default class Home extends PureComponent {
 
   constructor(props) {
     super(props);
+    this.isGetAllInfo = true;
     this.state = {
       cycleSelect: '',
       orgId: '',
@@ -161,7 +161,7 @@ export default class Home extends PureComponent {
 
     // 问题出在这里，在第一次比较empInfo的时候，custRange有可能还没回来，再等第二次比较
     // empInfo，这时候empInfo已经相等，所以custRange有值也不走getAllInfo了
-    if ((prevEmpInfo !== nextEmpInfo || query !== prevQuery) && isGetAllInfo) {
+    if ((prevEmpInfo !== nextEmpInfo || query !== prevQuery) && this.isGetAllInfo) {
       this.handleSetCustRange({
         empInfo: nextEmpInfo,
         empRespList,
@@ -172,7 +172,7 @@ export default class Home extends PureComponent {
   }
 
   componentDidUpdate() {
-    isGetAllInfo = true;
+    this.isGetAllInfo = true;
   }
 
   @autobind
@@ -218,7 +218,7 @@ export default class Home extends PureComponent {
       fspOrgId: respIdOfPosition < 0 ? '' : orgid,
       orgId: respIdOfPosition < 0 ? '' : orgid, // 组织ID
     }, () => {
-      if (custRange.length > 0 && isGetAllInfo) {
+      if (custRange.length > 0 && this.isGetAllInfo) {
         this.handleGetAllInfo(custRange);
       }
     });
@@ -268,7 +268,7 @@ export default class Home extends PureComponent {
     });
 
     // 重置获取信息的标记
-    isGetAllInfo = false;
+    this.isGetAllInfo = false;
   }
 
   // 此方法用来修改Duration 和 Org数据
