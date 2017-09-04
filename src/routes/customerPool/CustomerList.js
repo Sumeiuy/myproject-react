@@ -357,6 +357,8 @@ export default class CustomerList extends PureComponent {
     const {
       saveIsAllSelect,
       saveSelectedIds,
+      selectedIds,
+      isAllSelect,
       replace,
       location: { query, pathname },
     } = this.props;
@@ -369,8 +371,11 @@ export default class CustomerList extends PureComponent {
       },
     });
     // 筛选时清空已选中的数据、还原全选的状态
-    saveIsAllSelect(EMPTY_OBJECT);
-    saveSelectedIds(EMPTY_OBJECT);
+    saveIsAllSelect({ ...isAllSelect, [query.source]: false });
+    saveSelectedIds({
+      ...selectedIds,
+      [query.source]: EMPTY_LIST,
+    });
     this.setState({
       ...state,
     });
@@ -381,6 +386,8 @@ export default class CustomerList extends PureComponent {
     const {
       saveIsAllSelect,
       saveSelectedIds,
+      isAllSelect,
+      selectedIds,
       replace,
       location: { query, pathname },
     } = this.props;
@@ -393,8 +400,11 @@ export default class CustomerList extends PureComponent {
       },
     });
     // 筛选时清空已选中的数据、还原全选的状态
-    saveIsAllSelect(EMPTY_OBJECT);
-    saveSelectedIds(EMPTY_OBJECT);
+    saveIsAllSelect({ ...isAllSelect, [query.source]: false });
+    saveSelectedIds({
+      ...selectedIds,
+      [query.source]: EMPTY_LIST,
+    });
   }
 
   @autobind
