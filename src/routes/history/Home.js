@@ -186,9 +186,6 @@ export default class HistoryHome extends PureComponent {
       const { custRange } = nextProps;
       const ownerOrg = custRange[0];
       const timeStamp = new Date().getTime().toString();
-      // TODO 此处需要等到时间选择器完成提供方法
-      // const { begin, end, cycleType } = getDurationString('month');
-
       const defaultMoment = this.setDefaultMoment();
       this.setState({
         swtichDefault: timeStamp,
@@ -204,6 +201,7 @@ export default class HistoryHome extends PureComponent {
         orgId: ownerOrg && ownerOrg.id, // 用户当前选择的组织机构Id
         ownerOrgId: ownerOrg && ownerOrg.id, // 用户所属的组织机构Id
         coreIndicatorIds: [],
+        indicatorId: '', // 需要清除选中的core值
       },
         () => {
           this.queryInitial();
