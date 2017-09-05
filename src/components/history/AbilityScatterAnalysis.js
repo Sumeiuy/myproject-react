@@ -5,6 +5,7 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { Select } from 'antd';
 import { autobind } from 'core-decorators';
+import classnames from 'classnames';
 import _ from 'lodash';
 import CommonScatter from '../chartRealTime/CommonScatter';
 import imgSrc from '../../../static/images/noChart.png';
@@ -14,6 +15,7 @@ import {
   EXCEPT_CUST_TOUGU_TGJX_MAP,
   EXCEPT_TOUGU_JYYJ_MAP,
 } from '../../config/SpecialIndicators';
+import { optionsMap } from '../../config';
 import { constructScatterData } from './ConstructScatterData';
 import { constructScatterOptions } from './ConstructScatterOptions';
 import styles from './abilityScatterAnalysis.less';
@@ -25,6 +27,9 @@ const EMPTY_OBJECT = {};
 
 const YI = '亿';
 const WAN = '万';
+
+// 按类别排序
+const sortByType = optionsMap.sortByType;
 
 export default class AbilityScatterAnalysis extends PureComponent {
   static propTypes = {
@@ -39,6 +44,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
     contrastType: PropTypes.string.isRequired,
     isLvIndicator: PropTypes.bool.isRequired,
     level: PropTypes.string.isRequired,
+    scope: PropTypes.string,
     boardType: PropTypes.string.isRequired,
     currentSelectIndicatorKey: PropTypes.string.isRequired,
     isCommissionRate: PropTypes.bool.isRequired,
@@ -46,18 +52,24 @@ export default class AbilityScatterAnalysis extends PureComponent {
 
   static defaultProps = {
     optionsData: EMPTY_LIST,
+    scope: '2', // 查询数据的维度
   };
 
   constructor(props) {
     super(props);
     const options = this.makeOptions(props.optionsData);
+    const { scope } = props; // scope为维度
     // 默认第一个选项
     this.state = {
+      scopeSelectValue: scope,
+      scope,
       scatterElemHeight: 360,
       finalData: {},
       isShowTooltip: false,
-      orgName: '',
-      parentOrgName: '',
+      level1Name: '',
+      level2Name: '',
+      level3Name: '',
+      level4Name: '',
       finalOptions: options,
       selectValue: !_.isEmpty(options) && options[0].value,
       averageInfo: '',
@@ -75,8 +87,10 @@ export default class AbilityScatterAnalysis extends PureComponent {
       switchDefault: nextSwitch,
       isLvIndicator,
       isCommissionRate,
+      scope,
      } = nextProps;
     const {
+      scope: preScope,
       description,
       optionsData: prevOptions,
       switchDefault: prevSwitch,
@@ -86,6 +100,13 @@ export default class AbilityScatterAnalysis extends PureComponent {
       contrast = EMPTY_OBJECT,
       scatterDiagramModels = EMPTY_LIST,
     } = nextData;
+
+    if (!_.isEqual(preScope, scope) || !_.isEqual(prevSwitch, nextSwitch)) {
+      this.setState({
+        scopeSelectValue: scope,
+        scope,
+      });
+    }
 
     // 有值就构造图表数据
     if (!_.isEmpty(scatterDiagramModels)) {
@@ -245,6 +266,11 @@ export default class AbilityScatterAnalysis extends PureComponent {
   }
 
   @autobind
+  getPopupContainer() {
+    return document.querySelector('.react-app');
+  }
+
+  @autobind
   makeOptions(optionsData) {
     if (_.isEmpty(optionsData)) {
       return EMPTY_LIST;
@@ -365,13 +391,19 @@ export default class AbilityScatterAnalysis extends PureComponent {
         average,
       } } = this.state;
 
-    const { data: [xAxisData, yAxisData, { orgName, parentOrgName }] } = params;
+    const { data: [
+        xAxisData,
+        yAxisData,
+        { level1Name, level2Name, level3Name, level4Name },
+      ] } = params;
 
     if (isShowTooltip) {
       // 设置state，切换tooltip的显示信息
       this.setState({
-        orgName,
-        parentOrgName,
+        level1Name,
+        level2Name,
+        level3Name,
+        level4Name,
       });
       this.constructTooltipInfo({
         currentSelectX: xAxisData,
@@ -397,6 +429,21 @@ export default class AbilityScatterAnalysis extends PureComponent {
     queryContrastAnalyze({
       type,
       contrastIndicatorId: value, // y轴
+    });
+  }
+
+  // 切换维度
+  @autobind
+  handleScopeChange(v) {
+    this.setState({
+      scopeSelectValue: v,
+    });
+    const { queryContrastAnalyze, type } = this.props;
+    const { selectValue } = this.state;
+    queryContrastAnalyze({
+      type,
+      scope: v,
+      contrastIndicatorId: selectValue,
     });
   }
 
@@ -440,22 +487,34 @@ export default class AbilityScatterAnalysis extends PureComponent {
     const {
       scatterElemHeight,
       isShowTooltip,
-      orgName,
-      parentOrgName,
+      level1Name,
+      level2Name,
+      level3Name,
+      level4Name,
       tooltipInfo,
       finalData,
       selectValue,
       finalOptions,
       averageInfo,
       scatterOptions,
+      scopeSelectValue,
     } = this.state;
-
     const {
+      level,
+      boardType,
       title,
       style,
       contrastType,
       isLvIndicator,
     } = this.props;
+
+    // 隐藏选项
+    const toggleScope2Option = classnames({
+      hideOption: Number(level) !== 1,
+    });
+    const toggleScope3Option = classnames({
+      hideOption: Number(level) === 3,
+    });
 
 
     if (_.isEmpty(finalData)) {
@@ -475,6 +534,39 @@ export default class AbilityScatterAnalysis extends PureComponent {
           className={styles.abilityHeader}
         >
           <div className={styles.title}>{title}</div>
+          <div className={styles.customerDimensionSelect}>
+            <Select
+              style={{ width: 90 }}
+              value={scopeSelectValue}
+              onChange={this.handleScopeChange}
+              getPopupContainer={this.getPopupContainer}
+            >
+              {
+                sortByType[boardType].map((item, index) => {
+                  const sortByTypeIndex = index;
+                  let optionClass = '';
+                  // 按投顾所有级别均存在
+                  if (index === 0) {
+                    // 按分公司
+                    optionClass = toggleScope2Option;
+                  }
+                  if (index === 1) {
+                    // 按营业部
+                    optionClass = toggleScope3Option;
+                  }
+                  return (
+                    <Option
+                      className={optionClass}
+                      key={sortByTypeIndex}
+                      value={item.scope}
+                    >
+                      按{item.name}
+                    </Option>
+                  );
+                })
+              }
+            </Select>
+          </div>
           <div className={styles.customerDimensionSelect}>
             <span className={styles.contrastType}>{contrastType}</span>
             <Select
@@ -526,7 +618,12 @@ export default class AbilityScatterAnalysis extends PureComponent {
                   <div className={styles.description}>
                     <div className={styles.orgDes}>
                       <i className={styles.desIcon} />
-                      <span>{_.isEmpty(parentOrgName) ? '' : `${parentOrgName}-`}{orgName}:</span>
+                      <span>
+                        {_.isEmpty(level1Name) ? '' : `${level1Name}`}
+                        {_.isEmpty(level2Name) ? '' : `-${level2Name}`}
+                        {_.isEmpty(level3Name) ? '' : `-${level3Name}`}
+                        {_.isEmpty(level4Name) ? '' : `-${level4Name}`}:
+                      </span>
                     </div>
                     <div className={styles.detailDesc}>
                       <span>{tooltipInfo}</span>
