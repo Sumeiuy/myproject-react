@@ -19,6 +19,7 @@ import {
   fixedPeopleMaxMin,
   dealStackSeiesHu,
 } from './chartData';
+import { transform2array } from '../../utils/helper';
 import { stackTooltip } from './chartTooltipConfig';
 import IECharts from '../IECharts';
 import { iconTypeMap, ZHUNICODE } from '../../config';
@@ -30,16 +31,6 @@ const getIcon = iconTypeMap.getIcon;
 const REN = ZHUNICODE.REN;
 const HU = ZHUNICODE.HU;
 const YUAN = ZHUNICODE.YUAN;
-
-const arrayTransform = (arr) => {
-  let tmpArr = arr.slice();
-  arr.forEach((v) => {
-    if (v.children) {
-      tmpArr = [...tmpArr, ...v.children];
-    }
-  });
-  return tmpArr;
-};
 
 export default class ChartBarStack extends PureComponent {
 
@@ -71,7 +62,7 @@ export default class ChartBarStack extends PureComponent {
     // 先进行初始化的处理
     this.handleResize();
     this.registerResizeListener();
-    this.custRange = arrayTransform(this.props.custRange);
+    this.custRange = transform2array(this.props.custRange);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -92,6 +83,7 @@ export default class ChartBarStack extends PureComponent {
 
   @autobind
   onReady(instance) {
+    this.instance = instance;
     instance.on('click', (arg) => {
       if (arg.componentType !== 'yAxis') {
         return;
@@ -107,6 +99,8 @@ export default class ChartBarStack extends PureComponent {
         }
       });
     });
+    instance.on('mouseover', this.registerMouseover);
+    instance.on('mouseout', this.registerMouseout);
   }
 
   @autobind
@@ -118,6 +112,30 @@ export default class ChartBarStack extends PureComponent {
   setHeight(wrapperH) {
     this.setState({
       wrapperH,
+    });
+  }
+
+  @autobind
+  registerMouseover(arg) {
+    if (arg.componentType !== 'yAxis') {
+      return;
+    }
+    if (arg.value === '--') {
+      return;
+    }
+    const index = _.findIndex(this.state.yAxisLabels, o => o === arg.value);
+    this.setState({
+      mouseoverLabelIndex: index,
+    });
+  }
+
+  @autobind
+  registerMouseout(arg) {
+    if (arg.componentType !== 'yAxis') {
+      return;
+    }
+    this.setState({
+      mouseoverLabelIndex: '',
     });
   }
 
@@ -167,6 +185,7 @@ export default class ChartBarStack extends PureComponent {
     // 此为后面需要修改echarts的series做准备
     if (flag) {
       this.state = {
+        mouseoverLabelIndex: '',
         wrapperH: 0,
         chartName: name,
         iconType,
@@ -185,6 +204,7 @@ export default class ChartBarStack extends PureComponent {
       };
     } else {
       this.setState({
+        mouseoverLabelIndex: '',
         iconType,
         unit,
         key,
@@ -199,6 +219,13 @@ export default class ChartBarStack extends PureComponent {
         grid,
         legendState: {},
       });
+      const echart = this.instance;
+      if (echart) {
+        echart.off('mouseover', this.registerMouseover);
+        echart.off('mouseout', this.registerMouseout);
+        echart.on('mouseover', this.registerMouseover);
+        echart.on('mouseout', this.registerMouseout);
+      }
     }
   }
 
@@ -346,6 +373,7 @@ export default class ChartBarStack extends PureComponent {
       stackSeries,
       grid,
       legendState,
+      mouseoverLabelIndex,
     } = this.state;
 
     // eCharts的配置项
@@ -485,6 +513,11 @@ export default class ChartBarStack extends PureComponent {
               return `${value.substr(0, 4)}...`;
             }
             return value;
+          },
+          textStyle: {
+            color(v, index) {
+              return index === mouseoverLabelIndex ? '#348cf0' : '#999';
+            },
           },
         },
         triggerEvent: true,
