@@ -7,6 +7,8 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import { Row, Col } from 'antd';
+import { fspContainer } from '../../../config';
+import { fspGlobal, helper } from '../../../utils';
 import Icon from '../../common/Icon';
 import styles from './performanceIndicators.less';
 
@@ -61,14 +63,28 @@ export default class BusinessProcessing extends PureComponent {
 
   @autobind
   linkTo(Rights) {
-    const { push } = this.props;
-    push({
-      pathname: '/customerPool/list',
-      query: {
-        source: 'business',
-        Rights,
-      },
-    });
+    const pathname = '/customerPool/list';
+    const obj = {
+      source: 'business',
+      Rights,
+    };
+    if (document.querySelector(fspContainer.container)) {
+      const url = `${pathname}?${helper.queryToString(obj)}`;
+      const param = {
+        closable: true,
+        forceRefresh: true,
+        isSpecialTab: true,
+        id: 'RCT_FSP_BUSINESS',
+        title: '业务目标客户',
+      };
+      fspGlobal.openRctTab({ url, param });
+    } else {
+      const { push } = this.props;
+      push({
+        pathname,
+        query: obj,
+      });
+    }
   }
 
   render() {
