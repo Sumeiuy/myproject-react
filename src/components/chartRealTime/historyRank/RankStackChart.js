@@ -60,6 +60,9 @@ export default class RankStackChart extends PureComponent {
       if (arg.componentType !== 'series') {
         return;
       }
+      if (arg.name === '--') {
+        return;
+      }
       this.custRange.forEach((item) => {
         if (arg.name === item.name) {
           this.props.updateQueryState({
@@ -194,6 +197,7 @@ export default class RankStackChart extends PureComponent {
     const flag = name === 'max-label';
     const position = flag ? 'insideRight' : 'insideLeft';
     const textColor = flag ? '#999' : '#333';
+    const hoverTextColor = flag ? '#999' : '#348cf0';
     return {
       name,
       data,
@@ -221,7 +225,7 @@ export default class RankStackChart extends PureComponent {
         },
         emphasis: {
           show: true,
-          textStyle: { color: '#348cf0' },
+          textStyle: { color: hoverTextColor },
         },
       },
     };

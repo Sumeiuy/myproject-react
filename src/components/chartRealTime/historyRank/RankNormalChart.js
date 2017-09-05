@@ -183,6 +183,7 @@ export default class RankNormalChart extends PureComponent {
     const position = flag ? 'insideRight' : 'insideLeft';
     const textColor = flag ? '#999' : '#333';
     const itemColor = 'transparent';
+    const hoverTextColor = flag ? '#999' : '#348cf0';
     return {
       name,
       data,
@@ -210,7 +211,7 @@ export default class RankNormalChart extends PureComponent {
         },
         emphasis: {
           show: true,
-          textStyle: { color: '#348cf0' },
+          textStyle: { color: hoverTextColor },
         },
       },
     };
