@@ -11,6 +11,7 @@ import _ from 'lodash';
 import IECharts from '../../IECharts';
 import { barColor, yAxis, xAxis, chartGrid, chartTooltip } from './rankChartGeneralConfig';
 import { filterData, filterRankData, dealNormalData, designGrid, optimizeGrid } from './rankDataHandle';
+import { transform2array } from '../../../utils/helper';
 import styles from './RankChart.less';
 
 export default class RankNormalChart extends PureComponent {
@@ -19,10 +20,16 @@ export default class RankNormalChart extends PureComponent {
     level: PropTypes.string.isRequired,
     scope: PropTypes.string.isRequired,
     showChartUnit: PropTypes.func.isRequired,
+    updateQueryState: PropTypes.func.isRequired,
+    custRange: PropTypes.array.isRequired,
   };
 
   componentWillMount() {
     this.initialChartData(this.props);
+  }
+
+  componentDidMount() {
+    this.custRange = transform2array(this.props.custRange);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -39,6 +46,20 @@ export default class RankNormalChart extends PureComponent {
   onReady(echart) {
     this.setState({
       echart,
+    });
+    echart.on('click', (arg) => {
+      if (arg.componentType !== 'series') {
+        return;
+      }
+      this.custRange.forEach((item) => {
+        if (arg.name === item.name) {
+          this.props.updateQueryState({
+            orgId: item.id,
+            level: item.level,
+            scope: Number(item.level) + 1,
+          });
+        }
+      });
     });
   }
 
@@ -186,6 +207,10 @@ export default class RankNormalChart extends PureComponent {
             }
             return '--';
           },
+        },
+        emphasis: {
+          show: true,
+          textStyle: { color: '#348cf0' },
         },
       },
     };
