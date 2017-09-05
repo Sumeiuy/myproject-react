@@ -28,13 +28,14 @@ export default class CustRangeForList extends PureComponent {
     expandAll: PropTypes.bool,
     orgId: PropTypes.string,
     cycle: PropTypes.array.isRequired,
-    selectValue: PropTypes.string.isRequired,
+    selectValue: PropTypes.string,
   }
 
   static defaultProps = {
     expandAll: false,
     orgId: null,
     collectCustRange: () => { },
+    selectValue: '',
   }
 
   constructor(props) {

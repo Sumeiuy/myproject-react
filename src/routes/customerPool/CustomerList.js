@@ -160,14 +160,17 @@ export default class CustomerList extends PureComponent {
       },
       empInfo: { empRespList: PreEmpRespList },
       position: { orgId: preOrgId },
+      cycle: preCycle,
     } = this.props;
     const {
+      getStatisticalPeriod,
       custRange,
       location: {
         query,
       },
       empInfo: { empRespList },
       position: { orgId },
+      cycle,
     } = nextProps;
     // 组织机构树数据变化和职位切换重新生成组织机构树组件的数据
     if (!_.isEqual(preCustRange, custRange) || orgId !== preOrgId) {
@@ -178,6 +181,9 @@ export default class CustomerList extends PureComponent {
       !_.isEqual(PreEmpRespList, empRespList) ||
       orgId !== preOrgId) {
       this.getCustomerList(nextProps);
+    }
+    if (query.source === 'performance' && !_.isEqual(preCycle, cycle)) {
+      getStatisticalPeriod();
     }
   }
 
