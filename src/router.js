@@ -23,6 +23,7 @@ import BoardEditHome from './routes/boardEdit/Home';
 import ReportHome from './routes/reports/Home';
 import PreviewReport from './routes/reports/PreviewReport';
 import HistoryHome from './routes/history/Home';
+import PermissonHome from './routes/permission/Home';
 
 function switchRouter() {
   const fsp = document.querySelector(fspContainer.container);
@@ -46,6 +47,7 @@ const routes = ({ history }) => (// eslint-disable-line
       <Route path="modal" component={TemplModal} />
       <Route path="boardManage" component={BoardManageHome} />
       <Route path="boardEdit" component={BoardEditHome} />
+      <Route path="permission" component={PermissonHome} />
     </Route>
   </Router>
 );

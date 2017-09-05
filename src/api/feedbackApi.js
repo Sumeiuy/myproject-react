@@ -5,7 +5,7 @@ import apiCreator from '../utils/apiCreator';
 
 const api = apiCreator();
 
-const reportApi = {
+const feebbackApi = {
 
   // 暴露api上的几个底层方法: get / post
   ...api,
@@ -21,4 +21,4 @@ const reportApi = {
 
 };
 
-export default reportApi;
+export default feebbackApi;
