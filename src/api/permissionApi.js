@@ -1,5 +1,5 @@
 /**
- * 用户反馈模块的接口
+ * 权限申请模块的接口
  */
 import apiCreator from '../utils/apiCreator';
 

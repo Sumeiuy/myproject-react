@@ -14,7 +14,7 @@
 // const EMPTY_LIST = [];
 
 export default {
-  namespace: 'feedback',
+  namespace: 'permission',
   state: {
 
   },
