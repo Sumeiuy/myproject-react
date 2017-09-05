@@ -511,10 +511,9 @@ export default class HistoryHome extends PureComponent {
     this.props.getRankData(query);
   }
 
-  // 散点图切换对比指标
+  // 散点图切换对比指标、维度
   @autobind
   changeScatterContrast(query) {
-    const { type, contrastIndicatorId } = query;
     const { historyCore } = this.props;
     const { coreIndicatorIds } = this.state;
     let { indicatorId } = this.state;
@@ -535,9 +534,8 @@ export default class HistoryHome extends PureComponent {
       });
     }
     const scatterQuery = this.makeQueryParams({
-      type,
+      ...query,
       coreIndicatorId: indicatorId,
-      contrastIndicatorId,
     });
     this.props.queryContrastAnalyze(scatterQuery);
   }
@@ -683,11 +681,13 @@ export default class HistoryHome extends PureComponent {
                 contributionAnalysisData={contributionAnalysis}
                 reviewAnalysisData={reviewAnalysis}
                 queryContrastAnalyze={this.changeScatterContrast}
+                changeScatterScope={this.changeScatterScope}
                 cust={cust}
                 invest={invest}
                 switchDefault={swtichDefault}
                 location={location}
                 level={level}
+                scope={newScope}
                 isLvIndicator={isLvIndicator}
                 currentSelectIndicatorKey={defaultIndicatorKey}
                 isCommissionRate={isCommissionRate}
