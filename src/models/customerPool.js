@@ -216,6 +216,15 @@ export default {
         payload: { createTaskResult },
       });
     },
+    * getStatisticalPeriod({ }, { call, put }) { //eslint-disable-line
+      // 统计周期
+      const statisticalPeriod = yield call(api.getStatisticalPeriod);
+      // debugger;
+      yield put({
+        type: 'getStatisticalPeriodSuccess',
+        payload: { statisticalPeriod },
+      });
+    },
   },
   reducers: {
     getToDoListSuccess(state, action) {

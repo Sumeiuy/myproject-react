@@ -167,6 +167,7 @@ export default class CustomerRow extends PureComponent {
       unit: '元',
       newAsset: asset,
       checked: false,
+      visible: false,
     };
   }
 

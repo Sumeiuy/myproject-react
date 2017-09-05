@@ -271,13 +271,20 @@ export default class Home extends PureComponent {
   // 此方法用来修改Duration 和 Org数据
   @autobind
   updateQueryState(state) {
+    const { replace, location: { pathname, query } } = this.props;
     // 切换Duration和Orig时候，需要将数据全部恢复到默认值
     this.setState({
       ...state,
-    },
-      () => {
-        this.getIndicators();
+    }, () => {
+      this.getIndicators();
+      replace({
+        pathname,
+        query: {
+          ...query,
+          orgId: state.orgId || state.fspOrgId,
+        },
       });
+    });
   }
 
   // 获取联想数据
@@ -436,6 +443,7 @@ export default class Home extends PureComponent {
             motTaskCountData={motTaskCount}
           />
           <PerformanceIndicators
+            push={push}
             indicators={performanceIndicators}
             custRange={createCustRange}
             updateQueryState={this.updateQueryState}
