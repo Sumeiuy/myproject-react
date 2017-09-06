@@ -479,6 +479,7 @@ export default class CustomerList extends PureComponent {
       saveIsAllSelect,
       saveSelectedIds,
       cycle,
+      empInfo: { empInfo },
     } = this.props;
     const {
       sortDirection,
@@ -555,6 +556,7 @@ export default class CustomerList extends PureComponent {
           saveIsAllSelect={saveIsAllSelect}
           isAllSelect={isAllSelect}
           selectedIds={selectedIds}
+          empInfo={empInfo}
         />
       </div>
     );

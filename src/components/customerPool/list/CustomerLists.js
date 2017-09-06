@@ -13,6 +13,7 @@ import { fspContainer } from '../../../config';
 import { fspGlobal } from '../../../utils';
 import NoData from '../common/NoData';
 import CustomerRow from './CustomerRow';
+import CreateServiceRecord from './CreateServiceRecord';
 
 import styles from './customerLists.less';
 
@@ -20,6 +21,7 @@ const EMPTY_ARRAY = [];
 
 export default class CustomerLists extends PureComponent {
   static propTypes = {
+    empInfo: PropTypes.object.isRequired,
     page: PropTypes.object.isRequired,
     custList: PropTypes.array.isRequired,
     curPageNum: PropTypes.string,
@@ -51,6 +53,7 @@ export default class CustomerLists extends PureComponent {
     super(props);
     this.state = {
       taskAndGroupLeftPos: '0',
+      showCreateServiceRecord: false,
     };
   }
 
@@ -210,6 +213,20 @@ export default class CustomerLists extends PureComponent {
     }
   }
 
+  @autobind
+  showCreateServiceRecord() {
+    this.setState({
+      showCreateServiceRecord: true,
+    });
+  }
+
+  @autobind
+  hideCreateServiceRecord() {
+    this.setState({
+      showCreateServiceRecord: false,
+    });
+  }
+
   // 分组只针对服务经理，也就是说：
   // 1、搜素、标签客户池列表：客户列表是“我的客户”时可以添加用户分组
   // 2、业务办理客户池：默认是只显示自己负责客户的，所以可以添加用户分组
@@ -235,10 +252,12 @@ export default class CustomerLists extends PureComponent {
   render() {
     const {
       taskAndGroupLeftPos,
+      showCreateServiceRecord,
     } = this.state;
     const {
       q,
       page,
+      empInfo,
       custList,
       curPageNum,
       pageSize,
@@ -304,6 +323,7 @@ export default class CustomerLists extends PureComponent {
                 isAllSelect={isAllSelectBool}
                 selectedIds={selectIdsArr}
                 onChange={this.handleSingleSelect}
+                createServiceRecord={this.showCreateServiceRecord}
                 key={`${item.empId}-${item.custId}-${item.idNum}-${item.telephone}-${item.asset}`}
               />,
             )
@@ -350,6 +370,11 @@ export default class CustomerLists extends PureComponent {
             </button>
           </div>
         </div>
+        <CreateServiceRecord
+          empInfo={empInfo}
+          isShow={showCreateServiceRecord}
+          hideCreateServiceRecord={this.hideCreateServiceRecord}
+        />
       </div>
     );
   }
