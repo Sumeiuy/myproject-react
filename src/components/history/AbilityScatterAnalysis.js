@@ -200,9 +200,11 @@ export default class AbilityScatterAnalysis extends PureComponent {
       // 如果算出来的y坐标小于或者大于轴刻度的最小或最大值
       // 则将计算出来的值，作为刻度边界值，取floor或者ceil
       if (endYCood < yAxisMin) {
+        const newYAxisMin = Math.floor(endYCood);
         finalSeriesData = {
           ...finalSeriesData,
-          yAxisMin: Math.floor(endYCood),
+          yAxisMin: newYAxisMin,
+          startCoord: [xAxisMin, newYAxisMin],
         };
       } else if (endYCood > yAxisMax) {
         finalSeriesData = {
@@ -231,9 +233,11 @@ export default class AbilityScatterAnalysis extends PureComponent {
       // 如果算出来的x坐标小于轴刻度的最小
       // 则将计算出来的值，作为刻度边界值，取floor
       if (point < xAxisMin) {
+        const newXAxisMin = Math.floor(point);
         finalSeriesData = {
           ...seriesData,
-          xAxisMin: Math.floor(point),
+          xAxisMin: newXAxisMin,
+          startCoord: [newXAxisMin, yAxisMin],
         };
       }
     } else {
@@ -245,16 +249,17 @@ export default class AbilityScatterAnalysis extends PureComponent {
       // 如果算出来的y坐标小于轴刻度的最小
       // 则将计算出来的值，作为刻度边界值，取floor
       if (point < yAxisMin) {
+        const newYAxisMin = Math.floor(point);
         finalSeriesData = {
           ...seriesData,
-          yAxisMin: Math.floor(point),
+          yAxisMin: newYAxisMin,
+          startCoord: [xAxisMin, newYAxisMin],
         };
       }
     }
 
     const scatterOptions = constructScatterOptions({
       ...finalSeriesData,
-      startCoord: [xAxisMin, yAxisMin],
       endCoord,
     });
 
