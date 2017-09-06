@@ -537,6 +537,21 @@ export default class AbilityScatterAnalysis extends PureComponent {
         >
           <div className={styles.title}>{title}</div>
           <div className={styles.customerDimensionSelect}>
+            <span className={styles.contrastType}>{contrastType}</span>
+            <Select
+              onChange={this.handleChange}
+              allowClear={false}
+              placeholder="无"
+              value={selectValue} // 默认选中项
+              dropdownClassName={styles.custDimenSelect}
+            >
+              {
+                !_.isEmpty(finalOptions) ? finalOptions.map(item =>
+                  <Option value={item.value} key={item.key}>{item.label}</Option>) : null
+              }
+            </Select>
+          </div>
+          <div className={styles.customerDimensionSelect}>
             <Select
               style={{ width: 90 }}
               value={scopeSelectValue}
@@ -566,21 +581,6 @@ export default class AbilityScatterAnalysis extends PureComponent {
                     </Option>
                   );
                 })
-              }
-            </Select>
-          </div>
-          <div className={styles.customerDimensionSelect}>
-            <span className={styles.contrastType}>{contrastType}</span>
-            <Select
-              onChange={this.handleChange}
-              allowClear={false}
-              placeholder="无"
-              value={selectValue} // 默认选中项
-              dropdownClassName={styles.custDimenSelect}
-            >
-              {
-                !_.isEmpty(finalOptions) ? finalOptions.map(item =>
-                  <Option value={item.value} key={item.key}>{item.label}</Option>) : null
               }
             </Select>
           </div>
