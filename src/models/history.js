@@ -4,7 +4,7 @@
  */
 import _ from 'lodash';
 
-import { reportApi as api } from '../api';
+import { report as api } from '../api';
 import { BoardBasic } from '../config';
 
 // const EMPTY_OBJECT = {};

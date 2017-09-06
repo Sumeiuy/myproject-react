@@ -1,7 +1,13 @@
-import reportApi from './reportApi';
-import feedbackApi from './feedbackApi';
+import apiCreator from '../utils/apiCreator';
+import report from './report';
+import feedback from './feedback';
+
+const api = apiCreator();
 
 export default {
-  reportApi,
-  feedbackApi,
+  // 暴露api上的几个底层方法: get / post
+  ...api,
+  report: report(api),
+  feedback: feedback(api),
 };
+
