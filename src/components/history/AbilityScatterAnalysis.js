@@ -426,9 +426,11 @@ export default class AbilityScatterAnalysis extends PureComponent {
       selectValue: value,
     });
     const { queryContrastAnalyze, type } = this.props;
+    const { scopeSelectValue } = this.state;
     queryContrastAnalyze({
       type,
       contrastIndicatorId: value, // y轴
+      scope: scopeSelectValue,
     });
   }
 
@@ -584,55 +586,68 @@ export default class AbilityScatterAnalysis extends PureComponent {
           </div>
         </div>
         {
+          // 无对比意义的判断
           this.toggleChart() ?
             <div className={styles.noChart}>
               <img src={imgSrc} alt="无对比意义" />
               <div className={styles.noChartTip}>无对比意义</div>
-            </div> :
-            (
-              <div>
-                <div className={styles.yAxisName} style={style}>{yAxisName}（{yAxisUnit}）</div>
-                <div
-                  className={styles.abilityScatter}
-                  ref={ref => (this.abilityScatterElem = ref)}
-                >
-                  <CommonScatter
-                    onScatterHover={this.handleScatterHover}
-                    onScatterLeave={this.handleScatterLeave}
-                    scatterOptions={scatterOptions}
-                    scatterElemHeight={scatterElemHeight}
-                  />
-                  <div className={styles.xAxisName}>{xAxisName}（{xAxisUnit}）</div>
+            </div>
+          :
+            <div>
+              {
+                // 投顾历史看板下的投顾与投顾对比无对应数据(4是投顾或服务经理)
+              scopeSelectValue === '4' ?
+                <div className={styles.noChart}>
+                  <img src={imgSrc} alt="无对应数据" />
+                  <div className={styles.noChartTip}>无对应数据</div>
                 </div>
-                {
-                  _.isEmpty(finalData) ?
-                    null
-                    :
-                    <div className={styles.averageDescription}>
-                      <div className={styles.averageIcon} />
-                      <div className={styles.averageInfo}>{averageInfo}</div>
+              :
+                (
+                  <div>
+                    <div className={styles.yAxisName} style={style}>{yAxisName}（{yAxisUnit}）</div>
+                    <div
+                      className={styles.abilityScatter}
+                      ref={ref => (this.abilityScatterElem = ref)}
+                    >
+                      <CommonScatter
+                        onScatterHover={this.handleScatterHover}
+                        onScatterLeave={this.handleScatterLeave}
+                        scatterOptions={scatterOptions}
+                        scatterElemHeight={scatterElemHeight}
+                      />
+                      <div className={styles.xAxisName}>{xAxisName}（{xAxisUnit}）</div>
                     </div>
-                }
+                    {
+                      _.isEmpty(finalData) ?
+                        null
+                        :
+                        <div className={styles.averageDescription}>
+                          <div className={styles.averageIcon} />
+                          <div className={styles.averageInfo}>{averageInfo}</div>
+                        </div>
+                    }
 
-                {isShowTooltip ?
-                  <div className={styles.description}>
-                    <div className={styles.orgDes}>
-                      <i className={styles.desIcon} />
-                      <span>
-                        {_.isEmpty(level1Name) ? '' : `${level1Name}`}
-                        {_.isEmpty(level2Name) ? '' : `-${level2Name}`}
-                        {_.isEmpty(level3Name) ? '' : `-${level3Name}`}
-                        {_.isEmpty(level4Name) ? '' : `-${level4Name}`}:
-                      </span>
-                    </div>
-                    <div className={styles.detailDesc}>
-                      <span>{tooltipInfo}</span>
-                    </div>
+                    {isShowTooltip ?
+                      <div className={styles.description}>
+                        <div className={styles.orgDes}>
+                          <i className={styles.desIcon} />
+                          <span>
+                            {_.isEmpty(level1Name) ? '' : `${level1Name}`}
+                            {_.isEmpty(level2Name) ? '' : `-${level2Name}`}
+                            {_.isEmpty(level3Name) ? '' : `-${level3Name}`}
+                            {_.isEmpty(level4Name) ? '' : `-${level4Name}`}:
+                          </span>
+                        </div>
+                        <div className={styles.detailDesc}>
+                          <span>{tooltipInfo}</span>
+                        </div>
+                      </div>
+                      : <div className={styles.noneTooltip} />
+                    }
                   </div>
-                  : <div className={styles.noneTooltip} />
-                }
-              </div>
-            )
+                )
+              }
+            </div>
         }
       </div>
     );
