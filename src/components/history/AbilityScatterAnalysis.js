@@ -596,7 +596,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
             <div>
               {
                 // 投顾历史看板下的投顾与投顾对比无对应数据(4是投顾或服务经理)
-              scopeSelectValue === '4' ?
+              scopeSelectValue === '4' && (selectValue === 'tgInNum' || selectValue === 'ptyMngNum') ?
                 <div className={styles.noChart}>
                   <img src={imgSrc} alt="无对应数据" />
                   <div className={styles.noChartTip}>无对应数据</div>
