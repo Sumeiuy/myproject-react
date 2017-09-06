@@ -6,6 +6,7 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
 
 import { AxisOptions, gridOptions, barShadow } from './ChartGeneralOptions';
 import {
@@ -20,6 +21,7 @@ import {
   toFixedCI,
   toFixedGE,
 } from './FixNumber';
+import { transform2array } from '../../utils/helper';
 import IECharts from '../IECharts';
 import { iconTypeMap, ZHUNICODE } from '../../config';
 import Icon from '../common/Icon';
@@ -34,16 +36,6 @@ const HU = ZHUNICODE.HU;
 const CI = ZHUNICODE.CI;
 const YUAN = ZHUNICODE.YUAN;
 const GE = ZHUNICODE.GE;
-
-const arrayTransform = (arr) => {
-  let tmpArr = arr.slice();
-  arr.forEach((v) => {
-    if (v.children) {
-      tmpArr = [...tmpArr, ...v.children];
-    }
-  });
-  return tmpArr;
-};
 
 export default class ChartBarNormal extends PureComponent {
 
@@ -66,12 +58,40 @@ export default class ChartBarNormal extends PureComponent {
     custRange: [],
   }
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      mouseoverLabelIndex: '',
+    };
+  }
+
   componentDidMount() {
-    this.custRange = arrayTransform(this.props.custRange);
+    this.custRange = transform2array(this.props.custRange);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { scope, chartData: { orgModel: nextOrgModel } } = nextProps;
+    const { chartData: { orgModel: prevOrgModel } } = this.props;
+    if (!_.isEqual(nextOrgModel, prevOrgModel)) {
+      const echart = this.instance;
+      this.yAxisLabels = this.makeYaxisLabels(scope, nextOrgModel);
+      this.setState({
+        mouseoverLabelIndex: '',
+      });
+      if (echart) {
+        echart.off('mouseover', this.registerMouseover);
+        echart.off('mouseout', this.registerMouseout);
+        echart.on('mouseover', this.registerMouseover);
+        echart.on('mouseout', this.registerMouseout);
+      }
+    }
   }
 
   @autobind
   onReady(instance) {
+    this.instance = instance;
+    const { scope, chartData: { orgModel = [] } } = this.props;
+    this.yAxisLabels = this.makeYaxisLabels(scope, orgModel);
     instance.on('click', (arg) => {
       if (arg.componentType !== 'yAxis') {
         return;
@@ -87,6 +107,8 @@ export default class ChartBarNormal extends PureComponent {
         }
       });
     });
+    instance.on('mouseover', this.registerMouseover);
+    instance.on('mouseout', this.registerMouseout);
   }
 
   @autobind
@@ -104,6 +126,43 @@ export default class ChartBarNormal extends PureComponent {
           yAxisLabels.push(item[key]);
         }
       });
+    }
+    return yAxisLabels;
+  }
+
+  @autobind
+  registerMouseover(arg) {
+    if (arg.componentType !== 'yAxis') {
+      return;
+    }
+    if (arg.value === '--') {
+      return;
+    }
+    const index = _.findIndex(this.yAxisLabels, o => o === arg.value);
+    this.setState({
+      mouseoverLabelIndex: index,
+    });
+  }
+
+  @autobind
+  registerMouseout(arg) {
+    if (arg.componentType !== 'yAxis') {
+      return;
+    }
+    this.setState({
+      mouseoverLabelIndex: '',
+    });
+  }
+
+  @autobind
+  makeYaxisLabels(scope, orgModel) {
+    const levelName = `level${scope}Name`;
+    const yAxisLabels = this.getChartData(orgModel, levelName, 'yAxis');
+    const padLength = 10 - yAxisLabels.length;
+    if (padLength > 0) {
+      for (let i = 0; i < padLength; i++) {
+        yAxisLabels.push('--');
+      }
     }
     return yAxisLabels;
   }
@@ -345,6 +404,8 @@ export default class ChartBarNormal extends PureComponent {
                   0 1px 18px 0 rgba(0,0,0,0.12),
                   0 3px 5px -1px rgba(0,0,0,0.3);`,
     };
+
+    const { mouseoverLabelIndex } = this.state;
     // eCharts的配置项
     const options = {
       color: [barColor],
@@ -391,6 +452,11 @@ export default class ChartBarNormal extends PureComponent {
               return `${value.substr(0, 4)}...`;
             }
             return value;
+          },
+          textStyle: {
+            color(v, index) {
+              return index === mouseoverLabelIndex ? '#348cf0' : '#999';
+            },
           },
         },
         data: yAxisLabels,

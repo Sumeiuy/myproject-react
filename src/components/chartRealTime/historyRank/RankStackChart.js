@@ -20,6 +20,7 @@ import {
   getStackSummury,
   optimizeGrid,
 } from './rankDataHandle';
+import { transform2array } from '../../../utils/helper';
 import styles from './RankChart.less';
 
 export default class RankStackChart extends PureComponent {
@@ -28,10 +29,16 @@ export default class RankStackChart extends PureComponent {
     level: PropTypes.string.isRequired,
     scope: PropTypes.string.isRequired,
     showChartUnit: PropTypes.func.isRequired,
+    updateQueryState: PropTypes.func.isRequired,
+    custRange: PropTypes.array.isRequired,
   };
 
   componentWillMount() {
     this.initialChartData(this.props);
+  }
+
+  componentDidMount() {
+    this.custRange = transform2array(this.props.custRange);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -48,6 +55,23 @@ export default class RankStackChart extends PureComponent {
   onReady(echart) {
     this.setState({
       echart,
+    });
+    echart.on('click', (arg) => {
+      if (arg.componentType !== 'series') {
+        return;
+      }
+      if (arg.name === '--') {
+        return;
+      }
+      this.custRange.forEach((item) => {
+        if (arg.name === item.name) {
+          this.props.updateQueryState({
+            orgId: item.id,
+            level: item.level,
+            scope: Number(item.level) + 1,
+          });
+        }
+      });
     });
   }
 
@@ -173,6 +197,7 @@ export default class RankStackChart extends PureComponent {
     const flag = name === 'max-label';
     const position = flag ? 'insideRight' : 'insideLeft';
     const textColor = flag ? '#999' : '#333';
+    const hoverTextColor = flag ? '#999' : '#348cf0';
     return {
       name,
       data,
@@ -197,6 +222,10 @@ export default class RankStackChart extends PureComponent {
             }
             return '--';
           },
+        },
+        emphasis: {
+          show: true,
+          textStyle: { color: hoverTextColor },
         },
       },
     };

@@ -671,6 +671,8 @@ export default class HistoryHome extends PureComponent {
                     boardType={boardType}
                     changeRankBar={this.changeRankBar}
                     swtichDefault={swtichDefault}
+                    custRange={custRange}
+                    updateQueryState={this.updateQueryState}
                   />
                 </Col>
               </Row>
