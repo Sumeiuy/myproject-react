@@ -10,6 +10,8 @@ export default class CommonDialog extends Component {
   static propTypes = {
     onOk: PropTypes.func,
     onCancel: PropTypes.func,
+    okText: PropTypes.string,
+    cancelText: PropTypes.string,
     dataSource: PropTypes.array,
     placeholder: PropTypes.string,
     columns: PropTypes.array.isRequired,
@@ -22,41 +24,50 @@ export default class CommonDialog extends Component {
     onCancel: () => {},
     dataSource: [],
     placeholder: '',
+    okText: '确定',
+    cancelText: '取消',
   }
 
   constructor(props) {
     super(props);
     const { dataSource, visible } = this.props;
-    const defaultSelected = [];
-    if (dataSource.length > 0) {
-      const firstItem = dataSource[0];
-      defaultSelected.push(firstItem.id);
-    }
+    const defaultConfig = this.defaultSelected(dataSource);
     this.state = {
       visible,
       data: dataSource,
-      selectedRowKeys: defaultSelected,
-      selectedRows: [],
+      ...defaultConfig,
     };
   }
   componentWillReceiveProps(nextProps) {
     const { dataSource, visible } = nextProps;
-    const defaultSelected = [];
-    if (dataSource.length > 0) {
-      const firstItem = dataSource[0];
-      defaultSelected.push(firstItem.id);
-    }
+    const defaultConfig = this.defaultSelected(dataSource);
     this.setState({
+      ...this.state,
+      ...defaultConfig,
       visible,
-      selectedRowKeys: defaultSelected,
     });
   }
+
   @autobind
   onSelectChange(selectedRowKeys, selectedRows) {
     this.setState({
       selectedRowKeys,
       selectedRows,
     });
+  }
+
+  defaultSelected(dataSource) {
+    const defaultSelected = [];
+    const defaultSelectedRow = [];
+    if (dataSource.length > 0) {
+      const firstItem = dataSource[0];
+      defaultSelectedRow.push(firstItem);
+      defaultSelected.push(firstItem.id);
+    }
+    return {
+      selectedRowKeys: defaultSelected,
+      selectedRows: defaultSelectedRow,
+    };
   }
 
   @autobind
@@ -88,6 +99,8 @@ export default class CommonDialog extends Component {
       columns,
       title,
       placeholder,
+      okText,
+      cancelText,
     } = this.props;
     const {
       visible,
@@ -100,13 +113,16 @@ export default class CommonDialog extends Component {
       onChange: this.onSelectChange,
       selectedRowKeys,
     };
+    // ok 和 cancel的位置，UI和Modal组件上相反
     return (
       <div>
         <Modal
           title={title}
           visible={visible}
-          onOk={this.handleOk}
-          onCancel={this.handleCancel}
+          onOk={this.handleCancel}
+          onCancel={this.handleOk}
+          okText={cancelText}
+          cancelText={okText}
           wrapClassName={styles.modalContainer}
         >
           <Search
