@@ -17,6 +17,7 @@ export default class CommonDialog extends Component {
     columns: PropTypes.array.isRequired,
     title: PropTypes.string.isRequired,
     visible: PropTypes.bool.isRequired,
+    onSearch: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -34,7 +35,6 @@ export default class CommonDialog extends Component {
     const defaultConfig = this.defaultSelected(dataSource);
     this.state = {
       visible,
-      data: dataSource,
       ...defaultConfig,
     };
   }
@@ -90,54 +90,55 @@ export default class CommonDialog extends Component {
 
   @autobind
   handleSearch(value) {
-    // 关键字变化，改变数据源（发起搜索请求 或者 在结果中自行查找）
-    console.log('#######value########', value);
+    const { onSearch } = this.props;
+    onSearch(value);
   }
 
   render() {
+    const {
+      visible,
+      selectedRowKeys,
+    } = this.state;
+
+    if (!visible) {
+      return null;
+    }
+
     const {
       columns,
       title,
       placeholder,
       okText,
       cancelText,
+      dataSource,
     } = this.props;
-    const {
-      visible,
-      data,
-      selectedRowKeys,
-    } = this.state;
-
     const rowSelection = {
       type: 'radio',
       onChange: this.onSelectChange,
       selectedRowKeys,
     };
-    // ok 和 cancel的位置，UI和Modal组件上相反
     return (
-      <div>
-        <Modal
-          title={title}
-          visible={visible}
-          onOk={this.handleCancel}
-          onCancel={this.handleOk}
-          okText={cancelText}
-          cancelText={okText}
-          wrapClassName={styles.modalContainer}
-        >
-          <Search
-            placeholder={placeholder}
-            onSearch={(value) => { this.handleSearch(value); }}
-          />
-          <Table
-            rowKey="id"
-            rowSelection={rowSelection}
-            columns={columns}
-            dataSource={data}
-            pagination={false}
-          />
-        </Modal>
-      </div>
+      <Modal
+        title={title}
+        visible={visible}
+        onOk={this.handleOk}
+        onCancel={this.handleCancel}
+        okText={okText}
+        cancelText={cancelText}
+        wrapClassName={styles.modalContainer}
+      >
+        <Search
+          placeholder={placeholder}
+          onSearch={(value) => { this.handleSearch(value); }}
+        />
+        <Table
+          rowKey="id"
+          rowSelection={rowSelection}
+          columns={columns}
+          dataSource={dataSource}
+          pagination={false}
+        />
+      </Modal>
     );
   }
 }
