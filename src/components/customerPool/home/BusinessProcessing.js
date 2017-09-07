@@ -65,7 +65,7 @@ export default class BusinessProcessing extends PureComponent {
   linkTo(Rights) {
     const pathname = '/customerPool/list';
     const obj = {
-      source: 'business',
+      source: 'performance',
       Rights,
     };
     if (document.querySelector(fspContainer.container)) {

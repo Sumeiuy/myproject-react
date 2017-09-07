@@ -1,1 +1,78 @@
-createServiceRecord.less
+.mt30 {
+  margin-top: 30px;
+}
+.mb10 {
+  margin-bottom: 10px;
+}
+.serviceRecord {
+  :global {
+    .ant-modal-content {
+      padding: 0 20px;
+      .ant-modal-close {
+        display: none;
+      }
+      .ant-modal-header {
+        padding-left: 0;
+        padding-right: 0;
+      }
+      .ant-modal-body {
+        padding: 15px 0;
+        font-size: 14px;
+        color: #666;
+        p {
+          line-height: 1;
+        }
+      }
+      .ant-modal-footer {
+        padding: 15px 0;
+        border-top: 0;
+      }
+    }
+    .ant-select-selection {
+      border: 1px solid #d9d9d9;
+    }
+  }
+}
+.title {
+  font-size: 14px;
+  font-weight: bold;
+  color: #33393c;
+  span {
+    color: #7d9be0;
+  }
+}
+.serviceWay {
+  margin: 15px 15px 22px 15px;
+  color: #c2c2c2;
+  text-align: center;
+  cursor: pointer;
+  :global .serviceWayItem {
+    span {
+      display: inline-block;
+      width: 50px;
+      height: 50px;
+      background-color: #c2c2c2;
+      vertical-align: top;
+      i {
+        font-size: 35px;
+        color: #fff;
+      }
+    }
+    p {
+      padding: 5px 0;
+      font-size: 12px;
+    }
+    &:hover, &.active {
+      span {
+        background-color: #60bbea;
+      }
+      p {
+        color: #60bbea;
+      }
+    }
+  }
+}
+
+.label {
+  margin-right: 15px;
+}

@@ -44,6 +44,7 @@ const effects = {
   getCustomerList: 'customerPool/getCustomerList',
   getCustIncome: 'customerPool/getCustIncome',
   getCustomerScope: 'customerPool/getCustomerScope',
+  addServeRecord: 'customerPool/addServeRecord',
 };
 
 const fectchDataFunction = (globalLoading, type) => query => ({
@@ -64,6 +65,8 @@ const mapStateToProps = state => ({
   isAllSelect: state.customerPool.isAllSelect, // 是否全选
   selectedIds: state.customerPool.selectedIds, // 非全选时选中的id数组
   cycle: state.customerPool.cycle,  // 统计周期
+  addServeRecordSuccess: state.customerPool.addServeRecordSuccess,
+  isAddServeRecord: state.customerPool.isAddServeRecord,
 });
 
 const mapDispatchToProps = {
@@ -71,6 +74,7 @@ const mapDispatchToProps = {
   getCustomerData: fectchDataFunction(true, effects.getCustomerList),
   getCustIncome: fectchDataFunction(true, effects.getCustIncome),
   getCustomerScope: fectchDataFunction(true, effects.getCustomerScope),
+  addServeRecord: fectchDataFunction(true, effects.addServeRecord),
   push: routerRedux.push,
   replace: routerRedux.replace,
   saveIsAllSelect: query => ({
@@ -112,6 +116,9 @@ export default class CustomerList extends PureComponent {
     saveSelectedIds: PropTypes.func.isRequired,
     cycle: PropTypes.array,
     getStatisticalPeriod: PropTypes.func.isRequired,
+    addServeRecord: PropTypes.func.isRequired, // 添加服务记录
+    addServeRecordSuccess: PropTypes.bool.isRequired,
+    isAddServeRecord: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -479,6 +486,10 @@ export default class CustomerList extends PureComponent {
       saveIsAllSelect,
       saveSelectedIds,
       cycle,
+      empInfo: { empInfo },
+      addServeRecord,
+      addServeRecordSuccess,
+      isAddServeRecord,
     } = this.props;
     const {
       sortDirection,
@@ -555,6 +566,10 @@ export default class CustomerList extends PureComponent {
           saveIsAllSelect={saveIsAllSelect}
           isAllSelect={isAllSelect}
           selectedIds={selectedIds}
+          empInfo={empInfo}
+          addServeRecord={addServeRecord}
+          addServeRecordSuccess={addServeRecordSuccess}
+          isAddServeRecord={isAddServeRecord}
         />
       </div>
     );

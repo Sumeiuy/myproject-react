@@ -147,4 +147,7 @@ export default {
 
   // 自建任务提交
   createTask: query => api.post('/groovynoauth/fsp/cust/task/createTask', query),
+
+  // 客户列表页添加服务记录
+  addServeRecord: query => api.post('/groovynoauth/fsp/cust/custlist/addServeRecord', query),
 };
