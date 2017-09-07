@@ -59,6 +59,7 @@ app.model(require('./models/manage'));
 app.model(require('./models/edit'));
 app.model(require('./models/preview'));
 app.model(require('./models/history'));
+app.model(require('./models/permission'));
 
 // 4. Router
 app.router(routerConfig);
