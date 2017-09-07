@@ -41,6 +41,9 @@ export default class CustomerLists extends PureComponent {
     entertype: PropTypes.string.isRequired,
     custRange: PropTypes.array.isRequired,
     condition: PropTypes.object.isRequired,
+    addServeRecord: PropTypes.func.isRequired,
+    addServeRecordSuccess: PropTypes.bool.isRequired,
+    isAddServeRecord: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -214,8 +217,9 @@ export default class CustomerLists extends PureComponent {
   }
 
   @autobind
-  showCreateServiceRecord() {
+  showCreateServiceRecord(id) {
     this.setState({
+      id,
       showCreateServiceRecord: true,
     });
   }
@@ -253,6 +257,7 @@ export default class CustomerLists extends PureComponent {
     const {
       taskAndGroupLeftPos,
       showCreateServiceRecord,
+      id,
     } = this.state;
     const {
       q,
@@ -269,6 +274,9 @@ export default class CustomerLists extends PureComponent {
       selectedIds,
       isAllSelect,
       source,
+      addServeRecord,
+      addServeRecordSuccess,
+      isAddServeRecord,
     } = this.props;
     if (!custList.length) {
       return <div className="list-box"><NoData /></div>;
@@ -371,9 +379,13 @@ export default class CustomerLists extends PureComponent {
           </div>
         </div>
         <CreateServiceRecord
+          id={id}
           empInfo={empInfo}
           isShow={showCreateServiceRecord}
           hideCreateServiceRecord={this.hideCreateServiceRecord}
+          addServeRecord={addServeRecord}
+          addServeRecordSuccess={addServeRecordSuccess}
+          isAddServeRecord={isAddServeRecord}
         />
       </div>
     );

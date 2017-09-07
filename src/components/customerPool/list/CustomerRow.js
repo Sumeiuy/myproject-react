@@ -358,8 +358,9 @@ export default class CustomerRow extends PureComponent {
   showCreateServiceRecord() {
     const {
       createServiceRecord,
+      listItem: { custId },
     } = this.props;
-    createServiceRecord();
+    createServiceRecord(custId);
   }
 
   @autobind
