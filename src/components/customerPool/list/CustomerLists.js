@@ -44,6 +44,7 @@ export default class CustomerLists extends PureComponent {
     addServeRecord: PropTypes.func.isRequired,
     addServeRecordSuccess: PropTypes.bool.isRequired,
     isAddServeRecord: PropTypes.bool.isRequired,
+    dict: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -148,7 +149,7 @@ export default class CustomerLists extends PureComponent {
       condition,
       source,
     } = this.props;
-    const selectCount = isAllSelect ? page.total : selectedIds[source].length;
+    const selectCount = isAllSelect[source] ? page.total : selectedIds[source].length;
     if (!_.isEmpty(selectedIds[source])) {
       this.openByIds(url, selectedIds[source], selectCount, title, id, entertype);
     } else if (isAllSelect) {
@@ -277,6 +278,7 @@ export default class CustomerLists extends PureComponent {
       addServeRecord,
       addServeRecordSuccess,
       isAddServeRecord,
+      dict,
     } = this.props;
     if (!custList.length) {
       return <div className="list-box"><NoData /></div>;
@@ -380,6 +382,7 @@ export default class CustomerLists extends PureComponent {
         </div>
         <CreateServiceRecord
           id={id}
+          dict={dict}
           empInfo={empInfo}
           isShow={showCreateServiceRecord}
           hideCreateServiceRecord={this.hideCreateServiceRecord}

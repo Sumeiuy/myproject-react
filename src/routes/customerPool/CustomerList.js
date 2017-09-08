@@ -547,6 +547,7 @@ export default class CustomerList extends PureComponent {
           onChange={this.orderChange}
         />
         <CustomerLists
+          dict={dict}
           condition={queryParam}
           custRange={createCustRange}
           source={source}
