@@ -238,12 +238,13 @@ export default class CustomerLists extends PureComponent {
   // 3、业绩目标客户池：客户列表是“我的客户”时可以添加用户分组
   renderGroup() {
     const { custRange, source, location: { query: { orgId } } } = this.props;
-    // 从搜索和热词进入且只有我的客户
-    const onlyMyCustomer = (source === 'search' || source === 'tag') && custRange.length === 1 && custRange[0].id === 'msm';
+    const tmpArr = ['custIndicator', 'numOfCustOpened', 'search', 'tag'];
+    // 从绩效、搜索和热词进入且只有我的客户
+    const onlyMyCustomer = _.includes(tmpArr, source) && custRange.length === 1 && custRange[0].id === 'msm';
     // 从业务入口进入的
     const fromBusiness = source === 'business';
-    // 从搜索和热词进入,通过客户范围切换到我的客户
-    const inMyCustomer = (source === 'search' || source === 'tag') && orgId && orgId === 'msm';
+    // 从绩效、搜索和热词进入,通过客户范围切换到我的客户
+    const inMyCustomer = _.includes(tmpArr, source) && orgId && orgId === 'msm';
     if (onlyMyCustomer || fromBusiness || inMyCustomer) {
       return (<button
         onClick={() => { this.handleClick('/customerPool/customerGroup', '新建分组', 'FSP_GROUP'); }}

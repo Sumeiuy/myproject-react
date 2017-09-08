@@ -16,6 +16,7 @@ export default class BusinessProcessing extends PureComponent {
   static propTypes = {
     data: PropTypes.object,
     push: PropTypes.func.isRequired,
+    location: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -62,11 +63,15 @@ export default class BusinessProcessing extends PureComponent {
   }
 
   @autobind
-  linkTo(Rights) {
+  linkTo(value, bname) {
+    const { push, location: { query: { orgId, cycleSelect } } } = this.props;
     const pathname = '/customerPool/list';
     const obj = {
-      source: 'performance',
-      Rights,
+      source: 'numOfCustOpened',
+      rightType: value,
+      bname: encodeURIComponent(bname),
+      orgId,
+      cycleSelect,
     };
     if (document.querySelector(fspContainer.container)) {
       const url = `${pathname}?${helper.queryToString(obj)}`;
@@ -74,12 +79,11 @@ export default class BusinessProcessing extends PureComponent {
         closable: true,
         forceRefresh: true,
         isSpecialTab: true,
-        id: 'RCT_FSP_BUSINESS',
-        title: '业务目标客户',
+        id: 'RCT_FSP_PERFORMANCE',
+        title: '业绩目标客户',
       };
       fspGlobal.openRctTab({ url, param });
     } else {
-      const { push } = this.props;
       push({
         pathname,
         query: obj,
@@ -112,7 +116,7 @@ export default class BusinessProcessing extends PureComponent {
                     <li>
                       <p
                         className={styles.pointer}
-                        onClick={() => { this.linkTo('817170'); }}
+                        onClick={() => { this.linkTo('cftCust', '涨乐财富通'); }}
                       >
                         {this.numFormat(cftCust || '--')}
                       </p>
@@ -125,7 +129,7 @@ export default class BusinessProcessing extends PureComponent {
                     <li>
                       <p
                         className={styles.pointer}
-                        onClick={() => { this.linkTo('817050'); }}
+                        onClick={() => { this.linkTo('ttfCust', '天天发'); }}
                       >
                         {this.numFormat(ttfCust || '--')}
                       </p>
@@ -138,7 +142,7 @@ export default class BusinessProcessing extends PureComponent {
                     <li className={styles.bd_un_r}>
                       <p
                         className={styles.pointer}
-                        onClick={() => { this.linkTo('817030'); }}
+                        onClick={() => { this.linkTo('rzrqCust', '融资融券'); }}
                       >
                         {this.numFormat(rzrqCust || '--')}
                       </p>
@@ -153,7 +157,7 @@ export default class BusinessProcessing extends PureComponent {
                     <li>
                       <p
                         className={styles.pointer}
-                        onClick={() => { this.linkTo('817200'); }}
+                        onClick={() => { this.linkTo('szHkCust', '沪港通'); }}
                       >
                         {this.numFormat(shHkCust || '--')}
                       </p>
@@ -166,7 +170,7 @@ export default class BusinessProcessing extends PureComponent {
                     <li>
                       <p
                         className={styles.pointer}
-                        onClick={() => { this.linkTo('817440'); }}
+                        onClick={() => { this.linkTo('shHkCust', '深港通'); }}
                       >
                         {this.numFormat(szHkCust || '--')}
                       </p>
@@ -179,7 +183,7 @@ export default class BusinessProcessing extends PureComponent {
                     <li className={styles.bd_un_r}>
                       <p
                         className={styles.pointer}
-                        onClick={() => { this.linkTo('817270'); }}
+                        onClick={() => { this.linkTo('optCust', '期权'); }}
                       >
                         {this.numFormat(optCust || '--')}
                       </p>
