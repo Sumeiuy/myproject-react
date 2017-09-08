@@ -8,8 +8,8 @@ import React, { PropTypes, PureComponent } from 'react';
 import { Row, Col } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { fspGlobal } from '../../utils';
-import { fspContainer } from '../../config';
+import { fspGlobal } from '../../../utils';
+import { fspContainer } from '../../../config';
 import styles from './toBeDone.less';
 
 export default class PerformanceIndicators extends PureComponent {
@@ -120,7 +120,7 @@ export default class PerformanceIndicators extends PureComponent {
             </Col>
             <Col span={6}>
               <div className={`${styles.item} ${styles.item_d}`}>
-                <a className="item" onClick={() => fspGlobal.openRctTab({ notificationUrl, notificationParam })}>
+                <a className="item" onClick={() => fspGlobal.openRctTab({ notificationUrl, param: notificationParam })}>
                   <div className={styles.content}>
                     <h1>{this.processNum(notificationNumbers)}</h1>
                     <p>消息提醒</p>

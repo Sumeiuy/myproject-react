@@ -6,7 +6,7 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { Row, Col } from 'antd';
-import Icon from '../../components/common/Icon';
+import Icon from '../../common/Icon';
 import styles from './performanceIndicators.less';
 
 export default class CustomerIndicators extends PureComponent {

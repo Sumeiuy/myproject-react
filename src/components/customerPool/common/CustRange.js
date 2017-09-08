@@ -8,8 +8,8 @@ import React, { PureComponent, PropTypes } from 'react';
 import { TreeSelect } from 'antd';
 import { autobind } from 'core-decorators';
 // import _ from 'lodash';
-import mouseWheel from '../common/mouseWheel';
-import { constants } from '../../config';
+import mouseWheel from '../../common/mouseWheel';
+import { constants } from '../../../config';
 import styles from './custRange.less';
 
 function transformCustRangeData(list, parent = '') {

@@ -9,7 +9,7 @@ import { Button } from 'antd';
 import { autobind } from 'core-decorators';
 import ReactDOM from 'react-dom';
 import styles from './createTaskSuccess.less';
-import imgSrc from '../../../static/images/createTask_success.png';
+import imgSrc from '../../../../static/images/createTask_success.png';
 
 let successSetInterval;
 let COUNT = 10;

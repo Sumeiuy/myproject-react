@@ -10,9 +10,9 @@ import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { Tabs, Input, Row, Col, Button, message } from 'antd';
 import styles from './customerGroup.less';
-import CustomerGrouplist from '../../components/customerPool/CustomerGrouplist';
-import AddNewGroup from '../../components/customerPool/addNewGroup';
-import AddCusSuccess from '../../components/customerPool/addCusSuccess';
+import CustomerGrouplist from '../../components/customerPool/group/CustomerGrouplist';
+import AddNewGroup from '../../components/customerPool/group/AddNewGroup';
+import AddCusSuccess from '../../components/customerPool/group/AddCusSuccess';
 import helper from '../../utils/helper';
 
 

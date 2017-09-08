@@ -10,22 +10,23 @@ import { Checkbox } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
-import { customerPoolBusiness } from '../../config';
+import { customerPoolBusiness } from '../../../config';
+import Icon from '../../common/Icon';
 
 import styles from './customerRow.less';
 
-import iconavator from '../../../static/images/icon-avator.png';
-import iconGeneralGgency from '../../../static/images/icon-general-agency.png';
-import iconProductAgency from '../../../static/images/icon-product-agency.png';
-import iconMoney from '../../../static/images/icon-money.png';
-import iconDiamond from '../../../static/images/icon-diamond-card.png';
-import iconGold from '../../../static/images/icon-gold-card.png';
-import iconSliver from '../../../static/images/icon-sliver-card.png';
-import iconWhiteGold from '../../../static/images/icon-white-gold.png';
-// import iconNone from '../../../static/images/icon-none.png';
-import iconEmpty from '../../../static/images/icon-empty.png';
-import iconClose from '../../../static/images/icon-close.png';
-import iconOpen from '../../../static/images/icon-open.png';
+import iconavator from '../../../../static/images/icon-avator.png';
+import iconGeneralGgency from '../../../../static/images/icon-general-agency.png';
+import iconProductAgency from '../../../../static/images/icon-product-agency.png';
+import iconMoney from '../../../../static/images/icon-money.png';
+import iconDiamond from '../../../../static/images/icon-diamond-card.png';
+import iconGold from '../../../../static/images/icon-gold-card.png';
+import iconSliver from '../../../../static/images/icon-sliver-card.png';
+import iconWhiteGold from '../../../../static/images/icon-white-gold.png';
+// import iconNone from '../../../../static/images/icon-none.png';
+import iconEmpty from '../../../../static/images/icon-empty.png';
+import iconClose from '../../../../static/images/icon-close.png';
+import iconOpen from '../../../../static/images/icon-open.png';
 
 import ChartLineWidget from './ChartLine';
 
@@ -110,8 +111,6 @@ const UNIT_DEFAULT = '元';
 const UNIT_WAN = '万元';
 const UNIT_YI = '亿元';
 
-const trim = str => (str ? str.replace(/(^\s+)|(\s+$)/g, '') : '');
-
 const haveTitle = title => (title ? `<i class="tip">${title}</i>` : null);
 
 const replaceWord = (value, q, title = '') => {
@@ -153,6 +152,7 @@ export default class CustomerRow extends PureComponent {
     onChange: PropTypes.func.isRequired,
     isAllSelect: PropTypes.bool.isRequired,
     selectedIds: PropTypes.array,
+    createServiceRecord: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -169,6 +169,7 @@ export default class CustomerRow extends PureComponent {
       unit: '元',
       newAsset: asset,
       checked: false,
+      visible: false,
     };
   }
 
@@ -354,6 +355,15 @@ export default class CustomerRow extends PureComponent {
   }
 
   @autobind
+  showCreateServiceRecord() {
+    const {
+      createServiceRecord,
+      listItem: { custId },
+    } = this.props;
+    createServiceRecord(custId);
+  }
+
+  @autobind
   renderAgeOrOrgName() {
     const { listItem } = this.props;
     if (listItem.pOrO === 'P') {
@@ -365,12 +375,18 @@ export default class CustomerRow extends PureComponent {
   }
 
   render() {
-    const { q, listItem, monthlyProfits, isAllSelect, selectedIds } = this.props;
+    const {
+      q,
+      listItem,
+      monthlyProfits,
+      isAllSelect,
+      selectedIds,
+    } = this.props;
     const { unit, newAsset, checked } = this.state;
     const lastestProfit = Number(this.getLastestData(monthlyProfits).assetProfit);
     const lastestProfitRate = Number(this.getLastestData(monthlyProfits).assetProfitRate);
     const matchedWord = this.matchWord(q, listItem);
-    const rskLev = trim(listItem.riskLvl);
+    const rskLev = _.trim(listItem.riskLvl);
     const newIdsArr = _.map(selectedIds, v => (v.id));
     const isChecked = _.includes(newIdsArr, listItem.custId) || isAllSelect || checked;
     // console.log('listItem', checked);
@@ -378,10 +394,22 @@ export default class CustomerRow extends PureComponent {
       <div className={styles.customerRow}>
         <div className={styles.basicInfoD}>
           <ul className={styles.operationIcon}>
-            <li><div className={styles.iconIphone} /><span>电话联系</span></li>
-            <li><div className={styles.iconEmail} /><span>邮件联系</span></li>
-            <li><div className={styles.iconRecordService} /><span>添加服务记录</span></li>
-            <li><div className={styles.iconFocus} /><span>关注</span></li>
+            <li>
+              <Icon type="dianhua" />
+              <span>电话联系</span>
+            </li>
+            <li>
+              <Icon type="youjian" />
+              <span>邮件联系</span>
+            </li>
+            <li onClick={this.showCreateServiceRecord}>
+              <Icon type="jilu" />
+              <span>添加服务记录</span>
+            </li>
+            <li>
+              <Icon type="guanzhu" />
+              <span>关注</span>
+            </li>
           </ul>
         </div>
         <div className={`${styles.customerRowLeft} clear`}>

@@ -12,27 +12,28 @@ import _ from 'lodash';
 import { Row, Col } from 'antd';
 
 // import Icon from '../../components/common/Icon';
-import CustRangeForList from '../../components/customerPool/CustRangeForList';
-import CustomerTotal from '../../components/customerPool/CustomerTotal';
-import Filter from '../../components/customerPool/Filter';
-import Reorder from '../../components/customerPool/Reorder';
-import CustomerLists from '../../components/customerPool/CustomerLists';
+import CustRangeForList from '../../components/customerPool/list/CustRangeForList';
+import CustomerTotal from '../../components/customerPool/list/CustomerTotal';
+import Filter from '../../components/customerPool/list/Filter';
+import Reorder from '../../components/customerPool/list/Reorder';
+import CustomerLists from '../../components/customerPool/list/CustomerLists';
 
 import styles from './customerlist.less';
 
-const CUST_MANAGER = 1; // 客户经理
-const ORG = 3; // 组织机构
+// const CUST_MANAGER = 1; // 客户经理
+// const ORG = 3; // 组织机构
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const CUR_PAGE = 1; // 默认当前页
 const CUR_PAGESIZE = 10; // 默认页大小
 const HTSC_RESPID = '1-46IDNZI'; // 首页指标查询
-const MAIN_MAGEGER_ID = 'msm';
+const MAIN_MAGEGER_ID = 'msm'; // 主服务经理
 const ENTER_TYPE = {
   search: 'searchCustPool',
   tag: 'searchCustPool',
   association: 'searchCustPool',
   business: 'businessCustPool',
+  performance: 'businessCustPool',
 };
 
 const DEFAULT_SORT = { sortType: 'Aset', sortDirection: 'desc' }; // 默认排序方式
@@ -42,6 +43,8 @@ const effects = {
   getDictionary: 'customerPool/getDictionary',
   getCustomerList: 'customerPool/getCustomerList',
   getCustIncome: 'customerPool/getCustIncome',
+  getCustomerScope: 'customerPool/getCustomerScope',
+  addServeRecord: 'customerPool/addServeRecord',
 };
 
 const fectchDataFunction = (globalLoading, type) => query => ({
@@ -61,21 +64,30 @@ const mapStateToProps = state => ({
   monthlyProfits: state.customerPool.monthlyProfits, // 6个月收益数据
   isAllSelect: state.customerPool.isAllSelect, // 是否全选
   selectedIds: state.customerPool.selectedIds, // 非全选时选中的id数组
+  cycle: state.customerPool.cycle,  // 统计周期
+  addServeRecordSuccess: state.customerPool.addServeRecordSuccess,
+  isAddServeRecord: state.customerPool.isAddServeRecord,
 });
 
 const mapDispatchToProps = {
   getAllInfo: fectchDataFunction(true, effects.allInfo),
   getCustomerData: fectchDataFunction(true, effects.getCustomerList),
   getCustIncome: fectchDataFunction(true, effects.getCustIncome),
+  getCustomerScope: fectchDataFunction(true, effects.getCustomerScope),
+  addServeRecord: fectchDataFunction(true, effects.addServeRecord),
   push: routerRedux.push,
   replace: routerRedux.replace,
   saveIsAllSelect: query => ({
     type: 'customerPool/saveIsAllSelect',
-    payload: query || false,
+    payload: query || {},
   }),
   saveSelectedIds: query => ({
     type: 'customerPool/saveSelectedIds',
-    payload: query || [],
+    payload: query || {},
+  }),
+  getStatisticalPeriod: query => ({
+    type: 'customerPool/getStatisticalPeriod',
+    payload: query || {},
   }),
 };
 
@@ -86,9 +98,9 @@ export default class CustomerList extends PureComponent {
     location: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
+    getCustomerScope: PropTypes.func.isRequired,
     getAllInfo: PropTypes.func.isRequired,
     performanceIndicators: PropTypes.object,
-    collectCustRange: PropTypes.func.isRequired,
     custRange: PropTypes.array,
     empInfo: PropTypes.object,
     position: PropTypes.object,
@@ -98,78 +110,107 @@ export default class CustomerList extends PureComponent {
     custList: PropTypes.array.isRequired,
     page: PropTypes.object.isRequired,
     monthlyProfits: PropTypes.array.isRequired,
-    isAllSelect: PropTypes.bool.isRequired,
-    selectedIds: PropTypes.array.isRequired,
+    isAllSelect: PropTypes.object.isRequired,
+    selectedIds: PropTypes.object.isRequired,
     saveIsAllSelect: PropTypes.func.isRequired,
     saveSelectedIds: PropTypes.func.isRequired,
+    cycle: PropTypes.array,
+    getStatisticalPeriod: PropTypes.func.isRequired,
+    addServeRecord: PropTypes.func.isRequired, // 添加服务记录
+    addServeRecordSuccess: PropTypes.bool.isRequired,
+    isAddServeRecord: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
-    collectCustRange: () => { },
     performanceIndicators: {},
     custRange: [],
     position: {},
     empInfo: {},
+    cycle: EMPTY_LIST,
   }
 
   constructor(props) {
     super(props);
     this.state = {
-      orgId: '',
-      fspOrgId: '',
-      createCustRange: [],
       expandAll: false,
-      queryParam: null,
+      queryParam: {},
+      createCustRange: [],
+      cycleSelect: '',
     };
   }
 
   componentDidMount() {
-    const { custRange } = this.props;
-    if (custRange.length > 0) {
-      this.handleSetCustRange(this.props);
-    }
+    const {
+      getCustomerScope,
+      getStatisticalPeriod,
+      location: { query },
+    } = this.props;
+    // 请求组织机构树
+    getCustomerScope();
+    // 生成组织机构树
+    this.generateCustRange(this.props);
+    // 请求客户列表
     this.getCustomerList(this.props);
+    // 业绩客户列表时请求时间周期
+    if (query.source === 'performance') {
+      getStatisticalPeriod();
+    }
     // saveIsAllSelect(false);
     // saveSelectedIds(EMPTY_LIST);
   }
 
   componentWillReceiveProps(nextProps) {
-    // debugger
-    const { location: preLocation,
-      position: prePosition,
-      custRange: preCustRange } = this.props;
-    const { location: nextLocation,
-      position: nextPosition,
-      custRange: nextCustRange } = nextProps;
-    const { orgId: preOrgId } = prePosition;
-    const { orgId: nextOrgId } = nextPosition;
-    if (preOrgId !== nextOrgId) {
-      this.setState({
-        fspOrgId: nextOrgId,
-        createCustRange: this.handleCreateCustRange(nextOrgId, nextProps),
-      }, this.getCustomerList(nextProps));
+    const {
+      custRange: preCustRange,
+      location: {
+        query: preQuery,
+      },
+      empInfo: { empRespList: PreEmpRespList },
+      position: { orgId: preOrgId },
+      cycle: preCycle,
+    } = this.props;
+    const {
+      getStatisticalPeriod,
+      custRange,
+      location: {
+        query,
+      },
+      empInfo: { empRespList },
+      position: { orgId },
+      cycle,
+    } = nextProps;
+    // 组织机构树数据变化和职位切换重新生成组织机构树组件的数据
+    if (!_.isEqual(preCustRange, custRange) || orgId !== preOrgId) {
+      this.generateCustRange(nextProps);
     }
-    if (!_.isEqual(preCustRange, nextCustRange) || preLocation !== nextLocation) {
-      this.handleSetCustRange(nextProps);
-      // this.setState({
-      //   createCustRange: this.handleCreateCustRange(null, nextProps),
-      // });
-    }
-    if (!_.isEqual(preLocation.query, nextLocation.query)) {
+    // query变化、权限列表存在变化和职位切换时，重新获取列表数据
+    if (!_.isEqual(preQuery, query) ||
+      !_.isEqual(PreEmpRespList, empRespList) ||
+      orgId !== preOrgId) {
       this.getCustomerList(nextProps);
+    }
+    if (query.source === 'performance' && !_.isEqual(preCycle, cycle)) {
+      getStatisticalPeriod();
     }
   }
 
   @autobind
   getCustomerList(props) {
-    const { getCustomerData, location: { query },
-    empInfo: { empInfo = EMPTY_OBJECT, empRespList = EMPTY_LIST } } = props;
+    const {
+      cycle = [],
+      position: { orgId: posOrgId },
+      getCustomerData, location: { query },
+      empInfo: { empInfo = EMPTY_OBJECT, empRespList = EMPTY_LIST },
+    } = props;
     const { occDivnNum = '' } = empInfo;
     const occ = _.isEmpty(occDivnNum) ? '' : occDivnNum;// orgId取不到的情况下去用户信息中的
     const orgId = _.isEmpty(window.forReactPosition)
       ?
       occ
       : window.forReactPosition.orgId;
+    if (_.isEmpty(empRespList)) {
+      return;
+    }
     const respIdOfPosition = _.findIndex(empRespList, item => (item.respId === HTSC_RESPID));
     const k = decodeURIComponent(query.q);
     const param = {
@@ -196,9 +237,17 @@ export default class CustomerList extends PureComponent {
       param.paramsReqList = [
         { key: query.labelMapping, value: query.tagNumId },
       ];
-      // param.fullTestSearch = k;
+    } else if (query.source === 'performance') {
+      if (query.cycleSelect) {
+        param.dateType = query.cycleSelect;
+      } else {
+        param.dateType = (cycle[0] || {}).key;
+      }
     }
-    if (respIdOfPosition > 0 && query.orgId) {   // 客户经理机构号
+    // 职位切换
+    if (posOrgId) {
+      param.orgId = posOrgId;
+    } else if (respIdOfPosition > 0 && query.orgId) {   // 客户经理机构号
       if (MAIN_MAGEGER_ID !== query.orgId) {
         param.orgId = query.orgId;
       }
@@ -260,118 +309,98 @@ export default class CustomerList extends PureComponent {
   }
 
   @autobind
-  handleSetCustRange(props) {
-    const { custRange,
-    empInfo: { empInfo = EMPTY_OBJECT, empRespList = EMPTY_LIST } } = props;
-    const { occDivnNum = '' } = empInfo;
-    const occ = _.isEmpty(occDivnNum) ? '' : occDivnNum;// orgId取不到的情况下去用户信息中的
-    const fspOrgid = _.isEmpty(window.forReactPosition) ? occ : window.forReactPosition.orgId;
-    // const orgid = _.isEmpty(orgId) // window.forReactPosition
-    //   ?
-    //   fspOrgid
-    //   : orgId;
+  generateCustRange(props) {
+    const {
+      custRange,
+      empInfo: {
+        empInfo = EMPTY_OBJECT,
+        empRespList = EMPTY_LIST,
+      },
+      position: { orgId: posOrgId },
+    } = props;
+    // 判断是否存在首页绩效指标查看权限
     const respIdOfPosition = _.findIndex(empRespList, item => (item.respId === HTSC_RESPID));
-    this.setState({
-      fspOrgId: respIdOfPosition < 0 ? '' : fspOrgid,
-      orgId: respIdOfPosition < 0 ? '' : fspOrgid, // 组织ID
-    }, () => {
-      if (custRange.length > 0) {
-        this.handleGetAllInfo(custRange);
-      }
-    });
-  }
-
-  @autobind
-  handleGetAllInfo(custRangeData) {
-    const { fspOrgId } = this.state;
-    let custType = ORG;
-    const orgsId = custRangeData.length > 0 ? custRangeData[0].id : '';
-    this.setState({
-      createCustRange: this.handleCreateCustRange(fspOrgId, this.props),
-    });
-    if (fspOrgId === orgsId) { // 判断客户范围类型
-      custType = ORG;
-    } else {
-      this.setState({
-        expandAll: true,
-      });
-      custType = CUST_MANAGER;
-    }
-    console.log('custType', custType);
-  }
-
-  @autobind
-  handleCreateCustRange(orgId, nextProps) {
-    const { empInfo, custRange } = nextProps;
-    const { empPostnList = EMPTY_LIST,
-      empRespList = EMPTY_LIST } = empInfo; // 1-46IDNZI HTSC_RESPID
-    const { fspOrgId } = this.state;
-    let orgNewCustRange = [];
-    const newCustRrange = [];
     const myCustomer = {
       id: MAIN_MAGEGER_ID,
       name: '我的客户',
     };
-    const respIdOfPosition = _.findIndex(empRespList, item => item.respId === HTSC_RESPID);
+    // 无‘HTSC 首页指标查询’职责的普通用户，取值 '我的客户'
     if (respIdOfPosition < 0) {
-      newCustRrange.push(myCustomer);
-      return newCustRrange;
+      this.setState({
+        createCustRange: [myCustomer],
+      });
+      return false;
     }
-    let newOrgId = fspOrgId;
-    if (!_.isEmpty(orgId)) {
-      newOrgId = orgId;
+    // 保证全局的职位存在的情况下取职位, 取不到时从empInfo中取值
+    const occDivnNum = empInfo.occDivnNum || '';
+    // const fspJobOrgId = 'ZZ001041020';
+    let fspJobOrgId = !_.isEmpty(window.forReactPosition) ?
+      window.forReactPosition.orgId :
+      occDivnNum;
+    if (posOrgId) {
+      fspJobOrgId = posOrgId;
     }
-    if (custRange.length < 1) {
-      return null;
+    // 用户职位是经总
+    if (fspJobOrgId === custRange[0].id) {
+      this.setState({
+        createCustRange: custRange,
+        expandAll: true,
+      });
+      return false;
     }
-    if (newOrgId === custRange[0].id) {
-      return custRange;
+    // fspJobOrgId 在机构树中所处的分公司位置
+    const orgIdIndexInCustRange = _.findIndex(custRange, item => item.id === fspJobOrgId);
+    if (orgIdIndexInCustRange > -1) {
+      this.setState({
+        createCustRange: [custRange[orgIdIndexInCustRange], myCustomer],
+        expandAll: true,
+      });
+      return false;
     }
-    this.setState({
-      expandAll: true,
-    });
-    orgNewCustRange = _.findIndex(custRange, item => item.id === newOrgId);
-    let newData;
-    if (orgNewCustRange > -1) { // 总机构内
-      newData = custRange[orgNewCustRange];
-      newCustRrange.push(newData);
-    } else { // 职位中去查找
-      orgNewCustRange = _.findIndex(empPostnList, item => item.orgId === newOrgId);
-      if (orgNewCustRange > -1) {
-        const org = {
-          id: empPostnList[orgNewCustRange].orgId,
-          name: empPostnList[orgNewCustRange].orgName,
-        };
-        newData = org;
-        newCustRrange.push(newData);
+    // fspJobOrgId 在机构树中所处的营业部位置
+    _(custRange).forEach((obj) => {
+      if (obj.children && !_.isEmpty(obj.children)) {
+        const tmpArr = _.filter(obj.children, v => v.id === fspJobOrgId);
+        if (!_.isEmpty(tmpArr)) {
+          this.setState({
+            createCustRange: [...tmpArr, myCustomer],
+          });
+          return false;
+        }
       }
-    }
-    newCustRrange.push(myCustomer);
-    return newCustRrange;
+      return true;
+    });
+    return false;
   }
 
   // 此方法用来修改Duration 和 Org数据
   @autobind
   updateQueryState(state) {
+    console.log('updateQueryState: ', state);
     // 切换Duration和Orig时候，需要将数据全部恢复到默认值
     const {
       saveIsAllSelect,
       saveSelectedIds,
+      selectedIds,
+      isAllSelect,
       replace,
       location: { query, pathname },
     } = this.props;
+    const { cycleSelect, orgId } = state;
     replace({
       pathname,
       query: {
         ...query,
-        orgId: state.orgId,
+        orgId,
+        cycleSelect,
         curPageNum: 1,
       },
     });
-    saveIsAllSelect(false);
-    saveSelectedIds(EMPTY_LIST);
-    this.setState({
-      ...state,
+    // 筛选时清空已选中的数据、还原全选的状态
+    saveIsAllSelect({ ...isAllSelect, [query.source]: false });
+    saveSelectedIds({
+      ...selectedIds,
+      [query.source]: EMPTY_LIST,
     });
   }
 
@@ -380,6 +409,8 @@ export default class CustomerList extends PureComponent {
     const {
       saveIsAllSelect,
       saveSelectedIds,
+      isAllSelect,
+      selectedIds,
       replace,
       location: { query, pathname },
     } = this.props;
@@ -391,8 +422,12 @@ export default class CustomerList extends PureComponent {
         curPageNum: 1,
       },
     });
-    saveIsAllSelect(false);
-    saveSelectedIds(EMPTY_LIST);
+    // 筛选时清空已选中的数据、还原全选的状态
+    saveIsAllSelect({ ...isAllSelect, [query.source]: false });
+    saveSelectedIds({
+      ...selectedIds,
+      [query.source]: EMPTY_LIST,
+    });
   }
 
   @autobind
@@ -441,7 +476,6 @@ export default class CustomerList extends PureComponent {
       push,
       location,
       replace,
-      collectCustRange,
       dict,
       custList,
       page,
@@ -451,15 +485,21 @@ export default class CustomerList extends PureComponent {
       isAllSelect,
       saveIsAllSelect,
       saveSelectedIds,
+      cycle,
+      empInfo: { empInfo },
+      addServeRecord,
+      addServeRecordSuccess,
+      isAddServeRecord,
     } = this.props;
     const {
       sortDirection,
       sortType,
-      // orgId,
+      orgId,
       source,
       pageSize,
       curPageNum,
       q,
+      cycleSelect,
     } = location.query;
     // 排序的默认值 ： 总资产降序
     let reorderValue = { sortType: 'Aset', sortDirection: 'desc' };
@@ -467,6 +507,20 @@ export default class CustomerList extends PureComponent {
       reorderValue = { sortType, sortDirection };
     }
     const { expandAll, createCustRange, queryParam } = this.state;
+    const custRangeProps = {
+      orgId,
+      location,
+      replace,
+      source,
+      createCustRange,
+      updateQueryState: this.updateQueryState,
+      expandAll,
+    };
+    if (source === 'performance') {
+      const selectValue = cycleSelect || (cycle[0] || {}).key;
+      custRangeProps.cycle = cycle;
+      custRangeProps.selectValue = selectValue;
+    }
     // console.log('6个月收益数据： ', monthlyProfits);
     console.log('createCustRange>>>', createCustRange);
     return (
@@ -479,13 +533,7 @@ export default class CustomerList extends PureComponent {
           </Col>
           <Col span={12}>
             <CustRangeForList
-              location={location}
-              replace={replace}
-              source={source}
-              createCustRange={createCustRange}
-              updateQueryState={this.updateQueryState}
-              collectCustRange={collectCustRange}
-              expandAll={expandAll}
+              {...custRangeProps}
             />
           </Col>
         </Row>
@@ -518,6 +566,10 @@ export default class CustomerList extends PureComponent {
           saveIsAllSelect={saveIsAllSelect}
           isAllSelect={isAllSelect}
           selectedIds={selectedIds}
+          empInfo={empInfo}
+          addServeRecord={addServeRecord}
+          addServeRecordSuccess={addServeRecordSuccess}
+          isAddServeRecord={isAddServeRecord}
         />
       </div>
     );

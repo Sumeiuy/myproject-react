@@ -85,7 +85,7 @@
         position: relative;
         display: inline-block;
         margin-right: 14px;
-        background: url("../../../static/images/icon-signed.png");
+        background: url("../../../../static/images/icon-signed.png");
         width: 28px;
         height: 30px;
         background-repeat: no-repeat;
@@ -328,43 +328,55 @@
   font-size: 12px;
   .operationIcon {
     padding: 0px 0px 0px 10px;
+    height: 16px;
+    line-height: 16px;
     li {
       border-right: 1px solid #DDDDDD;
       display: inline-block;
       padding: 0px 10px 0px 10px;
-      height: 13px;
-      .iconIphone {
-        display: inline-block;
-        width: 17px;
-        height: 12px;
-        background: url("../../../static/images/icon-phone.png");
-        background-repeat: no-repeat;
-        background-size:contain;
+      cursor: pointer;
+      &:hover {
+        i, span {
+          color: #ff784e;
+        }
       }
-      .iconEmail {
-        display: inline-block;
-        width: 17px;
-        height: 9px;
-        background: url("../../../static/images/icon-email.png");
-        background-repeat: no-repeat;
-        background-size:contain;
+      i {
+        margin-right: 5px;
+        vertical-align: top;
+        color: #c2c2c2;
       }
-      .iconRecordService {
-        display: inline-block;
-        width: 15px;
-        height: 12px;
-        background: url("../../../static/images/icon-service-record.png");
-        background-repeat: no-repeat;
-        background-size: contain;
-      }
-      .iconFocus {
-        display: inline-block;
-        width: 15px;
-        height: 12px;
-        background: url("../../../static/images/icon-focus.png");
-        background-repeat: no-repeat;
-        background-size: contain;
-      }
+      // .iconIphone {
+      //   display: inline-block;
+      //   width: 17px;
+      //   height: 12px;
+      //   background: url("../../../../static/images/icon-phone.png");
+      //   background-repeat: no-repeat;
+      //   background-size:contain;
+      // }
+      // .iconEmail {
+      //   display: inline-block;
+      //   width: 17px;
+      //   height: 9px;
+      //   background: url("../../../../static/images/icon-email.png");
+      //   background-repeat: no-repeat;
+      //   background-size:contain;
+      // }
+      // .iconRecordService {
+      //   display: inline-block;
+      //   width: 15px;
+      //   height: 12px;
+      //   background: url("../../../../static/images/icon-service-record.png");
+      //   background-repeat: no-repeat;
+      //   background-size: contain;
+      // }
+      // .iconFocus {
+      //   display: inline-block;
+      //   width: 15px;
+      //   height: 12px;
+      //   background: url("../../../../static/images/icon-focus.png");
+      //   background-repeat: no-repeat;
+      //   background-size: contain;
+      // }
     }
     li:last-child {
       border-right: none;
