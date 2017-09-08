@@ -2,11 +2,11 @@ import React, { PropTypes, Component } from 'react';
 import { Table, Modal, Input } from 'antd';
 import { autobind } from 'core-decorators';
 
-import styles from './commonDialog.less';
+import styles from './tableDialog.less';
 
 const Search = Input.Search;
 
-export default class CommonDialog extends Component {
+export default class TableDialog extends Component {
   static propTypes = {
     onOk: PropTypes.func,
     onCancel: PropTypes.func,

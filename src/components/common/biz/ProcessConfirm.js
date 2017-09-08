@@ -2,13 +2,13 @@ import React, { PropTypes, Component } from 'react';
 import { Modal } from 'antd';
 import { autobind } from 'core-decorators';
 
-import styles from './commonConfirm.less';
+import styles from './processConfirm.less';
 
-export default class CommonDialog extends Component {
+export default class ProcessConfirm extends Component {
   static propTypes = {
     onOk: PropTypes.func,
     okText: PropTypes.string,
-    contentTitle: PropTypes,
+    contentTitle: PropTypes.string,
     title: PropTypes.string,
     content: PropTypes.object,
     visible: PropTypes.bool.isRequired,
