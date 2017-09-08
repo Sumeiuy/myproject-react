@@ -156,4 +156,7 @@ export default {
 
   // 查询最近五次服务记录
   queryRecentServiceRecord: query => api.post('/groovynoauth/fsp/cust/custlist/queryRecentServiceRecord', query),
+
+  // 客户列表页添加服务记录
+  addServeRecord: query => api.post('/groovynoauth/fsp/cust/custlist/addServeRecord', query),
 };

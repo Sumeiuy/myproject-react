@@ -5,11 +5,14 @@
  */
 
 import React, { PureComponent, PropTypes } from 'react';
+import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { Select } from 'antd';
 
 import CustRange from '../common/CustRange';
 import Icon from '../../common/Icon';
+
+import styles from './custRangeForList.less';
 
 let KEYCOUNT = 0;
 
@@ -24,12 +27,16 @@ export default class CustRangeForList extends PureComponent {
     createCustRange: PropTypes.array.isRequired,
     expandAll: PropTypes.bool,
     orgId: PropTypes.string,
+    cycle: PropTypes.array,
+    selectValue: PropTypes.string,
   }
 
   static defaultProps = {
     expandAll: false,
     orgId: null,
     collectCustRange: () => { },
+    selectValue: '',
+    cycle: [],
   }
 
   constructor(props) {
@@ -49,6 +56,14 @@ export default class CustRangeForList extends PureComponent {
     }
   }
 
+  @autobind
+  handleChange(value) {
+    const { updateQueryState } = this.props;
+    updateQueryState({
+      cycleSelect: value,
+    });
+  }
+
   render() {
     const {
       source,
@@ -59,11 +74,14 @@ export default class CustRangeForList extends PureComponent {
       updateQueryState,
       collectCustRange,
       expandAll,
+      selectValue,
+      cycle,
     } = this.props;
-    let rtnEle = null;
+    let custRangeEle = null;
+    let timeEle = null;
     const { key } = this.state;
-    if (_.includes(['search', 'tag', 'association'], source)) {
-      rtnEle = (<div className="custRange">
+    if (_.includes(['search', 'tag', 'association', 'performance'], source)) {
+      custRangeEle = (<div className={styles.item}>
         <Icon type="kehu" />
         {
           !_.isEmpty(createCustRange) ?
@@ -88,6 +106,28 @@ export default class CustRangeForList extends PureComponent {
         }
       </div>);
     }
-    return rtnEle;
+    if (source === 'performance') {
+      timeEle = (
+        <div className={styles.item}>
+          <i className={styles.bd} />
+          <Icon type="rili" />
+          <Select
+            style={{ width: 60 }}
+            value={selectValue}
+            onChange={this.handleChange}
+            key="dateSelect"
+          >
+            {cycle.map(item =>
+              <Select.Option key={item.key} value={item.key}>{item.value}</Select.Option>)}
+          </Select>
+        </div>
+      );
+    }
+    return (
+      <div className="custRange">
+        {custRangeEle}
+        {timeEle}
+      </div>
+    );
   }
 }

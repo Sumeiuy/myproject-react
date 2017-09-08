@@ -6,7 +6,6 @@
 import _ from 'lodash';
 import api from '../api';
 
-
 export default {
   namespace: 'customerPool',
   state: {
@@ -49,6 +48,8 @@ export default {
     incomeData: [],
     custContactData: [],
     serviceRecordData: [],
+    isAddServeRecord: false,
+    addServeRecordSuccess: false, // 添加服务记录成功的标记
   },
   subscriptions: {
     setup({ dispatch }) {
@@ -265,6 +266,26 @@ export default {
       yield put({
         type: 'getServiceRecordSuccess',
         payload: resultData,
+      });
+    },
+    * getStatisticalPeriod({ }, { call, put }) { //eslint-disable-line
+      // 统计周期
+      const statisticalPeriod = yield call(api.getStatisticalPeriod);
+      // debugger;
+      yield put({
+        type: 'getStatisticalPeriodSuccess',
+        payload: { statisticalPeriod },
+      });
+    },
+    // 列表页添加服务记录
+    * addServeRecord({ payload }, { call, put }) {
+      yield put({
+        type: 'sendAddServeRecordReq',
+      });
+      const res = yield call(api.addServeRecord, payload);
+      yield put({
+        type: 'addServeRecordSuccess',
+        payload: res,
       });
     },
   },
@@ -508,6 +529,20 @@ export default {
       return {
         ...state,
         serviceRecordData: payload,
+      };
+    },
+    sendAddServeRecordReq(state) {
+      return {
+        ...state,
+        isAddServeRecord: true,
+      };
+    },
+    addServeRecordSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        addServeRecordSuccess: payload.resultData === 'success',
+        isAddServeRecord: false,
       };
     },
   },

@@ -12,6 +12,7 @@ import _ from 'lodash';
 
 import { customerPoolBusiness } from '../../../config';
 import CreatePhoneContactModal from './CreatePhoneContactModal';
+import Icon from '../../common/Icon';
 import styles from './customerRow.less';
 
 import iconavator from '../../../../static/images/icon-avator.png';
@@ -159,6 +160,7 @@ export default class CustomerRow extends PureComponent {
     serviceRecordData: PropTypes.array.isRequired,
     getCustContact: PropTypes.func.isRequired,
     getServiceRecord: PropTypes.func.isRequired,
+    createServiceRecord: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -403,6 +405,15 @@ export default class CustomerRow extends PureComponent {
   }
 
   @autobind
+  showCreateServiceRecord() {
+    const {
+      createServiceRecord,
+      listItem: { custId },
+    } = this.props;
+    createServiceRecord(custId);
+  }
+
+  @autobind
   renderAgeOrOrgName() {
     const { listItem } = this.props;
     if (listItem.pOrO === 'P') {
@@ -440,11 +451,21 @@ export default class CustomerRow extends PureComponent {
         <div className={styles.basicInfoD}>
           <ul className={styles.operationIcon}>
             <li onClick={this.handleTelClick}>
-              <div className={styles.iconIphone} /><span>电话联系</span>
+              <Icon type="dianhua" />
+              <span>电话联系</span>
             </li>
-            <li><div className={styles.iconEmail} /><span>邮件联系</span></li>
-            <li><div className={styles.iconRecordService} /><span>添加服务记录</span></li>
-            <li><div className={styles.iconFocus} /><span>关注</span></li>
+            <li>
+              <Icon type="youjian" />
+              <span>邮件联系</span>
+            </li>
+            <li onClick={this.showCreateServiceRecord}>
+              <Icon type="jilu" />
+              <span>添加服务记录</span>
+            </li>
+            <li>
+              <Icon type="guanzhu" />
+              <span>关注</span>
+            </li>
           </ul>
         </div>
         <div className={`${styles.customerRowLeft} clear`}>
