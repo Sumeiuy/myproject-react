@@ -46,7 +46,7 @@ export default {
     cusGroupSaveMessage: '',
     resultgroupId: '',
     incomeData: [],
-    custContactData: [],
+    custContactData: {},
     serviceRecordData: [],
     isAddServeRecord: false,
     addServeRecordSuccess: false, // 添加服务记录成功的标记
