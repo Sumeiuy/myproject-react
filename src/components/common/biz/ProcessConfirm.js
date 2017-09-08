@@ -1,3 +1,15 @@
+/**
+ * @description 过程确认框，统一样式
+ * @author zhangjunli
+ * Usage:
+ * <ProcessConfirm visible={bool} />
+ * visible：必需的，用于控制弹框是否显示
+ * onOk：有默认值（空函数），按钮的回调事件
+ * okText：有默认值（确认），按钮的title
+ * contentTitle： 有默认值（流程发送成功），弹框内容的title
+ * title： 有默认值（系统提示），弹框的title
+ * content：有默认值（空对象），弹框的内容的value
+ */
 import React, { PropTypes, Component } from 'react';
 import { Modal } from 'antd';
 import { autobind } from 'core-decorators';
