@@ -1,3 +1,24 @@
+/**
+ * @description 带table的弹框，统一样式
+ * @author zhangjunli
+ * Usage:
+ * <TableDialog
+ *  visible={bool}
+ *  columns={array}
+ *  title={string}
+ *  onSearch={func}
+ * />
+ * visible：必需的，用于控制弹框是否显示
+ * columns: 必须的，用于table的列标题的定义
+ * title：必须的，弹框的title
+ * onSearch：必须的，搜索框的回调
+ * onOk：有默认值（空函数），按钮的回调事件
+ * onCancel：有默认值（空函数），按钮的回调事件
+ * dataSource： 有默认值（空数组），table的内容
+ * placeholder：有默认值（空字符串），用于搜索框无内容时的提示文字
+ * okText：有默认值（确定），按钮的title
+ * cancelText：有默认值（取消），按钮的title
+ */
 import React, { PropTypes, Component } from 'react';
 import { Table, Modal, Input } from 'antd';
 import { autobind } from 'core-decorators';
