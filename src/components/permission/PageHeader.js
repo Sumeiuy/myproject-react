@@ -68,6 +68,7 @@ export default class Pageheader extends PureComponent {
           allowClear
           treeDefaultExpandAll
           onChange={this.onChange}
+          searchPlaceholder="经济客户号/客户名称"
         />
 
         子类型:

@@ -3,18 +3,19 @@ import { autobind } from 'core-decorators';
 import { Table } from 'antd';
 import classnames from 'classnames';
 import _ from 'lodash';
-// import './feedbackList.less';
 import Icon from '../common/Icon';
-import { feedbackOptions } from '../../config';
+import { permissionOptions } from '../../config';
+
+import './jiraLayout.less';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
 
 // 状态字典
-const STATUS_MAP = [
-  { value: 'PROCESSING', label: '解决中' },
-  { value: 'CLOSED', label: '关闭' },
-];
+const STATUS_MAP = permissionOptions.stateOptions;
+
+// 类型字典
+const TYPE_MAP = permissionOptions.typeOptions;
 
 export default class PermissionList extends PureComponent {
   static propTypes = {
@@ -142,8 +143,12 @@ export default class PermissionList extends PureComponent {
   constructTableColumns() {
     const columns = [{
       dataIndex: 'issueType.feedId.description.feedEmpInfo',
-      width: '80%',
+      width: '60%',
       render: (text, record) => {
+        let typeLabel;
+        if (record.issueType) {
+          typeLabel = TYPE_MAP.filter(item => item.value === record.issueType);
+        }
         // 当前行记录
         const { feedEmpInfo = EMPTY_OBJECT, issueType } = record;
         const { name = '无', l1 = '', l2 = '', l3 = '' } = feedEmpInfo;
@@ -155,16 +160,17 @@ export default class PermissionList extends PureComponent {
           <div className="leftSection">
             <div className="id">
               {issueType ? <Icon {...typeIcon} /> : <Icon className="emptyIcon" />}
-              <span className="feedbackId">{record.feedId || '无'}</span>
+              <span className="listId">编号{record.feedId || '无'}</span>
+              <span className="listId">{(!_.isEmpty(typeLabel) && typeLabel[0].label)|| '无'}</span>
             </div>
-            <div className="description">{record.description || '无'}</div>
+            <div className="title">{record.title || '无'}</div>
             <div className="address">来自：{name}，{`${l1 || ''}${l2 || ''}${l3 || ''}` || '无'}</div>
           </div>
         );
       },
     }, {
       dataIndex: 'status.processer.createTime',
-      width: '20%',
+      width: '40%',
       render: (text, record) => {
         // 当前行记录
         let statusClass;
@@ -172,24 +178,19 @@ export default class PermissionList extends PureComponent {
         let processerLabel;
         if (record.status) {
           statusClass = classnames({
-            'state-resolve': record.status === STATUS_MAP[0].value,
-            'state-close': record.status === STATUS_MAP[1].value,
+            'state-complete': record.status === STATUS_MAP[0].value,
+            'state-resolve': record.status === STATUS_MAP[1].value,
+            'state-close': record.status === STATUS_MAP[2].value,
           });
           statusLabel = STATUS_MAP.filter(item => item.value === record.status);
-        }
-        if (!_.isEmpty(record.processer)
-          && record.processer !== '无'
-          && record.processer !== 'null') {
-          processerLabel = feedbackOptions.allOperatorOptions.filter(item =>
-            item.value === record.processer);
         }
         return (
           <div className="rightSection">
             <div className={statusClass}>{(!_.isEmpty(statusLabel) && statusLabel[0].label) || '无'}</div>
-            <div className="name">{(!_.isEmpty(processerLabel) && processerLabel[0].label) || '无'}</div>
             <div className="date">{(record.createTime &&
               record.createTime.length >= 10 &&
               record.createTime.slice(0, 10)) || '无'}</div>
+            <div className="cust">客户:{record.custName || '无'}({record.custId || '无'})</div>
           </div>
         );
       },
@@ -268,9 +269,9 @@ export default class PermissionList extends PureComponent {
     };
 
     return (
-      <div className="permissionList">
+      <div className="pageCommonList">
         <Table
-          className="permissionTable"
+          className="pageCommonTable"
           columns={columns}
           dataSource={this.constructTableDatas(resultData)}
           onRowClick={this.handleRowClick}
