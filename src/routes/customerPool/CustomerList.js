@@ -42,9 +42,11 @@ const effects = {
   getDictionary: 'customerPool/getDictionary',
   getCustomerList: 'customerPool/getCustomerList',
   getCustIncome: 'customerPool/getCustIncome',
+  getCustContact: 'customerPool/getCustContact',
+  getServiceRecord: 'customerPool/getServiceRecord',
 };
 
-const fectchDataFunction = (globalLoading, type) => query => ({
+const fetchDataFunction = (globalLoading, type) => query => ({
   type,
   payload: query || {},
   loading: globalLoading,
@@ -61,12 +63,16 @@ const mapStateToProps = state => ({
   monthlyProfits: state.customerPool.monthlyProfits, // 6个月收益数据
   isAllSelect: state.customerPool.isAllSelect, // 是否全选
   selectedIds: state.customerPool.selectedIds, // 非全选时选中的id数组
+  custContactData: state.customerPool.custContactData, // 联系方式数据
+  serviceRecordData: state.customerPool.serviceRecordData, // 最近服务记录
 });
 
 const mapDispatchToProps = {
-  getAllInfo: fectchDataFunction(true, effects.allInfo),
-  getCustomerData: fectchDataFunction(true, effects.getCustomerList),
-  getCustIncome: fectchDataFunction(true, effects.getCustIncome),
+  getAllInfo: fetchDataFunction(true, effects.allInfo),
+  getCustomerData: fetchDataFunction(true, effects.getCustomerList),
+  getCustIncome: fetchDataFunction(true, effects.getCustIncome),
+  getServiceRecord: fetchDataFunction(true, effects.getServiceRecord),
+  getCustContact: fetchDataFunction(true, effects.getCustContact),
   push: routerRedux.push,
   replace: routerRedux.replace,
   saveIsAllSelect: query => ({
@@ -102,6 +108,10 @@ export default class CustomerList extends PureComponent {
     selectedIds: PropTypes.object.isRequired,
     saveIsAllSelect: PropTypes.func.isRequired,
     saveSelectedIds: PropTypes.func.isRequired,
+    getCustContact: PropTypes.func.isRequired,
+    custContactData: PropTypes.object,
+    getServiceRecord: PropTypes.func.isRequired,
+    serviceRecordData: PropTypes.array,
   }
 
   static defaultProps = {
@@ -110,6 +120,8 @@ export default class CustomerList extends PureComponent {
     custRange: [],
     position: {},
     empInfo: {},
+    custContactData: EMPTY_OBJECT,
+    serviceRecordData: EMPTY_LIST,
   }
 
   constructor(props) {
@@ -163,7 +175,7 @@ export default class CustomerList extends PureComponent {
   @autobind
   getCustomerList(props) {
     const { getCustomerData, location: { query },
-    empInfo: { empInfo = EMPTY_OBJECT, empRespList = EMPTY_LIST } } = props;
+      empInfo: { empInfo = EMPTY_OBJECT, empRespList = EMPTY_LIST } } = props;
     const { occDivnNum = '' } = empInfo;
     const occ = _.isEmpty(occDivnNum) ? '' : occDivnNum;// orgId取不到的情况下去用户信息中的
     const orgId = _.isEmpty(window.forReactPosition)
@@ -262,7 +274,7 @@ export default class CustomerList extends PureComponent {
   @autobind
   handleSetCustRange(props) {
     const { custRange,
-    empInfo: { empInfo = EMPTY_OBJECT, empRespList = EMPTY_LIST } } = props;
+      empInfo: { empInfo = EMPTY_OBJECT, empRespList = EMPTY_LIST } } = props;
     const { occDivnNum = '' } = empInfo;
     const occ = _.isEmpty(occDivnNum) ? '' : occDivnNum;// orgId取不到的情况下去用户信息中的
     const fspOrgid = _.isEmpty(window.forReactPosition) ? occ : window.forReactPosition.orgId;
@@ -463,6 +475,10 @@ export default class CustomerList extends PureComponent {
       isAllSelect,
       saveIsAllSelect,
       saveSelectedIds,
+      getCustContact,
+      getServiceRecord,
+      custContactData,
+      serviceRecordData,
     } = this.props;
     const {
       sortDirection,
@@ -530,6 +546,10 @@ export default class CustomerList extends PureComponent {
           saveIsAllSelect={saveIsAllSelect}
           isAllSelect={isAllSelect}
           selectedIds={selectedIds}
+          getCustContact={getCustContact}
+          getServiceRecord={getServiceRecord}
+          custContactData={custContactData}
+          serviceRecordData={serviceRecordData}
         />
       </div>
     );

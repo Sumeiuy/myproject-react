@@ -46,6 +46,9 @@ export default {
     createTaskResult: {},
     cusGroupSaveMessage: '',
     resultgroupId: '',
+    incomeData: [],
+    custContactData: [],
+    serviceRecordData: [],
   },
   subscriptions: {
     setup({ dispatch }) {
@@ -79,15 +82,22 @@ export default {
     },
     // 初始化获取数据
     * getAllInfo({ payload }, { call, put }) {
+      const {
+        request: {
+        custType, // 客户范围类型
+        orgId, // 组织ID
+        empId,
+        fieldList,
+        begin,
+        end,
+        } } = payload;
       // 统计周期
       const statisticalPeriod = yield call(api.getStatisticalPeriod);
-      // debugger;
       yield put({
         type: 'getStatisticalPeriodSuccess',
         payload: { statisticalPeriod },
       });
       const firstCycle = statisticalPeriod.resultData.kPIDateScopeType;
-      // debugger;
       // (首页总数)
       const queryNumbers = yield call(api.getQueryNumbers);
       yield put({
@@ -101,6 +111,20 @@ export default {
       yield put({
         type: 'getPerformanceIndicatorsSuccess',
         payload: { indicators },
+      });
+      // 净创收数据
+      const resultData = yield call(api.queryKpiIncome, {
+        custType, // 客户范围类型
+        dateType: firstCycle[0].key, // 周期类型
+        orgId, // 组织ID
+        empId,
+        fieldList,
+        begin,
+        end,
+      });
+      yield put({
+        type: 'getIncomeDataSuccess',
+        payload: resultData,
       });
     },
     * search({ payload }, { put, select }) {
@@ -214,6 +238,33 @@ export default {
       yield put({
         type: 'createTaskSuccess',
         payload: { createTaskResult },
+      });
+    },
+    // 获取净创收数据
+    * getIncomeData({ payload }, { call, put }) {
+      const resultData = yield call(api.queryKpiIncome, payload);
+      yield put({
+        type: 'getIncomeDataSuccess',
+        payload: resultData,
+      });
+    },
+    // 获取个人和机构联系方式
+    * getCustContact({ payload }, { call, put }) {
+      const response = yield call(api.queryCustContact, payload);
+      const { resultData } = response;
+      const { custId } = payload;
+      yield put({
+        type: 'getCustContactSuccess',
+        payload: { resultData, custId },
+      });
+    },
+    // 获取最近五次服务记录
+    * getServiceRecord({ payload }, { call, put }) {
+      const response = yield call(api.queryRecentServiceRecord, payload);
+      const { resultData } = response;
+      yield put({
+        type: 'getServiceRecordSuccess',
+        payload: resultData,
       });
     },
   },
@@ -371,7 +422,7 @@ export default {
         clearState: clearHistoryState,
       };
     },
-      // 获取客户分组列表
+    // 获取客户分组列表
     getGroupListSuccess(state, action) {
       const { payload: { resultData } } = action;
       if (!resultData) {
@@ -417,7 +468,7 @@ export default {
         selectedIds: action.payload,
       };
     },
-      // 添加到现有分组保存成功
+    // 添加到现有分组保存成功
     addCusToGroupSuccess(state, action) {
       const { payload: { resultData } } = action;
       return {
@@ -431,6 +482,32 @@ export default {
       return {
         ...state,
         createTaskResult: payload,
+      };
+    },
+    // 获取净创收数据成功
+    getIncomeDataSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        incomeData: payload,
+      };
+    },
+    // 获取联系方式成功
+    getCustContactSuccess(state, action) {
+      const { payload: { resultData, custId } } = action;
+      return {
+        ...state,
+        custContactData: {
+          [custId]: resultData,
+        },
+      };
+    },
+    // 获取服务记录成功
+    getServiceRecordSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        serviceRecordData: payload,
       };
     },
   },

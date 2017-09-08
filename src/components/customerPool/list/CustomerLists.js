@@ -39,6 +39,10 @@ export default class CustomerLists extends PureComponent {
     entertype: PropTypes.string.isRequired,
     custRange: PropTypes.array.isRequired,
     condition: PropTypes.object.isRequired,
+    getCustContact: PropTypes.func.isRequired,
+    getServiceRecord: PropTypes.func.isRequired,
+    custContactData: PropTypes.object.isRequired,
+    serviceRecordData: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -226,7 +230,7 @@ export default class CustomerLists extends PureComponent {
       return (<button
         onClick={() => { this.handleClick('/customerPool/customerGroup', '新建分组', 'FSP_GROUP'); }}
       >
-          用户分组
+        用户分组
         </button>);
     }
     return null;
@@ -250,6 +254,10 @@ export default class CustomerLists extends PureComponent {
       selectedIds,
       isAllSelect,
       source,
+      getCustContact,
+      getServiceRecord,
+      custContactData,
+      serviceRecordData,
     } = this.props;
     if (!custList.length) {
       return <div className="list-box"><NoData /></div>;
@@ -304,6 +312,10 @@ export default class CustomerLists extends PureComponent {
                 isAllSelect={isAllSelectBool}
                 selectedIds={selectIdsArr}
                 onChange={this.handleSingleSelect}
+                getCustContact={getCustContact}
+                getServiceRecord={getServiceRecord}
+                custContactData={custContactData}
+                serviceRecordData={serviceRecordData}
                 key={`${item.empId}-${item.custId}-${item.idNum}-${item.telephone}-${item.asset}`}
               />,
             )
