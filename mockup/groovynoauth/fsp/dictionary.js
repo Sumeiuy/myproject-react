@@ -123,8 +123,61 @@ exports.response = function (req, res) {
           "key": "Chance",
           "value": "选做"
         }
-      ]
-
+      ],
+      "serveWay": [
+        {
+          "key": 'HTSC Phone',
+          "value": '电话',
+        },
+        {
+          "key": 'Mail',
+          "value": '邮件',
+        },
+        {
+          "key": 'HTSC SMS',
+          "value": '短信',
+        },
+        {
+          "key": 'wx',
+          "value": '微信',
+        },
+        {
+          "key": 'Interview',
+          "value": '面谈',
+        },
+        {
+          "key": 'Other',
+          "value": '其他',
+        },
+      ],
+      "serveType": [
+        {
+          "key": 'Campaign Action',
+          "value": '服务营销',
+        },
+        {
+          "key": 'Fins Su',
+          "value": '理财建议',
+        },
+        {
+          "key": 'New Customer Visit',
+          "value": '新客户回访',
+        },
+      ],
+      "workResult": [
+        {
+          "key": 'HTSC Complete',
+          "value": '完整完成',
+        },
+        {
+          "key": 'HTSC Partly Completed',
+          "value": '部分完成',
+        },
+        {
+          "key": 'HTSC Booking',
+          "value": '预约下次',
+        },
+      ],
     }
   }
 }

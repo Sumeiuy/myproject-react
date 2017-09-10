@@ -171,6 +171,12 @@ export default class CustomerRow extends PureComponent {
       checked: false,
       visible: false,
     };
+
+    this.debounced = _.debounce(
+      this.getCustIncome,
+      800,
+      { leading: false },
+    );
   }
 
   componentWillMount() {
@@ -180,6 +186,7 @@ export default class CustomerRow extends PureComponent {
     this.setState({
       unit,
       newAsset,
+      isShowCharts: false,
     });
   }
 
@@ -204,6 +211,24 @@ export default class CustomerRow extends PureComponent {
   }
 
   @autobind
+  getCustIncome() {
+    const { getCustIncome, listItem } = this.props;
+    // test data empId = 01041128、05038222、035000002899、02004642
+    getCustIncome({ custNumber: listItem.custId });
+    this.setState({
+      isShowCharts: true,
+    });
+  }
+
+  @autobind
+  handleMouseLeave() {
+    this.debounced.cancel();
+    this.setState({
+      isShowCharts: false,
+    });
+  }
+
+   @autobind
   handleCollapse(type) {
     if (type === 'open') {
       const prosshow = {
@@ -231,13 +256,6 @@ export default class CustomerRow extends PureComponent {
   }
 
   @autobind
-  handleMouseEnter() {
-    const { getCustIncome, listItem } = this.props;
-    // test data empId = 01041128、05038222、035000002899、02004642
-    getCustIncome({ custNumber: listItem.custId });
-  }
-
-  @autobind
   matchWord(q, listItem) {
     // if (!q) return;
     const { location: { query: { source } } } = this.props;
@@ -246,6 +264,8 @@ export default class CustomerRow extends PureComponent {
     let n = 0;
     const isSearch = source === 'search' || source === 'association';
     const isTag = source === 'tag';
+    const isCustIndicator = source === 'custIndicator';
+    const isNumOfCustOpened = source === 'numOfCustOpened';
     const isBusiness = source === 'business';
     if (isSearch && listItem.name && listItem.name.indexOf(q) > -1) {
       const markedEle = replaceWord(listItem.name, q);
@@ -303,7 +323,7 @@ export default class CustomerRow extends PureComponent {
       }
     }
     // 匹配可开通业务
-    if (isBusiness && listItem.unrightType) {
+    if ((isBusiness || isNumOfCustOpened) && listItem.unrightType) {
       const unrightTypeArr = listItem.unrightType.split(' ');
       const tmpArr = _.filter(_.map(unrightTypeArr, v => customerPoolBusiness[v]));
       if (!_.isEmpty(tmpArr)) {
@@ -316,7 +336,7 @@ export default class CustomerRow extends PureComponent {
       }
     }
     // 匹配已开通业务
-    if (isBusiness && listItem.userRights) {
+    if ((isBusiness || isNumOfCustOpened) && listItem.userRights) {
       const userRightsArr = listItem.userRights.split(' ');
       const tmpArr = _.filter(_.map(userRightsArr, v => customerPoolBusiness[v]));
       if (!_.isEmpty(tmpArr)) {
@@ -328,15 +348,24 @@ export default class CustomerRow extends PureComponent {
         }
       }
     }
-    // if (listItem.relatedLabels && listItem.relatedLabels.indexOf(q) > -1) {
-    //   const markedEle = replaceWord(listItem.relatedLabels, q, listItem.reasonDesc);
-    //   const domTpl = getNewHtml('匹配标签', markedEle);
-    //   rtnEle += domTpl;
-    //   n++;
-    //   if (n <= 2) {
-    //     shortRtnEle += domTpl;
-    //   }
-    // }
+    // 显示开户日期
+    if (isCustIndicator && listItem.openDt) {
+      const domTpl = getNewHtml('开户日期', listItem.openDt);
+      rtnEle += domTpl;
+      n++;
+      if (n <= 2) {
+        shortRtnEle += domTpl;
+      }
+    }
+    // 显示账户状态
+    if (isCustIndicator && listItem.accountStausName) {
+      const domTpl = getNewHtml('账户状态', listItem.accountStausName);
+      rtnEle += domTpl;
+      n++;
+      if (n <= 2) {
+        shortRtnEle += domTpl;
+      }
+    }
     return {
       shortRtnEle: { __html: shortRtnEle },
       rtnEle: { __html: rtnEle },
@@ -382,7 +411,7 @@ export default class CustomerRow extends PureComponent {
       isAllSelect,
       selectedIds,
     } = this.props;
-    const { unit, newAsset, checked } = this.state;
+    const { unit, newAsset, checked, isShowCharts } = this.state;
     const lastestProfit = Number(this.getLastestData(monthlyProfits).assetProfit);
     const lastestProfitRate = Number(this.getLastestData(monthlyProfits).assetProfitRate);
     const matchedWord = this.matchWord(q, listItem);
@@ -455,9 +484,19 @@ export default class CustomerRow extends PureComponent {
             <span>总资产：</span>
             <span className="asset">{newAsset}</span>
             <span>{unit}</span>
-            <span className="showChart" onMouseEnter={this.handleMouseEnter}>
-              查看详情
-              <div className={`${styles.showCharts} showChartsNow`}>
+            <span
+              className="showChart"
+            >
+              <p
+                onMouseEnter={this.debounced}
+                onMouseLeave={this.handleMouseLeave}
+              >
+                查看详情
+              </p>
+              <div
+                className={`${styles.showCharts}`}
+                style={{ display: isShowCharts ? 'block' : 'none' }}
+              >
                 <div className={styles.chartsContent}>
                   <ChartLineWidget chartData={monthlyProfits} />
                 </div>

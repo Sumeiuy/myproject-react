@@ -32,6 +32,7 @@ export default class PerformanceIndicators extends PureComponent {
     cycle: PropTypes.array,
     expandAll: PropTypes.bool,
     selectValue: PropTypes.string,
+    location: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -79,6 +80,7 @@ export default class PerformanceIndicators extends PureComponent {
       expandAll,
       selectValue,
       push,
+      location,
     } = this.props;
     const {
       cftCust,
@@ -175,12 +177,15 @@ export default class PerformanceIndicators extends PureComponent {
             <Row gutter={16}>
               <Col span={8}>
                 <CustomerIndicators
+                  push={push}
+                  location={location}
                   data={customerIndicators}
                 />
               </Col>
               <Col span={8}>
                 <BusinessProcessing
                   push={push}
+                  location={location}
                   data={businessProcessing}
                 />
               </Col>

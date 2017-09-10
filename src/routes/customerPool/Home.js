@@ -277,13 +277,23 @@ export default class Home extends PureComponent {
       ...state,
     }, () => {
       this.getIndicators();
-      replace({
-        pathname,
-        query: {
-          ...query,
-          orgId: state.orgId || state.fspOrgId,
-        },
-      });
+      if (state.orgId) {
+        replace({
+          pathname,
+          query: {
+            ...query,
+            orgId: state.orgId || state.fspOrgId,
+          },
+        });
+      } else if (state.cycleSelect) {
+        replace({
+          pathname,
+          query: {
+            ...query,
+            cycleSelect: state.cycleSelect,
+          },
+        });
+      }
     });
   }
 
