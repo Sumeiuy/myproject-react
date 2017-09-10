@@ -12,6 +12,7 @@ import ZHUNICODE from './unicode';
 import BoardBasic from './BoardBasic';
 import scatterType from './scatterType';
 import { responseCode, excludeCode } from './errorCode';
+import permissionOptions from './permissionOptions';
 
 export default {
   constants,
@@ -29,4 +30,5 @@ export default {
   scatterType,
   responseCode,
   excludeCode,
+  permissionOptions,
 };

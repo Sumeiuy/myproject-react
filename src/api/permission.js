@@ -4,7 +4,7 @@
 
 export default function permission(api) {
   return {
-    // 员工职责与职位
-    getEmpInfo: query => api.post('/groovynoauth/fsp/emp/info/queryEmpInfo', query),
+    // 获取权限申请列表
+    getPermissionList: query => api.post('/groovynoauth/permission/queryPermissionList', query),
   };
 }
