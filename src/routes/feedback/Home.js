@@ -384,4 +384,3 @@ export default class FeedBack extends PureComponent {
     );
   }
 }
-

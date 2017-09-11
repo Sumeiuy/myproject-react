@@ -320,7 +320,7 @@ export default class Search extends PureComponent {
             tagNumId: item.tagNumId || item.content,
             q: encodeURIComponent(item.content),
           }, '搜索目标客户', 'FSP_SEARCH')}
-          dangerouslySetInnerHTML={{ __html: newContent }}
+          dangerouslySetInnerHTML={{ __html: newContent }} // eslint-disable-line
           rel="noopener noreferrer"
         />
         <span className="desc">{item.desc}</span>
