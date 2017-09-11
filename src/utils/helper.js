@@ -250,6 +250,38 @@ const helper = {
   },
 
   /**
+   * 构造入参
+   * @param {*} query 查询
+   * @param {*} newPageNum 当前页
+   * @param {*} newPageSize 当前分页条目数
+   */
+  constructPermissionPostBody(query, newPageNum, newPageSize) {
+    let finalPostData = {
+      page: {
+        pageNum: newPageNum,
+        pageSize: newPageSize,
+      },
+    };
+
+    const omitData = _.omit(query, ['currentId', 'pageNum', 'pageSize', 'isResetPageNum']);
+    finalPostData = _.merge(finalPostData, omitData);
+
+    // 对子类型做处理
+    if (!('subType' in finalPostData)
+      || _.isEmpty(finalPostData.subType)) {
+      finalPostData = _.merge(finalPostData, { subType: 'PROCESSING' });
+    }
+
+    // 对状态做过滤处理
+    if (!('status' in finalPostData)
+      || _.isEmpty(finalPostData.status)) {
+      finalPostData = _.merge(finalPostData, { status: '01' });
+    }
+
+    return finalPostData;
+  },
+
+  /**
    * 格式化时间戳
    * @param {*} time 中国标准时间
    */

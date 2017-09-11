@@ -26,7 +26,7 @@ export default {
         ...state,
         list: {
           page,
-          resultData: page.curPageNum === 1 ?
+          resultData: page.pageNum === 1 ?
             permissionVOList : [...preListData, ...permissionVOList],
         },
       };
