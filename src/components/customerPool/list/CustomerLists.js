@@ -21,7 +21,7 @@ const EMPTY_ARRAY = [];
 
 export default class CustomerLists extends PureComponent {
   static propTypes = {
-    empInfo: PropTypes.object.isRequired,
+    empInfo: PropTypes.object,
     page: PropTypes.object.isRequired,
     custList: PropTypes.array.isRequired,
     curPageNum: PropTypes.string,
@@ -51,6 +51,7 @@ export default class CustomerLists extends PureComponent {
     pageSize: null,
     curPageNum: null,
     q: '',
+    empInfo: {},
   }
 
   constructor(props) {
