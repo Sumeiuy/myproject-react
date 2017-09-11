@@ -68,8 +68,8 @@ export default class CustomerIndicators extends PureComponent {
       source: 'custIndicator',
       customerType: value,
       bname: encodeURIComponent(bname),
-      orgId,
-      cycleSelect,
+      orgId: orgId || '',
+      cycleSelect: cycleSelect || '',
     };
     if (document.querySelector(fspContainer.container)) {
       const url = `${pathname}?${helper.queryToString(obj)}`;
@@ -77,7 +77,7 @@ export default class CustomerIndicators extends PureComponent {
         closable: true,
         forceRefresh: true,
         isSpecialTab: true,
-        id: 'RCT_FSP_PERFORMANCE',
+        id: 'RCT_FSP_CUSTOMER_LIST',
         title: '业绩目标客户',
       };
       fspGlobal.openRctTab({ url, param });

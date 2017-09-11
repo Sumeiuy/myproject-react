@@ -70,8 +70,8 @@ export default class BusinessProcessing extends PureComponent {
       source: 'numOfCustOpened',
       rightType: value,
       bname: encodeURIComponent(bname),
-      orgId,
-      cycleSelect,
+      orgId: orgId || '',
+      cycleSelect: cycleSelect || '',
     };
     if (document.querySelector(fspContainer.container)) {
       const url = `${pathname}?${helper.queryToString(obj)}`;
@@ -79,8 +79,8 @@ export default class BusinessProcessing extends PureComponent {
         closable: true,
         forceRefresh: true,
         isSpecialTab: true,
-        id: 'RCT_FSP_PERFORMANCE',
-        title: '业绩目标客户',
+        id: 'RCT_FSP_CUSTOMER_LIST',
+        title: '目标客户',
       };
       fspGlobal.openRctTab({ url, param });
     } else {
