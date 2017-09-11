@@ -177,6 +177,7 @@ export default class PerformanceIndicators extends PureComponent {
             <Row gutter={16}>
               <Col span={8}>
                 <CustomerIndicators
+                  cycle={cycle}
                   push={push}
                   location={location}
                   data={customerIndicators}
@@ -184,6 +185,7 @@ export default class PerformanceIndicators extends PureComponent {
               </Col>
               <Col span={8}>
                 <BusinessProcessing
+                  cycle={cycle}
                   push={push}
                   location={location}
                   data={businessProcessing}
