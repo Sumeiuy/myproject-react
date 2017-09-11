@@ -29,6 +29,10 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
+      '/fspa/mcrm/api/groovynoauth/fsp': {
+        target: 'http://168.61.8.81:9090', // SIT
+        secure: false,
+      },
       '/fspa/mcrm/api': {
         target: 'http://168.168.71.29:9084', // uat
         secure: false,
@@ -52,4 +56,4 @@ module.exports = {
   cssModules: true,
   appSrc: path.resolve(__dirname, '../src'),
   appNodeModules: path.resolve(__dirname, '../node_modules'),
-}
+};

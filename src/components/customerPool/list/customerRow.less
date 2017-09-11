@@ -1,0 +1,382 @@
+.clear {
+  clear: both;
+  content: '.';
+  display: block;
+  width: 0;
+  height: 0;
+  visibility: hidden;
+}
+.customerRow {
+  position: relative;
+  padding: 18px 0;
+  background-color: #fff;
+  border-bottom: 1px solid #ddd;
+  &:hover {
+    background-color: #F1F8FF;
+    .basicInfoD {
+      display: block;
+    }
+  }
+  &:after {
+    .clear;
+  }
+}
+.customerRowLeft {
+  float: left;
+  &:after {
+    .clear;
+  }
+}
+.selectIcon {
+  float: left;
+  margin-top: 28px;
+  margin-left: 15px;
+  width: 15px;
+  height: 15px;
+  line-height: 15px;
+  :global {
+    .ant-checkbox {
+      vertical-align: text-top;
+    }
+    .ant-checkbox-wrapper {
+      width: 15px;
+      height: 15px;
+      line-height: 15px;
+    }
+  }
+}
+.avatorContent {
+  margin-left: 34px;
+  padding: 12px 34px 0 34px;
+  text-align: center;
+  box-sizing: border-box;
+}
+.avatorImage {
+  width: 35px;
+  height: 35px;
+  vertical-align: top;
+}
+.avatorText {
+  height: 22px;
+  line-height: 22px;
+  font-size: 12px;
+  color: #B8B8B8;
+}
+.iconMoneyImage {
+  margin-top: 12px;
+  height: 20px;
+}
+.customerRowRight {
+  padding-left: 160px;
+  padding-right: 30px;
+  width: 100%;
+  box-sizing: border-box;
+  :global {
+    .row-one {
+      height: 30px;
+      line-height: 30px;
+      .name {
+        margin-right: 14px;
+        color: #515151;
+        font-weight: bold;
+        font-size: 16px;
+      }
+      .iconSingned {
+        position: relative;
+        display: inline-block;
+        margin-right: 14px;
+        background: url("../../../../static/images/icon-signed.png");
+        width: 28px;
+        height: 30px;
+        background-repeat: no-repeat;
+        background-size:contain;
+        vertical-align: middle;
+        &:hover {
+          .itemText {
+            display: inline-block;
+          }
+        }
+        .itemText {
+          display: none;
+          position: absolute;
+          border-radius: 3px;
+          font-size: 12px;
+          padding: 0 8px;
+          line-height: 18px;
+          top: -25px;
+          left: 0;
+          box-shadow: 0 0 15px #EAEBEB;
+          background-color: #FFFFCD;
+          white-space: nowrap;
+        }
+      }
+      .highWorthFlag {
+        display: inline-block;
+        margin-right: 5px;
+        border: 1px solid #7D9BE0;
+        border-radius: 5px;
+        color: #7D9BE0;
+        font-size: 12px;
+        width: 50px;
+        height: 18px;
+        line-height: 18px;
+        text-align: center;
+        box-sizing: content-box;
+      }
+      .riskLevel {
+        width: 30px;
+        height: 20px;
+        line-height: 20px;
+        text-align: center;
+        position: relative;
+        display: inline-block;
+        border-radius: 5px;
+        color: white;
+        font-size: 12px;
+        background-color: #60C1EA;
+        &.zuidi {
+          background-color: #81a3b8;
+          .itemText {
+            right: -48px;
+          }
+        }
+        &.baoshou {
+          background-color: #756fb8;
+        }
+        &.jinshen {
+          background-color: #7d9be0;
+        }
+        &.wenjian {
+          background-color: #60c1ea;
+        }
+        &.jiji {
+          background-color: #fdb02b;
+        }
+        &.jijin {
+          background-color: #fd752b;
+        }
+        &:hover {
+          .itemText {
+            display: inline-block;
+          }
+        }
+        .itemText {
+          display: none;
+          position: absolute;
+          top: -25px;
+          left: 0;
+          padding: 0 10px;
+          line-height: 18px;
+          border-radius: 3px;
+          font-size: 12px;
+          box-shadow: 0 0 15px #EAEBEB;
+          background-color: #FFFFCD;
+          color: #333;
+          white-space: nowrap;
+        }
+      }
+    }
+    .row-two {
+      height: 28px;
+      line-height: 28px;
+      span {
+        display: inline-block;
+        font-size: 14px;
+        color: #777;
+        &.cutOffLine {
+          padding: 0 10px;
+        }
+        &.commission {
+          float: right;
+          em {
+            font-weight: bold;
+            font-style: normal;
+          }
+        }
+      }
+    }
+    .row-three {
+      height: 28px;
+      line-height: 28px;
+      padding-bottom: 10px;
+      border-bottom: 1px dashed #c2c2c2;
+      box-sizing: content-box;
+      span {
+        float: left;
+        font-size: 14px;
+        color: #777;
+        &.asset {
+          font-weight: bold;
+        }
+        &.showChart {
+          position: relative;
+          float: left;
+          margin-left: 10px;
+          font-size: 14px;
+          color: #3983ff;
+        }
+      }
+      .department {
+        float: right;
+        .cutOffLine {
+          padding: 0 10px;
+        }
+      }
+    }
+  }
+}
+.showCharts {
+  display: none;
+  border: 1px solid antiquewhite;
+  height: 135px;
+  width: 500px;
+  position: absolute;
+  left: -5px;
+  top: 25px;
+  z-index: 2;
+  background-color: #FFFFFF;
+  border-radius: 8px;
+  .chartsContent {
+    display: inline-block;
+    width:300px;
+    height: 135px;
+  }
+  .chartsText {
+    display: inline-block;
+    width: 190px;
+    font-size: 13px;
+    color:#808080;
+    vertical-align:top;
+    div {
+      margin-top: 10px;
+    }
+    .numA{
+      font-weight: bold;
+    }
+    .numB{
+      color: #DA3915;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    span {
+      float: none;
+    }
+  }
+}
+
+.relatedInfo {
+  margin-top: 10px;
+  ul {
+    list-style-type: none;
+    font-size: 13px;
+    color: #969696;
+    margin-top: 10px;
+    li {
+      margin-top: 4px;
+      :global .marked {
+        position: relative;
+        color: #ff784e;
+        font-style: normal;
+        padding: 0;
+        background-color: transparent;
+        &:hover .tip {
+          display: inline-block;
+        }
+        .tip {
+          display: none;
+          position: absolute;
+          top: -30px;
+          right: -10px;
+          height: 26px;
+          line-height: 26px;
+          padding: 0 5px;
+          background-color: #FFFFCD;
+          font-style: normal;
+          color: #333;
+          white-space: nowrap;
+          box-shadow: 0 0 15px #EAEBEB;
+        }
+      }
+      :global .label {
+        padding: 0;
+        color: #ff784e;
+        font-style: normal;
+        font-weight: normal;
+      }
+    }
+  }
+}
+
+.collapseItem {
+  float: right;
+  font-size: 12px;
+  .itemA {
+    color: #B9B9B9;
+    cursor:pointer;
+    padding-right: 10px;
+  }
+}
+
+.basicInfoD {
+  display: none;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 12px;
+  .operationIcon {
+    padding: 0px 0px 0px 10px;
+    height: 16px;
+    line-height: 16px;
+    li {
+      border-right: 1px solid #DDDDDD;
+      display: inline-block;
+      padding: 0px 10px 0px 10px;
+      cursor: pointer;
+      &:hover {
+        i, span {
+          color: #ff784e;
+        }
+      }
+      i {
+        margin-right: 5px;
+        vertical-align: top;
+        color: #c2c2c2;
+      }
+      // .iconIphone {
+      //   display: inline-block;
+      //   width: 17px;
+      //   height: 12px;
+      //   background: url("../../../../static/images/icon-phone.png");
+      //   background-repeat: no-repeat;
+      //   background-size:contain;
+      // }
+      // .iconEmail {
+      //   display: inline-block;
+      //   width: 17px;
+      //   height: 9px;
+      //   background: url("../../../../static/images/icon-email.png");
+      //   background-repeat: no-repeat;
+      //   background-size:contain;
+      // }
+      // .iconRecordService {
+      //   display: inline-block;
+      //   width: 15px;
+      //   height: 12px;
+      //   background: url("../../../../static/images/icon-service-record.png");
+      //   background-repeat: no-repeat;
+      //   background-size: contain;
+      // }
+      // .iconFocus {
+      //   display: inline-block;
+      //   width: 15px;
+      //   height: 12px;
+      //   background: url("../../../../static/images/icon-focus.png");
+      //   background-repeat: no-repeat;
+      //   background-size: contain;
+      // }
+    }
+    li:last-child {
+      border-right: none;
+    }
+  }
+}

@@ -10,6 +10,8 @@ import feedbackOptions from './feedbackOptions';
 import reportAnchorOptions from './reportAnchorOptions';
 import ZHUNICODE from './unicode';
 import BoardBasic from './BoardBasic';
+import customerOptionMap from './customerOptionMap';
+import customerPoolBusiness from './customerPoolBusiness';
 import scatterType from './scatterType';
 import { responseCode, excludeCode } from './errorCode';
 import permissionOptions from './permissionOptions';
@@ -26,7 +28,9 @@ export default {
   feedbackOptions,
   ZHUNICODE,
   BoardBasic,
+  customerOptionMap,
   reportAnchorOptions,
+  customerPoolBusiness,
   scatterType,
   responseCode,
   excludeCode,

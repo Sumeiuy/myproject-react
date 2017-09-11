@@ -15,7 +15,6 @@ import { queryToString, getEmpId } from './helper';
  */
 export default function createApi() {
   const { prefix } = config;
-
   // 如果没有前缀，自动补上
   const padPrefix = (url) => {
     if (url.indexOf(prefix) === -1) {

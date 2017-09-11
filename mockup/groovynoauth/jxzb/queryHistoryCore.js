@@ -6,7 +6,7 @@ exports.response = function (req, res) {
       {
         key: 'effCustNum',
         name: '有效客户数',
-        value: '0',
+        value: '-12345678',
         historyValue: '2936687',
         unit: '户',
         description: '统计周期期末为有效的客户数',
@@ -36,7 +36,7 @@ exports.response = function (req, res) {
       {
         key: 'shzNpRate',
         name: '沪深归集率',
-        value: '0',
+        value: '-0.002893029',
         historyValue: '0.494634583251609970591092088697236714933',
         unit: '%',
         description: '客户在沪深市场归属华泰的资产总额/所有资产总额',

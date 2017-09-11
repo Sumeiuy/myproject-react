@@ -112,8 +112,9 @@ export default class Anchor extends PureComponent {
     antAnchor: PropTypes.object,
   };
 
-  refs: {
-    ink: PropTypes.any;
+  // noinspection JSAnnotator
+    refs: {
+      ink: PropTypes.any;
   };
 
   // private links: String[];

@@ -45,7 +45,7 @@ const helper = {
   // 获取 empId
   getEmpId() {
     // 临时 ID
-    const tempId = '001423';
+    const tempId = '002727'; // '001423''002727';
     const nativeQuery = helper.getQuery(window.location.search);
     const empId = window.curUserCode || nativeQuery.empId || tempId;
     return empId;
@@ -116,6 +116,7 @@ const helper = {
     const PERCENT = ZHUNICODE.PERCENT;
     const PERMILLAGE = ZHUNICODE.PERMILLAGE;
     const obj = {};
+    let minus = '';
     // 如果 value 有值
     if (value) {
       if (value === 'null') {
@@ -123,7 +124,12 @@ const helper = {
         obj.value = '暂无';
         obj.unit = '';
       } else {
-        const newValue = Number(value);
+        let newValue = Number(value);
+        // 如果 newValue 是负数
+        if (newValue < 0) {
+          minus = '-';
+          newValue = Math.abs(newValue);
+        }
         // 如果 value 的值是 0
         if (newValue === 0) {
           obj.value = newValue;
@@ -187,6 +193,7 @@ const helper = {
           }
         }
       }
+      obj.value = minus ? `${minus}${obj.value}` : obj.value;
     } else {
       // value 没值
       obj.value = '暂无';
@@ -401,6 +408,24 @@ const helper = {
     };
     return duration;
   },
+
+  /**
+   * 添加滚动监听
+  */
+  addWheelEvent(obj, handler) {
+    obj.addEventListener('mousewheel', handler, false);
+    obj.addEventListener('DOMMouseScroll', handler, false);
+    obj.addEventListener('wheel', handler, false);
+  },
+  /**
+   * 删除滚动监听
+  */
+  removeWheelEvent(obj, handler) {
+    obj.removeEventListener('mousewheel', handler, false);
+    obj.removeEventListener('DOMMouseScroll', handler, false);
+    obj.removeEventListener('wheel', handler, false);
+  },
+
   // 获取环比时间段事件
   queryMoMDuration(begin, end, duration) {
     let tempDuration;
@@ -437,6 +462,19 @@ const helper = {
       end: lastEndMoment,
     };
     return compareDuration;
+  },
+
+  // 根据Date的对象获取星期
+  getDay(d) {
+    const weekday = new Array(7);
+    weekday[0] = '周日';
+    weekday[1] = '周一';
+    weekday[2] = '周二';
+    weekday[3] = '周三';
+    weekday[4] = '周四';
+    weekday[5] = '周五';
+    weekday[6] = '周六';
+    return weekday[d.getDay()];
   },
 };
 
