@@ -179,27 +179,33 @@ export default class TableDialog extends Component {
             </div>
           )
         }
-        <Modal
-          title={title}
-          visible={visible}
-          onOk={this.handleOk}
-          onCancel={this.handleCancel}
-          okText={okText}
-          cancelText={cancelText}
-          wrapClassName={styles.modalContainer}
-        >
-          <Search
-            placeholder={placeholder}
-            onSearch={(value) => { this.handleSearch(value); }}
-          />
-          <Table
-            rowKey="id"
-            rowSelection={rowSelection}
-            columns={columns}
-            dataSource={dataSource}
-            pagination={false}
-          />
-        </Modal>
+        {
+          visible ? (
+            <Modal
+              title={title}
+              visible={visible}
+              onOk={this.handleOk}
+              onCancel={this.handleCancel}
+              okText={okText}
+              cancelText={cancelText}
+              wrapClassName={styles.modalContainer}
+            >
+              <Search
+                placeholder={placeholder}
+                onSearch={(value) => { this.handleSearch(value); }}
+              />
+              <Table
+                rowKey="id"
+                rowSelection={rowSelection}
+                columns={columns}
+                dataSource={dataSource}
+                pagination={false}
+              />
+            </Modal>
+          ) : (
+            null
+          )
+        }
       </div>
     );
   }
