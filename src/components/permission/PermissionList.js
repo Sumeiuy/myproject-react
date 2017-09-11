@@ -14,9 +14,6 @@ const EMPTY_LIST = [];
 // 状态字典
 const STATUS_MAP = permissionOptions.stateOptions;
 
-// 类型字典
-const TYPE_MAP = permissionOptions.typeOptions;
-
 export default class PermissionList extends PureComponent {
   static propTypes = {
     list: PropTypes.object.isRequired,
@@ -43,7 +40,7 @@ export default class PermissionList extends PureComponent {
       location: { query, pathname, query: { currentId } },
       replace,
       list: { resultData = EMPTY_LIST, page = EMPTY_OBJECT } } = nextProps;
-    const { curPageNum, pageSize } = page;
+    const { pageNum, pageSize } = page;
 
     // 只有当有数据，
     // 当前没有选中项currentId
@@ -60,8 +57,8 @@ export default class PermissionList extends PureComponent {
             query: {
               ...query,
               currentId: resultData[0] && resultData[0].id,
-              curPageNum,
-              curPageSize: pageSize,
+              pageNum,
+              pageSize,
             },
           });
           // 选中第一行
@@ -80,8 +77,8 @@ export default class PermissionList extends PureComponent {
             pathname,
             query: {
               ...query,
-              // curPageNum,
-              // curPageSize: pageSize,
+              // pageNum,
+              // pageSize: pageSize,
             },
           });
         }
@@ -120,7 +117,7 @@ export default class PermissionList extends PureComponent {
   /**
    * 页码改变事件
    * @param {*} nextPage 下一页码
-   * @param {*} curPageSize 当前页
+   * @param {*} pageSize 当前页
    */
   @autobind
   handlePageChange(nextPage, currentPageSize) {
@@ -130,8 +127,8 @@ export default class PermissionList extends PureComponent {
       pathname,
       query: {
         ...query,
-        curPageNum: nextPage,
-        curPageSize: currentPageSize,
+        pageNum: nextPage,
+        pageSize: currentPageSize,
       },
     });
   }
@@ -142,40 +139,26 @@ export default class PermissionList extends PureComponent {
   @autobind
   constructTableColumns() {
     const columns = [{
-      dataIndex: 'issueType.feedId.description.feedEmpInfo',
+      dataIndex: 'serialNumber.subType.title.empName.level1OrgName.level2OrgName.level3OrgName',
       width: '60%',
-      render: (text, record) => {
-        let typeLabel;
-        if (record.issueType) {
-          typeLabel = TYPE_MAP.filter(item => item.value === record.issueType);
-        }
-        // 当前行记录
-        const { feedEmpInfo = EMPTY_OBJECT, issueType } = record;
-        const { name = '无', l1 = '', l2 = '', l3 = '' } = feedEmpInfo;
-        const typeIcon = {
-          type: issueType === 'DEFECT' ? 'wenti' : 'jianyi',
-          className: issueType === 'DEFECT' ? 'wenti' : 'jianyi',
-        };
-        return (
-          <div className="leftSection">
-            <div className="id">
-              {issueType ? <Icon {...typeIcon} /> : <Icon className="emptyIcon" />}
-              <span className="listId">编号{record.feedId || '无'}</span>
-              <span className="listId">{(!_.isEmpty(typeLabel) && typeLabel[0].label)|| '无'}</span>
-            </div>
-            <div className="title">{record.title || '无'}</div>
-            <div className="address">来自：{name}，{`${l1 || ''}${l2 || ''}${l3 || ''}` || '无'}</div>
+      render: (text, record) => (
+        <div className="leftSection">
+          <div className="id">
+            <Icon type="save_blue" />
+            <span className="serialNumber">编号{record.serialNumber || '无'}</span>
+            <span className="subType">{record.subType || '无'}</span>
           </div>
-        );
-      },
+          <div className="title">{record.title || '无'}</div>
+          <div className="address">来自：{record.empName}，{`${record.level1OrgName || ''}${record.level2OrgName || ''}${record.level3OrgName || ''}` || '无'}</div>
+        </div>
+        ),
     }, {
-      dataIndex: 'status.processer.createTime',
+      dataIndex: 'status.createTime.custName.custNumber',
       width: '40%',
       render: (text, record) => {
         // 当前行记录
         let statusClass;
         let statusLabel;
-        let processerLabel;
         if (record.status) {
           statusClass = classnames({
             'state-complete': record.status === STATUS_MAP[0].value,
@@ -188,9 +171,8 @@ export default class PermissionList extends PureComponent {
           <div className="rightSection">
             <div className={statusClass}>{(!_.isEmpty(statusLabel) && statusLabel[0].label) || '无'}</div>
             <div className="date">{(record.createTime &&
-              record.createTime.length >= 10 &&
               record.createTime.slice(0, 10)) || '无'}</div>
-            <div className="cust">客户:{record.custName || '无'}({record.custId || '无'})</div>
+            <div className="cust">客户:{record.custName || '无'}({record.custNumber || '无'})</div>
           </div>
         );
       },
@@ -226,15 +208,15 @@ export default class PermissionList extends PureComponent {
       pathname,
       query: {
         ...query,
-        curPageNum: 1,
-        curPageSize: changedPageSize,
+        pageNum: 1,
+        pageSize: changedPageSize,
       },
     });
   }
 
-  constructPageSizeOptions(totalRecordNum) {
+  constructPageSizeOptions(totalCount) {
     const pageSizeOption = [];
-    const maxPage = Math.ceil(totalRecordNum / 10);
+    const maxPage = Math.ceil(totalCount / 10);
     for (let i = 1; i <= maxPage; i++) {
       pageSizeOption.push((10 * i).toString());
     }
@@ -244,8 +226,8 @@ export default class PermissionList extends PureComponent {
 
   render() {
     const { list: { resultData = EMPTY_LIST, page = EMPTY_OBJECT },
-      location: { query: { curPageNum, curPageSize } } } = this.props;
-    const { totalRecordNum } = page;
+      location: { query: { pageNum, pageSize } } } = this.props;
+    const { totalCount } = page;
     const { curSelectedRow } = this.state;
 
     if (!resultData) {
@@ -255,17 +237,17 @@ export default class PermissionList extends PureComponent {
     const columns = this.constructTableColumns();
 
     const paginationOptions = {
-      current: parseInt(curPageNum, 10),
+      current: parseInt(pageNum, 10),
       defaultCurrent: 1,
       size: 'small', // 迷你版
-      total: totalRecordNum,
-      pageSize: parseInt(curPageSize, 10),
+      total: totalCount,
+      pageSize: parseInt(pageSize, 10),
       defaultPageSize: 10,
       onChange: this.handlePageChange,
       showTotal: total => `共${total}个`,
       showSizeChanger: true,
       onShowSizeChange: this.handleShowSizeChange,
-      pageSizeOptions: this.constructPageSizeOptions(totalRecordNum),
+      pageSizeOptions: this.constructPageSizeOptions(totalCount),
     };
 
     return (
