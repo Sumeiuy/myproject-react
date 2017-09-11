@@ -161,7 +161,7 @@ export default class PermissionList extends PureComponent {
             <div className="id">
               {issueType ? <Icon {...typeIcon} /> : <Icon className="emptyIcon" />}
               <span className="listId">编号{record.feedId || '无'}</span>
-              <span className="listId">{(!_.isEmpty(typeLabel) && typeLabel[0].label)|| '无'}</span>
+              <span className="listId">{(!_.isEmpty(typeLabel) && typeLabel[0].label) || '无'}</span>
             </div>
             <div className="title">{record.title || '无'}</div>
             <div className="address">来自：{name}，{`${l1 || ''}${l2 || ''}${l3 || ''}` || '无'}</div>
@@ -175,7 +175,6 @@ export default class PermissionList extends PureComponent {
         // 当前行记录
         let statusClass;
         let statusLabel;
-        let processerLabel;
         if (record.status) {
           statusClass = classnames({
             'state-complete': record.status === STATUS_MAP[0].value,
