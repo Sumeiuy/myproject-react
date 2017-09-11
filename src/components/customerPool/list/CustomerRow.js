@@ -142,7 +142,7 @@ const formatNumber = (num) => {
   return num;
 };
 
-let COUNT = 0;
+let contactModalKeyCount = 0;
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 
@@ -179,7 +179,7 @@ export default class CustomerRow extends PureComponent {
       checked: false,
       visible: false,
       isShowModal: false,
-      modalKey: `contactModalKey${COUNT}`,
+      modalKey: `contactModalKey${contactModalKeyCount}`,
       currentCustId: '',
       custType: '',
     };
@@ -220,7 +220,7 @@ export default class CustomerRow extends PureComponent {
       if (!isShowModal) {
         this.setState({
           isShowModal: true,
-          modalKey: `contactModalKey${COUNT++}`,
+          modalKey: `contactModalKey${contactModalKeyCount++}`,
         });
       }
     }

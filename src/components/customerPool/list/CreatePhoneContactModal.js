@@ -445,12 +445,15 @@ export default class CreateContactModal extends PureComponent {
     let otherContactInfo = EMPTY_LIST;
     let mainContactInfo = EMPTY_OBJECT;
     let personalContactInfo = EMPTY_OBJECT;
+    let isPersonHasContact = false;
+    let isOrgHasMainContact = false;
 
     if (custType === 'org') {
       const mainContactIndex = _.findIndex(orgCustomerContactInfoList, item => item.mainFlag);
       let mainContactNameInfo;
       let allInfo;
       if (mainContactIndex > -1) {
+        isOrgHasMainContact = true;
         // 机构客户中存在主要联系人
         // 找出主要联系人姓名和职位和具体电话信息
         allInfo = _.pick(orgCustomerContactInfoList[mainContactIndex],
@@ -462,9 +465,10 @@ export default class CreateContactModal extends PureComponent {
           nameInfo: mainContactNameInfo,
           cellInfo: _.isEmpty(allInfo.cellPhones) ? '' :
             this.formatPhoneNumber(allInfo.cellPhones[0].contactValue, 'phone'),
-          telInfo: _.pick(allInfo, ['workTels', 'homeTels', 'otherTels']),
+          telInfo: _.omitBy(_.pick(allInfo, ['workTels', 'homeTels', 'otherTels']), _.isEmpty),
         };
       }
+      isOrgHasMainContact = false;
       // 其他联系人信息
       const otherContact = _.filter(orgCustomerContactInfoList,
         (item, index) => index !== mainContactIndex);
@@ -480,22 +484,30 @@ export default class CreateContactModal extends PureComponent {
       }));
     } else {
       const allTelInfo = _.pick(perCustomerContactInfo, ['cellPhones', 'workTels', 'homeTels', 'otherTels']);
-      const cellPhones = allTelInfo.cellPhones || EMPTY_LIST;
-      let mainTelInfo;
-      if (_.findIndex(cellPhones, item => item.mainFlag) > -1) {
-        // 存在主要电话
-        mainTelInfo = {
-          type: 'cellPhones',
-          value: this.formatPhoneNumber(cellPhones[0].contactValue, 'phone'),
+      isPersonHasContact = !_.isEmpty(_.omitBy(allTelInfo, _.isEmpty));
+      if (isPersonHasContact) {
+        const cellPhones = allTelInfo.cellPhones || EMPTY_LIST;
+        let mainTelInfo = {
+          type: 'none',
+          value: '',
+        };
+        if (_.findIndex(cellPhones, item => item.mainFlag) > -1) {
+          // 存在主要电话
+          mainTelInfo = {
+            type: 'cellPhones',
+            value: this.formatPhoneNumber(cellPhones && cellPhones[0].contactValue, 'phone'),
+          };
+        }
+        // 个人联系方式中，不存在主要电话
+        // 过滤联系方式为空的情况
+        const otherTelInfo = _.omitBy(_.omit(allTelInfo, ['cellPhones']), _.isEmpty);
+
+        // 筛选contactValue存在的其他电话
+        personalContactInfo = {
+          mainTelInfo,
+          otherTelInfo,
         };
       }
-      // 个人联系方式中，不存在主要电话
-      const otherTelInfo = _.omit(allTelInfo, ['cellPhones']);
-      // 筛选contactValue存在的其他电话
-      personalContactInfo = {
-        mainTelInfo,
-        otherTelInfo,
-      };
     }
 
     const columns = this.constructTableColumns();
@@ -516,22 +528,33 @@ export default class CreateContactModal extends PureComponent {
         ]}
       >
         {
-          custType === 'per' ?
-            <div className={styles.title}>
-              主要联系电话（{CONTACT_MAP[personalContactInfo.mainTelInfo.type]}）：
-            </div>
-            :
+          custType === 'org' ?
             <div className={styles.title}>
               主要联系人：{mainContactInfo.nameInfo.name || '--'}（{mainContactInfo.nameInfo.custRela || '--'}）
             </div>
+            : null
+        }
+        {
+          (custType === 'per' && isPersonHasContact) ?
+            <div className={styles.title}>
+              主要联系电话（{personalContactInfo.mainTelInfo.type === 'none' ? '--' :
+                  CONTACT_MAP[personalContactInfo.mainTelInfo.type]}）：
+            </div> : null
         }
         <div className={styles.number}>
-          <div className={styles.mainContact}>
-            <img src={Phone} alt={'电话联系'} />
-            <span>{custType === 'per' ?
-              personalContactInfo.mainTelInfo.value :
-              mainContactInfo.cellInfo}</span>
-          </div>
+          {
+            (isOrgHasMainContact || isPersonHasContact) ?
+              <div className={styles.mainContact}>
+                <img src={Phone} alt={'电话联系'} />
+                <span>{custType === 'per' ?
+                  personalContactInfo.mainTelInfo.value :
+                  mainContactInfo.cellInfo}
+                </span>
+              </div> :
+              <div className={styles.noneInfo}>
+               暂无客户联系电话，请与客户沟通尽快完善信息
+              </div>
+          }
           <div className={styles.rightSection}>
             <Button key="addServiceRecord" onClick={this.handleServiceRecordClick}>添加服务记录</Button>
           </div>

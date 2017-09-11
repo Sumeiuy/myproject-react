@@ -476,6 +476,7 @@ export default class Home extends PureComponent {
       historyWdsList,
       clearState,
       searchHistoryVal,
+      incomeData,
     } = this.props;
     const { expandAll, cycleSelect, createCustRange, fspOrgId } = this.state;
     return (
@@ -510,6 +511,7 @@ export default class Home extends PureComponent {
             cycle={cycle}
             expandAll={expandAll}
             selectValue={cycleSelect}
+            incomeData={incomeData}
           />
         </div>
       </div>
