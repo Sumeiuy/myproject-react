@@ -10,7 +10,6 @@ import { Checkbox } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
-import { customerPoolBusiness } from '../../../config';
 import CreatePhoneContactModal from './CreatePhoneContactModal';
 import Icon from '../../common/Icon';
 import styles from './customerRow.less';
@@ -164,6 +163,7 @@ export default class CustomerRow extends PureComponent {
     getCustContact: PropTypes.func.isRequired,
     getServiceRecord: PropTypes.func.isRequired,
     createServiceRecord: PropTypes.func.isRequired,
+    dict: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -173,7 +173,12 @@ export default class CustomerRow extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { listItem: { asset } } = props;
+    const {
+      dict: {
+        custBusinessType = [],
+      },
+      listItem: { asset },
+    } = props;
     this.state = {
       showStyle: show,
       hideStyle: hide,
@@ -186,6 +191,11 @@ export default class CustomerRow extends PureComponent {
       currentCustId: '',
       custType: '',
     };
+
+    this.businessConfig = new Map();
+    custBusinessType.forEach((v) => {
+      this.businessConfig.set(v.key, v.value);
+    });
 
     this.debounced = _.debounce(
       this.getCustIncome,
@@ -360,7 +370,7 @@ export default class CustomerRow extends PureComponent {
     // 匹配可开通业务
     if ((isBusiness || isNumOfCustOpened) && listItem.unrightType) {
       const unrightTypeArr = listItem.unrightType.split(' ');
-      const tmpArr = _.filter(_.map(unrightTypeArr, v => customerPoolBusiness[v]));
+      const tmpArr = _.filter(_.map(unrightTypeArr, v => this.businessConfig.get(v)));
       if (!_.isEmpty(tmpArr)) {
         const domTpl = getNewHtml(`可开通业务(${tmpArr.length})`, tmpArr.join('、'));
         rtnEle += domTpl;
@@ -373,7 +383,7 @@ export default class CustomerRow extends PureComponent {
     // 匹配已开通业务
     if ((isBusiness || isNumOfCustOpened) && listItem.userRights) {
       const userRightsArr = listItem.userRights.split(' ');
-      const tmpArr = _.filter(_.map(userRightsArr, v => customerPoolBusiness[v]));
+      const tmpArr = _.filter(_.map(userRightsArr, v => this.businessConfig.get(v)));
       if (!_.isEmpty(tmpArr)) {
         const domTpl = getNewHtml(`已开通业务(${tmpArr.length})`, tmpArr.join('、'));
         rtnEle += domTpl;

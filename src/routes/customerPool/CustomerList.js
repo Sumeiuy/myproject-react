@@ -20,8 +20,8 @@ import CustomerLists from '../../components/customerPool/list/CustomerLists';
 
 import styles from './customerlist.less';
 
-// const CUST_MANAGER = 1; // 客户经理
-// const ORG = 3; // 组织机构
+const CUST_MANAGER = 1; // 客户经理
+const ORG = 3; // 组织机构
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const CUR_PAGE = 1; // 默认当前页
@@ -255,6 +255,7 @@ export default class CustomerList extends PureComponent {
         { key: query.labelMapping, value: query.tagNumId },
       ];
     } else if (_.includes(['custIndicator', 'numOfCustOpened'], query.source)) {
+      // 业绩中的时间周期
       if (query.cycleSelect) {
         param.dateType = query.cycleSelect;
       } else {
@@ -275,29 +276,25 @@ export default class CustomerList extends PureComponent {
         value: query.rightType,
       };
     }
-    // 业绩中的时间周期
-    if (query.cycleSelect) {
-      param.dateType = query.cycleSelect;
-    }
     // 业务进来的时候，默认 我的客户 ，不带orgId
     // 我的客户 和 没有权限时，custType=1,其余情况custType=3
     if (query.source !== 'business') {
       // 职位切换
       if (thisPropsPosOrgId !== posOrgId) {
         param.orgId = posOrgId;
-        param.custType = 3;
+        param.custType = ORG;
       } else if (respIdOfPosition > 0 && query.orgId) {   // 有权限时切换组织机构树
         if (MAIN_MAGEGER_ID !== query.orgId) { // 切换到非我的客户，传选中的orgId
           param.orgId = query.orgId;
-          param.custType = 3;
+          param.custType = ORG;
         } else {
-          param.custType = 1; // 切换到我的客户
+          param.custType = CUST_MANAGER; // 切换到我的客户
         }
       } else if (respIdOfPosition > 0 && orgId) { // 第一次进入时，且有权限，传默认的职位orgId
         param.orgId = orgId;
-        param.custType = 3;
+        param.custType = ORG;
       } else if (respIdOfPosition < 0) { // 没有权限
-        param.custType = 1;
+        param.custType = CUST_MANAGER;
       }
     }
     // 过滤数组
@@ -388,7 +385,7 @@ export default class CustomerList extends PureComponent {
       fspJobOrgId = posOrgId;
     }
     // 用户职位是经总
-    if (fspJobOrgId === custRange[0].id) {
+    if (fspJobOrgId === (custRange[0] || {}).id) {
       this.setState({
         createCustRange: custRange,
         expandAll: true,

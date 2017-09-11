@@ -4,7 +4,7 @@
  * @author wangjunjun
  */
 import _ from 'lodash';
-import api from '../api';
+import { customerPool as api } from '../api';
 
 export default {
   namespace: 'customerPool',
