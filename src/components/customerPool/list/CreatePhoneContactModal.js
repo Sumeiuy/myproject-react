@@ -9,9 +9,9 @@ import ReactDOM from 'react-dom';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 // import moment from 'moment';
-// import classnames from 'classnames';
-import { Modal, Button, Table, Avatar } from 'antd';
-// import Icon from '../../common/Icon';
+import classnames from 'classnames';
+import { Modal, Button, Table } from 'antd';
+import Icon from '../../common/Icon';
 // import Anchor from '../../../components/common/anchor';
 import Collapse from './ModalCollapse';
 import styles from './createPhoneContactModal.less';
@@ -33,6 +33,9 @@ export default class CreateContactModal extends PureComponent {
     serviceRecordData: PropTypes.array.isRequired,
     visible: PropTypes.bool.isRequired,
     custType: PropTypes.string.isRequired,
+    createServiceRecord: PropTypes.func.isRequired,
+    currentCustId: PropTypes.string.isRequired,
+    onClose: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -69,7 +72,7 @@ export default class CreateContactModal extends PureComponent {
 
   componentWillUnmount() {
     const modalContainer = ReactDOM.findDOMNode( // eslint-disable-line
-      document.querySelector('.ant-modal-content'));
+      document.querySelector('.contactPop .ant-modal-content'));
     if (modalContainer) {
       modalContainer.removeEventListener('mousewheel', this.preventEventBubble, false);
       modalContainer.removeEventListener('DOMMouseScroll', this.preventEventBubble, false);
@@ -77,16 +80,17 @@ export default class CreateContactModal extends PureComponent {
     }
   }
 
+  @autobind
   setModalHeight() {
     /* eslint-disable */
     const modalContainer = ReactDOM.findDOMNode(
-      document.querySelector('.ant-modal-content'));
+      document.querySelector('.contactPop .ant-modal .ant-modal-content'));
     const modalBody = ReactDOM.findDOMNode(
-      document.querySelector('.ant-modal-body'));
+      document.querySelector('.contactPop .ant-modal .ant-modal-content .ant-modal-body'));
     const modalHeader = ReactDOM.findDOMNode(
-      document.querySelector('.ant-modal-header'));
+      document.querySelector('.contactPop .ant-modal .ant-modal-content .ant-modal-header'));
     const modalFooter = ReactDOM.findDOMNode(
-      document.querySelector('.ant-modal-footer'));
+      document.querySelector('.contactPop .ant-modal .ant-modal-content .ant-modal-footer'));
     const docHeight = ReactDOM.findDOMNode(document.documentElement).clientHeight;
     /* eslint-enable */
     let headerHeight;
@@ -97,7 +101,7 @@ export default class CreateContactModal extends PureComponent {
     if (modalFooter) {
       footerHeight = modalFooter.clientHeight;
     }
-    if (modalContainer) {
+    if (modalContainer && !modalBody.style.height) {
       // 设置高度和自动滚动
       modalContainer.style.height = `${docHeight - 100 - 20}px`;
       modalBody.style.overflow = 'auto';
@@ -297,6 +301,8 @@ export default class CreateContactModal extends PureComponent {
 
   @autobind
   handleCancel() {
+    const { onClose } = this.props;
+    onClose();
     this.setState({ visible: false });
   }
 
@@ -415,6 +421,19 @@ export default class CreateContactModal extends PureComponent {
     return newPhone;
   }
 
+  @autobind
+  handleServiceRecordClick() {
+    const { onClose, createServiceRecord, currentCustId } = this.props;
+    // 先关闭联系方式对话框
+    this.setState({
+      visible: false,
+    });
+    // 打开创建服务记录对话框
+    createServiceRecord(currentCustId);
+    // 回调，关闭父组件state状态
+    onClose();
+  }
+
   render() {
     const {
       visible,
@@ -451,24 +470,25 @@ export default class CreateContactModal extends PureComponent {
     if (custType === 'org') {
       const mainContactIndex = _.findIndex(orgCustomerContactInfoList, item => item.mainFlag);
       let mainContactNameInfo;
-      let allInfo;
+      let mainContactAllInfo;
       if (mainContactIndex > -1) {
         isOrgHasMainContact = true;
         // 机构客户中存在主要联系人
         // 找出主要联系人姓名和职位和具体电话信息
-        allInfo = _.pick(orgCustomerContactInfoList[mainContactIndex],
+        mainContactAllInfo = _.pick(orgCustomerContactInfoList[mainContactIndex],
           ['name', 'custRela', 'cellPhones', 'workTels', 'homeTels', 'otherTels']);
         // 主联系人的姓名、职位
-        mainContactNameInfo = _.pick(allInfo, ['name', 'custRela']);
+        mainContactNameInfo = _.pick(mainContactAllInfo, ['name', 'custRela']);
         // 主联系人的手机，住宅，单位，其他电话信息
         mainContactInfo = {
           nameInfo: mainContactNameInfo,
-          cellInfo: _.isEmpty(allInfo.cellPhones) ? '' :
-            this.formatPhoneNumber(allInfo.cellPhones[0].contactValue, 'phone'),
-          telInfo: _.omitBy(_.pick(allInfo, ['workTels', 'homeTels', 'otherTels']), _.isEmpty),
+          cellInfo: _.isEmpty(mainContactAllInfo.cellPhones) ? '' :
+            this.formatPhoneNumber(mainContactAllInfo.cellPhones[0].contactValue, 'phone'),
+          telInfo: _.omitBy(_.pick(mainContactAllInfo, ['workTels', 'homeTels', 'otherTels']), _.isEmpty),
         };
+      } else {
+        isOrgHasMainContact = false;
       }
-      isOrgHasMainContact = false;
       // 其他联系人信息
       const otherContact = _.filter(orgCustomerContactInfoList,
         (item, index) => index !== mainContactIndex);
@@ -515,7 +535,10 @@ export default class CreateContactModal extends PureComponent {
 
     return (
       <Modal
-        wrapClassName={styles.contactModal}
+        wrapClassName={classnames({
+          contactPop: true, // 供js查询时使用
+          [styles.contactModal]: true,
+        })}
         visible={visible}
         title={'联系客户'}
         onOk={this.handleOk}
@@ -578,7 +601,7 @@ export default class CreateContactModal extends PureComponent {
         }
         { /* 提示信息 */}
         <div className={styles.tipSection}>
-          <Avatar className={styles.tipIcon} shape="square" size="small" icon="user" />
+          <Icon className={styles.tipIcon} type="dengpao" />
           <span>温馨提醒：联系过客户后请及时创建服务记录</span>
         </div>
         <div className={styles.split} />
