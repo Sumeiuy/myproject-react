@@ -94,17 +94,24 @@ export default class TableDialog extends Component {
   handleOk() {
     const { selectedRows } = this.state;
     const selected = selectedRows.length > 0 ? selectedRows[0] : {};
+    // 重置默认值
+    const { dataSource } = this.props;
+    const defaultConfig = this.defaultSelected(dataSource);
     this.setState({
       visible: false,
       selected,
+      ...defaultConfig,
     });
   }
 
   @autobind
   handleCancel() {
-    const { onCancel } = this.props;
+    const { onCancel, dataSource } = this.props;
+    // 重置默认值
+    const defaultConfig = this.defaultSelected(dataSource);
     this.setState({
       visible: false,
+      ...defaultConfig,
     }, onCancel());
   }
 
@@ -118,7 +125,7 @@ export default class TableDialog extends Component {
   handleFocus() {
     this.setState({
       visible: true,
-    });
+    }, this.searchElem.input.refs.input.blur());
   }
 
   @autobind
@@ -153,6 +160,7 @@ export default class TableDialog extends Component {
         {
           flag ? (
             <Search
+              ref={(ref) => { this.searchElem = ref; }}
               className={styles.search}
               placeholder={placeholder}
               onFocus={this.handleFocus}
