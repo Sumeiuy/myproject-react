@@ -36,61 +36,6 @@ const SERVICE_ICON = {
   Interview: 'beizi',
   Other: 'other',
 };
-const SERVICE_WAY = [
-  {
-    key: 'HTSC Phone',
-    value: '电话',
-  },
-  {
-    key: 'Mail',
-    value: '邮件',
-  },
-  {
-    key: 'HTSC SMS',
-    value: '短信',
-  },
-  {
-    key: 'wx',
-    value: '微信',
-  },
-  {
-    key: 'Interview',
-    value: '面谈',
-  },
-  {
-    key: 'Other',
-    value: '其他',
-  },
-];
-const SERVICE_TYPE = [
-  {
-    key: 'Campaign Action',
-    value: '服务营销',
-  },
-  {
-    key: 'Fins Su',
-    value: '理财建议',
-  },
-  {
-    key: 'New Customer Visit',
-    value: '新客户回访',
-  },
-];
-
-const WORK_RESULT = [
-  {
-    key: 'HTSC Complete',
-    value: '完整完成',
-  },
-  {
-    key: 'HTSC Partly Completed',
-    value: '部分完成',
-  },
-  {
-    key: 'HTSC Booking',
-    value: '预约下次',
-  },
-];
 
 
 export default class CreateServiceRecord extends PureComponent {
@@ -103,6 +48,7 @@ export default class CreateServiceRecord extends PureComponent {
     addServeRecord: PropTypes.func.isRequired,
     addServeRecordSuccess: PropTypes.bool.isRequired,
     isAddServeRecord: PropTypes.bool.isRequired,
+    dict: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -112,10 +58,15 @@ export default class CreateServiceRecord extends PureComponent {
 
   constructor(props) {
     super(props);
+    const {
+      serveWay,
+      serveType,
+      workResult,
+    } = props.dict;
     this.state = {
-      serviceWay: SERVICE_WAY[0].key,
-      serviceType: SERVICE_TYPE[0].key,
-      workResult: WORK_RESULT[0].key,
+      serviceWay: serveWay[0].key,
+      serviceType: serveType[0].key,
+      workResult: workResult[0].key,
       serviceTime: formatCurrentDate,
       feedbackTime: formatCurrentDate,
     };
@@ -125,12 +76,17 @@ export default class CreateServiceRecord extends PureComponent {
     const {
       isAddServeRecord,
       addServeRecordSuccess,
+      dict: {
+        serveWay,
+        serveType,
+        workResult,
+      },
     } = nextProps;
     if (nextProps.id !== this.props.id) {
       this.setState({
-        serviceWay: SERVICE_WAY[0].key,
-        serviceType: SERVICE_TYPE[0].key,
-        workResult: WORK_RESULT[0].key,
+        serviceWay: serveWay[0].key,
+        serviceType: serveType[0].key,
+        workResult: workResult[0].key,
         serviceTime: formatCurrentDate,
         feedbackTime: formatCurrentDate,
       });
@@ -169,14 +125,6 @@ export default class CreateServiceRecord extends PureComponent {
     const {
       addServeRecord,
     } = this.props;
-    console.log(`输入的内容有： serviceWay: ${serviceWay}
-      serviceType: ${serviceType}
-      serviceTime: ${serviceTime}
-      serviceContent: ${serviceContent}
-      feedbackContent: ${feedbackContent}
-      feedbackTime: ${feedbackTime}
-      workResult: ${workResult}
-    `);
     addServeRecord({
       serveWay: serviceWay,
       serveType: serviceType,
@@ -238,6 +186,7 @@ export default class CreateServiceRecord extends PureComponent {
     const {
       isShow,
       empInfo,
+      dict,
     } = this.props;
     const {
       serviceWay,
@@ -270,7 +219,7 @@ export default class CreateServiceRecord extends PureComponent {
         <p>请选择一项服务方式</p>
         <Row className={styles.serviceWay} type="flex" justify="space-between">
           {
-            SERVICE_WAY.map(obj => (
+            dict.serveWay.map(obj => (
               <Col
                 className={`serviceWayItem ${serviceWay === obj.key ? 'active' : ''}`}
                 onClick={() => this.handleServiceWay(obj.key)}
@@ -290,7 +239,7 @@ export default class CreateServiceRecord extends PureComponent {
               onChange={this.handleServiceType}
             >
               {
-                SERVICE_TYPE.map(obj => (<Option value={obj.key}>{obj.value}</Option>))
+                dict.serveType.map(obj => (<Option value={obj.key}>{obj.value}</Option>))
               }
             </Select>
           </Col>
@@ -338,7 +287,7 @@ export default class CreateServiceRecord extends PureComponent {
               onChange={this.handleWorkResult}
             >
               {
-                WORK_RESULT.map(obj => (<Option value={obj.key}>{obj.value}</Option>))
+                dict.workResult.map(obj => (<Option value={obj.key}>{obj.value}</Option>))
               }
             </Select>
           </Col>

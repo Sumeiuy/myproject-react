@@ -80,7 +80,7 @@ export default class CustRangeForList extends PureComponent {
     let custRangeEle = null;
     let timeEle = null;
     const { key } = this.state;
-    if (_.includes(['search', 'tag', 'association', 'performance'], source)) {
+    if (_.includes(['search', 'tag', 'association', 'custIndicator', 'numOfCustOpened'], source)) {
       custRangeEle = (<div className={styles.item}>
         <Icon type="kehu" />
         {
@@ -106,7 +106,7 @@ export default class CustRangeForList extends PureComponent {
         }
       </div>);
     }
-    if (source === 'performance') {
+    if (_.includes(['custIndicator', 'numOfCustOpened'], source)) {
       timeEle = (
         <div className={styles.item}>
           <i className={styles.bd} />
