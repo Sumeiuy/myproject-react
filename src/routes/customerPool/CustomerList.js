@@ -376,7 +376,7 @@ export default class CustomerList extends PureComponent {
       fspJobOrgId = posOrgId;
     }
     // 用户职位是经总
-    if (fspJobOrgId === custRange[0].id) {
+    if (fspJobOrgId === (custRange[0] || {}).id) {
       this.setState({
         createCustRange: custRange,
         expandAll: true,
