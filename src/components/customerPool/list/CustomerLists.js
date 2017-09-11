@@ -10,7 +10,7 @@ import _ from 'lodash';
 import { Pagination, Checkbox } from 'antd';
 
 import { fspContainer } from '../../../config';
-import { fspGlobal } from '../../../utils';
+import { fspGlobal, helper } from '../../../utils';
 import NoData from '../common/NoData';
 import CustomerRow from './CustomerRow';
 import CreateServiceRecord from './CreateServiceRecord';
@@ -163,26 +163,26 @@ export default class CustomerLists extends PureComponent {
     // debugger
     const idStr = encodeURIComponent(_.map(ids, v => (v.id)).join(','));
     const name = encodeURIComponent(ids[0].name);
+    const obj = {
+      ids: idStr,
+      count,
+      entertype,
+      name,
+    };
     if (document.querySelector(fspContainer.container)) {
-      const urlQuery = `ids=${idStr}&count=${count}&entertype=${entertype}&name=${name}`;
-      const newurl = `${url}?${urlQuery}`;
+      const newurl = `${url}?${helper.queryToString(obj)}`;
       const param = {
         closable: true,
         forceRefresh: true,
         isSpecialTab: true,
-        id, // 'FSP_SERACH',
-        title, // '搜索目标客户',
+        id,
+        title,
       };
       fspGlobal.openRctTab({ url: newurl, param });
     } else {
       this.props.push({
         pathname: url,
-        query: {
-          ids: idStr,
-          count,
-          entertype,
-          name,
-        },
+        query: obj,
       });
     }
   }
@@ -193,26 +193,26 @@ export default class CustomerLists extends PureComponent {
     // 全选时取整个列表的第一个数据的name属性值传给后续页面
     const name = encodeURIComponent(this.props.custList[0].name);
     const condt = encodeURIComponent(JSON.stringify(condition));
+    const obj = {
+      condition: condt,
+      count,
+      entertype,
+      name,
+    };
     if (document.querySelector(fspContainer.container)) {
-      const newQuery = `condition=${condt}&count=${count}&entertype=${entertype}&name=${name}`;
-      const newurl = `${url}?${newQuery}`;
+      const newurl = `${url}?${helper.queryToString(obj)}`;
       const param = {
         closable: true,
         forceRefresh: true,
         isSpecialTab: true,
-        id, // 'FSP_SERACH',
-        title, // '搜索目标客户',
+        id,
+        title,
       };
       fspGlobal.openRctTab({ url: newurl, param });
     } else {
       this.props.push({
         pathname: url,
-        query: {
-          condition: condt,
-          count,
-          entertype,
-          name,
-        },
+        query: obj,
       });
     }
   }

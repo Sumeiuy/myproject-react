@@ -111,6 +111,9 @@ const UNIT_DEFAULT = '元';
 const UNIT_WAN = '万元';
 const UNIT_YI = '亿元';
 
+// 匹配标签区域超过两条显示 展开/收起 按钮
+const FOLD_NUM = 2;
+
 const haveTitle = title => (title ? `<i class="tip">${title}</i>` : null);
 
 const replaceWord = (value, q, title = '') => {
@@ -259,8 +262,8 @@ export default class CustomerRow extends PureComponent {
   matchWord(q, listItem) {
     // if (!q) return;
     const { location: { query: { source } } } = this.props;
-    let rtnEle = '';
-    let shortRtnEle = '';
+    let rtnEle = '';  // 全部展示的数据
+    let shortRtnEle = ''; // 只展示两条的数据
     let n = 0;
     const isSearch = source === 'search' || source === 'association';
     const isTag = source === 'tag';
@@ -272,7 +275,7 @@ export default class CustomerRow extends PureComponent {
       const domTpl = getNewHtml('姓名', markedEle);
       rtnEle += domTpl;
       n++;
-      if (n <= 2) {
+      if (n <= FOLD_NUM) {
         shortRtnEle += domTpl;
       }
     }
@@ -281,7 +284,7 @@ export default class CustomerRow extends PureComponent {
       const domTpl = getNewHtml('身份证号码', markedEle);
       rtnEle += domTpl;
       n++;
-      if (n <= 2) {
+      if (n <= FOLD_NUM) {
         shortRtnEle += domTpl;
       }
     }
@@ -290,7 +293,7 @@ export default class CustomerRow extends PureComponent {
       const domTpl = getNewHtml('联系电话', markedEle);
       rtnEle += domTpl;
       n++;
-      if (n <= 2) {
+      if (n <= FOLD_NUM) {
         shortRtnEle += domTpl;
       }
     }
@@ -299,7 +302,7 @@ export default class CustomerRow extends PureComponent {
       const domTpl = getNewHtml('经纪客户号', markedEle);
       rtnEle += domTpl;
       n++;
-      if (n <= 2) {
+      if (n <= FOLD_NUM) {
         shortRtnEle += domTpl;
       }
     }
@@ -317,7 +320,7 @@ export default class CustomerRow extends PureComponent {
         const domTpl = getNewHtml('匹配标签', markedEle);
         rtnEle += domTpl;
         n++;
-        if (n <= 2) {
+        if (n <= FOLD_NUM) {
           shortRtnEle += domTpl;
         }
       }
@@ -330,7 +333,7 @@ export default class CustomerRow extends PureComponent {
         const domTpl = getNewHtml(`可开通业务(${tmpArr.length})`, tmpArr.join('、'));
         rtnEle += domTpl;
         n++;
-        if (n <= 2) {
+        if (n <= FOLD_NUM) {
           shortRtnEle += domTpl;
         }
       }
@@ -343,7 +346,7 @@ export default class CustomerRow extends PureComponent {
         const domTpl = getNewHtml(`已开通业务(${tmpArr.length})`, tmpArr.join('、'));
         rtnEle += domTpl;
         n++;
-        if (n <= 2) {
+        if (n <= FOLD_NUM) {
           shortRtnEle += domTpl;
         }
       }
@@ -353,7 +356,7 @@ export default class CustomerRow extends PureComponent {
       const domTpl = getNewHtml('开户日期', listItem.openDt);
       rtnEle += domTpl;
       n++;
-      if (n <= 2) {
+      if (n <= FOLD_NUM) {
         shortRtnEle += domTpl;
       }
     }
@@ -362,7 +365,7 @@ export default class CustomerRow extends PureComponent {
       const domTpl = getNewHtml('账户状态', listItem.accountStausName);
       rtnEle += domTpl;
       n++;
-      if (n <= 2) {
+      if (n <= FOLD_NUM) {
         shortRtnEle += domTpl;
       }
     }
