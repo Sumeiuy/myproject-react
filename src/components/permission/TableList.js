@@ -1,0 +1,100 @@
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
+import classnames from 'classnames';
+import style from './tablelist.less';
+
+export default class TableList extends PureComponent {
+  static propTypes = {
+    info: PropTypes.array.isRequired,
+    statusType: PropTypes.string.isRequired,
+    selectValue: PropTypes.object.isRequired,
+    emitUpdateValue: PropTypes.func,
+  }
+
+  static defaultProps = {
+    emitUpdateValue: null,
+  }
+
+  get getEleList() {
+    const { emitUpdateValue } = this.props;
+    const result = this.props.info.map((item, index) => {
+      const callBack = () => {
+        emitUpdateValue(item);
+      };
+      const tabIndex = `TableList${index}`;
+      return (
+        <li
+          key={tabIndex}
+          className={style.spServerPersonelItem}
+        >
+          <div
+            className={classnames(['text-center',
+              { 'flex-base_0': this.props.statusType === 'ready' },
+              { 'flex-base_1': this.props.statusType !== 'ready' },
+            ])}
+          >
+            <label
+              htmlFor
+              className={item.id === this.props.selectValue.id ? 'label-btn-circle checked' : 'label-btn-circle'}
+            >
+              <input
+                type="radio"
+                name="serverPersonel"
+                className="hide"
+                checked={item.id === this.props.selectValue.id}
+                onChange={callBack}
+              />
+            </label>
+          </div>
+          <span
+            className="flex-base_2 text-center"
+          >{item.id}</span>
+          <span
+            className="flex-base_2 text-center"
+          >
+            <span
+              className={item.id === this.props.selectValue.id ? style.mainManager : ''}
+            >{item.name}</span>
+          </span>
+          <span
+            className="flex-base_2 text-center"
+          >{item.position}</span>
+          <span
+            className="flex-base_3 text-center"
+          >{item.department}</span>
+        </li>
+      );
+    });
+    return result;
+  }
+
+  render() {
+    return (
+      <ul className={style.spServerPersonel}>
+        <li
+          className={classnames([style.spServerPersonelItem, style.firstItem])}
+        >
+          <span
+            className={classnames(['text-center',
+              { 'flex-base_0': this.props.statusType === 'ready' },
+              { 'flex-base_1': this.props.statusType !== 'ready' },
+            ])}
+          />
+          <span
+            className="flex-base_2 text-center"
+          >工号</span>
+          <span
+            className="flex-base_2 text-center"
+          >姓名</span>
+          <span
+            className="flex-base_2 text-center"
+          >职位</span>
+          <span
+            className="flex-base_3 text-center"
+          >所属营业部</span>
+        </li>
+        {this.getEleList}
+      </ul>
+    );
+  }
+}

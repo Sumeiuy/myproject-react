@@ -1,0 +1,36 @@
+@import './publicconfig.less';
+
+.serverPersonel {
+	width: 100%;
+	height: auto;
+	margin-top: 19px;
+}
+.spAlerts {
+	width: 100%;
+	height: 36px;
+	margin: 19px 0 10px;
+}
+.spAlertsCircle {
+	float: left;
+	width: 26px;
+	height: 100%;
+	position: relative;
+}
+.spAlertsCircle:after {
+	content: '';
+	position: absolute;
+	top: 8px;
+	left: 7px;
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: @activeColor;
+}
+.spAlertsCon {
+	float: left;
+	width: 500px;
+	height: 100%;
+	line-height: 18px;
+	color: #a1a1a1;
+	font-size: @fontColor;
+}

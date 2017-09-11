@@ -1,0 +1,42 @@
+@import './publicconfig.less';
+
+.messageListComponent {
+	width: 100%;
+	height: auto;
+	margin-top: 19px;
+	border-bottom: @borderBottom;
+}
+.mlcContent {
+	width: 100%;
+	height: auto;
+	margin-top: 28px;
+	list-style: none;
+}
+.mlcContentList {
+	display: table;
+	width: 100%;
+	min-height: 32px;
+	heigth: 32px;
+	margin-bottom: 20px;
+	position: relative;
+}
+.mlcContentListTitle {
+	position: absolute;
+	display: table-cell;
+	top: 0;
+	left: 0;
+	width: 95px;
+	height: 100%;
+	color: #a1a1a1;
+	font-size: @fontSize;
+	line-height: 32px;
+	text-align: right;
+}
+.mlcContentListCon {
+	display: table-cell;
+	padding-left: 116px;
+	color: @fontColor;
+	font-size: @fontSize;
+	line-height: 32px;
+	text-align: left;
+}
