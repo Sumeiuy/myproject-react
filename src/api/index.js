@@ -149,7 +149,7 @@ export default {
   createTask: query => api.post('/groovynoauth/fsp/cust/task/createTask', query),
 
   // 净创收数据
-  queryKpiIncome: query => api.post('/groovynoauth/fsp/emp/kpi/queryKpiIncome', query),
+  queryKpiIncome: query => api.post('/groovynoauth/fsp/emp/kpi/queryNetIncome', query),
 
   // 查询机构与个人联系方式
   queryCustContact: query => api.post('/groovynoauth/fsp/cust/custlist/fspQueryCustContact', query),

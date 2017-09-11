@@ -221,7 +221,12 @@ export default class Home extends PureComponent {
       orgId, // 组织ID
       empId: helper.getEmpId(),
       fieldList: [
-        'tranPurRakeCopy', 'totCrdtIntCopy', 'totTranInt', 'pIncomeAmt',
+        'tranPurRakeCopy',
+        'totCrdtIntCopy',
+        'totTranInt',
+        'pIncomeAmt',
+        'prdtOIncomeAmt',
+        'oIncomeAmt',
       ],
       begin: '20170901',
       end: '20170905',

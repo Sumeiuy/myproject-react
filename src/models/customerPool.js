@@ -45,9 +45,9 @@ export default {
     createTaskResult: {},
     cusGroupSaveMessage: '',
     resultgroupId: '',
-    incomeData: [],
-    custContactData: {},
-    serviceRecordData: [],
+    incomeData: [], // 净收入
+    custContactData: {}, // 客户联系方式
+    serviceRecordData: [], // 服务记录
     isAddServeRecord: false,
     addServeRecordSuccess: false, // 添加服务记录成功的标记
   },
