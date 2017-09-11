@@ -51,5 +51,14 @@ export default function customerPool(api) {
 
     // 客户列表页添加服务记录
     addServeRecord: query => api.post('/groovynoauth/fsp/cust/custlist/addServeRecord', query),
+
+    // 净创收数据
+    queryKpiIncome: query => api.post('/groovynoauth/fsp/emp/kpi/queryNetIncome', query),
+
+    // 查询机构与个人联系方式
+    queryCustContact: query => api.post('/groovynoauth/fsp/cust/custlist/fspQueryCustContact', query),
+
+    // 查询最近五次服务记录
+    queryRecentServiceRecord: query => api.post('/groovynoauth/fsp/cust/custlist/queryRecentServiceRecord', query),
   };
 }

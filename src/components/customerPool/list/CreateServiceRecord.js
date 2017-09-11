@@ -82,6 +82,7 @@ export default class CreateServiceRecord extends PureComponent {
         workResult,
       },
     } = nextProps;
+    // 判断两次点击是否是同一个客户的服务记录，不是的，就还原数据，否则保留
     if (nextProps.id !== this.props.id) {
       this.setState({
         serviceWay: serveWay[0].key,
@@ -96,6 +97,7 @@ export default class CreateServiceRecord extends PureComponent {
         document.querySelector('#feedbackContent').value = '';
       }
     }
+    // 添加成功
     if (addServeRecordSuccess === true &&
     isAddServeRecord === false &&
     this.props.isAddServeRecord === true) {
@@ -103,6 +105,7 @@ export default class CreateServiceRecord extends PureComponent {
     }
   }
 
+  // 提交
   @autobind
   handleSubmit() {
     const serviceContent = _.trim(document.querySelector('#serviceContent').value);
@@ -138,12 +141,14 @@ export default class CreateServiceRecord extends PureComponent {
     hideCreateServiceRecord();
   }
 
+  // 关闭弹窗
   @autobind
   handleCancel() {
     const { hideCreateServiceRecord } = this.props;
     hideCreateServiceRecord();
   }
 
+  // 保存选中的服务方式的值
   @autobind
   handleServiceWay(key) {
     this.setState({
@@ -151,6 +156,7 @@ export default class CreateServiceRecord extends PureComponent {
     });
   }
 
+  // 保存服务类型的值
   @autobind
   handleServiceType(value) {
     this.setState({
@@ -158,6 +164,7 @@ export default class CreateServiceRecord extends PureComponent {
     });
   }
 
+  // 保存工作结果的值
   @autobind
   handleWorkResult(value) {
     this.setState({
@@ -165,6 +172,7 @@ export default class CreateServiceRecord extends PureComponent {
     });
   }
 
+  // 保存服务时间的值
   @autobind
   handleServiceTime(date) {
     const selectedDate = Number(date.format('x'));
@@ -173,6 +181,7 @@ export default class CreateServiceRecord extends PureComponent {
     });
   }
 
+  // 保存回馈时间的值
   @autobind
   handleFeedbackTime(date) {
     const selectedDate = Number(date.format('x'));
@@ -201,6 +210,7 @@ export default class CreateServiceRecord extends PureComponent {
         <span>&nbsp;{empInfo.empName}/{empInfo.empNum}</span>
       </p>
     );
+    // 自定义星期的值
     moment.locale('zh-cn', {
       weekdays,
     });
