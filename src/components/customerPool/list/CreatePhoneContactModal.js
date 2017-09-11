@@ -82,15 +82,16 @@ export default class CreateContactModal extends PureComponent {
 
   @autobind
   setModalHeight() {
+    const modalContent = '.contactPop .ant-modal .ant-modal-content';
     /* eslint-disable */
     const modalContainer = ReactDOM.findDOMNode(
-      document.querySelector('.contactPop .ant-modal .ant-modal-content'));
+      document.querySelector(`${modalContent}`));
     const modalBody = ReactDOM.findDOMNode(
-      document.querySelector('.contactPop .ant-modal .ant-modal-content .ant-modal-body'));
+      document.querySelector(`${modalContent} .ant-modal-body`));
     const modalHeader = ReactDOM.findDOMNode(
-      document.querySelector('.contactPop .ant-modal .ant-modal-content .ant-modal-header'));
+      document.querySelector(`${modalContent} .ant-modal-header`));
     const modalFooter = ReactDOM.findDOMNode(
-      document.querySelector('.contactPop .ant-modal .ant-modal-content .ant-modal-footer'));
+      document.querySelector(`${modalContent} .ant-modal-footer`));
     const docHeight = ReactDOM.findDOMNode(document.documentElement).clientHeight;
     /* eslint-enable */
     let headerHeight;
