@@ -115,6 +115,12 @@ exports.response = function (req, res) {
         {
           "lastName": "王华",
           "loginName": "002332",
+          "respId": "1-46IDNZI",
+          "respName": "HTSC 首页指标查询"
+        },
+        {
+          "lastName": "王华",
+          "loginName": "002332",
           "respId": "1-2323Q6N",
           "respName": "HTSC 知识库一般用户"
         },
@@ -485,74 +491,74 @@ exports.response = function (req, res) {
           "respName": "HTSC 绩效-营业部执行岗"
         },
       ],
-      empRespList: [
-        {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-FCQM-17",
-          "respName": "HTSC 绩效-营业部管理岗"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-FCQM-18",
-          "respName": "HTSC 产品管理-总部管理岗"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-FCQM-2",
-          "respName": "HTSC 华泰公共视图"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-FCQM-23",
-          "respName": "HTSC 客户资料-总部管理岗"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-FCQM-28",
-          "respName": "HTSC 融资融券-总部执行岗"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-FCQM-32",
-          "respName": "HTSC 客户资料-营业部执行岗"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-FCQM-35",
-          "respName": "HTSC 营销活动-分中心管理岗"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-FCQM-36",
-          "respName": "HTSC 营销活动-营业部执行岗"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-FCQM-37",
-          "respName": "HTSC 融资融券-营业部执行岗"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-FCQM-38",
-          "respName": "HTSC 销售服务-分中心管理岗"
-        },
-        {
-          "lastName": "王华",
-          "loginName": "002332",
-          "respId": "1-FCQM-7",
-          "respName": "HTSC 理财-总部执行岗"
-        }
-      ],
+      // empRespList: [
+      //   {
+      //     "lastName": "王华",
+      //     "loginName": "002332",
+      //     "respId": "1-FCQM-17",
+      //     "respName": "HTSC 绩效-营业部管理岗"
+      //   },
+      //   {
+      //     "lastName": "王华",
+      //     "loginName": "002332",
+      //     "respId": "1-FCQM-18",
+      //     "respName": "HTSC 产品管理-总部管理岗"
+      //   },
+      //   {
+      //     "lastName": "王华",
+      //     "loginName": "002332",
+      //     "respId": "1-FCQM-2",
+      //     "respName": "HTSC 华泰公共视图"
+      //   },
+      //   {
+      //     "lastName": "王华",
+      //     "loginName": "002332",
+      //     "respId": "1-FCQM-23",
+      //     "respName": "HTSC 客户资料-总部管理岗"
+      //   },
+      //   {
+      //     "lastName": "王华",
+      //     "loginName": "002332",
+      //     "respId": "1-FCQM-28",
+      //     "respName": "HTSC 融资融券-总部执行岗"
+      //   },
+      //   {
+      //     "lastName": "王华",
+      //     "loginName": "002332",
+      //     "respId": "1-FCQM-32",
+      //     "respName": "HTSC 客户资料-营业部执行岗"
+      //   },
+      //   {
+      //     "lastName": "王华",
+      //     "loginName": "002332",
+      //     "respId": "1-FCQM-35",
+      //     "respName": "HTSC 营销活动-分中心管理岗"
+      //   },
+      //   {
+      //     "lastName": "王华",
+      //     "loginName": "002332",
+      //     "respId": "1-FCQM-36",
+      //     "respName": "HTSC 营销活动-营业部执行岗"
+      //   },
+      //   {
+      //     "lastName": "王华",
+      //     "loginName": "002332",
+      //     "respId": "1-FCQM-37",
+      //     "respName": "HTSC 融资融券-营业部执行岗"
+      //   },
+      //   {
+      //     "lastName": "王华",
+      //     "loginName": "002332",
+      //     "respId": "1-FCQM-38",
+      //     "respName": "HTSC 销售服务-分中心管理岗"
+      //   },
+      //   {
+      //     "lastName": "王华",
+      //     "loginName": "002332",
+      //     "respId": "1-FCQM-7",
+      //     "respName": "HTSC 理财-总部执行岗"
+      //   }
+      // ],
       "empInfo": {
         "rowId": "1-OXZ5",
         "login": "002332",

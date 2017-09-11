@@ -5,13 +5,18 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
+import { autobind } from 'core-decorators';
 import { Row, Col } from 'antd';
+import { fspContainer } from '../../../config';
+import { fspGlobal, helper } from '../../../utils';
 import Icon from '../../common/Icon';
 import styles from './performanceIndicators.less';
 
 export default class CustomerIndicators extends PureComponent {
   static propTypes = {
     data: PropTypes.object,
+    push: PropTypes.func.isRequired,
+    location: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -55,6 +60,35 @@ export default class CustomerIndicators extends PureComponent {
     return (<b title={`${negative}${str}`}>{negative}{str}</b>);
   }
 
+  @autobind
+  linkTo(value, bname) {
+    const { push, location: { query: { orgId, cycleSelect } } } = this.props;
+    const pathname = '/customerPool/list';
+    const obj = {
+      source: 'custIndicator',
+      customerType: value,
+      bname: encodeURIComponent(bname),
+      orgId,
+      cycleSelect,
+    };
+    if (document.querySelector(fspContainer.container)) {
+      const url = `${pathname}?${helper.queryToString(obj)}`;
+      const param = {
+        closable: true,
+        forceRefresh: true,
+        isSpecialTab: true,
+        id: 'RCT_FSP_PERFORMANCE',
+        title: '业绩目标客户',
+      };
+      fspGlobal.openRctTab({ url, param });
+    } else {
+      push({
+        pathname,
+        query: obj,
+      });
+    }
+  }
+
   render() {
     const { data } = this.props;
     const {
@@ -78,8 +112,13 @@ export default class CustomerIndicators extends PureComponent {
               <Row gutter={0}>
                 <Col span={13}>
                   <ul>
-                    <li>
-                      <p>{this.numFormat(purAddCust || '--')} </p>
+                    <li >
+                      <p
+                        className={styles.pointer}
+                        onClick={() => { this.linkTo('', '新增有效户'); }}
+                      >
+                        {this.numFormat(purAddCust || '--')}
+                      </p>
                       <div>新增有效户</div>
                     </li>
                   </ul>
@@ -87,7 +126,12 @@ export default class CustomerIndicators extends PureComponent {
                 <Col span={11}>
                   <ul>
                     <li className={styles.bd_un_r}>
-                      <p>{this.numFormat(purAddNoretailcust || '--')} </p>
+                      <p
+                        className={styles.pointer}
+                        onClick={() => { this.linkTo('', '新增非零售客户'); }}
+                      >
+                        {this.numFormat(purAddNoretailcust || '--')}
+                      </p>
                       <div>新增非零售客户</div>
                     </li>
                   </ul>
@@ -97,7 +141,12 @@ export default class CustomerIndicators extends PureComponent {
                 <Col span={13}>
                   <ul>
                     <li>
-                      <p>{this.numFormat(purAddHighprodcust || '--')} </p>
+                      <p
+                        className={styles.pointer}
+                        onClick={() => { this.linkTo('', '新增高端产品户'); }}
+                      >
+                        {this.numFormat(purAddHighprodcust || '--')}
+                      </p>
                       <div>新增高端产品户</div>
                     </li>
                   </ul>
@@ -105,7 +154,12 @@ export default class CustomerIndicators extends PureComponent {
                 <Col span={11}>
                   <ul>
                     <li className={styles.bd_un_r}>
-                      <p>{this.numFormat(newProdCust || '--')} </p>
+                      <p
+                        className={styles.pointer}
+                        onClick={() => { this.linkTo('', '新增产品客户'); }}
+                      >
+                        {this.numFormat(newProdCust || '--')}
+                      </p>
                       <div>新增产品客户</div>
                     </li>
                   </ul>

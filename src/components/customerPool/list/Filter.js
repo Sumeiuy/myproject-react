@@ -12,7 +12,7 @@ import SingleFilter from './SingleFilter';
 import MultiFilter from './MultiFilter';
 
 // 从搜索、联想词、标签、已开通业务过来的
-const SEARCH_TAG_FILTER = ['search', 'tag', 'association', 'business', 'performance'];
+const SEARCH_TAG_FILTER = ['search', 'tag', 'association', 'business', 'custIndicator', 'numOfCustOpened'];
 
 export default class Filter extends PureComponent {
   static propTypes = {

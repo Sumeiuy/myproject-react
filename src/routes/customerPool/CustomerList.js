@@ -33,7 +33,8 @@ const ENTER_TYPE = {
   tag: 'searchCustPool',
   association: 'searchCustPool',
   business: 'businessCustPool',
-  performance: 'businessCustPool',
+  custIndicator: 'performanceCustPool',
+  numOfCustOpened: 'performanceCustPool',
 };
 
 const DEFAULT_SORT = { sortType: 'Aset', sortDirection: 'desc' }; // 默认排序方式
@@ -164,7 +165,7 @@ export default class CustomerList extends PureComponent {
     // 请求客户列表
     this.getCustomerList(this.props);
     // 业绩客户列表时请求时间周期
-    if (query.source === 'performance') {
+    if (_.includes(['custIndicator', 'numOfCustOpened'], query.source)) {
       getStatisticalPeriod();
     }
     // saveIsAllSelect(false);
@@ -201,11 +202,12 @@ export default class CustomerList extends PureComponent {
       orgId !== preOrgId) {
       this.getCustomerList(nextProps);
     }
-    if (query.source === 'performance' && !_.isEqual(preCycle, cycle)) {
+    if (_.includes(['custIndicator', 'numOfCustOpened'], query.source) && !_.isEqual(preCycle, cycle)) {
       getStatisticalPeriod();
     }
   }
 
+  // 获取列表数据
   @autobind
   getCustomerList(props) {
     const {
@@ -214,6 +216,9 @@ export default class CustomerList extends PureComponent {
       getCustomerData, location: { query },
       empInfo: { empInfo = EMPTY_OBJECT, empRespList = EMPTY_LIST },
     } = props;
+    const {
+      position: { orgId: thisPropsPosOrgId },
+    } = this.props;
     const { occDivnNum = '' } = empInfo;
     const occ = _.isEmpty(occDivnNum) ? '' : occDivnNum;// orgId取不到的情况下去用户信息中的
     const orgId = _.isEmpty(window.forReactPosition)
@@ -249,22 +254,51 @@ export default class CustomerList extends PureComponent {
       param.paramsReqList = [
         { key: query.labelMapping, value: query.tagNumId },
       ];
-    } else if (query.source === 'performance') {
+    } else if (_.includes(['custIndicator', 'numOfCustOpened'], query.source)) {
       if (query.cycleSelect) {
         param.dateType = query.cycleSelect;
       } else {
         param.dateType = (cycle[0] || {}).key;
       }
     }
-    // 职位切换
-    if (posOrgId) {
-      param.orgId = posOrgId;
-    } else if (respIdOfPosition > 0 && query.orgId) {   // 客户经理机构号
-      if (MAIN_MAGEGER_ID !== query.orgId) {
-        param.orgId = query.orgId;
+    // 客户业绩参数
+    if (query.customerType) {
+      param.performanceForm = {
+        type: 'customerType',
+        value: query.customerType,
+      };
+    }
+    // 业绩业务参数
+    if (query.rightType) {
+      param.performanceForm = {
+        type: 'rightType',
+        value: query.rightType,
+      };
+    }
+    // 业绩中的时间周期
+    if (query.cycleSelect) {
+      param.dateType = query.cycleSelect;
+    }
+    // 业务进来的时候，默认 我的客户 ，不带orgId
+    // 我的客户 和 没有权限时，custType=1,其余情况custType=3
+    if (query.source !== 'business') {
+      // 职位切换
+      if (thisPropsPosOrgId !== posOrgId) {
+        param.orgId = posOrgId;
+        param.custType = 3;
+      } else if (respIdOfPosition > 0 && query.orgId) {   // 有权限时切换组织机构树
+        if (MAIN_MAGEGER_ID !== query.orgId) { // 切换到非我的客户，传选中的orgId
+          param.orgId = query.orgId;
+          param.custType = 3;
+        } else {
+          param.custType = 1; // 切换到我的客户
+        }
+      } else if (respIdOfPosition > 0 && orgId) { // 第一次进入时，且有权限，传默认的职位orgId
+        param.orgId = orgId;
+        param.custType = 3;
+      } else if (respIdOfPosition < 0) { // 没有权限
+        param.custType = 1;
       }
-    } else if (respIdOfPosition > 0 && orgId) {
-      param.orgId = orgId;
     }
     // 过滤数组
     const filtersReq = [];
@@ -320,6 +354,7 @@ export default class CustomerList extends PureComponent {
     getCustomerData(param);
   }
 
+  // 生成组织机构树的数据
   @autobind
   generateCustRange(props) {
     const {
@@ -385,7 +420,7 @@ export default class CustomerList extends PureComponent {
     return false;
   }
 
-  // 此方法用来修改Duration 和 Org数据
+  // 组织机构树切换和时间周期切换
   @autobind
   updateQueryState(state) {
     console.log('updateQueryState: ', state);
@@ -416,6 +451,7 @@ export default class CustomerList extends PureComponent {
     });
   }
 
+  // 筛选变化
   @autobind
   filterChange(obj) {
     const {
@@ -442,6 +478,7 @@ export default class CustomerList extends PureComponent {
     });
   }
 
+  // 排序条件变化
   @autobind
   orderChange(obj) {
     const { replace, location: { query, pathname } } = this.props;
@@ -456,6 +493,7 @@ export default class CustomerList extends PureComponent {
     });
   }
 
+  // 翻页动作
   @autobind
   handlePageChange(page, pageSize) {
     const { replace, location: { query, pathname } } = this.props;
@@ -469,6 +507,7 @@ export default class CustomerList extends PureComponent {
     });
   }
 
+  // 改变一页的大小
   @autobind
   handleSizeChange(current, size) {
     const { replace, location: { query, pathname } } = this.props;
@@ -516,6 +555,7 @@ export default class CustomerList extends PureComponent {
       curPageNum,
       q,
       cycleSelect,
+      bname,
     } = location.query;
     // 排序的默认值 ： 总资产降序
     let reorderValue = { sortType: 'Aset', sortDirection: 'desc' };
@@ -532,7 +572,7 @@ export default class CustomerList extends PureComponent {
       updateQueryState: this.updateQueryState,
       expandAll,
     };
-    if (source === 'performance') {
+    if (_.includes(['custIndicator', 'numOfCustOpened'], source)) {
       const selectValue = cycleSelect || (cycle[0] || {}).key;
       custRangeProps.cycle = cycle;
       custRangeProps.selectValue = selectValue;
@@ -544,7 +584,7 @@ export default class CustomerList extends PureComponent {
         <Row type="flex" justify="space-between" align="middle">
           <Col span={12}>
             {
-              <CustomerTotal type={source} num={page.total} />
+              <CustomerTotal type={source} num={page.total} bname={bname} />
             }
           </Col>
           <Col span={12}>
@@ -563,6 +603,7 @@ export default class CustomerList extends PureComponent {
           onChange={this.orderChange}
         />
         <CustomerLists
+          dict={dict}
           condition={queryParam}
           custRange={createCustRange}
           source={source}

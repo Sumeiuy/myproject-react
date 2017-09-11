@@ -50,6 +50,7 @@ export default class CustomerLists extends PureComponent {
     addServeRecord: PropTypes.func.isRequired,
     addServeRecordSuccess: PropTypes.bool.isRequired,
     isAddServeRecord: PropTypes.bool.isRequired,
+    dict: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -154,7 +155,7 @@ export default class CustomerLists extends PureComponent {
       condition,
       source,
     } = this.props;
-    const selectCount = isAllSelect ? page.total : selectedIds[source].length;
+    const selectCount = isAllSelect[source] ? page.total : selectedIds[source].length;
     if (!_.isEmpty(selectedIds[source])) {
       this.openByIds(url, selectedIds[source], selectCount, title, id, entertype);
     } else if (isAllSelect) {
@@ -243,12 +244,13 @@ export default class CustomerLists extends PureComponent {
   // 3、业绩目标客户池：客户列表是“我的客户”时可以添加用户分组
   renderGroup() {
     const { custRange, source, location: { query: { orgId } } } = this.props;
-    // 从搜索和热词进入且只有我的客户
-    const onlyMyCustomer = (source === 'search' || source === 'tag') && custRange.length === 1 && custRange[0].id === 'msm';
+    const tmpArr = ['custIndicator', 'numOfCustOpened', 'search', 'tag'];
+    // 从绩效、搜索和热词进入且只有我的客户
+    const onlyMyCustomer = _.includes(tmpArr, source) && custRange.length === 1 && custRange[0].id === 'msm';
     // 从业务入口进入的
     const fromBusiness = source === 'business';
-    // 从搜索和热词进入,通过客户范围切换到我的客户
-    const inMyCustomer = (source === 'search' || source === 'tag') && orgId && orgId === 'msm';
+    // 从绩效、搜索和热词进入,通过客户范围切换到我的客户
+    const inMyCustomer = _.includes(tmpArr, source) && orgId && orgId === 'msm';
     if (onlyMyCustomer || fromBusiness || inMyCustomer) {
       return (<button
         onClick={() => { this.handleClick('/customerPool/customerGroup', '新建分组', 'FSP_GROUP'); }}
@@ -287,6 +289,7 @@ export default class CustomerLists extends PureComponent {
       addServeRecord,
       addServeRecordSuccess,
       isAddServeRecord,
+      dict,
     } = this.props;
     if (!custList.length) {
       return <div className="list-box"><NoData /></div>;
@@ -394,6 +397,7 @@ export default class CustomerLists extends PureComponent {
         </div>
         <CreateServiceRecord
           id={id}
+          dict={dict}
           empInfo={empInfo}
           isShow={showCreateServiceRecord}
           hideCreateServiceRecord={this.hideCreateServiceRecord}
