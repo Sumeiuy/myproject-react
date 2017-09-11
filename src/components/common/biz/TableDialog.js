@@ -11,7 +11,6 @@
  * columns: 必须的，用于table的列标题的定义
  * title：必须的，弹框的title
  * onSearch：必须的，搜索框的回调
- * keyLabel：必须的，说明性文字
  * onOk：有默认值（空函数），按钮的回调事件
  * onCancel：有默认值（空函数），按钮的回调事件
  * dataSource： 有默认值（空数组），table的内容
@@ -40,7 +39,6 @@ export default class TableDialog extends Component {
     columns: PropTypes.array.isRequired,
     title: PropTypes.string.isRequired,
     onSearch: PropTypes.func.isRequired,
-    keyLabel: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -56,7 +54,6 @@ export default class TableDialog extends Component {
     super(props);
     const { dataSource } = this.props;
     const defaultConfig = this.defaultSelected(dataSource);
-    console.log('#################');
     this.state = {
       visible: false,
       selected: {},
@@ -118,8 +115,7 @@ export default class TableDialog extends Component {
   }
 
   @autobind
-  handleFocus(relatedTarget) {
-    console.log('*****relatedTarget********', relatedTarget);
+  handleFocus() {
     this.setState({
       visible: true,
     });
@@ -146,7 +142,6 @@ export default class TableDialog extends Component {
       okText,
       cancelText,
       dataSource,
-      keyLabel,
     } = this.props;
     const rowSelection = {
       type: 'radio',
@@ -155,30 +150,27 @@ export default class TableDialog extends Component {
     };
     return (
       <div className={styles.container}>
-        <div className={styles.row}>
-          <div className={styles.keyLabel}>{keyLabel}</div>
-          {
-            flag ? (
-              <Search
-                className={styles.search}
-                placeholder={placeholder}
-                onFocus={this.handleFocus}
-              />
-            ) : (
-              <div className={styles.result}>
-                <div className={styles.nameLabel}>{selected.name}</div>
-                <div className={styles.custIdLabel}>{selected.id}</div>
-                <div className={styles.iconDiv}>
-                  <Icon
-                    type="close"
-                    className={styles.closeIcon}
-                    onClick={this.handleRemove}
-                  />
-                </div>
+        {
+          flag ? (
+            <Search
+              className={styles.search}
+              placeholder={placeholder}
+              onFocus={this.handleFocus}
+            />
+          ) : (
+            <div className={styles.result}>
+              <div className={styles.nameLabel}>{selected.name}</div>
+              <div className={styles.custIdLabel}>{selected.id}</div>
+              <div className={styles.iconDiv}>
+                <Icon
+                  type="close"
+                  className={styles.closeIcon}
+                  onClick={this.handleRemove}
+                />
               </div>
-            )
-          }
-        </div>
+            </div>
+          )
+        }
         <Modal
           title={title}
           visible={visible}
