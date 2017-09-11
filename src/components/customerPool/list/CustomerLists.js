@@ -326,6 +326,7 @@ export default class CustomerLists extends PureComponent {
           {
             custList.map(
               item => <CustomerRow
+                dict={dict}
                 location={location}
                 getCustIncome={getCustIncome}
                 monthlyProfits={monthlyProfits}
