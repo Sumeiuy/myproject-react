@@ -114,7 +114,7 @@ export default {
         payload: { indicators },
       });
       // 净创收数据
-      const resultData = yield call(api.queryKpiIncome, {
+      const response = yield call(api.queryKpiIncome, {
         custType, // 客户范围类型
         dateType: firstCycle[0].key, // 周期类型
         orgId, // 组织ID
@@ -123,6 +123,7 @@ export default {
         begin,
         end,
       });
+      const { resultData } = response;
       yield put({
         type: 'getIncomeDataSuccess',
         payload: resultData,
@@ -243,7 +244,8 @@ export default {
     },
     // 获取净创收数据
     * getIncomeData({ payload }, { call, put }) {
-      const resultData = yield call(api.queryKpiIncome, payload);
+      const response = yield call(api.queryKpiIncome, payload);
+      const { resultData } = response;
       yield put({
         type: 'getIncomeDataSuccess',
         payload: resultData,
