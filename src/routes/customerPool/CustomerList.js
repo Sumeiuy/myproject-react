@@ -44,11 +44,13 @@ const effects = {
   getDictionary: 'customerPool/getDictionary',
   getCustomerList: 'customerPool/getCustomerList',
   getCustIncome: 'customerPool/getCustIncome',
+  getCustContact: 'customerPool/getCustContact',
+  getServiceRecord: 'customerPool/getServiceRecord',
   getCustomerScope: 'customerPool/getCustomerScope',
   addServeRecord: 'customerPool/addServeRecord',
 };
 
-const fectchDataFunction = (globalLoading, type) => query => ({
+const fetchDataFunction = (globalLoading, type) => query => ({
   type,
   payload: query || {},
   loading: globalLoading,
@@ -65,17 +67,21 @@ const mapStateToProps = state => ({
   monthlyProfits: state.customerPool.monthlyProfits, // 6个月收益数据
   isAllSelect: state.customerPool.isAllSelect, // 是否全选
   selectedIds: state.customerPool.selectedIds, // 非全选时选中的id数组
+  custContactData: state.customerPool.custContactData, // 联系方式数据
+  serviceRecordData: state.customerPool.serviceRecordData, // 最近服务记录
   cycle: state.customerPool.cycle,  // 统计周期
   addServeRecordSuccess: state.customerPool.addServeRecordSuccess,
   isAddServeRecord: state.customerPool.isAddServeRecord,
 });
 
 const mapDispatchToProps = {
-  getAllInfo: fectchDataFunction(true, effects.allInfo),
-  getCustomerData: fectchDataFunction(true, effects.getCustomerList),
-  getCustIncome: fectchDataFunction(true, effects.getCustIncome),
-  getCustomerScope: fectchDataFunction(true, effects.getCustomerScope),
-  addServeRecord: fectchDataFunction(true, effects.addServeRecord),
+  getAllInfo: fetchDataFunction(true, effects.allInfo),
+  getCustomerData: fetchDataFunction(true, effects.getCustomerList),
+  getCustIncome: fetchDataFunction(true, effects.getCustIncome),
+  getCustomerScope: fetchDataFunction(true, effects.getCustomerScope),
+  addServeRecord: fetchDataFunction(true, effects.addServeRecord),
+  getServiceRecord: fetchDataFunction(true, effects.getServiceRecord),
+  getCustContact: fetchDataFunction(true, effects.getCustContact),
   push: routerRedux.push,
   replace: routerRedux.replace,
   saveIsAllSelect: query => ({
@@ -115,6 +121,10 @@ export default class CustomerList extends PureComponent {
     selectedIds: PropTypes.object.isRequired,
     saveIsAllSelect: PropTypes.func.isRequired,
     saveSelectedIds: PropTypes.func.isRequired,
+    getCustContact: PropTypes.func.isRequired,
+    custContactData: PropTypes.object,
+    getServiceRecord: PropTypes.func.isRequired,
+    serviceRecordData: PropTypes.array,
     cycle: PropTypes.array,
     getStatisticalPeriod: PropTypes.func.isRequired,
     addServeRecord: PropTypes.func.isRequired, // 添加服务记录
@@ -127,6 +137,8 @@ export default class CustomerList extends PureComponent {
     custRange: [],
     position: {},
     empInfo: {},
+    custContactData: EMPTY_OBJECT,
+    serviceRecordData: EMPTY_LIST,
     cycle: EMPTY_LIST,
   }
 
@@ -524,6 +536,10 @@ export default class CustomerList extends PureComponent {
       isAllSelect,
       saveIsAllSelect,
       saveSelectedIds,
+      getCustContact,
+      getServiceRecord,
+      custContactData,
+      serviceRecordData,
       cycle,
       empInfo: { empInfo },
       addServeRecord,
@@ -607,6 +623,10 @@ export default class CustomerList extends PureComponent {
           saveIsAllSelect={saveIsAllSelect}
           isAllSelect={isAllSelect}
           selectedIds={selectedIds}
+          getCustContact={getCustContact}
+          getServiceRecord={getServiceRecord}
+          custContactData={custContactData}
+          serviceRecordData={serviceRecordData}
           empInfo={empInfo}
           addServeRecord={addServeRecord}
           addServeRecordSuccess={addServeRecordSuccess}

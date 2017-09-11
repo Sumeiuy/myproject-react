@@ -29,9 +29,10 @@ const effects = {
   getHistoryWdsList: 'customerPool/getHistoryWdsList',
   clearSearchHistoryList: 'customerPool/clearSearchHistoryList',
   saveSearchVal: 'customerPool/saveSearchVal',
+  getIncomeData: 'customerPool/getIncomeData',
 };
 
-const fectchDataFunction = (globalLoading, type) => query => ({
+const fetchDataFunction = (globalLoading, type) => query => ({
   type,
   payload: query || {},
   loading: globalLoading,
@@ -50,16 +51,18 @@ const mapStateToProps = state => ({
   historyWdsList: state.customerPool.historyWdsList, // 历史搜索
   clearState: state.customerPool.clearState, // 清除历史列表
   searchHistoryVal: state.customerPool.searchHistoryVal, // 保存搜索内容
+  incomeData: state.customerPool.incomeData, // 净创收数据
 });
 
 const mapDispatchToProps = {
-  getAllInfo: fectchDataFunction(true, effects.allInfo),
-  getPerformanceIndicators: fectchDataFunction(true, effects.performanceIndicators),
-  getHotPossibleWds: fectchDataFunction(false, effects.getHotPossibleWds),
-  getHotWds: fectchDataFunction(true, effects.getHotWds),
-  getHistoryWdsList: fectchDataFunction(false, effects.getHistoryWdsList),
-  clearSearchHistoryList: fectchDataFunction(false, effects.clearSearchHistoryList),
-  saveSearchVal: fectchDataFunction(false, effects.saveSearchVal),
+  getAllInfo: fetchDataFunction(true, effects.allInfo),
+  getPerformanceIndicators: fetchDataFunction(true, effects.performanceIndicators),
+  getHotPossibleWds: fetchDataFunction(false, effects.getHotPossibleWds),
+  getHotWds: fetchDataFunction(true, effects.getHotWds),
+  getHistoryWdsList: fetchDataFunction(false, effects.getHistoryWdsList),
+  clearSearchHistoryList: fetchDataFunction(false, effects.clearSearchHistoryList),
+  saveSearchVal: fetchDataFunction(false, effects.saveSearchVal),
+  getIncomeData: fetchDataFunction(true, effects.getIncomeData),
   push: routerRedux.push,
   replace: routerRedux.replace,
 };
@@ -92,6 +95,8 @@ export default class Home extends PureComponent {
     historyWdsList: PropTypes.array,
     clearState: PropTypes.object,
     searchHistoryVal: PropTypes.string,
+    incomeData: PropTypes.array,
+    getIncomeData: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -108,6 +113,7 @@ export default class Home extends PureComponent {
     historyWdsList: EMPTY_LIST,
     clearState: EMPTY_OBJECT,
     searchHistoryVal: '',
+    incomeData: EMPTY_LIST,
   }
 
   constructor(props) {
@@ -151,7 +157,10 @@ export default class Home extends PureComponent {
           empInfo: nextEmpInfo,
           custRange,
         }),
-      }, this.getIndicators);
+      }, () => {
+        this.getIncomes();
+        this.getIndicators();
+      });
     }
     if (preCycle !== nextCycle) {
       this.setState({
@@ -189,6 +198,38 @@ export default class Home extends PureComponent {
       custType, // 客户范围类型
       dateType: cycleSelect, // 周期类型
       orgId, // 组织ID
+    });
+    return null;
+  }
+
+  @autobind
+  getIncomes() {
+    const { getIncomeData, custRange } = this.props;
+    const { orgId, cycleSelect } = this.state;
+    let custType = ORG;
+    if (custRange.length < 1) {
+      return null;
+    }
+    if (!_.isEmpty(orgId)) { // 判断客户范围类型
+      custType = ORG;
+    } else {
+      custType = CUST_MANAGER;
+    }
+    getIncomeData({
+      custType, // 客户范围类型
+      dateType: cycleSelect, // 周期类型
+      orgId, // 组织ID
+      empId: helper.getEmpId(),
+      fieldList: [
+        'tranPurRakeCopy',
+        'totCrdtIntCopy',
+        'totTranInt',
+        'pIncomeAmt',
+        'prdtOIncomeAmt',
+        'oIncomeAmt',
+      ],
+      begin: '20170901',
+      end: '20170905',
     });
     return null;
   }
@@ -259,8 +300,13 @@ export default class Home extends PureComponent {
     getAllInfo({
       request: {
         custType, // 客户范围类型
-        // dateType: '', // 周期类型
-        orgId: fspOrgId, // 组织ID
+        orgId: fspOrgId, // 组织ID,
+        empId: helper.getEmpId(),
+        fieldList: [
+          'tranPurRakeCopy', 'totCrdtIntCopy', 'totTranInt', 'pIncomeAmt',
+        ],
+        begin: '20170901',
+        end: '20170905',
       },
     });
 
@@ -277,6 +323,7 @@ export default class Home extends PureComponent {
       ...state,
     }, () => {
       this.getIndicators();
+      this.getIncomes();
       if (state.orgId) {
         replace({
           pathname,

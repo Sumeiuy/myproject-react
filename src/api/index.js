@@ -138,15 +138,24 @@ export default {
 
   // 清除历史搜索记录
   clearSearchHistoryList: query => api.post('/groovynoauth/fsp/cust/custlabel/clearSearchHistoryList', query),
-    // 客户分组列表信息
+  // 客户分组列表信息
   customerGroupList: query => api.post('/groovynoauth/fsp/cust/custgroup/queryCustGroupList', query),
-    // 添加客户到现有分组
+  // 添加客户到现有分组
   saveCustGroupList: query => api.post('/groovynoauth/fsp/cust/custgroup/saveCustGroupList', query),
-    // 添加客户到新建分组
+  // 添加客户到新建分组
   createCustGroup: query => api.post('/groovynoauth/fsp/cust/custgroup/createCustGroup', query),
 
   // 自建任务提交
   createTask: query => api.post('/groovynoauth/fsp/cust/task/createTask', query),
+
+  // 净创收数据
+  queryKpiIncome: query => api.post('/groovynoauth/fsp/emp/kpi/queryNetIncome', query),
+
+  // 查询机构与个人联系方式
+  queryCustContact: query => api.post('/groovynoauth/fsp/cust/custlist/fspQueryCustContact', query),
+
+  // 查询最近五次服务记录
+  queryRecentServiceRecord: query => api.post('/groovynoauth/fsp/cust/custlist/queryRecentServiceRecord', query),
 
   // 客户列表页添加服务记录
   addServeRecord: query => api.post('/groovynoauth/fsp/cust/custlist/addServeRecord', query),
