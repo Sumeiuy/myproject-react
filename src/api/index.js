@@ -8,7 +8,7 @@ export default {
   // 暴露api上的几个底层方法: get / post
   ...api,
 
-  // 目标客户池模块接口
+  // ========= 客户资源池相关接口
   customerPool: customerPool(api),
 
   // 获取组织机构树完整版
@@ -107,6 +107,4 @@ export default {
 
   // 看板名称重复验证
   distinctBoard: query => api.post('/groovynoauth/jxzb/saveBoard', query),
-
-  // ========= 客户资源池相关接口
 };

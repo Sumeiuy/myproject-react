@@ -9,11 +9,13 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { Pagination, Checkbox } from 'antd';
 
+import CustomerRow from './CustomerRow';
+import CreateServiceRecord from './CreateServiceRecord';
+
 import { fspContainer } from '../../../config';
 import { fspGlobal, helper } from '../../../utils';
 import NoData from '../common/NoData';
-import CustomerRow from './CustomerRow';
-import CreateServiceRecord from './CreateServiceRecord';
+
 
 import styles from './customerLists.less';
 
@@ -41,6 +43,10 @@ export default class CustomerLists extends PureComponent {
     entertype: PropTypes.string.isRequired,
     custRange: PropTypes.array.isRequired,
     condition: PropTypes.object.isRequired,
+    getCustContact: PropTypes.func.isRequired,
+    getServiceRecord: PropTypes.func.isRequired,
+    custContactData: PropTypes.object.isRequired,
+    serviceRecordData: PropTypes.array.isRequired,
     addServeRecord: PropTypes.func.isRequired,
     addServeRecordSuccess: PropTypes.bool.isRequired,
     isAddServeRecord: PropTypes.bool.isRequired,
@@ -250,7 +256,7 @@ export default class CustomerLists extends PureComponent {
       return (<button
         onClick={() => { this.handleClick('/customerPool/customerGroup', '新建分组', 'FSP_GROUP'); }}
       >
-          用户分组
+        用户分组
         </button>);
     }
     return null;
@@ -277,6 +283,10 @@ export default class CustomerLists extends PureComponent {
       selectedIds,
       isAllSelect,
       source,
+      getCustContact,
+      getServiceRecord,
+      custContactData,
+      serviceRecordData,
       addServeRecord,
       addServeRecordSuccess,
       isAddServeRecord,
@@ -336,6 +346,10 @@ export default class CustomerLists extends PureComponent {
                 isAllSelect={isAllSelectBool}
                 selectedIds={selectIdsArr}
                 onChange={this.handleSingleSelect}
+                getCustContact={getCustContact}
+                getServiceRecord={getServiceRecord}
+                custContactData={custContactData}
+                serviceRecordData={serviceRecordData}
                 createServiceRecord={this.showCreateServiceRecord}
                 key={`${item.empId}-${item.custId}-${item.idNum}-${item.telephone}-${item.asset}`}
               />,

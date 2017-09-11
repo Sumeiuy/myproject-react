@@ -10,9 +10,8 @@ import { Checkbox } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
-// import { customerPoolBusiness } from '../../../config';
+import CreatePhoneContactModal from './CreatePhoneContactModal';
 import Icon from '../../common/Icon';
-
 import styles from './customerRow.less';
 
 import iconavator from '../../../../static/images/icon-avator.png';
@@ -145,6 +144,10 @@ const formatNumber = (num) => {
   return num;
 };
 
+let COUNT = 0;
+const EMPTY_LIST = [];
+const EMPTY_OBJECT = {};
+
 export default class CustomerRow extends PureComponent {
   static propTypes = {
     q: PropTypes.string,
@@ -155,6 +158,10 @@ export default class CustomerRow extends PureComponent {
     onChange: PropTypes.func.isRequired,
     isAllSelect: PropTypes.bool.isRequired,
     selectedIds: PropTypes.array,
+    custContactData: PropTypes.object.isRequired,
+    serviceRecordData: PropTypes.array.isRequired,
+    getCustContact: PropTypes.func.isRequired,
+    getServiceRecord: PropTypes.func.isRequired,
     createServiceRecord: PropTypes.func.isRequired,
     dict: PropTypes.object.isRequired,
   }
@@ -179,6 +186,10 @@ export default class CustomerRow extends PureComponent {
       newAsset: asset,
       checked: false,
       visible: false,
+      isShowModal: false,
+      modalKey: `contactModalKey${COUNT}`,
+      currentCustId: '',
+      custType: '',
     };
 
     this.businessConfig = new Map();
@@ -204,9 +215,29 @@ export default class CustomerRow extends PureComponent {
     });
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps, nextState) {
     // console.log('nextProps.isAllSelect>>>', nextProps.isAllSelect);
     // console.log('this.props.isAllSelect>>>', this.props.isAllSelect);
+    const {
+      custContactData: prevCustContactData = EMPTY_OBJECT,
+      serviceRecordData: prevServiceRecordData = EMPTY_LIST,
+     } = this.props;
+    const {
+      custContactData: nextCustContactData = EMPTY_OBJECT,
+      serviceRecordData: nextServiceRecordData = EMPTY_LIST,
+     } = nextProps;
+    const { isShowModal, currentCustId } = nextState;
+    const prevContact = prevCustContactData[currentCustId] || EMPTY_OBJECT;
+    const nextContact = nextCustContactData[currentCustId] || EMPTY_OBJECT;
+    if (prevContact !== nextContact || prevServiceRecordData !== nextServiceRecordData) {
+      if (!isShowModal) {
+        this.setState({
+          isShowModal: true,
+          modalKey: `contactModalKey${COUNT++}`,
+        });
+      }
+    }
+
     if (nextProps.isAllSelect !== this.props.isAllSelect) {
       this.setState({
         checked: nextProps.isAllSelect,
@@ -242,7 +273,7 @@ export default class CustomerRow extends PureComponent {
     });
   }
 
-   @autobind
+  @autobind
   handleCollapse(type) {
     if (type === 'open') {
       const prosshow = {
@@ -398,6 +429,24 @@ export default class CustomerRow extends PureComponent {
   }
 
   @autobind
+  handleTelClick() {
+    const { listItem, getCustContact, getServiceRecord } = this.props;
+    const { custId, pOrO } = listItem;
+    this.setState({
+      currentCustId: custId,
+      custType: pOrO === 'P' ? 'per' : 'org',
+    });
+    // 联系方式接口
+    getCustContact({
+      custId,
+    });
+    // 服务记录接口
+    getServiceRecord({
+      custId,
+    });
+  }
+
+  @autobind
   showCreateServiceRecord() {
     const {
       createServiceRecord,
@@ -418,14 +467,20 @@ export default class CustomerRow extends PureComponent {
   }
 
   render() {
+    const { q, listItem, monthlyProfits, isAllSelect, selectedIds,
+      custContactData = EMPTY_OBJECT,
+      serviceRecordData = EMPTY_LIST } = this.props;
     const {
-      q,
-      listItem,
-      monthlyProfits,
-      isAllSelect,
-      selectedIds,
-    } = this.props;
-    const { unit, newAsset, checked, isShowCharts } = this.state;
+      unit,
+      newAsset,
+      checked,
+      isShowModal,
+      modalKey,
+      custType,
+      currentCustId,
+      isShowCharts,
+   } = this.state;
+    const finalContactData = custContactData[currentCustId] || EMPTY_OBJECT;
     const lastestProfit = Number(this.getLastestData(monthlyProfits).assetProfit);
     const lastestProfitRate = Number(this.getLastestData(monthlyProfits).assetProfitRate);
     const matchedWord = this.matchWord(q, listItem);
@@ -433,11 +488,12 @@ export default class CustomerRow extends PureComponent {
     const newIdsArr = _.map(selectedIds, v => (v.id));
     const isChecked = _.includes(newIdsArr, listItem.custId) || isAllSelect || checked;
     // console.log('listItem', checked);
+
     return (
       <div className={styles.customerRow}>
         <div className={styles.basicInfoD}>
           <ul className={styles.operationIcon}>
-            <li>
+            <li onClick={this.handleTelClick}>
               <Icon type="dianhua" />
               <span>电话联系</span>
             </li>
@@ -479,13 +535,14 @@ export default class CustomerRow extends PureComponent {
             }
             {listItem.highWorthFlag ? <div className="highWorthFlag">高净值</div> : null}
             {
-              (rskLev === '' || rskLev === 'null') ? '' :
-              <div
-                className={`riskLevel ${riskLevelConfig[rskLev].colorCls}`}
-              >
-                <div className="itemText">{riskLevelConfig[rskLev].title}</div>
-                {riskLevelConfig[rskLev].name}
-              </div>
+              (rskLev === '' || rskLev === 'null')
+                ? '' :
+                <div
+                  className={`riskLevel ${riskLevelConfig[rskLev].colorCls}`}
+                >
+                  <div className="itemText">{riskLevelConfig[rskLev].title}</div>
+                  {riskLevelConfig[rskLev].name}
+                </div>
             }
           </div>
           <div className="row-two">
@@ -527,9 +584,9 @@ export default class CustomerRow extends PureComponent {
                     <span className={styles.numB}>
                       {
                         monthlyProfits.length ?
-                        `${lastestProfitRate.toFixed(2)}%`
-                        :
-                        '--'
+                          `${lastestProfitRate.toFixed(2)}%`
+                          :
+                          '--'
                       }
                     </span>
                   </div>
@@ -539,9 +596,9 @@ export default class CustomerRow extends PureComponent {
                       <span className={styles.numB}>
                         {
                           monthlyProfits.length ?
-                          formatNumber(lastestProfit)
-                          :
-                          '--'
+                            formatNumber(lastestProfit)
+                            :
+                            '--'
                         }
                       </span>
                       &nbsp;
@@ -585,6 +642,17 @@ export default class CustomerRow extends PureComponent {
             />
           </div>
         </div>
+        {
+          isShowModal ?
+            <CreatePhoneContactModal
+              visible={isShowModal}
+              key={modalKey}
+              custContactData={finalContactData}
+              serviceRecordData={serviceRecordData}
+              custType={custType}
+            />
+            : null
+        }
       </div>
     );
   }
