@@ -8,7 +8,6 @@
  *  title={string}
  *  onSearch={func}
  * />
- * visible：必需的，用于控制弹框是否显示
  * columns: 必须的，用于table的列标题的定义
  * title：必须的，弹框的title
  * onSearch：必须的，搜索框的回调
@@ -22,7 +21,9 @@
 import React, { PropTypes, Component } from 'react';
 import { Table, Modal, Input } from 'antd';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
 
+import Icon from '../Icon';
 import styles from './tableDialog.less';
 
 const Search = Input.Search;
@@ -37,7 +38,6 @@ export default class TableDialog extends Component {
     placeholder: PropTypes.string,
     columns: PropTypes.array.isRequired,
     title: PropTypes.string.isRequired,
-    visible: PropTypes.bool.isRequired,
     onSearch: PropTypes.func.isRequired,
   }
 
@@ -52,20 +52,19 @@ export default class TableDialog extends Component {
 
   constructor(props) {
     super(props);
-    const { dataSource, visible } = this.props;
+    const { dataSource } = this.props;
     const defaultConfig = this.defaultSelected(dataSource);
     this.state = {
-      visible,
+      visible: false,
+      selected: {},
       ...defaultConfig,
     };
   }
   componentWillReceiveProps(nextProps) {
-    const { dataSource, visible } = nextProps;
+    const { dataSource } = nextProps;
     const defaultConfig = this.defaultSelected(dataSource);
     this.setState({
-      ...this.state,
       ...defaultConfig,
-      visible,
     });
   }
 
@@ -93,19 +92,26 @@ export default class TableDialog extends Component {
 
   @autobind
   handleOk() {
-    const { onOk } = this.props;
     const { selectedRows } = this.state;
     const selected = selectedRows.length > 0 ? selectedRows[0] : {};
+    // 重置默认值
+    const { dataSource } = this.props;
+    const defaultConfig = this.defaultSelected(dataSource);
     this.setState({
       visible: false,
-    }, onOk(selected));
+      selected,
+      ...defaultConfig,
+    });
   }
 
   @autobind
   handleCancel() {
-    const { onCancel } = this.props;
+    const { onCancel, dataSource } = this.props;
+    // 重置默认值
+    const defaultConfig = this.defaultSelected(dataSource);
     this.setState({
       visible: false,
+      ...defaultConfig,
     }, onCancel());
   }
 
@@ -115,16 +121,27 @@ export default class TableDialog extends Component {
     onSearch(value);
   }
 
+  @autobind
+  handleFocus() {
+    this.setState({
+      visible: true,
+    }, this.searchElem.input.refs.input.blur());
+  }
+
+  @autobind
+  handleRemove() {
+    this.setState({
+      selected: {},
+    });
+  }
+
   render() {
     const {
       visible,
       selectedRowKeys,
+      selected,
     } = this.state;
-
-    if (!visible) {
-      return null;
-    }
-
+    const flag = _.isEmpty(selected);
     const {
       columns,
       title,
@@ -139,27 +156,51 @@ export default class TableDialog extends Component {
       selectedRowKeys,
     };
     return (
-      <Modal
-        title={title}
-        visible={visible}
-        onOk={this.handleOk}
-        onCancel={this.handleCancel}
-        okText={okText}
-        cancelText={cancelText}
-        wrapClassName={styles.modalContainer}
-      >
-        <Search
-          placeholder={placeholder}
-          onSearch={(value) => { this.handleSearch(value); }}
-        />
-        <Table
-          rowKey="id"
-          rowSelection={rowSelection}
-          columns={columns}
-          dataSource={dataSource}
-          pagination={false}
-        />
-      </Modal>
+      <div className={styles.container}>
+        {
+          flag ? (
+            <Search
+              ref={(ref) => { this.searchElem = ref; }}
+              className={styles.search}
+              placeholder={placeholder}
+              onFocus={this.handleFocus}
+            />
+          ) : (
+            <div className={styles.result}>
+              <div className={styles.nameLabel}>{selected.name}</div>
+              <div className={styles.custIdLabel}>{selected.id}</div>
+              <div className={styles.iconDiv}>
+                <Icon
+                  type="close"
+                  className={styles.closeIcon}
+                  onClick={this.handleRemove}
+                />
+              </div>
+            </div>
+          )
+        }
+        <Modal
+          title={title}
+          visible={visible}
+          onOk={this.handleOk}
+          onCancel={this.handleCancel}
+          okText={okText}
+          cancelText={cancelText}
+          wrapClassName={styles.modalContainer}
+        >
+          <Search
+            placeholder={placeholder}
+            onSearch={(value) => { this.handleSearch(value); }}
+          />
+          <Table
+            rowKey="id"
+            rowSelection={rowSelection}
+            columns={columns}
+            dataSource={dataSource}
+            pagination={false}
+          />
+        </Modal>
+      </div>
     );
   }
 }
