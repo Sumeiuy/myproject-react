@@ -15,7 +15,9 @@ import TradingVolume from './TradingVolume';
 import CustomerIndicators from './CustomerIndicators';
 import BusinessProcessing from './BusinessProcessing';
 import Income from './Income';
+import { getDurationString } from '../../../utils/helper';
 import CustRange from '../common/CustRange';
+import { optionsMap } from '../../../config';
 import styles from './performanceIndicators.less';
 
 const Option = Select.Option;
@@ -64,9 +66,17 @@ export default class PerformanceIndicators extends PureComponent {
 
   @autobind
   handleChange(value) {
+    const { historyTime, customerPoolTimeSelect } = optionsMap;
+    const currentSelect = _.find(historyTime, itemData =>
+      itemData.name === _.find(customerPoolTimeSelect, item => item.key === value).name) || {};
+    const nowDuration = getDurationString(currentSelect.key);
+    const begin = nowDuration.begin;
+    const end = nowDuration.end;
     const { updateQueryState } = this.props;
     updateQueryState({
       cycleSelect: value,
+      begin,
+      end,
     });
   }
 
