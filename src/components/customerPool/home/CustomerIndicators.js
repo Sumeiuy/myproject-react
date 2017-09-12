@@ -14,6 +14,7 @@ import styles from './performanceIndicators.less';
 
 export default class CustomerIndicators extends PureComponent {
   static propTypes = {
+    cycle: PropTypes.array,
     data: PropTypes.object,
     push: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
@@ -21,6 +22,7 @@ export default class CustomerIndicators extends PureComponent {
 
   static defaultProps = {
     data: {},
+    cycle: [],
   }
 
   // 格式化数字，逢三位加一个逗号
@@ -62,14 +64,14 @@ export default class CustomerIndicators extends PureComponent {
 
   @autobind
   linkTo(value, bname) {
-    const { push, location: { query: { orgId, cycleSelect } } } = this.props;
+    const { cycle, push, location: { query: { orgId, cycleSelect } } } = this.props;
     const pathname = '/customerPool/list';
     const obj = {
       source: 'custIndicator',
       customerType: value,
       bname: encodeURIComponent(bname),
       orgId: orgId || '',
-      cycleSelect: cycleSelect || '',
+      cycleSelect: cycleSelect || (cycle[0] || {}).key,
     };
     if (document.querySelector(fspContainer.container)) {
       const url = `${pathname}?${helper.queryToString(obj)}`;

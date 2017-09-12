@@ -33,6 +33,7 @@ export default class PerformanceIndicators extends PureComponent {
     expandAll: PropTypes.bool,
     selectValue: PropTypes.string,
     location: PropTypes.object.isRequired,
+    incomeData: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -81,6 +82,7 @@ export default class PerformanceIndicators extends PureComponent {
       selectValue,
       push,
       location,
+      incomeData,
     } = this.props;
     const {
       cftCust,
@@ -177,6 +179,7 @@ export default class PerformanceIndicators extends PureComponent {
             <Row gutter={16}>
               <Col span={8}>
                 <CustomerIndicators
+                  cycle={cycle}
                   push={push}
                   location={location}
                   data={customerIndicators}
@@ -184,6 +187,7 @@ export default class PerformanceIndicators extends PureComponent {
               </Col>
               <Col span={8}>
                 <BusinessProcessing
+                  cycle={cycle}
                   push={push}
                   location={location}
                   data={businessProcessing}
@@ -210,7 +214,9 @@ export default class PerformanceIndicators extends PureComponent {
                       <Icon type="shouru" />净创收
                   </div>
                     <div className={styles.content}>
-                      <Income />
+                      <Income
+                        incomeData={incomeData}
+                      />
                     </div>
                   </div>
                 </div>

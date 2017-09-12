@@ -10,7 +10,6 @@ import { Checkbox, message } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
-import { customerPoolBusiness } from '../../../config';
 import CreatePhoneContactModal from './CreatePhoneContactModal';
 import Icon from '../../common/Icon';
 import styles from './customerRow.less';
@@ -145,7 +144,7 @@ const formatNumber = (num) => {
   return num;
 };
 
-let COUNT = 0;
+let contactModalKeyCount = 0;
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 let emailState = '';
@@ -166,6 +165,7 @@ export default class CustomerRow extends PureComponent {
     getCustContact: PropTypes.func.isRequired,
     getServiceRecord: PropTypes.func.isRequired,
     createServiceRecord: PropTypes.func.isRequired,
+    dict: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -175,7 +175,12 @@ export default class CustomerRow extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { listItem: { asset } } = props;
+    const {
+      dict: {
+        custBusinessType = [],
+      },
+      listItem: { asset },
+    } = props;
     this.state = {
       showStyle: show,
       hideStyle: hide,
@@ -184,11 +189,16 @@ export default class CustomerRow extends PureComponent {
       checked: false,
       visible: false,
       isShowModal: false,
-      modalKey: `contactModalKey${COUNT}`,
+      modalKey: `contactModalKey${contactModalKeyCount}`,
       currentCustId: '',
       custType: '',
       email: null,
     };
+
+    this.businessConfig = new Map();
+    custBusinessType.forEach((v) => {
+      this.businessConfig.set(v.key, v.value);
+    });
 
     this.debounced = _.debounce(
       this.getCustIncome,
@@ -227,7 +237,7 @@ export default class CustomerRow extends PureComponent {
       if (!isShowModal) {
         this.setState({
           isShowModal: true,
-          modalKey: `contactModalKey${COUNT++}`,
+          modalKey: `contactModalKey${contactModalKeyCount++}`,
         });
       }
     }
@@ -383,7 +393,7 @@ export default class CustomerRow extends PureComponent {
     // 匹配可开通业务
     if ((isBusiness || isNumOfCustOpened) && listItem.unrightType) {
       const unrightTypeArr = listItem.unrightType.split(' ');
-      const tmpArr = _.filter(_.map(unrightTypeArr, v => customerPoolBusiness[v]));
+      const tmpArr = _.filter(_.map(unrightTypeArr, v => this.businessConfig.get(v)));
       if (!_.isEmpty(tmpArr)) {
         const domTpl = getNewHtml(`可开通业务(${tmpArr.length})`, tmpArr.join('、'));
         rtnEle += domTpl;
@@ -396,7 +406,7 @@ export default class CustomerRow extends PureComponent {
     // 匹配已开通业务
     if ((isBusiness || isNumOfCustOpened) && listItem.userRights) {
       const userRightsArr = listItem.userRights.split(' ');
-      const tmpArr = _.filter(_.map(userRightsArr, v => customerPoolBusiness[v]));
+      const tmpArr = _.filter(_.map(userRightsArr, v => this.businessConfig.get(v)));
       if (!_.isEmpty(tmpArr)) {
         const domTpl = getNewHtml(`已开通业务(${tmpArr.length})`, tmpArr.join('、'));
         rtnEle += domTpl;
@@ -443,20 +453,30 @@ export default class CustomerRow extends PureComponent {
 
   @autobind
   handleTelClick() {
-    const { listItem, getCustContact, getServiceRecord } = this.props;
+    const { listItem, getCustContact, getServiceRecord, custContactData } = this.props;
     const { custId, pOrO } = listItem;
+    const { isShowModal } = this.state;
     this.setState({
       currentCustId: custId,
       custType: pOrO === 'P' ? 'per' : 'org',
     });
-    // 联系方式接口
-    getCustContact({
-      custId,
-    });
-    // 服务记录接口
-    getServiceRecord({
-      custId,
-    });
+    if (_.isEmpty(custContactData[custId])) {
+      // 缓存，有数据，就不要再次请求
+      // 联系方式接口
+      getCustContact({
+        custId,
+        custType: pOrO === 'P' ? 'per' : 'org',
+      });
+      // 服务记录接口
+      getServiceRecord({
+        custId,
+      });
+    } else if (!isShowModal) {
+      this.setState({
+        isShowModal: true,
+        modalKey: `contactModalKey${contactModalKeyCount++}`,
+      });
+    }
   }
 
   @autobind
@@ -466,6 +486,16 @@ export default class CustomerRow extends PureComponent {
       listItem: { custId },
     } = this.props;
     createServiceRecord(custId);
+  }
+
+  /**
+   * 回调，关闭modal打开state
+   */
+  @autobind
+  resetModalState() {
+    this.setState({
+      isShowModal: false,
+    });
   }
 
   @autobind
@@ -499,7 +529,9 @@ export default class CustomerRow extends PureComponent {
   render() {
     const { q, listItem, monthlyProfits, isAllSelect, selectedIds,
       custContactData = EMPTY_OBJECT,
-      serviceRecordData = EMPTY_LIST } = this.props;
+      serviceRecordData = EMPTY_LIST,
+      createServiceRecord,
+    } = this.props;
     const {
       unit,
       newAsset,
@@ -680,6 +712,9 @@ export default class CustomerRow extends PureComponent {
               custContactData={finalContactData}
               serviceRecordData={serviceRecordData}
               custType={custType}
+              createServiceRecord={createServiceRecord} /* 创建服务记录 */
+              currentCustId={currentCustId}
+              onClose={this.resetModalState}
             />
             : null
         }
