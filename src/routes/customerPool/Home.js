@@ -130,14 +130,14 @@ export default class Home extends PureComponent {
     };
   }
 
-  // componentDidMount() {
-  //   const {
-  //     empInfo: { empInfo = EMPTY_OBJECT, empRespList = EMPTY_LIST },
-  //     custRange,
-  //     location: { query },
-  //   } = this.props;
-  //   this.createCustRange({ query, empInfo, custRange, empRespList });
-  // }
+  componentDidMount() {
+    const {
+      empInfo: { empInfo = EMPTY_OBJECT, empRespList = EMPTY_LIST },
+      custRange,
+      location: { query },
+    } = this.props;
+    this.createCustRange({ query, empInfo, custRange, empRespList });
+  }
 
   componentWillReceiveProps(nextProps) {
     const {
@@ -195,16 +195,6 @@ export default class Home extends PureComponent {
     }
   }
 
-  // @autobind
-  // createCustRange({ query, empInfo, custRange, empRespList }) {
-  //   this.handleSetCustRange({
-  //     empInfo,
-  //     empRespList,
-  //     query,
-  //     custRange,
-  //   });
-  // }
-
   @autobind
   getIndicators() {
     const { getPerformanceIndicators, custRange } = this.props;
@@ -256,6 +246,16 @@ export default class Home extends PureComponent {
       end,
     });
     return null;
+  }
+
+  @autobind
+  createCustRange({ query, empInfo, custRange, empRespList }) {
+    this.handleSetCustRange({
+      empInfo,
+      empRespList,
+      query,
+      custRange,
+    });
   }
 
   @autobind
