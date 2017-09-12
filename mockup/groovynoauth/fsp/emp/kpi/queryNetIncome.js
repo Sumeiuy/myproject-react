@@ -58,6 +58,34 @@ exports.response = function (req, res) {
         "parentName": "净收入",
         "children": null,
         "isAggressive": null
+      },
+      {
+        "key": "prdtOIncomeAmt",
+        "name": "产品机构",
+        "value": null,
+        "unit": "元",
+        "description": "统计期内客户性质为产品机构的，金融产品净手续费+资本中介净利息（融券、资管资金融资）+交易净佣金",
+        "categoryKey": null,
+        "isBelongsSummury": null,
+        "hasChildren": null,
+        "parentKey": null,
+        "parentName": "净收入",
+        "children": null,
+        "isAggressive": null
+      },
+      {
+        "key": "oIncomeAmt",
+        "name": "机构",
+        "value": null,
+        "unit": "元",
+        "description": "统计期内客户性质为机构的，金融产品净手续费+资本中介净利息（融券、资管资金融资）+交易净佣金",
+        "categoryKey": null,
+        "isBelongsSummury": null,
+        "hasChildren": null,
+        "parentKey": null,
+        "parentName": "净收入",
+        "children": null,
+        "isAggressive": null
       }
     ]
   };

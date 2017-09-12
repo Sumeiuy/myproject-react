@@ -58,14 +58,17 @@ export default class ModalCollapse extends PureComponent {
   @autobind
   constructLeftServiceTimeSection(timeArray) {
     const { anchorAction } = this.props;
-    // const timeArray = [
-    //   '2017/07/28 15:55:46',
-    //   '2017/07/28 15:55:46',
-    //   '2017/07/29 15:55:46',
-    //   '2017/07/30 15:55:46',
-    //   '2017/07/30 15:55:46',
-    // ];
-    const serviceTimeCollection = this.separateDate(timeArray);
+    // 目前还没有左边时间这个字段，先mock一份
+    let tempArray = timeArray;
+    tempArray = [
+      '2017/07/28 15:55:46',
+      '2017/07/28 15:55:46',
+      '2017/07/29 15:55:46',
+      '2017/07/30 15:55:46',
+      '2017/07/30 15:55:46',
+    ];
+
+    const serviceTimeCollection = this.separateDate(tempArray);
 
     if (_.isEmpty(anchorAction)) {
       return null;
@@ -176,8 +179,10 @@ export default class ModalCollapse extends PureComponent {
                 <div className={styles.headerLeft}>{item.taskName || '--'}：{item.serveStrategy || '--'}</div>
                 <div className={styles.headerRight}>
                   <span>{item.serveChannel || '--'}</span>
+                  {/*
                   <span className={styles.distance}>-</span>
                   <span>电话</span>
+                  */}
                   <span className={styles.serviceStatus}>{item.serveStatus || '--'}</span>
                   <div
                     className={
@@ -196,45 +201,45 @@ export default class ModalCollapse extends PureComponent {
           >
             <div className={styles.serviceContainer} id="serviceContainer">
               <div className={styles.leftSection}>
-                <div className={styles.taskNameSection}>
+                <div className={styles.leftModule}>
                   <span>任务名</span>
                   <span>{item.taskName || '--'}</span>
                 </div>
-                <div className={styles.taskContent}>
+                <div className={styles.leftModule}>
                   <span>任务描述</span>
                   <span>{item.taskDesc || '--'}</span>
                 </div>
-                <div className={styles.taskType}>
+                <div className={styles.leftModule}>
                   <span>任务类型</span>
                   <span>{item.taskType || '--'}</span>
                 </div>
-                <div className={styles.excuteType}>
+                <div className={styles.leftModule}>
                   <span>执行方式</span>
                   <span>{item.handlerType || '--'}</span>
                 </div>
-                <div className={styles.handleTime}>
+                <div className={styles.leftModule}>
                   <span>处理期限</span>
                   <span>{item.handlerTimeLimit || '--'}</span>
                 </div>
               </div>
               <div className={styles.rightSection}>
-                <div className={styles.actionOwner}>
+                <div className={styles.rightModule}>
                   <span>实施者</span>
                   <span>{item.actor || '--'}</span>
                 </div>
-                <div className={styles.serviceRecord}>
+                <div className={styles.rightModule}>
                   <span>服务记录</span>
                   <span>{item.serveRecord || '--'}</span>
                 </div>
-                <div className={styles.custFeedback}>
+                <div className={styles.rightModule}>
                   <span>客户反馈</span>
                   <span>{item.custFeedback || '--'}</span>
                 </div>
-                <div className={styles.feedbackTime}>
+                <div className={styles.rightModule}>
                   <span>反馈时间</span>
                   <span>{item.feedbackTime || '--'}</span>
                 </div>
-                <div className={styles.result}>
+                <div className={styles.rightModule}>
                   <span>反馈结果</span>
                   <span>{item.workResult || '--'}</span>
                 </div>
@@ -249,11 +254,13 @@ export default class ModalCollapse extends PureComponent {
         <Panel
           header={
             <div className={styles.headerContainer}>
-              <div className={styles.headerLeft}>{item.taskName || '--'}：{item.serveStrategy || '--'}</div>
+              <div className={styles.headerLeft}>{item.taskType || '--'}：{item.activityContent || '--'}</div>
               <div className={styles.headerRight}>
                 <span>{item.serveChannel || '--'}</span>
+                {/*
                 <span className={styles.distance}>-</span>
                 <span>电话</span>
+                */}
                 <span className={styles.serviceStatus}>{item.serveStatus || '--'}</span>
                 <div
                   className={
@@ -272,33 +279,33 @@ export default class ModalCollapse extends PureComponent {
         >
           <div className={styles.serviceContainer} id="serviceContainer">
             <div className={styles.leftSection}>
-              <div className={styles.typeP}>
+              <div className={styles.leftModule}>
                 <span>类型</span>
                 <span>{item.handlerType || '--'}</span>
               </div>
-              <div className={styles.actionContentP}>
+              <div className={styles.leftModule}>
                 <span>活动内容</span>
                 <span>{item.activityContent || '--'}</span>
               </div>
-              <div className={styles.actionOwnerP}>
+              <div className={styles.leftModule}>
                 <span>实施者</span>
                 <span>{item.actor || '--'}</span>
               </div>
-              <div className={styles.serviceRecordP}>
+              <div className={styles.leftModule}>
                 <span>服务记录</span>
                 <span>{item.serveRecord || '--'}</span>
               </div>
             </div>
             <div className={styles.rightSection}>
-              <div className={styles.custFeedbackP}>
+              <div className={styles.rightModule}>
                 <span>客户反馈</span>
                 <span>{item.custFeedback || '--'}</span>
               </div>
-              <div className={styles.feedbackTimeP}>
+              <div className={styles.rightModule}>
                 <span>反馈时间</span>
                 <span>{item.feedbackTime || '--'}</span>
               </div>
-              <div className={styles.resultP}>
+              <div className={styles.rightModule}>
                 <span>反馈结果</span>
                 <span>{item.workResult || '--'}</span>
               </div>
