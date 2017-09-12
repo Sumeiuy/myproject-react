@@ -1,0 +1,118 @@
+@import '../../../css/variable.less';
+
+.container {
+  .search {
+    width: 184px;
+    height: 28px;
+    line-height: 28px;
+    :global {
+      .ant-input-suffix {
+        width: 28px;
+        height: 28px;
+        line-height: 28px;
+        text-align: center;
+        right: 0px;
+      }
+    }
+  }
+  .result {
+    flex: display;
+    display: -webkit-flex; /* Safari */
+    align-items: center;
+    height: 28px;
+    line-height: 28px;
+    .nameLabel {
+      font-family: @font-family;
+      font-size: 14px;
+      color: #4a4a4a;
+    }
+    .custIdLabel {
+      font-family: @font-family;
+      font-size: 14px;
+      color: #999;
+      margin-left: 8px;
+    }
+    .iconDiv {
+      margin-left: 12px;
+      border: 1px solid #ddd;
+      width: 17px;
+      height: 17px;
+      position: relative;
+      top: -1Px;
+      .closeIcon {
+        position: relative;
+        top: -8px;
+        left: -0.5Px;
+        font-size: 16px;
+        color: #4a90e2;
+        font-weight: 600;
+      }
+    }
+  }
+}
+.modalContainer {
+  :global {
+    .ant-modal-header {
+      padding: 12px 30px;
+      .ant-modal-title {
+        font-family: @font-family;
+        font-size: 14px;
+        color: #333;
+        letter-spacing: 0.24px;
+      }
+    }
+    .ant-modal-body {
+      padding: 16px 30px;
+      .ant-input-affix-wrapper {
+        width: 240px;
+        height: 28px;
+        margin-bottom: 20px;
+        .ant-input {
+          padding: 4px 14px;
+          padding-right: 31px;
+          border: 1px solid #348cf0;
+          border-radius: 3px;
+          font-family: PingFangSC-Regular;
+          font-size: 13px;
+          letter-spacing: 0.14px;
+        }
+        .ant-input-suffix {
+          width: 31px;
+          height: 28px;
+          line-height: 28px;
+          text-align: center;
+          color: #fff;
+          right: 0px;
+          background-color: #348cf0;
+          border-radius: 3px;
+        }
+        .ant-input-search-icon:hover {
+          color:#fff;
+        }
+      }
+      .ant-table {
+        border: 1px solid #e9e9e9;
+        border-bottom: none;
+        font-family: @font-family;
+        font-size: 14px;
+        color:#666;
+        .ant-table-thead > tr > th {
+          font-family: @font-family;
+          font-size: 14px;
+          color: #333;
+        }
+      }
+    }
+    .ant-modal-footer {
+      border-top: none;
+      padding: 0px 28px 28px;
+      .ant-btn-lg {
+        padding: 0px 34px;
+      }
+      .ant-btn {
+        font-family: PingFangSC-Regular;
+        font-size: 14px;
+      }
+    }
+  }
+}

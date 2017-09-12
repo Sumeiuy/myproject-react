@@ -16,6 +16,8 @@ import createSensorsLogger from './middlewares/sensorsLogger';
 import createActivityIndicator from './middlewares/createActivityIndicator';
 import routerConfig from './router';
 import persistConfig from './config/persist';
+import { initFspMethod } from './utils/fspGlobal';
+
 import permission from './permissions';
 
 const extraEnhancers = [];
@@ -60,6 +62,7 @@ app.model(require('./models/edit'));
 app.model(require('./models/preview'));
 app.model(require('./models/history'));
 app.model(require('./models/permission'));
+app.model(require('./models/customerPool'));
 
 // 4. Router
 app.router(routerConfig);
@@ -69,6 +72,9 @@ app.start('#exApp');
 
 // start后_store才被初始化
 const store = app._store; // eslint-disable-line
+
+// 暴露给fsp方法
+initFspMethod(store); // eslint-disable-line
 
 // 6. redux-persist
 if (persistConfig.active) {
