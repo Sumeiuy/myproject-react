@@ -4,6 +4,7 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import { autobind } from 'core-decorators';
 import style from './detail.less';
 import MessageList from './MessageList';
 import ServerPersonel from './ServerPersonel';
@@ -16,11 +17,20 @@ export default class Detail extends PureComponent {
     serverInfo: PropTypes.array.isRequired,
   }
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
-      statusType: 'modify', // 状态： ready（可读） 、 modify （修改）、 Approval（审批）
+      statusType: 'ready', // 状态： ready（可读） 、 modify （修改）、 Approval（审批）
+      num: props.num, // 编号
+      baseInfo: props.baseInfo, // 基本信息
+      draftInfo: props.draftInfo, // 拟稿信息
+      serverInfo: props.serverInfo, // 服务人员
     };
+  }
+
+  @autobind
+  updateValue(name, value) { // 更新本地数据
+    this.setState({ [name]: value });
   }
 
   render() {
@@ -30,7 +40,12 @@ export default class Detail extends PureComponent {
         <header className={style.dcHeader}>
           <span className={style.dcHaderNumb}>编号{num}</span>
           <span
-            className={this.state.statusType === 'modify' ? style.dcHeaderModifyBtn : `${style.dcHeaderModifyBtn} hide`}
+            onClick={() => { this.setState({ statusType: 'modify' }); }}
+            className={
+              this.state.statusType !== 'ready'
+              ? `hide ${style.dcHeaderModifyBtn}`
+              : style.dcHeaderModifyBtn
+            }
           >修改</span>
         </header>
         <MessageList {...baseInfo} />
@@ -39,6 +54,7 @@ export default class Detail extends PureComponent {
           head="服务人员"
           info={serverInfo}
           statusType={this.state.statusType}
+          emitEvent={this.updateValue}
         />
       </div>
     );

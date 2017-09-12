@@ -39,30 +39,36 @@ exports.response = function (req, res) {
       },
       "serverInfo": [
         {
-          "id": "HTSC001231",
-          "name": "王某某",
-          "position": "岗位A",
-          "department": "南京奥体东营业部"
+          "ptyMngId":"0101011",
+          "ptyMngName": "王二",
+          "job": "岗位A",
+          "businessDepartment": "南京奥体东营业部",
+          "isMain": false
         }, {
-          "id": "HTSC001232",
-          "name": "孙某某",
-          "position": "岗位B",
-          "department": "南京江华路营业部"
+          "ptyMngId":"0101012",
+          "ptyMngName": "王三",
+          "job": "岗位B",
+          "businessDepartment": "南京奥体东营业部AAA",
+          "isMain": true
+
         }, {
-          "id": "HTSC001233",
-          "name": "沈某某",
-          "position": "岗位C",
-          "department": "南京铁心桥营业部"
+          "ptyMngId":"0101013",
+          "ptyMngName": "李四",
+          "job": "岗位C",
+          "businessDepartment": "南京奥体东营业部BBB",
+          "isMain": false
         }, {
-          "id": "HTSC001234",
-          "name": "吴某某",
-          "position": "岗位D",
-          "department": "南京奥体东营业部"
+          "ptyMngId":"0101014",
+          "ptyMngName": "张三",
+          "job": "岗位D",
+          "businessDepartment": "南京奥体东营业部CCC",
+          "isMain": false
         }, {
-          "id": "HTSC00125",
-          "name": "张某某",
-          "position": "岗位E",
-          "department": "南京不知道营业部"
+          "ptyMngId":"0101015",
+          "ptyMngName": "码子",
+          "job": "岗位F",
+          "businessDepartment": "南京奥体东营业部DDD",
+          "isMain": false
         }
       ]
     }

@@ -2,21 +2,21 @@
 
 .spServerPersonel {
 	width: 100%;
-	height: 306px;
-	border: @borderBottom;
+	height: auto;
+	border: 1px solid #e9e9e9;
 }
 .spServerPersonelItem {
 	width: 100%;
 	height: 51px;
-	color: @fontColor;
-	font-size: @fontSize;
+	color: #333;
+	font-size: 14px;
 	display: flex;
 	flex-flow: row nowrap;
 	justify-content: flex-start;
 	align-items: center;
 }
 .spServerPersonelItem + .spServerPersonelItem {
-	border-top: @borderBottom;
+	border-top: 1px solid #e9e9e9;
 }
 .spServerPersonelItem.firstItem {
 	background: #f7f7f7;
@@ -71,7 +71,7 @@
 		position: relative;
 	}
 	.label-btn-circle.checked {
-		border: 1px solid @activeColor;
+		border: 1px solid #348cf0;
 	}
 	.label-btn-circle.checked:after {
 		content: '';
@@ -82,6 +82,6 @@
 		height: 8px;
 		border-radius: 50%;
 		border: none;
-		background: @activeColor;
+		background: #348cf0;
 	}
 }

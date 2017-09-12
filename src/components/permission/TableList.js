@@ -7,61 +7,65 @@ export default class TableList extends PureComponent {
   static propTypes = {
     info: PropTypes.array.isRequired,
     statusType: PropTypes.string.isRequired,
-    selectValue: PropTypes.object.isRequired,
+    selectValue: PropTypes.object,
     emitUpdateValue: PropTypes.func,
   }
 
   static defaultProps = {
     emitUpdateValue: null,
+    selectValue: {},
   }
 
   get getEleList() {
-    const { emitUpdateValue } = this.props;
-    const result = this.props.info.map((item, index) => {
+    const { statusType, emitUpdateValue, selectValue } = this.props;
+    const result = this.props.info.map((item) => {
       const callBack = () => {
         emitUpdateValue(item);
       };
-      const tabIndex = `TableList${index}`;
       return (
         <li
-          key={tabIndex}
+          key={item.ptyMngId}
           className={style.spServerPersonelItem}
         >
           <div
             className={classnames(['text-center',
-              { 'flex-base_0': this.props.statusType === 'ready' },
-              { 'flex-base_1': this.props.statusType !== 'ready' },
+              { 'flex-base_0': statusType === 'ready' },
+              { 'flex-base_1': statusType !== 'ready' },
             ])}
           >
             <label
-              htmlFor
-              className={item.id === this.props.selectValue.id ? 'label-btn-circle checked' : 'label-btn-circle'}
-            >
-              <input
-                type="radio"
-                name="serverPersonel"
-                className="hide"
-                checked={item.id === this.props.selectValue.id}
-                onChange={callBack}
-              />
-            </label>
+              htmlFor={`radio-${item.ptyMngId}`}
+              className={
+                item.ptyMngId === selectValue.ptyMngId
+                ? 'label-btn-circle checked'
+                : 'label-btn-circle'
+              }
+            >&nbsp;</label>
+            <input
+              type="radio"
+              id={`radio-${item.ptyMngId}`}
+              name="serverPersonel"
+              className="hide"
+              checked={item.ptyMngId === selectValue.ptyMngId}
+              onChange={callBack}
+            />
           </div>
           <span
             className="flex-base_2 text-center"
-          >{item.id}</span>
+          >{item.ptyMngId}</span>
           <span
             className="flex-base_2 text-center"
           >
             <span
-              className={item.id === this.props.selectValue.id ? style.mainManager : ''}
-            >{item.name}</span>
+              className={item.isMain ? style.mainManager : ''}
+            >{item.ptyMngName}</span>
           </span>
           <span
             className="flex-base_2 text-center"
-          >{item.position}</span>
+          >{item.job}</span>
           <span
             className="flex-base_3 text-center"
-          >{item.department}</span>
+          >{item.businessDepartment}</span>
         </li>
       );
     });
