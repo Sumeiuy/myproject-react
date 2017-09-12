@@ -1,44 +1,44 @@
 /**
- * @file premission/Home.js
- *  权限申请
- * @author honggaunqging
+ * @file feedback/Home.js
+ *  问题反馈
+ * @author yangquanjian
  */
 
 import React, { PureComponent, PropTypes } from 'react';
-import { Col } from 'antd';
-import _ from 'lodash';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import { withRouter, routerRedux } from 'dva/router';
-import { constructPermissionPostBody } from '../../utils/helper';
-import PageHeader from '../../components/permission/PageHeader';
-import PermissionList from '../../components/permission/PermissionList';
-
-import styles from './home.less';
+import SplitPanel from '../../components/common/splitPanel/SplitPanel';
+import Detail from '../../components/feedback/Detail';
+import FeedbackList from '../../components/feedback/FeedbackList';
+import FeedbackHeader from '../../components/feedback/FeedbackHeader';
+import { constructPostBody } from '../../utils/helper';
+import './home.less';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
 const mapStateToProps = state => ({
-  list: state.permission.list,
+  list: state.feedback.list,
 });
 
 const getDataFunction = loading => query => ({
-  type: 'permission/getPermissionList',
+  type: 'feedback/getFeedbackList',
   payload: query || {},
   loading,
 });
 
 const mapDispatchToProps = {
   replace: routerRedux.replace,
-  getPermissionList: getDataFunction(true),
+  getFeedbackList: getDataFunction(true),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
-export default class Permission extends PureComponent {
+export default class FeedBackNew extends PureComponent {
   static propTypes = {
     list: PropTypes.object.isRequired,
-    getPermissionList: PropTypes.func.isRequired,
+    getFeedbackList: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
   }
@@ -47,29 +47,36 @@ export default class Permission extends PureComponent {
 
   }
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      isEmpty: true,
+    };
+  }
+
   componentWillMount() {
-    const { getPermissionList, location: { query, query: {
-      pageNum,
-      pageSize,
+    const { getFeedbackList, location: { query, query: {
+      curPageNum,
+      curPageSize,
      } } } = this.props;
     // 默认筛选条件
-    getPermissionList(constructPermissionPostBody(query, pageNum || 1, pageSize || 10));
+    getFeedbackList(constructPostBody(query, curPageNum || 1, curPageSize || 10));
   }
 
   componentWillReceiveProps(nextProps) {
     const { location: { query: nextQuery = EMPTY_OBJECT } } = nextProps;
-    const { location: { query: prevQuery = EMPTY_OBJECT }, getPermissionList } = this.props;
-    const { isResetPageNum = 'N', pageNum, pageSize } = nextQuery;
+    const { location: { query: prevQuery = EMPTY_OBJECT }, getFeedbackList } = this.props;
+    const { isResetPageNum = 'N', curPageNum, curPageSize } = nextQuery;
 
     // 深比较值是否相等
     // url发生变化，检测是否改变了筛选条件
     if (!_.isEqual(prevQuery, nextQuery)) {
       if (!this.diffObject(prevQuery, nextQuery)) {
         // 只监测筛选条件是否变化
-        getPermissionList(constructPermissionPostBody(
+        getFeedbackList(constructPostBody(
           nextQuery,
-          isResetPageNum === 'Y' ? 1 : pageNum,
-          isResetPageNum === 'Y' ? 10 : pageSize,
+          isResetPageNum === 'Y' ? 1 : curPageNum,
+          isResetPageNum === 'Y' ? 10 : curPageSize,
         ));
       }
     }
@@ -100,7 +107,7 @@ export default class Permission extends PureComponent {
     }
   }
 
-    /**
+  /**
    * 检查部分属性是否相同
    * @param {*} prevQuery 前一次query
    * @param {*} nextQuery 后一次query
@@ -116,26 +123,35 @@ export default class Permission extends PureComponent {
 
   render() {
     const { list, location, replace } = this.props;
+    // const { isEmpty } = this.state;
+    const topPanel = (
+      <FeedbackHeader
+        location={location}
+        replace={replace}
+      />
+    );
+    const leftPanel = (
+      <FeedbackList
+        list={list}
+        replace={replace}
+        location={location}
+      />
+    );
+
+    const rightPanel = (
+      <Detail
+        location={location}
+      />
+    );
     return (
-      <div className={styles.premissionbox}>
-        <PageHeader
-          location={location}
-          replace={replace}
+      <div className="feedbackbox">
+        <SplitPanel
+          topPanel={topPanel}
+          leftPanel={leftPanel}
+          rightPanel={rightPanel}
+          leftListClassName="feedbackList"
         />
-        <div className={styles.pageBody}>
-          <Col span="24" className={styles.leftSection}>
-            <PermissionList
-              list={list}
-              replace={replace}
-              location={location}
-            />
-          </Col>
-          <Col span="24" className={styles.rightSection}>
-            wfdgfjhk
-          </Col>
-        </div>
       </div>
     );
   }
 }
-

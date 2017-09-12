@@ -53,8 +53,8 @@ export default class Pageheader extends PureComponent {
       <Option key={i.value}>{i.label}</Option>,
     );
     const { location: { query: {
-      permissionType,
-      permissionState,
+      subType,
+      status,
     } } } = this.props;
     return (
       <div className={styles.pageCommonHeader}>
@@ -75,8 +75,8 @@ export default class Pageheader extends PureComponent {
         <Select
           style={{ width: '12%' }}
           placeholder="全部"
-          value={permissionType}
-          onChange={key => this.handleSelectChange('permissionType', key)}
+          value={subType}
+          onChange={key => this.handleSelectChange('subType', key)}
           allowClear
         >
           {getSelectOption(typeOptions)}
@@ -86,8 +86,8 @@ export default class Pageheader extends PureComponent {
         <Select
           style={{ width: '8%' }}
           placeholder="全部"
-          value={permissionState}
-          onChange={key => this.handleSelectChange('permissionState', key)}
+          value={status}
+          onChange={key => this.handleSelectChange('status', key)}
           allowClear
         >
           {getSelectOption(stateOptions)}
