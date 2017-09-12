@@ -6,7 +6,6 @@ import classnames from 'classnames';
 import moment from 'moment';
 import styles from './modalCollapse.less';
 
-// const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
 const Panel = Collapse.Panel;
 
@@ -59,20 +58,19 @@ export default class ModalCollapse extends PureComponent {
   constructLeftServiceTimeSection(timeArray) {
     const { anchorAction } = this.props;
     // 目前还没有左边时间这个字段，先mock一份
-    let tempArray = timeArray;
-    tempArray = [
-      '2017/07/28 15:55:46',
-      '2017/07/28 15:55:46',
-      '2017/07/29 15:55:46',
-      '2017/07/30 15:55:46',
-      '2017/07/30 15:55:46',
-    ];
+    // let tempArray = timeArray;
+    // tempArray = [
+    //   '2017/07/28 15:55:46',
+    //   '2017/07/28 15:55:46',
+    //   '2017/07/29 15:55:46',
+    //   '2017/07/30 15:55:46',
+    //   '2017/07/30 15:55:46',
+    // ];
 
-    const serviceTimeCollection = this.separateDate(tempArray);
-
-    if (_.isEmpty(anchorAction)) {
+    if (_.isEmpty(anchorAction) || _.isEmpty(timeArray)) {
       return null;
     }
+    const serviceTimeCollection = this.separateDate(timeArray);
     return _.map(anchorAction, (item, index) =>
       <div
         style={{
@@ -328,7 +326,8 @@ export default class ModalCollapse extends PureComponent {
       return null;
     }
 
-    const feedbackTimeArray = _.map(data, item => item.feedbackTime);
+    // 左边服务时间字段
+    const serveTimeCollection = _.filter(data, item => !_.isEmpty(item.serveTime));
 
     const PanelDOM = this.constructPanel(data);
 
@@ -343,7 +342,7 @@ export default class ModalCollapse extends PureComponent {
             <div className={styles.leftAnchor}>
               <div className={styles.serviceTimeSection}>
                 {
-                  this.constructLeftServiceTimeSection(feedbackTimeArray)
+                  this.constructLeftServiceTimeSection(serveTimeCollection)
                 }
               </div>
               {
