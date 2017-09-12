@@ -8,6 +8,7 @@
  *  title={string}
  *  onSearch={func}
  * />
+ * visible: 必须的，控制是否出现弹框
  * columns: 必须的，用于table的列标题的定义
  * title：必须的，弹框的title
  * onSearch：必须的，搜索框的回调
@@ -21,9 +22,7 @@
 import React, { PropTypes, Component } from 'react';
 import { Table, Modal, Input } from 'antd';
 import { autobind } from 'core-decorators';
-import _ from 'lodash';
 
-import Icon from '../Icon';
 import styles from './tableDialog.less';
 
 const Search = Input.Search;
@@ -39,6 +38,7 @@ export default class TableDialog extends Component {
     columns: PropTypes.array.isRequired,
     title: PropTypes.string.isRequired,
     onSearch: PropTypes.func.isRequired,
+    visible: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -52,18 +52,18 @@ export default class TableDialog extends Component {
 
   constructor(props) {
     super(props);
-    const { dataSource } = this.props;
+    const { dataSource, visible } = this.props;
     const defaultConfig = this.defaultSelected(dataSource);
     this.state = {
-      visible: false,
-      selected: {},
+      visible,
       ...defaultConfig,
     };
   }
   componentWillReceiveProps(nextProps) {
-    const { dataSource } = nextProps;
+    const { dataSource, visible } = nextProps;
     const defaultConfig = this.defaultSelected(dataSource);
     this.setState({
+      visible,
       ...defaultConfig,
     });
   }
@@ -95,13 +95,12 @@ export default class TableDialog extends Component {
     const { selectedRows } = this.state;
     const selected = selectedRows.length > 0 ? selectedRows[0] : {};
     // 重置默认值
-    const { dataSource } = this.props;
+    const { dataSource, onOk } = this.props;
     const defaultConfig = this.defaultSelected(dataSource);
     this.setState({
       visible: false,
-      selected,
       ...defaultConfig,
-    });
+    }, onOk(selected));
   }
 
   @autobind
@@ -121,27 +120,15 @@ export default class TableDialog extends Component {
     onSearch(value);
   }
 
-  @autobind
-  handleFocus() {
-    this.setState({
-      visible: true,
-    }, this.searchElem.input.refs.input.blur());
-  }
-
-  @autobind
-  handleRemove() {
-    this.setState({
-      selected: {},
-    });
-  }
-
   render() {
     const {
       visible,
       selectedRowKeys,
-      selected,
     } = this.state;
-    const flag = _.isEmpty(selected);
+    if (!visible) {
+      return null;
+    }
+
     const {
       columns,
       title,
@@ -156,57 +143,27 @@ export default class TableDialog extends Component {
       selectedRowKeys,
     };
     return (
-      <div className={styles.container}>
-        {
-          flag ? (
-            <Search
-              ref={(ref) => { this.searchElem = ref; }}
-              className={styles.search}
-              placeholder={placeholder}
-              onFocus={this.handleFocus}
-            />
-          ) : (
-            <div className={styles.result}>
-              <div className={styles.nameLabel}>{selected.name}</div>
-              <div className={styles.custIdLabel}>{selected.id}</div>
-              <div className={styles.iconDiv}>
-                <Icon
-                  type="close"
-                  className={styles.closeIcon}
-                  onClick={this.handleRemove}
-                />
-              </div>
-            </div>
-          )
-        }
-        {
-          visible ? (
-            <Modal
-              title={title}
-              visible={visible}
-              onOk={this.handleOk}
-              onCancel={this.handleCancel}
-              okText={okText}
-              cancelText={cancelText}
-              wrapClassName={styles.modalContainer}
-            >
-              <Search
-                placeholder={placeholder}
-                onSearch={(value) => { this.handleSearch(value); }}
-              />
-              <Table
-                rowKey="id"
-                rowSelection={rowSelection}
-                columns={columns}
-                dataSource={dataSource}
-                pagination={false}
-              />
-            </Modal>
-          ) : (
-            null
-          )
-        }
-      </div>
+      <Modal
+        title={title}
+        visible={visible}
+        onOk={this.handleOk}
+        onCancel={this.handleCancel}
+        okText={okText}
+        cancelText={cancelText}
+        wrapClassName={styles.modalContainer}
+      >
+        <Search
+          placeholder={placeholder}
+          onSearch={(value) => { this.handleSearch(value); }}
+        />
+        <Table
+          rowKey="id"
+          rowSelection={rowSelection}
+          columns={columns}
+          dataSource={dataSource}
+          pagination={false}
+        />
+      </Modal>
     );
   }
 }
