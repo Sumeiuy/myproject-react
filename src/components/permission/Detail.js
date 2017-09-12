@@ -6,7 +6,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import style from './detail.less';
-import MessageList from './MessageList';
+import MessageList from '../common/MessageList';
 import ServerPersonel from './ServerPersonel';
 
 export default class Detail extends PureComponent {

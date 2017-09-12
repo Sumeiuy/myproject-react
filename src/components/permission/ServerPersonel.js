@@ -2,8 +2,8 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import InfoTitle from './InfoTitle';
-import TableList from './TableList';
+import InfoTitle from '../common/InfoTitle';
+import TableList from '../common/TableList';
 import style from './serverpersonel.less';
 
 export default class ServerPersonel extends PureComponent {

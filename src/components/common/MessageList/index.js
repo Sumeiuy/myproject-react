@@ -5,7 +5,8 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import InfoTitle from './InfoTitle';
+import InfoTitle from '../InfoTitle';
+import TextLayout from '../textlayout';
 import style from './messagelist.less';
 
 export default class MessageList extends PureComponent {
@@ -25,13 +26,7 @@ export default class MessageList extends PureComponent {
     const result = this.props.content.map((item, index) => {
       const tabIndex = `MgsList${index}`;
       return (
-        <li
-          key={tabIndex}
-          className={style.mlcContentList}
-        >
-          <span className={style.mlcContentListTitle}>{item.title}</span>
-          <span className={style.mlcContentListCon}>{item.content}</span>
-        </li>
+        <TextLayout key={tabIndex} {...item} />
       );
     });
     return result;
@@ -42,9 +37,9 @@ export default class MessageList extends PureComponent {
     return (
       <div className={style.messageListComponent}>
         <InfoTitle head={head} />
-        <ul className={style.mlcContent}>
+        <div className={style.mlcContent}>
           {this.getEleMap}
-        </ul>
+        </div>
       </div>
     );
   }
