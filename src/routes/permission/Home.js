@@ -10,8 +10,9 @@ import _ from 'lodash';
 import { connect } from 'react-redux';
 import { withRouter, routerRedux } from 'dva/router';
 import { constructPermissionPostBody } from '../../utils/helper';
+import SplitPanel from '../../components/common/splitPanel/SplitPanel';
 import PageHeader from '../../components/permission/PageHeader';
-import PermissionList from '../../components/permission/PermissionList';
+import PermissionList from '../../components/common/commonList/commonList';
 
 import styles from './home.less';
 
@@ -116,24 +117,33 @@ export default class Permission extends PureComponent {
 
   render() {
     const { list, location, replace } = this.props;
+    const topPanel = (
+      <PageHeader
+        location={location}
+        replace={replace}
+      />
+    );
+    const leftPanel = (
+      <PermissionList
+        list={list}
+        replace={replace}
+        location={location}
+      />
+    );
+
+    const rightPanel = (
+      <Col span="24" className={styles.rightSection}>
+        wfdgfjhk
+      </Col>
+    );
     return (
       <div className={styles.premissionbox}>
-        <PageHeader
-          location={location}
-          replace={replace}
+        <SplitPanel
+          topPanel={topPanel}
+          leftPanel={leftPanel}
+          rightPanel={rightPanel}
+          leftListClassName="premissionList"
         />
-        <div className={styles.pageBody}>
-          <Col span="24" className={styles.leftSection}>
-            <PermissionList
-              list={list}
-              replace={replace}
-              location={location}
-            />
-          </Col>
-          <Col span="24" className={styles.rightSection}>
-            wfdgfjhk
-          </Col>
-        </div>
       </div>
     );
   }

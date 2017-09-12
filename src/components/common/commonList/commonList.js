@@ -3,8 +3,8 @@ import { autobind } from 'core-decorators';
 import { Table } from 'antd';
 import classnames from 'classnames';
 import _ from 'lodash';
-import Icon from '../common/Icon';
-import { permissionOptions } from '../../config';
+import Icon from '../Icon';
+import { permissionOptions } from '../../../config';
 
 import './jiraLayout.less';
 
@@ -139,7 +139,7 @@ export default class PermissionList extends PureComponent {
   @autobind
   constructTableColumns() {
     const columns = [{
-      dataIndex: 'serialNumber.subType.title.empName.level1OrgName.level2OrgName.level3OrgName',
+      dataIndex: 'serialNumber.subType.title.empName.empId',
       width: '60%',
       render: (text, record) => (
         <div className="leftSection">
@@ -149,7 +149,7 @@ export default class PermissionList extends PureComponent {
             <span className="subType">{record.subType || '无'}</span>
           </div>
           <div className="title">{record.title || '无'}</div>
-          <div className="address">来自：{record.empName}，{`${record.level1OrgName || ''}${record.level2OrgName || ''}${record.level3OrgName || ''}` || '无'}</div>
+          <div className="address">拟稿人：{record.empName}({record.empId})，{`${record.level2OrgName || ''}${record.level3OrgName || ''}` || '无'}</div>
         </div>
         ),
     }, {
