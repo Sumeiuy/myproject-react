@@ -2,6 +2,18 @@
  * @description 类穿梭框组件，统一样式
  * @author zhangjunli
  * Usage:
+ * <Transfer
+    subscribeData={array}
+    unsubscribeData={array}
+    subscribeColumns={array}
+    unsubscribeColumns={array}
+  />
+ * subscribeTitle: 不必要，有默认值（‘当前订阅服务’），第一个表的title
+ * unsubscribeTitle： 不必要，有默认值（‘退订服务’），第二个表的title
+ * subscribeData：不必要，有默认值（空数据），第一个标的数据源
+ * unsubscribeData：不必要，有默认值（空数据），第二个标的数据源
+ * subscribeColumns：必要，第一表的表头定义
+ * unsubscribeColumns：必要，第二个表的表头定义
  */
 import React, { PropTypes, Component } from 'react';
 import { Table } from 'antd';
