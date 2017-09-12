@@ -9,7 +9,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { permissionOptions } from '../../config';
 
-import styles from './jiraLayout.less';
+import styles from '../../components/common/commonList/jiraLayout.less';
 
 const TreeNode = TreeSelect.TreeNode;
 const Option = Select.Option;
