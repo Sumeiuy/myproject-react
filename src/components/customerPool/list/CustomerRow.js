@@ -6,7 +6,7 @@
 
 import React, { PureComponent, PropTypes } from 'react';
 // import { withRouter } from 'dva/router';
-import { Checkbox } from 'antd';
+import { Checkbox, message } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
@@ -148,6 +148,8 @@ const formatNumber = (num) => {
 let COUNT = 0;
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
+let emailState = '';
+let onOff = false;
 
 export default class CustomerRow extends PureComponent {
   static propTypes = {
@@ -185,6 +187,7 @@ export default class CustomerRow extends PureComponent {
       modalKey: `contactModalKey${COUNT}`,
       currentCustId: '',
       custType: '',
+      email: null,
     };
 
     this.debounced = _.debounce(
@@ -205,9 +208,9 @@ export default class CustomerRow extends PureComponent {
     });
   }
 
-  componentWillReceiveProps(nextProps, nextState) {
-    // console.log('nextProps.isAllSelect>>>', nextProps.isAllSelect);
-    // console.log('this.props.isAllSelect>>>', this.props.isAllSelect);
+  componentWillReceiveProps(nextProps) {
+    console.log('nextProps.isAllSelect>>>', nextProps.isAllSelect);
+    console.log('this.props.isAllSelect>>>', this.state.currentCustId);
     const {
       custContactData: prevCustContactData = EMPTY_OBJECT,
       serviceRecordData: prevServiceRecordData = EMPTY_LIST,
@@ -216,9 +219,10 @@ export default class CustomerRow extends PureComponent {
       custContactData: nextCustContactData = EMPTY_OBJECT,
       serviceRecordData: nextServiceRecordData = EMPTY_LIST,
      } = nextProps;
-    const { isShowModal, currentCustId } = nextState;
+    const { isShowModal, currentCustId } = this.state.currentCustId;
     const prevContact = prevCustContactData[currentCustId] || EMPTY_OBJECT;
     const nextContact = nextCustContactData[currentCustId] || EMPTY_OBJECT;
+    emailState = emailState || currentCustId;
     if (prevContact !== nextContact || prevServiceRecordData !== nextServiceRecordData) {
       if (!isShowModal) {
         this.setState({
@@ -227,7 +231,26 @@ export default class CustomerRow extends PureComponent {
         });
       }
     }
+    if (onOff) {
+      const finded = _.findIndex(nextCustContactData[emailState].perCustomerContactInfo.emailAddresses, 'mainFlag', true);
+      if (finded === -1) {
+        console.log(111);
+        this.setState({
+          email: '15256058758@163.com',
+        }, () => {
+          const evt = new MouseEvent('click', { bubbles: false, cancelable: false, view: window });
+          document.querySelector('#toEmail').dispatchEvent(evt);
+        });
+      } else {
+        this.setState({
+          email: null,
+        });
+        message.error('暂无客户邮件，请与客户沟通尽快完善信息');
+      }
+      onOff = false;
+    }
 
+    console.log(this.state);
     if (nextProps.isAllSelect !== this.props.isAllSelect) {
       this.setState({
         checked: nextProps.isAllSelect,
@@ -446,6 +469,23 @@ export default class CustomerRow extends PureComponent {
   }
 
   @autobind
+  toEmail() {
+    const { listItem, getCustContact } = this.props;
+    const { custId } = listItem;
+    console.log(custId)
+    this.setState({
+      currentCustId: custId,
+    }, () => {
+      emailState = this.state.currentCustId;
+      onOff = true;
+      console.log(this.state.currentCustId);
+      console.log(emailState);
+    });
+    getCustContact({
+      custId,
+    });
+  }
+  @autobind
   renderAgeOrOrgName() {
     const { listItem } = this.props;
     if (listItem.pOrO === 'P') {
@@ -487,9 +527,9 @@ export default class CustomerRow extends PureComponent {
               <Icon type="dianhua" />
               <span>电话联系</span>
             </li>
-            <li>
+            <li onClick={this.toEmail}>
               <Icon type="youjian" />
-              <span>邮件联系</span>
+              <span><a id={this.state.email && emailState === currentCustId ? 'toEmail' : ''} href={this.state.email && emailState === currentCustId ? `mailto:${this.state.email}` : "javascript:(0);"}>邮件联系</a> </span>
             </li>
             <li onClick={this.showCreateServiceRecord}>
               <Icon type="jilu" />
