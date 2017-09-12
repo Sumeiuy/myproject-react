@@ -6,6 +6,7 @@
 
 import React, { PureComponent, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { withRouter, routerRedux } from 'dva/router';
 import SplitPanel from '../../components/common/splitPanel/SplitPanel';
@@ -121,9 +122,17 @@ export default class FeedBackNew extends PureComponent {
     return true;
   }
 
+  @autobind
+  searchResult(isEmpty) {
+    this.setState({
+      isEmpty,
+    });
+  }
+
   render() {
     const { list, location, replace } = this.props;
-    // const { isEmpty } = this.state;
+    // 此处需要提供一个方法给返回的接口查询设置是否查询到数据
+    const { isEmpty } = this.state;
     const topPanel = (
       <FeedbackHeader
         location={location}
@@ -146,6 +155,7 @@ export default class FeedBackNew extends PureComponent {
     return (
       <div className="feedbackbox">
         <SplitPanel
+          isEmpty={isEmpty}
           topPanel={topPanel}
           leftPanel={leftPanel}
           rightPanel={rightPanel}
