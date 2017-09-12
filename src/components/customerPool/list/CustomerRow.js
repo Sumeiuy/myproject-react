@@ -233,10 +233,10 @@ export default class CustomerRow extends PureComponent {
     }
     if (onOff) {
       const finded = _.findIndex(nextCustContactData[emailState].perCustomerContactInfo.emailAddresses, 'mainFlag', true);
-      if (finded === -1) {
-        console.log(111);
+      if (finded !== -1) {
+        const addresses = nextCustContactData[emailState].perCustomerContactInfo;
         this.setState({
-          email: '15256058758@163.com',
+          email: addresses.emailAddresses[finded].contactValue,
         }, () => {
           const evt = new MouseEvent('click', { bubbles: false, cancelable: false, view: window });
           document.querySelector('#toEmail').dispatchEvent(evt);
@@ -472,7 +472,7 @@ export default class CustomerRow extends PureComponent {
   toEmail() {
     const { listItem, getCustContact } = this.props;
     const { custId } = listItem;
-    console.log(custId)
+    console.log(custId);
     this.setState({
       currentCustId: custId,
     }, () => {
@@ -529,7 +529,7 @@ export default class CustomerRow extends PureComponent {
             </li>
             <li onClick={this.toEmail}>
               <Icon type="youjian" />
-              <span><a id={this.state.email && emailState === currentCustId ? 'toEmail' : ''} href={this.state.email && emailState === currentCustId ? `mailto:${this.state.email}` : "javascript:(0);"}>邮件联系</a> </span>
+              <span>{this.state.email && emailState === currentCustId ? <a id={this.state.email && emailState === currentCustId ? 'toEmail' : ''} href={`mailto:${this.state.email}`}>邮件联系</a> : '邮件联系' } </span>
             </li>
             <li onClick={this.showCreateServiceRecord}>
               <Icon type="jilu" />
