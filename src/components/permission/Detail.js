@@ -37,7 +37,7 @@ export default class Detail extends PureComponent {
     const { num, baseInfo, draftInfo, serverInfo } = this.props;
     return (
       <div className={style.detailComponent}>
-        <header className={style.dcHeader}>
+        <div className={style.dcHeader}>
           <span className={style.dcHaderNumb}>编号{num}</span>
           <span
             onClick={() => { this.setState({ statusType: 'modify' }); }}
@@ -47,7 +47,7 @@ export default class Detail extends PureComponent {
               : style.dcHeaderModifyBtn
             }
           >修改</span>
-        </header>
+        </div>
         <MessageList {...baseInfo} />
         <MessageList {...draftInfo} />
         <ServerPersonel

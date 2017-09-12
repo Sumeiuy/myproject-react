@@ -10,9 +10,10 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import { Col } from 'antd';
 import { constructPermissionPostBody } from '../../utils/helper';
+import SplitPanel from '../../components/common/splitPanel/SplitPanel';
 import PageHeader from '../../components/permission/PageHeader';
-import PermissionList from '../../components/permission/PermissionList';
 import Detail from '../../components/permission/Detail';
+import PermissionList from '../../components/common/commonList/commonList';
 import styles from './home.less';
 
 const EMPTY_LIST = [];
@@ -130,24 +131,34 @@ export default class Permission extends PureComponent {
 
   render() {
     const { list, location, replace } = this.props;
+    const topPanel = (
+      <PageHeader
+        location={location}
+        replace={replace}
+      />
+    );
+
+    const leftPanel = (
+      <PermissionList
+        list={list}
+        replace={replace}
+        location={location}
+      />
+    );
+
+    const rightPanel = (
+      <Col span="24" className={styles.rightSection}>
+        {this.getDetailComponent}
+      </Col>
+    );
     return (
       <div className={styles.premissionbox}>
-        <PageHeader
-          location={location}
-          replace={replace}
+        <SplitPanel
+          topPanel={topPanel}
+          leftPanel={leftPanel}
+          rightPanel={rightPanel}
+          leftListClassName="premissionList"
         />
-        <div className={styles.pageBody}>
-          <Col span="24" className={styles.leftSection}>
-            <PermissionList
-              list={list}
-              replace={replace}
-              location={location}
-            />
-          </Col>
-          <Col span="24" className={styles.rightSection}>
-            {this.getDetailComponent}
-          </Col>
-        </div>
       </div>
     );
   }
