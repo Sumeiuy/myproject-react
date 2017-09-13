@@ -10,7 +10,7 @@ import { Checkbox, message } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
-import CreatePhoneContactModal from './CreatePhoneContactModal';
+import CreateContactModal from './CreateContactModal';
 import Icon from '../../common/Icon';
 import styles from './customerRow.less';
 
@@ -219,8 +219,8 @@ export default class CustomerRow extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log('nextProps.isAllSelect>>>', nextProps.isAllSelect);
-    console.log('this.props.isAllSelect>>>', this.state.currentCustId);
+    // console.log('nextProps.isAllSelect>>>', nextProps.isAllSelect);
+    // console.log('this.props.isAllSelect>>>', this.props.isAllSelect);
     const {
       custContactData: prevCustContactData = EMPTY_OBJECT,
       serviceRecordData: prevServiceRecordData = EMPTY_LIST,
@@ -229,7 +229,7 @@ export default class CustomerRow extends PureComponent {
       custContactData: nextCustContactData = EMPTY_OBJECT,
       serviceRecordData: nextServiceRecordData = EMPTY_LIST,
      } = nextProps;
-    const { isShowModal, currentCustId } = this.state.currentCustId;
+    const { isShowModal, currentCustId } = this.state;
     const prevContact = prevCustContactData[currentCustId] || EMPTY_OBJECT;
     const nextContact = nextCustContactData[currentCustId] || EMPTY_OBJECT;
     emailState = emailState || currentCustId;
@@ -727,7 +727,7 @@ export default class CustomerRow extends PureComponent {
         </div>
         {
           isShowModal ?
-            <CreatePhoneContactModal
+            <CreateContactModal
               visible={isShowModal}
               key={modalKey}
               custContactData={finalContactData}
