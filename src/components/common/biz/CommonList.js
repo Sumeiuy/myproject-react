@@ -1,24 +1,19 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import { Table } from 'antd';
-import classnames from 'classnames';
 import _ from 'lodash';
-import Icon from '../Icon';
-import { permissionOptions } from '../../../config';
 
-import './jiraLayout.less';
+import '../../style/jiraLayout.less';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
-
-// 状态字典
-const STATUS_MAP = permissionOptions.stateOptions;
 
 export default class PermissionList extends PureComponent {
   static propTypes = {
     list: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
+    columns: PropTypes.array.isRequired,
   };
 
   static defaultProps = {
@@ -133,53 +128,6 @@ export default class PermissionList extends PureComponent {
     });
   }
 
-  /**
-   * 构造表格的列数据
-   */
-  @autobind
-  constructTableColumns() {
-    const columns = [{
-      dataIndex: 'serialNumber.subType.title.empName.empId',
-      width: '60%',
-      render: (text, record) => (
-        <div className="leftSection">
-          <div className="id">
-            <Icon type="save_blue" />
-            <span className="serialNumber">编号{record.serialNumber || '无'}</span>
-            <span className="subType">{record.subType || '无'}</span>
-          </div>
-          <div className="title">{record.title || '无'}</div>
-          <div className="address">拟稿人：{record.empName}({record.empId})，{`${record.level2OrgName || ''}${record.level3OrgName || ''}` || '无'}</div>
-        </div>
-        ),
-    }, {
-      dataIndex: 'status.createTime.custName.custNumber',
-      width: '40%',
-      render: (text, record) => {
-        // 当前行记录
-        let statusClass;
-        let statusLabel;
-        if (record.status) {
-          statusClass = classnames({
-            'state-complete': record.status === STATUS_MAP[0].value,
-            'state-resolve': record.status === STATUS_MAP[1].value,
-            'state-close': record.status === STATUS_MAP[2].value,
-          });
-          statusLabel = STATUS_MAP.filter(item => item.value === record.status);
-        }
-        return (
-          <div className="rightSection">
-            <div className={statusClass}>{(!_.isEmpty(statusLabel) && statusLabel[0].label) || '无'}</div>
-            <div className="date">{(record.createTime &&
-              record.createTime.slice(0, 10)) || '无'}</div>
-            <div className="cust">客户:{record.custName || '无'}({record.custNumber || '无'})</div>
-          </div>
-        );
-      },
-    }];
-
-    return columns;
-  }
 
   /**
    * 构造数据源
@@ -225,7 +173,7 @@ export default class PermissionList extends PureComponent {
   }
 
   render() {
-    const { list: { resultData = EMPTY_LIST, page = EMPTY_OBJECT },
+    const { columns, list: { resultData = EMPTY_LIST, page = EMPTY_OBJECT },
       location: { query: { pageNum, pageSize } } } = this.props;
     const { totalCount } = page;
     const { curSelectedRow } = this.state;
@@ -233,8 +181,6 @@ export default class PermissionList extends PureComponent {
     if (!resultData) {
       return null;
     }
-
-    const columns = this.constructTableColumns();
 
     const paginationOptions = {
       current: parseInt(pageNum, 10),
