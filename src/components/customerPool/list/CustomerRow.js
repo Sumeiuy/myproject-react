@@ -242,14 +242,36 @@ export default class CustomerRow extends PureComponent {
       }
     }
     if (onOff) {
-      const finded = _.findIndex(nextCustContactData[emailState].perCustomerContactInfo.emailAddresses, 'mainFlag', true);
+      // console.log(nextCustContactData[emailState]);
+      let finded = 0;
+      let addresses = null;
+      // orgCustomerContactInfoList,perCustomerContactInfo
+      // console.log(nextCustContactData[emailState].perCustomerContactInfo === undefined);
+      if (nextCustContactData[emailState].perCustomerContactInfo !== undefined) {
+        finded = _.findLastIndex(nextCustContactData[emailState].perCustomerContactInfo.emailAddresses, 'mainFlag', true);
+        addresses = nextCustContactData[emailState].perCustomerContactInfo;
+      } else {
+        // console.log(nextCustContactData[emailState].orgCustomerContactInfoList);
+        const index = _.findLastIndex(nextCustContactData[emailState].orgCustomerContactInfoList, 'mainFlag', false);
+        // console.log("index----", index);// -1
+        finded = _.findLastIndex(nextCustContactData[emailState].orgCustomerContactInfoList[index].emailAddresses, 'mainFlag', true);
+        // console.log("finded-----", finded);
+        addresses = nextCustContactData[emailState].orgCustomerContactInfoList[index];
+        // console.log(addresses)
+        // console.log(addresses.emailAddresses[finded].contactValue);
+      }
       if (finded !== -1) {
-        const addresses = nextCustContactData[emailState].perCustomerContactInfo;
+        // debugger;
+        // this.setState({
+        //   email: addresses.emailAddresses[finded].contactValue,
+        // });
+        // debugger;
+        // console.log("this.state.email---", this.state.email);
         this.setState({
           email: addresses.emailAddresses[finded].contactValue,
         }, () => {
           const evt = new MouseEvent('click', { bubbles: false, cancelable: false, view: window });
-          document.querySelector('#toEmail').dispatchEvent(evt);
+          document.querySelector('#endEmail').dispatchEvent(evt);
         });
       } else {
         this.setState({
@@ -259,8 +281,6 @@ export default class CustomerRow extends PureComponent {
       }
       onOff = false;
     }
-
-    console.log(this.state);
     if (nextProps.isAllSelect !== this.props.isAllSelect) {
       this.setState({
         checked: nextProps.isAllSelect,
@@ -508,8 +528,8 @@ export default class CustomerRow extends PureComponent {
     }, () => {
       emailState = this.state.currentCustId;
       onOff = true;
-      console.log(this.state.currentCustId);
-      console.log(emailState);
+      // console.log(this.state.currentCustId);
+      // console.log("emailState----", emailState);
     });
     getCustContact({
       custId,
@@ -541,6 +561,7 @@ export default class CustomerRow extends PureComponent {
       custType,
       currentCustId,
       isShowCharts,
+      email,
    } = this.state;
     const finalContactData = custContactData[currentCustId] || EMPTY_OBJECT;
     const lastestProfit = Number(this.getLastestData(monthlyProfits).assetProfit);
@@ -561,7 +582,7 @@ export default class CustomerRow extends PureComponent {
             </li>
             <li onClick={this.toEmail}>
               <Icon type="youjian" />
-              <span>{this.state.email && emailState === currentCustId ? <a id={this.state.email && emailState === currentCustId ? 'toEmail' : ''} href={`mailto:${this.state.email}`}>邮件联系</a> : '邮件联系' } </span>
+              <span>{emailState}--{currentCustId}--{email}{email && emailState === currentCustId ? <a id={email && emailState === currentCustId ? 'sendEmail' : ''} href={`mailto:${email}`}>邮件联系</a> : '邮件联系' } </span>
             </li>
             <li onClick={this.showCreateServiceRecord}>
               <Icon type="jilu" />

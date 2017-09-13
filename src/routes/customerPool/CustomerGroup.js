@@ -16,7 +16,7 @@ import AddCusSuccess from '../../components/customerPool/group/AddCusSuccess';
 import helper from '../../utils/helper';
 
 
-const CUR_PAGE = 0; // 默认当前页
+const CUR_PAGE = 1; // 默认当前页
 const CUR_PAGESIZE = 10; // 默认页大小
 const TabPane = Tabs.TabPane;
 let groupId = '';

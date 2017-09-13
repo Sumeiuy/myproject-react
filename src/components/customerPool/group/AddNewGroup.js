@@ -15,7 +15,7 @@ const create = Form.create;
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
-    sm: { span: 2 },
+    sm: { span: 3 },
   },
   wrapperCol: {
     xs: { span: 24 },
@@ -25,11 +25,11 @@ const formItemLayout = {
 const formItemLayout2 = {
   labelCol: {
     xs: { span: 24 },
-    sm: { span: 2 },
+    sm: { span: 3 },
   },
   wrapperCol: {
     xs: { span: 24 },
-    sm: { span: 22 },
+    sm: { span: 21 },
   },
 };
 @create()
