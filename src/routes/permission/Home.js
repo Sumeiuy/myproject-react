@@ -15,6 +15,7 @@ import SplitPanel from '../../components/common/splitPanel/SplitPanel';
 import PageHeader from '../../components/permission/PageHeader';
 import PermissionList from '../../components/common/biz/CommonList';
 import seibelColumns from '../../components/common/biz/seibelColumns';
+import Button from '../../components/common/Button';
 
 import styles from './home.less';
 
@@ -153,7 +154,12 @@ export default class Permission extends PureComponent {
 
     const rightPanel = (
       <Col span="24" className={styles.rightSection}>
-        wfdgfjhk
+        <Button
+          type="primary"
+          variant="variant"
+        >
+         完成
+        </Button>
       </Col>
     );
     return (
