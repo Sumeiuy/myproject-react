@@ -29,13 +29,16 @@ import styles from './ChartBar.less';
 import imgSrc from './noChart.png';
 
 const getIcon = iconTypeMap.getIcon;
-const PERCENT = ZHUNICODE.PERCENT;
-const PERMILLAGE = ZHUNICODE.PERMILLAGE;
-const REN = ZHUNICODE.REN;
-const HU = ZHUNICODE.HU;
-const CI = ZHUNICODE.CI;
-const YUAN = ZHUNICODE.YUAN;
-const GE = ZHUNICODE.GE;
+const {
+  PERCENT,
+  PERMILLAGE,
+  REN,
+  HU,
+  CI,
+  YUAN,
+  GE,
+  UNDISTRIBUTED,
+} = ZHUNICODE;
 
 export default class ChartBarNormal extends PureComponent {
 
@@ -138,9 +141,10 @@ export default class ChartBarNormal extends PureComponent {
     if (arg.value === '--') {
       return;
     }
-    const index = _.findIndex(this.yAxisLabels, o => o === arg.value);
+    const anid = arg.event.target.anid;
+    const index = anid.split('_')[1];
     this.setState({
-      mouseoverLabelIndex: index,
+      mouseoverLabelIndex: Number(index),
     });
   }
 
@@ -376,6 +380,9 @@ export default class ChartBarNormal extends PureComponent {
               <td>${levelCompanyArr[dataIndex]}</td>
             </tr>
           `;
+        }
+        if (axisValue === UNDISTRIBUTED) {
+          tooltipHead = '';
         }
         const tips = `
           <table class="echartTooltipTable">

@@ -27,10 +27,13 @@ import Icon from '../common/Icon';
 import styles from './ChartBar.less';
 import imgSrc from '../chartRealTime/noChart.png';
 
+const {
+  REN,
+  HU,
+  YUAN,
+  UNDISTRIBUTED,
+} = ZHUNICODE;
 const getIcon = iconTypeMap.getIcon;
-const REN = ZHUNICODE.REN;
-const HU = ZHUNICODE.HU;
-const YUAN = ZHUNICODE.YUAN;
 
 export default class ChartBarStack extends PureComponent {
 
@@ -88,6 +91,9 @@ export default class ChartBarStack extends PureComponent {
       if (arg.componentType !== 'yAxis') {
         return;
       }
+      if (Number(this.props.scope) === 4) {
+        return;
+      }
       this.custRange.forEach((item) => {
         if (arg.value === item.name) {
           this.props.updateQueryState({
@@ -123,9 +129,11 @@ export default class ChartBarStack extends PureComponent {
     if (arg.value === '--') {
       return;
     }
-    const index = _.findIndex(this.state.yAxisLabels, o => o === arg.value);
+    const anid = arg.event.target.anid;
+    console.log('anid', anid);
+    const index = anid.split('_')[1];
     this.setState({
-      mouseoverLabelIndex: index,
+      mouseoverLabelIndex: Number(index),
     });
   }
 
@@ -416,10 +424,16 @@ export default class ChartBarStack extends PureComponent {
                   // 投顾，需要显示分公司，营业部名称
                   title = `${levelCompanyArr[dataIndex]} - ${levelStoreArr[dataIndex]}`;
                 }
-                seriesTips.push(`
+                let toolTipNewHeader = `
                   <tr>
                     <td colspan="4">${title}</td>
                   <tr>
+                `;
+                if (axisValue === UNDISTRIBUTED) {
+                  toolTipNewHeader = '';
+                }
+                seriesTips.push(`
+                  ${toolTipNewHeader}
                   <tr>
                     <td colspan="4">${axisValue}</td>
                   </tr>
