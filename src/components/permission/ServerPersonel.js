@@ -12,6 +12,7 @@ export default class ServerPersonel extends PureComponent {
     info: PropTypes.array.isRequired,
     statusType: PropTypes.string.isRequired,
     emitEvent: PropTypes.func.isRequired,
+    type: PropTypes.string.isRequired,
   }
 
   constructor(props) {
@@ -64,7 +65,7 @@ export default class ServerPersonel extends PureComponent {
       this.setState(prevState => ({
         serverInfo: prevState.serverInfo.concat(this.state.addSelectedValue),
       }), () => {
-        this.props.emitEvent('serverInfo', this.state.serverInfo);
+        this.props.emitEvent(this.props.type, this.state.serverInfo);
       });
     }
   }
@@ -78,7 +79,7 @@ export default class ServerPersonel extends PureComponent {
           item => item.ptyMngId !== removeSelectedValue.ptyMngId,
         ),
       }), () => {
-        this.props.emitEvent('serverInfo', this.state.serverInfo);
+        this.props.emitEvent(this.props.type, this.state.serverInfo);
       });
     }
   }

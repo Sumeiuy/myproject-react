@@ -70,7 +70,31 @@ exports.response = function (req, res) {
           "businessDepartment": "南京奥体东营业部DDD",
           "isMain": false
         }
-      ]
+      ],
+      "approvalRecord":{
+        "stepName":"分公司负责人审批",
+        "approvalId":"001003",
+        "approvlName":"周延",
+        "beginTime":"20170901",
+        "suggestion":"审批意见很多意见超级多的意见"
+      },
+      "approvalRecordList":[
+        {
+        "stepName":"分公司负责人审批",
+        "approvalId":"001003",
+        "approvlName":"周延",
+        "beginTime":"20170910",
+        "suggestion":"意见是真他妈的多呀！多的不得了！！！！",
+        "isOk": true,
+        }, {
+        "stepName":"分公司负责人审批",
+        "approvalId":"001003",
+        "approvlName":"周延",
+        "beginTime":"20170901",
+        "suggestion":"审批意见很多意见超级多的意见",
+        "isOk": false,
+        }
+      ],
     }
   };
 }
