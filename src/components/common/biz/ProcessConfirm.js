@@ -2,9 +2,14 @@
  * @description 过程确认框，统一样式
  * @author zhangjunli
  * Usage:
- * <ProcessConfirm visible={bool} />
+ * <ProcessConfirm
+ *  visible={bool}
+ *  onOk={func}
+ *  modalKey={string}
+ * />
  * visible：必需的，用于控制弹框是否显示
- * onOk：有默认值（空函数），按钮的回调事件
+ * onOk：必须，按钮的回调事件
+ * modalKey： 必须，容器组件用来控制modal出现和隐藏的key
  * okText：有默认值（确认），按钮的title
  * contentTitle： 有默认值（流程发送成功），弹框内容的title
  * title： 有默认值（系统提示），弹框的title
@@ -18,49 +23,26 @@ import styles from './processConfirm.less';
 
 export default class ProcessConfirm extends Component {
   static propTypes = {
-    onOk: PropTypes.func,
     okText: PropTypes.string,
     contentTitle: PropTypes.string,
     title: PropTypes.string,
     content: PropTypes.object,
+    onOk: PropTypes.func.isRequired,
     visible: PropTypes.bool.isRequired,
+    modalKey: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
-    onOk: () => {},
     okText: '确认',
     contentTitle: '流程发送成功!',
     title: '系统提示',
     content: {},
   }
 
-  constructor(props) {
-    super(props);
-    const { visible } = this.props;
-    this.state = {
-      visible,
-    };
-  }
-  componentWillReceiveProps(nextProps) {
-    const { visible } = nextProps;
-    this.setState({
-      visible,
-    });
-  }
-
   @autobind
   handleOk() {
-    const { onOk } = this.props;
-    this.setState({
-      visible: false,
-    }, onOk());
-  }
-
-  @autobind
-  handleCancel() {
-    this.setState({
-      visible: false,
-    });
+    const { onOk, modalKey } = this.props;
+    onOk(modalKey);
   }
 
   render() {
@@ -69,17 +51,15 @@ export default class ProcessConfirm extends Component {
       contentTitle,
       content,
       okText,
-    } = this.props;
-    const {
       visible,
-    } = this.state;
+    } = this.props;
 
     return (
       <Modal
         title={title}
         visible={visible}
         onOk={this.handleOk}
-        onCancel={this.handleCancel}
+        onCancel={this.handleOk}
         okText={okText}
         wrapClassName={styles.modalContainer}
       >

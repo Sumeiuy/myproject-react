@@ -5,15 +5,19 @@
  */
 
 import React, { PureComponent, PropTypes } from 'react';
+import { Col } from 'antd';
+import { autobind } from 'core-decorators';
 import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { Col } from 'antd';
 import { constructPermissionPostBody } from '../../utils/helper';
 import SplitPanel from '../../components/common/splitPanel/SplitPanel';
 import PageHeader from '../../components/permission/PageHeader';
 import Detail from '../../components/permission/Detail';
-import PermissionList from '../../components/common/commonList/commonList';
+// import PermissionList from '../../components/common/commonList/commonList';
+import PermissionList from '../../components/common/biz/CommonList';
+import seibelColumns from '../../components/common/biz/seibelColumns';
+import Button from '../../components/common/Button';
 import styles from './home.less';
 
 const EMPTY_LIST = [];
@@ -53,6 +57,17 @@ export default class Permission extends PureComponent {
     detailMessage: PropTypes.object.isRequired,
     getDetailMessage: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
+  }
+
+  static defaultProps = {
+
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      isEmpty: true,
+    };
   }
 
   componentWillMount() {
@@ -129,8 +144,18 @@ export default class Permission extends PureComponent {
     return true;
   }
 
+  /**
+   * 构造表格的列数据
+   * 传参为icon的type
+   */
+  @autobind
+  constructTableColumns() {
+    return seibelColumns('save_blue');
+  }
+
   render() {
     const { list, location, replace } = this.props;
+    const { isEmpty } = this.state;
     const topPanel = (
       <PageHeader
         location={location}
@@ -143,17 +168,25 @@ export default class Permission extends PureComponent {
         list={list}
         replace={replace}
         location={location}
+        columns={this.constructTableColumns()}
       />
     );
 
     const rightPanel = (
       <Col span="24" className={styles.rightSection}>
         {this.getDetailComponent}
+        <Button
+          type="primary"
+          variant="variant"
+        >
+         完成
+        </Button>
       </Col>
     );
     return (
       <div className={styles.premissionbox}>
         <SplitPanel
+          isEmpty={isEmpty}
           topPanel={topPanel}
           leftPanel={leftPanel}
           rightPanel={rightPanel}
