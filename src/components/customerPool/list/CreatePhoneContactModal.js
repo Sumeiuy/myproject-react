@@ -14,7 +14,7 @@ import { Modal, Button, Table } from 'antd';
 import Icon from '../../common/Icon';
 // import Anchor from '../../../components/common/anchor';
 import Collapse from './ModalCollapse';
-import styles from './CreatePhoneContactModal.less';
+import styles from './createPhoneContactModal.less';
 import Phone from '../../../../static/images/phone.png';
 
 const EMPTY_OBJECT = {};
