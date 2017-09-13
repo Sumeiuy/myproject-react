@@ -5,17 +5,16 @@
  */
 
 import React, { PureComponent } from 'react';
-import { Row, Col } from 'antd';
 import classnames from 'classnames';
 import styles from './detail.less';
 
 export default class Commissiondetail extends PureComponent {
   render() {
-     const leftItem = classnames({
+    const leftItem = classnames({
       [styles.itemleft]: true,
       [styles.item]: true,
     });
-     const rightItem = classnames({
+    const rightItem = classnames({
       [styles.itemright]: true,
       [styles.item]: true,
     });
@@ -23,29 +22,29 @@ export default class Commissiondetail extends PureComponent {
       <div className={styles.detail_box}>
         <div className={styles.inner}>
           <h1 className={styles.bugtitle}>编号11222</h1>
-           <div id="detail_module" className={styles.module}>
-                  <div className={styles.mod_header}>
-                    <h2 className={styles.toogle_title}>基本信息</h2>
+          <div id="detail_module" className={styles.module}>
+            <div className={styles.mod_header}>
+              <h2 className={styles.toogle_title}>基本信息</h2>
+            </div>
+            <div className={styles.mod_content}>
+              <ul className={styles.property_list}>
+                <li className={styles.item}>
+                  <div className={styles.wrap}>
+                    <span className={styles.itemname}>子类型：</span>
+                    <span className={styles.itemvalue}>私密客户权限分配</span>
                   </div>
-                  <div className={styles.mod_content}>
-                    <ul className={styles.property_list}>
-                      <li className={styles.item}>
-                        <div className={styles.wrap}>
-                          <span className={styles.itemname}>子类型：</span>
-                          <span className={styles.itemvalue}>私密客户权限分配</span>
-                        </div>
-                      </li>
-                      <li className={styles.item}>
-                        <div className={styles.wrap}>
-                          <span className={styles.itemname}>备注：</span>
-                          <span className={styles.itemvalue}>
-                            这里是备注备注备注
-                          </span>
-                        </div>
-                      </li>
-                    </ul>
+                </li>
+                <li className={styles.item}>
+                  <div className={styles.wrap}>
+                    <span className={styles.itemname}>备注：</span>
+                    <span className={styles.itemvalue}>
+                      这里是备注备注备注
+                    </span>
                   </div>
-                </div>
+                </li>
+              </ul>
+            </div>
+          </div>
           <div id="nginformation_module" className={styles.module}>
             <div className={styles.mod_header}>
               <h2 className={styles.toogle_title}>拟稿信息</h2>
@@ -91,19 +90,19 @@ export default class Commissiondetail extends PureComponent {
               <h2 className={styles.toogle_title}>佣金产品选择：</h2>
             </div>
             <div className={styles.mod_content}>
-            <ul className={styles.property_list}>
-              <li className={styles.item}>
-                <div className={styles.wrap}>
-                  <span className={styles.itemname}>目标佣金率（股基）：</span>
-                  <span className={styles.itemvalue}>25‰</span>
-                </div>
-              </li>
-              <li className={styles.item}>
-                <div className={styles.wrap}>
-                  <span className={styles.itemname}>目标产品：</span>
-                  <span className={styles.itemvalue}>PPKD02/。。。。。</span>
-                </div>
-              </li>
+              <ul className={styles.property_list}>
+                <li className={styles.item}>
+                  <div className={styles.wrap}>
+                    <span className={styles.itemname}>目标佣金率（股基）：</span>
+                    <span className={styles.itemvalue}>25‰</span>
+                  </div>
+                </li>
+                <li className={styles.item}>
+                  <div className={styles.wrap}>
+                    <span className={styles.itemname}>目标产品：</span>
+                    <span className={styles.itemvalue}>PPKD02/。。。。。</span>
+                  </div>
+                </li>
               </ul>
             </div>
           </div>
