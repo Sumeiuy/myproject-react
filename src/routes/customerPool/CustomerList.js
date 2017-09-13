@@ -124,7 +124,7 @@ export default class CustomerList extends PureComponent {
     getCustContact: PropTypes.func.isRequired,
     custContactData: PropTypes.object,
     getServiceRecord: PropTypes.func.isRequired,
-    serviceRecordData: PropTypes.array,
+    serviceRecordData: PropTypes.object,
     cycle: PropTypes.array,
     getStatisticalPeriod: PropTypes.func.isRequired,
     addServeRecord: PropTypes.func.isRequired, // 添加服务记录
@@ -138,7 +138,7 @@ export default class CustomerList extends PureComponent {
     position: {},
     empInfo: {},
     custContactData: EMPTY_OBJECT,
-    serviceRecordData: EMPTY_LIST,
+    serviceRecordData: EMPTY_OBJECT,
     cycle: EMPTY_LIST,
   }
 

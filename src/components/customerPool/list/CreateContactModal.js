@@ -8,7 +8,7 @@ import React, { PropTypes, PureComponent } from 'react';
 import ReactDOM from 'react-dom';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import classnames from 'classnames';
+// import classnames from 'classnames';
 import { Modal, Button, Table } from 'antd';
 import Icon from '../../common/Icon';
 import Collapse from './ModalCollapse';
@@ -29,21 +29,22 @@ export default class CreateContactModal extends PureComponent {
     custContactData: PropTypes.object.isRequired,
     serviceRecordData: PropTypes.array.isRequired,
     visible: PropTypes.bool.isRequired,
-    custType: PropTypes.string.isRequired,
+    custType: PropTypes.string,
     createServiceRecord: PropTypes.func.isRequired,
     currentCustId: PropTypes.string.isRequired,
     onClose: PropTypes.func.isRequired,
+    isFirstLoad: PropTypes.bool.isRequired,
   };
 
   static defaultProps = {
     data: {},
+    custType: '',
   };
 
   constructor(props) {
     super(props);
     this.state = {
       visible: props.visible,
-      activeKey: '1',
       isOpen: true,
       anchorAction: EMPTY_LIST,
       isPanel1Open: true,
@@ -51,42 +52,8 @@ export default class CreateContactModal extends PureComponent {
       isPanel3Open: false,
       isPanel4Open: false,
       isPanel5Open: false,
+      isFirstLoad: props.isFirstLoad,
     };
-  }
-
-
-  componentDidMount() {
-    this.setModalHeight();
-    const panelDOM = ReactDOM.findDOMNode(document.getElementById('panelHeader1')); // eslint-disable-line
-    if (panelDOM) {
-      this.resetLeftGuide({ isCollapseAll: false });
-    }
-  }
-
-  componentDidUpdate() {
-    this.setModalHeight();
-  }
-
-  componentWillUnmount() {
-    const modalContainer = ReactDOM.findDOMNode( // eslint-disable-line
-      document.querySelector('.contactPop .ant-modal-content'));
-    if (modalContainer) {
-      modalContainer.removeEventListener('mousewheel', this.preventEventBubble, false);
-      modalContainer.removeEventListener('DOMMouseScroll', this.preventEventBubble, false);
-      modalContainer.removeEventListener('wheel', this.preventEventBubble, false);
-    }
-  }
-
-  @autobind
-  setModalHeight() {
-    const modalContainer = ReactDOM.findDOMNode( // eslint-disable-line
-      document.querySelector('.contactPop .ant-modal-content'));
-    if (modalContainer) {
-      // 阻止冒泡
-      modalContainer.addEventListener('mousewheel', this.preventEventBubble, false);
-      modalContainer.addEventListener('DOMMouseScroll', this.preventEventBubble, false);
-      modalContainer.addEventListener('wheel', this.preventEventBubble, false);
-    }
   }
 
   /**
@@ -112,6 +79,7 @@ export default class CreateContactModal extends PureComponent {
       panel2Height = panelDOM2.clientHeight;
     }
     const { originPanelHeight } = this.state;
+    // setTimeout(() => {
     if (isCollapseAll) {
       // 全部收起
       this.setState({
@@ -173,8 +141,10 @@ export default class CreateContactModal extends PureComponent {
         ],
         originPanelHeight: panel2Height,
         firstPanelHeight: panel1Height,
+        isFirstLoad: false,
       });
     }
+    // }, 250);
   }
 
   /**
@@ -412,22 +382,23 @@ export default class CreateContactModal extends PureComponent {
   render() {
     const {
       visible,
-      activeKey,
       anchorAction,
       isPanel1Open,
       isPanel2Open,
       isPanel3Open,
       isPanel4Open,
       isPanel5Open,
+      isFirstLoad,
     } = this.state;
 
     const {
       custContactData = EMPTY_OBJECT,
       serviceRecordData = EMPTY_LIST,
       custType,
+      currentCustId,
     } = this.props;
 
-    if (_.isEmpty(custContactData) || _.isEmpty(serviceRecordData)) {
+    if (!currentCustId || !visible) {
       return null;
     }
 
@@ -437,71 +408,77 @@ export default class CreateContactModal extends PureComponent {
     } = custContactData;
 
     let otherContactInfo = EMPTY_LIST;
-    let mainContactInfo = EMPTY_OBJECT;
+    let mainContactInfo = {
+      nameInfo: {},
+      cellInfo: '',
+      telInfo: {},
+    };
     let personalContactInfo = EMPTY_OBJECT;
     let isPersonHasContact = false;
     let isOrgMainContactHasTel = false;
 
-    if (custType === 'org') {
-      const mainContactIndex = _.findIndex(orgCustomerContactInfoList, item => item.mainFlag);
-      let mainContactNameInfo;
-      let mainContactAllInfo;
-      if (mainContactIndex > -1) {
-        // 机构客户中存在主要联系人
-        // 找出主要联系人姓名和职位和具体电话信息
-        mainContactAllInfo = _.pick(orgCustomerContactInfoList[mainContactIndex],
-          ['name', 'custRela', 'cellPhones', 'workTels', 'homeTels', 'otherTels']);
-        // 主联系人的姓名、职位
-        mainContactNameInfo = _.pick(mainContactAllInfo, ['name', 'custRela']);
-        // 主联系人的手机，住宅，单位，其他电话信息
-        mainContactInfo = {
-          nameInfo: mainContactNameInfo,
-          cellInfo: _.isEmpty(mainContactAllInfo.cellPhones) ? '' :
-            this.formatPhoneNumber(mainContactAllInfo.cellPhones[0].contactValue, 'phone'),
-          telInfo: _.omitBy(_.pick(mainContactAllInfo, ['workTels', 'homeTels', 'otherTels']), _.isEmpty),
-        };
-        if (!_.isEmpty(_.pick(mainContactAllInfo, ['workTels', 'homeTels', 'otherTels', 'cellPhones']))) {
-          isOrgMainContactHasTel = true;
+    if (!_.isEmpty(custContactData)) {
+      if (custType === 'org' && !_.isEmpty(orgCustomerContactInfoList)) {
+        const mainContactIndex = _.findIndex(orgCustomerContactInfoList, item => item.mainFlag);
+        let mainContactNameInfo;
+        let mainContactAllInfo;
+        if (mainContactIndex > -1) {
+          // 机构客户中存在主要联系人
+          // 找出主要联系人姓名和职位和具体电话信息
+          mainContactAllInfo = _.pick(orgCustomerContactInfoList[mainContactIndex],
+            ['name', 'custRela', 'cellPhones', 'workTels', 'homeTels', 'otherTels']);
+          // 主联系人的姓名、职位
+          mainContactNameInfo = _.pick(mainContactAllInfo, ['name', 'custRela']);
+          // 主联系人的手机，住宅，单位，其他电话信息
+          mainContactInfo = {
+            nameInfo: mainContactNameInfo,
+            cellInfo: _.isEmpty(mainContactAllInfo.cellPhones) ? '' :
+              this.formatPhoneNumber(mainContactAllInfo.cellPhones[0].contactValue, 'phone'),
+            telInfo: _.omitBy(_.pick(mainContactAllInfo, ['workTels', 'homeTels', 'otherTels']), _.isEmpty),
+          };
+          if (!_.isEmpty(_.pick(mainContactAllInfo, ['workTels', 'homeTels', 'otherTels', 'cellPhones']))) {
+            isOrgMainContactHasTel = true;
+          }
         }
-      }
-      // 其他联系人信息
-      const otherContact = _.filter(orgCustomerContactInfoList,
-        (item, index) => index !== mainContactIndex);
-      otherContactInfo = _.map(otherContact, item => ({
-        contact: item.name || '--',
-        phone: _.isEmpty(item.cellPhones) ? '--' :
-          this.formatPhoneNumber(item.cellPhones[0].contactValue, 'phone'),
-        work: _.isEmpty(item.workTels) ? '--' :
-          this.formatPhoneNumber(item.workTels[0].contactValue, 'work'),
-        home: _.isEmpty(item.homeTels) ? '--' :
-          this.formatPhoneNumber(item.homeTels[0].contactValue, 'home'),
-        personType: item.custRela || '--',
-      }));
-    } else {
-      const allTelInfo = _.pick(perCustomerContactInfo, ['cellPhones', 'workTels', 'homeTels', 'otherTels']);
-      isPersonHasContact = !_.isEmpty(_.omitBy(allTelInfo, _.isEmpty));
-      if (isPersonHasContact) {
-        const cellPhones = allTelInfo.cellPhones || EMPTY_LIST;
-        let mainTelInfo = {
-          type: 'none',
-          value: '',
-        };
-        if (_.findIndex(cellPhones, item => item.mainFlag) > -1) {
-          // 存在主要电话
-          mainTelInfo = {
-            type: 'cellPhones',
-            value: this.formatPhoneNumber(cellPhones && cellPhones[0].contactValue, 'phone'),
+        // 其他联系人信息
+        const otherContact = _.filter(orgCustomerContactInfoList,
+          (item, index) => index !== mainContactIndex) || EMPTY_LIST;
+        otherContactInfo = !_.isEmpty(otherContact) && _.map(otherContact, item => ({
+          contact: item.name || '--',
+          phone: _.isEmpty(item.cellPhones) ? '--' :
+            this.formatPhoneNumber(item.cellPhones[0].contactValue, 'phone'),
+          work: _.isEmpty(item.workTels) ? '--' :
+            this.formatPhoneNumber(item.workTels[0].contactValue, 'work'),
+          home: _.isEmpty(item.homeTels) ? '--' :
+            this.formatPhoneNumber(item.homeTels[0].contactValue, 'home'),
+          personType: item.custRela || '--',
+        }));
+      } else if (!_.isEmpty(perCustomerContactInfo)) {
+        const allTelInfo = _.pick(perCustomerContactInfo, ['cellPhones', 'workTels', 'homeTels', 'otherTels']);
+        isPersonHasContact = !_.isEmpty(_.omitBy(allTelInfo, _.isEmpty));
+        if (isPersonHasContact) {
+          const cellPhones = allTelInfo.cellPhones || EMPTY_LIST;
+          let mainTelInfo = {
+            type: 'none',
+            value: '',
+          };
+          if (_.findIndex(cellPhones, item => item.mainFlag) > -1) {
+            // 存在主要电话
+            mainTelInfo = {
+              type: 'cellPhones',
+              value: this.formatPhoneNumber(cellPhones && cellPhones[0].contactValue, 'phone'),
+            };
+          }
+          // 个人联系方式中，不存在主要电话
+          // 过滤联系方式为空的情况
+          const otherTelInfo = _.omitBy(_.omit(allTelInfo, ['cellPhones']), _.isEmpty);
+
+          // 筛选contactValue存在的其他电话
+          personalContactInfo = {
+            mainTelInfo,
+            otherTelInfo,
           };
         }
-        // 个人联系方式中，不存在主要电话
-        // 过滤联系方式为空的情况
-        const otherTelInfo = _.omitBy(_.omit(allTelInfo, ['cellPhones']), _.isEmpty);
-
-        // 筛选contactValue存在的其他电话
-        personalContactInfo = {
-          mainTelInfo,
-          otherTelInfo,
-        };
       }
     }
 
@@ -510,10 +487,7 @@ export default class CreateContactModal extends PureComponent {
 
     return (
       <Modal
-        wrapClassName={classnames({
-          contactPop: true, // 供js查询时使用
-          [styles.contactModal]: true,
-        })}
+        wrapClassName={styles.contactModal}
         visible={visible}
         title={'联系客户'}
         onOk={this.handleOk}
@@ -584,7 +558,6 @@ export default class CreateContactModal extends PureComponent {
         {/* 折叠面板 */}
         <Collapse
           data={serviceRecordData}
-          activeKey={activeKey}
           anchorAction={anchorAction}
           onCollapseChange={this.handleCollapseChange}
           isPanel1Open={isPanel1Open}
@@ -592,6 +565,8 @@ export default class CreateContactModal extends PureComponent {
           isPanel3Open={isPanel3Open}
           isPanel4Open={isPanel4Open}
           isPanel5Open={isPanel5Open}
+          setDefaultLeftGuide={this.resetLeftGuide}
+          isFirstLoad={isFirstLoad}
         />
       </Modal>
     );

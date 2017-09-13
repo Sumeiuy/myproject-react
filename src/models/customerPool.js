@@ -47,7 +47,7 @@ export default {
     resultgroupId: '',
     incomeData: [], // 净收入
     custContactData: {}, // 客户联系方式
-    serviceRecordData: [], // 服务记录
+    serviceRecordData: {}, // 服务记录
     isAddServeRecord: false,
     addServeRecordSuccess: false, // 添加服务记录成功的标记
   },
@@ -265,9 +265,10 @@ export default {
     * getServiceRecord({ payload }, { call, put }) {
       const response = yield call(api.queryRecentServiceRecord, payload);
       const { resultData } = response;
+      const { custId } = payload;
       yield put({
         type: 'getServiceRecordSuccess',
-        payload: resultData,
+        payload: { resultData, custId },
       });
     },
     * getStatisticalPeriod({ }, { call, put }) { //eslint-disable-line
@@ -527,10 +528,12 @@ export default {
     },
     // 获取服务记录成功
     getServiceRecordSuccess(state, action) {
-      const { payload } = action;
+      const { payload: { resultData, custId } } = action;
       return {
         ...state,
-        serviceRecordData: payload,
+        serviceRecordData: {
+          [custId]: resultData,
+        },
       };
     },
     sendAddServeRecordReq(state) {

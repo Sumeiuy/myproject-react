@@ -99,8 +99,8 @@ export default class CreateServiceRecord extends PureComponent {
     }
     // 添加成功
     if (addServeRecordSuccess === true &&
-    isAddServeRecord === false &&
-    this.props.isAddServeRecord === true) {
+      isAddServeRecord === false &&
+      this.props.isAddServeRecord === true) {
       message.success('添加服务记录成功');
     }
   }

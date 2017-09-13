@@ -1,4 +1,5 @@
 import React, { PropTypes, PureComponent } from 'react';
+import ReactDOM from 'react-dom';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import { Collapse } from 'antd';
@@ -12,7 +13,6 @@ const Panel = Collapse.Panel;
 export default class ModalCollapse extends PureComponent {
   static propTypes = {
     data: PropTypes.array,
-    activeKey: PropTypes.string,
     anchorAction: PropTypes.array,
     onCollapseChange: PropTypes.func.isRequired,
     isPanel1Open: PropTypes.bool.isRequired,
@@ -20,13 +20,23 @@ export default class ModalCollapse extends PureComponent {
     isPanel3Open: PropTypes.bool.isRequired,
     isPanel4Open: PropTypes.bool.isRequired,
     isPanel5Open: PropTypes.bool.isRequired,
+    setDefaultLeftGuide: PropTypes.func.isRequired,
+    isFirstLoad: PropTypes.bool,
   };
 
   static defaultProps = {
     data: EMPTY_LIST,
-    activeKey: '1',
     anchorAction: EMPTY_LIST,
+    isFirstLoad: true,
   };
+
+  componentDidUpdate() {
+    const { setDefaultLeftGuide, isFirstLoad } = this.props;
+    const panelDOM = ReactDOM.findDOMNode(document.getElementById('panelHeader1')); // eslint-disable-line
+    if (panelDOM && isFirstLoad) {
+      setDefaultLeftGuide({ isCollapseAll: false });
+    }
+  }
 
   @autobind
   getEveryPanelOpen(index) {
@@ -57,15 +67,6 @@ export default class ModalCollapse extends PureComponent {
   @autobind
   constructLeftServiceTimeSection(timeArray) {
     const { anchorAction } = this.props;
-    // 目前还没有左边时间这个字段，先mock一份
-    // let tempArray = timeArray;
-    // tempArray = [
-    //   '2017/07/28 15:55:46',
-    //   '2017/07/28 15:55:46',
-    //   '2017/07/29 15:55:46',
-    //   '2017/07/30 15:55:46',
-    //   '2017/07/30 15:55:46',
-    // ];
 
     if (_.isEmpty(anchorAction) || _.isEmpty(timeArray)) {
       return null;
@@ -94,9 +95,9 @@ export default class ModalCollapse extends PureComponent {
   }
 
   /**
-* 分割时间，同一天的保留一个年月日，其余都是时分秒
-* 不同一天，保留年月日时分秒
-*/
+  * 分割时间，同一天的保留一个年月日，其余都是时分秒
+  * 不同一天，保留年月日时分秒
+  */
   separateDate(serviceTimeCollection) {
     let currentDate = moment(serviceTimeCollection[0]).date();
     const newDate = [{
@@ -131,6 +132,7 @@ export default class ModalCollapse extends PureComponent {
     if (_.isEmpty(anchorAction)) {
       return null;
     }
+
     return _.map(anchorAction, item =>
       <span
         style={{
@@ -148,21 +150,6 @@ export default class ModalCollapse extends PureComponent {
   }
 
   constructPanel(dataSource) {
-    // "taskName": "新规_新股上市提醒",
-    // "taskDesc": "新股上市提醒，新股上市提醒...",
-    // "taskType": "MOT任务",
-    // "handlerType": "Mission",
-    // "handlerTimeLimit": "2017/07/20-2017/07/23",
-    // "actor": "李四",
-    // "custFeedback": "继续持有继续持有",
-    // "feedbackTime": "2017/09/08",
-    // "serveStatus": null,
-    // "workResult": "预约下次",
-    // "serveChannel": null,
-    // "serveStrategy": null,
-    // "serveRecord": "沟通顺畅",
-    // "activityContent": null
-
     if (_.isEmpty(dataSource)) {
       return null;
     }
@@ -316,25 +303,24 @@ export default class ModalCollapse extends PureComponent {
 
   render() {
     const {
-      activeKey,
       anchorAction,
       onCollapseChange,
       data = EMPTY_LIST,
      } = this.props;
 
-    if (!data) {
+    if (_.isEmpty(data)) {
       return null;
     }
 
     // 左边服务时间字段
-    const serveTimeCollection = _.filter(data, item => !_.isEmpty(item.serveTime));
+    const serveTimeCollection = _.filter(data, item => !_.isEmpty(item.serveTime)) || EMPTY_LIST;
 
     const PanelDOM = this.constructPanel(data);
 
     return (
       <Collapse
         className={styles.serviceCollapse}
-        defaultActiveKey={activeKey}
+        defaultActiveKey={'1'}
         onChange={onCollapseChange}
       >
         {
