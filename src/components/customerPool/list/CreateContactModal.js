@@ -1,5 +1,5 @@
 /**
- * @file list/CreatePhoneContactModal.js
+ * @file list/CreateContactModal.js
  *  电话联系组件
  * @author xuxiaoqin
  */
@@ -8,17 +8,14 @@ import React, { PropTypes, PureComponent } from 'react';
 import ReactDOM from 'react-dom';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-// import moment from 'moment';
 import classnames from 'classnames';
 import { Modal, Button, Table } from 'antd';
 import Icon from '../../common/Icon';
-// import Anchor from '../../../components/common/anchor';
 import Collapse from './ModalCollapse';
-import styles from './createPhoneContactModal.less';
+import styles from './createContactModal.less';
 import Phone from '../../../../static/images/phone.png';
 
 const EMPTY_OBJECT = {};
-// let COUNT = 0;
 const EMPTY_LIST = [];
 const CONTACT_MAP = {
   cellPhones: '手机',
@@ -82,32 +79,9 @@ export default class CreateContactModal extends PureComponent {
 
   @autobind
   setModalHeight() {
-    const modalContent = '.contactPop .ant-modal .ant-modal-content';
-    /* eslint-disable */
-    const modalContainer = ReactDOM.findDOMNode(
-      document.querySelector(`${modalContent}`));
-    const modalBody = ReactDOM.findDOMNode(
-      document.querySelector(`${modalContent} .ant-modal-body`));
-    const modalHeader = ReactDOM.findDOMNode(
-      document.querySelector(`${modalContent} .ant-modal-header`));
-    const modalFooter = ReactDOM.findDOMNode(
-      document.querySelector(`${modalContent} .ant-modal-footer`));
-    const docHeight = ReactDOM.findDOMNode(document.documentElement).clientHeight;
-    /* eslint-enable */
-    let headerHeight;
-    let footerHeight;
-    if (modalHeader) {
-      headerHeight = modalHeader.clientHeight;
-    }
-    if (modalFooter) {
-      footerHeight = modalFooter.clientHeight;
-    }
-    if (modalContainer && !modalBody.style.height) {
-      // 设置高度和自动滚动
-      modalContainer.style.height = `${docHeight - 100 - 20}px`;
-      modalBody.style.overflow = 'auto';
-      modalBody.style.height = `${docHeight - 100 - 20 - headerHeight - footerHeight}px`;
-
+    const modalContainer = ReactDOM.findDOMNode( // eslint-disable-line
+      document.querySelector('.contactPop .ant-modal-content'));
+    if (modalContainer) {
       // 阻止冒泡
       modalContainer.addEventListener('mousewheel', this.preventEventBubble, false);
       modalContainer.addEventListener('DOMMouseScroll', this.preventEventBubble, false);
@@ -466,14 +440,13 @@ export default class CreateContactModal extends PureComponent {
     let mainContactInfo = EMPTY_OBJECT;
     let personalContactInfo = EMPTY_OBJECT;
     let isPersonHasContact = false;
-    let isOrgHasMainContact = false;
+    let isOrgMainContactHasTel = false;
 
     if (custType === 'org') {
       const mainContactIndex = _.findIndex(orgCustomerContactInfoList, item => item.mainFlag);
       let mainContactNameInfo;
       let mainContactAllInfo;
       if (mainContactIndex > -1) {
-        isOrgHasMainContact = true;
         // 机构客户中存在主要联系人
         // 找出主要联系人姓名和职位和具体电话信息
         mainContactAllInfo = _.pick(orgCustomerContactInfoList[mainContactIndex],
@@ -487,8 +460,9 @@ export default class CreateContactModal extends PureComponent {
             this.formatPhoneNumber(mainContactAllInfo.cellPhones[0].contactValue, 'phone'),
           telInfo: _.omitBy(_.pick(mainContactAllInfo, ['workTels', 'homeTels', 'otherTels']), _.isEmpty),
         };
-      } else {
-        isOrgHasMainContact = false;
+        if (!_.isEmpty(_.pick(mainContactAllInfo, ['workTels', 'homeTels', 'otherTels', 'cellPhones']))) {
+          isOrgMainContactHasTel = true;
+        }
       }
       // 其他联系人信息
       const otherContact = _.filter(orgCustomerContactInfoList,
@@ -567,7 +541,7 @@ export default class CreateContactModal extends PureComponent {
         }
         <div className={styles.number}>
           {
-            (isOrgHasMainContact || isPersonHasContact) ?
+            (isOrgMainContactHasTel || isPersonHasContact) ?
               <div className={styles.mainContact}>
                 <img src={Phone} alt={'电话联系'} />
                 <span>{custType === 'per' ?
