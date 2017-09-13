@@ -59,6 +59,14 @@ export default class SearchModal extends Component {
   }
 
   @autobind
+  closeModal(modalKey) {
+    const { onCancel } = this.props;
+    this.setState({
+      [modalKey]: false,
+    }, onCancel());
+  }
+
+  @autobind
   handleOk(selected) {
     const { onOk } = this.props;
     this.setState({
@@ -94,6 +102,7 @@ export default class SearchModal extends Component {
       dataSource,
       onSearch,
     } = this.props;
+
     return (
       <div className={styles.container}>
         {
@@ -121,11 +130,13 @@ export default class SearchModal extends Component {
         <TableDialog
           visible={visible}
           onOk={this.handleOk}
+          onCancel={this.closeModal}
           onSearch={onSearch}
           dataSource={dataSource}
           columns={columns}
           title={title}
           placeholder={placeholder}
+          modalKey={'visible'}
         />
       </div>
     );
