@@ -149,10 +149,23 @@ export default class CustomerList extends PureComponent {
       queryParam: {},
       createCustRange: [],
       cycleSelect: '',
+      // 判断是否是主服务经理或者是否在业务列表中，用来控制列表快捷按钮的显示与否
+      isSms: false,
     };
   }
 
   componentDidMount() {
+    const {
+      empInfo: { empRespList = EMPTY_LIST },
+      location: { query: { source } },
+    } = this.props;
+    const respIdOfPosition = _.findIndex(empRespList, item => (item.respId === HTSC_RESPID));
+    // 判断是否是主服务经理，或者是否在业务客户列表中，是则为true，否则 false
+    if (respIdOfPosition < 0 && source === 'business') {
+      this.setState({ // eslint-disable-line
+        isSms: true,
+      });
+    }
     // 生成组织机构树
     this.generateCustRange(this.props);
     // 请求客户列表
@@ -187,6 +200,15 @@ export default class CustomerList extends PureComponent {
       !_.isEqual(PreEmpRespList, empRespList) ||
       orgId !== preOrgId) {
       this.getCustomerList(nextProps);
+    }
+    if (query.orgId === 'msm' || query.source === 'business') {
+      this.setState({
+        isSms: true,
+      });
+    } else {
+      this.setState({
+        isSms: false,
+      });
     }
   }
 
@@ -397,6 +419,13 @@ export default class CustomerList extends PureComponent {
       }
       return true;
     });
+    // 有权限，但是用户信息中获取到的occDivnNum不在empOrg（组织机构树）中，显示用户信息中的数据
+    this.setState({
+      createCustRange: [{
+        id: empInfo.occDivnNum,
+        name: empInfo.occupation,
+      }],
+    });
     return false;
   }
 
@@ -542,7 +571,7 @@ export default class CustomerList extends PureComponent {
     if (sortType && sortDirection) {
       reorderValue = { sortType, sortDirection };
     }
-    const { expandAll, createCustRange, queryParam } = this.state;
+    const { expandAll, createCustRange, queryParam, isSms } = this.state;
     const custRangeProps = {
       orgId,
       location,
@@ -583,6 +612,7 @@ export default class CustomerList extends PureComponent {
           onChange={this.orderChange}
         />
         <CustomerLists
+          isSms={isSms}
           dict={dict}
           condition={queryParam}
           custRange={createCustRange}
