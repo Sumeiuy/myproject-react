@@ -1,11 +1,11 @@
 {
-  "img/close.png": "img/close.a008ff86.png",
-  "img/header_bg.png": "img/header_bg.67016b3e.png",
-  "img/icon.png": "img/icon.052f7460.png",
+  "css/feedback.css": "css/feedback.css",
   "js/feedback.js": "js/feedback.js",
   "js/functionNameConst.js": "js/functionNameConst.js",
   "js/html2canvas.js": "js/html2canvas.js",
   "js/screenPrint.js": "js/screenPrint.js",
-  "html/feedback.html": "html/feedback.html",
-  "css/feedback.css": "css/feedback.css"
+  "img/close.png": "img/close.a008ff86.png",
+  "img/header_bg.png": "img/header_bg.67016b3e.png",
+  "img/icon.png": "img/icon.052f7460.png",
+  "html/feedback.html": "html/feedback.html"
 }
