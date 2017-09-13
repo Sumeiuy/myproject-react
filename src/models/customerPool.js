@@ -93,7 +93,7 @@ export default {
         end,
         } } = payload;
       // 统计周期
-      const { kPIDateScopeType: firstCycle = {} } = yield select(state => state.customerPool.dict);
+      const { kPIDateScopeType: firstCycle } = yield select(state => state.customerPool.dict);
       // const statisticalPeriod = yield call(api.getStatisticalPeriod);
       // yield put({
       //   type: 'getStatisticalPeriodSuccess',

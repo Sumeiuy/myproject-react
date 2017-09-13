@@ -210,6 +210,9 @@ export default class CustomerList extends PureComponent {
         isSms: false,
       });
     }
+    if (!_.isEqual(preQuery, query)) {
+      this.clearSelectData();
+    }
   }
 
   // 获取列表数据
@@ -356,6 +359,24 @@ export default class CustomerList extends PureComponent {
     getCustomerData(param);
   }
 
+  // 清空选中的数据，还原成初始值
+  @autobind
+  clearSelectData() {
+    const {
+      saveIsAllSelect,
+      saveSelectedIds,
+      selectedIds,
+      isAllSelect,
+      location: { query },
+    } = this.props;
+    // 筛选时清空已选中的数据、还原全选的状态
+    saveIsAllSelect({ ...isAllSelect, [query.source]: false });
+    saveSelectedIds({
+      ...selectedIds,
+      [query.source]: EMPTY_LIST,
+    });
+  }
+
   // 生成组织机构树的数据
   @autobind
   generateCustRange(props) {
@@ -435,10 +456,6 @@ export default class CustomerList extends PureComponent {
     console.log('updateQueryState: ', state);
     // 切换Duration和Orig时候，需要将数据全部恢复到默认值
     const {
-      saveIsAllSelect,
-      saveSelectedIds,
-      selectedIds,
-      isAllSelect,
       replace,
       location: { query, pathname },
     } = this.props;
@@ -452,22 +469,13 @@ export default class CustomerList extends PureComponent {
         curPageNum: 1,
       },
     });
-    // 筛选时清空已选中的数据、还原全选的状态
-    saveIsAllSelect({ ...isAllSelect, [query.source]: false });
-    saveSelectedIds({
-      ...selectedIds,
-      [query.source]: EMPTY_LIST,
-    });
+    this.clearSelectData();
   }
 
   // 筛选变化
   @autobind
   filterChange(obj) {
     const {
-      saveIsAllSelect,
-      saveSelectedIds,
-      isAllSelect,
-      selectedIds,
       replace,
       location: { query, pathname },
     } = this.props;
@@ -478,12 +486,6 @@ export default class CustomerList extends PureComponent {
         [obj.name]: obj.value,
         curPageNum: 1,
       },
-    });
-    // 筛选时清空已选中的数据、还原全选的状态
-    saveIsAllSelect({ ...isAllSelect, [query.source]: false });
-    saveSelectedIds({
-      ...selectedIds,
-      [query.source]: EMPTY_LIST,
     });
   }
 

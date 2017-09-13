@@ -13,7 +13,7 @@ import styles from './main.less';
 import '../css/skin.less';
 
 const effects = {
-  dictionary: 'customerPool/dictionary',
+  dictionary: 'customerPool/getDictionary',
   customerScope: 'customerPool/getCustomerScope',
   empInfo: 'app/getEmpInfo',
 };
