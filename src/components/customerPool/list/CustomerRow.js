@@ -10,7 +10,7 @@ import { Checkbox } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
-import CreatePhoneContactModal from './CreatePhoneContactModal';
+import CreateContactModal from './CreateContactModal';
 import Icon from '../../common/Icon';
 import styles from './customerRow.less';
 
@@ -215,7 +215,7 @@ export default class CustomerRow extends PureComponent {
     });
   }
 
-  componentWillReceiveProps(nextProps, nextState) {
+  componentWillReceiveProps(nextProps) {
     // console.log('nextProps.isAllSelect>>>', nextProps.isAllSelect);
     // console.log('this.props.isAllSelect>>>', this.props.isAllSelect);
     const {
@@ -226,7 +226,7 @@ export default class CustomerRow extends PureComponent {
       custContactData: nextCustContactData = EMPTY_OBJECT,
       serviceRecordData: nextServiceRecordData = EMPTY_LIST,
      } = nextProps;
-    const { isShowModal, currentCustId } = nextState;
+    const { isShowModal, currentCustId } = this.state;
     const prevContact = prevCustContactData[currentCustId] || EMPTY_OBJECT;
     const nextContact = nextCustContactData[currentCustId] || EMPTY_OBJECT;
     if (prevContact !== nextContact || prevServiceRecordData !== nextServiceRecordData) {
@@ -666,7 +666,7 @@ export default class CustomerRow extends PureComponent {
         </div>
         {
           isShowModal ?
-            <CreatePhoneContactModal
+            <CreateContactModal
               visible={isShowModal}
               key={modalKey}
               custContactData={finalContactData}

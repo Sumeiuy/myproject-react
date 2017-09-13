@@ -9,6 +9,8 @@ import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import { getDurationString } from '../../utils/helper';
+import { optionsMap } from '../../config';
 import PerformanceIndicators from '../../components/customerPool/home/PerformanceIndicators';
 import ToBeDone from '../../components/customerPool/home/ToBeDone';
 import { helper } from '../../utils';
@@ -129,7 +131,6 @@ export default class Home extends PureComponent {
   }
 
   componentDidMount() {
-    console.log('thisprops>>>>', this.props);
     const {
       custRange,
     } = this.props;
@@ -139,9 +140,9 @@ export default class Home extends PureComponent {
   componentWillReceiveProps(nextProps) {
     const {
       position: prePosition,
-      empInfo: { empInfo: prevEmpInfo = EMPTY_OBJECT },
+      // empInfo: { empInfo: prevEmpInfo = EMPTY_OBJECT },
       location: { query: prevQuery = EMPTY_OBJECT },
-      cycle: preCycle,
+      // cycle: preCycle,
       // custRange: prevCustRange = EMPTY_LIST,
     } = this.props;
 
@@ -152,6 +153,8 @@ export default class Home extends PureComponent {
       location: { query = EMPTY_OBJECT },
       empInfo: { empInfo: nextEmpInfo = EMPTY_OBJECT, empRespList = EMPTY_LIST },
    } = nextProps;
+
+    const { cycleSelect } = prevQuery;
 
     const { orgId: preOrgId } = prePosition;
     const { orgId: nextOrgId } = nextPosition;
@@ -170,15 +173,16 @@ export default class Home extends PureComponent {
         this.getIndicators();
       });
     }
-    if (preCycle !== nextCycle) {
+    // 当url上没有cycleSelect时，默认选中第一个，本月
+    if (!cycleSelect) {
       this.setState({
-        cycleSelect: nextCycle[0].key,
+        cycleSelect: (nextCycle[0] || {}).key,
       });
     }
 
     // 问题出在这里，在第一次比较empInfo的时候，custRange有可能还没回来，再等第二次比较
     // empInfo，这时候empInfo已经相等，所以custRange有值也不走getAllInfo了
-    if (prevEmpInfo !== nextEmpInfo || query !== prevQuery
+    if (!_.isEqual(prevQuery, query)
       || (!_.isEmpty(custRange) && this.isGetAllInfo)) {
       this.handleSetCustRange({
         empInfo: nextEmpInfo,
@@ -211,7 +215,7 @@ export default class Home extends PureComponent {
   }
 
   @autobind
-  getIncomes() {
+  getIncomes({ begin, end }) {
     const { getIncomeData, custRange } = this.props;
     const { orgId, cycleSelect } = this.state;
     let custType = ORG;
@@ -236,10 +240,20 @@ export default class Home extends PureComponent {
         'prdtOIncomeAmt',
         'oIncomeAmt',
       ],
-      begin: '20170901',
-      end: '20170905',
+      begin,
+      end,
     });
     return null;
+  }
+
+  @autobind
+  createCustRange({ query, empInfo, custRange, empRespList }) {
+    this.handleSetCustRange({
+      empInfo,
+      empRespList,
+      query,
+      custRange,
+    });
   }
 
   @autobind
@@ -272,8 +286,22 @@ export default class Home extends PureComponent {
 
   @autobind
   handleGetAllInfo(custRangeData = EMPTY_LIST) {
-    const { getAllInfo, cycle, getHotWds, getHistoryWdsList, empInfo, custRange } = this.props;
+    const {
+      getAllInfo,
+      // cycle,
+      getHotWds,
+      getHistoryWdsList,
+      empInfo,
+      custRange,
+      location: { query: { cycleSelect } },
+    } = this.props;
     const { fspOrgId } = this.state;
+    const { historyTime, customerPoolTimeSelect } = optionsMap;
+    const currentSelect = _.find(historyTime, itemData =>
+      itemData.name === _.find(customerPoolTimeSelect, item => item.key === (cycleSelect || '518003')).name) || {}; // 本月
+    const nowDuration = getDurationString(currentSelect.key);
+    const begin = nowDuration.begin;
+    const end = nowDuration.end;
     let custType = ORG;
     const orgsId = custRangeData.length > 0 ? custRangeData[0].id : '';
     this.setState({
@@ -294,8 +322,9 @@ export default class Home extends PureComponent {
     } else {
       custType = CUST_MANAGER;
     }
+
     this.setState({
-      cycleSelect: cycle.length > 0 ? cycle[0].key : '',
+      cycleSelect,
     });
     getHotWds({
       orgId: fspOrgId === '' ? null : fspOrgId, // 组织ID
@@ -311,10 +340,15 @@ export default class Home extends PureComponent {
         orgId: fspOrgId, // 组织ID,
         empId: helper.getEmpId(),
         fieldList: [
-          'tranPurRakeCopy', 'totCrdtIntCopy', 'totTranInt', 'pIncomeAmt',
+          'tranPurRakeCopy',
+          'totCrdtIntCopy',
+          'totTranInt',
+          'pIncomeAmt',
+          'prdtOIncomeAmt',
+          'oIncomeAmt',
         ],
-        begin: '20170901',
-        end: '20170905',
+        begin,
+        end,
       },
     });
 
@@ -326,12 +360,16 @@ export default class Home extends PureComponent {
   @autobind
   updateQueryState(state) {
     const { replace, location: { pathname, query } } = this.props;
+    const { begin, end } = state;
     // 切换Duration和Orig时候，需要将数据全部恢复到默认值
     this.setState({
       ...state,
     }, () => {
       this.getIndicators();
-      this.getIncomes();
+      this.getIncomes({
+        begin,
+        end,
+      });
       if (state.orgId) {
         replace({
           pathname,

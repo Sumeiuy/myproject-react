@@ -69,7 +69,7 @@ const mapStateToProps = state => ({
   selectedIds: state.customerPool.selectedIds, // 非全选时选中的id数组
   custContactData: state.customerPool.custContactData, // 联系方式数据
   serviceRecordData: state.customerPool.serviceRecordData, // 最近服务记录
-  cycle: state.customerPool.cycle,  // 统计周期
+  cycle: state.customerPool.dict.kPIDateScopeType,  // 统计周期
   addServeRecordSuccess: state.customerPool.addServeRecordSuccess,
   isAddServeRecord: state.customerPool.isAddServeRecord,
 });
@@ -153,21 +153,10 @@ export default class CustomerList extends PureComponent {
   }
 
   componentDidMount() {
-    // const {
-    //   getCustomerScope,
-    //   getStatisticalPeriod,
-    //   location: { query },
-    // } = this.props;
-    // 请求组织机构树
-    // getCustomerScope();
     // 生成组织机构树
     this.generateCustRange(this.props);
     // 请求客户列表
     this.getCustomerList(this.props);
-    // 业绩客户列表时请求时间周期
-    // if (_.includes(['custIndicator', 'numOfCustOpened'], query.source)) {
-    //   getStatisticalPeriod();
-    // }
     // saveIsAllSelect(false);
     // saveSelectedIds(EMPTY_LIST);
   }
@@ -180,17 +169,14 @@ export default class CustomerList extends PureComponent {
       },
       empInfo: { empRespList: PreEmpRespList },
       position: { orgId: preOrgId },
-      // cycle: preCycle,
     } = this.props;
     const {
-      // getStatisticalPeriod,
       custRange,
       location: {
         query,
       },
       empInfo: { empRespList },
       position: { orgId },
-      // cycle,
     } = nextProps;
     // 组织机构树数据变化和职位切换重新生成组织机构树组件的数据
     if (!_.isEqual(preCustRange, custRange) || orgId !== preOrgId) {
@@ -202,10 +188,6 @@ export default class CustomerList extends PureComponent {
       orgId !== preOrgId) {
       this.getCustomerList(nextProps);
     }
-    // if (_.includes(['custIndicator', 'numOfCustOpened'], query.source) &&
-    // !_.isEqual(preCycle, cycle)) {
-    //   getStatisticalPeriod();
-    // }
   }
 
   // 获取列表数据

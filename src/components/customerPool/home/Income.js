@@ -89,14 +89,50 @@ export default class Income extends PureComponent {
     }
   }
 
-
   render() {
     const { incomeData = EMPTY_LIST } = this.props;
-    if (!incomeData) {
-      return null;
+    let outerData = [];
+    let innerData = [];
+    let color = ['#ffa800', '#f0ce30', '#fa7911'];
+    let label = {
+      normal: {
+        show: false,
+      },
+    };
+    let itemStyle = {
+      normal: {
+        show: false,
+      },
+    };
+    if (_.isEmpty(incomeData)) {
+      innerData = [{
+        value: 0,
+        name: '暂无数据',
+      }];
+      outerData = [{
+        value: 0,
+        name: '暂无数据',
+      }];
+      color = ['#f2f2f2'];
+      label = {
+        normal: {
+          show: true,
+          position: 'center',
+          textStyle: {
+            fontSize: '16',
+            color: '#a1a1a1',
+            fontWeight: 'bold',
+          },
+        }
+      };
+      itemStyle = {
+        emphasis: {
+          shadowColor: '#ccc',
+          shadowBlur: 10,
+        },
+      };
     }
-    const outerData = [];
-    const innerData = [];
+
     _.forEach(incomeData, (item) => {
       const tempInner = _.find(INNER_DATA_MAP, itemData => itemData.key === item.key);
       if (tempInner) {
@@ -138,12 +174,8 @@ export default class Income extends PureComponent {
           type: 'pie',
           center: [90, 90],
           radius: innerPie,
-          color: ['#ffa800', '#f0ce30', '#fa7911'],
-          label: {
-            normal: {
-              show: false,
-            },
-          },
+          color,
+          label,
           labelLine: {
             normal: {
               show: false,
@@ -151,23 +183,21 @@ export default class Income extends PureComponent {
           },
           data: innerData,
           selectedOffset: 0,
+          itemStyle,
         },
         {
           name: '收入',
           type: 'pie',
           center: [90, 90],
           radius: wrapPie,
-          label: {
-            normal: {
-              show: false,
-            },
-          },
+          label,
           labelLine: {
             normal: {
               show: false,
             },
           },
           data: outerData,
+          itemStyle,
         },
       ],
     };
