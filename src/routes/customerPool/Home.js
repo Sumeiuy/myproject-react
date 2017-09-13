@@ -41,7 +41,7 @@ const fetchDataFunction = (globalLoading, type) => query => ({
 const mapStateToProps = state => ({
   performanceIndicators: state.customerPool.performanceIndicators, // 绩效指标
   custRange: state.customerPool.custRange, // 客户池用户范围
-  cycle: state.customerPool.cycle,  // 统计周期
+  cycle: state.customerPool.dict.kPIDateScopeType,  // 统计周期
   position: state.customerPool.position, // 职责切换
   process: state.customerPool.process, // 代办流程(首页总数)
   motTaskCount: state.customerPool.motTaskCount, // 今日可做任务总数
@@ -126,6 +126,14 @@ export default class Home extends PureComponent {
       createCustRange: [],
       expandAll: false,
     };
+  }
+
+  componentDidMount() {
+    console.log('thisprops>>>>', this.props);
+    const {
+      custRange,
+    } = this.props;
+    this.handleGetAllInfo(custRange);
   }
 
   componentWillReceiveProps(nextProps) {

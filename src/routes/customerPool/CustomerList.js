@@ -92,10 +92,10 @@ const mapDispatchToProps = {
     type: 'customerPool/saveSelectedIds',
     payload: query || {},
   }),
-  getStatisticalPeriod: query => ({
-    type: 'customerPool/getStatisticalPeriod',
-    payload: query || {},
-  }),
+  // getStatisticalPeriod: query => ({
+  //   type: 'customerPool/getStatisticalPeriod',
+  //   payload: query || {},
+  // }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -126,7 +126,7 @@ export default class CustomerList extends PureComponent {
     getServiceRecord: PropTypes.func.isRequired,
     serviceRecordData: PropTypes.array,
     cycle: PropTypes.array,
-    getStatisticalPeriod: PropTypes.func.isRequired,
+    // getStatisticalPeriod: PropTypes.func.isRequired,
     addServeRecord: PropTypes.func.isRequired, // 添加服务记录
     addServeRecordSuccess: PropTypes.bool.isRequired,
     isAddServeRecord: PropTypes.bool.isRequired,
@@ -153,21 +153,21 @@ export default class CustomerList extends PureComponent {
   }
 
   componentDidMount() {
-    const {
-      getCustomerScope,
-      getStatisticalPeriod,
-      location: { query },
-    } = this.props;
+    // const {
+    //   getCustomerScope,
+    //   getStatisticalPeriod,
+    //   location: { query },
+    // } = this.props;
     // 请求组织机构树
-    getCustomerScope();
+    // getCustomerScope();
     // 生成组织机构树
     this.generateCustRange(this.props);
     // 请求客户列表
     this.getCustomerList(this.props);
     // 业绩客户列表时请求时间周期
-    if (_.includes(['custIndicator', 'numOfCustOpened'], query.source)) {
-      getStatisticalPeriod();
-    }
+    // if (_.includes(['custIndicator', 'numOfCustOpened'], query.source)) {
+    //   getStatisticalPeriod();
+    // }
     // saveIsAllSelect(false);
     // saveSelectedIds(EMPTY_LIST);
   }
@@ -180,17 +180,17 @@ export default class CustomerList extends PureComponent {
       },
       empInfo: { empRespList: PreEmpRespList },
       position: { orgId: preOrgId },
-      cycle: preCycle,
+      // cycle: preCycle,
     } = this.props;
     const {
-      getStatisticalPeriod,
+      // getStatisticalPeriod,
       custRange,
       location: {
         query,
       },
       empInfo: { empRespList },
       position: { orgId },
-      cycle,
+      // cycle,
     } = nextProps;
     // 组织机构树数据变化和职位切换重新生成组织机构树组件的数据
     if (!_.isEqual(preCustRange, custRange) || orgId !== preOrgId) {
@@ -202,9 +202,10 @@ export default class CustomerList extends PureComponent {
       orgId !== preOrgId) {
       this.getCustomerList(nextProps);
     }
-    if (_.includes(['custIndicator', 'numOfCustOpened'], query.source) && !_.isEqual(preCycle, cycle)) {
-      getStatisticalPeriod();
-    }
+    // if (_.includes(['custIndicator', 'numOfCustOpened'], query.source) &&
+    // !_.isEqual(preCycle, cycle)) {
+    //   getStatisticalPeriod();
+    // }
   }
 
   // 获取列表数据
