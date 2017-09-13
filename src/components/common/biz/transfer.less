@@ -1,6 +1,7 @@
 @import '../../../css/variable.less';
 
 .container {
+  background-color: #fff;
   .upContent {
     margin-bottom: 32px;
   }
@@ -9,6 +10,10 @@
     font-family: @font-family;
     font-size: 14px;
     color: #5c5c5c;
+  }
+  .closeIcon {
+    font-size: 18px;
+    color: #4a90e2; 
   }
   :global {
     .ant-table {
@@ -36,11 +41,13 @@
       .ant-pagination-prev, .ant-pagination-next {
         border: none;
         margin-right: 10px;
+        //background-color: transparent;
       }
       .ant-pagination-item {
         border: none;
         margin-right: 10px;
         margin-bottom: 0px;
+        //background-color: transparent;
       }
     }
   }
