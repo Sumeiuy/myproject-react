@@ -23,6 +23,7 @@ export default class SplitPanel extends PureComponent {
     leftPanel: PropTypes.element.isRequired,
     rightPanel: PropTypes.element.isRequired,
     leftListClassName: PropTypes.string,
+    isEmpty: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -130,7 +131,6 @@ export default class SplitPanel extends PureComponent {
     const listWrapper = leftPanelElm.querySelector('.ant-table');
     // 分割柱条元素，鼠标hover时会需要改变分割区域大小
     const splitBarElm = this.splitPanel.querySelector('.Resizer');
-    console.warn('listWrapper111', listWrapper);
     // TODO 无数据的dom，后面需要更新
     // const nullElem = document.getElementById('empty');
     // const leftPanelList = document.querySelector(`.${this.props.leftListClassName}`);
@@ -162,7 +162,9 @@ export default class SplitPanel extends PureComponent {
     this.setElementStyle(panelWrapper, pwh);
     // 设置左右分割区域的高度
     if (leftPanelElm && rightPanelElm) {
+      this.setElementStyle(this.splitPanel, 'auto');
       this.setElementStyle(splitBarElm, 'center', 'backgroundPosition');
+      this.setElementStyle(splitBarElm, 'auto');
       const sectionHeight = viewHeight - topPanelHeight - topDistance - bottomDistance;
       this.setElementStyle(leftPanelElm, `${sectionHeight}px`);
       this.setElementStyle(rightPanelElm, `${sectionHeight}px`);
