@@ -582,7 +582,7 @@ export default class CustomerRow extends PureComponent {
             </li>
             <li onClick={this.toEmail}>
               <Icon type="youjian" />
-              <span>{emailState}--{currentCustId}--{email}{email && emailState === currentCustId ? <a id={email && emailState === currentCustId ? 'sendEmail' : ''} href={`mailto:${email}`}>邮件联系</a> : '邮件联系' } </span>
+              <span>{email && emailState === currentCustId ? <a id={email && emailState === currentCustId ? 'sendEmail' : ''} href={`mailto:${email}`}>邮件联系</a> : '邮件联系' } </span>
             </li>
             <li onClick={this.showCreateServiceRecord}>
               <Icon type="jilu" />
