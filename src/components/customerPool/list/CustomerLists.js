@@ -9,11 +9,13 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { Pagination, Checkbox } from 'antd';
 
-import { fspContainer } from '../../../config';
-import { fspGlobal } from '../../../utils';
-import NoData from '../common/NoData';
 import CustomerRow from './CustomerRow';
 import CreateServiceRecord from './CreateServiceRecord';
+
+import { fspContainer } from '../../../config';
+import { fspGlobal, helper } from '../../../utils';
+import NoData from '../common/NoData';
+
 
 import styles from './customerLists.less';
 
@@ -21,7 +23,7 @@ const EMPTY_ARRAY = [];
 
 export default class CustomerLists extends PureComponent {
   static propTypes = {
-    empInfo: PropTypes.object.isRequired,
+    empInfo: PropTypes.object,
     page: PropTypes.object.isRequired,
     custList: PropTypes.array.isRequired,
     curPageNum: PropTypes.string,
@@ -41,6 +43,10 @@ export default class CustomerLists extends PureComponent {
     entertype: PropTypes.string.isRequired,
     custRange: PropTypes.array.isRequired,
     condition: PropTypes.object.isRequired,
+    getCustContact: PropTypes.func.isRequired,
+    getServiceRecord: PropTypes.func.isRequired,
+    custContactData: PropTypes.object.isRequired,
+    serviceRecordData: PropTypes.array.isRequired,
     addServeRecord: PropTypes.func.isRequired,
     addServeRecordSuccess: PropTypes.bool.isRequired,
     isAddServeRecord: PropTypes.bool.isRequired,
@@ -51,6 +57,7 @@ export default class CustomerLists extends PureComponent {
     pageSize: null,
     curPageNum: null,
     q: '',
+    empInfo: {},
   }
 
   constructor(props) {
@@ -163,26 +170,26 @@ export default class CustomerLists extends PureComponent {
     // debugger
     const idStr = encodeURIComponent(_.map(ids, v => (v.id)).join(','));
     const name = encodeURIComponent(ids[0].name);
+    const obj = {
+      ids: idStr,
+      count,
+      entertype,
+      name,
+    };
     if (document.querySelector(fspContainer.container)) {
-      const urlQuery = `ids=${idStr}&count=${count}&entertype=${entertype}&name=${name}`;
-      const newurl = `${url}?${urlQuery}`;
+      const newurl = `${url}?${helper.queryToString(obj)}`;
       const param = {
         closable: true,
         forceRefresh: true,
         isSpecialTab: true,
-        id, // 'FSP_SERACH',
-        title, // '搜索目标客户',
+        id,
+        title,
       };
       fspGlobal.openRctTab({ url: newurl, param });
     } else {
       this.props.push({
         pathname: url,
-        query: {
-          ids: idStr,
-          count,
-          entertype,
-          name,
-        },
+        query: obj,
       });
     }
   }
@@ -193,26 +200,26 @@ export default class CustomerLists extends PureComponent {
     // 全选时取整个列表的第一个数据的name属性值传给后续页面
     const name = encodeURIComponent(this.props.custList[0].name);
     const condt = encodeURIComponent(JSON.stringify(condition));
+    const obj = {
+      condition: condt,
+      count,
+      entertype,
+      name,
+    };
     if (document.querySelector(fspContainer.container)) {
-      const newQuery = `condition=${condt}&count=${count}&entertype=${entertype}&name=${name}`;
-      const newurl = `${url}?${newQuery}`;
+      const newurl = `${url}?${helper.queryToString(obj)}`;
       const param = {
         closable: true,
         forceRefresh: true,
         isSpecialTab: true,
-        id, // 'FSP_SERACH',
-        title, // '搜索目标客户',
+        id,
+        title,
       };
       fspGlobal.openRctTab({ url: newurl, param });
     } else {
       this.props.push({
         pathname: url,
-        query: {
-          condition: condt,
-          count,
-          entertype,
-          name,
-        },
+        query: obj,
       });
     }
   }
@@ -249,7 +256,7 @@ export default class CustomerLists extends PureComponent {
       return (<button
         onClick={() => { this.handleClick('/customerPool/customerGroup', '新建分组', 'FSP_GROUP'); }}
       >
-          用户分组
+        用户分组
         </button>);
     }
     return null;
@@ -276,6 +283,10 @@ export default class CustomerLists extends PureComponent {
       selectedIds,
       isAllSelect,
       source,
+      getCustContact,
+      getServiceRecord,
+      custContactData,
+      serviceRecordData,
       addServeRecord,
       addServeRecordSuccess,
       isAddServeRecord,
@@ -326,6 +337,7 @@ export default class CustomerLists extends PureComponent {
           {
             custList.map(
               item => <CustomerRow
+                dict={dict}
                 location={location}
                 getCustIncome={getCustIncome}
                 monthlyProfits={monthlyProfits}
@@ -334,6 +346,10 @@ export default class CustomerLists extends PureComponent {
                 isAllSelect={isAllSelectBool}
                 selectedIds={selectIdsArr}
                 onChange={this.handleSingleSelect}
+                getCustContact={getCustContact}
+                getServiceRecord={getServiceRecord}
+                custContactData={custContactData}
+                serviceRecordData={serviceRecordData}
                 createServiceRecord={this.showCreateServiceRecord}
                 key={`${item.empId}-${item.custId}-${item.idNum}-${item.telephone}-${item.asset}`}
               />,

@@ -49,8 +49,8 @@ export default class PerformanceIndicators extends PureComponent {
       closable: true,
       forceRefresh: true,
       isSpecialTab: true,
-      id: 'RCT_FSP_BUSINESS',
-      title: '业务目标客户',
+      id: 'RCT_FSP_CUSTOMER_LIST',
+      title: '目标客户',
     };
     if (document.querySelector(fspContainer.container)) {
       fspGlobal.openRctTab({ url, param });

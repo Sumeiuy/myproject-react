@@ -20,8 +20,8 @@ import CustomerLists from '../../components/customerPool/list/CustomerLists';
 
 import styles from './customerlist.less';
 
-// const CUST_MANAGER = 1; // 客户经理
-// const ORG = 3; // 组织机构
+const CUST_MANAGER = 1; // 客户经理
+const ORG = 3; // 组织机构
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const CUR_PAGE = 1; // 默认当前页
@@ -44,11 +44,13 @@ const effects = {
   getDictionary: 'customerPool/getDictionary',
   getCustomerList: 'customerPool/getCustomerList',
   getCustIncome: 'customerPool/getCustIncome',
+  getCustContact: 'customerPool/getCustContact',
+  getServiceRecord: 'customerPool/getServiceRecord',
   getCustomerScope: 'customerPool/getCustomerScope',
   addServeRecord: 'customerPool/addServeRecord',
 };
 
-const fectchDataFunction = (globalLoading, type) => query => ({
+const fetchDataFunction = (globalLoading, type) => query => ({
   type,
   payload: query || {},
   loading: globalLoading,
@@ -65,17 +67,21 @@ const mapStateToProps = state => ({
   monthlyProfits: state.customerPool.monthlyProfits, // 6个月收益数据
   isAllSelect: state.customerPool.isAllSelect, // 是否全选
   selectedIds: state.customerPool.selectedIds, // 非全选时选中的id数组
+  custContactData: state.customerPool.custContactData, // 联系方式数据
+  serviceRecordData: state.customerPool.serviceRecordData, // 最近服务记录
   cycle: state.customerPool.cycle,  // 统计周期
   addServeRecordSuccess: state.customerPool.addServeRecordSuccess,
   isAddServeRecord: state.customerPool.isAddServeRecord,
 });
 
 const mapDispatchToProps = {
-  getAllInfo: fectchDataFunction(true, effects.allInfo),
-  getCustomerData: fectchDataFunction(true, effects.getCustomerList),
-  getCustIncome: fectchDataFunction(true, effects.getCustIncome),
-  getCustomerScope: fectchDataFunction(true, effects.getCustomerScope),
-  addServeRecord: fectchDataFunction(true, effects.addServeRecord),
+  getAllInfo: fetchDataFunction(true, effects.allInfo),
+  getCustomerData: fetchDataFunction(true, effects.getCustomerList),
+  getCustIncome: fetchDataFunction(true, effects.getCustIncome),
+  getCustomerScope: fetchDataFunction(true, effects.getCustomerScope),
+  addServeRecord: fetchDataFunction(true, effects.addServeRecord),
+  getServiceRecord: fetchDataFunction(true, effects.getServiceRecord),
+  getCustContact: fetchDataFunction(true, effects.getCustContact),
   push: routerRedux.push,
   replace: routerRedux.replace,
   saveIsAllSelect: query => ({
@@ -115,6 +121,10 @@ export default class CustomerList extends PureComponent {
     selectedIds: PropTypes.object.isRequired,
     saveIsAllSelect: PropTypes.func.isRequired,
     saveSelectedIds: PropTypes.func.isRequired,
+    getCustContact: PropTypes.func.isRequired,
+    custContactData: PropTypes.object,
+    getServiceRecord: PropTypes.func.isRequired,
+    serviceRecordData: PropTypes.array,
     cycle: PropTypes.array,
     getStatisticalPeriod: PropTypes.func.isRequired,
     addServeRecord: PropTypes.func.isRequired, // 添加服务记录
@@ -127,6 +137,8 @@ export default class CustomerList extends PureComponent {
     custRange: [],
     position: {},
     empInfo: {},
+    custContactData: EMPTY_OBJECT,
+    serviceRecordData: EMPTY_LIST,
     cycle: EMPTY_LIST,
   }
 
@@ -243,6 +255,7 @@ export default class CustomerList extends PureComponent {
         { key: query.labelMapping, value: query.tagNumId },
       ];
     } else if (_.includes(['custIndicator', 'numOfCustOpened'], query.source)) {
+      // 业绩中的时间周期
       if (query.cycleSelect) {
         param.dateType = query.cycleSelect;
       } else {
@@ -263,29 +276,25 @@ export default class CustomerList extends PureComponent {
         value: query.rightType,
       };
     }
-    // 业绩中的时间周期
-    if (query.cycleSelect) {
-      param.dateType = query.cycleSelect;
-    }
     // 业务进来的时候，默认 我的客户 ，不带orgId
     // 我的客户 和 没有权限时，custType=1,其余情况custType=3
     if (query.source !== 'business') {
       // 职位切换
       if (thisPropsPosOrgId !== posOrgId) {
         param.orgId = posOrgId;
-        param.custType = 3;
+        param.custType = ORG;
       } else if (respIdOfPosition > 0 && query.orgId) {   // 有权限时切换组织机构树
         if (MAIN_MAGEGER_ID !== query.orgId) { // 切换到非我的客户，传选中的orgId
           param.orgId = query.orgId;
-          param.custType = 3;
+          param.custType = ORG;
         } else {
-          param.custType = 1; // 切换到我的客户
+          param.custType = CUST_MANAGER; // 切换到我的客户
         }
       } else if (respIdOfPosition > 0 && orgId) { // 第一次进入时，且有权限，传默认的职位orgId
         param.orgId = orgId;
-        param.custType = 3;
+        param.custType = ORG;
       } else if (respIdOfPosition < 0) { // 没有权限
-        param.custType = 1;
+        param.custType = CUST_MANAGER;
       }
     }
     // 过滤数组
@@ -376,7 +385,7 @@ export default class CustomerList extends PureComponent {
       fspJobOrgId = posOrgId;
     }
     // 用户职位是经总
-    if (fspJobOrgId === custRange[0].id) {
+    if (fspJobOrgId === (custRange[0] || {}).id) {
       this.setState({
         createCustRange: custRange,
         expandAll: true,
@@ -524,6 +533,10 @@ export default class CustomerList extends PureComponent {
       isAllSelect,
       saveIsAllSelect,
       saveSelectedIds,
+      getCustContact,
+      getServiceRecord,
+      custContactData,
+      serviceRecordData,
       cycle,
       empInfo: { empInfo },
       addServeRecord,
@@ -607,6 +620,10 @@ export default class CustomerList extends PureComponent {
           saveIsAllSelect={saveIsAllSelect}
           isAllSelect={isAllSelect}
           selectedIds={selectedIds}
+          getCustContact={getCustContact}
+          getServiceRecord={getServiceRecord}
+          custContactData={custContactData}
+          serviceRecordData={serviceRecordData}
           empInfo={empInfo}
           addServeRecord={addServeRecord}
           addServeRecordSuccess={addServeRecordSuccess}

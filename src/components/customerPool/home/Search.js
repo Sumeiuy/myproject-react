@@ -128,7 +128,7 @@ export default class Search extends PureComponent {
         labelMapping: '',
         tagNumId: '',
         q: encodeURIComponent(searchVal),
-      }, '搜索目标客户', 'FSP_SEARCH');
+      }, '目标客户', 'RCT_FSP_CUSTOMER_LIST');
     }
     return true;
   }
@@ -231,7 +231,7 @@ export default class Search extends PureComponent {
             labelMapping: item.labelMapping || '',
             tagNumId: item.tagNumId || '',
             q: encodeURIComponent(item.labelNameVal),
-          }, '标签目标客户', 'FSP_TAG')}
+          }, '目标客户', 'RCT_FSP_CUSTOMER_LIST')}
           title={item.labelDesc}
           rel="noopener noreferrer"
         >
@@ -270,7 +270,7 @@ export default class Search extends PureComponent {
       labelMapping: '',
       tagNumId: '',
       q: encodeURIComponent(searchVal),
-    }, '搜索目标客户', 'FSP_SEARCH');
+    }, '目标客户', 'RCT_FSP_CUSTOMER_LIST');
   }
 
   @autobind
@@ -319,7 +319,7 @@ export default class Search extends PureComponent {
             labelMapping: item.labelMapping || '',
             tagNumId: item.tagNumId || item.content,
             q: encodeURIComponent(item.content),
-          }, '搜索目标客户', 'FSP_SEARCH')}
+          }, '目标客户', 'RCT_FSP_CUSTOMER_LIST')}
           dangerouslySetInnerHTML={{ __html: newContent }}
           rel="noopener noreferrer"
         />
@@ -347,7 +347,7 @@ export default class Search extends PureComponent {
                   labelMapping: item.labelMapping || '',
                   tagNumId: item.tagNumId || '',
                   q: encodeURIComponent(item.labelNameVal),
-                }, '搜索目标客户', 'FSP_SEARCH')}
+                }, '目标客户', 'RCT_FSP_CUSTOMER_LIST')}
                 rel="noopener noreferrer"
               >
                 {item.labelNameVal}

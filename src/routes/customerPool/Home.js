@@ -9,6 +9,8 @@ import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import { getDurationString } from '../../utils/helper';
+import { optionsMap } from '../../config';
 import PerformanceIndicators from '../../components/customerPool/home/PerformanceIndicators';
 import ToBeDone from '../../components/customerPool/home/ToBeDone';
 import { helper } from '../../utils';
@@ -29,9 +31,10 @@ const effects = {
   getHistoryWdsList: 'customerPool/getHistoryWdsList',
   clearSearchHistoryList: 'customerPool/clearSearchHistoryList',
   saveSearchVal: 'customerPool/saveSearchVal',
+  getIncomeData: 'customerPool/getIncomeData',
 };
 
-const fectchDataFunction = (globalLoading, type) => query => ({
+const fetchDataFunction = (globalLoading, type) => query => ({
   type,
   payload: query || {},
   loading: globalLoading,
@@ -50,16 +53,18 @@ const mapStateToProps = state => ({
   historyWdsList: state.customerPool.historyWdsList, // 历史搜索
   clearState: state.customerPool.clearState, // 清除历史列表
   searchHistoryVal: state.customerPool.searchHistoryVal, // 保存搜索内容
+  incomeData: state.customerPool.incomeData, // 净创收数据
 });
 
 const mapDispatchToProps = {
-  getAllInfo: fectchDataFunction(true, effects.allInfo),
-  getPerformanceIndicators: fectchDataFunction(true, effects.performanceIndicators),
-  getHotPossibleWds: fectchDataFunction(false, effects.getHotPossibleWds),
-  getHotWds: fectchDataFunction(true, effects.getHotWds),
-  getHistoryWdsList: fectchDataFunction(false, effects.getHistoryWdsList),
-  clearSearchHistoryList: fectchDataFunction(false, effects.clearSearchHistoryList),
-  saveSearchVal: fectchDataFunction(false, effects.saveSearchVal),
+  getAllInfo: fetchDataFunction(true, effects.allInfo),
+  getPerformanceIndicators: fetchDataFunction(true, effects.performanceIndicators),
+  getHotPossibleWds: fetchDataFunction(false, effects.getHotPossibleWds),
+  getHotWds: fetchDataFunction(true, effects.getHotWds),
+  getHistoryWdsList: fetchDataFunction(false, effects.getHistoryWdsList),
+  clearSearchHistoryList: fetchDataFunction(false, effects.clearSearchHistoryList),
+  saveSearchVal: fetchDataFunction(false, effects.saveSearchVal),
+  getIncomeData: fetchDataFunction(true, effects.getIncomeData),
   push: routerRedux.push,
   replace: routerRedux.replace,
 };
@@ -92,6 +97,8 @@ export default class Home extends PureComponent {
     historyWdsList: PropTypes.array,
     clearState: PropTypes.object,
     searchHistoryVal: PropTypes.string,
+    incomeData: PropTypes.array,
+    getIncomeData: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -108,6 +115,7 @@ export default class Home extends PureComponent {
     historyWdsList: EMPTY_LIST,
     clearState: EMPTY_OBJECT,
     searchHistoryVal: '',
+    incomeData: EMPTY_LIST,
   }
 
   constructor(props) {
@@ -120,6 +128,15 @@ export default class Home extends PureComponent {
       createCustRange: [],
       expandAll: false,
     };
+  }
+
+  componentDidMount() {
+    const {
+      empInfo: { empInfo = EMPTY_OBJECT, empRespList = EMPTY_LIST },
+      custRange,
+      location: { query },
+    } = this.props;
+    this.createCustRange({ query, empInfo, custRange, empRespList });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -139,6 +156,8 @@ export default class Home extends PureComponent {
       empInfo: { empInfo: nextEmpInfo = EMPTY_OBJECT, empRespList = EMPTY_LIST },
    } = nextProps;
 
+    const { cycleSelect } = prevQuery;
+
     const { orgId: preOrgId } = prePosition;
     const { orgId: nextOrgId } = nextPosition;
 
@@ -151,9 +170,13 @@ export default class Home extends PureComponent {
           empInfo: nextEmpInfo,
           custRange,
         }),
-      }, this.getIndicators);
+      }, () => {
+        this.getIncomes();
+        this.getIndicators();
+      });
     }
-    if (preCycle !== nextCycle) {
+    // 当url上没有cycleSelect时，默认选中第一个，本月
+    if (preCycle !== nextCycle && !cycleSelect) {
       this.setState({
         cycleSelect: nextCycle[0].key,
       });
@@ -194,6 +217,48 @@ export default class Home extends PureComponent {
   }
 
   @autobind
+  getIncomes({ begin, end }) {
+    const { getIncomeData, custRange } = this.props;
+    const { orgId, cycleSelect } = this.state;
+    let custType = ORG;
+    if (custRange.length < 1) {
+      return null;
+    }
+    if (!_.isEmpty(orgId)) { // 判断客户范围类型
+      custType = ORG;
+    } else {
+      custType = CUST_MANAGER;
+    }
+    getIncomeData({
+      custType, // 客户范围类型
+      dateType: cycleSelect, // 周期类型
+      orgId, // 组织ID
+      empId: helper.getEmpId(),
+      fieldList: [
+        'tranPurRakeCopy',
+        'totCrdtIntCopy',
+        'totTranInt',
+        'pIncomeAmt',
+        'prdtOIncomeAmt',
+        'oIncomeAmt',
+      ],
+      begin,
+      end,
+    });
+    return null;
+  }
+
+  @autobind
+  createCustRange({ query, empInfo, custRange, empRespList }) {
+    this.handleSetCustRange({
+      empInfo,
+      empRespList,
+      query,
+      custRange,
+    });
+  }
+
+  @autobind
   handleSetCustRange(params) {
     const {
       empInfo,
@@ -223,8 +288,22 @@ export default class Home extends PureComponent {
 
   @autobind
   handleGetAllInfo(custRangeData = EMPTY_LIST) {
-    const { getAllInfo, cycle, getHotWds, getHistoryWdsList, empInfo, custRange } = this.props;
+    const {
+      getAllInfo,
+      // cycle,
+      getHotWds,
+      getHistoryWdsList,
+      empInfo,
+      custRange,
+      location: { query: { cycleSelect } },
+    } = this.props;
     const { fspOrgId } = this.state;
+    const { historyTime, customerPoolTimeSelect } = optionsMap;
+    const currentSelect = _.find(historyTime, itemData =>
+      itemData.name === _.find(customerPoolTimeSelect, item => item.key === (cycleSelect || '518003')).name) || {}; // 本月
+    const nowDuration = getDurationString(currentSelect.key);
+    const begin = nowDuration.begin;
+    const end = nowDuration.end;
     let custType = ORG;
     const orgsId = custRangeData.length > 0 ? custRangeData[0].id : '';
     this.setState({
@@ -245,8 +324,9 @@ export default class Home extends PureComponent {
     } else {
       custType = CUST_MANAGER;
     }
+
     this.setState({
-      cycleSelect: cycle.length > 0 ? cycle[0].key : '',
+      cycleSelect,
     });
     getHotWds({
       orgId: fspOrgId === '' ? null : fspOrgId, // 组织ID
@@ -259,8 +339,18 @@ export default class Home extends PureComponent {
     getAllInfo({
       request: {
         custType, // 客户范围类型
-        // dateType: '', // 周期类型
-        orgId: fspOrgId, // 组织ID
+        orgId: fspOrgId, // 组织ID,
+        empId: helper.getEmpId(),
+        fieldList: [
+          'tranPurRakeCopy',
+          'totCrdtIntCopy',
+          'totTranInt',
+          'pIncomeAmt',
+          'prdtOIncomeAmt',
+          'oIncomeAmt',
+        ],
+        begin,
+        end,
       },
     });
 
@@ -272,11 +362,16 @@ export default class Home extends PureComponent {
   @autobind
   updateQueryState(state) {
     const { replace, location: { pathname, query } } = this.props;
+    const { begin, end } = state;
     // 切换Duration和Orig时候，需要将数据全部恢复到默认值
     this.setState({
       ...state,
     }, () => {
       this.getIndicators();
+      this.getIncomes({
+        begin,
+        end,
+      });
       if (state.orgId) {
         replace({
           pathname,
@@ -429,6 +524,7 @@ export default class Home extends PureComponent {
       historyWdsList,
       clearState,
       searchHistoryVal,
+      incomeData,
     } = this.props;
     const { expandAll, cycleSelect, createCustRange, fspOrgId } = this.state;
     return (
@@ -463,6 +559,7 @@ export default class Home extends PureComponent {
             cycle={cycle}
             expandAll={expandAll}
             selectValue={cycleSelect}
+            incomeData={incomeData}
           />
         </div>
       </div>

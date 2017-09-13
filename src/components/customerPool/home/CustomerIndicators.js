@@ -12,8 +12,15 @@ import { fspGlobal, helper } from '../../../utils';
 import Icon from '../../common/Icon';
 import styles from './performanceIndicators.less';
 
+// 提供给列表页传给后端的customerType的值
+const NEW_VALID_CUST = 1; // 新增有效户
+const NEW_NONRETAIL_CUST = 2; // 新增非零售客户
+const NEW_HIGHEND_CUST = 3; // 新增高端产品户
+const NEW_PRODUCT_CUST = 4; // 新增产品户
+
 export default class CustomerIndicators extends PureComponent {
   static propTypes = {
+    cycle: PropTypes.array,
     data: PropTypes.object,
     push: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
@@ -21,6 +28,7 @@ export default class CustomerIndicators extends PureComponent {
 
   static defaultProps = {
     data: {},
+    cycle: [],
   }
 
   // 格式化数字，逢三位加一个逗号
@@ -62,14 +70,14 @@ export default class CustomerIndicators extends PureComponent {
 
   @autobind
   linkTo(value, bname) {
-    const { push, location: { query: { orgId, cycleSelect } } } = this.props;
+    const { cycle, push, location: { query: { orgId, cycleSelect } } } = this.props;
     const pathname = '/customerPool/list';
     const obj = {
       source: 'custIndicator',
       customerType: value,
       bname: encodeURIComponent(bname),
-      orgId,
-      cycleSelect,
+      orgId: orgId || '',
+      cycleSelect: cycleSelect || (cycle[0] || {}).key,
     };
     if (document.querySelector(fspContainer.container)) {
       const url = `${pathname}?${helper.queryToString(obj)}`;
@@ -77,7 +85,7 @@ export default class CustomerIndicators extends PureComponent {
         closable: true,
         forceRefresh: true,
         isSpecialTab: true,
-        id: 'RCT_FSP_PERFORMANCE',
+        id: 'RCT_FSP_CUSTOMER_LIST',
         title: '业绩目标客户',
       };
       fspGlobal.openRctTab({ url, param });
@@ -115,7 +123,7 @@ export default class CustomerIndicators extends PureComponent {
                     <li >
                       <p
                         className={styles.pointer}
-                        onClick={() => { this.linkTo('', '新增有效户'); }}
+                        onClick={() => { this.linkTo(NEW_VALID_CUST, '新增有效户'); }}
                       >
                         {this.numFormat(purAddCust || '--')}
                       </p>
@@ -128,7 +136,7 @@ export default class CustomerIndicators extends PureComponent {
                     <li className={styles.bd_un_r}>
                       <p
                         className={styles.pointer}
-                        onClick={() => { this.linkTo('', '新增非零售客户'); }}
+                        onClick={() => { this.linkTo(NEW_NONRETAIL_CUST, '新增非零售客户'); }}
                       >
                         {this.numFormat(purAddNoretailcust || '--')}
                       </p>
@@ -143,7 +151,7 @@ export default class CustomerIndicators extends PureComponent {
                     <li>
                       <p
                         className={styles.pointer}
-                        onClick={() => { this.linkTo('', '新增高端产品户'); }}
+                        onClick={() => { this.linkTo(NEW_HIGHEND_CUST, '新增高端产品户'); }}
                       >
                         {this.numFormat(purAddHighprodcust || '--')}
                       </p>
@@ -156,7 +164,7 @@ export default class CustomerIndicators extends PureComponent {
                     <li className={styles.bd_un_r}>
                       <p
                         className={styles.pointer}
-                        onClick={() => { this.linkTo('', '新增产品客户'); }}
+                        onClick={() => { this.linkTo(NEW_PRODUCT_CUST, '新增产品客户'); }}
                       >
                         {this.numFormat(newProdCust || '--')}
                       </p>

@@ -15,7 +15,9 @@ import TradingVolume from './TradingVolume';
 import CustomerIndicators from './CustomerIndicators';
 import BusinessProcessing from './BusinessProcessing';
 import Income from './Income';
+import { getDurationString } from '../../../utils/helper';
 import CustRange from '../common/CustRange';
+import { optionsMap } from '../../../config';
 import styles from './performanceIndicators.less';
 
 const Option = Select.Option;
@@ -33,6 +35,7 @@ export default class PerformanceIndicators extends PureComponent {
     expandAll: PropTypes.bool,
     selectValue: PropTypes.string,
     location: PropTypes.object.isRequired,
+    incomeData: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -63,9 +66,17 @@ export default class PerformanceIndicators extends PureComponent {
 
   @autobind
   handleChange(value) {
+    const { historyTime, customerPoolTimeSelect } = optionsMap;
+    const currentSelect = _.find(historyTime, itemData =>
+      itemData.name === _.find(customerPoolTimeSelect, item => item.key === value).name) || {};
+    const nowDuration = getDurationString(currentSelect.key);
+    const begin = nowDuration.begin;
+    const end = nowDuration.end;
     const { updateQueryState } = this.props;
     updateQueryState({
       cycleSelect: value,
+      begin,
+      end,
     });
   }
 
@@ -81,6 +92,7 @@ export default class PerformanceIndicators extends PureComponent {
       selectValue,
       push,
       location,
+      incomeData,
     } = this.props;
     const {
       cftCust,
@@ -177,6 +189,7 @@ export default class PerformanceIndicators extends PureComponent {
             <Row gutter={16}>
               <Col span={8}>
                 <CustomerIndicators
+                  cycle={cycle}
                   push={push}
                   location={location}
                   data={customerIndicators}
@@ -184,6 +197,7 @@ export default class PerformanceIndicators extends PureComponent {
               </Col>
               <Col span={8}>
                 <BusinessProcessing
+                  cycle={cycle}
                   push={push}
                   location={location}
                   data={businessProcessing}
@@ -210,7 +224,9 @@ export default class PerformanceIndicators extends PureComponent {
                       <Icon type="shouru" />净创收
                   </div>
                     <div className={styles.content}>
-                      <Income />
+                      <Income
+                        incomeData={incomeData}
+                      />
                     </div>
                   </div>
                 </div>

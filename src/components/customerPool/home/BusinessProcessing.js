@@ -14,6 +14,7 @@ import styles from './performanceIndicators.less';
 
 export default class BusinessProcessing extends PureComponent {
   static propTypes = {
+    cycle: PropTypes.array,
     data: PropTypes.object,
     push: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
@@ -21,6 +22,7 @@ export default class BusinessProcessing extends PureComponent {
 
   static defaultProps = {
     data: {},
+    cycle: [],
   }
 
   constructor(props) {
@@ -64,14 +66,14 @@ export default class BusinessProcessing extends PureComponent {
 
   @autobind
   linkTo(value, bname) {
-    const { push, location: { query: { orgId, cycleSelect } } } = this.props;
+    const { cycle, push, location: { query: { orgId, cycleSelect } } } = this.props;
     const pathname = '/customerPool/list';
     const obj = {
       source: 'numOfCustOpened',
       rightType: value,
       bname: encodeURIComponent(bname),
-      orgId,
-      cycleSelect,
+      orgId: orgId || '',
+      cycleSelect: cycleSelect || (cycle[0] || {}).key,
     };
     if (document.querySelector(fspContainer.container)) {
       const url = `${pathname}?${helper.queryToString(obj)}`;
@@ -79,8 +81,8 @@ export default class BusinessProcessing extends PureComponent {
         closable: true,
         forceRefresh: true,
         isSpecialTab: true,
-        id: 'RCT_FSP_PERFORMANCE',
-        title: '业绩目标客户',
+        id: 'RCT_FSP_CUSTOMER_LIST',
+        title: '目标客户',
       };
       fspGlobal.openRctTab({ url, param });
     } else {

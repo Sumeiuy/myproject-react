@@ -10,9 +10,8 @@ import { Checkbox } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
-import { customerPoolBusiness } from '../../../config';
+import CreateContactModal from './CreateContactModal';
 import Icon from '../../common/Icon';
-
 import styles from './customerRow.less';
 
 import iconavator from '../../../../static/images/icon-avator.png';
@@ -111,6 +110,9 @@ const UNIT_DEFAULT = '元';
 const UNIT_WAN = '万元';
 const UNIT_YI = '亿元';
 
+// 匹配标签区域超过两条显示 展开/收起 按钮
+const FOLD_NUM = 2;
+
 const haveTitle = title => (title ? `<i class="tip">${title}</i>` : null);
 
 const replaceWord = (value, q, title = '') => {
@@ -142,6 +144,10 @@ const formatNumber = (num) => {
   return num;
 };
 
+let contactModalKeyCount = 0;
+const EMPTY_LIST = [];
+const EMPTY_OBJECT = {};
+
 export default class CustomerRow extends PureComponent {
   static propTypes = {
     q: PropTypes.string,
@@ -152,7 +158,12 @@ export default class CustomerRow extends PureComponent {
     onChange: PropTypes.func.isRequired,
     isAllSelect: PropTypes.bool.isRequired,
     selectedIds: PropTypes.array,
+    custContactData: PropTypes.object.isRequired,
+    serviceRecordData: PropTypes.array.isRequired,
+    getCustContact: PropTypes.func.isRequired,
+    getServiceRecord: PropTypes.func.isRequired,
     createServiceRecord: PropTypes.func.isRequired,
+    dict: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -162,7 +173,12 @@ export default class CustomerRow extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { listItem: { asset } } = props;
+    const {
+      dict: {
+        custBusinessType = [],
+      },
+      listItem: { asset },
+    } = props;
     this.state = {
       showStyle: show,
       hideStyle: hide,
@@ -170,7 +186,16 @@ export default class CustomerRow extends PureComponent {
       newAsset: asset,
       checked: false,
       visible: false,
+      isShowModal: false,
+      modalKey: `contactModalKey${contactModalKeyCount}`,
+      currentCustId: '',
+      custType: '',
     };
+
+    this.businessConfig = new Map();
+    custBusinessType.forEach((v) => {
+      this.businessConfig.set(v.key, v.value);
+    });
 
     this.debounced = _.debounce(
       this.getCustIncome,
@@ -193,6 +218,26 @@ export default class CustomerRow extends PureComponent {
   componentWillReceiveProps(nextProps) {
     // console.log('nextProps.isAllSelect>>>', nextProps.isAllSelect);
     // console.log('this.props.isAllSelect>>>', this.props.isAllSelect);
+    const {
+      custContactData: prevCustContactData = EMPTY_OBJECT,
+      serviceRecordData: prevServiceRecordData = EMPTY_LIST,
+     } = this.props;
+    const {
+      custContactData: nextCustContactData = EMPTY_OBJECT,
+      serviceRecordData: nextServiceRecordData = EMPTY_LIST,
+     } = nextProps;
+    const { isShowModal, currentCustId } = this.state;
+    const prevContact = prevCustContactData[currentCustId] || EMPTY_OBJECT;
+    const nextContact = nextCustContactData[currentCustId] || EMPTY_OBJECT;
+    if (prevContact !== nextContact || prevServiceRecordData !== nextServiceRecordData) {
+      if (!isShowModal) {
+        this.setState({
+          isShowModal: true,
+          modalKey: `contactModalKey${contactModalKeyCount++}`,
+        });
+      }
+    }
+
     if (nextProps.isAllSelect !== this.props.isAllSelect) {
       this.setState({
         checked: nextProps.isAllSelect,
@@ -228,7 +273,7 @@ export default class CustomerRow extends PureComponent {
     });
   }
 
-   @autobind
+  @autobind
   handleCollapse(type) {
     if (type === 'open') {
       const prosshow = {
@@ -259,8 +304,8 @@ export default class CustomerRow extends PureComponent {
   matchWord(q, listItem) {
     // if (!q) return;
     const { location: { query: { source } } } = this.props;
-    let rtnEle = '';
-    let shortRtnEle = '';
+    let rtnEle = '';  // 全部展示的数据
+    let shortRtnEle = ''; // 只展示两条的数据
     let n = 0;
     const isSearch = source === 'search' || source === 'association';
     const isTag = source === 'tag';
@@ -272,7 +317,7 @@ export default class CustomerRow extends PureComponent {
       const domTpl = getNewHtml('姓名', markedEle);
       rtnEle += domTpl;
       n++;
-      if (n <= 2) {
+      if (n <= FOLD_NUM) {
         shortRtnEle += domTpl;
       }
     }
@@ -281,7 +326,7 @@ export default class CustomerRow extends PureComponent {
       const domTpl = getNewHtml('身份证号码', markedEle);
       rtnEle += domTpl;
       n++;
-      if (n <= 2) {
+      if (n <= FOLD_NUM) {
         shortRtnEle += domTpl;
       }
     }
@@ -290,7 +335,7 @@ export default class CustomerRow extends PureComponent {
       const domTpl = getNewHtml('联系电话', markedEle);
       rtnEle += domTpl;
       n++;
-      if (n <= 2) {
+      if (n <= FOLD_NUM) {
         shortRtnEle += domTpl;
       }
     }
@@ -299,7 +344,7 @@ export default class CustomerRow extends PureComponent {
       const domTpl = getNewHtml('经纪客户号', markedEle);
       rtnEle += domTpl;
       n++;
-      if (n <= 2) {
+      if (n <= FOLD_NUM) {
         shortRtnEle += domTpl;
       }
     }
@@ -317,7 +362,7 @@ export default class CustomerRow extends PureComponent {
         const domTpl = getNewHtml('匹配标签', markedEle);
         rtnEle += domTpl;
         n++;
-        if (n <= 2) {
+        if (n <= FOLD_NUM) {
           shortRtnEle += domTpl;
         }
       }
@@ -325,12 +370,12 @@ export default class CustomerRow extends PureComponent {
     // 匹配可开通业务
     if ((isBusiness || isNumOfCustOpened) && listItem.unrightType) {
       const unrightTypeArr = listItem.unrightType.split(' ');
-      const tmpArr = _.filter(_.map(unrightTypeArr, v => customerPoolBusiness[v]));
+      const tmpArr = _.filter(_.map(unrightTypeArr, v => this.businessConfig.get(v)));
       if (!_.isEmpty(tmpArr)) {
         const domTpl = getNewHtml(`可开通业务(${tmpArr.length})`, tmpArr.join('、'));
         rtnEle += domTpl;
         n++;
-        if (n <= 2) {
+        if (n <= FOLD_NUM) {
           shortRtnEle += domTpl;
         }
       }
@@ -338,12 +383,12 @@ export default class CustomerRow extends PureComponent {
     // 匹配已开通业务
     if ((isBusiness || isNumOfCustOpened) && listItem.userRights) {
       const userRightsArr = listItem.userRights.split(' ');
-      const tmpArr = _.filter(_.map(userRightsArr, v => customerPoolBusiness[v]));
+      const tmpArr = _.filter(_.map(userRightsArr, v => this.businessConfig.get(v)));
       if (!_.isEmpty(tmpArr)) {
         const domTpl = getNewHtml(`已开通业务(${tmpArr.length})`, tmpArr.join('、'));
         rtnEle += domTpl;
         n++;
-        if (n <= 2) {
+        if (n <= FOLD_NUM) {
           shortRtnEle += domTpl;
         }
       }
@@ -353,7 +398,7 @@ export default class CustomerRow extends PureComponent {
       const domTpl = getNewHtml('开户日期', listItem.openDt);
       rtnEle += domTpl;
       n++;
-      if (n <= 2) {
+      if (n <= FOLD_NUM) {
         shortRtnEle += domTpl;
       }
     }
@@ -362,7 +407,7 @@ export default class CustomerRow extends PureComponent {
       const domTpl = getNewHtml('账户状态', listItem.accountStausName);
       rtnEle += domTpl;
       n++;
-      if (n <= 2) {
+      if (n <= FOLD_NUM) {
         shortRtnEle += domTpl;
       }
     }
@@ -384,12 +429,50 @@ export default class CustomerRow extends PureComponent {
   }
 
   @autobind
+  handleTelClick() {
+    const { listItem, getCustContact, getServiceRecord, custContactData } = this.props;
+    const { custId, pOrO } = listItem;
+    const { isShowModal } = this.state;
+    this.setState({
+      currentCustId: custId,
+      custType: pOrO === 'P' ? 'per' : 'org',
+    });
+    if (_.isEmpty(custContactData[custId])) {
+      // 缓存，有数据，就不要再次请求
+      // 联系方式接口
+      getCustContact({
+        custId,
+        custType: pOrO === 'P' ? 'per' : 'org',
+      });
+      // 服务记录接口
+      getServiceRecord({
+        custId,
+      });
+    } else if (!isShowModal) {
+      this.setState({
+        isShowModal: true,
+        modalKey: `contactModalKey${contactModalKeyCount++}`,
+      });
+    }
+  }
+
+  @autobind
   showCreateServiceRecord() {
     const {
       createServiceRecord,
       listItem: { custId },
     } = this.props;
     createServiceRecord(custId);
+  }
+
+  /**
+   * 回调，关闭modal打开state
+   */
+  @autobind
+  resetModalState() {
+    this.setState({
+      isShowModal: false,
+    });
   }
 
   @autobind
@@ -404,14 +487,22 @@ export default class CustomerRow extends PureComponent {
   }
 
   render() {
-    const {
-      q,
-      listItem,
-      monthlyProfits,
-      isAllSelect,
-      selectedIds,
+    const { q, listItem, monthlyProfits, isAllSelect, selectedIds,
+      custContactData = EMPTY_OBJECT,
+      serviceRecordData = EMPTY_LIST,
+      createServiceRecord,
     } = this.props;
-    const { unit, newAsset, checked, isShowCharts } = this.state;
+    const {
+      unit,
+      newAsset,
+      checked,
+      isShowModal,
+      modalKey,
+      custType,
+      currentCustId,
+      isShowCharts,
+   } = this.state;
+    const finalContactData = custContactData[currentCustId] || EMPTY_OBJECT;
     const lastestProfit = Number(this.getLastestData(monthlyProfits).assetProfit);
     const lastestProfitRate = Number(this.getLastestData(monthlyProfits).assetProfitRate);
     const matchedWord = this.matchWord(q, listItem);
@@ -419,11 +510,12 @@ export default class CustomerRow extends PureComponent {
     const newIdsArr = _.map(selectedIds, v => (v.id));
     const isChecked = _.includes(newIdsArr, listItem.custId) || isAllSelect || checked;
     // console.log('listItem', checked);
+
     return (
       <div className={styles.customerRow}>
         <div className={styles.basicInfoD}>
           <ul className={styles.operationIcon}>
-            <li>
+            <li onClick={this.handleTelClick}>
               <Icon type="dianhua" />
               <span>电话联系</span>
             </li>
@@ -465,13 +557,14 @@ export default class CustomerRow extends PureComponent {
             }
             {listItem.highWorthFlag ? <div className="highWorthFlag">高净值</div> : null}
             {
-              (rskLev === '' || rskLev === 'null') ? '' :
-              <div
-                className={`riskLevel ${riskLevelConfig[rskLev].colorCls}`}
-              >
-                <div className="itemText">{riskLevelConfig[rskLev].title}</div>
-                {riskLevelConfig[rskLev].name}
-              </div>
+              (rskLev === '' || rskLev === 'null')
+                ? '' :
+                <div
+                  className={`riskLevel ${riskLevelConfig[rskLev].colorCls}`}
+                >
+                  <div className="itemText">{riskLevelConfig[rskLev].title}</div>
+                  {riskLevelConfig[rskLev].name}
+                </div>
             }
           </div>
           <div className="row-two">
@@ -513,9 +606,9 @@ export default class CustomerRow extends PureComponent {
                     <span className={styles.numB}>
                       {
                         monthlyProfits.length ?
-                        `${lastestProfitRate.toFixed(2)}%`
-                        :
-                        '--'
+                          `${lastestProfitRate.toFixed(2)}%`
+                          :
+                          '--'
                       }
                     </span>
                   </div>
@@ -525,9 +618,9 @@ export default class CustomerRow extends PureComponent {
                       <span className={styles.numB}>
                         {
                           monthlyProfits.length ?
-                          formatNumber(lastestProfit)
-                          :
-                          '--'
+                            formatNumber(lastestProfit)
+                            :
+                            '--'
                         }
                       </span>
                       &nbsp;
@@ -571,6 +664,20 @@ export default class CustomerRow extends PureComponent {
             />
           </div>
         </div>
+        {
+          isShowModal ?
+            <CreateContactModal
+              visible={isShowModal}
+              key={modalKey}
+              custContactData={finalContactData}
+              serviceRecordData={serviceRecordData}
+              custType={custType}
+              createServiceRecord={createServiceRecord} /* 创建服务记录 */
+              currentCustId={currentCustId}
+              onClose={this.resetModalState}
+            />
+            : null
+        }
       </div>
     );
   }
