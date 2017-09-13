@@ -59,7 +59,16 @@ const fspGlobal = {
    *  在fsp中新开一个react的tab
    */
   openRctTab(obj) {
-    execOpenTab('loadPageInTabnavTo', obj.url, obj.param);
+    const { url, param } = obj;
+    execOpenTab(
+      'loadPageInTabnavTo',
+      url,
+      {
+        closable: true,
+        isSpecialTab: true,
+        ...param,
+      },
+    );
   },
 
   // 第二次打開tab
