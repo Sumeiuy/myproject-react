@@ -18,6 +18,7 @@
  * onOk：必须，按钮的回调事件
  * onCancel：必须，按钮的回调事件
  * modalKey: 必须，容器组件中，控制modal是否出现的key
+ * idKey: 必须，用于table设置选中的idkey
  * dataSource： 有默认值（空数组），table的内容
  * placeholder：有默认值（空字符串），用于搜索框无内容时的提示文字
  * okText：有默认值（确定），按钮的title
@@ -44,6 +45,7 @@ export default class TableDialog extends Component {
     onOk: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired,
     modalKey: PropTypes.string.isRequired,
+    idKey: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -55,15 +57,15 @@ export default class TableDialog extends Component {
 
   constructor(props) {
     super(props);
-    const { dataSource } = this.props;
-    const defaultConfig = this.defaultSelected(dataSource);
+    const { dataSource, idKey } = this.props;
+    const defaultConfig = this.defaultSelected(dataSource, idKey);
     this.state = {
       ...defaultConfig,
     };
   }
   componentWillReceiveProps(nextProps) {
-    const { dataSource } = nextProps;
-    const defaultConfig = this.defaultSelected(dataSource);
+    const { dataSource, idKey } = nextProps;
+    const defaultConfig = this.defaultSelected(dataSource, idKey);
     this.setState({
       ...defaultConfig,
     });
@@ -77,13 +79,13 @@ export default class TableDialog extends Component {
     });
   }
 
-  defaultSelected(dataSource) {
+  defaultSelected(dataSource, idKey) {
     const defaultSelected = [];
     const defaultSelectedRow = [];
     if (dataSource.length > 0) {
       const firstItem = dataSource[0];
       defaultSelectedRow.push(firstItem);
-      defaultSelected.push(firstItem.id);
+      defaultSelected.push(firstItem[idKey]);
     }
     return {
       selectedRowKeys: defaultSelected,
