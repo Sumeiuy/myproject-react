@@ -3,11 +3,8 @@
  * @author honggaungqing
  */
 
-// import { routerRedux } from 'dva/router';
-// import { message } from 'antd';
 import _ from 'lodash';
 import { permission as api } from '../api';
-// import { helper } from '../utils';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];

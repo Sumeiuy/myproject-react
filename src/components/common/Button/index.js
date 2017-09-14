@@ -11,6 +11,9 @@
     完成
    </Button>
  *  type,shape,size,loading,disabled等，与antd的Button组件用法相同
+ *  type可选值为 primary dashed danger或者不设
+ *  size可选值为 small large 或者不设
+ *  loading设置按钮载入状态
  *  variant:不必要，按钮有特殊需求的时候通过variant传一个参数过来
  * @author honggaungqing
  */
@@ -22,7 +25,9 @@ import './index.less';
 export default function Button(props) {
   const { variant } = props;
   return (
-    <AntButton {...props} className={`btn-${variant}`.trim()} />
+    <div className="commonBtn">
+      <AntButton {...props} className={`btn-${variant}`.trim()} />
+    </div>
   );
 }
 Button.propTypes = {

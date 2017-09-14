@@ -46,9 +46,13 @@
       box-shadow: 5px 5px 5px #ededee;
       .leftSection{
         text-align: left;
+        color:#a1a1a1;
+        font-size: 13px;
       }
       .rightSection{
         text-align: right;
+        color:#a1a1a1;
+        font-size: 13px;
       }
       .ant-table-tbody>tr,
       .ant-table-thead>tr {
@@ -88,7 +92,10 @@
         font-size:14px;
         color:#333;
       }
-      .address, .title, .cust{
+      .date{
+        font-size: 14px;
+      }
+      .drafter, .title, .cust, .date{
         max-width: 400px;
         width: 100%;
         // 超过一行则打点显示
@@ -98,29 +105,17 @@
         text-overflow:ellipsis;
         margin-top: 5px;
       }
-      .address, .state-resolve, .state-close, .name, .date {
-        color: #a2a2a2;
-      }
-      .id {
-        font-size:13px;
-        color:#a1a1a1;
-      }
       .leftSection {
         width: 100%;
       }
-      .code, .state-resolve, .state-close, .name {
-        font-size: 14px;
-      }
-      .address, .date, .cust{
-        font-size: 13px;
+      .drafter, .date, .cust, .cust{
         margin-top: 5px;
-        color:#a1a1a1;
       }
-      .cust{
-        margin-top: 8px;
+      .subType{
+        margin-left: 15px;
       }
-      .date {
-        white-space: nowrap;
+      .drafterName{
+        margin-right: 15px;
       }
       .pageCommonTable .ant-table-tbody > tr > td {
         border: 0px;
