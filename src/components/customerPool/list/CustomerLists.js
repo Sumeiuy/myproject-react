@@ -270,10 +270,12 @@ export default class CustomerLists extends PureComponent {
       currentCustId: custId,
       custType,
     }, () => {
+      // debugger;
       if (_.isEmpty(custContactData[custId])) {
         getCustContact({
           custId,
         });
+        // 请求服务记录不需要作缓存
         getServiceRecord({
           custId,
         });
@@ -283,6 +285,10 @@ export default class CustomerLists extends PureComponent {
           modalKey: `modalKeyCount${modalKeyCount++}`,
         });
       }
+      // 请求服务记录不需要作缓存
+      // getServiceRecord({
+      //   custId,
+      // });
     });
   }
 

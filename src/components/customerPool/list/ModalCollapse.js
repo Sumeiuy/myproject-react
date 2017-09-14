@@ -30,6 +30,15 @@ export default class ModalCollapse extends PureComponent {
     isFirstLoad: true,
   };
 
+  componentDidMount() {
+    const { setDefaultLeftGuide } = this.props;
+    const panelDOM = ReactDOM.findDOMNode(document.getElementById('panelHeader1')); // eslint-disable-line
+    // 当再次打开时，panelDOM已经存在，可以直接设置默认leftGuide
+    if (panelDOM) {
+      setDefaultLeftGuide({ isCollapseAll: false });
+    }
+  }
+
   componentDidUpdate() {
     const { setDefaultLeftGuide, isFirstLoad } = this.props;
     const panelDOM = ReactDOM.findDOMNode(document.getElementById('panelHeader1')); // eslint-disable-line
