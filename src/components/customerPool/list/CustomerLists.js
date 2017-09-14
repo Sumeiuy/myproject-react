@@ -54,6 +54,7 @@ export default class CustomerLists extends PureComponent {
     addServeRecordSuccess: PropTypes.bool.isRequired,
     isAddServeRecord: PropTypes.bool.isRequired,
     dict: PropTypes.object.isRequired,
+    isSms: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -68,9 +69,14 @@ export default class CustomerLists extends PureComponent {
     this.state = {
       taskAndGroupLeftPos: '0',
       showCreateServiceRecord: false,
+<<<<<<< HEAD
       currentCustId: '',
       isShowContactModal: false,
       modalKey: `modalKeyCount${modalKeyCount}`,
+=======
+      // 判断是否是主服务经理
+      isSms: false,
+>>>>>>> 724fc85d31f5ca2b2af897beb7c55c51e44b1b97
     };
   }
 
@@ -314,15 +320,17 @@ export default class CustomerLists extends PureComponent {
   // 2、业务办理客户池：默认是只显示自己负责客户的，所以可以添加用户分组
   // 3、业绩目标客户池：客户列表是“我的客户”时可以添加用户分组
   renderGroup() {
-    const { custRange, source, location: { query: { orgId } } } = this.props;
-    const tmpArr = ['custIndicator', 'numOfCustOpened', 'search', 'tag'];
-    // 从绩效、搜索和热词进入且只有我的客户
-    const onlyMyCustomer = _.includes(tmpArr, source) && custRange.length === 1 && custRange[0].id === 'msm';
-    // 从业务入口进入的
-    const fromBusiness = source === 'business';
-    // 从绩效、搜索和热词进入,通过客户范围切换到我的客户
-    const inMyCustomer = _.includes(tmpArr, source) && orgId && orgId === 'msm';
-    if (onlyMyCustomer || fromBusiness || inMyCustomer) {
+    // const { custRange, source, location: { query: { orgId } } } = this.props;
+    // const tmpArr = ['custIndicator', 'numOfCustOpened', 'search', 'tag'];
+    // // 从绩效、搜索和热词进入且只有我的客户
+    // const onlyMyCustomer = _.includes(tmpArr, source) &&
+    // custRange.length === 1 &&
+    // custRange[0].id === 'msm';
+    // // 从业务入口进入的
+    // const fromBusiness = source === 'business';
+    // // 从绩效、搜索和热词进入,通过客户范围切换到我的客户
+    // const inMyCustomer = _.includes(tmpArr, source) && orgId && orgId === 'msm';
+    if (this.props.isSms) {
       return (<button
         onClick={() => { this.handleClick('/customerPool/customerGroup', '新建分组', 'FSP_GROUP'); }}
       >
@@ -364,6 +372,7 @@ export default class CustomerLists extends PureComponent {
       addServeRecordSuccess,
       isAddServeRecord,
       dict,
+      isSms,
     } = this.props;
 
     const finalContactData = custContactData[currentCustId] || EMPTY_OBJECT;
@@ -413,6 +422,7 @@ export default class CustomerLists extends PureComponent {
           {
             custList.map(
               item => <CustomerRow
+                isSms={isSms}
                 dict={dict}
                 location={location}
                 getCustIncome={getCustIncome}
