@@ -6,7 +6,6 @@
  *  columns={array}
  *  title={string}
  *  onSearch={func}
- *  idKey={string}
  * />
  * columns: 必须的，用于table的列标题的定义
  * title：必须的，弹框的title
@@ -18,7 +17,7 @@
  * placeholder：有默认值（空字符串），用于搜索框无内容时的提示文字
  * okText：有默认值（确定），按钮的title
  * cancelText：有默认值（取消），按钮的title
- * defaultIdKey: 有默认值（空字符串，无选中），用于table设置选中的defaultIdKey
+ * idKey: 有默认值（空字符串，无选中），数据源中对象唯一的标识符，table设置选中用
  */
 import React, { PropTypes, Component } from 'react';
 import { Input } from 'antd';
@@ -38,7 +37,7 @@ export default class SearchModal extends Component {
     cancelText: PropTypes.string,
     dataSource: PropTypes.array,
     placeholder: PropTypes.string,
-    defaultIdKey: PropTypes.string,
+    idKey: PropTypes.string,
     columns: PropTypes.array.isRequired,
     title: PropTypes.string.isRequired,
     onSearch: PropTypes.func.isRequired,
@@ -52,7 +51,7 @@ export default class SearchModal extends Component {
     placeholder: '',
     okText: '确定',
     cancelText: '取消',
-    defaultIdKey: '',
+    idKey: '',
   }
 
   constructor(props) {
@@ -113,7 +112,7 @@ export default class SearchModal extends Component {
       placeholder,
       dataSource,
       onSearch,
-      defaultIdKey,
+      idKey,
     } = this.props;
 
     return (
@@ -140,7 +139,7 @@ export default class SearchModal extends Component {
           title={title}
           placeholder={placeholder}
           modalKey={'visible'}
-          defaultIdKey={defaultIdKey}
+          idKey={idKey}
         />
       </div>
     );

@@ -22,7 +22,7 @@
  * placeholder：有默认值（空字符串），用于搜索框无内容时的提示文字
  * okText：有默认值（确定），按钮的title
  * cancelText：有默认值（取消），按钮的title
- * defaultIdKey: 有默认值（空字符串，无选中），用于table设置选中的idkey
+ * idKey: 有默认值（空字符串，无选中），数据源中对象唯一的标识符，table设置选中用
  */
 import React, { PropTypes, Component } from 'react';
 import { Table, Modal, Input } from 'antd';
@@ -39,7 +39,7 @@ export default class TableDialog extends Component {
     cancelText: PropTypes.string,
     dataSource: PropTypes.array,
     placeholder: PropTypes.string,
-    defaultIdKey: PropTypes.string,
+    idKey: PropTypes.string,
     columns: PropTypes.array.isRequired,
     title: PropTypes.string.isRequired,
     onSearch: PropTypes.func.isRequired,
@@ -54,20 +54,20 @@ export default class TableDialog extends Component {
     placeholder: '',
     okText: '确定',
     cancelText: '取消',
-    defaultIdKey: '',
+    idKey: '',
   }
 
   constructor(props) {
     super(props);
-    const { dataSource, defaultIdKey } = this.props;
-    const defaultConfig = this.defaultSelected(dataSource, defaultIdKey);
+    const { dataSource, idKey } = this.props;
+    const defaultConfig = this.defaultSelected(dataSource, idKey);
     this.state = {
       ...defaultConfig,
     };
   }
   componentWillReceiveProps(nextProps) {
-    const { dataSource, defaultIdKey } = nextProps;
-    const defaultConfig = this.defaultSelected(dataSource, defaultIdKey);
+    const { dataSource, idKey } = nextProps;
+    const defaultConfig = this.defaultSelected(dataSource, idKey);
     this.setState({
       ...defaultConfig,
     });
