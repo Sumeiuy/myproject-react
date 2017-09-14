@@ -133,13 +133,14 @@ export default class CustomerGroup extends PureComponent {
   }
 
   @autobind
-  getCustomerGroup() {
+  getCustomerGroup(value = null) {
     const { location: { query } } = this.props;
     const param = {
         // 必传，页大小
-      curPageNum: query.curPageNum || CUR_PAGE,
+      pageNum: query.curPageNum || CUR_PAGE,
       pageSize: query.pageSize || CUR_PAGESIZE,
       empId: helper.getEmpId(),
+      keyWord: value,
     };
     this.props.getCustomerGroupList(param);
   }
@@ -190,6 +191,7 @@ export default class CustomerGroup extends PureComponent {
         KeyWord: value,
       },
     });
+    this.getCustomerGroup(value);
   }
 /*  添加到已有分组 */
   @autobind

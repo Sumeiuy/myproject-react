@@ -50,6 +50,7 @@ export default {
     serviceRecordData: [], // 服务记录
     isAddServeRecord: false,
     addServeRecordSuccess: false, // 添加服务记录成功的标记
+    isFollow: false,
   },
   subscriptions: {
     setup({ dispatch }) {
@@ -267,6 +268,14 @@ export default {
       const { resultData } = response;
       yield put({
         type: 'getServiceRecordSuccess',
+        payload: resultData,
+      });
+    },
+    * getFollowCust({ payload }, { call, put }) {
+      const response = yield call(api.queryFollowCust, payload);
+      const { resultData } = response;
+      yield put({
+        type: 'getFollowCustSuccess',
         payload: resultData,
       });
     },
@@ -497,6 +506,7 @@ export default {
       return {
         ...state,
         resultgroupId: resultData.groupId,
+        cusGroupSaveResult: resultData.result,
       };
     },
     // 自建任务提交
@@ -545,6 +555,15 @@ export default {
         ...state,
         addServeRecordSuccess: payload.resultData === 'success',
         isAddServeRecord: false,
+      };
+    },
+    // 关注成功
+    getFollowCustSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        isFollow: payload.result === 'success',
+        // addFollow: false,
       };
     },
   },
