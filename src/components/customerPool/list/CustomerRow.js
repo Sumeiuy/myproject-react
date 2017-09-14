@@ -160,11 +160,8 @@ export default class CustomerRow extends PureComponent {
     selectedIds: PropTypes.array,
     createServiceRecord: PropTypes.func.isRequired,
     dict: PropTypes.object.isRequired,
-<<<<<<< HEAD
     createContact: PropTypes.func.isRequired,
-=======
     isSms: PropTypes.bool.isRequired,
->>>>>>> 724fc85d31f5ca2b2af897beb7c55c51e44b1b97
   }
 
   static defaultProps = {
@@ -436,13 +433,7 @@ export default class CustomerRow extends PureComponent {
 
   render() {
     const { q, listItem, monthlyProfits, isAllSelect, selectedIds,
-<<<<<<< HEAD
-=======
-      custContactData = EMPTY_OBJECT,
-      serviceRecordData = EMPTY_LIST,
-      createServiceRecord,
       isSms,
->>>>>>> 724fc85d31f5ca2b2af897beb7c55c51e44b1b97
     } = this.props;
     const {
       unit,
@@ -483,8 +474,8 @@ export default class CustomerRow extends PureComponent {
                 </li>
               </ul>
             </div>
-        :
-        null
+            :
+            null
         }
         <div className={`${styles.customerRowLeft} clear`}>
           <div className={styles.selectIcon}>

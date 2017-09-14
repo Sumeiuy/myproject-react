@@ -69,14 +69,11 @@ export default class CustomerLists extends PureComponent {
     this.state = {
       taskAndGroupLeftPos: '0',
       showCreateServiceRecord: false,
-<<<<<<< HEAD
       currentCustId: '',
       isShowContactModal: false,
       modalKey: `modalKeyCount${modalKeyCount}`,
-=======
       // 判断是否是主服务经理
       isSms: false,
->>>>>>> 724fc85d31f5ca2b2af897beb7c55c51e44b1b97
     };
   }
 
