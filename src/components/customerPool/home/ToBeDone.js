@@ -123,7 +123,7 @@ export default class PerformanceIndicators extends PureComponent {
                 <a
                   className="item"
                   onClick={
-                    () => fspGlobal.openRctTab({
+                    () => fspGlobal.openFspTab({
                       url: notificationUrl,
                       param: notificationParam,
                     })
