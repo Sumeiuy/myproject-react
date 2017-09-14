@@ -2,101 +2,87 @@
  * @description 过程确认框，统一样式
  * @author zhangjunli
  * Usage:
- * <ProcessConfirm visible={bool} />
+ * <ProcessConfirm
+ *  visible={bool}
+ *  onOk={func}
+ *  modalKey={string}
+ * content={array}
+ * />
  * visible：必需的，用于控制弹框是否显示
- * onOk：有默认值（空函数），按钮的回调事件
+ * onOk：必须，按钮的回调事件
+ * modalKey： 必须，容器组件用来控制modal出现和隐藏的key
+ * content：必须，弹框的内容,是二维数组
  * okText：有默认值（确认），按钮的title
  * contentTitle： 有默认值（流程发送成功），弹框内容的title
  * title： 有默认值（系统提示），弹框的title
- * content：有默认值（空对象），弹框的内容的value
  */
 import React, { PropTypes, Component } from 'react';
 import { Modal } from 'antd';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
 
 import styles from './processConfirm.less';
 
 export default class ProcessConfirm extends Component {
   static propTypes = {
-    onOk: PropTypes.func,
     okText: PropTypes.string,
     contentTitle: PropTypes.string,
     title: PropTypes.string,
-    content: PropTypes.object,
+    content: PropTypes.array.isRequired,
+    onOk: PropTypes.func.isRequired,
     visible: PropTypes.bool.isRequired,
+    modalKey: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
-    onOk: () => {},
     okText: '确认',
     contentTitle: '流程发送成功!',
     title: '系统提示',
-    content: {},
-  }
-
-  constructor(props) {
-    super(props);
-    const { visible } = this.props;
-    this.state = {
-      visible,
-    };
-  }
-  componentWillReceiveProps(nextProps) {
-    const { visible } = nextProps;
-    this.setState({
-      visible,
-    });
   }
 
   @autobind
   handleOk() {
-    const { onOk } = this.props;
-    this.setState({
-      visible: false,
-    }, onOk());
+    const { onOk, modalKey } = this.props;
+    onOk(modalKey);
   }
 
   @autobind
-  handleCancel() {
-    this.setState({
-      visible: false,
-    });
+  modalContent() {
+    const { content } = this.props;
+    if (_.isEmpty(content)) {
+      return null;
+    }
+    const contentElemArray = content.map(
+      itemArray => (
+        <div className={styles.row}>
+          <div className={styles.key}>{itemArray[0]}</div>
+          <div className={styles.value}>{itemArray[1]}</div>
+        </div>
+      ),
+    );
+    return contentElemArray;
   }
 
   render() {
     const {
       title,
       contentTitle,
-      content,
       okText,
-    } = this.props;
-    const {
       visible,
-    } = this.state;
+    } = this.props;
 
     return (
       <Modal
         title={title}
         visible={visible}
         onOk={this.handleOk}
-        onCancel={this.handleCancel}
+        onCancel={this.handleOk}
         okText={okText}
         wrapClassName={styles.modalContainer}
       >
         <div className={styles.contentTitle}>{contentTitle}</div>
         <div className={styles.content}>
-          <div className={styles.row}>
-            <div className={styles.key}>待审批人</div>
-            <div className={styles.value}>{content.currentApprover}</div>
-          </div>
-          <div className={styles.row}>
-            <div className={styles.key}>待审意见</div>
-            <div className={styles.value}>{content.advice}</div>
-          </div>
-          <div className={styles.row}>
-            <div className={styles.key}>审送对象</div>
-            <div className={styles.value}>{content.nextApprover}</div>
-          </div>
+          {this.modalContent()}
         </div>
       </Modal>
     );

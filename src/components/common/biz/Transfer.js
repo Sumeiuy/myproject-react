@@ -17,8 +17,30 @@
  */
 import React, { PropTypes, Component } from 'react';
 import { Table } from 'antd';
+import { autobind } from 'core-decorators';
+import _ from 'lodash';
 
+import Icon from '../../common/Icon';
 import styles from './transfer.less';
+
+const actionColumns = (type, handleAction) => {
+  function handleClick(item) {
+    if (_.isFunction(handleAction)) {
+      handleAction(item);
+    }
+  }
+  return {
+    title: '操作',
+    key: 'action',
+    render: item => (
+      <Icon
+        type={type === 'subscribe' ? 'shanchu' : 'jia'}
+        className={styles.closeIcon}
+        onClick={() => { handleClick(item); }}
+      />
+    ),
+  };
+};
 
 export default class Transfer extends Component {
   static propTypes = {
@@ -26,6 +48,7 @@ export default class Transfer extends Component {
     unsubscribeTitle: PropTypes.string,
     subscribeData: PropTypes.array,
     unsubscribeData: PropTypes.array,
+    onChange: PropTypes.func,
     subscribeColumns: PropTypes.array.isRequired,
     unsubscribeColumns: PropTypes.array.isRequired,
   }
@@ -35,17 +58,73 @@ export default class Transfer extends Component {
     unsubscribeData: [],
     unsubscribeTitle: '退订服务',
     subscribeTitle: '当前订阅服务',
+    onChange: () => {},
+  }
+
+  constructor(props) {
+    super(props);
+    const {
+      subscribeData,
+      unsubscribeData,
+      subscribeColumns,
+      unsubscribeColumns,
+    } = this.props;
+
+    this.state = {
+      subscribelArray: subscribeData,
+      unsubcribeArray: unsubscribeData,
+      subscribeColumns: [
+        ...subscribeColumns,
+        actionColumns('subscribe', this.handleUnsubscribe),
+      ],
+      unsubscribeColumns: [
+        ...unsubscribeColumns,
+        actionColumns('unsubscribe', this.handleSubscribe),
+      ],
+    };
+  }
+
+  @autobind
+  handleUnsubscribe(selected) {
+    const { onChange } = this.props;
+    const { unsubcribeArray, subscribelArray } = this.state;
+    const newSubscribelArray = _.filter(
+      subscribelArray,
+      item => item.key !== selected.key,
+    );
+    const newUnsubcribeArray = [selected, ...unsubcribeArray];
+    this.setState({
+      subscribelArray: newSubscribelArray,
+      unsubcribeArray: newUnsubcribeArray,
+    }, onChange(newSubscribelArray, newUnsubcribeArray, selected));
+  }
+
+  @autobind
+  handleSubscribe(selected) {
+    const { onChange } = this.props;
+    const { subscribelArray, unsubcribeArray } = this.state;
+    const newUnsubcribeArray = _.filter(
+      unsubcribeArray,
+      item => item.key !== selected.key,
+    );
+    const newSubcribeArray = [selected, ...subscribelArray];
+    this.setState({
+      subscribelArray: newSubcribeArray,
+      unsubcribeArray: newUnsubcribeArray,
+    }, onChange(newSubcribeArray, newUnsubcribeArray, selected));
   }
 
   render() {
     const {
       subscribeTitle,
       unsubscribeTitle,
-      subscribeData,
-      unsubscribeData,
+    } = this.props;
+    const {
+      subscribelArray,
+      unsubcribeArray,
       subscribeColumns,
       unsubscribeColumns,
-    } = this.props;
+    } = this.state;
     const paginationProps = {
       defaultPageSize: 5,
       size: 'small',
@@ -58,7 +137,7 @@ export default class Transfer extends Component {
           <Table
             rowKey="subscribeId"
             columns={subscribeColumns}
-            dataSource={subscribeData}
+            dataSource={subscribelArray}
             pagination={paginationProps}
           />
         </div>
@@ -67,7 +146,7 @@ export default class Transfer extends Component {
           <Table
             rowKey="subscribeId"
             columns={unsubscribeColumns}
-            dataSource={unsubscribeData}
+            dataSource={unsubcribeArray}
             pagination={paginationProps}
           />
         </div>
