@@ -23,7 +23,7 @@ export default function seibelColumns(type) {
           <span className="subType">{record.subType || '无'}</span>
         </div>
         <div className="title">{record.title || '无'}</div>
-        <div className="address">拟稿人：{record.empName}({record.empId})，{`${record.level2OrgName || ''}${record.level3OrgName || ''}` || '无'}</div>
+        <div className="drafter">拟稿人：<span className="drafterName">{record.empName}({record.empId})</span>{`${record.level2OrgName || ''}${record.level3OrgName || ''}` || '无'}</div>
       </div>
       ),
   }, {
@@ -45,7 +45,7 @@ export default function seibelColumns(type) {
           <div className={statusClass}>{(!_.isEmpty(statusLabel) && statusLabel[0].label) || '无'}</div>
           <div className="date">{(record.createTime &&
             record.createTime.slice(0, 10)) || '无'}</div>
-          <div className="cust">客户:{record.custName || '无'}({record.custNumber || '无'})</div>
+          <div className="cust">客户：{record.custName || '无'}({record.custNumber || '无'})</div>
         </div>
       );
     },

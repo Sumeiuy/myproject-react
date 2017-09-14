@@ -14,10 +14,9 @@ import { constructPermissionPostBody } from '../../utils/helper';
 import SplitPanel from '../../components/common/splitPanel/SplitPanel';
 import PageHeader from '../../components/permission/PageHeader';
 import Detail from '../../components/permission/Detail';
-// import PermissionList from '../../components/common/commonList/commonList';
 import PermissionList from '../../components/common/biz/CommonList';
 import seibelColumns from '../../components/common/biz/seibelColumns';
-import Button from '../../components/common/Button';
+
 import styles from './home.less';
 
 const EMPTY_LIST = [];
@@ -35,16 +34,10 @@ const mapStateToProps = state => ({
   list: state.permission.list,
 });
 
-const getDataFunction = loading => query => ({
-  type: 'permission/getPermissionList',
-  payload: query || {},
-  loading,
-});
-
 const mapDispatchToProps = {
   replace: routerRedux.replace,
   getDetailMessage: fetchDataFunction(true, 'permission/getDetailMessage'),
-  getPermissionList: getDataFunction(true),
+  getPermissionList: fetchDataFunction(true, 'permission/getPermissionList'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -175,12 +168,6 @@ export default class Permission extends PureComponent {
     const rightPanel = (
       <Col span="24" className={styles.rightSection}>
         {this.getDetailComponent}
-        <Button
-          type="primary"
-          variant="variant"
-        >
-         完成
-        </Button>
       </Col>
     );
     return (
