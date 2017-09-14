@@ -1,5 +1,4 @@
 import React, { PropTypes, PureComponent } from 'react';
-import ReactDOM from 'react-dom';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import { Collapse } from 'antd';
@@ -33,18 +32,18 @@ export default class ModalCollapse extends PureComponent {
 
   componentDidMount() {
     const { setDefaultLeftGuide } = this.props;
-    const panelDOM = ReactDOM.findDOMNode(document.getElementById('panelHeader1')); // eslint-disable-line
     // 当再次打开时，panelDOM已经存在，可以直接设置默认leftGuide
-    if (panelDOM) {
+    if (this.panelHeader1) {
       setDefaultLeftGuide({ isCollapseAll: false });
     }
   }
 
   componentDidUpdate() {
     const { setDefaultLeftGuide, isFirstLoad } = this.props;
-    const panelDOM = ReactDOM.findDOMNode(document.getElementById('panelHeader1')); // eslint-disable-line
-    if (panelDOM && isFirstLoad) {
-      setDefaultLeftGuide({ isCollapseAll: false });
+    if (this.panelHeader1) {
+      if (isFirstLoad) {
+        setDefaultLeftGuide({ isCollapseAll: false });
+      }
     }
   }
 
@@ -72,6 +71,27 @@ export default class ModalCollapse extends PureComponent {
       default:
         return isPanel1Open;
     }
+  }
+
+  @autobind
+  getRefPanel(ref, index) {
+    if (ref) {
+      switch (index) {
+        case 0:
+          return this.panelHeader1 = ref;
+        case 1:
+          return this.panelHeader2 = ref;
+        case 2:
+          return this.panelHeader3 = ref;
+        case 3:
+          return this.panelHeader4 = ref;
+        case 4:
+          return this.panelHeader5 = ref;
+        default:
+          return this.panelHeader1 = ref;
+      }
+    }
+    return null;
   }
 
   @autobind
@@ -163,8 +183,9 @@ export default class ModalCollapse extends PureComponent {
     if (_.isEmpty(dataSource)) {
       return null;
     }
+
     let count = 0;
-    return _.map(dataSource, (item) => {
+    return _.map(dataSource, (item, index) => {
       if (item.handlerType === 'Mission') {
         count++;
         return (
@@ -193,6 +214,7 @@ export default class ModalCollapse extends PureComponent {
             key={count}
             className={styles.panelHeader}
             id={`panelHeader${count}`}
+            ref={ref => this.getRefPanel(ref, index)}
           >
             <div className={styles.serviceContainer} id="serviceContainer">
               <div className={styles.leftSection}>
