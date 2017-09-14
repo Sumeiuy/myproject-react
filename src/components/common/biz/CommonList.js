@@ -1,3 +1,8 @@
+/**
+ * @file seibelColumns.js
+ *  公共列表
+ * @author honggaunqging
+ */
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import { Table } from 'antd';
