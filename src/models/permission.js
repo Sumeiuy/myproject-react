@@ -48,8 +48,8 @@ export default {
       });
     },
     * getPermissionList({ payload }, { call, put }) {
-      const { page } = payload;
-      if (!_.isEmpty(page)) {
+      const { pageNum, pageSize } = payload;
+      if (!_.isEmpty(pageNum && pageSize)) {
         const response = yield call(api.getPermissionList, payload);
         yield put({
           type: 'getPermissionListSuccess',
