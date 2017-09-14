@@ -225,6 +225,7 @@ export default class Search extends PureComponent {
     data.forEach((item, index) => {
       recommendList.push(
         <a
+          key={item.id}
           className="item"
           onClick={() => this.handleOpenTab({
             source: 'tag',
@@ -238,7 +239,7 @@ export default class Search extends PureComponent {
           {item.labelNameVal}
         </a>);
       if (index !== data.length - 1) {
-        recommendList.push(<i className={styles.bd} />);
+        recommendList.push(<i key={item.labelNameVal} className={styles.bd} />);
       }
     });
     return recommendList;
@@ -312,7 +313,7 @@ export default class Search extends PureComponent {
     // 搜索 search
     // 标签 tag
     return (
-      <Option key={item.category} text={item.content}>
+      <Option key={item.id} text={item.content}>
         <a
           onClick={() => this.handleOpenTab({
             source: 'association',
@@ -332,7 +333,7 @@ export default class Search extends PureComponent {
     // debugger;
     const options = dataSource.map(group => (
       <OptGroup
-        key={group.id}
+        key={group.title}
         label={this.renderTitle(group.title)}
       >
         {group.children.map(item => (
@@ -340,7 +341,7 @@ export default class Search extends PureComponent {
             <Option key={item.id} text={item.labelNameVal} disabled>
               {item.labelNameVal}
             </Option> :
-            <Option key={item.labelNameVal} text={item.labelNameVal} >
+            <Option key={item.id} text={item.labelNameVal} >
               <a
                 onClick={() => this.handleOpenTab({
                   source: 'search',
