@@ -6,13 +6,14 @@ import InfoTitle from '../common/InfoTitle';
 import InputTextComponent from '../common/inputtextcomponent';
 import TextareaComponent from '../common/textareacomponent';
 import SearchModal from '../common/biz/SearchModal';
+import DrapDownSelect from '../common/drapdownselect';
 import columns from './PermissionColumns';
 
 export default class BaseInfoModify extends PureComponent {
   static propTypes = {
     head: PropTypes.string.isRequired,
     serverInfo: PropTypes.array,
-    baseInfo: PropTypes.array,
+    // baseInfo: PropTypes.array,
   }
 
   static defaultProps = {
@@ -41,6 +42,18 @@ export default class BaseInfoModify extends PureComponent {
   searchInfo(value) {
     console.log(value);
   }
+
+  @autobind
+  selectItem(item) {
+    // 选中下拉对象中对应的某个对象
+    console.log('向上传递选中的对象', item);
+  }
+
+  @autobind
+  toSearchInfo(value) {
+    console.log('暴露的查询方法，向上传递value', value);
+  }
+
   render() {
     return (
       <div className={style.baseInfo}>
@@ -62,10 +75,12 @@ export default class BaseInfoModify extends PureComponent {
             <i className={style.isRequired}>*</i>客户：
           </span>
           <div className={style.inputComponentContent}>
-            <InputTextComponent
-              value={this.state.title}
-              placeholder="请输入标题"
-              emitEvent={this.updateValue}
+            <DrapDownSelect
+              value="全部"
+              placeholder="请输入姓名或工号"
+              showObjKey="custName"
+              emitSelectItem={this.selectItem}
+              emitToSearch={this.toSearchInfo}
             />
           </div>
         </div>
@@ -76,7 +91,7 @@ export default class BaseInfoModify extends PureComponent {
           <div className={style.inputComponentContent}>
             <SearchModal
               dataSource={this.props.serverInfo}
-              placeholder="什么也咩有"
+              placeholder=""
               columns={columns}
               title="选择下一审批人员"
               onSearch={this.searchInfo}

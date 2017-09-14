@@ -1,53 +1,45 @@
 /**
- * @file premission/Home.js
- *  权限申请
- * @author honggaunqging
+ * @description 佣金调整首页
+ * @author sunweibin
  */
 
 import React, { PureComponent, PropTypes } from 'react';
-import { Col } from 'antd';
-import { autobind } from 'core-decorators';
-import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
+import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import { withRouter, routerRedux } from 'dva/router';
 import SplitPanel from '../../components/common/splitPanel/SplitPanel';
-import PageHeader from '../../components/permission/PageHeader';
-import Detail from '../../components/permission/Detail';
-import PermissionList from '../../components/common/biz/CommonList';
-import seibelColumns from '../../components/common/biz/seibelColumns';
-
-import styles from './home.less';
+import Detail from '../../components/feedback/Detail';
+import FeedbackList from '../../components/feedback/FeedbackList';
+import FeedbackHeader from '../../components/feedback/FeedbackHeader';
+import { constructPostBody } from '../../utils/helper';
+import './Home.less';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
-
-const fetchDataFunction = (globalLoading, type) => query => ({
-  type,
-  payload: query || {},
-  loading: globalLoading,
+const mapStateToProps = state => ({
+  list: state.feedback.list,
 });
 
-const mapStateToProps = state => ({
-  detailMessage: state.permission.detailMessage,
-  list: state.permission.list,
+const getDataFunction = loading => query => ({
+  type: 'feedback/getFeedbackList',
+  payload: query || {},
+  loading,
 });
 
 const mapDispatchToProps = {
   replace: routerRedux.replace,
-  getDetailMessage: fetchDataFunction(true, 'permission/getDetailMessage'),
-  getPermissionList: fetchDataFunction(true, 'permission/getPermissionList'),
+  getFeedbackList: getDataFunction(true),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
-export default class Permission extends PureComponent {
+export default class CommissionHome extends PureComponent {
   static propTypes = {
     list: PropTypes.object.isRequired,
-    getPermissionList: PropTypes.func.isRequired,
+    getFeedbackList: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
-    detailMessage: PropTypes.object.isRequired,
-    getDetailMessage: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
   }
 
@@ -63,34 +55,29 @@ export default class Permission extends PureComponent {
   }
 
   componentWillMount() {
-    this.props.getDetailMessage({ code: 111 });
-    const { getPermissionList, location: { query, query: {
-      pageNum,
-      pageSize,
+    const { getFeedbackList, location: { query, query: {
+      curPageNum,
+      curPageSize,
      } } } = this.props;
     // 默认筛选条件
-    getPermissionList({
-      query,
-      pageNum: pageNum || 1,
-      pageSize: pageSize || 10,
-    });
+    getFeedbackList(constructPostBody(query, curPageNum || 1, curPageSize || 10));
   }
 
   componentWillReceiveProps(nextProps) {
     const { location: { query: nextQuery = EMPTY_OBJECT } } = nextProps;
-    const { location: { query: prevQuery = EMPTY_OBJECT }, getPermissionList } = this.props;
-    const { isResetPageNum = 'N', pageNum, pageSize } = nextQuery;
+    const { location: { query: prevQuery = EMPTY_OBJECT }, getFeedbackList } = this.props;
+    const { isResetPageNum = 'N', curPageNum, curPageSize } = nextQuery;
 
     // 深比较值是否相等
     // url发生变化，检测是否改变了筛选条件
     if (!_.isEqual(prevQuery, nextQuery)) {
       if (!this.diffObject(prevQuery, nextQuery)) {
         // 只监测筛选条件是否变化
-        getPermissionList({
+        getFeedbackList(constructPostBody(
           nextQuery,
-          pageNum: isResetPageNum === 'Y' ? 1 : pageNum,
-          pageSize: isResetPageNum === 'Y' ? 10 : pageSize,
-        });
+          isResetPageNum === 'Y' ? 1 : curPageNum,
+          isResetPageNum === 'Y' ? 10 : curPageSize,
+        ));
       }
     }
   }
@@ -120,13 +107,7 @@ export default class Permission extends PureComponent {
     }
   }
 
-  get getDetailComponent() {
-    if (_.isEmpty(this.props.detailMessage)) {
-      return null;
-    }
-    return <Detail {...this.props.detailMessage} />;
-  }
-    /**
+  /**
    * 检查部分属性是否相同
    * @param {*} prevQuery 前一次query
    * @param {*} nextQuery 后一次query
@@ -140,50 +121,46 @@ export default class Permission extends PureComponent {
     return true;
   }
 
-  /**
-   * 构造表格的列数据
-   * 传参为icon的type
-   */
   @autobind
-  constructTableColumns() {
-    return seibelColumns('save_blue');
+  searchResult(isEmpty) {
+    this.setState({
+      isEmpty,
+    });
   }
 
   render() {
     const { list, location, replace } = this.props;
+    // 此处需要提供一个方法给返回的接口查询设置是否查询到数据
     const { isEmpty } = this.state;
     const topPanel = (
-      <PageHeader
+      <FeedbackHeader
         location={location}
         replace={replace}
       />
     );
-
     const leftPanel = (
-      <PermissionList
+      <FeedbackList
         list={list}
         replace={replace}
         location={location}
-        columns={this.constructTableColumns()}
       />
     );
 
     const rightPanel = (
-      <Col span="24" className={styles.rightSection}>
-        {this.getDetailComponent}
-      </Col>
+      <Detail
+        location={location}
+      />
     );
     return (
-      <div className={styles.premissionbox}>
+      <div className="feedbackbox">
         <SplitPanel
           isEmpty={isEmpty}
           topPanel={topPanel}
           leftPanel={leftPanel}
           rightPanel={rightPanel}
-          leftListClassName="premissionList"
+          leftListClassName="feedbackList"
         />
       </div>
     );
   }
 }
-
