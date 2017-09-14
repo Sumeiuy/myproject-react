@@ -18,15 +18,16 @@
  * onOk：必须，按钮的回调事件
  * onCancel：必须，按钮的回调事件
  * modalKey: 必须，容器组件中，控制modal是否出现的key
- * idKey: 必须，用于table设置选中的idkey
  * dataSource： 有默认值（空数组），table的内容
  * placeholder：有默认值（空字符串），用于搜索框无内容时的提示文字
  * okText：有默认值（确定），按钮的title
  * cancelText：有默认值（取消），按钮的title
+ * idKey: 有默认值（空字符串，无选中），数据源中对象唯一的标识符，table设置选中用
  */
 import React, { PropTypes, Component } from 'react';
 import { Table, Modal, Input } from 'antd';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
 
 import styles from './tableDialog.less';
 
@@ -38,6 +39,7 @@ export default class TableDialog extends Component {
     cancelText: PropTypes.string,
     dataSource: PropTypes.array,
     placeholder: PropTypes.string,
+    idKey: PropTypes.string,
     columns: PropTypes.array.isRequired,
     title: PropTypes.string.isRequired,
     onSearch: PropTypes.func.isRequired,
@@ -45,7 +47,6 @@ export default class TableDialog extends Component {
     onOk: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired,
     modalKey: PropTypes.string.isRequired,
-    idKey: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -53,6 +54,7 @@ export default class TableDialog extends Component {
     placeholder: '',
     okText: '确定',
     cancelText: '取消',
+    idKey: '',
   }
 
   constructor(props) {
@@ -79,13 +81,13 @@ export default class TableDialog extends Component {
     });
   }
 
-  defaultSelected(dataSource, idKey) {
+  defaultSelected(dataSource, defaultIdKey) {
     const defaultSelected = [];
     const defaultSelectedRow = [];
-    if (dataSource.length > 0) {
+    if (!_.isEmpty(defaultIdKey) && dataSource.length > 0) {
       const firstItem = dataSource[0];
       defaultSelectedRow.push(firstItem);
-      defaultSelected.push(firstItem[idKey]);
+      defaultSelected.push(firstItem[defaultIdKey]);
     }
     return {
       selectedRowKeys: defaultSelected,
