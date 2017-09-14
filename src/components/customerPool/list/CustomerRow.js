@@ -509,8 +509,8 @@ export default class CustomerRow extends PureComponent {
     const lastestProfitRate = Number(this.getLastestData(monthlyProfits).assetProfitRate);
     const matchedWord = this.matchWord(q, listItem);
     const rskLev = _.trim(listItem.riskLvl);
-    const newIdsArr = _.map(selectedIds, v => (v.id));
-    const isChecked = _.includes(newIdsArr, listItem.custId) || isAllSelect || checked;
+    const str = `${listItem.custId}.${listItem.name}`;
+    const isChecked = _.includes(selectedIds, str) || isAllSelect || checked;
     // console.log('listItem', checked);
 
     return (

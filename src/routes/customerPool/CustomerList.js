@@ -20,8 +20,8 @@ import CustomerLists from '../../components/customerPool/list/CustomerLists';
 
 import styles from './customerlist.less';
 
-const CUST_MANAGER = 1; // 客户经理
-const ORG = 3; // 组织机构
+const CUST_MANAGER = '1'; // 客户经理
+const ORG = '3'; // 组织机构
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const CUR_PAGE = 1; // 默认当前页
@@ -616,6 +616,7 @@ export default class CustomerList extends PureComponent {
           source={source}
           entertype={ENTER_TYPE[source]}
           location={location}
+          replace={replace}
           push={push}
           custList={custList}
           q={decodeURIComponent(q)}
