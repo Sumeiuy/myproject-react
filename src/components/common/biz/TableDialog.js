@@ -22,10 +22,12 @@
  * placeholder：有默认值（空字符串），用于搜索框无内容时的提示文字
  * okText：有默认值（确定），按钮的title
  * cancelText：有默认值（取消），按钮的title
+ * idKey: 有默认值（空字符串，无选中），数据源中对象唯一的标识符，table设置选中用
  */
 import React, { PropTypes, Component } from 'react';
 import { Table, Modal, Input } from 'antd';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
 
 import styles from './tableDialog.less';
 
@@ -37,6 +39,7 @@ export default class TableDialog extends Component {
     cancelText: PropTypes.string,
     dataSource: PropTypes.array,
     placeholder: PropTypes.string,
+    idKey: PropTypes.string,
     columns: PropTypes.array.isRequired,
     title: PropTypes.string.isRequired,
     onSearch: PropTypes.func.isRequired,
@@ -51,19 +54,20 @@ export default class TableDialog extends Component {
     placeholder: '',
     okText: '确定',
     cancelText: '取消',
+    idKey: '',
   }
 
   constructor(props) {
     super(props);
-    const { dataSource } = this.props;
-    const defaultConfig = this.defaultSelected(dataSource);
+    const { dataSource, idKey } = this.props;
+    const defaultConfig = this.defaultSelected(dataSource, idKey);
     this.state = {
       ...defaultConfig,
     };
   }
   componentWillReceiveProps(nextProps) {
-    const { dataSource } = nextProps;
-    const defaultConfig = this.defaultSelected(dataSource);
+    const { dataSource, idKey } = nextProps;
+    const defaultConfig = this.defaultSelected(dataSource, idKey);
     this.setState({
       ...defaultConfig,
     });
@@ -77,13 +81,13 @@ export default class TableDialog extends Component {
     });
   }
 
-  defaultSelected(dataSource) {
+  defaultSelected(dataSource, defaultIdKey) {
     const defaultSelected = [];
     const defaultSelectedRow = [];
-    if (dataSource.length > 0) {
+    if (!_.isEmpty(defaultIdKey) && dataSource.length > 0) {
       const firstItem = dataSource[0];
       defaultSelectedRow.push(firstItem);
-      defaultSelected.push(firstItem.id);
+      defaultSelected.push(firstItem[defaultIdKey]);
     }
     return {
       selectedRowKeys: defaultSelected,
