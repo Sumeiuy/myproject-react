@@ -5,12 +5,8 @@
  */
 
 import React from 'react';
-import classnames from 'classnames';
-import _ from 'lodash';
 import Icon from '../Icon';
-import { permissionOptions } from '../../../config';
-
-const STATUS_MAP = permissionOptions.stateOptions;
+import Tag from '../tag';
 
 export default function seibelColumns(type) {
   const columns = [{
@@ -28,27 +24,14 @@ export default function seibelColumns(type) {
       ),
   }, {
     width: '40%',
-    render: (text, record) => {
-      // 当前行记录
-      let statusClass;
-      let statusLabel;
-      if (record.status) {
-        statusClass = classnames({
-          'state-complete': record.status === STATUS_MAP[0].value,
-          'state-resolve': record.status === STATUS_MAP[1].value,
-          'state-close': record.status === STATUS_MAP[2].value,
-        });
-        statusLabel = STATUS_MAP.filter(item => item.value === record.status);
-      }
-      return (
-        <div className="rightSection">
-          <div className={statusClass}>{(!_.isEmpty(statusLabel) && statusLabel[0].label) || '无'}</div>
-          <div className="date">{(record.createTime &&
-            record.createTime.slice(0, 10)) || '无'}</div>
-          <div className="cust">客户：{record.custName || '无'}({record.custNumber || '无'})</div>
-        </div>
-      );
-    },
+    render: (text, record) => (
+      <div className="rightSection">
+        <Tag type={record.status} />
+        <div className="date">{(record.createTime &&
+          record.createTime.slice(0, 10)) || '无'}</div>
+        <div className="cust">客户：{record.custName || '无'}({record.custNumber || '无'})</div>
+      </div>
+    ),
   }];
 
   return columns;
