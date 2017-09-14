@@ -6,6 +6,7 @@ import React, { PureComponent } from 'react';
 import { Button } from 'antd';
 import { autobind } from 'core-decorators';
 
+import Icon from '../../components/common/Icon';
 import { VisibleRangeAll } from './VisibleRange';
 import CreateBoardModal from '../../components/modals/CreateBoardModal';
 import BackConfirmModal from '../../components/modals/BackConfirmModal';
@@ -22,6 +23,7 @@ import {
   unsubcribeData,
   productColumns,
 } from './MockTableData';
+import styles from './home.less';
 
 const visibleRange = VisibleRangeAll;
 
@@ -95,6 +97,23 @@ export default class TemplModal extends PureComponent {
     console.log(subscribelArray, unsubcribeArray, selected);
   }
 
+  @autobind
+  renderSelectedElem(selected, removeFunc) {
+    return (
+      <div className={styles.result}>
+        <div className={styles.nameLabel}>{selected.name}</div>
+        <div className={styles.custIdLabel}>{selected.id}</div>
+        <div className={styles.iconDiv}>
+          <Icon
+            type="close"
+            className={styles.closeIcon}
+            onClick={removeFunc}
+          />
+        </div>
+      </div>
+    );
+  }
+
   render() {
     const {
       createBoardModal,
@@ -149,6 +168,8 @@ export default class TemplModal extends PureComponent {
       title: '选择下一审批人员',
       placeholder: '员工号/员工姓名',
       onSearch: this.handleSearch,
+      renderSelected: this.renderSelectedElem,
+      idKey: 'id',
     };
 
     const confirmProps = {
