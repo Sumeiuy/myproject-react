@@ -262,9 +262,9 @@ export default class CreateServiceRecord extends PureComponent {
               onChange={this.handleServiceType}
             >
               {
-                dict.serveType.map(
-                  obj => (<Option key={obj.key} value={obj.key}>{obj.value}</Option>)
-                )
+                dict.serveType.map(obj => (
+                  <Option key={obj.key} value={obj.key}>{obj.value}</Option>
+                ))
               }
             </Select>
           </Col>
@@ -312,9 +312,9 @@ export default class CreateServiceRecord extends PureComponent {
               onChange={this.handleWorkResult}
             >
               {
-                dict.workResult.map(
-                  obj => (<Option key={obj.key} value={obj.key}>{obj.value}</Option>)
-                )
+                dict.workResult.map(obj => (
+                  <Option key={obj.key} value={obj.key}>{obj.value}</Option>
+                ))
               }
             </Select>
           </Col>
