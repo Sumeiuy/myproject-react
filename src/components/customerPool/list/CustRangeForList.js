@@ -77,6 +77,7 @@ export default class CustRangeForList extends PureComponent {
       selectValue,
       cycle,
     } = this.props;
+    console.log('selectValue>>>', selectValue);
     let custRangeEle = null;
     let timeEle = null;
     const { key } = this.state;

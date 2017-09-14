@@ -75,7 +75,7 @@ export default class Filter extends PureComponent {
             /> : null
         }
         {
-          source === 'business' ?
+          _.includes(['numOfCustOpened', 'business'], source) ?
             <MultiFilter
               value={unrightType || ''}
               filterLabel="可开通业务"
