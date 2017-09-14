@@ -6,7 +6,7 @@
 
 import React, { PureComponent, PropTypes } from 'react';
 // import { withRouter } from 'dva/router';
-import { Checkbox } from 'antd';
+import { Checkbox, message } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
@@ -238,7 +238,6 @@ export default class CustomerRow extends PureComponent {
         });
       }
     }
-
     if (nextProps.isAllSelect !== this.props.isAllSelect) {
       this.setState({
         checked: nextProps.isAllSelect,
@@ -475,7 +474,6 @@ export default class CustomerRow extends PureComponent {
       isShowModal: false,
     });
   }
-
   @autobind
   renderAgeOrOrgName() {
     const { listItem } = this.props;
