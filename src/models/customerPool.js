@@ -47,9 +47,10 @@ export default {
     resultgroupId: '',
     incomeData: [], // 净收入
     custContactData: {}, // 客户联系方式
-    serviceRecordData: [], // 服务记录
+    serviceRecordData: {}, // 服务记录
     isAddServeRecord: false,
     addServeRecordSuccess: false, // 添加服务记录成功的标记
+    isFollow: false,
   },
   subscriptions: {
     setup({ dispatch }) {
@@ -266,8 +267,17 @@ export default {
     * getServiceRecord({ payload }, { call, put }) {
       const response = yield call(api.queryRecentServiceRecord, payload);
       const { resultData } = response;
+      const { custId } = payload;
       yield put({
         type: 'getServiceRecordSuccess',
+        payload: { resultData, custId },
+      });
+    },
+    * getFollowCust({ payload }, { call, put }) {
+      const response = yield call(api.queryFollowCust, payload);
+      const { resultData } = response;
+      yield put({
+        type: 'getFollowCustSuccess',
         payload: resultData,
       });
     },
@@ -498,6 +508,7 @@ export default {
       return {
         ...state,
         resultgroupId: resultData.groupId,
+        cusGroupSaveResult: resultData.result,
       };
     },
     // 自建任务提交
@@ -528,10 +539,12 @@ export default {
     },
     // 获取服务记录成功
     getServiceRecordSuccess(state, action) {
-      const { payload } = action;
+      const { payload: { resultData, custId } } = action;
       return {
         ...state,
-        serviceRecordData: payload,
+        serviceRecordData: {
+          [custId]: resultData,
+        },
       };
     },
     sendAddServeRecordReq(state) {
@@ -546,6 +559,15 @@ export default {
         ...state,
         addServeRecordSuccess: payload.resultData === 'success',
         isAddServeRecord: false,
+      };
+    },
+    // 关注成功
+    getFollowCustSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        isFollow: payload.result === 'success',
+        // addFollow: false,
       };
     },
   },
