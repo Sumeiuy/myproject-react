@@ -6,6 +6,7 @@ import { Collapse } from 'antd';
 import classnames from 'classnames';
 import moment from 'moment';
 import styles from './modalCollapse.less';
+// import emptyImg from '../../../../static/images/empty.png';
 
 const EMPTY_LIST = [];
 const Panel = Collapse.Panel;
@@ -318,7 +319,14 @@ export default class ModalCollapse extends PureComponent {
      } = this.props;
 
     if (_.isEmpty(data)) {
-      return null;
+      return (
+        <div>
+          <div className={styles.nodata}>
+            <div className={styles.imgData} />
+          </div>
+          <div className={styles.noInfo}>没有相关服务记录</div>
+        </div>
+      );
     }
 
     // 左边服务时间字段

@@ -51,30 +51,54 @@ export default class PerformanceIndicators extends PureComponent {
     super(props);
     this.state = {
       key: KEYCOUNT,
+      begin: '',
+      end: '',
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    const { custRange: preCustRange } = this.props;
-    const { custRange: nextCustRange } = nextProps;
+    const { custRange: preCustRange, selectValue: prevSelectValue } = this.props;
+    const { custRange: nextCustRange, selectValue: nextSelectValue } = nextProps;
     if (!_.isEqual(preCustRange, nextCustRange)) {
       this.setState({
         key: ++KEYCOUNT,
       });
     }
+    if (prevSelectValue !== nextSelectValue) {
+      const { begin, end } = this.getBeginAndEndTime(nextSelectValue);
+      this.setState({
+        begin,
+        end,
+      });
+    }
+  }
+
+  @autobind
+  getBeginAndEndTime(value) {
+    const { historyTime, customerPoolTimeSelect } = optionsMap;
+    const currentSelect = _.find(historyTime, itemData =>
+      itemData.name === _.find(customerPoolTimeSelect, item =>
+        item.key === value).name) || {};
+    const nowDuration = getDurationString(currentSelect.key);
+    const begin = nowDuration.begin;
+    const end = nowDuration.end;
+    return {
+      begin,
+      end,
+    };
   }
 
   @autobind
   handleChange(value) {
-    const { historyTime, customerPoolTimeSelect } = optionsMap;
-    const currentSelect = _.find(historyTime, itemData =>
-      itemData.name === _.find(customerPoolTimeSelect, item => item.key === value).name) || {};
-    const nowDuration = getDurationString(currentSelect.key);
-    const begin = nowDuration.begin;
-    const end = nowDuration.end;
+    const { begin, end } = this.getBeginAndEndTime(value);
     const { updateQueryState } = this.props;
     updateQueryState({
       cycleSelect: value,
+      begin,
+      end,
+    });
+    // 记录下当前选中的timeSelect
+    this.setState({
       begin,
       end,
     });
@@ -145,7 +169,7 @@ export default class PerformanceIndicators extends PureComponent {
       szHkCust,
       optCust,
     };
-    const { key } = this.state;
+    const { key, begin, end } = this.state;
     return (
       <div className={styles.indexBox}>
         <div>
@@ -160,6 +184,8 @@ export default class PerformanceIndicators extends PureComponent {
                     location={location}
                     replace={replace}
                     updateQueryState={updateQueryState}
+                    beginTime={begin}
+                    endTime={end}
                     collectData={collectCustRange}
                     expandAll={expandAll}
                     key={`selectTree${key}`}

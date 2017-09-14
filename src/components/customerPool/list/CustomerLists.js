@@ -487,7 +487,6 @@ export default class CustomerLists extends PureComponent {
           addServeRecordSuccess={addServeRecordSuccess}
           isAddServeRecord={isAddServeRecord}
         />
-
         {
           isShowContactModal ?
             <CreateContactModal
