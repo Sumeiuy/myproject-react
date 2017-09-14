@@ -34,7 +34,7 @@ const actionColumns = (type, handleAction) => {
     key: 'action',
     render: item => (
       <Icon
-        type={type === 'subscribe' ? 'shanchu' : 'jia'}
+        type={type === 'subscribe' ? 'shanchu' : 'new'}
         className={styles.closeIcon}
         onClick={() => { handleClick(item); }}
       />
