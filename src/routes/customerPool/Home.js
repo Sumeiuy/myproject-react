@@ -449,18 +449,18 @@ export default class Home extends PureComponent {
       position: { orgId: posOrgId },
     } = props;
     // 判断是否存在首页绩效指标查看权限
-    const respIdOfPosition = _.findIndex(empRespList, item => (item.respId === HTSC_RESPID));
+    const respIdOfPosition = _.find(empRespList, item => (item.respId === HTSC_RESPID));
     const myCustomer = {
       id: MAIN_MAGEGER_ID,
       name: '我的客户',
     };
     // 无‘HTSC 首页指标查询’职责的普通用户，取值 '我的客户'
-    if (respIdOfPosition < 0) {
+    if (!respIdOfPosition) {
       return [myCustomer];
     }
     // 保证全局的职位存在的情况下取职位, 取不到时从empInfo中取值
     const occDivnNum = empInfo.occDivnNum || '';
-    // const fspJobOrgId = 'ZZ001041020';
+    // let fspJobOrgId = 'ZZ001041048';
     let fspJobOrgId = !_.isEmpty(window.forReactPosition) ?
       window.forReactPosition.orgId :
       occDivnNum;
@@ -475,23 +475,26 @@ export default class Home extends PureComponent {
       return custRange;
     }
     // fspJobOrgId 在机构树中所处的分公司位置
-    const orgIdIndexInCustRange = _.findIndex(custRange, item => item.id === fspJobOrgId);
-    if (orgIdIndexInCustRange > -1) {
+    const groupInCustRange = _.find(custRange, item => item.id === fspJobOrgId);
+    if (groupInCustRange) {
       this.setState({
         expandAll: true,
       });
-      return [custRange[orgIdIndexInCustRange], myCustomer];
+      return [groupInCustRange, myCustomer];
     }
     // fspJobOrgId 在机构树中所处的营业部位置
+    let department;
     _(custRange).forEach((obj) => {
       if (obj.children && !_.isEmpty(obj.children)) {
-        const tmpArr = _.filter(obj.children, v => v.id === fspJobOrgId);
-        if (!_.isEmpty(tmpArr)) {
-          return [...tmpArr, myCustomer];
+        const targetValue = _.find(obj.children, o => o.id === fspJobOrgId);
+        if (targetValue) {
+          department = [targetValue, myCustomer];
         }
       }
-      return true;
     });
+    if (department) {
+      return department;
+    }
     // 有权限，但是用户信息中获取到的occDivnNum不在empOrg（组织机构树）中，显示用户信息中的数据
     return [{
       id: empInfo.occDivnNum,

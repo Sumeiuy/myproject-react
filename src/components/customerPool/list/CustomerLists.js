@@ -262,7 +262,7 @@ export default class CustomerLists extends PureComponent {
         onClick={() => { this.handleClick('/customerPool/customerGroup', '新建分组', 'FSP_GROUP'); }}
       >
         用户分组
-        </button>);
+      </button>);
     }
     return null;
   }
@@ -326,6 +326,7 @@ export default class CustomerLists extends PureComponent {
     const isShow = (!_.isEmpty(selectIdsArr) || isAllSelectBool) ? 'block' : 'none';
     // 已选中的条数：选择全选显示所有数据量，非全选显示选中的条数
     const selectCount = isAllSelectBool ? page.total : selectIdsArr.length;
+    console.log('current: ', current);
     return (
       <div className="list-box">
         <div className={styles.selectAllBox}>

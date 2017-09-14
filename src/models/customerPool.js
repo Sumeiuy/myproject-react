@@ -414,7 +414,7 @@ export default {
       }
       const custPage = {
         pageSize: custListVO.pageSize,
-        pageNo: Number(custListVO.curPageNum) + 1,
+        pageNo: Number(custListVO.curPageNum),
         total: custListVO.totalCount,
       };
       return {
