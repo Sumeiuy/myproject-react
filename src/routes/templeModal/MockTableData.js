@@ -3,11 +3,11 @@
  * @description 组件的mock数据
  * @author zhangjunli
  */
-export const confirmData = {
-  currentApprover: '002332',
-  advice: '通过',
-  nextApprover: '002332',
-};
+export const confirmData = [
+  ['待审批人', '002332'],
+  ['待审意见', '通过通过通过通过通过通过通过通过过通过通过通过通过通过通过过通过通过通过'],
+  ['审送对象', '002332'],
+];
 
 export const employeeData = [{
   id: 'HTSC001234',
