@@ -12,6 +12,7 @@ import _ from 'lodash';
 import { Modal, Button, Table } from 'antd';
 import Icon from '../../common/Icon';
 import Collapse from './ModalCollapse';
+
 import styles from './createContactModal.less';
 import Phone from '../../../../static/images/phone.png';
 
