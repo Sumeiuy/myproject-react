@@ -11,6 +11,7 @@ import { Pagination, Checkbox } from 'antd';
 
 import CustomerRow from './CustomerRow';
 import CreateServiceRecord from './CreateServiceRecord';
+import CreateContactModal from './CreateContactModal';
 
 import { fspContainer } from '../../../config';
 import { fspGlobal, helper } from '../../../utils';
@@ -20,6 +21,8 @@ import NoData from '../common/NoData';
 import styles from './customerLists.less';
 
 const EMPTY_ARRAY = [];
+const EMPTY_OBJECT = {};
+let modalKeyCount = 0;
 
 export default class CustomerLists extends PureComponent {
   static propTypes = {
@@ -46,7 +49,7 @@ export default class CustomerLists extends PureComponent {
     getCustContact: PropTypes.func.isRequired,
     getServiceRecord: PropTypes.func.isRequired,
     custContactData: PropTypes.object.isRequired,
-    serviceRecordData: PropTypes.array.isRequired,
+    serviceRecordData: PropTypes.object.isRequired,
     addServeRecord: PropTypes.func.isRequired,
     addServeRecordSuccess: PropTypes.bool.isRequired,
     isAddServeRecord: PropTypes.bool.isRequired,
@@ -66,6 +69,9 @@ export default class CustomerLists extends PureComponent {
     this.state = {
       taskAndGroupLeftPos: '0',
       showCreateServiceRecord: false,
+      currentCustId: '',
+      isShowContactModal: false,
+      modalKey: `modalKeyCount${modalKeyCount}`,
       // 判断是否是主服务经理
       isSms: false,
     };
@@ -78,6 +84,31 @@ export default class CustomerLists extends PureComponent {
     if (sidebarHideBtn && sidebarShowBtn) {
       sidebarHideBtn.addEventListener('click', this.updateLeftPos);
       sidebarShowBtn.addEventListener('click', this.updateLeftPos);
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const {
+      custContactData: prevCustContactData = EMPTY_OBJECT,
+      serviceRecordData: prevServiceRecordData = EMPTY_ARRAY,
+     } = this.props;
+    const {
+      custContactData: nextCustContactData = EMPTY_OBJECT,
+      serviceRecordData: nextServiceRecordData = EMPTY_ARRAY,
+     } = nextProps;
+
+    const { currentCustId, isShowContactModal } = this.state;
+    const prevContact = prevCustContactData[currentCustId] || EMPTY_OBJECT;
+    const nextContact = nextCustContactData[currentCustId] || EMPTY_OBJECT;
+    const prevRecord = prevServiceRecordData[currentCustId] || EMPTY_OBJECT;
+    const nextRecord = nextServiceRecordData[currentCustId] || EMPTY_OBJECT;
+    if (prevContact !== nextContact || prevRecord !== nextRecord) {
+      if (!isShowContactModal) {
+        this.setState({
+          isShowContactModal: true,
+          modalKey: `modalKeyCount${modalKeyCount++}`,
+        });
+      }
     }
   }
 
@@ -236,9 +267,48 @@ export default class CustomerLists extends PureComponent {
   }
 
   @autobind
+  showCreateContact({ custId, custType }) {
+    const { getCustContact, getServiceRecord, custContactData } = this.props;
+    this.setState({
+      currentCustId: custId,
+      custType,
+    }, () => {
+      // debugger;
+      if (_.isEmpty(custContactData[custId])) {
+        getCustContact({
+          custId,
+        });
+        // 请求服务记录不需要作缓存
+        getServiceRecord({
+          custId,
+        });
+      } else {
+        this.setState({
+          isShowContactModal: true,
+          modalKey: `modalKeyCount${modalKeyCount++}`,
+        });
+      }
+      // 请求服务记录不需要作缓存
+      // getServiceRecord({
+      //   custId,
+      // });
+    });
+  }
+
+  @autobind
   hideCreateServiceRecord() {
     this.setState({
       showCreateServiceRecord: false,
+    });
+  }
+
+  /**
+ * 回调，关闭modal打开state
+ */
+  @autobind
+  resetModalState() {
+    this.setState({
+      isShowContactModal: false,
     });
   }
 
@@ -272,7 +342,12 @@ export default class CustomerLists extends PureComponent {
       taskAndGroupLeftPos,
       showCreateServiceRecord,
       id,
+      isShowContactModal,
+      currentCustId,
+      custType,
+      modalKey,
     } = this.state;
+
     const {
       q,
       page,
@@ -288,8 +363,6 @@ export default class CustomerLists extends PureComponent {
       selectedIds,
       isAllSelect,
       source,
-      getCustContact,
-      getServiceRecord,
       custContactData,
       serviceRecordData,
       addServeRecord,
@@ -298,6 +371,9 @@ export default class CustomerLists extends PureComponent {
       dict,
       isSms,
     } = this.props;
+
+    const finalContactData = custContactData[currentCustId] || EMPTY_OBJECT;
+    const finalServiceRecordData = serviceRecordData[currentCustId] || EMPTY_ARRAY;
     if (!custList.length) {
       return <div className="list-box"><NoData /></div>;
     }
@@ -353,11 +429,8 @@ export default class CustomerLists extends PureComponent {
                 isAllSelect={isAllSelectBool}
                 selectedIds={selectIdsArr}
                 onChange={this.handleSingleSelect}
-                getCustContact={getCustContact}
-                getServiceRecord={getServiceRecord}
-                custContactData={custContactData}
-                serviceRecordData={serviceRecordData}
                 createServiceRecord={this.showCreateServiceRecord}
+                createContact={this.showCreateContact}
                 key={`${item.empId}-${item.custId}-${item.idNum}-${item.telephone}-${item.asset}`}
               />,
             )
@@ -414,6 +487,20 @@ export default class CustomerLists extends PureComponent {
           addServeRecordSuccess={addServeRecordSuccess}
           isAddServeRecord={isAddServeRecord}
         />
+        {
+          isShowContactModal ?
+            <CreateContactModal
+              key={modalKey}
+              visible={isShowContactModal}
+              custContactData={finalContactData}
+              serviceRecordData={finalServiceRecordData}
+              custType={custType}
+              createServiceRecord={this.showCreateServiceRecord} /* 创建服务记录 */
+              onClose={this.resetModalState}
+              currentCustId={currentCustId}
+              isFirstLoad
+            /> : null
+        }
       </div>
     );
   }

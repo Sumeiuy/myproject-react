@@ -17,10 +17,10 @@ function transformCustRangeData(list, parent = '') {
     const obj = {
       label: item.name,
       value: parent
-              ?
-              `${item.level}-${item.id}-${parent}-${item.name}`
-              :
-              `${item.level}-${item.id}-${item.name}`,
+        ?
+        `${item.level}-${item.id}-${parent}-${item.name}`
+        :
+        `${item.level}-${item.id}-${item.name}`,
       key: item.id,
     };
     if (item.children && item.children.length) {
@@ -51,9 +51,9 @@ function findOrgNameByOrgId(orgId) {
       for (let i = 0; i < orgArr.length; i++) {
         if (orgArr[i].key === orgId) {
           custRangeNameDedault = parent !== '' ?
-          `${parent}/${orgArr[i].label}`
-          :
-          `${orgArr[i].label}`;
+            `${parent}/${orgArr[i].label}`
+            :
+            `${orgArr[i].label}`;
         }
       }
     }
@@ -71,11 +71,15 @@ export default class CustRange extends PureComponent {
     custRange: PropTypes.array.isRequired,
     expandAll: PropTypes.bool,
     orgId: PropTypes.string,
+    beginTime: PropTypes.string,
+    endTime: PropTypes.string,
   }
 
   static defaultProps = {
     expandAll: false,
     orgId: null,
+    beginTime: '',
+    endTime: '',
   }
 
   constructor(props) {
@@ -103,7 +107,7 @@ export default class CustRange extends PureComponent {
     if (!value) {
       return;
     }
-    const { updateQueryState, custRange, collectData } = this.props;
+    const { updateQueryState, custRange, collectData, beginTime, endTime } = this.props;
     const tmpArr = value.value.split('-');
     const custRangeLevel = tmpArr[0];
     const orgId = tmpArr[1];
@@ -111,9 +115,9 @@ export default class CustRange extends PureComponent {
     const changedValue = {
       label: custRangeName,
       value: custRangeName
-                ?
-                `${custRangeLevel}-${orgId}-${custRangeName}`
-                : custRange[0].id,
+        ?
+        `${custRangeLevel}-${orgId}-${custRangeName}`
+        : custRange[0].id,
     };
     this.setState({
       value: changedValue,
@@ -126,6 +130,8 @@ export default class CustRange extends PureComponent {
       custRangeLevel,
       level: custRangeLevel,
       scope: Number(custRangeLevel) + 1,
+      begin: beginTime,
+      end: endTime,
     });
   }
 
