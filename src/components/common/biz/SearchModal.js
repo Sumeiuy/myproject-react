@@ -12,13 +12,13 @@
  * title：必须的，弹框的title
  * onSearch：必须的，搜索框的回调
  * renderSelected: 必须，用户自定义render选中值得显示
- * idKey: 必须，用于table设置选中的idkey
  * onOk：有默认值（空函数），按钮的回调事件
  * onCancel：有默认值（空函数），按钮的回调事件
  * dataSource： 有默认值（空数组），table的内容
  * placeholder：有默认值（空字符串），用于搜索框无内容时的提示文字
  * okText：有默认值（确定），按钮的title
  * cancelText：有默认值（取消），按钮的title
+ * defaultIdKey: 有默认值（空字符串，无选中），用于table设置选中的defaultIdKey
  */
 import React, { PropTypes, Component } from 'react';
 import { Input } from 'antd';
@@ -38,11 +38,11 @@ export default class SearchModal extends Component {
     cancelText: PropTypes.string,
     dataSource: PropTypes.array,
     placeholder: PropTypes.string,
+    defaultIdKey: PropTypes.string,
     columns: PropTypes.array.isRequired,
     title: PropTypes.string.isRequired,
     onSearch: PropTypes.func.isRequired,
     renderSelected: PropTypes.func.isRequired,
-    idKey: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -52,6 +52,7 @@ export default class SearchModal extends Component {
     placeholder: '',
     okText: '确定',
     cancelText: '取消',
+    defaultIdKey: '',
   }
 
   constructor(props) {
@@ -112,7 +113,7 @@ export default class SearchModal extends Component {
       placeholder,
       dataSource,
       onSearch,
-      idKey,
+      defaultIdKey,
     } = this.props;
 
     return (
@@ -139,7 +140,7 @@ export default class SearchModal extends Component {
           title={title}
           placeholder={placeholder}
           modalKey={'visible'}
-          idKey={idKey}
+          defaultIdKey={defaultIdKey}
         />
       </div>
     );
