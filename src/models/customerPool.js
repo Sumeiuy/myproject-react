@@ -50,6 +50,7 @@ export default {
     serviceRecordData: [], // 服务记录
     isAddServeRecord: false,
     addServeRecordSuccess: false, // 添加服务记录成功的标记
+    isFollow: false,
   },
   subscriptions: {
     setup({ dispatch }) {
@@ -82,7 +83,7 @@ export default {
       });
     },
     // 初始化获取数据
-    * getAllInfo({ payload }, { call, put }) {
+    * getAllInfo({ payload }, { call, put, select }) {
       const {
         request: {
         custType, // 客户范围类型
@@ -93,12 +94,13 @@ export default {
         end,
         } } = payload;
       // 统计周期
-      const statisticalPeriod = yield call(api.getStatisticalPeriod);
-      yield put({
-        type: 'getStatisticalPeriodSuccess',
-        payload: { statisticalPeriod },
-      });
-      const firstCycle = statisticalPeriod.resultData.kPIDateScopeType;
+      const { kPIDateScopeType: firstCycle } = yield select(state => state.customerPool.dict);
+      // const statisticalPeriod = yield call(api.getStatisticalPeriod);
+      // yield put({
+      //   type: 'getStatisticalPeriodSuccess',
+      //   payload: { statisticalPeriod },
+      // });
+      // const firstCycle = statisticalPeriod.resultData.kPIDateScopeType;
       // (首页总数)
       const queryNumbers = yield call(api.getQueryNumbers);
       yield put({
@@ -270,15 +272,23 @@ export default {
         payload: resultData,
       });
     },
-    * getStatisticalPeriod({ }, { call, put }) { //eslint-disable-line
-      // 统计周期
-      const statisticalPeriod = yield call(api.getStatisticalPeriod);
-      // debugger;
+    * getFollowCust({ payload }, { call, put }) {
+      const response = yield call(api.queryFollowCust, payload);
+      const { resultData } = response;
       yield put({
-        type: 'getStatisticalPeriodSuccess',
-        payload: { statisticalPeriod },
+        type: 'getFollowCustSuccess',
+        payload: resultData,
       });
     },
+    // * getStatisticalPeriod({ }, { call, put }) { //eslint-disable-line
+    //   // 统计周期
+    //   const statisticalPeriod = yield call(api.getStatisticalPeriod);
+    //   // debugger;
+    //   yield put({
+    //     type: 'getStatisticalPeriodSuccess',
+    //     payload: { statisticalPeriod },
+    //   });
+    // },
     // 列表页添加服务记录
     * addServeRecord({ payload }, { call, put }) {
       yield put({
@@ -347,14 +357,14 @@ export default {
       };
     },
     // 统计周期
-    getStatisticalPeriodSuccess(state, action) {
-      const { payload: { statisticalPeriod } } = action;
-      const cycle = statisticalPeriod.resultData.kPIDateScopeType;
-      return {
-        ...state,
-        cycle,
-      };
-    },
+    // getStatisticalPeriodSuccess(state, action) {
+    //   const { payload: { statisticalPeriod } } = action;
+    //   const cycle = statisticalPeriod.resultData.kPIDateScopeType;
+    //   return {
+    //     ...state,
+    //     cycle,
+    //   };
+    // },
     // (首页总数)
     getWorkFlowTaskCountSuccess(state, action) {
       const { payload: { queryNumbers } } = action;
@@ -497,6 +507,7 @@ export default {
       return {
         ...state,
         resultgroupId: resultData.groupId,
+        cusGroupSaveResult: resultData.result,
       };
     },
     // 自建任务提交
@@ -545,6 +556,15 @@ export default {
         ...state,
         addServeRecordSuccess: payload.resultData === 'success',
         isAddServeRecord: false,
+      };
+    },
+    // 关注成功
+    getFollowCustSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        isFollow: payload.result === 'success',
+        // addFollow: false,
       };
     },
   },

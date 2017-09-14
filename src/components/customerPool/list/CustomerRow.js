@@ -6,7 +6,7 @@
 
 import React, { PureComponent, PropTypes } from 'react';
 // import { withRouter } from 'dva/router';
-import { Checkbox } from 'antd';
+import { Checkbox, message } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
@@ -164,6 +164,7 @@ export default class CustomerRow extends PureComponent {
     getServiceRecord: PropTypes.func.isRequired,
     createServiceRecord: PropTypes.func.isRequired,
     dict: PropTypes.object.isRequired,
+    isSms: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -237,7 +238,6 @@ export default class CustomerRow extends PureComponent {
         });
       }
     }
-
     if (nextProps.isAllSelect !== this.props.isAllSelect) {
       this.setState({
         checked: nextProps.isAllSelect,
@@ -474,7 +474,6 @@ export default class CustomerRow extends PureComponent {
       isShowModal: false,
     });
   }
-
   @autobind
   renderAgeOrOrgName() {
     const { listItem } = this.props;
@@ -491,6 +490,7 @@ export default class CustomerRow extends PureComponent {
       custContactData = EMPTY_OBJECT,
       serviceRecordData = EMPTY_LIST,
       createServiceRecord,
+      isSms,
     } = this.props;
     const {
       unit,
@@ -513,26 +513,31 @@ export default class CustomerRow extends PureComponent {
 
     return (
       <div className={styles.customerRow}>
-        <div className={styles.basicInfoD}>
-          <ul className={styles.operationIcon}>
-            <li onClick={this.handleTelClick}>
-              <Icon type="dianhua" />
-              <span>电话联系</span>
-            </li>
-            <li>
-              <Icon type="youjian" />
-              <span>邮件联系</span>
-            </li>
-            <li onClick={this.showCreateServiceRecord}>
-              <Icon type="jilu" />
-              <span>添加服务记录</span>
-            </li>
-            <li>
-              <Icon type="guanzhu" />
-              <span>关注</span>
-            </li>
-          </ul>
-        </div>
+        {
+          isSms ?
+            <div className={styles.basicInfoD}>
+              <ul className={styles.operationIcon}>
+                <li onClick={this.handleTelClick}>
+                  <Icon type="dianhua" />
+                  <span>电话联系</span>
+                </li>
+                <li>
+                  <Icon type="youjian" />
+                  <span>邮件联系</span>
+                </li>
+                <li onClick={this.showCreateServiceRecord}>
+                  <Icon type="jilu" />
+                  <span>添加服务记录</span>
+                </li>
+                <li>
+                  <Icon type="guanzhu" />
+                  <span>关注</span>
+                </li>
+              </ul>
+            </div>
+        :
+        null
+        }
         <div className={`${styles.customerRowLeft} clear`}>
           <div className={styles.selectIcon}>
             <Checkbox
