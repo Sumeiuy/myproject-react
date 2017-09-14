@@ -166,6 +166,7 @@ export default class CustomerRow extends PureComponent {
     getServiceRecord: PropTypes.func.isRequired,
     createServiceRecord: PropTypes.func.isRequired,
     dict: PropTypes.object.isRequired,
+    isSms: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -551,6 +552,7 @@ export default class CustomerRow extends PureComponent {
       custContactData = EMPTY_OBJECT,
       serviceRecordData = EMPTY_LIST,
       createServiceRecord,
+      isSms,
     } = this.props;
     const {
       unit,
@@ -574,26 +576,31 @@ export default class CustomerRow extends PureComponent {
 
     return (
       <div className={styles.customerRow}>
-        <div className={styles.basicInfoD}>
-          <ul className={styles.operationIcon}>
-            <li onClick={this.handleTelClick}>
-              <Icon type="dianhua" />
-              <span>电话联系</span>
-            </li>
-            <li onClick={this.toEmail}>
-              <Icon type="youjian" />
-              <span>{email && emailState === currentCustId ? <a id={email && emailState === currentCustId ? 'sendEmail' : ''} href={`mailto:${email}`}>邮件联系</a> : '邮件联系' } </span>
-            </li>
-            <li onClick={this.showCreateServiceRecord}>
-              <Icon type="jilu" />
-              <span>添加服务记录</span>
-            </li>
-            <li>
-              <Icon type="guanzhu" />
-              <span>关注</span>
-            </li>
-          </ul>
-        </div>
+        {
+          isSms ?
+            <div className={styles.basicInfoD}>
+              <ul className={styles.operationIcon}>
+                <li onClick={this.handleTelClick}>
+                  <Icon type="dianhua" />
+                  <span>电话联系</span>
+                </li>
+                <li onClick={this.toEmail}>
+                  <Icon type="youjian" />
+                  <span>{email && emailState === currentCustId ? <a id={email && emailState === currentCustId ? 'sendEmail' : ''} href={`mailto:${email}`}>邮件联系</a> : '邮件联系' } </span>
+                </li>
+                <li onClick={this.showCreateServiceRecord}>
+                  <Icon type="jilu" />
+                  <span>添加服务记录</span>
+                </li>
+                <li>
+                  <Icon type="guanzhu" />
+                  <span>关注</span>
+                </li>
+              </ul>
+            </div>
+        :
+        null
+        }
         <div className={`${styles.customerRowLeft} clear`}>
           <div className={styles.selectIcon}>
             <Checkbox

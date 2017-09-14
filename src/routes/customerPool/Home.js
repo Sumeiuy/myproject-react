@@ -23,6 +23,8 @@ const ORG = '3'; // 组织机构
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const HTSC_RESPID = '1-46IDNZI'; // 首页指标查询
+// 主服务经理id
+const MAIN_MAGEGER_ID = 'msm';
 const effects = {
   allInfo: 'customerPool/getAllInfo',
   performanceIndicators: 'customerPool/getPerformanceIndicators',
@@ -43,7 +45,7 @@ const fetchDataFunction = (globalLoading, type) => query => ({
 const mapStateToProps = state => ({
   performanceIndicators: state.customerPool.performanceIndicators, // 绩效指标
   custRange: state.customerPool.custRange, // 客户池用户范围
-  cycle: state.customerPool.cycle,  // 统计周期
+  cycle: state.customerPool.dict.kPIDateScopeType,  // 统计周期
   position: state.customerPool.position, // 职责切换
   process: state.customerPool.process, // 代办流程(首页总数)
   motTaskCount: state.customerPool.motTaskCount, // 今日可做任务总数
@@ -132,19 +134,17 @@ export default class Home extends PureComponent {
 
   componentDidMount() {
     const {
-      empInfo: { empInfo = EMPTY_OBJECT, empRespList = EMPTY_LIST },
       custRange,
-      location: { query },
     } = this.props;
-    this.createCustRange({ query, empInfo, custRange, empRespList });
+    this.handleGetAllInfo(custRange);
   }
 
   componentWillReceiveProps(nextProps) {
     const {
       position: prePosition,
-      empInfo: { empInfo: prevEmpInfo = EMPTY_OBJECT },
+      // empInfo: { empInfo: prevEmpInfo = EMPTY_OBJECT },
       location: { query: prevQuery = EMPTY_OBJECT },
-      cycle: preCycle,
+      // cycle: preCycle,
       // custRange: prevCustRange = EMPTY_LIST,
     } = this.props;
 
@@ -165,26 +165,22 @@ export default class Home extends PureComponent {
     if (preOrgId !== nextOrgId) {
       this.setState({
         fspOrgId: nextOrgId,
-        createCustRange: this.handleCreateCustRange({
-          orgId: nextOrgId,
-          empInfo: nextEmpInfo,
-          custRange,
-        }),
+        createCustRange: this.handleCreateCustRange(nextProps),
       }, () => {
         this.getIncomes();
         this.getIndicators();
       });
     }
     // 当url上没有cycleSelect时，默认选中第一个，本月
-    if (preCycle !== nextCycle && !cycleSelect) {
+    if (!cycleSelect) {
       this.setState({
-        cycleSelect: nextCycle[0].key,
+        cycleSelect: (nextCycle[0] || {}).key,
       });
     }
 
     // 问题出在这里，在第一次比较empInfo的时候，custRange有可能还没回来，再等第二次比较
     // empInfo，这时候empInfo已经相等，所以custRange有值也不走getAllInfo了
-    if (prevEmpInfo !== nextEmpInfo || query !== prevQuery
+    if (!_.isEqual(prevQuery, query)
       || (!_.isEmpty(custRange) && this.isGetAllInfo)) {
       this.handleSetCustRange({
         empInfo: nextEmpInfo,
@@ -293,8 +289,6 @@ export default class Home extends PureComponent {
       // cycle,
       getHotWds,
       getHistoryWdsList,
-      empInfo,
-      custRange,
       location: { query: { cycleSelect } },
     } = this.props;
     const { fspOrgId } = this.state;
@@ -307,11 +301,7 @@ export default class Home extends PureComponent {
     let custType = ORG;
     const orgsId = custRangeData.length > 0 ? custRangeData[0].id : '';
     this.setState({
-      createCustRange: this.handleCreateCustRange({
-        empInfo,
-        custRange,
-        orgId: fspOrgId,
-      }),
+      createCustRange: this.handleCreateCustRange(this.props),
     });
 
     if (fspOrgId !== orgsId) {
@@ -449,56 +439,64 @@ export default class Home extends PureComponent {
    * @param {*} nextProps 最新的props
    */
   @autobind
-  handleCreateCustRange(params) {
-    const { empInfo, custRange, orgId } = params;
-    const { empPostnList = EMPTY_LIST,
-      empRespList = EMPTY_LIST } = empInfo; // 1-46IDNZI HTSC_RESPID
-    let orgNewCustRange = [];
-    const newCustRrange = [];
+  handleCreateCustRange(props) {
+    const {
+      custRange,
+      empInfo: {
+        empInfo = EMPTY_OBJECT,
+        empRespList = EMPTY_LIST,
+      },
+      position: { orgId: posOrgId },
+    } = props;
+    // 判断是否存在首页绩效指标查看权限
+    const respIdOfPosition = _.findIndex(empRespList, item => (item.respId === HTSC_RESPID));
     const myCustomer = {
-      id: '',
+      id: MAIN_MAGEGER_ID,
       name: '我的客户',
     };
-    const respIdOfPosition = _.findIndex(empRespList, item => item.respId === HTSC_RESPID);
+    // 无‘HTSC 首页指标查询’职责的普通用户，取值 '我的客户'
     if (respIdOfPosition < 0) {
-      newCustRrange.push(myCustomer);
-      return newCustRrange;
+      return [myCustomer];
     }
-    let newOrgId;
-    if (!_.isEmpty(orgId)) {
-      newOrgId = orgId;
+    // 保证全局的职位存在的情况下取职位, 取不到时从empInfo中取值
+    const occDivnNum = empInfo.occDivnNum || '';
+    // const fspJobOrgId = 'ZZ001041020';
+    let fspJobOrgId = !_.isEmpty(window.forReactPosition) ?
+      window.forReactPosition.orgId :
+      occDivnNum;
+    if (posOrgId) {
+      fspJobOrgId = posOrgId;
     }
-    if (custRange.length < 1) {
-      return null;
-    }
-    if (newOrgId === custRange[0].id) {
+    // 用户职位是经总
+    if (fspJobOrgId === (custRange[0] || {}).id) {
+      this.setState({
+        expandAll: true,
+      });
       return custRange;
     }
-    // 打开级联下拉框
-    this.setState({
-      expandAll: true,
-    });
-    orgNewCustRange = _.findIndex(custRange, item => item.id === newOrgId);
-    let newData;
-    if (orgNewCustRange > -1) {
-      // 总机构内
-      newData = custRange[orgNewCustRange];
-      newCustRrange.push(newData);
-    } else {
-      // 职位中去查找
-      // 找到符合的那一条职位
-      orgNewCustRange = _.findIndex(empPostnList, item => item.orgId === newOrgId);
-      if (orgNewCustRange > -1) {
-        const org = {
-          id: empPostnList[orgNewCustRange].orgId,
-          name: empPostnList[orgNewCustRange].orgName,
-        };
-        newData = org;
-        newCustRrange.push(newData);
-      }
+    // fspJobOrgId 在机构树中所处的分公司位置
+    const orgIdIndexInCustRange = _.findIndex(custRange, item => item.id === fspJobOrgId);
+    if (orgIdIndexInCustRange > -1) {
+      this.setState({
+        expandAll: true,
+      });
+      return [custRange[orgIdIndexInCustRange], myCustomer];
     }
-    newCustRrange.push(myCustomer);
-    return newCustRrange;
+    // fspJobOrgId 在机构树中所处的营业部位置
+    _(custRange).forEach((obj) => {
+      if (obj.children && !_.isEmpty(obj.children)) {
+        const tmpArr = _.filter(obj.children, v => v.id === fspJobOrgId);
+        if (!_.isEmpty(tmpArr)) {
+          return [...tmpArr, myCustomer];
+        }
+      }
+      return true;
+    });
+    // 有权限，但是用户信息中获取到的occDivnNum不在empOrg（组织机构树）中，显示用户信息中的数据
+    return [{
+      id: empInfo.occDivnNum,
+      name: empInfo.occupation,
+    }];
   }
 
   @autobind

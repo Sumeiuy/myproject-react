@@ -83,7 +83,7 @@ export default {
       });
     },
     // 初始化获取数据
-    * getAllInfo({ payload }, { call, put }) {
+    * getAllInfo({ payload }, { call, put, select }) {
       const {
         request: {
         custType, // 客户范围类型
@@ -94,12 +94,13 @@ export default {
         end,
         } } = payload;
       // 统计周期
-      const statisticalPeriod = yield call(api.getStatisticalPeriod);
-      yield put({
-        type: 'getStatisticalPeriodSuccess',
-        payload: { statisticalPeriod },
-      });
-      const firstCycle = statisticalPeriod.resultData.kPIDateScopeType;
+      const { kPIDateScopeType: firstCycle } = yield select(state => state.customerPool.dict);
+      // const statisticalPeriod = yield call(api.getStatisticalPeriod);
+      // yield put({
+      //   type: 'getStatisticalPeriodSuccess',
+      //   payload: { statisticalPeriod },
+      // });
+      // const firstCycle = statisticalPeriod.resultData.kPIDateScopeType;
       // (首页总数)
       const queryNumbers = yield call(api.getQueryNumbers);
       yield put({
@@ -279,15 +280,15 @@ export default {
         payload: resultData,
       });
     },
-    * getStatisticalPeriod({ }, { call, put }) { //eslint-disable-line
-      // 统计周期
-      const statisticalPeriod = yield call(api.getStatisticalPeriod);
-      // debugger;
-      yield put({
-        type: 'getStatisticalPeriodSuccess',
-        payload: { statisticalPeriod },
-      });
-    },
+    // * getStatisticalPeriod({ }, { call, put }) { //eslint-disable-line
+    //   // 统计周期
+    //   const statisticalPeriod = yield call(api.getStatisticalPeriod);
+    //   // debugger;
+    //   yield put({
+    //     type: 'getStatisticalPeriodSuccess',
+    //     payload: { statisticalPeriod },
+    //   });
+    // },
     // 列表页添加服务记录
     * addServeRecord({ payload }, { call, put }) {
       yield put({
@@ -356,14 +357,14 @@ export default {
       };
     },
     // 统计周期
-    getStatisticalPeriodSuccess(state, action) {
-      const { payload: { statisticalPeriod } } = action;
-      const cycle = statisticalPeriod.resultData.kPIDateScopeType;
-      return {
-        ...state,
-        cycle,
-      };
-    },
+    // getStatisticalPeriodSuccess(state, action) {
+    //   const { payload: { statisticalPeriod } } = action;
+    //   const cycle = statisticalPeriod.resultData.kPIDateScopeType;
+    //   return {
+    //     ...state,
+    //     cycle,
+    //   };
+    // },
     // (首页总数)
     getWorkFlowTaskCountSuccess(state, action) {
       const { payload: { queryNumbers } } = action;

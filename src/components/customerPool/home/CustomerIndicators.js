@@ -121,12 +121,17 @@ export default class CustomerIndicators extends PureComponent {
                 <Col span={13}>
                   <ul>
                     <li >
-                      <p
-                        className={styles.pointer}
-                        onClick={() => { this.linkTo(NEW_VALID_CUST, '新增有效户'); }}
-                      >
-                        {this.numFormat(purAddCust || '--')}
-                      </p>
+                      {
+                        purAddCust ?
+                          <p
+                            className={styles.pointer}
+                            onClick={() => { this.linkTo(NEW_VALID_CUST, '新增有效户'); }}
+                          >
+                            {this.numFormat(purAddCust)}
+                          </p>
+                        :
+                          <p>{'--'}</p>
+                      }
                       <div>新增有效户</div>
                     </li>
                   </ul>
@@ -134,12 +139,17 @@ export default class CustomerIndicators extends PureComponent {
                 <Col span={11}>
                   <ul>
                     <li className={styles.bd_un_r}>
-                      <p
-                        className={styles.pointer}
-                        onClick={() => { this.linkTo(NEW_NONRETAIL_CUST, '新增非零售客户'); }}
-                      >
-                        {this.numFormat(purAddNoretailcust || '--')}
-                      </p>
+                      {
+                        purAddNoretailcust ?
+                          <p
+                            className={styles.pointer}
+                            onClick={() => { this.linkTo(NEW_NONRETAIL_CUST, '新增非零售客户'); }}
+                          >
+                            {this.numFormat(purAddNoretailcust)}
+                          </p>
+                        :
+                          <p>{'--'}</p>
+                      }
                       <div>新增非零售客户</div>
                     </li>
                   </ul>
@@ -149,12 +159,17 @@ export default class CustomerIndicators extends PureComponent {
                 <Col span={13}>
                   <ul>
                     <li>
-                      <p
-                        className={styles.pointer}
-                        onClick={() => { this.linkTo(NEW_HIGHEND_CUST, '新增高端产品户'); }}
-                      >
-                        {this.numFormat(purAddHighprodcust || '--')}
-                      </p>
+                      {
+                        purAddHighprodcust ?
+                          <p
+                            className={styles.pointer}
+                            onClick={() => { this.linkTo(NEW_HIGHEND_CUST, '新增高端产品户'); }}
+                          >
+                            {this.numFormat(purAddHighprodcust)}
+                          </p>
+                        :
+                          <p>{'--'}</p>
+                      }
                       <div>新增高端产品户</div>
                     </li>
                   </ul>
@@ -162,12 +177,17 @@ export default class CustomerIndicators extends PureComponent {
                 <Col span={11}>
                   <ul>
                     <li className={styles.bd_un_r}>
-                      <p
-                        className={styles.pointer}
-                        onClick={() => { this.linkTo(NEW_PRODUCT_CUST, '新增产品客户'); }}
-                      >
-                        {this.numFormat(newProdCust || '--')}
-                      </p>
+                      {
+                        newProdCust ?
+                          <p
+                            className={styles.pointer}
+                            onClick={() => { this.linkTo(NEW_PRODUCT_CUST, '新增产品客户'); }}
+                          >
+                            {this.numFormat(newProdCust || '--')}
+                          </p>
+                        :
+                          <p>{'--'}</p>
+                      }
                       <div>新增产品客户</div>
                     </li>
                   </ul>
