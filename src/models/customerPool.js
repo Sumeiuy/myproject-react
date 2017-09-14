@@ -110,7 +110,7 @@ export default {
       // 绩效指标
       const indicators =
         yield call(api.getPerformanceIndicators,
-          { ...payload.request, dateType: firstCycle[0].key });
+          { custType, orgId, empId, dateType: firstCycle[0].key });
       yield put({
         type: 'getPerformanceIndicatorsSuccess',
         payload: { indicators },

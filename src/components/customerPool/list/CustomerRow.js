@@ -144,10 +144,6 @@ const formatNumber = (num) => {
   return num;
 };
 
-// let contactModalKeyCount = 0;
-// const EMPTY_LIST = [];
-// const EMPTY_OBJECT = {};
-
 export default class CustomerRow extends PureComponent {
   static propTypes = {
     q: PropTypes.string,

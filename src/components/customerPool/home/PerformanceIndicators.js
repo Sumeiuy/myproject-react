@@ -36,6 +36,7 @@ export default class PerformanceIndicators extends PureComponent {
     selectValue: PropTypes.string,
     location: PropTypes.object.isRequired,
     incomeData: PropTypes.array.isRequired,
+    orgId: PropTypes.string,
   }
 
   static defaultProps = {
@@ -45,6 +46,7 @@ export default class PerformanceIndicators extends PureComponent {
     cycle: [],
     expandAll: false,
     selectValue: '',
+    orgId: '',
   }
 
   constructor(props) {
@@ -117,6 +119,7 @@ export default class PerformanceIndicators extends PureComponent {
       push,
       location,
       incomeData,
+      orgId,
     } = this.props;
     const {
       cftCust,
@@ -145,7 +148,7 @@ export default class PerformanceIndicators extends PureComponent {
       motTotMnt,
       taskCust,
       totCust,
-    } = indicators;
+    } = indicators || {};
     const tradingVolume = {
       purAddCustaset,
       purRakeGjpdt,
@@ -180,6 +183,7 @@ export default class PerformanceIndicators extends PureComponent {
               {
                 !_.isEmpty(custRange) ?
                   <CustRange
+                    orgId={orgId}
                     custRange={custRange}
                     location={location}
                     replace={replace}
