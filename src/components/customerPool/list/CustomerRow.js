@@ -147,8 +147,6 @@ const formatNumber = (num) => {
 let contactModalKeyCount = 0;
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
-let emailState = '';
-let onOff = false;
 
 export default class CustomerRow extends PureComponent {
   static propTypes = {
@@ -193,7 +191,6 @@ export default class CustomerRow extends PureComponent {
       modalKey: `contactModalKey${contactModalKeyCount}`,
       currentCustId: '',
       custType: '',
-      email: null,
     };
 
     this.businessConfig = new Map();
@@ -233,7 +230,6 @@ export default class CustomerRow extends PureComponent {
     const { isShowModal, currentCustId } = this.state;
     const prevContact = prevCustContactData[currentCustId] || EMPTY_OBJECT;
     const nextContact = nextCustContactData[currentCustId] || EMPTY_OBJECT;
-    emailState = emailState || currentCustId;
     if (prevContact !== nextContact || prevServiceRecordData !== nextServiceRecordData) {
       if (!isShowModal) {
         this.setState({
@@ -241,46 +237,6 @@ export default class CustomerRow extends PureComponent {
           modalKey: `contactModalKey${contactModalKeyCount++}`,
         });
       }
-    }
-    if (onOff) {
-      // console.log(nextCustContactData[emailState]);
-      let finded = 0;
-      let addresses = null;
-      // orgCustomerContactInfoList,perCustomerContactInfo
-      // console.log(nextCustContactData[emailState].perCustomerContactInfo === undefined);
-      if (nextCustContactData[emailState].perCustomerContactInfo !== undefined) {
-        finded = _.findLastIndex(nextCustContactData[emailState].perCustomerContactInfo.emailAddresses, 'mainFlag', true);
-        addresses = nextCustContactData[emailState].perCustomerContactInfo;
-      } else {
-        // console.log(nextCustContactData[emailState].orgCustomerContactInfoList);
-        const index = _.findLastIndex(nextCustContactData[emailState].orgCustomerContactInfoList, 'mainFlag', false);
-        // console.log("index----", index);// -1
-        finded = _.findLastIndex(nextCustContactData[emailState].orgCustomerContactInfoList[index].emailAddresses, 'mainFlag', true);
-        // console.log("finded-----", finded);
-        addresses = nextCustContactData[emailState].orgCustomerContactInfoList[index];
-        // console.log(addresses)
-        // console.log(addresses.emailAddresses[finded].contactValue);
-      }
-      if (finded !== -1) {
-        // debugger;
-        // this.setState({
-        //   email: addresses.emailAddresses[finded].contactValue,
-        // });
-        // debugger;
-        // console.log("this.state.email---", this.state.email);
-        this.setState({
-          email: addresses.emailAddresses[finded].contactValue,
-        }, () => {
-          const evt = new MouseEvent('click', { bubbles: false, cancelable: false, view: window });
-          document.querySelector('#endEmail').dispatchEvent(evt);
-        });
-      } else {
-        this.setState({
-          email: null,
-        });
-        message.error('暂无客户邮件，请与客户沟通尽快完善信息');
-      }
-      onOff = false;
     }
     if (nextProps.isAllSelect !== this.props.isAllSelect) {
       this.setState({
@@ -518,24 +474,6 @@ export default class CustomerRow extends PureComponent {
       isShowModal: false,
     });
   }
-
-  @autobind
-  toEmail() {
-    const { listItem, getCustContact } = this.props;
-    const { custId } = listItem;
-    console.log(custId);
-    this.setState({
-      currentCustId: custId,
-    }, () => {
-      emailState = this.state.currentCustId;
-      onOff = true;
-      // console.log(this.state.currentCustId);
-      // console.log("emailState----", emailState);
-    });
-    getCustContact({
-      custId,
-    });
-  }
   @autobind
   renderAgeOrOrgName() {
     const { listItem } = this.props;
@@ -563,7 +501,6 @@ export default class CustomerRow extends PureComponent {
       custType,
       currentCustId,
       isShowCharts,
-      email,
    } = this.state;
     const finalContactData = custContactData[currentCustId] || EMPTY_OBJECT;
     const lastestProfit = Number(this.getLastestData(monthlyProfits).assetProfit);
@@ -584,9 +521,9 @@ export default class CustomerRow extends PureComponent {
                   <Icon type="dianhua" />
                   <span>电话联系</span>
                 </li>
-                <li onClick={this.toEmail}>
+                <li>
                   <Icon type="youjian" />
-                  <span>{email && emailState === currentCustId ? <a id={email && emailState === currentCustId ? 'sendEmail' : ''} href={`mailto:${email}`}>邮件联系</a> : '邮件联系' } </span>
+                  <span>邮件联系</span>
                 </li>
                 <li onClick={this.showCreateServiceRecord}>
                   <Icon type="jilu" />
