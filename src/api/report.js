@@ -2,7 +2,7 @@
  * 绩效视图模块的接口
  */
 
-function report(api) {
+export default function report(api) {
   return {
     // 员工职责与职位
     getEmpInfo: query => api.post('/groovynoauth/fsp/emp/info/queryEmpInfo', query),
@@ -76,5 +76,3 @@ function report(api) {
     distinctBoard: query => api.post('/groovynoauth/jxzb/saveBoard', query),
   };
 }
-export default report;
-

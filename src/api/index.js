@@ -104,3 +104,4 @@ export default {
   // 看板名称重复验证
   distinctBoard: query => api.post('/groovynoauth/jxzb/saveBoard', query),
 };
+

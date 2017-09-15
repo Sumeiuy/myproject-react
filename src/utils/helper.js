@@ -433,13 +433,6 @@ const helper = {
       lastDurationStr = `${lastBeginMoment.format('YYYY/MM/DD')}-${lastEndMoment.format('YYYY/MM/DD')}`;
     } else {
       console.warn('用户自己选择的时间段');
-      // console.warn('begin', begin);
-      // console.warn('end', end);
-      // console.warn(moment(end).diff(moment(begin)));
-      // // const distanceYear = moment(end).diff(moment(begin), 'years');
-      // console.warn(moment(end).diff(moment(begin), 'years'));
-      // console.warn(moment(end).diff(moment(begin), 'months'));
-      // console.warn(moment(end).diff(moment(begin), 'days'));
     }
 
     const compareDuration = {
@@ -461,6 +454,17 @@ const helper = {
     weekday[5] = '周五';
     weekday[6] = '周六';
     return weekday[d.getDay()];
+  },
+
+  // 将CustRange转换成一个一维数据
+  transform2array(arr) {
+    let tmpArr = arr.slice();
+    arr.forEach((v) => {
+      if (v.children) {
+        tmpArr = [...tmpArr, ...v.children];
+      }
+    });
+    return tmpArr;
   },
 };
 
