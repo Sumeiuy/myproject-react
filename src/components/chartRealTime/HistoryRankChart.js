@@ -14,11 +14,13 @@ export default class HistoryRankChart extends PureComponent {
     level: PropTypes.string.isRequired,
     scope: PropTypes.string.isRequired,
     showChartUnit: PropTypes.func.isRequired,
+    updateQueryState: PropTypes.func.isRequired,
+    custRange: PropTypes.array.isRequired,
   };
 
   render() {
     const { data: { orgModel } } = this.props;
-    const { data, level, scope, showChartUnit } = this.props;
+    const { data, level, scope, showChartUnit, custRange, updateQueryState } = this.props;
      // 增加判断走堆叠还是普通柱状图
     if (orgModel
       && Array.isArray(orgModel)
@@ -32,6 +34,8 @@ export default class HistoryRankChart extends PureComponent {
           level={level}
           scope={scope}
           showChartUnit={showChartUnit}
+          custRange={custRange}
+          updateQueryState={updateQueryState}
         />
       );
     }
@@ -41,6 +45,8 @@ export default class HistoryRankChart extends PureComponent {
         level={level}
         scope={scope}
         showChartUnit={showChartUnit}
+        custRange={custRange}
+        updateQueryState={updateQueryState}
       />
     );
   }

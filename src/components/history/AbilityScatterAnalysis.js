@@ -5,6 +5,7 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { Select } from 'antd';
 import { autobind } from 'core-decorators';
+import classnames from 'classnames';
 import _ from 'lodash';
 import CommonScatter from '../chartRealTime/CommonScatter';
 import imgSrc from '../../../static/images/noChart.png';
@@ -14,6 +15,7 @@ import {
   EXCEPT_CUST_TOUGU_TGJX_MAP,
   EXCEPT_TOUGU_JYYJ_MAP,
 } from '../../config/SpecialIndicators';
+import { optionsMap } from '../../config';
 import { constructScatterData } from './ConstructScatterData';
 import { constructScatterOptions } from './ConstructScatterOptions';
 import styles from './abilityScatterAnalysis.less';
@@ -25,6 +27,9 @@ const EMPTY_OBJECT = {};
 
 const YI = '亿';
 const WAN = '万';
+
+// 按类别排序
+const sortByType = optionsMap.sortByType;
 
 export default class AbilityScatterAnalysis extends PureComponent {
   static propTypes = {
@@ -39,6 +44,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
     contrastType: PropTypes.string.isRequired,
     isLvIndicator: PropTypes.bool.isRequired,
     level: PropTypes.string.isRequired,
+    scope: PropTypes.string,
     boardType: PropTypes.string.isRequired,
     currentSelectIndicatorKey: PropTypes.string.isRequired,
     isCommissionRate: PropTypes.bool.isRequired,
@@ -46,18 +52,24 @@ export default class AbilityScatterAnalysis extends PureComponent {
 
   static defaultProps = {
     optionsData: EMPTY_LIST,
+    scope: '2', // 查询数据的维度
   };
 
   constructor(props) {
     super(props);
     const options = this.makeOptions(props.optionsData);
+    const { scope } = props; // scope为维度
     // 默认第一个选项
     this.state = {
+      scopeSelectValue: scope,
+      scope,
       scatterElemHeight: 360,
       finalData: {},
       isShowTooltip: false,
-      orgName: '',
-      parentOrgName: '',
+      level1Name: '',
+      level2Name: '',
+      level3Name: '',
+      level4Name: '',
       finalOptions: options,
       selectValue: !_.isEmpty(options) && options[0].value,
       averageInfo: '',
@@ -75,8 +87,10 @@ export default class AbilityScatterAnalysis extends PureComponent {
       switchDefault: nextSwitch,
       isLvIndicator,
       isCommissionRate,
+      scope,
      } = nextProps;
     const {
+      scope: preScope,
       description,
       optionsData: prevOptions,
       switchDefault: prevSwitch,
@@ -86,6 +100,13 @@ export default class AbilityScatterAnalysis extends PureComponent {
       contrast = EMPTY_OBJECT,
       scatterDiagramModels = EMPTY_LIST,
     } = nextData;
+
+    if (!_.isEqual(preScope, scope) || !_.isEqual(prevSwitch, nextSwitch)) {
+      this.setState({
+        scopeSelectValue: scope,
+        scope,
+      });
+    }
 
     // 有值就构造图表数据
     if (!_.isEmpty(scatterDiagramModels)) {
@@ -179,9 +200,11 @@ export default class AbilityScatterAnalysis extends PureComponent {
       // 如果算出来的y坐标小于或者大于轴刻度的最小或最大值
       // 则将计算出来的值，作为刻度边界值，取floor或者ceil
       if (endYCood < yAxisMin) {
+        const newYAxisMin = Math.floor(endYCood);
         finalSeriesData = {
           ...finalSeriesData,
-          yAxisMin: Math.floor(endYCood),
+          yAxisMin: newYAxisMin,
+          startCoord: [xAxisMin, newYAxisMin],
         };
       } else if (endYCood > yAxisMax) {
         finalSeriesData = {
@@ -189,6 +212,7 @@ export default class AbilityScatterAnalysis extends PureComponent {
           yAxisMax: Math.ceil(endYCood),
         };
       }
+      console.log(finalSeriesData);
       const scatterOptions = constructScatterOptions({
         ...finalSeriesData,
       });
@@ -205,14 +229,19 @@ export default class AbilityScatterAnalysis extends PureComponent {
     let current = yAxisMax;
     let point = current / slope;
     let endCoord = [point, current];
-    let finalSeriesData = seriesData;
+    let finalSeriesData = {
+      ...seriesData,
+      startCoord: [xAxisMin, yAxisMin],
+    };
     if (point <= compare) {
       // 如果算出来的x坐标小于轴刻度的最小
       // 则将计算出来的值，作为刻度边界值，取floor
       if (point < xAxisMin) {
+        const newXAxisMin = Math.floor(point);
         finalSeriesData = {
           ...seriesData,
-          xAxisMin: Math.floor(point),
+          xAxisMin: newXAxisMin,
+          startCoord: [newXAxisMin, yAxisMin],
         };
       }
     } else {
@@ -224,16 +253,17 @@ export default class AbilityScatterAnalysis extends PureComponent {
       // 如果算出来的y坐标小于轴刻度的最小
       // 则将计算出来的值，作为刻度边界值，取floor
       if (point < yAxisMin) {
+        const newYAxisMin = Math.floor(point);
         finalSeriesData = {
           ...seriesData,
-          yAxisMin: Math.floor(point),
+          yAxisMin: newYAxisMin,
+          startCoord: [xAxisMin, newYAxisMin],
         };
       }
     }
 
     const scatterOptions = constructScatterOptions({
       ...finalSeriesData,
-      startCoord: [xAxisMin, yAxisMin],
       endCoord,
     });
 
@@ -242,6 +272,11 @@ export default class AbilityScatterAnalysis extends PureComponent {
       average: '',
     });
     return true;
+  }
+
+  @autobind
+  getPopupContainer() {
+    return document.querySelector('.react-app');
   }
 
   @autobind
@@ -365,13 +400,19 @@ export default class AbilityScatterAnalysis extends PureComponent {
         average,
       } } = this.state;
 
-    const { data: [xAxisData, yAxisData, { orgName, parentOrgName }] } = params;
+    const { data: [
+        xAxisData,
+        yAxisData,
+        { level1Name, level2Name, level3Name, level4Name },
+      ] } = params;
 
     if (isShowTooltip) {
       // 设置state，切换tooltip的显示信息
       this.setState({
-        orgName,
-        parentOrgName,
+        level1Name,
+        level2Name,
+        level3Name,
+        level4Name,
       });
       this.constructTooltipInfo({
         currentSelectX: xAxisData,
@@ -394,9 +435,26 @@ export default class AbilityScatterAnalysis extends PureComponent {
       selectValue: value,
     });
     const { queryContrastAnalyze, type } = this.props;
+    const { scopeSelectValue } = this.state;
     queryContrastAnalyze({
       type,
       contrastIndicatorId: value, // y轴
+      scope: scopeSelectValue,
+    });
+  }
+
+  // 切换维度
+  @autobind
+  handleScopeChange(v) {
+    this.setState({
+      scopeSelectValue: v,
+    });
+    const { queryContrastAnalyze, type } = this.props;
+    const { selectValue } = this.state;
+    queryContrastAnalyze({
+      type,
+      scope: v,
+      contrastIndicatorId: selectValue,
     });
   }
 
@@ -440,22 +498,34 @@ export default class AbilityScatterAnalysis extends PureComponent {
     const {
       scatterElemHeight,
       isShowTooltip,
-      orgName,
-      parentOrgName,
+      level1Name,
+      level2Name,
+      level3Name,
+      level4Name,
       tooltipInfo,
       finalData,
       selectValue,
       finalOptions,
       averageInfo,
       scatterOptions,
+      scopeSelectValue,
     } = this.state;
-
     const {
+      level,
+      boardType,
       title,
       style,
       contrastType,
       isLvIndicator,
     } = this.props;
+
+    // 隐藏选项
+    const toggleScope2Option = classnames({
+      hideOption: Number(level) !== 1,
+    });
+    const toggleScope3Option = classnames({
+      hideOption: Number(level) === 3,
+    });
 
 
     if (_.isEmpty(finalData)) {
@@ -490,52 +560,103 @@ export default class AbilityScatterAnalysis extends PureComponent {
               }
             </Select>
           </div>
+          <div className={styles.customerDimensionSelect}>
+            <Select
+              style={{ width: 90 }}
+              value={scopeSelectValue}
+              onChange={this.handleScopeChange}
+              getPopupContainer={this.getPopupContainer}
+            >
+              {
+                sortByType[boardType].map((item, index) => {
+                  const sortByTypeIndex = index;
+                  let optionClass = '';
+                  // 按投顾所有级别均存在
+                  if (index === 0) {
+                    // 按分公司
+                    optionClass = toggleScope2Option;
+                  }
+                  if (index === 1) {
+                    // 按营业部
+                    optionClass = toggleScope3Option;
+                  }
+                  return (
+                    <Option
+                      className={optionClass}
+                      key={sortByTypeIndex}
+                      value={item.scope}
+                    >
+                      按{item.name}
+                    </Option>
+                  );
+                })
+              }
+            </Select>
+          </div>
         </div>
         {
+          // 无对比意义的判断
           this.toggleChart() ?
             <div className={styles.noChart}>
               <img src={imgSrc} alt="无对比意义" />
               <div className={styles.noChartTip}>无对比意义</div>
-            </div> :
-            (
-              <div>
-                <div className={styles.yAxisName} style={style}>{yAxisName}（{yAxisUnit}）</div>
-                <div
-                  className={styles.abilityScatter}
-                  ref={ref => (this.abilityScatterElem = ref)}
-                >
-                  <CommonScatter
-                    onScatterHover={this.handleScatterHover}
-                    onScatterLeave={this.handleScatterLeave}
-                    scatterOptions={scatterOptions}
-                    scatterElemHeight={scatterElemHeight}
-                  />
-                  <div className={styles.xAxisName}>{xAxisName}（{xAxisUnit}）</div>
+            </div>
+          :
+            <div>
+              {
+                // 投顾历史看板下的投顾与投顾对比无对应数据(4是投顾或服务经理)
+              scopeSelectValue === '4' && (selectValue === 'tgInNum' || selectValue === 'ptyMngNum') ?
+                <div className={styles.noChart}>
+                  <img src={imgSrc} alt="无对应数据" />
+                  <div className={styles.noChartTip}>无对应数据</div>
                 </div>
-                {
-                  _.isEmpty(finalData) ?
-                    null
-                    :
-                    <div className={styles.averageDescription}>
-                      <div className={styles.averageIcon} />
-                      <div className={styles.averageInfo}>{averageInfo}</div>
+              :
+                (
+                  <div>
+                    <div className={styles.yAxisName} style={style}>{yAxisName}（{yAxisUnit}）</div>
+                    <div
+                      className={styles.abilityScatter}
+                      ref={ref => (this.abilityScatterElem = ref)}
+                    >
+                      <CommonScatter
+                        onScatterHover={this.handleScatterHover}
+                        onScatterLeave={this.handleScatterLeave}
+                        scatterOptions={scatterOptions}
+                        scatterElemHeight={scatterElemHeight}
+                      />
+                      <div className={styles.xAxisName}>{xAxisName}（{xAxisUnit}）</div>
                     </div>
-                }
+                    {
+                      _.isEmpty(finalData) ?
+                        null
+                        :
+                        <div className={styles.averageDescription}>
+                          <div className={styles.averageIcon} />
+                          <div className={styles.averageInfo}>{averageInfo}</div>
+                        </div>
+                    }
 
-                {isShowTooltip ?
-                  <div className={styles.description}>
-                    <div className={styles.orgDes}>
-                      <i className={styles.desIcon} />
-                      <span>{_.isEmpty(parentOrgName) ? '' : `${parentOrgName}-`}{orgName}:</span>
-                    </div>
-                    <div className={styles.detailDesc}>
-                      <span>{tooltipInfo}</span>
-                    </div>
+                    {isShowTooltip ?
+                      <div className={styles.description}>
+                        <div className={styles.orgDes}>
+                          <i className={styles.desIcon} />
+                          <span>
+                            {_.isEmpty(level1Name) ? '' : `${level1Name}`}
+                            {_.isEmpty(level2Name) ? '' : `-${level2Name}`}
+                            {_.isEmpty(level3Name) ? '' : `-${level3Name}`}
+                            {_.isEmpty(level4Name) ? '' : `-${level4Name}`}:
+                          </span>
+                        </div>
+                        <div className={styles.detailDesc}>
+                          <span>{tooltipInfo}</span>
+                        </div>
+                      </div>
+                      : <div className={styles.noneTooltip} />
+                    }
                   </div>
-                  : <div className={styles.noneTooltip} />
-                }
-              </div>
-            )
+                )
+              }
+            </div>
         }
       </div>
     );
