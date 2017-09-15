@@ -50,7 +50,8 @@ export default {
     serviceRecordData: {}, // 服务记录
     isAddServeRecord: false,
     addServeRecordSuccess: false, // 添加服务记录成功的标记
-    isFollow: false,
+    followSuccess: false,
+    isFollow: {},
   },
   subscriptions: {
     setup({ dispatch }) {
@@ -494,7 +495,13 @@ export default {
         isAllSelect: action.payload,
       };
     },
-
+    // 保存关注成功状态
+    saveIsFollow(state, action) {
+      return {
+        ...state,
+        isFollow: action.payload,
+      };
+    },
     // 保存选中的数据id
     saveSelectedIds(state, action) {
       return {
@@ -566,7 +573,7 @@ export default {
       const { payload } = action;
       return {
         ...state,
-        isFollow: payload.result === 'success',
+        followSuccess: payload.result === 'success',
         // addFollow: false,
       };
     },

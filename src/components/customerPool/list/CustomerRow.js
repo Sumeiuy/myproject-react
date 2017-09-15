@@ -168,7 +168,7 @@ export default class CustomerRow extends PureComponent {
     email: PropTypes.string.isRequired,
     currentEmailCustId: PropTypes.string.isRequired,
     currentFollowCustId: PropTypes.string.isRequired,
-    follow: PropTypes.bool.isRequired,
+    isFollow: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -191,9 +191,7 @@ export default class CustomerRow extends PureComponent {
       unit: '元',
       newAsset: asset,
       checked: false,
-      followClass: null,
     };
-
     this.businessConfig = new Map();
     custBusinessType.forEach((v) => {
       this.businessConfig.set(v.key, v.value);
@@ -214,9 +212,6 @@ export default class CustomerRow extends PureComponent {
       newAsset,
       isShowCharts: false,
     });
-    this.state.followClass = classnames({
-      [styles.follows]: this.props.follow,
-    });
   }
   componentWillReceiveProps(nextProps) {
     if (nextProps.isAllSelect !== this.props.isAllSelect) {
@@ -224,16 +219,6 @@ export default class CustomerRow extends PureComponent {
         checked: nextProps.isAllSelect,
       });
     }
-    console.log(nextProps);
-    if (nextProps.currentFollowCustId !== '') {
-      const followClass = classnames({
-        [styles.follows]: nextProps.follow,
-      });
-      this.setState({
-        followClass,
-      });
-    }
-
     // this.setState({
     //   checked: nextProps.isAllSelect,
     // });
@@ -244,7 +229,6 @@ export default class CustomerRow extends PureComponent {
       document.querySelector('#sendEmail').dispatchEvent(evt);
     }
   }
-
   getLastestData(arr) {
     if (arr && arr instanceof Array && arr.length !== 0) {
       return arr[arr.length - 1];
@@ -452,9 +436,9 @@ export default class CustomerRow extends PureComponent {
       email,
       addFollow,
       currentFollowCustId,
-      follow,
       createContact,
       createServiceRecord,
+      isFollow,
     } = this.props;
     const {
       unit,
@@ -469,7 +453,6 @@ export default class CustomerRow extends PureComponent {
     const rskLev = _.trim(listItem.riskLvl);
     const newIdsArr = _.map(selectedIds, v => (v.id));
     const isChecked = _.includes(newIdsArr, listItem.custId) || isAllSelect || checked;
-    // console.log('listItem', checked);
 
     return (
       <div className={styles.customerRow}>
@@ -489,9 +472,9 @@ export default class CustomerRow extends PureComponent {
                   <Icon type="jilu" />
                   <span>添加服务记录</span>
                 </li>
-                <li onClick={() => addFollow(listItem)} className={currentFollowCustId === listItem.custId ? this.state.followClass : ''}>
-                  <Icon type="guanzhu" className={currentFollowCustId === listItem.custId ? this.state.followClass : ''} />
-                  <span>{follow}-----{currentFollowCustId === listItem.custId && follow ? '已关注' : '关注'}</span>
+                <li onClick={() => addFollow(listItem)} className={(currentFollowCustId === listItem.custId && isFollow[currentFollowCustId]) || isFollow[listItem.custId] ? styles.follows : ''}>
+                  <Icon type="guanzhu" />
+                  <span>{(currentFollowCustId === listItem.custId && isFollow[currentFollowCustId]) || isFollow[listItem.custId] ? '已关注' : '关注'}</span>
                 </li>
               </ul>
             </div>

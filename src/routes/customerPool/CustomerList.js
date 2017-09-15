@@ -73,7 +73,8 @@ const mapStateToProps = state => ({
   cycle: state.customerPool.dict.kPIDateScopeType,  // 统计周期
   addServeRecordSuccess: state.customerPool.addServeRecordSuccess,
   isAddServeRecord: state.customerPool.isAddServeRecord,
-  isFollow: state.customerPool.isFollow,
+  followSuccess: state.customerPool.followSuccess, // 关注成功
+  isFollow: state.customerPool.isFollow, // 是否关注的状态
 });
 
 const mapDispatchToProps = {
@@ -99,6 +100,10 @@ const mapDispatchToProps = {
   //   type: 'customerPool/getStatisticalPeriod',
   //   payload: query || {},
   // }),
+  saveIsFollow: query => ({
+    type: 'customerPool/saveIsFollow',
+    payload: query || {},
+  }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -134,7 +139,9 @@ export default class CustomerList extends PureComponent {
     addServeRecord: PropTypes.func.isRequired, // 添加服务记录
     addServeRecordSuccess: PropTypes.bool.isRequired,
     isAddServeRecord: PropTypes.bool.isRequired,
-    isFollow: PropTypes.bool.isRequired,
+    followSuccess: PropTypes.bool.isRequired,
+    isFollow: PropTypes.object.isRequired,
+    saveIsFollow: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -557,6 +564,8 @@ export default class CustomerList extends PureComponent {
       addServeRecord,
       addServeRecordSuccess,
       isAddServeRecord,
+      followSuccess,
+      saveIsFollow,
       isFollow,
     } = this.props;
     const {
@@ -646,7 +655,9 @@ export default class CustomerList extends PureComponent {
           addServeRecord={addServeRecord}
           addServeRecordSuccess={addServeRecordSuccess}
           isAddServeRecord={isAddServeRecord}
+          followSuccess={followSuccess}
           isFollow={isFollow}
+          saveIsFollow={saveIsFollow}
         />
       </div>
     );

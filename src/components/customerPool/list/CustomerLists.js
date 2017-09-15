@@ -26,6 +26,8 @@ const EMPTY_OBJECT = {};
 let modalKeyCount = 0;
 let finded = 0;// 邮件联系
 let addresses = '';
+let followOnoff = false;
+let operateType = null;
 
 export default class CustomerLists extends PureComponent {
   static propTypes = {
@@ -59,7 +61,9 @@ export default class CustomerLists extends PureComponent {
     isAddServeRecord: PropTypes.bool.isRequired,
     dict: PropTypes.object.isRequired,
     isSms: PropTypes.bool.isRequired,
-    isFollow: PropTypes.bool.isRequired,
+    followSuccess: PropTypes.bool.isRequired,
+    saveIsFollow: PropTypes.func.isRequired,
+    isFollow: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -104,13 +108,14 @@ export default class CustomerLists extends PureComponent {
       custContactData: nextCustContactData = EMPTY_OBJECT,
       serviceRecordData: nextServiceRecordData = EMPTY_ARRAY,
      } = nextProps;
-    console.log(nextProps.custContactData);
+    // console.log(nextProps.custContactData);
     const { currentCustId, isShowContactModal } = this.state;
     const prevContact = prevCustContactData[currentCustId] || EMPTY_OBJECT;
     const nextContact = nextCustContactData[currentCustId] || EMPTY_OBJECT;
     const prevRecord = prevServiceRecordData[currentCustId] || EMPTY_OBJECT;
     const nextRecord = nextServiceRecordData[currentCustId] || EMPTY_OBJECT;
-    if ((prevContact !== nextContact || prevRecord !== nextRecord) && onOff === false) {
+    if ((prevContact !== nextContact || prevRecord !== nextRecord) &&
+        onOff === false && followOnoff === false) {
       if (!isShowContactModal) {
         this.setState({
           isShowContactModal: true,
@@ -118,13 +123,20 @@ export default class CustomerLists extends PureComponent {
         });
       }
     }
-    console.log(nextContact);
     if (onOff) {
       if (_.size(nextContact) !== 0) {
         addresses = nextContact;
         this.getEmailData(addresses);
       }
       onOff = false;
+    }
+    if (followOnoff) {
+      if (operateType === 'new') {
+        message.success('关注成功');
+      } else {
+        message.error('已取消关注');
+      }
+      followOnoff = false;
     }
   }
   componentDidUpdate() {
@@ -358,32 +370,35 @@ export default class CustomerLists extends PureComponent {
   }
   @autobind
   addFollow(item) {
-    const { getFollowCust } = this.props;
+    const { getFollowCust, saveIsFollow, isFollow } = this.props;
     const { custId, empId } = item;
-    let operateType = null;
-    if (!this.state.follow) {
-      console.log('您已关注');
+    let isFollows = null;
+    if (isFollow[custId] === undefined || isFollow[custId] === false) {
+      isFollows = {
+        [custId]: true,
+      };
+      operateType = 'new';
+      saveIsFollow({ ...isFollow, ...isFollows });
       this.setState({
-        follow: !this.state.follow,
         currentFollowCustId: custId,
       });
-      operateType = 'new';
       getFollowCust({
         empId, operateType, custId,
       });
-      console.log(this.state.follow);
     } else {
-      console.log('您已取消关注');
+      isFollows = {
+        [custId]: false,
+      };
+      operateType = 'delete';
+      saveIsFollow({ ...isFollow, ...isFollows });
       this.setState({
-        follow: !this.state.follow,
         currentFollowCustId: custId,
       });
-      console.log(this.state.follow);
-      operateType = 'delete';
       getFollowCust({
         empId, operateType, custId,
       });
     }
+    followOnoff = true;
   }
 
   /**
@@ -429,7 +444,6 @@ export default class CustomerLists extends PureComponent {
       email,
       currentEmailCustId,
       currentFollowCustId,
-      follow,
       isShowContactModal,
       currentCustId,
       custType,
@@ -458,6 +472,7 @@ export default class CustomerLists extends PureComponent {
       isAddServeRecord,
       dict,
       isSms,
+      isFollow,
     } = this.props;
 
     const finalContactData = custContactData[currentCustId] || EMPTY_OBJECT;
@@ -526,7 +541,7 @@ export default class CustomerLists extends PureComponent {
                 email={email}
                 currentEmailCustId={currentEmailCustId}
                 currentFollowCustId={currentFollowCustId}
-                follow={follow}
+                isFollow={isFollow}
               />,
             )
           }
