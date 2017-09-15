@@ -48,6 +48,7 @@ const effects = {
   getServiceRecord: 'customerPool/getServiceRecord',
   getCustomerScope: 'customerPool/getCustomerScope',
   addServeRecord: 'customerPool/addServeRecord',
+  getFollowCust: 'customerPool/getFollowCust',
 };
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -70,6 +71,7 @@ const mapStateToProps = state => ({
   cycle: state.customerPool.dict.kPIDateScopeType,  // 统计周期
   addServeRecordSuccess: state.customerPool.addServeRecordSuccess,
   isAddServeRecord: state.customerPool.isAddServeRecord,
+  isFollow: state.customerPool.isFollow,
 });
 
 const mapDispatchToProps = {
@@ -80,6 +82,7 @@ const mapDispatchToProps = {
   addServeRecord: fetchDataFunction(true, effects.addServeRecord),
   getServiceRecord: fetchDataFunction(true, effects.getServiceRecord),
   getCustContact: fetchDataFunction(true, effects.getCustContact),
+  getFollowCust: fetchDataFunction(true, effects.getFollowCust),
   push: routerRedux.push,
   replace: routerRedux.replace,
 };
@@ -104,6 +107,7 @@ export default class CustomerList extends PureComponent {
     page: PropTypes.object.isRequired,
     monthlyProfits: PropTypes.array.isRequired,
     getCustContact: PropTypes.func.isRequired,
+    getFollowCust: PropTypes.func.isRequired,
     custContactData: PropTypes.object,
     getServiceRecord: PropTypes.func.isRequired,
     serviceRecordData: PropTypes.object,
@@ -112,6 +116,7 @@ export default class CustomerList extends PureComponent {
     addServeRecord: PropTypes.func.isRequired, // 添加服务记录
     addServeRecordSuccess: PropTypes.bool.isRequired,
     isAddServeRecord: PropTypes.bool.isRequired,
+    isFollow: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -515,6 +520,7 @@ export default class CustomerList extends PureComponent {
       getCustIncome,
       getCustContact,
       getServiceRecord,
+      getFollowCust,
       custContactData,
       serviceRecordData,
       cycle,
@@ -522,6 +528,7 @@ export default class CustomerList extends PureComponent {
       addServeRecord,
       addServeRecordSuccess,
       isAddServeRecord,
+      isFollow,
     } = this.props;
     const {
       sortDirection,
@@ -601,12 +608,14 @@ export default class CustomerList extends PureComponent {
           getCustIncome={getCustIncome}
           getCustContact={getCustContact}
           getServiceRecord={getServiceRecord}
+          getFollowCust={getFollowCust}
           custContactData={custContactData}
           serviceRecordData={serviceRecordData}
           empInfo={empInfo}
           addServeRecord={addServeRecord}
           addServeRecordSuccess={addServeRecordSuccess}
           isAddServeRecord={isAddServeRecord}
+          isFollow={isFollow}
         />
       </div>
     );
