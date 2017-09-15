@@ -10,6 +10,7 @@ import { autobind } from 'core-decorators';
 import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import { constructSeibelPostBody } from '../../utils/helper';
 import SplitPanel from '../../components/common/splitPanel/SplitPanel';
 import PageHeader from '../../components/permission/PageHeader';
 import Detail from '../../components/permission/Detail';
@@ -69,11 +70,7 @@ export default class Permission extends PureComponent {
       pageSize,
      } } } = this.props;
     // 默认筛选条件
-    getPermissionList({
-      query,
-      pageNum: pageNum || 1,
-      pageSize: pageSize || 10,
-    });
+    getPermissionList(constructSeibelPostBody(query, pageNum || 1, pageSize || 10));
   }
 
   componentWillReceiveProps(nextProps) {
@@ -86,11 +83,11 @@ export default class Permission extends PureComponent {
     if (!_.isEqual(prevQuery, nextQuery)) {
       if (!this.diffObject(prevQuery, nextQuery)) {
         // 只监测筛选条件是否变化
-        getPermissionList({
+        getPermissionList(constructSeibelPostBody(
           nextQuery,
-          pageNum: isResetPageNum === 'Y' ? 1 : pageNum,
-          pageSize: isResetPageNum === 'Y' ? 10 : pageSize,
-        });
+          isResetPageNum === 'Y' ? 1 : pageNum,
+          isResetPageNum === 'Y' ? 10 : pageSize,
+        ));
       }
     }
   }
