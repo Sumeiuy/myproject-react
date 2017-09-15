@@ -9,6 +9,7 @@ import React, { PureComponent, PropTypes } from 'react';
 import { Checkbox } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import classnames from 'classnames';
 
 // import CreateContactModal from './CreateContactModal';
 import Icon from '../../common/Icon';
@@ -159,9 +160,15 @@ export default class CustomerRow extends PureComponent {
     isAllSelect: PropTypes.bool.isRequired,
     selectedIds: PropTypes.array,
     createServiceRecord: PropTypes.func.isRequired,
+    toEmail: PropTypes.func.isRequired,
+    addFollow: PropTypes.func.isRequired,
     dict: PropTypes.object.isRequired,
     createContact: PropTypes.func.isRequired,
     isSms: PropTypes.bool.isRequired,
+    email: PropTypes.string.isRequired,
+    currentEmailCustId: PropTypes.string.isRequired,
+    currentFollowCustId: PropTypes.string.isRequired,
+    follow: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -184,6 +191,7 @@ export default class CustomerRow extends PureComponent {
       unit: '元',
       newAsset: asset,
       checked: false,
+      followClass: null,
     };
 
     this.businessConfig = new Map();
@@ -197,7 +205,6 @@ export default class CustomerRow extends PureComponent {
       { leading: false },
     );
   }
-
   componentWillMount() {
     const { listItem: { asset } } = this.props;
     const unit = generateUnit(+asset);
@@ -207,17 +214,35 @@ export default class CustomerRow extends PureComponent {
       newAsset,
       isShowCharts: false,
     });
+    this.state.followClass = classnames({
+      [styles.follows]: this.props.follow,
+    });
   }
-
   componentWillReceiveProps(nextProps) {
     if (nextProps.isAllSelect !== this.props.isAllSelect) {
       this.setState({
         checked: nextProps.isAllSelect,
       });
     }
+    console.log(nextProps);
+    if (nextProps.currentFollowCustId !== '') {
+      const followClass = classnames({
+        [styles.follows]: nextProps.follow,
+      });
+      this.setState({
+        followClass,
+      });
+    }
+
     // this.setState({
     //   checked: nextProps.isAllSelect,
     // });
+  }
+  componentDidUpdate() {
+    if (this.props.email !== '') {
+      const evt = new MouseEvent('click', { bubbles: false, cancelable: false, view: window });
+      document.querySelector('#sendEmail').dispatchEvent(evt);
+    }
   }
 
   getLastestData(arr) {
@@ -399,27 +424,15 @@ export default class CustomerRow extends PureComponent {
       onChange(custId, name);
     });
   }
-
+  /**
+   * 回调，关闭modal打开state
+   */
   @autobind
-  handleTelClick() {
-    const { listItem, createContact } = this.props;
-    const { custId, pOrO } = listItem;
-
-    createContact({
-      custId,
-      custType: pOrO === 'P' ? 'per' : 'org',
+  resetModalState() {
+    this.setState({
+      isShowModal: false,
     });
   }
-
-  @autobind
-  showCreateServiceRecord() {
-    const {
-      createServiceRecord,
-      listItem: { custId },
-    } = this.props;
-    createServiceRecord(custId);
-  }
-
   @autobind
   renderAgeOrOrgName() {
     const { listItem } = this.props;
@@ -434,6 +447,14 @@ export default class CustomerRow extends PureComponent {
   render() {
     const { q, listItem, monthlyProfits, isAllSelect, selectedIds,
       isSms,
+      toEmail,
+      currentEmailCustId,
+      email,
+      addFollow,
+      currentFollowCustId,
+      follow,
+      createContact,
+      createServiceRecord,
     } = this.props;
     const {
       unit,
@@ -456,21 +477,21 @@ export default class CustomerRow extends PureComponent {
           isSms ?
             <div className={styles.basicInfoD}>
               <ul className={styles.operationIcon}>
-                <li onClick={this.handleTelClick}>
+                <li onClick={() => createContact(listItem)}>
                   <Icon type="dianhua" />
                   <span>电话联系</span>
                 </li>
-                <li>
+                <li onClick={() => toEmail(listItem)}>
                   <Icon type="youjian" />
-                  <span>邮件联系</span>
+                  <span>{currentEmailCustId === listItem.custId && email ? <a id={email && currentEmailCustId === listItem.custId ? 'sendEmail' : ''} href={`mailto:${email}`} > 邮件联系 </a> : '邮件联系' }</span>
                 </li>
-                <li onClick={this.showCreateServiceRecord}>
+                <li onClick={() => createServiceRecord(listItem)}>
                   <Icon type="jilu" />
                   <span>添加服务记录</span>
                 </li>
-                <li>
-                  <Icon type="guanzhu" />
-                  <span>关注</span>
+                <li onClick={() => addFollow(listItem)} className={currentFollowCustId === listItem.custId ? this.state.followClass : ''}>
+                  <Icon type="guanzhu" className={currentFollowCustId === listItem.custId ? this.state.followClass : ''} />
+                  <span>{follow}-----{currentFollowCustId === listItem.custId && follow ? '已关注' : '关注'}</span>
                 </li>
               </ul>
             </div>
