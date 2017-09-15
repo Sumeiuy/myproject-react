@@ -20,8 +20,8 @@ import CustomerLists from '../../components/customerPool/list/CustomerLists';
 
 import styles from './customerlist.less';
 
-const CUST_MANAGER = 1; // 客户经理
-const ORG = 3; // 组织机构
+const CUST_MANAGER = '1'; // 客户经理
+const ORG = '3'; // 组织机构
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const CUR_PAGE = 1; // 默认当前页
@@ -66,8 +66,6 @@ const mapStateToProps = state => ({
   custList: state.customerPool.custList,
   page: state.customerPool.custPage,
   monthlyProfits: state.customerPool.monthlyProfits, // 6个月收益数据
-  isAllSelect: state.customerPool.isAllSelect, // 是否全选
-  selectedIds: state.customerPool.selectedIds, // 非全选时选中的id数组
   custContactData: state.customerPool.custContactData, // 联系方式数据
   serviceRecordData: state.customerPool.serviceRecordData, // 最近服务记录
   cycle: state.customerPool.dict.kPIDateScopeType,  // 统计周期
@@ -87,18 +85,6 @@ const mapDispatchToProps = {
   getFollowCust: fetchDataFunction(true, effects.getFollowCust),
   push: routerRedux.push,
   replace: routerRedux.replace,
-  saveIsAllSelect: query => ({
-    type: 'customerPool/saveIsAllSelect',
-    payload: query || {},
-  }),
-  saveSelectedIds: query => ({
-    type: 'customerPool/saveSelectedIds',
-    payload: query || {},
-  }),
-  // getStatisticalPeriod: query => ({
-  //   type: 'customerPool/getStatisticalPeriod',
-  //   payload: query || {},
-  // }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -120,10 +106,6 @@ export default class CustomerList extends PureComponent {
     custList: PropTypes.array.isRequired,
     page: PropTypes.object.isRequired,
     monthlyProfits: PropTypes.array.isRequired,
-    isAllSelect: PropTypes.object.isRequired,
-    selectedIds: PropTypes.object.isRequired,
-    saveIsAllSelect: PropTypes.func.isRequired,
-    saveSelectedIds: PropTypes.func.isRequired,
     getCustContact: PropTypes.func.isRequired,
     getFollowCust: PropTypes.func.isRequired,
     custContactData: PropTypes.object,
@@ -167,6 +149,7 @@ export default class CustomerList extends PureComponent {
     const respIdOfPosition = _.findIndex(empRespList, item => (item.respId === HTSC_RESPID));
     // 判断是否是主服务经理，或者是否在业务客户列表中，是则为true，否则 false
     if (respIdOfPosition < 0 || source === 'business') {
+      // debugger
       this.setState({ // eslint-disable-line
         isSms: true,
       });
@@ -175,8 +158,6 @@ export default class CustomerList extends PureComponent {
     this.generateCustRange(this.props);
     // 请求客户列表
     this.getCustomerList(this.props);
-    // saveIsAllSelect(false);
-    // saveSelectedIds(EMPTY_LIST);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -201,17 +182,28 @@ export default class CustomerList extends PureComponent {
       this.generateCustRange(nextProps);
     }
     // query变化、权限列表存在变化和职位切换时，重新获取列表数据
-    if (!_.isEqual(preQuery, query) ||
+    const {
+      selectedIds: preSelectedIds,
+      selectAll: preSelectAll,
+      ...preOtherQuery
+    } = preQuery;
+    const {
+      selectedIds,
+      selectAll,
+      ...otherQuery
+    } = query;
+    if (!_.isEqual(preOtherQuery, otherQuery) ||
       !_.isEqual(PreEmpRespList, empRespList) ||
       orgId !== preOrgId) {
       this.getCustomerList(nextProps);
     }
     // const noPermission = _.find(empRespList, item => item.id === )
-    this.setState({
-      isSms: query.orgId === 'msm' || query.source === 'business',
-    });
-    if (!_.isEqual(preQuery, query)) {
-      this.clearSelectData();
+    console.log('query.orgId----query.source', query.orgId, query.source);
+    // debugger
+    if (query.orgId === MAIN_MAGEGER_ID || query.source === 'business') {
+      this.setState({
+        isSms: true,
+      });
     }
   }
 
@@ -359,24 +351,6 @@ export default class CustomerList extends PureComponent {
     getCustomerData(param);
   }
 
-  // 清空选中的数据，还原成初始值
-  @autobind
-  clearSelectData() {
-    const {
-      saveIsAllSelect,
-      saveSelectedIds,
-      selectedIds,
-      isAllSelect,
-      location: { query },
-    } = this.props;
-    // 筛选时清空已选中的数据、还原全选的状态
-    saveIsAllSelect({ ...isAllSelect, [query.source]: false });
-    saveSelectedIds({
-      ...selectedIds,
-      [query.source]: EMPTY_LIST,
-    });
-  }
-
   // 生成组织机构树的数据
   @autobind
   generateCustRange(props) {
@@ -403,7 +377,7 @@ export default class CustomerList extends PureComponent {
     }
     // 保证全局的职位存在的情况下取职位, 取不到时从empInfo中取值
     const occDivnNum = empInfo.occDivnNum || '';
-    // const fspJobOrgId = 'ZZ001041020';
+    // let fspJobOrgId = 'ZZ001041020';
     let fspJobOrgId = !_.isEmpty(window.forReactPosition) ?
       window.forReactPosition.orgId :
       occDivnNum;
@@ -428,18 +402,21 @@ export default class CustomerList extends PureComponent {
       return false;
     }
     // fspJobOrgId 在机构树中所处的营业部位置
+    let department;
     _(custRange).forEach((obj) => {
       if (obj.children && !_.isEmpty(obj.children)) {
-        const tmpArr = _.filter(obj.children, v => v.id === fspJobOrgId);
-        if (!_.isEmpty(tmpArr)) {
-          this.setState({
-            createCustRange: [...tmpArr, myCustomer],
-          });
-          return false;
+        const targetValue = _.find(obj.children, o => o.id === fspJobOrgId);
+        if (targetValue) {
+          department = [targetValue, myCustomer];
         }
       }
-      return true;
     });
+    if (department) {
+      this.setState({
+        createCustRange: department,
+      });
+      return false;
+    }
     // 有权限，但是用户信息中获取到的occDivnNum不在empOrg（组织机构树）中，显示用户信息中的数据
     this.setState({
       createCustRange: [{
@@ -467,9 +444,10 @@ export default class CustomerList extends PureComponent {
         orgId,
         cycleSelect,
         curPageNum: 1,
+        selectAll: false,
+        selectedIds: '',
       },
     });
-    this.clearSelectData();
   }
 
   // 筛选变化
@@ -485,6 +463,8 @@ export default class CustomerList extends PureComponent {
         ...query,
         [obj.name]: obj.value,
         curPageNum: 1,
+        selectAll: false,
+        selectedIds: '',
       },
     });
   }
@@ -543,10 +523,6 @@ export default class CustomerList extends PureComponent {
       page,
       monthlyProfits,
       getCustIncome,
-      selectedIds,
-      isAllSelect,
-      saveIsAllSelect,
-      saveSelectedIds,
       getCustContact,
       getServiceRecord,
       getFollowCust,
@@ -591,7 +567,7 @@ export default class CustomerList extends PureComponent {
       custRangeProps.selectValue = selectValue;
     }
     // console.log('6个月收益数据： ', monthlyProfits);
-    console.log('createCustRange>>>', curPageNum, page);
+    console.log('createCustRange>>>', isSms);
     return (
       <div className={styles.customerlist}>
         <Row type="flex" justify="space-between" align="middle">
@@ -623,6 +599,7 @@ export default class CustomerList extends PureComponent {
           source={source}
           entertype={ENTER_TYPE[source]}
           location={location}
+          replace={replace}
           push={push}
           custList={custList}
           q={decodeURIComponent(q)}
@@ -633,10 +610,6 @@ export default class CustomerList extends PureComponent {
           onPageChange={this.handlePageChange}
           onSizeChange={this.handleSizeChange}
           getCustIncome={getCustIncome}
-          saveSelectedIds={saveSelectedIds}
-          saveIsAllSelect={saveIsAllSelect}
-          isAllSelect={isAllSelect}
-          selectedIds={selectedIds}
           getCustContact={getCustContact}
           getServiceRecord={getServiceRecord}
           getFollowCust={getFollowCust}

@@ -33,10 +33,12 @@ import CreateTask from './routes/customerPool/CreateTask';
 
 function switchRouter() {
   const fsp = document.querySelector(fspContainer.container);
-  if (fsp) {
-    fsp.scrollTop = 0;
-  } else {
-    window.scrollTo(0, 0);
+  if (!((this.state.location.state || {}).noScrollTop || false)) {
+    if (fsp) {
+      fsp.scrollTop = 0;
+    } else {
+      window.scrollTo(0, 0);
+    }
   }
 }
 
