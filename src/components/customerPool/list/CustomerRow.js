@@ -144,9 +144,9 @@ const formatNumber = (num) => {
   return num;
 };
 
-// let contactModalKeyCount = 0;
-// const EMPTY_LIST = [];
-// const EMPTY_OBJECT = {};
+let contactModalKeyCount = 0;
+const EMPTY_LIST = [];
+const EMPTY_OBJECT = {};
 
 export default class CustomerRow extends PureComponent {
   static propTypes = {
@@ -162,6 +162,8 @@ export default class CustomerRow extends PureComponent {
     dict: PropTypes.object.isRequired,
     createContact: PropTypes.func.isRequired,
     isSms: PropTypes.bool.isRequired,
+    custContactData: PropTypes.object.isRequired,
+    serviceRecordData: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -183,7 +185,11 @@ export default class CustomerRow extends PureComponent {
       hideStyle: hide,
       unit: '元',
       newAsset: asset,
-      checked: false,
+      visible: false,
+      isShowModal: false,
+      modalKey: `contactModalKey${contactModalKeyCount}`,
+      currentCustId: '',
+      custType: '',
     };
 
     this.businessConfig = new Map();
@@ -210,14 +216,27 @@ export default class CustomerRow extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.isAllSelect !== this.props.isAllSelect) {
-      this.setState({
-        checked: nextProps.isAllSelect,
-      });
+    // console.log('nextProps.isAllSelect>>>', nextProps.isAllSelect);
+    // console.log('this.props.isAllSelect>>>', this.props.isAllSelect);
+    const {
+      custContactData: prevCustContactData = EMPTY_OBJECT,
+      serviceRecordData: prevServiceRecordData = EMPTY_LIST,
+     } = this.props;
+    const {
+      custContactData: nextCustContactData = EMPTY_OBJECT,
+      serviceRecordData: nextServiceRecordData = EMPTY_LIST,
+     } = nextProps;
+    const { isShowModal, currentCustId } = this.state;
+    const prevContact = prevCustContactData[currentCustId] || EMPTY_OBJECT;
+    const nextContact = nextCustContactData[currentCustId] || EMPTY_OBJECT;
+    if (prevContact !== nextContact || prevServiceRecordData !== nextServiceRecordData) {
+      if (!isShowModal) {
+        this.setState({
+          isShowModal: true,
+          modalKey: `contactModalKey${contactModalKeyCount++}`,
+        });
+      }
     }
-    // this.setState({
-    //   checked: nextProps.isAllSelect,
-    // });
   }
 
   getLastestData(arr) {
@@ -367,7 +386,8 @@ export default class CustomerRow extends PureComponent {
     }
     // 显示开户日期
     if (isCustIndicator && listItem.openDt) {
-      const domTpl = getNewHtml('开户日期', listItem.openDt);
+      const openDate = `${listItem.openDt.slice(0, 4)}年${listItem.openDt.slice(4, 6)}月${listItem.openDt.slice(6, 8)}日`;
+      const domTpl = getNewHtml('开户日期', openDate);
       rtnEle += domTpl;
       n++;
       if (n <= FOLD_NUM) {
@@ -391,13 +411,9 @@ export default class CustomerRow extends PureComponent {
   }
 
   @autobind
-  handleSelect(e) {
+  handleSelect() {
     const { onChange, listItem: { custId, name } } = this.props;
-    this.setState({
-      checked: e.target.checked,
-    }, () => {
-      onChange(custId, name);
-    });
+    onChange(custId, name);
   }
 
   @autobind
@@ -438,7 +454,6 @@ export default class CustomerRow extends PureComponent {
     const {
       unit,
       newAsset,
-      checked,
       isShowCharts,
    } = this.state;
 
@@ -446,10 +461,8 @@ export default class CustomerRow extends PureComponent {
     const lastestProfitRate = Number(this.getLastestData(monthlyProfits).assetProfitRate);
     const matchedWord = this.matchWord(q, listItem);
     const rskLev = _.trim(listItem.riskLvl);
-    const newIdsArr = _.map(selectedIds, v => (v.id));
-    const isChecked = _.includes(newIdsArr, listItem.custId) || isAllSelect || checked;
-    // console.log('listItem', checked);
-
+    const str = `${listItem.custId}.${listItem.name}`;
+    const isChecked = _.includes(selectedIds, str) || isAllSelect;
     return (
       <div className={styles.customerRow}>
         {
