@@ -149,6 +149,7 @@ export default class CustomerList extends PureComponent {
     const respIdOfPosition = _.findIndex(empRespList, item => (item.respId === HTSC_RESPID));
     // 判断是否是主服务经理，或者是否在业务客户列表中，是则为true，否则 false
     if (respIdOfPosition < 0 || source === 'business') {
+      // debugger
       this.setState({ // eslint-disable-line
         isSms: true,
       });
@@ -197,9 +198,13 @@ export default class CustomerList extends PureComponent {
       this.getCustomerList(nextProps);
     }
     // const noPermission = _.find(empRespList, item => item.id === )
-    this.setState({
-      isSms: query.orgId === MAIN_MAGEGER_ID || query.source === 'business',
-    });
+    console.log('query.orgId----query.source', query.orgId, query.source);
+    // debugger
+    if (query.orgId === MAIN_MAGEGER_ID || query.source === 'business') {
+      this.setState({
+        isSms: true,
+      });
+    }
   }
 
   // 获取列表数据
@@ -556,14 +561,13 @@ export default class CustomerList extends PureComponent {
       updateQueryState: this.updateQueryState,
       expandAll,
     };
-    console.log('custRangeProps>>>>', createCustRange);
     if (_.includes(['custIndicator', 'numOfCustOpened'], source)) {
       const selectValue = cycleSelect || (cycle[0] || {}).key;
       custRangeProps.cycle = cycle;
       custRangeProps.selectValue = selectValue;
     }
     // console.log('6个月收益数据： ', monthlyProfits);
-    console.log('createCustRange>>>', curPageNum, page);
+    console.log('createCustRange>>>', isSms);
     return (
       <div className={styles.customerlist}>
         <Row type="flex" justify="space-between" align="middle">
