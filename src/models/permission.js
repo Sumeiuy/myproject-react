@@ -3,7 +3,6 @@
  * @author honggaungqing
  */
 
-import _ from 'lodash';
 import { permission as api } from '../api';
 
 const EMPTY_OBJECT = {};
@@ -48,14 +47,11 @@ export default {
       });
     },
     * getPermissionList({ payload }, { call, put }) {
-      const { pageNum, pageSize } = payload;
-      if (!_.isEmpty(pageNum && pageSize)) {
-        const response = yield call(api.getPermissionList, payload);
-        yield put({
-          type: 'getPermissionListSuccess',
-          payload: response,
-        });
-      }
+      const response = yield call(api.getPermissionList, payload);
+      yield put({
+        type: 'getPermissionListSuccess',
+        payload: response,
+      });
     },
   },
   subscriptions: {},
