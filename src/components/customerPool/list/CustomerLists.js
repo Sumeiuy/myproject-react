@@ -7,7 +7,7 @@
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { Pagination, Checkbox } from 'antd';
+import { Pagination, Checkbox, message } from 'antd';
 
 import CustomerRow from './CustomerRow';
 import CreateServiceRecord from './CreateServiceRecord';
@@ -20,6 +20,7 @@ import NoData from '../common/NoData';
 import styles from './customerLists.less';
 
 const EMPTY_ARRAY = [];
+let followOn = false;
 
 export default class CustomerLists extends PureComponent {
   static propTypes = {
@@ -45,6 +46,7 @@ export default class CustomerLists extends PureComponent {
     condition: PropTypes.object.isRequired,
     getCustContact: PropTypes.func.isRequired,
     getServiceRecord: PropTypes.func.isRequired,
+    getFollowCust: PropTypes.func.isRequired,
     custContactData: PropTypes.object.isRequired,
     serviceRecordData: PropTypes.array.isRequired,
     addServeRecord: PropTypes.func.isRequired,
@@ -52,6 +54,7 @@ export default class CustomerLists extends PureComponent {
     isAddServeRecord: PropTypes.bool.isRequired,
     dict: PropTypes.object.isRequired,
     isSms: PropTypes.bool.isRequired,
+    isFollow: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -68,6 +71,10 @@ export default class CustomerLists extends PureComponent {
       showCreateServiceRecord: false,
       // 判断是否是主服务经理
       isSms: false,
+      currentEmailCustId: '',
+      email: '',
+      follow: false,
+      currentFollowCustId: '',
     };
   }
 
@@ -80,7 +87,53 @@ export default class CustomerLists extends PureComponent {
       sidebarShowBtn.addEventListener('click', this.updateLeftPos);
     }
   }
-
+  componentWillReceiveProps(nextProps) {
+    console.log(nextProps);
+    console.log(this.state.currentEmailCustId);
+    let finded = 0;
+    let addresses = '';
+    const {
+      custContactData: nextCustContactData,
+    } = nextProps;
+    const { currentEmailCustId } = this.state;
+    if (_.size(nextProps.custContactData) !== 0) {
+      addresses = nextCustContactData[currentEmailCustId];
+      console.log(addresses)
+      if (addresses.orgCustomerContactInfoList !== undefined) {
+        const index = _.findLastIndex(addresses.orgCustomerContactInfoList,
+            (val) => { return val.mainFlag === true; });
+        finded = _.findLastIndex(addresses.orgCustomerContactInfoList[index].emailAddresses,
+            (val) => { return val.mainFlag === true; });
+        addresses = addresses.orgCustomerContactInfoList[index];
+      } else {
+        finded = _.findLastIndex(addresses.perCustomerContactInfo.emailAddresses,
+              (val) => { return val.mainFlag === true; });
+        addresses = addresses.perCustomerContactInfo;
+      }
+      if (finded !== -1) {
+        this.setState({
+          email: addresses.emailAddresses[finded].contactValue,
+        });
+      } else {
+        this.setState({
+          email: null,
+        });
+        message.error('暂无客户邮件，请与客户沟通尽快完善信息');
+      }
+      console.log('email----', this.state.email);
+    }
+    console.log('followOn---', followOn);
+    console.log(nextProps.isFollow);
+    // if (followOn) {
+    //   console.log('this.state.follow---', this.state.follow);
+    //   if (nextProps.isFollow) {
+    //     message.success('已关注');
+    //   } else {
+    //     message.success('已取消关注');
+    //   }
+    //   followOn = false;
+    // }
+  }
   componentDidUpdate() {
     this.setTaskAndGroup();
   }
@@ -241,7 +294,49 @@ export default class CustomerLists extends PureComponent {
       showCreateServiceRecord: false,
     });
   }
-
+  @autobind
+  toEmail(item) {
+    const { getCustContact } = this.props;
+    const { custId } = item;
+    console.log('custId-----', custId);
+    this.setState({
+      currentEmailCustId: custId,
+    });
+    getCustContact({
+      custId,
+    });
+  }
+  @autobind
+  addFollow(item) {
+    const { getFollowCust } = this.props;
+    const { custId, empId } = item;
+    let operateType = null;
+    if (!this.state.follow) {
+      console.log('您已关注');
+      this.setState({
+        follow: !this.state.follow,
+        currentFollowCustId: custId,
+      });
+      operateType = 'new';
+      getFollowCust({
+        empId, operateType, custId,
+      });
+      console.log(this.state.follow)
+    } else {
+      console.log('您已取消关注');
+      this.setState({
+        follow: !this.state.follow,
+        currentFollowCustId: custId,
+      });
+      console.log(this.state.follow)
+      operateType = 'delete';
+      getFollowCust({
+        empId, operateType, custId,
+      });
+    }
+    followOn = true;
+    console.log('followOn----', followOn);
+  }
   // 分组只针对服务经理，也就是说：
   // 1、搜素、标签客户池列表：客户列表是“我的客户”时可以添加用户分组
   // 2、业务办理客户池：默认是只显示自己负责客户的，所以可以添加用户分组
@@ -272,6 +367,10 @@ export default class CustomerLists extends PureComponent {
       taskAndGroupLeftPos,
       showCreateServiceRecord,
       id,
+      email,
+      currentEmailCustId,
+      currentFollowCustId,
+      follow,
     } = this.state;
     const {
       q,
@@ -356,9 +455,15 @@ export default class CustomerLists extends PureComponent {
                 getCustContact={getCustContact}
                 getServiceRecord={getServiceRecord}
                 custContactData={custContactData}
+                toEmail={this.toEmail}
+                addFollow={this.addFollow}
                 serviceRecordData={serviceRecordData}
                 createServiceRecord={this.showCreateServiceRecord}
                 key={`${item.empId}-${item.custId}-${item.idNum}-${item.telephone}-${item.asset}`}
+                email={email}
+                currentEmailCustId={currentEmailCustId}
+                currentFollowCustId={currentFollowCustId}
+                follow={follow}
               />,
             )
           }

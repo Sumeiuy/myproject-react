@@ -9,6 +9,7 @@ import React, { PureComponent, PropTypes } from 'react';
 import { Checkbox, message } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import classnames from 'classnames';
 
 import CreateContactModal from './CreateContactModal';
 import Icon from '../../common/Icon';
@@ -163,8 +164,14 @@ export default class CustomerRow extends PureComponent {
     getCustContact: PropTypes.func.isRequired,
     getServiceRecord: PropTypes.func.isRequired,
     createServiceRecord: PropTypes.func.isRequired,
+    toEmail: PropTypes.func.isRequired,
+    addFollow: PropTypes.func.isRequired,
     dict: PropTypes.object.isRequired,
     isSms: PropTypes.bool.isRequired,
+    email: PropTypes.string.isRequired,
+    currentEmailCustId: PropTypes.string.isRequired,
+    currentFollowCustId: PropTypes.string.isRequired,
+    follow: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -191,6 +198,7 @@ export default class CustomerRow extends PureComponent {
       modalKey: `contactModalKey${contactModalKeyCount}`,
       currentCustId: '',
       custType: '',
+      followClass: null,
     };
 
     this.businessConfig = new Map();
@@ -204,7 +212,6 @@ export default class CustomerRow extends PureComponent {
       { leading: false },
     );
   }
-
   componentWillMount() {
     const { listItem: { asset } } = this.props;
     const unit = generateUnit(+asset);
@@ -214,8 +221,10 @@ export default class CustomerRow extends PureComponent {
       newAsset,
       isShowCharts: false,
     });
+    this.state.followClass = classnames({
+      [styles.follows]: this.props.follow,
+    });
   }
-
   componentWillReceiveProps(nextProps) {
     // console.log('nextProps.isAllSelect>>>', nextProps.isAllSelect);
     // console.log('this.props.isAllSelect>>>', this.props.isAllSelect);
@@ -243,9 +252,25 @@ export default class CustomerRow extends PureComponent {
         checked: nextProps.isAllSelect,
       });
     }
+    console.log(nextProps)
+    if (nextProps.currentFollowCustId !== '') {
+      const followClass = classnames({
+        [styles.follows]: nextProps.follow,
+      });
+      this.setState({
+        followClass,
+      });
+    }
+
     // this.setState({
     //   checked: nextProps.isAllSelect,
     // });
+  }
+  componentDidUpdate() {
+    if (this.props.email !== '') {
+      const evt = new MouseEvent('click', { bubbles: false, cancelable: false, view: window });
+      document.querySelector('#sendEmail').dispatchEvent(evt);
+    }
   }
 
   getLastestData(arr) {
@@ -464,7 +489,24 @@ export default class CustomerRow extends PureComponent {
     } = this.props;
     createServiceRecord(custId);
   }
-
+  // @autobind
+  // toEmail() {
+  //   const { listItem, getCustContact } = this.props;
+  //   const { custId } = listItem;
+  //   console.log(custId);
+  //   this.setState({
+  //     currentCustId: custId,
+  //   }, () => {
+  //     // emailState = this.state.currentCustId;
+  //
+  //       // console.log(this.state.currentCustId);
+  //       // console.log("emailState----", emailState);
+  //   });
+  //   getCustContact({
+  //     custId,
+  //   });
+  //   onOff = true;
+  // }
   /**
    * 回调，关闭modal打开state
    */
@@ -491,6 +533,12 @@ export default class CustomerRow extends PureComponent {
       serviceRecordData = EMPTY_LIST,
       createServiceRecord,
       isSms,
+      toEmail,
+      currentEmailCustId,
+      email,
+      addFollow,
+      currentFollowCustId,
+      follow,
     } = this.props;
     const {
       unit,
@@ -521,17 +569,17 @@ export default class CustomerRow extends PureComponent {
                   <Icon type="dianhua" />
                   <span>电话联系</span>
                 </li>
-                <li>
+                <li onClick={() => { toEmail(listItem) }}>
                   <Icon type="youjian" />
-                  <span>邮件联系</span>
+                  <span>{currentEmailCustId === listItem.custId && email ? <a id={email && currentEmailCustId === listItem.custId ? 'sendEmail' : ''} href={`mailto:${email}`} > 邮件联系 </a> : '邮件联系' }</span>
                 </li>
                 <li onClick={this.showCreateServiceRecord}>
                   <Icon type="jilu" />
                   <span>添加服务记录</span>
                 </li>
-                <li>
-                  <Icon type="guanzhu" />
-                  <span>关注</span>
+                <li onClick={() => { addFollow(listItem) }} className={currentFollowCustId === listItem.custId ? this.state.followClass : ''}>
+                  <Icon type="guanzhu" className={currentFollowCustId === listItem.custId ? this.state.followClass : ''} />
+                  <span>{follow}-----{currentFollowCustId === listItem.custId && follow ? '已关注' : '关注'}</span>
                 </li>
               </ul>
             </div>
