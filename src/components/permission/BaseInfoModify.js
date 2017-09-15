@@ -59,6 +59,23 @@ export default class BaseInfoModify extends PureComponent {
     console.log('暴露的查询方法，向上传递value', value);
   }
 
+  @autobind
+  renderSelectedElem(selected, removeFunc) {
+    // return (
+    //   <div className={style.result}>
+    //     <div className={style.nameLabel}>{selected.name}</div>
+    //     <div className={style.custIdLabel}>{selected.id}</div>
+    //     <div className={style.iconDiv}>
+    //       <Icon
+    //         type="close"
+    //         className={style.closeIcon}
+    //         onClick={removeFunc}
+    //       />
+    //     </div>
+    //   </div>
+    // );
+  }
+  
   render() {
     return (
       <div className={style.baseInfo}>
@@ -97,11 +114,13 @@ export default class BaseInfoModify extends PureComponent {
           </span>
           <div className={style.inputComponentContent}>
             <SearchModal
-              dataSource={this.props.serverInfo}
-              placeholder=""
               columns={columns}
               title="选择下一审批人员"
+              dataSource={this.props.serverInfo}
+              placeholder=""
               onSearch={this.searchInfoList}
+              renderSelected={this.renderSelectedElem}
+              idKey="ptyMngId"
             />
 
           </div>
