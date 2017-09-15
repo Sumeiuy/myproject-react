@@ -4,6 +4,6 @@
 
 export default function contract(api) {
   return {
-    getContractDetail: query => api.post('/groovynoauth/fsp/contract/cooper', query),
+    getContractDetail: query => api.post('/groovynoauth/fsp/contract/cooper/queryDetail', query),
   };
 }

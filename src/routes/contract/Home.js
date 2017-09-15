@@ -61,6 +61,7 @@ export default class Contract extends PureComponent {
   // }
 
   render() {
+    const { location } = this.props;
     return (
       <div>
         <ContractDetail location={location} />
