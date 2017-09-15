@@ -268,7 +268,7 @@ export default class CreateContactModal extends PureComponent {
             type: 'none',
             value: '',
           };
-          if (_.findIndex(cellPhones, item => item.mainFlag) > -1) {
+          if (_.find(cellPhones, item => item.mainFlag)) {
             // 存在主要电话
             mainTelInfo = {
               type: 'cellPhones',
@@ -326,9 +326,12 @@ export default class CreateContactModal extends PureComponent {
             (isPersonHasContact && !_.isEmpty(personalContactInfo.mainTelInfo))) ?
               <div className={styles.mainContact}>
                 <img src={Phone} alt={'电话联系'} />
-                <span>{custType === 'per' ?
+                <span>
+                  {
+                  custType === 'per' ?
                   personalContactInfo.mainTelInfo.value :
-                  mainContactInfo.cellInfo}
+                  mainContactInfo.cellInfo
+                  }
                 </span>
               </div> :
               <div className={styles.noneInfo}>

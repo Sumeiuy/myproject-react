@@ -429,6 +429,17 @@ export default class CustomerRow extends PureComponent {
       isShowModal: false,
     });
   }
+
+  @autobind
+  createModal(listItem) {
+    const { pOrO, custId } = listItem;
+    const { createContact } = this.props;
+    createContact({
+      custId,
+      custType: (!pOrO || pOrO === 'P') ? 'per' : 'org',
+    });
+  }
+
   @autobind
   renderAgeOrOrgName() {
     const { listItem } = this.props;
@@ -449,7 +460,6 @@ export default class CustomerRow extends PureComponent {
       addFollow,
       currentFollowCustId,
       follow,
-      createContact,
       createServiceRecord,
     } = this.props;
     const {
@@ -473,13 +483,13 @@ export default class CustomerRow extends PureComponent {
           isSms ?
             <div className={styles.basicInfoD}>
               <ul className={styles.operationIcon}>
-                <li onClick={() => createContact(listItem)}>
+                <li onClick={() => this.createModal(listItem)}>
                   <Icon type="dianhua" />
                   <span>电话联系</span>
                 </li>
                 <li onClick={() => toEmail(listItem)}>
                   <Icon type="youjian" />
-                  <span>{currentEmailCustId === listItem.custId && email ? <a id={email && currentEmailCustId === listItem.custId ? 'sendEmail' : ''} href={`mailto:${email}`} > 邮件联系 </a> : '邮件联系' }</span>
+                  <span>{currentEmailCustId === listItem.custId && email ? <a id={email && currentEmailCustId === listItem.custId ? 'sendEmail' : ''} href={`mailto:${email}`} > 邮件联系 </a> : '邮件联系'}</span>
                 </li>
                 <li onClick={() => createServiceRecord(listItem)}>
                   <Icon type="jilu" />

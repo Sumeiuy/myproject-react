@@ -153,13 +153,13 @@ export default class CustomerLists extends PureComponent {
   getEmailData(address) {
     if (address.orgCustomerContactInfoList !== undefined) {
       const index = _.findLastIndex(address.orgCustomerContactInfoList,
-          val => val.mainFlag === true);
+        val => val.mainFlag === true);
       finded = _.findLastIndex(address.orgCustomerContactInfoList[index].emailAddresses,
-          val => val.mainFlag === true);
+        val => val.mainFlag === true);
       addresses = address.orgCustomerContactInfoList[index];
     } else {
       finded = _.findLastIndex(address.perCustomerContactInfo.emailAddresses,
-          val => val.mainFlag === true);
+        val => val.mainFlag === true);
       addresses = address.perCustomerContactInfo;
     }
     if (finded !== -1) {
