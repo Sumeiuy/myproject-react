@@ -60,7 +60,7 @@ export default class BaseInfoModify extends PureComponent {
   }
 
   @autobind
-  renderSelectedElem(selected, removeFunc) {
+  renderSelectedElem(/** selected, removeFunc */) {
     // return (
     //   <div className={style.result}>
     //     <div className={style.nameLabel}>{selected.name}</div>
@@ -75,7 +75,7 @@ export default class BaseInfoModify extends PureComponent {
     //   </div>
     // );
   }
-  
+
   render() {
     return (
       <div className={style.baseInfo}>
