@@ -81,6 +81,9 @@ const chartOptions = {
     confine: true,
     axisPointer: {
       type: 'shadow',
+      shadowStyle: {
+        color: 'transparent',
+      },
     },
     backgroundColor: 'rgba(255, 255, 255, .9)',
     padding: [12, 11, 13, 13],
