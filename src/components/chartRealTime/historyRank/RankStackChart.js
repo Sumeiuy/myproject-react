@@ -21,7 +21,10 @@ import {
   optimizeGrid,
 } from './rankDataHandle';
 import { transform2array } from '../../../utils/helper';
+import { ZHUNICODE } from '../../../config';
 import styles from './RankChart.less';
+
+const { UNDISTRIBUTED } = ZHUNICODE;
 
 export default class RankStackChart extends PureComponent {
   static propTypes = {
@@ -42,9 +45,9 @@ export default class RankStackChart extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { scope: preScope, chartData: preData } = this.props;
-    const { scope, chartData } = nextProps;
-    if (!_.isEqual(scope, preScope) || !_.isEqual(chartData, preData)) {
+    const { chartData: preData } = this.props;
+    const { chartData } = nextProps;
+    if (!_.isEqual(chartData, preData)) {
       this.state.echart.clear();
       this.initialChartData(nextProps);
     }
@@ -300,10 +303,16 @@ export default class RankStackChart extends PureComponent {
                 // 投顾，需要显示分公司，营业部名称
                 title = `${company[dataIndex]} - ${store[dataIndex]}`;
               }
-              seriesTips.push(`
+              let toolTipNewHeader = `
                 <tr>
                   <td colspan="4">${title}</td>
                 <tr>
+              `;
+              if (axisValue === UNDISTRIBUTED) {
+                toolTipNewHeader = '';
+              }
+              seriesTips.push(`
+                ${toolTipNewHeader}
                 <tr>
                   <td colspan="4">${axisValue}</td>
                 </tr>

@@ -12,7 +12,10 @@ import IECharts from '../../IECharts';
 import { barColor, yAxis, xAxis, chartGrid, chartTooltip } from './rankChartGeneralConfig';
 import { filterData, filterRankData, dealNormalData, designGrid, optimizeGrid } from './rankDataHandle';
 import { transform2array } from '../../../utils/helper';
+import { ZHUNICODE } from '../../../config';
 import styles from './RankChart.less';
+
+const { UNDISTRIBUTED } = ZHUNICODE;
 
 export default class RankNormalChart extends PureComponent {
   static propTypes = {
@@ -33,9 +36,9 @@ export default class RankNormalChart extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { scope: preScope, chartData: preData } = this.props;
-    const { scope, chartData } = nextProps;
-    if (!_.isEqual(scope, preScope) || !_.isEqual(chartData, preData)) {
+    const { chartData: preData } = this.props;
+    const { chartData } = nextProps;
+    if (!_.isEqual(chartData, preData)) {
       this.state.echart.clear();
       this.initialChartData(nextProps);
     }
@@ -179,7 +182,7 @@ export default class RankNormalChart extends PureComponent {
   // 柱状图Label
   @autobind
   makeLabelSeries(name, data, labels, realLength) {
-    const flag = name === 'max-label';
+    const flag = name === 'max-label'; // max-label显示数字
     const position = flag ? 'insideRight' : 'insideLeft';
     const textColor = flag ? '#999' : '#333';
     const itemColor = 'transparent';
@@ -279,6 +282,9 @@ export default class RankNormalChart extends PureComponent {
               <td>${company[dataIndex]}</td>
             </tr>
           `;
+        }
+        if (axisValue === UNDISTRIBUTED) {
+          tooltipHead = '';
         }
         const tips = `
           <table class="echartTooltipTable">
