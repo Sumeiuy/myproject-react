@@ -36,10 +36,6 @@ export default class CustomerLists extends PureComponent {
     monthlyProfits: PropTypes.array.isRequired,
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
-    isAllSelect: PropTypes.object.isRequired,
-    selectedIds: PropTypes.object.isRequired,
-    saveIsAllSelect: PropTypes.func.isRequired,
-    saveSelectedIds: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
     entertype: PropTypes.string.isRequired,
     custRange: PropTypes.array.isRequired,
@@ -124,44 +120,56 @@ export default class CustomerLists extends PureComponent {
         query: {
           ...query,
           selectedIds: str,
-          selecteAll: false,
+          selectAll: false,
         },
-      });
-      return false;
-    }
-    const selectedIdsArr = query.selectedIds.split(',');
-    if (_.includes(selectedIdsArr, str)) {
-      replace({
-        pathname,
-        query: {
-          ...query,
-          selectedIds: selectedIdsArr.filter(v => v !== str).join(','),
-          selecteAll: false,
+        state: {
+          noScrollTop: true,
         },
       });
     } else {
-      replace({
-        pathname,
-        query: {
-          ...query,
-          selectedIds: [...selectedIdsArr, str].join(','),
-          selecteAll: false,
-        },
-      });
+      const selectedIdsArr = query.selectedIds.split(',');
+      if (_.includes(selectedIdsArr, str)) {
+        replace({
+          pathname,
+          query: {
+            ...query,
+            selectedIds: selectedIdsArr.filter(v => v !== str).join(','),
+            selectAll: false,
+          },
+          state: {
+            noScrollTop: true,
+          },
+        });
+      } else {
+        replace({
+          pathname,
+          query: {
+            ...query,
+            selectedIds: [...selectedIdsArr, str].join(','),
+            selectAll: false,
+          },
+          state: {
+            noScrollTop: true,
+          },
+        });
+      }
     }
-    return true;
   }
 
   // 点击全选
   @autobind
   selectAll(e) {
+    const status = e.target.checked;
     const { replace, location: { query, pathname } } = this.props;
     replace({
       pathname,
       query: {
         ...query,
         selectedIds: '',
-        selecteAll: e.target.checked,
+        selectAll: status,
+      },
+      state: {
+        noScrollTop: true,
       },
     });
   }
@@ -176,14 +184,14 @@ export default class CustomerLists extends PureComponent {
       location: {
         query: {
           selectedIds,
-          selecteAll,
+          selectAll,
         },
       },
     } = this.props;
     if (selectedIds) {
       const selectedIdsArr = selectedIds.split(',');
       this.openByIds(url, selectedIdsArr, selectedIdsArr.length, title, id, entertype);
-    } else if (selecteAll) {
+    } else if (selectAll) {
       this.openByAllSelect(url, condition, page.total, title, id, entertype);
     }
   }
@@ -346,13 +354,15 @@ export default class CustomerLists extends PureComponent {
     if (page.total) {
       curTotal = Number(page.total);
     }
-    const selectIdsArr = selectedIds.split(',') || EMPTY_ARRAY;
-    const isAllSelectBool = selectAll || false;
+    const selectIdsArr = selectedIds ?
+      selectedIds.split(',') : EMPTY_ARRAY;
+    const isAllSelectBool = !((!selectAll || selectAll === 'false'));
     // 是否显示底部的发起任务和分组，全选或者有选中数据时才显示
     const isShow = (!_.isEmpty(selectIdsArr) || isAllSelectBool) ? 'block' : 'none';
     // 已选中的条数：选择全选显示所有数据量，非全选显示选中的条数
     const selectCount = isAllSelectBool ? page.total : selectIdsArr.length;
-    // console.log('current: ', current);
+    // debugger
+    // console.log('current: ', current, page, selectIdsArr, isAllSelectBool);
     return (
       <div className="list-box">
         <div className={styles.selectAllBox}>

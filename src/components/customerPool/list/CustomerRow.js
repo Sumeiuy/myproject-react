@@ -185,7 +185,6 @@ export default class CustomerRow extends PureComponent {
       hideStyle: hide,
       unit: '元',
       newAsset: asset,
-      checked: false,
       visible: false,
       isShowModal: false,
       modalKey: `contactModalKey${contactModalKeyCount}`,
@@ -238,15 +237,6 @@ export default class CustomerRow extends PureComponent {
         });
       }
     }
-
-    if (nextProps.isAllSelect !== this.props.isAllSelect) {
-      this.setState({
-        checked: nextProps.isAllSelect,
-      });
-    }
-    // this.setState({
-    //   checked: nextProps.isAllSelect,
-    // });
   }
 
   getLastestData(arr) {
@@ -396,7 +386,8 @@ export default class CustomerRow extends PureComponent {
     }
     // 显示开户日期
     if (isCustIndicator && listItem.openDt) {
-      const domTpl = getNewHtml('开户日期', listItem.openDt);
+      const openDate = `${listItem.openDt.slice(0, 4)}年${listItem.openDt.slice(4, 6)}月${listItem.openDt.slice(6, 8)}日`;
+      const domTpl = getNewHtml('开户日期', openDate);
       rtnEle += domTpl;
       n++;
       if (n <= FOLD_NUM) {
@@ -420,13 +411,9 @@ export default class CustomerRow extends PureComponent {
   }
 
   @autobind
-  handleSelect(e) {
+  handleSelect() {
     const { onChange, listItem: { custId, name } } = this.props;
-    this.setState({
-      checked: e.target.checked,
-    }, () => {
-      onChange(custId, name);
-    });
+    onChange(custId, name);
   }
 
   @autobind
@@ -497,7 +484,6 @@ export default class CustomerRow extends PureComponent {
     const {
       unit,
       newAsset,
-      checked,
       isShowModal,
       modalKey,
       custType,
@@ -510,9 +496,7 @@ export default class CustomerRow extends PureComponent {
     const matchedWord = this.matchWord(q, listItem);
     const rskLev = _.trim(listItem.riskLvl);
     const str = `${listItem.custId}.${listItem.name}`;
-    const isChecked = _.includes(selectedIds, str) || isAllSelect || checked;
-    // console.log('listItem', checked);
-
+    const isChecked = _.includes(selectedIds, str) || isAllSelect;
     return (
       <div className={styles.customerRow}>
         {
