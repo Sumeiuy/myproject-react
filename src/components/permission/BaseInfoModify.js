@@ -30,16 +30,20 @@ export default class BaseInfoModify extends PureComponent {
   }
 
   @autobind
-  updateTitle(value) { // 更改标题信息
+  updateTitle(value) {
+    // 更改标题信息
     this.setState({ title: value });
   }
 
   @autobind
-  changeRemarks(value) { // 更改备注信息
+  changeRemarks(value) {
+    // 更改备注信息
     this.setState({ remarks: value });
   }
+
   @autobind
-  searchInfo(value) {
+  searchInfoList(value) {
+    // 选中下拉对象中对应的某个对象
     console.log(value);
   }
 
@@ -51,6 +55,7 @@ export default class BaseInfoModify extends PureComponent {
 
   @autobind
   toSearchInfo(value) {
+    // 下拉菜单中的查询
     console.log('暴露的查询方法，向上传递value', value);
   }
 
@@ -78,7 +83,9 @@ export default class BaseInfoModify extends PureComponent {
             <DrapDownSelect
               value="全部"
               placeholder="请输入姓名或工号"
+              searchList={this.state.list}
               showObjKey="custName"
+              objId="custNumber"
               emitSelectItem={this.selectItem}
               emitToSearch={this.toSearchInfo}
             />
@@ -94,7 +101,7 @@ export default class BaseInfoModify extends PureComponent {
               placeholder=""
               columns={columns}
               title="选择下一审批人员"
-              onSearch={this.searchInfo}
+              onSearch={this.searchInfoList}
             />
 
           </div>

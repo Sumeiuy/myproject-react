@@ -15,6 +15,8 @@ export default class DrapDownSelect extends PureComponent {
     searchList: PropTypes.array,
     // 列表展示的数据 多对应的Object中的key
     showObjKey: PropTypes.string.isRequired,
+    // 数据中的key 作为react中辅助标识key
+    objId: PropTypes.string,
     // 选中对象 并触发选中方法 向父组件传递一个obj（必填）
     emitSelectItem: PropTypes.func.isRequired,
     // 在这里去触发查询搜索信息的方法并向父组件传递了string（必填）
@@ -25,6 +27,7 @@ export default class DrapDownSelect extends PureComponent {
     placeholder: '',
     value: '',
     searchList: [],
+    objId: '',
   }
 
   constructor() {
@@ -48,8 +51,8 @@ export default class DrapDownSelect extends PureComponent {
   }
 
   get getSearchListDom() {
-    const { searchList, emitSelectItem, showObjKey } = this.props;
-    const result = searchList.map((item) => {
+    const { searchList, emitSelectItem, showObjKey, objId } = this.props;
+    const result = searchList.map((item, index) => {
       const callBack = () => {
         emitSelectItem(item);
         this.setState({
@@ -57,9 +60,10 @@ export default class DrapDownSelect extends PureComponent {
           value: item[showObjKey],
         });
       };
+      const idx = (objId === '') ? `selectList-${index}` : item[objId];
       return (
         <li
-          key={item.custNumber}
+          key={idx}
           className={style.ddsDrapMenuConItem}
           onClick={callBack}
         >{item[showObjKey]}</li>
