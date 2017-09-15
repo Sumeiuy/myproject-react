@@ -4,14 +4,13 @@
  */
 
 import React, { PureComponent, PropTypes } from 'react';
-import { TreeSelect, Select } from 'antd';
+import { autobind } from 'core-decorators';
 import CommonSelect from '../common/biz/CommonSelect';
+import DropDownSelect from '../common/drapdownselect';
 import { permissionOptions } from '../../config';
 
 import styles from '../../components/style/jiraLayout.less';
 
-const TreeNode = TreeSelect.TreeNode;
-const Option = Select.Option;
 export default class Pageheader extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -33,6 +32,24 @@ export default class Pageheader extends PureComponent {
     this.setState({ value });
   }
 
+  @autobind
+  searchInfoList(value) {
+    // 选中下拉对象中对应的某个对象
+    console.log(value);
+  }
+
+  @autobind
+  selectItem(item) {
+    // 选中下拉对象中对应的某个对象
+    console.log('向上传递选中的对象', item);
+  }
+
+  @autobind
+  toSearchInfo(value) {
+    // 下拉菜单中的查询
+    console.log('暴露的查询方法，向上传递value', value);
+  }
+
   render() {
     const typeOptions = permissionOptions.typeOptions;
     const stateOptions = permissionOptions.stateOptions;
@@ -43,17 +60,17 @@ export default class Pageheader extends PureComponent {
     return (
       <div className={styles.pageCommonHeader}>
         客户:
-        <TreeSelect
-          showSearch
-          style={{ width: '10%' }}
-          value={this.state.value}
-          dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-          placeholder="全部"
-          allowClear
-          treeDefaultExpandAll
-          onChange={this.onChange}
-          searchPlaceholder="经济客户号/客户名称"
-        />
+        <div className={styles.dropDownSelect}>
+          <DropDownSelect
+            value="全部"
+            placeholder="请输入姓名或工号"
+            searchList={this.state.list}
+            showObjKey="custName"
+            objId="custNumber"
+            emitSelectItem={this.selectItem}
+            emitToSearch={this.toSearchInfo}
+          />
+        </div>
 
         子类型:
         <CommonSelect
@@ -71,48 +88,30 @@ export default class Pageheader extends PureComponent {
         />
 
         拟稿人:
-        <TreeSelect
-          showSearch
-          style={{ width: '10%' }}
-          value={this.state.value}
-          dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-          placeholder="全部"
-          allowClear
-          treeDefaultExpandAll
-          onChange={this.onChange}
-        >
-          <TreeNode value="parent 1" title="parent 1" key="0-1">
-            <TreeNode value="parent 1-0" title="parent 1-0" key="0-1-1">
-              <TreeNode value="leaf1" title="my leaf" key="random" />
-              <TreeNode value="leaf2" title="your leaf" key="random1" />
-            </TreeNode>
-            <TreeNode value="parent 1-1" title="parent 1-1" key="random2">
-              <TreeNode value="sss" title={<b style={{ color: '#08c' }}>sss</b>} key="random3" />
-            </TreeNode>
-          </TreeNode>
-        </TreeSelect>
+        <div className={styles.dropDownSelect}>
+          <DropDownSelect
+            value="全部"
+            placeholder="请输入姓名或工号"
+            searchList={this.state.list}
+            showObjKey="custName"
+            objId="custNumber"
+            emitSelectItem={this.selectItem}
+            emitToSearch={this.toSearchInfo}
+          />
+        </div>
 
         部门:
-        <TreeSelect
-          showSearch
-          style={{ width: '10%' }}
-          value={this.state.value}
-          dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-          placeholder="全部"
-          allowClear
-          treeDefaultExpandAll
-          onChange={this.onChange}
-        >
-          <TreeNode value="parent 1" title="parent 1" key="0-1">
-            <TreeNode value="parent 1-0" title="parent 1-0" key="0-1-1">
-              <TreeNode value="leaf1" title="my leaf" key="random" />
-              <TreeNode value="leaf2" title="your leaf" key="random1" />
-            </TreeNode>
-            <TreeNode value="parent 1-1" title="parent 1-1" key="random2">
-              <TreeNode value="sss" title={<b style={{ color: '#08c' }}>sss</b>} key="random3" />
-            </TreeNode>
-          </TreeNode>
-        </TreeSelect>
+        <div className={styles.dropDownSelect}>
+          <DropDownSelect
+            value="全部"
+            placeholder="请输入姓名或工号"
+            searchList={this.state.list}
+            showObjKey="custName"
+            objId="custNumber"
+            emitSelectItem={this.selectItem}
+            emitToSearch={this.toSearchInfo}
+          />
+        </div>
       </div>
     );
   }
