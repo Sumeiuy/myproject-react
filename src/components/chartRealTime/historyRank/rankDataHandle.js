@@ -97,7 +97,7 @@ const dataHandle = {
           rand_change: change,
           rank_contrast: contrast,
         } = item;
-        const current1 = _.isEmpty(current) ? 0 : Number.parseInt(current, 10);
+        const current1 = _.isEmpty(current) ? null : Number.parseInt(current, 10);
         const contrast1 = _.isEmpty(contrast) ? 0 : Number.parseInt(contrast, 10);
         let change1;
         if (_.isEmpty(change)) {
