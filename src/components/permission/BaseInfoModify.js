@@ -6,7 +6,7 @@ import InfoTitle from '../common/InfoTitle';
 import InputTextComponent from '../common/inputtextcomponent';
 import TextareaComponent from '../common/textareacomponent';
 import SearchModal from '../common/biz/SearchModal';
-import DrapDownSelect from '../common/drapdownselect';
+import DropdownSelect from '../common/dropdownSelect';
 import columns from './PermissionColumns';
 
 export default class BaseInfoModify extends PureComponent {
@@ -97,7 +97,7 @@ export default class BaseInfoModify extends PureComponent {
             <i className={style.isRequired}>*</i>客户：
           </span>
           <div className={style.inputComponentContent}>
-            <DrapDownSelect
+            <DropdownSelect
               value="全部"
               placeholder="请输入姓名或工号"
               searchList={this.state.list}
