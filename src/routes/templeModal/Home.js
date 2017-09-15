@@ -15,6 +15,10 @@ import DeleteBoardModal from '../../components/modals/DeleteBoardModal';
 import SearchModal from '../../components/common/biz/SearchModal';
 import ProcessConfirm from '../../components/common/biz/ProcessConfirm';
 import Transfer from '../../components/common/biz/Transfer';
+import CommonUpload from '../../components/common/biz/CommonUpload';
+import CommonModal from '../../components/common/biz/Modal';
+
+
 import {
   confirmData,
   employeeData,
@@ -37,13 +41,21 @@ export default class TemplModal extends PureComponent {
       publishConfirmModal: false,
       deleteBoardModal: false,
       confirmModal: false,
+      commonModal: false,
     };
   }
 
   @autobind
-  closeModal(modal) {
+  onOk() {
     this.setState({
-      [modal]: false,
+      commonModal: false,
+    });
+  }
+
+  @autobind
+  onCancel() {
+    this.setState({
+      commonModal: false,
     });
   }
 
@@ -98,6 +110,20 @@ export default class TemplModal extends PureComponent {
   }
 
   @autobind
+  showModal() {
+    this.setState({
+      commonModal: true,
+    });
+  }
+
+  @autobind
+  closeModal(modal) {
+    this.setState({
+      [modal]: false,
+    });
+  }
+
+  @autobind
   renderSelectedElem(selected, removeFunc) {
     return (
       <div className={styles.result}>
@@ -121,6 +147,7 @@ export default class TemplModal extends PureComponent {
       publishConfirmModal,
       deleteBoardModal,
       confirmModal,
+      commonModal,
     } = this.state;
 
     const createBMProps = {
@@ -187,6 +214,23 @@ export default class TemplModal extends PureComponent {
       onChange: this.handleChange,
     };
 
+    const uploadProps = {
+      fileList: [{
+        name: '测试.jpg',
+        size: 1024000,
+        lastModified: 1501926296785,
+      }],
+    };
+
+    const commonModalProps = {
+      title: '这是一个弹出层',
+      onOk: this.onOk,
+      onCancel: this.onCancel,
+      visible: commonModal,
+      size: 'normal',
+      children: 'tanchuang',
+    };
+
     return (
       <div>
         <Button onClick={this.openCreateModal}>创建</Button>
@@ -202,10 +246,13 @@ export default class TemplModal extends PureComponent {
         <SearchModal {...searchProps} />
         <br />
         <Button onClick={this.openConfirmClick}>show confirm弹框</Button>
+        <CommonUpload {...uploadProps} />
+        <Button onClick={this.showModal}>打开公用弹窗</Button>
         <ProcessConfirm {...confirmProps} />
         <br />
         <br />
         <Transfer {...transferProps} />
+        <CommonModal {...commonModalProps} />
       </div>
     );
   }
