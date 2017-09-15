@@ -5,17 +5,16 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import { Form, Input, Row, Col } from 'antd';
+import { Form, Row, Col } from 'antd';
 import { createForm } from 'rc-form';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { routerRedux } from 'dva/router';
 import style from './contractDetail.less';
+import TextEditor from './TextEditor';
 
 const EMPTY_OBJECT = {};
 const GETDETAIL = 'contract/getDetail';
-
-const FormItem = Form.Item;
 
 const mapStateToProps = state => ({
   contractDetail: state.contract.contractDetail,
@@ -41,7 +40,7 @@ export default class ContractDetail extends PureComponent {
     getDetail: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
-    form: PropTypes.func.isRequired,
+    form: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -137,18 +136,25 @@ export default class ContractDetail extends PureComponent {
     });
   }
 
+  handleSubmit = (e) => {
+    e.preventDefault();
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        console.log('Received values of form: ', values);
+      }
+    });
+  }
+
   render() {
     const {
       dataSource,
     } = this.state;
-    const { form } = this.props;
-    const { getFieldDecorator } = form;
 
     const detail = _.clone(dataSource || EMPTY_OBJECT, true);
     const contractName = detail.contractName;
     return (
       <div className={style.detail_box}>
-        <Form>
+        <Form onSubmit={this.handleSubmit}>
           <div className={style.inner}>
             <div className={style.row_box}>
               <Row gutter={18}>
@@ -157,20 +163,16 @@ export default class ContractDetail extends PureComponent {
                     <div className={style.mod_header}>
                       <h2 className="toogle_title">基本信息</h2>
                     </div>
-                    <div className={style.mod_content}>
-                      <div className={style.wrap}>
-                        <strong className={style.name}>合约名称：</strong>
-                        <FormItem
-                          hasFeedback
-                        >
-                          {getFieldDecorator(contractName, {
-                            rules: [{ required: true, message: '请输入合约名称!', whitespace: true }],
-                          })(
-                            <Input style={{ width: 120 }} />,
-                          )}
-                        </FormItem>
-                      </div>
-                    </div>
+                    <TextEditor
+                      editable
+                      originalValue={contractName}
+                      labelName="合约名称"
+                      style={{
+                        maxWidth: '260px',
+                      }}
+                      editorValue={contractName}
+                      editorName="contractNameEditor"
+                    />
                   </div>
                 </Col>
               </Row>
