@@ -9,7 +9,6 @@ import React, { PureComponent, PropTypes } from 'react';
 import { Checkbox } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import classnames from 'classnames';
 
 // import CreateContactModal from './CreateContactModal';
 import Icon from '../../common/Icon';
