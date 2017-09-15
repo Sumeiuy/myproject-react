@@ -23,7 +23,7 @@ import {
   unsubcribeData,
   productColumns,
 } from './MockTableData';
-import styles from './home.less';
+import styles from './Home.less';
 
 const visibleRange = VisibleRangeAll;
 

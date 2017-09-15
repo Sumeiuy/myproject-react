@@ -6,12 +6,13 @@
 import React, { PureComponent, PropTypes } from 'react';
 import SplitPane from 'react-split-pane';
 import { autobind } from 'core-decorators';
-// import classnames from 'classnames';
+import classnames from 'classnames';
 
 import splitConfig from './config';
 import { getEnv } from '../../../utils/helper';
 import '../../../css/react-split-pane-master.less';
 import styles from './SplitPanel.less';
+import nodatapng from './nodata.png';
 
 const BROWSER = getEnv();
 
@@ -184,7 +185,7 @@ export default class SplitPanel extends PureComponent {
     // }
   }
 
-  // 充值系统容器样式
+  // 重置系统容器样式
   @autobind
   resetContainerStyle() {
     let containerElem;
@@ -194,6 +195,12 @@ export default class SplitPanel extends PureComponent {
       containerElem = document.querySelector(splitConfig.container);
     }
     containerElem.style.height = 'auto';
+  }
+
+  // 无数据的区域
+  @autobind
+  noDataRef(input) {
+    this.emptyDiv = input;
   }
 
   // 左右分割区域的整体
@@ -277,13 +284,27 @@ export default class SplitPanel extends PureComponent {
 
   render() {
     const { paneMinSize, paneMaxSize } = this.state;
-    const { topPanel, leftPanel, rightPanel } = this.props;
+    const { topPanel, leftPanel, rightPanel, isEmpty } = this.props;
+    const noDataClass = classnames({
+      [styles.hide]: !isEmpty,
+      [styles.noData]: true,
+    });
+    const hasDataClass = classnames({
+      [styles.hide]: isEmpty,
+      [styles.panelBd]: true,
+    });
     return (
       <div className={styles.splitPanel}>
         <div className={styles.header}>
           {topPanel}
         </div>
-        <div className={styles.panelBd} ref={this.panelBdRef}>
+        <div className={noDataClass} ref={this.noDataRef}>
+          <div className={styles.nodataBlock}>
+            <img src={nodatapng} alt="nodata" />
+            <div className={styles.nodataText}>暂无数据</div>
+          </div>
+        </div>
+        <div className={hasDataClass} ref={this.panelBdRef}>
           <SplitPane
             onChange={this.panchange}
             split="vertical"
