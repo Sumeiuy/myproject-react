@@ -453,6 +453,8 @@ export default class CustomerRow extends PureComponent {
       addFollow,
       currentFollowCustId,
       follow,
+      createContact,
+      createServiceRecord,
     } = this.props;
     const {
       unit,
@@ -475,7 +477,7 @@ export default class CustomerRow extends PureComponent {
           isSms ?
             <div className={styles.basicInfoD}>
               <ul className={styles.operationIcon}>
-                <li onClick={this.handleTelClick}>
+                <li onClick={() => createContact(listItem)}>
                   <Icon type="dianhua" />
                   <span>电话联系</span>
                 </li>
@@ -483,7 +485,7 @@ export default class CustomerRow extends PureComponent {
                   <Icon type="youjian" />
                   <span>{currentEmailCustId === listItem.custId && email ? <a id={email && currentEmailCustId === listItem.custId ? 'sendEmail' : ''} href={`mailto:${email}`} > 邮件联系 </a> : '邮件联系' }</span>
                 </li>
-                <li onClick={this.showCreateServiceRecord}>
+                <li onClick={() => createServiceRecord(listItem)}>
                   <Icon type="jilu" />
                   <span>添加服务记录</span>
                 </li>
