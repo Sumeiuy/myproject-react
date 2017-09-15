@@ -13,6 +13,7 @@ export default {
   state: {
     detailMessage: EMPTY_OBJECT,
     list: EMPTY_OBJECT,
+    empInfo: EMPTY_LIST, // 拟稿人
   },
   reducers: {
     getDetailMessageSuccess(state, action) {
@@ -37,6 +38,15 @@ export default {
         },
       };
     },
+    getEmpListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      const { empInfo = EMPTY_LIST } = resultData;
+
+      return {
+        ...state,
+        empInfo,
+      };
+    },
   },
   effects: {
     * getDetailMessage({ payload }, { call, put }) {
@@ -50,6 +60,13 @@ export default {
       const response = yield call(api.getPermissionList, payload);
       yield put({
         type: 'getPermissionListSuccess',
+        payload: response,
+      });
+    },
+    * getEmpList({ payload }, { call, put }) {
+      const response = yield call(api.getEmpList, payload);
+      yield put({
+        type: 'getEmpListSuccess',
         payload: response,
       });
     },

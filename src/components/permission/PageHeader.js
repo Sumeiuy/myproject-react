@@ -5,8 +5,7 @@
 
 import React, { PureComponent, PropTypes } from 'react';
 import { TreeSelect, Select } from 'antd';
-import { autobind } from 'core-decorators';
-import _ from 'lodash';
+import CommonSelect from '../common/biz/CommonSelect';
 import { permissionOptions } from '../../config';
 
 import styles from '../../components/style/jiraLayout.less';
@@ -34,28 +33,13 @@ export default class Pageheader extends PureComponent {
     this.setState({ value });
   }
 
-  @autobind
-  handleSelectChange(name, key) {
-    const { replace, location: { pathname, query } } = this.props;
-    replace({
-      pathname,
-      query: {
-        ...query,
-        [name]: _.isArray(key) ? key.join(',') : key,
-      },
-    });
-  }
-
   render() {
     const typeOptions = permissionOptions.typeOptions;
     const stateOptions = permissionOptions.stateOptions;
     const getSelectOption = item => item.map(i =>
       <Option key={i.value}>{i.label}</Option>,
     );
-    const { location: { query: {
-      subType,
-      status,
-    } } } = this.props;
+    const { replace, location } = this.props;
     return (
       <div className={styles.pageCommonHeader}>
         客户:
@@ -72,26 +56,19 @@ export default class Pageheader extends PureComponent {
         />
 
         子类型:
-        <Select
-          style={{ width: '12%' }}
-          placeholder="全部"
-          value={subType}
-          onChange={key => this.handleSelectChange('subType', key)}
-          allowClear
-        >
-          {getSelectOption(typeOptions)}
-        </Select>
-
+        <CommonSelect
+          location={location}
+          replace={replace}
+          data={getSelectOption(typeOptions)}
+          name={'subType'}
+        />
         状态:
-        <Select
-          style={{ width: '8%' }}
-          placeholder="全部"
-          value={status}
-          onChange={key => this.handleSelectChange('status', key)}
-          allowClear
-        >
-          {getSelectOption(stateOptions)}
-        </Select>
+        <CommonSelect
+          location={location}
+          replace={replace}
+          data={getSelectOption(stateOptions)}
+          name={'status'}
+        />
 
         拟稿人:
         <TreeSelect
