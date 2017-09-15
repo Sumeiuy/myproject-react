@@ -39,8 +39,6 @@ export default {
       total: 0,
     },
     searchHistoryVal: '',
-    isAllSelect: {},
-    selectedIds: {},
     cusGroupSaveResult: '',
     createTaskResult: {},
     cusGroupSaveMessage: '',
@@ -444,21 +442,6 @@ export default {
       return {
         ...state,
         searchHistoryVal: searchVal,
-      };
-    },
-    // 保存是否全选
-    saveIsAllSelect(state, action) {
-      return {
-        ...state,
-        isAllSelect: action.payload,
-      };
-    },
-
-    // 保存选中的数据id
-    saveSelectedIds(state, action) {
-      return {
-        ...state,
-        selectedIds: action.payload,
       };
     },
     // 添加到现有分组保存成功

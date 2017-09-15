@@ -215,12 +215,6 @@ export default class CustomerRow extends PureComponent {
     });
   }
   componentWillReceiveProps(nextProps) {
-    if (nextProps.isAllSelect !== this.props.isAllSelect) {
-      this.setState({
-        checked: nextProps.isAllSelect,
-      });
-    }
-    console.log(nextProps);
     if (nextProps.currentFollowCustId !== '') {
       const followClass = classnames({
         [styles.follows]: nextProps.follow,
@@ -229,10 +223,6 @@ export default class CustomerRow extends PureComponent {
         followClass,
       });
     }
-
-    // this.setState({
-    //   checked: nextProps.isAllSelect,
-    // });
   }
   componentDidUpdate() {
     if (this.props.email !== '') {
@@ -388,7 +378,8 @@ export default class CustomerRow extends PureComponent {
     }
     // 显示开户日期
     if (isCustIndicator && listItem.openDt) {
-      const domTpl = getNewHtml('开户日期', listItem.openDt);
+      const openDate = `${listItem.openDt.slice(0, 4)}年${listItem.openDt.slice(4, 6)}月${listItem.openDt.slice(6, 8)}日`;
+      const domTpl = getNewHtml('开户日期', openDate);
       rtnEle += domTpl;
       n++;
       if (n <= FOLD_NUM) {
@@ -412,13 +403,9 @@ export default class CustomerRow extends PureComponent {
   }
 
   @autobind
-  handleSelect(e) {
+  handleSelect() {
     const { onChange, listItem: { custId, name } } = this.props;
-    this.setState({
-      checked: e.target.checked,
-    }, () => {
-      onChange(custId, name);
-    });
+    onChange(custId, name);
   }
   /**
    * 回调，关闭modal打开state
@@ -465,7 +452,6 @@ export default class CustomerRow extends PureComponent {
     const {
       unit,
       newAsset,
-      checked,
       isShowCharts,
    } = this.state;
 
@@ -473,10 +459,8 @@ export default class CustomerRow extends PureComponent {
     const lastestProfitRate = Number(this.getLastestData(monthlyProfits).assetProfitRate);
     const matchedWord = this.matchWord(q, listItem);
     const rskLev = _.trim(listItem.riskLvl);
-    const newIdsArr = _.map(selectedIds, v => (v.id));
-    const isChecked = _.includes(newIdsArr, listItem.custId) || isAllSelect || checked;
-    // console.log('listItem', checked);
-
+    const str = `${listItem.custId}.${listItem.name}`;
+    const isChecked = _.includes(selectedIds, str) || isAllSelect;
     return (
       <div className={styles.customerRow}>
         {

@@ -243,10 +243,11 @@ export default class CreateServiceRecord extends PureComponent {
           {
             dict.serveWay.map(obj => (
               <Col
+                key={obj.key}
                 className={`serviceWayItem ${serviceWay === obj.key ? 'active' : ''}`}
                 onClick={() => this.handleServiceWay(obj.key)}
               >
-                <span><Icon type={SERVICE_ICON[obj.key]} /></span>
+                <span><Icon type={SERVICE_ICON[obj.key] || ''} /></span>
                 <p>{obj.value}</p>
               </Col>
             ))
@@ -261,7 +262,9 @@ export default class CreateServiceRecord extends PureComponent {
               onChange={this.handleServiceType}
             >
               {
-                dict.serveType.map(obj => (<Option value={obj.key}>{obj.value}</Option>))
+                dict.serveType.map(obj => (
+                  <Option key={obj.key} value={obj.key}>{obj.value}</Option>
+                ))
               }
             </Select>
           </Col>
@@ -309,7 +312,9 @@ export default class CreateServiceRecord extends PureComponent {
               onChange={this.handleWorkResult}
             >
               {
-                dict.workResult.map(obj => (<Option value={obj.key}>{obj.value}</Option>))
+                dict.workResult.map(obj => (
+                  <Option key={obj.key} value={obj.key}>{obj.value}</Option>
+                ))
               }
             </Select>
           </Col>
