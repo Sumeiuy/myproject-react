@@ -63,7 +63,6 @@ export default class Main extends Component {
 
   render() {
     const { children, loading, interfaceState } = this.props;
-    console.log('interfaceState>>>>', interfaceState);
     return (
       <div>
         <div className={styles.layout}>

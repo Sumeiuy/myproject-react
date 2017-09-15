@@ -1,11 +1,17 @@
+/**
+ * @file list/ModalCollapse.js
+ *  折叠
+ * @author xuxiaoqin
+ */
+
 import React, { PropTypes, PureComponent } from 'react';
+import ReactDOM from 'react-dom';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import { Collapse } from 'antd';
 import classnames from 'classnames';
 import moment from 'moment';
 import styles from './modalCollapse.less';
-// import emptyImg from '../../../../static/images/empty.png';
 
 const EMPTY_LIST = [];
 const Panel = Collapse.Panel;
@@ -13,38 +19,59 @@ const Panel = Collapse.Panel;
 export default class ModalCollapse extends PureComponent {
   static propTypes = {
     data: PropTypes.array,
-    anchorAction: PropTypes.array,
-    onCollapseChange: PropTypes.func.isRequired,
-    isPanel1Open: PropTypes.bool.isRequired,
-    isPanel2Open: PropTypes.bool.isRequired,
-    isPanel3Open: PropTypes.bool.isRequired,
-    isPanel4Open: PropTypes.bool.isRequired,
-    isPanel5Open: PropTypes.bool.isRequired,
-    setDefaultLeftGuide: PropTypes.func.isRequired,
     isFirstLoad: PropTypes.bool,
+    onResetFirstLoad: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
     data: EMPTY_LIST,
-    anchorAction: EMPTY_LIST,
     isFirstLoad: true,
   };
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      anchorAction: EMPTY_LIST,
+      isPanel1Open: true,
+      isPanel2Open: false,
+      isPanel3Open: false,
+      isPanel4Open: false,
+      isPanel5Open: false,
+    };
+  }
+
   componentDidMount() {
-    const { setDefaultLeftGuide } = this.props;
     // 当再次打开时，panelDOM已经存在，可以直接设置默认leftGuide
     if (this.panelHeader1) {
-      setDefaultLeftGuide({ isCollapseAll: false });
+      this.resetLeftGuide({ isCollapseAll: false });
     }
   }
 
   componentDidUpdate() {
-    const { setDefaultLeftGuide, isFirstLoad } = this.props;
+    const { isFirstLoad } = this.props;
     if (this.panelHeader1) {
       if (isFirstLoad) {
-        setDefaultLeftGuide({ isCollapseAll: false });
+        this.resetLeftGuide({ isCollapseAll: false });
       }
     }
+  }
+
+  @autobind
+  getDOM(index) {
+    /* eslint-disable */
+    switch (index) {
+      case '1':
+        return ReactDOM.findDOMNode(this.panelHeader1);
+      case '2':
+        return ReactDOM.findDOMNode(this.panelHeader2);
+      case '3':
+        return ReactDOM.findDOMNode(this.panelHeader3);
+      case '4':
+        return ReactDOM.findDOMNode(this.panelHeader4);
+      default:
+        return ReactDOM.findDOMNode(this.panelHeader1);
+    }
+    /* eslint-enable */
   }
 
   @autobind
@@ -55,7 +82,7 @@ export default class ModalCollapse extends PureComponent {
       isPanel3Open,
       isPanel4Open,
       isPanel5Open,
-     } = this.props;
+     } = this.state;
 
     switch (index) {
       case 1:
@@ -94,9 +121,180 @@ export default class ModalCollapse extends PureComponent {
     return null;
   }
 
+  /**
+ * 处理collapse change事件
+ * @param {*} currentKey 当前key
+ */
+  @autobind
+  handleCollapseChange(currentKey) {
+    // 只得到当前激活的panel key
+    const { originPanelHeight } = this.state;
+    const margin = 10;
+    let panel1Height;
+    let panel2Height;
+    let panel3Height;
+    let panel4Height;
+
+    let isPanel1Open = false;
+    let isPanel2Open = false;
+    let isPanel3Open = false;
+    let isPanel4Open = false;
+    let isPanel5Open = false;
+
+    if (_.isEmpty(currentKey)) {
+      // 当前所有panel全部收起
+      this.resetLeftGuide({ isCollapseAll: true });
+    } else {
+      // 当前激活的包含一个panel,
+      // 设置其余四个panel
+      setTimeout(() => {
+        isPanel1Open = _.includes(currentKey, '1');
+        isPanel2Open = _.includes(currentKey, '2');
+        isPanel3Open = _.includes(currentKey, '3');
+        isPanel4Open = _.includes(currentKey, '4');
+        isPanel5Open = _.includes(currentKey, '5');
+
+        panel1Height = isPanel1Open ? this.getDOM('1').clientHeight : originPanelHeight;
+        panel2Height = isPanel2Open ? this.getDOM('2').clientHeight : originPanelHeight;
+        panel3Height = isPanel3Open ? this.getDOM('3').clientHeight : originPanelHeight;
+        panel4Height = isPanel4Open ? this.getDOM('4').clientHeight : originPanelHeight;
+
+        this.setState({
+          anchorAction: [
+            {
+              top: 15,
+              status: isPanel1Open ? 1 : 0,
+            },
+            {
+              top: panel1Height +
+              (margin * 1) +
+              (originPanelHeight / 2),
+              status: isPanel2Open ? 1 : 0,
+            },
+            {
+              top: panel2Height +
+              panel1Height +
+              (margin * 2) +
+              (originPanelHeight / 2),
+              status: isPanel3Open ? 1 : 0,
+            },
+            {
+              top: panel3Height +
+              panel2Height +
+              panel1Height +
+              (margin * 3) +
+              (originPanelHeight / 2),
+              status: isPanel4Open ? 1 : 0,
+            },
+            {
+              top: panel4Height +
+              panel3Height +
+              panel2Height +
+              panel1Height +
+              (margin * 4) +
+              (originPanelHeight / 2),
+              status: isPanel5Open ? 1 : 0,
+            },
+          ],
+          isPanel1Open,
+          isPanel2Open,
+          isPanel3Open,
+          isPanel4Open,
+          isPanel5Open,
+        });
+      }, 250);
+    }
+  }
+
+  @autobind
+  resetLeftGuide({ isCollapseAll }) {
+    // 收起来之后，panel高度一样
+    // const panelDOM1 = ReactDOM.findDOMNode(document.getElementById('panelHeader1'));
+    // const panelDOM2 = ReactDOM.findDOMNode(document.getElementById('panelHeader2'));
+    const panelDOM1 = this.panelHeader1;
+    const panelDOM2 = this.panelHeader2;
+    const margin = 10;
+    let panel1Height;
+    let panel2Height;
+    if (panelDOM1) {
+      panel1Height = ReactDOM.findDOMNode(panelDOM1).clientHeight; // eslint-disable-line
+    }
+    if (panelDOM2) {
+      panel2Height = ReactDOM.findDOMNode(panelDOM2).clientHeight; // eslint-disable-line
+    }
+    const { originPanelHeight } = this.state;
+    const { onResetFirstLoad } = this.props;
+
+    if (isCollapseAll) {
+      // 全部收起
+      this.setState({
+        // 1代表激活，0代表收起
+        anchorAction: [
+          {
+            top: 15,
+            status: 0,
+          },
+          {
+            top: (originPanelHeight * 1) + (margin * 1) + (originPanelHeight / 2),
+            status: 0,
+          },
+          {
+            top: (originPanelHeight * 2) + (margin * 2) + (originPanelHeight / 2),
+            status: 0,
+          },
+          {
+            top: (originPanelHeight * 3) + (margin * 3) + (originPanelHeight / 2),
+            status: 0,
+          },
+          {
+            top: (originPanelHeight * 4) + (margin * 4) + (originPanelHeight / 2),
+            status: 0,
+          },
+        ],
+        // 重置panel打开状态
+        isPanel1Open: false,
+        isPanel2Open: false,
+        isPanel3Open: false,
+        isPanel4Open: false,
+        isPanel5Open: false,
+      });
+    } else {
+      // 收起其余的，保留第一个展开
+      this.setState({
+        // 1代表激活，0代表收起
+        anchorAction: [
+          {
+            top: 15,
+            status: 1,
+          },
+          {
+            top: (panel1Height * 1) + (margin * 1) + (panel2Height / 2),
+            status: 0,
+          },
+          {
+            top: panel2Height + panel1Height + (margin * 2) + (panel2Height / 2),
+            status: 0,
+          },
+          {
+            top: (panel2Height * 2) + panel1Height + (margin * 3) + (panel2Height / 2),
+            status: 0,
+          },
+          {
+            top: (panel2Height * 3) + panel1Height + (margin * 4) + (panel2Height / 2),
+            status: 0,
+          },
+        ],
+        originPanelHeight: panel2Height,
+        firstPanelHeight: panel1Height,
+      });
+      // 重置firstLoad
+      onResetFirstLoad();
+    }
+  }
+
   @autobind
   constructLeftServiceTimeSection(timeArray) {
-    const { anchorAction } = this.props;
+    const { anchorAction } = this.state;
 
     if (_.isEmpty(anchorAction) || _.isEmpty(timeArray)) {
       return null;
@@ -158,7 +356,7 @@ export default class ModalCollapse extends PureComponent {
 
   @autobind
   constructAnchor() {
-    const { anchorAction } = this.props;
+    const { anchorAction } = this.state;
     if (_.isEmpty(anchorAction)) {
       return null;
     }
@@ -335,10 +533,10 @@ export default class ModalCollapse extends PureComponent {
 
   render() {
     const {
-      anchorAction,
-      onCollapseChange,
       data = EMPTY_LIST,
      } = this.props;
+
+    const { anchorAction } = this.state;
 
     if (_.isEmpty(data)) {
       return (
@@ -360,7 +558,7 @@ export default class ModalCollapse extends PureComponent {
       <Collapse
         className={styles.serviceCollapse}
         defaultActiveKey={'1'}
-        onChange={onCollapseChange}
+        onChange={this.handleCollapseChange}
       >
         {
           !_.isEmpty(anchorAction) ?

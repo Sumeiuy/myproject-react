@@ -82,53 +82,12 @@ export default {
         payload: { indicators },
       });
     },
-    // 初始化获取数据
-    * getAllInfo({ payload }, { call, put, select }) {
-      const {
-        request: {
-        custType, // 客户范围类型
-        orgId, // 组织ID
-        empId,
-        fieldList,
-        begin,
-        end,
-        } } = payload;
-      // 统计周期
-      const { kPIDateScopeType: firstCycle } = yield select(state => state.customerPool.dict);
-      // const statisticalPeriod = yield call(api.getStatisticalPeriod);
-      // yield put({
-      //   type: 'getStatisticalPeriodSuccess',
-      //   payload: { statisticalPeriod },
-      // });
-      // const firstCycle = statisticalPeriod.resultData.kPIDateScopeType;
-      // (首页总数)
+    // (首页总数)
+    * getToBeDone({ payload }, { call, put }) {
       const queryNumbers = yield call(api.getQueryNumbers);
       yield put({
         type: 'getWorkFlowTaskCountSuccess',
         payload: { queryNumbers },
-      });
-      // 绩效指标
-      const indicators =
-        yield call(api.getPerformanceIndicators,
-          { custType, orgId, empId, dateType: firstCycle[0].key });
-      yield put({
-        type: 'getPerformanceIndicatorsSuccess',
-        payload: { indicators },
-      });
-      // 净创收数据
-      const response = yield call(api.queryKpiIncome, {
-        custType, // 客户范围类型
-        dateType: firstCycle[0].key, // 周期类型
-        orgId, // 组织ID
-        empId,
-        fieldList,
-        begin,
-        end,
-      });
-      const { resultData } = response;
-      yield put({
-        type: 'getIncomeDataSuccess',
-        payload: resultData,
       });
     },
     * search({ payload }, { put, select }) {
@@ -424,7 +383,7 @@ export default {
       }
       const custPage = {
         pageSize: custListVO.pageSize,
-        pageNo: Number(custListVO.curPageNum) + 1,
+        pageNo: Number(custListVO.curPageNum),
         total: custListVO.totalCount,
       };
       return {
@@ -524,7 +483,7 @@ export default {
       const { payload } = action;
       return {
         ...state,
-        incomeData: payload,
+        incomeData: !_.isEmpty(payload) ? payload : [],
       };
     },
     // 获取联系方式成功

@@ -5,7 +5,6 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import ReactDOM from 'react-dom';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 // import classnames from 'classnames';
@@ -46,203 +45,8 @@ export default class CreateContactModal extends PureComponent {
     super(props);
     this.state = {
       visible: props.visible,
-      isOpen: true,
-      anchorAction: EMPTY_LIST,
-      isPanel1Open: true,
-      isPanel2Open: false,
-      isPanel3Open: false,
-      isPanel4Open: false,
-      isPanel5Open: false,
       isFirstLoad: props.isFirstLoad,
     };
-  }
-
-  /**
-   * 获取dom
-   * @param {*} id id
-   */
-  getDOM(id) {
-    return ReactDOM.findDOMNode(document.getElementById(id)); // eslint-disable-line
-  }
-
-  @autobind
-  resetLeftGuide({ isCollapseAll }) {
-    // 收起来之后，panel高度一样
-    const panelDOM1 = ReactDOM.findDOMNode(document.getElementById('panelHeader1')); // eslint-disable-line
-    const panelDOM2 = ReactDOM.findDOMNode(document.getElementById('panelHeader2')); // eslint-disable-line
-    const margin = 10;
-    let panel1Height;
-    let panel2Height;
-    if (panelDOM1) {
-      panel1Height = panelDOM1.clientHeight;
-    }
-    if (panelDOM2) {
-      panel2Height = panelDOM2.clientHeight;
-    }
-    const { originPanelHeight } = this.state;
-    // setTimeout(() => {
-    if (isCollapseAll) {
-      // 全部收起
-      this.setState({
-        // 1代表激活，0代表收起
-        anchorAction: [
-          {
-            top: 15,
-            status: 0,
-          },
-          {
-            top: (originPanelHeight * 1) + (margin * 1) + (originPanelHeight / 2),
-            status: 0,
-          },
-          {
-            top: (originPanelHeight * 2) + (margin * 2) + (originPanelHeight / 2),
-            status: 0,
-          },
-          {
-            top: (originPanelHeight * 3) + (margin * 3) + (originPanelHeight / 2),
-            status: 0,
-          },
-          {
-            top: (originPanelHeight * 4) + (margin * 4) + (originPanelHeight / 2),
-            status: 0,
-          },
-        ],
-        // 重置panel打开状态
-        isPanel1Open: false,
-        isPanel2Open: false,
-        isPanel3Open: false,
-        isPanel4Open: false,
-        isPanel5Open: false,
-      });
-    } else {
-      // 收起其余的，保留第一个展开
-      this.setState({
-        // 1代表激活，0代表收起
-        anchorAction: [
-          {
-            top: 15,
-            status: 1,
-          },
-          {
-            top: (panel1Height * 1) + (margin * 1) + (panel2Height / 2),
-            status: 0,
-          },
-          {
-            top: panel2Height + panel1Height + (margin * 2) + (panel2Height / 2),
-            status: 0,
-          },
-          {
-            top: (panel2Height * 2) + panel1Height + (margin * 3) + (panel2Height / 2),
-            status: 0,
-          },
-          {
-            top: (panel2Height * 3) + panel1Height + (margin * 4) + (panel2Height / 2),
-            status: 0,
-          },
-        ],
-        originPanelHeight: panel2Height,
-        firstPanelHeight: panel1Height,
-        isFirstLoad: false,
-      });
-    }
-    // }, 250);
-  }
-
-  /**
- * 阻止事件冒泡
- * @param {*} e 事件
- */
-  preventEventBubble(e = window.event) {
-    if (e.stopPropagation) {
-      e.stopPropagation();
-    } else {
-      e.cancelBubble = true;
-    }
-  }
-
-  /**
-   * 处理collapse change事件
-   * @param {*} currentKey 当前key
-   */
-  @autobind
-  handleCollapseChange(currentKey) {
-    // 只得到当前激活的panel key
-    const { originPanelHeight } = this.state;
-    const margin = 10;
-    let panel1Height;
-    let panel2Height;
-    let panel3Height;
-    let panel4Height;
-
-    let isPanel1Open = false;
-    let isPanel2Open = false;
-    let isPanel3Open = false;
-    let isPanel4Open = false;
-    let isPanel5Open = false;
-
-    if (_.isEmpty(currentKey)) {
-      // 当前所有panel全部收起
-      this.resetLeftGuide({ isCollapseAll: true });
-    } else {
-      // 当前激活的包含一个panel,
-      // 设置其余四个panel
-      setTimeout(() => {
-        isPanel1Open = _.includes(currentKey, '1');
-        isPanel2Open = _.includes(currentKey, '2');
-        isPanel3Open = _.includes(currentKey, '3');
-        isPanel4Open = _.includes(currentKey, '4');
-        isPanel5Open = _.includes(currentKey, '5');
-
-        panel1Height = isPanel1Open ? this.getDOM('panelHeader1').clientHeight : originPanelHeight;
-        panel2Height = isPanel2Open ? this.getDOM('panelHeader2').clientHeight : originPanelHeight;
-        panel3Height = isPanel3Open ? this.getDOM('panelHeader3').clientHeight : originPanelHeight;
-        panel4Height = isPanel4Open ? this.getDOM('panelHeader4').clientHeight : originPanelHeight;
-
-        this.setState({
-          anchorAction: [
-            {
-              top: 15,
-              status: isPanel1Open ? 1 : 0,
-            },
-            {
-              top: panel1Height +
-              (margin * 1) +
-              (originPanelHeight / 2),
-              status: isPanel2Open ? 1 : 0,
-            },
-            {
-              top: panel2Height +
-              panel1Height +
-              (margin * 2) +
-              (originPanelHeight / 2),
-              status: isPanel3Open ? 1 : 0,
-            },
-            {
-              top: panel3Height +
-              panel2Height +
-              panel1Height +
-              (margin * 3) +
-              (originPanelHeight / 2),
-              status: isPanel4Open ? 1 : 0,
-            },
-            {
-              top: panel4Height +
-              panel3Height +
-              panel2Height +
-              panel1Height +
-              (margin * 4) +
-              (originPanelHeight / 2),
-              status: isPanel5Open ? 1 : 0,
-            },
-          ],
-          isPanel1Open,
-          isPanel2Open,
-          isPanel3Open,
-          isPanel4Open,
-          isPanel5Open,
-        });
-      }, 250);
-    }
   }
 
   @autobind
@@ -380,15 +184,16 @@ export default class CreateContactModal extends PureComponent {
     onClose();
   }
 
+  @autobind
+  resetFirstLoad() {
+    this.setState({
+      isFirstLoad: false,
+    });
+  }
+
   render() {
     const {
       visible,
-      anchorAction,
-      isPanel1Open,
-      isPanel2Open,
-      isPanel3Open,
-      isPanel4Open,
-      isPanel5Open,
       isFirstLoad,
     } = this.state;
 
@@ -501,14 +306,15 @@ export default class CreateContactModal extends PureComponent {
         ]}
       >
         {
-          custType === 'org' ?
+          custType === 'org' && !_.isEmpty(mainContactInfo.nameInfo) ?
             <div className={styles.title}>
               主要联系人：{mainContactInfo.nameInfo.name || '--'}（{mainContactInfo.nameInfo.custRela || '--'}）
             </div>
             : null
         }
         {
-          (custType === 'per' && isPersonHasContact) ?
+          (custType === 'per' && isPersonHasContact
+          && !_.isEmpty(personalContactInfo.mainTelInfo)) ?
             <div className={styles.title}>
               主要联系电话（{personalContactInfo.mainTelInfo.type === 'none' ? '--' :
                   CONTACT_MAP[personalContactInfo.mainTelInfo.type]}）：
@@ -516,7 +322,8 @@ export default class CreateContactModal extends PureComponent {
         }
         <div className={styles.number}>
           {
-            (isOrgMainContactHasTel || isPersonHasContact) ?
+            ((isOrgMainContactHasTel && !_.isEmpty(mainContactInfo.cellInfo)) ||
+            (isPersonHasContact && !_.isEmpty(personalContactInfo.mainTelInfo))) ?
               <div className={styles.mainContact}>
                 <img src={Phone} alt={'电话联系'} />
                 <span>{custType === 'per' ?
@@ -539,7 +346,7 @@ export default class CreateContactModal extends PureComponent {
         }
         { /* 机构客户其他联系人与联系方式 */}
         {
-          custType === 'org' ?
+          (custType === 'org' && !_.isEmpty(newDataSource)) ?
             <div className={styles.orgCustOtherTelsSection}>
               <Table
                 className={styles.telTable}
@@ -559,15 +366,8 @@ export default class CreateContactModal extends PureComponent {
         {/* 折叠面板 */}
         <Collapse
           data={serviceRecordData}
-          anchorAction={anchorAction}
-          onCollapseChange={this.handleCollapseChange}
-          isPanel1Open={isPanel1Open}
-          isPanel2Open={isPanel2Open}
-          isPanel3Open={isPanel3Open}
-          isPanel4Open={isPanel4Open}
-          isPanel5Open={isPanel5Open}
-          setDefaultLeftGuide={this.resetLeftGuide}
           isFirstLoad={isFirstLoad}
+          onResetFirstLoad={this.resetFirstLoad}
         />
       </Modal>
     );
