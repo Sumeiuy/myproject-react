@@ -6,7 +6,7 @@
 
 import React, { PureComponent, PropTypes } from 'react';
 // import { withRouter } from 'dva/router';
-import { Checkbox, message } from 'antd';
+import { Checkbox } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import classnames from 'classnames';
@@ -252,7 +252,7 @@ export default class CustomerRow extends PureComponent {
         checked: nextProps.isAllSelect,
       });
     }
-    console.log(nextProps)
+    console.log(nextProps);
     if (nextProps.currentFollowCustId !== '') {
       const followClass = classnames({
         [styles.follows]: nextProps.follow,
@@ -569,7 +569,7 @@ export default class CustomerRow extends PureComponent {
                   <Icon type="dianhua" />
                   <span>电话联系</span>
                 </li>
-                <li onClick={() => { toEmail(listItem) }}>
+                <li onClick={() => toEmail(listItem)}>
                   <Icon type="youjian" />
                   <span>{currentEmailCustId === listItem.custId && email ? <a id={email && currentEmailCustId === listItem.custId ? 'sendEmail' : ''} href={`mailto:${email}`} > 邮件联系 </a> : '邮件联系' }</span>
                 </li>
@@ -577,7 +577,7 @@ export default class CustomerRow extends PureComponent {
                   <Icon type="jilu" />
                   <span>添加服务记录</span>
                 </li>
-                <li onClick={() => { addFollow(listItem) }} className={currentFollowCustId === listItem.custId ? this.state.followClass : ''}>
+                <li onClick={() => addFollow(listItem)} className={currentFollowCustId === listItem.custId ? this.state.followClass : ''}>
                   <Icon type="guanzhu" className={currentFollowCustId === listItem.custId ? this.state.followClass : ''} />
                   <span>{follow}-----{currentFollowCustId === listItem.custId && follow ? '已关注' : '关注'}</span>
                 </li>

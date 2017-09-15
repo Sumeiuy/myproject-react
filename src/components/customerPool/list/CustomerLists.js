@@ -98,16 +98,16 @@ export default class CustomerLists extends PureComponent {
     const { currentEmailCustId } = this.state;
     if (_.size(nextProps.custContactData) !== 0) {
       addresses = nextCustContactData[currentEmailCustId];
-      console.log(addresses)
+      // console.log(addresses);
       if (addresses.orgCustomerContactInfoList !== undefined) {
         const index = _.findLastIndex(addresses.orgCustomerContactInfoList,
-            (val) => { return val.mainFlag === true; });
+            val => val.mainFlag === true);
         finded = _.findLastIndex(addresses.orgCustomerContactInfoList[index].emailAddresses,
-            (val) => { return val.mainFlag === true; });
+            val => val.mainFlag === true);
         addresses = addresses.orgCustomerContactInfoList[index];
       } else {
         finded = _.findLastIndex(addresses.perCustomerContactInfo.emailAddresses,
-              (val) => { return val.mainFlag === true; });
+            val => val.mainFlag === true);
         addresses = addresses.perCustomerContactInfo;
       }
       if (finded !== -1) {
@@ -120,10 +120,10 @@ export default class CustomerLists extends PureComponent {
         });
         message.error('暂无客户邮件，请与客户沟通尽快完善信息');
       }
-      console.log('email----', this.state.email);
+      // console.log('email----', this.state.email);
     }
-    console.log('followOn---', followOn);
-    console.log(nextProps.isFollow);
+    // console.log('followOn---', followOn);
+    // console.log(nextProps.isFollow);
     // if (followOn) {
     //   console.log('this.state.follow---', this.state.follow);
     //   if (nextProps.isFollow) {
@@ -321,14 +321,14 @@ export default class CustomerLists extends PureComponent {
       getFollowCust({
         empId, operateType, custId,
       });
-      console.log(this.state.follow)
+      console.log(this.state.follow);
     } else {
       console.log('您已取消关注');
       this.setState({
         follow: !this.state.follow,
         currentFollowCustId: custId,
       });
-      console.log(this.state.follow)
+      console.log(this.state.follow);
       operateType = 'delete';
       getFollowCust({
         empId, operateType, custId,
