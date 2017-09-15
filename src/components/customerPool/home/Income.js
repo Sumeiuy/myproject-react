@@ -98,6 +98,9 @@ export default class Income extends PureComponent {
       normal: {
         show: false,
       },
+      emphasis: {
+        show: false,
+      },
     };
     let itemStyle = {
       normal: {
@@ -119,11 +122,14 @@ export default class Income extends PureComponent {
           show: true,
           position: 'center',
           textStyle: {
-            fontSize: '16',
+            fontSize: '14',
             color: '#a1a1a1',
             fontWeight: 'bold',
           },
-        }
+        },
+        emphasis: {
+          show: false,
+        },
       };
       itemStyle = {
         emphasis: {

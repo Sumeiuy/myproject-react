@@ -45,7 +45,15 @@ const fspGlobal = {
    *  在fsp中新开一个tab
    */
   openFspTab(obj) {
-    execOpenTab('loadPageInTab', obj.url, obj.param);
+    const { url, param } = obj;
+    execOpenTab(
+      'loadPageInTab',
+      url,
+      {
+        closable: true,
+        ...param,
+      },
+    );
   },
 
   /**

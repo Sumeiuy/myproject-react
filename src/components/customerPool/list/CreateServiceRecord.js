@@ -34,8 +34,10 @@ const SERVICE_ICON = {
   'HTSC SMS': 'duanxin',
   wx: 'weixin',
   Interview: 'beizi',
-  Other: 'other',
+  'HTSC Other': 'other',
 };
+
+const MAX_LENGTH = 1000;
 
 
 export default class CreateServiceRecord extends PureComponent {
@@ -99,8 +101,8 @@ export default class CreateServiceRecord extends PureComponent {
     }
     // 添加成功
     if (addServeRecordSuccess === true &&
-    isAddServeRecord === false &&
-    this.props.isAddServeRecord === true) {
+      isAddServeRecord === false &&
+      this.props.isAddServeRecord === true) {
       message.success('添加服务记录成功');
     }
   }
@@ -114,8 +116,16 @@ export default class CreateServiceRecord extends PureComponent {
       message.error('请输入此次服务的内容');
       return;
     }
+    if (helper.getStrLen(serviceContent) > MAX_LENGTH) {
+      message.error(`服务的内容字数不能超过${MAX_LENGTH}`);
+      return;
+    }
     if (!feedbackContent) {
       message.error('请输入此次服务的反馈');
+      return;
+    }
+    if (helper.getStrLen(feedbackContent) > MAX_LENGTH) {
+      message.error(`服务的反馈内容字数不能超过${MAX_LENGTH}`);
       return;
     }
     const {
@@ -126,9 +136,11 @@ export default class CreateServiceRecord extends PureComponent {
       feedbackTime,
     } = this.state;
     const {
+      id,
       addServeRecord,
     } = this.props;
     addServeRecord({
+      custId: id,
       serveWay: serviceWay,
       serveType: serviceType,
       serveTime: serviceTime,

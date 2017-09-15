@@ -128,7 +128,7 @@ export default class CustomerList extends PureComponent {
     getFollowCust: PropTypes.func.isRequired,
     custContactData: PropTypes.object,
     getServiceRecord: PropTypes.func.isRequired,
-    serviceRecordData: PropTypes.array,
+    serviceRecordData: PropTypes.object,
     cycle: PropTypes.array,
     // getStatisticalPeriod: PropTypes.func.isRequired,
     addServeRecord: PropTypes.func.isRequired, // 添加服务记录
@@ -143,7 +143,7 @@ export default class CustomerList extends PureComponent {
     position: {},
     empInfo: {},
     custContactData: EMPTY_OBJECT,
-    serviceRecordData: EMPTY_LIST,
+    serviceRecordData: EMPTY_OBJECT,
     cycle: EMPTY_LIST,
   }
 
@@ -166,7 +166,7 @@ export default class CustomerList extends PureComponent {
     } = this.props;
     const respIdOfPosition = _.findIndex(empRespList, item => (item.respId === HTSC_RESPID));
     // 判断是否是主服务经理，或者是否在业务客户列表中，是则为true，否则 false
-    if (respIdOfPosition < 0 && source === 'business') {
+    if (respIdOfPosition < 0 || source === 'business') {
       this.setState({ // eslint-disable-line
         isSms: true,
       });
@@ -206,15 +206,10 @@ export default class CustomerList extends PureComponent {
       orgId !== preOrgId) {
       this.getCustomerList(nextProps);
     }
-    if (query.orgId === 'msm' || query.source === 'business') {
-      this.setState({
-        isSms: true,
-      });
-    } else {
-      this.setState({
-        isSms: false,
-      });
-    }
+    // const noPermission = _.find(empRespList, item => item.id === )
+    this.setState({
+      isSms: query.orgId === 'msm' || query.source === 'business',
+    });
     if (!_.isEqual(preQuery, query)) {
       this.clearSelectData();
     }
@@ -424,10 +419,10 @@ export default class CustomerList extends PureComponent {
       return false;
     }
     // fspJobOrgId 在机构树中所处的分公司位置
-    const orgIdIndexInCustRange = _.findIndex(custRange, item => item.id === fspJobOrgId);
-    if (orgIdIndexInCustRange > -1) {
+    const groupInCustRange = _.find(custRange, item => item.id === fspJobOrgId);
+    if (groupInCustRange) {
       this.setState({
-        createCustRange: [custRange[orgIdIndexInCustRange], myCustomer],
+        createCustRange: [groupInCustRange, myCustomer],
         expandAll: true,
       });
       return false;
@@ -596,7 +591,7 @@ export default class CustomerList extends PureComponent {
       custRangeProps.selectValue = selectValue;
     }
     // console.log('6个月收益数据： ', monthlyProfits);
-    console.log('createCustRange>>>', createCustRange);
+    console.log('createCustRange>>>', curPageNum, page);
     return (
       <div className={styles.customerlist}>
         <Row type="flex" justify="space-between" align="middle">

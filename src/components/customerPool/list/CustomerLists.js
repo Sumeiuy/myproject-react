@@ -11,6 +11,7 @@ import { Pagination, Checkbox, message } from 'antd';
 
 import CustomerRow from './CustomerRow';
 import CreateServiceRecord from './CreateServiceRecord';
+import CreateContactModal from './CreateContactModal';
 
 import { fspContainer } from '../../../config';
 import { fspGlobal, helper } from '../../../utils';
@@ -21,6 +22,8 @@ import styles from './customerLists.less';
 
 const EMPTY_ARRAY = [];
 let followOn = false;
+const EMPTY_OBJECT = {};
+let modalKeyCount = 0;
 
 export default class CustomerLists extends PureComponent {
   static propTypes = {
@@ -48,7 +51,7 @@ export default class CustomerLists extends PureComponent {
     getServiceRecord: PropTypes.func.isRequired,
     getFollowCust: PropTypes.func.isRequired,
     custContactData: PropTypes.object.isRequired,
-    serviceRecordData: PropTypes.array.isRequired,
+    serviceRecordData: PropTypes.object.isRequired,
     addServeRecord: PropTypes.func.isRequired,
     addServeRecordSuccess: PropTypes.bool.isRequired,
     isAddServeRecord: PropTypes.bool.isRequired,
@@ -69,6 +72,9 @@ export default class CustomerLists extends PureComponent {
     this.state = {
       taskAndGroupLeftPos: '0',
       showCreateServiceRecord: false,
+      currentCustId: '',
+      isShowContactModal: false,
+      modalKey: `modalKeyCount${modalKeyCount}`,
       // 判断是否是主服务经理
       isSms: false,
       currentEmailCustId: '',
@@ -88,26 +94,48 @@ export default class CustomerLists extends PureComponent {
     }
   }
   componentWillReceiveProps(nextProps) {
+    const {
+      custContactData: prevCustContactData = EMPTY_OBJECT,
+      serviceRecordData: prevServiceRecordData = EMPTY_ARRAY,
+     } = this.props;
+    const {
+      custContactData: nextCustContactData = EMPTY_OBJECT,
+      serviceRecordData: nextServiceRecordData = EMPTY_ARRAY,
+     } = nextProps;
+    console.log(nextProps.custContactData);
+    const { currentCustId, isShowContactModal } = this.state;
+    const prevContact = prevCustContactData[currentCustId] || EMPTY_OBJECT;
+    const nextContact = nextCustContactData[currentCustId] || EMPTY_OBJECT;
+    const prevRecord = prevServiceRecordData[currentCustId] || EMPTY_OBJECT;
+    const nextRecord = nextServiceRecordData[currentCustId] || EMPTY_OBJECT;
+    if (prevContact !== nextContact || prevRecord !== nextRecord) {
+      if (!isShowContactModal) {
+        this.setState({
+          isShowContactModal: true,
+          modalKey: `modalKeyCount${modalKeyCount++}`,
+        });
+      }
+    }
     console.log(nextProps);
     console.log(this.state.currentEmailCustId);
     let finded = 0;
     let addresses = '';
-    const {
-      custContactData: nextCustContactData,
-    } = nextProps;
+    // const {
+    //   custContactData: nextCustContactData,
+    // } = nextProps;
     const { currentEmailCustId } = this.state;
     if (_.size(nextProps.custContactData) !== 0) {
       addresses = nextCustContactData[currentEmailCustId];
-      // console.log(addresses);
+    // console.log(addresses);
       if (addresses.orgCustomerContactInfoList !== undefined) {
         const index = _.findLastIndex(addresses.orgCustomerContactInfoList,
-            val => val.mainFlag === true);
+          val => val.mainFlag === true);
         finded = _.findLastIndex(addresses.orgCustomerContactInfoList[index].emailAddresses,
-            val => val.mainFlag === true);
+          val => val.mainFlag === true);
         addresses = addresses.orgCustomerContactInfoList[index];
       } else {
         finded = _.findLastIndex(addresses.perCustomerContactInfo.emailAddresses,
-            val => val.mainFlag === true);
+          val => val.mainFlag === true);
         addresses = addresses.perCustomerContactInfo;
       }
       if (finded !== -1) {
@@ -120,19 +148,19 @@ export default class CustomerLists extends PureComponent {
         });
         message.error('暂无客户邮件，请与客户沟通尽快完善信息');
       }
-      // console.log('email----', this.state.email);
+        // console.log('email----', this.state.email);
     }
-    // console.log('followOn---', followOn);
-    // console.log(nextProps.isFollow);
-    // if (followOn) {
-    //   console.log('this.state.follow---', this.state.follow);
-    //   if (nextProps.isFollow) {
-    //     message.success('已关注');
-    //   } else {
-    //     message.success('已取消关注');
-    //   }
-    //   followOn = false;
-    // }
+      // console.log('followOn---', followOn);
+      // console.log(nextProps.isFollow);
+      // if (followOn) {
+      //   console.log('this.state.follow---', this.state.follow);
+      //   if (nextProps.isFollow) {
+      //     message.success('已关注');
+      //   } else {
+      //     message.success('已取消关注');
+      //   }
+      //   followOn = false;
+      // }
   }
   componentDidUpdate() {
     this.setTaskAndGroup();
@@ -289,6 +317,35 @@ export default class CustomerLists extends PureComponent {
   }
 
   @autobind
+  showCreateContact({ custId, custType }) {
+    const { getCustContact, getServiceRecord, custContactData } = this.props;
+    this.setState({
+      currentCustId: custId,
+      custType,
+    }, () => {
+      // debugger;
+      if (_.isEmpty(custContactData[custId])) {
+        getCustContact({
+          custId,
+        });
+        // 请求服务记录不需要作缓存
+        getServiceRecord({
+          custId,
+        });
+      } else {
+        this.setState({
+          isShowContactModal: true,
+          modalKey: `modalKeyCount${modalKeyCount++}`,
+        });
+      }
+      // 请求服务记录不需要作缓存
+      // getServiceRecord({
+      //   custId,
+      // });
+    });
+  }
+
+  @autobind
   hideCreateServiceRecord() {
     this.setState({
       showCreateServiceRecord: false,
@@ -337,6 +394,17 @@ export default class CustomerLists extends PureComponent {
     followOn = true;
     console.log('followOn----', followOn);
   }
+
+  /**
+ * 回调，关闭modal打开state
+ */
+  @autobind
+  resetModalState() {
+    this.setState({
+      isShowContactModal: false,
+    });
+  }
+
   // 分组只针对服务经理，也就是说：
   // 1、搜素、标签客户池列表：客户列表是“我的客户”时可以添加用户分组
   // 2、业务办理客户池：默认是只显示自己负责客户的，所以可以添加用户分组
@@ -357,7 +425,7 @@ export default class CustomerLists extends PureComponent {
         onClick={() => { this.handleClick('/customerPool/customerGroup', '新建分组', 'FSP_GROUP'); }}
       >
         用户分组
-        </button>);
+      </button>);
     }
     return null;
   }
@@ -371,7 +439,12 @@ export default class CustomerLists extends PureComponent {
       currentEmailCustId,
       currentFollowCustId,
       follow,
+      isShowContactModal,
+      currentCustId,
+      custType,
+      modalKey,
     } = this.state;
+
     const {
       q,
       page,
@@ -387,8 +460,6 @@ export default class CustomerLists extends PureComponent {
       selectedIds,
       isAllSelect,
       source,
-      getCustContact,
-      getServiceRecord,
       custContactData,
       serviceRecordData,
       addServeRecord,
@@ -397,6 +468,9 @@ export default class CustomerLists extends PureComponent {
       dict,
       isSms,
     } = this.props;
+
+    const finalContactData = custContactData[currentCustId] || EMPTY_OBJECT;
+    const finalServiceRecordData = serviceRecordData[currentCustId] || EMPTY_ARRAY;
     if (!custList.length) {
       return <div className="list-box"><NoData /></div>;
     }
@@ -425,6 +499,7 @@ export default class CustomerLists extends PureComponent {
     const isShow = (!_.isEmpty(selectIdsArr) || isAllSelectBool) ? 'block' : 'none';
     // 已选中的条数：选择全选显示所有数据量，非全选显示选中的条数
     const selectCount = isAllSelectBool ? page.total : selectIdsArr.length;
+    console.log('current: ', current);
     return (
       <div className="list-box">
         <div className={styles.selectAllBox}>
@@ -452,13 +527,10 @@ export default class CustomerLists extends PureComponent {
                 isAllSelect={isAllSelectBool}
                 selectedIds={selectIdsArr}
                 onChange={this.handleSingleSelect}
-                getCustContact={getCustContact}
-                getServiceRecord={getServiceRecord}
-                custContactData={custContactData}
                 toEmail={this.toEmail}
                 addFollow={this.addFollow}
-                serviceRecordData={serviceRecordData}
                 createServiceRecord={this.showCreateServiceRecord}
+                createContact={this.showCreateContact}
                 key={`${item.empId}-${item.custId}-${item.idNum}-${item.telephone}-${item.asset}`}
                 email={email}
                 currentEmailCustId={currentEmailCustId}
@@ -519,6 +591,20 @@ export default class CustomerLists extends PureComponent {
           addServeRecordSuccess={addServeRecordSuccess}
           isAddServeRecord={isAddServeRecord}
         />
+        {
+          isShowContactModal ?
+            <CreateContactModal
+              key={modalKey}
+              visible={isShowContactModal}
+              custContactData={finalContactData}
+              serviceRecordData={finalServiceRecordData}
+              custType={custType}
+              createServiceRecord={this.showCreateServiceRecord} /* 创建服务记录 */
+              onClose={this.resetModalState}
+              currentCustId={currentCustId}
+              isFirstLoad
+            /> : null
+        }
       </div>
     );
   }
