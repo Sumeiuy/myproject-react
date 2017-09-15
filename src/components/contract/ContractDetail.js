@@ -5,20 +5,14 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-// import ReactDOM from 'react-dom';
 import { Form, Input, Row, Col } from 'antd';
 import { createForm } from 'rc-form';
-// import classnames from 'classnames';
 import { connect } from 'react-redux';
-// import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { routerRedux } from 'dva/router';
-// import { helper } from '../../utils';
-// import { request } from '../../config';
-import './contractDetail.less';
+import style from './contractDetail.less';
 
 const EMPTY_OBJECT = {};
-// const EMPTY_LIST = [];
 const GETDETAIL = 'contract/getDetail';
 
 const FormItem = Form.Item;
@@ -153,19 +147,19 @@ export default class ContractDetail extends PureComponent {
     const detail = _.clone(dataSource || EMPTY_OBJECT, true);
     const contractName = detail.contractName;
     return (
-      <div className="detail_box">
+      <div className={style.detail_box}>
         <Form>
-          <div className="inner">
-            <div className="row_box">
+          <div className={style.inner}>
+            <div className={style.row_box}>
               <Row gutter={18}>
                 <Col span="24">
-                  <div id="detail_module" className="module">
-                    <div className="mod_header">
+                  <div id="detail_module" className={style.module}>
+                    <div className={style.mod_header}>
                       <h2 className="toogle_title">基本信息</h2>
                     </div>
-                    <div className="mod_content">
-                      <div className="wrap">
-                        <strong className="name">合约名称：</strong>
+                    <div className={style.mod_content}>
+                      <div className={style.wrap}>
+                        <strong className={style.name}>合约名称：</strong>
                         <FormItem
                           hasFeedback
                         >

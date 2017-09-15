@@ -5,19 +5,11 @@
  */
 
 import React, { PureComponent, PropTypes } from 'react';
-// import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
-// import _ from 'lodash';
-// import classnames from 'classnames';
-// import { autobind } from 'core-decorators';
 import { withRouter, routerRedux } from 'dva/router';
-// import { getEnv } from '../../utils/helper';
 import './home.less';
-// import ContractDetail from '../../components/contract/ContractDetail';
+import ContractDetail from '../../components/contract/ContractDetail';
 
-// const EMPTY_LIST = [];
-// const EMPTY_OBJECT = {};
-// const BROWSER = getEnv();
 const getDataFunction = loading => query => ({
   type: 'feedback/getFeedbackList',
   payload: query || {},
@@ -71,7 +63,7 @@ export default class Contract extends PureComponent {
   render() {
     return (
       <div>
-        list
+        <ContractDetail location={location} />
       </div>
     );
   }
