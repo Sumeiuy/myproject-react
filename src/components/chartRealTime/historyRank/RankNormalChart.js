@@ -11,7 +11,11 @@ import _ from 'lodash';
 import IECharts from '../../IECharts';
 import { barColor, yAxis, xAxis, chartGrid, chartTooltip } from './rankChartGeneralConfig';
 import { filterData, filterRankData, dealNormalData, designGrid, optimizeGrid } from './rankDataHandle';
+import { transform2array } from '../../../utils/helper';
+import { ZHUNICODE } from '../../../config';
 import styles from './RankChart.less';
+
+const { UNDISTRIBUTED } = ZHUNICODE;
 
 export default class RankNormalChart extends PureComponent {
   static propTypes = {
@@ -19,10 +23,16 @@ export default class RankNormalChart extends PureComponent {
     level: PropTypes.string.isRequired,
     scope: PropTypes.string.isRequired,
     showChartUnit: PropTypes.func.isRequired,
+    updateQueryState: PropTypes.func.isRequired,
+    custRange: PropTypes.array.isRequired,
   };
 
   componentWillMount() {
     this.initialChartData(this.props);
+  }
+
+  componentDidMount() {
+    this.custRange = transform2array(this.props.custRange);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -39,6 +49,20 @@ export default class RankNormalChart extends PureComponent {
   onReady(echart) {
     this.setState({
       echart,
+    });
+    echart.on('click', (arg) => {
+      if (arg.componentType !== 'series') {
+        return;
+      }
+      this.custRange.forEach((item) => {
+        if (arg.name === item.name) {
+          this.props.updateQueryState({
+            orgId: item.id,
+            level: item.level,
+            scope: Number(item.level) + 1,
+          });
+        }
+      });
     });
   }
 
@@ -158,10 +182,11 @@ export default class RankNormalChart extends PureComponent {
   // 柱状图Label
   @autobind
   makeLabelSeries(name, data, labels, realLength) {
-    const flag = name === 'max-label';
+    const flag = name === 'max-label'; // max-label显示数字
     const position = flag ? 'insideRight' : 'insideLeft';
     const textColor = flag ? '#999' : '#333';
     const itemColor = 'transparent';
+    const hoverTextColor = flag ? '#999' : '#348cf0';
     return {
       name,
       data,
@@ -186,6 +211,10 @@ export default class RankNormalChart extends PureComponent {
             }
             return '--';
           },
+        },
+        emphasis: {
+          show: true,
+          textStyle: { color: hoverTextColor },
         },
       },
     };
@@ -253,6 +282,9 @@ export default class RankNormalChart extends PureComponent {
               <td>${company[dataIndex]}</td>
             </tr>
           `;
+        }
+        if (axisValue === UNDISTRIBUTED) {
+          tooltipHead = '';
         }
         const tips = `
           <table class="echartTooltipTable">
@@ -322,7 +354,8 @@ export default class RankNormalChart extends PureComponent {
           {
             rank.map((item, index) => {
               const key = `rank-${index}`;
-              const { current, change } = item;
+              const { change } = item;
+              let { current } = item;
               let rankClass;
               let changeText;
               let changeIcon;
@@ -341,6 +374,9 @@ export default class RankNormalChart extends PureComponent {
                 });
                 changeText = change === 0 ? '不变' : `${Math.abs(change)}名`;
                 changeIcon = change === 0 ? '--' : (<Icon type={icon} />);
+              }
+              if (current === null) {
+                current = '--';
               }
               return (
                 <div key={key} className={styles.rankNumberAndChange}>
