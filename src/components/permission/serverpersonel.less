@@ -12,12 +12,15 @@
 	width: 100%;
 	height: 36px;
 	margin: 0 0 10px;
+	position: relative;
 }
 .spAlertsCircle {
+	position: absolute;
+	top: 0;
+	left: 0;
 	float: left;
 	width: 26px;
 	height: 100%;
-	position: relative;
 }
 .spAlertsCircle:after {
 	content: '';
@@ -30,12 +33,14 @@
 	background: #348cf0;
 }
 .spAlertsCon {
-	float: left;
-	width: 500px;
+	display: block;
+	width: 526px;
 	height: 100%;
+	padding-left: 26px;
 	line-height: 18px;
 	color: #a1a1a1;
-	font-size: #333;
+	font-size: 14px;
+	box-sizing: border-box;
 }
 .spBtnGroup {
 	width: 100%;

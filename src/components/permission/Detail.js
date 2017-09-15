@@ -33,12 +33,18 @@ export default class Detail extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      statusType: 'ready', // 状态： ready（可读） 、 modify （修改）、 approval（审批）
-      num: props.num, // 编号
-      baseInfo: props.baseInfo, // 基本信息
-      draftInfo: props.draftInfo, // 拟稿信息
-      serverInfo: props.serverInfo, // 服务人员
-      approvalComments: '他们什么都不晓得', // 审批意见
+      // 状态： ready（可读） 、 modify （修改）、 approval（审批）
+      statusType: 'ready',
+      // 编号
+      num: props.num,
+      // 基本信息
+      baseInfo: props.baseInfo,
+      // 拟稿信息
+      draftInfo: props.draftInfo,
+      // 服务人员
+      serverInfo: props.serverInfo,
+      // 审批意见
+      approvalComments: '他们什么都不晓得',
     };
   }
 

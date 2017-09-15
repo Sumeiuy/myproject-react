@@ -7,7 +7,6 @@ export default class TextareaComponent extends PureComponent {
   static propTypes = {
     value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     title: PropTypes.string.isRequired,
-    onChange: PropTypes.func.isRequired,
     placeholder: PropTypes.string,
     emitEvent: PropTypes.func.isRequired,
   }
@@ -20,7 +19,8 @@ export default class TextareaComponent extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      value: '', // textarea中的value值
+      // textarea中的value值
+      value: '',
     };
   }
 
