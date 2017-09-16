@@ -12,17 +12,19 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import { constructSeibelPostBody } from '../../utils/helper';
 import SplitPanel from '../../components/common/splitPanel/SplitPanel';
-import PageHeader from '../../components/permission/PageHeader';
+import PermissionHeader from '../../components/common/biz/SeibelHeader';
 import Detail from '../../components/permission/Detail';
 import PermissionList from '../../components/common/biz/CommonList';
 import seibelColumns from '../../components/common/biz/seibelColumns';
+import { permissionOptions } from '../../config';
 
 import styles from './home.less';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
-
+const typeOptions = permissionOptions.typeOptions;
+const stateOptions = permissionOptions.stateOptions;
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
   payload: query || {},
@@ -150,9 +152,12 @@ export default class Permission extends PureComponent {
     const { list, location, replace } = this.props;
     const { isEmpty } = this.state;
     const topPanel = (
-      <PageHeader
+      <PermissionHeader
         location={location}
         replace={replace}
+        page="premissionPage"
+        typeOptions={typeOptions}
+        stateOptions={stateOptions}
       />
     );
 

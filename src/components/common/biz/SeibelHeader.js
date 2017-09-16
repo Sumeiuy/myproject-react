@@ -5,20 +5,22 @@
 
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
-import CommonSelect from '../common/biz/CommonSelect';
-import DropDownSelect from '../common/drapdownselect';
-import { permissionOptions } from '../../config';
+import Select from '../Select';
+import DropDownSelect from '../drapdownselect';
 
-import styles from '../../components/style/jiraLayout.less';
+import styles from '../../style/jiraLayout.less';
 
 export default class Pageheader extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
+    page: PropTypes.string,
+    typeOptions: PropTypes.array.isRequired,
+    stateOptions: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
-
+    page: '',
   }
   constructor(props) {
     super(props);
@@ -27,10 +29,6 @@ export default class Pageheader extends PureComponent {
     };
   }
 
-  onChange = (value) => {
-    console.log(arguments);
-    this.setState({ value });
-  }
 
   @autobind
   searchInfoList(value) {
@@ -51,8 +49,7 @@ export default class Pageheader extends PureComponent {
   }
 
   render() {
-    const typeOptions = permissionOptions.typeOptions;
-    const stateOptions = permissionOptions.stateOptions;
+    const { typeOptions, stateOptions } = this.props;
     const getSelectOption = item => item.map(i =>
       <Option key={i.value}>{i.label}</Option>,
     );
@@ -60,10 +57,10 @@ export default class Pageheader extends PureComponent {
     return (
       <div className={styles.pageCommonHeader}>
         客户:
-        <div className={styles.dropDownSelect}>
+        <div className={styles.dropDownSelectBox}>
           <DropDownSelect
             value="全部"
-            placeholder="请输入姓名或工号"
+            placeholder="经济客户号/客户名称"
             searchList={this.state.list}
             showObjKey="custName"
             objId="custNumber"
@@ -73,14 +70,14 @@ export default class Pageheader extends PureComponent {
         </div>
 
         子类型:
-        <CommonSelect
+        <Select
           location={location}
           replace={replace}
           data={getSelectOption(typeOptions)}
           name={'subType'}
         />
         状态:
-        <CommonSelect
+        <Select
           location={location}
           replace={replace}
           data={getSelectOption(stateOptions)}
@@ -88,7 +85,7 @@ export default class Pageheader extends PureComponent {
         />
 
         拟稿人:
-        <div className={styles.dropDownSelect}>
+        <div className={styles.dropDownSelectBox}>
           <DropDownSelect
             value="全部"
             placeholder="请输入姓名或工号"
@@ -101,7 +98,7 @@ export default class Pageheader extends PureComponent {
         </div>
 
         部门:
-        <div className={styles.dropDownSelect}>
+        <div className={styles.dropDownSelectBox}>
           <DropDownSelect
             value="全部"
             placeholder="请输入姓名或工号"
