@@ -1,0 +1,52 @@
+@import '../../../css/variable.less';
+
+.container {
+  .search {
+    width: 184px;
+    height: 28px;
+    line-height: 28px;
+    :global {
+      .ant-input-suffix {
+        width: 28px;
+        height: 28px;
+        line-height: 28px;
+        text-align: center;
+        right: 0px;
+      }
+    }
+  }
+  .result {
+    flex: display;
+    display: -webkit-flex; /* Safari */
+    align-items: center;
+    height: 28px;
+    line-height: 28px;
+    .nameLabel {
+      font-family: @font-family;
+      font-size: 14px;
+      color: #4a4a4a;
+    }
+    .custIdLabel {
+      font-family: @font-family;
+      font-size: 14px;
+      color: #999;
+      margin-left: 8px;
+    }
+    .iconDiv {
+      margin-left: 12px;
+      border: 1px solid #ddd;
+      width: 17px;
+      height: 17px;
+      position: relative;
+      top: -1Px;
+      .closeIcon {
+        position: relative;
+        top: -8px;
+        left: -0.5Px;
+        font-size: 16px;
+        color: #4a90e2;
+        font-weight: 600;
+      }
+    }
+  }
+}
