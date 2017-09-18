@@ -21,7 +21,8 @@ export default {
     process: {},
     empInfo: {},
     dict: {},
-    monthlyProfits: [],
+    monthlyProfits: {},
+    isGetCustIncome: false,
     hotwds: {},
     hotPossibleWdsList: [],
     custList: [],
@@ -166,10 +167,13 @@ export default {
     },
     // 获取客户列表6个月收益率
     * getCustIncome({ payload }, { call, put }) {
-      const response = yield call(api.getCustIncome, payload);
+      yield put({
+        type: 'getCustIncomeReq',
+      });
+      const { resultData: { monthlyProfits } } = yield call(api.getCustIncome, payload);
       yield put({
         type: 'getCustIncomeSuccess',
-        payload: response,
+        payload: { ...payload, monthlyProfits },
       });
     },
     // 默认推荐词及热词推荐列表及历史搜索数据
@@ -432,10 +436,14 @@ export default {
       };
     },
     getCustIncomeSuccess(state, action) {
-      const { payload: { resultData: { monthlyProfits } } } = action;
+      const { payload: { custNumber, monthlyProfits } } = action;
       return {
         ...state,
-        monthlyProfits,
+        isGetCustIncome: false,
+        monthlyProfits: {
+          ...state.monthlyProfits,
+          [custNumber]: monthlyProfits,
+        },
       };
     },
     // 历史搜索列表
@@ -551,6 +559,12 @@ export default {
         ...state,
         isFollow: payload.result === 'success',
         // addFollow: false,
+      };
+    },
+    getCustIncomeReq(state) {
+      return {
+        ...state,
+        isGetCustIncome: true,
       };
     },
   },

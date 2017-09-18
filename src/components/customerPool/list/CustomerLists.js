@@ -39,7 +39,7 @@ export default class CustomerLists extends PureComponent {
     getCustIncome: PropTypes.func.isRequired,
     q: PropTypes.string,
     source: PropTypes.string.isRequired,
-    monthlyProfits: PropTypes.array.isRequired,
+    monthlyProfits: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
@@ -57,6 +57,7 @@ export default class CustomerLists extends PureComponent {
     dict: PropTypes.object.isRequired,
     isSms: PropTypes.bool.isRequired,
     isFollow: PropTypes.bool.isRequired,
+    isGetCustIncome: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -489,6 +490,7 @@ export default class CustomerLists extends PureComponent {
       isAddServeRecord,
       dict,
       isSms,
+      isGetCustIncome,
     } = this.props;
     const finalContactData = custContactData[currentCustId] || EMPTY_OBJECT;
     const finalServiceRecordData = serviceRecordData[currentCustId] || EMPTY_ARRAY;
@@ -563,6 +565,7 @@ export default class CustomerLists extends PureComponent {
                 currentEmailCustId={currentEmailCustId}
                 currentFollowCustId={currentFollowCustId}
                 follow={follow}
+                isGetCustIncome={isGetCustIncome}
               />,
             )
           }

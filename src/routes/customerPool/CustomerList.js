@@ -72,12 +72,13 @@ const mapStateToProps = state => ({
   addServeRecordSuccess: state.customerPool.addServeRecordSuccess,
   isAddServeRecord: state.customerPool.isAddServeRecord,
   isFollow: state.customerPool.isFollow,
+  isGetCustIncome: state.customerPool.isGetCustIncome,
 });
 
 const mapDispatchToProps = {
   getAllInfo: fetchDataFunction(true, effects.allInfo),
   getCustomerData: fetchDataFunction(true, effects.getCustomerList),
-  getCustIncome: fetchDataFunction(true, effects.getCustIncome),
+  getCustIncome: fetchDataFunction(false, effects.getCustIncome),
   getCustomerScope: fetchDataFunction(true, effects.getCustomerScope),
   addServeRecord: fetchDataFunction(true, effects.addServeRecord),
   getServiceRecord: fetchDataFunction(true, effects.getServiceRecord),
@@ -105,7 +106,7 @@ export default class CustomerList extends PureComponent {
     getCustIncome: PropTypes.func.isRequired,
     custList: PropTypes.array.isRequired,
     page: PropTypes.object.isRequired,
-    monthlyProfits: PropTypes.array.isRequired,
+    monthlyProfits: PropTypes.object.isRequired,
     getCustContact: PropTypes.func.isRequired,
     getFollowCust: PropTypes.func.isRequired,
     custContactData: PropTypes.object,
@@ -117,6 +118,7 @@ export default class CustomerList extends PureComponent {
     addServeRecordSuccess: PropTypes.bool.isRequired,
     isAddServeRecord: PropTypes.bool.isRequired,
     isFollow: PropTypes.bool.isRequired,
+    isGetCustIncome: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -536,6 +538,7 @@ export default class CustomerList extends PureComponent {
       addServeRecordSuccess,
       isAddServeRecord,
       isFollow,
+      isGetCustIncome,
     } = this.props;
     const {
       sortDirection,
@@ -609,6 +612,7 @@ export default class CustomerList extends PureComponent {
           curPageNum={curPageNum}
           pageSize={pageSize}
           monthlyProfits={monthlyProfits}
+          isGetCustIncome={isGetCustIncome}
           onPageChange={this.handlePageChange}
           onSizeChange={this.handleSizeChange}
           getCustIncome={getCustIncome}
