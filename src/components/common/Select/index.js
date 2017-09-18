@@ -5,46 +5,37 @@
 
 import React, { PureComponent, PropTypes } from 'react';
 import { Select } from 'antd';
-import { autobind } from 'core-decorators';
 import styles from './index.less';
 
+const Option = Select.Option;
 export default class CommonSelect extends PureComponent {
   static propTypes = {
     data: PropTypes.array.isRequired,
     name: PropTypes.string.isRequired,
-    location: PropTypes.object.isRequired,
-    replace: PropTypes.func.isRequired,
+    onChange: PropTypes.func.isRequired,
+    value: PropTypes.string,
   }
 
   static defaultProps = {
-
+    value: '全部',
   }
 
-  @autobind
-  handleSelectChange(value, key) {
-    const { replace, location: { pathname, query } } = this.props;
-    replace({
-      pathname,
-      query: {
-        ...query,
-        [value]: key,
-        isResetPageNum: 'Y',
-      },
-    });
-  }
 
   render() {
-    const { data, name, location: { query } } = this.props;
-    console.warn('name', name);
+    const { data, name, value, onChange } = this.props;
+    const getSelectOption = item => item.map(i =>
+      <Option key={i.value}>{i.label}</Option>,
+    );
     return (
-      <div className={styles.commomSelect} style={{ width: '16%' }}>
+      <div className={styles.commomSelect}>
         <Select
-          style={{ width: '80%' }}
           placeholder="全部"
-          value={query[name]}
-          onChange={key => this.handleSelectChange(name, key)}
+          value={value}
+          onChange={key => onChange(name, key)}
+          allowClear
+          dropdownMatchSelectWidth={false}
         >
-          {data}
+          {getSelectOption(data)}
         </Select>
       </div>
     );
