@@ -23,8 +23,10 @@ export default class Pageheader extends PureComponent {
     stateOptions: PropTypes.array.isRequired,
     // 新建
     creatSeibelModal: PropTypes.func.isRequired,
-    // 搜索拟稿人
+    // 搜索拟稿人方法
     toSearchDrafter: PropTypes.func.isRequired,
+    // 拟稿人数据
+    drafterList: PropTypes.array.isRequired
   }
 
   static defaultProps = {
@@ -57,7 +59,13 @@ export default class Pageheader extends PureComponent {
   }
 
   render() {
-    const { typeOptions, stateOptions, creatSeibelModal, toSearchDrafter } = this.props;
+    const { 
+      typeOptions,
+      stateOptions,
+      creatSeibelModal,
+      toSearchDrafter,
+      drafterList
+    } = this.props;
     const getSelectOption = item => item.map(i =>
       <Option key={i.value}>{i.label}</Option>,
     );
@@ -100,7 +108,7 @@ export default class Pageheader extends PureComponent {
           <DropDownSelect
             value="全部"
             placeholder="请输入姓名或工号"
-            searchList={this.state.list}
+            searchList={drafterList}
             showObjKey="custName2"
             objId="custNumber2"
             emitSelectItem={this.selectItem}
@@ -130,7 +138,7 @@ export default class Pageheader extends PureComponent {
           type="primary"
           icon="plus"
           size="small"
-          onclick={creatSeibelModal}
+          onCick={creatSeibelModal}
         >
           新建
         </Button>

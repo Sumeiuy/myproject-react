@@ -172,7 +172,7 @@ export default class Permission extends PureComponent {
   }
 
   render() {
-    const { list, location, replace } = this.props;
+    const { list, location, replace, drafterList } = this.props;
     const { isEmpty } = this.state;
     const topPanel = (
       <PermissionHeader
@@ -183,6 +183,7 @@ export default class Permission extends PureComponent {
         stateOptions={stateOptions}
         creatSeibelModal={this.creatPermossionModal}
         toSearchDrafter={this.toSearchDrafter}
+        drafterList={drafterList}
       />
     );
 

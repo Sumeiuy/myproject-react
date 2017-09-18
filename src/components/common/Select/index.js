@@ -1,5 +1,5 @@
 /**
- * @file CommonSelect.js
+ * @file Select.js
  * @author honggaunqging
  */
 
