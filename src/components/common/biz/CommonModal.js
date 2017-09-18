@@ -10,7 +10,7 @@
  * title         string      弹窗的标题
  * visible       boolean     弹窗是否可见
  * onOk          function    点击确定回调
- * onCancel      function    点击遮罩层或右上角叉或取消按钮的回调
+ * closeModal      function    点击遮罩层或右上角叉或取消按钮的回调
  * okText        string      确认按钮文字，默认为 【确认】
  * okType        string      确认按钮类型，类型参照 commom/Button 下的类型
  * cancelText    string      取消按钮文字，默认为 【取消】
@@ -38,7 +38,7 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { Modal, Button } from 'antd';
 // import Button from '../Button';
-import styles from './Modal.less';
+import styles from './commonModal.less';
 
 export default class CommonModal extends PureComponent {
   static propTypes = {
@@ -47,7 +47,8 @@ export default class CommonModal extends PureComponent {
     okText: PropTypes.string,
     size: PropTypes.string,
     cancelText: PropTypes.string,
-    onCancel: PropTypes.func.isRequired,
+    modalKey: PropTypes.string.isRequired,
+    closeModal: PropTypes.func.isRequired,
     onOk: PropTypes.func.isRequired,
     btnStatus: PropTypes.bool,
     children: React.PropTypes.oneOfType([
@@ -68,7 +69,8 @@ export default class CommonModal extends PureComponent {
     const {
       size,
       children,
-      onCancel,
+      modalKey,
+      closeModal,
       cancelText,
       onOk,
       okText,
@@ -78,13 +80,13 @@ export default class CommonModal extends PureComponent {
     return (
       <Modal
         {...this.props}
-        onCancel={onCancel}
+        onCancel={() => closeModal(modalKey)}
         wrapClassName={`${styles.commonModal} ${styles[modalSize]}`}
         footer={[
           <Button
             key="back"
             size="large"
-            onClick={onCancel}
+            onClick={() => closeModal(modalKey)}
           >
             {cancelText}
           </Button>,
@@ -93,7 +95,7 @@ export default class CommonModal extends PureComponent {
             type="primary"
             size="large"
             disabled={btnStatus}
-            onClick={onOk}
+            onClick={() => onOk(modalKey)}
           >
             {okText}
           </Button>,
