@@ -26,7 +26,7 @@ export default {
     },
     getPermissionListSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
-      const { page = EMPTY_OBJECT, permissionVOList = EMPTY_LIST } = resultData;
+      const { page = EMPTY_OBJECT, applicationList = EMPTY_LIST } = resultData;
       const { listData: preListData = EMPTY_LIST } = state.list;
 
       return {
@@ -34,17 +34,17 @@ export default {
         list: {
           page,
           resultData: page.pageNum === 1 ?
-            permissionVOList : [...preListData, ...permissionVOList],
+            applicationList : [...preListData, ...applicationList],
         },
       };
     },
     getDrafterListSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
-      const { drafterList = EMPTY_LIST } = resultData;
+      const { empInfo = EMPTY_LIST } = resultData;
 
       return {
         ...state,
-        drafterList,
+        drafterList: empInfo,
       };
     },
   },

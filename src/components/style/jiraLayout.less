@@ -2,31 +2,31 @@
   font-size: 14px;
   .dropDownSelectBox{
     display: inline-block;
-    width: 15%;
+    width: 12%;
     margin-right: 20px;
     vertical-align: middle;
-    .ddsShowBox{
-      border: none;
-    }
-    .ddsDrapMenu{
-      .searhInput{
-        vertical-align: top;
-      }
-    }
   }
   :global{
+    .commonBtn{
+      float: right;
+      margin-right: 25px;
+    }
     //select边框
     .ant-select{
+      min-width: 120px;
       margin-right: 20px;
       .ant-select-selection{
         background-color: transparent;
-        border-color: transparent;
+        border: 1px solid transparent;
       }
       // 字体颜色大小
       .ant-select-selection__rendered div,
       .ant-select-selection__rendered span{
         color: #33393c;
         font-size: 14px;
+      }
+      &.ant-select-open .ant-select-selection{
+        border: 1px solid #348cf0;
       }
     }
 
@@ -46,9 +46,9 @@
     }
     //清楚单选select小图标旋转
     .ant-select-open .ant-select-arrow:before {
-        -webkit-transform: rotate(0deg);
-        -ms-transform: rotate(0deg);
-        transform: rotate(0deg);
+      -webkit-transform: rotate(0deg);
+      -ms-transform: rotate(0deg);
+      transform: rotate(0deg);
     }
   }
 }
