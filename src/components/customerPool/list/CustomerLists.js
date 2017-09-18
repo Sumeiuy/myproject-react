@@ -101,7 +101,7 @@ export default class CustomerLists extends PureComponent {
       custContactData: nextCustContactData = EMPTY_OBJECT,
       serviceRecordData: nextServiceRecordData = EMPTY_ARRAY,
      } = nextProps;
-    console.log(nextProps.custContactData);
+    // console.log(nextProps.custContactData);
     const { currentCustId, isShowContactModal } = this.state;
     const prevContact = prevCustContactData[currentCustId] || EMPTY_OBJECT;
     const nextContact = nextCustContactData[currentCustId] || EMPTY_OBJECT;
@@ -115,7 +115,7 @@ export default class CustomerLists extends PureComponent {
         });
       }
     }
-    console.log(nextContact);
+    // console.log(nextContact);
     if (onOff) {
       if (_.size(nextContact) !== 0) {
         addresses = nextContact;
@@ -396,7 +396,7 @@ export default class CustomerLists extends PureComponent {
     const { custId, empId } = item;
     let operateType = null;
     if (!this.state.follow) {
-      console.log('您已关注');
+      // console.log('您已关注');
       this.setState({
         follow: !this.state.follow,
         currentFollowCustId: custId,
@@ -405,14 +405,14 @@ export default class CustomerLists extends PureComponent {
       getFollowCust({
         empId, operateType, custId,
       });
-      console.log(this.state.follow);
+      // console.log(this.state.follow);
     } else {
-      console.log('您已取消关注');
+      // console.log('您已取消关注');
       this.setState({
         follow: !this.state.follow,
         currentFollowCustId: custId,
       });
-      console.log(this.state.follow);
+      // console.log(this.state.follow);
       operateType = 'delete';
       getFollowCust({
         empId, operateType, custId,

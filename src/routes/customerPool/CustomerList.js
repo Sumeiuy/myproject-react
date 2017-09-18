@@ -230,7 +230,7 @@ export default class CustomerList extends PureComponent {
     if (!_.isEmpty(empRespList)) {
       respIdOfPosition = _.findIndex(empRespList, item => (item.respId === HTSC_RESPID));
     }
-    const k = decodeURIComponent(query.q);
+    const keyword = decodeURIComponent(query.q);
     const param = {
       // 必传，当前页
       curPageNum: query.curPageNum || CUR_PAGE,
@@ -243,7 +243,7 @@ export default class CustomerList extends PureComponent {
     if (query.source === 'search') {
       param.searchTypeReq = 'FromFullTextType';
       param.paramsReqList = [
-        { key: 'fullTestSearch', value: k },
+        { key: 'fullTestSearch', value: keyword },
       ];
     } else if (query.source === 'tag') { // 热词
       param.searchTypeReq = 'FromWdsListErea';

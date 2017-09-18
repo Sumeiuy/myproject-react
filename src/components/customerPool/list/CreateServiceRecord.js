@@ -5,7 +5,6 @@
  */
 
 import React, { PureComponent, PropTypes } from 'react';
-import ReactDOM from 'react-dom';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { Modal, Row, Col, Select, DatePicker, Input, message } from 'antd';
@@ -38,6 +37,7 @@ const SERVICE_ICON = {
   'HTSC Other': 'other',
 };
 
+// 服务内容和反馈内容字数限制
 const MAX_LENGTH = 1000;
 
 
@@ -94,11 +94,9 @@ export default class CreateServiceRecord extends PureComponent {
         serviceTime: formatCurrentDate,
         feedbackTime: formatCurrentDate,
       });
-      const sc = ReactDOM.findDOMNode(this.serviceContent); //eslint-disable-line
-      const fc = ReactDOM.findDOMNode(this.feedbackContent); //eslint-disable-line
-      if (sc && fc) {
-        sc.value = '';
-        fc.value = '';
+      if (this.serviceContent && this.feedbackContent) {
+        this.serviceContent.textAreaRef.value = '';
+        this.feedbackContent.textAreaRef.value = '';
       }
     }
     // 添加成功
@@ -112,10 +110,10 @@ export default class CreateServiceRecord extends PureComponent {
   // 提交
   @autobind
   handleSubmit() {
-    const sc = ReactDOM.findDOMNode(this.serviceContent); //eslint-disable-line
-    const fc = ReactDOM.findDOMNode(this.feedbackContent); //eslint-disable-line
-    const serviceContent = _.trim(sc.value);
-    const feedbackContent = _.trim(fc.value);
+    const serviceContentNode = this.serviceContent.textAreaRef;
+    const feedbackContentNode = this.feedbackContent.textAreaRef;
+    const serviceContent = _.trim(serviceContentNode.value);
+    const feedbackContent = _.trim(feedbackContentNode.value);
     if (!serviceContent) {
       message.error('请输入此次服务的内容');
       return;
@@ -153,8 +151,8 @@ export default class CreateServiceRecord extends PureComponent {
       feedBackTime: feedbackTime,
       workResult,
     });
-    sc.value = '';
-    fc.value = '';
+    serviceContentNode.value = '';
+    feedbackContentNode.value = '';
     const { hideCreateServiceRecord } = this.props;
     hideCreateServiceRecord();
   }

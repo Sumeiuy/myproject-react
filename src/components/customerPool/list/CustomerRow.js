@@ -226,8 +226,6 @@ export default class CustomerRow extends PureComponent {
     });
   }
   componentWillReceiveProps(nextProps) {
-    // console.log('nextProps.isAllSelect>>>', nextProps.isAllSelect);
-    // console.log('this.props.isAllSelect>>>', this.props.isAllSelect);
     const {
       custContactData: prevCustContactData = EMPTY_OBJECT,
       serviceRecordData: prevServiceRecordData = EMPTY_LIST,
@@ -247,7 +245,6 @@ export default class CustomerRow extends PureComponent {
         });
       }
     }
-    console.log(nextProps);
     if (nextProps.currentFollowCustId !== '') {
       const followClass = classnames({
         [styles.follows]: nextProps.follow,
