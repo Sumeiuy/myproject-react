@@ -7,13 +7,13 @@ import React, { PropTypes } from 'react';
 import styles from './OtherCommission.less';
 
 export default function OtherCommission(props) {
-  const { commissionName, commissionValue } = props;
+  const { name, value } = props;
   return (
     <div className={styles.otherComm}>
       <div className={styles.item}>
         <div className={styles.wrap}>
-          <span className={styles.itemname}>{ commissionName }</span>
-          <span className={styles.itemvalue}>{ commissionValue }</span>
+          <span className={styles.itemname}>{name}</span>
+          <span className={styles.itemvalue}>{value}</span>
         </div>
       </div>
     </div>
@@ -21,11 +21,11 @@ export default function OtherCommission(props) {
 }
 
 OtherCommission.propTypes = {
-  commissionName: PropTypes.string,
-  commissionValue: PropTypes.string,
+  name: PropTypes.string,
+  value: PropTypes.string,
 };
 
 OtherCommission.defaultProps = {
-  commissionName: '',
-  commissionValue: '',
+  name: '',
+  value: '',
 };

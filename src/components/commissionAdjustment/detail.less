@@ -1,8 +1,4 @@
-body {
-  width: 100%;
-}
-
-.detail_box {
+.detailBox {
   .clear {
     clear: both;
     height: 0;
@@ -10,7 +6,7 @@ body {
     font-size: 0
   }
   background-color: #f3f3f4;
-  padding: 10px 10px 0 0;
+  padding: 0 10px 0 0;
   height: 100%;
   box-shadow: 5px 5px 5px #ededee;
   h1,
@@ -19,16 +15,13 @@ body {
     color: #33393c;
     font-size: 14px;
   }
-  .btnhidden {
-    display: none;
-  }
   .inner {
     border-radius: 5px;
     background-color: #FFF;
     padding: 20px;
     height: 100%;
     overflow: auto;
-    .mod_header {
+    .modHeader {
       position: relative;
       padding-left: 10px;
       &:before {
@@ -41,9 +34,9 @@ body {
         background-color: #108ee9;
       }
     }
-    .bugtitle {
+    .bugTitle {
       border-bottom: 1px solid #c2c2c2;
-      padding: 0 0 15px 0;
+      padding: 0 0 15px 20px;
       text-indent: -8px;
     }
     .module {
@@ -53,32 +46,27 @@ body {
         font-weight: normal;
         line-height: 1.5;
       }
-      .mod_content {
+      .modContent {
         padding: 5px 0;
         position: relative;
-        .property_list {
-          .value_word {
-            .value {
-              word-wrap: break-word;
-              word-break: break-word;
-              white-space: nowrap;
-              overflow: hidden;
-              text-overflow: ellipsis;
-              max-width: 98%;
-              min-width: 120px;
-            }
-          }
-          .left_commission {
-            width: 50%;
-            float: left;
+        width: 100%;
+        .propertyList {
+          li.item {
+            padding: 3px 0;
+            position: relative;
             clear: left;
-          }
-          .right_commission {
-            width: 50%;
-            float: right;
-            clear: right;
+            width: 100%;
+            box-sizing: border-box;
           }
         }
+        .leftCommission {
+            width: 50%;
+            float: left;
+          }
+          .rightCommission {
+            width: 50%;
+            float: right;
+          }
       }
     }
   }
