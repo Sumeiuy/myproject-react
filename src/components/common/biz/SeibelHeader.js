@@ -26,7 +26,7 @@ export default class Pageheader extends PureComponent {
     // 搜索拟稿人方法
     toSearchDrafter: PropTypes.func.isRequired,
     // 拟稿人数据
-    drafterList: PropTypes.array.isRequired
+    drafterList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -59,12 +59,12 @@ export default class Pageheader extends PureComponent {
   }
 
   render() {
-    const { 
+    const {
       typeOptions,
       stateOptions,
       creatSeibelModal,
       toSearchDrafter,
-      drafterList
+      drafterList,
     } = this.props;
     const getSelectOption = item => item.map(i =>
       <Option key={i.value}>{i.label}</Option>,

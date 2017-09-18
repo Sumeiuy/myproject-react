@@ -6,8 +6,8 @@
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import { Icon, Input, AutoComplete } from 'antd';
-import classnames from 'classnames';
-import styles from './ProductsDropBox.less';
+import _ from 'lodash';
+import styles from './productsDropBox.less';
 
 const Option = AutoComplete.Option;
 const dataSource = [
@@ -31,45 +31,42 @@ export default class ProductsDropdownBox extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      displaySearchIcon: false,
+      iconType: 'search',
+      value: '',
     };
   }
 
   // 根据用户输入过滤目标产品
   @autobind
   handleSearchFilterOptions(inputValue, option) {
-    let canBeShown = false;
     const optionArray = option.props.children;
-    for (let i = 0; i < optionArray.length; i++) {
-      if (optionArray[i].props.children.indexOf(inputValue) !== -1) {
-        canBeShown = true;
-        break;
-      }
-    }
-    return canBeShown;
+    return !!_.find(optionArray, item => item.props.children.indexOf(inputValue) !== -1);
   }
 
   // 获取到value值后隐藏icon
   @autobind
   changeInputbox(value) {
-    if (value !== '') {
+    if (value) {
       this.setState({
-        displaySearchIcon: true,
+        iconType: 'close',
+        value,
       });
-    } else if (value === '') {
-      if (value !== '') {
-        this.setState({
-          displaySearchIcon: false,
-        });
-      }
+    } else {
+      this.setState({
+        value: '',
+        iconType: 'search',
+      });
     }
   }
-  render() {
-    const { displaySearchIcon } = this.state;
-    const searchIconClass = classnames({
-      [styles.searchicon]: true,
-      [styles.searchicondisplay]: displaySearchIcon,
+  @autobind
+  clearValue() {
+    this.setState({
+      value: '',
+      iconType: 'search',
     });
+  }
+  render() {
+    const { iconType, value } = this.state;
     const options = dataSource.map(opt => (
       <Option key={opt.id} value={opt.prodName}>
         <span className={styles.prodcom}>{`${opt.prodCommision}‰`}</span>
@@ -87,12 +84,20 @@ export default class ProductsDropdownBox extends PureComponent {
           size="large"
           style={{ width: '100%' }}
           dataSource={options}
-          allowClear
           onChange={this.changeInputbox}
           optionLabelProp="value"
           filterOption={this.handleSearchFilterOptions}
+          value={value}
         >
-          <Input suffix={<Icon type="search" className={searchIconClass} />} />
+          <Input
+            suffix={
+              <Icon
+                type={iconType}
+                onClick={this.clearValue}
+                className={styles.searchicon}
+              />
+            }
+          />
         </AutoComplete>
       </div>
     );

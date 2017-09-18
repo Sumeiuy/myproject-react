@@ -5,7 +5,7 @@
  */
 
 import React, { PureComponent } from 'react';
-import styles from './Detail.less';
+import styles from './detail.less';
 
 export default class Commissiondetail extends PureComponent {
   render() {
