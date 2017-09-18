@@ -330,7 +330,7 @@ export default class CustomerLists extends PureComponent {
   }
 
   @autobind
-  showCreateServiceRecord(id) {
+  showCreateServiceRecord({ custId: id }) {
     this.setState({
       id,
       showCreateServiceRecord: true,

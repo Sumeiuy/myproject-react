@@ -190,7 +190,7 @@ exports.response = function (req, res) {
           "value": '面谈',
         },
         {
-          "key": 'Other',
+          "key": 'HTSC Other',
           "value": '其他',
         },
       ],

@@ -198,7 +198,7 @@ export default class CustomerList extends PureComponent {
       this.getCustomerList(nextProps);
     }
     // const noPermission = _.find(empRespList, item => item.id === )
-    console.log('query.orgId----query.source', query.orgId, query.source);
+    // console.log('query.orgId----query.source', query.orgId, query.source);
     // debugger
     if (query.orgId === MAIN_MAGEGER_ID || query.source === 'business') {
       this.setState({
@@ -221,14 +221,15 @@ export default class CustomerList extends PureComponent {
     } = this.props;
     const { occDivnNum = '' } = empInfo;
     const occ = _.isEmpty(occDivnNum) ? '' : occDivnNum;// orgId取不到的情况下去用户信息中的
-    const orgId = _.isEmpty(window.forReactPosition)
-      ?
-      occ
-      : window.forReactPosition.orgId;
-    if (_.isEmpty(empRespList)) {
-      return;
+    // const orgId = _.isEmpty(window.forReactPosition)
+    //   ?
+    //   occ
+    //   : window.forReactPosition.orgId;
+    const orgId = posOrgId || occ;
+    let respIdOfPosition;
+    if (!_.isEmpty(empRespList)) {
+      respIdOfPosition = _.findIndex(empRespList, item => (item.respId === HTSC_RESPID));
     }
-    const respIdOfPosition = _.findIndex(empRespList, item => (item.respId === HTSC_RESPID));
     const k = decodeURIComponent(query.q);
     const param = {
       // 必传，当前页
@@ -378,12 +379,13 @@ export default class CustomerList extends PureComponent {
     // 保证全局的职位存在的情况下取职位, 取不到时从empInfo中取值
     const occDivnNum = empInfo.occDivnNum || '';
     // let fspJobOrgId = 'ZZ001041020';
-    let fspJobOrgId = !_.isEmpty(window.forReactPosition) ?
-      window.forReactPosition.orgId :
-      occDivnNum;
-    if (posOrgId) {
-      fspJobOrgId = posOrgId;
-    }
+    // let fspJobOrgId = !_.isEmpty(window.forReactPosition) ?
+    //   window.forReactPosition.orgId :
+    //   occDivnNum;
+    // if (posOrgId) {
+    //   fspJobOrgId = posOrgId;
+    // }
+    const fspJobOrgId = posOrgId || occDivnNum;
     // 用户职位是经总
     if (fspJobOrgId === (custRange[0] || {}).id) {
       this.setState({
@@ -430,7 +432,7 @@ export default class CustomerList extends PureComponent {
   // 组织机构树切换和时间周期切换
   @autobind
   updateQueryState(state) {
-    console.log('updateQueryState: ', state);
+    // console.log('updateQueryState: ', state);
     // 切换Duration和Orig时候，需要将数据全部恢复到默认值
     const {
       replace,
@@ -567,7 +569,7 @@ export default class CustomerList extends PureComponent {
       custRangeProps.selectValue = selectValue;
     }
     // console.log('6个月收益数据： ', monthlyProfits);
-    console.log('createCustRange>>>', isSms);
+    // console.log('createCustRange>>>', isSms);
     return (
       <div className={styles.customerlist}>
         <Row type="flex" justify="space-between" align="middle">
