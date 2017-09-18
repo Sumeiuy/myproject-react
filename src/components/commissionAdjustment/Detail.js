@@ -5,19 +5,10 @@
  */
 
 import React, { PureComponent } from 'react';
-import classnames from 'classnames';
 import styles from './detail.less';
 
 export default class Commissiondetail extends PureComponent {
   render() {
-    const leftItem = classnames({
-      [styles.itemleft]: true,
-      [styles.item]: true,
-    });
-    const rightItem = classnames({
-      [styles.itemright]: true,
-      [styles.item]: true,
-    });
     return (
       <div className={styles.detail_box}>
         <div className={styles.inner}>
@@ -87,7 +78,7 @@ export default class Commissiondetail extends PureComponent {
           </div>
           <div id="choosecommission" className={styles.module}>
             <div className={styles.mod_header}>
-              <h2 className={styles.toogle_title}>佣金产品选择：</h2>
+              <h2 className={styles.toogle_title}>佣金产品：</h2>
             </div>
             <div className={styles.mod_content}>
               <ul className={styles.property_list}>
@@ -111,32 +102,8 @@ export default class Commissiondetail extends PureComponent {
               <h2 className={styles.toogle_title}>其他佣金费率：</h2>
             </div>
             <div className={styles.mod_content}>
-              <ul className={styles.property_list}>
-                <li className={leftItem}>
-                  <div className={styles.wrap}>
-                    <span className={styles.itemname}>B股：</span>
-                    <span className={styles.itemvalue}>内容</span>
-                  </div>
-                </li>
-                <li className={rightItem}>
-                  <div className={styles.wrap}>
-                    <span className={styles.itemname}>担保权证</span>
-                    <span className={styles.itemvalue}>内容</span>
-                  </div>
-                </li>
-                <li className={leftItem}>
-                  <div className={styles.wrap}>
-                    <span className={styles.itemname}>债券：</span>
-                    <span className={styles.itemvalue}>内容</span>
-                  </div>
-                </li>
-                <li className={rightItem}>
-                  <div className={styles.wrap}>
-                    <span className={styles.itemname}>信用顾基：</span>
-                    <span className={styles.itemvalue}>内容</span>
-                  </div>
-                </li>
-              </ul>
+              <div className={styles.left_commission} />
+              <div className={styles.right_commission} />
             </div>
           </div>
         </div>
