@@ -1,6 +1,7 @@
 import report from './report';
 import feedback from './feedback';
 import permission from './permission';
+import commission from './commission';
 import customerPool from './customerPool';
 import contract from './contract';
 import apiCreator from '../utils/apiCreator';
@@ -16,10 +17,10 @@ export default {
   permission: permission(api),
   // ========= 客户资源池相关接口
   customerPool: customerPool(api),
-
   // 合作合约相关接口
   contract: contract(api),
-
+ // ==========佣金调整的数据接口end
+  commission: commission(api),
   // 获取组织机构树完整版
   getCustRangeAll: query => api.post('/groovynoauth/fsp/emp/org/queryEmpOrgTree', query),
 

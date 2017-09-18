@@ -10,8 +10,9 @@ import _ from 'lodash';
 import { withRouter, routerRedux } from 'dva/router';
 import SplitPanel from '../../components/common/splitPanel/SplitPanel';
 import Detail from '../../components/feedback/Detail';
-import FeedbackList from '../../components/feedback/FeedbackList';
-import FeedbackHeader from '../../components/feedback/FeedbackHeader';
+import CommissionHeader from '../../components/common/biz/SeibelHeader';
+import CommissionList from '../../components/common/biz/CommonList';
+import seibelColumns from '../../components/common/biz/seibelColumns';
 import { constructPostBody } from '../../utils/helper';
 import './Home.less';
 
@@ -128,21 +129,46 @@ export default class CommissionHome extends PureComponent {
     });
   }
 
+  // 头部新建按钮点击事件处理程序
+  @autobind
+  handleCreateBtnClick() {
+    console.warn('新建按钮');
+  }
+
+  // 根据用户输入查询查询拟稿人
+  @autobind
+  searDrafterList(keyword) {
+    console.warn('请输入的拟稿人关键字', keyword);
+  }
+
+  // 生成左侧列表页面的数据列
+  @autobind
+  constructTableColumns() {
+    return seibelColumns('save_blue');
+  }
+
   render() {
     const { list, location, replace } = this.props;
     // 此处需要提供一个方法给返回的接口查询设置是否查询到数据
     const { isEmpty } = this.state;
     const topPanel = (
-      <FeedbackHeader
+      <CommissionHeader
         location={location}
         replace={replace}
+        page="commission"
+        typeOptions={[]}
+        stateOptions={[]}
+        drafterList={[]}
+        creatSeibelModal={this.handleCreateBtnClick}
+        toSearchDrafter={this.searDrafterList}
       />
     );
     const leftPanel = (
-      <FeedbackList
+      <CommissionList
         list={list}
         replace={replace}
         location={location}
+        columns={this.constructTableColumns()}
       />
     );
 

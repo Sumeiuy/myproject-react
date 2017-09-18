@@ -90,7 +90,7 @@ export default class Pageheader extends PureComponent {
         <div className={styles.dropDownSelectBox}>
           <DropDownSelect
             value="全部"
-            placeholder="经济客户号/客户名称"
+            placeholder="经纪客户号/客户名称"
             searchList={this.state.list}
             showObjKey="empName"
             objId="empId"
