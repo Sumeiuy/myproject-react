@@ -55,6 +55,7 @@ export default class Permission extends PureComponent {
     list: PropTypes.object.isRequired,
     drafterList: PropTypes.array.isRequired,
     getPermissionList: PropTypes.func.isRequired,
+    getDrafterList: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     detailMessage: PropTypes.object.isRequired,
     getDetailMessage: PropTypes.func.isRequired,
@@ -156,9 +157,18 @@ export default class Permission extends PureComponent {
   }
 
   @autobind
-  toSearchInfo(value) {
-    // 下拉菜单中的查询
-    console.log('暴露的查询方法，向上传递value', value);
+  toSearchDrafter(value) {
+    const { getDrafterList } = this.props;
+    // 查询拟稿人
+    getDrafterList({
+      empId: value,
+    });
+  }
+
+  // 头部新建页面
+  @autobind
+  creatPermossionModal() {
+    console.log('新建');
   }
 
   render() {
@@ -171,6 +181,8 @@ export default class Permission extends PureComponent {
         page="premissionPage"
         typeOptions={typeOptions}
         stateOptions={stateOptions}
+        creatSeibelModal={this.creatPermossionModal}
+        toSearchDrafter={this.toSearchDrafter}
       />
     );
 

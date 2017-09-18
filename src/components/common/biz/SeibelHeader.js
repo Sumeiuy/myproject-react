@@ -6,7 +6,8 @@
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
 import Select from '../Select';
-import DropDownSelect from '../drapdownselect';
+import DropDownSelect from '../dropdownSelect';
+import Button from '../Button';
 
 import styles from '../../style/jiraLayout.less';
 
@@ -14,9 +15,16 @@ export default class Pageheader extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
+    // 哪个页面
     page: PropTypes.string,
+    // 子类型
     typeOptions: PropTypes.array.isRequired,
+    // 状态
     stateOptions: PropTypes.array.isRequired,
+    // 新建
+    creatSeibelModal: PropTypes.func.isRequired,
+    // 搜索拟稿人
+    toSearchDrafter: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -49,7 +57,7 @@ export default class Pageheader extends PureComponent {
   }
 
   render() {
-    const { typeOptions, stateOptions } = this.props;
+    const { typeOptions, stateOptions, creatSeibelModal, toSearchDrafter } = this.props;
     const getSelectOption = item => item.map(i =>
       <Option key={i.value}>{i.label}</Option>,
     );
@@ -93,10 +101,10 @@ export default class Pageheader extends PureComponent {
             value="全部"
             placeholder="请输入姓名或工号"
             searchList={this.state.list}
-            showObjKey="custName"
-            objId="custNumber"
+            showObjKey="custName2"
+            objId="custNumber2"
             emitSelectItem={this.selectItem}
-            emitToSearch={this.toSearchInfo}
+            emitToSearch={toSearchDrafter}
             boxStyle={{
               border: 'none',
             }}
@@ -109,8 +117,8 @@ export default class Pageheader extends PureComponent {
             value="全部"
             placeholder="请输入姓名或工号"
             searchList={this.state.list}
-            showObjKey="custName"
-            objId="custNumber"
+            showObjKey="custName3"
+            objId="custNumber3"
             emitSelectItem={this.selectItem}
             emitToSearch={this.toSearchInfo}
             boxStyle={{
@@ -118,6 +126,14 @@ export default class Pageheader extends PureComponent {
             }}
           />
         </div>
+        <Button
+          type="primary"
+          icon="plus"
+          size="small"
+          onclick={creatSeibelModal}
+        >
+          新建
+        </Button>
       </div>
     );
   }
