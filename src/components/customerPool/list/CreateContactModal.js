@@ -33,7 +33,6 @@ export default class CreateContactModal extends PureComponent {
     createServiceRecord: PropTypes.func.isRequired,
     currentCustId: PropTypes.string.isRequired,
     onClose: PropTypes.func.isRequired,
-    isFirstLoad: PropTypes.bool.isRequired,
   };
 
   static defaultProps = {
@@ -45,7 +44,6 @@ export default class CreateContactModal extends PureComponent {
     super(props);
     this.state = {
       visible: props.visible,
-      isFirstLoad: props.isFirstLoad,
     };
   }
 
@@ -184,17 +182,9 @@ export default class CreateContactModal extends PureComponent {
     onClose();
   }
 
-  @autobind
-  resetFirstLoad() {
-    this.setState({
-      isFirstLoad: false,
-    });
-  }
-
   render() {
     const {
       visible,
-      isFirstLoad,
     } = this.state;
 
     const {
@@ -369,8 +359,6 @@ export default class CreateContactModal extends PureComponent {
         {/* 折叠面板 */}
         <Collapse
           data={serviceRecordData}
-          isFirstLoad={isFirstLoad}
-          onResetFirstLoad={this.resetFirstLoad}
         />
       </Modal>
     );

@@ -150,13 +150,13 @@ export default class CustomerLists extends PureComponent {
   getEmailData(address) {
     if (address.orgCustomerContactInfoList !== undefined) {
       const index = _.findLastIndex(address.orgCustomerContactInfoList,
-        val => val.mainFlag === true);
+        val => val.mainFlag);
       finded = _.findLastIndex(address.orgCustomerContactInfoList[index].emailAddresses,
-        val => val.mainFlag === true);
+        val => val.mainFlag);
       addresses = address.orgCustomerContactInfoList[index];
     } else {
       finded = _.findLastIndex(address.perCustomerContactInfo.emailAddresses,
-        val => val.mainFlag === true);
+        val => val.mainFlag);
       addresses = address.perCustomerContactInfo;
     }
     if (finded !== -1) {
@@ -253,7 +253,7 @@ export default class CustomerLists extends PureComponent {
       location: {
         query: {
           selectedIds,
-          selectAll,
+        selectAll,
         },
       },
     } = this.props;
@@ -628,7 +628,6 @@ export default class CustomerLists extends PureComponent {
               createServiceRecord={this.showCreateServiceRecord} /* 创建服务记录 */
               onClose={this.resetModalState}
               currentCustId={currentCustId}
-              isFirstLoad
             /> : null
         }
       </div>
