@@ -46,10 +46,7 @@ export default class CustomerLists extends PureComponent {
     source: PropTypes.string.isRequired,
     monthlyProfits: PropTypes.array.isRequired,
     location: PropTypes.object.isRequired,
-    isAllSelect: PropTypes.object.isRequired,
-    selectedIds: PropTypes.object.isRequired,
-    saveIsAllSelect: PropTypes.func.isRequired,
-    saveSelectedIds: PropTypes.func.isRequired,
+    replace: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
     entertype: PropTypes.string.isRequired,
     custRange: PropTypes.array.isRequired,
@@ -257,66 +254,103 @@ export default class CustomerLists extends PureComponent {
     }
   }
 
+  // 单选列表中的数据
   @autobind
   handleSingleSelect(id, name) {
-    const { selectedIds, saveSelectedIds, source } = this.props;
-    let flag = false;
-    const selectedIdsArr = selectedIds[source] || [];
-    selectedIdsArr.forEach((v) => {
-      if (v.id === id && v.name === name) {
-        flag = true;
-      }
-    });
-    if (flag) {
-      saveSelectedIds({
-        ...selectedIds,
-        [source]: selectedIdsArr.filter(v => v.id !== id),
+    const { replace, location: { query, pathname } } = this.props;
+    const str = `${id}.${name}`;
+    if (!query.selectedIds) {
+      replace({
+        pathname,
+        query: {
+          ...query,
+          selectedIds: str,
+          selectAll: false,
+        },
+        state: {
+          noScrollTop: true,
+        },
       });
     } else {
-      saveSelectedIds({
-        ...selectedIds,
-        [source]: [...selectedIdsArr, { id, name }],
-      });
+      const selectedIdsArr = query.selectedIds.split(',');
+      if (_.includes(selectedIdsArr, str)) {
+        replace({
+          pathname,
+          query: {
+            ...query,
+            selectedIds: selectedIdsArr.filter(v => v !== str).join(','),
+            selectAll: false,
+          },
+          state: {
+            noScrollTop: true,
+          },
+        });
+      } else {
+        replace({
+          pathname,
+          query: {
+            ...query,
+            selectedIds: [...selectedIdsArr, str].join(','),
+            selectAll: false,
+          },
+          state: {
+            noScrollTop: true,
+          },
+        });
+      }
     }
   }
+
+  // 点击全选
   @autobind
   selectAll(e) {
-    const isSelectAll = e.target.checked;
-    const { saveIsAllSelect, saveSelectedIds, selectedIds, isAllSelect, source } = this.props;
-    // const obj = {};
-    // obj[source] = isSelectAll
-    saveIsAllSelect({ ...isAllSelect, [source]: isSelectAll });
-    // const newSelectedIds = !isSelectAll ? selectedIds : EMPTY_ARRAY;
-    saveSelectedIds({
-      ...selectedIds,
-      [source]: EMPTY_ARRAY,
+    const status = e.target.checked;
+    const { replace, location: { query, pathname } } = this.props;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        selectedIds: '',
+        selectAll: status,
+      },
+      state: {
+        noScrollTop: true,
+      },
     });
   }
 
+  // 点击新建分组或者发起任务按钮
   @autobind
   handleClick(url, title, id) {
     const {
       page,
-      entertype,
-      isAllSelect,
-      selectedIds,
       condition,
-      source,
+      entertype,
+      location: {
+        query: {
+          selectedIds,
+          selectAll,
+        },
+      },
     } = this.props;
-    const selectCount = isAllSelect[source] ? page.total : selectedIds[source].length;
-    if (!_.isEmpty(selectedIds[source])) {
-      this.openByIds(url, selectedIds[source], selectCount, title, id, entertype);
-    } else if (isAllSelect) {
-      this.openByAllSelect(url, condition, selectCount, title, id, entertype);
+    if (selectedIds) {
+      const selectedIdsArr = selectedIds.split(',');
+      this.openByIds(url, selectedIdsArr, selectedIdsArr.length, title, id, entertype);
+    } else if (selectAll) {
+      this.openByAllSelect(url, condition, page.total, title, id, entertype);
     }
   }
 
-  // 通过单个点击选中
+  // 单个点击选中时跳转到新建分组或者发起任务
   @autobind
   openByIds(url, ids, count, title, id, entertype) {
     // debugger
-    const idStr = encodeURIComponent(_.map(ids, v => (v.id)).join(','));
-    const name = encodeURIComponent(ids[0].name);
+    const tmpArr = [];
+    _(ids).forEach((item) => {
+      tmpArr.push(item.split('.')[0]);
+    });
+    const idStr = encodeURIComponent(tmpArr.join(','));
+    const name = encodeURIComponent(ids[0].split('.')[1]);
     const obj = {
       ids: idStr,
       count,
@@ -341,7 +375,7 @@ export default class CustomerLists extends PureComponent {
     }
   }
 
-  // 通过全选按钮选中
+  // 全选按钮选中时跳转到新建分组或者发起任务
   @autobind
   openByAllSelect(url, condition, count, title, id, entertype) {
     // 全选时取整个列表的第一个数据的name属性值传给后续页面
@@ -372,7 +406,7 @@ export default class CustomerLists extends PureComponent {
   }
 
   @autobind
-  showCreateServiceRecord(id) {
+  showCreateServiceRecord({ custId: id }) {
     this.setState({
       id,
       showCreateServiceRecord: true,
@@ -521,9 +555,6 @@ export default class CustomerLists extends PureComponent {
       getCustIncome,
       monthlyProfits,
       location,
-      selectedIds,
-      isAllSelect,
-      source,
       custContactData,
       serviceRecordData,
       addServeRecord,
@@ -532,9 +563,12 @@ export default class CustomerLists extends PureComponent {
       dict,
       isSms,
     } = this.props;
-
     const finalContactData = custContactData[currentCustId] || EMPTY_OBJECT;
     const finalServiceRecordData = serviceRecordData[currentCustId] || EMPTY_ARRAY;
+    const {
+      selectedIds = '',
+      selectAll,
+    } = location.query;
     if (!custList.length) {
       return <div className="list-box"><NoData /></div>;
     }
@@ -557,13 +591,15 @@ export default class CustomerLists extends PureComponent {
     if (page.total) {
       curTotal = Number(page.total);
     }
-    const selectIdsArr = selectedIds[source] || EMPTY_ARRAY;
-    const isAllSelectBool = isAllSelect[source] || false;
+    const selectIdsArr = selectedIds ?
+      selectedIds.split(',') : EMPTY_ARRAY;
+    const isAllSelectBool = !((!selectAll || selectAll === 'false'));
     // 是否显示底部的发起任务和分组，全选或者有选中数据时才显示
     const isShow = (!_.isEmpty(selectIdsArr) || isAllSelectBool) ? 'block' : 'none';
     // 已选中的条数：选择全选显示所有数据量，非全选显示选中的条数
     const selectCount = isAllSelectBool ? page.total : selectIdsArr.length;
-    console.log('current: ', current);
+    // debugger
+    // console.log('current: ', current, page, selectIdsArr, isAllSelectBool);
     return (
       <div className="list-box">
         <div className={styles.selectAllBox}>

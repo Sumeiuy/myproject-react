@@ -5,6 +5,7 @@
  */
 
 import React, { PureComponent, PropTypes } from 'react';
+import ReactDOM from 'react-dom';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { Modal, Row, Col, Select, DatePicker, Input, message } from 'antd';
@@ -93,10 +94,11 @@ export default class CreateServiceRecord extends PureComponent {
         serviceTime: formatCurrentDate,
         feedbackTime: formatCurrentDate,
       });
-      const sc = document.querySelector('#serviceContent');
-      if (sc) {
-        document.querySelector('#serviceContent').value = '';
-        document.querySelector('#feedbackContent').value = '';
+      const sc = ReactDOM.findDOMNode(this.serviceContent); //eslint-disable-line
+      const fc = ReactDOM.findDOMNode(this.feedbackContent); //eslint-disable-line
+      if (sc && fc) {
+        sc.value = '';
+        fc.value = '';
       }
     }
     // 添加成功
@@ -110,8 +112,10 @@ export default class CreateServiceRecord extends PureComponent {
   // 提交
   @autobind
   handleSubmit() {
-    const serviceContent = _.trim(document.querySelector('#serviceContent').value);
-    const feedbackContent = _.trim(document.querySelector('#feedbackContent').value);
+    const sc = ReactDOM.findDOMNode(this.serviceContent); //eslint-disable-line
+    const fc = ReactDOM.findDOMNode(this.feedbackContent); //eslint-disable-line
+    const serviceContent = _.trim(sc.value);
+    const feedbackContent = _.trim(fc.value);
     if (!serviceContent) {
       message.error('请输入此次服务的内容');
       return;
@@ -149,6 +153,8 @@ export default class CreateServiceRecord extends PureComponent {
       feedBackTime: feedbackTime,
       workResult,
     });
+    sc.value = '';
+    fc.value = '';
     const { hideCreateServiceRecord } = this.props;
     hideCreateServiceRecord();
   }
@@ -243,10 +249,11 @@ export default class CreateServiceRecord extends PureComponent {
           {
             dict.serveWay.map(obj => (
               <Col
+                key={obj.key}
                 className={`serviceWayItem ${serviceWay === obj.key ? 'active' : ''}`}
                 onClick={() => this.handleServiceWay(obj.key)}
               >
-                <span><Icon type={SERVICE_ICON[obj.key]} /></span>
+                <span><Icon type={SERVICE_ICON[obj.key] || ''} /></span>
                 <p>{obj.value}</p>
               </Col>
             ))
@@ -261,7 +268,9 @@ export default class CreateServiceRecord extends PureComponent {
               onChange={this.handleServiceType}
             >
               {
-                dict.serveType.map(obj => (<Option value={obj.key}>{obj.value}</Option>))
+                dict.serveType.map(obj => (
+                  <Option key={obj.key} value={obj.key}>{obj.value}</Option>
+                ))
               }
             </Select>
           </Col>
@@ -281,14 +290,14 @@ export default class CreateServiceRecord extends PureComponent {
         </p>
         <TextArea
           rows={5}
-          id="serviceContent"
+          ref={ref => this.serviceContent = ref}
         />
         <p className={`${styles.mt30} ${styles.mb10}`}>
           请描述客户对此次服务的反馈
         </p>
         <TextArea
           rows={5}
-          id="feedbackContent"
+          ref={ref => this.feedbackContent = ref}
         />
         <Row className={styles.mt30}>
           <Col span={12}>
@@ -309,7 +318,9 @@ export default class CreateServiceRecord extends PureComponent {
               onChange={this.handleWorkResult}
             >
               {
-                dict.workResult.map(obj => (<Option value={obj.key}>{obj.value}</Option>))
+                dict.workResult.map(obj => (
+                  <Option key={obj.key} value={obj.key}>{obj.value}</Option>
+                ))
               }
             </Select>
           </Col>

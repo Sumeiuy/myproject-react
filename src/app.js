@@ -3,7 +3,6 @@
  * @author maoquan(maoquan@htsc.com)
  */
 
-import 'babel-polyfill';
 import dva from 'dva';
 import { hashHistory, routerRedux } from 'dva/router';
 
@@ -61,7 +60,9 @@ app.model(require('./models/manage'));
 app.model(require('./models/edit'));
 app.model(require('./models/preview'));
 app.model(require('./models/history'));
+app.model(require('./models/permission'));
 app.model(require('./models/customerPool'));
+app.model(require('./models/contract'));
 
 // 4. Router
 app.router(routerConfig);

@@ -250,6 +250,24 @@ const helper = {
   },
 
   /**
+   * 构造入参
+   * @param {*} query 查询
+   * @param {*} newPageNum 当前页
+   * @param {*} newPageSize 当前分页条目数
+   */
+  constructSeibelPostBody(query, newPageNum, newPageSize) {
+    let finalPostData = {
+      pageNum: newPageNum,
+      pageSize: newPageSize,
+    };
+
+    const omitData = _.omit(query, ['currentId', 'pageNum', 'pageSize', 'isResetPageNum']);
+    finalPostData = _.merge(finalPostData, omitData);
+
+    return finalPostData;
+  },
+
+  /**
    * 格式化时间戳
    * @param {*} time 中国标准时间
    */

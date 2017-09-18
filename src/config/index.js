@@ -14,6 +14,7 @@ import customerOptionMap from './customerOptionMap';
 import customerPoolBusiness from './customerPoolBusiness';
 import scatterType from './scatterType';
 import { responseCode, excludeCode } from './errorCode';
+import permissionOptions from './permissionOptions';
 
 export default {
   constants,
@@ -33,4 +34,5 @@ export default {
   scatterType,
   responseCode,
   excludeCode,
+  permissionOptions,
 };
