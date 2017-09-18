@@ -28,7 +28,6 @@ export default class CustomerGrouplist extends PureComponent {
   }
   render() {
     const { data, columns, cusgroupPage, onSizeChange, rowSelection, className } = this.props;
-    console.log(cusgroupPage)
     return (
       <Table
         className={className}

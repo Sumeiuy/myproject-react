@@ -73,7 +73,7 @@ const mapStateToProps = state => ({
   cycle: state.customerPool.dict.kPIDateScopeType,  // 统计周期
   addServeRecordSuccess: state.customerPool.addServeRecordSuccess,
   isAddServeRecord: state.customerPool.isAddServeRecord,
-  followLoading: state.customerPool.followLoading,// 关注成功
+  followLoading: state.customerPool.followLoading, // 关注成功
   fllowCustData: state.customerPool.fllowCustData,
 });
 
@@ -137,7 +137,7 @@ export default class CustomerList extends PureComponent {
     isAddServeRecord: PropTypes.bool.isRequired,
     fllowCustData: PropTypes.object,
     followLoading: PropTypes.bool,
-  }
+  };
 
   static defaultProps = {
     performanceIndicators: {},

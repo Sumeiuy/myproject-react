@@ -228,7 +228,7 @@ export default class CustomerRow extends PureComponent {
     console.warn(this.props.currentEmailCustId);
     console.warn(this.props.listItem.custId);
     if (this.props.email !== '' && this.props.currentEmailCustId === this.props.listItem.custId) {
-      debugger;
+      // debugger;
       console.log(this.sendEmail);
       const evt = new MouseEvent('click', { bubbles: false, cancelable: false, view: window });
       this.sendEmail.dispatchEvent(evt);

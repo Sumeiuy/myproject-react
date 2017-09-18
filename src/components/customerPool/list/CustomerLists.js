@@ -71,6 +71,8 @@ export default class CustomerLists extends PureComponent {
     curPageNum: null,
     q: '',
     empInfo: {},
+    fllowCustData: {},
+    followLoading: false,
   }
 
   constructor(props) {
@@ -235,7 +237,7 @@ export default class CustomerLists extends PureComponent {
           val => val.mainFlag);
       addresses = address.perCustomerContactInfo;
     }
-    console.warn('emailAddresses-------', addresses.emailAddresses[finded].contactValue)
+    // console.warn('emailAddresses-------', addresses.emailAddresses[finded].contactValue)
     if (finded !== -1) {
       this.setState({
         email: addresses.emailAddresses[finded].contactValue,

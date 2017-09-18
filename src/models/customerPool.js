@@ -283,7 +283,7 @@ export default {
           value: true,
           message: '开始开始',
         },
-      })
+      });
       const response = yield call(api.queryFollowCust, payload);
       const { resultData } = response;
       yield put({
