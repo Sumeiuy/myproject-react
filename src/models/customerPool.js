@@ -52,6 +52,8 @@ export default {
     addServeRecordSuccess: false, // 添加服务记录成功的标记
     followSuccess: false,
     isFollow: {},
+    followLoading: false,
+    fllowCustData: {},
   },
   subscriptions: {
     setup({ dispatch }) {
@@ -275,12 +277,29 @@ export default {
       });
     },
     * getFollowCust({ payload }, { call, put }) {
+      yield put({
+        type: 'getFollowCustSuccess',
+        payload: {
+          value: true,
+          message: '开始开始',
+        },
+      })
       const response = yield call(api.queryFollowCust, payload);
       const { resultData } = response;
       yield put({
         type: 'getFollowCustSuccess',
-        payload: resultData,
+        payload: {
+          value: false,
+          message: '关注成功',
+          fllowCustData: resultData,
+        },
       });
+      // const response = yield call(api.queryFollowCust, payload);
+      // const { resultData } = response;
+      // yield put({
+      //   type: 'getFollowCustSuccess',
+      //   payload: resultData,
+      // });
     },
     // * getStatisticalPeriod({ }, { call, put }) { //eslint-disable-line
     //   // 统计周期
@@ -570,11 +589,12 @@ export default {
     },
     // 关注成功
     getFollowCustSuccess(state, action) {
-      const { payload } = action;
+      const { payload: { value, message, fllowCustData } } = action;
       return {
         ...state,
-        followSuccess: payload.result === 'success',
-        // addFollow: false,
+        followLoading: value,
+        message,
+        fllowCustData,
       };
     },
   },

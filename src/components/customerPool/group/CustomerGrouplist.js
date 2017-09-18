@@ -28,6 +28,7 @@ export default class CustomerGrouplist extends PureComponent {
   }
   render() {
     const { data, columns, cusgroupPage, onSizeChange, rowSelection, className } = this.props;
+    console.log(cusgroupPage)
     return (
       <Table
         className={className}
@@ -38,7 +39,7 @@ export default class CustomerGrouplist extends PureComponent {
           total: cusgroupPage.total,
           size: 'small',
           onChange: this.handleChange,
-          showTotal: total => (`共${total}项`),
+          showTotal: total => (`共${total}页`),
           showSizeChanger: true,
           onShowSizeChange: onSizeChange,
         }}
