@@ -17,6 +17,7 @@ import ProcessConfirm from '../../components/common/biz/ProcessConfirm';
 import Transfer from '../../components/common/biz/Transfer';
 import CommonUpload from '../../components/common/biz/CommonUpload';
 import CommonModal from '../../components/common/biz/Modal';
+import InfoItem from '../../components/common/infoItem';
 
 
 import {
@@ -253,6 +254,8 @@ export default class TemplModal extends PureComponent {
         <br />
         <Transfer {...transferProps} />
         <CommonModal {...commonModalProps} />
+        <br />
+        <InfoItem label="备注" value="这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值" />
       </div>
     );
   }
