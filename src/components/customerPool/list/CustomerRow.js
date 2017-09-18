@@ -634,11 +634,11 @@ export default class CustomerRow extends PureComponent {
             }
             <ul
               style={this.state.showStyle}
-              dangerouslySetInnerHTML={matchedWord.shortRtnEle}
+              dangerouslySetInnerHTML={matchedWord.shortRtnEle} // eslint-disable-line
             />
             <ul
               style={this.state.hideStyle}
-              dangerouslySetInnerHTML={matchedWord.rtnEle}
+              dangerouslySetInnerHTML={matchedWord.rtnEle} // eslint-disable-line
             />
           </div>
         </div>
