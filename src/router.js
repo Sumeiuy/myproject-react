@@ -17,19 +17,21 @@ import { fspContainer } from './config';
 import Main from './layouts/Main';
 
 import Empty from './routes/empty/Home';
-import BusinessHome from './routes/business/Home';
 import FeedBack from './routes/feedback/Home';
+import CommissionHome from './routes/commission/Home';
 import TemplModal from './routes/templeModal/Home';
 import BoardManageHome from './routes/boardManage/Home';
 import BoardEditHome from './routes/boardEdit/Home';
 import ReportHome from './routes/reports/Home';
 import PreviewReport from './routes/reports/PreviewReport';
 import HistoryHome from './routes/history/Home';
+import PermissonHome from './routes/permission/Home';
 import CustomerPoolHome from './routes/customerPool/Home';
 import ToDo from './routes/customerPool/ToDo';
 import CustomerList from './routes/customerPool/CustomerList';
 import CustomerGroup from './routes/customerPool/CustomerGroup';
 import CreateTask from './routes/customerPool/CreateTask';
+import Contract from './routes/contract/Home';
 
 function switchRouter() {
   const fsp = document.querySelector(fspContainer.container);
@@ -51,17 +53,22 @@ const routes = ({ history }) => (// eslint-disable-line
       <Route path="report" component={ReportHome} />
       <Route path="preview" component={PreviewReport} />
       <Route path="history" component={HistoryHome} />
-      <Route path="business" component={BusinessHome} />
       <Route path="feedback" component={FeedBack} />
+      <Route path="commission" component={CommissionHome} />
       <Route path="modal" component={TemplModal} />
       <Route path="boardManage" component={BoardManageHome} />
       <Route path="boardEdit" component={BoardEditHome} />
+      <Route path="permission" component={PermissonHome} />
       <Route path="customerPool">
         <IndexRoute component={CustomerPoolHome} />
         <Route path="todo" component={ToDo} />
         <Route path="list" component={CustomerList} />
         <Route path="customerGroup" component={CustomerGroup} />
         <Route path="createTask" component={CreateTask} />
+      </Route>
+      <Route path="contract">
+        <IndexRoute component={Contract} />
+        <Route path="edit" component={Contract} />
       </Route>
     </Route>
   </Router>

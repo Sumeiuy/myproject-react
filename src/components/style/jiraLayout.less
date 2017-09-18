@@ -1,0 +1,197 @@
+.pageCommonHeader{
+  font-size: 14px;
+  .dropDownSelectBox{
+    display: inline-block;
+    width: 15%;
+    margin-right: 20px;
+    vertical-align: middle;
+    .ddsShowBox{
+      border: none;
+    }
+    .ddsDrapMenu{
+      .searhInput{
+        vertical-align: top;
+      }
+    }
+  }
+  :global{
+    //select边框
+    .ant-select{
+      margin-right: 20px;
+      .ant-select-selection{
+        background-color: transparent;
+        border-color: transparent;
+      }
+      // 字体颜色大小
+      .ant-select-selection__rendered div,
+      .ant-select-selection__rendered span{
+        color: #33393c;
+        font-size: 14px;
+      }
+    }
+
+    //多选下拉小图标样式
+    .ant-select-arrow:before {
+      content: "";
+      height: 0;
+      position: absolute;
+      right: 2px;
+      top: 5px;
+      width: 0;
+      height: 0;
+      border: none;
+      border-top: 10px solid #c2c2c2;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+    }
+    //清楚单选select小图标旋转
+    .ant-select-open .ant-select-arrow:before {
+        -webkit-transform: rotate(0deg);
+        -ms-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+  }
+}
+
+:global {
+  .react-app{
+    .pageCommonList {
+      background-color: #f3f3f4;
+      box-shadow: 5px 5px 5px #ededee;
+      .leftSection{
+        text-align: left;
+        color:#a1a1a1;
+        font-size: 13px;
+      }
+      .rightSection{
+        text-align: right;
+        color:#a1a1a1;
+        font-size: 13px;
+      }
+      .ant-table-tbody>tr,
+      .ant-table-thead>tr {
+          transition: initial;
+      }
+      .pageCommonTable {
+        background: white;
+        border-radius: 5px;
+        height: 100%;
+      }
+      .pageCommonTable .ant-table .ant-table-tbody > tr{
+        cursor: pointer;
+        & > td {
+          text-align: left;
+        }
+      }
+      .pageCommonTable table {
+        width: 100%;
+        max-width: 100%;
+      }
+      .pageCommonTable table > tbody > tr:nth-child(odd) {
+        background-color: #fff;
+      }
+      .active {
+        background-color: rgb(237, 246, 253) !important;
+      }
+      .pageCommonTable table > tbody > tr {
+        height: 80px;
+      }
+      .pageCommonTable .ant-table-thead > tr > th, .pageCommonTable .ant-table-tbody > tr > td {
+        padding: 15px 8px;
+      }
+      .pageCommonTable table > tbody > tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+      .title{
+        font-size:14px;
+        color:#333;
+      }
+      .date{
+        font-size: 14px;
+      }
+      .drafter, .title, .cust, .date{
+        max-width: 400px;
+        width: 100%;
+        // 超过一行则打点显示
+        display:block;
+        white-space:nowrap;
+        overflow:hidden; 
+        text-overflow:ellipsis;
+        margin-top: 5px;
+      }
+      .leftSection {
+        width: 100%;
+      }
+      .drafter, .date, .cust, .cust{
+        margin-top: 5px;
+      }
+      .subType{
+        margin-left: 15px;
+      }
+      .drafterName{
+        margin-right: 15px;
+      }
+      .pageCommonTable .ant-table-tbody > tr > td {
+        border: 0px;
+      }
+      .rightSection {
+        display: flex;
+        align-items: flex-end;
+        justify-content: flex-start;
+        flex-direction: column;
+        padding-right: 10px;
+      }
+      .state-complete {
+        color: #fff;
+        font-size:13px;
+        background: #f0b048;
+        border-radius:2px;
+        width:50px;
+        height:21px;
+        text-align: center;
+      }
+      .state-close {
+        font-size:13px;
+        color:#ffffff;
+        background:#a1a1a1;
+        border-radius:2px;
+        width:38px;
+        height:21px;
+        text-align: center;
+      }
+      .state-resolve {
+        font-size:13px;
+        color:#ffffff;
+        background:#7d9be0;
+        border-radius:2px;
+        width:38px;
+        height:21px;
+        text-align: center;
+      }
+      .selectedRow {
+        background-color: #e4eef8;
+      }
+      .ant-pagination.ant-table-pagination { 
+        // white-space: nowrap;
+        // overflow: hidden;
+      }
+      .ant-pagination-item {
+        margin-bottom: 0px;
+      }
+      .emptyIcon {
+        display: inline-block;
+        width: 16px;
+        height: 17px;
+      }
+      .ant-table-pagination {
+        display: block;
+        text-align: center;
+        height: 22px;
+        overflow: hidden;
+        li{
+          margin-bottom:2px;          
+        }
+      }
+    }
+  }
+}

@@ -45,9 +45,9 @@ export default class RankStackChart extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { scope: preScope, chartData: preData } = this.props;
-    const { scope, chartData } = nextProps;
-    if (!_.isEqual(scope, preScope) || !_.isEqual(chartData, preData)) {
+    const { chartData: preData } = this.props;
+    const { chartData } = nextProps;
+    if (!_.isEqual(chartData, preData)) {
       this.state.echart.clear();
       this.initialChartData(nextProps);
     }

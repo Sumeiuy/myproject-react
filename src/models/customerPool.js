@@ -17,7 +17,7 @@ export default {
     performanceIndicators: {},
     custRange: [],
     cycle: [],
-    position: {},
+    position: window.forReactPosition || {},
     process: {},
     empInfo: {},
     dict: {},
