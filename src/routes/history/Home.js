@@ -186,9 +186,6 @@ export default class HistoryHome extends PureComponent {
       const { custRange } = nextProps;
       const ownerOrg = custRange[0];
       const timeStamp = new Date().getTime().toString();
-      // TODO 此处需要等到时间选择器完成提供方法
-      // const { begin, end, cycleType } = getDurationString('month');
-
       const defaultMoment = this.setDefaultMoment();
       this.setState({
         swtichDefault: timeStamp,
@@ -204,6 +201,7 @@ export default class HistoryHome extends PureComponent {
         orgId: ownerOrg && ownerOrg.id, // 用户当前选择的组织机构Id
         ownerOrgId: ownerOrg && ownerOrg.id, // 用户所属的组织机构Id
         coreIndicatorIds: [],
+        indicatorId: '', // 需要清除选中的core值
       },
         () => {
           this.queryInitial();
@@ -513,10 +511,9 @@ export default class HistoryHome extends PureComponent {
     this.props.getRankData(query);
   }
 
-  // 散点图切换对比指标
+  // 散点图切换对比指标、维度
   @autobind
   changeScatterContrast(query) {
-    const { type, contrastIndicatorId } = query;
     const { historyCore } = this.props;
     const { coreIndicatorIds } = this.state;
     let { indicatorId } = this.state;
@@ -537,9 +534,8 @@ export default class HistoryHome extends PureComponent {
       });
     }
     const scatterQuery = this.makeQueryParams({
-      type,
+      ...query,
       coreIndicatorId: indicatorId,
-      contrastIndicatorId,
     });
     this.props.queryContrastAnalyze(scatterQuery);
   }
@@ -675,6 +671,8 @@ export default class HistoryHome extends PureComponent {
                     boardType={boardType}
                     changeRankBar={this.changeRankBar}
                     swtichDefault={swtichDefault}
+                    custRange={custRange}
+                    updateQueryState={this.updateQueryState}
                   />
                 </Col>
               </Row>
@@ -685,11 +683,13 @@ export default class HistoryHome extends PureComponent {
                 contributionAnalysisData={contributionAnalysis}
                 reviewAnalysisData={reviewAnalysis}
                 queryContrastAnalyze={this.changeScatterContrast}
+                changeScatterScope={this.changeScatterScope}
                 cust={cust}
                 invest={invest}
                 switchDefault={swtichDefault}
                 location={location}
                 level={level}
+                scope={newScope}
                 isLvIndicator={isLvIndicator}
                 currentSelectIndicatorKey={defaultIndicatorKey}
                 isCommissionRate={isCommissionRate}

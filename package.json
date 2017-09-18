@@ -23,7 +23,7 @@
     "core-decorators": "^0.15.0",
     "dva": "^1.2.1",
     "dva-loading": "^0.2.0",
-    "echarts": "^3.5.3",
+    "echarts": "^3.7.1",
     "element-resize-detector": "^1.1.12",
     "localforage": "^1.4.3",
     "lodash": "^4.17.4",

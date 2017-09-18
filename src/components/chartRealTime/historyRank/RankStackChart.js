@@ -20,7 +20,11 @@ import {
   getStackSummury,
   optimizeGrid,
 } from './rankDataHandle';
+import { transform2array } from '../../../utils/helper';
+import { ZHUNICODE } from '../../../config';
 import styles from './RankChart.less';
+
+const { UNDISTRIBUTED } = ZHUNICODE;
 
 export default class RankStackChart extends PureComponent {
   static propTypes = {
@@ -28,16 +32,22 @@ export default class RankStackChart extends PureComponent {
     level: PropTypes.string.isRequired,
     scope: PropTypes.string.isRequired,
     showChartUnit: PropTypes.func.isRequired,
+    updateQueryState: PropTypes.func.isRequired,
+    custRange: PropTypes.array.isRequired,
   };
 
   componentWillMount() {
     this.initialChartData(this.props);
   }
 
+  componentDidMount() {
+    this.custRange = transform2array(this.props.custRange);
+  }
+
   componentWillReceiveProps(nextProps) {
-    const { scope: preScope, chartData: preData } = this.props;
-    const { scope, chartData } = nextProps;
-    if (!_.isEqual(scope, preScope) || !_.isEqual(chartData, preData)) {
+    const { chartData: preData } = this.props;
+    const { chartData } = nextProps;
+    if (!_.isEqual(chartData, preData)) {
       this.state.echart.clear();
       this.initialChartData(nextProps);
     }
@@ -48,6 +58,23 @@ export default class RankStackChart extends PureComponent {
   onReady(echart) {
     this.setState({
       echart,
+    });
+    echart.on('click', (arg) => {
+      if (arg.componentType !== 'series') {
+        return;
+      }
+      if (arg.name === '--') {
+        return;
+      }
+      this.custRange.forEach((item) => {
+        if (arg.name === item.name) {
+          this.props.updateQueryState({
+            orgId: item.id,
+            level: item.level,
+            scope: Number(item.level) + 1,
+          });
+        }
+      });
     });
   }
 
@@ -173,6 +200,7 @@ export default class RankStackChart extends PureComponent {
     const flag = name === 'max-label';
     const position = flag ? 'insideRight' : 'insideLeft';
     const textColor = flag ? '#999' : '#333';
+    const hoverTextColor = flag ? '#999' : '#348cf0';
     return {
       name,
       data,
@@ -197,6 +225,10 @@ export default class RankStackChart extends PureComponent {
             }
             return '--';
           },
+        },
+        emphasis: {
+          show: true,
+          textStyle: { color: hoverTextColor },
         },
       },
     };
@@ -271,10 +303,16 @@ export default class RankStackChart extends PureComponent {
                 // 投顾，需要显示分公司，营业部名称
                 title = `${company[dataIndex]} - ${store[dataIndex]}`;
               }
-              seriesTips.push(`
+              let toolTipNewHeader = `
                 <tr>
                   <td colspan="4">${title}</td>
                 <tr>
+              `;
+              if (axisValue === UNDISTRIBUTED) {
+                toolTipNewHeader = '';
+              }
+              seriesTips.push(`
+                ${toolTipNewHeader}
                 <tr>
                   <td colspan="4">${axisValue}</td>
                 </tr>
@@ -377,7 +415,8 @@ export default class RankStackChart extends PureComponent {
           {
             rank.map((item, index) => {
               const key = `rank-${index}`;
-              const { current, change } = item;
+              const { change } = item;
+              let { current } = item;
               let rankClass;
               let changeText;
               let changeIcon;
@@ -396,6 +435,9 @@ export default class RankStackChart extends PureComponent {
                 });
                 changeText = change === 0 ? '不变' : `${Math.abs(change)}名`;
                 changeIcon = change === 0 ? '--' : (<Icon type={icon} />);
+              }
+              if (current === null) {
+                current = '--';
               }
               return (
                 <div key={key} className={styles.rankNumberAndChange}>

@@ -84,13 +84,19 @@ export default class Detail extends PureComponent {
             className={modifyBtnClass}
           >修改</span>
         </div>
-        <MessageList {...baseInfo} />
+        <MessageList
+          head="基本信息"
+          {...baseInfo}
+        />
         <BaseInfoModify
           head="基本信息"
           serverInfo={this.state.serverInfo}
           baseInfo={this.state.baseInfo}
         />
-        <MessageList {...draftInfo} />
+        <MessageList
+          head="拟稿信息"
+          {...draftInfo}
+        />
         <ServerPersonel
           head="服务人员"
           type="serverInfo"

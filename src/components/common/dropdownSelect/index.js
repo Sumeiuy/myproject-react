@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Icon } from 'antd';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
+import _ from 'lodash';
 import style from './style.less';
 
 export default class DrapDownSelect extends PureComponent {
@@ -133,6 +134,11 @@ export default class DrapDownSelect extends PureComponent {
               <Icon type="search" />
             </span>
           </div>
+          {
+            _.isEmpty(this.props.searchList)
+            ? <span className={style.notFound}>没有发现与之匹配的结果</span>
+            : null
+          }
           <ul className={style.ddsDrapMenuCon}>
             {this.getSearchListDom}
           </ul>

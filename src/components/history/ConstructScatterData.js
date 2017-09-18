@@ -273,7 +273,7 @@ export const constructScatterData = (options = {}) => {
   _.each(scatterDiagramModels, ((item) => {
     const xPointerData = _.pick(item.contrastIndicator, ['name', 'value']);
     const yPointerData = _.pick(item.coreIndicator, ['name', 'value']);
-    const orgItem = _.pick(item.orgItemDto, ['id', 'name', 'pid', 'pname']);
+    const orgItem = _.pick(item.orgItemDto, ['level1Name', 'level2Name', 'level3Name', 'level4Name']);
     if (!_.isEmpty(xPointerData.value)
       && !_.isEmpty(yPointerData.value)
       && xPointerData.value !== '0'
@@ -332,10 +332,10 @@ export const constructScatterData = (options = {}) => {
     item,
     ySeriesData[index],
     {
-      orgId: orgItemArray[index].id,
-      orgName: orgItemArray[index].name,
-      parentOrgId: orgItemArray[index].pid,
-      parentOrgName: orgItemArray[index].pname,
+      level1Name: orgItemArray[index].level1Name,
+      level2Name: orgItemArray[index].level2Name,
+      level3Name: orgItemArray[index].level3Name,
+      level4Name: orgItemArray[index].level4Name,
     },
   ]);
 

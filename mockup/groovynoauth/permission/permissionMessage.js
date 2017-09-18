@@ -5,7 +5,6 @@ exports.response = function (req, res) {
     "resultData": {
       "num": "123456456",
       "baseInfo": {
-        "head": "基本信息",
         "content": [ 
           {
             "title": "标题",
@@ -23,7 +22,6 @@ exports.response = function (req, res) {
         ]
       },
       "draftInfo": {
-        "head": "拟稿信息",
         "content": [
           {
             "title": "拟稿",

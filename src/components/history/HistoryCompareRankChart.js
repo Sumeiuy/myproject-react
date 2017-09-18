@@ -36,6 +36,8 @@ export default class HistoryCompareRankChart extends PureComponent {
     swtichDefault: PropTypes.string.isRequired,
     data: PropTypes.object.isRequired,
     changeRankBar: PropTypes.func.isRequired,
+    updateQueryState: PropTypes.func.isRequired,
+    custRange: PropTypes.array.isRequired,
   };
 
   static defaultProps = {
@@ -168,7 +170,13 @@ export default class HistoryCompareRankChart extends PureComponent {
   }
 
   render() {
-    const { level, boardType, data: { historyCardRecordVo } } = this.props;
+    const {
+      custRange,
+      level,
+      boardType,
+      updateQueryState,
+      data: { historyCardRecordVo },
+    } = this.props;
     const { orderType, scopeSelectValue, rankPage, totalPage } = this.state;
     let { unit } = this.state;
     if (_.isEmpty(historyCardRecordVo)) {
@@ -283,6 +291,8 @@ export default class HistoryCompareRankChart extends PureComponent {
                   level={level}
                   scope={scopeSelectValue}
                   showChartUnit={this.showChartUnit}
+                  custRange={custRange}
+                  updateQueryState={updateQueryState}
                 />
               )
           }
