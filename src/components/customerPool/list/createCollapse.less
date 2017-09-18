@@ -15,71 +15,115 @@
     text-align: center;
     padding-top: 10px;
   }
-  .serviceCollapse {
-    width: 84%;
-    float: right;
-    margin-right: 10px;
-    background: white;
-    border: 0;
-    position: relative;
-    & > .leftAnchor > .visible {
-      display: inline-block;
-      position: absolute;
-      width: 9px;
-      height: 9px;
-      border-radius: 9px;
-      left: -19px;
-      transition: top 0.1s ease-in-out;
-      transform: translateX(-50%);
-      border: 3px solid #108ee9;
-      background-color: #fff;
-    }
-    & > .leftAnchor > .hidden {
-      display: inline-block;
-      position: absolute;
-      width: 6px;
-      height: 6px;
-      border-radius: 6px;
-      left: -19px;
-      transition: top 0.1s ease-in-out;
-      transform: translateX(-50%);
-      border: 1px solid #c2c2c2;
-      background-color: #c2c2c2;
-    }
-    & > .leftAnchor::before {
-      content: "";
-      position: absolute;
-      width: 2px;
-      height: 98%;
-      display: block;
-      background-color: #e9e9e9;
-      margin: 0 auto;
-      left: -20px;
-      top: 15px;
-    }
-    & > .leftAnchor {
-      & > .serviceTimeSection {
+  .stepCollection {
+    :global {
+      // i::after {
+      //   display: none;
+      // }
+      i {
+        // margin-left: 50px;
+      }
+      i::after {
+        width: 100%;
+        background: #e9e9e9 !important;
+        transition: all .6s;
+        opacity: 1;
+        box-shadow: 0 0 0 0 #e9e9e9;
+      }
+      .ant-steps-tail {
+        display: block !important;
+        margin-top: 15px !important;
         position: absolute;
-        & > .serviceTime {
+        left: 3px !important;
+        top: 0 !important;
+        height: 105% !important;
+        width: 1px !important;
+        padding: 0 !important;
+        & > i ::after {
           position: absolute;
-          word-wrap: break-word;
-          word-break: break-word;
-          text-align: right;
-          font-size: 12px;
-          & > .yearTime {
-            font-size: 12px;
-            color: #777777;
-          }
-          & > .dayTime {
-            font-size: 12px;
-            color: #a1a1a1;
-          }
-          & > .activeTime {
-            color: #108ee9;
-          }
+          content: "";
+          top: 0;
+          width: 0;
+          background: #e9e9e9;
+          height: 100%;
+          opacity: 0;
         }
       }
+      .ant-steps-status-process .ant-steps-title {
+        color: rgba(0, 0, 0, 0.43) !important;
+      }
+      .ant-steps-step {
+        width: 100%;
+      }
+      .active {
+        border-color: #108ee9 !important;
+        background-color: #108ee9 !important;
+      }
+      .ant-steps-head {
+        float: left;
+        margin-top: 15px;
+        // margin-left: 50px;
+      }
+      .ant-steps-status-process .ant-steps-head-inner {
+        border-color: #108ee9 !important;
+        background-color: #108ee9 !important;
+      }
+      .ant-steps-head-inner {
+        border-color: #c2c2c2 !important;
+        background-color: #c2c2c2 !important;
+        display: block;
+        border: 1px solid rgba(0, 0, 0, 0.25);
+        width: 8px;
+        height: 8px;
+        line-height: 5px;
+        text-align: center;
+        border-radius: 8px;
+        font-size: 12px;
+        margin-right: 16px !important;
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+      }
+      .ant-steps-icon {
+        display: none;
+      }
+      .ant-steps-title {
+        width: auto !important;
+        float: left;
+        padding-right: 0;
+      }
+      .ant-steps-description {
+        padding-bottom: 0px;
+        width: 100%;
+        float: left;
+      }
     }
+  }
+  .stepItem {
+    display: block;
+  }
+  .serviceTime {
+    // position: absolute;
+    word-wrap: break-word;
+    word-break: break-word;
+    text-align: right;
+    font-size: 12px;
+    & > .yearTime {
+      font-size: 12px;
+      color: #777777;
+    }
+    & > .dayTime {
+      font-size: 12px;
+      color: #a1a1a1;
+    }
+    & > .activeTime {
+      color: #108ee9;
+    }
+  }
+  .serviceCollapse {
+    background: white;
+    border: 0;
+    // padding-top: 20px;
+    position: relative;
+    // padding-left: 30px;
     & > .panelHeader {
       :global {
         & .arrow {

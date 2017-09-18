@@ -17,7 +17,9 @@ exports.response = function (req, res) {
         "serveChannel": null,
         "serveStrategy": null,
         "serveRecord": "沟通顺畅",
-        "activityContent": null
+        "activityContent": null,
+        "id": 'weqwqe21321',
+        "serveTime": "2017/07/16 12:34:56",
       },
       {
         "taskName": "新规_新股上市提醒",
@@ -33,7 +35,9 @@ exports.response = function (req, res) {
         "serveChannel": null,
         "serveStrategy": null,
         "serveRecord": "沟通顺畅",
-        "activityContent": null
+        "activityContent": null,
+        "id": 'dfsadsa1231',
+        "serveTime": "2017/07/16 08:34:56",
       },
       {
         "taskName": "新规_新股上市提醒",
@@ -49,7 +53,9 @@ exports.response = function (req, res) {
         "serveChannel": null,
         "serveStrategy": null,
         "serveRecord": "沟通顺畅",
-        "activityContent": null
+        "activityContent": null,
+        "id": 'fgfdgd455',
+        "serveTime": "2017/07/18 12:34:56",
       },
       {
         "taskName": "新规_新股上市提醒",
@@ -65,7 +71,9 @@ exports.response = function (req, res) {
         "serveChannel": null,
         "serveStrategy": null,
         "serveRecord": "沟通顺畅",
-        "activityContent": null
+        "activityContent": null,
+        "id": 'sdfsd2355',
+        "serveTime": "2017/07/19 12:34:56",
       },
       {
         "taskName": "新规_新股上市提醒",
@@ -81,7 +89,9 @@ exports.response = function (req, res) {
         "serveChannel": null,
         "serveStrategy": null,
         "serveRecord": "沟通顺畅",
-        "activityContent": null
+        "activityContent": null,
+        "id": 'dsadsa213',
+        "serveTime": "2017/07/20 12:34:56",
       },
     ]
   }
