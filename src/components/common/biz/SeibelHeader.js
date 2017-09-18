@@ -66,6 +66,9 @@ export default class Pageheader extends PureComponent {
             objId="custNumber"
             emitSelectItem={this.selectItem}
             emitToSearch={this.toSearchInfo}
+            boxStyle={{
+              border: 'none',
+            }}
           />
         </div>
 
@@ -94,6 +97,9 @@ export default class Pageheader extends PureComponent {
             objId="custNumber"
             emitSelectItem={this.selectItem}
             emitToSearch={this.toSearchInfo}
+            boxStyle={{
+              border: 'none',
+            }}
           />
         </div>
 
@@ -107,6 +113,9 @@ export default class Pageheader extends PureComponent {
             objId="custNumber"
             emitSelectItem={this.selectItem}
             emitToSearch={this.toSearchInfo}
+            boxStyle={{
+              border: 'none',
+            }}
           />
         </div>
       </div>

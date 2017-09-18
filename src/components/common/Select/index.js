@@ -43,7 +43,6 @@ export default class CommonSelect extends PureComponent {
           placeholder="全部"
           value={query[name]}
           onChange={key => this.handleSelectChange(name, key)}
-          allowClear
         >
           {data}
         </Select>

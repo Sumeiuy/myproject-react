@@ -34,12 +34,18 @@ const fetchDataFunction = (globalLoading, type) => query => ({
 const mapStateToProps = state => ({
   detailMessage: state.permission.detailMessage,
   list: state.permission.list,
+  // 拟稿人
+  drafterList: state.permission.empInfo,
 });
 
 const mapDispatchToProps = {
   replace: routerRedux.replace,
+  // 获取右侧详情
   getDetailMessage: fetchDataFunction(true, 'permission/getDetailMessage'),
+  // 获取左侧列表
   getPermissionList: fetchDataFunction(true, 'permission/getPermissionList'),
+  // 获取拟稿人
+  getDrafterList: fetchDataFunction(true, 'permission/getDrafterList'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -47,6 +53,7 @@ const mapDispatchToProps = {
 export default class Permission extends PureComponent {
   static propTypes = {
     list: PropTypes.object.isRequired,
+    drafterList: PropTypes.array.isRequired,
     getPermissionList: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     detailMessage: PropTypes.object.isRequired,
@@ -146,6 +153,12 @@ export default class Permission extends PureComponent {
   @autobind
   constructTableColumns() {
     return seibelColumns('save_blue');
+  }
+
+  @autobind
+  toSearchInfo(value) {
+    // 下拉菜单中的查询
+    console.log('暴露的查询方法，向上传递value', value);
   }
 
   render() {
