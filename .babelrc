@@ -17,7 +17,7 @@
       "plugins": [
         [
           "dva-hmr", {
-            "container": "#app",
+            "container": ".react-app",
             "quiet": false
           }
         ]
