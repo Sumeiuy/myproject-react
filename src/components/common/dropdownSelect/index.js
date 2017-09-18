@@ -94,7 +94,10 @@ export default class DrapDownSelect extends PureComponent {
 
   @autobind
   hideModal() {
-    this.setState({ isSHowModal: false });
+    const { isSHowModal } = this.state;
+    if (isSHowModal) {
+      this.setState({ isSHowModal: false });
+    }
   }
 
   render() {

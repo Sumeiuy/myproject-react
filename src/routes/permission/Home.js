@@ -35,7 +35,7 @@ const mapStateToProps = state => ({
   detailMessage: state.permission.detailMessage,
   list: state.permission.list,
   // 拟稿人
-  drafterList: state.permission.empInfo,
+  drafterList: state.permission.drafterList,
 });
 
 const mapDispatchToProps = {
@@ -158,9 +158,8 @@ export default class Permission extends PureComponent {
 
   @autobind
   toSearchDrafter(value) {
-    const { getDrafterList } = this.props;
     // 查询拟稿人
-    getDrafterList({
+    this.props.getDrafterList({
       empId: value,
     });
   }
