@@ -197,7 +197,7 @@ export default class TemplModal extends PureComponent {
       placeholder: '员工号/员工姓名',
       onSearch: this.handleSearch,
       renderSelected: this.renderSelectedElem,
-      idKey: 'id',
+      rowKey: 'id',
     };
 
     const confirmProps = {
