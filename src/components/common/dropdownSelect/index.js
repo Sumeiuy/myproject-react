@@ -40,11 +40,16 @@ export default class DrapDownSelect extends PureComponent {
       isSHowModal: false,
       // 选中的值
       value: '',
+      // 添加id标识
+      id: '',
     };
   }
 
   componentWillMount() {
-    this.setState({ value: this.props.value });
+    this.setState({
+      value: this.props.value,
+      id: new Date().getTime() + parseInt(Math.random() * 1000000, 10),
+    });
   }
 
   componentDidMount() {
@@ -78,8 +83,7 @@ export default class DrapDownSelect extends PureComponent {
   }
 
   @autobind
-  showDrapDown(e) {
-    e.nativeEvent.stopImmediatePropagation();
+  showDrapDown() {
     this.setState({ isSHowModal: !this.state.isSHowModal });
   }
 
@@ -90,8 +94,11 @@ export default class DrapDownSelect extends PureComponent {
   }
 
   @autobind
-  hideModal() {
-    this.setState({ isSHowModal: false });
+  hideModal(e) {
+    // 隐藏下拉框
+    if (+e.target.getAttribute('data-id') !== this.state.id) {
+      this.setState({ isSHowModal: false });
+    }
   }
 
   render() {
@@ -108,6 +115,7 @@ export default class DrapDownSelect extends PureComponent {
         <div
           onClick={this.showDrapDown}
           className={ddsShowBoxClass}
+          data-id={this.state.id}
         >
           {this.state.value}
         </div>

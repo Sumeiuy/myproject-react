@@ -5,6 +5,8 @@ import _ from 'lodash';
 import InfoTitle from '../common/InfoTitle';
 import TableList from '../common/TableList';
 import style from './serverpersonel.less';
+import DropdownSelect from '../common/dropdownSelect';
+import PubSub from '../../utils/pubsub';
 
 export default class ServerPersonel extends PureComponent {
   static propTypes = {
@@ -18,11 +20,38 @@ export default class ServerPersonel extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
+      // 服务人员信息
       serverInfo: props.info,
-      addSelectedValue: {}, // 添加选中的值
-      removeSelectedValue: {}, // 移除选中的值
+      // 选中添加值
+      addSelectedValue: {},
+      // 选中移除值
+      removeSelectedValue: {},
+      // 新增服务人员 查询信息列表
+      searchList: [],
+      list: [
+        {
+          ptyMngId: '0101017',
+          ptyMngName: '五大',
+          job: '岗位C',
+          businessDepartment: '南京奥体东营业部BBB',
+          isMain: false,
+        }, {
+          ptyMngId: '0101018',
+          ptyMngName: '五三',
+          job: '岗位D',
+          businessDepartment: '南京奥体东营业部CCC',
+          isMain: false,
+        }, {
+          ptyMngId: '0101019',
+          ptyMngName: '无二',
+          job: '岗位F',
+          businessDepartment: '南京奥体东营业部DDD',
+          isMain: false,
+        },
+      ],
     };
   }
+
   get getModifyDom() { // 只读或者编辑状态下所对应的操作状态
     let result;
     if (this.props.statusType === 'ready') {
@@ -40,6 +69,17 @@ export default class ServerPersonel extends PureComponent {
       result = (
         <div className={style.spBtnGroup}>
           <span className={style.spAddServerPerson}>新增服务人员：</span>
+          <div className={style.spAddDropdownSelect}>
+            <DropdownSelect
+              value="全部"
+              placeholder="请输入姓名或工号"
+              searchList={this.state.searchList}
+              showObjKey="ptyMngName"
+              objId="ptyMngId"
+              emitSelectItem={this.selectItem}
+              emitToSearch={this.toSearchInfo}
+            />
+          </div>
           <span
             className={style.spAddBtn}
             onClick={this.addServerPerson}
@@ -52,6 +92,27 @@ export default class ServerPersonel extends PureComponent {
       );
     }
     return result;
+  }
+
+  componentDIdMount() {
+    PubSub.serverPersonelList.add((data) => {
+      this.setState({ searchList: data });
+    });
+  }
+
+  @autobind
+  selectItem(item) {
+    // 添加选中对象
+    console.log(item);
+    this.setState({ addSelectedValue: item });
+  }
+
+  @autobind
+  toSearchInfo(value) {
+    // 搜错查询关键字
+    // 通过pubsub触发查询获取服务人员列表
+    PubSub.dispatchServerPersonelList.dispatch(value);
+    // this.setState({searchList: this.state.list});
   }
 
   @autobind

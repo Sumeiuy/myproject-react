@@ -20,6 +20,7 @@ export default class Detail extends PureComponent {
     draftInfo: PropTypes.object,
     serverInfo: PropTypes.array,
     approvalRecordList: PropTypes.array,
+    dispatchServerPersonelList: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -43,6 +44,8 @@ export default class Detail extends PureComponent {
       draftInfo: props.draftInfo,
       // 服务人员
       serverInfo: props.serverInfo,
+      // 审批记录
+      approvalRecordList: props.approvalRecordList,
       // 审批意见
       approvalComments: '他们什么都不晓得',
     };
@@ -65,13 +68,34 @@ export default class Detail extends PureComponent {
     return result;
   }
 
+  get getBaseInfoModifyDom() {
+    let result;
+    if (this.state.statusType === 'ready') {
+      result = (
+        <MessageList
+          head="基本信息"
+          {...this.state.baseInfo}
+        />
+      );
+    } else {
+      result = (
+        <BaseInfoModify
+          head="基本信息"
+          serverInfo={this.state.serverInfo}
+          baseInfo={this.state.baseInfo}
+        />
+      );
+    }
+    return result;
+  }
+
   @autobind
   updateValue(name, value) { // 更新本地数据
     this.setState({ [name]: value });
   }
 
   render() {
-    const { num, baseInfo, draftInfo, serverInfo, approvalRecordList } = this.props;
+    const { num, draftInfo, serverInfo, approvalRecordList } = this.state;
     const modifyBtnClass = classnames([style.dcHeaderModifyBtn,
       { hide: this.state.statusType !== 'ready' },
     ]);
@@ -84,15 +108,7 @@ export default class Detail extends PureComponent {
             className={modifyBtnClass}
           >修改</span>
         </div>
-        <MessageList
-          head="基本信息"
-          {...baseInfo}
-        />
-        <BaseInfoModify
-          head="基本信息"
-          serverInfo={this.state.serverInfo}
-          baseInfo={this.state.baseInfo}
-        />
+        {this.getBaseInfoModifyDom}
         <MessageList
           head="拟稿信息"
           {...draftInfo}

@@ -16,7 +16,7 @@ import PageHeader from '../../components/permission/PageHeader';
 import Detail from '../../components/permission/Detail';
 import PermissionList from '../../components/common/biz/CommonList';
 import seibelColumns from '../../components/common/biz/seibelColumns';
-
+import PubSub from '../../utils/pubsub';
 import styles from './home.less';
 
 const EMPTY_LIST = [];
@@ -32,12 +32,14 @@ const fetchDataFunction = (globalLoading, type) => query => ({
 const mapStateToProps = state => ({
   detailMessage: state.permission.detailMessage,
   list: state.permission.list,
+  serverPersonelList: state.permission.serverPersonelList,
 });
 
 const mapDispatchToProps = {
   replace: routerRedux.replace,
   getDetailMessage: fetchDataFunction(true, 'permission/getDetailMessage'),
   getPermissionList: fetchDataFunction(true, 'permission/getPermissionList'),
+  getServerPersonelList: fetchDataFunction(true, 'permission/getServerPersonelList'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -50,6 +52,8 @@ export default class Permission extends PureComponent {
     detailMessage: PropTypes.object.isRequired,
     getDetailMessage: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
+    serverPersonelList: PropTypes.array.isRequired,
+    getServerPersonelList: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -73,6 +77,11 @@ export default class Permission extends PureComponent {
     getPermissionList(constructSeibelPostBody(query, pageNum || 1, pageSize || 10));
   }
 
+  componentDidMount() {
+    // 建立通过观察者模式对dispatchServerPersonelList的监听
+    PubSub.dispatchServerPersonelList.add(this.pubsubAdd);
+  }
+
   componentWillReceiveProps(nextProps) {
     const { location: { query: nextQuery = EMPTY_OBJECT } } = nextProps;
     const { location: { query: prevQuery = EMPTY_OBJECT }, getPermissionList } = this.props;
@@ -89,6 +98,10 @@ export default class Permission extends PureComponent {
           isResetPageNum === 'Y' ? 10 : pageSize,
         ));
       }
+    }
+    if (nextProps.serverPersonelList !== this.props.serverPersonelList) {
+      // 通过观察者模式对serverPersonelList数据监听
+      PubSub.serverPersonelList.dispatch(nextProps.serverPersonelList);
     }
   }
 
@@ -117,11 +130,21 @@ export default class Permission extends PureComponent {
     }
   }
 
+  componentWillUnmount() {
+    // 销毁之前 清楚观察者模式的监听
+    PubSub.dispatchServerPersonelList.remove(this.pubsubAdd);
+  }
+
   get getDetailComponent() {
     if (_.isEmpty(this.props.detailMessage)) {
       return null;
     }
-    return <Detail {...this.props.detailMessage} />;
+    return (
+      <Detail
+        {...this.props.detailMessage}
+        dispatchServerPersonelList={this.props.getServerPersonelList}
+      />
+    );
   }
     /**
    * 检查部分属性是否相同
@@ -146,6 +169,11 @@ export default class Permission extends PureComponent {
     return seibelColumns('save_blue');
   }
 
+  @autobind
+  pubsubAdd(data) {
+    // pubsub 监听事件
+    this.props.getServerPersonelList({ id: data });
+  }
   render() {
     const { list, location, replace } = this.props;
     const { isEmpty } = this.state;

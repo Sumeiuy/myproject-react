@@ -91,6 +91,20 @@ exports.response = function (req, res) {
         "beginTime":"20170901",
         "suggestion":"审批意见很多意见超级多的意见",
         "isOk": false,
+        }, {
+        "stepName":"分公司负责人审批",
+        "approvalId":"001003",
+        "approvlName":"周延",
+        "beginTime":"20170901",
+        "suggestion":"审批意见很多意见超级多的意见",
+        "isOk": false,
+        }, {
+        "stepName":"分公司负责人审批",
+        "approvalId":"001003",
+        "approvlName":"周延",
+        "beginTime":"20170901",
+        "suggestion":"审批意见很多意见超级多的意见",
+        "isOk": false,
         }
       ],
     }
