@@ -72,12 +72,13 @@ const mapStateToProps = state => ({
   addServeRecordSuccess: state.customerPool.addServeRecordSuccess,
   isAddServeRecord: state.customerPool.isAddServeRecord,
   isFollow: state.customerPool.isFollow,
+  isGetCustIncome: state.customerPool.isGetCustIncome,
 });
 
 const mapDispatchToProps = {
   getAllInfo: fetchDataFunction(true, effects.allInfo),
   getCustomerData: fetchDataFunction(true, effects.getCustomerList),
-  getCustIncome: fetchDataFunction(true, effects.getCustIncome),
+  getCustIncome: fetchDataFunction(false, effects.getCustIncome),
   getCustomerScope: fetchDataFunction(true, effects.getCustomerScope),
   addServeRecord: fetchDataFunction(true, effects.addServeRecord),
   getServiceRecord: fetchDataFunction(true, effects.getServiceRecord),
@@ -105,7 +106,7 @@ export default class CustomerList extends PureComponent {
     getCustIncome: PropTypes.func.isRequired,
     custList: PropTypes.array.isRequired,
     page: PropTypes.object.isRequired,
-    monthlyProfits: PropTypes.array.isRequired,
+    monthlyProfits: PropTypes.object.isRequired,
     getCustContact: PropTypes.func.isRequired,
     getFollowCust: PropTypes.func.isRequired,
     custContactData: PropTypes.object,
@@ -117,6 +118,7 @@ export default class CustomerList extends PureComponent {
     addServeRecordSuccess: PropTypes.bool.isRequired,
     isAddServeRecord: PropTypes.bool.isRequired,
     isFollow: PropTypes.bool.isRequired,
+    isGetCustIncome: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -230,7 +232,7 @@ export default class CustomerList extends PureComponent {
     if (!_.isEmpty(empRespList)) {
       respIdOfPosition = _.findIndex(empRespList, item => (item.respId === HTSC_RESPID));
     }
-    const k = decodeURIComponent(query.q);
+    const keyword = decodeURIComponent(query.q);
     const param = {
       // 必传，当前页
       curPageNum: query.curPageNum || CUR_PAGE,
@@ -243,7 +245,7 @@ export default class CustomerList extends PureComponent {
     if (query.source === 'search') {
       param.searchTypeReq = 'FromFullTextType';
       param.paramsReqList = [
-        { key: 'fullTestSearch', value: k },
+        { key: 'fullTestSearch', value: keyword },
       ];
     } else if (query.source === 'tag') { // 热词
       param.searchTypeReq = 'FromWdsListErea';
@@ -536,6 +538,7 @@ export default class CustomerList extends PureComponent {
       addServeRecordSuccess,
       isAddServeRecord,
       isFollow,
+      isGetCustIncome,
     } = this.props;
     const {
       sortDirection,
@@ -609,6 +612,7 @@ export default class CustomerList extends PureComponent {
           curPageNum={curPageNum}
           pageSize={pageSize}
           monthlyProfits={monthlyProfits}
+          isGetCustIncome={isGetCustIncome}
           onPageChange={this.handlePageChange}
           onSizeChange={this.handleSizeChange}
           getCustIncome={getCustIncome}

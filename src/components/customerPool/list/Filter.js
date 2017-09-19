@@ -31,7 +31,6 @@ export default class Filter extends PureComponent {
       unright_type: unrightType,
       source,
     } = location.query;
-    console.log('Filter>>>', unrightType);
     return (
       <div className="filter">
         {

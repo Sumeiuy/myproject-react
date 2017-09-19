@@ -39,7 +39,7 @@ export default class CustomerLists extends PureComponent {
     getCustIncome: PropTypes.func.isRequired,
     q: PropTypes.string,
     source: PropTypes.string.isRequired,
-    monthlyProfits: PropTypes.array.isRequired,
+    monthlyProfits: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
@@ -57,6 +57,7 @@ export default class CustomerLists extends PureComponent {
     dict: PropTypes.object.isRequired,
     isSms: PropTypes.bool.isRequired,
     isFollow: PropTypes.bool.isRequired,
+    isGetCustIncome: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -101,7 +102,7 @@ export default class CustomerLists extends PureComponent {
       custContactData: nextCustContactData = EMPTY_OBJECT,
       serviceRecordData: nextServiceRecordData = EMPTY_ARRAY,
      } = nextProps;
-    console.log(nextProps.custContactData);
+    // console.log(nextProps.custContactData);
     const { currentCustId, isShowContactModal } = this.state;
     const prevContact = prevCustContactData[currentCustId] || EMPTY_OBJECT;
     const nextContact = nextCustContactData[currentCustId] || EMPTY_OBJECT;
@@ -115,7 +116,7 @@ export default class CustomerLists extends PureComponent {
         });
       }
     }
-    console.log(nextContact);
+    // console.log(nextContact);
     if (onOff) {
       if (_.size(nextContact) !== 0) {
         addresses = nextContact;
@@ -396,7 +397,7 @@ export default class CustomerLists extends PureComponent {
     const { custId, empId } = item;
     let operateType = null;
     if (!this.state.follow) {
-      console.log('您已关注');
+      // console.log('您已关注');
       this.setState({
         follow: !this.state.follow,
         currentFollowCustId: custId,
@@ -405,14 +406,14 @@ export default class CustomerLists extends PureComponent {
       getFollowCust({
         empId, operateType, custId,
       });
-      console.log(this.state.follow);
+      // console.log(this.state.follow);
     } else {
-      console.log('您已取消关注');
+      // console.log('您已取消关注');
       this.setState({
         follow: !this.state.follow,
         currentFollowCustId: custId,
       });
-      console.log(this.state.follow);
+      // console.log(this.state.follow);
       operateType = 'delete';
       getFollowCust({
         empId, operateType, custId,
@@ -489,6 +490,7 @@ export default class CustomerLists extends PureComponent {
       isAddServeRecord,
       dict,
       isSms,
+      isGetCustIncome,
     } = this.props;
     const finalContactData = custContactData[currentCustId] || EMPTY_OBJECT;
     const finalServiceRecordData = serviceRecordData[currentCustId] || EMPTY_ARRAY;
@@ -563,6 +565,7 @@ export default class CustomerLists extends PureComponent {
                 currentEmailCustId={currentEmailCustId}
                 currentFollowCustId={currentFollowCustId}
                 follow={follow}
+                isGetCustIncome={isGetCustIncome}
               />,
             )
           }
