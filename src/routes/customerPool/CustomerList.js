@@ -310,7 +310,7 @@ export default class CustomerList extends PureComponent {
     const sortsReqList = [];
     if (query.unright_type) {
       filtersReq.push({
-        filterType: 'unright_type',
+        filterType: 'Unrights',
         filterContentList: query.unright_type.split(','),
       });
     }

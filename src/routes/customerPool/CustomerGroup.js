@@ -203,7 +203,7 @@ export default class CustomerGroup extends PureComponent {
       const { location: { query } } = this.props;
       if (query.ids) {
         const ids = decodeURIComponent(query.ids).split(',');
-        param.custList = ids;
+        param.custIdList = ids;
       } else if (query.condition) {
         const condition = JSON.parse(decodeURIComponent(query.condition));
         param.searchReq = condition;
@@ -223,7 +223,7 @@ export default class CustomerGroup extends PureComponent {
     const { location: { query } } = this.props;
     if (query.ids) {
       const ids = decodeURIComponent(query.ids).split(',');
-      param.custList = ids;
+      param.custIdList = ids;
     } else if (query.condition) {
       const condition = JSON.parse(decodeURIComponent(query.condition));
       param.searchReq = condition;
