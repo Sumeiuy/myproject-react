@@ -4,7 +4,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import moment from 'moment';
 import Button from '../Button';
-import styles from './commonUpload.less';
+import styles from './CommonUpload.less';
 import Icon from '../Icon';
 
 

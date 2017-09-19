@@ -7,7 +7,7 @@ import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import { Icon, Input, AutoComplete } from 'antd';
 import _ from 'lodash';
-import styles from './productsDropBox.less';
+import styles from './ProductsDropBox.less';
 
 const Option = AutoComplete.Option;
 const dataSource = [
