@@ -17,7 +17,7 @@
  * placeholder：有默认值（空字符串），用于搜索框无内容时的提示文字
  * okText：有默认值（确定），按钮的title
  * cancelText：有默认值（取消），按钮的title
- * idKey: 有默认值（空字符串，无选中），数据源中对象唯一的标识符，table设置选中用
+ * rowKey: 有默认值（空字符串，无选中），数据源中对象唯一的标识符，table设置选中用
  */
 import React, { PropTypes, Component } from 'react';
 import { Input } from 'antd';
@@ -37,7 +37,7 @@ export default class SearchModal extends Component {
     cancelText: PropTypes.string,
     dataSource: PropTypes.array,
     placeholder: PropTypes.string,
-    idKey: PropTypes.string,
+    rowKey: PropTypes.string,
     columns: PropTypes.array.isRequired,
     title: PropTypes.string.isRequired,
     onSearch: PropTypes.func.isRequired,
@@ -51,7 +51,7 @@ export default class SearchModal extends Component {
     placeholder: '',
     okText: '确定',
     cancelText: '取消',
-    idKey: '',
+    rowKey: '',
   }
 
   constructor(props) {
@@ -112,7 +112,7 @@ export default class SearchModal extends Component {
       placeholder,
       dataSource,
       onSearch,
-      idKey,
+      rowKey,
     } = this.props;
 
     return (
@@ -139,7 +139,7 @@ export default class SearchModal extends Component {
           title={title}
           placeholder={placeholder}
           modalKey={'visible'}
-          idKey={idKey}
+          rowKey={rowKey}
         />
       </div>
     );
