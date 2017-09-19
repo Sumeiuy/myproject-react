@@ -14,6 +14,7 @@ export default {
     detailMessage: EMPTY_OBJECT,
     list: EMPTY_OBJECT,
     drafterList: EMPTY_LIST, // 拟稿人
+    empOrgTreeList: EMPTY_OBJECT, // 部门
   },
   reducers: {
     getDetailMessageSuccess(state, action) {
@@ -47,6 +48,14 @@ export default {
         drafterList: empInfo,
       };
     },
+    getEmpOrgTreeSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+
+      return {
+        ...state,
+        empOrgTreeList: resultData,
+      };
+    },
   },
   effects: {
     * getDetailMessage({ payload }, { call, put }) {
@@ -64,9 +73,16 @@ export default {
       });
     },
     * getDrafterList({ payload }, { call, put }) {
-      const response = yield call(api.getEmpList, payload);
+      const response = yield call(api.getDrafterList, payload);
       yield put({
         type: 'getDrafterListSuccess',
+        payload: response,
+      });
+    },
+    * getEmpOrgTree({ payload }, { call, put }) {
+      const response = yield call(api.getEmpOrgTree, payload);
+      yield put({
+        type: 'getEmpOrgTreeSuccess',
         payload: response,
       });
     },

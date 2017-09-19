@@ -36,6 +36,8 @@ const mapStateToProps = state => ({
   list: state.permission.list,
   // 拟稿人
   drafterList: state.permission.drafterList,
+  // 部门
+  empOrgTreeList: state.permission.empOrgTreeList,
 });
 
 const mapDispatchToProps = {
@@ -46,6 +48,8 @@ const mapDispatchToProps = {
   getPermissionList: fetchDataFunction(true, 'permission/getPermissionList'),
   // 获取拟稿人
   getDrafterList: fetchDataFunction(true, 'permission/getDrafterList'),
+  // 获取部门
+  getEmpOrgTree: fetchDataFunction(true, 'permission/getEmpOrgTree'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -54,6 +58,7 @@ export default class Permission extends PureComponent {
   static propTypes = {
     list: PropTypes.object.isRequired,
     drafterList: PropTypes.array.isRequired,
+    empOrgTreeList: PropTypes.object.isRequired,
     getPermissionList: PropTypes.func.isRequired,
     getDrafterList: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
@@ -171,7 +176,7 @@ export default class Permission extends PureComponent {
   }
 
   render() {
-    const { list, location, replace, drafterList } = this.props;
+    const { list, location, replace, drafterList, empOrgTreeList } = this.props;
     const { isEmpty } = this.state;
     const topPanel = (
       <PermissionHeader
@@ -183,6 +188,7 @@ export default class Permission extends PureComponent {
         creatSeibelModal={this.creatPermossionModal}
         toSearchDrafter={this.toSearchDrafter}
         drafterList={drafterList}
+        empOrgTreeList={empOrgTreeList}
       />
     );
 
