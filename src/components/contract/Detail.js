@@ -1,12 +1,17 @@
-/**
- * @file detail.js
- * @author shenxuxiang
+/*
+ * @Description: 合作合约详情页面
+ * @Author: LiuJianShu
+ * @Date: 2017-09-19 09:37:42
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2017-09-19 13:54:14
  */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
+import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
-import style from './detail.less';
+
+import InfoTitle from '../common/InfoTitle';
+import InfoItem from '../common/infoItem';
+import styles from './detail.less';
 import MessageList from '../common/MessageList';
 import CommonUpload from '../common/biz/CommonUpload';
 import ServerPersonel from '../permission/ServerPersonel';
@@ -73,7 +78,7 @@ export default class Detail extends PureComponent {
 
   render() {
     const { num, baseInfo, draftInfo, serverInfo, approvalRecordList } = this.props;
-    const modifyBtnClass = classnames([style.dcHeaderModifyBtn,
+    const modifyBtnClass = classnames([styles.dcHeaderModifyBtn,
       { hide: this.state.statusType !== 'ready' },
     ]);
     const uploadProps = {
@@ -84,13 +89,33 @@ export default class Detail extends PureComponent {
       }],
     };
     return (
-      <div className={style.detailComponent}>
-        <div className={style.dcHeader}>
-          <span className={style.dcHaderNumb}>编号{num}</span>
+      <div className={styles.detailComponent}>
+        <div className={styles.dcHeader}>
+          <span className={styles.dcHaderNumb}>编号{num}</span>
           <span
             onClick={() => { this.setState({ statusType: 'modify' }); }}
             className={modifyBtnClass}
           >修改</span>
+        </div>
+        <div className={styles.detailWrapper}>
+          <InfoTitle head="基本信息" />
+          <InfoItem label="合约名称" value="这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值" />
+          <InfoItem label="子类型" value="私密客户交易信息权限分配" />
+          <InfoItem label="客户" value="张三 123456" />
+          <InfoItem label="合约开始日期" value="2017/08/31" />
+          <InfoItem label="合约有效期" value="2018/05/31" />
+          <InfoItem label="合约终止日期" value="2018/05/31" />
+          <InfoItem label="合约内容" value="这里是合约内容" />
+        </div>
+        <div className={styles.detailWrapper}>
+          <InfoTitle head="拟稿信息" />
+          <InfoItem label="拟稿人" value="南京分公司长江路营业部-李四（001654321）" />
+          <InfoItem label="提请事件" value="2017/08/31" />
+          <InfoItem label="状态" value="已完成" />
+        </div>
+        <div className={styles.detailWrapper}>
+          <InfoTitle head="合约条款" />
+
         </div>
         <MessageList
           head="基本信息"
