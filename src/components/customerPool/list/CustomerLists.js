@@ -119,7 +119,7 @@ export default class CustomerLists extends PureComponent {
     let isFollows = {};
     const { result } = fllowCustData || '';
     if ((prevContact !== nextContact || prevRecord !== nextRecord) &&
-        onOff === false && followOnoff === false) {
+      onOff === false && followOnoff === false) {
       if (!isShowContactModal) {
         this.setState({
           isShowContactModal: true,
@@ -199,13 +199,13 @@ export default class CustomerLists extends PureComponent {
   getEmailData(address) {
     if (address.orgCustomerContactInfoList !== undefined) {
       const index = _.findLastIndex(address.orgCustomerContactInfoList,
-          val => val.mainFlag);
+        val => val.mainFlag);
       finded = _.findLastIndex(address.orgCustomerContactInfoList[index].emailAddresses,
-          val => val.mainFlag);
+        val => val.mainFlag);
       addresses = address.orgCustomerContactInfoList[index];
     } else {
       finded = _.findLastIndex(address.perCustomerContactInfo.emailAddresses,
-          val => val.mainFlag);
+        val => val.mainFlag);
       addresses = address.perCustomerContactInfo;
     }
     // console.warn('emailAddresses-------', addresses.emailAddresses[finded].contactValue)
@@ -303,7 +303,7 @@ export default class CustomerLists extends PureComponent {
       location: {
         query: {
           selectedIds,
-          selectAll,
+        selectAll,
         },
       },
     } = this.props;
@@ -394,7 +394,6 @@ export default class CustomerLists extends PureComponent {
       currentCustId: custId,
       custType,
     }, () => {
-      // debugger;
       if (_.isEmpty(custContactData[custId])) {
         getCustContact({
           custId,
@@ -535,6 +534,8 @@ export default class CustomerLists extends PureComponent {
       isSms,
       isGetCustIncome,
     } = this.props;
+    // 服务记录执行方式字典
+    const { executeTypes = EMPTY_ARRAY } = dict;
     const finalContactData = custContactData[currentCustId] || EMPTY_OBJECT;
     const finalServiceRecordData = serviceRecordData[currentCustId] || EMPTY_ARRAY;
     const {
@@ -676,7 +677,7 @@ export default class CustomerLists extends PureComponent {
               createServiceRecord={this.showCreateServiceRecord} /* 创建服务记录 */
               onClose={this.resetModalState}
               currentCustId={currentCustId}
-              isFirstLoad
+              executeTypes={executeTypes}
             /> : null
         }
       </div>

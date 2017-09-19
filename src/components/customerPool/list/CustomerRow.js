@@ -144,10 +144,6 @@ const formatNumber = (num) => {
   return num;
 };
 
-let contactModalKeyCount = 0;
-const EMPTY_LIST = [];
-const EMPTY_OBJECT = {};
-
 export default class CustomerRow extends PureComponent {
   static propTypes = {
     q: PropTypes.string,
@@ -164,8 +160,6 @@ export default class CustomerRow extends PureComponent {
     dict: PropTypes.object.isRequired,
     createContact: PropTypes.func.isRequired,
     isSms: PropTypes.bool.isRequired,
-    custContactData: PropTypes.object.isRequired,
-    serviceRecordData: PropTypes.array.isRequired,
     email: PropTypes.string.isRequired,
     currentEmailCustId: PropTypes.string.isRequired,
     currentFollowCustId: PropTypes.string.isRequired,
@@ -193,11 +187,6 @@ export default class CustomerRow extends PureComponent {
       hideStyle: hide,
       unit: '元',
       newAsset: asset,
-      visible: false,
-      isShowModal: false,
-      modalKey: `contactModalKey${contactModalKeyCount}`,
-      currentCustId: '',
-      custType: '',
       checked: false,
     };
     this.businessConfig = new Map();
@@ -220,30 +209,6 @@ export default class CustomerRow extends PureComponent {
       newAsset,
       isShowCharts: false,
     });
-  }
-  componentWillReceiveProps(nextProps) {
-    const {
-      custContactData: prevCustContactData = EMPTY_OBJECT,
-      serviceRecordData: prevServiceRecordData = EMPTY_LIST,
-     } = this.props;
-    const {
-      custContactData: nextCustContactData = EMPTY_OBJECT,
-      serviceRecordData: nextServiceRecordData = EMPTY_LIST,
-     } = nextProps;
-    const { isShowModal, currentCustId } = this.state;
-    const prevContact = prevCustContactData[currentCustId] || EMPTY_OBJECT;
-    const nextContact = nextCustContactData[currentCustId] || EMPTY_OBJECT;
-    if (prevContact !== nextContact || prevServiceRecordData !== nextServiceRecordData) {
-      if (!isShowModal) {
-        this.setState({
-          isShowModal: true,
-          modalKey: `contactModalKey${contactModalKeyCount++}`,
-        });
-      }
-    }
-    // this.setState({
-    //   checked: nextProps.isAllSelect,
-    // });
   }
   componentDidUpdate() {
     console.log(this.props.email !== '' && this.props.currentEmailCustId === this.props.listItem.custId);
@@ -444,6 +409,17 @@ export default class CustomerRow extends PureComponent {
       isShowModal: false,
     });
   }
+
+  @autobind
+  createModal(listItem) {
+    const { pOrO, custId } = listItem;
+    const { createContact } = this.props;
+    createContact({
+      custId,
+      custType: (!pOrO || pOrO === 'P') ? 'per' : 'org',
+    });
+  }
+
   @autobind
   renderAgeOrOrgName() {
     const { listItem } = this.props;
@@ -463,7 +439,6 @@ export default class CustomerRow extends PureComponent {
       email,
       addFollow,
       currentFollowCustId,
-      createContact,
       createServiceRecord,
       isFollows,
       isGetCustIncome,
@@ -486,7 +461,7 @@ export default class CustomerRow extends PureComponent {
           isSms ?
             <div className={styles.basicInfoD}>
               <ul className={styles.operationIcon}>
-                <li onClick={() => createContact(listItem)}>
+                <li onClick={() => this.createModal(listItem)}>
                   <Icon type="dianhua" />
                   <span>电话联系</span>
                 </li>
