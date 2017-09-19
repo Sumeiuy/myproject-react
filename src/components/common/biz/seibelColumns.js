@@ -16,9 +16,9 @@ export default function seibelColumns(type) {
         <div className="id">
           <Icon type={type} />
           <span className="serialNumber">编号{record.serialNumber || '无'}</span>
-          <span className="subType">{record.subType || '无'}</span>
+          <span className="type">{record.type || '无'}</span>
         </div>
-        <div className="title">{record.title || '无'}</div>
+        <div className="subType">{record.subType || '无'}</div>
         <div className="drafter">拟稿人：<span className="drafterName">{record.empName}({record.empId})</span>{`${record.level2OrgName || ''}${record.level3OrgName || ''}` || '无'}</div>
       </div>
       ),

@@ -19,7 +19,7 @@ export default {
   reducers: {
     getDetailMessageSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
-
+      console.warn('resultData', resultData);
       return {
         ...state,
         detailMessage: resultData,
@@ -71,6 +71,17 @@ export default {
         type: 'getPermissionListSuccess',
         payload: response,
       });
+      const result = response.resultData.applicationList;
+      if (Array.isArray(result) && result.length) {
+        const detailList = yield call(api.getMessage, {
+          id: result[0].id,
+        });
+        console.warn('detailList', detailList);
+        yield put({
+          type: 'getDetailMessageSuccess',
+          payload: detailList,
+        });
+      }
     },
     * getDrafterList({ payload }, { call, put }) {
       const response = yield call(api.getDrafterList, payload);

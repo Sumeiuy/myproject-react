@@ -23,7 +23,9 @@ import styles from './home.less';
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
-const typeOptions = permissionOptions.typeOptions;
+// 子类型
+const subtypeOptions = permissionOptions.subtypeOptions;
+// 状态
 const stateOptions = permissionOptions.stateOptions;
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
@@ -32,7 +34,9 @@ const fetchDataFunction = (globalLoading, type) => query => ({
 });
 
 const mapStateToProps = state => ({
+  // 右侧详情
   detailMessage: state.permission.detailMessage,
+  // 左侧列表数据
   list: state.permission.list,
   // 拟稿人
   drafterList: state.permission.drafterList,
@@ -79,7 +83,6 @@ export default class Permission extends PureComponent {
   }
 
   componentWillMount() {
-    this.props.getDetailMessage({ code: 111 });
     const { getPermissionList, location: { query, query: {
       pageNum,
       pageSize,
@@ -133,10 +136,22 @@ export default class Permission extends PureComponent {
   }
 
   get getDetailComponent() {
+    console.warn('detailMessage', this.props.detailMessage);
     if (_.isEmpty(this.props.detailMessage)) {
       return null;
     }
     return <Detail {...this.props.detailMessage} />;
+  }
+
+  /**
+   * 点击列表每条的时候对应请求详情
+   */
+  @autobind
+  getListRowId(id) {
+    const { getDetailMessage } = this.props;
+    getDetailMessage({
+      id,
+    });
   }
     /**
    * 检查部分属性是否相同
@@ -183,7 +198,7 @@ export default class Permission extends PureComponent {
         location={location}
         replace={replace}
         page="premissionPage"
-        typeOptions={typeOptions}
+        subtypeOptions={subtypeOptions}
         stateOptions={stateOptions}
         creatSeibelModal={this.creatPermossionModal}
         toSearchDrafter={this.toSearchDrafter}
@@ -198,6 +213,7 @@ export default class Permission extends PureComponent {
         replace={replace}
         location={location}
         columns={this.constructTableColumns()}
+        getListRowId={this.getListRowId}
       />
     );
 

@@ -18,7 +18,7 @@ export default class Pageheader extends PureComponent {
     // 页面
     page: PropTypes.string,
     // 子类型
-    typeOptions: PropTypes.array.isRequired,
+    subtypeOptions: PropTypes.array.isRequired,
     // 状态
     stateOptions: PropTypes.array.isRequired,
     // 新建
@@ -89,7 +89,7 @@ export default class Pageheader extends PureComponent {
       replace,
       location,
       location: { query },
-      typeOptions,
+      subtypeOptions,
       stateOptions,
       creatSeibelModal,
       toSearchDrafter,
@@ -116,7 +116,7 @@ export default class Pageheader extends PureComponent {
           value={query.subType}
           location={location}
           replace={replace}
-          data={typeOptions}
+          data={subtypeOptions}
           name="subType"
           onChange={this.handleSelectChange}
         />
