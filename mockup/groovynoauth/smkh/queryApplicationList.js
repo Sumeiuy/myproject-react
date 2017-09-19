@@ -28,7 +28,7 @@ exports.response = function (req, res) {
           id: 109,
           serialNumber: '10270',
           type: '私密客户申请',
-          subType: '私密客户设置',
+          subType: '私密客户取消',
           title: '标题AAAAA',
           status: 'COMPLETE',
           createTime: '2017-09-01', // 拟稿时间
@@ -48,7 +48,7 @@ exports.response = function (req, res) {
           id: 108,
           serialNumber: '10269',
           type: '私密客户申请',
-          subType: '私密客户设置',
+          subType: '私密客户交易信息权限分配',
           title: '标题AAAAA',
           status: 'COMPLETE',
           createTime: '2017-09-01', // 拟稿时间
@@ -68,7 +68,7 @@ exports.response = function (req, res) {
           id: 107,
           serialNumber: '10268',
           type: '私密客户申请',
-          subType: '私密客户设置',
+          subType: '私密客户交易信息权限分配',
           title: '标题AAAAA',
           status: 'COMPLETE',
           createTime: '2017-09-01', // 拟稿时间
