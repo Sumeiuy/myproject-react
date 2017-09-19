@@ -33,6 +33,7 @@ export default class CreateContactModal extends PureComponent {
     createServiceRecord: PropTypes.func.isRequired,
     currentCustId: PropTypes.string.isRequired,
     onClose: PropTypes.func.isRequired,
+    executeTypes: PropTypes.array.isRequired, // 执行方式字典
   };
 
   static defaultProps = {
@@ -192,6 +193,7 @@ export default class CreateContactModal extends PureComponent {
       serviceRecordData = EMPTY_LIST,
       custType,
       currentCustId,
+      executeTypes,
     } = this.props;
 
     if (!currentCustId || !visible) {
@@ -359,6 +361,7 @@ export default class CreateContactModal extends PureComponent {
         {/* 折叠面板 */}
         <Collapse
           data={serviceRecordData}
+          executeTypes={executeTypes}
         />
       </Modal>
     );

@@ -489,6 +489,8 @@ export default class CustomerLists extends PureComponent {
       dict,
       isSms,
     } = this.props;
+    // 服务记录执行方式字典
+    const { executeTypes = EMPTY_ARRAY } = dict;
     const finalContactData = custContactData[currentCustId] || EMPTY_OBJECT;
     const finalServiceRecordData = serviceRecordData[currentCustId] || EMPTY_ARRAY;
     const {
@@ -628,6 +630,7 @@ export default class CustomerLists extends PureComponent {
               createServiceRecord={this.showCreateServiceRecord} /* 创建服务记录 */
               onClose={this.resetModalState}
               currentCustId={currentCustId}
+              executeTypes={executeTypes}
             /> : null
         }
       </div>

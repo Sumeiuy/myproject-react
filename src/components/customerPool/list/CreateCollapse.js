@@ -7,7 +7,7 @@
 import React, { PropTypes, PureComponent } from 'react';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
-import { Collapse, Steps } from 'antd';
+import { Collapse } from 'antd';
 import classnames from 'classnames';
 import moment from 'moment';
 import ServiceRecordContent from './ServiceRecordContent';
@@ -15,11 +15,11 @@ import styles from './createCollapse.less';
 
 const EMPTY_LIST = [];
 const Panel = Collapse.Panel;
-const Step = Steps.Step;
 
 export default class CreateCollapse extends PureComponent {
   static propTypes = {
     data: PropTypes.array,
+    executeTypes: PropTypes.array.isRequired,
   };
 
   static defaultProps = {
@@ -28,30 +28,9 @@ export default class CreateCollapse extends PureComponent {
 
   constructor(props) {
     super(props);
-    this.isClosePanel = {};
     this.state = {
-      currentActiveIndex: [{
-        key: 0,
-      }],
-      currentStep: 0,
+      currentActiveIndex: ['0'],
     };
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { data } = this.props;
-    const { data: nextData = EMPTY_LIST } = nextProps;
-    if (data !== nextData) {
-      _.forEach(nextData, (item, index) => {
-        if (index === 0) {
-          this.isClosePanel[`key${index}`] = false;
-        } else {
-          this.isClosePanel[`key${index}`] = true;
-        }
-      });
-    }
-    this.setState({
-      isClosePanel: this.isClosePanel,
-    });
   }
 
   /**
@@ -59,26 +38,10 @@ export default class CreateCollapse extends PureComponent {
    * @param {*} currentKey 当前key
    */
   @autobind
-  handleCollapseChange(currentKey, index) {
-    if (currentKey.length === 1) {
-      // 关闭状态
-      this.setState({
-        currentStep: -1,
-        isClosePanel: {
-          ...this.state.isClosePanel,
-          [`key${index}`]: true,
-        },
-      });
-    } else {
-      // 打开状态
-      this.setState({
-        currentStep: index,
-        isClosePanel: {
-          ...this.state.isClosePanel,
-          [`key${index}`]: false,
-        },
-      });
-    }
+  handleCollapseChange(currentKey) {
+    this.setState({
+      currentActiveIndex: currentKey,
+    });
   }
 
   /**
@@ -127,76 +90,91 @@ export default class CreateCollapse extends PureComponent {
   }
 
   renderPanel(serveTime) {
-    const { data } = this.props;
-    const { currentStep, isClosePanel } = this.state;
+    const { data, executeTypes } = this.props;
+    const { currentActiveIndex } = this.state;
+
     if (_.isEmpty(data)) {
       return null;
     }
 
     return (
       <div className={styles.panelContainer}>
-        <Steps
-          current={currentStep}
-          direction={'vertical'}
-          className={styles.stepCollection}
-          ref={ref => (this.stepElem = ref)}
+        <Collapse
+          className={styles.serviceCollapse}
+          defaultActiveKey={['0']}
+          onChange={this.handleCollapseChange}
         >
           {
             _.map(data, (item, index) =>
-              <Step
-                progressDot
-                size="small"
-                title={this.renderServeTime(serveTime, index)}
-                key={item.id}
-                className={styles.stepItem}
-                description={
-                  <div>
-                    <Collapse
-                      className={styles.serviceCollapse}
-                      defaultActiveKey={'1'}
-                      onChange={currentKey => this.handleCollapseChange(currentKey, index)}
-                    >
-                      <Panel
-                        header={
-                          <div className={styles.headerContainer}>
-                            {
-                              item.handlerTyp === 'Mission' ?
-                                <div className={styles.headerLeft}>
-                                  {item.taskName || '--'}：{item.serveStrategy || '--'}
-                                </div> :
-                                <div className={styles.headerLeft}>
-                                  {item.taskType || '--'}：{item.activityContent || '--'}
-                                </div>
-                            }
-                            <div className={styles.headerRight}>
-                              <span>{item.serveChannel || '--'}</span>
-                              <span className={styles.serviceStatus}>{item.serveStatus || '--'}</span>
-                              <div
-                                className={
-                                  classnames({
-                                    [styles.upIcon]: !isClosePanel[`key${index}`],
-                                    [styles.downIcon]: isClosePanel[`key${index}`],
-                                  })
-                                }
-                              />
-                            </div>
-                          </div>
-                        }
-                        className={styles.panelHeader}
+              <Panel
+                header={
+                  <div className={styles.headerContainer}>
+                    <div>
+                      <div
+                        className={styles.serviceTime}
+                        key={`${serveTime[index].yearTime}${serveTime[index].dayTime}`}
                       >
-                        <ServiceRecordContent
-                          item={item}
-                          styles={styles}
-                          type={item.handlerType}
+                        <div className={styles.yearTime}>{serveTime[index].yearTime || ''}</div>
+                        <div
+                          className={
+                            classnames({
+                              [styles.activeTime]: _.includes(currentActiveIndex, String(index)),
+                              [styles.dayTime]: !_.includes(currentActiveIndex, String(index)),
+                              [styles.onlyDayTime]: _.isEmpty(serveTime[index].yearTime),
+                            })
+                          }
+                        >
+                          {serveTime[index].dayTime || ''}
+                        </div>
+                      </div>
+                      <div className={styles.leftAnchor}>
+                        <span
+                          className={
+                            classnames({
+                              [styles.hidden]: !_.includes(currentActiveIndex, String(index)),
+                              [styles.visible]: _.includes(currentActiveIndex, String(index)),
+                            })
+                          }
                         />
-                      </Panel>
-                    </Collapse>
+                      </div>
+                    </div>
+                    <div className={styles.collapsePanel}>
+                      {
+                        item.taskType.indexOf('MOT') !== -1 ?
+                          <div className={styles.headerLeft}>
+                            {item.taskName || '--'}：{item.serveStrategy || '--'}
+                          </div> :
+                          <div className={styles.headerLeft}>
+                            {item.taskType || '--'}：{item.activityContent || '--'}
+                          </div>
+                      }
+                      <div className={styles.headerRight}>
+                        <span>{item.serveChannel || '--'}</span>
+                        <span className={styles.serviceStatus}>{item.serveStatus || '--'}</span>
+                        <div
+                          className={
+                            classnames({
+                              [styles.upIcon]: _.includes(currentActiveIndex, String(index)),
+                              [styles.downIcon]: !_.includes(currentActiveIndex, String(index)),
+                            })
+                          }
+                        />
+                      </div>
+                    </div>
                   </div>
                 }
-              />,
+                className={styles.panelHeader}
+                key={index}
+              >
+                <ServiceRecordContent
+                  executeTypes={executeTypes}
+                  item={item}
+                  type={item.taskType}
+                />
+              </Panel>,
             )
           }
-        </Steps>
+        </Collapse>
       </div>
     );
   }
