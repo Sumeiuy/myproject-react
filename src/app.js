@@ -3,7 +3,6 @@
  * @author maoquan(maoquan@htsc.com)
  */
 
-import 'babel-polyfill';
 import dva from 'dva';
 import { hashHistory, routerRedux } from 'dva/router';
 
