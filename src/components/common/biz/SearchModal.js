@@ -25,7 +25,6 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
 import TableDialog from './TableDialog';
-import styles from './searchModal.less';
 
 const Search = Input.Search;
 
@@ -116,12 +115,11 @@ export default class SearchModal extends Component {
     } = this.props;
 
     return (
-      <div className={styles.container}>
+      <div>
         {
           flag ? (
             <Search
               ref={(ref) => { this.searchElem = ref; }}
-              className={styles.search}
               placeholder={placeholder}
               onFocus={this.handleFocus}
             />
