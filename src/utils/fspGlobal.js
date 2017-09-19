@@ -20,6 +20,14 @@ function execOpenTab(method, ...args) {
   }
 }
 
+function closeTab(arg) {
+  try {
+    window.$(`${arg} .close`).click();
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 const fspGlobal = {
   // 待办流程列表中进入详情页
   openAuditPage: (args) => {
@@ -86,6 +94,16 @@ const fspGlobal = {
     } catch (e) {
       console.log(e);
     }
+  },
+
+  // 关闭fsp中原有的tab
+  closeFspTabByHref(hrefValue) {
+    closeTab(`a[href="${hrefValue}"]`);
+  },
+
+  // 关闭fsp中由react生成的tab
+  closeRctTabById(id) {
+    closeTab(`#${id}`);
   },
 };
 
