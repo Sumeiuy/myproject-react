@@ -9,6 +9,8 @@ export default function permission(api) {
     // 获取权限申请列表
     getPermissionList: query => api.post('/groovynoauth/smkh/queryPermissionList', query),
     // 获取拟稿人
-    getEmpList: query => api.post('/groovynoauth/smkh/queryEmpList', query),
+    getDrafterList: query => api.post('/groovynoauth/smkh/queryEmpList', query),
+    // 获取部门
+    getEmpOrgTree: query => api.post('/groovynoauth/jxzb/empOrgTree', query),
   };
 }
