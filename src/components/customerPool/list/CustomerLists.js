@@ -44,7 +44,7 @@ export default class CustomerLists extends PureComponent {
     getCustIncome: PropTypes.func.isRequired,
     q: PropTypes.string,
     source: PropTypes.string.isRequired,
-    monthlyProfits: PropTypes.array.isRequired,
+    monthlyProfits: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
@@ -61,6 +61,7 @@ export default class CustomerLists extends PureComponent {
     isAddServeRecord: PropTypes.bool.isRequired,
     dict: PropTypes.object.isRequired,
     isSms: PropTypes.bool.isRequired,
+    isGetCustIncome: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -110,9 +111,7 @@ export default class CustomerLists extends PureComponent {
       followLoading,
       fllowCustData,
      } = nextProps;
-    // console.log('nextProps----', nextProps);
-    // console.log('this.props----', this.props);
-    const { currentCustId, isShowContactModal } = this.state;
+    const { currentCustId, isShowContactModal, currentFollowCustId } = this.state;
     const prevContact = prevCustContactData[currentCustId] || EMPTY_OBJECT;
     const nextContact = nextCustContactData[currentCustId] || EMPTY_OBJECT;
     const prevRecord = prevServiceRecordData[currentCustId] || EMPTY_OBJECT;
@@ -135,46 +134,22 @@ export default class CustomerLists extends PureComponent {
       }
       onOff = false;
     }
-    // debugger;
-      // if (nextProps.followSuccess) {
-      //   console.log(this.state.currentFollowCustId);
-      //   message.success('关注成功,并已添加到“我关注的客户”分组');
-      //   change = {
-      //     ...this.state.isFollows,
-      //     ...{ [this.state.currentFollowCustId]: true },
-      //   };
-      //   this.setState({
-      //     isFollows: change,
-      //     isEmail: false,
-      //   });
-      // } else {
-      //   console.log(66666666);
-      //   message.error('已取消关注');
-      //   change = {
-      //     ...this.state.isFollows,
-      //     ...{ [this.state.currentFollowCustId]: false },
-      //   }
-      //   this.setState({
-      //     isFollows: change,
-      //   });
-      // }
     if (preFL && !followLoading) {
       if (result === 'success') {
-        console.warn(this.state.isFollows[this.state.currentFollowCustId]);
-        if (!this.state.isFollows[this.state.currentFollowCustId]) {
-          message.success('关注成功');
+        if (!this.state.isFollows[currentFollowCustId]) {
+          message.success('关注成功，并添加到“我关注的客户”分组');
           change = {
             ...this.state.isFollows,
-            ...{ [this.state.currentFollowCustId]: true },
+            ...{ [currentFollowCustId]: true },
           };
           this.setState({
             isFollows: change,
           });
         } else {
-          message.success('取消关注');
+          message.success('已取消关注');
           change = {
             ...this.state.isFollows,
-            ...{ [this.state.currentFollowCustId]: false },
+            ...{ [currentFollowCustId]: false },
           };
           this.setState({
             isFollows: change,
@@ -182,9 +157,8 @@ export default class CustomerLists extends PureComponent {
         }
       }
     }
-    // followOnoff = false;
     if (nextProps.custList !== this.props.custList) {
-      console.log(111111111);
+      // console.log(111111111);
       nextProps.custList.map((item) => {
         isFollows = {
           ...isFollows,
@@ -192,7 +166,7 @@ export default class CustomerLists extends PureComponent {
         };
         return isFollows;
       });
-      console.log(isFollows);
+      // console.log(isFollows);
       this.setState({
         ...this.state.isFollows,
         isFollows,
@@ -476,7 +450,6 @@ export default class CustomerLists extends PureComponent {
       getFollowCust({
         empId, operateType, custId,
       });
-      // console.log(22222);
       this.setState({
         currentFollowCustId: custId,
       });
@@ -489,9 +462,7 @@ export default class CustomerLists extends PureComponent {
         currentFollowCustId: custId,
       });
     }
-    followOnoff = true;
   }
-
   /**
  * 回调，关闭modal打开state
  */
@@ -540,7 +511,7 @@ export default class CustomerLists extends PureComponent {
       custType,
       modalKey,
       isFollows,
-      isEmail,
+      // isEmail,
     } = this.state;
 
     const {
@@ -562,6 +533,7 @@ export default class CustomerLists extends PureComponent {
       isAddServeRecord,
       dict,
       isSms,
+      isGetCustIncome,
     } = this.props;
     const finalContactData = custContactData[currentCustId] || EMPTY_OBJECT;
     const finalServiceRecordData = serviceRecordData[currentCustId] || EMPTY_ARRAY;
@@ -636,7 +608,8 @@ export default class CustomerLists extends PureComponent {
                 currentEmailCustId={currentEmailCustId}
                 currentFollowCustId={currentFollowCustId}
                 isFollows={isFollows}
-                isEmail={isEmail}
+                // isEmail={isEmail}
+                isGetCustIncome={isGetCustIncome}
               />,
             )
           }

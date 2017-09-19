@@ -153,7 +153,7 @@ export default class CustomerRow extends PureComponent {
     q: PropTypes.string,
     listItem: PropTypes.object.isRequired,
     getCustIncome: PropTypes.func.isRequired,
-    monthlyProfits: PropTypes.array.isRequired,
+    monthlyProfits: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
     onChange: PropTypes.func.isRequired,
     isAllSelect: PropTypes.bool.isRequired,
@@ -170,7 +170,8 @@ export default class CustomerRow extends PureComponent {
     currentEmailCustId: PropTypes.string.isRequired,
     currentFollowCustId: PropTypes.string.isRequired,
     isFollows: PropTypes.object.isRequired,
-    isEmail: PropTypes.bool.isRequired,
+    // isEmail: PropTypes.bool.isRequired,
+    isGetCustIncome: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -221,8 +222,6 @@ export default class CustomerRow extends PureComponent {
     });
   }
   componentWillReceiveProps(nextProps) {
-    // console.log('nextProps.isAllSelect>>>', nextProps.isAllSelect);
-    // console.log('this.props.isAllSelect>>>', this.props.isAllSelect);
     const {
       custContactData: prevCustContactData = EMPTY_OBJECT,
       serviceRecordData: prevServiceRecordData = EMPTY_LIST,
@@ -266,9 +265,12 @@ export default class CustomerRow extends PureComponent {
 
   @autobind
   getCustIncome() {
-    const { getCustIncome, listItem } = this.props;
-    // test data empId = 01041128、05038222、035000002899、02004642
-    getCustIncome({ custNumber: listItem.custId });
+    const { getCustIncome, listItem, monthlyProfits } = this.props;
+    const thisMonthlyProfits = monthlyProfits[listItem.custId];
+    if (!thisMonthlyProfits || _.isEmpty(thisMonthlyProfits)) {
+      // test data empId = 01041128、05038222、035000002899、02004642
+      getCustIncome({ custNumber: listItem.custId });
+    }
     this.setState({
       isShowCharts: true,
     });
@@ -464,15 +466,16 @@ export default class CustomerRow extends PureComponent {
       createContact,
       createServiceRecord,
       isFollows,
+      isGetCustIncome,
     } = this.props;
     const {
       unit,
       newAsset,
       isShowCharts,
-   } = this.state;
-
-    const lastestProfit = Number(this.getLastestData(monthlyProfits).assetProfit);
-    const lastestProfitRate = Number(this.getLastestData(monthlyProfits).assetProfitRate);
+    } = this.state;
+    const thisMonthlyProfits = monthlyProfits[listItem.custId] || [];
+    const lastestProfit = Number(this.getLastestData(thisMonthlyProfits).assetProfit);
+    const lastestProfitRate = Number(this.getLastestData(thisMonthlyProfits).assetProfitRate);
     const matchedWord = this.matchWord(q, listItem);
     const rskLev = _.trim(listItem.riskLvl);
     const str = `${listItem.custId}.${listItem.name}`;
@@ -550,6 +553,9 @@ export default class CustomerRow extends PureComponent {
             <span>{unit}</span>
             <span
               className="showChart"
+              style={{
+                cursor: isGetCustIncome ? 'wait' : 'pointer',
+              }}
             >
               <p
                 onMouseEnter={this.debounced}
@@ -559,10 +565,12 @@ export default class CustomerRow extends PureComponent {
               </p>
               <div
                 className={`${styles.showCharts}`}
-                style={{ display: isShowCharts ? 'block' : 'none' }}
+                style={{
+                  display: isShowCharts ? 'block' : 'none',
+                }}
               >
                 <div className={styles.chartsContent}>
-                  <ChartLineWidget chartData={monthlyProfits} />
+                  <ChartLineWidget chartData={thisMonthlyProfits} />
                 </div>
                 <div className={styles.chartsText}>
                   <div>
@@ -576,7 +584,7 @@ export default class CustomerRow extends PureComponent {
                     <span>本月收益率：</span>
                     <span className={styles.numB}>
                       {
-                        monthlyProfits.length ?
+                        thisMonthlyProfits.length ?
                           `${lastestProfitRate.toFixed(2)}%`
                           :
                           '--'
@@ -588,14 +596,14 @@ export default class CustomerRow extends PureComponent {
                       本月收益：
                       <span className={styles.numB}>
                         {
-                          monthlyProfits.length ?
+                          thisMonthlyProfits.length ?
                             formatNumber(lastestProfit)
                             :
                             '--'
                         }
                       </span>
                       &nbsp;
-                      {monthlyProfits.length ? generateUnit(lastestProfit) : null}
+                      {thisMonthlyProfits.length ? generateUnit(lastestProfit) : null}
                     </span>
                   </div>
                 </div>
