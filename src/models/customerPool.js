@@ -21,7 +21,8 @@ export default {
     process: {},
     empInfo: {},
     dict: {},
-    monthlyProfits: [],
+    monthlyProfits: {},
+    isGetCustIncome: false,
     hotwds: {},
     hotPossibleWdsList: [],
     custList: [],
@@ -48,7 +49,10 @@ export default {
     serviceRecordData: {}, // 服务记录
     isAddServeRecord: false,
     addServeRecordSuccess: false, // 添加服务记录成功的标记
-    isFollow: false,
+    followSuccess: false,
+    isFollow: {},
+    followLoading: false,
+    fllowCustData: {},
   },
   subscriptions: {
     setup({ dispatch }) {
@@ -125,10 +129,13 @@ export default {
     },
     // 获取客户列表6个月收益率
     * getCustIncome({ payload }, { call, put }) {
-      const response = yield call(api.getCustIncome, payload);
+      yield put({
+        type: 'getCustIncomeReq',
+      });
+      const { resultData: { monthlyProfits } } = yield call(api.getCustIncome, payload);
       yield put({
         type: 'getCustIncomeSuccess',
-        payload: response,
+        payload: { ...payload, monthlyProfits },
       });
     },
     // 默认推荐词及热词推荐列表及历史搜索数据
@@ -231,12 +238,29 @@ export default {
       });
     },
     * getFollowCust({ payload }, { call, put }) {
+      yield put({
+        type: 'getFollowCustSuccess',
+        payload: {
+          value: true,
+          message: '开始开始',
+        },
+      });
       const response = yield call(api.queryFollowCust, payload);
       const { resultData } = response;
       yield put({
         type: 'getFollowCustSuccess',
-        payload: resultData,
+        payload: {
+          value: false,
+          message: '关注成功',
+          fllowCustData: resultData,
+        },
       });
+      // const response = yield call(api.queryFollowCust, payload);
+      // const { resultData } = response;
+      // yield put({
+      //   type: 'getFollowCustSuccess',
+      //   payload: resultData,
+      // });
     },
     // * getStatisticalPeriod({ }, { call, put }) { //eslint-disable-line
     //   // 统计周期
@@ -391,10 +415,14 @@ export default {
       };
     },
     getCustIncomeSuccess(state, action) {
-      const { payload: { resultData: { monthlyProfits } } } = action;
+      const { payload: { custNumber, monthlyProfits } } = action;
       return {
         ...state,
-        monthlyProfits,
+        isGetCustIncome: false,
+        monthlyProfits: {
+          ...state.monthlyProfits,
+          [custNumber]: monthlyProfits,
+        },
       };
     },
     // 历史搜索列表
@@ -505,11 +533,18 @@ export default {
     },
     // 关注成功
     getFollowCustSuccess(state, action) {
-      const { payload } = action;
+      const { payload: { value, message, fllowCustData } } = action;
       return {
         ...state,
-        isFollow: payload.result === 'success',
-        // addFollow: false,
+        followLoading: value,
+        message,
+        fllowCustData,
+      };
+    },
+    getCustIncomeReq(state) {
+      return {
+        ...state,
+        isGetCustIncome: true,
       };
     },
   },

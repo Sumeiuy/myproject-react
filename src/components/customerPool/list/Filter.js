@@ -31,7 +31,6 @@ export default class Filter extends PureComponent {
       unright_type: unrightType,
       source,
     } = location.query;
-    console.log('Filter>>>', unrightType);
     return (
       <div className="filter">
         {
@@ -66,7 +65,7 @@ export default class Filter extends PureComponent {
         }
         {
           (_.includes(SEARCH_TAG_FILTER, source)) ?
-            <SingleFilter
+            <MultiFilter
               value={Rights || ''}
               filterLabel="已开通业务"
               filter="Rights"

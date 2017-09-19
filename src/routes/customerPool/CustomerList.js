@@ -71,13 +71,15 @@ const mapStateToProps = state => ({
   cycle: state.customerPool.dict.kPIDateScopeType,  // 统计周期
   addServeRecordSuccess: state.customerPool.addServeRecordSuccess,
   isAddServeRecord: state.customerPool.isAddServeRecord,
-  isFollow: state.customerPool.isFollow,
+  followLoading: state.customerPool.followLoading, // 关注成功
+  fllowCustData: state.customerPool.fllowCustData,
+  isGetCustIncome: state.customerPool.isGetCustIncome,
 });
 
 const mapDispatchToProps = {
   getAllInfo: fetchDataFunction(true, effects.allInfo),
   getCustomerData: fetchDataFunction(true, effects.getCustomerList),
-  getCustIncome: fetchDataFunction(true, effects.getCustIncome),
+  getCustIncome: fetchDataFunction(false, effects.getCustIncome),
   getCustomerScope: fetchDataFunction(true, effects.getCustomerScope),
   addServeRecord: fetchDataFunction(true, effects.addServeRecord),
   getServiceRecord: fetchDataFunction(true, effects.getServiceRecord),
@@ -105,7 +107,7 @@ export default class CustomerList extends PureComponent {
     getCustIncome: PropTypes.func.isRequired,
     custList: PropTypes.array.isRequired,
     page: PropTypes.object.isRequired,
-    monthlyProfits: PropTypes.array.isRequired,
+    monthlyProfits: PropTypes.object.isRequired,
     getCustContact: PropTypes.func.isRequired,
     getFollowCust: PropTypes.func.isRequired,
     custContactData: PropTypes.object,
@@ -116,7 +118,9 @@ export default class CustomerList extends PureComponent {
     addServeRecord: PropTypes.func.isRequired, // 添加服务记录
     addServeRecordSuccess: PropTypes.bool.isRequired,
     isAddServeRecord: PropTypes.bool.isRequired,
-    isFollow: PropTypes.bool.isRequired,
+    fllowCustData: PropTypes.object,
+    followLoading: PropTypes.bool,
+    isGetCustIncome: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -127,6 +131,8 @@ export default class CustomerList extends PureComponent {
     custContactData: EMPTY_OBJECT,
     serviceRecordData: EMPTY_OBJECT,
     cycle: EMPTY_LIST,
+    fllowCustData: {},
+    followLoading: false,
   }
 
   constructor(props) {
@@ -230,7 +236,7 @@ export default class CustomerList extends PureComponent {
     if (!_.isEmpty(empRespList)) {
       respIdOfPosition = _.findIndex(empRespList, item => (item.respId === HTSC_RESPID));
     }
-    const k = decodeURIComponent(query.q);
+    const keyword = decodeURIComponent(query.q);
     const param = {
       // 必传，当前页
       curPageNum: query.curPageNum || CUR_PAGE,
@@ -243,7 +249,7 @@ export default class CustomerList extends PureComponent {
     if (query.source === 'search') {
       param.searchTypeReq = 'FromFullTextType';
       param.paramsReqList = [
-        { key: 'fullTestSearch', value: k },
+        { key: 'fullTestSearch', value: keyword },
       ];
     } else if (query.source === 'tag') { // 热词
       param.searchTypeReq = 'FromWdsListErea';
@@ -304,7 +310,7 @@ export default class CustomerList extends PureComponent {
     const sortsReqList = [];
     if (query.unright_type) {
       filtersReq.push({
-        filterType: 'unright_type',
+        filterType: 'Unrights',
         filterContentList: query.unright_type.split(','),
       });
     }
@@ -535,7 +541,9 @@ export default class CustomerList extends PureComponent {
       addServeRecord,
       addServeRecordSuccess,
       isAddServeRecord,
-      isFollow,
+      followLoading,
+      fllowCustData,
+      isGetCustIncome,
     } = this.props;
     const {
       sortDirection,
@@ -609,6 +617,7 @@ export default class CustomerList extends PureComponent {
           curPageNum={curPageNum}
           pageSize={pageSize}
           monthlyProfits={monthlyProfits}
+          isGetCustIncome={isGetCustIncome}
           onPageChange={this.handlePageChange}
           onSizeChange={this.handleSizeChange}
           getCustIncome={getCustIncome}
@@ -621,7 +630,8 @@ export default class CustomerList extends PureComponent {
           addServeRecord={addServeRecord}
           addServeRecordSuccess={addServeRecordSuccess}
           isAddServeRecord={isAddServeRecord}
-          isFollow={isFollow}
+          fllowCustData={fllowCustData}
+          followLoading={followLoading}
         />
       </div>
     );

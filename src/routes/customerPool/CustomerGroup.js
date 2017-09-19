@@ -203,13 +203,14 @@ export default class CustomerGroup extends PureComponent {
       const { location: { query } } = this.props;
       if (query.ids) {
         const ids = decodeURIComponent(query.ids).split(',');
-        param.custList = ids;
+        param.custIdList = ids;
       } else if (query.condition) {
         const condition = JSON.parse(decodeURIComponent(query.condition));
         param.searchReq = condition;
       }
       param.groupId = groupId;
       param.empId = helper.getEmpId();
+      console.log(param);
       this.props.addCustomerToGroup({ ...param });
     } else {
       message.error('请选择分组');
@@ -222,7 +223,7 @@ export default class CustomerGroup extends PureComponent {
     const { location: { query } } = this.props;
     if (query.ids) {
       const ids = decodeURIComponent(query.ids).split(',');
-      param.custList = ids;
+      param.custIdList = ids;
     } else if (query.condition) {
       const condition = JSON.parse(decodeURIComponent(query.condition));
       param.searchReq = condition;

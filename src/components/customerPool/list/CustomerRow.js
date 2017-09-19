@@ -9,7 +9,6 @@ import React, { PureComponent, PropTypes } from 'react';
 import { Checkbox } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import classnames from 'classnames';
 
 // import CreateContactModal from './CreateContactModal';
 import Icon from '../../common/Icon';
@@ -150,7 +149,7 @@ export default class CustomerRow extends PureComponent {
     q: PropTypes.string,
     listItem: PropTypes.object.isRequired,
     getCustIncome: PropTypes.func.isRequired,
-    monthlyProfits: PropTypes.array.isRequired,
+    monthlyProfits: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
     onChange: PropTypes.func.isRequired,
     isAllSelect: PropTypes.bool.isRequired,
@@ -164,7 +163,9 @@ export default class CustomerRow extends PureComponent {
     email: PropTypes.string.isRequired,
     currentEmailCustId: PropTypes.string.isRequired,
     currentFollowCustId: PropTypes.string.isRequired,
-    follow: PropTypes.bool.isRequired,
+    isFollows: PropTypes.object.isRequired,
+    // isEmail: PropTypes.bool.isRequired,
+    isGetCustIncome: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -187,9 +188,7 @@ export default class CustomerRow extends PureComponent {
       unit: '元',
       newAsset: asset,
       checked: false,
-      followClass: null,
     };
-
     this.businessConfig = new Map();
     custBusinessType.forEach((v) => {
       this.businessConfig.set(v.key, v.value);
@@ -210,27 +209,18 @@ export default class CustomerRow extends PureComponent {
       newAsset,
       isShowCharts: false,
     });
-    this.state.followClass = classnames({
-      [styles.follows]: this.props.follow,
-    });
-  }
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.currentFollowCustId !== '') {
-      const followClass = classnames({
-        [styles.follows]: nextProps.follow,
-      });
-      this.setState({
-        followClass,
-      });
-    }
   }
   componentDidUpdate() {
-    if (this.props.email !== '') {
+    console.log(this.props.email !== '' && this.props.currentEmailCustId === this.props.listItem.custId);
+    console.warn(this.props.currentEmailCustId);
+    console.warn(this.props.listItem.custId);
+    if (this.props.email !== '' && this.props.currentEmailCustId === this.props.listItem.custId) {
+      // debugger;
+      console.log(this.sendEmail);
       const evt = new MouseEvent('click', { bubbles: false, cancelable: false, view: window });
-      document.querySelector('#sendEmail').dispatchEvent(evt);
+      this.sendEmail.dispatchEvent(evt);
     }
   }
-
   getLastestData(arr) {
     if (arr && arr instanceof Array && arr.length !== 0) {
       return arr[arr.length - 1];
@@ -240,9 +230,12 @@ export default class CustomerRow extends PureComponent {
 
   @autobind
   getCustIncome() {
-    const { getCustIncome, listItem } = this.props;
-    // test data empId = 01041128、05038222、035000002899、02004642
-    getCustIncome({ custNumber: listItem.custId });
+    const { getCustIncome, listItem, monthlyProfits } = this.props;
+    const thisMonthlyProfits = monthlyProfits[listItem.custId];
+    if (!thisMonthlyProfits || _.isEmpty(thisMonthlyProfits)) {
+      // test data empId = 01041128、05038222、035000002899、02004642
+      getCustIncome({ custNumber: listItem.custId });
+    }
     this.setState({
       isShowCharts: true,
     });
@@ -446,17 +439,18 @@ export default class CustomerRow extends PureComponent {
       email,
       addFollow,
       currentFollowCustId,
-      follow,
       createServiceRecord,
+      isFollows,
+      isGetCustIncome,
     } = this.props;
     const {
       unit,
       newAsset,
       isShowCharts,
-   } = this.state;
-
-    const lastestProfit = Number(this.getLastestData(monthlyProfits).assetProfit);
-    const lastestProfitRate = Number(this.getLastestData(monthlyProfits).assetProfitRate);
+    } = this.state;
+    const thisMonthlyProfits = monthlyProfits[listItem.custId] || [];
+    const lastestProfit = Number(this.getLastestData(thisMonthlyProfits).assetProfit);
+    const lastestProfitRate = Number(this.getLastestData(thisMonthlyProfits).assetProfitRate);
     const matchedWord = this.matchWord(q, listItem);
     const rskLev = _.trim(listItem.riskLvl);
     const str = `${listItem.custId}.${listItem.name}`;
@@ -473,15 +467,15 @@ export default class CustomerRow extends PureComponent {
                 </li>
                 <li onClick={() => toEmail(listItem)}>
                   <Icon type="youjian" />
-                  <span>{currentEmailCustId === listItem.custId && email ? <a id={email && currentEmailCustId === listItem.custId ? 'sendEmail' : ''} href={`mailto:${email}`} > 邮件联系 </a> : '邮件联系'}</span>
+                  <span>{currentEmailCustId === listItem.custId && email ? <a ref={ref => this.sendEmail = ref} href={`mailto:${email}`} > 邮件联系 </a> : '邮件联系' }</span>
                 </li>
                 <li onClick={() => createServiceRecord(listItem)}>
                   <Icon type="jilu" />
                   <span>添加服务记录</span>
                 </li>
-                <li onClick={() => addFollow(listItem)} className={currentFollowCustId === listItem.custId ? this.state.followClass : ''}>
-                  <Icon type="guanzhu" className={currentFollowCustId === listItem.custId ? this.state.followClass : ''} />
-                  <span>{follow}-----{currentFollowCustId === listItem.custId && follow ? '已关注' : '关注'}</span>
+                <li onClick={() => addFollow(listItem)} className={(currentFollowCustId === listItem.custId && isFollows[currentFollowCustId]) || isFollows[listItem.custId] ? styles.follows : ''}>
+                  <Icon type="guanzhu" />
+                  <span>{(currentFollowCustId === listItem.custId && isFollows[currentFollowCustId]) || isFollows[listItem.custId] ? '已关注' : '关注'}</span>
                 </li>
               </ul>
             </div>
@@ -534,6 +528,9 @@ export default class CustomerRow extends PureComponent {
             <span>{unit}</span>
             <span
               className="showChart"
+              style={{
+                cursor: isGetCustIncome ? 'wait' : 'pointer',
+              }}
             >
               <p
                 onMouseEnter={this.debounced}
@@ -543,10 +540,12 @@ export default class CustomerRow extends PureComponent {
               </p>
               <div
                 className={`${styles.showCharts}`}
-                style={{ display: isShowCharts ? 'block' : 'none' }}
+                style={{
+                  display: isShowCharts ? 'block' : 'none',
+                }}
               >
                 <div className={styles.chartsContent}>
-                  <ChartLineWidget chartData={monthlyProfits} />
+                  <ChartLineWidget chartData={thisMonthlyProfits} />
                 </div>
                 <div className={styles.chartsText}>
                   <div>
@@ -560,7 +559,7 @@ export default class CustomerRow extends PureComponent {
                     <span>本月收益率：</span>
                     <span className={styles.numB}>
                       {
-                        monthlyProfits.length ?
+                        thisMonthlyProfits.length ?
                           `${lastestProfitRate.toFixed(2)}%`
                           :
                           '--'
@@ -572,14 +571,14 @@ export default class CustomerRow extends PureComponent {
                       本月收益：
                       <span className={styles.numB}>
                         {
-                          monthlyProfits.length ?
+                          thisMonthlyProfits.length ?
                             formatNumber(lastestProfit)
                             :
                             '--'
                         }
                       </span>
                       &nbsp;
-                      {monthlyProfits.length ? generateUnit(lastestProfit) : null}
+                      {thisMonthlyProfits.length ? generateUnit(lastestProfit) : null}
                     </span>
                   </div>
                 </div>
