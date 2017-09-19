@@ -4,7 +4,7 @@
  * @author baojiajia
  */
 import React, { PropTypes } from 'react';
-import styles from './OtherCommission.less';
+import styles from './otherCommission.less';
 
 export default function OtherCommission(props) {
   const { name, value } = props;
