@@ -14,6 +14,7 @@ export default {
     detailMessage: EMPTY_OBJECT,
     list: EMPTY_OBJECT,
     serverPersonelList: EMPTY_LIST,
+    drafterList: EMPTY_LIST, // 拟稿人
   },
   reducers: {
     getDetailMessageSuccess(state, action) {
@@ -26,7 +27,7 @@ export default {
     },
     getPermissionListSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
-      const { page = EMPTY_OBJECT, permissionVOList = EMPTY_LIST } = resultData;
+      const { page = EMPTY_OBJECT, applicationList = EMPTY_LIST } = resultData;
       const { listData: preListData = EMPTY_LIST } = state.list;
 
       return {
@@ -34,7 +35,7 @@ export default {
         list: {
           page,
           resultData: page.pageNum === 1 ?
-            permissionVOList : [...preListData, ...permissionVOList],
+            applicationList : [...preListData, ...applicationList],
         },
       };
     },
@@ -43,6 +44,15 @@ export default {
       return {
         ...state,
         serverPersonelList: resultData,
+      };
+    },
+    getDrafterListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      const { empInfo = EMPTY_LIST } = resultData;
+
+      return {
+        ...state,
+        drafterList: empInfo,
       };
     },
   },
@@ -65,6 +75,13 @@ export default {
       const response = yield call(api.getServerPersonelList, payload);
       yield put({
         type: 'getServerPersonelListSuccess',
+        payload: response,
+      });
+    },
+    * getDrafterList({ payload }, { call, put }) {
+      const response = yield call(api.getEmpList, payload);
+      yield put({
+        type: 'getDrafterListSuccess',
         payload: response,
       });
     },

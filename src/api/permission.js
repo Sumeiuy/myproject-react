@@ -10,5 +10,7 @@ export default function permission(api) {
     getServerPersonelList: query => api.post('/groovynoauth/permission/serverPersonelList', query),
     // 获取权限申请列表
     getPermissionList: query => api.post('/groovynoauth/permission/queryPermissionList', query),
+    // 获取拟稿人
+    getEmpList: query => api.post('/groovynoauth/permission/queryEmpList', query),
   };
 }

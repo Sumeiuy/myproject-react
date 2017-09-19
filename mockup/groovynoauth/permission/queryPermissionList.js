@@ -3,7 +3,7 @@ exports.response = function (req, res) {
         "code": "0",
         "msg": "OK",
         "resultData": {
-            "permissionVOList": [
+            "applicationList": [
                 {
                     "id": 110,
                     "serialNumber":"10271",

@@ -8,12 +8,14 @@ import TextareaComponent from '../common/textareacomponent';
 import SearchModal from '../common/biz/SearchModal';
 import DropdownSelect from '../common/dropdownSelect';
 import columns from './PermissionColumns';
+import Icon from '../common/Icon';
 
 export default class BaseInfoModify extends PureComponent {
   static propTypes = {
     head: PropTypes.string.isRequired,
+    // 暂时定义的对象
     serverInfo: PropTypes.array,
-    // baseInfo: PropTypes.array,
+    baseInfo: PropTypes.array,
   }
 
   static defaultProps = {
@@ -42,38 +44,44 @@ export default class BaseInfoModify extends PureComponent {
   }
 
   @autobind
-  searchInfoList(value) {
-    // 选中下拉对象中对应的某个对象
+  searchChildTypeList(value) {
+    // 按 关键字 查询 子类型 列表
     console.log(value);
   }
 
   @autobind
-  selectItem(item) {
-    // 选中下拉对象中对应的某个对象
+  selectCustomer(item) {
+    // 选中客户
     console.log('向上传递选中的对象', item);
   }
 
   @autobind
-  toSearchInfo(value) {
-    // 下拉菜单中的查询
+  searchCustomerList(value) {
+    // 按照 关键字 查询 客户 列表
     console.log('暴露的查询方法，向上传递value', value);
   }
 
   @autobind
-  renderSelectedElem(/** selected, removeFunc */) {
-    // return (
-    //   <div className={style.result}>
-    //     <div className={style.nameLabel}>{selected.name}</div>
-    //     <div className={style.custIdLabel}>{selected.id}</div>
-    //     <div className={style.iconDiv}>
-    //       <Icon
-    //         type="close"
-    //         className={style.closeIcon}
-    //         onClick={removeFunc}
-    //       />
-    //     </div>
-    //   </div>
-    // );
+  selectChildType(value) {
+    // 选择子类型
+    console.log('#####handleOk######', value);
+  }
+
+  @autobind
+  renderSelectedElem(selected, removeFunc) {
+    return (
+      <div className={style.result}>
+        <div className={style.nameLabel}>{selected.ptyMngName}</div>
+        <div className={style.custIdLabel}>{selected.ptyMngId}</div>
+        <div className={style.iconDiv}>
+          <Icon
+            type="close"
+            className={style.closeIcon}
+            onClick={removeFunc}
+          />
+        </div>
+      </div>
+    );
   }
 
   render() {
@@ -99,12 +107,13 @@ export default class BaseInfoModify extends PureComponent {
           <div className={style.inputComponentContent}>
             <DropdownSelect
               value="全部"
-              placeholder="请输入姓名或工号"
+              placeholder="经济客户号/客户名称"
               searchList={this.state.list}
               showObjKey="custName"
               objId="custNumber"
-              emitSelectItem={this.selectItem}
-              emitToSearch={this.toSearchInfo}
+              emitSelectItem={this.selectCustomer}
+              emitToSearch={this.searchCustomerList}
+              boxStyle={{ border: '1px solid #d9d9d9' }}
             />
           </div>
         </div>
@@ -114,13 +123,14 @@ export default class BaseInfoModify extends PureComponent {
           </span>
           <div className={style.inputComponentContent}>
             <SearchModal
+              onOk={this.selectChildType}
               columns={columns}
               title="选择下一审批人员"
               dataSource={this.props.serverInfo}
               placeholder=""
-              onSearch={this.searchInfoList}
+              onSearch={this.searchChildTypeList}
               renderSelected={this.renderSelectedElem}
-              idKey="ptyMngId"
+              rowKey="ptyMngId"
             />
 
           </div>

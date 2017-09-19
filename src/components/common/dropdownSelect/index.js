@@ -6,7 +6,7 @@ import classnames from 'classnames';
 import _ from 'lodash';
 import style from './style.less';
 
-export default class DrapDownSelect extends PureComponent {
+export default class DropdownSelect extends PureComponent {
   static propTypes = {
     // 查询框中的placeholder
     placeholder: PropTypes.string,
@@ -22,6 +22,8 @@ export default class DrapDownSelect extends PureComponent {
     emitSelectItem: PropTypes.func.isRequired,
     // 在这里去触发查询搜索信息的方法并向父组件传递了string（必填）
     emitToSearch: PropTypes.func.isRequired,
+    // 用户自定义style
+    boxStyle: PropTypes.object,
   }
 
   static defaultProps = {
@@ -29,6 +31,7 @@ export default class DrapDownSelect extends PureComponent {
     value: '',
     searchList: [],
     objId: '',
+    boxStyle: {},
   }
 
   constructor() {
@@ -116,6 +119,7 @@ export default class DrapDownSelect extends PureComponent {
           onClick={this.showDrapDown}
           className={ddsShowBoxClass}
           data-id={this.state.id}
+          style={this.props.boxStyle}
         >
           {this.state.value}
         </div>

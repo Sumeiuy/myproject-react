@@ -74,7 +74,7 @@ export default class Detail extends PureComponent {
       result = (
         <MessageList
           head="基本信息"
-          {...this.state.baseInfo}
+          baseInfo={this.state.baseInfo}
         />
       );
     } else {
@@ -111,7 +111,7 @@ export default class Detail extends PureComponent {
         {this.getBaseInfoModifyDom}
         <MessageList
           head="拟稿信息"
-          {...draftInfo}
+          baseInfo={draftInfo}
         />
         <ServerPersonel
           head="服务人员"

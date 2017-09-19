@@ -12,18 +12,18 @@ import style from './messagelist.less';
 export default class MessageList extends PureComponent {
   static propTypes = {
     head: PropTypes.string.isRequired,
-    content: PropTypes.arrayOf(PropTypes.shape({
+    baseInfo: PropTypes.arrayOf(PropTypes.shape({
       title: PropTypes.string,
       content: PropTypes.string,
     })),
   }
 
   static defaultProps = {
-    content: [],
+    baseInfo: [],
   }
 
   get getEleMap() {
-    const result = this.props.content.map((item, index) => {
+    const result = this.props.baseInfo.map((item, index) => {
       const tabIndex = `MgsList${index}`;
       return (
         <TextLayout key={tabIndex} {...item} />

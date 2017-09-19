@@ -5,138 +5,88 @@
  */
 
 import React, { PureComponent } from 'react';
-import classnames from 'classnames';
+import InfoTitle from '../common/InfoTitle';
+import InfoItem from '../common/infoItem';
+import OtherCommission from './OtherCommission';
 import styles from './detail.less';
 
 export default class Commissiondetail extends PureComponent {
   render() {
-    const leftItem = classnames({
-      [styles.itemleft]: true,
-      [styles.item]: true,
-    });
-    const rightItem = classnames({
-      [styles.itemright]: true,
-      [styles.item]: true,
-    });
     return (
-      <div className={styles.detail_box}>
+      <div className={styles.detailBox}>
         <div className={styles.inner}>
-          <h1 className={styles.bugtitle}>编号11222</h1>
-          <div id="detail_module" className={styles.module}>
-            <div className={styles.mod_header}>
-              <h2 className={styles.toogle_title}>基本信息</h2>
-            </div>
-            <div className={styles.mod_content}>
-              <ul className={styles.property_list}>
+          <h1 className={styles.bugTitle}>编号11222</h1>
+          <div id="detailModule" className={styles.module}>
+            <InfoTitle head="基本信息" />
+            <div className={styles.modContent}>
+              <ul className={styles.propertyList}>
                 <li className={styles.item}>
-                  <div className={styles.wrap}>
-                    <span className={styles.itemname}>子类型：</span>
-                    <span className={styles.itemvalue}>私密客户权限分配</span>
-                  </div>
+                  <InfoItem label="子类型" value="私密客户权限分配" />
                 </li>
                 <li className={styles.item}>
-                  <div className={styles.wrap}>
-                    <span className={styles.itemname}>备注：</span>
-                    <span className={styles.itemvalue}>
-                      这里是备注备注备注
-                    </span>
-                  </div>
+                  <InfoItem label="备注" value="这是备注这是备注这是备注这是备注这是备注这是备注这是备注这是备注这是备注这是备注这是备注这是备注这是备注" />
                 </li>
               </ul>
             </div>
           </div>
           <div id="nginformation_module" className={styles.module}>
-            <div className={styles.mod_header}>
-              <h2 className={styles.toogle_title}>拟稿信息</h2>
-            </div>
-            <div className={styles.mod_content}>
-              <ul className={styles.property_list}>
+            <InfoTitle head="拟稿信息" />
+            <div className={styles.modContent}>
+              <ul className={styles.propertyList}>
                 <li className={styles.item}>
-                  <div className={styles.wrap}>
-                    <span className={styles.itemname}>拟稿人：</span>
-                    <span className={styles.itemvalue}>南京分公司长江路营业部-李四（0016533333）</span>
-                  </div>
+                  <InfoItem label="拟稿人" value="南京分公司长江路营业部" />
                 </li>
                 <li className={styles.item}>
-                  <div className={styles.wrap}>
-                    <span className={styles.itemname}>提请时间：</span>
-                    <span className={styles.itemvalue}>2017/08/31</span>
-                  </div>
+                  <InfoItem label="提请时间" value="2017/08/31" />
                 </li>
                 <li className={styles.item}>
-                  <div className={styles.wrap}>
-                    <span className={styles.itemname}>状态：</span>
-                    <span className={styles.itemvalue}>
-                     已完成
-                    </span>
-                  </div>
+                  <InfoItem label="状态" value="已完成" />
                 </li>
               </ul>
-              { /* <div className="btn_dv">
-                <Button type="primary" onClick={this.showModal}>{messageBtnValue}</Button>
-              </div> */ }
             </div>
           </div>
           <div id="customer_module" className={styles.module}>
-            <div className={styles.mod_header}>
-              <h2 className={styles.toogle_title}>客户信息：</h2>
-            </div>
-            <div className={styles.mod_content}>
+            <InfoTitle head="客户信息" />
+            <div className={styles.modContent}>
               客户列表
             </div>
           </div>
           <div id="choosecommission" className={styles.module}>
-            <div className={styles.mod_header}>
-              <h2 className={styles.toogle_title}>佣金产品选择：</h2>
-            </div>
-            <div className={styles.mod_content}>
-              <ul className={styles.property_list}>
+            <InfoTitle head="佣金产品" />
+            <div className={styles.modContent}>
+              <ul className={styles.propertyList}>
                 <li className={styles.item}>
-                  <div className={styles.wrap}>
-                    <span className={styles.itemname}>目标佣金率（股基）：</span>
-                    <span className={styles.itemvalue}>25‰</span>
-                  </div>
+                  <InfoItem label="目标佣金率（股基）" value="25‰" />
                 </li>
                 <li className={styles.item}>
-                  <div className={styles.wrap}>
-                    <span className={styles.itemname}>目标产品：</span>
-                    <span className={styles.itemvalue}>PPKD02/。。。。。</span>
-                  </div>
+                  <InfoItem label="目标产品" value="PPKD02/。。。。。" />
                 </li>
               </ul>
             </div>
           </div>
           <div id="processing" className={styles.module}>
-            <div className={styles.mod_header}>
-              <h2 className={styles.toogle_title}>其他佣金费率：</h2>
-            </div>
-            <div className={styles.mod_content}>
-              <ul className={styles.property_list}>
-                <li className={leftItem}>
-                  <div className={styles.wrap}>
-                    <span className={styles.itemname}>B股：</span>
-                    <span className={styles.itemvalue}>内容</span>
-                  </div>
-                </li>
-                <li className={rightItem}>
-                  <div className={styles.wrap}>
-                    <span className={styles.itemname}>担保权证</span>
-                    <span className={styles.itemvalue}>内容</span>
-                  </div>
-                </li>
-                <li className={leftItem}>
-                  <div className={styles.wrap}>
-                    <span className={styles.itemname}>债券：</span>
-                    <span className={styles.itemvalue}>内容</span>
-                  </div>
-                </li>
-                <li className={rightItem}>
-                  <div className={styles.wrap}>
-                    <span className={styles.itemname}>信用顾基：</span>
-                    <span className={styles.itemvalue}>内容</span>
-                  </div>
-                </li>
-              </ul>
+            <InfoTitle head="其他佣金费率" />
+            <div className={styles.modContent}>
+              <div className={styles.leftCommission}>
+                <OtherCommission name="B股：" value="这里是内容" />
+                <OtherCommission name="债券：" value="这里是内容" />
+                <OtherCommission name="回购：" value="这里是内容" />
+                <OtherCommission name="场内基金：" value="这里是内容" />
+                <OtherCommission name="权证：" value="这里是内容" />
+                <OtherCommission name="担保股基：" value="这里是内容" />
+                <OtherCommission name="担保债券：" value="这里是内容" />
+                <OtherCommission name="担保场内基金：" value="这里是内容" />
+              </div>
+              <div className={styles.rightCommission}>
+                <OtherCommission name="担保权证：" value="这里是内容" />
+                <OtherCommission name="信用股基：" value="这里是内容" />
+                <OtherCommission name="信用场内基金：" value="这里是内容" />
+                <OtherCommission name="港股通（净佣金）：" value="这里是内容" />
+                <OtherCommission name="个股期权：" value="这里是内容" />
+                <OtherCommission name="担保品大宗：" value="这里是内容" />
+                <OtherCommission name="股转：" value="这里是内容" />
+                <OtherCommission name="大宗交易：" value="这里是内容" />
+              </div>
             </div>
           </div>
         </div>

@@ -10,8 +10,9 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { withRouter, routerRedux } from 'dva/router';
 import SplitPanel from '../../components/common/splitPanel/SplitPanel';
+import LeftPanel from '../../components/common/leftPanel';
 import Detail from '../../components/feedback/Detail';
-import FeedbackList from '../../components/feedback/FeedbackList';
+// import FeedbackList from '../../components/feedback/FeedbackList';
 import FeedbackHeader from '../../components/feedback/FeedbackHeader';
 import { constructPostBody } from '../../utils/helper';
 import './home.less';
@@ -140,7 +141,7 @@ export default class FeedBackNew extends PureComponent {
       />
     );
     const leftPanel = (
-      <FeedbackList
+      <LeftPanel
         list={list}
         replace={replace}
         location={location}

@@ -4,8 +4,11 @@ exports.response = function (req, res) {
     "msg": "OK",
     "resultData": {
       "num": "123456456",
-      "baseInfo": {
-        "content": [ 
+      "title": "不知道什么标题",
+      "custNumber": "223232",
+      "custName": "李四",
+      "remark": "备注备注很多很多的备注",
+      "baseInfo": [
           {
             "title": "标题",
             "content": "20170906今天南京又下雨了"
@@ -19,22 +22,19 @@ exports.response = function (req, res) {
             "title": "备注",
             "content": "斯蒂芬斯蒂芬是否斯蒂芬斯蒂芬十点多"
           }
-        ]
-      },
-      "draftInfo": {
-        "content": [
-          {
-            "title": "拟稿",
-            "content": "沈旭祥"
-          }, {
-            "title": "提请时间",
-            "content": "20170906"
-          }, {
-            "title": "状态",
-            "content": "已完成"
-          }
-        ]
-      },
+      ],
+      "draftInfo": [
+        {
+          "title": "拟稿",
+          "content": "沈旭祥"
+        }, {
+          "title": "提请时间",
+          "content": "20170906"
+        }, {
+          "title": "状态",
+          "content": "已完成"
+        }
+      ],
       "serverInfo": [
         {
           "ptyMngId":"0101011",

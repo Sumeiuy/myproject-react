@@ -28,28 +28,13 @@ export default class ServerPersonel extends PureComponent {
       removeSelectedValue: {},
       // 新增服务人员 查询信息列表
       searchList: [],
-      list: [
-        {
-          ptyMngId: '0101017',
-          ptyMngName: '五大',
-          job: '岗位C',
-          businessDepartment: '南京奥体东营业部BBB',
-          isMain: false,
-        }, {
-          ptyMngId: '0101018',
-          ptyMngName: '五三',
-          job: '岗位D',
-          businessDepartment: '南京奥体东营业部CCC',
-          isMain: false,
-        }, {
-          ptyMngId: '0101019',
-          ptyMngName: '无二',
-          job: '岗位F',
-          businessDepartment: '南京奥体东营业部DDD',
-          isMain: false,
-        },
-      ],
     };
+  }
+
+  componentDidMount() {
+    PubSub.serverPersonelList.add((data) => {
+      this.setState({ searchList: data });
+    });
   }
 
   get getModifyDom() { // 只读或者编辑状态下所对应的操作状态
@@ -78,6 +63,7 @@ export default class ServerPersonel extends PureComponent {
               objId="ptyMngId"
               emitSelectItem={this.selectItem}
               emitToSearch={this.toSearchInfo}
+              boxStyle={{ border: '1px solid #d9d9d9' }}
             />
           </div>
           <span
@@ -94,12 +80,6 @@ export default class ServerPersonel extends PureComponent {
     return result;
   }
 
-  componentDIdMount() {
-    PubSub.serverPersonelList.add((data) => {
-      this.setState({ searchList: data });
-    });
-  }
-
   @autobind
   selectItem(item) {
     // 添加选中对象
@@ -110,9 +90,8 @@ export default class ServerPersonel extends PureComponent {
   @autobind
   toSearchInfo(value) {
     // 搜错查询关键字
-    // 通过pubsub触发查询获取服务人员列表
+    // 通过 pubsub 去触发查询获取服务人员列表
     PubSub.dispatchServerPersonelList.dispatch(value);
-    // this.setState({searchList: this.state.list});
   }
 
   @autobind

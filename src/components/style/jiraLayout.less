@@ -1,15 +1,23 @@
 .pageCommonHeader{
   font-size: 14px;
-  .label{
-    margin-right: 5px;
+  .dropDownSelectBox{
+    display: inline-block;
+    width: 12%;
+    margin-right: 20px;
+    vertical-align: middle;
   }
   :global{
+    .commonBtn{
+      float: right;
+      margin-right: 25px;
+    }
     //select边框
     .ant-select{
+      min-width: 120px;
       margin-right: 20px;
       .ant-select-selection{
         background-color: transparent;
-        border-color: transparent;
+        border: 1px solid transparent;
       }
       // 字体颜色大小
       .ant-select-selection__rendered div,
@@ -17,24 +25,30 @@
         color: #33393c;
         font-size: 14px;
       }
+      &.ant-select-open .ant-select-selection{
+        border: 1px solid #348cf0;
+      }
     }
 
     //多选下拉小图标样式
     .ant-select-arrow:before {
-      border: 4px solid transparent;
-      border-top-color: #c2c2c2;
       content: "";
       height: 0;
       position: absolute;
       right: 2px;
       top: 5px;
-      width: 10px;
+      width: 0;
+      height: 0;
+      border: none;
+      border-top: 10px solid #c2c2c2;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
     }
     //清楚单选select小图标旋转
     .ant-select-open .ant-select-arrow:before {
-        -webkit-transform: rotate(0deg);
-        -ms-transform: rotate(0deg);
-        transform: rotate(0deg);
+      -webkit-transform: rotate(0deg);
+      -ms-transform: rotate(0deg);
+      transform: rotate(0deg);
     }
   }
 }

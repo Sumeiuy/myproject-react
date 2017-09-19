@@ -7,6 +7,10 @@ import React, { PureComponent, PropTypes } from 'react';
 import { TreeSelect, Select } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+
+import CommonModal from '../common/biz/CommonModal';
+import Icon from '../common/Icon';
+import Button from '../common/Button';
 import { permissionOptions } from '../../config';
 
 import styles from '../../components/style/jiraLayout.less';
@@ -26,7 +30,15 @@ export default class Pageheader extends PureComponent {
     super(props);
     this.state = {
       value: undefined,
+      commonModal: false,
     };
+  }
+
+  @autobind
+  onOk(modalKey) {
+    this.setState({
+      [modalKey]: false,
+    });
   }
 
   onChange = (value) => {
@@ -45,6 +57,19 @@ export default class Pageheader extends PureComponent {
       },
     });
   }
+  @autobind
+  showModal(modalKey) {
+    this.setState({
+      [modalKey]: true,
+    });
+  }
+
+  @autobind
+  closeModal(modalKey) {
+    this.setState({
+      [modalKey]: false,
+    });
+  }
 
   render() {
     const typeOptions = permissionOptions.typeOptions;
@@ -56,19 +81,28 @@ export default class Pageheader extends PureComponent {
       subType,
       status,
     } } } = this.props;
+    const { commonModal } = this.state;
+    const newModalProps = {
+      modalKey: 'commonModal',
+      title: '这是一个弹出层',
+      onOk: this.onOk,
+      closeModal: this.closeModal,
+      visible: commonModal,
+      size: 'large',
+      children: 'tanchuang',
+    };
     return (
       <div className={styles.pageCommonHeader}>
-        客户:
         <TreeSelect
           showSearch
           style={{ width: '10%' }}
           value={this.state.value}
           dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-          placeholder="全部"
+          placeholder="合约名称"
           allowClear
           treeDefaultExpandAll
           onChange={this.onChange}
-          searchPlaceholder="经济客户号/客户名称"
+          searchPlaceholder="合约编号/合约名称/客户号/客户名称"
         />
 
         子类型:
@@ -136,6 +170,8 @@ export default class Pageheader extends PureComponent {
             </TreeNode>
           </TreeNode>
         </TreeSelect>
+        <Button type="primary" onClick={() => this.showModal('commonModal')}><Icon type="jia" />新建</Button>
+        <CommonModal {...newModalProps} />
       </div>
     );
   }

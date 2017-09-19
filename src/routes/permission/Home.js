@@ -12,17 +12,19 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import { constructSeibelPostBody } from '../../utils/helper';
 import SplitPanel from '../../components/common/splitPanel/SplitPanel';
-import PageHeader from '../../components/permission/PageHeader';
+import PermissionHeader from '../../components/common/biz/SeibelHeader';
 import Detail from '../../components/permission/Detail';
 import PermissionList from '../../components/common/biz/CommonList';
 import seibelColumns from '../../components/common/biz/seibelColumns';
 import PubSub from '../../utils/pubsub';
+import { permissionOptions } from '../../config';
 import styles from './home.less';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
-
+const typeOptions = permissionOptions.typeOptions;
+const stateOptions = permissionOptions.stateOptions;
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
   payload: query || {},
@@ -33,13 +35,20 @@ const mapStateToProps = state => ({
   detailMessage: state.permission.detailMessage,
   list: state.permission.list,
   serverPersonelList: state.permission.serverPersonelList,
+  // 拟稿人
+  drafterList: state.permission.drafterList,
 });
 
 const mapDispatchToProps = {
   replace: routerRedux.replace,
+  // 获取右侧详情
   getDetailMessage: fetchDataFunction(true, 'permission/getDetailMessage'),
+  // 获取左侧列表
   getPermissionList: fetchDataFunction(true, 'permission/getPermissionList'),
+  // 获取服务人员列表
   getServerPersonelList: fetchDataFunction(true, 'permission/getServerPersonelList'),
+  // 获取拟稿人
+  getDrafterList: fetchDataFunction(true, 'permission/getDrafterList'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -47,7 +56,9 @@ const mapDispatchToProps = {
 export default class Permission extends PureComponent {
   static propTypes = {
     list: PropTypes.object.isRequired,
+    drafterList: PropTypes.array.isRequired,
     getPermissionList: PropTypes.func.isRequired,
+    getDrafterList: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     detailMessage: PropTypes.object.isRequired,
     getDetailMessage: PropTypes.func.isRequired,
@@ -174,13 +185,34 @@ export default class Permission extends PureComponent {
     // pubsub 监听事件
     this.props.getServerPersonelList({ id: data });
   }
+
+  @autobind
+  toSearchDrafter(value) {
+    // 查询拟稿人
+    this.props.getDrafterList({
+      empId: value,
+    });
+  }
+
+  // 头部新建页面
+  @autobind
+  creatPermossionModal() {
+    console.log('新建');
+  }
+
   render() {
-    const { list, location, replace } = this.props;
+    const { list, location, replace, drafterList } = this.props;
     const { isEmpty } = this.state;
     const topPanel = (
-      <PageHeader
+      <PermissionHeader
         location={location}
         replace={replace}
+        page="premissionPage"
+        typeOptions={typeOptions}
+        stateOptions={stateOptions}
+        creatSeibelModal={this.creatPermossionModal}
+        toSearchDrafter={this.toSearchDrafter}
+        drafterList={drafterList}
       />
     );
 
