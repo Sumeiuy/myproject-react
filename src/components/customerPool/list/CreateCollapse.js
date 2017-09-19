@@ -82,13 +82,6 @@ export default class CreateCollapse extends PureComponent {
     return newDate;
   }
 
-  renderServeTime(serveTime, index) {
-    if (!_.isEmpty(serveTime) && !_.isEmpty(serveTime[index])) {
-      return `${serveTime[index].yearTime || ''} ${serveTime[index].dayTime || ''}`;
-    }
-    return '';
-  }
-
   renderPanel(serveTime) {
     const { data, executeTypes } = this.props;
     const { currentActiveIndex } = this.state;
