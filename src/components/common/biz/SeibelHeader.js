@@ -27,11 +27,14 @@ export default class Pageheader extends PureComponent {
     toSearchDrafter: PropTypes.func.isRequired,
     // 拟稿人数据
     drafterList: PropTypes.array,
+    // 部门
+    empOrgTreeList: PropTypes.object,
   }
 
   static defaultProps = {
     page: '',
     drafterList: [],
+    empOrgTreeList: {},
   }
   constructor(props) {
     super(props);
@@ -50,7 +53,15 @@ export default class Pageheader extends PureComponent {
   @autobind
   selectItem(item) {
     // 选中下拉对象中对应的某个对象
-    console.log('向上传递选中的对象', item);
+    const { replace, location: { pathname, query } } = this.props;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        keyword: item.empId,
+        isResetPageNum: 'Y',
+      },
+    });
   }
 
   @autobind
@@ -125,8 +136,8 @@ export default class Pageheader extends PureComponent {
             value="全部"
             placeholder="工号/名称"
             searchList={drafterList}
-            showObjKey="custName2"
-            objId="custNumber2"
+            showObjKey="empName"
+            objId="empId"
             emitSelectItem={this.selectItem}
             emitToSearch={toSearchDrafter}
           />
@@ -144,6 +155,7 @@ export default class Pageheader extends PureComponent {
             emitToSearch={this.toSearchInfo}
           />
         </div>
+
         <Button
           type="primary"
           icon="plus"

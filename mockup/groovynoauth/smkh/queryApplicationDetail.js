@@ -4,24 +4,20 @@ exports.response = function (req, res) {
     "msg": "OK",
     "resultData": {
       "num": "123456456",
-      "title": "不知道什么标题",
-      "custNumber": "223232",
-      "custName": "李四",
-      "remark": "备注备注很多很多的备注",
-      "baseInfo": [
-          {
-            "title": "标题",
-            "content": "20170906今天南京又下雨了"
-          }, {
-            "title": "子类型",
-            "content": "私密客户思密达"
-          }, {
-            "title": "客户",
-            "content": "张三"
-          }, {
-            "title": "备注",
-            "content": "斯蒂芬斯蒂芬是否斯蒂芬斯蒂芬十点多"
-          }
+      "baseInfo": [ 
+        {
+          "title": "标题",
+          "content": "20170906今天南京又下雨了"
+        }, {
+          "title": "子类型",
+          "content": "私密客户思密达"
+        }, {
+          "title": "客户",
+          "content": "张三"
+        }, {
+          "title": "备注",
+          "content": "斯蒂芬斯蒂芬是否斯蒂芬斯蒂芬十点多"
+        }
       ],
       "draftInfo": [
         {
@@ -84,20 +80,6 @@ exports.response = function (req, res) {
         "beginTime":"20170910",
         "suggestion":"意见是真他妈的多呀！多的不得了！！！！",
         "isOk": true,
-        }, {
-        "stepName":"分公司负责人审批",
-        "approvalId":"001003",
-        "approvlName":"周延",
-        "beginTime":"20170901",
-        "suggestion":"审批意见很多意见超级多的意见",
-        "isOk": false,
-        }, {
-        "stepName":"分公司负责人审批",
-        "approvalId":"001003",
-        "approvlName":"周延",
-        "beginTime":"20170901",
-        "suggestion":"审批意见很多意见超级多的意见",
-        "isOk": false,
         }, {
         "stepName":"分公司负责人审批",
         "approvalId":"001003",

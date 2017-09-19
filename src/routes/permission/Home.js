@@ -37,6 +37,12 @@ const mapStateToProps = state => ({
   serverPersonelList: state.permission.serverPersonelList,
   // 拟稿人
   drafterList: state.permission.drafterList,
+  // 部门
+  empOrgTreeList: state.permission.empOrgTreeList,
+  // 子类型
+  childTypeList: state.permission.childTypeList,
+  // 客户
+  customerList: state.permission.customerList,
 });
 
 const mapDispatchToProps = {
@@ -49,6 +55,12 @@ const mapDispatchToProps = {
   getServerPersonelList: fetchDataFunction(true, 'permission/getServerPersonelList'),
   // 获取拟稿人
   getDrafterList: fetchDataFunction(true, 'permission/getDrafterList'),
+  // 获取部门
+  getEmpOrgTree: fetchDataFunction(true, 'permission/getEmpOrgTree'),
+  // 获取子类型
+  getChildTypeList: fetchDataFunction(true, 'permission/getChildTypeList'),
+ // 获取客户列表
+  getCustomerList: fetchDataFunction(true, 'permission/getCustomerList'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -57,6 +69,7 @@ export default class Permission extends PureComponent {
   static propTypes = {
     list: PropTypes.object.isRequired,
     drafterList: PropTypes.array.isRequired,
+    empOrgTreeList: PropTypes.object.isRequired,
     getPermissionList: PropTypes.func.isRequired,
     getDrafterList: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
@@ -65,6 +78,10 @@ export default class Permission extends PureComponent {
     replace: PropTypes.func.isRequired,
     serverPersonelList: PropTypes.array.isRequired,
     getServerPersonelList: PropTypes.func.isRequired,
+    getChildTypeList: PropTypes.func.isRequired,
+    childTypeList: PropTypes.array.isRequired,
+    getCustomerList: PropTypes.func.isRequired,
+    customerList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -89,8 +106,12 @@ export default class Permission extends PureComponent {
   }
 
   componentDidMount() {
-    // 建立通过观察者模式对dispatchServerPersonelList的监听
-    PubSub.dispatchServerPersonelList.add(this.pubsubAdd);
+    // 建立通过观察者模式对获取 查询服务人员列表 监听
+    PubSub.dispatchServerPersonelList.add(this.emitAsyncGetServerPersonelList);
+    // 建立通过观察者模式对获取 子类型 监听
+    PubSub.dispatchChildTypeList.add(this.emitAsyncGetChildTypeList);
+    // 建立通过观察者模式对获取 客户列表 监听
+    PubSub.dispatchCustomerList.add(this.emitAsyncGetCustomerList);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -113,6 +134,16 @@ export default class Permission extends PureComponent {
     if (nextProps.serverPersonelList !== this.props.serverPersonelList) {
       // 通过观察者模式对serverPersonelList数据监听
       PubSub.serverPersonelList.dispatch(nextProps.serverPersonelList);
+    }
+
+    if (nextProps.childTypeList !== this.props.childTypeList) {
+      // 通过观察者模式对childTypeList数据监听
+      PubSub.childTypeList.dispatch(nextProps.childTypeList);
+    }
+
+    if (nextProps.customerList !== this.props.customerList) {
+      // 通过观察者模式对customerList数据监听
+      PubSub.customerList.dispatch(nextProps.customerList);
     }
   }
 
@@ -142,11 +173,13 @@ export default class Permission extends PureComponent {
   }
 
   componentWillUnmount() {
-    // 销毁之前 清楚观察者模式的监听
-    PubSub.dispatchServerPersonelList.remove(this.pubsubAdd);
+    // 销毁
+    PubSub.dispatchServerPersonelList.remove(this.emitAsyncGetServerPersonelList);
+    PubSub.dispatchChildTypeList.remove(this.emitAsyncGetChildTypeList);
+    PubSub.dispatchCustomerList.remove(this.emitAsyncGetCustomerList);
   }
 
-  get getDetailComponent() {
+  get detailComponent() {
     if (_.isEmpty(this.props.detailMessage)) {
       return null;
     }
@@ -181,9 +214,21 @@ export default class Permission extends PureComponent {
   }
 
   @autobind
-  pubsubAdd(data) {
+  emitAsyncGetServerPersonelList(data) {
     // pubsub 监听事件
     this.props.getServerPersonelList({ id: data });
+  }
+
+  @autobind
+  emitAsyncGetChildTypeList(data) {
+    // pubsub 监听事件
+    this.props.getChildTypeList({ id: data });
+  }
+
+  @autobind
+  emitAsyncGetCustomerList(data) {
+    // pubsub 监听事件
+    this.props.getCustomerList({ id: data });
   }
 
   @autobind
@@ -201,7 +246,7 @@ export default class Permission extends PureComponent {
   }
 
   render() {
-    const { list, location, replace, drafterList } = this.props;
+    const { list, location, replace, drafterList, empOrgTreeList } = this.props;
     const { isEmpty } = this.state;
     const topPanel = (
       <PermissionHeader
@@ -213,6 +258,7 @@ export default class Permission extends PureComponent {
         creatSeibelModal={this.creatPermossionModal}
         toSearchDrafter={this.toSearchDrafter}
         drafterList={drafterList}
+        empOrgTreeList={empOrgTreeList}
       />
     );
 
@@ -227,7 +273,7 @@ export default class Permission extends PureComponent {
 
     const rightPanel = (
       <Col span="24" className={styles.rightSection}>
-        {this.getDetailComponent}
+        {this.detailComponent}
       </Col>
     );
     return (

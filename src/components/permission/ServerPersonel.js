@@ -13,7 +13,7 @@ export default class ServerPersonel extends PureComponent {
     head: PropTypes.string.isRequired,
     info: PropTypes.array.isRequired,
     statusType: PropTypes.string.isRequired,
-    emitEvent: PropTypes.func.isRequired,
+    onEmitEvent: PropTypes.func.isRequired,
     type: PropTypes.string.isRequired,
   }
 
@@ -32,12 +32,14 @@ export default class ServerPersonel extends PureComponent {
   }
 
   componentDidMount() {
-    PubSub.serverPersonelList.add((data) => {
-      this.setState({ searchList: data });
-    });
+    PubSub.serverPersonelList.add(this.updateSearchListValue);
   }
 
-  get getModifyDom() { // 只读或者编辑状态下所对应的操作状态
+  componentWillUnmount() {
+    PubSub.serverPersonelList.remove(this.updateSearchListValue);
+  }
+
+  get modifyDom() { // 只读或者编辑状态下所对应的操作状态
     let result;
     if (this.props.statusType === 'ready') {
       result = (
@@ -105,7 +107,7 @@ export default class ServerPersonel extends PureComponent {
       this.setState(prevState => ({
         serverInfo: prevState.serverInfo.concat(this.state.addSelectedValue),
       }), () => {
-        this.props.emitEvent(this.props.type, this.state.serverInfo);
+        this.props.onEmitEvent(this.props.type, this.state.serverInfo);
       });
     }
   }
@@ -119,16 +121,21 @@ export default class ServerPersonel extends PureComponent {
           item => item.ptyMngId !== removeSelectedValue.ptyMngId,
         ),
       }), () => {
-        this.props.emitEvent(this.props.type, this.state.serverInfo);
+        this.props.onEmitEvent(this.props.type, this.state.serverInfo);
       });
     }
+  }
+
+  @autobind
+  updateSearchListValue(data) {
+    this.setState({ searchList: data });
   }
 
   render() {
     return (
       <div className={style.serverPersonel}>
         <InfoTitle head={this.props.head} />
-        {this.getModifyDom}
+        {this.modifyDom}
         <TableList
           info={this.state.serverInfo}
           statusType={this.props.statusType}

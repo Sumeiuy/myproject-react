@@ -9,26 +9,56 @@ import SearchModal from '../common/biz/SearchModal';
 import DropdownSelect from '../common/dropdownSelect';
 import columns from './PermissionColumns';
 import Icon from '../common/Icon';
+import PubSub from '../../utils/pubsub';
 
 export default class BaseInfoModify extends PureComponent {
   static propTypes = {
     head: PropTypes.string.isRequired,
-    // 暂时定义的对象
-    serverInfo: PropTypes.array,
     baseInfo: PropTypes.array,
   }
 
   static defaultProps = {
-    serverInfo: [],
     baseInfo: [],
   }
 
   constructor() {
     super();
     this.state = {
+      // 标题
       title: '标题是什么',
+      // 备注
       remarks: '此处省略一万个字...',
+      // 客户类型
+      customer: '',
+      // 子类型
+      childType: '',
+      // 子类型列表
+      childTypeList: [],
+      // 客户列表
+      customerList: [],
     };
+  }
+
+  componentDidMount() {
+    // 子类型触发
+    PubSub.childTypeList.add(this.updateChildTypeListValue);
+    // 客户列表触发
+    PubSub.customerList.add(this.updateCustomerListValue);
+  }
+
+  componentWillUnmount() {
+    PubSub.childTypeList.remove(this.updateChildTypeListValue);
+    PubSub.customerList.remove(this.updateCustomerListValue);
+  }
+
+  @autobind
+  updateCustomerListValue(data) {
+    this.setState({ customerList: data });
+  }
+
+  @autobind
+  updateChildTypeListValue(data) {
+    this.setState({ childTypeList: data });
   }
 
   @autobind
@@ -46,7 +76,13 @@ export default class BaseInfoModify extends PureComponent {
   @autobind
   searchChildTypeList(value) {
     // 按 关键字 查询 子类型 列表
-    console.log(value);
+    PubSub.dispatchChildTypeList.dispatch(value);
+  }
+
+  @autobind
+  selectChildType(value) {
+    // 选择子类型
+    console.log('#####handleOk######', value);
   }
 
   @autobind
@@ -58,13 +94,7 @@ export default class BaseInfoModify extends PureComponent {
   @autobind
   searchCustomerList(value) {
     // 按照 关键字 查询 客户 列表
-    console.log('暴露的查询方法，向上传递value', value);
-  }
-
-  @autobind
-  selectChildType(value) {
-    // 选择子类型
-    console.log('#####handleOk######', value);
+    PubSub.dispatchCustomerList.dispatch(value);
   }
 
   @autobind
@@ -96,7 +126,7 @@ export default class BaseInfoModify extends PureComponent {
             <InputTextComponent
               value={this.state.title}
               placeholder="请输入标题"
-              emitEvent={this.updateTitle}
+              onEmitEvent={this.updateTitle}
             />
           </div>
         </div>
@@ -108,9 +138,9 @@ export default class BaseInfoModify extends PureComponent {
             <DropdownSelect
               value="全部"
               placeholder="经济客户号/客户名称"
-              searchList={this.state.list}
+              searchList={this.state.customerList}
               showObjKey="custName"
-              objId="custNumber"
+              objId="cusId"
               emitSelectItem={this.selectCustomer}
               emitToSearch={this.searchCustomerList}
               boxStyle={{ border: '1px solid #d9d9d9' }}
@@ -126,19 +156,18 @@ export default class BaseInfoModify extends PureComponent {
               onOk={this.selectChildType}
               columns={columns}
               title="选择下一审批人员"
-              dataSource={this.props.serverInfo}
+              dataSource={this.state.childTypeList}
               placeholder=""
               onSearch={this.searchChildTypeList}
               renderSelected={this.renderSelectedElem}
               rowKey="ptyMngId"
             />
-
           </div>
         </div>
         <TextareaComponent
           title="备注"
           value={this.state.remarks}
-          emitEvent={this.changeRemarks}
+          onEmitEvent={this.changeRemarks}
           placeholder="请输入您的备注信息"
         />
       </div>

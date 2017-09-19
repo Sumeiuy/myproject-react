@@ -22,7 +22,7 @@ export default class MessageList extends PureComponent {
     baseInfo: [],
   }
 
-  get getEleMap() {
+  get eleMap() {
     const result = this.props.baseInfo.map((item, index) => {
       const tabIndex = `MgsList${index}`;
       return (
@@ -38,7 +38,7 @@ export default class MessageList extends PureComponent {
       <div className={style.messageListComponent}>
         <InfoTitle head={head} />
         <div className={style.mlcContent}>
-          {this.getEleMap}
+          {this.eleMap}
         </div>
       </div>
     );

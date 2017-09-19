@@ -16,8 +16,8 @@ import BaseInfoModify from './BaseInfoModify';
 export default class Detail extends PureComponent {
   static propTypes = {
     num: PropTypes.string,
-    baseInfo: PropTypes.object,
-    draftInfo: PropTypes.object,
+    baseInfo: PropTypes.array,
+    draftInfo: PropTypes.array,
     serverInfo: PropTypes.array,
     approvalRecordList: PropTypes.array,
     dispatchServerPersonelList: PropTypes.func.isRequired,
@@ -25,8 +25,8 @@ export default class Detail extends PureComponent {
 
   static defaultProps = {
     num: '',
-    baseInfo: {},
-    draftInfo: {},
+    baseInfo: [],
+    draftInfo: [],
     serverInfo: [],
     approvalRecordList: [],
   }
@@ -51,23 +51,6 @@ export default class Detail extends PureComponent {
     };
   }
 
-  get getApprovalDom() {
-    let result;
-    if (this.state.statusType === 'ready') {
-      result = null;
-    } else {
-      result = (
-        <Approval
-          head="审批"
-          type="approvalComments"
-          textValue={this.state.approvalComments}
-          emitEvent={this.updateValue}
-        />
-      );
-    }
-    return result;
-  }
-
   get getBaseInfoModifyDom() {
     let result;
     if (this.state.statusType === 'ready') {
@@ -83,6 +66,23 @@ export default class Detail extends PureComponent {
           head="基本信息"
           serverInfo={this.state.serverInfo}
           baseInfo={this.state.baseInfo}
+        />
+      );
+    }
+    return result;
+  }
+
+  get approvalDom() {
+    let result;
+    if (this.state.statusType === 'ready') {
+      result = null;
+    } else {
+      result = (
+        <Approval
+          head="审批"
+          type="approvalComments"
+          textValue={this.state.approvalComments}
+          emitEvent={this.updateValue}
         />
       );
     }
@@ -120,7 +120,7 @@ export default class Detail extends PureComponent {
           statusType={this.state.statusType}
           emitEvent={this.updateValue}
         />
-        {this.getApprovalDom}
+        {this.approvalDom}
         <ApprovalRecord
           head="审批记录"
           info={approvalRecordList}
