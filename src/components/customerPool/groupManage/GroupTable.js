@@ -128,12 +128,8 @@ export default class GroupTable extends PureComponent {
    * 构造数据源
    */
   renderTableDatas(dataSource) {
-    const newDataSource = [];
-    if (dataSource.length > 0) {
-      dataSource.forEach((currentValue, index) =>
-        newDataSource.push(_.merge(currentValue, { key: index })),
-      );
-    }
+    let newDataSource = [];
+    newDataSource = _.map(dataSource, (item, index) => _.merge(item, { key: index }));
 
     return newDataSource;
   }

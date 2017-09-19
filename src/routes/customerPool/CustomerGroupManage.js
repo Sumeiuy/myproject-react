@@ -4,8 +4,9 @@ import { connect } from 'react-redux';
 import { withRouter, routerRedux } from 'dva/router';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
-import { Button } from 'antd';
-import _ from 'lodash';
+// import { Button } from 'antd';
+// import _ from 'lodash';
+import Button from '../../components/common/Button';
 import GroupTable from '../../components/customerPool/groupManage/GroupTable';
 import CustomerGroupSearch from '../../components/customerPool/groupManage/CustomerGroupListSearch';
 import styles from './customerGroupManage.less';
@@ -56,26 +57,39 @@ export default class CustomerGroupManage extends PureComponent {
     });
   }
 
-  componentWillReceiveProps(nextProps) {
-    const {
-      replace,
-      location: { query, query: { curPageNum }, pathname },
-    } = this.props;
-    const { customerGroupList: nextCustomerGroupList = EMPTY_OBJECT } = nextProps;
-    const { page: nextPage = EMPTY_OBJECT } = nextCustomerGroupList;
-    const { curPageNum: nextPageNum = 1, pageSize } = nextPage;
+  componentDidMount() {
+    const { replace, location: { query, pathname } } = this.props;
     // 初始化，url上加上页码，页目
-    if (nextPageNum === 1 && _.isEmpty(curPageNum)) {
-      replace({
-        pathname,
-        query: {
-          ...query,
-          curPageNum: nextPageNum,
-          curPageSize: pageSize,
-        },
-      });
-    }
+    replace({
+      pathname,
+      query: {
+        ...query,
+        curPageNum: 1,
+        curPageSize: 10,
+      },
+    });
   }
+
+  // componentWillReceiveProps(nextProps) {
+  // const {
+  //   replace,
+  //   location: { query, query: { curPageNum }, pathname },
+  // } = this.props;
+  // const { customerGroupList: nextCustomerGroupList = EMPTY_OBJECT } = nextProps;
+  // const { page: nextPage = EMPTY_OBJECT } = nextCustomerGroupList;
+  // const { curPageNum: nextPageNum = 1, pageSize } = nextPage;
+  // // 初始化，url上加上页码，页目
+  // if (nextPageNum === 1 && _.isEmpty(curPageNum)) {
+  //   replace({
+  //     pathname,
+  //     query: {
+  //       ...query,
+  //       curPageNum: nextPageNum,
+  //       curPageSize: pageSize,
+  //     },
+  //   });
+  // }
+  // }
 
   /**
    * 页码改变事件，翻页事件
