@@ -26,9 +26,14 @@ const EMPTY_OBJECT = {};
 let modalKeyCount = 0;
 let finded = 0;// 邮件联系
 let addresses = '';
+let followOnoff = false;
+let operateType = null;
+let change = {};
 
 export default class CustomerLists extends PureComponent {
   static propTypes = {
+    fllowCustData: PropTypes.object,
+    followLoading: PropTypes.bool,
     empInfo: PropTypes.object,
     page: PropTypes.object.isRequired,
     custList: PropTypes.array.isRequired,
@@ -56,7 +61,6 @@ export default class CustomerLists extends PureComponent {
     isAddServeRecord: PropTypes.bool.isRequired,
     dict: PropTypes.object.isRequired,
     isSms: PropTypes.bool.isRequired,
-    isFollow: PropTypes.bool.isRequired,
     isGetCustIncome: PropTypes.bool.isRequired,
   }
 
@@ -65,6 +69,8 @@ export default class CustomerLists extends PureComponent {
     curPageNum: null,
     q: '',
     empInfo: {},
+    fllowCustData: {},
+    followLoading: false,
   }
 
   constructor(props) {
@@ -79,11 +85,10 @@ export default class CustomerLists extends PureComponent {
       isSms: false,
       currentEmailCustId: '',
       email: '',
-      follow: false,
+      isFollows: {},
       currentFollowCustId: '',
     };
   }
-
   componentDidMount() {
     this.setTaskAndGroup();
     const sidebarHideBtn = document.querySelector(fspContainer.sidebarHideBtn);
@@ -92,23 +97,29 @@ export default class CustomerLists extends PureComponent {
       sidebarHideBtn.addEventListener('click', this.updateLeftPos);
       sidebarShowBtn.addEventListener('click', this.updateLeftPos);
     }
+    // console.log('this.props----', this.props);
   }
   componentWillReceiveProps(nextProps) {
     const {
       custContactData: prevCustContactData = EMPTY_OBJECT,
       serviceRecordData: prevServiceRecordData = EMPTY_ARRAY,
+      followLoading: preFL,
      } = this.props;
     const {
       custContactData: nextCustContactData = EMPTY_OBJECT,
       serviceRecordData: nextServiceRecordData = EMPTY_ARRAY,
+      followLoading,
+      fllowCustData,
      } = nextProps;
-    // console.log(nextProps.custContactData);
-    const { currentCustId, isShowContactModal } = this.state;
+    const { currentCustId, isShowContactModal, currentFollowCustId } = this.state;
     const prevContact = prevCustContactData[currentCustId] || EMPTY_OBJECT;
     const nextContact = nextCustContactData[currentCustId] || EMPTY_OBJECT;
     const prevRecord = prevServiceRecordData[currentCustId] || EMPTY_OBJECT;
     const nextRecord = nextServiceRecordData[currentCustId] || EMPTY_OBJECT;
-    if ((prevContact !== nextContact || prevRecord !== nextRecord) && onOff === false) {
+    let isFollows = {};
+    const { result } = fllowCustData || '';
+    if ((prevContact !== nextContact || prevRecord !== nextRecord) &&
+        onOff === false && followOnoff === false) {
       if (!isShowContactModal) {
         this.setState({
           isShowContactModal: true,
@@ -116,13 +127,50 @@ export default class CustomerLists extends PureComponent {
         });
       }
     }
-    // console.log(nextContact);
     if (onOff) {
       if (_.size(nextContact) !== 0) {
         addresses = nextContact;
         this.getEmailData(addresses);
       }
       onOff = false;
+    }
+    if (preFL && !followLoading) {
+      if (result === 'success') {
+        if (!this.state.isFollows[currentFollowCustId]) {
+          message.success('关注成功，并添加到“我关注的客户”分组');
+          change = {
+            ...this.state.isFollows,
+            ...{ [currentFollowCustId]: true },
+          };
+          this.setState({
+            isFollows: change,
+          });
+        } else {
+          message.success('已取消关注');
+          change = {
+            ...this.state.isFollows,
+            ...{ [currentFollowCustId]: false },
+          };
+          this.setState({
+            isFollows: change,
+          });
+        }
+      }
+    }
+    if (nextProps.custList !== this.props.custList) {
+      // console.log(111111111);
+      nextProps.custList.map((item) => {
+        isFollows = {
+          ...isFollows,
+          [item.custId]: item.whetherExist,
+        };
+        return isFollows;
+      });
+      // console.log(isFollows);
+      this.setState({
+        ...this.state.isFollows,
+        isFollows,
+      });
     }
   }
   componentDidUpdate() {
@@ -151,15 +199,16 @@ export default class CustomerLists extends PureComponent {
   getEmailData(address) {
     if (address.orgCustomerContactInfoList !== undefined) {
       const index = _.findLastIndex(address.orgCustomerContactInfoList,
-          val => val.mainFlag === true);
+          val => val.mainFlag);
       finded = _.findLastIndex(address.orgCustomerContactInfoList[index].emailAddresses,
-          val => val.mainFlag === true);
+          val => val.mainFlag);
       addresses = address.orgCustomerContactInfoList[index];
     } else {
       finded = _.findLastIndex(address.perCustomerContactInfo.emailAddresses,
-          val => val.mainFlag === true);
+          val => val.mainFlag);
       addresses = address.perCustomerContactInfo;
     }
+    // console.warn('emailAddresses-------', addresses.emailAddresses[finded].contactValue)
     if (finded !== -1) {
       this.setState({
         email: addresses.emailAddresses[finded].contactValue,
@@ -361,6 +410,7 @@ export default class CustomerLists extends PureComponent {
         custId,
       });
     });
+    followOnoff = false;
   }
 
   @autobind
@@ -395,32 +445,24 @@ export default class CustomerLists extends PureComponent {
   addFollow(item) {
     const { getFollowCust } = this.props;
     const { custId, empId } = item;
-    let operateType = null;
-    if (!this.state.follow) {
-      // console.log('您已关注');
-      this.setState({
-        follow: !this.state.follow,
-        currentFollowCustId: custId,
-      });
+    if (!this.state.isFollows[custId]) {
       operateType = 'new';
       getFollowCust({
         empId, operateType, custId,
       });
-      // console.log(this.state.follow);
-    } else {
-      // console.log('您已取消关注');
       this.setState({
-        follow: !this.state.follow,
         currentFollowCustId: custId,
       });
-      // console.log(this.state.follow);
+    } else {
       operateType = 'delete';
       getFollowCust({
         empId, operateType, custId,
       });
+      this.setState({
+        currentFollowCustId: custId,
+      });
     }
   }
-
   /**
  * 回调，关闭modal打开state
  */
@@ -464,11 +506,12 @@ export default class CustomerLists extends PureComponent {
       email,
       currentEmailCustId,
       currentFollowCustId,
-      follow,
       isShowContactModal,
       currentCustId,
       custType,
       modalKey,
+      isFollows,
+      // isEmail,
     } = this.state;
 
     const {
@@ -564,7 +607,8 @@ export default class CustomerLists extends PureComponent {
                 email={email}
                 currentEmailCustId={currentEmailCustId}
                 currentFollowCustId={currentFollowCustId}
-                follow={follow}
+                isFollows={isFollows}
+                // isEmail={isEmail}
                 isGetCustIncome={isGetCustIncome}
               />,
             )

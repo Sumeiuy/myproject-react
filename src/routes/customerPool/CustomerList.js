@@ -71,7 +71,8 @@ const mapStateToProps = state => ({
   cycle: state.customerPool.dict.kPIDateScopeType,  // 统计周期
   addServeRecordSuccess: state.customerPool.addServeRecordSuccess,
   isAddServeRecord: state.customerPool.isAddServeRecord,
-  isFollow: state.customerPool.isFollow,
+  followLoading: state.customerPool.followLoading, // 关注成功
+  fllowCustData: state.customerPool.fllowCustData,
   isGetCustIncome: state.customerPool.isGetCustIncome,
 });
 
@@ -117,7 +118,8 @@ export default class CustomerList extends PureComponent {
     addServeRecord: PropTypes.func.isRequired, // 添加服务记录
     addServeRecordSuccess: PropTypes.bool.isRequired,
     isAddServeRecord: PropTypes.bool.isRequired,
-    isFollow: PropTypes.bool.isRequired,
+    fllowCustData: PropTypes.object,
+    followLoading: PropTypes.bool,
     isGetCustIncome: PropTypes.bool.isRequired,
   }
 
@@ -129,6 +131,8 @@ export default class CustomerList extends PureComponent {
     custContactData: EMPTY_OBJECT,
     serviceRecordData: EMPTY_OBJECT,
     cycle: EMPTY_LIST,
+    fllowCustData: {},
+    followLoading: false,
   }
 
   constructor(props) {
@@ -537,7 +541,8 @@ export default class CustomerList extends PureComponent {
       addServeRecord,
       addServeRecordSuccess,
       isAddServeRecord,
-      isFollow,
+      followLoading,
+      fllowCustData,
       isGetCustIncome,
     } = this.props;
     const {
@@ -625,7 +630,8 @@ export default class CustomerList extends PureComponent {
           addServeRecord={addServeRecord}
           addServeRecordSuccess={addServeRecordSuccess}
           isAddServeRecord={isAddServeRecord}
-          isFollow={isFollow}
+          fllowCustData={fllowCustData}
+          followLoading={followLoading}
         />
       </div>
     );

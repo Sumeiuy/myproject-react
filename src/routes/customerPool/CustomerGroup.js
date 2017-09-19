@@ -210,6 +210,7 @@ export default class CustomerGroup extends PureComponent {
       }
       param.groupId = groupId;
       param.empId = helper.getEmpId();
+      console.log(param);
       this.props.addCustomerToGroup({ ...param });
     } else {
       message.error('请选择分组');

@@ -38,7 +38,7 @@ export default class CustomerGrouplist extends PureComponent {
           total: cusgroupPage.total,
           size: 'small',
           onChange: this.handleChange,
-          showTotal: total => (`共${total}项`),
+          showTotal: total => (`共${total}页`),
           showSizeChanger: true,
           onShowSizeChange: onSizeChange,
         }}

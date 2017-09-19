@@ -9,7 +9,6 @@ import React, { PureComponent, PropTypes } from 'react';
 import { Checkbox } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import classnames from 'classnames';
 
 // import CreateContactModal from './CreateContactModal';
 import Icon from '../../common/Icon';
@@ -170,7 +169,8 @@ export default class CustomerRow extends PureComponent {
     email: PropTypes.string.isRequired,
     currentEmailCustId: PropTypes.string.isRequired,
     currentFollowCustId: PropTypes.string.isRequired,
-    follow: PropTypes.bool.isRequired,
+    isFollows: PropTypes.object.isRequired,
+    // isEmail: PropTypes.bool.isRequired,
     isGetCustIncome: PropTypes.bool.isRequired,
   }
 
@@ -199,9 +199,7 @@ export default class CustomerRow extends PureComponent {
       currentCustId: '',
       custType: '',
       checked: false,
-      followClass: null,
     };
-
     this.businessConfig = new Map();
     custBusinessType.forEach((v) => {
       this.businessConfig.set(v.key, v.value);
@@ -221,9 +219,6 @@ export default class CustomerRow extends PureComponent {
       unit,
       newAsset,
       isShowCharts: false,
-    });
-    this.state.followClass = classnames({
-      [styles.follows]: this.props.follow,
     });
   }
   componentWillReceiveProps(nextProps) {
@@ -246,22 +241,21 @@ export default class CustomerRow extends PureComponent {
         });
       }
     }
-    if (nextProps.currentFollowCustId !== '') {
-      const followClass = classnames({
-        [styles.follows]: nextProps.follow,
-      });
-      this.setState({
-        followClass,
-      });
-    }
+    // this.setState({
+    //   checked: nextProps.isAllSelect,
+    // });
   }
   componentDidUpdate() {
-    if (this.props.email !== '') {
+    console.log(this.props.email !== '' && this.props.currentEmailCustId === this.props.listItem.custId);
+    console.warn(this.props.currentEmailCustId);
+    console.warn(this.props.listItem.custId);
+    if (this.props.email !== '' && this.props.currentEmailCustId === this.props.listItem.custId) {
+      // debugger;
+      console.log(this.sendEmail);
       const evt = new MouseEvent('click', { bubbles: false, cancelable: false, view: window });
-      document.querySelector('#sendEmail').dispatchEvent(evt);
+      this.sendEmail.dispatchEvent(evt);
     }
   }
-
   getLastestData(arr) {
     if (arr && arr instanceof Array && arr.length !== 0) {
       return arr[arr.length - 1];
@@ -469,9 +463,9 @@ export default class CustomerRow extends PureComponent {
       email,
       addFollow,
       currentFollowCustId,
-      follow,
       createContact,
       createServiceRecord,
+      isFollows,
       isGetCustIncome,
     } = this.props;
     const {
@@ -498,15 +492,15 @@ export default class CustomerRow extends PureComponent {
                 </li>
                 <li onClick={() => toEmail(listItem)}>
                   <Icon type="youjian" />
-                  <span>{currentEmailCustId === listItem.custId && email ? <a id={email && currentEmailCustId === listItem.custId ? 'sendEmail' : ''} href={`mailto:${email}`} > 邮件联系 </a> : '邮件联系' }</span>
+                  <span>{currentEmailCustId === listItem.custId && email ? <a ref={ref => this.sendEmail = ref} href={`mailto:${email}`} > 邮件联系 </a> : '邮件联系' }</span>
                 </li>
                 <li onClick={() => createServiceRecord(listItem)}>
                   <Icon type="jilu" />
                   <span>添加服务记录</span>
                 </li>
-                <li onClick={() => addFollow(listItem)} className={currentFollowCustId === listItem.custId ? this.state.followClass : ''}>
-                  <Icon type="guanzhu" className={currentFollowCustId === listItem.custId ? this.state.followClass : ''} />
-                  <span>{follow}-----{currentFollowCustId === listItem.custId && follow ? '已关注' : '关注'}</span>
+                <li onClick={() => addFollow(listItem)} className={(currentFollowCustId === listItem.custId && isFollows[currentFollowCustId]) || isFollows[listItem.custId] ? styles.follows : ''}>
+                  <Icon type="guanzhu" />
+                  <span>{(currentFollowCustId === listItem.custId && isFollows[currentFollowCustId]) || isFollows[listItem.custId] ? '已关注' : '关注'}</span>
                 </li>
               </ul>
             </div>
