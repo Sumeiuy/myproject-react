@@ -101,12 +101,14 @@ export default class CustomerLists extends PureComponent {
       custContactData: prevCustContactData = EMPTY_OBJECT,
       serviceRecordData: prevServiceRecordData = EMPTY_ARRAY,
       followLoading: preFL,
+      custList,
      } = this.props;
     const {
       custContactData: nextCustContactData = EMPTY_OBJECT,
       serviceRecordData: nextServiceRecordData = EMPTY_ARRAY,
       followLoading,
       fllowCustData,
+      custList: nextCustList,
      } = nextProps;
     const { currentCustId, isShowContactModal, currentFollowCustId } = this.state;
     const prevContact = prevCustContactData[currentCustId] || EMPTY_OBJECT;
@@ -151,8 +153,8 @@ export default class CustomerLists extends PureComponent {
         }
       }
     }
-    if (nextProps.custList !== this.props.custList) {
-      nextProps.custList.map((item) => {
+    if (nextCustList !== custList) {
+      nextCustList.map((item) => {
         isFollows = {
           ...isFollows,
           [item.custId]: item.whetherExist,
@@ -272,7 +274,7 @@ export default class CustomerLists extends PureComponent {
       location: {
         query: {
           selectedIds,
-          selectAll,
+        selectAll,
         },
       },
     } = this.props;
@@ -363,7 +365,6 @@ export default class CustomerLists extends PureComponent {
       currentCustId: custId,
       custType,
     }, () => {
-      // debugger;
       if (_.isEmpty(custContactData[custId])) {
         getCustContact({
           custId,
@@ -490,6 +491,8 @@ export default class CustomerLists extends PureComponent {
       isSms,
       isGetCustIncome,
     } = this.props;
+    // 服务记录执行方式字典
+    const { executeTypes = EMPTY_ARRAY } = dict;
     const finalContactData = custContactData[currentCustId] || EMPTY_OBJECT;
     const finalServiceRecordData = serviceRecordData[currentCustId] || EMPTY_ARRAY;
     const {
@@ -630,7 +633,7 @@ export default class CustomerLists extends PureComponent {
               createServiceRecord={this.showCreateServiceRecord} /* 创建服务记录 */
               onClose={this.resetModalState}
               currentCustId={currentCustId}
-              isFirstLoad
+              executeTypes={executeTypes}
             /> : null
         }
       </div>

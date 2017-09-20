@@ -203,12 +203,20 @@ export default class CustomerList extends PureComponent {
       orgId !== preOrgId) {
       this.getCustomerList(nextProps);
     }
-    // const noPermission = _.find(empRespList, item => item.id === )
+    const havePermission = _.find(empRespList, item => item.id === HTSC_RESPID);
     // console.log('query.orgId----query.source', query.orgId, query.source);
     // debugger
-    if (query.orgId === MAIN_MAGEGER_ID || query.source === 'business') {
+    if (query.orgId) {
+      this.setState({
+        isSms: query.orgId === MAIN_MAGEGER_ID,
+      });
+    } else if (query.source === 'business') {
       this.setState({
         isSms: true,
+      });
+    } else {
+      this.setState({
+        isSms: !!havePermission,
       });
     }
   }
@@ -310,7 +318,7 @@ export default class CustomerList extends PureComponent {
     const sortsReqList = [];
     if (query.unright_type) {
       filtersReq.push({
-        filterType: 'unright_type',
+        filterType: 'Unrights',
         filterContentList: query.unright_type.split(','),
       });
     }

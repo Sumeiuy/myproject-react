@@ -144,7 +144,6 @@ const formatNumber = (num) => {
   return num;
 };
 
-const contactModalKeyCount = 0;
 let hrefUrl = '';
 
 export default class CustomerRow extends PureComponent {
@@ -164,7 +163,6 @@ export default class CustomerRow extends PureComponent {
     createContact: PropTypes.func.isRequired,
     isSms: PropTypes.bool.isRequired,
     custContactData: PropTypes.object.isRequired,
-    serviceRecordData: PropTypes.array.isRequired,
     currentFollowCustId: PropTypes.string.isRequired,
     currentCustId: PropTypes.string.isRequired,
     isFollows: PropTypes.object.isRequired,
@@ -192,7 +190,6 @@ export default class CustomerRow extends PureComponent {
       newAsset: asset,
       visible: false,
       isShowModal: false,
-      modalKey: `contactModalKey${contactModalKeyCount}`,
       custType: '',
       checked: false,
       addressEmail: {},
@@ -241,8 +238,6 @@ export default class CustomerRow extends PureComponent {
         }
       });
     }
-  }
-  componentDidUpdate() {
   }
   getLastestData(arr) {
     if (arr && arr instanceof Array && arr.length !== 0) {
@@ -475,6 +470,16 @@ export default class CustomerRow extends PureComponent {
   }
 
   @autobind
+  createModal(listItem) {
+    const { pOrO, custId } = listItem;
+    const { createContact } = this.props;
+    createContact({
+      custId,
+      custType: (!pOrO || pOrO === 'P') ? 'per' : 'org',
+    });
+  }
+
+  @autobind
   renderAgeOrOrgName() {
     const { listItem } = this.props;
     if (listItem.pOrO === 'P') {
@@ -490,7 +495,6 @@ export default class CustomerRow extends PureComponent {
       isSms,
       onAddFollow,
       currentFollowCustId,
-      createContact,
       createServiceRecord,
       isFollows,
       isGetCustIncome,
@@ -514,7 +518,7 @@ export default class CustomerRow extends PureComponent {
           isSms ?
             <div className={styles.basicInfoD}>
               <ul className={styles.operationIcon}>
-                <li onClick={() => createContact(listItem)}>
+                <li onClick={() => this.createModal(listItem)}>
                   <Icon type="dianhua" />
                   <span>电话联系</span>
                 </li>

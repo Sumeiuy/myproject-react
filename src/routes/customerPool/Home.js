@@ -26,7 +26,7 @@ const HTSC_RESPID = '1-46IDNZI'; // 首页指标查询
 // 主服务经理id
 const MAIN_MAGEGER_ID = 'msm';
 const effects = {
-  allInfo: 'customerPool/getAllInfo',
+  toBeTone: 'customerPool/getToBeDone',
   performanceIndicators: 'customerPool/getPerformanceIndicators',
   getHotPossibleWds: 'customerPool/getHotPossibleWds',
   getHotWds: 'customerPool/getHotWds',
@@ -59,7 +59,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  getAllInfo: fetchDataFunction(true, effects.allInfo),
+  getToBeDone: fetchDataFunction(true, effects.toBeTone),
   getPerformanceIndicators: fetchDataFunction(true, effects.performanceIndicators),
   getHotPossibleWds: fetchDataFunction(false, effects.getHotPossibleWds),
   getHotWds: fetchDataFunction(true, effects.getHotWds),
@@ -79,7 +79,7 @@ export default class Home extends PureComponent {
     location: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
-    getAllInfo: PropTypes.func.isRequired,
+    getToBeDone: PropTypes.func.isRequired,
     performanceIndicators: PropTypes.object,
     collectCustRange: PropTypes.func.isRequired,
     getPerformanceIndicators: PropTypes.func.isRequired,
@@ -122,41 +122,58 @@ export default class Home extends PureComponent {
 
   constructor(props) {
     super(props);
-    this.isGetAllInfo = true;
     this.state = {
       cycleSelect: '',
-      orgId: '',
-      fspOrgId: '',
+      fspOrgId: '', // 主服务经理
       createCustRange: [],
       expandAll: false,
+      isHasAuthorize: false,
     };
   }
 
   componentDidMount() {
     const {
       custRange,
+      location: { query: { orgId = '', cycleSelect = '' } },
+      empInfo: { empInfo, empRespList },
+      position: { orgId: posOrgId = '' },
     } = this.props;
-    this.handleGetAllInfo(custRange);
+
+    // 初始化时，判断url上存在orgId
+    let fspOrgId = '';
+    if (orgId === '') {
+      fspOrgId = posOrgId;
+    } else {
+      fspOrgId = orgId;
+    }
+
+    const { begin, end } = this.getTimeSelectBeginAndEnd();
+    this.getAllInfo({
+      custRange,
+      empInfo,
+      empRespList,
+      posOrgId: fspOrgId,
+      cycleSelect,
+      begin,
+      end,
+    });
   }
 
   componentWillReceiveProps(nextProps) {
     const {
       position: prePosition,
-      // empInfo: { empInfo: prevEmpInfo = EMPTY_OBJECT },
+      empInfo: { empInfo, empRespList },
       location: { query: prevQuery = EMPTY_OBJECT },
-      // cycle: preCycle,
-      // custRange: prevCustRange = EMPTY_LIST,
+      custRange,
     } = this.props;
 
     const {
       position: nextPosition,
       cycle: nextCycle,
-      custRange = EMPTY_LIST,
-      location: { query = EMPTY_OBJECT },
-      empInfo: { empInfo: nextEmpInfo = EMPTY_OBJECT, empRespList = EMPTY_LIST },
+      location: { query: { cycleSelect: nextCycleSelect = '' } },
    } = nextProps;
 
-    const { cycleSelect } = prevQuery;
+    const { cycleSelect = '' } = prevQuery;
 
     const { orgId: preOrgId } = prePosition;
     const { orgId: nextOrgId } = nextPosition;
@@ -165,10 +182,17 @@ export default class Home extends PureComponent {
     if (preOrgId !== nextOrgId) {
       this.setState({
         fspOrgId: nextOrgId,
-        createCustRange: this.handleCreateCustRange(nextProps),
       }, () => {
-        this.getIncomes();
-        this.getIndicators();
+        const { begin, end } = this.getTimeSelectBeginAndEnd();
+        this.getAllInfo({
+          custRange,
+          empInfo,
+          empRespList,
+          posOrgId: nextOrgId,
+          cycleSelect: nextCycleSelect,
+          begin,
+          end,
+        });
       });
     }
     // 当url上没有cycleSelect时，默认选中第一个，本月
@@ -178,57 +202,52 @@ export default class Home extends PureComponent {
       });
     }
 
-    // 问题出在这里，在第一次比较empInfo的时候，custRange有可能还没回来，再等第二次比较
-    // empInfo，这时候empInfo已经相等，所以custRange有值也不走getAllInfo了
-    if (!_.isEqual(prevQuery, query)
-      || (!_.isEmpty(custRange) && this.isGetAllInfo)) {
-      this.handleSetCustRange({
-        empInfo: nextEmpInfo,
-        empRespList,
-        query,
-        custRange,
+    // 当url上有cycleSelect时，更新state
+    if (cycleSelect !== nextCycleSelect) {
+      this.setState({
+        cycleSelect: nextCycleSelect,
       });
     }
   }
 
   @autobind
-  getIndicators() {
-    const { getPerformanceIndicators, custRange } = this.props;
-    const { orgId, cycleSelect } = this.state;
+  getIndicators({ orgId, cycleSelect }) {
+    const { getPerformanceIndicators, custRange, cycle } = this.props;
+    const { fspOrgId } = this.state;
     let custType = ORG;
     if (custRange.length < 1) {
       return null;
     }
-    if (!_.isEmpty(orgId)) { // 判断客户范围类型
+    if (!_.isEmpty(orgId || fspOrgId)) { // 判断客户范围类型
       custType = ORG;
     } else {
       custType = CUST_MANAGER;
     }
     getPerformanceIndicators({
       custType, // 客户范围类型
-      dateType: cycleSelect, // 周期类型
-      orgId, // 组织ID
+      dateType: cycleSelect || (!_.isEmpty(cycle) ? cycle[0].key : ''), // 周期类型
+      orgId: orgId || fspOrgId, // 组织ID
     });
     return null;
   }
 
   @autobind
-  getIncomes({ begin, end }) {
-    const { getIncomeData, custRange } = this.props;
-    const { orgId, cycleSelect } = this.state;
+  getIncomes({ begin, end, orgId, cycleSelect }) {
+    const { getIncomeData, custRange, cycle } = this.props;
+    const { fspOrgId } = this.state;
     let custType = ORG;
     if (custRange.length < 1) {
       return null;
     }
-    if (!_.isEmpty(orgId)) { // 判断客户范围类型
+    if (!_.isEmpty(orgId || fspOrgId)) { // 判断客户范围类型
       custType = ORG;
     } else {
       custType = CUST_MANAGER;
     }
     getIncomeData({
       custType, // 客户范围类型
-      dateType: cycleSelect, // 周期类型
-      orgId, // 组织ID
+      dateType: cycleSelect || (!_.isEmpty(cycle) ? cycle[0].key : ''), // 周期类型
+      orgId: orgId || fspOrgId, // 组织ID
       empId: helper.getEmpId(),
       fieldList: [
         'tranPurRakeCopy',
@@ -245,158 +264,130 @@ export default class Home extends PureComponent {
   }
 
   @autobind
-  createCustRange({ query, empInfo, custRange, empRespList }) {
-    this.handleSetCustRange({
-      empInfo,
-      empRespList,
-      query,
-      custRange,
-    });
-  }
-
-  @autobind
-  handleSetCustRange(params) {
-    const {
-      empInfo,
-      empRespList,
-      query,
-      custRange,
-    } = params;
-    const { occDivnNum = '' } = empInfo;
-    const { orgId } = query;
-    const occ = _.isEmpty(occDivnNum) ? '' : occDivnNum;// orgId取不到的情况下去用户信息中的
-    const fspOrgid = _.isEmpty(window.forReactPosition) ? occ : window.forReactPosition.orgId;
-    // url中存在orgid，则取url中的orgid，不然取fspOrgid
-    const orgid = _.isEmpty(orgId) // window.forReactPosition
-      ?
-      fspOrgid
-      : orgId;
-    const respIdOfPosition = _.findIndex(empRespList, item => item.respId === HTSC_RESPID);
-    this.setState({
-      fspOrgId: respIdOfPosition < 0 ? '' : orgid,
-      orgId: respIdOfPosition < 0 ? '' : orgid, // 组织ID
-    }, () => {
-      if (custRange.length > 0 && this.isGetAllInfo) {
-        this.handleGetAllInfo(custRange);
-      }
-    });
-  }
-
-  @autobind
-  handleGetAllInfo(custRangeData = EMPTY_LIST) {
-    const {
-      getAllInfo,
-      // cycle,
-      getHotWds,
-      getHistoryWdsList,
-      location: { query: { cycleSelect } },
-    } = this.props;
-    const { fspOrgId } = this.state;
+  getTimeSelectBeginAndEnd() {
+    const { location: { query: { cycleSelect } } } = this.props;
     const { historyTime, customerPoolTimeSelect } = optionsMap;
     const currentSelect = _.find(historyTime, itemData =>
-      itemData.name === _.find(customerPoolTimeSelect, item => item.key === (cycleSelect || '518003')).name) || {}; // 本月
+      itemData.name === _.find(customerPoolTimeSelect, item =>
+        item.key === (cycleSelect || '518003')).name) || {}; // 本月
     const nowDuration = getDurationString(currentSelect.key);
     const begin = nowDuration.begin;
     const end = nowDuration.end;
-    let custType = ORG;
-    const orgsId = custRangeData.length > 0 ? custRangeData[0].id : '';
-    this.setState({
-      createCustRange: this.handleCreateCustRange(this.props),
-    });
+    return {
+      begin,
+      end,
+    };
+  }
 
-    if (fspOrgId !== orgsId) {
-      this.setState({
-        expandAll: true,
-      });
-    }
-    if (!_.isEmpty(fspOrgId)) { // 判断客户范围类型
-      custType = ORG;
-    } else {
-      custType = CUST_MANAGER;
-    }
-
+  @autobind
+  getAllInfo({ custRange, empInfo, empRespList, posOrgId, cycleSelect, begin, end }) {
     this.setState({
       cycleSelect,
+      createCustRange: this.handleCreateCustRange({
+        begin,
+        end,
+        custRange,
+        empInfo,
+        empRespList,
+        posOrgId,
+        cycleSelect,
+      }),
     });
+  }
+
+  @autobind
+  handleGetAllInfo(begin, end, cycleSelect) {
+    const { fspOrgId } = this.state;
+    const {
+      getToBeDone,
+      getHotWds,
+      getHistoryWdsList,
+      location: { pathname, query },
+      replace,
+    } = this.props;
+
+    // 热词搜索
     getHotWds({
       orgId: fspOrgId === '' ? null : fspOrgId, // 组织ID
       empNo: helper.getEmpId(), // 用户ID
     });
+
+    // 历史搜索记录
     getHistoryWdsList({
       orgId: fspOrgId === '' ? null : fspOrgId, // 组织ID
       empNo: helper.getEmpId(), // 用户ID
     });
-    getAllInfo({
-      request: {
-        custType, // 客户范围类型
-        orgId: fspOrgId, // 组织ID,
-        empId: helper.getEmpId(),
-        fieldList: [
-          'tranPurRakeCopy',
-          'totCrdtIntCopy',
-          'totTranInt',
-          'pIncomeAmt',
-          'prdtOIncomeAmt',
-          'oIncomeAmt',
-        ],
-        begin,
-        end,
+
+    // 待办事项
+    getToBeDone();
+
+    // 净创收数据
+    this.getIncomes({ begin, end, orgId: fspOrgId, cycleSelect });
+
+    // 绩效指标
+    this.getIndicators({ orgId: fspOrgId, cycleSelect });
+
+    // 替换url orgId
+    replace({
+      pathname,
+      query: {
+        ...query,
+        orgId: fspOrgId,
       },
     });
-
-    // 重置
-    this.isGetAllInfo = false;
   }
 
   // 此方法用来修改Duration 和 Org数据
   @autobind
-  updateQueryState(state) {
+  updateQueryState(params) {
     const { replace, location: { pathname, query } } = this.props;
-    const { begin, end } = state;
+    const { begin, end, cycleSelect = '', orgId = '' } = params;
+    const { fspOrgId, cycleSelect: currentCycleSelect } = this.state;
     // 切换Duration和Orig时候，需要将数据全部恢复到默认值
     this.setState({
-      ...state,
+      cycleSelect: cycleSelect || currentCycleSelect, // 切换组织机构树的时候并没有cycleSelect
+      fspOrgId: orgId === 'msm' ? '' : fspOrgId, // 切换时间的时候并没有组织机构
     }, () => {
-      this.getIndicators();
-      this.getIncomes({
-        begin,
-        end,
-      });
-      if (state.orgId) {
+      if (orgId) {
         replace({
           pathname,
           query: {
             ...query,
-            orgId: state.orgId || state.fspOrgId,
+            orgId,
           },
         });
-      } else if (state.cycleSelect) {
+      } else if (cycleSelect) {
         replace({
           pathname,
           query: {
             ...query,
-            cycleSelect: state.cycleSelect,
+            cycleSelect,
           },
         });
       }
+
+      // 时间或者组织机构树变化
+      // 重新请求绩效指标数据和净创收数据
+      this.getIndicators({
+        orgId: orgId === 'msm' ? '' : orgId,
+        cycleSelect: cycleSelect || currentCycleSelect,
+      });
+      this.getIncomes({
+        begin,
+        end,
+        orgId: orgId === 'msm' ? '' : orgId,
+        cycleSelect: cycleSelect || currentCycleSelect,
+      });
     });
   }
 
   // 获取联想数据
   @autobind
   queryHotPossibleWds(state) {
-    const { location: { query },
-      empInfo: { empInfo = EMPTY_OBJECT }, getHotPossibleWds } = this.props;
-    const { occDivnNum = '' } = empInfo;
-    const { orgId } = query;
-    const occ = _.isEmpty(occDivnNum) ? '' : occDivnNum;// orgId取不到的情况下去用户信息中的
-    const fspOrgid = _.isEmpty(window.forReactPosition) ? occ : window.forReactPosition.orgId;
-    const orgid = _.isEmpty(orgId) // window.forReactPosition
-      ?
-      fspOrgid
-      : orgId;
+    const { getHotPossibleWds } = this.props;
+    const { fspOrgId } = this.state;
     const setData = {
-      orgId: orgid, // 组织ID
+      orgId: fspOrgId, // 组织ID
       empNo: helper.getEmpId(), // 用户ID
     };
     getHotPossibleWds({
@@ -435,19 +426,18 @@ export default class Home extends PureComponent {
 
   /**
    * 创建客户范围
-   * @param {*} orgId 组织机构Id
-   * @param {*} nextProps 最新的props
+   * @param {*} props 最新的props
    */
   @autobind
-  handleCreateCustRange(props) {
-    const {
-      custRange,
-      empInfo: {
-        empInfo = EMPTY_OBJECT,
-        empRespList = EMPTY_LIST,
-      },
-      position: { orgId: posOrgId },
-    } = props;
+  handleCreateCustRange({
+    begin,
+    end,
+    custRange,
+    empInfo,
+    empRespList,
+    posOrgId,
+    cycleSelect,
+  }) {
     // 判断是否存在首页绩效指标查看权限
     const respIdOfPosition = _.find(empRespList, item => (item.respId === HTSC_RESPID));
     const myCustomer = {
@@ -456,8 +446,14 @@ export default class Home extends PureComponent {
     };
     // 无‘HTSC 首页指标查询’职责的普通用户，取值 '我的客户'
     if (!respIdOfPosition) {
+      this.setState({
+        fspOrgId: '',
+      }, () => {
+        this.handleGetAllInfo(begin, end, cycleSelect);
+      });
       return [myCustomer];
     }
+
     // 保证全局的职位存在的情况下取职位, 取不到时从empInfo中取值
     const occDivnNum = empInfo.occDivnNum || '';
     // let fspJobOrgId = 'ZZ001041048';
@@ -467,6 +463,13 @@ export default class Home extends PureComponent {
     if (posOrgId) {
       fspJobOrgId = posOrgId;
     }
+    this.setState({
+      fspOrgId: fspJobOrgId,
+      isHasAuthorize: true,
+    }, () => {
+      this.handleGetAllInfo(begin, end, cycleSelect);
+    });
+    // 只要不是我的客户，都展开组织机构树
     // 用户职位是经总
     if (fspJobOrgId === (custRange[0] || {}).id) {
       this.setState({
@@ -483,6 +486,20 @@ export default class Home extends PureComponent {
       return [groupInCustRange, myCustomer];
     }
     // fspJobOrgId 在机构树中所处的营业部位置
+    // let tempData = custRange;
+    // tempData = _.filter(_.filter(tempData, i => i.level !== '1'),
+    //   (itemData) => {
+    //     if (_.isEmpty(itemData.children)) {
+    //       return itemData.id === fspJobOrgId;
+    //     }
+    //     return !_.isEmpty(_.filter(itemData.children, c => c.id === fspJobOrgId) || []);
+    //   }) || [];
+    // if (!_.isEmpty(tempData)) {
+    //   this.setState({
+    //     expandAll: true,
+    //   });
+    //   return [...tempData, myCustomer];
+
     let department;
     _(custRange).forEach((obj) => {
       if (obj.children && !_.isEmpty(obj.children)) {
@@ -492,6 +509,7 @@ export default class Home extends PureComponent {
         }
       }
     });
+
     if (department) {
       return department;
     }
@@ -526,8 +544,9 @@ export default class Home extends PureComponent {
       clearState,
       searchHistoryVal,
       incomeData,
+      custRange,
     } = this.props;
-    const { expandAll, cycleSelect, createCustRange, fspOrgId } = this.state;
+    const { expandAll, cycleSelect, createCustRange, fspOrgId, isHasAuthorize } = this.state;
     return (
       <div className={styles.customerPoolWrap}>
         <Search
@@ -561,6 +580,7 @@ export default class Home extends PureComponent {
             expandAll={expandAll}
             selectValue={cycleSelect}
             incomeData={incomeData}
+            orgId={isHasAuthorize ? (fspOrgId || custRange[0].id) : null}
           />
         </div>
       </div>
