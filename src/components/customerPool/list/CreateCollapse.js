@@ -185,7 +185,7 @@ export default class CreateCollapse extends PureComponent {
     if (_.isEmpty(data)) {
       return (
         <div>
-          <div className={styles.nodata}>
+          <div className={styles.noServiceRecord}>
             <div className={styles.imgData} />
           </div>
           <div className={styles.noInfo}>没有相关服务记录</div>
