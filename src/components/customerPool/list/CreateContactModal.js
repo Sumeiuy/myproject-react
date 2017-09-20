@@ -282,7 +282,6 @@ export default class CreateContactModal extends PureComponent {
 
     const columns = this.constructTableColumns();
     const newDataSource = this.constructTableDatas(otherContactInfo);
-
     return (
       <Modal
         wrapClassName={styles.contactModal}
