@@ -40,8 +40,10 @@ const mapStateToProps = state => ({
   list: state.permission.list,
   // 拟稿人
   drafterList: state.permission.drafterList,
+  // 客户
+  custList: state.permission.custList,
   // 部门
-  empOrgTreeList: state.permission.empOrgTreeList,
+  custRange: state.permission.custRange,
 });
 
 const mapDispatchToProps = {
@@ -52,6 +54,8 @@ const mapDispatchToProps = {
   getPermissionList: fetchDataFunction(true, 'permission/getPermissionList'),
   // 获取拟稿人
   getDrafterList: fetchDataFunction(true, 'permission/getDrafterList'),
+  // 获取客户
+  getCustList: fetchDataFunction(true, 'permission/getCustList'),
   // 获取部门
   getEmpOrgTree: fetchDataFunction(true, 'permission/getEmpOrgTree'),
 };
@@ -62,9 +66,12 @@ export default class Permission extends PureComponent {
   static propTypes = {
     list: PropTypes.object.isRequired,
     drafterList: PropTypes.array.isRequired,
-    empOrgTreeList: PropTypes.object.isRequired,
+    custList: PropTypes.array.isRequired,
+    custRange: PropTypes.array.isRequired,
     getPermissionList: PropTypes.func.isRequired,
     getDrafterList: PropTypes.func.isRequired,
+    getCustList: PropTypes.func.isRequired,
+    getEmpOrgTree: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     detailMessage: PropTypes.object.isRequired,
     getDetailMessage: PropTypes.func.isRequired,
@@ -83,19 +90,22 @@ export default class Permission extends PureComponent {
   }
 
   componentWillMount() {
-    const { getPermissionList, location: { query, query: {
+    const {
+      getEmpOrgTree,
+      getPermissionList,
+      location: { query, query: {
       pageNum,
       pageSize,
      } } } = this.props;
     // 默认筛选条件
     getPermissionList(constructSeibelPostBody(query, pageNum || 1, pageSize || 10));
+    getEmpOrgTree({});
   }
 
   componentWillReceiveProps(nextProps) {
     const { location: { query: nextQuery = EMPTY_OBJECT } } = nextProps;
     const { location: { query: prevQuery = EMPTY_OBJECT }, getPermissionList } = this.props;
     const { isResetPageNum = 'N', pageNum, pageSize } = nextQuery;
-
     // 深比较值是否相等
     // url发生变化，检测是否改变了筛选条件
     if (!_.isEqual(prevQuery, nextQuery)) {
@@ -136,7 +146,6 @@ export default class Permission extends PureComponent {
   }
 
   get getDetailComponent() {
-    console.warn('detailMessage', this.props.detailMessage);
     if (_.isEmpty(this.props.detailMessage)) {
       return null;
     }
@@ -176,11 +185,21 @@ export default class Permission extends PureComponent {
     return seibelColumns('save_blue');
   }
 
+  // 查询拟稿人
   @autobind
   toSearchDrafter(value) {
-    // 查询拟稿人
-    this.props.getDrafterList({
+    const { getDrafterList } = this.props;
+    getDrafterList({
       empId: value,
+    });
+  }
+
+  // 查询客户
+  @autobind
+  toSearchCust(value) {
+    const { getCustList } = this.props;
+    getCustList({
+      keyword: value,
     });
   }
 
@@ -191,7 +210,17 @@ export default class Permission extends PureComponent {
   }
 
   render() {
-    const { list, location, replace, drafterList, empOrgTreeList } = this.props;
+    const {
+      list,
+      location,
+      replace,
+      drafterList,
+      custList,
+      custRange,
+    } = this.props;
+    if (!custRange || !custRange.length) {
+      return null;
+    }
     const { isEmpty } = this.state;
     const topPanel = (
       <PermissionHeader
@@ -202,8 +231,10 @@ export default class Permission extends PureComponent {
         stateOptions={stateOptions}
         creatSeibelModal={this.creatPermossionModal}
         toSearchDrafter={this.toSearchDrafter}
+        toSearchCust={this.toSearchCust}
         drafterList={drafterList}
-        empOrgTreeList={empOrgTreeList}
+        custList={custList}
+        custRange={custRange}
       />
     );
 

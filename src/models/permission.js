@@ -14,7 +14,8 @@ export default {
     detailMessage: EMPTY_OBJECT,
     list: EMPTY_OBJECT,
     drafterList: EMPTY_LIST, // 拟稿人
-    empOrgTreeList: EMPTY_OBJECT, // 部门
+    custList: EMPTY_LIST, // 客户
+    custRange: EMPTY_LIST, // 部门
   },
   reducers: {
     getDetailMessageSuccess(state, action) {
@@ -48,12 +49,30 @@ export default {
         drafterList: empInfo,
       };
     },
-    getEmpOrgTreeSuccess(state, action) {
+    getCustListSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
+      const { tcustList = EMPTY_LIST } = resultData;
 
       return {
         ...state,
-        empOrgTreeList: resultData,
+        custList: tcustList,
+      };
+    },
+    getEmpOrgTreeSuccess(state, action) {
+      const { payload: { resultData = EMPTY_LIST } } = action;
+      let custRange;
+      if (resultData.level === '1') {
+        custRange = [
+          { id: resultData.id, name: resultData.name, level: resultData.level },
+          ...resultData.children,
+        ];
+      } else {
+        custRange = [resultData];
+      }
+      console.warn('custRange111', custRange);
+      return {
+        ...state,
+        custRange,
       };
     },
   },
@@ -90,8 +109,16 @@ export default {
         payload: response,
       });
     },
+    * getCustList({ payload }, { call, put }) {
+      const response = yield call(api.getCustList, payload);
+      yield put({
+        type: 'getCustListSuccess',
+        payload: response,
+      });
+    },
     * getEmpOrgTree({ payload }, { call, put }) {
       const response = yield call(api.getEmpOrgTree, payload);
+      console.warn('response123', response);
       yield put({
         type: 'getEmpOrgTreeSuccess',
         payload: response,

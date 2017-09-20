@@ -6,6 +6,7 @@
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
 import Select from '../Select';
+import CustRange from '../../pageCommon/CustRange2';
 import DropDownSelect from '../dropdownSelect';
 import Button from '../Button';
 
@@ -25,16 +26,21 @@ export default class Pageheader extends PureComponent {
     creatSeibelModal: PropTypes.func.isRequired,
     // 搜索拟稿人方法
     toSearchDrafter: PropTypes.func.isRequired,
+    // 搜索客户方法
+    toSearchCust: PropTypes.func.isRequired,
     // 拟稿人数据
     drafterList: PropTypes.array,
+    // 客户数据
+    custList: PropTypes.array,
     // 部门
-    empOrgTreeList: PropTypes.object,
+    custRange: PropTypes.array,
   }
 
   static defaultProps = {
     page: '',
     drafterList: [],
-    empOrgTreeList: {},
+    custList: [],
+    custRange: [],
   }
   constructor(props) {
     super(props);
@@ -83,7 +89,6 @@ export default class Pageheader extends PureComponent {
     });
   }
 
-
   render() {
     const {
       replace,
@@ -93,20 +98,23 @@ export default class Pageheader extends PureComponent {
       stateOptions,
       creatSeibelModal,
       toSearchDrafter,
+      toSearchCust,
       drafterList,
+      custList,
+      custRange,
     } = this.props;
-
+    console.warn('custRange', custRange);
     return (
       <div className={styles.pageCommonHeader}>
         <div className={styles.dropDownSelectBox}>
           <DropDownSelect
             value="全部"
             placeholder="经纪客户号/客户名称"
-            searchList={this.state.list}
-            showObjKey="empName"
-            objId="empId"
+            searchList={custList}
+            showObjKey="tcustName"
+            objId="tcusId"
             emitSelectItem={this.selectItem}
-            emitToSearch={this.toSearchInfo}
+            emitToSearch={toSearchCust}
           />
         </div>
 
@@ -144,17 +152,13 @@ export default class Pageheader extends PureComponent {
         </div>
 
         部门:
-        <div className={styles.dropDownSelectBox}>
-          <DropDownSelect
-            value="全部"
-            placeholder="部门"
-            searchList={this.state.list}
-            showObjKey="custName3"
-            objId="custNumber3"
-            emitSelectItem={this.selectItem}
-            emitToSearch={this.toSearchInfo}
-          />
-        </div>
+        <CustRange
+          style={{ width: '20%' }}
+          custRange={custRange}
+          location={location}
+          replace={replace}
+        />
+
 
         <Button
           type="primary"

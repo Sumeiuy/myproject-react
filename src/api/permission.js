@@ -12,5 +12,7 @@ export default function permission(api) {
     getDrafterList: query => api.post('/groovynoauth/smkh/queryEmpList', query),
     // 获取部门
     getEmpOrgTree: query => api.post('/groovynoauth/jxzb/empOrgTree', query),
+    // 获取客户
+    getCustList: query => api.post('/groovynoauth/smkh/queryCustList', query),
   };
 }
