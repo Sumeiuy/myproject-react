@@ -8,6 +8,8 @@ import classnames from 'classnames';
 // import _ from 'lodash';
 import Button from '../../components/common/Button';
 import GroupTable from '../../components/customerPool/groupManage/GroupTable';
+import GroupModal from '../../components/customerPool/groupManage/CustomerGroupUpdateModal';
+import CustomerGroupDetail from '../../components/customerPool/groupManage/CustomerGroupDetail';
 import CustomerGroupSearch from '../../components/customerPool/groupManage/CustomerGroupListSearch';
 import styles from './customerGroupManage.less';
 import tableStyles from '../../components/customerPool/groupManage/groupTable.less';
@@ -17,6 +19,7 @@ const EMPTY_OBJECT = {};
 
 const effects = {
   getGroupList: 'customerPool/getCustomerGroupList',
+  getCustList: 'customerPool/getGroupCustomerList',
 };
 
 const fetchData = (type, loading) => query => ({
@@ -26,14 +29,22 @@ const fetchData = (type, loading) => query => ({
 });
 
 const mapStateToProps = state => ({
-  customerGroupList: state.customerPool.customerGroupList, // 客户分组列表
+  // 客户分组列表
+  customerGroupList: state.customerPool.customerGroupList,
+  // 一个分组下的所有客户
+  customerList: state.customerPool.customerList,
 });
 
 const mapDispatchToProps = {
-  getCustomerGroupList: fetchData(effects.getGroupList, true), // 获取客户分组列表
+  // 获取客户分组列表
+  getCustomerGroupList: fetchData(effects.getGroupList, true),
+  // 获取分组客户列表
+  getGroupCustomerList: fetchData(effects.getCustList, true),
   push: routerRedux.push,
   replace: routerRedux.replace,
 };
+
+let modalKeyCount = 0;
 
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
@@ -44,16 +55,33 @@ export default class CustomerGroupManage extends PureComponent {
     push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
     getCustomerGroupList: PropTypes.func.isRequired,
+    getGroupCustomerList: PropTypes.func.isRequired,
+    customerList: PropTypes.object.isRequired,
   };
 
   static defaultProps = {
     customerGroupList: EMPTY_OBJECT,
   };
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      visible: false, // 控制显示更新分组弹出层
+      modalKey: `groupModalKey${modalKeyCount}`,
+    };
+  }
+
   componentWillMount() {
-    const { getCustomerGroupList } = this.props;
+    const { getCustomerGroupList, getGroupCustomerList } = this.props;
     // 获取客户分组列表
     getCustomerGroupList({
+      curPageNum: 1,
+      pageSize: 10,
+    });
+    // 获取分组客户列表
+    getGroupCustomerList({
+      curPageNum: 1,
+      pageSize: 5,
     });
   }
 
@@ -165,6 +193,42 @@ export default class CustomerGroupManage extends PureComponent {
   @autobind
   handleAddGroup() {
     console.log('add customer group');
+    this.setState({
+      visible: true,
+      modalKey: `groupModalKey${modalKeyCount++}`,
+    });
+  }
+
+  @autobind
+  handleShowGroupDetail() {
+    console.log('show add group detail modal');
+  }
+
+  @autobind
+  handleUpdateGroup() {
+    console.log('show add group detail modal');
+  }
+
+  @autobind
+  handleCloseModal() {
+    this.setState({
+      visible: false,
+    });
+  }
+
+  renderActionSource() {
+    return [{
+      type: '编辑',
+      handler: this.editCustomerGroup,
+    },
+    {
+      type: '删除',
+      handler: this.deleteCustomerGroup,
+    },
+    {
+      type: '发起任务',
+      handler: this.lanuchTask,
+    }];
   }
 
   renderColumnTitle() {
@@ -190,32 +254,26 @@ export default class CustomerGroupManage extends PureComponent {
     }];
   }
 
-  renderActionSource() {
-    return [{
-      type: '编辑',
-      handler: this.editCustomerGroup,
-    },
-    {
-      type: '删除',
-      handler: this.deleteCustomerGroup,
-    },
-    {
-      type: '发起任务',
-      handler: this.lanuchTask,
-    }];
-  }
-
   render() {
-    const { customerGroupList = EMPTY_OBJECT } = this.props;
+    const {
+      customerGroupList = EMPTY_OBJECT,
+      location: { query: { curPageNum, curPageSize } },
+      customerList = EMPTY_OBJECT,
+     } = this.props;
+
+    const { visible, modalKey } = this.state;
 
     const {
       resultData = EMPTY_LIST,
       page = EMPTY_OBJECT,
-    } = customerGroupList;
+    } = customerGroupList || EMPTY_OBJECT;
 
-    const { totalRecordNum = 1, curPageNum: pageNum, pageSize } = page;
+    const { totalRecordNum = 10, curPageNum: pageNum, pageSize } = page;
 
-    const { location: { query: { curPageNum, curPageSize } } } = this.props;
+    // const { totalRecordNum: custListTotalRecordNum = 5,
+    //   curPageNum: custListPageNum,
+    //   pageSize: custListPageSize,
+    // } = customerListPageData;
 
     const currentPageNum = curPageNum || pageNum;
     const currentPageSize = curPageSize || pageSize;
@@ -233,12 +291,12 @@ export default class CustomerGroupManage extends PureComponent {
           <CustomerGroupSearch
             onSearch={this.handleGroupListSearch}
           />
-          <div className={styles.addBtn} onClick={this.handleAddGroup}>
+          <div className={styles.addBtnSection} onClick={this.handleAddGroup}>
             <Button
               type="primary"
-              icon="search"
+              className={styles.addBtn}
             >
-              新建
+              新增
             </Button>
           </div>
         </div>
@@ -258,7 +316,37 @@ export default class CustomerGroupManage extends PureComponent {
           }
           titleColumn={titleColumn}
           actionSource={actionSource}
+          isFirstColumnLink
+          firstColumnHandler={this.handleShowGroupDetail}
         />
+        {
+          visible ?
+            <GroupModal
+              wrapperClass={
+                classnames({
+                  [styles.groupModalContainer]: true,
+                })
+              }
+              // 为了每次都能打开一个新的modal
+              key={modalKey}
+              visible={visible}
+              title={'新建用户分组'}
+              okText={'提交'}
+              cancelText={'取消'}
+              okType={'primary'}
+              modalContent={
+                <CustomerGroupDetail
+                  customerList={customerList}
+                  onCloseModal={this.handleCloseModal}
+                  detailData={{
+                    name: '21321321321',
+                    description: '2321321dsddwqeqw',
+                  }}
+                />
+              }
+              onOkHandler={this.handleUpdateGroup}
+            /> : null
+        }
       </div>
     );
   }

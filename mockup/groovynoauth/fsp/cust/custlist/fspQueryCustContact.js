@@ -131,6 +131,13 @@ exports.response = function (req, res) {
               "contactValue": "18011122140",
               "rowId": "COMMI-20151221-04824750590",
               "validFlag": true
+            },
+            {
+              "mainFlag": false,
+              "contactType": "104123",
+              "contactValue": "15645785256",
+              "rowId": "COMMI-20151221-04824750590",
+              "validFlag": true
             }
           ],
           "workTels": [],
