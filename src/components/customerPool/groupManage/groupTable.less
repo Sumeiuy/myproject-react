@@ -1,0 +1,45 @@
+.groupTable {
+  padding: 15px 20px 20px 15px;
+  table {
+    border: 1px solid #dddddd;
+  }
+  table > tbody > tr:nth-child(odd) {
+    background-color: #f9f9f9;
+  }
+  table > thead > tr > th, tbody > tr > td {
+    padding-bottom: 5px;
+    padding-top: 5px;
+    font-size: 14px;
+    color: #a1a1a1;
+    text-align: center;
+  }
+  table > thead > tr > th {
+    background-color: #ffffff;
+    color: #666666;
+    text-align: center;
+    font-weight: 600;
+  }
+  table > tbody > tr > td {
+    border-bottom: 0px;
+  }
+  .operation {
+    & > .link {
+      color: #108ee9;
+      background: transparent;
+      text-decoration: none;
+      outline: none;
+      cursor: pointer;
+      transition: color .3s ease;
+    }
+    & > .link:not(:last-child)::after {
+      content: '';
+      display: inline-block;
+      border-right: 1px solid #108ee9;
+      height: 12px;
+      width: 1px;
+      margin-left: 4px;
+      margin-right: 4px;
+      vertical-align: middle
+    }
+  }
+}

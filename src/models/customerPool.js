@@ -6,6 +6,9 @@
 import _ from 'lodash';
 import { customerPool as api } from '../api';
 
+const EMPTY_LIST = [];
+const EMPTY_OBJECT = {};
+
 export default {
   namespace: 'customerPool',
   state: {
@@ -53,6 +56,7 @@ export default {
     isFollow: {},
     followLoading: false,
     fllowCustData: {},
+    customerGroupList: {}, // 分组维度，客户分组列表
   },
   subscriptions: {
     setup({ dispatch }) {
@@ -280,6 +284,14 @@ export default {
       yield put({
         type: 'addServeRecordSuccess',
         payload: res,
+      });
+    },
+    * getCustomerGroupList({ payload }, { call, put }) {
+      const response = yield call(api.queryCustomerGroupList, payload);
+      const { resultData } = response;
+      yield put({
+        type: 'getCustomerGroupListSuccess',
+        payload: resultData,
       });
     },
   },
@@ -545,6 +557,18 @@ export default {
       return {
         ...state,
         isGetCustIncome: true,
+      };
+    },
+    getCustomerGroupListSuccess(state, action) {
+      const { payload } = action;
+      const { page = EMPTY_OBJECT, groupList = EMPTY_LIST } = payload;
+
+      return {
+        ...state,
+        customerGroupList: {
+          page,
+          resultData: groupList,
+        },
       };
     },
   },
