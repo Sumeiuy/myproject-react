@@ -103,23 +103,28 @@ export default class CreateCollapse extends PureComponent {
                 header={
                   <div className={styles.headerContainer}>
                     <div>
-                      <div
-                        className={styles.serviceTime}
-                        key={`${serveTime[index].yearTime}${serveTime[index].dayTime}`}
-                      >
-                        <div className={styles.yearTime}>{serveTime[index].yearTime || ''}</div>
-                        <div
-                          className={
-                            classnames({
-                              [styles.activeTime]: _.includes(currentActiveIndex, String(index)),
-                              [styles.dayTime]: !_.includes(currentActiveIndex, String(index)),
-                              [styles.onlyDayTime]: _.isEmpty(serveTime[index].yearTime),
-                            })
-                          }
-                        >
-                          {serveTime[index].dayTime || ''}
-                        </div>
-                      </div>
+                      {
+                        !_.isEmpty(serveTime) ?
+                          <div
+                            className={styles.serviceTime}
+                            key={`${serveTime[index].yearTime}${serveTime[index].dayTime}`}
+                          >
+                            <div className={styles.yearTime}>{serveTime[index].yearTime || ''}</div>
+                            <div
+                              className={
+                                classnames({
+                                  [styles.activeTime]: _.includes(currentActiveIndex,
+                                    String(index)),
+                                  [styles.dayTime]: !_.includes(currentActiveIndex,
+                                    String(index)),
+                                  [styles.onlyDayTime]: _.isEmpty(serveTime[index].yearTime),
+                                })
+                              }
+                            >
+                              {serveTime[index].dayTime || ''}
+                            </div>
+                          </div> : null
+                      }
                       <div className={styles.leftAnchor}>
                         <span
                           className={
