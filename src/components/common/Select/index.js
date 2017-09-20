@@ -3,7 +3,9 @@
  * @author honggaunqging
  */
 
-import React, { PureComponent, PropTypes } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
+import { autobind } from 'core-decorators';
 import { Select } from 'antd';
 import styles from './index.less';
 
@@ -20,22 +22,30 @@ export default class CommonSelect extends PureComponent {
     value: '全部',
   }
 
+  @autobind
+  makeSelectOptions(data) {
+    const options = [];
+    data.forEach((item) => {
+      if (item.show) {
+        options.push(<Option key={item.value} value={item.value}>{item.label}</Option>);
+      }
+    });
+    return options;
+  }
+
 
   render() {
     const { data, name, value, onChange } = this.props;
-    const getSelectOption = item => item.map(i =>
-      <Option key={i.value}>{i.label}</Option>,
-    );
+    const options = this.makeSelectOptions(data);
     return (
       <div className={styles.commomSelect}>
         <Select
           placeholder="全部"
           value={value}
           onChange={key => onChange(name, key)}
-          allowClear
           dropdownMatchSelectWidth={false}
         >
-          {getSelectOption(data)}
+          {options}
         </Select>
       </div>
     );

@@ -36,10 +36,12 @@ export default class Pageheader extends PureComponent {
     drafterList: [],
     empOrgTreeList: {},
   }
+
   constructor(props) {
     super(props);
     this.state = {
-      value: undefined,
+      subType: '',
+      status: '',
     };
   }
 
@@ -71,13 +73,16 @@ export default class Pageheader extends PureComponent {
   }
 
   @autobind
-  handleSelectChange(value, key) {
+  handleSelectChange(key, v) {
+    this.setState({
+      [key]: v,
+    });
     const { replace, location: { pathname, query } } = this.props;
     replace({
       pathname,
       query: {
         ...query,
-        [value]: key,
+        [key]: v,
         isResetPageNum: 'Y',
       },
     });
@@ -86,15 +91,14 @@ export default class Pageheader extends PureComponent {
 
   render() {
     const {
-      replace,
-      location,
-      location: { query },
       subtypeOptions,
       stateOptions,
       creatSeibelModal,
       toSearchDrafter,
       drafterList,
     } = this.props;
+
+    const { subType, status } = this.state;
 
     return (
       <div className={styles.pageCommonHeader}>
@@ -112,21 +116,17 @@ export default class Pageheader extends PureComponent {
 
         子类型:
         <Select
-          style={{ width: '20%' }}
-          value={query.subType}
-          location={location}
-          replace={replace}
-          data={subtypeOptions}
           name="subType"
+          value={subType}
+          data={subtypeOptions}
           onChange={this.handleSelectChange}
+          style={{ width: '20%' }}
         />
         状态:
         <Select
-          value={query.status}
-          location={location}
-          replace={replace}
-          data={stateOptions}
           name="status"
+          value={status}
+          data={stateOptions}
           onChange={this.handleSelectChange}
         />
 
