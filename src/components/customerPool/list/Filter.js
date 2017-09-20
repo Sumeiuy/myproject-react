@@ -8,8 +8,7 @@ import React, { PropTypes, PureComponent } from 'react';
 // import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
-import SingleFilter from './SingleFilter';
-import MultiFilter from './MultiFilter';
+import { SingleFilter, MultiFilter } from '../../common/filter';
 
 // 从搜索、联想词、标签、已开通业务过来的
 const SEARCH_TAG_FILTER = ['search', 'tag', 'association', 'business', 'custIndicator', 'numOfCustOpened'];

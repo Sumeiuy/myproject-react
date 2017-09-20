@@ -5,6 +5,7 @@ import permission from './permission';
 import commission from './commission';
 import customerPool from './customerPool';
 import contract from './contract';
+import fullChannelServiceRecord from './fullChannelServiceRecord';
 
 const api = apiCreator();
 
@@ -23,5 +24,7 @@ export default {
   contract: contract(api),
   // ==========佣金调整的数据接口end
   commission: commission(api),
+  // 全渠道服务记录数据接口api
+  fullChannelServiceRecord: fullChannelServiceRecord(api),
 };
 
