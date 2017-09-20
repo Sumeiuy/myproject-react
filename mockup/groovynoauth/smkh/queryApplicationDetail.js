@@ -89,6 +89,30 @@ exports.response = function (req, res) {
         "isOk": false,
         }
       ],
+      "attachInfoList":[
+        {
+          "name":"附件名称",
+          "empId": "010015",
+          "empName": "赵4",
+          "uploadTime": "20170902",
+          "attachUrl": "/upload/13222.doc",
+          "attachSize": "33kb"
+        }, {
+          "name":"附件名称",
+          "empId": "010016",
+          "empName": "赵5",
+          "uploadTime": "20170903",
+          "attachUrl": "/upload/132111.doc",
+          "attachSize": "100kb"
+        }, {
+          "name":"附件名称",
+          "empId": "010017",
+          "empName": "赵7",
+          "uploadTime": "20170915",
+          "attachUrl": "/upload/123456.doc",
+          "attachSize": "101kb"
+        },
+      ],
     }
   };
 }

@@ -16,8 +16,8 @@ import PermissionHeader from '../../components/common/biz/SeibelHeader';
 import Detail from '../../components/permission/Detail';
 import PermissionList from '../../components/common/biz/CommonList';
 import seibelColumns from '../../components/common/biz/seibelColumns';
-import PubSub from '../../utils/pubsub';
 import { permissionOptions } from '../../config';
+import CreatePrivateClient from '../../components/permission/CreatePrivateClient';
 import styles from './home.less';
 
 const EMPTY_LIST = [];
@@ -73,14 +73,14 @@ export default class Permission extends PureComponent {
     getPermissionList: PropTypes.func.isRequired,
     getDrafterList: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
-    detailMessage: PropTypes.object.isRequired,
     getDetailMessage: PropTypes.func.isRequired,
+    detailMessage: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
-    serverPersonelList: PropTypes.array.isRequired,
     getServerPersonelList: PropTypes.func.isRequired,
     getChildTypeList: PropTypes.func.isRequired,
-    childTypeList: PropTypes.array.isRequired,
     getCustomerList: PropTypes.func.isRequired,
+    serverPersonelList: PropTypes.array.isRequired,
+    childTypeList: PropTypes.array.isRequired,
     customerList: PropTypes.array.isRequired,
   }
 
@@ -88,10 +88,35 @@ export default class Permission extends PureComponent {
 
   }
 
+  static childContextTypes = {
+    getChildTypeList: PropTypes.func.isRequired,
+    getCustomerList: PropTypes.func.isRequired,
+    getServerPersonelList: PropTypes.func.isRequired,
+  }
+
   constructor(props) {
     super(props);
     this.state = {
       isEmpty: true,
+      // 默认状态下新建弹窗不可见 false 不可见  true 可见
+      isShowModal: false,
+    };
+  }
+
+  getChildContext() {
+    return {
+      // 获取 子类型
+      getChildTypeList: (data) => {
+        this.props.getChildTypeList({ id: data });
+      },
+      // 获取 客户列表
+      getCustomerList: (data) => {
+        this.props.getCustomerList({ code: data });
+      },
+      // 获取 服务人员列表
+      getServerPersonelList: (data) => {
+        this.props.getServerPersonelList({ code: data });
+      },
     };
   }
 
@@ -103,15 +128,6 @@ export default class Permission extends PureComponent {
      } } } = this.props;
     // 默认筛选条件
     getPermissionList(constructSeibelPostBody(query, pageNum || 1, pageSize || 10));
-  }
-
-  componentDidMount() {
-    // 建立通过观察者模式对获取 查询服务人员列表 监听
-    PubSub.dispatchServerPersonelList.add(this.emitAsyncGetServerPersonelList);
-    // 建立通过观察者模式对获取 子类型 监听
-    PubSub.dispatchChildTypeList.add(this.emitAsyncGetChildTypeList);
-    // 建立通过观察者模式对获取 客户列表 监听
-    PubSub.dispatchCustomerList.add(this.emitAsyncGetCustomerList);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -130,20 +146,6 @@ export default class Permission extends PureComponent {
           isResetPageNum === 'Y' ? 10 : pageSize,
         ));
       }
-    }
-    if (nextProps.serverPersonelList !== this.props.serverPersonelList) {
-      // 通过观察者模式对serverPersonelList数据监听
-      PubSub.serverPersonelList.dispatch(nextProps.serverPersonelList);
-    }
-
-    if (nextProps.childTypeList !== this.props.childTypeList) {
-      // 通过观察者模式对childTypeList数据监听
-      PubSub.childTypeList.dispatch(nextProps.childTypeList);
-    }
-
-    if (nextProps.customerList !== this.props.customerList) {
-      // 通过观察者模式对customerList数据监听
-      PubSub.customerList.dispatch(nextProps.customerList);
     }
   }
 
@@ -172,38 +174,6 @@ export default class Permission extends PureComponent {
     }
   }
 
-  componentWillUnmount() {
-    // 销毁
-    PubSub.dispatchServerPersonelList.remove(this.emitAsyncGetServerPersonelList);
-    PubSub.dispatchChildTypeList.remove(this.emitAsyncGetChildTypeList);
-    PubSub.dispatchCustomerList.remove(this.emitAsyncGetCustomerList);
-  }
-
-  get detailComponent() {
-    if (_.isEmpty(this.props.detailMessage)) {
-      return null;
-    }
-    return (
-      <Detail
-        {...this.props.detailMessage}
-        dispatchServerPersonelList={this.props.getServerPersonelList}
-      />
-    );
-  }
-    /**
-   * 检查部分属性是否相同
-   * @param {*} prevQuery 前一次query
-   * @param {*} nextQuery 后一次query
-   */
-  diffObject(prevQuery, nextQuery) {
-    const prevQueryData = _.omit(prevQuery, OMIT_ARRAY);
-    const nextQueryData = _.omit(nextQuery, OMIT_ARRAY);
-    if (!_.isEqual(prevQueryData, nextQueryData)) {
-      return false;
-    }
-    return true;
-  }
-
   /**
    * 构造表格的列数据
    * 传参为icon的type
@@ -211,24 +181,6 @@ export default class Permission extends PureComponent {
   @autobind
   constructTableColumns() {
     return seibelColumns('save_blue');
-  }
-
-  @autobind
-  emitAsyncGetServerPersonelList(data) {
-    // pubsub 监听事件
-    this.props.getServerPersonelList({ id: data });
-  }
-
-  @autobind
-  emitAsyncGetChildTypeList(data) {
-    // pubsub 监听事件
-    this.props.getChildTypeList({ id: data });
-  }
-
-  @autobind
-  emitAsyncGetCustomerList(data) {
-    // pubsub 监听事件
-    this.props.getCustomerList({ id: data });
   }
 
   @autobind
@@ -242,7 +194,40 @@ export default class Permission extends PureComponent {
   // 头部新建页面
   @autobind
   creatPermossionModal() {
-    console.log('新建');
+    this.props.getServerPersonelList({ id: 101110 });
+    this.setState({ isShowModal: true });
+  }
+
+  @autobind
+  setModalShowOrHide() {
+    this.setState({ isShowModal: !this.state.isShowModal });
+  }
+  /**
+   * 检查部分属性是否相同
+   * @param {*} prevQuery 前一次query
+   * @param {*} nextQuery 后一次query
+   */
+  diffObject(prevQuery, nextQuery) {
+    const prevQueryData = _.omit(prevQuery, OMIT_ARRAY);
+    const nextQueryData = _.omit(nextQuery, OMIT_ARRAY);
+    if (!_.isEqual(prevQueryData, nextQueryData)) {
+      return false;
+    }
+    return true;
+  }
+
+  get detailComponent() {
+    if (_.isEmpty(this.props.detailMessage)) {
+      return null;
+    }
+    return (
+      <Detail
+        {...this.props.detailMessage}
+        customerList={this.props.customerList}
+        childTypeList={this.props.childTypeList}
+        serverPersonelList={this.props.serverPersonelList}
+      />
+    );
   }
 
   render() {
@@ -284,6 +269,13 @@ export default class Permission extends PureComponent {
           leftPanel={leftPanel}
           rightPanel={rightPanel}
           leftListClassName="premissionList"
+        />
+        <CreatePrivateClient
+          isShow={this.state.isShowModal}
+          onEmitSHowOrHideModal={this.setModalShowOrHide}
+          customerList={this.props.customerList}
+          childTypeList={this.props.childTypeList}
+          serverPersonelList={this.props.serverPersonelList}
         />
       </div>
     );

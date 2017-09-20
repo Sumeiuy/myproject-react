@@ -78,6 +78,7 @@ export default {
     getCustomerListSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
       const { custList = EMPTY_LIST } = resultData;
+      console.log('reduces', custList);
       return {
         ...state,
         customerList: custList,

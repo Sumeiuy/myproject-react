@@ -12,6 +12,7 @@ import ServerPersonel from './ServerPersonel';
 import Approval from './Approval';
 import ApprovalRecord from './ApprovalRecord';
 import BaseInfoModify from './BaseInfoModify';
+import UploadFile from './UploadFile';
 
 export default class Detail extends PureComponent {
   static propTypes = {
@@ -20,7 +21,10 @@ export default class Detail extends PureComponent {
     draftInfo: PropTypes.array,
     serverInfo: PropTypes.array,
     approvalRecordList: PropTypes.array,
-    dispatchServerPersonelList: PropTypes.func.isRequired,
+    attachInfoList: PropTypes.array,
+    serverPersonelList: PropTypes.array.isRequired,
+    childTypeList: PropTypes.array.isRequired,
+    customerList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -29,6 +33,7 @@ export default class Detail extends PureComponent {
     draftInfo: [],
     serverInfo: [],
     approvalRecordList: [],
+    attachInfoList: [],
   }
 
   constructor(props) {
@@ -46,6 +51,8 @@ export default class Detail extends PureComponent {
       serverInfo: props.serverInfo,
       // 审批记录
       approvalRecordList: props.approvalRecordList,
+      // 附件数据
+      attachInfoList: props.attachInfoList,
       // 审批意见
       approvalComments: '他们什么都不晓得',
     };
@@ -64,8 +71,9 @@ export default class Detail extends PureComponent {
       result = (
         <BaseInfoModify
           head="基本信息"
-          serverInfo={this.state.serverInfo}
           baseInfo={this.state.baseInfo}
+          customerList={this.props.customerList}
+          childTypeList={this.props.childTypeList}
         />
       );
     }
@@ -82,7 +90,7 @@ export default class Detail extends PureComponent {
           head="审批"
           type="approvalComments"
           textValue={this.state.approvalComments}
-          emitEvent={this.updateValue}
+          onEmitEvent={this.updateValue}
         />
       );
     }
@@ -118,14 +126,26 @@ export default class Detail extends PureComponent {
           type="serverInfo"
           info={serverInfo}
           statusType={this.state.statusType}
-          emitEvent={this.updateValue}
+          onEmitEvent={this.updateValue}
+          serverPersonelList={this.props.serverPersonelList}
         />
+        <UploadFile fileList={this.state.attachInfoList} />
         {this.approvalDom}
         <ApprovalRecord
           head="审批记录"
           info={approvalRecordList}
           statusType={this.state.statusType}
         />
+        <div className={style.dcFooter}>
+          <span
+            className={style.spClearBtn}
+            onClick={this.removeServerPerson}
+          >终止</span>
+          <span
+            className={style.spAddBtn}
+            onClick={this.addServerPerson}
+          >提交</span>
+        </div>
       </div>
     );
   }
