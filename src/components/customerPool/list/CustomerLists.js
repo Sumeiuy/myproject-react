@@ -24,8 +24,6 @@ const EMPTY_ARRAY = [];
 let onOff = false;// 邮件链接开关
 const EMPTY_OBJECT = {};
 let modalKeyCount = 0;
-// let finded = 0;// 邮件联系
-// let addresses = '';
 
 export default class CustomerLists extends PureComponent {
   static propTypes = {

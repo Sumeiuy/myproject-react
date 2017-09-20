@@ -188,9 +188,6 @@ export default class CustomerRow extends PureComponent {
       hideStyle: hide,
       unit: '元',
       newAsset: asset,
-      visible: false,
-      isShowModal: false,
-      custType: '',
       checked: false,
       addressEmail: {},
     };
@@ -218,19 +215,14 @@ export default class CustomerRow extends PureComponent {
   componentWillReceiveProps(nextProps) {
     const { custContactData } = this.props;
     if (custContactData !== nextProps.custContactData && _.size(nextProps.custContactData) !== 0) {
-      // console.warn(nextProps.custContactData);
-      // console.log(this.getEmailData(nextProps.custContactData));
       const change = {
         ...this.state.addressEmail,
-        ...{ [nextProps.currentCustId]: this.getEmailData(nextProps.custContactData,
+        ...{ [nextProps.currentCustId]: this.getEmail(nextProps.custContactData,
             nextProps.currentCustId) },
       };
       this.setState({
         addressEmail: change,
       }, () => {
-        // console.warn('hrefUrl1111----', hrefUrl);
-        // console.log(this.sendEmail && hrefUrl !== '');
-        // console.log('hrefUrl !== \'\'---', hrefUrl !== '');
         if (this.sendEmail && hrefUrl !== '') {
           const evt = new MouseEvent('click', { bubbles: false, cancelable: false, view: window });
           this.sendEmail.dispatchEvent(evt);
@@ -260,7 +252,7 @@ export default class CustomerRow extends PureComponent {
   }
 
   @autobind
-  getEmailData(address, nextID) {
+  getEmail(address, nextID) {
     let addresses = '';
     let finded = 0;// 邮件联系
     let email = null;
