@@ -24,11 +24,6 @@ const EMPTY_ARRAY = [];
 let onOff = false;// 邮件链接开关
 const EMPTY_OBJECT = {};
 let modalKeyCount = 0;
-let finded = 0;// 邮件联系
-let addresses = '';
-let followOnoff = false;
-let operateType = null;
-let change = {};
 
 export default class CustomerLists extends PureComponent {
   static propTypes = {
@@ -104,12 +99,14 @@ export default class CustomerLists extends PureComponent {
       custContactData: prevCustContactData = EMPTY_OBJECT,
       serviceRecordData: prevServiceRecordData = EMPTY_ARRAY,
       followLoading: preFL,
+      custList,
      } = this.props;
     const {
       custContactData: nextCustContactData = EMPTY_OBJECT,
       serviceRecordData: nextServiceRecordData = EMPTY_ARRAY,
       followLoading,
       fllowCustData,
+      custList: nextCustList,
      } = nextProps;
     const { currentCustId, isShowContactModal, currentFollowCustId } = this.state;
     const prevContact = prevCustContactData[currentCustId] || EMPTY_OBJECT;
@@ -117,9 +114,10 @@ export default class CustomerLists extends PureComponent {
     const prevRecord = prevServiceRecordData[currentCustId] || EMPTY_OBJECT;
     const nextRecord = nextServiceRecordData[currentCustId] || EMPTY_OBJECT;
     let isFollows = {};
+    let change = {};
     const { result } = fllowCustData || '';
-    if ((prevContact !== nextContact || prevRecord !== nextRecord) &&
-      onOff === false && followOnoff === false) {
+    console.warn('onOff---', onOff);
+    if ((prevContact !== nextContact || prevRecord !== nextRecord) && onOff === false) {
       if (!isShowContactModal) {
         this.setState({
           isShowContactModal: true,
@@ -128,11 +126,7 @@ export default class CustomerLists extends PureComponent {
       }
     }
     if (onOff) {
-      if (_.size(nextContact) !== 0) {
-        addresses = nextContact;
-        this.getEmailData(addresses);
-      }
-      onOff = false;
+      onOff = !onOff;
     }
     if (preFL && !followLoading) {
       if (result === 'success') {
@@ -157,22 +151,21 @@ export default class CustomerLists extends PureComponent {
         }
       }
     }
-    if (nextProps.custList !== this.props.custList) {
-      // console.log(111111111);
-      nextProps.custList.map((item) => {
+    if (nextCustList !== custList) {
+      nextCustList.map((item) => {
         isFollows = {
           ...isFollows,
           [item.custId]: item.whetherExist,
         };
         return isFollows;
       });
-      // console.log(isFollows);
       this.setState({
         ...this.state.isFollows,
         isFollows,
       });
     }
   }
+
   componentDidUpdate() {
     this.setTaskAndGroup();
   }
@@ -195,31 +188,7 @@ export default class CustomerLists extends PureComponent {
       });
     }
   }
-  @autobind
-  getEmailData(address) {
-    if (address.orgCustomerContactInfoList !== undefined) {
-      const index = _.findLastIndex(address.orgCustomerContactInfoList,
-        val => val.mainFlag);
-      finded = _.findLastIndex(address.orgCustomerContactInfoList[index].emailAddresses,
-        val => val.mainFlag);
-      addresses = address.orgCustomerContactInfoList[index];
-    } else {
-      finded = _.findLastIndex(address.perCustomerContactInfo.emailAddresses,
-        val => val.mainFlag);
-      addresses = address.perCustomerContactInfo;
-    }
-    // console.warn('emailAddresses-------', addresses.emailAddresses[finded].contactValue)
-    if (finded !== -1) {
-      this.setState({
-        email: addresses.emailAddresses[finded].contactValue,
-      });
-    } else {
-      this.setState({
-        email: null,
-      });
-      message.error('暂无客户邮件，请与客户沟通尽快完善信息');
-    }
-  }
+
   updateLeftPos() {
     const workspaceSidebar = document.querySelector(fspContainer.workspaceSidebar);
     const fixedEleDom = document.querySelector('fixedEleDom');
@@ -409,7 +378,6 @@ export default class CustomerLists extends PureComponent {
         custId,
       });
     });
-    followOnoff = false;
   }
 
   @autobind
@@ -419,48 +387,38 @@ export default class CustomerLists extends PureComponent {
     });
   }
   @autobind
-  toEmail(item) {
+  handleSendEmail(item) {
     const { getCustContact, custContactData } = this.props;
     const { custId } = item;
     if (_.isEmpty(custContactData[custId])) {
-      this.setState({
-        currentEmailCustId: custId,
-        currentCustId: custId,
-      });
       getCustContact({
         custId,
       });
-    } else {
-      this.setState({
-        currentEmailCustId: custId,
-        currentCustId: custId,
-      });
-      addresses = custContactData[custId];
-      this.getEmailData(addresses);
     }
+    this.setState({
+      currentCustId: custId,
+    });
     onOff = true;
   }
   @autobind
-  addFollow(item) {
+  handleAddFollow(item) {
     const { getFollowCust } = this.props;
     const { custId, empId } = item;
+    let operateType = null;
     if (!this.state.isFollows[custId]) {
       operateType = 'new';
       getFollowCust({
         empId, operateType, custId,
-      });
-      this.setState({
-        currentFollowCustId: custId,
       });
     } else {
       operateType = 'delete';
       getFollowCust({
         empId, operateType, custId,
       });
-      this.setState({
-        currentFollowCustId: custId,
-      });
     }
+    this.setState({
+      currentFollowCustId: custId,
+    });
   }
   /**
  * 回调，关闭modal打开state
@@ -502,15 +460,12 @@ export default class CustomerLists extends PureComponent {
       taskAndGroupLeftPos,
       showCreateServiceRecord,
       id,
-      email,
-      currentEmailCustId,
       currentFollowCustId,
       isShowContactModal,
       currentCustId,
       custType,
       modalKey,
       isFollows,
-      // isEmail,
     } = this.state;
 
     const {
@@ -600,16 +555,15 @@ export default class CustomerLists extends PureComponent {
                 isAllSelect={isAllSelectBool}
                 selectedIds={selectIdsArr}
                 onChange={this.handleSingleSelect}
-                toEmail={this.toEmail}
-                addFollow={this.addFollow}
+                onSendEmail={this.handleSendEmail}
+                onAddFollow={this.handleAddFollow}
                 createServiceRecord={this.showCreateServiceRecord}
                 createContact={this.showCreateContact}
                 key={`${item.empId}-${item.custId}-${item.idNum}-${item.telephone}-${item.asset}`}
-                email={email}
-                currentEmailCustId={currentEmailCustId}
+                custContactData={finalContactData}
                 currentFollowCustId={currentFollowCustId}
                 isFollows={isFollows}
-                // isEmail={isEmail}
+                currentCustId={currentCustId}
                 isGetCustIncome={isGetCustIncome}
               />,
             )

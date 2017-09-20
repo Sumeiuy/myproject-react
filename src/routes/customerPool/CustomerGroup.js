@@ -198,6 +198,7 @@ export default class CustomerGroup extends PureComponent {
   handleSubmit() {
       /* groupId不为空，表示已经选中了分组 */
     if (groupId !== '') {
+      console.info('groupId---', groupId);
         /* 获取所选目标分组客户：ids表示选择客户，condition表示全选,将筛选条件传入后台。 */
       const param = {};
       const { location: { query } } = this.props;
@@ -206,7 +207,8 @@ export default class CustomerGroup extends PureComponent {
         param.custIdList = ids;
       } else if (query.condition) {
         const condition = JSON.parse(decodeURIComponent(query.condition));
-        param.searchReq = condition;
+        param.queryCustsForm = condition;
+        param.custIdList = null;
       }
       param.groupId = groupId;
       param.empId = helper.getEmpId();
@@ -221,16 +223,20 @@ export default class CustomerGroup extends PureComponent {
   handleNewGroupSubmit(value) {
     const param = {};
     const { location: { query } } = this.props;
+    console.log(query);
     if (query.ids) {
       const ids = decodeURIComponent(query.ids).split(',');
       param.custIdList = ids;
     } else if (query.condition) {
       const condition = JSON.parse(decodeURIComponent(query.condition));
-      param.searchReq = condition;
+      // console.log(condition)
+      param.queryCustsForm = condition;
+      param.custIdList = null;
     }
     param.empId = helper.getEmpId();
     Object.assign(param, value);
     this.props.createCustGroup({ ...param });
+    console.log(this.props.createCustGroup);
   }
   @autobind
   /* 退回 */
@@ -288,6 +294,7 @@ export default class CustomerGroup extends PureComponent {
                 </Row>
                 <Row className={styles.groupForm}>
                   <AddNewGroup
+                    goback={this.goback}
                     onSubmit={this.handleNewGroupSubmit}
                   />
                   <Row className={styles.BtnContent} />
