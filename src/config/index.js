@@ -15,6 +15,7 @@ import customerPoolBusiness from './customerPoolBusiness';
 import scatterType from './scatterType';
 import { responseCode, excludeCode } from './errorCode';
 import permissionOptions from './permissionOptions';
+import seibelConfig from './pageConfig';
 
 export default {
   constants,
@@ -35,4 +36,5 @@ export default {
   responseCode,
   excludeCode,
   permissionOptions,
+  seibelConfig,
 };
