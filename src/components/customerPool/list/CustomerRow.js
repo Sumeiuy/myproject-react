@@ -6,7 +6,7 @@
 
 import React, { PureComponent, PropTypes } from 'react';
 // import { withRouter } from 'dva/router';
-import { Checkbox } from 'antd';
+import { Checkbox, message } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
@@ -144,6 +144,8 @@ const formatNumber = (num) => {
   return num;
 };
 
+let hrefUrl = '';
+
 export default class CustomerRow extends PureComponent {
   static propTypes = {
     q: PropTypes.string,
@@ -155,16 +157,15 @@ export default class CustomerRow extends PureComponent {
     isAllSelect: PropTypes.bool.isRequired,
     selectedIds: PropTypes.array,
     createServiceRecord: PropTypes.func.isRequired,
-    toEmail: PropTypes.func.isRequired,
-    addFollow: PropTypes.func.isRequired,
+    onSendEmail: PropTypes.func.isRequired,
+    onAddFollow: PropTypes.func.isRequired,
     dict: PropTypes.object.isRequired,
     createContact: PropTypes.func.isRequired,
     isSms: PropTypes.bool.isRequired,
-    email: PropTypes.string.isRequired,
-    currentEmailCustId: PropTypes.string.isRequired,
+    custContactData: PropTypes.object.isRequired,
     currentFollowCustId: PropTypes.string.isRequired,
+    currentCustId: PropTypes.string.isRequired,
     isFollows: PropTypes.object.isRequired,
-    // isEmail: PropTypes.bool.isRequired,
     isGetCustIncome: PropTypes.bool.isRequired,
   }
 
@@ -188,6 +189,7 @@ export default class CustomerRow extends PureComponent {
       unit: '元',
       newAsset: asset,
       checked: false,
+      addressEmail: {},
     };
     this.businessConfig = new Map();
     custBusinessType.forEach((v) => {
@@ -210,15 +212,23 @@ export default class CustomerRow extends PureComponent {
       isShowCharts: false,
     });
   }
-  componentDidUpdate() {
-    console.log(this.props.email !== '' && this.props.currentEmailCustId === this.props.listItem.custId);
-    console.warn(this.props.currentEmailCustId);
-    console.warn(this.props.listItem.custId);
-    if (this.props.email !== '' && this.props.currentEmailCustId === this.props.listItem.custId) {
-      // debugger;
-      console.log(this.sendEmail);
-      const evt = new MouseEvent('click', { bubbles: false, cancelable: false, view: window });
-      this.sendEmail.dispatchEvent(evt);
+  componentWillReceiveProps(nextProps) {
+    const { custContactData } = this.props;
+    if (custContactData !== nextProps.custContactData && _.size(nextProps.custContactData) !== 0) {
+      const change = {
+        ...this.state.addressEmail,
+        ...{ [nextProps.currentCustId]: this.getEmail(nextProps.custContactData,
+            nextProps.currentCustId) },
+      };
+      this.setState({
+        addressEmail: change,
+      }, () => {
+        if (this.sendEmail && hrefUrl !== '') {
+          const evt = new MouseEvent('click', { bubbles: false, cancelable: false, view: window });
+          this.sendEmail.dispatchEvent(evt);
+          hrefUrl = '';
+        }
+      });
     }
   }
   getLastestData(arr) {
@@ -239,6 +249,35 @@ export default class CustomerRow extends PureComponent {
     this.setState({
       isShowCharts: true,
     });
+  }
+
+  @autobind
+  getEmail(address, nextID) {
+    let addresses = '';
+    let finded = 0;// 邮件联系
+    let email = null;
+    if (address.orgCustomerContactInfoList !== undefined) {
+      const index = _.findLastIndex(address.orgCustomerContactInfoList,
+          val => val.mainFlag);
+      finded = _.findLastIndex(address.orgCustomerContactInfoList[index].emailAddresses,
+          val => val.mainFlag);
+      addresses = address.orgCustomerContactInfoList[index];
+    } else if (address.perCustomerContactInfo !== undefined) {
+      finded = _.findLastIndex(address.perCustomerContactInfo.emailAddresses,
+          val => val.mainFlag);
+      addresses = address.perCustomerContactInfo;
+    } else {
+      finded = -1;
+    }
+    if (finded === -1) {
+      if (this.props.listItem.custId === nextID) {
+        message.error('暂无客户邮箱，请与客户沟通尽快完善信息');
+        email = null;
+      }
+    } else {
+      email = addresses.emailAddresses[finded].contactValue;
+    }
+    return email;
   }
 
   @autobind
@@ -275,6 +314,18 @@ export default class CustomerRow extends PureComponent {
       });
     }
   }
+
+  @autobind
+  /* eslint-disable */
+  handleIsEmail(e) {
+    const noEmail = 'javascript:void(0);';
+    const { listItem } = this.props;
+    hrefUrl = e.target.getAttribute('href');
+    if (hrefUrl === noEmail) {
+      this.props.onSendEmail(listItem);
+    }
+  }
+  /* eslint-disable */
 
   @autobind
   matchWord(q, listItem) {
@@ -434,10 +485,7 @@ export default class CustomerRow extends PureComponent {
   render() {
     const { q, listItem, monthlyProfits, isAllSelect, selectedIds,
       isSms,
-      toEmail,
-      currentEmailCustId,
-      email,
-      addFollow,
+      onAddFollow,
       currentFollowCustId,
       createServiceRecord,
       isFollows,
@@ -447,6 +495,7 @@ export default class CustomerRow extends PureComponent {
       unit,
       newAsset,
       isShowCharts,
+      addressEmail,
     } = this.state;
     const thisMonthlyProfits = monthlyProfits[listItem.custId] || [];
     const lastestProfit = Number(this.getLastestData(thisMonthlyProfits).assetProfit);
@@ -465,15 +514,15 @@ export default class CustomerRow extends PureComponent {
                   <Icon type="dianhua" />
                   <span>电话联系</span>
                 </li>
-                <li onClick={() => toEmail(listItem)}>
+                <li onClick={this.handleIsEmail}>
                   <Icon type="youjian" />
-                  <span>{currentEmailCustId === listItem.custId && email ? <a ref={ref => this.sendEmail = ref} href={`mailto:${email}`} > 邮件联系 </a> : '邮件联系' }</span>
+                  <span><a ref={ref => this.sendEmail = ref} href={addressEmail[listItem.custId] === undefined || addressEmail[listItem.custId] === null ? 'javascript:void(0);' : `mailto:${addressEmail[listItem.custId]}`}> 邮件联系 </a></span>
                 </li>
                 <li onClick={() => createServiceRecord(listItem)}>
                   <Icon type="jilu" />
                   <span>添加服务记录</span>
                 </li>
-                <li onClick={() => addFollow(listItem)} className={(currentFollowCustId === listItem.custId && isFollows[currentFollowCustId]) || isFollows[listItem.custId] ? styles.follows : ''}>
+                <li onClick={() => onAddFollow(listItem)} className={(currentFollowCustId === listItem.custId && isFollows[currentFollowCustId]) || isFollows[listItem.custId] ? styles.follows : ''}>
                   <Icon type="guanzhu" />
                   <span>{(currentFollowCustId === listItem.custId && isFollows[currentFollowCustId]) || isFollows[listItem.custId] ? '已关注' : '关注'}</span>
                 </li>
