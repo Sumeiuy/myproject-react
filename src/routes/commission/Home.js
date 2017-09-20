@@ -9,39 +9,49 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { withRouter, routerRedux } from 'dva/router';
 import SplitPanel from '../../components/common/splitPanel/SplitPanel';
-import Detail from '../../components/feedback/Detail';
+import Detail from '../../components/commissionAdjustment/Detail';
 import CommissionHeader from '../../components/common/biz/SeibelHeader';
 import CommissionList from '../../components/common/biz/CommonList';
 import seibelColumns from '../../components/common/biz/seibelColumns';
-import { constructPostBody } from '../../utils/helper';
+import { getSeibelQuery } from '../../utils/helper';
 import './Home.less';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
+
+const effects = {
+  list: 'commission/getCommissionList',
+  detail: 'commission/getCommissionDetail',
+};
+
 const mapStateToProps = state => ({
-  list: state.feedback.list,
+  list: state.commission.list,
+  detail: state.commission.detail,
 });
 
-const getDataFunction = loading => query => ({
-  type: 'feedback/getFeedbackList',
+const getDataFunction = (loading, type) => query => ({
+  type,
   payload: query || {},
   loading,
 });
 
 const mapDispatchToProps = {
   replace: routerRedux.replace,
-  getFeedbackList: getDataFunction(true),
+  getCommissionList: getDataFunction(true, effects.list), // 获取批量佣金调整List
+  getCommissionDetail: getDataFunction(true, effects.detail), // 获取批量佣金调整List
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 export default class CommissionHome extends PureComponent {
   static propTypes = {
-    list: PropTypes.object.isRequired,
-    getFeedbackList: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
+    getCommissionList: PropTypes.func.isRequired,
+    getCommissionDetail: PropTypes.func.isRequired,
+    list: PropTypes.object.isRequired,
+    detail: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -56,29 +66,26 @@ export default class CommissionHome extends PureComponent {
   }
 
   componentWillMount() {
-    const { getFeedbackList, location: { query, query: {
-      curPageNum,
-      curPageSize,
-     } } } = this.props;
+    const {
+      getCommissionList,
+      location: { query },
+    } = this.props;
+    const params = getSeibelQuery('commission', query);
     // 默认筛选条件
-    getFeedbackList(constructPostBody(query, curPageNum || 1, curPageSize || 10));
+    getCommissionList(params);
   }
 
   componentWillReceiveProps(nextProps) {
     const { location: { query: nextQuery = EMPTY_OBJECT } } = nextProps;
-    const { location: { query: prevQuery = EMPTY_OBJECT }, getFeedbackList } = this.props;
-    const { isResetPageNum = 'N', curPageNum, curPageSize } = nextQuery;
+    const { location: { query: prevQuery = EMPTY_OBJECT }, getCommissionList } = this.props;
 
     // 深比较值是否相等
     // url发生变化，检测是否改变了筛选条件
     if (!_.isEqual(prevQuery, nextQuery)) {
       if (!this.diffObject(prevQuery, nextQuery)) {
+        const params = getSeibelQuery('commission', nextQuery);
         // 只监测筛选条件是否变化
-        getFeedbackList(constructPostBody(
-          nextQuery,
-          isResetPageNum === 'Y' ? 1 : curPageNum,
-          isResetPageNum === 'Y' ? 10 : curPageSize,
-        ));
+        getCommissionList(params);
       }
     }
   }
