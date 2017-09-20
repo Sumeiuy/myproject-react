@@ -203,9 +203,6 @@ export default class CustomerList extends PureComponent {
       orgId !== preOrgId) {
       this.getCustomerList(nextProps);
     }
-    const havePermission = _.find(empRespList, item => item.id === HTSC_RESPID);
-    // console.log('query.orgId----query.source', query.orgId, query.source);
-    // debugger
     if (query.orgId) {
       this.setState({
         isSms: query.orgId === MAIN_MAGEGER_ID,
@@ -213,10 +210,6 @@ export default class CustomerList extends PureComponent {
     } else if (query.source === 'business') {
       this.setState({
         isSms: true,
-      });
-    } else {
-      this.setState({
-        isSms: !!havePermission,
       });
     }
   }
@@ -387,6 +380,7 @@ export default class CustomerList extends PureComponent {
     if (respIdOfPosition < 0) {
       this.setState({
         createCustRange: [myCustomer],
+        isSms: true,
       });
       return false;
     }
@@ -405,6 +399,7 @@ export default class CustomerList extends PureComponent {
       this.setState({
         createCustRange: custRange,
         expandAll: true,
+        isSms: false,
       });
       return false;
     }
@@ -414,6 +409,7 @@ export default class CustomerList extends PureComponent {
       this.setState({
         createCustRange: [groupInCustRange, myCustomer],
         expandAll: true,
+        isSms: false,
       });
       return false;
     }
@@ -430,6 +426,7 @@ export default class CustomerList extends PureComponent {
     if (department) {
       this.setState({
         createCustRange: department,
+        isSms: false,
       });
       return false;
     }
@@ -438,6 +435,7 @@ export default class CustomerList extends PureComponent {
       createCustRange: [{
         id: empInfo.occDivnNum,
         name: empInfo.occupation,
+        isSms: false,
       }],
     });
     return false;
