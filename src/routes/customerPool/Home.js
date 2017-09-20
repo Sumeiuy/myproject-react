@@ -353,7 +353,7 @@ export default class Home extends PureComponent {
           pathname,
           query: {
             ...query,
-            orgId: orgId === 'msm' ? '' : orgId,
+            orgId,
           },
         });
       } else if (cycleSelect) {

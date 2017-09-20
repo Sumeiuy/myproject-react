@@ -97,13 +97,15 @@ const fspGlobal = {
   },
 
   // 关闭fsp中原有的tab
+  // 参数 hrefValue 为对应标签页关闭按钮的父级元素href的属性值
   closeFspTabByHref(hrefValue) {
     closeTab(`a[href="${hrefValue}"]`);
   },
 
   // 关闭fsp中由react生成的tab
+  // 参数 id 为对应得tab标签的id
   closeRctTabById(id) {
-    closeTab(`#${id}`);
+    closeTab(`#exApp_${id}`);
   },
 };
 

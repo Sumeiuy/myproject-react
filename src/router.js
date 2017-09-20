@@ -32,6 +32,7 @@ import CustomerList from './routes/customerPool/CustomerList';
 import CustomerGroup from './routes/customerPool/CustomerGroup';
 import CreateTask from './routes/customerPool/CreateTask';
 import Contract from './routes/contract/Home';
+import FullChannelServiceRecord from './routes/fullChannelServiceRecord/Home';
 
 function switchRouter() {
   const fsp = document.querySelector(fspContainer.container);
@@ -70,6 +71,7 @@ const routes = ({ history }) => (// eslint-disable-line
         <IndexRoute component={Contract} />
         <Route path="edit" component={Contract} />
       </Route>
+      <Route path="fullChannelServiceRecord" component={FullChannelServiceRecord} />
     </Route>
   </Router>
 );
