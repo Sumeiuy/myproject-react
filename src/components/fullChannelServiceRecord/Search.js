@@ -1,6 +1,6 @@
 /**
  * @file components/fullChannelServiceRecord/Search.js
- *  全渠道服务记录
+ *  全渠道服务记录搜索区
  * @author wangjunjun
  */
 import React, { PureComponent, PropTypes } from 'react';

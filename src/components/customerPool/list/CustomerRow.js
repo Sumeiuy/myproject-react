@@ -476,8 +476,10 @@ export default class CustomerRow extends PureComponent {
     const { listItem } = this.props;
     if (listItem.pOrO === 'P') {
       return <span>{listItem.genderValue}/{listItem.age}岁</span>;
-    } else if (listItem.pOrO === 'O' || listItem.pOrO === 'F' || listItem.orgTypeName) {
+    } else if (listItem.pOrO === 'O' && listItem.orgTypeName) {
       return <span>{listItem.orgTypeName}</span>;
+    } else if (listItem.pOrO === 'F' && listItem.prodTypeName) {
+      return <span>{listItem.prodTypeName}</span>;
     }
     return '';
   }
