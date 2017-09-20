@@ -568,7 +568,7 @@ export default class CustomerRow extends PureComponent {
                 <div
                   className={`riskLevel ${riskLevelConfig[rskLev].colorCls}`}
                 >
-                  <div className="itemText">{riskLevelConfig[rskLev].title}</div>
+                  <div className="itemText">{`风险等级：${riskLevelConfig[rskLev].title}`}</div>
                   {riskLevelConfig[rskLev].name}
                 </div>
             }
