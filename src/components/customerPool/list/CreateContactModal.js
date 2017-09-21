@@ -157,7 +157,15 @@ export default class CreateContactModal extends PureComponent {
     let newPhone = '';
     const temp = phone.toString();
     const len = temp.length;
-    const flag = checkFormat.isCellphone(phone) ? 4 : 8;
+    let flag = 4;
+    const isCellPhone = checkFormat.isCellphone(phone);
+    if (!isCellPhone) {
+      // 不是手机号
+      if (phone.indexOf('-') === -1) {
+        // 但是后台没有处理成025-213413421形式
+        flag = 8;
+      }
+    }
 
     for (let i = len - 1; i >= 0; i--) {
       if (count % flag === 0 && count !== 0) {
@@ -238,6 +246,16 @@ export default class CreateContactModal extends PureComponent {
           if (!_.isEmpty(_.pick(mainContactAllInfo, ['workTels', 'homeTels', 'otherTels', 'cellPhones']))) {
             isOrgMainContactHasTel = true;
           }
+          const otherCellInfo = _.filter(mainContactAllInfo.cellPhones,
+            item => !item.mainFlag) || EMPTY_LIST;
+          if (!_.isEmpty(otherCellInfo)) {
+            // 手机号不止一个
+            mainContactInfo = _.merge(mainContactInfo, {
+              telInfo: {
+                cellPhones: otherCellInfo,
+              },
+            });
+          }
         }
         // 其他联系人信息
         const otherContact = _.filter(orgCustomerContactInfoList,
@@ -268,9 +286,17 @@ export default class CreateContactModal extends PureComponent {
               value: this.formatPhoneNumber(cellPhones && cellPhones[0].contactValue),
             };
           }
-          // 个人联系方式中，不存在主要电话
-          // 过滤联系方式为空的情况
-          const otherTelInfo = _.omitBy(_.omit(allTelInfo, ['cellPhones']), _.isEmpty);
+
+          // 过滤个人其他联系方式为空的情况
+          let otherTelInfo = _.omitBy(_.omit(allTelInfo, ['cellPhones']), _.isEmpty);
+
+          const otherCellInfo = _.filter(cellPhones, item => !item.mainFlag) || EMPTY_LIST;
+          if (!_.isEmpty(otherCellInfo)) {
+            // 手机号不止一个
+            otherTelInfo = _.merge(otherTelInfo, {
+              cellPhones: otherCellInfo,
+            });
+          }
 
           // 筛选contactValue存在的其他电话
           personalContactInfo = {
@@ -305,16 +331,15 @@ export default class CreateContactModal extends PureComponent {
         }
         {
           (custType === 'per' && isPersonHasContact
-          && !_.isEmpty(personalContactInfo.mainTelInfo)) ?
+          && personalContactInfo.mainTelInfo.type !== 'none') ?
             <div className={styles.title}>
-              主要联系电话（{personalContactInfo.mainTelInfo.type === 'none' ? '--' :
-                  CONTACT_MAP[personalContactInfo.mainTelInfo.type]}）：
+              主要联系电话（{CONTACT_MAP[personalContactInfo.mainTelInfo.type]}）：
             </div> : null
         }
         <div className={styles.number}>
           {
             ((isOrgMainContactHasTel && !_.isEmpty(mainContactInfo.cellInfo)) ||
-            (isPersonHasContact && !_.isEmpty(personalContactInfo.mainTelInfo))) ?
+            (isPersonHasContact && personalContactInfo.mainTelInfo.type !== 'none')) ?
               <div className={styles.mainContact}>
                 <img src={Phone} alt={'电话联系'} />
                 <span>

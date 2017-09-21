@@ -56,6 +56,7 @@ export default {
     followLoading: false,
     fllowCustData: {},
     customerGroupList: {}, // 分组维度，客户分组列表
+    customerList: {}, // 指定分组下的客户列表
   },
   subscriptions: {
     setup({ dispatch }) {
@@ -285,11 +286,21 @@ export default {
         payload: res,
       });
     },
+    // 获取客户分组
     * getCustomerGroupList({ payload }, { call, put }) {
       const response = yield call(api.queryCustomerGroupList, payload);
       const { resultData } = response;
       yield put({
         type: 'getCustomerGroupListSuccess',
+        payload: resultData,
+      });
+    },
+    // 获取分组客户
+    * getGroupCustomerList({ payload }, { call, put }) {
+      const response = yield call(api.queryGroupCustomerList, payload);
+      const { resultData } = response;
+      yield put({
+        type: 'getGroupCustomerListSuccess',
         payload: resultData,
       });
     },
@@ -562,6 +573,7 @@ export default {
         isGetCustIncome: true,
       };
     },
+    // 获取客户分组成功
     getCustomerGroupListSuccess(state, action) {
       const { payload } = action;
       const { page = EMPTY_OBJECT, groupList = EMPTY_LIST } = payload;
@@ -571,6 +583,19 @@ export default {
         customerGroupList: {
           page,
           resultData: groupList,
+        },
+      };
+    },
+    // 获取指定分组客户成功
+    getGroupCustomerListSuccess(state, action) {
+      const { payload } = action;
+      const { page = EMPTY_OBJECT, custList = EMPTY_LIST } = payload;
+
+      return {
+        ...state,
+        customerList: {
+          page,
+          resultData: custList,
         },
       };
     },
