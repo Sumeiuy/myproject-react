@@ -63,6 +63,7 @@ app.model(require('./models/history'));
 app.model(require('./models/permission'));
 app.model(require('./models/customerPool'));
 app.model(require('./models/contract'));
+app.model(require('./models/fullChannelServiceRecord'));
 
 // 4. Router
 app.router(routerConfig);
