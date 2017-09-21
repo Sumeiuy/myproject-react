@@ -23,7 +23,7 @@ import styles from './home.less';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
-const OMIT_ARRAY = ['isResetPageNum'];
+const OMIT_ARRAY = ['isResetPageNum', 'currentId'];
 const { permission: { pageType, subType, status } } = seibelConfig;
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
@@ -131,12 +131,20 @@ export default class Permission extends PureComponent {
       ...params,
       type: pageType,
     });
+
     getEmpOrgTree({});
   }
 
   componentWillReceiveProps(nextProps) {
-    const { location: { query: nextQuery = EMPTY_OBJECT } } = nextProps;
-    const { location: { query: prevQuery = EMPTY_OBJECT }, getPermissionList } = this.props;
+    const {
+      location: { query: nextQuery = EMPTY_OBJECT },
+      location: { query: { currentId } },
+    } = nextProps;
+    const {
+      location: { query: prevQuery = EMPTY_OBJECT },
+      getPermissionList,
+      location: { query: { currentId: prevCurrentId } },
+     } = this.props;
     const { isResetPageNum = 'N', pageNum, pageSize } = nextQuery;
     // 深比较值是否相等
     // url发生变化，检测是否改变了筛选条件
@@ -152,6 +160,11 @@ export default class Permission extends PureComponent {
           type: pageType,
         });
       }
+    }
+
+    /* currentId变化重新请求 */
+    if (currentId && (currentId !== prevCurrentId)) {
+      this.clickRow(currentId);
     }
   }
 
@@ -182,17 +195,6 @@ export default class Permission extends PureComponent {
     return <Detail {...this.props.detailMessage} />;
   }
 
-  /**
-   * 点击列表每条的时候对应请求详情
-   */
-  @autobind
-  getListRowId(id) {
-    const { getDetailMessage } = this.props;
-    getDetailMessage({
-      id,
-    });
-  }
-
   @autobind
   clearModal() {
     // 清除模态框组件
@@ -213,7 +215,7 @@ export default class Permission extends PureComponent {
   toSearchDrafter(value) {
     const { getDrafterList } = this.props;
     getDrafterList({
-      empId: value,
+      keyword: value,
     });
   }
 
@@ -227,12 +229,26 @@ export default class Permission extends PureComponent {
   }
 
   /**
+   * 点击列表每条的时候对应请求详情
+   */
+  @autobind
+  clickRow(id) {
+    const { getDetailMessage } = this.props;
+    getDetailMessage({
+      id,
+    });
+  }
+
+  /**
    * 构造表格的列数据
    * 传参为icon的type
    */
   @autobind
   constructTableColumns() {
-    return seibelColumns('save_blue');
+    return seibelColumns({
+      pageName: 'permission',
+      type: 'kehu1',
+    });
   }
 
   /**
@@ -289,6 +305,7 @@ export default class Permission extends PureComponent {
         drafterList={drafterList}
         customerList={customerList}
         custRange={custRange}
+        clickRow={this.clickRow}
       />
     );
 
