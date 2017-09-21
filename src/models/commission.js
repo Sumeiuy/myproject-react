@@ -16,6 +16,14 @@ export default {
     list: {},
     // 批量佣金右侧详情
     detail: {},
+    // 单个用户的审批记录
+    approvalRecord: [],
+    // 查询审批记录流程状态
+    recordLoading: false,
+    // 筛选的客户列表
+    filterCustList: [],
+    // 筛选的拟稿人列表
+    filterDrafterList: [],
   },
   reducers: {
 
@@ -50,6 +58,38 @@ export default {
           ...detailResult,
           custList: listResult,
         },
+      };
+    },
+
+    getApprovalRecordsSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        approvalRecord: resultData,
+      };
+    },
+
+    searchCustListSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        filterCustList: resultData,
+      };
+    },
+
+    searchDrafterListSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        filterDrafterList: resultData,
+      };
+    },
+
+    opertateState(state, action) {
+      const { payload: { name, value } } = action;
+      return {
+        ...state,
+        [name]: value,
       };
     },
   },
@@ -88,6 +128,49 @@ export default {
       yield put({
         type: 'getCommissionDetailSuccess',
         payload: { detailRes, custListRes },
+      });
+    },
+
+    // 批量佣金调整详情页面中单个客户的审批记录
+    * getApprovalRecords({ payload }, { call, put }) {
+      yield put({
+        type: 'opertateState',
+        payload: {
+          name: 'recordLoading',
+          value: true,
+          message: '开始查询审批记录',
+        },
+      });
+      const recordResponse = yield call(api.querySingleCustApprovalRecord, payload);
+      yield put({
+        type: 'getApprovalRecordsSuccess',
+        payload: recordResponse,
+      });
+      yield put({
+        type: 'opertateState',
+        payload: {
+          name: 'recordLoading',
+          value: false,
+          message: '查询审批记录结束',
+        },
+      });
+    },
+
+    // 根据用户输入的关键字，来查询可选的客户列表
+    * searchCustList({ payload }, { call, put }) {
+      const custResponse = yield call(api.getCustList, payload);
+      yield put({
+        type: 'searchCustListSuccess',
+        payload: custResponse,
+      });
+    },
+
+    // 根据用户输入的关键字，来查询可选的拟稿人列表
+    * searchDrafterList({ payload }, { call, put }) {
+      const drafterResponse = yield call(api.getDrafterList, payload);
+      yield put({
+        type: 'searchDrafterListSuccess',
+        payload: drafterResponse,
       });
     },
   },

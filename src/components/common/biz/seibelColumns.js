@@ -26,7 +26,7 @@ export default function seibelColumns(type) {
     width: '40%',
     render: (text, record) => (
       <div className="rightSection">
-        <Tag type={record.status} />
+        <Tag type="blue" text={record.status} />
         <div className="date">{(record.createTime &&
           record.createTime.slice(0, 10)) || '无'}</div>
         <div className="cust">客户：{record.custName || '无'}({record.custNumber || '无'})</div>
