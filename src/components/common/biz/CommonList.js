@@ -19,12 +19,9 @@ export default class PermissionList extends PureComponent {
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
     columns: PropTypes.array.isRequired,
-    // 点击列表显示对应的详情页
-    clickRow: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
-
   };
 
   constructor(props) {
@@ -100,7 +97,6 @@ export default class PermissionList extends PureComponent {
       location: { pathname, query },
       replace,
       list: { resultData = EMPTY_LIST },
-      clickRow,
     } = this.props;
 
     // 设置当前选中行
@@ -116,8 +112,6 @@ export default class PermissionList extends PureComponent {
         currentId: resultData[index].id,
       },
     });
-
-    clickRow(resultData[index].id);
   }
 
   /**

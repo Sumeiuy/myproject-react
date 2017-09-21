@@ -164,7 +164,10 @@ export default class Permission extends PureComponent {
 
     /* currentId变化重新请求 */
     if (currentId && (currentId !== prevCurrentId)) {
-      this.clickRow(currentId);
+      const { getDetailMessage } = this.props;
+      getDetailMessage({
+        id: currentId,
+      });
     }
   }
 
@@ -225,17 +228,6 @@ export default class Permission extends PureComponent {
     const { getCustomerList } = this.props;
     getCustomerList({
       keyword: value,
-    });
-  }
-
-  /**
-   * 点击列表每条的时候对应请求详情
-   */
-  @autobind
-  clickRow(id) {
-    const { getDetailMessage } = this.props;
-    getDetailMessage({
-      id,
     });
   }
 
@@ -305,7 +297,6 @@ export default class Permission extends PureComponent {
         drafterList={drafterList}
         customerList={customerList}
         custRange={custRange}
-        clickRow={this.clickRow}
       />
     );
 
