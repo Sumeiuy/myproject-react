@@ -17,7 +17,7 @@ import Detail from '../../components/permission/Detail';
 import PermissionList from '../../components/common/biz/CommonList';
 import seibelColumns from '../../components/common/biz/seibelColumns';
 import { permissionOptions } from '../../config';
-
+import CreatePrivateClient from '../../components/permission/CreatePrivateClient';
 import styles from './home.less';
 
 const EMPTY_LIST = [];
@@ -38,10 +38,15 @@ const mapStateToProps = state => ({
   detailMessage: state.permission.detailMessage,
   // 左侧列表数据
   list: state.permission.list,
+  serverPersonelList: state.permission.serverPersonelList,
   // 拟稿人
   drafterList: state.permission.drafterList,
   // 部门
   empOrgTreeList: state.permission.empOrgTreeList,
+  // 子类型
+  childTypeList: state.permission.childTypeList,
+  // 客户
+  customerList: state.permission.customerList,
 });
 
 const mapDispatchToProps = {
@@ -50,10 +55,16 @@ const mapDispatchToProps = {
   getDetailMessage: fetchDataFunction(true, 'permission/getDetailMessage'),
   // 获取左侧列表
   getPermissionList: fetchDataFunction(true, 'permission/getPermissionList'),
+  // 获取服务人员列表
+  getServerPersonelList: fetchDataFunction(true, 'permission/getServerPersonelList'),
   // 获取拟稿人
   getDrafterList: fetchDataFunction(true, 'permission/getDrafterList'),
   // 获取部门
   getEmpOrgTree: fetchDataFunction(true, 'permission/getEmpOrgTree'),
+  // 获取子类型
+  getChildTypeList: fetchDataFunction(true, 'permission/getChildTypeList'),
+ // 获取客户列表
+  getCustomerList: fetchDataFunction(true, 'permission/getCustomerList'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -66,19 +77,50 @@ export default class Permission extends PureComponent {
     getPermissionList: PropTypes.func.isRequired,
     getDrafterList: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
-    detailMessage: PropTypes.object.isRequired,
     getDetailMessage: PropTypes.func.isRequired,
+    detailMessage: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
+    getServerPersonelList: PropTypes.func.isRequired,
+    getChildTypeList: PropTypes.func.isRequired,
+    getCustomerList: PropTypes.func.isRequired,
+    serverPersonelList: PropTypes.array.isRequired,
+    childTypeList: PropTypes.array.isRequired,
+    customerList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
 
   }
 
+  static childContextTypes = {
+    getChildTypeList: PropTypes.func.isRequired,
+    getCustomerList: PropTypes.func.isRequired,
+    getServerPersonelList: PropTypes.func.isRequired,
+  }
+
   constructor(props) {
     super(props);
     this.state = {
       isEmpty: true,
+      // 默认状态下新建弹窗不可见 false 不可见  true 可见
+      isShowModal: false,
+    };
+  }
+
+  getChildContext() {
+    return {
+      // 获取 子类型
+      getChildTypeList: (data) => {
+        this.props.getChildTypeList({ id: data });
+      },
+      // 获取 客户列表
+      getCustomerList: (data) => {
+        this.props.getCustomerList({ code: data });
+      },
+      // 获取 服务人员列表
+      getServerPersonelList: (data) => {
+        this.props.getServerPersonelList({ code: data });
+      },
     };
   }
 
@@ -135,14 +177,6 @@ export default class Permission extends PureComponent {
     }
   }
 
-  get getDetailComponent() {
-    console.warn('detailMessage', this.props.detailMessage);
-    if (_.isEmpty(this.props.detailMessage)) {
-      return null;
-    }
-    return <Detail {...this.props.detailMessage} />;
-  }
-
   /**
    * 点击列表每条的时候对应请求详情
    */
@@ -153,7 +187,37 @@ export default class Permission extends PureComponent {
       id,
     });
   }
-    /**
+
+  @autobind
+  setModalShowOrHide() {
+    this.setState({ isShowModal: !this.state.isShowModal });
+  }
+
+  // 头部新建页面
+  @autobind
+  creatPermossionModal() {
+    this.props.getServerPersonelList({ id: 101110 });
+    this.setState({ isShowModal: true });
+  }
+
+  @autobind
+  toSearchDrafter(value) {
+    // 查询拟稿人
+    this.props.getDrafterList({
+      empId: value,
+    });
+  }
+
+  /**
+   * 构造表格的列数据
+   * 传参为icon的type
+   */
+  @autobind
+  constructTableColumns() {
+    return seibelColumns('save_blue');
+  }
+
+  /**
    * 检查部分属性是否相同
    * @param {*} prevQuery 前一次query
    * @param {*} nextQuery 后一次query
@@ -167,32 +231,32 @@ export default class Permission extends PureComponent {
     return true;
   }
 
-  /**
-   * 构造表格的列数据
-   * 传参为icon的type
-   */
-  @autobind
-  constructTableColumns() {
-    return seibelColumns('save_blue');
-  }
-
-  @autobind
-  toSearchDrafter(value) {
-    // 查询拟稿人
-    this.props.getDrafterList({
-      empId: value,
-    });
-  }
-
-  // 头部新建页面
-  @autobind
-  creatPermossionModal() {
-    console.log('新建');
+  get detailComponent() {
+    if (_.isEmpty(this.props.detailMessage)) {
+      return null;
+    }
+    return (
+      <Detail
+        {...this.props.detailMessage}
+        customerList={this.props.customerList}
+        childTypeList={this.props.childTypeList}
+        serverPersonelList={this.props.serverPersonelList}
+      />
+    );
   }
 
   render() {
-    const { list, location, replace, drafterList, empOrgTreeList } = this.props;
-    const { isEmpty } = this.state;
+    const {
+      list,
+      location,
+      replace,
+      drafterList,
+      empOrgTreeList,
+      customerList,
+      childTypeList,
+      serverPersonelList,
+    } = this.props;
+    const { isEmpty, isShowModal } = this.state;
     const topPanel = (
       <PermissionHeader
         location={location}
@@ -219,7 +283,7 @@ export default class Permission extends PureComponent {
 
     const rightPanel = (
       <Col span="24" className={styles.rightSection}>
-        {this.getDetailComponent}
+        {this.detailComponent}
       </Col>
     );
     return (
@@ -230,6 +294,13 @@ export default class Permission extends PureComponent {
           leftPanel={leftPanel}
           rightPanel={rightPanel}
           leftListClassName="premissionList"
+        />
+        <CreatePrivateClient
+          isShow={isShowModal}
+          onEmitSHowOrHideModal={this.setModalShowOrHide}
+          customerList={customerList}
+          childTypeList={childTypeList}
+          serverPersonelList={serverPersonelList}
         />
       </div>
     );
