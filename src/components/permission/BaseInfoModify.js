@@ -5,8 +5,6 @@ import style from './baseinfomodify.less';
 import InfoTitle from '../common/InfoTitle';
 import TextareaComponent from '../common/textareacomponent';
 import DropdownSelect from '../common/dropdownSelect';
-// import columns from './PermissionColumns';
-// import Icon from '../common/Icon';
 import Select from '../common/Select';
 import { seibelConfig } from '../../config';
 
@@ -16,7 +14,6 @@ export default class BaseInfoModify extends PureComponent {
   static propTypes = {
     head: PropTypes.string.isRequired,
     baseInfo: PropTypes.array,
-    childTypeList: PropTypes.array.isRequired,
     customerList: PropTypes.array.isRequired,
   }
 
@@ -26,7 +23,6 @@ export default class BaseInfoModify extends PureComponent {
 
   static contextTypes = {
     getCustomerList: PropTypes.func.isRequired,
-    getChildTypeList: PropTypes.func.isRequired,
   }
 
   constructor() {
@@ -39,8 +35,6 @@ export default class BaseInfoModify extends PureComponent {
       customer: '',
       // 子类型
       subType: '全部',
-      // 子类型列表
-      childTypeList: [],
       // 客户列表
       customerList: [],
     };
@@ -81,23 +75,6 @@ export default class BaseInfoModify extends PureComponent {
     const result = subType.filter(item => (item.value === value))[0].label;
     this.setState({ [name]: result });
   }
-
-  // @autobind
-  // renderSelectedElem(selected, removeFunc) {
-  //   return (
-  //     <div className={style.result}>
-  //       <div className={style.nameLabel}>{selected.ptyMngName}</div>
-  //       <div className={style.custIdLabel}>{selected.ptyMngId}</div>
-  //       <div className={style.iconDiv}>
-  //         <Icon
-  //           type="close"
-  //           className={style.closeIcon}
-  //           onClick={removeFunc}
-  //         />
-  //       </div>
-  //     </div>
-  //   );
-  // }
 
   render() {
     return (
