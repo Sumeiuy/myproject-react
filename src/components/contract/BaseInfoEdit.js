@@ -3,7 +3,7 @@
 * @Author: XuWenKang
 * @Date:   2017-09-20 13:47:07
 * @Last Modified by:   XuWenKang
-* @Last Modified time: 2017-09-21 10:46:15
+* @Last Modified time: 2017-09-21 11:19:20
 */
 
 import React, { PureComponent } from 'react';
@@ -18,7 +18,7 @@ import InfoTitle from '../common/InfoTitle';
 import DropDownSelect from '../common/dropdownSelect';
 import DatePicker from '../common/datePicker';
 
-import styles from './baseinfoedit.less';
+import styles from './baseInfoEdit.less';
 
 const { TextArea } = Input;
 

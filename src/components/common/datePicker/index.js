@@ -1,8 +1,9 @@
 /*
+* @Description: 日期选择组件
 * @Author: XuWenKang
 * @Date:   2017-09-20 10:38:57
 * @Last Modified by:   XuWenKang
-* @Last Modified time: 2017-09-20 17:40:38
+* @Last Modified time: 2017-09-21 11:16:25
 */
 
 import React, { PureComponent, PropTypes } from 'react';
