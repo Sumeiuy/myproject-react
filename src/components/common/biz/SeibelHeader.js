@@ -51,33 +51,35 @@ export default class Pageheader extends PureComponent {
     };
   }
 
-
+  // 选中客户下拉对象中对应的某个对象
   @autobind
-  searchInfoList(value) {
-    // 选中下拉对象中对应的某个对象
-    console.log(value);
-  }
-
-  @autobind
-  selectItem(item) {
-    // 选中下拉对象中对应的某个对象
+  selectCustItem(item) {
     const { replace, location: { pathname, query } } = this.props;
     replace({
       pathname,
       query: {
         ...query,
-        keyword: item.empId,
+        keyword: item.tcusId,
         isResetPageNum: 'Y',
       },
     });
   }
 
+  // 选中拟稿人下拉对象中对应的某个对象
   @autobind
-  toSearchInfo(value) {
-    // 下拉菜单中的查询
-    console.log('暴露的查询方法，向上传递value', value);
+  selectDrafterItem(item) {
+    const { replace, location: { pathname, query } } = this.props;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        empId: item.empId,
+        isResetPageNum: 'Y',
+      },
+    });
   }
 
+  // select改变
   @autobind
   handleSelectChange(key, v) {
     this.setState({
@@ -118,7 +120,7 @@ export default class Pageheader extends PureComponent {
             searchList={custList}
             showObjKey="tcustName"
             objId="tcusId"
-            emitSelectItem={this.selectItem}
+            emitSelectItem={this.selectCustItem}
             emitToSearch={toSearchCust}
           />
         </div>
@@ -147,7 +149,7 @@ export default class Pageheader extends PureComponent {
             searchList={drafterList}
             showObjKey="empName"
             objId="empId"
-            emitSelectItem={this.selectItem}
+            emitSelectItem={this.selectDrafterItem}
             emitToSearch={toSearchDrafter}
           />
         </div>

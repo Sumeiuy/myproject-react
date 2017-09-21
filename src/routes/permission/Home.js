@@ -100,7 +100,10 @@ export default class Permission extends PureComponent {
     } = this.props;
     const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
     // 默认筛选条件
-    getPermissionList({ ...params, type: pageType });
+    getPermissionList({
+      ...params,
+      type: pageType,
+    });
     getEmpOrgTree({});
   }
 
