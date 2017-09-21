@@ -1,3 +1,8 @@
+/**
+ * @file components/customerPool/common/ProgressList.js
+ *  长条形进度条列表
+ * @author zhangjunli
+ */
 import React, { PropTypes } from 'react';
 import { Progress } from 'antd';
 import styles from './progressList.less';

@@ -1,3 +1,8 @@
+/**
+ * @file components/customerPool/common/TextList.js
+ *  文字列表
+ * @author zhangjunli
+ */
 import React, { PropTypes } from 'react';
 
 import styles from './textList.less';

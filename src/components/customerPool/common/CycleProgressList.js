@@ -1,3 +1,8 @@
+/**
+ * @file components/customerPool/common/CycleProgressList.js
+ *  圆形进度条列表
+ * @author zhangjunli
+ */
 import React, { PropTypes } from 'react';
 import { Progress } from 'antd';
 import classnames from 'classnames';

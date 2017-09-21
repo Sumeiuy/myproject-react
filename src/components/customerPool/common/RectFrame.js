@@ -1,3 +1,8 @@
+/**
+ * @file components/customerPool/common/RectFrame.js
+ *  矩形框
+ * @author zhangjunli
+ */
 import React, { PropTypes } from 'react';
 import _ from 'lodash';
 

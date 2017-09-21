@@ -1,3 +1,8 @@
+/**
+ * @file components/customerPool/home/Viewpoint.js
+ *  带有标题的，能收缩的文字列表
+ * @author zhangjunli
+ */
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';

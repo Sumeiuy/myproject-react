@@ -1,3 +1,8 @@
+/**
+ * @file components/customerPool/home/TabsExtra.js
+ *  Tabs的extra组件
+ * @author zhangjunli
+ */
 import React, { PropTypes, PureComponent } from 'react';
 import { Select } from 'antd';
 import { autobind } from 'core-decorators';
