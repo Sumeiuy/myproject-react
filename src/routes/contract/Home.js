@@ -16,7 +16,9 @@ import SplitPanel from '../../components/common/splitPanel/SplitPanel';
 import Detail from '../../components/contract/Detail';
 import ContractList from '../../components/common/biz/CommonList';
 import seibelColumns from '../../components/common/biz/seibelColumns';
-import Edit from '../../components/contract/Edit';
+import Add from '../../components/contract/Add';
+// import Edit from '../../components/contract/Edit';
+import CommonModal from '../../components/common/biz/CommonModal';
 
 import styles from './home.less';
 
@@ -61,6 +63,7 @@ export default class Contract extends PureComponent {
     super(props);
     this.state = {
       isEmpty: true,
+      commonModal: true,
     };
   }
 
@@ -147,6 +150,20 @@ export default class Contract extends PureComponent {
     return seibelColumns('save_blue');
   }
 
+  @autobind
+  showModal(modalKey) {
+    this.setState({
+      [modalKey]: true,
+    });
+  }
+
+  @autobind
+  closeModal(modalKey) {
+    this.setState({
+      [modalKey]: false,
+    });
+  }
+
   render() {
     const { list, location, replace } = this.props;
     const { isEmpty } = this.state;
@@ -155,7 +172,7 @@ export default class Contract extends PureComponent {
       //   location={location}
       //   replace={replace}
       // />
-      null
+      <div />
     );
 
     const leftPanel = (
@@ -171,8 +188,18 @@ export default class Contract extends PureComponent {
       // <Col span="24" className={styles.rightSection}>
       //   {this.getDetailComponent}
       // </Col>
-      <Edit />
+      <div />
     );
+    const newModalProps = {
+      modalKey: 'commonModal',
+      title: '合作合约修改',
+      onOk: this.onOk,
+      closeModal: this.closeModal,
+      visible: this.state.commonModal,
+      size: 'large',
+      // children: <Edit />,
+      children: <Add />,
+    };
     return (
       <div className={styles.premissionbox}>
         <SplitPanel
@@ -181,6 +208,9 @@ export default class Contract extends PureComponent {
           leftPanel={leftPanel}
           rightPanel={rightPanel}
           leftListClassName="premissionList"
+        />
+        <CommonModal
+          {...newModalProps}
         />
       </div>
     );

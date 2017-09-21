@@ -1,22 +1,19 @@
 /*
-* @Description: 合作合约修改 页面
+* @Description: 合作合约新建 页面
 * @Author: XuWenKang
-* @Date:   2017-09-19 14:47:08
+* @Date:   2017-09-21 15:17:50
 * @Last Modified by:   XuWenKang
-* @Last Modified time: 2017-09-21 17:49:26
+* @Last Modified time: 2017-09-21 17:48:38
 */
 import React, { PureComponent } from 'react';
 // import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 // import { message } from 'antd';
 
-import BaseInfoEdit from './BaseInfoEdit';
-import DraftInfo from './DraftInfo';
+import BaseInfoAdd from './BaseInfoAdd';
 import UploadFile from '../permission/UploadFile';
-import Approval from '../permission/Approval';
-import ApprovalRecord from '../permission/ApprovalRecord';
 
-import styles from './edit.less';
+import styles from './add.less';
 
 export default class Edit extends PureComponent {
   static propTypes = {
@@ -47,10 +44,7 @@ export default class Edit extends PureComponent {
   render() {
     return (
       <div className={styles.editComponent}>
-        <div className={styles.dcHeader}>
-          <span className={styles.dcHaderNumb}>编号{111}</span>
-        </div>
-        <BaseInfoEdit
+        <BaseInfoAdd
           contractName="合约名称"
           childType={{ list: [] }}
           client={{}}
@@ -60,20 +54,8 @@ export default class Edit extends PureComponent {
           remark="备注备注"
           onChange={this.changeBaseInfo}
         />
-        <DraftInfo />
         <UploadFile
           fileList={[]}
-        />
-        <Approval
-          type="appraval"
-          head="审批"
-          textValue=""
-          onEmitEvent={this.changeAppraval}
-        />
-        <ApprovalRecord
-          head="审批记录"
-          info={[{ isOk: true, beginTime: 'abc于2017/08/31', stepName: '发起', suggestion: 'adad' }]}
-          statusType=""
         />
         <div className={styles.cutSpace} />
       </div>
