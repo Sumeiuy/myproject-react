@@ -5,17 +5,18 @@
  */
 
 import React, { PureComponent, PropTypes } from 'react';
-import { Col } from 'antd';
+// import { Col } from 'antd';
 import { autobind } from 'core-decorators';
 import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { constructSeibelPostBody } from '../../utils/helper';
 import SplitPanel from '../../components/common/splitPanel/SplitPanel';
-import PageHeader from '../../components/contract/PageHeader';
+// import PageHeader from '../../components/contract/PageHeader';
 import Detail from '../../components/contract/Detail';
 import ContractList from '../../components/common/biz/CommonList';
 import seibelColumns from '../../components/common/biz/seibelColumns';
+import Edit from '../../components/contract/Edit';
 
 import styles from './home.less';
 
@@ -150,10 +151,11 @@ export default class Contract extends PureComponent {
     const { list, location, replace } = this.props;
     const { isEmpty } = this.state;
     const topPanel = (
-      <PageHeader
-        location={location}
-        replace={replace}
-      />
+      // <PageHeader
+      //   location={location}
+      //   replace={replace}
+      // />
+      null
     );
 
     const leftPanel = (
@@ -166,9 +168,10 @@ export default class Contract extends PureComponent {
     );
 
     const rightPanel = (
-      <Col span="24" className={styles.rightSection}>
-        {this.getDetailComponent}
-      </Col>
+      // <Col span="24" className={styles.rightSection}>
+      //   {this.getDetailComponent}
+      // </Col>
+      <Edit />
     );
     return (
       <div className={styles.premissionbox}>
