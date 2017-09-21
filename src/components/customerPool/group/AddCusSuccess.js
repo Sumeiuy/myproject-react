@@ -6,7 +6,7 @@
 import React, { PureComponent, PropTypes } from 'react';
 import { withRouter } from 'dva/router';
 import { autobind } from 'core-decorators';
-import { Button } from 'antd';
+import Button from '../../common/Button';
 import styles from './addCusSuccess.less';
 
 
@@ -15,10 +15,14 @@ export default class AddCusSuccess extends PureComponent {
   static propTypes = {
     goback: PropTypes.func.isRequired,
     groupId: PropTypes.string.isRequired,
+    groupName: PropTypes.string.isRequired,
   }
+  @autobind
   /* 回退 */
-  goBack() {
+  closeTab() {
+    console.log(this.props);
     const { goback } = this.props;
+    // console.log(goback)
     goback();
   }
   /* 跳转到fsp的分组详情 */
@@ -27,6 +31,8 @@ export default class AddCusSuccess extends PureComponent {
     /* const { groupId } = this.props; */
   }
   render() {
+    const { groupName } = this.props;
+    console.log('this.props---', this.props);
     return (
       <div className={styles.addCusSuccess}>
         <div className={styles.text}>添加分组</div>
@@ -35,11 +41,12 @@ export default class AddCusSuccess extends PureComponent {
           <div className={styles.img} />
           <div className={styles.text1}>保存成功，已完成分组添加!</div>
           <div className={styles.text2}>你可以在
-            <span onClick={() => this.LinkToGroupDetail()} className={styles.linkTo}>重点关注客户群</span>
+            <span onClick={() => this.LinkToGroupDetail()} className={styles.linkTo}>{groupName}
+            </span>
             查看该分组下所有客户
           </div>
           <div className={styles.successBtn}>
-            <Button onClick={() => this.goBack()}type="primary">返回首页</Button>
+            <Button onClick={this.closeTab} type="primary">返回首页</Button>
           </div>
         </div>
       </div>

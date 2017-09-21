@@ -56,7 +56,11 @@ export default class CreateTaskSuccess extends PureComponent {
       successSetInterval = setInterval(this.handleMovTime, 1000);
     }
   }
-
+  @autobind
+  /* 关闭当前页 */
+  closeTab() {
+      fspGlobal.closeRctTabById('RCT_FSP_TASK');
+  }
   @autobind
   handleMovTime() {
     this.setState({
@@ -64,6 +68,7 @@ export default class CreateTaskSuccess extends PureComponent {
     }, () => {
       if (COUNT < 0){
         console.log('页面关闭');
+        this.closeTab();
         clearInterval(successSetInterval);
       }
     });    

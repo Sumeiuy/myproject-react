@@ -10,7 +10,6 @@ import { Checkbox, message } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
-// import CreateContactModal from './CreateContactModal';
 import Icon from '../../common/Icon';
 import styles from './customerRow.less';
 
@@ -516,7 +515,7 @@ export default class CustomerRow extends PureComponent {
                 </li>
                 <li onClick={this.handleIsEmail}>
                   <Icon type="youjian" />
-                  <span><a ref={ref => this.sendEmail = ref} href={addressEmail[listItem.custId] === undefined || addressEmail[listItem.custId] === null ? 'javascript:void(0);' : `mailto:${addressEmail[listItem.custId]}`}> 邮件联系 </a></span>
+                  <span><a ref={ref => this.sendEmail = ref} href={_.isEmpty(addressEmail[listItem.custId]) ? 'javascript:void(0);' : `mailto:${addressEmail[listItem.custId]}`}> 邮件联系 </a></span>
                 </li>
                 <li onClick={() => createServiceRecord(listItem)}>
                   <Icon type="jilu" />
