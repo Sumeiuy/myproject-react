@@ -12,22 +12,28 @@ import ServerPersonel from './ServerPersonel';
 import Approval from './Approval';
 import ApprovalRecord from './ApprovalRecord';
 import BaseInfoModify from './BaseInfoModify';
+import UploadFile from './UploadFile';
 
 export default class Detail extends PureComponent {
   static propTypes = {
     num: PropTypes.string,
-    baseInfo: PropTypes.object,
-    draftInfo: PropTypes.object,
+    baseInfo: PropTypes.array,
+    draftInfo: PropTypes.array,
     serverInfo: PropTypes.array,
     approvalRecordList: PropTypes.array,
+    attachInfoList: PropTypes.array,
+    serverPersonelList: PropTypes.array.isRequired,
+    childTypeList: PropTypes.array.isRequired,
+    customerList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
     num: '',
-    baseInfo: {},
-    draftInfo: {},
+    baseInfo: [],
+    draftInfo: [],
     serverInfo: [],
     approvalRecordList: [],
+    attachInfoList: [],
   }
 
   constructor(props) {
@@ -43,12 +49,38 @@ export default class Detail extends PureComponent {
       draftInfo: props.draftInfo,
       // 服务人员
       serverInfo: props.serverInfo,
+      // 审批记录
+      approvalRecordList: props.approvalRecordList,
+      // 附件数据
+      attachInfoList: props.attachInfoList,
       // 审批意见
       approvalComments: '他们什么都不晓得',
     };
   }
 
-  get getApprovalDom() {
+  get getBaseInfoModifyDom() {
+    let result;
+    if (this.state.statusType === 'ready') {
+      result = (
+        <MessageList
+          head="基本信息"
+          baseInfo={this.state.baseInfo}
+        />
+      );
+    } else {
+      result = (
+        <BaseInfoModify
+          head="基本信息"
+          baseInfo={this.state.baseInfo}
+          customerList={this.props.customerList}
+          childTypeList={this.props.childTypeList}
+        />
+      );
+    }
+    return result;
+  }
+
+  get approvalDom() {
     let result;
     if (this.state.statusType === 'ready') {
       result = null;
@@ -58,7 +90,7 @@ export default class Detail extends PureComponent {
           head="审批"
           type="approvalComments"
           textValue={this.state.approvalComments}
-          emitEvent={this.updateValue}
+          onEmitEvent={this.updateValue}
         />
       );
     }
@@ -71,7 +103,7 @@ export default class Detail extends PureComponent {
   }
 
   render() {
-    const { num, baseInfo, draftInfo, serverInfo, approvalRecordList } = this.props;
+    const { num, draftInfo, serverInfo, approvalRecordList } = this.state;
     const modifyBtnClass = classnames([style.dcHeaderModifyBtn,
       { hide: this.state.statusType !== 'ready' },
     ]);
@@ -84,32 +116,36 @@ export default class Detail extends PureComponent {
             className={modifyBtnClass}
           >修改</span>
         </div>
-        <MessageList
-          head="基本信息"
-          {...baseInfo}
-        />
-        <BaseInfoModify
-          head="基本信息"
-          serverInfo={this.state.serverInfo}
-          baseInfo={this.state.baseInfo}
-        />
+        {this.getBaseInfoModifyDom}
         <MessageList
           head="拟稿信息"
-          {...draftInfo}
+          baseInfo={draftInfo}
         />
         <ServerPersonel
           head="服务人员"
           type="serverInfo"
           info={serverInfo}
           statusType={this.state.statusType}
-          emitEvent={this.updateValue}
+          onEmitEvent={this.updateValue}
+          serverPersonelList={this.props.serverPersonelList}
         />
-        {this.getApprovalDom}
+        <UploadFile fileList={this.state.attachInfoList} />
+        {this.approvalDom}
         <ApprovalRecord
           head="审批记录"
           info={approvalRecordList}
           statusType={this.state.statusType}
         />
+        <div className={style.dcFooter}>
+          <span
+            className={style.spClearBtn}
+            onClick={this.removeServerPerson}
+          >终止</span>
+          <span
+            className={style.spAddBtn}
+            onClick={this.addServerPerson}
+          >提交</span>
+        </div>
       </div>
     );
   }
