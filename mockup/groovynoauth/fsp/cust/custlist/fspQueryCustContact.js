@@ -134,7 +134,15 @@ exports.response = function (req, res) {
             }
           ],
           "workTels": [],
-          "homeTels": [],
+          "homeTels": [
+            {
+              "mainFlag": false,
+              "contactType": "104121",
+              "contactValue": "15651554744",
+              "rowId": "COMMI-20130622-00038358908",
+              "validFlag": true
+            }
+          ],
           "otherTels": [],
           "emailAddresses": [
             {

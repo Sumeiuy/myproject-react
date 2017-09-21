@@ -4,23 +4,45 @@
  * @author wanghan
  */
 
-// import { routerRedux } from 'dva/router';
-
+/**
+ * @file models/premissinon.js
+ * @author honggaungqing
+ */
 import { message } from 'antd';
-// import _ from 'lodash';
 import { contract as api } from '../api';
-// import { helper } from '../utils';
-// import config from '../config/request';
+
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
 
 export default {
   namespace: 'contract',
   state: {
-    list: EMPTY_LIST,
+    detailMessage: EMPTY_OBJECT,
+    list: EMPTY_OBJECT,
     contractDetail: EMPTY_OBJECT,
   },
   reducers: {
+    getDetailMessageSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        detailMessage: resultData,
+      };
+    },
+    getContractListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      const { page = EMPTY_OBJECT, contractVOList = EMPTY_LIST } = resultData;
+      const { listData: preListData = EMPTY_LIST } = state.list;
+
+      return {
+        ...state,
+        list: {
+          page,
+          resultData: page.pageNum === 1 ?
+            contractVOList : [...preListData, ...contractVOList],
+        },
+      };
+    },
     getDetailSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
       return {
@@ -30,6 +52,20 @@ export default {
     },
   },
   effects: {
+    * getDetailMessage({ payload }, { call, put }) {
+      const response = yield call(api.getMessage, payload);
+      yield put({
+        type: 'getDetailMessageSuccess',
+        payload: response,
+      });
+    },
+    * getContractList({ payload }, { call, put }) {
+      const response = yield call(api.getContractList, payload);
+      yield put({
+        type: 'getContractListSuccess',
+        payload: response,
+      });
+    },
     * getDetail({ payload }, { call, put }) {
       const response = yield call(api.getContractDetail, payload);
       yield put({

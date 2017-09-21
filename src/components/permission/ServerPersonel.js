@@ -5,25 +5,41 @@ import _ from 'lodash';
 import InfoTitle from '../common/InfoTitle';
 import TableList from '../common/TableList';
 import style from './serverpersonel.less';
+import DropdownSelect from '../common/dropdownSelect';
 
 export default class ServerPersonel extends PureComponent {
   static propTypes = {
     head: PropTypes.string.isRequired,
     info: PropTypes.array.isRequired,
     statusType: PropTypes.string.isRequired,
-    emitEvent: PropTypes.func.isRequired,
+    onEmitEvent: PropTypes.func.isRequired,
     type: PropTypes.string.isRequired,
+    serverPersonelList: PropTypes.array.isRequired,
+  }
+
+  static contextTypes = {
+    getServerPersonelList: PropTypes.func.isRequired,
   }
 
   constructor(props) {
     super(props);
     this.state = {
+      // 服务人员信息
       serverInfo: props.info,
-      addSelectedValue: {}, // 添加选中的值
-      removeSelectedValue: {}, // 移除选中的值
+      // 选中添加值
+      addSelectedValue: {},
+      // 选中移除值
+      removeSelectedValue: {},
+      // 新增服务人员 查询信息列表
+      searchList: [],
     };
   }
-  get getModifyDom() { // 只读或者编辑状态下所对应的操作状态
+
+  componentWillReceiveProps(newProps) {
+    this.setState({ serverInfo: newProps.info });
+  }
+
+  get modifyDom() { // 只读或者编辑状态下所对应的操作状态
     let result;
     if (this.props.statusType === 'ready') {
       result = (
@@ -40,6 +56,18 @@ export default class ServerPersonel extends PureComponent {
       result = (
         <div className={style.spBtnGroup}>
           <span className={style.spAddServerPerson}>新增服务人员：</span>
+          <div className={style.spAddDropdownSelect}>
+            <DropdownSelect
+              value="全部"
+              placeholder="请输入姓名或工号"
+              searchList={this.props.serverPersonelList}
+              showObjKey="ptyMngName"
+              objId="ptyMngId"
+              emitSelectItem={this.dropdownSelectedItem}
+              emitToSearch={this.dropdownToSearchInfo}
+              boxStyle={{ border: '1px solid #d9d9d9' }}
+            />
+          </div>
           <span
             className={style.spAddBtn}
             onClick={this.addServerPerson}
@@ -55,17 +83,32 @@ export default class ServerPersonel extends PureComponent {
   }
 
   @autobind
-  UpdateValue(item) { // state更新
+  dropdownSelectedItem(item) {
+    // 下拉菜单添加选中对象
+    console.log(item);
+    this.setState({ addSelectedValue: item });
+  }
+
+  @autobind
+  dropdownToSearchInfo(value) {
+    // 下拉菜单搜错查询关键字
+    this.context.getServerPersonelList(value);
+  }
+
+  @autobind
+  updateRadioValue(item) {
+    // 更新table列表的选中值
     this.setState({ removeSelectedValue: item });
   }
 
   @autobind
-  addServerPerson() { // 添加服务人员按钮
+  addServerPerson() {
+    // 添加服务人员按钮
     if (!_.isEmpty(this.state.addSelectedValue)) {
       this.setState(prevState => ({
         serverInfo: prevState.serverInfo.concat(this.state.addSelectedValue),
       }), () => {
-        this.props.emitEvent(this.props.type, this.state.serverInfo);
+        this.props.onEmitEvent(this.props.type, this.state.serverInfo);
       });
     }
   }
@@ -79,21 +122,26 @@ export default class ServerPersonel extends PureComponent {
           item => item.ptyMngId !== removeSelectedValue.ptyMngId,
         ),
       }), () => {
-        this.props.emitEvent(this.props.type, this.state.serverInfo);
+        this.props.onEmitEvent(this.props.type, this.state.serverInfo);
       });
     }
+  }
+
+  @autobind
+  updateSearchListValue(data) {
+    this.setState({ searchList: data });
   }
 
   render() {
     return (
       <div className={style.serverPersonel}>
         <InfoTitle head={this.props.head} />
-        {this.getModifyDom}
+        {this.modifyDom}
         <TableList
           info={this.state.serverInfo}
           statusType={this.props.statusType}
           selectValue={this.state.removeSelectedValue}
-          emitUpdateValue={this.UpdateValue}
+          emitUpdateValue={this.updateRadioValue}
         />
       </div>
     );

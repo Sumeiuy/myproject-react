@@ -3,48 +3,49 @@
  * @author honggaunqging
  */
 
-import React, { PureComponent, PropTypes } from 'react';
-import { Select } from 'antd';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import { Select } from 'antd';
 import styles from './index.less';
 
+const Option = Select.Option;
 export default class CommonSelect extends PureComponent {
   static propTypes = {
     data: PropTypes.array.isRequired,
     name: PropTypes.string.isRequired,
-    location: PropTypes.object.isRequired,
-    replace: PropTypes.func.isRequired,
+    onChange: PropTypes.func.isRequired,
+    value: PropTypes.string,
   }
 
   static defaultProps = {
-
+    value: '全部',
   }
 
   @autobind
-  handleSelectChange(value, key) {
-    const { replace, location: { pathname, query } } = this.props;
-    replace({
-      pathname,
-      query: {
-        ...query,
-        [value]: key,
-        isResetPageNum: 'Y',
-      },
+  makeSelectOptions(data) {
+    const options = [];
+    data.forEach((item) => {
+      if (item.show) {
+        options.push(<Option key={item.value} value={item.value}>{item.label}</Option>);
+      }
     });
+    return options;
   }
 
+
   render() {
-    const { data, name, location: { query } } = this.props;
-    console.warn('name', name);
+    const { data, name, value, onChange } = this.props;
+    const options = this.makeSelectOptions(data);
     return (
-      <div className={styles.commomSelect} style={{ width: '16%' }}>
+      <div className={styles.commomSelect}>
         <Select
-          style={{ width: '80%' }}
           placeholder="全部"
-          value={query[name]}
-          onChange={key => this.handleSelectChange(name, key)}
+          value={value}
+          onChange={key => onChange(name, key)}
+          dropdownMatchSelectWidth={false}
         >
-          {data}
+          {options}
         </Select>
       </div>
     );
