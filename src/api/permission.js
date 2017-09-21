@@ -5,17 +5,17 @@
 export default function permission(api) {
   return {
     // 获取详情信息
-    getMessage: query => api.post('/groovynoauth/smkh/queryApplicationDetail', query),
+    getMessage: query => api.post('/groovynoauth/fsp/smkhsq/queryApplicationDetail', query),
     // 获取服务人员列表
-    getServerPersonelList: query => api.post('/groovynoauth/smkh/queryApplicationEmpList', query),
+    getServerPersonelList: query => api.post('/groovynoauth/fsp/smkhsq/queryApplicationEmpList', query),
     // 获取子类型
-    getChildTypeList: query => api.post('/groovynoauth/smkh/queryAvalibleEmpList', query),
+    getChildTypeList: query => api.post('/groovynoauth/fsp/smkhsq/queryAvalibleEmpList', query),
     // 获取客户列表
-    getCustomerList: query => api.post('/groovynoauth/smkh/queryCustList', query),
+    getCustomerList: query => api.post('/groovynoauth/fsp/smkhsq/CustList', query),
     // 获取权限申请列表
-    getPermissionList: query => api.post('/groovynoauth/smkh/queryApplicationList', query),
+    getPermissionList: query => api.post('/groovynoauth/fsp/queryApplicationList', query),
     // 获取拟稿人
-    getDrafterList: query => api.post('/groovynoauth/smkh/queryEmpList', query),
+    getDrafterList: query => api.post('/groovynoauth/fsp/queryDrafterList', query),
     // 获取部门
     getEmpOrgTree: query => api.post('/groovynoauth/jxzb/empOrgTree', query),
   };

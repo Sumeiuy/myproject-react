@@ -257,8 +257,8 @@ const helper = {
    */
   constructSeibelPostBody(query, newPageNum, newPageSize) {
     let finalPostData = {
-      pageNum: newPageNum,
-      pageSize: newPageSize,
+      pageNum: _.parseInt(newPageNum, 10),
+      pageSize: _.parseInt(newPageSize, 10),
     };
 
     const omitData = _.omit(query, ['currentId', 'pageNum', 'pageSize', 'isResetPageNum']);
