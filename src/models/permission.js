@@ -11,11 +11,13 @@ const EMPTY_LIST = [];
 export default {
   namespace: 'permission',
   state: {
-    detailMessage: EMPTY_OBJECT,
+    detailMessage: EMPTY_OBJECT, // 详情
     list: EMPTY_OBJECT,
+    serverPersonelList: EMPTY_LIST, // 服务人员列表
     drafterList: EMPTY_LIST, // 拟稿人
-    custList: EMPTY_LIST, // 客户
     custRange: EMPTY_LIST, // 部门
+    childTypeList: EMPTY_LIST, // 子类型
+    customerList: EMPTY_LIST, // 客户列表
   },
   reducers: {
     getDetailMessageSuccess(state, action) {
@@ -39,6 +41,13 @@ export default {
         },
       };
     },
+    getServerPersonelListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_LIST } } = action;
+      return {
+        ...state,
+        serverPersonelList: resultData,
+      };
+    },
     getDrafterListSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
       const { empInfo = EMPTY_LIST } = resultData;
@@ -46,15 +55,6 @@ export default {
       return {
         ...state,
         drafterList: empInfo,
-      };
-    },
-    getCustListSuccess(state, action) {
-      const { payload: { resultData = EMPTY_OBJECT } } = action;
-      const { tcustList = EMPTY_LIST } = resultData;
-
-      return {
-        ...state,
-        custList: tcustList,
       };
     },
     getEmpOrgTreeSuccess(state, action) {
@@ -71,6 +71,23 @@ export default {
       return {
         ...state,
         custRange,
+      };
+    },
+    getChildTypeListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      const { childList = EMPTY_LIST } = resultData;
+
+      return {
+        ...state,
+        childTypeList: childList,
+      };
+    },
+    getCustomerListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      const { custList = EMPTY_LIST } = resultData;
+      return {
+        ...state,
+        customerList: custList,
       };
     },
   },
@@ -99,6 +116,13 @@ export default {
         });
       }
     },
+    * getServerPersonelList({ payload }, { call, put }) {
+      const response = yield call(api.getServerPersonelList, payload);
+      yield put({
+        type: 'getServerPersonelListSuccess',
+        payload: response,
+      });
+    },
     * getDrafterList({ payload }, { call, put }) {
       const response = yield call(api.getDrafterList, payload);
       yield put({
@@ -106,17 +130,24 @@ export default {
         payload: response,
       });
     },
-    * getCustList({ payload }, { call, put }) {
-      const response = yield call(api.getCustList, payload);
-      yield put({
-        type: 'getCustListSuccess',
-        payload: response,
-      });
-    },
     * getEmpOrgTree({ payload }, { call, put }) {
       const response = yield call(api.getEmpOrgTree, payload);
       yield put({
         type: 'getEmpOrgTreeSuccess',
+        payload: response,
+      });
+    },
+    * getChildTypeList({ payload }, { call, put }) {
+      const response = yield call(api.getChildTypeList, payload);
+      yield put({
+        type: 'getChildTypeListSuccess',
+        payload: response,
+      });
+    },
+    * getCustomerList({ payload }, { call, put }) {
+      const response = yield call(api.getCustomerList, payload);
+      yield put({
+        type: 'getCustomerListSuccess',
         payload: response,
       });
     },

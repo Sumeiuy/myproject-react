@@ -8,7 +8,7 @@ export default class TextareaComponent extends PureComponent {
     value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     title: PropTypes.string.isRequired,
     placeholder: PropTypes.string,
-    emitEvent: PropTypes.func.isRequired,
+    onEmitEvent: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -35,7 +35,7 @@ export default class TextareaComponent extends PureComponent {
   @autobind
   changeTextValue(e) {
     // 触发事件， 向上传递
-    this.props.emitEvent(e.target.value);
+    this.props.onEmitEvent(e.target.value);
   }
 
   render() {

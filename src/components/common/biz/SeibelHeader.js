@@ -1,5 +1,6 @@
 /**
  * @file Pageheader.js
+ * 权限申请，合约管理，佣金调整头部筛选
  * @author honggaunqging
  */
 
@@ -31,7 +32,7 @@ export default class Pageheader extends PureComponent {
     // 拟稿人数据
     drafterList: PropTypes.array,
     // 客户数据
-    custList: PropTypes.array,
+    customerList: PropTypes.array,
     // 部门
     custRange: PropTypes.array,
   }
@@ -39,7 +40,7 @@ export default class Pageheader extends PureComponent {
   static defaultProps = {
     page: '',
     drafterList: [],
-    custList: [],
+    customerList: [],
     custRange: [],
   }
 
@@ -59,7 +60,7 @@ export default class Pageheader extends PureComponent {
       pathname,
       query: {
         ...query,
-        keyword: item.tcusId,
+        keyword: item.cusId || item.custName,
         isResetPageNum: 'Y',
       },
     });
@@ -104,7 +105,7 @@ export default class Pageheader extends PureComponent {
       toSearchDrafter,
       toSearchCust,
       drafterList,
-      custList,
+      customerList,
       custRange,
       replace,
     } = this.props;
@@ -117,9 +118,9 @@ export default class Pageheader extends PureComponent {
           <DropDownSelect
             value="全部"
             placeholder="经纪客户号/客户名称"
-            searchList={custList}
-            showObjKey="tcustName"
-            objId="tcusId"
+            searchList={customerList}
+            showObjKey="custName"
+            objId="cusId"
             emitSelectItem={this.selectCustItem}
             emitToSearch={toSearchCust}
           />

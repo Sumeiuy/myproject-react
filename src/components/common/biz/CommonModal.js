@@ -51,9 +51,10 @@ export default class CommonModal extends PureComponent {
     closeModal: PropTypes.func.isRequired,
     onOk: PropTypes.func.isRequired,
     btnStatus: PropTypes.bool,
-    children: React.PropTypes.oneOfType([
-      React.PropTypes.string,
-      React.PropTypes.object,
+    children: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.object,
+      PropTypes.element,
     ]),
   }
 

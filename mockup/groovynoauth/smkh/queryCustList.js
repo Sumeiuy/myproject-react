@@ -1,24 +1,18 @@
 exports.response = function (req, res) {
-  return {
+  return{
     code: '0',
     msg: 'OK',
     resultData: {
-      page: {
-        pageSize: 10,
-        curPageNum: 1,
-        totalPageNum: 50,
-        totalRecordNum: 499,
-      },
-      tcustList: [
+      custList: [
         {
-          tcusId: '1-3YOO83T',
-          tcustName: '刘**',
-          tbrokerNumber: '666626443512',
-          tcustLevelCode: '805015',
-          tcustLevelName: '白金',
-          tcustTotalAsset: 2669691.91,
-          tcustType: 'per',
-          tcustOpenDate: '2016-07-22 00:00:00',
+          cusId: '1-3YOO83T',
+          custName: '刘**',
+          brokerNumber: '666626443512',
+          custLevelCode: '805015',
+          custLevelName: '白金',
+          custTotalAsset: 2669691.91,
+          custType: 'per',
+          custOpenDate: '2016-07-22 00:00:00',
         },
         {
           cusId: '1-3XY7RZB',
@@ -89,26 +83,6 @@ exports.response = function (req, res) {
           custTotalAsset: 2174214.1,
           custType: 'per',
           custOpenDate: '2016-01-21 00:00:00',
-        },
-        {
-          cusId: '1-3R74B5P',
-          custName: '陈**',
-          brokerNumber: '666625310256',
-          custLevelCode: '805015',
-          custLevelName: '白金',
-          custTotalAsset: 120775.68,
-          custType: 'per',
-          custOpenDate: '2015-12-01 00:00:00',
-        },
-        {
-          cusId: '1-3PQBHLJ',
-          custName: '张**',
-          brokerNumber: '02045647',
-          custLevelCode: '805020',
-          custLevelName: '金',
-          custTotalAsset: 236981.72,
-          custType: 'per',
-          custOpenDate: '2015-10-23 00:00:00',
         },
       ],
     },
