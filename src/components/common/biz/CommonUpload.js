@@ -111,8 +111,12 @@ export default class CommonUpload extends PureComponent {
                         </p>
                       </div>
                     );
+                    const colKey = `attachment${index}`;
                     return (
-                      <Col span={8}>
+                      <Col
+                        span={8}
+                        key={colKey}
+                      >
                         <div className={styles.fileItem}>
                           <Popover
                             placement="right"

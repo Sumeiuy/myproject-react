@@ -189,13 +189,16 @@ export default class Permission extends PureComponent {
   }
 
   @autobind
-  setModalShowOrHide() {
-    this.setState({ isShowModal: !this.state.isShowModal });
+  clearModal() {
+    // 清除模态框组件
+    console.log('模态框已经清楚');
+    this.setState({ isShowModal: false });
   }
 
   // 头部新建页面
   @autobind
   creatPermossionModal() {
+    // 打开模态框 发送获取服务人员列表请求
     this.props.getServerPersonelList({ id: 101110 });
     this.setState({ isShowModal: true });
   }
@@ -256,7 +259,7 @@ export default class Permission extends PureComponent {
       childTypeList,
       serverPersonelList,
     } = this.props;
-    const { isEmpty, isShowModal } = this.state;
+    const { isEmpty } = this.state;
     const topPanel = (
       <PermissionHeader
         location={location}
@@ -295,13 +298,17 @@ export default class Permission extends PureComponent {
           rightPanel={rightPanel}
           leftListClassName="premissionList"
         />
-        <CreatePrivateClient
-          isShow={isShowModal}
-          onEmitSHowOrHideModal={this.setModalShowOrHide}
-          customerList={customerList}
-          childTypeList={childTypeList}
-          serverPersonelList={serverPersonelList}
-        />
+        {
+          this.state.isShowModal ?
+            <CreatePrivateClient
+              customerList={customerList}
+              childTypeList={childTypeList}
+              serverPersonelList={serverPersonelList}
+              onEmitClearModal={this.clearModal}
+            />
+          :
+            null
+        }
       </div>
     );
   }
