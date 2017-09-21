@@ -99,7 +99,7 @@ export default class CreateTaskSuccess extends PureComponent {
               <p>页面会在 <b>{changeTime}</b> 秒内自动关闭</p>
             </div>
             <div className={styles.taskSuccess_btn}>
-              <Button type="primary" onclick={goToIndex()}>
+              <Button type="primary" onclick={this.goToIndex}>
                 返回首页
               </Button>
             </div>

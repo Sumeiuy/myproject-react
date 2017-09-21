@@ -115,8 +115,6 @@ export default class CreateTaskForm extends PureComponent {
     const { form, createTask } = this.props;
     const { custList, searchReq } = this.state;
     form.validateFields((err, values) => {
-      console.log(err);
-      console.log(values);
       if (!err) {
         const value = { ...values, custList, searchReq };
         console.log('Received values of form: ', value);
@@ -306,7 +304,7 @@ export default class CreateTaskForm extends PureComponent {
                           {
                             initialValue: defaultMissionType,
                           })(
-                            <Select className={styles.selection}>
+                            <Select>
                               {this.handleCreatOptions(taskTypes)}
                             </Select>,
                         )}
