@@ -1,0 +1,38 @@
+.container {
+  padding: 4px 24px 30px 20px;
+  .row {
+    height: 34px;
+    .intro {
+      display: -webkit-flex; /* Safari */
+      display: flex;
+      justify-content: space-between;
+      overflow: hidden;
+      height: 17px;
+      position: relative;
+      top: 10px;
+      .title {
+        font-size: 8px;
+        color: #999;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        margin-right: 15px;
+      }
+      .count {
+        font-size: 14px;
+        color: #1486d8;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+    :global {
+      .ant-progress-inner {
+        background-color: #eaeaea;
+        .ant-progress-bg {
+          background-color: #71aff4;
+        }
+      }
+    }
+  }
+}

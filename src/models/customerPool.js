@@ -9,6 +9,8 @@ import { customerPool as api } from '../api';
 export default {
   namespace: 'customerPool',
   state: {
+    lastAddCusts: [],
+    viewpoints: [],
     todolist: [],
     todolistRecord: [],
     todoPage: {
@@ -60,6 +62,20 @@ export default {
     },
   },
   effects: {
+    * getLastAddCust({ }, { call, put }) {  //eslint-disable-line
+      const response = yield call(api.getLastAddCust);
+      yield put({
+        type: 'getLastAddCustSuccess',
+        payload: response,
+      });
+    },
+    * getViewpoints({ }, { call, put }) {  //eslint-disable-line
+      const response = yield call(api.getViewpoints);
+      yield put({
+        type: 'getViewpointsSuccess',
+        payload: response,
+      });
+    },
     * getToDoList({ }, { call, put }) {  //eslint-disable-line
       const response = yield call(api.getToDoList);
       yield put({
@@ -284,6 +300,20 @@ export default {
     },
   },
   reducers: {
+    getLastAddCustSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        lastAddCusts: resultData,
+      };
+    },
+    getViewpointsSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        viewpoints: resultData,
+      };
+    },
     getToDoListSuccess(state, action) {
       const { payload: { resultData: { empWorkFlowList } } } = action;
       empWorkFlowList.forEach((item) => {

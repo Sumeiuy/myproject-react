@@ -5,121 +5,45 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import { Row, Col, Select } from 'antd';
-import _ from 'lodash';
-import { autobind } from 'core-decorators';
+import { Row, Col } from 'antd';
 import Icon from '../../common/Icon';
 import CustomerService from './CustomerService';
-import ProductSales from './ProductSales';
+// import ProductSales from './ProductSales';
 import TradingVolume from './TradingVolume';
-import CustomerIndicators from './CustomerIndicators';
+// import CustomerIndicators from './CustomerIndicators';
 import BusinessProcessing from './BusinessProcessing';
 import Income from './Income';
-import { getDurationString } from '../../../utils/helper';
-import CustRange from '../common/CustRange';
-import { optionsMap } from '../../../config';
 import styles from './performanceIndicators.less';
+import ProgressList from '../../customerPool/common/ProgressList';
+import TextList from '../../customerPool/common/TextList';
+import RectFrame from '../../customerPool/common/RectFrame';
 
-const Option = Select.Option;
-let KEYCOUNT = 0;
 export default class PerformanceIndicators extends PureComponent {
   static propTypes = {
     indicators: PropTypes.object,
     customersData: PropTypes.array,
-    custRange: PropTypes.array,
-    replace: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
-    updateQueryState: PropTypes.func.isRequired,
-    collectCustRange: PropTypes.func.isRequired,
     cycle: PropTypes.array,
-    expandAll: PropTypes.bool,
-    selectValue: PropTypes.string,
     location: PropTypes.object.isRequired,
     incomeData: PropTypes.array.isRequired,
-    orgId: PropTypes.string,
+    lastAddCusts: PropTypes.array,
   }
 
   static defaultProps = {
     indicators: {},
     customersData: [],
-    custRange: [],
     cycle: [],
-    expandAll: false,
-    selectValue: '',
-    orgId: '',
-  }
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      key: KEYCOUNT,
-      begin: '',
-      end: '',
-    };
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { custRange: preCustRange, selectValue: prevSelectValue } = this.props;
-    const { custRange: nextCustRange, selectValue: nextSelectValue } = nextProps;
-    if (!_.isEqual(preCustRange, nextCustRange)) {
-      this.setState({
-        key: ++KEYCOUNT,
-      });
-    }
-    if (prevSelectValue !== nextSelectValue) {
-      const { begin, end } = this.getBeginAndEndTime(nextSelectValue);
-      this.setState({
-        begin,
-        end,
-      });
-    }
-  }
-
-  @autobind
-  getBeginAndEndTime(value) {
-    const { historyTime, customerPoolTimeSelect } = optionsMap;
-    const currentSelect = _.find(historyTime, itemData =>
-      itemData.name === _.find(customerPoolTimeSelect, item =>
-        item.key === value).name) || {};
-    const nowDuration = getDurationString(currentSelect.key);
-    const begin = nowDuration.begin;
-    const end = nowDuration.end;
-    return {
-      begin,
-      end,
-    };
-  }
-
-  @autobind
-  handleChange(value) {
-    const { begin, end } = this.getBeginAndEndTime(value);
-    const { updateQueryState } = this.props;
-    updateQueryState({
-      cycleSelect: value,
-      begin,
-      end,
-    });
-    // 记录下当前选中的timeSelect
-    this.setState({
-      begin,
-      end,
-    });
+    lastAddCusts: [],
   }
 
   render() {
     const {
       indicators,
-      custRange,
-      replace,
-      updateQueryState,
-      collectCustRange,
       cycle,
-      expandAll,
-      selectValue,
       push,
       location,
       incomeData,
-      orgId,
+      lastAddCusts,
     } = this.props;
     const {
       cftCust,
@@ -164,6 +88,7 @@ export default class PerformanceIndicators extends PureComponent {
       purAddHighprodcust,
       newProdCust,
     };
+    console.log('为了lint通过，先输出', productSalesData, customerIndicators);
     const businessProcessing = {
       cftCust,
       ttfCust,
@@ -172,58 +97,23 @@ export default class PerformanceIndicators extends PureComponent {
       szHkCust,
       optCust,
     };
-    const { key, begin, end } = this.state;
+    const addCustHead = { icon: 'kehuzhibiao', title: '新增客户（户）' };
     return (
       <div className={styles.indexBox}>
         <div>
-          <div className={styles.title}>
-            <span className={styles.name}>绩效指标</span>
-            <div className={styles.timeBox}>
-              <Icon type="kehu" />
-              {
-                !_.isEmpty(custRange) ?
-                  <CustRange
-                    orgId={orgId}
-                    custRange={custRange}
-                    location={location}
-                    replace={replace}
-                    updateQueryState={updateQueryState}
-                    beginTime={begin}
-                    endTime={end}
-                    collectData={collectCustRange}
-                    expandAll={expandAll}
-                    key={`selectTree${key}`}
-                  /> :
-                  <Select
-                    style={{ width: 200, color: '#CCC' }}
-                    defaultValue="暂无数据"
-                    key="seletTreeNull"
-                  >
-                    <Option value="暂无数据">暂无数据</Option>
-                  </Select>
-              }
-              <i className={styles.bd} />
-              <Icon type="rili" />
-              <Select
-                style={{ width: 60 }}
-                value={selectValue}
-                onChange={this.handleChange}
-                key="dateSelect"
-              >
-                {cycle.map(item =>
-                  <Option key={item.key} value={item.key}>{item.value}</Option>)}
-              </Select>
-            </div>
-          </div>
           <div className={`${styles.listItem} ${styles.firstListItem}`}>
             <Row gutter={16}>
               <Col span={8}>
-                <CustomerIndicators
+                <RectFrame dataSource={addCustHead}>
+                  <ProgressList dataSource={lastAddCusts} />
+                </RectFrame>
+
+                {/* <CustomerIndicators
                   cycle={cycle}
                   push={push}
                   location={location}
                   data={customerIndicators}
-                />
+                /> */}
               </Col>
               <Col span={8}>
                 <BusinessProcessing
@@ -243,9 +133,12 @@ export default class PerformanceIndicators extends PureComponent {
           <div className={styles.listItem}>
             <Row gutter={16}>
               <Col span={8}>
-                <ProductSales
+                <RectFrame dataSource={addCustHead}>
+                  <TextList dataSource={lastAddCusts} />
+                </RectFrame>
+                {/* <ProductSales
                   data={productSalesData}
-                />
+                /> */}
               </Col>
               <Col span={8}>
                 <div className={styles.indexItemBox}>

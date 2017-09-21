@@ -222,7 +222,7 @@ export default class Search extends PureComponent {
       return null;
     }
     const recommendList = [];
-    data.forEach((item, index) => {
+    data.forEach((item) => {
       recommendList.push(
         <a
           key={item.id}
@@ -238,9 +238,6 @@ export default class Search extends PureComponent {
         >
           {item.labelNameVal}
         </a>);
-      if (index !== data.length - 1) {
-        recommendList.push(<i key={item.labelNameVal} className={styles.bd} />);
-      }
     });
     return recommendList;
   }
@@ -409,7 +406,7 @@ export default class Search extends PureComponent {
                       type="primary"
                       onClick={this.handleSearchBtn}
                     >
-                      <AntdIcon type="search" />
+                      搜索客户
                     </Button>
                   )}
                 />
