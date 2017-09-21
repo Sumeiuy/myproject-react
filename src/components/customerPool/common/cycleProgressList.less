@@ -1,0 +1,59 @@
+.container {
+  padding: 24px 0px;
+  .row {
+    display: -webkit-flex; /* Safari */
+    display: flex;
+    justify-content: space-around;
+    .column{
+      overflow: hidden;
+      .content {
+        display: -webkit-flex; /* Safari */
+        display: flex;
+        justify-content: center;
+        .percent {
+          font-size: 26px;
+          color: #000;
+        }
+        .symbol {
+          font-size: 8px;
+          color: #666;
+          padding-top: 12px;
+        }
+      }
+      .text {
+        margin-top: 11px;
+        font-size: 14px;
+        color: #999;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-align: center;
+      }
+    }
+    :global {
+      .ant-progress-circle-trail {
+        stroke: #d6d6d6;
+      }
+    }
+    .firstColumn {
+      :global {
+        .ant-progress-circle .ant-progress-inner {
+          border: 1px solid #188ca2;
+        }
+        .ant-progress-circle-path {
+          stroke: #188ca2;
+        }
+      }
+    }
+    .secondColumn {
+      :global {
+        .ant-progress-circle .ant-progress-inner {
+          border: 1px solid #6075aa;
+        }
+        .ant-progress-circle-path {
+          stroke: #6075aa;
+        }
+      }
+    }
+  }
+}

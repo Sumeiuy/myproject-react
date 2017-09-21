@@ -12,6 +12,7 @@ const EMPTY_OBJECT = {};
 export default {
   namespace: 'customerPool',
   state: {
+    serviceIndicators: [],
     lastAddCusts: [],
     viewpoints: [],
     todolist: [],
@@ -66,6 +67,13 @@ export default {
     },
   },
   effects: {
+    * getServiceIndicators({ }, { call, put }) {  //eslint-disable-line
+      const response = yield call(api.getServiceIndicators);
+      yield put({
+        type: 'getServiceIndicatorsSuccess',
+        payload: response,
+      });
+    },
     * getLastAddCust({ }, { call, put }) {  //eslint-disable-line
       const response = yield call(api.getLastAddCust);
       yield put({
@@ -312,6 +320,13 @@ export default {
     },
   },
   reducers: {
+    getServiceIndicatorsSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        serviceIndicators: resultData,
+      };
+    },
     getLastAddCustSuccess(state, action) {
       const { payload: { resultData } } = action;
       return {

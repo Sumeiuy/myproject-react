@@ -6,16 +6,17 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { Row, Col } from 'antd';
-import Icon from '../../common/Icon';
-import CustomerService from './CustomerService';
+// import Icon from '../../common/Icon';
+// import CustomerService from './CustomerService';
 // import ProductSales from './ProductSales';
 import TradingVolume from './TradingVolume';
 // import CustomerIndicators from './CustomerIndicators';
 import BusinessProcessing from './BusinessProcessing';
-import Income from './Income';
+// import Income from './Income';
 import styles from './performanceIndicators.less';
 import ProgressList from '../../customerPool/common/ProgressList';
 import TextList from '../../customerPool/common/TextList';
+import CycleProgressList from '../../customerPool/common/CycleProgressList';
 import RectFrame from '../../customerPool/common/RectFrame';
 
 export default class PerformanceIndicators extends PureComponent {
@@ -27,6 +28,7 @@ export default class PerformanceIndicators extends PureComponent {
     location: PropTypes.object.isRequired,
     incomeData: PropTypes.array.isRequired,
     lastAddCusts: PropTypes.array,
+    serviceIndicators: PropTypes.array,
   }
 
   static defaultProps = {
@@ -34,6 +36,7 @@ export default class PerformanceIndicators extends PureComponent {
     customersData: [],
     cycle: [],
     lastAddCusts: [],
+    serviceIndicators: [],
   }
 
   render() {
@@ -42,8 +45,9 @@ export default class PerformanceIndicators extends PureComponent {
       cycle,
       push,
       location,
-      incomeData,
+      // incomeData,
       lastAddCusts,
+      serviceIndicators,
     } = this.props;
     const {
       cftCust,
@@ -88,7 +92,7 @@ export default class PerformanceIndicators extends PureComponent {
       purAddHighprodcust,
       newProdCust,
     };
-    console.log('为了lint通过，先输出', productSalesData, customerIndicators);
+    console.log('为了lint通过，先输出', customerServiceData, productSalesData, customerIndicators);
     const businessProcessing = {
       cftCust,
       ttfCust,
@@ -97,7 +101,7 @@ export default class PerformanceIndicators extends PureComponent {
       szHkCust,
       optCust,
     };
-    const addCustHead = { icon: 'kehuzhibiao', title: '新增客户（户）' };
+    const addCustHead = { icon: '', title: '新增客户（户）' };
     return (
       <div className={styles.indexBox}>
         <div>
@@ -141,7 +145,10 @@ export default class PerformanceIndicators extends PureComponent {
                 /> */}
               </Col>
               <Col span={8}>
-                <div className={styles.indexItemBox}>
+                <RectFrame dataSource={addCustHead}>
+                  <ProgressList dataSource={lastAddCusts} />
+                </RectFrame>
+                {/* <div className={styles.indexItemBox}>
                   <div className={styles.inner}>
                     <div className={styles.title}>
                       <Icon type="shouru" />净创收
@@ -152,10 +159,13 @@ export default class PerformanceIndicators extends PureComponent {
                       />
                     </div>
                   </div>
-                </div>
+                </div> */}
               </Col>
               <Col span={8}>
-                <div className={styles.indexItemBox}>
+                <RectFrame dataSource={addCustHead}>
+                  <CycleProgressList dataSource={serviceIndicators} />
+                </RectFrame>
+                {/* <div className={styles.indexItemBox}>
                   <div className={styles.inner}>
                     <div className={styles.title}>
                       <Icon type="kehufuwu" />客户服务
@@ -166,7 +176,7 @@ export default class PerformanceIndicators extends PureComponent {
                       />
                     </div>
                   </div>
-                </div>
+                </div> */}
               </Col>
             </Row>
           </div>

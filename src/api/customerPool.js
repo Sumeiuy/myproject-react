@@ -5,6 +5,8 @@
 export default function customerPool(api) {
   return {
     // 获取新增客户
+    getServiceIndicators: query => api.post('/groovynoauth/fsp/emp/indicators/serviceIndicators', query),
+    // 获取新增客户
     getLastAddCust: query => api.post('/groovynoauth/fsp/emp/indicators/lastAddCust', query),
     // 获取首席投顾观点
     getViewpoints: query => api.post('/groovynoauth/fsp/emp/viewpoints/queryViewpoints', query),

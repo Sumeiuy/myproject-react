@@ -41,6 +41,8 @@ const effects = {
   getIncomeData: 'customerPool/getIncomeData',
   getViewpoints: 'customerPool/getViewpoints',
   getLastAddCust: 'customerPool/getLastAddCust',
+  getServiceIndicators: 'customerPool/getServiceIndicators',
+
 };
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -65,9 +67,11 @@ const mapStateToProps = state => ({
   incomeData: state.customerPool.incomeData, // 净创收数据
   viewpoints: state.customerPool.viewpoints, // 首席投顾观点
   lastAddCusts: state.customerPool.lastAddCusts, // 新增客户数
+  serviceIndicators: state.customerPool.serviceIndicators, // 服务指标
 });
 
 const mapDispatchToProps = {
+  getServiceIndicators: fetchDataFunction(true, effects.getServiceIndicators),
   getLastAddCust: fetchDataFunction(true, effects.getLastAddCust),
   getViewpoints: fetchDataFunction(true, effects.getViewpoints),
   getToBeDone: fetchDataFunction(true, effects.toBeTone),
@@ -116,7 +120,8 @@ export default class Home extends PureComponent {
     viewpoints: PropTypes.array,
     lastAddCusts: PropTypes.array,
     getLastAddCust: PropTypes.func.isRequired,
-
+    getServiceIndicators: PropTypes.func.isRequired,
+    serviceIndicators: PropTypes.array,
   }
 
   static defaultProps = {
@@ -136,6 +141,7 @@ export default class Home extends PureComponent {
     incomeData: EMPTY_LIST,
     viewpoints: EMPTY_LIST,
     lastAddCusts: EMPTY_LIST,
+    serviceIndicators: EMPTY_LIST,
   }
 
   constructor(props) {
@@ -317,6 +323,7 @@ export default class Home extends PureComponent {
   handleGetAllInfo(begin, end, cycleSelect) {
     const { fspOrgId } = this.state;
     const {
+      getServiceIndicators,
       getLastAddCust,
       getViewpoints,
       getToBeDone,
@@ -344,6 +351,8 @@ export default class Home extends PureComponent {
     getViewpoints();
     // 新增客户
     getLastAddCust();
+    // 服务指标
+    getServiceIndicators();
 
     // 净创收数据
     this.getIncomes({ begin, end, orgId: fspOrgId, cycleSelect });
@@ -598,6 +607,7 @@ export default class Home extends PureComponent {
       incomeData,
       viewpoints,
       lastAddCusts,
+      serviceIndicators,
     } = this.props;
     const { fspOrgId } = this.state;
     return (
@@ -635,6 +645,7 @@ export default class Home extends PureComponent {
                   cycle={cycle}
                   incomeData={incomeData}
                   lastAddCusts={lastAddCusts}
+                  serviceIndicators={serviceIndicators}
                 />
               </TabPane>
               <TabPane tab="投顾绩效" key="2">
@@ -645,6 +656,7 @@ export default class Home extends PureComponent {
                   cycle={cycle}
                   incomeData={incomeData}
                   lastAddCusts={lastAddCusts}
+                  serviceIndicators={serviceIndicators}
                 />
               </TabPane>
             </Tabs>
