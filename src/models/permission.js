@@ -20,7 +20,6 @@ export default {
   reducers: {
     getDetailMessageSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
-      console.warn('resultData', resultData);
       return {
         ...state,
         detailMessage: resultData,
@@ -69,7 +68,6 @@ export default {
       } else {
         custRange = [resultData];
       }
-      console.warn('custRange111', custRange);
       return {
         ...state,
         custRange,
@@ -95,7 +93,6 @@ export default {
         const detailList = yield call(api.getMessage, {
           id: result[0].id,
         });
-        console.warn('detailList', detailList);
         yield put({
           type: 'getDetailMessageSuccess',
           payload: detailList,
@@ -118,7 +115,6 @@ export default {
     },
     * getEmpOrgTree({ payload }, { call, put }) {
       const response = yield call(api.getEmpOrgTree, payload);
-      console.warn('response123', response);
       yield put({
         type: 'getEmpOrgTreeSuccess',
         payload: response,

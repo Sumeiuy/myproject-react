@@ -16,17 +16,14 @@ import PermissionHeader from '../../components/common/biz/SeibelHeader';
 import Detail from '../../components/permission/Detail';
 import PermissionList from '../../components/common/biz/CommonList';
 import seibelColumns from '../../components/common/biz/seibelColumns';
-import { permissionOptions } from '../../config';
+import { seibelConfig } from '../../config';
 
 import styles from './home.less';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
-const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
-// 子类型
-const subtypeOptions = permissionOptions.subtypeOptions;
-// 状态
-const stateOptions = permissionOptions.stateOptions;
+const OMIT_ARRAY = ['isResetPageNum'];
+const { permission: { pageType, subType, status } } = seibelConfig;
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
   payload: query || {},
@@ -93,12 +90,17 @@ export default class Permission extends PureComponent {
     const {
       getEmpOrgTree,
       getPermissionList,
-      location: { query, query: {
-      pageNum,
-      pageSize,
-     } } } = this.props;
+      location: {
+        query,
+        query: {
+          pageNum,
+          pageSize,
+        },
+      },
+    } = this.props;
+    const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
     // 默认筛选条件
-    getPermissionList(constructSeibelPostBody(query, pageNum || 1, pageSize || 10));
+    getPermissionList({ ...params, type: pageType });
     getEmpOrgTree({});
   }
 
@@ -111,11 +113,14 @@ export default class Permission extends PureComponent {
     if (!_.isEqual(prevQuery, nextQuery)) {
       if (!this.diffObject(prevQuery, nextQuery)) {
         // 只监测筛选条件是否变化
-        getPermissionList(constructSeibelPostBody(
-          nextQuery,
+        const params = constructSeibelPostBody(nextQuery,
           isResetPageNum === 'Y' ? 1 : pageNum,
           isResetPageNum === 'Y' ? 10 : pageSize,
-        ));
+        );
+        getPermissionList({
+          ...params,
+          type: pageType,
+        });
       }
     }
   }
@@ -130,19 +135,14 @@ export default class Permission extends PureComponent {
         query: {
           ...query,
           isResetPageNum: 'N',
+          pageNum: 1,
         },
       });
     }
-
-    if (_.isEmpty(resultData)) {
-      this.setState({ // eslint-disable-line
-        isEmpty: true,
-      });
-    } else {
-      this.setState({ // eslint-disable-line
-        isEmpty: false,
-      });
-    }
+    const isEmpty = _.isEmpty(resultData);
+    this.setState({ // eslint-disable-line
+      isEmpty,
+    });
   }
 
   get getDetailComponent() {
@@ -227,8 +227,8 @@ export default class Permission extends PureComponent {
         location={location}
         replace={replace}
         page="premissionPage"
-        subtypeOptions={subtypeOptions}
-        stateOptions={stateOptions}
+        subtypeOptions={subType}
+        stateOptions={status}
         creatSeibelModal={this.creatPermossionModal}
         toSearchDrafter={this.toSearchDrafter}
         toSearchCust={this.toSearchCust}

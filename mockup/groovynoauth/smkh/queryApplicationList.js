@@ -1,3 +1,9 @@
+/**
+ * 合作合约、佣金调整、权限申请左侧列表项数据
+ * @param  {[type]} req [description]
+ * @param  {[type]} res [description]
+ * @return {[type]}     [description]
+ */
 exports.response = function (req, res) {
   return {
     code: '0',
@@ -21,14 +27,14 @@ exports.response = function (req, res) {
           level2OrgName: '南京分公司',
           level3OrgId: 'ZZ04001051',
           level3OrgName: '南京某营业部',
-          custNumbe: '0100001',
+          custNumber: '0100001',
           custName: '李四', // 客户名字
         },
         {
           id: 109,
           serialNumber: '10270',
           type: '私密客户申请',
-          subType: '私密客户取消',
+          subType: '私密客户设置',
           title: '标题AAAAA',
           status: 'COMPLETE',
           createTime: '2017-09-01', // 拟稿时间
@@ -48,9 +54,9 @@ exports.response = function (req, res) {
           id: 108,
           serialNumber: '10269',
           type: '私密客户申请',
-          subType: '私密客户交易信息权限分配',
+          subType: '私密客户设置',
           title: '标题AAAAA',
-          status: 'COMPLETE',
+          status: 'END',
           createTime: '2017-09-01', // 拟稿时间
           modifyTime: '2017-09-01', // 更新时间
           empName: '张三', // 拟稿人
@@ -68,9 +74,9 @@ exports.response = function (req, res) {
           id: 107,
           serialNumber: '10268',
           type: '私密客户申请',
-          subType: '私密客户交易信息权限分配',
+          subType: '私密客户设置',
           title: '标题AAAAA',
-          status: 'COMPLETE',
+          status: 'PROCESSING',
           createTime: '2017-09-01', // 拟稿时间
           modifyTime: '2017-09-01', // 更新时间
           empName: '张三', // 拟稿人
@@ -90,7 +96,7 @@ exports.response = function (req, res) {
           type: '私密客户申请',
           subType: '私密客户设置',
           title: '标题AAAAA',
-          status: 'COMPLETE',
+          status: 'PROCESSING',
           createTime: '2017-09-01', // 拟稿时间
           modifyTime: '2017-09-01', // 更新时间
           empName: '张三', // 拟稿人
@@ -110,7 +116,7 @@ exports.response = function (req, res) {
           type: '私密客户申请',
           subType: '私密客户设置',
           title: '标题AAAAA',
-          status: 'COMPLETE',
+          status: 'PROCESSING',
           createTime: '2017-09-01', // 拟稿时间
           modifyTime: '2017-09-01', // 更新时间
           empName: '张三', // 拟稿人
@@ -130,7 +136,7 @@ exports.response = function (req, res) {
           type: '私密客户申请',
           subType: '私密客户设置',
           title: '标题AAAAA',
-          status: 'COMPLETE',
+          status: 'PROCESSING',
           createTime: '2017-09-01', // 拟稿时间
           modifyTime: '2017-09-01', // 更新时间
           empName: '张三', // 拟稿人
@@ -142,7 +148,7 @@ exports.response = function (req, res) {
           level3OrgId: 'ZZ04001051',
           level3OrgName: '南京某营业部',
           custNumber: '0100001',
-          custName: '李四', // 客户名字
+          custName: '李四',// 客户名字
         },
         {
           id: 103,
@@ -150,7 +156,7 @@ exports.response = function (req, res) {
           type: '私密客户申请',
           subType: '私密客户设置',
           title: '标题AAAAA',
-          status: 'COMPLETE',
+          status: 'PROCESSING',
           createTime: '2017-09-01', // 拟稿时间
           modifyTime: '2017-09-01', // 更新时间
           empName: '张三', // 拟稿人
@@ -170,7 +176,7 @@ exports.response = function (req, res) {
           type: '私密客户申请',
           subType: '私密客户设置',
           title: '标题AAAAA',
-          status: 'COMPLETE',
+          status: 'PROCESSING',
           createTime: '2017-09-01', // 拟稿时间
           modifyTime: '2017-09-01', // 更新时间
           empName: '张三', // 拟稿人
@@ -190,7 +196,7 @@ exports.response = function (req, res) {
           type: '私密客户申请',
           subType: '私密客户设置',
           title: '标题AAAAA',
-          status: 'COMPLETE',
+          status: 'PROCESSING',
           createTime: '2017-09-01', // 拟稿时间
           modifyTime: '2017-09-01', // 更新时间
           empName: '张三', // 拟稿人
@@ -210,7 +216,7 @@ exports.response = function (req, res) {
           type: '私密客户申请',
           subType: '私密客户设置',
           title: '标题AAAAA',
-          status: 'COMPLETE',
+          status: 'PROCESSING',
           createTime: '2017-09-01', // 拟稿时间
           modifyTime: '2017-09-01', // 更新时间
           empName: '张三', // 拟稿人
@@ -225,8 +231,7 @@ exports.response = function (req, res) {
           custName: '李四', // 客户名字
         },
       ],
- 
-      page:{
+      page: {
         pageNum: 1,
         pageSize: 10,
         totalCount: 38,
@@ -234,4 +239,4 @@ exports.response = function (req, res) {
       },
     },
   };
-};
+}
