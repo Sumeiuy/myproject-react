@@ -7,7 +7,7 @@ export default class InputTextComponent extends PureComponent {
   static propTypes = {
     value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     placeholder: PropTypes.string,
-    emitEvent: PropTypes.func.isRequired,
+    onEmitEvent: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -32,7 +32,7 @@ export default class InputTextComponent extends PureComponent {
 
   @autobind
   changeValue(e) {
-    this.props.emitEvent(e.target.value);
+    this.props.onEmitEvent(e.target.value);
   }
 
   render() {

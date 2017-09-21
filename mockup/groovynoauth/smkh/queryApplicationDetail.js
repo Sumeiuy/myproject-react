@@ -4,37 +4,33 @@ exports.response = function (req, res) {
     "msg": "OK",
     "resultData": {
       "num": "123456456",
-      "baseInfo": {
-        "content": [ 
-          {
-            "title": "标题",
-            "content": "20170906今天南京又下雨了"
-          }, {
-            "title": "子类型",
-            "content": "私密客户思密达"
-          }, {
-            "title": "客户",
-            "content": "张三"
-          }, {
-            "title": "备注",
-            "content": "斯蒂芬斯蒂芬是否斯蒂芬斯蒂芬十点多"
-          }
-        ]
-      },
-      "draftInfo": {
-        "content": [
-          {
-            "title": "拟稿",
-            "content": "沈旭祥"
-          }, {
-            "title": "提请时间",
-            "content": "20170906"
-          }, {
-            "title": "状态",
-            "content": "已完成"
-          }
-        ]
-      },
+      "baseInfo": [ 
+        {
+          "title": "标题",
+          "content": "20170906今天南京又下雨了"
+        }, {
+          "title": "子类型",
+          "content": "私密客户思密达"
+        }, {
+          "title": "客户",
+          "content": "张三"
+        }, {
+          "title": "备注",
+          "content": "斯蒂芬斯蒂芬是否斯蒂芬斯蒂芬十点多"
+        }
+      ],
+      "draftInfo": [
+        {
+          "title": "拟稿",
+          "content": "沈旭祥"
+        }, {
+          "title": "提请时间",
+          "content": "20170906"
+        }, {
+          "title": "状态",
+          "content": "已完成"
+        }
+      ],
       "serverInfo": [
         {
           "ptyMngId":"0101011",
@@ -92,6 +88,30 @@ exports.response = function (req, res) {
         "suggestion":"审批意见很多意见超级多的意见",
         "isOk": false,
         }
+      ],
+      "attachInfoList":[
+        {
+          "name":"附件名称",
+          "empId": "010015",
+          "empName": "赵4",
+          "uploadTime": "20170902",
+          "attachUrl": "/upload/13222.doc",
+          "attachSize": "33kb"
+        }, {
+          "name":"附件名称",
+          "empId": "010016",
+          "empName": "赵5",
+          "uploadTime": "20170903",
+          "attachUrl": "/upload/132111.doc",
+          "attachSize": "100kb"
+        }, {
+          "name":"附件名称",
+          "empId": "010017",
+          "empName": "赵7",
+          "uploadTime": "20170915",
+          "attachUrl": "/upload/123456.doc",
+          "attachSize": "101kb"
+        },
       ],
     }
   };

@@ -8,7 +8,7 @@ import moment from 'moment';
 import bowser from 'bowser';
 import _ from 'lodash';
 
-import { ZHUNICODE, constants } from '../config';
+import { ZHUNICODE, constants, seibelConfig } from '../config';
 
 function getOS() {
   const osList = ['mac', 'windows', 'windowsphone'];
@@ -265,6 +265,32 @@ const helper = {
     finalPostData = _.merge(finalPostData, omitData);
 
     return finalPostData;
+  },
+
+  /**
+   * 获取合约、佣金、权限的列表请求参数
+   * @param  {[string]} page  [页面名称]
+   * @param  {[object]} query [查询参数]
+   * @return {[object]}       [接口查询需要的最终参数]
+   */
+  getSeibelQuery(page, query) {
+    const type = seibelConfig[page].pageType;
+    const defaultQuery = {
+      keyword: '',
+      subType: '',
+      status: '',
+      orgId: '',
+      pageSize: 10,
+      pageNum: 1,
+      empId: '',
+    };
+    const { drafter, ...reset } = query;
+    return {
+      type,
+      ...defaultQuery,
+      ...reset,
+      empId: drafter,
+    };
   },
 
   /**
