@@ -23,7 +23,9 @@ import styles from './home.less';
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
-const typeOptions = permissionOptions.typeOptions;
+// 子类型
+const subtypeOptions = permissionOptions.subtypeOptions;
+// 状态
 const stateOptions = permissionOptions.stateOptions;
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
@@ -32,7 +34,9 @@ const fetchDataFunction = (globalLoading, type) => query => ({
 });
 
 const mapStateToProps = state => ({
+  // 右侧详情
   detailMessage: state.permission.detailMessage,
+  // 左侧列表数据
   list: state.permission.list,
   serverPersonelList: state.permission.serverPersonelList,
   // 拟稿人
@@ -121,7 +125,6 @@ export default class Permission extends PureComponent {
   }
 
   componentWillMount() {
-    this.props.getDetailMessage({ code: 111 });
     const { getPermissionList, location: { query, query: {
       pageNum,
       pageSize,
@@ -175,20 +178,19 @@ export default class Permission extends PureComponent {
   }
 
   /**
-   * 构造表格的列数据
-   * 传参为icon的type
+   * 点击列表每条的时候对应请求详情
    */
   @autobind
-  constructTableColumns() {
-    return seibelColumns('save_blue');
+  getListRowId(id) {
+    const { getDetailMessage } = this.props;
+    getDetailMessage({
+      id,
+    });
   }
 
   @autobind
-  toSearchDrafter(value) {
-    // 查询拟稿人
-    this.props.getDrafterList({
-      empId: value,
-    });
+  setModalShowOrHide() {
+    this.setState({ isShowModal: !this.state.isShowModal });
   }
 
   // 头部新建页面
@@ -199,9 +201,22 @@ export default class Permission extends PureComponent {
   }
 
   @autobind
-  setModalShowOrHide() {
-    this.setState({ isShowModal: !this.state.isShowModal });
+  toSearchDrafter(value) {
+    // 查询拟稿人
+    this.props.getDrafterList({
+      empId: value,
+    });
   }
+
+  /**
+   * 构造表格的列数据
+   * 传参为icon的type
+   */
+  @autobind
+  constructTableColumns() {
+    return seibelColumns('save_blue');
+  }
+
   /**
    * 检查部分属性是否相同
    * @param {*} prevQuery 前一次query
@@ -231,14 +246,23 @@ export default class Permission extends PureComponent {
   }
 
   render() {
-    const { list, location, replace, drafterList, empOrgTreeList } = this.props;
-    const { isEmpty } = this.state;
+    const {
+      list,
+      location,
+      replace,
+      drafterList,
+      empOrgTreeList,
+      customerList,
+      childTypeList,
+      serverPersonelList,
+    } = this.props;
+    const { isEmpty, isShowModal } = this.state;
     const topPanel = (
       <PermissionHeader
         location={location}
         replace={replace}
         page="premissionPage"
-        typeOptions={typeOptions}
+        subtypeOptions={subtypeOptions}
         stateOptions={stateOptions}
         creatSeibelModal={this.creatPermossionModal}
         toSearchDrafter={this.toSearchDrafter}
@@ -253,6 +277,7 @@ export default class Permission extends PureComponent {
         replace={replace}
         location={location}
         columns={this.constructTableColumns()}
+        getListRowId={this.getListRowId}
       />
     );
 
@@ -271,11 +296,11 @@ export default class Permission extends PureComponent {
           leftListClassName="premissionList"
         />
         <CreatePrivateClient
-          isShow={this.state.isShowModal}
+          isShow={isShowModal}
           onEmitSHowOrHideModal={this.setModalShowOrHide}
-          customerList={this.props.customerList}
-          childTypeList={this.props.childTypeList}
-          serverPersonelList={this.props.serverPersonelList}
+          customerList={customerList}
+          childTypeList={childTypeList}
+          serverPersonelList={serverPersonelList}
         />
       </div>
     );

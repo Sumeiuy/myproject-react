@@ -42,7 +42,6 @@
     "redux-logger": "^2.7.4",
     "redux-persist": "^4.4.0",
     "reselect": "^2.5.4",
-    "signals": "^1.0.0",
     "whatwg-fetch": "^2.0.1"
   },
   "devDependencies": {

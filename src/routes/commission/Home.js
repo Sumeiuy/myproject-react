@@ -3,45 +3,58 @@
  * @author sunweibin
  */
 
-import React, { PureComponent, PropTypes } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { withRouter, routerRedux } from 'dva/router';
 import SplitPanel from '../../components/common/splitPanel/SplitPanel';
-import Detail from '../../components/feedback/Detail';
+import Detail from '../../components/commissionAdjustment/Detail';
 import CommissionHeader from '../../components/common/biz/SeibelHeader';
 import CommissionList from '../../components/common/biz/CommonList';
 import seibelColumns from '../../components/common/biz/seibelColumns';
-import { constructPostBody } from '../../utils/helper';
+import { constructSeibelPostBody } from '../../utils/helper';
+import { seibelConfig } from '../../config';
 import './Home.less';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
-const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
+const OMIT_ARRAY = ['isResetPageNum'];
+const { commission: { pageType, subType, status } } = seibelConfig;
+const effects = {
+  list: 'commission/getCommissionList',
+  detail: 'commission/getCommissionDetail',
+};
+
 const mapStateToProps = state => ({
-  list: state.feedback.list,
+  list: state.commission.list,
+  detail: state.commission.detail,
 });
 
-const getDataFunction = loading => query => ({
-  type: 'feedback/getFeedbackList',
+const getDataFunction = (loading, type) => query => ({
+  type,
   payload: query || {},
   loading,
 });
 
 const mapDispatchToProps = {
   replace: routerRedux.replace,
-  getFeedbackList: getDataFunction(true),
+  getCommissionList: getDataFunction(true, effects.list), // 获取批量佣金调整List
+  getCommissionDetail: getDataFunction(true, effects.detail), // 获取批量佣金调整Detail
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 export default class CommissionHome extends PureComponent {
+
   static propTypes = {
-    list: PropTypes.object.isRequired,
-    getFeedbackList: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
+    getCommissionList: PropTypes.func.isRequired,
+    getCommissionDetail: PropTypes.func.isRequired,
+    list: PropTypes.object.isRequired,
+    detail: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -56,29 +69,38 @@ export default class CommissionHome extends PureComponent {
   }
 
   componentWillMount() {
-    const { getFeedbackList, location: { query, query: {
-      curPageNum,
-      curPageSize,
-     } } } = this.props;
+    const {
+      getCommissionList,
+      location: {
+        query,
+        query: {
+          pageNum,
+          pageSize,
+        },
+      },
+    } = this.props;
+    const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
     // 默认筛选条件
-    getFeedbackList(constructPostBody(query, curPageNum || 1, curPageSize || 10));
+    getCommissionList({ ...params, type: pageType });
   }
 
   componentWillReceiveProps(nextProps) {
     const { location: { query: nextQuery = EMPTY_OBJECT } } = nextProps;
-    const { location: { query: prevQuery = EMPTY_OBJECT }, getFeedbackList } = this.props;
-    const { isResetPageNum = 'N', curPageNum, curPageSize } = nextQuery;
-
+    const { location: { query: prevQuery = EMPTY_OBJECT }, getCommissionList } = this.props;
+    const { isResetPageNum = 'N', pageNum, pageSize } = nextQuery;
     // 深比较值是否相等
     // url发生变化，检测是否改变了筛选条件
     if (!_.isEqual(prevQuery, nextQuery)) {
       if (!this.diffObject(prevQuery, nextQuery)) {
         // 只监测筛选条件是否变化
-        getFeedbackList(constructPostBody(
-          nextQuery,
-          isResetPageNum === 'Y' ? 1 : curPageNum,
-          isResetPageNum === 'Y' ? 10 : curPageSize,
-        ));
+        const params = constructSeibelPostBody(nextQuery,
+          isResetPageNum === 'Y' ? 1 : pageNum,
+          isResetPageNum === 'Y' ? 10 : pageSize,
+        );
+        getCommissionList({
+          ...params,
+          type: pageType,
+        });
       }
     }
   }
@@ -93,19 +115,25 @@ export default class CommissionHome extends PureComponent {
         query: {
           ...query,
           isResetPageNum: 'N',
+          pageNum: 1,
         },
       });
     }
+    const isEmpty = _.isEmpty(resultData);
+    this.setState({ // eslint-disable-line
+      isEmpty,
+    });
+  }
 
-    if (_.isEmpty(resultData)) {
-      this.setState({ // eslint-disable-line
-        isEmpty: true,
-      });
-    } else {
-      this.setState({ // eslint-disable-line
-        isEmpty: false,
-      });
-    }
+  /**
+   * 点击列表每条的时候对应请求详情
+   */
+  @autobind
+  getListRowId(id) {
+    const { getCommissionDetail } = this.props;
+    getCommissionDetail({
+      batchNum: id,
+    });
   }
 
   /**
@@ -156,8 +184,8 @@ export default class CommissionHome extends PureComponent {
         location={location}
         replace={replace}
         page="commission"
-        typeOptions={[]}
-        stateOptions={[]}
+        subtypeOptions={subType}
+        stateOptions={status}
         drafterList={[]}
         creatSeibelModal={this.handleCreateBtnClick}
         toSearchDrafter={this.searDrafterList}
@@ -169,6 +197,7 @@ export default class CommissionHome extends PureComponent {
         replace={replace}
         location={location}
         columns={this.constructTableColumns()}
+        getListRowId={this.getListRowId}
       />
     );
 
