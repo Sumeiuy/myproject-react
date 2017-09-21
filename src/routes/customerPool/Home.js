@@ -243,7 +243,7 @@ export default class Home extends PureComponent {
     }
     getPerformanceIndicators({
       custType, // 客户范围类型
-      dateType: cycleSelect || cycle[0].key, // 周期类型
+      dateType: cycleSelect || (!_.isEmpty(cycle) ? cycle[0].key : ''), // 周期类型
       orgId: orgId || fspOrgId, // 组织ID
     });
     return null;
@@ -264,7 +264,7 @@ export default class Home extends PureComponent {
     }
     getIncomeData({
       custType, // 客户范围类型
-      dateType: cycleSelect || cycle[0].key, // 周期类型
+      dateType: cycleSelect || (!_.isEmpty(cycle) ? cycle[0].key : ''), // 周期类型
       orgId: orgId || fspOrgId, // 组织ID
       empId: helper.getEmpId(),
       fieldList: [
@@ -377,7 +377,7 @@ export default class Home extends PureComponent {
           pathname,
           query: {
             ...query,
-            orgId: orgId === 'msm' ? '' : orgId,
+            orgId,
           },
         });
       } else if (cycleSelect) {

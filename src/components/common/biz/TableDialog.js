@@ -22,7 +22,7 @@
  * placeholder：有默认值（空字符串），用于搜索框无内容时的提示文字
  * okText：有默认值（确定），按钮的title
  * cancelText：有默认值（取消），按钮的title
- * idKey: 有默认值（空字符串，无选中），数据源中对象唯一的标识符，table设置选中用
+ * rowKey: 有默认值（空字符串，无选中），数据源中对象唯一的标识符，table设置选中用
  */
 import React, { PropTypes, Component } from 'react';
 import { Table, Modal, Input } from 'antd';
@@ -39,7 +39,7 @@ export default class TableDialog extends Component {
     cancelText: PropTypes.string,
     dataSource: PropTypes.array,
     placeholder: PropTypes.string,
-    idKey: PropTypes.string,
+    rowKey: PropTypes.string,
     columns: PropTypes.array.isRequired,
     title: PropTypes.string.isRequired,
     onSearch: PropTypes.func.isRequired,
@@ -54,20 +54,20 @@ export default class TableDialog extends Component {
     placeholder: '',
     okText: '确定',
     cancelText: '取消',
-    idKey: '',
+    rowKey: '',
   }
 
   constructor(props) {
     super(props);
-    const { dataSource, idKey } = this.props;
-    const defaultConfig = this.defaultSelected(dataSource, idKey);
+    const { dataSource, rowKey } = this.props;
+    const defaultConfig = this.defaultSelected(dataSource, rowKey);
     this.state = {
       ...defaultConfig,
     };
   }
   componentWillReceiveProps(nextProps) {
-    const { dataSource, idKey } = nextProps;
-    const defaultConfig = this.defaultSelected(dataSource, idKey);
+    const { dataSource, rowKey } = nextProps;
+    const defaultConfig = this.defaultSelected(dataSource, rowKey);
     this.setState({
       ...defaultConfig,
     });
@@ -81,13 +81,13 @@ export default class TableDialog extends Component {
     });
   }
 
-  defaultSelected(dataSource, defaultIdKey) {
+  defaultSelected(dataSource, rowKey) {
     const defaultSelected = [];
     const defaultSelectedRow = [];
-    if (!_.isEmpty(defaultIdKey) && dataSource.length > 0) {
+    if (!_.isEmpty(rowKey) && dataSource.length > 0) {
       const firstItem = dataSource[0];
       defaultSelectedRow.push(firstItem);
-      defaultSelected.push(firstItem[defaultIdKey]);
+      defaultSelected.push(firstItem[rowKey]);
     }
     return {
       selectedRowKeys: defaultSelected,
@@ -135,6 +135,7 @@ export default class TableDialog extends Component {
       cancelText,
       dataSource,
       visible,
+      rowKey,
     } = this.props;
 
     if (!visible) {
@@ -161,7 +162,7 @@ export default class TableDialog extends Component {
           onSearch={(value) => { this.handleSearch(value); }}
         />
         <Table
-          rowKey="id"
+          rowKey={record => record[rowKey]}
           rowSelection={rowSelection}
           columns={columns}
           dataSource={dataSource}

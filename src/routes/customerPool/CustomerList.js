@@ -203,10 +203,11 @@ export default class CustomerList extends PureComponent {
       orgId !== preOrgId) {
       this.getCustomerList(nextProps);
     }
-    // const noPermission = _.find(empRespList, item => item.id === )
-    // console.log('query.orgId----query.source', query.orgId, query.source);
-    // debugger
-    if (query.orgId === MAIN_MAGEGER_ID || query.source === 'business') {
+    if (query.orgId) {
+      this.setState({
+        isSms: query.orgId === MAIN_MAGEGER_ID,
+      });
+    } else if (query.source === 'business') {
       this.setState({
         isSms: true,
       });
@@ -379,6 +380,7 @@ export default class CustomerList extends PureComponent {
     if (respIdOfPosition < 0) {
       this.setState({
         createCustRange: [myCustomer],
+        isSms: true,
       });
       return false;
     }
@@ -397,6 +399,7 @@ export default class CustomerList extends PureComponent {
       this.setState({
         createCustRange: custRange,
         expandAll: true,
+        isSms: false,
       });
       return false;
     }
@@ -406,6 +409,7 @@ export default class CustomerList extends PureComponent {
       this.setState({
         createCustRange: [groupInCustRange, myCustomer],
         expandAll: true,
+        isSms: false,
       });
       return false;
     }
@@ -422,6 +426,7 @@ export default class CustomerList extends PureComponent {
     if (department) {
       this.setState({
         createCustRange: department,
+        isSms: false,
       });
       return false;
     }
@@ -430,6 +435,7 @@ export default class CustomerList extends PureComponent {
       createCustRange: [{
         id: empInfo.occDivnNum,
         name: empInfo.occupation,
+        isSms: false,
       }],
     });
     return false;
@@ -445,12 +451,18 @@ export default class CustomerList extends PureComponent {
       location: { query, pathname },
     } = this.props;
     const { cycleSelect, orgId } = state;
+    const obj = {};
+    if (cycleSelect) {
+      obj.cycleSelect = cycleSelect;
+    }
+    if (orgId) {
+      obj.orgId = orgId;
+    }
     replace({
       pathname,
       query: {
         ...query,
-        orgId,
-        cycleSelect,
+        ...obj,
         curPageNum: 1,
         selectAll: false,
         selectedIds: '',

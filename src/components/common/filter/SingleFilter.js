@@ -1,7 +1,14 @@
 /**
- * @file components/customerPool/SingleFilter.js
- *  客户池-客户列表单项筛选
+ * @file components/common/filter/SingleFilter.js
+ *  单项筛选
  * @author wangjunjun
+ *
+ * filterLabel string类型 筛选的对象 eg: '客户类型'
+ * filterField array类型 筛选项
+ * filter string类型 onChange回调方法中返回的对象的name值
+ * value string类型 回填到组件的值，也是onChange回调方法中返回的对象的value值
+ * onChange function类型 组件的回调方法，获取已选中的值
+ *             返回一个对象 { name: 'name', value: 'value' }
  */
 
 import React, { PropTypes, PureComponent } from 'react';

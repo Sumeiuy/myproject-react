@@ -73,5 +73,8 @@ export default function customerPool(api) {
 
     // 关注与取消关注
     queryFollowCust: query => api.post('/groovynoauth/fsp/cust/custgroup/queryFollowCust', query),
+
+    // 分组维度，客户分组列表
+    queryCustomerGroupList: query => api.post('/groovynoauth/fsp/cust/custgroup/queryCustomerGroupList', query),
   };
 }

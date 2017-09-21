@@ -11,6 +11,7 @@ import _ from 'lodash';
 import { Modal, Button, Table } from 'antd';
 import Icon from '../../common/Icon';
 import Collapse from './CreateCollapse';
+import { checkFormat } from '../../../utils/helper';
 
 import styles from './createContactModal.less';
 import Phone from '../../../../static/images/phone.png';
@@ -151,12 +152,12 @@ export default class CreateContactModal extends PureComponent {
    * 格式化座机号 02588888888 变成 025-88888888形式
    * @param {*} phone 手机号
    */
-  formatPhoneNumber(phone, type) {
+  formatPhoneNumber(phone) {
     let count = 0;
     let newPhone = '';
     const temp = phone.toString();
     const len = temp.length;
-    const flag = type === 'phone' ? 4 : 8;
+    const flag = checkFormat.isCellphone(phone) ? 4 : 8;
 
     for (let i = len - 1; i >= 0; i--) {
       if (count % flag === 0 && count !== 0) {
@@ -231,7 +232,7 @@ export default class CreateContactModal extends PureComponent {
           mainContactInfo = {
             nameInfo: mainContactNameInfo,
             cellInfo: _.isEmpty(mainContactAllInfo.cellPhones) ? '' :
-              this.formatPhoneNumber(mainContactAllInfo.cellPhones[0].contactValue, 'phone'),
+              this.formatPhoneNumber(mainContactAllInfo.cellPhones[0].contactValue),
             telInfo: _.omitBy(_.pick(mainContactAllInfo, ['workTels', 'homeTels', 'otherTels']), _.isEmpty),
           };
           if (!_.isEmpty(_.pick(mainContactAllInfo, ['workTels', 'homeTels', 'otherTels', 'cellPhones']))) {
@@ -244,11 +245,11 @@ export default class CreateContactModal extends PureComponent {
         otherContactInfo = !_.isEmpty(otherContact) && _.map(otherContact, item => ({
           contact: item.name || '--',
           phone: _.isEmpty(item.cellPhones) ? '--' :
-            this.formatPhoneNumber(item.cellPhones[0].contactValue, 'phone'),
+            this.formatPhoneNumber(item.cellPhones[0].contactValue),
           work: _.isEmpty(item.workTels) ? '--' :
-            this.formatPhoneNumber(item.workTels[0].contactValue, 'work'),
+            this.formatPhoneNumber(item.workTels[0].contactValue),
           home: _.isEmpty(item.homeTels) ? '--' :
-            this.formatPhoneNumber(item.homeTels[0].contactValue, 'home'),
+            this.formatPhoneNumber(item.homeTels[0].contactValue),
           personType: item.custRela || '--',
         }));
       } else if (!_.isEmpty(perCustomerContactInfo)) {
@@ -264,7 +265,7 @@ export default class CreateContactModal extends PureComponent {
             // 存在主要电话
             mainTelInfo = {
               type: 'cellPhones',
-              value: this.formatPhoneNumber(cellPhones && cellPhones[0].contactValue, 'phone'),
+              value: this.formatPhoneNumber(cellPhones && cellPhones[0].contactValue),
             };
           }
           // 个人联系方式中，不存在主要电话
@@ -282,13 +283,11 @@ export default class CreateContactModal extends PureComponent {
 
     const columns = this.constructTableColumns();
     const newDataSource = this.constructTableDatas(otherContactInfo);
-
     return (
       <Modal
         wrapClassName={styles.contactModal}
         visible={visible}
         title={'联系客户'}
-        onOk={this.handleOk}
         maskClosable={false}
         width={700}
         onCancel={this.handleCancel}

@@ -3,7 +3,7 @@ exports.response = function (req, res) {
         "code": "0",
         "msg": "OK",
         "resultData": {
-            "permissionVOList": [
+            "contractVOList": [
                 {
                     "id": 110,
                     "serialNumber":"10271",
@@ -225,7 +225,7 @@ exports.response = function (req, res) {
                     "custName": "李四"//客户名字
                 },
             ],
-       
+
             "page":{
                 "pageNum":1,
                 "pageSize":10,

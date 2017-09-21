@@ -8,24 +8,40 @@ import TextareaComponent from '../common/textareacomponent';
 import SearchModal from '../common/biz/SearchModal';
 import DropdownSelect from '../common/dropdownSelect';
 import columns from './PermissionColumns';
+import Icon from '../common/Icon';
 
 export default class BaseInfoModify extends PureComponent {
   static propTypes = {
     head: PropTypes.string.isRequired,
-    serverInfo: PropTypes.array,
-    // baseInfo: PropTypes.array,
+    baseInfo: PropTypes.array,
+    childTypeList: PropTypes.array.isRequired,
+    customerList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
-    serverInfo: [],
     baseInfo: [],
+  }
+
+  static contextTypes = {
+    getCustomerList: PropTypes.func.isRequired,
+    getChildTypeList: PropTypes.func.isRequired,
   }
 
   constructor() {
     super();
     this.state = {
+      // 标题
       title: '标题是什么',
+      // 备注
       remarks: '此处省略一万个字...',
+      // 客户类型
+      customer: '',
+      // 子类型
+      childType: '',
+      // 子类型列表
+      childTypeList: [],
+      // 客户列表
+      customerList: [],
     };
   }
 
@@ -42,43 +58,49 @@ export default class BaseInfoModify extends PureComponent {
   }
 
   @autobind
-  searchInfoList(value) {
-    // 选中下拉对象中对应的某个对象
-    console.log(value);
+  searchChildTypeList(value) {
+    // 按 关键字 查询 子类型 列表
+    this.context.getChildTypeList(value);
   }
 
   @autobind
-  selectItem(item) {
-    // 选中下拉对象中对应的某个对象
+  selectChildType(value) {
+    // 选择子类型
+    console.log('#####handleOk######', value);
+  }
+
+  @autobind
+  selectCustomer(item) {
+    // 选中客户
     console.log('向上传递选中的对象', item);
   }
 
   @autobind
-  toSearchInfo(value) {
-    // 下拉菜单中的查询
-    console.log('暴露的查询方法，向上传递value', value);
+  searchCustomerList(value) {
+    // 按照 关键字 查询 客户 列表
+    this.context.getCustomerList(value);
   }
 
   @autobind
-  renderSelectedElem(/** selected, removeFunc */) {
-    // return (
-    //   <div className={style.result}>
-    //     <div className={style.nameLabel}>{selected.name}</div>
-    //     <div className={style.custIdLabel}>{selected.id}</div>
-    //     <div className={style.iconDiv}>
-    //       <Icon
-    //         type="close"
-    //         className={style.closeIcon}
-    //         onClick={removeFunc}
-    //       />
-    //     </div>
-    //   </div>
-    // );
+  renderSelectedElem(selected, removeFunc) {
+    return (
+      <div className={style.result}>
+        <div className={style.nameLabel}>{selected.ptyMngName}</div>
+        <div className={style.custIdLabel}>{selected.ptyMngId}</div>
+        <div className={style.iconDiv}>
+          <Icon
+            type="close"
+            className={style.closeIcon}
+            onClick={removeFunc}
+          />
+        </div>
+      </div>
+    );
   }
-
   render() {
     return (
       <div className={style.baseInfo}>
+        <p>{this.context.str}</p>
         <InfoTitle head={this.props.head} />
         <div className={style.inputComponent}>
           <span className={style.inputComponentTitle}>
@@ -88,7 +110,7 @@ export default class BaseInfoModify extends PureComponent {
             <InputTextComponent
               value={this.state.title}
               placeholder="请输入标题"
-              emitEvent={this.updateTitle}
+              onEmitEvent={this.updateTitle}
             />
           </div>
         </div>
@@ -99,12 +121,13 @@ export default class BaseInfoModify extends PureComponent {
           <div className={style.inputComponentContent}>
             <DropdownSelect
               value="全部"
-              placeholder="请输入姓名或工号"
-              searchList={this.state.list}
+              placeholder="经济客户号/客户名称"
+              searchList={this.props.customerList}
               showObjKey="custName"
-              objId="custNumber"
-              emitSelectItem={this.selectItem}
-              emitToSearch={this.toSearchInfo}
+              objId="cusId"
+              emitSelectItem={this.selectCustomer}
+              emitToSearch={this.searchCustomerList}
+              boxStyle={{ border: '1px solid #d9d9d9' }}
             />
           </div>
         </div>
@@ -114,21 +137,21 @@ export default class BaseInfoModify extends PureComponent {
           </span>
           <div className={style.inputComponentContent}>
             <SearchModal
+              onOk={this.selectChildType}
               columns={columns}
               title="选择下一审批人员"
-              dataSource={this.props.serverInfo}
+              dataSource={this.props.childTypeList}
               placeholder=""
-              onSearch={this.searchInfoList}
+              onSearch={this.searchChildTypeList}
               renderSelected={this.renderSelectedElem}
-              idKey="ptyMngId"
+              rowKey="ptyMngId"
             />
-
           </div>
         </div>
         <TextareaComponent
           title="备注"
           value={this.state.remarks}
-          emitEvent={this.changeRemarks}
+          onEmitEvent={this.changeRemarks}
           placeholder="请输入您的备注信息"
         />
       </div>
