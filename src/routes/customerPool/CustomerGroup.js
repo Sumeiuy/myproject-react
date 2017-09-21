@@ -30,7 +30,6 @@ const mapStateToProps = state => ({
 });
 const mapDispatchToProps = {
   replace: routerRedux.replace,
-  goBack: routerRedux.goBack,
   getCustomerGroupList: query => ({
     type: 'customerPool/customerGroupList',
     payload: query || {},
@@ -87,7 +86,6 @@ export default class CustomerGroup extends PureComponent {
     createCustGroup: PropTypes.func.isRequired,
     cusgroupPage: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
-    goBack: PropTypes.func.isRequired,
     addCustomerToGroup: PropTypes.func.isRequired,
     cusGroupSaveResult: PropTypes.string,
     resultgroupId: PropTypes.string,
@@ -248,11 +246,7 @@ export default class CustomerGroup extends PureComponent {
     this.props.createCustGroup({ ...param });
     console.log(this.props.createCustGroup);
   }
-  @autobind
-  /* 退回 */
-  goback() {
-    this.props.goBack();
-  }
+
   @autobind
   closeTab() {
     fspGlobal.closeRctTabById('FSP_GROUP');
@@ -322,7 +316,7 @@ export default class CustomerGroup extends PureComponent {
         </div>
         <div className={this.state.controlCusSuccess} >
           <AddCusSuccess
-            goback={this.closeTab}
+            closeTab={this.closeTab}
             groupName={groupName} groupId={this.state.cusgroupId}
           />
         </div>

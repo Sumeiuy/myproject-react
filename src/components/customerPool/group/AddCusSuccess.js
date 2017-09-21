@@ -8,31 +8,41 @@ import { withRouter } from 'dva/router';
 import { autobind } from 'core-decorators';
 import Button from '../../common/Button';
 import styles from './addCusSuccess.less';
-
+import { fspGlobal } from '../../../utils';
 
 @withRouter
 export default class AddCusSuccess extends PureComponent {
   static propTypes = {
-    goback: PropTypes.func.isRequired,
+    closeTab: PropTypes.func.isRequired,
     groupId: PropTypes.string.isRequired,
     groupName: PropTypes.string.isRequired,
-  }
-  @autobind
-  /* 回退 */
-  closeTab() {
-    console.log(this.props);
-    const { goback } = this.props;
-    // console.log(goback)
-    goback();
   }
   /* 跳转到fsp的分组详情 */
   @autobind
   LinkToGroupDetail() {
-    /* const { groupId } = this.props; */
+    const url = `/custgroup/manage/viewGroupInfo?groupId=${this.props.groupId}`;
+    const param = {
+      id: 'FSP_ST_TAB_CUSTCENTER_CUSTGROUP_VIEW',
+      title: '查看客户分组信息',
+      forceRefresh: true,
+      closable: true,
+    };
+    fspGlobal.openFspTab({ url, param });
+  }
+
+  // 返回首页
+  @autobind
+  goToIndex() {
+    const url = '/customerPool';
+    const param = {
+      id: 'tab-home',
+      title: '首页',
+    };
+    fspGlobal.openRctTab({ url, param });
+    this.props.closeTab();
   }
   render() {
     const { groupName } = this.props;
-    console.log('this.props---', this.props);
     return (
       <div className={styles.addCusSuccess}>
         <div className={styles.text}>添加分组</div>
@@ -46,7 +56,7 @@ export default class AddCusSuccess extends PureComponent {
             查看该分组下所有客户
           </div>
           <div className={styles.successBtn}>
-            <Button onClick={this.closeTab} type="primary">返回首页</Button>
+            <Button onClick={this.goToIndex} type="primary">返回首页</Button>
           </div>
         </div>
       </div>

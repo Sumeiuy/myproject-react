@@ -116,7 +116,6 @@ export default class CustomerLists extends PureComponent {
     let isFollows = {};
     let change = {};
     const { result } = fllowCustData || '';
-    console.warn('onOff---', onOff);
     if ((prevContact !== nextContact || prevRecord !== nextRecord) && onOff === false) {
       if (!isShowContactModal) {
         this.setState({
@@ -126,6 +125,7 @@ export default class CustomerLists extends PureComponent {
       }
     }
     if (onOff) {
+      this.getEmail(nextCustContactData[currentCustId]);
       onOff = !onOff;
     }
     if (preFL && !followLoading) {

@@ -62,6 +62,16 @@ export default class CreateTaskSuccess extends PureComponent {
       fspGlobal.closeRctTabById('RCT_FSP_TASK');
   }
   @autobind
+  goToIndex() {
+    const url = '/customerPool';
+    const param = {
+      id: 'tab-home',
+      title: '首页',
+    };
+    fspGlobal.openRctTab({ url, param });
+    fspGlobal.closeRctTabById('FSP_GROUP');
+  }
+  @autobind
   handleMovTime() {
     this.setState({
       changeTime: COUNT--,
@@ -89,7 +99,7 @@ export default class CreateTaskSuccess extends PureComponent {
               <p>页面会在 <b>{changeTime}</b> 秒内自动关闭</p>
             </div>
             <div className={styles.taskSuccess_btn}>
-              <Button type="primary" >
+              <Button type="primary" onclick={goToIndex()}>
                 返回首页
               </Button>
             </div>

@@ -6,7 +6,7 @@
 
 import React, { PureComponent, PropTypes } from 'react';
 // import { withRouter } from 'dva/router';
-import { Checkbox, message } from 'antd';
+import { Checkbox } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
@@ -213,11 +213,11 @@ export default class CustomerRow extends PureComponent {
   }
   componentWillReceiveProps(nextProps) {
     const { custContactData } = this.props;
+    console.log(custContactData !== nextProps.custContactData);
     if (custContactData !== nextProps.custContactData && _.size(nextProps.custContactData) !== 0) {
       const change = {
         ...this.state.addressEmail,
-        ...{ [nextProps.currentCustId]: this.getEmail(nextProps.custContactData,
-            nextProps.currentCustId) },
+        ...{ [nextProps.currentCustId]: this.getEmail(nextProps.custContactData) },
       };
       this.setState({
         addressEmail: change,
@@ -251,7 +251,7 @@ export default class CustomerRow extends PureComponent {
   }
 
   @autobind
-  getEmail(address, nextID) {
+  getEmail(address) {
     let addresses = '';
     let finded = 0;// 邮件联系
     let email = null;
@@ -269,10 +269,7 @@ export default class CustomerRow extends PureComponent {
       finded = -1;
     }
     if (finded === -1) {
-      if (this.props.listItem.custId === nextID) {
-        message.error('暂无客户邮箱，请与客户沟通尽快完善信息');
-        email = null;
-      }
+      email = null;
     } else {
       email = addresses.emailAddresses[finded].contactValue;
     }
