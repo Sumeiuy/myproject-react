@@ -16,7 +16,7 @@ export default class TableList extends PureComponent {
     selectValue: {},
   }
 
-  get getEleList() {
+  get eleList() {
     const { statusType, emitUpdateValue, selectValue } = this.props;
     const result = this.props.info.map((item) => {
       const callBack = () => {
@@ -97,7 +97,7 @@ export default class TableList extends PureComponent {
             className="flex-base_3 text-center"
           >所属营业部</span>
         </li>
-        {this.getEleList}
+        {this.eleList}
       </ul>
     );
   }

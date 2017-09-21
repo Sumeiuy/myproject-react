@@ -5,11 +5,13 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import { Form, Select, Input, Button, DatePicker } from 'antd';
+import { Form, Select, Input, DatePicker } from 'antd';
 import _ from 'lodash';
 import moment from 'moment';
 import { autobind } from 'core-decorators';
 import styles from './createTaskForm.less';
+import { fspGlobal } from '../../../utils';
+import Button from '../../common/Button';
 
 const FormItem = Form.Item;
 const create = Form.create;
@@ -250,7 +252,11 @@ export default class CreateTaskForm extends PureComponent {
     this.handleCreatAddDate(startTime, 'start');
     this.handleCreatAddDate(endTime, 'end');
   }
-
+  @autobind
+    /* 关闭当前页 */
+  closeTab() {
+    fspGlobal.closeRctTabById('RCT_FSP_TASK');
+  }
   render() {
     const { dict, form } = this.props;
     const { taskTypes, executeTypes } = dict;
@@ -426,7 +432,7 @@ export default class CreateTaskForm extends PureComponent {
               </div>
               <div className={styles.task_btn}>
                 <FormItem>
-                  <Button>
+                  <Button onClick={this.closeTab}>
                     取消
                     </Button>
                   <Button type="primary" htmlType="submit">提交</Button> { /* loading */}

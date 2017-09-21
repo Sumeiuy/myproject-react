@@ -1,3 +1,10 @@
+/*
+ * @Author: xuxiaoqin
+ * @Date: 2017-09-20 17:09:13
+ * @Last Modified by:   xuxiaoqin
+ * @Last Modified time: 2017-09-20 17:09:13
+ */
+
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Input } from 'antd';
@@ -23,6 +30,7 @@ export default class CustomerGroupListSearch extends PureComponent {
     const { onSearch } = this.props;
     return (
       <div className={styles.searchWrapper}>
+        <span className={styles.name}>客户名称：</span>
         <Search
           placeholder="分组名"
           style={{ width: 200 }}

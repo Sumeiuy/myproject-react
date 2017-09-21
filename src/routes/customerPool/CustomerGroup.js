@@ -8,12 +8,13 @@ import { withRouter, routerRedux } from 'dva/router';
 import { autobind } from 'core-decorators';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
-import { Tabs, Input, Row, Col, Button, message } from 'antd';
+import { Tabs, Input, Row, Col, message } from 'antd';
+import Button from '../../components/common/Button';
 import styles from './customerGroup.less';
 import CustomerGrouplist from '../../components/customerPool/group/CustomerGrouplist';
 import AddNewGroup from '../../components/customerPool/group/AddNewGroup';
 import AddCusSuccess from '../../components/customerPool/group/AddCusSuccess';
-import helper from '../../utils/helper';
+import { fspGlobal, helper } from '../../utils';
 
 
 const CUR_PAGE = 0; // 默认当前页
@@ -26,11 +27,9 @@ const mapStateToProps = state => ({
   cusGroupSaveResult: state.customerPool.cusGroupSaveResult,
   cusGroupSaveMessage: state.customerPool.cusGroupSaveMessage,
   resultgroupId: state.customerPool.resultgroupId,
-
 });
 const mapDispatchToProps = {
   replace: routerRedux.replace,
-  goBack: routerRedux.goBack,
   getCustomerGroupList: query => ({
     type: 'customerPool/customerGroupList',
     payload: query || {},
@@ -68,11 +67,13 @@ const columns = [
     key: 'createdTm',
   },
 ];
+let selectGroupName = '';
 /* 列表checkbox按钮 */
 const rowSelection = {
   type: 'radio',
   onChange: (selectedRowKeys, selectedRows) => {
     groupId = selectedRows[0].groupId;
+    selectGroupName = selectedRows[0].groupName;
   },
 };
 @connect(mapStateToProps, mapDispatchToProps)
@@ -85,11 +86,9 @@ export default class CustomerGroup extends PureComponent {
     createCustGroup: PropTypes.func.isRequired,
     cusgroupPage: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
-    goBack: PropTypes.func.isRequired,
     addCustomerToGroup: PropTypes.func.isRequired,
     cusGroupSaveResult: PropTypes.string,
     resultgroupId: PropTypes.string,
-
   }
   constructor(props) {
     super(props);
@@ -97,6 +96,7 @@ export default class CustomerGroup extends PureComponent {
       controlGroupPane: '',
       controlCusSuccess: '',
       cusgroupId: '',
+      groupName: '',
     };
   }
 
@@ -174,7 +174,7 @@ export default class CustomerGroup extends PureComponent {
       pathname,
       query: {
         ...query,
-        pageSize: size,
+        curPageSize: size,
         curPageNum: 1,
       },
     });
@@ -213,7 +213,11 @@ export default class CustomerGroup extends PureComponent {
       param.groupId = groupId;
       param.empId = helper.getEmpId();
       console.log(param);
+      this.setState({
+        groupName: selectGroupName,
+      });
       this.props.addCustomerToGroup({ ...param });
+      groupId = '';
     } else {
       message.error('请选择分组');
     }
@@ -235,16 +239,22 @@ export default class CustomerGroup extends PureComponent {
     }
     param.empId = helper.getEmpId();
     Object.assign(param, value);
+    // console.log(param)
+    this.setState({
+      groupName: param.groupName,
+    });
     this.props.createCustGroup({ ...param });
     console.log(this.props.createCustGroup);
   }
+
   @autobind
-  /* 退回 */
-  goback() {
-    this.props.goBack();
+  closeTab() {
+    fspGlobal.closeRctTabById('FSP_GROUP');
   }
+
   render() {
     const { cusgroupList, cusgroupPage, location: { query } } = this.props;
+    const { groupName } = this.state;
     const count = query.count;
     return (
       <div>
@@ -271,6 +281,7 @@ export default class CustomerGroup extends PureComponent {
                 <Row className="groupListRow">
                   <CustomerGrouplist
                     className="CustomerGrouplist"
+                    locationPage={query}
                     data={cusgroupList}
                     columns={columns}
                     cusgroupPage={cusgroupPage}
@@ -280,8 +291,8 @@ export default class CustomerGroup extends PureComponent {
                   />
                 </Row>
                 <Row className={styles.BtnContent}>
-                  <Button onClick={() => this.goback()}>取消</Button>
-                  <Button onClick={() => this.handleSubmit()} type="primary">保存</Button>
+                  <Button onClick={this.closeTab}>取消</Button>
+                  <Button onClick={this.handleSubmit} type="primary">保存</Button>
                 </Row>
               </div>
             </TabPane>
@@ -294,7 +305,7 @@ export default class CustomerGroup extends PureComponent {
                 </Row>
                 <Row className={styles.groupForm}>
                   <AddNewGroup
-                    goback={this.goback}
+                    closeTab={this.closeTab}
                     onSubmit={this.handleNewGroupSubmit}
                   />
                   <Row className={styles.BtnContent} />
@@ -304,7 +315,10 @@ export default class CustomerGroup extends PureComponent {
           </Tabs>
         </div>
         <div className={this.state.controlCusSuccess} >
-          <AddCusSuccess goback={this.goback} groupId={this.state.cusgroupId} />
+          <AddCusSuccess
+            closeTab={this.closeTab}
+            groupName={groupName} groupId={this.state.cusgroupId}
+          />
         </div>
       </div>
     );

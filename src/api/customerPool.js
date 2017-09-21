@@ -72,5 +72,8 @@ export default function customerPool(api) {
 
     // 分组维度，客户分组列表
     queryCustomerGroupList: query => api.post('/groovynoauth/fsp/cust/custgroup/queryCustomerGroupList', query),
+
+    // 某一个分组下面的客户列表
+    queryGroupCustomerList: query => api.post('/groovynoauth/fsp/cust/custgroup/queryGroupCustomerList', query),
   };
 }

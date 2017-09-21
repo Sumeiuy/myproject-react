@@ -6,7 +6,7 @@
 
 const permissionOptions = {
   // 头部查询条件-渠道
-  typeOptions: [
+  subtypeOptions: [
     {
       value: 'ADD',
       label: '私密客户设置',
