@@ -3,9 +3,8 @@
  */
 
 import React, { PureComponent } from 'react';
-import { Button } from 'antd';
 import { autobind } from 'core-decorators';
-
+import { Button } from 'antd';
 import Icon from '../../components/common/Icon';
 import { VisibleRangeAll } from './VisibleRange';
 import CreateBoardModal from '../../components/modals/CreateBoardModal';
@@ -18,6 +17,7 @@ import Transfer from '../../components/common/biz/Transfer';
 import CommonUpload from '../../components/common/biz/CommonUpload';
 import CommonModal from '../../components/common/biz/CommonModal';
 import InfoItem from '../../components/common/infoItem';
+import SearchSelect from '../../components/common/Select/SearchSelect';
 
 
 import {
@@ -116,7 +116,10 @@ export default class TemplModal extends PureComponent {
       [modal]: false,
     });
   }
-
+ @autobind
+  changeFunction(value) {
+    console.log(value);
+  }
   @autobind
   renderSelectedElem(selected, removeFunc) {
     return (
@@ -133,8 +136,8 @@ export default class TemplModal extends PureComponent {
       </div>
     );
   }
-
-  render() {
+ 
+render() {
     const {
       createBoardModal,
       backConfirmModal,
@@ -226,6 +229,7 @@ export default class TemplModal extends PureComponent {
       children: 'tanchuang',
     };
 
+
     return (
       <div>
         <Button onClick={this.openCreateModal}>创建</Button>
@@ -250,6 +254,14 @@ export default class TemplModal extends PureComponent {
         <CommonModal {...commonModalProps} />
         <br />
         <InfoItem label="备注" value="这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值" />
+        <br />
+        <SearchSelect
+          onChange={this.changeFunction}
+          addSelectValue={this.changeFunction}
+          width="300"
+          labelName="产品"
+        />
+
       </div>
     );
   }
