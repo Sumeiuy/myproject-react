@@ -15,6 +15,11 @@ const pageConfig = {
     subType: [
       {
         show: true,
+        label: '全部',
+        value: '',
+      },
+      {
+        show: true,
         label: '私密客户设置',
         value: '0103',
         status: [
@@ -278,6 +283,11 @@ const pageConfig = {
   contract: {
     pageType: '03',
     subType: [
+      {
+        show: true,
+        label: '全部',
+        value: '',
+      },
       {
         show: true,
         label: '限售股解禁',

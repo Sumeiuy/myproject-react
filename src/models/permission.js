@@ -15,14 +15,13 @@ export default {
     list: EMPTY_OBJECT,
     serverPersonelList: EMPTY_LIST, // 服务人员列表
     drafterList: EMPTY_LIST, // 拟稿人
-    empOrgTreeList: EMPTY_OBJECT, // 部门
+    custRange: EMPTY_LIST, // 部门
     childTypeList: EMPTY_LIST, // 子类型
     customerList: EMPTY_LIST, // 客户列表
   },
   reducers: {
     getDetailMessageSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
-      console.warn('resultData', resultData);
       return {
         ...state,
         detailMessage: resultData,
@@ -59,11 +58,19 @@ export default {
       };
     },
     getEmpOrgTreeSuccess(state, action) {
-      const { payload: { resultData = EMPTY_OBJECT } } = action;
-
+      const { payload: { resultData = EMPTY_LIST } } = action;
+      let custRange;
+      if (resultData.level === '1') {
+        custRange = [
+          { id: resultData.id, name: resultData.name, level: resultData.level },
+          ...resultData.children,
+        ];
+      } else {
+        custRange = [resultData];
+      }
       return {
         ...state,
-        empOrgTreeList: resultData,
+        custRange,
       };
     },
     getChildTypeListSuccess(state, action) {
@@ -78,7 +85,6 @@ export default {
     getCustomerListSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
       const { custList = EMPTY_LIST } = resultData;
-      console.log('reduces', custList);
       return {
         ...state,
         customerList: custList,
@@ -104,7 +110,6 @@ export default {
         const detailList = yield call(api.getMessage, {
           id: result[0].id,
         });
-        console.warn('detailList', detailList);
         yield put({
           type: 'getDetailMessageSuccess',
           payload: detailList,
