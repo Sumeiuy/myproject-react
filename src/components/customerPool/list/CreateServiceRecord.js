@@ -22,10 +22,8 @@ const d = new Date();
 // 当前日期的时间戳
 const currentDate = d.getTime();
 const formatCurrentDate = helper.formatTime(currentDate);
-// 日期组件的星期值
-const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
 // 日期组件的显示格式
-const dateFormat = 'YYYY/MM/DD (dddd)';
+const dateFormat = 'YYYY/MM/DD HH:mm';
 const width = { width: 192 };
 // 根据服务方式的key来记录对应的iconname
 const SERVICE_ICON = {
@@ -193,7 +191,7 @@ export default class CreateServiceRecord extends PureComponent {
   handleServiceTime(date) {
     const selectedDate = Number(date.format('x'));
     this.setState({
-      serviceTime: helper.formatTime(selectedDate),
+      serviceTime: moment(selectedDate).format(dateFormat),
     });
   }
 
@@ -202,7 +200,7 @@ export default class CreateServiceRecord extends PureComponent {
   handleFeedbackTime(date) {
     const selectedDate = Number(date.format('x'));
     this.setState({
-      feedbackTime: helper.formatTime(selectedDate),
+      feedbackTime: moment(selectedDate).format(dateFormat),
     });
   }
 
@@ -226,10 +224,6 @@ export default class CreateServiceRecord extends PureComponent {
         <span>&nbsp;{empInfo.empName}/{empInfo.empNum}</span>
       </p>
     );
-    // 自定义星期的值
-    moment.locale('zh-cn', {
-      weekdays,
-    });
     return (
       <Modal
         width={688}
@@ -279,6 +273,7 @@ export default class CreateServiceRecord extends PureComponent {
               value={moment(serviceTime, dateFormat)}
               format={dateFormat}
               allowClear={false}
+              showTime
               onChange={this.handleServiceTime}
             />
           </Col>
@@ -305,6 +300,7 @@ export default class CreateServiceRecord extends PureComponent {
               value={moment(feedbackTime, dateFormat)}
               format={dateFormat}
               allowClear={false}
+              showTime
               onChange={this.handleFeedbackTime}
             />
           </Col>

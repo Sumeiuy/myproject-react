@@ -5,8 +5,8 @@
  */
 
 export default function feebback(api) {
-  console.log(api);
   return {
-
+    // 获取全渠道服务记录列表
+    getServiceRecordList: query => api.post('/groovynoauth/fsp/queryAllRecord', query),
   };
 }

@@ -67,7 +67,7 @@ exports.response = function (req, res) {
                     "originator":"002332",
                     "originatorName":"002332",
                     "stepName":"修改或终止流程",
-                    "subject":"1-F0-4146投顾协议签约流程",
+                    "subject":"1-F0-4146投顾协议签约流程签约流程签约流程",
                     "systemCode":"102330",
                     "wobNum":"8BCE21F7DBF5DE4DBAF17A1C117C96D8"
                 },
