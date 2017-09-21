@@ -1,14 +1,10 @@
-/**
- * @file models/contract.js
- * 合约管理
- * @author wanghan
+/*
+ * @Description: 合作合约 model
+ * @Author: LiuJianShu
+ * @Date: 2017-09-20 15:13:30
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2017-09-20 15:51:13
  */
-
-/**
- * @file models/premissinon.js
- * @author honggaungqing
- */
-import { message } from 'antd';
 import { contract as api } from '../api';
 
 const EMPTY_OBJECT = {};
@@ -19,7 +15,8 @@ export default {
   state: {
     detailMessage: EMPTY_OBJECT,
     list: EMPTY_OBJECT,
-    contractDetail: EMPTY_OBJECT,
+    drafterList: EMPTY_LIST, // 拟稿人
+    empOrgTreeList: EMPTY_OBJECT, // 部门
   },
   reducers: {
     getDetailMessageSuccess(state, action) {
@@ -31,7 +28,7 @@ export default {
     },
     getContractListSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
-      const { page = EMPTY_OBJECT, contractVOList = EMPTY_LIST } = resultData;
+      const { page = EMPTY_OBJECT, applicationList = EMPTY_LIST } = resultData;
       const { listData: preListData = EMPTY_LIST } = state.list;
 
       return {
@@ -39,15 +36,25 @@ export default {
         list: {
           page,
           resultData: page.pageNum === 1 ?
-            contractVOList : [...preListData, ...contractVOList],
+            applicationList : [...preListData, ...applicationList],
         },
       };
     },
-    getDetailSuccess(state, action) {
+    getDrafterListSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
+      const { empInfo = EMPTY_LIST } = resultData;
+
       return {
         ...state,
-        contractDetail: resultData,
+        drafterList: empInfo,
+      };
+    },
+    getEmpOrgTreeSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+
+      return {
+        ...state,
+        empOrgTreeList: resultData,
       };
     },
   },
@@ -65,23 +72,30 @@ export default {
         type: 'getContractListSuccess',
         payload: response,
       });
+      const result = response.resultData.applicationList;
+      if (Array.isArray(result) && result.length) {
+        const detailList = yield call(api.getMessage, {
+          id: result[0].id,
+        });
+        console.warn('detailList', detailList);
+        yield put({
+          type: 'getDetailMessageSuccess',
+          payload: detailList,
+        });
+      }
     },
-    * getDetail({ payload }, { call, put }) {
-      const response = yield call(api.getContractDetail, payload);
+    * getDrafterList({ payload }, { call, put }) {
+      const response = yield call(api.getDrafterList, payload);
       yield put({
-        type: 'getDetailSuccess',
+        type: 'getDrafterListSuccess',
         payload: response,
       });
     },
-    * saveDetail({ payload }, { call, put, select }) {
-      yield call(api.getContractDetail, payload);
-      message.success('操作成功！');
-      const id = yield select(state => state.contract.contractDetail.id);
+    * getEmpOrgTree({ payload }, { call, put }) {
+      const response = yield call(api.getEmpOrgTree, payload);
       yield put({
-        type: 'getDetail',
-        payload: {
-          id,
-        },
+        type: 'getEmpOrgTreeSuccess',
+        payload: response,
       });
     },
   },

@@ -136,8 +136,8 @@ export default class TemplModal extends PureComponent {
       </div>
     );
   }
- 
-render() {
+
+  render() {
     const {
       createBoardModal,
       backConfirmModal,
