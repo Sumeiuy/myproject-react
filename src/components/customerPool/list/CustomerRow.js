@@ -213,7 +213,6 @@ export default class CustomerRow extends PureComponent {
   }
   componentWillReceiveProps(nextProps) {
     const { custContactData } = this.props;
-    console.log(custContactData !== nextProps.custContactData);
     if (custContactData !== nextProps.custContactData && _.size(nextProps.custContactData) !== 0) {
       const change = {
         ...this.state.addressEmail,
@@ -255,13 +254,15 @@ export default class CustomerRow extends PureComponent {
     let addresses = '';
     let finded = 0;// 邮件联系
     let email = null;
-    if (address.orgCustomerContactInfoList !== undefined) {
+    if (address.orgCustomerContactInfoList !== undefined
+        && _.size(address.orgCustomerContactInfoList) > 0) {
       const index = _.findLastIndex(address.orgCustomerContactInfoList,
           val => val.mainFlag);
       finded = _.findLastIndex(address.orgCustomerContactInfoList[index].emailAddresses,
           val => val.mainFlag);
       addresses = address.orgCustomerContactInfoList[index];
-    } else if (address.perCustomerContactInfo !== undefined) {
+    } else if (address.perCustomerContactInfo !== undefined
+        && _.size(address.perCustomerContactInfo) > 0) {
       finded = _.findLastIndex(address.perCustomerContactInfo.emailAddresses,
           val => val.mainFlag);
       addresses = address.perCustomerContactInfo;
