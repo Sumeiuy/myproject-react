@@ -10,6 +10,10 @@ export default {
   namespace: 'app',
   state: {
     empInfo: {},
+    // 显示隐藏添加服务记录弹窗，默认隐藏
+    ServiceRecordModalVisible: false,
+    // 服务弹窗对应的客户的经纪客户号
+    ServiceRecordModalVisibleOfId: '',
   },
   subscriptions: {},
   effects: {
@@ -28,6 +32,13 @@ export default {
         });
       }
     },
+    // 显示与隐藏创建服务记录弹框
+    * toggleServiceRecordModal({ payload }, { put }) {
+      yield put({
+        type: 'toggleServiceRecordModalSuccess',
+        payload,
+      });
+    },
   },
   reducers: {
     // 获取员工职责与职位
@@ -36,6 +47,15 @@ export default {
       return {
         ...state,
         empInfo: payload,
+      };
+    },
+    // 显示与隐藏创建服务记录弹框
+    toggleServiceRecordModalSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        ServiceRecordModalVisible: payload.flag,
+        ServiceRecordModalVisibleOfId: payload.custId,
       };
     },
   },

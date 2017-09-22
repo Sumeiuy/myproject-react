@@ -155,7 +155,6 @@ export default class CustomerRow extends PureComponent {
     onChange: PropTypes.func.isRequired,
     isAllSelect: PropTypes.bool.isRequired,
     selectedIds: PropTypes.array,
-    createServiceRecord: PropTypes.func.isRequired,
     onSendEmail: PropTypes.func.isRequired,
     onAddFollow: PropTypes.func.isRequired,
     dict: PropTypes.object.isRequired,
@@ -166,6 +165,7 @@ export default class CustomerRow extends PureComponent {
     currentCustId: PropTypes.string.isRequired,
     isFollows: PropTypes.object.isRequired,
     isGetCustIncome: PropTypes.bool.isRequired,
+    toggleServiceRecordModal: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -485,9 +485,9 @@ export default class CustomerRow extends PureComponent {
       isSms,
       onAddFollow,
       currentFollowCustId,
-      createServiceRecord,
       isFollows,
       isGetCustIncome,
+      toggleServiceRecordModal,
     } = this.props;
     const {
       unit,
@@ -516,7 +516,9 @@ export default class CustomerRow extends PureComponent {
                   <Icon type="youjian" />
                   <span><a ref={ref => this.sendEmail = ref} href={_.isEmpty(addressEmail[listItem.custId]) ? 'javascript:void(0);' : `mailto:${addressEmail[listItem.custId]}`}> 邮件联系 </a></span>
                 </li>
-                <li onClick={() => createServiceRecord(listItem)}>
+                <li
+                  onClick={() => toggleServiceRecordModal({ custId: listItem.custId, flag: true })}
+                >
                   <Icon type="jilu" />
                   <span>添加服务记录</span>
                 </li>

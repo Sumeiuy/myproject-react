@@ -47,7 +47,6 @@ const effects = {
   getCustContact: 'customerPool/getCustContact',
   getServiceRecord: 'customerPool/getServiceRecord',
   getCustomerScope: 'customerPool/getCustomerScope',
-  addServeRecord: 'customerPool/addServeRecord',
   getFollowCust: 'customerPool/getFollowCust',
 };
 
@@ -69,8 +68,6 @@ const mapStateToProps = state => ({
   custContactData: state.customerPool.custContactData, // 联系方式数据
   serviceRecordData: state.customerPool.serviceRecordData, // 最近服务记录
   cycle: state.customerPool.dict.kPIDateScopeType,  // 统计周期
-  addServeRecordSuccess: state.customerPool.addServeRecordSuccess,
-  isAddServeRecord: state.customerPool.isAddServeRecord,
   followLoading: state.customerPool.followLoading, // 关注成功
   fllowCustData: state.customerPool.fllowCustData,
   isGetCustIncome: state.customerPool.isGetCustIncome,
@@ -81,10 +78,13 @@ const mapDispatchToProps = {
   getCustomerData: fetchDataFunction(true, effects.getCustomerList),
   getCustIncome: fetchDataFunction(false, effects.getCustIncome),
   getCustomerScope: fetchDataFunction(true, effects.getCustomerScope),
-  addServeRecord: fetchDataFunction(true, effects.addServeRecord),
   getServiceRecord: fetchDataFunction(true, effects.getServiceRecord),
   getCustContact: fetchDataFunction(true, effects.getCustContact),
   getFollowCust: fetchDataFunction(true, effects.getFollowCust),
+  toggleServiceRecordModal: query => ({
+    type: 'app/toggleServiceRecordModal',
+    payload: query || false,
+  }),
   push: routerRedux.push,
   replace: routerRedux.replace,
 };
@@ -115,12 +115,10 @@ export default class CustomerList extends PureComponent {
     serviceRecordData: PropTypes.object,
     cycle: PropTypes.array,
     // getStatisticalPeriod: PropTypes.func.isRequired,
-    addServeRecord: PropTypes.func.isRequired, // 添加服务记录
-    addServeRecordSuccess: PropTypes.bool.isRequired,
-    isAddServeRecord: PropTypes.bool.isRequired,
     fllowCustData: PropTypes.object,
     followLoading: PropTypes.bool,
     isGetCustIncome: PropTypes.bool.isRequired,
+    toggleServiceRecordModal: PropTypes.func.isRequired, // 显示隐藏添加服务记录弹框
   }
 
   static defaultProps = {
@@ -549,13 +547,10 @@ export default class CustomerList extends PureComponent {
       custContactData,
       serviceRecordData,
       cycle,
-      empInfo: { empInfo },
-      addServeRecord,
-      addServeRecordSuccess,
-      isAddServeRecord,
       followLoading,
       fllowCustData,
       isGetCustIncome,
+      toggleServiceRecordModal,
     } = this.props;
     const {
       sortDirection,
@@ -638,12 +633,9 @@ export default class CustomerList extends PureComponent {
           getFollowCust={getFollowCust}
           custContactData={custContactData}
           serviceRecordData={serviceRecordData}
-          empInfo={empInfo}
-          addServeRecord={addServeRecord}
-          addServeRecordSuccess={addServeRecordSuccess}
-          isAddServeRecord={isAddServeRecord}
           fllowCustData={fllowCustData}
           followLoading={followLoading}
+          toggleServiceRecordModal={toggleServiceRecordModal}
         />
       </div>
     );
