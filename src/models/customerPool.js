@@ -58,6 +58,10 @@ export default {
     fllowCustData: {},
     customerGroupList: {}, // 分组维度，客户分组列表
     customerList: {}, // 指定分组下的客户列表
+    customerHistoryWordsList: [], // 客户分组历史搜索列表
+    isClearCustomerHistorySuccess: false, // 客户分组是否清除历史搜索成功
+    customerSearchHistoryVal: '', // 客户分组历史搜索值，点击过按钮
+    customerHotPossibleWordsList: [], // 客户分组热词列表
   },
   subscriptions: {
     setup({ dispatch }) {
@@ -303,6 +307,30 @@ export default {
       yield put({
         type: 'getGroupCustomerListSuccess',
         payload: resultData,
+      });
+    },
+    // 分组客户下联想的推荐热词列表
+    * getCustomerHotPossibleWds({ payload }, { call, put }) {
+      const response = yield call(api.getHotPossibleWds, payload);
+      yield put({
+        type: 'getCustomerHotPossibleWdsSuccess',
+        payload: { response },
+      });
+    },
+    // 分组客户下默认推荐词及热词推荐列表及历史搜索数据
+    * getCustomerHistoryWdsList({ payload }, { call, put }) {
+      const history = yield call(api.getHistoryWdsList, payload);
+      yield put({
+        type: 'getCustomerHistoryWdsListSuccess',
+        payload: { history },
+      });
+    },
+    // 分组客户下清除历史搜索列表
+    * clearCustomerSearchHistoryList({ payload }, { call, put }) {
+      const clearHistoryState = yield call(api.clearSearchHistoryList, payload);
+      yield put({
+        type: 'clearCustomerSearchHistoryListSuccess',
+        payload: { clearHistoryState },
       });
     },
   },
@@ -594,6 +622,39 @@ export default {
           page,
           resultData: custList,
         },
+      };
+    },
+    // 分组客户下的历史搜索列表
+    getCustomerHistoryWdsListSuccess(state, action) {
+      const { payload: { history: { resultData: { historyWdsList } } } } = action;
+      return {
+        ...state,
+        customerHistoryWordsList: historyWdsList,
+      };
+    },
+    // 清除分组客户下历史搜索列表
+    clearCustomerSearchHistoryListSuccess(state, action) {
+      const { payload: { clearHistoryState: { clearState } } } = action;
+      return {
+        ...state,
+        isClearCustomerHistorySuccess: clearState,
+      };
+    },
+    // 分组客户下保存搜索内容
+    saveCustomerSearchVal(state, action) {
+      const { payload: { searchVal } } = action;
+      return {
+        ...state,
+        customerSearchHistoryVal: searchVal,
+      };
+    },
+    // 分组客户下联想的推荐热词列表
+    getCustomerHotPossibleWdsSuccess(state, action) {
+      const { payload: { response } } = action;
+      const hotPossibleWdsList = response.resultData.hotPossibleWdsList;
+      return {
+        ...state,
+        customerHotPossibleWordsList: hotPossibleWdsList,
       };
     },
   },

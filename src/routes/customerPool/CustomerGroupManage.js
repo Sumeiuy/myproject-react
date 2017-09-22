@@ -4,13 +4,11 @@ import { connect } from 'react-redux';
 import { withRouter, routerRedux } from 'dva/router';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
-// import { Button } from 'antd';
-// import _ from 'lodash';
 import Button from '../../components/common/Button';
 import GroupTable from '../../components/customerPool/groupManage/GroupTable';
 import GroupModal from '../../components/customerPool/groupManage/CustomerGroupUpdateModal';
 import CustomerGroupDetail from '../../components/customerPool/groupManage/CustomerGroupDetail';
-import CustomerGroupSearch from '../../components/customerPool/groupManage/CustomerGroupListSearch';
+import Search from '../../components/common/Search';
 import styles from './customerGroupManage.less';
 import tableStyles from '../../components/customerPool/groupManage/groupTable.less';
 
@@ -20,6 +18,10 @@ const EMPTY_OBJECT = {};
 const effects = {
   getGroupList: 'customerPool/getCustomerGroupList',
   getCustList: 'customerPool/getGroupCustomerList',
+  getHotPossibleWds: 'customerPool/getCustomerHotPossibleWds',
+  getHistoryWdsList: 'customerPool/getCustomerHistoryWdsList',
+  clearSearchHistoryList: 'customerPool/clearCustomerSearchHistoryList',
+  saveSearchVal: 'customerPool/saveCustomerSearchVal',
 };
 
 const fetchData = (type, loading) => query => ({
@@ -33,6 +35,14 @@ const mapStateToProps = state => ({
   customerGroupList: state.customerPool.customerGroupList,
   // 一个分组下的所有客户
   customerList: state.customerPool.customerList,
+  // 联想的推荐热词列表
+  customerHotPossibleWordsList: state.customerPool.customerHotPossibleWordsList,
+  // 历史搜索
+  customerHistoryWordsList: state.customerPool.customerHistoryWordsList,
+  // 清除历史列表
+  isClearCustomerHistorySuccess: state.customerPool.isClearCustomerHistorySuccess,
+  // 保存的搜索内容
+  customerSearchHistoryVal: state.customerPool.customerSearchHistoryVal,
 });
 
 const mapDispatchToProps = {
@@ -40,6 +50,14 @@ const mapDispatchToProps = {
   getCustomerGroupList: fetchData(effects.getGroupList, true),
   // 获取分组客户列表
   getGroupCustomerList: fetchData(effects.getCustList, true),
+  // 获取热词列表
+  getHotPossibleWds: fetchData(effects.getHotPossibleWds, false),
+  // 获取搜索记录列表
+  getHistoryWdsList: fetchData(effects.getHistoryWdsList, false),
+  // 清除搜索记录
+  clearSearchHistoryList: fetchData(effects.clearSearchHistoryList, false),
+  // 保存搜索关键字
+  saveSearchVal: fetchData(effects.saveSearchVal, false),
   push: routerRedux.push,
   replace: routerRedux.replace,
 };
@@ -57,6 +75,14 @@ export default class CustomerGroupManage extends PureComponent {
     getCustomerGroupList: PropTypes.func.isRequired,
     getGroupCustomerList: PropTypes.func.isRequired,
     customerList: PropTypes.object.isRequired,
+    customerHotPossibleWordsList: PropTypes.array.isRequired,
+    customerHistoryWordsList: PropTypes.array.isRequired,
+    isClearCustomerHistorySuccess: PropTypes.bool.isRequired,
+    customerSearchHistoryVal: PropTypes.string.isRequired,
+    getHotPossibleWds: PropTypes.func.isRequired,
+    getHistoryWdsList: PropTypes.func.isRequired,
+    clearSearchHistoryList: PropTypes.func.isRequired,
+    saveSearchVal: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -72,7 +98,12 @@ export default class CustomerGroupManage extends PureComponent {
   }
 
   componentWillMount() {
-    const { getCustomerGroupList, getGroupCustomerList } = this.props;
+    const {
+      getCustomerGroupList,
+      getGroupCustomerList,
+      getHistoryWdsList,
+      getHotPossibleWds,
+      } = this.props;
     // 获取客户分组列表
     getCustomerGroupList({
       curPageNum: 1,
@@ -83,6 +114,10 @@ export default class CustomerGroupManage extends PureComponent {
       curPageNum: 1,
       pageSize: 5,
     });
+    // 历史搜索记录
+    getHistoryWdsList({});
+    // 热词搜索
+    getHotPossibleWds({});
   }
 
   componentDidMount() {
@@ -118,6 +153,21 @@ export default class CustomerGroupManage extends PureComponent {
   //   });
   // }
   // }
+
+  // 获取联想数据
+  @autobind
+  queryHotPossibleWds() {
+    const { getHotPossibleWds } = this.props;
+    getHotPossibleWds({});
+  }
+
+  // 获取历史搜索
+  @autobind
+  queryHistoryWdsList() {
+    const { getHistoryWdsList } = this.props;
+    getHistoryWdsList({
+    });
+  }
 
   /**
    * 页码改变事件，翻页事件
@@ -216,6 +266,11 @@ export default class CustomerGroupManage extends PureComponent {
     });
   }
 
+  @autobind
+  handleSearchGroup({ value }) {
+    console.log('search value', value);
+  }
+
   renderActionSource() {
     return [{
       type: '编辑',
@@ -259,6 +314,14 @@ export default class CustomerGroupManage extends PureComponent {
       customerGroupList = EMPTY_OBJECT,
       location: { query: { curPageNum, curPageSize } },
       customerList = EMPTY_OBJECT,
+      customerHotPossibleWordsList = EMPTY_LIST,
+      customerHistoryWordsList = EMPTY_LIST,
+      isClearCustomerHistorySuccess = false,
+      customerSearchHistoryVal = '',
+      getHotPossibleWds,
+      getHistoryWdsList,
+      clearSearchHistoryList,
+      saveSearchVal,
      } = this.props;
 
     const { visible, modalKey } = this.state;
@@ -288,10 +351,45 @@ export default class CustomerGroupManage extends PureComponent {
       <div className={styles.groupPanelContainer}>
         <div className={styles.title}>我的客户分组</div>
         <div className={styles.operationRow}>
-          <CustomerGroupSearch
-            onSearch={this.handleGroupListSearch}
-          />
-          <div className={styles.addBtnSection} onClick={this.handleAddGroup}>
+          <div className={styles.leftSection}>
+            <span className={styles.groupName}>分组名称：</span>
+            <Search
+              // 请求联想关键词
+              queryPossibleWords={getHotPossibleWds}
+              // 请求历史搜索数据
+              queryHistoryWdsList={getHistoryWdsList}
+              // 联想出来的数据
+              possibleWordsData={customerHotPossibleWordsList}
+              // 历史单词列表数据
+              historySearchWordsList={customerHistoryWordsList}
+              // 清除搜索历史是否成功
+              clearSuccess={isClearCustomerHistorySuccess}
+              // 清除搜索历史请求
+              clearHistorySearchList={clearSearchHistoryList}
+              // 搜索历史值
+              searchHistoryVal={customerSearchHistoryVal}
+              // 保存搜索的value
+              saveSearchVal={saveSearchVal}
+              // 是否需要搜索大图标
+              isNeedLgSearch={false}
+              // 搜索className
+              searchWrapperClass={styles.customerGroupSearch}
+              // 是否需要历史搜索功能
+              isNeedRememberHistory
+              // 搜索按钮功能
+              onSearchClick={this.handleSearchGroup}
+              // 点击option某一项
+              onOptionClick={() => { }}
+              // placeholder
+              placeholder={'请输入分组名称'}
+              // 搜索框style
+              searchStyle={{
+                height: '30px',
+                width: '250px',
+              }}
+            />
+          </div>
+          <div className={styles.rightSection} onClick={this.handleAddGroup}>
             <Button
               type="primary"
               className={styles.addBtn}
@@ -334,8 +432,18 @@ export default class CustomerGroupManage extends PureComponent {
               okText={'提交'}
               cancelText={'取消'}
               okType={'primary'}
+              onCancelHandler={this.handleCloseModal}
+              footer={null}
               modalContent={
                 <CustomerGroupDetail
+                  customerHotPossibleWordsList={customerHotPossibleWordsList}
+                  customerHistoryWordsList={customerHistoryWordsList}
+                  isClearCustomerHistorySuccess={isClearCustomerHistorySuccess}
+                  customerSearchHistoryVal={customerSearchHistoryVal}
+                  getHotPossibleWds={getHotPossibleWds}
+                  getHistoryWdsList={getHistoryWdsList}
+                  clearSearchHistoryList={clearSearchHistoryList}
+                  saveSearchVal={saveSearchVal}
                   customerList={customerList}
                   onCloseModal={this.handleCloseModal}
                   detailData={{

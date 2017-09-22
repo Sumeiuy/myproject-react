@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 14:15:22
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-09-20 20:48:38
+ * @Last Modified time: 2017-09-22 17:33:14
  */
 
 import React, { PureComponent } from 'react';
@@ -11,9 +11,9 @@ import { Input, Form } from 'antd';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
-// import Button from '../../common/Button';
+import Button from '../../common/Button';
 import GroupTable from './GroupTable';
-// import { Link } from 'dva/router';
+import Search from '../../common/Search';
 
 import tableStyles from './groupTable.less';
 import styles from './customerGroupDetail.less';
@@ -30,6 +30,10 @@ export default class CustomerGroupDetail extends PureComponent {
     form: PropTypes.object.isRequired,
     customerList: PropTypes.object.isRequired,
     onCloseModal: PropTypes.func,
+    customerHotPossibleWordsList: PropTypes.array.isRequired,
+    customerSearchHistoryVal: PropTypes.string.isRequired,
+    getHotPossibleWds: PropTypes.func.isRequired,
+    saveSearchVal: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -132,6 +136,14 @@ export default class CustomerGroupDetail extends PureComponent {
     console.log('delete customer from group');
   }
 
+  @autobind
+  dispatchFormClickEvent() {
+    if (this.submitForm) {
+      const evt = new MouseEvent('click', { bubbles: false, cancelable: false, view: window });
+      this.submitForm.dispatchEvent(evt);
+    }
+  }
+
   renderActionSource() {
     return [{
       type: '删除',
@@ -170,7 +182,15 @@ export default class CustomerGroupDetail extends PureComponent {
       curPageSize,
       totalRecordNum,
     } = this.state;
-    const { form: { getFieldDecorator }, customerList } = this.props;
+    const {
+      form: { getFieldDecorator },
+      customerList,
+      customerHotPossibleWordsList = EMPTY_LIST,
+      customerSearchHistoryVal = '',
+      getHotPossibleWds,
+      saveSearchVal,
+      onCloseModal,
+  } = this.props;
     const { resultData = EMPTY_LIST } = customerList;
     // 构造表格头部
     const titleColumn = this.renderColumnTitle();
@@ -220,6 +240,44 @@ export default class CustomerGroupDetail extends PureComponent {
             </FormItem>
           </div>
         </div>
+        <div className={styles.searchSection}>
+          <div className={styles.searchTitle}>
+            客户
+          </div>
+          <Search
+            // 请求联想关键词
+            queryPossibleWords={getHotPossibleWds}
+            // 联想出来的数据
+            possibleWordsData={customerHotPossibleWordsList}
+            // 搜索历史值
+            searchHistoryVal={customerSearchHistoryVal}
+            // 保存搜索的value
+            saveSearchVal={saveSearchVal}
+            // 是否需要搜索大图标
+            isNeedLgSearch={false}
+            // 搜索className
+            searchWrapperClass={styles.groupCustomerSearch}
+            // 是否需要历史搜索功能
+            isNeedRememberHistory={false}
+            // 搜索按钮功能
+            onSearchClick={() => { }}
+            // 点击option某一项
+            onOptionClick={() => { }}
+            // placeholder
+            placeholder={'客户号/姓名'}
+            // 搜索框style
+            searchStyle={{
+              height: '30px',
+              width: '190px',
+            }}
+            // 是否需要添加按钮
+            isNeedAddBtn
+            // 添加按钮事件
+            addBtnCallback={(value) => {
+              console.log('receive value, add customer to table', value);
+            }}
+          />
+        </div>
         {
           !_.isEmpty(resultData) ?
             <div className={styles.customerListTable}>
@@ -244,22 +302,23 @@ export default class CustomerGroupDetail extends PureComponent {
               />
             </div> : null
         }
-        {
-          /* <div className={styles.operationBtnSection}>
-          <Button
-            className={styles.cancel}
-            onClick={onCloseModal}
-          >
-            取消
+        <FormItem>
+          <div className={styles.operationBtnSection}>
+            <Button
+              className={styles.cancel}
+              onClick={onCloseModal}
+            >
+              取消
           </Button>
-          <Button
-            className={styles.submit}
-            type="primary"
-          >
-            提交
-        </Button>
-        </div> */
-        }
+            <Button
+              htmlType="submit"
+              className={styles.submit}
+              type="primary"
+            >
+              提交
+          </Button>
+          </div>
+        </FormItem>
       </Form>
     );
   }

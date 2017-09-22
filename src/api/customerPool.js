@@ -35,7 +35,7 @@ export default function customerPool(api) {
     getHotWds: query => api.post('/groovynoauth/fsp/cust/custlabel/queryHotWds', query),
 
     // 联想的推荐热词列表
-    getHotPossibleWds: query => api.post('/groovynoauth/fsp/cust/custlabel/queryPossibleHotWds', query),
+    getHotPossibleWds: query => api.post('/groovynoauth/fsp/cust/custlabel/queryHotPossibleWds', query),
 
     // 历史搜索记录
     getHistoryWdsList: query => api.post('/groovynoauth/fsp/cust/custlabel/queryHistoryWdsList', query),

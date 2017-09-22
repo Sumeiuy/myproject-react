@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-09-20 19:51:33
+ * @Last Modified time: 2017-09-22 10:48:44
  */
 
 import React, { PureComponent } from 'react';
@@ -67,7 +67,7 @@ export default class GroupTable extends PureComponent {
    */
   renderPageSizeOptions(totalRecordNum, curPageSize) {
     const pageSizeOption = [];
-    const maxPage = Math.ceil(totalRecordNum / curPageSize);
+    const maxPage = Math.ceil(totalRecordNum / Number(curPageSize));
     for (let i = 1; i <= maxPage; i++) {
       pageSizeOption.push((curPageSize * i).toString());
     }
@@ -89,9 +89,14 @@ export default class GroupTable extends PureComponent {
       size: 'small', // 迷你版
       total: totalRecordNum,
       pageSize: parseInt(curPageSize, 10),
-      defaultPageSize: curPageSize,
+      defaultPageSize: Number(curPageSize),
       onChange: onPageChange,
-      showTotal: total => `共${total}个`,
+      showTotal: total =>
+        <span className={styles.totalPageSection}>
+          共 <span className={styles.totalPage}>
+            {total}
+          </span> 项
+       </span>,
       showSizeChanger: true,
       onShowSizeChange: onSizeChange,
       pageSizeOptions: this.renderPageSizeOptions(totalRecordNum, curPageSize),
