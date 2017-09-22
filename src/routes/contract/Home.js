@@ -16,6 +16,9 @@ import SplitPanel from '../../components/common/splitPanel/SplitPanel';
 import Detail from '../../components/contract/Detail';
 import ContractList from '../../components/common/biz/CommonList';
 import seibelColumns from '../../components/common/biz/seibelColumns';
+// import AddForm from '../../components/contract/AddForm';
+import EditForm from '../../components/contract/EditForm';
+import CommonModal from '../../components/common/biz/CommonModal';
 // import Edit from '../../components/contract/Edit';
 import ContractHeader from '../../components/common/biz/SeibelHeader';
 import { permissionOptions } from '../../config';
@@ -81,6 +84,7 @@ export default class Contract extends PureComponent {
     super(props);
     this.state = {
       isEmpty: true,
+      commonModal: true,
     };
   }
 
@@ -91,6 +95,9 @@ export default class Contract extends PureComponent {
      } } } = this.props;
     // 默认筛选条件
     getContractList(constructSeibelPostBody(query, pageNum || 1, pageSize || 10));
+    document.addEventListener('click', () => {
+      this.showModal('commonModal');
+    });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -178,6 +185,20 @@ export default class Contract extends PureComponent {
   }
 
   @autobind
+  showModal(modalKey) {
+    this.setState({
+      [modalKey]: true,
+    });
+  }
+
+  @autobind
+  closeModal(modalKey) {
+    this.setState({
+      [modalKey]: false,
+    });
+  }
+
+  @autobind
   toSearchDrafter(value) {
     // 查询拟稿人
     this.props.getDrafterList({
@@ -226,8 +247,17 @@ export default class Contract extends PureComponent {
       <Col span="24" className={styles.rightSection}>
         {this.getDetailComponent}
       </Col>
-      // <Edit />
     );
+    const newModalProps = {
+      modalKey: 'commonModal',
+      title: '合作合约修改',
+      onOk: this.onOk,
+      closeModal: this.closeModal,
+      visible: this.state.commonModal,
+      size: 'large',
+      children: <EditForm />,
+      // children: <AddForm />,
+    };
     return (
       <div className={styles.premissionbox}>
         <SplitPanel
@@ -236,6 +266,9 @@ export default class Contract extends PureComponent {
           leftPanel={leftPanel}
           rightPanel={rightPanel}
           leftListClassName="premissionList"
+        />
+        <CommonModal
+          {...newModalProps}
         />
       </div>
     );
