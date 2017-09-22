@@ -45,6 +45,7 @@
     .ant-popover-arrow,
     .ant-popover-arrow:after{
       border-right-color: transparent !important;
+      border-left-color: transparent !important;
     }
     .ant-popover-inner{
       border:1px solid #d9d9d9;
@@ -57,6 +58,16 @@
         p{
           span{
             float: right;
+            em{
+              color: #357bf0;
+            }
+            em:first-child{
+              margin-right: 10px;
+            }
+            em:nth-child(2){
+              padding-left: 10px;
+              border-left: 1px solid #d9d9d9;
+            }
           }
           .fileListItemSize{
             color: #f5a623;
