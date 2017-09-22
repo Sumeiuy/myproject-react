@@ -2,8 +2,8 @@
 * @Description: 合作合约修改/新建 -基本信息
 * @Author: XuWenKang
 * @Date:   2017-09-20 13:47:07
-* @Last Modified by:   XuWenKang
-* @Last Modified time: 2017-09-21 11:19:20
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2017-09-22 13:20:27
 */
 
 import React, { PureComponent } from 'react';
@@ -18,7 +18,7 @@ import InfoTitle from '../common/InfoTitle';
 import DropDownSelect from '../common/dropdownSelect';
 import DatePicker from '../common/datePicker';
 
-import styles from './baseinfoedit.less';
+import styles from './baseInfoEdit.less';
 
 const { TextArea } = Input;
 
