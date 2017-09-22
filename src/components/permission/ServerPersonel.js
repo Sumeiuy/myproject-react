@@ -10,15 +10,21 @@ import DropdownSelect from '../common/dropdownSelect';
 export default class ServerPersonel extends PureComponent {
   static propTypes = {
     head: PropTypes.string.isRequired,
-    info: PropTypes.array.isRequired,
+    info: PropTypes.array,
     statusType: PropTypes.string.isRequired,
-    onEmitEvent: PropTypes.func.isRequired,
+    onEmitEvent: PropTypes.func,
     type: PropTypes.string.isRequired,
-    serverPersonelList: PropTypes.array.isRequired,
+    serverPersonelList: PropTypes.array,
+  }
+
+  static defaultProps = {
+    info: [],
+    serverPersonelList: [],
+    onEmitEvent: () => {},
   }
 
   static contextTypes = {
-    getServerPersonelList: PropTypes.func.isRequired,
+    getServerPersonelList: PropTypes.func,
   }
 
   constructor(props) {
@@ -141,7 +147,7 @@ export default class ServerPersonel extends PureComponent {
           info={this.state.serverInfo}
           statusType={this.props.statusType}
           selectValue={this.state.removeSelectedValue}
-          emitUpdateValue={this.updateRadioValue}
+          onEmitUpdateValue={this.updateRadioValue}
         />
       </div>
     );
