@@ -39,11 +39,6 @@ const pageConfig = {
             label: '终止',
             value: '',
           },
-          {
-            show: true,
-            label: '驳回',
-            value: '',
-          },
         ], // 状态
       },
       {
