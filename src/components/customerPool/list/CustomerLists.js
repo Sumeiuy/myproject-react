@@ -116,7 +116,6 @@ export default class CustomerLists extends PureComponent {
     let isFollows = {};
     let change = {};
     const { result } = fllowCustData || '';
-    console.warn('onOff---', onOff);
     if ((prevContact !== nextContact || prevRecord !== nextRecord) && onOff === false) {
       if (!isShowContactModal) {
         this.setState({
@@ -126,6 +125,7 @@ export default class CustomerLists extends PureComponent {
       }
     }
     if (onOff) {
+      this.getEmail(nextCustContactData[currentCustId]);
       onOff = !onOff;
     }
     if (preFL && !followLoading) {
@@ -188,7 +188,27 @@ export default class CustomerLists extends PureComponent {
       });
     }
   }
-
+// 判断已有信息邮箱是否存在
+  @autobind
+  getEmail(address) {
+    let finded = 0;// 邮件联系
+    if (address.orgCustomerContactInfoList !== undefined
+        && _.size(address.orgCustomerContactInfoList) > 0) {
+      const index = _.findLastIndex(address.orgCustomerContactInfoList,
+          val => val.mainFlag);
+      finded = _.findLastIndex(address.orgCustomerContactInfoList[index].emailAddresses,
+          val => val.mainFlag);
+    } else if (address.perCustomerContactInfo !== undefined
+        && _.size(address.perCustomerContactInfo) > 0) {
+      finded = _.findLastIndex(address.perCustomerContactInfo.emailAddresses,
+          val => val.mainFlag);
+    } else {
+      finded = -1;
+    }
+    if (finded === -1) {
+      message.error('暂无客户邮箱，请与客户沟通尽快完善信息');
+    }
+  }
   updateLeftPos() {
     const workspaceSidebar = document.querySelector(fspContainer.workspaceSidebar);
     const fixedEleDom = document.querySelector('fixedEleDom');
@@ -272,7 +292,7 @@ export default class CustomerLists extends PureComponent {
       location: {
         query: {
           selectedIds,
-        selectAll,
+          selectAll,
         },
       },
     } = this.props;
@@ -394,12 +414,15 @@ export default class CustomerLists extends PureComponent {
       getCustContact({
         custId,
       });
+    } else {
+      this.getEmail(custContactData[custId]);
     }
     this.setState({
       currentCustId: custId,
     });
     onOff = true;
   }
+
   @autobind
   handleAddFollow(item) {
     const { getFollowCust } = this.props;

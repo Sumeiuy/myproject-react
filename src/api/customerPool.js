@@ -68,7 +68,7 @@ export default function customerPool(api) {
     queryRecentServiceRecord: query => api.post('/groovynoauth/fsp/cust/custlist/queryRecentServiceRecord', query),
 
     // 关注与取消关注
-    queryFollowCust: query => api.post('/groovynoauth/fsp/cust/custgroup/queryFollowCust', query),
+    followCust: query => api.post('/groovynoauth/fsp/cust/custgroup/followCust', query),
 
     // 分组维度，客户分组列表
     queryCustomerGroupList: query => api.post('/groovynoauth/fsp/cust/custgroup/queryCustomerGroupList', query),

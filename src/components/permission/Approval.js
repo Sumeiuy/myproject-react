@@ -10,7 +10,7 @@ export default class Approval extends PureComponent {
     type: PropTypes.string.isRequired,
     head: PropTypes.string.isRequired,
     textValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    emitEvent: PropTypes.func.isRequired,
+    onEmitEvent: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -19,7 +19,7 @@ export default class Approval extends PureComponent {
 
   @autobind
   changeTextValue(value) {
-    this.props.emitEvent(this.props.type, value);
+    this.props.onEmitEvent(this.props.type, value);
   }
 
   render() {
@@ -29,7 +29,7 @@ export default class Approval extends PureComponent {
         <TextareaComponent
           title="审批意见"
           value={this.props.textValue}
-          emitEvent={this.changeTextValue}
+          onEmitEvent={this.changeTextValue}
         />
       </div>
     );

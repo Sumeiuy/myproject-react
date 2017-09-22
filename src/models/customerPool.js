@@ -38,8 +38,8 @@ export default {
     clearState: {},
     cusgroupList: [],
     cusgroupPage: {
-      pageSize: 10,
-      pageNo: 1,
+      pageSize: 0,
+      pageNo: 0,
       total: 0,
     },
     searchHistoryVal: '',
@@ -52,7 +52,6 @@ export default {
     serviceRecordData: {}, // 服务记录
     isAddServeRecord: false,
     addServeRecordSuccess: false, // 添加服务记录成功的标记
-    followSuccess: false,
     isFollow: {},
     followLoading: false,
     fllowCustData: {},
@@ -254,7 +253,7 @@ export default {
           message: '开始开始',
         },
       });
-      const response = yield call(api.queryFollowCust, payload);
+      const response = yield call(api.followCust, payload);
       const { resultData } = response;
       yield put({
         type: 'getFollowCustSuccess',
@@ -264,12 +263,6 @@ export default {
           fllowCustData: resultData,
         },
       });
-      // const response = yield call(api.queryFollowCust, payload);
-      // const { resultData } = response;
-      // yield put({
-      //   type: 'getFollowCustSuccess',
-      //   payload: resultData,
-      // });
     },
     // * getStatisticalPeriod({ }, { call, put }) { //eslint-disable-line
     //   // 统计周期
@@ -495,23 +488,27 @@ export default {
     // 获取客户分组列表
     getGroupListSuccess(state, action) {
       const { payload: { resultData } } = action;
+      const { custGroupDTOList, curPageNum, pageSize, totalRecordNum } = resultData;
       if (!resultData) {
         return {
           ...state,
           cusgroupList: [],
           cusgroupPage: {
-            total: 0,
+            curPageNum,
+            pageSize,
+            totalRecordNum,
           },
-          cusGroupSaveResult: '',
         };
       }
-      const cusgroupPage = {
-        total: resultData.totalPageNum,
-      };
+
       return {
         ...state,
-        cusgroupList: resultData.custGroupDTOList,
-        cusgroupPage,
+        cusgroupList: custGroupDTOList,
+        cusgroupPage: {
+          curPageNum,
+          pageSize,
+          totalRecordNum,
+        },
         cusGroupSaveResult: '',
       };
     },

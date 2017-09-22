@@ -451,12 +451,18 @@ export default class CustomerList extends PureComponent {
       location: { query, pathname },
     } = this.props;
     const { cycleSelect, orgId } = state;
+    const obj = {};
+    if (cycleSelect) {
+      obj.cycleSelect = cycleSelect;
+    }
+    if (orgId) {
+      obj.orgId = orgId;
+    }
     replace({
       pathname,
       query: {
         ...query,
-        orgId,
-        cycleSelect,
+        ...obj,
         curPageNum: 1,
         selectAll: false,
         selectedIds: '',

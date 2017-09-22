@@ -1,3 +1,7 @@
+/*
+ * @Author: shenxuxiang
+ * @file dropdownSelect.js
+ */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Icon } from 'antd';
@@ -6,7 +10,7 @@ import classnames from 'classnames';
 import _ from 'lodash';
 import style from './style.less';
 
-export default class DrapDownSelect extends PureComponent {
+export default class DropdownSelect extends PureComponent {
   static propTypes = {
     // 查询框中的placeholder
     placeholder: PropTypes.string,
@@ -43,11 +47,16 @@ export default class DrapDownSelect extends PureComponent {
       isSHowModal: false,
       // 选中的值
       value: '',
+      // 添加id标识
+      id: '',
     };
   }
 
   componentWillMount() {
-    this.setState({ value: this.props.value });
+    this.setState({
+      value: this.props.value,
+      id: new Date().getTime() + parseInt(Math.random() * 1000000, 10),
+    });
   }
 
   componentDidMount() {
@@ -61,7 +70,7 @@ export default class DrapDownSelect extends PureComponent {
         emitSelectItem(item);
         this.setState({
           isSHowModal: false,
-          value: item[showObjKey],
+          value: `${item[showObjKey]}（${item[objId]}）`,
         });
       };
       const idx = (objId === '') ? `selectList-${index}` : item[objId];
@@ -70,7 +79,7 @@ export default class DrapDownSelect extends PureComponent {
           key={idx}
           className={style.ddsDrapMenuConItem}
           onClick={callBack}
-        >{item[showObjKey]}</li>
+        >{`${item[showObjKey]}（${item[objId]}）`}</li>
       );
     });
     return result;
@@ -81,8 +90,7 @@ export default class DrapDownSelect extends PureComponent {
   }
 
   @autobind
-  showDrapDown(e) {
-    e.nativeEvent.stopImmediatePropagation();
+  showDrapDown() {
     this.setState({ isSHowModal: !this.state.isSHowModal });
   }
 
@@ -93,8 +101,11 @@ export default class DrapDownSelect extends PureComponent {
   }
 
   @autobind
-  hideModal() {
-    this.setState({ isSHowModal: false });
+  hideModal(e) {
+    // 隐藏下拉框
+    if (+e.target.getAttribute('data-id') !== this.state.id) {
+      this.setState({ isSHowModal: false });
+    }
   }
 
   render() {
@@ -111,6 +122,7 @@ export default class DrapDownSelect extends PureComponent {
         <div
           onClick={this.showDrapDown}
           className={ddsShowBoxClass}
+          data-id={this.state.id}
           style={this.props.boxStyle}
         >
           {this.state.value}

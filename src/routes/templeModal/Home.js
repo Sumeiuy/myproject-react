@@ -16,7 +16,7 @@ import SearchModal from '../../components/common/biz/SearchModal';
 import ProcessConfirm from '../../components/common/biz/ProcessConfirm';
 import Transfer from '../../components/common/biz/Transfer';
 import CommonUpload from '../../components/common/biz/CommonUpload';
-import CommonModal from '../../components/common/biz/Modal';
+import CommonModal from '../../components/common/biz/CommonModal';
 import InfoItem from '../../components/common/infoItem';
 
 
@@ -48,13 +48,6 @@ export default class TemplModal extends PureComponent {
 
   @autobind
   onOk() {
-    this.setState({
-      commonModal: false,
-    });
-  }
-
-  @autobind
-  onCancel() {
     this.setState({
       commonModal: false,
     });
@@ -197,7 +190,7 @@ export default class TemplModal extends PureComponent {
       placeholder: '员工号/员工姓名',
       onSearch: this.handleSearch,
       renderSelected: this.renderSelectedElem,
-      idKey: 'id',
+      rowKey: 'id',
     };
 
     const confirmProps = {
@@ -224,11 +217,12 @@ export default class TemplModal extends PureComponent {
     };
 
     const commonModalProps = {
+      modalKey: 'commonModal',
       title: '这是一个弹出层',
       onOk: this.onOk,
-      onCancel: this.onCancel,
+      closeModal: this.closeModal,
       visible: commonModal,
-      size: 'normal',
+      size: 'large',
       children: 'tanchuang',
     };
 
