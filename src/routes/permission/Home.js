@@ -21,7 +21,6 @@ import CreatePrivateClient from '../../components/permission/CreatePrivateClient
 
 import styles from './home.less';
 
-const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const OMIT_ARRAY = ['isResetPageNum', 'currentId'];
 const { permission, permission: { pageType, subType, status } } = seibelConfig;
@@ -54,13 +53,13 @@ const mapDispatchToProps = {
   // 获取左侧列表
   getPermissionList: fetchDataFunction(true, 'permission/getPermissionList'),
   // 获取服务人员列表
-  getServerPersonelList: fetchDataFunction(true, 'permission/getServerPersonelList'),
+  getServerPersonelList: fetchDataFunction(false, 'permission/getServerPersonelList'),
   // 获取拟稿人
-  getDrafterList: fetchDataFunction(true, 'permission/getDrafterList'),
+  getDrafterList: fetchDataFunction(false, 'permission/getDrafterList'),
   // 获取部门
-  getEmpOrgTree: fetchDataFunction(true, 'permission/getEmpOrgTree'),
+  getEmpOrgTree: fetchDataFunction(false, 'permission/getEmpOrgTree'),
  // 获取客户列表
-  getCustomerList: fetchDataFunction(true, 'permission/getCustomerList'),
+  getCustomerList: fetchDataFunction(false, 'permission/getCustomerList'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -115,8 +114,6 @@ export default class Permission extends PureComponent {
 
   componentWillMount() {
     const {
-      getEmpOrgTree,
-      getPermissionList,
       location: {
         query,
         query: {
@@ -124,6 +121,8 @@ export default class Permission extends PureComponent {
           pageSize,
         },
       },
+      getPermissionList,
+      getEmpOrgTree,
     } = this.props;
     const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
     // 默认筛选条件
@@ -173,8 +172,7 @@ export default class Permission extends PureComponent {
   }
 
   componentDidUpdate() {
-    const { location: { pathname, query, query: { isResetPageNum } }, replace,
-      list: { resultData = EMPTY_LIST } } = this.props;
+    const { location: { pathname, query, query: { isResetPageNum } }, replace } = this.props;
     // 重置pageNum和pageSize
     if (isResetPageNum === 'Y') {
       replace({
@@ -186,10 +184,6 @@ export default class Permission extends PureComponent {
         },
       });
     }
-    const isEmpty = _.isEmpty(resultData);
-    this.setState({ // eslint-disable-line
-      isEmpty,
-    });
   }
 
   get getDetailComponent() {
@@ -220,6 +214,7 @@ export default class Permission extends PureComponent {
     const { getDrafterList } = this.props;
     getDrafterList({
       keyword: value,
+      type: pageType,
     });
   }
 
@@ -229,6 +224,7 @@ export default class Permission extends PureComponent {
     const { getCustomerList } = this.props;
     getCustomerList({
       keyword: value,
+      type: pageType,
     });
   }
 
@@ -285,7 +281,8 @@ export default class Permission extends PureComponent {
     if (!custRange || !custRange.length) {
       return null;
     }
-    const { isEmpty, isShowModal } = this.state;
+    const isEmpty = _.isEmpty(list.resultData);
+    const { isShowModal } = this.state;
     const topPanel = (
       <PermissionHeader
         location={location}

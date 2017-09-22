@@ -2,7 +2,6 @@
  * @file models/premissinon.js
  * @author honggaungqing
  */
-
 import { permission as api } from '../api';
 
 const EMPTY_OBJECT = {};
@@ -28,16 +27,18 @@ export default {
       };
     },
     getPermissionListSuccess(state, action) {
-      const { payload: { resultData = EMPTY_OBJECT } } = action;
-      const { page = EMPTY_OBJECT, applicationBaseInfoList = EMPTY_LIST } = resultData;
-      const { listData: preListData = EMPTY_LIST } = state.list;
-
+      const { payload: { resultData } } = action;
+      let applist = [];
+      let page = {};
+      if (resultData) {
+        applist = resultData.applicationBaseInfoList;
+        page = resultData.page;
+      }
       return {
         ...state,
         list: {
           page,
-          resultData: page.pageNum === 1 ?
-            applicationBaseInfoList : [...preListData, ...applicationBaseInfoList],
+          resultData: applist,
         },
       };
     },
@@ -105,7 +106,7 @@ export default {
         type: 'getPermissionListSuccess',
         payload: response,
       });
-      const result = response.resultData.applicationBaseInfoList;
+      const result = response.resultData && response.resultData.applicationBaseInfoList;
       if (Array.isArray(result) && result.length) {
         const detailList = yield call(api.getMessage, {
           id: result[0].id,

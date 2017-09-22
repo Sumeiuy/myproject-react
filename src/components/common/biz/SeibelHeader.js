@@ -44,14 +44,6 @@ export default class Pageheader extends PureComponent {
     custRange: [],
   }
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      subType: '',
-      status: '',
-    };
-  }
-
   // 选中客户下拉对象中对应的某个对象
   @autobind
   selectCustItem(item) {
@@ -60,7 +52,7 @@ export default class Pageheader extends PureComponent {
       pathname,
       query: {
         ...query,
-        custNumber: item.cusId,
+        custNumber: item.custNumber,
         isResetPageNum: 'Y',
       },
     });
@@ -122,9 +114,8 @@ export default class Pageheader extends PureComponent {
       customerList,
       custRange,
       replace,
+      location: { query: { subType, status } },
     } = this.props;
-
-    const { subType, status } = this.state;
 
     return (
       <div className={styles.pageCommonHeader}>
@@ -134,7 +125,7 @@ export default class Pageheader extends PureComponent {
             placeholder="经纪客户号/客户名称"
             searchList={customerList}
             showObjKey="custName"
-            objId="cusId"
+            objId="custNumber"
             emitSelectItem={this.selectCustItem}
             emitToSearch={toSearchCust}
           />
