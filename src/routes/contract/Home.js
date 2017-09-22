@@ -1,9 +1,10 @@
-/**
- * @file premission/Home.js
- *  权限申请
- * @author honggaunqging
+/*
+ * @Description: 合作合约 home 页面
+ * @Author: LiuJianShu
+ * @Date: 2017-09-22 14:49:16
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2017-09-22 14:52:49
  */
-
 import React, { PureComponent, PropTypes } from 'react';
 import { Col } from 'antd';
 import { autobind } from 'core-decorators';

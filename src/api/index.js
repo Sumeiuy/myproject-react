@@ -104,5 +104,8 @@ export default {
 
   // 看板名称重复验证
   distinctBoard: query => api.post('/groovynoauth/jxzb/saveBoard', query),
+
+  // 附件删除
+  ceFileDelete: query => api.post('/file/ceFileDelete', query),
 };
 

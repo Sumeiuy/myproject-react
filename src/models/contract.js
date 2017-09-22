@@ -3,9 +3,9 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-20 15:13:30
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-09-20 15:51:13
+ * @Last Modified time: 2017-09-22 14:46:04
  */
-import { contract as api } from '../api';
+import { contract as api, ceFileDelete } from '../api';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -17,6 +17,7 @@ export default {
     list: EMPTY_OBJECT,
     drafterList: EMPTY_LIST, // 拟稿人
     empOrgTreeList: EMPTY_OBJECT, // 部门
+    attaches: EMPTY_LIST, // 附件信息
   },
   reducers: {
     getDetailMessageSuccess(state, action) {
@@ -57,6 +58,13 @@ export default {
         empOrgTreeList: resultData,
       };
     },
+    ceFileDeleteSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        attachment: resultData,
+      };
+    },
   },
   effects: {
     * getDetailMessage({ payload }, { call, put }) {
@@ -95,6 +103,13 @@ export default {
       const response = yield call(api.getEmpOrgTree, payload);
       yield put({
         type: 'getEmpOrgTreeSuccess',
+        payload: response,
+      });
+    },
+    * ceFileDelete({ payload }, { call, put }) {
+      const response = yield call(ceFileDelete, payload);
+      yield put({
+        type: 'ceFileDeleteSuccess',
         payload: response,
       });
     },
