@@ -19,6 +19,7 @@ import CommonModal from '../../components/common/biz/CommonModal';
 import InfoItem from '../../components/common/infoItem';
 import SearchSelect from '../../components/common/Select/SearchSelect';
 import DigitalTrimmer from '../../components/common/DigitalTrimmer';
+import ApprovalRecordBoard from '../../components/commissionAdjustment/ApprovalRecordBoard';
 
 import {
   confirmData,
@@ -43,6 +44,7 @@ export default class TemplModal extends PureComponent {
       deleteBoardModal: false,
       confirmModal: false,
       commonModal: false,
+      approvalModal: false,
     };
   }
 
@@ -121,6 +123,20 @@ export default class TemplModal extends PureComponent {
     console.log(value);
   }
   @autobind
+  openApprovalModal() {
+    this.setState({
+      approvalModal: true,
+    });
+  }
+
+  @autobind
+  closeApprovalModal() {
+    this.setState({
+      approvalModal: false,
+    });
+  }
+
+  @autobind
   renderSelectedElem(selected, removeFunc) {
     return (
       <div className={styles.result}>
@@ -145,6 +161,7 @@ export default class TemplModal extends PureComponent {
       deleteBoardModal,
       confirmModal,
       commonModal,
+      approvalModal,
     } = this.state;
 
     const createBMProps = {
@@ -229,9 +246,25 @@ export default class TemplModal extends PureComponent {
       children: 'tanchuang',
     };
 
+    const approvalCust = {
+      batchNum: '308RY237WE00001',
+      custId: '1-DF-7620',
+      custType: 'per',
+      econNum: '02000191',
+      custName: '张三',
+      custLevel: '钻石',
+      openAccDept: '南京长江路证券营业部南京长江路证券营业部',
+      status: '成功',
+    };
 
     return (
       <div>
+        <Button onClick={this.openApprovalModal}>打开审批记录弹窗</Button>
+        <ApprovalRecordBoard
+          cust={approvalCust}
+          visible={approvalModal}
+          onClose={this.closeApprovalModal}
+        />
         <Button onClick={this.openCreateModal}>创建</Button>
         <CreateBoardModal {...createBMProps} />
         <Button onClick={this.openBackConfirmModal}>Back</Button>

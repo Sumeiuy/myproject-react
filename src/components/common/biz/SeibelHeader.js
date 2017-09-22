@@ -175,7 +175,6 @@ export default class Pageheader extends PureComponent {
           location={location}
           replace={replace}
           updateQueryState={this.selectCustRange}
-
         />
 
 
