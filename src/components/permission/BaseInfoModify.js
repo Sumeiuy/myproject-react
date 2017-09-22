@@ -13,37 +13,32 @@ const { permission: { subType } } = seibelConfig;
 export default class BaseInfoModify extends PureComponent {
   static propTypes = {
     head: PropTypes.string.isRequired,
-    baseInfo: PropTypes.array,
     customerList: PropTypes.array.isRequired,
+    subTypeTxt: PropTypes.string.isRequired,
+    customer: PropTypes.string.isRequired,
+    remark: PropTypes.string.isRequired,
+    onEmitEvent: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
-    baseInfo: [],
+
   }
 
   static contextTypes = {
     getCustomerList: PropTypes.func.isRequired,
   }
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
-      // 标题
-      // 备注
-      remarks: '此处省略一万个字...',
-      // 客户类型
-      customer: '',
-      // 子类型
-      subType: '全部',
-      // 客户列表
-      customerList: [],
+      subTypeTxt: props.subTypeTxt,
     };
   }
 
   @autobind
   changeRemarks(value) {
     // 更改备注信息
-    this.setState({ remarks: value });
+    this.props.onEmitEvent('remark', value);
   }
 
   @autobind
@@ -61,7 +56,7 @@ export default class BaseInfoModify extends PureComponent {
   @autobind
   selectCustomer(item) {
     // 选中客户
-    console.log('向上传递选中的对象', item);
+    this.props.onEmitEvent('customer', { custName: item.custName, custNumber: item.cusId });
   }
 
   @autobind
@@ -73,7 +68,8 @@ export default class BaseInfoModify extends PureComponent {
   @autobind
   updateSubTypeValue(name, value) {
     const result = subType.filter(item => (item.value === value))[0].label;
-    this.setState({ [name]: result });
+    this.setState({ subTypeTxt: result });
+    this.props.onEmitEvent(name, value);
   }
 
   render() {
@@ -92,7 +88,7 @@ export default class BaseInfoModify extends PureComponent {
                 data={subType}
                 name="subType"
                 onChange={this.updateSubTypeValue}
-                value={this.state.subType}
+                value={this.state.subTypeTxt}
               />
             </div>
           </div>
@@ -104,7 +100,7 @@ export default class BaseInfoModify extends PureComponent {
           </span>
           <div className={style.inputComponentContent}>
             <DropdownSelect
-              value="全部"
+              value={this.props.customer}
               placeholder="经济客户号/客户名称"
               searchList={this.props.customerList}
               showObjKey="custName"
@@ -117,7 +113,7 @@ export default class BaseInfoModify extends PureComponent {
         </div>
         <TextareaComponent
           title="备注"
-          value={this.state.remarks}
+          value={this.props.remark}
           onEmitEvent={this.changeRemarks}
           placeholder="请输入您的备注信息"
         />
