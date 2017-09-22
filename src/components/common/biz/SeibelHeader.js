@@ -60,7 +60,7 @@ export default class Pageheader extends PureComponent {
       pathname,
       query: {
         ...query,
-        keyword: item.cusId || item.custName,
+        custNumber: item.cusId,
         isResetPageNum: 'Y',
       },
     });
@@ -74,12 +74,13 @@ export default class Pageheader extends PureComponent {
       pathname,
       query: {
         ...query,
-        empId: item.empId,
+        drafterId: item.empId,
         isResetPageNum: 'Y',
       },
     });
   }
 
+  // 选中部门下拉对象中对应的某个对象
   @autobind
   selectCustRange(obj) {
     const { replace, location: { pathname, query } } = this.props;

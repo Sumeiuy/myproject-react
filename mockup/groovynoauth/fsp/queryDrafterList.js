@@ -3,7 +3,7 @@ exports.response = function (req, res) {
     code: '0',
     msg: 'OK',
     resultData: {
-      empInfo: [
+      empList: [
         {
           empId: '001105',
           empName: '张五',
