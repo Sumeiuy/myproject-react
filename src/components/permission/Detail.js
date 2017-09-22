@@ -23,7 +23,6 @@ export default class Detail extends PureComponent {
     approvalRecordList: PropTypes.array,
     attachInfoList: PropTypes.array,
     serverPersonelList: PropTypes.array.isRequired,
-    childTypeList: PropTypes.array.isRequired,
     customerList: PropTypes.array.isRequired,
   }
 
@@ -73,7 +72,6 @@ export default class Detail extends PureComponent {
           head="基本信息"
           baseInfo={this.state.baseInfo}
           customerList={this.props.customerList}
-          childTypeList={this.props.childTypeList}
         />
       );
     }

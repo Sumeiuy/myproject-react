@@ -5,8 +5,6 @@ import _ from 'lodash';
 import moment from 'moment';
 import Button from '../Button';
 import uploadRequest from '../../../utils/uploadRequest';
-// import { helper } from '../../../utils';
-import { request } from '../../../config';
 import styles from './commonUpload.less';
 import Icon from '../Icon';
 
@@ -26,6 +24,7 @@ export default class CommonUpload extends PureComponent {
       fileList: props.fileList,
       status: 'active',
       statusText: '',
+      file: {},
     };
   }
 
@@ -35,6 +34,7 @@ export default class CommonUpload extends PureComponent {
     this.setState({
       percent: info.file.percent,
       fileList: info.fileList,
+      file: info.file,
     });
     if (info.file.status !== 'uploading') {
       console.log(info.file, info.fileList);
@@ -81,15 +81,19 @@ export default class CommonUpload extends PureComponent {
   }
 
   render() {
-    const { fileList, percent, status, statusText } = this.state;
+    const { file, fileList, percent, status, statusText } = this.state;
     const uploadProps = {
-      data: { empId: '002332' },
-      action: `${request.prefix}/file/ceFileUpload`,
+      data: {
+        empId: '002332',
+        file,
+      },
+      action: '/mcrm/api/v1/file/ceFileUpload',
       onChange: this.onChange,
       showUploadList: false,
       fileList,
-      customRequest: this.fileCustomRequest,
+      // customRequest: this.fileCustomRequest,
     };
+    console.warn('render data', file);
     return (
       <div className={`${styles.fileListMain} fileListMain`}>
         <div className={styles.fileList}>
@@ -118,9 +122,12 @@ export default class CommonUpload extends PureComponent {
                         </p>
                       </div>
                     );
-                    const colKeyIndex = `colKey${index}`;
+                    const colKey = `attachment${index}`;
                     return (
-                      <Col span={8} key={colKeyIndex}>
+                      <Col
+                        span={8}
+                        key={colKey}
+                      >
                         <div className={styles.fileItem}>
                           <Popover
                             placement="right"

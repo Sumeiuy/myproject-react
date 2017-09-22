@@ -18,7 +18,7 @@ import CommonUpload from '../../components/common/biz/CommonUpload';
 import CommonModal from '../../components/common/biz/CommonModal';
 import InfoItem from '../../components/common/infoItem';
 import SearchSelect from '../../components/common/Select/SearchSelect';
-
+import DigitalTrimmer from '../../components/common/DigitalTrimmer';
 
 import {
   confirmData,
@@ -261,7 +261,14 @@ export default class TemplModal extends PureComponent {
           width="300"
           labelName="产品"
         />
-
+        <br />
+        <DigitalTrimmer
+          min={1.6}
+          max="3"
+          step="0.1"
+          defaultValue="1.6"
+          getValue={this.changeFunction}
+        />
       </div>
     );
   }
