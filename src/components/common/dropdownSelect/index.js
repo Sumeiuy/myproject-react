@@ -103,7 +103,8 @@ export default class DropdownSelect extends PureComponent {
   @autobind
   hideModal(e) {
     // 隐藏下拉框
-    if (+e.target.getAttribute('data-id') !== this.state.id) {
+    const { isSHowModal } = this.state;
+    if (+e.target.getAttribute('data-id') !== this.state.id && isSHowModal) {
       this.setState({ isSHowModal: false });
     }
   }

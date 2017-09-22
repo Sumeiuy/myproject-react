@@ -1,11 +1,13 @@
 /**
  * @file Pageheader.js
+ * 权限申请，合约管理，佣金调整头部筛选
  * @author honggaunqging
  */
 
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
 import Select from '../Select';
+import CustRange from '../../pageCommon/SeibelCustRange';
 import DropDownSelect from '../dropdownSelect';
 import Button from '../Button';
 
@@ -25,16 +27,21 @@ export default class Pageheader extends PureComponent {
     creatSeibelModal: PropTypes.func.isRequired,
     // 搜索拟稿人方法
     toSearchDrafter: PropTypes.func.isRequired,
+    // 搜索客户方法
+    toSearchCust: PropTypes.func.isRequired,
     // 拟稿人数据
     drafterList: PropTypes.array,
+    // 客户数据
+    customerList: PropTypes.array,
     // 部门
-    empOrgTreeList: PropTypes.object,
+    custRange: PropTypes.array,
   }
 
   static defaultProps = {
     page: '',
     drafterList: [],
-    empOrgTreeList: {},
+    customerList: [],
+    custRange: [],
   }
 
   constructor(props) {
@@ -45,33 +52,48 @@ export default class Pageheader extends PureComponent {
     };
   }
 
-
+  // 选中客户下拉对象中对应的某个对象
   @autobind
-  searchInfoList(value) {
-    // 选中下拉对象中对应的某个对象
-    console.log(value);
-  }
-
-  @autobind
-  selectItem(item) {
-    // 选中下拉对象中对应的某个对象
+  selectCustItem(item) {
     const { replace, location: { pathname, query } } = this.props;
     replace({
       pathname,
       query: {
         ...query,
-        keyword: item.empId,
+        keyword: item.cusId || item.custName,
+        isResetPageNum: 'Y',
+      },
+    });
+  }
+
+  // 选中拟稿人下拉对象中对应的某个对象
+  @autobind
+  selectDrafterItem(item) {
+    const { replace, location: { pathname, query } } = this.props;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        empId: item.empId,
         isResetPageNum: 'Y',
       },
     });
   }
 
   @autobind
-  toSearchInfo(value) {
-    // 下拉菜单中的查询
-    console.log('暴露的查询方法，向上传递value', value);
+  selectCustRange(obj) {
+    const { replace, location: { pathname, query } } = this.props;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        orgId: obj.orgId,
+        isResetPageNum: 'Y',
+      },
+    });
   }
 
+  // select改变
   @autobind
   handleSelectChange(key, v) {
     this.setState({
@@ -88,14 +110,17 @@ export default class Pageheader extends PureComponent {
     });
   }
 
-
   render() {
     const {
       subtypeOptions,
       stateOptions,
       creatSeibelModal,
       toSearchDrafter,
+      toSearchCust,
       drafterList,
+      customerList,
+      custRange,
+      replace,
     } = this.props;
 
     const { subType, status } = this.state;
@@ -106,11 +131,11 @@ export default class Pageheader extends PureComponent {
           <DropDownSelect
             value="全部"
             placeholder="经纪客户号/客户名称"
-            searchList={this.state.list}
-            showObjKey="empName"
-            objId="empId"
-            emitSelectItem={this.selectItem}
-            emitToSearch={this.toSearchInfo}
+            searchList={customerList}
+            showObjKey="custName"
+            objId="cusId"
+            emitSelectItem={this.selectCustItem}
+            emitToSearch={toSearchCust}
           />
         </div>
 
@@ -138,23 +163,21 @@ export default class Pageheader extends PureComponent {
             searchList={drafterList}
             showObjKey="empName"
             objId="empId"
-            emitSelectItem={this.selectItem}
+            emitSelectItem={this.selectDrafterItem}
             emitToSearch={toSearchDrafter}
           />
         </div>
 
         部门:
-        <div className={styles.dropDownSelectBox}>
-          <DropDownSelect
-            value="全部"
-            placeholder="部门"
-            searchList={this.state.list}
-            showObjKey="custName3"
-            objId="custNumber3"
-            emitSelectItem={this.selectItem}
-            emitToSearch={this.toSearchInfo}
-          />
-        </div>
+        <CustRange
+          style={{ width: '20%' }}
+          custRange={custRange}
+          location={location}
+          replace={replace}
+          updateQueryState={this.selectCustRange}
+
+        />
+
 
         <Button
           type="primary"

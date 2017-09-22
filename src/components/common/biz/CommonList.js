@@ -19,11 +19,9 @@ export default class PermissionList extends PureComponent {
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
     columns: PropTypes.array.isRequired,
-    getListRowId: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
-
   };
 
   constructor(props) {
@@ -31,6 +29,61 @@ export default class PermissionList extends PureComponent {
     this.state = {
       curSelectedRow: 0,
     };
+  }
+
+
+  componentWillReceiveProps(nextProps) {
+    // 第一次替换query
+    // 添加currentId
+    const { list: { resultData: prevResultData = EMPTY_LIST } } = this.props;
+    const {
+       location: { query, pathname, query: { currentId } },
+       replace,
+       list: { resultData = EMPTY_LIST, page = EMPTY_OBJECT } } = nextProps;
+    const { pageNum, pageSize } = page;
+
+    // 只有当有数据，
+    // 当前没有选中项currentId
+    // 或者query上存在currentId，但是数据没有匹配时
+    // 默认设置第一条初始值
+    if (prevResultData !== resultData) {
+      if (!_.isEmpty(resultData)) {
+        if ((!currentId || (
+           currentId &&
+           _.isEmpty(_.find(resultData, item => item.id.toString() === currentId))
+        ))) {
+          replace({
+            pathname,
+            query: {
+              ...query,
+              currentId: resultData[0] && resultData[0].id,
+              pageNum,
+              pageSize,
+            },
+          });
+          // 选中第一行
+          this.setState({ // eslint-disable-line
+            curSelectedRow: 0,
+          });
+        } else {
+          // query上存在正确的currentId
+          // 设置当前选中行
+          this.setState({ // eslint-disable-line
+            curSelectedRow: _.findIndex(resultData,
+              item => item.id.toString() === currentId),
+          });
+
+          replace({
+            pathname,
+            query: {
+              ...query,
+              // pageNum,
+              // pageSize: pageSize,
+            },
+          });
+        }
+      }
+    }
   }
 
   /**
@@ -41,7 +94,8 @@ export default class PermissionList extends PureComponent {
   @autobind
   handleRowClick(record, index) {
     const {
-      getListRowId,
+      location: { pathname, query },
+      replace,
       list: { resultData = EMPTY_LIST },
     } = this.props;
 
@@ -50,7 +104,14 @@ export default class PermissionList extends PureComponent {
       curSelectedRow: index,
     });
 
-    getListRowId(resultData[index].id);
+   // 替换currentId
+    replace({
+      pathname,
+      query: {
+        ...query,
+        currentId: resultData[index].id,
+      },
+    });
   }
 
   /**

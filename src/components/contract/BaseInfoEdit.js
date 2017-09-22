@@ -18,7 +18,7 @@ import InfoTitle from '../common/InfoTitle';
 import DropDownSelect from '../common/dropdownSelect';
 import DatePicker from '../common/datePicker';
 
-import styles from './baseInfoEdit.less';
+import styles from './baseinfoedit.less';
 
 const { TextArea } = Input;
 
