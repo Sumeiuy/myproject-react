@@ -249,7 +249,7 @@ export default {
           message: '开始开始',
         },
       });
-      const response = yield call(api.queryFollowCust, payload);
+      const response = yield call(api.followCust, payload);
       const { resultData } = response;
       yield put({
         type: 'getFollowCustSuccess',
@@ -259,12 +259,6 @@ export default {
           fllowCustData: resultData,
         },
       });
-      // const response = yield call(api.queryFollowCust, payload);
-      // const { resultData } = response;
-      // yield put({
-      //   type: 'getFollowCustSuccess',
-      //   payload: resultData,
-      // });
     },
     // * getStatisticalPeriod({ }, { call, put }) { //eslint-disable-line
     //   // 统计周期
