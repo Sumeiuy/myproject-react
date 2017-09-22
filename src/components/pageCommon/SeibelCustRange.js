@@ -1,26 +1,25 @@
 /**
- * @file invest/CustRange2.js
- *  客户范围筛选组件
- * @author wangjunjun
+ * @file seibelCustRange.js
+ *  seibel客户范围筛选组件
+ * @author hongguangqing
  */
 
 import React, { PureComponent, PropTypes } from 'react';
 import { TreeSelect } from 'antd';
 import { autobind } from 'core-decorators';
-// import _ from 'lodash';
-
 import { constants } from '../../config';
-import styles from './custRange.less';
+
+import styles from './seibelCustRange.less';
 
 function transformCustRangeData(list, parent = '') {
   return list.map((item) => {
     const obj = {
       label: item.name,
       value: parent
-              ?
-              `${item.level}-${item.id}-${parent}-${item.name}`
-              :
-              `${item.level}-${item.id}-${item.name}`,
+        ?
+        `${item.level}-${item.id}-${parent}-${item.name}`
+        :
+        `${item.level}-${item.id}-${item.name}`,
       key: item.id,
     };
     if (item.children && item.children.length) {

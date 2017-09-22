@@ -1,5 +1,9 @@
+/**
+ * @description 头部根据用户输入的关键字，查询客户信息列表
+ * @author sunweibin
+ */
 exports.response = function (req, res) {
-  return{
+  return {
     code: '0',
     msg: 'OK',
     resultData: {

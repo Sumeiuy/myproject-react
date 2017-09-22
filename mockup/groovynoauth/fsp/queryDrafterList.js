@@ -3,18 +3,32 @@ exports.response = function (req, res) {
     code: '0',
     msg: 'OK',
     resultData: {
-      empInfo: [
+      page: {
+        pageNum: 1,
+        pageSize: 10,
+        totalCount: 1,
+        totalPage: 1,
+      },
+      empList: [
         {
-          empId: '001105',
-          empName: '张五',
+          empId: '012345',
+          empName: '孙伟斌',
         },
         {
-          empId: '001104',
-          empName: '张四',
+          empId: '456789',
+          empName: '鲍佳佳',
         },
         {
-          empId: '001103',
-          empName: '张三',
+          empId: '345678',
+          empName: '洪光情',
+        },
+        {
+          empId: '234567',
+          empName: '刘建树',
+        },
+        {
+          empId: '123456',
+          empName: '毛权',
         },
       ],
     },

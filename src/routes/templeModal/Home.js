@@ -19,6 +19,7 @@ import CommonModal from '../../components/common/biz/CommonModal';
 import InfoItem from '../../components/common/infoItem';
 import SearchSelect from '../../components/common/Select/SearchSelect';
 import DigitalTrimmer from '../../components/common/DigitalTrimmer';
+import ApprovalRecordBoard from '../../components/commissionAdjustment/ApprovalRecordBoard';
 
 import {
   confirmData,
@@ -43,6 +44,7 @@ export default class TemplModal extends PureComponent {
       deleteBoardModal: false,
       confirmModal: false,
       commonModal: false,
+      approvalModal: false,
     };
   }
 
@@ -121,6 +123,20 @@ export default class TemplModal extends PureComponent {
     console.log(value);
   }
   @autobind
+  openApprovalModal() {
+    this.setState({
+      approvalModal: true,
+    });
+  }
+
+  @autobind
+  closeApprovalModal() {
+    this.setState({
+      approvalModal: false,
+    });
+  }
+
+  @autobind
   renderSelectedElem(selected, removeFunc) {
     return (
       <div className={styles.result}>
@@ -136,6 +152,7 @@ export default class TemplModal extends PureComponent {
       </div>
     );
   }
+
   render() {
     const {
       createBoardModal,
@@ -144,6 +161,7 @@ export default class TemplModal extends PureComponent {
       deleteBoardModal,
       confirmModal,
       commonModal,
+      approvalModal,
     } = this.state;
 
     const createBMProps = {
@@ -210,11 +228,34 @@ export default class TemplModal extends PureComponent {
       onChange: this.handleChange,
     };
 
+
     const uploadProps = {
-      fileList: [{
-        name: '测试.jpg',
-        size: 1024000,
-        lastModified: 1501926296785,
+      attaches: [{
+        creator: '002332',
+        attachId: '{6795CB98-B0CD-4CEC-8677-3B0B9298B209}',
+        name: '新建文本文档 (3).txt',
+        size: '0',
+        createTime: '2017/09/12 13:37:45',
+        downloadURL: 'http://ceflow:8086/unstructured/downloadDocument?sessionId=675fd3be-baca-4099-8b52-bf9dde9f2b59&documentId={6795CB98-B0CD-4CEC-8677-3B0B9298B209}',
+        realDownloadURL: '/attach/download?filename=%E6%96%B0%E5%BB%BA%E6%96%87%E6%9C%AC%E6%96%87%E6%A1%A3+%283%29.txt&attachId={6795CB98-B0CD-4CEC-8677-3B0B9298B209',
+      },
+      {
+        creator: '002332',
+        attachId: '{2EF837DE-508C-4FCA-93B8-99CEA68DCB0D}',
+        name: '测试.docx',
+        size: '11',
+        createTime: '2017/09/12 11:53:36',
+        downloadURL: 'http://ceflow:8086/unstructured/downloadDocument?sessionId=675fd3be-baca-4099-8b52-bf9dde9f2b59&documentId={2EF837DE-508C-4FCA-93B8-99CEA68DCB0D}',
+        realDownloadURL: '/attach/download?filename=%E6%B5%8B%E8%AF%95.docx&attachId={2EF837DE-508C-4FCA-93B8-99CEA68DCB0D',
+      },
+      {
+        creator: '002332',
+        attachId: '{24C098F0-9DE3-4DC6-9E7D-FECE683E4B6F}',
+        name: '生产sql和修改后sql.txt',
+        size: '2',
+        createTime: '2017/09/12 11:55:32',
+        downloadURL: 'http://ceflow:8086/unstructured/downloadDocument?sessionId=675fd3be-baca-4099-8b52-bf9dde9f2b59&documentId={24C098F0-9DE3-4DC6-9E7D-FECE683E4B6F}',
+        realDownloadURL: '/attach/download?filename=%E7%94%9F%E4%BA%A7sql%E5%92%8C%E4%BF%AE%E6%94%B9%E5%90%8Esql.txt&attachId={24C098F0-9DE3-4DC6-9E7D-FECE683E4B6F',
       }],
     };
 
@@ -228,9 +269,25 @@ export default class TemplModal extends PureComponent {
       children: 'tanchuang',
     };
 
+    const approvalCust = {
+      batchNum: '308RY237WE00001',
+      custId: '1-DF-7620',
+      custType: 'per',
+      econNum: '02000191',
+      custName: '张三',
+      custLevel: '钻石',
+      openAccDept: '南京长江路证券营业部南京长江路证券营业部',
+      status: '成功',
+    };
 
     return (
       <div>
+        <Button onClick={this.openApprovalModal}>打开审批记录弹窗</Button>
+        <ApprovalRecordBoard
+          cust={approvalCust}
+          visible={approvalModal}
+          onClose={this.closeApprovalModal}
+        />
         <Button onClick={this.openCreateModal}>创建</Button>
         <CreateBoardModal {...createBMProps} />
         <Button onClick={this.openBackConfirmModal}>Back</Button>
@@ -244,7 +301,7 @@ export default class TemplModal extends PureComponent {
         <SearchModal {...searchProps} />
         <br />
         <Button onClick={this.openConfirmClick}>show confirm弹框</Button>
-        <CommonUpload {...uploadProps} />
+        <CommonUpload {...uploadProps} edit />
         <Button onClick={this.showModal}>打开公用弹窗</Button>
         <ProcessConfirm {...confirmProps} />
         <br />
@@ -263,9 +320,9 @@ export default class TemplModal extends PureComponent {
         <br />
         <DigitalTrimmer
           min={1.6}
-          max="3"
-          step="0.1"
-          defaultValue="1.6"
+          max={3}
+          step={0.1}
+          defaultValue={1.6}
           getValue={this.changeFunction}
         />
       </div>

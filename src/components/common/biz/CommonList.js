@@ -19,9 +19,13 @@ export default class PermissionList extends PureComponent {
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
     columns: PropTypes.array.isRequired,
+    clickRow: PropTypes.func,
+    backKeys: PropTypes.array,
   };
 
   static defaultProps = {
+    clickRow: () => {},
+    backKeys: [],
   };
 
   constructor(props) {
@@ -97,6 +101,8 @@ export default class PermissionList extends PureComponent {
       location: { pathname, query },
       replace,
       list: { resultData = EMPTY_LIST },
+      clickRow,
+      backKeys,
     } = this.props;
 
     // 设置当前选中行
@@ -112,6 +118,8 @@ export default class PermissionList extends PureComponent {
         currentId: resultData[index].id,
       },
     });
+    const params = backKeys.map(item => record[item]);
+    clickRow(resultData[index].id, ...params);
   }
 
   /**
