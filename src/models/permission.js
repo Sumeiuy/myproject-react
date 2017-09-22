@@ -50,11 +50,11 @@ export default {
     },
     getDrafterListSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
-      const { empInfo = EMPTY_LIST } = resultData;
+      const { empList = EMPTY_LIST } = resultData;
 
       return {
         ...state,
-        drafterList: empInfo,
+        drafterList: empList,
       };
     },
     getEmpOrgTreeSuccess(state, action) {
@@ -109,6 +109,7 @@ export default {
       if (Array.isArray(result) && result.length) {
         const detailList = yield call(api.getMessage, {
           id: result[0].id,
+          type: '01',
         });
         yield put({
           type: 'getDetailMessageSuccess',

@@ -4,7 +4,8 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import moment from 'moment';
 import Button from '../Button';
-import styles from './CommonUpload.less';
+import uploadRequest from '../../../utils/uploadRequest';
+import styles from './commonUpload.less';
 import Icon from '../Icon';
 
 
@@ -23,16 +24,17 @@ export default class CommonUpload extends PureComponent {
       fileList: props.fileList,
       status: 'active',
       statusText: '',
+      file: {},
     };
   }
 
   @autobind
   onChange(info) {
     console.warn('info', info);
-    console.warn('info.fileList', info.fileList);
     this.setState({
       percent: info.file.percent,
       fileList: info.fileList,
+      file: info.file,
     });
     if (info.file.status !== 'uploading') {
       console.log(info.file, info.fileList);
@@ -71,18 +73,27 @@ export default class CommonUpload extends PureComponent {
   findFileListNode() {
     return document.querySelectorAll('.fileListMain')[0];
   }
+  @autobind
+  fileCustomRequest(option) {
+    console.warn('option', option);
+    console.warn('uploadRequest(option)', uploadRequest(option));
+    return uploadRequest(option);
+  }
 
   render() {
-    const { fileList, percent, status, statusText } = this.state;
+    const { file, fileList, percent, status, statusText } = this.state;
     const uploadProps = {
-      name: 'file',
+      data: {
+        empId: '002332',
+        file,
+      },
+      action: '/mcrm/api/v1/file/ceFileUpload',
+      onChange: this.onChange,
       showUploadList: false,
       fileList,
-      action: '//jsonplaceholder.typicode.com/posts/',
-      headers: {
-        authorization: 'authorization-text',
-      },
+      // customRequest: this.fileCustomRequest,
     };
+    console.warn('render data', file);
     return (
       <div className={`${styles.fileListMain} fileListMain`}>
         <div className={styles.fileList}>
@@ -136,7 +147,7 @@ export default class CommonUpload extends PureComponent {
                             {
                               (index === fileList.length - 1 && Number(percent) !== 0) ?
                                 <Progress
-                                  percent={percent.toFixed(0)}
+                                  percent={Number(percent).toFixed(0)}
                                   strokeWidth={4}
                                   status={status}
                                 />
@@ -154,7 +165,7 @@ export default class CommonUpload extends PureComponent {
               <div className={styles.noFile}>暂无附件</div>
           }
         </div>
-        <Upload {...uploadProps} onChange={this.onChange}>
+        <Upload {...uploadProps}>
           <Button className={styles.commonUploadBtn}>
             上传附件
           </Button>
