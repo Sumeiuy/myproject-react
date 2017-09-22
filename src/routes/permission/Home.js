@@ -24,7 +24,7 @@ import styles from './home.less';
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const OMIT_ARRAY = ['isResetPageNum', 'currentId'];
-const { permission: { pageType, subType, status } } = seibelConfig;
+const { permission, permission: { pageType, subType, status } } = seibelConfig;
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
   payload: query || {},
@@ -177,6 +177,7 @@ export default class Permission extends PureComponent {
       const { getDetailMessage } = this.props;
       getDetailMessage({
         id: currentId,
+        type: pageType,
       });
     }
   }
@@ -247,6 +248,7 @@ export default class Permission extends PureComponent {
     return seibelColumns({
       pageName: 'permission',
       type: 'kehu1',
+      pageData: permission,
     });
   }
 
