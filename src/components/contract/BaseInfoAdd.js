@@ -3,7 +3,7 @@
 * @Author: XuWenKang
 * @Date:   2017-09-21 15:27:31
 * @Last Modified by:   XuWenKang
-* @Last Modified time: 2017-09-21 17:51:11
+* @Last Modified time: 2017-09-22 14:17:13
 */
 
 import React, { PureComponent } from 'react';
@@ -21,103 +21,104 @@ import styles from './baseInfoAdd.less';
 
 const { TextArea } = Input;
 
+const operationList = [{
+  show: true,
+  label: '订购',
+  value: '1',
+}, {
+  show: true,
+  label: '退订',
+  value: '2',
+}];
+const contractNumList = [{
+  show: true,
+  label: '合约编号1',
+  value: '1',
+}, {
+  show: true,
+  label: '合约编号2',
+  value: '2',
+}];
+const dropDownSelectBoxStyle = {
+  width: 220,
+  height: 32,
+  border: '1px solid #d9d9d9',
+};
+const datePickerBoxStyle = {
+  width: 220,
+  height: 32,
+};
+
 export default class BaseInfoEdit extends PureComponent {
   static propTypes = {
     childType: PropTypes.object.isRequired,
     client: PropTypes.object.isRequired,
-    contractStarDate: PropTypes.string.isRequired,
-    contractPalidity: PropTypes.string,
-    remark: PropTypes.string,
     onChange: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
-    contractPalidity: '',
-    remark: '',
+
   }
 
   constructor(props) {
     super(props);
     this.state = {
-      operation: {
-        list: [{
-          show: true,
-          label: '订购',
-          value: '1',
-        }, {
-          show: true,
-          label: '退订',
-          value: '2',
-        }],
-        value: '1',
-      },
-      contractNum: {
-        list: [{
-          show: true,
-          label: '合约编号1',
-          value: '1',
-        }, {
-          show: true,
-          label: '合约编号1',
-          value: '2',
-        }],
-        value: '1',
-      },
+      operation: '1',
+      contractNum: '1',
+      childType: '',
+      client: '',
+      contractStarDate: '',
+      contractPalidity: '',
+      remark: '',
     };
   }
 
   componentWillMount() {
-    const {
-      childType,
-      client,
-      contractStarDate,
-      contractPalidity,
-      remark,
-    } = this.props;
-    this.setState({
-      childType,
-      client,
-      contractStarDate,
-      contractPalidity,
-      remark,
-    });
+    // const {
+    //   childType: { value:childType },
+    //   client: { value:client },
+    //   contractStarDate,
+    //   contractPalidity,
+    //   remark,
+    // } = this.props;
+    // this.setState({
+    //   childType,
+    //   client,
+    //   contractStarDate,
+    //   contractPalidity,
+    //   remark,
+    // });
   }
 
   @autobind
-  selectChange(key, value) {
+  handleSelectChange(key, value) {
     console.log({ [key]: value });
     this.setState({
       ...this.state,
-      [key]: {
-        ...this.state[key],
-        value,
-      },
+      [key]: value,
     }, () => {
       this.props.onChange(this.state);
     });
   }
 
   @autobind
-  selectClient(value) {
+  handleSelectClient(value) {
     console.log('selectClient', value);
     this.setState({
       ...this.state,
-      client: {
-        ...this.state.client,
-        value,
-      },
+      client: value,
     }, () => {
       this.props.onChange(this.state);
     });
   }
 
   @autobind
-  searchClient(v) {
+  handleSearchClient(v) {
     console.log('searchClient', v);
   }
 
   @autobind
-  changeDate(obj) {
+  handleChangeDate(obj) {
     console.log(obj);
     this.setState({
       ...this.state,
@@ -128,7 +129,7 @@ export default class BaseInfoEdit extends PureComponent {
   }
 
   @autobind
-  changeRemark(e) {
+  handleChangeRemark(e) {
     console.log(e.target.value);
     this.setState({
       ...this.state,
@@ -139,9 +140,12 @@ export default class BaseInfoEdit extends PureComponent {
   }
 
   render() {
-    console.log('awdawd', moment(''));
-    const { operation: { value: operationType } } = this.state;
-    const contractNum = operationType === '1' ?
+    const {
+      childType,
+      client,
+    } = this.props;
+    const { operation } = this.state;
+    const contractNum = operation === '1' ?
       (<div className={styles.lineInputWrap}>
         <div className={styles.label}>
           <i className={styles.required}>*</i>
@@ -150,9 +154,9 @@ export default class BaseInfoEdit extends PureComponent {
         <div className={`${styles.componentBox} ${styles.selectBox}`}>
           <Select
             name="contractNum"
-            data={this.state.contractNum.list}
-            value={this.state.contractNum.value}
-            onChange={this.selectChange}
+            data={contractNumList}
+            value={this.state.contractNum}
+            onChange={this.handleSelectChange}
           />
         </div>
       </div>)
@@ -169,9 +173,9 @@ export default class BaseInfoEdit extends PureComponent {
           <div className={`${styles.componentBox} ${styles.selectBox}`}>
             <Select
               name="operation"
-              data={this.state.operation.list}
-              value={this.state.operation.value}
-              onChange={this.selectChange}
+              data={operationList}
+              value={this.state.operation}
+              onChange={this.handleSelectChange}
             />
           </div>
         </div>
@@ -183,9 +187,9 @@ export default class BaseInfoEdit extends PureComponent {
           <div className={`${styles.componentBox} ${styles.selectBox}`}>
             <Select
               name="childType"
-              data={this.state.childType.list}
-              value={this.state.childType.value}
-              onChange={this.selectChange}
+              data={childType.list}
+              value={this.state.childType}
+              onChange={this.handleSelectChange}
             />
           </div>
         </div>
@@ -199,11 +203,11 @@ export default class BaseInfoEdit extends PureComponent {
               placeholder="经纪客户号/客户名称"
               showObjKey="name"
               objId="value"
-              value={this.state.client.value}
-              searchList={this.state.client.list}
-              emitSelectItem={this.selectClient}
-              emitToSearch={this.searchClient}
-              boxStyle={{ width: 220, height: 32, border: '1px solid #d9d9d9' }}
+              value={this.state.client}
+              searchList={client.list}
+              emitSelectItem={this.handleSelectClient}
+              emitToSearch={this.handleSearchClient}
+              boxStyle={dropDownSelectBoxStyle}
             />
           </div>
         </div>
@@ -216,9 +220,14 @@ export default class BaseInfoEdit extends PureComponent {
           <div className={`${styles.componentBox}`}>
             <DatePicker
               name="contractStarDate"
-              value={moment(this.state.contractStarDate, 'YYYY-MM-DD')}
-              onChange={this.changeDate}
-              boxStyle={{ width: 220, height: 32 }}
+              value={
+                this.state.contractStarDate ?
+                moment(this.state.contractStarDate, 'YYYY-MM-DD')
+                :
+                ''
+              }
+              onChange={this.handleChangeDate}
+              boxStyle={datePickerBoxStyle}
             />
           </div>
         </div>
@@ -229,9 +238,14 @@ export default class BaseInfoEdit extends PureComponent {
           <div className={`${styles.componentBox}`}>
             <DatePicker
               name="contractPalidity"
-              value={moment(this.state.contractPalidity, 'YYYY-MM-DD')}
-              onChange={this.changeDate}
-              boxStyle={{ width: 220, height: 32 }}
+              value={
+                this.state.contractPalidity ?
+                moment(this.state.contractPalidity, 'YYYY-MM-DD')
+                :
+                ''
+              }
+              onChange={this.handleChangeDate}
+              boxStyle={datePickerBoxStyle}
             />
           </div>
         </div>
@@ -242,7 +256,7 @@ export default class BaseInfoEdit extends PureComponent {
           <div className={`${styles.componentBox} ${styles.textAreaBox}`}>
             <TextArea
               value={this.state.remark}
-              onChange={this.changeRemark}
+              onChange={this.handleChangeRemark}
             />
           </div>
         </div>

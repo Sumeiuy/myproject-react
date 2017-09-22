@@ -3,7 +3,7 @@
 * @Author: XuWenKang
 * @Date:   2017-09-20 13:47:07
 * @Last Modified by:   XuWenKang
-* @Last Modified time: 2017-09-21 15:27:43
+* @Last Modified time: 2017-09-22 14:38:54
 */
 
 import React, { PureComponent } from 'react';
@@ -12,19 +12,28 @@ import { autobind } from 'core-decorators';
 
 import { Input } from 'antd';
 import moment from 'moment';
-import InputTextComponent from '../common/inputtextcomponent';
 import Select from '../common/Select';
 import InfoTitle from '../common/InfoTitle';
 import DropDownSelect from '../common/dropdownSelect';
 import DatePicker from '../common/datePicker';
 
-import styles from './baseinfoedit.less';
+import styles from './baseInfoEdit.less';
 
 const { TextArea } = Input;
 
+// const EMPTY_OBJECT = {};
+// const EMPTY_ARRAY = [];
+const dropDownSelectBoxStyle = {
+  width: 220,
+  height: 32,
+  border: '1px solid #d9d9d9',
+};
+const datePickerBoxStyle = {
+  width: 220,
+  height: 32,
+};
 export default class BaseInfoEdit extends PureComponent {
   static propTypes = {
-    contractName: PropTypes.string.isRequired,
     childType: PropTypes.object.isRequired,
     client: PropTypes.object.isRequired,
     contractStarDate: PropTypes.string.isRequired,
@@ -43,22 +52,25 @@ export default class BaseInfoEdit extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      contractName: '',
+      childType: '',
+      client: '',
+      contractStarDate: '',
+      contractPalidity: '',
+      contractEndDate: '',
+      remark: '',
     };
   }
 
   componentWillMount() {
     const {
-      contractName,
-      childType,
-      client,
+      childType: { value: childType },
+      client: { value: client },
       contractStarDate,
       contractPalidity,
       contractEndDate,
       remark,
     } = this.props;
     this.setState({
-      contractName,
       childType,
       client,
       contractStarDate,
@@ -68,52 +80,36 @@ export default class BaseInfoEdit extends PureComponent {
     });
   }
 
-  @autobind
-  changeContractName(v) {
-    console.log('eee', v);
-    this.setState({
-      ...this.state,
-      contractName: v,
-    }, () => {
-      this.props.onChange(this.state);
-    });
-  }
 
   @autobind
-  changeChildType(key, value) {
+  handleChangeChildType(key, value) {
     console.log({ [key]: value });
     this.setState({
       ...this.state,
-      childType: {
-        ...this.state.childType,
-        value,
-      },
+      childType: value,
     }, () => {
       this.props.onChange(this.state);
     });
   }
 
   @autobind
-  selectClient(value) {
+  handleSelectClient(value) {
     console.log('selectClient', value);
     this.setState({
       ...this.state,
-      client: {
-        ...this.state.client,
-        value,
-      },
+      client: value,
     }, () => {
       this.props.onChange(this.state);
     });
   }
 
   @autobind
-  searchClient(v) {
+  handleSearchClient(v) {
     console.log('searchClient', v);
   }
 
   @autobind
-  changeDate(obj) {
+  handleChangeDate(obj) {
     console.log(obj);
     this.setState({
       ...this.state,
@@ -124,7 +120,7 @@ export default class BaseInfoEdit extends PureComponent {
   }
 
   @autobind
-  changeRemark(e) {
+  handleChangeRemark(e) {
     console.log(e.target.value);
     this.setState({
       ...this.state,
@@ -135,21 +131,13 @@ export default class BaseInfoEdit extends PureComponent {
   }
 
   render() {
+    const {
+      childType,
+      client,
+    } = this.props;
     return (
       <div className={styles.editWrapper}>
         <InfoTitle head="基本信息" />
-        <div className={styles.lineInputWrap}>
-          <div className={styles.label}>
-            <i className={styles.required}>*</i>
-              合约名称<span className={styles.colon}>:</span>
-          </div>
-          <div className={`${styles.componentBox} ${styles.inputBox}`}>
-            <InputTextComponent
-              value={this.state.contractName}
-              onEmitEvent={this.changeContractName}
-            />
-          </div>
-        </div>
         <div className={styles.lineInputWrap}>
           <div className={styles.label}>
             <i className={styles.required}>*</i>
@@ -158,9 +146,9 @@ export default class BaseInfoEdit extends PureComponent {
           <div className={`${styles.componentBox} ${styles.selectBox}`}>
             <Select
               name="childType"
-              data={this.state.childType.list}
-              value={this.state.childType.value}
-              onChange={this.changeChildType}
+              data={childType.list}
+              value={this.state.childType}
+              onChange={this.handleChangeChildType}
             />
           </div>
         </div>
@@ -174,11 +162,11 @@ export default class BaseInfoEdit extends PureComponent {
               placeholder="经纪客户号/客户名称"
               showObjKey="name"
               objId="value"
-              value={this.state.client.value}
-              searchList={this.state.client.list}
-              emitSelectItem={this.selectClient}
-              emitToSearch={this.searchClient}
-              boxStyle={{ width: 220, height: 32, border: '1px solid #d9d9d9' }}
+              value={this.state.client}
+              searchList={client.list}
+              emitSelectItem={this.handleSelectClient}
+              emitToSearch={this.handleSearchClient}
+              boxStyle={dropDownSelectBoxStyle}
             />
           </div>
         </div>
@@ -190,9 +178,14 @@ export default class BaseInfoEdit extends PureComponent {
           <div className={`${styles.componentBox}`}>
             <DatePicker
               name="contractStarDate"
-              value={moment(this.state.contractStarDate, 'YYYY-MM-DD')}
-              onChange={this.changeDate}
-              boxStyle={{ width: 220, height: 32 }}
+              value={
+                this.state.contractStarDate ?
+                moment(this.state.contractStarDate, 'YYYY-MM-DD')
+                :
+                ''
+              }
+              onChange={this.handleChangeDate}
+              boxStyle={datePickerBoxStyle}
             />
           </div>
         </div>
@@ -203,9 +196,14 @@ export default class BaseInfoEdit extends PureComponent {
           <div className={`${styles.componentBox}`}>
             <DatePicker
               name="contractPalidity"
-              value={moment(this.state.contractPalidity, 'YYYY-MM-DD')}
-              onChange={this.changeDate}
-              boxStyle={{ width: 220, height: 32 }}
+              value={
+                this.state.contractPalidity ?
+                moment(this.state.contractPalidity, 'YYYY-MM-DD')
+                :
+                ''
+              }
+              onChange={this.handleChangeDate}
+              boxStyle={datePickerBoxStyle}
             />
           </div>
         </div>
@@ -216,9 +214,14 @@ export default class BaseInfoEdit extends PureComponent {
           <div className={`${styles.componentBox}`}>
             <DatePicker
               name="contractEndDate"
-              value={moment(this.state.contractEndDate, 'YYYY-MM-DD')}
-              onChange={this.changeDate}
-              boxStyle={{ width: 220, height: 32 }}
+              value={
+                this.state.contractEndDate ?
+                moment(this.state.contractEndDate, 'YYYY-MM-DD')
+                :
+                ''
+              }
+              onChange={this.handleChangeDate}
+              boxStyle={datePickerBoxStyle}
             />
           </div>
         </div>
@@ -229,7 +232,7 @@ export default class BaseInfoEdit extends PureComponent {
           <div className={`${styles.componentBox} ${styles.textAreaBox}`}>
             <TextArea
               value={this.state.remark}
-              onChange={this.changeRemark}
+              onChange={this.handleChangeRemark}
             />
           </div>
         </div>

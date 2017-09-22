@@ -16,8 +16,8 @@ import SplitPanel from '../../components/common/splitPanel/SplitPanel';
 import Detail from '../../components/contract/Detail';
 import ContractList from '../../components/common/biz/CommonList';
 import seibelColumns from '../../components/common/biz/seibelColumns';
-import Add from '../../components/contract/Add';
-// import Edit from '../../components/contract/Edit';
+// import AddForm from '../../components/contract/AddForm';
+import EditForm from '../../components/contract/EditForm';
 import CommonModal from '../../components/common/biz/CommonModal';
 
 import styles from './home.less';
@@ -75,6 +75,9 @@ export default class Contract extends PureComponent {
      } } } = this.props;
     // 默认筛选条件
     getContractList(constructSeibelPostBody(query, pageNum || 1, pageSize || 10));
+    document.addEventListener('click', () => {
+      this.showModal('commonModal');
+    });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -197,8 +200,8 @@ export default class Contract extends PureComponent {
       closeModal: this.closeModal,
       visible: this.state.commonModal,
       size: 'large',
-      // children: <Edit />,
-      children: <Add />,
+      children: <EditForm />,
+      // children: <AddForm />,
     };
     return (
       <div className={styles.premissionbox}>

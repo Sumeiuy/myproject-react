@@ -3,7 +3,7 @@
 * @Author: XuWenKang
 * @Date:   2017-09-21 15:17:50
 * @Last Modified by:   XuWenKang
-* @Last Modified time: 2017-09-21 17:48:38
+* @Last Modified time: 2017-09-22 14:28:47
 */
 import React, { PureComponent } from 'react';
 // import PropTypes from 'prop-types';
@@ -13,8 +13,10 @@ import { autobind } from 'core-decorators';
 import BaseInfoAdd from './BaseInfoAdd';
 import UploadFile from '../permission/UploadFile';
 
-import styles from './add.less';
+import styles from './addForm.less';
 
+const EMPTY_OBJECT = {};
+const EMPTY_ARRAY = [];
 export default class Edit extends PureComponent {
   static propTypes = {
 
@@ -32,12 +34,7 @@ export default class Edit extends PureComponent {
   }
 
   @autobind
-  changeAppraval(type, value) {
-    console.log(type, value);
-  }
-
-  @autobind
-  changeBaseInfo(formData) {
+  handleChangeBaseInfo(formData) {
     console.log('baseInfoData', formData);
   }
 
@@ -46,16 +43,16 @@ export default class Edit extends PureComponent {
       <div className={styles.editComponent}>
         <BaseInfoAdd
           contractName="合约名称"
-          childType={{ list: [] }}
-          client={{}}
+          childType={{ list: EMPTY_ARRAY }}
+          client={EMPTY_OBJECT}
           contractStarDate="2017-9-10"
           contractPalidity="2017-9-9"
           contractEndDate="2017-8-8"
           remark="备注备注"
-          onChange={this.changeBaseInfo}
+          onChange={this.handleChangeBaseInfo}
         />
         <UploadFile
-          fileList={[]}
+          fileList={EMPTY_ARRAY}
         />
         <div className={styles.cutSpace} />
       </div>

@@ -3,7 +3,7 @@
 * @Author: XuWenKang
 * @Date:   2017-09-19 14:47:08
 * @Last Modified by:   XuWenKang
-* @Last Modified time: 2017-09-21 17:49:26
+* @Last Modified time: 2017-09-22 14:29:12
 */
 import React, { PureComponent } from 'react';
 // import PropTypes from 'prop-types';
@@ -16,8 +16,16 @@ import UploadFile from '../permission/UploadFile';
 import Approval from '../permission/Approval';
 import ApprovalRecord from '../permission/ApprovalRecord';
 
-import styles from './edit.less';
+import styles from './editForm.less';
 
+const EMPTY_OBJECT = {};
+const EMPTY_ARRAY = [];
+const approvalRecordList = [{
+  isOk: true,
+  beginTime: 'abc于2017/08/31',
+  stepName: '发起',
+  suggestion: 'adad',
+}];
 export default class Edit extends PureComponent {
   static propTypes = {
 
@@ -35,12 +43,12 @@ export default class Edit extends PureComponent {
   }
 
   @autobind
-  changeAppraval(type, value) {
+  handleChangeAppraval(type, value) {
     console.log(type, value);
   }
 
   @autobind
-  changeBaseInfo(formData) {
+  handleChangeBaseInfo(formData) {
     console.log('baseInfoData', formData);
   }
 
@@ -52,27 +60,27 @@ export default class Edit extends PureComponent {
         </div>
         <BaseInfoEdit
           contractName="合约名称"
-          childType={{ list: [] }}
-          client={{}}
+          childType={{ list: EMPTY_ARRAY }}
+          client={EMPTY_OBJECT}
           contractStarDate="2017-9-10"
           contractPalidity="2017-9-9"
-          contractEndDate="2017-8-8"
+          contractEndDate=""
           remark="备注备注"
-          onChange={this.changeBaseInfo}
+          onChange={this.handleChangeBaseInfo}
         />
         <DraftInfo />
         <UploadFile
-          fileList={[]}
+          fileList={EMPTY_ARRAY}
         />
         <Approval
           type="appraval"
           head="审批"
           textValue=""
-          onEmitEvent={this.changeAppraval}
+          onEmitEvent={this.handleChangeAppraval}
         />
         <ApprovalRecord
           head="审批记录"
-          info={[{ isOk: true, beginTime: 'abc于2017/08/31', stepName: '发起', suggestion: 'adad' }]}
+          info={approvalRecordList}
           statusType=""
         />
         <div className={styles.cutSpace} />
