@@ -3,7 +3,7 @@
 * @Author: XuWenKang
 * @Date:   2017-09-21 15:27:31
 * @Last Modified by:   XuWenKang
-* @Last Modified time: 2017-09-22 14:17:13
+* @Last Modified time: 2017-09-22 17:24:29
 */
 
 import React, { PureComponent } from 'react';
@@ -14,6 +14,7 @@ import { Input } from 'antd';
 import moment from 'moment';
 import Select from '../common/Select';
 import InfoTitle from '../common/InfoTitle';
+import InfoItem from '../common/infoItem';
 import DropDownSelect from '../common/dropdownSelect';
 import DatePicker from '../common/datePicker';
 
@@ -145,7 +146,7 @@ export default class BaseInfoEdit extends PureComponent {
       client,
     } = this.props;
     const { operation } = this.state;
-    const contractNum = operation === '1' ?
+    const contractNumComponent = operation === '1' ?
       (<div className={styles.lineInputWrap}>
         <div className={styles.label}>
           <i className={styles.required}>*</i>
@@ -162,6 +163,49 @@ export default class BaseInfoEdit extends PureComponent {
       </div>)
       :
       null;
+    const contractStarDateComponent = operation === '1' ?
+      (<div className={styles.lineInputWrap}>
+        <div className={styles.label}>
+          <i className={styles.required}>*</i>
+                合约开始日期<span className={styles.colon}>:</span>
+        </div>
+        <div className={`${styles.componentBox}`}>
+          <DatePicker
+            name="contractStarDate"
+            value={
+                  this.state.contractStarDate ?
+                  moment(this.state.contractStarDate, 'YYYY-MM-DD')
+                  :
+                  ''
+                }
+            onChange={this.handleChangeDate}
+            boxStyle={datePickerBoxStyle}
+          />
+        </div>
+      </div>)
+      :
+      <InfoItem label="合约开始日期" value="2017/08/31" />;
+    const contractPalidityComponent = operation === '1' ?
+      (<div className={styles.lineInputWrap}>
+        <div className={styles.label}>
+              合约有效期<span className={styles.colon}>:</span>
+        </div>
+        <div className={`${styles.componentBox}`}>
+          <DatePicker
+            name="contractPalidity"
+            value={
+                this.state.contractPalidity ?
+                moment(this.state.contractPalidity, 'YYYY-MM-DD')
+                :
+                ''
+              }
+            onChange={this.handleChangeDate}
+            boxStyle={datePickerBoxStyle}
+          />
+        </div>
+      </div>)
+      :
+      <InfoItem label="合约有效期" value="2017/08/31" />;
     return (
       <div className={styles.editWrapper}>
         <InfoTitle head="基本信息" />
@@ -211,44 +255,9 @@ export default class BaseInfoEdit extends PureComponent {
             />
           </div>
         </div>
-        {contractNum}
-        <div className={styles.lineInputWrap}>
-          <div className={styles.label}>
-            <i className={styles.required}>*</i>
-              合约开始日期<span className={styles.colon}>:</span>
-          </div>
-          <div className={`${styles.componentBox}`}>
-            <DatePicker
-              name="contractStarDate"
-              value={
-                this.state.contractStarDate ?
-                moment(this.state.contractStarDate, 'YYYY-MM-DD')
-                :
-                ''
-              }
-              onChange={this.handleChangeDate}
-              boxStyle={datePickerBoxStyle}
-            />
-          </div>
-        </div>
-        <div className={styles.lineInputWrap}>
-          <div className={styles.label}>
-              合约有效期<span className={styles.colon}>:</span>
-          </div>
-          <div className={`${styles.componentBox}`}>
-            <DatePicker
-              name="contractPalidity"
-              value={
-                this.state.contractPalidity ?
-                moment(this.state.contractPalidity, 'YYYY-MM-DD')
-                :
-                ''
-              }
-              onChange={this.handleChangeDate}
-              boxStyle={datePickerBoxStyle}
-            />
-          </div>
-        </div>
+        {contractNumComponent}
+        {contractStarDateComponent}
+        {contractPalidityComponent}
         <div className={styles.lineInputWrap}>
           <div className={styles.label}>
               备注<span className={styles.colon}>:</span>
