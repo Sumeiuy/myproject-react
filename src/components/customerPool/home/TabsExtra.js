@@ -15,7 +15,6 @@ import CustRange from '../common/CustRange';
 import styles from './tabsExtra.less';
 
 const Option = Select.Option;
-let KEYCOUNT = 0;
 export default class TabsExtra extends PureComponent {
   static propTypes = {
     custRange: PropTypes.array,
@@ -40,20 +39,15 @@ export default class TabsExtra extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      key: KEYCOUNT,
       begin: '',
       end: '',
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    const { custRange: preCustRange, selectValue: prevSelectValue } = this.props;
-    const { custRange: nextCustRange, selectValue: nextSelectValue } = nextProps;
-    if (!_.isEqual(preCustRange, nextCustRange)) {
-      this.setState({
-        key: ++KEYCOUNT,
-      });
-    }
+    const { selectValue: prevSelectValue } = this.props;
+    const { selectValue: nextSelectValue } = nextProps;
+
     if (prevSelectValue !== nextSelectValue) {
       const { begin, end } = this.getBeginAndEndTime(nextSelectValue);
       this.setState({
@@ -106,7 +100,7 @@ export default class TabsExtra extends PureComponent {
       location,
       orgId,
     } = this.props;
-    const { key, begin, end } = this.state;
+    const { begin, end } = this.state;
     return (
       <div className={styles.timeBox}>
         <Icon type="kehu" />
@@ -122,7 +116,6 @@ export default class TabsExtra extends PureComponent {
               endTime={end}
               collectData={collectCustRange}
               expandAll={expandAll}
-              key={`selectTree${key}`}
             /> :
             <Select
               defaultValue="暂无数据"
