@@ -192,12 +192,14 @@ export default class CustomerLists extends PureComponent {
   @autobind
   getEmail(address) {
     let finded = 0;// 邮件联系
-    if (address.orgCustomerContactInfoList !== undefined) {
+    if (address.orgCustomerContactInfoList !== undefined
+        && _.size(address.orgCustomerContactInfoList) > 0) {
       const index = _.findLastIndex(address.orgCustomerContactInfoList,
           val => val.mainFlag);
       finded = _.findLastIndex(address.orgCustomerContactInfoList[index].emailAddresses,
           val => val.mainFlag);
-    } else if (address.perCustomerContactInfo !== undefined) {
+    } else if (address.perCustomerContactInfo !== undefined
+        && _.size(address.perCustomerContactInfo) > 0) {
       finded = _.findLastIndex(address.perCustomerContactInfo.emailAddresses,
           val => val.mainFlag);
     } else {
