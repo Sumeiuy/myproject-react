@@ -97,12 +97,14 @@ export default class CustomerGroup extends PureComponent {
       controlCusSuccess: '',
       cusgroupId: '',
       groupName: '',
+      keyWord: null,
     };
   }
 
   componentWillMount() {
 /* 获取客户分组列表 */
-    this.getCustomerGroup();
+    const { keyWord } = this.state;
+    this.getCustomerGroup(keyWord, this.props);
     /* 初始化classname,首次渲染显示分组tab,隐藏分组成功组件 */
     this.state.controlGroupPane = classnames({
       [styles.customerGroup]: true,
@@ -116,7 +118,11 @@ export default class CustomerGroup extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     // 根据分组结果，重新渲染组件
-    const { cusGroupSaveResult, resultgroupId } = nextProps;
+    const { cusGroupSaveResult, resultgroupId, location: { query } } = nextProps;
+    const curPageNum = Number(query.curPageNum) - 1;
+    const { location: { query: preQuery } } = this.props;
+    const { keyWord } = this.state;
+    const newLocation = { ...nextProps.location, query: { ...query, curPageNum } };// 更新curPageNum
     const controlGroupPane = classnames({
       [styles.customerGroup]: cusGroupSaveResult !== 'success',
       [styles.hiddencustomerGroup]: cusGroupSaveResult === 'success',
@@ -130,11 +136,14 @@ export default class CustomerGroup extends PureComponent {
       controlCusSuccess,
       cusgroupId: resultgroupId,
     });
+    if (query !== preQuery) {
+      this.getCustomerGroup(keyWord, { ...nextProps, location: newLocation });
+    }
   }
 
   @autobind
-  getCustomerGroup(value = null) {
-    const { location: { query } } = this.props;
+  getCustomerGroup(value = null, props) {
+    const { location: { query }, getCustomerGroupList } = props;
     const param = {
         // 必传，页大小
       pageNum: query.curPageNum || CUR_PAGE,
@@ -142,7 +151,7 @@ export default class CustomerGroup extends PureComponent {
       empId: helper.getEmpId(),
       keyWord: value,
     };
-    this.props.getCustomerGroupList(param);
+    getCustomerGroupList(param);
   }
   /**
    * 页码改变事件
@@ -153,6 +162,7 @@ export default class CustomerGroup extends PureComponent {
   handlePageChange(page) {
     const { location: { query, pathname }, replace } = this.props;
    // 替换当前页码和分页条目
+    console.log('page, pageSize:', page);
     replace({
       pathname,
       query: {
@@ -191,7 +201,9 @@ export default class CustomerGroup extends PureComponent {
         KeyWord: value,
       },
     });
-    this.getCustomerGroup(value);
+    this.setState({
+      keyWord: value,
+    });
   }
 /*  添加到已有分组 */
   @autobind
@@ -207,12 +219,15 @@ export default class CustomerGroup extends PureComponent {
         param.custIdList = ids;
       } else if (query.condition) {
         const condition = JSON.parse(decodeURIComponent(query.condition));
-        param.queryCustsForm = condition;
+        console.warn(condition);
+        param.searchReq = {
+          enterType: condition.enterType,
+          sortsReqList: condition.sortsReqList,
+        };
         param.custIdList = null;
       }
       param.groupId = groupId;
       param.empId = helper.getEmpId();
-      console.log(param);
       this.setState({
         groupName: selectGroupName,
       });
@@ -233,13 +248,14 @@ export default class CustomerGroup extends PureComponent {
       param.custIdList = ids;
     } else if (query.condition) {
       const condition = JSON.parse(decodeURIComponent(query.condition));
-      // console.log(condition)
-      param.queryCustsForm = condition;
+      param.searchReq = {
+        enterType: condition.enterType,
+        sortsReqList: condition.sortsReqList,
+      };
       param.custIdList = null;
     }
     param.empId = helper.getEmpId();
     Object.assign(param, value);
-    // console.log(param)
     this.setState({
       groupName: param.groupName,
     });
