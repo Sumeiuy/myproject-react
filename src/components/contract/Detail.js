@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-19 09:37:42
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-09-19 13:54:14
+ * @Last Modified time: 2017-09-21 16:23:11
  */
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -12,12 +12,13 @@ import classnames from 'classnames';
 import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
 import styles from './detail.less';
-import MessageList from '../common/MessageList';
+// import MessageList from '../common/MessageList';
 import CommonUpload from '../common/biz/CommonUpload';
-import ServerPersonel from '../permission/ServerPersonel';
+import CommonTable from '../common/biz/CommonTable';
+// import ServerPersonel from '../permission/ServerPersonel';
 import Approval from '../permission/Approval';
-import ApprovalRecord from '../permission/ApprovalRecord';
-import BaseInfoModify from '../permission/BaseInfoModify';
+// import ApprovalRecord from '../permission/ApprovalRecord';
+// import BaseInfoModify from '../permission/BaseInfoModify';
 
 export default class Detail extends PureComponent {
   static propTypes = {
@@ -51,6 +52,8 @@ export default class Detail extends PureComponent {
       serverInfo: props.serverInfo,
       // 审批意见
       approvalComments: '他们什么都不晓得',
+      // 表格默认 radio 索引
+      radio: 0,
     };
   }
 
@@ -76,8 +79,19 @@ export default class Detail extends PureComponent {
     this.setState({ [name]: value });
   }
 
+  @autobind
+  deleteTableData(record, index) {
+    console.warn('record', record);
+    console.warn('index', index);
+    this.setState({
+      radio: index,
+    });
+  }
+
   render() {
-    const { num, baseInfo, draftInfo, serverInfo, approvalRecordList } = this.props;
+    // const { num, baseInfo, draftInfo, serverInfo, approvalRecordList } = this.props;
+    const { num } = this.props;
+    const { radio } = this.state;
     const modifyBtnClass = classnames([styles.dcHeaderModifyBtn,
       { hide: this.state.statusType !== 'ready' },
     ]);
@@ -87,6 +101,80 @@ export default class Detail extends PureComponent {
         size: 1024000,
         lastModified: 1501926296785,
       }],
+    };
+
+    const terms = [
+      {
+        termsName: '基金子公司产品分成1',
+        paraName: '基金子公司产品分成比例1',
+        paraVal: '0.51',
+        divIntegrationId: 'ZZ001041054',
+        divName: '南京解放路证券营业部1',
+        furturePromotion: '',
+        preCondition: '',
+        synBusSys: '',
+      },
+      {
+        termsName: '基金子公司产品分成2',
+        paraName: '基金子公司产品分成比例2',
+        paraVal: '0.52',
+        divIntegrationId: 'ZZ0010410542',
+        divName: '南京解放路证券营业部2',
+        furturePromotion: '',
+        preCondition: '',
+        synBusSys: '',
+      },
+      {
+        termsName: '基金子公司产品分成3',
+        paraName: '基金子公司产品分成比例3',
+        paraVal: '0.53',
+        divIntegrationId: 'ZZ0010410543',
+        divName: '南京解放路证券营业部3',
+        furturePromotion: '',
+        preCondition: '',
+        synBusSys: '',
+      },
+      {
+        termsName: '基金子公司产品分成4',
+        paraName: '基金子公司产品分成比例4',
+        paraVal: '0.54',
+        divIntegrationId: 'ZZ0010410544',
+        divName: '南京解放路证券营业部4',
+        furturePromotion: '',
+        preCondition: '',
+        synBusSys: '',
+      },
+    ];
+    const titleList = [
+      {
+        dataIndex: 'termsName',
+        key: 'termsName',
+        title: '条款名称',
+      },
+      {
+        dataIndex: 'paraName',
+        key: 'paraName',
+        title: '明细参数',
+      },
+      {
+        dataIndex: 'paraVal',
+        key: 'paraVal',
+        title: '值',
+      },
+      {
+        dataIndex: 'divName',
+        key: 'divName',
+        title: '合作部门',
+      },
+    ];
+    // 表格中需要的操作
+    const operation = {
+      column: {
+        key: 'radio', // 'check'\'delete'\'view'
+        title: '',
+        radio, // radio 仅在 key: radio 时需要
+      },
+      operate: this.deleteTableData,
     };
     return (
       <div className={styles.detailComponent}>
@@ -115,35 +203,13 @@ export default class Detail extends PureComponent {
         </div>
         <div className={styles.detailWrapper}>
           <InfoTitle head="合约条款" />
-
+          <CommonTable
+            data={terms}
+            titleList={titleList}
+            operation={operation}
+          />
         </div>
-        <MessageList
-          head="基本信息"
-          {...baseInfo}
-        />
-        <BaseInfoModify
-          head="基本信息"
-          serverInfo={this.state.serverInfo}
-          baseInfo={this.state.baseInfo}
-        />
-        <MessageList
-          head="拟稿信息"
-          {...draftInfo}
-        />
-        <ServerPersonel
-          head="服务人员"
-          type="serverInfo"
-          info={serverInfo}
-          statusType={this.state.statusType}
-          emitEvent={this.updateValue}
-        />
-        {this.getApprovalDom}
         <CommonUpload {...uploadProps} />
-        <ApprovalRecord
-          head="审批记录"
-          info={approvalRecordList}
-          statusType={this.state.statusType}
-        />
       </div>
     );
   }

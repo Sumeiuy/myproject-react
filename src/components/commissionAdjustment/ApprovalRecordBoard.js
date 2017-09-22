@@ -18,26 +18,25 @@ import styles from './approvalRecordBoard.less';
 export default class ApprovalRecordBoard extends PureComponent {
   static propTypes = {
     visible: PropTypes.bool,
-    cust: PropTypes.object,
-    record: PropTypes.array,
+    record: PropTypes.object,
     onClose: PropTypes.func,
+    modalKey: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
     visible: false,
-    cust: {},
-    record: [],
+    record: {},
     onClose: () => {},
   }
 
   @autobind
-  closeModal() {
-    this.props.onClose();
+  closeModal(key) {
+    this.props.onClose(key);
   }
 
   render() {
-    const { visible, cust, record } = this.props;
-    if (_.isEmpty(cust) || _.isEmpty(record)) {
+    const { modalKey, visible, record: { cust, approval } } = this.props;
+    if (_.isEmpty(cust) || _.isEmpty(approval)) {
       return null;
     }
     const basicInfo = `${cust.custName}(${cust.econNum})-${cust.custLevel}`;
@@ -50,6 +49,7 @@ export default class ApprovalRecordBoard extends PureComponent {
     return (
       <CommonModal
         title="审批记录"
+        modalKey={modalKey}
         needBtn={false}
         maskClosable={false}
         size="normal"
@@ -67,7 +67,7 @@ export default class ApprovalRecordBoard extends PureComponent {
           <InfoTitle head="审批记录" />
           <div className={styles.recordBox}>
             {
-              record.map(item => (<ApprovalRecord record={item} />))
+              approval.map(item => (<ApprovalRecord record={item} />))
             }
           </div>
         </div>

@@ -18,6 +18,7 @@ exports.response = function (req, res) {
         custLevel: '钻石',
         openAccDept: '南京长江路证券营业部',
         status: '成功',
+        flowCode: '3E90EB0B56C4DB45A7581863554414EC',
       },
       {
         batchNum: '308RY237WE00001',
@@ -28,6 +29,7 @@ exports.response = function (req, res) {
         custLevel: '钻石',
         openAccDept: '南京长江路证券营业部',
         status: '成功',
+        flowCode: '3E90EB0B56C4DB45A7581863554414EC',
       },
       {
         batchNum: '308RY237WE00001',
@@ -38,6 +40,7 @@ exports.response = function (req, res) {
         custLevel: '钻石',
         openAccDept: '南京长江路证券营业部',
         status: '失败',
+        flowCode: '3E90EB0B56C4DB45A7581863554414EC',
       },
       {
         batchNum: '308RY237WE00001',
@@ -48,6 +51,7 @@ exports.response = function (req, res) {
         custLevel: '钻石',
         openAccDept: '南京长江路证券营业部',
         status: '成功',
+        flowCode: '3E90EB0B56C4DB45A7581863554414EC',
       },
       {
         batchNum: '308RY237WE00001',
@@ -58,6 +62,7 @@ exports.response = function (req, res) {
         custLevel: '钻石',
         openAccDept: '南京长江路证券营业部',
         status: '成功',
+        flowCode: '3E90EB0B56C4DB45A7581863554414EC',
       },
       {
         batchNum: '308RY237WE00001',
@@ -68,6 +73,7 @@ exports.response = function (req, res) {
         custLevel: '钻石',
         openAccDept: '南京长江路证券营业部',
         status: '成功',
+        flowCode: '3E90EB0B56C4DB45A7581863554414EC',
       },
       {
         batchNum: '308RY237WE00001',
@@ -78,6 +84,7 @@ exports.response = function (req, res) {
         custLevel: '钻石',
         openAccDept: '南京长江路证券营业部',
         status: '成功',
+        flowCode: '3E90EB0B56C4DB45A7581863554414EC',
       },
       {
         batchNum: '308RY237WE00001',
@@ -88,6 +95,7 @@ exports.response = function (req, res) {
         custLevel: '钻石',
         openAccDept: '南京长江路证券营业部',
         status: '失败',
+        flowCode: '3E90EB0B56C4DB45A7581863554414EC',
       },
       {
         batchNum: '308RY237WE00001',
@@ -98,6 +106,7 @@ exports.response = function (req, res) {
         custLevel: '钻石',
         openAccDept: '南京长江路证券营业部',
         status: '成功',
+        flowCode: '3E90EB0B56C4DB45A7581863554414EC',
       },
       {
         batchNum: '308RY237WE00001',
@@ -108,6 +117,7 @@ exports.response = function (req, res) {
         custLevel: '金卡',
         openAccDept: '南京长江路证券营业部',
         status: '成功',
+        flowCode: '3E90EB0B56C4DB45A7581863554414EC',
       },
     ],
   };
