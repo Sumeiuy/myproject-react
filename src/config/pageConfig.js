@@ -11,6 +11,7 @@
 const pageConfig = {
   // 权限分配
   permission: {
+    pageName: '权限申请',
     pageType: '01', // 查询列表接口中的type值
     subType: [
       {
@@ -130,6 +131,7 @@ const pageConfig = {
   },
   // 佣金调整
   commission: {
+    pageName: '佣金调整',
     pageType: '02',
     subType: [
       {
@@ -281,6 +283,7 @@ const pageConfig = {
   },
   // 合作合约
   contract: {
+    pageName: '合作合约',
     pageType: '03',
     subType: [
       {

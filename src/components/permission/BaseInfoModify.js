@@ -3,18 +3,17 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import style from './baseinfomodify.less';
 import InfoTitle from '../common/InfoTitle';
-import InputTextComponent from '../common/inputtextcomponent';
 import TextareaComponent from '../common/textareacomponent';
-import SearchModal from '../common/biz/SearchModal';
 import DropdownSelect from '../common/dropdownSelect';
-import columns from './PermissionColumns';
-import Icon from '../common/Icon';
+import Select from '../common/Select';
+import { seibelConfig } from '../../config';
+
+const { permission: { subType } } = seibelConfig;
 
 export default class BaseInfoModify extends PureComponent {
   static propTypes = {
     head: PropTypes.string.isRequired,
     baseInfo: PropTypes.array,
-    childTypeList: PropTypes.array.isRequired,
     customerList: PropTypes.array.isRequired,
   }
 
@@ -24,31 +23,21 @@ export default class BaseInfoModify extends PureComponent {
 
   static contextTypes = {
     getCustomerList: PropTypes.func.isRequired,
-    getChildTypeList: PropTypes.func.isRequired,
   }
 
   constructor() {
     super();
     this.state = {
       // 标题
-      title: '标题是什么',
       // 备注
       remarks: '此处省略一万个字...',
       // 客户类型
       customer: '',
       // 子类型
-      childType: '',
-      // 子类型列表
-      childTypeList: [],
+      subType: '全部',
       // 客户列表
       customerList: [],
     };
-  }
-
-  @autobind
-  updateTitle(value) {
-    // 更改标题信息
-    this.setState({ title: value });
   }
 
   @autobind
@@ -82,38 +71,33 @@ export default class BaseInfoModify extends PureComponent {
   }
 
   @autobind
-  renderSelectedElem(selected, removeFunc) {
-    return (
-      <div className={style.result}>
-        <div className={style.nameLabel}>{selected.ptyMngName}</div>
-        <div className={style.custIdLabel}>{selected.ptyMngId}</div>
-        <div className={style.iconDiv}>
-          <Icon
-            type="close"
-            className={style.closeIcon}
-            onClick={removeFunc}
-          />
-        </div>
-      </div>
-    );
+  updateSubTypeValue(name, value) {
+    const result = subType.filter(item => (item.value === value))[0].label;
+    this.setState({ [name]: result });
   }
+
   render() {
     return (
       <div className={style.baseInfo}>
         <p>{this.context.str}</p>
         <InfoTitle head={this.props.head} />
+
         <div className={style.inputComponent}>
           <span className={style.inputComponentTitle}>
-            <i className={style.isRequired}>*</i>标题：
+            <i className={style.isRequired}>*</i>子类型：
           </span>
           <div className={style.inputComponentContent}>
-            <InputTextComponent
-              value={this.state.title}
-              placeholder="请输入标题"
-              onEmitEvent={this.updateTitle}
-            />
+            <div className={style.boxBorder}>
+              <Select
+                data={subType}
+                name="subType"
+                onChange={this.updateSubTypeValue}
+                value={this.state.subType}
+              />
+            </div>
           </div>
         </div>
+
         <div className={style.inputComponent}>
           <span className={style.inputComponentTitle}>
             <i className={style.isRequired}>*</i>客户：
@@ -128,23 +112,6 @@ export default class BaseInfoModify extends PureComponent {
               emitSelectItem={this.selectCustomer}
               emitToSearch={this.searchCustomerList}
               boxStyle={{ border: '1px solid #d9d9d9' }}
-            />
-          </div>
-        </div>
-        <div className={style.inputComponent}>
-          <span className={style.inputComponentTitle}>
-            <i className={style.isRequired}>*</i>子类型：
-          </span>
-          <div className={style.inputComponentContent}>
-            <SearchModal
-              onOk={this.selectChildType}
-              columns={columns}
-              title="选择下一审批人员"
-              dataSource={this.props.childTypeList}
-              placeholder=""
-              onSearch={this.searchChildTypeList}
-              renderSelected={this.renderSelectedElem}
-              rowKey="ptyMngId"
             />
           </div>
         </div>

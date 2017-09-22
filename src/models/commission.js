@@ -24,6 +24,8 @@ export default {
     filterCustList: [],
     // 筛选的拟稿人列表
     filterDrafterList: [],
+    // 可选部门组织机构树
+    custRange: [],
   },
   reducers: {
 
@@ -82,6 +84,23 @@ export default {
       return {
         ...state,
         filterDrafterList: resultData,
+      };
+    },
+
+    getCustRangeSuccess(state, action) {
+      const { payload: { resultData = EMPTY_LIST } } = action;
+      let custRange;
+      if (resultData.level === '1') {
+        custRange = [
+          { id: resultData.id, name: resultData.name, level: resultData.level },
+          ...resultData.children,
+        ];
+      } else {
+        custRange = [resultData];
+      }
+      return {
+        ...state,
+        custRange,
       };
     },
 
@@ -171,6 +190,15 @@ export default {
       yield put({
         type: 'searchDrafterListSuccess',
         payload: drafterResponse,
+      });
+    },
+
+    // 组织结构树
+    * getCustRange({ payload }, { call, put }) {
+      const response = yield call(api.getEmpOrgTree, payload);
+      yield put({
+        type: 'getCustRangeSuccess',
+        payload: response,
       });
     },
   },

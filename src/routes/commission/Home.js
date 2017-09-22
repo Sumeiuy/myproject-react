@@ -29,11 +29,13 @@ const effects = {
   record: 'commission/getApprovalRecords',
   searchCust: 'commission/searchCustList',
   searchDrafter: 'commission/searchDrafterList',
+  custRange: 'commission/getCustRange',
 };
 
 const mapStateToProps = state => ({
   list: state.commission.list,
   detail: state.commission.detail,
+  custRange: state.commission.custRange,
   approvalRecord: state.commission.approvalRecord,
   recordLoading: state.commission.recordLoading,
   filterCustList: state.commission.filterCustList,
@@ -50,9 +52,10 @@ const mapDispatchToProps = {
   replace: routerRedux.replace,
   getCommissionList: getDataFunction(true, effects.list), // 获取批量佣金调整List
   getCommissionDetail: getDataFunction(true, effects.detail), // 获取批量佣金调整Detail
-  getApprovalRecords: getDataFunction(true, effects.record), // 获取批量佣金调整Detail
+  getApprovalRecords: getDataFunction(true, effects.record), // 获取用户审批记录
   searchCustList: getDataFunction(true, effects.searchCust), // 通过关键字，查询可选用户列表
   searchDrafter: getDataFunction(true, effects.searchDrafter), // 通过关键字，查询可选拟稿人列表
+  getCustRange: getDataFunction(true, effects.custRange), // 组织机构
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -67,12 +70,14 @@ export default class CommissionHome extends PureComponent {
     getApprovalRecords: PropTypes.func.isRequired,
     searchCustList: PropTypes.func.isRequired,
     searchDrafter: PropTypes.func.isRequired,
+    getCustRange: PropTypes.func.isRequired,
+    custRange: PropTypes.array.isRequired,
     list: PropTypes.object.isRequired,
     detail: PropTypes.object.isRequired,
     approvalRecord: PropTypes.array.isRequired,
     recordLoading: PropTypes.bool.isRequired,
-    filterCustList: PropTypes.bool.isRequired,
-    filterDrafterList: PropTypes.bool.isRequired,
+    filterCustList: PropTypes.array.isRequired,
+    filterDrafterList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -91,6 +96,7 @@ export default class CommissionHome extends PureComponent {
   componentWillMount() {
     const {
       getCommissionList,
+      getCustRange,
       location: {
         query,
         query: {
@@ -102,6 +108,7 @@ export default class CommissionHome extends PureComponent {
     const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
     // 默认筛选条件
     getCommissionList({ ...params, type: pageType });
+    getCustRange({});
   }
 
   componentWillReceiveProps(nextProps) {
@@ -206,6 +213,12 @@ export default class CommissionHome extends PureComponent {
     console.warn('请输入的拟稿人关键字', keyword);
   }
 
+  // 根据用户输入的客户关键字查询客户List
+  @autobind
+  searchCustList(keyword) {
+    console.warn('请输入的客户关键字', keyword);
+  }
+
   // 生成左侧列表页面的数据列
   @autobind
   constructTableColumns() {
@@ -228,7 +241,15 @@ export default class CommissionHome extends PureComponent {
   }
 
   render() {
-    const { list, location, replace, detail } = this.props;
+    const {
+      location,
+      replace,
+      list,
+      detail,
+      filterDrafterList,
+      filterCustList,
+      custRange,
+    } = this.props;
     // 此处需要提供一个方法给返回的接口查询设置是否查询到数据
     const { isEmpty, approvalBoard, approvalCust } = this.state;
     const topPanel = (
@@ -238,9 +259,12 @@ export default class CommissionHome extends PureComponent {
         page="commission"
         subtypeOptions={subType}
         stateOptions={status}
-        drafterList={[]}
-        creatSeibelModal={this.handleCreateBtnClick}
         toSearchDrafter={this.searDrafterList}
+        drafterList={filterDrafterList}
+        toSearchCust={this.searchCustList}
+        customerList={filterCustList}
+        custRange={custRange}
+        creatSeibelModal={this.handleCreateBtnClick}
       />
     );
     const leftPanel = (
@@ -249,7 +273,8 @@ export default class CommissionHome extends PureComponent {
         replace={replace}
         location={location}
         columns={this.constructTableColumns()}
-        getListRowId={this.getListRowId}
+        clickRow={this.getListRowId}
+        backKeys={['bussiness1']}
       />
     );
 

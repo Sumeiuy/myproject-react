@@ -7,7 +7,7 @@
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
 import Select from '../Select';
-import CustRange from '../../pageCommon/CustRange2';
+import CustRange from '../../pageCommon/SeibelCustRange';
 import DropDownSelect from '../dropdownSelect';
 import Button from '../Button';
 
@@ -75,6 +75,19 @@ export default class Pageheader extends PureComponent {
       query: {
         ...query,
         empId: item.empId,
+        isResetPageNum: 'Y',
+      },
+    });
+  }
+
+  @autobind
+  selectCustRange(obj) {
+    const { replace, location: { pathname, query } } = this.props;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        orgId: obj.orgId,
         isResetPageNum: 'Y',
       },
     });
@@ -161,6 +174,7 @@ export default class Pageheader extends PureComponent {
           custRange={custRange}
           location={location}
           replace={replace}
+          updateQueryState={this.selectCustRange}
         />
 
 

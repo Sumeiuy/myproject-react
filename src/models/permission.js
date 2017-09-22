@@ -29,7 +29,7 @@ export default {
     },
     getPermissionListSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
-      const { page = EMPTY_OBJECT, applicationList = EMPTY_LIST } = resultData;
+      const { page = EMPTY_OBJECT, applicationBaseInfoList = EMPTY_LIST } = resultData;
       const { listData: preListData = EMPTY_LIST } = state.list;
 
       return {
@@ -37,7 +37,7 @@ export default {
         list: {
           page,
           resultData: page.pageNum === 1 ?
-            applicationList : [...preListData, ...applicationList],
+            applicationBaseInfoList : [...preListData, ...applicationBaseInfoList],
         },
       };
     },
@@ -105,7 +105,7 @@ export default {
         type: 'getPermissionListSuccess',
         payload: response,
       });
-      const result = response.resultData.applicationList;
+      const result = response.resultData.applicationBaseInfoList;
       if (Array.isArray(result) && result.length) {
         const detailList = yield call(api.getMessage, {
           id: result[0].id,
