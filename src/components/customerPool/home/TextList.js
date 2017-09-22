@@ -1,6 +1,8 @@
 /**
  * @file components/customerPool/common/TextList.js
- *  文字列表
+ *  文字列表，row如下图：-----代表solid线
+ *  xxxxx       50
+ *  --------------
  * @author zhangjunli
  */
 import React, { PropTypes } from 'react';

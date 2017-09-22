@@ -1,6 +1,8 @@
 /**
  * @file components/customerPool/common/ProgressList.js
- *  长条形进度条列表
+ *  长条形进度条列表,row如下图：-----代表进度条
+ * xxxxx         50
+ * ----------------
  * @author zhangjunli
  */
 import React, { PropTypes } from 'react';

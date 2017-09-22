@@ -1,6 +1,6 @@
 /**
  * @file components/customerPool/common/CycleProgressList.js
- *  圆形进度条列表
+ *  圆形进度条列表，目前只一行，两列，每列一个圆形进度条
  * @author zhangjunli
  */
 import React, { PropTypes } from 'react';

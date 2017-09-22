@@ -1,6 +1,12 @@
 /**
  * @file components/customerPool/home/Viewpoint.js
- *  带有标题的，能收缩的文字列表
+ *  带有标题的，能收缩的文字列表,---代表solid线
+ * xxx
+ * ------
+ *  xxxx
+ *  xxxx
+ * ------
+ *     xx
  * @author zhangjunli
  */
 import React, { PropTypes, PureComponent } from 'react';

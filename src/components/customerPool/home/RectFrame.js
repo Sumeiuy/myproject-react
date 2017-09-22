@@ -1,6 +1,12 @@
 /**
  * @file components/customerPool/common/RectFrame.js
- *  矩形框
+ *  存在不同指标的矩形框，带有title。样子类似：----和 | 都是solid线
+ * ----------
+ * |title   |
+ * ----------
+ * |        |
+ * |        |
+ * ----------
  * @author zhangjunli
  */
 import React, { PropTypes } from 'react';
