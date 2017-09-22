@@ -306,7 +306,6 @@ export default class Permission extends PureComponent {
         replace={replace}
         location={location}
         columns={this.constructTableColumns()}
-        getListRowId={this.getListRowId}
       />
     );
 

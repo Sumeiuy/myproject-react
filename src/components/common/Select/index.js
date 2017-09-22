@@ -5,6 +5,7 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import { Select } from 'antd';
 import styles from './index.less';
@@ -25,9 +26,10 @@ export default class CommonSelect extends PureComponent {
   @autobind
   makeSelectOptions(data) {
     const options = [];
-    data.forEach((item) => {
-      if (item.show) {
-        options.push(<Option key={item.value} value={item.value}>{item.label}</Option>);
+    _.forEach(data, (item) => {
+      const { show, value, label } = item;
+      if (show) {
+        options.push(<Option key={value} value={value}>{label}</Option>);
       }
     });
     return options;

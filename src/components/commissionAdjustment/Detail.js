@@ -5,26 +5,73 @@
  */
 
 import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
+
 import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
 import OtherCommission from './OtherCommission';
+// import { isNull } from '../../utils/helper';
 import styles from './detail.less';
 
 export default class Commissiondetail extends PureComponent {
+
+  static propTypes = {
+    location: PropTypes.object.isRequired,
+    checkApproval: PropTypes.func.isRequired,
+    data: PropTypes.object,
+  }
+
+  static defaultProps = {
+    data: {},
+  }
+
   render() {
+    const { data, location: { query: { currentId = '' } } } = this.props;
+    const {
+      businessType,
+      comments,
+      divisionName,
+      createdByName,
+      createdByLogin,
+      created,
+      status,
+      newCommission, // 目标佣金率（股基)
+      prodCode, // 目标产品
+      bgCommission, // B股
+      zqCommission, // 债券
+      hCommission, // 回购
+      oCommission, // 场内基金
+      qCommission, // 权证
+      stkCommission, // 担保股基
+      dzCommission, // 担保债券
+      doCommission, // 担保场内基金
+      dqCommission, // 担保权证
+      creditCommission, // 信用股基
+      coCommission, // 信用场内基金
+      hkCommission, // 港股通（净佣金）
+      opCommission, // 个股期权
+      ddCommission, // 担保品大宗
+      stbCommission, // 股转
+      dCommission, // 大宗交易
+    } = data;
+
+    const bugTitle = `编号${currentId}`;
+    const drafter = `${divisionName} - ${createdByName} (${createdByLogin})`;
+    const targetCom = `${newCommission}‰`;
+
     return (
       <div className={styles.detailBox}>
         <div className={styles.inner}>
-          <h1 className={styles.bugTitle}>编号11222</h1>
+          <h1 className={styles.bugTitle}>{bugTitle}</h1>
           <div id="detailModule" className={styles.module}>
             <InfoTitle head="基本信息" />
             <div className={styles.modContent}>
               <ul className={styles.propertyList}>
                 <li className={styles.item}>
-                  <InfoItem label="子类型" value="私密客户权限分配" />
+                  <InfoItem label="子类型" value={businessType} />
                 </li>
                 <li className={styles.item}>
-                  <InfoItem label="备注" value="这是备注这是备注这是备注这是备注这是备注这是备注这是备注这是备注这是备注这是备注这是备注这是备注这是备注" />
+                  <InfoItem label="备注" value={comments} />
                 </li>
               </ul>
             </div>
@@ -34,13 +81,13 @@ export default class Commissiondetail extends PureComponent {
             <div className={styles.modContent}>
               <ul className={styles.propertyList}>
                 <li className={styles.item}>
-                  <InfoItem label="拟稿人" value="南京分公司长江路营业部" />
+                  <InfoItem label="拟稿人" value={drafter} />
                 </li>
                 <li className={styles.item}>
-                  <InfoItem label="提请时间" value="2017/08/31" />
+                  <InfoItem label="提请时间" value={created} />
                 </li>
                 <li className={styles.item}>
-                  <InfoItem label="状态" value="已完成" />
+                  <InfoItem label="状态" value={status} />
                 </li>
               </ul>
             </div>
@@ -56,10 +103,10 @@ export default class Commissiondetail extends PureComponent {
             <div className={styles.modContent}>
               <ul className={styles.propertyList}>
                 <li className={styles.item}>
-                  <InfoItem label="目标佣金率（股基）" value="25‰" />
+                  <InfoItem label="目标佣金率（股基）" value={targetCom} />
                 </li>
                 <li className={styles.item}>
-                  <InfoItem label="目标产品" value="PPKD02/。。。。。" />
+                  <InfoItem label="目标产品" value={prodCode} />
                 </li>
               </ul>
             </div>
@@ -68,24 +115,24 @@ export default class Commissiondetail extends PureComponent {
             <InfoTitle head="其他佣金费率" />
             <div className={styles.modContent}>
               <div className={styles.leftCommission}>
-                <OtherCommission name="B股：" value="这里是内容" />
-                <OtherCommission name="债券：" value="这里是内容" />
-                <OtherCommission name="回购：" value="这里是内容" />
-                <OtherCommission name="场内基金：" value="这里是内容" />
-                <OtherCommission name="权证：" value="这里是内容" />
-                <OtherCommission name="担保股基：" value="这里是内容" />
-                <OtherCommission name="担保债券：" value="这里是内容" />
-                <OtherCommission name="担保场内基金：" value="这里是内容" />
+                <OtherCommission name="B股：" value={bgCommission} />
+                <OtherCommission name="债券：" value={zqCommission} />
+                <OtherCommission name="回购：" value={hCommission} />
+                <OtherCommission name="场内基金：" value={oCommission} />
+                <OtherCommission name="权证：" value={qCommission} />
+                <OtherCommission name="担保股基：" value={stkCommission} />
+                <OtherCommission name="担保债券：" value={dzCommission} />
+                <OtherCommission name="担保场内基金：" value={doCommission} />
               </div>
               <div className={styles.rightCommission}>
-                <OtherCommission name="担保权证：" value="这里是内容" />
-                <OtherCommission name="信用股基：" value="这里是内容" />
-                <OtherCommission name="信用场内基金：" value="这里是内容" />
-                <OtherCommission name="港股通（净佣金）：" value="这里是内容" />
-                <OtherCommission name="个股期权：" value="这里是内容" />
-                <OtherCommission name="担保品大宗：" value="这里是内容" />
-                <OtherCommission name="股转：" value="这里是内容" />
-                <OtherCommission name="大宗交易：" value="这里是内容" />
+                <OtherCommission name="担保权证：" value={dqCommission} />
+                <OtherCommission name="信用股基：" value={creditCommission} />
+                <OtherCommission name="信用场内基金：" value={coCommission} />
+                <OtherCommission name="港股通（净佣金）：" value={hkCommission} />
+                <OtherCommission name="个股期权：" value={opCommission} />
+                <OtherCommission name="担保品大宗：" value={ddCommission} />
+                <OtherCommission name="股转：" value={stbCommission} />
+                <OtherCommission name="大宗交易：" value={dCommission} />
               </div>
             </div>
           </div>
