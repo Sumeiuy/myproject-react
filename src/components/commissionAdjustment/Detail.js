@@ -10,6 +10,7 @@ import PropTypes from 'prop-types';
 import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
 import OtherCommission from './OtherCommission';
+import CommonTable from '../common/biz/CommonTable';
 // import { isNull } from '../../utils/helper';
 import styles from './detail.less';
 
@@ -28,6 +29,7 @@ export default class Commissiondetail extends PureComponent {
   render() {
     const { data, location: { query: { currentId = '' } } } = this.props;
     const {
+      custList = [],
       businessType,
       comments,
       divisionName,
@@ -58,6 +60,43 @@ export default class Commissiondetail extends PureComponent {
     const bugTitle = `编号${currentId}`;
     const drafter = `${divisionName} - ${createdByName} (${createdByLogin})`;
     const targetCom = `${newCommission}‰`;
+    // 表头
+    const tableHeader = [
+      {
+        dataIndex: 'econNum',
+        key: 'econNum',
+        title: '经纪客户号',
+      },
+      {
+        dataIndex: 'custName',
+        key: 'custName',
+        title: '客户名称',
+      },
+      {
+        dataIndex: 'custLevel',
+        key: 'custLevel',
+        title: '客户等级',
+      },
+      {
+        dataIndex: 'openAccDept',
+        key: 'openAccDept',
+        title: '开户营业部',
+      },
+      {
+        dataIndex: 'status',
+        key: 'status',
+        title: '状态',
+      },
+    ];
+
+    // 表格中需要的操作
+    const operation = {
+      column: {
+        key: 'view', // 'check'\'delete'\'view'
+        title: '审批记录',
+      },
+      operate: this.props.checkApproval,
+    };
 
     return (
       <div className={styles.detailBox}>
@@ -95,7 +134,14 @@ export default class Commissiondetail extends PureComponent {
           <div id="customer_module" className={styles.module}>
             <InfoTitle head="客户信息" />
             <div className={styles.modContent}>
-              客户列表
+              <CommonTable
+                data={custList}
+                titleList={tableHeader}
+                operation={operation}
+                pagination={{
+                  pageSize: 5,
+                }}
+              />
             </div>
           </div>
           <div id="choosecommission" className={styles.module}>
