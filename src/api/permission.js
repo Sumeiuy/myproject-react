@@ -8,8 +8,8 @@ export default function permission(api) {
     getMessage: query => api.post('/groovynoauth/fsp/smkhsq/queryApplicationDetail', query),
     // 获取服务人员列表
     getServerPersonelList: query => api.post('/groovynoauth/fsp/smkhsq/queryApplicationEmpList', query),
-    // 获取子类型
-    getChildTypeList: query => api.post('/groovynoauth/fsp/smkhsq/queryAvalibleEmpList', query),
+    // // 获取子类型
+    // getChildTypeList: query => api.post('/groovynoauth/fsp/smkhsq/queryAvalibleEmpList', query),
     // 获取客户列表
     getCustomerList: query => api.post('/groovynoauth/fsp/smkhsq/CustList', query),
     // 获取权限申请列表
@@ -18,5 +18,9 @@ export default function permission(api) {
     getDrafterList: query => api.post('/groovynoauth/fsp/queryDrafterList', query),
     // 获取部门
     getEmpOrgTree: query => api.post('/groovynoauth/jxzb/empOrgTree', query),
+    // 新建状态下 获取已经有得服务人员列表
+    getHasServerPersonList: query => api.post('/groovynoauth/fsp/smkhsq/queryCustEmpList', query),
+    // 查询某客户的服务人员待选择列表
+    getSearchServerPersonelList: query => api.post('/groovynoauth/fsp/smkhsq/queryEmpList', query),
   };
 }

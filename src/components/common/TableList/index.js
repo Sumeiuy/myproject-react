@@ -58,7 +58,7 @@ export default class TableList extends PureComponent {
             className="flex-base_2 text-center"
           >
             <span
-              className={item.isMain ? style.mainManager : ''}
+              className={item.isMain === 'Y' ? style.mainManager : ''}
             >{item.ptyMngName}</span>
           </span>
           <span

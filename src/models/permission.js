@@ -13,11 +13,13 @@ export default {
   state: {
     detailMessage: EMPTY_OBJECT, // 详情
     list: EMPTY_OBJECT,
-    serverPersonelList: EMPTY_LIST, // 服务人员列表
+    // searchServerPersonList: EMPTY_LIST, // 服务人员列表
     drafterList: EMPTY_LIST, // 拟稿人
     custRange: EMPTY_LIST, // 部门
     childTypeList: EMPTY_LIST, // 子类型
     customerList: EMPTY_LIST, // 客户列表
+    hasServerPersonList: EMPTY_LIST, // 已有服务人员列表
+    searchServerPersonList: EMPTY_LIST, // 可查询服务人员列表
   },
   reducers: {
     getDetailMessageSuccess(state, action) {
@@ -41,11 +43,12 @@ export default {
         },
       };
     },
-    getServerPersonelListSuccess(state, action) {
-      const { payload: { resultData = EMPTY_LIST } } = action;
+    getSearchServerPersonListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      const { servicePeopleList = EMPTY_LIST } = resultData;
       return {
         ...state,
-        serverPersonelList: resultData,
+        searchServerPersonList: servicePeopleList,
       };
     },
     getDrafterListSuccess(state, action) {
@@ -90,6 +93,13 @@ export default {
         customerList: custList,
       };
     },
+    getHasServerPersonListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_LIST } } = action;
+      return {
+        ...state,
+        hasServerPersonList: resultData,
+      };
+    },
   },
   effects: {
     * getDetailMessage({ payload }, { call, put }) {
@@ -117,10 +127,10 @@ export default {
         });
       }
     },
-    * getServerPersonelList({ payload }, { call, put }) {
-      const response = yield call(api.getServerPersonelList, payload);
+    * getSearchServerPersonList({ payload }, { call, put }) {
+      const response = yield call(api.getSearchServerPersonelList, payload);
       yield put({
-        type: 'getServerPersonelListSuccess',
+        type: 'getSearchServerPersonListSuccess',
         payload: response,
       });
     },
@@ -149,6 +159,13 @@ export default {
       const response = yield call(api.getCustomerList, payload);
       yield put({
         type: 'getCustomerListSuccess',
+        payload: response,
+      });
+    },
+    * getHasServerPersonList({ payload }, { call, put }) {
+      const response = yield call(api.getHasServerPersonList, payload);
+      yield put({
+        type: 'getHasServerPersonListSuccess',
         payload: response,
       });
     },

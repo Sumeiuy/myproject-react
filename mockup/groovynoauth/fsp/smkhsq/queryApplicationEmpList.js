@@ -4,41 +4,53 @@ exports.response = function (req, res) {
     "msg": "OK",
     "resultData": [
       {
-        "ptyMngId":"154656",
-        "ptyMngName": "仗义",
-        "job": "岗位A",
-        "businessDepartment": "南京长江路证券营业部",
-        "isMain": false
+          "row_Id": null,
+          "empId": "123455",
+          "empName": "小明",
+          "isMain": "false",
+          "occupation": "经纪及财富管理部",
+          "occDivnNum": "ZZ001041",
+          "jobTitle": "经营分析团队负责人"
       }, {
-        "ptyMngId":"154654568",
-        "ptyMngName": "李二",
-        "job": "岗位A",
-        "businessDepartment": "南京长江路证券营业部",
-        "isMain": false
+          "row_Id": null,
+          "empId": "123450",
+          "empName": "小费",
+          "isMain": "false",
+          "occupation": "经纪及财富管理部",
+          "occDivnNum": "ZZ001041",
+          "jobTitle": "经营分析团队负责人"
       }, {
-        "ptyMngId":"45444",
-        "ptyMngName": "码子",
-        "job": "岗位A",
-        "businessDepartment": "南京长江路证券营业部",
-        "isMain": false
+          "row_Id": null,
+          "empId": "124445",
+          "empName": "小王",
+          "isMain": "false",
+          "occupation": "经纪及财富管理部",
+          "occDivnNum": "ZZ001041",
+          "jobTitle": "经营分析团队负责人"
       }, {
-        "ptyMngId":"2685546",
-        "ptyMngName": "九万",
-        "job": "岗位A",
-        "businessDepartment": "南京长江路证券营业部",
-        "isMain": false
+          "row_Id": null,
+          "empId": "9875522",
+          "empName": "隔壁老王",
+          "isMain": "false",
+          "occupation": "经纪及财富管理部",
+          "occDivnNum": "ZZ001041",
+          "jobTitle": "经营分析团队负责人"
       }, {
-        "ptyMngId":"156165",
-        "ptyMngName": "不知道",
-        "job": "岗位A",
-        "businessDepartment": "南京长江路证券营业部",
-        "isMain": false
+          "row_Id": null,
+          "empId": "123123456",
+          "empName": "小红",
+          "isMain": "false",
+          "occupation": "经纪及财富管理部",
+          "occDivnNum": "ZZ001041",
+          "jobTitle": "经营分析团队负责人"
       }, {
-        "ptyMngId":"446465255325",
-        "ptyMngName": "妖姬",
-        "job": "岗位A",
-        "businessDepartment": "南京长江路证券营业部",
-        "isMain": false
+          "row_Id": null,
+          "empId": "1234555",
+          "empName": "小强",
+          "isMain": "false",
+          "occupation": "经纪及财富管理部",
+          "occDivnNum": "ZZ001041",
+          "jobTitle": "经营分析团队负责人"
       },
     ],
   };
