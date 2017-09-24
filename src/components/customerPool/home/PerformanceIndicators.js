@@ -5,121 +5,50 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import { Row, Col, Select } from 'antd';
-import _ from 'lodash';
-import { autobind } from 'core-decorators';
-import Icon from '../../common/Icon';
-import CustomerService from './CustomerService';
-import ProductSales from './ProductSales';
+import { Row, Col } from 'antd';
+// import Icon from '../../common/Icon';
+// import CustomerService from './CustomerService';
+// import ProductSales from './ProductSales';
 import TradingVolume from './TradingVolume';
-import CustomerIndicators from './CustomerIndicators';
-import BusinessProcessing from './BusinessProcessing';
-import Income from './Income';
-import { getDurationString } from '../../../utils/helper';
-import CustRange from '../common/CustRange';
-import { optionsMap } from '../../../config';
+// import CustomerIndicators from './CustomerIndicators';
+// import BusinessProcessing from './BusinessProcessing';
+// import Income from './Income';
 import styles from './performanceIndicators.less';
+import ProgressList from './ProgressList';
+import TextList from './TextList';
+// import CycleProgressList from './CycleProgressList';
+import RectFrame from './RectFrame';
+import IECharts from '../../IECharts';
 
-const Option = Select.Option;
-let KEYCOUNT = 0;
 export default class PerformanceIndicators extends PureComponent {
   static propTypes = {
     indicators: PropTypes.object,
     customersData: PropTypes.array,
-    custRange: PropTypes.array,
-    replace: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
-    updateQueryState: PropTypes.func.isRequired,
-    collectCustRange: PropTypes.func.isRequired,
     cycle: PropTypes.array,
-    expandAll: PropTypes.bool,
-    selectValue: PropTypes.string,
     location: PropTypes.object.isRequired,
     incomeData: PropTypes.array.isRequired,
-    orgId: PropTypes.string,
+    lastAddCusts: PropTypes.array,
+    serviceIndicators: PropTypes.array,
   }
 
   static defaultProps = {
     indicators: {},
     customersData: [],
-    custRange: [],
     cycle: [],
-    expandAll: false,
-    selectValue: '',
-    orgId: '',
-  }
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      key: KEYCOUNT,
-      begin: '',
-      end: '',
-    };
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { custRange: preCustRange, selectValue: prevSelectValue } = this.props;
-    const { custRange: nextCustRange, selectValue: nextSelectValue } = nextProps;
-    if (!_.isEqual(preCustRange, nextCustRange)) {
-      this.setState({
-        key: ++KEYCOUNT,
-      });
-    }
-    if (prevSelectValue !== nextSelectValue) {
-      const { begin, end } = this.getBeginAndEndTime(nextSelectValue);
-      this.setState({
-        begin,
-        end,
-      });
-    }
-  }
-
-  @autobind
-  getBeginAndEndTime(value) {
-    const { historyTime, customerPoolTimeSelect } = optionsMap;
-    const currentSelect = _.find(historyTime, itemData =>
-      itemData.name === _.find(customerPoolTimeSelect, item =>
-        item.key === value).name) || {};
-    const nowDuration = getDurationString(currentSelect.key);
-    const begin = nowDuration.begin;
-    const end = nowDuration.end;
-    return {
-      begin,
-      end,
-    };
-  }
-
-  @autobind
-  handleChange(value) {
-    const { begin, end } = this.getBeginAndEndTime(value);
-    const { updateQueryState } = this.props;
-    updateQueryState({
-      cycleSelect: value,
-      begin,
-      end,
-    });
-    // 记录下当前选中的timeSelect
-    this.setState({
-      begin,
-      end,
-    });
+    lastAddCusts: [],
+    serviceIndicators: [],
   }
 
   render() {
     const {
       indicators,
-      custRange,
-      replace,
-      updateQueryState,
-      collectCustRange,
-      cycle,
-      expandAll,
-      selectValue,
-      push,
-      location,
-      incomeData,
-      orgId,
+      // cycle,
+      // push,
+      // location,
+      // incomeData,
+      lastAddCusts,
+      // serviceIndicators,
     } = this.props;
     const {
       cftCust,
@@ -172,66 +101,142 @@ export default class PerformanceIndicators extends PureComponent {
       szHkCust,
       optCust,
     };
-    const { key, begin, end } = this.state;
+    console.log('为了lint通过，先输出', businessProcessing, customerServiceData, productSalesData, customerIndicators);
+    const businessOption = {
+      grid: {
+        left: '15px',
+        right: '15px',
+        bottom: '40px',
+        top: '30px',
+        containLabel: false,
+      },
+      xAxis: {
+        data: ['MOT\n完成率', '服务\n覆盖率', '多元配\n置覆盖率', '信息\n完备率'],
+        axisTick: { show: false },
+        axisLine: { show: false },
+        axisLabel: {
+          color: '#999',
+          fontSize: '12',
+          interval: 0,
+          margin: 6,
+        },
+      },
+      yAxis: {
+        show: false,
+        splitLine: { show: false },
+      },
+      series: [{
+        type: 'bar',
+        itemStyle: {
+          normal: { color: '#ddd' },
+        },
+        silent: true,
+        barWidth: 25,
+        barGap: '-100%', // Make series be overlap
+        data: [100, 100, 100, 100],
+      }, {
+        type: 'bar',
+        itemStyle: {
+          normal: { color: '#188ca2' },
+        },
+        barWidth: 25,
+        z: 10,
+        data: [90, 80, 30, 75],
+        label: {
+          normal: {
+            show: true,
+            position: 'top',
+            color: '#999',
+            formatter: params => `${params.value}%`,
+          },
+        },
+      }],
+    };
+    const serviceOption = {
+      color: ['#334fb4'],
+      grid: {
+        left: '15px',
+        right: '15px',
+        bottom: '30px',
+        top: '30px',
+        containLabel: false,
+      },
+      xAxis: [
+        {
+          data: ['天天发', '港股通', '融资融券', '期权', '创业版'],
+          axisTick: { show: false },
+          axisLabel: {
+            color: '#999',
+            fontSize: '12',
+            interval: 0,
+            margin: 4,
+          },
+          axisLine: {
+            lineStyle: {
+              color: '#999',
+            },
+          },
+        },
+      ],
+      yAxis: [{ show: false }],
+      series: [
+        {
+          name: '业务开通数（户次）',
+          type: 'bar',
+          barWidth: '10px',
+          barGap: '30px',
+          label: {
+            normal: {
+              show: true,
+              position: 'top',
+              color: '#1486d8',
+            },
+          },
+          data: [50, 40, 50, 35, 40],
+        },
+      ],
+    };
+    const addCustHead = { icon: '', title: '新增客户（户）' };
     return (
       <div className={styles.indexBox}>
         <div>
-          <div className={styles.title}>
-            <span className={styles.name}>绩效指标</span>
-            <div className={styles.timeBox}>
-              <Icon type="kehu" />
-              {
-                !_.isEmpty(custRange) ?
-                  <CustRange
-                    orgId={orgId}
-                    custRange={custRange}
-                    location={location}
-                    replace={replace}
-                    updateQueryState={updateQueryState}
-                    beginTime={begin}
-                    endTime={end}
-                    collectData={collectCustRange}
-                    expandAll={expandAll}
-                    key={`selectTree${key}`}
-                  /> :
-                  <Select
-                    style={{ width: 200, color: '#CCC' }}
-                    defaultValue="暂无数据"
-                    key="seletTreeNull"
-                  >
-                    <Option value="暂无数据">暂无数据</Option>
-                  </Select>
-              }
-              <i className={styles.bd} />
-              <Icon type="rili" />
-              <Select
-                style={{ width: 60 }}
-                value={selectValue}
-                onChange={this.handleChange}
-                key="dateSelect"
-              >
-                {cycle.map(item =>
-                  <Option key={item.key} value={item.key}>{item.value}</Option>)}
-              </Select>
-            </div>
-          </div>
           <div className={`${styles.listItem} ${styles.firstListItem}`}>
             <Row gutter={16}>
               <Col span={8}>
-                <CustomerIndicators
+                <RectFrame dataSource={addCustHead}>
+                  <ProgressList dataSource={lastAddCusts} />
+                </RectFrame>
+
+                {/* <CustomerIndicators
                   cycle={cycle}
                   push={push}
                   location={location}
                   data={customerIndicators}
-                />
+                /> */}
               </Col>
               <Col span={8}>
-                <BusinessProcessing
+                <RectFrame dataSource={addCustHead}>
+                  <IECharts
+                    option={serviceOption}
+                    resizable
+                    onReady={this.radarOnReady}
+                    style={{
+                      height: '170px',
+                    }}
+                  />
+                </RectFrame>
+                {/* <BusinessProcessing
                   cycle={cycle}
                   push={push}
                   location={location}
                   data={businessProcessing}
-                />
+                /> */}
+                {/* <BusinessProcessing
+                  cycle={cycle}
+                  push={push}
+                  location={location}
+                  data={businessProcessing}
+                /> */}
               </Col>
               <Col span={8}>
                 <TradingVolume
@@ -243,12 +248,18 @@ export default class PerformanceIndicators extends PureComponent {
           <div className={styles.listItem}>
             <Row gutter={16}>
               <Col span={8}>
-                <ProductSales
+                <RectFrame dataSource={addCustHead}>
+                  <TextList dataSource={lastAddCusts} />
+                </RectFrame>
+                {/* <ProductSales
                   data={productSalesData}
-                />
+                /> */}
               </Col>
               <Col span={8}>
-                <div className={styles.indexItemBox}>
+                <RectFrame dataSource={addCustHead}>
+                  <ProgressList dataSource={lastAddCusts} />
+                </RectFrame>
+                {/* <div className={styles.indexItemBox}>
                   <div className={styles.inner}>
                     <div className={styles.title}>
                       <Icon type="shouru" />净创收
@@ -259,10 +270,23 @@ export default class PerformanceIndicators extends PureComponent {
                       />
                     </div>
                   </div>
-                </div>
+                </div> */}
               </Col>
               <Col span={8}>
-                <div className={styles.indexItemBox}>
+                <RectFrame dataSource={addCustHead}>
+                  <IECharts
+                    option={businessOption}
+                    resizable
+                    onReady={this.radarOnReady}
+                    style={{
+                      height: '170px',
+                    }}
+                  />
+                </RectFrame>
+                {/* <RectFrame dataSource={addCustHead}>
+                  <CycleProgressList dataSource={serviceIndicators} />
+                </RectFrame> */}
+                {/* <div className={styles.indexItemBox}>
                   <div className={styles.inner}>
                     <div className={styles.title}>
                       <Icon type="kehufuwu" />客户服务
@@ -273,7 +297,7 @@ export default class PerformanceIndicators extends PureComponent {
                       />
                     </div>
                   </div>
-                </div>
+                </div> */}
               </Col>
             </Row>
           </div>

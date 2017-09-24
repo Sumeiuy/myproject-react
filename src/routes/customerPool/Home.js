@@ -8,15 +8,20 @@ import React, { PropTypes, PureComponent } from 'react';
 import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
+import { Tabs } from 'antd';
 import _ from 'lodash';
+
 import { getDurationString } from '../../utils/helper';
 import { optionsMap } from '../../config';
+import TabsExtra from '../../components/customerPool/home/TabsExtra';
 import PerformanceIndicators from '../../components/customerPool/home/PerformanceIndicators';
 import ToBeDone from '../../components/customerPool/home/ToBeDone';
 import { helper } from '../../utils';
 import Search from '../../components/customerPool/home/Search';
+import Viewpoint from '../../components/customerPool/home/Viewpoint';
 import styles from './home.less';
 
+const TabPane = Tabs.TabPane;
 const CUST_MANAGER = '1'; // 客户经理
 // const CUST_MANAGER_TEAM = 2; // 客户经理团队
 const ORG = '3'; // 组织机构
@@ -34,6 +39,10 @@ const effects = {
   clearSearchHistoryList: 'customerPool/clearSearchHistoryList',
   saveSearchVal: 'customerPool/saveSearchVal',
   getIncomeData: 'customerPool/getIncomeData',
+  getViewpoints: 'customerPool/getViewpoints',
+  getLastAddCust: 'customerPool/getLastAddCust',
+  getServiceIndicators: 'customerPool/getServiceIndicators',
+
 };
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -56,9 +65,15 @@ const mapStateToProps = state => ({
   clearState: state.customerPool.clearState, // 清除历史列表
   searchHistoryVal: state.customerPool.searchHistoryVal, // 保存搜索内容
   incomeData: state.customerPool.incomeData, // 净创收数据
+  viewpoints: state.customerPool.viewpoints, // 首席投顾观点
+  lastAddCusts: state.customerPool.lastAddCusts, // 新增客户数
+  serviceIndicators: state.customerPool.serviceIndicators, // 服务指标
 });
 
 const mapDispatchToProps = {
+  getServiceIndicators: fetchDataFunction(true, effects.getServiceIndicators),
+  getLastAddCust: fetchDataFunction(true, effects.getLastAddCust),
+  getViewpoints: fetchDataFunction(true, effects.getViewpoints),
   getToBeDone: fetchDataFunction(true, effects.toBeTone),
   getPerformanceIndicators: fetchDataFunction(true, effects.performanceIndicators),
   getHotPossibleWds: fetchDataFunction(false, effects.getHotPossibleWds),
@@ -101,6 +116,12 @@ export default class Home extends PureComponent {
     searchHistoryVal: PropTypes.string,
     incomeData: PropTypes.array,
     getIncomeData: PropTypes.func.isRequired,
+    getViewpoints: PropTypes.func.isRequired,
+    viewpoints: PropTypes.array,
+    lastAddCusts: PropTypes.array,
+    getLastAddCust: PropTypes.func.isRequired,
+    getServiceIndicators: PropTypes.func.isRequired,
+    serviceIndicators: PropTypes.array,
   }
 
   static defaultProps = {
@@ -118,6 +139,9 @@ export default class Home extends PureComponent {
     clearState: EMPTY_OBJECT,
     searchHistoryVal: '',
     incomeData: EMPTY_LIST,
+    viewpoints: EMPTY_LIST,
+    lastAddCusts: EMPTY_LIST,
+    serviceIndicators: EMPTY_LIST,
   }
 
   constructor(props) {
@@ -299,6 +323,9 @@ export default class Home extends PureComponent {
   handleGetAllInfo(begin, end, cycleSelect) {
     const { fspOrgId } = this.state;
     const {
+      getServiceIndicators,
+      getLastAddCust,
+      getViewpoints,
       getToBeDone,
       getHotWds,
       getHistoryWdsList,
@@ -320,6 +347,12 @@ export default class Home extends PureComponent {
 
     // 待办事项
     getToBeDone();
+    // 首席投顾观点
+    getViewpoints();
+    // 新增客户
+    getLastAddCust();
+    // 服务指标
+    getServiceIndicators();
 
     // 净创收数据
     this.getIncomes({ begin, end, orgId: fspOrgId, cycleSelect });
@@ -528,12 +561,40 @@ export default class Home extends PureComponent {
     );
   }
 
+  @autobind
+  renderTabsExtra() {
+    const {
+      custRange,
+      replace,
+      collectCustRange,
+      cycle,
+      location,
+    } = this.props;
+    const {
+      expandAll,
+      cycleSelect,
+      createCustRange,
+      fspOrgId,
+      isHasAuthorize,
+    } = this.state;
+    const extraProps = {
+      custRange: createCustRange,
+      replace,
+      updateQueryState: this.updateQueryState,
+      collectCustRange,
+      cycle,
+      expandAll,
+      selectValue: cycleSelect,
+      location,
+      orgId: isHasAuthorize ? (fspOrgId || custRange[0].id) : null,
+    };
+    return (<TabsExtra {...extraProps} />);
+  }
+
   render() {
     const {
       performanceIndicators,
       location,
-      replace,
-      collectCustRange,
       process,
       cycle,
       motTaskCount,
@@ -544,9 +605,11 @@ export default class Home extends PureComponent {
       clearState,
       searchHistoryVal,
       incomeData,
-      custRange,
+      viewpoints,
+      lastAddCusts,
+      serviceIndicators,
     } = this.props;
-    const { expandAll, cycleSelect, createCustRange, fspOrgId, isHasAuthorize } = this.state;
+    const { fspOrgId } = this.state;
     return (
       <div className={styles.customerPoolWrap}>
         <Search
@@ -562,26 +625,45 @@ export default class Home extends PureComponent {
           searchHistoryVal={searchHistoryVal}
           saveSearchVal={this.handleSaveSearchVal}
         />
-        <div className={styles.content}>
-          <ToBeDone
-            push={push}
-            data={process}
-            motTaskCountData={motTaskCount}
-          />
-          <PerformanceIndicators
-            push={push}
-            indicators={performanceIndicators}
-            custRange={createCustRange}
-            updateQueryState={this.updateQueryState}
-            collectCustRange={collectCustRange}
-            location={location}
-            replace={replace}
-            cycle={cycle}
-            expandAll={expandAll}
-            selectValue={cycleSelect}
-            incomeData={incomeData}
-            orgId={isHasAuthorize ? (fspOrgId || custRange[0].id) : null}
-          />
+        <div className={styles.poolContainer}>
+          <div className={styles.content}>
+            <ToBeDone
+              push={push}
+              data={process}
+              motTaskCountData={motTaskCount}
+            />
+            <Tabs
+              tabBarExtraContent={this.renderTabsExtra()}
+              defaultActiveKey="1"
+              onChange={this.callback}
+            >
+              <TabPane tab="经营指标" key="1">
+                <PerformanceIndicators
+                  push={push}
+                  indicators={performanceIndicators}
+                  location={location}
+                  cycle={cycle}
+                  incomeData={incomeData}
+                  lastAddCusts={lastAddCusts}
+                  serviceIndicators={serviceIndicators}
+                />
+              </TabPane>
+              <TabPane tab="投顾绩效" key="2">
+                <PerformanceIndicators
+                  push={push}
+                  indicators={performanceIndicators}
+                  location={location}
+                  cycle={cycle}
+                  incomeData={incomeData}
+                  lastAddCusts={lastAddCusts}
+                  serviceIndicators={serviceIndicators}
+                />
+              </TabPane>
+            </Tabs>
+          </div>
+          <div className={styles.viewPoint}>
+            <Viewpoint dataSource={viewpoints} />
+          </div>
         </div>
       </div>
     );

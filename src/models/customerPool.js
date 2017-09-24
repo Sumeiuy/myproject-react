@@ -12,6 +12,9 @@ const EMPTY_OBJECT = {};
 export default {
   namespace: 'customerPool',
   state: {
+    serviceIndicators: [],
+    lastAddCusts: [],
+    viewpoints: [],
     todolist: [],
     todolistRecord: [],
     todoPage: {
@@ -64,6 +67,27 @@ export default {
     },
   },
   effects: {
+    * getServiceIndicators({ }, { call, put }) {  //eslint-disable-line
+      const response = yield call(api.getServiceIndicators);
+      yield put({
+        type: 'getServiceIndicatorsSuccess',
+        payload: response,
+      });
+    },
+    * getLastAddCust({ }, { call, put }) {  //eslint-disable-line
+      const response = yield call(api.getLastAddCust);
+      yield put({
+        type: 'getLastAddCustSuccess',
+        payload: response,
+      });
+    },
+    * getViewpoints({ }, { call, put }) {  //eslint-disable-line
+      const response = yield call(api.getViewpoints);
+      yield put({
+        type: 'getViewpointsSuccess',
+        payload: response,
+      });
+    },
     * getToDoList({ }, { call, put }) {  //eslint-disable-line
       const response = yield call(api.getToDoList);
       yield put({
@@ -296,6 +320,27 @@ export default {
     },
   },
   reducers: {
+    getServiceIndicatorsSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        serviceIndicators: resultData,
+      };
+    },
+    getLastAddCustSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        lastAddCusts: resultData,
+      };
+    },
+    getViewpointsSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        viewpoints: resultData,
+      };
+    },
     getToDoListSuccess(state, action) {
       const { payload: { resultData: { empWorkFlowList } } } = action;
       empWorkFlowList.forEach((item) => {

@@ -99,9 +99,6 @@ export default class CustRange extends PureComponent {
     };
   }
 
-  componentDidMount() {
-  }
-
   @autobind
   onChange(value) {
     if (!value) {
@@ -151,7 +148,6 @@ export default class CustRange extends PureComponent {
         treeNodeFilterProp={'title'}
         showSearch
         dropdownMatchSelectWidth
-        style={{ width: 200 }}
         labelInValue
         getPopupContainer={() => document.querySelector(constants.container)}
       />
