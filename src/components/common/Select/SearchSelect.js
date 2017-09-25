@@ -15,82 +15,84 @@ export default class ProductsDropdownBox extends PureComponent {
 
   static propTypes = {
     labelName: PropTypes.string.isRequired,
-    dataSource: PropTypes.array,
-    onChange: PropTypes.func.isRequired,
-    addSelectValue: PropTypes.func.isRequired,
-    value: PropTypes.string,
+    dataSource: PropTypes.array.isRequired,
+    addClick: PropTypes.func.isRequired,
+    changeValue: PropTypes.func.isRequired,
     width: PropTypes.string,
   }
 
   static defaultProps = {
-    dataSource: [
-      {
-        key: '1-34Z1T0D-1',
-        name: '通道佣金专用（万分之1.5）',
-      },
-      {
-        key: '1-34Z1T0D-2',
-        name: '通道佣金专用（万分之1.6）',
-      },
-    ],
-    value: '',
-    width: '300',
+    width: '300px',
   }
 
   constructor(props) {
     super(props);
     this.state = {
       selectItem: {},
+      inputValue: '',
     };
+  }
+
+   @autobind
+  onChange(value) {
+    this.setState({
+      inputValue: value,
+    });
   }
 
   // 根据用户选中的option的value值获取对应的数组值
   @autobind
-  setSelectValue(value) {
+  setSelectValue(value, option) {
     this.setState({
-      selectItem: this.props.dataSource[value],
+      selectItem: this.props.dataSource[option.props.index],
     });
   }
 
   // 把对应的数组值传入外部接口
   @autobind
   handleAddBtnClick() {
-    this.props.addSelectValue(this.state.selectItem);
+    this.props.addClick(this.state.selectItem);
   }
 
+  @autobind
+  changeDataSource() {
+    this.props.changeValue(this.state.inputValue);
+  }
+
+
   render() {
-    const { labelName, onChange, dataSource, value, width } = this.props;
-    const options = dataSource.map((opt, index) => (
-      <Option key={opt.id} value={`${index}`}>
-        <span className={styles.prodvalue}>{opt.name}</span>
+    const { labelName, dataSource, width } = this.props;
+    const options = dataSource.map(opt => (
+      <Option key={opt.key} value={opt.name}>
+        <span className={styles.prodValue}>{opt.name}</span>
       </Option>
     ));
     return (
       <div className={styles.selectSearchBox}>
         <span className={styles.labelName}>{`${labelName}：`}</span>
         <AutoComplete
-          className={styles.searchbox}
-          dropdownClassName={styles.searchdropdown}
+          className={styles.searchBox}
+          dropdownClassName={styles.searchDropDown}
           dropdownStyle={{ width }}
           dropdownMatchSelectWidth={false}
           size="large"
           style={{ width }}
           dataSource={options}
-          onChange={onChange}
-          onSelect={this.setSelectValue}
           optionLabelProp="value"
-          value={value}
+          onChange={this.onChange}
+          onSelect={this.setSelectValue}
         >
           <Input
             suffix={
               <Icon
                 type="search"
-                className={styles.searchicon}
+                onClick={this.changeDataSource}
+                className={styles.searchIcon}
               />
             }
           />
         </AutoComplete>
-        <Button onClick={this.handleAddBtnClick}>添加</Button>
+        <Button className={styles.addButton} onClick={this.handleAddBtnClick}>添加</Button>
       </div>
     );
   }
