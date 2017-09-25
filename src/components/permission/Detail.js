@@ -5,6 +5,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
 import classnames from 'classnames';
 import style from './detail.less';
 import MessageList from '../common/MessageList';
@@ -108,7 +109,7 @@ export default class Detail extends PureComponent {
     // 返回基本信息或者基本信息修改组件
     let result;
     const { subType, custName, custNumber, remark } = this.props;
-    const subTypeTxt = subTypeList.filter(item => (item.value === subType))[0].label;
+    const subTypeTxt = this.changeDisplay(subType, subTypeList);
     const info = [
       {
         title: '子类型',
@@ -147,7 +148,7 @@ export default class Detail extends PureComponent {
   get draftInfo() {
     // 返回拟稿信息组件
     const { empName, createTime, status } = this.props;
-    const statusTxt = statusList.filter(item => (item.value === status))[0].label;
+    const statusTxt = this.changeDisplay(status, statusList);
     const info = [
       {
         title: '拟稿',
@@ -190,6 +191,16 @@ export default class Detail extends PureComponent {
   updateValue(name, value) { // 更新本地数据
     console.log(name, value);
     this.setState({ [name]: value });
+  }
+
+  // 后台返回的子类型字段、状态字段转化为对应的中文显示
+  @autobind
+  changeDisplay(st, options) {
+    if (st && !_.isEmpty(st)) {
+      const nowStatus = _.find(options, o => o.value === st) || {};
+      return nowStatus.label || '无';
+    }
+    return '无';
   }
 
   render() {
