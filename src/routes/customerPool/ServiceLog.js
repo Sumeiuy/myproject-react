@@ -72,7 +72,7 @@ export default class CreateTaskForm extends PureComponent {
     const params = {
       custId: '020014642',
       empId: '001206',
-    }
+    };
     getServiceRecord({
       ...params,
     });
