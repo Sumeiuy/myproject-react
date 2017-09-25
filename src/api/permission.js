@@ -11,7 +11,7 @@ export default function permission(api) {
     // // 获取子类型
     // getChildTypeList: query => api.post('/groovynoauth/fsp/smkhsq/queryAvalibleEmpList', query),
     // 获取客户列表
-    getCustomerList: query => api.post('/groovynoauth/fsp/smkhsq/CustList', query),
+    getCustomerList: query => api.post('/groovynoauth/fsp/empCustList', query),
     // 获取权限申请列表
     getPermissionList: query => api.post('/groovynoauth/fsp/queryApplicationList', query),
     // 获取拟稿人
