@@ -254,14 +254,14 @@ export default class CustomerRow extends PureComponent {
     let addresses = '';
     let finded = 0;// 邮件联系
     let email = null;
-    if (address.orgCustomerContactInfoList !== undefined
+    if (!_.isEmpty(address.orgCustomerContactInfoList)
         && _.size(address.orgCustomerContactInfoList) > 0) {
       const index = _.findLastIndex(address.orgCustomerContactInfoList,
           val => val.mainFlag);
       finded = _.findLastIndex(address.orgCustomerContactInfoList[index].emailAddresses,
           val => val.mainFlag);
       addresses = address.orgCustomerContactInfoList[index];
-    } else if (address.perCustomerContactInfo !== undefined
+    } else if (!_.isEmpty(address.perCustomerContactInfo)
         && _.size(address.perCustomerContactInfo) > 0) {
       finded = _.findLastIndex(address.perCustomerContactInfo.emailAddresses,
           val => val.mainFlag);

@@ -35,6 +35,7 @@ import Contract from './routes/contract/Home';
 import FullChannelServiceRecord from './routes/fullChannelServiceRecord/Home';
 import CustomerGroupManage from './routes/customerPool/CustomerGroupManage';
 
+
 function switchRouter() {
   const fsp = document.querySelector(fspContainer.container);
   if (!((this.state.location.state || {}).noScrollTop || false)) {
