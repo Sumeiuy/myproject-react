@@ -12,23 +12,32 @@ const EMPTY_OBJECT = {};
 export default {
   namespace: 'customerPool',
   state: {
+    // 存放从服务端获取的全部代办数据
     todolist: [],
+    // 存放筛选后数据
     todolistRecord: [],
+    // 待办列表页码
     todoPage: {
       curPageNum: 1,
     },
     performanceIndicators: {},
+    // 组织机构树
     custRange: [],
+    // 时间周期：本年、本季、本月
     cycle: [],
+    // 用户当前所在岗位
     position: window.forReactPosition || {},
     process: {},
     empInfo: {},
-    dict: {},
+    // 客户列表中对应的每个客户的近6个月的收益
     monthlyProfits: {},
+    // 发送客户的近6个月的收益请求的前后标记
     isGetCustIncome: false,
     hotwds: {},
     hotPossibleWdsList: [],
+    // 目标客户列表数据
     custList: [],
+    // 目标客户列表页码
     custPage: {
       pageSize: 10,
       pageNo: 1,
@@ -50,23 +59,27 @@ export default {
     incomeData: [], // 净收入
     custContactData: {}, // 客户联系方式
     serviceRecordData: {}, // 服务记录
+    // 添加服务记录请求前后的标记
     isAddServeRecord: false,
-    addServeRecordSuccess: false, // 添加服务记录成功的标记
+    // 添加服务记录成功的标记
+    addServeRecordSuccess: false,
     isFollow: {},
     followLoading: false,
     fllowCustData: {},
-    customerGroupList: {}, // 分组维度，客户分组列表
-    customerList: {}, // 指定分组下的客户列表
-    customerHistoryWordsList: [], // 客户分组历史搜索列表
-    isClearCustomerHistorySuccess: false, // 客户分组是否清除历史搜索成功
-    customerSearchHistoryVal: '', // 客户分组历史搜索值，点击过按钮
-    customerHotPossibleWordsList: [], // 客户分组热词列表
+    // 分组维度，客户分组列表
+    customerGroupList: {},
+    // 指定分组下的客户列表
+    customerList: {},
+    // 客户分组历史搜索列表
+    customerHistoryWordsList: [],
+    // 客户分组是否清除历史搜索成功
+    isClearCustomerHistorySuccess: false,
+    // 客户分组历史搜索值，点击过按钮
+    customerSearchHistoryVal: '',
+    // 客户分组热词列表
+    customerHotPossibleWordsList: [],
   },
-  subscriptions: {
-    setup({ dispatch }) {
-      dispatch({ type: 'getDictionary' });
-    },
-  },
+  subscriptions: {},
   effects: {
     * getToDoList({ }, { call, put }) {  //eslint-disable-line
       const response = yield call(api.getToDoList);
@@ -116,15 +129,6 @@ export default {
       yield put({
         type: 'pageChangeSuccess',
         payload: newPage,
-      });
-    },
-    // 获取字典
-    * getDictionary({ payload }, { call, put }) {
-      const response = yield call(api.getStatisticalPeriod);
-      // console.log('dict', response);
-      yield put({
-        type: 'getDictionarySuccess',
-        payload: { response },
       });
     },
     // 获取客户列表
@@ -406,14 +410,6 @@ export default {
       return {
         ...state,
         position: payload,
-      };
-    },
-    getDictionarySuccess(state, action) {
-      const { payload: { response } } = action;
-      const dict = response.resultData;
-      return {
-        ...state,
-        dict,
       };
     },
     // 默认推荐词及热词推荐列表
