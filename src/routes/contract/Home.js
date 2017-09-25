@@ -2,8 +2,8 @@
  * @Description: 合作合约 home 页面
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
- * @Last Modified by:   XuWenKang
- * @Last Modified time: 2017-09-25 08:51:06
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2017-09-25 17:38:31
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { Col } from 'antd';
@@ -18,7 +18,7 @@ import Detail from '../../components/permission/Detail';
 import PermissionList from '../../components/common/biz/CommonList';
 import seibelColumns from '../../components/common/biz/seibelColumns';
 import { seibelConfig } from '../../config';
-import CreatePrivateClient from '../../components/permission/createPrivateClient';
+import CreatePrivateClient from '../../components/permission/CreatePrivateClient';
 
 import styles from './home.less';
 
