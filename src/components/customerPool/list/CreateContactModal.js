@@ -187,7 +187,7 @@ export default class CreateContactModal extends PureComponent {
       visible: false,
     });
     // 打开创建服务记录对话框
-    createServiceRecord(currentCustId);
+    createServiceRecord({ custId: currentCustId, flag: true });
     // 回调，关闭父组件state状态
     onClose();
   }

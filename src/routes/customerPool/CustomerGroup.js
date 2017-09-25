@@ -76,6 +76,7 @@ const rowSelection = {
     selectGroupName = selectedRows[0].groupName;
   },
 };
+let onOff = false;
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 export default class CustomerGroup extends PureComponent {
@@ -233,8 +234,12 @@ export default class CustomerGroup extends PureComponent {
       });
       this.props.addCustomerToGroup({ ...param });
       groupId = '';
-    } else {
-      message.error('请选择分组');
+    } else if (!onOff) {
+      message.error('请选择分组', 2, () => {
+        console.log('1111');
+        onOff = false;
+      });
+      onOff = true;
     }
   }
   /* 添加到新建分组 */

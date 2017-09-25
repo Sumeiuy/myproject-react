@@ -23,7 +23,7 @@ const fectchDataFunction = (globalLoading, type) => query => ({
 });
 
 const mapStateToProps = state => ({
-  dict: state.customerPool.dict,
+  dict: state.app.dict,
   createTaskResult: state.customerPool.createTaskResult,
 });
 

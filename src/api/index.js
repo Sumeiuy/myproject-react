@@ -6,6 +6,7 @@ import commission from './commission';
 import customerPool from './customerPool';
 import contract from './contract';
 import fullChannelServiceRecord from './fullChannelServiceRecord';
+import seibelCommon from './seibelCommon';
 
 const api = apiCreator();
 
@@ -18,7 +19,9 @@ export default {
   report: report(api),
   // ========= 反馈管理
   feedback: feedback(api),
-  // ========= 权限申请
+  // ==========seibel 通用接口
+  seibel: seibelCommon(api),
+  // ==========权限申请私有接口
   permission: permission(api),
   // 合作合约相关接口
   contract: contract(api),
@@ -26,5 +29,8 @@ export default {
   commission: commission(api),
   // 全渠道服务记录数据接口api
   fullChannelServiceRecord: fullChannelServiceRecord(api),
+
+  // 附件删除
+  ceFileDelete: query => api.post('/file/ceFileDelete', query),
 };
 

@@ -13,26 +13,39 @@ import Approval from './Approval';
 import ApprovalRecord from './ApprovalRecord';
 import BaseInfoModify from './BaseInfoModify';
 import UploadFile from './UploadFile';
+import { seibelConfig } from '../../config';
+
+const subTypeList = seibelConfig.permission.subType;
+const statusList = seibelConfig.permission.status;
 
 export default class Detail extends PureComponent {
   static propTypes = {
-    num: PropTypes.string,
-    baseInfo: PropTypes.array,
-    draftInfo: PropTypes.array,
-    serverInfo: PropTypes.array,
-    approvalRecordList: PropTypes.array,
+    id: PropTypes.number,
+    subType: PropTypes.string,
+    custName: PropTypes.string,
+    custNumber: PropTypes.string,
+    remark: PropTypes.string,
+    empName: PropTypes.string,
+    createTime: PropTypes.string,
+    status: PropTypes.string,
+    empInfoVOS: PropTypes.array,
+    workflowHistoryBeans: PropTypes.array,
     attachInfoList: PropTypes.array,
-    serverPersonelList: PropTypes.array.isRequired,
-    childTypeList: PropTypes.array.isRequired,
+    searchServerPersonList: PropTypes.array.isRequired,
     customerList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
-    num: '',
-    baseInfo: [],
-    draftInfo: [],
-    serverInfo: [],
-    approvalRecordList: [],
+    id: '',
+    subType: '',
+    custName: '',
+    custNumber: '',
+    remark: '',
+    empName: '',
+    createTime: '',
+    status: '',
+    empInfoVOS: [],
+    workflowHistoryBeans: [],
     attachInfoList: [],
   }
 
@@ -42,45 +55,121 @@ export default class Detail extends PureComponent {
       // 状态： ready（可读） 、 modify （修改）、 approval（审批）
       statusType: 'ready',
       // 编号
-      num: props.num,
-      // 基本信息
-      baseInfo: props.baseInfo,
-      // 拟稿信息
-      draftInfo: props.draftInfo,
-      // 服务人员
-      serverInfo: props.serverInfo,
-      // 审批记录
-      approvalRecordList: props.approvalRecordList,
-      // 附件数据
-      attachInfoList: props.attachInfoList,
+      subType: '',
+      // 客户对象
+      customer: {
+        // 客户姓名
+        custName: '',
+        // 客户id
+        custNumber: '',
+      },
+      // 备注
+      remark: '',
+      // 拟稿人
+      empName: '',
+      // 提请时间
+      createTime: '',
+      // 状态
+      status: '',
+      // 主服务经理
+      empInfoVOS: [],
       // 审批意见
-      approvalComments: '他们什么都不晓得',
+      approvalComments: '',
     };
   }
 
+  componentWillMount() {
+    const {
+      subType,
+      custName,
+      custNumber,
+      remark,
+      empName,
+      createTime,
+      status,
+      empInfoVOS,
+    } = this.props;
+
+    this.setState({
+      subType,
+      customer: {
+        custName,
+        custNumber,
+      },
+      remark,
+      empName,
+      createTime,
+      status,
+      empInfoVOS,
+    });
+  }
+
   get getBaseInfoModifyDom() {
+    // 返回基本信息或者基本信息修改组件
     let result;
+    const { subType, custName, custNumber, remark } = this.props;
+    const subTypeTxt = subTypeList.filter(item => (item.value === subType))[0].label;
+    const info = [
+      {
+        title: '子类型',
+        content: subTypeTxt,
+      }, {
+        title: '客户',
+        content: `${custName}（${custNumber}）`,
+      }, {
+        title: '备注',
+        content: remark,
+      },
+    ];
+
     if (this.state.statusType === 'ready') {
       result = (
         <MessageList
           head="基本信息"
-          baseInfo={this.state.baseInfo}
+          baseInfo={info}
         />
       );
     } else {
       result = (
         <BaseInfoModify
           head="基本信息"
-          baseInfo={this.state.baseInfo}
+          subTypeTxt={subTypeTxt}
+          customer={`${this.state.customer.custName}（${this.state.customer.custNumber}）`}
+          remark={this.state.remark}
           customerList={this.props.customerList}
-          childTypeList={this.props.childTypeList}
+          onEmitEvent={this.updateValue}
         />
       );
     }
     return result;
   }
 
+  get draftInfo() {
+    // 返回拟稿信息组件
+    const { empName, createTime, status } = this.props;
+    const statusTxt = statusList.filter(item => (item.value === status))[0].label;
+    const info = [
+      {
+        title: '拟稿',
+        content: empName,
+      }, {
+        title: '提请时间',
+        content: createTime,
+      }, {
+        title: '状态',
+        content: statusTxt,
+      },
+    ];
+    return (
+      <MessageList
+        head="拟稿信息"
+        baseInfo={info}
+      />
+    );
+  }
+
   get approvalDom() {
+    // 返回审批意见组件
     let result;
     if (this.state.statusType === 'ready') {
       result = null;
@@ -99,53 +188,55 @@ export default class Detail extends PureComponent {
 
   @autobind
   updateValue(name, value) { // 更新本地数据
+    console.log(name, value);
     this.setState({ [name]: value });
   }
 
   render() {
-    const { num, draftInfo, serverInfo, approvalRecordList } = this.state;
     const modifyBtnClass = classnames([style.dcHeaderModifyBtn,
       { hide: this.state.statusType !== 'ready' },
     ]);
     return (
       <div className={style.detailComponent}>
         <div className={style.dcHeader}>
-          <span className={style.dcHaderNumb}>编号{num}</span>
+          <span className={style.dcHaderNumb}>编号{this.props.id}</span>
           <span
             onClick={() => { this.setState({ statusType: 'modify' }); }}
             className={modifyBtnClass}
           >修改</span>
         </div>
         {this.getBaseInfoModifyDom}
-        <MessageList
-          head="拟稿信息"
-          baseInfo={draftInfo}
-        />
+        {this.draftInfo}
         <ServerPersonel
           head="服务人员"
-          type="serverInfo"
-          info={serverInfo}
+          type="empInfoVOS"
+          info={this.props.empInfoVOS}
           statusType={this.state.statusType}
           onEmitEvent={this.updateValue}
-          serverPersonelList={this.props.serverPersonelList}
+          searchServerPersonList={this.props.searchServerPersonList}
         />
-        <UploadFile fileList={this.state.attachInfoList} />
+        <UploadFile fileList={this.props.attachInfoList} />
         {this.approvalDom}
         <ApprovalRecord
           head="审批记录"
-          info={approvalRecordList}
+          info={this.props.workflowHistoryBeans}
           statusType={this.state.statusType}
         />
-        <div className={style.dcFooter}>
-          <span
-            className={style.spClearBtn}
-            onClick={this.removeServerPerson}
-          >终止</span>
-          <span
-            className={style.spAddBtn}
-            onClick={this.addServerPerson}
-          >提交</span>
-        </div>
+        {
+          this.state.statusType !== 'ready' ?
+            <div className={style.dcFooter}>
+              <span
+                className={style.spClearBtn}
+                onClick={this.removeServerPerson}
+              >终止</span>
+              <span
+                className={style.spAddBtn}
+                onClick={this.addServerPerson}
+              >提交</span>
+            </div>
+          :
+            null
+        }
       </div>
     );
   }
