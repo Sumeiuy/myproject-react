@@ -86,6 +86,8 @@ export default class CreateTask extends PureComponent {
   render() {
     const { dict, location } = this.props;
     const { isSuccess } = this.state;
+    console.log('dict---', dict);
+    console.warn('location---', location);
     return (
       <div className={styles.taskBox}>
         {!isSuccess ?

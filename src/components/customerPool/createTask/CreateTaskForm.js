@@ -54,6 +54,7 @@ export default class CreateTaskForm extends PureComponent {
 
   componentWillMount() {
     const { location: { query } } = this.props;
+    console.log('query---', query)
     this.handleInit(query);
   }
 
@@ -134,6 +135,8 @@ export default class CreateTaskForm extends PureComponent {
       this.setState({
         endValue: moment(newDay, `YYYY/MM/DD(${WEEK[e]})`),
         endFormat: `YYYY/MM/DD(${WEEK[e]})`,
+      }, () => {
+        console.warn(this.state.endValue);
       });
     } else {
       this.setState({
@@ -164,6 +167,8 @@ export default class CreateTaskForm extends PureComponent {
       } else {
         this.setState({
           startFormat: `YYYY/MM/DD(${WEEK[e]})`,
+        }, () => {
+          console.log('this.state.startFormat----', this.state.startFormat);
         });
       }
     }

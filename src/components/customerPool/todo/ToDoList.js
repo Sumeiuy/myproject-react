@@ -31,7 +31,7 @@ const columns = [
         fspGlobal.openFspIframeTab({ url, param });
       }}
     >
-      {_.truncate(item.text, { length: 19, omission: '...' })}
+      {_.truncate(item.text, { length: 18, omission: '...' })}
     </a>,
   },
   {
