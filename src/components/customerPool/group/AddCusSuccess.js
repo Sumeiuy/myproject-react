@@ -6,27 +6,44 @@
 import React, { PureComponent, PropTypes } from 'react';
 import { withRouter } from 'dva/router';
 import { autobind } from 'core-decorators';
-import { Button } from 'antd';
+import Button from '../../common/Button';
 import styles from './addCusSuccess.less';
-
+import { fspGlobal } from '../../../utils';
 
 @withRouter
 export default class AddCusSuccess extends PureComponent {
   static propTypes = {
-    goback: PropTypes.func.isRequired,
+    closeTab: PropTypes.func.isRequired,
     groupId: PropTypes.string.isRequired,
-  }
-  /* 回退 */
-  goBack() {
-    const { goback } = this.props;
-    goback();
+    groupName: PropTypes.string.isRequired,
   }
   /* 跳转到fsp的分组详情 */
   @autobind
   LinkToGroupDetail() {
-    /* const { groupId } = this.props; */
+    const url = `/custgroup/manage/viewGroupInfo?groupId=${this.props.groupId}`;
+    const param = {
+      id: 'FSP_ST_TAB_CUSTCENTER_CUSTGROUP_VIEW',
+      title: '查看客户分组信息',
+      forceRefresh: true,
+      closable: true,
+    };
+    fspGlobal.openFspTab({ url, param });
+    this.props.closeTab();
+  }
+
+  // 返回首页
+  @autobind
+  goToIndex() {
+    const url = '/customerPool';
+    const param = {
+      id: 'tab-home',
+      title: '首页',
+    };
+    fspGlobal.openRctTab({ url, param });
+    this.props.closeTab();
   }
   render() {
+    const { groupName } = this.props;
     return (
       <div className={styles.addCusSuccess}>
         <div className={styles.text}>添加分组</div>
@@ -35,11 +52,12 @@ export default class AddCusSuccess extends PureComponent {
           <div className={styles.img} />
           <div className={styles.text1}>保存成功，已完成分组添加!</div>
           <div className={styles.text2}>你可以在
-            <span onClick={() => this.LinkToGroupDetail()} className={styles.linkTo}>重点关注客户群</span>
+            <span onClick={this.LinkToGroupDetail} className={styles.linkTo}>{groupName}
+            </span>
             查看该分组下所有客户
           </div>
           <div className={styles.successBtn}>
-            <Button onClick={() => this.goBack()}type="primary">返回首页</Button>
+            <Button onClick={this.goToIndex} type="primary">返回首页</Button>
           </div>
         </div>
       </div>

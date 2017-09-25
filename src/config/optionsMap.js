@@ -42,6 +42,20 @@ const optionsMap = {
       name: '本年',
     },
   ],
+  customerPoolTimeSelect: [
+    {
+      key: '518003',
+      name: '本月',
+    },
+    {
+      key: '518004',
+      name: '本季',
+    },
+    {
+      key: '518005',
+      name: '本年',
+    },
+  ],
   historyTime: [
     {
       key: 'month',
