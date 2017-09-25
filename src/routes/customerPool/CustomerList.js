@@ -61,13 +61,13 @@ const mapStateToProps = state => ({
   custRange: state.customerPool.custRange, // 客户池用户范围
   empInfo: state.app.empInfo, // 职位信息
   position: state.customerPool.position, // 职责切换
-  dict: state.customerPool.dict, // 职责切换
+  dict: state.app.dict, // 职责切换
   custList: state.customerPool.custList,
   page: state.customerPool.custPage,
   monthlyProfits: state.customerPool.monthlyProfits, // 6个月收益数据
   custContactData: state.customerPool.custContactData, // 联系方式数据
   serviceRecordData: state.customerPool.serviceRecordData, // 最近服务记录
-  cycle: state.customerPool.dict.kPIDateScopeType,  // 统计周期
+  cycle: state.app.dict.kPIDateScopeType,  // 统计周期
   followLoading: state.customerPool.followLoading, // 关注成功
   fllowCustData: state.customerPool.fllowCustData,
   isGetCustIncome: state.customerPool.isGetCustIncome,

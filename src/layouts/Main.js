@@ -31,7 +31,7 @@ const mapStateToProps = state => ({
   ...state.app,
   loading: state.activity.global,
   custRange: state.customerPool.custRange,
-  dict: state.customerPool.dict,
+  dict: state.app.dict,
   empInfo: state.app.empInfo,
   interfaceState: state.loading.effects,
   // 显示隐藏添加服务记录弹窗
