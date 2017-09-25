@@ -19,11 +19,11 @@ const { Option } = Select;
 const { TextArea } = Input;
 
 const d = new Date();
+// 日期组件的显示格式
+const dateFormat = 'YYYY-MM-DD HH:mm';
 // 当前日期的时间戳
 const currentDate = d.getTime();
-const formatCurrentDate = helper.formatTime(currentDate);
-// 日期组件的显示格式
-const dateFormat = 'YYYY/MM/DD HH:mm';
+const formatCurrentDate = moment(currentDate).format(dateFormat);
 const width = { width: 192 };
 // 根据服务方式的key来记录对应的iconname
 const SERVICE_ICON = {
@@ -45,7 +45,7 @@ export default class CreateServiceRecord extends PureComponent {
     id: PropTypes.string,
     isShow: PropTypes.bool,
     empInfo: PropTypes.object.isRequired,
-    hideCreateServiceRecord: PropTypes.func.isRequired,
+    onToggleServiceRecordModal: PropTypes.func.isRequired,
     addServeRecord: PropTypes.func.isRequired,
     addServeRecordSuccess: PropTypes.bool.isRequired,
     isAddServeRecord: PropTypes.bool.isRequired,
@@ -73,34 +73,14 @@ export default class CreateServiceRecord extends PureComponent {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillUnmount() {
     const {
       isAddServeRecord,
       addServeRecordSuccess,
-      dict: {
-        serveWay,
-        serveType,
-        workResult,
-      },
-    } = nextProps;
-    // 判断两次点击是否是同一个客户的服务记录，不是的，就还原数据，否则保留
-    if (nextProps.id !== this.props.id) {
-      this.setState({
-        serviceWay: serveWay[0].key,
-        serviceType: serveType[0].key,
-        workResult: workResult[0].key,
-        serviceTime: formatCurrentDate,
-        feedbackTime: formatCurrentDate,
-      });
-      if (this.serviceContent && this.feedbackContent) {
-        this.serviceContent.textAreaRef.value = '';
-        this.feedbackContent.textAreaRef.value = '';
-      }
-    }
+    } = this.props;
     // 添加成功
     if (addServeRecordSuccess === true &&
-      isAddServeRecord === false &&
-      this.props.isAddServeRecord === true) {
+      isAddServeRecord === false) {
       message.success('添加服务记录成功');
     }
   }
@@ -151,15 +131,15 @@ export default class CreateServiceRecord extends PureComponent {
     });
     serviceContentNode.value = '';
     feedbackContentNode.value = '';
-    const { hideCreateServiceRecord } = this.props;
-    hideCreateServiceRecord();
+    const { onToggleServiceRecordModal } = this.props;
+    onToggleServiceRecordModal(false);
   }
 
   // 关闭弹窗
   @autobind
   handleCancel() {
-    const { hideCreateServiceRecord } = this.props;
-    hideCreateServiceRecord();
+    const { onToggleServiceRecordModal } = this.props;
+    onToggleServiceRecordModal(false);
   }
 
   // 保存选中的服务方式的值
@@ -204,6 +184,12 @@ export default class CreateServiceRecord extends PureComponent {
     });
   }
 
+  disabledDate(current) {
+    if (current) {
+      return current.valueOf() > moment().subtract(0, 'days');
+    }
+    return true;
+  }
 
   render() {
     const {
@@ -275,6 +261,7 @@ export default class CreateServiceRecord extends PureComponent {
               allowClear={false}
               showTime
               onChange={this.handleServiceTime}
+              disabledDate={this.disabledDate}
             />
           </Col>
         </Row>
@@ -302,6 +289,7 @@ export default class CreateServiceRecord extends PureComponent {
               allowClear={false}
               showTime
               onChange={this.handleFeedbackTime}
+              disabledDate={this.disabledDate}
             />
           </Col>
           <Col span={12}>
