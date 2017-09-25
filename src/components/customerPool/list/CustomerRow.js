@@ -10,7 +10,10 @@ import { Checkbox } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
-import Icon from '../../common/Icon';
+import { helper } from '../../../utils';
+import QuickMenu from './QuickMenu';
+import SixMonthEarnings from './SixMonthEarnings';
+import MatchArea from './MatchArea';
 import styles from './customerRow.less';
 
 import iconavator from '../../../../static/images/icon-avator.png';
@@ -23,17 +26,7 @@ import iconSliver from '../../../../static/images/icon-sliver-card.png';
 import iconWhiteGold from '../../../../static/images/icon-white-gold.png';
 // import iconNone from '../../../../static/images/icon-none.png';
 import iconEmpty from '../../../../static/images/icon-empty.png';
-import iconClose from '../../../../static/images/icon-close.png';
-import iconOpen from '../../../../static/images/icon-open.png';
 
-import ChartLineWidget from './ChartLine';
-
-const show = {
-  display: 'block',
-};
-const hide = {
-  display: 'none',
-};
 // 风险等级配置
 const riskLevelConfig = {
   704010: {
@@ -101,49 +94,39 @@ const rankImgSrcConfig = {
 };
 
 // 数字常量
-const WAN = 10000;
-const YI = 100000000;
+// const WAN = 10000;
+// const YI = 100000000;
 
 // 单位常量
-const UNIT_DEFAULT = '元';
-const UNIT_WAN = '万元';
-const UNIT_YI = '亿元';
+// const UNIT_DEFAULT = '元';
+// const UNIT_WAN = '万元';
+// const UNIT_YI = '亿元';
 
-// 匹配标签区域超过两条显示 展开/收起 按钮
-const FOLD_NUM = 2;
+// const generateUnit = (num) => {
+//   const absNum = Math.abs(num);
+//   if (absNum >= YI) {
+//     return UNIT_YI;
+//   }
+//   if (absNum >= WAN) {
+//     return UNIT_WAN;
+//   }
+//   return UNIT_DEFAULT;
+// };
 
-const haveTitle = title => (title ? `<i class="tip">${title}</i>` : null);
+// const formatNumber = (num) => {
+//   const absNum = Math.abs(num);
+//   if (absNum >= YI) {
+//     return (num / YI).toFixed(2);
+//   }
+//   if (absNum >= WAN) {
+//     return (num / WAN).toFixed(2);
+//   }
+//   return num;
+// };
 
-const replaceWord = (value, q, title = '') => {
-  const titleDom = haveTitle(title);
-  return value.replace(new RegExp(q, 'g'), `<em class="marked">${q}${titleDom || ''}</em>`);
-};
+const formatNumber = value => helper.toUnit(value, '元').value;
 
-const getNewHtml = (value, k) => (`<li><span><i class="label">${value}：</i>${k}</span></li>`);
-
-const generateUnit = (num) => {
-  const absNum = Math.abs(num);
-  if (absNum >= YI) {
-    return UNIT_YI;
-  }
-  if (absNum >= WAN) {
-    return UNIT_WAN;
-  }
-  return UNIT_DEFAULT;
-};
-
-const formatNumber = (num) => {
-  const absNum = Math.abs(num);
-  if (absNum >= YI) {
-    return (num / YI).toFixed(2);
-  }
-  if (absNum >= WAN) {
-    return (num / WAN).toFixed(2);
-  }
-  return num;
-};
-
-let hrefUrl = '';
+const formatUnit = value => helper.toUnit(value, '元').unit;
 
 export default class CustomerRow extends PureComponent {
   static propTypes = {
@@ -175,271 +158,8 @@ export default class CustomerRow extends PureComponent {
 
   constructor(props) {
     super(props);
-    const {
-      dict: {
-        custBusinessType = [],
-      },
-      listItem: { asset },
-    } = props;
-
     this.state = {
-      showStyle: show,
-      hideStyle: hide,
-      unit: '元',
-      newAsset: asset,
       checked: false,
-      addressEmail: {},
-    };
-    this.businessConfig = new Map();
-    custBusinessType.forEach((v) => {
-      this.businessConfig.set(v.key, v.value);
-    });
-
-    this.debounced = _.debounce(
-      this.getCustIncome,
-      800,
-      { leading: false },
-    );
-  }
-  componentWillMount() {
-    const { listItem: { asset } } = this.props;
-    const unit = generateUnit(+asset);
-    const newAsset = formatNumber(+asset);
-    this.setState({
-      unit,
-      newAsset,
-      isShowCharts: false,
-    });
-  }
-  componentWillReceiveProps(nextProps) {
-    const { custContactData } = this.props;
-    if (custContactData !== nextProps.custContactData && _.size(nextProps.custContactData) !== 0) {
-      const change = {
-        ...this.state.addressEmail,
-        ...{ [nextProps.currentCustId]: this.getEmail(nextProps.custContactData) },
-      };
-      this.setState({
-        addressEmail: change,
-      }, () => {
-        if (this.sendEmail && hrefUrl !== '') {
-          const evt = new MouseEvent('click', { bubbles: false, cancelable: false, view: window });
-          this.sendEmail.dispatchEvent(evt);
-          hrefUrl = '';
-        }
-      });
-    }
-  }
-  getLastestData(arr) {
-    if (arr && arr instanceof Array && arr.length !== 0) {
-      return arr[arr.length - 1];
-    }
-    return {};
-  }
-
-  @autobind
-  getCustIncome() {
-    const { getCustIncome, listItem, monthlyProfits } = this.props;
-    const thisMonthlyProfits = monthlyProfits[listItem.custId];
-    if (!thisMonthlyProfits || _.isEmpty(thisMonthlyProfits)) {
-      // test data empId = 01041128、05038222、035000002899、02004642
-      getCustIncome({ custNumber: listItem.custId });
-    }
-    this.setState({
-      isShowCharts: true,
-    });
-  }
-
-  @autobind
-  getEmail(address) {
-    let addresses = '';
-    let finded = 0;// 邮件联系
-    let email = null;
-    if (!_.isEmpty(address.orgCustomerContactInfoList)
-        && _.size(address.orgCustomerContactInfoList) > 0) {
-      const index = _.findLastIndex(address.orgCustomerContactInfoList,
-          val => val.mainFlag);
-      finded = _.findLastIndex(address.orgCustomerContactInfoList[index].emailAddresses,
-          val => val.mainFlag);
-      addresses = address.orgCustomerContactInfoList[index];
-    } else if (!_.isEmpty(address.perCustomerContactInfo)
-        && _.size(address.perCustomerContactInfo) > 0) {
-      finded = _.findLastIndex(address.perCustomerContactInfo.emailAddresses,
-          val => val.mainFlag);
-      addresses = address.perCustomerContactInfo;
-    } else {
-      finded = -1;
-    }
-    if (finded === -1) {
-      email = null;
-    } else {
-      email = addresses.emailAddresses[finded].contactValue;
-    }
-    return email;
-  }
-
-  @autobind
-  handleMouseLeave() {
-    this.debounced.cancel();
-    this.setState({
-      isShowCharts: false,
-    });
-  }
-
-  @autobind
-  handleCollapse(type) {
-    if (type === 'open') {
-      const prosshow = {
-        display: 'none',
-      };
-      const proshide = {
-        display: 'block',
-      };
-      this.setState({
-        showStyle: prosshow,
-        hideStyle: proshide,
-      });
-    } else if (type === 'close') {
-      const consshow = {
-        display: 'block',
-      };
-      const conshide = {
-        display: 'none',
-      };
-      this.setState({
-        showStyle: consshow,
-        hideStyle: conshide,
-      });
-    }
-  }
-
-  @autobind
-  /* eslint-disable */
-  handleIsEmail(e) {
-    const noEmail = 'javascript:void(0);';
-    const { listItem } = this.props;
-    hrefUrl = e.target.getAttribute('href');
-    if (hrefUrl === noEmail) {
-      this.props.onSendEmail(listItem);
-    }
-  }
-  /* eslint-disable */
-
-  @autobind
-  matchWord(q, listItem) {
-    // if (!q) return;
-    const { location: { query: { source } } } = this.props;
-    let rtnEle = '';  // 全部展示的数据
-    let shortRtnEle = ''; // 只展示两条的数据
-    let n = 0;
-    const isSearch = source === 'search' || source === 'association';
-    const isTag = source === 'tag';
-    const isCustIndicator = source === 'custIndicator';
-    const isNumOfCustOpened = source === 'numOfCustOpened';
-    const isBusiness = source === 'business';
-    if (isSearch && listItem.name && listItem.name.indexOf(q) > -1) {
-      const markedEle = replaceWord(listItem.name, q);
-      const domTpl = getNewHtml('姓名', markedEle);
-      rtnEle += domTpl;
-      n++;
-      if (n <= FOLD_NUM) {
-        shortRtnEle += domTpl;
-      }
-    }
-    if (isSearch && listItem.idNum && listItem.idNum.indexOf(q) > -1) {
-      const markedEle = replaceWord(listItem.idNum, q);
-      const domTpl = getNewHtml('身份证号码', markedEle);
-      rtnEle += domTpl;
-      n++;
-      if (n <= FOLD_NUM) {
-        shortRtnEle += domTpl;
-      }
-    }
-    if (isSearch && listItem.telephone && listItem.telephone.indexOf(q) > -1) {
-      const markedEle = replaceWord(listItem.telephone, q);
-      const domTpl = getNewHtml('联系电话', markedEle);
-      rtnEle += domTpl;
-      n++;
-      if (n <= FOLD_NUM) {
-        shortRtnEle += domTpl;
-      }
-    }
-    if (isSearch && listItem.custId && listItem.custId.indexOf(q) > -1) {
-      const markedEle = replaceWord(listItem.custId, q);
-      const domTpl = getNewHtml('经纪客户号', markedEle);
-      rtnEle += domTpl;
-      n++;
-      if (n <= FOLD_NUM) {
-        shortRtnEle += domTpl;
-      }
-    }
-    // 匹配标签
-    if ((isTag || isSearch) && listItem.relatedLabels) {
-      const relatedLabels = listItem.relatedLabels.split(' ').filter((v) => { //eslint-disable-line
-        if (v.indexOf(q) > -1) {
-          return v;
-        }
-      });
-      // 有描述
-      // const markedEle = relatedLabels.map(v => (replaceWord(v, q, listItem.reasonDesc)));
-      if (!_.isEmpty(relatedLabels)) {
-        const markedEle = relatedLabels.map(v => (replaceWord(v, q)));
-        const domTpl = getNewHtml('匹配标签', markedEle);
-        rtnEle += domTpl;
-        n++;
-        if (n <= FOLD_NUM) {
-          shortRtnEle += domTpl;
-        }
-      }
-    }
-    // 匹配可开通业务
-    if ((isBusiness || isNumOfCustOpened) && listItem.unrightType) {
-      const unrightTypeArr = listItem.unrightType.split(' ');
-      const tmpArr = _.filter(_.map(unrightTypeArr, v => this.businessConfig.get(v)));
-      if (!_.isEmpty(tmpArr)) {
-        const domTpl = getNewHtml(`可开通业务(${tmpArr.length})`, tmpArr.join('、'));
-        rtnEle += domTpl;
-        n++;
-        if (n <= FOLD_NUM) {
-          shortRtnEle += domTpl;
-        }
-      }
-    }
-    // 匹配已开通业务
-    if ((isBusiness || isNumOfCustOpened) && listItem.userRights) {
-      const userRightsArr = listItem.userRights.split(' ');
-      const tmpArr = _.filter(_.map(userRightsArr, v => this.businessConfig.get(v)));
-      if (!_.isEmpty(tmpArr)) {
-        const domTpl = getNewHtml(`已开通业务(${tmpArr.length})`, tmpArr.join('、'));
-        rtnEle += domTpl;
-        n++;
-        if (n <= FOLD_NUM) {
-          shortRtnEle += domTpl;
-        }
-      }
-    }
-    // 显示开户日期
-    if (isCustIndicator && listItem.openDt) {
-      const openDate = `${listItem.openDt.slice(0, 4)}年${listItem.openDt.slice(4, 6)}月${listItem.openDt.slice(6, 8)}日`;
-      const domTpl = getNewHtml('开户日期', openDate);
-      rtnEle += domTpl;
-      n++;
-      if (n <= FOLD_NUM) {
-        shortRtnEle += domTpl;
-      }
-    }
-    // 显示账户状态
-    if (isCustIndicator && listItem.accountStausName) {
-      const domTpl = getNewHtml('账户状态', listItem.accountStausName);
-      rtnEle += domTpl;
-      n++;
-      if (n <= FOLD_NUM) {
-        shortRtnEle += domTpl;
-      }
-    }
-    return {
-      shortRtnEle: { __html: shortRtnEle },
-      rtnEle: { __html: rtnEle },
-      n,
     };
   }
 
@@ -447,15 +167,6 @@ export default class CustomerRow extends PureComponent {
   handleSelect() {
     const { onChange, listItem: { custId, name } } = this.props;
     onChange(custId, name);
-  }
-  /**
-   * 回调，关闭modal打开state
-   */
-  @autobind
-  resetModalState() {
-    this.setState({
-      isShowModal: false,
-    });
   }
 
   @autobind
@@ -489,49 +200,30 @@ export default class CustomerRow extends PureComponent {
       isFollows,
       isGetCustIncome,
       toggleServiceRecordModal,
+      custContactData,
+      onSendEmail,
+      currentCustId,
+      getCustIncome,
+      location,
+      dict,
     } = this.props;
-    const {
-      unit,
-      newAsset,
-      isShowCharts,
-      addressEmail,
-    } = this.state;
-    const thisMonthlyProfits = monthlyProfits[listItem.custId] || [];
-    const lastestProfit = Number(this.getLastestData(thisMonthlyProfits).assetProfit);
-    const lastestProfitRate = Number(this.getLastestData(thisMonthlyProfits).assetProfitRate);
-    const matchedWord = this.matchWord(q, listItem);
     const rskLev = _.trim(listItem.riskLvl);
     const str = `${listItem.custId}.${listItem.name}`;
     const isChecked = _.includes(selectedIds, str) || isAllSelect;
     return (
       <div className={styles.customerRow}>
-        {
-          isSms ?
-            <div className={styles.basicInfoD}>
-              <ul className={styles.operationIcon}>
-                <li onClick={() => this.createModal(listItem)}>
-                  <Icon type="dianhua" />
-                  <span>电话联系</span>
-                </li>
-                <li onClick={this.handleIsEmail}>
-                  <Icon type="youjian" />
-                  <span><a ref={ref => this.sendEmail = ref} href={_.isEmpty(addressEmail[listItem.custId]) ? 'javascript:void(0);' : `mailto:${addressEmail[listItem.custId]}`}> 邮件联系 </a></span>
-                </li>
-                <li
-                  onClick={() => toggleServiceRecordModal({ custId: listItem.custId, flag: true })}
-                >
-                  <Icon type="jilu" />
-                  <span>添加服务记录</span>
-                </li>
-                <li onClick={() => onAddFollow(listItem)} className={(currentFollowCustId === listItem.custId && isFollows[currentFollowCustId]) || isFollows[listItem.custId] ? styles.follows : ''}>
-                  <Icon type="guanzhu" />
-                  <span>{(currentFollowCustId === listItem.custId && isFollows[currentFollowCustId]) || isFollows[listItem.custId] ? '已关注' : '关注'}</span>
-                </li>
-              </ul>
-            </div>
-            :
-            null
-        }
+        <QuickMenu
+          isSms={isSms}
+          listItem={listItem}
+          createModal={this.createModal}
+          toggleServiceRecordModal={toggleServiceRecordModal}
+          custContactData={custContactData}
+          currentCustId={currentCustId}
+          onSendEmail={onSendEmail}
+          currentFollowCustId={currentFollowCustId}
+          isFollows={isFollows}
+          onAddFollow={onAddFollow}
+        />
         <div className={`${styles.customerRowLeft} clear`}>
           <div className={styles.selectIcon}>
             <Checkbox
@@ -574,99 +266,26 @@ export default class CustomerRow extends PureComponent {
           </div>
           <div className="row-three">
             <span>总资产：</span>
-            <span className="asset">{newAsset}</span>
-            <span>{unit}</span>
-            <span
-              className="showChart"
-              style={{
-                cursor: isGetCustIncome ? 'wait' : 'pointer',
-              }}
-            >
-              <p
-                onMouseEnter={this.debounced}
-                onMouseLeave={this.handleMouseLeave}
-              >
-                查看详情
-              </p>
-              <div
-                className={`${styles.showCharts}`}
-                style={{
-                  display: isShowCharts ? 'block' : 'none',
-                }}
-              >
-                <div className={styles.chartsContent}>
-                  <ChartLineWidget chartData={thisMonthlyProfits} />
-                </div>
-                <div className={styles.chartsText}>
-                  <div>
-                    <span>年最大时点资产：</span>
-                    <span className={styles.numA}>
-                      {listItem.maxTotAsetY ? formatNumber(listItem.maxTotAsetY) : '--'}
-                    </span>
-                    {listItem.maxTotAsetY ? generateUnit(listItem.maxTotAsetY) : ''}
-                  </div>
-                  <div>
-                    <span>本月收益率：</span>
-                    <span className={styles.numB}>
-                      {
-                        thisMonthlyProfits.length ?
-                          `${lastestProfitRate.toFixed(2)}%`
-                          :
-                          '--'
-                      }
-                    </span>
-                  </div>
-                  <div>
-                    <span>
-                      本月收益：
-                      <span className={styles.numB}>
-                        {
-                          thisMonthlyProfits.length ?
-                            formatNumber(lastestProfit)
-                            :
-                            '--'
-                        }
-                      </span>
-                      &nbsp;
-                      {thisMonthlyProfits.length ? generateUnit(lastestProfit) : null}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </span>
+            <span className="asset">{formatNumber(+listItem.asset)}</span>
+            <span>{formatUnit(+listItem.asset)}</span>
+            <SixMonthEarnings
+              listItem={listItem}
+              monthlyProfits={monthlyProfits}
+              isGetCustIncome={isGetCustIncome}
+              getCustIncome={getCustIncome}
+            />
             <div className="department">
               <span>{listItem.orgName}</span>
               <span className="cutOffLine">|</span>
               <span>{`服务经理：${listItem.empName || '无'}`}</span>
             </div>
           </div>
-          <div className={styles.relatedInfo}>
-            {
-              matchedWord.n > 2 ?
-                <div className={styles.collapseItem}>
-                  <span style={this.state.showStyle}>
-                    <a onClick={() => this.handleCollapse('open')}>
-                      <span className={styles.itemA}>展开</span>
-                      <img src={iconOpen} alt="open" />
-                    </a>
-                  </span>
-                  <span style={this.state.hideStyle}>
-                    <a onClick={() => this.handleCollapse('close')}>
-                      <span className={styles.itemA}>收起</span>
-                      <img src={iconClose} alt="open" />
-                    </a>
-                  </span>
-                </div> : null
-            }
-            <ul
-              style={this.state.showStyle}
-              dangerouslySetInnerHTML={matchedWord.shortRtnEle} // eslint-disable-line
-            />
-            <ul
-              style={this.state.hideStyle}
-              dangerouslySetInnerHTML={matchedWord.rtnEle} // eslint-disable-line
-            />
-          </div>
+          <MatchArea
+            q={q}
+            dict={dict}
+            location={location}
+            listItem={listItem}
+          />
         </div>
       </div>
     );

@@ -13,7 +13,7 @@
   border-bottom: 1px solid #ddd;
   &:hover {
     background-color: #F1F8FF;
-    .basicInfoD {
+    :global .showQuickMenu {
       display: block;
     }
   }
@@ -208,14 +208,6 @@
         &.asset {
           font-weight: bold;
         }
-        &.showChart {
-          position: relative;
-          float: left;
-          margin-left: 10px;
-          font-size: 14px;
-          color: #3983ff;
-          cursor: pointer;
-        }
       }
       .department {
         float: right;
@@ -226,164 +218,4 @@
     }
   }
 }
-.showCharts {
-  display: none;
-  border: 1px solid antiquewhite;
-  height: 135px;
-  width: 510px;
-  position: absolute;
-  left: -5px;
-  top: 25px;
-  z-index: 2;
-  background-color: #FFFFFF;
-  border-radius: 8px;
-  .chartsContent {
-    display: inline-block;
-    width:300px;
-    height: 135px;
-  }
-  .chartsText {
-    display: inline-block;
-    width: 200px;
-    font-size: 13px;
-    color:#808080;
-    vertical-align:top;
-    div {
-      margin-top: 10px;
-    }
-    .numA{
-      font-weight: bold;
-    }
-    .numB{
-      color: #DA3915;
-      font-size: 14px;
-      font-weight: bold;
-    }
-    span {
-      float: none;
-    }
-  }
-}
 
-.relatedInfo {
-  margin-top: 10px;
-  ul {
-    list-style-type: none;
-    font-size: 13px;
-    color: #969696;
-    margin-top: 10px;
-    li {
-      margin-top: 4px;
-      :global .marked {
-        position: relative;
-        color: #ff784e;
-        font-style: normal;
-        padding: 0;
-        background-color: transparent;
-        &:hover .tip {
-          display: inline-block;
-        }
-        .tip {
-          display: none;
-          position: absolute;
-          top: -30px;
-          right: -10px;
-          height: 26px;
-          line-height: 26px;
-          padding: 0 5px;
-          background-color: #FFFFCD;
-          font-style: normal;
-          color: #333;
-          white-space: nowrap;
-          box-shadow: 0 0 15px #EAEBEB;
-        }
-      }
-      :global .label {
-        padding: 0;
-        color: #ff784e;
-        font-style: normal;
-        font-weight: normal;
-      }
-    }
-  }
-}
-
-.collapseItem {
-  float: right;
-  font-size: 12px;
-  .itemA {
-    color: #B9B9B9;
-    cursor:pointer;
-    padding-right: 10px;
-  }
-}
-
-.basicInfoD {
-  display: none;
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  font-size: 12px;
-  .operationIcon {
-    padding: 0px 0px 0px 10px;
-    height: 16px;
-    line-height: 16px;
-    .follows, .follows i{
-      color: #ff784e;
-    }
-    li {
-      border-right: 1px solid #DDDDDD;
-      display: inline-block;
-      padding: 0px 10px 0px 10px;
-      cursor: pointer;
-      &:hover {
-        i, span ,a{
-          color: #ff784e;
-        }
-      }
-      a{
-        color: #777;
-      }
-      i {
-        margin-right: 5px;
-        vertical-align: top;
-        color: #c2c2c2;
-      }
-      // .iconIphone {
-      //   display: inline-block;
-      //   width: 17px;
-      //   height: 12px;
-      //   background: url("../../../../static/images/icon-phone.png");
-      //   background-repeat: no-repeat;
-      //   background-size:contain;
-      // }
-      // .iconEmail {
-      //   display: inline-block;
-      //   width: 17px;
-      //   height: 9px;
-      //   background: url("../../../../static/images/icon-email.png");
-      //   background-repeat: no-repeat;
-      //   background-size:contain;
-      // }
-      // .iconRecordService {
-      //   display: inline-block;
-      //   width: 15px;
-      //   height: 12px;
-      //   background: url("../../../../static/images/icon-service-record.png");
-      //   background-repeat: no-repeat;
-      //   background-size: contain;
-      // }
-      // .iconFocus {
-      //   display: inline-block;
-      //   width: 15px;
-      //   height: 12px;
-      //   background: url("../../../../static/images/icon-focus.png");
-      //   background-repeat: no-repeat;
-      //   background-size: contain;
-      // }
-    }
-    li:last-child {
-      border-right: none;
-    }
-  }
-}

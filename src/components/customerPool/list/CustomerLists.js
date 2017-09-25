@@ -1,6 +1,6 @@
 /**
- * @file invest/CustRangeForList.js
- *  客户范围组件
+ * @file components/customerPool/list/CustomerLists.js
+ *  客户列表
  * @author wangjunjun
  */
 

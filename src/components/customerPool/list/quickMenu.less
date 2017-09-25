@@ -1,0 +1,39 @@
+:global .showQuickMenu {
+  display: none;
+}
+.basicInfoD {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 12px;
+  .operationIcon {
+    padding: 0px 0px 0px 10px;
+    height: 16px;
+    line-height: 16px;
+    .follows, .follows i{
+      color: #ff784e;
+    }
+    li {
+      border-right: 1px solid #DDDDDD;
+      display: inline-block;
+      padding: 0px 10px 0px 10px;
+      cursor: pointer;
+      &:hover {
+        i, span ,a{
+          color: #ff784e;
+        }
+      }
+      a{
+        color: #777;
+      }
+      i {
+        margin-right: 5px;
+        vertical-align: top;
+        color: #c2c2c2;
+      }
+    }
+    li:last-child {
+      border-right: none;
+    }
+  }
+}
