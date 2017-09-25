@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 14:15:22
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-09-22 17:33:14
+ * @Last Modified time: 2017-09-25 16:10:28
  */
 
 import React, { PureComponent } from 'react';
@@ -31,30 +31,25 @@ export default class CustomerGroupDetail extends PureComponent {
     customerList: PropTypes.object.isRequired,
     onCloseModal: PropTypes.func,
     customerHotPossibleWordsList: PropTypes.array.isRequired,
-    customerSearchHistoryVal: PropTypes.string.isRequired,
     getHotPossibleWds: PropTypes.func.isRequired,
-    saveSearchVal: PropTypes.func.isRequired,
+    canEditDetail: PropTypes.bool,
   };
 
   static defaultProps = {
     detailData: EMPTY_OBJECT,
     onCloseModal: () => { },
+    canEditDetail: true,
   };
 
   constructor(props) {
     super(props);
     const { name = '', description = '' } = props.detailData;
-    const { page: {
-      curPageNum = 1,
-      pageSize = 5,
-      totalRecordNum = 5,
-    } } = props.customerList || EMPTY_OBJECT;
     this.state = {
       name,
       description,
-      curPageNum,
-      curPageSize: pageSize,
-      totalRecordNum,
+      curPageNum: 1,
+      curPageSize: 5,
+      totalRecordNum: 1,
     };
   }
 
@@ -137,11 +132,13 @@ export default class CustomerGroupDetail extends PureComponent {
   }
 
   @autobind
-  dispatchFormClickEvent() {
-    if (this.submitForm) {
-      const evt = new MouseEvent('click', { bubbles: false, cancelable: false, view: window });
-      this.submitForm.dispatchEvent(evt);
-    }
+  handleSearchClick() {
+    console.log('search click');
+  }
+
+  @autobind
+  handleAddCustomerFromSearch(value) {
+    console.log('receive value, add customer to table', value);
   }
 
   renderActionSource() {
@@ -186,10 +183,9 @@ export default class CustomerGroupDetail extends PureComponent {
       form: { getFieldDecorator },
       customerList,
       customerHotPossibleWordsList = EMPTY_LIST,
-      customerSearchHistoryVal = '',
       getHotPossibleWds,
-      saveSearchVal,
       onCloseModal,
+      canEditDetail,
   } = this.props;
     const { resultData = EMPTY_LIST } = customerList;
     // 构造表格头部
@@ -207,13 +203,14 @@ export default class CustomerGroupDetail extends PureComponent {
             <FormItem>
               {getFieldDecorator('name', {
                 rules: [],
-                initialValue: name,
+                initialValue: name || '',
               })(
                 <Input
                   id={'nameInput'}
-                  placeholder={'请输入分组名称'}
+                  placeholder={canEditDetail ? '请输入分组名称' : ''}
                   size={'default'}
                   ref={ref => (this.nameInput = ref)}
+                  disabled={!canEditDetail}
                 />,
               )}
             </FormItem>
@@ -227,13 +224,14 @@ export default class CustomerGroupDetail extends PureComponent {
             <FormItem>
               {getFieldDecorator('description', {
                 rules: [],
-                initialValue: description,
+                initialValue: description || '',
               })(
                 <Input.TextArea
                   id={'descriptionInput'}
-                  placeholder={'请输入分组描述'}
+                  placeholder={canEditDetail ? '请输入分组描述' : ''}
                   size={'default'}
                   autosize={false}
+                  disabled={!canEditDetail}
                   ref={ref => (this.descriptionInput = ref)}
                 />,
               )}
@@ -249,20 +247,10 @@ export default class CustomerGroupDetail extends PureComponent {
             queryPossibleWords={getHotPossibleWds}
             // 联想出来的数据
             possibleWordsData={customerHotPossibleWordsList}
-            // 搜索历史值
-            searchHistoryVal={customerSearchHistoryVal}
-            // 保存搜索的value
-            saveSearchVal={saveSearchVal}
-            // 是否需要搜索大图标
-            isNeedLgSearch={false}
             // 搜索className
             searchWrapperClass={styles.groupCustomerSearch}
-            // 是否需要历史搜索功能
-            isNeedRememberHistory={false}
             // 搜索按钮功能
-            onSearchClick={() => { }}
-            // 点击option某一项
-            onOptionClick={() => { }}
+            onSearchClick={this.handleSearchClick}
             // placeholder
             placeholder={'客户号/姓名'}
             // 搜索框style
@@ -273,9 +261,7 @@ export default class CustomerGroupDetail extends PureComponent {
             // 是否需要添加按钮
             isNeedAddBtn
             // 添加按钮事件
-            addBtnCallback={(value) => {
-              console.log('receive value, add customer to table', value);
-            }}
+            addBtnCallback={this.handleAddCustomerFromSearch}
           />
         </div>
         {

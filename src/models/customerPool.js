@@ -598,13 +598,18 @@ export default {
     // 获取客户分组成功
     getCustomerGroupListSuccess(state, action) {
       const { payload } = action;
-      const { page = EMPTY_OBJECT, groupList = EMPTY_LIST } = payload;
+      const { custGroupDTOList = EMPTY_LIST, totalRecordNum } = payload;
 
       return {
         ...state,
         customerGroupList: {
-          page,
-          resultData: groupList,
+          page: {
+            // 后台返回的一直是null，所以不要了
+            // curPageNum,
+            // pageSize,
+            totalRecordNum,
+          },
+          resultData: custGroupDTOList,
         },
       };
     },

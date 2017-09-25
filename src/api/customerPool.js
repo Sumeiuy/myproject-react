@@ -71,7 +71,7 @@ export default function customerPool(api) {
     followCust: query => api.post('/groovynoauth/fsp/cust/custgroup/followCust', query),
 
     // 分组维度，客户分组列表
-    queryCustomerGroupList: query => api.post('/groovynoauth/fsp/cust/custgroup/queryCustomerGroupList', query),
+    queryCustomerGroupList: query => api.post('/groovynoauth/fsp/cust/custgroup/queryCustGroupList', query),
 
     // 某一个分组下面的客户列表
     queryGroupCustomerList: query => api.post('/groovynoauth/fsp/cust/custgroup/queryGroupCustomerList', query),

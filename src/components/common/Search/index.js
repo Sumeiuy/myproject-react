@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-21 13:39:44
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-09-22 17:42:53
+ * @Last Modified time: 2017-09-25 14:50:41
  * 通用搜索组件，包含搜索历史记录，搜索热词联想，添加按钮
  */
 
@@ -41,7 +41,7 @@ export default class Search extends PureComponent {
     // 保存搜索的value
     saveSearchVal: PropTypes.func,
     // 是否需要大图标
-    isNeedLgSearch: PropTypes.bool.isRequired,
+    isNeedLgSearch: PropTypes.bool,
     // 搜索className
     searchWrapperClass: PropTypes.string,
     // 是否需要历史搜索功能
@@ -78,6 +78,7 @@ export default class Search extends PureComponent {
     placeholder: '',
     searchStyle: {},
     isNeedAddBtn: false,
+    isNeedLgSearch: false,
     addBtnCallback: () => { },
   }
 
@@ -444,7 +445,7 @@ export default class Search extends PureComponent {
                 dataSource={dataSource}
                 style={searchStyle}
                 onSelect={this.onSelect}
-                onSearch={this.handleSearch}
+                onSearch={_.debounce(this.handleSearch, 250)} // 防抖动，节流函数，保证不连续触发
                 placeholder={placeholder}
                 optionLabelProp="value"
                 defaultValue={searchHistoryVal}
