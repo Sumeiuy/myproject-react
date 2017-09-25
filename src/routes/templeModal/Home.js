@@ -136,6 +136,11 @@ export default class TemplModal extends PureComponent {
     });
   }
 
+   @autobind
+  changeValue(value) {
+    console.log('value', value);
+  }
+
   @autobind
   renderSelectedElem(selected, removeFunc) {
     return (
@@ -280,6 +285,17 @@ export default class TemplModal extends PureComponent {
       status: '成功',
     };
 
+    const dataSource = [
+      {
+        key: '1-34Z1T0D-1',
+        name: '通道佣金专用（万分之1.5）',
+      },
+      {
+        key: '1-34Z1T0D-2',
+        name: '通道佣金专用（万分之1.6）',
+      },
+    ];
+
     return (
       <div>
         <Button onClick={this.openApprovalModal}>打开审批记录弹窗</Button>
@@ -312,10 +328,11 @@ export default class TemplModal extends PureComponent {
         <InfoItem label="备注" value="这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值" />
         <br />
         <SearchSelect
-          onChange={this.changeFunction}
-          addSelectValue={this.changeFunction}
-          width="300"
+          addClick={this.changeFunction}
+          changeValue={this.changeValue}
+          width="184px"
           labelName="产品"
+          dataSource={dataSource}
         />
         <br />
         <DigitalTrimmer
