@@ -6,7 +6,6 @@ import style from './approvalrecord.less';
 
 export default function ApprovalRecord(props) {
   const mapElementList = props.info.map((item, index) => {
-    const idx = `approvalrecord-${index}`;
     const mapElementClass = classnames([style.approvalRecordList, {
       [style.approvalRecordListEven]: index % 2 === 0,
       [style.approvalRecordListOdd]: index % 2 !== 0,
@@ -15,13 +14,13 @@ export default function ApprovalRecord(props) {
     return (
       <div
         className={mapElementClass}
-        key={idx}
+        key={item.handler}
       >
         <p className={style.arlistContentOne}>
-          审批人： {item.beginTime}，步骤名称：{item.stepName}
+          审批人： {item.handler}于{item.handleTime}，步骤名称：{item.stepName}
         </p>
         <p className={style.arlistContentTwo}>
-          {main}：{item.suggestion}
+          {main}：{item.comment}
         </p>
       </div>
     );

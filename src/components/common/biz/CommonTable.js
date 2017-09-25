@@ -16,10 +16,12 @@ export default class CommonTable extends PureComponent {
     data: PropTypes.array.isRequired,
     titleList: PropTypes.array.isRequired,
     operation: PropTypes.object,
+    pagination: PropTypes.object,
   }
 
   static defaultProps = {
     operation: null,
+    pagination: {},
   }
 
   render() {
@@ -36,7 +38,12 @@ export default class CommonTable extends PureComponent {
           break;
         case 'view':
           operation.column.render = (text, record, index) => (
-            <a href="###" onClick={() => operation.operate(record, index)}>查看</a>
+            <span
+              className={styles.viewlink}
+              onClick={() => operation.operate(record, index)}
+            >
+              查看
+            </span>
           );
           titleList.push(operation.column);
           break;
@@ -56,6 +63,7 @@ export default class CommonTable extends PureComponent {
     return (
       <div className={styles.commonTable}>
         <Table
+          pagination={this.props.pagination}
           dataSource={data}
           columns={titleList}
         />

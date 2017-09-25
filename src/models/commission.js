@@ -2,7 +2,7 @@
  * @file models/report.js
  * @author sunweibin
  */
-import { commission as api } from '../api';
+import { commission as api, seibel as seibelApi } from '../api';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -17,7 +17,7 @@ export default {
     // 批量佣金右侧详情
     detail: {},
     // 单个用户的审批记录
-    approvalRecord: [],
+    approvalRecord: {},
     // 查询审批记录流程状态
     recordLoading: false,
     // 筛选的客户列表
@@ -39,13 +39,13 @@ export default {
 
     getCommissionListSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
-      const { page = EMPTY_OBJECT, applicationList = EMPTY_LIST } = resultData;
+      const { page = EMPTY_OBJECT, applicationBaseInfoList = EMPTY_LIST } = resultData;
 
       return {
         ...state,
         list: {
           page,
-          resultData: applicationList,
+          resultData: applicationBaseInfoList,
         },
       };
     },
@@ -64,10 +64,13 @@ export default {
     },
 
     getApprovalRecordsSuccess(state, action) {
-      const { payload: { resultData } } = action;
+      const { payload: { recordResponse, cust } } = action;
       return {
         ...state,
-        approvalRecord: resultData,
+        approvalRecord: {
+          cust,
+          approval: recordResponse.resultData,
+        },
       };
     },
 
@@ -75,7 +78,7 @@ export default {
       const { payload: { resultData } } = action;
       return {
         ...state,
-        filterCustList: resultData,
+        filterCustList: resultData.custList,
       };
     },
 
@@ -83,7 +86,7 @@ export default {
       const { payload: { resultData } } = action;
       return {
         ...state,
-        filterDrafterList: resultData,
+        filterDrafterList: resultData.empList,
       };
     },
 
@@ -124,23 +127,23 @@ export default {
 
     // 批量佣金Home列表
     * getCommissionList({ payload }, { call, put }) {
-      const listResponse = yield call(api.getCommissionList, payload);
+      const listResponse = yield call(seibelApi.getSeibleList, payload);
       yield put({
         type: 'getCommissionListSuccess',
         payload: listResponse,
       });
-      const appList = listResponse.resultData.applicationList;
+      const appList = listResponse.resultData.applicationBaseInfoList;
       if (Array.isArray(appList) && appList.length) {
         yield put({
           type: 'getCommissionDetail',
-          payload: { batchNum: appList[0].id },
+          payload: { batchNum: appList[0].bussiness1 },
         });
       }
     },
 
     // 批量佣金调整Home的右侧详情
     * getCommissionDetail({ payload }, { call, put }) {
-      const detailRes = yield call(api.getCommissionDetail, payload);
+      const detailRes = yield call(api.getCommissionDetail, { type: 'BatchProcess', ...payload });
       const custListRes = yield call(api.getCommissionDetailCustList, {
         batchNum: payload.batchNum,
       });
@@ -160,10 +163,11 @@ export default {
           message: '开始查询审批记录',
         },
       });
-      const recordResponse = yield call(api.querySingleCustApprovalRecord, payload);
+      const { flowCode, loginuser, ...reset } = payload;
+      const recordResponse = yield call(api.querySingleCustApprovalRecord, { flowCode, loginuser });
       yield put({
         type: 'getApprovalRecordsSuccess',
-        payload: recordResponse,
+        payload: { recordResponse, cust: reset },
       });
       yield put({
         type: 'opertateState',
@@ -177,7 +181,7 @@ export default {
 
     // 根据用户输入的关键字，来查询可选的客户列表
     * searchCustList({ payload }, { call, put }) {
-      const custResponse = yield call(api.getCustList, payload);
+      const custResponse = yield call(seibelApi.getCustList, payload);
       yield put({
         type: 'searchCustListSuccess',
         payload: custResponse,
@@ -186,7 +190,7 @@ export default {
 
     // 根据用户输入的关键字，来查询可选的拟稿人列表
     * searchDrafterList({ payload }, { call, put }) {
-      const drafterResponse = yield call(api.getDrafterList, payload);
+      const drafterResponse = yield call(seibelApi.getDrafterList, payload);
       yield put({
         type: 'searchDrafterListSuccess',
         payload: drafterResponse,
@@ -195,7 +199,7 @@ export default {
 
     // 组织结构树
     * getCustRange({ payload }, { call, put }) {
-      const response = yield call(api.getEmpOrgTree, payload);
+      const response = yield call(seibelApi.getEmpOrgTree, payload);
       yield put({
         type: 'getCustRangeSuccess',
         payload: response,
