@@ -35,15 +35,15 @@ const mapStateToProps = state => ({
   detailMessage: state.permission.detailMessage,
   // 左侧列表数据
   list: state.permission.list,
-  serverPersonelList: state.permission.serverPersonelList,
+  searchServerPersonList: state.permission.searchServerPersonList,
   // 拟稿人
   drafterList: state.permission.drafterList,
   // 部门
   custRange: state.permission.custRange,
-  // // 子类型
-  // childTypeList: state.permission.childTypeList,
   // 客户
   customerList: state.permission.customerList,
+  // 查询已有服务任务列表
+  hasServerPersonList: state.permission.hasServerPersonList,
 });
 
 const mapDispatchToProps = {
@@ -54,12 +54,15 @@ const mapDispatchToProps = {
   getPermissionList: fetchDataFunction(true, 'permission/getPermissionList'),
   // 获取服务人员列表
   getServerPersonelList: fetchDataFunction(false, 'permission/getServerPersonelList'),
+  getSearchServerPersonList: fetchDataFunction(false, 'permission/getSearchServerPersonList'),
   // 获取拟稿人
   getDrafterList: fetchDataFunction(false, 'permission/getDrafterList'),
   // 获取部门
   getEmpOrgTree: fetchDataFunction(false, 'permission/getEmpOrgTree'),
  // 获取客户列表
   getCustomerList: fetchDataFunction(false, 'permission/getCustomerList'),
+  // 查询已有服务任务列表
+  getHasServerPersonList: fetchDataFunction(false, 'permission/getHasServerPersonList'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -76,10 +79,12 @@ export default class Permission extends PureComponent {
     getDetailMessage: PropTypes.func.isRequired,
     detailMessage: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
-    getServerPersonelList: PropTypes.func.isRequired,
+    getSearchServerPersonList: PropTypes.func.isRequired,
     getCustomerList: PropTypes.func.isRequired,
-    serverPersonelList: PropTypes.array.isRequired,
+    searchServerPersonList: PropTypes.array.isRequired,
     customerList: PropTypes.array.isRequired,
+    hasServerPersonList: PropTypes.array.isRequired,
+    getHasServerPersonList: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -88,7 +93,7 @@ export default class Permission extends PureComponent {
 
   static childContextTypes = {
     getCustomerList: PropTypes.func.isRequired,
-    getServerPersonelList: PropTypes.func.isRequired,
+    getSearchServerPersonList: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -102,12 +107,13 @@ export default class Permission extends PureComponent {
 
   getChildContext() {
     return {
+      // 获取查询客户列表
       getCustomerList: (data) => {
         this.props.getCustomerList({ code: data });
       },
-      // 获取 服务人员列表
-      getServerPersonelList: (data) => {
-        this.props.getServerPersonelList({ code: data });
+      // 获取 查询服务人员列表
+      getSearchServerPersonList: (data) => {
+        this.props.getSearchServerPersonList({ code: data });
       },
     };
   }
@@ -204,7 +210,7 @@ export default class Permission extends PureComponent {
   @autobind
   creatPermossionModal() {
     // 打开模态框 发送获取服务人员列表请求
-    this.props.getServerPersonelList({ id: 101110 });
+    this.props.getHasServerPersonList({ id: 101110 });
     this.setState({ isShowModal: true });
   }
 
@@ -263,7 +269,7 @@ export default class Permission extends PureComponent {
       <Detail
         {...this.props.detailMessage}
         customerList={this.props.customerList}
-        serverPersonelList={this.props.serverPersonelList}
+        searchServerPersonList={this.props.searchServerPersonList}
       />
     );
   }
@@ -276,7 +282,8 @@ export default class Permission extends PureComponent {
       drafterList,
       custRange,
       customerList,
-      serverPersonelList,
+      searchServerPersonList,
+      hasServerPersonList,
     } = this.props;
     if (!custRange || !custRange.length) {
       return null;
@@ -326,7 +333,8 @@ export default class Permission extends PureComponent {
           isShowModal ?
             <CreatePrivateClient
               customerList={customerList}
-              serverPersonelList={serverPersonelList}
+              searchServerPersonList={searchServerPersonList}
+              hasServerPersonList={hasServerPersonList}
               onEmitClearModal={this.clearModal}
             />
           :

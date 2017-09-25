@@ -3,115 +3,116 @@ exports.response = function (req, res) {
     "code": "0",
     "msg": "OK",
     "resultData": {
-      "num": "123456456",
-      "baseInfo": [ 
+      "id": 440,
+      "flowId": "8C5C9B41EAF3C242A4D2E035C4978317",
+      "title": "私密四册四dddd李四册d哈哈哈dd测试",
+      "empId": "002332",
+      "empName": "王华", // 拟稿
+      "orgId": "ZZ001041051",
+      "orgName": "南京长江路证券营业部", 
+      "type": "01",
+      "subType": "0103", // 子类型
+      "status": "营业部负责人审批", // 状态
+      "custNumber": "1-3UUZ9JF", // 客户id
+      "custName": "强哥", // 客户
+      "createTime": "2017-09-21 13:38:34", // 提请时间
+      "modifyTime": null,
+      "remark": "备注备注备注备注hahaha备注", // 备注
+      "empInfoVOS": [ // 主服务经理
         {
-          "title": "标题",
-          "content": "20170906今天南京又下雨了"
-        }, {
-          "title": "子类型",
-          "content": "私密客户思密达"
-        }, {
-          "title": "客户",
-          "content": "张三"
-        }, {
-          "title": "备注",
-          "content": "斯蒂芬斯蒂芬是否斯蒂芬斯蒂芬十点多"
-        }
+          "ptyMngId": "22222",
+          "ptyMngName": "小强",
+          "job": "HTSC002332",
+          "businessDepartment": "南京长江路证券营业部",
+          "isMain": "Y"
+        },
+        {
+          "ptyMngId": "11111",
+          "ptyMngName": "王华",
+          "job": "HTSC002332",
+          "businessDepartment": "南京长江路证券营业部",
+          "isMain": "Y"
+        },
+        {
+          "ptyMngId": "33333",
+          "ptyMngName": "小明",
+          "job": "HTSC002332",
+          "businessDepartment": "南京长江路证券营业部",
+          "isMain": "N"
+        },
+        {
+          "ptyMngId": "44444",
+          "ptyMngName": "小红",
+          "job": "HTSC002332",
+          "businessDepartment": "南京长江路证券营业部",
+          "isMain": "N"
+        },
       ],
-      "draftInfo": [
+      "workflowHistoryBeans": [ //这里是审批历史
         {
-          "title": "拟稿",
-          "content": "沈旭祥"
+          "entryTime": "",
+          "handler": "002332",
+          "handleName": "隔壁老王",
+          "handleTime": "2017-09-21 13:39:00", // 时间
+          "comment": "流程发起", // 建议
+          "stepName": "流程发起" // 步骤
         }, {
-          "title": "提请时间",
-          "content": "20170906"
+          "entryTime": "",
+          "handler": "002331",
+          "handleName": "隔壁老王",
+          "handleTime": "2017-09-21 13:39:00",
+          "comment": "流程发起",
+          "stepName": "流程发起"
         }, {
-          "title": "状态",
-          "content": "已完成"
-        }
-      ],
-      "serverInfo": [
-        {
-          "ptyMngId":"0101011",
-          "ptyMngName": "王二",
-          "job": "岗位A",
-          "businessDepartment": "南京奥体东营业部",
-          "isMain": false
+          "entryTime": "",
+          "handler": "002333",
+          "handleName": "隔壁老王",
+          "handleTime": "2017-09-21 13:39:00",
+          "comment": "流程发起",
+          "stepName": "流程发起"
         }, {
-          "ptyMngId":"0101012",
-          "ptyMngName": "王三",
-          "job": "岗位B",
-          "businessDepartment": "南京奥体东营业部AAA",
-          "isMain": true
-
-        }, {
-          "ptyMngId":"0101013",
-          "ptyMngName": "李四",
-          "job": "岗位C",
-          "businessDepartment": "南京奥体东营业部BBB",
-          "isMain": false
-        }, {
-          "ptyMngId":"0101014",
-          "ptyMngName": "张三",
-          "job": "岗位D",
-          "businessDepartment": "南京奥体东营业部CCC",
-          "isMain": false
-        }, {
-          "ptyMngId":"0101015",
-          "ptyMngName": "码子",
-          "job": "岗位F",
-          "businessDepartment": "南京奥体东营业部DDD",
-          "isMain": false
-        }
-      ],
-      "approvalRecord":{
-        "stepName":"分公司负责人审批",
-        "approvalId":"001003",
-        "approvlName":"周延",
-        "beginTime":"20170901",
-        "suggestion":"审批意见很多意见超级多的意见"
-      },
-      "approvalRecordList":[
-        {
-        "stepName":"分公司负责人审批",
-        "approvalId":"001003",
-        "approvlName":"周延",
-        "beginTime":"20170910",
-        "suggestion":"意见是真他妈的多呀！多的不得了！！！！",
-        "isOk": true,
-        }, {
-        "stepName":"分公司负责人审批",
-        "approvalId":"001003",
-        "approvlName":"周延",
-        "beginTime":"20170901",
-        "suggestion":"审批意见很多意见超级多的意见",
-        "isOk": false,
+          "entryTime": "",
+          "handler": "002334",
+          "handleName": "隔壁老王",
+          "handleTime": "2017-09-21 13:39:00",
+          "comment": "流程发起",
+          "stepName": "流程发起"
         }
       ],
       "attachInfoList":[
         {
-          "name":"附件名称",
-          "empId": "010015",
-          "empName": "赵4",
-          "uploadTime": "20170902",
-          "attachUrl": "/upload/13222.doc",
-          "attachSize": "33kb"
+          "creator": "002331",
+          "attachId": "{C70B06ssa-4435-4F1A-A63B-C6CB1E3BE3EC}",
+          "name": "sxx.txt",
+          "size": "60",
+          "createTime": "2017/09/22 13:14:46",
+          "downloadURL": "http://ceflow:8086/unstructured/downloadDocument?sessionId=a15abee5-8a4b-48b5-bc33-def6b0fcecf8&documentId={C70B0687-4435-4F1A-A63B-C6CB1E3BE3EC}",
+          "realDownloadURL": "/attach/download?filename=%E6%96%B0%E5%BB%BA%E6%96%87%E6%9C%AC%E6%96%87%E6%A1%A3+%283%29.txt&attachId={C70B0687-4435-4F1A-A63B-C6CB1E3BE3EC}"
         }, {
-          "name":"附件名称",
-          "empId": "010016",
-          "empName": "赵5",
-          "uploadTime": "20170903",
-          "attachUrl": "/upload/132111.doc",
-          "attachSize": "100kb"
+          "creator": "002332",
+          "attachId": "{C70B068d-4435-4F1A-A63B-C6CB1E3BE3EC}",
+          "name": "sj.txt",
+          "size": "58",
+          "createTime": "2017/09/18 13:14:46",
+          "downloadURL": "http://ceflow:8086/unstructured/downloadDocument?sessionId=a15abee5-8a4b-48b5-bc33-def6b0fcecf8&documentId={C70B0687-4435-4F1A-A63B-C6CB1E3BE3EC}",
+          "realDownloadURL": "/attach/download?filename=%E6%96%B0%E5%BB%BA%E6%96%87%E6%9C%AC%E6%96%87%E6%A1%A3+%283%29.txt&attachId={C70B0687-4435-4F1A-A63B-C6CB1E3BE3EC}"
         }, {
-          "name":"附件名称",
-          "empId": "010017",
-          "empName": "赵7",
-          "uploadTime": "20170915",
-          "attachUrl": "/upload/123456.doc",
-          "attachSize": "101kb"
-        },
+          "creator": "002333",
+          "attachId": "{C70Bssd87-4435-4F1A-A63B-C6CB1E3BE3EC}",
+          "name": "mc.txt",
+          "size": "50",
+          "createTime": "2017/09/05 13:14:46",
+          "downloadURL": "http://ceflow:8086/unstructured/downloadDocument?sessionId=a15abee5-8a4b-48b5-bc33-def6b0fcecf8&documentId={C70B0687-4435-4F1A-A63B-C6CB1E3BE3EC}",
+          "realDownloadURL": "/attach/download?filename=%E6%96%B0%E5%BB%BA%E6%96%87%E6%9C%AC%E6%96%87%E6%A1%A3+%283%29.txt&attachId={C70B0687-4435-4F1A-A63B-C6CB1E3BE3EC}"
+        }, {
+          "creator": "002334",
+          "attachId": "{C70B06ss7-4435-4F1A-A63B-C6CB1E3BE3EC}",
+          "name": "jd.txt",
+          "size": "100",
+          "createTime": "2017/09/20 13:14:46",
+          "downloadURL": "http://ceflow:8086/unstructured/downloadDocument?sessionId=a15abee5-8a4b-48b5-bc33-def6b0fcecf8&documentId={C70B0687-4435-4F1A-A63B-C6CB1E3BE3EC}",
+          "realDownloadURL": "/attach/download?filename=%E6%96%B0%E5%BB%BA%E6%96%87%E6%9C%AC%E6%96%87%E6%A1%A3+%283%29.txt&attachId={C70B0687-4435-4F1A-A63B-C6CB1E3BE3EC}"
+        }
       ],
     }
   };
