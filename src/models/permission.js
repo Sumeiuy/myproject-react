@@ -2,7 +2,6 @@
  * @file models/premissinon.js
  * @author honggaungqing
  */
-
 import { permission as api } from '../api';
 
 const EMPTY_OBJECT = {};
@@ -13,57 +12,69 @@ export default {
   state: {
     detailMessage: EMPTY_OBJECT, // 详情
     list: EMPTY_OBJECT,
-    serverPersonelList: EMPTY_LIST, // 服务人员列表
+    // searchServerPersonList: EMPTY_LIST, // 服务人员列表
     drafterList: EMPTY_LIST, // 拟稿人
-    empOrgTreeList: EMPTY_OBJECT, // 部门
+    custRange: EMPTY_LIST, // 部门
     childTypeList: EMPTY_LIST, // 子类型
     customerList: EMPTY_LIST, // 客户列表
+    hasServerPersonList: EMPTY_LIST, // 已有服务人员列表
+    searchServerPersonList: EMPTY_LIST, // 可查询服务人员列表
   },
   reducers: {
     getDetailMessageSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
-      console.warn('resultData', resultData);
       return {
         ...state,
         detailMessage: resultData,
       };
     },
     getPermissionListSuccess(state, action) {
-      const { payload: { resultData = EMPTY_OBJECT } } = action;
-      const { page = EMPTY_OBJECT, applicationList = EMPTY_LIST } = resultData;
-      const { listData: preListData = EMPTY_LIST } = state.list;
-
+      const { payload: { resultData } } = action;
+      let applist = [];
+      let page = {};
+      if (resultData) {
+        applist = resultData.applicationBaseInfoList;
+        page = resultData.page;
+      }
       return {
         ...state,
         list: {
           page,
-          resultData: page.pageNum === 1 ?
-            applicationList : [...preListData, ...applicationList],
+          resultData: applist,
         },
       };
     },
-    getServerPersonelListSuccess(state, action) {
-      const { payload: { resultData = EMPTY_LIST } } = action;
+    getSearchServerPersonListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      const { servicePeopleList = EMPTY_LIST } = resultData;
       return {
         ...state,
-        serverPersonelList: resultData,
+        searchServerPersonList: servicePeopleList,
       };
     },
     getDrafterListSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
-      const { empInfo = EMPTY_LIST } = resultData;
+      const { empList = EMPTY_LIST } = resultData;
 
       return {
         ...state,
-        drafterList: empInfo,
+        drafterList: empList,
       };
     },
     getEmpOrgTreeSuccess(state, action) {
-      const { payload: { resultData = EMPTY_OBJECT } } = action;
-
+      const { payload: { resultData = EMPTY_LIST } } = action;
+      let custRange;
+      if (resultData.level === '1') {
+        custRange = [
+          { id: resultData.id, name: resultData.name, level: resultData.level },
+          ...resultData.children,
+        ];
+      } else {
+        custRange = [resultData];
+      }
       return {
         ...state,
-        empOrgTreeList: resultData,
+        custRange,
       };
     },
     getChildTypeListSuccess(state, action) {
@@ -78,10 +89,16 @@ export default {
     getCustomerListSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
       const { custList = EMPTY_LIST } = resultData;
-      console.log('reduces', custList);
       return {
         ...state,
         customerList: custList,
+      };
+    },
+    getHasServerPersonListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_LIST } } = action;
+      return {
+        ...state,
+        hasServerPersonList: resultData,
       };
     },
   },
@@ -99,22 +116,22 @@ export default {
         type: 'getPermissionListSuccess',
         payload: response,
       });
-      const result = response.resultData.applicationList;
+      const result = response.resultData && response.resultData.applicationBaseInfoList;
       if (Array.isArray(result) && result.length) {
         const detailList = yield call(api.getMessage, {
           id: result[0].id,
+          type: '01',
         });
-        console.warn('detailList', detailList);
         yield put({
           type: 'getDetailMessageSuccess',
           payload: detailList,
         });
       }
     },
-    * getServerPersonelList({ payload }, { call, put }) {
-      const response = yield call(api.getServerPersonelList, payload);
+    * getSearchServerPersonList({ payload }, { call, put }) {
+      const response = yield call(api.getSearchServerPersonelList, payload);
       yield put({
-        type: 'getServerPersonelListSuccess',
+        type: 'getSearchServerPersonListSuccess',
         payload: response,
       });
     },
@@ -143,6 +160,13 @@ export default {
       const response = yield call(api.getCustomerList, payload);
       yield put({
         type: 'getCustomerListSuccess',
+        payload: response,
+      });
+    },
+    * getHasServerPersonList({ payload }, { call, put }) {
+      const response = yield call(api.getHasServerPersonList, payload);
+      yield put({
+        type: 'getHasServerPersonListSuccess',
         payload: response,
       });
     },
