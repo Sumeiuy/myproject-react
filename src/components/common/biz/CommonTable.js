@@ -17,15 +17,17 @@ export default class CommonTable extends PureComponent {
     titleList: PropTypes.array.isRequired,
     operation: PropTypes.object,
     pagination: PropTypes.object,
+    scroll: PropTypes.object,
   }
 
   static defaultProps = {
     operation: null,
     pagination: {},
+    scroll: {},
   }
 
   render() {
-    const { data, titleList, operation, operation: { column: { radio = 0 } } } = this.props;
+    const { scroll, data, titleList, operation, operation: { column: { radio = 0 } } } = this.props;
     if (operation) {
       switch (operation.column.key) {
         case 'delete':
@@ -63,6 +65,7 @@ export default class CommonTable extends PureComponent {
     return (
       <div className={styles.commonTable}>
         <Table
+          scroll={scroll}
           pagination={this.props.pagination}
           dataSource={data}
           columns={titleList}
