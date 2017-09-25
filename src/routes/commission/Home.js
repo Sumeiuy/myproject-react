@@ -9,27 +9,38 @@ import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { withRouter, routerRedux } from 'dva/router';
+
 import SplitPanel from '../../components/common/splitPanel/SplitPanel';
 import Detail from '../../components/commissionAdjustment/Detail';
+import ApprovalRecordBoard from '../../components/commissionAdjustment/ApprovalRecordBoard';
 import CommissionHeader from '../../components/common/biz/SeibelHeader';
 import CommissionList from '../../components/common/biz/CommonList';
 import seibelColumns from '../../components/common/biz/seibelColumns';
-import { constructSeibelPostBody } from '../../utils/helper';
+import { constructSeibelPostBody, getEmpId } from '../../utils/helper';
 import { seibelConfig } from '../../config';
-import './Home.less';
+import './home.less';
 
-const EMPTY_LIST = [];
+// const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
-const OMIT_ARRAY = ['isResetPageNum'];
-const { commission: { pageType, subType, status } } = seibelConfig;
+const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
+const { commission, commission: { pageType, subType, status } } = seibelConfig;
 const effects = {
   list: 'commission/getCommissionList',
   detail: 'commission/getCommissionDetail',
+  record: 'commission/getApprovalRecords',
+  searchCust: 'commission/searchCustList',
+  searchDrafter: 'commission/searchDrafterList',
+  custRange: 'commission/getCustRange',
 };
 
 const mapStateToProps = state => ({
   list: state.commission.list,
   detail: state.commission.detail,
+  custRange: state.commission.custRange,
+  approvalRecord: state.commission.approvalRecord,
+  recordLoading: state.commission.recordLoading,
+  filterCustList: state.commission.filterCustList,
+  filterDrafterList: state.commission.filterDrafterList,
 });
 
 const getDataFunction = (loading, type) => query => ({
@@ -42,6 +53,10 @@ const mapDispatchToProps = {
   replace: routerRedux.replace,
   getCommissionList: getDataFunction(true, effects.list), // 获取批量佣金调整List
   getCommissionDetail: getDataFunction(true, effects.detail), // 获取批量佣金调整Detail
+  getApprovalRecords: getDataFunction(false, effects.record), // 获取用户审批记录
+  searchCustList: getDataFunction(false, effects.searchCust), // 通过关键字，查询可选用户列表
+  searchDrafter: getDataFunction(false, effects.searchDrafter), // 通过关键字，查询可选拟稿人列表
+  getCustRange: getDataFunction(false, effects.custRange), // 组织机构
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -53,8 +68,17 @@ export default class CommissionHome extends PureComponent {
     replace: PropTypes.func.isRequired,
     getCommissionList: PropTypes.func.isRequired,
     getCommissionDetail: PropTypes.func.isRequired,
+    getApprovalRecords: PropTypes.func.isRequired,
+    searchCustList: PropTypes.func.isRequired,
+    searchDrafter: PropTypes.func.isRequired,
+    getCustRange: PropTypes.func.isRequired,
+    custRange: PropTypes.array.isRequired,
     list: PropTypes.object.isRequired,
     detail: PropTypes.object.isRequired,
+    approvalRecord: PropTypes.array.isRequired,
+    recordLoading: PropTypes.bool.isRequired,
+    filterCustList: PropTypes.array.isRequired,
+    filterDrafterList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -65,12 +89,14 @@ export default class CommissionHome extends PureComponent {
     super(props);
     this.state = {
       isEmpty: true,
+      approvalBoard: false,
     };
   }
 
   componentWillMount() {
     const {
       getCommissionList,
+      getCustRange,
       location: {
         query,
         query: {
@@ -80,6 +106,7 @@ export default class CommissionHome extends PureComponent {
       },
     } = this.props;
     const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
+    getCustRange({});
     // 默认筛选条件
     getCommissionList({ ...params, type: pageType });
   }
@@ -103,11 +130,26 @@ export default class CommissionHome extends PureComponent {
         });
       }
     }
+
+    // 判断用户点击查询审批记录
+    const { recordLoading: prevRL } = this.props;
+    const { recordLoading: nextRL } = nextProps;
+    if (prevRL && !nextRL) {
+      // 表示发起审批记录查询完成
+      // 打开弹出窗
+      this.openApprovalBoard();
+    }
   }
 
   componentDidUpdate() {
-    const { location: { pathname, query, query: { isResetPageNum } }, replace,
-      list: { resultData = EMPTY_LIST } } = this.props;
+    const {
+      location: {
+        pathname,
+        query,
+        query: { isResetPageNum },
+      },
+      replace,
+    } = this.props;
     // 重置pageNum和pageSize
     if (isResetPageNum === 'Y') {
       replace({
@@ -119,10 +161,6 @@ export default class CommissionHome extends PureComponent {
         },
       });
     }
-    const isEmpty = _.isEmpty(resultData);
-    this.setState({ // eslint-disable-line
-      isEmpty,
-    });
   }
 
   /**
@@ -134,6 +172,14 @@ export default class CommissionHome extends PureComponent {
     getCommissionDetail({
       batchNum: id,
     });
+  }
+
+  // 点击查看的时候，弹出框需要的所点击的用户信息
+  @autobind
+  getApprovalBoardCustInfo(info) {
+    const loginuser = getEmpId();
+    console.warn('getApprovalBoardCustInfo', info);
+    this.props.getApprovalRecords({ ...info, loginuser });
   }
 
   /**
@@ -150,13 +196,6 @@ export default class CommissionHome extends PureComponent {
     return true;
   }
 
-  @autobind
-  searchResult(isEmpty) {
-    this.setState({
-      isEmpty,
-    });
-  }
-
   // 头部新建按钮点击事件处理程序
   @autobind
   handleCreateBtnClick() {
@@ -166,19 +205,63 @@ export default class CommissionHome extends PureComponent {
   // 根据用户输入查询查询拟稿人
   @autobind
   searDrafterList(keyword) {
-    console.warn('请输入的拟稿人关键字', keyword);
+    this.props.searchDrafter({
+      type: pageType,
+      keyword,
+    });
+  }
+
+  // 根据用户输入的客户关键字查询客户List
+  @autobind
+  searchCustList(keyword) {
+    this.props.searchCustList({
+      keyword,
+    });
   }
 
   // 生成左侧列表页面的数据列
   @autobind
   constructTableColumns() {
-    return seibelColumns('save_blue');
+    return seibelColumns({
+      pageName: 'commission',
+      type: 'yongjin',
+      pageData: commission,
+    });
+  }
+
+  // 打开审批记录弹出窗
+  @autobind
+  openApprovalBoard() {
+    this.setState({
+      approvalBoard: true,
+    });
+  }
+
+  // 关闭审批记录弹出窗
+  @autobind
+  closeApprovalBoard() {
+    this.setState({
+      approvalBoard: false,
+    });
   }
 
   render() {
-    const { list, location, replace } = this.props;
+    const {
+      location,
+      replace,
+      list,
+      detail,
+      filterDrafterList,
+      filterCustList,
+      custRange,
+      approvalRecord,
+    } = this.props;
+    if (_.isEmpty(custRange)) {
+      return null;
+    }
+    const isEmpty = _.isEmpty(list);
     // 此处需要提供一个方法给返回的接口查询设置是否查询到数据
-    const { isEmpty } = this.state;
+    const { approvalBoard } = this.state;
     const topPanel = (
       <CommissionHeader
         location={location}
@@ -186,9 +269,12 @@ export default class CommissionHome extends PureComponent {
         page="commission"
         subtypeOptions={subType}
         stateOptions={status}
-        drafterList={[]}
-        creatSeibelModal={this.handleCreateBtnClick}
         toSearchDrafter={this.searDrafterList}
+        drafterList={filterDrafterList}
+        toSearchCust={this.searchCustList}
+        customerList={filterCustList}
+        custRange={custRange}
+        creatSeibelModal={this.handleCreateBtnClick}
       />
     );
     const leftPanel = (
@@ -197,13 +283,16 @@ export default class CommissionHome extends PureComponent {
         replace={replace}
         location={location}
         columns={this.constructTableColumns()}
-        getListRowId={this.getListRowId}
+        clickRow={this.getListRowId}
+        backKeys={['bussiness1', 'flowId']}
       />
     );
 
     const rightPanel = (
       <Detail
+        data={detail}
         location={location}
+        checkApproval={this.getApprovalBoardCustInfo}
       />
     );
     return (
@@ -214,6 +303,12 @@ export default class CommissionHome extends PureComponent {
           leftPanel={leftPanel}
           rightPanel={rightPanel}
           leftListClassName="feedbackList"
+        />
+        <ApprovalRecordBoard
+          modalKey="approvalBoard"
+          record={approvalRecord}
+          visible={approvalBoard}
+          onClose={this.closeApprovalBoard}
         />
       </div>
     );

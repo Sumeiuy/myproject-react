@@ -27,7 +27,7 @@ export default class UploadFile extends PureComponent {
   render() {
     return (
       <div className={style.uploadFile}>
-        <InfoTitle head="附件上传" />
+        <InfoTitle head="附件" />
         <CommonUpload fileList={this.state.fileList} />
       </div>
     );

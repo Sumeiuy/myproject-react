@@ -10,33 +10,42 @@ import DropdownSelect from '../common/dropdownSelect';
 export default class ServerPersonel extends PureComponent {
   static propTypes = {
     head: PropTypes.string.isRequired,
-    info: PropTypes.array.isRequired,
+    info: PropTypes.array,
     statusType: PropTypes.string.isRequired,
-    onEmitEvent: PropTypes.func.isRequired,
+    onEmitEvent: PropTypes.func,
     type: PropTypes.string.isRequired,
-    serverPersonelList: PropTypes.array.isRequired,
+    searchServerPersonList: PropTypes.array,
+  }
+
+  static defaultProps = {
+    info: [],
+    searchServerPersonList: [],
+    onEmitEvent: () => {},
   }
 
   static contextTypes = {
-    getServerPersonelList: PropTypes.func.isRequired,
+    getSearchServerPersonList: PropTypes.func,
   }
 
   constructor(props) {
     super(props);
     this.state = {
       // 服务人员信息
-      serverInfo: props.info,
-      // 选中添加值
+      serverInfo: [],
+      // 选中作为 添加项 添加到table列表中
       addSelectedValue: {},
-      // 选中移除值
+      // 选中table列表中的某一项 作为 即将要移除
       removeSelectedValue: {},
-      // 新增服务人员 查询信息列表
-      searchList: [],
     };
+  }
+  componentWillMount() {
+    this.setState({ serverInfo: this.props.info });
   }
 
   componentWillReceiveProps(newProps) {
-    this.setState({ serverInfo: newProps.info });
+    if (newProps.info !== this.props.info) {
+      this.setState({ serverInfo: newProps.info });
+    }
   }
 
   get modifyDom() { // 只读或者编辑状态下所对应的操作状态
@@ -60,7 +69,7 @@ export default class ServerPersonel extends PureComponent {
             <DropdownSelect
               value="全部"
               placeholder="请输入姓名或工号"
-              searchList={this.props.serverPersonelList}
+              searchList={this.props.searchServerPersonList}
               showObjKey="ptyMngName"
               objId="ptyMngId"
               emitSelectItem={this.dropdownSelectedItem}
@@ -85,14 +94,13 @@ export default class ServerPersonel extends PureComponent {
   @autobind
   dropdownSelectedItem(item) {
     // 下拉菜单添加选中对象
-    console.log(item);
     this.setState({ addSelectedValue: item });
   }
 
   @autobind
   dropdownToSearchInfo(value) {
     // 下拉菜单搜错查询关键字
-    this.context.getServerPersonelList(value);
+    this.context.getSearchServerPersonList(value);
   }
 
   @autobind
@@ -106,7 +114,7 @@ export default class ServerPersonel extends PureComponent {
     // 添加服务人员按钮
     if (!_.isEmpty(this.state.addSelectedValue)) {
       this.setState(prevState => ({
-        serverInfo: prevState.serverInfo.concat(this.state.addSelectedValue),
+        serverInfo: [].concat(this.state.addSelectedValue, prevState.serverInfo),
       }), () => {
         this.props.onEmitEvent(this.props.type, this.state.serverInfo);
       });
@@ -141,7 +149,7 @@ export default class ServerPersonel extends PureComponent {
           info={this.state.serverInfo}
           statusType={this.props.statusType}
           selectValue={this.state.removeSelectedValue}
-          emitUpdateValue={this.updateRadioValue}
+          onEmitUpdateValue={this.updateRadioValue}
         />
       </div>
     );

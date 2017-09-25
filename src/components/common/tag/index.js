@@ -1,26 +1,35 @@
 /**
- * @description 通用的Tag组件
- * @author 孙伟斌
+ * @file components/common/tag/index.js
+ * @author sunweibin
+ * @description 用于显示列表组件中的标签组件
+ * 由于接口的原因，
+ * 传递的属性说明：
+ * type {string} // 需要使用何种样式，目前仅有两个选项blue, yellow
+ * text {string} // 标签显示文字
+ * color {string} // 背景颜色的自定义色值，可选
  */
 
 import React, { PropTypes, PureComponent } from 'react';
 import classnames from 'classnames';
 
-import tagConfig from './config';
+// import tagConfig from './config';
 import styles from './index.less';
 
 export default class Tag extends PureComponent {
   static propTypes = {
-    type: PropTypes.string.isRequired,
+    type: PropTypes.oneOf(['blue', 'yellow']),
     color: PropTypes.string,
+    text: PropTypes.string,
   };
 
   static defaultProps = {
     color: '',
+    text: '',
+    type: 'blue',
   }
 
   render() {
-    const { type, color } = this.props;
+    const { type, color, text } = this.props;
     const lowType = type.toLowerCase();
     let newStyle = {};
     if (color !== '') {
@@ -35,7 +44,7 @@ export default class Tag extends PureComponent {
     });
 
     return (
-      <span className={tagCls} style={newStyle}>{tagConfig[lowType]}</span>
+      <span className={tagCls} style={newStyle}>{text}</span>
     );
   }
 }
