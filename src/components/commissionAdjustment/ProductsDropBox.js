@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Icon, Input, AutoComplete } from 'antd';
 import _ from 'lodash';
-import styles from './productsDropBox.less';
+import styles from './productsDropBox1.less';
 
 const Option = AutoComplete.Option;
 
