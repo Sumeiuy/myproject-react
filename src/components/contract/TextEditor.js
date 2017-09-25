@@ -9,7 +9,7 @@ import { autobind } from 'core-decorators';
 import { Form, Input } from 'antd';
 import _ from 'lodash';
 
-import styles from './TextEditor.less';
+import styles from './textEditor.less';
 
 const FormItem = Form.Item;
 const create = Form.create;
