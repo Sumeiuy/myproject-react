@@ -29,7 +29,7 @@ export default class Detail extends PureComponent {
     empName: PropTypes.string,
     createTime: PropTypes.string,
     status: PropTypes.string,
-    empInfoVOS: PropTypes.array,
+    empList: PropTypes.array,
     workflowHistoryBeans: PropTypes.array,
     attachInfoList: PropTypes.array,
     searchServerPersonList: PropTypes.array.isRequired,
@@ -45,7 +45,7 @@ export default class Detail extends PureComponent {
     empName: '',
     createTime: '',
     status: '',
-    empInfoVOS: [],
+    empList: [],
     workflowHistoryBeans: [],
     attachInfoList: [],
   }
@@ -73,7 +73,7 @@ export default class Detail extends PureComponent {
       // 状态
       status: '',
       // 主服务经理
-      empInfoVOS: [],
+      empList: [],
       // 审批意见
       approvalComments: '',
     };
@@ -88,7 +88,7 @@ export default class Detail extends PureComponent {
       empName,
       createTime,
       status,
-      empInfoVOS,
+      empList,
     } = this.props;
 
     this.setState({
@@ -101,7 +101,7 @@ export default class Detail extends PureComponent {
       empName,
       createTime,
       status,
-      empInfoVOS,
+      empList,
     });
   }
 
@@ -220,8 +220,8 @@ export default class Detail extends PureComponent {
         {this.draftInfo}
         <ServerPersonel
           head="服务人员"
-          type="empInfoVOS"
-          info={this.props.empInfoVOS}
+          type="empList"
+          info={this.props.empList}
           statusType={this.state.statusType}
           onEmitEvent={this.updateValue}
           searchServerPersonList={this.props.searchServerPersonList}

@@ -18,7 +18,7 @@ exports.response = function (req, res) {
       "createTime": "2017-09-21 13:38:34", // 提请时间
       "modifyTime": null,
       "remark": "备注备注备注备注hahaha备注", // 备注
-      "empInfoVOS": [ // 主服务经理
+      "empList": [ // 主服务经理
         {
           "ptyMngId": "22222",
           "ptyMngName": "小强",
