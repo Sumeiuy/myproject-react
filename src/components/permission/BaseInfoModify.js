@@ -13,7 +13,7 @@ const { permission: { subType } } = seibelConfig;
 export default class BaseInfoModify extends PureComponent {
   static propTypes = {
     head: PropTypes.string.isRequired,
-    customerList: PropTypes.array.isRequired,
+    canApplyCustList: PropTypes.array.isRequired,
     subTypeTxt: PropTypes.string.isRequired,
     customer: PropTypes.string.isRequired,
     remark: PropTypes.string.isRequired,
@@ -25,7 +25,7 @@ export default class BaseInfoModify extends PureComponent {
   }
 
   static contextTypes = {
-    getCustomerList: PropTypes.func.isRequired,
+    getCanApplyCustList: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -60,9 +60,9 @@ export default class BaseInfoModify extends PureComponent {
   }
 
   @autobind
-  searchCustomerList(value) {
+  searchCanApplyCustList(value) {
     // 按照 关键字 查询 客户 列表
-    this.context.getCustomerList(value);
+    this.context.getCanApplyCustList(value);
   }
 
   @autobind
@@ -102,11 +102,11 @@ export default class BaseInfoModify extends PureComponent {
             <DropdownSelect
               value={this.props.customer}
               placeholder="经济客户号/客户名称"
-              searchList={this.props.customerList}
+              searchList={this.props.canApplyCustList}
               showObjKey="custName"
               objId="cusId"
               emitSelectItem={this.selectCustomer}
-              emitToSearch={this.searchCustomerList}
+              emitToSearch={this.searchCanApplyCustList}
               boxStyle={{ border: '1px solid #d9d9d9' }}
             />
           </div>

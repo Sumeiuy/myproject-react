@@ -13,7 +13,7 @@ const confirm = Modal.confirm;
 export default class CreatePrivateClient extends PureComponent {
   static propTypes = {
     searchServerPersonList: PropTypes.array.isRequired,
-    customerList: PropTypes.array.isRequired,
+    canApplyCustList: PropTypes.array.isRequired,
     onEmitClearModal: PropTypes.func.isRequired,
     hasServerPersonList: PropTypes.array.isRequired,
   }
@@ -97,7 +97,7 @@ export default class CreatePrivateClient extends PureComponent {
                 ''
             }
             remark={this.state.remark}
-            customerList={this.props.customerList}
+            canApplyCustList={this.props.canApplyCustList}
             onEmitEvent={this.updateValue}
           />
           <ServerPersonel
