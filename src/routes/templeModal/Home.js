@@ -20,6 +20,7 @@ import InfoItem from '../../components/common/infoItem';
 import SearchSelect from '../../components/common/Select/SearchSelect';
 import DigitalTrimmer from '../../components/common/DigitalTrimmer';
 import ApprovalRecordBoard from '../../components/commissionAdjustment/ApprovalRecordBoard';
+import OperationOfCustermorList from '../../components/commissionAdjustment/OperationOfCustermorList'
 
 import {
   confirmData,
@@ -121,6 +122,7 @@ export default class TemplModal extends PureComponent {
  @autobind
   changeFunction(value) {
     console.log(value);
+    console.log('111');
   }
   @autobind
   openApprovalModal() {
@@ -328,8 +330,8 @@ export default class TemplModal extends PureComponent {
         <InfoItem label="备注" value="这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值" />
         <br />
         <SearchSelect
-          addClick={this.changeFunction}
-          changeValue={this.changeValue}
+          onAddCustomer={this.changeFunction}
+          onChangeValue={this.changeValue}
           width="184px"
           labelName="产品"
           dataSource={dataSource}
@@ -341,6 +343,14 @@ export default class TemplModal extends PureComponent {
           step={0.1}
           defaultValue={1.6}
           getValue={this.changeFunction}
+        />
+        <br />
+        <OperationOfCustermorList
+          onAddCustomer={this.changeFunction}
+          onChangeValue={this.changeValue}
+          labelName="产品"
+          dataSource={dataSource}
+          onDelectCustomer={this.changeFunction}
         />
       </div>
     );
