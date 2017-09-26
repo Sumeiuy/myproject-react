@@ -8,17 +8,17 @@ exports.response = function (req, res) {
     "resultData": {
       "hotPossibleWdsList": [
         {
-          "id": null,
+          "id": 1,
           "tagNumId": "499_1",
           "labelMapping": "shi_fou_cai_zhang_die",
-          "labelNameVal": "乐米版猜涨跌客户",
+          "labelNameVal": "乐米版猜涨跌1",
           "labelDesc": "乐米版猜涨跌客户"
         },
         {
-          "id": null,
+          "id": 2,
           "tagNumId": "231_1",
           "labelMapping": "shi_fou_cai_zhang_die",
-          "labelNameVal": "乐米版猜涨跌客户",
+          "labelNameVal": "乐米版猜涨跌2",
           "labelDesc": "近三个月参与乐米版猜涨跌次数超过1次"
         }
       ]

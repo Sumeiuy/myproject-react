@@ -33,7 +33,23 @@
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    & > .addBtnSection {
+    & > .leftSection {
+      width: 50%;
+      display: flex;
+      justify-content: flex-start;
+      align-items: flex-start;
+      & > .groupName {
+        display: inline-block;
+        font-size: 14px;
+        color: #666666;
+        margin-right: 5px;
+        margin-top: 3px;
+      }
+      & > .customerGroupSearch {
+        display: block;
+      }
+    }
+    & > .rightSection {
       display: block;
       width: 50%;
       text-align: right;

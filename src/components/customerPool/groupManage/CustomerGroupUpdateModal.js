@@ -2,20 +2,14 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 10:53:22
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-09-20 18:53:52
+ * @Last Modified time: 2017-09-22 15:39:10
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Modal } from 'antd';
 import { autobind } from 'core-decorators';
-// import { Link } from 'dva/router';
-// import classnames from 'classnames';
-// import _ from 'lodash';
 import styles from './customerGroupUpdateModal.less';
-
-// const EMPTY_LIST = [];
-// const EMPTY_OBJECT = {};
 
 export default class CustomerGroupUpdateModal extends PureComponent {
   static propTypes = {
@@ -27,6 +21,8 @@ export default class CustomerGroupUpdateModal extends PureComponent {
     okType: PropTypes.string,
     onOkHandler: PropTypes.func.isRequired,
     modalContent: PropTypes.node,
+    onCancelHandler: PropTypes.func,
+    footer: PropTypes.node,
   };
 
   static defaultProps = {
@@ -35,14 +31,31 @@ export default class CustomerGroupUpdateModal extends PureComponent {
     okType: 'primary',
     cancelText: '取消',
     modalContent: null,
+    onCancelHandler: () => { },
+    footer: null,
   };
 
   constructor(props) {
     super(props);
     this.state = {
       visible: props.visible,
+      footer: props.footer,
     };
   }
+
+  /*
+  // 设置默认footer
+  componentWillMount() {
+    this.setState({
+      footer: <div className={styles.footerSection}>
+        <Button key="back" size="default" onClick={this.handleCancel} className="cancel">取消</Button>
+        <Button key="submit" type="primary" size="default" className="submit">
+          提交
+        </Button>
+      </div>,
+    });
+  }
+  */
 
   @autobind
   handleOk() {
@@ -55,9 +68,11 @@ export default class CustomerGroupUpdateModal extends PureComponent {
   @autobind
   handleCancel() {
     const { visible } = this.state;
+    const { onCancelHandler } = this.props;
     this.setState({
       visible: !visible,
     });
+    onCancelHandler();
   }
 
   render() {
@@ -70,7 +85,10 @@ export default class CustomerGroupUpdateModal extends PureComponent {
       onOkHandler,
       modalContent,
     } = this.props;
-    const { visible } = this.state;
+    const { visible, footer } = this.state;
+    // if (!visible) {
+    //   return null;
+    // }
     return (
       <div className={styles.groupUpdateWrapper}>
         <Modal
@@ -85,6 +103,7 @@ export default class CustomerGroupUpdateModal extends PureComponent {
           width={700}
           onCancel={this.handleCancel}
           closable={false}
+          footer={footer}
         >
           {
             modalContent
