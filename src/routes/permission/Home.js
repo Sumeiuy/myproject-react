@@ -40,8 +40,10 @@ const mapStateToProps = state => ({
   drafterList: state.permission.drafterList,
   // 部门
   custRange: state.permission.custRange,
-  // 客户
+  // 已申请客户
   customerList: state.permission.customerList,
+  // 可申请客户
+  canApplyCustList: state.permission.canApplyCustList,
   // 查询已有服务任务列表
   hasServerPersonList: state.permission.hasServerPersonList,
 });
@@ -59,8 +61,10 @@ const mapDispatchToProps = {
   getDrafterList: fetchDataFunction(false, 'permission/getDrafterList'),
   // 获取部门
   getEmpOrgTree: fetchDataFunction(false, 'permission/getEmpOrgTree'),
- // 获取客户列表
+  // 获取已申请客户列表
   getCustomerList: fetchDataFunction(false, 'permission/getCustomerList'),
+  // 获取可申请客户列表
+  getCanApplyCustList: fetchDataFunction(false, 'permission/getCanApplyCustList'),
   // 查询已有服务任务列表
   getHasServerPersonList: fetchDataFunction(false, 'permission/getHasServerPersonList'),
 };
@@ -81,8 +85,10 @@ export default class Permission extends PureComponent {
     replace: PropTypes.func.isRequired,
     getSearchServerPersonList: PropTypes.func.isRequired,
     getCustomerList: PropTypes.func.isRequired,
+    getCanApplyCustList: PropTypes.func.isRequired,
     searchServerPersonList: PropTypes.array.isRequired,
     customerList: PropTypes.array.isRequired,
+    canApplyCustList: PropTypes.array.isRequired,
     hasServerPersonList: PropTypes.array.isRequired,
     getHasServerPersonList: PropTypes.func.isRequired,
   }
@@ -92,7 +98,7 @@ export default class Permission extends PureComponent {
   }
 
   static childContextTypes = {
-    getCustomerList: PropTypes.func.isRequired,
+    getCanApplyCustList: PropTypes.func.isRequired,
     getSearchServerPersonList: PropTypes.func.isRequired,
   }
 
@@ -108,8 +114,8 @@ export default class Permission extends PureComponent {
   getChildContext() {
     return {
       // 获取查询客户列表
-      getCustomerList: (data) => {
-        this.props.getCustomerList({ code: data });
+      getCanApplyCustList: (data) => {
+        this.props.getCanApplyCustList({ keyword: data });
       },
       // 获取 查询服务人员列表
       getSearchServerPersonList: (data) => {
@@ -268,7 +274,7 @@ export default class Permission extends PureComponent {
     return (
       <Detail
         {...this.props.detailMessage}
-        customerList={this.props.customerList}
+        canApplyCustList={this.props.canApplyCustList}
         searchServerPersonList={this.props.searchServerPersonList}
       />
     );
@@ -282,6 +288,7 @@ export default class Permission extends PureComponent {
       drafterList,
       custRange,
       customerList,
+      canApplyCustList,
       searchServerPersonList,
       hasServerPersonList,
     } = this.props;
@@ -332,7 +339,7 @@ export default class Permission extends PureComponent {
         {
           isShowModal ?
             <CreatePrivateClient
-              customerList={customerList}
+              canApplyCustList={canApplyCustList}
               searchServerPersonList={searchServerPersonList}
               hasServerPersonList={hasServerPersonList}
               onEmitClearModal={this.clearModal}

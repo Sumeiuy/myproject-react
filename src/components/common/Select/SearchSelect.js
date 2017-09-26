@@ -16,8 +16,8 @@ export default class ProductsDropdownBox extends PureComponent {
   static propTypes = {
     labelName: PropTypes.string.isRequired,
     dataSource: PropTypes.array.isRequired,
-    addClick: PropTypes.func.isRequired,
-    changeValue: PropTypes.func.isRequired,
+    onAddCustomer: PropTypes.func.isRequired,
+    onChangeValue: PropTypes.func.isRequired,
     width: PropTypes.string,
   }
 
@@ -51,12 +51,12 @@ export default class ProductsDropdownBox extends PureComponent {
   // 把对应的数组值传入外部接口
   @autobind
   handleAddBtnClick() {
-    this.props.addClick(this.state.selectItem);
+    this.props.onAddCustomer(this.state.selectItem);
   }
 
   @autobind
   changeDataSource() {
-    this.props.changeValue(this.state.inputValue);
+    this.props.onChangeValue(this.state.inputValue);
   }
 
 

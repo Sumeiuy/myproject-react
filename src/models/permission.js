@@ -16,7 +16,8 @@ export default {
     drafterList: EMPTY_LIST, // 拟稿人
     custRange: EMPTY_LIST, // 部门
     childTypeList: EMPTY_LIST, // 子类型
-    customerList: EMPTY_LIST, // 客户列表
+    customerList: EMPTY_LIST, // 已申请客户列表
+    canApplyCustList: EMPTY_LIST, // 可申请客户列表
     hasServerPersonList: EMPTY_LIST, // 已有服务人员列表
     searchServerPersonList: EMPTY_LIST, // 可查询服务人员列表
   },
@@ -94,6 +95,14 @@ export default {
         customerList: custList,
       };
     },
+    getCanApplyCustListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      const { custList = EMPTY_LIST } = resultData;
+      return {
+        ...state,
+        canApplyCustList: custList,
+      };
+    },
     getHasServerPersonListSuccess(state, action) {
       const { payload: { resultData = EMPTY_LIST } } = action;
       return {
@@ -160,6 +169,13 @@ export default {
       const response = yield call(seibelApi.getCustList, payload);
       yield put({
         type: 'getCustomerListSuccess',
+        payload: response,
+      });
+    },
+    * getCanApplyCustList({ payload }, { call, put }) {
+      const response = yield call(seibelApi.getCanApplyCustList, payload);
+      yield put({
+        type: 'getCanApplyCustListSuccess',
         payload: response,
       });
     },

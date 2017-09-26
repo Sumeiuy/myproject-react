@@ -7,6 +7,12 @@ exports.response = function (req, res) {
     code: '0',
     msg: 'OK',
     resultData: {
+      page: {
+        pageSize: 10,
+        curPageNum: 1,
+        totalPageNum: 50,
+        totalRecordNum: 499,
+      },
       custList: [
         {
           cusId: '1-3YOO83T',

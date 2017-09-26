@@ -20,6 +20,7 @@
  * btnStatus     boolean     确认按钮的禁用状态， 默认 【false】
  * children      string/DOM  弹窗内需要显示的元素
  * needBtn       boolean     是否需要显示底部的Button
+ * showCancelBtn boolean     是否显示Cancel Button 默认为true
  * 其他参数与 Antd.Modal 相同，具体见下方链接
  * https://ant.design/components/modal-cn/
  * 示例
@@ -54,6 +55,8 @@ export default class CommonModal extends PureComponent {
     closeModal: PropTypes.func.isRequired,
     onOk: PropTypes.func.isRequired,
     btnStatus: PropTypes.bool,
+    showOkBtn: PropTypes.bool,
+    showCancelBtn: PropTypes.bool,
     children: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.object,
@@ -64,6 +67,8 @@ export default class CommonModal extends PureComponent {
   static defaultProps = {
     needBtn: true,
     btnStatus: false,
+    showCancelBtn: true,
+    showOkBtn: true,
     okText: '确认',
     cancelText: '取消',
     children: '子元素内容区域',
@@ -81,27 +86,30 @@ export default class CommonModal extends PureComponent {
       okText,
       btnStatus,
       needBtn,
+      showCancelBtn,
+      showOkBtn,
     } = this.props;
     const modalSize = `modal${size}`;
+    const okBtn = !showOkBtn ? null
+    : (<Button
+      key="submit"
+      type="primary"
+      size="large"
+      disabled={btnStatus}
+      onClick={() => onOk(modalKey)}
+    >
+      {okText}
+    </Button>);
+    const cancelBtn = !showCancelBtn ? null
+    : (<Button
+      key="back"
+      size="large"
+      onClick={() => closeModal(modalKey)}
+    >
+      {cancelText}
+    </Button>);
     const footerContent = !needBtn ? null
-      : ([
-        <Button
-          key="back"
-          size="large"
-          onClick={() => closeModal(modalKey)}
-        >
-          {cancelText}
-        </Button>,
-        <Button
-          key="submit"
-          type="primary"
-          size="large"
-          disabled={btnStatus}
-          onClick={() => onOk(modalKey)}
-        >
-          {okText}
-        </Button>,
-      ]);
+      : [okBtn, cancelBtn];
     return (
       <Modal
         {...this.props}

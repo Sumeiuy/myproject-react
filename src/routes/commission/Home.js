@@ -13,6 +13,7 @@ import { withRouter, routerRedux } from 'dva/router';
 import SplitPanel from '../../components/common/splitPanel/SplitPanel';
 import Detail from '../../components/commissionAdjustment/Detail';
 import ApprovalRecordBoard from '../../components/commissionAdjustment/ApprovalRecordBoard';
+import CreateNewApprovalBoard from '../../components/commissionAdjustment/CreateNewApprovalBoard';
 import CommissionHeader from '../../components/common/biz/SeibelHeader';
 import CommissionList from '../../components/common/biz/CommonList';
 import seibelColumns from '../../components/common/biz/seibelColumns';
@@ -75,7 +76,7 @@ export default class CommissionHome extends PureComponent {
     custRange: PropTypes.array.isRequired,
     list: PropTypes.object.isRequired,
     detail: PropTypes.object.isRequired,
-    approvalRecord: PropTypes.array.isRequired,
+    approvalRecord: PropTypes.object.isRequired,
     recordLoading: PropTypes.bool.isRequired,
     filterCustList: PropTypes.array.isRequired,
     filterDrafterList: PropTypes.array.isRequired,
@@ -90,6 +91,7 @@ export default class CommissionHome extends PureComponent {
     this.state = {
       isEmpty: true,
       approvalBoard: false,
+      createApprovalBoard: false,
     };
   }
 
@@ -178,7 +180,6 @@ export default class CommissionHome extends PureComponent {
   @autobind
   getApprovalBoardCustInfo(info) {
     const loginuser = getEmpId();
-    console.warn('getApprovalBoardCustInfo', info);
     this.props.getApprovalRecords({ ...info, loginuser });
   }
 
@@ -199,7 +200,7 @@ export default class CommissionHome extends PureComponent {
   // 头部新建按钮点击事件处理程序
   @autobind
   handleCreateBtnClick() {
-    console.warn('新建按钮');
+    this.openCreateApprovalBoard();
   }
 
   // 根据用户输入查询查询拟稿人
@@ -237,11 +238,27 @@ export default class CommissionHome extends PureComponent {
     });
   }
 
+  // 打开新建申请的弹出框
+  @autobind
+  openCreateApprovalBoard() {
+    this.setState({
+      createApprovalBoard: true,
+    });
+  }
+
   // 关闭审批记录弹出窗
   @autobind
   closeApprovalBoard() {
     this.setState({
       approvalBoard: false,
+    });
+  }
+
+  // 关闭新建申请弹出层
+  @autobind
+  closeNewApprovalBoard() {
+    this.setState({
+      createApprovalBoard: false,
     });
   }
 
@@ -261,7 +278,7 @@ export default class CommissionHome extends PureComponent {
     }
     const isEmpty = _.isEmpty(list);
     // 此处需要提供一个方法给返回的接口查询设置是否查询到数据
-    const { approvalBoard } = this.state;
+    const { approvalBoard, createApprovalBoard } = this.state;
     const topPanel = (
       <CommissionHeader
         location={location}
@@ -309,6 +326,11 @@ export default class CommissionHome extends PureComponent {
           record={approvalRecord}
           visible={approvalBoard}
           onClose={this.closeApprovalBoard}
+        />
+        <CreateNewApprovalBoard
+          modalKey="createApprovalBoard"
+          visible={createApprovalBoard}
+          onClose={this.closeNewApprovalBoard}
         />
       </div>
     );
