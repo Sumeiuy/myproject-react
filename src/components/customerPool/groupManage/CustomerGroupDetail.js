@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 14:15:22
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-09-25 16:10:28
+ * @Last Modified time: 2017-09-26 16:45:22
  */
 
 import React, { PureComponent } from 'react';
@@ -132,13 +132,16 @@ export default class CustomerGroupDetail extends PureComponent {
   }
 
   @autobind
-  handleSearchClick() {
-    console.log('search click');
+  handleSearchClick({ value, selectedItem }) {
+    console.log('search click', value, JSON.stringify(selectedItem));
   }
 
   @autobind
-  handleAddCustomerFromSearch(value) {
-    console.log('receive value, add customer to table', value);
+  handleAddCustomerFromSearch(selectedItem) {
+    console.log('receive value, add customer to table', selectedItem);
+    const { custName, cusId, custLevel, riskLevel } = selectedItem;
+    console.log(custName, cusId, custLevel, riskLevel);
+    // 将数据添加进表格
   }
 
   renderActionSource() {

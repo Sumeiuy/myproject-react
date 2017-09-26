@@ -20,6 +20,7 @@ export default class CreateCollapse extends PureComponent {
   static propTypes = {
     data: PropTypes.array,
     executeTypes: PropTypes.array.isRequired,
+    serveWay: PropTypes.array.isRequired,
   };
 
   static defaultProps = {
@@ -82,6 +83,19 @@ export default class CreateCollapse extends PureComponent {
     return newDate;
   }
 
+  /**
+   * 格式化服务渠道
+   * @param {*} serveChannel 服务渠道
+   */
+  formatServeStrategy(serveChannel) {
+    const { serveWay } = this.props;
+    const item = _.find(serveWay, i => i.key === serveChannel);
+    if (item) {
+      return item.value;
+    }
+    return serveChannel;
+  }
+
   renderPanel(serveTime) {
     const { data, executeTypes } = this.props;
     const { currentActiveIndex } = this.state;
@@ -139,15 +153,21 @@ export default class CreateCollapse extends PureComponent {
                     <div className={styles.collapsePanel}>
                       {
                         item.taskType.indexOf('MOT') !== -1 ?
-                          <div className={styles.headerLeft}>
+                          <div
+                            className={styles.headerLeft}
+                            title={`${item.taskName || '--'}：${item.serveStrategy || '--'}`}
+                          >
                             {item.taskName || '--'}：{item.serveStrategy || '--'}
                           </div> :
-                          <div className={styles.headerLeft}>
+                          <div
+                            className={styles.headerLeft}
+                            itle={`${item.taskType || '--'}：${item.activityContent || '--'}`}
+                          >
                             {item.taskType || '--'}：{item.activityContent || '--'}
                           </div>
                       }
                       <div className={styles.headerRight}>
-                        <span>{item.serveChannel || '--'}</span>
+                        <span>{this.formatServeStrategy(item.serveChannel) || '--'}</span>
                         <span className={styles.serviceStatus}>{item.serveStatus || '--'}</span>
                         <div
                           className={

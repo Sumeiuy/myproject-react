@@ -172,7 +172,8 @@ export default class Search extends PureComponent {
             labelNameVal: item,
             labelMapping: '',
             tagNumId: item,
-            id: `historyList${COUNT++}`,
+            // id: `historyList${COUNT++}`,
+            id: item,
             labelDesc: '',
           });
         }
@@ -192,9 +193,9 @@ export default class Search extends PureComponent {
       category: `${item.labelNameVal}${index}`,
       content: item.labelNameVal,
       desc: item.labelDesc,
-      id: `autoList${COUNT++}`,
       labelMapping: item.labelMapping,
       tagNumId: item.tagNumId,
+      id: item.labelNameVal,
     }));
   }
 

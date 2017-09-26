@@ -308,10 +308,11 @@ export default {
     },
     // 分组客户下联想的推荐热词列表
     * getCustomerHotPossibleWds({ payload }, { call, put }) {
-      const response = yield call(api.getHotPossibleWds, payload);
+      const response = yield call(api.queryPossibleCustList, payload);
+      const { resultData } = response;
       yield put({
         type: 'getCustomerHotPossibleWdsSuccess',
-        payload: { response },
+        payload: resultData,
       });
     },
     // 分组客户下默认推荐词及热词推荐列表及历史搜索数据
@@ -648,11 +649,36 @@ export default {
     },
     // 分组客户下联想的推荐热词列表
     getCustomerHotPossibleWdsSuccess(state, action) {
-      const { payload: { response } } = action;
-      const hotPossibleWdsList = response.resultData.hotPossibleWdsList;
+      const { payload } = action;
+      const { custList } = payload;
+      // {
+      //   "id": 1,
+      //   "tagNumId": "499_1",
+      //   "labelMapping": "shi_fou_cai_zhang_die",
+      //   "labelNameVal": "乐米版猜涨跌1",
+      //   "labelDesc": "乐米版猜涨跌客户"
+      // },
+      // {
+      //     "cusId": "1-41G4URN",
+      //     "custName": "郭**",
+      //     "brokerNumber": "666626898217",
+      //     "custLevelCode": "805040",
+      //     "custLevelName": "空",
+      //     "custTotalAsset": 5998.59,
+      //     "custType": "per",
+      //     "custOpenDate": "2016-10-12 00:00:00"
+      // }
+      // 构造成联想列表识别的
+      const finalPossibleHotCust = _.map(custList, item => ({
+        id: item.cusId,
+        labelNameVal: item.cusId,
+        labelDesc: item.custName,
+        ...item,
+      }));
+
       return {
         ...state,
-        customerHotPossibleWordsList: hotPossibleWdsList,
+        customerHotPossibleWordsList: finalPossibleHotCust,
       };
     },
   },

@@ -35,6 +35,7 @@ export default class CreateContactModal extends PureComponent {
     currentCustId: PropTypes.string.isRequired,
     onClose: PropTypes.func.isRequired,
     executeTypes: PropTypes.array.isRequired, // 执行方式字典
+    serveWay: PropTypes.array.isRequired, // 服务渠道字典
   };
 
   static defaultProps = {
@@ -203,6 +204,7 @@ export default class CreateContactModal extends PureComponent {
       custType,
       currentCustId,
       executeTypes,
+      serveWay,
     } = this.props;
 
     if (!currentCustId || !visible) {
@@ -250,11 +252,11 @@ export default class CreateContactModal extends PureComponent {
             item => !item.mainFlag) || EMPTY_LIST;
           if (!_.isEmpty(otherCellInfo)) {
             // 手机号不止一个
-            mainContactInfo = _.merge(mainContactInfo, {
+            mainContactInfo = _.merge({
               telInfo: {
                 cellPhones: otherCellInfo,
               },
-            });
+            }, mainContactInfo);
           }
         }
         // 其他联系人信息
@@ -293,9 +295,9 @@ export default class CreateContactModal extends PureComponent {
           const otherCellInfo = _.filter(cellPhones, item => !item.mainFlag) || EMPTY_LIST;
           if (!_.isEmpty(otherCellInfo)) {
             // 手机号不止一个
-            otherTelInfo = _.merge(otherTelInfo, {
+            otherTelInfo = _.merge({
               cellPhones: otherCellInfo,
-            });
+            }, otherTelInfo);
           }
 
           // 筛选contactValue存在的其他电话
@@ -351,8 +353,14 @@ export default class CreateContactModal extends PureComponent {
                 </span>
               </div> :
               <div className={styles.noneInfo}>
-               暂无客户联系电话，请与客户沟通尽快完善信息
+                暂无客户手机号码
               </div>
+          }
+          {
+            (!isPersonHasContact && !isOrgMainContactHasTel) ?
+              <div className={styles.noneInfo}>
+                暂无客户联系电话，请与客户沟通尽快完善信息
+              </div> : null
           }
           <div className={styles.rightSection}>
             <Button key="addServiceRecord" onClick={this.handleServiceRecordClick}>添加服务记录</Button>
@@ -386,6 +394,7 @@ export default class CreateContactModal extends PureComponent {
         <Collapse
           data={serviceRecordData}
           executeTypes={executeTypes}
+          serveWay={serveWay}
         />
       </Modal>
     );

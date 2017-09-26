@@ -75,5 +75,8 @@ export default function customerPool(api) {
 
     // 某一个分组下面的客户列表
     queryGroupCustomerList: query => api.post('/groovynoauth/fsp/cust/custgroup/queryGroupCustomerList', query),
+
+    // 查询客户列表，用于分组详情里面的客户搜索，联想
+    queryPossibleCustList: query => api.post('/groovynoauth/fsp/custList', query),
   };
 }
