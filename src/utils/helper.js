@@ -22,6 +22,14 @@ function getOS() {
 }
 
 const helper = {
+  // 判断参数是否为null
+  isNull(v) {
+    if (v === null || v === 'null' || v === '' || v === undefined || v === 'undefined') {
+      return true;
+    }
+    return false;
+  },
+
   // 获取元素CSS的样式
   getCssStyle(ele, css) {
     return window.getComputedStyle(ele, null).getPropertyValue(css);
@@ -257,8 +265,8 @@ const helper = {
    */
   constructSeibelPostBody(query, newPageNum, newPageSize) {
     let finalPostData = {
-      pageNum: newPageNum,
-      pageSize: newPageSize,
+      pageNum: _.parseInt(newPageNum, 10),
+      pageSize: _.parseInt(newPageSize, 10),
     };
 
     const omitData = _.omit(query, ['currentId', 'pageNum', 'pageSize', 'isResetPageNum']);

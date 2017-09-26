@@ -65,14 +65,16 @@ export default class CustRange extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
-    collectData: PropTypes.func.isRequired,
-    updateQueryState: PropTypes.func.isRequired,
+    collectData: PropTypes.func,
+    updateQueryState: PropTypes.func,
     custRange: PropTypes.array.isRequired,
     orgId: PropTypes.string,
   }
 
   static defaultProps = {
     orgId: '',
+    collectData: () => {},
+    updateQueryState: () => {},
   }
 
   constructor(props) {

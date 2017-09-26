@@ -26,6 +26,7 @@ import ReportHome from './routes/reports/Home';
 import PreviewReport from './routes/reports/PreviewReport';
 import HistoryHome from './routes/history/Home';
 import PermissonHome from './routes/permission/Home';
+import Approval from './routes/approval/Home';
 import CustomerPoolHome from './routes/customerPool/Home';
 import ToDo from './routes/customerPool/ToDo';
 import CustomerList from './routes/customerPool/CustomerList';
@@ -63,6 +64,7 @@ const routes = ({ history }) => (// eslint-disable-line
       <Route path="boardManage" component={BoardManageHome} />
       <Route path="boardEdit" component={BoardEditHome} />
       <Route path="permission" component={PermissonHome} />
+      <Route path="approval" component={Approval} />
       <Route path="customerPool">
         <IndexRoute component={CustomerPoolHome} />
         <Route path="todo" component={ToDo} />

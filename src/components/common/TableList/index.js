@@ -5,22 +5,23 @@ import style from './tablelist.less';
 
 export default class TableList extends PureComponent {
   static propTypes = {
-    info: PropTypes.array.isRequired,
+    info: PropTypes.array,
     statusType: PropTypes.string.isRequired,
     selectValue: PropTypes.object,
-    emitUpdateValue: PropTypes.func,
+    onEmitUpdateValue: PropTypes.func,
   }
 
   static defaultProps = {
-    emitUpdateValue: null,
+    info: [],
+    onEmitUpdateValue: null,
     selectValue: {},
   }
 
   get eleList() {
-    const { statusType, emitUpdateValue, selectValue } = this.props;
-    const result = this.props.info.map((item) => {
+    const { statusType, onEmitUpdateValue, selectValue, info } = this.props;
+    const result = info.map((item) => {
       const callBack = () => {
-        emitUpdateValue(item);
+        onEmitUpdateValue(item);
       };
       return (
         <li
@@ -57,7 +58,7 @@ export default class TableList extends PureComponent {
             className="flex-base_2 text-center"
           >
             <span
-              className={item.isMain ? style.mainManager : ''}
+              className={item.isMain === 'Y' ? style.mainManager : ''}
             >{item.ptyMngName}</span>
           </span>
           <span

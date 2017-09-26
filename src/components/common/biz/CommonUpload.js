@@ -1,48 +1,100 @@
-import React, { PropTypes, PureComponent } from 'react';
+/*
+ * @Author: LiuJianShu
+ * @Date: 2017-09-22 15:02:49
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2017-09-22 17:44:10
+ */
+/**
+ * 常用说明
+ * 参数             类型         说明
+ * attaches         string      附件列表
+ * attachment       boolean     上传附件必须的 ID
+ * fileRemove       function    删除附件
+ * 其他参数与 Antd.Modal 相同，具体见下方链接
+ * https://ant.design/components/upload-cn/
+ * 示例
+ <CommonUpload
+   attaches: [{
+      creator: '002332',
+      attachId: '{6795CB98-B0CD-4CEC-8677-3B0B9298B209}',
+      name: '新建文本文档 (3).txt',
+      size: '0',
+      createTime: '2017/09/12 13:37:45',
+      downloadURL: '',
+      realDownloadURL: '',
+    }],
+    attachment: 'dkdjk-ieidop-kldlkd-bndnbjd',
+    fileRemove: this.fileRemove,
+  />
+ */
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { Progress, Upload, message, Popover, Row, Col } from 'antd';
 import { autobind } from 'core-decorators';
-import _ from 'lodash';
 import moment from 'moment';
+import _ from 'lodash';
 import Button from '../Button';
+import { request } from '../../../config';
+import { helper } from '../../../utils';
 import styles from './commonUpload.less';
 import Icon from '../Icon';
 
 
 export default class CommonUpload extends PureComponent {
   static propTypes = {
-    fileList: PropTypes.array.isRequired,
+    fileRemove: PropTypes.func,
+    attachment: PropTypes.string,
+    attaches: PropTypes.array,
+    edit: PropTypes.boolean,
   }
 
   static defaultProps = {
+    fileRemove: () => {},
+    attachment: '',
+    attaches: [],
+    edit: false,
   }
 
   constructor(props) {
     super(props);
+    const { attaches, attachment } = props;
     this.state = {
-      percent: 0,
-      fileList: props.fileList,
-      status: 'active',
-      statusText: '',
+      empId: helper.getEmpId(), // empId
+      percent: 0, // 上传百分比
+      status: 'active', // 上传状态
+      statusText: '', // 上传状态对应文字
+      file: {}, // 当前上传的文件
+      fileList: attaches, // 文件列表
+      attachment, // 上传后的唯一 ID
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const props = this.props;
+    if (!_.isEqual(props, nextProps)) {
+      const { attaches, attachment } = nextProps;
+      this.setState({
+        fileList: attaches, // 文件列表
+        attachment, // 上传后的唯一 ID
+      });
+    }
   }
 
   @autobind
   onChange(info) {
-    console.warn('info', info);
-    console.warn('info.fileList', info.fileList);
     this.setState({
       percent: info.file.percent,
       fileList: info.fileList,
+      file: info.file,
     });
-    if (info.file.status !== 'uploading') {
-      console.log(info.file, info.fileList);
-    }
     if (info.file.status === 'done') {
+      const data = info.file.response.resultData;
       this.setState({
         status: 'success',
         statusText: '上传完成',
+        fileList: data.attaches,
+        attachment: data.attachment,
       });
-      message.success(`${info.file.name} file uploaded successfully`);
     } else if (info.file.status === 'error') {
       this.setState({
         status: 'exception ',
@@ -53,17 +105,10 @@ export default class CommonUpload extends PureComponent {
   }
 
   @autobind
-  fileRemove(index) {
-    const { fileList } = this.state;
-    const that = this;
+  onRemove(attachId) {
+    const { fileRemove } = this.props;
     if (confirm('确定要删除此附件吗？')) {// eslint-disable-line
-      const newFileList = _.without(fileList, fileList[index]);
-      that.setState({
-        fileList: newFileList,
-      });
-      console.warn('OK');
-    } else {
-      console.warn('Cancel');
+      fileRemove(attachId);
     }
   }
 
@@ -73,15 +118,26 @@ export default class CommonUpload extends PureComponent {
   }
 
   render() {
-    const { fileList, percent, status, statusText } = this.state;
+    const {
+      empId,
+      file,
+      attachment,
+      fileList,
+      percent,
+      status,
+      statusText,
+    } = this.state;
+    const { edit } = this.props;
     const uploadProps = {
-      name: 'file',
+      data: {
+        empId,
+        file,
+        attachment,
+      },
+      action: `${request.prefix}/file/ceFileUpload`,
+      onChange: this.onChange,
       showUploadList: false,
       fileList,
-      action: '//jsonplaceholder.typicode.com/posts/',
-      headers: {
-        authorization: 'authorization-text',
-      },
     };
     return (
       <div className={`${styles.fileListMain} fileListMain`}>
@@ -99,25 +155,36 @@ export default class CommonUpload extends PureComponent {
                           {item.name.substring(0, item.name.lastIndexOf('.'))}
                         </p>
                         <p>
-                          上传人：
-                          <span className="fileListItemSize">大小：{`${(item.size / 1024).toFixed(0)} kb`}</span>
+                          上传人：{item.creator}
+                          <span className="fileListItemSize">大小：{`${item.size} kb`}</span>
                         </p>
                         <p>
                           上传于：{moment(item.lastModified).format('YYYY-MM-DD')}
                           <span>
-                            <Icon type="shanchu" onClick={() => this.fileRemove(index)} /> |
-                            <Icon type="xiala" />
+                            {
+                              edit ?
+                                <em>
+                                  <Icon type="shanchu" onClick={() => this.onRemove(item.attachId)} />
+                                </em>
+                              :
+                                null
+                            }
+                            <em><a href={item.downloadURL}><Icon type="xiala" /></a></em>
                           </span>
                         </p>
                       </div>
                     );
                     return (
-                      <Col span={8}>
+                      <Col
+                        span={8}
+                        key={item.attachId}
+                      >
                         <div className={styles.fileItem}>
                           <Popover
                             placement="right"
                             content={popoverHtml}
                             trigger="hover"
+                            getPopupContainer={this.findFileListNode}
                           >
                             <p>
                               <Icon type="fuzhi" />
@@ -132,7 +199,7 @@ export default class CommonUpload extends PureComponent {
                             {
                               (index === fileList.length - 1 && Number(percent) !== 0) ?
                                 <Progress
-                                  percent={percent.toFixed(0)}
+                                  percent={Number(percent).toFixed(0)}
                                   strokeWidth={4}
                                   status={status}
                                 />
@@ -150,11 +217,16 @@ export default class CommonUpload extends PureComponent {
               <div className={styles.noFile}>暂无附件</div>
           }
         </div>
-        <Upload {...uploadProps} onChange={this.onChange}>
-          <Button className={styles.commonUploadBtn}>
-            上传附件
-          </Button>
-        </Upload>
+        {
+          edit ?
+            <Upload {...uploadProps} {...this.props}>
+              <Button className={styles.commonUploadBtn}>
+                上传附件
+              </Button>
+            </Upload>
+          :
+            null
+        }
       </div>
     );
   }

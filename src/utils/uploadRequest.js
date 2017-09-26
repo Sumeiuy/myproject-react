@@ -57,7 +57,6 @@ export default function uploadRequest(option) {
   }
 
   formData.append(option.filename, option.file);
-
   xhr.onerror = function error(e) {
     option.onError(e);
   };
@@ -78,7 +77,6 @@ export default function uploadRequest(option) {
     return true;
   };
 
-
   xhr.open('post', option.action, true);
 
   // Has to be after `.open()`. See https://github.com/enyo/dropzone/issues/179
@@ -94,12 +92,13 @@ export default function uploadRequest(option) {
     xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
   }
   /* eslint-disable */
-    for (const h in headers) {
-      if (headers.hasOwnProperty(h) && headers[h] !== null) {
-        xhr.setRequestHeader(h, headers[h]);
-      }
+  for (const h in headers) {
+    if (headers.hasOwnProperty(h) && headers[h] !== null) {
+      xhr.setRequestHeader(h, headers[h]);
     }
+  }
   /* eslint-enable */
+
   xhr.send(formData);
 
   return {

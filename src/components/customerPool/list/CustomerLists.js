@@ -1,6 +1,6 @@
 /**
- * @file invest/CustRangeForList.js
- *  客户范围组件
+ * @file components/customerPool/list/CustomerLists.js
+ *  客户列表
  * @author wangjunjun
  */
 
@@ -10,13 +10,11 @@ import _ from 'lodash';
 import { Pagination, Checkbox, message } from 'antd';
 
 import CustomerRow from './CustomerRow';
-import CreateServiceRecord from './CreateServiceRecord';
 import CreateContactModal from './CreateContactModal';
 
 import { fspContainer } from '../../../config';
 import { fspGlobal, helper } from '../../../utils';
 import NoData from '../common/NoData';
-
 
 import styles from './customerLists.less';
 
@@ -29,7 +27,6 @@ export default class CustomerLists extends PureComponent {
   static propTypes = {
     fllowCustData: PropTypes.object,
     followLoading: PropTypes.bool,
-    empInfo: PropTypes.object,
     page: PropTypes.object.isRequired,
     custList: PropTypes.array.isRequired,
     curPageNum: PropTypes.string,
@@ -51,19 +48,16 @@ export default class CustomerLists extends PureComponent {
     getFollowCust: PropTypes.func.isRequired,
     custContactData: PropTypes.object.isRequired,
     serviceRecordData: PropTypes.object.isRequired,
-    addServeRecord: PropTypes.func.isRequired,
-    addServeRecordSuccess: PropTypes.bool.isRequired,
-    isAddServeRecord: PropTypes.bool.isRequired,
     dict: PropTypes.object.isRequired,
     isSms: PropTypes.bool.isRequired,
     isGetCustIncome: PropTypes.bool.isRequired,
+    toggleServiceRecordModal: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
     pageSize: null,
     curPageNum: null,
     q: '',
-    empInfo: {},
     fllowCustData: {},
     followLoading: false,
   }
@@ -72,7 +66,6 @@ export default class CustomerLists extends PureComponent {
     super(props);
     this.state = {
       taskAndGroupLeftPos: '0',
-      showCreateServiceRecord: false,
       currentCustId: '',
       isShowContactModal: false,
       modalKey: `modalKeyCount${modalKeyCount}`,
@@ -369,14 +362,6 @@ export default class CustomerLists extends PureComponent {
   }
 
   @autobind
-  showCreateServiceRecord({ custId: id }) {
-    this.setState({
-      id,
-      showCreateServiceRecord: true,
-    });
-  }
-
-  @autobind
   showCreateContact({ custId, custType }) {
     const { getCustContact, getServiceRecord, custContactData } = this.props;
     this.setState({
@@ -400,12 +385,6 @@ export default class CustomerLists extends PureComponent {
     });
   }
 
-  @autobind
-  hideCreateServiceRecord() {
-    this.setState({
-      showCreateServiceRecord: false,
-    });
-  }
   @autobind
   handleSendEmail(item) {
     const { getCustContact, custContactData } = this.props;
@@ -481,8 +460,6 @@ export default class CustomerLists extends PureComponent {
   render() {
     const {
       taskAndGroupLeftPos,
-      showCreateServiceRecord,
-      id,
       currentFollowCustId,
       isShowContactModal,
       currentCustId,
@@ -494,7 +471,6 @@ export default class CustomerLists extends PureComponent {
     const {
       q,
       page,
-      empInfo,
       custList,
       curPageNum,
       pageSize,
@@ -505,12 +481,10 @@ export default class CustomerLists extends PureComponent {
       location,
       custContactData,
       serviceRecordData,
-      addServeRecord,
-      addServeRecordSuccess,
-      isAddServeRecord,
       dict,
       isSms,
       isGetCustIncome,
+      toggleServiceRecordModal,
     } = this.props;
     // 服务记录执行方式字典
 
@@ -581,7 +555,6 @@ export default class CustomerLists extends PureComponent {
                 onChange={this.handleSingleSelect}
                 onSendEmail={this.handleSendEmail}
                 onAddFollow={this.handleAddFollow}
-                createServiceRecord={this.showCreateServiceRecord}
                 createContact={this.showCreateContact}
                 key={`${item.empId}-${item.custId}-${item.idNum}-${item.telephone}-${item.asset}`}
                 custContactData={finalContactData}
@@ -589,6 +562,7 @@ export default class CustomerLists extends PureComponent {
                 isFollows={isFollows}
                 currentCustId={currentCustId}
                 isGetCustIncome={isGetCustIncome}
+                toggleServiceRecordModal={toggleServiceRecordModal}
               />,
             )
           }
@@ -634,16 +608,6 @@ export default class CustomerLists extends PureComponent {
             </button>
           </div>
         </div>
-        <CreateServiceRecord
-          id={id}
-          dict={dict}
-          empInfo={empInfo}
-          isShow={showCreateServiceRecord}
-          hideCreateServiceRecord={this.hideCreateServiceRecord}
-          addServeRecord={addServeRecord}
-          addServeRecordSuccess={addServeRecordSuccess}
-          isAddServeRecord={isAddServeRecord}
-        />
         {
           isShowContactModal ?
             <CreateContactModal
@@ -652,7 +616,7 @@ export default class CustomerLists extends PureComponent {
               custContactData={finalContactData}
               serviceRecordData={finalServiceRecordData}
               custType={custType}
-              createServiceRecord={this.showCreateServiceRecord} /* 创建服务记录 */
+              createServiceRecord={toggleServiceRecordModal} /* 创建服务记录 */
               onClose={this.resetModalState}
               currentCustId={currentCustId}
               executeTypes={executeTypes}

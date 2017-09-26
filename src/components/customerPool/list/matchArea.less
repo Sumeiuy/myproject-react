@@ -1,0 +1,52 @@
+.relatedInfo {
+  margin-top: 10px;
+  ul {
+    list-style-type: none;
+    font-size: 13px;
+    color: #969696;
+    margin-top: 10px;
+    li {
+      margin-top: 4px;
+      :global .marked {
+        position: relative;
+        color: #ff784e;
+        font-style: normal;
+        padding: 0;
+        background-color: transparent;
+        &:hover .tip {
+          display: inline-block;
+        }
+        .tip {
+          display: none;
+          position: absolute;
+          top: -30px;
+          right: -10px;
+          height: 26px;
+          line-height: 26px;
+          padding: 0 5px;
+          background-color: #FFFFCD;
+          font-style: normal;
+          color: #333;
+          white-space: nowrap;
+          box-shadow: 0 0 15px #EAEBEB;
+        }
+      }
+      :global .label {
+        padding: 0;
+        color: #ff784e;
+        font-style: normal;
+        font-weight: normal;
+      }
+    }
+  }
+}
+
+.collapseItem {
+  float: right;
+  font-size: 12px;
+  .itemA {
+    color: #B9B9B9;
+    cursor:pointer;
+    padding-right: 10px;
+  }
+}

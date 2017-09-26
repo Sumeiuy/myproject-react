@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-09-20 19:51:33
+ * @Last Modified time: 2017-09-25 14:38:24
  */
 
 import React, { PureComponent } from 'react';
@@ -67,7 +67,7 @@ export default class GroupTable extends PureComponent {
    */
   renderPageSizeOptions(totalRecordNum, curPageSize) {
     const pageSizeOption = [];
-    const maxPage = Math.ceil(totalRecordNum / curPageSize);
+    const maxPage = Math.ceil(totalRecordNum / Number(curPageSize));
     for (let i = 1; i <= maxPage; i++) {
       pageSizeOption.push((curPageSize * i).toString());
     }
@@ -89,9 +89,14 @@ export default class GroupTable extends PureComponent {
       size: 'small', // 迷你版
       total: totalRecordNum,
       pageSize: parseInt(curPageSize, 10),
-      defaultPageSize: curPageSize,
+      defaultPageSize: Number(curPageSize),
       onChange: onPageChange,
-      showTotal: total => `共${total}个`,
+      showTotal: total =>
+        <span className={styles.totalPageSection}>
+          共 <span className={styles.totalPage}>
+            {total}
+          </span> 项
+       </span>,
       showSizeChanger: true,
       onShowSizeChange: onSizeChange,
       pageSizeOptions: this.renderPageSizeOptions(totalRecordNum, curPageSize),
@@ -152,7 +157,7 @@ export default class GroupTable extends PureComponent {
                   className={styles.link}
                   onClick={() => firstColumnHandler(record)}
                 >
-                  {record.feedEmpInfo.l3}
+                  {record[item.key] || '--'}
                 </span>
               </div>,
           };
@@ -170,14 +175,14 @@ export default class GroupTable extends PureComponent {
                     className={styles.link}
                     onClick={() => firstColumnHandler(record)}
                   >
-                    {record.feedEmpInfo.l3}
+                    {record[item.key] || '--'}
                   </span>
                 </div>
               );
             }
             return (
               <div className={styles.column}>
-                <span>{record.feedEmpInfo.l3}</span>
+                <span>{record[item.key] || '--'}</span>
               </div>
             );
           },
@@ -191,7 +196,7 @@ export default class GroupTable extends PureComponent {
       title: item.value,
       render: (text, record) =>
         <div className={styles.column}>
-          <span>{record.feedEmpInfo.l3}</span>
+          <span>{record[item.key] || '--'}</span>
         </div>,
     }));
   }
@@ -202,7 +207,7 @@ export default class GroupTable extends PureComponent {
   renderTableDatas(dataSource) {
     let newDataSource = [];
     newDataSource = _.map(dataSource,
-      (item, index) => _.merge(item, { key: index })); // 暂时用index当key，等有数据再替换成id
+      item => _.merge(item, { key: item.id })); // 在外部传入数据时，统一加入一个id
 
     return newDataSource;
   }

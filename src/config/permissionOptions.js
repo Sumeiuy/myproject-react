@@ -8,15 +8,15 @@ const permissionOptions = {
   // 头部查询条件-渠道
   subtypeOptions: [
     {
-      value: 'ADD',
+      value: '0103',
       label: '私密客户设置',
     },
     {
-      value: 'CANCEL',
+      value: '0102',
       label: '私密客户取消',
     },
     {
-      value: 'DISTRIBUTE',
+      value: '0101',
       label: '私密客户交易信息权限分配',
     },
   ],
