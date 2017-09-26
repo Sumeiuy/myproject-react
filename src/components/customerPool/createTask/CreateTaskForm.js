@@ -28,6 +28,7 @@ export default class CreateTaskForm extends PureComponent {
     dict: PropTypes.object,
     createTask: PropTypes.func,
     createTaskResult: PropTypes.object,
+    goBack: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -255,7 +256,9 @@ export default class CreateTaskForm extends PureComponent {
   @autobind
     /* 关闭当前页 */
   closeTab() {
-    fspGlobal.closeRctTabById('RCT_FSP_TASK');
+    // fspGlobal.closeRctTabById('RCT_FSP_TASK');
+    fspGlobal.closeRctTabById('RCT_FSP_CUSTOMER_LIST');
+    // this.props.goBack();
   }
   render() {
     const { dict, form } = this.props;

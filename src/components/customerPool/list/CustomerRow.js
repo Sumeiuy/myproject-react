@@ -10,7 +10,10 @@ import { Checkbox } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
-import { helper } from '../../../utils';
+import {
+  // fspGlobal,
+  helper,
+} from '../../../utils';
 import QuickMenu from './QuickMenu';
 import SixMonthEarnings from './SixMonthEarnings';
 import MatchArea from './MatchArea';
@@ -164,6 +167,26 @@ export default class CustomerRow extends PureComponent {
   }
 
   @autobind
+  toDetail() {
+    // const {
+    //   listItem: {
+    //     pOrO,
+    //     custId,
+    //   },
+    // } = this.props;
+    // const type = (!pOrO || pOrO === 'P') ? 'per' : 'org';
+    // const param = {
+    //   id: 'FSP_360VIEW_M_TAB',
+    //   title: '客户360视图-客户信息',
+    //   forceRefresh: true,
+    // };
+    // fspGlobal.openFspTab({
+    //   url: `/customerCenter/360/${type}/main?id=${custId}&rowId=${}&ptyId=${}`;,
+    //   param,
+    // });
+  }
+
+  @autobind
   handleSelect() {
     const { onChange, listItem: { custId, name } } = this.props;
     onChange(custId, name);
@@ -211,7 +234,10 @@ export default class CustomerRow extends PureComponent {
     const str = `${listItem.custId}.${listItem.name}`;
     const isChecked = _.includes(selectedIds, str) || isAllSelect;
     return (
-      <div className={styles.customerRow}>
+      <div
+        className={styles.customerRow}
+        onClick={this.toDetail}
+      >
         <QuickMenu
           isSms={isSms}
           listItem={listItem}
