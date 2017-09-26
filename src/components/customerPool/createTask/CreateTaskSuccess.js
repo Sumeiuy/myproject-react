@@ -5,11 +5,12 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import { Button } from 'antd';
 import { autobind } from 'core-decorators';
 import ReactDOM from 'react-dom';
 import styles from './createTaskSuccess.less';
 import imgSrc from '../../../../static/images/createTask_success.png';
+import { fspGlobal } from '../../../utils';
+import Button from '../../common/Button';
 
 let successSetInterval;
 let COUNT = 10;
@@ -99,7 +100,7 @@ export default class CreateTaskSuccess extends PureComponent {
               <p>页面会在 <b>{changeTime}</b> 秒内自动关闭</p>
             </div>
             <div className={styles.taskSuccess_btn}>
-              <Button type="primary" onclick={this.goToIndex}>
+              <Button type="primary" onClick={this.goToIndex}>
                 返回首页
               </Button>
             </div>

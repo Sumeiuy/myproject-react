@@ -487,6 +487,7 @@ export default class CustomerLists extends PureComponent {
       toggleServiceRecordModal,
     } = this.props;
     // 服务记录执行方式字典
+
     const { executeTypes = EMPTY_ARRAY } = dict;
     const finalContactData = custContactData[currentCustId] || EMPTY_OBJECT;
     const finalServiceRecordData = serviceRecordData[currentCustId] || EMPTY_ARRAY;
