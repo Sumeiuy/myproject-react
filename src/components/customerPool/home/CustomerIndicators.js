@@ -86,7 +86,7 @@ export default class CustomerIndicators extends PureComponent {
         forceRefresh: true,
         isSpecialTab: true,
         id: 'RCT_FSP_CUSTOMER_LIST',
-        title: '目标客户',
+        title: '客户列表',
       };
       fspGlobal.openRctTab({ url, param });
     } else {
