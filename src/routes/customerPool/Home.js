@@ -134,6 +134,7 @@ export default class Home extends PureComponent {
   componentDidMount() {
     const {
       custRange,
+      cycle = EMPTY_LIST,
       location: { query: { orgId = '', cycleSelect = '' } },
       empInfo: { empInfo, empRespList },
       position: { orgId: posOrgId = '' },
@@ -148,12 +149,14 @@ export default class Home extends PureComponent {
     }
 
     const { begin, end } = this.getTimeSelectBeginAndEnd();
+    const initialCycleSelect = !_.isEmpty(cycle) ? cycle[0].key : '';
+
     this.getAllInfo({
       custRange,
       empInfo,
       empRespList,
       posOrgId: fspOrgId,
-      cycleSelect,
+      cycleSelect: initialCycleSelect || cycleSelect,
       begin,
       end,
     });
@@ -322,10 +325,10 @@ export default class Home extends PureComponent {
     getToBeDone();
 
     // 净创收数据
-    this.getIncomes({ begin, end, orgId: fspOrgId, cycleSelect });
+    this.getIncomes({ begin, end, orgId: fspOrgId, cycleSelect: cycleSelect || '518003' });
 
     // 绩效指标
-    this.getIndicators({ orgId: fspOrgId, cycleSelect });
+    this.getIndicators({ orgId: fspOrgId, cycleSelect: cycleSelect || '518003' });
 
     // 替换url orgId
     replace({
@@ -333,6 +336,7 @@ export default class Home extends PureComponent {
       query: {
         ...query,
         orgId: fspOrgId,
+        cycleSelect: cycleSelect || '518003',
       },
     });
   }

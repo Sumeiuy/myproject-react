@@ -139,12 +139,16 @@ export default class CustomerGroupManage extends PureComponent {
     });
   }
 
-  // // 获取联想数据
-  // @autobind
-  // queryHotPossibleWds() {
-  //   const { getHotPossibleWds } = this.props;
-  //   getHotPossibleWds();
-  // }
+  // 获取联想数据
+  @autobind
+  queryHotPossibleWds({ keyword }) {
+    const { getHotPossibleWds } = this.props;
+    getHotPossibleWds({
+      keyword, // 搜索关键字（客户号或客户名字）
+      pageNum: 1,
+      pageSize: 10,
+    });
+  }
 
   // // 获取历史搜索
   // @autobind
@@ -279,8 +283,8 @@ export default class CustomerGroupManage extends PureComponent {
     const { getCustomerGroupList, location: { query: { curPageNum, curPageSize } } } = this.props;
     getCustomerGroupList({
       keyWord: value,
-      pageNum: curPageNum,
-      pageSize: curPageSize,
+      pageNum: Number(curPageNum) - 1,
+      pageSize: Number(curPageSize),
     });
   }
 
@@ -346,7 +350,6 @@ export default class CustomerGroupManage extends PureComponent {
       location: { query: { curPageNum, curPageSize } },
       customerList = EMPTY_OBJECT,
       customerHotPossibleWordsList = EMPTY_LIST,
-      getHotPossibleWds,
      } = this.props;
 
     const { visible, modalKey, canEditDetail, name, description, modalTitle } = this.state;
@@ -425,7 +428,7 @@ export default class CustomerGroupManage extends PureComponent {
                 <CustomerGroupDetail
                   canEditDetail={canEditDetail}
                   customerHotPossibleWordsList={customerHotPossibleWordsList}
-                  getHotPossibleWds={getHotPossibleWds}
+                  getHotPossibleWds={this.queryHotPossibleWds}
                   customerList={customerList}
                   onCloseModal={this.handleCloseModal}
                   detailData={{
