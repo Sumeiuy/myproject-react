@@ -449,7 +449,7 @@ export default class CustomerLists extends PureComponent {
     // const inMyCustomer = _.includes(tmpArr, source) && orgId && orgId === 'msm';
     if (this.props.isSms) {
       return (<button
-        onClick={() => { this.handleClick('/customerPool/customerGroup', '新建分组', 'FSP_GROUP'); }}
+        onClick={() => { this.handleClick('/customerPool/customerGroup', '新建分组', 'RCT_FSP_CUSTOMER_LIST'); }}
       >
         用户分组
       </button>);
@@ -602,7 +602,7 @@ export default class CustomerLists extends PureComponent {
           <div className="right">
             {this.renderGroup()}
             <button
-              onClick={() => { this.handleClick('/customerPool/createTask', '发起任务', 'RCT_FSP_TASK'); }}
+              onClick={() => { this.handleClick('/customerPool/createTask', '发起任务', 'RCT_FSP_CUSTOMER_LIST'); }}
             >
               发起任务
             </button>

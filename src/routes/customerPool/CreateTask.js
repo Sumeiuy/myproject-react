@@ -5,6 +5,7 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
+import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
@@ -29,9 +30,11 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   createTask: fectchDataFunction(true, effects.createTask),
+  goBack: routerRedux.goBack,
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
+@withRouter
 export default class CreateTask extends PureComponent {
 
   static propTypes = {
@@ -40,6 +43,7 @@ export default class CreateTask extends PureComponent {
     dict: PropTypes.object,
     createTask: PropTypes.func.isRequired,
     createTaskResult: PropTypes.object,
+    goBack: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -84,12 +88,13 @@ export default class CreateTask extends PureComponent {
   }
 
   render() {
-    const { dict, location } = this.props;
+    const { dict, location, goBack } = this.props;
     const { isSuccess } = this.state;
     return (
       <div className={styles.taskBox}>
         {!isSuccess ?
           <CreateTaskFrom
+            goBack={goBack}
             location={location}
             dict={dict}
             createTask={this.handleCreateTask}
