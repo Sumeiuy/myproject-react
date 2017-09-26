@@ -44,6 +44,7 @@ export default class CreatePrivateClient extends PureComponent {
   @autobind
   onOk() {
     console.log('确定要关闭吗');
+    // this.setState({isShowModal: false});
   }
 
   @autobind
