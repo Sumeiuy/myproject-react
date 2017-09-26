@@ -61,12 +61,12 @@ export default class CreateServiceRecord extends PureComponent {
     super(props);
     const {
       serveWay,
-      serveType,
+      serviceTypeTree,
       workResult,
     } = props.dict;
     this.state = {
       serviceWay: serveWay[0].key,
-      serviceType: serveType[0].key,
+      serviceType: serviceTypeTree[0].key,
       workResult: workResult[0].key,
       serviceTime: formatCurrentDate,
       feedbackTime: formatCurrentDate,
@@ -118,11 +118,20 @@ export default class CreateServiceRecord extends PureComponent {
     const {
       id,
       addServeRecord,
+      dict: {
+        serviceTypeTree,
+      },
     } = this.props;
+    const targetObj = _.find(serviceTypeTree, obj => obj.key === serviceType);
+    let type = null;
+    if (targetObj && !_.isEmpty(targetObj.children)) {
+      type = targetObj.children[0].key;
+    }
     addServeRecord({
       custId: id,
       serveWay: serviceWay,
       serveType: serviceType,
+      type,
       serveTime: serviceTime,
       serveContentDesc: serviceContent,
       serveCustFeedBack: feedbackContent,
@@ -246,7 +255,7 @@ export default class CreateServiceRecord extends PureComponent {
               onChange={this.handleServiceType}
             >
               {
-                dict.serveType.map(obj => (
+                dict.serviceTypeTree.map(obj => (
                   <Option key={obj.key} value={obj.key}>{obj.value}</Option>
                 ))
               }
