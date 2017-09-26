@@ -60,7 +60,8 @@ export default class CreateTaskSuccess extends PureComponent {
   @autobind
   /* 关闭当前页 */
   closeTab() {
-      fspGlobal.closeRctTabById('RCT_FSP_TASK');
+      // fspGlobal.closeRctTabById('RCT_FSP_TASK');
+      fspGlobal.closeRctTabById('RCT_FSP_CUSTOMER_LIST');
   }
   @autobind
   goToIndex() {
@@ -70,7 +71,7 @@ export default class CreateTaskSuccess extends PureComponent {
       title: '首页',
     };
     fspGlobal.openRctTab({ url, param });
-    fspGlobal.closeRctTabById('FSP_GROUP');
+    this.closeTab();
   }
   @autobind
   handleMovTime() {
