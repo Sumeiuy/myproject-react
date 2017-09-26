@@ -17,11 +17,7 @@ export default {
     // 服务弹窗对应的客户的经纪客户号
     ServiceRecordModalVisibleOfId: '',
   },
-  subscriptions: {
-    setup({ dispatch }) {
-      dispatch({ type: 'getDictionary' });
-    },
-  },
+  subscriptions: {},
   effects: {
     // 获取员工职责与职位
     * getEmpInfo({ payload }, { call, put }) {

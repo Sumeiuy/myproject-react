@@ -35,6 +35,7 @@ import CreateTask from './routes/customerPool/CreateTask';
 import Contract from './routes/contract/Home';
 import FullChannelServiceRecord from './routes/fullChannelServiceRecord/Home';
 import CustomerGroupManage from './routes/customerPool/CustomerGroupManage';
+import ServiceLog from './routes/customerPool/ServiceLog';
 
 
 function switchRouter() {
@@ -71,6 +72,7 @@ const routes = ({ history }) => (// eslint-disable-line
         <Route path="customerGroup" component={CustomerGroup} />
         <Route path="createTask" component={CreateTask} />
         <Route path="customerGroupManage" component={CustomerGroupManage} />
+        <Route path="serviceLog" component={ServiceLog} />
       </Route>
       <Route path="contract">
         <IndexRoute component={Contract} />
