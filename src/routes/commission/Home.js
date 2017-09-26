@@ -16,7 +16,7 @@ import CommissionList from '../../components/common/biz/CommonList';
 import seibelColumns from '../../components/common/biz/seibelColumns';
 import { constructSeibelPostBody } from '../../utils/helper';
 import { seibelConfig } from '../../config';
-import './Home.less';
+import './home.less';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
