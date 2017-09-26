@@ -83,18 +83,18 @@ export default class CreateCollapse extends PureComponent {
     return newDate;
   }
 
-  /**
-   * 格式化服务渠道
-   * @param {*} serveChannel 服务渠道
-   */
-  formatServeStrategy(serveChannel) {
-    const { serveWay } = this.props;
-    const item = _.find(serveWay, i => i.key === serveChannel);
-    if (item) {
-      return item.value;
-    }
-    return serveChannel;
-  }
+  // /**
+  //  * 格式化服务渠道
+  //  * @param {*} serveChannel 服务渠道
+  //  */
+  // formatServeStrategy(serveChannel) {
+  //   const { serveWay } = this.props;
+  //   const item = _.find(serveWay, i => i.key === serveChannel);
+  //   if (item) {
+  //     return item.value;
+  //   }
+  //   return serveChannel;
+  // }
 
   renderPanel(serveTime) {
     const { data, executeTypes } = this.props;
@@ -167,7 +167,7 @@ export default class CreateCollapse extends PureComponent {
                           </div>
                       }
                       <div className={styles.headerRight}>
-                        <span>{this.formatServeStrategy(item.serveChannel) || '--'}</span>
+                        <span>{item.serveChannel || '--'}</span>
                         <span className={styles.serviceStatus}>{item.serveStatus || '--'}</span>
                         <div
                           className={

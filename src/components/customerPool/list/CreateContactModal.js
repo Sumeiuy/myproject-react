@@ -338,34 +338,30 @@ export default class CreateContactModal extends PureComponent {
               主要联系电话（{CONTACT_MAP[personalContactInfo.mainTelInfo.type]}）：
             </div> : null
         }
-        <div className={styles.number}>
-          {
-            ((isOrgMainContactHasTel && !_.isEmpty(mainContactInfo.cellInfo)) ||
-            (isPersonHasContact && personalContactInfo.mainTelInfo.type !== 'none')) ?
-              <div className={styles.mainContact}>
-                <img src={Phone} alt={'电话联系'} />
-                <span>
-                  {
-                  custType === 'per' ?
-                  personalContactInfo.mainTelInfo.value :
-                  mainContactInfo.cellInfo
-                  }
-                </span>
-              </div> :
-              <div className={styles.noneInfo}>
-                暂无客户手机号码
+        {
+          (!isPersonHasContact && !isOrgMainContactHasTel) ?
+            <div className={styles.noneInfo}>
+                  暂无客户联系电话，请与客户沟通尽快完善信息
+            </div> : <div className={styles.number}>
+              {
+                ((isOrgMainContactHasTel && !_.isEmpty(mainContactInfo.cellInfo)) ||
+                (isPersonHasContact && personalContactInfo.mainTelInfo.type !== 'none')) ?
+                  <div className={styles.mainContact}>
+                    <img src={Phone} alt={'电话联系'} />
+                    <span>
+                      {
+                      custType === 'per' ?
+                      personalContactInfo.mainTelInfo.value :
+                      mainContactInfo.cellInfo
+                      }
+                    </span>
+                  </div> : <div className={styles.noneInfo} />
+              }
+              <div className={styles.rightSection}>
+                <Button key="addServiceRecord" onClick={this.handleServiceRecordClick}>添加服务记录</Button>
               </div>
-          }
-          {
-            (!isPersonHasContact && !isOrgMainContactHasTel) ?
-              <div className={styles.noneInfo}>
-                暂无客户联系电话，请与客户沟通尽快完善信息
-              </div> : null
-          }
-          <div className={styles.rightSection}>
-            <Button key="addServiceRecord" onClick={this.handleServiceRecordClick}>添加服务记录</Button>
-          </div>
-        </div>
+            </div>
+        }
         {
           /* 个人其他联系方式和主联系人其他联系方式 */
           custType === 'per' ? this.constructOtherContact(personalContactInfo.otherTelInfo)
