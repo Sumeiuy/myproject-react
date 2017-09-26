@@ -8,7 +8,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Input } from 'antd';
-// import _ from 'lodash';
+import _ from 'lodash';
 
 import CommonTable from '../common/biz/CommonTable';
 import CommonModal from '../common/biz/CommonModal';
@@ -22,7 +22,6 @@ export default class ChoiceApproverBoard extends PureComponent {
     approverList: PropTypes.array,
     onClose: PropTypes.func.isRequired,
     onOk: PropTypes.func.isRequired,
-    onSearchApprover: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -33,6 +32,7 @@ export default class ChoiceApproverBoard extends PureComponent {
     super(props);
     this.state = {
       approverRadio: 0,
+      listAfterFilter: _.cloneDeep(props.approverList),
     };
   }
 
@@ -44,8 +44,8 @@ export default class ChoiceApproverBoard extends PureComponent {
   // 点击确认
   @autobind
   onOk() {
-    const { approverRadio } = this.state;
-    this.props.onOk(this.props.approverList[approverRadio]);
+    const { approverRadio, listAfterFilter } = this.state;
+    this.props.onOk(listAfterFilter[approverRadio]);
     this.onCloseModal();
   }
 
@@ -65,14 +65,31 @@ export default class ChoiceApproverBoard extends PureComponent {
     });
   }
 
+  // 过滤审批人员列表
+  @autobind
+  filterApprovalUser(v) {
+    const list = this.props.approverList;
+    const listAfterFilter = _.filter(list, (user) => {
+      const { empNo, empName } = user;
+      if (empNo.indexOf(v) > -1 || empName.indexOf(v) > -1) {
+        return true;
+      }
+      return false;
+    });
+    this.setState({
+      approverRadio: 0,
+      listAfterFilter,
+    });
+  }
+
   render() {
-    const { visible, onSearchApprover, approverList } = this.props;
-    const { approverRadio } = this.state;
+    const { visible } = this.props;
+    const { approverRadio, listAfterFilter } = this.state;
     // 表头
     const tableHeader = [
       {
-        dataIndex: 'empId',
-        key: 'empId',
+        dataIndex: 'empNo',
+        key: 'empNo',
         title: '工号',
       },
       {
@@ -81,8 +98,8 @@ export default class ChoiceApproverBoard extends PureComponent {
         title: '姓名',
       },
       {
-        dataIndex: 'org',
-        key: 'org',
+        dataIndex: 'belowDept',
+        key: 'belowDept',
         title: '所属营业部',
       },
     ];
@@ -117,12 +134,12 @@ export default class ChoiceApproverBoard extends PureComponent {
               style={{
                 width: '300px',
               }}
-              onSearch={onSearchApprover}
+              onSearch={this.filterApprovalUser}
             />
           </div>
           <div className={styles.approverListBox}>
             <CommonTable
-              data={approverList}
+              data={listAfterFilter}
               titleList={tableHeader}
               operation={operation}
               scroll={{ y: 294 }}

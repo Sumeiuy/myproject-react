@@ -40,64 +40,21 @@ export default class CreateNewApprovalBoard extends PureComponent {
     onClose: PropTypes.func,
     targetProductList: PropTypes.array,
     approverList: PropTypes.array,
+    customerList: PropTypes.array,
+    validateResult: PropTypes.string,
+    validataLoading: PropTypes.bool,
+    queryProductList: PropTypes.func.isRequired,
+    validateCust: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
     visible: false,
+    validateResult: '',
+    validataLoading: false,
     onClose: () => {},
     targetProductList: [],
-    approverList: [
-      {
-        empId: 'HTSC001234',
-        empName: 'sunweibin',
-        org: '南京长江路证券营业部',
-      },
-      {
-        empId: 'HTSC001234',
-        empName: 'sunweibin',
-        org: '南京长江路证券营业部',
-      },
-      {
-        empId: 'HTSC001234',
-        empName: 'sunweibin',
-        org: '南京长江路证券营业部',
-      },
-      {
-        empId: 'HTSC001234',
-        empName: 'sunweibin',
-        org: '南京长江路证券营业部',
-      },
-      {
-        empId: 'HTSC001234',
-        empName: 'sunweibin',
-        org: '南京长江路证券营业部',
-      },
-      {
-        empId: 'HTSC001234',
-        empName: 'sunweibin',
-        org: '南京长江路证券营业部',
-      },
-      {
-        empId: 'HTSC001234',
-        empName: 'sunweibin',
-        org: '南京长江路证券营业部',
-      },
-      {
-        empId: 'HTSC001234',
-        empName: 'sunweibin',
-        org: '南京长江路证券营业部',
-      },
-      {
-        empId: 'HTSC001234',
-        empName: 'sunweibin',
-        org: '南京长江路证券营业部',
-      },
-      {
-        empId: 'HTSC001234',
-        empName: 'sunweibin',
-        org: '南京长江路证券营业部',
-      },
-    ],
+    customerList: [],
+    approverList: [],
   }
 
   constructor(props) {
@@ -108,13 +65,10 @@ export default class CreateNewApprovalBoard extends PureComponent {
       targetProduct: '',
       bgCommission: '',
       choiceApprover: false,
+      newCommission: '1.6',
+      approverName: '',
+      approverId: '',
     };
-  }
-
-  // 查询审批人员
-  @autobind
-  onSearchApprover(e) {
-    console.warn('onSearchApprover', e);
   }
 
   // 关闭弹出层后的提示框信息
@@ -138,7 +92,6 @@ export default class CreateNewApprovalBoard extends PureComponent {
   @autobind
   closeModal(key) {
     this.closeModalConfirm(key);
-    // this.props.onClose(key);
   }
 
   // 提交
@@ -167,7 +120,16 @@ export default class CreateNewApprovalBoard extends PureComponent {
   // 切换目标产品股基佣金率
   @autobind
   changeTargetGJCommission(v) {
-    console.warn('changeTargetGJCommission', v);
+    this.setState({
+      newCommission: v,
+    });
+    this.props.queryProductList({ prodCommision: v });
+  }
+
+  // 切换选择某个产品
+  @autobind
+  handleSelectProduct(productId) {
+    console.warn('选择某个产品', productId);
   }
 
   // 选择某个产品后
@@ -194,6 +156,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     });
   }
 
+  // 关闭审批人员选择弹出窗
   @autobind
   closeChoiceApproverModal() {
     this.setState({
@@ -201,15 +164,40 @@ export default class CreateNewApprovalBoard extends PureComponent {
     });
   }
 
-  @autobind
-  handleApproverSelected() {
-    console.warn('66666666666');
-  }
-
   // 审批人弹出框确认按钮
   @autobind
-  handleApproverModalOK(emp) {
-    console.warn('handleApproverModalOK', emp);
+  handleApproverModalOK(approver) {
+    this.setState({
+      approverName: approver.empName,
+      approverId: approver.empNo,
+    });
+  }
+
+  // 根据用户输入查询客户列表
+  @autobind
+  handleCustomerListSearch(value) {
+    console.warn('根据用户输入查询客户列表', value);
+  }
+
+  // 将用户选择添加的客户列表返回到弹出层，以便提交试用
+  @autobind
+  saveSelectedCustomerList(list) {
+    console.warn('用户选择添加的客户列表', list);
+  }
+
+  // 验证用户资格
+  @autobind
+  handleCustomerValidate(customer) {
+    const { approvalType, newCommission, targetProduct } = this.state;
+    const { cusId, custType } = customer;
+    // 如果是批量佣金则传递businessType = 'BatchProcess'
+    this.props.validateCust({
+      businessType: approvalType === '0201' ? 'BatchProcess' : null,
+      custId: cusId,
+      custType,
+      newCommission,
+      prodCode: targetProduct,
+    });
   }
 
   render() {
@@ -218,11 +206,16 @@ export default class CreateNewApprovalBoard extends PureComponent {
       visible,
       targetProductList,
       approverList,
+      validataLoading,
+      validateResult,
+      customerList,
     } = this.props;
     const {
       approvalType,
       remark,
       choiceApprover,
+      approverName,
+      approverId,
     } = this.state;
     return (
       <div>
@@ -282,6 +275,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
                     getValue={this.changeTargetGJCommission}
                   />
                 </div>
+                <span className={styles.fuhao}>‰</span>
               </div>
               <div className={styles.lineInputWrap}>
                 <div className={styles.label}>
@@ -290,7 +284,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
                 <div className={`${styles.componentBox}`}>
                   <ProductsDropBox
                     productList={targetProductList}
-                    onSelect={this.changeTargetGJCommission}
+                    onSelect={this.handleSelectProduct}
                   />
                 </div>
               </div>
@@ -382,12 +376,19 @@ export default class CreateNewApprovalBoard extends PureComponent {
                 />
               </div>
               <div className={styles.blockTip}>
-                <Icon type="exclamation-circle" />本功能不提供特殊资产校验的费率设置，如需调整请通过单客户佣金调整功能
+                <Icon type="exclamation-circle" /> 本功能不提供特殊资产校验的费率设置，如需调整请通过单客户佣金调整功能
               </div>
             </div>
             <div className={styles.approvalBlock}>
               <InfoTitle head="客户" />
-              <AddCustomer />
+              <AddCustomer
+                onSearch={this.handleCustomerListSearch}
+                passList2Home={this.saveSelectedCustomerList}
+                validate={this.handleCustomerValidate}
+                validateResult={validateResult}
+                validataLoading={validataLoading}
+                searchList={customerList}
+              />
             </div>
             <div className={styles.approvalBlock}>
               <InfoTitle head="审批人" />
@@ -397,7 +398,10 @@ export default class CreateNewApprovalBoard extends PureComponent {
                 </div>
                 <div className={`${styles.componentBox} ${styles.selectBox}`}>
                   <div className={styles.checkApprover} onClick={this.openApproverBoard}>
-                    <div className={styles.searchIcon}><Icon type="search" /></div>
+                    <div className={styles.searchIcon}>
+                      {`${approverName}(${approverId})`}
+                      <Icon type="search" />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -409,7 +413,6 @@ export default class CreateNewApprovalBoard extends PureComponent {
           approverList={approverList}
           onClose={this.closeChoiceApproverModal}
           onOk={this.handleApproverModalOK}
-          onSearchApprover={this.onSearchApprover}
         />
       </div>
     );

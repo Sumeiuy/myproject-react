@@ -5,35 +5,137 @@
  */
 
 import React, { PureComponent } from 'react';
-// import PropTypes from 'prop-types';
-// import { autobind } from 'core-decorators';
-// import _ from 'lodash';
+import PropTypes from 'prop-types';
+import { autobind } from 'core-decorators';
+import _ from 'lodash';
 
-import SearchSelect from '../common/Select/SearchSelect';
+import OperationOfCustermorList from './OperationOfCustermorList';
+import CustomerTableList from './CutomerTableList';
+import ProcessConfirm from '../common/biz/ProcessConfirm';
 import styles from './addCustomer.less';
 
 export default class AddCustomer extends PureComponent {
   static propTypes = {
-    // name: PropTypes.string,
+    onSearch: PropTypes.func.isRequired,
+    searchList: PropTypes.array.isRequired,
+    passList2Home: PropTypes.func.isRequired,
+    validate: PropTypes.func.isRequired,
+    validateResult: PropTypes.string,
+    validataLoading: PropTypes.bool,
   }
 
   static defaultProps = {
-    // name: '',
+    validataLoading: false,
+    validateResult: '',
   }
 
-  // constructor(props) {
-  //   super(props);
-  // }
+  constructor(props) {
+    super(props);
+    this.state = {
+      customerList: [],
+      customer: null,
+      content: [[]],
+      processModal: false,
+    };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { validataLoading: prevL } = this.props;
+    const { validataLoading: nextL, validateResult } = nextProps;
+    if (!nextL && prevL) {
+      // 验证完毕
+      // 添加客户
+      if (validateResult === 'OK') {
+        this.addCustomer(this.state.customer);
+        this.setState({
+          customer: null,
+        });
+      } else {
+        const { customer } = this.state;
+        const content = [[customer.custName, validateResult]];
+        this.setState({
+          content,
+          processModal: true,
+        });
+      }
+    }
+  }
+
+  // 选出需要传递给接口的值
+  @autobind
+  pickValue(list, key) {
+    const tempList = _.cloneDeep(list);
+    return tempList.map(item => _.pick(item, key));
+  }
+
+  @autobind
+  passData2Home(list) {
+    this.props.passList2Home(list);
+  }
+
+  @autobind
+  handleValidate(customer) {
+    this.setState({
+      customer,
+    });
+    this.props.validate(customer);
+  }
+
+  // 添加用户
+  @autobind
+  addCustomer(customer) {
+    const { customerList } = this.state;
+    const newList = customerList.unshift(customer);
+    this.setState({
+      customerList: newList,
+    });
+    this.passData2Home(this.pickValue(newList, 'cusId'));
+  }
+
+  // 删除选择的用户
+  @autobind
+  handleDeleteCustomer(list) {
+    const { customerList } = this.state;
+    const newList = _.filter(customerList, item => _.includes(list, item.cusId));
+    this.setState({
+      customerList: newList,
+    });
+    this.passData2Home(this.pickValue(newList, 'cusId'));
+  }
+
+  @autobind
+  closeProcessModal() {
+    this.setState({
+      processModal: false,
+      content: [[]],
+    });
+  }
 
   render() {
+    const { searchList, onSearch } = this.props;
+    const { customerList, processModal, content } = this.state;
+    const listWithKey = customerList.map(item => ({ ...item, key: item.cusId }));
     return (
       <div className={styles.addCustomersBox}>
-        <SearchSelect
-          addClick={() => {}}
-          changeValue=""
-          width="184px"
+        <OperationOfCustermorList
+          onChangeValue={onSearch}
           labelName="客户"
-          dataSource={[]}
+          dataSource={searchList}
+          onDelectCustomer={this.handleDeleteCustomer}
+          validate={this.handleValidate}
+        />
+        <div className={styles.tableList}>
+          <CustomerTableList
+            customerList={listWithKey}
+            onDeleteCustomer={this.handleDeleteCustomer}
+          />
+        </div>
+        <ProcessConfirm
+          modalKey="processModal"
+          visible={processModal}
+          onOk={this.closeProcessModal}
+          content={content}
+          contentTitle=""
         />
       </div>
     );

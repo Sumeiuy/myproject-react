@@ -2,6 +2,7 @@
  * @file models/report.js
  * @author sunweibin
  */
+import _ from 'lodash';
 import { commission as api, seibel as seibelApi } from '../api';
 
 const EMPTY_OBJECT = {};
@@ -10,8 +11,10 @@ const EMPTY_LIST = [];
 export default {
   namespace: 'commission',
   state: {
-    // 新建佣金目标产品测试
+    // 查询到的目标产品列表
     productList: [],
+    // 审批人员列表
+    approvalUserList: [],
     // 批量佣金左侧列表
     list: {},
     // 批量佣金右侧详情
@@ -26,14 +29,21 @@ export default {
     filterDrafterList: [],
     // 可选部门组织机构树
     custRange: [],
+    // 校验进程
+    validataLoading: false,
+    // 检验结果
+    validateResult: '',
   },
   reducers: {
-
-    getProductList(state, action) {
+    getProductListSuccess(state, action) {
       const { payload: { resultData } } = action;
+      let list = [];
+      if (!_.isEmpty(resultData)) {
+        list = resultData;
+      }
       return {
         ...state,
-        productList: resultData,
+        productList: list,
       };
     },
 
@@ -74,6 +84,14 @@ export default {
       };
     },
 
+    getAprovalUserListSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        approvalUserList: resultData,
+      };
+    },
+
     searchCustListSuccess(state, action) {
       const { payload: { resultData } } = action;
       return {
@@ -107,6 +125,14 @@ export default {
       };
     },
 
+    validateCustInfoSuccess(state, action) {
+      const { payload: { msg } } = action;
+      return {
+        ...state,
+        validateResult: msg,
+      };
+    },
+
     opertateState(state, action) {
       const { payload: { name, value } } = action;
       return {
@@ -118,9 +144,9 @@ export default {
   effects: {
     // 新建批量佣金调整用户选择的目标产品列表
     * getProductList({ payload }, { call, put }) {
-      const response = yield call(api.queryProduct, payload);
+      const response = yield call(api.queryProductList, payload);
       yield put({
-        type: 'getProductList',
+        type: 'getProductListSuccess',
         payload: response,
       });
     },
@@ -203,6 +229,39 @@ export default {
       yield put({
         type: 'getCustRangeSuccess',
         payload: response,
+      });
+    },
+
+    // 获取审批人员列表
+    * getAprovalUserList({ payload }, { call, put }) {
+      const response = yield call(api.queryAprovalUserList, payload);
+      yield put({
+        type: 'getAprovalUserListSuccess',
+        payload: response,
+      });
+    },
+
+    * validateCustInfo({ payload }, { call, put }) {
+      yield put({
+        type: 'opertateState',
+        payload: {
+          name: 'validataLoading',
+          value: true,
+          message: '开始校验',
+        },
+      });
+      const response = yield call(api.validateCustInfo, payload);
+      yield put({
+        type: 'validateCustInfoSuccess',
+        payload: response,
+      });
+      yield put({
+        type: 'opertateState',
+        payload: {
+          name: 'validataLoading',
+          value: false,
+          message: '结束校验',
+        },
       });
     },
   },
