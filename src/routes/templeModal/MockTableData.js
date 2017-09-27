@@ -97,6 +97,58 @@ export const subscribelData = [{
   type: '综合定价产品',
 }];
 
+export const data = [{
+  key: '11',
+  productName: '福享套餐11',
+  productCode: 'TC02',
+  type: '综合定价产品',
+}, {
+  key: '12',
+  productName: '持仓异动提醒12',
+  productCode: 'SP0258',
+  type: '综合定价产品',
+}, {
+  key: '13',
+  productName: '研报掘金13',
+  productCode: 'SP0449',
+  type: '综合定价产品',
+}, {
+  key: '14',
+  productName: '乐享套餐14',
+  productCode: 'TC03',
+  type: '综合定价产品',
+}, {
+  key: '15',
+  productName: '行业投资组合精选15行业投资组合5',
+  productCode: 'SP0449',
+  type: '综合定价产品',
+}, {
+  key: '16',
+  productName: '福享套餐16',
+  productCode: 'TC02',
+  type: '综合定价产品',
+}, {
+  key: '17',
+  productName: '持仓异动提醒17',
+  productCode: 'SP0258',
+  type: '综合定价产品',
+}, {
+  key: '18',
+  productName: '研报掘金18',
+  productCode: 'SP0449',
+  type: '综合定价产品',
+}, {
+  key: '19',
+  productName: '乐享套餐19',
+  productCode: 'TC03',
+  type: '综合定价产品',
+}, {
+  key: '20',
+  productName: '行业投资组合精选20',
+  productCode: 'SP0449',
+  type: '综合定价产品',
+}];
+
 export const unsubcribeData = [{
   key: '11',
   productName: '福享套餐11',

@@ -34,11 +34,41 @@
   .leftHeader {
     justify-content: space-between;
   }
+  .rightHeader {
+    .tipContainer {
+      position: relative;
+      top: -70px;
+      left: 20px;
+      .tipRow {
+        display: -webkit-flex; /* Safari */
+        display: flex;
+        .finishIcon {
+          font-size: 22px;
+          color: #70c381;
+        }
+        .warningIcon {
+          font-size: 22px;
+          color: #f0b048;
+        }
+        .tip {
+          font-size: 14px;
+          margin-left: 10px;
+        }
+        .finishTip {
+          color: #70c381;
+        }
+        .warningTip {
+          color: #f0b048;
+        }
+      }
+    }
+  }
   
   :global {
     .ant-input {
       height: 32px;
       width: 220px;
+      font-size: 14px;
     }
     .ant-table {
       font-family: @font-family;

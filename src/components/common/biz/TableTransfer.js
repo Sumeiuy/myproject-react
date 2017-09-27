@@ -55,10 +55,16 @@ export default class TableTransfer extends Component {
     secondData: PropTypes.array,
     onChange: PropTypes.func,
     placeholder: PropTypes.string,
-    renderSecondIntro: PropTypes.func,
+    finishTips: PropTypes.array,
+    warningTips: PropTypes.array,
+    onSearch: PropTypes.func,
+    showSearch: PropTypes.bool,
+    pagination: React.PropTypes.oneOfType([
+      PropTypes.object,
+      PropTypes.bool,
+    ]),
     firstColumns: PropTypes.array.isRequired,
     secondColumns: PropTypes.array.isRequired,
-    onSearch: PropTypes.func,
     rowKey: PropTypes.string.isRequired,
   }
 
@@ -69,8 +75,10 @@ export default class TableTransfer extends Component {
     secondTitle: '已选产品',
     onChange: () => {},
     placeholder: '',
-    renderSecondIntro: () => {},
+    finishTips: [],
+    warningTips: [],
     onSearch: () => {},
+    showSearch: true,
   }
 
   constructor(props) {
@@ -227,12 +235,43 @@ export default class TableTransfer extends Component {
     onSearch(keyword);
   }
 
+  @autobind
+  renderFinishTipsTips() {
+    const { finishTips } = this.props;
+    return finishTips.map(
+      item => (
+        <div className={styles.tipRow}>
+          <div className={styles.iconColumns}>
+            <Icon type="duihao" className={styles.finishIcon} />
+          </div>
+          <div className={classnames(styles.tip, styles.finishTip)}>{item}</div>
+        </div>
+      ),
+    );
+  }
+
+  @autobind
+  renderTipsTips() {
+    const { warningTips } = this.props;
+    return warningTips.map(
+      item => (
+        <div className={styles.tipRow}>
+          <div className={styles.iconColumns}>
+            <Icon type="duihao" className={styles.warningIcon} />
+          </div>
+          <div className={classnames(styles.tip, styles.warningTip)}>{item}</div>
+        </div>
+      ),
+    );
+  }
+
   render() {
     const {
       firstTitle,
       secondTitle,
       placeholder,
-      renderSecondIntro,
+      showSearch,
+      pagination,
     } = this.props;
     const {
       firstArray,
@@ -240,42 +279,44 @@ export default class TableTransfer extends Component {
       firstColumns,
       secondColumns,
     } = this.state;
-    const paginationProps = {
-      defaultPageSize: 5,
-      pageSize: 5,
-      size: 'small',
-    };
 
     return (
       <div className={styles.container}>
         <div className={styles.leftContent}>
           <div className={classnames(styles.header, styles.leftHeader)}>
             <div className={styles.titleLabel}>{firstTitle}</div>
-            <div>
-              <Search
-                placeholder={placeholder}
-                onSearch={(value) => { this.handleSearch(value); }}
-              />
-            </div>
+            {
+              showSearch ? (
+                <div>
+                  <Search
+                    placeholder={placeholder}
+                    onSearch={(value) => { this.handleSearch(value); }}
+                  />
+                </div>
+              ) : (null)
+            }
           </div>
           <Table
             rowKey="key"
             columns={firstColumns}
             dataSource={firstArray}
-            pagination={paginationProps}
+            pagination={pagination}
             scroll={{ y: 260 }}
           />
         </div>
         <div className={styles.rightContent}>
-          <div className={classnames(styles.header)}>
+          <div className={classnames(styles.header, styles.rightHeader)}>
             <div className={styles.titleLabel}>{secondTitle}</div>
-            {renderSecondIntro}
+            <div className={styles.tipContainer}>
+              {this.renderFinishTipsTips()}
+              {this.renderTipsTips()}
+            </div>
           </div>
           <Table
             rowKey="key"
             columns={secondColumns}
             dataSource={secondArray}
-            pagination={paginationProps}
+            pagination={pagination}
             scroll={{ y: 260 }}
           />
         </div>

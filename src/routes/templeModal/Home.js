@@ -28,6 +28,7 @@ import {
   employeeColumns,
   subscribelData,
   unsubcribeData,
+  // data,
   productColumns,
 } from './MockTableData';
 import styles from './home.less';
@@ -227,14 +228,27 @@ export default class TemplModal extends PureComponent {
       onOk: this.closeModal,
     };
 
+    const pagination = {
+      defaultPageSize: 5,
+      pageSize: 5,
+      size: 'small',
+    };
+
     const transferProps = {
       firstData: subscribelData,
+      // secondData: data,
       secondData: unsubcribeData,
       firstColumns: productColumns,
       secondColumns: productColumns,
       onChange: this.handleChange,
       onSearch: this.handleSearch,
       rowKey: 'key',
+      showSearch: true,
+      placeholder: '产品代码/产品名称',
+      // pagination: false,
+      pagination,
+      finishTips: ['产品组合等于目标佣金值'],
+      warningTips: ['产品组合比目标佣金高 0.5%', '产品组合离目标佣金还差 0.63%'],
     };
 
 
