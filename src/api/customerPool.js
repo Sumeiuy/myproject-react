@@ -81,5 +81,8 @@ export default function customerPool(api) {
 
     // 操作分组（编辑、新增客户分组）
     operateGroup: query => api.post('/groovynoauth/fsp/cust/custgroup/operateGroup', query),
+
+    // 删除分组
+    deleteGroup: query => api.post('/groovynoauth/fsp/cust/custgroup/deleteGroup', query),
   };
 }

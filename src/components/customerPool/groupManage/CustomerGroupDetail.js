@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 14:15:22
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-09-27 16:13:23
+ * @Last Modified time: 2017-09-27 17:43:54
  */
 
 import React, { PureComponent } from 'react';
@@ -12,6 +12,7 @@ import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
 import Button from '../../common/Button';
+import Confirm from '../../common/Confirm';
 import GroupTable from './GroupTable';
 import Search from '../../common/Search';
 
@@ -40,13 +41,14 @@ export default class CustomerGroupDetail extends PureComponent {
     // 操作分组信息
     operateGroup: PropTypes.func.isRequired,
     // 风险等级字典
-    custRiskBearing: PropTypes.array.isRequired,
+    custRiskBearing: PropTypes.array,
   };
 
   static defaultProps = {
     detailData: EMPTY_OBJECT,
     onCloseModal: () => { },
     canEditDetail: true,
+    custRiskBearing: [],
   };
 
   constructor(props) {
@@ -58,10 +60,12 @@ export default class CustomerGroupDetail extends PureComponent {
       curPageNum: 1,
       curPageSize: 5,
       groupId,
+      record: {},
       totalRecordNum: 1,
       dataSource: EMPTY_LIST,
       includeCustIdList: [],
       excludeCustIdList: [],
+      isShowDeleteConfirm: false,
     };
   }
 
@@ -69,10 +73,12 @@ export default class CustomerGroupDetail extends PureComponent {
     const { customerList = EMPTY_OBJECT } = this.props;
     const { resultData: prevData = EMPTY_LIST } = customerList;
     const { customerList: nextList = EMPTY_OBJECT } = nextProps;
-    const { resultData: nextData = EMPTY_LIST } = nextList;
+    const { resultData: nextData = EMPTY_LIST, page = EMPTY_OBJECT } = nextList;
+    const { totalRecordNum } = page;
     if (prevData !== nextData) {
       this.setState({
         dataSource: nextData,
+        totalRecordNum,
       });
     }
   }
@@ -174,7 +180,7 @@ export default class CustomerGroupDetail extends PureComponent {
   @autobind
   deleteCustomerFromGroup(record) {
     console.log('delete customer from group');
-    const { includeCustIdList, excludeCustIdList, dataSource } = this.state;
+    const { includeCustIdList, excludeCustIdList, dataSource, totalRecordNum } = this.state;
     const { custId } = record;
     // 判断删除的custId在includeCustIdList中有没有
     if (_.includes(includeCustIdList, custId)) {
@@ -192,6 +198,8 @@ export default class CustomerGroupDetail extends PureComponent {
     // 数据从表格删除
     this.setState({
       dataSource: _.filter(dataSource, item => item.custId !== custId),
+      // 总记录数减1
+      totalRecordNum: totalRecordNum - 1,
     });
   }
 
@@ -221,7 +229,7 @@ export default class CustomerGroupDetail extends PureComponent {
     console.log('receive value, add customer to table', selectedItem);
     const { custName, cusId, custLevelName, riskLevel } = selectedItem;
     console.log(custName, cusId, custLevelName, riskLevel);
-    const { includeCustIdList, dataSource } = this.state;
+    const { includeCustIdList, dataSource, totalRecordNum } = this.state;
     const { custRiskBearing } = this.props;
     const riskLevelObject = _.find(custRiskBearing, item => item.key === riskLevel) || EMPTY_OBJECT;
     // 将数据添加进includeCustIdList
@@ -237,6 +245,32 @@ export default class CustomerGroupDetail extends PureComponent {
         riskLevelName: riskLevelObject.value,
         id: cusId,
       }]),
+      totalRecordNum: totalRecordNum + 1,
+    });
+  }
+
+  @autobind
+  handleConfirmOk() {
+    const { record } = this.state;
+    this.setState({
+      isShowDeleteConfirm: false,
+    });
+    this.deleteCustomerFromGroup(record);
+  }
+
+  @autobind
+  handleConfirmCancel() {
+    this.setState({
+      isShowDeleteConfirm: false,
+    });
+  }
+
+  @autobind
+  handleDeleteBtnClick(record) {
+    this.setState({
+      isShowDeleteConfirm: true,
+      // 当前删除行记录数据
+      record,
     });
   }
 
@@ -255,7 +289,7 @@ export default class CustomerGroupDetail extends PureComponent {
   renderActionSource() {
     return [{
       type: '删除',
-      handler: this.deleteCustomerFromGroup,
+      handler: this.handleDeleteBtnClick,
     }];
   }
 
@@ -293,17 +327,18 @@ export default class CustomerGroupDetail extends PureComponent {
       curPageNum,
       curPageSize,
       dataSource,
+      isShowDeleteConfirm,
+      totalRecordNum,
+      record,
     } = this.state;
     const {
       form: { getFieldDecorator },
-      customerList = EMPTY_OBJECT,
       customerHotPossibleWordsList = EMPTY_LIST,
       getHotPossibleWds,
       onCloseModal,
       canEditDetail,
   } = this.props;
-    const { page = EMPTY_OBJECT } = customerList;
-    const { totalRecordNum = 1 } = page;
+    const { custName } = record;
     // 构造表格头部
     const titleColumn = this.renderColumnTitle();
     // 构造operation
@@ -433,6 +468,16 @@ export default class CustomerGroupDetail extends PureComponent {
           </Button>
           </div>
         </FormItem>
+        {
+          isShowDeleteConfirm ?
+            <Confirm
+              title={`确认删除客户：${custName}吗？`}
+              content={`真的确认删除客户：${custName}吗？`}
+              type={'delete'}
+              onCancelHandler={this.handleConfirmCancel}
+              onOkHandler={this.handleConfirmOk}
+            /> : null
+        }
       </Form>
     );
   }

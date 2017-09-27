@@ -80,6 +80,8 @@ export default {
     customerHotPossibleWordsList: [],
     // 编辑，新增客户分组结果
     operateGroupResult: '',
+    // 删除分组结果
+    deleteGroupResult: '',
   },
   subscriptions: {},
   effects: {
@@ -342,6 +344,23 @@ export default {
         payload: resultData,
       });
       // 成功之后，更新分组信息
+      yield put({
+        type: 'getCustomerGroupList',
+        payload: {
+          pageNum: 1,
+          pageSize: 10,
+        },
+      });
+    },
+    // 删除客户分组
+    * deleteGroup({ payload }, { call, put }) {
+      const response = yield call(api.deleteGroup, payload);
+      const { resultData } = response;
+      yield put({
+        type: 'deleteGroupSuccess',
+        payload: resultData,
+      });
+      // 删除成功之后，更新分组信息
       yield put({
         type: 'getCustomerGroupList',
         payload: {
@@ -705,13 +724,22 @@ export default {
         customerHotPossibleWordsList: finalPossibleHotCust,
       };
     },
-    // 操作分组成功
+    // 新增、编辑分组成功
     operateGroupSuccess(state, action) {
       const { payload } = action;
       return {
         ...state,
         // success
         operateGroupResult: payload,
+      };
+    },
+    // 删除分组成功
+    deleteGroupSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        // success
+        deleteGroupResult: payload,
       };
     },
   },

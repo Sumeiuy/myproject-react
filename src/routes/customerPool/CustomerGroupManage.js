@@ -25,6 +25,7 @@ const effects = {
   // clearSearchHistoryList: 'customerPool/clearCustomerSearchHistoryList',
   // saveSearchVal: 'customerPool/saveCustomerSearchVal',
   operateGroup: 'customerPool/operateGroup',
+  deleteGroup: 'customerPool/deleteGroup',
 };
 
 const fetchData = (type, loading) => query => ({
@@ -49,7 +50,9 @@ const mapStateToProps = state => ({
   // 更新分组信息成功与否
   operateGroupResult: state.customerPool.operateGroupResult,
   // 字典信息
-  dict: state.app.dict, // 职责切换
+  dict: state.app.dict,
+  // 删除分组结果
+  deleteGroupResult: state.customerPool.deleteGroupResult,
 });
 
 const mapDispatchToProps = {
@@ -66,7 +69,9 @@ const mapDispatchToProps = {
   // 保存搜索关键字
   // saveSearchVal: fetchData(effects.saveSearchVal, false),
   // 新增、编辑客户分组
-  operateGroup: fetchData(effects.operateGroup, false),
+  operateGroup: fetchData(effects.operateGroup, true),
+  // 删除分组
+  deleteGroup: fetchData(effects.deleteGroup, true),
   push: routerRedux.push,
   replace: routerRedux.replace,
 };
@@ -95,6 +100,8 @@ export default class CustomerGroupManage extends PureComponent {
     operateGroupResult: PropTypes.string.isRequired,
     operateGroup: PropTypes.func.isRequired,
     dict: PropTypes.object.isRequired,
+    deleteGroupResult: PropTypes.string.isRequired,
+    deleteGroup: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -231,8 +238,13 @@ export default class CustomerGroupManage extends PureComponent {
 
   // 删除客户分组
   @autobind
-  deleteCustomerGroup() {
+  deleteCustomerGroup(record) {
     console.log('delete customer group list');
+    const { groupId } = record;
+    const { deleteGroup } = this.props;
+    deleteGroup({
+      groupId,
+    });
   }
 
   // 发起任务
