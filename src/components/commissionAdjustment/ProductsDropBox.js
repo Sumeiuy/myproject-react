@@ -17,6 +17,7 @@ export default class ProductsDropdownBox extends PureComponent {
   static propTypes = {
     productList: PropTypes.array.isRequired,
     onSelect: PropTypes.func.isRequired,
+    onSearch: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -46,6 +47,7 @@ export default class ProductsDropdownBox extends PureComponent {
         iconType: 'close',
         value,
       });
+      this.props.onSearch(value);
     } else {
       this.setState({
         value: '',
@@ -79,6 +81,7 @@ export default class ProductsDropdownBox extends PureComponent {
     return (
       <div className={styles.dropdownbox}>
         <AutoComplete
+          placeholder="产品名称/产品代码"
           className={styles.searchbox}
           dropdownClassName={styles.searchdropdown}
           dropdownStyle={{ width: 343 }}
