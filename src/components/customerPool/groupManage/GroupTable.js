@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-09-26 16:35:26
+ * @Last Modified time: 2017-09-27 17:43:57
  */
 
 import React, { PureComponent } from 'react';
@@ -216,12 +216,16 @@ export default class GroupTable extends PureComponent {
 
   render() {
     const {
-      listData,
+      listData = EMPTY_LIST,
       pageData: { curPageNum, curPageSize, totalRecordNum },
       tableClass,
      } = this.props;
     const { curSelectedRow } = this.state;
-    const paginationOptions = this.renderPaganation(curPageNum, totalRecordNum, curPageSize);
+    const paginationOptions = this.renderPaganation(
+      curPageNum,
+      totalRecordNum,
+      curPageSize,
+    );
     const columns = this.renderColumns();
 
     return (

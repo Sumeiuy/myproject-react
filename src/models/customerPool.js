@@ -7,7 +7,7 @@ import _ from 'lodash';
 import { customerPool as api } from '../api';
 
 const EMPTY_LIST = [];
-const EMPTY_OBJECT = {};
+// const EMPTY_OBJECT = {};
 
 export default {
   namespace: 'customerPool',
@@ -65,7 +65,7 @@ export default {
     // 分组维度，客户分组列表
     customerGroupList: {},
     // 指定分组下的客户列表
-    customerList: {},
+    groupCustomerList: {},
     // 客户分组历史搜索列表
     customerHistoryWordsList: [],
     // 客户分组是否清除历史搜索成功
@@ -74,6 +74,10 @@ export default {
     customerSearchHistoryVal: '',
     // 客户分组热词列表
     customerHotPossibleWordsList: [],
+    // 编辑，新增客户分组结果
+    operateGroupResult: '',
+    // 删除分组结果
+    deleteGroupResult: '',
   },
   subscriptions: {},
   effects: {
@@ -322,6 +326,40 @@ export default {
       yield put({
         type: 'clearCustomerSearchHistoryListSuccess',
         payload: { clearHistoryState },
+      });
+    },
+    // 新增，编辑客户分组
+    * operateGroup({ payload }, { call, put }) {
+      const response = yield call(api.operateGroup, payload);
+      const { resultData } = response;
+      yield put({
+        type: 'operateGroupSuccess',
+        payload: resultData,
+      });
+      // 成功之后，更新分组信息
+      yield put({
+        type: 'getCustomerGroupList',
+        payload: {
+          pageNum: 1,
+          pageSize: 10,
+        },
+      });
+    },
+    // 删除客户分组
+    * deleteGroup({ payload }, { call, put }) {
+      const response = yield call(api.deleteGroup, payload);
+      const { resultData } = response;
+      yield put({
+        type: 'deleteGroupSuccess',
+        payload: resultData,
+      });
+      // 删除成功之后，更新分组信息
+      yield put({
+        type: 'getCustomerGroupList',
+        payload: {
+          pageNum: 1,
+          pageSize: 10,
+        },
       });
     },
   },
@@ -592,13 +630,18 @@ export default {
     // 获取指定分组客户成功
     getGroupCustomerListSuccess(state, action) {
       const { payload } = action;
-      const { page = EMPTY_OBJECT, custList = EMPTY_LIST } = payload;
+      const { totalRecordNum, groupCustDTOList = EMPTY_LIST } = payload;
 
       return {
         ...state,
-        customerList: {
-          page,
-          resultData: custList,
+        groupCustomerList: {
+          page: {
+            // 后台返回的一直是null，所以不要了
+            // curPageNum,
+            // pageSize,
+            totalRecordNum,
+          },
+          resultData: groupCustDTOList,
         },
       };
     },
@@ -658,6 +701,24 @@ export default {
       return {
         ...state,
         customerHotPossibleWordsList: finalPossibleHotCust,
+      };
+    },
+    // 新增、编辑分组成功
+    operateGroupSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        // success
+        operateGroupResult: payload,
+      };
+    },
+    // 删除分组成功
+    deleteGroupSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        // success
+        deleteGroupResult: payload,
       };
     },
   },
