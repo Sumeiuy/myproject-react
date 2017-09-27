@@ -149,6 +149,7 @@ export default class CustomerRow extends PureComponent {
     isFollows: PropTypes.object.isRequired,
     isGetCustIncome: PropTypes.bool.isRequired,
     toggleServiceRecordModal: PropTypes.func.isRequired,
+    isEmptyEmail: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -206,6 +207,7 @@ export default class CustomerRow extends PureComponent {
       getCustIncome,
       location,
       dict,
+      isEmptyEmail,
     } = this.props;
     const rskLev = _.trim(listItem.riskLvl);
     const str = `${listItem.custId}.${listItem.name}`;
@@ -223,6 +225,7 @@ export default class CustomerRow extends PureComponent {
           currentFollowCustId={currentFollowCustId}
           isFollows={isFollows}
           onAddFollow={onAddFollow}
+          isEmptyEmail={isEmptyEmail}
         />
         <div className={`${styles.customerRowLeft} clear`}>
           <div className={styles.selectIcon}>

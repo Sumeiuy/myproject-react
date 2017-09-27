@@ -42,6 +42,7 @@ export default class AddNewGroup extends PureComponent {
     closeTab: PropTypes.func.isRequired,
   };
   addNewGroupSubmit = (e) => {
+    e.preventDefault();
     const { onSubmit } = this.props;
     console.log(onSubmit);
     e.preventDefault();

@@ -75,6 +75,7 @@ export default class CustomerLists extends PureComponent {
       email: '',
       isFollows: {},
       currentFollowCustId: '',
+      isEmptyEmail: false, // 判断是否发送请求
     };
   }
   componentDidMount() {
@@ -393,8 +394,14 @@ export default class CustomerLists extends PureComponent {
       getCustContact({
         custId,
       });
+      this.setState({
+        isEmptyEmail: false,
+      });
     } else {
       this.getEmail(custContactData[custId]);
+      this.setState({
+        isEmptyEmail: true,
+      });
     }
     this.setState({
       currentCustId: custId,
@@ -466,6 +473,7 @@ export default class CustomerLists extends PureComponent {
       custType,
       modalKey,
       isFollows,
+      isEmptyEmail,
     } = this.state;
 
     const {
@@ -563,6 +571,7 @@ export default class CustomerLists extends PureComponent {
                 currentCustId={currentCustId}
                 isGetCustIncome={isGetCustIncome}
                 toggleServiceRecordModal={toggleServiceRecordModal}
+                isEmptyEmail={isEmptyEmail}
               />,
             )
           }

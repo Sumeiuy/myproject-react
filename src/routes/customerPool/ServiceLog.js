@@ -48,7 +48,7 @@ export default class CreateTaskForm extends PureComponent {
     };
   }
   componentWillMount() {
-    this.handileData();
+    this.handleData();
   }
   componentWillReceiveProps(nextProps) {
     console.log(nextProps);
@@ -67,9 +67,9 @@ export default class CreateTaskForm extends PureComponent {
     }
   }
   @autobind
-  handileData() {
+  handleData() {
     const { getServiceRecord } = this.props;
-    const params = {
+    const params = {// 用本地死参数
       custId: '020014642',
       empId: '001206',
     };

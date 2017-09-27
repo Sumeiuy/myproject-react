@@ -14,6 +14,7 @@ import styles from './quickMenu.less';
 const NO_EMAIL_HREF = 'javascript:void(0);'; // eslint-disable-line
 
 let hrefUrl = '';
+let isClickEmail = false;
 
 export default class QuickMenu extends PureComponent {
 
@@ -28,6 +29,7 @@ export default class QuickMenu extends PureComponent {
     currentFollowCustId: PropTypes.string.isRequired,
     isFollows: PropTypes.object.isRequired,
     currentCustId: PropTypes.string.isRequired,
+    isEmptyEmail: PropTypes.bool.isRequired,
   }
 
   constructor(props) {
@@ -39,23 +41,31 @@ export default class QuickMenu extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { custContactData } = this.props;
-    if (custContactData !== nextProps.custContactData && _.size(nextProps.custContactData) !== 0) {
+    // _.isEqual
+    if (custContactData !== nextProps.custContactData && _.size(nextProps.custContactData) > 0) {
       const change = {
         ...this.state.addressEmail,
         ...{ [nextProps.currentCustId]: this.getEmail(nextProps.custContactData) },
       };
       this.setState({
         addressEmail: change,
-      }, () => {
-        if (this.sendEmail && hrefUrl !== '') {
-          const evt = new MouseEvent('click', { bubbles: false, cancelable: false, view: window });
-          this.sendEmail.dispatchEvent(evt);
-          hrefUrl = '';
-        }
       });
     }
+    if (nextProps.isEmptyEmail) {
+      isClickEmail = false;
+    }
   }
-
+  componentDidUpdate() {
+    const { currentCustId, listItem } = this.props;
+    const { addressEmail } = this.state;
+    const email = addressEmail[currentCustId];
+    if (!_.isEmpty(email) &&
+        currentCustId === listItem.custId && isClickEmail) {
+      const evt = new MouseEvent('click', { bubbles: false, cancelable: false, view: window });
+      this.sendEmail.dispatchEvent(evt);
+      isClickEmail = false;
+    }
+  }
   @autobind
   getEmail(address) {
     let addresses = '';
@@ -83,10 +93,10 @@ export default class QuickMenu extends PureComponent {
     }
     return email;
   }
-
   @autobind
   handleIsEmail(e) {
     const { listItem, onSendEmail } = this.props;
+    isClickEmail = true;
     hrefUrl = e.target.getAttribute('href');
     if (hrefUrl === NO_EMAIL_HREF) {
       onSendEmail(listItem);
@@ -120,7 +130,7 @@ export default class QuickMenu extends PureComponent {
           </li>
           <li onClick={this.handleIsEmail}>
             <Icon type="youjian" />
-            <span><a ref={ref => this.sendEmail = ref} href={_.isEmpty(addressEmail[listItem.custId]) ? NO_EMAIL_HREF : `mailto:${addressEmail[listItem.custId]}`}> 邮件联系 </a></span>
+            <span>{addressEmail[listItem.custId]}<a ref={ref => this.sendEmail = ref} href={_.isEmpty(addressEmail[listItem.custId]) ? NO_EMAIL_HREF : `mailto:${addressEmail[listItem.custId]}`}> 邮件联系 </a></span>
           </li>
           <li
             onClick={() => toggleServiceRecordModal({ custId: listItem.custId, flag: true })}

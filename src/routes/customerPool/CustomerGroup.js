@@ -7,6 +7,7 @@ import React, { PureComponent, PropTypes } from 'react';
 import { withRouter, routerRedux } from 'dva/router';
 import { autobind } from 'core-decorators';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import classnames from 'classnames';
 import { Tabs, Input, Row, Col, message } from 'antd';
 import Button from '../../components/common/Button';
@@ -17,7 +18,7 @@ import AddCusSuccess from '../../components/customerPool/group/AddCusSuccess';
 import { fspGlobal, helper } from '../../utils';
 
 
-const CUR_PAGE = 0; // 默认当前页
+const CUR_PAGE = 1; // 默认当前页
 const CUR_PAGESIZE = 10; // 默认页大小
 const TabPane = Tabs.TabPane;
 let groupId = '';
@@ -48,6 +49,9 @@ const columns = [
     title: '分组名称',
     dataIndex: 'groupName',
     key: 'groupName',
+    render: item => <a title={item} className="groupNames">
+      {_.truncate(item, { length: 18, omission: '...' })}
+    </a>,
   },
   {
     title: '分组描述',
@@ -65,6 +69,9 @@ const columns = [
     title: '创建时间',
     dataIndex: 'createdTm',
     key: 'createdTm',
+    render: item => <a title={item} className="groupNames">
+      {_.truncate(item, { length: 18, omission: '...' })}
+    </a>,
   },
 ];
 let selectGroupName = '';
@@ -77,6 +84,7 @@ const rowSelection = {
   },
 };
 let onOff = false;
+// {_.truncate(item.text, { length: 18, omission: '...' })}
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 export default class CustomerGroup extends PureComponent {
@@ -120,10 +128,8 @@ export default class CustomerGroup extends PureComponent {
   componentWillReceiveProps(nextProps) {
     // 根据分组结果，重新渲染组件
     const { cusGroupSaveResult, resultgroupId, location: { query } } = nextProps;
-    const curPageNum = Number(query.curPageNum) - 1;
     const { location: { query: preQuery } } = this.props;
     const { keyWord } = this.state;
-    const newLocation = { ...nextProps.location, query: { ...query, curPageNum } };// 更新curPageNum
     const controlGroupPane = classnames({
       [styles.customerGroup]: cusGroupSaveResult !== 'success',
       [styles.hiddencustomerGroup]: cusGroupSaveResult === 'success',
@@ -138,7 +144,7 @@ export default class CustomerGroup extends PureComponent {
       cusgroupId: resultgroupId,
     });
     if (query !== preQuery) {
-      this.getCustomerGroup(keyWord, { ...nextProps, location: newLocation });
+      this.getCustomerGroup(keyWord, { nextProps });
     }
   }
 
@@ -236,7 +242,6 @@ export default class CustomerGroup extends PureComponent {
       groupId = '';
     } else if (!onOff) {
       message.error('请选择分组', 2, () => {
-        console.log('1111');
         onOff = false;
       });
       onOff = true;
@@ -265,7 +270,6 @@ export default class CustomerGroup extends PureComponent {
       groupName: param.groupName,
     });
     this.props.createCustGroup({ ...param });
-    console.log(this.props.createCustGroup);
   }
 
   @autobind
