@@ -20,7 +20,7 @@ import InfoItem from '../../components/common/infoItem';
 import SearchSelect from '../../components/common/Select/SearchSelect';
 import DigitalTrimmer from '../../components/common/DigitalTrimmer';
 import ApprovalRecordBoard from '../../components/commissionAdjustment/ApprovalRecordBoard';
-import OperationOfCustermorList from '../../components/commissionAdjustment/OperationOfCustermorList'
+import OperationOfCustermorList from '../../components/commissionAdjustment/OperationOfCustermorList';
 
 import {
   confirmData,
