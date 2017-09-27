@@ -18,6 +18,7 @@ export default class CustomerGrouplist extends PureComponent {
     onSizeChange: PropTypes.func.isRequired,
     rowSelection: PropTypes.object.isRequired,
     className: PropTypes.string.isRequired,
+    locationPage: PropTypes.object.isRequired,
   }
   @autobind
   handleChange(nextPage, currentPageSize) {
@@ -27,7 +28,8 @@ export default class CustomerGrouplist extends PureComponent {
     });
   }
   render() {
-    const { data, columns, cusgroupPage, onSizeChange, rowSelection, className } = this.props;
+    const { data, columns, cusgroupPage, onSizeChange,
+        rowSelection, className, locationPage } = this.props;
     return (
       <Table
         className={className}
@@ -35,10 +37,12 @@ export default class CustomerGrouplist extends PureComponent {
         columns={columns}
         dataSource={data}
         pagination={{
-          total: cusgroupPage.total,
+          total: cusgroupPage.totalRecordNum,
+          pageSize: +locationPage.curPageSize || cusgroupPage.pageSize,
+          current: +locationPage.curPageNum || cusgroupPage.curPageNum,
           size: 'small',
           onChange: this.handleChange,
-          showTotal: total => (`共${total}项`),
+          showTotal: () => (`共${cusgroupPage.totalRecordNum}项`),
           showSizeChanger: true,
           onShowSizeChange: onSizeChange,
         }}

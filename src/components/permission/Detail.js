@@ -5,6 +5,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
 import classnames from 'classnames';
 import style from './detail.less';
 import MessageList from '../common/MessageList';
@@ -28,11 +29,11 @@ export default class Detail extends PureComponent {
     empName: PropTypes.string,
     createTime: PropTypes.string,
     status: PropTypes.string,
-    empInfoVOS: PropTypes.array,
+    empList: PropTypes.array,
     workflowHistoryBeans: PropTypes.array,
     attachInfoList: PropTypes.array,
     searchServerPersonList: PropTypes.array.isRequired,
-    customerList: PropTypes.array.isRequired,
+    canApplyCustList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -44,7 +45,7 @@ export default class Detail extends PureComponent {
     empName: '',
     createTime: '',
     status: '',
-    empInfoVOS: [],
+    empList: [],
     workflowHistoryBeans: [],
     attachInfoList: [],
   }
@@ -72,7 +73,7 @@ export default class Detail extends PureComponent {
       // 状态
       status: '',
       // 主服务经理
-      empInfoVOS: [],
+      empList: [],
       // 审批意见
       approvalComments: '',
     };
@@ -87,7 +88,7 @@ export default class Detail extends PureComponent {
       empName,
       createTime,
       status,
-      empInfoVOS,
+      empList,
     } = this.props;
 
     this.setState({
@@ -100,7 +101,7 @@ export default class Detail extends PureComponent {
       empName,
       createTime,
       status,
-      empInfoVOS,
+      empList,
     });
   }
 
@@ -108,7 +109,7 @@ export default class Detail extends PureComponent {
     // 返回基本信息或者基本信息修改组件
     let result;
     const { subType, custName, custNumber, remark } = this.props;
-    const subTypeTxt = subTypeList.filter(item => (item.value === subType))[0].label;
+    const subTypeTxt = this.changeDisplay(subType, subTypeList);
     const info = [
       {
         title: '子类型',
@@ -136,7 +137,7 @@ export default class Detail extends PureComponent {
           subTypeTxt={subTypeTxt}
           customer={`${this.state.customer.custName}（${this.state.customer.custNumber}）`}
           remark={this.state.remark}
-          customerList={this.props.customerList}
+          canApplyCustList={this.props.canApplyCustList}
           onEmitEvent={this.updateValue}
         />
       );
@@ -147,7 +148,7 @@ export default class Detail extends PureComponent {
   get draftInfo() {
     // 返回拟稿信息组件
     const { empName, createTime, status } = this.props;
-    const statusTxt = statusList.filter(item => (item.value === status))[0].label;
+    const statusTxt = this.changeDisplay(status, statusList);
     const info = [
       {
         title: '拟稿',
@@ -192,6 +193,16 @@ export default class Detail extends PureComponent {
     this.setState({ [name]: value });
   }
 
+  // 后台返回的子类型字段、状态字段转化为对应的中文显示
+  @autobind
+  changeDisplay(st, options) {
+    if (st && !_.isEmpty(st)) {
+      const nowStatus = _.find(options, o => o.value === st) || {};
+      return nowStatus.label || '无';
+    }
+    return '无';
+  }
+
   render() {
     const modifyBtnClass = classnames([style.dcHeaderModifyBtn,
       { hide: this.state.statusType !== 'ready' },
@@ -209,8 +220,8 @@ export default class Detail extends PureComponent {
         {this.draftInfo}
         <ServerPersonel
           head="服务人员"
-          type="empInfoVOS"
-          info={this.props.empInfoVOS}
+          type="empList"
+          info={this.props.empList}
           statusType={this.state.statusType}
           onEmitEvent={this.updateValue}
           searchServerPersonList={this.props.searchServerPersonList}

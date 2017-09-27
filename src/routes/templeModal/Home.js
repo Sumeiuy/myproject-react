@@ -20,6 +20,7 @@ import InfoItem from '../../components/common/infoItem';
 import SearchSelect from '../../components/common/Select/SearchSelect';
 import DigitalTrimmer from '../../components/common/DigitalTrimmer';
 import ApprovalRecordBoard from '../../components/commissionAdjustment/ApprovalRecordBoard';
+import OperationOfCustermorList from '../../components/commissionAdjustment/OperationOfCustermorList';
 
 import {
   confirmData,
@@ -121,6 +122,7 @@ export default class TemplModal extends PureComponent {
  @autobind
   changeFunction(value) {
     console.log(value);
+    console.log('111');
   }
   @autobind
   openApprovalModal() {
@@ -134,6 +136,11 @@ export default class TemplModal extends PureComponent {
     this.setState({
       approvalModal: false,
     });
+  }
+
+   @autobind
+  changeValue(value) {
+    console.log('value', value);
   }
 
   @autobind
@@ -280,6 +287,17 @@ export default class TemplModal extends PureComponent {
       status: '成功',
     };
 
+    const dataSource = [
+      {
+        key: '1-34Z1T0D-1',
+        name: '通道佣金专用（万分之1.5）',
+      },
+      {
+        key: '1-34Z1T0D-2',
+        name: '通道佣金专用（万分之1.6）',
+      },
+    ];
+
     return (
       <div>
         <Button onClick={this.openApprovalModal}>打开审批记录弹窗</Button>
@@ -312,10 +330,11 @@ export default class TemplModal extends PureComponent {
         <InfoItem label="备注" value="这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值" />
         <br />
         <SearchSelect
-          onChange={this.changeFunction}
-          addSelectValue={this.changeFunction}
-          width="300"
+          onAddCustomer={this.changeFunction}
+          onChangeValue={this.changeValue}
+          width="184px"
           labelName="产品"
+          dataSource={dataSource}
         />
         <br />
         <DigitalTrimmer
@@ -324,6 +343,14 @@ export default class TemplModal extends PureComponent {
           step={0.1}
           defaultValue={1.6}
           getValue={this.changeFunction}
+        />
+        <br />
+        <OperationOfCustermorList
+          onAddCustomer={this.changeFunction}
+          onChangeValue={this.changeValue}
+          labelName="产品"
+          dataSource={dataSource}
+          onDelectCustomer={this.changeFunction}
         />
       </div>
     );

@@ -10,24 +10,52 @@ import ReactDOM from 'react-dom';
 import IECharts from '../../IECharts';
 import styles from './customerService.less';
 
-let COUNT = 0;
+let pieCount = 0;
+const EMPTY_LIST = [];
+const INNER_DATA_MAP = [
+  {
+    key: 'tranPurRakeCopy',
+    name: '净佣金',
+  },
+  {
+    key: 'totCrdtIntCopy',
+    name: '净利息',
+  },
+  {
+    key: 'totTranInt',
+    name: '净手续费',
+  },
+];
+const OUTER_DATA_MAP = [
+  {
+    key: 'pIncomeAmt',
+    name: '个人',
+  },
+  {
+    key: 'prdtOIncomeAmt',
+    name: '产品机构',
+  },
+  {
+    key: 'oIncomeAmt',
+    name: '一般机构',
+  },
+];
 export default class Income extends PureComponent {
 
   static propTypes = {
-    data: PropTypes.array,
+    incomeData: PropTypes.array,
   }
 
   static defaultProps = {
-    data: [],
+    incomeData: EMPTY_LIST,
   }
 
   constructor(props) {
     super(props);
-    console.log(props);
     this.state = {
       innerPie: ['45%', '60%'],
       wrapPie: ['70%', '85%'],
-      ChartsKey: `pie${COUNT}`,
+      ChartsKey: `pie${pieCount}`,
     };
   }
 
@@ -55,15 +83,79 @@ export default class Income extends PureComponent {
         this.setState({
           innerPie: ['35%', '50%'],
           wrapPie: ['60%', '75%'],
-          ChartsKey: `pie${COUNT++}`,
+          ChartsKey: `pie${pieCount++}`,
         })
       }
     }
   }
 
-
   render() {
-    const  { ChartsKey, innerPie, wrapPie } = this.state;
+    const { incomeData = EMPTY_LIST } = this.props;
+    let outerData = [];
+    let innerData = [];
+    let color = ['#ffa800', '#f0ce30', '#fa7911'];
+    let label = {
+      normal: {
+        show: false,
+      },
+      emphasis: {
+        show: false,
+      },
+    };
+    let itemStyle = {
+      normal: {
+        show: false,
+      },
+    };
+    if (_.isEmpty(incomeData)) {
+      innerData = [{
+        value: 0,
+        name: '暂无数据',
+      }];
+      outerData = [{
+        value: 0,
+        name: '暂无数据',
+      }];
+      color = ['#f2f2f2'];
+      label = {
+        normal: {
+          show: true,
+          position: 'center',
+          textStyle: {
+            fontSize: '14',
+            color: '#a1a1a1',
+            fontWeight: 'bold',
+          },
+        },
+        emphasis: {
+          show: false,
+        },
+      };
+      itemStyle = {
+        emphasis: {
+          shadowColor: '#ccc',
+          shadowBlur: 10,
+        },
+      };
+    }
+
+    _.forEach(incomeData, (item) => {
+      const tempInner = _.find(INNER_DATA_MAP, itemData => itemData.key === item.key);
+      if (tempInner) {
+        innerData.push({
+          value: item.value || 0,
+          name: tempInner.name,
+        });
+      }
+      const tempOuter = _.find(OUTER_DATA_MAP, itemData => itemData.key === item.key);
+      if (tempOuter) {
+        outerData.push({
+          value: item.value || 0,
+          name: tempOuter.name,
+        });
+      }
+    });
+    const { ChartsKey, innerPie, wrapPie } = this.state;
     const options = {
       tooltip: {
         formatter: '{a} <br/>{b}: {c} ({d}%)',
@@ -79,7 +171,8 @@ export default class Income extends PureComponent {
           { name: '产品机构', icon: 'square' },
           { name: '净手续费', icon: 'square' },
           { name: '净佣金', icon: 'square' },
-          { name: '净利息', icon: 'square' }],
+          { name: '净利息', icon: 'square' }
+        ],
       },
       series: [
         {
@@ -87,44 +180,30 @@ export default class Income extends PureComponent {
           type: 'pie',
           center: [90, 90],
           radius: innerPie,
-          color: ['#ffa800', '#f0ce30', '#fa7911'],
-          label: {
-            normal: {
-              show: false,
-            },
-          },
+          color,
+          label,
           labelLine: {
             normal: {
               show: false,
             },
           },
-          data: [
-            { value: 335, name: '个人' },
-            { value: 679, name: '一般机构' },
-            { value: 1548, name: '产品机构' },
-          ],
+          data: innerData,
           selectedOffset: 0,
+          itemStyle,
         },
         {
           name: '收入',
           type: 'pie',
           center: [90, 90],
           radius: wrapPie,
-          label: {
-            normal: {
-              show: false,
-            },
-          },
+          label,
           labelLine: {
             normal: {
               show: false,
             },
           },
-          data: [
-            { value: 335, name: '净手续费' },
-            { value: 310, name: '净佣金' },
-            { value: 234, name: '净利息' },
-          ],
+          data: outerData,
+          itemStyle,
         },
       ],
     };

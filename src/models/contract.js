@@ -3,9 +3,9 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-20 15:13:30
  * @Last Modified by:   XuWenKang
- * @Last Modified time: 2017-09-27 10:21:09
+ * @Last Modified time: 2017-09-27 10:38:10
  */
-import { contract as api, ceFileDelete, seibel as seibelApi } from '../api';
+import { contract as api, seibel as seibelApi } from '../api';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -21,51 +21,33 @@ export default {
     custList: EMPTY_LIST, // 客户列表
     contractDetail: EMPTY_OBJECT, // 合约详情
     contractNumList: EMPTY_LIST, // 合作合约编号列表
+    baseInfo: EMPTY_OBJECT,
+    attachmentList: EMPTY_LIST, // 附件信息
   },
   reducers: {
-    getDetailMessageSuccess(state, action) {
+    // 获取详情
+    getBaseInfoSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
       return {
         ...state,
-        detailMessage: resultData,
+        baseInfo: resultData,
       };
     },
-    getContractListSuccess(state, action) {
-      const { payload: { resultData = EMPTY_OBJECT } } = action;
-      const { page = EMPTY_OBJECT, applicationList = EMPTY_LIST } = resultData;
-      const { listData: preListData = EMPTY_LIST } = state.list;
-
+    // 获取附件列表
+    getAttachmentListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_LIST } } = action;
       return {
         ...state,
-        list: {
-          page,
-          resultData: page.pageNum === 1 ?
-            applicationList : [...preListData, ...applicationList],
-        },
+        attachmentList: resultData,
       };
     },
-    getDrafterListSuccess(state, action) {
+    // 删除附件
+    deleteAttachmentSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
-      const { empInfo = EMPTY_LIST } = resultData;
-
+      const { attaches = EMPTY_LIST } = resultData;
       return {
         ...state,
-        drafterList: empInfo,
-      };
-    },
-    getEmpOrgTreeSuccess(state, action) {
-      const { payload: { resultData = EMPTY_OBJECT } } = action;
-
-      return {
-        ...state,
-        empOrgTreeList: resultData,
-      };
-    },
-    ceFileDeleteSuccess(state, action) {
-      const { payload: { resultData = EMPTY_OBJECT } } = action;
-      return {
-        ...state,
-        attachment: resultData,
+        attachmentList: attaches,
       };
     },
     getCutListSuccess(state, action) {
@@ -99,49 +81,26 @@ export default {
     },
   },
   effects: {
-    * getDetailMessage({ payload }, { call, put }) {
-      const response = yield call(api.getMessage, payload);
+    // 获取详情
+    * getBaseInfo({ payload }, { call, put }) {
+      const response = yield call(api.getContractDetail, payload);
       yield put({
-        type: 'getDetailMessageSuccess',
+        type: 'getBaseInfoSuccess',
         payload: response,
       });
     },
-    * getContractList({ payload }, { call, put }) {
-      const response = yield call(api.getContractList, payload);
+    // 获取附件信息
+    * getAttachmentList({ payload }, { call, put }) {
+      const response = yield call(api.getAttachmentList, payload);
       yield put({
-        type: 'getContractListSuccess',
-        payload: response,
-      });
-      const result = response.resultData.applicationList;
-      if (Array.isArray(result) && result.length) {
-        const detailList = yield call(api.getMessage, {
-          id: result[0].id,
-        });
-        console.warn('detailList', detailList);
-        yield put({
-          type: 'getDetailMessageSuccess',
-          payload: detailList,
-        });
-      }
-    },
-    * getDrafterList({ payload }, { call, put }) {
-      const response = yield call(api.getDrafterList, payload);
-      yield put({
-        type: 'getDrafterListSuccess',
+        type: 'getAttachmentListSuccess',
         payload: response,
       });
     },
-    * getEmpOrgTree({ payload }, { call, put }) {
-      const response = yield call(api.getEmpOrgTree, payload);
+    * deleteAttachment({ payload }, { call, put }) {
+      const response = yield call(api.deleteAttachment, payload);
       yield put({
-        type: 'getEmpOrgTreeSuccess',
-        payload: response,
-      });
-    },
-    * ceFileDelete({ payload }, { call, put }) {
-      const response = yield call(ceFileDelete, payload);
-      yield put({
-        type: 'ceFileDeleteSuccess',
+        type: 'deleteAttachmentSuccess',
         payload: response,
       });
     },

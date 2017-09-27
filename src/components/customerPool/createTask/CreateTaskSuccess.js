@@ -56,7 +56,21 @@ export default class CreateTaskSuccess extends PureComponent {
       successSetInterval = setInterval(this.handleMovTime, 1000);
     }
   }
-
+  @autobind
+  /* 关闭当前页 */
+  closeTab() {
+      fspGlobal.closeRctTabById('RCT_FSP_TASK');
+  }
+  @autobind
+  goToIndex() {
+    const url = '/customerPool';
+    const param = {
+      id: 'tab-home',
+      title: '首页',
+    };
+    fspGlobal.openRctTab({ url, param });
+    fspGlobal.closeRctTabById('FSP_GROUP');
+  }
   @autobind
   handleMovTime() {
     this.setState({
@@ -64,6 +78,7 @@ export default class CreateTaskSuccess extends PureComponent {
     }, () => {
       if (COUNT < 0){
         console.log('页面关闭');
+        this.closeTab();
         clearInterval(successSetInterval);
       }
     });    
@@ -84,7 +99,7 @@ export default class CreateTaskSuccess extends PureComponent {
               <p>页面会在 <b>{changeTime}</b> 秒内自动关闭</p>
             </div>
             <div className={styles.taskSuccess_btn}>
-              <Button type="primary" >
+              <Button type="primary" onclick={this.goToIndex}>
                 返回首页
               </Button>
             </div>

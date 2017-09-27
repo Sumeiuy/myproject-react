@@ -10,7 +10,7 @@ import Tag from '../tag';
 
 export default function seibelColumns(props) {
   const { pageName, type, pageData } = props;
-  const { subType } = pageData;
+  const { subType, status } = pageData;
 
   // 后台返回的类型字段转化为对应的中文显示
   const changeTypeDisplay = (st, options) => {
@@ -20,8 +20,8 @@ export default function seibelColumns(props) {
     return '无';
   };
 
-  // 后台返回的子类型字段转化为对应的中文显示
-  const changeSubTypeDisplay = (st, options) => {
+  // 后台返回的子类型字段、状态字段转化为对应的中文显示
+  const changeDisplay = (st, options) => {
     if (st && !_.isEmpty(st)) {
       const nowStatus = _.find(options, o => o.value === st) || {};
       return nowStatus.label || '无';
@@ -38,7 +38,7 @@ export default function seibelColumns(props) {
           <span className="serialNumber">编号{record.id || '无'}</span>
           <span className="type">{changeTypeDisplay(record.type, pageData)}</span>
         </div>
-        <div className="subType">{changeSubTypeDisplay(record.subType, subType)}</div>
+        <div className="subType">{changeDisplay(record.subType, subType)}</div>
         <div className="drafter">拟稿人：<span className="drafterName">{record.empName}({record.empId})</span>{`${record.orgName || ''}` || '无'}</div>
       </div>
       ),
@@ -48,7 +48,7 @@ export default function seibelColumns(props) {
       <div className="rightSection">
         <div className="tagArea">
           {pageName === 'contract' ? <Tag type="yellow" text={record.status} /> : null}
-          <Tag type="blue" text={record.status} />
+          <Tag type="blue" text={changeDisplay(record.status, status)} />
         </div>
         <div className="date">{(record.createTime &&
           record.createTime.slice(0, 10)) || '无'}</div>

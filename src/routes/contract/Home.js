@@ -3,26 +3,33 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by:   XuWenKang
- * @Last Modified time: 2017-09-27 10:19:19
+ * @Last Modified time: 2017-09-27 13:16:13
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
 import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import { message } from 'antd';
-// import _ from 'lodash';
-// import { constructSeibelPostBody } from '../../utils/helper';
-// import { seibelConfig } from '../../config';
+import _ from 'lodash';
+import { constructSeibelPostBody, getEmpId } from '../../utils/helper';
+import SplitPanel from '../../components/common/splitPanel/SplitPanel';
+import ContractHeader from '../../components/common/biz/SeibelHeader';
+import Detail from '../../components/contract/Detail';
+import ContractList from '../../components/common/biz/CommonList';
+import seibelColumns from '../../components/common/biz/seibelColumns';
 import CommonModal from '../../components/common/biz/CommonModal';
 import EditForm from '../../components/contract/EditForm';
 import AddForm from '../../components/contract/AddForm';
+import { seibelConfig } from '../../config';
 
 import styles from './home.less';
 
-// const EMPTY_LIST = [];
+const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 // 退订的类型
 const unsubscribe = '2';
+// const OMIT_ARRAY = ['isResetPageNum', 'currentId'];
+const { contract, contract: { pageType, subType, status } } = seibelConfig;
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
   payload: query || {},
@@ -30,7 +37,18 @@ const fetchDataFunction = (globalLoading, type) => query => ({
 });
 
 const mapStateToProps = state => ({
-
+  // 查询左侧列表
+  seibleList: state.app.seibleList,
+  // 查询拟稿人
+  drafterList: state.app.drafterList,
+  // 查询部门
+  custRange: state.app.custRange,
+  // 查询客户
+  customerList: state.app.customerList,
+  // 查询右侧详情
+  baseInfo: state.contract.baseInfo,
+  // 附件列表
+  attachmentList: state.contract.attachmentList,
   // 新建/修改 客户列表
   custList: state.contract.custList,
   // 退订所选合约详情
@@ -41,7 +59,20 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   replace: routerRedux.replace,
-
+  // 获取左侧列表
+  getSeibleList: fetchDataFunction(true, 'app/getSeibleList'),
+  // 获取拟稿人
+  getDrafterList: fetchDataFunction(false, 'app/getDrafterList'),
+  // 获取部门
+  getCustRange: fetchDataFunction(false, 'app/getCustRange'),
+  // 获取客户列表
+  getCustomerList: fetchDataFunction(false, 'app/getCustomerList'),
+  // 获取右侧详情
+  getBaseInfo: fetchDataFunction(true, 'contract/getBaseInfo'),
+  // 获取附件列表
+  getAttachmentList: fetchDataFunction(true, 'contract/getAttachmentList'),
+  // 删除附件
+  deleteAttachment: fetchDataFunction(true, 'contract/deleteAttachment'),
   // 获取客户列表
   getCutList: fetchDataFunction(false, 'contract/getCutList'),
   // 查询合作合约详情
@@ -54,58 +85,96 @@ const mapDispatchToProps = {
 
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
-export default class Permission extends PureComponent {
+export default class Contract extends PureComponent {
   static propTypes = {
-
+    location: PropTypes.object.isRequired,
+    replace: PropTypes.func.isRequired,
+    // 查询左侧列表
+    getSeibleList: PropTypes.func.isRequired,
+    seibleList: PropTypes.object.isRequired,
+    // 查询拟稿人
+    getDrafterList: PropTypes.func.isRequired,
+    drafterList: PropTypes.array.isRequired,
+    // 查询部门
+    getCustRange: PropTypes.func.isRequired,
+    custRange: PropTypes.array.isRequired,
+    // 查询客户
+    getCustomerList: PropTypes.func.isRequired,
+    customerList: PropTypes.array.isRequired,
+    // 查询右侧详情
+    getBaseInfo: PropTypes.func.isRequired,
+    baseInfo: PropTypes.object.isRequired,
+    // 附件列表
+    getAttachmentList: PropTypes.func.isRequired,
+    attachmentList: PropTypes.array,
+    // 删除附件
+    deleteAttachment: PropTypes.func,
+    // 获取客户列表
     getCutList: PropTypes.func.isRequired,
     custList: PropTypes.array.isRequired,
+    // 查询合作合约详情
     getContractDetail: PropTypes.func.isRequired,
-    saveContractData: PropTypes.func.isRequired,
-    contractNumList: PropTypes.array.isRequired,
-    getContractNumList: PropTypes.func.isRequired,
     contractDetail: PropTypes.object.isRequired,
-
+    // 保存合作合约
+    saveContractData: PropTypes.func.isRequired,
+    // 查询合作合约编号
+    getContractNumList: PropTypes.func.isRequired,
+    contractNumList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
-
+    attachmentList: EMPTY_LIST,
+    deleteAttachment: () => {},
   }
-
-  // static childContextTypes = {
-    // getCutList: PropTypes.func.isRequired,
-    // getServerPersonelList: PropTypes.func.isRequired,
-  // }
 
   constructor(props) {
     super(props);
     this.state = {
-      // isEmpty: true,
+      isEmpty: true,
       // 默认状态下新建弹窗不可见 false 不可见  true 可见
-      // isShowModal: false,
-
+      createApprovalBoard: false,
       // 合作合约表单数据
       contractFormData: EMPTY_OBJECT,
+      // 新建合作合约弹窗状态
       addFormModal: true,
+      // 修改合作合约弹窗状态
       editFormModal: false,
+      // 修改合作合约对象的操作类型和id
       editContractInfo: EMPTY_OBJECT,
     };
   }
 
   componentWillMount() {
-    console.log('adawdawd', this.props);
-  }
+    const {
+      location: {
+        query,
+        query: {
+          currentId,
+          pageNum,
+          pageSize,
+        },
+      },
+      getSeibleList,
+      getCustRange,
+      getBaseInfo,
+      getAttachmentList,
+    } = this.props;
+    const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
 
-  // getChildContext() {
-    // return {
-      // getCustomerList: (data) => {
-      //   this.props.getCustomerList({ code: data });
-      // },
-      // 获取 服务人员列表
-      // getServerPersonelList: (data) => {
-      //   this.props.getServerPersonelList({ code: data });
-      // },
-    // };
-  // }
+    getCustRange({});
+    // 默认筛选条件
+    getSeibleList({
+      ...params,
+      type: pageType,
+    });
+    getBaseInfo({
+      id: currentId,
+    });
+    getAttachmentList({
+      empId: getEmpId(),
+      attachment: '121212121212',
+    });
+  }
 
   @autobind
   onOk(modalKey) {
@@ -114,25 +183,22 @@ export default class Permission extends PureComponent {
     });
   }
 
+  // 删除附件
   @autobind
-  showModal(modalKey) {
-    this.setState({
-      [modalKey]: true,
-    });
+  onRemoveFile(attachId) {
+    const { deleteAttachment } = this.props;
+    console.warn('删除事件。。。。。。。。。。。');
+    const deleteObj = {
+      empId: getEmpId(),
+      attachId,
+      attachment: '121212121212',
+    };
+    deleteAttachment(deleteObj);
   }
 
-  @autobind
-  closeModal(modalKey) {
-    this.setState({
-      [modalKey]: false,
-    });
-  }
-
-  @autobind
-  clearModal() {
-    // 清除模态框组件
-    console.log('模态框已经清楚');
-    this.setState({ isShowModal: false });
+  // 上传成功后回调
+  onUploadComplete(attachment) {
+    console.warn('attachment', attachment);
   }
 
   // 根据子类型和客户查询合约编号
@@ -228,7 +294,110 @@ export default class Permission extends PureComponent {
     }
   }
 
+  // 查询拟稿人
+  @autobind
+  toSearchDrafter(value) {
+    const { getDrafterList } = this.props;
+    getDrafterList({
+      keyword: value,
+      type: pageType,
+    });
+  }
+
+  // 查询客户
+  @autobind
+  toSearchCust(value) {
+    const { getCustomerList } = this.props;
+    getCustomerList({
+      keyword: value,
+      type: pageType,
+    });
+  }
+
+  // 头部新建按钮点击事件处理程序
+  @autobind
+  handleCreateBtnClick() {
+    this.openCreateApprovalBoard();
+  }
+  // 打开新建申请的弹出框
+  @autobind
+  openCreateApprovalBoard() {
+    this.setState({
+      createApprovalBoard: true,
+    });
+  }
+
+  @autobind
+  showModal(modalKey) {
+    this.setState({
+      [modalKey]: true,
+    });
+  }
+
+  @autobind
+  closeModal(modalKey) {
+    this.setState({
+      [modalKey]: false,
+    });
+  }
+
+  @autobind
+  constructTableColumns() {
+    return seibelColumns({
+      pageName: 'contract',
+      type: 'kehu1',
+      pageData: contract,
+    });
+  }
+
   render() {
+    const {
+      location,
+      replace,
+      seibleList,
+      drafterList,
+      custRange,
+      customerList,
+      baseInfo,
+      attachmentList,
+    } = this.props;
+    if (!custRange || !custRange.length) {
+      return null;
+    }
+    const isEmpty = _.isEmpty(seibleList.resultData);
+    const topPanel = (
+      <ContractHeader
+        location={location}
+        replace={replace}
+        page="contractPage"
+        subtypeOptions={subType}
+        stateOptions={status}
+        toSearchDrafter={this.toSearchDrafter}
+        toSearchCust={this.toSearchCust}
+        drafterList={drafterList}
+        customerList={customerList}
+        custRange={custRange}
+        creatSeibelModal={this.handleCreateBtnClick}
+      />
+    );
+
+    const leftPanel = (
+      <ContractList
+        list={seibleList}
+        replace={replace}
+        location={location}
+        columns={this.constructTableColumns()}
+      />
+    );
+    const rightPanel = (
+      <Detail
+        baseInfo={baseInfo}
+        attachmentList={attachmentList}
+        deleteAttachment={this.onRemoveFile}
+        uploadAttachment={this.onUploadComplete}
+      />
+    );
+
     const addFormProps = {
       custList: this.props.custList,
       contractDetail: this.props.contractDetail,
@@ -266,6 +435,13 @@ export default class Permission extends PureComponent {
 
     return (
       <div className={styles.premissionbox}>
+        <SplitPanel
+          isEmpty={isEmpty}
+          topPanel={topPanel}
+          leftPanel={leftPanel}
+          rightPanel={rightPanel}
+          leftListClassName="contractList"
+        />
         <CommonModal {...addFormModalProps} />
         <CommonModal {...editFormModalProps} />
       </div>

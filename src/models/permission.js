@@ -2,7 +2,7 @@
  * @file models/premissinon.js
  * @author honggaungqing
  */
-import { permission as api } from '../api';
+import { permission as api, seibel as seibelApi } from '../api';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -16,7 +16,8 @@ export default {
     drafterList: EMPTY_LIST, // 拟稿人
     custRange: EMPTY_LIST, // 部门
     childTypeList: EMPTY_LIST, // 子类型
-    customerList: EMPTY_LIST, // 客户列表
+    customerList: EMPTY_LIST, // 已申请客户列表
+    canApplyCustList: EMPTY_LIST, // 可申请客户列表
     hasServerPersonList: EMPTY_LIST, // 已有服务人员列表
     searchServerPersonList: EMPTY_LIST, // 可查询服务人员列表
   },
@@ -94,6 +95,14 @@ export default {
         customerList: custList,
       };
     },
+    getCanApplyCustListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      const { custList = EMPTY_LIST } = resultData;
+      return {
+        ...state,
+        canApplyCustList: custList,
+      };
+    },
     getHasServerPersonListSuccess(state, action) {
       const { payload: { resultData = EMPTY_LIST } } = action;
       return {
@@ -111,7 +120,7 @@ export default {
       });
     },
     * getPermissionList({ payload }, { call, put }) {
-      const response = yield call(api.getPermissionList, payload);
+      const response = yield call(seibelApi.getSeibleList, payload);
       yield put({
         type: 'getPermissionListSuccess',
         payload: response,
@@ -136,14 +145,14 @@ export default {
       });
     },
     * getDrafterList({ payload }, { call, put }) {
-      const response = yield call(api.getDrafterList, payload);
+      const response = yield call(seibelApi.getDrafterList, payload);
       yield put({
         type: 'getDrafterListSuccess',
         payload: response,
       });
     },
     * getEmpOrgTree({ payload }, { call, put }) {
-      const response = yield call(api.getEmpOrgTree, payload);
+      const response = yield call(seibelApi.getEmpOrgTree, payload);
       yield put({
         type: 'getEmpOrgTreeSuccess',
         payload: response,
@@ -157,9 +166,16 @@ export default {
       });
     },
     * getCustomerList({ payload }, { call, put }) {
-      const response = yield call(api.getCustomerList, payload);
+      const response = yield call(seibelApi.getCustList, payload);
       yield put({
         type: 'getCustomerListSuccess',
+        payload: response,
+      });
+    },
+    * getCanApplyCustList({ payload }, { call, put }) {
+      const response = yield call(seibelApi.getCanApplyCustList, payload);
+      yield put({
+        type: 'getCanApplyCustListSuccess',
         payload: response,
       });
     },

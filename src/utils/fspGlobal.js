@@ -20,6 +20,14 @@ function execOpenTab(method, ...args) {
   }
 }
 
+function closeTab(arg) {
+  try {
+    window.$(`${arg} .close`).click();
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 const fspGlobal = {
   // 待办流程列表中进入详情页
   openAuditPage: (args) => {
@@ -45,7 +53,15 @@ const fspGlobal = {
    *  在fsp中新开一个tab
    */
   openFspTab(obj) {
-    execOpenTab('loadPageInTab', obj.url, obj.param);
+    const { url, param } = obj;
+    execOpenTab(
+      'loadPageInTab',
+      url,
+      {
+        closable: true,
+        ...param,
+      },
+    );
   },
 
   /**
@@ -59,7 +75,16 @@ const fspGlobal = {
    *  在fsp中新开一个react的tab
    */
   openRctTab(obj) {
-    execOpenTab('loadPageInTabnavTo', obj.url, obj.param);
+    const { url, param } = obj;
+    execOpenTab(
+      'loadPageInTabnavTo',
+      url,
+      {
+        closable: true,
+        isSpecialTab: true,
+        ...param,
+      },
+    );
   },
 
   // 第二次打開tab
@@ -69,6 +94,18 @@ const fspGlobal = {
     } catch (e) {
       console.log(e);
     }
+  },
+
+  // 关闭fsp中原有的tab
+  // 参数 hrefValue 为对应标签页关闭按钮的父级元素href的属性值
+  closeFspTabByHref(hrefValue) {
+    closeTab(`a[href="${hrefValue}"]`);
+  },
+
+  // 关闭fsp中由react生成的tab
+  // 参数 id 为对应得tab标签的id
+  closeRctTabById(id) {
+    closeTab(`#exApp_${id}`);
   },
 };
 
