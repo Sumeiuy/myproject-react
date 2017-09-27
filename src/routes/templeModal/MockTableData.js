@@ -102,6 +102,22 @@ export const unsubcribeData = [{
   productName: '福享套餐11',
   productCode: 'TC02',
   type: '综合定价产品',
+  children: [{
+    key: '111',
+    productName: '福享套餐111',
+    productCode: 'TC02',
+    type: '综合定价产品',
+  }, {
+    key: '112',
+    productName: '福享套餐112',
+    productCode: 'TC02',
+    type: '综合定价产品',
+  }, {
+    key: '113',
+    productName: '福享套餐113',
+    productCode: 'TC02',
+    type: '综合定价产品',
+  }],
 }, {
   key: '12',
   productName: '持仓异动提醒12',
@@ -112,6 +128,22 @@ export const unsubcribeData = [{
   productName: '研报掘金13',
   productCode: 'SP0449',
   type: '综合定价产品',
+  children: [{
+    key: '131',
+    productName: '福享套餐131',
+    productCode: 'TC02',
+    type: '综合定价产品',
+  }, {
+    key: '132',
+    productName: '福享套餐132',
+    productCode: 'TC02',
+    type: '综合定价产品',
+  }, {
+    key: '133',
+    productName: '福享套餐133',
+    productCode: 'TC02',
+    type: '综合定价产品',
+  }],
 }, {
   key: '14',
   productName: '乐享套餐14',
@@ -122,6 +154,22 @@ export const unsubcribeData = [{
   productName: '行业投资组合精选15',
   productCode: 'SP0449',
   type: '综合定价产品',
+  children: [{
+    key: '151',
+    productName: '福享套餐151',
+    productCode: 'TC02',
+    type: '综合定价产品',
+  }, {
+    key: '152',
+    productName: '福享套餐152',
+    productCode: 'TC02',
+    type: '综合定价产品',
+  }, {
+    key: '153',
+    productName: '福享套餐113',
+    productCode: 'TC02',
+    type: '综合定价产品',
+  }],
 }, {
   key: '16',
   productName: '福享套餐16',
@@ -153,13 +201,16 @@ export const productColumns = [{
   title: '产品名称',
   dataIndex: 'productName',
   key: 'productName',
+  width: '40%',
 }, {
   title: '产品代码',
   dataIndex: 'productCode',
   key: 'productCode',
+  width: '20%',
 }, {
   title: '类型',
   dataIndex: 'type',
   key: 'type',
+  width: '25%',
 }];
 

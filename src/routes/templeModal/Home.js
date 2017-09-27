@@ -228,11 +228,13 @@ export default class TemplModal extends PureComponent {
     };
 
     const transferProps = {
-      subscribeData: subscribelData,
-      unsubscribeData: unsubcribeData,
-      subscribeColumns: productColumns,
-      unsubscribeColumns: productColumns,
+      firstData: subscribelData,
+      secondData: unsubcribeData,
+      firstColumns: productColumns,
+      secondColumns: productColumns,
       onChange: this.handleChange,
+      onSearch: this.handleSearch,
+      rowKey: 'key',
     };
 
 
