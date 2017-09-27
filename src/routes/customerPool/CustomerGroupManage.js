@@ -24,6 +24,7 @@ const effects = {
   // getHistoryWdsList: 'customerPool/getCustomerHistoryWdsList',
   // clearSearchHistoryList: 'customerPool/clearCustomerSearchHistoryList',
   // saveSearchVal: 'customerPool/saveCustomerSearchVal',
+  operateGroup: 'customerPool/operateGroup',
 };
 
 const fetchData = (type, loading) => query => ({
@@ -36,7 +37,7 @@ const mapStateToProps = state => ({
   // 客户分组列表
   customerGroupList: state.customerPool.customerGroupList,
   // 一个分组下的所有客户
-  customerList: state.customerPool.customerList,
+  groupCustomerList: state.customerPool.groupCustomerList,
   // 联想的推荐热词列表
   customerHotPossibleWordsList: state.customerPool.customerHotPossibleWordsList,
   // 历史搜索
@@ -45,6 +46,10 @@ const mapStateToProps = state => ({
   // isClearCustomerHistorySuccess: state.customerPool.isClearCustomerHistorySuccess,
   // 保存的搜索内容
   // customerSearchHistoryVal: state.customerPool.customerSearchHistoryVal,
+  // 更新分组信息成功与否
+  operateGroupResult: state.customerPool.operateGroupResult,
+  // 字典信息
+  dict: state.app.dict, // 职责切换
 });
 
 const mapDispatchToProps = {
@@ -60,6 +65,8 @@ const mapDispatchToProps = {
   // clearSearchHistoryList: fetchData(effects.clearSearchHistoryList, false),
   // 保存搜索关键字
   // saveSearchVal: fetchData(effects.saveSearchVal, false),
+  // 新增、编辑客户分组
+  operateGroup: fetchData(effects.operateGroup, false),
   push: routerRedux.push,
   replace: routerRedux.replace,
 };
@@ -76,7 +83,7 @@ export default class CustomerGroupManage extends PureComponent {
     replace: PropTypes.func.isRequired,
     getCustomerGroupList: PropTypes.func.isRequired,
     getGroupCustomerList: PropTypes.func.isRequired,
-    customerList: PropTypes.object.isRequired,
+    groupCustomerList: PropTypes.object.isRequired,
     customerHotPossibleWordsList: PropTypes.array.isRequired,
     // customerHistoryWordsList: PropTypes.array.isRequired,
     // isClearCustomerHistorySuccess: PropTypes.bool.isRequired,
@@ -85,6 +92,9 @@ export default class CustomerGroupManage extends PureComponent {
     // getHistoryWdsList: PropTypes.func.isRequired,
     // clearSearchHistoryList: PropTypes.func.isRequired,
     // saveSearchVal: PropTypes.func.isRequired,
+    operateGroupResult: PropTypes.string.isRequired,
+    operateGroup: PropTypes.func.isRequired,
+    dict: PropTypes.object.isRequired,
   };
 
   static defaultProps = {
@@ -100,23 +110,18 @@ export default class CustomerGroupManage extends PureComponent {
       name: '', // 分组名称
       description: '', // 分组描述
       modalTitle: '新建用户分组',
+      groupId: '',
     };
   }
 
   componentWillMount() {
     const {
       getCustomerGroupList,
-      getGroupCustomerList,
     } = this.props;
     // 获取客户分组列表
     getCustomerGroupList({
-      pageNum: 0,
+      pageNum: 1,
       pageSize: 10,
-    });
-    // 获取分组客户列表
-    getGroupCustomerList({
-      curPageNum: 1,
-      pageSize: 5,
     });
   }
 
@@ -176,7 +181,7 @@ export default class CustomerGroupManage extends PureComponent {
       },
     });
     getCustomerGroupList({
-      pageNum: nextPage - 1,
+      pageNum: nextPage,
       pageSize: currentPageSize,
     });
   }
@@ -200,7 +205,7 @@ export default class CustomerGroupManage extends PureComponent {
       },
     });
     getCustomerGroupList({
-      pageNum: currentPageNum - 1,
+      pageNum: currentPageNum,
       pageSize: changedPageSize,
     });
   }
@@ -209,10 +214,18 @@ export default class CustomerGroupManage extends PureComponent {
   @autobind
   editCustomerGroup(record) {
     console.log('edit customer group list');
-    this.handleAddGroup(record);
+    const { groupId } = record;
+    const { getGroupCustomerList } = this.props;
+    this.showGroupDetailModal(record);
     this.setState({
       canEditDetail: true,
       modalTitle: '编辑用户分组',
+    });
+    // 获取分组下的客户列表
+    getGroupCustomerList({
+      groupId,
+      pageNum: 1,
+      pageSize: 5,
     });
   }
 
@@ -238,26 +251,36 @@ export default class CustomerGroupManage extends PureComponent {
    * @param {*} record 当前记录
    */
   @autobind
-  handleAddGroup(record) {
+  showGroupDetailModal(record = {}) {
     console.log('add customer group');
-    const { groupName, xComments } = record;
+    const { groupName = '', xComments = '', groupId = '' } = record;
     this.setState({
       visible: true,
       modalKey: `groupModalKey${modalKeyCount++}`,
       canEditDetail: true,
       name: groupName,
       description: xComments,
+      // 默认是新建用户分组
       modalTitle: '新建用户分组',
+      groupId,
     });
   }
 
   @autobind
   handleShowGroupDetail(record) {
     console.log('show add group detail modal');
-    this.handleAddGroup(record);
+    const { groupId } = record;
+    const { getGroupCustomerList } = this.props;
+    this.showGroupDetailModal(record);
     this.setState({
       canEditDetail: false,
       modalTitle: '查看用户分组',
+    });
+    // 获取分组下的客户列表
+    getGroupCustomerList({
+      groupId,
+      pageNum: 1,
+      pageSize: 5,
     });
   }
 
@@ -283,7 +306,7 @@ export default class CustomerGroupManage extends PureComponent {
     const { getCustomerGroupList, location: { query: { curPageNum, curPageSize } } } = this.props;
     getCustomerGroupList({
       keyWord: value,
-      pageNum: Number(curPageNum) - 1,
+      pageNum: Number(curPageNum),
       pageSize: Number(curPageSize),
     });
   }
@@ -348,11 +371,15 @@ export default class CustomerGroupManage extends PureComponent {
     const {
       customerGroupList = EMPTY_OBJECT,
       location: { query: { curPageNum, curPageSize } },
-      customerList = EMPTY_OBJECT,
+      groupCustomerList = EMPTY_OBJECT,
       customerHotPossibleWordsList = EMPTY_LIST,
+      getGroupCustomerList,
+      operateGroup,
+      operateGroupResult,
+      dict,
      } = this.props;
 
-    const { visible, modalKey, canEditDetail, name, description, modalTitle } = this.state;
+    const { visible, modalKey, canEditDetail, name, description, modalTitle, groupId } = this.state;
 
     const {
       resultData = EMPTY_LIST,
@@ -360,6 +387,9 @@ export default class CustomerGroupManage extends PureComponent {
     } = customerGroupList || EMPTY_OBJECT;
 
     const { totalRecordNum } = page;
+
+    // 风险等级字典信息
+    const { custRiskBearing } = dict;
 
     // 构造表格头部
     const titleColumn = this.renderColumnTitle();
@@ -380,7 +410,7 @@ export default class CustomerGroupManage extends PureComponent {
           </div>
           <div className={styles.rightSection}>
             <Button
-              onClick={this.handleAddGroup}
+              onClick={this.showGroupDetailModal}
               type="primary"
               className={styles.addBtn}
             >
@@ -426,14 +456,19 @@ export default class CustomerGroupManage extends PureComponent {
               footer={null}
               modalContent={
                 <CustomerGroupDetail
+                  custRiskBearing={custRiskBearing}
                   canEditDetail={canEditDetail}
                   customerHotPossibleWordsList={customerHotPossibleWordsList}
                   getHotPossibleWds={this.queryHotPossibleWds}
-                  customerList={customerList}
+                  customerList={groupCustomerList}
                   onCloseModal={this.handleCloseModal}
+                  getGroupCustomerList={getGroupCustomerList}
+                  operateGroup={operateGroup}
+                  operateGroupResult={operateGroupResult}
                   detailData={{
                     name,
                     description,
+                    groupId,
                   }}
                 />
               }

@@ -485,6 +485,7 @@ export default class CustomerLists extends PureComponent {
       isSms,
       isGetCustIncome,
       toggleServiceRecordModal,
+      push,
     } = this.props;
     // 服务记录执行方式字典
     const { executeTypes = EMPTY_ARRAY, serveWay = EMPTY_ARRAY } = dict;
@@ -620,6 +621,7 @@ export default class CustomerLists extends PureComponent {
               currentCustId={currentCustId}
               executeTypes={executeTypes}
               serveWay={serveWay}
+              push={push}
             /> : null
         }
       </div>

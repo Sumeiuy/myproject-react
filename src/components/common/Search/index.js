@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-21 13:39:44
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-09-26 15:11:04
+ * @Last Modified time: 2017-09-27 15:51:49
  * 通用搜索组件，包含搜索历史记录，搜索热词联想，添加按钮
  */
 
@@ -259,7 +259,7 @@ export default class Search extends PureComponent {
   handleSearch(value) {
     if (_.isEmpty(value)) {
       this.setState({
-        inputVal: value,
+        inputVal: '',
         dataSource: [],
         selectedItem: {},
       });
@@ -345,6 +345,19 @@ export default class Search extends PureComponent {
         }],
       }],
     });
+  }
+
+  @autobind
+  handleAddClick() {
+    // 当前输入或者联想到输入框里的value
+    const { selectedItem } = this.state;
+    const { addBtnCallback } = this.props;
+    // 清空回调到输入框中的值
+    this.setState({
+      inputVal: '',
+      dataSource: [],
+    });
+    addBtnCallback(selectedItem);
   }
 
   @autobind
@@ -437,11 +450,7 @@ export default class Search extends PureComponent {
       placeholder,
       searchStyle,
       isNeedAddBtn,
-      addBtnCallback,
      } = this.props;
-
-    // 当前输入或者联想到输入框里的value
-    const { selectedItem } = this.state;
 
     // 构造下拉框数据源
     const dataSource = this.createOption();
@@ -489,7 +498,7 @@ export default class Search extends PureComponent {
                     className={styles.addBtnClass}
                     type="primary"
                     size="default"
-                    onClick={() => addBtnCallback(selectedItem)}
+                    onClick={this.handleAddClick}
                   >
                     添加
                   </Button> : null
