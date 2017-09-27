@@ -19,7 +19,7 @@ export default class AddCustomer extends PureComponent {
     onSearch: PropTypes.func.isRequired,
     searchList: PropTypes.array.isRequired,
     passList2Home: PropTypes.func.isRequired,
-    validate: PropTypes.func.isRequired,
+    onValidate: PropTypes.func.isRequired,
     validateResult: PropTypes.string,
     validataLoading: PropTypes.bool,
   }
@@ -78,7 +78,7 @@ export default class AddCustomer extends PureComponent {
     this.setState({
       customer,
     });
-    this.props.validate(customer);
+    this.props.onValidate(customer);
   }
 
   // 添加用户
