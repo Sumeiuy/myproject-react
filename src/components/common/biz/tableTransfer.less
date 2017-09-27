@@ -5,11 +5,12 @@
   display: -webkit-flex; /* Safari */
   display: flex;
   .leftContent {
-    margin-right: 20px;
-    flex-grow: 1;
+    margin-right: 10px;
+    width: 50%;
   }
   .rightContent {
-    flex-grow: 1;
+    margin-left: 10px;
+    width: 50%;
   }
   .titleLabel {
     font-family: @font-family;
@@ -33,11 +34,41 @@
   .leftHeader {
     justify-content: space-between;
   }
+  .rightHeader {
+    .tipContainer {
+      position: relative;
+      top: -70px;
+      left: 20px;
+      .tipRow {
+        display: -webkit-flex; /* Safari */
+        display: flex;
+        .finishIcon {
+          font-size: 22px;
+          color: #70c381;
+        }
+        .warningIcon {
+          font-size: 22px;
+          color: #f0b048;
+        }
+        .tip {
+          font-size: 14px;
+          margin-left: 10px;
+        }
+        .finishTip {
+          color: #70c381;
+        }
+        .warningTip {
+          color: #f0b048;
+        }
+      }
+    }
+  }
   
   :global {
     .ant-input {
       height: 32px;
       width: 220px;
+      font-size: 14px;
     }
     .ant-table {
       font-family: @font-family;
@@ -49,19 +80,24 @@
       td {
         color: #666;
       }
+      .ant-table-body {
+        min-height: 260px;
+      }
       .ant-table-tbody > tr > td {
         padding: 8px 8px 16px;
+        text-align: left;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 100px;
       }
       .ant-table-thead > tr > th {
         padding: 15px 8px 15px;
-      }
-      .ant-table-row-expand-icon {
-        position: absolute;
-        left: 18px;
-        margin-right: 20px;
-      }
-      .ant-table-row-indent {
-        padding-left: 0px !important;
+        text-align: left;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 100px;
       }
     }
     .ant-pagination {
