@@ -12,8 +12,6 @@ import { Modal, Button, Table } from 'antd';
 import Icon from '../../common/Icon';
 import Collapse from './CreateCollapse';
 import { checkFormat } from '../../../utils/helper';
-import { fspContainer } from '../../../config';
-import { fspGlobal } from '../../../utils';
 
 import styles from './createContactModal.less';
 import Phone from '../../../../static/images/phone.png';
@@ -38,7 +36,6 @@ export default class CreateContactModal extends PureComponent {
     onClose: PropTypes.func.isRequired,
     executeTypes: PropTypes.array.isRequired, // 执行方式字典
     serveWay: PropTypes.array.isRequired, // 服务渠道字典
-    push: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -58,10 +55,6 @@ export default class CreateContactModal extends PureComponent {
     const { onClose } = this.props;
     onClose();
     this.setState({ visible: false });
-
-    this.handleOpenTab({
-      q: '11',
-    }, '客户分组管理', 'RCT_FSP_CUSTOMER_GROUP_MANAGE');
   }
 
   /**
@@ -198,29 +191,6 @@ export default class CreateContactModal extends PureComponent {
     createServiceRecord({ custId: currentCustId, flag: true });
     // 回调，关闭父组件state状态
     onClose();
-  }
-
-  @autobind
-  handleOpenTab(obj, titles, ids) {
-    const { q } = obj;
-    const { push } = this.props;
-    const firstUrl = '/customerPool/customerGroupManage';
-    if (document.querySelector(fspContainer.container)) {
-      const url = `${firstUrl}?q=${q}`;
-      const param = {
-        closable: true,
-        forceRefresh: true,
-        isSpecialTab: true,
-        id: ids, // tab的id
-        title: titles, // tab标题
-      };
-      fspGlobal.openRctTab({ url, param }); // 打开react tab
-    } else {
-      push({
-        pathname: firstUrl,
-        query: obj,
-      });
-    }
   }
 
   render() {

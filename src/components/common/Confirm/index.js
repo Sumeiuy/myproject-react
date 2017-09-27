@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 10:53:22
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-09-27 17:31:36
+ * @Last Modified time: 2017-09-27 17:53:07
  */
 
 import React, { PureComponent } from 'react';
@@ -11,7 +11,7 @@ import { Modal } from 'antd';
 import styles from './index.less';
 
 const confirm = Modal.confirm;
-let confirmRef;
+
 export default class Confirm extends PureComponent {
   static propTypes = {
     title: PropTypes.string,
@@ -23,7 +23,7 @@ export default class Confirm extends PureComponent {
 
   static defaultProps = {
     title: '确认删除xxx吗？',
-    content: '真的确认删除吗？',
+    content: '真的确认删除xxx吗？',
     type: 'delete',
     onOkHandler: () => { },
     onCancelHandler: () => { },
@@ -31,7 +31,7 @@ export default class Confirm extends PureComponent {
 
   showConfirm() {
     const { title, content, type, onOkHandler, onCancelHandler } = this.props;
-    confirmRef = confirm({
+    this.confirmRef = confirm({
       title,
       content,
       okText: '确认',
@@ -40,13 +40,13 @@ export default class Confirm extends PureComponent {
       onOk() {
         console.log('确认');
         // 销毁
-        confirmRef.destroy();
+        this.confirmRef.destroy();
         onOkHandler();
       },
       onCancel() {
         console.log('取消');
         // 销毁
-        confirmRef.destroy();
+        this.confirmRef.destroy();
         onCancelHandler();
       },
     });
