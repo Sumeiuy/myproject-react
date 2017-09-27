@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-21 13:39:44
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-09-25 14:50:41
+ * @Last Modified time: 2017-09-26 15:11:04
  * 通用搜索组件，包含搜索历史记录，搜索热词联想，添加按钮
  */
 
@@ -19,7 +19,6 @@ const OptGroup = AutoComplete.OptGroup;
 const EMPTY_LIST = [];
 // const EMPTY_OBJECT = {};
 let historySourceCount = 0;
-let dataSourceCount = 0;
 let searchInputDOM;
 
 export default class Search extends PureComponent {
@@ -165,12 +164,16 @@ export default class Search extends PureComponent {
 
   // 选择option中的某一项，触发onSelect
   @autobind
-  onSelect(value) {
-    // 拿到的是value值
+  onSelect(item) {
+    const { possibleWordsData } = this.props;
+    const selectedItem = _.find(possibleWordsData, itemData =>
+      itemData.id === item) || {};
+    // 拿到的是item
     this.setState({
-      inputVal: value,
+      inputVal: item,
+      selectedItem,
     });
-    this.handleSearch(value);
+    this.handleSearch(item);
   }
 
   /**
@@ -181,6 +184,7 @@ export default class Search extends PureComponent {
   handleEnter(event) {
     const e = event || window.event;
     const { onSearchClick } = this.props;
+    const { selectedItem } = this.state;
     if (e.stopPropagation) {
       e.stopPropagation();
     } else {
@@ -198,6 +202,7 @@ export default class Search extends PureComponent {
       // 按了回车键
       onSearchClick({
         value: searchVal,
+        selectedItem,
       });
     }
     return true;
@@ -234,15 +239,15 @@ export default class Search extends PureComponent {
    */
   searchResult(query, hotList) {
     return hotList.map((item, index) => ({
+      // 展开返回结果中的item
+      ...item,
       query,
       category: `${item.labelNameVal}${index}`,
       // 联想的内容
       content: item.labelNameVal,
       // 联想的内容描述
       desc: item.labelDesc,
-      // 展开返回结果中的item
-      ...item,
-      id: `searchList${dataSourceCount++}`,
+      id: item.id,
     }));
   }
 
@@ -256,6 +261,7 @@ export default class Search extends PureComponent {
       this.setState({
         inputVal: value,
         dataSource: [],
+        selectedItem: {},
       });
       return;
     }
@@ -265,7 +271,7 @@ export default class Search extends PureComponent {
     const { queryPossibleWords } = this.props;
     // 请求联想可能的数据
     queryPossibleWords({
-      wd: value,
+      keyword: value,
     });
   }
 
@@ -294,7 +300,7 @@ export default class Search extends PureComponent {
    */
   @autobind
   handleSearchBtn() {
-    const { inputVal } = this.state;
+    const { inputVal, selectedItem } = this.state;
     const { onSearchClick } = this.props;
     const searchVal = inputVal;
     if (_.isEmpty(_.trim(inputVal))) {
@@ -306,6 +312,7 @@ export default class Search extends PureComponent {
     // 点击了搜索按钮
     onSearchClick({
       value: searchVal,
+      selectedItem,
     });
     return true;
   }
@@ -346,14 +353,20 @@ export default class Search extends PureComponent {
     const { onOptionClick } = this.props;
     // 高亮显示搜索文本
     const newContent = item.content.replace(inputVal, `<em>${inputVal}</em>`);
+    const newDesc = item.desc.replace(inputVal, `<em>${inputVal}</em>`);
+    const isContentMatch = item.content.indexOf(inputVal) > -1;
     return (
-      <Option key={item.id} value={item.content}>
+      // 利用JSON序列化一下item，作为value，然后在onSelect时，再JSON.parse
+      <Option key={item.id} text={isContentMatch ? item.id : item.desc}>
         <a
           onClick={onOptionClick}
           dangerouslySetInnerHTML={{ __html: newContent }}
           rel="noopener noreferrer"
         />
-        <span className="desc">{item.desc}</span>
+        <span
+          className="desc"
+          dangerouslySetInnerHTML={{ __html: newDesc }}
+        />
       </Option>
     );
   }
@@ -372,10 +385,10 @@ export default class Search extends PureComponent {
         {
           group.children.map(item => (
             item.labelNameVal === '无' ?
-              <Option key={item.id} value={item.labelNameVal} disabled>
+              <Option key={item.id} text={item.labelNameVal} disabled>
                 {item.labelNameVal}
               </Option> :
-              <Option key={item.id} value={item.labelNameVal} >
+              <Option key={item.id} text={item.labelNameVal} >
                 <a
                   onClick={this.onGroupOptionClick}
                   rel="noopener noreferrer"
@@ -428,7 +441,7 @@ export default class Search extends PureComponent {
      } = this.props;
 
     // 当前输入或者联想到输入框里的value
-    const { inputVal } = this.state;
+    const { selectedItem } = this.state;
 
     // 构造下拉框数据源
     const dataSource = this.createOption();
@@ -447,7 +460,7 @@ export default class Search extends PureComponent {
                 onSelect={this.onSelect}
                 onSearch={_.debounce(this.handleSearch, 250)} // 防抖动，节流函数，保证不连续触发
                 placeholder={placeholder}
-                optionLabelProp="value"
+                optionLabelProp="text"
                 defaultValue={searchHistoryVal}
               /* getPopupContainer={() => document.getElementById('searchWrapper')} */
               >
@@ -476,7 +489,7 @@ export default class Search extends PureComponent {
                     className={styles.addBtnClass}
                     type="primary"
                     size="default"
-                    onClick={() => addBtnCallback(inputVal)}
+                    onClick={() => addBtnCallback(selectedItem)}
                   >
                     添加
                   </Button> : null

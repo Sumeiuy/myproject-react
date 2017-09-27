@@ -128,7 +128,7 @@ export default class Search extends PureComponent {
         labelMapping: '',
         tagNumId: '',
         q: encodeURIComponent(searchVal),
-      }, '目标客户', 'RCT_FSP_CUSTOMER_LIST');
+      }, '客户列表', 'RCT_FSP_CUSTOMER_LIST');
     }
     return true;
   }
@@ -172,7 +172,8 @@ export default class Search extends PureComponent {
             labelNameVal: item,
             labelMapping: '',
             tagNumId: item,
-            id: `historyList${COUNT++}`,
+            // id: `historyList${COUNT++}`,
+            id: item,
             labelDesc: '',
           });
         }
@@ -192,9 +193,9 @@ export default class Search extends PureComponent {
       category: `${item.labelNameVal}${index}`,
       content: item.labelNameVal,
       desc: item.labelDesc,
-      id: `autoList${COUNT++}`,
       labelMapping: item.labelMapping,
       tagNumId: item.tagNumId,
+      id: item.labelNameVal,
     }));
   }
 
@@ -232,7 +233,7 @@ export default class Search extends PureComponent {
             labelMapping: item.labelMapping || '',
             tagNumId: item.tagNumId || '',
             q: encodeURIComponent(item.labelNameVal),
-          }, '目标客户', 'RCT_FSP_CUSTOMER_LIST')}
+          }, '客户列表', 'RCT_FSP_CUSTOMER_LIST')}
           title={item.labelDesc}
           rel="noopener noreferrer"
         >
@@ -271,7 +272,7 @@ export default class Search extends PureComponent {
       labelMapping: '',
       tagNumId: '',
       q: encodeURIComponent(searchVal),
-    }, '目标客户', 'RCT_FSP_CUSTOMER_LIST');
+    }, '客户列表', 'RCT_FSP_CUSTOMER_LIST');
   }
 
   @autobind
@@ -320,7 +321,7 @@ export default class Search extends PureComponent {
             labelMapping: item.labelMapping || '',
             tagNumId: item.tagNumId || item.content,
             q: encodeURIComponent(item.content),
-          }, '目标客户', 'RCT_FSP_CUSTOMER_LIST')}
+          }, '客户列表', 'RCT_FSP_CUSTOMER_LIST')}
           dangerouslySetInnerHTML={{ __html: newContent }}
           rel="noopener noreferrer"
         />
@@ -348,7 +349,7 @@ export default class Search extends PureComponent {
                   labelMapping: item.labelMapping || '',
                   tagNumId: item.tagNumId || '',
                   q: encodeURIComponent(item.labelNameVal),
-                }, '目标客户', 'RCT_FSP_CUSTOMER_LIST')}
+                }, '客户列表', 'RCT_FSP_CUSTOMER_LIST')}
                 rel="noopener noreferrer"
               >
                 {item.labelNameVal}

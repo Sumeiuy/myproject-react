@@ -15,7 +15,7 @@ import styles from './main.less';
 import '../css/skin.less';
 
 const effects = {
-  dictionary: 'customerPool/getDictionary',
+  dictionary: 'app/getDictionary',
   customerScope: 'customerPool/getCustomerScope',
   empInfo: 'app/getEmpInfo',
   addServeRecord: 'customerPool/addServeRecord',
@@ -81,7 +81,7 @@ export default class Main extends Component {
     ServiceRecordModalVisibleOfId: '',
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const { getCustomerScope, getEmpInfo, getDictionary } = this.props;
     getCustomerScope(); // 加载客户池客户范围
     getEmpInfo(); // 加载员工职责与职位

@@ -18,7 +18,7 @@ import AddCusSuccess from '../../components/customerPool/group/AddCusSuccess';
 import { fspGlobal, helper } from '../../utils';
 
 
-const CUR_PAGE = 1; // 默认当前页
+const CUR_PAGE = 1; // 默认当前页 0->1, 后端入参变化
 const CUR_PAGESIZE = 10; // 默认页大小
 const TabPane = Tabs.TabPane;
 let groupId = '';
@@ -30,6 +30,7 @@ const mapStateToProps = state => ({
   resultgroupId: state.customerPool.resultgroupId,
 });
 const mapDispatchToProps = {
+  goBack: routerRedux.goBack,
   replace: routerRedux.replace,
   getCustomerGroupList: query => ({
     type: 'customerPool/customerGroupList',
@@ -98,6 +99,7 @@ export default class CustomerGroup extends PureComponent {
     addCustomerToGroup: PropTypes.func.isRequired,
     cusGroupSaveResult: PropTypes.string,
     resultgroupId: PropTypes.string,
+    goBack: PropTypes.func.isRequired,
   }
   constructor(props) {
     super(props);
@@ -274,7 +276,9 @@ export default class CustomerGroup extends PureComponent {
 
   @autobind
   closeTab() {
-    fspGlobal.closeRctTabById('FSP_GROUP');
+    // fspGlobal.closeRctTabById('FSP_GROUP');
+    fspGlobal.closeRctTabById('RCT_FSP_CUSTOMER_LIST');
+    // this.props.goBack();
   }
 
   render() {
@@ -316,7 +320,7 @@ export default class CustomerGroup extends PureComponent {
                   />
                 </Row>
                 <Row className={styles.BtnContent}>
-                  <Button onClick={this.closeTab}>取消</Button>
+                  <Button onClick={this.goBack}>取消</Button>
                   <Button onClick={this.handleSubmit} type="primary">保存</Button>
                 </Row>
               </div>

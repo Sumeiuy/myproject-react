@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-09-25 14:38:24
+ * @Last Modified time: 2017-09-26 16:35:26
  */
 
 import React, { PureComponent } from 'react';
@@ -154,6 +154,7 @@ export default class GroupTable extends PureComponent {
             render: (text, record) =>
               <div className={styles.operation}>
                 <span
+                  title={record[item.key]}
                   className={styles.link}
                   onClick={() => firstColumnHandler(record)}
                 >
@@ -172,6 +173,7 @@ export default class GroupTable extends PureComponent {
               return (
                 <div className={styles.operation}>
                   <span
+                    title={record[item.key]}
                     className={styles.link}
                     onClick={() => firstColumnHandler(record)}
                   >
@@ -182,7 +184,7 @@ export default class GroupTable extends PureComponent {
             }
             return (
               <div className={styles.column}>
-                <span>{record[item.key] || '--'}</span>
+                <span title={record[item.key]}>{record[item.key] || '--'}</span>
               </div>
             );
           },
@@ -196,7 +198,7 @@ export default class GroupTable extends PureComponent {
       title: item.value,
       render: (text, record) =>
         <div className={styles.column}>
-          <span>{record[item.key] || '--'}</span>
+          <span title={record[item.key]}>{record[item.key] || '--'}</span>
         </div>,
     }));
   }
