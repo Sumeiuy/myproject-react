@@ -22,7 +22,7 @@ export default {
     searchServerPersonList: EMPTY_LIST, // 可查询服务人员列表
     nextApproverList: EMPTY_LIST, // 按照条件查询下一审批人列表
     bottonList: EMPTY_LIST, // 按钮组
-    modifyCustApplication: EMPTY_OBJECT // 获取修改私密客户申请 的结果
+    modifyCustApplication: EMPTY_OBJECT, // 获取修改私密客户申请 的结果
   },
   reducers: {
     getDetailMessageSuccess(state, action) {

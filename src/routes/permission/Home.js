@@ -304,7 +304,7 @@ export default class Permission extends PureComponent {
       bottonList,
       getModifyCustApplication,
       modifyCustApplication,
-    } = this.props
+    } = this.props;
     return (
       <Detail
         {...this.state.detailMessage}
