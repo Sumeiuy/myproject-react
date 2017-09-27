@@ -3,32 +3,37 @@
 * @Author: XuWenKang
 * @Date:   2017-09-19 14:47:08
 * @Last Modified by:   XuWenKang
-* @Last Modified time: 2017-09-22 14:29:12
+* @Last Modified time: 2017-09-27 09:59:29
 */
 import React, { PureComponent } from 'react';
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 // import { message } from 'antd';
 
 import BaseInfoEdit from './BaseInfoEdit';
 import DraftInfo from './DraftInfo';
-import UploadFile from '../permission/UploadFile';
+import UploadFile from './UploadFile';
 import Approval from '../permission/Approval';
 import ApprovalRecord from '../permission/ApprovalRecord';
 
 import styles from './editForm.less';
 
-const EMPTY_OBJECT = {};
+// const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
+const BOOL_TRUE = true;
 const approvalRecordList = [{
   isOk: true,
   beginTime: 'abc于2017/08/31',
   stepName: '发起',
   suggestion: 'adad',
 }];
-export default class Edit extends PureComponent {
+export default class EditForm extends PureComponent {
   static propTypes = {
-
+    custList: PropTypes.array.isRequired,
+    onSearchCutList: PropTypes.func.isRequired,
+    onChangeForm: PropTypes.func.isRequired,
+    operationType: PropTypes.string.isRequired,
+    contractDetail: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -42,17 +47,32 @@ export default class Edit extends PureComponent {
     };
   }
 
+  componentDidMount() {
+    const { onSearchCutList } = this.props;
+    onSearchCutList();
+  }
+
   @autobind
   handleChangeAppraval(type, value) {
     console.log(type, value);
   }
 
   @autobind
-  handleChangeBaseInfo(formData) {
-    console.log('baseInfoData', formData);
+  handleChangeBaseInfo(data) {
+    // console.log('baseInfoData', formData);
+    const formData = data;
+    formData.formType = 'edit';
+    this.props.onChangeForm(formData);
+  }
+
+  @autobind
+  handleSearchClient(value) {
+    const { onSearchCutList } = this.props;
+    onSearchCutList(value);
   }
 
   render() {
+    const { custList, contractDetail, operationType } = this.props;
     return (
       <div className={styles.editComponent}>
         <div className={styles.dcHeader}>
@@ -60,16 +80,20 @@ export default class Edit extends PureComponent {
         </div>
         <BaseInfoEdit
           contractName="合约名称"
-          childType={{ list: EMPTY_ARRAY }}
-          client={EMPTY_OBJECT}
-          contractStarDate="2017-9-10"
-          contractPalidity="2017-9-9"
-          contractEndDate=""
-          remark="备注备注"
+          childType={contractDetail.subType}
+          client={contractDetail.custId}
+          custList={custList}
+          contractStarDate={contractDetail.startDt}
+          contractPalidity={contractDetail.vailDt}
+          contractEndDate={contractDetail.endDt}
+          remark={contractDetail.description}
           onChange={this.handleChangeBaseInfo}
+          onSearchClient={this.handleSearchClient}
+          operationType={operationType}
         />
         <DraftInfo />
         <UploadFile
+          edit={BOOL_TRUE}
           fileList={EMPTY_ARRAY}
         />
         <Approval
