@@ -188,7 +188,7 @@ export default class CustRange extends PureComponent {
         value={value}
         treeData={formatCustRange}
         onChange={this.onChange}
-        dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+        dropdownStyle={{ maxHeight: 400, minWidth: 200, overflow: 'auto' }}
         treeNodeFilterProp={'title'}
         showSearch
         dropdownMatchSelectWidth
