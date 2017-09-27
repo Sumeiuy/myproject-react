@@ -3,12 +3,13 @@
 * @Author: XuWenKang
 * @Date:   2017-09-21 15:27:31
 * @Last Modified by:   XuWenKang
-* @Last Modified time: 2017-09-27 09:41:50
+* @Last Modified time: 2017-09-27 19:00:34
 */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
 
 import { Input } from 'antd';
 import moment from 'moment';
@@ -23,21 +24,12 @@ import styles from './baseInfoAdd.less';
 
 const { TextArea } = Input;
 
-function clearUselessData(data) {
-  const list = data;
-  list.forEach((v, i) => {
-    if (v.label === '全部') {
-      list.splice(i, 1);
-    }
-  });
-  return list;
-}
 // 操作类型列表
 const { contract: { operationList } } = seibelConfig;
 // 退订的类型
 const unsubscribe = operationList[1].value;
 // 子类型列表
-const childTypeList = clearUselessData(seibelConfig.contract.subType);
+const childTypeList = _.filter(seibelConfig.contract.subType, v => v.label !== '全部');
 // 临时数据待删
 // const contractNumList = [{
 //   show: true,
@@ -62,14 +54,21 @@ const datePickerBoxStyle = {
 const EMPTY_OBJECT = {};
 export default class BaseInfoEdit extends PureComponent {
   static propTypes = {
-    client: PropTypes.object.isRequired,
     onChange: PropTypes.func.isRequired,
+    // 查询客户
     onSearchClient: PropTypes.func.isRequired,
+    // 查询合约编号
     onSearchContractNum: PropTypes.func.isRequired,
+    // 查询合约详情
     onSearchContractDetail: PropTypes.func.isRequired,
+    // 客户列表
     custList: PropTypes.array.isRequired,
+    // 合约详情
     contractDetail: PropTypes.object.isRequired,
+    // 合约编号列表
     contractNumList: PropTypes.array.isRequired,
+    // 更改操作类型时重置表单数据
+    onReset: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -91,6 +90,7 @@ export default class BaseInfoEdit extends PureComponent {
     };
   }
 
+  // 更改操作类型时重置表单数据
   @autobind
   resetState() {
     console.log('reset');
@@ -105,9 +105,11 @@ export default class BaseInfoEdit extends PureComponent {
       remark: '',
     }, () => {
       this.props.onChange(this.state);
+      this.props.onReset();
     });
   }
 
+  // 通用Select Change方法
   @autobind
   handleSelectChange(key, value) {
     console.log({ [key]: value });
@@ -129,6 +131,7 @@ export default class BaseInfoEdit extends PureComponent {
     });
   }
 
+  // 选择客户
   @autobind
   handleSelectClient(value) {
     console.log('selectClient', value);
@@ -145,12 +148,14 @@ export default class BaseInfoEdit extends PureComponent {
     });
   }
 
+  // 根据关键字查询客户
   @autobind
   handleSearchClient(v) {
     console.log('searchClient', v);
     this.props.onSearchClient(v);
   }
 
+  // 选择合约编号
   @autobind
   handleSelectContractNum(value) {
     this.setState({
@@ -163,11 +168,13 @@ export default class BaseInfoEdit extends PureComponent {
     });
   }
 
+  // 根据填入关键词筛选合约编号
   @autobind
   handleSearchContractNum(value) {
     console.log('筛选合约编号', value);
   }
 
+  // 通用 Date组件更新方法
   @autobind
   handleChangeDate(obj) {
     console.log(obj);
@@ -179,6 +186,7 @@ export default class BaseInfoEdit extends PureComponent {
     });
   }
 
+  // 修改备注
   @autobind
   handleChangeRemark(e) {
     console.log(e.target.value);
