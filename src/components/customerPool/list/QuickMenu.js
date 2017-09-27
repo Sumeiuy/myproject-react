@@ -130,7 +130,7 @@ export default class QuickMenu extends PureComponent {
           </li>
           <li onClick={this.handleIsEmail}>
             <Icon type="youjian" />
-            <span>{addressEmail[listItem.custId]}<a ref={ref => this.sendEmail = ref} href={_.isEmpty(addressEmail[listItem.custId]) ? NO_EMAIL_HREF : `mailto:${addressEmail[listItem.custId]}`}> 邮件联系 </a></span>
+            <span><a ref={ref => this.sendEmail = ref} href={_.isEmpty(addressEmail[listItem.custId]) ? NO_EMAIL_HREF : `mailto:${addressEmail[listItem.custId]}`}> 邮件联系 </a></span>
           </li>
           <li
             onClick={() => toggleServiceRecordModal({ custId: listItem.custId, flag: true })}
