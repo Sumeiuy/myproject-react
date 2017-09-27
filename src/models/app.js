@@ -13,9 +13,9 @@ export default {
     // 字典数据
     dict: {},
     // 显示隐藏添加服务记录弹窗，默认隐藏
-    ServiceRecordModalVisible: false,
+    serviceRecordModalVisible: false,
     // 服务弹窗对应的客户的经纪客户号
-    ServiceRecordModalVisibleOfId: '',
+    serviceRecordModalVisibleOfId: '',
   },
   subscriptions: {},
   effects: {
@@ -65,8 +65,8 @@ export default {
       const { payload } = action;
       return {
         ...state,
-        ServiceRecordModalVisible: payload.flag,
-        ServiceRecordModalVisibleOfId: payload.custId,
+        serviceRecordModalVisible: payload.flag,
+        serviceRecordModalVisibleOfId: payload.custId,
       };
     },
     getDictionarySuccess(state, action) {

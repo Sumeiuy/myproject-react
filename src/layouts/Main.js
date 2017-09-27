@@ -35,13 +35,11 @@ const mapStateToProps = state => ({
   empInfo: state.app.empInfo,
   interfaceState: state.loading.effects,
   // 显示隐藏添加服务记录弹窗
-  ServiceRecordModalVisible: state.app.ServiceRecordModalVisible,
+  serviceRecordModalVisible: state.app.serviceRecordModalVisible,
   // 发送保存服务记录请求成功状态
   addServeRecordSuccess: state.customerPool.addServeRecordSuccess,
-  // 发送保存服务记录请求前后的变化状态
-  isAddServeRecord: state.customerPool.isAddServeRecord,
   // 服务弹窗对应的客户的经纪客户号
-  ServiceRecordModalVisibleOfId: state.app.ServiceRecordModalVisibleOfId,
+  serviceRecordModalVisibleOfId: state.app.serviceRecordModalVisibleOfId,
 });
 
 const mapDispatchToProps = {
@@ -68,17 +66,16 @@ export default class Main extends Component {
     getDictionary: PropTypes.func.isRequired,
     dict: PropTypes.object.isRequired,
     empInfo: PropTypes.object.isRequired,
-    ServiceRecordModalVisible: PropTypes.bool,
-    ServiceRecordModalVisibleOfId: PropTypes.string,
-    isAddServeRecord: PropTypes.bool.isRequired,
+    serviceRecordModalVisible: PropTypes.bool,
+    serviceRecordModalVisibleOfId: PropTypes.string,
     addServeRecordSuccess: PropTypes.bool.isRequired,
     addServeRecord: PropTypes.func.isRequired,
     toggleServiceRecordModal: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
-    ServiceRecordModalVisible: false,
-    ServiceRecordModalVisibleOfId: '',
+    serviceRecordModalVisible: false,
+    serviceRecordModalVisibleOfId: '',
   }
 
   componentDidMount() {
@@ -94,12 +91,11 @@ export default class Main extends Component {
       loading,
       interfaceState,
       dict,
-      empInfo: { empInfo },
-      isAddServeRecord,
+      empInfo: { empInfo = {} },
       addServeRecordSuccess,
       addServeRecord,
-      ServiceRecordModalVisibleOfId,
-      ServiceRecordModalVisible,
+      serviceRecordModalVisibleOfId,
+      serviceRecordModalVisible,
       toggleServiceRecordModal,
     } = this.props;
     return (
@@ -114,30 +110,26 @@ export default class Main extends Component {
                     !interfaceState[effects.dictionary] &&
                     !interfaceState[effects.customerScope] &&
                     !interfaceState[effects.empInfo]) ?
-                  children
-                  :
-                  null
+                      <div>
+                        {children}
+                        <CreateServiceRecord
+                          loading={interfaceState[effects.addServeRecord]}
+                          id={serviceRecordModalVisibleOfId}
+                          dict={dict}
+                          empInfo={empInfo}
+                          isShow={serviceRecordModalVisible}
+                          addServeRecord={addServeRecord}
+                          addServeRecordSuccess={addServeRecordSuccess}
+                          onToggleServiceRecordModal={toggleServiceRecordModal}
+                        />
+                      </div>
+                      :
+                      null
                 }
               </div>
             </div>
           </div>
         </div>
-        {
-          /*
-            添加服务记录弹窗
-          */
-          ServiceRecordModalVisible ?
-            <CreateServiceRecord
-              id={ServiceRecordModalVisibleOfId}
-              dict={dict}
-              empInfo={empInfo}
-              isShow={ServiceRecordModalVisible}
-              addServeRecord={addServeRecord}
-              addServeRecordSuccess={addServeRecordSuccess}
-              isAddServeRecord={isAddServeRecord}
-              onToggleServiceRecordModal={toggleServiceRecordModal}
-            /> : null
-        }
       </div>
     );
   }

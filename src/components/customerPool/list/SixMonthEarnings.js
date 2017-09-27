@@ -28,7 +28,7 @@ export default class SixMonthEarnings extends PureComponent {
   static propTypes = {
     listItem: PropTypes.object.isRequired,
     monthlyProfits: PropTypes.object.isRequired,
-    isGetCustIncome: PropTypes.bool.isRequired,
+    custIncomeReqState: PropTypes.bool.isRequired,
     getCustIncome: PropTypes.func.isRequired,
   }
 
@@ -46,14 +46,14 @@ export default class SixMonthEarnings extends PureComponent {
 
   @autobind
   getCustIncome() {
-    const { getCustIncome, listItem, monthlyProfits } = this.props;
-    const thisMonthlyProfits = monthlyProfits[listItem.custId];
-    if (!thisMonthlyProfits || _.isEmpty(thisMonthlyProfits)) {
+    const { getCustIncome, listItem, monthlyProfits, custIncomeReqState } = this.props;
+    const thisProfits = monthlyProfits[listItem.custId];
+    if (!thisProfits || _.isEmpty(thisProfits)) {
       // test data empId = 01041128、05038222、035000002899、02004642
       getCustIncome({ custNumber: listItem.custId });
     }
     this.setState({
-      isShowCharts: true,
+      isShowCharts: !custIncomeReqState,
     });
   }
 
@@ -69,19 +69,30 @@ export default class SixMonthEarnings extends PureComponent {
     const {
       listItem,
       monthlyProfits,
-      isGetCustIncome,
+      custIncomeReqState,
     } = this.props;
     const {
       isShowCharts,
     } = this.state;
-    const thisMonthlyProfits = monthlyProfits[listItem.custId] || [];
-    const lastestProfit = Number(getLastestData(thisMonthlyProfits).assetProfit);
-    const lastestProfitRate = Number(getLastestData(thisMonthlyProfits).assetProfitRate);
+    const thisProfits = monthlyProfits[listItem.custId] || [];
+    const lastestProfit = Number(getLastestData(thisProfits).assetProfit);
+    const lastestProfitRate = Number(getLastestData(thisProfits).assetProfitRate);
+    let lastestPrifitsValue = '--';
+    let lastestPrifitsUnit = null;
+    let lastestPrifitsRate = '--';
+    if (thisProfits.length) {
+      if (lastestProfit) {
+        lastestPrifitsValue = formatNumber(lastestProfit);
+        lastestPrifitsUnit = formatUnit(lastestProfit);
+        lastestPrifitsRate = `${lastestProfitRate.toFixed(2)}%`;
+      }
+    }
+    // console.log('formatNumber(lastestProfit)', formatNumber(lastestProfit), lastestProfit);
     return (
       <span
         className={styles.showChartBtn}
         style={{
-          cursor: isGetCustIncome ? 'wait' : 'pointer',
+          cursor: custIncomeReqState ? 'wait' : 'pointer',
         }}
       >
         <p
@@ -97,7 +108,7 @@ export default class SixMonthEarnings extends PureComponent {
           }}
         >
           <div className={styles.chartsContent}>
-            <ChartLineWidget chartData={thisMonthlyProfits} />
+            <ChartLineWidget chartData={thisProfits} />
           </div>
           <div className={styles.chartsText}>
             <div className={styles.lh28}>
@@ -110,27 +121,17 @@ export default class SixMonthEarnings extends PureComponent {
             <div className={styles.lh28}>
               <span>本月收益率：</span>
               <span className={styles.numB}>
-                {
-                  thisMonthlyProfits.length ?
-                    `${lastestProfitRate.toFixed(2)}%`
-                    :
-                    '--'
-                }
+                {lastestPrifitsRate}
               </span>
             </div>
             <div className={styles.lh28}>
               <span>本月收益：</span>
               <span className={styles.numB}>
-                {
-                  thisMonthlyProfits.length ?
-                    formatNumber(lastestProfit)
-                    :
-                    '--'
-                }
+                {lastestPrifitsValue}
                 &nbsp;
               </span>
               <span>
-                {thisMonthlyProfits.length ? formatUnit(lastestProfit) : null}
+                {lastestPrifitsUnit}
               </span>
             </div>
           </div>
