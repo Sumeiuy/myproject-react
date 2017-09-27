@@ -1,8 +1,8 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-09-14 14:44:35
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-09-25 14:25:48
+ * @Last Modified by:   XuWenKang
+ * @Last Modified time: 2017-09-27 18:40:35
  */
 /**
  * 常用说明
@@ -57,6 +57,7 @@ export default class CommonModal extends PureComponent {
     btnStatus: PropTypes.bool,
     showOkBtn: PropTypes.bool,
     showCancelBtn: PropTypes.bool,
+    wrapClassName: PropTypes.string,
     children: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.object,
@@ -73,6 +74,7 @@ export default class CommonModal extends PureComponent {
     cancelText: '取消',
     children: '子元素内容区域',
     size: 'normal',
+    wrapClassName: '',
   }
 
   render() {
@@ -114,7 +116,7 @@ export default class CommonModal extends PureComponent {
       <Modal
         {...this.props}
         onCancel={() => closeModal(modalKey)}
-        wrapClassName={`${styles.commonModal} ${styles[modalSize]}`}
+        wrapClassName={`${styles.commonModal} ${styles[modalSize]} ${this.props.wrapClassName}`}
         footer={footerContent}
       >
         {children}
