@@ -19,13 +19,11 @@ const { Option } = Select;
 const { TextArea } = Input;
 
 const d = new Date();
+// 日期组件的显示格式
+const dateFormat = 'YYYY-MM-DD HH:mm';
 // 当前日期的时间戳
 const currentDate = d.getTime();
-const formatCurrentDate = helper.formatTime(currentDate);
-// 日期组件的星期值
-const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
-// 日期组件的显示格式
-const dateFormat = 'YYYY/MM/DD (dddd)';
+const formatCurrentDate = moment(currentDate).format(dateFormat);
 const width = { width: 192 };
 // 根据服务方式的key来记录对应的iconname
 const SERVICE_ICON = {
@@ -34,8 +32,11 @@ const SERVICE_ICON = {
   'HTSC SMS': 'duanxin',
   wx: 'weixin',
   Interview: 'beizi',
-  Other: 'other',
+  'HTSC Other': 'other',
 };
+
+// 服务内容和反馈内容字数限制
+const MAX_LENGTH = 1000;
 
 
 export default class CreateServiceRecord extends PureComponent {
@@ -44,7 +45,7 @@ export default class CreateServiceRecord extends PureComponent {
     id: PropTypes.string,
     isShow: PropTypes.bool,
     empInfo: PropTypes.object.isRequired,
-    hideCreateServiceRecord: PropTypes.func.isRequired,
+    onToggleServiceRecordModal: PropTypes.func.isRequired,
     addServeRecord: PropTypes.func.isRequired,
     addServeRecordSuccess: PropTypes.bool.isRequired,
     isAddServeRecord: PropTypes.bool.isRequired,
@@ -72,47 +73,39 @@ export default class CreateServiceRecord extends PureComponent {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillUnmount() {
     const {
       isAddServeRecord,
       addServeRecordSuccess,
-      dict: {
-        serveWay,
-        serveType,
-        workResult,
-      },
-    } = nextProps;
-    if (nextProps.id !== this.props.id) {
-      this.setState({
-        serviceWay: serveWay[0].key,
-        serviceType: serveType[0].key,
-        workResult: workResult[0].key,
-        serviceTime: formatCurrentDate,
-        feedbackTime: formatCurrentDate,
-      });
-      const sc = document.querySelector('#serviceContent');
-      if (sc) {
-        document.querySelector('#serviceContent').value = '';
-        document.querySelector('#feedbackContent').value = '';
-      }
-    }
+    } = this.props;
+    // 添加成功
     if (addServeRecordSuccess === true &&
-    isAddServeRecord === false &&
-    this.props.isAddServeRecord === true) {
+      isAddServeRecord === false) {
       message.success('添加服务记录成功');
     }
   }
 
+  // 提交
   @autobind
   handleSubmit() {
-    const serviceContent = _.trim(document.querySelector('#serviceContent').value);
-    const feedbackContent = _.trim(document.querySelector('#feedbackContent').value);
+    const serviceContentNode = this.serviceContent.textAreaRef;
+    const feedbackContentNode = this.feedbackContent.textAreaRef;
+    const serviceContent = _.trim(serviceContentNode.value);
+    const feedbackContent = _.trim(feedbackContentNode.value);
     if (!serviceContent) {
       message.error('请输入此次服务的内容');
       return;
     }
+    if (helper.getStrLen(serviceContent) > MAX_LENGTH) {
+      message.error(`服务的内容字数不能超过${MAX_LENGTH}`);
+      return;
+    }
     if (!feedbackContent) {
       message.error('请输入此次服务的反馈');
+      return;
+    }
+    if (helper.getStrLen(feedbackContent) > MAX_LENGTH) {
+      message.error(`服务的反馈内容字数不能超过${MAX_LENGTH}`);
       return;
     }
     const {
@@ -123,9 +116,11 @@ export default class CreateServiceRecord extends PureComponent {
       feedbackTime,
     } = this.state;
     const {
+      id,
       addServeRecord,
     } = this.props;
     addServeRecord({
+      custId: id,
       serveWay: serviceWay,
       serveType: serviceType,
       serveTime: serviceTime,
@@ -134,16 +129,20 @@ export default class CreateServiceRecord extends PureComponent {
       feedBackTime: feedbackTime,
       workResult,
     });
-    const { hideCreateServiceRecord } = this.props;
-    hideCreateServiceRecord();
+    serviceContentNode.value = '';
+    feedbackContentNode.value = '';
+    const { onToggleServiceRecordModal } = this.props;
+    onToggleServiceRecordModal(false);
   }
 
+  // 关闭弹窗
   @autobind
   handleCancel() {
-    const { hideCreateServiceRecord } = this.props;
-    hideCreateServiceRecord();
+    const { onToggleServiceRecordModal } = this.props;
+    onToggleServiceRecordModal(false);
   }
 
+  // 保存选中的服务方式的值
   @autobind
   handleServiceWay(key) {
     this.setState({
@@ -151,6 +150,7 @@ export default class CreateServiceRecord extends PureComponent {
     });
   }
 
+  // 保存服务类型的值
   @autobind
   handleServiceType(value) {
     this.setState({
@@ -158,6 +158,7 @@ export default class CreateServiceRecord extends PureComponent {
     });
   }
 
+  // 保存工作结果的值
   @autobind
   handleWorkResult(value) {
     this.setState({
@@ -165,22 +166,30 @@ export default class CreateServiceRecord extends PureComponent {
     });
   }
 
+  // 保存服务时间的值
   @autobind
   handleServiceTime(date) {
     const selectedDate = Number(date.format('x'));
     this.setState({
-      serviceTime: helper.formatTime(selectedDate),
+      serviceTime: moment(selectedDate).format(dateFormat),
     });
   }
 
+  // 保存回馈时间的值
   @autobind
   handleFeedbackTime(date) {
     const selectedDate = Number(date.format('x'));
     this.setState({
-      feedbackTime: helper.formatTime(selectedDate),
+      feedbackTime: moment(selectedDate).format(dateFormat),
     });
   }
 
+  disabledDate(current) {
+    if (current) {
+      return current.valueOf() > moment().subtract(0, 'days');
+    }
+    return true;
+  }
 
   render() {
     const {
@@ -201,9 +210,6 @@ export default class CreateServiceRecord extends PureComponent {
         <span>&nbsp;{empInfo.empName}/{empInfo.empNum}</span>
       </p>
     );
-    moment.locale('zh-cn', {
-      weekdays,
-    });
     return (
       <Modal
         width={688}
@@ -221,10 +227,11 @@ export default class CreateServiceRecord extends PureComponent {
           {
             dict.serveWay.map(obj => (
               <Col
+                key={obj.key}
                 className={`serviceWayItem ${serviceWay === obj.key ? 'active' : ''}`}
                 onClick={() => this.handleServiceWay(obj.key)}
               >
-                <span><Icon type={SERVICE_ICON[obj.key]} /></span>
+                <span><Icon type={SERVICE_ICON[obj.key] || ''} /></span>
                 <p>{obj.value}</p>
               </Col>
             ))
@@ -239,7 +246,9 @@ export default class CreateServiceRecord extends PureComponent {
               onChange={this.handleServiceType}
             >
               {
-                dict.serveType.map(obj => (<Option value={obj.key}>{obj.value}</Option>))
+                dict.serveType.map(obj => (
+                  <Option key={obj.key} value={obj.key}>{obj.value}</Option>
+                ))
               }
             </Select>
           </Col>
@@ -250,7 +259,9 @@ export default class CreateServiceRecord extends PureComponent {
               value={moment(serviceTime, dateFormat)}
               format={dateFormat}
               allowClear={false}
+              showTime
               onChange={this.handleServiceTime}
+              disabledDate={this.disabledDate}
             />
           </Col>
         </Row>
@@ -259,14 +270,14 @@ export default class CreateServiceRecord extends PureComponent {
         </p>
         <TextArea
           rows={5}
-          id="serviceContent"
+          ref={ref => this.serviceContent = ref}
         />
         <p className={`${styles.mt30} ${styles.mb10}`}>
           请描述客户对此次服务的反馈
         </p>
         <TextArea
           rows={5}
-          id="feedbackContent"
+          ref={ref => this.feedbackContent = ref}
         />
         <Row className={styles.mt30}>
           <Col span={12}>
@@ -276,7 +287,9 @@ export default class CreateServiceRecord extends PureComponent {
               value={moment(feedbackTime, dateFormat)}
               format={dateFormat}
               allowClear={false}
+              showTime
               onChange={this.handleFeedbackTime}
+              disabledDate={this.disabledDate}
             />
           </Col>
           <Col span={12}>
@@ -287,7 +300,9 @@ export default class CreateServiceRecord extends PureComponent {
               onChange={this.handleWorkResult}
             >
               {
-                dict.workResult.map(obj => (<Option value={obj.key}>{obj.value}</Option>))
+                dict.workResult.map(obj => (
+                  <Option key={obj.key} value={obj.key}>{obj.value}</Option>
+                ))
               }
             </Select>
           </Col>

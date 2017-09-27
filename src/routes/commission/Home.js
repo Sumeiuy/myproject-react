@@ -13,6 +13,7 @@ import { withRouter, routerRedux } from 'dva/router';
 import SplitPanel from '../../components/common/splitPanel/SplitPanel';
 import Detail from '../../components/commissionAdjustment/Detail';
 import ApprovalRecordBoard from '../../components/commissionAdjustment/ApprovalRecordBoard';
+import CreateNewApprovalBoard from '../../components/commissionAdjustment/CreateNewApprovalBoard';
 import CommissionHeader from '../../components/common/biz/SeibelHeader';
 import CommissionList from '../../components/common/biz/CommonList';
 import seibelColumns from '../../components/common/biz/seibelColumns';
@@ -31,10 +32,17 @@ const effects = {
   searchCust: 'commission/searchCustList',
   searchDrafter: 'commission/searchDrafterList',
   custRange: 'commission/getCustRange',
+  productList: 'commission/getProductList',
+  approver: 'commission/getAprovalUserList',
+  validate: 'commission/validateCustInfo',
 };
 
 const mapStateToProps = state => ({
   list: state.commission.list,
+  productList: state.commission.productList,
+  approvalUserList: state.commission.approvalUserList,
+  validataLoading: state.commission.validataLoading,
+  validateResult: state.commission.validateResult,
   detail: state.commission.detail,
   custRange: state.commission.custRange,
   approvalRecord: state.commission.approvalRecord,
@@ -57,6 +65,9 @@ const mapDispatchToProps = {
   searchCustList: getDataFunction(false, effects.searchCust), // 通过关键字，查询可选用户列表
   searchDrafter: getDataFunction(false, effects.searchDrafter), // 通过关键字，查询可选拟稿人列表
   getCustRange: getDataFunction(false, effects.custRange), // 组织机构
+  getProductList: getDataFunction(false, effects.productList), // 查询目标产品列表
+  getAprovalUserList: getDataFunction(false, effects.approver), // 查询审批人员列表
+  validateCustInfo: getDataFunction(false, effects.validate), // 校验用户资格
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -66,17 +77,24 @@ export default class CommissionHome extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
+    validateCustInfo: PropTypes.func.isRequired,
+    getAprovalUserList: PropTypes.func.isRequired,
     getCommissionList: PropTypes.func.isRequired,
     getCommissionDetail: PropTypes.func.isRequired,
     getApprovalRecords: PropTypes.func.isRequired,
     searchCustList: PropTypes.func.isRequired,
     searchDrafter: PropTypes.func.isRequired,
     getCustRange: PropTypes.func.isRequired,
+    getProductList: PropTypes.func.isRequired,
     custRange: PropTypes.array.isRequired,
+    productList: PropTypes.array.isRequired,
     list: PropTypes.object.isRequired,
     detail: PropTypes.object.isRequired,
-    approvalRecord: PropTypes.array.isRequired,
+    approvalRecord: PropTypes.object.isRequired,
     recordLoading: PropTypes.bool.isRequired,
+    validataLoading: PropTypes.bool.isRequired,
+    validateResult: PropTypes.string.isRequired,
+    approvalUserList: PropTypes.array.isRequired,
     filterCustList: PropTypes.array.isRequired,
     filterDrafterList: PropTypes.array.isRequired,
   }
@@ -90,12 +108,14 @@ export default class CommissionHome extends PureComponent {
     this.state = {
       isEmpty: true,
       approvalBoard: false,
+      createApprovalBoard: false,
     };
   }
 
   componentWillMount() {
     const {
       getCommissionList,
+      getAprovalUserList,
       getCustRange,
       location: {
         query,
@@ -107,6 +127,7 @@ export default class CommissionHome extends PureComponent {
     } = this.props;
     const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
     getCustRange({});
+    getAprovalUserList({ loginUser: getEmpId() });
     // 默认筛选条件
     getCommissionList({ ...params, type: pageType });
   }
@@ -178,7 +199,6 @@ export default class CommissionHome extends PureComponent {
   @autobind
   getApprovalBoardCustInfo(info) {
     const loginuser = getEmpId();
-    console.warn('getApprovalBoardCustInfo', info);
     this.props.getApprovalRecords({ ...info, loginuser });
   }
 
@@ -199,7 +219,7 @@ export default class CommissionHome extends PureComponent {
   // 头部新建按钮点击事件处理程序
   @autobind
   handleCreateBtnClick() {
-    console.warn('新建按钮');
+    this.openCreateApprovalBoard();
   }
 
   // 根据用户输入查询查询拟稿人
@@ -237,11 +257,27 @@ export default class CommissionHome extends PureComponent {
     });
   }
 
+  // 打开新建申请的弹出框
+  @autobind
+  openCreateApprovalBoard() {
+    this.setState({
+      createApprovalBoard: true,
+    });
+  }
+
   // 关闭审批记录弹出窗
   @autobind
   closeApprovalBoard() {
     this.setState({
       approvalBoard: false,
+    });
+  }
+
+  // 关闭新建申请弹出层
+  @autobind
+  closeNewApprovalBoard() {
+    this.setState({
+      createApprovalBoard: false,
     });
   }
 
@@ -255,13 +291,19 @@ export default class CommissionHome extends PureComponent {
       filterCustList,
       custRange,
       approvalRecord,
+      productList,
+      getProductList,
+      approvalUserList,
+      validataLoading,
+      validateResult,
+      validateCustInfo,
     } = this.props;
     if (_.isEmpty(custRange)) {
       return null;
     }
     const isEmpty = _.isEmpty(list);
     // 此处需要提供一个方法给返回的接口查询设置是否查询到数据
-    const { approvalBoard } = this.state;
+    const { approvalBoard, createApprovalBoard } = this.state;
     const topPanel = (
       <CommissionHeader
         location={location}
@@ -309,6 +351,18 @@ export default class CommissionHome extends PureComponent {
           record={approvalRecord}
           visible={approvalBoard}
           onClose={this.closeApprovalBoard}
+        />
+        <CreateNewApprovalBoard
+          modalKey="createApprovalBoard"
+          visible={createApprovalBoard}
+          onClose={this.closeNewApprovalBoard}
+          queryProductList={getProductList}
+          targetProductList={productList}
+          approverList={approvalUserList}
+          customerList={[]}
+          validataLoading={validataLoading}
+          validateResult={validateResult}
+          validateCust={validateCustInfo}
         />
       </div>
     );

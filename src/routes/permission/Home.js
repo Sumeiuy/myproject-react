@@ -35,13 +35,16 @@ const mapStateToProps = state => ({
   detailMessage: state.permission.detailMessage,
   // 左侧列表数据
   list: state.permission.list,
+  // 查询服务人员列表
   searchServerPersonList: state.permission.searchServerPersonList,
   // 拟稿人
   drafterList: state.permission.drafterList,
   // 部门
   custRange: state.permission.custRange,
-  // 客户
+  // 已申请客户
   customerList: state.permission.customerList,
+  // 可申请客户
+  canApplyCustList: state.permission.canApplyCustList,
   // 查询已有服务任务列表
   hasServerPersonList: state.permission.hasServerPersonList,
   // 按照条件 查询下一审批人列表
@@ -63,8 +66,10 @@ const mapDispatchToProps = {
   getDrafterList: fetchDataFunction(false, 'permission/getDrafterList'),
   // 获取部门
   getEmpOrgTree: fetchDataFunction(false, 'permission/getEmpOrgTree'),
- // 获取客户列表
+  // 获取已申请客户列表
   getCustomerList: fetchDataFunction(false, 'permission/getCustomerList'),
+  // 获取可申请客户列表
+  getCanApplyCustList: fetchDataFunction(false, 'permission/getCanApplyCustList'),
   // 查询已有服务任务列表
   getHasServerPersonList: fetchDataFunction(false, 'permission/getHasServerPersonList'),
   // 按照条件 查询下一审批人列表
@@ -89,8 +94,10 @@ export default class Permission extends PureComponent {
     replace: PropTypes.func.isRequired,
     getSearchServerPersonList: PropTypes.func.isRequired,
     getCustomerList: PropTypes.func.isRequired,
+    getCanApplyCustList: PropTypes.func.isRequired,
     searchServerPersonList: PropTypes.array.isRequired,
     customerList: PropTypes.array.isRequired,
+    canApplyCustList: PropTypes.array.isRequired,
     hasServerPersonList: PropTypes.array.isRequired,
     getHasServerPersonList: PropTypes.func.isRequired,
     getNextApproverList: PropTypes.func.isRequired,
@@ -104,7 +111,7 @@ export default class Permission extends PureComponent {
   }
 
   static childContextTypes = {
-    getCustomerList: PropTypes.func.isRequired,
+    getCanApplyCustList: PropTypes.func.isRequired,
     getSearchServerPersonList: PropTypes.func.isRequired,
   }
 
@@ -114,14 +121,14 @@ export default class Permission extends PureComponent {
       isEmpty: true,
       // 默认状态下新建弹窗不可见 false 不可见  true 可见
       isShowModal: false,
+      detailMessage: {},
     };
   }
 
   getChildContext() {
     return {
-      // 获取查询客户列表
-      getCustomerList: (data) => {
-        this.props.getCustomerList({ keyword: data });
+      getCanApplyCustList: (data) => {
+        this.props.getCanApplyCustList({ keyword: data });
       },
       // 获取 查询服务人员列表
       getSearchServerPersonList: (data) => {
@@ -150,6 +157,7 @@ export default class Permission extends PureComponent {
     });
 
     getEmpOrgTree({});
+    this.setState({ detailMessage: this.props.detailMessage });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -178,7 +186,6 @@ export default class Permission extends PureComponent {
         });
       }
     }
-
     /* currentId变化重新请求 */
     if (currentId && (currentId !== prevCurrentId)) {
       const { getDetailMessage } = this.props;
@@ -186,6 +193,11 @@ export default class Permission extends PureComponent {
         id: currentId,
         type: pageType,
       });
+      this.setState({ detailMessage: {} });
+    }
+    // 当redux 中 detailMessage的数据放生变化的时候 重新setState赋值
+    if (this.props.detailMessage !== nextProps.detailMessage) {
+      this.setState({ detailMessage: nextProps.detailMessage });
     }
   }
 
@@ -274,13 +286,13 @@ export default class Permission extends PureComponent {
   }
 
   get detailComponent() {
-    if (_.isEmpty(this.props.detailMessage)) {
+    if (_.isEmpty(this.state.detailMessage)) {
       return null;
     }
     return (
       <Detail
-        {...this.props.detailMessage}
-        customerList={this.props.customerList}
+        {...this.state.detailMessage}
+        canApplyCustList={this.props.canApplyCustList}
         searchServerPersonList={this.props.searchServerPersonList}
         nextApproverList={this.props.nextApproverList}
         getNextApproverList={this.props.getNextApproverList}
@@ -298,6 +310,7 @@ export default class Permission extends PureComponent {
       drafterList,
       custRange,
       customerList,
+      canApplyCustList,
       searchServerPersonList,
       hasServerPersonList,
     } = this.props;
@@ -348,7 +361,7 @@ export default class Permission extends PureComponent {
         {
           isShowModal ?
             <CreatePrivateClient
-              customerList={customerList}
+              canApplyCustList={canApplyCustList}
               searchServerPersonList={searchServerPersonList}
               hasServerPersonList={hasServerPersonList}
               onEmitClearModal={this.clearModal}

@@ -37,11 +37,11 @@ export default class Detail extends PureComponent {
     workflowHistoryBeans: PropTypes.array,
     attachInfoList: PropTypes.array,
     searchServerPersonList: PropTypes.array.isRequired,
-    customerList: PropTypes.array.isRequired,
     nextApproverList: PropTypes.array.isRequired,
     getNextApproverList: PropTypes.func.isRequired,
     bottonList: PropTypes.array.isRequired,
     getBottonList: PropTypes.func.isRequired,
+    canApplyCustList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -156,7 +156,7 @@ export default class Detail extends PureComponent {
           subTypeTxt={subTypeTxt}
           customer={`${this.state.customer.custName}（${this.state.customer.custNumber}）`}
           remark={this.state.remark}
-          customerList={this.props.customerList}
+          canApplyCustList={this.props.canApplyCustList}
           onEmitEvent={this.updateValue}
         />
       );

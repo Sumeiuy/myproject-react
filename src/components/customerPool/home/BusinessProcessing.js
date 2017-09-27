@@ -14,6 +14,7 @@ import styles from './performanceIndicators.less';
 
 export default class BusinessProcessing extends PureComponent {
   static propTypes = {
+    cycle: PropTypes.array,
     data: PropTypes.object,
     push: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
@@ -21,6 +22,7 @@ export default class BusinessProcessing extends PureComponent {
 
   static defaultProps = {
     data: {},
+    cycle: [],
   }
 
   constructor(props) {
@@ -64,14 +66,14 @@ export default class BusinessProcessing extends PureComponent {
 
   @autobind
   linkTo(value, bname) {
-    const { push, location: { query: { orgId, cycleSelect } } } = this.props;
+    const { cycle, push, location: { query: { orgId, cycleSelect } } } = this.props;
     const pathname = '/customerPool/list';
     const obj = {
       source: 'numOfCustOpened',
       rightType: value,
       bname: encodeURIComponent(bname),
-      orgId,
-      cycleSelect,
+      orgId: orgId || '',
+      cycleSelect: cycleSelect || (cycle[0] || {}).key,
     };
     if (document.querySelector(fspContainer.container)) {
       const url = `${pathname}?${helper.queryToString(obj)}`;
@@ -79,8 +81,8 @@ export default class BusinessProcessing extends PureComponent {
         closable: true,
         forceRefresh: true,
         isSpecialTab: true,
-        id: 'RCT_FSP_PERFORMANCE',
-        title: '业绩目标客户',
+        id: 'RCT_FSP_CUSTOMER_LIST',
+        title: '目标客户',
       };
       fspGlobal.openRctTab({ url, param });
     } else {
@@ -114,12 +116,17 @@ export default class BusinessProcessing extends PureComponent {
                 <Col span={9}>
                   <ul>
                     <li>
-                      <p
-                        className={styles.pointer}
-                        onClick={() => { this.linkTo('cftCust', '涨乐财富通'); }}
-                      >
-                        {this.numFormat(cftCust || '--')}
-                      </p>
+                      {
+                        cftCust ?
+                          <p
+                            className={styles.pointer}
+                            onClick={() => { this.linkTo('cftCust', '涨乐财富通'); }}
+                          >
+                            {this.numFormat(cftCust)}
+                          </p>
+                        :
+                          <p>{'--'}</p>
+                      }
                       <div>涨乐财富通</div>
                     </li>
                   </ul>
@@ -127,12 +134,17 @@ export default class BusinessProcessing extends PureComponent {
                 <Col span={8}>
                   <ul>
                     <li>
-                      <p
-                        className={styles.pointer}
-                        onClick={() => { this.linkTo('ttfCust', '天天发'); }}
-                      >
-                        {this.numFormat(ttfCust || '--')}
-                      </p>
+                      {
+                        ttfCust ?
+                          <p
+                            className={styles.pointer}
+                            onClick={() => { this.linkTo('ttfCust', '天天发'); }}
+                          >
+                            {this.numFormat(ttfCust)}
+                          </p>
+                        :
+                          <p>{'--'}</p>
+                      }
                       <div>天天发</div>
                     </li>
                   </ul>
@@ -140,12 +152,17 @@ export default class BusinessProcessing extends PureComponent {
                 <Col span={7}>
                   <ul>
                     <li className={styles.bd_un_r}>
-                      <p
-                        className={styles.pointer}
-                        onClick={() => { this.linkTo('rzrqCust', '融资融券'); }}
-                      >
-                        {this.numFormat(rzrqCust || '--')}
-                      </p>
+                      {
+                        rzrqCust ?
+                          <p
+                            className={styles.pointer}
+                            onClick={() => { this.linkTo('rzrqCust', '融资融券'); }}
+                          >
+                            {this.numFormat(rzrqCust)}
+                          </p>
+                        :
+                          <p>{'--'}</p>
+                      }
                       <div>融资融券</div>
                     </li>
                   </ul>
@@ -155,12 +172,17 @@ export default class BusinessProcessing extends PureComponent {
                 <Col span={9}>
                   <ul>
                     <li>
-                      <p
-                        className={styles.pointer}
-                        onClick={() => { this.linkTo('szHkCust', '沪港通'); }}
-                      >
-                        {this.numFormat(shHkCust || '--')}
-                      </p>
+                      {
+                        shHkCust ?
+                          <p
+                            className={styles.pointer}
+                            onClick={() => { this.linkTo('szHkCust', '沪港通'); }}
+                          >
+                            {this.numFormat(shHkCust)}
+                          </p>
+                        :
+                          <p>{'--'}</p>
+                      }
                       <div>沪港通</div>
                     </li>
                   </ul>
@@ -168,12 +190,17 @@ export default class BusinessProcessing extends PureComponent {
                 <Col span={8}>
                   <ul>
                     <li>
-                      <p
-                        className={styles.pointer}
-                        onClick={() => { this.linkTo('shHkCust', '深港通'); }}
-                      >
-                        {this.numFormat(szHkCust || '--')}
-                      </p>
+                      {
+                        szHkCust ?
+                          <p
+                            className={styles.pointer}
+                            onClick={() => { this.linkTo('shHkCust', '深港通'); }}
+                          >
+                            {this.numFormat(szHkCust || '--')}
+                          </p>
+                        :
+                          <p>{'--'}</p>
+                      }
                       <div>深港通</div>
                     </li>
                   </ul>
@@ -181,12 +208,17 @@ export default class BusinessProcessing extends PureComponent {
                 <Col span={7}>
                   <ul>
                     <li className={styles.bd_un_r}>
-                      <p
-                        className={styles.pointer}
-                        onClick={() => { this.linkTo('optCust', '期权'); }}
-                      >
-                        {this.numFormat(optCust || '--')}
-                      </p>
+                      {
+                        optCust ?
+                          <p
+                            className={styles.pointer}
+                            onClick={() => { this.linkTo('optCust', '期权'); }}
+                          >
+                            {this.numFormat(optCust || '--')}
+                          </p>
+                        :
+                          <p>{'--'}</p>
+                      }
                       <div>期权</div>
                     </li>
                   </ul>

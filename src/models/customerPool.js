@@ -6,25 +6,38 @@
 import _ from 'lodash';
 import { customerPool as api } from '../api';
 
+const EMPTY_LIST = [];
+const EMPTY_OBJECT = {};
+
 export default {
   namespace: 'customerPool',
   state: {
+    // 存放从服务端获取的全部代办数据
     todolist: [],
+    // 存放筛选后数据
     todolistRecord: [],
+    // 待办列表页码
     todoPage: {
       curPageNum: 1,
     },
     performanceIndicators: {},
+    // 组织机构树
     custRange: [],
+    // 时间周期：本年、本季、本月
     cycle: [],
-    position: {},
+    // 用户当前所在岗位
+    position: window.forReactPosition || {},
     process: {},
     empInfo: {},
-    dict: {},
-    monthlyProfits: [],
+    // 客户列表中对应的每个客户的近6个月的收益
+    monthlyProfits: {},
+    // 发送客户的近6个月的收益请求的前后标记
+    isGetCustIncome: false,
     hotwds: {},
     hotPossibleWdsList: [],
+    // 目标客户列表数据
     custList: [],
+    // 目标客户列表页码
     custPage: {
       pageSize: 10,
       pageNo: 1,
@@ -34,25 +47,39 @@ export default {
     clearState: {},
     cusgroupList: [],
     cusgroupPage: {
-      pageSize: 10,
-      pageNo: 1,
+      pageSize: 0,
+      pageNo: 0,
       total: 0,
     },
     searchHistoryVal: '',
-    isAllSelect: {},
-    selectedIds: {},
     cusGroupSaveResult: '',
     createTaskResult: {},
     cusGroupSaveMessage: '',
     resultgroupId: '',
+    incomeData: [], // 净收入
+    custContactData: {}, // 客户联系方式
+    serviceRecordData: {}, // 服务记录
+    // 添加服务记录请求前后的标记
     isAddServeRecord: false,
-    addServeRecordSuccess: false, // 添加服务记录成功的标记
+    // 添加服务记录成功的标记
+    addServeRecordSuccess: false,
+    isFollow: {},
+    followLoading: false,
+    fllowCustData: {},
+    // 分组维度，客户分组列表
+    customerGroupList: {},
+    // 指定分组下的客户列表
+    customerList: {},
+    // 客户分组历史搜索列表
+    customerHistoryWordsList: [],
+    // 客户分组是否清除历史搜索成功
+    isClearCustomerHistorySuccess: false,
+    // 客户分组历史搜索值，点击过按钮
+    customerSearchHistoryVal: '',
+    // 客户分组热词列表
+    customerHotPossibleWordsList: [],
   },
-  subscriptions: {
-    setup({ dispatch }) {
-      dispatch({ type: 'getDictionary' });
-    },
-  },
+  subscriptions: {},
   effects: {
     * getToDoList({ }, { call, put }) {  //eslint-disable-line
       const response = yield call(api.getToDoList);
@@ -78,30 +105,12 @@ export default {
         payload: { indicators },
       });
     },
-    // 初始化获取数据
-    * getAllInfo({ payload }, { call, put }) {
-      // 统计周期
-      const statisticalPeriod = yield call(api.getStatisticalPeriod);
-      // debugger;
-      yield put({
-        type: 'getStatisticalPeriodSuccess',
-        payload: { statisticalPeriod },
-      });
-      const firstCycle = statisticalPeriod.resultData.kPIDateScopeType;
-      // debugger;
-      // (首页总数)
+    // (首页总数)
+    * getToBeDone({ payload }, { call, put }) {
       const queryNumbers = yield call(api.getQueryNumbers);
       yield put({
         type: 'getWorkFlowTaskCountSuccess',
         payload: { queryNumbers },
-      });
-      // 绩效指标
-      const indicators =
-        yield call(api.getPerformanceIndicators,
-          { ...payload.request, dateType: firstCycle[0].key });
-      yield put({
-        type: 'getPerformanceIndicatorsSuccess',
-        payload: { indicators },
       });
     },
     * search({ payload }, { put, select }) {
@@ -122,15 +131,6 @@ export default {
         payload: newPage,
       });
     },
-    // 获取字典
-    * getDictionary({ payload }, { call, put }) {
-      const response = yield call(api.getStatisticalPeriod);
-      // console.log('dict', response);
-      yield put({
-        type: 'getDictionarySuccess',
-        payload: { response },
-      });
-    },
     // 获取客户列表
     * getCustomerList({ payload }, { call, put }) {
       const response = yield call(api.getCustomerList, payload);
@@ -141,10 +141,13 @@ export default {
     },
     // 获取客户列表6个月收益率
     * getCustIncome({ payload }, { call, put }) {
-      const response = yield call(api.getCustIncome, payload);
+      yield put({
+        type: 'getCustIncomeReq',
+      });
+      const { resultData: { monthlyProfits } } = yield call(api.getCustIncome, payload);
       yield put({
         type: 'getCustIncomeSuccess',
-        payload: response,
+        payload: { ...payload, monthlyProfits },
       });
     },
     // 默认推荐词及热词推荐列表及历史搜索数据
@@ -217,15 +220,63 @@ export default {
         payload: { createTaskResult },
       });
     },
-    * getStatisticalPeriod({ }, { call, put }) { //eslint-disable-line
-      // 统计周期
-      const statisticalPeriod = yield call(api.getStatisticalPeriod);
-      // debugger;
+    // 获取净创收数据
+    * getIncomeData({ payload }, { call, put }) {
+      const response = yield call(api.queryKpiIncome, payload);
+      const { resultData } = response;
       yield put({
-        type: 'getStatisticalPeriodSuccess',
-        payload: { statisticalPeriod },
+        type: 'getIncomeDataSuccess',
+        payload: resultData,
       });
     },
+    // 获取个人和机构联系方式
+    * getCustContact({ payload }, { call, put }) {
+      const response = yield call(api.queryCustContact, payload);
+      const { resultData } = response;
+      const { custId } = payload;
+      yield put({
+        type: 'getCustContactSuccess',
+        payload: { resultData, custId },
+      });
+    },
+    // 获取最近五次服务记录
+    * getServiceRecord({ payload }, { call, put }) {
+      const response = yield call(api.queryRecentServiceRecord, payload);
+      const { resultData } = response;
+      const { custId } = payload;
+      yield put({
+        type: 'getServiceRecordSuccess',
+        payload: { resultData, custId },
+      });
+    },
+    * getFollowCust({ payload }, { call, put }) {
+      yield put({
+        type: 'getFollowCustSuccess',
+        payload: {
+          value: true,
+          message: '开始开始',
+        },
+      });
+      const response = yield call(api.followCust, payload);
+      const { resultData } = response;
+      yield put({
+        type: 'getFollowCustSuccess',
+        payload: {
+          value: false,
+          message: '关注成功',
+          fllowCustData: resultData,
+        },
+      });
+    },
+    // * getStatisticalPeriod({ }, { call, put }) { //eslint-disable-line
+    //   // 统计周期
+    //   const statisticalPeriod = yield call(api.getStatisticalPeriod);
+    //   // debugger;
+    //   yield put({
+    //     type: 'getStatisticalPeriodSuccess',
+    //     payload: { statisticalPeriod },
+    //   });
+    // },
     // 列表页添加服务记录
     * addServeRecord({ payload }, { call, put }) {
       yield put({
@@ -235,6 +286,48 @@ export default {
       yield put({
         type: 'addServeRecordSuccess',
         payload: res,
+      });
+    },
+    // 获取客户分组
+    * getCustomerGroupList({ payload }, { call, put }) {
+      const response = yield call(api.queryCustomerGroupList, payload);
+      const { resultData } = response;
+      yield put({
+        type: 'getCustomerGroupListSuccess',
+        payload: resultData,
+      });
+    },
+    // 获取分组客户
+    * getGroupCustomerList({ payload }, { call, put }) {
+      const response = yield call(api.queryGroupCustomerList, payload);
+      const { resultData } = response;
+      yield put({
+        type: 'getGroupCustomerListSuccess',
+        payload: resultData,
+      });
+    },
+    // 分组客户下联想的推荐热词列表
+    * getCustomerHotPossibleWds({ payload }, { call, put }) {
+      const response = yield call(api.getHotPossibleWds, payload);
+      yield put({
+        type: 'getCustomerHotPossibleWdsSuccess',
+        payload: { response },
+      });
+    },
+    // 分组客户下默认推荐词及热词推荐列表及历史搜索数据
+    * getCustomerHistoryWdsList({ payload }, { call, put }) {
+      const history = yield call(api.getHistoryWdsList, payload);
+      yield put({
+        type: 'getCustomerHistoryWdsListSuccess',
+        payload: { history },
+      });
+    },
+    // 分组客户下清除历史搜索列表
+    * clearCustomerSearchHistoryList({ payload }, { call, put }) {
+      const clearHistoryState = yield call(api.clearSearchHistoryList, payload);
+      yield put({
+        type: 'clearCustomerSearchHistoryListSuccess',
+        payload: { clearHistoryState },
       });
     },
   },
@@ -294,14 +387,14 @@ export default {
       };
     },
     // 统计周期
-    getStatisticalPeriodSuccess(state, action) {
-      const { payload: { statisticalPeriod } } = action;
-      const cycle = statisticalPeriod.resultData.kPIDateScopeType;
-      return {
-        ...state,
-        cycle,
-      };
-    },
+    // getStatisticalPeriodSuccess(state, action) {
+    //   const { payload: { statisticalPeriod } } = action;
+    //   const cycle = statisticalPeriod.resultData.kPIDateScopeType;
+    //   return {
+    //     ...state,
+    //     cycle,
+    //   };
+    // },
     // (首页总数)
     getWorkFlowTaskCountSuccess(state, action) {
       const { payload: { queryNumbers } } = action;
@@ -317,14 +410,6 @@ export default {
       return {
         ...state,
         position: payload,
-      };
-    },
-    getDictionarySuccess(state, action) {
-      const { payload: { response } } = action;
-      const dict = response.resultData;
-      return {
-        ...state,
-        dict,
       };
     },
     // 默认推荐词及热词推荐列表
@@ -360,7 +445,7 @@ export default {
       }
       const custPage = {
         pageSize: custListVO.pageSize,
-        pageNo: Number(custListVO.curPageNum) + 1,
+        pageNo: Number(custListVO.curPageNum),
         total: custListVO.totalCount,
       };
       return {
@@ -370,10 +455,14 @@ export default {
       };
     },
     getCustIncomeSuccess(state, action) {
-      const { payload: { resultData: { monthlyProfits } } } = action;
+      const { payload: { custNumber, monthlyProfits } } = action;
       return {
         ...state,
-        monthlyProfits,
+        isGetCustIncome: false,
+        monthlyProfits: {
+          ...state.monthlyProfits,
+          [custNumber]: monthlyProfits,
+        },
       };
     },
     // 历史搜索列表
@@ -392,26 +481,30 @@ export default {
         clearState: clearHistoryState,
       };
     },
-      // 获取客户分组列表
+    // 获取客户分组列表
     getGroupListSuccess(state, action) {
       const { payload: { resultData } } = action;
+      const { custGroupDTOList, curPageNum, pageSize, totalRecordNum } = resultData;
       if (!resultData) {
         return {
           ...state,
           cusgroupList: [],
           cusgroupPage: {
-            total: 0,
+            curPageNum,
+            pageSize,
+            totalRecordNum,
           },
-          cusGroupSaveResult: '',
         };
       }
-      const cusgroupPage = {
-        total: resultData.totalPageNum,
-      };
+
       return {
         ...state,
-        cusgroupList: resultData.custGroupDTOList,
-        cusgroupPage,
+        cusgroupList: custGroupDTOList,
+        cusgroupPage: {
+          curPageNum,
+          pageSize,
+          totalRecordNum,
+        },
         cusGroupSaveResult: '',
       };
     },
@@ -423,27 +516,13 @@ export default {
         searchHistoryVal: searchVal,
       };
     },
-    // 保存是否全选
-    saveIsAllSelect(state, action) {
-      return {
-        ...state,
-        isAllSelect: action.payload,
-      };
-    },
-
-    // 保存选中的数据id
-    saveSelectedIds(state, action) {
-      return {
-        ...state,
-        selectedIds: action.payload,
-      };
-    },
-      // 添加到现有分组保存成功
+    // 添加到现有分组保存成功
     addCusToGroupSuccess(state, action) {
       const { payload: { resultData } } = action;
       return {
         ...state,
         resultgroupId: resultData.groupId,
+        cusGroupSaveResult: resultData.result,
       };
     },
     // 自建任务提交
@@ -452,6 +531,34 @@ export default {
       return {
         ...state,
         createTaskResult: payload,
+      };
+    },
+    // 获取净创收数据成功
+    getIncomeDataSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        incomeData: !_.isEmpty(payload) ? payload : [],
+      };
+    },
+    // 获取联系方式成功
+    getCustContactSuccess(state, action) {
+      const { payload: { resultData, custId } } = action;
+      return {
+        ...state,
+        custContactData: {
+          [custId]: resultData,
+        },
+      };
+    },
+    // 获取服务记录成功
+    getServiceRecordSuccess(state, action) {
+      const { payload: { resultData, custId } } = action;
+      return {
+        ...state,
+        serviceRecordData: {
+          [custId]: resultData,
+        },
       };
     },
     sendAddServeRecordReq(state) {
@@ -466,6 +573,86 @@ export default {
         ...state,
         addServeRecordSuccess: payload.resultData === 'success',
         isAddServeRecord: false,
+      };
+    },
+    // 关注成功
+    getFollowCustSuccess(state, action) {
+      const { payload: { value, message, fllowCustData } } = action;
+      return {
+        ...state,
+        followLoading: value,
+        message,
+        fllowCustData,
+      };
+    },
+    getCustIncomeReq(state) {
+      return {
+        ...state,
+        isGetCustIncome: true,
+      };
+    },
+    // 获取客户分组成功
+    getCustomerGroupListSuccess(state, action) {
+      const { payload } = action;
+      const { custGroupDTOList = EMPTY_LIST, totalRecordNum } = payload;
+
+      return {
+        ...state,
+        customerGroupList: {
+          page: {
+            // 后台返回的一直是null，所以不要了
+            // curPageNum,
+            // pageSize,
+            totalRecordNum,
+          },
+          resultData: custGroupDTOList,
+        },
+      };
+    },
+    // 获取指定分组客户成功
+    getGroupCustomerListSuccess(state, action) {
+      const { payload } = action;
+      const { page = EMPTY_OBJECT, custList = EMPTY_LIST } = payload;
+
+      return {
+        ...state,
+        customerList: {
+          page,
+          resultData: custList,
+        },
+      };
+    },
+    // 分组客户下的历史搜索列表
+    getCustomerHistoryWdsListSuccess(state, action) {
+      const { payload: { history: { resultData: { historyWdsList } } } } = action;
+      return {
+        ...state,
+        customerHistoryWordsList: historyWdsList,
+      };
+    },
+    // 清除分组客户下历史搜索列表
+    clearCustomerSearchHistoryListSuccess(state, action) {
+      const { payload: { clearHistoryState: { clearState } } } = action;
+      return {
+        ...state,
+        isClearCustomerHistorySuccess: clearState,
+      };
+    },
+    // 分组客户下保存搜索内容
+    saveCustomerSearchVal(state, action) {
+      const { payload: { searchVal } } = action;
+      return {
+        ...state,
+        customerSearchHistoryVal: searchVal,
+      };
+    },
+    // 分组客户下联想的推荐热词列表
+    getCustomerHotPossibleWdsSuccess(state, action) {
+      const { payload: { response } } = action;
+      const hotPossibleWdsList = response.resultData.hotPossibleWdsList;
+      return {
+        ...state,
+        customerHotPossibleWordsList: hotPossibleWdsList,
       };
     },
   },

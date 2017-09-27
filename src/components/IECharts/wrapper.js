@@ -103,7 +103,9 @@ function wrapECharts(ECharts) {
       if (this.state.fnResize && this.state.fnResize.cancel) {
         this.state.fnResize.cancel();
       }
-      this.state.instance.dispose();
+      if (this.state.instance) {
+        this.state.instance.dispose();
+      }
       // const instance = that._getInstance()
       // if (instance) {
       //   instance.dispose();
@@ -163,7 +165,9 @@ function wrapECharts(ECharts) {
     myresize() {
       const that = this;
       // console.log('_resize');
-      that.state.instance.resize();
+      if (that.state.instance) {
+        that.state.instance.resize();
+      }
       // const instance = that._getInstance()
       // if (instance) {
       //   instance.resize();

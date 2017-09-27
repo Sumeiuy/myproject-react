@@ -49,8 +49,8 @@ export default class PerformanceIndicators extends PureComponent {
       closable: true,
       forceRefresh: true,
       isSpecialTab: true,
-      id: 'RCT_FSP_BUSINESS',
-      title: '业务目标客户',
+      id: 'RCT_FSP_CUSTOMER_LIST',
+      title: '目标客户',
     };
     if (document.querySelector(fspContainer.container)) {
       fspGlobal.openRctTab({ url, param });
@@ -120,7 +120,15 @@ export default class PerformanceIndicators extends PureComponent {
             </Col>
             <Col span={6}>
               <div className={`${styles.item} ${styles.item_d}`}>
-                <a className="item" onClick={() => fspGlobal.openRctTab({ notificationUrl, param: notificationParam })}>
+                <a
+                  className="item"
+                  onClick={
+                    () => fspGlobal.openFspTab({
+                      url: notificationUrl,
+                      param: notificationParam,
+                    })
+                  }
+                >
                   <div className={styles.content}>
                     <h1>{this.processNum(notificationNumbers)}</h1>
                     <p>消息提醒</p>
