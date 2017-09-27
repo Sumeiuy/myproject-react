@@ -35,7 +35,7 @@ const mapStateToProps = state => ({
   detailMessage: state.permission.detailMessage,
   // 左侧列表数据
   list: state.app.seibleList,
-  // 查询服务人员列表
+  // 服务人员列表
   searchServerPersonList: state.permission.searchServerPersonList,
   // 拟稿人
   drafterList: state.app.drafterList,
@@ -44,7 +44,7 @@ const mapStateToProps = state => ({
   // 已申请客户
   customerList: state.app.customerList,
   // 可申请客户
-  canApplyCustList: state.permission.canApplyCustList,
+  canApplyCustList: state.app.canApplyCustList,
   // 查询已有服务任务列表
   hasServerPersonList: state.permission.hasServerPersonList,
   // 按照条件 查询下一审批人列表
@@ -53,6 +53,8 @@ const mapStateToProps = state => ({
   bottonList: state.permission.bottonList,
   // 获取修改私密客户申请 的结果
   modifyCustApplication: state.permission.modifyCustApplication,
+  // 列表loading
+  seibelListLoading: state.loading.effects['app/getSeibleList'],
 });
 
 const mapDispatchToProps = {
@@ -60,18 +62,19 @@ const mapDispatchToProps = {
   // 获取右侧详情
   getDetailMessage: fetchDataFunction(true, 'permission/getDetailMessage'),
   // 获取左侧列表
-  getPermissionList: fetchDataFunction(true, 'app/getPermissionList'),
+  getPermissionList: fetchDataFunction(true, 'app/getSeibleList'),
   // 获取服务人员列表
-  // getServerPersonelList: fetchDataFunction(false, 'permission/getServerPersonelList'),
+  getServerPersonelList: fetchDataFunction(false, 'permission/getServerPersonelList'),
+  // 搜索服务人员列表
   getSearchServerPersonList: fetchDataFunction(false, 'permission/getSearchServerPersonList'),
   // 获取拟稿人
   getDrafterList: fetchDataFunction(false, 'app/getDrafterList'),
   // 获取部门
-  getEmpOrgTree: fetchDataFunction(false, 'app/getEmpOrgTree'),
+  getEmpOrgTree: fetchDataFunction(false, 'app/getCustRange'),
   // 获取已申请客户列表
   getCustomerList: fetchDataFunction(false, 'app/getCustomerList'),
   // 获取可申请客户列表
-  getCanApplyCustList: fetchDataFunction(false, 'permission/getCanApplyCustList'),
+  getCanApplyCustList: fetchDataFunction(false, 'app/getCanApplyCustList'),
   // 查询已有服务任务列表
   getHasServerPersonList: fetchDataFunction(false, 'permission/getHasServerPersonList'),
   // 按照条件 查询下一审批人列表
@@ -87,6 +90,7 @@ const mapDispatchToProps = {
 export default class Permission extends PureComponent {
   static propTypes = {
     list: PropTypes.object.isRequired,
+    seibelListLoading: PropTypes.bool,
     drafterList: PropTypes.array.isRequired,
     custRange: PropTypes.array.isRequired,
     getPermissionList: PropTypes.func.isRequired,
@@ -113,7 +117,7 @@ export default class Permission extends PureComponent {
   }
 
   static defaultProps = {
-
+    seibelListLoading: false,
   }
 
   static childContextTypes = {
@@ -192,8 +196,10 @@ export default class Permission extends PureComponent {
         });
       }
     }
+    const { seibelListLoading: prevSLL } = this.props;
+    const { seibelListLoading: nextSLL } = nextProps;
     /* currentId变化重新请求 */
-    if (currentId && (currentId !== prevCurrentId)) {
+    if ((prevSLL && !nextSLL) || (currentId && (currentId !== prevCurrentId))) {
       const { getDetailMessage } = this.props;
       getDetailMessage({
         id: currentId,
