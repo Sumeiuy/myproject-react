@@ -15,7 +15,5 @@ export default function seibelCommon(api) {
     getCustRange: query => api.post('/groovynoauth/fsp/queryOrgInfo', query),
     // 通过用户输入的关键字，获取可申请的客户列表
     getCanApplyCustList: query => api.post('/groovynoauth/fsp/custList', query),
-    // 附件删除
-    deleteAttachment: query => api.post('/file/ceFileDelete', query),
   };
 }
