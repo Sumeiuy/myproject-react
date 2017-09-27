@@ -13,7 +13,7 @@ import PublishConfirmModal from '../../components/modals/PublishConfirmModal';
 import DeleteBoardModal from '../../components/modals/DeleteBoardModal';
 import SearchModal from '../../components/common/biz/SearchModal';
 import ProcessConfirm from '../../components/common/biz/ProcessConfirm';
-import Transfer from '../../components/common/biz/Transfer';
+import Transfer from '../../components/common/biz/TableTransfer';
 import CommonUpload from '../../components/common/biz/CommonUpload';
 import CommonModal from '../../components/common/biz/CommonModal';
 import InfoItem from '../../components/common/infoItem';

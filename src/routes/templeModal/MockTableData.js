@@ -151,7 +151,7 @@ export const unsubcribeData = [{
   type: '综合定价产品',
 }, {
   key: '15',
-  productName: '行业投资组合精选15',
+  productName: '行业投资组合精选15行业投资组合5',
   productCode: 'SP0449',
   type: '综合定价产品',
   children: [{
