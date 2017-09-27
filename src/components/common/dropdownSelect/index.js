@@ -73,7 +73,7 @@ export default class DropdownSelect extends PureComponent {
           value: `${item[showObjKey]}（${item[objId]}）`,
         });
       };
-      const idx = (objId === '') ? `selectList-${index}` : item[objId];
+      const idx = !item[objId] ? `selectList-${index}` : item[objId];
       return (
         <li
           key={idx}
