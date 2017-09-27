@@ -1,0 +1,39 @@
+.approveWrapper{
+  .approveNow{
+    line-height: 17px;
+    text-indent: 15px;
+    color: #a1a1a1;
+    font-size: 13px;
+    span:nth-child(odd) {
+      color: #333;
+    }
+    span:nth-child(3) {
+      margin-left: 20px;
+    }
+  }
+  .approveList {
+    margin-top: 11px;
+    div {
+      padding: 20px;
+      background: rgba(52,140,240,.1);
+      box-sizing: border-box;
+      &:nth-child(even) {
+        background: #fff;
+      }
+      &:hover {
+        background: #c2c2c2;
+        color: #fff;
+      }
+      p {
+        font-size: 13px;
+        line-height: 1.5;
+        color: #a1a1a1;
+        &:nth-child(2) {
+          font-size: 14px;
+          color: #333;
+          word-wrap: break-word;
+        }
+      }
+    }
+  }
+}

@@ -128,7 +128,7 @@ export default class Search extends PureComponent {
         labelMapping: '',
         tagNumId: '',
         q: encodeURIComponent(searchVal),
-      }, '搜索目标客户', 'FSP_SEARCH');
+      }, '目标客户', 'RCT_FSP_CUSTOMER_LIST');
     }
     return true;
   }
@@ -225,20 +225,21 @@ export default class Search extends PureComponent {
     data.forEach((item, index) => {
       recommendList.push(
         <a
+          key={item.id}
           className="item"
           onClick={() => this.handleOpenTab({
             source: 'tag',
             labelMapping: item.labelMapping || '',
             tagNumId: item.tagNumId || '',
             q: encodeURIComponent(item.labelNameVal),
-          }, '标签目标客户', 'FSP_TAG')}
+          }, '目标客户', 'RCT_FSP_CUSTOMER_LIST')}
           title={item.labelDesc}
           rel="noopener noreferrer"
         >
           {item.labelNameVal}
         </a>);
       if (index !== data.length - 1) {
-        recommendList.push(<i className={styles.bd} />);
+        recommendList.push(<i key={item.labelNameVal} className={styles.bd} />);
       }
     });
     return recommendList;
@@ -270,7 +271,7 @@ export default class Search extends PureComponent {
       labelMapping: '',
       tagNumId: '',
       q: encodeURIComponent(searchVal),
-    }, '搜索目标客户', 'FSP_SEARCH');
+    }, '目标客户', 'RCT_FSP_CUSTOMER_LIST');
   }
 
   @autobind
@@ -312,15 +313,15 @@ export default class Search extends PureComponent {
     // 搜索 search
     // 标签 tag
     return (
-      <Option key={item.category} text={item.content}>
+      <Option key={item.id} text={item.content}>
         <a
           onClick={() => this.handleOpenTab({
             source: 'association',
             labelMapping: item.labelMapping || '',
             tagNumId: item.tagNumId || item.content,
             q: encodeURIComponent(item.content),
-          }, '搜索目标客户', 'FSP_SEARCH')}
-          dangerouslySetInnerHTML={{ __html: newContent }} // eslint-disable-line
+          }, '目标客户', 'RCT_FSP_CUSTOMER_LIST')}
+          dangerouslySetInnerHTML={{ __html: newContent }}
           rel="noopener noreferrer"
         />
         <span className="desc">{item.desc}</span>
@@ -332,7 +333,7 @@ export default class Search extends PureComponent {
     // debugger;
     const options = dataSource.map(group => (
       <OptGroup
-        key={group.id}
+        key={group.title}
         label={this.renderTitle(group.title)}
       >
         {group.children.map(item => (
@@ -340,14 +341,14 @@ export default class Search extends PureComponent {
             <Option key={item.id} text={item.labelNameVal} disabled>
               {item.labelNameVal}
             </Option> :
-            <Option key={item.labelNameVal} text={item.labelNameVal} >
+            <Option key={item.id} text={item.labelNameVal} >
               <a
                 onClick={() => this.handleOpenTab({
                   source: 'search',
                   labelMapping: item.labelMapping || '',
                   tagNumId: item.tagNumId || '',
                   q: encodeURIComponent(item.labelNameVal),
-                }, '搜索目标客户', 'FSP_SEARCH')}
+                }, '目标客户', 'RCT_FSP_CUSTOMER_LIST')}
                 rel="noopener noreferrer"
               >
                 {item.labelNameVal}

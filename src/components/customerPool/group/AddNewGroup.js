@@ -6,7 +6,8 @@
  * */
 import React, { PureComponent, PropTypes } from 'react';
 import { withRouter } from 'dva/router';
-import { Form, Input, Button } from 'antd';
+import { Form, Input } from 'antd';
+import Button from '../../common/Button';
 import styles from './addNewGroup.less';
 
 const FormItem = Form.Item;
@@ -15,7 +16,7 @@ const create = Form.create;
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
-    sm: { span: 2 },
+    sm: { span: 3 },
   },
   wrapperCol: {
     xs: { span: 24 },
@@ -25,11 +26,11 @@ const formItemLayout = {
 const formItemLayout2 = {
   labelCol: {
     xs: { span: 24 },
-    sm: { span: 2 },
+    sm: { span: 3 },
   },
   wrapperCol: {
     xs: { span: 24 },
-    sm: { span: 22 },
+    sm: { span: 21 },
   },
 };
 @create()
@@ -38,9 +39,11 @@ export default class AddNewGroup extends PureComponent {
   static propTypes = {
     form: PropTypes.object.isRequired,
     onSubmit: PropTypes.func.isRequired,
-  }
+    closeTab: PropTypes.func.isRequired,
+  };
   addNewGroupSubmit = (e) => {
     const { onSubmit } = this.props;
+    console.log(onSubmit);
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
@@ -50,7 +53,7 @@ export default class AddNewGroup extends PureComponent {
   };
   render() {
     const { getFieldDecorator } = this.props.form;
-
+    const { closeTab } = this.props;
     return (
       <Form onSubmit={this.addNewGroupSubmit}>
         <FormItem
@@ -72,7 +75,7 @@ export default class AddNewGroup extends PureComponent {
               )}
         </FormItem>
         <FormItem className={styles.btnContent}>
-          <Button>
+          <Button onClick={closeTab}>
             取消
           </Button>
           <Button

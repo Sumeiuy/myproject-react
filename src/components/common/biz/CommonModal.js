@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-14 14:44:35
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-09-14 15:14:31
+ * @Last Modified time: 2017-09-25 14:25:48
  */
 /**
  * 常用说明
@@ -46,7 +46,7 @@ import styles from './commonModal.less';
 export default class CommonModal extends PureComponent {
   static propTypes = {
     visible: PropTypes.bool.isRequired,
-    needBtn: PropTypes.bool.isRequired,
+    needBtn: PropTypes.bool,
     title: PropTypes.string.isRequired,
     okText: PropTypes.string,
     size: PropTypes.string,

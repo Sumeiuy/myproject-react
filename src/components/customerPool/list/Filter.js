@@ -8,8 +8,7 @@ import React, { PropTypes, PureComponent } from 'react';
 // import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
-import SingleFilter from './SingleFilter';
-import MultiFilter from './MultiFilter';
+import { SingleFilter, MultiFilter } from '../../common/filter';
 
 // 从搜索、联想词、标签、已开通业务过来的
 const SEARCH_TAG_FILTER = ['search', 'tag', 'association', 'business', 'custIndicator', 'numOfCustOpened'];
@@ -31,7 +30,6 @@ export default class Filter extends PureComponent {
       unright_type: unrightType,
       source,
     } = location.query;
-    console.log('Filter>>>', unrightType);
     return (
       <div className="filter">
         {
@@ -66,7 +64,7 @@ export default class Filter extends PureComponent {
         }
         {
           (_.includes(SEARCH_TAG_FILTER, source)) ?
-            <SingleFilter
+            <MultiFilter
               value={Rights || ''}
               filterLabel="已开通业务"
               filter="Rights"
@@ -75,7 +73,7 @@ export default class Filter extends PureComponent {
             /> : null
         }
         {
-          source === 'business' ?
+          _.includes(['numOfCustOpened', 'business'], source) ?
             <MultiFilter
               value={unrightType || ''}
               filterLabel="可开通业务"

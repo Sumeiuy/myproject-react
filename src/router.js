@@ -1,4 +1,4 @@
-/**
+ /**
  * @file routes.js
  * @author maoquan(maoquan@htsc.com)
  */
@@ -33,13 +33,18 @@ import CustomerList from './routes/customerPool/CustomerList';
 import CustomerGroup from './routes/customerPool/CustomerGroup';
 import CreateTask from './routes/customerPool/CreateTask';
 import Contract from './routes/contract/Home';
+import FullChannelServiceRecord from './routes/fullChannelServiceRecord/Home';
+import CustomerGroupManage from './routes/customerPool/CustomerGroupManage';
+
 
 function switchRouter() {
   const fsp = document.querySelector(fspContainer.container);
-  if (fsp) {
-    fsp.scrollTop = 0;
-  } else {
-    window.scrollTo(0, 0);
+  if (!((this.state.location.state || {}).noScrollTop || false)) {
+    if (fsp) {
+      fsp.scrollTop = 0;
+    } else {
+      window.scrollTo(0, 0);
+    }
   }
 }
 
@@ -65,11 +70,13 @@ const routes = ({ history }) => (// eslint-disable-line
         <Route path="list" component={CustomerList} />
         <Route path="customerGroup" component={CustomerGroup} />
         <Route path="createTask" component={CreateTask} />
+        <Route path="customerGroupManage" component={CustomerGroupManage} />
       </Route>
       <Route path="contract">
         <IndexRoute component={Contract} />
         <Route path="edit" component={Contract} />
       </Route>
+      <Route path="fullChannelServiceRecord" component={FullChannelServiceRecord} />
     </Route>
   </Router>
 );
