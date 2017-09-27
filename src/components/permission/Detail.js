@@ -42,6 +42,8 @@ export default class Detail extends PureComponent {
     bottonList: PropTypes.array.isRequired,
     getBottonList: PropTypes.func.isRequired,
     canApplyCustList: PropTypes.array.isRequired,
+    getModifyCustApplication: PropTypes.func.isRequired,
+    modifyCustApplication: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -282,6 +284,7 @@ export default class Detail extends PureComponent {
     };
     console.log(queryConfig, value);
     this.setState({ approvalModal: false });
+    this.props.getModifyCustApplication(queryConfig);
   }
 
   render() {

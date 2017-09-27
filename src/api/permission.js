@@ -20,6 +20,6 @@ export default function permission(api) {
     // 获取那些按钮
     getButtonList: query => api.post('/groovynoauth/fsp/smkhsq/queryButtonList', query),
     // 提交 私密客户申请
-    updateApplication: query => api.post('/groovynoauth/fsp/smkhsq/updateApplication', query),
+    getModifyCustApplication: query => api.post('/groovynoauth/fsp/smkhsq/updateApplication', query),
   };
 }

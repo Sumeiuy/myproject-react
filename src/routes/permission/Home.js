@@ -34,15 +34,15 @@ const mapStateToProps = state => ({
   // 右侧详情
   detailMessage: state.permission.detailMessage,
   // 左侧列表数据
-  list: state.permission.list,
+  list: state.app.seibleList,
   // 查询服务人员列表
   searchServerPersonList: state.permission.searchServerPersonList,
   // 拟稿人
-  drafterList: state.permission.drafterList,
+  drafterList: state.app.drafterList,
   // 部门
-  custRange: state.permission.custRange,
+  custRange: state.app.custRange,
   // 已申请客户
-  customerList: state.permission.customerList,
+  customerList: state.app.customerList,
   // 可申请客户
   canApplyCustList: state.permission.canApplyCustList,
   // 查询已有服务任务列表
@@ -51,6 +51,8 @@ const mapStateToProps = state => ({
   nextApproverList: state.permission.nextApproverList,
   // 获取btnlist
   bottonList: state.permission.bottonList,
+  // 获取修改私密客户申请 的结果
+  modifyCustApplication: state.permission.modifyCustApplication,
 });
 
 const mapDispatchToProps = {
@@ -58,16 +60,16 @@ const mapDispatchToProps = {
   // 获取右侧详情
   getDetailMessage: fetchDataFunction(true, 'permission/getDetailMessage'),
   // 获取左侧列表
-  getPermissionList: fetchDataFunction(true, 'permission/getPermissionList'),
+  getPermissionList: fetchDataFunction(true, 'app/getPermissionList'),
   // 获取服务人员列表
   // getServerPersonelList: fetchDataFunction(false, 'permission/getServerPersonelList'),
   getSearchServerPersonList: fetchDataFunction(false, 'permission/getSearchServerPersonList'),
   // 获取拟稿人
-  getDrafterList: fetchDataFunction(false, 'permission/getDrafterList'),
+  getDrafterList: fetchDataFunction(false, 'app/getDrafterList'),
   // 获取部门
-  getEmpOrgTree: fetchDataFunction(false, 'permission/getEmpOrgTree'),
+  getEmpOrgTree: fetchDataFunction(false, 'app/getEmpOrgTree'),
   // 获取已申请客户列表
-  getCustomerList: fetchDataFunction(false, 'permission/getCustomerList'),
+  getCustomerList: fetchDataFunction(false, 'app/getCustomerList'),
   // 获取可申请客户列表
   getCanApplyCustList: fetchDataFunction(false, 'permission/getCanApplyCustList'),
   // 查询已有服务任务列表
@@ -76,6 +78,8 @@ const mapDispatchToProps = {
   getNextApproverList: fetchDataFunction(false, 'permission/getNextApproverList'),
   // 获取btnlist
   getBottonList: fetchDataFunction(false, 'permission/getBottonList'),
+  // 获取 获取修改私密客户申请 的结果
+  getModifyCustApplication: fetchDataFunction(false, 'permission/getModifyCustApplication'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -104,6 +108,8 @@ export default class Permission extends PureComponent {
     nextApproverList: PropTypes.array.isRequired,
     bottonList: PropTypes.array.isRequired,
     getBottonList: PropTypes.func.isRequired,
+    getModifyCustApplication: PropTypes.func.isRequired,
+    modifyCustApplication: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -289,15 +295,27 @@ export default class Permission extends PureComponent {
     if (_.isEmpty(this.state.detailMessage)) {
       return null;
     }
+    const {
+      canApplyCustList,
+      searchServerPersonList,
+      nextApproverList,
+      getNextApproverList,
+      getBottonList,
+      bottonList,
+      getModifyCustApplication,
+      modifyCustApplication,
+    } = this.props
     return (
       <Detail
         {...this.state.detailMessage}
-        canApplyCustList={this.props.canApplyCustList}
-        searchServerPersonList={this.props.searchServerPersonList}
-        nextApproverList={this.props.nextApproverList}
-        getNextApproverList={this.props.getNextApproverList}
-        getBottonList={this.props.getBottonList}
-        bottonList={this.props.bottonList}
+        canApplyCustList={canApplyCustList}
+        searchServerPersonList={searchServerPersonList}
+        nextApproverList={nextApproverList}
+        getNextApproverList={getNextApproverList}
+        getBottonList={getBottonList}
+        bottonList={bottonList}
+        getModifyCustApplication={getModifyCustApplication}
+        modifyCustApplication={modifyCustApplication}
       />
     );
   }
