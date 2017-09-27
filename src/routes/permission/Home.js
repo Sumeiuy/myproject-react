@@ -44,6 +44,10 @@ const mapStateToProps = state => ({
   customerList: state.permission.customerList,
   // 查询已有服务任务列表
   hasServerPersonList: state.permission.hasServerPersonList,
+  // 按照条件 查询下一审批人列表
+  nextApproverList: state.permission.nextApproverList,
+  // 获取btnlist
+  bottonList: state.permission.bottonList,
 });
 
 const mapDispatchToProps = {
@@ -53,7 +57,7 @@ const mapDispatchToProps = {
   // 获取左侧列表
   getPermissionList: fetchDataFunction(true, 'permission/getPermissionList'),
   // 获取服务人员列表
-  getServerPersonelList: fetchDataFunction(false, 'permission/getServerPersonelList'),
+  // getServerPersonelList: fetchDataFunction(false, 'permission/getServerPersonelList'),
   getSearchServerPersonList: fetchDataFunction(false, 'permission/getSearchServerPersonList'),
   // 获取拟稿人
   getDrafterList: fetchDataFunction(false, 'permission/getDrafterList'),
@@ -63,6 +67,10 @@ const mapDispatchToProps = {
   getCustomerList: fetchDataFunction(false, 'permission/getCustomerList'),
   // 查询已有服务任务列表
   getHasServerPersonList: fetchDataFunction(false, 'permission/getHasServerPersonList'),
+  // 按照条件 查询下一审批人列表
+  getNextApproverList: fetchDataFunction(false, 'permission/getNextApproverList'),
+  // 获取btnlist
+  getBottonList: fetchDataFunction(false, 'permission/getBottonList'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -85,6 +93,10 @@ export default class Permission extends PureComponent {
     customerList: PropTypes.array.isRequired,
     hasServerPersonList: PropTypes.array.isRequired,
     getHasServerPersonList: PropTypes.func.isRequired,
+    getNextApproverList: PropTypes.func.isRequired,
+    nextApproverList: PropTypes.array.isRequired,
+    bottonList: PropTypes.array.isRequired,
+    getBottonList: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -109,11 +121,11 @@ export default class Permission extends PureComponent {
     return {
       // 获取查询客户列表
       getCustomerList: (data) => {
-        this.props.getCustomerList({ code: data });
+        this.props.getCustomerList({ keyword: data });
       },
       // 获取 查询服务人员列表
       getSearchServerPersonList: (data) => {
-        this.props.getSearchServerPersonList({ code: data });
+        this.props.getSearchServerPersonList({ keyword: data });
       },
     };
   }
@@ -210,7 +222,7 @@ export default class Permission extends PureComponent {
   @autobind
   creatPermossionModal() {
     // 打开模态框 发送获取服务人员列表请求
-    this.props.getHasServerPersonList({ id: 101110 });
+    // this.props.getHasServerPersonList({ id: 101110 });
     this.setState({ isShowModal: true });
   }
 
@@ -270,6 +282,10 @@ export default class Permission extends PureComponent {
         {...this.props.detailMessage}
         customerList={this.props.customerList}
         searchServerPersonList={this.props.searchServerPersonList}
+        nextApproverList={this.props.nextApproverList}
+        getNextApproverList={this.props.getNextApproverList}
+        getBottonList={this.props.getBottonList}
+        bottonList={this.props.bottonList}
       />
     );
   }
@@ -336,6 +352,7 @@ export default class Permission extends PureComponent {
               searchServerPersonList={searchServerPersonList}
               hasServerPersonList={hasServerPersonList}
               onEmitClearModal={this.clearModal}
+              getHasServerPersonList={this.props.getHasServerPersonList}
             />
           :
             null

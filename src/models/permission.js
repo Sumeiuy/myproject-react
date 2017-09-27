@@ -19,6 +19,8 @@ export default {
     customerList: EMPTY_LIST, // 客户列表
     hasServerPersonList: EMPTY_LIST, // 已有服务人员列表
     searchServerPersonList: EMPTY_LIST, // 可查询服务人员列表
+    nextApproverList: EMPTY_LIST, // 按照条件查询下一审批人列表
+    bottonList: EMPTY_LIST, // 按钮组
   },
   reducers: {
     getDetailMessageSuccess(state, action) {
@@ -65,9 +67,10 @@ export default {
       const { payload: { resultData = EMPTY_LIST } } = action;
       let custRange;
       if (resultData.level === '1') {
+        const children = resultData.children || [];
         custRange = [
           { id: resultData.id, name: resultData.name, level: resultData.level },
-          ...resultData.children,
+          ...children,
         ];
       } else {
         custRange = [resultData];
@@ -99,6 +102,20 @@ export default {
       return {
         ...state,
         hasServerPersonList: resultData,
+      };
+    },
+    getNextApproverListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        nextApproverList: resultData,
+      };
+    },
+    getBottonListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        bottonList: resultData,
       };
     },
   },
@@ -167,6 +184,20 @@ export default {
       const response = yield call(api.getHasServerPersonList, payload);
       yield put({
         type: 'getHasServerPersonListSuccess',
+        payload: response,
+      });
+    },
+    * getNextApproverList({ payload }, { call, put }) {
+      const response = yield call(api.getNextApproverList, payload);
+      yield put({
+        type: 'getNextApproverListSuccess',
+        payload: response,
+      });
+    },
+    * getBottonList({ payload }, { call, put }) {
+      const response = yield call(api.getButtonList, payload);
+      yield put({
+        type: 'getBottonListSuccess',
         payload: response,
       });
     },

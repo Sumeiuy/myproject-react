@@ -45,7 +45,7 @@ export default class CommonUpload extends PureComponent {
     fileRemove: PropTypes.func,
     attachment: PropTypes.string,
     attaches: PropTypes.array,
-    edit: PropTypes.boolean,
+    edit: PropTypes.bool,
   }
 
   static defaultProps = {
