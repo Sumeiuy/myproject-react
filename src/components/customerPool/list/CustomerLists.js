@@ -182,20 +182,20 @@ export default class CustomerLists extends PureComponent {
       });
     }
   }
-// 判断已有信息邮箱是否存在
+  // 判断已有信息邮箱是否存在
   @autobind
   getEmail(address) {
     let finded = 0;// 邮件联系
     if (!_.isEmpty(address.orgCustomerContactInfoList)
-        && _.size(address.orgCustomerContactInfoList) > 0) {
+      && _.size(address.orgCustomerContactInfoList) > 0) {
       const index = _.findLastIndex(address.orgCustomerContactInfoList,
-          val => val.mainFlag);
+        val => val.mainFlag);
       finded = _.findLastIndex(address.orgCustomerContactInfoList[index].emailAddresses,
-          val => val.mainFlag);
+        val => val.mainFlag);
     } else if (!_.isEmpty(address.perCustomerContactInfo)
-        && _.size(address.perCustomerContactInfo) > 0) {
+      && _.size(address.perCustomerContactInfo) > 0) {
       finded = _.findLastIndex(address.perCustomerContactInfo.emailAddresses,
-          val => val.mainFlag);
+        val => val.mainFlag);
     } else {
       finded = -1;
     }
@@ -286,7 +286,7 @@ export default class CustomerLists extends PureComponent {
       location: {
         query: {
           selectedIds,
-          selectAll,
+        selectAll,
         },
       },
     } = this.props;
@@ -488,8 +488,7 @@ export default class CustomerLists extends PureComponent {
       toggleServiceRecordModal,
     } = this.props;
     // 服务记录执行方式字典
-
-    const { executeTypes = EMPTY_ARRAY } = dict;
+    const { executeTypes = EMPTY_ARRAY, serveWay = EMPTY_ARRAY } = dict;
     const finalContactData = custContactData[currentCustId] || EMPTY_OBJECT;
     const finalServiceRecordData = serviceRecordData[currentCustId] || EMPTY_ARRAY;
     const {
@@ -621,6 +620,7 @@ export default class CustomerLists extends PureComponent {
               onClose={this.resetModalState}
               currentCustId={currentCustId}
               executeTypes={executeTypes}
+              serveWay={serveWay}
             /> : null
         }
       </div>
