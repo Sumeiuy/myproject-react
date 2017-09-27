@@ -18,7 +18,7 @@ import Detail from '../../components/permission/Detail';
 import PermissionList from '../../components/common/biz/CommonList';
 import seibelColumns from '../../components/common/biz/seibelColumns';
 import { seibelConfig } from '../../config';
-import CreatePrivateClient from '../../components/permission/CreatePrivateClient';
+import CreatePrivateClient from '../../components/permission/createPrivateClient';
 
 import styles from './home.less';
 

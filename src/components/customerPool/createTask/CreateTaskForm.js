@@ -120,7 +120,7 @@ export default class CreateTaskForm extends PureComponent {
       if (!err) {
         values.closingDate = moment(values.closingDate).format('YYYY-MM-DD');// eslint-disable-line
         values.triggerDate = moment(values.triggerDate).format('YYYY-MM-DD');// eslint-disable-line
-        console.log('d-----', moment(values.closingDate).format('YYYY-MM-DD'));
+        // console.log('d-----', moment(values.closingDate).format('YYYY-MM-DD'));
         const value = { ...values, custIdList, searchReq };
         console.log('Received values of form: ', value);
         createTask(value);
