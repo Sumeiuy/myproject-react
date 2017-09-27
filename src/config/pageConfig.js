@@ -336,6 +336,17 @@ const pageConfig = {
         value: '终止',
       },
     ],
+    operationList: [
+      {
+        show: true,
+        label: '订购',
+        value: '1',
+      }, {
+        show: true,
+        label: '退订',
+        value: '2',
+      },
+    ],
   },
 };
 

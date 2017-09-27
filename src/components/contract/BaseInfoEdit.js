@@ -3,7 +3,7 @@
 * @Author: XuWenKang
 * @Date:   2017-09-20 13:47:07
 * @Last Modified by:   XuWenKang
-* @Last Modified time: 2017-09-22 15:27:44
+* @Last Modified time: 2017-09-27 09:42:22
 */
 
 import React, { PureComponent } from 'react';
@@ -14,33 +14,42 @@ import { Input } from 'antd';
 import moment from 'moment';
 import Select from '../common/Select';
 import InfoTitle from '../common/InfoTitle';
+import InfoItem from '../common/infoItem';
 import DropDownSelect from '../common/dropdownSelect';
 import DatePicker from '../common/datePicker';
+import { contract as contractConfig } from '../../config';
 
 import styles from './baseInfoEdit.less';
 
 const { TextArea } = Input;
 
+// 子类型列表
+const childTypeList = contractConfig.subType;
 // const EMPTY_OBJECT = {};
 // const EMPTY_ARRAY = [];
+// 下拉搜索组件样式
 const dropDownSelectBoxStyle = {
   width: 220,
   height: 32,
   border: '1px solid #d9d9d9',
 };
+// 时间选择组件样式
 const datePickerBoxStyle = {
   width: 220,
   height: 32,
 };
 export default class BaseInfoEdit extends PureComponent {
   static propTypes = {
-    childType: PropTypes.object.isRequired,
-    client: PropTypes.object.isRequired,
+    childType: PropTypes.string.isRequired,
+    client: PropTypes.string.isRequired,
     contractStarDate: PropTypes.string.isRequired,
     contractPalidity: PropTypes.string,
     contractEndDate: PropTypes.string,
     remark: PropTypes.string,
     onChange: PropTypes.func.isRequired,
+    onSearchClient: PropTypes.func.isRequired,
+    custList: PropTypes.array.isRequired,
+    operationType: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -63,8 +72,8 @@ export default class BaseInfoEdit extends PureComponent {
 
   componentWillMount() {
     const {
-      childType: { value: childType },
-      client: { value: client },
+      childType,
+      client,
       contractStarDate,
       contractPalidity,
       contractEndDate,
@@ -80,13 +89,12 @@ export default class BaseInfoEdit extends PureComponent {
     });
   }
 
-
   @autobind
-  handleChangeChildType(key, value) {
+  handleSelectChange(key, value) {
     console.log({ [key]: value });
     this.setState({
       ...this.state,
-      childType: value,
+      [key]: value,
     }, () => {
       this.props.onChange(this.state);
     });
@@ -106,6 +114,7 @@ export default class BaseInfoEdit extends PureComponent {
   @autobind
   handleSearchClient(v) {
     console.log('searchClient', v);
+    this.props.onSearchClient(v);
   }
 
   @autobind
@@ -132,12 +141,13 @@ export default class BaseInfoEdit extends PureComponent {
 
   render() {
     const {
-      childType,
-      client,
+      custList,
+      operationType,
     } = this.props;
     return (
       <div className={styles.editWrapper}>
         <InfoTitle head="基本信息" />
+        <InfoItem label="操作类型" value={operationType} />;
         <div className={styles.lineInputWrap}>
           <div className={styles.label}>
             <i className={styles.required}>*</i>
@@ -146,9 +156,9 @@ export default class BaseInfoEdit extends PureComponent {
           <div className={`${styles.componentBox} ${styles.selectBox}`}>
             <Select
               name="childType"
-              data={childType.list}
+              data={childTypeList}
               value={this.state.childType}
-              onChange={this.handleChangeChildType}
+              onChange={this.handleSelectChange}
             />
           </div>
         </div>
@@ -160,10 +170,10 @@ export default class BaseInfoEdit extends PureComponent {
           <div className={styles.componentBox}>
             <DropDownSelect
               placeholder="经纪客户号/客户名称"
-              showObjKey="name"
-              objId="value"
+              showObjKey="custName"
+              objId="cusId"
               value={this.state.client}
-              searchList={client.list}
+              searchList={custList}
               emitSelectItem={this.handleSelectClient}
               emitToSearch={this.handleSearchClient}
               boxStyle={dropDownSelectBoxStyle}

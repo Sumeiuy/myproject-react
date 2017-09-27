@@ -4,7 +4,7 @@
 
 export default function contract(api) {
   return {
-    // getContractDetail: query => api.post('/groovynoauth/fsp/contract/cooper/queryDetail', query),
+    getContractDetail: query => api.post('/groovynoauth/fsp/contract/cooper/queryDetail', query),
     // // 获取详情信息
     // getMessage: query => api.post('/groovynoauth/contract/contractMessage', query),
     // // 获取权限申请列表
@@ -17,5 +17,9 @@ export default function contract(api) {
     getDrafterList: query => api.post('/groovynoauth/smkh/queryEmpList', query),
     // 获取部门
     getEmpOrgTree: query => api.post('/groovynoauth/jxzb/empOrgTree', query),
+    // 保存合作合约
+    saveContractData: query => api.post('/groovynoauth/fsp/contract/cooper/saveContract', query),
+    // 查询合作合约编号
+    getContractNumList: query => api.post('/groovynoauth/fsp/contract/cooper/queryContractId', query),
   };
 }
