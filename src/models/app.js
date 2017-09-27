@@ -26,6 +26,8 @@ export default {
     drafterList: EMPTY_LIST,
     // 客户列表
     customerList: EMPTY_LIST,
+    // 可申请客户列表
+    canApplyCustList: EMPTY_LIST,
   },
   reducers: {
     // 获取员工职责与职位
@@ -36,13 +38,22 @@ export default {
         empInfo: payload,
       };
     },
-    // 获取客户列表
+    // 获取已申请客户列表
     getCustomerListSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
       const { custList = EMPTY_LIST } = resultData;
       return {
         ...state,
         customerList: custList,
+      };
+    },
+    // 获取可申请客户列表
+    getCanApplyCustListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      const { custList = EMPTY_LIST } = resultData;
+      return {
+        ...state,
+        canApplyCustList: custList,
       };
     },
     // 获取拟稿人
@@ -137,6 +148,13 @@ export default {
       const response = yield call(seibelApi.getCustList, payload);
       yield put({
         type: 'getCustomerListSuccess',
+        payload: response,
+      });
+    },
+    * getCanApplyCustList({ payload }, { call, put }) {
+      const response = yield call(seibelApi.getCanApplyCustList, payload);
+      yield put({
+        type: 'getCanApplyCustListSuccess',
         payload: response,
       });
     },
