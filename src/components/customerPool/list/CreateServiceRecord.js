@@ -10,6 +10,7 @@ import _ from 'lodash';
 import { Modal, Row, Col, Select, DatePicker, Input, message } from 'antd';
 import moment from 'moment';
 
+import Loading from '../../../layouts/Loading';
 import Icon from '../../common/Icon';
 import { helper } from '../../../utils';
 
@@ -38,6 +39,8 @@ const SERVICE_ICON = {
 // 服务内容和反馈内容字数限制
 const MAX_LENGTH = 1000;
 
+const EMPTY_LIST = [];
+
 
 export default class CreateServiceRecord extends PureComponent {
 
@@ -48,21 +51,22 @@ export default class CreateServiceRecord extends PureComponent {
     onToggleServiceRecordModal: PropTypes.func.isRequired,
     addServeRecord: PropTypes.func.isRequired,
     addServeRecordSuccess: PropTypes.bool.isRequired,
-    isAddServeRecord: PropTypes.bool.isRequired,
     dict: PropTypes.object.isRequired,
+    loading: PropTypes.bool,
   }
 
   static defaultProps = {
     id: '',
     isShow: false,
+    loading: false,
   }
 
   constructor(props) {
     super(props);
     const {
-      serveWay,
-      serviceTypeTree,
-      workResult,
+      serveWay = [{}],
+      serviceTypeTree = [{}],
+      workResult = [{}],
     } = props.dict;
     this.state = {
       serviceWay: serveWay[0].key,
@@ -73,17 +77,30 @@ export default class CreateServiceRecord extends PureComponent {
     };
   }
 
-  componentWillUnmount() {
+  componentWillReceiveProps(nextProps) {
     const {
-      isAddServeRecord,
       addServeRecordSuccess,
+      onToggleServiceRecordModal,
+      loading,
     } = this.props;
     // 添加成功
-    if (addServeRecordSuccess === true &&
-      isAddServeRecord === false) {
+    if (loading && !nextProps.loading && addServeRecordSuccess === true) {
+      onToggleServiceRecordModal(false);
       message.success('添加服务记录成功');
     }
   }
+
+  // componentWillUnmount() {
+  //   const {
+  //     isAddServeRecord,
+  //     addServeRecordSuccess,
+  //   } = this.props;
+  //   // 添加成功
+  //   if (addServeRecordSuccess === true &&
+  //     isAddServeRecord === false) {
+  //     message.success('添加服务记录成功');
+  //   }
+  // }
 
   // 提交
   @autobind
@@ -140,8 +157,6 @@ export default class CreateServiceRecord extends PureComponent {
     });
     serviceContentNode.value = '';
     feedbackContentNode.value = '';
-    const { onToggleServiceRecordModal } = this.props;
-    onToggleServiceRecordModal(false);
   }
 
   // 关闭弹窗
@@ -205,6 +220,7 @@ export default class CreateServiceRecord extends PureComponent {
       isShow,
       empInfo,
       dict,
+      loading,
     } = this.props;
     const {
       serviceWay,
@@ -213,6 +229,9 @@ export default class CreateServiceRecord extends PureComponent {
       serviceTime,
       feedbackTime,
     } = this.state;
+    if (!empInfo || !dict) {
+      return null;
+    }
     const title = (
       <p className={styles.title}>
         创建服务记录:
@@ -231,91 +250,99 @@ export default class CreateServiceRecord extends PureComponent {
         okText="提交"
         cancelText="取消"
       >
-        <p>请选择一项服务方式</p>
-        <Row className={styles.serviceWay} type="flex" justify="space-between">
-          {
-            dict.serveWay.map(obj => (
-              <Col
-                key={obj.key}
-                className={`serviceWayItem ${serviceWay === obj.key ? 'active' : ''}`}
-                onClick={() => this.handleServiceWay(obj.key)}
-              >
-                <span><Icon type={SERVICE_ICON[obj.key] || ''} /></span>
-                <p>{obj.value}</p>
-              </Col>
-            ))
-          }
-        </Row>
-        <Row>
-          <Col span={12}>
-            <span className={styles.label}>服务类型</span>
-            <Select
-              value={serviceType}
-              style={width}
-              onChange={this.handleServiceType}
-            >
-              {
-                dict.serviceTypeTree.map(obj => (
-                  <Option key={obj.key} value={obj.key}>{obj.value}</Option>
+        {
+          !loading ?
+            <div>
+              <p>请选择一项服务方式</p>
+              <Row className={styles.serviceWay} type="flex" justify="space-between">
+                {
+                (dict.serveWay || EMPTY_LIST).map(obj => (
+                  <Col
+                    key={obj.key}
+                    className={`serviceWayItem ${serviceWay === obj.key ? 'active' : ''}`}
+                    onClick={() => this.handleServiceWay(obj.key)}
+                  >
+                    <span><Icon type={SERVICE_ICON[obj.key] || ''} /></span>
+                    <p>{obj.value}</p>
+                  </Col>
                 ))
               }
-            </Select>
-          </Col>
-          <Col span={12}>
-            <span className={styles.label}>服务时间</span>
-            <DatePicker
-              style={width}
-              value={moment(serviceTime, dateFormat)}
-              format={dateFormat}
-              allowClear={false}
-              showTime
-              onChange={this.handleServiceTime}
-              disabledDate={this.disabledDate}
-            />
-          </Col>
-        </Row>
-        <p className={`${styles.mt30} ${styles.mb10}`}>
-          请描述此次服务的内容
-        </p>
-        <TextArea
-          rows={5}
-          ref={ref => this.serviceContent = ref}
-        />
-        <p className={`${styles.mt30} ${styles.mb10}`}>
-          请描述客户对此次服务的反馈
-        </p>
-        <TextArea
-          rows={5}
-          ref={ref => this.feedbackContent = ref}
-        />
-        <Row className={styles.mt30}>
-          <Col span={12}>
-            <span className={styles.label}>反馈时间</span>
-            <DatePicker
-              style={width}
-              value={moment(feedbackTime, dateFormat)}
-              format={dateFormat}
-              allowClear={false}
-              showTime
-              onChange={this.handleFeedbackTime}
-              disabledDate={this.disabledDate}
-            />
-          </Col>
-          <Col span={12}>
-            <span className={styles.label}>工作结果</span>
-            <Select
-              value={workResult}
-              style={width}
-              onChange={this.handleWorkResult}
-            >
-              {
-                dict.workResult.map(obj => (
-                  <Option key={obj.key} value={obj.key}>{obj.value}</Option>
-                ))
-              }
-            </Select>
-          </Col>
-        </Row>
+              </Row>
+              <Row>
+                <Col span={12}>
+                  <span className={styles.label}>服务类型</span>
+                  <Select
+                    value={serviceType}
+                    style={width}
+                    onChange={this.handleServiceType}
+                  >
+                    {
+                    (dict.serviceTypeTree || EMPTY_LIST).map(obj => (
+                      <Option key={obj.key} value={obj.key}>{obj.value}</Option>
+                    ))
+                  }
+                  </Select>
+                </Col>
+                <Col span={12}>
+                  <span className={styles.label}>服务时间</span>
+                  <DatePicker
+                    style={width}
+                    value={moment(serviceTime, dateFormat)}
+                    format={dateFormat}
+                    allowClear={false}
+                    showTime
+                    onChange={this.handleServiceTime}
+                    disabledDate={this.disabledDate}
+                  />
+                </Col>
+              </Row>
+              <p className={`${styles.mt30} ${styles.mb10}`}>
+              请描述此次服务的内容
+            </p>
+              <TextArea
+                rows={5}
+                ref={ref => this.serviceContent = ref}
+              />
+              <p className={`${styles.mt30} ${styles.mb10}`}>
+              请描述客户对此次服务的反馈
+            </p>
+              <TextArea
+                rows={5}
+                ref={ref => this.feedbackContent = ref}
+              />
+              <Row className={styles.mt30}>
+                <Col span={12}>
+                  <span className={styles.label}>反馈时间</span>
+                  <DatePicker
+                    style={width}
+                    value={moment(feedbackTime, dateFormat)}
+                    format={dateFormat}
+                    allowClear={false}
+                    showTime
+                    onChange={this.handleFeedbackTime}
+                    disabledDate={this.disabledDate}
+                  />
+                </Col>
+                <Col span={12}>
+                  <span className={styles.label}>工作结果</span>
+                  <Select
+                    value={workResult}
+                    style={width}
+                    onChange={this.handleWorkResult}
+                  >
+                    {
+                    (dict.workResult || EMPTY_LIST).map(obj => (
+                      <Option key={obj.key} value={obj.key}>{obj.value}</Option>
+                    ))
+                  }
+                  </Select>
+                </Col>
+              </Row>
+            </div>
+          :
+            <Loading loading={loading} />
+        }
+
       </Modal>
     );
   }
