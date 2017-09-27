@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 15:02:49
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-09-22 17:44:10
+ * @Last Modified time: 2017-09-26 09:24:49
  */
 /**
  * 常用说明
@@ -42,29 +42,31 @@ import Icon from '../Icon';
 
 export default class CommonUpload extends PureComponent {
   static propTypes = {
-    fileRemove: PropTypes.func,
+    deleteAttachment: PropTypes.func,
+    uploadAttachment: PropTypes.func,
     attachment: PropTypes.string,
-    attaches: PropTypes.array,
+    attachmentList: PropTypes.array,
     edit: PropTypes.boolean,
   }
 
   static defaultProps = {
-    fileRemove: () => {},
+    deleteAttachment: () => {},
+    uploadAttachment: () => {},
     attachment: '',
-    attaches: [],
+    attachmentList: [],
     edit: false,
   }
 
   constructor(props) {
     super(props);
-    const { attaches, attachment } = props;
+    const { attachmentList, attachment } = props;
     this.state = {
       empId: helper.getEmpId(), // empId
       percent: 0, // 上传百分比
       status: 'active', // 上传状态
       statusText: '', // 上传状态对应文字
       file: {}, // 当前上传的文件
-      fileList: attaches, // 文件列表
+      fileList: attachmentList, // 文件列表
       attachment, // 上传后的唯一 ID
     };
   }
@@ -72,9 +74,9 @@ export default class CommonUpload extends PureComponent {
   componentWillReceiveProps(nextProps) {
     const props = this.props;
     if (!_.isEqual(props, nextProps)) {
-      const { attaches, attachment } = nextProps;
+      const { attachmentList, attachment } = nextProps;
       this.setState({
-        fileList: attaches, // 文件列表
+        fileList: attachmentList, // 文件列表
         attachment, // 上传后的唯一 ID
       });
     }
@@ -82,6 +84,7 @@ export default class CommonUpload extends PureComponent {
 
   @autobind
   onChange(info) {
+    const { uploadAttachment } = this.props;
     this.setState({
       percent: info.file.percent,
       fileList: info.fileList,
@@ -94,7 +97,7 @@ export default class CommonUpload extends PureComponent {
         statusText: '上传完成',
         fileList: data.attaches,
         attachment: data.attachment,
-      });
+      }, uploadAttachment(this.state.attachment));
     } else if (info.file.status === 'error') {
       this.setState({
         status: 'exception ',
@@ -106,9 +109,10 @@ export default class CommonUpload extends PureComponent {
 
   @autobind
   onRemove(attachId) {
-    const { fileRemove } = this.props;
+    const { deleteAttachment } = this.props;
     if (confirm('确定要删除此附件吗？')) {// eslint-disable-line
-      fileRemove(attachId);
+      console.warn('删除事件 attachId', attachId);
+      deleteAttachment(attachId);
     }
   }
 
@@ -148,11 +152,12 @@ export default class CommonUpload extends PureComponent {
               <Row>
                 {
                   fileList.map((item, index) => {
+                    const fileName = item.name.substring(0, item.name.lastIndexOf('.'));
                     const popoverHtml = (
                       <div>
-                        <p>
-                          <Icon type="fuzhi" />
-                          {item.name.substring(0, item.name.lastIndexOf('.'))}
+                        <p title={fileName}>
+                          <Icon type="fujian1" />
+                          {fileName}
                         </p>
                         <p>
                           上传人：{item.creator}
@@ -169,7 +174,7 @@ export default class CommonUpload extends PureComponent {
                               :
                                 null
                             }
-                            <em><a href={item.downloadURL}><Icon type="xiala" /></a></em>
+                            <em><a href={item.downloadURL}><Icon type="xiazai1" /></a></em>
                           </span>
                         </p>
                       </div>
@@ -186,9 +191,9 @@ export default class CommonUpload extends PureComponent {
                             trigger="hover"
                             getPopupContainer={this.findFileListNode}
                           >
-                            <p>
+                            <p className={styles.fileItemText} title={fileName}>
                               <Icon type="fuzhi" />
-                              {item.name.substring(0, item.name.lastIndexOf('.'))}
+                              {fileName}
                             </p>
                           </Popover>
                           <Popover
