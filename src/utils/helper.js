@@ -53,7 +53,7 @@ const helper = {
   // 获取 empId
   getEmpId() {
     // 临时 ID
-    const tempId = '002727'; // '001423''002727';
+    const tempId = '001206'; // '001423''002727';
     const nativeQuery = helper.getQuery(window.location.search);
     const empId = window.curUserCode || nativeQuery.empId || tempId;
     return empId;
@@ -499,6 +499,19 @@ const helper = {
       }
     });
     return tmpArr;
+  },
+
+  // 手机号、座机、邮箱正则表达式
+  checkFormat: {
+    isCellphone(value) {
+      return /^((13[0-9]{1})|(14[0-9]{1})|(15[0-9]{1})|(17[0-8]{1})|(18[0-9]{1}))+\d{8}$/.test(value);
+    },
+    isTelephone(value) {
+      return /^(00?[0-9]{2,3}\-?)?([2-9][0-9]{6,7})(\-[0-9]{1,8})?$/.test(value); // eslint-disable-line
+    },
+    isEmail(value) {
+      return /\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/.test(value);
+    },
   },
 };
 

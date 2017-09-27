@@ -6,6 +6,7 @@
 
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
 import { Table } from 'antd';
 import { fspGlobal } from '../../../utils';
 
@@ -30,7 +31,7 @@ const columns = [
         fspGlobal.openFspIframeTab({ url, param });
       }}
     >
-      {item.text}
+      {_.truncate(item.text, { length: 19, omission: '...' })}
     </a>,
   },
   {
