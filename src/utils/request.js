@@ -4,6 +4,7 @@
  */
 
 import 'whatwg-fetch';
+import _ from 'lodash';
 
 import { request as config, excludeCode } from '../config';
 
@@ -19,7 +20,7 @@ function parseJSON(response) {
     (res) => {
       // 神策的响应是succeed: true
       const { code, msg, succeed } = res;
-      const existExclude = excludeCode.findIndex(o => o.code === code) > -1;
+      const existExclude = _.findIndex(excludeCode, o => o.code === code) > -1;
       if (!existExclude && !succeed) {
         let error;
         if (code === 'MAG0010') {
