@@ -1,6 +1,6 @@
 /**
- * @file components/commissionAdjustment/Detail.js
- *  批量佣金详情
+ * @file components/commissionAdjustment/SingleDetail.js
+ *  单佣金详情
  * @author baojiajia
  */
 
@@ -10,15 +10,17 @@ import PropTypes from 'prop-types';
 import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
 import OtherCommission from './OtherCommission';
+import CommonUpload from '../common/biz/CommonUpload';
+import ApproveList from '../common/approveList';
 import CommonTable from '../common/biz/CommonTable';
 import styles from './detail.less';
 
-// 表头
-const tableHeader = [
+// 客户信息表表头
+const titleList = [
   {
-    dataIndex: 'econNum',
-    key: 'econNum',
-    title: '经纪客户号',
+    dataIndex: 'custId',
+    key: 'custId',
+    title: '经济客户号',
   },
   {
     dataIndex: 'custName',
@@ -36,9 +38,40 @@ const tableHeader = [
     title: '开户营业部',
   },
   {
-    dataIndex: 'status',
-    key: 'status',
-    title: '状态',
+    dataIndex: 'serviceManager',
+    key: 'serviceManager',
+    title: '服务经理',
+  },
+];
+
+// 附件
+const attachmentList = [
+  {
+    creator: '002332',
+    attachId: '{6795CB98-B0CD-4CEC-8677-3B0B9298B209}',
+    name: '新建文本文档 (3).txt',
+    size: '0',
+    createTime: '2017/09/12 13:37:45',
+    downloadURL: 'http://ceflow:8086/unstructured/downloadDocument?sessionId=675fd3be-baca-4099-8b52-bf9dde9f2b59&documentId={6795CB98-B0CD-4CEC-8677-3B0B9298B209}',
+    realDownloadURL: '/attach/download?filename=%E6%96%B0%E5%BB%BA%E6%96%87%E6%9C%AC%E6%96%87%E6%A1%A3+%283%29.txt&attachId={6795CB98-B0CD-4CEC-8677-3B0B9298B209',
+  },
+  {
+    creator: '002332',
+    attachId: '{2EF837DE-508C-4FCA-93B8-99CEA68DCB0D}',
+    name: '测试.docx',
+    size: '11',
+    createTime: '2017/09/12 11:53:36',
+    downloadURL: 'http://ceflow:8086/unstructured/downloadDocument?sessionId=675fd3be-baca-4099-8b52-bf9dde9f2b59&documentId={2EF837DE-508C-4FCA-93B8-99CEA68DCB0D}',
+    realDownloadURL: '/attach/download?filename=%E6%B5%8B%E8%AF%95.docx&attachId={2EF837DE-508C-4FCA-93B8-99CEA68DCB0D',
+  },
+  {
+    creator: '002332',
+    attachId: '{24C098F0-9DE3-4DC6-9E7D-FECE683E4B6F}',
+    name: '生产sql和修改后sql.txt',
+    size: '2',
+    createTime: '2017/09/12 11:55:32',
+    downloadURL: 'http://ceflow:8086/unstructured/downloadDocument?sessionId=675fd3be-baca-4099-8b52-bf9dde9f2b59&documentId={24C098F0-9DE3-4DC6-9E7D-FECE683E4B6F}',
+    realDownloadURL: '/attach/download?filename=%E7%94%9F%E4%BA%A7sql%E5%92%8C%E4%BF%AE%E6%94%B9%E5%90%8Esql.txt&attachId={24C098F0-9DE3-4DC6-9E7D-FECE683E4B6F',
   },
 ];
 
@@ -66,7 +99,6 @@ export default class Commissiondetail extends PureComponent {
       created,
       status,
       newCommission, // 目标股基佣金率
-      prodCode, // 目标产品
       bgCommission, // B股
       zqCommission, // 债券
       hCommission, // 回购
@@ -88,15 +120,6 @@ export default class Commissiondetail extends PureComponent {
     const bugTitle = `编号${currentId}`;
     const drafter = `${divisionName} - ${createdByName} (${createdByLogin})`;
     const targetCom = `${newCommission}‰`;
-    // 表格中需要的操作
-    const operation = {
-      column: {
-        key: 'view', // 'check'\'delete'\'view'
-        title: '审批记录',
-      },
-      operate: this.props.checkApproval,
-    };
-
     return (
       <div className={styles.detailBox}>
         <div className={styles.inner}>
@@ -135,8 +158,7 @@ export default class Commissiondetail extends PureComponent {
             <div className={styles.modContent}>
               <CommonTable
                 data={custList}
-                titleList={tableHeader}
-                operation={operation}
+                titleList={titleList}
                 pagination={{
                   pageSize: 5,
                 }}
@@ -144,14 +166,11 @@ export default class Commissiondetail extends PureComponent {
             </div>
           </div>
           <div id="choosecommission" className={styles.module}>
-            <InfoTitle head="佣金产品" />
+            <InfoTitle head="佣金" />
             <div className={styles.modContent}>
               <ul className={styles.propertyList}>
                 <li className={styles.item}>
                   <InfoItem label="目标股基佣金率" value={targetCom} />
-                </li>
-                <li className={styles.item}>
-                  <InfoItem label="目标产品" value={prodCode} />
                 </li>
               </ul>
             </div>
@@ -180,6 +199,22 @@ export default class Commissiondetail extends PureComponent {
                 <OtherCommission name="大宗交易：" value={dCommission} />
               </div>
             </div>
+          </div>
+          <div id="productSelection" className={styles.module}>
+            <InfoTitle head="产品选择" />
+            <div>
+              产品选择表单
+            </div>
+          </div>
+          <div id="enclosure" className={styles.module}>
+            <InfoTitle head="附件" />
+            <CommonUpload
+              attachmentList={attachmentList}
+            />
+          </div>
+          <div id="enclosure" className={styles.module}>
+            <InfoTitle head="审批记录" />
+            <ApproveList />
           </div>
         </div>
       </div>

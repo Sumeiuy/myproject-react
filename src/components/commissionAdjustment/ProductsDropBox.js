@@ -17,7 +17,6 @@ export default class ProductsDropdownBox extends PureComponent {
   static propTypes = {
     productList: PropTypes.array,
     onSelect: PropTypes.func.isRequired,
-    onSearch: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -47,7 +46,6 @@ export default class ProductsDropdownBox extends PureComponent {
         iconType: 'close',
         value,
       });
-      this.props.onSearch(value);
     } else {
       this.setState({
         value: '',

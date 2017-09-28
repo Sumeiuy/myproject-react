@@ -16,7 +16,7 @@ export default class SelectAssembly extends PureComponent {
   static propTypes = {
     labelName: PropTypes.string.isRequired,
     dataSource: PropTypes.array,
-    onSelelctValue: PropTypes.func.isRequired,
+    onSearchValue: PropTypes.func.isRequired,
     width: PropTypes.string,
   }
 
@@ -55,11 +55,16 @@ export default class SelectAssembly extends PureComponent {
     this.setState({
       inputValue: value,
     });
+    if (value === '') {
+      this.setState({
+        typeStyle: 'search',
+      });
+    }
   }
 
   // 根据用户选中的option的value值获取对应的数组值
   @autobind
-  setSelectValue(value, option) {
+  onSelect(value, option) {
     if (value) {
       this.setState({
         typeStyle: 'close',
@@ -76,7 +81,7 @@ export default class SelectAssembly extends PureComponent {
   @autobind
   changeDataSource() {
     if (this.state.typeStyle === 'search') {
-      this.props.onSelelctValue(this.state.selectItem);
+      this.props.onSearchValue(this.state.selectItem);
     } else if (this.state.typeStyle === 'close') {
       this.setState({
         inputValue: '',
@@ -90,7 +95,7 @@ export default class SelectAssembly extends PureComponent {
     const { labelName, dataSource, width } = this.props;
     const { inputValue, typeStyle } = this.state;
     const options = dataSource.map(opt => (
-      <Option key={opt.custId} value={opt.custId}>
+      <Option key={opt.custId} value={`${opt.custName}（${opt.custId}） - ${opt.custType}`}>
         <span className={styles.prodValue}>{opt.custName}（{opt.custId}） - {opt.custType}</span>
       </Option>
     ));
@@ -108,7 +113,7 @@ export default class SelectAssembly extends PureComponent {
           dataSource={options}
           optionLabelProp="value"
           onChange={this.onChange}
-          onSelect={this.setSelectValue}
+          onSelect={this.onSelect}
           value={inputValue}
         >
           <Input
