@@ -279,7 +279,7 @@ export default class CustomerGroup extends PureComponent {
   }
 
   render() {
-    const { cusgroupList, cusgroupPage, location: { query } } = this.props;
+    const { goBack, cusgroupList, cusgroupPage, location: { query } } = this.props;
     const { groupName } = this.state;
     const count = query.count;
     return (
@@ -317,7 +317,7 @@ export default class CustomerGroup extends PureComponent {
                   />
                 </Row>
                 <Row className={styles.BtnContent}>
-                  <Button onClick={this.goBack}>取消</Button>
+                  <Button onClick={goBack}>取消</Button>
                   <Button onClick={this.handleSubmit} type="primary">保存</Button>
                 </Row>
               </div>
@@ -331,7 +331,7 @@ export default class CustomerGroup extends PureComponent {
                 </Row>
                 <Row className={styles.groupForm}>
                   <AddNewGroup
-                    closeTab={this.closeTab}
+                    goBack={goBack}
                     onSubmit={this.handleNewGroupSubmit}
                   />
                   <Row className={styles.BtnContent} />

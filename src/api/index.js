@@ -29,8 +29,7 @@ export default {
   commission: commission(api),
   // 全渠道服务记录数据接口api
   fullChannelServiceRecord: fullChannelServiceRecord(api),
-
-  // 附件删除
-  ceFileDelete: query => api.post('/file/ceFileDelete', query),
+  // 员工职责与职位
+  getEmpInfo: query => api.post('/groovynoauth/fsp/emp/info/queryEmpInfo', query),
 };
 

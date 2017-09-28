@@ -51,7 +51,7 @@ export default class CustomerLists extends PureComponent {
     serviceRecordData: PropTypes.object.isRequired,
     dict: PropTypes.object.isRequired,
     isSms: PropTypes.bool.isRequired,
-    isGetCustIncome: PropTypes.bool.isRequired,
+    custIncomeReqState: PropTypes.bool,
     toggleServiceRecordModal: PropTypes.func.isRequired,
   }
 
@@ -61,6 +61,7 @@ export default class CustomerLists extends PureComponent {
     q: '',
     fllowCustData: {},
     followLoading: false,
+    custIncomeReqState: false,
   }
 
   constructor(props) {
@@ -479,7 +480,7 @@ export default class CustomerLists extends PureComponent {
       serviceRecordData,
       dict,
       isSms,
-      isGetCustIncome,
+      custIncomeReqState,
       toggleServiceRecordModal,
     } = this.props;
     // 服务记录执行方式字典
@@ -557,7 +558,7 @@ export default class CustomerLists extends PureComponent {
                 currentFollowCustId={currentFollowCustId}
                 isFollows={isFollows}
                 currentCustId={currentCustId}
-                isGetCustIncome={isGetCustIncome}
+                custIncomeReqState={custIncomeReqState}
                 toggleServiceRecordModal={toggleServiceRecordModal}
               />,
             )

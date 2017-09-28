@@ -2,10 +2,10 @@
  * @Description: 合作合约 model
  * @Author: LiuJianShu
  * @Date: 2017-09-20 15:13:30
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-09-22 14:46:04
+ * @Last Modified by:   XuWenKang
+ * @Last Modified time: 2017-09-27 14:58:02
  */
-import { contract as api, ceFileDelete } from '../api';
+import { contract as api, seibel as seibelApi } from '../api';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -18,98 +18,119 @@ export default {
     drafterList: EMPTY_LIST, // 拟稿人
     empOrgTreeList: EMPTY_OBJECT, // 部门
     attaches: EMPTY_LIST, // 附件信息
+    custList: EMPTY_LIST, // 客户列表
+    contractDetail: EMPTY_OBJECT, // 合约详情
+    contractNumList: EMPTY_LIST, // 合作合约编号列表
+    baseInfo: EMPTY_OBJECT,
+    attachmentList: EMPTY_LIST, // 附件信息
   },
   reducers: {
-    getDetailMessageSuccess(state, action) {
+    // 获取详情
+    getBaseInfoSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
       return {
         ...state,
-        detailMessage: resultData,
+        baseInfo: resultData,
       };
     },
-    getContractListSuccess(state, action) {
-      const { payload: { resultData = EMPTY_OBJECT } } = action;
-      const { page = EMPTY_OBJECT, applicationList = EMPTY_LIST } = resultData;
-      const { listData: preListData = EMPTY_LIST } = state.list;
-
+    // 获取附件列表
+    getAttachmentListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_LIST } } = action;
       return {
         ...state,
-        list: {
-          page,
-          resultData: page.pageNum === 1 ?
-            applicationList : [...preListData, ...applicationList],
-        },
+        attachmentList: resultData,
       };
     },
-    getDrafterListSuccess(state, action) {
+    // 删除附件
+    deleteAttachmentSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
-      const { empInfo = EMPTY_LIST } = resultData;
-
+      const { attaches = EMPTY_LIST } = resultData;
       return {
         ...state,
-        drafterList: empInfo,
+        attachmentList: attaches,
       };
     },
-    getEmpOrgTreeSuccess(state, action) {
+    getCutListSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
-
+      const { custList = EMPTY_LIST } = resultData;
       return {
         ...state,
-        empOrgTreeList: resultData,
+        custList,
       };
     },
-    ceFileDeleteSuccess(state, action) {
+    getContractDetailSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
       return {
         ...state,
-        attachment: resultData,
+        contractDetail: resultData,
+      };
+    },
+    saveContractDataSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      console.log(resultData);
+      return {
+        ...state,
+      };
+    },
+    getContractNumListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_LIST } } = action;
+      return {
+        ...state,
+        contractNumList: resultData,
       };
     },
   },
   effects: {
-    * getDetailMessage({ payload }, { call, put }) {
-      const response = yield call(api.getMessage, payload);
+    // 获取详情
+    * getBaseInfo({ payload }, { call, put }) {
+      const response = yield call(api.getContractDetail, payload);
       yield put({
-        type: 'getDetailMessageSuccess',
+        type: 'getBaseInfoSuccess',
         payload: response,
       });
     },
-    * getContractList({ payload }, { call, put }) {
-      const response = yield call(api.getContractList, payload);
+    // 获取附件信息
+    * getAttachmentList({ payload }, { call, put }) {
+      const response = yield call(api.getAttachmentList, payload);
       yield put({
-        type: 'getContractListSuccess',
-        payload: response,
-      });
-      const result = response.resultData.applicationList;
-      if (Array.isArray(result) && result.length) {
-        const detailList = yield call(api.getMessage, {
-          id: result[0].id,
-        });
-        console.warn('detailList', detailList);
-        yield put({
-          type: 'getDetailMessageSuccess',
-          payload: detailList,
-        });
-      }
-    },
-    * getDrafterList({ payload }, { call, put }) {
-      const response = yield call(api.getDrafterList, payload);
-      yield put({
-        type: 'getDrafterListSuccess',
+        type: 'getAttachmentListSuccess',
         payload: response,
       });
     },
-    * getEmpOrgTree({ payload }, { call, put }) {
-      const response = yield call(api.getEmpOrgTree, payload);
+    * deleteAttachment({ payload }, { call, put }) {
+      const response = yield call(api.deleteAttachment, payload);
       yield put({
-        type: 'getEmpOrgTreeSuccess',
+        type: 'deleteAttachmentSuccess',
         payload: response,
       });
     },
-    * ceFileDelete({ payload }, { call, put }) {
-      const response = yield call(ceFileDelete, payload);
+    * getCutList({ payload }, { call, put }) {
+      const response = yield call(seibelApi.getCanApplyCustList, payload);
       yield put({
-        type: 'ceFileDeleteSuccess',
+        type: 'getCutListSuccess',
+        payload: response,
+      });
+    },
+    * getContractDetail({ payload }, { call, put }) {
+      const response = yield call(api.getContractDetail, payload);
+      console.log('detail', response);
+      yield put({
+        type: 'getContractDetailSuccess',
+        payload: response,
+      });
+    },
+    * saveContractData({ payload }, { call, put }) {
+      console.log('payload', payload);
+      const response = yield call(api.saveContractData, payload);
+      yield put({
+        type: 'saveContractDataSuccess',
+        payload: response,
+      });
+    },
+    * getContractNumList({ payload }, { call, put }) {
+      const response = yield call(api.getContractNumList, payload);
+      yield put({
+        type: 'getContractNumListSuccess',
         payload: response,
       });
     },

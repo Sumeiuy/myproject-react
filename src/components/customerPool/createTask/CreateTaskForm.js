@@ -446,7 +446,7 @@ export default class CreateTaskForm extends PureComponent {
               </div>
               <div className={styles.task_btn}>
                 <FormItem>
-                  <Button onClick={this.closeTab}>
+                  <Button onClick={this.props.goBack}>
                     取消
                     </Button>
                   <Button type="primary" htmlType="submit">提交</Button> { /* loading */}

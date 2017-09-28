@@ -58,21 +58,33 @@ const fetchDataFunction = (globalLoading, type) => query => ({
 });
 
 const mapStateToProps = state => ({
-  performanceIndicators: state.customerPool.performanceIndicators, // 绩效指标
-  custRange: state.customerPool.custRange, // 客户池用户范围
-  empInfo: state.app.empInfo, // 职位信息
-  position: state.customerPool.position, // 职责切换
-  dict: state.app.dict, // 职责切换
+  // 绩效指标
+  performanceIndicators: state.customerPool.performanceIndicators,
+  // 客户池用户范围
+  custRange: state.customerPool.custRange,
+  // 职位信息
+  empInfo: state.app.empInfo,
+  // 职责切换
+  position: state.customerPool.position,
+  // 职责切换
+  dict: state.app.dict,
   custList: state.customerPool.custList,
   page: state.customerPool.custPage,
-  monthlyProfits: state.customerPool.monthlyProfits, // 6个月收益数据
-  custContactData: state.customerPool.custContactData, // 联系方式数据
+  // 6个月收益数据
+  monthlyProfits: state.customerPool.monthlyProfits,
+  // 联系方式数据
+  custContactData: state.customerPool.custContactData,
+  // 邮箱地址
   custEmail: state.customerPool.custEmail,
-  serviceRecordData: state.customerPool.serviceRecordData, // 最近服务记录
-  cycle: state.app.dict.kPIDateScopeType,  // 统计周期
-  followLoading: state.customerPool.followLoading, // 关注成功
+  // 最近服务记录
+  serviceRecordData: state.customerPool.serviceRecordData,
+  // 统计周期
+  cycle: state.app.dict.kPIDateScopeType,
+  // 关注成功
+  followLoading: state.customerPool.followLoading,
   fllowCustData: state.customerPool.fllowCustData,
-  isGetCustIncome: state.customerPool.isGetCustIncome,
+  // 接口的loading状态
+  interfaceState: state.loading.effects,
 });
 
 const mapDispatchToProps = {
@@ -122,8 +134,10 @@ export default class CustomerList extends PureComponent {
     // getStatisticalPeriod: PropTypes.func.isRequired,
     fllowCustData: PropTypes.object,
     followLoading: PropTypes.bool,
-    isGetCustIncome: PropTypes.bool.isRequired,
-    toggleServiceRecordModal: PropTypes.func.isRequired, // 显示隐藏添加服务记录弹框
+    // 显示隐藏添加服务记录弹框
+    toggleServiceRecordModal: PropTypes.func.isRequired,
+    // 接口的loading状态
+    interfaceState: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -557,8 +571,8 @@ export default class CustomerList extends PureComponent {
       cycle,
       followLoading,
       fllowCustData,
-      isGetCustIncome,
       toggleServiceRecordModal,
+      interfaceState,
     } = this.props;
     const {
       sortDirection,
@@ -632,7 +646,7 @@ export default class CustomerList extends PureComponent {
           curPageNum={curPageNum}
           pageSize={pageSize}
           monthlyProfits={monthlyProfits}
-          isGetCustIncome={isGetCustIncome}
+          custIncomeReqState={interfaceState[effects.getCustIncome]}
           onPageChange={this.handlePageChange}
           onSizeChange={this.handleSizeChange}
           getCustIncome={getCustIncome}

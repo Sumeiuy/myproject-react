@@ -340,9 +340,15 @@ export default class CreateContactModal extends PureComponent {
         }
         {
           (!isPersonHasContact && !isOrgMainContactHasTel) ?
-            <div className={styles.noneInfo}>
+            <div className={styles.noneInfoSection}>
+              <div className={styles.noneInfo}>
                   暂无客户联系电话，请与客户沟通尽快完善信息
-            </div> : <div className={styles.number}>
+              </div>
+              <div className={styles.rightSection}>
+                <Button key="addServiceRecord" onClick={this.handleServiceRecordClick}>添加服务记录</Button>
+              </div>
+            </div> :
+            <div className={styles.number}>
               {
                 ((isOrgMainContactHasTel && !_.isEmpty(mainContactInfo.cellInfo)) ||
                 (isPersonHasContact && personalContactInfo.mainTelInfo.type !== 'none')) ?

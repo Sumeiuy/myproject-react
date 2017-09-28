@@ -25,6 +25,7 @@ const EMPTY_OBJECT = {};
 const HTSC_RESPID = '1-46IDNZI'; // 首页指标查询
 // 主服务经理id
 const MAIN_MAGEGER_ID = 'msm';
+const LOCAL_MONTH = '518003';
 const effects = {
   toBeTone: 'customerPool/getToBeDone',
   performanceIndicators: 'customerPool/getPerformanceIndicators',
@@ -272,7 +273,7 @@ export default class Home extends PureComponent {
     const { historyTime, customerPoolTimeSelect } = optionsMap;
     const currentSelect = _.find(historyTime, itemData =>
       itemData.name === _.find(customerPoolTimeSelect, item =>
-        item.key === (cycleSelect || '518003')).name) || {}; // 本月
+        item.key === (cycleSelect || LOCAL_MONTH)).name) || {}; // 本月
     const nowDuration = getDurationString(currentSelect.key);
     const begin = nowDuration.begin;
     const end = nowDuration.end;
@@ -325,10 +326,10 @@ export default class Home extends PureComponent {
     getToBeDone();
 
     // 净创收数据
-    this.getIncomes({ begin, end, orgId: fspOrgId, cycleSelect: cycleSelect || '518003' });
+    this.getIncomes({ begin, end, orgId: fspOrgId, cycleSelect: cycleSelect || LOCAL_MONTH });
 
     // 绩效指标
-    this.getIndicators({ orgId: fspOrgId, cycleSelect: cycleSelect || '518003' });
+    this.getIndicators({ orgId: fspOrgId, cycleSelect: cycleSelect || LOCAL_MONTH });
 
     // 替换url orgId
     replace({
@@ -336,7 +337,7 @@ export default class Home extends PureComponent {
       query: {
         ...query,
         orgId: fspOrgId,
-        cycleSelect: cycleSelect || '518003',
+        cycleSelect: cycleSelect || LOCAL_MONTH,
       },
     });
   }
