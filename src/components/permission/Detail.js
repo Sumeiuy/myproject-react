@@ -296,7 +296,7 @@ export default class Detail extends PureComponent {
 
   render() {
     const modifyBtnClass = classnames([style.dcHeaderModifyBtn,
-      { hide: this.state.statusType !== 'ready' },
+      { hide: this.props.status !== '04' },
     ]);
 
     const columns = [{

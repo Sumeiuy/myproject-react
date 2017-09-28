@@ -10,6 +10,21 @@ import UploadFile from './UploadFile';
 import TableDialog from '../common/biz/TableDialog';
 
 const confirm = Modal.confirm;
+const columns = [
+  {
+    title: '工号',
+    dataIndex: 'ptyMngId',
+    key: 'ptyMngId',
+  }, {
+    title: '姓名',
+    dataIndex: 'ptyMngName',
+    key: 'ptyMngName',
+  }, {
+    title: '所属营业部',
+    dataIndex: 'businessDepartment',
+    key: 'businessDepartment',
+  },
+];
 
 export default class CreatePrivateClient extends PureComponent {
   static propTypes = {
@@ -22,6 +37,7 @@ export default class CreatePrivateClient extends PureComponent {
     getNextApproverList: PropTypes.func.isRequired,
     getCreateCustApplication: PropTypes.func.isRequired,
     createCustApplication: PropTypes.object.isRequired,
+    addListenCreate: PropTypes.bool.isRequired,
     subTypeList: PropTypes.array.isRequired,
     empId: PropTypes.string,
     empName: PropTypes.string,
@@ -55,6 +71,8 @@ export default class CreatePrivateClient extends PureComponent {
       nextApproverModal: false,
       // 下一审批人
       nextApproverList: [],
+      // 新建 私密客户申请 是否成功
+      createSuccess: false,
     };
   }
 
@@ -62,14 +80,19 @@ export default class CreatePrivateClient extends PureComponent {
     if (newProps.hasServerPersonList !== this.props.hasServerPersonList) {
       this.setState({ serverInfo: newProps.hasServerPersonList });
     }
-    if (newProps.createCustApplication.msg === 'success') {
+
+    if (
+      this.props.addListenCreate === true &&
+      newProps.addListenCreate === false &&
+      newProps.createCustApplication.msg === 'success'
+    ) {
       this.setState({ isShowModal: false });
       message.success('私密客户创建成功！！！');
     }
   }
 
   @autobind
-  toSelectNextApproverList() {
+  selectNextApproverList() {
     // 显示 选择下一审批人模态框
     this.setState({ nextApproverModal: true });
   }
@@ -154,21 +177,6 @@ export default class CreatePrivateClient extends PureComponent {
   }
 
   render() {
-    const columns = [
-      {
-        title: '工号',
-        dataIndex: 'ptyMngId',
-        key: 'ptyMngId',
-      }, {
-        title: '姓名',
-        dataIndex: 'ptyMngName',
-        key: 'ptyMngName',
-      }, {
-        title: '所属营业部',
-        dataIndex: 'businessDepartment',
-        key: 'businessDepartment',
-      },
-    ];
     const searchProps = {
       visible: this.state.nextApproverModal,
       onOk: this.confirmSubmit,
@@ -186,7 +194,7 @@ export default class CreatePrivateClient extends PureComponent {
       <CommonModal
         title="新建私密客户申请"
         visible={this.state.isShowModal}
-        onOk={this.toSelectNextApproverList}
+        onOk={this.selectNextApproverList}
         okText="提交"
         closeModal={this.closeModal}
         size="large"
@@ -223,7 +231,6 @@ export default class CreatePrivateClient extends PureComponent {
             onEmitEvent={this.updateValue}
           />
           <TableDialog {...searchProps} />
-
         </div>
       </CommonModal>
     );

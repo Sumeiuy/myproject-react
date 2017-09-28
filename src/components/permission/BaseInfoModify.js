@@ -39,16 +39,16 @@ export default class BaseInfoModify extends PureComponent {
 
   componentWillReceiveProps(newProps) {
     if (newProps.subTypeList !== this.props.subTypeList && newProps.subTypeList.length > 0) {
-      const result = [];
-      /* eslint-disable */
-      for (const value of newProps.subTypeList) {
+      /* eslint-disable */ 
+      const result = newProps.subTypeList.map((value) => {
+        let obj;
         for (const item of subType) {
           if (item.value === value) {
-            result.push(item);
-            return;
+            return obj = item;
           }
         }
-      }
+        return obj;
+      });
       /* eslint-enable */
       this.setState({ subTypeList: result });
     }

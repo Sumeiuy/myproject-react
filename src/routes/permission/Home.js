@@ -55,6 +55,8 @@ const mapStateToProps = state => ({
   modifyCustApplication: state.permission.modifyCustApplication,
   // 获取创建私密客户申请 的结果
   createCustApplication: state.permission.createCustApplication,
+  // 监听 创建私密客户申请 过程
+  addListenCreate: state.loading.effects['permission/getCreateCustApplication'] || false,
   // 列表loading
   seibelListLoading: state.loading.effects['app/getSeibleList'],
   //  获取子类型
@@ -124,6 +126,7 @@ export default class Permission extends PureComponent {
     modifyCustApplication: PropTypes.object.isRequired,
     getCreateCustApplication: PropTypes.func.isRequired,
     createCustApplication: PropTypes.object.isRequired,
+    addListenCreate: PropTypes.bool.isRequired,
     getSubTypeList: PropTypes.func.isRequired,
     subTypeList: PropTypes.array.isRequired,
   }
@@ -155,7 +158,11 @@ export default class Permission extends PureComponent {
       },
       // 获取 查询服务人员列表
       getSearchServerPersonList: (data) => {
-        this.props.getSearchServerPersonList({ keyword: data });
+        this.props.getSearchServerPersonList({
+          keyword: data,
+          pageSize: 10,
+          pageNum: 1,
+        });
       },
       getSubTypeList: (data) => {
         this.props.getSubTypeList(data);
@@ -359,6 +366,7 @@ export default class Permission extends PureComponent {
       getNextApproverList,
       getCreateCustApplication,
       createCustApplication,
+      addListenCreate,
       detailMessage,
       subTypeList,
     } = this.props;
@@ -419,6 +427,7 @@ export default class Permission extends PureComponent {
               getNextApproverList={getNextApproverList}
               getCreateCustApplication={getCreateCustApplication}
               createCustApplication={createCustApplication}
+              addListenCreate={addListenCreate}
               subTypeList={subTypeList}
               empId={detailMessage.empId}
               empName={detailMessage.empName}
