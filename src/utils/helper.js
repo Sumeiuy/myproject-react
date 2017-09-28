@@ -53,7 +53,7 @@ const helper = {
   // 获取 empId
   getEmpId() {
     // 临时 ID
-    const tempId = '002727'; // '001423''002727';
+    const tempId = '001206'; // '001423''002727';
     const nativeQuery = helper.getQuery(window.location.search);
     const empId = window.curUserCode || nativeQuery.empId || tempId;
     return empId;

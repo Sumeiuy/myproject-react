@@ -14,9 +14,9 @@ export default class BaseInfoModify extends PureComponent {
   static propTypes = {
     head: PropTypes.string.isRequired,
     canApplyCustList: PropTypes.array.isRequired,
-    subTypeTxt: PropTypes.string.isRequired,
     customer: PropTypes.string.isRequired,
     remark: PropTypes.string.isRequired,
+    subTypeList: PropTypes.array.isRequired,
     onEmitEvent: PropTypes.func.isRequired,
   }
 
@@ -26,13 +26,32 @@ export default class BaseInfoModify extends PureComponent {
 
   static contextTypes = {
     getCanApplyCustList: PropTypes.func.isRequired,
+    getSubTypeList: PropTypes.func.isRequired,
   }
 
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
     this.state = {
-      subTypeTxt: props.subTypeTxt,
+      subTypeTxt: '请选择',
+      subTypeList: [],
     };
+  }
+
+  componentWillReceiveProps(newProps) {
+    if (newProps.subTypeList !== this.props.subTypeList && newProps.subTypeList.length > 0) {
+      const result = [];
+      /* eslint-disable */
+      for (const value of newProps.subTypeList) {
+        for (const item of subType) {
+          if (item.value === value) {
+            result.push(item);
+            return;
+          }
+        }
+      }
+      /* eslint-enable */
+      this.setState({ subTypeList: result });
+    }
   }
 
   @autobind
@@ -56,7 +75,11 @@ export default class BaseInfoModify extends PureComponent {
   @autobind
   selectCustomer(item) {
     // 选中客户
-    this.props.onEmitEvent('customer', { custName: item.custName, custNumber: item.cusId });
+    this.props.onEmitEvent('customer', item);
+    this.context.getSubTypeList({
+      customerId: item.cusId,
+      customerType: item.custType,
+    });
   }
 
   @autobind
@@ -77,23 +100,6 @@ export default class BaseInfoModify extends PureComponent {
       <div className={style.baseInfo}>
         <p>{this.context.str}</p>
         <InfoTitle head={this.props.head} />
-
-        <div className={style.inputComponent}>
-          <span className={style.inputComponentTitle}>
-            <i className={style.isRequired}>*</i>子类型：
-          </span>
-          <div className={style.inputComponentContent}>
-            <div className={style.boxBorder}>
-              <Select
-                data={subType}
-                name="subType"
-                onChange={this.updateSubTypeValue}
-                value={this.state.subTypeTxt}
-              />
-            </div>
-          </div>
-        </div>
-
         <div className={style.inputComponent}>
           <span className={style.inputComponentTitle}>
             <i className={style.isRequired}>*</i>客户：
@@ -109,6 +115,21 @@ export default class BaseInfoModify extends PureComponent {
               emitToSearch={this.searchCanApplyCustList}
               boxStyle={{ border: '1px solid #d9d9d9' }}
             />
+          </div>
+        </div>
+        <div className={style.inputComponent}>
+          <span className={style.inputComponentTitle}>
+            <i className={style.isRequired}>*</i>子类型：
+          </span>
+          <div className={style.inputComponentContent}>
+            <div className={style.boxBorder}>
+              <Select
+                data={this.state.subTypeList}
+                name="subType"
+                onChange={this.updateSubTypeValue}
+                value={this.state.subTypeTxt}
+              />
+            </div>
           </div>
         </div>
         <TextareaComponent

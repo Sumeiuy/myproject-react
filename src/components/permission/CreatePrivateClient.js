@@ -1,12 +1,13 @@
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import PropTypes from 'prop-types';
-import { Modal } from 'antd';
+import { Modal, message } from 'antd';
 import _ from 'lodash';
 import CommonModal from '../common/biz/CommonModal';
 import ServerPersonel from './ServerPersonel';
 import BaseInfoModify from './BaseInfoModify';
 import UploadFile from './UploadFile';
+import TableDialog from '../common/biz/TableDialog';
 
 const confirm = Modal.confirm;
 
@@ -16,10 +17,22 @@ export default class CreatePrivateClient extends PureComponent {
     canApplyCustList: PropTypes.array.isRequired,
     onEmitClearModal: PropTypes.func.isRequired,
     hasServerPersonList: PropTypes.array.isRequired,
+    getHasServerPersonList: PropTypes.func.isRequired,
+    nextApproverList: PropTypes.array.isRequired,
+    getNextApproverList: PropTypes.func.isRequired,
+    getCreateCustApplication: PropTypes.func.isRequired,
+    createCustApplication: PropTypes.object.isRequired,
+    subTypeList: PropTypes.array.isRequired,
+    empId: PropTypes.string,
+    empName: PropTypes.string,
+    orgId: PropTypes.string,
   }
 
   static defaultProps = {
-
+    empId: '',
+    empName: '',
+    type: '',
+    orgId: '',
   }
 
   constructor(props) {
@@ -28,10 +41,20 @@ export default class CreatePrivateClient extends PureComponent {
       // 模态框是否显示   默认状态下是隐藏的
       isShowModal: true,
       serverInfo: props.hasServerPersonList,
-      attachInfoList: [],
+      attachment: '',
       subType: '',
       customer: {},
       remark: '',
+      // 新建时 选择的客户
+      custId: '',
+      // 新建时 选择的该客户类型
+      custType: '',
+      // 新建时 选择的该客户姓名
+      custName: '',
+      // 模态框下一审批人是否显示
+      nextApproverModal: false,
+      // 下一审批人
+      nextApproverList: [],
     };
   }
 
@@ -39,26 +62,27 @@ export default class CreatePrivateClient extends PureComponent {
     if (newProps.hasServerPersonList !== this.props.hasServerPersonList) {
       this.setState({ serverInfo: newProps.hasServerPersonList });
     }
+    if (newProps.createCustApplication.msg === 'success') {
+      this.setState({ isShowModal: false });
+      message.success('私密客户创建成功！！！');
+    }
   }
 
   @autobind
-  onOk() {
-    console.log('确定要关闭吗');
-    // this.setState({isShowModal: false});
+  toSelectNextApproverList() {
+    // 显示 选择下一审批人模态框
+    this.setState({ nextApproverModal: true });
   }
 
   @autobind
   closeModal() {
-    // 关闭我的模态框
+    // 关闭 新建私密客户 模态框
     const that = this;
     confirm({
       title: '真的要关闭此弹框嘛?',
       content: '亲~~弹框关闭以后，您所填写的信息是不会保存的哟！！！',
       onOk() {
         that.setState({ isShowModal: false });
-      },
-      onCancel() {
-
       },
     });
   }
@@ -70,16 +94,99 @@ export default class CreatePrivateClient extends PureComponent {
 
   @autobind
   updateValue(name, value) {
-    this.setState({ [name]: value });
     console.log(name, value);
+    this.setState({ [name]: value });
+    switch (name) {
+      case 'subType':
+        this.props.getHasServerPersonList({
+          custId: this.state.custId,
+          custType: this.state.custType,
+        });
+        break;
+      case 'customer':
+        this.setState({
+          customer: {
+            custName: value.custName,
+            custNumber: value.cusId,
+          },
+          custId: value.cusId,
+          custType: value.custType,
+        });
+        break;
+      default: break;
+    }
+  }
+
+  @autobind
+  confirmSubmit(value) {
+    const { empId, empName, orgId } = this.props;
+    const {
+      serverInfo,
+      attachment,
+      subType,
+      customer,
+      remark,
+    } = this.state;
+
+    const queryConfig = {
+      subType,
+      remark,
+      empInfoList: serverInfo,
+      attachment,
+      approvalIds: this.state.nextApproverList.concat(value.ptyMngId),
+      empId,
+      empName,
+      type: '01',
+      orgId,
+      custName: customer.custName,
+      custNumber: customer.custNumber,
+    };
+    this.props.getCreateCustApplication(queryConfig);
+    this.setState({ nextApproverModal: false });
+  }
+
+  @autobind
+  searchNextApproverList() {
+    // 按照给出的条件 搜索查询 下一审批人列表
+    this.props.getNextApproverList({
+      approverNum: 'single',
+    });
   }
 
   render() {
+    const columns = [
+      {
+        title: '工号',
+        dataIndex: 'ptyMngId',
+        key: 'ptyMngId',
+      }, {
+        title: '姓名',
+        dataIndex: 'ptyMngName',
+        key: 'ptyMngName',
+      }, {
+        title: '所属营业部',
+        dataIndex: 'businessDepartment',
+        key: 'businessDepartment',
+      },
+    ];
+    const searchProps = {
+      visible: this.state.nextApproverModal,
+      onOk: this.confirmSubmit,
+      onCancel: () => { this.setState({ nextApproverModal: false }); },
+      onSearch: this.searchNextApproverList,
+      dataSource: this.props.nextApproverList,
+      columns,
+      title: '选择下一审批人员',
+      placeholder: '员工号/员工姓名',
+      modalKey: 'nextApproverModal',
+      rowKey: 'ptyMngId',
+    };
+
     return (
       <CommonModal
         title="新建私密客户申请"
         visible={this.state.isShowModal}
-        onOk={this.onOk}
+        onOk={this.toSelectNextApproverList}
         okText="提交"
         closeModal={this.closeModal}
         size="large"
@@ -89,7 +196,6 @@ export default class CreatePrivateClient extends PureComponent {
         <div style={{ padding: '0 50px' }}>
           <BaseInfoModify
             head="基本信息"
-            subTypeTxt="全部"
             customer={!_.isEmpty(this.state.customer)
               ?
                 `${this.state.customer.custName}（${this.state.customer.custNumber}）`
@@ -99,6 +205,7 @@ export default class CreatePrivateClient extends PureComponent {
             remark={this.state.remark}
             canApplyCustList={this.props.canApplyCustList}
             onEmitEvent={this.updateValue}
+            subTypeList={this.props.subTypeList}
           />
           <ServerPersonel
             head="服务人员"
@@ -108,7 +215,15 @@ export default class CreatePrivateClient extends PureComponent {
             onEmitEvent={this.updateValue}
             searchServerPersonList={this.props.searchServerPersonList}
           />
-          <UploadFile fileList={this.state.attachInfoList} />
+          <UploadFile
+            fileList={[]}
+            edit
+            type="attachment"
+            attachment={this.state.attachment}
+            onEmitEvent={this.updateValue}
+          />
+          <TableDialog {...searchProps} />
+
         </div>
       </CommonModal>
     );

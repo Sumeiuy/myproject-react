@@ -53,8 +53,12 @@ const mapStateToProps = state => ({
   bottonList: state.permission.bottonList,
   // 获取修改私密客户申请 的结果
   modifyCustApplication: state.permission.modifyCustApplication,
+  // 获取创建私密客户申请 的结果
+  createCustApplication: state.permission.createCustApplication,
   // 列表loading
   seibelListLoading: state.loading.effects['app/getSeibleList'],
+  //  获取子类型
+  subTypeList: state.permission.subTypeList,
 });
 
 const mapDispatchToProps = {
@@ -81,8 +85,12 @@ const mapDispatchToProps = {
   getNextApproverList: fetchDataFunction(false, 'permission/getNextApproverList'),
   // 获取btnlist
   getBottonList: fetchDataFunction(false, 'permission/getBottonList'),
-  // 获取 获取修改私密客户申请 的结果
+  // 获取修改私密客户申请 的结果
   getModifyCustApplication: fetchDataFunction(false, 'permission/getModifyCustApplication'),
+  // 获取创建私密客户申请 的结果
+  getCreateCustApplication: fetchDataFunction(false, 'permission/getCreateCustApplication'),
+  // 获取子类型
+  getSubTypeList: fetchDataFunction(false, 'permission/getSubTypeList'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -114,6 +122,10 @@ export default class Permission extends PureComponent {
     getBottonList: PropTypes.func.isRequired,
     getModifyCustApplication: PropTypes.func.isRequired,
     modifyCustApplication: PropTypes.object.isRequired,
+    getCreateCustApplication: PropTypes.func.isRequired,
+    createCustApplication: PropTypes.object.isRequired,
+    getSubTypeList: PropTypes.func.isRequired,
+    subTypeList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -123,6 +135,7 @@ export default class Permission extends PureComponent {
   static childContextTypes = {
     getCanApplyCustList: PropTypes.func.isRequired,
     getSearchServerPersonList: PropTypes.func.isRequired,
+    getSubTypeList: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -143,6 +156,9 @@ export default class Permission extends PureComponent {
       // 获取 查询服务人员列表
       getSearchServerPersonList: (data) => {
         this.props.getSearchServerPersonList({ keyword: data });
+      },
+      getSubTypeList: (data) => {
+        this.props.getSubTypeList(data);
       },
     };
   }
@@ -238,7 +254,6 @@ export default class Permission extends PureComponent {
   @autobind
   clearModal() {
     // 清除模态框组件
-    console.log('模态框已经清楚');
     this.setState({ isShowModal: false });
   }
 
@@ -310,6 +325,7 @@ export default class Permission extends PureComponent {
       bottonList,
       getModifyCustApplication,
       modifyCustApplication,
+      subTypeList,
     } = this.props;
     return (
       <Detail
@@ -322,6 +338,7 @@ export default class Permission extends PureComponent {
         bottonList={bottonList}
         getModifyCustApplication={getModifyCustApplication}
         modifyCustApplication={modifyCustApplication}
+        subTypeList={subTypeList}
       />
     );
   }
@@ -337,7 +354,15 @@ export default class Permission extends PureComponent {
       canApplyCustList,
       searchServerPersonList,
       hasServerPersonList,
+      getHasServerPersonList,
+      nextApproverList,
+      getNextApproverList,
+      getCreateCustApplication,
+      createCustApplication,
+      detailMessage,
+      subTypeList,
     } = this.props;
+
     if (!custRange || !custRange.length) {
       return null;
     }
@@ -389,7 +414,15 @@ export default class Permission extends PureComponent {
               searchServerPersonList={searchServerPersonList}
               hasServerPersonList={hasServerPersonList}
               onEmitClearModal={this.clearModal}
-              getHasServerPersonList={this.props.getHasServerPersonList}
+              getHasServerPersonList={getHasServerPersonList}
+              nextApproverList={nextApproverList}
+              getNextApproverList={getNextApproverList}
+              getCreateCustApplication={getCreateCustApplication}
+              createCustApplication={createCustApplication}
+              subTypeList={subTypeList}
+              empId={detailMessage.empId}
+              empName={detailMessage.empName}
+              orgId={detailMessage.orgId}
             />
           :
             null

@@ -46,7 +46,7 @@ export default class CommonUpload extends PureComponent {
     uploadAttachment: PropTypes.func,
     attachment: PropTypes.string,
     attachmentList: PropTypes.array,
-    edit: PropTypes.boolean,
+    edit: PropTypes.bool,
   }
 
   static defaultProps = {
