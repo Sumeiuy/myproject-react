@@ -1,3 +1,7 @@
+/**
+ * @description 头部根据用户输入的关键字，查询已经申请客户信息列表
+ * @author hongguangqing
+ */
 exports.response = function (req, res) {
   return{
     code: '0',

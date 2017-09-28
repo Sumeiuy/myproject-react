@@ -12,13 +12,13 @@ exports.response = function (req, res) {
       "orgName": "南京长江路证券营业部", 
       "type": "01",
       "subType": "0103", // 子类型
-      "status": "营业部负责人审批", // 状态
+      "status": "01", // 状态
       "custNumber": "1-3UUZ9JF", // 客户id
       "custName": "强哥", // 客户
       "createTime": "2017-09-21 13:38:34", // 提请时间
       "modifyTime": null,
       "remark": "备注备注备注备注hahaha备注", // 备注
-      "empInfoVOS": [ // 主服务经理
+      "empList": [ // 主服务经理
         {
           "ptyMngId": "22222",
           "ptyMngName": "小强",

@@ -20,10 +20,10 @@ export default class DigitalTrimmer extends PureComponent {
   }
 
   static defaultProps = {
-    min: 0,
-    max: 100,
-    step: 1,
-    defaultValue: 0,
+    min: 1.6,
+    max: 3,
+    step: 0.1,
+    defaultValue: 1.6,
   }
   @autobind
   onChange(v) {

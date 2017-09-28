@@ -3,7 +3,7 @@ exports.response = function (req, res) {
         'code': '0',
         'msg': 'OK',
         'resultData': {
-            'id': '1-4310LCU',
+            'id': '380',
             'action': null,
             'createdBy': '1-OXZ5',
             'createdName': '王华',
@@ -35,11 +35,56 @@ exports.response = function (req, res) {
             'assetAccnt': '',
             'terms': [
                 {
+                    'key': 1,
                     'termsName': '基金子公司产品分成',
                     'paraName': '基金子公司产品分成比例',
                     'paraVal': '0.5',
                     'divIntegrationId': 'ZZ001041054',
                     'divName': '南京解放路证券营业部',
+                    'furturePromotion': '',
+                    'preCondition': '',
+                    'synBusSys': ''
+                },
+                {
+                    'key': 2,
+                    'termsName': '基金子公司产品分成2',
+                    'paraName': '基金子公司产品分成比例2',
+                    'paraVal': '0.52',
+                    'divIntegrationId': 'ZZ0010410542',
+                    'divName': '南京解放路证券营业部2',
+                    'furturePromotion': '',
+                    'preCondition': '',
+                    'synBusSys': ''
+                },
+                {
+                    'key': 3,
+                    'termsName': '基金子公司产品分成3',
+                    'paraName': '基金子公司产品分成比例3',
+                    'paraVal': '0.53',
+                    'divIntegrationId': 'ZZ0010410543',
+                    'divName': '南京解放路证券营业部3',
+                    'furturePromotion': '',
+                    'preCondition': '',
+                    'synBusSys': ''
+                },
+                {
+                    'key': 4,
+                    'termsName': '基金子公司产品分成4',
+                    'paraName': '基金子公司产品分成比例4',
+                    'paraVal': '0.54',
+                    'divIntegrationId': 'ZZ0010410544',
+                    'divName': '南京解放路证券营业部4',
+                    'furturePromotion': '',
+                    'preCondition': '',
+                    'synBusSys': ''
+                },
+                {
+                    'key': 5,
+                    'termsName': '基金子公司产品分成5',
+                    'paraName': '基金子公司产品分成比例5',
+                    'paraVal': '0.55',
+                    'divIntegrationId': 'ZZ0010410545',
+                    'divName': '南京解放路证券营业部5',
                     'furturePromotion': '',
                     'preCondition': '',
                     'synBusSys': ''

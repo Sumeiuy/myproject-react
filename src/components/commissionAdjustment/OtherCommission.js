@@ -4,10 +4,15 @@
  * @author baojiajia
  */
 import React, { PropTypes } from 'react';
+import _ from 'lodash';
 import styles from './otherCommission.less';
 
 export default function OtherCommission(props) {
-  const { name, value } = props;
+  const { name } = props;
+  let { value } = props;
+  if (_.isEmpty(value)) {
+    value = '不变';
+  }
   return (
     <div className={styles.otherComm}>
       <div className={styles.item}>
