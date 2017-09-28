@@ -73,6 +73,23 @@
     width: 60%;
     padding-bottom: 10px;
   }
+  .noneInfoSection {
+    display: flex;
+    & > .rightSection {
+      width: 40%;
+      text-align: right;
+      height: 32px;
+      padding-right: 10px;
+      & > button {
+        border: 1px solid #108ee9;
+        height: 100%;
+        & > span {
+          font-size: 13px;
+          color: #108ee9;
+        }
+      }
+    }
+  }
   .number {
     display: flex;
     justify-content: flex-start;
