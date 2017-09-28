@@ -15,6 +15,24 @@ import CommonModal from '../common/biz/CommonModal';
 import styles from './choiceApproverBoard.less';
 
 const Search = Input.Search;
+// 表头
+const tableHeader = [
+  {
+    dataIndex: 'empNo',
+    key: 'empNo',
+    title: '工号',
+  },
+  {
+    dataIndex: 'empName',
+    key: 'empName',
+    title: '姓名',
+  },
+  {
+    dataIndex: 'belowDept',
+    key: 'belowDept',
+    title: '所属营业部',
+  },
+];
 
 export default class ChoiceApproverBoard extends PureComponent {
   static propTypes = {
@@ -85,25 +103,6 @@ export default class ChoiceApproverBoard extends PureComponent {
   render() {
     const { visible } = this.props;
     const { approverRadio, listAfterFilter } = this.state;
-    // 表头
-    const tableHeader = [
-      {
-        dataIndex: 'empNo',
-        key: 'empNo',
-        title: '工号',
-      },
-      {
-        dataIndex: 'empName',
-        key: 'empName',
-        title: '姓名',
-      },
-      {
-        dataIndex: 'belowDept',
-        key: 'belowDept',
-        title: '所属营业部',
-      },
-    ];
-
     // 表格中需要的操作
     const operation = {
       column: {

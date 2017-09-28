@@ -3,7 +3,7 @@
  * @author sunweibin
  */
 import _ from 'lodash';
-import { commission as api, seibel as seibelApi } from '../api';
+import { commission as api } from '../api';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -15,8 +15,6 @@ export default {
     productList: [],
     // 审批人员列表
     approvalUserList: [],
-    // 批量佣金左侧列表
-    list: {},
     // 批量佣金右侧详情
     detail: {},
     // 单个用户的审批记录
@@ -27,8 +25,6 @@ export default {
     filterCustList: [],
     // 筛选的拟稿人列表
     filterDrafterList: [],
-    // 可选部门组织机构树
-    custRange: [],
     // 校验进程
     validataLoading: false,
     // 检验结果
@@ -88,7 +84,7 @@ export default {
       const { payload: { resultData } } = action;
       return {
         ...state,
-        approvalUserList: resultData,
+        approvalUserList: resultData.employList,
       };
     },
 
@@ -105,23 +101,6 @@ export default {
       return {
         ...state,
         filterDrafterList: resultData.empList,
-      };
-    },
-
-    getCustRangeSuccess(state, action) {
-      const { payload: { resultData = EMPTY_LIST } } = action;
-      let custRange;
-      if (resultData.level === '1') {
-        custRange = [
-          { id: resultData.id, name: resultData.name, level: resultData.level },
-          ...resultData.children,
-        ];
-      } else {
-        custRange = [resultData];
-      }
-      return {
-        ...state,
-        custRange,
       };
     },
 
@@ -149,22 +128,6 @@ export default {
         type: 'getProductListSuccess',
         payload: response,
       });
-    },
-
-    // 批量佣金Home列表
-    * getCommissionList({ payload }, { call, put }) {
-      const listResponse = yield call(seibelApi.getSeibleList, payload);
-      yield put({
-        type: 'getCommissionListSuccess',
-        payload: listResponse,
-      });
-      const appList = listResponse.resultData.applicationBaseInfoList;
-      if (Array.isArray(appList) && appList.length) {
-        yield put({
-          type: 'getCommissionDetail',
-          payload: { batchNum: appList[0].bussiness1 },
-        });
-      }
     },
 
     // 批量佣金调整Home的右侧详情
@@ -205,33 +168,6 @@ export default {
       });
     },
 
-    // 根据用户输入的关键字，来查询可选的客户列表
-    * searchCustList({ payload }, { call, put }) {
-      const custResponse = yield call(seibelApi.getCustList, payload);
-      yield put({
-        type: 'searchCustListSuccess',
-        payload: custResponse,
-      });
-    },
-
-    // 根据用户输入的关键字，来查询可选的拟稿人列表
-    * searchDrafterList({ payload }, { call, put }) {
-      const drafterResponse = yield call(seibelApi.getDrafterList, payload);
-      yield put({
-        type: 'searchDrafterListSuccess',
-        payload: drafterResponse,
-      });
-    },
-
-    // 组织结构树
-    * getCustRange({ payload }, { call, put }) {
-      const response = yield call(seibelApi.getEmpOrgTree, payload);
-      yield put({
-        type: 'getCustRangeSuccess',
-        payload: response,
-      });
-    },
-
     // 获取审批人员列表
     * getAprovalUserList({ payload }, { call, put }) {
       const response = yield call(api.queryAprovalUserList, payload);
@@ -241,6 +177,7 @@ export default {
       });
     },
 
+    // 校验客户信息
     * validateCustInfo({ payload }, { call, put }) {
       yield put({
         type: 'opertateState',

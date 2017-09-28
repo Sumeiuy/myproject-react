@@ -80,7 +80,7 @@ export default class SplitPanel extends PureComponent {
   componentWillUnmount() {
     // 重置外层容器样式
     // 防止影响其他界面
-    this.setUTBContentMargin('30px', '10px');
+    this.setUTBContentMargin('10px', '30px', '10px');
     this.resetContainerStyle();
     // 取消事件监听
     window.removeEventListener('resize', this.onResizeChange, false);
@@ -95,11 +95,12 @@ export default class SplitPanel extends PureComponent {
 
   // 设置系统容器的局部样式
   @autobind
-  setUTBContentMargin(marginRight, marginBottom) {
+  setUTBContentMargin(top, right, bottom) {
     const utb = this.UTBContentElem;
     if (utb) {
-      utb.style.marginRight = marginRight;
-      utb.style.marginBottom = marginBottom;
+      utb.style.marginTop = top;
+      utb.style.marginRight = right;
+      utb.style.marginBottom = bottom;
     }
   }
 
@@ -115,7 +116,7 @@ export default class SplitPanel extends PureComponent {
   @autobind
   setDocumentScroll() {
     // 将系统的Margin设置为0;
-    this.setUTBContentMargin(0, 0);
+    this.setUTBContentMargin(0, 0, 0);
     // 次变量用来判断是否在FSP系统中
     const utb = this.UTBContentElem;
     // 视口的高度
@@ -149,24 +150,22 @@ export default class SplitPanel extends PureComponent {
     const fspTabHeight = 55;
 
     // 设置系统容器高度
-    let pch = `${viewHeight}px`;
+    let pch = viewHeight;
     if (utb) {
-      pch = `${viewHeight - fspTabHeight}px`;
+      pch = viewHeight - fspTabHeight;
     }
-    this.setElementStyle(pageContainer, pch);
+    this.setElementStyle(pageContainer, `${pch}px`);
     this.setElementStyle(pageContent, '100%');
     // 设置分割面板的高度
-    let pwh = `${viewHeight - topPanelHeight}px`;
-    if (utb) {
-      pwh = `${viewHeight - fspTabHeight - topPanelHeight}px`;
-    }
-    this.setElementStyle(panelWrapper, pwh);
+    const pwh = pch - topPanelHeight;
+    this.setElementStyle(panelWrapper, `${pwh}px`);
     // 设置左右分割区域的高度
     if (leftPanelElm && rightPanelElm) {
       this.setElementStyle(this.splitPanel, 'auto');
       this.setElementStyle(splitBarElm, 'center', 'backgroundPosition');
+      this.setElementStyle(splitBarElm, '0 0 auto', 'flex');
       this.setElementStyle(splitBarElm, 'auto');
-      const sectionHeight = viewHeight - topPanelHeight - topDistance - bottomDistance;
+      const sectionHeight = pwh - topDistance - bottomDistance;
       this.setElementStyle(leftPanelElm, `${sectionHeight}px`);
       this.setElementStyle(rightPanelElm, `${sectionHeight}px`);
       // 并且设置左侧列表的高度
@@ -176,13 +175,6 @@ export default class SplitPanel extends PureComponent {
         this.setElementStyle(listWrapper, 'auto', 'overflow');
       }
     }
-
-    // TODO 后面需要增加无数据情况下的高度设置
-    // if (nullElem && this.state.isEmpty) {
-    //   const top = nullElem.getBoundingClientRect().top;
-    //   containerElem.style.height = `${docElemHeight - top}px`;
-    //   nullDivSectionElem.style.height = `${docElemHeight - top}px`; // eslint-disable-line
-    // }
   }
 
   // 重置系统容器样式
@@ -223,9 +215,11 @@ export default class SplitPanel extends PureComponent {
   @autobind
   initPane() {
     const boxWidth = this.splitPanel.getBoundingClientRect().width;
+    // Splitpanel的两个容器所占总宽度
+    const totalWidth = boxWidth - 120;
     const paneaWidth = this.leftPanel.getBoundingClientRect().width;
-    const minsize = boxWidth * 0.3 || 200;
-    const maxsize = boxWidth * 0.6 || 600;
+    const minsize = totalWidth * 0.3;
+    const maxsize = totalWidth * 0.6;
     const { paneboxWidth } = this.state;
     if (paneboxWidth !== boxWidth) {
       if (paneaWidth > maxsize) {
@@ -274,7 +268,7 @@ export default class SplitPanel extends PureComponent {
   panchange(size) {
     this.panMov(size);
     this.initPane();
-    const boxWidth = this.splitPanel.getBoundingClientRect().width;
+    const boxWidth = this.splitPanel.getBoundingClientRect().width - 120;
     if (size > boxWidth * 0.5) {
       this.rightPanel.className = 'Pane vertical Pane2 allWidth';
     } else {
@@ -305,20 +299,19 @@ export default class SplitPanel extends PureComponent {
           </div>
         </div>
         <div className={hasDataClass} ref={this.panelBdRef}>
-          <SplitPane
-            onChange={this.panchange}
-            split="vertical"
-            minSize={paneMinSize}
-            maxSize={paneMaxSize}
-            defaultSize={splitConfig.defaultSize}
-            className="primary"
-            style={{
-              padding: '0 20px',
-            }}
-          >
-            <div className={styles.leftPanel} ref={this.leftPanelRef}>{leftPanel}</div>
-            <div className={styles.rightPanel} ref={this.rightPanelRef}>{rightPanel}</div>
-          </SplitPane>
+          <div style={{ height: '100%', position: 'relative' }}>
+            <SplitPane
+              onChange={this.panchange}
+              split="vertical"
+              minSize={paneMinSize}
+              maxSize={paneMaxSize}
+              defaultSize={splitConfig.defaultSize}
+              className="primary"
+            >
+              <div className={styles.leftPanel} ref={this.leftPanelRef}>{leftPanel}</div>
+              <div className={styles.rightPanel} ref={this.rightPanelRef}>{rightPanel}</div>
+            </SplitPane>
+          </div>
         </div>
       </div>
     );

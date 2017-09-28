@@ -24,7 +24,7 @@ export default {
     custRange: EMPTY_LIST,
     // 拟稿人
     drafterList: EMPTY_LIST,
-    // 客户列表
+    // 已申请的客户列表
     customerList: EMPTY_LIST,
     // 可申请客户列表
     canApplyCustList: EMPTY_LIST,
@@ -144,6 +144,7 @@ export default {
         payload: { response },
       });
     },
+    // 获取已申请的客户列表
     * getCustomerList({ payload }, { call, put }) {
       const response = yield call(seibelApi.getCustList, payload);
       yield put({
