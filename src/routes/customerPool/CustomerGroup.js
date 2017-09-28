@@ -189,7 +189,6 @@ export default class CustomerGroup extends PureComponent {
   @autobind
   handleSizeChange(current, size) {
     const { replace, location: { query, pathname } } = this.props;
-    console.log(current, size)
     replace({
       pathname,
       query: {
