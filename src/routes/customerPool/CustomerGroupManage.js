@@ -11,6 +11,9 @@ import GroupModal from '../../components/customerPool/groupManage/CustomerGroupU
 import CustomerGroupDetail from '../../components/customerPool/groupManage/CustomerGroupDetail';
 // import Search from '../../components/common/Search';
 import SimpleSearch from '../../components/customerPool/groupManage/CustomerGroupListSearch';
+import { fspContainer } from '../../config';
+import { fspGlobal } from '../../utils';
+import Confirm from '../../components/common/Confirm';
 import styles from './customerGroupManage.less';
 import tableStyles from '../../components/customerPool/groupManage/groupTable.less';
 
@@ -59,7 +62,7 @@ const mapDispatchToProps = {
   // 获取客户分组列表
   getCustomerGroupList: fetchData(effects.getGroupList, true),
   // 获取分组客户列表
-  getGroupCustomerList: fetchData(effects.getCustList, true),
+  getGroupCustomerList: fetchData(effects.getCustList, false),
   // 获取热词列表
   getHotPossibleWds: fetchData(effects.getHotPossibleWds, false),
   // 获取搜索记录列表
@@ -118,6 +121,8 @@ export default class CustomerGroupManage extends PureComponent {
       description: '', // 分组描述
       modalTitle: '新建用户分组',
       groupId: '',
+      record: {},
+      isShowDeleteConfirm: false,
     };
   }
 
@@ -238,8 +243,9 @@ export default class CustomerGroupManage extends PureComponent {
 
   // 删除客户分组
   @autobind
-  deleteCustomerGroup(record) {
+  deleteCustomerGroup() {
     console.log('delete customer group list');
+    const { record } = this.state;
     const { groupId } = record;
     const { deleteGroup } = this.props;
     deleteGroup({
@@ -249,13 +255,64 @@ export default class CustomerGroupManage extends PureComponent {
 
   // 发起任务
   @autobind
-  lanuchTask() {
+  lanuchTask(record) {
     console.log('launch task');
+    const { groupId } = record;
+    this.handleOpenTab({
+      groupId,
+    }, '自建任务', 'RCT_FSP_CREATE_TASK');
+  }
+
+  @autobind
+  handleOpenTab(obj, titles, ids) {
+    const { groupId } = obj;
+    const { push } = this.props;
+    const firstUrl = '/customerPool/createTask';
+    if (document.querySelector(fspContainer.container)) {
+      const url = `${firstUrl}?groupId=${groupId}`;
+      const param = {
+        closable: true,
+        forceRefresh: true,
+        isSpecialTab: true,
+        id: ids, // tab的id
+        title: titles, // tab标题
+      };
+      fspGlobal.openRctTab({ url, param }); // 打开react tab
+    } else {
+      push({
+        pathname: firstUrl,
+        query: obj,
+      });
+    }
   }
 
   @autobind
   handleGroupListSearch(value) {
     console.log('search', value);
+  }
+
+  @autobind
+  handleConfirmOk() {
+    this.deleteCustomerGroup();
+    this.setState({
+      isShowDeleteConfirm: false,
+    });
+  }
+
+  @autobind
+  handleConfirmCancel() {
+    this.setState({
+      isShowDeleteConfirm: false,
+    });
+  }
+
+  @autobind
+  handleDeleteBtnClick(record) {
+    this.setState({
+      // 当前删除行记录数据
+      record,
+      isShowDeleteConfirm: true,
+    });
   }
 
   /**
@@ -342,7 +399,7 @@ export default class CustomerGroupManage extends PureComponent {
     },
     {
       type: '删除',
-      handler: this.deleteCustomerGroup,
+      handler: this.handleDeleteBtnClick,
     },
     {
       type: '发起任务',
@@ -391,7 +448,16 @@ export default class CustomerGroupManage extends PureComponent {
       dict,
      } = this.props;
 
-    const { visible, modalKey, canEditDetail, name, description, modalTitle, groupId } = this.state;
+    const {
+      visible,
+      modalKey,
+      canEditDetail,
+      name,
+      description,
+      modalTitle,
+      groupId,
+      isShowDeleteConfirm,
+    } = this.state;
 
     const {
       resultData = EMPTY_LIST,
@@ -485,6 +551,14 @@ export default class CustomerGroupManage extends PureComponent {
                 />
               }
               onOkHandler={this.handleUpdateGroup}
+            /> : null
+        }
+        {
+          isShowDeleteConfirm ?
+            <Confirm
+              type={'delete'}
+              onCancelHandler={this.handleConfirmCancel}
+              onOkHandler={this.handleConfirmOk}
             /> : null
         }
       </div>
