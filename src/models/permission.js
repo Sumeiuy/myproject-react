@@ -11,12 +11,13 @@ export default {
   namespace: 'permission',
   state: {
     detailMessage: EMPTY_OBJECT, // 详情
-    childTypeList: EMPTY_LIST, // 子类型
     hasServerPersonList: EMPTY_LIST, // 已有服务人员列表
     searchServerPersonList: EMPTY_LIST, // 可查询服务人员列表
     nextApproverList: EMPTY_LIST, // 按照条件查询下一审批人列表
     bottonList: EMPTY_LIST, // 按钮组
     modifyCustApplication: EMPTY_OBJECT, // 获取修改私密客户申请 的结果
+    createCustApplication: EMPTY_OBJECT, // 获取创建私密客户申请 的结果
+    subTypeList: EMPTY_LIST, // 返回的子类型
   },
   reducers: {
     getDetailMessageSuccess(state, action) {
@@ -34,13 +35,12 @@ export default {
         searchServerPersonList: servicePeopleList,
       };
     },
-    getChildTypeListSuccess(state, action) {
-      const { payload: { resultData = EMPTY_OBJECT } } = action;
-      const { childList = EMPTY_LIST } = resultData;
+    getSubTypeListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_LIST } } = action;
 
       return {
         ...state,
-        childTypeList: childList,
+        subTypeList: resultData,
       };
     },
     getHasServerPersonListSuccess(state, action) {
@@ -71,6 +71,13 @@ export default {
         modifyCustApplication: resultData,
       };
     },
+    getCreateCustApplicationSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        createCustApplication: resultData,
+      };
+    },
   },
   effects: {
     * getDetailMessage({ payload }, { call, put }) {
@@ -87,10 +94,10 @@ export default {
         payload: response,
       });
     },
-    * getChildTypeList({ payload }, { call, put }) {
-      const response = yield call(api.getChildTypeList, payload);
+    * getSubTypeList({ payload }, { call, put }) {
+      const response = yield call(api.getSubTypeList, payload);
       yield put({
-        type: 'getChildTypeListSuccess',
+        type: 'getSubTypeListSuccess',
         payload: response,
       });
     },
@@ -119,6 +126,13 @@ export default {
       const response = yield call(api.getModifyCustApplication, payload);
       yield put({
         type: 'getModifyCustApplicationSuccess',
+        payload: response,
+      });
+    },
+    * getCreateCustApplication({ payload }, { call, put }) {
+      const response = yield call(api.getCreateCustApplication, payload);
+      yield put({
+        type: 'getCreateCustApplicationSuccess',
         payload: response,
       });
     },

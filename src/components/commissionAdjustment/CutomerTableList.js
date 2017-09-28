@@ -12,6 +12,26 @@ import { Table } from 'antd';
 
 import styles from './customerTableList.less';
 
+// 表格的表头
+const columns = [
+  {
+    title: '经纪客户号',
+    dataIndex: 'cusId',
+  },
+  {
+    title: '客户名称',
+    dataIndex: 'custName',
+  },
+  {
+    title: '客户等级',
+    dataIndex: 'custLevelName',
+  },
+  {
+    title: '开户营业部',
+    dataIndex: 'openOrgName',
+  },
+];
+
 export default class CutomerTableList extends PureComponent {
   static propTypes = {
     customerList: PropTypes.array,
@@ -41,25 +61,6 @@ export default class CutomerTableList extends PureComponent {
       return null;
     }
     const { selectedRowKeys } = this.state;
-    const columns = [
-      {
-        title: '经纪客户号',
-        dataIndex: 'cusId',
-      },
-      {
-        title: '客户名称',
-        dataIndex: 'custName',
-      },
-      {
-        title: '客户等级',
-        dataIndex: 'custLevelName',
-      },
-      {
-        title: '开户营业部',
-        dataIndex: 'openOrgName',
-      },
-    ];
-
     const rowSelection = {
       selectedRowKeys,
       onChange: this.onSelectChange,

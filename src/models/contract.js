@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-20 15:13:30
  * @Last Modified by:   XuWenKang
- * @Last Modified time: 2017-09-27 10:38:10
+ * @Last Modified time: 2017-09-27 14:58:02
  */
 import { contract as api, seibel as seibelApi } from '../api';
 
@@ -113,6 +113,7 @@ export default {
     },
     * getContractDetail({ payload }, { call, put }) {
       const response = yield call(api.getContractDetail, payload);
+      console.log('detail', response);
       yield put({
         type: 'getContractDetailSuccess',
         payload: response,

@@ -53,8 +53,14 @@ const mapStateToProps = state => ({
   bottonList: state.permission.bottonList,
   // 获取修改私密客户申请 的结果
   modifyCustApplication: state.permission.modifyCustApplication,
+  // 获取创建私密客户申请 的结果
+  createCustApplication: state.permission.createCustApplication,
+  // 监听 创建私密客户申请 过程
+  addListenCreate: state.loading.effects['permission/getCreateCustApplication'] || false,
   // 列表loading
   seibelListLoading: state.loading.effects['app/getSeibleList'],
+  //  获取子类型
+  subTypeList: state.permission.subTypeList,
 });
 
 const mapDispatchToProps = {
@@ -70,7 +76,7 @@ const mapDispatchToProps = {
   // 获取拟稿人
   getDrafterList: fetchDataFunction(false, 'app/getDrafterList'),
   // 获取部门
-  getEmpOrgTree: fetchDataFunction(false, 'app/getCustRange'),
+  getCustRange: fetchDataFunction(false, 'app/getCustRange'),
   // 获取已申请客户列表
   getCustomerList: fetchDataFunction(false, 'app/getCustomerList'),
   // 获取可申请客户列表
@@ -81,8 +87,12 @@ const mapDispatchToProps = {
   getNextApproverList: fetchDataFunction(false, 'permission/getNextApproverList'),
   // 获取btnlist
   getBottonList: fetchDataFunction(false, 'permission/getBottonList'),
-  // 获取 获取修改私密客户申请 的结果
+  // 获取修改私密客户申请 的结果
   getModifyCustApplication: fetchDataFunction(false, 'permission/getModifyCustApplication'),
+  // 获取创建私密客户申请 的结果
+  getCreateCustApplication: fetchDataFunction(false, 'permission/getCreateCustApplication'),
+  // 获取子类型
+  getSubTypeList: fetchDataFunction(false, 'permission/getSubTypeList'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -95,7 +105,7 @@ export default class Permission extends PureComponent {
     custRange: PropTypes.array.isRequired,
     getPermissionList: PropTypes.func.isRequired,
     getDrafterList: PropTypes.func.isRequired,
-    getEmpOrgTree: PropTypes.func.isRequired,
+    getCustRange: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     getDetailMessage: PropTypes.func.isRequired,
     detailMessage: PropTypes.object.isRequired,
@@ -114,6 +124,11 @@ export default class Permission extends PureComponent {
     getBottonList: PropTypes.func.isRequired,
     getModifyCustApplication: PropTypes.func.isRequired,
     modifyCustApplication: PropTypes.object.isRequired,
+    getCreateCustApplication: PropTypes.func.isRequired,
+    createCustApplication: PropTypes.object.isRequired,
+    addListenCreate: PropTypes.bool.isRequired,
+    getSubTypeList: PropTypes.func.isRequired,
+    subTypeList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -123,6 +138,7 @@ export default class Permission extends PureComponent {
   static childContextTypes = {
     getCanApplyCustList: PropTypes.func.isRequired,
     getSearchServerPersonList: PropTypes.func.isRequired,
+    getSubTypeList: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -142,7 +158,14 @@ export default class Permission extends PureComponent {
       },
       // 获取 查询服务人员列表
       getSearchServerPersonList: (data) => {
-        this.props.getSearchServerPersonList({ keyword: data });
+        this.props.getSearchServerPersonList({
+          keyword: data,
+          pageSize: 10,
+          pageNum: 1,
+        });
+      },
+      getSubTypeList: (data) => {
+        this.props.getSubTypeList(data);
       },
     };
   }
@@ -157,7 +180,7 @@ export default class Permission extends PureComponent {
         },
       },
       getPermissionList,
-      getEmpOrgTree,
+      getCustRange,
     } = this.props;
     const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
     // 默认筛选条件
@@ -165,8 +188,7 @@ export default class Permission extends PureComponent {
       ...params,
       type: pageType,
     });
-
-    getEmpOrgTree({});
+    getCustRange({});
     this.setState({ detailMessage: this.props.detailMessage });
   }
 
@@ -238,7 +260,6 @@ export default class Permission extends PureComponent {
   @autobind
   clearModal() {
     // 清除模态框组件
-    console.log('模态框已经清楚');
     this.setState({ isShowModal: false });
   }
 
@@ -310,6 +331,7 @@ export default class Permission extends PureComponent {
       bottonList,
       getModifyCustApplication,
       modifyCustApplication,
+      subTypeList,
     } = this.props;
     return (
       <Detail
@@ -322,6 +344,7 @@ export default class Permission extends PureComponent {
         bottonList={bottonList}
         getModifyCustApplication={getModifyCustApplication}
         modifyCustApplication={modifyCustApplication}
+        subTypeList={subTypeList}
       />
     );
   }
@@ -337,7 +360,16 @@ export default class Permission extends PureComponent {
       canApplyCustList,
       searchServerPersonList,
       hasServerPersonList,
+      getHasServerPersonList,
+      nextApproverList,
+      getNextApproverList,
+      getCreateCustApplication,
+      createCustApplication,
+      addListenCreate,
+      detailMessage,
+      subTypeList,
     } = this.props;
+
     if (!custRange || !custRange.length) {
       return null;
     }
@@ -389,7 +421,16 @@ export default class Permission extends PureComponent {
               searchServerPersonList={searchServerPersonList}
               hasServerPersonList={hasServerPersonList}
               onEmitClearModal={this.clearModal}
-              getHasServerPersonList={this.props.getHasServerPersonList}
+              getHasServerPersonList={getHasServerPersonList}
+              nextApproverList={nextApproverList}
+              getNextApproverList={getNextApproverList}
+              getCreateCustApplication={getCreateCustApplication}
+              createCustApplication={createCustApplication}
+              addListenCreate={addListenCreate}
+              subTypeList={subTypeList}
+              empId={detailMessage.empId}
+              empName={detailMessage.empName}
+              orgId={detailMessage.orgId}
             />
           :
             null

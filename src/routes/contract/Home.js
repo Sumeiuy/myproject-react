@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by:   XuWenKang
- * @Last Modified time: 2017-09-27 13:16:13
+ * @Last Modified time: 2017-09-27 17:50:35
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
@@ -136,11 +136,14 @@ export default class Contract extends PureComponent {
       // 合作合约表单数据
       contractFormData: EMPTY_OBJECT,
       // 新建合作合约弹窗状态
-      addFormModal: true,
+      addFormModal: false,
       // 修改合作合约弹窗状态
       editFormModal: false,
       // 修改合作合约对象的操作类型和id
-      editContractInfo: EMPTY_OBJECT,
+      editContractInfo: {
+        operationType: '',
+        id: '',
+      },
     };
   }
 
@@ -174,6 +177,14 @@ export default class Contract extends PureComponent {
       empId: getEmpId(),
       attachment: '121212121212',
     });
+
+    // 调试 待删除
+    // document.addEventListener('click', () => {
+    //   this.handleShowEditForm({operationType: '2', id: '111'})
+    // })
+    setTimeout(() => {
+      this.handleShowEditForm({ operationType: '2', id: '111' });
+    }, 1000);
   }
 
   @autobind
@@ -229,6 +240,8 @@ export default class Contract extends PureComponent {
       ...this.state,
       editContractInfo: data,
     }, () => {
+      console.log('显示修改');
+      this.handleSearchContractDetail(data.id);
       this.showModal('editFormModal');
     });
   }
@@ -290,7 +303,11 @@ export default class Contract extends PureComponent {
         this.props.saveContractData(condition);
       }
     } else if (contractFormData.formType === 'edit') {
-      console.log('修改');
+      if (!contractFormData.contractStarDate) {
+        message.error('请选择合约开始日期');
+        return;
+      }
+      console.log('修改', contractFormData);
     }
   }
 
@@ -397,7 +414,7 @@ export default class Contract extends PureComponent {
         uploadAttachment={this.onUploadComplete}
       />
     );
-
+    // 新建表单props
     const addFormProps = {
       custList: this.props.custList,
       contractDetail: this.props.contractDetail,
@@ -407,6 +424,7 @@ export default class Contract extends PureComponent {
       onSearchContractNum: this.handleSearchContractNum,
       onSearchContractDetail: this.handleSearchContractDetail,
     };
+    // 修改表单props
     const editFormProps = {
       custList: this.props.custList,
       contractDetail: this.props.contractDetail,
@@ -432,7 +450,6 @@ export default class Contract extends PureComponent {
       size: 'large',
       children: <EditForm {...editFormProps} />,
     };
-
     return (
       <div className={styles.premissionbox}>
         <SplitPanel

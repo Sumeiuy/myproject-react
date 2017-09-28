@@ -45,6 +45,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     validataLoading: PropTypes.bool,
     queryProductList: PropTypes.func.isRequired,
     validateCust: PropTypes.func.isRequired,
+    otherRatio: PropTypes.array,
   }
 
   static defaultProps = {
@@ -55,6 +56,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     targetProductList: [],
     customerList: [],
     approverList: [],
+    otherRatio: [],
   }
 
   constructor(props) {
@@ -209,6 +211,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       validataLoading,
       validateResult,
       customerList,
+      // otherRato,
     } = this.props;
     const {
       approvalType,
@@ -384,7 +387,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
               <AddCustomer
                 onSearch={this.handleCustomerListSearch}
                 passList2Home={this.saveSelectedCustomerList}
-                validate={this.handleCustomerValidate}
+                onValidate={this.handleCustomerValidate}
                 validateResult={validateResult}
                 validataLoading={validataLoading}
                 searchList={customerList}

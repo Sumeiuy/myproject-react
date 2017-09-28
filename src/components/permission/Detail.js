@@ -36,6 +36,7 @@ export default class Detail extends PureComponent {
     empList: PropTypes.array,
     workflowHistoryBeans: PropTypes.array,
     attachInfoList: PropTypes.array,
+    attachment: PropTypes.string,
     searchServerPersonList: PropTypes.array.isRequired,
     nextApproverList: PropTypes.array.isRequired,
     getNextApproverList: PropTypes.func.isRequired,
@@ -44,6 +45,7 @@ export default class Detail extends PureComponent {
     canApplyCustList: PropTypes.array.isRequired,
     getModifyCustApplication: PropTypes.func.isRequired,
     modifyCustApplication: PropTypes.object.isRequired,
+    subTypeList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -60,6 +62,7 @@ export default class Detail extends PureComponent {
     empList: [],
     workflowHistoryBeans: [],
     attachInfoList: [],
+    attachment: '',
   }
 
   constructor(props) {
@@ -89,9 +92,9 @@ export default class Detail extends PureComponent {
       // 审批意见
       suggestion: '',
       // 长传附件的id
-      attachment: '123456789',
+      attachment: '',
       // 审批模态框是否展示
-      approvalModal: false,
+      nextApproverModal: false,
       // 下一组ID
       nextGroupId: '',
       // 按钮名称
@@ -119,9 +122,6 @@ export default class Detail extends PureComponent {
         custNumber,
       },
       remark,
-      // empName,
-      // createTime,
-      // status,
       empList,
     });
   }
@@ -133,11 +133,11 @@ export default class Detail extends PureComponent {
     const subTypeTxt = this.changeDisplay(subType, subTypeList);
     const info = [
       {
-        title: '子类型',
-        content: subTypeTxt,
-      }, {
         title: '客户',
         content: `${custName}（${custNumber}）`,
+      }, {
+        title: '子类型',
+        content: subTypeTxt,
       }, {
         title: '备注',
         content: remark,
@@ -160,6 +160,7 @@ export default class Detail extends PureComponent {
           remark={this.state.remark}
           canApplyCustList={this.props.canApplyCustList}
           onEmitEvent={this.updateValue}
+          subTypeList={this.props.subTypeList}
         />
       );
     }
@@ -216,6 +217,12 @@ export default class Detail extends PureComponent {
   @autobind
   updateValue(name, value) { // 更新本地数据
     console.log(name, value);
+    if (name === 'customer') {
+      this.setState({ customer: {
+        custName: value.custName,
+        custNumber: value.cusId,
+      } });
+    }
     this.setState({ [name]: value });
   }
 
@@ -233,7 +240,7 @@ export default class Detail extends PureComponent {
     // 修改状态下的提交按钮
     // 点击按钮后 弹出下一审批人 模态框
     this.setState({
-      approvalModal: true,
+      nextApproverModal: true,
       routeId: item.routeId,
       btnName: item.btnName,
       nextGroupId: item.nextGroupId,
@@ -250,7 +257,7 @@ export default class Detail extends PureComponent {
 
   @autobind
   confirmSubmit(value) {
-    console.log('1234656', value.login);
+    console.log('1234656', value.ptyMngId);
     // 提交 修改私密客户申请
     const queryConfig = {
       title: '私密客户申请',
@@ -272,7 +279,7 @@ export default class Detail extends PureComponent {
       // 备注
       remark: this.state.remark,
       // 下一审批人
-      approvalIds: this.state.nextApproverList.concat(value.login),
+      approvalIds: this.state.nextApproverList.concat(value.ptyMngId),
       // 下一组ID
       nextGroupId: this.state.nextGroupId,
       btnName: this.state.btnName,
@@ -283,38 +290,40 @@ export default class Detail extends PureComponent {
       attachment: this.state.attachment,
     };
     console.log(queryConfig, value);
-    this.setState({ approvalModal: false });
+    this.setState({ nextApproverModal: false });
     this.props.getModifyCustApplication(queryConfig);
   }
 
   render() {
     const modifyBtnClass = classnames([style.dcHeaderModifyBtn,
-      { hide: this.state.statusType !== 'ready' },
+      { hide: this.props.status !== '04' },
     ]);
+
     const columns = [{
       title: '工号',
-      dataIndex: 'login',
-      key: 'login',
+      dataIndex: 'ptyMngId',
+      key: 'ptyMngId',
     }, {
       title: '姓名',
-      dataIndex: 'empName',
-      key: 'empName',
+      dataIndex: 'ptyMngName',
+      key: 'ptyMngName',
     }, {
       title: '所属营业部',
-      dataIndex: 'occupation',
-      key: 'occupation',
+      dataIndex: 'businessDepartment',
+      key: 'businessDepartment',
     }];
+
     const searchProps = {
-      visible: this.state.approvalModal,
+      visible: this.state.nextApproverModal,
       onOk: this.confirmSubmit,
-      onCancel: () => { this.setState({ approvalModal: false }); },
+      onCancel: () => { this.setState({ nextApproverModal: false }); },
       onSearch: this.searchNextApproverList,
       dataSource: this.props.nextApproverList,
       columns,
       title: '选择下一审批人员',
       placeholder: '员工号/员工姓名',
-      modalKey: 'approvalModal',
-      rowKey: 'login',
+      modalKey: 'nextApproverModal',
+      rowKey: 'ptyMngId',
     };
 
     return (
@@ -336,7 +345,13 @@ export default class Detail extends PureComponent {
           onEmitEvent={this.updateValue}
           searchServerPersonList={this.props.searchServerPersonList}
         />
-        <UploadFile fileList={this.props.attachInfoList} />
+        <UploadFile
+          fileList={this.props.attachInfoList}
+          edit={this.state.statusType !== 'ready'}
+          type="attachment"
+          attachment={this.props.attachment}
+          onEmitEvent={this.updateValue}
+        />
         {this.approvalDom}
         <ApprovalRecord
           head="审批记录"
