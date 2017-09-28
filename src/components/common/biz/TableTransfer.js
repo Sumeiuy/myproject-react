@@ -17,9 +17,11 @@
  * unsubscribeColumns：必要，第二个表的表头定义，需要指定 column 的 width 属性，否则列头和内容可能不对齐。
  * onSearch: 必要，搜索框触发的发放
  * rowKey： 必要，唯一的标识
+ * checkChange： 不必要，向组件外传递信息，返回当前child，此父元素下选中所有child，所有选中的child
+ * transferChange： 不必要，向组件外传递信息，返回第二个table的数据源
  */
 import React, { PropTypes, Component } from 'react';
-import { Table, Input } from 'antd';
+import { Table, Input, Checkbox } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import classnames from 'classnames';
@@ -37,13 +39,21 @@ const actionColumns = (type, handleAction) => {
   return {
     title: '操作',
     key: 'action',
-    render: item => (
-      <Icon
-        type={type === 'first' ? 'new' : 'shanchu'}
-        className={styles.actionIcon}
-        onClick={() => { handleClick(type, item); }}
-      />
-    ),
+    render: (item) => {
+      if (_.isEmpty(item.parentKey)) {
+        return (
+          <Icon
+            type={type === 'first' ? 'new' : 'shanchu'}
+            className={styles.actionIcon}
+            onClick={() => { handleClick(type, item); }}
+          />
+        );
+      }
+      return (<Checkbox
+        onChange={() => handleClick(type, item)}
+        defaultChecked={item.defaultChecked}
+      />);
+    },
   };
 };
 
@@ -53,7 +63,8 @@ export default class TableTransfer extends Component {
     secondTitle: PropTypes.string,
     firstData: PropTypes.array,
     secondData: PropTypes.array,
-    onChange: PropTypes.func,
+    transferChange: PropTypes.func,
+    checkChange: PropTypes.func,
     placeholder: PropTypes.string,
     finishTips: PropTypes.array,
     warningTips: PropTypes.array,
@@ -73,7 +84,8 @@ export default class TableTransfer extends Component {
     secondData: [],
     firstTitle: '可选佣金调整',
     secondTitle: '已选产品',
-    onChange: () => {},
+    transferChange: () => {},
+    checkChange: () => {},
     placeholder: '',
     finishTips: [],
     warningTips: [],
@@ -91,9 +103,12 @@ export default class TableTransfer extends Component {
       rowKey,
     } = this.props;
 
+    const initFirstArray = this.initTableData(firstData, rowKey);
+    const initSecondArray = this.initTableData(secondData, rowKey);
     this.state = {
-      firstArray: this.initTableData(firstData, rowKey),
-      secondArray: this.initTableData(secondData, rowKey),
+      checked: {},
+      firstArray: this.hiddenChildren(initFirstArray),
+      secondArray: initSecondArray,
       firstColumns: [
         ...firstColumns,
         actionColumns('first', this.handleClick),
@@ -105,7 +120,8 @@ export default class TableTransfer extends Component {
     };
   }
 
-  // 为父元素的children添加，用于操作的category属性
+  // 添加属性，方便操作.初始操作为show children状态
+  // parentKey:辨识子元素挂在哪个父元素上
   initTableData(dataArray, rowKey) {
     const newData = dataArray.map(
       (item) => {
@@ -121,112 +137,101 @@ export default class TableTransfer extends Component {
     return newData;
   }
 
-  // 更新数据源，触发render
-  @autobind
-  updateData(modifyRemoveArray, modifyAddArray, currentTableType) {
-    const { onChange } = this.props;
-    const isOperateFirstTable = currentTableType === 'first';
-    const updateFirstArray = isOperateFirstTable ? modifyRemoveArray : modifyAddArray;
-    const updateSecondArray = isOperateFirstTable ? modifyAddArray : modifyRemoveArray;
-    this.setState({
-      firstArray: updateFirstArray,
-      secondArray: updateSecondArray,
-    }, onChange(updateSecondArray));
-  }
-
-  // 移除选中项
-  @autobind
-  removeSelected(needRemoveArray, selected) {
-    const modifyRemoveArray = [];
-    needRemoveArray.forEach(
-      (item) => {
-        if (_.isEmpty(selected.parentKey)) {
-          if (item.key !== selected.key) {
-            modifyRemoveArray.push(item);
-          }
-        } else if (item.key === selected.parentKey) {
-          const { children } = item;
-          const newChildren = _.filter(
-            children,
-            child => child.key !== selected.key,
-          );
-          modifyRemoveArray.push({ ...item, children: newChildren });
-        } else if (item.key !== selected.key) {
-          modifyRemoveArray.push(item);
+  replaceKeyOfObject(item, oldKey, newKey) {
+    let newItem = {};
+    const keys = Object.keys(item);
+    keys.forEach(
+      (key) => {
+        if (key === oldKey) {
+          newItem = { ...newItem, [newKey]: item[key] };
+        } else {
+          newItem = { ...newItem, [key]: item[key] };
         }
       },
     );
-    return modifyRemoveArray;
+    return newItem;
   }
 
-  // 添加选中项
+  // hidden:table不显示树形数据结构
   @autobind
-  addSelected(needAddArray, selected) {
-    let modifyAddArray = [];
-    // 无父元素
-    if (_.isEmpty(selected.parentKey)) {
-      // 无子元素
-      if (_.isEmpty(selected.children)) {
-        modifyAddArray = [selected, ...needAddArray];
-      // 有子元素
-      } else {
-        const { children } = selected;
-        // 挑出数据源中的子元素
-        const aloneChildren = _.filter(
-          needAddArray,
-          item => (!_.isEmpty(item.parentKey) && item.parentKey === selected.key),
-        ) || [];
-        // 移除数据源中的子元素
-        const newAddArray = _.difference(needAddArray, aloneChildren);
-        // 合并子元素，更新数据源
-        modifyAddArray = [
-          {
-            ...selected,
-            children: [
-              ...children,
-              ...aloneChildren,
-            ],
-          },
-          ...newAddArray,
-        ];
-      }
-    // 有父元素
-    } else {
-      const selectParent = _.find(
-        needAddArray,
-        item => item.key === selected.parentKey,
-      );
-      // 数据源中，无父元素存在
-      if (_.isEmpty(selectParent)) {
-        modifyAddArray = [selected, ...needAddArray];
-      // 数据源中，有父元素存在
-      } else {
-        const { children } = selectParent;
-        const newChildren = [selected, ...children];
-        const newSelected = { ...selectParent, children: newChildren };
-        const newAddArray = _.filter(
-          needAddArray,
-          item => item.key !== selected.parentKey,
-        );
-        modifyAddArray = [newSelected, ...newAddArray];
-      }
-    }
-    return modifyAddArray;
+  hiddenChildren(dataArray) {
+    const newDataArray = dataArray.map(
+      (item) => {
+        if (!_.isEmpty(item.children)) {
+          return this.replaceKeyOfObject(item, 'children', 'hidden');
+        }
+        return item;
+      },
+    );
+    return newDataArray;
+  }
+
+  // children:table显示树形数据结构
+  @autobind
+  showChildren(dataArray) {
+    const newDataArray = dataArray.map(
+      (item) => {
+        if (!_.isEmpty(item.hidden)) {
+          return this.replaceKeyOfObject(item, 'hidden', 'children');
+        }
+        return item;
+      },
+    );
+    return newDataArray;
+  }
+
+  // 点击check框触发时间，返回当前child，此父元素下选中所有child，所有选中的child
+  @autobind
+  handleCheck(selected) {
+    const { checked } = this.state;
+    const { checkChange } = this.props;
+    const selectChildren = checked[selected.parentKey] || [];
+    const selectAll = { ...checked, [selected.parentKey]: [...selectChildren, selected] };
+    this.setState({
+      checked: selectAll,
+    }, checkChange(selected, [...selectChildren, selected], selectAll));
+  }
+
+  // 更新数据源，触发render
+  @autobind
+  updateData(seleted, modifyRemoveArray, modifyAddArray, currentTableType) {
+    const { transferChange, rowKey } = this.props;
+    const { checked } = this.state;
+    const isOperateFirstTable = currentTableType === 'first';
+    const updateFirstArray = isOperateFirstTable ? modifyRemoveArray : modifyAddArray;
+    const updateSecondArray = isOperateFirstTable ? modifyAddArray : modifyRemoveArray;
+    // 清空对应的children选中
+    const clearChildren = { [seleted[rowKey]]: [] };
+    this.setState({
+      checked: [...checked, ...clearChildren],
+      firstArray: updateFirstArray,
+      secondArray: updateSecondArray,
+    }, transferChange(updateSecondArray));
   }
 
   @autobind
   handleClick(currentTableType, selected) {
+    const { rowKey } = this.props;
     const { secondArray, firstArray } = this.state;
     const isOperateFirstTable = currentTableType === 'first';
     const needAddArray = isOperateFirstTable ? secondArray : firstArray;
     const needRemoveArray = isOperateFirstTable ? firstArray : secondArray;
-
+    // 选择子元素
+    if (!_.isEmpty(selected.parentKey)) {
+      this.handleCheck(selected);
+      return;
+    }
     // 更新操作表格的数据源。remove要移动的元素
-    const modifyRemoveArray = this.removeSelected(needRemoveArray, selected);
+    const modifyRemoveArray = _.filter(
+      needRemoveArray,
+      item => item[rowKey] !== selected[rowKey],
+    );
+    const modifySelected = isOperateFirstTable ?
+      this.showChildren([selected]) : this.hiddenChildren([selected]);
     // 更新另一个表的数据源，添加要移动的元素
-    const modifyAddArray = this.addSelected(needAddArray, selected);
+    const modifyAddArray = [...modifySelected, ...needAddArray];
     // 更新数据源
-    this.updateData(modifyRemoveArray, modifyAddArray, currentTableType);
+    this.updateData(selected, modifyRemoveArray, modifyAddArray, currentTableType);
   }
 
   @autobind
@@ -272,6 +277,7 @@ export default class TableTransfer extends Component {
       placeholder,
       showSearch,
       pagination,
+      rowKey,
     } = this.props;
     const {
       firstArray,
@@ -297,7 +303,7 @@ export default class TableTransfer extends Component {
             }
           </div>
           <Table
-            rowKey="key"
+            rowKey={record => record[rowKey]}
             columns={firstColumns}
             dataSource={firstArray}
             pagination={pagination}
@@ -313,7 +319,7 @@ export default class TableTransfer extends Component {
             </div>
           </div>
           <Table
-            rowKey="key"
+            rowKey={record => record[rowKey]}
             columns={secondColumns}
             dataSource={secondArray}
             pagination={pagination}
