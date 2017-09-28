@@ -76,7 +76,7 @@ const mapDispatchToProps = {
   // 获取拟稿人
   getDrafterList: fetchDataFunction(false, 'app/getDrafterList'),
   // 获取部门
-  getEmpOrgTree: fetchDataFunction(false, 'app/getCustRange'),
+  getCustRange: fetchDataFunction(false, 'app/getCustRange'),
   // 获取已申请客户列表
   getCustomerList: fetchDataFunction(false, 'app/getCustomerList'),
   // 获取可申请客户列表
@@ -105,7 +105,7 @@ export default class Permission extends PureComponent {
     custRange: PropTypes.array.isRequired,
     getPermissionList: PropTypes.func.isRequired,
     getDrafterList: PropTypes.func.isRequired,
-    getEmpOrgTree: PropTypes.func.isRequired,
+    getCustRange: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     getDetailMessage: PropTypes.func.isRequired,
     detailMessage: PropTypes.object.isRequired,
@@ -180,7 +180,7 @@ export default class Permission extends PureComponent {
         },
       },
       getPermissionList,
-      getEmpOrgTree,
+      getCustRange,
     } = this.props;
     const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
     // 默认筛选条件
@@ -188,8 +188,7 @@ export default class Permission extends PureComponent {
       ...params,
       type: pageType,
     });
-
-    getEmpOrgTree({});
+    getCustRange({});
     this.setState({ detailMessage: this.props.detailMessage });
   }
 
