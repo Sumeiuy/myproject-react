@@ -2,7 +2,8 @@
  * @file models/report.js
  * @author sunweibin
  */
-import { commission as api, seibel as seibelApi } from '../api';
+import _ from 'lodash';
+import { commission as api } from '../api';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -10,10 +11,10 @@ const EMPTY_LIST = [];
 export default {
   namespace: 'commission',
   state: {
-    // 新建佣金目标产品测试
+    // 查询到的目标产品列表
     productList: [],
-    // 批量佣金左侧列表
-    list: {},
+    // 审批人员列表
+    approvalUserList: [],
     // 批量佣金右侧详情
     detail: {},
     // 单个用户的审批记录
@@ -24,16 +25,21 @@ export default {
     filterCustList: [],
     // 筛选的拟稿人列表
     filterDrafterList: [],
-    // 可选部门组织机构树
-    custRange: [],
+    // 校验进程
+    validataLoading: false,
+    // 检验结果
+    validateResult: '',
   },
   reducers: {
-
-    getProductList(state, action) {
+    getProductListSuccess(state, action) {
       const { payload: { resultData } } = action;
+      let list = [];
+      if (!_.isEmpty(resultData)) {
+        list = resultData;
+      }
       return {
         ...state,
-        productList: resultData,
+        productList: list,
       };
     },
 
@@ -74,6 +80,14 @@ export default {
       };
     },
 
+    getAprovalUserListSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        approvalUserList: resultData.employList,
+      };
+    },
+
     searchCustListSuccess(state, action) {
       const { payload: { resultData } } = action;
       return {
@@ -90,20 +104,11 @@ export default {
       };
     },
 
-    getCustRangeSuccess(state, action) {
-      const { payload: { resultData = EMPTY_LIST } } = action;
-      let custRange;
-      if (resultData.level === '1') {
-        custRange = [
-          { id: resultData.id, name: resultData.name, level: resultData.level },
-          ...resultData.children,
-        ];
-      } else {
-        custRange = [resultData];
-      }
+    validateCustInfoSuccess(state, action) {
+      const { payload: { msg } } = action;
       return {
         ...state,
-        custRange,
+        validateResult: msg,
       };
     },
 
@@ -118,27 +123,11 @@ export default {
   effects: {
     // 新建批量佣金调整用户选择的目标产品列表
     * getProductList({ payload }, { call, put }) {
-      const response = yield call(api.queryProduct, payload);
+      const response = yield call(api.queryProductList, payload);
       yield put({
-        type: 'getProductList',
+        type: 'getProductListSuccess',
         payload: response,
       });
-    },
-
-    // 批量佣金Home列表
-    * getCommissionList({ payload }, { call, put }) {
-      const listResponse = yield call(seibelApi.getSeibleList, payload);
-      yield put({
-        type: 'getCommissionListSuccess',
-        payload: listResponse,
-      });
-      const appList = listResponse.resultData.applicationBaseInfoList;
-      if (Array.isArray(appList) && appList.length) {
-        yield put({
-          type: 'getCommissionDetail',
-          payload: { batchNum: appList[0].bussiness1 },
-        });
-      }
     },
 
     // 批量佣金调整Home的右侧详情
@@ -179,30 +168,37 @@ export default {
       });
     },
 
-    // 根据用户输入的关键字，来查询可选的客户列表
-    * searchCustList({ payload }, { call, put }) {
-      const custResponse = yield call(seibelApi.getCustList, payload);
+    // 获取审批人员列表
+    * getAprovalUserList({ payload }, { call, put }) {
+      const response = yield call(api.queryAprovalUserList, payload);
       yield put({
-        type: 'searchCustListSuccess',
-        payload: custResponse,
-      });
-    },
-
-    // 根据用户输入的关键字，来查询可选的拟稿人列表
-    * searchDrafterList({ payload }, { call, put }) {
-      const drafterResponse = yield call(seibelApi.getDrafterList, payload);
-      yield put({
-        type: 'searchDrafterListSuccess',
-        payload: drafterResponse,
-      });
-    },
-
-    // 组织结构树
-    * getCustRange({ payload }, { call, put }) {
-      const response = yield call(seibelApi.getEmpOrgTree, payload);
-      yield put({
-        type: 'getCustRangeSuccess',
+        type: 'getAprovalUserListSuccess',
         payload: response,
+      });
+    },
+
+    // 校验客户信息
+    * validateCustInfo({ payload }, { call, put }) {
+      yield put({
+        type: 'opertateState',
+        payload: {
+          name: 'validataLoading',
+          value: true,
+          message: '开始校验',
+        },
+      });
+      const response = yield call(api.validateCustInfo, payload);
+      yield put({
+        type: 'validateCustInfoSuccess',
+        payload: response,
+      });
+      yield put({
+        type: 'opertateState',
+        payload: {
+          name: 'validataLoading',
+          value: false,
+          message: '结束校验',
+        },
       });
     },
   },

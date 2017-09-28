@@ -11,8 +11,36 @@ import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
 import OtherCommission from './OtherCommission';
 import CommonTable from '../common/biz/CommonTable';
-// import { isNull } from '../../utils/helper';
 import styles from './detail.less';
+
+// 表头
+const tableHeader = [
+  {
+    dataIndex: 'econNum',
+    key: 'econNum',
+    title: '经纪客户号',
+  },
+  {
+    dataIndex: 'custName',
+    key: 'custName',
+    title: '客户名称',
+  },
+  {
+    dataIndex: 'custLevel',
+    key: 'custLevel',
+    title: '客户等级',
+  },
+  {
+    dataIndex: 'openAccDept',
+    key: 'openAccDept',
+    title: '开户营业部',
+  },
+  {
+    dataIndex: 'status',
+    key: 'status',
+    title: '状态',
+  },
+];
 
 export default class Commissiondetail extends PureComponent {
 
@@ -60,35 +88,6 @@ export default class Commissiondetail extends PureComponent {
     const bugTitle = `编号${currentId}`;
     const drafter = `${divisionName} - ${createdByName} (${createdByLogin})`;
     const targetCom = `${newCommission}‰`;
-    // 表头
-    const tableHeader = [
-      {
-        dataIndex: 'econNum',
-        key: 'econNum',
-        title: '经纪客户号',
-      },
-      {
-        dataIndex: 'custName',
-        key: 'custName',
-        title: '客户名称',
-      },
-      {
-        dataIndex: 'custLevel',
-        key: 'custLevel',
-        title: '客户等级',
-      },
-      {
-        dataIndex: 'openAccDept',
-        key: 'openAccDept',
-        title: '开户营业部',
-      },
-      {
-        dataIndex: 'status',
-        key: 'status',
-        title: '状态',
-      },
-    ];
-
     // 表格中需要的操作
     const operation = {
       column: {

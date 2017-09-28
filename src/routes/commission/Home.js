@@ -13,6 +13,7 @@ import { withRouter, routerRedux } from 'dva/router';
 import SplitPanel from '../../components/common/splitPanel/SplitPanel';
 import Detail from '../../components/commissionAdjustment/Detail';
 import ApprovalRecordBoard from '../../components/commissionAdjustment/ApprovalRecordBoard';
+import CreateNewApprovalBoard from '../../components/commissionAdjustment/CreateNewApprovalBoard';
 import CommissionHeader from '../../components/common/biz/SeibelHeader';
 import CommissionList from '../../components/common/biz/CommonList';
 import seibelColumns from '../../components/common/biz/seibelColumns';
@@ -25,22 +26,31 @@ const EMPTY_OBJECT = {};
 const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
 const { commission, commission: { pageType, subType, status } } = seibelConfig;
 const effects = {
-  list: 'commission/getCommissionList',
+  list: 'app/getSeibleList',
+  searchDrafter: 'app/getDrafterList',
+  searchCust: 'app/getCustomerList',
+  custRange: 'app/getCustRange',
   detail: 'commission/getCommissionDetail',
   record: 'commission/getApprovalRecords',
-  searchCust: 'commission/searchCustList',
-  searchDrafter: 'commission/searchDrafterList',
-  custRange: 'commission/getCustRange',
+  productList: 'commission/getProductList',
+  approver: 'commission/getAprovalUserList',
+  validate: 'commission/validateCustInfo',
 };
 
 const mapStateToProps = state => ({
-  list: state.commission.list,
-  detail: state.commission.detail,
-  custRange: state.commission.custRange,
-  approvalRecord: state.commission.approvalRecord,
-  recordLoading: state.commission.recordLoading,
-  filterCustList: state.commission.filterCustList,
-  filterDrafterList: state.commission.filterDrafterList,
+  dict: state.app.dict, // 字典
+  list: state.app.seibleList, // 左侧里诶包
+  custRange: state.app.custRange, // 组织结构树
+  listProcess: state.loading.effects[effects.list], // 获取列表数据进程
+  filterDrafterList: state.app.drafterList, // 拟稿人列表
+  filterCustList: state.app.customerList, // 已申请的客户列表
+  productList: state.commission.productList, // 目标产品列表
+  approvalUserList: state.commission.approvalUserList, // 审批人员列表
+  validataLoading: state.commission.validataLoading, // 验证过程
+  validateResult: state.commission.validateResult, // 验证结果描述
+  detail: state.commission.detail, // 右侧详情
+  approvalRecord: state.commission.approvalRecord, // 审批历史记录
+  recordLoading: state.commission.recordLoading, // 查询审批记录进程
 });
 
 const getDataFunction = (loading, type) => query => ({
@@ -52,11 +62,14 @@ const getDataFunction = (loading, type) => query => ({
 const mapDispatchToProps = {
   replace: routerRedux.replace,
   getCommissionList: getDataFunction(true, effects.list), // 获取批量佣金调整List
+  getCustRange: getDataFunction(true, effects.custRange), // 获取批量佣金调整List
   getCommissionDetail: getDataFunction(true, effects.detail), // 获取批量佣金调整Detail
   getApprovalRecords: getDataFunction(false, effects.record), // 获取用户审批记录
   searchCustList: getDataFunction(false, effects.searchCust), // 通过关键字，查询可选用户列表
   searchDrafter: getDataFunction(false, effects.searchDrafter), // 通过关键字，查询可选拟稿人列表
-  getCustRange: getDataFunction(false, effects.custRange), // 组织机构
+  getProductList: getDataFunction(false, effects.productList), // 查询目标产品列表
+  getAprovalUserList: getDataFunction(false, effects.approver), // 查询审批人员列表
+  validateCustInfo: getDataFunction(false, effects.validate), // 校验用户资格
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -66,23 +79,32 @@ export default class CommissionHome extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
+    dict: PropTypes.object.isRequired,
+    getCustRange: PropTypes.func.isRequired,
+    validateCustInfo: PropTypes.func.isRequired,
+    getAprovalUserList: PropTypes.func.isRequired,
     getCommissionList: PropTypes.func.isRequired,
     getCommissionDetail: PropTypes.func.isRequired,
     getApprovalRecords: PropTypes.func.isRequired,
     searchCustList: PropTypes.func.isRequired,
     searchDrafter: PropTypes.func.isRequired,
-    getCustRange: PropTypes.func.isRequired,
+    getProductList: PropTypes.func.isRequired,
     custRange: PropTypes.array.isRequired,
+    productList: PropTypes.array.isRequired,
     list: PropTypes.object.isRequired,
     detail: PropTypes.object.isRequired,
-    approvalRecord: PropTypes.array.isRequired,
+    approvalRecord: PropTypes.object.isRequired,
     recordLoading: PropTypes.bool.isRequired,
+    listProcess: PropTypes.bool,
+    validataLoading: PropTypes.bool.isRequired,
+    validateResult: PropTypes.string.isRequired,
+    approvalUserList: PropTypes.array.isRequired,
     filterCustList: PropTypes.array.isRequired,
     filterDrafterList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
-
+    listProcess: false,
   }
 
   constructor(props) {
@@ -90,13 +112,16 @@ export default class CommissionHome extends PureComponent {
     this.state = {
       isEmpty: true,
       approvalBoard: false,
+      createApprovalBoard: false,
     };
   }
 
   componentWillMount() {
     const {
       getCommissionList,
+      getAprovalUserList,
       getCustRange,
+      custRange,
       location: {
         query,
         query: {
@@ -106,12 +131,27 @@ export default class CommissionHome extends PureComponent {
       },
     } = this.props;
     const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
-    getCustRange({});
+    if (_.isEmpty(custRange)) {
+      getCustRange({});
+    }
+    // 获取审批人员列表
+    getAprovalUserList({ loginUser: getEmpId() });
     // 默认筛选条件
     getCommissionList({ ...params, type: pageType });
   }
 
   componentWillReceiveProps(nextProps) {
+    const { listProcess: prevLP } = this.props;
+    const { listProcess: nextLP, list } = nextProps;
+    if (!nextLP && prevLP) {
+      if (!_.isEmpty(list.resultData)) {
+        // 表示左侧列表获取完毕
+        // 因此此时获取Detail
+        this.props.getCommissionDetail({
+          batchNum: list.resultData[0].bussiness1,
+        });
+      }
+    }
     const { location: { query: nextQuery = EMPTY_OBJECT } } = nextProps;
     const { location: { query: prevQuery = EMPTY_OBJECT }, getCommissionList } = this.props;
     const { isResetPageNum = 'N', pageNum, pageSize } = nextQuery;
@@ -167,10 +207,10 @@ export default class CommissionHome extends PureComponent {
    * 点击列表每条的时候对应请求详情
    */
   @autobind
-  getListRowId(id) {
+  getListRowId(batchNum) {
     const { getCommissionDetail } = this.props;
     getCommissionDetail({
-      batchNum: id,
+      batchNum,
     });
   }
 
@@ -178,7 +218,6 @@ export default class CommissionHome extends PureComponent {
   @autobind
   getApprovalBoardCustInfo(info) {
     const loginuser = getEmpId();
-    console.warn('getApprovalBoardCustInfo', info);
     this.props.getApprovalRecords({ ...info, loginuser });
   }
 
@@ -199,7 +238,7 @@ export default class CommissionHome extends PureComponent {
   // 头部新建按钮点击事件处理程序
   @autobind
   handleCreateBtnClick() {
-    console.warn('新建按钮');
+    this.openCreateApprovalBoard();
   }
 
   // 根据用户输入查询查询拟稿人
@@ -237,11 +276,27 @@ export default class CommissionHome extends PureComponent {
     });
   }
 
+  // 打开新建申请的弹出框
+  @autobind
+  openCreateApprovalBoard() {
+    this.setState({
+      createApprovalBoard: true,
+    });
+  }
+
   // 关闭审批记录弹出窗
   @autobind
   closeApprovalBoard() {
     this.setState({
       approvalBoard: false,
+    });
+  }
+
+  // 关闭新建申请弹出层
+  @autobind
+  closeNewApprovalBoard() {
+    this.setState({
+      createApprovalBoard: false,
     });
   }
 
@@ -255,13 +310,20 @@ export default class CommissionHome extends PureComponent {
       filterCustList,
       custRange,
       approvalRecord,
+      productList,
+      getProductList,
+      approvalUserList,
+      validataLoading,
+      validateResult,
+      validateCustInfo,
+      dict: { otherRato },
     } = this.props;
     if (_.isEmpty(custRange)) {
       return null;
     }
-    const isEmpty = _.isEmpty(list);
+    const isEmpty = _.isEmpty(list.resultData);
     // 此处需要提供一个方法给返回的接口查询设置是否查询到数据
-    const { approvalBoard } = this.state;
+    const { approvalBoard, createApprovalBoard } = this.state;
     const topPanel = (
       <CommissionHeader
         location={location}
@@ -309,6 +371,19 @@ export default class CommissionHome extends PureComponent {
           record={approvalRecord}
           visible={approvalBoard}
           onClose={this.closeApprovalBoard}
+        />
+        <CreateNewApprovalBoard
+          modalKey="createApprovalBoard"
+          visible={createApprovalBoard}
+          onClose={this.closeNewApprovalBoard}
+          queryProductList={getProductList}
+          targetProductList={productList}
+          approverList={approvalUserList}
+          customerList={[]}
+          validataLoading={validataLoading}
+          validateResult={validateResult}
+          validateCust={validateCustInfo}
+          otherRatio={otherRato}
         />
       </div>
     );

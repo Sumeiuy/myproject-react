@@ -13,13 +13,14 @@ import PublishConfirmModal from '../../components/modals/PublishConfirmModal';
 import DeleteBoardModal from '../../components/modals/DeleteBoardModal';
 import SearchModal from '../../components/common/biz/SearchModal';
 import ProcessConfirm from '../../components/common/biz/ProcessConfirm';
-import Transfer from '../../components/common/biz/Transfer';
+import Transfer from '../../components/common/biz/TableTransfer';
 import CommonUpload from '../../components/common/biz/CommonUpload';
 import CommonModal from '../../components/common/biz/CommonModal';
 import InfoItem from '../../components/common/infoItem';
 import SearchSelect from '../../components/common/Select/SearchSelect';
 import DigitalTrimmer from '../../components/common/DigitalTrimmer';
 import ApprovalRecordBoard from '../../components/commissionAdjustment/ApprovalRecordBoard';
+import OperationOfCustermorList from '../../components/commissionAdjustment/OperationOfCustermorList';
 
 import {
   confirmData,
@@ -27,6 +28,7 @@ import {
   employeeColumns,
   subscribelData,
   unsubcribeData,
+  // data,
   productColumns,
 } from './MockTableData';
 import styles from './home.less';
@@ -121,6 +123,7 @@ export default class TemplModal extends PureComponent {
  @autobind
   changeFunction(value) {
     console.log(value);
+    console.log('111');
   }
   @autobind
   openApprovalModal() {
@@ -134,6 +137,11 @@ export default class TemplModal extends PureComponent {
     this.setState({
       approvalModal: false,
     });
+  }
+
+   @autobind
+  changeValue(value) {
+    console.log('value', value);
   }
 
   @autobind
@@ -220,12 +228,27 @@ export default class TemplModal extends PureComponent {
       onOk: this.closeModal,
     };
 
+    const pagination = {
+      defaultPageSize: 5,
+      pageSize: 5,
+      size: 'small',
+    };
+
     const transferProps = {
-      subscribeData: subscribelData,
-      unsubscribeData: unsubcribeData,
-      subscribeColumns: productColumns,
-      unsubscribeColumns: productColumns,
+      firstData: subscribelData,
+      // secondData: data,
+      secondData: unsubcribeData,
+      firstColumns: productColumns,
+      secondColumns: productColumns,
       onChange: this.handleChange,
+      onSearch: this.handleSearch,
+      rowKey: 'key',
+      showSearch: true,
+      placeholder: '产品代码/产品名称',
+      // pagination: false,
+      pagination,
+      finishTips: ['产品组合等于目标佣金值'],
+      warningTips: ['产品组合比目标佣金高 0.5%', '产品组合离目标佣金还差 0.63%'],
     };
 
 
@@ -280,6 +303,17 @@ export default class TemplModal extends PureComponent {
       status: '成功',
     };
 
+    const dataSource = [
+      {
+        key: '1-34Z1T0D-1',
+        name: '通道佣金专用（万分之1.5）',
+      },
+      {
+        key: '1-34Z1T0D-2',
+        name: '通道佣金专用（万分之1.6）',
+      },
+    ];
+
     return (
       <div>
         <Button onClick={this.openApprovalModal}>打开审批记录弹窗</Button>
@@ -312,10 +346,11 @@ export default class TemplModal extends PureComponent {
         <InfoItem label="备注" value="这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值" />
         <br />
         <SearchSelect
-          onChange={this.changeFunction}
-          addSelectValue={this.changeFunction}
-          width="300"
+          onAddCustomer={this.changeFunction}
+          onChangeValue={this.changeValue}
+          width="184px"
           labelName="产品"
+          dataSource={dataSource}
         />
         <br />
         <DigitalTrimmer
@@ -324,6 +359,14 @@ export default class TemplModal extends PureComponent {
           step={0.1}
           defaultValue={1.6}
           getValue={this.changeFunction}
+        />
+        <br />
+        <OperationOfCustermorList
+          onAddCustomer={this.changeFunction}
+          onChangeValue={this.changeValue}
+          labelName="产品"
+          dataSource={dataSource}
+          onDelectCustomer={this.changeFunction}
         />
       </div>
     );
