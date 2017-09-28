@@ -79,12 +79,11 @@ export default class CreateServiceRecord extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const {
-      addServeRecordSuccess,
       onToggleServiceRecordModal,
       loading,
     } = this.props;
     // 添加成功
-    if (loading && !nextProps.loading && addServeRecordSuccess === true) {
+    if (loading && !nextProps.loading && nextProps.addServeRecordSuccess === true) {
       onToggleServiceRecordModal(false);
       message.success('添加服务记录成功');
     }
