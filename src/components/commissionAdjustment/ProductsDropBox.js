@@ -4,29 +4,25 @@
  * @author baojiajia
  */
 import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Icon, Input, AutoComplete } from 'antd';
 import _ from 'lodash';
-import styles from './productsDropBox.less';
+import styles from './productsDropBox1.less';
 
 const Option = AutoComplete.Option;
-const dataSource = [
-  {
-    id: '1-34Z1T0D-1',
-    prodCode: 'PPWT40',
-    prodName: '通道佣金专用（万分之1.5）',
-    prodCommision: '0.15',
-  },
-  {
-    id: '1-34Z1T0D-2',
-    prodCode: 'PPWT41',
-    prodName: '通道佣金专用（万分之1.6）',
-    prodCommision: '0.16',
-  },
-];
-
 
 export default class ProductsDropdownBox extends PureComponent {
+
+  static propTypes = {
+    productList: PropTypes.array.isRequired,
+    onSelect: PropTypes.func.isRequired,
+    onSearch: PropTypes.func.isRequired,
+  }
+
+  static defaultProps = {
+    productList: [],
+  }
 
   constructor(props) {
     super(props);
@@ -51,6 +47,7 @@ export default class ProductsDropdownBox extends PureComponent {
         iconType: 'close',
         value,
       });
+      this.props.onSearch(value);
     } else {
       this.setState({
         value: '',
@@ -58,6 +55,12 @@ export default class ProductsDropdownBox extends PureComponent {
       });
     }
   }
+
+  @autobind
+  selectProduct(value) {
+    this.props.onSelect(value);
+  }
+
   @autobind
   clearValue() {
     this.setState({
@@ -67,8 +70,9 @@ export default class ProductsDropdownBox extends PureComponent {
   }
   render() {
     const { iconType, value } = this.state;
-    const options = dataSource.map(opt => (
-      <Option key={opt.id} value={opt.prodName}>
+    const { productList } = this.props;
+    const options = productList.map(opt => (
+      <Option key={opt.id} value={opt.id}>
         <span className={styles.prodcom}>{`${opt.prodCommision}‰`}</span>
         <span className={styles.prodname}>{opt.prodName}</span>
         <span className={styles.prodcode}>{opt.prodCode}</span>
@@ -77,6 +81,7 @@ export default class ProductsDropdownBox extends PureComponent {
     return (
       <div className={styles.dropdownbox}>
         <AutoComplete
+          placeholder="产品名称/产品代码"
           className={styles.searchbox}
           dropdownClassName={styles.searchdropdown}
           dropdownStyle={{ width: 343 }}
@@ -85,6 +90,7 @@ export default class ProductsDropdownBox extends PureComponent {
           style={{ width: '100%' }}
           dataSource={options}
           onChange={this.changeInputbox}
+          onSelect={this.selectProduct}
           optionLabelProp="value"
           filterOption={this.handleSearchFilterOptions}
           value={value}

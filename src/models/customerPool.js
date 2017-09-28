@@ -32,8 +32,6 @@ export default {
     empInfo: {},
     // 客户列表中对应的每个客户的近6个月的收益
     monthlyProfits: {},
-    // 发送客户的近6个月的收益请求的前后标记
-    isGetCustIncome: false,
     hotwds: {},
     hotPossibleWdsList: [],
     // 目标客户列表数据
@@ -60,8 +58,6 @@ export default {
     incomeData: [], // 净收入
     custContactData: {}, // 客户联系方式
     serviceRecordData: {}, // 服务记录
-    // 添加服务记录请求前后的标记
-    isAddServeRecord: false,
     // 添加服务记录成功的标记
     addServeRecordSuccess: false,
     isFollow: {},
@@ -203,17 +199,23 @@ export default {
         const response = yield call(api.saveCustGroupList, payload);
         yield put({
           type: 'addCusToGroupSuccess',
-          payload: response,
+          payload: {
+            groupId: payload.groupId,
+            result: response.resultData,
+          },
         });
       }
     },
     // 添加客户到新的分组
     * createCustGroup({ payload }, { call, put }) {
       if (!_.isEmpty(payload)) {
-        const response = yield call(api.createCustGroup, payload);
+        const { resultData } = yield call(api.createCustGroup, payload);
         yield put({
           type: 'addCusToGroupSuccess',
-          payload: response,
+          payload: {
+            groupId: resultData.groupId,
+            result: resultData.result,
+          },
         });
       }
     },
@@ -284,9 +286,6 @@ export default {
     // },
     // 列表页添加服务记录
     * addServeRecord({ payload }, { call, put }) {
-      yield put({
-        type: 'sendAddServeRecordReq',
-      });
       const res = yield call(api.addServeRecord, payload);
       yield put({
         type: 'addServeRecordSuccess',
@@ -511,7 +510,6 @@ export default {
       const { payload: { custNumber, monthlyProfits } } = action;
       return {
         ...state,
-        isGetCustIncome: false,
         monthlyProfits: {
           ...state.monthlyProfits,
           [custNumber]: monthlyProfits,
@@ -571,11 +569,11 @@ export default {
     },
     // 添加到现有分组保存成功
     addCusToGroupSuccess(state, action) {
-      const { payload: { resultData } } = action;
+      const { payload: { groupId, result } } = action;
       return {
         ...state,
-        resultgroupId: resultData.groupId,
-        cusGroupSaveResult: resultData.result,
+        resultgroupId: groupId,
+        cusGroupSaveResult: result,
       };
     },
     // 自建任务提交
@@ -614,18 +612,11 @@ export default {
         },
       };
     },
-    sendAddServeRecordReq(state) {
-      return {
-        ...state,
-        isAddServeRecord: true,
-      };
-    },
     addServeRecordSuccess(state, action) {
       const { payload } = action;
       return {
         ...state,
         addServeRecordSuccess: payload.resultData === 'success',
-        isAddServeRecord: false,
       };
     },
     // 关注成功
@@ -636,12 +627,6 @@ export default {
         followLoading: value,
         message,
         fllowCustData,
-      };
-    },
-    getCustIncomeReq(state) {
-      return {
-        ...state,
-        isGetCustIncome: true,
       };
     },
     // 获取客户分组成功

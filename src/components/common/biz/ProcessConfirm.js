@@ -54,7 +54,7 @@ export default class ProcessConfirm extends Component {
     }
     const contentElemArray = content.map(
       itemArray => (
-        <div className={styles.row}>
+        <div key={`${itemArray[0]}-${new Date().getTime()}`} className={styles.row}>
           <div className={styles.key}>{itemArray[0]}</div>
           <div className={styles.value}>{itemArray[1]}</div>
         </div>

@@ -5,13 +5,12 @@
 */
 
 import React, { PureComponent, PropTypes } from 'react';
-// import { withRouter } from 'dva/router';
 import { Checkbox } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
 import {
-  // fspGlobal,
+  fspGlobal,
   helper,
 } from '../../../utils';
 import QuickMenu from './QuickMenu';
@@ -150,7 +149,7 @@ export default class CustomerRow extends PureComponent {
     currentFollowCustId: PropTypes.string.isRequired,
     currentCustId: PropTypes.string.isRequired,
     isFollows: PropTypes.object.isRequired,
-    isGetCustIncome: PropTypes.bool.isRequired,
+    custIncomeReqState: PropTypes.bool.isRequired,
     toggleServiceRecordModal: PropTypes.func.isRequired,
   }
 
@@ -168,22 +167,24 @@ export default class CustomerRow extends PureComponent {
 
   @autobind
   toDetail() {
-    // const {
-    //   listItem: {
-    //     pOrO,
-    //     custId,
-    //   },
-    // } = this.props;
-    // const type = (!pOrO || pOrO === 'P') ? 'per' : 'org';
-    // const param = {
-    //   id: 'FSP_360VIEW_M_TAB',
-    //   title: '客户360视图-客户信息',
-    //   forceRefresh: true,
-    // };
-    // fspGlobal.openFspTab({
-    //   url: `/customerCenter/360/${type}/main?id=${custId}&rowId=${}&ptyId=${}`;,
-    //   param,
-    // });
+    const {
+      listItem: {
+        pOrO,
+        custId,
+        rowId,
+        ptyId,
+      },
+    } = this.props;
+    const type = (!pOrO || pOrO === 'P') ? 'per' : 'org';
+    const param = {
+      id: 'FSP_360VIEW_M_TAB',
+      title: '客户360视图-客户信息',
+      forceRefresh: true,
+    };
+    fspGlobal.openFspTab({
+      url: `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`,
+      param,
+    });
   }
 
   @autobind
@@ -221,7 +222,7 @@ export default class CustomerRow extends PureComponent {
       onAddFollow,
       currentFollowCustId,
       isFollows,
-      isGetCustIncome,
+      custIncomeReqState,
       toggleServiceRecordModal,
       custContactData,
       onSendEmail,
@@ -236,7 +237,6 @@ export default class CustomerRow extends PureComponent {
     return (
       <div
         className={styles.customerRow}
-        onClick={this.toDetail}
       >
         <QuickMenu
           isSms={isSms}
@@ -250,68 +250,73 @@ export default class CustomerRow extends PureComponent {
           isFollows={isFollows}
           onAddFollow={onAddFollow}
         />
-        <div className={`${styles.customerRowLeft} clear`}>
-          <div className={styles.selectIcon}>
-            <Checkbox
-              disabled={isAllSelect}
-              checked={isChecked}
-              onChange={this.handleSelect}
-            />
-          </div>
-          <div className={styles.avatorContent}>
-            <img className={styles.avatorImage} src={custNature[listItem.pOrO].imgSrc} alt="" />
-            <div className={styles.avatorText}>{custNature[listItem.pOrO].name}</div>
-            <img className={styles.iconMoneyImage} src={rankImgSrcConfig[listItem.levelCode]} alt="" />
-          </div>
+        <div className={styles.selectIcon}>
+          <Checkbox
+            disabled={isAllSelect}
+            checked={isChecked}
+            onChange={this.handleSelect}
+          />
         </div>
-        <div className={styles.customerRowRight}>
-          <div className="row-one">{listItem.name ? <span className="name">{listItem.name}</span> : null}
-            {
-              listItem.contactFlag ?
-                <div className="iconSingned">
-                  <div className="itemText">签约客户</div>
-                </div> : null
-            }
-            {listItem.highWorthFlag ? <div className="highWorthFlag">高净值</div> : null}
-            {
-              (rskLev === '' || rskLev === 'null')
-                ? '' :
-                <div
-                  className={`riskLevel ${riskLevelConfig[rskLev].colorCls}`}
-                >
-                  <div className="itemText">{`风险等级：${riskLevelConfig[rskLev].title}`}</div>
-                  {riskLevelConfig[rskLev].name}
-                </div>
-            }
-          </div>
-          <div className="row-two">
-            <span>{listItem.custId}</span>
-            <span className="cutOffLine">|</span>
-            {this.renderAgeOrOrgName()}
-            <span className="commission">佣金率: <em>{(listItem.miniFee * 1000).toFixed(2)}‰</em></span>
-          </div>
-          <div className="row-three">
-            <span>总资产：</span>
-            <span className="asset">{formatNumber(+listItem.asset)}</span>
-            <span>{formatUnit(+listItem.asset)}</span>
-            <SixMonthEarnings
-              listItem={listItem}
-              monthlyProfits={monthlyProfits}
-              isGetCustIncome={isGetCustIncome}
-              getCustIncome={getCustIncome}
-            />
-            <div className="department">
-              <span>{listItem.orgName}</span>
-              <span className="cutOffLine">|</span>
-              <span>{`服务经理：${listItem.empName || '无'}`}</span>
+        <div
+          className={styles.customerRowContent}
+          onClick={this.toDetail}
+        >
+          <div className={`${styles.customerRowLeft} clear`}>
+            <div className={styles.avatorContent}>
+              <img className={styles.avatorImage} src={custNature[listItem.pOrO].imgSrc} alt="" />
+              <div className={styles.avatorText}>{custNature[listItem.pOrO].name}</div>
+              <img className={styles.iconMoneyImage} src={rankImgSrcConfig[listItem.levelCode]} alt="" />
             </div>
           </div>
-          <MatchArea
-            q={q}
-            dict={dict}
-            location={location}
-            listItem={listItem}
-          />
+          <div className={styles.customerRowRight}>
+            <div className="row-one">{listItem.name ? <span className="name">{listItem.name}</span> : null}
+              {
+                listItem.contactFlag ?
+                  <div className="iconSingned">
+                    <div className="itemText">签约客户</div>
+                  </div> : null
+              }
+              {listItem.highWorthFlag ? <div className="highWorthFlag">高净值</div> : null}
+              {
+                (rskLev === '' || rskLev === 'null')
+                  ? '' :
+                  <div
+                    className={`riskLevel ${riskLevelConfig[rskLev].colorCls}`}
+                  >
+                    <div className="itemText">{`风险等级：${riskLevelConfig[rskLev].title}`}</div>
+                    {riskLevelConfig[rskLev].name}
+                  </div>
+              }
+            </div>
+            <div className="row-two">
+              <span>{listItem.custId}</span>
+              <span className="cutOffLine">|</span>
+              {this.renderAgeOrOrgName()}
+              <span className="commission">佣金率: <em>{(listItem.miniFee * 1000).toFixed(2)}‰</em></span>
+            </div>
+            <div className="row-three">
+              <span>总资产：</span>
+              <span className="asset">{formatNumber(+listItem.asset)}</span>
+              <span>{formatUnit(+listItem.asset)}</span>
+              <SixMonthEarnings
+                listItem={listItem}
+                monthlyProfits={monthlyProfits}
+                custIncomeReqState={custIncomeReqState}
+                getCustIncome={getCustIncome}
+              />
+              <div className="department">
+                <span>{listItem.orgName}</span>
+                <span className="cutOffLine">|</span>
+                <span>{`服务经理：${listItem.empName || '无'}`}</span>
+              </div>
+            </div>
+            <MatchArea
+              q={q}
+              dict={dict}
+              location={location}
+              listItem={listItem}
+            />
+          </div>
         </div>
       </div>
     );

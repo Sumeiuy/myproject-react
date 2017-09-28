@@ -80,7 +80,7 @@ export default class CreateTaskSuccess extends PureComponent {
     }, () => {
       if (COUNT < 0){
         console.log('页面关闭');
-        this.closeTab();
+        this.goToIndex();
         clearInterval(successSetInterval);
       }
     });    

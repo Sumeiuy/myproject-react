@@ -16,6 +16,7 @@ import scatterType from './scatterType';
 import { responseCode, excludeCode } from './errorCode';
 import permissionOptions from './permissionOptions';
 import seibelConfig from './pageConfig';
+import contract from './contract';
 
 export default {
   constants,
@@ -37,4 +38,5 @@ export default {
   excludeCode,
   permissionOptions,
   seibelConfig,
+  contract,
 };
