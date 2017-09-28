@@ -13,7 +13,7 @@ import PublishConfirmModal from '../../components/modals/PublishConfirmModal';
 import DeleteBoardModal from '../../components/modals/DeleteBoardModal';
 import SearchModal from '../../components/common/biz/SearchModal';
 import ProcessConfirm from '../../components/common/biz/ProcessConfirm';
-import Transfer from '../../components/common/biz/Transfer';
+import Transfer from '../../components/common/biz/TableTransfer';
 import CommonUpload from '../../components/common/biz/CommonUpload';
 import CommonModal from '../../components/common/biz/CommonModal';
 import InfoItem from '../../components/common/infoItem';
@@ -28,6 +28,7 @@ import {
   employeeColumns,
   subscribelData,
   unsubcribeData,
+  // data,
   productColumns,
 } from './MockTableData';
 import styles from './home.less';
@@ -227,12 +228,27 @@ export default class TemplModal extends PureComponent {
       onOk: this.closeModal,
     };
 
+    const pagination = {
+      defaultPageSize: 5,
+      pageSize: 5,
+      size: 'small',
+    };
+
     const transferProps = {
-      subscribeData: subscribelData,
-      unsubscribeData: unsubcribeData,
-      subscribeColumns: productColumns,
-      unsubscribeColumns: productColumns,
+      firstData: subscribelData,
+      // secondData: data,
+      secondData: unsubcribeData,
+      firstColumns: productColumns,
+      secondColumns: productColumns,
       onChange: this.handleChange,
+      onSearch: this.handleSearch,
+      rowKey: 'key',
+      showSearch: true,
+      placeholder: '产品代码/产品名称',
+      // pagination: false,
+      pagination,
+      finishTips: ['产品组合等于目标佣金值'],
+      warningTips: ['产品组合比目标佣金高 0.5%', '产品组合离目标佣金还差 0.63%'],
     };
 
 
