@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 10:53:22
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-09-27 17:53:07
+ * @Last Modified time: 2017-09-28 17:27:55
  */
 
 import React, { PureComponent } from 'react';
@@ -22,8 +22,8 @@ export default class Confirm extends PureComponent {
   };
 
   static defaultProps = {
-    title: '确认删除xxx吗？',
-    content: '真的确认删除xxx吗？',
+    title: '系统提示',
+    content: '此操作不可恢复，您确认删除吗？',
     type: 'delete',
     onOkHandler: () => { },
     onCancelHandler: () => { },
@@ -31,7 +31,7 @@ export default class Confirm extends PureComponent {
 
   showConfirm() {
     const { title, content, type, onOkHandler, onCancelHandler } = this.props;
-    this.confirmRef = confirm({
+    confirm({
       title,
       content,
       okText: '确认',
@@ -39,14 +39,10 @@ export default class Confirm extends PureComponent {
       cancelText: '取消',
       onOk() {
         console.log('确认');
-        // 销毁
-        this.confirmRef.destroy();
         onOkHandler();
       },
       onCancel() {
         console.log('取消');
-        // 销毁
-        this.confirmRef.destroy();
         onCancelHandler();
       },
     });
