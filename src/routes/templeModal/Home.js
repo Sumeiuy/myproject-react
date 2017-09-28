@@ -21,6 +21,7 @@ import SearchSelect from '../../components/common/Select/SearchSelect';
 import DigitalTrimmer from '../../components/common/DigitalTrimmer';
 import ApprovalRecordBoard from '../../components/commissionAdjustment/ApprovalRecordBoard';
 import OperationOfCustermorList from '../../components/commissionAdjustment/OperationOfCustermorList';
+import SelectAssembly from '../../components/common/Select/SelectAssembly';
 
 import {
   confirmData,
@@ -367,6 +368,11 @@ export default class TemplModal extends PureComponent {
           labelName="产品"
           dataSource={dataSource}
           onDelectCustomer={this.changeFunction}
+        />
+        <br />
+        <SelectAssembly
+          labelName="客户"
+          onSelelctValue={this.changeFunction}
         />
       </div>
     );

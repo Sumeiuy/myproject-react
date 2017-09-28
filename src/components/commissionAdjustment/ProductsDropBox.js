@@ -15,7 +15,7 @@ const Option = AutoComplete.Option;
 export default class ProductsDropdownBox extends PureComponent {
 
   static propTypes = {
-    productList: PropTypes.array.isRequired,
+    productList: PropTypes.array,
     onSelect: PropTypes.func.isRequired,
     onSearch: PropTypes.func.isRequired,
   }
@@ -63,10 +63,12 @@ export default class ProductsDropdownBox extends PureComponent {
 
   @autobind
   clearValue() {
-    this.setState({
-      value: '',
-      iconType: 'search',
-    });
+    if (this.state.iconType === 'close') {
+      this.setState({
+        value: '',
+        iconType: 'search',
+      });
+    }
   }
   render() {
     const { iconType, value } = this.state;
