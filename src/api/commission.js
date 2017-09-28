@@ -11,7 +11,7 @@ export default function commission(api) {
     // 查询批量佣金调整详情页面中查看单个用户的审批记录
     querySingleCustApprovalRecord: query => api.post('/groovynoauth/fsp/biz/chgcommsion/queryFlowHistory', query),
     // 根据目标股基佣金率查询目标产品列表
-    queryProductList: query => api.post('/groovynoauth/fsp/biz/chgcommission/queryProduct', query),
+    queryProductList: query => api.post('/groovynoauth/fsp/biz/chgcommsion/queryProduct', query),
     // 查询审批人员
     queryAprovalUserList: query => api.post('/groovynoauth/fsp/biz/chgcommsion/queryAprovalUser', query),
     // 检验客户是否可以调整

@@ -38,13 +38,15 @@ export default function createApi() {
      *
      * @return {Promise}
      */
-    get(url, query) {
+    get(url, query = {}) {
       const finalUrl = padPrefix(url);
-      const queryString = queryToString(query);
+      const { ignoreCatch = false, ...resetQuery } = query;
+      const queryString = queryToString(resetQuery);
       return request(
         `${finalUrl}?${queryString}&empId=${getEmpId()}`,
         {
           method: 'GET',
+          ignoreCatch,
         },
       );
     },
@@ -55,8 +57,9 @@ export default function createApi() {
      *
      * @return {Promise}
      */
-    post(url, query) {
+    post(url, query = {}) {
       const finalUrl = padPrefix(url);
+      const { ignoreCatch = false, ...resetQuery } = query;
       return request(
         finalUrl,
         {
@@ -65,7 +68,8 @@ export default function createApi() {
             'Content-Type': 'application/json',
             empId: getEmpId(),
           },
-          body: JSON.stringify({ ...query, empId: getEmpId() }),
+          ignoreCatch,
+          body: JSON.stringify({ ...resetQuery, empId: getEmpId() }),
         },
       );
     },

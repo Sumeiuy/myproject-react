@@ -12,16 +12,20 @@ import { request as config, excludeCode } from '../config';
  * Parses the JSON returned by a network request
  *
  * @param  {object} response A response from a network request
+ * @param  {object} options 针对请求在后期需要做的特殊处理
+ * options含有属性
+ * ignoreCatch boolen， 默认为false，表示需要经过全局Catch，true表示忽略全局捕获
  *
  * @return {object}          The parsed JSON from the request
  */
-function parseJSON(response) {
+function parseJSON(response, options) {
+  const { ignoreCatch = false } = options;
   return response.json().then(
     (res) => {
       // 神策的响应是succeed: true
       const { code, msg, succeed } = res;
       const existExclude = _.findIndex(excludeCode, o => o.code === code) > -1;
-      if (!existExclude && !succeed) {
+      if (!existExclude && !succeed && !ignoreCatch) {
         let error;
         if (code === 'MAG0010') {
           // 这里使用code作为message，以便对登录错误做特殊处理
@@ -66,7 +70,7 @@ export default function request(url, options) {
   return Promise.race([
     fetch(url, { credentials: 'include', ...options })
       .then(checkStatus)
-      .then(parseJSON),
+      .then(response => parseJSON(response, options)),
     new Promise(
       (rosolve, reject) => {// eslint-disable-line
         setTimeout(

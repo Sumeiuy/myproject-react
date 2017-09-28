@@ -33,6 +33,7 @@ const effects = {
   detail: 'commission/getCommissionDetail',
   record: 'commission/getApprovalRecords',
   productList: 'commission/getProductList',
+  applyCustList: 'commission/getCanApplyCustList',
   approver: 'commission/getAprovalUserList',
   validate: 'commission/validateCustInfo',
 };
@@ -44,6 +45,7 @@ const mapStateToProps = state => ({
   listProcess: state.loading.effects[effects.list], // 获取列表数据进程
   filterDrafterList: state.app.drafterList, // 拟稿人列表
   filterCustList: state.app.customerList, // 已申请的客户列表
+  canApplyCustList: state.commission.canApplyCustList, // 可申请的客户列表
   productList: state.commission.productList, // 目标产品列表
   approvalUserList: state.commission.approvalUserList, // 审批人员列表
   validataLoading: state.commission.validataLoading, // 验证过程
@@ -65,11 +67,12 @@ const mapDispatchToProps = {
   getCustRange: getDataFunction(true, effects.custRange), // 获取批量佣金调整List
   getCommissionDetail: getDataFunction(true, effects.detail), // 获取批量佣金调整Detail
   getApprovalRecords: getDataFunction(false, effects.record), // 获取用户审批记录
-  searchCustList: getDataFunction(false, effects.searchCust), // 通过关键字，查询可选用户列表
+  searchCustList: getDataFunction(false, effects.searchCust), // 通过关键字，查询可选的已申请用户列表
   searchDrafter: getDataFunction(false, effects.searchDrafter), // 通过关键字，查询可选拟稿人列表
   getProductList: getDataFunction(false, effects.productList), // 查询目标产品列表
   getAprovalUserList: getDataFunction(false, effects.approver), // 查询审批人员列表
   validateCustInfo: getDataFunction(false, effects.validate), // 校验用户资格
+  getCanApplyCustList: getDataFunction(false, effects.applyCustList), // 通过关键字，查询可选的可申请用户列表
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -82,6 +85,7 @@ export default class CommissionHome extends PureComponent {
     dict: PropTypes.object.isRequired,
     getCustRange: PropTypes.func.isRequired,
     validateCustInfo: PropTypes.func.isRequired,
+    getCanApplyCustList: PropTypes.func.isRequired,
     getAprovalUserList: PropTypes.func.isRequired,
     getCommissionList: PropTypes.func.isRequired,
     getCommissionDetail: PropTypes.func.isRequired,
@@ -100,6 +104,7 @@ export default class CommissionHome extends PureComponent {
     validateResult: PropTypes.string.isRequired,
     approvalUserList: PropTypes.array.isRequired,
     filterCustList: PropTypes.array.isRequired,
+    canApplyCustList: PropTypes.array.isRequired,
     filterDrafterList: PropTypes.array.isRequired,
   }
 
@@ -312,7 +317,9 @@ export default class CommissionHome extends PureComponent {
       approvalRecord,
       productList,
       getProductList,
+      getCanApplyCustList,
       approvalUserList,
+      canApplyCustList,
       validataLoading,
       validateResult,
       validateCustInfo,
@@ -379,7 +386,8 @@ export default class CommissionHome extends PureComponent {
           queryProductList={getProductList}
           targetProductList={productList}
           approverList={approvalUserList}
-          customerList={[]}
+          onSearchApplyCust={getCanApplyCustList}
+          customerList={canApplyCustList}
           validataLoading={validataLoading}
           validateResult={validateResult}
           validateCust={validateCustInfo}
