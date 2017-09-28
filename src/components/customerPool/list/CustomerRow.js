@@ -146,13 +146,12 @@ export default class CustomerRow extends PureComponent {
     dict: PropTypes.object.isRequired,
     createContact: PropTypes.func.isRequired,
     isSms: PropTypes.bool.isRequired,
-    custContactData: PropTypes.object.isRequired,
+    custEmail: PropTypes.object.isRequired,
     currentFollowCustId: PropTypes.string.isRequired,
     currentCustId: PropTypes.string.isRequired,
     isFollows: PropTypes.object.isRequired,
     isGetCustIncome: PropTypes.bool.isRequired,
     toggleServiceRecordModal: PropTypes.func.isRequired,
-    isEmptyEmail: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -224,13 +223,12 @@ export default class CustomerRow extends PureComponent {
       isFollows,
       isGetCustIncome,
       toggleServiceRecordModal,
-      custContactData,
+      custEmail,
       onSendEmail,
       currentCustId,
       getCustIncome,
       location,
       dict,
-      isEmptyEmail,
     } = this.props;
     const rskLev = _.trim(listItem.riskLvl);
     const str = `${listItem.custId}.${listItem.name}`;
@@ -245,13 +243,12 @@ export default class CustomerRow extends PureComponent {
           listItem={listItem}
           createModal={this.createModal}
           toggleServiceRecordModal={toggleServiceRecordModal}
-          custContactData={custContactData}
+          custEmail={custEmail}
           currentCustId={currentCustId}
           onSendEmail={onSendEmail}
           currentFollowCustId={currentFollowCustId}
           isFollows={isFollows}
           onAddFollow={onAddFollow}
-          isEmptyEmail={isEmptyEmail}
         />
         <div className={`${styles.customerRowLeft} clear`}>
           <div className={styles.selectIcon}>

@@ -21,6 +21,7 @@ import { fspGlobal, helper } from '../../utils';
 const CUR_PAGE = 1; // 默认当前页 0->1, 后端入参变化
 const CUR_PAGESIZE = 10; // 默认页大小
 const TabPane = Tabs.TabPane;
+const CUR_KEYWORD = null;
 let groupId = '';
 const mapStateToProps = state => ({
   cusgroupList: state.customerPool.cusgroupList,
@@ -108,14 +109,12 @@ export default class CustomerGroup extends PureComponent {
       controlCusSuccess: '',
       cusgroupId: '',
       groupName: '',
-      keyWord: null,
     };
   }
 
   componentWillMount() {
 /* 获取客户分组列表 */
-    const { keyWord } = this.state;
-    this.getCustomerGroup(keyWord, this.props);
+    this.getCustomerGroup(this.props);
     /* 初始化classname,首次渲染显示分组tab,隐藏分组成功组件 */
     this.state.controlGroupPane = classnames({
       [styles.customerGroup]: true,
@@ -131,7 +130,6 @@ export default class CustomerGroup extends PureComponent {
     // 根据分组结果，重新渲染组件
     const { cusGroupSaveResult, resultgroupId, location: { query } } = nextProps;
     const { location: { query: preQuery } } = this.props;
-    const { keyWord } = this.state;
     const controlGroupPane = classnames({
       [styles.customerGroup]: cusGroupSaveResult !== 'success',
       [styles.hiddencustomerGroup]: cusGroupSaveResult === 'success',
@@ -145,20 +143,22 @@ export default class CustomerGroup extends PureComponent {
       controlCusSuccess,
       cusgroupId: resultgroupId,
     });
+    console.log('keyWord----', query.keyWord);
     if (query !== preQuery) {
-      this.getCustomerGroup(keyWord, { nextProps });
+      this.getCustomerGroup({ ...nextProps });
     }
   }
 
   @autobind
-  getCustomerGroup(value = null, props) {
+  getCustomerGroup(props) {
     const { location: { query }, getCustomerGroupList } = props;
+    console.log('props---', query.value);
     const param = {
         // 必传，页大小
       pageNum: query.curPageNum || CUR_PAGE,
       pageSize: query.pageSize || CUR_PAGESIZE,
       empId: helper.getEmpId(),
-      keyWord: value,
+      keyWord: query.keyWord || CUR_KEYWORD,
     };
     getCustomerGroupList(param);
   }
@@ -189,6 +189,7 @@ export default class CustomerGroup extends PureComponent {
   @autobind
   handleSizeChange(current, size) {
     const { replace, location: { query, pathname } } = this.props;
+    console.log(current, size)
     replace({
       pathname,
       query: {
@@ -207,11 +208,8 @@ export default class CustomerGroup extends PureComponent {
         ...query,
         curPageNum: CUR_PAGE,
         curPageSize: CUR_PAGESIZE,
-        KeyWord: value,
+        keyWord: value,
       },
-    });
-    this.setState({
-      keyWord: value,
     });
   }
 /*  添加到已有分组 */
