@@ -103,8 +103,13 @@ export default class TemplModal extends PureComponent {
   }
 
   @autobind
-  handleChange(subscribelArray, unsubcribeArray, selected) {
-    console.log(subscribelArray, unsubcribeArray, selected);
+  handleTransferChange(updateArray) {
+    console.log(updateArray);
+  }
+
+  @autobind
+  handleCheckChange(selected, selectedChildren, selectedAll) {
+    console.log(selected, selectedChildren, selectedAll);
   }
 
   @autobind
@@ -240,7 +245,8 @@ export default class TemplModal extends PureComponent {
       secondData: unsubcribeData,
       firstColumns: productColumns,
       secondColumns: productColumns,
-      onChange: this.handleChange,
+      transferChange: this.handleTransferChange,
+      checkChange: this.handleCheckChange,
       onSearch: this.handleSearch,
       rowKey: 'key',
       showSearch: true,
