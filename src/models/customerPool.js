@@ -198,17 +198,23 @@ export default {
         const response = yield call(api.saveCustGroupList, payload);
         yield put({
           type: 'addCusToGroupSuccess',
-          payload: response,
+          payload: {
+            groupId: payload.groupId,
+            result: response.resultData,
+          },
         });
       }
     },
     // 添加客户到新的分组
     * createCustGroup({ payload }, { call, put }) {
       if (!_.isEmpty(payload)) {
-        const response = yield call(api.createCustGroup, payload);
+        const { resultData } = yield call(api.createCustGroup, payload);
         yield put({
           type: 'addCusToGroupSuccess',
-          payload: response,
+          payload: {
+            groupId: resultData.groupId,
+            result: resultData.result,
+          },
         });
       }
     },
@@ -549,11 +555,11 @@ export default {
     },
     // 添加到现有分组保存成功
     addCusToGroupSuccess(state, action) {
-      const { payload: { resultData } } = action;
+      const { payload: { groupId, result } } = action;
       return {
         ...state,
-        resultgroupId: resultData.groupId,
-        cusGroupSaveResult: resultData.result,
+        resultgroupId: groupId,
+        cusGroupSaveResult: result,
       };
     },
     // 自建任务提交
