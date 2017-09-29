@@ -94,7 +94,7 @@ export default class CreateTask extends PureComponent {
     console.log(isSuccess);
     return (
       <div className={styles.taskBox}>
-        {isSuccess ?
+        {!isSuccess ?
           <CreateTaskFrom
             goBack={goBack}
             location={location}

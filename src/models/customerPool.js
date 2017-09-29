@@ -5,6 +5,7 @@
  */
 import _ from 'lodash';
 import { customerPool as api } from '../api';
+import { toastM } from '../utils/sagaEffects';
 
 const EMPTY_LIST = [];
 // const EMPTY_OBJECT = {};
@@ -368,6 +369,11 @@ export default {
         type: 'operateGroupSuccess',
         payload: resultData,
       });
+      yield put({
+        type: 'toastM',
+        message: '更新分组成功',
+        delay: 1,
+      });
       // 成功之后，更新分组信息
       yield put({
         type: 'getCustomerGroupList',
@@ -377,6 +383,9 @@ export default {
         },
       });
     },
+    * toastM({ message, delay }) {
+      yield toastM(message, delay);
+    },
     // 删除客户分组
     * deleteGroup({ payload }, { call, put }) {
       const response = yield call(api.deleteGroup, payload);
@@ -384,6 +393,11 @@ export default {
       yield put({
         type: 'deleteGroupSuccess',
         payload: resultData,
+      });
+      yield put({
+        type: 'toastM',
+        message: '删除分组成功',
+        delay: 1,
       });
       // 删除成功之后，更新分组信息
       yield put({
@@ -674,7 +688,7 @@ export default {
             // pageSize,
             totalRecordNum,
           },
-          resultData: custGroupDTOList,
+          resultData: custGroupDTOList || EMPTY_LIST,
         },
       };
     },
@@ -692,7 +706,7 @@ export default {
             // pageSize,
             totalRecordNum,
           },
-          resultData: groupCustDTOList,
+          resultData: groupCustDTOList || EMPTY_LIST,
         },
       };
     },
