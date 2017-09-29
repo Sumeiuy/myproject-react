@@ -212,6 +212,11 @@ export default class CustomerRow extends PureComponent {
       assetValue = obj.value;
       assetUnit = obj.unit;
     }
+    // 佣金率
+    let miniFee = '--';
+    if (listItem.miniFee !== null) {
+      miniFee = `${(listItem.miniFee * 1000).toFixed(2)}‰`;
+    }
     return (
       <div
         className={styles.customerRow}
@@ -270,7 +275,7 @@ export default class CustomerRow extends PureComponent {
               <span>{listItem.custId}</span>
               <span className="cutOffLine">|</span>
               {this.renderAgeOrOrgName()}
-              <span className="commission">佣金率: <em>{(listItem.miniFee * 1000).toFixed(2)}‰</em></span>
+              <span className="commission">佣金率: <em>{miniFee}</em></span>
             </div>
             <div className="row-three">
               <span>总资产：</span>
