@@ -28,9 +28,9 @@ let modalKeyCount = 0;
  */
 const formatAsset = (num) => {
   // 数字常量
-  const WAN = 10000;
-  const YI = 100000000;
-  const WANYI = 1000000000000;
+  const WAN = 1e4;
+  const YI = 1e8;
+  const WANYI = 1e12;
 
   // 单位常量
   const UNIT_DEFAULT = '元';
@@ -41,6 +41,12 @@ const formatAsset = (num) => {
   const newNum = Number(num);
   const absNum = Math.abs(newNum);
 
+  if (absNum >= WANYI) {
+    return {
+      value: (newNum / WANYI).toFixed(2),
+      unit: UNIT_WANYI,
+    };
+  }
   if (absNum >= YI) {
     return {
       value: (newNum / YI).toFixed(2),
@@ -51,12 +57,6 @@ const formatAsset = (num) => {
     return {
       value: (newNum / WAN).toFixed(2),
       unit: UNIT_WAN,
-    };
-  }
-  if (absNum >= WANYI) {
-    return {
-      value: (newNum / WANYI).toFixed(2),
-      unit: UNIT_WANYI,
     };
   }
   return { value: newNum, unit: UNIT_DEFAULT };
