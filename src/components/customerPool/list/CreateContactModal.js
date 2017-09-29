@@ -345,7 +345,7 @@ export default class CreateContactModal extends PureComponent {
                   暂无客户联系电话，请与客户沟通尽快完善信息
               </div>
               <div className={styles.rightSection}>
-                <Button key="addServiceRecord" onClick={this.handleServiceRecordClick}>添加服务记录</Button>
+                <Button onClick={this.handleServiceRecordClick}>添加服务记录</Button>
               </div>
             </div> :
             <div className={styles.number}>
@@ -364,7 +364,7 @@ export default class CreateContactModal extends PureComponent {
                   </div> : <div className={styles.noneInfo} />
               }
               <div className={styles.rightSection}>
-                <Button key="addServiceRecord" onClick={this.handleServiceRecordClick}>添加服务记录</Button>
+                <Button onClick={this.handleServiceRecordClick}>添加服务记录</Button>
               </div>
             </div>
         }

@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 14:15:22
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-09-28 16:56:56
+ * @Last Modified time: 2017-09-29 14:39:16
  */
 
 import React, { PureComponent } from 'react';
@@ -44,6 +44,8 @@ export default class CustomerGroupDetail extends PureComponent {
     custRiskBearing: PropTypes.array,
     // 从指定分组下删除某个客户
     deleteCustomerFromGroup: PropTypes.func.isRequired,
+    // 删除分组下指定客户结果
+    deleteCustomerFromGroupResult: PropTypes.object.isRequired,
   };
 
   static defaultProps = {
@@ -75,18 +77,50 @@ export default class CustomerGroupDetail extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { customerList = EMPTY_OBJECT } = this.props;
+    const { customerList = EMPTY_OBJECT,
+      deleteCustomerFromGroupResult: deleteResult = EMPTY_OBJECT,
+      getGroupCustomerList,
+       } = this.props;
     const { resultData: prevData = EMPTY_LIST } = customerList;
-    const { customerList: nextList = EMPTY_OBJECT } = nextProps;
+    const { customerList: nextList = EMPTY_OBJECT,
+      deleteCustomerFromGroupResult: nextDeleteResult = EMPTY_OBJECT } = nextProps;
     const { resultData: nextData = EMPTY_LIST, page = EMPTY_OBJECT } = nextList;
     const { totalRecordNum } = page;
-    const { includeCustListSize, dataSource } = this.state;
+    const { includeCustListSize,
+      dataSource,
+      groupId,
+      needDeleteCustId,
+      totalRecordNum: newRecordNum,
+      } = this.state;
+    const prevResult = deleteResult[`${groupId}_${needDeleteCustId}`];
+    const nextResult = nextDeleteResult[`${groupId}_${needDeleteCustId}`];
+
     if (prevData !== nextData) {
       this.setState({
-        // 将新数据与旧数据concat
-        dataSource: _.concat(dataSource, nextData),
+        // 将新数据与旧数据concat,合并去重
+        dataSource: _.uniqBy(_.concat(dataSource, nextData), 'custId'),
         // 总条目与当前新增cust条目相加
         totalRecordNum: totalRecordNum + includeCustListSize,
+      });
+    }
+
+    // 判断删除是否成功
+    if (prevResult !== nextResult) {
+      const newDataSource = _.filter(dataSource, item => item.custId !== needDeleteCustId);
+      // 数据从表格删除
+      this.setState({
+        dataSource: newDataSource,
+        // 总记录数减1
+        totalRecordNum: newRecordNum - 1,
+      }, () => {
+        if (_.isEmpty(newDataSource)) {
+          // 判断数据是否不存在了，不存在请求数据
+          getGroupCustomerList({
+            groupId,
+            pageNum: 1,
+            pageSize: 5,
+          });
+        }
       });
     }
   }
@@ -200,20 +234,32 @@ export default class CustomerGroupDetail extends PureComponent {
       dataSource,
       totalRecordNum,
       includeCustList,
+      groupId,
     } = this.state;
+    const { getGroupCustomerList } = this.props;
     const { custId } = record;
 
     // 判断删除的custId在includeCustIdList中有没有
     if (_.includes(includeCustIdList, custId)) {
+      const newDataSource = _.filter(dataSource, item => item.custId !== custId);
       // 存在则只是将includeCustIdList减少一条
       this.setState({
         includeCustIdList: _.filter(includeCustIdList, item => item !== custId),
         includeCustList: _.filter(includeCustList, item => item.custId !== custId),
         includeCustListSize: _.size(includeCustIdList) - 1,
-        dataSource: _.filter(dataSource, item => item.custId !== custId),
+        dataSource: newDataSource,
         // 总记录数减1
         totalRecordNum: totalRecordNum - 1,
         needDeleteCustId: custId,
+      }, () => {
+        if (_.isEmpty(newDataSource)) {
+          // 判断数据是否不存在了，不存在请求数据
+          getGroupCustomerList({
+            groupId,
+            pageNum: 1,
+            pageSize: 5,
+          });
+        }
       });
     } else {
       // 不存在，直接提示删除确认框，然后删除
@@ -226,6 +272,10 @@ export default class CustomerGroupDetail extends PureComponent {
 
   @autobind
   handleSearchClick({ value, selectedItem }) {
+    const { getHotPossibleWds } = this.props;
+    getHotPossibleWds({
+      keyword: value,
+    });
     console.log('search click', value, JSON.stringify(selectedItem));
   }
 
@@ -247,6 +297,9 @@ export default class CustomerGroupDetail extends PureComponent {
     // "openOrgName": "南京长江路证券营业部",
     // "openOrgId": "ZZ001041051"
     // }
+    if (_.isEmpty(selectedItem)) {
+      return;
+    }
     console.log('receive value, add customer to table', selectedItem);
     const { custName, cusId, custLevelName, riskLevel, brokerNumber } = selectedItem;
     console.log(custName, cusId, custLevelName, riskLevel);
@@ -290,12 +343,7 @@ export default class CustomerGroupDetail extends PureComponent {
 
   @autobind
   handleConfirmOk() {
-    const { needDeleteCustId, dataSource, totalRecordNum } = this.state;
-    // 数据从表格删除
     this.setState({
-      dataSource: _.filter(dataSource, item => item.custId !== needDeleteCustId),
-      // 总记录数减1
-      totalRecordNum: totalRecordNum - 1,
       isShowDeleteConfirm: false,
     });
     this.deleteCustomerFromGroupForever();

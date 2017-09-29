@@ -29,6 +29,7 @@ const effects = {
   // saveSearchVal: 'customerPool/saveCustomerSearchVal',
   operateGroup: 'customerPool/operateGroup',
   deleteGroup: 'customerPool/deleteGroup',
+  deleteCustomerFromGroup: 'customerPool/deleteCustomerFromGroup',
 };
 
 const fetchData = (type, loading) => query => ({
@@ -56,6 +57,8 @@ const mapStateToProps = state => ({
   dict: state.app.dict,
   // 删除分组结果
   deleteGroupResult: state.customerPool.deleteGroupResult,
+  // 删除分组下客户结果
+  deleteCustomerFromGroupResult: state.customerPool.deleteCustomerFromGroupResult,
 });
 
 const mapDispatchToProps = {
@@ -75,6 +78,8 @@ const mapDispatchToProps = {
   operateGroup: fetchData(effects.operateGroup, true),
   // 删除分组
   deleteGroup: fetchData(effects.deleteGroup, true),
+  // 删除分组下客户
+  deleteCustomerFromGroup: fetchData(effects.deleteCustomerFromGroup, true),
   push: routerRedux.push,
   replace: routerRedux.replace,
 };
@@ -105,6 +110,8 @@ export default class CustomerGroupManage extends PureComponent {
     dict: PropTypes.object.isRequired,
     deleteGroupResult: PropTypes.string.isRequired,
     deleteGroup: PropTypes.func.isRequired,
+    deleteCustomerFromGroupResult: PropTypes.object.isRequired,
+    deleteCustomerFromGroup: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -260,6 +267,7 @@ export default class CustomerGroupManage extends PureComponent {
     const { groupId } = record;
     this.handleOpenTab({
       groupId,
+      enterType: 'custGroupList',
     }, '自建任务', 'RCT_FSP_CREATE_TASK');
   }
 
@@ -446,6 +454,8 @@ export default class CustomerGroupManage extends PureComponent {
       operateGroup,
       operateGroupResult,
       dict,
+      deleteCustomerFromGroup,
+      deleteCustomerFromGroupResult,
      } = this.props;
 
     const {
@@ -534,6 +544,8 @@ export default class CustomerGroupManage extends PureComponent {
               footer={null}
               modalContent={
                 <CustomerGroupDetail
+                  deleteCustomerFromGroupResult={deleteCustomerFromGroupResult}
+                  deleteCustomerFromGroup={deleteCustomerFromGroup}
                   custRiskBearing={custRiskBearing}
                   canEditDetail={canEditDetail}
                   customerHotPossibleWordsList={customerHotPossibleWordsList}

@@ -16,12 +16,12 @@ export default {};
 export const delay = ms => new Promise(resolve => setTimeout(() => resolve(true), ms));
 
 // 弹出提示信息
-export const toastM = (msg, ms = 1) => (
+export const toastM = (msg, duration = 1) => (
   new Promise(
     (resolve) => {
       message.success(
         msg,
-        ms,
+        duration,
         () => resolve(true),
       );
     },
