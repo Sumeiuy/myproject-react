@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 14:15:22
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-09-29 14:39:16
+ * @Last Modified time: 2017-09-29 17:16:04
  */
 
 import React, { PureComponent } from 'react';
@@ -91,7 +91,8 @@ export default class CustomerGroupDetail extends PureComponent {
       groupId,
       needDeleteCustId,
       totalRecordNum: newRecordNum,
-      } = this.state;
+    } = this.state;
+
     const prevResult = deleteResult[`${groupId}_${needDeleteCustId}`];
     const nextResult = nextDeleteResult[`${groupId}_${needDeleteCustId}`];
 
@@ -124,20 +125,6 @@ export default class CustomerGroupDetail extends PureComponent {
       });
     }
   }
-
-  // @autobind
-  // handleDescriptionInputChange(e) {
-  //   this.setState({
-  //     description: e.target.value,
-  //   });
-  // }
-
-  // @autobind
-  // handleNameInputChange(e) {
-  //   this.setState({
-  //     name: e.target.value,
-  //   });
-  // }
 
   /**
   * 页码改变事件，翻页事件

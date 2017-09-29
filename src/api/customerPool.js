@@ -86,6 +86,6 @@ export default function customerPool(api) {
     deleteGroup: query => api.post('/groovynoauth/fsp/cust/custgroup/deleteGroup', query),
 
     // 删除分组下的客户
-    deleteCustomerFromGroup: query => api.post('/groovynoauth/fsp/cust/custgroup/deleteCustomerFromGroup', query),
+    deleteCustomerFromGroup: query => api.post('/groovynoauth/fsp/cust/custgroup/operateCust', query),
   };
 }
