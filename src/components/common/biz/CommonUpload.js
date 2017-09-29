@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 15:02:49
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-09-26 09:24:49
+ * @Last Modified time: 2017-09-29 21:39:36
  */
 /**
  * 常用说明
@@ -33,12 +33,30 @@ import { Progress, Upload, message, Popover, Row, Col } from 'antd';
 import { autobind } from 'core-decorators';
 import moment from 'moment';
 import _ from 'lodash';
+import { connect } from 'react-redux';
 import Button from '../Button';
 import { request } from '../../../config';
 import { helper } from '../../../utils';
 import styles from './commonUpload.less';
 import Icon from '../Icon';
 
+const EMPTY_LIST = [];
+// const EMPTY_OBJECT = {};
+const fetchDataFunction = (globalLoading, type) => query => ({
+  type,
+  payload: query || {},
+  loading: globalLoading,
+});
+
+const mapStateToProps = () => ({
+});
+
+const mapDispatchToProps = {
+  // 删除附件
+  deleteAttachment: fetchDataFunction(true, 'contract/deleteAttachment'),
+};
+
+@connect(mapStateToProps, mapDispatchToProps)
 
 export default class CommonUpload extends PureComponent {
   static propTypes = {
@@ -74,7 +92,7 @@ export default class CommonUpload extends PureComponent {
   componentWillReceiveProps(nextProps) {
     const props = this.props;
     if (!_.isEqual(props, nextProps)) {
-      const { attachmentList, attachment } = nextProps;
+      const { attachmentList = EMPTY_LIST, attachment = '' } = nextProps;
       this.setState({
         fileList: attachmentList, // 文件列表
         attachment, // 上传后的唯一 ID
@@ -110,9 +128,14 @@ export default class CommonUpload extends PureComponent {
   @autobind
   onRemove(attachId) {
     const { deleteAttachment } = this.props;
+    const { empId, attachment } = this.state;
     if (confirm('确定要删除此附件吗？')) {// eslint-disable-line
-      console.warn('删除事件 attachId', attachId);
-      deleteAttachment(attachId);
+      const deleteObj = {
+        empId,
+        attachId,
+        attachment,
+      };
+      deleteAttachment(deleteObj);
     }
   }
 
@@ -192,7 +215,7 @@ export default class CommonUpload extends PureComponent {
                             getPopupContainer={this.findFileListNode}
                           >
                             <p className={styles.fileItemText} title={fileName}>
-                              <Icon type="fuzhi" />
+                              <Icon type="fujian" />
                               {fileName}
                             </p>
                           </Popover>
