@@ -9,16 +9,22 @@
     unsubscribeColumns={array}
     rowKey={string}
   />
+ * subscribeColumns：必要，第一表的表头定义，需要指定 column 的 width 属性，否则列头和内容可能不对齐。
+ * unsubscribeColumns：必要，第二个表的表头定义，需要指定 column 的 width 属性，否则列头和内容可能不对齐。
+ * rowKey： 必要，唯一的标识
  * subscribeTitle: 不必要，有默认值（‘当前订阅服务’），第一个表的title
  * unsubscribeTitle： 不必要，有默认值（‘退订服务’），第二个表的title
  * subscribeData：不必要，有默认值（空数据），第一个标的数据源
  * unsubscribeData：不必要，有默认值（空数据），第二个标的数据源
- * subscribeColumns：必要，第一表的表头定义，需要指定 column 的 width 属性，否则列头和内容可能不对齐。
- * unsubscribeColumns：必要，第二个表的表头定义，需要指定 column 的 width 属性，否则列头和内容可能不对齐。
- * onSearch: 必要，搜索框触发的发放
- * rowKey： 必要，唯一的标识
  * checkChange： 不必要，向组件外传递信息，返回当前child，此父元素下选中所有child，所有选中的child
  * transferChange： 不必要，向组件外传递信息，返回第二个table的数据源
+ * defaultCheckKey: 不必要，标识子项的默认选中key
+ * placeholder： 不必要，搜索框的提示文字
+ * finishTips： 不必要，成功的提示，类型数组
+ * warningTips：不必要，警告的提示文字，类型数组
+ * showSearch： 不必要，是否显示search框
+ * pagination： 不必要，页码
+ * onSearch: 不必要，搜索框触发的发放
  */
 import React, { PropTypes, Component } from 'react';
 import { Table, Input, Checkbox } from 'antd';
@@ -31,9 +37,9 @@ import styles from './tableTransfer.less';
 
 const Search = Input.Search;
 const actionColumns = (type, handleAction) => {
-  function handleClick(flag, item, event) {
+  function handleClick(flag, item) {
     if (_.isFunction(handleAction)) {
-      handleAction(flag, item, event);
+      handleAction(flag, item);
     }
   }
   return {
@@ -49,37 +55,32 @@ const actionColumns = (type, handleAction) => {
           />
         );
       }
-      // return (<div className={styles.description}>标记可选产品</div>);
-      return (
-        <Checkbox
-          onChange={event => handleClick(type, item, event)}
-          defaultChecked={item.defaultChecked || false}
-        />
-      );
+      return (<div className={styles.actionTip}>{item.tip}</div>);
     },
   };
 };
 
-const checkColumns = (handleAction) => {
+const checkColumns = (column, handleAction) => {
   function handleClick(item, event) {
     if (_.isFunction(handleAction)) {
       handleAction(item, event);
     }
   }
   return {
+    ...column,
     render: (item) => {
-      console.log('^^^^^^^item^^^^^^^^', item);
+      const { key } = column;
       if (!_.isEmpty(item.parentKey)) {
         return (
           <Checkbox
             onChange={event => handleClick(item, event)}
             defaultChecked={item.defaultChecked || false}
           >
-            {item}
+            {item[key]}
           </Checkbox>
         );
       }
-      return <span>{item}</span>;
+      return <span>{item[key]}</span>;
     },
   };
 };
@@ -104,6 +105,7 @@ export default class TableTransfer extends Component {
     firstColumns: PropTypes.array.isRequired,
     secondColumns: PropTypes.array.isRequired,
     rowKey: PropTypes.string.isRequired,
+    defaultCheckKey: PropTypes.string,
   }
 
   static defaultProps = {
@@ -118,6 +120,7 @@ export default class TableTransfer extends Component {
     warningTips: [],
     onSearch: () => {},
     showSearch: true,
+    defaultCheckKey: '',
   }
 
   constructor(props) {
@@ -128,10 +131,11 @@ export default class TableTransfer extends Component {
       firstColumns,
       secondColumns,
       rowKey,
+      defaultCheckKey,
     } = this.props;
 
-    const initFirstArray = this.initTableData(firstData, rowKey);
-    const initSecondArray = this.initTableData(secondData, rowKey);
+    const initFirstArray = this.initTableData(firstData, rowKey, defaultCheckKey);
+    const initSecondArray = this.initTableData(secondData, rowKey, defaultCheckKey);
     const initSecondColumns = this.initTableColumn(secondColumns);
     this.state = {
       checked: this.getAllDefaultCheck(initSecondArray, rowKey),
@@ -167,12 +171,22 @@ export default class TableTransfer extends Component {
 
   // 添加属性，方便操作.初始操作为show children状态
   // parentKey:辨识子元素挂在哪个父元素上
-  initTableData(dataArray, rowKey) {
+  // tip属性，显示子项勾选框对应的提示，（对用户是透明的）
+  // 默认项defaultChecked属性，便于操作
+  initTableData(dataArray, rowKey, defaultCheckedKey) {
     const newData = dataArray.map(
       (item) => {
         if (!_.isEmpty(item.children)) {
           const newChildren = item.children.map(
-            child => ({ ...child, parentKey: item[rowKey] }),
+            (child) => {
+              const newChild = {
+                ...child,
+                parentKey: item[rowKey],
+                tip: `${child.defaultChecked ? '取消可选产品' : '标记可选产品'}`,
+              };
+              return _.isEmpty(defaultCheckedKey) ?
+                newChild : { ...newChild, defaultChecked: child[defaultCheckedKey] };
+            },
           );
           return { ...item, children: newChildren };
         }
@@ -188,7 +202,7 @@ export default class TableTransfer extends Component {
     return columnArray.map(
       (item, index) => {
         if (index === 0) {
-          return { ...item, ...(checkColumns(this.handleCheck)) };
+          return checkColumns(_.omit(item, 'dataIndex'), this.handleCheck);
         }
         return item;
       },
@@ -259,11 +273,37 @@ export default class TableTransfer extends Component {
     }, transferChange(updateSecondArray));
   }
 
+  // 子项勾选和取消勾选，为显示不同的提示，需要更新所在的数据源
+  @autobind
+  updateSecondData(selected) {
+    const { secondArray } = this.state;
+    const { rowKey } = this.props;
+    return secondArray.map(
+      (item) => {
+        if (item[rowKey] === selected.parentKey) {
+          const { children } = item;
+          const newChildren = [];
+          children.forEach(
+            (child) => {
+              if (child[rowKey] === selected[rowKey]) {
+                newChildren.push(selected);
+              } else {
+                newChildren.push(child);
+              }
+            },
+          );
+          return { ...item, children: newChildren };
+        }
+        return item;
+      },
+    );
+  }
+
   // 更新带有children属性的元素，取消child的默认选中
   updateItem(selected) {
     if (!_.isEmpty(selected.children)) {
       const newChildren = selected.children.map(
-        item => this.replaceKeyOfObject(item, 'defaultChecked'),
+        item => _.omit(item, 'defaultChecked'),
       );
       return { ...selected, children: newChildren };
     }
@@ -280,7 +320,7 @@ export default class TableTransfer extends Component {
     let newSelectChildren = [];
     if (event.target.checked) {
       // 添加
-      newSelectChildren = [...selectChildren, selected];
+      newSelectChildren = [...selectChildren, { ...selected, tip: '取消可选产品' }];
     } else {
       // 移除
       newSelectChildren = _.filter(
@@ -288,24 +328,27 @@ export default class TableTransfer extends Component {
         selectedChild => selectedChild[rowKey] !== selected[rowKey],
       );
     }
+    // 更新对应的数据源，更改子项勾选对应的提示
+    const newSecondData = this.updateSecondData({
+      ...selected,
+      tip: `${event.target.checked ? '取消可选产品' : '标记可选产品'}`,
+    });
+    // 更新选中的项
     const selectAll = { ...checked, [selected.parentKey]: newSelectChildren };
     this.setState({
       checked: selectAll,
+      secondArray: newSecondData,
     }, checkChange(newSelectChildren, selectAll));
   }
 
   @autobind
-  handleClick(currentTableType, selected, event) {
+  handleClick(currentTableType, selected) {
     const { rowKey } = this.props;
     const { secondArray, firstArray } = this.state;
     const isOperateFirstTable = currentTableType === 'first';
     const needAddArray = isOperateFirstTable ? secondArray : firstArray;
     const needRemoveArray = isOperateFirstTable ? firstArray : secondArray;
-    // 选择子元素
-    if (!_.isEmpty(selected.parentKey)) {
-      this.handleCheck(selected, event);
-      return;
-    }
+
     // 更新操作表格的数据源。remove要移动的元素
     const modifyRemoveArray = _.filter(
       needRemoveArray,
