@@ -71,7 +71,7 @@ export const subscribelData = [{
   productCode: 'SP0449',
   type: '综合定价产品',
 }, {
-  key: '5',
+  key: '6',
   productName: '福享套餐6',
   productCode: 'TC02',
   type: '综合定价产品',
