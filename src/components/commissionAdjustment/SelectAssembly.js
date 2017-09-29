@@ -51,7 +51,7 @@ export default class SelectAssembly extends PureComponent {
   }
 
    @autobind
-  onChange(value) {
+  handleInputValue(value) {
     this.setState({
       inputValue: value,
     });
@@ -64,7 +64,7 @@ export default class SelectAssembly extends PureComponent {
 
   // 根据用户选中的option的value值获取对应的数组值
   @autobind
-  onSelect(value, option) {
+  handleSelectedValue(value, option) {
     if (value) {
       this.setState({
         typeStyle: 'close',
@@ -112,8 +112,8 @@ export default class SelectAssembly extends PureComponent {
           style={{ width }}
           dataSource={options}
           optionLabelProp="value"
-          onChange={this.onChange}
-          onSelect={this.onSelect}
+          onChange={this.handleInputValue}
+          onSelect={this.handleSelectedValue}
           value={inputValue}
         >
           <Input
