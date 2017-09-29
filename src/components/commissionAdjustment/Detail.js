@@ -13,6 +13,35 @@ import OtherCommission from './OtherCommission';
 import CommonTable from '../common/biz/CommonTable';
 import styles from './detail.less';
 
+// 表头
+const tableHeader = [
+  {
+    dataIndex: 'econNum',
+    key: 'econNum',
+    title: '经纪客户号',
+  },
+  {
+    dataIndex: 'custName',
+    key: 'custName',
+    title: '客户名称',
+  },
+  {
+    dataIndex: 'custLevel',
+    key: 'custLevel',
+    title: '客户等级',
+  },
+  {
+    dataIndex: 'openAccDept',
+    key: 'openAccDept',
+    title: '开户营业部',
+  },
+  {
+    dataIndex: 'status',
+    key: 'status',
+    title: '状态',
+  },
+];
+
 export default class Commissiondetail extends PureComponent {
 
   static propTypes = {
@@ -67,35 +96,6 @@ export default class Commissiondetail extends PureComponent {
       },
       operate: this.props.checkApproval,
     };
-
-    // 表头
-    const tableHeader = [
-      {
-        dataIndex: 'econNum',
-        key: 'econNum',
-        title: '经纪客户号',
-      },
-      {
-        dataIndex: 'custName',
-        key: 'custName',
-        title: '客户名称',
-      },
-      {
-        dataIndex: 'custLevel',
-        key: 'custLevel',
-        title: '客户等级',
-      },
-      {
-        dataIndex: 'openAccDept',
-        key: 'openAccDept',
-        title: '开户营业部',
-      },
-      {
-        dataIndex: 'status',
-        key: 'status',
-        title: '状态',
-      },
-    ];
 
     return (
       <div className={styles.detailBox}>

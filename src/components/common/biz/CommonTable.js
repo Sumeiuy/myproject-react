@@ -8,6 +8,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Table, Radio } from 'antd';
+import _ from 'lodash';
 import Icon from '../Icon';
 import styles from './commonTable.less';
 
@@ -27,39 +28,41 @@ export default class CommonTable extends PureComponent {
   }
 
   render() {
-    const { scroll, data, titleList, operation } = this.props;
+    const { scroll, data, operation, titleList, ...resetProps } = this.props;
+    const newTitleList = _.cloneDeep(titleList);
     if (operation) {
       switch (operation.column.key) {
         case 'delete':
           operation.column.render = (text, record, index) => (
-            <span>
+            <span key={`delete-${record.key}`}>
               <Icon type="close" onClick={() => operation.operate(record, index)} />
             </span>
           );
-          titleList.push(operation.column);
+          newTitleList.push(operation.column);
           break;
         case 'view':
           operation.column.render = (text, record, index) => (
             <span
+              key={`view-${record.key}`}
               className={styles.viewlink}
               onClick={() => operation.operate(record, index)}
             >
               查看
             </span>
           );
-          titleList.push(operation.column);
+          newTitleList.push(operation.column);
           break;
         case 'radio':
           operation.column.render = (text, record, index) => (
             <span>
               <Radio
-                key={record.key}
+                key={`radio-${record.key}`}
                 checked={index === operation.column.radio}
                 onClick={() => operation.operate(record, index)}
               />
             </span>
           );
-          titleList.unshift(operation.column);
+          newTitleList.unshift(operation.column);
           break;
         default:
           break;
@@ -69,10 +72,11 @@ export default class CommonTable extends PureComponent {
     return (
       <div className={styles.commonTable}>
         <Table
+          {...resetProps}
           scroll={scroll}
           pagination={this.props.pagination}
           dataSource={data}
-          columns={titleList}
+          columns={newTitleList}
         />
       </div>
     );

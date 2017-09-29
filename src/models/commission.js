@@ -31,6 +31,8 @@ export default {
     validateResult: '',
     // 筛选的可申请客户列表
     canApplyCustList: [],
+    // 提交批量佣金调整申请后的BatchNum
+    batchnum: '',
   },
   reducers: {
     getProductListSuccess(state, action) {
@@ -110,6 +112,18 @@ export default {
       };
     },
 
+    submitBatchSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      let batchnum = 'fail';
+      if (resultData && resultData.batchnum) {
+        batchnum = resultData.batchnum;
+      }
+      return {
+        ...state,
+        batchnum,
+      };
+    },
+
     opertateState(state, action) {
       const { payload: { name, value } } = action;
       return {
@@ -130,6 +144,7 @@ export default {
 
     // 批量佣金调整Home的右侧详情
     * getCommissionDetail({ payload }, { call, put }) {
+      console.warn('getCommissionDetail', payload);
       const detailRes = yield call(api.getCommissionDetail, { type: 'BatchProcess', ...payload });
       const custListRes = yield call(api.getCommissionDetailCustList, {
         batchNum: payload.batchNum,
@@ -151,7 +166,10 @@ export default {
         },
       });
       const { flowCode, loginuser, ...reset } = payload;
-      const recordResponse = yield call(api.querySingleCustApprovalRecord, { flowCode, loginuser });
+      const recordResponse = yield call(api.querySingleCustApprovalRecord, {
+        flowCode: '618C53D2EA54F8408E10F9E8338716FC',
+        loginuser,
+      });
       yield put({
         type: 'getApprovalRecordsSuccess',
         payload: { recordResponse, cust: reset },
@@ -205,6 +223,15 @@ export default {
       const response = yield call(seibelApi.getCanApplyCustList, payload);
       yield put({
         type: 'getCanApplyCustListSuccess',
+        payload: response,
+      });
+    },
+
+    // 提交批量佣金调整申请
+    * submitBatchCommission({ payload }, { call, put }) {
+      const response = yield call(api.submitBatchCommission, payload);
+      yield put({
+        type: 'submitBatchSuccess',
         payload: response,
       });
     },

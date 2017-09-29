@@ -5,9 +5,9 @@
 export default function commission(api) {
   return {
     // 批量佣金调整Home右侧详情
-    getCommissionDetail: query => api.post('/groovynoauth/fsp/biz/qrybatchdetailinfo/qryBatchDetailInfo', query),
+    getCommissionDetail: query => api.post('/groovynoauth/fsp/biz/chgcommsion/queryBatchCommChgOrderInfo', query),
     // 批量佣金调整Home右侧详情内容中的客户列表
-    getCommissionDetailCustList: query => api.post('/groovynoauth/fsp/biz/qrybatchdetailinfo/qrySelectedCustList', query),
+    getCommissionDetailCustList: query => api.post('/groovynoauth/fsp/biz/chgcommsion/queryCommChgOrderCusts', query),
     // 查询批量佣金调整详情页面中查看单个用户的审批记录
     querySingleCustApprovalRecord: query => api.post('/groovynoauth/fsp/biz/chgcommsion/queryFlowHistory', query),
     // 根据目标股基佣金率查询目标产品列表
@@ -15,6 +15,8 @@ export default function commission(api) {
     // 查询审批人员
     queryAprovalUserList: query => api.post('/groovynoauth/fsp/biz/chgcommsion/queryAprovalUser', query),
     // 检验客户是否可以调整
-    validateCustInfo: query => api.post('/groovynoauth/fsp/biz/validcustinfo/validCustInfo', query),
+    validateCustInfo: query => api.post('/groovynoauth/fsp/biz/chgcommsion/validateBatCommChgCust', query),
+    // 提交批量佣金调整
+    submitBatchCommission: query => api.post('/groovynoauth/fsp/biz/chgcommsion/saveBatchJustCommionInfo', query),
   };
 }

@@ -7,68 +7,68 @@
  */
 
 export default {
-  htscZfareRatio: {
+  HTSC_ZFARE_RATIO: {
     brief: '债券',
-    paramName: '',
+    paramName: 'zqCommission',
   },
-  htscDbfareRatio: {
+  HTSC_DBFARE_RATIO: {
     brief: '担保股基',
-    paramName: '',
+    paramName: 'stkCommission',
   },
-  htscCbfareRatio: {
+  HTSC_CBFARE_RATIO: {
     brief: '信用股基',
-    paramName: '',
+    paramName: 'creditCommission',
   },
-  htscDdfareRatio: {
+  HTSC_DDFARE_RATIO: {
     brief: '担保品大宗交易',
-    paramName: '',
+    paramName: 'ddCommission',
   },
-  htscHfareRatio: {
+  HTSC_HFARE_RATIO: {
     brief: '回购',
-    paramName: '',
+    paramName: 'hCommission',
   },
-  htscDzfareRatio: {
+  HTSC_DZFARE_RATIO: {
     brief: '担保债券',
-    paramName: '',
+    paramName: 'dzCommission',
   },
-  htscCofareRatio: {
+  HTSC_COFARE_RATIO: {
     brief: '信用场内基金',
-    paramName: '',
+    paramName: 'coCommission',
   },
-  htscStbfareRatio: {
+  HTSC_STBFARE_RATIO: {
     brief: '股转',
-    paramName: '',
+    paramName: 'stbCommission',
   },
-  htscOfareRatio: {
+  HTSC_OFARE_RATIO: {
     brief: '场内基金',
-    paramName: '',
+    paramName: 'oCommission',
   },
-  htscDofareRatio: {
+  HTSC_DOFARE_RATIO: {
     brief: '担保场内基金',
-    paramName: '',
+    paramName: 'doCommission',
   },
-  htscHkfareRatio: {
+  HTSC_HKFARE_RATIO: {
     brief: '港股通（净佣金）',
-    paramName: '',
+    paramName: 'hkCommission',
   },
-  htscBgfareRatio: {
+  HTSC_BGFARE_RATIO: {
     brief: 'B股',
-    paramName: '',
+    paramName: 'bgCommission',
   },
-  htscQfareRatio: {
+  HTSC_QFARE_RATIO: {
     brief: '权证',
-    paramName: '',
+    paramName: 'qCommission',
   },
-  htscDqfareRatio: {
+  HTSC_DQFARE_RATIO: {
     brief: '担保权证',
-    paramName: '',
+    paramName: 'dqCommission',
   },
-  htscOptfareRatio: {
+  HTSC_OPTFARE_RATIO: {
     brief: '个股期权',
-    paramName: '',
+    paramName: 'opCommission',
   },
-  htscDfareRatio: {
+  HTSC_DFARE_RATIO: {
     brief: '大宗交易',
-    paramName: '',
+    paramName: 'dCommission',
   },
 };

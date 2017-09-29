@@ -47,7 +47,8 @@ export default class CreateNewApprovalBoard extends PureComponent {
     validataLoading: PropTypes.bool,
     queryProductList: PropTypes.func.isRequired,
     validateCust: PropTypes.func.isRequired,
-    otherRatio: PropTypes.array,
+    onBatchSubmit: PropTypes.func.isRequired,
+    otherRatios: PropTypes.array,
   }
 
   static defaultProps = {
@@ -58,7 +59,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     targetProductList: [],
     customerList: [],
     approverList: [],
-    otherRatio: [],
+    otherRatios: [],
   }
 
   constructor(props) {
@@ -72,12 +73,19 @@ export default class CreateNewApprovalBoard extends PureComponent {
       newCommission: '1.6',
       approverName: '',
       approverId: '',
+      custLists: [],
     };
   }
 
   @autobind
   getPopupContainer() {
     return this.approvalBody;
+  }
+
+  // 判断当前是否某个子类型
+  @autobind
+  judgeSubtypeNow(assert) {
+    return this.state.approvalType === assert;
   }
 
   // 关闭弹出层后的提示框信息
@@ -106,7 +114,8 @@ export default class CreateNewApprovalBoard extends PureComponent {
   // 提交
   @autobind
   handleSubmitApprovals(key) {
-    console.warn('点击提交按钮');
+    // 提交
+    this.props.onBatchSubmit();
     this.props.onClose(key);
   }
 
@@ -118,6 +127,10 @@ export default class CreateNewApprovalBoard extends PureComponent {
   // 选择申请子类型
   @autobind
   choiceApprovalSubType(name, key) {
+    // 如果切换批量佣金需要，先查一把1.6下目标产品
+    if (name === 'approvalType') {
+      this.props.queryProductList({ prodCommision: 1.6 });
+    }
     this.setState({
       [name]: key,
     });
@@ -142,13 +155,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
 
   // 切换选择某个产品
   @autobind
-  handleSelectProduct(productId) {
-    console.warn('选择某个产品', productId);
-  }
-
-  // 选择某个产品后
-  @autobind
-  handleProductSelect(targetProduct) {
+  handleSelectProduct(targetProduct) {
     this.setState({
       targetProduct,
     });
@@ -157,6 +164,8 @@ export default class CreateNewApprovalBoard extends PureComponent {
   // 选择其他佣金比率
   @autobind
   changeOtherCommission(name, value) {
+    console.warn('changeOtherCommission>name', name);
+    console.warn('changeOtherCommission>value', value);
     this.setState({
       [name]: value,
     });
@@ -199,6 +208,9 @@ export default class CreateNewApprovalBoard extends PureComponent {
   @autobind
   saveSelectedCustomerList(list) {
     console.warn('用户选择添加的客户列表', list);
+    this.setState({
+      custLists: list,
+    });
   }
 
   // 验证用户资格
@@ -208,7 +220,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     const { cusId, custType } = customer;
     // 如果是批量佣金则传递businessType = 'BatchProcess'
     this.props.validateCust({
-      businessType: approvalType === '0201' ? 'BatchProcess' : null,
+      businessType: approvalType === '0202' ? 'BatchProcess' : null,
       custId: cusId,
       custType,
       newCommission,
@@ -226,6 +238,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       validataLoading,
       validateResult,
       customerList,
+      otherRatios,
     } = this.props;
     const newApproverList = approverList.map((item, index) => {
       const key = `${new Date().getTime()}-${index}`;
@@ -241,12 +254,13 @@ export default class CreateNewApprovalBoard extends PureComponent {
       approverName,
       approverId,
     } = this.state;
+    const needBtn = !this.judgeSubtypeNow('');
     return (
       <div>
         <CommonModal
           title="新建"
           modalKey={modalKey}
-          needBtn
+          needBtn={needBtn}
           maskClosable={false}
           size="large"
           visible={visible}
@@ -267,60 +281,85 @@ export default class CreateNewApprovalBoard extends PureComponent {
                   getPopupContainer={this.getPopupContainer}
                 />
               </CommissionLine>
-              <CommissionLine label="备注" labelWidth="90px">
-                <TextArea
-                  placeholder="备注内容"
-                  value={remark}
-                  onChange={this.handleChangeRemark}
-                  style={{
-                    fontSize: '14px',
-                  }}
-                />
-              </CommissionLine>
+              {
+                this.judgeSubtypeNow('') ? null
+                : (
+                  <CommissionLine label="备注" labelWidth="90px">
+                    <TextArea
+                      placeholder="备注内容"
+                      value={remark}
+                      onChange={this.handleChangeRemark}
+                      style={{
+                        fontSize: '14px',
+                      }}
+                    />
+                  </CommissionLine>
+                )
+              }
             </div>
-            <div className={styles.approvalBlock}>
-              <InfoTitle head="佣金产品选择" />
-              <CommissionLine label="目标股基佣金率" labelWidth="135px">
-                <DigitalTrimmer
-                  getValue={this.changeTargetGJCommission}
-                />
-              </CommissionLine>
-              <CommissionLine label="目标产品" labelWidth="135px" needInputBox={false}>
-                <ProductsDropBox
-                  productList={targetProductList}
-                  onSelect={this.handleSelectProduct}
-                />
-              </CommissionLine>
-            </div>
-            <div className={styles.approvalBlock}>
-              <InfoTitle head="其他佣金费率" />
-              <OtherCommissionSelectList
-                otherRatios={[]}
-                onChange={this.changeOtherCommission}
-              />
-            </div>
-            <div className={styles.approvalBlock}>
-              <InfoTitle head="客户" />
-              <AddCustomer
-                onSearch={this.handleCustomerListSearch}
-                passList2Home={this.saveSelectedCustomerList}
-                onValidate={this.handleCustomerValidate}
-                validateResult={validateResult}
-                validataLoading={validataLoading}
-                searchList={customerList}
-              />
-            </div>
-            <div className={styles.approvalBlock}>
-              <InfoTitle head="审批人" />
-              <CommissionLine label="选择审批人" labelWidth="110px">
-                <div className={styles.checkApprover} onClick={this.openApproverBoard}>
-                  {approverName === '' ? '' : `${approverName}(${approverId})`}
-                  <div className={styles.searchIcon}>
-                    <Icon type="search" />
-                  </div>
+            {
+              !this.judgeSubtypeNow('0202') ? null
+              : (
+                <div className={styles.approvalBlock}>
+                  <InfoTitle head="佣金产品选择" />
+                  <CommissionLine label="目标股基佣金率" labelWidth="135px">
+                    <DigitalTrimmer
+                      getValue={this.changeTargetGJCommission}
+                    />
+                  </CommissionLine>
+                  <CommissionLine label="目标产品" labelWidth="135px" needInputBox={false}>
+                    <ProductsDropBox
+                      productList={targetProductList}
+                      onSelect={this.handleSelectProduct}
+                    />
+                  </CommissionLine>
                 </div>
-              </CommissionLine>
-            </div>
+              )
+            }
+            {
+              !this.judgeSubtypeNow('0202') ? null
+              : (
+                <div className={styles.approvalBlock}>
+                  <InfoTitle head="其他佣金费率" />
+                  <OtherCommissionSelectList
+                    otherRatios={otherRatios}
+                    onChange={this.changeOtherCommission}
+                  />
+                </div>
+              )
+            }
+            {
+              !this.judgeSubtypeNow('0202') ? null
+              : (
+                <div className={styles.approvalBlock}>
+                  <InfoTitle head="客户" />
+                  <AddCustomer
+                    onSearch={this.handleCustomerListSearch}
+                    passList2Home={this.saveSelectedCustomerList}
+                    onValidate={this.handleCustomerValidate}
+                    validateResult={validateResult}
+                    validataLoading={validataLoading}
+                    searchList={customerList}
+                  />
+                </div>
+              )
+            }
+            {
+              !this.judgeSubtypeNow('0202') ? null
+              : (
+                <div className={styles.approvalBlock}>
+                  <InfoTitle head="审批人" />
+                  <CommissionLine label="选择审批人" labelWidth="110px">
+                    <div className={styles.checkApprover} onClick={this.openApproverBoard}>
+                      {approverName === '' ? '' : `${approverName}(${approverId})`}
+                      <div className={styles.searchIcon}>
+                        <Icon type="search" />
+                      </div>
+                    </div>
+                  </CommissionLine>
+                </div>
+              )
+            }
           </div>
         </CommonModal>
         <ChoiceApproverBoard

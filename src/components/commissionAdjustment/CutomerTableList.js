@@ -12,10 +12,31 @@ import { Table } from 'antd';
 
 import styles from './customerTableList.less';
 
+// 表格的表头
+const columns = [
+  {
+    title: '经纪客户号',
+    dataIndex: 'cusId',
+  },
+  {
+    title: '客户名称',
+    dataIndex: 'custName',
+    width: '300px',
+  },
+  {
+    title: '客户等级',
+    dataIndex: 'custLevelName',
+  },
+  {
+    title: '开户营业部',
+    dataIndex: 'openOrgName',
+  },
+];
+
 export default class CutomerTableList extends PureComponent {
   static propTypes = {
     customerList: PropTypes.array,
-    onDeleteCustomer: PropTypes.func.isRequired,
+    onSelectCustomerList: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -42,7 +63,7 @@ export default class CutomerTableList extends PureComponent {
   @autobind
   onSelectChange(selectedRowKeys) {
     this.setState({ selectedRowKeys });
-    this.props.onDeleteCustomer(selectedRowKeys);
+    this.props.onSelectCustomerList(selectedRowKeys);
   }
 
   render() {
@@ -55,26 +76,6 @@ export default class CutomerTableList extends PureComponent {
       selectedRowKeys,
       onChange: this.onSelectChange,
     };
-    // 表格的表头
-    const columns = [
-      {
-        title: '经纪客户号',
-        dataIndex: 'cusId',
-      },
-      {
-        title: '客户名称',
-        dataIndex: 'custName',
-        width: '300px',
-      },
-      {
-        title: '客户等级',
-        dataIndex: 'custLevelName',
-      },
-      {
-        title: '开户营业部',
-        dataIndex: 'openOrgName',
-      },
-    ];
 
     return (
       <Table
