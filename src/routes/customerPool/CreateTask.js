@@ -44,13 +44,13 @@ export default class CreateTask extends PureComponent {
     createTask: PropTypes.func.isRequired,
     createTaskResult: PropTypes.object,
     goBack: PropTypes.func.isRequired,
-  }
+  };
 
   static defaultProps = {
     data: [],
     dict: {},
     createTaskResult: {},
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -91,7 +91,7 @@ export default class CreateTask extends PureComponent {
   render() {
     const { dict, location, goBack } = this.props;
     const { isSuccess } = this.state;
-    console.log(isSuccess)
+    console.log(isSuccess);
     return (
       <div className={styles.taskBox}>
         {isSuccess ?

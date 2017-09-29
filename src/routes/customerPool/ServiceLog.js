@@ -10,14 +10,15 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import moment from 'moment';
 import { autobind } from 'core-decorators';
-import Collapse from '../../components/customerPool/list/CreateCollapse';
+// import Collapse from '../../components/customerPool/list/CreateCollapse';
 import styles from './serviceLog.less';
 
 
 // const create = Form.create;
 const Option = Select.Option;
 const RangePicker = DatePicker.RangePicker;
-const WEEK = ['日', '一', '二', '三', '四', '五', '六'];
+// const WEEK = ['日', '一', '二', '三', '四', '五', '六'];
+const dateFormat = 'YYYY/MM/DD';
 
 const effects = {
   getServiceLog: 'customerPool/getServiceLog',
@@ -70,10 +71,10 @@ export default class CreateTaskForm extends PureComponent {
     console.log(start);
     console.log(end);
   }
-  @autobind
-  disabledDate(startValue) {
-
-  }
+  // @autobind
+  // disabledDate(startValue) {
+  //
+  // }
 // >custId: 客户经纪客户号（必填）
 // >serveSource: 服务渠道来源
 // >serveType: 服务类型
@@ -124,7 +125,7 @@ export default class CreateTaskForm extends PureComponent {
               </Col>
               <Col span={5} >
                 <RangePicker
-                  ranges={{ Today: [moment(), moment()], 'This Month': [moment(), moment().endOf('month')] }}
+                  defaultValue={[moment('2015/01/01', dateFormat), moment('2015/01/01', dateFormat)]}
                   onChange={this.onChange} disabledDate={this.disabledDate}
                 />
               </Col>
@@ -152,6 +153,7 @@ export default class CreateTaskForm extends PureComponent {
           </div>
           <Row>
             <Col span={20} offset={2} className={styles.serviceLog}>
+              <div>dddddd</div>
             </Col>
           </Row>
         </div>
