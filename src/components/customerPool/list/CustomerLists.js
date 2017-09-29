@@ -395,6 +395,7 @@ export default class CustomerLists extends PureComponent {
     });
     this.setState({
       currentCustId: custId,
+      emailCustId: custId,
     });
   }
 
@@ -459,6 +460,7 @@ export default class CustomerLists extends PureComponent {
       currentFollowCustId,
       isShowContactModal,
       currentCustId,
+      emailCustId,
       custType,
       modalKey,
       isFollows,
@@ -483,10 +485,11 @@ export default class CustomerLists extends PureComponent {
       custIncomeReqState,
       toggleServiceRecordModal,
     } = this.props;
+    // console.log('1---', this.props)
     // 服务记录执行方式字典
     const { executeTypes = EMPTY_ARRAY, serveWay = EMPTY_ARRAY } = dict;
     const finalContactData = custContactData[currentCustId] || EMPTY_OBJECT;
-    const finalEmailData = custEmail[currentCustId] || EMPTY_OBJECT;
+    const finalEmailData = custEmail[emailCustId] || EMPTY_OBJECT;
     const finalServiceRecordData = serviceRecordData[currentCustId] || EMPTY_ARRAY;
     const {
       selectedIds = '',
@@ -558,6 +561,7 @@ export default class CustomerLists extends PureComponent {
                 currentFollowCustId={currentFollowCustId}
                 isFollows={isFollows}
                 currentCustId={currentCustId}
+                emailCustId={emailCustId}
                 custIncomeReqState={custIncomeReqState}
                 toggleServiceRecordModal={toggleServiceRecordModal}
               />,

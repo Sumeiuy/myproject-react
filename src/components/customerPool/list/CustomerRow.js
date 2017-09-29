@@ -147,7 +147,7 @@ export default class CustomerRow extends PureComponent {
     isSms: PropTypes.bool.isRequired,
     custEmail: PropTypes.object.isRequired,
     currentFollowCustId: PropTypes.string.isRequired,
-    currentCustId: PropTypes.string.isRequired,
+    emailCustId: PropTypes.string.isRequired,
     isFollows: PropTypes.object.isRequired,
     custIncomeReqState: PropTypes.bool.isRequired,
     toggleServiceRecordModal: PropTypes.func.isRequired,
@@ -226,7 +226,7 @@ export default class CustomerRow extends PureComponent {
       toggleServiceRecordModal,
       custEmail,
       onSendEmail,
-      currentCustId,
+      emailCustId,
       getCustIncome,
       location,
       dict,
@@ -244,7 +244,7 @@ export default class CustomerRow extends PureComponent {
           createModal={this.createModal}
           toggleServiceRecordModal={toggleServiceRecordModal}
           custEmail={custEmail}
-          currentCustId={currentCustId}
+          emailCustId={emailCustId}
           onSendEmail={onSendEmail}
           currentFollowCustId={currentFollowCustId}
           isFollows={isFollows}

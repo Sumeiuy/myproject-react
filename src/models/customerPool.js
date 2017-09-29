@@ -637,7 +637,7 @@ export default {
         },
       };
     },
-      // custEmail
+    // custEmail获取成功
     getCustEmailSuccess(state, action) {
       const { payload: { resultData, custId } } = action;
       return {
