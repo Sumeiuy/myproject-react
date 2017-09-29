@@ -274,7 +274,7 @@ exports.response = function (req, res) {
             "value":"电话"
         },
         {
-            "key":"Mail",
+            "key":"HTSC Email",
             "value":"邮件"
         },
         {

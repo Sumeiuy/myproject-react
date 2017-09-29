@@ -23,6 +23,45 @@ let onOff = false;// 邮件链接开关
 const EMPTY_OBJECT = {};
 let modalKeyCount = 0;
 
+/*
+ * 格式化钱款数据和单位
+ */
+const formatAsset = (num) => {
+  // 数字常量
+  const WAN = 10000;
+  const YI = 100000000;
+  const WANYI = 1000000000000;
+
+  // 单位常量
+  const UNIT_DEFAULT = '元';
+  const UNIT_WAN = '万元';
+  const UNIT_YI = '亿元';
+  const UNIT_WANYI = '万亿元';
+
+  const newNum = Number(num);
+  const absNum = Math.abs(newNum);
+
+  if (absNum >= YI) {
+    return {
+      value: (newNum / YI).toFixed(2),
+      unit: UNIT_YI,
+    };
+  }
+  if (absNum >= WAN) {
+    return {
+      value: (newNum / WAN).toFixed(2),
+      unit: UNIT_WAN,
+    };
+  }
+  if (absNum >= WANYI) {
+    return {
+      value: (newNum / WANYI).toFixed(2),
+      unit: UNIT_WANYI,
+    };
+  }
+  return { value: newNum, unit: UNIT_DEFAULT };
+};
+
 export default class CustomerLists extends PureComponent {
   static propTypes = {
     fllowCustData: PropTypes.object,
@@ -563,6 +602,7 @@ export default class CustomerLists extends PureComponent {
                 currentCustId={currentCustId}
                 custIncomeReqState={custIncomeReqState}
                 toggleServiceRecordModal={toggleServiceRecordModal}
+                formatAsset={formatAsset}
               />,
             )
           }
