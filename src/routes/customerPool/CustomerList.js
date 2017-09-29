@@ -45,6 +45,7 @@ const effects = {
   getCustomerList: 'customerPool/getCustomerList',
   getCustIncome: 'customerPool/getCustIncome',
   getCustContact: 'customerPool/getCustContact',
+  getCustEmail: 'customerPool/getCustEmail', // 获取邮件地址
   getServiceRecord: 'customerPool/getServiceRecord',
   getCustomerScope: 'customerPool/getCustomerScope',
   getFollowCust: 'customerPool/getFollowCust',
@@ -73,6 +74,8 @@ const mapStateToProps = state => ({
   monthlyProfits: state.customerPool.monthlyProfits,
   // 联系方式数据
   custContactData: state.customerPool.custContactData,
+  // 邮箱地址
+  custEmail: state.customerPool.custEmail,
   // 最近服务记录
   serviceRecordData: state.customerPool.serviceRecordData,
   // 统计周期
@@ -91,6 +94,7 @@ const mapDispatchToProps = {
   getCustomerScope: fetchDataFunction(true, effects.getCustomerScope),
   getServiceRecord: fetchDataFunction(true, effects.getServiceRecord),
   getCustContact: fetchDataFunction(true, effects.getCustContact),
+  getCustEmail: fetchDataFunction(true, effects.getCustEmail),
   getFollowCust: fetchDataFunction(true, effects.getFollowCust),
   toggleServiceRecordModal: query => ({
     type: 'app/toggleServiceRecordModal',
@@ -120,8 +124,10 @@ export default class CustomerList extends PureComponent {
     page: PropTypes.object.isRequired,
     monthlyProfits: PropTypes.object.isRequired,
     getCustContact: PropTypes.func.isRequired,
+    getCustEmail: PropTypes.func.isRequired,
     getFollowCust: PropTypes.func.isRequired,
     custContactData: PropTypes.object,
+    custEmail: PropTypes.object,
     getServiceRecord: PropTypes.func.isRequired,
     serviceRecordData: PropTypes.object,
     cycle: PropTypes.array,
@@ -140,9 +146,10 @@ export default class CustomerList extends PureComponent {
     position: {},
     empInfo: {},
     custContactData: EMPTY_OBJECT,
+    custEmail: EMPTY_OBJECT,
     serviceRecordData: EMPTY_OBJECT,
     cycle: EMPTY_LIST,
-    fllowCustData: {},
+    fllowCustData: EMPTY_OBJECT,
     followLoading: false,
   }
 
@@ -555,9 +562,11 @@ export default class CustomerList extends PureComponent {
       monthlyProfits,
       getCustIncome,
       getCustContact,
+      getCustEmail,
       getServiceRecord,
       getFollowCust,
       custContactData,
+      custEmail,
       serviceRecordData,
       cycle,
       followLoading,
@@ -642,9 +651,11 @@ export default class CustomerList extends PureComponent {
           onSizeChange={this.handleSizeChange}
           getCustIncome={getCustIncome}
           getCustContact={getCustContact}
+          getCustEmail={getCustEmail}
           getServiceRecord={getServiceRecord}
           getFollowCust={getFollowCust}
           custContactData={custContactData}
+          custEmail={custEmail}
           serviceRecordData={serviceRecordData}
           fllowCustData={fllowCustData}
           followLoading={followLoading}

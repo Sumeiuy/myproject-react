@@ -8,13 +8,13 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
 import ChartLineWidget from './ChartLine';
-import { helper } from '../../../utils';
+// import { helper } from '../../../utils';
 
 import styles from './sixMonthEarnings.less';
 
-const formatNumber = value => helper.toUnit(value, '元').value;
+// const formatNumber = value => helper.toUnit(value, '元').value;
 
-const formatUnit = value => helper.toUnit(value, '元').unit;
+// const formatUnit = value => helper.toUnit(value, '元').unit;
 
 const getLastestData = (arr) => {
   if (arr && arr instanceof Array && arr.length !== 0) {
@@ -30,6 +30,7 @@ export default class SixMonthEarnings extends PureComponent {
     monthlyProfits: PropTypes.object.isRequired,
     custIncomeReqState: PropTypes.bool.isRequired,
     getCustIncome: PropTypes.func.isRequired,
+    formatAsset: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -70,6 +71,7 @@ export default class SixMonthEarnings extends PureComponent {
       listItem,
       monthlyProfits,
       custIncomeReqState,
+      formatAsset,
     } = this.props;
     const {
       isShowCharts,
@@ -77,17 +79,26 @@ export default class SixMonthEarnings extends PureComponent {
     const thisProfits = monthlyProfits[listItem.custId] || [];
     const lastestProfit = Number(getLastestData(thisProfits).assetProfit);
     const lastestProfitRate = Number(getLastestData(thisProfits).assetProfitRate);
+    // 格式化本月收益的值和单位、本月收益率
     let lastestPrifitsValue = '--';
-    let lastestPrifitsUnit = null;
+    let lastestPrifitsUnit = '';
     let lastestPrifitsRate = '--';
     if (thisProfits.length) {
       if (lastestProfit) {
-        lastestPrifitsValue = formatNumber(lastestProfit);
-        lastestPrifitsUnit = formatUnit(lastestProfit);
+        const obj = formatAsset(lastestProfit);
+        lastestPrifitsValue = obj.value;
+        lastestPrifitsUnit = obj.unit;
         lastestPrifitsRate = `${lastestProfitRate.toFixed(2)}%`;
       }
     }
-    // console.log('formatNumber(lastestProfit)', formatNumber(lastestProfit), lastestProfit);
+    // 格式化年最大时点资产的值和单位
+    let maxTotAsetYValue = '--';
+    let maxTotAsetYUnit = '';
+    if (listItem.maxTotAsetY) {
+      const obj = formatAsset(listItem.maxTotAsetY);
+      maxTotAsetYValue = obj.value;
+      maxTotAsetYUnit = obj.unit;
+    }
     return (
       <span
         className={styles.showChartBtn}
@@ -113,10 +124,8 @@ export default class SixMonthEarnings extends PureComponent {
           <div className={styles.chartsText}>
             <div className={styles.lh28}>
               <span>年最大时点资产：</span>
-              <span className={styles.numA}>
-                {listItem.maxTotAsetY ? formatNumber(listItem.maxTotAsetY) : '--'}
-              </span>
-              {listItem.maxTotAsetY ? formatUnit(listItem.maxTotAsetY) : ''}
+              <span className={styles.numA}>{maxTotAsetYValue}</span>
+              {maxTotAsetYUnit}
             </div>
             <div className={styles.lh28}>
               <span>本月收益率：</span>

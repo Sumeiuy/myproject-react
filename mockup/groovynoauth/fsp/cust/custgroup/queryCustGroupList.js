@@ -10,7 +10,7 @@ exports.response = function (req, res) {
             custGroupDTOList: [
                 {
                     "groupId": "001",
-                    "groupName": "test",
+                    "groupName": "testfdfdsafdsafdsfdsafdsafdsfdsafdafdsa",
                     "relatCust": 0,
                     "createdTm": "2017-02-02 00:00:00",
                     "createLogin": null,

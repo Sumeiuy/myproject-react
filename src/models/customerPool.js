@@ -63,6 +63,7 @@ export default {
     isFollow: {},
     followLoading: false,
     fllowCustData: {},
+    custEmail: {},
     // 分组维度，客户分组列表
     customerGroupList: {},
     // 指定分组下的客户列表
@@ -81,9 +82,11 @@ export default {
     deleteGroupResult: '',
     // 删除分组下客户结果
     deleteCustomerFromGroupResult: {},
+    serviceLogData: [], // 360服务记录查询数据
   },
   subscriptions: {},
   effects: {
+    // 代办流程任务列表
     * getToDoList({ }, { call, put }) {  //eslint-disable-line
       const response = yield call(api.getToDoList);
       yield put({
@@ -116,6 +119,7 @@ export default {
         payload: { queryNumbers },
       });
     },
+    // 代办流程任务搜索
     * search({ payload }, { put, select }) {
       const todolist = yield select(state => state.customerPool.todolist);
       yield put({
@@ -123,6 +127,7 @@ export default {
         payload: todolist.filter(v => v.subject.indexOf(payload) > -1),
       });
     },
+    // 代办流程任务页数改变
     * pageChange({ payload }, { put, select }) {
       const todoPage = yield select(state => state.customerPool.todoPage);
       const newPage = {
@@ -239,12 +244,33 @@ export default {
       });
     },
     // 获取个人和机构联系方式
-    * getCustContact({ payload }, { call, put }) {
-      const response = yield call(api.queryCustContact, payload);
-      const { resultData } = response;
-      const { custId } = payload;
+    * getCustContact({ payload }, { call, put, select }) {
+      const custContactData = yield select(state => state.customerPool.custEmail);
+      const custId = payload.custId;
+      let resultData = null;
+      if (!_.isEmpty(custContactData[custId])) {
+        resultData = custContactData[custId];
+      } else {
+        const response = yield call(api.queryCustContact, payload);
+        resultData = response.resultData;
+      }
       yield put({
         type: 'getCustContactSuccess',
+        payload: { resultData, custId },
+      });
+    },
+    * getCustEmail({ payload }, { call, put, select }) {
+      const custEmailData = yield select(state => state.customerPool.custContactData);
+      const { custId } = payload;
+      let resultData = null;
+      if (!_.isEmpty(custEmailData[custId])) {
+        resultData = custEmailData[custId];
+      } else {
+        const response = yield call(api.queryCustContact, payload);
+        resultData = response.resultData;
+      }
+      yield put({
+        type: 'getCustEmailSuccess',
         payload: { resultData, custId },
       });
     },
@@ -404,6 +430,15 @@ export default {
         type: 'toastM',
         message: '删除分组下客户成功',
         duration: 2,
+      });
+    },
+    // 360服务记录查询
+    * getServiceLog({ payload }, { call, put }) {
+      const response = yield call(api.queryServeRecords, payload);
+      const { resultData } = response;
+      yield put({
+        type: 'getServiceLogSuccess',
+        payload: { resultData },
       });
     },
   },
@@ -626,6 +661,16 @@ export default {
         },
       };
     },
+      // custEmail
+    getCustEmailSuccess(state, action) {
+      const { payload: { resultData, custId } } = action;
+      return {
+        ...state,
+        custEmail: {
+          [custId]: resultData,
+        },
+      };
+    },
     // 获取服务记录成功
     getServiceRecordSuccess(state, action) {
       const { payload: { resultData, custId } } = action;
@@ -775,6 +820,14 @@ export default {
         deleteCustomerFromGroupResult: {
           [`${groupId}_${custId}`]: resultData,
         },
+      };
+    },
+    // 360服务记录查询成功
+    getServiceLogSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        serviceLogData: resultData,
       };
     },
   },

@@ -42,9 +42,8 @@ export default class AddNewGroup extends PureComponent {
     goBack: PropTypes.func.isRequired,
   };
   addNewGroupSubmit = (e) => {
-    const { onSubmit } = this.props;
-    console.log(onSubmit);
     e.preventDefault();
+    const { onSubmit } = this.props;
     this.props.form.validateFields((err, values) => {
       if (!err) {
         onSubmit(values);

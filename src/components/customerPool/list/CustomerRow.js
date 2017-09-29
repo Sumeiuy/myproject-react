@@ -11,7 +11,7 @@ import _ from 'lodash';
 
 import {
   fspGlobal,
-  helper,
+  // helper,
 } from '../../../utils';
 import QuickMenu from './QuickMenu';
 import SixMonthEarnings from './SixMonthEarnings';
@@ -95,40 +95,9 @@ const rankImgSrcConfig = {
   805999: '',
 };
 
-// 数字常量
-// const WAN = 10000;
-// const YI = 100000000;
+// const formatNumber = value => helper.toUnit(value, '元').value;
 
-// 单位常量
-// const UNIT_DEFAULT = '元';
-// const UNIT_WAN = '万元';
-// const UNIT_YI = '亿元';
-
-// const generateUnit = (num) => {
-//   const absNum = Math.abs(num);
-//   if (absNum >= YI) {
-//     return UNIT_YI;
-//   }
-//   if (absNum >= WAN) {
-//     return UNIT_WAN;
-//   }
-//   return UNIT_DEFAULT;
-// };
-
-// const formatNumber = (num) => {
-//   const absNum = Math.abs(num);
-//   if (absNum >= YI) {
-//     return (num / YI).toFixed(2);
-//   }
-//   if (absNum >= WAN) {
-//     return (num / WAN).toFixed(2);
-//   }
-//   return num;
-// };
-
-const formatNumber = value => helper.toUnit(value, '元').value;
-
-const formatUnit = value => helper.toUnit(value, '元').unit;
+// const formatUnit = value => helper.toUnit(value, '元').unit;
 
 export default class CustomerRow extends PureComponent {
   static propTypes = {
@@ -145,12 +114,13 @@ export default class CustomerRow extends PureComponent {
     dict: PropTypes.object.isRequired,
     createContact: PropTypes.func.isRequired,
     isSms: PropTypes.bool.isRequired,
-    custContactData: PropTypes.object.isRequired,
+    custEmail: PropTypes.object.isRequired,
     currentFollowCustId: PropTypes.string.isRequired,
     currentCustId: PropTypes.string.isRequired,
     isFollows: PropTypes.object.isRequired,
     custIncomeReqState: PropTypes.bool.isRequired,
     toggleServiceRecordModal: PropTypes.func.isRequired,
+    formatAsset: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -224,16 +194,24 @@ export default class CustomerRow extends PureComponent {
       isFollows,
       custIncomeReqState,
       toggleServiceRecordModal,
-      custContactData,
+      custEmail,
       onSendEmail,
       currentCustId,
       getCustIncome,
       location,
       dict,
+      formatAsset,
     } = this.props;
     const rskLev = _.trim(listItem.riskLvl);
     const str = `${listItem.custId}.${listItem.name}`;
     const isChecked = _.includes(selectedIds, str) || isAllSelect;
+    let assetValue = '--';
+    let assetUnit = '';
+    if (listItem.asset) {
+      const obj = formatAsset(listItem.asset);
+      assetValue = obj.value;
+      assetUnit = obj.unit;
+    }
     return (
       <div
         className={styles.customerRow}
@@ -243,7 +221,7 @@ export default class CustomerRow extends PureComponent {
           listItem={listItem}
           createModal={this.createModal}
           toggleServiceRecordModal={toggleServiceRecordModal}
-          custContactData={custContactData}
+          custEmail={custEmail}
           currentCustId={currentCustId}
           onSendEmail={onSendEmail}
           currentFollowCustId={currentFollowCustId}
@@ -296,13 +274,14 @@ export default class CustomerRow extends PureComponent {
             </div>
             <div className="row-three">
               <span>总资产：</span>
-              <span className="asset">{formatNumber(+listItem.asset)}</span>
-              <span>{formatUnit(+listItem.asset)}</span>
+              <span className="asset">{assetValue}</span>
+              <span>{assetUnit}</span>
               <SixMonthEarnings
                 listItem={listItem}
                 monthlyProfits={monthlyProfits}
                 custIncomeReqState={custIncomeReqState}
                 getCustIncome={getCustIncome}
+                formatAsset={formatAsset}
               />
               <div className="department">
                 <span>{listItem.orgName}</span>

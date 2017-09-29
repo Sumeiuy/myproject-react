@@ -7,6 +7,7 @@ import React, { PureComponent, PropTypes } from 'react';
 import { withRouter, routerRedux } from 'dva/router';
 import { autobind } from 'core-decorators';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import classnames from 'classnames';
 import { Tabs, Input, Row, Col, message } from 'antd';
 import Button from '../../components/common/Button';
@@ -20,6 +21,7 @@ import { fspGlobal, helper } from '../../utils';
 const CUR_PAGE = 1; // 默认当前页 0->1, 后端入参变化
 const CUR_PAGESIZE = 10; // 默认页大小
 const TabPane = Tabs.TabPane;
+const CUR_KEYWORD = null;
 let groupId = '';
 const mapStateToProps = state => ({
   cusgroupList: state.customerPool.cusgroupList,
@@ -49,6 +51,9 @@ const columns = [
     title: '分组名称',
     dataIndex: 'groupName',
     key: 'groupName',
+    render: item => <a title={item} className="groupNames">
+      {_.truncate(item, { length: 18, omission: '...' })}
+    </a>,
   },
   {
     title: '分组描述',
@@ -66,6 +71,9 @@ const columns = [
     title: '创建时间',
     dataIndex: 'createdTm',
     key: 'createdTm',
+    render: item => <a title={item} className="groupNames">
+      {_.truncate(item, { length: 18, omission: '...' })}
+    </a>,
   },
 ];
 let selectGroupName = '';
@@ -78,6 +86,7 @@ const rowSelection = {
   },
 };
 let onOff = false;
+// {_.truncate(item.text, { length: 18, omission: '...' })}
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 export default class CustomerGroup extends PureComponent {
@@ -100,14 +109,12 @@ export default class CustomerGroup extends PureComponent {
       controlCusSuccess: '',
       cusgroupId: '',
       groupName: '',
-      keyWord: null,
     };
   }
 
   componentWillMount() {
 /* 获取客户分组列表 */
-    const { keyWord } = this.state;
-    this.getCustomerGroup(keyWord, this.props);
+    this.getCustomerGroup(this.props);
     /* 初始化classname,首次渲染显示分组tab,隐藏分组成功组件 */
     this.state.controlGroupPane = classnames({
       [styles.customerGroup]: true,
@@ -122,10 +129,7 @@ export default class CustomerGroup extends PureComponent {
   componentWillReceiveProps(nextProps) {
     // 根据分组结果，重新渲染组件
     const { cusGroupSaveResult, resultgroupId, location: { query } } = nextProps;
-    const curPageNum = Number(query.curPageNum) - 1;
     const { location: { query: preQuery } } = this.props;
-    const { keyWord } = this.state;
-    const newLocation = { ...nextProps.location, query: { ...query, curPageNum } };// 更新curPageNum
     const controlGroupPane = classnames({
       [styles.customerGroup]: cusGroupSaveResult !== 'success',
       [styles.hiddencustomerGroup]: cusGroupSaveResult === 'success',
@@ -139,20 +143,22 @@ export default class CustomerGroup extends PureComponent {
       controlCusSuccess,
       cusgroupId: resultgroupId,
     });
+    console.log('keyWord----', query.keyWord);
     if (query !== preQuery) {
-      this.getCustomerGroup(keyWord, { ...nextProps, location: newLocation });
+      this.getCustomerGroup({ ...nextProps });
     }
   }
 
   @autobind
-  getCustomerGroup(value = null, props) {
+  getCustomerGroup(props) {
     const { location: { query }, getCustomerGroupList } = props;
+    console.log('props---', query.value);
     const param = {
         // 必传，页大小
       pageNum: query.curPageNum || CUR_PAGE,
       pageSize: query.pageSize || CUR_PAGESIZE,
       empId: helper.getEmpId(),
-      keyWord: value,
+      keyWord: query.keyWord || CUR_KEYWORD,
     };
     getCustomerGroupList(param);
   }
@@ -164,6 +170,7 @@ export default class CustomerGroup extends PureComponent {
   @autobind
   handlePageChange(page) {
     const { location: { query, pathname }, replace } = this.props;
+    console.warn(pathname);
    // 替换当前页码和分页条目
     console.log('page, pageSize:', page);
     replace({
@@ -201,11 +208,8 @@ export default class CustomerGroup extends PureComponent {
         ...query,
         curPageNum: CUR_PAGE,
         curPageSize: CUR_PAGESIZE,
-        KeyWord: value,
+        keyWord: value,
       },
-    });
-    this.setState({
-      keyWord: value,
     });
   }
 /*  添加到已有分组 */
@@ -238,7 +242,6 @@ export default class CustomerGroup extends PureComponent {
       groupId = '';
     } else if (!onOff) {
       message.error('请选择分组', 2, () => {
-        console.log('1111');
         onOff = false;
       });
       onOff = true;
@@ -267,7 +270,6 @@ export default class CustomerGroup extends PureComponent {
       groupName: param.groupName,
     });
     this.props.createCustGroup({ ...param });
-    console.log(this.props.createCustGroup);
   }
 
   @autobind

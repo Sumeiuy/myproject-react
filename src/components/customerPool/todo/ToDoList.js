@@ -30,6 +30,7 @@ const columns = [
         };
         fspGlobal.openFspIframeTab({ url, param });
       }}
+      title={item.text}
     >
       {_.truncate(item.text, { length: 18, omission: '...' })}
     </a>,
@@ -99,7 +100,6 @@ export default class ToDoList extends PureComponent {
       curPageNum: page,
     });
   }
-
   render() {
     const { className, data, todoPage, todolist } = this.props;
     // 没有待办流程

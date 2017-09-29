@@ -22,6 +22,7 @@ const { TextArea } = Input;
 const d = new Date();
 // 日期组件的显示格式
 const dateFormat = 'YYYY-MM-DD HH:mm';
+const timeFormat = 'HH:mm';
 // 当前日期的时间戳
 const currentDate = d.getTime();
 const formatCurrentDate = moment(currentDate).format(dateFormat);
@@ -29,7 +30,7 @@ const width = { width: 192 };
 // 根据服务方式的key来记录对应的iconname
 const SERVICE_ICON = {
   'HTSC Phone': 'dianhua',
-  Mail: 'youjian',
+  'HTSC Email': 'youjian',
   'HTSC SMS': 'duanxin',
   wx: 'weixin',
   Interview: 'beizi',
@@ -289,7 +290,9 @@ export default class CreateServiceRecord extends PureComponent {
                     value={moment(serviceTime, dateFormat)}
                     format={dateFormat}
                     allowClear={false}
-                    showTime
+                    showTime={{
+                      format: timeFormat,
+                    }}
                     onChange={this.handleServiceTime}
                     disabledDate={this.disabledDate}
                   />
@@ -317,7 +320,9 @@ export default class CreateServiceRecord extends PureComponent {
                     value={moment(feedbackTime, dateFormat)}
                     format={dateFormat}
                     allowClear={false}
-                    showTime
+                    showTime={{
+                      format: timeFormat,
+                    }}
                     onChange={this.handleFeedbackTime}
                     disabledDate={this.disabledDate}
                   />
