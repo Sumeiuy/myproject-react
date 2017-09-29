@@ -52,7 +52,7 @@ const actionColumns = (type, handleAction) => {
       // return (<div className={styles.description}>标记可选产品</div>);
       return (
         <Checkbox
-          onChange={event => handleClick(item, event)}
+          onChange={event => handleClick(type, item, event)}
           defaultChecked={item.defaultChecked || false}
         />
       );
