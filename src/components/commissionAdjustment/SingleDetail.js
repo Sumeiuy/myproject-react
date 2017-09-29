@@ -13,10 +13,10 @@ import OtherCommission from './OtherCommission';
 import CommonUpload from '../common/biz/CommonUpload';
 import ApproveList from '../common/approveList';
 import CommonTable from '../common/biz/CommonTable';
-import styles from './detail.less';
+import styles from './singleDetail.less';
 
 // 客户信息表表头
-const titleList = [
+const custTitleList = [
   {
     dataIndex: 'custId',
     key: 'custId',
@@ -44,7 +44,36 @@ const titleList = [
   },
 ];
 
-// 附件
+// 产品选择表表头
+const proTitleList = [
+  {
+    dataIndex: 'proId',
+    key: 'proId',
+    title: '产品代码',
+  },
+  {
+    dataIndex: 'proName',
+    key: 'proName',
+    title: '产品名称',
+  },
+  {
+    dataIndex: 'commisionValue',
+    key: 'commisionValue',
+    title: '佣金率',
+  },
+  {
+    dataIndex: 'riskMatchOrNot',
+    key: 'riskMatchOrNot',
+    title: '风险是否匹配',
+  },
+  {
+    dataIndex: 'termMatchOrNot',
+    key: 'termMatchOrNot',
+    title: '期限是否匹配',
+  },
+];
+
+// 附件测试数据模板
 const attachmentList = [
   {
     creator: '002332',
@@ -75,7 +104,53 @@ const attachmentList = [
   },
 ];
 
-export default class Commissiondetail extends PureComponent {
+// 产品选择表单测试数据模板
+const proList = [
+  {
+    key: 1,
+    proId: 'SP001',
+    proName: '成交回报（短信）',
+    commisionValue: '0.21‰',
+    riskMatchOrNot: '是',
+    termMatchOrNot: '是',
+    children: [
+      {
+        key: '001',
+        proId: '111',
+        proName: '成交',
+        commisionValue: '0.11‰',
+        riskMatchOrNot: '是',
+        termMatchOrNot: '是',
+      },
+      {
+        key: '002',
+        proId: '112',
+        proName: '成交',
+        commisionValue: '0.11‰',
+        riskMatchOrNot: '是',
+        termMatchOrNot: '是',
+      },
+    ],
+  },
+  {
+    key: 2,
+    proId: 'SP002',
+    proName: '量价异动警告（短信）',
+    commisionValue: '0.21‰',
+    riskMatchOrNot: '是',
+    termMatchOrNot: '是',
+  },
+  {
+    key: 3,
+    proId: 'SP003',
+    proName: '成交回报（短信）',
+    commisionValue: '0.21‰',
+    riskMatchOrNot: '是',
+    termMatchOrNot: '是',
+  },
+];
+
+export default class Singlecommissiondetail extends PureComponent {
 
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -158,7 +233,7 @@ export default class Commissiondetail extends PureComponent {
             <div className={styles.modContent}>
               <CommonTable
                 data={custList}
-                titleList={titleList}
+                titleList={custTitleList}
                 pagination={{
                   pageSize: 5,
                 }}
@@ -200,10 +275,16 @@ export default class Commissiondetail extends PureComponent {
               </div>
             </div>
           </div>
-          <div id="productSelection" className={styles.module}>
+          <div id="productSelectionmodal" className={styles.module}>
             <InfoTitle head="产品选择" />
-            <div>
-              产品选择表单
+            <div className={styles.modContent}>
+              <CommonTable
+                data={proList}
+                titleList={proTitleList}
+                pagination={{
+                  pageSize: 5,
+                }}
+              />
             </div>
           </div>
           <div id="enclosure" className={styles.module}>
@@ -212,7 +293,7 @@ export default class Commissiondetail extends PureComponent {
               attachmentList={attachmentList}
             />
           </div>
-          <div id="enclosure" className={styles.module}>
+          <div id="approvalRecord" className={styles.module}>
             <InfoTitle head="审批记录" />
             <ApproveList />
           </div>
