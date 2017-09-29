@@ -29,7 +29,7 @@ const width = { width: 192 };
 // 根据服务方式的key来记录对应的iconname
 const SERVICE_ICON = {
   'HTSC Phone': 'dianhua',
-  Mail: 'youjian',
+  'HTSC Email': 'youjian',
   'HTSC SMS': 'duanxin',
   wx: 'weixin',
   Interview: 'beizi',

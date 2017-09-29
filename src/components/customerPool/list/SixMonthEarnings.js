@@ -8,13 +8,13 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
 import ChartLineWidget from './ChartLine';
-import { helper } from '../../../utils';
+// import { helper } from '../../../utils';
 
 import styles from './sixMonthEarnings.less';
 
-const formatNumber = value => helper.toUnit(value, '元').value;
+// const formatNumber = value => helper.toUnit(value, '元').value;
 
-const formatUnit = value => helper.toUnit(value, '元').unit;
+// const formatUnit = value => helper.toUnit(value, '元').unit;
 
 const getLastestData = (arr) => {
   if (arr && arr instanceof Array && arr.length !== 0) {
@@ -30,6 +30,8 @@ export default class SixMonthEarnings extends PureComponent {
     monthlyProfits: PropTypes.object.isRequired,
     custIncomeReqState: PropTypes.bool.isRequired,
     getCustIncome: PropTypes.func.isRequired,
+    formatNumber: PropTypes.func.isRequired,
+    formatUnit: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -70,6 +72,8 @@ export default class SixMonthEarnings extends PureComponent {
       listItem,
       monthlyProfits,
       custIncomeReqState,
+      formatNumber,
+      formatUnit,
     } = this.props;
     const {
       isShowCharts,

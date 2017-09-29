@@ -11,7 +11,7 @@ import _ from 'lodash';
 
 import {
   fspGlobal,
-  helper,
+  // helper,
 } from '../../../utils';
 import QuickMenu from './QuickMenu';
 import SixMonthEarnings from './SixMonthEarnings';
@@ -96,39 +96,39 @@ const rankImgSrcConfig = {
 };
 
 // 数字常量
-// const WAN = 10000;
-// const YI = 100000000;
+const WAN = 10000;
+const YI = 100000000;
 
 // 单位常量
-// const UNIT_DEFAULT = '元';
-// const UNIT_WAN = '万元';
-// const UNIT_YI = '亿元';
+const UNIT_DEFAULT = '元';
+const UNIT_WAN = '万元';
+const UNIT_YI = '亿元';
 
-// const generateUnit = (num) => {
-//   const absNum = Math.abs(num);
-//   if (absNum >= YI) {
-//     return UNIT_YI;
-//   }
-//   if (absNum >= WAN) {
-//     return UNIT_WAN;
-//   }
-//   return UNIT_DEFAULT;
-// };
+const formatUnit = (num) => {
+  const absNum = Math.abs(num);
+  if (absNum >= YI) {
+    return UNIT_YI;
+  }
+  if (absNum >= WAN) {
+    return UNIT_WAN;
+  }
+  return UNIT_DEFAULT;
+};
 
-// const formatNumber = (num) => {
-//   const absNum = Math.abs(num);
-//   if (absNum >= YI) {
-//     return (num / YI).toFixed(2);
-//   }
-//   if (absNum >= WAN) {
-//     return (num / WAN).toFixed(2);
-//   }
-//   return num;
-// };
+const formatNumber = (num) => {
+  const absNum = Math.abs(num);
+  if (absNum >= YI) {
+    return (num / YI).toFixed(2);
+  }
+  if (absNum >= WAN) {
+    return (num / WAN).toFixed(2);
+  }
+  return num;
+};
 
-const formatNumber = value => helper.toUnit(value, '元').value;
+// const formatNumber = value => helper.toUnit(value, '元').value;
 
-const formatUnit = value => helper.toUnit(value, '元').unit;
+// const formatUnit = value => helper.toUnit(value, '元').unit;
 
 export default class CustomerRow extends PureComponent {
   static propTypes = {
@@ -303,6 +303,8 @@ export default class CustomerRow extends PureComponent {
                 monthlyProfits={monthlyProfits}
                 custIncomeReqState={custIncomeReqState}
                 getCustIncome={getCustIncome}
+                formatUnit={formatUnit}
+                formatNumber={formatNumber}
               />
               <div className="department">
                 <span>{listItem.orgName}</span>
