@@ -18,6 +18,7 @@ import PermissionList from '../../components/common/biz/CommonList';
 import seibelColumns from '../../components/common/biz/seibelColumns';
 import { seibelConfig } from '../../config';
 import CreatePrivateClient from '../../components/permission/CreatePrivateClient';
+import ModifyPrivateClient from '../../components/permission/ModifyPrivateClient';
 
 import styles from './home.less';
 
@@ -53,6 +54,8 @@ const mapStateToProps = state => ({
   bottonList: state.permission.bottonList,
   // 获取修改私密客户申请 的结果
   modifyCustApplication: state.permission.modifyCustApplication,
+  // 监听 修改私密客户申请 过程
+  addListenModify: state.loading.effects['permission/getModifyCustApplication'] || false,
   // 获取创建私密客户申请 的结果
   createCustApplication: state.permission.createCustApplication,
   // 监听 创建私密客户申请 过程
@@ -124,6 +127,7 @@ export default class Permission extends PureComponent {
     getBottonList: PropTypes.func.isRequired,
     getModifyCustApplication: PropTypes.func.isRequired,
     modifyCustApplication: PropTypes.object.isRequired,
+    addListenModify: PropTypes.bool.isRequired,
     getCreateCustApplication: PropTypes.func.isRequired,
     createCustApplication: PropTypes.object.isRequired,
     addListenCreate: PropTypes.bool.isRequired,
@@ -145,8 +149,10 @@ export default class Permission extends PureComponent {
     super(props);
     this.state = {
       isEmpty: true,
-      // 默认状态下新建弹窗不可见 false 不可见  true 可见
-      isShowModal: false,
+      // 是否显示新建私密客户弹框
+      isShowCreateModal: false,
+      // 是否显示修改私密客户弹框
+      isShowModifyModal: false,
       detailMessage: {},
     };
   }
@@ -258,9 +264,9 @@ export default class Permission extends PureComponent {
   }
 
   @autobind
-  clearModal() {
+  clearModal(name) {
     // 清除模态框组件
-    this.setState({ isShowModal: false });
+    this.setState({ [name]: false });
   }
 
   // 头部新建页面
@@ -268,7 +274,7 @@ export default class Permission extends PureComponent {
   creatPermossionModal() {
     // 打开模态框 发送获取服务人员列表请求
     // this.props.getHasServerPersonList({ id: 101110 });
-    this.setState({ isShowModal: true });
+    this.setState({ isShowCreateModal: true });
   }
 
   // 查询拟稿人
@@ -290,7 +296,10 @@ export default class Permission extends PureComponent {
       type: pageType,
     });
   }
-
+  @autobind
+  showModifyModal() {
+    this.setState(prevState => ({ isShowModifyModal: !prevState.isShowModifyModal }));
+  }
   /**
    * 构造表格的列数据
    * 传参为icon的type
@@ -331,6 +340,7 @@ export default class Permission extends PureComponent {
       bottonList,
       getModifyCustApplication,
       modifyCustApplication,
+      addListenModify,
       subTypeList,
     } = this.props;
     return (
@@ -344,7 +354,9 @@ export default class Permission extends PureComponent {
         bottonList={bottonList}
         getModifyCustApplication={getModifyCustApplication}
         modifyCustApplication={modifyCustApplication}
+        addListenModify={addListenModify}
         subTypeList={subTypeList}
+        onEmitEvent={this.showModifyModal}
       />
     );
   }
@@ -368,13 +380,18 @@ export default class Permission extends PureComponent {
       addListenCreate,
       detailMessage,
       subTypeList,
+      getBottonList,
+      bottonList,
+      getModifyCustApplication,
+      modifyCustApplication,
+      addListenModify,
     } = this.props;
 
     if (!custRange || !custRange.length) {
       return null;
     }
     const isEmpty = _.isEmpty(list.resultData);
-    const { isShowModal } = this.state;
+    const { isShowCreateModal, isShowModifyModal } = this.state;
     const topPanel = (
       <PermissionHeader
         location={location}
@@ -415,7 +432,7 @@ export default class Permission extends PureComponent {
           leftListClassName="premissionList"
         />
         {
-          isShowModal ?
+          isShowCreateModal ?
             <CreatePrivateClient
               canApplyCustList={canApplyCustList}
               searchServerPersonList={searchServerPersonList}
@@ -434,6 +451,24 @@ export default class Permission extends PureComponent {
             />
           :
             null
+        }
+        {
+          isShowModifyModal ?
+            <ModifyPrivateClient
+              {...this.state.detailMessage}
+              onEmitClearModal={this.clearModal}
+              canApplyCustList={canApplyCustList}
+              searchServerPersonList={searchServerPersonList}
+              nextApproverList={nextApproverList}
+              getNextApproverList={getNextApproverList}
+              getBottonList={getBottonList}
+              bottonList={bottonList}
+              getModifyCustApplication={getModifyCustApplication}
+              modifyCustApplication={modifyCustApplication}
+              addListenModify={addListenModify}
+              subTypeList={subTypeList}
+            />
+          : null
         }
       </div>
     );

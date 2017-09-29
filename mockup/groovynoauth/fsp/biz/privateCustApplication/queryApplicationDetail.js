@@ -12,7 +12,7 @@ exports.response = function (req, res) {
       "orgName": "南京长江路证券营业部", 
       "type": "01",
       "subType": "0103", // 子类型
-      "status": "01", // 状态
+      "status": "04", // 状态
       "custNumber": "1-3UUZ9JF", // 客户id
       "custName": "强哥", // 客户
       "createTime": "2017-09-21 13:38:34", // 提请时间
@@ -49,35 +49,6 @@ exports.response = function (req, res) {
         },
       ],
       "workflowHistoryBeans": [ //这里是审批历史
-        {
-          "entryTime": "",
-          "handler": "002332",
-          "handleName": "隔壁老王",
-          "handleTime": "2017-09-21 13:39:00", // 时间
-          "comment": "流程发起", // 建议
-          "stepName": "流程发起" // 步骤
-        }, {
-          "entryTime": "",
-          "handler": "002331",
-          "handleName": "隔壁老王",
-          "handleTime": "2017-09-21 13:39:00",
-          "comment": "流程发起",
-          "stepName": "流程发起"
-        }, {
-          "entryTime": "",
-          "handler": "002333",
-          "handleName": "隔壁老王",
-          "handleTime": "2017-09-21 13:39:00",
-          "comment": "流程发起",
-          "stepName": "流程发起"
-        }, {
-          "entryTime": "",
-          "handler": "002334",
-          "handleName": "隔壁老王",
-          "handleTime": "2017-09-21 13:39:00",
-          "comment": "流程发起",
-          "stepName": "流程发起"
-        }
       ],
       "attachInfoList":[
         {
