@@ -310,7 +310,7 @@ export default class TableTransfer extends Component {
     return selected;
   }
 
-  // 点击check框触发时间，返回当前child，此父元素下选中所有child，所有选中的child
+  // 点击check框触发事件，此父元素下选中所有child，所有选中的child
   @autobind
   handleCheck(selected, event) {
     const { checked } = this.state;
@@ -415,6 +415,8 @@ export default class TableTransfer extends Component {
       showSearch,
       pagination,
       rowKey,
+      finishTips,
+      warningTips,
     } = this.props;
     const {
       firstArray,
@@ -422,7 +424,10 @@ export default class TableTransfer extends Component {
       firstColumns,
       secondColumns,
     } = this.state;
-
+    // 调整提示信息的位置
+    const count = finishTips.length + warningTips.length;
+    const top = count > 1 ? `${-(count - 1) * 32}px` : '0px';
+    const style = { top };
     return (
       <div className={styles.container}>
         <div className={styles.leftContent}>
@@ -450,7 +455,7 @@ export default class TableTransfer extends Component {
         <div className={styles.rightContent}>
           <div className={classnames(styles.header, styles.rightHeader)}>
             <div className={styles.titleLabel}>{secondTitle}</div>
-            <div className={styles.tipContainer}>
+            <div className={styles.tipContainer} style={style}>
               {this.renderFinishTipsTips()}
               {this.renderTipsTips()}
             </div>

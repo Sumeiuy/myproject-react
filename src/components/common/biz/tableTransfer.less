@@ -42,6 +42,10 @@
       .tipRow {
         display: -webkit-flex; /* Safari */
         display: flex;
+        height: 32px;
+        line-height: 32px;
+        overflow: hidden;
+        text-overflow: ellipsis;
         .finishIcon {
           font-size: 22px;
           color: #70c381;
@@ -53,6 +57,7 @@
         .tip {
           font-size: 14px;
           margin-left: 10px;
+          white-space: nowrap;
         }
         .finishTip {
           color: #70c381;
