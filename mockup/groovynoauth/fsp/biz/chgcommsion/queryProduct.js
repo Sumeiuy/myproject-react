@@ -4,7 +4,7 @@
  */
 
 exports.response = function (req, res) {
-  return{
+  return {
     code: '0',
     msg: 'OK',
     resultData: [

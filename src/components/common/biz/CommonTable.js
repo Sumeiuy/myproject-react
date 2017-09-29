@@ -53,6 +53,7 @@ export default class CommonTable extends PureComponent {
           operation.column.render = (text, record, index) => (
             <span>
               <Radio
+                key={record.key}
                 checked={index === operation.column.radio}
                 onClick={() => operation.operate(record, index)}
               />

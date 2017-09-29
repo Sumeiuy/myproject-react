@@ -6,7 +6,7 @@
 exports.response = function (req, res) {
   return {
     code: '402',
-    msg: '校验客户信息失败',
+    msg: 'OK',
     resultData: null,
   };
 };

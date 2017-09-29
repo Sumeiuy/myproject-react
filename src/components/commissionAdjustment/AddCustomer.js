@@ -75,6 +75,10 @@ export default class AddCustomer extends PureComponent {
 
   @autobind
   handleValidate(customer) {
+    const { customerList } = this.state;
+    // 判断是否已经存在改用户
+    const exist = _.findIndex(customerList, o => o.cusId === customer.cusId) > -1;
+    if (exist) return;
     this.setState({
       customer,
     });
@@ -85,7 +89,10 @@ export default class AddCustomer extends PureComponent {
   @autobind
   addCustomer(customer) {
     const { customerList } = this.state;
-    const newList = customerList.unshift(customer);
+    // 判断是否已经存在改用户
+    const exist = _.findIndex(customerList, o => o.cusId === customer.cusId) > -1;
+    if (exist) return;
+    const newList = _.concat([customer], customerList);
     this.setState({
       customerList: newList,
     });

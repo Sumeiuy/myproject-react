@@ -19,6 +19,7 @@ export default class OtherCommissionSelect extends PureComponent {
     name: PropTypes.string,
     value: PropTypes.string,
     onChange: PropTypes.func.isRequired,
+    getPopupContainer: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -34,7 +35,7 @@ export default class OtherCommissionSelect extends PureComponent {
   }
 
   render() {
-    const { name, label, options, value } = this.props;
+    const { name, label, options, value, getPopupContainer } = this.props;
     return (
       <div className={styles.lineInputWrap}>
         <div className={styles.label}>
@@ -46,6 +47,7 @@ export default class OtherCommissionSelect extends PureComponent {
             data={options}
             value={value}
             onChange={this.onChange}
+            getPopupContainer={getPopupContainer}
           />
         </div>
       </div>
