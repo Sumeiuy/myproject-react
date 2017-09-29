@@ -84,5 +84,8 @@ export default function customerPool(api) {
 
     // 删除分组
     deleteGroup: query => api.post('/groovynoauth/fsp/cust/custgroup/deleteGroup', query),
+
+    // 360服务记录查询
+    queryServeRecords: query => api.post('/groovynoauth/fsp/cust/task/queryServeRecords', query),
   };
 }

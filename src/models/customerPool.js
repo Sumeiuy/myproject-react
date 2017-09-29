@@ -79,6 +79,7 @@ export default {
     operateGroupResult: '',
     // 删除分组结果
     deleteGroupResult: '',
+    serviceLogData: [], // 360服务记录查询数据
   },
   subscriptions: {},
   effects: {
@@ -391,6 +392,15 @@ export default {
           pageNum: 1,
           pageSize: 10,
         },
+      });
+    },
+    // 360服务记录查询
+    * getServiceLog({ payload }, { call, put }) {
+      const response = yield call(api.queryServeRecords, payload);
+      const { resultData } = response;
+      yield put({
+        type: 'getServiceLogSuccess',
+        payload: { resultData },
       });
     },
   },
@@ -760,6 +770,14 @@ export default {
         ...state,
         // success
         deleteGroupResult: payload,
+      };
+    },
+    // 360服务记录查询成功
+    getServiceLogSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        serviceLogData: resultData,
       };
     },
   },
