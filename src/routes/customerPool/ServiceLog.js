@@ -7,6 +7,7 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { Select, DatePicker, Row, Col } from 'antd';
 import { connect } from 'react-redux';
+import { routerRedux } from 'dva/router';
 import _ from 'lodash';
 import moment from 'moment';
 import { autobind } from 'core-decorators';
@@ -18,7 +19,8 @@ import styles from './serviceLog.less';
 const Option = Select.Option;
 const RangePicker = DatePicker.RangePicker;
 // const WEEK = ['日', '一', '二', '三', '四', '五', '六'];
-const dateFormat = 'YYYY/MM/DD';
+const dateFormat = 'YYYY-MM-DD';
+const today = moment(new Date()).format('YYYY-MM-DD');
 
 const effects = {
   getServiceLog: 'customerPool/getServiceLog',
@@ -33,12 +35,14 @@ const mapStateToProps = state => ({
   serviceLogData: state.customerPool.serviceLogData, // 最近服务记录
 });
 const mapDispatchToProps = {
-  getServiceLog: fetchDataFunction(true, effects.getServiceRecord),
+  replace: routerRedux.replace,
+  getServiceLog: fetchDataFunction(true, effects.getServiceLog),
 };
 @connect(mapStateToProps, mapDispatchToProps)
 // @create()
 export default class CreateTaskForm extends PureComponent {
   static propTypes = {
+    replace: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     getServiceLog: PropTypes.func.isRequired,
     serviceLogData: PropTypes.array.isRequired,
@@ -59,6 +63,7 @@ export default class CreateTaskForm extends PureComponent {
   }
   componentWillMount() {
     this.handleData();
+    console.log(this.props.serviceLogData);
   }
   componentWillReceiveProps(nextProps) {
     console.log(nextProps);
@@ -66,15 +71,47 @@ export default class CreateTaskForm extends PureComponent {
   @autobind
   onChange(value) {
     console.log('value---', value);
-    const start = moment(value[0]).format('YYYY-MM-DD HH:mm:ss');
-    const end = moment(value[1]).format('YYYY-MM-DD HH:mm:ss');
+    const { location: { query, pathname }, replace } = this.props;
+    const start = moment(value[0]).format('YYYY-MM-DD');
+    const end = moment(value[1]).format('YYYY-MM-DD');
     console.log(start);
     console.log(end);
+    replace({
+      pathname,
+      query: {
+        ...query,
+        serveDateFrom: start,
+        serveDateTo: end,
+      },
+    });
+    console.log(query);
   }
-  // @autobind
-  // disabledDate(startValue) {
-  //
-  // }
+  @autobind
+  getSixDate() {
+    const d = new Date();
+    const month = (new Date()).getMonth() + 1;
+    let sixMonth = month - 6;
+    let sixDate = null;
+    // console.log(month);
+    if (sixMonth > 0) {
+      sixDate = `${d.getFullYear()}-${sixMonth}-${d.getDate()}`;
+      // console.log('sixDate--', sixDate);
+    } else {
+      sixMonth = 12 + sixMonth;
+      sixDate = `${d.getFullYear() - 1}-${sixMonth}-${d.getDate()}`;
+      // console.log('sixDate2222--', sixDate);
+    }
+    return sixDate;
+  }
+  @autobind
+  disabledDate(startValue) {
+    if (!startValue) {
+      return false;
+    }
+    const newDay = this.getSixDate();
+    const nowDay = moment(newDay, 'YYYY-MM-DD');
+    return startValue.valueOf() <= nowDay.valueOf();
+  }
 // >custId: 客户经纪客户号（必填）
 // >serveSource: 服务渠道来源
 // >serveType: 服务类型
@@ -84,19 +121,25 @@ export default class CreateTaskForm extends PureComponent {
 // >pageSize: 每页返回的日期总数（默认7天）
   @autobind
   handleData() {
-    // const { getServiceLog } = this.props;
-    // const params = {// 用本地死参数
-    //   custId: '020014642',
-    //   empId: '001206',
-    // };
-    // getServiceLog({
-    //   ...params,
-    // });
-    // this.setState({
-    //   custId: params.custId,
-    // });
+    const { location: { query, pathname }, getServiceLog, replace } = this.props;
+    console.log(query);
+    const params = {// 用本地死参数
+      custId: '020014642',
+      serveSource: '001206',
+      serveType: '',
+      serveDateFrom: this.getSixDate(),
+      serveDateTo: today,
+      serveDateToPaged: '',
+      pageSize: '',
+    };
+    replace({
+      pathname,
+      query: params,
+    });
+    console.log(query);
+    getServiceLog(params);
+    this.getSixDate();
   }
-
   @autobind
   handleCreatOptions(data) {
     if (!_.isEmpty(data)) {
@@ -125,7 +168,7 @@ export default class CreateTaskForm extends PureComponent {
               </Col>
               <Col span={5} >
                 <RangePicker
-                  defaultValue={[moment('2015/01/01', dateFormat), moment('2015/01/01', dateFormat)]}
+                  defaultValue={[moment(this.getSixDate(), dateFormat), moment(today, dateFormat)]}
                   onChange={this.onChange} disabledDate={this.disabledDate}
                 />
               </Col>

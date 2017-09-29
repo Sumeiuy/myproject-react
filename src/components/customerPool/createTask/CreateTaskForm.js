@@ -55,6 +55,7 @@ export default class CreateTaskForm extends PureComponent {
 
   componentWillMount() {
     const { location: { query } } = this.props;
+    console.warn('query--', query);
     this.handleInit(query);
   }
 
@@ -223,8 +224,7 @@ export default class CreateTaskForm extends PureComponent {
         endTime = 8;
         break;
       case 'searchCustPool':
-        defaultMissionName = '提醒客户办理已满足条件的业务';
-        defaultMissionType = 'businessRecommend';
+        defaultMissionType = 'other';
         defaultExecutionType = 'Chance';
         defaultMissionDesc = '';
         startTime = 1;
@@ -286,6 +286,7 @@ export default class CreateTaskForm extends PureComponent {
       firstUserName,
       count,
     } = this.state;
+    console.warn('dict---', dict);
     return (
       <div className={`${styles.taskInner}`}>
         <div className={styles.taskcontent}>
@@ -327,7 +328,7 @@ export default class CreateTaskForm extends PureComponent {
                       <FormItem
                         wrapperCol={{ span: 12 }}
                       >
-                        <Select>
+                        <Select defaultValue="暂无数据">
                           <Option key="null" value="0">暂无数据</Option>
                         </Select>
                       </FormItem>
@@ -353,7 +354,7 @@ export default class CreateTaskForm extends PureComponent {
                       <FormItem
                         wrapperCol={{ span: 12 }}
                       >
-                        <Select>
+                        <Select defaultValue="暂无数据">
                           <Option key="null" value="0">暂无数据</Option>
                         </Select>
                       </FormItem>
