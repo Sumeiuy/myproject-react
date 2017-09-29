@@ -6,7 +6,7 @@
 exports.response = function (req, res) {
   return {
     code: '402',
-    msg: 'OK',
+    msg: '客户没有有效的风险测评，不允许进行佣金调整！',
     resultData: null,
   };
 };

@@ -26,10 +26,6 @@ export default class DigitalTrimmer extends PureComponent {
     defaultValue: 1.6,
   }
 
-  componentDidMount() {
-    this.props.getValue(this.props.defaultValue);
-  }
-
   @autobind
   onChange(v) {
     this.props.getValue(v);

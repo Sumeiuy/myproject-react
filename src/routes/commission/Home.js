@@ -36,23 +36,42 @@ const effects = {
   applyCustList: 'commission/getCanApplyCustList',
   approver: 'commission/getAprovalUserList',
   validate: 'commission/validateCustInfo',
+  submitBatch: 'commission/submitBatchCommission',
 };
 
 const mapStateToProps = state => ({
-  dict: state.app.dict, // 字典
-  list: state.app.seibleList, // 左侧里诶包
-  custRange: state.app.custRange, // 组织结构树
-  listProcess: state.loading.effects[effects.list], // 获取列表数据进程
-  filterDrafterList: state.app.drafterList, // 拟稿人列表
-  filterCustList: state.app.customerList, // 已申请的客户列表
-  canApplyCustList: state.commission.canApplyCustList, // 可申请的客户列表
-  productList: state.commission.productList, // 目标产品列表
-  approvalUserList: state.commission.approvalUserList, // 审批人员列表
-  validataLoading: state.commission.validataLoading, // 验证过程
-  validateResult: state.commission.validateResult, // 验证结果描述
-  detail: state.commission.detail, // 右侧详情
-  approvalRecord: state.commission.approvalRecord, // 审批历史记录
-  recordLoading: state.commission.recordLoading, // 查询审批记录进程
+  // 字典
+  dict: state.app.dict,
+  // 左侧里诶包
+  list: state.app.seibleList,
+  // 组织结构树
+  custRange: state.app.custRange,
+  // 获取列表数据进程
+  listProcess: state.loading.effects[effects.list],
+  // 拟稿人列表
+  filterDrafterList: state.app.drafterList,
+  // 已申请的客户列表
+  filterCustList: state.app.customerList,
+  // 可申请的客户列表
+  canApplyCustList: state.commission.canApplyCustList,
+  // 目标产品列表
+  productList: state.commission.productList,
+  // 审批人员列表
+  approvalUserList: state.commission.approvalUserList,
+  // 验证过程
+  validataLoading: state.commission.validataLoading,
+  // 验证结果描述
+  validateResult: state.commission.validateResult,
+  // 右侧详情
+  detail: state.commission.detail,
+  // 审批历史记录
+  approvalRecord: state.commission.approvalRecord,
+  // 查询审批记录进程
+  recordLoading: state.commission.recordLoading,
+  // 批量佣金调整申请提交后，返回的批量处理号
+  batchnum: state.commission.batchnum,
+  // 提交批量佣金申请调整的进程
+  batchSubmitProcess: state.loading.effects[effects.submitBatch],
 });
 
 const getDataFunction = (loading, type) => query => ({
@@ -63,16 +82,28 @@ const getDataFunction = (loading, type) => query => ({
 
 const mapDispatchToProps = {
   replace: routerRedux.replace,
-  getCommissionList: getDataFunction(true, effects.list), // 获取批量佣金调整List
-  getCustRange: getDataFunction(true, effects.custRange), // 获取批量佣金调整List
-  getCommissionDetail: getDataFunction(true, effects.detail), // 获取批量佣金调整Detail
-  getApprovalRecords: getDataFunction(false, effects.record), // 获取用户审批记录
-  searchCustList: getDataFunction(false, effects.searchCust), // 通过关键字，查询可选的已申请用户列表
-  searchDrafter: getDataFunction(false, effects.searchDrafter), // 通过关键字，查询可选拟稿人列表
-  getProductList: getDataFunction(false, effects.productList), // 查询目标产品列表
-  getAprovalUserList: getDataFunction(false, effects.approver), // 查询审批人员列表
-  validateCustInfo: getDataFunction(false, effects.validate), // 校验用户资格
-  getCanApplyCustList: getDataFunction(false, effects.applyCustList), // 通过关键字，查询可选的可申请用户列表
+  // 获取批量佣金调整List
+  getCommissionList: getDataFunction(true, effects.list),
+  // 获取批量佣金调整List
+  getCustRange: getDataFunction(true, effects.custRange),
+  // 获取批量佣金调整Detail
+  getCommissionDetail: getDataFunction(true, effects.detail),
+  // 获取用户审批记录
+  getApprovalRecords: getDataFunction(false, effects.record),
+  // 通过关键字，查询可选的已申请用户列表
+  searchCustList: getDataFunction(false, effects.searchCust),
+  // 通过关键字，查询可选拟稿人列表
+  searchDrafter: getDataFunction(false, effects.searchDrafter),
+  // 查询目标产品列表
+  getProductList: getDataFunction(false, effects.productList),
+  // 查询审批人员列表
+  getAprovalUserList: getDataFunction(false, effects.approver),
+  // 校验用户资格
+  validateCustInfo: getDataFunction(false, effects.validate),
+  // 通过关键字，查询可选的可申请用户列表
+  getCanApplyCustList: getDataFunction(false, effects.applyCustList),
+  // 提交批量佣金调整申请
+  submitBatch: getDataFunction(false, effects.submitBatch),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -100,16 +131,20 @@ export default class CommissionHome extends PureComponent {
     approvalRecord: PropTypes.object.isRequired,
     recordLoading: PropTypes.bool.isRequired,
     listProcess: PropTypes.bool,
+    batchSubmitProcess: PropTypes.bool,
     validataLoading: PropTypes.bool.isRequired,
     validateResult: PropTypes.string.isRequired,
     approvalUserList: PropTypes.array.isRequired,
     filterCustList: PropTypes.array.isRequired,
     canApplyCustList: PropTypes.array.isRequired,
     filterDrafterList: PropTypes.array.isRequired,
+    batchnum: PropTypes.string.isRequired,
+    submitBatch: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
     listProcess: false,
+    batchSubmitProcess: false,
   }
 
   constructor(props) {
@@ -147,13 +182,15 @@ export default class CommissionHome extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { listProcess: prevLP } = this.props;
-    const { listProcess: nextLP, list } = nextProps;
+    const { listProcess: nextLP, list, location: { query: { currentId } } } = nextProps;
     if (!nextLP && prevLP) {
       if (!_.isEmpty(list.resultData)) {
         // 表示左侧列表获取完毕
         // 因此此时获取Detail
+        const item = _.filter(list.resultData, o => String(o.id) === String(currentId));
+        console.warn('detail', item);
         this.props.getCommissionDetail({
-          batchNum: list.resultData[0].bussiness1,
+          batchNum: item[0].business1,
         });
       }
     }
@@ -184,6 +221,17 @@ export default class CommissionHome extends PureComponent {
       // 打开弹出窗
       this.openApprovalBoard();
     }
+
+    // 用户提交批量佣金调整申请
+    const { batchSubmitProcess: prevBSP } = this.props;
+    const { batchSubmitProcess: nextBSP, batchnum } = nextProps;
+    if (prevBSP && !nextBSP) {
+      // 完成提交
+      // 以后看需要是否需要做相应操作
+      if (batchnum !== 'fail') {
+        // 成功
+      }
+    }
   }
 
   componentDidUpdate() {
@@ -212,10 +260,10 @@ export default class CommissionHome extends PureComponent {
    * 点击列表每条的时候对应请求详情
    */
   @autobind
-  getListRowId(batchNum) {
+  getListRowId({ bussiness1 }) {
     const { getCommissionDetail } = this.props;
     getCommissionDetail({
-      batchNum,
+      batchNum: bussiness1,
     });
   }
 
@@ -318,12 +366,13 @@ export default class CommissionHome extends PureComponent {
       productList,
       getProductList,
       getCanApplyCustList,
+      submitBatch,
       approvalUserList,
       canApplyCustList,
       validataLoading,
       validateResult,
       validateCustInfo,
-      dict: { otherRato },
+      dict: { otherRatio },
     } = this.props;
     if (_.isEmpty(custRange)) {
       return null;
@@ -353,7 +402,7 @@ export default class CommissionHome extends PureComponent {
         location={location}
         columns={this.constructTableColumns()}
         clickRow={this.getListRowId}
-        backKeys={['bussiness1', 'flowId']}
+        backKeys={['business1', 'flowId']}
       />
     );
 
@@ -391,7 +440,8 @@ export default class CommissionHome extends PureComponent {
           validataLoading={validataLoading}
           validateResult={validateResult}
           validateCust={validateCustInfo}
-          otherRatio={otherRato}
+          otherRatios={otherRatio}
+          onBatchSubmit={submitBatch}
         />
       </div>
     );
