@@ -49,12 +49,13 @@ export default class CreateTaskForm extends PureComponent {
       successShow: false,
       firstUserName: '',
       searchReq: null,
-      custList: null,
+      custIdList: null,
     };
   }
 
   componentWillMount() {
     const { location: { query } } = this.props;
+    console.warn('query--', query);
     this.handleInit(query);
   }
 
@@ -113,16 +114,21 @@ export default class CreateTaskForm extends PureComponent {
   // 自建任务提交
   handleSubmit = (e) => {
     e.preventDefault();
-    const { form, createTask } = this.props;
-    const { custList, searchReq } = this.state;
+    const { form, createTask, location } = this.props;
+    const { custIdList, searchReq } = this.state;
+    console.log('startValue---', moment(this.state.startValue).format('YYYY-MM-DD'));
+    console.log(location);
     form.validateFields((err, values) => {
       if (!err) {
-        const value = { ...values, custList, searchReq };
+        values.closingDate = moment(values.closingDate).format('YYYY-MM-DD');// eslint-disable-line
+        values.triggerDate = moment(values.triggerDate).format('YYYY-MM-DD');// eslint-disable-line
+        // console.log('d-----', moment(values.closingDate).format('YYYY-MM-DD'));
+        const value = { ...values, custIdList, searchReq };
         console.log('Received values of form: ', value);
         createTask(value);
       }
     });
-  }
+  };
 
   @autobind
   handleCreatAddDate(days, type) {
@@ -165,6 +171,8 @@ export default class CreateTaskForm extends PureComponent {
       } else {
         this.setState({
           startFormat: `YYYY/MM/DD(${WEEK[e]})`,
+        }, () => {
+          console.log('startFormat---', this.state.startFormat);
         });
       }
     }
@@ -184,15 +192,19 @@ export default class CreateTaskForm extends PureComponent {
     let defaultMissionDesc = '';
     let startTime = 1;
     let endTime = 4;
-    let custList = null;
+    let custIdList = null;
     let searchReq = null;
     let firstUserName = '';
     const count = query.count || '0';
     if (query.ids) {
-      custList = decodeURIComponent(query.ids).split(',');
+      custIdList = decodeURIComponent(query.ids).split(',');
       console.log('ids: ', decodeURIComponent(query.ids).split(','));
     } else if (query.condition) {
-      searchReq = JSON.parse(decodeURIComponent(query.condition));
+      const param = JSON.parse(decodeURIComponent(query.condition));
+      searchReq = {
+        sortsReqList: param.sortsReqList,
+        enterType: param.enterType,
+      };
       console.log('condition: ', JSON.parse(decodeURIComponent(query.condition)));
     } else if (query.name) {
       firstUserName = decodeURIComponent(query.name) || '';
@@ -212,8 +224,7 @@ export default class CreateTaskForm extends PureComponent {
         endTime = 8;
         break;
       case 'searchCustPool':
-        defaultMissionName = '提醒客户办理已满足条件的业务';
-        defaultMissionType = 'businessRecommend';
+        defaultMissionType = 'other';
         defaultExecutionType = 'Chance';
         defaultMissionDesc = '';
         startTime = 1;
@@ -236,8 +247,8 @@ export default class CreateTaskForm extends PureComponent {
         endTime = 8;
         break;
       default:
-        defaultMissionType = 'businessRecommend';
-        defaultExecutionType = 'Chance';
+        defaultMissionType = '请选择';
+        defaultExecutionType = '请选择';
         break;
     }
     this.setState({
@@ -247,7 +258,7 @@ export default class CreateTaskForm extends PureComponent {
       defaultMissionDesc,
       firstUserName,
       count,
-      custList,
+      custIdList,
       searchReq,
     });
     this.handleCreatAddDate(startTime, 'start');
@@ -275,6 +286,7 @@ export default class CreateTaskForm extends PureComponent {
       firstUserName,
       count,
     } = this.state;
+    console.warn('dict---', dict);
     return (
       <div className={`${styles.taskInner}`}>
         <div className={styles.taskcontent}>
@@ -287,12 +299,12 @@ export default class CreateTaskForm extends PureComponent {
                   <FormItem
                     wrapperCol={{ span: 12 }}
                   >
-                    {getFieldDecorator('missionName',
+                    {getFieldDecorator('taskName ',
                       {
                         rules: [{ required: true, message: '任务名称不能为空!' }],
                         initialValue: defaultMissionName,
                       })(
-                        <Input />,
+                        <Input placeholder="请输入任务名称" />,
                     )}
                   </FormItem>
                 </li>
@@ -303,7 +315,7 @@ export default class CreateTaskForm extends PureComponent {
                       <FormItem
                         wrapperCol={{ span: 12 }}
                       >
-                        {getFieldDecorator('missionType',
+                        {getFieldDecorator('taskType ',
                           {
                             initialValue: defaultMissionType,
                           })(
@@ -316,7 +328,7 @@ export default class CreateTaskForm extends PureComponent {
                       <FormItem
                         wrapperCol={{ span: 12 }}
                       >
-                        <Select>
+                        <Select defaultValue="暂无数据">
                           <Option key="null" value="0">暂无数据</Option>
                         </Select>
                       </FormItem>
@@ -342,7 +354,7 @@ export default class CreateTaskForm extends PureComponent {
                       <FormItem
                         wrapperCol={{ span: 12 }}
                       >
-                        <Select>
+                        <Select defaultValue="暂无数据">
                           <Option key="null" value="0">暂无数据</Option>
                         </Select>
                       </FormItem>
