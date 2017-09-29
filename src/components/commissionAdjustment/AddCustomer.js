@@ -32,6 +32,7 @@ export default class AddCustomer extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
+      selectList: [],
       customerList: [],
       customer: null,
       content: [[]],
@@ -75,6 +76,10 @@ export default class AddCustomer extends PureComponent {
 
   @autobind
   handleValidate(customer) {
+    const { customerList } = this.state;
+    // 判断是否已经存在改用户
+    const exist = _.findIndex(customerList, o => o.cusId === customer.cusId) > -1;
+    if (exist) return;
     this.setState({
       customer,
     });
@@ -85,7 +90,10 @@ export default class AddCustomer extends PureComponent {
   @autobind
   addCustomer(customer) {
     const { customerList } = this.state;
-    const newList = customerList.unshift(customer);
+    // 判断是否已经存在改用户
+    const exist = _.findIndex(customerList, o => o.cusId === customer.cusId) > -1;
+    if (exist) return;
+    const newList = _.concat([customer], customerList);
     this.setState({
       customerList: newList,
     });
@@ -94,13 +102,22 @@ export default class AddCustomer extends PureComponent {
 
   // 删除选择的用户
   @autobind
-  handleDeleteCustomer(list) {
-    const { customerList } = this.state;
-    const newList = _.filter(customerList, item => _.includes(list, item.cusId));
+  handleDeleteCustomer() {
+    const { customerList, selectList } = this.state;
+    if (_.isEmpty(selectList)) return;
+    const newList = _.filter(customerList, item => _.includes(selectList, item.cusId));
     this.setState({
       customerList: newList,
+      selectList: [],
     });
     this.passData2Home(this.pickValue(newList, 'cusId'));
+  }
+
+  @autobind
+  handleSelectedCustList(selectList) {
+    this.setState({
+      selectList,
+    });
   }
 
   @autobind
@@ -127,7 +144,7 @@ export default class AddCustomer extends PureComponent {
         <div className={styles.tableList}>
           <CustomerTableList
             customerList={listWithKey}
-            onDeleteCustomer={this.handleDeleteCustomer}
+            onSelectCustomerList={this.handleSelectedCustList}
           />
         </div>
         <ProcessConfirm

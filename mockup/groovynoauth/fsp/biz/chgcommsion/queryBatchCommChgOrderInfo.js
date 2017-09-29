@@ -1,7 +1,9 @@
 /**
- * @description 查询佣金调整详情
+ * 批量佣金调整详情
+ * @param  {[type]} req [description]
+ * @param  {[type]} res [description]
+ * @return {[type]}     [description]
  */
-
 exports.response = function (req, res) {
   return {
     code: '0',

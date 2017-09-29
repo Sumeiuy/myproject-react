@@ -15,9 +15,8 @@ const Option = AutoComplete.Option;
 export default class ProductsDropdownBox extends PureComponent {
 
   static propTypes = {
-    productList: PropTypes.array.isRequired,
+    productList: PropTypes.array,
     onSelect: PropTypes.func.isRequired,
-    onSearch: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -47,7 +46,6 @@ export default class ProductsDropdownBox extends PureComponent {
         iconType: 'close',
         value,
       });
-      this.props.onSearch(value);
     } else {
       this.setState({
         value: '',
@@ -63,16 +61,22 @@ export default class ProductsDropdownBox extends PureComponent {
 
   @autobind
   clearValue() {
-    this.setState({
-      value: '',
-      iconType: 'search',
-    });
+    if (this.state.iconType === 'close') {
+      this.setState({
+        value: '',
+        iconType: 'search',
+      });
+    }
   }
   render() {
     const { iconType, value } = this.state;
     const { productList } = this.props;
     const options = productList.map(opt => (
-      <Option key={opt.id} value={opt.id}>
+      <Option
+        key={opt.id}
+        value={opt.id}
+        text={`${opt.prodCommision}‰ ${opt.prodName} ${opt.prodCode}`}
+      >
         <span className={styles.prodcom}>{`${opt.prodCommision}‰`}</span>
         <span className={styles.prodname}>{opt.prodName}</span>
         <span className={styles.prodcode}>{opt.prodCode}</span>
@@ -91,9 +95,9 @@ export default class ProductsDropdownBox extends PureComponent {
           dataSource={options}
           onChange={this.changeInputbox}
           onSelect={this.selectProduct}
-          optionLabelProp="value"
           filterOption={this.handleSearchFilterOptions}
           value={value}
+          optionLabelProp="text"
         >
           <Input
             suffix={

@@ -17,7 +17,8 @@ import InfoTitle from '../common/InfoTitle';
 import Select from '../common/Select';
 import DigitalTrimmer from '../common/DigitalTrimmer';
 import ProductsDropBox from './ProductsDropBox';
-import OtherCommissionSelect from './OtherCommissionSelect';
+import OtherCommissionSelectList from './OtherCommissionSelectList';
+import CommissionLine from './CommissionLine';
 import { seibelConfig } from '../../config';
 import styles from './createNewApprovalBoard.less';
 
@@ -38,6 +39,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     modalKey: PropTypes.string.isRequired,
     visible: PropTypes.bool,
     onClose: PropTypes.func,
+    onSearchApplyCust: PropTypes.func.isRequired,
     targetProductList: PropTypes.array,
     approverList: PropTypes.array,
     customerList: PropTypes.array,
@@ -45,7 +47,8 @@ export default class CreateNewApprovalBoard extends PureComponent {
     validataLoading: PropTypes.bool,
     queryProductList: PropTypes.func.isRequired,
     validateCust: PropTypes.func.isRequired,
-    otherRatio: PropTypes.array,
+    onBatchSubmit: PropTypes.func.isRequired,
+    otherRatios: PropTypes.array,
   }
 
   static defaultProps = {
@@ -56,7 +59,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     targetProductList: [],
     customerList: [],
     approverList: [],
-    otherRatio: [],
+    otherRatios: [],
   }
 
   constructor(props) {
@@ -70,7 +73,19 @@ export default class CreateNewApprovalBoard extends PureComponent {
       newCommission: '1.6',
       approverName: '',
       approverId: '',
+      custLists: [],
     };
+  }
+
+  @autobind
+  getPopupContainer() {
+    return this.approvalBody;
+  }
+
+  // 判断当前是否某个子类型
+  @autobind
+  judgeSubtypeNow(assert) {
+    return this.state.approvalType === assert;
   }
 
   // 关闭弹出层后的提示框信息
@@ -99,13 +114,23 @@ export default class CreateNewApprovalBoard extends PureComponent {
   // 提交
   @autobind
   handleSubmitApprovals(key) {
-    console.warn('点击提交按钮');
+    // 提交
+    this.props.onBatchSubmit();
     this.props.onClose(key);
+  }
+
+  @autobind
+  newApprovalBoxRef(input) {
+    this.approvalBody = input;
   }
 
   // 选择申请子类型
   @autobind
   choiceApprovalSubType(name, key) {
+    // 如果切换批量佣金需要，先查一把1.6下目标产品
+    if (name === 'approvalType') {
+      this.props.queryProductList({ prodCommision: 1.6 });
+    }
     this.setState({
       [name]: key,
     });
@@ -130,13 +155,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
 
   // 切换选择某个产品
   @autobind
-  handleSelectProduct(productId) {
-    console.warn('选择某个产品', productId);
-  }
-
-  // 选择某个产品后
-  @autobind
-  handleProductSelect(targetProduct) {
+  handleSelectProduct(targetProduct) {
     this.setState({
       targetProduct,
     });
@@ -145,6 +164,8 @@ export default class CreateNewApprovalBoard extends PureComponent {
   // 选择其他佣金比率
   @autobind
   changeOtherCommission(name, value) {
+    console.warn('changeOtherCommission>name', name);
+    console.warn('changeOtherCommission>value', value);
     this.setState({
       [name]: value,
     });
@@ -177,14 +198,19 @@ export default class CreateNewApprovalBoard extends PureComponent {
 
   // 根据用户输入查询客户列表
   @autobind
-  handleCustomerListSearch(value) {
-    console.warn('根据用户输入查询客户列表', value);
+  handleCustomerListSearch(keyword) {
+    this.props.onSearchApplyCust({
+      keyword,
+    });
   }
 
   // 将用户选择添加的客户列表返回到弹出层，以便提交试用
   @autobind
   saveSelectedCustomerList(list) {
     console.warn('用户选择添加的客户列表', list);
+    this.setState({
+      custLists: list,
+    });
   }
 
   // 验证用户资格
@@ -194,11 +220,12 @@ export default class CreateNewApprovalBoard extends PureComponent {
     const { cusId, custType } = customer;
     // 如果是批量佣金则传递businessType = 'BatchProcess'
     this.props.validateCust({
-      businessType: approvalType === '0201' ? 'BatchProcess' : null,
+      businessType: approvalType === '0202' ? 'BatchProcess' : null,
       custId: cusId,
       custType,
       newCommission,
       prodCode: targetProduct,
+      ignoreCatch: true,
     });
   }
 
@@ -211,8 +238,15 @@ export default class CreateNewApprovalBoard extends PureComponent {
       validataLoading,
       validateResult,
       customerList,
-      // otherRato,
+      otherRatios,
     } = this.props;
+    const newApproverList = approverList.map((item, index) => {
+      const key = `${new Date().getTime()}-${index}`;
+      return {
+        ...item,
+        key,
+      };
+    });
     const {
       approvalType,
       remark,
@@ -220,12 +254,13 @@ export default class CreateNewApprovalBoard extends PureComponent {
       approverName,
       approverId,
     } = this.state;
+    const needBtn = !this.judgeSubtypeNow('');
     return (
       <div>
         <CommonModal
           title="新建"
           modalKey={modalKey}
-          needBtn
+          needBtn={needBtn}
           maskClosable={false}
           size="large"
           visible={visible}
@@ -234,186 +269,102 @@ export default class CreateNewApprovalBoard extends PureComponent {
           showCancelBtn={false}
           onOk={this.handleSubmitApprovals}
         >
-          <div className={styles.newApprovalBox}>
+          <div className={styles.newApprovalBox} ref={this.newApprovalBoxRef}>
             <div className={styles.approvalBlock}>
               <InfoTitle head="基本信息" />
-              <div className={styles.lineInputWrap}>
-                <div className={styles.label}>
-                  <i className={styles.required}>*</i>
-                    子类型<span className={styles.colon}>:</span>
+              <CommissionLine label="子类型" labelWidth="90px" required needInputBox>
+                <Select
+                  name="approvalType"
+                  data={newSubTypes}
+                  value={approvalType}
+                  onChange={this.choiceApprovalSubType}
+                  getPopupContainer={this.getPopupContainer}
+                />
+              </CommissionLine>
+              {
+                this.judgeSubtypeNow('') ? null
+                : (
+                  <CommissionLine label="备注" labelWidth="90px">
+                    <TextArea
+                      placeholder="备注内容"
+                      value={remark}
+                      onChange={this.handleChangeRemark}
+                      style={{
+                        fontSize: '14px',
+                      }}
+                    />
+                  </CommissionLine>
+                )
+              }
+            </div>
+            {
+              !this.judgeSubtypeNow('0202') ? null
+              : (
+                <div className={styles.approvalBlock}>
+                  <InfoTitle head="佣金产品选择" />
+                  <CommissionLine label="目标股基佣金率" labelWidth="135px">
+                    <DigitalTrimmer
+                      getValue={this.changeTargetGJCommission}
+                    />
+                  </CommissionLine>
+                  <CommissionLine label="目标产品" labelWidth="135px" needInputBox={false}>
+                    <ProductsDropBox
+                      productList={targetProductList}
+                      onSelect={this.handleSelectProduct}
+                    />
+                  </CommissionLine>
                 </div>
-                <div className={`${styles.componentBox} ${styles.selectBox}`}>
-                  <Select
-                    name="approvalType"
-                    data={newSubTypes}
-                    value={approvalType}
-                    onChange={this.choiceApprovalSubType}
+              )
+            }
+            {
+              !this.judgeSubtypeNow('0202') ? null
+              : (
+                <div className={styles.approvalBlock}>
+                  <InfoTitle head="其他佣金费率" />
+                  <OtherCommissionSelectList
+                    otherRatios={otherRatios}
+                    onChange={this.changeOtherCommission}
                   />
                 </div>
-              </div>
-              <div className={styles.lineInputWrap}>
-                <div className={styles.label}>
-                    备注<span className={styles.colon}>:</span>
-                </div>
-                <div className={`${styles.componentBox} ${styles.textAreaBox}`}>
-                  <TextArea
-                    placeholder="备注内容"
-                    value={remark}
-                    onChange={this.handleChangeRemark}
-                    style={{
-                      fontSize: '14px',
-                    }}
+              )
+            }
+            {
+              !this.judgeSubtypeNow('0202') ? null
+              : (
+                <div className={styles.approvalBlock}>
+                  <InfoTitle head="客户" />
+                  <AddCustomer
+                    onSearch={this.handleCustomerListSearch}
+                    passList2Home={this.saveSelectedCustomerList}
+                    onValidate={this.handleCustomerValidate}
+                    validateResult={validateResult}
+                    validataLoading={validataLoading}
+                    searchList={customerList}
                   />
                 </div>
-              </div>
-            </div>
-            <div className={styles.approvalBlock}>
-              <InfoTitle head="佣金产品选择" />
-              <div className={styles.lineInputWrap}>
-                <div className={styles.label}>
-                    目标股基佣金率<span className={styles.colon}>:</span>
-                </div>
-                <div className={`${styles.componentBox} ${styles.selectBox}`}>
-                  <DigitalTrimmer
-                    getValue={this.changeTargetGJCommission}
-                  />
-                </div>
-                <span className={styles.fuhao}>‰</span>
-              </div>
-              <div className={styles.lineInputWrap}>
-                <div className={styles.label}>
-                    目标产品<span className={styles.colon}>:</span>
-                </div>
-                <div className={`${styles.componentBox}`}>
-                  <ProductsDropBox
-                    productList={targetProductList}
-                    onSelect={this.handleSelectProduct}
-                  />
-                </div>
-              </div>
-            </div>
-            <div className={styles.approvalBlock}>
-              <InfoTitle head="其他佣金费率" />
-              <div className={styles.otherComsBox}>
-                <OtherCommissionSelect
-                  label="B股"
-                  name="bgCommission"
-                  onChange={this.changeOtherCommission}
-                />
-                <OtherCommissionSelect
-                  label="债券"
-                  name="zqCommission"
-                  onChange={this.changeOtherCommission}
-                />
-                <OtherCommissionSelect
-                  label="回购"
-                  name="hCommission"
-                  onChange={this.changeOtherCommission}
-                />
-                <OtherCommissionSelect
-                  label="场内基金"
-                  name="oCommission"
-                  onChange={this.changeOtherCommission}
-                />
-                <OtherCommissionSelect
-                  label="权证"
-                  name="qCommission"
-                  onChange={this.changeOtherCommission}
-                />
-                <OtherCommissionSelect
-                  label="担保股基"
-                  name="stkCommission"
-                  onChange={this.changeOtherCommission}
-                />
-                <OtherCommissionSelect
-                  label="担保债券"
-                  name="dzCommission"
-                  onChange={this.changeOtherCommission}
-                />
-                <OtherCommissionSelect
-                  label="担保场内基金"
-                  name="doCommission"
-                  onChange={this.changeOtherCommission}
-                />
-              </div>
-              <div className={styles.otherComsBox}>
-                <OtherCommissionSelect
-                  label="担保权证"
-                  name="dqCommission"
-                  onChange={this.changeOtherCommission}
-                />
-                <OtherCommissionSelect
-                  label="信用股基"
-                  name="creditCommission"
-                  onChange={this.changeOtherCommission}
-                />
-                <OtherCommissionSelect
-                  label="信用场内基金"
-                  name="coCommission"
-                  onChange={this.changeOtherCommission}
-                />
-                <OtherCommissionSelect
-                  label="港股通（净佣金）"
-                  name="hkCommission"
-                  onChange={this.changeOtherCommission}
-                />
-                <OtherCommissionSelect
-                  label="个股期权"
-                  name="opCommission"
-                  onChange={this.changeOtherCommission}
-                />
-                <OtherCommissionSelect
-                  label="担保品大宗交易"
-                  name="ddCommission"
-                  onChange={this.changeOtherCommission}
-                />
-                <OtherCommissionSelect
-                  label="股转"
-                  name="stbCommission"
-                  onChange={this.changeOtherCommission}
-                />
-                <OtherCommissionSelect
-                  label="大宗交易"
-                  name="dCommission"
-                  onChange={this.changeOtherCommission}
-                />
-              </div>
-              <div className={styles.blockTip}>
-                <Icon type="exclamation-circle" /> 本功能不提供特殊资产校验的费率设置，如需调整请通过单客户佣金调整功能
-              </div>
-            </div>
-            <div className={styles.approvalBlock}>
-              <InfoTitle head="客户" />
-              <AddCustomer
-                onSearch={this.handleCustomerListSearch}
-                passList2Home={this.saveSelectedCustomerList}
-                onValidate={this.handleCustomerValidate}
-                validateResult={validateResult}
-                validataLoading={validataLoading}
-                searchList={customerList}
-              />
-            </div>
-            <div className={styles.approvalBlock}>
-              <InfoTitle head="审批人" />
-              <div className={styles.lineInputWrap}>
-                <div className={styles.label}>
-                  选择审批人<span className={styles.colon}>:</span>
-                </div>
-                <div className={`${styles.componentBox} ${styles.selectBox}`}>
-                  <div className={styles.checkApprover} onClick={this.openApproverBoard}>
-                    <div className={styles.searchIcon}>
-                      {`${approverName}(${approverId})`}
-                      <Icon type="search" />
+              )
+            }
+            {
+              !this.judgeSubtypeNow('0202') ? null
+              : (
+                <div className={styles.approvalBlock}>
+                  <InfoTitle head="审批人" />
+                  <CommissionLine label="选择审批人" labelWidth="110px">
+                    <div className={styles.checkApprover} onClick={this.openApproverBoard}>
+                      {approverName === '' ? '' : `${approverName}(${approverId})`}
+                      <div className={styles.searchIcon}>
+                        <Icon type="search" />
+                      </div>
                     </div>
-                  </div>
+                  </CommissionLine>
                 </div>
-              </div>
-            </div>
+              )
+            }
           </div>
         </CommonModal>
         <ChoiceApproverBoard
           visible={choiceApprover}
-          approverList={approverList}
+          approverList={newApproverList}
           onClose={this.closeChoiceApproverModal}
           onOk={this.handleApproverModalOK}
         />

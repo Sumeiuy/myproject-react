@@ -63,8 +63,8 @@ export default class ProductsDropdownBox extends PureComponent {
   render() {
     const { labelName, dataSource, width } = this.props;
     const options = dataSource.map(opt => (
-      <Option key={opt.key} value={opt.name}>
-        <span className={styles.prodValue}>{opt.name}</span>
+      <Option key={opt.cusId} value={opt.custName}>
+        <span className={styles.prodValue}>{opt.custName}</span>
       </Option>
     ));
     return (

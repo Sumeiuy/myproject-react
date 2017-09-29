@@ -20,7 +20,6 @@ import InfoItem from '../../components/common/infoItem';
 import SearchSelect from '../../components/common/Select/SearchSelect';
 import DigitalTrimmer from '../../components/common/DigitalTrimmer';
 import ApprovalRecordBoard from '../../components/commissionAdjustment/ApprovalRecordBoard';
-import OperationOfCustermorList from '../../components/commissionAdjustment/OperationOfCustermorList';
 
 import {
   confirmData,
@@ -103,8 +102,13 @@ export default class TemplModal extends PureComponent {
   }
 
   @autobind
-  handleChange(subscribelArray, unsubcribeArray, selected) {
-    console.log(subscribelArray, unsubcribeArray, selected);
+  handleTransferChange(updateArray) {
+    console.log(updateArray);
+  }
+
+  @autobind
+  handleCheckChange(selectedChildren, selectedAll) {
+    console.log(selectedChildren, selectedAll);
   }
 
   @autobind
@@ -240,20 +244,22 @@ export default class TemplModal extends PureComponent {
       secondData: unsubcribeData,
       firstColumns: productColumns,
       secondColumns: productColumns,
-      onChange: this.handleChange,
+      transferChange: this.handleTransferChange,
+      checkChange: this.handleCheckChange,
       onSearch: this.handleSearch,
       rowKey: 'key',
+      defaultCheckKey: 'default',
       showSearch: true,
       placeholder: '产品代码/产品名称',
       // pagination: false,
       pagination,
-      finishTips: ['产品组合等于目标佣金值'],
+      finishTips: ['产品组合等于目标佣金值', '产品组合等于目标佣金值'],
       warningTips: ['产品组合比目标佣金高 0.5%', '产品组合离目标佣金还差 0.63%'],
     };
 
 
     const uploadProps = {
-      attaches: [{
+      attachmentList: [{
         creator: '002332',
         attachId: '{6795CB98-B0CD-4CEC-8677-3B0B9298B209}',
         name: '新建文本文档 (3).txt',
@@ -336,6 +342,7 @@ export default class TemplModal extends PureComponent {
         <br />
         <Button onClick={this.openConfirmClick}>show confirm弹框</Button>
         <CommonUpload {...uploadProps} edit />
+        <CommonUpload {...uploadProps} />
         <Button onClick={this.showModal}>打开公用弹窗</Button>
         <ProcessConfirm {...confirmProps} />
         <br />
@@ -359,14 +366,6 @@ export default class TemplModal extends PureComponent {
           step={0.1}
           defaultValue={1.6}
           getValue={this.changeFunction}
-        />
-        <br />
-        <OperationOfCustermorList
-          onAddCustomer={this.changeFunction}
-          onChangeValue={this.changeValue}
-          labelName="产品"
-          dataSource={dataSource}
-          onDelectCustomer={this.changeFunction}
         />
       </div>
     );
