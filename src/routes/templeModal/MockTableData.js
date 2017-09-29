@@ -159,16 +159,19 @@ export const unsubcribeData = [{
     productName: '福享套餐111',
     productCode: 'TC02',
     type: '综合定价产品',
+    default: true,
   }, {
     key: '112',
     productName: '福享套餐112',
     productCode: 'TC02',
     type: '综合定价产品',
+    default: false,
   }, {
     key: '113',
     productName: '福享套餐113',
     productCode: 'TC02',
     type: '综合定价产品',
+    default: true,
   }],
 }, {
   key: '12',
@@ -185,16 +188,19 @@ export const unsubcribeData = [{
     productName: '福享套餐131',
     productCode: 'TC02',
     type: '综合定价产品',
+    default: true,
   }, {
     key: '132',
     productName: '福享套餐132',
     productCode: 'TC02',
     type: '综合定价产品',
+    default: true,
   }, {
     key: '133',
     productName: '福享套餐133',
     productCode: 'TC02',
     type: '综合定价产品',
+    default: false,
   }],
 }, {
   key: '14',
@@ -211,16 +217,19 @@ export const unsubcribeData = [{
     productName: '福享套餐151',
     productCode: 'TC02',
     type: '综合定价产品',
+    default: false,
   }, {
     key: '152',
     productName: '福享套餐152',
     productCode: 'TC02',
     type: '综合定价产品',
+    default: false,
   }, {
     key: '153',
     productName: '福享套餐113',
     productCode: 'TC02',
     type: '综合定价产品',
+    default: true,
   }],
 }, {
   key: '16',

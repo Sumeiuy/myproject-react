@@ -107,8 +107,8 @@ export default class TemplModal extends PureComponent {
   }
 
   @autobind
-  handleCheckChange(selected, selectedChildren, selectedAll) {
-    console.log(selected, selectedChildren, selectedAll);
+  handleCheckChange(selectedChildren, selectedAll) {
+    console.log(selectedChildren, selectedAll);
   }
 
   @autobind
@@ -248,6 +248,7 @@ export default class TemplModal extends PureComponent {
       checkChange: this.handleCheckChange,
       onSearch: this.handleSearch,
       rowKey: 'key',
+      defaultCheckKey: 'default',
       showSearch: true,
       placeholder: '产品代码/产品名称',
       // pagination: false,
