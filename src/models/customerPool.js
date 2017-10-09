@@ -661,7 +661,7 @@ export default {
         },
       };
     },
-      // custEmail
+    // custEmail
     getCustEmailSuccess(state, action) {
       const { payload: { resultData, custId } } = action;
       return {
@@ -799,6 +799,8 @@ export default {
         ...state,
         // success
         operateGroupResult: payload,
+        // 成功
+        cusGroupSaveResult: payload,
       };
     },
     // 删除分组成功

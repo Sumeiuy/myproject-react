@@ -157,7 +157,7 @@ export default class Home extends PureComponent {
       empInfo,
       empRespList,
       posOrgId: fspOrgId,
-      cycleSelect: initialCycleSelect || cycleSelect,
+      cycleSelect: cycleSelect || initialCycleSelect,
       begin,
       end,
     });

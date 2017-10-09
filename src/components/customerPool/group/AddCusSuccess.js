@@ -16,7 +16,14 @@ export default class AddCusSuccess extends PureComponent {
     closeTab: PropTypes.func.isRequired,
     groupId: PropTypes.string.isRequired,
     groupName: PropTypes.string.isRequired,
+    resetSuccess: PropTypes.func.isRequired,
   }
+
+  componentWillUnmount() {
+    const { resetSuccess } = this.props;
+    resetSuccess();
+  }
+
   /* 跳转到fsp的分组详情 */
   @autobind
   LinkToGroupDetail() {
@@ -42,6 +49,7 @@ export default class AddCusSuccess extends PureComponent {
     fspGlobal.openRctTab({ url, param });
     this.props.closeTab();
   }
+
   render() {
     const { groupName } = this.props;
     return (
