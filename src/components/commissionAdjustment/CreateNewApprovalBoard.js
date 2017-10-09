@@ -34,6 +34,13 @@ newSubTypes.unshift({
   value: '',
 });
 
+// 佣金调整的子类型常量
+const commadj = {
+  noSelected: '', // 用户未选择子类型的情况
+  single: '0201', // 单佣金调整
+  batch: '0202', // 批量佣金调整
+};
+
 export default class CreateNewApprovalBoard extends PureComponent {
   static propTypes = {
     modalKey: PropTypes.string.isRequired,
@@ -219,8 +226,9 @@ export default class CreateNewApprovalBoard extends PureComponent {
     const { approvalType, newCommission, targetProduct } = this.state;
     const { cusId, custType } = customer;
     // 如果是批量佣金则传递businessType = 'BatchProcess'
+    // '0202' ：表示批量佣金调整
     this.props.validateCust({
-      businessType: approvalType === '0202' ? 'BatchProcess' : null,
+      businessType: approvalType === commadj.batch ? 'BatchProcess' : null,
       custId: cusId,
       custType,
       newCommission,
@@ -282,7 +290,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
                 />
               </CommissionLine>
               {
-                this.judgeSubtypeNow('') ? null
+                this.judgeSubtypeNow(commadj.noSelected) ? null
                 : (
                   <CommissionLine label="备注" labelWidth="90px">
                     <TextArea
@@ -298,7 +306,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
               }
             </div>
             {
-              !this.judgeSubtypeNow('0202') ? null
+              !this.judgeSubtypeNow(commadj.batch) ? null
               : (
                 <div className={styles.approvalBlock}>
                   <InfoTitle head="佣金产品选择" />
@@ -317,7 +325,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
               )
             }
             {
-              !this.judgeSubtypeNow('0202') ? null
+              !this.judgeSubtypeNow(commadj.batch) ? null
               : (
                 <div className={styles.approvalBlock}>
                   <InfoTitle head="其他佣金费率" />
@@ -329,7 +337,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
               )
             }
             {
-              !this.judgeSubtypeNow('0202') ? null
+              !this.judgeSubtypeNow(commadj.batch) ? null
               : (
                 <div className={styles.approvalBlock}>
                   <InfoTitle head="客户" />
@@ -345,7 +353,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
               )
             }
             {
-              !this.judgeSubtypeNow('0202') ? null
+              !this.judgeSubtypeNow(commadj.batch) ? null
               : (
                 <div className={styles.approvalBlock}>
                   <InfoTitle head="审批人" />
