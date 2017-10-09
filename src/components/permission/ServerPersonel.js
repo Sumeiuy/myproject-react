@@ -125,7 +125,7 @@ export default class ServerPersonel extends PureComponent {
   @autobind
   removeServerPerson() { // 移除服务人员按钮
     const { removeSelectedValue } = this.state;
-    if (!_.isEmpty(this.state.removeSelectedValue)) {
+    if (!_.isEmpty(this.state.removeSelectedValue) && removeSelectedValue.isMain === 'false') {
       this.setState(prevState => ({
         serverInfo: prevState.serverInfo.filter(
           item => item.ptyMngId !== removeSelectedValue.ptyMngId,
