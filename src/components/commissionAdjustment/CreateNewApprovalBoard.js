@@ -232,12 +232,29 @@ export default class CreateNewApprovalBoard extends PureComponent {
     this.props.queryProductList({ prodCommision: v });
   }
 
+  @autobind
+  addCustomerRef(input) {
+    this.addCustomer = input;
+  }
   // 切换选择某个产品
   @autobind
   handleSelectProduct(targetProduct) {
+    const clearCust = this.addCustomer.clearCustList;
+    const { custLists } = this.state;
     this.setState({
       targetProduct,
     });
+    if (!_.isEmpty(custLists)) {
+      confirm({
+        title: '真的要重新选择目标产品么?',
+        content: '选择新的目标产品后，您之前所选择的客户会被清空哟！！！',
+        onOk() {
+          clearCust();
+        },
+        onCancel() {
+        },
+      });
+    }
   }
 
   // 选择其他佣金比率
@@ -419,6 +436,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
                     validateResult={validateResult}
                     validataLoading={validataLoading}
                     searchList={customerList}
+                    ref={this.addCustomerRef}
                   />
                 </div>
               )
