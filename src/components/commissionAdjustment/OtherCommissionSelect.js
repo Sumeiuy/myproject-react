@@ -14,6 +14,7 @@ import styles from './otherCommissionSelect.less';
 
 export default class OtherCommissionSelect extends PureComponent {
   static propTypes = {
+    reset: PropTypes.number.isRequired,
     label: PropTypes.string,
     options: PropTypes.array,
     name: PropTypes.string,
@@ -32,6 +33,16 @@ export default class OtherCommissionSelect extends PureComponent {
     this.state = {
       value: '',
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { reset: prevReset } = this.props;
+    const { reset: nextReset } = nextProps;
+    if (prevReset !== nextReset) {
+      this.setState({
+        value: '',
+      });
+    }
   }
 
   @autobind

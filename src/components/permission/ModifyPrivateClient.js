@@ -1,23 +1,18 @@
-/**
- * @file detail.js
- * @author shenxuxiang
- */
 import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { message } from 'antd';
-import _ from 'lodash';
-import classnames from 'classnames';
-import style from './detail.less';
-import MessageList from '../common/MessageList';
+import PropTypes from 'prop-types';
+// import { Modal, message } from 'antd';
+// import _ from 'lodash';
+import CommonModal from '../common/biz/CommonModal';
 import ServerPersonel from './ServerPersonel';
-import Approval from './Approval';
-import ApprovalRecord from './ApprovalRecord';
 import BaseInfoModify from './BaseInfoModify';
+import MessageList from '../common/MessageList';
+import ApprovalRecord from './ApprovalRecord';
 import UploadFile from './UploadFile';
-import { seibelConfig } from '../../config';
 import TableDialog from '../common/biz/TableDialog';
 import BottonGroup from './BottonGroup';
+import { seibelConfig } from '../../config';
+import style from './modifyPrivateClient.less';
 
 const subTypeList = seibelConfig.permission.subType;
 const statusList = seibelConfig.permission.status;
@@ -35,7 +30,7 @@ const columns = [{
   key: 'businessDepartment',
 }];
 
-export default class Detail extends PureComponent {
+export default class modifyPrivateClient extends PureComponent {
   static propTypes = {
     id: PropTypes.number,
     flowId: PropTypes.string,
@@ -57,13 +52,12 @@ export default class Detail extends PureComponent {
     bottonList: PropTypes.array.isRequired,
     getBottonList: PropTypes.func.isRequired,
     canApplyCustList: PropTypes.array.isRequired,
-    subTypeList: PropTypes.array.isRequired,
-    onEmitEvent: PropTypes.func.isRequired,
     getModifyCustApplication: PropTypes.func.isRequired,
     modifyCustApplication: PropTypes.object.isRequired,
     addListenModify: PropTypes.bool.isRequired,
+    subTypeList: PropTypes.array.isRequired,
+    onEmitClearModal: PropTypes.func.isRequired,
   }
-
   static defaultProps = {
     id: '',
     flowId: '',
@@ -80,13 +74,12 @@ export default class Detail extends PureComponent {
     attachInfoList: [],
     attachment: '',
   }
-
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
     this.state = {
-      // 状态： ready（可读） 、 modify （修改）
-      statusType: 'ready',
-      // 编号
+      // 模态框是否显示   默认状态下是隐藏的
+      isShowModal: true,
+      // 子类型
       subType: '',
       // 客户对象
       customer: {
@@ -99,14 +92,8 @@ export default class Detail extends PureComponent {
       remark: '',
       // 拟稿人
       empName: '',
-      // 提请时间
-      // createTime: '',
-      // 状态
-      // status: '',
       // 服务人员列表
       empList: [],
-      // 审批意见
-      suggestion: '',
       // 长传附件的id
       attachment: '',
       // 审批模态框是否展示
@@ -119,11 +106,11 @@ export default class Detail extends PureComponent {
       btnId: '',
       // 下一步操作id
       routeId: '',
-      // 下一审批人
+      // 下一审批人列表
       nextApproverList: [],
+      bottonList: [],
     };
   }
-
   componentWillMount() {
     const {
       subType,
@@ -142,110 +129,33 @@ export default class Detail extends PureComponent {
       remark,
       empList,
     });
+    // 获取下一步骤按钮列表
+    this.props.getBottonList({ flowId: this.props.flowId });
   }
-
   componentWillReceiveProps(nextProps) {
-    if (
-      this.props.addListenModify === true &&
-      nextProps.addListenModify === false &&
-      nextProps.modifyCustApplication.msg === 'success'
-    ) {
-      message.success('私密客户修改成功！！！');
+    if (nextProps.bottonList && nextProps.bottonList !== this.props.bottonList) {
+      this.setState({ bottonList: nextProps.bottonList });
     }
-  }
-
-  get getBaseInfoModifyDom() {
-    // 返回基本信息或者基本信息修改组件
-    let result;
-    const { subType, custName, custNumber, remark } = this.props;
-    const subTypeTxt = this.changeDisplay(subType, subTypeList);
-    const info = [
-      {
-        title: '客户',
-        content: `${custName}（${custNumber}）`,
-      }, {
-        title: '子类型',
-        content: subTypeTxt,
-      }, {
-        title: '备注',
-        content: remark,
-      },
-    ];
-
-    if (this.state.statusType === 'ready') {
-      result = (
-        <MessageList
-          head="基本信息"
-          baseInfo={info}
-        />
-      );
-    } else if (this.state.statusType === 'modify') {
-      result = (
-        <BaseInfoModify
-          head="基本信息"
-          subTypeTxt={subTypeTxt}
-          customer={`${this.state.customer.custName}（${this.state.customer.custNumber}）`}
-          remark={this.state.remark}
-          canApplyCustList={this.props.canApplyCustList}
-          onEmitEvent={this.updateValue}
-          subTypeList={this.props.subTypeList}
-        />
-      );
-    }
-    return result;
-  }
-
-  get draftInfo() {
-    // 返回拟稿信息组件
-    const { empName, createTime, status } = this.props;
-    const statusTxt = this.changeDisplay(status, statusList);
-    const info = [
-      {
-        title: '拟稿',
-        content: empName,
-      }, {
-        title: '提请时间',
-        content: createTime,
-      }, {
-        title: '状态',
-        content: statusTxt,
-      },
-    ];
-    return (
-      <MessageList
-        head="拟稿信息"
-        baseInfo={info}
-      />
-    );
-  }
-
-  get approvalDom() {
-    // 返回审批意见组件
-    let result;
-    if (this.state.statusType === 'ready') {
-      result = null;
-    } else if (this.state.statusType === 'modify') {
-      result = (
-        <Approval
-          head="审批"
-          type="suggestion"
-          textValue={this.state.suggestion}
-          onEmitEvent={this.updateValue}
-        />
-      );
-    }
-    return result;
   }
   @autobind
-  toChangeStatus() {
-    // this.setState({ statusType: 'modify' });
-    // 获取下一步骤按钮
-    // this.props.getBottonList({ flowId: this.props.flowId });
-    this.props.onEmitEvent();
-  }
+  selectNextApproverList() {
+    // 点击下一步按钮 选择下一审批人列表
 
+  }
   @autobind
-  updateValue(name, value) { // 更新本地数据
+  closeModal() {
+    // 关闭模态框
+    this.setState({ isShowModal: false });
+  }
+  @autobind
+  afterClose() {
+    // 模态框关闭之后执行的函数
+    this.props.onEmitClearModal('isShowModifyModal');
+  }
+  @autobind
+  updateValue(name, value) {
+    // 更新state
+    console.log(name, value);
     if (name === 'customer') {
       this.setState({ customer: {
         custName: value.custName,
@@ -253,16 +163,6 @@ export default class Detail extends PureComponent {
       } });
     }
     this.setState({ [name]: value });
-  }
-
-  // 后台返回的子类型字段、状态字段转化为对应的中文显示
-  @autobind
-  changeDisplay(st, options) {
-    if (st && !_.isEmpty(st)) {
-      const nowStatus = _.find(options, o => o.value === st) || {};
-      return nowStatus.label || '请选择';
-    }
-    return '请选择';
   }
   @autobind
   submitModifyInfo(item) {
@@ -276,7 +176,6 @@ export default class Detail extends PureComponent {
       nextGroupId: item.nextGroupId,
     });
   }
-
   @autobind
   searchNextApproverList() {
     // 按照给出的条件 搜索查询 下一审批人列表
@@ -286,7 +185,6 @@ export default class Detail extends PureComponent {
       flowId: this.props.flowId,
     });
   }
-
   @autobind
   confirmSubmit(value) {
     // 提交 修改私密客户申请
@@ -323,12 +221,47 @@ export default class Detail extends PureComponent {
     this.setState({ nextApproverModal: false });
     this.props.getModifyCustApplication(queryConfig);
   }
-
+  get baseInfoModifyDom() {
+    // 返回基本信息修改组件
+    let subTypeTxt = subTypeList.filter(item => item.value === this.state.subType);
+    subTypeTxt = subTypeTxt[0].label || '请选择';
+    return (
+      <BaseInfoModify
+        head="基本信息"
+        subTypeTxt={subTypeTxt}
+        customer={`${this.state.customer.custName}（${this.state.customer.custNumber}）`}
+        remark={this.state.remark}
+        canApplyCustList={this.props.canApplyCustList}
+        onEmitEvent={this.updateValue}
+        subTypeList={this.props.subTypeList}
+      />
+    );
+  }
+  get draftInfo() {
+    // 返回拟稿信息组件
+    const { empName, createTime, status } = this.props;
+    let statusTxt = statusList.filter(item => item.value === status);
+    statusTxt = statusTxt[0].label || '无';
+    const info = [
+      {
+        title: '拟稿',
+        content: empName,
+      }, {
+        title: '提请时间',
+        content: createTime,
+      }, {
+        title: '状态',
+        content: statusTxt,
+      },
+    ];
+    return (
+      <MessageList
+        head="拟稿信息"
+        baseInfo={info}
+      />
+    );
+  }
   render() {
-    const modifyBtnClass = classnames([style.dcHeaderModifyBtn,
-      { hide: this.props.status !== '04' || this.state.statusType === 'modify' },
-    ]);
-
     const searchProps = {
       visible: this.state.nextApproverModal,
       onOk: this.confirmSubmit,
@@ -341,47 +274,53 @@ export default class Detail extends PureComponent {
       modalKey: 'nextApproverModal',
       rowKey: 'ptyMngId',
     };
-
     return (
-      <div className={style.detailComponent}>
-        <div className={style.dcHeader}>
-          <span className={style.dcHaderNumb}>编号{this.props.id}</span>
-          <span
-            onClick={this.toChangeStatus}
-            className={modifyBtnClass}
-          >修改</span>
+      <CommonModal
+        title="私密客户管理修改"
+        visible={this.state.isShowModal}
+        onOk={this.selectNextApproverList}
+        okText="提交"
+        closeModal={this.closeModal}
+        size="large"
+        modalKey="myModal"
+        afterClose={this.afterClose}
+      >
+        <div className={style.modifyPrivateClient}>
+          <div className={style.dcHeader}>
+            <span className={style.dcHaderNumb}>编号{this.props.id}</span>
+          </div>
+          {this.baseInfoModifyDom}
+          {this.draftInfo}
+          <ServerPersonel
+            head="服务人员"
+            type="empList"
+            info={this.props.empList}
+            radioName="modifyRadio"
+            statusType="modify"
+            onEmitEvent={this.updateValue}
+            searchServerPersonList={this.props.searchServerPersonList}
+          />
+          <UploadFile
+            fileList={this.props.attachInfoList}
+            edit
+            type="attachment"
+            attachment={this.props.attachment || ''}
+            onEmitEvent={this.updateValue}
+          />
+          <ApprovalRecord
+            head="审批记录"
+            info={this.props.workflowHistoryBeans}
+            statusType="modify"
+          />
+          <BottonGroup
+            list={this.state.bottonList}
+            onEmitEvent={this.submitModifyInfo}
+          />
+          <TableDialog
+            {...searchProps}
+          />
         </div>
-        {this.getBaseInfoModifyDom}
-        {this.draftInfo}
-        <ServerPersonel
-          head="服务人员"
-          type="empList"
-          info={this.props.empList}
-          radioName="readyRadio"
-          statusType={this.state.statusType}
-          onEmitEvent={this.updateValue}
-          searchServerPersonList={this.props.searchServerPersonList}
-        />
-        <UploadFile
-          fileList={this.props.attachInfoList}
-          edit={this.state.statusType !== 'ready'}
-          type="attachment"
-          attachment={this.props.attachment || ''}
-          onEmitEvent={this.updateValue}
-        />
-        <ApprovalRecord
-          head="审批记录"
-          info={this.props.workflowHistoryBeans}
-          statusType={this.state.statusType}
-        />
-        <BottonGroup
-          list={this.props.bottonList}
-          onEmitEvent={this.submitModifyInfo}
-        />
-        <TableDialog
-          {...searchProps}
-        />
-      </div>
+      </CommonModal>
     );
   }
 }

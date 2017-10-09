@@ -42,6 +42,7 @@ export default class CreatePrivateClient extends PureComponent {
     empId: PropTypes.string,
     empName: PropTypes.string,
     orgId: PropTypes.string,
+    flowId: PropTypes.string,
   }
 
   static defaultProps = {
@@ -49,6 +50,7 @@ export default class CreatePrivateClient extends PureComponent {
     empName: '',
     type: '',
     orgId: '',
+    flowId: '',
   }
 
   constructor(props) {
@@ -76,15 +78,15 @@ export default class CreatePrivateClient extends PureComponent {
     };
   }
 
-  componentWillReceiveProps(newProps) {
-    if (newProps.hasServerPersonList !== this.props.hasServerPersonList) {
-      this.setState({ serverInfo: newProps.hasServerPersonList });
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.hasServerPersonList !== this.props.hasServerPersonList) {
+      this.setState({ serverInfo: nextProps.hasServerPersonList });
     }
 
     if (
       this.props.addListenCreate === true &&
-      newProps.addListenCreate === false &&
-      newProps.createCustApplication.msg === 'success'
+      nextProps.addListenCreate === false &&
+      nextProps.createCustApplication.msg === 'success'
     ) {
       this.setState({ isShowModal: false });
       message.success('私密客户创建成功！！！');
@@ -112,7 +114,7 @@ export default class CreatePrivateClient extends PureComponent {
 
   @autobind
   afterClose() {
-    this.props.onEmitClearModal();
+    this.props.onEmitClearModal('isShowCreateModal');
   }
 
   @autobind
@@ -154,7 +156,7 @@ export default class CreatePrivateClient extends PureComponent {
     const queryConfig = {
       subType,
       remark,
-      empInfoList: serverInfo,
+      empList: serverInfo,
       attachment,
       approvalIds: this.state.nextApproverList.concat(value.ptyMngId),
       empId,
@@ -173,6 +175,8 @@ export default class CreatePrivateClient extends PureComponent {
     // 按照给出的条件 搜索查询 下一审批人列表
     this.props.getNextApproverList({
       approverNum: 'single',
+      btnId: this.state.btnId,
+      flowId: this.props.flowId,
     });
   }
 

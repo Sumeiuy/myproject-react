@@ -114,6 +114,7 @@ export default class Pageheader extends PureComponent {
       customerList,
       custRange,
       replace,
+      page,
       location: { query: { subType, status } },
     } = this.props;
 
@@ -128,6 +129,7 @@ export default class Pageheader extends PureComponent {
             objId="custNumber"
             emitSelectItem={this.selectCustItem}
             emitToSearch={toSearchCust}
+            name={`${page}-custName`}
           />
         </div>
 
@@ -157,6 +159,7 @@ export default class Pageheader extends PureComponent {
             objId="empId"
             emitSelectItem={this.selectDrafterItem}
             emitToSearch={toSearchDrafter}
+            name={`${page}-empName`}
           />
         </div>
 
