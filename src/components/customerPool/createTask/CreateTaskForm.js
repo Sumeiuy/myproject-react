@@ -55,7 +55,7 @@ export default class CreateTaskForm extends PureComponent {
 
   componentWillMount() {
     const { location: { query } } = this.props;
-    console.warn('query--', query);
+    // console.warn('query--', query);
     this.handleInit(query);
   }
 
@@ -114,10 +114,10 @@ export default class CreateTaskForm extends PureComponent {
   // 自建任务提交
   handleSubmit = (e) => {
     e.preventDefault();
-    const { form, createTask, location } = this.props;
+    const { form, createTask } = this.props;
     const { custIdList, searchReq } = this.state;
-    console.log('startValue---', moment(this.state.startValue).format('YYYY-MM-DD'));
-    console.log(location);
+    // console.log('startValue---', moment(this.state.startValue).format('YYYY-MM-DD'));
+    // console.log(location);
     form.validateFields((err, values) => {
       if (!err) {
         values.closingDate = moment(values.closingDate).format('YYYY-MM-DD');// eslint-disable-line
@@ -171,8 +171,6 @@ export default class CreateTaskForm extends PureComponent {
       } else {
         this.setState({
           startFormat: `YYYY/MM/DD(${WEEK[e]})`,
-        }, () => {
-          console.log('startFormat---', this.state.startFormat);
         });
       }
     }
@@ -180,7 +178,7 @@ export default class CreateTaskForm extends PureComponent {
 
   // 从业务目标池客户：businessCustPool
   // 标签、搜索目标客户：searchCustPool
-  // 绩效目标客户 - 净新增客户：performanceIncrementCustPool
+  // 绩效目标客户 - 净新增客户： performanceCustPool
   // 绩效目标客户 - 业务开通：performanceBusinessOpenCustPool
 
   @autobind
@@ -230,7 +228,7 @@ export default class CreateTaskForm extends PureComponent {
         startTime = 1;
         endTime = 4;
         break;
-      case 'performanceIncrementCustPool':
+      case 'performanceCustPool':
         defaultMissionName = '新客户回访';
         defaultMissionType = 'newCustVisit';
         defaultExecutionType = 'Chance';
@@ -286,7 +284,7 @@ export default class CreateTaskForm extends PureComponent {
       firstUserName,
       count,
     } = this.state;
-    console.warn('dict---', dict);
+    // console.warn('dict---', dict);
     return (
       <div className={`${styles.taskInner}`}>
         <div className={styles.taskcontent}>

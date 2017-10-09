@@ -27,7 +27,7 @@ export default class QuickMenu extends PureComponent {
     onAddFollow: PropTypes.func.isRequired,
     currentFollowCustId: PropTypes.string.isRequired,
     isFollows: PropTypes.object.isRequired,
-    currentCustId: PropTypes.string.isRequired,
+    emailCustId: PropTypes.string.isRequired,
   }
 
   constructor(props) {
@@ -39,10 +39,11 @@ export default class QuickMenu extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { custEmail } = this.props;
+    console.log(custEmail !== nextProps.custEmail);
     if (custEmail !== nextProps.custEmail) {
       const change = {
         ...this.state.addressEmail,
-        ...{ [nextProps.currentCustId]: this.getEmail(nextProps.custEmail) },
+        ...{ [nextProps.emailCustId]: this.getEmail(nextProps.custEmail) },
       };
       this.setState({
         addressEmail: change,
@@ -50,10 +51,12 @@ export default class QuickMenu extends PureComponent {
     }
   }
   componentDidUpdate() {
-    const { currentCustId, listItem } = this.props;
+    const { emailCustId, listItem } = this.props;
     const { addressEmail } = this.state;
-    const email = addressEmail[currentCustId];
-    if (!_.isEmpty(email) && currentCustId === listItem.custId) {
+    const email = addressEmail[emailCustId];
+    // debugger;
+    console.log(!_.isEmpty(email) && emailCustId === listItem.custId);
+    if (!_.isEmpty(email) && emailCustId === listItem.custId) {
       const evt = new MouseEvent('click', { bubbles: false, cancelable: false, view: window });
       this.sendEmail.dispatchEvent(evt);
     }

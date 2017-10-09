@@ -34,7 +34,7 @@ const ENTER_TYPE = {
   association: 'searchCustPool',
   business: 'businessCustPool',
   custIndicator: 'performanceCustPool',
-  numOfCustOpened: 'performanceCustPool',
+  numOfCustOpened: 'performanceBusinessOpenCustPool',
 };
 
 const DEFAULT_SORT = { sortType: 'Aset', sortDirection: 'desc' }; // 默认排序方式
@@ -540,7 +540,7 @@ export default class CustomerList extends PureComponent {
   @autobind
   handleSizeChange(current, size) {
     const { replace, location: { query, pathname } } = this.props;
-    console.log('current, size:', current, size);
+    // console.log('current, size:', current, size);
     replace({
       pathname,
       query: {

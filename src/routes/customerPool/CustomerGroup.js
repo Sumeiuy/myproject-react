@@ -170,7 +170,6 @@ export default class CustomerGroup extends PureComponent {
   @autobind
   handlePageChange(page) {
     const { location: { query, pathname }, replace } = this.props;
-    console.warn(pathname);
    // 替换当前页码和分页条目
     console.log('page, pageSize:', page);
     replace({

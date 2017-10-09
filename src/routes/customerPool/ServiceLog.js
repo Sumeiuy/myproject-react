@@ -11,7 +11,7 @@ import { routerRedux } from 'dva/router';
 import _ from 'lodash';
 import moment from 'moment';
 import { autobind } from 'core-decorators';
-// import Collapse from '../../components/customerPool/list/CreateCollapse';
+import Collapse from '../../components/customerPool/list/CreateCollapse';
 import styles from './serviceLog.less';
 
 
@@ -63,7 +63,6 @@ export default class CreateTaskForm extends PureComponent {
   }
   componentWillMount() {
     this.handleData();
-    console.log(this.props.serviceLogData);
   }
   componentWillReceiveProps(nextProps) {
     console.log(nextProps);
@@ -84,9 +83,9 @@ export default class CreateTaskForm extends PureComponent {
         serveDateTo: end,
       },
     });
-    console.log(query);
   }
   @autobind
+  // 获取当前六个月之前的日期
   getSixDate() {
     const d = new Date();
     const month = (new Date()).getMonth() + 1;
@@ -104,6 +103,7 @@ export default class CreateTaskForm extends PureComponent {
     return sixDate;
   }
   @autobind
+  // 设置不可选日期
   disabledDate(startValue) {
     if (!startValue) {
       return false;
@@ -123,13 +123,13 @@ export default class CreateTaskForm extends PureComponent {
   handleData() {
     const { location: { query, pathname }, getServiceLog, replace } = this.props;
     console.log(query);
-    const params = {// 用本地死参数
+    const params = { // 模拟 query 穿过来的数据
       custId: '020014642',
       serveSource: '001206',
       serveType: '',
       serveDateFrom: this.getSixDate(),
       serveDateTo: today,
-      serveDateToPaged: '',
+      serveDateToPaged: today,
       pageSize: '',
     };
     replace({
@@ -138,7 +138,6 @@ export default class CreateTaskForm extends PureComponent {
     });
     console.log(query);
     getServiceLog(params);
-    this.getSixDate();
   }
   @autobind
   handleCreatOptions(data) {
@@ -149,15 +148,16 @@ export default class CreateTaskForm extends PureComponent {
     }
     return null;
   }
+  @autobind
+  taskTypesChange(value) {
+    console.log(value);
+  }
 
   render() {
-    // const { form } = this.props;
-    // const { getFieldDecorator } = form;
-    // const { serviceLogData } = this.props;
-    // const { custId } = this.state;
-    // const date = serviceLogData
-    const { dict } = this.props;
-    const { taskTypes, executeTypes } = dict;
+    const { dict, serviceLogData } = this.props;
+    const { taskTypes, serveType } = dict;
+    // serveSource 在字典中未找到，taskTypes 先代替展现
+    console.warn('dict--', dict);
     return (
       <div className={styles.serviceInner}>
         <div className={styles.servicecontent}>
@@ -174,20 +174,20 @@ export default class CreateTaskForm extends PureComponent {
               </Col>
               <Col span={4}>
                 {!_.isEmpty(taskTypes) ?
-                  <Select defaultValue="所有渠道">
+                  <Select defaultValue="所有渠道" onChange={this.taskTypesChange}>
                     {this.handleCreatOptions(taskTypes)}
                   </Select> :
-                  <Select>
+                  <Select defaultValue="暂无数据">
                     <Option key="null" value="0" >暂无数据</Option>
                   </Select>
                 }
               </Col>
               <Col span={4}>
-                {!_.isEmpty(executeTypes) ?
+                {!_.isEmpty(serveType) ?
                   <Select defaultValue="所有类型">
-                    {this.handleCreatOptions(executeTypes)}
+                    {this.handleCreatOptions(serveType)}
                   </Select> :
-                  <Select>
+                  <Select defaultValue="暂无数据">
                     <Option key="null" value="0" >暂无数据</Option>
                   </Select>
                 }
@@ -196,7 +196,10 @@ export default class CreateTaskForm extends PureComponent {
           </div>
           <Row>
             <Col span={20} offset={2} className={styles.serviceLog}>
-              <div>dddddd</div>
+              <Collapse
+                data={serviceLogData}
+              // executeTypes={executeTypes}
+              />
             </Col>
           </Row>
         </div>
