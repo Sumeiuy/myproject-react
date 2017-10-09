@@ -406,7 +406,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
                   <CommissionLine label="目标股基佣金率" labelWidth="135px">
                     <DigitalTrimmer
                       getValue={this.changeTargetGJCommission}
-                    />‰
+                    />
                   </CommissionLine>
                   <CommissionLine label="目标产品" labelWidth="135px" needInputBox={false}>
                     <ProductsDropBox
