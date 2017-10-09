@@ -58,7 +58,7 @@ export default class CreatePrivateClient extends PureComponent {
     this.state = {
       // 模态框是否显示   默认状态下是隐藏的
       isShowModal: true,
-      serverInfo: props.hasServerPersonList,
+      serverInfo: [],
       attachment: '',
       subType: '',
       customer: {},

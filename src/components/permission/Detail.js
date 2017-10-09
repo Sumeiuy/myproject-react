@@ -18,6 +18,7 @@ import UploadFile from './UploadFile';
 import { seibelConfig } from '../../config';
 import TableDialog from '../common/biz/TableDialog';
 import BottonGroup from './BottonGroup';
+import { getEmpId } from '../../utils/helper';
 
 const subTypeList = seibelConfig.permission.subType;
 const statusList = seibelConfig.permission.status;
@@ -45,6 +46,7 @@ export default class Detail extends PureComponent {
     custNumber: PropTypes.string,
     remark: PropTypes.string,
     empName: PropTypes.string,
+    empId: PropTypes.string,
     createTime: PropTypes.string,
     status: PropTypes.string,
     empList: PropTypes.array,
@@ -73,6 +75,7 @@ export default class Detail extends PureComponent {
     custNumber: '',
     remark: '',
     empName: '',
+    empId: '',
     createTime: '',
     status: '',
     empList: [],
@@ -319,14 +322,17 @@ export default class Detail extends PureComponent {
       empList: this.state.empList,
       // 附件上传后的id
       attachment: this.state.attachment,
+      // 拟稿人id
+      empId: this.props.empId,
     };
     this.setState({ nextApproverModal: false });
     this.props.getModifyCustApplication(queryConfig);
   }
 
   render() {
+    const loginUser = getEmpId();
     const modifyBtnClass = classnames([style.dcHeaderModifyBtn,
-      { hide: this.props.status !== '04' || this.state.statusType === 'modify' },
+      { hide: this.props.status !== '04' || this.state.statusType === 'modify' || this.props.empId === loginUser },
     ]);
 
     const searchProps = {
