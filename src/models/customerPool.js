@@ -80,6 +80,8 @@ export default {
     operateGroupResult: '',
     // 删除分组结果
     deleteGroupResult: '',
+    // 删除分组下客户结果
+    deleteCustomerFromGroupResult: {},
     serviceLogData: [], // 360服务记录查询数据
   },
   subscriptions: {},
@@ -363,16 +365,24 @@ export default {
     },
     // 新增，编辑客户分组
     * operateGroup({ payload }, { call, put }) {
+      const { groupId } = payload;
       const response = yield call(api.operateGroup, payload);
       const { resultData } = response;
+      let message;
       yield put({
         type: 'operateGroupSuccess',
         payload: resultData,
       });
+      if (groupId) {
+        // 更新
+        message = '更新分组成功';
+      } else {
+        message = '新增分组成功';
+      }
       yield put({
         type: 'toastM',
-        message: '更新分组成功',
-        delay: 1,
+        message,
+        duration: 2,
       });
       // 成功之后，更新分组信息
       yield put({
@@ -383,8 +393,8 @@ export default {
         },
       });
     },
-    * toastM({ message, delay }) {
-      yield toastM(message, delay);
+    * toastM({ message, duration }) {
+      yield toastM(message, duration);
     },
     // 删除客户分组
     * deleteGroup({ payload }, { call, put }) {
@@ -397,7 +407,7 @@ export default {
       yield put({
         type: 'toastM',
         message: '删除分组成功',
-        delay: 1,
+        duration: 2,
       });
       // 删除成功之后，更新分组信息
       yield put({
@@ -406,6 +416,20 @@ export default {
           pageNum: 1,
           pageSize: 10,
         },
+      });
+    },
+    * deleteCustomerFromGroup({ payload }, { call, put }) {
+      const response = yield call(api.deleteCustomerFromGroup, payload);
+      const { custId, groupId } = payload;
+      const { resultData } = response;
+      yield put({
+        type: 'deleteCustomerFromGroupSuccess',
+        payload: { resultData, custId, groupId },
+      });
+      yield put({
+        type: 'toastM',
+        message: '删除分组下客户成功',
+        duration: 2,
       });
     },
     // 360服务记录查询
@@ -784,6 +808,18 @@ export default {
         ...state,
         // success
         deleteGroupResult: payload,
+      };
+    },
+    // 删除分组下的客户成功
+    deleteCustomerFromGroupSuccess(state, action) {
+      const { payload: { resultData, custId, groupId } } = action;
+      return {
+        ...state,
+        // success
+        // 以groupId和custId来做主键
+        deleteCustomerFromGroupResult: {
+          [`${groupId}_${custId}`]: resultData,
+        },
       };
     },
     // 360服务记录查询成功
