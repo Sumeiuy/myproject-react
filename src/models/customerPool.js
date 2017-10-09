@@ -799,6 +799,8 @@ export default {
         ...state,
         // success
         operateGroupResult: payload,
+        // 成功
+        cusGroupSaveResult: payload,
       };
     },
     // 删除分组成功

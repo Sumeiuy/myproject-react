@@ -1,7 +1,7 @@
- /**
- * @file routes.js
- * @author maoquan(maoquan@htsc.com)
- */
+/**
+* @file routes.js
+* @author maoquan(maoquan@htsc.com)
+*/
 
 import React from 'react';
 import {
@@ -36,6 +36,7 @@ import Contract from './routes/contract/Home';
 import FullChannelServiceRecord from './routes/fullChannelServiceRecord/Home';
 import CustomerGroupManage from './routes/customerPool/CustomerGroupManage';
 import ServiceLog from './routes/customerPool/ServiceLog';
+import TaskFlow from './routes/customerPool/TaskFlow';
 
 
 function switchRouter() {
@@ -73,6 +74,7 @@ const routes = ({ history }) => (// eslint-disable-line
         <Route path="createTask" component={CreateTask} />
         <Route path="customerGroupManage" component={CustomerGroupManage} />
         <Route path="serviceLog" component={ServiceLog} />
+        <Route path="taskFlow" component={TaskFlow} />
       </Route>
       <Route path="contract">
         <IndexRoute component={Contract} />

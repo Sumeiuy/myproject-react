@@ -157,7 +157,7 @@ export default class Home extends PureComponent {
       empInfo,
       empRespList,
       posOrgId: fspOrgId,
-      cycleSelect: initialCycleSelect || cycleSelect,
+      cycleSelect: cycleSelect || initialCycleSelect,
       begin,
       end,
     });
@@ -566,10 +566,12 @@ export default class Home extends PureComponent {
           clearFun={this.clearHistoryList}
           searchHistoryVal={searchHistoryVal}
           saveSearchVal={this.handleSaveSearchVal}
+          location={location}
         />
         <div className={styles.content}>
           <ToBeDone
             push={push}
+            location={location}
             data={process}
             motTaskCountData={motTaskCount}
           />

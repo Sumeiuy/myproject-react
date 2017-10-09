@@ -34,6 +34,7 @@ export default class Search extends PureComponent {
     clearFun: PropTypes.func,
     searchHistoryVal: PropTypes.string,
     saveSearchVal: PropTypes.func,
+    location: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -140,7 +141,7 @@ export default class Search extends PureComponent {
       labelMapping,
       tagNumId,
       q } = obj;
-    const { push } = this.props;
+    const { push, location: { query } } = this.props;
     const firstUrl = '/customerPool/list';
     this.handleSaveSearchVal();
     if (document.querySelector(fspContainer.container)) {
@@ -157,6 +158,10 @@ export default class Search extends PureComponent {
       push({
         pathname: firstUrl,
         query: obj,
+        // 方便返回页面时，记住首页的query，在本地环境里
+        state: {
+          ...query,
+        },
       });
     }
   }
