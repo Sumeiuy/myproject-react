@@ -7,7 +7,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Input, Icon, Modal } from 'antd';
+import { Input, Icon, Modal, message } from 'antd';
 import _ from 'lodash';
 
 import CommonModal from '../common/biz/CommonModal';
@@ -20,6 +20,7 @@ import ProductsDropBox from './ProductsDropBox';
 import OtherCommissionSelectList from './OtherCommissionSelectList';
 import CommissionLine from './CommissionLine';
 import { seibelConfig } from '../../config';
+import { getEmpId } from '../../utils/helper';
 import styles from './createNewApprovalBoard.less';
 
 const confirm = Modal.confirm;
@@ -40,6 +41,26 @@ const commadj = {
   single: '0201', // 单佣金调整
   batch: '0202', // 批量佣金调整
 };
+
+// 其他佣金率的参数名称数组
+const otherComs = [
+  'zqCommission',
+  'stkCommission',
+  'creditCommission',
+  'ddCommission',
+  'hCommission',
+  'dzCommission',
+  'coCommission',
+  'stbCommission',
+  'oCommission',
+  'doCommission',
+  'hkCommission',
+  'bgCommission',
+  'qCommission',
+  'dqCommission',
+  'opCommission',
+  'dCommission',
+];
 
 export default class CreateNewApprovalBoard extends PureComponent {
   static propTypes = {
@@ -72,15 +93,15 @@ export default class CreateNewApprovalBoard extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      approvalType: '',
+      approvalType: commadj.batch,
       remark: '',
       targetProduct: '',
-      bgCommission: '',
       choiceApprover: false,
       newCommission: '1.6',
       approverName: '',
       approverId: '',
       custLists: [],
+      otherComReset: new Date().getTime(), // 用来判断是否重置
     };
   }
 
@@ -95,15 +116,34 @@ export default class CreateNewApprovalBoard extends PureComponent {
     return this.state.approvalType === assert;
   }
 
+  // 关闭弹出框后，清空页面数据
+  @autobind
+  clearApprovalBoard() {
+    this.setState({
+      approvalType: commadj.batch,
+      remark: '',
+      targetProduct: '',
+      choiceApprover: false,
+      newCommission: '1.6',
+      approverName: '',
+      approverId: '',
+      custLists: [],
+      otherComReset: new Date().getTime(),
+    });
+  }
+
   // 关闭弹出层后的提示框信息
   @autobind
   closeModalConfirm(key) {
     // 关闭我的模态框
     const closeFunc = this.props.onClose;
+    const clear = this.clearApprovalBoard;
     confirm({
       title: '真的要关闭此弹框嘛?',
       content: '亲~~弹框关闭以后，您所填写的信息是不会保存的哟！！！',
       onOk() {
+        // 清空数据
+        clear();
         closeFunc(key);
       },
       onCancel() {
@@ -121,8 +161,40 @@ export default class CreateNewApprovalBoard extends PureComponent {
   // 提交
   @autobind
   handleSubmitApprovals(key) {
+    const {
+      newCommission,
+      targetProduct,
+      remark,
+      approverId,
+      custLists,
+    } = this.state;
+    // 判断什么时候能够提交
+    if (_.isEmpty(targetProduct)) {
+      message.error('请选择目标产品');
+      return;
+    }
+    if (_.isEmpty(custLists)) {
+      message.error('请添加客户');
+      return;
+    }
+    if (_.isEmpty(approverId)) {
+      message.error('审批人员不能为空');
+      return;
+    }
+    // 挑选出用户选择的其他佣金率
+    const otherCommissions = _.pick(this.state, [otherComs]);
+    const empId = getEmpId();
+    const submitParams = {
+      custLists,
+      newCommsion: newCommission,
+      prodInfo: { prdCode: targetProduct },
+      aprovaluser: approverId,
+      remark,
+      loginUser: empId,
+      ...otherCommissions,
+    };
     // 提交
-    this.props.onBatchSubmit();
+    this.props.onBatchSubmit(submitParams);
     this.props.onClose(key);
   }
 
@@ -134,13 +206,13 @@ export default class CreateNewApprovalBoard extends PureComponent {
   // 选择申请子类型
   @autobind
   choiceApprovalSubType(name, key) {
+    this.setState({
+      [name]: key,
+    });
     // 如果切换批量佣金需要，先查一把1.6下目标产品
     if (name === 'approvalType') {
       this.props.queryProductList({ prodCommision: 1.6 });
     }
-    this.setState({
-      [name]: key,
-    });
   }
 
   // 填写备注
@@ -171,8 +243,6 @@ export default class CreateNewApprovalBoard extends PureComponent {
   // 选择其他佣金比率
   @autobind
   changeOtherCommission(name, value) {
-    console.warn('changeOtherCommission>name', name);
-    console.warn('changeOtherCommission>value', value);
     this.setState({
       [name]: value,
     });
@@ -214,7 +284,6 @@ export default class CreateNewApprovalBoard extends PureComponent {
   // 将用户选择添加的客户列表返回到弹出层，以便提交试用
   @autobind
   saveSelectedCustomerList(list) {
-    console.warn('用户选择添加的客户列表', list);
     this.setState({
       custLists: list,
     });
@@ -261,6 +330,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       choiceApprover,
       approverName,
       approverId,
+      otherComReset,
     } = this.state;
     const needBtn = !this.judgeSubtypeNow('');
     return (
@@ -330,6 +400,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
                 <div className={styles.approvalBlock}>
                   <InfoTitle head="其他佣金费率" />
                   <OtherCommissionSelectList
+                    reset={otherComReset}
                     otherRatios={otherRatios}
                     onChange={this.changeOtherCommission}
                   />
