@@ -102,6 +102,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       approverId: '',
       custLists: [],
       otherComReset: new Date().getTime(), // 用来判断是否重置
+      custReset: new Date().getTime(),
     };
   }
 
@@ -232,12 +233,34 @@ export default class CreateNewApprovalBoard extends PureComponent {
     this.props.queryProductList({ prodCommision: v });
   }
 
+  // 选择新目标产品后，清空选中客户
+  @autobind
+  clearCustList() {
+    this.setState({
+      custReset: new Date().getTime(),
+    });
+  }
+
   // 切换选择某个产品
   @autobind
   handleSelectProduct(targetProduct) {
+    const clearCust = this.clearCustList;
+    const { custLists } = this.state;
     this.setState({
       targetProduct,
     });
+    if(!(_.isEmpty(custLists))){
+      confirm({
+        title: '真的要重新选择目标产品么?',
+        content: '选择新的目标产品后，您之前所选择的客户会被清空哟！！！',
+        onOk() {
+          clearCust();
+        },
+        onCancel() {
+  
+        },
+      });
+    }
   }
 
   // 选择其他佣金比率
@@ -331,6 +354,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       approverName,
       approverId,
       otherComReset,
+      custReset,
     } = this.state;
     const needBtn = !this.judgeSubtypeNow('');
     return (
@@ -383,7 +407,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
                   <CommissionLine label="目标股基佣金率" labelWidth="135px">
                     <DigitalTrimmer
                       getValue={this.changeTargetGJCommission}
-                    />
+                    />‰
                   </CommissionLine>
                   <CommissionLine label="目标产品" labelWidth="135px" needInputBox={false}>
                     <ProductsDropBox
@@ -419,6 +443,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
                     validateResult={validateResult}
                     validataLoading={validataLoading}
                     searchList={customerList}
+                    custReset={custReset}
                   />
                 </div>
               )

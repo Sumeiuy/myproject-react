@@ -11,7 +11,7 @@ import styles from './searchSelect.less';
 
 const Option = AutoComplete.Option;
 
-export default class ProductsDropdownBox extends PureComponent {
+export default class SearchSelect extends PureComponent {
 
   static propTypes = {
     labelName: PropTypes.string.isRequired,
@@ -30,6 +30,7 @@ export default class ProductsDropdownBox extends PureComponent {
     this.state = {
       selectItem: {},
       inputValue: '',
+      proValue: '',
     };
   }
 
@@ -37,6 +38,7 @@ export default class ProductsDropdownBox extends PureComponent {
   onChange(value) {
     this.setState({
       inputValue: value,
+      proValue: value,
     });
   }
 
@@ -52,6 +54,9 @@ export default class ProductsDropdownBox extends PureComponent {
   @autobind
   handleAddBtnClick() {
     this.props.onAddCustomer(this.state.selectItem);
+    this.setState({
+      proValue: '',
+    });
   }
 
   @autobind
@@ -62,6 +67,7 @@ export default class ProductsDropdownBox extends PureComponent {
 
   render() {
     const { labelName, dataSource, width } = this.props;
+    const { proValue } = this.state;
     const options = dataSource.map(opt => (
       <Option key={opt.cusId} value={opt.custName}>
         <span className={styles.prodValue}>{opt.custName}</span>
@@ -80,6 +86,7 @@ export default class ProductsDropdownBox extends PureComponent {
           dataSource={options}
           optionLabelProp="value"
           onChange={this.onChange}
+          value={proValue}
           onSelect={this.setSelectValue}
         >
           <Input
