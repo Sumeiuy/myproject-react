@@ -307,6 +307,7 @@ export default class CommissionHome extends PureComponent {
   @autobind
   searchCustList(keyword) {
     this.props.searchCustList({
+      type: pageType,
       keyword,
     });
   }
