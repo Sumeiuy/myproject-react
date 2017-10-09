@@ -18,7 +18,6 @@ export default class AddCustomer extends PureComponent {
   static propTypes = {
     onSearch: PropTypes.func.isRequired,
     searchList: PropTypes.array.isRequired,
-    custReset: PropTypes.number.isRequired,
     passList2Home: PropTypes.func.isRequired,
     onValidate: PropTypes.func.isRequired,
     validateResult: PropTypes.string,
@@ -43,12 +42,10 @@ export default class AddCustomer extends PureComponent {
   componentWillReceiveProps(nextProps) {
     const { validataLoading: prevL } = this.props;
     const { validataLoading: nextL, validateResult } = nextProps;
-    const { custReset: prevReset } = this.props;
-    const { custReset: nextReset } = nextProps;
     if (!nextL && prevL) {
       // 验证完毕
       // 添加客户
-      if (validateResult !== 'OK') {
+      if (validateResult === 'OK') {
         this.addCustomer(this.state.customer);
         this.setState({
           customer: null,
@@ -62,11 +59,14 @@ export default class AddCustomer extends PureComponent {
         });
       }
     }
-    if (prevReset !== nextReset) {
-      this.setState({
-        customerList: [],
-      });
-    }
+  }
+
+  @autobind
+  clearCustList() {
+    this.setState({
+      customerList: [],
+    });
+    this.passData2Home([]);
   }
 
   // 选出需要传递给接口的值
