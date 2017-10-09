@@ -2,7 +2,7 @@
  * @Author: zhuyanwen
  * @Date: 2017-10-09 13:25:51
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-09 13:27:55
+ * @Last Modified time: 2017-10-09 14:10:53
  * @description: 客户分组功能
  */
 
@@ -38,6 +38,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   goBack: routerRedux.goBack,
   go: routerRedux.go,
+  push: routerRedux.push,
   replace: routerRedux.replace,
   getCustomerGroupList: query => ({
     type: 'customerPool/customerGroupList',
@@ -115,6 +116,7 @@ export default class CustomerGroup extends PureComponent {
     resultgroupId: PropTypes.string,
     goBack: PropTypes.func.isRequired,
     go: PropTypes.func.isRequired,
+    push: PropTypes.func.isRequired,
     // 操作分组结果
     operateGroupResult: PropTypes.string.isRequired,
     // 操作分组（编辑、删除）
@@ -354,7 +356,7 @@ export default class CustomerGroup extends PureComponent {
   }
 
   render() {
-    const { goBack, go, cusgroupList, cusgroupPage, location: { query } } = this.props;
+    const { goBack, go, push, cusgroupList, cusgroupPage, location: { query } } = this.props;
     const { groupName } = this.state;
     const count = query.count;
     return (
@@ -421,6 +423,7 @@ export default class CustomerGroup extends PureComponent {
             groupName={groupName} groupId={this.state.cusgroupId}
             resetSuccess={this.resetSuccess}
             go={go}
+            push={push}
           />
         </div>
       </div>

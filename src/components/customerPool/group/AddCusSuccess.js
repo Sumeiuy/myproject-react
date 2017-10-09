@@ -19,6 +19,7 @@ export default class AddCusSuccess extends PureComponent {
     groupName: PropTypes.string.isRequired,
     resetSuccess: PropTypes.func.isRequired,
     go: PropTypes.func.isRequired,
+    push: PropTypes.func.isRequired,
   }
 
   componentWillUnmount() {
@@ -26,18 +27,13 @@ export default class AddCusSuccess extends PureComponent {
     resetSuccess();
   }
 
-  /* 跳转到fsp的分组详情 */
+  /* 跳转到客户分组管理列表 */
   @autobind
-  LinkToGroupDetail() {
-    const url = `/custgroup/manage/viewGroupInfo?groupId=${this.props.groupId}`;
-    const param = {
-      id: 'FSP_ST_TAB_CUSTCENTER_CUSTGROUP_VIEW',
-      title: '查看客户分组信息',
-      forceRefresh: true,
-      closable: true,
-    };
-    fspGlobal.openFspTab({ url, param });
-    this.props.closeTab();
+  LinkToGroupManage() {
+    const { push } = this.props;
+    push({
+      pathname: '/customerPool/customerGroupManage',
+    });
   }
 
   // 返回首页
@@ -53,12 +49,12 @@ export default class AddCusSuccess extends PureComponent {
       fspGlobal.openRctTab({ url, param });
       closeTab();
     } else {
+      // 返回两个层级
       go(-2);
     }
   }
 
   render() {
-    const { groupName } = this.props;
     return (
       <div className={styles.addCusSuccess}>
         <div className={styles.text}>添加分组</div>
@@ -67,9 +63,10 @@ export default class AddCusSuccess extends PureComponent {
           <div className={styles.img} />
           <div className={styles.text1}>保存成功，已完成分组添加!</div>
           <div className={styles.text2}>你可以在
-            <span onClick={this.LinkToGroupDetail} className={styles.linkTo}>{groupName}
+            <span onClick={this.LinkToGroupManage} className={styles.linkTo}>
+              客户分组
             </span>
-            查看该分组下所有客户
+            查看该分组
           </div>
           <div className={styles.successBtn}>
             <Button onClick={this.goToIndex} type="primary">返回首页</Button>

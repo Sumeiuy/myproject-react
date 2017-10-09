@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-09-27 17:43:57
+ * @Last Modified time: 2017-10-09 13:59:19
  */
 
 import React, { PureComponent } from 'react';
@@ -60,20 +60,20 @@ export default class GroupTable extends PureComponent {
     });
   }
 
-  /**
-   * 构造page size
-   * @param {*} totalRecordNum 总条目
-   * @param {*} curPageSize 当前分页数
-   */
-  renderPageSizeOptions(totalRecordNum, curPageSize) {
-    const pageSizeOption = [];
-    const maxPage = Math.ceil(totalRecordNum / Number(curPageSize));
-    for (let i = 1; i <= maxPage; i++) {
-      pageSizeOption.push((curPageSize * i).toString());
-    }
+  // /**
+  //  * 构造page size
+  //  * @param {*} totalRecordNum 总条目
+  //  * @param {*} curPageSize 当前分页数
+  //  */
+  // renderPageSizeOptions(totalRecordNum, curPageSize) {
+  //   const pageSizeOption = [];
+  //   const maxPage = Math.ceil(totalRecordNum / Number(curPageSize));
+  //   for (let i = 1; i <= maxPage; i++) {
+  //     pageSizeOption.push((curPageSize * i).toString());
+  //   }
 
-    return pageSizeOption;
-  }
+  //   return pageSizeOption;
+  // }
 
   /**
    * 构造分页器
@@ -99,7 +99,6 @@ export default class GroupTable extends PureComponent {
        </span>,
       showSizeChanger: true,
       onShowSizeChange: onSizeChange,
-      pageSizeOptions: this.renderPageSizeOptions(totalRecordNum, curPageSize),
     };
 
     return paginationOptions;
