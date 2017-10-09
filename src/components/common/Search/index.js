@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-21 13:39:44
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-09-27 15:51:49
+ * @Last Modified time: 2017-09-29 14:55:19
  * 通用搜索组件，包含搜索历史记录，搜索热词联想，添加按钮
  */
 
@@ -192,6 +192,8 @@ export default class Search extends PureComponent {
     }
     // 回车键
     if (e && e.keyCode === 13) {
+      // 阻止默认事件，譬如输入框在form中，回车会触发form submit
+      e.preventDefault();
       const searchVal = e.target.value;
       if (_.isEmpty(_.trim(searchVal))) {
         message.info('搜索内容不能为空', 1);
