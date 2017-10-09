@@ -45,7 +45,7 @@ export default class AddCustomer extends PureComponent {
     const { validataLoading: nextL, validateResult } = nextProps;
     const { custReset: prevReset } = this.props;
     const { custReset: nextReset } = nextProps;
-   if (!nextL && prevL) {
+    if (!nextL && prevL) {
       // 验证完毕
       // 添加客户
       if (validateResult !== 'OK') {

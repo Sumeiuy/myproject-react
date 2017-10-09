@@ -249,7 +249,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     this.setState({
       targetProduct,
     });
-    if(!(_.isEmpty(custLists))){
+    if (!(_.isEmpty(custLists))) {
       confirm({
         title: '真的要重新选择目标产品么?',
         content: '选择新的目标产品后，您之前所选择的客户会被清空哟！！！',
@@ -257,7 +257,6 @@ export default class CreateNewApprovalBoard extends PureComponent {
           clearCust();
         },
         onCancel() {
-  
         },
       });
     }
