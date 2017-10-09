@@ -6,6 +6,7 @@
 import React, { PureComponent, PropTypes } from 'react';
 import { withRouter } from 'dva/router';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
 import Button from '../../common/Button';
 import { fspContainer } from '../../../config';
 import styles from './addCusSuccess.less';
@@ -17,14 +18,14 @@ export default class AddCusSuccess extends PureComponent {
     closeTab: PropTypes.func.isRequired,
     groupId: PropTypes.string.isRequired,
     groupName: PropTypes.string.isRequired,
-    resetSuccess: PropTypes.func.isRequired,
-    go: PropTypes.func.isRequired,
+    onDestroy: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
+    state: PropTypes.object.isRequired,
   }
 
   componentWillUnmount() {
-    const { resetSuccess } = this.props;
-    resetSuccess();
+    const { onDestroy } = this.props;
+    onDestroy();
   }
 
   /* 跳转到客户分组管理列表 */
@@ -39,18 +40,21 @@ export default class AddCusSuccess extends PureComponent {
   // 返回首页
   @autobind
   goToIndex() {
-    const { go, closeTab } = this.props;
+    const { closeTab, push, state } = this.props;
     const url = '/customerPool';
     const param = {
       id: 'tab-home',
       title: '首页',
     };
+
     if (document.querySelector(fspContainer.container)) {
       fspGlobal.openRctTab({ url, param });
       closeTab();
     } else {
-      // 返回两个层级
-      go(-2);
+      push({
+        pathname: url,
+        query: _.omit(state, 'noScrollTop'),
+      });
     }
   }
 

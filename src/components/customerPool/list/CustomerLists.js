@@ -253,7 +253,7 @@ export default class CustomerLists extends PureComponent {
   // 单选列表中的数据
   @autobind
   handleSingleSelect(id, name) {
-    const { replace, location: { query, pathname } } = this.props;
+    const { replace, location: { query, pathname, state } } = this.props;
     const str = `${id}.${name}`;
     if (!query.selectedIds) {
       replace({
@@ -264,6 +264,7 @@ export default class CustomerLists extends PureComponent {
           selectAll: false,
         },
         state: {
+          ...state,
           noScrollTop: true,
         },
       });
@@ -278,6 +279,7 @@ export default class CustomerLists extends PureComponent {
             selectAll: false,
           },
           state: {
+            ...state,
             noScrollTop: true,
           },
         });
@@ -290,6 +292,7 @@ export default class CustomerLists extends PureComponent {
             selectAll: false,
           },
           state: {
+            ...state,
             noScrollTop: true,
           },
         });
@@ -301,7 +304,7 @@ export default class CustomerLists extends PureComponent {
   @autobind
   selectAll(e) {
     const status = e.target.checked;
-    const { replace, location: { query, pathname } } = this.props;
+    const { replace, location: { query, pathname, state } } = this.props;
     replace({
       pathname,
       query: {
@@ -310,6 +313,7 @@ export default class CustomerLists extends PureComponent {
         selectAll: status,
       },
       state: {
+        ...state,
         noScrollTop: true,
       },
     });
@@ -323,24 +327,24 @@ export default class CustomerLists extends PureComponent {
       condition,
       entertype,
       location: {
+        state,
         query: {
           selectedIds,
-        selectAll,
+          selectAll,
         },
       },
     } = this.props;
     if (selectedIds) {
       const selectedIdsArr = selectedIds.split(',');
-      this.openByIds(url, selectedIdsArr, selectedIdsArr.length, title, id, entertype);
+      this.openByIds(url, selectedIdsArr, selectedIdsArr.length, title, id, entertype, state);
     } else if (selectAll) {
-      this.openByAllSelect(url, condition, page.total, title, id, entertype);
+      this.openByAllSelect(url, condition, page.total, title, id, entertype, state);
     }
   }
 
   // 单个点击选中时跳转到新建分组或者发起任务
   @autobind
-  openByIds(url, ids, count, title, id, entertype) {
-    // debugger
+  openByIds(url, ids, count, title, id, entertype, state) {
     const tmpArr = [];
     _(ids).forEach((item) => {
       tmpArr.push(item.split('.')[0]);
@@ -367,13 +371,14 @@ export default class CustomerLists extends PureComponent {
       this.props.push({
         pathname: url,
         query: obj,
+        state,
       });
     }
   }
 
   // 全选按钮选中时跳转到新建分组或者发起任务
   @autobind
-  openByAllSelect(url, condition, count, title, id, entertype) {
+  openByAllSelect(url, condition, count, title, id, entertype, state) {
     // 全选时取整个列表的第一个数据的name属性值传给后续页面
     const name = encodeURIComponent(this.props.custList[0].name);
     const condt = encodeURIComponent(JSON.stringify(condition));
@@ -397,6 +402,7 @@ export default class CustomerLists extends PureComponent {
       this.props.push({
         pathname: url,
         query: obj,
+        state,
       });
     }
   }

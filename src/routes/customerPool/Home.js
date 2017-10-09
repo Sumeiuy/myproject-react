@@ -566,10 +566,12 @@ export default class Home extends PureComponent {
           clearFun={this.clearHistoryList}
           searchHistoryVal={searchHistoryVal}
           saveSearchVal={this.handleSaveSearchVal}
+          location={location}
         />
         <div className={styles.content}>
           <ToBeDone
             push={push}
+            location={location}
             data={process}
             motTaskCountData={motTaskCount}
           />

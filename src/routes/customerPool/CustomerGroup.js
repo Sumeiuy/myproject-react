@@ -2,7 +2,7 @@
  * @Author: zhuyanwen
  * @Date: 2017-10-09 13:25:51
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-09 14:10:53
+ * @Last Modified time: 2017-10-09 15:19:58
  * @description: 客户分组功能
  */
 
@@ -115,7 +115,6 @@ export default class CustomerGroup extends PureComponent {
     cusGroupSaveResult: PropTypes.string,
     resultgroupId: PropTypes.string,
     goBack: PropTypes.func.isRequired,
-    go: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
     // 操作分组结果
     operateGroupResult: PropTypes.string.isRequired,
@@ -124,9 +123,10 @@ export default class CustomerGroup extends PureComponent {
   }
   constructor(props) {
     super(props);
+    /* 初始化classname,首次渲染显示分组tab,隐藏分组成功组件 */
     this.state = {
-      controlGroupPane: '',
-      controlCusSuccess: '',
+      showGroupPanel: true,
+      showOperateGroupSuccess: false,
       cusgroupId: '',
       groupName: '',
     };
@@ -135,35 +135,18 @@ export default class CustomerGroup extends PureComponent {
   componentWillMount() {
     /* 获取客户分组列表 */
     this.getCustomerGroup(this.props);
-    /* 初始化classname,首次渲染显示分组tab,隐藏分组成功组件 */
-    this.state.controlGroupPane = classnames({
-      [styles.customerGroup]: true,
-      [styles.hiddencustomerGroup]: false,
-    });
-    this.state.controlCusSuccess = classnames({
-      [styles.showsaveSuccessTab]: false,
-      [styles.hiddensaveSuccessTab]: true,
-    });
   }
 
   componentWillReceiveProps(nextProps) {
     // 根据分组结果，重新渲染组件
     const { cusGroupSaveResult, resultgroupId, location: { query } } = nextProps;
     const { location: { query: preQuery } } = this.props;
-    const controlGroupPane = classnames({
-      [styles.customerGroup]: cusGroupSaveResult !== 'success',
-      [styles.hiddencustomerGroup]: cusGroupSaveResult === 'success',
-    });
-    const controlCusSuccess = classnames({
-      [styles.showsaveSuccessTab]: cusGroupSaveResult === 'success',
-      [styles.hiddensaveSuccessTab]: cusGroupSaveResult !== 'success',
-    });
     this.setState({
-      controlGroupPane,
-      controlCusSuccess,
+      showGroupPanel: cusGroupSaveResult !== 'success',
+      showOperateGroupSuccess: cusGroupSaveResult === 'success',
       cusgroupId: resultgroupId,
     });
-    console.log('keyWord----', query.keyWord);
+
     if (query !== preQuery) {
       this.getCustomerGroup({ ...nextProps });
     }
@@ -255,13 +238,9 @@ export default class CustomerGroup extends PureComponent {
    * 重置成功提示
    */
   @autobind
-  resetSuccess() {
-    const controlCusSuccess = classnames({
-      [styles.showsaveSuccessTab]: false,
-      [styles.hiddensaveSuccessTab]: true,
-    });
+  clearSuccessFlag() {
     this.setState({
-      controlCusSuccess,
+      showOperateGroupSuccess: false,
     });
   }
 
@@ -356,12 +335,19 @@ export default class CustomerGroup extends PureComponent {
   }
 
   render() {
-    const { goBack, go, push, cusgroupList, cusgroupPage, location: { query } } = this.props;
-    const { groupName } = this.state;
+    const { goBack, push, cusgroupList, cusgroupPage, location: { query, state } } = this.props;
+    const { groupName, showGroupPanel, showOperateGroupSuccess } = this.state;
     const count = query.count;
     return (
       <div>
-        <div className={this.state.controlGroupPane}>
+        <div
+          className={
+            classnames({
+              [styles.customerGroup]: showGroupPanel,
+              [styles.hiddencustomerGroup]: !showGroupPanel,
+            })
+          }
+        >
           <div className={styles.text}>添加分组</div>
           <hr />
           <Tabs defaultActiveKey="addhasGroup" type="card">
@@ -417,13 +403,20 @@ export default class CustomerGroup extends PureComponent {
             </TabPane>
           </Tabs>
         </div>
-        <div className={this.state.controlCusSuccess} >
+        <div
+          className={
+            classnames({
+              [styles.showsaveSuccessTab]: showOperateGroupSuccess,
+              [styles.hiddensaveSuccessTab]: !showOperateGroupSuccess,
+            })
+          }
+        >
           <AddCusSuccess
             closeTab={this.closeTab}
             groupName={groupName} groupId={this.state.cusgroupId}
-            resetSuccess={this.resetSuccess}
-            go={go}
+            onDestroy={this.clearSuccessFlag}
             push={push}
+            state={state}
           />
         </div>
       </div>

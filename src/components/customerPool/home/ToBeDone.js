@@ -16,6 +16,7 @@ export default class PerformanceIndicators extends PureComponent {
   static propTypes = {
     data: PropTypes.object,
     push: PropTypes.func.isRequired,
+    location: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -44,7 +45,8 @@ export default class PerformanceIndicators extends PureComponent {
   // 跳转到满足业务办理客户列表
   @autobind
   linkToBusiness() {
-    const url = '/customerPool/list?source=business';
+    const { location: { query } } = this.props;
+    const url = '/customerPool/list';
     const param = {
       closable: true,
       forceRefresh: true,
@@ -53,9 +55,18 @@ export default class PerformanceIndicators extends PureComponent {
       title: '客户列表',
     };
     if (document.querySelector(fspContainer.container)) {
-      fspGlobal.openRctTab({ url, param });
+      fspGlobal.openRctTab({ url: `${url}?source=business`, param });
     } else {
-      this.props.push(url);
+      this.props.push({
+        pathname: url,
+        query: {
+          source: 'business',
+        },
+        // 方便返回页面时，记住首页的query，在本地环境里
+        state: {
+          ...query,
+        },
+      });
     }
   }
 
