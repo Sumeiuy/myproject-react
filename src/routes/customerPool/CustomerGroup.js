@@ -1,8 +1,11 @@
-/**
- *@file customerPool/customerGroup
- * 客户分组功能
- *@author zhuyanwen
-* */
+/*
+ * @Author: zhuyanwen
+ * @Date: 2017-10-09 13:25:51
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2017-10-09 13:27:55
+ * @description: 客户分组功能
+ */
+
 import React, { PureComponent, PropTypes } from 'react';
 import { withRouter, routerRedux } from 'dva/router';
 import { autobind } from 'core-decorators';
@@ -34,6 +37,7 @@ const mapStateToProps = state => ({
 });
 const mapDispatchToProps = {
   goBack: routerRedux.goBack,
+  go: routerRedux.go,
   replace: routerRedux.replace,
   getCustomerGroupList: query => ({
     type: 'customerPool/customerGroupList',
@@ -110,6 +114,7 @@ export default class CustomerGroup extends PureComponent {
     cusGroupSaveResult: PropTypes.string,
     resultgroupId: PropTypes.string,
     goBack: PropTypes.func.isRequired,
+    go: PropTypes.func.isRequired,
     // 操作分组结果
     operateGroupResult: PropTypes.string.isRequired,
     // 操作分组（编辑、删除）
@@ -223,12 +228,15 @@ export default class CustomerGroup extends PureComponent {
     });
   }
 
+  /**
+   * 解析query
+   */
   @autobind
   parseQuery() {
     const { location: { query: { ids, condition } } } = this.props;
-
     let custCondition = {};
     let includeCustIdList = [];
+
     if (!_.isEmpty(ids)) {
       includeCustIdList = decodeURIComponent(ids).split(',');
     } else {
@@ -241,6 +249,9 @@ export default class CustomerGroup extends PureComponent {
     };
   }
 
+  /**
+   * 重置成功提示
+   */
   @autobind
   resetSuccess() {
     const controlCusSuccess = classnames({
@@ -343,7 +354,7 @@ export default class CustomerGroup extends PureComponent {
   }
 
   render() {
-    const { goBack, cusgroupList, cusgroupPage, location: { query } } = this.props;
+    const { goBack, go, cusgroupList, cusgroupPage, location: { query } } = this.props;
     const { groupName } = this.state;
     const count = query.count;
     return (
@@ -409,6 +420,7 @@ export default class CustomerGroup extends PureComponent {
             closeTab={this.closeTab}
             groupName={groupName} groupId={this.state.cusgroupId}
             resetSuccess={this.resetSuccess}
+            go={go}
           />
         </div>
       </div>

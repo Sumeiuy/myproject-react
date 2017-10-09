@@ -7,6 +7,7 @@ import React, { PureComponent, PropTypes } from 'react';
 import { withRouter } from 'dva/router';
 import { autobind } from 'core-decorators';
 import Button from '../../common/Button';
+import { fspContainer } from '../../../config';
 import styles from './addCusSuccess.less';
 import { fspGlobal } from '../../../utils';
 
@@ -17,6 +18,7 @@ export default class AddCusSuccess extends PureComponent {
     groupId: PropTypes.string.isRequired,
     groupName: PropTypes.string.isRequired,
     resetSuccess: PropTypes.func.isRequired,
+    go: PropTypes.func.isRequired,
   }
 
   componentWillUnmount() {
@@ -41,13 +43,18 @@ export default class AddCusSuccess extends PureComponent {
   // 返回首页
   @autobind
   goToIndex() {
+    const { go, closeTab } = this.props;
     const url = '/customerPool';
     const param = {
       id: 'tab-home',
       title: '首页',
     };
-    fspGlobal.openRctTab({ url, param });
-    this.props.closeTab();
+    if (document.querySelector(fspContainer.container)) {
+      fspGlobal.openRctTab({ url, param });
+      closeTab();
+    } else {
+      go(-2);
+    }
   }
 
   render() {
