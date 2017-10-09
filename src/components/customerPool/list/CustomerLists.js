@@ -24,6 +24,7 @@ let modalKeyCount = 0;
 
 /*
  * 格式化钱款数据和单位
+ * 入参： 190000000 转化成 { value: '1.90', unit: '亿元' }
  */
 const formatAsset = (num) => {
   // 数字常量
