@@ -12,6 +12,8 @@ import style from './style.less';
 
 export default class DropdownSelect extends PureComponent {
   static propTypes = {
+    // 组件名称
+    name: PropTypes.string,
     // 查询框中的placeholder
     placeholder: PropTypes.string,
     // 所选取的值
@@ -31,6 +33,7 @@ export default class DropdownSelect extends PureComponent {
   }
 
   static defaultProps = {
+    name: 'customerDrop',
     placeholder: '',
     value: '',
     searchList: [],
@@ -64,7 +67,7 @@ export default class DropdownSelect extends PureComponent {
   }
 
   get getSearchListDom() {
-    const { searchList, emitSelectItem, showObjKey, objId } = this.props;
+    const { searchList, emitSelectItem, showObjKey, objId, name } = this.props;
     const result = searchList.map((item, index) => {
       const callBack = () => {
         emitSelectItem(item);
@@ -73,7 +76,7 @@ export default class DropdownSelect extends PureComponent {
           value: `${item[showObjKey]}（${item[objId]}）`,
         });
       };
-      const idx = !item[objId] ? `selectList-${index}` : item[objId];
+      const idx = !item[objId] ? `selectList-${index}` : `${name}-${item[objId]}`;
       return (
         <li
           key={idx}
