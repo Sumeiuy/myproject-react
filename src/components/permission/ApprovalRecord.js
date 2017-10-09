@@ -8,14 +8,12 @@ import style from './approvalrecord.less';
 export default function ApprovalRecord(props) {
   const info = props.info || [];
   const len = info.length;
-  console.warn('info', info);
   const historyList = len ? info : [];
   const currentStepObj = len ? info[0] : [];
   const mapElementList = () => {
     if (!historyList || _.isEmpty(historyList)) {
       return null;
     }
-    console.warn('historyList', historyList);
     return historyList.map((item, index) => {
       const mapElementClass = classnames([style.approvalRecordList, {
         [style.approvalRecordListEven]: index % 2 === 0,
