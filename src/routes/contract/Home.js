@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-10 14:40:04
+ * @Last Modified time: 2017-10-10 15:18:57
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
@@ -267,19 +267,22 @@ export default class Contract extends PureComponent {
     this.props.getContractNumList({ subType: data.childType, custId: data.client.cusId });
   }
 
-  // // 查询客户
-  // @autobind
-  // handleSearchCutList(value) {
-  //   const { getCutList } = this.props;
-  //   getCutList({
-  //     keyword: value,
-  //   });
-  // }
+  // 查询客户
+  @autobind
+  handleSearchCutList(value) {
+    const { getCanApplyCustList } = this.props;
+    getCanApplyCustList({
+      keyword: value,
+    });
+  }
 
   // 查询合约详情
   @autobind
   handleSearchContractDetail(data) {
-    this.props.getBaseInfo({ id: data.value });
+    this.props.getBaseInfo({
+      id: data.value,
+      flowId: data.flowId,
+    });
   }
 
   // 显示修改合作合约弹框
@@ -382,14 +385,7 @@ export default class Contract extends PureComponent {
   // 头部新建按钮点击事件处理程序
   @autobind
   handleCreateBtnClick() {
-    this.openCreateApprovalBoard();
-  }
-  // 打开新建申请的弹出框
-  @autobind
-  openCreateApprovalBoard() {
-    this.setState({
-      createApprovalBoard: true,
-    });
+    this.showModal('addFormModal');
   }
 
   @autobind
@@ -427,9 +423,7 @@ export default class Contract extends PureComponent {
       baseInfo,
       attachmentList,
       flowHistory,
-      getCanApplyCustList,
       canApplyCustList,
-      getContractNumList,
       contractNumList,
     } = this.props;
     const {
@@ -479,21 +473,24 @@ export default class Contract extends PureComponent {
     );
     // 新建表单props
     const addFormProps = {
-      canApplyCustList,
-      getCanApplyCustList,
-      contractNumList,
-      getContractNumList,
-      saveModalData: this.saveModalData,
-      custList: canApplyCustList,
-      contractDetail: this.props.baseInfo,
-      onSearchCutList: this.handleSearchCutList,
-      onChangeForm: this.handleChangeContractForm,
+      // 合约编号
       onSearchContractNum: this.handleSearchContractNum,
+      contractNumList,
+      // 可申请客户列表
+      onSearchCutList: this.handleSearchCutList,
+      custList: canApplyCustList,
+      // 基本信息
       onSearchContractDetail: this.handleSearchContractDetail,
+      contractDetail: this.props.baseInfo,
+      // 表单变化
+      onChangeForm: this.handleChangeContractForm,
     };
     // 修改表单props
     const contractDetail = {
-      baseInfo,
+      baseInfo: {
+        ...baseInfo,
+        business2,
+      },
       attachmentList,
       flowHistory,
     };

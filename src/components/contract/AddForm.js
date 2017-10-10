@@ -2,8 +2,8 @@
 * @Description: 合作合约新建 页面
 * @Author: XuWenKang
 * @Date:   2017-09-21 15:17:50
-* @Last Modified by:   XuWenKang
-* @Last Modified time: 2017-09-27 18:07:16
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2017-10-10 14:58:31
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -14,34 +14,16 @@ import BaseInfoAdd from './BaseInfoAdd';
 import UploadFile from './UploadFile';
 import InfoTitle from '../common/InfoTitle';
 import CommonTable from '../common/biz/CommonTable';
-
+import { seibelConfig } from '../../config';
 import styles from './addForm.less';
 
+
+// 合约条款的表头
+const { contract: { titleList } } = seibelConfig;
 const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
 const BOOL_TRUE = true;
-const titleList = [
-  {
-    dataIndex: 'termsName',
-    key: 'termsName',
-    title: '条款名称',
-  },
-  {
-    dataIndex: 'paraName',
-    key: 'paraName',
-    title: '明细参数',
-  },
-  {
-    dataIndex: 'paraVal',
-    key: 'paraVal',
-    title: '值',
-  },
-  {
-    dataIndex: 'divName',
-    key: 'divName',
-    title: '合作部门',
-  },
-];
+
 export default class AddForm extends PureComponent {
   static propTypes = {
     // 客户列表
