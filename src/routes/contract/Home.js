@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by:   XuWenKang
- * @Last Modified time: 2017-09-27 17:50:35
+ * @Last Modified time: 2017-10-09 17:15:44
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
@@ -230,7 +230,7 @@ export default class Contract extends PureComponent {
   // 查询合约详情
   @autobind
   handleSearchContractDetail(data) {
-    this.props.getContractDetail({ id: data.value });
+    this.props.getBaseInfo({ id: data.value });
   }
 
   // 显示修改合作合约弹框
@@ -417,7 +417,7 @@ export default class Contract extends PureComponent {
     // 新建表单props
     const addFormProps = {
       custList: this.props.custList,
-      contractDetail: this.props.contractDetail,
+      contractDetail: this.props.baseInfo,
       onSearchCutList: this.handleSearchCutList,
       contractNumList: this.props.contractNumList,
       onChangeForm: this.handleChangeContractForm,

@@ -8,19 +8,8 @@ import style from './approvalrecord.less';
 export default function ApprovalRecord(props) {
   const info = props.info || [];
   const len = info.length;
-  let historyList;
-  let currentStepObj;
-  if (len === 1) {
-    historyList = [];
-    [currentStepObj] = info;
-  } else if (len > 1) {
-    info.reverse();
-    [currentStepObj, ...historyList] = info;
-    historyList.reverse();
-  } else {
-    historyList = [];
-    currentStepObj = [];
-  }
+  const historyList = len ? info : [];
+  const currentStepObj = len ? info[0] : [];
   const mapElementList = () => {
     if (!historyList || _.isEmpty(historyList)) {
       return null;
@@ -30,7 +19,6 @@ export default function ApprovalRecord(props) {
         [style.approvalRecordListEven]: index % 2 === 0,
         [style.approvalRecordListOdd]: index % 2 !== 0,
       }]);
-      const main = item.isOk ? '同意' : '驳回';
       return (
         <div
           className={mapElementClass}
@@ -40,7 +28,7 @@ export default function ApprovalRecord(props) {
             审批人： {item.handler}于{item.handleTime}，步骤名称：{item.stepName}
           </p>
           <p className={style.arlistContentTwo}>
-            {main}：{item.comment}
+            {item.comment}
           </p>
         </div>
       );
@@ -51,7 +39,7 @@ export default function ApprovalRecord(props) {
       { hide: props.statusType !== 'ready' },
     ]);
     return !currentStepObj || _.isEmpty(currentStepObj) ? (
-      <p className={style.notFoundApprovalList}>没有找到相关审批记录</p>
+      <p className={style.notFoundApprovalList}>暂无相关审批记录</p>
       ) : (
         <div
           className={stepElementClass}
