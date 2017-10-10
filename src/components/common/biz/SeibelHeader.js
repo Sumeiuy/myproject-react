@@ -6,6 +6,7 @@
 
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
 import Select from '../Select';
 import CustRange from '../../pageCommon/SeibelCustRange';
 import DropDownSelect from '../dropdownSelect';
@@ -117,8 +118,13 @@ export default class Pageheader extends PureComponent {
       page,
       location: { query: { subType, status } },
     } = this.props;
-    const customerAllList = [{ custName: '全部', custNumber: '' }, ...customerList];
-    const drafterAllList = [{ empName: '全部', empId: '' }, ...drafterList];
+
+    const customerAllList = !_.isEmpty(customerList) ?
+    [{ custName: '全部', custNumber: '' }, ...customerList] : customerList;
+
+    const drafterAllList = !_.isEmpty(drafterList) ?
+    [{ empName: '全部', empId: '' }, ...drafterList] : customerList;
+
     return (
       <div className={styles.pageCommonHeader}>
         <div className={styles.dropDownSelectBox}>

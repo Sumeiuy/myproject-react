@@ -78,18 +78,13 @@ export default class DropdownSelect extends PureComponent {
       };
       const idx = !item[objId] ? `selectList-${index}` : `${name}-${item[objId]}`;
       return (
-        item[objId] ?
-          <li
-            key={idx}
-            className={style.ddsDrapMenuConItem}
-            onClick={callBack}
-          >{`${item[showObjKey]}（${item[objId]}）`}</li>
-        :
-          <li
-            key={idx}
-            className={style.ddsDrapMenuConItem}
-            onClick={callBack}
-          >{`${item[showObjKey]}`}</li>
+        <li
+          key={idx}
+          className={style.ddsDrapMenuConItem}
+          onClick={callBack}
+        >
+          {item[objId] ? `${item[showObjKey]}（${item[objId]}）` : `${item[showObjKey]}`}
+        </li>
       );
     });
     return result;
