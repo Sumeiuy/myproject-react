@@ -16,5 +16,9 @@ export default function contract(api) {
     saveContractData: query => api.post('/groovynoauth/fsp/contract/cooper/saveContract', query),
     // 查询合作合约编号
     getContractNumList: query => api.post('/groovynoauth/fsp/contract/cooper/queryContractId', query),
+    // 查询合作部门
+    getCooperDeparmentList: query => api.post('/groovynoauth/fsp/contract/cooper/queryDeparment', query),
+    // 查询合约条款名称列表
+    getClauseNameList: query => api.post('/groovynoauth/fsp/contract/cooper/termNameList', query),
   };
 }

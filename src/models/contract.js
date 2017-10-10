@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-20 15:13:30
  * @Last Modified by:   XuWenKang
- * @Last Modified time: 2017-09-27 14:58:02
+ * @Last Modified time: 2017-10-10 18:08:58
  */
 import { contract as api, seibel as seibelApi } from '../api';
 
@@ -23,6 +23,8 @@ export default {
     contractNumList: EMPTY_LIST, // 合作合约编号列表
     baseInfo: EMPTY_OBJECT,
     attachmentList: EMPTY_LIST, // 附件信息
+    cooperDeparment: EMPTY_LIST, // 合作部门
+    clauseNameList: EMPTY_LIST, // 条款名称列表
   },
   reducers: {
     // 获取详情
@@ -79,6 +81,35 @@ export default {
         contractNumList: resultData,
       };
     },
+    getClauseNameListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_LIST } } = action;
+      console.log('resultData', resultData);
+      // if(resultData.length) {
+      //   resultData.forEach((v) => {
+      //     v.label = v.termVal;
+      //     v.value = v.termName;
+      //     v.show = true;
+      //     if (v.param.length) {
+      //       v.param.forEach((sv) => {
+      //         sv.label = v.val;
+      //         sv.value = sv.name;
+      //         sv.show = true;
+      //       });
+      //     }
+      //   });
+      // }
+      return {
+        ...state,
+        clauseNameList: resultData,
+      };
+    },
+    getCooperDeparmentListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_LIST } } = action;
+      return {
+        ...state,
+        cooperDeparment: resultData,
+      };
+    },
   },
   effects: {
     // 获取详情
@@ -131,6 +162,20 @@ export default {
       const response = yield call(api.getContractNumList, payload);
       yield put({
         type: 'getContractNumListSuccess',
+        payload: response,
+      });
+    },
+    * getClauseNameList({ payload }, { call, put }) {
+      const response = yield call(api.getClauseNameList, payload);
+      yield put({
+        type: 'getClauseNameListSuccess',
+        payload: response,
+      });
+    },
+    * getCooperDeparmentList({ payload }, { call, put }) {
+      const response = yield call(api.getCooperDeparmentList, payload);
+      yield put({
+        type: 'getCooperDeparmentListSuccess',
         payload: response,
       });
     },

@@ -3,7 +3,7 @@
 * @Author: XuWenKang
 * @Date:   2017-09-19 14:47:08
 * @Last Modified by:   XuWenKang
-* @Last Modified time: 2017-10-09 16:10:21
+* @Last Modified time: 2017-10-10 11:07:05
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -25,42 +25,42 @@ import styles from './editForm.less';
 // const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
 const BOOL_TRUE = true;
-const clauseNameList = [
-  {
-    label: '条款名称1',
-    value: '1',
-    show: true,
-    valueList: [
-      {
-        label: '明细1',
-        value: '1',
-        show: true,
-      },
-      {
-        label: '明细2',
-        value: '2',
-        show: true,
-      },
-    ],
-  },
-  {
-    label: '条款名称2',
-    value: '2',
-    show: true,
-    valueList: [
-      {
-        label: '明细1',
-        value: '1',
-        show: true,
-      },
-      {
-        label: '明细2',
-        value: '2',
-        show: true,
-      },
-    ],
-  },
-];
+// const clauseNameList = [
+//   {
+//     label: '条款名称1',
+//     value: '1',
+//     show: true,
+//     valueList: [
+//       {
+//         label: '明细1',
+//         value: '1',
+//         show: true,
+//       },
+//       {
+//         label: '明细2',
+//         value: '2',
+//         show: true,
+//       },
+//     ],
+//   },
+//   {
+//     label: '条款名称2',
+//     value: '2',
+//     show: true,
+//     valueList: [
+//       {
+//         label: '明细1',
+//         value: '1',
+//         show: true,
+//       },
+//       {
+//         label: '明细2',
+//         value: '2',
+//         show: true,
+//       },
+//     ],
+//   },
+// ];
 const titleList = [
   {
     dataIndex: 'termsName',
@@ -102,6 +102,11 @@ export default class EditForm extends PureComponent {
     operationType: PropTypes.string.isRequired,
     // 合约详情
     contractDetail: PropTypes.object.isRequired,
+    // 条款名称
+    clauseNameList: PropTypes.array.isRequired,
+    // 合作部门
+    cooperDeparment: PropTypes.array.isRequired,
+    searchCooperDeparment: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -201,15 +206,16 @@ export default class EditForm extends PureComponent {
     this.handleCloseModal();
   }
 
-  // 根据关键词搜索合作部门
-  @autobind
-  handleSearchDepartment(keyword) {
-    console.log(keyword);
-  }
-
 
   render() {
-    const { custList, contractDetail, operationType } = this.props;
+    const {
+      custList,
+      contractDetail,
+      operationType,
+      clauseNameList,
+      cooperDeparment,
+      searchCooperDeparment,
+    } = this.props;
     const { formData, showAddClauseModal } = this.state;
     const buttonProps = {
       type: 'primary',
@@ -263,8 +269,8 @@ export default class EditForm extends PureComponent {
           onConfirm={this.handleAddClause}
           onCloseModal={this.handleCloseModal}
           clauseNameList={clauseNameList}
-          departmentList={EMPTY_ARRAY}
-          searchDepartment={this.handleSearchDepartment}
+          departmentList={cooperDeparment}
+          searchDepartment={searchCooperDeparment}
         />
       </div>
     );
