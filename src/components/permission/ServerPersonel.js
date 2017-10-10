@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import { message } from 'antd';
 import _ from 'lodash';
 import InfoTitle from '../common/InfoTitle';
 import TableList from '../common/TableList';
@@ -125,7 +126,9 @@ export default class ServerPersonel extends PureComponent {
   @autobind
   removeServerPerson() { // 移除服务人员按钮
     const { removeSelectedValue } = this.state;
-    if (!_.isEmpty(this.state.removeSelectedValue) && removeSelectedValue.isMain === 'false') {
+    if (removeSelectedValue.isMain === 'true') {
+      message.error('主服务经理不能删除')
+    } else if (!_.isEmpty(this.state.removeSelectedValue) ) {
       this.setState(prevState => ({
         serverInfo: prevState.serverInfo.filter(
           item => item.ptyMngId !== removeSelectedValue.ptyMngId,
