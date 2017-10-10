@@ -283,7 +283,6 @@ export default class CustomerGroup extends PureComponent {
           enterType,
         },
       });
-      groupId = '';
     } else if (!onOff) {
       message.error('请选择分组', 2, () => {
         onOff = false;

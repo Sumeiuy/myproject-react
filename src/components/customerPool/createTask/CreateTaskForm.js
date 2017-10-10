@@ -212,7 +212,7 @@ export default class CreateTaskForm extends PureComponent {
         firstUserName += '等';
       }
     }
-     switch (entertype) {
+    switch (entertype) {
       case 'businessCustPool':
         defaultMissionName = '提醒客户办理已满足条件的业务';
         defaultMissionType = 'businessRecommend';
@@ -270,7 +270,6 @@ export default class CreateTaskForm extends PureComponent {
     this.handleCreatAddDate(endTime, 'end');
   }
   @autobind
-    /* 关闭当前页 */
   closeTab() {
     // fspGlobal.closeRctTabById('RCT_FSP_TASK');
     fspGlobal.closeRctTabById('RCT_FSP_CUSTOMER_LIST');
@@ -291,7 +290,6 @@ export default class CreateTaskForm extends PureComponent {
       firstUserName,
       count,
     } = this.state;
-    // console.warn('dict---', dict);
     return (
       <div className={`${styles.taskInner}`}>
         <div className={styles.taskcontent}>
