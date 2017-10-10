@@ -115,7 +115,7 @@ export default class CommonUpload extends PureComponent {
         statusText: '上传完成',
         fileList: data.attaches,
         attachment: data.attachment,
-      }, uploadAttachment(this.state.attachment));
+      }, uploadAttachment(data.attachment));
     } else if (info.file.status === 'error') {
       this.setState({
         status: 'exception ',

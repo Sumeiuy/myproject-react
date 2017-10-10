@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-19 09:37:42
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-09-29 21:40:02
+ * @Last Modified time: 2017-10-10 13:49:17
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -26,8 +26,9 @@ export default class Detail extends PureComponent {
     baseInfo: PropTypes.object,
     attachmentList: PropTypes.array,
     uploadAttachment: PropTypes.func,
-    createEditModal: PropTypes.func,
+    showEditModal: PropTypes.func,
     flowHistory: PropTypes.array,
+    operationType: PropTypes.string,
   }
 
   static defaultProps = {
@@ -35,7 +36,8 @@ export default class Detail extends PureComponent {
     attachmentList: [],
     flowHistory: [],
     uploadAttachment: () => {},
-    createEditModal: () => {},
+    showEditModal: () => {},
+    operationType: '',
   }
 
   constructor(props) {
@@ -59,8 +61,9 @@ export default class Detail extends PureComponent {
       baseInfo,
       attachmentList,
       uploadAttachment,
-      createEditModal,
+      showEditModal,
       flowHistory,
+      operationType,
     } = this.props;
     const modifyBtnClass = classnames([styles.dcHeaderModifyBtn,
       { hide: this.state.statusType !== 'ready' },
@@ -88,19 +91,19 @@ export default class Detail extends PureComponent {
         <div className={styles.dcHeader}>
           <span className={styles.dcHaderNumb}>编号</span>
           <span
-            onClick={createEditModal}
+            onClick={showEditModal}
             className={modifyBtnClass}
           >修改</span>
         </div>
         <div className={styles.detailWrapper}>
           <InfoTitle head="基本信息" />
-          <InfoItem label="操作类型" value="" />
+          <InfoItem label="操作类型" value={operationType} />
           <InfoItem label="子类型" value="私密客户交易信息权限分配" />
           <InfoItem label="客户" value={`${baseInfo.custName} ${baseInfo.custId}`} />
           <InfoItem label="合约开始日期" value="2018/05/31" />
           <InfoItem label="合约有效期" value="2018/05/31" />
           <InfoItem label="合约终止日期" value="2018/05/31" />
-          <InfoItem label="备注" value="这里是合约内容" />
+          <InfoItem label="备注" value="这里是备注内容" />
         </div>
         <div className={styles.detailWrapper}>
           <InfoTitle head="拟稿信息" />

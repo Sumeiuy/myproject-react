@@ -15,6 +15,7 @@ export default class ServerPersonel extends PureComponent {
     onEmitEvent: PropTypes.func,
     type: PropTypes.string.isRequired,
     searchServerPersonList: PropTypes.array,
+    radioName: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -94,7 +95,7 @@ export default class ServerPersonel extends PureComponent {
   @autobind
   dropdownSelectedItem(item) {
     // 下拉菜单添加选中对象
-    this.setState({ addSelectedValue: item });
+    this.setState({ addSelectedValue: { ...item, isMain: 'false' } });
   }
 
   @autobind
@@ -124,7 +125,7 @@ export default class ServerPersonel extends PureComponent {
   @autobind
   removeServerPerson() { // 移除服务人员按钮
     const { removeSelectedValue } = this.state;
-    if (!_.isEmpty(this.state.removeSelectedValue)) {
+    if (!_.isEmpty(this.state.removeSelectedValue) && removeSelectedValue.isMain === 'false') {
       this.setState(prevState => ({
         serverInfo: prevState.serverInfo.filter(
           item => item.ptyMngId !== removeSelectedValue.ptyMngId,
@@ -147,6 +148,7 @@ export default class ServerPersonel extends PureComponent {
         {this.modifyDom}
         <TableList
           info={this.state.serverInfo}
+          radioName={this.props.radioName}
           statusType={this.props.statusType}
           selectValue={this.state.removeSelectedValue}
           onEmitUpdateValue={this.updateRadioValue}

@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-09-29 21:49:43
+ * @Last Modified time: 2017-10-10 14:40:04
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
@@ -15,12 +15,11 @@ import { constructSeibelPostBody } from '../../utils/helper';
 import SplitPanel from '../../components/common/splitPanel/SplitPanel';
 import ContractHeader from '../../components/common/biz/SeibelHeader';
 import Detail from '../../components/contract/Detail';
-import EditDetail from '../../components/contract/EditDetail';
 import ContractList from '../../components/common/biz/CommonList';
 import seibelColumns from '../../components/common/biz/seibelColumns';
 import CommonModal from '../../components/common/biz/CommonModal';
-// import EditForm from '../../components/contract/EditForm';
-// import AddForm from '../../components/contract/AddForm';
+import EditForm from '../../components/contract/EditForm';
+import AddForm from '../../components/contract/AddForm';
 import { seibelConfig } from '../../config';
 
 import styles from './home.less';
@@ -29,7 +28,7 @@ const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 // 退订的类型
 const unsubscribe = '2';
-const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
+const OMIT_ARRAY = ['isResetPageNum', 'currentId'];
 const { contract, contract: { pageType, subType, status } } = seibelConfig;
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
@@ -85,6 +84,7 @@ const mapDispatchToProps = {
   // 查询合作合约编号
   getContractNumList: fetchDataFunction(false, 'contract/getContractNumList'),
 };
+
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 export default class Contract extends PureComponent {
@@ -115,7 +115,7 @@ export default class Contract extends PureComponent {
     attachmentList: PropTypes.array,
     // 查询合作合约详情
     getContractDetail: PropTypes.func.isRequired,
-    contractDetail: PropTypes.object.isRequired,
+    contractDetail: PropTypes.object,
     // 保存合作合约
     saveContractData: PropTypes.func.isRequired,
     // 查询合作合约编号
@@ -129,13 +129,14 @@ export default class Contract extends PureComponent {
     attachmentList: EMPTY_LIST,
     seibleListLoading: false,
     flowHistory: EMPTY_LIST,
+    contractDetail: EMPTY_OBJECT,
   }
 
   constructor(props) {
     super(props);
     this.state = {
-      // 默认为新建弹窗
-      modalType: 'add',
+      // 操作类型
+      business2: '',
       isEmpty: true,
       // 默认状态下新建弹窗不可见 false 不可见  true 可见
       createApprovalBoard: false,
@@ -144,7 +145,7 @@ export default class Contract extends PureComponent {
       // 新建合作合约弹窗状态
       addFormModal: false,
       // 修改合作合约弹窗状态
-      // editFormModal: false,
+      editFormModal: false,
       // 修改合作合约对象的操作类型和id
       editContractInfo: {
         operationType: '',
@@ -158,15 +159,14 @@ export default class Contract extends PureComponent {
       location: {
         query,
         query: {
-          // currentId,
-          pageNum = 1,
-          pageSize = 10,
+          pageNum,
+          pageSize,
         },
       },
       getSeibleList,
       getCustRange,
     } = this.props;
-    const params = constructSeibelPostBody(query, pageNum, pageSize);
+    const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
 
     getCustRange(EMPTY_OBJECT);
     // 默认筛选条件
@@ -210,8 +210,13 @@ export default class Contract extends PureComponent {
         const item = _.filter(seibleList.resultData, o => String(o.id) === String(currentId));
         // 表示左侧列表获取完毕
         // 因此此时获取Detail
+        console.warn('获取详情', item);
         getBaseInfo({
-          flowId: item.flowId,
+          flowId: item[0].flowId,
+          id: '',
+        });
+        this.setState({
+          business2: item[0].business2,
         });
       }
     }
@@ -236,6 +241,10 @@ export default class Contract extends PureComponent {
     const { getBaseInfo } = this.props;
     getBaseInfo({
       flowId: obj.flowId,
+      id: '',
+    });
+    this.setState({
+      business2: obj.business2,
     });
   }
   /**
@@ -270,19 +279,18 @@ export default class Contract extends PureComponent {
   // 查询合约详情
   @autobind
   handleSearchContractDetail(data) {
-    this.props.getContractDetail({ id: data.value });
+    this.props.getBaseInfo({ id: data.value });
   }
 
   // 显示修改合作合约弹框
   @autobind
-  handleShowEditForm(data) {
+  handleShowEditForm(data = {}) {
     this.setState({
       ...this.state,
       editContractInfo: data,
     }, () => {
       console.log('显示修改');
-      this.handleSearchContractDetail(data.id);
-      // this.showModal('editFormModal');
+      this.showModal('editFormModal');
     });
   }
 
@@ -374,17 +382,7 @@ export default class Contract extends PureComponent {
   // 头部新建按钮点击事件处理程序
   @autobind
   handleCreateBtnClick() {
-    this.setState({
-      modalType: 'add',
-    }, this.showModal('addFormModal'));
-  }
-  // 详情页面点击修改打开弹窗的事件
-  @autobind
-  createEditModal() {
-    console.warn('点击了修改按钮');
-    this.setState({
-      modalType: 'edit',
-    }, this.showModal('addFormModal'));
+    this.openCreateApprovalBoard();
   }
   // 打开新建申请的弹出框
   @autobind
@@ -403,9 +401,10 @@ export default class Contract extends PureComponent {
 
   @autobind
   closeModal(modalKey) {
+    console.warn('点击了关闭弹窗', modalKey);
     this.setState({
       [modalKey]: false,
-    });
+    }, console.warn('修改后的 state', this.state));
   }
 
   @autobind
@@ -415,81 +414,6 @@ export default class Contract extends PureComponent {
       type: 'kehu1',
       pageData: contract,
     });
-  }
-
-  // 保存 modal 数据
-  @autobind
-  saveModalData(state) {
-    console.warn('保存数据', state);
-    this.setState({
-      modalData: state,
-    });
-  }
-
-  // 更新合作合约表单数据 2017年9月29日 21:34:49
-  @autobind
-  updateContractData() {
-    const { modalData: {
-        childType,          // 子类型
-        cust,               // 客户
-        modalType,          // 弹窗类型
-        operation,          // 操作类型
-        contractStartDate,  // 合约开始日期
-        contractValidDate,  // 合约有效期
-        // contractEndDate,    // 合约终止日期
-        remark,             // 备注
-        contractNum,        // 合约编号
-      },
-    } = this.state;
-    console.warn('调用保存数据接口', this.state.modalData);
-
-    if (!_.isEmpty(childType)) {
-      message.error('请选择子类型');
-      return;
-    }
-    if (!_.isEmpty(cust)) {
-      message.error('请选择客户');
-      return;
-    }
-    // 判断是新建还是修改
-    if (modalType === 'add') {
-      // 判断是退订还是订购
-      if (operation === unsubscribe) {
-        if (!_.isEmpty(contractNum)) {
-          message.error('请选择合约编号');
-        }
-        // const condition = {
-          // 接口和传值待定
-        // };
-      } else {
-        if (!_.isEmpty(contractStartDate)) {
-          message.error('请选择合约开始日期');
-          return;
-        }
-        const condition = {
-          subType: childType,
-          custId: cust.cusId,
-          startDt: contractStartDate,
-          vailDt: contractValidDate || '',
-          contractName: '1123123123', // 待删
-          createdBy: '002332', // 待删
-          createdName: 'zhangsan', // 待删
-          id: '',
-          action: 'new',
-          // endDt: '',
-          context: '',
-          description: remark || '',
-        };
-        console.log('savesave');
-        this.props.saveContractData(condition);
-      }
-    } else {
-      if (!_.isEmpty(contractStartDate)) {
-        message.error('请选择合约开始日期');
-        return;
-      }
-      console.log('修改', this.state.modalData);
-    }
   }
 
   render() {
@@ -508,7 +432,11 @@ export default class Contract extends PureComponent {
       getContractNumList,
       contractNumList,
     } = this.props;
-    const { modalType } = this.state;
+    const {
+      addFormModal,
+      editFormModal,
+      business2,
+    } = this.state;
     if (!custRange || !custRange.length) {
       return null;
     }
@@ -536,16 +464,17 @@ export default class Contract extends PureComponent {
         location={location}
         columns={this.constructTableColumns()}
         clickRow={this.getListRowId}
-        backKeys={['flowId']}
+        backKeys={['flowId', 'business2']}
       />
     );
     const rightPanel = (
       <Detail
         baseInfo={baseInfo}
+        operationType={business2}
         attachmentList={attachmentList}
         flowHistory={flowHistory}
+        showEditModal={this.handleShowEditForm}
         uploadAttachment={this.onUploadComplete}
-        createEditModal={this.createEditModal}
       />
     );
     // 新建表单props
@@ -554,36 +483,45 @@ export default class Contract extends PureComponent {
       getCanApplyCustList,
       contractNumList,
       getContractNumList,
-      modalType,
       saveModalData: this.saveModalData,
+      custList: canApplyCustList,
+      contractDetail: this.props.baseInfo,
+      onSearchCutList: this.handleSearchCutList,
+      onChangeForm: this.handleChangeContractForm,
+      onSearchContractNum: this.handleSearchContractNum,
+      onSearchContractDetail: this.handleSearchContractDetail,
     };
     // 修改表单props
-    // const editFormProps = {
-    //   canApplyCustList: this.props.canApplyCustList,
-    //   contractDetail: this.props.contractDetail,
-    //   onSearchCutList: this.handleSearchCutList,
-    //   onChangeForm: this.handleChangeContractForm,
-    //   operationType: this.state.editContractInfo.operationType || '',
-    // };
+    const contractDetail = {
+      baseInfo,
+      attachmentList,
+      flowHistory,
+    };
+    const editFormProps = {
+      custList: canApplyCustList,
+      contractDetail,
+      onSearchCutList: this.toSearchCust,
+      onChangeForm: this.handleChangeContractForm,
+      operationType: this.state.editContractInfo.operationType || '',
+    };
     const addFormModalProps = {
       modalKey: 'addFormModal',
       title: '新建合约申请',
-      // onOk: this.saveModalData,
       onOk: this.saveContractData,
       closeModal: this.closeModal,
-      visible: this.state.addFormModal,
+      visible: addFormModal,
       size: 'large',
-      children: <EditDetail {...addFormProps} />,
+      children: <AddForm {...addFormProps} />,
     };
-    // const editFormModalProps = {
-    //   modalKey: 'editFormModal',
-    //   title: '修改合约申请',
-    //   onOk: this.saveContractData,
-    //   closeModal: this.closeModal,
-    //   visible: this.state.editFormModal,
-    //   size: 'large',
-    //   children: <EditForm {...editFormProps} />,
-    // };
+    const editFormModalProps = {
+      modalKey: 'editFormModal',
+      title: '修改合约申请',
+      onOk: this.saveContractData,
+      closeModal: this.closeModal,
+      visible: editFormModal,
+      size: 'large',
+      children: <EditForm {...editFormProps} />,
+    };
     return (
       <div className={styles.premissionbox}>
         <SplitPanel
@@ -594,9 +532,13 @@ export default class Contract extends PureComponent {
           leftListClassName="contractList"
         />
         <CommonModal {...addFormModalProps} />
-        {/* <CommonModal {...editFormModalProps} /> */}
+        {
+          editFormModal ?
+            <CommonModal {...editFormModalProps} />
+          :
+            null
+        }
       </div>
     );
   }
 }
-

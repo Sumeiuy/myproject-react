@@ -16,6 +16,7 @@ import styles from './otherCommissionSelectList.less';
 
 export default class OtherCommissionSelectList extends PureComponent {
   static propTypes = {
+    reset: PropTypes.number.isRequired,
     otherRatios: PropTypes.array,
     onChange: PropTypes.func,
   };
@@ -37,7 +38,7 @@ export default class OtherCommissionSelectList extends PureComponent {
 
   @autobind
   makeSelect(item) {
-    const { onChange } = this.props;
+    const { onChange, reset } = this.props;
     const { code, options } = item;
     const { brief, paramName } = dictMap[code];
     const newOptions = options.map(option => ({
@@ -47,6 +48,7 @@ export default class OtherCommissionSelectList extends PureComponent {
     }));
     return (
       <OtherCommissionSelect
+        reset={reset}
         key={code}
         label={brief}
         name={paramName}
@@ -75,7 +77,7 @@ export default class OtherCommissionSelectList extends PureComponent {
           }
         </div>
         <div className={styles.blockTip}>
-          <Icon type="exclamation-circle" /> 本功能不提供特殊资产校验的费率设置，如需调整请通过单客户佣金调整功能
+          <Icon type="exclamation-circle" />本功能不提供特殊资产校验的费率设置，如需调整请通过单客户佣金调整功能
         </div>
       </div>
     );

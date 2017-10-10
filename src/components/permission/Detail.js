@@ -5,6 +5,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import { message } from 'antd';
 import _ from 'lodash';
 import classnames from 'classnames';
 import style from './detail.less';
@@ -17,9 +18,23 @@ import UploadFile from './UploadFile';
 import { seibelConfig } from '../../config';
 import TableDialog from '../common/biz/TableDialog';
 import BottonGroup from './BottonGroup';
+import { getEmpId } from '../../utils/helper';
 
 const subTypeList = seibelConfig.permission.subType;
 const statusList = seibelConfig.permission.status;
+const columns = [{
+  title: '工号',
+  dataIndex: 'ptyMngId',
+  key: 'ptyMngId',
+}, {
+  title: '姓名',
+  dataIndex: 'ptyMngName',
+  key: 'ptyMngName',
+}, {
+  title: '所属营业部',
+  dataIndex: 'businessDepartment',
+  key: 'businessDepartment',
+}];
 
 export default class Detail extends PureComponent {
   static propTypes = {
@@ -31,6 +46,7 @@ export default class Detail extends PureComponent {
     custNumber: PropTypes.string,
     remark: PropTypes.string,
     empName: PropTypes.string,
+    empId: PropTypes.string,
     createTime: PropTypes.string,
     status: PropTypes.string,
     empList: PropTypes.array,
@@ -43,9 +59,11 @@ export default class Detail extends PureComponent {
     bottonList: PropTypes.array.isRequired,
     getBottonList: PropTypes.func.isRequired,
     canApplyCustList: PropTypes.array.isRequired,
+    subTypeList: PropTypes.array.isRequired,
+    onEmitEvent: PropTypes.func.isRequired,
     getModifyCustApplication: PropTypes.func.isRequired,
     modifyCustApplication: PropTypes.object.isRequired,
-    subTypeList: PropTypes.array.isRequired,
+    addListenModify: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -57,6 +75,7 @@ export default class Detail extends PureComponent {
     custNumber: '',
     remark: '',
     empName: '',
+    empId: '',
     createTime: '',
     status: '',
     empList: [],
@@ -68,7 +87,7 @@ export default class Detail extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      // 状态： ready（可读） 、 modify （修改）、 approval（审批）
+      // 状态： ready（可读） 、 modify （修改）
       statusType: 'ready',
       // 编号
       subType: '',
@@ -97,8 +116,10 @@ export default class Detail extends PureComponent {
       nextApproverModal: false,
       // 下一组ID
       nextGroupId: '',
-      // 按钮名称
+      // 下一步按钮名称
       btnName: '',
+      // 下一步按钮id
+      btnId: '',
       // 下一步操作id
       routeId: '',
       // 下一审批人
@@ -126,6 +147,16 @@ export default class Detail extends PureComponent {
     });
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (
+      this.props.addListenModify === true &&
+      nextProps.addListenModify === false &&
+      nextProps.modifyCustApplication.msg === 'success'
+    ) {
+      message.success('私密客户修改成功！！！');
+    }
+  }
+
   get getBaseInfoModifyDom() {
     // 返回基本信息或者基本信息修改组件
     let result;
@@ -151,7 +182,7 @@ export default class Detail extends PureComponent {
           baseInfo={info}
         />
       );
-    } else {
+    } else if (this.state.statusType === 'modify') {
       result = (
         <BaseInfoModify
           head="基本信息"
@@ -196,7 +227,7 @@ export default class Detail extends PureComponent {
     let result;
     if (this.state.statusType === 'ready') {
       result = null;
-    } else {
+    } else if (this.state.statusType === 'modify') {
       result = (
         <Approval
           head="审批"
@@ -210,13 +241,14 @@ export default class Detail extends PureComponent {
   }
   @autobind
   toChangeStatus() {
-    this.setState({ statusType: 'modify' });
-    this.props.getBottonList({ flowId: this.props.flowId });
+    // this.setState({ statusType: 'modify' });
+    // 获取下一步骤按钮
+    // this.props.getBottonList({ flowId: this.props.flowId });
+    this.props.onEmitEvent();
   }
 
   @autobind
   updateValue(name, value) { // 更新本地数据
-    console.log(name, value);
     if (name === 'customer') {
       this.setState({ customer: {
         custName: value.custName,
@@ -231,9 +263,9 @@ export default class Detail extends PureComponent {
   changeDisplay(st, options) {
     if (st && !_.isEmpty(st)) {
       const nowStatus = _.find(options, o => o.value === st) || {};
-      return nowStatus.label || '无';
+      return nowStatus.label || '请选择';
     }
-    return '无';
+    return '请选择';
   }
   @autobind
   submitModifyInfo(item) {
@@ -243,6 +275,7 @@ export default class Detail extends PureComponent {
       nextApproverModal: true,
       routeId: item.routeId,
       btnName: item.btnName,
+      btnId: item.btnId,
       nextGroupId: item.nextGroupId,
     });
   }
@@ -252,12 +285,13 @@ export default class Detail extends PureComponent {
     // 按照给出的条件 搜索查询 下一审批人列表
     this.props.getNextApproverList({
       approverNum: 'single',
+      btnId: this.state.btnId,
+      flowId: this.props.flowId,
     });
   }
 
   @autobind
   confirmSubmit(value) {
-    console.log('1234656', value.ptyMngId);
     // 提交 修改私密客户申请
     const queryConfig = {
       title: '私密客户申请',
@@ -285,33 +319,21 @@ export default class Detail extends PureComponent {
       btnName: this.state.btnName,
       routeId: this.state.routeId,
       // 服务人员列表
-      ptyMngDtoList: this.state.empList,
+      empList: this.state.empList,
       // 附件上传后的id
       attachment: this.state.attachment,
+      // 拟稿人id
+      empId: this.props.empId,
     };
-    console.log(queryConfig, value);
     this.setState({ nextApproverModal: false });
     this.props.getModifyCustApplication(queryConfig);
   }
 
   render() {
+    const loginUser = getEmpId();
     const modifyBtnClass = classnames([style.dcHeaderModifyBtn,
-      { hide: this.props.status !== '04' },
+      { hide: this.props.status !== '04' || this.state.statusType === 'modify' || this.props.empId === loginUser },
     ]);
-
-    const columns = [{
-      title: '工号',
-      dataIndex: 'ptyMngId',
-      key: 'ptyMngId',
-    }, {
-      title: '姓名',
-      dataIndex: 'ptyMngName',
-      key: 'ptyMngName',
-    }, {
-      title: '所属营业部',
-      dataIndex: 'businessDepartment',
-      key: 'businessDepartment',
-    }];
 
     const searchProps = {
       visible: this.state.nextApproverModal,
@@ -341,6 +363,7 @@ export default class Detail extends PureComponent {
           head="服务人员"
           type="empList"
           info={this.props.empList}
+          radioName="readyRadio"
           statusType={this.state.statusType}
           onEmitEvent={this.updateValue}
           searchServerPersonList={this.props.searchServerPersonList}
@@ -349,10 +372,9 @@ export default class Detail extends PureComponent {
           fileList={this.props.attachInfoList}
           edit={this.state.statusType !== 'ready'}
           type="attachment"
-          attachment={this.props.attachment}
+          attachment={this.props.attachment || ''}
           onEmitEvent={this.updateValue}
         />
-        {this.approvalDom}
         <ApprovalRecord
           head="审批记录"
           info={this.props.workflowHistoryBeans}

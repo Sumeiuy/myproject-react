@@ -33,7 +33,6 @@ const tableHeader = [
     dataIndex: 'belowDept',
     key: 'belowDept',
     title: '所属营业部',
-    width: 120,
   },
 ];
 
@@ -112,7 +111,7 @@ export default class ChoiceApproverBoard extends PureComponent {
         key: 'radio', // 'check'\'delete'\'view'
         title: '',
         radio: approverRadio,
-        width: 100,
+        width: 60,
       },
       operate: this.handleApproverRadio,
     };
@@ -145,6 +144,7 @@ export default class ChoiceApproverBoard extends PureComponent {
               titleList={tableHeader}
               operation={operation}
               scroll={{ y: 294 }}
+              size="middle"
             />
           </div>
         </div>

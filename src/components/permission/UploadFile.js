@@ -27,12 +27,9 @@ export default class UploadFile extends PureComponent {
     };
   }
 
-  componentWillMount() {
-    this.setState({ fileList: this.props.fileList });
-  }
-
   @autobind
   uploadAttachment(value) {
+    console.log('attachment', value);
     this.props.onEmitEvent(this.props.type, value);
   }
 

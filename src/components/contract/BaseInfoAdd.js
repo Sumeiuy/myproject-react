@@ -2,8 +2,8 @@
 * @Description: 合作合约新建 -基本信息
 * @Author: XuWenKang
 * @Date:   2017-09-21 15:27:31
-* @Last Modified by:   XuWenKang
-* @Last Modified time: 2017-09-27 19:00:34
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2017-10-09 14:41:12
 */
 
 import React, { PureComponent } from 'react';
@@ -16,6 +16,7 @@ import moment from 'moment';
 import Select from '../common/Select';
 import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
+import InfoForm from '../common/infoForm';
 import DropDownSelect from '../common/dropdownSelect';
 import DatePicker from '../common/datePicker';
 import { seibelConfig } from '../../config';
@@ -203,132 +204,92 @@ export default class BaseInfoEdit extends PureComponent {
     console.log('contractDetail', contractDetail);
     const { operation } = this.state;
     const contractNumComponent = operation === unsubscribe ?
-      (<div className={styles.lineInputWrap}>
-        <div className={styles.label}>
-          <i className={styles.required}>*</i>
-            合约编号<span className={styles.colon}>:</span>
-        </div>
-        <div className={`${styles.componentBox} ${styles.selectBox}`}>
-          <DropDownSelect
-            placeholder="合约编号"
-            showObjKey="contractName"
-            objId="id"
-            value={this.state.contractNum.id || ''}
-            searchList={contractNumList}
-            emitSelectItem={this.handleSelectContractNum}
-            emitToSearch={this.handleSearchContractNum}
-            boxStyle={dropDownSelectBoxStyle}
-          />
-        </div>
-      </div>)
+      (<InfoForm label="合约编号" required>
+        <DropDownSelect
+          placeholder="合约编号"
+          showObjKey="contractName"
+          objId="id"
+          value={this.state.contractNum.id || ''}
+          searchList={contractNumList}
+          emitSelectItem={this.handleSelectContractNum}
+          emitToSearch={this.handleSearchContractNum}
+          boxStyle={dropDownSelectBoxStyle}
+        />
+      </InfoForm>)
       :
       null;
     const contractStarDateComponent = operation !== unsubscribe ?
-      (<div className={styles.lineInputWrap}>
-        <div className={styles.label}>
-          <i className={styles.required}>*</i>
-                合约开始日期<span className={styles.colon}>:</span>
-        </div>
-        <div className={`${styles.componentBox}`}>
-          <DatePicker
-            name="contractStarDate"
-            value={
-                  this.state.contractStarDate ?
-                  moment(this.state.contractStarDate, 'YYYY-MM-DD')
-                  :
-                  ''
-                }
-            onChange={this.handleChangeDate}
-            boxStyle={datePickerBoxStyle}
-          />
-        </div>
-      </div>)
-      :
-      <InfoItem label="合约开始日期" value={contractDetail.startDt || ''} />;
-    const contractPalidityComponent = operation !== unsubscribe ?
-      (<div className={styles.lineInputWrap}>
-        <div className={styles.label}>
-              合约有效期<span className={styles.colon}>:</span>
-        </div>
-        <div className={`${styles.componentBox}`}>
-          <DatePicker
-            name="contractPalidity"
-            value={
-                this.state.contractPalidity ?
-                moment(this.state.contractPalidity, 'YYYY-MM-DD')
+      (<InfoForm label="合约开始日期" required>
+        <DatePicker
+          name="contractStarDate"
+          value={
+                this.state.contractStarDate ?
+                moment(this.state.contractStarDate, 'YYYY-MM-DD')
                 :
                 ''
               }
-            onChange={this.handleChangeDate}
-            boxStyle={datePickerBoxStyle}
-          />
-        </div>
-      </div>)
+          onChange={this.handleChangeDate}
+          boxStyle={datePickerBoxStyle}
+        />
+      </InfoForm>)
+      :
+      <InfoItem label="合约开始日期" value={contractDetail.startDt || ''} />;
+    const contractPalidityComponent = operation !== unsubscribe ?
+      (<InfoForm label="合约有效期">
+        <DatePicker
+          name="contractPalidity"
+          value={
+              this.state.contractPalidity ?
+              moment(this.state.contractPalidity, 'YYYY-MM-DD')
+              :
+              ''
+            }
+          onChange={this.handleChangeDate}
+          boxStyle={datePickerBoxStyle}
+        />
+      </InfoForm>)
       :
       <InfoItem label="合约有效期" value={contractDetail.vailDt || ''} />;
     const remarkComponent = operation !== unsubscribe ?
-      (<div className={styles.lineInputWrap}>
-        <div className={styles.label}>
-              备注<span className={styles.colon}>:</span>
-        </div>
-        <div className={`${styles.componentBox} ${styles.textAreaBox}`}>
-          <TextArea
-            value={this.state.remark}
-            onChange={this.handleChangeRemark}
-          />
-        </div>
-      </div>)
+      (<InfoForm label="备注">
+        <TextArea
+          value={this.state.remark}
+          onChange={this.handleChangeRemark}
+        />
+      </InfoForm>)
       :
       <InfoItem label="备注" value={contractDetail.description || ''} />;
     return (
       <div className={styles.editWrapper}>
         <InfoTitle head="基本信息" />
-        <div className={styles.lineInputWrap}>
-          <div className={styles.label}>
-            <i className={styles.required}>*</i>
-              操作类型<span className={styles.colon}>:</span>
-          </div>
-          <div className={`${styles.componentBox} ${styles.selectBox}`}>
-            <Select
-              name="operation"
-              data={operationList}
-              value={this.state.operation}
-              onChange={this.handleSelectChange}
-            />
-          </div>
-        </div>
-        <div className={styles.lineInputWrap}>
-          <div className={styles.label}>
-            <i className={styles.required}>*</i>
-              子类型<span className={styles.colon}>:</span>
-          </div>
-          <div className={`${styles.componentBox} ${styles.selectBox}`}>
-            <Select
-              name="childType"
-              data={childTypeList}
-              value={this.state.childType}
-              onChange={this.handleSelectChange}
-            />
-          </div>
-        </div>
-        <div className={styles.lineInputWrap}>
-          <div className={styles.label}>
-            <i className={styles.required}>*</i>
-              客户<span className={styles.colon}>:</span>
-          </div>
-          <div className={styles.componentBox}>
-            <DropDownSelect
-              placeholder="经纪客户号/客户名称"
-              showObjKey="custName"
-              objId="cusId"
-              value={this.state.client.cusId || ''}
-              searchList={custList}
-              emitSelectItem={this.handleSelectClient}
-              emitToSearch={this.handleSearchClient}
-              boxStyle={dropDownSelectBoxStyle}
-            />
-          </div>
-        </div>
+        <InfoForm label="操作类型" required>
+          <Select
+            name="operation"
+            data={operationList}
+            value={this.state.operation}
+            onChange={this.handleSelectChange}
+          />
+        </InfoForm>
+        <InfoForm label="子类型" required>
+          <Select
+            name="childType"
+            data={childTypeList}
+            value={this.state.childType}
+            onChange={this.handleSelectChange}
+          />
+        </InfoForm>
+        <InfoForm label="客户" required>
+          <DropDownSelect
+            placeholder="经纪客户号/客户名称"
+            showObjKey="custName"
+            objId="cusId"
+            value={this.state.client.cusId || ''}
+            searchList={custList}
+            emitSelectItem={this.handleSelectClient}
+            emitToSearch={this.handleSearchClient}
+            boxStyle={dropDownSelectBoxStyle}
+          />
+        </InfoForm>
         {contractNumComponent}
         {contractStarDateComponent}
         {contractPalidityComponent}
