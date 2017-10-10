@@ -144,6 +144,7 @@ export default class ChoiceApproverBoard extends PureComponent {
               titleList={tableHeader}
               operation={operation}
               scroll={{ y: 294 }}
+              size="middle"
             />
           </div>
         </div>

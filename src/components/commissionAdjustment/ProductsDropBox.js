@@ -74,7 +74,7 @@ export default class ProductsDropdownBox extends PureComponent {
     const options = productList.map(opt => (
       <Option
         key={opt.id}
-        value={opt.id}
+        value={opt.prodCode}
         text={`${opt.prodCommision}‰ ${opt.prodName} ${opt.prodCode}`}
       >
         <span className={styles.prodcom}>{`${opt.prodCommision}‰`}</span>
