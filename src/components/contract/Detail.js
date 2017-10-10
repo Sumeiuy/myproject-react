@@ -3,12 +3,13 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-19 09:37:42
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-09-26 09:28:26
+ * @Last Modified time: 2017-10-10 13:49:17
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
+// import moment from 'moment';
 
 import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
@@ -16,80 +17,72 @@ import ApproveList from '../common/approveList';
 import styles from './detail.less';
 import CommonUpload from '../common/biz/CommonUpload';
 import CommonTable from '../common/biz/CommonTable';
+import { seibelConfig } from '../../config';
 
+// 合约条款的表头
+const { contract: { titleList } } = seibelConfig;
 export default class Detail extends PureComponent {
   static propTypes = {
     baseInfo: PropTypes.object,
     attachmentList: PropTypes.array,
-    deleteAttachment: PropTypes.func,
     uploadAttachment: PropTypes.func,
+    showEditModal: PropTypes.func,
+    flowHistory: PropTypes.array,
+    operationType: PropTypes.string,
   }
 
   static defaultProps = {
     baseInfo: {},
     attachmentList: [],
-    deleteAttachment: () => {},
+    flowHistory: [],
     uploadAttachment: () => {},
+    showEditModal: () => {},
+    operationType: '',
   }
 
   constructor(props) {
     super(props);
     this.state = {
       radio: 0,
+      statusType: 'ready',
     };
   }
 
   // 表格删除事件
   @autobind
   deleteTableData(record, index) {
-    console.warn('record', record);
-    console.warn('index', index);
     this.setState({
       radio: index,
     });
   }
 
   render() {
-    const { baseInfo, attachmentList, deleteAttachment, uploadAttachment } = this.props;
+    const {
+      baseInfo,
+      attachmentList,
+      uploadAttachment,
+      showEditModal,
+      flowHistory,
+      operationType,
+    } = this.props;
     const modifyBtnClass = classnames([styles.dcHeaderModifyBtn,
       { hide: this.state.statusType !== 'ready' },
     ]);
     const uploadProps = {
       attachmentList,
       edit: true,
-      deleteAttachment,
       uploadAttachment,
       attachment: baseInfo.attachment || '',
     };
-
-    const titleList = [
-      {
-        dataIndex: 'termsName',
-        key: 'termsName',
-        title: '条款名称',
-      },
-      {
-        dataIndex: 'paraName',
-        key: 'paraName',
-        title: '明细参数',
-      },
-      {
-        dataIndex: 'paraVal',
-        key: 'paraVal',
-        title: '值',
-      },
-      {
-        dataIndex: 'divName',
-        key: 'divName',
-        title: '合作部门',
-      },
-    ];
+    const nowStep = {
+      stepName: baseInfo.workflowName,
+      userName: baseInfo.workflowName,
+    };
     // 表格中需要的操作
     // const operation = {
     //   column: {
-    //     key: 'radio', // 'check'\'delete'\'view'
+    //     key: 'delete', // 'check'\'delete'\'view'
     //     title: '',
-    //     radio, // radio 仅在 key: radio 时需要
     //   },
     //   operate: this.deleteTableData,
     // };
@@ -98,19 +91,19 @@ export default class Detail extends PureComponent {
         <div className={styles.dcHeader}>
           <span className={styles.dcHaderNumb}>编号</span>
           <span
-            onClick={() => { this.setState({ statusType: 'modify' }); }}
+            onClick={showEditModal}
             className={modifyBtnClass}
           >修改</span>
         </div>
         <div className={styles.detailWrapper}>
           <InfoTitle head="基本信息" />
-          <InfoItem label="操作类型" value="这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值" />
+          <InfoItem label="操作类型" value={operationType} />
           <InfoItem label="子类型" value="私密客户交易信息权限分配" />
-          <InfoItem label="客户" value="张三 123456" />
-          <InfoItem label="合约开始日期" value="2017/08/31" />
+          <InfoItem label="客户" value={`${baseInfo.custName} ${baseInfo.custId}`} />
+          <InfoItem label="合约开始日期" value="2018/05/31" />
           <InfoItem label="合约有效期" value="2018/05/31" />
           <InfoItem label="合约终止日期" value="2018/05/31" />
-          <InfoItem label="备注" value="这里是合约内容" />
+          <InfoItem label="备注" value="这里是备注内容" />
         </div>
         <div className={styles.detailWrapper}>
           <InfoTitle head="拟稿信息" />
@@ -121,7 +114,7 @@ export default class Detail extends PureComponent {
         <div className={styles.detailWrapper}>
           <InfoTitle head="合约条款" />
           <CommonTable
-            data={baseInfo.terms}
+            data={baseInfo.terms || []}
             titleList={titleList}
           />
         </div>
@@ -131,7 +124,7 @@ export default class Detail extends PureComponent {
         </div>
         <div className={styles.detailWrapper}>
           <InfoTitle head="审批记录" />
-          <ApproveList />
+          <ApproveList data={flowHistory} nowStep={nowStep} />
         </div>
       </div>
     );

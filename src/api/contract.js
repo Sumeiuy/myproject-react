@@ -16,5 +16,7 @@ export default function contract(api) {
     saveContractData: query => api.post('/groovynoauth/fsp/contract/cooper/saveContract', query),
     // 查询合作合约编号
     getContractNumList: query => api.post('/groovynoauth/fsp/contract/cooper/queryContractId', query),
+    // 查询批量佣金调整详情页面中查看单个用户的审批记录
+    getFlowHistory: query => api.post('/groovynoauth/fsp/biz/chgcommsion/queryFlowHistory', query),
   };
 }

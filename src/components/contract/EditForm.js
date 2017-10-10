@@ -2,8 +2,8 @@
 * @Description: 合作合约修改 页面
 * @Author: XuWenKang
 * @Date:   2017-09-19 14:47:08
-* @Last Modified by:   XuWenKang
-* @Last Modified time: 2017-10-09 16:10:21
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2017-10-10 14:12:31
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -126,16 +126,17 @@ export default class EditForm extends PureComponent {
     onSearchCutList();
   }
 
-  componentWillReceiveProps(nextProps) {
-    const newTerms = nextProps.contractDetail.terms;
-    this.setState({
-      ...this.state,
-      formData: {
-        ...this.state.formData,
-        terms: newTerms,
-      },
-    });
-  }
+  // 不需要
+  // componentWillReceiveProps(nextProps) {
+  //   const newTerms = nextProps.contractDetail.terms;
+  //   this.setState({
+  //     ...this.state,
+  //     formData: {
+  //       ...this.state.formData,
+  //       terms: newTerms,
+  //     },
+  //   });
+  // }
 
   // 审批意见
   @autobind
