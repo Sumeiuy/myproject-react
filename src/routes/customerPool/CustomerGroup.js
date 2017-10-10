@@ -64,7 +64,7 @@ const columns = [
     dataIndex: 'groupName',
     key: 'groupName',
     render: item => <a title={item} className="groupNames">
-      {_.truncate(item, { length: 18, omission: '...' })}
+      {_.truncate(item, { length: 25, omission: '...' })}
     </a>,
   },
   {
@@ -73,7 +73,7 @@ const columns = [
     key: 'xComments',
     render: item =>
       <div className="groupDescription">
-        <div className="showtext">{item}</div>
+        <div className="showtext"> {_.truncate(item, { length: 33, omission: '...' })}</div>
         <div className="hiddentext">
           <div>{item}</div>
         </div>
@@ -84,7 +84,7 @@ const columns = [
     dataIndex: 'createdTm',
     key: 'createdTm',
     render: item => <a title={item} className="groupNames">
-      {_.truncate(item, { length: 18, omission: '...' })}
+      {_.truncate(item, { length: 25, omission: '...' })}
     </a>,
   },
 ];
@@ -283,7 +283,6 @@ export default class CustomerGroup extends PureComponent {
           enterType,
         },
       });
-      groupId = '';
     } else if (!onOff) {
       message.error('请选择分组', 2, () => {
         onOff = false;

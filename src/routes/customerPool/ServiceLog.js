@@ -1,7 +1,7 @@
 /**
- * @file customerPool/CreateTaskForm.js
- *  客户池-自建任务表单
- * @author yangquanjian
+ * @file customerPool/ServiceLog.js
+ *  360服务记录
+ * @author zhushengnan
  */
 
 import React, { PropTypes, PureComponent } from 'react';
@@ -57,8 +57,8 @@ export default class CreateTaskForm extends PureComponent {
       custId: '',
       startValue: null,
       endValue: null,
-      startFormat: 'YYYY/MM/DD(E)',
-      endFormat: 'YYYY/MM/DD(E)',
+      startFormat: 'YYYY-MM-DD',
+      endFormat: 'YYYY-MM-DD',
     };
   }
   componentWillMount() {
