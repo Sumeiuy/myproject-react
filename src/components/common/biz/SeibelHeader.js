@@ -117,14 +117,15 @@ export default class Pageheader extends PureComponent {
       page,
       location: { query: { subType, status } },
     } = this.props;
-
+    const customerAllList = [{ custName: '全部', custNumber: '' }, ...customerList];
+    const drafterAllList = [{ empName: '全部', empId: '' }, ...drafterList];
     return (
       <div className={styles.pageCommonHeader}>
         <div className={styles.dropDownSelectBox}>
           <DropDownSelect
             value="全部"
             placeholder="经纪客户号/客户名称"
-            searchList={customerList}
+            searchList={customerAllList}
             showObjKey="custName"
             objId="custNumber"
             emitSelectItem={this.selectCustItem}
@@ -154,7 +155,7 @@ export default class Pageheader extends PureComponent {
           <DropDownSelect
             value="全部"
             placeholder="工号/名称"
-            searchList={drafterList}
+            searchList={drafterAllList}
             showObjKey="empName"
             objId="empId"
             emitSelectItem={this.selectDrafterItem}
