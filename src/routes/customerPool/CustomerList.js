@@ -33,7 +33,7 @@ const ENTER_TYPE = {
   tag: 'searchCustPool',
   association: 'searchCustPool',
   business: 'businessCustPool',
-  custIndicator: 'performanceCustPool',
+  custIndicator: 'performanceIncrementCustPool',
   numOfCustOpened: 'performanceBusinessOpenCustPool',
 };
 

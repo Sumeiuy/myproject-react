@@ -212,7 +212,7 @@ export default class CreateTaskForm extends PureComponent {
         firstUserName += '等';
       }
     }
-    switch (entertype) {
+     switch (entertype) {
       case 'businessCustPool':
         defaultMissionName = '提醒客户办理已满足条件的业务';
         defaultMissionType = 'businessRecommend';
@@ -228,7 +228,7 @@ export default class CreateTaskForm extends PureComponent {
         startTime = 1;
         endTime = 4;
         break;
-      case 'performanceCustPool':
+      case 'performanceIncrementCustPool':
         defaultMissionName = '新客户回访';
         defaultMissionType = 'newCustVisit';
         defaultExecutionType = 'Chance';
@@ -241,6 +241,13 @@ export default class CreateTaskForm extends PureComponent {
         defaultMissionType = 'stockCustVisit';
         defaultExecutionType = 'Chance';
         defaultMissionDesc = '用户在 2 周内办理了 {14日内开通的业务} 业务，建议跟踪服务了解客户是否有问题需要解决。';
+        startTime = 1;
+        endTime = 8;
+        break;
+      case 'custGroupList':
+        defaultMissionName = '';
+        defaultMissionType = '请选择';
+        defaultExecutionType = '请选择';
         startTime = 1;
         endTime = 8;
         break;
@@ -425,7 +432,7 @@ export default class CreateTaskForm extends PureComponent {
                   <label htmlFor="desc"><i>*</i>任务描述</label>
                 </p>
                 <FormItem>
-                  {getFieldDecorator('missionDesc',
+                  {getFieldDecorator('templetDesc',
                     {
                       rules: [{ required: true, min: 10, message: '任务描述不能小于10个字符!' }],
                       initialValue: defaultMissionDesc,
