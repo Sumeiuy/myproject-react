@@ -15,6 +15,9 @@ export default function TextLayout(props) {
 
 TextLayout.propTypes = {
   title: PropTypes.string.isRequired,
-  content: PropTypes.string.isRequired,
+  content: PropTypes.string,
+};
+TextLayout.defaultProps = {
+  content: '',
 };
 

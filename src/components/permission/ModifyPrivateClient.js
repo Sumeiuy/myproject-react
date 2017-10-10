@@ -5,13 +5,13 @@ import PropTypes from 'prop-types';
 // import _ from 'lodash';
 import CommonModal from '../common/biz/CommonModal';
 import ServerPersonel from './ServerPersonel';
-import BaseInfoModify from './BaseInfoModify';
 import MessageList from '../common/MessageList';
 import ApprovalRecord from './ApprovalRecord';
 import UploadFile from './UploadFile';
 import TableDialog from '../common/biz/TableDialog';
 import BottonGroup from './BottonGroup';
 import { seibelConfig } from '../../config';
+import TextareaComponent from '../common/textareacomponent';
 import style from './modifyPrivateClient.less';
 
 const subTypeList = seibelConfig.permission.subType;
@@ -152,6 +152,7 @@ export default class modifyPrivateClient extends PureComponent {
     // 模态框关闭之后执行的函数
     this.props.onEmitClearModal('isShowModifyModal');
   }
+
   @autobind
   updateValue(name, value) {
     // 更新state
@@ -164,6 +165,13 @@ export default class modifyPrivateClient extends PureComponent {
     }
     this.setState({ [name]: value });
   }
+
+  @autobind
+  changeRemarks(value) {
+    // 更改备注信息
+    this.updateValue('remark', value);
+  }
+
   @autobind
   submitModifyInfo(item) {
     // 修改状态下的提交按钮
@@ -224,17 +232,34 @@ export default class modifyPrivateClient extends PureComponent {
   get baseInfoModifyDom() {
     // 返回基本信息修改组件
     let subTypeTxt = subTypeList.filter(item => item.value === this.state.subType);
+    console.warn('subTypeTxt', subTypeTxt);
     subTypeTxt = subTypeTxt[0].label || '请选择';
+
+
+    const info = [
+      {
+        title: '客户',
+        content: `${this.state.customer.custName}（${this.state.customer.custNumber}）`,
+      }, {
+        title: '子类型',
+        content: subTypeTxt,
+      },
+    ];
+
     return (
-      <BaseInfoModify
-        head="基本信息"
-        subTypeTxt={subTypeTxt}
-        customer={`${this.state.customer.custName}（${this.state.customer.custNumber}）`}
-        remark={this.state.remark}
-        canApplyCustList={this.props.canApplyCustList}
-        onEmitEvent={this.updateValue}
-        subTypeList={this.props.subTypeList}
-      />
+      <div className={style.modifyPageMessageList}>
+        <MessageList
+          head="基本信息"
+          baseInfo={info}
+          boxStyle={{ border: 'none' }}
+        />
+        <TextareaComponent
+          title="备注"
+          value={this.state.remark}
+          onEmitEvent={this.changeRemarks}
+          placeholder="请输入您的备注信息"
+        />
+      </div>
     );
   }
   get draftInfo() {
