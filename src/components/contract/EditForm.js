@@ -3,7 +3,7 @@
 * @Author: XuWenKang
 * @Date:   2017-09-19 14:47:08
 * @Last Modified by:   XuWenKang
-* @Last Modified time: 2017-09-27 18:45:14
+* @Last Modified time: 2017-10-09 16:10:21
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -25,6 +25,42 @@ import styles from './editForm.less';
 // const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
 const BOOL_TRUE = true;
+const clauseNameList = [
+  {
+    label: '条款名称1',
+    value: '1',
+    show: true,
+    valueList: [
+      {
+        label: '明细1',
+        value: '1',
+        show: true,
+      },
+      {
+        label: '明细2',
+        value: '2',
+        show: true,
+      },
+    ],
+  },
+  {
+    label: '条款名称2',
+    value: '2',
+    show: true,
+    valueList: [
+      {
+        label: '明细1',
+        value: '1',
+        show: true,
+      },
+      {
+        label: '明细2',
+        value: '2',
+        show: true,
+      },
+    ],
+  },
+];
 const titleList = [
   {
     dataIndex: 'termsName',
@@ -162,6 +198,13 @@ export default class EditForm extends PureComponent {
   @autobind
   handleAddClause(clauseData) {
     console.log('添加合约条款', clauseData);
+    this.handleCloseModal();
+  }
+
+  // 根据关键词搜索合作部门
+  @autobind
+  handleSearchDepartment(keyword) {
+    console.log(keyword);
   }
 
 
@@ -217,8 +260,11 @@ export default class EditForm extends PureComponent {
         <div className={styles.cutSpace} />
         <AddClause
           isShow={showAddClauseModal}
-          onAdd={this.handleAddClause}
+          onConfirm={this.handleAddClause}
           onCloseModal={this.handleCloseModal}
+          clauseNameList={clauseNameList}
+          departmentList={EMPTY_ARRAY}
+          searchDepartment={this.handleSearchDepartment}
         />
       </div>
     );

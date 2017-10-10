@@ -39,7 +39,6 @@ export default class AddCustomer extends PureComponent {
       processModal: false,
     };
   }
-
   componentWillReceiveProps(nextProps) {
     const { validataLoading: prevL } = this.props;
     const { validataLoading: nextL, validateResult } = nextProps;
@@ -60,6 +59,14 @@ export default class AddCustomer extends PureComponent {
         });
       }
     }
+  }
+
+  @autobind
+  clearCustList() {
+    this.setState({
+      customerList: [],
+    });
+    this.passData2Home([]);
   }
 
   // 选出需要传递给接口的值
