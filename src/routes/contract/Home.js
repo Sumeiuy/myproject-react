@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-10 15:06:35
+ * @Last Modified time: 2017-10-10 15:18:57
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
@@ -487,7 +487,10 @@ export default class Contract extends PureComponent {
     };
     // 修改表单props
     const contractDetail = {
-      baseInfo,
+      baseInfo: {
+        ...baseInfo,
+        business2,
+      },
       attachmentList,
       flowHistory,
     };

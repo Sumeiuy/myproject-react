@@ -3,7 +3,7 @@
 * @Author: XuWenKang
 * @Date:   2017-09-20 13:47:07
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-10 14:39:38
+ * @Last Modified time: 2017-10-10 15:34:52
 */
 
 import React, { PureComponent } from 'react';
@@ -26,6 +26,7 @@ import styles from './baseInfoEdit.less';
 const { TextArea } = Input;
 // 子类型列表
 const childTypeList = _.filter(seibelConfig.contract.subType, v => v.label !== '全部');
+console.warn('childTypeList', childTypeList);
 // const EMPTY_OBJECT = {};
 // const EMPTY_ARRAY = [];
 // 下拉搜索组件样式
@@ -39,11 +40,6 @@ const datePickerBoxStyle = {
   width: 220,
   height: 32,
 };
-// 操作类型MAP
-const operationMap = {
-  1: '订购',
-  2: '退订',
-};
 export default class BaseInfoEdit extends PureComponent {
   static propTypes = {
     onChange: PropTypes.func.isRequired,
@@ -51,8 +47,6 @@ export default class BaseInfoEdit extends PureComponent {
     onSearchClient: PropTypes.func.isRequired,
     // 客户列表
     custList: PropTypes.array.isRequired,
-    // 操作类型
-    operationType: PropTypes.string.isRequired,
     // 合约详情
     contractDetail: PropTypes.object.isRequired,
   }
@@ -64,7 +58,7 @@ export default class BaseInfoEdit extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      childType: '',
+      childType: '0301',
       client: '',
       contractStarDate: '',
       contractPalidity: '',
@@ -162,13 +156,15 @@ export default class BaseInfoEdit extends PureComponent {
   render() {
     const {
       custList,
-      operationType,
+      contractDetail: { baseInfo, attachmentList, flowHistory },
     } = this.props;
     console.log('props', this.props);
+    console.log('attachmentList', attachmentList);
+    console.log('flowHistory', flowHistory);
     return (
       <div className={styles.editWrapper}>
         <InfoTitle head="基本信息" />
-        <InfoItem label="操作类型" value={operationMap[operationType]} />
+        <InfoItem label="操作类型" value={baseInfo.business2} />
         <InfoForm label="子类型" required>
           <Select
             name="childType"
