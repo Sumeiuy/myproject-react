@@ -127,8 +127,8 @@ export default class ServerPersonel extends PureComponent {
   removeServerPerson() { // 移除服务人员按钮
     const { removeSelectedValue } = this.state;
     if (removeSelectedValue.isMain === 'true') {
-      message.error('主服务经理不能删除')
-    } else if (!_.isEmpty(this.state.removeSelectedValue) ) {
+      message.error('主服务经理不能删除');
+    } else if (!_.isEmpty(this.state.removeSelectedValue)) {
       this.setState(prevState => ({
         serverInfo: prevState.serverInfo.filter(
           item => item.ptyMngId !== removeSelectedValue.ptyMngId,
