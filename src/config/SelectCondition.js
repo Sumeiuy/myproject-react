@@ -131,3 +131,14 @@ export const stringCondition = [
   },
 ];
 
+export const type = [
+  {
+    key: '1',
+    value: '且',
+  },
+  {
+    key: '2',
+    value: '或',
+  },
+];
+

@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 13:43:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-11 17:53:35
+ * @Last Modified time: 2017-10-11 18:03:30
  * 客户细分组件
  */
 
@@ -24,6 +24,7 @@ const EMPTY_LIST = [];
 
 const Option = Select.Option;
 
+// mock数据
 const indicator = [
   {
     key: '客户性质',
@@ -36,17 +37,6 @@ const indicator = [
   {
     key: '总资产',
     value: '总资产',
-  },
-];
-
-const type = [
-  {
-    key: '1',
-    value: '且',
-  },
-  {
-    key: '2',
-    value: '或',
   },
 ];
 
@@ -175,10 +165,17 @@ export default class CustomerSegment extends PureComponent {
     console.log(value);
   }
 
+  /**
+   * 渲染一组condition section
+   */
   renderOneGroupIndicatorSection() {
     return (
       <div className={styles.customerSegmentSection}>
-        <div className={styles.conditionSection}>{type[0].value}</div>
+        {
+          /*
+          <div className={styles.conditionSection}>{type[0].value}</div>
+          */
+        }
         <div className={styles.conditionSection} />
         {this.renderOneSection()}
       </div>
@@ -189,6 +186,7 @@ export default class CustomerSegment extends PureComponent {
    * 渲染指标列
    */
   renderOneSection() {
+    // mock数据
     return _.map(indicator, () =>
       <div className={styles.conditionSection}>
         <div className={styles.selectCondition}>
@@ -239,6 +237,9 @@ export default class CustomerSegment extends PureComponent {
     // "custId":"118000119822",
     // "levelName":"钻石",
     // "riskLevelName":"稳定"
+
+    // 随着导入表格列的变化而变化
+    // TODO
     return [
       {
         key: 'custName',
