@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-10 15:18:57
+ * @Last Modified time: 2017-10-11 11:00:52
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
@@ -137,6 +137,7 @@ export default class Contract extends PureComponent {
     this.state = {
       // 操作类型
       business2: '',
+      createTime: '',
       isEmpty: true,
       // 默认状态下新建弹窗不可见 false 不可见  true 可见
       createApprovalBoard: false,
@@ -145,7 +146,7 @@ export default class Contract extends PureComponent {
       // 新建合作合约弹窗状态
       addFormModal: false,
       // 修改合作合约弹窗状态
-      editFormModal: false,
+      editFormModal: true,
       // 修改合作合约对象的操作类型和id
       editContractInfo: {
         operationType: '',
@@ -212,11 +213,13 @@ export default class Contract extends PureComponent {
         // 因此此时获取Detail
         console.warn('获取详情', item);
         getBaseInfo({
-          flowId: item[0].flowId,
+          // flowId: item[0].flowId,
+          flowId: '47D97E3A0E52E84ABE1CFBB388F869C3',
           id: '',
         });
         this.setState({
           business2: item[0].business2,
+          createTime: item[0].createTime,
         });
       }
     }
@@ -240,11 +243,13 @@ export default class Contract extends PureComponent {
   getListRowId(obj) {
     const { getBaseInfo } = this.props;
     getBaseInfo({
-      flowId: obj.flowId,
+      // flowId: obj.flowId,
+      flowId: '47D97E3A0E52E84ABE1CFBB388F869C3',
       id: '',
     });
     this.setState({
       business2: obj.business2,
+      createTime: obj.createTime,
     });
   }
   /**
@@ -430,6 +435,7 @@ export default class Contract extends PureComponent {
       addFormModal,
       editFormModal,
       business2,
+      createTime,
     } = this.state;
     if (!custRange || !custRange.length) {
       return null;
@@ -458,13 +464,14 @@ export default class Contract extends PureComponent {
         location={location}
         columns={this.constructTableColumns()}
         clickRow={this.getListRowId}
-        backKeys={['flowId', 'business2']}
+        backKeys={['flowId', 'business2', 'createTime']}
       />
     );
     const rightPanel = (
       <Detail
         baseInfo={baseInfo}
         operationType={business2}
+        createTime={createTime}
         attachmentList={attachmentList}
         flowHistory={flowHistory}
         showEditModal={this.handleShowEditForm}
@@ -490,6 +497,7 @@ export default class Contract extends PureComponent {
       baseInfo: {
         ...baseInfo,
         business2,
+        createTime,
       },
       attachmentList,
       flowHistory,
@@ -517,7 +525,6 @@ export default class Contract extends PureComponent {
       closeModal: this.closeModal,
       visible: editFormModal,
       size: 'large',
-      children: <EditForm {...editFormProps} />,
     };
     return (
       <div className={styles.premissionbox}>
@@ -531,7 +538,9 @@ export default class Contract extends PureComponent {
         <CommonModal {...addFormModalProps} />
         {
           editFormModal ?
-            <CommonModal {...editFormModalProps} />
+            <CommonModal {...editFormModalProps}>
+              <EditForm {...editFormProps} />
+            </CommonModal>
           :
             null
         }
