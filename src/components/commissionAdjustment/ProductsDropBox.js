@@ -31,6 +31,20 @@ export default class ProductsDropdownBox extends PureComponent {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    const { productList: prevList } = this.props;
+    const { productList: nextList } = nextProps;
+    if (!_.isEqual(prevList, nextList)) {
+      // 佣金率改变后目标产品选中值置空
+      this.setState({
+        value: '',
+        iconType: 'search',
+      });
+      // 此时需将外层目标产品值置空
+      this.selectProduct('');
+    }
+  }
+
   // 根据用户输入过滤目标产品
   @autobind
   handleSearchFilterOptions(inputValue, option) {
