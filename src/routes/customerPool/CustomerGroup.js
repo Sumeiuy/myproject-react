@@ -64,7 +64,7 @@ const columns = [
     dataIndex: 'groupName',
     key: 'groupName',
     render: item => <a title={item} className="groupNames">
-      {_.truncate(item, { length: 25, omission: '...' })}
+      {item}
     </a>,
   },
   {
@@ -73,7 +73,7 @@ const columns = [
     key: 'xComments',
     render: item =>
       <div className="groupDescription">
-        <div className="showtext"> {_.truncate(item, { length: 33, omission: '...' })}</div>
+        <div className="showtext"> {item}</div>
         <div className="hiddentext">
           <div>{item}</div>
         </div>
