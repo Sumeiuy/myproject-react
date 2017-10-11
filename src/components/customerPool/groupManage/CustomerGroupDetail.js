@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 14:15:22
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-11 10:12:02
+ * @Last Modified time: 2017-10-11 17:20:23
  */
 
 import React, { PureComponent } from 'react';
@@ -84,7 +84,8 @@ export default class CustomerGroupDetail extends PureComponent {
     const { resultData: prevData = EMPTY_LIST } = customerList;
     const { customerList: nextList = EMPTY_OBJECT,
       deleteCustomerFromGroupResult: nextDeleteResult = EMPTY_OBJECT } = nextProps;
-    const { resultData: nextData = EMPTY_LIST } = nextList;
+    const { resultData: nextData = EMPTY_LIST, page = EMPTY_OBJECT } = nextList;
+    const { totalRecordNum } = page;
     const { includeCustListSize,
       dataSource,
       groupId,
@@ -101,7 +102,7 @@ export default class CustomerGroupDetail extends PureComponent {
       this.setState({
         dataSource: newDataSource,
         // 总条目与当前新增cust条目相加
-        totalRecordNum: _.size(newDataSource) + includeCustListSize,
+        totalRecordNum: totalRecordNum + includeCustListSize,
       });
     }
 
@@ -508,6 +509,8 @@ export default class CustomerGroupDetail extends PureComponent {
               height: '30px',
               width: '190px',
             }}
+            // 是否需要搜索图标
+            isNeedSearchIcon={false}
             // 是否需要添加按钮
             isNeedAddBtn
             // 添加按钮事件

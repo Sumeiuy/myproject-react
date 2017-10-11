@@ -144,19 +144,6 @@ export default class CustomerGroupManage extends PureComponent {
     });
   }
 
-  componentDidMount() {
-    const { replace, location: { query, pathname } } = this.props;
-    // 初始化，url上加上页码，页目
-    replace({
-      pathname,
-      query: {
-        ...query,
-        curPageNum: 1,
-        curPageSize: 10,
-      },
-    });
-  }
-
   componentWillUnmount() {
     this.setState({
       visible: false, // 控制显示更新分组弹出层
@@ -264,9 +251,10 @@ export default class CustomerGroupManage extends PureComponent {
   @autobind
   lanuchTask(record) {
     console.log('launch task');
-    const { groupId } = record;
+    const { groupId, relatCust } = record;
     this.handleOpenTab({
       groupId,
+      count: relatCust,
       enterType: 'custGroupList',
     }, '自建任务', 'RCT_FSP_CREATE_TASK');
   }
@@ -380,11 +368,22 @@ export default class CustomerGroupManage extends PureComponent {
   @autobind
   handleSearchGroup(value) {
     console.log('search value', value);
-    const { getCustomerGroupList, location: { query: { curPageNum, curPageSize } } } = this.props;
+    const {
+      getCustomerGroupList,
+      replace,
+      location: { pathname, query, query: { curPageSize } },
+    } = this.props;
     getCustomerGroupList({
       keyWord: value,
-      pageNum: Number(curPageNum),
+      pageNum: 1,
       pageSize: Number(curPageSize),
+    });
+    replace({
+      pathname,
+      query: {
+        ...query,
+        curPageNum: 1,
+      },
     });
   }
 
@@ -432,7 +431,7 @@ export default class CustomerGroupManage extends PureComponent {
     },
     {
       key: 'relatCust',
-      value: '用户数',
+      value: '客户数',
     },
     {
       key: 'createdTm',
@@ -447,7 +446,7 @@ export default class CustomerGroupManage extends PureComponent {
   render() {
     const {
       customerGroupList = EMPTY_OBJECT,
-      location: { query: { curPageNum, curPageSize } },
+      location: { query: { curPageNum = 1, curPageSize = 10 } },
       groupCustomerList = EMPTY_OBJECT,
       customerHotPossibleWordsList = EMPTY_LIST,
       getGroupCustomerList,
@@ -524,6 +523,7 @@ export default class CustomerGroupManage extends PureComponent {
           actionSource={actionSource}
           isFirstColumnLink
           firstColumnHandler={this.handleShowGroupDetail}
+          columnWidth={['25%', '25%', '10%', '20%', '20%']}
         />
         {
           visible ?

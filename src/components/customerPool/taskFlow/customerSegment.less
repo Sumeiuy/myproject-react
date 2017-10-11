@@ -103,6 +103,59 @@
     }
   }
 }
+.overviewBtnSection {
+  display: block;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #dddddd;
+  .overviewBtn {
+    display: block;
+    padding: 0 17px !important;
+    font-size: 12px !important;
+  }
+}
+.tableSection {
+  display: block;
+  & > .title {
+    font-size:12px;
+    color:rgba(0,0,0,0.75);
+    text-align:left;
+    margin-bottom: 10px;
+    & > span {
+      font-size:12px;
+      color:#d67c1e;
+    }
+  }
+  .custListTable {
+    padding: 0 !important;
+    table > thead > tr > th, tbody > tr > td {
+      padding: 0px !important;
+      padding-bottom: 7px !important;
+      padding-top: 7px !important;
+      padding-left: 20px !important;
+      text-align: left !important;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      border-bottom: 1px solid #e9e9e9;
+
+    }
+    table > tbody > tr:nth-child(odd) {
+      background-color: #ffffff;
+    }
+    tbody > tr > td > div {
+      max-width: 100px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      margin: 0;
+    }
+    table > thead > tr > th {
+      text-align: left !important;
+      background-color: #f7f7f7;
+    }
+  }
+}
 // .customerSegmentSection::before {
 //   content: "";
 //   position: absolute;

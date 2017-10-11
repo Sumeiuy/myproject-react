@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-21 13:39:44
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-09-29 14:55:19
+ * @Last Modified time: 2017-10-11 17:46:20
  * 通用搜索组件，包含搜索历史记录，搜索热词联想，添加按钮
  */
 
@@ -57,6 +57,8 @@ export default class Search extends PureComponent {
     isNeedAddBtn: PropTypes.bool,
     // 添加按钮事件
     addBtnCallback: PropTypes.func,
+    // 是否需要搜索图标
+    isNeedSearchIcon: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -79,6 +81,7 @@ export default class Search extends PureComponent {
     isNeedAddBtn: false,
     isNeedLgSearch: false,
     addBtnCallback: () => { },
+    isNeedSearchIcon: true,
   }
 
   constructor(props) {
@@ -452,6 +455,7 @@ export default class Search extends PureComponent {
       placeholder,
       searchStyle,
       isNeedAddBtn,
+      isNeedSearchIcon,
      } = this.props;
 
     // 构造下拉框数据源
@@ -485,10 +489,18 @@ export default class Search extends PureComponent {
                         type="primary"
                         onClick={this.handleSearchBtn}
                       >
-                        <AntdIcon type="search" />
+                        <AntdIcon
+                          type="search"
+                          style={{
+                            display: isNeedSearchIcon ? 'block' : 'none',
+                          }}
+                        />
                       </Button> :
                       <AntdIcon
                         type="search"
+                        style={{
+                          display: isNeedSearchIcon ? 'block' : 'none',
+                        }}
                         onClick={this.handleSearchBtn}
                       />
                   )}

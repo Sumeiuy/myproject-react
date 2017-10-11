@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-09 13:59:19
+ * @Last Modified time: 2017-10-11 17:14:37
  */
 
 import React, { PureComponent } from 'react';
@@ -35,6 +35,20 @@ export default class GroupTable extends PureComponent {
     isFirstColumnLink: PropTypes.bool,
     // 表格第一列点击的回调
     firstColumnHandler: PropTypes.func,
+    // 是否展示表格边框
+    bordered: PropTypes.bool,
+    // 是否固定列
+    isFixedColumn: PropTypes.bool,
+    // 固定列的区间
+    fixedColumn: PropTypes.array,
+    // 滚动的x范围
+    scrollX: PropTypes.number,
+    // 列的宽度
+    columnWidth: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.number,
+      PropTypes.array,
+    ]),
   };
 
   static defaultProps = {
@@ -42,6 +56,11 @@ export default class GroupTable extends PureComponent {
     listData: EMPTY_LIST,
     actionSource: [],
     isFirstColumnLink: false,
+    bordered: false,
+    isFixedColumn: false,
+    fixedColumn: [],
+    scrollX: 0,
+    columnWidth: ['20%', '20%', '20%', '20%', '20%'],
     firstColumnHandler: () => { },
   };
 
@@ -114,6 +133,9 @@ export default class GroupTable extends PureComponent {
       actionSource,
       isFirstColumnLink,
       firstColumnHandler,
+      isFixedColumn,
+      fixedColumn,
+      columnWidth,
     } = this.props;
     const len = titleColumn.length - 1;
     if (_.isEmpty(listData)) {
@@ -127,8 +149,9 @@ export default class GroupTable extends PureComponent {
           // operation column
           return {
             dataIndex: item.key,
-            width: '20%',
+            width: _.isArray(columnWidth) ? columnWidth[index] : columnWidth,
             title: item.value,
+            fixed: (isFixedColumn && _.includes(fixedColumn, index)) ? 'left' : false,
             render: (text, record) =>
               <div className={styles.operation}>
                 {
@@ -148,8 +171,9 @@ export default class GroupTable extends PureComponent {
           // 第一列可以Link，有handler
           return {
             dataIndex: item.key,
-            width: '20%',
+            width: _.isArray(columnWidth) ? columnWidth[index] : columnWidth,
             title: item.value,
+            fixed: (isFixedColumn && _.includes(fixedColumn, index)) ? 'left' : false,
             render: (text, record) =>
               <div className={styles.operation}>
                 <span
@@ -157,7 +181,7 @@ export default class GroupTable extends PureComponent {
                   className={styles.link}
                   onClick={() => firstColumnHandler(record)}
                 >
-                  {record[item.key] || '--'}
+                  {(record[item.key] === 0 || record[item.key]) ? record[item.key] : '--'}
                 </span>
               </div>,
           };
@@ -165,8 +189,9 @@ export default class GroupTable extends PureComponent {
 
         return {
           dataIndex: item.key,
-          width: '20%',
+          width: _.isArray(columnWidth) ? columnWidth[index] : columnWidth,
           title: item.value,
+          fixed: (isFixedColumn && _.includes(fixedColumn, index)) ? 'left' : false,
           render: (text, record) => {
             if (index === 0 && isFirstColumnLink) {
               return (
@@ -176,14 +201,15 @@ export default class GroupTable extends PureComponent {
                     className={styles.link}
                     onClick={() => firstColumnHandler(record)}
                   >
-                    {record[item.key] || '--'}
+                    {(record[item.key] === 0 || record[item.key]) ? record[item.key] : '--'}
                   </span>
                 </div>
               );
             }
             return (
               <div className={styles.column}>
-                <span title={record[item.key]}>{record[item.key] || '--'}</span>
+                <span title={record[item.key]}>
+                  {(record[item.key] === 0 || record[item.key]) ? record[item.key] : '--'}</span>
               </div>
             );
           },
@@ -191,13 +217,16 @@ export default class GroupTable extends PureComponent {
       });
     }
 
-    return _.map(titleColumn, item => ({
+    return _.map(titleColumn, (item, index) => ({
       dataIndex: item.key,
-      width: '20%',
+      width: _.isArray(columnWidth) ? columnWidth[index] : columnWidth,
       title: item.value,
+      fixed: (isFixedColumn && _.includes(fixedColumn, index)) ? 'left' : false,
       render: (text, record) =>
         <div className={styles.column}>
-          <span title={record[item.key]}>{record[item.key] || '--'}</span>
+          <span title={record[item.key]}>
+            {(record[item.key] === 0 || record[item.key]) ? record[item.key] : '--'}
+          </span>
         </div>,
     }));
   }
@@ -218,6 +247,9 @@ export default class GroupTable extends PureComponent {
       listData = EMPTY_LIST,
       pageData: { curPageNum, curPageSize, totalRecordNum },
       tableClass,
+      bordered,
+      isFixedColumn,
+      scrollX,
      } = this.props;
     const { curSelectedRow } = this.state;
     const paginationOptions = this.renderPaganation(
@@ -233,7 +265,8 @@ export default class GroupTable extends PureComponent {
         columns={columns}
         dataSource={this.renderTableDatas(listData)}
         pagination={paginationOptions}
-        bordered={false}
+        bordered={bordered}
+        scroll={isFixedColumn ? { x: scrollX } : {}}
         onRowClick={this.handleRowClick}
         rowClassName={(record, index) => {
           if (curSelectedRow === index) {
