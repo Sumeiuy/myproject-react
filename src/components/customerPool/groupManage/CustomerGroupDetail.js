@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 14:15:22
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-09-29 17:16:04
+ * @Last Modified time: 2017-10-11 10:12:02
  */
 
 import React, { PureComponent } from 'react';
@@ -84,8 +84,7 @@ export default class CustomerGroupDetail extends PureComponent {
     const { resultData: prevData = EMPTY_LIST } = customerList;
     const { customerList: nextList = EMPTY_OBJECT,
       deleteCustomerFromGroupResult: nextDeleteResult = EMPTY_OBJECT } = nextProps;
-    const { resultData: nextData = EMPTY_LIST, page = EMPTY_OBJECT } = nextList;
-    const { totalRecordNum } = page;
+    const { resultData: nextData = EMPTY_LIST } = nextList;
     const { includeCustListSize,
       dataSource,
       groupId,
@@ -97,11 +96,12 @@ export default class CustomerGroupDetail extends PureComponent {
     const nextResult = nextDeleteResult[`${groupId}_${needDeleteCustId}`];
 
     if (prevData !== nextData) {
+      // 将新数据与旧数据concat,合并去重
+      const newDataSource = _.uniqBy(_.concat(dataSource, nextData), 'custId');
       this.setState({
-        // 将新数据与旧数据concat,合并去重
-        dataSource: _.uniqBy(_.concat(dataSource, nextData), 'custId'),
+        dataSource: newDataSource,
         // 总条目与当前新增cust条目相加
-        totalRecordNum: totalRecordNum + includeCustListSize,
+        totalRecordNum: _.size(newDataSource) + includeCustListSize,
       });
     }
 

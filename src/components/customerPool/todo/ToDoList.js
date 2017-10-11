@@ -141,7 +141,7 @@ export default class ToDoList extends PureComponent {
     return (
       <Table
         className={className}
-        rowKey={record => record.applyId}
+        // rowKey={record => record.applyId}
         columns={columns}
         dataSource={data}
         pagination={{
