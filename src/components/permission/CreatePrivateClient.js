@@ -8,6 +8,7 @@ import ServerPersonel from './ServerPersonel';
 import BaseInfoModify from './BaseInfoModify';
 import UploadFile from './UploadFile';
 import TableDialog from '../common/biz/TableDialog';
+import { getEmpId } from '../../utils/helper';
 
 const confirm = Modal.confirm;
 const columns = [
@@ -39,17 +40,13 @@ export default class CreatePrivateClient extends PureComponent {
     createCustApplication: PropTypes.object.isRequired,
     addListenCreate: PropTypes.bool.isRequired,
     subTypeList: PropTypes.array.isRequired,
-    empId: PropTypes.string,
-    empName: PropTypes.string,
-    orgId: PropTypes.string,
+    empInfo: PropTypes.object.isRequired,
     flowId: PropTypes.string,
+    push: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
-    empId: '',
-    empName: '',
     type: '',
-    orgId: '',
     flowId: '',
   }
 
@@ -79,6 +76,7 @@ export default class CreatePrivateClient extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
+    const { push } = nextProps;
     if (nextProps.hasServerPersonList !== this.props.hasServerPersonList) {
       this.setState({ serverInfo: nextProps.hasServerPersonList });
     }
@@ -90,6 +88,7 @@ export default class CreatePrivateClient extends PureComponent {
     ) {
       this.setState({ isShowModal: false });
       message.success('私密客户创建成功！！！');
+      push('/permission');
     }
   }
 
@@ -144,7 +143,7 @@ export default class CreatePrivateClient extends PureComponent {
 
   @autobind
   confirmSubmit(value) {
-    const { empId, empName, orgId } = this.props;
+    const { empInfo } = this.props;
     const {
       serverInfo,
       attachment,
@@ -152,6 +151,13 @@ export default class CreatePrivateClient extends PureComponent {
       customer,
       remark,
     } = this.state;
+
+        // 登录人Id，新建私密客户必传
+    const empId = getEmpId();
+    // 登录人custName，新建私密客户必传
+    const empName = empInfo.empName;
+    // 登录人orgId，新建私密客户必传
+    const orgId = empInfo.occDivnNum;
 
     const queryConfig = {
       subType,
