@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 13:43:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-11 18:03:30
+ * @Last Modified time: 2017-10-11 18:07:11
  * 客户细分组件
  */
 
@@ -56,7 +56,7 @@ export default class CustomerSegment extends PureComponent {
       dataSource: [
         {
           custName: '1-5TTJ-3900',
-          custId: '118000119822',
+          custId: '1180001198232',
           levelName: '钻石',
           riskLevelName: '稳定',
           rate: 0.11,
@@ -66,7 +66,7 @@ export default class CustomerSegment extends PureComponent {
         },
         {
           custName: '1-5TTJ-3900',
-          custId: '118000119822',
+          custId: '1180001196822',
           levelName: '钻石',
           riskLevelName: '稳定',
           rate: 0.11,
@@ -76,7 +76,7 @@ export default class CustomerSegment extends PureComponent {
         },
         {
           custName: '1-5TTJ-3900',
-          custId: '118000119822',
+          custId: '1180001119822',
           levelName: '钻石',
           riskLevelName: '稳定',
           rate: 0.11,
@@ -86,7 +86,7 @@ export default class CustomerSegment extends PureComponent {
         },
         {
           custName: '1-5TTJ-3900',
-          custId: '118000119822',
+          custId: '11800011qq9822',
           levelName: '钻石',
           riskLevelName: '稳定',
           rate: 0.11,
@@ -96,7 +96,7 @@ export default class CustomerSegment extends PureComponent {
         },
         {
           custName: '1-5TTJ-3900',
-          custId: '118000119822',
+          custId: '1180001ww19822',
           levelName: '钻石',
           riskLevelName: '稳定',
           rate: 0.11,
