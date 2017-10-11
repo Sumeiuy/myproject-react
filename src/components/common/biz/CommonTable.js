@@ -2,8 +2,8 @@
  * @Description: 公用的表格组件
  * @Author: LiuJianShu
  * @Date: 2017-09-19 14:27:39
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-09-26 09:26:08
+ * @Last Modified by:   XuWenKang
+ * @Last Modified time: 2017-10-11 10:21:05
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -68,7 +68,7 @@ export default class CommonTable extends PureComponent {
           break;
       }
     }
-
+    console.log('tableData', data);
     return (
       <div className={styles.commonTable}>
         <Table

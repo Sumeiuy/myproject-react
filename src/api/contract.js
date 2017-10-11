@@ -16,6 +16,10 @@ export default function contract(api) {
     saveContractData: query => api.post('/groovynoauth/fsp/contract/cooper/saveContract', query),
     // 查询合作合约编号
     getContractNumList: query => api.post('/groovynoauth/fsp/contract/cooper/queryContractId', query),
+    // 查询合作部门
+    getCooperDeparmentList: query => api.post('/groovynoauth/fsp/contract/cooper/queryDeparment', query),
+    // 查询合约条款名称列表
+    getClauseNameList: query => api.post('/groovynoauth/fsp/contract/cooper/termNameList', query),
     // 查询批量佣金调整详情页面中查看单个用户的审批记录
     getFlowHistory: query => api.post('/groovynoauth/fsp/biz/chgcommsion/queryFlowHistory', query),
   };

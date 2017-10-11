@@ -2,8 +2,8 @@
 * @Description: 新建合约条款 弹层
 * @Author: XuWenKang
 * @Date:   2017-09-27 17:10:08
-* @Last Modified by:   XuWenKang
-* @Last Modified time: 2017-10-09 17:22:39
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2017-10-11 14:38:04
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -24,7 +24,6 @@ const dropDownSelectBoxStyle = {
   height: 32,
   border: '1px solid #d9d9d9',
 };
-let timer;
 export default class EditForm extends PureComponent {
   static propTypes = {
     // 点击确认的回调
@@ -51,23 +50,23 @@ export default class EditForm extends PureComponent {
       clauseName: EMPTY_OBJECT,
       detailParam: EMPTY_OBJECT,
       value: '',
-      department: '',
+      department: EMPTY_OBJECT,
       detailParamList: EMPTY_ARRAY, // 明细参数列表
     };
   }
 
-  componentDidMount() {
-    timer = setInterval(() => {
-      const wrap = document.querySelector('.addClauseWrap');
-      if (wrap) {
-        wrap.previousElementSibling.style.backgroundColor = 'rgba(0,0,0,0)';
-      }
-    }, 50);
-  }
+  // componentDidMount() {
+  //   timer = setInterval(() => {
+  //     const wrap = document.querySelector('.addClauseWrap');
+  //     if (wrap) {
+  //       wrap.previousElementSibling.style.backgroundColor = 'rgba(0,0,0,0)';
+  //     }
+  //   }, 50);
+  // }
 
-  componentWillUnmount() {
-    clearInterval(timer);
-  }
+  // componentWillUnmount() {
+  //   clearInterval(timer);
+  // }
 
   @autobind
   onOk() {
@@ -89,7 +88,7 @@ export default class EditForm extends PureComponent {
       message.error('请输入值');
       return;
     }
-    if (!department) {
+    if (!department.value) {
       message.error('请选择合作部门');
       return;
     }
@@ -111,15 +110,15 @@ export default class EditForm extends PureComponent {
   // Select Change方法
   @autobind
   handleSelectChange(key, value) {
-    console.log({ [key]: value });
     if (key === 'clauseName') {
       const { clauseNameList } = this.props;
       const clauseName = _.filter(clauseNameList, v => v.value === value)[0];
-      const detailParamList = clauseName.valueList;
+      const detailParamList = clauseName.param;
       this.setState({
         ...this.state,
         clauseName,
         detailParamList,
+        detailParam: EMPTY_OBJECT,
       });
     } else if (key === 'detailParam') {
       const { detailParamList } = this.state;
@@ -135,6 +134,10 @@ export default class EditForm extends PureComponent {
   @autobind
   handleSelectDepartment(v) {
     console.log(v);
+    this.setState({
+      ...this.state,
+      department: v,
+    });
   }
 
   // 筛选部门
@@ -160,7 +163,7 @@ export default class EditForm extends PureComponent {
       clauseName: EMPTY_OBJECT,
       detailParam: EMPTY_OBJECT,
       value: '',
-      department: '',
+      department: EMPTY_OBJECT,
       detailParamList: EMPTY_ARRAY,
     });
   }
@@ -176,7 +179,8 @@ export default class EditForm extends PureComponent {
       zIndex: 1001,
       wrapClassName: 'addClauseWrap',
     };
-    const { clauseNameList } = this.props;
+    const { clauseNameList, departmentList } = this.props;
+    console.log('state', this.state);
     return (
       <div className={styles.addClauseBox}>
         <CommonModal {...clasueProps} >
@@ -216,6 +220,7 @@ export default class EditForm extends PureComponent {
             <div className={`${styles.componentBox} ${styles.inputBox}`}>
               <Input
                 onChange={this.changeValue}
+                value={this.state.value}
               />
             </div>
           </div>
@@ -229,8 +234,8 @@ export default class EditForm extends PureComponent {
                 placeholder="合作部门"
                 showObjKey="name"
                 objId="value"
-                value={this.state.department}
-                searchList={EMPTY_ARRAY}
+                value={this.state.department.value || ''}
+                searchList={departmentList}
                 emitSelectItem={this.handleSelectDepartment}
                 emitToSearch={this.handleSearchDepartment}
                 boxStyle={dropDownSelectBoxStyle}

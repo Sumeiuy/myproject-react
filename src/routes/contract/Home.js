@@ -2,8 +2,8 @@
  * @Description: 合作合约 home 页面
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-11 11:00:52
+ * @Last Modified by:   XuWenKang
+ * @Last Modified time: 2017-10-11 15:30:19
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
@@ -59,6 +59,10 @@ const mapStateToProps = state => ({
   contractNumList: state.contract.contractNumList,
   // 审批记录
   flowHistory: state.contract.flowHistory,
+  // 新增合约条款-条款名称
+  clauseNameList: state.contract.clauseNameList,
+  // 新增合约条款-合作部门
+  cooperDeparment: state.contract.cooperDeparment,
 });
 
 const mapDispatchToProps = {
@@ -83,6 +87,10 @@ const mapDispatchToProps = {
   saveContractData: fetchDataFunction(true, 'contract/saveContractData'),
   // 查询合作合约编号
   getContractNumList: fetchDataFunction(false, 'contract/getContractNumList'),
+  // 查询条款名称列表
+  getClauseNameList: fetchDataFunction(false, 'contract/getClauseNameList'),
+  // 查询合作部门
+  getCooperDeparmentList: fetchDataFunction(false, 'contract/getCooperDeparmentList'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -123,6 +131,12 @@ export default class Contract extends PureComponent {
     contractNumList: PropTypes.array.isRequired,
     // 审批记录
     flowHistory: PropTypes.array,
+    // 查询条款名称列表
+    getClauseNameList: PropTypes.func.isRequired,
+    clauseNameList: PropTypes.array.isRequired,
+    // 查询合作部门
+    getCooperDeparmentList: PropTypes.func.isRequired,
+    cooperDeparment: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -166,6 +180,8 @@ export default class Contract extends PureComponent {
       },
       getSeibleList,
       getCustRange,
+      getCooperDeparmentList,
+      getClauseNameList,
     } = this.props;
     const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
 
@@ -175,6 +191,9 @@ export default class Contract extends PureComponent {
       ...params,
       type: pageType,
     });
+
+    getCooperDeparmentList({ name: '南京' });
+    getClauseNameList({});
   }
 
   componentWillReceiveProps(nextProps) {
@@ -213,7 +232,6 @@ export default class Contract extends PureComponent {
         // 因此此时获取Detail
         console.warn('获取详情', item);
         getBaseInfo({
-          // flowId: item[0].flowId,
           flowId: '47D97E3A0E52E84ABE1CFBB388F869C3',
           id: '',
         });
@@ -310,6 +328,14 @@ export default class Contract extends PureComponent {
       ...this.state,
       contractFormData: formData,
     });
+  }
+
+  // 根据关键词查询合作部门
+  @autobind
+  handleSearchCooperDeparment(keyword) {
+    if (keyword) {
+      this.props.getCooperDeparmentList({ name: keyword });
+    }
   }
 
   // 保存合作合约 新建/修改 数据
@@ -491,6 +517,12 @@ export default class Contract extends PureComponent {
       contractDetail: this.props.baseInfo,
       // 表单变化
       onChangeForm: this.handleChangeContractForm,
+      // 条款名称列表
+      clauseNameList: this.props.clauseNameList,
+      // 合作部门列表
+      cooperDeparment: this.props.cooperDeparment,
+      // 根据管检测查询合作部门
+      searchCooperDeparment: this.handleSearchCooperDeparment,
     };
     // 修改表单props
     const contractDetail = {
@@ -508,6 +540,12 @@ export default class Contract extends PureComponent {
       onSearchCutList: this.toSearchCust,
       onChangeForm: this.handleChangeContractForm,
       operationType: this.state.editContractInfo.operationType || '',
+      // 条款名称列表
+      clauseNameList: this.props.clauseNameList,
+      // 合作部门列表
+      cooperDeparment: this.props.cooperDeparment,
+      // 根据管检测查询合作部门
+      searchCooperDeparment: this.handleSearchCooperDeparment,
     };
     const addFormModalProps = {
       modalKey: 'addFormModal',

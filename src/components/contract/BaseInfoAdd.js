@@ -2,8 +2,8 @@
 * @Description: 合作合约新建 -基本信息
 * @Author: XuWenKang
 * @Date:   2017-09-21 15:27:31
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-09 14:41:12
+ * @Last Modified by:   XuWenKang
+ * @Last Modified time: 2017-10-10 19:47:31
 */
 
 import React, { PureComponent } from 'react';

@@ -2,7 +2,7 @@
 * @Author: XuWenKang
 * @Date:   2017-10-09 13:23:40
 * @Last Modified by:   XuWenKang
-* @Last Modified time: 2017-10-09 13:44:58
+* @Last Modified time: 2017-10-10 18:34:55
 */
 exports.response = function (req, res) {
     return {
@@ -11,29 +11,29 @@ exports.response = function (req, res) {
       "resultData": [
         {
           'termName': '条款名称1',
-          'termValue': '1',
-          'valueList': [
+          'termVal': '1',
+          'param': [
             {
               'name': '明细1',
-              'value': '1',
+              'val': '1',
             },
             {
               'name': '明细2',
-              'value': '2',
+              'val': '2',
             },
           ],
         },
         {
           'termName': '条款名称2',
-          'termValue': '2',
-          'valueList': [
+          'termVal': '2',
+          'param': [
             {
               'name': '明细1',
-              'value': '1',
+              'val': '1',
             },
             {
               'name': '明细2',
-              'value': '2',
+              'val': '2',
             },
           ],
         }

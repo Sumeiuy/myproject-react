@@ -2,8 +2,8 @@
 * @Description: 合作合约修改 页面
 * @Author: XuWenKang
 * @Date:   2017-09-19 14:47:08
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-11 13:40:30
+* @Last Modified by:   XuWenKang
+* @Last Modified time: 2017-10-11 15:31:48
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -21,69 +21,14 @@ import Approval from '../permission/Approval';
 import Button from '../common/Button';
 import AddClause from './AddClause';
 
+import { seibelConfig } from '../../config';
 import styles from './editForm.less';
 
 // const EMPTY_OBJECT = {};
-const EMPTY_ARRAY = [];
+// const EMPTY_ARRAY = [];
 const BOOL_TRUE = true;
-const clauseNameList = [
-  {
-    label: '条款名称1',
-    value: '1',
-    show: true,
-    valueList: [
-      {
-        label: '明细1',
-        value: '1',
-        show: true,
-      },
-      {
-        label: '明细2',
-        value: '2',
-        show: true,
-      },
-    ],
-  },
-  {
-    label: '条款名称2',
-    value: '2',
-    show: true,
-    valueList: [
-      {
-        label: '明细1',
-        value: '1',
-        show: true,
-      },
-      {
-        label: '明细2',
-        value: '2',
-        show: true,
-      },
-    ],
-  },
-];
-const titleList = [
-  {
-    dataIndex: 'termsName',
-    key: 'termsName',
-    title: '条款名称',
-  },
-  {
-    dataIndex: 'paraName',
-    key: 'paraName',
-    title: '明细参数',
-  },
-  {
-    dataIndex: 'paraVal',
-    key: 'paraVal',
-    title: '值',
-  },
-  {
-    dataIndex: 'divName',
-    key: 'divName',
-    title: '合作部门',
-  },
-];
+// 合约条款的表头
+const { contract: { titleList } } = seibelConfig;
 // 临时数据 待删
 // const approvalRecordList = [{
 //   isOk: true,
@@ -103,6 +48,11 @@ export default class EditForm extends PureComponent {
     operationType: PropTypes.string.isRequired,
     // 合约详情
     contractDetail: PropTypes.object.isRequired,
+    // 条款名称列表
+    clauseNameList: PropTypes.array.isRequired,
+    // 合作部门列表
+    searchCooperDeparment: PropTypes.func.isRequired,
+    cooperDeparment: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -200,19 +150,39 @@ export default class EditForm extends PureComponent {
   // 添加合约条款
   @autobind
   handleAddClause(clauseData) {
-    console.log('添加合约条款', clauseData);
-    this.handleCloseModal();
-  }
-
-  // 根据关键词搜索合作部门
-  @autobind
-  handleSearchDepartment(keyword) {
-    console.log(keyword);
+    const { formData: { terms } } = this.state;
+    const termItem = {
+      termsName: clauseData.termsName.termVal, // 条款名称
+      termsVal: clauseData.termsName.value, // 条款code
+      paraName: clauseData.paraName.val, // 明细参数名称
+      paraValue: clauseData.paraName.value, // 明细参数code
+      paraVal: clauseData.paraVal, // 值
+      divName: clauseData.divName.name, // 合作部门名称
+      divValue: clauseData.value, // 合作部门code
+    };
+    console.log('添加合约条款', clauseData, terms);
+    this.setState({
+      ...this.state,
+      formData: {
+        ...this.state.formData,
+        terms: [...terms, termItem],
+      },
+    }, () => {
+      this.props.onChangeForm(this.state.formData);
+      this.handleCloseModal();
+    });
   }
 
 
   render() {
-    const { custList, contractDetail, operationType } = this.props;
+    const {
+      custList,
+      contractDetail,
+      operationType,
+      clauseNameList,
+      cooperDeparment,
+      searchCooperDeparment,
+    } = this.props;
     const { formData, showAddClauseModal } = this.state;
     const buttonProps = {
       type: 'primary',
@@ -270,8 +240,8 @@ export default class EditForm extends PureComponent {
           onConfirm={this.handleAddClause}
           onCloseModal={this.handleCloseModal}
           clauseNameList={clauseNameList}
-          departmentList={EMPTY_ARRAY}
-          searchDepartment={this.handleSearchDepartment}
+          departmentList={cooperDeparment}
+          searchDepartment={searchCooperDeparment}
         />
       </div>
     );
