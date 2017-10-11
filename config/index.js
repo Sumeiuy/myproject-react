@@ -47,7 +47,7 @@ module.exports = {
     // In our experience, they generally work as expected,
     // just be aware of this issue when enabling this option.
     cssSourceMap: false,
-    mock: false, // 本地
+    mock: true, // 本地
   },
   cssModules: true,
   appSrc: path.resolve(__dirname, '../src'),
