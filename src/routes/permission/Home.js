@@ -350,11 +350,14 @@ export default class Permission extends PureComponent {
       addListenModify,
       subTypeList,
       push,
+      location,
+      getPermissionList,
     } = this.props;
     return (
       <Detail
         {...this.state.detailMessage}
         push={push}
+        location={location}
         canApplyCustList={canApplyCustList}
         searchServerPersonList={searchServerPersonList}
         nextApproverList={nextApproverList}
@@ -367,6 +370,7 @@ export default class Permission extends PureComponent {
         subTypeList={subTypeList}
         onEmitEvent={this.showModifyModal}
         onEmitClearModal={this.clearModal}
+        getPermissionList={getPermissionList}
       />
     );
   }
@@ -449,6 +453,7 @@ export default class Permission extends PureComponent {
           isShowCreateModal ?
             <CreatePrivateClient
               push={push}
+              location={location}
               canApplyCustList={canApplyCustList}
               searchServerPersonList={searchServerPersonList}
               hasServerPersonList={hasServerPersonList}

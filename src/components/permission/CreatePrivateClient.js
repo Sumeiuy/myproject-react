@@ -43,6 +43,7 @@ export default class CreatePrivateClient extends PureComponent {
     empInfo: PropTypes.object.isRequired,
     flowId: PropTypes.string,
     push: PropTypes.func.isRequired,
+    location: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
