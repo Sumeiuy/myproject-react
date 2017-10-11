@@ -3,14 +3,13 @@
 * @Author: XuWenKang
 * @Date:   2017-09-20 13:47:07
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-10 15:34:52
+ * @Last Modified time: 2017-10-11 10:22:57
 */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-
 import { Input } from 'antd';
 import moment from 'moment';
 import Select from '../common/Select';
@@ -57,13 +56,14 @@ export default class BaseInfoEdit extends PureComponent {
 
   constructor(props) {
     super(props);
+    const { contractDetail: { baseInfo } } = props;
     this.state = {
-      childType: '0301',
-      client: '',
-      contractStarDate: '',
-      contractPalidity: '',
-      contractEndDate: '',
-      remark: '',
+      childType: childTypeList[0].value,
+      client: baseInfo.custName,
+      contractStarDate: moment(baseInfo.startDt).format('YYYY-MM-DD'),
+      contractPalidity: moment(baseInfo.vailDt).format('YYYY-MM-DD'),
+      contractEndDate: moment(baseInfo.endDt).format('YYYY-MM-DD'),
+      remark: baseInfo.description,
       id: '',
     };
   }

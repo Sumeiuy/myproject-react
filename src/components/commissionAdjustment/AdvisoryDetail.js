@@ -78,7 +78,7 @@ const proTitleList = [
 ];
 
 // 附件测试数据模板
-const attachmentList = [
+const testAttachmentList = [
   {
     creator: '002332',
     attachId: '{6795CB98-B0CD-4CEC-8677-3B0B9298B209}',
@@ -109,7 +109,7 @@ const attachmentList = [
 ];
 
 // 产品选择表单测试数据模板
-const proList = [
+const testProList = [
   {
     key: 1,
     proId: 'SP001',
@@ -159,11 +159,46 @@ const proList = [
   },
 ];
 
-export default class Singlecommissiondetail extends PureComponent {
+// 审批记录测试模板
+const testApproveList = [
+  {
+    id: '1',
+    approver: '002332',
+    time: '2017-09-21 13:39:21',
+    stepName: '流程发起',
+    status: '同意',
+    statusDescription: '这里是审批意见，有很多的意见，说不完的意见',
+  },
+  {
+    id: '2',
+    approver: '002332',
+    time: '2017-09-21 13:39:21',
+    stepName: '流程发起',
+    status: '同意',
+    statusDescription: '这里是审批意见，有很多的意见，说不完的意见',
+  },
+  {
+    id: '3',
+    approver: '002332',
+    time: '2017-09-21 13:39:21',
+    stepName: '流程发起',
+    status: '同意',
+    statusDescription: '这里是审批意见，有很多的意见，说不完的意见',
+  },
+  {
+    id: '4',
+    approver: '002332',
+    time: '2017-09-21 13:39:21',
+    stepName: '流程发起',
+    status: '同意',
+    statusDescription: '这里是审批意见，有很多的意见，说不完的意见',
+  },
+];
+
+export default class AdvisoryDetail extends PureComponent {
 
   static propTypes = {
     location: PropTypes.object.isRequired,
-    checkApproval: PropTypes.func.isRequired,
     data: PropTypes.object,
   }
 
@@ -182,6 +217,9 @@ export default class Singlecommissiondetail extends PureComponent {
       createdByLogin,
       created,
       status,
+      attachmentList = testAttachmentList,
+      proList = testProList,
+      approveList = testApproveList,
     } = data;
 
     const bugTitle = `编号${currentId}`;
@@ -251,7 +289,9 @@ export default class Singlecommissiondetail extends PureComponent {
           </div>
           <div id="approvalRecord" className={styles.module}>
             <InfoTitle head="审批记录" />
-            <ApproveList />
+            <ApproveList
+              data={approveList}
+            />
           </div>
         </div>
       </div>

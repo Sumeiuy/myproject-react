@@ -3,9 +3,10 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-20 15:13:30
  * @Last Modified by:   XuWenKang
- * @Last Modified time: 2017-10-11 09:23:58
+ * @Last Modified time: 2017-10-11 15:29:47
  */
 import { contract as api, seibel as seibelApi } from '../api';
+import { getEmpId } from '../utils/helper';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -109,7 +110,9 @@ export default {
   },
   effects: {
     // 获取详情
+    // TODO 增加一个参数，区分详情页与新建退订的数据
     * getBaseInfo({ payload }, { call, put }) {
+      const empId = getEmpId();
       const response = yield call(api.getContractDetail, payload);
       yield put({
         type: 'getBaseInfoSuccess',
@@ -117,8 +120,7 @@ export default {
       });
       // 获取附件列表的 payload
       const attachPayload = {
-        empId: payload.empId,
-        attachment: response.resultData.attachment || '',
+        attachment: response.resultData.uuid || '',
       };
       const attachResponse = yield call(api.getAttachmentList, attachPayload);
       yield put({
@@ -128,8 +130,7 @@ export default {
       // 获取审批记录的 payload
       const flowPayload = {
         flowCode: response.resultData.workflowCode || '',
-        loginuser: payload.empId,
-        empId: payload.empId,
+        loginuser: empId,
       };
       const flowHistoryResponse = yield call(api.getFlowHistory, flowPayload);
       yield put({

@@ -224,6 +224,7 @@ export default class CreatePrivateClient extends PureComponent {
             type="serverInfo"
             info={this.state.serverInfo}
             statusType="modify"
+            radioName="modifyRadio"
             onEmitEvent={this.updateValue}
             searchServerPersonList={this.props.searchServerPersonList}
           />

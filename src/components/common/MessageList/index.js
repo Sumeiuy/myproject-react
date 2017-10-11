@@ -12,6 +12,8 @@ import style from './messagelist.less';
 export default class MessageList extends PureComponent {
   static propTypes = {
     head: PropTypes.string.isRequired,
+    // 用户自定义style
+    boxStyle: PropTypes.object,
     baseInfo: PropTypes.arrayOf(PropTypes.shape({
       title: PropTypes.string,
       content: PropTypes.string,
@@ -20,6 +22,7 @@ export default class MessageList extends PureComponent {
 
   static defaultProps = {
     baseInfo: [],
+    boxStyle: {},
   }
 
   get eleMap() {
@@ -35,7 +38,10 @@ export default class MessageList extends PureComponent {
   render() {
     const { head } = this.props;
     return (
-      <div className={style.messageListComponent}>
+      <div
+        className={style.messageListComponent}
+        style={this.props.boxStyle}
+      >
         <InfoTitle head={head} />
         <div className={style.mlcContent}>
           {this.eleMap}

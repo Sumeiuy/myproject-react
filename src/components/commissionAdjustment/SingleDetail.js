@@ -74,7 +74,7 @@ const proTitleList = [
 ];
 
 // 附件测试数据模板
-const attachmentList = [
+const testAttachmentList = [
   {
     creator: '002332',
     attachId: '{6795CB98-B0CD-4CEC-8677-3B0B9298B209}',
@@ -105,7 +105,7 @@ const attachmentList = [
 ];
 
 // 产品选择表单测试数据模板
-const proList = [
+const testProList = [
   {
     key: 1,
     proId: 'SP001',
@@ -150,6 +150,41 @@ const proList = [
   },
 ];
 
+// 审批记录测试模板
+const testApproveList = [
+  {
+    id: '1',
+    approver: '002332',
+    time: '2017-09-21 13:39:21',
+    stepName: '流程发起',
+    status: '同意',
+    statusDescription: '这里是审批意见，有很多的意见，说不完的意见',
+  },
+  {
+    id: '2',
+    approver: '002332',
+    time: '2017-09-21 13:39:21',
+    stepName: '流程发起',
+    status: '同意',
+    statusDescription: '这里是审批意见，有很多的意见，说不完的意见',
+  },
+  {
+    id: '3',
+    approver: '002332',
+    time: '2017-09-21 13:39:21',
+    stepName: '流程发起',
+    status: '同意',
+    statusDescription: '这里是审批意见，有很多的意见，说不完的意见',
+  },
+  {
+    id: '4',
+    approver: '002332',
+    time: '2017-09-21 13:39:21',
+    stepName: '流程发起',
+    status: '同意',
+    statusDescription: '这里是审批意见，有很多的意见，说不完的意见',
+  },
+];
 export default class Singlecommissiondetail extends PureComponent {
 
   static propTypes = {
@@ -173,6 +208,7 @@ export default class Singlecommissiondetail extends PureComponent {
       createdByLogin,
       created,
       status,
+      proList = testProList, // 产品选择表数据
       newCommission, // 目标股基佣金率
       bgCommission, // B股
       zqCommission, // 债券
@@ -190,6 +226,8 @@ export default class Singlecommissiondetail extends PureComponent {
       ddCommission, // 担保品大宗
       stbCommission, // 股转
       dCommission, // 大宗交易
+      attachmentList = testAttachmentList, // 附件
+      approveList = testApproveList, // 审批记录
     } = data;
 
     const bugTitle = `编号${currentId}`;
@@ -295,7 +333,9 @@ export default class Singlecommissiondetail extends PureComponent {
           </div>
           <div id="approvalRecord" className={styles.module}>
             <InfoTitle head="审批记录" />
-            <ApproveList />
+            <ApproveList
+              data={approveList}
+            />
           </div>
         </div>
       </div>
