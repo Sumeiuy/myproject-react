@@ -68,8 +68,9 @@ export default class SearchSelect extends PureComponent {
   render() {
     const { labelName, dataSource, width } = this.props;
     const { proValue } = this.state;
-    const options = dataSource.map(opt => (
-      <Option key={opt.cusId} value={opt.custName}>
+    const newDataSource = dataSource.map(item => ({ key: item.cusId, ...item }));
+    const options = newDataSource.map(opt => (
+      <Option key={opt.cusId} value={opt.cusId} text={opt.custName}>
         <span className={styles.prodValue}>{opt.custName}</span>
       </Option>
     ));
@@ -84,7 +85,7 @@ export default class SearchSelect extends PureComponent {
           size="large"
           style={{ width }}
           dataSource={options}
-          optionLabelProp="value"
+          optionLabelProp="text"
           onChange={this.onChange}
           value={proValue}
           onSelect={this.setSelectValue}

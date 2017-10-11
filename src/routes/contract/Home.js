@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by:   XuWenKang
- * @Last Modified time: 2017-10-10 14:39:11
+ * @Last Modified time: 2017-10-11 13:37:24
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
@@ -11,7 +11,7 @@ import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import { message } from 'antd';
 import _ from 'lodash';
-import { constructSeibelPostBody, getEmpId } from '../../utils/helper';
+import { constructSeibelPostBody } from '../../utils/helper';
 import SplitPanel from '../../components/common/splitPanel/SplitPanel';
 import ContractHeader from '../../components/common/biz/SeibelHeader';
 import Detail from '../../components/contract/Detail';
@@ -28,7 +28,7 @@ const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 // 退订的类型
 const unsubscribe = '2';
-// const OMIT_ARRAY = ['isResetPageNum', 'currentId'];
+const OMIT_ARRAY = ['isResetPageNum', 'currentId'];
 const { contract, contract: { pageType, subType, status } } = seibelConfig;
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
@@ -39,6 +39,8 @@ const fetchDataFunction = (globalLoading, type) => query => ({
 const mapStateToProps = state => ({
   // 查询左侧列表
   seibleList: state.app.seibleList,
+  // 列表请求状态
+  seibleListLoading: state.loading.effects['app/getSeibleList'], // 获取列表数据进程
   // 查询拟稿人
   drafterList: state.app.drafterList,
   // 查询部门
@@ -50,11 +52,13 @@ const mapStateToProps = state => ({
   // 附件列表
   attachmentList: state.contract.attachmentList,
   // 新建/修改 客户列表
-  custList: state.contract.custList,
+  canApplyCustList: state.app.canApplyCustList,
   // 退订所选合约详情
   contractDetail: state.contract.contractDetail,
   // 合作合约编号列表
   contractNumList: state.contract.contractNumList,
+  // 审批记录
+  flowHistory: state.contract.flowHistory,
   // 新增合约条款-条款名称
   clauseNameList: state.contract.clauseNameList,
   // 新增合约条款-合作部门
@@ -75,10 +79,8 @@ const mapDispatchToProps = {
   getBaseInfo: fetchDataFunction(true, 'contract/getBaseInfo'),
   // 获取附件列表
   getAttachmentList: fetchDataFunction(true, 'contract/getAttachmentList'),
-  // 删除附件
-  deleteAttachment: fetchDataFunction(true, 'contract/deleteAttachment'),
-  // 获取客户列表
-  getCutList: fetchDataFunction(false, 'contract/getCutList'),
+  // 获取可申请客户列表
+  getCanApplyCustList: fetchDataFunction(false, 'app/getCanApplyCustList'),
   // 查询合作合约详情
   getContractDetail: fetchDataFunction(false, 'contract/getContractDetail'),
   // 保存合作合约
@@ -100,6 +102,7 @@ export default class Contract extends PureComponent {
     // 查询左侧列表
     getSeibleList: PropTypes.func.isRequired,
     seibleList: PropTypes.object.isRequired,
+    seibleListLoading: PropTypes.bool,
     // 查询拟稿人
     getDrafterList: PropTypes.func.isRequired,
     drafterList: PropTypes.array.isRequired,
@@ -109,42 +112,45 @@ export default class Contract extends PureComponent {
     // 查询客户
     getCustomerList: PropTypes.func.isRequired,
     customerList: PropTypes.array.isRequired,
+    // 查询可申请客户列表
+    getCanApplyCustList: PropTypes.func.isRequired,
+    canApplyCustList: PropTypes.array.isRequired,
     // 查询右侧详情
     getBaseInfo: PropTypes.func.isRequired,
     baseInfo: PropTypes.object.isRequired,
     // 附件列表
     getAttachmentList: PropTypes.func.isRequired,
     attachmentList: PropTypes.array,
-    // 删除附件
-    deleteAttachment: PropTypes.func,
-    // 获取客户列表
-    getCutList: PropTypes.func.isRequired,
-    custList: PropTypes.array.isRequired,
     // 查询合作合约详情
     getContractDetail: PropTypes.func.isRequired,
-    contractDetail: PropTypes.object.isRequired,
+    contractDetail: PropTypes.object,
     // 保存合作合约
     saveContractData: PropTypes.func.isRequired,
     // 查询合作合约编号
     getContractNumList: PropTypes.func.isRequired,
     contractNumList: PropTypes.array.isRequired,
+    // 审批记录
+    flowHistory: PropTypes.array,
     // 查询条款名称列表
     getClauseNameList: PropTypes.func.isRequired,
     clauseNameList: PropTypes.array.isRequired,
     // 查询合作部门
     getCooperDeparmentList: PropTypes.func.isRequired,
     cooperDeparment: PropTypes.array.isRequired,
-
   }
 
   static defaultProps = {
     attachmentList: EMPTY_LIST,
-    deleteAttachment: () => {},
+    seibleListLoading: false,
+    flowHistory: EMPTY_LIST,
+    contractDetail: EMPTY_OBJECT,
   }
 
   constructor(props) {
     super(props);
     this.state = {
+      // 操作类型
+      business2: '',
       isEmpty: true,
       // 默认状态下新建弹窗不可见 false 不可见  true 可见
       createApprovalBoard: false,
@@ -167,43 +173,72 @@ export default class Contract extends PureComponent {
       location: {
         query,
         query: {
-          currentId,
           pageNum,
           pageSize,
         },
       },
       getSeibleList,
       getCustRange,
-      getBaseInfo,
-      getAttachmentList,
       getCooperDeparmentList,
       getClauseNameList,
     } = this.props;
     const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
 
-    getCustRange({});
+    getCustRange(EMPTY_OBJECT);
     // 默认筛选条件
     getSeibleList({
       ...params,
       type: pageType,
     });
-    getBaseInfo({
-      id: currentId,
-    });
-    getAttachmentList({
-      empId: getEmpId(),
-      attachment: '121212121212',
-    });
+
     getCooperDeparmentList({ name: '南京' });
     getClauseNameList({});
+  }
 
-    // 调试 待删除
-    // document.addEventListener('click', () => {
-    //   this.handleShowEditForm({operationType: '2', id: '111'})
-    // })
-    setTimeout(() => {
-      this.handleShowEditForm({ operationType: '2', id: '111' });
-    }, 1000);
+  componentWillReceiveProps(nextProps) {
+    const { seibleListLoading: prevSLL } = this.props;
+    const {
+      seibleListLoading: nextSLL,
+      seibleList,
+      getBaseInfo,
+      location: { query: { currentId } },
+    } = nextProps;
+
+    const { location: { query: prevQuery = EMPTY_OBJECT }, getSeibleList } = this.props;
+    const { location: { query: nextQuery = EMPTY_OBJECT } } = nextProps;
+    const { isResetPageNum = 'N', pageNum, pageSize } = nextQuery;
+    // 深比较值是否相等
+    // url发生变化，检测是否改变了筛选条件
+    if (!_.isEqual(prevQuery, nextQuery)) {
+      if (!this.diffObject(prevQuery, nextQuery)) {
+        // 只监测筛选条件是否变化
+        const params = constructSeibelPostBody(nextQuery,
+          isResetPageNum === 'Y' ? 1 : pageNum,
+          isResetPageNum === 'Y' ? 10 : pageSize,
+        );
+        getSeibleList({
+          ...params,
+          type: pageType,
+        });
+      }
+    }
+
+    // 判断是否取到 seibleList
+    if (prevSLL && !nextSLL) {
+      if (!_.isEmpty(seibleList.resultData)) {
+        const item = _.filter(seibleList.resultData, o => String(o.id) === String(currentId));
+        // 表示左侧列表获取完毕
+        // 因此此时获取Detail
+        console.warn('获取详情', item);
+        getBaseInfo({
+          flowId: item[0].flowId,
+          id: '721',
+        });
+        this.setState({
+          business2: item[0].business2,
+        });
+      }
+    }
   }
 
   @autobind
@@ -213,22 +248,36 @@ export default class Contract extends PureComponent {
     });
   }
 
-  // 删除附件
-  @autobind
-  onRemoveFile(attachId) {
-    const { deleteAttachment } = this.props;
-    console.warn('删除事件。。。。。。。。。。。');
-    const deleteObj = {
-      empId: getEmpId(),
-      attachId,
-      attachment: '121212121212',
-    };
-    deleteAttachment(deleteObj);
-  }
-
   // 上传成功后回调
   onUploadComplete(attachment) {
     console.warn('attachment', attachment);
+  }
+  /**
+   * 点击列表每条的时候对应请求详情
+   */
+  @autobind
+  getListRowId(obj) {
+    const { getBaseInfo } = this.props;
+    getBaseInfo({
+      flowId: obj.flowId,
+      id: '',
+    });
+    this.setState({
+      business2: obj.business2,
+    });
+  }
+  /**
+   * 检查部分属性是否相同
+   * @param {*} prevQuery 前一次query
+   * @param {*} nextQuery 后一次query
+   */
+  diffObject(prevQuery, nextQuery) {
+    const prevQueryData = _.omit(prevQuery, OMIT_ARRAY);
+    const nextQueryData = _.omit(nextQuery, OMIT_ARRAY);
+    if (!_.isEqual(prevQueryData, nextQueryData)) {
+      return false;
+    }
+    return true;
   }
 
   // 根据子类型和客户查询合约编号
@@ -240,8 +289,8 @@ export default class Contract extends PureComponent {
   // 查询客户
   @autobind
   handleSearchCutList(value) {
-    const { getCutList } = this.props;
-    getCutList({
+    const { getCanApplyCustList } = this.props;
+    getCanApplyCustList({
       keyword: value,
     });
   }
@@ -249,18 +298,20 @@ export default class Contract extends PureComponent {
   // 查询合约详情
   @autobind
   handleSearchContractDetail(data) {
-    this.props.getBaseInfo({ id: data.value });
+    this.props.getBaseInfo({
+      id: data.value,
+      flowId: data.flowId,
+    });
   }
 
   // 显示修改合作合约弹框
   @autobind
-  handleShowEditForm(data) {
+  handleShowEditForm(data = {}) {
     this.setState({
       ...this.state,
       editContractInfo: data,
     }, () => {
       console.log('显示修改');
-      this.handleSearchContractDetail(data.id);
       this.showModal('editFormModal');
     });
   }
@@ -361,14 +412,7 @@ export default class Contract extends PureComponent {
   // 头部新建按钮点击事件处理程序
   @autobind
   handleCreateBtnClick() {
-    this.openCreateApprovalBoard();
-  }
-  // 打开新建申请的弹出框
-  @autobind
-  openCreateApprovalBoard() {
-    this.setState({
-      createApprovalBoard: true,
-    });
+    this.showModal('addFormModal');
   }
 
   @autobind
@@ -380,9 +424,10 @@ export default class Contract extends PureComponent {
 
   @autobind
   closeModal(modalKey) {
+    console.warn('点击了关闭弹窗', modalKey);
     this.setState({
       [modalKey]: false,
-    });
+    }, console.warn('修改后的 state', this.state));
   }
 
   @autobind
@@ -404,7 +449,15 @@ export default class Contract extends PureComponent {
       customerList,
       baseInfo,
       attachmentList,
+      flowHistory,
+      canApplyCustList,
+      contractNumList,
     } = this.props;
+    const {
+      addFormModal,
+      editFormModal,
+      business2,
+    } = this.state;
     if (!custRange || !custRange.length) {
       return null;
     }
@@ -431,35 +484,60 @@ export default class Contract extends PureComponent {
         replace={replace}
         location={location}
         columns={this.constructTableColumns()}
+        clickRow={this.getListRowId}
+        backKeys={['flowId', 'business2']}
       />
     );
     const rightPanel = (
       <Detail
         baseInfo={baseInfo}
+        operationType={business2}
         attachmentList={attachmentList}
-        deleteAttachment={this.onRemoveFile}
+        flowHistory={flowHistory}
+        showEditModal={this.handleShowEditForm}
         uploadAttachment={this.onUploadComplete}
       />
     );
     // 新建表单props
     const addFormProps = {
-      custList: this.props.custList,
-      contractDetail: this.props.baseInfo,
-      onSearchCutList: this.handleSearchCutList,
-      contractNumList: this.props.contractNumList,
-      onChangeForm: this.handleChangeContractForm,
+      // 合约编号
       onSearchContractNum: this.handleSearchContractNum,
+      contractNumList,
+      // 可申请客户列表
+      onSearchCutList: this.handleSearchCutList,
+      custList: canApplyCustList,
+      // 基本信息
       onSearchContractDetail: this.handleSearchContractDetail,
+      contractDetail: this.props.baseInfo,
+      // 表单变化
+      onChangeForm: this.handleChangeContractForm,
+      // 条款名称列表
+      clauseNameList: this.props.clauseNameList,
+      // 合作部门列表
+      cooperDeparment: this.props.cooperDeparment,
+      // 根据管检测查询合作部门
+      searchCooperDeparment: this.handleSearchCooperDeparment,
     };
     // 修改表单props
+    const contractDetail = {
+      baseInfo: {
+        ...baseInfo,
+        business2,
+      },
+      attachmentList,
+      flowHistory,
+    };
     const editFormProps = {
-      custList: this.props.custList,
-      contractDetail: this.props.contractDetail,
-      onSearchCutList: this.handleSearchCutList,
+      custList: canApplyCustList,
+      contractDetail,
+      onSearchCutList: this.toSearchCust,
       onChangeForm: this.handleChangeContractForm,
       operationType: this.state.editContractInfo.operationType || '',
+      // 条款名称列表
       clauseNameList: this.props.clauseNameList,
+      // 合作部门列表
       cooperDeparment: this.props.cooperDeparment,
+      // 根据管检测查询合作部门
       searchCooperDeparment: this.handleSearchCooperDeparment,
     };
     const addFormModalProps = {
@@ -467,7 +545,7 @@ export default class Contract extends PureComponent {
       title: '新建合约申请',
       onOk: this.saveContractData,
       closeModal: this.closeModal,
-      visible: this.state.addFormModal,
+      visible: addFormModal,
       size: 'large',
       children: <AddForm {...addFormProps} />,
     };
@@ -476,7 +554,7 @@ export default class Contract extends PureComponent {
       title: '修改合约申请',
       onOk: this.saveContractData,
       closeModal: this.closeModal,
-      visible: this.state.editFormModal,
+      visible: editFormModal,
       size: 'large',
       children: <EditForm {...editFormProps} />,
     };
@@ -490,9 +568,13 @@ export default class Contract extends PureComponent {
           leftListClassName="contractList"
         />
         <CommonModal {...addFormModalProps} />
-        <CommonModal {...editFormModalProps} />
+        {
+          editFormModal ?
+            <CommonModal {...editFormModalProps} />
+          :
+            null
+        }
       </div>
     );
   }
 }
-

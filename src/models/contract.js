@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-20 15:13:30
  * @Last Modified by:   XuWenKang
- * @Last Modified time: 2017-10-10 18:08:58
+ * @Last Modified time: 2017-10-11 09:23:58
  */
 import { contract as api, seibel as seibelApi } from '../api';
 
@@ -13,18 +13,13 @@ const EMPTY_LIST = [];
 export default {
   namespace: 'contract',
   state: {
-    detailMessage: EMPTY_OBJECT,
-    list: EMPTY_OBJECT,
-    drafterList: EMPTY_LIST, // 拟稿人
-    empOrgTreeList: EMPTY_OBJECT, // 部门
-    attaches: EMPTY_LIST, // 附件信息
     custList: EMPTY_LIST, // 客户列表
-    contractDetail: EMPTY_OBJECT, // 合约详情
     contractNumList: EMPTY_LIST, // 合作合约编号列表
     baseInfo: EMPTY_OBJECT,
     attachmentList: EMPTY_LIST, // 附件信息
     cooperDeparment: EMPTY_LIST, // 合作部门
     clauseNameList: EMPTY_LIST, // 条款名称列表
+    flowHistory: EMPTY_LIST,  // 审批记录
   },
   reducers: {
     // 获取详情
@@ -60,13 +55,6 @@ export default {
         custList,
       };
     },
-    getContractDetailSuccess(state, action) {
-      const { payload: { resultData = EMPTY_OBJECT } } = action;
-      return {
-        ...state,
-        contractDetail: resultData,
-      };
-    },
     saveContractDataSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
       console.log(resultData);
@@ -83,21 +71,22 @@ export default {
     },
     getClauseNameListSuccess(state, action) {
       const { payload: { resultData = EMPTY_LIST } } = action;
-      console.log('resultData', resultData);
-      // if(resultData.length) {
-      //   resultData.forEach((v) => {
-      //     v.label = v.termVal;
-      //     v.value = v.termName;
-      //     v.show = true;
-      //     if (v.param.length) {
-      //       v.param.forEach((sv) => {
-      //         sv.label = v.val;
-      //         sv.value = sv.name;
-      //         sv.show = true;
-      //       });
-      //     }
-      //   });
-      // }
+      /*eslint-disable */
+      if (resultData.length) {
+        resultData.forEach((v) => {
+          v.label = v.termVal;
+          v.value = v.termName;
+          v.show = true;
+          if (v.param.length) {
+            v.param.forEach((sv) => {
+              sv.label = sv.val;
+              sv.value = sv.name;
+              sv.show = true;
+            });
+          }
+        });
+      }
+      /*eslint-disable */
       return {
         ...state,
         clauseNameList: resultData,
@@ -110,6 +99,13 @@ export default {
         cooperDeparment: resultData,
       };
     },
+    getFlowHistorySuccess(state, action) {
+      const { payload: { resultData = EMPTY_LIST } } = action;
+      return {
+        ...state,
+        flowHistory: resultData,
+      };
+    },
   },
   effects: {
     // 获取详情
@@ -118,6 +114,27 @@ export default {
       yield put({
         type: 'getBaseInfoSuccess',
         payload: response,
+      });
+      // 获取附件列表的 payload
+      const attachPayload = {
+        empId: payload.empId,
+        attachment: response.resultData.attachment || '',
+      };
+      const attachResponse = yield call(api.getAttachmentList, attachPayload);
+      yield put({
+        type: 'getAttachmentListSuccess',
+        payload: attachResponse,
+      });
+      // 获取审批记录的 payload
+      const flowPayload = {
+        flowCode: response.resultData.workflowCode || '',
+        loginuser: payload.empId,
+        empId: payload.empId,
+      };
+      const flowHistoryResponse = yield call(api.getFlowHistory, flowPayload);
+      yield put({
+        type: 'getFlowHistorySuccess',
+        payload: flowHistoryResponse,
       });
     },
     // 获取附件信息
@@ -128,6 +145,7 @@ export default {
         payload: response,
       });
     },
+    // 删除附件
     * deleteAttachment({ payload }, { call, put }) {
       const response = yield call(api.deleteAttachment, payload);
       yield put({
@@ -135,6 +153,7 @@ export default {
         payload: response,
       });
     },
+    // 获取可申请客户列表
     * getCutList({ payload }, { call, put }) {
       const response = yield call(seibelApi.getCanApplyCustList, payload);
       yield put({
@@ -142,14 +161,7 @@ export default {
         payload: response,
       });
     },
-    * getContractDetail({ payload }, { call, put }) {
-      const response = yield call(api.getContractDetail, payload);
-      console.log('detail', response);
-      yield put({
-        type: 'getContractDetailSuccess',
-        payload: response,
-      });
-    },
+    // 保存详情
     * saveContractData({ payload }, { call, put }) {
       console.log('payload', payload);
       const response = yield call(api.saveContractData, payload);
@@ -158,6 +170,7 @@ export default {
         payload: response,
       });
     },
+    // 获取合约编号列表
     * getContractNumList({ payload }, { call, put }) {
       const response = yield call(api.getContractNumList, payload);
       yield put({
@@ -176,6 +189,14 @@ export default {
       const response = yield call(api.getCooperDeparmentList, payload);
       yield put({
         type: 'getCooperDeparmentListSuccess',
+        payload: response,
+      });
+    },
+    // 获取审批记录
+    * getFlowHistory({ payload }, { call, put }) {
+      const response = yield call(api.getFlowHistory, payload);
+      yield put({
+        type: 'getFlowHistorySuccess',
         payload: response,
       });
     },

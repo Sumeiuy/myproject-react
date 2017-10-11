@@ -105,6 +105,13 @@ export default class CreateNewApprovalBoard extends PureComponent {
     };
   }
 
+  componentWillMount() {
+    if (this.judgeSubtypeNow(commadj.batch)) {
+      // 如果是初次进入，则需要查下产品列表
+      this.props.queryProductList({ prodCommision: 1.6 });
+    }
+  }
+
   @autobind
   getPopupContainer() {
     return this.approvalBody;
@@ -311,6 +318,10 @@ export default class CreateNewApprovalBoard extends PureComponent {
   handleCustomerValidate(customer) {
     const { approvalType, newCommission, targetProduct } = this.state;
     const { cusId, custType } = customer;
+    if (_.isEmpty(targetProduct)) {
+      message.error('请选择目标产品', 2);
+      return;
+    }
     // 如果是批量佣金则传递businessType = 'BatchProcess'
     // '0202' ：表示批量佣金调整
     this.props.validateCust({
@@ -397,7 +408,22 @@ export default class CreateNewApprovalBoard extends PureComponent {
               : (
                 <div className={styles.approvalBlock}>
                   <InfoTitle head="佣金产品选择" />
-                  <CommissionLine label="目标股基佣金率" labelWidth="135px">
+                  <CommissionLine
+                    label="目标股基佣金率"
+                    labelWidth="135px"
+                    extra={
+                      <span
+                        style={{
+                          fontSize: '14px',
+                          color: '#9b9b9b',
+                          lineHeight: '26px',
+                          paddingLeft: '4px',
+                        }}
+                      >
+                        ‰
+                      </span>
+                    }
+                  >
                     <DigitalTrimmer
                       getValue={this.changeTargetGJCommission}
                     />

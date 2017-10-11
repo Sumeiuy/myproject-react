@@ -11,7 +11,7 @@ import classnames from 'classnames';
 import styles from './commissionLine.less';
 
 export default function CommissionLine(props) {
-  const { label, required, labelWidth, children, needInputBox } = props;
+  const { label, required, labelWidth, children, needInputBox, extra } = props;
   const requiredIcon = required ? (<i className={styles.required}>*</i>) : null;
   const componentBox = classnames({
     [styles.componentBox]: true,
@@ -28,6 +28,7 @@ export default function CommissionLine(props) {
       <div className={componentBox} style={{ marginLeft: labelWidth }}>
         {children}
       </div>
+      {extra}
     </div>
   );
 }
@@ -39,6 +40,7 @@ CommissionLine.propTypes = {
   required: PropTypes.bool,
   needInputBox: PropTypes.bool,
   children: PropTypes.element.isRequired,
+  extra: PropTypes.element,
 };
 
 CommissionLine.defaultProps = {
@@ -47,5 +49,6 @@ CommissionLine.defaultProps = {
   inputWidth: '100%',
   required: false,
   needInputBox: true,
+  extra: null,
 };
 

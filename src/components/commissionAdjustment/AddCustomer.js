@@ -73,7 +73,7 @@ export default class AddCustomer extends PureComponent {
   @autobind
   pickValue(list, key) {
     const tempList = _.cloneDeep(list);
-    return tempList.map(item => _.pick(item, key));
+    return tempList.map(item => ({ custId: item[key] }));
   }
 
   @autobind
