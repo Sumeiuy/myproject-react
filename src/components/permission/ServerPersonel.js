@@ -4,6 +4,7 @@ import { autobind } from 'core-decorators';
 import { message } from 'antd';
 import _ from 'lodash';
 import InfoTitle from '../common/InfoTitle';
+import Button from '../common/Button';
 import TableList from '../common/TableList';
 import style from './serverpersonel.less';
 import DropdownSelect from '../common/dropdownSelect';
@@ -79,14 +80,42 @@ export default class ServerPersonel extends PureComponent {
               boxStyle={{ border: '1px solid #d9d9d9' }}
             />
           </div>
-          <span
-            className={style.spAddBtn}
-            onClick={this.addServerPerson}
-          >添加</span>
-          <span
-            className={style.spClearBtn}
-            onClick={this.removeServerPerson}
-          >移除</span>
+          {
+            !_.isEmpty(this.state.addSelectedValue) ?
+              <Button
+                type="primary"
+                onClick={this.addServerPerson}
+                className={style.spAddBtn}
+              >
+              添加
+            </Button>
+            :
+              <Button
+                type="primary"
+                disabled
+                className={style.spAddBtn}
+              >
+              添加
+            </Button>
+          }
+          {
+            !_.isEmpty(this.state.removeSelectedValue) ?
+              <Button
+                type="primary"
+                onClick={this.removeServerPerson}
+                className={style.spClearBtn}
+              >
+              移除
+            </Button>
+            :
+              <Button
+                type="primary"
+                disabled
+                className={style.spClearBtn}
+              >
+              移除
+            </Button>
+          }
         </div>
       );
     }
