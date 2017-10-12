@@ -1,8 +1,8 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-09-14 14:44:35
- * @Last Modified by:   XuWenKang
- * @Last Modified time: 2017-09-27 18:40:35
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2017-10-12 11:00:47
  */
 /**
  * 常用说明
@@ -40,6 +40,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Modal, Button } from 'antd';
+import _ from 'lodash';
 // import Button from '../Button';
 import styles from './commonModal.less';
 
@@ -62,7 +63,9 @@ export default class CommonModal extends PureComponent {
       PropTypes.string,
       PropTypes.object,
       PropTypes.element,
+      PropTypes.node,
     ]),
+    selfBtnGroup: PropTypes.array,
   }
 
   static defaultProps = {
@@ -75,6 +78,7 @@ export default class CommonModal extends PureComponent {
     children: '子元素内容区域',
     size: 'normal',
     wrapClassName: '',
+    selfBtnGroup: [],
   }
 
   render() {
@@ -90,6 +94,7 @@ export default class CommonModal extends PureComponent {
       needBtn,
       showCancelBtn,
       showOkBtn,
+      selfBtnGroup,
     } = this.props;
     const modalSize = `modal${size}`;
     const okBtn = !showOkBtn ? null
@@ -110,8 +115,11 @@ export default class CommonModal extends PureComponent {
     >
       {cancelText}
     </Button>);
-    const footerContent = !needBtn ? null
+    let footerContent = !needBtn ? null
       : [okBtn, cancelBtn];
+    if (!_.isEmpty(selfBtnGroup)) {
+      footerContent = selfBtnGroup;
+    }
     return (
       <Modal
         {...this.props}

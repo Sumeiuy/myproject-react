@@ -174,15 +174,28 @@ export default class modifyPrivateClient extends PureComponent {
 
   @autobind
   submitModifyInfo(item) {
+    console.warn('item', item);
     // 修改状态下的提交按钮
     // 点击按钮后 弹出下一审批人 模态框
-    this.setState({
-      nextApproverModal: true,
-      routeId: item.routeId,
-      btnName: item.btnName,
-      btnId: item.btnId,
-      nextGroupId: item.nextGroupId,
-    });
+    if (item.flowBtnId !== 118006) {
+      this.setState({
+        nextApproverModal: true,
+        routeId: item.routeId,
+        btnName: item.btnName,
+        btnId: item.btnId,
+        nextGroupId: item.nextGroupId,
+      });
+    } else {
+      this.setState({
+        routeId: item.routeId,
+        btnName: item.btnName,
+        btnId: item.btnId,
+        nextGroupId: item.nextGroupId,
+      },
+      () => {
+        this.confirmSubmit();
+      });
+    }
   }
 
   @autobind
@@ -218,7 +231,7 @@ export default class modifyPrivateClient extends PureComponent {
       // 备注
       remark: this.state.remark,
       // 下一审批人
-      approvalIds: this.state.nextApproverList.concat(value.ptyMngId),
+      approvalIds: !_.isEmpty(value) ? this.state.nextApproverList.concat(value.ptyMngId) : [],
       // 下一组ID
       nextGroupId: this.state.nextGroupId,
       btnName: this.state.btnName,
