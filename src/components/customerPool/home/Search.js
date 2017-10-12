@@ -406,7 +406,7 @@ export default class Search extends PureComponent {
                 style={{ width: '100%' }}
                 dataSource={this.createOption()}
                 onSelect={this.onSelect}
-                onSearch={this.handleSearch}
+                onSearch={_.debounce(this.handleSearch, 200)}
                 placeholder={hotWds.labelNameVal || ''}
                 optionLabelProp="text"
                 defaultValue={searchHistoryVal}

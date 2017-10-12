@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-12 10:51:49
+ * @Last Modified time: 2017-10-12 15:25:35
  */
 
 import React, { PureComponent } from 'react';
@@ -39,10 +39,14 @@ export default class GroupTable extends PureComponent {
     bordered: PropTypes.bool,
     // 是否固定列
     isFixedColumn: PropTypes.bool,
+    // 是否固定标题
+    isFixedTitle: PropTypes.bool,
     // 固定列的区间
     fixedColumn: PropTypes.array,
     // 滚动的x范围
     scrollX: PropTypes.number,
+    // 滚动Y范围
+    scrollY: PropTypes.number,
     // 列的宽度
     columnWidth: PropTypes.oneOfType([
       PropTypes.string,
@@ -60,8 +64,11 @@ export default class GroupTable extends PureComponent {
     isFixedColumn: false,
     fixedColumn: [],
     scrollX: 0,
+    scrollY: 0,
+    isFixedTitle: false,
     columnWidth: ['20%', '20%', '20%', '20%', '20%'],
     firstColumnHandler: () => { },
+    tableHeight: 150,
   };
 
   constructor(props) {
@@ -256,6 +263,8 @@ export default class GroupTable extends PureComponent {
       bordered,
       isFixedColumn,
       scrollX,
+      scrollY,
+      isFixedTitle,
      } = this.props;
     const { curSelectedRow } = this.state;
     const paginationOptions = this.renderPaganation(
@@ -264,7 +273,8 @@ export default class GroupTable extends PureComponent {
       curPageSize,
     );
     const columns = this.renderColumns();
-
+    const scrollYArea = isFixedTitle ? { y: scrollY } : {};
+    const scrollXArea = isFixedColumn ? { x: scrollX } : {};
     return (
       <Table
         className={tableClass}
@@ -272,7 +282,7 @@ export default class GroupTable extends PureComponent {
         dataSource={this.renderTableDatas(listData)}
         pagination={paginationOptions}
         bordered={bordered}
-        scroll={isFixedColumn ? { x: scrollX } : {}}
+        scroll={_.merge(scrollXArea, scrollYArea)}
         onRowClick={this.handleRowClick}
         rowClassName={(record, index) => {
           if (curSelectedRow === index) {

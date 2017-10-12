@@ -85,6 +85,9 @@ const mapStateToProps = state => ({
   fllowCustData: state.customerPool.fllowCustData,
   // 接口的loading状态
   interfaceState: state.loading.effects,
+  // 联系方式接口loading、服务记录接口loading
+  isLoadingEnd: (!state.loading.effects[effects.getCustContact]
+    && !state.loading.effects[effects.getServiceRecord]) || false,
 });
 
 const mapDispatchToProps = {
@@ -138,6 +141,8 @@ export default class CustomerList extends PureComponent {
     toggleServiceRecordModal: PropTypes.func.isRequired,
     // 接口的loading状态
     interfaceState: PropTypes.object.isRequired,
+    // 联系方式接口loading
+    isLoadingEnd: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -573,6 +578,7 @@ export default class CustomerList extends PureComponent {
       fllowCustData,
       toggleServiceRecordModal,
       interfaceState,
+      isLoadingEnd,
     } = this.props;
     const {
       sortDirection,
@@ -660,6 +666,7 @@ export default class CustomerList extends PureComponent {
           fllowCustData={fllowCustData}
           followLoading={followLoading}
           toggleServiceRecordModal={toggleServiceRecordModal}
+          isLoadingEnd={isLoadingEnd}
         />
       </div>
     );

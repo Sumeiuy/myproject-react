@@ -93,6 +93,7 @@ export default class CustomerLists extends PureComponent {
     isSms: PropTypes.bool.isRequired,
     custIncomeReqState: PropTypes.bool,
     toggleServiceRecordModal: PropTypes.func.isRequired,
+    isLoadingEnd: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -523,6 +524,7 @@ export default class CustomerLists extends PureComponent {
       isSms,
       custIncomeReqState,
       toggleServiceRecordModal,
+      isLoadingEnd,
     } = this.props;
     // console.log('1---', this.props)
     // 服务记录执行方式字典
@@ -649,7 +651,7 @@ export default class CustomerLists extends PureComponent {
           </div>
         </div>
         {
-          isShowContactModal ?
+          (isShowContactModal && isLoadingEnd) ?
             <CreateContactModal
               key={modalKey}
               visible={isShowContactModal}
