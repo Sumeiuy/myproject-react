@@ -15,12 +15,14 @@ export default function contract(api) {
     // 保存合作合约
     saveContractData: query => api.post('/groovynoauth/fsp/contract/cooper/saveContract', query),
     // 查询合作合约编号
-    getContractNumList: query => api.post('/groovynoauth/fsp/contract/cooper/queryContractId', query),
+    getContractNumList: query => api.post('/groovynoauth/fsp/contract/cooper/queryNumList', query),
     // 查询合作部门
     getCooperDeparmentList: query => api.post('/groovynoauth/fsp/contract/cooper/queryDeparment', query),
     // 查询合约条款名称列表
     getClauseNameList: query => api.post('/groovynoauth/fsp/contract/cooper/termNameList', query),
     // 查询批量佣金调整详情页面中查看单个用户的审批记录
     getFlowHistory: query => api.post('/groovynoauth/fsp/flow/queryFlowHistory', query),
+    // 合作合约退订
+    contractUnSubscribe: query => api.post('/groovynoauth/fsp/contract/cooper/addFlow', query),
   };
 }

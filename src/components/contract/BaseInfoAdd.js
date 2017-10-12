@@ -2,8 +2,8 @@
 * @Description: 合作合约新建 -基本信息
 * @Author: XuWenKang
 * @Date:   2017-09-21 15:27:31
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-11 19:55:23
+ * @Last Modified by:   XuWenKang
+ * @Last Modified time: 2017-10-12 16:20:05
 */
 
 import React, { PureComponent } from 'react';
@@ -96,7 +96,6 @@ export default class BaseInfoEdit extends PureComponent {
       remark: '',
     }, () => {
       this.transferDataToHome();
-      this.props.onReset();
     });
   }
 
@@ -104,7 +103,7 @@ export default class BaseInfoEdit extends PureComponent {
   @autobind
   handleSelectChange(key, value) {
     console.log({ [key]: value });
-    const { oldOperation } = this.state;
+    const { oldOperation } = this.state.operation;
     this.setState({
       ...this.state,
       [key]: value,
@@ -118,6 +117,7 @@ export default class BaseInfoEdit extends PureComponent {
       // 操作类型发生变化时重置所有填入的数据
       if (key === 'operation' && value !== oldOperation) {
         this.resetState();
+        this.props.onReset();
       }
     });
   }
@@ -208,6 +208,9 @@ export default class BaseInfoEdit extends PureComponent {
       // 备注
       description: data.remark,
     };
+    if (data.operation === unsubscribe) {
+      obj.contractNum = data.contractNum;
+    }
     console.warn('obj', obj);
     this.props.onChange(obj);
   }
@@ -220,7 +223,7 @@ export default class BaseInfoEdit extends PureComponent {
       (<InfoForm label="合约编号" required>
         <DropDownSelect
           placeholder="合约编号"
-          showObjKey="contractName"
+          showObjKey="id"
           objId="id"
           value={this.state.contractNum.id || ''}
           searchList={contractNumList}
