@@ -302,7 +302,7 @@ export default class CreateTaskForm extends PureComponent {
                   <FormItem
                     wrapperCol={{ span: 12 }}
                   >
-                    {getFieldDecorator('taskName ',
+                    {getFieldDecorator('taskName',
                       {
                         rules: [{ required: true, message: '任务名称不能为空!' }],
                         initialValue: defaultMissionName,
@@ -318,7 +318,7 @@ export default class CreateTaskForm extends PureComponent {
                       <FormItem
                         wrapperCol={{ span: 12 }}
                       >
-                        {getFieldDecorator('taskType ',
+                        {getFieldDecorator('taskType',
                           {
                             initialValue: defaultMissionType,
                           })(

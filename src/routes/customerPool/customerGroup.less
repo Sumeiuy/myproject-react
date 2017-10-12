@@ -108,7 +108,7 @@
           border: 1px solid #ddd;
           border-radius: 4px;
           .groupDescription {
-            width: 30%;
+            width: 100%;
           }
           .ant-table {
             position: static;
@@ -128,7 +128,7 @@
           }
           .ant-table-tbody {
             tr > td {
-              padding: 11px 44px;
+              padding: 11px 42px;
               border-bottom: 0;
               font-size: 14px;
               color: #666;
@@ -138,8 +138,15 @@
               }
               a.groupNames {
                 color: #666;
-              }
+              }              
 
+            }
+            tr > td:nth-child(2){
+                max-width:290px;
+                min-width:212px;
+                text-overflow:ellipsis; 
+                overflow:hidden;
+                white-space:nowrap;              
             }
             tr:nth-child(2n+1) > td {
               background-color: #f9f9f9;
@@ -148,7 +155,9 @@
               background-color: #FFFFFF;
             }
             tr > td:nth-child(3) {
-              width: 45%;
+              width:40%;
+              min-width:438px;
+              max-width:595px;
               .groupDescription {
                 cursor: pointer;
                 &:hover {
@@ -157,19 +166,26 @@
                   }
                 }
                 .showtext {
-                  width: 50%;
+                  min-width: 470px;
+                  max-width: 470px;
                   overflow: hidden;
                   height: 22px;
+                  overflow:hidden;
+                  white-space: nowrap;
+                  text-overflow: ellipsis;
                 }
                 .hiddentext {
                   display: none;
                   position: absolute;
-                  width: 30%;
-                  height: 80px;
-                  background-color: #ffffcd;
+                  width: 45%;
+                  height:100px;
+                  overflow-y:scroll;
+                  background-color: #fff;
+                  border:1px solid #ddd;
+                  border-radius:5px;
                   div {
                     padding: 4px 8px 0px 8px;
-                    font-size: 17px;
+                    font-size: 12px;
                   }
                 }
               }
