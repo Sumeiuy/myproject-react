@@ -1,8 +1,8 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-09-14 14:44:35
- * @Last Modified by:   XuWenKang
- * @Last Modified time: 2017-09-27 18:40:35
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2017-10-11 20:44:56
  */
 /**
  * 常用说明
@@ -62,6 +62,7 @@ export default class CommonModal extends PureComponent {
       PropTypes.string,
       PropTypes.object,
       PropTypes.element,
+      PropTypes.node,
     ]),
   }
 

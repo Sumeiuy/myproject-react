@@ -3,14 +3,13 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-19 09:37:42
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-11 10:59:49
+ * @Last Modified time: 2017-10-12 09:51:00
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
-import moment from 'moment';
 
 import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
@@ -19,11 +18,14 @@ import styles from './detail.less';
 import CommonUpload from '../common/biz/CommonUpload';
 import CommonTable from '../common/biz/CommonTable';
 import { seibelConfig } from '../../config';
+import { dateFormat } from '../../utils/helper';
+
 // 子类型列表
 const childTypeList = _.filter(seibelConfig.contract.subType, v => v.label !== '全部');
+console.warn('seibelConfig.contract.subType', seibelConfig.contract.subType);
 console.warn('childTypeList', childTypeList);
-// 合约条款的表头
-const { contract: { titleList } } = seibelConfig;
+// 合约条款的表头、状态对应值
+const { contract: { titleList, status } } = seibelConfig;
 export default class Detail extends PureComponent {
   static propTypes = {
     baseInfo: PropTypes.object,
@@ -80,9 +82,17 @@ export default class Detail extends PureComponent {
       attachment: baseInfo.attachment || '',
     };
     const nowStep = {
-      stepName: baseInfo.workflowName,
+      // 当前步骤
+      stepName: baseInfo.workflowNode,
+      // 当前审批人
       userName: baseInfo.workflowName,
     };
+    let statusLabel = '';
+    if (typeof (baseInfo.status) === 'number') {
+      statusLabel = status[Number(baseInfo.status)].label;
+    } else {
+      statusLabel = '';
+    }
     // 表格中需要的操作
     // const operation = {
     //   column: {
@@ -94,7 +104,7 @@ export default class Detail extends PureComponent {
     return (
       <div className={styles.detailComponent}>
         <div className={styles.dcHeader}>
-          <span className={styles.dcHaderNumb}>编号</span>
+          <span className={styles.dcHaderNumb}>编号{baseInfo.contractNum}</span>
           <span
             onClick={showEditModal}
             className={modifyBtnClass}
@@ -105,16 +115,16 @@ export default class Detail extends PureComponent {
           <InfoItem label="操作类型" value={operationType} />
           <InfoItem label="子类型" value={childTypeList[0].label} />
           <InfoItem label="客户" value={`${baseInfo.custName} ${baseInfo.custId || ''}`} />
-          <InfoItem label="合约开始日期" value={moment(baseInfo.startDt).format('YYYY-MM-DD')} />
-          <InfoItem label="合约有效期" value={moment(baseInfo.vailDt).format('YYYY-MM-DD')} />
-          <InfoItem label="合约终止日期" value={moment(baseInfo.endDt).format('YYYY-MM-DD')} />
+          <InfoItem label="合约开始日期" value={dateFormat(baseInfo.startDt)} />
+          <InfoItem label="合约有效期" value={dateFormat(baseInfo.vailDt)} />
+          <InfoItem label="合约终止日期" value={dateFormat(baseInfo.endDt)} />
           <InfoItem label="备注" value={baseInfo.description} />
         </div>
         <div className={styles.detailWrapper}>
           <InfoTitle head="拟稿信息" />
           <InfoItem label="拟稿人" value={`${baseInfo.divisionName} ${baseInfo.createdName}`} />
           <InfoItem label="提请时间" value={createTime} />
-          <InfoItem label="状态" value={baseInfo.status} />
+          <InfoItem label="状态" value={statusLabel} />
         </div>
         <div className={styles.detailWrapper}>
           <InfoTitle head="合约条款" />

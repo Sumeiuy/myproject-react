@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import PropTypes from 'prop-types';
 // import { Modal, message } from 'antd';
-// import _ from 'lodash';
+import _ from 'lodash';
 import CommonModal from '../common/biz/CommonModal';
 import ServerPersonel from './ServerPersonel';
 import MessageList from '../common/MessageList';
@@ -184,6 +184,7 @@ export default class modifyPrivateClient extends PureComponent {
       nextGroupId: item.nextGroupId,
     });
   }
+
   @autobind
   searchNextApproverList() {
     // 按照给出的条件 搜索查询 下一审批人列表
@@ -193,6 +194,7 @@ export default class modifyPrivateClient extends PureComponent {
       flowId: this.props.flowId,
     });
   }
+
   @autobind
   confirmSubmit(value) {
     // 提交 修改私密客户申请
@@ -232,9 +234,7 @@ export default class modifyPrivateClient extends PureComponent {
   get baseInfoModifyDom() {
     // 返回基本信息修改组件
     let subTypeTxt = subTypeList.filter(item => item.value === this.state.subType);
-    console.warn('subTypeTxt', subTypeTxt);
-    subTypeTxt = subTypeTxt[0].label || '请选择';
-
+    subTypeTxt = !_.isEmpty(subTypeTxt) ? subTypeTxt[0].label : '无';
 
     const info = [
       {
@@ -266,7 +266,7 @@ export default class modifyPrivateClient extends PureComponent {
     // 返回拟稿信息组件
     const { empName, createTime, status } = this.props;
     let statusTxt = statusList.filter(item => item.value === status);
-    statusTxt = statusTxt[0].label || '无';
+    statusTxt = !_.isEmpty(statusTxt) ? statusTxt[0].label : '无';
     const info = [
       {
         title: '拟稿',

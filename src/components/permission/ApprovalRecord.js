@@ -19,10 +19,11 @@ export default function ApprovalRecord(props) {
         [style.approvalRecordListEven]: index % 2 === 0,
         [style.approvalRecordListOdd]: index % 2 !== 0,
       }]);
+      const key = `record-${index}`;
       return (
         <div
           className={mapElementClass}
-          key={item.handler}
+          key={key}
         >
           <p className={style.arlistContentOne}>
             审批人： {item.handler}于{item.handleTime}，步骤名称：{item.stepName}

@@ -64,6 +64,8 @@ const mapStateToProps = state => ({
   seibelListLoading: state.loading.effects['app/getSeibleList'],
   //  获取子类型
   subTypeList: state.permission.subTypeList,
+  // 员工基本信息
+  empInfo: state.app.empInfo,
 });
 
 const mapDispatchToProps = {
@@ -96,12 +98,14 @@ const mapDispatchToProps = {
   getCreateCustApplication: fetchDataFunction(false, 'permission/getCreateCustApplication'),
   // 获取子类型
   getSubTypeList: fetchDataFunction(false, 'permission/getSubTypeList'),
+  push: routerRedux.push,
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 export default class Permission extends PureComponent {
   static propTypes = {
+    push: PropTypes.func.isRequired,
     list: PropTypes.object.isRequired,
     seibelListLoading: PropTypes.bool,
     drafterList: PropTypes.array.isRequired,
@@ -111,7 +115,7 @@ export default class Permission extends PureComponent {
     getCustRange: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     getDetailMessage: PropTypes.func.isRequired,
-    detailMessage: PropTypes.object.isRequired,
+    detailMessage: PropTypes.object,
     replace: PropTypes.func.isRequired,
     getSearchServerPersonList: PropTypes.func.isRequired,
     getCustomerList: PropTypes.func.isRequired,
@@ -133,9 +137,12 @@ export default class Permission extends PureComponent {
     addListenCreate: PropTypes.bool.isRequired,
     getSubTypeList: PropTypes.func.isRequired,
     subTypeList: PropTypes.array.isRequired,
+    empInfo: PropTypes.object,
   }
 
   static defaultProps = {
+    detailMessage: {},
+    empInfo: {},
     seibelListLoading: false,
   }
 
@@ -342,10 +349,15 @@ export default class Permission extends PureComponent {
       modifyCustApplication,
       addListenModify,
       subTypeList,
+      push,
+      location,
+      getPermissionList,
     } = this.props;
     return (
       <Detail
         {...this.state.detailMessage}
+        push={push}
+        location={location}
         canApplyCustList={canApplyCustList}
         searchServerPersonList={searchServerPersonList}
         nextApproverList={nextApproverList}
@@ -357,6 +369,8 @@ export default class Permission extends PureComponent {
         addListenModify={addListenModify}
         subTypeList={subTypeList}
         onEmitEvent={this.showModifyModal}
+        onEmitClearModal={this.clearModal}
+        getPermissionList={getPermissionList}
       />
     );
   }
@@ -378,13 +392,16 @@ export default class Permission extends PureComponent {
       getCreateCustApplication,
       createCustApplication,
       addListenCreate,
-      detailMessage,
       subTypeList,
       getBottonList,
       bottonList,
       getModifyCustApplication,
       modifyCustApplication,
       addListenModify,
+      empInfo: {
+        empInfo = EMPTY_OBJECT,
+      },
+      push,
     } = this.props;
 
     if (!custRange || !custRange.length) {
@@ -422,6 +439,7 @@ export default class Permission extends PureComponent {
         {this.detailComponent}
       </Col>
     );
+
     return (
       <div className={styles.premissionbox}>
         <SplitPanel
@@ -434,6 +452,8 @@ export default class Permission extends PureComponent {
         {
           isShowCreateModal ?
             <CreatePrivateClient
+              push={push}
+              location={location}
               canApplyCustList={canApplyCustList}
               searchServerPersonList={searchServerPersonList}
               hasServerPersonList={hasServerPersonList}
@@ -445,9 +465,7 @@ export default class Permission extends PureComponent {
               createCustApplication={createCustApplication}
               addListenCreate={addListenCreate}
               subTypeList={subTypeList}
-              empId={detailMessage.empId}
-              empName={detailMessage.empName}
-              orgId={detailMessage.orgId}
+              empInfo={empInfo}
             />
           :
             null

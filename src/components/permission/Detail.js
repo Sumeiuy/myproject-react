@@ -17,11 +17,11 @@ import BaseInfoModify from './BaseInfoModify';
 import UploadFile from './UploadFile';
 import { seibelConfig } from '../../config';
 import TableDialog from '../common/biz/TableDialog';
-import BottonGroup from './BottonGroup';
-import { getEmpId } from '../../utils/helper';
+import { getEmpId, constructSeibelPostBody } from '../../utils/helper';
 
 const subTypeList = seibelConfig.permission.subType;
 const statusList = seibelConfig.permission.status;
+const pageType = seibelConfig.permission.pageType;
 const columns = [{
   title: '工号',
   dataIndex: 'ptyMngId',
@@ -61,9 +61,13 @@ export default class Detail extends PureComponent {
     canApplyCustList: PropTypes.array.isRequired,
     subTypeList: PropTypes.array.isRequired,
     onEmitEvent: PropTypes.func.isRequired,
+    onEmitClearModal: PropTypes.func.isRequired,
     getModifyCustApplication: PropTypes.func.isRequired,
     modifyCustApplication: PropTypes.object.isRequired,
     addListenModify: PropTypes.bool.isRequired,
+    push: PropTypes.func.isRequired,
+    location: PropTypes.object.isRequired,
+    getPermissionList: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -148,12 +152,24 @@ export default class Detail extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
+    const {
+      getPermissionList,
+      push,
+      location: { query, query: { currentId, pageNum, pageSize } },
+    } = nextProps;
+    const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
     if (
       this.props.addListenModify === true &&
       nextProps.addListenModify === false &&
       nextProps.modifyCustApplication.msg === 'success'
     ) {
+      this.props.onEmitClearModal('isShowModifyModal');
       message.success('私密客户修改成功！！！');
+      push(`/permission?currentId=${currentId}&pageNum=${pageNum}&pageSize=${pageSize}`);
+      getPermissionList({
+        ...params,
+        type: pageType,
+      });
     }
   }
 
@@ -267,6 +283,7 @@ export default class Detail extends PureComponent {
     }
     return '请选择';
   }
+
   @autobind
   submitModifyInfo(item) {
     // 修改状态下的提交按钮
@@ -332,7 +349,7 @@ export default class Detail extends PureComponent {
   render() {
     const loginUser = getEmpId();
     const modifyBtnClass = classnames([style.dcHeaderModifyBtn,
-      { hide: this.props.status !== '04' || this.state.statusType === 'modify' || this.props.empId === loginUser },
+      { hide: this.props.status !== '04' || this.state.statusType === 'modify' || this.props.empId !== loginUser },
     ]);
 
     const searchProps = {
@@ -379,10 +396,6 @@ export default class Detail extends PureComponent {
           head="审批记录"
           info={this.props.workflowHistoryBeans}
           statusType={this.state.statusType}
-        />
-        <BottonGroup
-          list={this.props.bottonList}
-          onEmitEvent={this.submitModifyInfo}
         />
         <TableDialog
           {...searchProps}
