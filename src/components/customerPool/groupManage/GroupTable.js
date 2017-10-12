@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-12 15:25:35
+ * @Last Modified time: 2017-10-12 17:56:39
  */
 
 import React, { PureComponent } from 'react';
@@ -68,7 +68,6 @@ export default class GroupTable extends PureComponent {
     isFixedTitle: false,
     columnWidth: ['20%', '20%', '20%', '20%', '20%'],
     firstColumnHandler: () => { },
-    tableHeight: 150,
   };
 
   constructor(props) {
