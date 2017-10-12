@@ -2,8 +2,8 @@
 * @Description: 合作合约新建 -基本信息
 * @Author: XuWenKang
 * @Date:   2017-09-21 15:27:31
- * @Last Modified by:   XuWenKang
- * @Last Modified time: 2017-10-10 19:47:31
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2017-10-11 19:55:23
 */
 
 import React, { PureComponent } from 'react';
@@ -31,16 +31,6 @@ const { contract: { operationList } } = seibelConfig;
 const unsubscribe = operationList[1].value;
 // 子类型列表
 const childTypeList = _.filter(seibelConfig.contract.subType, v => v.label !== '全部');
-// 临时数据待删
-// const contractNumList = [{
-//   show: true,
-//   label: '合约编号1',
-//   value: '1',
-// }, {
-//   show: true,
-//   label: '合约编号2',
-//   value: '2',
-// }];
 // 下拉搜索组件样式
 const dropDownSelectBoxStyle = {
   width: 220,
@@ -83,7 +73,7 @@ export default class BaseInfoEdit extends PureComponent {
       contractNum: {
         id: '',
       },
-      childType: '',
+      subType: '',
       client: EMPTY_OBJECT,
       contractStarDate: '',
       contractPalidity: '',
@@ -97,15 +87,15 @@ export default class BaseInfoEdit extends PureComponent {
     console.log('reset');
     this.setState({
       contractNum: {
-        value: '1',
+        value: '',
       },
-      childType: '',
+      subType: '',
       client: EMPTY_OBJECT,
       contractStarDate: '',
       contractPalidity: '',
       remark: '',
     }, () => {
-      this.props.onChange(this.state);
+      this.transferDataToHome();
       this.props.onReset();
     });
   }
@@ -119,11 +109,11 @@ export default class BaseInfoEdit extends PureComponent {
       ...this.state,
       [key]: value,
     }, () => {
-      this.props.onChange(this.state);
-      const { operation, childType, client } = this.state;
+      this.transferDataToHome();
+      const { operation, subType, client } = this.state;
       // 当前操作类型为“退订”并且子类型变化的时候触发合作合约编号查询
-      if (operation === unsubscribe && key === 'childType') {
-        this.props.onSearchContractNum({ childType, client });
+      if (operation === unsubscribe && key === 'subType') {
+        this.props.onSearchContractNum({ subType, client });
       }
       // 操作类型发生变化时重置所有填入的数据
       if (key === 'operation' && value !== oldOperation) {
@@ -140,11 +130,12 @@ export default class BaseInfoEdit extends PureComponent {
       ...this.state,
       client: value,
     }, () => {
-      this.props.onChange(this.state);
-      const { operation, childType, client } = this.state;
+      this.transferDataToHome();
+      const { operation, subType, client } = this.state;
       // 当前操作类型为“退订”并且子类型变化的时候触发合作合约编号查询
       if (operation === unsubscribe) {
-        this.props.onSearchContractNum({ childType, client });
+        console.warn('退订且是子类型');
+        this.props.onSearchContractNum({ subType, client });
       }
     });
   }
@@ -163,7 +154,7 @@ export default class BaseInfoEdit extends PureComponent {
       ...this.state,
       contractNum: value,
     }, () => {
-      this.props.onChange(this.state);
+      this.transferDataToHome();
       // 退订选择合约编号后搜索该合约详情
       this.props.onSearchContractDetail(value);
     });
@@ -182,9 +173,7 @@ export default class BaseInfoEdit extends PureComponent {
     this.setState({
       ...this.state,
       [obj.name]: obj.value,
-    }, () => {
-      this.props.onChange(this.state);
-    });
+    }, this.transferDataToHome);
   }
 
   // 修改备注
@@ -194,9 +183,33 @@ export default class BaseInfoEdit extends PureComponent {
     this.setState({
       ...this.state,
       remark: e.target.value,
-    }, () => {
-      this.props.onChange(this.state);
-    });
+    }, this.transferDataToHome);
+  }
+
+  // 向外传递数据
+  @autobind
+  transferDataToHome() {
+    const data = this.state;
+    const obj = {
+      // 操作类型--必填
+      workflowname: data.operation,
+      // 子类型--必填
+      subType: data.subType,
+      // 客户名称--必填
+      custName: data.client.custName,
+      // 客户 ID--必填
+      custId: data.client.cusId,
+      // 客户类型--必填
+      custType: data.client.custType,
+      // 合约开始日期--订购状态下必填，退订不可编辑
+      startDt: data.contractStarDate,
+      // 合约有效期
+      vailDt: data.contractPalidity,
+      // 备注
+      description: data.remark,
+    };
+    console.warn('obj', obj);
+    this.props.onChange(obj);
   }
 
   render() {
@@ -272,9 +285,9 @@ export default class BaseInfoEdit extends PureComponent {
         </InfoForm>
         <InfoForm label="子类型" required>
           <Select
-            name="childType"
+            name="subType"
             data={childTypeList}
-            value={this.state.childType}
+            value={this.state.subType}
             onChange={this.handleSelectChange}
           />
         </InfoForm>

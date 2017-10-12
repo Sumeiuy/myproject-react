@@ -2,14 +2,15 @@
 * @Description: 合作合约修改 页面
 * @Author: XuWenKang
 * @Date:   2017-09-19 14:47:08
-* @Last Modified by:   XuWenKang
-* @Last Modified time: 2017-10-11 15:31:48
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2017-10-11 16:48:44
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 // import moment from 'moment';
 // import { message } from 'antd';
+import { Icon } from 'antd';
 
 import BaseInfoEdit from './BaseInfoEdit';
 import DraftInfo from './DraftInfo';
@@ -20,6 +21,8 @@ import ApproveList from '../common/approveList';
 import Approval from '../permission/Approval';
 import Button from '../common/Button';
 import AddClause from './AddClause';
+import ChoiceApproverBoard from '../commissionAdjustment/ChoiceApproverBoard';
+import CommissionLine from '../commissionAdjustment/CommissionLine';
 
 import { seibelConfig } from '../../config';
 import styles from './editForm.less';
@@ -53,22 +56,29 @@ export default class EditForm extends PureComponent {
     // 合作部门列表
     searchCooperDeparment: PropTypes.func.isRequired,
     cooperDeparment: PropTypes.array.isRequired,
+    // 上传成功后的回调
+    uploadAttachment: PropTypes.func.isRequired,
+    approverList: PropTypes.array,
   }
 
   static defaultProps = {
-
+    approverList: [],
   }
 
   constructor(props) {
     super(props);
     this.state = {
       formData: {
+        ...props.contractDetail.baseInfo,
         formType: 'edit',
-        attachment: '',
         terms: props.contractDetail.baseInfo.terms,
       },
       // 是否显示添加合约条款组件
       showAddClauseModal: false,
+      // 选择审批人弹窗
+      choiceApprover: false,
+      approverName: '',
+      approverId: '',
     };
   }
 
@@ -122,10 +132,10 @@ export default class EditForm extends PureComponent {
       ...this.state,
       formData: {
         ...this.state.formData,
-        attachment,
+        uuid: attachment,
       },
     }, () => {
-      this.props.onChangeForm(this.state.formData);
+      this.props.uploadAttachment(this.state.formData);
     });
   }
 
@@ -173,6 +183,32 @@ export default class EditForm extends PureComponent {
     });
   }
 
+  // 打开选择审批人弹窗
+  @autobind
+  openApproverBoard() {
+    this.setState({
+      choiceApprover: true,
+    });
+  }
+
+  // 关闭审批人员选择弹出窗
+  @autobind
+  closeChoiceApproverModal() {
+    this.setState({
+      choiceApprover: false,
+    });
+  }
+
+  // 审批人弹出框确认按钮
+  @autobind
+  handleApproverModalOK(approver) {
+    console.warn('approver', approver);
+    this.setState({
+      approverName: approver.empName,
+      approverId: approver.empNo,
+    });
+  }
+
 
   render() {
     const {
@@ -182,8 +218,16 @@ export default class EditForm extends PureComponent {
       clauseNameList,
       cooperDeparment,
       searchCooperDeparment,
+      contractDetail: { baseInfo },
+      approverList,
     } = this.props;
-    const { formData, showAddClauseModal } = this.state;
+    const {
+      formData,
+      showAddClauseModal,
+      choiceApprover,
+      approverName,
+      approverId,
+    } = this.state;
     const buttonProps = {
       type: 'primary',
       size: 'large',
@@ -192,14 +236,21 @@ export default class EditForm extends PureComponent {
       onClick: this.handleShowAddClause,
     };
     const draftInfo = {
-      name: contractDetail.baseInfo.createdName,
-      date: contractDetail.baseInfo.createTime,
-      status: contractDetail.baseInfo.status,
+      name: baseInfo.createdName,
+      date: baseInfo.createTime,
+      status: baseInfo.status,
     };
+    const newApproverList = approverList.map((item, index) => {
+      const key = `${new Date().getTime()}-${index}`;
+      return {
+        ...item,
+        key,
+      };
+    });
     return (
       <div className={styles.editComponent}>
         <div className={styles.dcHeader}>
-          <span className={styles.dcHaderNumb}>编号{111}</span>
+          <span className={styles.dcHaderNumb}>编号{baseInfo.contractNum}</span>
         </div>
         <BaseInfoEdit
           contractName="合约名称"
@@ -221,7 +272,7 @@ export default class EditForm extends PureComponent {
         <UploadFile
           edit={BOOL_TRUE}
           fileList={contractDetail.attachmentList}
-          attachment={contractDetail.baseInfo.attachment}
+          attachment={contractDetail.baseInfo.uuid}
           uploadAttachment={this.handleUploadSuccess}
         />
         <Approval
@@ -234,6 +285,17 @@ export default class EditForm extends PureComponent {
           <InfoTitle head="审批记录" />
           <ApproveList data={contractDetail.flowHistory} />
         </div>
+        <div className={styles.editWrapper}>
+          <InfoTitle head="审批人" />
+          <CommissionLine label="选择审批人" labelWidth="110px">
+            <div className={styles.checkApprover} onClick={this.openApproverBoard}>
+              {approverName === '' ? '' : `${approverName}(${approverId})`}
+              <div className={styles.searchIcon}>
+                <Icon type="search" />
+              </div>
+            </div>
+          </CommissionLine>
+        </div>
         <div className={styles.cutSpace} />
         <AddClause
           isShow={showAddClauseModal}
@@ -242,6 +304,12 @@ export default class EditForm extends PureComponent {
           clauseNameList={clauseNameList}
           departmentList={cooperDeparment}
           searchDepartment={searchCooperDeparment}
+        />
+        <ChoiceApproverBoard
+          visible={choiceApprover}
+          approverList={newApproverList}
+          onClose={this.closeChoiceApproverModal}
+          onOk={this.handleApproverModalOK}
         />
       </div>
     );

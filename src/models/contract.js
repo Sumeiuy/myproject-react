@@ -2,8 +2,8 @@
  * @Description: 合作合约 model
  * @Author: LiuJianShu
  * @Date: 2017-09-20 15:13:30
- * @Last Modified by:   XuWenKang
- * @Last Modified time: 2017-10-11 15:29:47
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2017-10-11 17:10:17
  */
 import { contract as api, seibel as seibelApi } from '../api';
 import { getEmpId } from '../utils/helper';
@@ -17,6 +17,7 @@ export default {
     custList: EMPTY_LIST, // 客户列表
     contractNumList: EMPTY_LIST, // 合作合约编号列表
     baseInfo: EMPTY_OBJECT,
+    unsubscribeBaseInfo: EMPTY_OBJECT,
     attachmentList: EMPTY_LIST, // 附件信息
     cooperDeparment: EMPTY_LIST, // 合作部门
     clauseNameList: EMPTY_LIST, // 条款名称列表
@@ -29,6 +30,14 @@ export default {
       return {
         ...state,
         baseInfo: resultData,
+      };
+    },
+    // 获取退订详情
+    getUnsubscribeDetailSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        unsubscribeBaseInfo: resultData,
       };
     },
     // 获取附件列表
@@ -110,14 +119,22 @@ export default {
   },
   effects: {
     // 获取详情
-    // TODO 增加一个参数，区分详情页与新建退订的数据
     * getBaseInfo({ payload }, { call, put }) {
       const empId = getEmpId();
       const response = yield call(api.getContractDetail, payload);
-      yield put({
-        type: 'getBaseInfoSuccess',
-        payload: response,
-      });
+      if (payload.type === 'unsubscribeDetail') {
+        // 退订时请求详情
+        yield put({
+          type: 'getUnsubscribeDetailSuccess',
+          payload: response,
+        });
+      } else {
+        // 非退订时请求详情
+        yield put({
+          type: 'getBaseInfoSuccess',
+          payload: response,
+        });
+      }
       // 获取附件列表的 payload
       const attachPayload = {
         attachment: response.resultData.uuid || '',
