@@ -57,6 +57,7 @@ export default class modifyPrivateClient extends PureComponent {
     addListenModify: PropTypes.bool.isRequired,
     subTypeList: PropTypes.array.isRequired,
     onEmitClearModal: PropTypes.func.isRequired,
+    location: PropTypes.object.isRequired,
   }
   static defaultProps = {
     id: '',
@@ -210,6 +211,7 @@ export default class modifyPrivateClient extends PureComponent {
 
   @autobind
   confirmSubmit(value) {
+    const { location: { query } } = this.props;
     // 提交 修改私密客户申请
     const queryConfig = {
       title: '私密客户申请',
@@ -240,6 +242,7 @@ export default class modifyPrivateClient extends PureComponent {
       empList: this.state.empList,
       // 附件上传后的id
       attachment: this.state.attachment,
+      currentQuery: query,
     };
     this.setState({ nextApproverModal: false });
     this.props.getModifyCustApplication(queryConfig);
@@ -312,6 +315,10 @@ export default class modifyPrivateClient extends PureComponent {
       modalKey: 'nextApproverModal',
       rowKey: 'ptyMngId',
     };
+    const btnGroupElement = (<BottonGroup
+      list={this.state.bottonList}
+      onEmitEvent={this.submitModifyInfo}
+    />);
     return (
       <CommonModal
         title="私密客户管理修改"
@@ -322,6 +329,8 @@ export default class modifyPrivateClient extends PureComponent {
         size="large"
         modalKey="myModal"
         afterClose={this.afterClose}
+        needBtn={false}
+        selfBtnGroup={btnGroupElement}
       >
         <div className={style.modifyPrivateClient}>
           <div className={style.dcHeader}>
@@ -349,10 +358,6 @@ export default class modifyPrivateClient extends PureComponent {
             head="审批记录"
             info={this.props.workflowHistoryBeans}
             statusType="modify"
-          />
-          <BottonGroup
-            list={this.state.bottonList}
-            onEmitEvent={this.submitModifyInfo}
           />
           <TableDialog
             {...searchProps}

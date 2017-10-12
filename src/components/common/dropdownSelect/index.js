@@ -4,10 +4,10 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Icon } from 'antd';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
+import Icon from '../Icon';
 import style from './style.less';
 
 export default class DropdownSelect extends PureComponent {
@@ -149,7 +149,7 @@ export default class DropdownSelect extends PureComponent {
               className={style.searchSub}
               onClick={this.toSearch}
             >
-              <Icon type="search" />
+              <Icon type="Shape" />
             </span>
           </div>
           {

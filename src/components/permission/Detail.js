@@ -5,7 +5,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { message } from 'antd';
 import _ from 'lodash';
 import classnames from 'classnames';
 import style from './detail.less';
@@ -17,11 +16,10 @@ import BaseInfoModify from './BaseInfoModify';
 import UploadFile from './UploadFile';
 import { seibelConfig } from '../../config';
 import TableDialog from '../common/biz/TableDialog';
-import { getEmpId, constructSeibelPostBody } from '../../utils/helper';
+import { getEmpId } from '../../utils/helper';
 
 const subTypeList = seibelConfig.permission.subType;
 const statusList = seibelConfig.permission.status;
-const pageType = seibelConfig.permission.pageType;
 const columns = [{
   title: '工号',
   dataIndex: 'ptyMngId',
@@ -66,7 +64,6 @@ export default class Detail extends PureComponent {
     modifyCustApplication: PropTypes.object.isRequired,
     addListenModify: PropTypes.bool.isRequired,
     location: PropTypes.object.isRequired,
-    getPermissionList: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -151,22 +148,12 @@ export default class Detail extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const {
-      getPermissionList,
-      location: { query, query: { pageNum, pageSize } },
-    } = nextProps;
-    const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
     if (
       this.props.addListenModify === true &&
       nextProps.addListenModify === false &&
       nextProps.modifyCustApplication.msg === 'success'
     ) {
       this.props.onEmitClearModal('isShowModifyModal');
-      message.success('私密客户修改成功！！！');
-      getPermissionList({
-        ...params,
-        type: pageType,
-      });
     }
   }
 
@@ -306,6 +293,7 @@ export default class Detail extends PureComponent {
 
   @autobind
   confirmSubmit(value) {
+    const { location: { query } } = this.props;
     // 提交 修改私密客户申请
     const queryConfig = {
       title: '私密客户申请',
@@ -338,6 +326,7 @@ export default class Detail extends PureComponent {
       attachment: this.state.attachment,
       // 拟稿人id
       empId: this.props.empId,
+      currentQuery: query,
     };
     this.setState({ nextApproverModal: false });
     this.props.getModifyCustApplication(queryConfig);

@@ -65,7 +65,7 @@ export default class CommonModal extends PureComponent {
       PropTypes.element,
       PropTypes.node,
     ]),
-    selfBtnGroup: PropTypes.array,
+    selfBtnGroup: PropTypes.object,
   }
 
   static defaultProps = {
@@ -78,7 +78,7 @@ export default class CommonModal extends PureComponent {
     children: '子元素内容区域',
     size: 'normal',
     wrapClassName: '',
-    selfBtnGroup: [],
+    selfBtnGroup: {},
   }
 
   render() {

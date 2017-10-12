@@ -4,10 +4,12 @@
  */
 import { message } from 'antd';
 import { permission as api } from '../api';
+import { helper } from '../utils';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
-const creatRepeatCode = '-2';
+const creatRepeatCode = '-2'; // 客户正在处理中不能重复处理
+const pageType = '01'; // 01代表私密客户申请
 
 export default {
   namespace: 'permission',
@@ -125,13 +127,24 @@ export default {
       });
     },
     * getModifyCustApplication({ payload }, { call, put }) {
+      const { currentQuery, currentQuery: { pageNum, pageSize } } = payload;
       const response = yield call(api.getModifyCustApplication, payload);
       yield put({
         type: 'getModifyCustApplicationSuccess',
         payload: response,
       });
+      message.success('私密客户修改成功！');
+      const params = helper.constructSeibelPostBody(currentQuery, pageNum || 1, pageSize || 10);
+      yield put({
+        type: 'app/getSeibleList',
+        payload: {
+          ...params,
+          type: pageType,
+        },
+      });
     },
     * getCreateCustApplication({ payload }, { call, put }) {
+      const { currentQuery, currentQuery: { pageNum, pageSize } } = payload;
       const response = yield call(api.getCreateCustApplication, payload);
       const code = response.code;
       const msg = response.msg;
@@ -141,6 +154,15 @@ export default {
         yield put({
           type: 'getCreateCustApplicationSuccess',
           payload: response,
+        });
+        message.success('私密客户创建成功！');
+        const params = helper.constructSeibelPostBody(currentQuery, pageNum || 1, pageSize || 10);
+        yield put({
+          type: 'app/getSeibleList',
+          payload: {
+            ...params,
+            type: pageType,
+          },
         });
       }
     },
