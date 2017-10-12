@@ -50,6 +50,17 @@ const helper = {
     return len;
   },
 
+  // 格式化日期为 YYYY-MM-DD 格式
+  dateFormat(str) {
+    let date = '';
+    if (str) {
+      date = moment(str).format('YYYY-MM-DD');
+    } else {
+      date = '';
+    }
+    return date;
+  },
+
   // 获取 empId
   getEmpId() {
     // 临时 ID

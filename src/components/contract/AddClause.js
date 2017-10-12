@@ -2,8 +2,8 @@
 * @Description: 新建合约条款 弹层
 * @Author: XuWenKang
 * @Date:   2017-09-27 17:10:08
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2017-10-11 14:38:04
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2017-10-11 20:17:28
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -13,7 +13,6 @@ import _ from 'lodash';
 import CommonModal from '../../components/common/biz/CommonModal';
 import Select from '../../components/common/Select';
 import DropDownSelect from '../common/dropdownSelect';
-
 import styles from './addClause.less';
 
 const EMPTY_OBJECT = {};
@@ -175,7 +174,7 @@ export default class EditForm extends PureComponent {
       onOk: this.onOk,
       closeModal: this.closeModal,
       visible: this.props.isShow,
-      size: 'small',
+      size: 'normal',
       zIndex: 1001,
       wrapClassName: 'addClauseWrap',
     };

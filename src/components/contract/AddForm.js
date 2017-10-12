@@ -2,8 +2,8 @@
 * @Description: 合作合约新建 页面
 * @Author: XuWenKang
 * @Date:   2017-09-21 15:17:50
- * @Last Modified by:   XuWenKang
- * @Last Modified time: 2017-10-11 16:11:55
+* @Last Modified by:   XuWenKang
+* @Last Modified by: LiuJianShu
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -81,7 +81,7 @@ export default class AddForm extends PureComponent {
     const { formData } = this.state;
     this.setState({
       ...this.state,
-      operationType: data.operation,
+      operationType: data.workflowname,
       formData: Object.assign(formData, data),
     }, () => {
       this.props.onChangeForm(this.state.formData);
@@ -118,7 +118,7 @@ export default class AddForm extends PureComponent {
       ...this.state,
       formData: {
         ...this.state.formData,
-        attachment,
+        uuid: attachment,
       },
     }, () => {
       this.props.onChangeForm(this.state.formData);
@@ -176,7 +176,6 @@ export default class AddForm extends PureComponent {
       ...this.state,
       formData: {
         formType: 'add',
-        attachment: '',
         terms: [],
       },
     });
@@ -246,5 +245,4 @@ export default class AddForm extends PureComponent {
       </div>
     );
   }
-
 }
