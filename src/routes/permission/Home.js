@@ -98,14 +98,12 @@ const mapDispatchToProps = {
   getCreateCustApplication: fetchDataFunction(false, 'permission/getCreateCustApplication'),
   // 获取子类型
   getSubTypeList: fetchDataFunction(false, 'permission/getSubTypeList'),
-  push: routerRedux.push,
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 export default class Permission extends PureComponent {
   static propTypes = {
-    push: PropTypes.func.isRequired,
     list: PropTypes.object.isRequired,
     seibelListLoading: PropTypes.bool,
     drafterList: PropTypes.array.isRequired,
@@ -349,14 +347,11 @@ export default class Permission extends PureComponent {
       modifyCustApplication,
       addListenModify,
       subTypeList,
-      push,
       location,
-      getPermissionList,
     } = this.props;
     return (
       <Detail
         {...this.state.detailMessage}
-        push={push}
         location={location}
         canApplyCustList={canApplyCustList}
         searchServerPersonList={searchServerPersonList}
@@ -370,7 +365,6 @@ export default class Permission extends PureComponent {
         subTypeList={subTypeList}
         onEmitEvent={this.showModifyModal}
         onEmitClearModal={this.clearModal}
-        getPermissionList={getPermissionList}
       />
     );
   }
@@ -401,7 +395,6 @@ export default class Permission extends PureComponent {
       empInfo: {
         empInfo = EMPTY_OBJECT,
       },
-      push,
     } = this.props;
 
     if (!custRange || !custRange.length) {
@@ -452,7 +445,6 @@ export default class Permission extends PureComponent {
         {
           isShowCreateModal ?
             <CreatePrivateClient
-              push={push}
               location={location}
               canApplyCustList={canApplyCustList}
               searchServerPersonList={searchServerPersonList}
@@ -474,6 +466,7 @@ export default class Permission extends PureComponent {
           isShowModifyModal ?
             <ModifyPrivateClient
               {...this.state.detailMessage}
+              location={location}
               onEmitClearModal={this.clearModal}
               canApplyCustList={canApplyCustList}
               searchServerPersonList={searchServerPersonList}

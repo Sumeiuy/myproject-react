@@ -164,6 +164,7 @@ export default class ServerPersonel extends PureComponent {
         ),
       }), () => {
         this.props.onEmitEvent(this.props.type, this.state.serverInfo);
+        this.setState({ removeSelectedValue: {} });
       });
     }
   }

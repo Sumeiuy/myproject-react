@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import PropTypes from 'prop-types';
-import { Modal, message } from 'antd';
+import { Modal } from 'antd';
 import _ from 'lodash';
 import CommonModal from '../common/biz/CommonModal';
 import ServerPersonel from './ServerPersonel';
@@ -42,7 +42,6 @@ export default class CreatePrivateClient extends PureComponent {
     subTypeList: PropTypes.array.isRequired,
     empInfo: PropTypes.object.isRequired,
     flowId: PropTypes.string,
-    push: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
   }
 
@@ -77,7 +76,6 @@ export default class CreatePrivateClient extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { push } = nextProps;
     if (nextProps.hasServerPersonList !== this.props.hasServerPersonList) {
       this.setState({ serverInfo: nextProps.hasServerPersonList });
     }
@@ -88,8 +86,6 @@ export default class CreatePrivateClient extends PureComponent {
       nextProps.createCustApplication.msg === 'success'
     ) {
       this.setState({ isShowModal: false });
-      message.success('私密客户创建成功！！！');
-      push('/permission');
     }
   }
 
@@ -144,7 +140,7 @@ export default class CreatePrivateClient extends PureComponent {
 
   @autobind
   confirmSubmit(value) {
-    const { empInfo } = this.props;
+    const { empInfo, location: { query } } = this.props;
     const {
       serverInfo,
       attachment,
@@ -172,6 +168,7 @@ export default class CreatePrivateClient extends PureComponent {
       orgId,
       custName: customer.custName,
       custNumber: customer.custNumber,
+      currentQuery: query,
     };
     this.props.getCreateCustApplication(queryConfig);
     this.setState({ nextApproverModal: false });
