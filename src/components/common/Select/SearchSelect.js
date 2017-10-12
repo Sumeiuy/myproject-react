@@ -56,6 +56,7 @@ export default class SearchSelect extends PureComponent {
     this.props.onAddCustomer(this.state.selectItem);
     this.setState({
       proValue: '',
+      inputValue: '',
     });
   }
 
