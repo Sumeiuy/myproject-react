@@ -13,7 +13,7 @@ exports.response = function (req, res) {
         "uuid": "1-A1EQ1D",
         "contractNum": "1-8897730101",
         "contractName": "LZTEST0905",
-        "status": "",
+        "status": "01",
         "type": "Coop Contract",
         "subType": "Coop Contract",
         "workflowName": "合作合约",

@@ -3,7 +3,7 @@
 * @Author: XuWenKang
 * @Date:   2017-09-20 13:47:07
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-11 10:22:57
+ * @Last Modified time: 2017-10-12 09:56:25
 */
 
 import React, { PureComponent } from 'react';
@@ -12,6 +12,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { Input } from 'antd';
 import moment from 'moment';
+
 import Select from '../common/Select';
 import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
@@ -19,6 +20,7 @@ import InfoForm from '../common/infoForm';
 import DropDownSelect from '../common/dropdownSelect';
 import DatePicker from '../common/datePicker';
 import { seibelConfig } from '../../config';
+import { dateFormat } from '../../utils/helper';
 
 import styles from './baseInfoEdit.less';
 
@@ -60,43 +62,13 @@ export default class BaseInfoEdit extends PureComponent {
     this.state = {
       childType: childTypeList[0].value,
       client: baseInfo.custName,
-      contractStarDate: moment(baseInfo.startDt).format('YYYY-MM-DD'),
-      contractPalidity: moment(baseInfo.vailDt).format('YYYY-MM-DD'),
-      contractEndDate: moment(baseInfo.endDt).format('YYYY-MM-DD'),
+      contractStarDate: dateFormat(baseInfo.startDt),
+      contractPalidity: dateFormat(baseInfo.vailDt),
+      contractEndDate: dateFormat(baseInfo.endDt),
       remark: baseInfo.description,
       id: '',
     };
   }
-
-  componentWillMount() {
-    // console.log('awdadadawd',this.props.contractDetail)
-  }
-
-  // componentWillReceiveProps(nextProps) {
-  //   const { contractDetail = EMPTY_OBJECT } = this.props;
-  //   const newcontractDetail = nextProps.contractDetail;
-  //   // 判断新的合约详情和旧的合约详情是否一样，不一样则更新
-  //   if (contractDetail.id !== newcontractDetail.id) {
-  //     const {
-  //     subType: childType = '',
-  //     custId: client = '',
-  //     startDt: contractStarDate = '',
-  //     vailDt: contractPalidity = '',
-  //     endDt: contractEndDate = '',
-  //     description: remark = '',
-  //     id: id = '',
-  //   } = newcontractDetail;
-  //     this.setState({
-  //       childType,
-  //       client,
-  //       contractStarDate,
-  //       contractPalidity,
-  //       contractEndDate,
-  //       remark,
-  //       id,
-  //     });
-  //   }
-  // }
 
   // 通用Select Change方法
   @autobind
@@ -105,9 +77,7 @@ export default class BaseInfoEdit extends PureComponent {
     this.setState({
       ...this.state,
       [key]: value,
-    }, () => {
-      this.props.onChange(this.state);
-    });
+    }, this.transferDataToHome);
   }
 
   // 选择客户
@@ -117,9 +87,7 @@ export default class BaseInfoEdit extends PureComponent {
     this.setState({
       ...this.state,
       client: value,
-    }, () => {
-      this.props.onChange(this.state);
-    });
+    }, this.transferDataToHome);
   }
 
   // 根据关键词查询客户
@@ -136,9 +104,7 @@ export default class BaseInfoEdit extends PureComponent {
     this.setState({
       ...this.state,
       [obj.name]: obj.value,
-    }, () => {
-      this.props.onChange(this.state);
-    });
+    }, this.transferDataToHome);
   }
 
   // 更改备注
@@ -148,19 +114,40 @@ export default class BaseInfoEdit extends PureComponent {
     this.setState({
       ...this.state,
       remark: e.target.value,
-    }, () => {
-      this.props.onChange(this.state);
-    });
+    }, this.transferDataToHome);
+  }
+
+  // 向外传递数据
+  @autobind
+  transferDataToHome() {
+    const data = this.state;
+    const obj = {
+      // 操作类型--必填
+      workflowname: data.operation,
+      // 子类型--必填
+      subType: data.subType,
+      // 客户名称--必填
+      custName: data.client.custName,
+      // 客户 ID--必填
+      custId: data.client.cusId,
+      // 客户类型--必填
+      custType: data.client.custType,
+      // 合约开始日期--订购状态下必填，退订不可编辑
+      startDt: data.contractStarDate,
+      // 合约有效期
+      vailDt: data.contractPalidity,
+      // 备注
+      description: data.remark,
+    };
+    console.warn('obj', obj);
+    this.props.onChange(obj);
   }
 
   render() {
     const {
       custList,
-      contractDetail: { baseInfo, attachmentList, flowHistory },
+      contractDetail: { baseInfo },
     } = this.props;
-    console.log('props', this.props);
-    console.log('attachmentList', attachmentList);
-    console.log('flowHistory', flowHistory);
     return (
       <div className={styles.editWrapper}>
         <InfoTitle head="基本信息" />
@@ -186,19 +173,6 @@ export default class BaseInfoEdit extends PureComponent {
           />
         </InfoForm>
         <InfoForm label="合约开始日期" required>
-          <DatePicker
-            name="contractStarDate"
-            value={
-              this.state.contractStarDate ?
-              moment(this.state.contractStarDate, 'YYYY-MM-DD')
-              :
-              ''
-            }
-            onChange={this.handleChangeDate}
-            boxStyle={datePickerBoxStyle}
-          />
-        </InfoForm>
-        <InfoForm label="合约开始日期">
           <DatePicker
             name="contractStarDate"
             value={

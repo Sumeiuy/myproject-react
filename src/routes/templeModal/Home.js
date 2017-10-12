@@ -253,8 +253,12 @@ export default class TemplModal extends PureComponent {
       placeholder: '产品代码/产品名称',
       // pagination: false,
       pagination,
-      finishTips: ['产品组合等于目标佣金值', '产品组合等于目标佣金值'],
-      warningTips: ['产品组合比目标佣金高 0.5%', '产品组合离目标佣金还差 0.63%'],
+      tips: [
+        { content: '产品组合等于目标佣金值', type: 'finish' },
+        { content: '产品组合等于目标佣金值', type: 'finish' },
+        { content: '产品组合比目标佣金高 0.5%', type: 'warning' },
+        { content: '产品组合离目标佣金还差 0.63%', type: 'warning' },
+      ],
     };
 
 

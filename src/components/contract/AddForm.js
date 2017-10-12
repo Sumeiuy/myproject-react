@@ -2,8 +2,8 @@
 * @Description: 合作合约新建 页面
 * @Author: XuWenKang
 * @Date:   2017-09-21 15:17:50
- * @Last Modified by:   XuWenKang
- * @Last Modified time: 2017-10-11 16:11:55
+* @Last Modified by:   XuWenKang
+* @Last Modified by: LiuJianShu
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -75,13 +75,20 @@ export default class AddForm extends PureComponent {
     onSearchCutList();
   }
 
+  // componentWillReceiveProps(nextProps) {
+  //   if (this.props.addFormModal !== nextProps.addFormModal) {
+  //     this.handleReset();
+  //     console.log('重置1111', this.state.formData);
+  //   }
+  // }
+
   // 更新数据到父组件
   @autobind
   handleChangeBaseInfo(data) {
     const { formData } = this.state;
     this.setState({
       ...this.state,
-      operationType: data.operation,
+      operationType: data.workflowname,
       formData: Object.assign(formData, data),
     }, () => {
       this.props.onChangeForm(this.state.formData);
@@ -99,7 +106,7 @@ export default class AddForm extends PureComponent {
   @autobind
   handleSearchContractNum(data) {
     console.log('SearchContractNum', data);
-    if (data.childType && data.client.cusId) {
+    if (data.subType && data.client.cusId) {
       this.props.onSearchContractNum(data);
     }
   }
@@ -118,7 +125,7 @@ export default class AddForm extends PureComponent {
       ...this.state,
       formData: {
         ...this.state.formData,
-        attachment,
+        uuid: attachment,
       },
     }, () => {
       this.props.onChangeForm(this.state.formData);
@@ -154,7 +161,8 @@ export default class AddForm extends PureComponent {
       paraValue: clauseData.paraName.value, // 明细参数code
       paraVal: clauseData.paraVal, // 值
       divName: clauseData.divName.name, // 合作部门名称
-      divValue: clauseData.value, // 合作部门code
+      divIntegrationId: clauseData.divName.value, // 合作部门code
+
     };
     console.log('添加合约条款', clauseData, terms);
     this.setState({
@@ -169,16 +177,20 @@ export default class AddForm extends PureComponent {
     });
   }
 
-  // 子组件更改操作类型 重置所有数据
+  // 子组件更改操作类型/重新关闭打开弹窗 重置所有数据
   @autobind
   handleReset() {
+    const formData = {
+      formType: 'add',
+      terms: [],
+    };
     this.setState({
       ...this.state,
-      formData: {
-        formType: 'add',
-        attachment: '',
-        terms: [],
-      },
+      formData,
+    }, () => {
+      if (this.BaseInfoAddComponent) {
+        this.BaseInfoAddComponent.resetState();
+      }
     });
   }
 
@@ -199,7 +211,7 @@ export default class AddForm extends PureComponent {
       ghost: true,
       onClick: this.handleShowAddClause,
     };
-    const termsData = (operationType === subscribe) ? formData.terms : contractDetail.terms;
+    const termsData = (operationType === subscribe) ? formData.terms : contractDetail.terms || [];
     return (
       <div className={styles.editComponent}>
         <BaseInfoAdd
@@ -214,6 +226,7 @@ export default class AddForm extends PureComponent {
           onSearchContractNum={this.handleSearchContractNum}
           onSearchContractDetail={this.handleSearchContractDetail}
           onReset={this.handleReset}
+          ref={(BaseInfoAddComponent) => { this.BaseInfoAddComponent = BaseInfoAddComponent; }}
         />
         <div className={styles.editWrapper}>
           <InfoTitle head="合约条款" />
@@ -246,5 +259,4 @@ export default class AddForm extends PureComponent {
       </div>
     );
   }
-
 }
