@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-19 14:27:39
  * @Last Modified by:   XuWenKang
- * @Last Modified time: 2017-10-11 10:21:05
+ * @Last Modified time: 2017-10-11 15:52:47
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -68,7 +68,6 @@ export default class CommonTable extends PureComponent {
           break;
       }
     }
-    console.log('tableData', data);
     return (
       <div className={styles.commonTable}>
         <Table

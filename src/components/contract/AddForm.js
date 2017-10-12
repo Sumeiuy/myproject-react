@@ -2,8 +2,8 @@
 * @Description: 合作合约新建 页面
 * @Author: XuWenKang
 * @Date:   2017-09-21 15:17:50
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2017-10-11 14:06:01
+ * @Last Modified by:   XuWenKang
+ * @Last Modified time: 2017-10-11 16:11:55
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -199,6 +199,7 @@ export default class AddForm extends PureComponent {
       ghost: true,
       onClick: this.handleShowAddClause,
     };
+    const termsData = (operationType === subscribe) ? formData.terms : contractDetail.terms;
     return (
       <div className={styles.editComponent}>
         <BaseInfoAdd
@@ -223,7 +224,7 @@ export default class AddForm extends PureComponent {
             null
           }
           <CommonTable
-            data={formData.terms}
+            data={termsData}
             titleList={titleList}
           />
         </div>

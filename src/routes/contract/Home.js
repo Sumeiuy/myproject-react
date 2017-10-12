@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by:   XuWenKang
- * @Last Modified time: 2017-10-11 15:30:19
+ * @Last Modified time: 2017-10-11 16:20:26
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
@@ -158,9 +158,9 @@ export default class Contract extends PureComponent {
       // 合作合约表单数据
       contractFormData: EMPTY_OBJECT,
       // 新建合作合约弹窗状态
-      addFormModal: false,
+      addFormModal: true,
       // 修改合作合约弹窗状态
-      editFormModal: true,
+      editFormModal: false,
       // 修改合作合约对象的操作类型和id
       editContractInfo: {
         operationType: '',
@@ -180,7 +180,6 @@ export default class Contract extends PureComponent {
       },
       getSeibleList,
       getCustRange,
-      getCooperDeparmentList,
       getClauseNameList,
     } = this.props;
     const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
@@ -192,7 +191,6 @@ export default class Contract extends PureComponent {
       type: pageType,
     });
 
-    getCooperDeparmentList({ name: '南京' });
     getClauseNameList({});
   }
 
