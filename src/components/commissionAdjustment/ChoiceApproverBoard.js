@@ -56,6 +56,17 @@ export default class ChoiceApproverBoard extends PureComponent {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    const { approverList: prevList } = this.props;
+    const { approverList: nextList } = nextProps;
+    if (!_.isEqual(prevList, nextList)) {
+      this.setState({
+        approverRadio: 0,
+        listAfterFilter: _.cloneDeep(nextList),
+      });
+    }
+  }
+
   @autobind
   onCloseModal() {
     this.props.onClose();
