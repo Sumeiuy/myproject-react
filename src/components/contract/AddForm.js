@@ -31,6 +31,8 @@ const BOOL_TRUE = true;
 
 export default class AddForm extends PureComponent {
   static propTypes = {
+    // 弹窗开关状态 用于判断弹窗开关变化时进行重置数据操作
+    addFormModal: PropTypes.bool.isRequired,
     // 客户列表
     custList: PropTypes.array.isRequired,
     // 查询客户列表
@@ -75,6 +77,13 @@ export default class AddForm extends PureComponent {
     onSearchCutList();
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (this.props.addFormModal !== nextProps.addFormModal) {
+      this.handleReset();
+      console.log('重置1111', this.state.formData);
+    }
+  }
+
   // 更新数据到父组件
   @autobind
   handleChangeBaseInfo(data) {
@@ -99,7 +108,7 @@ export default class AddForm extends PureComponent {
   @autobind
   handleSearchContractNum(data) {
     console.log('SearchContractNum', data);
-    if (data.childType && data.client.cusId) {
+    if (data.subType && data.client.cusId) {
       this.props.onSearchContractNum(data);
     }
   }
@@ -154,7 +163,8 @@ export default class AddForm extends PureComponent {
       paraValue: clauseData.paraName.value, // 明细参数code
       paraVal: clauseData.paraVal, // 值
       divName: clauseData.divName.name, // 合作部门名称
-      divValue: clauseData.value, // 合作部门code
+      divIntegrationId: clauseData.divName.value, // 合作部门code
+
     };
     console.log('添加合约条款', clauseData, terms);
     this.setState({
@@ -169,15 +179,16 @@ export default class AddForm extends PureComponent {
     });
   }
 
-  // 子组件更改操作类型 重置所有数据
+  // 子组件更改操作类型/重新关闭打开弹窗 重置所有数据
   @autobind
   handleReset() {
+    const formData = {
+      formType: 'add',
+      terms: [],
+    };
     this.setState({
       ...this.state,
-      formData: {
-        formType: 'add',
-        terms: [],
-      },
+      formData,
     });
   }
 
@@ -189,6 +200,7 @@ export default class AddForm extends PureComponent {
       clauseNameList,
       cooperDeparment,
       searchCooperDeparment,
+      addFormModal,
     } = this.props;
     const { formData, showAddClauseModal, operationType } = this.state;
     const buttonProps = {
@@ -198,11 +210,12 @@ export default class AddForm extends PureComponent {
       ghost: true,
       onClick: this.handleShowAddClause,
     };
-    const termsData = (operationType === subscribe) ? formData.terms : contractDetail.terms;
+    const termsData = (operationType === subscribe) ? formData.terms : contractDetail.terms || [];
     return (
       <div className={styles.editComponent}>
         <BaseInfoAdd
           contractName="合约名称"
+          addFormModal={addFormModal}
           childType={{ list: EMPTY_ARRAY }}
           client={EMPTY_OBJECT}
           custList={custList}
