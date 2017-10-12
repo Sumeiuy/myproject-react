@@ -152,10 +152,10 @@ export default class Detail extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { 
-      getPermissionList, 
-      push, 
-      location: { query, query: { currentId, pageNum, pageSize } } 
+    const {
+      getPermissionList,
+      push,
+      location: { query, query: { currentId, pageNum, pageSize } },
     } = nextProps;
     const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
     if (

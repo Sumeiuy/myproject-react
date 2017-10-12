@@ -3,7 +3,7 @@
 * @Author: XuWenKang
 * @Date:   2017-09-26 10:51:52
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-09 17:17:32
+ * @Last Modified time: 2017-10-11 14:15:32
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -15,11 +15,13 @@ export default class UploadFile extends PureComponent {
   static propTypes = {
     fileList: PropTypes.array,
     edit: PropTypes.bool,
+    uploadAttachment: PropTypes.func,
   }
 
   static defaultProps = {
     fileList: [],
     edit: false,
+    uploadAttachment: () => {},
   }
 
   constructor() {
@@ -34,13 +36,14 @@ export default class UploadFile extends PureComponent {
   // }
 
   render() {
-    const { fileList, edit } = this.props;
+    const { fileList, edit, uploadAttachment } = this.props;
     return (
       <div className={style.uploadFile}>
         <InfoTitle head="附件" />
         <CommonUpload
           attaches={fileList}
           edit={edit}
+          uploadAttachment={uploadAttachment}
         />
       </div>
     );
