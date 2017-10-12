@@ -11,6 +11,7 @@ import { Pagination, Checkbox, message } from 'antd';
 
 import CustomerRow from './CustomerRow';
 import CreateContactModal from './CreateContactModal';
+import Loading from '../../../layouts/Loading';
 
 import { fspContainer } from '../../../config';
 import { fspGlobal, helper } from '../../../utils';
@@ -663,7 +664,7 @@ export default class CustomerLists extends PureComponent {
               currentCustId={currentCustId}
               executeTypes={executeTypes}
               serveWay={serveWay}
-            /> : null
+            /> : <Loading loading={!isLoadingEnd} />
         }
       </div>
     );

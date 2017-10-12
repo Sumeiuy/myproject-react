@@ -87,7 +87,7 @@ const mapStateToProps = state => ({
   interfaceState: state.loading.effects,
   // 联系方式接口loading、服务记录接口loading
   isLoadingEnd: (!state.loading.effects[effects.getCustContact]
-    && !state.loading.effects[effects.getServiceRecord]) || false,
+    && !state.loading.effects[effects.getServiceRecord]) || true,
 });
 
 const mapDispatchToProps = {
