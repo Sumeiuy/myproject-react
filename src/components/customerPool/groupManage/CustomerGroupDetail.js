@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 14:15:22
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-11 17:20:23
+ * @Last Modified time: 2017-10-12 10:16:10
  */
 
 import React, { PureComponent } from 'react';
@@ -46,6 +46,8 @@ export default class CustomerGroupDetail extends PureComponent {
     deleteCustomerFromGroup: PropTypes.func.isRequired,
     // 删除分组下指定客户结果
     deleteCustomerFromGroupResult: PropTypes.object.isRequired,
+    replace: PropTypes.func.isRequired,
+    location: PropTypes.object.isRequired,
   };
 
   static defaultProps = {
@@ -98,9 +100,9 @@ export default class CustomerGroupDetail extends PureComponent {
 
     if (prevData !== nextData) {
       // 将新数据与旧数据concat,合并去重
-      const newDataSource = _.uniqBy(_.concat(dataSource, nextData), 'custId');
+      // const newDataSource = _.uniqBy(_.concat(dataSource, nextData), 'custId');
       this.setState({
-        dataSource: newDataSource,
+        dataSource: nextData,
         // 总条目与当前新增cust条目相加
         totalRecordNum: totalRecordNum + includeCustListSize,
       });
@@ -136,7 +138,7 @@ export default class CustomerGroupDetail extends PureComponent {
   handlePageChange(nextPage, currentPageSize) {
     console.log(nextPage, currentPageSize);
     const { getGroupCustomerList } = this.props;
-    const { groupId = '', includeCustListSize } = this.state;
+    const { groupId = '', includeCustListSize, includeCustList } = this.state;
     this.setState({
       curPageNum: nextPage,
       curPageSize: currentPageSize,
@@ -149,6 +151,13 @@ export default class CustomerGroupDetail extends PureComponent {
         groupId,
         pageNum: nextPage,
         pageSize: currentPageSize,
+      });
+    } else {
+      const curPage = nextPage * currentPageSize;
+      // 截取includeList指定序列
+      const newDataSource = _.slice(includeCustList, curPage - currentPageSize, curPage);
+      this.setState({
+        dataSource: newDataSource,
       });
     }
   }
@@ -180,6 +189,7 @@ export default class CustomerGroupDetail extends PureComponent {
 
   @autobind
   handleSubmit(e) {
+    const { location: { pathname, query }, replace } = this.props;
     // this.props.form.resetFields(); 清除value
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
@@ -206,6 +216,14 @@ export default class CustomerGroupDetail extends PureComponent {
             excludeCustIdList: null,
           });
         }
+        // 重置分页
+        replace({
+          pathname,
+          query: {
+            ...query,
+            curPageNum: 1,
+          },
+        });
         // 关闭弹窗
         onCloseModal();
       } else {

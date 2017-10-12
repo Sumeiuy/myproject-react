@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 10:53:22
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-11 17:57:22
+ * @Last Modified time: 2017-10-12 11:20:12
  * 确认提示框，用于删除提示与表单返回提示，传入type
  * type === delete，删除提示
  * type ==== edit，表单返回提示
@@ -36,8 +36,8 @@ export default class Confirm extends PureComponent {
     super(props);
     this.state = {
       content: props.type === 'delete' ?
-        '亲~~此操作不可恢复，您确认删除吗？'
-        : '亲~~弹框关闭以后，您所填写的信息是不会保存的哟！！！',
+        '确定要删除吗？'
+        : '关闭弹框后，您编辑的信息将不会被保存，确认关闭？',
     };
   }
 

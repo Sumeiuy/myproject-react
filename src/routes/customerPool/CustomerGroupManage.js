@@ -241,9 +241,17 @@ export default class CustomerGroupManage extends PureComponent {
     console.log('delete customer group list');
     const { record } = this.state;
     const { groupId } = record;
-    const { deleteGroup } = this.props;
+    const { deleteGroup, location: { query, pathname }, replace } = this.props;
     deleteGroup({
       groupId,
+    });
+    // 重置分页
+    replace({
+      pathname,
+      query: {
+        ...query,
+        curPageNum: 1,
+      },
     });
   }
 
@@ -371,7 +379,7 @@ export default class CustomerGroupManage extends PureComponent {
     const {
       getCustomerGroupList,
       replace,
-      location: { pathname, query, query: { curPageSize } },
+      location: { pathname, query, query: { curPageSize = 10 } },
     } = this.props;
     getCustomerGroupList({
       keyWord: value,
@@ -455,6 +463,8 @@ export default class CustomerGroupManage extends PureComponent {
       dict,
       deleteCustomerFromGroup,
       deleteCustomerFromGroupResult,
+      location,
+      replace,
      } = this.props;
 
     const {
@@ -560,6 +570,8 @@ export default class CustomerGroupManage extends PureComponent {
                     description,
                     groupId,
                   }}
+                  location={location}
+                  replace={replace}
                 />
               }
               onOkHandler={this.handleUpdateGroup}
