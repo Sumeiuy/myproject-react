@@ -8,8 +8,10 @@ import ServerPersonel from './ServerPersonel';
 import BaseInfoModify from './BaseInfoModify';
 import UploadFile from './UploadFile';
 import TableDialog from '../common/biz/TableDialog';
-import { getEmpId } from '../../utils/helper';
+import { getEmpId, constructSeibelPostBody } from '../../utils/helper';
+import { seibelConfig } from '../../config';
 
+const pageType = seibelConfig.permission.pageType;
 const confirm = Modal.confirm;
 const columns = [
   {
@@ -42,7 +44,7 @@ export default class CreatePrivateClient extends PureComponent {
     subTypeList: PropTypes.array.isRequired,
     empInfo: PropTypes.object.isRequired,
     flowId: PropTypes.string,
-    push: PropTypes.func.isRequired,
+    getPermissionList: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
   }
 
@@ -77,7 +79,11 @@ export default class CreatePrivateClient extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { push } = nextProps;
+    const {
+      getPermissionList,
+      location: { query, query: { pageNum, pageSize } },
+    } = nextProps;
+    const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
     if (nextProps.hasServerPersonList !== this.props.hasServerPersonList) {
       this.setState({ serverInfo: nextProps.hasServerPersonList });
     }
@@ -89,7 +95,10 @@ export default class CreatePrivateClient extends PureComponent {
     ) {
       this.setState({ isShowModal: false });
       message.success('私密客户创建成功！！！');
-      push('/permission');
+      getPermissionList({
+        ...params,
+        type: pageType,
+      });
     }
   }
 

@@ -65,7 +65,6 @@ export default class Detail extends PureComponent {
     getModifyCustApplication: PropTypes.func.isRequired,
     modifyCustApplication: PropTypes.object.isRequired,
     addListenModify: PropTypes.bool.isRequired,
-    push: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     getPermissionList: PropTypes.func.isRequired,
   }
@@ -152,10 +151,9 @@ export default class Detail extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { 
-      getPermissionList, 
-      push, 
-      location: { query, query: { currentId, pageNum, pageSize } } 
+    const {
+      getPermissionList,
+      location: { query, query: { pageNum, pageSize } },
     } = nextProps;
     const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
     if (
@@ -165,7 +163,6 @@ export default class Detail extends PureComponent {
     ) {
       this.props.onEmitClearModal('isShowModifyModal');
       message.success('私密客户修改成功！！！');
-      push(`/permission?currentId=${currentId}&pageNum=${pageNum}&pageSize=${pageSize}`);
       getPermissionList({
         ...params,
         type: pageType,
