@@ -2,10 +2,12 @@
  * @file models/premissinon.js
  * @author honggaungqing
  */
+import { message } from 'antd';
 import { permission as api } from '../api';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
+const creatRepeatCode = '-2';
 
 export default {
   namespace: 'permission',
@@ -131,10 +133,16 @@ export default {
     },
     * getCreateCustApplication({ payload }, { call, put }) {
       const response = yield call(api.getCreateCustApplication, payload);
-      yield put({
-        type: 'getCreateCustApplicationSuccess',
-        payload: response,
-      });
+      const code = response.code;
+      const msg = response.msg;
+      if (code === creatRepeatCode) {
+        message.error(msg);
+      } else {
+        yield put({
+          type: 'getCreateCustApplicationSuccess',
+          payload: response,
+        });
+      }
     },
   },
   subscriptions: {},

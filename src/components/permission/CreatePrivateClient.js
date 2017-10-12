@@ -94,7 +94,7 @@ export default class CreatePrivateClient extends PureComponent {
       nextProps.createCustApplication.msg === 'success'
     ) {
       this.setState({ isShowModal: false });
-      message.success('私密客户创建成功！！！');
+      message.success('私密客户创建成功');
       getPermissionList({
         ...params,
         type: pageType,
