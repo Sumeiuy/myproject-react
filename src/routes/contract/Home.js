@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by:   XuWenKang
- * @Last Modified time: 2017-10-11 16:20:26
+ * @Last Modified time: 2017-10-11 19:08:12
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
@@ -285,7 +285,7 @@ export default class Contract extends PureComponent {
   // 根据子类型和客户查询合约编号
   @autobind
   handleSearchContractNum(data) {
-    this.props.getContractNumList({ subType: data.childType, custId: data.client.cusId });
+    this.props.getContractNumList({ subType: data.childType });
   }
 
   // 查询客户

@@ -2,8 +2,8 @@
 * @Description: 新建合约条款 弹层
 * @Author: XuWenKang
 * @Date:   2017-09-27 17:10:08
- * @Last Modified by: XuWenKang
- * @Last Modified time: 2017-10-11 14:38:04
+ * @Last Modified by:   XuWenKang
+ * @Last Modified time: 2017-10-11 18:58:46
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -180,7 +180,6 @@ export default class EditForm extends PureComponent {
       wrapClassName: 'addClauseWrap',
     };
     const { clauseNameList, departmentList } = this.props;
-    console.log('state', this.state);
     return (
       <div className={styles.addClauseBox}>
         <CommonModal {...clasueProps} >
