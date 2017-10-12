@@ -37,6 +37,7 @@ import FullChannelServiceRecord from './routes/fullChannelServiceRecord/Home';
 import CustomerGroupManage from './routes/customerPool/CustomerGroupManage';
 import ServiceLog from './routes/customerPool/ServiceLog';
 import TaskFlow from './routes/customerPool/TaskFlow';
+import TaskFlowSecond from './routes/customerPool/TaskFlowSecond';
 
 
 function switchRouter() {
@@ -75,6 +76,7 @@ const routes = ({ history }) => (// eslint-disable-line
         <Route path="customerGroupManage" component={CustomerGroupManage} />
         <Route path="serviceLog" component={ServiceLog} />
         <Route path="taskFlow" component={TaskFlow} />
+        <Route path="taskFlowSecond" component={TaskFlowSecond} />
       </Route>
       <Route path="contract">
         <IndexRoute component={Contract} />

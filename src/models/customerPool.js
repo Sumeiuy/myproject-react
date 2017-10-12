@@ -83,6 +83,7 @@ export default {
     // 删除分组下客户结果
     deleteCustomerFromGroupResult: {},
     serviceLogData: [], // 360服务记录查询数据
+    serviceLogMoreData: [], // 360服务记录查询更多数据
   },
   subscriptions: {},
   effects: {
@@ -434,10 +435,19 @@ export default {
     },
     // 360服务记录查询
     * getServiceLog({ payload }, { call, put }) {
-      const response = yield call(api.queryServeRecords, payload);
+      const response = yield call(api.queryAllServiceRecord, payload);
       const { resultData } = response;
       yield put({
         type: 'getServiceLogSuccess',
+        payload: { resultData },
+      });
+    },
+    // 360服务记录查询更多服务
+    * getServiceLogMore({ payload }, { call, put }) {
+      const response = yield call(api.queryAllServiceRecord, payload);
+      const { resultData } = response;
+      yield put({
+        type: 'getServiceLogMoreSuccess',
         payload: { resultData },
       });
     },
@@ -830,6 +840,14 @@ export default {
       return {
         ...state,
         serviceLogData: resultData,
+      };
+    },
+    // 360服务记录查询更多服务成功
+    getServiceLogMoreSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        serviceLogMoreData: resultData,
       };
     },
   },
