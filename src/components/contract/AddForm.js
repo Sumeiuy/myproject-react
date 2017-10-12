@@ -31,8 +31,6 @@ const BOOL_TRUE = true;
 
 export default class AddForm extends PureComponent {
   static propTypes = {
-    // 弹窗开关状态 用于判断弹窗开关变化时进行重置数据操作
-    addFormModal: PropTypes.bool.isRequired,
     // 客户列表
     custList: PropTypes.array.isRequired,
     // 查询客户列表
@@ -77,12 +75,12 @@ export default class AddForm extends PureComponent {
     onSearchCutList();
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.addFormModal !== nextProps.addFormModal) {
-      this.handleReset();
-      console.log('重置1111', this.state.formData);
-    }
-  }
+  // componentWillReceiveProps(nextProps) {
+  //   if (this.props.addFormModal !== nextProps.addFormModal) {
+  //     this.handleReset();
+  //     console.log('重置1111', this.state.formData);
+  //   }
+  // }
 
   // 更新数据到父组件
   @autobind
@@ -189,6 +187,10 @@ export default class AddForm extends PureComponent {
     this.setState({
       ...this.state,
       formData,
+    }, () => {
+      if (this.BaseInfoAddComponent) {
+        this.BaseInfoAddComponent.resetState();
+      }
     });
   }
 
@@ -200,7 +202,6 @@ export default class AddForm extends PureComponent {
       clauseNameList,
       cooperDeparment,
       searchCooperDeparment,
-      addFormModal,
     } = this.props;
     const { formData, showAddClauseModal, operationType } = this.state;
     const buttonProps = {
@@ -215,7 +216,6 @@ export default class AddForm extends PureComponent {
       <div className={styles.editComponent}>
         <BaseInfoAdd
           contractName="合约名称"
-          addFormModal={addFormModal}
           childType={{ list: EMPTY_ARRAY }}
           client={EMPTY_OBJECT}
           custList={custList}
@@ -226,6 +226,7 @@ export default class AddForm extends PureComponent {
           onSearchContractNum={this.handleSearchContractNum}
           onSearchContractDetail={this.handleSearchContractDetail}
           onReset={this.handleReset}
+          ref={(BaseInfoAddComponent) => { this.BaseInfoAddComponent = BaseInfoAddComponent; }}
         />
         <div className={styles.editWrapper}>
           <InfoTitle head="合约条款" />

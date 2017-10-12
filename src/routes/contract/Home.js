@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by:   XuWenKang
- * @Last Modified time: 2017-10-12 15:14:09
+ * @Last Modified time: 2017-10-12 16:16:24
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
@@ -427,6 +427,7 @@ export default class Contract extends PureComponent {
   @autobind
   handleCreateBtnClick() {
     this.showModal('addFormModal');
+    // 每次打开弹窗的时候重置退订详情数据
     this.props.resetUnsubscribeDetail();
   }
 
@@ -434,6 +435,10 @@ export default class Contract extends PureComponent {
   showModal(modalKey) {
     this.setState({
       [modalKey]: true,
+    }, () => {
+      if (modalKey === 'addFormModal' && this.AddFormComponent) {
+        this.AddFormComponent.handleReset();
+      }
     });
   }
 
@@ -516,8 +521,6 @@ export default class Contract extends PureComponent {
     );
     // 新建表单props
     const addFormProps = {
-      // 弹窗开关状态
-      addFormModal: this.state.addFormModal,
       // 合约编号
       onSearchContractNum: this.handleSearchContractNum,
       contractNumList,
@@ -577,7 +580,7 @@ export default class Contract extends PureComponent {
       size: 'large',
     };
     return (
-      <div className={styles.premissionbox}>
+      <div className={styles.premissionbox} >
         <SplitPanel
           isEmpty={isEmpty}
           topPanel={topPanel}
@@ -585,8 +588,11 @@ export default class Contract extends PureComponent {
           rightPanel={rightPanel}
           leftListClassName="contractList"
         />
-        <CommonModal {...addFormModalProps}>
-          <AddForm {...addFormProps} />
+        <CommonModal {...addFormModalProps} >
+          <AddForm
+            {...addFormProps}
+            ref={(AddFormComponent) => { this.AddFormComponent = AddFormComponent; }}
+          />
         </CommonModal>
         {
           editFormModal ?
