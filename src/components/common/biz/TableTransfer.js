@@ -94,8 +94,7 @@ export default class TableTransfer extends Component {
     transferChange: PropTypes.func,
     checkChange: PropTypes.func,
     placeholder: PropTypes.string,
-    finishTips: PropTypes.array,
-    warningTips: PropTypes.array,
+    tips: PropTypes.array,
     onSearch: PropTypes.func,
     showSearch: PropTypes.bool,
     pagination: React.PropTypes.oneOfType([
@@ -116,8 +115,7 @@ export default class TableTransfer extends Component {
     transferChange: () => {},
     checkChange: () => {},
     placeholder: '',
-    finishTips: [],
-    warningTips: [],
+    tips: [],
     onSearch: () => {},
     showSearch: true,
     defaultCheckKey: '',
@@ -378,32 +376,34 @@ export default class TableTransfer extends Component {
   }
 
   @autobind
-  renderFinishTipsTips() {
-    const { finishTips } = this.props;
-    return finishTips.map(
-      item => (
-        <div className={styles.tipRow}>
-          <div className={styles.iconColumns}>
-            <Icon type="duihao" className={styles.finishIcon} />
+  renderTips() {
+    const { tips } = this.props;
+    return tips.map(
+      (item) => {
+        const isWarning = item.type === 'warning';
+        const iconType = isWarning ? 'tixing' : 'duihao';
+        return (
+          <div className={styles.tipRow}>
+            <div className={styles.iconColumns}>
+              <Icon
+                type={iconType}
+                className={classnames(
+                  styles.icon,
+                  { [styles.warningIcon]: isWarning },
+                )}
+              />
+            </div>
+            <div
+              className={classnames(
+                styles.tip,
+                { [styles.warningTip]: isWarning },
+              )}
+            >
+              {item.content}
+            </div>
           </div>
-          <div className={classnames(styles.tip, styles.finishTip)}>{item}</div>
-        </div>
-      ),
-    );
-  }
-
-  @autobind
-  renderTipsTips() {
-    const { warningTips } = this.props;
-    return warningTips.map(
-      item => (
-        <div className={styles.tipRow}>
-          <div className={styles.iconColumns}>
-            <Icon type="duihao" className={styles.warningIcon} />
-          </div>
-          <div className={classnames(styles.tip, styles.warningTip)}>{item}</div>
-        </div>
-      ),
+        );
+      },
     );
   }
 
@@ -415,8 +415,7 @@ export default class TableTransfer extends Component {
       showSearch,
       pagination,
       rowKey,
-      finishTips,
-      warningTips,
+      tips,
     } = this.props;
     const {
       firstArray,
@@ -425,7 +424,7 @@ export default class TableTransfer extends Component {
       secondColumns,
     } = this.state;
     // 调整提示信息的位置
-    const count = finishTips.length + warningTips.length;
+    const count = tips.length;
     const top = count > 1 ? `${-(count - 1) * 32}px` : '0px';
     const style = { top };
     return (
@@ -456,8 +455,7 @@ export default class TableTransfer extends Component {
           <div className={classnames(styles.header, styles.rightHeader)}>
             <div className={styles.titleLabel}>{secondTitle}</div>
             <div className={styles.tipContainer} style={style}>
-              {this.renderFinishTipsTips()}
-              {this.renderTipsTips()}
+              {this.renderTips()}
             </div>
           </div>
           <Table
