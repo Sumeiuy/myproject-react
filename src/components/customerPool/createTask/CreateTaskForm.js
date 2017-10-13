@@ -19,6 +19,7 @@ const FormItem = Form.Item;
 const create = Form.create;
 const Option = Select.Option;
 const { TextArea } = Input;
+const { toContentState, getMentions  } = Mention;
 const WEEK = ['日', '一', '二', '三', '四', '五', '六'];
 const { toString } = Mention;
 let users = [];
@@ -60,7 +61,13 @@ export default class CreateTaskForm extends PureComponent {
 
   componentWillMount() {
     const { location: { query }, dict: { custIdexPlaceHolders } } = this.props;
-    users = custIdexPlaceHolders;
+    const arr = [];
+    _.map(custIdexPlaceHolders, (item) => {
+      // item.substring(1, item.length);
+      arr.push(item.substring(1, item.length))
+    })
+    console.log(arr)
+    users = arr;
     this.handleInit(query);
   }
 
@@ -107,6 +114,22 @@ export default class CreateTaskForm extends PureComponent {
   @autobind
   handleChange(editorState) {
     console.log(toString(editorState));
+    console.log(typeof editorState);
+  }
+  checkMention = (rule, value, callback) => {
+    // const { getFieldValue } = this.props.form;
+    // const mentions = getMentions(getFieldValue('templetDesc'));
+    console.log('value---', value);
+    if (toString(value).length < 10) {
+      callback(new Error('任务描述不能小于10个字符!'));
+    } else {
+      callback();
+    }
+    // if (mentions.length < 2) {
+    //   callback(new Error('More than one must be selected!'));
+    // } else {
+    //   callback();
+    // }
   }
   // 提及
 
@@ -144,12 +167,15 @@ export default class CreateTaskForm extends PureComponent {
     // console.log(location);
     form.validateFields((err, values) => {
       if (!err) {
+        console.warn('templetDesc-----', values.templetDesc);
         values.closingDate = moment(values.closingDate).format('YYYY-MM-DD');// eslint-disable-line
         values.triggerDate = moment(values.triggerDate).format('YYYY-MM-DD');// eslint-disable-line
         // console.log('d-----', moment(values.closingDate).format('YYYY-MM-DD'));
         const value = { ...values, custIdList, searchReq };
         console.log('Received values of form: ', value);
         createTask(value);
+      } else {
+        console.warn('templetDesc-----', values.templetDesc);
       }
     });
   };
@@ -477,30 +503,9 @@ export default class CreateTaskForm extends PureComponent {
                   <label htmlFor="desc"><i>*</i>任务描述</label>
                 </p>
                 <FormItem>
-                  {getFieldDecorator('templetDesc',
-                    {
-                      rules: [{ required: true, min: 10, message: '任务描述不能小于10个字符!' }],
-                      initialValue: defaultMissionDesc,
-                    })(
-                      <TextArea
-                        id="desc"
-                        rows={5}
-                        placeholder="请在描述客户经理联系客户钱需要了解的客户相关信息，比如持仓情况。（字数限制：10-1000字）"
-                        style={{ width: '100%' }}
-                        maxLength={1000}
-                        className={
-                          classnames({
-                            [styles.showTextArea]: showText,
-                            [styles.hideTextArea]: !showText,
-                          })
-                        }
-                      />,
-                    )}
-                  {getFieldDecorator('mention', {
-                    rules: [
-                      { validator: this.checkMention },
-                    ],
-                    initialValue: this.state.initValue,
+                  {getFieldDecorator('templetDesc', {
+                    rules: [{ validator: this.checkMention },],
+                    initialValue: toContentState(defaultMissionDesc),
                   })(
                     <Mention
                       style={{ width: '100%', height: 100 }}
@@ -511,12 +516,6 @@ export default class CreateTaskForm extends PureComponent {
                       onSearchChange={this.onSearchChange}
                       suggestions={suggestions}
                       onSelect={this.onSelect}
-                      className={
-                        classnames({
-                          [styles.showTextArea]: !showText,
-                          [styles.hideTextArea]: showText,
-                        })
-                      }
                     />,
                   )}
                   <div className={styles.info}>
@@ -525,7 +524,14 @@ export default class CreateTaskForm extends PureComponent {
                 </FormItem>
               </div>
               <div className={styles.task_btn}>
-                <FormItem>
+                <FormItem
+                  className={
+                    classnames({
+                      [styles.hideTextArea]: !showText,
+                      [styles.showTextArea]: showText,
+                    })
+                  }
+                >
                   <Button onClick={this.closeTab}>
                     取消
                     </Button>

@@ -3,9 +3,11 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter, routerRedux } from 'dva/router';
 import { Steps, message, Button } from 'antd';
+import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import PickTargetCustomer from '../../components/customerPool/taskFlow/PickTargetCustomer';
 import TaskOverview from '../../components/customerPool/taskFlow/TaskOverview';
+import CreateTaskForm from '../../components/customerPool/createTask/CreateTaskForm';
 // import Button from '../../components/common/Button';
 import styles from './taskFlow.less';
 
@@ -13,7 +15,7 @@ const Step = Steps.Step;
 
 const steps = [{
   title: '基本信息',
-  content: 'First-step',
+  content: <CreateTaskForm />,
 }, {
   title: '目标客户',
   content: <PickTargetCustomer />,
@@ -24,12 +26,14 @@ const steps = [{
 
 const stepsCount = _.size(steps);
 
-// const EMPTY_LIST = [];
-// const EMPTY_OBJECT = {};
-
-// const effects = {
-//   getHotPossibleWds: 'customerPool/getCustomerHotPossibleWds',
-// };
+const effects = {
+  createTask: 'customerPool/createTask',
+};
+const fectchDataFunction = (globalLoading, type) => query => ({
+  type,
+  payload: query || {},
+  loading: globalLoading,
+});
 
 // const fetchData = (type, loading) => query => ({
 //   type,
@@ -40,11 +44,13 @@ const stepsCount = _.size(steps);
 const mapStateToProps = state => ({
   // 字典信息
   dict: state.app.dict,
+  createTaskResult: state.customerPool.createTaskResult,
 });
 
 const mapDispatchToProps = {
   push: routerRedux.push,
   replace: routerRedux.replace,
+  createTask: fectchDataFunction(true, effects.createTask),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -54,10 +60,12 @@ export default class TaskFlow extends PureComponent {
     location: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
+    createTask: PropTypes.func.isRequired,
+    dict: PropTypes.object,
   };
 
   static defaultProps = {
-
+    dict: {},
   };
 
   constructor(props) {
@@ -66,7 +74,20 @@ export default class TaskFlow extends PureComponent {
       current: 0,
     };
   }
-
+  componentWillMount() {
+    const { dict, location } = this.props;
+    steps[0].content = <CreateTaskForm
+      location={location}
+      dict={dict}
+      createTask={this.handleCreateTask}
+    />;
+  }
+  @autobind
+  handleCreateTask(value) {
+    const { createTask } = this.props;
+    console.log(value);
+    createTask(value);
+  }
   next() {
     const { current } = this.state;
     this.setState({

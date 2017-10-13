@@ -6,11 +6,9 @@ import { withRouter, routerRedux } from 'dva/router';
 // import { autobind } from 'core-decorators';
 // import _ from 'lodash';
 // import Button from '../../components/common/Button';
-import Search from '../../components/common/Search';
-import TaskSearchRow from '../../components/customerPool/taskFlow/TaskSearchRow';
+import Search from '../../common/Search/index';
+import TaskSearchRow from './TaskSearchRow';
 import styles from './taskFlowSecond.less';
-
-// const Search = Input.Search;
 
 // const EMPTY_LIST = [];
 // const EMPTY_OBJECT = {};

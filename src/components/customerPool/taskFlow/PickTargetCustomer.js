@@ -12,6 +12,7 @@ import { Tabs } from 'antd';
 // import classnames from 'classnames';
 // import _ from 'lodash';
 import CustomerSegment from './CustomerSegment';
+import TaskFlowSecond from './TaskFlowSecond';
 import styles from './pickTargetCustomer.less';
 
 // const EMPTY_LIST = [];
@@ -48,7 +49,9 @@ export default class PickTargetCustomer extends PureComponent {
             <TabPane tab="客户细分" key="1">
               <CustomerSegment />
             </TabPane>
-            <TabPane tab="标签圈人" key="2">Content of Tab Pane 2</TabPane>
+            <TabPane tab="标签圈人" key="2">
+              <TaskFlowSecond />
+            </TabPane>
           </Tabs>
         </div>
       </div>
