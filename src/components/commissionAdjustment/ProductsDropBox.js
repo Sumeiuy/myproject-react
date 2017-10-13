@@ -85,7 +85,8 @@ export default class ProductsDropdownBox extends PureComponent {
   render() {
     const { iconType, value } = this.state;
     const { productList } = this.props;
-    const options = productList.map(opt => (
+    const newList = productList.map(pro => ({ key: pro.id, ...pro }));
+    const options = newList.map(opt => (
       <Option
         key={opt.id}
         value={opt.prodCode}

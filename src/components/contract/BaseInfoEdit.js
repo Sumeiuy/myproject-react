@@ -3,7 +3,7 @@
 * @Author: XuWenKang
 * @Date:   2017-09-20 13:47:07
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-12 09:56:25
+ * @Last Modified time: 2017-10-12 21:37:21
 */
 
 import React, { PureComponent } from 'react';
@@ -61,19 +61,22 @@ export default class BaseInfoEdit extends PureComponent {
     const { contractDetail: { baseInfo } } = props;
     this.state = {
       childType: childTypeList[0].value,
-      client: baseInfo.custName,
+      client: {},
       contractStarDate: dateFormat(baseInfo.startDt),
       contractPalidity: dateFormat(baseInfo.vailDt),
       contractEndDate: dateFormat(baseInfo.endDt),
       remark: baseInfo.description,
       id: '',
+      oldData: {
+        ...baseInfo,
+      },
     };
   }
 
   // 通用Select Change方法
   @autobind
   handleSelectChange(key, value) {
-    console.log({ [key]: value });
+    console.warn({ [key]: value });
     this.setState({
       ...this.state,
       [key]: value,
@@ -83,7 +86,7 @@ export default class BaseInfoEdit extends PureComponent {
   // 选择客户
   @autobind
   handleSelectClient(value) {
-    console.log('selectClient', value);
+    console.warn('selectClient', value);
     this.setState({
       ...this.state,
       client: value,
@@ -93,14 +96,14 @@ export default class BaseInfoEdit extends PureComponent {
   // 根据关键词查询客户
   @autobind
   handleSearchClient(v) {
-    console.log('searchClient', v);
+    console.warn('searchClient', v);
     this.props.onSearchClient(v);
   }
 
   // 通用 Date组件更新方法
   @autobind
   handleChangeDate(obj) {
-    console.log(obj);
+    console.warn(obj);
     this.setState({
       ...this.state,
       [obj.name]: obj.value,
@@ -110,7 +113,7 @@ export default class BaseInfoEdit extends PureComponent {
   // 更改备注
   @autobind
   handleChangeRemark(e) {
-    console.log(e.target.value);
+    console.warn(e.target.value);
     this.setState({
       ...this.state,
       remark: e.target.value,
@@ -121,23 +124,24 @@ export default class BaseInfoEdit extends PureComponent {
   @autobind
   transferDataToHome() {
     const data = this.state;
+    const oldData = data.oldData;
     const obj = {
       // 操作类型--必填
-      workflowname: data.operation,
+      workflowname: data.operation || oldData.workflowname,
       // 子类型--必填
-      subType: data.subType,
+      subType: data.subType || oldData.subType,
       // 客户名称--必填
-      custName: data.client.custName,
+      custName: data.client.custName || oldData.custName,
       // 客户 ID--必填
-      custId: data.client.cusId,
+      custId: data.client.custNumber || oldData.custId,
       // 客户类型--必填
-      custType: data.client.custType,
+      custType: data.client.custType || oldData.custType,
       // 合约开始日期--订购状态下必填，退订不可编辑
-      startDt: data.contractStarDate,
+      startDt: data.contractStarDate || oldData.startDt,
       // 合约有效期
-      vailDt: data.contractPalidity,
+      vailDt: data.contractPalidity || oldData.vailDt,
       // 备注
-      description: data.remark,
+      description: data.remark || oldData.description,
     };
     console.warn('obj', obj);
     this.props.onChange(obj);
@@ -165,7 +169,7 @@ export default class BaseInfoEdit extends PureComponent {
             placeholder="经纪客户号/客户名称"
             showObjKey="custName"
             objId="cusId"
-            value={this.state.client}
+            value={this.state.oldData.custName}
             searchList={custList}
             emitSelectItem={this.handleSelectClient}
             emitToSearch={this.handleSearchClient}

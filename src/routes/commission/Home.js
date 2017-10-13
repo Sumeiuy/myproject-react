@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { withRouter, routerRedux } from 'dva/router';
+import { message } from 'antd';
 
 import SplitPanel from '../../components/common/splitPanel/SplitPanel';
 import Detail from '../../components/commissionAdjustment/Detail';
@@ -42,6 +43,8 @@ const effects = {
 const mapStateToProps = state => ({
   // 字典
   dict: state.app.dict,
+  // empInfo:
+  empInfo: state.app.empInfo,
   // 左侧里诶包
   list: state.app.seibleList,
   // 组织结构树
@@ -114,6 +117,7 @@ export default class CommissionHome extends PureComponent {
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
     dict: PropTypes.object.isRequired,
+    empInfo: PropTypes.object.isRequired,
     getCustRange: PropTypes.func.isRequired,
     validateCustInfo: PropTypes.func.isRequired,
     getCanApplyCustList: PropTypes.func.isRequired,
@@ -230,6 +234,9 @@ export default class CommissionHome extends PureComponent {
       // 以后看需要是否需要做相应操作
       if (batchnum !== 'fail') {
         // 成功
+        message.success('提交成功');
+      } else {
+        message.error('提交失败');
       }
     }
   }
@@ -260,11 +267,16 @@ export default class CommissionHome extends PureComponent {
    * 点击列表每条的时候对应请求详情
    */
   @autobind
-  getListRowId({ bussiness1 }) {
-    const { getCommissionDetail } = this.props;
-    getCommissionDetail({
-      batchNum: bussiness1,
-    });
+  getListRowId({ business1, id }) {
+    const {
+      getCommissionDetail,
+      location: { query: { currentId } },
+    } = this.props;
+    if (!_.isEqual(currentId, id)) {
+      getCommissionDetail({
+        batchNum: business1,
+      });
+    }
   }
 
   // 点击查看的时候，弹出框需要的所点击的用户信息
@@ -374,6 +386,7 @@ export default class CommissionHome extends PureComponent {
       validateResult,
       validateCustInfo,
       dict: { otherRatio },
+      empInfo: { empInfo },
     } = this.props;
     if (_.isEmpty(custRange)) {
       return null;
@@ -430,6 +443,7 @@ export default class CommissionHome extends PureComponent {
           onClose={this.closeApprovalBoard}
         />
         <CreateNewApprovalBoard
+          empInfo={empInfo}
           modalKey="createApprovalBoard"
           visible={createApprovalBoard}
           onClose={this.closeNewApprovalBoard}

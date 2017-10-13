@@ -2,8 +2,8 @@
 * @Description: 合作合约修改 页面
 * @Author: XuWenKang
 * @Date:   2017-09-19 14:47:08
- * @Last Modified by:   XuWenKang
- * @Last Modified time: 2017-10-12 14:59:05
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2017-10-12 21:05:44
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -58,11 +58,12 @@ export default class EditForm extends PureComponent {
     cooperDeparment: PropTypes.array.isRequired,
     // 上传成功后的回调
     uploadAttachment: PropTypes.func.isRequired,
-    approverList: PropTypes.array,
+    // 审批人
+    flowStepInfo: PropTypes.object,
   }
 
   static defaultProps = {
-    approverList: [],
+    flowStepInfo: {},
   }
 
   constructor(props) {
@@ -76,9 +77,12 @@ export default class EditForm extends PureComponent {
       // 是否显示添加合约条款组件
       showAddClauseModal: false,
       // 选择审批人弹窗
+      appravalInfo: {
+        appraval: '',
+        approverName: '',
+        approverId: '',
+      },
       choiceApprover: false,
-      approverName: '',
-      approverId: '',
     };
   }
 
@@ -103,6 +107,14 @@ export default class EditForm extends PureComponent {
   @autobind
   handleChangeAppraval(type, value) {
     console.log(type, value);
+    this.setState({
+      appravalInfo: {
+        ...this.state.appravalInfo,
+        [type]: value,
+      },
+    }, () => {
+      this.props.onChangeForm(this.state.appravalInfo);
+    });
   }
 
   // 向父组件更新数据
@@ -204,8 +216,13 @@ export default class EditForm extends PureComponent {
   handleApproverModalOK(approver) {
     console.warn('approver', approver);
     this.setState({
-      approverName: approver.empName,
-      approverId: approver.empNo,
+      appravalInfo: {
+        ...this.state.appravalInfo,
+        approverName: approver.empName,
+        approverId: approver.empNo,
+      },
+    }, () => {
+      this.props.onChangeForm(this.state.appravalInfo);
     });
   }
 
@@ -218,15 +235,14 @@ export default class EditForm extends PureComponent {
       clauseNameList,
       cooperDeparment,
       searchCooperDeparment,
-      contractDetail: { baseInfo },
-      approverList,
+      contractDetail: { baseInfo, attachmentList },
+      flowStepInfo,
     } = this.props;
     const {
       formData,
       showAddClauseModal,
       choiceApprover,
-      approverName,
-      approverId,
+      appravalInfo: { appraval, approverName, approverId },
     } = this.state;
     const buttonProps = {
       type: 'primary',
@@ -240,10 +256,13 @@ export default class EditForm extends PureComponent {
       date: baseInfo.createTime,
       status: baseInfo.status,
     };
-    const newApproverList = approverList.map((item, index) => {
+    const listData = flowStepInfo.flowButtons[0].flowAuditors;
+    const newApproverList = listData.map((item, index) => {
       const key = `${new Date().getTime()}-${index}`;
       return {
-        ...item,
+        empNo: item.login || '',
+        empName: item.empName || '无',
+        belowDept: item.occupation || '无',
         key,
       };
     });
@@ -260,6 +279,7 @@ export default class EditForm extends PureComponent {
           onSearchClient={this.handleSearchClient}
           operationType={operationType}
         />
+        { /* 拟稿人信息 */ }
         <DraftInfo data={draftInfo} />
         <div className={styles.editWrapper}>
           <InfoTitle head="合约条款" />
@@ -271,14 +291,14 @@ export default class EditForm extends PureComponent {
         </div>
         <UploadFile
           edit={BOOL_TRUE}
-          fileList={contractDetail.attachmentList}
-          attachment={contractDetail.baseInfo.uuid}
+          fileList={attachmentList}
+          attachment={baseInfo.uuid}
           uploadAttachment={this.handleUploadSuccess}
         />
         <Approval
           type="appraval"
           head="审批"
-          textValue=""
+          textValue={appraval}
           onEmitEvent={this.handleChangeAppraval}
         />
         <div className={styles.editWrapper}>

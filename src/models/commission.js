@@ -167,7 +167,7 @@ export default {
       });
       const { flowCode, loginuser, ...reset } = payload;
       const recordResponse = yield call(api.querySingleCustApprovalRecord, {
-        flowCode: '618C53D2EA54F8408E10F9E8338716FC',
+        flowCode,
         loginuser,
       });
       yield put({
