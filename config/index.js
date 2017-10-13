@@ -31,8 +31,8 @@ module.exports = {
     proxyTable: {
       '/fspa/mcrm/api': {
 
-        target: 'http://168.61.8.81:5085', // SIT
-        // target: 'http://168.61.8.82:5086', // UAT
+        // target: 'http://168.61.8.81:5085', // SIT
+        target: 'http://168.61.8.82:5086', // UAT
         secure: false,
       },
       '/screenshot': {
@@ -49,7 +49,7 @@ module.exports = {
     // In our experience, they generally work as expected,
     // just be aware of this issue when enabling this option.
     cssSourceMap: false,
-    mock: true,
+    mock: false,
   },
   cssModules: true,
   appSrc: path.resolve(__dirname, '../src'),
