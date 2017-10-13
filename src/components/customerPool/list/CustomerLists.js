@@ -95,6 +95,7 @@ export default class CustomerLists extends PureComponent {
     custIncomeReqState: PropTypes.bool,
     toggleServiceRecordModal: PropTypes.func.isRequired,
     isLoadingEnd: PropTypes.bool.isRequired,
+    onRequestLoading: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -405,7 +406,7 @@ export default class CustomerLists extends PureComponent {
 
   @autobind
   showCreateContact({ custId, custType }) {
-    const { getCustContact, getServiceRecord, custContactData } = this.props;
+    const { getCustContact, getServiceRecord, custContactData, onRequestLoading } = this.props;
     this.setState({
       currentCustId: custId,
       custType,
@@ -424,6 +425,7 @@ export default class CustomerLists extends PureComponent {
       getServiceRecord({
         custId,
       });
+      onRequestLoading();
     });
   }
 
@@ -664,7 +666,10 @@ export default class CustomerLists extends PureComponent {
               currentCustId={currentCustId}
               executeTypes={executeTypes}
               serveWay={serveWay}
-            /> : <Loading loading={!isLoadingEnd} />
+            /> : null
+        }
+        {
+          <Loading loading={!isLoadingEnd} />
         }
       </div>
     );

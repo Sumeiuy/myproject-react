@@ -24,7 +24,6 @@ export default class UploadFiles extends PureComponent {
     attachModelList: PropTypes.array,
     form: PropTypes.object.isRequired,
     onCreate: PropTypes.func.isRequired,
-    removeFile: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -54,7 +53,7 @@ export default class UploadFiles extends PureComponent {
           Object.keys(objs).forEach(key => (_.isEmpty(objs[key]) || objs[key] === 'undefined') && delete objs[key]);
           return objs;
         };
-        const filesList =  removeEmpty(nextFileList);
+        const filesList = removeEmpty(nextFileList);
         fileList = filesList.map((item, i) => ({
           uid: `${item.attachUploader || ''}afiles${i}`,
           name: item.attachName,
@@ -76,12 +75,15 @@ export default class UploadFiles extends PureComponent {
 
   @autobind
   fileOnChange({ file }) {
+    // {
+    //    uid: 'uid',      // 文件唯一标识，建议设置为负数，防止和内部产生的 id 冲突
+    //    name: 'xx.png'   // 文件名
+    //    status: 'done', // 状态有：uploading done error removed
+    //    response: '{"status": "success"}', // 服务端响应内容
+    // }
     const status = file.status;
     const response = file.response || {};
     const { onCreate } = this.props;
-    if (status !== 'uploading') {
-      // console.log(info.file, info.fileList);
-    }
     if (status === 'done') {
       onCreate(response.resultData, 'ADD');
     } else if (status === 'error') {
@@ -93,6 +95,7 @@ export default class UploadFiles extends PureComponent {
 
   @autobind
   fileOnRemove(file) {
+    debugger;
     const { onCreate } = this.props;
     const nowUserId = helper.getEmpId();
     const uids = file.uid || '';
