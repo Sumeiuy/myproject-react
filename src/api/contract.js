@@ -24,5 +24,9 @@ export default function contract(api) {
     getFlowHistory: query => api.post('/groovynoauth/fsp/flow/queryFlowHistory', query),
     // 合作合约退订
     contractUnSubscribe: query => api.post('/groovynoauth/fsp/contract/cooper/addFlow', query),
+    // 查询审批人列表
+    getFlowStepInfo: query => api.post('/groovynoauth/fsp/contract/cooper/queryFlowStepInfo', query),
+    // 审批流程
+    postDoApprove: query => api.post('/groovynoauth/fsp/contract/cooper/doApprove', query),
   };
 }
