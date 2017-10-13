@@ -52,6 +52,7 @@ export default class Search extends PureComponent {
 
   state = {
     dataSource: EMPTY_LIST,
+    inputValue: '',
     historySource: [{
       title: '历史搜索',
       children: [{
@@ -193,7 +194,7 @@ export default class Search extends PureComponent {
   }
 
   searchResult(query, hotList) {
-    return hotList.map((item, index) => ({
+    return _.map(hotList, (item, index) => ({
       query,
       category: `${item.labelNameVal}${index}`,
       content: item.labelNameVal,
@@ -213,12 +214,12 @@ export default class Search extends PureComponent {
       });
       return;
     }
-    this.setState({
-      inputVal: value,
-    });
     const { queryHotPossibleWds } = this.props;
     queryHotPossibleWds({
       wd: value,
+    });
+    this.setState({
+      inputVal: value,
     });
   }
 
@@ -253,7 +254,7 @@ export default class Search extends PureComponent {
 
   createOption() {
     const { dataSource, historySource, inputVal } = this.state;
-    const newData = dataSource.map(this.renderOption);
+    const newData = _.map(dataSource, this.renderOption);
     if (!_.isEmpty(inputVal)) {
       return newData;
     }
@@ -266,18 +267,22 @@ export default class Search extends PureComponent {
   handleSearchBtn() {
     const { inputVal } = this.state;
     const { data: { hotWds = EMPTY_OBJECT } } = this.props;
-    let searchVal = inputVal;
     if (_.isEmpty(_.trim(inputVal))) {
-      // message.info('搜索内容不能为空', 1);
-      // return;
-      searchVal = hotWds.labelNameVal;
+      // 搜索的时候，如果搜索框没有内容，将hotWds塞入搜索框
+      this.setState({
+        inputVal: hotWds.labelNameVal,
+      });
+    } else {
+      this.setState({
+        inputVal: '',
+      });
+      this.handleOpenTab({
+        source: 'search',
+        labelMapping: '',
+        tagNumId: '',
+        q: encodeURIComponent(inputVal),
+      }, '客户列表', 'RCT_FSP_CUSTOMER_LIST');
     }
-    this.handleOpenTab({
-      source: 'search',
-      labelMapping: '',
-      tagNumId: '',
-      q: encodeURIComponent(searchVal),
-    }, '客户列表', 'RCT_FSP_CUSTOMER_LIST');
   }
 
   @autobind
@@ -313,7 +318,6 @@ export default class Search extends PureComponent {
   @autobind
   renderOption(item) {
     const { inputVal } = this.state;
-    // debugger;
     const newContent = item.content.replace(inputVal, `<em>${inputVal}</em>`);
     // 联想 association
     // 搜索 search
@@ -336,7 +340,6 @@ export default class Search extends PureComponent {
   }
 
   renderGroup(dataSource) {
-    // debugger;
     const options = dataSource.map(group => (
       <OptGroup
         key={group.title}
@@ -390,6 +393,7 @@ export default class Search extends PureComponent {
   render() {
     const { data: { hotWds = EMPTY_OBJECT,
       hotWdsList = EMPTY_LIST }, searchHistoryVal } = this.props;
+
     return (
       <div className={styles.searchBox}>
         <div className={styles.inner}>

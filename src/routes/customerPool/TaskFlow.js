@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import { withRouter, routerRedux } from 'dva/router';
 import { Steps, message, Button } from 'antd';
 import _ from 'lodash';
+import PickTargetCustomer from '../../components/customerPool/taskFlow/PickTargetCustomer';
+import TaskOverview from '../../components/customerPool/taskFlow/TaskOverview';
 // import Button from '../../components/common/Button';
 import styles from './taskFlow.less';
 
@@ -14,10 +16,10 @@ const steps = [{
   content: 'First-step',
 }, {
   title: '目标客户',
-  content: 'Second-step',
+  content: <PickTargetCustomer />,
 }, {
   title: '提交',
-  content: 'Last-step',
+  content: <TaskOverview />,
 }];
 
 const stepsCount = _.size(steps);
@@ -86,7 +88,9 @@ export default class TaskFlow extends PureComponent {
         <Steps current={current} className={styles.stepsSection}>
           {_.map(steps, item => <Step key={item.title} title={item.title} />)}
         </Steps>
-        <div className={styles.stepsContent}>{steps[current].content}</div>
+        <div className={styles.stepsContent}>
+          {steps[current].content}
+        </div>
         <div className={styles.stepsAction}>
           {
             current === 0
@@ -98,7 +102,7 @@ export default class TaskFlow extends PureComponent {
           {
             current > 0
             &&
-            <Button className={styles.prevStepBtn} type="primary" onClick={() => this.prev()}>
+            <Button className={styles.prevStepBtn} type="default" onClick={() => this.prev()}>
               上一步
             </Button>
           }

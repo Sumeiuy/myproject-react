@@ -210,8 +210,10 @@ export default class PerformanceIndicators extends PureComponent {
                 onChange={this.handleChange}
                 key="dateSelect"
               >
-                {cycle.map(item =>
-                  <Option key={item.key} value={item.key}>{item.value}</Option>)}
+                {
+                  cycle.map(item =>
+                    <Option key={item.key} value={item.key}>{item.value}</Option>)
+                }
               </Select>
             </div>
           </div>

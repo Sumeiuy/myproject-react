@@ -1,0 +1,68 @@
+.taskOverViewContainer {
+  width: 80%;
+  margin: 0 auto;
+  & > .basicInfoSection {
+    background: #ffffff;
+    border: 1px solid #979797;
+    margin-bottom: 30px;
+    & > .title {
+      font-size: 12px;
+      color: #4a4a4a;
+      text-align: left;
+      margin-left: 30px;
+      margin-bottom: 12px;
+      margin-top: 12px;
+      font-weight: 600;
+    }
+    & > .divider {
+      display: block;
+      width: 100%;
+      border-bottom: 1px solid #dddddd;
+    }
+    & > .infoDescription {
+      padding-top: 10px;
+      padding-left: 30px;
+      padding-bottom: 20px;
+      & > .descriptionOrNameSection {
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-start;
+        font-size: 12px;
+        color: #9b9b9b;
+        text-align: left;
+        margin-bottom: 10px;
+        & > div:first-child {
+          white-space: nowrap;
+        }
+        & > div:last-child {
+          margin-left: 10px;
+          word-break: break-all;
+          padding-right: 30px;
+        }
+      }
+      & > .taskSection {
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-start;
+        font-size: 12px;
+        color: #9b9b9b;
+        text-align: left;
+        margin-bottom: 10px;
+        & > div {
+          width: 50%;
+          display: flex;
+          justify-content: flex-start;
+          align-items: flex-start;
+          & > div:first-child {
+            white-space: nowrap;
+          }
+          & > div:last-child {
+            margin-left: 10px;
+            word-break: break-all;
+            padding-right: 30px;
+          }
+        }
+      }
+    }
+  }
+}

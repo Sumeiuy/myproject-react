@@ -1,3 +1,8 @@
+:global {
+  .react-app .ant-pagination-options .ant-select {
+    width: 80px;
+  }
+}
 .groupTable {
   padding: 15px 20px 20px 15px;
   table {
@@ -16,6 +21,7 @@
   }
   table > thead > tr > th:first-child, tbody > tr > td:first-child {
     padding-left: 40px;
+    padding-right: 10px;
   }
   table > thead > tr > th {
     background-color: #ffffff;
@@ -27,7 +33,7 @@
     border-bottom: 0px;
   }
   .column {
-    max-width: 180px;
+    max-width: 200px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -39,9 +45,6 @@
     }
     .ant-select-selection {
       border: 1px solid #dddddd;
-    }
-    .ant-select {
-      width: 100%;
     }
   }
   .totalPageSection {
