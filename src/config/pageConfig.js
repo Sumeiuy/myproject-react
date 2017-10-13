@@ -350,6 +350,14 @@ const pageConfig = {
       },
     ],
   },
+  // 进行佣金调整子类型比对需要用到的数据
+  comsubs: {
+    noSelected: '', // 用户未选择子类型的情况
+    single: '0201', // 单佣金调整
+    batch: '0202', // 批量佣金调整
+    subscribe: '0203', // 资讯订阅
+    unsubscribe: '0204', // 资讯退订
+  },
 };
 
 export default pageConfig;
