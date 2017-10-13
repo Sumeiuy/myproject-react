@@ -33,7 +33,7 @@ import {
 
 const confirm = Modal.confirm;
 const { TextArea } = Input;
-const { commission: { subType } } = seibelConfig;
+const { commission: { subType }, comsubs: commadj } = seibelConfig;
 // 给subType去除全部的选项
 const newSubTypes = _.filter(subType, item => !!item.value);
 // 增加一个"请选择申请类型的option"
@@ -42,13 +42,6 @@ newSubTypes.unshift({
   label: '请选择申请类型',
   value: '',
 });
-
-// 佣金调整的子类型常量
-const commadj = {
-  noSelected: '', // 用户未选择子类型的情况
-  single: '0201', // 单佣金调整
-  batch: '0202', // 批量佣金调整
-};
 
 // 其他佣金率的参数名称数组
 const otherComs = [
@@ -102,7 +95,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      approvalType: commadj.batch,
+      approvalType: '',
       remark: '',
       targetProduct: '',
       choiceApprover: false,
@@ -121,11 +114,6 @@ export default class CreateNewApprovalBoard extends PureComponent {
     }
   }
 
-  @autobind
-  getPopupContainer() {
-    return this.approvalBody;
-  }
-
   // 判断当前是否某个子类型
   @autobind
   judgeSubtypeNow(assert) {
@@ -139,10 +127,10 @@ export default class CreateNewApprovalBoard extends PureComponent {
   // 关闭弹出框后，清空页面数据
   @autobind
   clearApprovalBoard() {
-    this.digital.reset();
-    this.addCustomer.clearCustList();
+    if (this.digital) this.digital.reset();
+    if (this.addCustomer) this.addCustomer.clearCustList();
     this.setState({
-      approvalType: commadj.batch,
+      approvalType: '',
       remark: '',
       targetProduct: '',
       choiceApprover: false,
@@ -436,6 +424,8 @@ export default class CreateNewApprovalBoard extends PureComponent {
       warningTips: ['产品组合比目标佣金高 0.5%', '产品组合离目标佣金还差 0.63%'],
     };
 
+    const wrapClassName = this.judgeSubtypeNow(commadj.noSelected) ? 'commissionModal' : '';
+
     return (
       <div>
         <CommonModal
@@ -449,6 +439,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
           okText="提交"
           showCancelBtn={false}
           onOk={this.handleSubmitApprovals}
+          wrapClassName={wrapClassName}
         >
           <div className={styles.newApprovalBox} ref={this.newApprovalBoxRef}>
             <div className={styles.approvalBlock}>

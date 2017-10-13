@@ -25,7 +25,8 @@ import './home.less';
 // const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
-const { commission, commission: { pageType, subType, status } } = seibelConfig;
+const { comsubs, commission, commission: { pageType, subType, status } } = seibelConfig;
+
 const effects = {
   list: 'app/getSeibleList',
   searchDrafter: 'app/getDrafterList',
@@ -90,7 +91,7 @@ const mapDispatchToProps = {
   // 获取批量佣金调整List
   getCustRange: getDataFunction(true, effects.custRange),
   // 获取批量佣金调整Detail
-  getCommissionDetail: getDataFunction(true, effects.detail),
+  getBatchCommissionDetail: getDataFunction(true, effects.detail),
   // 获取用户审批记录
   getApprovalRecords: getDataFunction(false, effects.record),
   // 通过关键字，查询可选的已申请用户列表
@@ -123,7 +124,7 @@ export default class CommissionHome extends PureComponent {
     getCanApplyCustList: PropTypes.func.isRequired,
     getAprovalUserList: PropTypes.func.isRequired,
     getCommissionList: PropTypes.func.isRequired,
-    getCommissionDetail: PropTypes.func.isRequired,
+    getBatchCommissionDetail: PropTypes.func.isRequired,
     getApprovalRecords: PropTypes.func.isRequired,
     searchCustList: PropTypes.func.isRequired,
     searchDrafter: PropTypes.func.isRequired,
@@ -191,11 +192,9 @@ export default class CommissionHome extends PureComponent {
       if (!_.isEmpty(list.resultData)) {
         // 表示左侧列表获取完毕
         // 因此此时获取Detail
-        const item = _.filter(list.resultData, o => String(o.id) === String(currentId));
-        console.warn('detail', item);
-        this.props.getCommissionDetail({
-          batchNum: item[0].business1,
-        });
+        const item = _.filter(list.resultData, o => String(o.id) === String(currentId))[0];
+        const { business1, subType: st } = item;
+        this.getDetail4Subtye(st, { batchNum: business1 });
       }
     }
     const { location: { query: nextQuery = EMPTY_OBJECT } } = nextProps;
@@ -263,19 +262,15 @@ export default class CommissionHome extends PureComponent {
     }
   }
 
-  /**
-   * 点击列表每条的时候对应请求详情
-   */
-  @autobind
-  getListRowId({ business1, id }) {
-    const {
-      getCommissionDetail,
-      location: { query: { currentId } },
-    } = this.props;
-    if (!_.isEqual(currentId, id)) {
-      getCommissionDetail({
-        batchNum: business1,
-      });
+  // 查询佣金调整4个子类型的详情信息
+  getDetail4Subtye(st, params) {
+    const { getBatchCommissionDetail } = this.props;
+    switch (st) {
+      case comsubs.batch:
+        getBatchCommissionDetail(params);
+        break;
+      default:
+        break;
     }
   }
 
@@ -284,6 +279,18 @@ export default class CommissionHome extends PureComponent {
   getApprovalBoardCustInfo(info) {
     const loginuser = getEmpId();
     this.props.getApprovalRecords({ ...info, loginuser });
+  }
+
+  /**
+   * 点击列表每条的时候对应请求详情
+   */
+  @autobind
+  handleListRowClick({ business1, id, subType: st }) {
+    const {
+      location: { query: { currentId } },
+    } = this.props;
+    if (currentId === id) return;
+    this.getDetail4Subtye(st, { batchNum: business1 });
   }
 
   /**
@@ -415,8 +422,8 @@ export default class CommissionHome extends PureComponent {
         replace={replace}
         location={location}
         columns={this.constructTableColumns()}
-        clickRow={this.getListRowId}
-        backKeys={['business1', 'flowId']}
+        clickRow={this.handleListRowClick}
+        backKeys={['business1', 'flowId', 'subType']}
       />
     );
 
