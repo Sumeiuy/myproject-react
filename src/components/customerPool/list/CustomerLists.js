@@ -11,6 +11,7 @@ import { Pagination, Checkbox, message } from 'antd';
 
 import CustomerRow from './CustomerRow';
 import CreateContactModal from './CreateContactModal';
+import Loading from '../../../layouts/Loading';
 
 import { fspContainer } from '../../../config';
 import { fspGlobal, helper } from '../../../utils';
@@ -93,6 +94,8 @@ export default class CustomerLists extends PureComponent {
     isSms: PropTypes.bool.isRequired,
     custIncomeReqState: PropTypes.bool,
     toggleServiceRecordModal: PropTypes.func.isRequired,
+    isLoadingEnd: PropTypes.bool.isRequired,
+    onRequestLoading: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -403,7 +406,7 @@ export default class CustomerLists extends PureComponent {
 
   @autobind
   showCreateContact({ custId, custType }) {
-    const { getCustContact, getServiceRecord, custContactData } = this.props;
+    const { getCustContact, getServiceRecord, custContactData, onRequestLoading } = this.props;
     this.setState({
       currentCustId: custId,
       custType,
@@ -422,6 +425,7 @@ export default class CustomerLists extends PureComponent {
       getServiceRecord({
         custId,
       });
+      onRequestLoading();
     });
   }
 
@@ -523,6 +527,7 @@ export default class CustomerLists extends PureComponent {
       isSms,
       custIncomeReqState,
       toggleServiceRecordModal,
+      isLoadingEnd,
     } = this.props;
     // console.log('1---', this.props)
     // 服务记录执行方式字典
@@ -649,7 +654,7 @@ export default class CustomerLists extends PureComponent {
           </div>
         </div>
         {
-          isShowContactModal ?
+          (isShowContactModal && isLoadingEnd) ?
             <CreateContactModal
               key={modalKey}
               visible={isShowContactModal}
@@ -662,6 +667,9 @@ export default class CustomerLists extends PureComponent {
               executeTypes={executeTypes}
               serveWay={serveWay}
             /> : null
+        }
+        {
+          <Loading loading={!isLoadingEnd} />
         }
       </div>
     );

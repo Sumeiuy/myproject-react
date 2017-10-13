@@ -85,6 +85,10 @@ const mapStateToProps = state => ({
   fllowCustData: state.customerPool.fllowCustData,
   // 接口的loading状态
   interfaceState: state.loading.effects,
+  // 联系方式接口loading
+  isContactLoading: state.loading.effects[effects.getCustContact],
+  // 服务记录接口loading
+  isRecordLoading: state.loading.effects[effects.getServiceRecord],
 });
 
 const mapDispatchToProps = {
@@ -138,6 +142,10 @@ export default class CustomerList extends PureComponent {
     toggleServiceRecordModal: PropTypes.func.isRequired,
     // 接口的loading状态
     interfaceState: PropTypes.object.isRequired,
+    // 联系方式接口loading
+    isContactLoading: PropTypes.bool,
+    // 服务记录接口loading
+    isRecordLoading: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -151,6 +159,8 @@ export default class CustomerList extends PureComponent {
     cycle: EMPTY_LIST,
     fllowCustData: EMPTY_OBJECT,
     followLoading: false,
+    isContactLoading: false,
+    isRecordLoading: false,
   }
 
   constructor(props) {
@@ -162,6 +172,8 @@ export default class CustomerList extends PureComponent {
       cycleSelect: '',
       // 判断是否是主服务经理或者是否在业务列表中，用来控制列表快捷按钮的显示与否
       isSms: false,
+      // 初始化没有loading
+      isLoadingEnd: true,
     };
   }
 
@@ -192,6 +204,8 @@ export default class CustomerList extends PureComponent {
       },
       empInfo: { empRespList: PreEmpRespList },
       position: { orgId: preOrgId },
+      isContactLoading = false,
+      isRecordLoading = false,
     } = this.props;
     const {
       custRange,
@@ -200,6 +214,8 @@ export default class CustomerList extends PureComponent {
       },
       empInfo: { empRespList },
       position: { orgId },
+      isContactLoading: nextContactLoading = false,
+      isRecordLoading: nextRecordLoading = false,
     } = nextProps;
     // 组织机构树数据变化和职位切换重新生成组织机构树组件的数据
     if (!_.isEqual(preCustRange, custRange) || orgId !== preOrgId) {
@@ -228,6 +244,16 @@ export default class CustomerList extends PureComponent {
     } else if (query.source === 'business') {
       this.setState({
         isSms: true,
+      });
+    }
+
+    // loading状态
+    // 只有全部loading完毕才触发isLoadingEnd
+    if ((isContactLoading && !nextContactLoading && isRecordLoading && !nextRecordLoading)
+      || (!nextContactLoading && !nextRecordLoading)) {
+      // debugger;
+      this.setState({
+        isLoadingEnd: true,
       });
     }
   }
@@ -375,6 +401,13 @@ export default class CustomerList extends PureComponent {
       queryParam: param,
     });
     getCustomerData(param);
+  }
+
+  @autobind
+  setLoading() {
+    this.setState({
+      isLoadingEnd: false,
+    });
   }
 
   // 生成组织机构树的数据
@@ -590,7 +623,7 @@ export default class CustomerList extends PureComponent {
     if (sortType && sortDirection) {
       reorderValue = { sortType, sortDirection };
     }
-    const { expandAll, createCustRange, queryParam, isSms } = this.state;
+    const { expandAll, createCustRange, queryParam, isSms, isLoadingEnd } = this.state;
     const custRangeProps = {
       orgId,
       location,
@@ -660,6 +693,8 @@ export default class CustomerList extends PureComponent {
           fllowCustData={fllowCustData}
           followLoading={followLoading}
           toggleServiceRecordModal={toggleServiceRecordModal}
+          isLoadingEnd={isLoadingEnd}
+          onRequestLoading={this.setLoading}
         />
       </div>
     );

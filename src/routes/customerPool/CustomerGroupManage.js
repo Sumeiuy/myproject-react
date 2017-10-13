@@ -269,11 +269,11 @@ export default class CustomerGroupManage extends PureComponent {
 
   @autobind
   handleOpenTab(obj, titles, ids) {
-    const { groupId } = obj;
+    const { groupId, count } = obj;
     const { push } = this.props;
     const firstUrl = '/customerPool/createTask';
     if (document.querySelector(fspContainer.container)) {
-      const url = `${firstUrl}?groupId=${groupId}`;
+      const url = `${firstUrl}?groupId=${groupId}&count=${count}`;
       const param = {
         closable: true,
         forceRefresh: true,

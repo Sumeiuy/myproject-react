@@ -2,49 +2,30 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 13:43:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-11 18:07:11
+ * @Last Modified time: 2017-10-13 17:24:20
  * 客户细分组件
  */
 
 import React, { PureComponent } from 'react';
-// import PropTypes from 'prop-types';
-import { Select, Icon } from 'antd';
+import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
 import GroupTable from '../groupManage/GroupTable';
-
+import Upload from './Upload';
 import tableStyles from '../groupManage/groupTable.less';
-// import CustRange from '../common/CustRange';
-import Button from '../../common/Button';
 import styles from './customerSegment.less';
 
 const EMPTY_LIST = [];
 // const EMPTY_OBJECT = {};
 
-const Option = Select.Option;
-
-// mock数据
-const indicator = [
-  {
-    key: '客户性质',
-    value: '客户性质',
-  },
-  {
-    key: '选择指标',
-    value: '选择指标',
-  },
-  {
-    key: '总资产',
-    value: '总资产',
-  },
-];
-
 export default class CustomerSegment extends PureComponent {
   static propTypes = {
+    attachModelList: PropTypes.array,
   };
 
   static defaultProps = {
+    attachModelList: EMPTY_LIST,
   };
 
   constructor(props) {
@@ -161,75 +142,30 @@ export default class CustomerSegment extends PureComponent {
     console.log(key);
   }
 
-  handleChange(value) {
-    console.log(value);
-  }
+  // 上传直接提交
+  @autobind
+  handleFileUpload(file, type) {
+    let fileStatus = {};
+    const { uploadedFileKey } = file;
+    if (type === 'ADD') {
+      fileStatus = {
+        uploadedFiles: [file],
+      };
+    } else if (type === 'DELETE') {
+      fileStatus = {
+        deletedFiles: [file],
+      };
+    }
 
-  /**
-   * 渲染一组condition section
-   */
-  renderOneGroupIndicatorSection() {
-    return (
-      <div className={styles.customerSegmentSection}>
-        {
-          /*
-          <div className={styles.conditionSection}>{type[0].value}</div>
-          */
-        }
-        <div className={styles.conditionSection} />
-        {this.renderOneSection()}
-      </div>
-    );
-  }
+    // 已经上传的file key
+    // 用来预览客户列表时，用
+    this.setState({
+      uploadedFileKey,
+    });
 
-  /**
-   * 渲染指标列
-   */
-  renderOneSection() {
-    // mock数据
-    return _.map(indicator, () =>
-      <div className={styles.conditionSection}>
-        <div className={styles.selectCondition}>
-          <Select
-            style={{ width: 60 }}
-            defaultValue={1}
-            onChange={this.handleChange}
-            className={styles.indicator}
-          >
-            <Option key={1} value={1}>{1}</Option>
-            <Option key={2} value={2}>{2}</Option>
-            <Option key={3} value={3}>{3}</Option>
-          </Select>
-        </div>
-        <div className={styles.selectCondition}>
-          <Select
-            style={{ width: 60 }}
-            defaultValue={2}
-            onChange={this.handleChange}
-            className={styles.condition}
-          >
-            <Option key={1} value={1}>{1}</Option>
-            <Option key={2} value={2}>{2}</Option>
-            <Option key={3} value={3}>{3}</Option>
-          </Select>
-        </div>
-        <div className={styles.selectCondition}>
-          <Select
-            style={{ width: 60 }}
-            mode="multiple"
-            defaultValue={['3']}
-            onChange={this.handleChange}
-            className={styles.value}
-          >
-            <Option key={1} value={1}>{1}</Option>
-            <Option key={2} value={2}>{2}</Option>
-            <Option key={3} value={3}>{3}</Option>
-          </Select>
-        </div>
-        <div className={styles.delete}>
-          <Icon type="close" className={styles.deleteIcon} />
-        </div>
-      </div>);
+    console.log(fileStatus);
+    // 可能需要发请求去拿列表数据或者删除刚才上传的文件
+    // TODO
   }
 
   renderColumnTitle() {
@@ -284,6 +220,8 @@ export default class CustomerSegment extends PureComponent {
       isShowTable,
     } = this.state;
 
+    const { attachModelList } = this.props;
+
     // 构造表格头部
     const titleColumn = this.renderColumnTitle();
 
@@ -292,12 +230,18 @@ export default class CustomerSegment extends PureComponent {
 
     return (
       <div className={styles.customerSegmentContainer}>
-        {this.renderOneGroupIndicatorSection()}
-        <div className={styles.overviewBtnSection}>
-          <Button className={styles.overviewBtn} type="default" onClick={this.showMatchCustomerTable}>预览</Button>
+        <div className={styles.uploadSection}>
+          <Upload
+            onOperateFile={this.handleFileUpload}
+            attachModelList={attachModelList}
+            onHandleOverview={this.showMatchCustomerTable}
+          />
         </div>
         <div className={styles.tableSection}>
-          <div className={styles.title}>共匹配到<span>2346</span>客户</div>
+          {
+            isShowTable ?
+              <div className={styles.title}>共匹配到<span>2346</span>客户</div> : null
+          }
           {
             isShowTable ?
               <GroupTable

@@ -361,7 +361,7 @@ export default class CreateContactModal extends PureComponent {
                       mainContactInfo.cellInfo
                       }
                     </span>
-                  </div> : <div className={styles.noneInfo} />
+                  </div> : null
               }
               <div className={styles.rightSection}>
                 <Button onClick={this.handleServiceRecordClick}>添加服务记录</Button>
