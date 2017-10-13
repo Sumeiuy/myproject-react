@@ -126,7 +126,6 @@ export default class DropdownSelect extends PureComponent {
   }
 
   render() {
-    console.log('dropdownSelect', this.props, this.state);
     const modalClass = classnames([style.ddsDrapMenu,
       { hide: !this.state.isSHowModal },
     ]);
