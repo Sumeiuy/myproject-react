@@ -66,6 +66,17 @@ export default class DropdownSelect extends PureComponent {
     document.addEventListener('click', this.hideModal);
   }
 
+  // props清空数据时触发组件清空value
+  componentWillReceiveProps(nextProps) {
+    const oldValue = this.props.value;
+    if (oldValue !== nextProps.value && nextProps.value === '') {
+      this.setState({
+        ...this.state,
+        value: '',
+      });
+    }
+  }
+
   get getSearchListDom() {
     const { searchList, emitSelectItem, showObjKey, objId, name } = this.props;
     const result = searchList.map((item, index) => {
@@ -115,6 +126,7 @@ export default class DropdownSelect extends PureComponent {
   }
 
   render() {
+    console.log('dropdownSelect', this.props, this.state);
     const modalClass = classnames([style.ddsDrapMenu,
       { hide: !this.state.isSHowModal },
     ]);
