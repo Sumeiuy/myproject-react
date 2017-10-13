@@ -5,19 +5,23 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import { Form, Select, Input, DatePicker } from 'antd';
+import { Form, Select, Input, DatePicker, Mention } from 'antd';
 import _ from 'lodash';
 import moment from 'moment';
+import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import styles from './createTaskForm.less';
 import { fspGlobal } from '../../../utils';
 import Button from '../../common/Button';
+
 
 const FormItem = Form.Item;
 const create = Form.create;
 const Option = Select.Option;
 const { TextArea } = Input;
 const WEEK = ['日', '一', '二', '三', '四', '五', '六'];
+const { toString } = Mention;
+let users = [];
 
 @create()
 export default class CreateTaskForm extends PureComponent {
@@ -28,7 +32,6 @@ export default class CreateTaskForm extends PureComponent {
     dict: PropTypes.object,
     createTask: PropTypes.func,
     createTaskResult: PropTypes.object,
-    goBack: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -50,12 +53,14 @@ export default class CreateTaskForm extends PureComponent {
       firstUserName: '',
       searchReq: null,
       custIdList: null,
+      suggestions: [],
+      showText: false,
     };
   }
 
   componentWillMount() {
-    const { location: { query } } = this.props;
-    // console.warn('query--', query);
+    const { location: { query }, dict: { custIdexPlaceHolders } } = this.props;
+    users = custIdexPlaceHolders;
     this.handleInit(query);
   }
 
@@ -85,6 +90,25 @@ export default class CreateTaskForm extends PureComponent {
     this.onChange('endValue', value);
     this.handleDateFormat(value, 'end');
   }
+
+  // 提及
+  @autobind
+  onSelect(suggestion) {
+    console.log('onSelect', suggestion);
+  }
+  // @autobind
+  onSearchChange = (value, trigger) => {
+    console.log('onSearchChange', value, trigger);
+    const dataSource = trigger === '$' ? users : [];
+    this.setState({
+      suggestions: dataSource.filter(item => item.indexOf(value) !== -1),
+    });
+  }
+  @autobind
+  handleChange(editorState) {
+    console.log(toString(editorState));
+  }
+  // 提及
 
   @autobind
   disabledStartDate(startValue) {
@@ -184,6 +208,7 @@ export default class CreateTaskForm extends PureComponent {
   @autobind
   handleInit(query) {
     const entertype = query.entertype || '';
+    const { dict: { custIdexPlaceHolders } } = this.props;
     let defaultMissionName = '';
     let defaultMissionType = '';
     let defaultExecutionType = '';
@@ -217,9 +242,12 @@ export default class CreateTaskForm extends PureComponent {
         defaultMissionName = '提醒客户办理已满足条件的业务';
         defaultMissionType = 'businessRecommend';
         defaultExecutionType = 'Mission';
-        defaultMissionDesc = '用户已达到到办理 {可开通业务列表}业务的条件，请联系客户办理相关业务。注意提醒客户准备业务办理必须的文件。';
+        defaultMissionDesc = `用户已达到到办理 ${custIdexPlaceHolders[0]} 业务的条件，请联系客户办理相关业务。注意提醒客户准备业务办理必须的文件。`;
         startTime = 1;
         endTime = 8;
+        this.setState({
+          showText: true,
+        });
         break;
       case 'searchCustPool':
         defaultMissionType = 'other';
@@ -227,22 +255,32 @@ export default class CreateTaskForm extends PureComponent {
         defaultMissionDesc = '';
         startTime = 1;
         endTime = 4;
+        this.setState({
+          showText: true,
+        });
         break;
       case 'performanceIncrementCustPool':
         defaultMissionName = '新客户回访';
         defaultMissionType = 'newCustVisit';
         defaultExecutionType = 'Chance';
-        defaultMissionDesc = '用户在 {开户日} 开户，建议跟踪服务了解客户是否有问题需要解决。注：如果客户状态为流失，则：用户在 {流失日}流失，建议跟踪服务了解客户是否有问题需要解决。';
+        defaultMissionDesc = `用户在 ${custIdexPlaceHolders[1]} 开户，建议跟踪服务了解客户是否有问题需要解决。注：如果客户状态为流失，则：用户在 {流失日}流失，建议跟踪服务了解客户是否有问题需要解决。`;
         startTime = 1;
         endTime = 8;
+        this.setState({
+          showText: true,
+        });
         break;
       case 'performanceBusinessOpenCustPool':
         defaultMissionName = '业务开通回访';
         defaultMissionType = 'stockCustVisit';
         defaultExecutionType = 'Chance';
-        defaultMissionDesc = '用户在 2 周内办理了 {14日内开通的业务} 业务，建议跟踪服务了解客户是否有问题需要解决。';
+        defaultMissionDesc = `用户在 2 周内办理了 ${custIdexPlaceHolders[2]} 业务，建议跟踪服务了解客户是否有问题需要解决。`;
         startTime = 1;
         endTime = 8;
+        this.setState({
+          showText: true,
+        });
+        // {14日内开通的业务}
         break;
       case 'custGroupList':
         defaultMissionName = '';
@@ -250,10 +288,16 @@ export default class CreateTaskForm extends PureComponent {
         defaultExecutionType = '请选择';
         startTime = 1;
         endTime = 8;
+        this.setState({
+          showText: true,
+        });
         break;
       default:
         defaultMissionType = '请选择';
         defaultExecutionType = '请选择';
+        this.setState({
+          showText: false,
+        });
         break;
     }
     this.setState({
@@ -279,8 +323,9 @@ export default class CreateTaskForm extends PureComponent {
     const { dict, form } = this.props;
     const { taskTypes, executeTypes } = dict;
     const { getFieldDecorator } = form;
-    const { endFormat,
+    const {
       startFormat,
+      endFormat,
       startValue,
       endValue,
       defaultMissionName,
@@ -289,6 +334,8 @@ export default class CreateTaskForm extends PureComponent {
       defaultMissionDesc,
       firstUserName,
       count,
+      suggestions,
+      showText,
     } = this.state;
     return (
       <div className={`${styles.taskInner}`}>
@@ -381,7 +428,7 @@ export default class CreateTaskForm extends PureComponent {
                           onChange={this.onStartChange}
                           style={{ width: '100%' }}
                         />,
-                      )}
+                    )}
                   </FormItem>
                 </li>
                 <li>
@@ -422,7 +469,7 @@ export default class CreateTaskForm extends PureComponent {
                         style={{ width: '100%' }}
                         maxLength={1000}
                       />,
-                    )}
+                  )}
                 </FormItem>
               </div>
               <div className={styles.task_textArea}>
@@ -441,16 +488,45 @@ export default class CreateTaskForm extends PureComponent {
                         placeholder="请在描述客户经理联系客户钱需要了解的客户相关信息，比如持仓情况。（字数限制：10-1000字）"
                         style={{ width: '100%' }}
                         maxLength={1000}
+                        className={
+                          classnames({
+                            [styles.showTextArea]: showText,
+                            [styles.hideTextArea]: !showText,
+                          })
+                        }
                       />,
                     )}
+                  {getFieldDecorator('mention', {
+                    rules: [
+                      { validator: this.checkMention },
+                    ],
+                    initialValue: this.state.initValue,
+                  })(
+                    <Mention
+                      style={{ width: '100%', height: 100 }}
+                      multiLines
+                      onChange={this.handleChange}
+                      placeholder="请在描述客户经理联系客户钱需要了解的客户相关信息，比如持仓情况。（字数限制：10-1000字）"
+                      prefix={['$']}
+                      onSearchChange={this.onSearchChange}
+                      suggestions={suggestions}
+                      onSelect={this.onSelect}
+                      className={
+                        classnames({
+                          [styles.showTextArea]: !showText,
+                          [styles.hideTextArea]: showText,
+                        })
+                      }
+                    />,
+                  )}
                   <div className={styles.info}>
                     任务描述中 &#123;XXXX&#125; 部分后台会根据客户自动替换为该客户对应的属性值，编辑任务描述时请尽量避免修改这些参数描述。
-                    </div>
+                  </div>
                 </FormItem>
               </div>
               <div className={styles.task_btn}>
                 <FormItem>
-                  <Button onClick={this.props.goBack}>
+                  <Button onClick={this.closeTab}>
                     取消
                     </Button>
                   <Button type="primary" htmlType="submit">提交</Button> { /* loading */}

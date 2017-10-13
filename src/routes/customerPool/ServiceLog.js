@@ -8,6 +8,7 @@ import React, { PropTypes, PureComponent } from 'react';
 import { Select, DatePicker, Row, Col, Button } from 'antd';
 import { connect } from 'react-redux';
 import { routerRedux } from 'dva/router';
+import classnames from 'classnames';
 import _ from 'lodash';
 import moment from 'moment';
 import { autobind } from 'core-decorators';
@@ -20,12 +21,16 @@ const Option = Select.Option;
 const RangePicker = DatePicker.RangePicker;
 // const WEEK = ['日', '一', '二', '三', '四', '五', '六'];
 const dateFormat = 'YYYY-MM-DD HH:mm:ss';
-const today = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
+const newDay = moment(new Date()).subtract(1, 'minutes');
+const today = moment(newDay).format('YYYY-MM-DD HH:mm:ss');
+
 const sixMonth = moment(today).subtract(6, 'months');
-const sixDate = moment(sixMonth).format('YYYY-MM-DD HH:mm:ss');
+const sixDay = moment(sixMonth).add(1, 'days');
+const sixDate = moment(sixDay).format('YYYY-MM-DD HH:mm:ss');
 
 const effects = {
   getServiceLog: 'customerPool/getServiceLog',
+  getServiceLogMore: 'customerPool/getServiceLogMore',
 };
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
@@ -63,8 +68,8 @@ export default class CreateTaskForm extends PureComponent {
       custId: '',
       startValue: null,
       endValue: null,
-      startFormat: 'YYYY-MM-DD HH:mm:ss',
-      endFormat: 'YYYY-MM-DD HH:mm:ss',
+      showBtn: false,
+      logData: [],
     };
   }
   componentWillMount() {
@@ -74,19 +79,44 @@ export default class CreateTaskForm extends PureComponent {
   }
   componentWillReceiveProps(nextProps) {
     console.log('nextProps---', nextProps);
-    const { location: { query }, serviceLogMoreData } = nextProps;
-    const { location: { query: prevQuery } } = this.props;
+    const { location: { query }, serviceLogMoreData, serviceLogData, getServiceLog } = nextProps;
+    const { location: { query: prevQuery }, serviceLogMoreData: prevServiceLogMoreData,
+      serviceLogData: prevServiceLogData } = this.props;
     console.log('nextProps---', query);
-    console.log('prevQuery---', prevQuery);
-    // console.log('query.serveDateToPaged---', query.serveDateToPaged);
-    // console.log('prevQuery.serveDateToPaged---', prevQuery.serveDateToPaged);
-    console.warn('serviceLogMoreData--', serviceLogMoreData);
-    // console.warn(query.serveDateToPaged === prevQuery.serveDateToPaged);
-
-    // console.log(query!==prevQuery && query.serveDateToPaged === prevQuery.serveDateToPaged)
-    // if (query!==prevQuery && query.serveDateToPaged === prevQuery.serveDateToPaged) {
-    //   getServiceLog(query);
-    // }
+    console.warn('prevQuery---', prevQuery);
+    console.log('query.serveDateToPaged---', query.serveDateToPaged);
+    console.warn('prevQuery.serveDateToPaged---', prevQuery.serveDateToPaged);
+    console.log('serviceLogMoreData---', prevQuery.serviceLogMoreData);
+    console.warn('pervServiceLogMoreData--', prevServiceLogMoreData);
+    // debugger
+    if (query !== prevQuery) {
+      getServiceLog(query);
+    }
+    if (serviceLogData !== prevServiceLogData) {
+      this.setState({
+        logData: serviceLogData,
+      });
+    }
+    console.log('_.isEmpty(serviceLogData)--', _.isEmpty(serviceLogData));
+    if (_.isEmpty(serviceLogData)) {
+      this.setState({
+        showBtn: true,
+      });
+    } else {
+      this.setState({
+        showBtn: false,
+      });
+    }
+    // debugger
+    if (serviceLogMoreData !== prevServiceLogMoreData) {
+      const newServiceLogData = _.concat(serviceLogData, serviceLogMoreData);
+      const serviceLogDatas = { ...serviceLogData, ...newServiceLogData };
+      console.log('serviceLogData---', newServiceLogData);
+      this.setState({
+        logData: newServiceLogData,
+      });
+      console.log(serviceLogDatas);
+    }
   }
   @autobind
   onChange(value) {
@@ -101,28 +131,7 @@ export default class CreateTaskForm extends PureComponent {
         serveDateTo: end,
       },
     });
-    console.log(query);
   }
-
-  // @autobind
-  // // 获取当前六个月之前的日期
-  // getSixDate() {
-  //   const d = new Date();
-  //   const month = (new Date()).getMonth() + 1;
-  //   let sixMonth = month - 6;
-  //   let sixDate = null;
-  //   // console.log(month);
-  //   if (sixMonth > 0) {
-  //     sixDate = `${d.getFullYear()}-${sixMonth}-${d.getDate()}
-  // ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
-  //     // console.log('sixDate--', sixDate);
-  //   } else {
-  //     sixMonth = 12 + sixMonth;
-  //     sixDate = `${d.getFullYear() - 1}-${sixMonth}-${d.getDate()}`;
-  //     // console.log('sixDate2222--', sixDate);
-  //   }
-  //   return sixDate;
-  // }
 
   @autobind
   // 设置不可选日期
@@ -142,10 +151,11 @@ export default class CreateTaskForm extends PureComponent {
   // >pageSize: 每页返回的日期总数（默认7天）
   @autobind
   handleData() {
-    const { location: { query, pathname }, getServiceLog, replace } = this.props;
+    const { location: { query, pathname }, replace, getServiceLog } = this.props;
     console.log(query);
     const params = { // 模拟 query 穿过来的数据
       custId: '666621585446',
+      empId: null,
       serveSource: '短信',
       serveType: 'MOT服务记录',
       serveDateFrom: sixDate,
@@ -157,7 +167,6 @@ export default class CreateTaskForm extends PureComponent {
       pathname,
       query: params,
     });
-    console.log(query);
     getServiceLog(params);
   }
   // @autobind
@@ -171,23 +180,14 @@ export default class CreateTaskForm extends PureComponent {
   // }
   @autobind
   handleMore() {
-    // alert(111)
-    const { location: { query, pathname },
-        replace,
-        serviceLogData,
-        getServiceLogMore,
+    console.log(this.props);
+    const { location: { query },
+      serviceLogData,
+      getServiceLogMore,
     } = this.props;
     const lastTime = serviceLogData[serviceLogData.length - 1].serveTime;
-    replace({
-      pathname,
-      query: {
-        ...query,
-        serveDateToPaged: lastTime,
-      },
-    });
     const params = query;
     params.serveDateToPaged = lastTime;
-    console.warn(query);
     getServiceLogMore(params);
   }
   @autobind
@@ -201,7 +201,6 @@ export default class CreateTaskForm extends PureComponent {
         serveSource: value,
       },
     });
-    console.log(query);
   }
   @autobind
   handleCreatOptions(data) {
@@ -224,15 +223,14 @@ export default class CreateTaskForm extends PureComponent {
         serveType: value,
       },
     });
-    console.log(query);
   }
 
   render() {
-    const { dict, serviceLogData } = this.props;
+    const { dict } = this.props;
     const { serveAllSource, serveAllType } = dict;
-    // serveSource 在字典中未找到，taskTypes 先代替展现
+    const { logData, showBtn } = this.state;
     console.warn('dict--', dict);
-    // console.warn('this.props---', this.props)
+    console.log(logData);
     return (
       <div className={styles.serviceInner}>
         <div
@@ -278,12 +276,18 @@ export default class CreateTaskForm extends PureComponent {
           <Row>
             <Col span={20} offset={2} className={styles.serviceLog}>
               <Collapse
-                data={serviceLogData}
+                data={logData}
               // executeTypes={executeTypes}
               />
             </Col>
           </Row>
-          <Row>
+          <Row
+            className={
+              classnames({
+                [styles.showBtn]: showBtn,
+              })
+            }
+          >
             <Col className={styles.more}>
               <Button onClick={this.handleMore}>更多</Button>
             </Col>
