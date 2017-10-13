@@ -6,10 +6,8 @@ import InfoTitle from '../common/InfoTitle';
 import style from './approvalrecord.less';
 
 export default function ApprovalRecord(props) {
-  const info = props.info || [];
-  const len = info.length;
-  const historyList = len ? info : [];
-  const currentStepObj = len ? info[0] : [];
+  const historyList = !_.isEmpty(props.info) ? props.info : [];
+  const currentStepObj = props.currentApproval;
   const mapElementList = () => {
     if (!historyList || _.isEmpty(historyList)) {
       return null;
@@ -46,9 +44,9 @@ export default function ApprovalRecord(props) {
           className={stepElementClass}
         >
           <span>当前步骤：</span>
-          <span style={{ color: '#333' }}>{currentStepObj.stepName}</span>
+          <span style={{ color: '#333' }}>{currentStepObj.occupation}</span>
           <span style={{ marginLeft: 20 }}>当前审批人：</span>
-          <span style={{ color: '#333' }}>{currentStepObj.handleName}({currentStepObj.handler})</span>
+          <span style={{ color: '#333' }}>{currentStepObj.empName}({currentStepObj.empNum})</span>
         </div>
     );
   };
@@ -64,9 +62,11 @@ export default function ApprovalRecord(props) {
 ApprovalRecord.propTypes = {
   head: PropTypes.string.isRequired,
   info: PropTypes.array,
+  currentApproval: PropTypes.object,
   statusType: PropTypes.string.isRequired,
 };
 
 ApprovalRecord.defaultProps = {
   info: [],
+  currentApproval: {},
 };

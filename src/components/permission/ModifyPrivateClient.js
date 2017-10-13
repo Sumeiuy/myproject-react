@@ -16,6 +16,7 @@ import style from './modifyPrivateClient.less';
 
 const subTypeList = seibelConfig.permission.subType;
 const statusList = seibelConfig.permission.status;
+const overFlowBtnId = 118006; // 终止按钮的flowBtnId
 const columns = [{
   title: '工号',
   dataIndex: 'ptyMngId',
@@ -175,28 +176,22 @@ export default class modifyPrivateClient extends PureComponent {
 
   @autobind
   submitModifyInfo(item) {
-    console.warn('item', item);
     // 修改状态下的提交按钮
     // 点击按钮后 弹出下一审批人 模态框
-    if (item.flowBtnId !== 118006) {
-      this.setState({
-        nextApproverModal: true,
-        routeId: item.routeId,
-        btnName: item.btnName,
-        btnId: item.btnId,
-        nextGroupId: item.nextGroupId,
-      });
-    } else {
-      this.setState({
-        routeId: item.routeId,
-        btnName: item.btnName,
-        btnId: item.btnId,
-        nextGroupId: item.nextGroupId,
-      },
-      () => {
+    this.setState({
+      routeId: item.routeId,
+      btnName: item.btnName,
+      btnId: item.btnId,
+      nextGroupId: item.nextGroupId,
+    }, () => {
+      if (item.flowBtnId !== overFlowBtnId) {
+        this.setState({
+          nextApproverModal: true,
+        });
+      } else {
         this.confirmSubmit();
-      });
-    }
+      }
+    });
   }
 
   @autobind
