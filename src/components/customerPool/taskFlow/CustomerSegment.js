@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 13:43:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-13 16:57:50
+ * @Last Modified time: 2017-10-13 17:24:20
  * 客户细分组件
  */
 
@@ -142,7 +142,7 @@ export default class CustomerSegment extends PureComponent {
     console.log(key);
   }
 
-  // 图片上传直接提交
+  // 上传直接提交
   @autobind
   handleFileUpload(file, type) {
     let fileStatus = {};
