@@ -12,15 +12,15 @@ const EMPTY_OBJECT = {};
 export default {
   namespace: 'customerPool',
   state: {
-    serviceIndicators: [],
-    lastAddCusts: [],
+    performanceIndicators: [],
+    hsRate: '',
     viewpoints: [],
     todolist: [],
     todolistRecord: [],
     todoPage: {
       curPageNum: 1,
     },
-    performanceIndicators: {},
+    manageIndicators: {},
     custRange: [],
     cycle: [],
     position: window.forReactPosition || {},
@@ -67,18 +67,22 @@ export default {
     },
   },
   effects: {
-    * getServiceIndicators({ }, { call, put }) {  //eslint-disable-line
-      const response = yield call(api.getServiceIndicators);
+    // 沪深归集率（经营指标）
+    * getPerformanceIndicators({ }, { call, put }) {  //eslint-disable-line
+      const response = yield call(api.getPerformanceIndicators);
       yield put({
-        type: 'getServiceIndicatorsSuccess',
+        type: 'getPerformanceIndicatorsSuccess',
         payload: response,
       });
     },
-    * getLastAddCust({ }, { call, put }) {  //eslint-disable-line
-      const response = yield call(api.getLastAddCust);
+    // 沪深归集率（经营指标）
+    * getHSRate({ }, { call, put }) {  //eslint-disable-line
+      const response = yield call(api.getHSRate);
+      const { resultData } = response;
+      const data = resultData.length > 0 ? resultData[0] : {};
       yield put({
-        type: 'getLastAddCustSuccess',
-        payload: response,
+        type: 'getHSRateSuccess',
+        payload: data.value,
       });
     },
     * getViewpoints({ }, { call, put }) {  //eslint-disable-line
@@ -104,11 +108,11 @@ export default {
       });
     },
     // 绩效指标
-    * getPerformanceIndicators({ payload }, { call, put }) {
+    * getManageIndicators({ payload }, { call, put }) {
       const indicators =
-        yield call(api.getPerformanceIndicators, payload);
+        yield call(api.getManageIndicators, payload);
       yield put({
-        type: 'getPerformanceIndicatorsSuccess',
+        type: 'getManageIndicatorsSuccess',
         payload: { indicators },
       });
     },
@@ -320,18 +324,18 @@ export default {
     },
   },
   reducers: {
-    getServiceIndicatorsSuccess(state, action) {
+    getPerformanceIndicatorsSuccess(state, action) {
       const { payload: { resultData } } = action;
       return {
         ...state,
-        serviceIndicators: resultData,
+        performanceIndicators: resultData,
       };
     },
-    getLastAddCustSuccess(state, action) {
-      const { payload: { resultData } } = action;
+    getHSRateSuccess(state, action) {
+      const { payload } = action;
       return {
         ...state,
-        lastAddCusts: resultData,
+        hsRate: payload,
       };
     },
     getViewpointsSuccess(state, action) {
@@ -386,13 +390,13 @@ export default {
         custRange,
       };
     },
-    // 绩效指标
-    getPerformanceIndicatorsSuccess(state, action) {
+    // 经营指标
+    getManageIndicatorsSuccess(state, action) {
       const { payload: { indicators } } = action;
-      const performanceIndicators = indicators.resultData;
+      const manageIndicators = indicators.resultData;
       return {
         ...state,
-        performanceIndicators,
+        manageIndicators,
       };
     },
     // 统计周期

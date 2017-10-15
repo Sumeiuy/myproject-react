@@ -3,6 +3,7 @@
  * @author sunweibin
  * @description 为图表chart提供单位数字的处理函数集
  */
+import _ from 'lodash';
 
 function padFixedMoney(m, method) {
   const money = Math.abs(m);
@@ -224,6 +225,31 @@ const FixNumber = {
       min = 0;
     }
     return { max, min };
+  },
+
+  // 换算比最大整数稍大的整数（纯美观），进度条百分数比例的分母
+  getDenominator(max, method) {
+    const money = Math.abs(max);
+    const mLength = money.toString().length || 0;
+    let value = 0;
+    const powm = Math.pow(10, mLength - 1);  // eslint-disable-line
+    const addwm = Math.pow(10, mLength - 2);  // eslint-disable-line
+    if (mLength > 0 && money >= powm) {
+      value = (Math[method](max / powm) * powm) + addwm;
+    } else {
+      value = Math[method](max);
+    }
+    return value;
+  },
+
+  // 百分比计算
+  getPercentage(datas) {
+    const maxAndMin = FixNumber.getMaxAndMinMoney(datas);
+    const maxX = FixNumber.getDenominator(maxAndMin.max, 'ceil');
+    return _.map(
+      datas,
+      item => (item / maxX) * 100,
+    );
   },
 };
 

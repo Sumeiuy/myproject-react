@@ -5,12 +5,11 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import { Row, Col } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+
 import { fspGlobal } from '../../../utils';
 import { fspContainer } from '../../../config';
-import Icon from '../../common/Icon';
 import styles from './toBeDone.less';
 
 export default class PerformanceIndicators extends PureComponent {
@@ -81,91 +80,69 @@ export default class PerformanceIndicators extends PureComponent {
     };
     return (
       <div className={styles.toBeDoneBox}>
-        <div className={styles.inner}>
-          <div className={styles.title}>
-            <span className={styles.name}>任务概览</span>
+        <div className={styles.title}>
+          <span className={styles.name}>任务概览</span>
+        </div>
+        <div className={styles.row}>
+          <div className={`${styles.item} ${styles.item_a}`}>
+            <a className="item" onClick={() => fspGlobal.myMotTask()}>
+              <div className={styles.content}>
+                <div className={styles.description}>
+                  <div className={styles.count}>
+                    {this.farmtNum(todayToDoNumbers)}
+                  </div>
+                  <div className={styles.intro}>今日可做任务</div>
+                </div>
+              </div>
+            </a>
           </div>
-          <Row gutter={32}>
-            <Col span={6}>
-              <div className={`${styles.item} ${styles.item_a}`}>
-                <a className="item" onClick={() => fspGlobal.myMotTask()}>
-                  <div className={styles.content}>
-                    <div className={styles.iconDiv}>
-                      <Icon type="rili" className={styles.icon} />
-                    </div>
-                    <div className={styles.description}>
-                      <div className={styles.count}>
-                        {this.farmtNum(todayToDoNumbers)}
-                      </div>
-                      <div className={styles.intro}>今日可做任务</div>
-                    </div>
+          <div className={`${styles.item} ${styles.item_b}`}>
+            <a
+              className="item"
+              onClick={this.linkToBusiness}
+            >
+              <div className={styles.content}>
+                <div className={styles.description}>
+                  <div className={styles.count}>
+                    {this.farmtNum(businessNumbers)}
                   </div>
-                </a>
+                  <div className={styles.intro}>满足业务开通客户</div>
+                </div>
               </div>
-            </Col>
-            <Col span={6}>
-              <div className={`${styles.item} ${styles.item_b}`}>
-                <a
-                  className="item"
-                  onClick={this.linkToBusiness}
-                >
-                  <div className={styles.content}>
-                    <div className={styles.iconDiv}>
-                      <Icon type="rili" className={styles.icon} />
-                    </div>
-                    <div className={styles.description}>
-                      <div className={styles.count}>
-                        {this.farmtNum(businessNumbers)}
-                      </div>
-                      <div className={styles.intro}>满足业务开通客户</div>
-                    </div>
+            </a>
+          </div>
+          <div className={`${styles.item} ${styles.item_c}`}>
+            <a className="item" onClick={() => fspGlobal.openRctTab({ url, param })}>
+              <div className={styles.content}>
+                <div className={styles.description}>
+                  <div className={styles.count}>
+                    {this.processNum(workFlowNumbers)}
                   </div>
-                </a>
+                  <div className={styles.intro}>待办流程</div>
+                </div>
               </div>
-            </Col>
-            <Col span={6}>
-              <div className={`${styles.item} ${styles.item_c}`}>
-                <a className="item" onClick={() => fspGlobal.openRctTab({ url, param })}>
-                  <div className={styles.content}>
-                    <div className={styles.iconDiv}>
-                      <Icon type="rili" className={styles.icon} />
-                    </div>
-                    <div className={styles.description}>
-                      <div className={styles.count}>
-                        {this.farmtNum(workFlowNumbers)}
-                      </div>
-                      <div className={styles.intro}>待办流程</div>
-                    </div>
+            </a>
+          </div>
+          <div className={`${styles.item} ${styles.item_d}`}>
+            <a
+              className="item"
+              onClick={
+                () => fspGlobal.openFspTab({
+                  url: notificationUrl,
+                  param: notificationParam,
+                })
+              }
+            >
+              <div className={styles.content}>
+                <div className={styles.description}>
+                  <div className={styles.count}>
+                    {this.processNum(notificationNumbers)}
                   </div>
-                </a>
+                  <div className={styles.intro}>消息提醒</div>
+                </div>
               </div>
-            </Col>
-            <Col span={6}>
-              <div className={`${styles.item} ${styles.item_d}`}>
-                <a
-                  className="item"
-                  onClick={
-                    () => fspGlobal.openFspTab({
-                      url: notificationUrl,
-                      param: notificationParam,
-                    })
-                  }
-                >
-                  <div className={styles.content}>
-                    <div className={styles.iconDiv}>
-                      <Icon type="rili" className={styles.icon} />
-                    </div>
-                    <div className={styles.description}>
-                      <div className={styles.count}>
-                        {this.farmtNum(notificationNumbers)}
-                      </div>
-                      <div className={styles.intro}>消息提醒</div>
-                    </div>
-                  </div>
-                </a>
-              </div>
-            </Col>
-          </Row>
+            </a>
+          </div>
         </div>
       </div>
     );

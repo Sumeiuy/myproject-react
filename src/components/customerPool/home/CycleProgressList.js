@@ -26,7 +26,7 @@ function renderList(dataSource) {
             </div>
           )}
         />
-        <div className={styles.text}>{motData.text || '--'}</div>
+        <div className={styles.text}>{motData.category || '--'}</div>
       </div>
       <div className={classnames(styles.column, styles.secondColumn)}>
         <Progress
@@ -40,7 +40,7 @@ function renderList(dataSource) {
             </div>
           )}
         />
-        <div className={styles.text}>{serviceData.text || '--'}</div>
+        <div className={styles.text}>{serviceData.category || '--'}</div>
       </div>
     </div>
   );

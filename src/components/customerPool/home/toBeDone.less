@@ -1,89 +1,86 @@
 .toBeDoneBox{
-  .inner{
-    padding-bottom: 30px;
-    .title{
-      height: 36px;
-      line-height: 36px;
-      border-bottom: 1px solid #ccc;
-      margin-bottom: 15px;
-      .name{
-        font-size: 16px;
-        font-weight: 500;
-        color:#333;
-      }
+  padding-bottom: 32px;
+  .title{
+    height: 30px;
+    line-height: 30px;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 12px;
+    .name{
+      font-family:PingFangSC-Medium;
+      font-size:16px;
+      color:#4a4a4a;
+      letter-spacing:0.16px;
     }
+  }
+  .row {
+    display: -webkit-flex; /* Safari */
+    display: flex;
     .item{
-      margin: auto;
-      height: 60px;
-      border-radius: 4px;
+      height: 64px;
+      width: 161px;
+      border-radius: 3px;
       color:#FFF;
+      margin-right: 35px;
       a,a:hover{
         color:#FFF;
       }
       .content{
-        height: 60px;
-        display: -webkit-flex; /* Safari */
-        display: flex;
-        .iconDiv{
-          height: 60px;
-          line-height: 60px;
-          margin-left: 12px;
-          margin-right: 15px;
-          position: relative;
-          overflow: hidden;
-          .icon{
-            font-size: 26px;
-            color: #60bbea;
-            height: 28px;
-            position: relative;
-            bottom: -7px;
-          }
-        }
+        height: 64px;
+        padding-left: 60px;
         .description {
-          height: 60px;
-          padding-top: 5px;
+          height: 64px;
           overflow: hidden;
+          position: relative;
           .count {
-            font-size: 26px;
-            color: #fff;
-            height: 31px;
-            line-height: 31px;
+            font-family:PingFangSC-Regular;
+            font-size:28px;
+            font-weight: 500;
+            color:#ffffff;
+            letter-spacing:0.12px;
+            height: 40px;
+            line-height: 40px;
           }
           .intro {
-            height: 16px;
-            line-height: 16px;
-            font-size: 10px;
-            color: #60bbea;
+            font-family:PingFangSC-Regular;
+            font-size:12px;
+            color:#ffffff;
+            letter-spacing:0.12px;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            position: relative;
+            top: -5px;
           }
         }
       }
     }
     .item_a{
-      background: #188ca2;
+      background: #38d8e8 url(../../../../static/images/customer_db_bg_a.png) no-repeat bottom left;
+      background-size: 47px 48px;
     }
     .item_b{
-      background: #176ab3;
+      background: #60bbea url(../../../../static/images/customer_db_bg_b.png) no-repeat bottom left;
+      background-size: 47px 48px;
     }
     .item_c{
-      background: #334fb4;
+      background: #7d9be0 url(../../../../static/images/customer_db_bg_c.png) no-repeat bottom left;
+      background-size: 47px 48px;
     }
     .item_d{
-      background: #1f63aa;
+      background: #756fb8 url(../../../../static/images/customer_db_bg_d.png) no-repeat bottom left;
+      background-size: 47px 48px;
     }
     .item_a:hover{
-       box-shadow: 0 0 5px 5px #188ca2;
+       box-shadow: 0 0 5px 5px #38d8e8;
     }
     .item_b:hover{
-       box-shadow: 0 0 5px 5px #176ab3;
+       box-shadow: 0 0 5px 5px #60bbea;
     }
     .item_c:hover{
-       box-shadow: 0 0 5px 5px #334fb4;
+       box-shadow: 0 0 5px 5px #7d9be0;
     }
     .item_d:hover{
-       box-shadow: 0 0 5px 5px #1f63aa;
+       box-shadow: 0 0 5px 5px #756fb8;
     }
   }
 }

@@ -1,5 +1,5 @@
 /**
- * @file components/customerPool/common/RectFrame.js
+ * @file components/customerPool/home/RectFrame.js
  *  存在不同指标的矩形框，带有title。样子类似：----和 | 都是solid线
  * ----------
  * |title   |
@@ -24,9 +24,7 @@ function RectFrame(props) {
           _.isEmpty(icon) ? (
             null
           ) : (
-            <div className={styles.iconContainer}>
-              <Icon type={icon} className={styles.icon} />
-            </div>
+            <Icon type={icon} />
           )
         }
         <div className={styles.title}>{title}</div>

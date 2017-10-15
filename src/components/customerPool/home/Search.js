@@ -406,7 +406,7 @@ export default class Search extends PureComponent {
                       type="primary"
                       onClick={this.handleSearchBtn}
                     >
-                      搜索客户
+                      <AntdIcon type="search" />
                     </Button>
                   )}
                 />
@@ -414,12 +414,10 @@ export default class Search extends PureComponent {
             </div>
           </div>
           <div className={styles.historyList}>
-            <div className={styles.inner}>
-              <span className={styles.s_title}>
-                <Icon type="dengpao" />猜你感兴趣：
-              </span>
-              <div>{this.handleCreatRecommend(hotWdsList)}</div>
-            </div>
+            <span className={styles.s_title}>
+              <Icon type="dengpao" />猜你感兴趣：
+            </span>
+            <div>{this.handleCreatRecommend(hotWdsList)}</div>
           </div>
         </div>
       </div>

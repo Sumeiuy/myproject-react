@@ -4,10 +4,10 @@
 
 export default function customerPool(api) {
   return {
-    // 获取新增客户
-    getServiceIndicators: query => api.post('/groovynoauth/fsp/emp/indicators/serviceIndicators', query),
-    // 获取新增客户
-    getLastAddCust: query => api.post('/groovynoauth/fsp/emp/indicators/lastAddCust', query),
+    // 获取客户池沪深归集率（经营指标）
+    getHSRate: query => api.post('/groovynoauth/fsp/emp/info/queryHsRate', query),
+    // 获取客户池投顾绩效
+    getPerformanceIndicators: query => api.post('/groovynoauth/fsp/emp/info/queryPerformance', query),
     // 获取首席投顾观点
     getViewpoints: query => api.post('/groovynoauth/fsp/emp/viewpoints/queryViewpoints', query),
     // 获取组织机构树完整版
@@ -19,8 +19,8 @@ export default function customerPool(api) {
     // 查询待办流程记录列表
     getToDoList: query => api.post('/groovynoauth/fsp/emp/workflow/queryWorkFlowTaskList', query),
 
-    // 获取客户池绩效指标
-    getPerformanceIndicators: query => api.post('/groovynoauth/fsp/emp/kpi/queryEmpKPIs', query),
+    // 获取客户池经营指标
+    getManageIndicators: query => api.post('/groovynoauth/fsp/emp/kpi/queryEmpKPIs', query),
 
     // 统计周期
     getStatisticalPeriod: query => api.post('/groovynoauth/fsp/dictionary', query),
