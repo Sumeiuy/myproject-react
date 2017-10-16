@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { withRouter, routerRedux } from 'dva/router';
+import { message } from 'antd';
 
 import SplitPanel from '../../components/common/splitPanel/SplitPanel';
 import Detail from '../../components/commissionAdjustment/Detail';
@@ -24,7 +25,8 @@ import './home.less';
 // const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const OMIT_ARRAY = ['currentId', 'isResetPageNum'];
-const { commission, commission: { pageType, subType, status } } = seibelConfig;
+const { comsubs, commission, commission: { pageType, subType, status } } = seibelConfig;
+
 const effects = {
   list: 'app/getSeibleList',
   searchDrafter: 'app/getDrafterList',
@@ -42,6 +44,8 @@ const effects = {
 const mapStateToProps = state => ({
   // 字典
   dict: state.app.dict,
+  // empInfo:
+  empInfo: state.app.empInfo,
   // 左侧里诶包
   list: state.app.seibleList,
   // 组织结构树
@@ -87,7 +91,7 @@ const mapDispatchToProps = {
   // 获取批量佣金调整List
   getCustRange: getDataFunction(true, effects.custRange),
   // 获取批量佣金调整Detail
-  getCommissionDetail: getDataFunction(true, effects.detail),
+  getBatchCommissionDetail: getDataFunction(true, effects.detail),
   // 获取用户审批记录
   getApprovalRecords: getDataFunction(false, effects.record),
   // 通过关键字，查询可选的已申请用户列表
@@ -114,12 +118,13 @@ export default class CommissionHome extends PureComponent {
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
     dict: PropTypes.object.isRequired,
+    empInfo: PropTypes.object.isRequired,
     getCustRange: PropTypes.func.isRequired,
     validateCustInfo: PropTypes.func.isRequired,
     getCanApplyCustList: PropTypes.func.isRequired,
     getAprovalUserList: PropTypes.func.isRequired,
     getCommissionList: PropTypes.func.isRequired,
-    getCommissionDetail: PropTypes.func.isRequired,
+    getBatchCommissionDetail: PropTypes.func.isRequired,
     getApprovalRecords: PropTypes.func.isRequired,
     searchCustList: PropTypes.func.isRequired,
     searchDrafter: PropTypes.func.isRequired,
@@ -187,11 +192,9 @@ export default class CommissionHome extends PureComponent {
       if (!_.isEmpty(list.resultData)) {
         // 表示左侧列表获取完毕
         // 因此此时获取Detail
-        const item = _.filter(list.resultData, o => String(o.id) === String(currentId));
-        console.warn('detail', item);
-        this.props.getCommissionDetail({
-          batchNum: item[0].business1,
-        });
+        const item = _.filter(list.resultData, o => String(o.id) === String(currentId))[0];
+        const { business1, subType: st } = item;
+        this.getDetail4Subtye(st, { batchNum: business1 });
       }
     }
     const { location: { query: nextQuery = EMPTY_OBJECT } } = nextProps;
@@ -230,6 +233,9 @@ export default class CommissionHome extends PureComponent {
       // 以后看需要是否需要做相应操作
       if (batchnum !== 'fail') {
         // 成功
+        message.success('提交成功');
+      } else {
+        message.error('提交失败');
       }
     }
   }
@@ -256,15 +262,16 @@ export default class CommissionHome extends PureComponent {
     }
   }
 
-  /**
-   * 点击列表每条的时候对应请求详情
-   */
-  @autobind
-  getListRowId({ bussiness1 }) {
-    const { getCommissionDetail } = this.props;
-    getCommissionDetail({
-      batchNum: bussiness1,
-    });
+  // 查询佣金调整4个子类型的详情信息
+  getDetail4Subtye(st, params) {
+    const { getBatchCommissionDetail } = this.props;
+    switch (st) {
+      case comsubs.batch:
+        getBatchCommissionDetail(params);
+        break;
+      default:
+        break;
+    }
   }
 
   // 点击查看的时候，弹出框需要的所点击的用户信息
@@ -272,6 +279,18 @@ export default class CommissionHome extends PureComponent {
   getApprovalBoardCustInfo(info) {
     const loginuser = getEmpId();
     this.props.getApprovalRecords({ ...info, loginuser });
+  }
+
+  /**
+   * 点击列表每条的时候对应请求详情
+   */
+  @autobind
+  handleListRowClick({ business1, id, subType: st }) {
+    const {
+      location: { query: { currentId } },
+    } = this.props;
+    if (currentId === id) return;
+    this.getDetail4Subtye(st, { batchNum: business1 });
   }
 
   /**
@@ -374,6 +393,7 @@ export default class CommissionHome extends PureComponent {
       validateResult,
       validateCustInfo,
       dict: { otherRatio },
+      empInfo: { empInfo },
     } = this.props;
     if (_.isEmpty(custRange)) {
       return null;
@@ -402,8 +422,8 @@ export default class CommissionHome extends PureComponent {
         replace={replace}
         location={location}
         columns={this.constructTableColumns()}
-        clickRow={this.getListRowId}
-        backKeys={['business1', 'flowId']}
+        clickRow={this.handleListRowClick}
+        backKeys={['business1', 'flowId', 'subType']}
       />
     );
 
@@ -430,6 +450,7 @@ export default class CommissionHome extends PureComponent {
           onClose={this.closeApprovalBoard}
         />
         <CreateNewApprovalBoard
+          empInfo={empInfo}
           modalKey="createApprovalBoard"
           visible={createApprovalBoard}
           onClose={this.closeNewApprovalBoard}

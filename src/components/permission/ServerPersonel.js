@@ -70,7 +70,7 @@ export default class ServerPersonel extends PureComponent {
           <span className={style.spAddServerPerson}>新增服务人员：</span>
           <div className={style.spAddDropdownSelect}>
             <DropdownSelect
-              value="全部"
+              value="工号/名称"
               placeholder="请输入姓名或工号"
               searchList={this.props.searchServerPersonList}
               showObjKey="ptyMngName"
@@ -164,6 +164,7 @@ export default class ServerPersonel extends PureComponent {
         ),
       }), () => {
         this.props.onEmitEvent(this.props.type, this.state.serverInfo);
+        this.setState({ removeSelectedValue: {} });
       });
     }
   }

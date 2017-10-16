@@ -19,10 +19,12 @@ export default class SearchSelect extends PureComponent {
     onAddCustomer: PropTypes.func.isRequired,
     onChangeValue: PropTypes.func.isRequired,
     width: PropTypes.string,
+    defaultInput: PropTypes.string,
   }
 
   static defaultProps = {
     width: '300px',
+    defaultInput: '',
   }
 
   constructor(props) {
@@ -56,6 +58,7 @@ export default class SearchSelect extends PureComponent {
     this.props.onAddCustomer(this.state.selectItem);
     this.setState({
       proValue: '',
+      inputValue: '',
     });
   }
 
@@ -66,12 +69,12 @@ export default class SearchSelect extends PureComponent {
 
 
   render() {
-    const { labelName, dataSource, width } = this.props;
+    const { labelName, dataSource, width, defaultInput } = this.props;
     const { proValue } = this.state;
     const newDataSource = dataSource.map(item => ({ key: item.cusId, ...item }));
     const options = newDataSource.map(opt => (
       <Option key={opt.cusId} value={opt.cusId} text={opt.custName}>
-        <span className={styles.prodValue}>{opt.custName}</span>
+        <span className={styles.prodValue}>{opt.custName}({opt.brokerNumber})</span>
       </Option>
     ));
     return (
@@ -83,6 +86,7 @@ export default class SearchSelect extends PureComponent {
           dropdownStyle={{ width }}
           dropdownMatchSelectWidth={false}
           size="large"
+          placeholder={defaultInput}
           style={{ width }}
           dataSource={options}
           optionLabelProp="text"

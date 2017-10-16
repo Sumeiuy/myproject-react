@@ -11,6 +11,8 @@ import { Input, Icon, Modal, message } from 'antd';
 import _ from 'lodash';
 
 import CommonModal from '../common/biz/CommonModal';
+import CommonUpload from '../common/biz/CommonUpload';
+import Transfer from '../common/biz/TableTransfer';
 import ChoiceApproverBoard from './ChoiceApproverBoard';
 import AddCustomer from './AddCustomer';
 import InfoTitle from '../common/InfoTitle';
@@ -20,12 +22,18 @@ import ProductsDropBox from './ProductsDropBox';
 import OtherCommissionSelectList from './OtherCommissionSelectList';
 import CommissionLine from './CommissionLine';
 import { seibelConfig } from '../../config';
-import { getEmpId } from '../../utils/helper';
+// import { getEmpId } from '../../utils/helper';
 import styles from './createNewApprovalBoard.less';
+// 临时设置的单佣金调整需要的产品结构Mock数据
+import {
+  subscribelData,
+  unsubcribeData,
+  productColumns,
+} from '../../routes/templeModal/MockTableData';
 
 const confirm = Modal.confirm;
 const { TextArea } = Input;
-const { commission: { subType } } = seibelConfig;
+const { commission: { subType }, comsubs: commadj } = seibelConfig;
 // 给subType去除全部的选项
 const newSubTypes = _.filter(subType, item => !!item.value);
 // 增加一个"请选择申请类型的option"
@@ -34,13 +42,6 @@ newSubTypes.unshift({
   label: '请选择申请类型',
   value: '',
 });
-
-// 佣金调整的子类型常量
-const commadj = {
-  noSelected: '', // 用户未选择子类型的情况
-  single: '0201', // 单佣金调整
-  batch: '0202', // 批量佣金调整
-};
 
 // 其他佣金率的参数名称数组
 const otherComs = [
@@ -77,6 +78,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     validateCust: PropTypes.func.isRequired,
     onBatchSubmit: PropTypes.func.isRequired,
     otherRatios: PropTypes.array,
+    empInfo: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -93,7 +95,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      approvalType: commadj.batch,
+      approvalType: '',
       remark: '',
       targetProduct: '',
       choiceApprover: false,
@@ -112,22 +114,23 @@ export default class CreateNewApprovalBoard extends PureComponent {
     }
   }
 
-  @autobind
-  getPopupContainer() {
-    return this.approvalBody;
-  }
-
   // 判断当前是否某个子类型
   @autobind
   judgeSubtypeNow(assert) {
-    return this.state.approvalType === assert;
+    const { approvalType } = this.state;
+    if (Array.isArray(assert)) {
+      return _.includes(assert, approvalType);
+    }
+    return approvalType === assert;
   }
 
   // 关闭弹出框后，清空页面数据
   @autobind
   clearApprovalBoard() {
+    if (this.digital) this.digital.reset();
+    if (this.addCustomer) this.addCustomer.clearCustList();
     this.setState({
-      approvalType: commadj.batch,
+      approvalType: '',
       remark: '',
       targetProduct: '',
       choiceApprover: false,
@@ -189,20 +192,22 @@ export default class CreateNewApprovalBoard extends PureComponent {
       return;
     }
     // 挑选出用户选择的其他佣金率
-    const otherCommissions = _.pick(this.state, [otherComs]);
-    const empId = getEmpId();
+    const otherCommissions = _.pick(this.state, otherComs);
+    const { empInfo: { occDivnNum, empNum } } = this.props;
     const submitParams = {
       custLists,
       newCommsion: newCommission,
       prodInfo: { prdCode: targetProduct },
       aprovaluser: approverId,
       remark,
-      loginUser: empId,
+      loginUser: empNum,
+      orgId: occDivnNum,
       ...otherCommissions,
     };
     // 提交
     this.props.onBatchSubmit(submitParams);
     this.props.onClose(key);
+    this.clearApprovalBoard();
   }
 
   @autobind
@@ -243,6 +248,12 @@ export default class CreateNewApprovalBoard extends PureComponent {
   addCustomerRef(input) {
     this.addCustomer = input;
   }
+
+  @autobind
+  digitalRef(input) {
+    this.digital = input;
+  }
+
   // 切换选择某个产品
   @autobind
   handleSelectProduct(targetProduct) {
@@ -361,6 +372,60 @@ export default class CreateNewApprovalBoard extends PureComponent {
       otherComReset,
     } = this.state;
     const needBtn = !this.judgeSubtypeNow('');
+
+    const uploadProps = {
+      attachmentList: [{
+        creator: '002332',
+        attachId: '{6795CB98-B0CD-4CEC-8677-3B0B9298B209}',
+        name: '新建文本文档 (3).txt',
+        size: '0',
+        createTime: '2017/09/12 13:37:45',
+        downloadURL: 'http://ceflow:8086/unstructured/downloadDocument?sessionId=675fd3be-baca-4099-8b52-bf9dde9f2b59&documentId={6795CB98-B0CD-4CEC-8677-3B0B9298B209}',
+        realDownloadURL: '/attach/download?filename=%E6%96%B0%E5%BB%BA%E6%96%87%E6%9C%AC%E6%96%87%E6%A1%A3+%283%29.txt&attachId={6795CB98-B0CD-4CEC-8677-3B0B9298B209',
+      },
+      {
+        creator: '002332',
+        attachId: '{2EF837DE-508C-4FCA-93B8-99CEA68DCB0D}',
+        name: '测试.docx',
+        size: '11',
+        createTime: '2017/09/12 11:53:36',
+        downloadURL: 'http://ceflow:8086/unstructured/downloadDocument?sessionId=675fd3be-baca-4099-8b52-bf9dde9f2b59&documentId={2EF837DE-508C-4FCA-93B8-99CEA68DCB0D}',
+        realDownloadURL: '/attach/download?filename=%E6%B5%8B%E8%AF%95.docx&attachId={2EF837DE-508C-4FCA-93B8-99CEA68DCB0D',
+      },
+      {
+        creator: '002332',
+        attachId: '{24C098F0-9DE3-4DC6-9E7D-FECE683E4B6F}',
+        name: '生产sql和修改后sql.txt',
+        size: '2',
+        createTime: '2017/09/12 11:55:32',
+        downloadURL: 'http://ceflow:8086/unstructured/downloadDocument?sessionId=675fd3be-baca-4099-8b52-bf9dde9f2b59&documentId={24C098F0-9DE3-4DC6-9E7D-FECE683E4B6F}',
+        realDownloadURL: '/attach/download?filename=%E7%94%9F%E4%BA%A7sql%E5%92%8C%E4%BF%AE%E6%94%B9%E5%90%8Esql.txt&attachId={24C098F0-9DE3-4DC6-9E7D-FECE683E4B6F',
+      }],
+    };
+
+    const transferProps = {
+      firstData: subscribelData,
+      secondData: unsubcribeData,
+      firstColumns: productColumns,
+      secondColumns: productColumns,
+      transferChange: this.handleTransferChange,
+      checkChange: this.handleCheckChange,
+      onSearch: this.handleSearch,
+      rowKey: 'key',
+      defaultCheckKey: 'default',
+      showSearch: true,
+      placeholder: '产品代码/产品名称',
+      pagination: {
+        defaultPageSize: 5,
+        pageSize: 5,
+        size: 'small',
+      },
+      finishTips: ['产品组合等于目标佣金值', '产品组合等于目标佣金值'],
+      warningTips: ['产品组合比目标佣金高 0.5%', '产品组合离目标佣金还差 0.63%'],
+    };
+
+    const wrapClassName = this.judgeSubtypeNow(commadj.noSelected) ? 'commissionModal' : '';
+
     return (
       <div>
         <CommonModal
@@ -374,6 +439,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
           okText="提交"
           showCancelBtn={false}
           onOk={this.handleSubmitApprovals}
+          wrapClassName={wrapClassName}
         >
           <div className={styles.newApprovalBox} ref={this.newApprovalBoxRef}>
             <div className={styles.approvalBlock}>
@@ -384,7 +450,6 @@ export default class CreateNewApprovalBoard extends PureComponent {
                   data={newSubTypes}
                   value={approvalType}
                   onChange={this.choiceApprovalSubType}
-                  getPopupContainer={this.getPopupContainer}
                 />
               </CommissionLine>
               {
@@ -404,7 +469,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
               }
             </div>
             {
-              !this.judgeSubtypeNow(commadj.batch) ? null
+              !this.judgeSubtypeNow([commadj.batch, commadj.single]) ? null
               : (
                 <div className={styles.approvalBlock}>
                   <InfoTitle head="佣金产品选择" />
@@ -425,20 +490,33 @@ export default class CreateNewApprovalBoard extends PureComponent {
                     }
                   >
                     <DigitalTrimmer
+                      ref={this.digitalRef}
                       getValue={this.changeTargetGJCommission}
                     />
                   </CommissionLine>
-                  <CommissionLine label="目标产品" labelWidth="135px" needInputBox={false}>
-                    <ProductsDropBox
-                      productList={targetProductList}
-                      onSelect={this.handleSelectProduct}
-                    />
-                  </CommissionLine>
+                  {
+                    !this.judgeSubtypeNow(commadj.batch) ? null
+                    : (
+                      <CommissionLine label="目标产品" labelWidth="135px" needInputBox={false}>
+                        <ProductsDropBox
+                          productList={targetProductList}
+                          onSelect={this.handleSelectProduct}
+                        />
+                      </CommissionLine>
+                    )
+                  }
+                  {
+                    // 单佣金调整中的产品选择
+                    !this.judgeSubtypeNow(commadj.single) ? null
+                    : (
+                      <Transfer {...transferProps} />
+                    )
+                  }
                 </div>
               )
             }
             {
-              !this.judgeSubtypeNow(commadj.batch) ? null
+              !this.judgeSubtypeNow([commadj.batch, commadj.single]) ? null
               : (
                 <div className={styles.approvalBlock}>
                   <InfoTitle head="其他佣金费率" />
@@ -451,6 +529,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
               )
             }
             {
+              // 批量佣金调整中的添加客户组件
               !this.judgeSubtypeNow(commadj.batch) ? null
               : (
                 <div className={styles.approvalBlock}>
@@ -468,7 +547,17 @@ export default class CreateNewApprovalBoard extends PureComponent {
               )
             }
             {
-              !this.judgeSubtypeNow(commadj.batch) ? null
+              // 单佣金调整中的附件信息
+              !this.judgeSubtypeNow(commadj.single) ? null
+              : (
+                <div className={styles.approvalBlock}>
+                  <InfoTitle head="附件信息" />
+                  <CommonUpload edit {...uploadProps} />
+                </div>
+              )
+            }
+            {
+              this.judgeSubtypeNow(commadj.noSelected) ? null
               : (
                 <div className={styles.approvalBlock}>
                   <InfoTitle head="审批人" />

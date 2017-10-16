@@ -5,7 +5,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { message } from 'antd';
 import _ from 'lodash';
 import classnames from 'classnames';
 import style from './detail.less';
@@ -17,11 +16,10 @@ import BaseInfoModify from './BaseInfoModify';
 import UploadFile from './UploadFile';
 import { seibelConfig } from '../../config';
 import TableDialog from '../common/biz/TableDialog';
-import { getEmpId, constructSeibelPostBody } from '../../utils/helper';
+import { getEmpId } from '../../utils/helper';
 
 const subTypeList = seibelConfig.permission.subType;
 const statusList = seibelConfig.permission.status;
-const pageType = seibelConfig.permission.pageType;
 const columns = [{
   title: '工号',
   dataIndex: 'ptyMngId',
@@ -51,7 +49,8 @@ export default class Detail extends PureComponent {
     status: PropTypes.string,
     empList: PropTypes.array,
     workflowHistoryBeans: PropTypes.array,
-    attachInfoList: PropTypes.array,
+    currentApproval: PropTypes.object,
+    attaches: PropTypes.array,
     attachment: PropTypes.string,
     searchServerPersonList: PropTypes.array.isRequired,
     nextApproverList: PropTypes.array.isRequired,
@@ -65,9 +64,7 @@ export default class Detail extends PureComponent {
     getModifyCustApplication: PropTypes.func.isRequired,
     modifyCustApplication: PropTypes.object.isRequired,
     addListenModify: PropTypes.bool.isRequired,
-    push: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
-    getPermissionList: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -84,7 +81,8 @@ export default class Detail extends PureComponent {
     status: '',
     empList: [],
     workflowHistoryBeans: [],
-    attachInfoList: [],
+    currentApproval: {},
+    attaches: [],
     attachment: '',
   }
 
@@ -152,24 +150,12 @@ export default class Detail extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const {
-      getPermissionList,
-      push,
-      location: { query, query: { currentId, pageNum, pageSize } },
-    } = nextProps;
-    const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
     if (
       this.props.addListenModify === true &&
       nextProps.addListenModify === false &&
       nextProps.modifyCustApplication.msg === 'success'
     ) {
       this.props.onEmitClearModal('isShowModifyModal');
-      message.success('私密客户修改成功！！！');
-      push(`/permission?currentId=${currentId}&pageNum=${pageNum}&pageSize=${pageSize}`);
-      getPermissionList({
-        ...params,
-        type: pageType,
-      });
     }
   }
 
@@ -309,6 +295,7 @@ export default class Detail extends PureComponent {
 
   @autobind
   confirmSubmit(value) {
+    const { location: { query } } = this.props;
     // 提交 修改私密客户申请
     const queryConfig = {
       title: '私密客户申请',
@@ -341,6 +328,7 @@ export default class Detail extends PureComponent {
       attachment: this.state.attachment,
       // 拟稿人id
       empId: this.props.empId,
+      currentQuery: query,
     };
     this.setState({ nextApproverModal: false });
     this.props.getModifyCustApplication(queryConfig);
@@ -386,7 +374,7 @@ export default class Detail extends PureComponent {
           searchServerPersonList={this.props.searchServerPersonList}
         />
         <UploadFile
-          fileList={this.props.attachInfoList}
+          fileList={this.props.attaches}
           edit={this.state.statusType !== 'ready'}
           type="attachment"
           attachment={this.props.attachment || ''}
@@ -395,6 +383,7 @@ export default class Detail extends PureComponent {
         <ApprovalRecord
           head="审批记录"
           info={this.props.workflowHistoryBeans}
+          currentApproval={this.props.currentApproval}
           statusType={this.state.statusType}
         />
         <TableDialog

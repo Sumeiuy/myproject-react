@@ -43,6 +43,7 @@ export default class ProductsDropdownBox extends PureComponent {
             width="184px"
             labelName={labelName}
             dataSource={dataSource}
+            defaultInput="经济客户号/客户名称"
           />
         </div>
         <Button className={styles.delectCustomerButton} onClick={onDelectCustomer}>移除</Button>

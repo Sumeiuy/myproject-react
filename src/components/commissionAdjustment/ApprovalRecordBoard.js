@@ -30,6 +30,11 @@ export default class ApprovalRecordBoard extends PureComponent {
   }
 
   @autobind
+  handleModalOK() {
+    // 必须要的空方法
+  }
+
+  @autobind
   closeModal(key) {
     this.props.onClose(key);
   }
@@ -39,6 +44,7 @@ export default class ApprovalRecordBoard extends PureComponent {
     if (_.isEmpty(cust) || _.isEmpty(approval)) {
       return null;
     }
+    const newApproval = approval.map(item => ({ key: item.handleTime, ...item }));
     const basicInfo = `${cust.custName}(${cust.econNum})-${cust.custLevel}`;
     const orgInfo = cust.openAccDept;
     const statusInfo = cust.status;
@@ -55,6 +61,7 @@ export default class ApprovalRecordBoard extends PureComponent {
         size="normal"
         visible={visible}
         closeModal={this.closeModal}
+        onOk={this.handleModalOK}
       >
         <div className={styles.approvalBox}>
           <div className={styles.custInfo}>
@@ -67,7 +74,7 @@ export default class ApprovalRecordBoard extends PureComponent {
           <InfoTitle head="审批记录" />
           <div className={styles.recordBox}>
             {
-              approval.map(item => (<ApprovalRecord record={item} />))
+              newApproval.map(item => (<ApprovalRecord record={item} />))
             }
           </div>
         </div>

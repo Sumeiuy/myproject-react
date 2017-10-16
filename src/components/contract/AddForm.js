@@ -8,7 +8,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-// import { message } from 'antd';
+import { Icon } from 'antd';
 
 import BaseInfoAdd from './BaseInfoAdd';
 import UploadFile from './UploadFile';
@@ -16,6 +16,8 @@ import InfoTitle from '../common/InfoTitle';
 import CommonTable from '../common/biz/CommonTable';
 import Button from '../common/Button';
 import AddClause from './AddClause';
+import ChoiceApproverBoard from '../commissionAdjustment/ChoiceApproverBoard';
+import CommissionLine from '../commissionAdjustment/CommissionLine';
 
 import { seibelConfig } from '../../config';
 import styles from './addForm.less';
@@ -49,10 +51,12 @@ export default class AddForm extends PureComponent {
     // 合作部门列表
     searchCooperDeparment: PropTypes.func.isRequired,
     cooperDeparment: PropTypes.array.isRequired,
+    approverList: PropTypes.array,
   }
 
   static defaultProps = {
     contractDetail: EMPTY_OBJECT,
+    approverList: EMPTY_ARRAY,
   }
 
   constructor(props) {
@@ -67,6 +71,10 @@ export default class AddForm extends PureComponent {
       showAddClauseModal: false,
       // 操作类型
       operationType: subscribe,
+      // 选择审批人弹窗
+      choiceApprover: false,
+      approverName: '',
+      approverId: '',
     };
   }
 
@@ -74,6 +82,13 @@ export default class AddForm extends PureComponent {
     const { onSearchCutList } = this.props;
     onSearchCutList();
   }
+
+  // componentWillReceiveProps(nextProps) {
+  //   if (this.props.addFormModal !== nextProps.addFormModal) {
+  //     this.handleReset();
+  //     console.log('重置1111', this.state.formData);
+  //   }
+  // }
 
   // 更新数据到父组件
   @autobind
@@ -99,7 +114,7 @@ export default class AddForm extends PureComponent {
   @autobind
   handleSearchContractNum(data) {
     console.log('SearchContractNum', data);
-    if (data.childType && data.client.cusId) {
+    if (data.subType && data.client.cusId) {
       this.props.onSearchContractNum(data);
     }
   }
@@ -154,7 +169,8 @@ export default class AddForm extends PureComponent {
       paraValue: clauseData.paraName.value, // 明细参数code
       paraVal: clauseData.paraVal, // 值
       divName: clauseData.divName.name, // 合作部门名称
-      divValue: clauseData.value, // 合作部门code
+      divIntegrationId: clauseData.divName.value, // 合作部门code
+
     };
     console.log('添加合约条款', clauseData, terms);
     this.setState({
@@ -169,15 +185,46 @@ export default class AddForm extends PureComponent {
     });
   }
 
-  // 子组件更改操作类型 重置所有数据
+  // 子组件更改操作类型/重新关闭打开弹窗 重置所有数据
   @autobind
   handleReset() {
+    const formData = {
+      formType: 'add',
+      terms: [],
+    };
     this.setState({
       ...this.state,
-      formData: {
-        formType: 'add',
-        terms: [],
-      },
+      formData,
+    }, () => {
+      if (this.BaseInfoAddComponent) {
+        this.BaseInfoAddComponent.resetState();
+      }
+    });
+  }
+
+  // 打开选择审批人弹窗
+  @autobind
+  openApproverBoard() {
+    this.setState({
+      choiceApprover: true,
+    });
+  }
+
+  // 关闭审批人员选择弹出窗
+  @autobind
+  closeChoiceApproverModal() {
+    this.setState({
+      choiceApprover: false,
+    });
+  }
+
+  // 审批人弹出框确认按钮
+  @autobind
+  handleApproverModalOK(approver) {
+    console.warn('approver', approver);
+    this.setState({
+      approverName: approver.empName,
+      approverId: approver.empNo,
     });
   }
 
@@ -189,8 +236,16 @@ export default class AddForm extends PureComponent {
       clauseNameList,
       cooperDeparment,
       searchCooperDeparment,
+      approverList,
     } = this.props;
-    const { formData, showAddClauseModal, operationType } = this.state;
+    const {
+      formData,
+      showAddClauseModal,
+      operationType,
+      choiceApprover,
+      approverName,
+      approverId,
+    } = this.state;
     const buttonProps = {
       type: 'primary',
       size: 'large',
@@ -198,7 +253,14 @@ export default class AddForm extends PureComponent {
       ghost: true,
       onClick: this.handleShowAddClause,
     };
-    const termsData = (operationType === subscribe) ? formData.terms : contractDetail.terms;
+    const newApproverList = approverList.map((item, index) => {
+      const key = `${new Date().getTime()}-${index}`;
+      return {
+        ...item,
+        key,
+      };
+    });
+    const termsData = (operationType === subscribe) ? formData.terms : contractDetail.terms || [];
     return (
       <div className={styles.editComponent}>
         <BaseInfoAdd
@@ -213,6 +275,7 @@ export default class AddForm extends PureComponent {
           onSearchContractNum={this.handleSearchContractNum}
           onSearchContractDetail={this.handleSearchContractDetail}
           onReset={this.handleReset}
+          ref={(BaseInfoAddComponent) => { this.BaseInfoAddComponent = BaseInfoAddComponent; }}
         />
         <div className={styles.editWrapper}>
           <InfoTitle head="合约条款" />
@@ -233,6 +296,17 @@ export default class AddForm extends PureComponent {
           attachment={formData.attachment}
           uploadAttachment={this.handleUploadSuccess}
         />
+        <div className={styles.editWrapper}>
+          <InfoTitle head="审批人" />
+          <CommissionLine label="选择审批人" labelWidth="110px">
+            <div className={styles.checkApprover} onClick={this.openApproverBoard}>
+              {approverName === '' ? '' : `${approverName}(${approverId})`}
+              <div className={styles.searchIcon}>
+                <Icon type="search" />
+              </div>
+            </div>
+          </CommissionLine>
+        </div>
         <div className={styles.cutSpace} />
         <AddClause
           isShow={showAddClauseModal}
@@ -241,6 +315,12 @@ export default class AddForm extends PureComponent {
           clauseNameList={clauseNameList}
           departmentList={cooperDeparment}
           searchDepartment={searchCooperDeparment}
+        />
+        <ChoiceApproverBoard
+          visible={choiceApprover}
+          approverList={newApproverList}
+          onClose={this.closeChoiceApproverModal}
+          onOk={this.handleApproverModalOK}
         />
       </div>
     );

@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-20 15:13:30
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-11 17:10:17
+ * @Last Modified time: 2017-10-12 21:43:39
  */
 import { contract as api, seibel as seibelApi } from '../api';
 import { getEmpId } from '../utils/helper';
@@ -22,6 +22,7 @@ export default {
     cooperDeparment: EMPTY_LIST, // 合作部门
     clauseNameList: EMPTY_LIST, // 条款名称列表
     flowHistory: EMPTY_LIST,  // 审批记录
+    flowStepInfo: EMPTY_OBJECT, // 审批人
   },
   reducers: {
     // 获取详情
@@ -38,6 +39,13 @@ export default {
       return {
         ...state,
         unsubscribeBaseInfo: resultData,
+      };
+    },
+    // 清空退订详情数据
+    resetUnsubscribeDetail(state) {
+      return {
+        ...state,
+        unsubscribeBaseInfo: EMPTY_OBJECT,
       };
     },
     // 获取附件列表
@@ -116,6 +124,27 @@ export default {
         flowHistory: resultData,
       };
     },
+    contractUnSubscribeSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        unsubscribeBaseInfo: resultData,
+      };
+    },
+    getFlowStepInfoSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        flowStepInfo: resultData,
+      };
+    },
+    getAddFlowStepInfoSuccess() {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        addFlowStepInfo: resultData,
+      };
+    }
   },
   effects: {
     // 获取详情
@@ -153,6 +182,15 @@ export default {
       yield put({
         type: 'getFlowHistorySuccess',
         payload: flowHistoryResponse,
+      });
+      // 获取审批人的 payload
+      const flowStepInfoPayload = {
+        flowId: payload.flowId,
+      };
+      const flowStepInfoResponse = yield call(api.getFlowStepInfo, flowStepInfoPayload);
+      yield put({
+        type: 'getFlowStepInfoSuccess',
+        payload: flowStepInfoResponse,
       });
     },
     // 获取附件信息
@@ -218,6 +256,27 @@ export default {
         payload: response,
       });
     },
+    // 合作合约退订
+    * contractUnSubscribe({ payload }, { call, put }) {
+      const response = yield call(api.contractUnSubscribe, payload);
+      yield put({
+        type: 'contractUnSubscribeSuccess',
+        payload: response,
+      });
+    },
+
+    // 新建时的获取审批人列表
+    * getFlowStepInfo({ payload }, { call, put }) {
+      const response = yield call(api.getFlowStepInfo, payload);
+      yield put({
+        type: 'getAddFlowStepInfoSuccess',
+        payload: response,
+      });
+    },
+    // 审批操作
+    * postDoApprove({ payload }, { call }) {
+      yield call(api.postDoApprove, payload);
+    }
   },
   subscriptions: {},
 };

@@ -6,6 +6,7 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 
 import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
@@ -85,6 +86,10 @@ export default class Commissiondetail extends PureComponent {
       dCommission, // 大宗交易
     } = data;
 
+    if (_.isEmpty(businessType) || _.isEmpty(custList)) {
+      return null;
+    }
+
     const bugTitle = `编号${currentId}`;
     const drafter = `${divisionName} - ${createdByName} (${createdByLogin})`;
     const targetCom = `${newCommission}‰`;
@@ -100,84 +105,86 @@ export default class Commissiondetail extends PureComponent {
     return (
       <div className={styles.detailBox}>
         <div className={styles.inner}>
-          <h1 className={styles.bugTitle}>{bugTitle}</h1>
-          <div id="detailModule" className={styles.module}>
-            <InfoTitle head="基本信息" />
-            <div className={styles.modContent}>
-              <ul className={styles.propertyList}>
-                <li className={styles.item}>
-                  <InfoItem label="子类型" value={businessType} />
-                </li>
-                <li className={styles.item}>
-                  <InfoItem label="备注" value={comments} />
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div id="nginformation_module" className={styles.module}>
-            <InfoTitle head="拟稿信息" />
-            <div className={styles.modContent}>
-              <ul className={styles.propertyList}>
-                <li className={styles.item}>
-                  <InfoItem label="拟稿人" value={drafter} />
-                </li>
-                <li className={styles.item}>
-                  <InfoItem label="提请时间" value={created} />
-                </li>
-                <li className={styles.item}>
-                  <InfoItem label="状态" value={status} />
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div id="customer_module" className={styles.module}>
-            <InfoTitle head="客户信息" />
-            <div className={styles.modContent}>
-              <CommonTable
-                data={custList}
-                titleList={tableHeader}
-                operation={operation}
-                pagination={{
-                  pageSize: 5,
-                }}
-              />
-            </div>
-          </div>
-          <div id="choosecommission" className={styles.module}>
-            <InfoTitle head="佣金产品" />
-            <div className={styles.modContent}>
-              <ul className={styles.propertyList}>
-                <li className={styles.item}>
-                  <InfoItem label="目标股基佣金率" value={targetCom} />
-                </li>
-                <li className={styles.item}>
-                  <InfoItem label="目标产品" value={prodCode} />
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div id="processing" className={styles.module}>
-            <InfoTitle head="其他佣金费率" />
-            <div className={styles.modContent}>
-              <div className={styles.leftCommission}>
-                <OtherCommission name="B股：" value={bgCommission} />
-                <OtherCommission name="债券：" value={zqCommission} />
-                <OtherCommission name="回购：" value={hCommission} />
-                <OtherCommission name="场内基金：" value={oCommission} />
-                <OtherCommission name="权证：" value={qCommission} />
-                <OtherCommission name="担保股基：" value={stkCommission} />
-                <OtherCommission name="担保债券：" value={dzCommission} />
-                <OtherCommission name="担保场内基金：" value={doCommission} />
+          <div className={styles.innerWrap}>
+            <h1 className={styles.bugTitle}>{bugTitle}</h1>
+            <div id="detailModule" className={styles.module}>
+              <InfoTitle head="基本信息" />
+              <div className={styles.modContent}>
+                <ul className={styles.propertyList}>
+                  <li className={styles.item}>
+                    <InfoItem label="子类型" value={businessType} />
+                  </li>
+                  <li className={styles.item}>
+                    <InfoItem label="备注" value={comments} />
+                  </li>
+                </ul>
               </div>
-              <div className={styles.rightCommission}>
-                <OtherCommission name="担保权证：" value={dqCommission} />
-                <OtherCommission name="信用股基：" value={creditCommission} />
-                <OtherCommission name="信用场内基金：" value={coCommission} />
-                <OtherCommission name="港股通（净佣金）：" value={hkCommission} />
-                <OtherCommission name="个股期权：" value={opCommission} />
-                <OtherCommission name="担保品大宗：" value={ddCommission} />
-                <OtherCommission name="股转：" value={stbCommission} />
-                <OtherCommission name="大宗交易：" value={dCommission} />
+            </div>
+            <div id="nginformation_module" className={styles.module}>
+              <InfoTitle head="拟稿信息" />
+              <div className={styles.modContent}>
+                <ul className={styles.propertyList}>
+                  <li className={styles.item}>
+                    <InfoItem label="拟稿人" value={drafter} />
+                  </li>
+                  <li className={styles.item}>
+                    <InfoItem label="提请时间" value={created} />
+                  </li>
+                  <li className={styles.item}>
+                    <InfoItem label="状态" value={status} />
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div id="customer_module" className={styles.module}>
+              <InfoTitle head="客户信息" />
+              <div className={styles.modContent}>
+                <CommonTable
+                  data={custList}
+                  titleList={tableHeader}
+                  operation={operation}
+                  pagination={{
+                    pageSize: 5,
+                  }}
+                />
+              </div>
+            </div>
+            <div id="choosecommission" className={styles.module}>
+              <InfoTitle head="佣金产品" />
+              <div className={styles.modContent}>
+                <ul className={styles.propertyList}>
+                  <li className={styles.item}>
+                    <InfoItem label="目标股基佣金率" value={targetCom} />
+                  </li>
+                  <li className={styles.item}>
+                    <InfoItem label="目标产品" value={prodCode} />
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div id="processing" className={styles.module}>
+              <InfoTitle head="其他佣金费率" />
+              <div className={styles.modContent}>
+                <div className={styles.leftCommission}>
+                  <OtherCommission name="B股：" value={bgCommission} />
+                  <OtherCommission name="债券：" value={zqCommission} />
+                  <OtherCommission name="回购：" value={hCommission} />
+                  <OtherCommission name="场内基金：" value={oCommission} />
+                  <OtherCommission name="权证：" value={qCommission} />
+                  <OtherCommission name="担保股基：" value={stkCommission} />
+                  <OtherCommission name="担保债券：" value={dzCommission} />
+                  <OtherCommission name="担保场内基金：" value={doCommission} />
+                </div>
+                <div className={styles.rightCommission}>
+                  <OtherCommission name="担保权证：" value={dqCommission} />
+                  <OtherCommission name="信用股基：" value={creditCommission} />
+                  <OtherCommission name="信用场内基金：" value={coCommission} />
+                  <OtherCommission name="港股通（净佣金）：" value={hkCommission} />
+                  <OtherCommission name="个股期权：" value={opCommission} />
+                  <OtherCommission name="担保品大宗：" value={ddCommission} />
+                  <OtherCommission name="股转：" value={stbCommission} />
+                  <OtherCommission name="大宗交易：" value={dCommission} />
+                </div>
               </div>
             </div>
           </div>

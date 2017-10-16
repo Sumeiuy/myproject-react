@@ -218,6 +218,7 @@ export default class SplitPanel extends PureComponent {
     // Splitpanel的两个容器所占总宽度
     const totalWidth = boxWidth - 120;
     const paneaWidth = this.leftPanel.getBoundingClientRect().width;
+    this.rightPanel.style.width = `${totalWidth - paneaWidth}px`;
     const minsize = totalWidth * 0.3;
     const maxsize = totalWidth * 0.6;
     const { paneboxWidth } = this.state;

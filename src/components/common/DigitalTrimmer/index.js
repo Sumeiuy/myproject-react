@@ -15,30 +15,50 @@ export default class DigitalTrimmer extends PureComponent {
     min: PropTypes.number,
     max: PropTypes.number,
     step: PropTypes.number,
-    defaultValue: PropTypes.number,
+    value: PropTypes.number,
     getValue: PropTypes.func.isRequired,
+    ref: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
     min: 1.6,
     max: 3,
     step: 0.1,
-    defaultValue: 1.6,
+    value: 1.6,
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      value: props.value,
+    };
   }
 
   @autobind
-  onChange(v) {
-    this.props.getValue(v);
+  onChange(value) {
+    this.setState({
+      value,
+    });
+    this.props.getValue(value);
   }
+
+  @autobind
+  reset() {
+    this.setState({
+      value: this.props.value,
+    });
+  }
+
   render() {
-    const { min, max, step, defaultValue } = this.props;
+    const { min, max, step } = this.props;
+    const { value } = this.state;
     return (
       <InputNumber
         className={style.inputBox}
         min={min}
         max={max}
         step={step}
-        defaultValue={defaultValue}
+        value={value}
         onChange={this.onChange}
       />
     );
