@@ -2,8 +2,8 @@
 * @Description: 合作合约修改 -基本信息
 * @Author: XuWenKang
 * @Date:   2017-09-20 13:47:07
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-12 21:37:21
+* @Last Modified by: LiuJianShu
+* @Last Modified time: 2017-10-12 21:37:21
 */
 
 import React, { PureComponent } from 'react';
@@ -27,7 +27,6 @@ import styles from './baseInfoEdit.less';
 const { TextArea } = Input;
 // 子类型列表
 const childTypeList = _.filter(seibelConfig.contract.subType, v => v.label !== '全部');
-console.warn('childTypeList', childTypeList);
 // const EMPTY_OBJECT = {};
 // const EMPTY_ARRAY = [];
 // 下拉搜索组件样式
@@ -76,7 +75,6 @@ export default class BaseInfoEdit extends PureComponent {
   // 通用Select Change方法
   @autobind
   handleSelectChange(key, value) {
-    console.warn({ [key]: value });
     this.setState({
       ...this.state,
       [key]: value,
@@ -86,7 +84,6 @@ export default class BaseInfoEdit extends PureComponent {
   // 选择客户
   @autobind
   handleSelectClient(value) {
-    console.warn('selectClient', value);
     this.setState({
       ...this.state,
       client: value,
@@ -96,14 +93,12 @@ export default class BaseInfoEdit extends PureComponent {
   // 根据关键词查询客户
   @autobind
   handleSearchClient(v) {
-    console.warn('searchClient', v);
     this.props.onSearchClient(v);
   }
 
   // 通用 Date组件更新方法
   @autobind
   handleChangeDate(obj) {
-    console.warn(obj);
     this.setState({
       ...this.state,
       [obj.name]: obj.value,
@@ -113,7 +108,6 @@ export default class BaseInfoEdit extends PureComponent {
   // 更改备注
   @autobind
   handleChangeRemark(e) {
-    console.warn(e.target.value);
     this.setState({
       ...this.state,
       remark: e.target.value,
@@ -143,7 +137,6 @@ export default class BaseInfoEdit extends PureComponent {
       // 备注
       description: data.remark || oldData.description,
     };
-    console.warn('obj', obj);
     this.props.onChange(obj);
   }
 

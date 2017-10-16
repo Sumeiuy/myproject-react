@@ -231,10 +231,6 @@ export default {
         payload: response,
       });
     },
-    // 下载附件
-    * fileDownload({ payload }, { call, put }) {
-      yield call(api.fileDownload, payload);
-    },
     // 获取可申请客户列表
     * getCutList({ payload }, { call, put }) {
       const response = yield call(seibelApi.getCanApplyCustList, payload);

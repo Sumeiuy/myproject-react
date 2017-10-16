@@ -78,7 +78,6 @@ export default class EditDetail extends PureComponent {
 
   constructor(props) {
     super(props);
-    console.warn('editDetail props', props);
     this.state = {
       childType: '',
       // 操作类型默认值
@@ -108,8 +107,6 @@ export default class EditDetail extends PureComponent {
   // 表格删除事件
   @autobind
   deleteTableData(record, index) {
-    console.warn('record', record);
-    console.warn('index', index);
     this.setState({
       radio: index,
     });
@@ -129,7 +126,6 @@ export default class EditDetail extends PureComponent {
   // 通用Select Change方法
   @autobind
   handleSelectChange(key, value) {
-    console.warn('通用 select 选择事件', { [key]: value });
     this.setState({
       ...this.state,
       [key]: value,
@@ -138,7 +134,6 @@ export default class EditDetail extends PureComponent {
   // 选择客户
   @autobind
   handleSelectCust(value) {
-    console.warn('选择客户', value);
     this.setState({
       ...this.state,
       cust: value,
@@ -156,7 +151,6 @@ export default class EditDetail extends PureComponent {
   // 选择合约编号
   @autobind
   handleSelectContractNum(value) {
-    console.warn('合约编号', value);
     this.setState({
       ...this.state,
       contractNum: value,
@@ -167,7 +161,6 @@ export default class EditDetail extends PureComponent {
   // 通用 Date组件更新方法
   @autobind
   handleChangeDate(obj) {
-    console.warn('选择时间', obj);
     this.setState({
       ...this.state,
       [obj.name]: obj.value,
@@ -176,7 +169,6 @@ export default class EditDetail extends PureComponent {
   // 修改备注
   @autobind
   handleChangeRemark(e) {
-    console.warn('修改备注', e.target.value);
     this.setState({
       ...this.state,
       remark: e.target.value,

@@ -94,13 +94,6 @@ export default class AddForm extends PureComponent {
     onSearchCutList();
   }
 
-  // componentWillReceiveProps(nextProps) {
-  //   if (this.props.addFormModal !== nextProps.addFormModal) {
-  //     this.handleReset();
-  //     console.log('重置1111', this.state.formData);
-  //   }
-  // }
-
   // 更新数据到父组件
   @autobind
   handleChangeBaseInfo(data) {
@@ -124,7 +117,6 @@ export default class AddForm extends PureComponent {
   // 查询合约编号列表
   @autobind
   handleSearchContractNum(data) {
-    console.log('SearchContractNum', data);
     if (data.subType && data.client.cusId) {
       this.props.onSearchContractNum(data);
     }
@@ -133,7 +125,6 @@ export default class AddForm extends PureComponent {
   // 查询合约详情
   @autobind
   handleSearchContractDetail(data) {
-    console.log('SearchContractDetail', data);
     this.props.onSearchContractDetail(data);
   }
 
@@ -183,7 +174,6 @@ export default class AddForm extends PureComponent {
       divIntegrationId: clauseData.divName.value, // 合作部门code
 
     };
-    console.log('添加合约条款', clauseData, terms);
     this.setState({
       ...this.state,
       formData: {
