@@ -16,7 +16,7 @@ import styles from './customerTableList.less';
 const columns = [
   {
     title: '经纪客户号',
-    dataIndex: 'cusId',
+    dataIndex: 'brokerNumber',
   },
   {
     title: '客户名称',

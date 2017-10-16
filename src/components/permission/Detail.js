@@ -49,6 +49,7 @@ export default class Detail extends PureComponent {
     status: PropTypes.string,
     empList: PropTypes.array,
     workflowHistoryBeans: PropTypes.array,
+    currentApproval: PropTypes.object,
     attachInfoList: PropTypes.array,
     attachment: PropTypes.string,
     searchServerPersonList: PropTypes.array.isRequired,
@@ -80,6 +81,7 @@ export default class Detail extends PureComponent {
     status: '',
     empList: [],
     workflowHistoryBeans: [],
+    currentApproval: {},
     attachInfoList: [],
     attachment: '',
   }
@@ -381,6 +383,7 @@ export default class Detail extends PureComponent {
         <ApprovalRecord
           head="审批记录"
           info={this.props.workflowHistoryBeans}
+          currentApproval={this.props.currentApproval}
           statusType={this.state.statusType}
         />
         <TableDialog
