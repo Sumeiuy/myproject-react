@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-12 17:56:39
+ * @Last Modified time: 2017-10-16 11:06:15
  */
 
 import React, { PureComponent } from 'react';
@@ -12,6 +12,7 @@ import { autobind } from 'core-decorators';
 // import { Link } from 'dva/router';
 import classnames from 'classnames';
 import _ from 'lodash';
+import Paganation from '../../common/Paganation';
 import styles from './groupTable.less';
 
 const EMPTY_LIST = [];
@@ -264,34 +265,47 @@ export default class GroupTable extends PureComponent {
       scrollX,
       scrollY,
       isFixedTitle,
+      onPageChange,
+      onSizeChange,
      } = this.props;
-    const { curSelectedRow } = this.state;
-    const paginationOptions = this.renderPaganation(
+    const { curSelectedRow, originPageSizeUnit } = this.state;
+    // const paginationOptions = this.renderPaganation(
+    //   curPageNum,
+    //   totalRecordNum,
+    //   curPageSize,
+    // );
+    const paganationOption = {
       curPageNum,
       totalRecordNum,
       curPageSize,
-    );
+      onPageChange,
+      onSizeChange,
+      originPageSizeUnit,
+    };
     const columns = this.renderColumns();
     const scrollYArea = isFixedTitle ? { y: scrollY } : {};
     const scrollXArea = isFixedColumn ? { x: scrollX } : {};
     return (
-      <Table
-        className={tableClass}
-        columns={columns}
-        dataSource={this.renderTableDatas(listData)}
-        pagination={paginationOptions}
-        bordered={bordered}
-        scroll={_.merge(scrollXArea, scrollYArea)}
-        onRowClick={this.handleRowClick}
-        rowClassName={(record, index) => {
-          if (curSelectedRow === index) {
-            return classnames({
-              [styles.rowSelected]: true,
-            });
-          }
-          return null;
-        }}
-      />
+      <div>
+        <Table
+          className={tableClass}
+          columns={columns}
+          dataSource={this.renderTableDatas(listData)}
+          bordered={bordered}
+          pagination={false}
+          scroll={_.merge(scrollXArea, scrollYArea)}
+          onRowClick={this.handleRowClick}
+          rowClassName={(record, index) => {
+            if (curSelectedRow === index) {
+              return classnames({
+                [styles.rowSelected]: true,
+              });
+            }
+            return null;
+          }}
+        />
+        <Paganation {...paganationOption} />
+      </div>
     );
   }
 }
