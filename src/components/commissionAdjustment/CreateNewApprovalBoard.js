@@ -99,7 +99,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       remark: '',
       targetProduct: '',
       choiceApprover: false,
-      newCommission: '1.6',
+      newCommission: '0.16',
       approverName: '',
       approverId: '',
       custLists: [],
@@ -110,7 +110,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
   componentWillMount() {
     if (this.judgeSubtypeNow(commadj.batch)) {
       // 如果是初次进入，则需要查下产品列表
-      this.props.queryProductList({ prodCommision: 1.6 });
+      this.props.queryProductList({ prodCommision: 0.16 });
     }
   }
 
@@ -134,7 +134,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       remark: '',
       targetProduct: '',
       choiceApprover: false,
-      newCommission: '1.6',
+      newCommission: '0.16',
       approverName: '',
       approverId: '',
       custLists: [],
@@ -221,9 +221,9 @@ export default class CreateNewApprovalBoard extends PureComponent {
     this.setState({
       [name]: key,
     });
-    // 如果切换批量佣金需要，先查一把1.6下目标产品
+    // 如果切换批量佣金需要，先查一把0.16下目标产品
     if (name === 'approvalType') {
-      this.props.queryProductList({ prodCommision: 1.6 });
+      this.props.queryProductList({ prodCommision: 0.16 });
     }
   }
 
