@@ -149,14 +149,6 @@ export default class TableTransfer extends Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-    console.log(nextProps);
-    const { firstData, secondData } = this.props;
-    if (firstData !== nextProps.firstData || secondData !== nextProps.secondData) {
-      this.resetDataSource(nextProps);
-    }
-  }
-
   // 获取所有默认选中
   getAllDefaultCheck(dataArray, rowKey) {
     let defaultCheck = {};
@@ -176,7 +168,7 @@ export default class TableTransfer extends Component {
 
   // 重置数据源
   @autobind
-  resetDataSource(props) {
+  resetDataSource() {
     const {
       firstData,
       secondData,
@@ -184,7 +176,7 @@ export default class TableTransfer extends Component {
       secondColumns,
       rowKey,
       defaultCheckKey,
-    } = props || this.props;
+    } = this.props;
     const initFirstArray = this.initTableData(firstData, rowKey, defaultCheckKey);
     const initSecondArray = this.initTableData(secondData, rowKey, defaultCheckKey);
     const initSecondColumns = this.initTableColumn(secondColumns);
