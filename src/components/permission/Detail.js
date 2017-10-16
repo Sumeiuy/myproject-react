@@ -50,7 +50,7 @@ export default class Detail extends PureComponent {
     empList: PropTypes.array,
     workflowHistoryBeans: PropTypes.array,
     currentApproval: PropTypes.object,
-    attachInfoList: PropTypes.array,
+    attaches: PropTypes.array,
     attachment: PropTypes.string,
     searchServerPersonList: PropTypes.array.isRequired,
     nextApproverList: PropTypes.array.isRequired,
@@ -82,7 +82,7 @@ export default class Detail extends PureComponent {
     empList: [],
     workflowHistoryBeans: [],
     currentApproval: {},
-    attachInfoList: [],
+    attaches: [],
     attachment: '',
   }
 
@@ -374,7 +374,7 @@ export default class Detail extends PureComponent {
           searchServerPersonList={this.props.searchServerPersonList}
         />
         <UploadFile
-          fileList={this.props.attachInfoList}
+          fileList={this.props.attaches}
           edit={this.state.statusType !== 'ready'}
           type="attachment"
           attachment={this.props.attachment || ''}
