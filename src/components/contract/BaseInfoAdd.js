@@ -96,6 +96,12 @@ export default class BaseInfoEdit extends PureComponent {
       remark: '',
     }, () => {
       this.transferDataToHome();
+      if (this.selectCustComponent) {
+        this.selectCustComponent.clearValue();
+      }
+      if (this.selectContractComponent) {
+        this.selectContractComponent.clearValue();
+      }
     });
   }
 
@@ -230,6 +236,7 @@ export default class BaseInfoEdit extends PureComponent {
           emitSelectItem={this.handleSelectContractNum}
           emitToSearch={this.handleSearchContractNum}
           boxStyle={dropDownSelectBoxStyle}
+          ref={selectContractComponent => this.selectContractComponent = selectContractComponent}
         />
       </InfoForm>)
       :
@@ -304,6 +311,7 @@ export default class BaseInfoEdit extends PureComponent {
             emitSelectItem={this.handleSelectClient}
             emitToSearch={this.handleSearchClient}
             boxStyle={dropDownSelectBoxStyle}
+            ref={selectCustComponent => this.selectCustComponent = selectCustComponent}
           />
         </InfoForm>
         {contractNumComponent}
