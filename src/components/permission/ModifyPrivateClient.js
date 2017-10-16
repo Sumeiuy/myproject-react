@@ -45,7 +45,7 @@ export default class modifyPrivateClient extends PureComponent {
     status: PropTypes.string,
     empList: PropTypes.array,
     workflowHistoryBeans: PropTypes.array,
-    attachInfoList: PropTypes.array,
+    attaches: PropTypes.array,
     attachment: PropTypes.string,
     searchServerPersonList: PropTypes.array.isRequired,
     nextApproverList: PropTypes.array.isRequired,
@@ -73,7 +73,7 @@ export default class modifyPrivateClient extends PureComponent {
     status: '',
     empList: [],
     workflowHistoryBeans: [],
-    attachInfoList: [],
+    attaches: [],
     attachment: '',
   }
   constructor() {
@@ -343,7 +343,7 @@ export default class modifyPrivateClient extends PureComponent {
             searchServerPersonList={this.props.searchServerPersonList}
           />
           <UploadFile
-            fileList={this.props.attachInfoList}
+            fileList={this.props.attaches}
             edit
             type="attachment"
             attachment={this.props.attachment || ''}
