@@ -8,6 +8,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import cx from 'classnames';
 import { Icon } from 'antd';
 
 import dictMap from '../../config/otherCommissionDictionary';
@@ -16,6 +17,7 @@ import styles from './otherCommissionSelectList.less';
 
 export default class OtherCommissionSelectList extends PureComponent {
   static propTypes = {
+    showTip: PropTypes.bool.isRequired,
     reset: PropTypes.number.isRequired,
     otherRatios: PropTypes.array,
     onChange: PropTypes.func,
@@ -60,10 +62,14 @@ export default class OtherCommissionSelectList extends PureComponent {
   }
 
   render() {
-    const { otherRatios } = this.props;
+    const { otherRatios, showTip } = this.props;
     const compactRatios = _.compact(otherRatios);
     const oddCommissionArray = _.filter(compactRatios, (v, index) => index % 2 === 1);
     const evenCommissionArray = _.filter(compactRatios, (v, index) => index % 2 === 0);
+    const tipCls = cx({
+      [styles.blockTip]: true,
+      [styles.hide]: showTip,
+    });
     return (
       <div className={styles.otherComsBoxWrap} ref={this.wrapRef}>
         <div className={styles.otherComsBox}>
@@ -76,7 +82,7 @@ export default class OtherCommissionSelectList extends PureComponent {
             oddCommissionArray.map(this.makeSelect)
           }
         </div>
-        <div className={styles.blockTip}>
+        <div className={tipCls}>
           <Icon type="exclamation-circle" />本功能不提供特殊资产校验的费率设置，如需调整请通过单客户佣金调整功能
         </div>
       </div>
