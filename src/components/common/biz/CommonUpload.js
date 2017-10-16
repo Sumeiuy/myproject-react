@@ -54,6 +54,8 @@ const mapStateToProps = () => ({
 const mapDispatchToProps = {
   // 删除附件
   deleteAttachment: fetchDataFunction(true, 'contract/deleteAttachment'),
+  // 下载附件
+  fileDownload: fetchDataFunction(true, 'contract/fileDownload'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -62,6 +64,7 @@ export default class CommonUpload extends PureComponent {
   static propTypes = {
     deleteAttachment: PropTypes.func,
     uploadAttachment: PropTypes.func,
+    fileDownload: PropTypes.func,
     attachment: PropTypes.string,
     attachmentList: PropTypes.array,
     edit: PropTypes.bool,
@@ -70,6 +73,7 @@ export default class CommonUpload extends PureComponent {
   static defaultProps = {
     deleteAttachment: () => {},
     uploadAttachment: () => {},
+    fileDownload: () => {},
     attachment: '',
     attachmentList: [],
     edit: false,
@@ -140,6 +144,18 @@ export default class CommonUpload extends PureComponent {
   }
 
   @autobind
+  onFileDownload(item) {
+    const { fileDownload } = this.props;
+    const { attachment } = this.state;
+    const payload = {
+      attachId: item.attachId,
+      attachment,
+      fileName: item.name,
+    };
+    fileDownload(payload);
+  }
+
+  @autobind
   findFileListNode() {
     return document.querySelectorAll('.fileListMain')[0];
   }
@@ -197,7 +213,9 @@ export default class CommonUpload extends PureComponent {
                               :
                                 null
                             }
-                            <em><a href={item.downloadURL}><Icon type="xiazai1" /></a></em>
+                            <em>
+                              <Icon type="xiazai1" onClick={() => this.onFileDownload(item)} />
+                            </em>
                           </span>
                         </p>
                       </div>
