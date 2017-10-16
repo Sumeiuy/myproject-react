@@ -2,8 +2,8 @@
 * @Description: 合作合约新建 -基本信息
 * @Author: XuWenKang
 * @Date:   2017-09-21 15:27:31
- * @Last Modified by:   XuWenKang
- * @Last Modified time: 2017-10-12 16:20:05
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2017-10-13 17:11:50
 */
 
 import React, { PureComponent } from 'react';
@@ -60,6 +60,7 @@ export default class BaseInfoEdit extends PureComponent {
     contractNumList: PropTypes.array.isRequired,
     // 更改操作类型时重置表单数据
     onReset: PropTypes.func.isRequired,
+    getFlowStepInfo: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -118,6 +119,7 @@ export default class BaseInfoEdit extends PureComponent {
       const { operation, subType, client } = this.state;
       // 当前操作类型为“退订”并且子类型变化的时候触发合作合约编号查询
       if (operation === unsubscribe && key === 'subType') {
+        console.warn('调用 onSearchContractNum');
         this.props.onSearchContractNum({ subType, client });
       }
       // 操作类型发生变化时重置所有填入的数据
@@ -140,7 +142,7 @@ export default class BaseInfoEdit extends PureComponent {
       const { operation, subType, client } = this.state;
       // 当前操作类型为“退订”并且子类型变化的时候触发合作合约编号查询
       if (operation === unsubscribe) {
-        console.warn('退订且是子类型');
+        console.warn('选择客户后调用 onSearchContractNum');
         this.props.onSearchContractNum({ subType, client });
       }
     });
@@ -207,6 +209,8 @@ export default class BaseInfoEdit extends PureComponent {
       custId: data.client.cusId,
       // 客户类型--必填
       custType: data.client.custType,
+      // 经济客户号
+      econNum: data.client.brokerNumber,
       // 合约开始日期--订购状态下必填，退订不可编辑
       startDt: data.contractStarDate,
       // 合约有效期
