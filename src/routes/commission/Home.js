@@ -155,6 +155,7 @@ export default class CommissionHome extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
+      currentSubtype: '',
       isEmpty: true,
       approvalBoard: false,
       createApprovalBoard: false,
@@ -185,6 +186,11 @@ export default class CommissionHome extends PureComponent {
     getCommissionList({ ...params, type: pageType });
   }
 
+  componentDidMount() {
+    // 给元素添加该class修改滚动条颜色，以避免其他页面受影响
+    document.querySelector('body').classList.add('selfScrollBarStyle');
+  }
+
   componentWillReceiveProps(nextProps) {
     const { listProcess: prevLP } = this.props;
     const { listProcess: nextLP, list, location: { query: { currentId } } } = nextProps;
@@ -193,8 +199,11 @@ export default class CommissionHome extends PureComponent {
         // 表示左侧列表获取完毕
         // 因此此时获取Detail
         const item = _.filter(list.resultData, o => String(o.id) === String(currentId))[0];
-        const { business1, subType: st } = item;
-        this.getDetail4Subtye(st, { batchNum: business1 });
+        const { subType: st } = item;
+        this.setState({
+          currentSubtype: st,
+        });
+        this.getDetail4Subtye(item);
       }
     }
     const { location: { query: nextQuery = EMPTY_OBJECT } } = nextProps;
@@ -262,12 +271,18 @@ export default class CommissionHome extends PureComponent {
     }
   }
 
+  componentWillUnmount() {
+    // 给元素添加该class修改滚动条颜色，以避免其他页面受影响
+    document.querySelector('body').classList.remove('selfScrollBarStyle');
+  }
+
   // 查询佣金调整4个子类型的详情信息
-  getDetail4Subtye(st, params) {
+  getDetail4Subtye(record) {
+    const { subType: st, business1 } = record;
     const { getBatchCommissionDetail } = this.props;
     switch (st) {
       case comsubs.batch:
-        getBatchCommissionDetail(params);
+        getBatchCommissionDetail({ batchNum: business1 });
         break;
       default:
         break;
@@ -282,15 +297,39 @@ export default class CommissionHome extends PureComponent {
   }
 
   /**
-   * 点击列表每条的时候对应请求详情
+   * 根据子类型获取不同的Detail组件
+   * @param  {string} st 子类型
    */
   @autobind
-  handleListRowClick({ business1, id, subType: st }) {
+  getDetailComponentBySubType(st) {
+    const { detail, location } = this.props;
+    let detailComponent = null;
+    switch (st) {
+      case comsubs.batch:
+        detailComponent = (
+          <Detail
+            data={detail}
+            location={location}
+            checkApproval={this.getApprovalBoardCustInfo}
+          />
+        );
+        break;
+      default:
+        break;
+    }
+    return detailComponent;
+  }
+
+  // 点击列表每条的时候对应请求详情
+  @autobind
+  handleListRowClick(record) {
+    const { id, subType: st } = record;
     const {
       location: { query: { currentId } },
     } = this.props;
     if (currentId === id) return;
-    this.getDetail4Subtye(st, { batchNum: business1 });
+    this.setState({ currentSubtype: st });
+    this.getDetail4Subtye(record);
   }
 
   /**
@@ -378,7 +417,6 @@ export default class CommissionHome extends PureComponent {
       location,
       replace,
       list,
-      detail,
       filterDrafterList,
       filterCustList,
       custRange,
@@ -400,7 +438,7 @@ export default class CommissionHome extends PureComponent {
     }
     const isEmpty = _.isEmpty(list.resultData);
     // 此处需要提供一个方法给返回的接口查询设置是否查询到数据
-    const { approvalBoard, createApprovalBoard } = this.state;
+    const { approvalBoard, createApprovalBoard, currentSubtype } = this.state;
     const topPanel = (
       <CommissionHeader
         location={location}
@@ -423,17 +461,11 @@ export default class CommissionHome extends PureComponent {
         location={location}
         columns={this.constructTableColumns()}
         clickRow={this.handleListRowClick}
-        backKeys={['business1', 'flowId', 'subType']}
       />
     );
+    // TODO 此处需要根据不同的子类型使用不同的Detail组件
+    const rightPanel = this.getDetailComponentBySubType(currentSubtype);
 
-    const rightPanel = (
-      <Detail
-        data={detail}
-        location={location}
-        checkApproval={this.getApprovalBoardCustInfo}
-      />
-    );
     return (
       <div className="feedbackbox">
         <SplitPanel

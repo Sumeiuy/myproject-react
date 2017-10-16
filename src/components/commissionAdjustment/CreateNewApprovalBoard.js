@@ -21,6 +21,7 @@ import DigitalTrimmer from '../common/DigitalTrimmer';
 import ProductsDropBox from './ProductsDropBox';
 import OtherCommissionSelectList from './OtherCommissionSelectList';
 import CommissionLine from './CommissionLine';
+import SelectAssembly from './SelectAssembly';
 import { seibelConfig } from '../../config';
 // import { getEmpId } from '../../utils/helper';
 import styles from './createNewApprovalBoard.less';
@@ -403,7 +404,54 @@ export default class CreateNewApprovalBoard extends PureComponent {
       }],
     };
 
+    // 单佣金调整中的产品选择配置
     const transferProps = {
+      firstData: subscribelData,
+      secondData: unsubcribeData,
+      firstColumns: productColumns,
+      secondColumns: productColumns,
+      transferChange: this.handleTransferChange,
+      checkChange: this.handleCheckChange,
+      onSearch: this.handleSearch,
+      rowKey: 'key',
+      defaultCheckKey: 'default',
+      showSearch: true,
+      placeholder: '产品代码/产品名称',
+      pagination: {
+        defaultPageSize: 5,
+        pageSize: 5,
+        size: 'small',
+      },
+      finishTips: ['产品组合等于目标佣金值', '产品组合等于目标佣金值'],
+      warningTips: ['产品组合比目标佣金高 0.5%', '产品组合离目标佣金还差 0.63%'],
+    };
+    // 资讯订阅中的产品选择配置
+    const subScribetransferProps = {
+      firstTitle: '可选服务',
+      secondTitle: '已选服务',
+      firstData: subscribelData,
+      secondData: unsubcribeData,
+      firstColumns: productColumns,
+      secondColumns: productColumns,
+      transferChange: this.handleTransferChange,
+      checkChange: this.handleCheckChange,
+      onSearch: this.handleSearch,
+      rowKey: 'key',
+      defaultCheckKey: 'default',
+      showSearch: true,
+      placeholder: '产品代码/产品名称',
+      pagination: {
+        defaultPageSize: 5,
+        pageSize: 5,
+        size: 'small',
+      },
+      finishTips: ['产品组合等于目标佣金值', '产品组合等于目标佣金值'],
+      warningTips: ['产品组合比目标佣金高 0.5%', '产品组合离目标佣金还差 0.63%'],
+    };
+    // 资讯退订中的服务产品退订配置
+    const unsubScribetransferProps = {
+      firstTitle: '可退订服务',
+      secondTitle: '已选服务',
       firstData: subscribelData,
       secondData: unsubcribeData,
       firstColumns: productColumns,
@@ -444,7 +492,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
           <div className={styles.newApprovalBox} ref={this.newApprovalBoxRef}>
             <div className={styles.approvalBlock}>
               <InfoTitle head="基本信息" />
-              <CommissionLine label="子类型" labelWidth="90px" required needInputBox>
+              <CommissionLine label="子类型" labelWidth="90px" required>
                 <Select
                   name="approvalType"
                   data={newSubTypes}
@@ -452,6 +500,16 @@ export default class CreateNewApprovalBoard extends PureComponent {
                   onChange={this.choiceApprovalSubType}
                 />
               </CommissionLine>
+              {
+                this.judgeSubtypeNow([commadj.batch, commadj.noSelected]) ? null
+                : (
+                  <CommissionLine label="客户" labelWidth="90px" needInputBox={false}>
+                    <SelectAssembly
+                      onSearchValue={() => {}}
+                    />
+                  </CommissionLine>
+                )
+              }
               {
                 this.judgeSubtypeNow(commadj.noSelected) ? null
                 : (
@@ -475,7 +533,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
                   <InfoTitle head="佣金产品选择" />
                   <CommissionLine
                     label="目标股基佣金率"
-                    labelWidth="135px"
+                    labelWidth={this.judgeSubtypeNow([commadj.single]) ? '110px' : '135px'}
                     extra={
                       <span
                         style={{
@@ -516,11 +574,33 @@ export default class CreateNewApprovalBoard extends PureComponent {
               )
             }
             {
+              // 资讯订阅中的资讯产品选择
+              !this.judgeSubtypeNow(commadj.subscribe) ? null
+              : (
+                <div className={styles.approvalBlock}>
+                  <InfoTitle head="资讯产品选择" />
+                  <Transfer {...subScribetransferProps} />
+                </div>
+              )
+            }
+            {
+              // 资讯订阅中的资讯产品选择
+              !this.judgeSubtypeNow(commadj.unsubscribe) ? null
+              : (
+                <div className={styles.approvalBlock}>
+                  <InfoTitle head="服务产品退订" />
+                  <Transfer {...unsubScribetransferProps} />
+                </div>
+              )
+            }
+            {
+              // 批量佣金调整和单佣金调整中的其他佣金匪类
               !this.judgeSubtypeNow([commadj.batch, commadj.single]) ? null
               : (
                 <div className={styles.approvalBlock}>
                   <InfoTitle head="其他佣金费率" />
                   <OtherCommissionSelectList
+                    showTip={!this.judgeSubtypeNow(commadj.batch)}
                     reset={otherComReset}
                     otherRatios={otherRatios}
                     onChange={this.changeOtherCommission}
@@ -548,7 +628,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
             }
             {
               // 单佣金调整中的附件信息
-              !this.judgeSubtypeNow(commadj.single) ? null
+              this.judgeSubtypeNow([commadj.batch, commadj.noSelected]) ? null
               : (
                 <div className={styles.approvalBlock}>
                   <InfoTitle head="附件信息" />
@@ -557,6 +637,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
               )
             }
             {
+              // 选择审批人
               this.judgeSubtypeNow(commadj.noSelected) ? null
               : (
                 <div className={styles.approvalBlock}>
