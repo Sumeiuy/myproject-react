@@ -4,11 +4,13 @@
  * author baojiajia
  */
 import React, { PureComponent } from 'react';
-import { InputNumber } from 'antd';
+import { InputNumber, Modal } from 'antd';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 
 import style from './style.less';
+
+const confirm = Modal.confirm;
 
 export default class DigitalTrimmer extends PureComponent {
   static propTypes = {
@@ -21,10 +23,10 @@ export default class DigitalTrimmer extends PureComponent {
   }
 
   static defaultProps = {
-    min: 1.6,
-    max: 3,
-    step: 0.1,
-    value: 1.6,
+    min: 0.16,
+    max: Infinity,
+    step: 0.01,
+    value: 0.16,
   }
 
   constructor(props) {
@@ -36,10 +38,44 @@ export default class DigitalTrimmer extends PureComponent {
 
   @autobind
   onChange(value) {
+    const clearValue = this.clearInput;
+    let inputLength = 0;
+    if (value.toString().split('.').length > 1) {
+      inputLength = value.toString().split('.')[1].length;
+    }
+    if (isNaN(value)) {
+      confirm({
+        title: '错误',
+        content: '请输入数字',
+        onOk() {
+          clearValue();
+        },
+        onCancel() {
+        },
+      });
+    } else if (!isNaN(value) && (inputLength > 2)) {
+      confirm({
+        title: '错误',
+        content: '小数点后不超过两位',
+        onOk() {
+          clearValue();
+        },
+        onCancel() {
+        },
+      });
+    } else {
+      this.setState({
+        value,
+      });
+      this.props.getValue(value);
+    }
+  }
+
+  @autobind
+  clearInput() {
     this.setState({
-      value,
+      value: '',
     });
-    this.props.getValue(value);
   }
 
   @autobind
