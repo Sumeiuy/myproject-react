@@ -130,8 +130,7 @@ export default class TableTransfer extends Component {
       secondColumns,
       rowKey,
       defaultCheckKey,
-    } = this.props;
-
+    } = props || this.props;
     const initFirstArray = this.initTableData(firstData, rowKey, defaultCheckKey);
     const initSecondArray = this.initTableData(secondData, rowKey, defaultCheckKey);
     const initSecondColumns = this.initTableColumn(secondColumns);
@@ -167,6 +166,35 @@ export default class TableTransfer extends Component {
     return defaultCheck;
   }
 
+  // 重置数据源
+  @autobind
+  resetDataSource() {
+    const {
+      firstData,
+      secondData,
+      firstColumns,
+      secondColumns,
+      rowKey,
+      defaultCheckKey,
+    } = this.props;
+    const initFirstArray = this.initTableData(firstData, rowKey, defaultCheckKey);
+    const initSecondArray = this.initTableData(secondData, rowKey, defaultCheckKey);
+    const initSecondColumns = this.initTableColumn(secondColumns);
+    this.setState({
+      checked: this.getAllDefaultCheck(initSecondArray, rowKey),
+      firstArray: this.hiddenChildren(initFirstArray),
+      secondArray: initSecondArray,
+      firstColumns: [
+        ...firstColumns,
+        actionColumns('first', this.handleClick),
+      ],
+      secondColumns: [
+        ...initSecondColumns,
+        actionColumns('second', this.handleClick),
+      ],
+    });
+  }
+
   // 添加属性，方便操作.初始操作为show children状态
   // parentKey:辨识子元素挂在哪个父元素上
   // tip属性，显示子项勾选框对应的提示，（对用户是透明的）
@@ -180,7 +208,7 @@ export default class TableTransfer extends Component {
               const newChild = {
                 ...child,
                 parentKey: item[rowKey],
-                tip: `${child.defaultChecked ? '取消可选产品' : '标记可选产品'}`,
+                tip: `${child.default ? '取消可选产品' : '标记可选产品'}`,
               };
               return _.isEmpty(defaultCheckedKey) ?
                 newChild : { ...newChild, defaultChecked: child[defaultCheckedKey] };
