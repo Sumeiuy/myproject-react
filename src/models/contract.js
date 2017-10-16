@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-20 15:13:30
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-12 21:43:39
+ * @Last Modified time: 2017-10-13 15:41:16
  */
 import { contract as api, seibel as seibelApi } from '../api';
 import { getEmpId } from '../utils/helper';
@@ -23,6 +23,8 @@ export default {
     clauseNameList: EMPTY_LIST, // 条款名称列表
     flowHistory: EMPTY_LIST,  // 审批记录
     flowStepInfo: EMPTY_OBJECT, // 审批人
+    unsubFlowStepInfo: EMPTY_OBJECT, // 退订审批人
+    doApprove: EMPTY_OBJECT,
   },
   reducers: {
     // 获取详情
@@ -138,30 +140,59 @@ export default {
         flowStepInfo: resultData,
       };
     },
-    getAddFlowStepInfoSuccess() {
+    getAddFlowStepInfoSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
       return {
         ...state,
         addFlowStepInfo: resultData,
       };
-    }
+    },
+    getUnsubFlowStepInfoSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        unsubFlowStepInfo: resultData,
+      };
+    },
+    postDoApproveSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        doApprove: resultData,
+      };
+    },
   },
   effects: {
     // 获取详情
     * getBaseInfo({ payload }, { call, put }) {
       const empId = getEmpId();
       const response = yield call(api.getContractDetail, payload);
+
+      // 获取审批人的 payload
+      const flowStepInfoPayload = {
+        flowId: payload.flowId,
+        operate: payload. operate || '',
+      };
+      const flowStepInfoResponse = yield call(api.getFlowStepInfo, flowStepInfoPayload);
       if (payload.type === 'unsubscribeDetail') {
         // 退订时请求详情
         yield put({
           type: 'getUnsubscribeDetailSuccess',
           payload: response,
         });
+        yield put({
+          type: 'getUnsubFlowStepInfoSuccess',
+          payload: flowStepInfoResponse,
+        });
       } else {
         // 非退订时请求详情
         yield put({
           type: 'getBaseInfoSuccess',
           payload: response,
+        });
+        yield put({
+          type: 'getFlowStepInfoSuccess',
+          payload: flowStepInfoResponse,
         });
       }
       // 获取附件列表的 payload
@@ -183,15 +214,6 @@ export default {
         type: 'getFlowHistorySuccess',
         payload: flowHistoryResponse,
       });
-      // 获取审批人的 payload
-      const flowStepInfoPayload = {
-        flowId: payload.flowId,
-      };
-      const flowStepInfoResponse = yield call(api.getFlowStepInfo, flowStepInfoPayload);
-      yield put({
-        type: 'getFlowStepInfoSuccess',
-        payload: flowStepInfoResponse,
-      });
     },
     // 获取附件信息
     * getAttachmentList({ payload }, { call, put }) {
@@ -209,6 +231,10 @@ export default {
         payload: response,
       });
     },
+    // 下载附件
+    * fileDownload({ payload }, { call, put }) {
+      yield call(api.fileDownload, payload);
+    },
     // 获取可申请客户列表
     * getCutList({ payload }, { call, put }) {
       const response = yield call(seibelApi.getCanApplyCustList, payload);
@@ -219,8 +245,19 @@ export default {
     },
     // 保存详情
     * saveContractData({ payload }, { call, put }) {
-      console.log('payload', payload);
-      const response = yield call(api.saveContractData, payload);
+      const response = yield call(api.saveContractData, payload.data);
+      if (payload.type === 'add') {
+        const itemId = response.resultData;
+        const newPayload = {
+          itemId,
+          ...payload.approveData,
+        }
+        const approveResponse = yield call(api.postDoApprove, newPayload);
+        yield put({
+          type: 'postDoApproveSuccess',
+          payload: approveResponse,
+        })
+      }
       yield put({
         type: 'saveContractDataSuccess',
         payload: response,
@@ -274,8 +311,12 @@ export default {
       });
     },
     // 审批操作
-    * postDoApprove({ payload }, { call }) {
-      yield call(api.postDoApprove, payload);
+    * postDoApprove({ payload }, { call, put }) {
+      const response = yield call(api.postDoApprove, payload);
+      yield put({
+        type: 'postDoApproveSuccess',
+        payload: response,
+      })
     }
   },
   subscriptions: {},

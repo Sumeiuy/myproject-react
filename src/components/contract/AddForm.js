@@ -2,8 +2,8 @@
 * @Description: 合作合约新建 页面
 * @Author: XuWenKang
 * @Date:   2017-09-21 15:17:50
-* @Last Modified by:   XuWenKang
-* @Last Modified by: LiuJianShu
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2017-10-13 15:46:45
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -52,11 +52,17 @@ export default class AddForm extends PureComponent {
     searchCooperDeparment: PropTypes.func.isRequired,
     cooperDeparment: PropTypes.array.isRequired,
     approverList: PropTypes.array,
+    // 审批人
+    getFlowStepInfo: PropTypes.func.isRequired,
+    // 审批人
+    flowStepInfo: PropTypes.object,
   }
 
   static defaultProps = {
     contractDetail: EMPTY_OBJECT,
     approverList: EMPTY_ARRAY,
+    // 审批人
+    flowStepInfo: EMPTY_OBJECT,
   }
 
   constructor(props) {
@@ -73,8 +79,13 @@ export default class AddForm extends PureComponent {
       operationType: subscribe,
       // 选择审批人弹窗
       choiceApprover: false,
-      approverName: '',
-      approverId: '',
+
+      // 选择审批人弹窗
+      appravalInfo: {
+        appraval: '',
+        approverName: '',
+        approverId: '',
+      },
     };
   }
 
@@ -221,10 +232,14 @@ export default class AddForm extends PureComponent {
   // 审批人弹出框确认按钮
   @autobind
   handleApproverModalOK(approver) {
-    console.warn('approver', approver);
     this.setState({
-      approverName: approver.empName,
-      approverId: approver.empNo,
+      appravalInfo: {
+        ...this.state.appravalInfo,
+        approverName: approver.empName,
+        approverId: approver.empNo,
+      },
+    }, () => {
+      this.props.onChangeForm(this.state.appravalInfo);
     });
   }
 
@@ -236,15 +251,15 @@ export default class AddForm extends PureComponent {
       clauseNameList,
       cooperDeparment,
       searchCooperDeparment,
-      approverList,
+      getFlowStepInfo,
+      flowStepInfo,
     } = this.props;
     const {
       formData,
       showAddClauseModal,
       operationType,
       choiceApprover,
-      approverName,
-      approverId,
+      appravalInfo: { approverName, approverId },
     } = this.state;
     const buttonProps = {
       type: 'primary',
@@ -253,10 +268,13 @@ export default class AddForm extends PureComponent {
       ghost: true,
       onClick: this.handleShowAddClause,
     };
-    const newApproverList = approverList.map((item, index) => {
+    const listData = flowStepInfo.flowButtons[0].flowAuditors;
+    const newApproverList = listData.map((item, index) => {
       const key = `${new Date().getTime()}-${index}`;
       return {
-        ...item,
+        empNo: item.login || '',
+        empName: item.empName || '无',
+        belowDept: item.occupation || '无',
         key,
       };
     });
@@ -275,6 +293,7 @@ export default class AddForm extends PureComponent {
           onSearchContractNum={this.handleSearchContractNum}
           onSearchContractDetail={this.handleSearchContractDetail}
           onReset={this.handleReset}
+          getFlowStepInfo={getFlowStepInfo}
           ref={(BaseInfoAddComponent) => { this.BaseInfoAddComponent = BaseInfoAddComponent; }}
         />
         <div className={styles.editWrapper}>
