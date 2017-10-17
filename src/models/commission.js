@@ -17,6 +17,8 @@ export default {
     approvalUserList: [],
     // 批量佣金右侧详情
     detail: {},
+    // 咨询订阅详情
+    subscribeDetail: {},
     // 单个用户的审批记录
     approvalRecord: {},
     // 查询审批记录流程状态
@@ -70,6 +72,15 @@ export default {
           ...detailResult,
           custList: listResult,
         },
+      };
+    },
+
+    getSubscribeDetailSuccess(state, action) {
+      const { payload: { detailRes } } = action;
+      const detailResult = detailRes.resultData;
+      return {
+        ...state,
+        subscribeDetail: detailResult,
       };
     },
 
@@ -233,6 +244,21 @@ export default {
       yield put({
         type: 'submitBatchSuccess',
         payload: response,
+      });
+    },
+
+    // 查询咨询订阅详情数据
+    * getSubscribeDetail({ payload }, { call, put }) {
+      const detailRes = yield call(api.queryConsultSubscribeDetail,
+        {
+          action: 'query',
+          applyType: 'Internal',
+          operationType: 'SP Purchase',
+          ...payload,
+        });
+      yield put({
+        type: 'getSubscribeDetailSuccess',
+        payload: { detailRes },
       });
     },
   },

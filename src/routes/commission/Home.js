@@ -33,6 +33,7 @@ const effects = {
   searchCust: 'app/getCustomerList',
   custRange: 'app/getCustRange',
   detail: 'commission/getCommissionDetail',
+  subscribeDetail: 'commission/getSubscribeDetail',
   record: 'commission/getApprovalRecords',
   productList: 'commission/getProductList',
   applyCustList: 'commission/getCanApplyCustList',
@@ -66,8 +67,10 @@ const mapStateToProps = state => ({
   validataLoading: state.commission.validataLoading,
   // 验证结果描述
   validateResult: state.commission.validateResult,
-  // 右侧详情
+  // 右侧批量佣金详情
   detail: state.commission.detail,
+  // 右侧咨询订阅详情
+  subscribeDetail: state.commission.subscribeDetail,
   // 审批历史记录
   approvalRecord: state.commission.approvalRecord,
   // 查询审批记录进程
@@ -92,6 +95,8 @@ const mapDispatchToProps = {
   getCustRange: getDataFunction(true, effects.custRange),
   // 获取批量佣金调整Detail
   getBatchCommissionDetail: getDataFunction(true, effects.detail),
+  // 获取咨询订阅详情Detail
+  getSubscribeDetail: getDataFunction(true, effects.subscribeDetail),
   // 获取用户审批记录
   getApprovalRecords: getDataFunction(false, effects.record),
   // 通过关键字，查询可选的已申请用户列表
@@ -125,6 +130,7 @@ export default class CommissionHome extends PureComponent {
     getAprovalUserList: PropTypes.func.isRequired,
     getCommissionList: PropTypes.func.isRequired,
     getBatchCommissionDetail: PropTypes.func.isRequired,
+    getSubscribeDetail: PropTypes.func.isRequired,
     getApprovalRecords: PropTypes.func.isRequired,
     searchCustList: PropTypes.func.isRequired,
     searchDrafter: PropTypes.func.isRequired,
@@ -133,6 +139,7 @@ export default class CommissionHome extends PureComponent {
     productList: PropTypes.array.isRequired,
     list: PropTypes.object.isRequired,
     detail: PropTypes.object.isRequired,
+    subscribeDetail: PropTypes.object.isRequired,
     approvalRecord: PropTypes.object.isRequired,
     recordLoading: PropTypes.bool.isRequired,
     listProcess: PropTypes.bool,
