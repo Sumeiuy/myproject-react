@@ -113,6 +113,7 @@ export default class modifyPrivateClient extends PureComponent {
       bottonList: [],
     };
   }
+
   componentWillMount() {
     const {
       subType,
@@ -133,7 +134,15 @@ export default class modifyPrivateClient extends PureComponent {
     });
     // 获取下一步骤按钮列表
     this.props.getBottonList({ flowId: this.props.flowId });
+
+    // 按照给出的条件 搜索查询 下一审批人列表
+    this.props.getNextApproverList({
+      approverNum: 'single',
+      btnId: this.state.btnId,
+      flowId: this.props.flowId,
+    });
   }
+
   componentWillReceiveProps(nextProps) {
     if (nextProps.bottonList && nextProps.bottonList !== this.props.bottonList) {
       this.setState({ bottonList: nextProps.bottonList });
@@ -191,16 +200,6 @@ export default class modifyPrivateClient extends PureComponent {
       } else {
         this.confirmSubmit();
       }
-    });
-  }
-
-  @autobind
-  searchNextApproverList() {
-    // 按照给出的条件 搜索查询 下一审批人列表
-    this.props.getNextApproverList({
-      approverNum: 'single',
-      btnId: this.state.btnId,
-      flowId: this.props.flowId,
     });
   }
 
@@ -302,13 +301,13 @@ export default class modifyPrivateClient extends PureComponent {
       visible: this.state.nextApproverModal,
       onOk: this.confirmSubmit,
       onCancel: () => { this.setState({ nextApproverModal: false }); },
-      onSearch: this.searchNextApproverList,
       dataSource: this.props.nextApproverList,
       columns,
       title: '选择下一审批人员',
       placeholder: '员工号/员工姓名',
       modalKey: 'nextApproverModal',
       rowKey: 'ptyMngId',
+      searchShow: false,
     };
     const btnGroupElement = (<BottonGroup
       list={this.state.bottonList}
