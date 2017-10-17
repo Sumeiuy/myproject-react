@@ -197,7 +197,11 @@ export default class CommonUpload extends PureComponent {
                               :
                                 null
                             }
-                            <em><a href={item.downloadURL}><Icon type="xiazai1" /></a></em>
+                            <em>
+                              <a href={`${request.prefix}/file/ceFileDownload?attachId=${item.attachId}&empId=${empId}&filename=${item.name}`}>
+                                <Icon type="xiazai1" />
+                              </a>
+                            </em>
                           </span>
                         </p>
                       </div>

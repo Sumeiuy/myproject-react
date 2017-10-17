@@ -22,8 +22,6 @@ import { dateFormat } from '../../utils/helper';
 
 // 子类型列表
 const childTypeList = _.filter(seibelConfig.contract.subType, v => v.label !== '全部');
-console.warn('seibelConfig.contract.subType', seibelConfig.contract.subType);
-console.warn('childTypeList', childTypeList);
 // 合约条款的表头、状态对应值
 const { contract: { titleList, status } } = seibelConfig;
 export default class Detail extends PureComponent {

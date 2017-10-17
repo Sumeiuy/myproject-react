@@ -106,7 +106,6 @@ export default class EditForm extends PureComponent {
   // 审批意见
   @autobind
   handleChangeAppraval(type, value) {
-    console.log(type, value);
     this.setState({
       appravalInfo: {
         ...this.state.appravalInfo,
@@ -139,7 +138,6 @@ export default class EditForm extends PureComponent {
   // 上传文件成功
   @autobind
   handleUploadSuccess(attachment) {
-    console.warn('上传成功', attachment);
     this.setState({
       ...this.state,
       formData: {
@@ -182,7 +180,6 @@ export default class EditForm extends PureComponent {
       divName: clauseData.divName.name, // 合作部门名称
       divValue: clauseData.value, // 合作部门code
     };
-    console.log('添加合约条款', clauseData, terms);
     this.setState({
       ...this.state,
       formData: {
@@ -214,7 +211,6 @@ export default class EditForm extends PureComponent {
   // 审批人弹出框确认按钮
   @autobind
   handleApproverModalOK(approver) {
-    console.warn('approver', approver);
     this.setState({
       appravalInfo: {
         ...this.state.appravalInfo,

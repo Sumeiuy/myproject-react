@@ -2,8 +2,8 @@
 * @Description: 合作合约新建 -基本信息
 * @Author: XuWenKang
 * @Date:   2017-09-21 15:27:31
- * @Last Modified by:   XuWenKang
- * @Last Modified time: 2017-10-12 16:20:05
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2017-10-13 17:11:50
 */
 
 import React, { PureComponent } from 'react';
@@ -60,6 +60,7 @@ export default class BaseInfoEdit extends PureComponent {
     contractNumList: PropTypes.array.isRequired,
     // 更改操作类型时重置表单数据
     onReset: PropTypes.func.isRequired,
+    getFlowStepInfo: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -84,7 +85,6 @@ export default class BaseInfoEdit extends PureComponent {
   // 更改操作类型时重置表单数据
   @autobind
   resetState() {
-    console.log('reset');
     this.setState({
       contractNum: {
         value: '',
@@ -96,13 +96,18 @@ export default class BaseInfoEdit extends PureComponent {
       remark: '',
     }, () => {
       this.transferDataToHome();
+      if (this.selectCustComponent) {
+        this.selectCustComponent.clearValue();
+      }
+      if (this.selectContractComponent) {
+        this.selectContractComponent.clearValue();
+      }
     });
   }
 
   // 通用Select Change方法
   @autobind
   handleSelectChange(key, value) {
-    console.log({ [key]: value });
     const { oldOperation } = this.state.operation;
     this.setState({
       ...this.state,
@@ -125,7 +130,6 @@ export default class BaseInfoEdit extends PureComponent {
   // 选择客户
   @autobind
   handleSelectClient(value) {
-    console.log('selectClient', value);
     this.setState({
       ...this.state,
       client: value,
@@ -134,7 +138,6 @@ export default class BaseInfoEdit extends PureComponent {
       const { operation, subType, client } = this.state;
       // 当前操作类型为“退订”并且子类型变化的时候触发合作合约编号查询
       if (operation === unsubscribe) {
-        console.warn('退订且是子类型');
         this.props.onSearchContractNum({ subType, client });
       }
     });
@@ -143,7 +146,6 @@ export default class BaseInfoEdit extends PureComponent {
   // 根据关键字查询客户
   @autobind
   handleSearchClient(v) {
-    console.log('searchClient', v);
     this.props.onSearchClient(v);
   }
 
@@ -169,7 +171,6 @@ export default class BaseInfoEdit extends PureComponent {
   // 通用 Date组件更新方法
   @autobind
   handleChangeDate(obj) {
-    console.log(obj);
     this.setState({
       ...this.state,
       [obj.name]: obj.value,
@@ -179,7 +180,6 @@ export default class BaseInfoEdit extends PureComponent {
   // 修改备注
   @autobind
   handleChangeRemark(e) {
-    console.log(e.target.value);
     this.setState({
       ...this.state,
       remark: e.target.value,
@@ -201,6 +201,8 @@ export default class BaseInfoEdit extends PureComponent {
       custId: data.client.cusId,
       // 客户类型--必填
       custType: data.client.custType,
+      // 经济客户号
+      econNum: data.client.brokerNumber,
       // 合约开始日期--订购状态下必填，退订不可编辑
       startDt: data.contractStarDate,
       // 合约有效期
@@ -211,13 +213,11 @@ export default class BaseInfoEdit extends PureComponent {
     if (data.operation === unsubscribe) {
       obj.contractNum = data.contractNum;
     }
-    console.warn('obj', obj);
     this.props.onChange(obj);
   }
 
   render() {
     const { custList, contractDetail, contractNumList } = this.props;
-    console.log('contractDetail', contractDetail);
     const { operation } = this.state;
     const contractNumComponent = operation === unsubscribe ?
       (<InfoForm label="合约编号" required>
@@ -230,6 +230,7 @@ export default class BaseInfoEdit extends PureComponent {
           emitSelectItem={this.handleSelectContractNum}
           emitToSearch={this.handleSearchContractNum}
           boxStyle={dropDownSelectBoxStyle}
+          ref={selectContractComponent => this.selectContractComponent = selectContractComponent}
         />
       </InfoForm>)
       :
@@ -304,6 +305,7 @@ export default class BaseInfoEdit extends PureComponent {
             emitSelectItem={this.handleSelectClient}
             emitToSearch={this.handleSearchClient}
             boxStyle={dropDownSelectBoxStyle}
+            ref={selectCustComponent => this.selectCustComponent = selectCustComponent}
           />
         </InfoForm>
         {contractNumComponent}
