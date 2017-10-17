@@ -108,7 +108,6 @@ export default class CreateTaskForm extends PureComponent {
         ...query,
         serveDateFrom: start,
         serveDateTo: end,
-        empId: null,
       },
     });
   }
@@ -179,7 +178,6 @@ export default class CreateTaskForm extends PureComponent {
       query: {
         ...query,
         serveSource: value,
-        empId: null,
       },
     });
   }
@@ -202,7 +200,6 @@ export default class CreateTaskForm extends PureComponent {
       query: {
         ...query,
         serveType: value,
-        empId: null,
       },
     });
   }

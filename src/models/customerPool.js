@@ -91,7 +91,7 @@ export default {
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen(({ pathname, search }) => {
-        const params = queryString.parse(search.substring(1,search.length));
+        const params = queryString.parse(search.substring(1, search.length));
         console.log('params--', params);
         const url = pathToRegexp('/customerPool/serviceLog').exec(pathname);
         console.warn('url---', url);
@@ -105,7 +105,7 @@ export default {
     },
   },
   effects: {
-    // 代办流程任务列表
+    // 代办流程任务列
     * getToDoList({ }, { call, put }) {  //eslint-disable-line
       const response = yield call(api.getToDoList);
       yield put({
