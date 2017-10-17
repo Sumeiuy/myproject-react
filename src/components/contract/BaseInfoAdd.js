@@ -85,7 +85,6 @@ export default class BaseInfoEdit extends PureComponent {
   // 更改操作类型时重置表单数据
   @autobind
   resetState() {
-    console.log('reset');
     this.setState({
       contractNum: {
         value: '',
@@ -109,7 +108,6 @@ export default class BaseInfoEdit extends PureComponent {
   // 通用Select Change方法
   @autobind
   handleSelectChange(key, value) {
-    console.log({ [key]: value });
     const { oldOperation } = this.state.operation;
     this.setState({
       ...this.state,
@@ -119,7 +117,6 @@ export default class BaseInfoEdit extends PureComponent {
       const { operation, subType, client } = this.state;
       // 当前操作类型为“退订”并且子类型变化的时候触发合作合约编号查询
       if (operation === unsubscribe && key === 'subType') {
-        console.warn('调用 onSearchContractNum');
         this.props.onSearchContractNum({ subType, client });
       }
       // 操作类型发生变化时重置所有填入的数据
@@ -133,7 +130,6 @@ export default class BaseInfoEdit extends PureComponent {
   // 选择客户
   @autobind
   handleSelectClient(value) {
-    console.log('selectClient', value);
     this.setState({
       ...this.state,
       client: value,
@@ -142,7 +138,6 @@ export default class BaseInfoEdit extends PureComponent {
       const { operation, subType, client } = this.state;
       // 当前操作类型为“退订”并且子类型变化的时候触发合作合约编号查询
       if (operation === unsubscribe) {
-        console.warn('选择客户后调用 onSearchContractNum');
         this.props.onSearchContractNum({ subType, client });
       }
     });
@@ -151,7 +146,6 @@ export default class BaseInfoEdit extends PureComponent {
   // 根据关键字查询客户
   @autobind
   handleSearchClient(v) {
-    console.log('searchClient', v);
     this.props.onSearchClient(v);
   }
 
@@ -177,7 +171,6 @@ export default class BaseInfoEdit extends PureComponent {
   // 通用 Date组件更新方法
   @autobind
   handleChangeDate(obj) {
-    console.log(obj);
     this.setState({
       ...this.state,
       [obj.name]: obj.value,
@@ -187,7 +180,6 @@ export default class BaseInfoEdit extends PureComponent {
   // 修改备注
   @autobind
   handleChangeRemark(e) {
-    console.log(e.target.value);
     this.setState({
       ...this.state,
       remark: e.target.value,
@@ -221,13 +213,11 @@ export default class BaseInfoEdit extends PureComponent {
     if (data.operation === unsubscribe) {
       obj.contractNum = data.contractNum;
     }
-    console.warn('obj', obj);
     this.props.onChange(obj);
   }
 
   render() {
     const { custList, contractDetail, contractNumList } = this.props;
-    console.log('contractDetail', contractDetail);
     const { operation } = this.state;
     const contractNumComponent = operation === unsubscribe ?
       (<InfoForm label="合约编号" required>

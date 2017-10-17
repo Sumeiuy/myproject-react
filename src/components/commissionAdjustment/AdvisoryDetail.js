@@ -6,6 +6,8 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import { autobind } from 'core-decorators';
+import _ from 'lodash';
 
 import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
@@ -17,9 +19,9 @@ import styles from './advisoryDetail.less';
 // 客户信息表表头
 const custTitleList = [
   {
-    dataIndex: 'custId',
-    key: 'custId',
-    title: '经济客户号',
+    dataIndex: 'custNum',
+    key: 'custNum',
+    title: '经纪客户号',
   },
   {
     dataIndex: 'custName',
@@ -32,13 +34,13 @@ const custTitleList = [
     title: '客户等级',
   },
   {
-    dataIndex: 'openAccDept',
-    key: 'openAccDept',
+    dataIndex: 'openDivisinoName',
+    key: 'openDivisinoName',
     title: '开户营业部',
   },
   {
-    dataIndex: 'serviceManager',
-    key: 'serviceManager',
+    dataIndex: 'serManager',
+    key: 'serManager',
     title: '服务经理',
   },
 ];
@@ -46,152 +48,34 @@ const custTitleList = [
 // 产品选择表表头
 const proTitleList = [
   {
-    dataIndex: 'proId',
-    key: 'proId',
+    dataIndex: 'prodCode',
+    key: 'prodCode',
     title: '产品代码',
   },
   {
-    dataIndex: 'proName',
-    key: 'proName',
+    dataIndex: 'aliasName',
+    key: 'aliasName',
     title: '产品名称',
   },
   {
-    dataIndex: 'riskMatchOrNot',
-    key: 'riskMatchOrNot',
+    dataIndex: 'riskMatch',
+    key: 'riskMatch',
     title: '风险是否匹配',
   },
   {
-    dataIndex: 'termMatchOrNot',
-    key: 'termMatchOrNot',
+    dataIndex: 'termMatch',
+    key: 'termMatch',
     title: '期限是否匹配',
   },
   {
-    dataIndex: 'investmentVarieties',
-    key: 'investmentVarieties',
+    dataIndex: 'prodMatch',
+    key: 'prodMatch',
     title: '投资品种是否匹配',
   },
   {
-    dataIndex: 'confirmationType',
-    key: 'confirmationType',
+    dataIndex: 'agrType',
+    key: 'agrType',
     title: '签署确认书类型',
-  },
-];
-
-// 附件测试数据模板
-const testAttachmentList = [
-  {
-    creator: '002332',
-    attachId: '{6795CB98-B0CD-4CEC-8677-3B0B9298B209}',
-    name: '新建文本文档 (3).txt',
-    size: '0',
-    createTime: '2017/09/12 13:37:45',
-    downloadURL: 'http://ceflow:8086/unstructured/downloadDocument?sessionId=675fd3be-baca-4099-8b52-bf9dde9f2b59&documentId={6795CB98-B0CD-4CEC-8677-3B0B9298B209}',
-    realDownloadURL: '/attach/download?filename=%E6%96%B0%E5%BB%BA%E6%96%87%E6%9C%AC%E6%96%87%E6%A1%A3+%283%29.txt&attachId={6795CB98-B0CD-4CEC-8677-3B0B9298B209',
-  },
-  {
-    creator: '002332',
-    attachId: '{2EF837DE-508C-4FCA-93B8-99CEA68DCB0D}',
-    name: '测试.docx',
-    size: '11',
-    createTime: '2017/09/12 11:53:36',
-    downloadURL: 'http://ceflow:8086/unstructured/downloadDocument?sessionId=675fd3be-baca-4099-8b52-bf9dde9f2b59&documentId={2EF837DE-508C-4FCA-93B8-99CEA68DCB0D}',
-    realDownloadURL: '/attach/download?filename=%E6%B5%8B%E8%AF%95.docx&attachId={2EF837DE-508C-4FCA-93B8-99CEA68DCB0D',
-  },
-  {
-    creator: '002332',
-    attachId: '{24C098F0-9DE3-4DC6-9E7D-FECE683E4B6F}',
-    name: '生产sql和修改后sql.txt',
-    size: '2',
-    createTime: '2017/09/12 11:55:32',
-    downloadURL: 'http://ceflow:8086/unstructured/downloadDocument?sessionId=675fd3be-baca-4099-8b52-bf9dde9f2b59&documentId={24C098F0-9DE3-4DC6-9E7D-FECE683E4B6F}',
-    realDownloadURL: '/attach/download?filename=%E7%94%9F%E4%BA%A7sql%E5%92%8C%E4%BF%AE%E6%94%B9%E5%90%8Esql.txt&attachId={24C098F0-9DE3-4DC6-9E7D-FECE683E4B6F',
-  },
-];
-
-// 产品选择表单测试数据模板
-const testProList = [
-  {
-    key: 1,
-    proId: 'SP001',
-    proName: '成交回报（短信）',
-    riskMatchOrNot: '是',
-    termMatchOrNot: '是',
-    investmentVarieties: '是',
-    confirmationType: '未知',
-    children: [
-      {
-        key: '001',
-        proId: '111',
-        proName: '成交',
-        riskMatchOrNot: '是',
-        termMatchOrNot: '是',
-        investmentVarieties: '是',
-        confirmationType: '未知',
-      },
-      {
-        key: '002',
-        proId: '112',
-        proName: '成交',
-        riskMatchOrNot: '是',
-        termMatchOrNot: '是',
-        investmentVarieties: '是',
-        confirmationType: '未知',
-      },
-    ],
-  },
-  {
-    key: 2,
-    proId: 'SP002',
-    proName: '量价异动警告（短信）',
-    riskMatchOrNot: '是',
-    termMatchOrNot: '是',
-    investmentVarieties: '是',
-    confirmationType: '未知',
-  },
-  {
-    key: 3,
-    proId: 'SP003',
-    proName: '成交回报（短信）',
-    riskMatchOrNot: '是',
-    termMatchOrNot: '是',
-    investmentVarieties: '是',
-    confirmationType: '未知',
-  },
-];
-
-// 审批记录测试模板
-const testApproveList = [
-  {
-    id: '1',
-    approver: '002332',
-    time: '2017-09-21 13:39:21',
-    stepName: '流程发起',
-    status: '同意',
-    statusDescription: '这里是审批意见，有很多的意见，说不完的意见',
-  },
-  {
-    id: '2',
-    approver: '002332',
-    time: '2017-09-21 13:39:21',
-    stepName: '流程发起',
-    status: '同意',
-    statusDescription: '这里是审批意见，有很多的意见，说不完的意见',
-  },
-  {
-    id: '3',
-    approver: '002332',
-    time: '2017-09-21 13:39:21',
-    stepName: '流程发起',
-    status: '同意',
-    statusDescription: '这里是审批意见，有很多的意见，说不完的意见',
-  },
-  {
-    id: '4',
-    approver: '002332',
-    time: '2017-09-21 13:39:21',
-    stepName: '流程发起',
-    status: '同意',
-    statusDescription: '这里是审批意见，有很多的意见，说不完的意见',
   },
 ];
 
@@ -206,24 +90,79 @@ export default class AdvisoryDetail extends PureComponent {
     data: {},
   }
 
-  render() {
-    const { data, location: { query: { currentId = '' } } } = this.props;
+  @autobind
+  createCustList(data) {
     const {
-      custList = [],
-      businessType,
+      custNum,
+      custName,
+      custLevel,
+      openDivisinoName,
+      serviceManager,
+      serviceManagerLogin,
+    } = data;
+    return [{
+      custNum,
+      custName,
+      custLevel,
+      openDivisinoName,
+      serManager: `${serviceManager}(${serviceManagerLogin})`,
+    }];
+  }
+
+  @autobind
+  convertNY2ZN(v) {
+    return v === 'N' ? '否' : '是';
+  }
+
+  @autobind
+  changeProductJson(product) {
+    const { riskMatch, termMatch, prodMatch, prodCode, aliasName, agrType } = product;
+    return {
+      prodCode,
+      aliasName,
+      agrType,
+      riskMatch: this.convertNY2ZN(riskMatch),
+      termMatch: this.convertNY2ZN(termMatch),
+      prodMatch: this.convertNY2ZN(prodMatch),
+    };
+  }
+
+  @autobind
+  createProList(data) {
+    const newProductLiet = data.map((product) => {
+      const { subItem } = product;
+      const newProduct = this.changeProductJson(product);
+      let children = null;
+      if (!_.isEmpty(subItem)) {
+        // 存在子产品
+        children = subItem.map(this.changeProductJson);
+        return { ...newProduct, children };
+      }
+      return newProduct;
+    });
+    return newProductLiet;
+  }
+
+
+  render() {
+    const { data: { base, attachmentList, approvalHistory } } = this.props;
+    if (_.isEmpty(base)) return null;
+    const {
+      orderId,
+      operationType,
       comments,
       divisionName,
       createdByName,
       createdByLogin,
       created,
       status,
-      attachmentList = testAttachmentList,
-      proList = testProList,
-      approveList = testApproveList,
-    } = data;
-
-    const bugTitle = `编号${currentId}`;
+      item,
+    } = base;
+    const custList = this.createCustList(base);
+    const proList = this.createProList(item);
+    const bugTitle = `编号${orderId}`;
     const drafter = `${divisionName} - ${createdByName} (${createdByLogin})`;
+
     return (
       <div className={styles.detailBox}>
         <div className={styles.inner}>
@@ -233,7 +172,7 @@ export default class AdvisoryDetail extends PureComponent {
             <div className={styles.modContent}>
               <ul className={styles.propertyList}>
                 <li className={styles.item}>
-                  <InfoItem label="子类型" value={businessType} />
+                  <InfoItem label="子类型" value={operationType} />
                 </li>
                 <li className={styles.item}>
                   <InfoItem label="备注" value={comments} />
@@ -263,9 +202,6 @@ export default class AdvisoryDetail extends PureComponent {
               <CommonTable
                 data={custList}
                 titleList={custTitleList}
-                pagination={{
-                  pageSize: 5,
-                }}
               />
             </div>
           </div>
@@ -290,7 +226,11 @@ export default class AdvisoryDetail extends PureComponent {
           <div id="approvalRecord" className={styles.module}>
             <InfoTitle head="审批记录" />
             <ApproveList
-              data={approveList}
+              data={approvalHistory}
+              nowStep={{
+                stepName: '营业部负责人审核',
+                handleName: '鲍佳佳',
+              }}
             />
           </div>
         </div>

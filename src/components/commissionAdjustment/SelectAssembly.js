@@ -14,7 +14,6 @@ const Option = AutoComplete.Option;
 export default class SelectAssembly extends PureComponent {
 
   static propTypes = {
-    labelName: PropTypes.string.isRequired,
     dataSource: PropTypes.array,
     onSearchValue: PropTypes.func.isRequired,
     width: PropTypes.string,
@@ -92,7 +91,7 @@ export default class SelectAssembly extends PureComponent {
 
 
   render() {
-    const { labelName, dataSource, width } = this.props;
+    const { dataSource, width } = this.props;
     const { inputValue, typeStyle } = this.state;
     const options = dataSource.map(opt => (
       <Option key={opt.custId} value={`${opt.custName}（${opt.custId}） - ${opt.custType}`}>
@@ -101,9 +100,8 @@ export default class SelectAssembly extends PureComponent {
     ));
     return (
       <div className={styles.selectSearchBox}>
-        <span className={styles.labelName}>{`${labelName}：`}</span>
         <AutoComplete
-          placeholder="工号/姓名"
+          placeholder="客户号/客户姓名"
           className={styles.searchBox}
           dropdownClassName={styles.searchDropDown}
           dropdownStyle={{ width }}

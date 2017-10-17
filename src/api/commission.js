@@ -18,5 +18,9 @@ export default function commission(api) {
     validateCustInfo: query => api.post('/groovynoauth/fsp/biz/chgcommsion/validateBatCommChgCust', query),
     // 提交批量佣金调整
     submitBatchCommission: query => api.post('/groovynoauth/fsp/biz/chgcommsion/saveBatchJustCommionInfo', query),
+    // 查询咨询订阅详情接口
+    queryConsultSubscribeDetail: query => api.post('/groovynoauth/fsp/biz/mailsubscription/saveMailSubscriptionInfo', query),
+    // 获取附件信息
+    getAttachment: query => api.post('/file/ceFileList', query),
   };
 }

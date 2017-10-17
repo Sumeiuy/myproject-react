@@ -132,7 +132,6 @@ export default class EditForm extends PureComponent {
   // 选择部门
   @autobind
   handleSelectDepartment(v) {
-    console.log(v);
     this.setState({
       ...this.state,
       department: v,
@@ -142,7 +141,6 @@ export default class EditForm extends PureComponent {
   // 筛选部门
   @autobind
   handleSearchDepartment(v) {
-    console.log(v);
     this.props.searchDepartment(v);
   }
 

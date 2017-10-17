@@ -42,11 +42,12 @@ export default class TableDialog extends Component {
     rowKey: PropTypes.string,
     columns: PropTypes.array.isRequired,
     title: PropTypes.string.isRequired,
-    onSearch: PropTypes.func.isRequired,
+    onSearch: PropTypes.func,
     visible: PropTypes.bool.isRequired,
     onOk: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired,
     modalKey: PropTypes.string.isRequired,
+    searchShow: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -55,6 +56,8 @@ export default class TableDialog extends Component {
     okText: '确定',
     cancelText: '取消',
     rowKey: '',
+    searchShow: true,
+    onSearch: () => {},
   }
 
   constructor(props) {
@@ -136,6 +139,7 @@ export default class TableDialog extends Component {
       dataSource,
       visible,
       rowKey,
+      searchShow,
     } = this.props;
 
     if (!visible) {
@@ -157,10 +161,15 @@ export default class TableDialog extends Component {
         cancelText={cancelText}
         wrapClassName={styles.modalContainer}
       >
-        <Search
-          placeholder={placeholder}
-          onSearch={(value) => { this.handleSearch(value); }}
-        />
+        {
+          searchShow ?
+            <Search
+              placeholder={placeholder}
+              onSearch={(value) => { this.handleSearch(value); }}
+            />
+            :
+            null
+        }
         <Table
           rowKey={record => record[rowKey]}
           rowSelection={rowSelection}

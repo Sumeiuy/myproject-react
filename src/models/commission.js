@@ -17,6 +17,8 @@ export default {
     approvalUserList: [],
     // 批量佣金右侧详情
     detail: {},
+    // 咨询订阅详情
+    subscribeDetail: {},
     // 单个用户的审批记录
     approvalRecord: {},
     // 查询审批记录流程状态
@@ -69,6 +71,21 @@ export default {
         detail: {
           ...detailResult,
           custList: listResult,
+        },
+      };
+    },
+
+    getSubscribeDetailSuccess(state, action) {
+      const { payload: { detailRes, attachmentRes, approvalRes } } = action;
+      const detailResult = detailRes.resultData;
+      const attachmentResult = attachmentRes.resultData;
+      const approvalResult = approvalRes.resultData;
+      return {
+        ...state,
+        subscribeDetail: {
+          base: detailResult,
+          attachmentList: attachmentResult,
+          approvalHistory: approvalResult,
         },
       };
     },
@@ -233,6 +250,28 @@ export default {
       yield put({
         type: 'submitBatchSuccess',
         payload: response,
+      });
+    },
+
+    // 查询咨询订阅详情数据
+    * getSubscribeDetail({ payload }, { call, put }) {
+      const detailRes = yield call(api.queryConsultSubscribeDetail,
+        {
+          action: 'query',
+          applyType: 'Internal',
+          operationType: 'SP Purchase',
+          ...payload,
+        });
+      // 通过查询到的详情数据的attachmentNum获取附件信息
+      const detailRD = detailRes.resultData;
+      const attachmentRes = yield call(api.getAttachment, { attachment: detailRD.attachmentNum });
+      const approvalRes = yield call(api.querySingleCustApprovalRecord, {
+        flowCode: detailRD.flowCode,
+      });
+      // TODO 还差一个当前审批步骤的接口
+      yield put({
+        type: 'getSubscribeDetailSuccess',
+        payload: { detailRes, attachmentRes, approvalRes },
       });
     },
   },

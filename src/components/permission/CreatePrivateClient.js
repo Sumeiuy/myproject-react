@@ -75,6 +75,15 @@ export default class CreatePrivateClient extends PureComponent {
     };
   }
 
+  componentWillMount() {
+    // 按照给出的条件 搜索查询 下一审批人列表
+    this.props.getNextApproverList({
+      approverNum: 'single',
+      btnId: this.state.btnId,
+      flowId: this.props.flowId,
+    });
+  }
+
   componentWillReceiveProps(nextProps) {
     if (nextProps.hasServerPersonList !== this.props.hasServerPersonList) {
       this.setState({ serverInfo: nextProps.hasServerPersonList });
@@ -129,6 +138,7 @@ export default class CreatePrivateClient extends PureComponent {
           customer: {
             custName: value.custName,
             custNumber: value.cusId,
+            brokerNumber: value.brokerNumber,
           },
           custId: value.cusId,
           custType: value.custType,
@@ -167,21 +177,11 @@ export default class CreatePrivateClient extends PureComponent {
       type: '01',
       orgId,
       custName: customer.custName,
-      custNumber: customer.custNumber,
+      custNumber: customer.brokerNumber,
       currentQuery: query,
     };
     this.props.getCreateCustApplication(queryConfig);
     this.setState({ nextApproverModal: false });
-  }
-
-  @autobind
-  searchNextApproverList() {
-    // 按照给出的条件 搜索查询 下一审批人列表
-    this.props.getNextApproverList({
-      approverNum: 'single',
-      btnId: this.state.btnId,
-      flowId: this.props.flowId,
-    });
   }
 
   render() {
@@ -189,13 +189,13 @@ export default class CreatePrivateClient extends PureComponent {
       visible: this.state.nextApproverModal,
       onOk: this.confirmSubmit,
       onCancel: () => { this.setState({ nextApproverModal: false }); },
-      onSearch: this.searchNextApproverList,
       dataSource: this.props.nextApproverList,
       columns,
       title: '选择下一审批人员',
       placeholder: '员工号/员工姓名',
       modalKey: 'nextApproverModal',
       rowKey: 'ptyMngId',
+      searchShow: false,
     };
 
     return (

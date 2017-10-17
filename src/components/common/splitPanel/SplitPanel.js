@@ -22,13 +22,14 @@ export default class SplitPanel extends PureComponent {
   static propTypes = {
     topPanel: PropTypes.element.isRequired,
     leftPanel: PropTypes.element.isRequired,
-    rightPanel: PropTypes.element.isRequired,
+    rightPanel: PropTypes.element,
     leftListClassName: PropTypes.string,
     isEmpty: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
     leftListClassName: 'pageCommonList',
+    rightPanel: null,
   }
 
   constructor(props) {

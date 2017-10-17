@@ -13,6 +13,7 @@ import { message } from 'antd';
 
 import SplitPanel from '../../components/common/splitPanel/SplitPanel';
 import Detail from '../../components/commissionAdjustment/Detail';
+import AdvisoryDetail from '../../components/commissionAdjustment/AdvisoryDetail';
 import ApprovalRecordBoard from '../../components/commissionAdjustment/ApprovalRecordBoard';
 import CreateNewApprovalBoard from '../../components/commissionAdjustment/CreateNewApprovalBoard';
 import CommissionHeader from '../../components/common/biz/SeibelHeader';
@@ -33,6 +34,7 @@ const effects = {
   searchCust: 'app/getCustomerList',
   custRange: 'app/getCustRange',
   detail: 'commission/getCommissionDetail',
+  subscribeDetail: 'commission/getSubscribeDetail',
   record: 'commission/getApprovalRecords',
   productList: 'commission/getProductList',
   applyCustList: 'commission/getCanApplyCustList',
@@ -66,8 +68,10 @@ const mapStateToProps = state => ({
   validataLoading: state.commission.validataLoading,
   // 验证结果描述
   validateResult: state.commission.validateResult,
-  // 右侧详情
+  // 右侧批量佣金详情
   detail: state.commission.detail,
+  // 右侧咨询订阅详情
+  subscribeDetail: state.commission.subscribeDetail,
   // 审批历史记录
   approvalRecord: state.commission.approvalRecord,
   // 查询审批记录进程
@@ -92,6 +96,8 @@ const mapDispatchToProps = {
   getCustRange: getDataFunction(true, effects.custRange),
   // 获取批量佣金调整Detail
   getBatchCommissionDetail: getDataFunction(true, effects.detail),
+  // 获取咨询订阅详情Detail
+  getSubscribeDetail: getDataFunction(true, effects.subscribeDetail),
   // 获取用户审批记录
   getApprovalRecords: getDataFunction(false, effects.record),
   // 通过关键字，查询可选的已申请用户列表
@@ -125,6 +131,7 @@ export default class CommissionHome extends PureComponent {
     getAprovalUserList: PropTypes.func.isRequired,
     getCommissionList: PropTypes.func.isRequired,
     getBatchCommissionDetail: PropTypes.func.isRequired,
+    getSubscribeDetail: PropTypes.func.isRequired,
     getApprovalRecords: PropTypes.func.isRequired,
     searchCustList: PropTypes.func.isRequired,
     searchDrafter: PropTypes.func.isRequired,
@@ -133,6 +140,7 @@ export default class CommissionHome extends PureComponent {
     productList: PropTypes.array.isRequired,
     list: PropTypes.object.isRequired,
     detail: PropTypes.object.isRequired,
+    subscribeDetail: PropTypes.object.isRequired,
     approvalRecord: PropTypes.object.isRequired,
     recordLoading: PropTypes.bool.isRequired,
     listProcess: PropTypes.bool,
@@ -155,6 +163,7 @@ export default class CommissionHome extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
+      currentSubtype: '',
       isEmpty: true,
       approvalBoard: false,
       createApprovalBoard: false,
@@ -185,6 +194,11 @@ export default class CommissionHome extends PureComponent {
     getCommissionList({ ...params, type: pageType });
   }
 
+  componentDidMount() {
+    // 给元素添加该class修改滚动条颜色，以避免其他页面受影响
+    document.querySelector('body').classList.add('selfScrollBarStyle');
+  }
+
   componentWillReceiveProps(nextProps) {
     const { listProcess: prevLP } = this.props;
     const { listProcess: nextLP, list, location: { query: { currentId } } } = nextProps;
@@ -193,8 +207,11 @@ export default class CommissionHome extends PureComponent {
         // 表示左侧列表获取完毕
         // 因此此时获取Detail
         const item = _.filter(list.resultData, o => String(o.id) === String(currentId))[0];
-        const { business1, subType: st } = item;
-        this.getDetail4Subtye(st, { batchNum: business1 });
+        const { subType: st } = item;
+        this.setState({
+          currentSubtype: st,
+        });
+        this.getDetail4Subtye(item);
       }
     }
     const { location: { query: nextQuery = EMPTY_OBJECT } } = nextProps;
@@ -262,12 +279,28 @@ export default class CommissionHome extends PureComponent {
     }
   }
 
+  componentWillUnmount() {
+    // 给元素添加该class修改滚动条颜色，以避免其他页面受影响
+    document.querySelector('body').classList.remove('selfScrollBarStyle');
+  }
+
   // 查询佣金调整4个子类型的详情信息
-  getDetail4Subtye(st, params) {
-    const { getBatchCommissionDetail } = this.props;
+  getDetail4Subtye(record) {
+    const { subType: st, id, business1, custType } = record;
+    const {
+      getBatchCommissionDetail,
+      getSubscribeDetail,
+    } = this.props;
     switch (st) {
       case comsubs.batch:
-        getBatchCommissionDetail(params);
+        getBatchCommissionDetail({ batchNum: business1 });
+        break;
+      case comsubs.single:
+        break;
+      case comsubs.subscribe:
+        getSubscribeDetail({ orderId: id, type: custType });
+        break;
+      case comsubs.unsubscribe:
         break;
       default:
         break;
@@ -282,15 +315,50 @@ export default class CommissionHome extends PureComponent {
   }
 
   /**
-   * 点击列表每条的时候对应请求详情
+   * 根据子类型获取不同的Detail组件
+   * @param  {string} st 子类型
    */
   @autobind
-  handleListRowClick({ business1, id, subType: st }) {
+  getDetailComponentBySubType(st) {
+    const { detail, location, subscribeDetail } = this.props;
+    let detailComponent = null;
+    switch (st) {
+      case comsubs.batch:
+        detailComponent = (
+          <Detail
+            data={detail}
+            location={location}
+            checkApproval={this.getApprovalBoardCustInfo}
+          />
+        );
+        break;
+      case comsubs.single:
+        break;
+      case comsubs.subscribe:
+        detailComponent = (
+          <AdvisoryDetail
+            data={subscribeDetail}
+          />
+        );
+        break;
+      case comsubs.unsubscribe:
+        break;
+      default:
+        break;
+    }
+    return detailComponent;
+  }
+
+  // 点击列表每条的时候对应请求详情
+  @autobind
+  handleListRowClick(record) {
+    const { id, subType: st } = record;
     const {
       location: { query: { currentId } },
     } = this.props;
     if (currentId === id) return;
-    this.getDetail4Subtye(st, { batchNum: business1 });
+    this.setState({ currentSubtype: st });
+    this.getDetail4Subtye(record);
   }
 
   /**
@@ -378,7 +446,6 @@ export default class CommissionHome extends PureComponent {
       location,
       replace,
       list,
-      detail,
       filterDrafterList,
       filterCustList,
       custRange,
@@ -400,7 +467,7 @@ export default class CommissionHome extends PureComponent {
     }
     const isEmpty = _.isEmpty(list.resultData);
     // 此处需要提供一个方法给返回的接口查询设置是否查询到数据
-    const { approvalBoard, createApprovalBoard } = this.state;
+    const { approvalBoard, createApprovalBoard, currentSubtype } = this.state;
     const topPanel = (
       <CommissionHeader
         location={location}
@@ -423,17 +490,11 @@ export default class CommissionHome extends PureComponent {
         location={location}
         columns={this.constructTableColumns()}
         clickRow={this.handleListRowClick}
-        backKeys={['business1', 'flowId', 'subType']}
       />
     );
+    // TODO 此处需要根据不同的子类型使用不同的Detail组件
+    const rightPanel = this.getDetailComponentBySubType(currentSubtype);
 
-    const rightPanel = (
-      <Detail
-        data={detail}
-        location={location}
-        checkApproval={this.getApprovalBoardCustInfo}
-      />
-    );
     return (
       <div className="feedbackbox">
         <SplitPanel

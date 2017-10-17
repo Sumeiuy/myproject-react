@@ -12,8 +12,6 @@ export default function contract(api) {
     getAttachmentList: query => api.post('/file/ceFileList', query),
     // 删除附件
     deleteAttachment: query => api.post('/file/ceFileDelete', query),
-    // 下载附件
-    fileDownload: query => api.get('/file/ceFileDownload', query),
     // 保存合作合约
     saveContractData: query => api.post('/groovynoauth/fsp/contract/cooper/saveContract', query),
     // 查询合作合约编号
