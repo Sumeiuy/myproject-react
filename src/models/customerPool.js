@@ -6,6 +6,7 @@
 import _ from 'lodash';
 import { customerPool as api } from '../api';
 import { toastM } from '../utils/sagaEffects';
+import queryString from 'querystring';
 
 const EMPTY_LIST = [];
 // const EMPTY_OBJECT = {};
@@ -85,7 +86,20 @@ export default {
     serviceLogData: [], // 360服务记录查询数据
     serviceLogMoreData: [], // 360服务记录查询更多数据
   },
-  subscriptions: {},
+  subscriptions: {
+    setup({ dispatch, history }) {
+      history.listen(({ search }) => {
+        const params = queryString.parse(search);
+        console.log(params);
+        if (!_.isEmpty(params.serveSource)) { // 根据必有的参数判断是否是360服务记录页面的location变化
+          dispatch({
+            type: 'getServiceLog',
+            payload: params,
+          });
+        }
+      });
+    },
+  },
   effects: {
     // 代办流程任务列表
     * getToDoList({ }, { call, put }) {  //eslint-disable-line
