@@ -24,40 +24,6 @@ export default class ApproveList extends PureComponent {
 
   render() {
     const { data, nowStep } = this.props;
-    // const test = [
-    //   {
-    //     id: '1',
-    //     approver: '002332',
-    //     time: '2017-09-21 13:39:21',
-    //     stepName: '流程发起',
-    //     status: '同意',
-    //     statusDescription: '这里是审批意见，有很多的意见，说不完的意见',
-    //   },
-    //   {
-    //     id: '2',
-    //     approver: '002332',
-    //     time: '2017-09-21 13:39:21',
-    //     stepName: '流程发起',
-    //     status: '同意',
-    //     statusDescription: '这里是审批意见，有很多的意见，说不完的意见',
-    //   },
-    //   {
-    //     id: '3',
-    //     approver: '002332',
-    //     time: '2017-09-21 13:39:21',
-    //     stepName: '流程发起',
-    //     status: '同意',
-    //     statusDescription: '这里是审批意见，有很多的意见，说不完的意见',
-    //   },
-    //   {
-    //     id: '4',
-    //     approver: '002332',
-    //     time: '2017-09-21 13:39:21',
-    //     stepName: '流程发起',
-    //     status: '同意',
-    //     statusDescription: '这里是审批意见，有很多的意见，说不完的意见',
-    //   },
-    // ];
     return (
       <div className={styles.approveWrapper}>
         {
@@ -66,7 +32,7 @@ export default class ApproveList extends PureComponent {
               <span>当前步骤：</span>
               <span>{nowStep.stepName}</span>
               <span>当前审批人：</span>
-              <span>{nowStep.stepName}</span>
+              <span>{nowStep.handleName}</span>
             </div>
           :
             null

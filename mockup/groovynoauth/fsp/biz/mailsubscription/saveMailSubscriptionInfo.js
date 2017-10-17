@@ -10,8 +10,8 @@ exports.response = function (req, res) {
       "resultData": {
         "orderId": "12332",
         "flowCode": "2322",
-        "operationType": "SP Purchase",
-        "workFlowName": "服务订阅子流程",
+        "operationType": "资讯订阅",
+        "workFlowName": "资讯订阅子流程",
         "workFlowNumber":"34445",
         "nextProcessLogin": "11111",
         "prodCode": "22222",
