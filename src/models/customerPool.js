@@ -92,6 +92,7 @@ export default {
     setup({ dispatch, history }) {
       history.listen(({ pathname, search }) => {
         const params = queryString.parse(search.substring(1, search.length));
+        const { pageSize, serveDateToPaged } = params;          
         console.log('params--', params);
         const url = pathToRegexp('/customerPool/serviceLog').exec(pathname);
         console.warn('url---', url);
