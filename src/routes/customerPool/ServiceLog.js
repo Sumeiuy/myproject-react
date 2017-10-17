@@ -108,6 +108,7 @@ export default class CreateTaskForm extends PureComponent {
         ...query,
         serveDateFrom: start,
         serveDateTo: end,
+        empId: null,
       },
     });
   }
@@ -178,6 +179,7 @@ export default class CreateTaskForm extends PureComponent {
       query: {
         ...query,
         serveSource: value,
+        empId: null,
       },
     });
   }
@@ -200,6 +202,7 @@ export default class CreateTaskForm extends PureComponent {
       query: {
         ...query,
         serveType: value,
+        empId: null,
       },
     });
   }
@@ -209,7 +212,6 @@ export default class CreateTaskForm extends PureComponent {
     const { serveAllSource, serveAllType } = dict;
     const { logData, showBtn } = this.state;
     console.warn('dict--', dict);
-    console.log(this.props);
     return (
       <div className={styles.serviceInner}>
         <div

@@ -5,6 +5,7 @@
  */
 import _ from 'lodash';
 import queryString from 'querystring';
+import pathToRegexp from 'path-to-regexp';
 import { customerPool as api } from '../api';
 import { toastM } from '../utils/sagaEffects';
 
@@ -89,10 +90,12 @@ export default {
   },
   subscriptions: {
     setup({ dispatch, history }) {
-      history.listen(({ search }) => {
-        const params = queryString.parse(search);
-        console.log(params);
-        if (!_.isEmpty(params.serveSource)) { // 根据必有的参数判断是否是360服务记录页面的location变化
+      history.listen(({ pathname, search }) => {
+        const params = queryString.parse(search.substring(1,search.length));
+        console.log('params--', params);
+        const url = pathToRegexp('/customerPool/serviceLog').exec(pathname);
+        console.warn('url---', url);
+        if (url) { // 根据必有的参数判断是否是360服务记录页面的location变化
           dispatch({
             type: 'getServiceLog',
             payload: params,

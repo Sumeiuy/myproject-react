@@ -104,6 +104,7 @@ export default class CreateTaskForm extends PureComponent {
   }
   // @autobind
   onSearchChange = (value, trigger) => {
+    console.log('onSearchChange', value, trigger);
     const dataSource = trigger === '$' ? users : [];
     this.setState({
       suggestions: dataSource.filter(item => item.indexOf(value) !== -1),
@@ -164,6 +165,7 @@ export default class CreateTaskForm extends PureComponent {
     // console.log(location);
     form.validateFields((err, values) => {
       if (!err) {
+        console.warn('templetDesc-----', values.templetDesc);
         values.closingDate = moment(values.closingDate).format('YYYY-MM-DD');// eslint-disable-line
         values.triggerDate = moment(values.triggerDate).format('YYYY-MM-DD');// eslint-disable-line
         values.templetDesc = toString(values.templetDesc);// eslint-disable-line

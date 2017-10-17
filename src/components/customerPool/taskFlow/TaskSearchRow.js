@@ -102,7 +102,6 @@ export default class TaskSearchRow extends PureComponent {
     const { onChange } = this.props;
     onChange(e.target.value);
   }
-
   @autobind
   handleSeeCust() {
     console.log(1);
@@ -202,7 +201,6 @@ export default class TaskSearchRow extends PureComponent {
       visible,
     } = this.state;
     const titleColumn = this.renderColumnTitle();
-    // const actionSource = this.renderActionSource();
     return (
       <div>
         <RadioGroup name="radiogroup" onChange={this.change}>
