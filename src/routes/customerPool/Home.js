@@ -16,10 +16,10 @@ import { optionsMap } from '../../config';
 import TabsExtra from '../../components/customerPool/home/TabsExtra';
 import PerformanceIndicators from '../../components/customerPool/home/PerformanceIndicators';
 import ManageIndicators from '../../components/customerPool/home/ManageIndicators';
+import Viewpoint from '../../components/customerPool/home/Viewpoint';
 import ToBeDone from '../../components/customerPool/home/ToBeDone';
 import { helper } from '../../utils';
 import Search from '../../components/customerPool/home/Search';
-import Viewpoint from '../../components/customerPool/home/Viewpoint';
 import styles from './home.less';
 
 const TabPane = Tabs.TabPane;
@@ -39,7 +39,7 @@ const effects = {
   getHistoryWdsList: 'customerPool/getHistoryWdsList',
   clearSearchHistoryList: 'customerPool/clearSearchHistoryList',
   saveSearchVal: 'customerPool/saveSearchVal',
-  getViewpoints: 'customerPool/getViewpoints',
+  getInformation: 'customerPool/getInformation',
   getHSRate: 'customerPool/getHSRate',
   getPerformanceIndicators: 'customerPool/getPerformanceIndicators',
 };
@@ -63,7 +63,7 @@ const mapStateToProps = state => ({
   historyWdsList: state.customerPool.historyWdsList, // 历史搜索
   clearState: state.customerPool.clearState, // 清除历史列表
   searchHistoryVal: state.customerPool.searchHistoryVal, // 保存搜索内容
-  viewpoints: state.customerPool.viewpoints, // 首席投顾观点
+  information: state.customerPool.information, // 首席投顾观点
   performanceIndicators: state.customerPool.performanceIndicators, // 绩效指标
   hsRate: state.customerPool.hsRate, // 沪深归集率（经营指标）
 });
@@ -71,7 +71,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   getHSRate: fetchDataFunction(true, effects.getHSRate),
   getPerformanceIndicators: fetchDataFunction(true, effects.getPerformanceIndicators),
-  getViewpoints: fetchDataFunction(true, effects.getViewpoints),
+  getInformation: fetchDataFunction(true, effects.getInformation),
   getToBeDone: fetchDataFunction(true, effects.toBeTone),
   getManageIndicators: fetchDataFunction(true, effects.manageIndicators),
   getHotPossibleWds: fetchDataFunction(false, effects.getHotPossibleWds),
@@ -111,8 +111,8 @@ export default class Home extends PureComponent {
     historyWdsList: PropTypes.array,
     clearState: PropTypes.object,
     searchHistoryVal: PropTypes.string,
-    getViewpoints: PropTypes.func.isRequired,
-    viewpoints: PropTypes.array,
+    getInformation: PropTypes.func.isRequired,
+    information: PropTypes.object,
     performanceIndicators: PropTypes.array,
     getPerformanceIndicators: PropTypes.func.isRequired,
     hsRate: PropTypes.string,
@@ -133,7 +133,7 @@ export default class Home extends PureComponent {
     historyWdsList: EMPTY_LIST,
     clearState: EMPTY_OBJECT,
     searchHistoryVal: '',
-    viewpoints: EMPTY_LIST,
+    information: EMPTY_OBJECT,
     performanceIndicators: EMPTY_LIST,
     hsRate: '',
   }
@@ -324,7 +324,7 @@ export default class Home extends PureComponent {
   handleGetAllInfo(begin, end, cycleSelect) {
     const { fspOrgId } = this.state;
     const {
-      getViewpoints,
+      getInformation,
       getToBeDone,
       getHotWds,
       getHistoryWdsList,
@@ -341,8 +341,9 @@ export default class Home extends PureComponent {
     getHistoryWdsList({ orgId, empNo });
     // 待办事项
     getToBeDone();
+    console.log('########getInformation##########');
     // 首席投顾观点
-    getViewpoints();
+    getInformation({ curPageNum: 1, pageSize: 18 });
     // 指标
     this.getIndicators({ begin, end, orgId, cycleSelect });
     // 沪深归集率（经营指标）
@@ -588,7 +589,7 @@ export default class Home extends PureComponent {
       historyWdsList,
       clearState,
       searchHistoryVal,
-      viewpoints,
+      information,
       performanceIndicators,
       hsRate,
     } = this.props;
@@ -641,7 +642,7 @@ export default class Home extends PureComponent {
           </div>
           <div className={styles.viewpoint}>
             <Viewpoint
-              dataSource={viewpoints}
+              information={information}
               push={push}
             />
           </div>

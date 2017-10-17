@@ -108,7 +108,7 @@ const getBgItem = ({
         color: '#4a4a4a',
         formatter: (params) => {
           if (params.value !== 0) {
-            return `${maxValue - params.value}%`;
+            return `${(maxValue - params.value).toFixed(2)}%`;
           }
           return '';
         },

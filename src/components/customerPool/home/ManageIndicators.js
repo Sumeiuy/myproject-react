@@ -6,7 +6,6 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { Row, Col } from 'antd';
-import _ from 'lodash';
 
 import RectFrame from './RectFrame';
 import IECharts from '../../IECharts';
@@ -22,7 +21,9 @@ import {
   getClientsNumber,
   getTradingVolume,
   // getServiceIndicatorOfManage,
-} from './HomeIndicators';
+  filterEmptyToInteger,
+  filterEmptyToNumber,
+} from './homeIndicators';
 
 export default class PerformanceIndicators extends PureComponent {
   static propTypes = {
@@ -47,57 +48,42 @@ export default class PerformanceIndicators extends PureComponent {
       push,
       location,
     } = this.props;
+
+    // 字段语义，在mock文件内：/mockup/groovynoauth/fsp/emp/kpi/queryEmpKPIs.js
     const {
-      motOkMnt,
-      motTotMnt,
-      taskCust,
-      totCust,
-      cftCust,
-      ttfCust,
-      rzrqCust,
-      shHkCust,
-      szHkCust,
-      optCust,
-      hkCust,
-      otcTranAmt,
-      fundTranAmt,
-      finaTranAmt,
-      privateTranAmt,
-      purAddCustaset,
-      purRakeGjpdt,
-      tranAmtBasicpdt,
-      tranAmtTotpdt,
-      purAddCust,
-      newProdCust,
-      purAddNoretailcust,
-      purAddHighprodcust,
+      motOkMnt, motTotMnt, taskCust, totCust, startupCust,
+      ttfCust, rzrqCust, shHkCust, szHkCust, optCust, hkCust,
+      otcTranAmt, fundTranAmt, finaTranAmt, privateTranAmt,
+      purAddCustaset, purRakeGjpdt, tranAmtBasicpdt, tranAmtTotpdt,
+      purAddCust, newProdCust, purAddNoretailcust, purAddHighprodcust,
     } = indicators || {};
 
+    // _.toNumber(null) 值为0，_.parseInt(null) 值为NaN
     // 新增客户（经营指标）
     const pureAddData = [
-      _.parseInt(purAddCust, 10),
-      _.parseInt(purAddNoretailcust, 10),
-      _.parseInt(purAddHighprodcust, 10),
-      _.parseInt(newProdCust, 10),
+      filterEmptyToInteger(purAddCust),
+      filterEmptyToInteger(purAddNoretailcust),
+      filterEmptyToInteger(purAddHighprodcust),
+      filterEmptyToInteger(newProdCust),
     ];
     const { newUnit: pureAddUnit, items: pureAddItems } = getPureAddCust({ pureAddData });
     const pureAddHead = { icon: 'kehu', title: `新增客户（${pureAddUnit}）` };
 
     // 业务开通数（经营指标）
     const clientNumberData = [
-      _.parseInt(ttfCust, 10),
-      _.parseInt(shHkCust, 10),
-      _.parseInt(rzrqCust, 10),
-      _.parseInt(optCust, 10),
-      _.parseInt(cftCust, 10),
+      filterEmptyToInteger(ttfCust),
+      filterEmptyToInteger(shHkCust),
+      filterEmptyToInteger(rzrqCust),
+      filterEmptyToInteger(optCust),
+      filterEmptyToInteger(startupCust),
     ];
     const param = {
       clientNumberData,
       colourfulIndex: 1,
       colourfulData: [
-        { value: _.parseInt(szHkCust, 10), color: '#38d8e8' },
+        { value: filterEmptyToInteger(szHkCust), color: '#38d8e8' },
       ],
-      colourfulTotalNumber: _.parseInt(hkCust, 10),
+      colourfulTotalNumber: filterEmptyToInteger(hkCust),
     };
     const { newUnit: clientUnit, items: clientItems } = getClientsNumber(param);
     const clientHead = { icon: 'kehuzhibiao', title: `业务开通数（${clientUnit}）` };
@@ -108,10 +94,10 @@ export default class PerformanceIndicators extends PureComponent {
 
     // 资产和交易量（经营指标）
     const tradeingVolumeData = [
-      _.toNumber(purAddCustaset),
-      _.toNumber(tranAmtBasicpdt),
-      _.toNumber(tranAmtTotpdt),
-      _.toNumber(purRakeGjpdt),
+      filterEmptyToNumber(purAddCustaset),
+      filterEmptyToNumber(tranAmtBasicpdt),
+      filterEmptyToNumber(tranAmtTotpdt),
+      filterEmptyToNumber(purRakeGjpdt),
     ];
     const {
       newUnit: tradeVolumeUnit,
@@ -121,10 +107,10 @@ export default class PerformanceIndicators extends PureComponent {
 
     // 产品销售（经营指标）
     const productSaleData = [
-      _.toNumber(fundTranAmt),
-      _.toNumber(finaTranAmt),
-      _.toNumber(privateTranAmt),
-      _.toNumber(otcTranAmt),
+      filterEmptyToNumber(fundTranAmt),
+      filterEmptyToNumber(finaTranAmt),
+      filterEmptyToNumber(privateTranAmt),
+      filterEmptyToNumber(otcTranAmt),
     ];
     const {
       newUnit: productSaleUnit,

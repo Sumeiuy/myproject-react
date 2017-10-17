@@ -4,12 +4,12 @@
 
 export default function customerPool(api) {
   return {
+    // 获取资讯中心统一接口
+    getInformation: query => api.post('/groovynoauth/fsp/info/queryInfo', query),
     // 获取客户池沪深归集率（经营指标）
-    getHSRate: query => api.post('/groovynoauth/fsp/emp/info/queryHsRate', query),
+    getHSRate: query => api.post('/groovynoauth/fsp/emp/kpi/queryHsRate', query),
     // 获取客户池投顾绩效
-    getPerformanceIndicators: query => api.post('/groovynoauth/fsp/emp/info/queryPerformance', query),
-    // 获取首席投顾观点
-    getViewpoints: query => api.post('/groovynoauth/fsp/emp/viewpoints/queryViewpoints', query),
+    getPerformanceIndicators: query => api.post('/groovynoauth/fsp/emp/kpi/queryPerformance', query),
     // 获取组织机构树完整版
     getCustRangeAll: query => api.post('/groovynoauth/fsp/emp/org/queryEmpOrgTree', query),
 

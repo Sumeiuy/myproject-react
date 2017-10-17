@@ -8,12 +8,45 @@ import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
 import { Table } from 'antd';
+import _ from 'lodash';
 
 import Icon from '../../components/common/Icon';
-import { columns, viewpointData } from './MockViewpointData';
 import styles from './viewpointList.less';
 
-const mapStateToProps = () => ({});
+const columns = [{
+  title: '标题',
+  dataIndex: 'texttitle',
+  key: 'texttitle',
+  width: '36%',
+}, {
+  title: '类型',
+  dataIndex: 'textcategory',
+  key: 'textcategory',
+  width: '18%',
+}, {
+  title: '相关股票',
+  dataIndex: 'aboutStock',
+  key: 'aboutStock',
+  width: '15%',
+}, {
+  title: '行业',
+  dataIndex: 'secucategorycodel',
+  key: 'secucategorycodel',
+  width: '12%',
+}, {
+  title: '报告日期',
+  dataIndex: 'pubdata',
+  key: 'pubdata',
+  width: '12%',
+}, {
+  title: '作者',
+  dataIndex: 'authors',
+  key: 'authors',
+}];
+
+const mapStateToProps = state => ({
+  information: state.customerPool.information, // 首席投顾观点
+});
 const mapDispatchToProps = {
   push: routerRedux.push,
 };
@@ -23,15 +56,27 @@ export default class ViewpointList extends PureComponent {
   static propTypes = {
     push: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
+    information: PropTypes.object,
+  }
+
+  static defaultProps = {
+    information: {},
   }
 
   @autobind
-  handleRowClick() {
+  handleRowClick(record, index) {
     const { push } = this.props;
-    push({ pathname: '/customerPool/viewpointDetail' });
+    push({
+      pathname: '/customerPool/viewpointDetail',
+      query: { detailIndex: `${index}` },
+    });
   }
 
-  itemRenderFunc(current, type, originalElement) {
+  totalPage(total) {
+    return `共 ${total} 项`;
+  }
+
+  renderItem(current, type, originalElement) {
     if (type === 'prev') {
       return <a><Icon type="xiangzuo" className={styles.zuoIcon} />上一页</a>;
     } else if (type === 'next') {
@@ -40,13 +85,14 @@ export default class ViewpointList extends PureComponent {
     return originalElement;
   }
 
-  totalPage(total) {
-    return `共 ${total} 项`;
-  }
-
   render() {
+    const { information: { infoVOList = [] } } = this.props;
+    const newInfoVOList = _.map(
+      infoVOList,
+      item => ({ ...item, aboutStock: `${item.secuabbr} / ${item.comcode}` }),
+    );
     const pagination = {
-      itemRender: this.itemRenderFunc,
+      itemRender: this.renderItem,
       showTotal: this.totalPage,
       defaultPageSize: 18,
       pageSize: 18,
@@ -58,7 +104,7 @@ export default class ViewpointList extends PureComponent {
           <Table
             rowKey={'id'}
             columns={columns}
-            dataSource={viewpointData}
+            dataSource={newInfoVOList}
             pagination={pagination}
             onRowClick={this.handleRowClick}
           />

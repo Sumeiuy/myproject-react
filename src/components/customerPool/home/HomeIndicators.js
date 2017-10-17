@@ -1,13 +1,21 @@
 /**
- * @fileOverview home/HomeIndictors.js
+ * @fileOverview home/homeIndictors.js
  * @author zhangjunli
  * @description 封装首页指标数据
  */
 import _ from 'lodash';
 import { fspContainer } from '../../../config';
 import { fspGlobal, helper } from '../../../utils';
-import getSeries, { tooltipConfig, singleColorBar } from './ChartOption';
+import getSeries, { tooltipConfig, singleColorBar } from './chartOption';
 import { toFixedCust, getPercentage, toFixedMoney } from '../../chartRealTime/FixNumber';
+
+export function filterEmptyToInteger(number) {
+  return ((_.isEmpty(number)) ? 0 : _.parseInt(number, 10));
+}
+
+export function filterEmptyToNumber(number) {
+  return ((_.isEmpty(number)) ? 0 : _.toNumber(number));
+}
 
 // 数字千分位格式化(只格式化整数部分，小数部分不格式化)
 function toThousands({ isNegative = false, integerStr = '', floatStr = '' }) {
@@ -49,9 +57,6 @@ function getProgressDataSource({
   colorArray,
   formatterMethod,
 }) {
-  if (_.isEmpty(dataArray)) {
-    return { newUnit: '户', items: [] };
-  }
   const percenteArray = getPercentage(dataArray);
   const { newUnit, newSeries } = formatterMethod(dataArray);
   const thousandsFormatSeries = _.map(
@@ -102,14 +107,11 @@ export function getProductSale({
 // 一柱多彩
 export function getClientsNumber({
   clientNumberData,
-  names = ['天天发', '港股通', '融资融券', '期权', '创业版'],
+  names = ['天天发', '港股通', '两融', '期权', '创业版'],
   colourfulIndex,
   colourfulData,
   colourfulTotalNumber,
 }) {
-  if (_.isEmpty(clientNumberData)) {
-    return { newUnit: '户', items: {} };
-  }
   const {
     newUnit,
     newSeries,
@@ -171,8 +173,14 @@ export function getTradingVolume({ tradeingVolumeData }) {
 
 // 经营指标的服务指标
 export function getServiceIndicatorOfManage({ motOkMnt, motTotMnt, taskCust, totCust }) {
-  const motPercent = (_.toNumber(motOkMnt) / _.toNumber(motTotMnt)) * 100;
-  const taskPercent = (_.toNumber(taskCust) / _.toNumber(totCust)) * 100;
+  let motPercent = 0;
+  let taskPercent = 0;
+  if (!_.isEmpty(motTotMnt) && filterEmptyToNumber(motOkMnt) > 0) {
+    motPercent = (_.toNumber(motOkMnt) / _.toNumber(motTotMnt)) * 100;
+  }
+  if (!_.isEmpty(totCust) && filterEmptyToNumber(taskCust) > 0) {
+    taskPercent = (_.toNumber(taskCust) / _.toNumber(totCust)) * 100;
+  }
   return [
     { category: '必做MOT完成率', percent: motPercent },
     { category: '客户服务覆盖率', percent: taskPercent },
@@ -217,16 +225,13 @@ export function getServiceIndicatorOfPerformance({ performanceData }) {
 
 // 投顾绩效的客户及资产
 export function getCustAndProperty(dataArray) {
-  if (_.isEmpty(dataArray)) {
-    return {};
-  }
   const custArray = [];
   const properyArray = [];
   for (let i = 0; i < dataArray.length; i += 2) {
     const custItem = dataArray[i];
     const propertyItem = dataArray[(i + 1)];
-    custArray.push({ value: custItem.value, name: custItem.name });
-    properyArray.push(_.toNumber(propertyItem.value));
+    custArray.push({ value: filterEmptyToInteger(custItem.value), name: custItem.name });
+    properyArray.push(filterEmptyToNumber(propertyItem.value));
   }
   // formatter 资产数据，获得 unit
   const { newUnit: propertyUnit, newSeries } = toFixedMoney(properyArray);
@@ -235,15 +240,15 @@ export function getCustAndProperty(dataArray) {
     (item, index) => ({ ...(custArray[index]), property: item }),
   );
   // 降序排列
-  _.orderBy(datas, ['value'], ['desc']);
+  const descData = _.orderBy(datas, ['value'], ['desc']);
   // formatter 客户数，获得 unit
   const custNumberArray = [];
-  _.forEach(datas, item => custNumberArray.push(_.parseInt(item.value)));
+  _.forEach(descData, item => custNumberArray.push(item.value));
   const { newUnit: custUnit, newSeries: newCustArray } = toFixedCust(custNumberArray);
   // 设置背景色
   const colors = ['#756fb8', '#7d9be0', '#38d8e8'];
   const newDatas = _.map(
-    datas,
+    descData,
     (item, index) => ({ ...item, bgColor: colors[index], value: newCustArray[index] }),
   );
   return { color: '#000', custUnit, propertyUnit, data: newDatas };

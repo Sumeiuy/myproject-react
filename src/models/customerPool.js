@@ -12,9 +12,9 @@ const EMPTY_OBJECT = {};
 export default {
   namespace: 'customerPool',
   state: {
-    performanceIndicators: [],
-    hsRate: '',
-    viewpoints: [],
+    information: {},     // 资讯
+    performanceIndicators: [],  // 投顾指标
+    hsRate: '',  // 沪深归集率（经营指标）
     todolist: [],
     todolistRecord: [],
     todoPage: {
@@ -67,17 +67,17 @@ export default {
     },
   },
   effects: {
-    // 沪深归集率（经营指标）
-    * getPerformanceIndicators({ }, { call, put }) {  //eslint-disable-line
-      const response = yield call(api.getPerformanceIndicators);
+    // 投顾绩效
+    * getPerformanceIndicators({ payload }, { call, put }) {  //eslint-disable-line
+      const response = yield call(api.getPerformanceIndicators, payload);
       yield put({
         type: 'getPerformanceIndicatorsSuccess',
         payload: response,
       });
     },
     // 沪深归集率（经营指标）
-    * getHSRate({ }, { call, put }) {  //eslint-disable-line
-      const response = yield call(api.getHSRate);
+    * getHSRate({ payload }, { call, put }) {  //eslint-disable-line
+      const response = yield call(api.getHSRate, payload);
       const { resultData } = response;
       const data = resultData.length > 0 ? resultData[0] : {};
       yield put({
@@ -85,10 +85,11 @@ export default {
         payload: data.value,
       });
     },
-    * getViewpoints({ }, { call, put }) {  //eslint-disable-line
-      const response = yield call(api.getViewpoints);
+    // 资讯列表和详情
+    * getInformation({ payload }, { call, put }) {  //eslint-disable-line
+      const response = yield call(api.getInformation, payload);
       yield put({
-        type: 'getViewpointsSuccess',
+        type: 'getinformationSuccess',
         payload: response,
       });
     },
@@ -338,11 +339,11 @@ export default {
         hsRate: payload,
       };
     },
-    getViewpointsSuccess(state, action) {
+    getinformationSuccess(state, action) {
       const { payload: { resultData } } = action;
       return {
         ...state,
-        viewpoints: resultData,
+        information: resultData,
       };
     },
     getToDoListSuccess(state, action) {

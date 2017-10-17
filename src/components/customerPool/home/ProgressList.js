@@ -6,11 +6,10 @@
  * @author zhangjunli
  */
 import React, { PropTypes, PureComponent } from 'react';
-import ReactDOM from 'react-dom';
 import { Progress } from 'antd';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
-import { linkTo } from './HomeIndicators';
+import { linkTo } from './homeIndicators';
 
 import styles from './progressList.less';
 
@@ -46,8 +45,8 @@ export default class ProgressList extends PureComponent {
     }
     dataSource.forEach(
       (item, index) => {
-        // row 组件
-        const rowElem = ReactDOM.findDOMNode(this[`row${index}`]);   // eslint-disable-line
+        // 拿到容纳了progress的div
+        const rowElem = this[`row${index}`];
         if (rowElem && !_.isEmpty(location)) {
           rowElem.style.cursor = 'pointer';
         }

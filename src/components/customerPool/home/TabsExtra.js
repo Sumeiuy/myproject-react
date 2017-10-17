@@ -123,7 +123,6 @@ export default class TabsExtra extends PureComponent {
               /> :
               <Select
                 defaultValue="暂无数据"
-                key="seletTreeNull"
               >
                 <Option value="暂无数据">暂无数据</Option>
               </Select>
@@ -138,7 +137,6 @@ export default class TabsExtra extends PureComponent {
             style={{ width: 60 }}
             value={selectValue}
             onChange={this.handleChange}
-            key="dateSelect"
           >
             {cycle.map(item =>
               <Option key={item.key} value={item.key}>{item.value}</Option>)}
