@@ -20,13 +20,14 @@ export default class TableList extends PureComponent {
 
   get eleList() {
     const { statusType, onEmitUpdateValue, selectValue, info, radioName } = this.props;
-    const result = info.map((item) => {
+    const result = info.map((item, index) => {
       const callBack = () => {
         onEmitUpdateValue(item);
       };
+      const key = `tableList-${index}`;
       return (
         <li
-          key={item.ptyMngId}
+          key={key}
           className={style.spServerPersonelItem}
         >
           <div
