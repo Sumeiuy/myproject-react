@@ -74,9 +74,27 @@ export default function customerPool(api) {
     queryRecentServiceRecord: query => api.post('/groovynoauth/fsp/cust/custlist/queryRecentServiceRecord', query),
 
     // 关注与取消关注
-    queryFollowCust: query => api.post('/groovynoauth/fsp/cust/custgroup/queryFollowCust', query),
+    followCust: query => api.post('/groovynoauth/fsp/cust/custgroup/followCust', query),
 
     // 分组维度，客户分组列表
-    queryCustomerGroupList: query => api.post('/groovynoauth/fsp/cust/custgroup/queryCustomerGroupList', query),
+    queryCustomerGroupList: query => api.post('/groovynoauth/fsp/cust/custgroup/queryCustGroupList', query),
+
+    // 某一个分组下面的客户列表
+    queryGroupCustomerList: query => api.post('/groovynoauth/fsp/cust/custgroup/queryGroupCustList', query),
+
+    // 查询客户列表，用于分组详情里面的客户搜索，联想
+    queryPossibleCustList: query => api.post('/groovynoauth/fsp/biz/custList', query),
+
+    // 操作分组（编辑、新增客户分组）
+    operateGroup: query => api.post('/groovynoauth/fsp/cust/custgroup/operateGroup', query),
+
+    // 删除分组
+    deleteGroup: query => api.post('/groovynoauth/fsp/cust/custgroup/deleteGroup', query),
+
+    // 删除分组下的客户
+    deleteCustomerFromGroup: query => api.post('/groovynoauth/fsp/cust/custgroup/operateCust', query),
+
+    // 360服务记录查询
+    queryAllServiceRecord: query => api.post('/groovynoauth/fsp/cust/custlist/queryAllServiceRecord', query),
   };
 }

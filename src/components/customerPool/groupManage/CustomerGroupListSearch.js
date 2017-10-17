@@ -1,13 +1,16 @@
+/*
+ * @Author: xuxiaoqin
+ * @Date: 2017-09-20 17:09:13
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2017-10-11 10:18:29
+ */
+
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Input } from 'antd';
-// import { Link } from 'dva/router';
-// import classnames from 'classnames';
-// import _ from 'lodash';
+import { autobind } from 'core-decorators';
 import styles from './customerGroupListSearch.less';
 
-// const EMPTY_LIST = [];
-// const EMPTY_OBJECT = {};
 const Search = Input.Search;
 
 export default class CustomerGroupListSearch extends PureComponent {
@@ -19,14 +22,44 @@ export default class CustomerGroupListSearch extends PureComponent {
     onSearch: () => { },
   };
 
-  render() {
+  constructor(props) {
+    super(props);
+    this.state = {
+      curSearchValue: '',
+    };
+  }
+
+  @autobind
+  handleSearch(value) {
     const { onSearch } = this.props;
+    // 清空搜索值
+    // this.setState({
+    //   curSearchValue: '',
+    // });
+    onSearch(value);
+  }
+
+  @autobind
+  handleInputChange(e) {
+    this.setState({
+      curSearchValue: e.target.value,
+    });
+  }
+
+  render() {
+    const { curSearchValue } = this.state;
     return (
       <div className={styles.searchWrapper}>
+        <span className={styles.name}>分组名称：</span>
         <Search
-          placeholder="分组名"
-          style={{ width: 200 }}
-          onSearch={onSearch}
+          placeholder="分组名称"
+          value={curSearchValue}
+          onChange={this.handleInputChange}
+          onSearch={this.handleSearch}
+          style={{
+            height: '30px',
+            width: '250px',
+          }}
         />
       </div>
     );

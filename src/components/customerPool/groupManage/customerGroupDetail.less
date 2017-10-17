@@ -1,0 +1,109 @@
+.groupDetail {
+  ::-webkit-input-placeholder {
+    font-size: 12px;
+  }
+  :-ms-input-placeholder {
+    font-size: 12px;
+  }
+  & > .nameSection {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    // padding-bottom: 20px;
+    & > .name {
+      width: 10%;
+      font-size: 14px;
+      padding-top: 5px;
+    }
+    & > .nameContent {
+      width: 90%;
+    }
+  }
+  & > .descriptionSection {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding-bottom: 20px;
+    & > .description {
+      width: 10%;
+      padding-top: 5px;
+      font-size: 14px;
+    }
+    & > .descriptionContent {
+      width: 90%;
+      textarea {
+        resize: none !important;
+        height: 82px !important;
+        min-height: 82px !important;
+        max-height: 82px !important;
+        overflow-y: scroll;
+      }
+    }
+  }
+  & > .groupCustomerSearch {
+    display: block;
+  }
+  & > .searchSection {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    & > .searchTitle {
+      font-size: 14px;
+      margin-right: 10px;
+      color: #666666;
+      margin-top: 2px;
+    }
+  }
+  & > .emptyTable {
+    height: 230px;
+  }
+  & > .customerListTable {
+    display: block;
+    height: 230px;
+    .custListTable {
+      padding: 0 !important;
+      table > thead > tr > th, tbody > tr > td {
+        padding: 0px !important;
+        padding-bottom: 7px !important;
+        padding-top: 7px !important;
+        text-align: center !important;
+      }
+      // tbody {
+      //   overflow-y: scroll;
+      // }
+      tbody > tr > td > div {
+        max-width: 100px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        margin: 0 auto;
+      }
+      table > thead > tr > th {
+        text-align: center !important;
+      }
+      :global {
+        .ant-table-header {
+          background-color: #ffffff;
+          table {
+            border-bottom: 0px;
+          }
+        }
+      }
+    }
+  }
+  .operationBtnSection {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    width: 100%;
+    .cancel {
+      width: 68px;
+      height: 28px;
+      margin-right: 15px;
+    }
+    .submit {
+      width: 68px;
+      height: 28px;
+    }
+  }
+}

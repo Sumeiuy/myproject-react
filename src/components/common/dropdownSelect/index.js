@@ -73,7 +73,7 @@ export default class DropdownSelect extends PureComponent {
           value: `${item[showObjKey]}（${item[objId]}）`,
         });
       };
-      const idx = (objId === '') ? `selectList-${index}` : item[objId];
+      const idx = !item[objId] ? `selectList-${index}` : item[objId];
       return (
         <li
           key={idx}
@@ -103,7 +103,8 @@ export default class DropdownSelect extends PureComponent {
   @autobind
   hideModal(e) {
     // 隐藏下拉框
-    if (+e.target.getAttribute('data-id') !== this.state.id) {
+    const { isSHowModal } = this.state;
+    if (+e.target.getAttribute('data-id') !== this.state.id && isSHowModal) {
       this.setState({ isSHowModal: false });
     }
   }

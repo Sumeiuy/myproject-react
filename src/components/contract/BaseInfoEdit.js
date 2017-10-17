@@ -1,119 +1,142 @@
 /*
-* @Description: 合作合约修改/新建 -基本信息
+* @Description: 合作合约修改 -基本信息
 * @Author: XuWenKang
 * @Date:   2017-09-20 13:47:07
 * @Last Modified by:   XuWenKang
-* @Last Modified time: 2017-09-21 10:46:15
+* @Last Modified time: 2017-09-27 17:56:57
 */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
 
 import { Input } from 'antd';
 import moment from 'moment';
-import InputTextComponent from '../common/inputtextcomponent';
 import Select from '../common/Select';
 import InfoTitle from '../common/InfoTitle';
+import InfoItem from '../common/infoItem';
 import DropDownSelect from '../common/dropdownSelect';
 import DatePicker from '../common/datePicker';
+import { seibelConfig } from '../../config';
 
-import styles from './baseinfoedit.less';
+import styles from './baseInfoEdit.less';
 
 const { TextArea } = Input;
-
+// 子类型列表
+const childTypeList = _.filter(seibelConfig.contract.subType, v => v.label !== '全部');
+const EMPTY_OBJECT = {};
+// const EMPTY_ARRAY = [];
+// 下拉搜索组件样式
+const dropDownSelectBoxStyle = {
+  width: 220,
+  height: 32,
+  border: '1px solid #d9d9d9',
+};
+// 时间选择组件样式
+const datePickerBoxStyle = {
+  width: 220,
+  height: 32,
+};
+// 操作类型MAP
+const operationMap = {
+  1: '订购',
+  2: '退订',
+};
 export default class BaseInfoEdit extends PureComponent {
   static propTypes = {
-    contractName: PropTypes.string.isRequired,
-    childType: PropTypes.object.isRequired,
-    client: PropTypes.object.isRequired,
-    contractStarDate: PropTypes.string.isRequired,
-    contractPalidity: PropTypes.string,
-    contractEndDate: PropTypes.string,
-    remark: PropTypes.string,
     onChange: PropTypes.func.isRequired,
+    // 查询客户
+    onSearchClient: PropTypes.func.isRequired,
+    // 客户列表
+    custList: PropTypes.array.isRequired,
+    // 操作类型
+    operationType: PropTypes.string.isRequired,
+    // 合约详情
+    contractDetail: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
-    contractPalidity: '',
-    contractEndDate: '',
-    remark: '',
+
   }
 
   constructor(props) {
     super(props);
     this.state = {
-      contractName: '',
+      childType: '',
+      client: '',
+      contractStarDate: '',
+      contractPalidity: '',
+      contractEndDate: '',
+      remark: '',
+      id: '',
     };
   }
 
   componentWillMount() {
-    const {
-      contractName,
-      childType,
-      client,
-      contractStarDate,
-      contractPalidity,
-      contractEndDate,
-      remark,
-    } = this.props;
-    this.setState({
-      contractName,
-      childType,
-      client,
-      contractStarDate,
-      contractPalidity,
-      contractEndDate,
-      remark,
-    });
+    // console.log('awdadadawd',this.props.contractDetail)
   }
 
-  @autobind
-  changeContractName(v) {
-    console.log('eee', v);
-    this.setState({
-      ...this.state,
-      contractName: v,
-    }, () => {
-      this.props.onChange(this.state);
-    });
+  componentWillReceiveProps(nextProps) {
+    const { contractDetail = EMPTY_OBJECT } = this.props;
+    const newcontractDetail = nextProps.contractDetail;
+    // 判断新的合约详情和旧的合约详情是否一样，不一样则更新
+    if (contractDetail.id !== newcontractDetail.id) {
+      const {
+      subType: childType = '',
+      custId: client = '',
+      startDt: contractStarDate = '',
+      vailDt: contractPalidity = '',
+      endDt: contractEndDate = '',
+      description: remark = '',
+      id: id = '',
+    } = newcontractDetail;
+      this.setState({
+        childType,
+        client,
+        contractStarDate,
+        contractPalidity,
+        contractEndDate,
+        remark,
+        id,
+      });
+    }
   }
 
+  // 通用Select Change方法
   @autobind
-  changeChildType(key, value) {
+  handleSelectChange(key, value) {
     console.log({ [key]: value });
     this.setState({
       ...this.state,
-      childType: {
-        ...this.state.childType,
-        value,
-      },
+      [key]: value,
     }, () => {
       this.props.onChange(this.state);
     });
   }
 
+  // 选择客户
   @autobind
-  selectClient(value) {
+  handleSelectClient(value) {
     console.log('selectClient', value);
     this.setState({
       ...this.state,
-      client: {
-        ...this.state.client,
-        value,
-      },
+      client: value,
     }, () => {
       this.props.onChange(this.state);
     });
   }
 
+  // 根据关键词查询客户
   @autobind
-  searchClient(v) {
+  handleSearchClient(v) {
     console.log('searchClient', v);
+    this.props.onSearchClient(v);
   }
 
+  // 通用 Date组件更新方法
   @autobind
-  changeDate(obj) {
+  handleChangeDate(obj) {
     console.log(obj);
     this.setState({
       ...this.state,
@@ -123,8 +146,9 @@ export default class BaseInfoEdit extends PureComponent {
     });
   }
 
+  // 更改备注
   @autobind
-  changeRemark(e) {
+  handleChangeRemark(e) {
     console.log(e.target.value);
     this.setState({
       ...this.state,
@@ -135,21 +159,15 @@ export default class BaseInfoEdit extends PureComponent {
   }
 
   render() {
+    const {
+      custList,
+      operationType,
+    } = this.props;
+    console.log('props', this.props);
     return (
       <div className={styles.editWrapper}>
         <InfoTitle head="基本信息" />
-        <div className={styles.lineInputWrap}>
-          <div className={styles.label}>
-            <i className={styles.required}>*</i>
-              合约名称<span className={styles.colon}>:</span>
-          </div>
-          <div className={`${styles.componentBox} ${styles.inputBox}`}>
-            <InputTextComponent
-              value={this.state.contractName}
-              onEmitEvent={this.changeContractName}
-            />
-          </div>
-        </div>
+        <InfoItem label="操作类型" value={operationMap[operationType]} />
         <div className={styles.lineInputWrap}>
           <div className={styles.label}>
             <i className={styles.required}>*</i>
@@ -158,9 +176,9 @@ export default class BaseInfoEdit extends PureComponent {
           <div className={`${styles.componentBox} ${styles.selectBox}`}>
             <Select
               name="childType"
-              data={this.state.childType.list}
-              value={this.state.childType.value}
-              onChange={this.changeChildType}
+              data={childTypeList}
+              value={this.state.childType}
+              onChange={this.handleSelectChange}
             />
           </div>
         </div>
@@ -172,13 +190,13 @@ export default class BaseInfoEdit extends PureComponent {
           <div className={styles.componentBox}>
             <DropDownSelect
               placeholder="经纪客户号/客户名称"
-              showObjKey="name"
-              objId="value"
-              value={this.state.client.value}
-              searchList={this.state.client.list}
-              emitSelectItem={this.selectClient}
-              emitToSearch={this.searchClient}
-              boxStyle={{ width: 220, height: 32, border: '1px solid #d9d9d9' }}
+              showObjKey="custName"
+              objId="cusId"
+              value={this.state.client}
+              searchList={custList}
+              emitSelectItem={this.handleSelectClient}
+              emitToSearch={this.handleSearchClient}
+              boxStyle={dropDownSelectBoxStyle}
             />
           </div>
         </div>
@@ -190,9 +208,14 @@ export default class BaseInfoEdit extends PureComponent {
           <div className={`${styles.componentBox}`}>
             <DatePicker
               name="contractStarDate"
-              value={moment(this.state.contractStarDate, 'YYYY-MM-DD')}
-              onChange={this.changeDate}
-              boxStyle={{ width: 220, height: 32 }}
+              value={
+                this.state.contractStarDate ?
+                moment(this.state.contractStarDate, 'YYYY-MM-DD')
+                :
+                ''
+              }
+              onChange={this.handleChangeDate}
+              boxStyle={datePickerBoxStyle}
             />
           </div>
         </div>
@@ -203,9 +226,14 @@ export default class BaseInfoEdit extends PureComponent {
           <div className={`${styles.componentBox}`}>
             <DatePicker
               name="contractPalidity"
-              value={moment(this.state.contractPalidity, 'YYYY-MM-DD')}
-              onChange={this.changeDate}
-              boxStyle={{ width: 220, height: 32 }}
+              value={
+                this.state.contractPalidity ?
+                moment(this.state.contractPalidity, 'YYYY-MM-DD')
+                :
+                ''
+              }
+              onChange={this.handleChangeDate}
+              boxStyle={datePickerBoxStyle}
             />
           </div>
         </div>
@@ -216,9 +244,14 @@ export default class BaseInfoEdit extends PureComponent {
           <div className={`${styles.componentBox}`}>
             <DatePicker
               name="contractEndDate"
-              value={moment(this.state.contractEndDate, 'YYYY-MM-DD')}
-              onChange={this.changeDate}
-              boxStyle={{ width: 220, height: 32 }}
+              value={
+                this.state.contractEndDate ?
+                moment(this.state.contractEndDate, 'YYYY-MM-DD')
+                :
+                ''
+              }
+              onChange={this.handleChangeDate}
+              boxStyle={datePickerBoxStyle}
             />
           </div>
         </div>
@@ -229,7 +262,7 @@ export default class BaseInfoEdit extends PureComponent {
           <div className={`${styles.componentBox} ${styles.textAreaBox}`}>
             <TextArea
               value={this.state.remark}
-              onChange={this.changeRemark}
+              onChange={this.handleChangeRemark}
             />
           </div>
         </div>

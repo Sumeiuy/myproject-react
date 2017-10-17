@@ -5,13 +5,17 @@
 */
 
 import React, { PureComponent, PropTypes } from 'react';
-// import { withRouter } from 'dva/router';
-import { Checkbox, message } from 'antd';
+import { Checkbox } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
-// import CreateContactModal from './CreateContactModal';
-import Icon from '../../common/Icon';
+import {
+  fspGlobal,
+  // helper,
+} from '../../../utils';
+import QuickMenu from './QuickMenu';
+import SixMonthEarnings from './SixMonthEarnings';
+import MatchArea from './MatchArea';
 import styles from './customerRow.less';
 
 import iconavator from '../../../../static/images/icon-avator.png';
@@ -24,17 +28,7 @@ import iconSliver from '../../../../static/images/icon-sliver-card.png';
 import iconWhiteGold from '../../../../static/images/icon-white-gold.png';
 // import iconNone from '../../../../static/images/icon-none.png';
 import iconEmpty from '../../../../static/images/icon-empty.png';
-import iconClose from '../../../../static/images/icon-close.png';
-import iconOpen from '../../../../static/images/icon-open.png';
 
-import ChartLineWidget from './ChartLine';
-
-const show = {
-  display: 'block',
-};
-const hide = {
-  display: 'none',
-};
 // 风险等级配置
 const riskLevelConfig = {
   704010: {
@@ -101,50 +95,9 @@ const rankImgSrcConfig = {
   805999: '',
 };
 
-// 数字常量
-const WAN = 10000;
-const YI = 100000000;
+// const formatNumber = value => helper.toUnit(value, '元').value;
 
-// 单位常量
-const UNIT_DEFAULT = '元';
-const UNIT_WAN = '万元';
-const UNIT_YI = '亿元';
-
-// 匹配标签区域超过两条显示 展开/收起 按钮
-const FOLD_NUM = 2;
-
-const haveTitle = title => (title ? `<i class="tip">${title}</i>` : null);
-
-const replaceWord = (value, q, title = '') => {
-  const titleDom = haveTitle(title);
-  return value.replace(new RegExp(q, 'g'), `<em class="marked">${q}${titleDom || ''}</em>`);
-};
-
-const getNewHtml = (value, k) => (`<li><span><i class="label">${value}：</i>${k}</span></li>`);
-
-const generateUnit = (num) => {
-  const absNum = Math.abs(num);
-  if (absNum >= YI) {
-    return UNIT_YI;
-  }
-  if (absNum >= WAN) {
-    return UNIT_WAN;
-  }
-  return UNIT_DEFAULT;
-};
-
-const formatNumber = (num) => {
-  const absNum = Math.abs(num);
-  if (absNum >= YI) {
-    return (num / YI).toFixed(2);
-  }
-  if (absNum >= WAN) {
-    return (num / WAN).toFixed(2);
-  }
-  return num;
-};
-
-let hrefUrl = '';
+// const formatUnit = value => helper.toUnit(value, '元').unit;
 
 export default class CustomerRow extends PureComponent {
   static propTypes = {
@@ -156,17 +109,18 @@ export default class CustomerRow extends PureComponent {
     onChange: PropTypes.func.isRequired,
     isAllSelect: PropTypes.bool.isRequired,
     selectedIds: PropTypes.array,
-    createServiceRecord: PropTypes.func.isRequired,
     onSendEmail: PropTypes.func.isRequired,
     onAddFollow: PropTypes.func.isRequired,
     dict: PropTypes.object.isRequired,
     createContact: PropTypes.func.isRequired,
     isSms: PropTypes.bool.isRequired,
-    custContactData: PropTypes.object.isRequired,
+    custEmail: PropTypes.object.isRequired,
     currentFollowCustId: PropTypes.string.isRequired,
-    currentCustId: PropTypes.string.isRequired,
+    emailCustId: PropTypes.string.isRequired,
     isFollows: PropTypes.object.isRequired,
-    isGetCustIncome: PropTypes.bool.isRequired,
+    custIncomeReqState: PropTypes.bool.isRequired,
+    toggleServiceRecordModal: PropTypes.func.isRequired,
+    formatAsset: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -176,289 +130,37 @@ export default class CustomerRow extends PureComponent {
 
   constructor(props) {
     super(props);
-    const {
-      dict: {
-        custBusinessType = [],
-      },
-      listItem: { asset },
-    } = props;
-
     this.state = {
-      showStyle: show,
-      hideStyle: hide,
-      unit: '元',
-      newAsset: asset,
       checked: false,
-      addressEmail: {},
     };
-    this.businessConfig = new Map();
-    custBusinessType.forEach((v) => {
-      this.businessConfig.set(v.key, v.value);
-    });
-
-    this.debounced = _.debounce(
-      this.getCustIncome,
-      800,
-      { leading: false },
-    );
-  }
-  componentWillMount() {
-    const { listItem: { asset } } = this.props;
-    const unit = generateUnit(+asset);
-    const newAsset = formatNumber(+asset);
-    this.setState({
-      unit,
-      newAsset,
-      isShowCharts: false,
-    });
-  }
-  componentWillReceiveProps(nextProps) {
-    const { custContactData } = this.props;
-    if (custContactData !== nextProps.custContactData && _.size(nextProps.custContactData) !== 0) {
-      const change = {
-        ...this.state.addressEmail,
-        ...{ [nextProps.currentCustId]: this.getEmail(nextProps.custContactData,
-            nextProps.currentCustId) },
-      };
-      this.setState({
-        addressEmail: change,
-      }, () => {
-        if (this.sendEmail && hrefUrl !== '') {
-          const evt = new MouseEvent('click', { bubbles: false, cancelable: false, view: window });
-          this.sendEmail.dispatchEvent(evt);
-          hrefUrl = '';
-        }
-      });
-    }
-  }
-  getLastestData(arr) {
-    if (arr && arr instanceof Array && arr.length !== 0) {
-      return arr[arr.length - 1];
-    }
-    return {};
   }
 
   @autobind
-  getCustIncome() {
-    const { getCustIncome, listItem, monthlyProfits } = this.props;
-    const thisMonthlyProfits = monthlyProfits[listItem.custId];
-    if (!thisMonthlyProfits || _.isEmpty(thisMonthlyProfits)) {
-      // test data empId = 01041128、05038222、035000002899、02004642
-      getCustIncome({ custNumber: listItem.custId });
-    }
-    this.setState({
-      isShowCharts: true,
-    });
-  }
-
-  @autobind
-  getEmail(address, nextID) {
-    let addresses = '';
-    let finded = 0;// 邮件联系
-    let email = null;
-    if (address.orgCustomerContactInfoList !== undefined) {
-      const index = _.findLastIndex(address.orgCustomerContactInfoList,
-          val => val.mainFlag);
-      finded = _.findLastIndex(address.orgCustomerContactInfoList[index].emailAddresses,
-          val => val.mainFlag);
-      addresses = address.orgCustomerContactInfoList[index];
-    } else if (address.perCustomerContactInfo !== undefined) {
-      finded = _.findLastIndex(address.perCustomerContactInfo.emailAddresses,
-          val => val.mainFlag);
-      addresses = address.perCustomerContactInfo;
-    } else {
-      finded = -1;
-    }
-    if (finded === -1) {
-      if (this.props.listItem.custId === nextID) {
-        message.error('暂无客户邮箱，请与客户沟通尽快完善信息');
-        email = null;
-      }
-    } else {
-      email = addresses.emailAddresses[finded].contactValue;
-    }
-    return email;
-  }
-
-  @autobind
-  handleMouseLeave() {
-    this.debounced.cancel();
-    this.setState({
-      isShowCharts: false,
-    });
-  }
-
-  @autobind
-  handleCollapse(type) {
-    if (type === 'open') {
-      const prosshow = {
-        display: 'none',
-      };
-      const proshide = {
-        display: 'block',
-      };
-      this.setState({
-        showStyle: prosshow,
-        hideStyle: proshide,
-      });
-    } else if (type === 'close') {
-      const consshow = {
-        display: 'block',
-      };
-      const conshide = {
-        display: 'none',
-      };
-      this.setState({
-        showStyle: consshow,
-        hideStyle: conshide,
-      });
-    }
-  }
-
-  @autobind
-  /* eslint-disable */
-  handleIsEmail(e) {
-    const noEmail = 'javascript:void(0);';
-    const { listItem } = this.props;
-    hrefUrl = e.target.getAttribute('href');
-    if (hrefUrl === noEmail) {
-      this.props.onSendEmail(listItem);
-    }
-  }
-  /* eslint-disable */
-
-  @autobind
-  matchWord(q, listItem) {
-    // if (!q) return;
-    const { location: { query: { source } } } = this.props;
-    let rtnEle = '';  // 全部展示的数据
-    let shortRtnEle = ''; // 只展示两条的数据
-    let n = 0;
-    const isSearch = source === 'search' || source === 'association';
-    const isTag = source === 'tag';
-    const isCustIndicator = source === 'custIndicator';
-    const isNumOfCustOpened = source === 'numOfCustOpened';
-    const isBusiness = source === 'business';
-    if (isSearch && listItem.name && listItem.name.indexOf(q) > -1) {
-      const markedEle = replaceWord(listItem.name, q);
-      const domTpl = getNewHtml('姓名', markedEle);
-      rtnEle += domTpl;
-      n++;
-      if (n <= FOLD_NUM) {
-        shortRtnEle += domTpl;
-      }
-    }
-    if (isSearch && listItem.idNum && listItem.idNum.indexOf(q) > -1) {
-      const markedEle = replaceWord(listItem.idNum, q);
-      const domTpl = getNewHtml('身份证号码', markedEle);
-      rtnEle += domTpl;
-      n++;
-      if (n <= FOLD_NUM) {
-        shortRtnEle += domTpl;
-      }
-    }
-    if (isSearch && listItem.telephone && listItem.telephone.indexOf(q) > -1) {
-      const markedEle = replaceWord(listItem.telephone, q);
-      const domTpl = getNewHtml('联系电话', markedEle);
-      rtnEle += domTpl;
-      n++;
-      if (n <= FOLD_NUM) {
-        shortRtnEle += domTpl;
-      }
-    }
-    if (isSearch && listItem.custId && listItem.custId.indexOf(q) > -1) {
-      const markedEle = replaceWord(listItem.custId, q);
-      const domTpl = getNewHtml('经纪客户号', markedEle);
-      rtnEle += domTpl;
-      n++;
-      if (n <= FOLD_NUM) {
-        shortRtnEle += domTpl;
-      }
-    }
-    // 匹配标签
-    if ((isTag || isSearch) && listItem.relatedLabels) {
-      const relatedLabels = listItem.relatedLabels.split(' ').filter((v) => { //eslint-disable-line
-        if (v.indexOf(q) > -1) {
-          return v;
-        }
-      });
-      // 有描述
-      // const markedEle = relatedLabels.map(v => (replaceWord(v, q, listItem.reasonDesc)));
-      if (!_.isEmpty(relatedLabels)) {
-        const markedEle = relatedLabels.map(v => (replaceWord(v, q)));
-        const domTpl = getNewHtml('匹配标签', markedEle);
-        rtnEle += domTpl;
-        n++;
-        if (n <= FOLD_NUM) {
-          shortRtnEle += domTpl;
-        }
-      }
-    }
-    // 匹配可开通业务
-    if ((isBusiness || isNumOfCustOpened) && listItem.unrightType) {
-      const unrightTypeArr = listItem.unrightType.split(' ');
-      const tmpArr = _.filter(_.map(unrightTypeArr, v => this.businessConfig.get(v)));
-      if (!_.isEmpty(tmpArr)) {
-        const domTpl = getNewHtml(`可开通业务(${tmpArr.length})`, tmpArr.join('、'));
-        rtnEle += domTpl;
-        n++;
-        if (n <= FOLD_NUM) {
-          shortRtnEle += domTpl;
-        }
-      }
-    }
-    // 匹配已开通业务
-    if ((isBusiness || isNumOfCustOpened) && listItem.userRights) {
-      const userRightsArr = listItem.userRights.split(' ');
-      const tmpArr = _.filter(_.map(userRightsArr, v => this.businessConfig.get(v)));
-      if (!_.isEmpty(tmpArr)) {
-        const domTpl = getNewHtml(`已开通业务(${tmpArr.length})`, tmpArr.join('、'));
-        rtnEle += domTpl;
-        n++;
-        if (n <= FOLD_NUM) {
-          shortRtnEle += domTpl;
-        }
-      }
-    }
-    // 显示开户日期
-    if (isCustIndicator && listItem.openDt) {
-      const openDate = `${listItem.openDt.slice(0, 4)}年${listItem.openDt.slice(4, 6)}月${listItem.openDt.slice(6, 8)}日`;
-      const domTpl = getNewHtml('开户日期', openDate);
-      rtnEle += domTpl;
-      n++;
-      if (n <= FOLD_NUM) {
-        shortRtnEle += domTpl;
-      }
-    }
-    // 显示账户状态
-    if (isCustIndicator && listItem.accountStausName) {
-      const domTpl = getNewHtml('账户状态', listItem.accountStausName);
-      rtnEle += domTpl;
-      n++;
-      if (n <= FOLD_NUM) {
-        shortRtnEle += domTpl;
-      }
-    }
-    return {
-      shortRtnEle: { __html: shortRtnEle },
-      rtnEle: { __html: rtnEle },
-      n,
+  toDetail() {
+    const {
+      listItem: {
+        pOrO,
+        custId,
+        rowId,
+        ptyId,
+      },
+    } = this.props;
+    const type = (!pOrO || pOrO === 'P') ? 'per' : 'org';
+    const param = {
+      id: 'FSP_360VIEW_M_TAB',
+      title: '客户360视图-客户信息',
+      forceRefresh: true,
     };
+    fspGlobal.openFspTab({
+      url: `/customerCenter/360/${type}/main?id=${custId}&rowId=${rowId}&ptyId=${ptyId}`,
+      param,
+    });
   }
 
   @autobind
   handleSelect() {
     const { onChange, listItem: { custId, name } } = this.props;
     onChange(custId, name);
-  }
-  /**
-   * 回调，关闭modal打开state
-   */
-  @autobind
-  resetModalState() {
-    this.setState({
-      isShowModal: false,
-    });
   }
 
   @autobind
@@ -478,8 +180,8 @@ export default class CustomerRow extends PureComponent {
       return <span>{listItem.genderValue}/{listItem.age}岁</span>;
     } else if (listItem.pOrO === 'O' && listItem.orgTypeName) {
       return <span>{listItem.orgTypeName}</span>;
-    } else if (listItem.pOrO === 'F' && listItem.prodTypeName) {
-      return <span>{listItem.prodTypeName}</span>;
+    } else if (listItem.pOrO === 'F' && listItem.prodTypeCode) {
+      return <span>{listItem.prodTypeCode}</span>;
     }
     return '';
   }
@@ -489,183 +191,114 @@ export default class CustomerRow extends PureComponent {
       isSms,
       onAddFollow,
       currentFollowCustId,
-      createServiceRecord,
       isFollows,
-      isGetCustIncome,
+      custIncomeReqState,
+      toggleServiceRecordModal,
+      custEmail,
+      onSendEmail,
+      emailCustId,
+      getCustIncome,
+      location,
+      dict,
+      formatAsset,
     } = this.props;
-    const {
-      unit,
-      newAsset,
-      isShowCharts,
-      addressEmail,
-    } = this.state;
-    const thisMonthlyProfits = monthlyProfits[listItem.custId] || [];
-    const lastestProfit = Number(this.getLastestData(thisMonthlyProfits).assetProfit);
-    const lastestProfitRate = Number(this.getLastestData(thisMonthlyProfits).assetProfitRate);
-    const matchedWord = this.matchWord(q, listItem);
     const rskLev = _.trim(listItem.riskLvl);
     const str = `${listItem.custId}.${listItem.name}`;
     const isChecked = _.includes(selectedIds, str) || isAllSelect;
+    let assetValue = '--';
+    let assetUnit = '';
+    if (listItem.asset) {
+      const obj = formatAsset(listItem.asset);
+      assetValue = obj.value;
+      assetUnit = obj.unit;
+    }
+    // 佣金率
+    let miniFee = '--';
+    if (listItem.miniFee !== null) {
+      miniFee = `${(listItem.miniFee * 1000).toFixed(2)}‰`;
+    }
     return (
-      <div className={styles.customerRow}>
-        {
-          isSms ?
-            <div className={styles.basicInfoD}>
-              <ul className={styles.operationIcon}>
-                <li onClick={() => this.createModal(listItem)}>
-                  <Icon type="dianhua" />
-                  <span>电话联系</span>
-                </li>
-                <li onClick={this.handleIsEmail}>
-                  <Icon type="youjian" />
-                  <span><a ref={ref => this.sendEmail = ref} href={addressEmail[listItem.custId] === undefined || addressEmail[listItem.custId] === null ? 'javascript:void(0);' : `mailto:${addressEmail[listItem.custId]}`}> 邮件联系 </a></span>
-                </li>
-                <li onClick={() => createServiceRecord(listItem)}>
-                  <Icon type="jilu" />
-                  <span>添加服务记录</span>
-                </li>
-                <li onClick={() => onAddFollow(listItem)} className={(currentFollowCustId === listItem.custId && isFollows[currentFollowCustId]) || isFollows[listItem.custId] ? styles.follows : ''}>
-                  <Icon type="guanzhu" />
-                  <span>{(currentFollowCustId === listItem.custId && isFollows[currentFollowCustId]) || isFollows[listItem.custId] ? '已关注' : '关注'}</span>
-                </li>
-              </ul>
-            </div>
-            :
-            null
-        }
-        <div className={`${styles.customerRowLeft} clear`}>
-          <div className={styles.selectIcon}>
-            <Checkbox
-              disabled={isAllSelect}
-              checked={isChecked}
-              onChange={this.handleSelect}
-            />
-          </div>
-          <div className={styles.avatorContent}>
-            <img className={styles.avatorImage} src={custNature[listItem.pOrO].imgSrc} alt="" />
-            <div className={styles.avatorText}>{custNature[listItem.pOrO].name}</div>
-            <img className={styles.iconMoneyImage} src={rankImgSrcConfig[listItem.levelCode]} alt="" />
-          </div>
+      <div
+        className={styles.customerRow}
+      >
+        <QuickMenu
+          isSms={isSms}
+          listItem={listItem}
+          createModal={this.createModal}
+          toggleServiceRecordModal={toggleServiceRecordModal}
+          custEmail={custEmail}
+          emailCustId={emailCustId}
+          onSendEmail={onSendEmail}
+          currentFollowCustId={currentFollowCustId}
+          isFollows={isFollows}
+          onAddFollow={onAddFollow}
+        />
+        <div className={styles.selectIcon}>
+          <Checkbox
+            disabled={isAllSelect}
+            checked={isChecked}
+            onChange={this.handleSelect}
+          />
         </div>
-        <div className={styles.customerRowRight}>
-          <div className="row-one">{listItem.name ? <span className="name">{listItem.name}</span> : null}
-            {
-              listItem.contactFlag ?
-                <div className="iconSingned">
-                  <div className="itemText">签约客户</div>
-                </div> : null
-            }
-            {listItem.highWorthFlag ? <div className="highWorthFlag">高净值</div> : null}
-            {
-              (rskLev === '' || rskLev === 'null')
-                ? '' :
-                <div
-                  className={`riskLevel ${riskLevelConfig[rskLev].colorCls}`}
-                >
-                  <div className="itemText">{`风险等级：${riskLevelConfig[rskLev].title}`}</div>
-                  {riskLevelConfig[rskLev].name}
-                </div>
-            }
-          </div>
-          <div className="row-two">
-            <span>{listItem.custId}</span>
-            <span className="cutOffLine">|</span>
-            {this.renderAgeOrOrgName()}
-            <span className="commission">佣金率: <em>{(listItem.miniFee * 1000).toFixed(2)}‰</em></span>
-          </div>
-          <div className="row-three">
-            <span>总资产：</span>
-            <span className="asset">{newAsset}</span>
-            <span>{unit}</span>
-            <span
-              className="showChart"
-              style={{
-                cursor: isGetCustIncome ? 'wait' : 'pointer',
-              }}
-            >
-              <p
-                onMouseEnter={this.debounced}
-                onMouseLeave={this.handleMouseLeave}
-              >
-                查看详情
-              </p>
-              <div
-                className={`${styles.showCharts}`}
-                style={{
-                  display: isShowCharts ? 'block' : 'none',
-                }}
-              >
-                <div className={styles.chartsContent}>
-                  <ChartLineWidget chartData={thisMonthlyProfits} />
-                </div>
-                <div className={styles.chartsText}>
-                  <div>
-                    <span>年最大时点资产：</span>
-                    <span className={styles.numA}>
-                      {listItem.maxTotAsetY ? formatNumber(listItem.maxTotAsetY) : '--'}
-                    </span>
-                    {listItem.maxTotAsetY ? generateUnit(listItem.maxTotAsetY) : ''}
-                  </div>
-                  <div>
-                    <span>本月收益率：</span>
-                    <span className={styles.numB}>
-                      {
-                        thisMonthlyProfits.length ?
-                          `${lastestProfitRate.toFixed(2)}%`
-                          :
-                          '--'
-                      }
-                    </span>
-                  </div>
-                  <div>
-                    <span>
-                      本月收益：
-                      <span className={styles.numB}>
-                        {
-                          thisMonthlyProfits.length ?
-                            formatNumber(lastestProfit)
-                            :
-                            '--'
-                        }
-                      </span>
-                      &nbsp;
-                      {thisMonthlyProfits.length ? generateUnit(lastestProfit) : null}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </span>
-            <div className="department">
-              <span>{listItem.orgName}</span>
-              <span className="cutOffLine">|</span>
-              <span>{`服务经理：${listItem.empName || '无'}`}</span>
+        <div
+          className={styles.customerRowContent}
+          onClick={this.toDetail}
+        >
+          <div className={`${styles.customerRowLeft} clear`}>
+            <div className={styles.avatorContent}>
+              <img className={styles.avatorImage} src={custNature[listItem.pOrO].imgSrc} alt="" />
+              <div className={styles.avatorText}>{custNature[listItem.pOrO].name}</div>
+              <img className={styles.iconMoneyImage} src={rankImgSrcConfig[listItem.levelCode]} alt="" />
             </div>
           </div>
-          <div className={styles.relatedInfo}>
-            {
-              matchedWord.n > 2 ?
-                <div className={styles.collapseItem}>
-                  <span style={this.state.showStyle}>
-                    <a onClick={() => this.handleCollapse('open')}>
-                      <span className={styles.itemA}>展开</span>
-                      <img src={iconOpen} alt="open" />
-                    </a>
-                  </span>
-                  <span style={this.state.hideStyle}>
-                    <a onClick={() => this.handleCollapse('close')}>
-                      <span className={styles.itemA}>收起</span>
-                      <img src={iconClose} alt="open" />
-                    </a>
-                  </span>
-                </div> : null
-            }
-            <ul
-              style={this.state.showStyle}
-              dangerouslySetInnerHTML={matchedWord.shortRtnEle} // eslint-disable-line
-            />
-            <ul
-              style={this.state.hideStyle}
-              dangerouslySetInnerHTML={matchedWord.rtnEle} // eslint-disable-line
+          <div className={styles.customerRowRight}>
+            <div className="row-one">{listItem.name ? <span className="name">{listItem.name}</span> : null}
+              {
+                listItem.contactFlag ?
+                  <div className="iconSingned">
+                    <div className="itemText">签约客户</div>
+                  </div> : null
+              }
+              {listItem.highWorthFlag ? <div className="highWorthFlag">高净值</div> : null}
+              {
+                (rskLev === '' || rskLev === 'null')
+                  ? '' :
+                  <div
+                    className={`riskLevel ${riskLevelConfig[rskLev].colorCls}`}
+                  >
+                    <div className="itemText">{`风险等级：${riskLevelConfig[rskLev].title}`}</div>
+                    {riskLevelConfig[rskLev].name}
+                  </div>
+              }
+            </div>
+            <div className="row-two">
+              <span>{listItem.custId}</span>
+              <span className="cutOffLine">|</span>
+              {this.renderAgeOrOrgName()}
+              <span className="commission">佣金率: <em>{miniFee}</em></span>
+            </div>
+            <div className="row-three">
+              <span>总资产：</span>
+              <span className="asset">{assetValue}</span>
+              <span>{assetUnit}</span>
+              <SixMonthEarnings
+                listItem={listItem}
+                monthlyProfits={monthlyProfits}
+                custIncomeReqState={custIncomeReqState}
+                getCustIncome={getCustIncome}
+                formatAsset={formatAsset}
+              />
+              <div className="department">
+                <span>{listItem.orgName}</span>
+                <span className="cutOffLine">|</span>
+                <span>{`服务经理：${listItem.empName || '无'}`}</span>
+              </div>
+            </div>
+            <MatchArea
+              q={q}
+              dict={dict}
+              location={location}
+              listItem={listItem}
             />
           </div>
         </div>

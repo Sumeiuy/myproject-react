@@ -9,7 +9,7 @@ import React, { PropTypes, PureComponent } from 'react';
 import { Progress } from 'antd';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
-import { linkTo } from './homeIndicators';
+import { linkTo } from './homeIndicators_';
 
 import styles from './progressList.less';
 

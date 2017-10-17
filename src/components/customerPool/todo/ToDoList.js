@@ -6,6 +6,7 @@
 
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
 import { Table } from 'antd';
 import { fspGlobal } from '../../../utils';
 
@@ -29,8 +30,9 @@ const columns = [
         };
         fspGlobal.openFspIframeTab({ url, param });
       }}
+      title={item.text}
     >
-      {item.text}
+      {_.truncate(item.text, { length: 18, omission: '...' })}
     </a>,
   },
   {
@@ -98,7 +100,6 @@ export default class ToDoList extends PureComponent {
       curPageNum: page,
     });
   }
-
   render() {
     const { className, data, todoPage, todolist } = this.props;
     // 没有待办流程
@@ -140,7 +141,7 @@ export default class ToDoList extends PureComponent {
     return (
       <Table
         className={className}
-        rowKey={record => record.applyId}
+        // rowKey={record => record.applyId}
         columns={columns}
         dataSource={data}
         pagination={{

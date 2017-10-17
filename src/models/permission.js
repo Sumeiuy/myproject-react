@@ -2,7 +2,6 @@
  * @file models/premissinon.js
  * @author honggaungqing
  */
-
 import { permission as api } from '../api';
 
 const EMPTY_OBJECT = {};
@@ -12,58 +11,27 @@ export default {
   namespace: 'permission',
   state: {
     detailMessage: EMPTY_OBJECT, // 详情
-    list: EMPTY_OBJECT,
-    serverPersonelList: EMPTY_LIST, // 服务人员列表
-    drafterList: EMPTY_LIST, // 拟稿人
-    empOrgTreeList: EMPTY_OBJECT, // 部门
     childTypeList: EMPTY_LIST, // 子类型
-    customerList: EMPTY_LIST, // 客户列表
+    hasServerPersonList: EMPTY_LIST, // 已有服务人员列表
+    searchServerPersonList: EMPTY_LIST, // 可查询服务人员列表
+    nextApproverList: EMPTY_LIST, // 按照条件查询下一审批人列表
+    bottonList: EMPTY_LIST, // 按钮组
+    modifyCustApplication: EMPTY_OBJECT, // 获取修改私密客户申请 的结果
   },
   reducers: {
     getDetailMessageSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
-      console.warn('resultData', resultData);
       return {
         ...state,
         detailMessage: resultData,
       };
     },
-    getPermissionListSuccess(state, action) {
+    getSearchServerPersonListSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
-      const { page = EMPTY_OBJECT, applicationList = EMPTY_LIST } = resultData;
-      const { listData: preListData = EMPTY_LIST } = state.list;
-
+      const { servicePeopleList = EMPTY_LIST } = resultData;
       return {
         ...state,
-        list: {
-          page,
-          resultData: page.pageNum === 1 ?
-            applicationList : [...preListData, ...applicationList],
-        },
-      };
-    },
-    getServerPersonelListSuccess(state, action) {
-      const { payload: { resultData = EMPTY_LIST } } = action;
-      return {
-        ...state,
-        serverPersonelList: resultData,
-      };
-    },
-    getDrafterListSuccess(state, action) {
-      const { payload: { resultData = EMPTY_OBJECT } } = action;
-      const { empInfo = EMPTY_LIST } = resultData;
-
-      return {
-        ...state,
-        drafterList: empInfo,
-      };
-    },
-    getEmpOrgTreeSuccess(state, action) {
-      const { payload: { resultData = EMPTY_OBJECT } } = action;
-
-      return {
-        ...state,
-        empOrgTreeList: resultData,
+        searchServerPersonList: servicePeopleList,
       };
     },
     getChildTypeListSuccess(state, action) {
@@ -75,13 +43,32 @@ export default {
         childTypeList: childList,
       };
     },
-    getCustomerListSuccess(state, action) {
-      const { payload: { resultData = EMPTY_OBJECT } } = action;
-      const { custList = EMPTY_LIST } = resultData;
-      console.log('reduces', custList);
+    getHasServerPersonListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_LIST } } = action;
       return {
         ...state,
-        customerList: custList,
+        hasServerPersonList: resultData,
+      };
+    },
+    getNextApproverListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        nextApproverList: resultData,
+      };
+    },
+    getBottonListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        bottonList: resultData,
+      };
+    },
+    getModifyCustApplicationSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        modifyCustApplication: resultData,
       };
     },
   },
@@ -93,42 +80,10 @@ export default {
         payload: response,
       });
     },
-    * getPermissionList({ payload }, { call, put }) {
-      const response = yield call(api.getPermissionList, payload);
+    * getSearchServerPersonList({ payload }, { call, put }) {
+      const response = yield call(api.getSearchServerPersonelList, payload);
       yield put({
-        type: 'getPermissionListSuccess',
-        payload: response,
-      });
-      const result = response.resultData.applicationList;
-      if (Array.isArray(result) && result.length) {
-        const detailList = yield call(api.getMessage, {
-          id: result[0].id,
-        });
-        console.warn('detailList', detailList);
-        yield put({
-          type: 'getDetailMessageSuccess',
-          payload: detailList,
-        });
-      }
-    },
-    * getServerPersonelList({ payload }, { call, put }) {
-      const response = yield call(api.getServerPersonelList, payload);
-      yield put({
-        type: 'getServerPersonelListSuccess',
-        payload: response,
-      });
-    },
-    * getDrafterList({ payload }, { call, put }) {
-      const response = yield call(api.getDrafterList, payload);
-      yield put({
-        type: 'getDrafterListSuccess',
-        payload: response,
-      });
-    },
-    * getEmpOrgTree({ payload }, { call, put }) {
-      const response = yield call(api.getEmpOrgTree, payload);
-      yield put({
-        type: 'getEmpOrgTreeSuccess',
+        type: 'getSearchServerPersonListSuccess',
         payload: response,
       });
     },
@@ -139,10 +94,31 @@ export default {
         payload: response,
       });
     },
-    * getCustomerList({ payload }, { call, put }) {
-      const response = yield call(api.getCustomerList, payload);
+    * getHasServerPersonList({ payload }, { call, put }) {
+      const response = yield call(api.getHasServerPersonList, payload);
       yield put({
-        type: 'getCustomerListSuccess',
+        type: 'getHasServerPersonListSuccess',
+        payload: response,
+      });
+    },
+    * getNextApproverList({ payload }, { call, put }) {
+      const response = yield call(api.getNextApproverList, payload);
+      yield put({
+        type: 'getNextApproverListSuccess',
+        payload: response,
+      });
+    },
+    * getBottonList({ payload }, { call, put }) {
+      const response = yield call(api.getButtonList, payload);
+      yield put({
+        type: 'getBottonListSuccess',
+        payload: response,
+      });
+    },
+    * getModifyCustApplication({ payload }, { call, put }) {
+      const response = yield call(api.getModifyCustApplication, payload);
+      yield put({
+        type: 'getModifyCustApplicationSuccess',
         payload: response,
       });
     },

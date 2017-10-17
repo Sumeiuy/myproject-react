@@ -31,6 +31,7 @@ const EMPTY_OBJECT = {};
 const HTSC_RESPID = '1-46IDNZI'; // 首页指标查询
 // 主服务经理id
 const MAIN_MAGEGER_ID = 'msm';
+const LOCAL_MONTH = '518003';
 const effects = {
   toBeTone: 'customerPool/getToBeDone',
   manageIndicators: 'customerPool/getManageIndicators',
@@ -53,7 +54,7 @@ const fetchDataFunction = (globalLoading, type) => query => ({
 const mapStateToProps = state => ({
   manageIndicators: state.customerPool.manageIndicators, // 经营指标
   custRange: state.customerPool.custRange, // 客户池用户范围
-  cycle: state.customerPool.dict.kPIDateScopeType,  // 统计周期
+  cycle: state.app.dict.kPIDateScopeType,  // 统计周期
   position: state.customerPool.position, // 职责切换
   process: state.customerPool.process, // 代办流程(首页总数)
   motTaskCount: state.customerPool.motTaskCount, // 今日可做任务总数
@@ -152,6 +153,7 @@ export default class Home extends PureComponent {
   componentDidMount() {
     const {
       custRange,
+      cycle = EMPTY_LIST,
       location: { query: { orgId = '', cycleSelect = '' } },
       empInfo: { empInfo, empRespList },
       position: { orgId: posOrgId = '' },
@@ -166,12 +168,14 @@ export default class Home extends PureComponent {
     }
 
     const { begin, end } = this.getTimeSelectBeginAndEnd();
+    const initialCycleSelect = !_.isEmpty(cycle) ? cycle[0].key : '';
+
     this.getAllInfo({
       custRange,
       empInfo,
       empRespList,
       posOrgId: fspOrgId,
-      cycleSelect,
+      cycleSelect: cycleSelect || initialCycleSelect,
       begin,
       end,
     });
@@ -274,7 +278,7 @@ export default class Home extends PureComponent {
     const { historyTime, customerPoolTimeSelect } = optionsMap;
     const currentSelect = _.find(historyTime, itemData =>
       itemData.name === _.find(customerPoolTimeSelect, item =>
-        item.key === (cycleSelect || '518003')).name) || {}; // 本月
+        item.key === (cycleSelect || LOCAL_MONTH)).name) || {}; // 本月
     const nowDuration = getDurationString(currentSelect.key);
     const begin = nowDuration.begin;
     const end = nowDuration.end;
@@ -341,13 +345,22 @@ export default class Home extends PureComponent {
     getHistoryWdsList({ orgId, empNo });
     // 待办事项
     getToBeDone();
-    console.log('########getInformation##########');
+
     // 首席投顾观点
     getInformation({ curPageNum: 1, pageSize: 18 });
     // 指标
-    this.getIndicators({ begin, end, orgId, cycleSelect });
+    // 已和下面接口合并
+    // this.getIndicators({ begin, end, orgId, cycleSelect });
+    // 绩效指标
+    this.getIndicators({ begin, end, orgId: fspOrgId, cycleSelect: cycleSelect || LOCAL_MONTH });
+
     // 沪深归集率（经营指标）
     this.fetchHSRate({ begin, end, orgId, cycleSelect });
+
+    // 净创收数据
+    // 已删除
+    // this.getIncomes({ begin, end, orgId: fspOrgId, cycleSelect: cycleSelect || LOCAL_MONTH });
+
 
     // 替换url orgId
     replace({
@@ -355,6 +368,7 @@ export default class Home extends PureComponent {
       query: {
         ...query,
         orgId: fspOrgId,
+        cycleSelect: cycleSelect || LOCAL_MONTH,
       },
     });
   }
@@ -608,6 +622,7 @@ export default class Home extends PureComponent {
           clearFun={this.clearHistoryList}
           searchHistoryVal={searchHistoryVal}
           saveSearchVal={this.handleSaveSearchVal}
+          location={location}
         />
         <div className={styles.poolContainer}>
           <div className={styles.content}>

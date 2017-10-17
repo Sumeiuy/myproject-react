@@ -23,7 +23,7 @@ import {
   // getServiceIndicatorOfManage,
   filterEmptyToInteger,
   filterEmptyToNumber,
-} from './homeIndicators';
+} from './homeIndicators_';
 
 export default class PerformanceIndicators extends PureComponent {
   static propTypes = {

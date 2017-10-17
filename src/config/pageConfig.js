@@ -11,8 +11,14 @@
 const pageConfig = {
   // 权限分配
   permission: {
+    pageName: '权限申请',
     pageType: '01', // 查询列表接口中的type值
     subType: [
+      {
+        show: true,
+        label: '全部',
+        value: '',
+      },
       {
         show: true,
         label: '私密客户设置',
@@ -88,43 +94,29 @@ const pageConfig = {
       },
       {
         show: true,
-        label: '流程发起',
-        value: '流程发起',
+        label: '处理中',
+        value: '01',
       },
       {
         show: true,
-        label: '营业部负责人审批',
-        value: '营业部负责人审批',
+        label: '完成',
+        value: '02',
       },
       {
         show: true,
-        label: '分公司负责人审批',
-        value: '分公司负责人审批',
+        label: '终止',
+        value: '03',
       },
       {
         show: true,
-        label: '经纪及财富管理部业务处理',
-        value: '经纪及财富管理部业务处理',
-      },
-      {
-        show: true,
-        label: '重新提交',
-        value: '重新提交',
-      },
-      {
-        show: true,
-        label: '终止办结',
-        value: '终止办结',
-      },
-      {
-        show: true,
-        label: '正常办结',
-        value: '正常办结',
+        label: '驳回',
+        value: '04',
       },
     ],
   },
   // 佣金调整
   commission: {
+    pageName: '佣金调整',
     pageType: '02',
     subType: [
       {
@@ -244,40 +236,36 @@ const pageConfig = {
       },
       {
         show: true,
-        label: '待营业部负责人审核',
-        value: '待营业部负责人审核',
-      },
-      {
-        show: true,
-        label: '返回创建者',
-        value: '返回创建者',
-      },
-      {
-        show: true,
-        label: '佣金待处理',
-        value: '佣金待处理',
-      },
-      {
-        show: true,
         label: '处理中',
-        value: '处理中',
+        value: '01',
       },
       {
         show: true,
         label: '完成',
-        value: '完成',
+        value: '02',
       },
       {
         show: true,
-        label: '已失败',
-        value: '已失败',
+        label: '终止',
+        value: '03',
+      },
+      {
+        show: true,
+        label: '驳回',
+        value: '04',
       },
     ],
   },
   // 合作合约
   contract: {
+    pageName: '合作合约',
     pageType: '03',
     subType: [
+      {
+        show: true,
+        label: '全部',
+        value: '',
+      },
       {
         show: true,
         label: '限售股解禁',
@@ -310,17 +298,33 @@ const pageConfig = {
       {
         show: true,
         label: '处理中',
-        value: '处理中',
+        value: '01',
       },
       {
         show: true,
         label: '完成',
-        value: '完成',
+        value: '02',
       },
       {
         show: true,
         label: '终止',
-        value: '终止',
+        value: '03',
+      },
+      {
+        show: true,
+        label: '驳回',
+        value: '04',
+      },
+    ],
+    operationList: [
+      {
+        show: true,
+        label: '订购',
+        value: '1',
+      }, {
+        show: true,
+        label: '退订',
+        value: '2',
       },
     ],
   },

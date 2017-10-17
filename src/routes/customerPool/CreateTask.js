@@ -5,6 +5,7 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
+import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
@@ -23,15 +24,17 @@ const fectchDataFunction = (globalLoading, type) => query => ({
 });
 
 const mapStateToProps = state => ({
-  dict: state.customerPool.dict,
+  dict: state.app.dict,
   createTaskResult: state.customerPool.createTaskResult,
 });
 
 const mapDispatchToProps = {
   createTask: fectchDataFunction(true, effects.createTask),
+  goBack: routerRedux.goBack,
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
+@withRouter
 export default class CreateTask extends PureComponent {
 
   static propTypes = {
@@ -40,13 +43,14 @@ export default class CreateTask extends PureComponent {
     dict: PropTypes.object,
     createTask: PropTypes.func.isRequired,
     createTaskResult: PropTypes.object,
-  }
+    goBack: PropTypes.func.isRequired,
+  };
 
   static defaultProps = {
     data: [],
     dict: {},
     createTaskResult: {},
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -64,6 +68,7 @@ export default class CreateTask extends PureComponent {
     if (preCreateTaskResult !== nextcreateTaskResult) {
       this.handleCreateTaskSuccess(nextcreateTaskResult);
     }
+    console.log(nextcreateTaskResult);
   }
 
   @autobind
@@ -84,12 +89,14 @@ export default class CreateTask extends PureComponent {
   }
 
   render() {
-    const { dict, location } = this.props;
+    const { dict, location, goBack } = this.props;
     const { isSuccess } = this.state;
+    console.log(isSuccess);
     return (
       <div className={styles.taskBox}>
         {!isSuccess ?
           <CreateTaskFrom
+            goBack={goBack}
             location={location}
             dict={dict}
             createTask={this.handleCreateTask}

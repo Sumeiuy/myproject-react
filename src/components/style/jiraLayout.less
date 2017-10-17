@@ -2,7 +2,7 @@
   font-size: 14px;
   .dropDownSelectBox{
     display: inline-block;
-    width: 14%;
+    min-width: 100px;
     margin-right: 20px;
     vertical-align: middle;
   }
@@ -13,7 +13,7 @@
     }
     //select边框
     .ant-select{
-      min-width: 120px;
+      min-width: 100px;
       margin-right: 20px;
       .ant-select-selection{
         background-color: transparent;
@@ -27,6 +27,7 @@
       }
       &.ant-select-open .ant-select-selection{
         border: 1px solid #348cf0;
+        box-shadow: 0 0 0 2px rgba(16, 142, 233, 0.2);
       }
     }
 
@@ -167,6 +168,19 @@
         li{
           margin-bottom:2px;          
         }
+      }
+      .seibelListIcon{
+        width: 20px;
+        height: 20px;
+        line-height: 20px;
+        text-align: center;
+        display: inline-block;
+        border-radius: 50%;
+        background-color: #7D9BE0;
+        font-size: 12px;
+        color: #fff;
+        vertical-align: bottom;
+        margin-top: 3px;
       }
     }
   }

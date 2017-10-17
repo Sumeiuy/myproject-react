@@ -4,10 +4,17 @@
 
 export default function contract(api) {
   return {
-    getContractDetail: query => api.post('/groovynoauth/fsp/contract/cooper/queryDetail', query),
     // 获取详情信息
-    getMessage: query => api.post('/groovynoauth/contract/contractMessage', query),
-    // 获取权限申请列表
-    getContractList: query => api.post('/groovynoauth/contract/queryContractList', query),
+    getContractDetail: query => api.post('/groovynoauth/fsp/contract/cooper/queryDetail', query),
+    // 获取附件信息
+    getAttachList: query => api.post('/groovynoauth/fsp/contract/cooper/queryAttaches', query),
+    // 获取附件列表
+    getAttachmentList: query => api.post('/file/ceFileList', query),
+    // 删除附件
+    deleteAttachment: query => api.post('/file/ceFileDelete', query),
+    // 保存合作合约
+    saveContractData: query => api.post('/groovynoauth/fsp/contract/cooper/saveContract', query),
+    // 查询合作合约编号
+    getContractNumList: query => api.post('/groovynoauth/fsp/contract/cooper/queryContractId', query),
   };
 }

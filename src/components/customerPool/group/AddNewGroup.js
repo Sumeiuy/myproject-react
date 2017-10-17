@@ -6,7 +6,8 @@
  * */
 import React, { PureComponent, PropTypes } from 'react';
 import { withRouter } from 'dva/router';
-import { Form, Input, Button } from 'antd';
+import { Form, Input } from 'antd';
+import Button from '../../common/Button';
 import styles from './addNewGroup.less';
 
 const FormItem = Form.Item;
@@ -38,12 +39,11 @@ export default class AddNewGroup extends PureComponent {
   static propTypes = {
     form: PropTypes.object.isRequired,
     onSubmit: PropTypes.func.isRequired,
-    goback: PropTypes.func.isRequired,
+    goBack: PropTypes.func.isRequired,
   };
   addNewGroupSubmit = (e) => {
-    const { onSubmit } = this.props;
-    console.log(onSubmit);
     e.preventDefault();
+    const { onSubmit } = this.props;
     this.props.form.validateFields((err, values) => {
       if (!err) {
         onSubmit(values);
@@ -52,7 +52,7 @@ export default class AddNewGroup extends PureComponent {
   };
   render() {
     const { getFieldDecorator } = this.props.form;
-    const { goback } = this.props;
+    const { goBack } = this.props;
     return (
       <Form onSubmit={this.addNewGroupSubmit}>
         <FormItem
@@ -74,7 +74,7 @@ export default class AddNewGroup extends PureComponent {
               )}
         </FormItem>
         <FormItem className={styles.btnContent}>
-          <Button onClick={() => goback()}>
+          <Button onClick={goBack}>
             取消
           </Button>
           <Button

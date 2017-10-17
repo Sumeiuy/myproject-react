@@ -1,8 +1,8 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-09-14 14:44:35
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-09-14 15:14:31
+ * @Last Modified by:   XuWenKang
+ * @Last Modified time: 2017-09-27 18:40:35
  */
 /**
  * 常用说明
@@ -16,9 +16,11 @@
  * cancelText    string      取消按钮文字，默认为 【取消】
  * maskClosable  boolean     点击蒙层是否允许关闭
  * 新增参数
- * size          string      弹窗的大小，可选值 [large, normal, small] 默认为 noral
+ * size          string      弹窗的大小，可选值 [large, normal, small] 默认为 normal
  * btnStatus     boolean     确认按钮的禁用状态， 默认 【false】
  * children      string/DOM  弹窗内需要显示的元素
+ * needBtn       boolean     是否需要显示底部的Button
+ * showCancelBtn boolean     是否显示Cancel Button 默认为true
  * 其他参数与 Antd.Modal 相同，具体见下方链接
  * https://ant.design/components/modal-cn/
  * 示例
@@ -35,7 +37,8 @@
  </CommonModal>
  */
 
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { Modal, Button } from 'antd';
 // import Button from '../Button';
 import styles from './commonModal.less';
@@ -43,6 +46,7 @@ import styles from './commonModal.less';
 export default class CommonModal extends PureComponent {
   static propTypes = {
     visible: PropTypes.bool.isRequired,
+    needBtn: PropTypes.bool,
     title: PropTypes.string.isRequired,
     okText: PropTypes.string,
     size: PropTypes.string,
@@ -51,6 +55,9 @@ export default class CommonModal extends PureComponent {
     closeModal: PropTypes.func.isRequired,
     onOk: PropTypes.func.isRequired,
     btnStatus: PropTypes.bool,
+    showOkBtn: PropTypes.bool,
+    showCancelBtn: PropTypes.bool,
+    wrapClassName: PropTypes.string,
     children: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.object,
@@ -59,11 +66,15 @@ export default class CommonModal extends PureComponent {
   }
 
   static defaultProps = {
+    needBtn: true,
     btnStatus: false,
+    showCancelBtn: true,
+    showOkBtn: true,
     okText: '确认',
     cancelText: '取消',
     children: '子元素内容区域',
     size: 'normal',
+    wrapClassName: '',
   }
 
   render() {
@@ -76,31 +87,37 @@ export default class CommonModal extends PureComponent {
       onOk,
       okText,
       btnStatus,
+      needBtn,
+      showCancelBtn,
+      showOkBtn,
     } = this.props;
     const modalSize = `modal${size}`;
+    const okBtn = !showOkBtn ? null
+    : (<Button
+      key="submit"
+      type="primary"
+      size="large"
+      disabled={btnStatus}
+      onClick={() => onOk(modalKey)}
+    >
+      {okText}
+    </Button>);
+    const cancelBtn = !showCancelBtn ? null
+    : (<Button
+      key="back"
+      size="large"
+      onClick={() => closeModal(modalKey)}
+    >
+      {cancelText}
+    </Button>);
+    const footerContent = !needBtn ? null
+      : [okBtn, cancelBtn];
     return (
       <Modal
         {...this.props}
         onCancel={() => closeModal(modalKey)}
-        wrapClassName={`${styles.commonModal} ${styles[modalSize]}`}
-        footer={[
-          <Button
-            key="back"
-            size="large"
-            onClick={() => closeModal(modalKey)}
-          >
-            {cancelText}
-          </Button>,
-          <Button
-            key="submit"
-            type="primary"
-            size="large"
-            disabled={btnStatus}
-            onClick={() => onOk(modalKey)}
-          >
-            {okText}
-          </Button>,
-        ]}
+        wrapClassName={`${styles.commonModal} ${styles[modalSize]} ${this.props.wrapClassName}`}
+        footer={footerContent}
       >
         {children}
       </Modal>

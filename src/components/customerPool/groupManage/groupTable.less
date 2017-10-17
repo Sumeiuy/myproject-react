@@ -1,3 +1,8 @@
+:global {
+  .react-app .ant-pagination-options .ant-select {
+    width: 80px;
+  }
+}
 .groupTable {
   padding: 15px 20px 20px 15px;
   table {
@@ -7,22 +12,53 @@
     background-color: #f9f9f9;
   }
   table > thead > tr > th, tbody > tr > td {
-    padding-bottom: 5px;
-    padding-top: 5px;
+    padding: 0px;
+    padding-bottom: 11px;
+    padding-top: 11px;
     font-size: 14px;
-    color: #a1a1a1;
-    text-align: center;
+    color: #727272;
+    text-align: left !important;
+  }
+  table > thead > tr > th:first-child, tbody > tr > td:first-child {
+    padding-left: 40px;
+    padding-right: 10px;
   }
   table > thead > tr > th {
     background-color: #ffffff;
-    color: #666666;
-    text-align: center;
+    color: #333333;
+    text-align: left !important;
     font-weight: 600;
   }
   table > tbody > tr > td {
     border-bottom: 0px;
   }
+  .column {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  :global {
+    .mini {
+      display: flex;
+      justify-content: flex-end;
+    }
+    .ant-select-selection {
+      border: 1px solid #dddddd;
+    }
+  }
+  .totalPageSection {
+    font-size: 12px;
+    & > .totalPage {
+      color: #108ee9;
+      font-size: 12px;
+    }
+  }
   .operation {
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     & > .link {
       color: #108ee9;
       background: transparent;
@@ -30,16 +66,20 @@
       outline: none;
       cursor: pointer;
       transition: color .3s ease;
+      padding-right: 8px;
     }
-    & > .link:not(:last-child)::after {
-      content: '';
-      display: inline-block;
-      border-right: 1px solid #108ee9;
-      height: 12px;
-      width: 1px;
-      margin-left: 4px;
-      margin-right: 4px;
-      vertical-align: middle
-    }
+    // & > .link:not(:last-child)::after {
+    //   content: '';
+    //   display: inline-block;
+    //   border-right: 1px solid #108ee9;
+    //   height: 12px;
+    //   width: 1px;
+    //   margin-left: 4px;
+    //   margin-right: 4px;
+    //   vertical-align: middle
+    // }
+  }
+  .rowSelected {
+    background-color: rgb(237, 246, 253) !important;
   }
 }
