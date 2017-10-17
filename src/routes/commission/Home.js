@@ -13,6 +13,7 @@ import { message } from 'antd';
 
 import SplitPanel from '../../components/common/splitPanel/SplitPanel';
 import Detail from '../../components/commissionAdjustment/Detail';
+import AdvisoryDetail from '../../components/commissionAdjustment/AdvisoryDetail';
 import ApprovalRecordBoard from '../../components/commissionAdjustment/ApprovalRecordBoard';
 import CreateNewApprovalBoard from '../../components/commissionAdjustment/CreateNewApprovalBoard';
 import CommissionHeader from '../../components/common/biz/SeibelHeader';
@@ -285,11 +286,21 @@ export default class CommissionHome extends PureComponent {
 
   // 查询佣金调整4个子类型的详情信息
   getDetail4Subtye(record) {
-    const { subType: st, business1 } = record;
-    const { getBatchCommissionDetail } = this.props;
+    const { subType: st, id, business1, custType } = record;
+    const {
+      getBatchCommissionDetail,
+      getSubscribeDetail,
+    } = this.props;
     switch (st) {
       case comsubs.batch:
         getBatchCommissionDetail({ batchNum: business1 });
+        break;
+      case comsubs.single:
+        break;
+      case comsubs.subscribe:
+        getSubscribeDetail({ orderId: id, type: custType });
+        break;
+      case comsubs.unsubscribe:
         break;
       default:
         break;
@@ -309,7 +320,7 @@ export default class CommissionHome extends PureComponent {
    */
   @autobind
   getDetailComponentBySubType(st) {
-    const { detail, location } = this.props;
+    const { detail, location, subscribeDetail } = this.props;
     let detailComponent = null;
     switch (st) {
       case comsubs.batch:
@@ -320,6 +331,17 @@ export default class CommissionHome extends PureComponent {
             checkApproval={this.getApprovalBoardCustInfo}
           />
         );
+        break;
+      case comsubs.single:
+        break;
+      case comsubs.subscribe:
+        detailComponent = (
+          <AdvisoryDetail
+            data={subscribeDetail}
+          />
+        );
+        break;
+      case comsubs.unsubscribe:
         break;
       default:
         break;

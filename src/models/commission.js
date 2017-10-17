@@ -76,11 +76,17 @@ export default {
     },
 
     getSubscribeDetailSuccess(state, action) {
-      const { payload: { detailRes } } = action;
+      const { payload: { detailRes, attachmentRes, approvalRes } } = action;
       const detailResult = detailRes.resultData;
+      const attachmentResult = attachmentRes.resultData;
+      const approvalResult = approvalRes.resultData;
       return {
         ...state,
-        subscribeDetail: detailResult,
+        subscribeDetail: {
+          base: detailResult,
+          attachmentList: attachmentResult,
+          approvalHistory: approvalResult,
+        },
       };
     },
 
@@ -256,9 +262,16 @@ export default {
           operationType: 'SP Purchase',
           ...payload,
         });
+      // 通过查询到的详情数据的attachmentNum获取附件信息
+      const detailRD = detailRes.resultData;
+      const attachmentRes = yield call(api.getAttachment, { attachment: detailRD.attachmentNum });
+      const approvalRes = yield call(api.querySingleCustApprovalRecord, {
+        flowCode: detailRD.flowCode,
+      });
+      // TODO 还差一个当前审批步骤的接口
       yield put({
         type: 'getSubscribeDetailSuccess',
-        payload: { detailRes },
+        payload: { detailRes, attachmentRes, approvalRes },
       });
     },
   },
