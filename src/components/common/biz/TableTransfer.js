@@ -25,9 +25,13 @@
  * showSearch： 不必要，是否显示search框
  * pagination： 不必要，页码
  * onSearch: 不必要，搜索框触发的发放
+ * supportSearchKey: 不必要,支持通过搜索的key（筛选用），
+ *                  二维数组（匹配分：模糊和精准），数据顺序固定，第一个是精准匹配数组，第二个是模糊匹配数组
+ * aboutRate: 不必要, 长度，内容顺序 固定,第一个是目标佣金率（string类型），第二个是拿到表中对象佣金率的key（string类型）
+ * totalData: 不必要, 总数据源（搜索用的）
  */
 import React, { PropTypes, Component } from 'react';
-import { Table, Input, Checkbox } from 'antd';
+import { Table, Input, Checkbox, Tooltip } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import classnames from 'classnames';
@@ -85,6 +89,20 @@ const checkColumns = (column, handleAction) => {
   };
 };
 
+const tooltipColumns = column => (
+  {
+    ...column,
+    render: (item) => {
+      const { key } = column;
+      return (
+        <Tooltip title={`${item[key]}`}>
+          <span>{item[key]}</span>
+        </Tooltip>
+      );
+    },
+  }
+);
+
 export default class TableTransfer extends Component {
   static propTypes = {
     firstTitle: PropTypes.string,
@@ -105,6 +123,9 @@ export default class TableTransfer extends Component {
     secondColumns: PropTypes.array.isRequired,
     rowKey: PropTypes.string.isRequired,
     defaultCheckKey: PropTypes.string,
+    supportSearchKey: PropTypes.array,
+    aboutRate: PropTypes.array,
+    totalData: PropTypes.array,
   }
 
   static defaultProps = {
@@ -119,6 +140,9 @@ export default class TableTransfer extends Component {
     onSearch: () => {},
     showSearch: true,
     defaultCheckKey: '',
+    supportSearchKey: [],
+    aboutRate: ['', ''],
+    totalData: [],
   }
 
   constructor(props) {
@@ -133,20 +157,27 @@ export default class TableTransfer extends Component {
     } = props || this.props;
     const initFirstArray = this.initTableData(firstData, rowKey, defaultCheckKey);
     const initSecondArray = this.initTableData(secondData, rowKey, defaultCheckKey);
+    const initFirstColumns = this.initTableColumn(firstColumns);
     const initSecondColumns = this.initTableColumn(secondColumns);
     this.state = {
       checked: this.getAllDefaultCheck(initSecondArray, rowKey),
       firstArray: this.hiddenChildren(initFirstArray),
       secondArray: initSecondArray,
       firstColumns: [
-        ...firstColumns,
+        ...initFirstColumns,
         actionColumns('first', this.handleClick),
       ],
       secondColumns: [
         ...initSecondColumns,
         actionColumns('second', this.handleClick),
       ],
+      tip: { type: '', content: '' },
     };
+    /*
+     tip 有且只出现一条
+         有三种情况（等于，高于，低于)
+         两种类型（finish(等于时出现)，warning(高于，低于时出现)）
+    */
   }
 
   // 获取所有默认选中
@@ -229,6 +260,8 @@ export default class TableTransfer extends Component {
       (item, index) => {
         if (index === 0) {
           return checkColumns(_.omit(item, 'dataIndex'), this.handleCheck);
+        } else if (index === 1) {
+          return tooltipColumns(_.omit(item, 'dataIndex'));
         }
         return item;
       },
@@ -367,6 +400,29 @@ export default class TableTransfer extends Component {
     }, checkChange(newSelectChildren, selectAll));
   }
 
+  // 更新提示
+  @autobind
+  updateTips(selected) {
+    const { aboutRate } = this.props;
+    if (!_.isEmpty(aboutRate)) {
+      const targetRate = aboutRate[0] || '0';
+      const rateKey = aboutRate[1] || '';
+      const selectRate = selected[rateKey] || '0';
+      const result = _.toNumber(selectRate) - _.toNumber(targetRate);
+      if (result === 0) {
+        this.setState({ tip: { type: 'finish', content: '产品组合等于目标佣金率' } });
+      } else if (result > 0) {
+        this.setState({
+          tip: { type: 'warning', content: `产品组合比目标佣金率高${(1000 * Math.abs(result)).toFixed(2)}‰` } },
+        );
+      } else {
+        this.setState({
+          tip: { type: 'warning', content: `产品组合离目标佣金率还差${(1000 * Math.abs(result)).toFixed(2)}‰` } },
+        );
+      }
+    }
+  }
+
   @autobind
   handleClick(currentTableType, selected) {
     const { rowKey } = this.props;
@@ -385,10 +441,14 @@ export default class TableTransfer extends Component {
     let modifySelected = {};
     if (isOperateFirstTable) {
       modifySelected = this.showChildren([selected]);
+      // 展示提示
+      this.updateTips(selected);
     } else {
       // 移除当前child的默认选中，否则，从左侧表穿梭到右侧表时，还是默认选中状态
       const newSelected = this.updateItem(selected);
       modifySelected = this.hiddenChildren([newSelected]);
+      // 移除提示
+      this.setState({ tip: { type: '', content: '' } });
     }
 
     // 更新数据源，添加要移动的元素
@@ -399,39 +459,72 @@ export default class TableTransfer extends Component {
 
   @autobind
   handleSearch(keyword) {
-    const { onSearch } = this.props;
-    onSearch(keyword);
+    const { supportSearchKey, totalData, rowKey, defaultCheckKey } = this.props;
+    const { secondArray } = this.state;
+    // 左边表中数据，不能展开
+    const initFistData = this.hiddenChildren(
+      this.initTableData(totalData, rowKey, defaultCheckKey),
+    );
+    // 搜索的数据源为未被选的数据 = 原始数据源 - 被选中的数据源
+    const searchDataSource = _.differenceBy(initFistData, secondArray, `${rowKey}`);
+    // 无筛选key时，筛选功能不能使用
+    if (_.isEmpty(supportSearchKey)) {
+      return;
+    }
+    // 关键字为 空字符串时，展示全部未被选中数据
+    if (keyword === '') {
+      this.setState({ firstArray: searchDataSource });
+    }
+    // 根据key，执行筛选功能
+    const newFirstArray = _.filter(
+      searchDataSource,
+      (item) => {
+        const resultArray = _.filter(
+          supportSearchKey,
+          (keys, index) => {
+            // 精准匹配
+            if (index === 0) {
+              return !_.isEmpty(_.filter(keys, key => (item[key] === keyword)));
+            }
+            // 模糊匹配
+            return !_.isEmpty(_.filter(keys, key => (item[key].indexOf(keyword) !== -1)));
+          },
+        );
+        return !_.isEmpty(resultArray);
+      },
+    );
+    // 更新数据源
+    this.setState({ firstArray: newFirstArray });
   }
 
   @autobind
   renderTips() {
-    const { tips } = this.props;
-    return tips.map(
-      (item) => {
-        const isWarning = item.type === 'warning';
-        const iconType = isWarning ? 'tixing' : 'duihao';
-        return (
-          <div className={styles.tipRow}>
-            <div className={styles.iconColumns}>
-              <Icon
-                type={iconType}
-                className={classnames(
-                  styles.icon,
-                  { [styles.warningIcon]: isWarning },
-                )}
-              />
-            </div>
-            <div
-              className={classnames(
-                styles.tip,
-                { [styles.warningTip]: isWarning },
-              )}
-            >
-              {item.content}
-            </div>
-          </div>
-        );
-      },
+    const { tip } = this.state;
+    if (_.isEmpty(tip.type)) {
+      return null;
+    }
+    const isWarning = tip.type === 'warning';
+    const iconType = isWarning ? 'tixing' : 'duihao';
+    return (
+      <div className={styles.tipRow}>
+        <div className={styles.iconColumns}>
+          <Icon
+            type={iconType}
+            className={classnames(
+              styles.icon,
+              { [styles.warningIcon]: isWarning },
+            )}
+          />
+        </div>
+        <div
+          className={classnames(
+            styles.tip,
+            { [styles.warningTip]: isWarning },
+          )}
+        >
+          {tip.content}
+        </div>
+      </div>
     );
   }
 
@@ -443,7 +536,6 @@ export default class TableTransfer extends Component {
       showSearch,
       pagination,
       rowKey,
-      tips,
     } = this.props;
     const {
       firstArray,
@@ -451,10 +543,6 @@ export default class TableTransfer extends Component {
       firstColumns,
       secondColumns,
     } = this.state;
-    // 调整提示信息的位置
-    const count = tips.length;
-    const top = count > 1 ? `${-(count - 1) * 32}px` : '0px';
-    const style = { top };
     return (
       <div className={styles.container}>
         <div className={styles.leftContent}>
@@ -482,7 +570,7 @@ export default class TableTransfer extends Component {
         <div className={styles.rightContent}>
           <div className={classnames(styles.header, styles.rightHeader)}>
             <div className={styles.titleLabel}>{secondTitle}</div>
-            <div className={styles.tipContainer} style={style}>
+            <div className={styles.tipContainer}>
               {this.renderTips()}
             </div>
           </div>
