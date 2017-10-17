@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-16 10:00:34
+ * @Last Modified time: 2017-10-17 17:57:56
  */
 
 import React, { PropTypes, PureComponent } from 'react';
@@ -17,51 +17,55 @@ import uploadRequest from '../../../utils/uploadRequest';
 import './upload.less';
 
 let count = 0;
-const EMPTY_LIST = [];
+// const EMPTY_LIST = [];
+const EMPTY_OBJECT = {};
 const Dragger = Upload.Dragger;
 // const confirm = Modal.confirm;
 
 export default class UploadFile extends PureComponent {
   static propTypes = {
-    attachModelList: PropTypes.array,
+    attachModel: PropTypes.object,
+    fileKey: PropTypes.string,
     onOperateFile: PropTypes.func.isRequired,
     onHandleOverview: PropTypes.func,
   }
 
   static defaultProps = {
-    attachModelList: EMPTY_LIST,
+    attachModel: {},
     onHandleOverview: () => { },
+    fileKey: '',
   }
 
   constructor(props) {
     super(props);
+    const { attachModel = EMPTY_OBJECT, fileKey = '' } = props;
     this.state = {
       fList: [],
+      lastFile: attachModel,
+      fileList: [],
+      uploadedFileKey: fileKey,
       upData: {
         empId: helper.getEmpId(),
       },
-      delData: {},
       isShowDeleteConfirm: false,
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { attachModelList: nextFileList = EMPTY_LIST } = nextProps;
-    const { attachModelList: prevFileList = EMPTY_LIST } = this.props;
-    if (nextFileList !== prevFileList) {
-      let fileList = [];
-      if (nextFileList && nextFileList.length > 0) {
-        const filesList = this.removeEmpty(nextFileList);
-        fileList = filesList.map((item, i) => ({
-          uid: `${item.attachUploader || ''}-server-files${i}`,
-          name: item.attachName,
-          status: 'done',
-          url: `${request.prefix}/file/${item.attachUrl}`,
-          thumbUrl: item.attachUrl,
-        }));
-      }
+  componentWillMount() {
+    const { attachModel = EMPTY_OBJECT } = this.props;
+    if (attachModel) {
       this.setState({
-        fList: fileList,
+        lastFile: attachModel,
+      });
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { attachModel: nextFile = EMPTY_OBJECT } = nextProps;
+    const { attachModel: prevFile = EMPTY_OBJECT } = this.props;
+    if (nextFile !== prevFile) {
+      this.setState({
+        lastFile: nextFile,
       });
     }
   }
@@ -80,77 +84,124 @@ export default class UploadFile extends PureComponent {
   }
 
   @autobind
-  fileOnChange({ file }) {
+  fileOnChange(info) {
+    const { onOperateFile } = this.props;
+    // 当前列表
+    const fileList = info.fileList;
+    // 当前操作upload项
+    const currentFile = info.file;
     // {
     //    uid: 'uid',      // 文件唯一标识，建议设置为负数，防止和内部产生的 id 冲突
     //    name: 'xx.png'   // 文件名
     //    status: 'done', // 状态有：uploading done error removed
     //    response: '{"status": "success"}', // 服务端响应内容
     // }
-    const status = file.status;
-    const response = file.response || {};
-    const { resultData, msg } = response;
-    const { onOperateFile } = this.props;
+
+    //  {
+    //   "lastModified": 1247549551674,
+    //   "lastModifiedDate": "2009-07-14T05:32:31.674Z",
+    //   "name": "Lighthouse.jpg",
+    //   "size": 561276,
+    //   "type": "image/jpeg",
+    //   "uid": "rc-upload-1508129119030-2",
+    //   "response": {
+    //       "code": "0",
+    //       "msg": "OK",
+    //       "resultData": {
+    //           "attachName": "Lighthouse.jpg",
+    //           "attachUrl": "10dc4bd5-2a16-408f-a380-bfb077b65e59.jpg",
+    //           "attachUploader": "002332"
+    //       }
+    //   },
+    //   "percent": 100,
+    //   "originFileObj": {
+    //       "uid": "rc-upload-1508129119030-2"
+    //   },
+    //   "status": "done"
+    // }
+
+    const { status, response } = currentFile;
+    const { resultData, msg } = response || {};
+
     if (status === 'uploading') {
       console.log('uploading');
     }
+
     if (status === 'removed') {
       console.log('removed');
+      // 移除file
+      // 保留最后一个file在state里面
+      if (!_.isEmpty(fileList)) {
+        let newFileList = fileList;
+        // 过滤掉错误的fileList
+        newFileList = newFileList.filter(file => !_.isEmpty(file.error));
+        if (!_.isEmpty(newFileList)) {
+          const lastFile = newFileList[newFileList.length - 1];
+          const { response: lastResponse } = lastFile;
+          const { resultData: lastData } = lastResponse || {};
+          this.setState({
+            lastFile,
+            uploadedFileKey: lastData,
+          });
+          onOperateFile({
+            currentFile: lastFile,
+            uploadedFileKey: lastData,
+          });
+        }
+      }
     }
+
     if (status === 'done') {
-      message.success('文件上传成功', 1);
-      onOperateFile(resultData, 'ADD');
-    } else if (status === 'error') {
-      const errorMsg = _.isEmpty(msg) ? '文件上传失败' : msg;
-      message.error(`${errorMsg}.`);
+      message.success('文件上传成功', 2);
+      onOperateFile({
+        currentFile,
+        uploadedFileKey: resultData,
+      });
+      this.setState({
+        lastFile: currentFile,
+        uploadedFileKey: resultData,
+      });
     }
-    return true;
+
+    if (status === 'error') {
+      const errorMsg = _.isEmpty(msg) ? '文件上传失败' : msg;
+      message.error(`${errorMsg}.`, 2);
+    }
+
+    // this.setState({
+    //   fileList,
+    // });
   }
 
   @autobind
   fileOnRemove(file) {
-    const uid = file.uid || '';
-    if (!_.isEmpty(uid) && !file.error) {
-      let delData = {};
-      // 具体deletData等接口联调
-      // TODO
-      delData = {
-        attachName: file.name,
-        attachUrl: file.thumbUrl,
-      };
-      this.showConfirm(delData);
-    } else if (file.error) {
-      // 删除错误的文件，不用提示是否删除
-      return true;
-    } else if (_.isEmpty(uid)) {
-      return false;
-    } else {
-      message.warning(`您无权限删除文件${file.name}`);
+    console.log(file);
+    const { error } = file;
+    if (!error) {
+      this.showConfirm();
     }
 
-    return false;
+    return true;
   }
 
   @autobind
-  showConfirm(delData) {
+  showConfirm() {
     this.setState({
-      delData,
       isShowDeleteConfirm: true,
     });
   }
 
   @autobind
   createUpload() {
-    const { fList = EMPTY_LIST, upData } = this.state;
+    const { upData, fileList } = this.state;
     const uploadKey = `uploadKey${count++}`;
     return (
       <Dragger
         key={uploadKey}
         name="file"
-        // 上传所需要的参数
+        defaultFileList={fileList}
         data={upData}
-        action={`${request.prefix}/file/feedbackFileUpload`} //  khxfFileUpload
-        defaultFileList={fList}
+        action={`${request.prefix}/file/khxfFileUpload`} //  feedbackFileUpload
         onRemove={this.fileOnRemove}
         onChange={this.fileOnChange}
         customRequest={this.fileCustomRequest}
@@ -164,9 +215,6 @@ export default class UploadFile extends PureComponent {
 
   @autobind
   deleteFile() {
-    const { onOperateFile } = this.props;
-    const { delData } = this.state;
-    onOperateFile(delData, 'DELETE');
     this.setState({
       isShowDeleteConfirm: false,
     });
@@ -180,7 +228,7 @@ export default class UploadFile extends PureComponent {
   }
 
   render() {
-    const { isShowDeleteConfirm } = this.state;
+    const { isShowDeleteConfirm, uploadedFileKey } = this.state;
     const { onHandleOverview } = this.props;
     return (
       <div className="uploadBox">
@@ -196,7 +244,7 @@ export default class UploadFile extends PureComponent {
           <Button
             className="overviewBtn"
             type="default"
-            onClick={onHandleOverview}
+            onClick={() => onHandleOverview(uploadedFileKey)}
           >预览</Button>
         </div>
         {

@@ -84,6 +84,12 @@ export default {
     deleteCustomerFromGroupResult: {},
     serviceLogData: [], // 360服务记录查询数据
     serviceLogMoreData: [], // 360服务记录查询更多数据
+    // 预览客户细分数据
+    priviewCustFileData: {},
+    // 存储的客户细分数据
+    storedCustSegmentData: {},
+    // 存储的标签圈人数据
+    storedLabelCustData: {},
   },
   subscriptions: {},
   effects: {
@@ -449,6 +455,15 @@ export default {
       yield put({
         type: 'getServiceLogMoreSuccess',
         payload: { resultData },
+      });
+    },
+    // 预览客户细分导入数据
+    * priviewCustFile({ payload }, { call, put }) {
+      const response = yield call(api.priviewCustFile, payload);
+      const { resultData } = response;
+      yield put({
+        type: 'priviewCustFileSuccess',
+        payload: resultData,
       });
     },
   },
@@ -848,6 +863,30 @@ export default {
       return {
         ...state,
         serviceLogMoreData: resultData,
+      };
+    },
+    // 获取客户细分列表成功
+    priviewCustFileSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        priviewCustFileData: payload,
+      };
+    },
+    // 存储客户细分
+    saveCustSegmentData(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        storedCustSegmentData: payload,
+      };
+    },
+    // 存储标签圈人
+    saveLabelCustData(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        storedLabelCustData: payload,
       };
     },
   },

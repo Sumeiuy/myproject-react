@@ -90,5 +90,8 @@ export default function customerPool(api) {
 
     // 360服务记录查询
     queryAllServiceRecord: query => api.post('/groovynoauth/fsp/cust/custlist/queryAllServiceRecord', query),
+
+    // 预览客户细分数据
+    priviewCustFile: query => api.post('/groovynoauth/fsp/priviewCustFile', query),
   };
 }
