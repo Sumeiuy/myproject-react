@@ -7,6 +7,7 @@ import React, { PropTypes, PureComponent } from 'react';
 import { Select } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import classnames from 'classnames';
 
 import { getDurationString } from '../../../utils/helper';
 import { optionsMap } from '../../../config';
@@ -103,38 +104,44 @@ export default class TabsExtra extends PureComponent {
     const { begin, end } = this.state;
     return (
       <div className={styles.timeBox}>
-        <Icon type="kehu" />
-        {
-          !_.isEmpty(custRange) ?
-            <CustRange
-              orgId={orgId}
-              custRange={custRange}
-              location={location}
-              replace={replace}
-              updateQueryState={updateQueryState}
-              beginTime={begin}
-              endTime={end}
-              collectData={collectCustRange}
-              expandAll={expandAll}
-            /> :
-            <Select
-              defaultValue="暂无数据"
-              key="seletTreeNull"
-            >
-              <Option value="暂无数据">暂无数据</Option>
-            </Select>
-        }
-        <i className={styles.bd} />
-        <Icon type="rili" />
-        <Select
-          style={{ width: 60 }}
-          value={selectValue}
-          onChange={this.handleChange}
-          key="dateSelect"
-        >
-          {cycle.map(item =>
-            <Option key={item.key} value={item.key}>{item.value}</Option>)}
-        </Select>
+        <div className={classnames(styles.icon, styles.kehuIcon)}>
+          <Icon type="kehu" />
+        </div>
+        <div>
+          {
+            !_.isEmpty(custRange) ?
+              <CustRange
+                orgId={orgId}
+                custRange={custRange}
+                location={location}
+                replace={replace}
+                updateQueryState={updateQueryState}
+                beginTime={begin}
+                endTime={end}
+                collectData={collectCustRange}
+                expandAll={expandAll}
+              /> :
+              <Select
+                defaultValue="暂无数据"
+              >
+                <Option value="暂无数据">暂无数据</Option>
+              </Select>
+          }
+        </div>
+        <div className={styles.separateLine} />
+        <div className={styles.icon}>
+          <Icon type="rili" />
+        </div>
+        <div className={styles.select}>
+          <Select
+            style={{ width: 60 }}
+            value={selectValue}
+            onChange={this.handleChange}
+          >
+            {cycle.map(item =>
+              <Option key={item.key} value={item.key}>{item.value}</Option>)}
+          </Select>
+        </div>
       </div>
     );
   }

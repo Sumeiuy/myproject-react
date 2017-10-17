@@ -12,15 +12,15 @@ const EMPTY_OBJECT = {};
 export default {
   namespace: 'customerPool',
   state: {
-    serviceIndicators: [],
-    lastAddCusts: [],
-    viewpoints: [],
+    information: {},     // 资讯
+    performanceIndicators: [],  // 投顾指标
+    hsRate: '',  // 沪深归集率（经营指标）
     todolist: [],
     todolistRecord: [],
     todoPage: {
       curPageNum: 1,
     },
-    performanceIndicators: {},
+    manageIndicators: {},
     custRange: [],
     cycle: [],
     position: window.forReactPosition || {},
@@ -67,24 +67,29 @@ export default {
     },
   },
   effects: {
-    * getServiceIndicators({ }, { call, put }) {  //eslint-disable-line
-      const response = yield call(api.getServiceIndicators);
+    // 投顾绩效
+    * getPerformanceIndicators({ payload }, { call, put }) {  //eslint-disable-line
+      const response = yield call(api.getPerformanceIndicators, payload);
       yield put({
-        type: 'getServiceIndicatorsSuccess',
+        type: 'getPerformanceIndicatorsSuccess',
         payload: response,
       });
     },
-    * getLastAddCust({ }, { call, put }) {  //eslint-disable-line
-      const response = yield call(api.getLastAddCust);
+    // 沪深归集率（经营指标）
+    * getHSRate({ payload }, { call, put }) {  //eslint-disable-line
+      const response = yield call(api.getHSRate, payload);
+      const { resultData } = response;
+      const data = resultData.length > 0 ? resultData[0] : {};
       yield put({
-        type: 'getLastAddCustSuccess',
-        payload: response,
+        type: 'getHSRateSuccess',
+        payload: data.value,
       });
     },
-    * getViewpoints({ }, { call, put }) {  //eslint-disable-line
-      const response = yield call(api.getViewpoints);
+    // 资讯列表和详情
+    * getInformation({ payload }, { call, put }) {  //eslint-disable-line
+      const response = yield call(api.getInformation, payload);
       yield put({
-        type: 'getViewpointsSuccess',
+        type: 'getinformationSuccess',
         payload: response,
       });
     },
@@ -104,11 +109,11 @@ export default {
       });
     },
     // 绩效指标
-    * getPerformanceIndicators({ payload }, { call, put }) {
+    * getManageIndicators({ payload }, { call, put }) {
       const indicators =
-        yield call(api.getPerformanceIndicators, payload);
+        yield call(api.getManageIndicators, payload);
       yield put({
-        type: 'getPerformanceIndicatorsSuccess',
+        type: 'getManageIndicatorsSuccess',
         payload: { indicators },
       });
     },
@@ -320,25 +325,25 @@ export default {
     },
   },
   reducers: {
-    getServiceIndicatorsSuccess(state, action) {
+    getPerformanceIndicatorsSuccess(state, action) {
       const { payload: { resultData } } = action;
       return {
         ...state,
-        serviceIndicators: resultData,
+        performanceIndicators: resultData,
       };
     },
-    getLastAddCustSuccess(state, action) {
-      const { payload: { resultData } } = action;
+    getHSRateSuccess(state, action) {
+      const { payload } = action;
       return {
         ...state,
-        lastAddCusts: resultData,
+        hsRate: payload,
       };
     },
-    getViewpointsSuccess(state, action) {
+    getinformationSuccess(state, action) {
       const { payload: { resultData } } = action;
       return {
         ...state,
-        viewpoints: resultData,
+        information: resultData,
       };
     },
     getToDoListSuccess(state, action) {
@@ -386,13 +391,13 @@ export default {
         custRange,
       };
     },
-    // 绩效指标
-    getPerformanceIndicatorsSuccess(state, action) {
+    // 经营指标
+    getManageIndicatorsSuccess(state, action) {
       const { payload: { indicators } } = action;
-      const performanceIndicators = indicators.resultData;
+      const manageIndicators = indicators.resultData;
       return {
         ...state,
-        performanceIndicators,
+        manageIndicators,
       };
     },
     // 统计周期

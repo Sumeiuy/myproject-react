@@ -1,11 +1,13 @@
 .container {
-  padding: 24px 0px;
+  padding: 28px 0px;
   .row {
     display: -webkit-flex; /* Safari */
     display: flex;
-    justify-content: space-around;
+    align-items: center;
     .column{
       overflow: hidden;
+      width: 50%;
+      text-align: center;
       .content {
         display: -webkit-flex; /* Safari */
         display: flex;
@@ -21,13 +23,15 @@
         }
       }
       .text {
-        margin-top: 11px;
-        font-size: 14px;
-        color: #999;
+        margin-top: 12px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
         text-align: center;
+        font-family:PingFangSC-Regular;
+        color:#666666;
+        letter-spacing:0.2px;
+        font-size: 6px;
       }
     }
     :global {
@@ -37,21 +41,15 @@
     }
     .firstColumn {
       :global {
-        .ant-progress-circle .ant-progress-inner {
-          border: 1px solid #188ca2;
-        }
         .ant-progress-circle-path {
-          stroke: #188ca2;
+          stroke: #33D0E2;
         }
       }
     }
     .secondColumn {
       :global {
-        .ant-progress-circle .ant-progress-inner {
-          border: 1px solid #6075aa;
-        }
         .ant-progress-circle-path {
-          stroke: #6075aa;
+          stroke: #6b87d8;
         }
       }
     }

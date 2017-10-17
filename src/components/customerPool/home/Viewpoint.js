@@ -1,74 +1,103 @@
 /**
  * @file components/customerPool/home/Viewpoint.js
- *  带有标题的，能收缩的文字列表,---代表solid线
- * xxx
- * ------
- *  xxxx
- *  xxxx
- * ------
- *     xx
+ *  首页投顾观点区域
  * @author zhangjunli
  */
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
+import _ from 'lodash';
 
 import styles from './viewpoint.less';
 
 export default class Viewpoint extends PureComponent {
   static propTypes = {
-    dataSource: PropTypes.array,
+    information: PropTypes.object,
+    push: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
-    dataSource: [],
-  }
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      isFold: true,
-    };
+    information: {},
   }
 
   @autobind
-  handleClick() {
-    const { isFold } = this.state;
-    this.setState({
-      isFold: !isFold,
+  handleMoreClick() {
+    const { push } = this.props;
+    // 跳转到资讯详情界面
+    push({
+      pathname: '/customerPool/viewpointList',
+      query: { detailIndex: '0' },
+    });
+  }
+  @autobind
+  handleDetailClick(index) {
+    const { push } = this.props;
+    // 跳转到资讯详情界面
+    push({
+      pathname: '/customerPool/viewpointDetail',
+      query: { detailIndex: `${index}` },
     });
   }
 
   @autobind
-  renderContent() {
-    const { dataSource } = this.props;
-    const { isFold } = this.state;
-    return dataSource.map((item, index) => (
+  renderContent(titleArray) {
+    return titleArray.map((item, index) => (
       <div
-        className={classnames(styles.row, { [styles.none]: (isFold && index >= 12) })}
+        className={classnames(styles.row, { [styles.none]: (index >= 12) })}
+        key={item.id}
       >
-        <a onClick={() => {}}>{item.descri}</a>
+        <a
+          className={styles.news}
+          onClick={() => { this.handleDetailClick(index); }}
+        >
+          {item.texttitle}
+        </a>
       </div>
     ));
   }
 
   render() {
-    const { dataSource } = this.props;
-    const { isFold } = this.state;
-    const isShow = dataSource.length > 12;
+    const { information: { infoVOList = [] } } = this.props;
+    const { texttitle, abstract } = infoVOList[0] || {};
+    const isShowMore = infoVOList.length > 12;
+    const isHiddenDetail = _.isEmpty(abstract);
+    const newInfoVOList = _.map(infoVOList, (item, index) => ({ ...item, id: `${index}` }));
     return (
       <div className={styles.container}>
-        <div className={styles.title}>首席投顾观点</div>
-        <div className={styles.descriContainer}>
-          {this.renderContent()}
+        <div className={styles.head}>首席投顾观点</div>
+        <div className={styles.up}>
+          <div className={styles.title}>{texttitle || '暂无数据'}</div>
+          <div className={styles.article}>
+            <div className={styles.text}>{abstract || '暂无数据'}</div>
+            <div
+              className={classnames(
+                styles.details,
+                { [styles.detailsNone]: isHiddenDetail },
+              )}
+            >
+              <a onClick={this.handleDetailClick}>详情</a>
+            </div>
+          </div>
         </div>
-        {
-          isShow ? (
-            <div className={styles.fold} onClick={this.handleClick} >{isFold ? '更多' : '收起'}</div>
-          ) : (
-            null
-          )
-        }
+        <div className={styles.down}>
+          <div className={classnames(styles.title, styles.downTitle)}>资讯列表</div>
+          {
+            _.isEmpty(newInfoVOList) ? (
+              <div className={styles.descri}>暂无数据</div>
+            ) : (
+              <div className={classnames(styles.descriContainer, { [styles.descri]: !isShowMore })}>
+                {this.renderContent(newInfoVOList)}
+              </div>
+            )
+          }
+          {
+            isShowMore ? (
+              <div className={styles.fold} onClick={this.handleMoreClick} >{'更多'}</div>
+            ) : (
+              null
+            )
+          }
+        </div>
       </div>
     );
   }

@@ -5,7 +5,7 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import { Row, Col } from 'antd';
+import classnames from 'classnames';
 import _ from 'lodash';
 import IECharts from '../../IECharts';
 import styles from './customerService.less';
@@ -21,13 +21,13 @@ export default class CustomerService extends PureComponent {
   }
 
   // 创建option
-  createOption(okData, toData) {
+  createOption(okData, toData, colors) {
     let data = 0;
     let rest = 0;
     let dataName = '';
-    if (!_.isEmpty(okData) && !_.isEmpty(toData) && parseInt(toData, 10) > 0) {
-      data = (parseInt(okData, 10) / parseInt(toData, 10)) * 100;
-      rest = ((parseInt(toData, 10) - parseInt(okData, 10)) / parseInt(toData, 10)) * 100;
+    if (!_.isEmpty(okData) && !_.isEmpty(toData) && _.toNumber(toData) > 0) {
+      data = (_.toNumber(okData) / _.toNumber(toData)) * 100;
+      rest = ((_.toNumber(toData) - _.toNumber(okData)) / _.toNumber(toData)) * 100;
       dataName = `${parseFloat(data).toFixed(0)}%`;
     } else {
       data = 0;
@@ -69,7 +69,7 @@ export default class CustomerService extends PureComponent {
           },
         },
       }],
-      color: ['#60bbea', '#f2f2f2'], // 38d8e8
+      color: colors, // 38d8e8
     };
     return options;
   }
@@ -77,38 +77,28 @@ export default class CustomerService extends PureComponent {
     const { data } = this.props;
     const { motOkMnt, motTotMnt, taskCust, totCust } = data;
     return (
-      <div className={styles.serviceBox}>
-        <div className={styles.chartBox}>
-          <Row>
-            <Col span={12}>
-              <div className={styles.chartItem}>
-                <IECharts
-                  option={this.createOption(motOkMnt, motTotMnt)}
-                  resizable
-                  style={{
-                    height: '180px',
-                    width: '90%',
-                  }}
-                />
-                <p>必做MOT任务完成率</p>
-              </div>
-            </Col>
-            <Col span={12}>
-              <div className={styles.chartItem}>
-                <IECharts
-                  option={this.createOption(taskCust, totCust)}
-                  resizable
-                  style={{
-                    height: '180px',
-                    width: '90%',
-                  }}
-                />
-                <p>客户服务覆盖率</p>
-              </div>
-            </Col>
-          </Row>
+      <div className={styles.row}>
+        <div className={classnames(styles.column, styles.firstColumn)}>
+          <IECharts
+            option={this.createOption(motOkMnt, motTotMnt, ['#33D0E2', '#d6d6d6'])}
+            resizable
+            style={{
+              height: '115px',
+            }}
+          />
+          <div className={styles.text}>{'必做MOT完成率'}</div>
         </div>
-      </div >
+        <div className={classnames(styles.column, styles.secondColumn)}>
+          <IECharts
+            option={this.createOption(taskCust, totCust, ['#6b87d8', '#d6d6d6'])}
+            resizable
+            style={{
+              height: '115px',
+            }}
+          />
+          <div className={styles.text}>{'客户服务覆盖率'}</div>
+        </div>
+      </div>
     );
   }
 }
