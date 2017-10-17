@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-13 17:03:18
+ * @Last Modified time: 2017-10-16 10:00:34
  */
 
 import React, { PropTypes, PureComponent } from 'react';
@@ -185,6 +185,13 @@ export default class UploadFile extends PureComponent {
     return (
       <div className="uploadBox">
         {this.createUpload()}
+        {
+          /*
+          <div className="downloadSection">
+          <a className="downloadLnk" download="">下载模板</a>
+          </div>
+          */
+        }
         <div className="overviewBtnSection">
           <Button
             className="overviewBtn"
