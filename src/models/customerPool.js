@@ -4,9 +4,10 @@
  * @author wangjunjun
  */
 import _ from 'lodash';
+import queryString from 'querystring';
 import { customerPool as api } from '../api';
 import { toastM } from '../utils/sagaEffects';
-import queryString from 'querystring';
+
 
 const EMPTY_LIST = [];
 // const EMPTY_OBJECT = {};
