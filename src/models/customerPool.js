@@ -13,6 +13,9 @@ const EMPTY_LIST = [];
 export default {
   namespace: 'customerPool',
   state: {
+    information: {},     // 资讯
+    performanceIndicators: [],  // 投顾指标
+    hsRate: '',  // 沪深归集率（经营指标）
     // 存放从服务端获取的全部代办数据
     todolist: [],
     // 存放筛选后数据
@@ -21,7 +24,7 @@ export default {
     todoPage: {
       curPageNum: 1,
     },
-    performanceIndicators: {},
+    manageIndicators: {},
     // 组织机构树
     custRange: [],
     // 时间周期：本年、本季、本月
@@ -93,6 +96,32 @@ export default {
   },
   subscriptions: {},
   effects: {
+    // 投顾绩效
+    * getPerformanceIndicators({ payload }, { call, put }) {  //eslint-disable-line
+      const response = yield call(api.getPerformanceIndicators, payload);
+      yield put({
+        type: 'getPerformanceIndicatorsSuccess',
+        payload: response,
+      });
+    },
+    // 沪深归集率（经营指标）
+    * getHSRate({ payload }, { call, put }) {  //eslint-disable-line
+      const response = yield call(api.getHSRate, payload);
+      const { resultData } = response;
+      const data = resultData.length > 0 ? resultData[0] : {};
+      yield put({
+        type: 'getHSRateSuccess',
+        payload: data.value,
+      });
+    },
+    // 资讯列表和详情
+    * getInformation({ payload }, { call, put }) {  //eslint-disable-line
+      const response = yield call(api.getInformation, payload);
+      yield put({
+        type: 'getinformationSuccess',
+        payload: response,
+      });
+    },
     // 代办流程任务列表
     * getToDoList({ }, { call, put }) {  //eslint-disable-line
       const response = yield call(api.getToDoList);
@@ -110,11 +139,11 @@ export default {
       });
     },
     // 绩效指标
-    * getPerformanceIndicators({ payload }, { call, put }) {
+    * getManageIndicators({ payload }, { call, put }) {
       const indicators =
-        yield call(api.getPerformanceIndicators, payload);
+        yield call(api.getManageIndicators, payload);
       yield put({
-        type: 'getPerformanceIndicatorsSuccess',
+        type: 'getManageIndicatorsSuccess',
         payload: { indicators },
       });
     },
@@ -468,6 +497,27 @@ export default {
     },
   },
   reducers: {
+    getPerformanceIndicatorsSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        performanceIndicators: resultData,
+      };
+    },
+    getHSRateSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        hsRate: payload,
+      };
+    },
+    getinformationSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        information: resultData,
+      };
+    },
     getToDoListSuccess(state, action) {
       const { payload: { resultData: { empWorkFlowList } } } = action;
       empWorkFlowList.forEach((item) => {
@@ -513,13 +563,13 @@ export default {
         custRange,
       };
     },
-    // 绩效指标
-    getPerformanceIndicatorsSuccess(state, action) {
+    // 经营指标
+    getManageIndicatorsSuccess(state, action) {
       const { payload: { indicators } } = action;
-      const performanceIndicators = indicators.resultData;
+      const manageIndicators = indicators.resultData;
       return {
         ...state,
-        performanceIndicators,
+        manageIndicators,
       };
     },
     // 统计周期

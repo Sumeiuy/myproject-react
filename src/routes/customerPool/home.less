@@ -1,6 +1,41 @@
 .customerPoolWrap{
   background:#FFF;
-  .content{
-    padding:0 20px 20px;
+  padding: 0px 50px;
+  .poolContainer {
+    display: -webkit-flex; /* Safari */
+    display: flex;
+    margin: 30px 60px 42px;
+    .content{
+      width: 747px;
+      margin-right:32px;
+    }
+    .viewpoint {
+      width: 228px;
+    }
+    :global {
+      .ant-tabs-nav-container {
+        font-size: 16px;
+        color:#4a4a4a;
+        letter-spacing:0.16px;
+        font-family:PingFangSC-Medium;
+      }
+      .ant-tabs-nav .ant-tabs-tab-active {
+        font-weight: 600;
+        color:#4a4a4a;
+      }
+      .ant-tabs-nav .ant-tabs-tab {
+        margin-right: 24px;
+        height: 30px;
+        padding: 0px;
+      }
+      .ant-tabs-bar {
+        border-bottom: 1px solid #ccc;
+        height: 30px;
+        margin-bottom: 0px;
+      }
+      .ant-tabs-ink-bar {
+        height: 3px;
+      }
+    }
   }
 }

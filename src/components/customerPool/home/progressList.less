@@ -1,0 +1,40 @@
+.container {
+  padding: 0px 21px;
+  .row {
+    height: 25px;
+    .intro {
+      display: -webkit-flex; /* Safari */
+      display: flex;
+      justify-content: space-between;
+      overflow: hidden;
+      height: 17px;
+      .title {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-family:PingFangSC-Regular;
+        font-size:12px;
+        color:#666666;
+        letter-spacing:0.12px;
+      }
+      .count {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-family:PingFangSC-Regular;
+        font-size:14px;
+        color:#4a4a4a;
+        letter-spacing:0.14px;
+      }
+    }
+    :global {
+      .ant-progress-inner {
+        background-color: #eeeeee;
+        vertical-align: top;
+        .ant-progress-bg {
+          background-color: #71aff4;
+        }
+      }
+    }
+  }
+}

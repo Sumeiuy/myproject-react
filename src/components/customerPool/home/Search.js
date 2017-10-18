@@ -229,7 +229,7 @@ export default class Search extends PureComponent {
       return null;
     }
     const recommendList = [];
-    data.forEach((item, index) => {
+    data.forEach((item) => {
       recommendList.push(
         <a
           key={item.id}
@@ -245,9 +245,6 @@ export default class Search extends PureComponent {
         >
           {item.labelNameVal}
         </a>);
-      if (index !== data.length - 1) {
-        recommendList.push(<i key={item.labelNameVal} className={styles.bd} />);
-      }
     });
     return recommendList;
   }
@@ -427,12 +424,10 @@ export default class Search extends PureComponent {
             </div>
           </div>
           <div className={styles.historyList}>
-            <div className={styles.inner}>
-              <span className={styles.s_title}>
-                <Icon type="dengpao" />猜你感兴趣：
-              </span>
-              <div>{this.handleCreatRecommend(hotWdsList)}</div>
-            </div>
+            <span className={styles.s_title}>
+              <Icon type="dengpao" />猜你感兴趣：
+            </span>
+            <div>{this.handleCreatRecommend(hotWdsList)}</div>
           </div>
         </div>
       </div>
