@@ -35,6 +35,7 @@ const effects = {
   custRange: 'app/getCustRange',
   detail: 'commission/getCommissionDetail',
   subscribeDetail: 'commission/getSubscribeDetail',
+  unsubDetail: 'commission/getUnSubscribeDetail',
   record: 'commission/getApprovalRecords',
   productList: 'commission/getProductList',
   applyCustList: 'commission/getCanApplyCustList',
@@ -72,6 +73,8 @@ const mapStateToProps = state => ({
   detail: state.commission.detail,
   // 右侧咨询订阅详情
   subscribeDetail: state.commission.subscribeDetail,
+  // 右侧资讯退订详情
+  unsubscribeDetail: state.commission.subscribeDetail,
   // 审批历史记录
   approvalRecord: state.commission.approvalRecord,
   // 查询审批记录进程
@@ -98,6 +101,8 @@ const mapDispatchToProps = {
   getBatchCommissionDetail: getDataFunction(true, effects.detail),
   // 获取咨询订阅详情Detail
   getSubscribeDetail: getDataFunction(true, effects.subscribeDetail),
+  // 获取资讯退订详情Detail
+  getUnSubscribeDetail: getDataFunction(true, effects.unsubDetail),
   // 获取用户审批记录
   getApprovalRecords: getDataFunction(false, effects.record),
   // 通过关键字，查询可选的已申请用户列表
@@ -132,6 +137,7 @@ export default class CommissionHome extends PureComponent {
     getCommissionList: PropTypes.func.isRequired,
     getBatchCommissionDetail: PropTypes.func.isRequired,
     getSubscribeDetail: PropTypes.func.isRequired,
+    getUnSubscribeDetail: PropTypes.func.isRequired,
     getApprovalRecords: PropTypes.func.isRequired,
     searchCustList: PropTypes.func.isRequired,
     searchDrafter: PropTypes.func.isRequired,
@@ -141,6 +147,7 @@ export default class CommissionHome extends PureComponent {
     list: PropTypes.object.isRequired,
     detail: PropTypes.object.isRequired,
     subscribeDetail: PropTypes.object.isRequired,
+    unsubscribeDetail: PropTypes.object.isRequired,
     approvalRecord: PropTypes.object.isRequired,
     recordLoading: PropTypes.bool.isRequired,
     listProcess: PropTypes.bool,
@@ -290,6 +297,7 @@ export default class CommissionHome extends PureComponent {
     const {
       getBatchCommissionDetail,
       getSubscribeDetail,
+      getUnSubscribeDetail,
     } = this.props;
     switch (st) {
       case comsubs.batch:
@@ -301,6 +309,7 @@ export default class CommissionHome extends PureComponent {
         getSubscribeDetail({ orderId: id, type: custType });
         break;
       case comsubs.unsubscribe:
+        getUnSubscribeDetail({ orderId: id, type: custType });
         break;
       default:
         break;
@@ -320,7 +329,7 @@ export default class CommissionHome extends PureComponent {
    */
   @autobind
   getDetailComponentBySubType(st) {
-    const { detail, location, subscribeDetail } = this.props;
+    const { detail, location, subscribeDetail, unsubscribeDetail } = this.props;
     let detailComponent = null;
     switch (st) {
       case comsubs.batch:
@@ -337,11 +346,18 @@ export default class CommissionHome extends PureComponent {
       case comsubs.subscribe:
         detailComponent = (
           <AdvisoryDetail
+            name="资讯订阅"
             data={subscribeDetail}
           />
         );
         break;
       case comsubs.unsubscribe:
+        detailComponent = (
+          <AdvisoryDetail
+            name="资讯退订"
+            data={unsubscribeDetail}
+          />
+        );
         break;
       default:
         break;

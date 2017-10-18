@@ -224,7 +224,11 @@ export default class CreateNewApprovalBoard extends PureComponent {
     });
     // 如果切换批量佣金需要，先查一把0.16下目标产品
     if (name === 'approvalType') {
-      this.props.queryProductList({ prodCommision: 0.16 });
+      const { empInfo: { occDivnNum } } = this.props;
+      this.props.queryProductList({
+        prodCommision: 0.16,
+        orgId: occDivnNum,
+      });
     }
   }
 
@@ -242,7 +246,11 @@ export default class CreateNewApprovalBoard extends PureComponent {
     this.setState({
       newCommission: v,
     });
-    this.props.queryProductList({ prodCommision: v });
+    const { empInfo: { occDivnNum } } = this.props;
+    this.props.queryProductList({
+      prodCommision: v,
+      orgId: occDivnNum,
+    });
   }
 
   @autobind
