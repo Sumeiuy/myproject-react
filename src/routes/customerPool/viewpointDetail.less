@@ -1,0 +1,109 @@
+.listContainer {
+  background-color: #f3f3f4;
+  .inner {
+    margin: 21px 18px 43px 19px;
+    .content {
+      padding: 17px 74px 147px 77px;
+      background-color: #fff;
+      .backColumn {
+        position: absolute;
+        line-height: 20px;
+        height: 20px;
+        display: -webkit-flex; /* Safari */
+        display: flex;
+        .backIcon {
+          font-size: 12px;
+          color: #108ee9;
+          vertical-align: 2px;
+        }
+        .backTitle {
+          font-family:PingFangSC-Light;
+          font-size:14px;
+          color:#108ee9;
+          letter-spacing:-0.09px;
+          text-align:left;
+          margin-left: 4px;
+        }
+      }
+      .head {
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 15px;
+        .titleRow {
+          height: 20px;
+          line-height: 20px;
+          position: relative;
+          .upper {
+            left: 0px;
+          }
+          .title {
+            font-family:PingFangSC-Medium;
+            font-size:16px;
+            color:#4a4a4a;
+            letter-spacing:0.23px;
+            text-align: center;
+          }
+        }
+        .infoRow {
+          margin-top: 6px;
+          display: -webkit-flex; /* Safari */
+          display: flex;
+          .column {
+            flex-grow: 1;
+            text-align: right;
+            font-family:PingFangSC-Regular;
+            font-size:14px;
+            color:#9b9b9b;
+            letter-spacing:0.2px;
+          }
+          .middle {
+            margin-left: 40px;
+            margin-right: 40px;
+            flex-grow: 0;
+            text-align: center;
+          }
+          .column:last-child {
+            text-align: left;
+          }
+        }
+      }
+      .body {
+        margin: 9px 0px 58px;
+        font-family:PingFangSC-Regular;
+        font-size:14px;
+        color:#4a4a4a;
+        letter-spacing:0.2px;
+        line-height:26px;
+        text-align:justify;
+      }
+      .footer {
+        display: -webkit-flex; /* Safari */
+        display: flex;
+        position: relative;
+        height: 20px;
+        line-height: 20px;
+        .fileColumn {
+          margin-right: 47px;
+          display: -webkit-flex; /* Safari */
+          display: flex;
+          .fileIcon {
+            font-size: 16px;
+            margin-right: 6px;
+            color: #ff3c54;
+          }
+          .fileName {
+            font-family:PingFangSC-Regular;
+            font-size:14px;
+            color:#108ee9;
+            letter-spacing:0.2px;
+          }
+          .word {
+            color: #108ee9;
+          }
+        }
+        .under {
+          right: 0px;
+        }
+      }
+    }
+  }
+}

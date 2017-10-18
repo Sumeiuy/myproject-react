@@ -35,9 +35,10 @@ import CreateTask from './routes/customerPool/CreateTask';
 import Contract from './routes/contract/Home';
 import FullChannelServiceRecord from './routes/fullChannelServiceRecord/Home';
 import CustomerGroupManage from './routes/customerPool/CustomerGroupManage';
+import ViewpointList from './routes/customerPool/ViewpointList';
+import ViewpointDetail from './routes/customerPool/ViewpointDetail';
 import ServiceLog from './routes/customerPool/ServiceLog';
 import TaskFlow from './routes/customerPool/TaskFlow';
-
 
 function switchRouter() {
   const fsp = document.querySelector(fspContainer.container);
@@ -68,6 +69,8 @@ const routes = ({ history }) => (// eslint-disable-line
       <Route path="approval" component={Approval} />
       <Route path="customerPool">
         <IndexRoute component={CustomerPoolHome} />
+        <Route path="viewpointDetail" component={ViewpointDetail} />
+        <Route path="viewpointList" component={ViewpointList} />
         <Route path="todo" component={ToDo} />
         <Route path="list" component={CustomerList} />
         <Route path="customerGroup" component={CustomerGroup} />
