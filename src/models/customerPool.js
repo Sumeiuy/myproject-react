@@ -98,7 +98,7 @@ export default {
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen(({ pathname, search }) => {
-        const params = queryString.parse(search.substring(1, search.length));
+        const params = queryString.parse(search);
         const url = pathToRegexp('customerPool/serviceLog').exec(pathname);
         if (url) {
           const { pageSize, serveDateToPaged } = params;

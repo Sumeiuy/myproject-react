@@ -38,18 +38,15 @@ const mapDispatchToProps = {
 @withRouter
 export default class TaskFlow extends PureComponent {
   static propTypes = {
-  };
-
-  static defaultProps = {
     getCirclePeople: PropTypes.func.isRequired,
     circlePeopleData: PropTypes.array.isRequired,
   };
-
   constructor(props) {
     super(props);
     this.state = {
       current: 0,
     };
+    this.bigBtn = true;
   }
   @autobind
   handleRadioChange(value) {
@@ -57,12 +54,16 @@ export default class TaskFlow extends PureComponent {
   }
   @autobind
   handleSearchClick({ value, selectedItem }) {
-    // const { getHotPossibleWds } = this.props;
-    // getHotPossibleWds({
-    //   keyword: value,
-    // });
-    console.log('search click', value, JSON.stringify(selectedItem));
+    console.log('search click---', value, '--', JSON.stringify(selectedItem));
+    const { getCirclePeople } = this.props;
+    // const condition = value;
+    const param = {
+      condition: value,
+    };
+    console.log(param);
+    getCirclePeople(param);
   }
+
   render() {
     console.log(Search);
     return (
@@ -73,6 +74,7 @@ export default class TaskFlow extends PureComponent {
             width: '390px',
           }}
           onSearchClick={this.handleSearchClick}
+          isNeedLgSearch={this.bigBtn}
         />
         <TaskSearchRow
           onChange={this.handleRadioChange}

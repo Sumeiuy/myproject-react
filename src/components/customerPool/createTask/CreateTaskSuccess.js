@@ -76,17 +76,17 @@ export default class CreateTaskSuccess extends PureComponent {
   }
   @autobind
   goToTask(){
-    const params = encodeURI('%7B%22id%22%3A%22');
     const { push, state } = this.props;
-    console.log(params)
-    const url = 'FSP_MOT_SELFBUILT_TASK'; // id: FSP_MOT_SELFBUILT_TASK "closable": true,"forceRefresh":true
+    const url = '/mot/selfbuildTask/selfBuildTaskMain';
     const param ={
-      id: url,
+      id: 'FSP_MOT_SELFBUILT_TASK',
       closable: true,
       forceRefresh:true,
       title: '自建任务管理'
     }
+    debugger;
     fspGlobal.openFspTab({ url, param })
+    debugger
     this.closeTab();
   }
   // #FSP_MOT_SELFBUILT_TASK

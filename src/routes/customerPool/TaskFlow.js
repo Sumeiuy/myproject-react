@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter, routerRedux } from 'dva/router';
 import { Steps, message, Button } from 'antd';
-import { autobind } from 'core-decorators';
+// import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import PickTargetCustomer from '../../components/customerPool/taskFlow/PickTargetCustomer';
 import TaskOverview from '../../components/customerPool/taskFlow/TaskOverview';
@@ -13,18 +13,18 @@ import styles from './taskFlow.less';
 
 const Step = Steps.Step;
 
-const steps = [{
-  title: '基本信息',
-  content: <CreateTaskForm />,
-}, {
-  title: '目标客户',
-  content: <PickTargetCustomer />,
-}, {
-  title: '提交',
-  content: <TaskOverview />,
-}];
+// const steps = [{
+//   title: '基本信息',
+//   content: <CreateTaskForm />,
+// }, {
+//   title: '目标客户',
+//   content: <PickTargetCustomer />,
+// }, {
+//   title: '提交',
+//   content: <TaskOverview />,
+// }];
 
-const stepsCount = _.size(steps);
+// const stepsCount = _.size(steps);
 
 const effects = {
   getLabelCirclePeople: 'customerPool/getLabelCirclePeople',
@@ -63,7 +63,6 @@ export default class TaskFlow extends PureComponent {
     location: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
-    createTask: PropTypes.func.isRequired,
     getCirclePeople: PropTypes.func.isRequired,
     getPeopleOfLabel: PropTypes.func.isRequired,
     circlePeopleData: PropTypes.array.isRequired,
@@ -76,24 +75,28 @@ export default class TaskFlow extends PureComponent {
   };
 
   constructor(props) {
+    console.warn('props--', props);
+    const { dict, location } = props;
     super(props);
     this.state = {
       current: 0,
     };
+    this.steps = [{
+      title: '基本信息',
+      content: <CreateTaskForm
+        location={location}
+        dict={dict}
+      />,
+    }, {
+      title: '目标客户',
+      content: <PickTargetCustomer />,
+    }, {
+      title: '提交',
+      content: <TaskOverview />,
+    }];
+    this.stepsCount = _.size(this.steps);
   }
   componentWillMount() {
-    const { dict, location } = this.props;
-    steps[0].content = <CreateTaskForm // eslint-disable-line
-      location={location}
-      dict={dict}
-      createTask={this.handleCreateTask}
-    />;
-  }
-  @autobind
-  handleCreateTask(value) {
-    const { createTask } = this.props;
-    console.log(value);
-    createTask(value);
   }
   next() {
     const { current } = this.state;
@@ -114,10 +117,10 @@ export default class TaskFlow extends PureComponent {
     return (
       <div className={styles.taskFlowContainer}>
         <Steps current={current} className={styles.stepsSection}>
-          {_.map(steps, item => <Step key={item.title} title={item.title} />)}
+          {_.map(this.steps, item => <Step key={item.title} title={item.title} />)}
         </Steps>
         <div className={styles.stepsContent}>
-          {steps[current].content}
+          {this.steps[current].content}
         </div>
         <div className={styles.stepsAction}>
           {
@@ -135,12 +138,12 @@ export default class TaskFlow extends PureComponent {
             </Button>
           }
           {
-            current < stepsCount - 1
+            current < this.stepsCount - 1
             &&
             <Button className={styles.nextStepBtn} type="primary" onClick={() => this.next()}>下一步</Button>
           }
           {
-            current === stepsCount - 1
+            current === this.stepsCount - 1
             &&
             <Button className={styles.confirmBtn} type="primary" onClick={() => message.success('Processing complete!')}>确认无误，提交</Button>
           }
