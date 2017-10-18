@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter, routerRedux } from 'dva/router';
 import { autobind } from 'core-decorators';
@@ -41,7 +41,8 @@ export default class TaskFlow extends PureComponent {
   };
 
   static defaultProps = {
-
+    getCirclePeople: PropTypes.func.isRequired,
+    circlePeopleData: PropTypes.array.isRequired,
   };
 
   constructor(props) {
@@ -54,7 +55,14 @@ export default class TaskFlow extends PureComponent {
   handleRadioChange(value) {
     console.log('value--', value);
   }
-
+  @autobind
+  handleSearchClick({ value, selectedItem }) {
+    // const { getHotPossibleWds } = this.props;
+    // getHotPossibleWds({
+    //   keyword: value,
+    // });
+    console.log('search click', value, JSON.stringify(selectedItem));
+  }
   render() {
     console.log(Search);
     return (
@@ -64,6 +72,7 @@ export default class TaskFlow extends PureComponent {
             height: '50px',
             width: '390px',
           }}
+          onSearchClick={this.handleSearchClick}
         />
         <TaskSearchRow
           onChange={this.handleRadioChange}

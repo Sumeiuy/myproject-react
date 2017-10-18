@@ -6,10 +6,11 @@
  */
 
 import React, { PureComponent } from 'react';
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import { Tabs } from 'antd';
 // import { autobind } from 'core-decorators';
 // import classnames from 'classnames';
+import { connect } from 'react-redux';
 // import _ from 'lodash';
 import CustomerSegment from './CustomerSegment';
 import TaskFlowSecond from './TaskFlowSecond';
@@ -22,8 +23,34 @@ import styles from './pickTargetCustomer.less';
 
 const TabPane = Tabs.TabPane;
 
+const effects = {
+  getLabelCirclePeople: 'customerPool/getLabelCirclePeople',
+  getPeopleOfLabel: 'customerPool/getPeopleOfLabel',
+};
+const fectchDataFunction = (globalLoading, type) => query => ({
+  type,
+  payload: query || {},
+  loading: globalLoading,
+});
+
+const mapStateToProps = state => ({
+  circlePeopleData: state.customerPool.circlePeopleData,
+  peopleOfLabelData: state.customerPool.peopleOfLabelData,
+});
+
+const mapDispatchToProps = {
+  getCirclePeople: fectchDataFunction(true, effects.getCirclePeople),
+  getPeopleOfLabel: fectchDataFunction(true, effects.getPeopleOfLabel),
+};
+
+@connect(mapStateToProps, mapDispatchToProps)
+
 export default class PickTargetCustomer extends PureComponent {
   static propTypes = {
+    getCirclePeople: PropTypes.func.isRequired,
+    getPeopleOfLabel: PropTypes.func.isRequired,
+    circlePeopleData: PropTypes.array.isRequired,
+    peopleOfLabelData: PropTypes.array.isRequired,
   };
 
   static defaultProps = {
@@ -40,6 +67,7 @@ export default class PickTargetCustomer extends PureComponent {
   }
 
   render() {
+    const { getCirclePeople, circlePeopleData } = this.props;
     return (
       <div className={styles.pickCustomerSection}>
         <div className={styles.title}>目标客户</div>
@@ -50,7 +78,10 @@ export default class PickTargetCustomer extends PureComponent {
               <CustomerSegment />
             </TabPane>
             <TabPane tab="标签圈人" key="2">
-              <TaskFlowSecond />
+              <TaskFlowSecond
+                circlePeopleData={circlePeopleData}
+                getCirclePeople={getCirclePeople}
+              />
             </TabPane>
           </Tabs>
         </div>

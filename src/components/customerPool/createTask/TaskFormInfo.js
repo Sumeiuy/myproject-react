@@ -351,8 +351,8 @@ export default class TaskFormInfo extends PureComponent {
           <FormItem
             className={
               classnames({
-                [styles.hideTextArea]: !showText,
-                [styles.showTextArea]: showText,
+                [styles.hideTextArea]: showText,
+                [styles.showTextArea]: !showText,
               })
             }
           >
