@@ -18,7 +18,7 @@ import ChoiceApproverBoard from './ChoiceApproverBoard';
 import AddCustomer from './AddCustomer';
 import InfoTitle from '../common/InfoTitle';
 import Select from '../common/Select';
-import DigitalTrimmer from '../common/DigitalTrimmer';
+import AutoComplete from '../common/AutoComplete';
 import ProductsDropBox from './ProductsDropBox';
 import OtherCommissionSelectList from './OtherCommissionSelectList';
 import CommissionLine from './CommissionLine';
@@ -251,15 +251,21 @@ export default class CreateNewApprovalBoard extends PureComponent {
 
   // 切换目标产品股基佣金率
   @autobind
-  changeTargetGJCommission(v) {
+  selectTargetGJCommission(v) {
     this.setState({
-      newCommission: v,
+      newCommission: v.codeValue,
     });
     const { empInfo: { occDivnNum } } = this.props;
     this.props.queryProductList({
-      prodCommision: v,
+      prodCommision: v.codeValue,
       orgId: occDivnNum,
     });
+  }
+
+  // 客户输入目标股基佣金率调用方法
+  @autobind
+  changeTargetGJCommission(v) {
+    console.warn('vvvv', v);
   }
 
   @autobind
@@ -566,9 +572,11 @@ export default class CreateNewApprovalBoard extends PureComponent {
                       </span>
                     }
                   >
-                    <DigitalTrimmer
-                      ref={this.digitalRef}
-                      getValue={this.changeTargetGJCommission}
+                    <AutoComplete
+                      dataSource={[]}
+                      onChangeValue={this.changeTargetGJCommission}
+                      onSelectValue={this.selectTargetGJCommission}
+                      width="100px"
                     />
                   </CommissionLine>
                   {

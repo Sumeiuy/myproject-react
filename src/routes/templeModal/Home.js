@@ -362,10 +362,10 @@ export default class TemplModal extends PureComponent {
         />
         <br />
         <DigitalTrimmer
-          min={1.6}
+          min={0.16}
           max={3}
-          step={0.1}
-          defaultValue={1.6}
+          step={0.01}
+          defaultValue={0.16}
           getValue={this.changeFunction}
         />
       </div>

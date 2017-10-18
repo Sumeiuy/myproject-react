@@ -118,12 +118,12 @@ export default class AdvisoryDetail extends PureComponent {
   changeProductJson(product) {
     const { riskMatch, termMatch, prodMatch, prodCode, aliasName, agrType } = product;
     return {
-      prodCode,
-      aliasName,
-      agrType,
-      riskMatch: this.convertNY2ZN(riskMatch),
-      termMatch: this.convertNY2ZN(termMatch),
-      prodMatch: this.convertNY2ZN(prodMatch),
+      prodCode, // 产品代码
+      aliasName, // 产品名称
+      agrType, // 签署确认书类型
+      riskMatch: this.convertNY2ZN(riskMatch), // 风险是否匹配
+      termMatch: this.convertNY2ZN(termMatch), // 期限是否匹配
+      prodMatch: this.convertNY2ZN(prodMatch), // 产品是否匹配
     };
   }
 
@@ -148,14 +148,14 @@ export default class AdvisoryDetail extends PureComponent {
     const { name, data: { base, attachmentList, approvalHistory } } = this.props;
     if (_.isEmpty(base)) return null;
     const {
-      orderId,
-      comments,
-      divisionName,
-      createdByName,
-      createdByLogin,
-      created,
-      status,
-      item,
+      orderId, // 订单Id
+      comments, // 备注
+      divisionName, // 营业部名称
+      createdByName, // 创建者姓名
+      createdByLogin, // 创建者工号
+      created, // 创建时间
+      status, // 状态
+      item, // 产品
     } = base;
     const custList = this.createCustList(base);
     const proList = this.createProList(item);
