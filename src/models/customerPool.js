@@ -4,8 +4,11 @@
  * @author wangjunjun
  */
 import _ from 'lodash';
+import queryString from 'query-string';
+import pathToRegexp from 'path-to-regexp';
 import { customerPool as api } from '../api';
 import { toastM } from '../utils/sagaEffects';
+
 
 const EMPTY_LIST = [];
 // const EMPTY_OBJECT = {};
@@ -87,8 +90,28 @@ export default {
     deleteCustomerFromGroupResult: {},
     serviceLogData: [], // 360服务记录查询数据
     serviceLogMoreData: [], // 360服务记录查询更多数据
+    // 标签圈人
+    circlePeopleData: [],
+    // 标签圈人-id查询客户列表
+    peopleOfLabelData: [],
   },
-  subscriptions: {},
+  subscriptions: {
+    setup({ dispatch, history }) {
+      history.listen(({ pathname, search }) => {
+        const params = queryString.parse(search);
+        const url = pathToRegexp('customerPool/serviceLog').exec(pathname);
+        if (url) {
+          const { pageSize, serveDateToPaged } = params;
+          if (_.isEmpty(pageSize)) params.pageSize = null;
+          if (_.isEmpty(serveDateToPaged)) params.serveDateToPaged = null;
+          dispatch({
+            type: 'getServiceLog',
+            payload: params,
+          });
+        }
+      });
+    },
+  },
   effects: {
     // 投顾绩效
     * getPerformanceIndicators({ payload }, { call, put }) {  //eslint-disable-line
@@ -477,6 +500,24 @@ export default {
       const { resultData } = response;
       yield put({
         type: 'getServiceLogMoreSuccess',
+        payload: { resultData },
+      });
+    },
+    // 标签圈人
+    * getCirclePeople({ payload }, { call, put }) {
+      const response = yield call(api.labelCirclePeople, payload);
+      const { resultData } = response;
+      yield put({
+        type: 'getCirclePeopleSuccess',
+        payload: { resultData },
+      });
+    },
+    // 标签圈人-id查询客户列表
+    * getPeopleOfLabel({ payload }, { call, put }) {
+      const response = yield call(api.labelCirclePeople, payload);
+      const { resultData } = response;
+      yield put({
+        type: 'getPeopleOfLabelSuccess',
         payload: { resultData },
       });
     },
@@ -898,6 +939,22 @@ export default {
       return {
         ...state,
         serviceLogMoreData: resultData,
+      };
+    },
+    // 标签圈人成功
+    getCirclePeopleSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        circlePeopleData: resultData,
+      };
+    },
+    // 标签圈人-id客户列表查询
+    getPeopleOfLabelSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        peopleOfLabelData: resultData,
       };
     },
   },

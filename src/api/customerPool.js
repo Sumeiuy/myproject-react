@@ -96,5 +96,11 @@ export default function customerPool(api) {
 
     // 360服务记录查询
     queryAllServiceRecord: query => api.post('/groovynoauth/fsp/cust/custlist/queryAllServiceRecord', query),
+
+    // 标签圈人查询
+    labelCirclePeople: query => api.post('/groovynoauth/fsp/cust/task/labelCirclePeople', query),
+
+    // 标签圈人-标签id查询客户列表明细
+    queryPeopleOfLabel: query => api.post('/groovynoauth/fsp/cust/task/queryPeopleOfLabel', query),
   };
 }
