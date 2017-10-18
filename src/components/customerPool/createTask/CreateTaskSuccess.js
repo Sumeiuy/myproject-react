@@ -5,11 +5,12 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import { Button } from 'antd';
 import { autobind } from 'core-decorators';
 import ReactDOM from 'react-dom';
 import styles from './createTaskSuccess.less';
 import imgSrc from '../../../../static/images/createTask_success.png';
+import { fspGlobal } from '../../../utils';
+import Button from '../../common/Button';
 
 let successSetInterval;
 let COUNT = 10;
@@ -59,7 +60,8 @@ export default class CreateTaskSuccess extends PureComponent {
   @autobind
   /* 关闭当前页 */
   closeTab() {
-      fspGlobal.closeRctTabById('RCT_FSP_TASK');
+      // fspGlobal.closeRctTabById('RCT_FSP_TASK');
+      fspGlobal.closeRctTabById('RCT_FSP_CUSTOMER_LIST');
   }
   @autobind
   goToIndex() {
@@ -69,7 +71,7 @@ export default class CreateTaskSuccess extends PureComponent {
       title: '首页',
     };
     fspGlobal.openRctTab({ url, param });
-    fspGlobal.closeRctTabById('FSP_GROUP');
+    this.closeTab();
   }
   @autobind
   handleMovTime() {
@@ -78,7 +80,7 @@ export default class CreateTaskSuccess extends PureComponent {
     }, () => {
       if (COUNT < 0){
         console.log('页面关闭');
-        this.closeTab();
+        this.goToIndex();
         clearInterval(successSetInterval);
       }
     });    
@@ -99,7 +101,7 @@ export default class CreateTaskSuccess extends PureComponent {
               <p>页面会在 <b>{changeTime}</b> 秒内自动关闭</p>
             </div>
             <div className={styles.taskSuccess_btn}>
-              <Button type="primary" onclick={this.goToIndex}>
+              <Button type="primary" onClick={this.goToIndex}>
                 返回首页
               </Button>
             </div>

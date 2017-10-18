@@ -4,6 +4,12 @@
 
 export default function customerPool(api) {
   return {
+    // 获取资讯中心统一接口
+    getInformation: query => api.post('/groovynoauth/fsp/info/queryInfo', query),
+    // 获取客户池沪深归集率（经营指标）
+    getHSRate: query => api.post('/groovynoauth/fsp/emp/kpi/queryHsRate', query),
+    // 获取客户池投顾绩效
+    getPerformanceIndicators: query => api.post('/groovynoauth/fsp/emp/kpi/queryPerformance', query),
     // 获取组织机构树完整版
     getCustRangeAll: query => api.post('/groovynoauth/fsp/emp/org/queryEmpOrgTree', query),
 
@@ -13,8 +19,8 @@ export default function customerPool(api) {
     // 查询待办流程记录列表
     getToDoList: query => api.post('/groovynoauth/fsp/emp/workflow/queryWorkFlowTaskList', query),
 
-    // 获取客户池绩效指标
-    getPerformanceIndicators: query => api.post('/groovynoauth/fsp/emp/kpi/queryEmpKPIs', query),
+    // 获取客户池经营指标
+    getManageIndicators: query => api.post('/groovynoauth/fsp/emp/kpi/queryEmpKPIs', query),
 
     // 统计周期
     getStatisticalPeriod: query => api.post('/groovynoauth/fsp/dictionary', query),
@@ -74,6 +80,21 @@ export default function customerPool(api) {
     queryCustomerGroupList: query => api.post('/groovynoauth/fsp/cust/custgroup/queryCustGroupList', query),
 
     // 某一个分组下面的客户列表
-    queryGroupCustomerList: query => api.post('/groovynoauth/fsp/cust/custgroup/queryGroupCustomerList', query),
+    queryGroupCustomerList: query => api.post('/groovynoauth/fsp/cust/custgroup/queryGroupCustList', query),
+
+    // 查询客户列表，用于分组详情里面的客户搜索，联想
+    queryPossibleCustList: query => api.post('/groovynoauth/fsp/biz/custList', query),
+
+    // 操作分组（编辑、新增客户分组）
+    operateGroup: query => api.post('/groovynoauth/fsp/cust/custgroup/operateGroup', query),
+
+    // 删除分组
+    deleteGroup: query => api.post('/groovynoauth/fsp/cust/custgroup/deleteGroup', query),
+
+    // 删除分组下的客户
+    deleteCustomerFromGroup: query => api.post('/groovynoauth/fsp/cust/custgroup/operateCust', query),
+
+    // 360服务记录查询
+    queryAllServiceRecord: query => api.post('/groovynoauth/fsp/cust/custlist/queryAllServiceRecord', query),
   };
 }

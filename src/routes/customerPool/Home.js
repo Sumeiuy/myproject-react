@@ -8,15 +8,21 @@ import React, { PropTypes, PureComponent } from 'react';
 import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
+import { Tabs } from 'antd';
 import _ from 'lodash';
+
 import { getDurationString } from '../../utils/helper';
 import { optionsMap } from '../../config';
+import TabsExtra from '../../components/customerPool/home/TabsExtra';
 import PerformanceIndicators from '../../components/customerPool/home/PerformanceIndicators';
+import ManageIndicators from '../../components/customerPool/home/ManageIndicators';
+import Viewpoint from '../../components/customerPool/home/Viewpoint';
 import ToBeDone from '../../components/customerPool/home/ToBeDone';
 import { helper } from '../../utils';
 import Search from '../../components/customerPool/home/Search';
 import styles from './home.less';
 
+const TabPane = Tabs.TabPane;
 const CUST_MANAGER = '1'; // 客户经理
 // const CUST_MANAGER_TEAM = 2; // 客户经理团队
 const ORG = '3'; // 组织机构
@@ -25,15 +31,18 @@ const EMPTY_OBJECT = {};
 const HTSC_RESPID = '1-46IDNZI'; // 首页指标查询
 // 主服务经理id
 const MAIN_MAGEGER_ID = 'msm';
+const LOCAL_MONTH = '518003';
 const effects = {
   toBeTone: 'customerPool/getToBeDone',
-  performanceIndicators: 'customerPool/getPerformanceIndicators',
+  manageIndicators: 'customerPool/getManageIndicators',
   getHotPossibleWds: 'customerPool/getHotPossibleWds',
   getHotWds: 'customerPool/getHotWds',
   getHistoryWdsList: 'customerPool/getHistoryWdsList',
   clearSearchHistoryList: 'customerPool/clearSearchHistoryList',
   saveSearchVal: 'customerPool/saveSearchVal',
-  getIncomeData: 'customerPool/getIncomeData',
+  getInformation: 'customerPool/getInformation',
+  getHSRate: 'customerPool/getHSRate',
+  getPerformanceIndicators: 'customerPool/getPerformanceIndicators',
 };
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -43,7 +52,7 @@ const fetchDataFunction = (globalLoading, type) => query => ({
 });
 
 const mapStateToProps = state => ({
-  performanceIndicators: state.customerPool.performanceIndicators, // 绩效指标
+  manageIndicators: state.customerPool.manageIndicators, // 经营指标
   custRange: state.customerPool.custRange, // 客户池用户范围
   cycle: state.app.dict.kPIDateScopeType,  // 统计周期
   position: state.customerPool.position, // 职责切换
@@ -55,18 +64,22 @@ const mapStateToProps = state => ({
   historyWdsList: state.customerPool.historyWdsList, // 历史搜索
   clearState: state.customerPool.clearState, // 清除历史列表
   searchHistoryVal: state.customerPool.searchHistoryVal, // 保存搜索内容
-  incomeData: state.customerPool.incomeData, // 净创收数据
+  information: state.customerPool.information, // 首席投顾观点
+  performanceIndicators: state.customerPool.performanceIndicators, // 绩效指标
+  hsRate: state.customerPool.hsRate, // 沪深归集率（经营指标）
 });
 
 const mapDispatchToProps = {
+  getHSRate: fetchDataFunction(true, effects.getHSRate),
+  getPerformanceIndicators: fetchDataFunction(true, effects.getPerformanceIndicators),
+  getInformation: fetchDataFunction(true, effects.getInformation),
   getToBeDone: fetchDataFunction(true, effects.toBeTone),
-  getPerformanceIndicators: fetchDataFunction(true, effects.performanceIndicators),
+  getManageIndicators: fetchDataFunction(true, effects.manageIndicators),
   getHotPossibleWds: fetchDataFunction(false, effects.getHotPossibleWds),
   getHotWds: fetchDataFunction(true, effects.getHotWds),
   getHistoryWdsList: fetchDataFunction(false, effects.getHistoryWdsList),
   clearSearchHistoryList: fetchDataFunction(false, effects.clearSearchHistoryList),
   saveSearchVal: fetchDataFunction(false, effects.saveSearchVal),
-  getIncomeData: fetchDataFunction(true, effects.getIncomeData),
   push: routerRedux.push,
   replace: routerRedux.replace,
 };
@@ -80,9 +93,9 @@ export default class Home extends PureComponent {
     push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
     getToBeDone: PropTypes.func.isRequired,
-    performanceIndicators: PropTypes.object,
+    manageIndicators: PropTypes.object,
     collectCustRange: PropTypes.func.isRequired,
-    getPerformanceIndicators: PropTypes.func.isRequired,
+    getManageIndicators: PropTypes.func.isRequired,
     getHotPossibleWds: PropTypes.func.isRequired,
     getHotWds: PropTypes.func.isRequired,
     getHistoryWdsList: PropTypes.func.isRequired,
@@ -99,12 +112,16 @@ export default class Home extends PureComponent {
     historyWdsList: PropTypes.array,
     clearState: PropTypes.object,
     searchHistoryVal: PropTypes.string,
-    incomeData: PropTypes.array,
-    getIncomeData: PropTypes.func.isRequired,
+    getInformation: PropTypes.func.isRequired,
+    information: PropTypes.object,
+    performanceIndicators: PropTypes.array,
+    getPerformanceIndicators: PropTypes.func.isRequired,
+    hsRate: PropTypes.string,
+    getHSRate: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
-    performanceIndicators: EMPTY_OBJECT,
+    manageIndicators: EMPTY_OBJECT,
     custRange: EMPTY_LIST,
     cycle: EMPTY_LIST,
     collectCustRange: () => { },
@@ -117,7 +134,9 @@ export default class Home extends PureComponent {
     historyWdsList: EMPTY_LIST,
     clearState: EMPTY_OBJECT,
     searchHistoryVal: '',
-    incomeData: EMPTY_LIST,
+    information: EMPTY_OBJECT,
+    performanceIndicators: EMPTY_LIST,
+    hsRate: '',
   }
 
   constructor(props) {
@@ -134,6 +153,7 @@ export default class Home extends PureComponent {
   componentDidMount() {
     const {
       custRange,
+      cycle = EMPTY_LIST,
       location: { query: { orgId = '', cycleSelect = '' } },
       empInfo: { empInfo, empRespList },
       position: { orgId: posOrgId = '' },
@@ -148,12 +168,14 @@ export default class Home extends PureComponent {
     }
 
     const { begin, end } = this.getTimeSelectBeginAndEnd();
+    const initialCycleSelect = !_.isEmpty(cycle) ? cycle[0].key : '';
+
     this.getAllInfo({
       custRange,
       empInfo,
       empRespList,
       posOrgId: fspOrgId,
-      cycleSelect,
+      cycleSelect: cycleSelect || initialCycleSelect,
       begin,
       end,
     });
@@ -177,7 +199,6 @@ export default class Home extends PureComponent {
 
     const { orgId: preOrgId } = prePosition;
     const { orgId: nextOrgId } = nextPosition;
-
     // FSP职责切换，position变化
     if (preOrgId !== nextOrgId) {
       this.setState({
@@ -211,54 +232,42 @@ export default class Home extends PureComponent {
   }
 
   @autobind
-  getIndicators({ orgId, cycleSelect }) {
-    const { getPerformanceIndicators, custRange, cycle } = this.props;
+  getCustType(orgId) {
     const { fspOrgId } = this.state;
-    let custType = ORG;
-    if (custRange.length < 1) {
-      return null;
-    }
+    let custType = CUST_MANAGER;
     if (!_.isEmpty(orgId || fspOrgId)) { // 判断客户范围类型
       custType = ORG;
-    } else {
-      custType = CUST_MANAGER;
     }
-    getPerformanceIndicators({
-      custType, // 客户范围类型
-      dateType: cycleSelect || (!_.isEmpty(cycle) ? cycle[0].key : ''), // 周期类型
-      orgId: orgId || fspOrgId, // 组织ID
-    });
-    return null;
+    return custType;
+  }
+
+  // 周期类型
+  @autobind
+  getDateType(cycleSelect) {
+    const { cycle } = this.props;
+    return cycleSelect || (!_.isEmpty(cycle) ? cycle[0].key : '');
   }
 
   @autobind
-  getIncomes({ begin, end, orgId, cycleSelect }) {
-    const { getIncomeData, custRange, cycle } = this.props;
+  getIndicators({ begin, end, orgId, cycleSelect }) {
+    const { getPerformanceIndicators, getManageIndicators, custRange } = this.props;
     const { fspOrgId } = this.state;
-    let custType = ORG;
+    const custType = this.getCustType(orgId);
     if (custRange.length < 1) {
       return null;
     }
-    if (!_.isEmpty(orgId || fspOrgId)) { // 判断客户范围类型
-      custType = ORG;
-    } else {
-      custType = CUST_MANAGER;
-    }
-    getIncomeData({
+    getManageIndicators({
       custType, // 客户范围类型
-      dateType: cycleSelect || (!_.isEmpty(cycle) ? cycle[0].key : ''), // 周期类型
+      dateType: this.getDateType(cycleSelect), // 周期类型
       orgId: orgId || fspOrgId, // 组织ID
-      empId: helper.getEmpId(),
-      fieldList: [
-        'tranPurRakeCopy',
-        'totCrdtIntCopy',
-        'totTranInt',
-        'pIncomeAmt',
-        'prdtOIncomeAmt',
-        'oIncomeAmt',
-      ],
+    });
+    getPerformanceIndicators({
       begin,
       end,
+      empId: helper.getEmpId(),
+      custType, // 客户范围类型
+      dateType: this.getDateType(cycleSelect), // 周期类型
+      orgId: orgId || fspOrgId, // 组织ID
     });
     return null;
   }
@@ -269,7 +278,7 @@ export default class Home extends PureComponent {
     const { historyTime, customerPoolTimeSelect } = optionsMap;
     const currentSelect = _.find(historyTime, itemData =>
       itemData.name === _.find(customerPoolTimeSelect, item =>
-        item.key === (cycleSelect || '518003')).name) || {}; // 本月
+        item.key === (cycleSelect || LOCAL_MONTH)).name) || {}; // 本月
     const nowDuration = getDurationString(currentSelect.key);
     const begin = nowDuration.begin;
     const end = nowDuration.end;
@@ -296,9 +305,30 @@ export default class Home extends PureComponent {
   }
 
   @autobind
+  fetchHSRate({ begin, end, orgId, cycleSelect }) {
+    const { getHSRate, custRange } = this.props;
+    const { fspOrgId } = this.state;
+    const custType = this.getCustType(orgId);
+    if (custRange.length < 1) {
+      return null;
+    }
+    getHSRate({
+      custType, // 客户范围类型
+      dateType: this.getDateType(cycleSelect), // 周期类型
+      orgId: orgId || fspOrgId, // 组织ID
+      empId: helper.getEmpId(),
+      fieldList: ['shzNpRate'],
+      begin,
+      end,
+    });
+    return null;
+  }
+
+  @autobind
   handleGetAllInfo(begin, end, cycleSelect) {
     const { fspOrgId } = this.state;
     const {
+      getInformation,
       getToBeDone,
       getHotWds,
       getHistoryWdsList,
@@ -306,26 +336,31 @@ export default class Home extends PureComponent {
       replace,
     } = this.props;
 
+    const orgId = fspOrgId === '' ? null : fspOrgId; // 组织ID
+    const empNo = helper.getEmpId();
+
     // 热词搜索
-    getHotWds({
-      orgId: fspOrgId === '' ? null : fspOrgId, // 组织ID
-      empNo: helper.getEmpId(), // 用户ID
-    });
-
+    getHotWds({ orgId, empNo });
     // 历史搜索记录
-    getHistoryWdsList({
-      orgId: fspOrgId === '' ? null : fspOrgId, // 组织ID
-      empNo: helper.getEmpId(), // 用户ID
-    });
-
+    getHistoryWdsList({ orgId, empNo });
     // 待办事项
     getToBeDone();
 
-    // 净创收数据
-    this.getIncomes({ begin, end, orgId: fspOrgId, cycleSelect });
-
+    // 首席投顾观点
+    getInformation({ curPageNum: 1, pageSize: 18 });
+    // 指标
+    // 已和下面接口合并
+    // this.getIndicators({ begin, end, orgId, cycleSelect });
     // 绩效指标
-    this.getIndicators({ orgId: fspOrgId, cycleSelect });
+    this.getIndicators({ begin, end, orgId: fspOrgId, cycleSelect: cycleSelect || LOCAL_MONTH });
+
+    // 沪深归集率（经营指标）
+    this.fetchHSRate({ begin, end, orgId, cycleSelect });
+
+    // 净创收数据
+    // 已删除
+    // this.getIncomes({ begin, end, orgId: fspOrgId, cycleSelect: cycleSelect || LOCAL_MONTH });
+
 
     // 替换url orgId
     replace({
@@ -333,6 +368,7 @@ export default class Home extends PureComponent {
       query: {
         ...query,
         orgId: fspOrgId,
+        cycleSelect: cycleSelect || LOCAL_MONTH,
       },
     });
   }
@@ -369,15 +405,13 @@ export default class Home extends PureComponent {
       // 时间或者组织机构树变化
       // 重新请求绩效指标数据和净创收数据
       this.getIndicators({
-        orgId: orgId === 'msm' ? '' : orgId,
-        cycleSelect: cycleSelect || currentCycleSelect,
-      });
-      this.getIncomes({
         begin,
         end,
         orgId: orgId === 'msm' ? '' : orgId,
         cycleSelect: cycleSelect || currentCycleSelect,
       });
+      // 沪深归集率（经营指标）
+      this.fetchHSRate({ begin, end, orgId, cycleSelect });
     });
   }
 
@@ -523,17 +557,43 @@ export default class Home extends PureComponent {
   @autobind
   handleSaveSearchVal(obj) {
     const { saveSearchVal } = this.props;
-    saveSearchVal(
-      obj,
-    );
+    saveSearchVal(obj);
+  }
+
+  @autobind
+  renderTabsExtra() {
+    const {
+      custRange,
+      replace,
+      collectCustRange,
+      cycle,
+      location,
+    } = this.props;
+    const {
+      expandAll,
+      cycleSelect,
+      createCustRange,
+      fspOrgId,
+      isHasAuthorize,
+    } = this.state;
+    const extraProps = {
+      custRange: createCustRange,
+      replace,
+      updateQueryState: this.updateQueryState,
+      collectCustRange,
+      cycle,
+      expandAll,
+      selectValue: cycleSelect,
+      location,
+      orgId: isHasAuthorize ? (fspOrgId || custRange[0].id) : null,
+    };
+    return (<TabsExtra {...extraProps} />);
   }
 
   render() {
     const {
-      performanceIndicators,
+      manageIndicators,
       location,
-      replace,
-      collectCustRange,
       process,
       cycle,
       motTaskCount,
@@ -543,10 +603,11 @@ export default class Home extends PureComponent {
       historyWdsList,
       clearState,
       searchHistoryVal,
-      incomeData,
-      custRange,
+      information,
+      performanceIndicators,
+      hsRate,
     } = this.props;
-    const { expandAll, cycleSelect, createCustRange, fspOrgId, isHasAuthorize } = this.state;
+    const { fspOrgId } = this.state;
     return (
       <div className={styles.customerPoolWrap}>
         <Search
@@ -561,27 +622,45 @@ export default class Home extends PureComponent {
           clearFun={this.clearHistoryList}
           searchHistoryVal={searchHistoryVal}
           saveSearchVal={this.handleSaveSearchVal}
+          location={location}
         />
-        <div className={styles.content}>
-          <ToBeDone
-            push={push}
-            data={process}
-            motTaskCountData={motTaskCount}
-          />
-          <PerformanceIndicators
-            push={push}
-            indicators={performanceIndicators}
-            custRange={createCustRange}
-            updateQueryState={this.updateQueryState}
-            collectCustRange={collectCustRange}
-            location={location}
-            replace={replace}
-            cycle={cycle}
-            expandAll={expandAll}
-            selectValue={cycleSelect}
-            incomeData={incomeData}
-            orgId={isHasAuthorize ? (fspOrgId || custRange[0].id) : null}
-          />
+        <div className={styles.poolContainer}>
+          <div className={styles.content}>
+            <ToBeDone
+              push={push}
+              data={process}
+              motTaskCountData={motTaskCount}
+            />
+            <Tabs
+              tabBarExtraContent={this.renderTabsExtra()}
+              defaultActiveKey="1"
+              onChange={this.callback}
+            >
+              <TabPane tab="经营指标" key="1">
+                <ManageIndicators
+                  push={push}
+                  indicators={manageIndicators}
+                  location={location}
+                  cycle={cycle}
+                  hsRate={hsRate}
+                />
+              </TabPane>
+              <TabPane tab="投顾绩效" key="2">
+                <PerformanceIndicators
+                  push={push}
+                  indicators={performanceIndicators}
+                  location={location}
+                  cycle={cycle}
+                />
+              </TabPane>
+            </Tabs>
+          </div>
+          <div className={styles.viewpoint}>
+            <Viewpoint
+              information={information}
+              push={push}
+            />
+          </div>
         </div>
       </div>
     );

@@ -8,13 +8,13 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
 import ChartLineWidget from './ChartLine';
-import { helper } from '../../../utils';
+// import { helper } from '../../../utils';
 
 import styles from './sixMonthEarnings.less';
 
-const formatNumber = value => helper.toUnit(value, '元').value;
+// const formatNumber = value => helper.toUnit(value, '元').value;
 
-const formatUnit = value => helper.toUnit(value, '元').unit;
+// const formatUnit = value => helper.toUnit(value, '元').unit;
 
 const getLastestData = (arr) => {
   if (arr && arr instanceof Array && arr.length !== 0) {
@@ -28,8 +28,9 @@ export default class SixMonthEarnings extends PureComponent {
   static propTypes = {
     listItem: PropTypes.object.isRequired,
     monthlyProfits: PropTypes.object.isRequired,
-    isGetCustIncome: PropTypes.bool.isRequired,
+    custIncomeReqState: PropTypes.bool.isRequired,
     getCustIncome: PropTypes.func.isRequired,
+    formatAsset: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -46,14 +47,14 @@ export default class SixMonthEarnings extends PureComponent {
 
   @autobind
   getCustIncome() {
-    const { getCustIncome, listItem, monthlyProfits } = this.props;
-    const thisMonthlyProfits = monthlyProfits[listItem.custId];
-    if (!thisMonthlyProfits || _.isEmpty(thisMonthlyProfits)) {
+    const { getCustIncome, listItem, monthlyProfits, custIncomeReqState } = this.props;
+    const thisProfits = monthlyProfits[listItem.custId];
+    if (!thisProfits || _.isEmpty(thisProfits)) {
       // test data empId = 01041128、05038222、035000002899、02004642
       getCustIncome({ custNumber: listItem.custId });
     }
     this.setState({
-      isShowCharts: true,
+      isShowCharts: !custIncomeReqState,
     });
   }
 
@@ -69,19 +70,40 @@ export default class SixMonthEarnings extends PureComponent {
     const {
       listItem,
       monthlyProfits,
-      isGetCustIncome,
+      custIncomeReqState,
+      formatAsset,
     } = this.props;
     const {
       isShowCharts,
     } = this.state;
-    const thisMonthlyProfits = monthlyProfits[listItem.custId] || [];
-    const lastestProfit = Number(getLastestData(thisMonthlyProfits).assetProfit);
-    const lastestProfitRate = Number(getLastestData(thisMonthlyProfits).assetProfitRate);
+    const thisProfits = monthlyProfits[listItem.custId] || [];
+    const lastestProfit = Number(getLastestData(thisProfits).assetProfit);
+    const lastestProfitRate = Number(getLastestData(thisProfits).assetProfitRate);
+    // 格式化本月收益的值和单位、本月收益率
+    let lastestPrifitsValue = '--';
+    let lastestPrifitsUnit = '';
+    let lastestPrifitsRate = '--';
+    if (thisProfits.length) {
+      if (lastestProfit) {
+        const obj = formatAsset(lastestProfit);
+        lastestPrifitsValue = obj.value;
+        lastestPrifitsUnit = obj.unit;
+        lastestPrifitsRate = `${lastestProfitRate.toFixed(2)}%`;
+      }
+    }
+    // 格式化年最大时点资产的值和单位
+    let maxTotAsetYValue = '--';
+    let maxTotAsetYUnit = '';
+    if (listItem.maxTotAsetY) {
+      const obj = formatAsset(listItem.maxTotAsetY);
+      maxTotAsetYValue = obj.value;
+      maxTotAsetYUnit = obj.unit;
+    }
     return (
       <span
         className={styles.showChartBtn}
         style={{
-          cursor: isGetCustIncome ? 'wait' : 'pointer',
+          cursor: custIncomeReqState ? 'wait' : 'pointer',
         }}
       >
         <p
@@ -97,40 +119,28 @@ export default class SixMonthEarnings extends PureComponent {
           }}
         >
           <div className={styles.chartsContent}>
-            <ChartLineWidget chartData={thisMonthlyProfits} />
+            <ChartLineWidget chartData={thisProfits} />
           </div>
           <div className={styles.chartsText}>
             <div className={styles.lh28}>
               <span>年最大时点资产：</span>
-              <span className={styles.numA}>
-                {listItem.maxTotAsetY ? formatNumber(listItem.maxTotAsetY) : '--'}
-              </span>
-              {listItem.maxTotAsetY ? formatUnit(listItem.maxTotAsetY) : ''}
+              <span className={styles.numA}>{maxTotAsetYValue}</span>
+              {maxTotAsetYUnit}
             </div>
             <div className={styles.lh28}>
               <span>本月收益率：</span>
               <span className={styles.numB}>
-                {
-                  thisMonthlyProfits.length ?
-                    `${lastestProfitRate.toFixed(2)}%`
-                    :
-                    '--'
-                }
+                {lastestPrifitsRate}
               </span>
             </div>
             <div className={styles.lh28}>
               <span>本月收益：</span>
               <span className={styles.numB}>
-                {
-                  thisMonthlyProfits.length ?
-                    formatNumber(lastestProfit)
-                    :
-                    '--'
-                }
+                {lastestPrifitsValue}
                 &nbsp;
               </span>
               <span>
-                {thisMonthlyProfits.length ? formatUnit(lastestProfit) : null}
+                {lastestPrifitsUnit}
               </span>
             </div>
           </div>

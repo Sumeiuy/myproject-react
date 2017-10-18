@@ -7,9 +7,10 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Input, Icon, Modal, message } from 'antd';
+import { Input, Icon, message } from 'antd';
 import _ from 'lodash';
 
+import Confirm from '../common/Confirm';
 import CommonModal from '../common/biz/CommonModal';
 import CommonUpload from '../common/biz/CommonUpload';
 import Transfer from '../common/biz/TableTransfer';
@@ -23,8 +24,9 @@ import OtherCommissionSelectList from './OtherCommissionSelectList';
 import CommissionLine from './CommissionLine';
 import SelectAssembly from './SelectAssembly';
 import { seibelConfig } from '../../config';
-// import { getEmpId } from '../../utils/helper';
+
 import styles from './createNewApprovalBoard.less';
+
 // 临时设置的单佣金调整需要的产品结构Mock数据
 import {
   subscribelData,
@@ -32,7 +34,7 @@ import {
   productColumns,
 } from '../../routes/templeModal/MockTableData';
 
-const confirm = Modal.confirm;
+// const confirm = Modal.confirm;
 const { TextArea } = Input;
 const { commission: { subType }, comsubs: commadj } = seibelConfig;
 // 给subType去除全部的选项
@@ -105,6 +107,8 @@ export default class CreateNewApprovalBoard extends PureComponent {
       approverId: '',
       custLists: [],
       otherComReset: new Date().getTime(), // 用来判断是否重置
+      showCloseApprovalBoardConfirm: false, // 用来展示关闭弹出层时的确认提示框
+      showSwitchProductConfirm: false, // 用来展示切换目标产品后的确认提示框
     };
   }
 
@@ -143,30 +147,35 @@ export default class CreateNewApprovalBoard extends PureComponent {
     });
   }
 
-  // 关闭弹出层后的提示框信息
+  // 关闭弹窗
   @autobind
-  closeModalConfirm(key) {
-    // 关闭我的模态框
-    const closeFunc = this.props.onClose;
-    const clear = this.clearApprovalBoard;
-    confirm({
-      title: '真的要关闭此弹框嘛?',
-      content: '亲~~弹框关闭以后，您所填写的信息是不会保存的哟！！！',
-      onOk() {
-        // 清空数据
-        clear();
-        closeFunc(key);
-      },
-      onCancel() {
-
-      },
+  closeModal() {
+    this.setState({
+      showCloseApprovalBoardConfirm: true,
     });
   }
 
-  // 关闭弹窗
+  // 清空弹出层数据
   @autobind
-  closeModal(key) {
-    this.closeModalConfirm(key);
+  clearBoardAllData() {
+    const { modalKey, onClose } = this.props;
+    this.clearApprovalBoard();
+    onClose(modalKey);
+    this.closeBoardConfirm();
+  }
+
+  @autobind
+  closeBoardConfirm() {
+    this.setState({
+      showCloseApprovalBoardConfirm: false,
+    });
+  }
+
+  @autobind
+  closeProductChangeConfirm() {
+    this.setState({
+      showSwitchProductConfirm: false,
+    });
   }
 
   // 提交
@@ -263,23 +272,23 @@ export default class CreateNewApprovalBoard extends PureComponent {
     this.digital = input;
   }
 
+  // 清空用户选择的客户列表
+  @autobind
+  clearCustList() {
+    this.addCustomer.clearCustList();
+    this.closeProductChangeConfirm();
+  }
+
   // 切换选择某个产品
   @autobind
   handleSelectProduct(targetProduct) {
-    const clearCust = this.addCustomer.clearCustList;
     const { custLists } = this.state;
     this.setState({
       targetProduct,
     });
     if (!_.isEmpty(custLists)) {
-      confirm({
-        title: '真的要重新选择目标产品么?',
-        content: '选择新的目标产品后，您之前所选择的客户会被清空哟！！！',
-        onOk() {
-          clearCust();
-        },
-        onCancel() {
-        },
+      this.setState({
+        showSwitchProductConfirm: true,
       });
     }
   }
@@ -379,6 +388,8 @@ export default class CreateNewApprovalBoard extends PureComponent {
       approverName,
       approverId,
       otherComReset,
+      showCloseApprovalBoardConfirm,
+      showSwitchProductConfirm,
     } = this.state;
     const needBtn = !this.judgeSubtypeNow('');
 
@@ -669,6 +680,26 @@ export default class CreateNewApprovalBoard extends PureComponent {
           onClose={this.closeChoiceApproverModal}
           onOk={this.handleApproverModalOK}
         />
+        {
+          !showCloseApprovalBoardConfirm ? null
+          : (
+            <Confirm
+              type="close"
+              onOkHandler={this.clearBoardAllData}
+              onCancelHandler={this.closeBoardConfirm}
+            />
+          )
+        }
+        {
+          !showSwitchProductConfirm ? null
+          : (
+            <Confirm
+              type="changeproduct"
+              onOkHandler={this.clearCustList}
+              onCancelHandler={this.closeProductChangeConfirm}
+            />
+          )
+        }
       </div>
     );
   }

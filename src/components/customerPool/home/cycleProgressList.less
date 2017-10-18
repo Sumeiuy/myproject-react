@@ -1,0 +1,57 @@
+.container {
+  padding: 28px 0px;
+  .row {
+    display: -webkit-flex; /* Safari */
+    display: flex;
+    align-items: center;
+    .column{
+      overflow: hidden;
+      width: 50%;
+      text-align: center;
+      .content {
+        display: -webkit-flex; /* Safari */
+        display: flex;
+        justify-content: center;
+        .percent {
+          font-size: 26px;
+          color: #000;
+        }
+        .symbol {
+          font-size: 8px;
+          color: #666;
+          padding-top: 12px;
+        }
+      }
+      .text {
+        margin-top: 12px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-align: center;
+        font-family:PingFangSC-Regular;
+        color:#666666;
+        letter-spacing:0.2px;
+        font-size: 6px;
+      }
+    }
+    :global {
+      .ant-progress-circle-trail {
+        stroke: #d6d6d6;
+      }
+    }
+    .firstColumn {
+      :global {
+        .ant-progress-circle-path {
+          stroke: #33D0E2;
+        }
+      }
+    }
+    .secondColumn {
+      :global {
+        .ant-progress-circle-path {
+          stroke: #6b87d8;
+        }
+      }
+    }
+  }
+}

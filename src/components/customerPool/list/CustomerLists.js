@@ -11,6 +11,7 @@ import { Pagination, Checkbox, message } from 'antd';
 
 import CustomerRow from './CustomerRow';
 import CreateContactModal from './CreateContactModal';
+import Loading from '../../../layouts/Loading';
 
 import { fspContainer } from '../../../config';
 import { fspGlobal, helper } from '../../../utils';
@@ -19,9 +20,48 @@ import NoData from '../common/NoData';
 import styles from './customerLists.less';
 
 const EMPTY_ARRAY = [];
-let onOff = false;// 邮件链接开关
 const EMPTY_OBJECT = {};
 let modalKeyCount = 0;
+
+/*
+ * 格式化钱款数据和单位
+ * 入参： 190000000 转化成 { value: '1.90', unit: '亿元' }
+ */
+const formatAsset = (num) => {
+  // 数字常量
+  const WAN = 1e4;
+  const YI = 1e8;
+  const WANYI = 1e12;
+
+  // 单位常量
+  const UNIT_DEFAULT = '元';
+  const UNIT_WAN = '万元';
+  const UNIT_YI = '亿元';
+  const UNIT_WANYI = '万亿元';
+
+  const newNum = Number(num);
+  const absNum = Math.abs(newNum);
+
+  if (absNum >= WANYI) {
+    return {
+      value: (newNum / WANYI).toFixed(2),
+      unit: UNIT_WANYI,
+    };
+  }
+  if (absNum >= YI) {
+    return {
+      value: (newNum / YI).toFixed(2),
+      unit: UNIT_YI,
+    };
+  }
+  if (absNum >= WAN) {
+    return {
+      value: (newNum / WAN).toFixed(2),
+      unit: UNIT_WAN,
+    };
+  }
+  return { value: newNum, unit: UNIT_DEFAULT };
+};
 
 export default class CustomerLists extends PureComponent {
   static propTypes = {
@@ -44,14 +84,18 @@ export default class CustomerLists extends PureComponent {
     custRange: PropTypes.array.isRequired,
     condition: PropTypes.object.isRequired,
     getCustContact: PropTypes.func.isRequired,
+    getCustEmail: PropTypes.func.isRequired,
     getServiceRecord: PropTypes.func.isRequired,
     getFollowCust: PropTypes.func.isRequired,
     custContactData: PropTypes.object.isRequired,
+    custEmail: PropTypes.object.isRequired,
     serviceRecordData: PropTypes.object.isRequired,
     dict: PropTypes.object.isRequired,
     isSms: PropTypes.bool.isRequired,
-    isGetCustIncome: PropTypes.bool.isRequired,
+    custIncomeReqState: PropTypes.bool,
     toggleServiceRecordModal: PropTypes.func.isRequired,
+    isLoadingEnd: PropTypes.bool.isRequired,
+    onRequestLoading: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -60,6 +104,7 @@ export default class CustomerLists extends PureComponent {
     q: '',
     fllowCustData: {},
     followLoading: false,
+    custIncomeReqState: false,
   }
 
   constructor(props) {
@@ -71,10 +116,9 @@ export default class CustomerLists extends PureComponent {
       modalKey: `modalKeyCount${modalKeyCount}`,
       // 判断是否是主服务经理
       isSms: false,
-      currentEmailCustId: '',
-      email: '',
       isFollows: {},
       currentFollowCustId: '',
+      emailCustId: '',
     };
   }
   componentDidMount() {
@@ -93,6 +137,7 @@ export default class CustomerLists extends PureComponent {
       serviceRecordData: prevServiceRecordData = EMPTY_ARRAY,
       followLoading: preFL,
       custList,
+      custEmail,
      } = this.props;
     const {
       custContactData: nextCustContactData = EMPTY_OBJECT,
@@ -100,6 +145,7 @@ export default class CustomerLists extends PureComponent {
       followLoading,
       fllowCustData,
       custList: nextCustList,
+      custEmail: nextCustEmail,
      } = nextProps;
     const { currentCustId, isShowContactModal, currentFollowCustId } = this.state;
     const prevContact = prevCustContactData[currentCustId] || EMPTY_OBJECT;
@@ -109,7 +155,7 @@ export default class CustomerLists extends PureComponent {
     let isFollows = {};
     let change = {};
     const { result } = fllowCustData || '';
-    if ((prevContact !== nextContact || prevRecord !== nextRecord) && onOff === false) {
+    if ((prevContact !== nextContact || prevRecord !== nextRecord)) {
       if (!isShowContactModal) {
         this.setState({
           isShowContactModal: true,
@@ -117,14 +163,13 @@ export default class CustomerLists extends PureComponent {
         });
       }
     }
-    if (onOff) {
-      this.getEmail(nextCustContactData[currentCustId]);
-      onOff = !onOff;
+    if (custEmail !== nextCustEmail) {
+      this.getEmail(nextCustEmail[currentCustId]);
     }
     if (preFL && !followLoading) {
       if (result === 'success') {
         if (!this.state.isFollows[currentFollowCustId]) {
-          message.success('关注成功，并添加到“我关注的客户”分组');
+          message.success('关注成功，并添加到“我的关注”分组');
           change = {
             ...this.state.isFollows,
             ...{ [currentFollowCustId]: true },
@@ -181,20 +226,18 @@ export default class CustomerLists extends PureComponent {
       });
     }
   }
-// 判断已有信息邮箱是否存在
+  // 判断已有信息邮箱是否存在
   @autobind
   getEmail(address) {
     let finded = 0;// 邮件联系
-    if (!_.isEmpty(address.orgCustomerContactInfoList)
-        && _.size(address.orgCustomerContactInfoList) > 0) {
+    if (!_.isEmpty(address.orgCustomerContactInfoList)) {
       const index = _.findLastIndex(address.orgCustomerContactInfoList,
-          val => val.mainFlag);
+        val => val.mainFlag);
       finded = _.findLastIndex(address.orgCustomerContactInfoList[index].emailAddresses,
-          val => val.mainFlag);
-    } else if (!_.isEmpty(address.perCustomerContactInfo)
-        && _.size(address.perCustomerContactInfo) > 0) {
+        val => val.mainFlag);
+    } else if (!_.isEmpty(address.perCustomerContactInfo)) {
       finded = _.findLastIndex(address.perCustomerContactInfo.emailAddresses,
-          val => val.mainFlag);
+        val => val.mainFlag);
     } else {
       finded = -1;
     }
@@ -285,7 +328,7 @@ export default class CustomerLists extends PureComponent {
       location: {
         query: {
           selectedIds,
-          selectAll,
+        selectAll,
         },
       },
     } = this.props;
@@ -363,7 +406,7 @@ export default class CustomerLists extends PureComponent {
 
   @autobind
   showCreateContact({ custId, custType }) {
-    const { getCustContact, getServiceRecord, custContactData } = this.props;
+    const { getCustContact, getServiceRecord, custContactData, onRequestLoading } = this.props;
     this.setState({
       currentCustId: custId,
       custType,
@@ -382,24 +425,21 @@ export default class CustomerLists extends PureComponent {
       getServiceRecord({
         custId,
       });
+      onRequestLoading();
     });
   }
 
   @autobind
   handleSendEmail(item) {
-    const { getCustContact, custContactData } = this.props;
+    const { getCustEmail } = this.props;
     const { custId } = item;
-    if (_.isEmpty(custContactData[custId])) {
-      getCustContact({
-        custId,
-      });
-    } else {
-      this.getEmail(custContactData[custId]);
-    }
+    getCustEmail({
+      custId,
+    });
     this.setState({
       currentCustId: custId,
+      emailCustId: custId,
     });
-    onOff = true;
   }
 
   @autobind
@@ -449,7 +489,7 @@ export default class CustomerLists extends PureComponent {
     // const inMyCustomer = _.includes(tmpArr, source) && orgId && orgId === 'msm';
     if (this.props.isSms) {
       return (<button
-        onClick={() => { this.handleClick('/customerPool/customerGroup', '新建分组', 'FSP_GROUP'); }}
+        onClick={() => { this.handleClick('/customerPool/customerGroup', '新建分组', 'RCT_FSP_CUSTOMER_LIST'); }}
       >
         用户分组
       </button>);
@@ -463,6 +503,7 @@ export default class CustomerLists extends PureComponent {
       currentFollowCustId,
       isShowContactModal,
       currentCustId,
+      emailCustId,
       custType,
       modalKey,
       isFollows,
@@ -479,16 +520,20 @@ export default class CustomerLists extends PureComponent {
       getCustIncome,
       monthlyProfits,
       location,
+      custEmail,
       custContactData,
       serviceRecordData,
       dict,
       isSms,
-      isGetCustIncome,
+      custIncomeReqState,
       toggleServiceRecordModal,
+      isLoadingEnd,
     } = this.props;
+    // console.log('1---', this.props)
     // 服务记录执行方式字典
-    const { executeTypes = EMPTY_ARRAY } = dict;
+    const { executeTypes = EMPTY_ARRAY, serveWay = EMPTY_ARRAY } = dict;
     const finalContactData = custContactData[currentCustId] || EMPTY_OBJECT;
+    const finalEmailData = custEmail[emailCustId] || EMPTY_OBJECT;
     const finalServiceRecordData = serviceRecordData[currentCustId] || EMPTY_ARRAY;
     const {
       selectedIds = '',
@@ -556,12 +601,13 @@ export default class CustomerLists extends PureComponent {
                 onAddFollow={this.handleAddFollow}
                 createContact={this.showCreateContact}
                 key={`${item.empId}-${item.custId}-${item.idNum}-${item.telephone}-${item.asset}`}
-                custContactData={finalContactData}
+                custEmail={finalEmailData}
                 currentFollowCustId={currentFollowCustId}
                 isFollows={isFollows}
-                currentCustId={currentCustId}
-                isGetCustIncome={isGetCustIncome}
+                emailCustId={emailCustId}
+                custIncomeReqState={custIncomeReqState}
                 toggleServiceRecordModal={toggleServiceRecordModal}
+                formatAsset={formatAsset}
               />,
             )
           }
@@ -601,14 +647,14 @@ export default class CustomerLists extends PureComponent {
           <div className="right">
             {this.renderGroup()}
             <button
-              onClick={() => { this.handleClick('/customerPool/createTask', '发起任务', 'RCT_FSP_TASK'); }}
+              onClick={() => { this.handleClick('/customerPool/createTask', '发起任务', 'RCT_FSP_CUSTOMER_LIST'); }}
             >
               发起任务
             </button>
           </div>
         </div>
         {
-          isShowContactModal ?
+          (isShowContactModal && isLoadingEnd) ?
             <CreateContactModal
               key={modalKey}
               visible={isShowContactModal}
@@ -619,7 +665,11 @@ export default class CustomerLists extends PureComponent {
               onClose={this.resetModalState}
               currentCustId={currentCustId}
               executeTypes={executeTypes}
+              serveWay={serveWay}
             /> : null
+        }
+        {
+          <Loading loading={!isLoadingEnd} />
         }
       </div>
     );

@@ -51,7 +51,8 @@ export default class MatchArea extends PureComponent {
   }
 
   @autobind
-  handleCollapse(bool) {
+  handleCollapse(bool, e) {
+    e.stopPropagation();
     this.setState({
       showAll: bool,
     });
@@ -192,14 +193,14 @@ export default class MatchArea extends PureComponent {
               {
                 !showAll ?
                   <span>
-                    <a onClick={() => this.handleCollapse(true)}>
+                    <a onClick={e => this.handleCollapse(true, e)}>
                       <span className={styles.itemA}>展开</span>
                       <img src={iconOpen} alt="open" />
                     </a>
                   </span>
                 :
                   <span>
-                    <a onClick={() => this.handleCollapse(false)}>
+                    <a onClick={e => this.handleCollapse(false, e)}>
                       <span className={styles.itemA}>收起</span>
                       <img src={iconClose} alt="open" />
                     </a>

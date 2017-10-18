@@ -8,9 +8,11 @@
 }
 .customerRow {
   position: relative;
-  padding: 18px 0;
   background-color: #fff;
   border-bottom: 1px solid #ddd;
+  .customerRowContent {
+    padding: 18px 0;
+  }
   &:hover {
     background-color: #F1F8FF;
     :global .showQuickMenu {
@@ -28,9 +30,9 @@
   }
 }
 .selectIcon {
-  float: left;
-  margin-top: 28px;
-  margin-left: 15px;
+  position: absolute;
+  top: 46px;
+  left: 15px;
   width: 15px;
   height: 15px;
   line-height: 15px;

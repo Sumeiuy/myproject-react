@@ -23,7 +23,7 @@ export default function ServiceRecordItem(props) {
       })}
     >
       <span>{title || '--'}</span>
-      <span>{newContent || '--'}</span>
+      <span title={newContent}>{newContent || '--'}</span>
     </div>
   );
 }
