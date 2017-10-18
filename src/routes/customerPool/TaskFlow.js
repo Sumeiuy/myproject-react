@@ -178,6 +178,7 @@ export default class TaskFlow extends PureComponent {
         storeData={saveCustSegmentData}
         // 第一步需要store data，不需要restore data
         isStoreData={!_.isEmpty(storeWhichData) && _.includes(storeWhichData, 0)}
+        isRestoreData={!_.isEmpty(restoreWhichData) && _.includes(restoreWhichData, 0)}
       />,
     }, {
       title: '目标客户',
@@ -195,6 +196,7 @@ export default class TaskFlow extends PureComponent {
         priviewCustFileData={priviewCustFileData}
         // 0代表第一步，1代表第二步，2代表第三步
         isRestoreData={!_.isEmpty(restoreWhichData) && _.includes(restoreWhichData, 1)}
+        // 0代表第一步，1代表第二步，2代表第三步
         isStoreData={!_.isEmpty(storeWhichData) && _.includes(storeWhichData, 1)}
       />,
     }, {

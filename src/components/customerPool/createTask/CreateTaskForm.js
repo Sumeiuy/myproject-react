@@ -37,8 +37,9 @@ export default class CreateTaskForm extends PureComponent {
     createTaskResult: PropTypes.object,
     onStepUpdate: PropTypes.func.isRequired,
     storedData: PropTypes.object,
-    // 第一步需要store data，不需要restore data
+    // 第一步需要store data
     isStoreData: PropTypes.bool,
+    isRestoreData: PropTypes.bool,
     replace: PropTypes.func.isRequired,
   }
 
@@ -47,6 +48,7 @@ export default class CreateTaskForm extends PureComponent {
     createTaskResult: {},
     createTask: () => { },
     isStoreData: false,
+    isRestoreData: false,
     storedData: {},
   }
 
