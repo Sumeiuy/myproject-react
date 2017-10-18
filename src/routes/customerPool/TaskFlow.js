@@ -27,7 +27,8 @@ const steps = [{
 const stepsCount = _.size(steps);
 
 const effects = {
-  createTask: 'customerPool/createTask',
+  getLabelCirclePeople: 'customerPool/getLabelCirclePeople',
+  getPeopleOfLabel: 'customerPool/getPeopleOfLabel',
 };
 const fectchDataFunction = (globalLoading, type) => query => ({
   type,
@@ -44,13 +45,15 @@ const fectchDataFunction = (globalLoading, type) => query => ({
 const mapStateToProps = state => ({
   // 字典信息
   dict: state.app.dict,
-  createTaskResult: state.customerPool.createTaskResult,
+  circlePeopleData: state.customerPool.circlePeopleData,
+  peopleOfLabelData: state.customerPool.peopleOfLabelData,
 });
 
 const mapDispatchToProps = {
   push: routerRedux.push,
   replace: routerRedux.replace,
-  createTask: fectchDataFunction(true, effects.createTask),
+  getCirclePeople: fectchDataFunction(true, effects.getCirclePeople),
+  getPeopleOfLabel: fectchDataFunction(true, effects.getPeopleOfLabel),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -61,6 +64,10 @@ export default class TaskFlow extends PureComponent {
     push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
     createTask: PropTypes.func.isRequired,
+    getCirclePeople: PropTypes.func.isRequired,
+    getPeopleOfLabel: PropTypes.func.isRequired,
+    circlePeopleData: PropTypes.array.isRequired,
+    peopleOfLabelData: PropTypes.array.isRequired,
     dict: PropTypes.object,
   };
 
