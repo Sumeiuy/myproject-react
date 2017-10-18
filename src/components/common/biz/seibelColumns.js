@@ -50,9 +50,17 @@ export default function seibelColumns(props) {
           {(pageName === 'contract' && record.business2) ? <Tag type="yellow" text={record.business2} /> : null}
           <Tag type="blue" text={changeDisplay(record.status, status)} />
         </div>
-        <div className="date">{(record.createTime &&
-          record.createTime.slice(0, 10)) || '无'}</div>
-        <div className="cust">客户：{record.custName || '无'}({record.custNumber || '无'})</div>
+        <div className="date">{(record.createTime && record.createTime.slice(0, 10)) || '无'}</div>
+        {
+          record.subType === '0202' ?
+          (
+            <div className="cust">共{record.business2 || 0}人,成功{record.business3 || 0}人</div>
+          )
+          :
+          (
+            <div className="cust">客户：{record.custName || '无'}({record.custNumber || '无'})</div>
+          )
+        }
       </div>
     ),
   }];
