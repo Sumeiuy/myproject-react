@@ -19,6 +19,8 @@ export default {
     detail: {},
     // 咨询订阅详情
     subscribeDetail: {},
+    // 资讯退订详情
+    unsubscribeDetail: {},
     // 单个用户的审批记录
     approvalRecord: {},
     // 查询审批记录流程状态
@@ -83,6 +85,21 @@ export default {
       return {
         ...state,
         subscribeDetail: {
+          base: detailResult,
+          attachmentList: attachmentResult,
+          approvalHistory: approvalResult,
+        },
+      };
+    },
+
+    getUnSubscribeDetailSuccess(state, action) {
+      const { payload: { detailRes, attachmentRes, approvalRes } } = action;
+      const detailResult = detailRes.resultData;
+      const attachmentResult = attachmentRes.resultData;
+      const approvalResult = approvalRes.resultData;
+      return {
+        ...state,
+        unsubscribeDetail: {
           base: detailResult,
           attachmentList: attachmentResult,
           approvalHistory: approvalResult,
@@ -271,6 +288,28 @@ export default {
       // TODO 还差一个当前审批步骤的接口
       yield put({
         type: 'getSubscribeDetailSuccess',
+        payload: { detailRes, attachmentRes, approvalRes },
+      });
+    },
+
+    // 查询咨询订阅详情数据
+    * getUnSubscribeDetail({ payload }, { call, put }) {
+      const detailRes = yield call(api.queryConsultSubscribeDetail,
+        {
+          action: 'query',
+          applyType: 'Internal',
+          operationType: 'SP Cancel',
+          ...payload,
+        });
+      // 通过查询到的详情数据的attachmentNum获取附件信息
+      const detailRD = detailRes.resultData;
+      const attachmentRes = yield call(api.getAttachment, { attachment: detailRD.attachmentNum });
+      const approvalRes = yield call(api.querySingleCustApprovalRecord, {
+        flowCode: detailRD.flowCode,
+      });
+      // TODO 还差一个当前审批步骤的接口
+      yield put({
+        type: 'getUnSubscribeDetailSuccess',
         payload: { detailRes, attachmentRes, approvalRes },
       });
     },

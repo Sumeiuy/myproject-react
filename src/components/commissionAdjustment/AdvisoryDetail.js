@@ -82,7 +82,7 @@ const proTitleList = [
 export default class AdvisoryDetail extends PureComponent {
 
   static propTypes = {
-    location: PropTypes.object.isRequired,
+    name: PropTypes.string.isRequired,
     data: PropTypes.object,
   }
 
@@ -145,11 +145,10 @@ export default class AdvisoryDetail extends PureComponent {
 
 
   render() {
-    const { data: { base, attachmentList, approvalHistory } } = this.props;
+    const { name, data: { base, attachmentList, approvalHistory } } = this.props;
     if (_.isEmpty(base)) return null;
     const {
       orderId,
-      operationType,
       comments,
       divisionName,
       createdByName,
@@ -172,7 +171,7 @@ export default class AdvisoryDetail extends PureComponent {
             <div className={styles.modContent}>
               <ul className={styles.propertyList}>
                 <li className={styles.item}>
-                  <InfoItem label="子类型" value={operationType} />
+                  <InfoItem label="子类型" value={name} />
                 </li>
                 <li className={styles.item}>
                   <InfoItem label="备注" value={comments} />
