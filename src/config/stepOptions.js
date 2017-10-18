@@ -2,16 +2,26 @@ export default {};
 
 export const steps = [
   {
-    key: '1',
+    key: 'first',
     value: '第一步',
   },
   {
-    key: '2',
+    key: 'second',
     value: '第二步',
   },
   {
-    key: '3',
+    key: 'third',
     value: '第三步',
   },
 ];
 
+export const custSelectType = [
+  {
+    key: 'custSegment',
+    value: '客户细分',
+  },
+  {
+    key: 'labelCust',
+    value: '标签圈人',
+  },
+];

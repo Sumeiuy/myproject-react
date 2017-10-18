@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 10:29:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-11 14:44:22
+ * @Last Modified time: 2017-10-18 14:32:27
  */
 
 import React, { PureComponent } from 'react';
@@ -11,13 +11,15 @@ import PropTypes from 'prop-types';
 // import classnames from 'classnames';
 // import _ from 'lodash';
 import styles from './taskOverview.less';
-
+import { steps } from '../../../config';
 // const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 
 export default class TaskOverview extends PureComponent {
   static propTypes = {
     taskData: PropTypes.object,
+    location: PropTypes.object.isRequired,
+    replace: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -28,6 +30,20 @@ export default class TaskOverview extends PureComponent {
     super(props);
     this.state = {
     };
+  }
+
+  componentWillMount() {
+    const { replace, location: { query, pathname } } = this.props;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        // 页面初始化时，恢复option
+        isStoreData: 'N',
+        step: steps[2].key,
+        type: '',
+      },
+    });
   }
 
   handleTabChange(key) {

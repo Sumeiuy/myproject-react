@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-18 09:52:35
+ * @Last Modified time: 2017-10-18 15:41:29
  */
 
 import React, { PropTypes, PureComponent } from 'react';
@@ -10,7 +10,7 @@ import { Upload, message } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import Confirm from '../../common/Confirm';
-import Button from '../../common/Button';
+// import Button from '../../common/Button';
 import { request } from '../../../config';
 import { helper } from '../../../utils';
 import uploadRequest from '../../../utils/uploadRequest';
@@ -27,12 +27,12 @@ export default class Uploader extends PureComponent {
     attachModel: PropTypes.object,
     fileKey: PropTypes.string,
     onOperateFile: PropTypes.func.isRequired,
-    onHandleOverview: PropTypes.func,
+    onHandleOverview: PropTypes.func.isRequired,
+    onDeleteFile: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
     attachModel: {},
-    onHandleOverview: () => { },
     fileKey: '',
   }
 
@@ -48,6 +48,7 @@ export default class Uploader extends PureComponent {
         empId: helper.getEmpId(),
       },
       isShowDeleteConfirm: false,
+      isShowUpload: true,
     };
   }
 
@@ -143,6 +144,8 @@ export default class Uploader extends PureComponent {
       this.setState({
         lastFile: currentFile,
         uploadedFileKey: resultData,
+        // 不展示upload组件
+        isShowUpload: false,
       });
     }
 
@@ -190,17 +193,22 @@ export default class Uploader extends PureComponent {
         customRequest={this.fileCustomRequest}
       >
         <div className="upload_txt">
-          + 上传附件
+          + 上传客户列表
         </div>
       </Dragger>
     );
   }
 
   @autobind
-  handleDelete() {
+  handleDeleteConfirm() {
+    const { onDeleteFile } = this.props;
     this.setState({
       isShowDeleteConfirm: false,
+      lastFile: {},
+      uploadedFileKey: '',
+      isShowUpload: true,
     });
+    onDeleteFile();
   }
 
   @autobind
@@ -210,32 +218,49 @@ export default class Uploader extends PureComponent {
     });
   }
 
-  render() {
-    const { isShowDeleteConfirm, uploadedFileKey } = this.state;
+  @autobind
+  handleDeleteFile() {
+    // const { uploadedFileKey } = this.state;
+    this.setState({
+      isShowDeleteConfirm: true,
+    });
+  }
+
+  @autobind
+  handlePreview() {
     const { onHandleOverview } = this.props;
+    const { uploadedFileKey } = this.state;
+    onHandleOverview(uploadedFileKey);
+  }
+
+  render() {
+    const { isShowDeleteConfirm, isShowUpload } = this.state;
     return (
       <div className="uploadBox">
-        {this.createUpload()}
         {
-          /*
-          <div className="downloadSection">
-          <a className="downloadLnk" download="">下载模板</a>
-          </div>
-          */
+          isShowUpload ? this.createUpload() : null
         }
-        <div className="overviewBtnSection">
-          <Button
-            className="overviewBtn"
-            type="default"
-            onClick={() => onHandleOverview(uploadedFileKey)}
-          >预览</Button>
-        </div>
+        {
+          !isShowUpload ? <div className="previewSection">
+            <div className="uploadedFile">
+              我的客户细分.xls
+            </div>
+            <div
+              className="overview"
+              onClick={this.handlePreview}
+            >预览</div>
+            <div
+              className="delete"
+              onClick={this.handleDeleteFile}
+            >删除</div>
+          </div> : null
+        }
         {
           isShowDeleteConfirm ?
             <Confirm
               type="delete"
               onCancelHandler={this.handleCancel}
-              onOkHandler={this.handleDelete}
+              onOkHandler={this.handleDeleteConfirm}
             /> : null
         }
       </div>

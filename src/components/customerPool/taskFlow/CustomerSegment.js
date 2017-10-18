@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 13:43:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-18 10:47:20
+ * @Last Modified time: 2017-10-18 15:46:08
  * 客户细分组件
  */
 
@@ -13,7 +13,7 @@ import classnames from 'classnames';
 import _ from 'lodash';
 import GroupTable from '../groupManage/GroupTable';
 import Uploader from './Uploader';
-import { steps } from '../../../config';
+import { steps, custSelectType } from '../../../config';
 import tableStyles from '../groupManage/groupTable.less';
 import styles from './customerSegment.less';
 
@@ -51,7 +51,7 @@ export default class CustomerSegment extends PureComponent {
   constructor(props) {
     super(props);
     const { isRestoreData, storedData } = props;
-    let attachModel;
+    let attachModel = {};
     let fileKey;
     if (isRestoreData) {
       // 恢复数据
@@ -64,11 +64,25 @@ export default class CustomerSegment extends PureComponent {
       dataSource: EMPTY_LIST,
       totalRecordNum: 10,
       isShowTable: false,
-      currentFile: {},
-      uploadedFileKey: '',
+      currentFile: attachModel,
+      uploadedFileKey: fileKey,
       attachModel,
       fileKey,
     };
+  }
+
+  componentWillMount() {
+    const { replace, location: { query, pathname } } = this.props;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        // 页面初始化时，恢复option
+        isStoreData: 'N',
+        step: steps[1].key,
+        type: custSelectType[0].key,
+      },
+    });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -105,15 +119,17 @@ export default class CustomerSegment extends PureComponent {
       });
     }
 
-    if (isStoreData !== nextIsStoreData) {
+    if (isStoreData !== nextIsStoreData || isStoreData) {
       const { currentFile, uploadedFileKey } = this.state;
       replace({
         pathname,
         query: {
           ...query,
-          isStoreData: nextIsStoreData,
+          isStoreData: nextIsStoreData ? 'Y' : 'N',
           // 第二步
           step: steps[1].key,
+          // 客户细分
+          type: custSelectType[0].key,
         },
         state: {
           ...state,
@@ -121,17 +137,12 @@ export default class CustomerSegment extends PureComponent {
         },
       });
 
-      // 存贮数据
-      // storeData({
-      //   attachModel: currentFile,
-      //   fileKey: uploadedFileKey,
-      // });
       onStepUpdate({
         type: 'next',
       });
     }
 
-    if (isRestoreData !== nextIsRestoreData) {
+    if (isRestoreData !== nextIsRestoreData || isRestoreData) {
       // 恢复数据
       const {
         attachModel,
@@ -139,6 +150,7 @@ export default class CustomerSegment extends PureComponent {
       } = storedData;
       this.setState({
         attachModel,
+        currentFile: attachModel,
         fileKey,
       });
     }
@@ -149,10 +161,11 @@ export default class CustomerSegment extends PureComponent {
     // 已经上传的file key
     // 用来预览客户列表时，用
     const { onPreview } = this.props;
+    const { curPageNum, curPageSize, fileKey } = this.state;
     this.setState({
-      uploadedFileKey,
+      uploadedFileKey: uploadedFileKey || fileKey,
     });
-    onPreview(uploadedFileKey);
+    onPreview({ uploadKey: uploadedFileKey, pageNum: curPageNum, pageSize: curPageSize });
   }
 
   /**
@@ -176,9 +189,17 @@ export default class CustomerSegment extends PureComponent {
   @autobind
   handlePageChange(nextPage, currentPageSize) {
     console.log(nextPage, currentPageSize);
+    const { uploadedFileKey } = this.state;
+    const { onPreview } = this.props;
     this.setState({
       curPageNum: nextPage,
       curPageSize: currentPageSize,
+    });
+    // 预览数据
+    onPreview({
+      uploadKey: uploadedFileKey,
+      pageNum: nextPage,
+      pageSize: currentPageSize,
     });
   }
 
@@ -190,9 +211,17 @@ export default class CustomerSegment extends PureComponent {
   @autobind
   handleShowSizeChange(currentPageNum, changedPageSize) {
     console.log(currentPageNum, changedPageSize);
+    const { uploadedFileKey } = this.state;
+    const { onPreview } = this.props;
     this.setState({
       curPageNum: currentPageNum,
       curPageSize: changedPageSize,
+    });
+    // 预览数据
+    onPreview({
+      uploadKey: uploadedFileKey,
+      pageNum: currentPageNum,
+      pageSize: changedPageSize,
     });
   }
 
@@ -210,6 +239,14 @@ export default class CustomerSegment extends PureComponent {
 
   handleTabChange(key) {
     console.log(key);
+  }
+
+  @autobind
+  handleDeleteFile() {
+    this.setState({
+      isShowTable: false,
+      uploadedFileKey: '',
+    });
   }
 
   @autobind
@@ -262,7 +299,11 @@ export default class CustomerSegment extends PureComponent {
             onHandleOverview={this.handleShowMatchCustTable}
             attachModel={attachModel}
             fileKey={fileKey}
+            onDeleteFile={this.handleDeleteFile}
           />
+        </div>
+        <div className={styles.tipSection}>
+          注：支持从客户细分导出的Excel或CSV格式文件。文件第一列必须是客户号，第二列必须是客户名称。
         </div>
         <div className={styles.tableSection}>
           {

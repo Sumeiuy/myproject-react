@@ -100,7 +100,7 @@ export default class TaskFlow extends PureComponent {
   }
 
   @autobind
-  handlePreview(uploadKey) {
+  handlePreview({ uploadKey, pageNum, pageSize }) {
     console.log(uploadKey);
     if (!uploadKey) {
       message.error('请先上传文件');
@@ -110,8 +110,8 @@ export default class TaskFlow extends PureComponent {
     // 预览数据
     priviewCustFile({
       filename: uploadKey,
-      pageNum: 1,
-      pageSize: 10,
+      pageNum,
+      pageSize,
     });
   }
 
@@ -157,6 +157,8 @@ export default class TaskFlow extends PureComponent {
     }, {
       title: '提交',
       content: <TaskOverview
+        location={location}
+        replace={replace}
         isRestoreData={!_.isEmpty(restoreWhichData) && _.includes(restoreWhichData, 2)}
         isStoreData={!_.isEmpty(storeWhichData) && _.includes(storeWhichData, 2)}
       />,

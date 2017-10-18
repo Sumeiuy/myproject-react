@@ -4,6 +4,9 @@
  * @author wangjunjun
  */
 import _ from 'lodash';
+import queryString from 'query-string';
+import pathToRegexp from 'path-to-regexp';
+import { custSelectType } from '../config';
 import { customerPool as api } from '../api';
 import { toastM } from '../utils/sagaEffects';
 
@@ -94,7 +97,32 @@ export default {
     // 存储的标签圈人数据
     storedLabelCustData: {},
   },
-  subscriptions: {},
+  subscriptions: {
+    setup({ dispatch, history }) {
+      history.listen(({ pathname, search, state }) => {
+        const params = queryString.parse(search);
+        const url = pathToRegexp('/customerPool/taskFlow').exec(pathname);
+        if (url) {
+          const { isStoreData, step, type } = params;
+          if (isStoreData === 'Y') {
+            if (step === 'second') {
+              // 第二步
+              if (type === custSelectType[0].key) {
+                // 客户细分
+                const { data } = state;
+                dispatch({
+                  type: 'saveCustSegmentData',
+                  payload: data,
+                });
+              } else if (type === custSelectType[1].key) {
+                // 标签圈人
+              }
+            }
+          }
+        }
+      });
+    },
+  },
   effects: {
     // 投顾绩效
     * getPerformanceIndicators({ payload }, { call, put }) {  //eslint-disable-line
