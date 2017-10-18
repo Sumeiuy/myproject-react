@@ -10,6 +10,7 @@ import { custSelectType } from '../config';
 import { customerPool as api } from '../api';
 import { toastM } from '../utils/sagaEffects';
 
+
 const EMPTY_LIST = [];
 // const EMPTY_OBJECT = {};
 
@@ -88,21 +89,25 @@ export default {
     deleteGroupResult: '',
     // 删除分组下客户结果
     deleteCustomerFromGroupResult: {},
-    serviceLogData: [], // 360服务记录查询数据
-    serviceLogMoreData: [], // 360服务记录查询更多数据
+    // 360服务记录查询数据
+    serviceLogData: [],
+    // 360服务记录查询更多数据
+    serviceLogMoreData: [],
     // 预览客户细分数据
     priviewCustFileData: {},
     // 存储的客户细分数据
     storedCustSegmentData: {},
     // 存储的标签圈人数据
     storedLabelCustData: {},
+    // 当前选中tab
+    currentTab: '',
   },
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen(({ pathname, search, state }) => {
         const params = queryString.parse(search);
-        const url = pathToRegexp('/customerPool/taskFlow').exec(pathname);
-        if (url) {
+        const taskFlowUrl = pathToRegexp('/customerPool/taskFlow').exec(pathname);
+        if (taskFlowUrl) {
           const { isStoreData, step, type } = params;
           if (isStoreData === 'Y') {
             if (step === 'second') {
@@ -119,6 +124,17 @@ export default {
               }
             }
           }
+        }
+
+        const serviceLogUrl = pathToRegexp('customerPool/serviceLog').exec(pathname);
+        if (serviceLogUrl) {
+          const { pageSize, serveDateToPaged } = params;
+          if (_.isEmpty(pageSize)) params.pageSize = null;
+          if (_.isEmpty(serveDateToPaged)) params.serveDateToPaged = null;
+          dispatch({
+            type: 'getServiceLog',
+            payload: params,
+          });
         }
       });
     },
@@ -521,6 +537,24 @@ export default {
       yield put({
         type: 'priviewCustFileSuccess',
         payload: resultData,
+      });
+    },
+    // 标签圈人
+    * getCirclePeople({ payload }, { call, put }) {
+      const response = yield call(api.labelCirclePeople, payload);
+      const { resultData } = response;
+      yield put({
+        type: 'getCirclePeopleSuccess',
+        payload: { resultData },
+      });
+    },
+    // 标签圈人-id查询客户列表
+    * getPeopleOfLabel({ payload }, { call, put }) {
+      const response = yield call(api.labelCirclePeople, payload);
+      const { resultData } = response;
+      yield put({
+        type: 'getPeopleOfLabelSuccess',
+        payload: { resultData },
       });
     },
   },
@@ -965,6 +999,30 @@ export default {
       return {
         ...state,
         storedLabelCustData: payload,
+      };
+    },
+    // 标签圈人成功
+    getCirclePeopleSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        circlePeopleData: resultData,
+      };
+    },
+    // 标签圈人-id客户列表查询
+    getPeopleOfLabelSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        peopleOfLabelData: resultData,
+      };
+    },
+    // 保存当前选中tab
+    saveCurrentTab(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        currentTab: payload,
       };
     },
   },

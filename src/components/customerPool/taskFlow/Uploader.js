@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-18 15:41:29
+ * @Last Modified time: 2017-10-18 17:33:15
  */
 
 import React, { PropTypes, PureComponent } from 'react';
@@ -48,7 +48,7 @@ export default class Uploader extends PureComponent {
         empId: helper.getEmpId(),
       },
       isShowDeleteConfirm: false,
-      isShowUpload: true,
+      isShowUpload: !(attachModel && fileKey),
     };
   }
 

@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 13:43:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-18 15:46:08
+ * @Last Modified time: 2017-10-18 17:34:15
  * 客户细分组件
  */
 
@@ -31,8 +31,6 @@ export default class CustomerSegment extends PureComponent {
     isStoreData: PropTypes.bool.isRequired,
     // 保存数据方法
     storeData: PropTypes.func.isRequired,
-    // 恢复数据方法
-    restoreData: PropTypes.func.isRequired,
     // 保存的数据
     storedData: PropTypes.object,
     // 步骤更新回调
@@ -50,14 +48,8 @@ export default class CustomerSegment extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { isRestoreData, storedData } = props;
-    let attachModel = {};
-    let fileKey;
-    if (isRestoreData) {
-      // 恢复数据
-      attachModel = storedData.attachModel;
-      fileKey = storedData.fileKey;
-    }
+    const { storedData } = props;
+    const { attachModel, fileKey } = storedData;
     this.state = {
       curPageNum: 1,
       curPageSize: 10,
@@ -91,7 +83,6 @@ export default class CustomerSegment extends PureComponent {
       isRestoreData,
       isStoreData,
       // storeData,
-      // restoreData,
       storedData,
       onStepUpdate,
       replace,
@@ -133,6 +124,7 @@ export default class CustomerSegment extends PureComponent {
         },
         state: {
           ...state,
+          // currentSelect 1 代表第一个tab
           data: { attachModel: currentFile, fileKey: uploadedFileKey },
         },
       });

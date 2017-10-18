@@ -99,5 +99,10 @@ export default function customerPool(api) {
 
     // 预览客户细分数据
     priviewCustFile: query => api.post('/groovynoauth/fsp/priviewCustFile', query),
+    // 标签圈人查询
+    labelCirclePeople: query => api.post('/groovynoauth/fsp/cust/task/labelCirclePeople', query),
+
+    // 标签圈人-标签id查询客户列表明细
+    queryPeopleOfLabel: query => api.post('/groovynoauth/fsp/cust/task/queryPeopleOfLabel', query),
   };
 }

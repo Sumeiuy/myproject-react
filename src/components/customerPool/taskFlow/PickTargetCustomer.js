@@ -2,37 +2,37 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 10:29:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-18 10:21:57
+ * @Last Modified time: 2017-10-18 17:26:38
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Tabs } from 'antd';
 import { autobind } from 'core-decorators';
-// import classnames from 'classnames';
-// import _ from 'lodash';
 import CustomerSegment from './CustomerSegment';
+import SelectLabelCust from './SelectLabelCust';
 import styles from './pickTargetCustomer.less';
 
-// const EMPTY_LIST = [];
-// const EMPTY_OBJECT = {};
-
-// const FormItem = Form.Item;
-
 const TabPane = Tabs.TabPane;
-
 export default class PickTargetCustomer extends PureComponent {
   static propTypes = {
     onPreview: PropTypes.func.isRequired,
     priviewCustFileData: PropTypes.object.isRequired,
     isRestoreData: PropTypes.bool,
     isStoreData: PropTypes.bool,
-    storeData: PropTypes.func,
-    restoreData: PropTypes.func,
-    storedData: PropTypes.object,
+    storedCustSegmentData: PropTypes.object,
+    saveCustSegmentData: PropTypes.func.isRequired,
+    storedLabelCustData: PropTypes.object,
+    saveLabelCustData: PropTypes.func.isRequired,
     onStepUpdate: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
+    getCirclePeople: PropTypes.func.isRequired,
+    getPeopleOfLabel: PropTypes.func.isRequired,
+    circlePeopleData: PropTypes.array.isRequired,
+    peopleOfLabelData: PropTypes.array.isRequired,
+    currentTab: PropTypes.string.isRequired,
+    saveCurrentTab: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -40,7 +40,8 @@ export default class PickTargetCustomer extends PureComponent {
     isStoreData: false,
     storeData: () => { },
     restoreData: () => { },
-    storedData: {},
+    storedCustSegmentData: {},
+    storedLabelCustData: {},
   };
 
   constructor(props) {
@@ -52,9 +53,11 @@ export default class PickTargetCustomer extends PureComponent {
 
   @autobind
   handleTabChange(key) {
+    const { saveCurrentTab } = this.props;
     this.setState({
       currentKey: key,
     });
+    saveCurrentTab(key);
     console.log(key);
   }
 
@@ -64,21 +67,22 @@ export default class PickTargetCustomer extends PureComponent {
       priviewCustFileData,
       isRestoreData,
       isStoreData,
-      storeData,
-      restoreData,
-      storedData,
+      storedCustSegmentData,
+      storedLabelCustData,
       onStepUpdate,
       replace,
       location,
+      saveCustSegmentData,
+      saveLabelCustData,
+      currentTab,
     } = this.props;
     const { currentKey } = this.state;
 
-    const { currentSelect } = storedData;
-
     // 当前激活的tab
     // 根据缓存数据或者默认初始化数据，恢复tab
-    const currentActiveKey = currentSelect || currentKey;
+    const currentActiveKey = currentTab || currentKey;
 
+    const { getCirclePeople, circlePeopleData } = this.props;
     return (
       <div className={styles.pickCustomerSection}>
         <div className={styles.title}>目标客户</div>
@@ -92,15 +96,25 @@ export default class PickTargetCustomer extends PureComponent {
                 onPreview={onPreview}
                 priviewCustFileData={priviewCustFileData}
                 // 只有当前tab是客户细分，并且需要存储数据时，才存储数据
-                isStoreData={isStoreData && currentKey === '1'}
+                isStoreData={isStoreData && currentActiveKey === '1'}
                 isRestoreData={isRestoreData}
-                storeData={storeData}
-                restoreData={restoreData}
-                storedData={storedData}
+                storeData={saveCustSegmentData}
+                storedData={storedCustSegmentData}
                 onStepUpdate={onStepUpdate}
               />
             </TabPane>
-            <TabPane tab="标签圈人" key="2">Content of Tab Pane 2</TabPane>
+            <TabPane tab="标签圈人" key="2">
+              <SelectLabelCust
+                circlePeopleData={circlePeopleData}
+                getCirclePeople={getCirclePeople}
+                onStepUpdate={onStepUpdate}
+                // 只有当前tab是标签圈人，并且需要存储数据时，才存储数据
+                isStoreData={isStoreData && currentActiveKey === '2'}
+                isRestoreData={isRestoreData}
+                storeData={saveLabelCustData}
+                storedData={storedLabelCustData}
+              />
+            </TabPane>
           </Tabs>
         </div>
       </div>

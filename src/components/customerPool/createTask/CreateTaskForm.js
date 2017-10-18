@@ -5,19 +5,26 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import { Form, Select, Input, DatePicker } from 'antd';
+import { Form } from 'antd';
 import _ from 'lodash';
 import moment from 'moment';
+// import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import styles from './createTaskForm.less';
 import { fspGlobal } from '../../../utils';
-import Button from '../../common/Button';
+import { steps } from '../../../config';
+// import Button from '../../common/Button';
+import TaskFormInfo from './TaskFormInfo';
 
-const FormItem = Form.Item;
+
+// const FormItem = Form.Item;
 const create = Form.create;
-const Option = Select.Option;
-const { TextArea } = Input;
+// const Option = Select.Option;
+// const { TextArea } = Input;
+// // const { toContentState } = Mention;
 const WEEK = ['日', '一', '二', '三', '四', '五', '六'];
+// const { toString } = Mention;
+
 
 @create()
 export default class CreateTaskForm extends PureComponent {
@@ -28,13 +35,19 @@ export default class CreateTaskForm extends PureComponent {
     dict: PropTypes.object,
     createTask: PropTypes.func,
     createTaskResult: PropTypes.object,
-    goBack: PropTypes.func.isRequired,
+    onStepUpdate: PropTypes.func.isRequired,
+    storedData: PropTypes.object,
+    // 第一步需要store data，不需要restore data
+    isStoreData: PropTypes.bool,
+    replace: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
     dict: {},
     createTaskResult: {},
-    createTask: () => {},
+    createTask: () => { },
+    isStoreData: false,
+    storedData: {},
   }
 
   constructor(props) {
@@ -43,71 +56,63 @@ export default class CreateTaskForm extends PureComponent {
       startValue: null,
       endValue: null,
       endOpen: false,
-      startFormat: 'YYYY/MM/DD(E)',
-      endFormat: 'YYYY/MM/DD(E)',
       fromShow: true,
       successShow: false,
       firstUserName: '',
       searchReq: null,
       custIdList: null,
+      suggestions: [],
+      showText: false,
+      statusData: [],
     };
   }
 
   componentWillMount() {
-    const { location: { query } } = this.props;
-    // console.warn('query--', query);
+    const { location: { query }, dict: { custIdexPlaceHolders } } = this.props;
+    // const { statusData } = this.state;
+    const arr = [];
+    _.map(custIdexPlaceHolders, (item) => {
+      // item.substring(1, item.length);
+      arr.push(item.substring(1, item.length));
+    });
+    this.setState({
+      statusData: arr,
+    });
     this.handleInit(query);
   }
 
   componentWillReceiveProps(nextProps) {
-    const { createTaskResult: preCreateTaskResult } = this.props;
-    const { createTaskResult: nextcreateTaskResult } = nextProps;
-    if (preCreateTaskResult !== nextcreateTaskResult) {
-      // this.handleCreateTaskSuccess(nextcreateTaskResult);
+    const {
+      isStoreData,
+      // storedData,
+      onStepUpdate,
+      replace,
+      location: { query, pathname, state },
+     } = this.props;
+    const {
+      isStoreData: nextIsStoreData,
+     } = nextProps;
+
+    if (isStoreData !== nextIsStoreData || isStoreData) {
+      replace({
+        pathname,
+        query: {
+          ...query,
+          isStoreData: nextIsStoreData ? 'Y' : 'N',
+          // 第一步
+          step: steps[0].key,
+        },
+        state: {
+          ...state,
+          // 需要存起来的数据
+          data: {},
+        },
+      });
+
+      onStepUpdate({
+        type: 'next',
+      });
     }
-  }
-
-  @autobind
-  onChange(field, value) {
-    this.setState({
-      [field]: value,
-    });
-  }
-
-  @autobind
-  onStartChange(value) {
-    this.onChange('startValue', value);
-    this.handleDateFormat(value, 'start');
-  }
-
-  @autobind
-  onEndChange(value) {
-    this.onChange('endValue', value);
-    this.handleDateFormat(value, 'end');
-  }
-
-  @autobind
-  disabledStartDate(startValue) {
-    const endValue = this.state.endValue;
-    if (!startValue || !endValue) {
-      return false;
-    }
-    const d = new Date();
-    d.setDate(d.getDate() - 1);
-    const m = d.getMonth() + 1;
-    const newDay = `${d.getFullYear()}/${m}/${d.getDate()}`;
-    const e = d.getDay();
-    const nowDay = moment(newDay, `YYYY/MM/DD(${WEEK[e]})`);
-    return startValue.valueOf() <= nowDay.valueOf() || startValue.valueOf() > endValue.valueOf();
-  }
-
-  @autobind
-  disabledEndDate(endValue) {
-    const startValue = this.state.startValue;
-    if (!endValue || !startValue) {
-      return false;
-    }
-    return endValue.valueOf() <= startValue.valueOf();
   }
 
 
@@ -120,12 +125,14 @@ export default class CreateTaskForm extends PureComponent {
     // console.log(location);
     form.validateFields((err, values) => {
       if (!err) {
+        console.warn('templetDesc-----', values.templetDesc);
         values.closingDate = moment(values.closingDate).format('YYYY-MM-DD');// eslint-disable-line
         values.triggerDate = moment(values.triggerDate).format('YYYY-MM-DD');// eslint-disable-line
-        // console.log('d-----', moment(values.closingDate).format('YYYY-MM-DD'));
+        values.templetDesc = toString(values.templetDesc);// eslint-disable-line
         const value = { ...values, custIdList, searchReq };
-        console.log('Received values of form: ', value);
         createTask(value);
+      } else {
+        console.warn('templetDesc-----', values.templetDesc);
       }
     });
   };
@@ -150,32 +157,6 @@ export default class CreateTaskForm extends PureComponent {
     }
   }
 
-  handleCreatOptions(data) {
-    if (!_.isEmpty(data)) {
-      return data.map(item =>
-        <Option key={`task${item.key}`} value={item.key}>{item.value}</Option>,
-      );
-    }
-    return null;
-  }
-
-  handleDateFormat(value, type) {
-    if (!_.isEmpty(value)) {
-      const { _d } = value;
-      const d = new Date(_d);
-      const e = d.getDay();
-      if (type === 'end') {
-        this.setState({
-          endFormat: `YYYY/MM/DD(${WEEK[e]})`,
-        });
-      } else {
-        this.setState({
-          startFormat: `YYYY/MM/DD(${WEEK[e]})`,
-        });
-      }
-    }
-  }
-
   // 从业务目标池客户：businessCustPool
   // 标签、搜索目标客户：searchCustPool
   // 绩效目标客户 - 净新增客户： performanceCustPool
@@ -184,6 +165,7 @@ export default class CreateTaskForm extends PureComponent {
   @autobind
   handleInit(query) {
     const entertype = query.entertype || '';
+    const { dict: { custIdexPlaceHolders } } = this.props;
     let defaultMissionName = '';
     let defaultMissionType = '';
     let defaultExecutionType = '';
@@ -196,14 +178,12 @@ export default class CreateTaskForm extends PureComponent {
     const count = query.count || '0';
     if (query.ids) {
       custIdList = decodeURIComponent(query.ids).split(',');
-      console.log('ids: ', decodeURIComponent(query.ids).split(','));
     } else if (query.condition) {
       const param = JSON.parse(decodeURIComponent(query.condition));
       searchReq = {
         sortsReqList: param.sortsReqList,
         enterType: param.enterType,
       };
-      console.log('condition: ', JSON.parse(decodeURIComponent(query.condition)));
     } else if (query.name) {
       firstUserName = decodeURIComponent(query.name) || '';
       if (firstUserName.length > 10) {
@@ -217,9 +197,12 @@ export default class CreateTaskForm extends PureComponent {
         defaultMissionName = '提醒客户办理已满足条件的业务';
         defaultMissionType = 'businessRecommend';
         defaultExecutionType = 'Mission';
-        defaultMissionDesc = '用户已达到到办理 {可开通业务列表}业务的条件，请联系客户办理相关业务。注意提醒客户准备业务办理必须的文件。';
+        defaultMissionDesc = `用户已达到到办理 ${custIdexPlaceHolders[0]} 业务的条件，请联系客户办理相关业务。注意提醒客户准备业务办理必须的文件。`;
         startTime = 1;
         endTime = 8;
+        this.setState({
+          showText: true,
+        });
         break;
       case 'searchCustPool':
         defaultMissionType = 'other';
@@ -227,22 +210,32 @@ export default class CreateTaskForm extends PureComponent {
         defaultMissionDesc = '';
         startTime = 1;
         endTime = 4;
+        this.setState({
+          showText: true,
+        });
         break;
       case 'performanceIncrementCustPool':
         defaultMissionName = '新客户回访';
         defaultMissionType = 'newCustVisit';
         defaultExecutionType = 'Chance';
-        defaultMissionDesc = '用户在 {开户日} 开户，建议跟踪服务了解客户是否有问题需要解决。注：如果客户状态为流失，则：用户在 {流失日}流失，建议跟踪服务了解客户是否有问题需要解决。';
+        defaultMissionDesc = `用户在 ${custIdexPlaceHolders[1]} 开户，建议跟踪服务了解客户是否有问题需要解决。注：如果客户状态为流失，则：用户在 {流失日}流失，建议跟踪服务了解客户是否有问题需要解决。`;
         startTime = 1;
         endTime = 8;
+        this.setState({
+          showText: true,
+        });
         break;
       case 'performanceBusinessOpenCustPool':
         defaultMissionName = '业务开通回访';
         defaultMissionType = 'stockCustVisit';
         defaultExecutionType = 'Chance';
-        defaultMissionDesc = '用户在 2 周内办理了 {14日内开通的业务} 业务，建议跟踪服务了解客户是否有问题需要解决。';
+        defaultMissionDesc = `用户在 2 周内办理了 ${custIdexPlaceHolders[2]} 业务，建议跟踪服务了解客户是否有问题需要解决。`;
         startTime = 1;
         endTime = 8;
+        this.setState({
+          showText: true,
+        });
+        // {14日内开通的业务}
         break;
       case 'custGroupList':
         defaultMissionName = '';
@@ -250,10 +243,16 @@ export default class CreateTaskForm extends PureComponent {
         defaultExecutionType = '请选择';
         startTime = 1;
         endTime = 8;
+        this.setState({
+          showText: true,
+        });
         break;
       default:
         defaultMissionType = '请选择';
         defaultExecutionType = '请选择';
+        this.setState({
+          showText: false,
+        });
         break;
     }
     this.setState({
@@ -279,8 +278,7 @@ export default class CreateTaskForm extends PureComponent {
     const { dict, form } = this.props;
     const { taskTypes, executeTypes } = dict;
     const { getFieldDecorator } = form;
-    const { endFormat,
-      startFormat,
+    const {
       startValue,
       endValue,
       defaultMissionName,
@@ -289,174 +287,30 @@ export default class CreateTaskForm extends PureComponent {
       defaultMissionDesc,
       firstUserName,
       count,
+      suggestions,
+      showText,
+      statusData,
     } = this.state;
     return (
       <div className={`${styles.taskInner}`}>
         <div className={styles.taskcontent}>
           <div className={styles.task_title}>为{firstUserName} <b>{count}</b> 位客户新建任务</div>
           <div className={styles.task_from}>
-            <Form onSubmit={this.handleSubmit}>
-              <ul className={styles.task_selectList}>
-                <li>
-                  <label htmlFor="dd" className={styles.task_label}><i className={styles.required_i}>*</i>任务名称</label>
-                  <FormItem
-                    wrapperCol={{ span: 12 }}
-                  >
-                    {getFieldDecorator('taskName',
-                      {
-                        rules: [{ required: true, message: '任务名称不能为空!' }],
-                        initialValue: defaultMissionName,
-                      })(
-                        <Input placeholder="请输入任务名称" />,
-                    )}
-                  </FormItem>
-                </li>
-                <li>
-                  <label htmlFor="dd" className={styles.task_label}><i className={styles.required_i}>*</i>任务类型</label>
-                  {
-                    !_.isEmpty(taskTypes) ?
-                      <FormItem
-                        wrapperCol={{ span: 12 }}
-                      >
-                        {getFieldDecorator('taskType',
-                          {
-                            initialValue: defaultMissionType,
-                          })(
-                            <Select>
-                              {this.handleCreatOptions(taskTypes)}
-                            </Select>,
-                        )}
-                      </FormItem>
-                      :
-                      <FormItem
-                        wrapperCol={{ span: 12 }}
-                      >
-                        <Select defaultValue="暂无数据">
-                          <Option key="null" value="0">暂无数据</Option>
-                        </Select>
-                      </FormItem>
-                  }
-                </li>
-                <li>
-                  <label htmlFor="dd" className={styles.task_label}><i className={styles.required_i}>*</i>执行方式</label>
-                  {
-                    !_.isEmpty(executeTypes) ?
-                      <FormItem
-                        wrapperCol={{ span: 12 }}
-                      >
-                        {getFieldDecorator('executionType',
-                          {
-                            initialValue: defaultExecutionType,
-                          })(
-                            <Select>
-                              {this.handleCreatOptions(executeTypes)}
-                            </Select>,
-                        )}
-                      </FormItem>
-                      :
-                      <FormItem
-                        wrapperCol={{ span: 12 }}
-                      >
-                        <Select defaultValue="暂无数据">
-                          <Option key="null" value="0">暂无数据</Option>
-                        </Select>
-                      </FormItem>
-                  }
-                </li>
-                <li>
-                  <label htmlFor="dd" className={styles.task_label}><i className={styles.required_i}>*</i>触发日期</label>
-                  <FormItem
-                    wrapperCol={{ span: 12 }}
-                  >
-                    {getFieldDecorator('triggerDate',
-                      {
-                        initialValue: startValue,
-                      })(
-                        <DatePicker
-                          disabledDate={this.disabledStartDate}
-                          allowClear={false}
-                          showToday={false}
-                          format={startFormat}
-                          placeholder="开始时间"
-                          onChange={this.onStartChange}
-                          style={{ width: '100%' }}
-                        />,
-                      )}
-                  </FormItem>
-                </li>
-                <li>
-                  <label htmlFor="dd" className={styles.task_label}><i className={styles.required_i}>*</i>截止日期</label>
-                  <FormItem
-                    wrapperCol={{ span: 12 }}
-                  >
-                    {getFieldDecorator('closingDate',
-                      {
-                        initialValue: endValue,
-                      })(
-                        <DatePicker
-                          disabledDate={this.disabledEndDate}
-                          allowClear={false}
-                          showToday={false}
-                          format={endFormat}
-                          placeholder="结束时间"
-                          onChange={this.onEndChange}
-                          style={{ width: '100%' }}
-                        />,
-                    )}
-                  </FormItem>
-                </li>
-              </ul>
-              <div className={styles.task_textArea}>
-                <p>
-                  <label htmlFor="desc"><i>*</i>服务策略（适用于所有客户）</label>
-                </p>
-                <FormItem>
-                  {getFieldDecorator('serviceStrategySuggestion',
-                    {
-                      rules: [{ required: true, min: 10, message: '服务策略不能小于10个字符!' }],
-                    })(
-                      <TextArea
-                        id="desc"
-                        rows={5}
-                        placeholder="请在此介绍该新建任务的服务策略，以指导客户经理或投顾实施任务。（字数限制：10-1000字）"
-                        style={{ width: '100%' }}
-                        maxLength={1000}
-                      />,
-                    )}
-                </FormItem>
-              </div>
-              <div className={styles.task_textArea}>
-                <p>
-                  <label htmlFor="desc"><i>*</i>任务描述</label>
-                </p>
-                <FormItem>
-                  {getFieldDecorator('templetDesc',
-                    {
-                      rules: [{ required: true, min: 10, message: '任务描述不能小于10个字符!' }],
-                      initialValue: defaultMissionDesc,
-                    })(
-                      <TextArea
-                        id="desc"
-                        rows={5}
-                        placeholder="请在描述客户经理联系客户钱需要了解的客户相关信息，比如持仓情况。（字数限制：10-1000字）"
-                        style={{ width: '100%' }}
-                        maxLength={1000}
-                      />,
-                    )}
-                  <div className={styles.info}>
-                    任务描述中 &#123;XXXX&#125; 部分后台会根据客户自动替换为该客户对应的属性值，编辑任务描述时请尽量避免修改这些参数描述。
-                    </div>
-                </FormItem>
-              </div>
-              <div className={styles.task_btn}>
-                <FormItem>
-                  <Button onClick={this.props.goBack}>
-                    取消
-                    </Button>
-                  <Button type="primary" htmlType="submit">提交</Button> { /* loading */}
-                </FormItem>
-              </div>
-            </Form>
+            <TaskFormInfo
+              defaultMissionName={defaultMissionName}
+              defaultMissionType={defaultMissionType}
+              defaultExecutionType={defaultExecutionType}
+              defaultMissionDesc={defaultMissionDesc}
+              suggestions={suggestions}
+              showText={showText}
+              users={statusData}
+              getFieldDecorator={getFieldDecorator}
+              taskTypes={taskTypes}
+              executeTypes={executeTypes}
+              onSubmit={this.handleSubmit}
+              startValue={startValue}
+              endValue={endValue}
+            />
           </div>
         </div>
       </div>
