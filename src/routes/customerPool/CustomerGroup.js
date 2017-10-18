@@ -14,7 +14,7 @@ import _ from 'lodash';
 import classnames from 'classnames';
 import { Tabs, Input, Row, Col, message } from 'antd';
 import Button from '../../components/common/Button';
-import styles from './CustomerGroup_.less';
+import styles from './customerGroup.less';
 import CustomerGrouplist from '../../components/customerPool/group/CustomerGrouplist';
 import AddNewGroup from '../../components/customerPool/group/AddNewGroup';
 import AddCusSuccess from '../../components/customerPool/group/AddCusSuccess';
