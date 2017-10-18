@@ -22,5 +22,7 @@ export default function commission(api) {
     queryConsultSubscribeDetail: query => api.post('/groovynoauth/fsp/biz/mailsubscription/saveMailSubscriptionInfo', query),
     // 获取附件信息
     getAttachment: query => api.post('/file/ceFileList', query),
+    // 根据用户输入的数值查询目标股基佣金率的码值
+    queryGJCommissionRate: query => api.post('/groovynoauth/fsp/biz/chgcommsion/querySingelCommionJustRate', query),
   };
 }
