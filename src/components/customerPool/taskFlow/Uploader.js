@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-17 17:57:56
+ * @Last Modified time: 2017-10-18 09:52:35
  */
 
 import React, { PropTypes, PureComponent } from 'react';
@@ -14,7 +14,7 @@ import Button from '../../common/Button';
 import { request } from '../../../config';
 import { helper } from '../../../utils';
 import uploadRequest from '../../../utils/uploadRequest';
-import './upload.less';
+import './uploader.less';
 
 let count = 0;
 // const EMPTY_LIST = [];
@@ -22,7 +22,7 @@ const EMPTY_OBJECT = {};
 const Dragger = Upload.Dragger;
 // const confirm = Modal.confirm;
 
-export default class UploadFile extends PureComponent {
+export default class Uploader extends PureComponent {
   static propTypes = {
     attachModel: PropTypes.object,
     fileKey: PropTypes.string,
@@ -51,15 +51,6 @@ export default class UploadFile extends PureComponent {
     };
   }
 
-  componentWillMount() {
-    const { attachModel = EMPTY_OBJECT } = this.props;
-    if (attachModel) {
-      this.setState({
-        lastFile: attachModel,
-      });
-    }
-  }
-
   componentWillReceiveProps(nextProps) {
     const { attachModel: nextFile = EMPTY_OBJECT } = nextProps;
     const { attachModel: prevFile = EMPTY_OBJECT } = this.props;
@@ -71,20 +62,12 @@ export default class UploadFile extends PureComponent {
   }
 
   @autobind
-  removeEmpty(obj) {
-    const objs = obj;
-    Object.keys(objs).forEach(key => (_.isEmpty(objs[key]) || objs[key] === 'undefined')
-      && delete objs[key]);
-    return objs;
-  }
-
-  @autobind
   fileCustomRequest(option) {
     return uploadRequest(option);
   }
 
   @autobind
-  fileOnChange(info) {
+  handleFileChange(info) {
     const { onOperateFile } = this.props;
     // 当前列表
     const fileList = info.fileList;
@@ -174,7 +157,7 @@ export default class UploadFile extends PureComponent {
   }
 
   @autobind
-  fileOnRemove(file) {
+  handleFileRemove(file) {
     console.log(file);
     const { error } = file;
     if (!error) {
@@ -202,8 +185,8 @@ export default class UploadFile extends PureComponent {
         defaultFileList={fileList}
         data={upData}
         action={`${request.prefix}/file/khxfFileUpload`} //  feedbackFileUpload
-        onRemove={this.fileOnRemove}
-        onChange={this.fileOnChange}
+        onRemove={this.handleFileRemove}
+        onChange={this.handleFileChange}
         customRequest={this.fileCustomRequest}
       >
         <div className="upload_txt">
@@ -214,14 +197,14 @@ export default class UploadFile extends PureComponent {
   }
 
   @autobind
-  deleteFile() {
+  handleDelete() {
     this.setState({
       isShowDeleteConfirm: false,
     });
   }
 
   @autobind
-  cancelDeleteFile() {
+  handleCancel() {
     this.setState({
       isShowDeleteConfirm: false,
     });
@@ -251,8 +234,8 @@ export default class UploadFile extends PureComponent {
           isShowDeleteConfirm ?
             <Confirm
               type="delete"
-              onCancelHandler={this.cancelDeleteFile}
-              onOkHandler={this.deleteFile}
+              onCancelHandler={this.handleCancel}
+              onOkHandler={this.handleDelete}
             /> : null
         }
       </div>

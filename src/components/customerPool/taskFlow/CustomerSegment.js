@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 13:43:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-17 17:59:58
+ * @Last Modified time: 2017-10-18 10:47:20
  * 客户细分组件
  */
 
@@ -12,13 +12,15 @@ import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
 import GroupTable from '../groupManage/GroupTable';
-import Upload from './Upload';
+import Uploader from './Uploader';
+import { steps } from '../../../config';
 import tableStyles from '../groupManage/groupTable.less';
 import styles from './customerSegment.less';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const COLUMN_WIDTH = 140;
+
 export default class CustomerSegment extends PureComponent {
   static propTypes = {
     onPreview: PropTypes.func.isRequired,
@@ -35,6 +37,10 @@ export default class CustomerSegment extends PureComponent {
     storedData: PropTypes.object,
     // 步骤更新回调
     onStepUpdate: PropTypes.func.isRequired,
+    // replace
+    replace: PropTypes.func.isRequired,
+    // location
+    location: PropTypes.object.isRequired,
   };
 
   static defaultProps = {
@@ -44,31 +50,25 @@ export default class CustomerSegment extends PureComponent {
 
   constructor(props) {
     super(props);
+    const { isRestoreData, storedData } = props;
+    let attachModel;
+    let fileKey;
+    if (isRestoreData) {
+      // 恢复数据
+      attachModel = storedData.attachModel;
+      fileKey = storedData.fileKey;
+    }
     this.state = {
       curPageNum: 1,
       curPageSize: 10,
-      // mock数据
       dataSource: EMPTY_LIST,
       totalRecordNum: 10,
       isShowTable: false,
       currentFile: {},
       uploadedFileKey: '',
+      attachModel,
+      fileKey,
     };
-  }
-
-  componentWillMount() {
-    const { isRestoreData, storedData } = this.props;
-    if (isRestoreData) {
-      // 恢复数据
-      const {
-        attachModel,
-        fileKey,
-      } = storedData;
-      this.setState({
-        attachModel,
-        fileKey,
-      });
-    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -76,10 +76,12 @@ export default class CustomerSegment extends PureComponent {
       priviewCustFileData = EMPTY_LIST,
       isRestoreData,
       isStoreData,
-      storeData,
+      // storeData,
       // restoreData,
       storedData,
       onStepUpdate,
+      replace,
+      location: { query, pathname, state },
      } = this.props;
     const {
       priviewCustFileData: nextData = EMPTY_LIST,
@@ -105,11 +107,25 @@ export default class CustomerSegment extends PureComponent {
 
     if (isStoreData !== nextIsStoreData) {
       const { currentFile, uploadedFileKey } = this.state;
-      // 存贮数据
-      storeData({
-        attachModel: currentFile,
-        fileKey: uploadedFileKey,
+      replace({
+        pathname,
+        query: {
+          ...query,
+          isStoreData: nextIsStoreData,
+          // 第二步
+          step: steps[1].key,
+        },
+        state: {
+          ...state,
+          data: { attachModel: currentFile, fileKey: uploadedFileKey },
+        },
       });
+
+      // 存贮数据
+      // storeData({
+      //   attachModel: currentFile,
+      //   fileKey: uploadedFileKey,
+      // });
       onStepUpdate({
         type: 'next',
       });
@@ -129,7 +145,7 @@ export default class CustomerSegment extends PureComponent {
   }
 
   @autobind
-  showMatchCustomerTable(uploadedFileKey) {
+  handleShowMatchCustTable(uploadedFileKey) {
     // 已经上传的file key
     // 用来预览客户列表时，用
     const { onPreview } = this.props;
@@ -241,9 +257,9 @@ export default class CustomerSegment extends PureComponent {
     return (
       <div className={styles.customerSegmentContainer}>
         <div className={styles.uploadSection}>
-          <Upload
+          <Uploader
             onOperateFile={this.handleFileUpload}
-            onHandleOverview={this.showMatchCustomerTable}
+            onHandleOverview={this.handleShowMatchCustTable}
             attachModel={attachModel}
             fileKey={fileKey}
           />

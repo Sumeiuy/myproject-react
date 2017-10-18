@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 10:29:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-17 16:27:13
+ * @Last Modified time: 2017-10-18 10:21:57
  */
 
 import React, { PureComponent } from 'react';
@@ -31,6 +31,8 @@ export default class PickTargetCustomer extends PureComponent {
     restoreData: PropTypes.func,
     storedData: PropTypes.object,
     onStepUpdate: PropTypes.func.isRequired,
+    replace: PropTypes.func.isRequired,
+    location: PropTypes.object.isRequired,
   };
 
   static defaultProps = {
@@ -66,6 +68,8 @@ export default class PickTargetCustomer extends PureComponent {
       restoreData,
       storedData,
       onStepUpdate,
+      replace,
+      location,
     } = this.props;
     const { currentKey } = this.state;
 
@@ -83,6 +87,8 @@ export default class PickTargetCustomer extends PureComponent {
           <Tabs defaultActiveKey={currentActiveKey} onChange={this.handleTabChange} type="card">
             <TabPane tab="客户细分" key="1">
               <CustomerSegment
+                location={location}
+                replace={replace}
                 onPreview={onPreview}
                 priviewCustFileData={priviewCustFileData}
                 // 只有当前tab是客户细分，并且需要存储数据时，才存储数据

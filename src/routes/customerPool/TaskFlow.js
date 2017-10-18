@@ -129,7 +129,13 @@ export default class TaskFlow extends PureComponent {
 
   render() {
     const { current, storeWhichData, restoreWhichData } = this.state;
-    const { priviewCustFileData, storedCustSegmentData, saveCustSegmentData } = this.props;
+    const {
+      priviewCustFileData,
+      storedCustSegmentData,
+      saveCustSegmentData,
+      replace,
+      location,
+    } = this.props;
 
     const steps = [{
       title: '基本信息',
@@ -137,11 +143,14 @@ export default class TaskFlow extends PureComponent {
     }, {
       title: '目标客户',
       content: <PickTargetCustomer
+        location={location}
+        replace={replace}
         onPreview={this.handlePreview}
         onStepUpdate={this.handleStepUpdate}
         storedData={storedCustSegmentData}
         storeData={saveCustSegmentData}
         priviewCustFileData={priviewCustFileData}
+        // 1代表第一步，2代表第二步，3代表第三步
         isRestoreData={!_.isEmpty(restoreWhichData) && _.includes(restoreWhichData, 1)}
         isStoreData={!_.isEmpty(storeWhichData) && _.includes(storeWhichData, 1)}
       />,
@@ -181,7 +190,7 @@ export default class TaskFlow extends PureComponent {
             <Button
               className={styles.prevStepBtn}
               type="default"
-              onClick={() => this.prev()}
+              onClick={this.prev}
             >
               上一步
             </Button>
@@ -192,7 +201,7 @@ export default class TaskFlow extends PureComponent {
             <Button
               className={styles.nextStepBtn}
               type="primary"
-              onClick={() => this.next()}
+              onClick={this.next}
             >下一步</Button>
           }
           {

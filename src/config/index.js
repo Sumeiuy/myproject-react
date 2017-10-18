@@ -1,5 +1,5 @@
-import constants from './constants';
 import fspContainer from './fspContainer';
+import constants from './constants';
 import log from './log';
 import menu from './menu';
 import persist from './persist';
@@ -17,6 +17,7 @@ import { responseCode, excludeCode } from './errorCode';
 import permissionOptions from './permissionOptions';
 import seibelConfig from './pageConfig';
 import contract from './contract';
+import { steps } from './stepOptions';
 
 export default {
   constants,
@@ -39,4 +40,5 @@ export default {
   permissionOptions,
   seibelConfig,
   contract,
+  steps,
 };
