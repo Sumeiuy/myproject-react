@@ -37,6 +37,8 @@ export default {
     canApplyCustList: [],
     // 提交批量佣金调整申请后的BatchNum
     batchnum: '',
+    // 目标股基佣金率列表项
+    gjCommission: [],
   },
   reducers: {
     getProductListSuccess(state, action) {
@@ -158,6 +160,14 @@ export default {
       };
     },
 
+    getGJCommissionRateSuccess(state, action) {
+      const { rate: { resultData } } = action;
+      return {
+        ...state,
+        gjCommission: resultData,
+      };
+    },
+
     opertateState(state, action) {
       const { payload: { name, value } } = action;
       return {
@@ -270,13 +280,26 @@ export default {
       });
     },
 
+    // 查询目标股基佣金率码值
+    * getGJCommissionRate({ payload }, { call, put }) {
+      const rate = yield call(api.queryGJCommissionRate,
+        {
+          ...payload,
+          codeType: 'HTSC_COMMISSION_LEVEL',
+        });
+      yield put({
+        type: 'getGJCommissionRateSuccess',
+        payload: { rate },
+      });
+    },
+
     // 查询咨询订阅详情数据
     * getSubscribeDetail({ payload }, { call, put }) {
       const detailRes = yield call(api.queryConsultSubscribeDetail,
         {
           action: 'query',
           applyType: 'Internal',
-          operationType: 'SP Purchase',
+          operationType: 'subscribe',
           ...payload,
         });
       // 通过查询到的详情数据的attachmentNum获取附件信息
@@ -298,7 +321,7 @@ export default {
         {
           action: 'query',
           applyType: 'Internal',
-          operationType: 'SP Cancel',
+          operationType: 'unsubscribe',
           ...payload,
         });
       // 通过查询到的详情数据的attachmentNum获取附件信息

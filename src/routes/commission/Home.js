@@ -42,6 +42,7 @@ const effects = {
   approver: 'commission/getAprovalUserList',
   validate: 'commission/validateCustInfo',
   submitBatch: 'commission/submitBatchCommission',
+  gjCommissionRate: 'commission/getGJCommissionRate',
 };
 
 const mapStateToProps = state => ({
@@ -83,6 +84,8 @@ const mapStateToProps = state => ({
   batchnum: state.commission.batchnum,
   // 提交批量佣金申请调整的进程
   batchSubmitProcess: state.loading.effects[effects.submitBatch],
+  // 目标股基佣金率码值列表
+  gjCommissionList: state.commission.gjCommission,
 });
 
 const getDataFunction = (loading, type) => query => ({
@@ -119,6 +122,8 @@ const mapDispatchToProps = {
   getCanApplyCustList: getDataFunction(false, effects.applyCustList),
   // 提交批量佣金调整申请
   submitBatch: getDataFunction(false, effects.submitBatch),
+  // 获取目标估计佣金率
+  getGJCommissionRate: getDataFunction(false, effects.gjCommissionRate),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -160,6 +165,8 @@ export default class CommissionHome extends PureComponent {
     filterDrafterList: PropTypes.array.isRequired,
     batchnum: PropTypes.string.isRequired,
     submitBatch: PropTypes.func.isRequired,
+    getGJCommissionRate: PropTypes.func.isRequired,
+    gjCommissionList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -477,6 +484,8 @@ export default class CommissionHome extends PureComponent {
       validateCustInfo,
       dict: { otherRatio },
       empInfo: { empInfo },
+      getGJCommissionRate,
+      gjCommissionList,
     } = this.props;
     if (_.isEmpty(custRange)) {
       return null;
@@ -541,6 +550,8 @@ export default class CommissionHome extends PureComponent {
           validateCust={validateCustInfo}
           otherRatios={otherRatio}
           onBatchSubmit={submitBatch}
+          gjCommission={gjCommissionList}
+          queryGJCommission={getGJCommissionRate}
         />
       </div>
     );
