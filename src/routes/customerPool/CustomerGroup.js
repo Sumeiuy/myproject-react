@@ -2,7 +2,7 @@
  * @Author: zhuyanwen
  * @Date: 2017-10-09 13:25:51
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-12 14:11:51
+ * @Last Modified time: 2017-10-18 10:51:19
  * @description: 客户分组功能
  */
 
@@ -14,7 +14,7 @@ import _ from 'lodash';
 import classnames from 'classnames';
 import { Tabs, Input, Row, Col, message } from 'antd';
 import Button from '../../components/common/Button';
-import styles from './customerGroup.less';
+import styles from './customerGroup_.less';
 import CustomerGrouplist from '../../components/customerPool/group/CustomerGrouplist';
 import AddNewGroup from '../../components/customerPool/group/AddNewGroup';
 import AddCusSuccess from '../../components/customerPool/group/AddCusSuccess';
