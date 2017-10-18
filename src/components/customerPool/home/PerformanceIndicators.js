@@ -1,280 +1,300 @@
 /**
  * @file customerPool/PerformanceIndicators.js
- *  目标客户池-绩效指标
- * @author yangquanjian
+ *  目标客户池-投顾绩效
+ * @author zhangjunli
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import { Row, Col, Select } from 'antd';
+import { Row, Col } from 'antd';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
-import Icon from '../../common/Icon';
-import CustomerService from './CustomerService';
-import ProductSales from './ProductSales';
-import TradingVolume from './TradingVolume';
-import CustomerIndicators from './CustomerIndicators';
-import BusinessProcessing from './BusinessProcessing';
-import Income from './Income';
-import { getDurationString } from '../../../utils/helper';
-import CustRange from '../common/CustRange';
-import { optionsMap } from '../../../config';
-import styles from './performanceIndicators.less';
 
-const Option = Select.Option;
-let KEYCOUNT = 0;
+import Funney from './Funney';
+import RectFrame from './RectFrame';
+import IECharts from '../../IECharts';
+import ProgressList from './ProgressList';
+import styles from './performanceIndicators.less';
+import {
+  getHSRate,
+  getProductSale,
+  getClientsNumber,
+  getCustAndProperty,
+  filterEmptyToNumber,
+  filterEmptyToInteger,
+  getServiceIndicatorOfPerformance,
+} from './homeIndicators_';
+
 export default class PerformanceIndicators extends PureComponent {
   static propTypes = {
-    indicators: PropTypes.object,
-    customersData: PropTypes.array,
-    custRange: PropTypes.array,
-    replace: PropTypes.func.isRequired,
+    indicators: PropTypes.array,
     push: PropTypes.func.isRequired,
-    updateQueryState: PropTypes.func.isRequired,
-    collectCustRange: PropTypes.func.isRequired,
     cycle: PropTypes.array,
-    expandAll: PropTypes.bool,
-    selectValue: PropTypes.string,
     location: PropTypes.object.isRequired,
-    incomeData: PropTypes.array.isRequired,
-    orgId: PropTypes.string,
   }
 
   static defaultProps = {
-    indicators: {},
-    customersData: [],
-    custRange: [],
+    indicators: [],
     cycle: [],
-    expandAll: false,
-    selectValue: '',
-    orgId: '',
   }
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      key: KEYCOUNT,
-      begin: '',
-      end: '',
+  formatIndicators(indicatorArray) {
+    const custAndProperty = {
+      key: 'kehujizichan',
+      headLine: '客户及资产',
+      data: [
+        indicatorArray[0],
+        { ...indicatorArray[1], name: '服务客户资产' },
+        { ...indicatorArray[2], name: '签约客户数' },
+        { ...indicatorArray[3], name: '签约客户资产' },
+        indicatorArray[9],
+        { ...indicatorArray[4], name: '新开客户资产' },
+      ],
     };
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { custRange: preCustRange, selectValue: prevSelectValue } = this.props;
-    const { custRange: nextCustRange, selectValue: nextSelectValue } = nextProps;
-    if (!_.isEqual(preCustRange, nextCustRange)) {
-      this.setState({
-        key: ++KEYCOUNT,
-      });
-    }
-    if (prevSelectValue !== nextSelectValue) {
-      const { begin, end } = this.getBeginAndEndTime(nextSelectValue);
-      this.setState({
-        begin,
-        end,
-      });
-    }
+    const establishBusiness = {
+      key: 'yewukaitong',
+      headLine: '业务开通',
+      data: [
+        indicatorArray[10],
+        indicatorArray[11],
+        indicatorArray[12],
+        { ...indicatorArray[13], name: '两融' },
+        indicatorArray[14],
+        { ...indicatorArray[15], name: '期权' },
+        indicatorArray[16],
+      ],
+    };
+    const hsRate = {
+      key: 'hushenguijilv',
+      headLine: '沪深归集率',
+      data: [
+        indicatorArray[17],
+      ],
+    };
+    const productSale = {
+      key: 'chanpinxiaoshou',
+      headLine: '产品销售',
+      data: [
+        { ...indicatorArray[21], name: '公募基金' },
+        { ...indicatorArray[22], name: '私募基金' },
+        { ...indicatorArray[23], name: '紫金基金' },
+        indicatorArray[24],
+      ],
+    };
+    const pureIcome = {
+      key: 'jingchuangshou',
+      headLine: '净创收',
+      data: [
+        { ...indicatorArray[18], name: '净佣金' },
+        { ...indicatorArray[19], name: '产品手续费' },
+        { ...indicatorArray[20], name: '净利息' },
+      ],
+    };
+    const serviceIndicator = {
+      key: 'fuwuzhibiao',
+      headLine: '服务指标',
+      data: [
+        { ...indicatorArray[5], name: '必做MOT\n完成率' },
+        { ...indicatorArray[6], name: '服务\n覆盖率' },
+        { ...indicatorArray[7], name: '多元配\n置覆盖率' },
+        { ...indicatorArray[8], name: '信息\n完备率' },
+      ],
+    };
+    return [custAndProperty, establishBusiness, hsRate, productSale, pureIcome, serviceIndicator];
   }
 
   @autobind
-  getBeginAndEndTime(value) {
-    const { historyTime, customerPoolTimeSelect } = optionsMap;
-    const currentSelect = _.find(historyTime, itemData =>
-      itemData.name === _.find(customerPoolTimeSelect, item =>
-        item.key === value).name) || {};
-    const nowDuration = getDurationString(currentSelect.key);
-    const begin = nowDuration.begin;
-    const end = nowDuration.end;
-    return {
-      begin,
-      end,
-    };
+  renderIndictors(item) {
+    if (item.key === 'kehujizichan') {
+      return this.renderCustAndPropertyIndicator(item);
+    } else if (item.key === 'yewukaitong') {
+      return this.renderBusinessIndicator(item);
+    } else if (item.key === 'hushenguijilv') {
+      return this.renderHSRateIndicators(item);
+    } else if (item.key === 'chanpinxiaoshou' || item.key === 'jingchuangshou') {
+      return this.renderProductSaleAndPureIcomeIndicators(item);
+    } else if (item.key === 'fuwuzhibiao') {
+      return this.renderServiceIndicators(item);
+    }
+    return null;
   }
 
-  @autobind
-  handleChange(value) {
-    const { begin, end } = this.getBeginAndEndTime(value);
-    const { updateQueryState } = this.props;
-    updateQueryState({
-      cycleSelect: value,
-      begin,
-      end,
-    });
-    // 记录下当前选中的timeSelect
-    this.setState({
-      begin,
-      end,
-    });
+  // 客户及资产（投顾绩效）
+  renderCustAndPropertyIndicator(param) {
+    if (_.isEmpty(param.data)) {
+      // 暂无数据图
+      return null;
+    }
+    const data = getCustAndProperty(param.data);
+    const headLine = { icon: 'kehu', title: param.headLine };
+    return (
+      <Col span={8}>
+        <RectFrame dataSource={headLine}>
+          <Funney dataSource={data} />
+        </RectFrame>
+      </Col>
+    );
+  }
+
+  // 业务开通数（投顾绩效）
+  renderBusinessIndicator(param) {
+    if (_.isEmpty(param.data)) {
+      // 暂无数据图
+      return null;
+    }
+    const numberArray = [];
+    const nameArray = [];
+    let shangHaiStock = 0; // 沪港通
+    let shenZhenStock = 0; // 深港通
+    let colourfulIndex = 0;
+    _.forEach(
+      param.data,
+      (item, index) => {
+        // _.toNumber(null) 值为0，_.parseInt(null) 值为NaN
+        if (item.key === 'hgtBusi') {
+          shangHaiStock = filterEmptyToInteger(item.value);
+          colourfulIndex = index;
+          numberArray.push(filterEmptyToInteger(item.value));
+          nameArray.push('港股通');
+        } else if (item.key === 'sgtBusi') {
+          shenZhenStock = filterEmptyToInteger(item.value);
+        } else {
+          numberArray.push(filterEmptyToInteger(item.value));
+          nameArray.push(item.name);
+        }
+      },
+    );
+    const argument = {
+      colourfulIndex,
+      names: nameArray,
+      clientNumberData: numberArray,
+      colourfulTotalNumber: (shangHaiStock + shenZhenStock),
+      colourfulData: [{ value: shenZhenStock, color: '#38d8e8' }],
+    };
+    const { newUnit, items } = getClientsNumber(argument);
+    const headLine = { icon: 'kehuzhibiao', title: `${param.headLine}（${newUnit}次）` };
+    return (
+      <Col span={8}>
+        <RectFrame dataSource={headLine}>
+          <IECharts
+            option={items}
+            resizable
+            style={{
+              height: '170px',
+            }}
+          />
+        </RectFrame>
+      </Col>
+    );
+  }
+
+  // 沪深归集率（投顾绩效）
+  renderHSRateIndicators(param) {
+    if (_.isEmpty(param.data)) {
+      // 暂无数据图
+      return null;
+    }
+    const hsRate = param.data[0];
+    const data = getHSRate([filterEmptyToNumber(hsRate.value)]);
+    console.log('hsRate:', data);
+    const headLine = { icon: 'jiaoyiliang', title: param.headLine };
+    return (
+      <Col span={8}>
+        <RectFrame dataSource={headLine}>
+          <div />
+          {/* <IECharts
+            option={data}
+            resizable
+            style={{
+              height: '170px',
+            }}
+          /> */}
+        </RectFrame>
+      </Col>
+    );
+  }
+
+  // 产品销售 & 净创收（投顾绩效）
+  renderProductSaleAndPureIcomeIndicators(param) {
+    if (_.isEmpty(param.data)) {
+      // 暂无数据图
+      return null;
+    }
+    const valueArray = [];
+    const nameArray = [];
+    _.forEach(
+      param.data,
+      (item) => {
+        valueArray.push(filterEmptyToNumber(item.value));
+        nameArray.push(item.name);
+      },
+    );
+    const { newUnit, items } = getProductSale({ productSaleData: valueArray, nameArray });
+    const icon = param.key === 'chanpinxiaoshou' ? 'chanpinxiaoshou' : 'shouru';
+    const headLine = { icon, title: `${param.headLine}（${newUnit}）` };
+    return (
+      <Col span={8}>
+        <RectFrame dataSource={headLine}>
+          <ProgressList dataSource={items} key={param.key} />
+        </RectFrame>
+      </Col>
+    );
+  }
+
+  // 服务指标（投顾绩效）
+  renderServiceIndicators(param) {
+    if (_.isEmpty(param.data)) {
+      // 暂无数据图
+      return null;
+    }
+    const performanceData = [];
+    const colors = ['#38d8e8', '#60bbea', '#7d9be0', '#756fb8'];
+    _.forEach(
+      param.data,
+      (item, index) => (
+        performanceData.push({
+          value: filterEmptyToNumber(item.value).toFixed(2),
+          color: colors[index],
+        })
+      ),
+    );
+    const option = getServiceIndicatorOfPerformance({ performanceData });
+    const headLine = { icon: 'kehufuwu', title: param.headLine };
+    return (
+      <Col span={8}>
+        <RectFrame dataSource={headLine}>
+          <IECharts
+            option={option}
+            resizable
+            style={{
+              height: '170px',
+            }}
+          />
+        </RectFrame>
+      </Col>
+    );
   }
 
   render() {
-    const {
-      indicators,
-      custRange,
-      replace,
-      updateQueryState,
-      collectCustRange,
-      cycle,
-      expandAll,
-      selectValue,
-      push,
-      location,
-      incomeData,
-      orgId,
-    } = this.props;
-    const {
-      cftCust,
-      // dateType,
-      finaTranAmt,
-      fundTranAmt,
-      // hkCust,
-      szHkCust,
-      shHkCust,
-      newProdCust,
-      optCust,
-      otcTranAmt,
-      privateTranAmt,
-      purAddCust,
-      purAddCustaset,
-      purAddHighprodcust,
-      purAddNoretailcust,
-      purRakeGjpdt,
-      rzrqCust,
-      // staId,
-      // staType,
-      tranAmtBasicpdt,
-      tranAmtTotpdt,
-      ttfCust,
-      motOkMnt,
-      motTotMnt,
-      taskCust,
-      totCust,
-    } = indicators || {};
-    const tradingVolume = {
-      purAddCustaset,
-      purRakeGjpdt,
-      tranAmtBasicpdt,
-      tranAmtTotpdt,
-    };
-    const productSalesData = { fundTranAmt, privateTranAmt, finaTranAmt, otcTranAmt };
-    const customerServiceData = { motOkMnt, motTotMnt, taskCust, totCust };
-    const customerIndicators = {
-      totCust,
-      purAddCust,
-      purAddNoretailcust,
-      purAddHighprodcust,
-      newProdCust,
-    };
-    const businessProcessing = {
-      cftCust,
-      ttfCust,
-      rzrqCust,
-      shHkCust,
-      szHkCust,
-      optCust,
-    };
-    const { key, begin, end } = this.state;
+    const { indicators } = this.props;
+    if (_.isEmpty(indicators)) {
+      return null;
+    }
+    const formatIndicator = this.formatIndicators(indicators);
     return (
       <div className={styles.indexBox}>
         <div>
-          <div className={styles.title}>
-            <span className={styles.name}>绩效指标</span>
-            <div className={styles.timeBox}>
-              <Icon type="kehu" />
-              {
-                !_.isEmpty(custRange) ?
-                  <CustRange
-                    orgId={orgId}
-                    custRange={custRange}
-                    location={location}
-                    replace={replace}
-                    updateQueryState={updateQueryState}
-                    beginTime={begin}
-                    endTime={end}
-                    collectData={collectCustRange}
-                    expandAll={expandAll}
-                    key={`selectTree${key}`}
-                  /> :
-                  <Select
-                    style={{ width: 200, color: '#CCC' }}
-                    defaultValue="暂无数据"
-                    key="seletTreeNull"
-                  >
-                    <Option value="暂无数据">暂无数据</Option>
-                  </Select>
-              }
-              <i className={styles.bd} />
-              <Icon type="rili" />
-              <Select
-                style={{ width: 60 }}
-                value={selectValue}
-                onChange={this.handleChange}
-                key="dateSelect"
-              >
-                {cycle.map(item =>
-                  <Option key={item.key} value={item.key}>{item.value}</Option>)}
-              </Select>
-            </div>
-          </div>
           <div className={`${styles.listItem} ${styles.firstListItem}`}>
             <Row gutter={16}>
-              <Col span={8}>
-                <CustomerIndicators
-                  cycle={cycle}
-                  push={push}
-                  location={location}
-                  data={customerIndicators}
-                />
-              </Col>
-              <Col span={8}>
-                <BusinessProcessing
-                  cycle={cycle}
-                  push={push}
-                  location={location}
-                  data={businessProcessing}
-                />
-              </Col>
-              <Col span={8}>
-                <TradingVolume
-                  data={tradingVolume}
-                />
-              </Col>
+              {this.renderIndictors(formatIndicator[0])}
+              {this.renderIndictors(formatIndicator[1])}
+              {this.renderIndictors(formatIndicator[2])}
             </Row>
           </div>
           <div className={styles.listItem}>
             <Row gutter={16}>
-              <Col span={8}>
-                <ProductSales
-                  data={productSalesData}
-                />
-              </Col>
-              <Col span={8}>
-                <div className={styles.indexItemBox}>
-                  <div className={styles.inner}>
-                    <div className={styles.title}>
-                      <Icon type="shouru" />净创收
-                  </div>
-                    <div className={styles.content}>
-                      <Income
-                        incomeData={incomeData}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </Col>
-              <Col span={8}>
-                <div className={styles.indexItemBox}>
-                  <div className={styles.inner}>
-                    <div className={styles.title}>
-                      <Icon type="kehufuwu" />客户服务
-                  </div>
-                    <div className={`${styles.content} ${styles.jyContent}`}>
-                      <CustomerService
-                        data={customerServiceData}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </Col>
+              {this.renderIndictors(formatIndicator[3])}
+              {this.renderIndictors(formatIndicator[4])}
+              {this.renderIndictors(formatIndicator[5])}
             </Row>
           </div>
         </div>

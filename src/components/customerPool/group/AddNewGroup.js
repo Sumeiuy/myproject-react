@@ -39,12 +39,11 @@ export default class AddNewGroup extends PureComponent {
   static propTypes = {
     form: PropTypes.object.isRequired,
     onSubmit: PropTypes.func.isRequired,
-    closeTab: PropTypes.func.isRequired,
+    goBack: PropTypes.func.isRequired,
   };
   addNewGroupSubmit = (e) => {
-    const { onSubmit } = this.props;
-    console.log(onSubmit);
     e.preventDefault();
+    const { onSubmit } = this.props;
     this.props.form.validateFields((err, values) => {
       if (!err) {
         onSubmit(values);
@@ -53,7 +52,7 @@ export default class AddNewGroup extends PureComponent {
   };
   render() {
     const { getFieldDecorator } = this.props.form;
-    const { closeTab } = this.props;
+    const { goBack } = this.props;
     return (
       <Form onSubmit={this.addNewGroupSubmit}>
         <FormItem
@@ -75,7 +74,7 @@ export default class AddNewGroup extends PureComponent {
               )}
         </FormItem>
         <FormItem className={styles.btnContent}>
-          <Button onClick={closeTab}>
+          <Button onClick={goBack}>
             取消
           </Button>
           <Button

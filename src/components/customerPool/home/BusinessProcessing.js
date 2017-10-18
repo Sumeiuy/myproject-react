@@ -66,7 +66,7 @@ export default class BusinessProcessing extends PureComponent {
 
   @autobind
   linkTo(value, bname) {
-    const { cycle, push, location: { query: { orgId, cycleSelect } } } = this.props;
+    const { cycle, push, location: { query, query: { orgId, cycleSelect } } } = this.props;
     const pathname = '/customerPool/list';
     const obj = {
       source: 'numOfCustOpened',
@@ -82,13 +82,17 @@ export default class BusinessProcessing extends PureComponent {
         forceRefresh: true,
         isSpecialTab: true,
         id: 'RCT_FSP_CUSTOMER_LIST',
-        title: '目标客户',
+        title: '客户列表',
       };
       fspGlobal.openRctTab({ url, param });
     } else {
       push({
         pathname,
         query: obj,
+        // 方便返回页面时，记住首页的query，在本地环境里
+        state: {
+          ...query,
+        },
       });
     }
   }
@@ -124,7 +128,7 @@ export default class BusinessProcessing extends PureComponent {
                           >
                             {this.numFormat(cftCust)}
                           </p>
-                        :
+                          :
                           <p>{'--'}</p>
                       }
                       <div>涨乐财富通</div>
@@ -142,7 +146,7 @@ export default class BusinessProcessing extends PureComponent {
                           >
                             {this.numFormat(ttfCust)}
                           </p>
-                        :
+                          :
                           <p>{'--'}</p>
                       }
                       <div>天天发</div>
@@ -160,7 +164,7 @@ export default class BusinessProcessing extends PureComponent {
                           >
                             {this.numFormat(rzrqCust)}
                           </p>
-                        :
+                          :
                           <p>{'--'}</p>
                       }
                       <div>融资融券</div>
@@ -180,7 +184,7 @@ export default class BusinessProcessing extends PureComponent {
                           >
                             {this.numFormat(shHkCust)}
                           </p>
-                        :
+                          :
                           <p>{'--'}</p>
                       }
                       <div>沪港通</div>
@@ -198,7 +202,7 @@ export default class BusinessProcessing extends PureComponent {
                           >
                             {this.numFormat(szHkCust || '--')}
                           </p>
-                        :
+                          :
                           <p>{'--'}</p>
                       }
                       <div>深港通</div>
@@ -216,7 +220,7 @@ export default class BusinessProcessing extends PureComponent {
                           >
                             {this.numFormat(optCust || '--')}
                           </p>
-                        :
+                          :
                           <p>{'--'}</p>
                       }
                       <div>期权</div>

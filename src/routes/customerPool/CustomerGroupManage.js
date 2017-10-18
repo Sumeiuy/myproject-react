@@ -11,6 +11,9 @@ import GroupModal from '../../components/customerPool/groupManage/CustomerGroupU
 import CustomerGroupDetail from '../../components/customerPool/groupManage/CustomerGroupDetail';
 // import Search from '../../components/common/Search';
 import SimpleSearch from '../../components/customerPool/groupManage/CustomerGroupListSearch';
+import { fspContainer } from '../../config';
+import { fspGlobal } from '../../utils';
+import Confirm from '../../components/common/Confirm';
 import styles from './customerGroupManage.less';
 import tableStyles from '../../components/customerPool/groupManage/groupTable.less';
 
@@ -24,6 +27,9 @@ const effects = {
   // getHistoryWdsList: 'customerPool/getCustomerHistoryWdsList',
   // clearSearchHistoryList: 'customerPool/clearCustomerSearchHistoryList',
   // saveSearchVal: 'customerPool/saveCustomerSearchVal',
+  operateGroup: 'customerPool/operateGroup',
+  deleteGroup: 'customerPool/deleteGroup',
+  deleteCustomerFromGroup: 'customerPool/deleteCustomerFromGroup',
 };
 
 const fetchData = (type, loading) => query => ({
@@ -36,7 +42,7 @@ const mapStateToProps = state => ({
   // 客户分组列表
   customerGroupList: state.customerPool.customerGroupList,
   // 一个分组下的所有客户
-  customerList: state.customerPool.customerList,
+  groupCustomerList: state.customerPool.groupCustomerList,
   // 联想的推荐热词列表
   customerHotPossibleWordsList: state.customerPool.customerHotPossibleWordsList,
   // 历史搜索
@@ -45,13 +51,21 @@ const mapStateToProps = state => ({
   // isClearCustomerHistorySuccess: state.customerPool.isClearCustomerHistorySuccess,
   // 保存的搜索内容
   // customerSearchHistoryVal: state.customerPool.customerSearchHistoryVal,
+  // 更新分组信息成功与否
+  operateGroupResult: state.customerPool.operateGroupResult,
+  // 字典信息
+  dict: state.app.dict,
+  // 删除分组结果
+  deleteGroupResult: state.customerPool.deleteGroupResult,
+  // 删除分组下客户结果
+  deleteCustomerFromGroupResult: state.customerPool.deleteCustomerFromGroupResult,
 });
 
 const mapDispatchToProps = {
   // 获取客户分组列表
   getCustomerGroupList: fetchData(effects.getGroupList, true),
   // 获取分组客户列表
-  getGroupCustomerList: fetchData(effects.getCustList, true),
+  getGroupCustomerList: fetchData(effects.getCustList, false),
   // 获取热词列表
   getHotPossibleWds: fetchData(effects.getHotPossibleWds, false),
   // 获取搜索记录列表
@@ -60,6 +74,12 @@ const mapDispatchToProps = {
   // clearSearchHistoryList: fetchData(effects.clearSearchHistoryList, false),
   // 保存搜索关键字
   // saveSearchVal: fetchData(effects.saveSearchVal, false),
+  // 新增、编辑客户分组
+  operateGroup: fetchData(effects.operateGroup, true),
+  // 删除分组
+  deleteGroup: fetchData(effects.deleteGroup, true),
+  // 删除分组下客户
+  deleteCustomerFromGroup: fetchData(effects.deleteCustomerFromGroup, true),
   push: routerRedux.push,
   replace: routerRedux.replace,
 };
@@ -76,7 +96,7 @@ export default class CustomerGroupManage extends PureComponent {
     replace: PropTypes.func.isRequired,
     getCustomerGroupList: PropTypes.func.isRequired,
     getGroupCustomerList: PropTypes.func.isRequired,
-    customerList: PropTypes.object.isRequired,
+    groupCustomerList: PropTypes.object.isRequired,
     customerHotPossibleWordsList: PropTypes.array.isRequired,
     // customerHistoryWordsList: PropTypes.array.isRequired,
     // isClearCustomerHistorySuccess: PropTypes.bool.isRequired,
@@ -85,6 +105,13 @@ export default class CustomerGroupManage extends PureComponent {
     // getHistoryWdsList: PropTypes.func.isRequired,
     // clearSearchHistoryList: PropTypes.func.isRequired,
     // saveSearchVal: PropTypes.func.isRequired,
+    operateGroupResult: PropTypes.string.isRequired,
+    operateGroup: PropTypes.func.isRequired,
+    dict: PropTypes.object.isRequired,
+    deleteGroupResult: PropTypes.string.isRequired,
+    deleteGroup: PropTypes.func.isRequired,
+    deleteCustomerFromGroupResult: PropTypes.object.isRequired,
+    deleteCustomerFromGroup: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -100,36 +127,20 @@ export default class CustomerGroupManage extends PureComponent {
       name: '', // 分组名称
       description: '', // 分组描述
       modalTitle: '新建用户分组',
+      groupId: '',
+      record: {},
+      isShowDeleteConfirm: false,
     };
   }
 
   componentWillMount() {
     const {
       getCustomerGroupList,
-      getGroupCustomerList,
     } = this.props;
     // 获取客户分组列表
     getCustomerGroupList({
-      pageNum: 0,
+      pageNum: 1,
       pageSize: 10,
-    });
-    // 获取分组客户列表
-    getGroupCustomerList({
-      curPageNum: 1,
-      pageSize: 5,
-    });
-  }
-
-  componentDidMount() {
-    const { replace, location: { query, pathname } } = this.props;
-    // 初始化，url上加上页码，页目
-    replace({
-      pathname,
-      query: {
-        ...query,
-        curPageNum: 1,
-        curPageSize: 10,
-      },
     });
   }
 
@@ -139,12 +150,16 @@ export default class CustomerGroupManage extends PureComponent {
     });
   }
 
-  // // 获取联想数据
-  // @autobind
-  // queryHotPossibleWds() {
-  //   const { getHotPossibleWds } = this.props;
-  //   getHotPossibleWds();
-  // }
+  // 获取联想数据
+  @autobind
+  queryHotPossibleWds({ keyword }) {
+    const { getHotPossibleWds } = this.props;
+    getHotPossibleWds({
+      keyword, // 搜索关键字（客户号或客户名字）
+      pageNum: 1,
+      pageSize: 10,
+    });
+  }
 
   // // 获取历史搜索
   // @autobind
@@ -172,7 +187,7 @@ export default class CustomerGroupManage extends PureComponent {
       },
     });
     getCustomerGroupList({
-      pageNum: nextPage - 1,
+      pageNum: nextPage,
       pageSize: currentPageSize,
     });
   }
@@ -196,7 +211,7 @@ export default class CustomerGroupManage extends PureComponent {
       },
     });
     getCustomerGroupList({
-      pageNum: currentPageNum - 1,
+      pageNum: currentPageNum,
       pageSize: changedPageSize,
     });
   }
@@ -205,10 +220,18 @@ export default class CustomerGroupManage extends PureComponent {
   @autobind
   editCustomerGroup(record) {
     console.log('edit customer group list');
-    this.handleAddGroup(record);
+    const { groupId } = record;
+    const { getGroupCustomerList } = this.props;
+    this.showGroupDetailModal(record);
     this.setState({
       canEditDetail: true,
       modalTitle: '编辑用户分组',
+    });
+    // 获取分组下的客户列表
+    getGroupCustomerList({
+      groupId,
+      pageNum: 1,
+      pageSize: 5,
     });
   }
 
@@ -216,12 +239,55 @@ export default class CustomerGroupManage extends PureComponent {
   @autobind
   deleteCustomerGroup() {
     console.log('delete customer group list');
+    const { record } = this.state;
+    const { groupId } = record;
+    const { deleteGroup, location: { query, pathname }, replace } = this.props;
+    deleteGroup({
+      groupId,
+    });
+    // 重置分页
+    replace({
+      pathname,
+      query: {
+        ...query,
+        curPageNum: 1,
+      },
+    });
   }
 
   // 发起任务
   @autobind
-  lanuchTask() {
+  lanuchTask(record) {
     console.log('launch task');
+    const { groupId, relatCust } = record;
+    this.handleOpenTab({
+      groupId,
+      count: relatCust,
+      enterType: 'custGroupList',
+    }, '自建任务', 'RCT_FSP_CREATE_TASK');
+  }
+
+  @autobind
+  handleOpenTab(obj, titles, ids) {
+    const { groupId, count } = obj;
+    const { push } = this.props;
+    const firstUrl = '/customerPool/createTask';
+    if (document.querySelector(fspContainer.container)) {
+      const url = `${firstUrl}?groupId=${groupId}&count=${count}`;
+      const param = {
+        closable: true,
+        forceRefresh: true,
+        isSpecialTab: true,
+        id: ids, // tab的id
+        title: titles, // tab标题
+      };
+      fspGlobal.openRctTab({ url, param }); // 打开react tab
+    } else {
+      push({
+        pathname: firstUrl,
+        query: obj,
+      });
+    }
   }
 
   @autobind
@@ -229,31 +295,65 @@ export default class CustomerGroupManage extends PureComponent {
     console.log('search', value);
   }
 
+  @autobind
+  handleConfirmOk() {
+    this.deleteCustomerGroup();
+    this.setState({
+      isShowDeleteConfirm: false,
+    });
+  }
+
+  @autobind
+  handleConfirmCancel() {
+    this.setState({
+      isShowDeleteConfirm: false,
+    });
+  }
+
+  @autobind
+  handleDeleteBtnClick(record) {
+    this.setState({
+      // 当前删除行记录数据
+      record,
+      isShowDeleteConfirm: true,
+    });
+  }
+
   /**
    * 打开编辑或者新建分组详情记录modal
    * @param {*} record 当前记录
    */
   @autobind
-  handleAddGroup(record) {
+  showGroupDetailModal(record = {}) {
     console.log('add customer group');
-    const { groupName, xComments } = record;
+    const { groupName = '', xComments = '', groupId = '' } = record;
     this.setState({
       visible: true,
       modalKey: `groupModalKey${modalKeyCount++}`,
       canEditDetail: true,
       name: groupName,
       description: xComments,
+      // 默认是新建用户分组
       modalTitle: '新建用户分组',
+      groupId,
     });
   }
 
   @autobind
   handleShowGroupDetail(record) {
     console.log('show add group detail modal');
-    this.handleAddGroup(record);
+    const { groupId } = record;
+    const { getGroupCustomerList } = this.props;
+    this.showGroupDetailModal(record);
     this.setState({
       canEditDetail: false,
       modalTitle: '查看用户分组',
+    });
+    // 获取分组下的客户列表
+    getGroupCustomerList({
+      groupId,
+      pageNum: 1,
+      pageSize: 5,
     });
   }
 
@@ -276,11 +376,22 @@ export default class CustomerGroupManage extends PureComponent {
   @autobind
   handleSearchGroup(value) {
     console.log('search value', value);
-    const { getCustomerGroupList, location: { query: { curPageNum, curPageSize } } } = this.props;
+    const {
+      getCustomerGroupList,
+      replace,
+      location: { pathname, query, query: { curPageSize = 10 } },
+    } = this.props;
     getCustomerGroupList({
       keyWord: value,
-      pageNum: curPageNum,
-      pageSize: curPageSize,
+      pageNum: 1,
+      pageSize: Number(curPageSize),
+    });
+    replace({
+      pathname,
+      query: {
+        ...query,
+        curPageNum: 1,
+      },
     });
   }
 
@@ -303,7 +414,7 @@ export default class CustomerGroupManage extends PureComponent {
     },
     {
       type: '删除',
-      handler: this.deleteCustomerGroup,
+      handler: this.handleDeleteBtnClick,
     },
     {
       type: '发起任务',
@@ -328,7 +439,7 @@ export default class CustomerGroupManage extends PureComponent {
     },
     {
       key: 'relatCust',
-      value: '用户数',
+      value: '客户数',
     },
     {
       key: 'createdTm',
@@ -343,13 +454,29 @@ export default class CustomerGroupManage extends PureComponent {
   render() {
     const {
       customerGroupList = EMPTY_OBJECT,
-      location: { query: { curPageNum, curPageSize } },
-      customerList = EMPTY_OBJECT,
+      location: { query: { curPageNum = 1, curPageSize = 10 } },
+      groupCustomerList = EMPTY_OBJECT,
       customerHotPossibleWordsList = EMPTY_LIST,
-      getHotPossibleWds,
+      getGroupCustomerList,
+      operateGroup,
+      operateGroupResult,
+      dict,
+      deleteCustomerFromGroup,
+      deleteCustomerFromGroupResult,
+      location,
+      replace,
      } = this.props;
 
-    const { visible, modalKey, canEditDetail, name, description, modalTitle } = this.state;
+    const {
+      visible,
+      modalKey,
+      canEditDetail,
+      name,
+      description,
+      modalTitle,
+      groupId,
+      isShowDeleteConfirm,
+    } = this.state;
 
     const {
       resultData = EMPTY_LIST,
@@ -357,6 +484,9 @@ export default class CustomerGroupManage extends PureComponent {
     } = customerGroupList || EMPTY_OBJECT;
 
     const { totalRecordNum } = page;
+
+    // 风险等级字典信息
+    const { custRiskBearing } = dict;
 
     // 构造表格头部
     const titleColumn = this.renderColumnTitle();
@@ -377,7 +507,7 @@ export default class CustomerGroupManage extends PureComponent {
           </div>
           <div className={styles.rightSection}>
             <Button
-              onClick={this.handleAddGroup}
+              onClick={this.showGroupDetailModal}
               type="primary"
               className={styles.addBtn}
             >
@@ -403,6 +533,7 @@ export default class CustomerGroupManage extends PureComponent {
           actionSource={actionSource}
           isFirstColumnLink
           firstColumnHandler={this.handleShowGroupDetail}
+          columnWidth={['25%', '25%', '10%', '20%', '20%']}
         />
         {
           visible ?
@@ -423,18 +554,35 @@ export default class CustomerGroupManage extends PureComponent {
               footer={null}
               modalContent={
                 <CustomerGroupDetail
+                  deleteCustomerFromGroupResult={deleteCustomerFromGroupResult}
+                  deleteCustomerFromGroup={deleteCustomerFromGroup}
+                  custRiskBearing={custRiskBearing}
                   canEditDetail={canEditDetail}
                   customerHotPossibleWordsList={customerHotPossibleWordsList}
-                  getHotPossibleWds={getHotPossibleWds}
-                  customerList={customerList}
+                  getHotPossibleWds={this.queryHotPossibleWds}
+                  customerList={groupCustomerList}
                   onCloseModal={this.handleCloseModal}
+                  getGroupCustomerList={getGroupCustomerList}
+                  operateGroup={operateGroup}
+                  operateGroupResult={operateGroupResult}
                   detailData={{
                     name,
                     description,
+                    groupId,
                   }}
+                  location={location}
+                  replace={replace}
                 />
               }
               onOkHandler={this.handleUpdateGroup}
+            /> : null
+        }
+        {
+          isShowDeleteConfirm ?
+            <Confirm
+              type={'delete'}
+              onCancelHandler={this.handleConfirmCancel}
+              onOkHandler={this.handleConfirmOk}
             /> : null
         }
       </div>

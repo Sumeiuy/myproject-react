@@ -30,8 +30,9 @@ const columns = [
         };
         fspGlobal.openFspIframeTab({ url, param });
       }}
+      title={item.text}
     >
-      {_.truncate(item.text, { length: 19, omission: '...' })}
+      {_.truncate(item.text, { length: 18, omission: '...' })}
     </a>,
   },
   {
@@ -99,7 +100,6 @@ export default class ToDoList extends PureComponent {
       curPageNum: page,
     });
   }
-
   render() {
     const { className, data, todoPage, todolist } = this.props;
     // 没有待办流程
@@ -141,7 +141,7 @@ export default class ToDoList extends PureComponent {
     return (
       <Table
         className={className}
-        rowKey={record => record.applyId}
+        // rowKey={record => record.applyId}
         columns={columns}
         dataSource={data}
         pagination={{

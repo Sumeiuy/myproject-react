@@ -1,0 +1,41 @@
+.container {
+  padding: 23.5px 14px;
+  display: -webkit-flex; /* Safari */
+  display: flex;
+  .content {
+    width: 50%;
+    .check:first-child {
+      .title {
+        margin-bottom: 12px;
+      }
+    }
+    .check:last-child {
+      .count {
+        margin-top: 14px;
+      }
+    }
+  }
+  .left {
+    border-right: 1px solid #ccc;
+  }
+  .right {
+    .check {
+      padding-left: 14px;
+    }
+  }
+  .bottomBorder {
+    border-bottom: 1px solid #ccc;
+  }
+  .count {
+    font-family:PingFangSC-Medium;
+    font-size:20px;
+    color:#4a4a4a;
+    letter-spacing:0.2px;
+  }
+  .title {
+    font-family:PingFangSC-Regular;
+    font-size:12px;
+    color:#666666;
+    letter-spacing:0.12px;
+  }
+}

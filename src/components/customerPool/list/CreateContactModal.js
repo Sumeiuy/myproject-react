@@ -35,6 +35,7 @@ export default class CreateContactModal extends PureComponent {
     currentCustId: PropTypes.string.isRequired,
     onClose: PropTypes.func.isRequired,
     executeTypes: PropTypes.array.isRequired, // 执行方式字典
+    serveWay: PropTypes.array.isRequired, // 服务渠道字典
   };
 
   static defaultProps = {
@@ -67,7 +68,7 @@ export default class CreateContactModal extends PureComponent {
       width: '20%',
       render: record =>
         // 当前行记录
-        <div className="contactSection">
+        <div className="recordSection" title={record}>
           {record}
         </div>,
     },
@@ -77,7 +78,7 @@ export default class CreateContactModal extends PureComponent {
       width: '20%',
       render: record =>
         // 当前行记录
-        <div className="phoneSection">
+        <div className="recordSection" title={record}>
           {record}
         </div>,
     },
@@ -87,7 +88,7 @@ export default class CreateContactModal extends PureComponent {
       width: '20%',
       render: record =>
         // 当前行记录
-        <div className="workSection">
+        <div className="recordSection" title={record}>
           {record}
         </div>,
     },
@@ -96,7 +97,7 @@ export default class CreateContactModal extends PureComponent {
       title: '住宅',
       width: '20%',
       render: record =>
-        <div className="homeSection">
+        <div className="recordSection" title={record}>
           {record}
         </div>,
     },
@@ -105,7 +106,7 @@ export default class CreateContactModal extends PureComponent {
       title: '人员类型',
       width: '20%',
       render: record =>
-        <div className="personTypeSection">
+        <div className="recordSection" title={record}>
           {record}
         </div>,
     }];
@@ -203,6 +204,7 @@ export default class CreateContactModal extends PureComponent {
       custType,
       currentCustId,
       executeTypes,
+      serveWay,
     } = this.props;
 
     if (!currentCustId || !visible) {
@@ -250,11 +252,11 @@ export default class CreateContactModal extends PureComponent {
             item => !item.mainFlag) || EMPTY_LIST;
           if (!_.isEmpty(otherCellInfo)) {
             // 手机号不止一个
-            mainContactInfo = _.merge(mainContactInfo, {
+            mainContactInfo = _.merge({
               telInfo: {
                 cellPhones: otherCellInfo,
               },
-            });
+            }, mainContactInfo);
           }
         }
         // 其他联系人信息
@@ -293,9 +295,9 @@ export default class CreateContactModal extends PureComponent {
           const otherCellInfo = _.filter(cellPhones, item => !item.mainFlag) || EMPTY_LIST;
           if (!_.isEmpty(otherCellInfo)) {
             // 手机号不止一个
-            otherTelInfo = _.merge(otherTelInfo, {
+            otherTelInfo = _.merge({
               cellPhones: otherCellInfo,
-            });
+            }, otherTelInfo);
           }
 
           // 筛选contactValue存在的其他电话
@@ -336,28 +338,36 @@ export default class CreateContactModal extends PureComponent {
               主要联系电话（{CONTACT_MAP[personalContactInfo.mainTelInfo.type]}）：
             </div> : null
         }
-        <div className={styles.number}>
-          {
-            ((isOrgMainContactHasTel && !_.isEmpty(mainContactInfo.cellInfo)) ||
-            (isPersonHasContact && personalContactInfo.mainTelInfo.type !== 'none')) ?
-              <div className={styles.mainContact}>
-                <img src={Phone} alt={'电话联系'} />
-                <span>
-                  {
-                  custType === 'per' ?
-                  personalContactInfo.mainTelInfo.value :
-                  mainContactInfo.cellInfo
-                  }
-                </span>
-              </div> :
+        {
+          (!isPersonHasContact && !isOrgMainContactHasTel) ?
+            <div className={styles.noneInfoSection}>
               <div className={styles.noneInfo}>
-               暂无客户联系电话，请与客户沟通尽快完善信息
+                  暂无客户联系电话，请与客户沟通尽快完善信息
               </div>
-          }
-          <div className={styles.rightSection}>
-            <Button key="addServiceRecord" onClick={this.handleServiceRecordClick}>添加服务记录</Button>
-          </div>
-        </div>
+              <div className={styles.rightSection}>
+                <Button onClick={this.handleServiceRecordClick}>添加服务记录</Button>
+              </div>
+            </div> :
+            <div className={styles.number}>
+              {
+                ((isOrgMainContactHasTel && !_.isEmpty(mainContactInfo.cellInfo)) ||
+                (isPersonHasContact && personalContactInfo.mainTelInfo.type !== 'none')) ?
+                  <div className={styles.mainContact}>
+                    <img src={Phone} alt={'电话联系'} />
+                    <span>
+                      {
+                      custType === 'per' ?
+                      personalContactInfo.mainTelInfo.value :
+                      mainContactInfo.cellInfo
+                      }
+                    </span>
+                  </div> : null
+              }
+              <div className={styles.rightSection}>
+                <Button onClick={this.handleServiceRecordClick}>添加服务记录</Button>
+              </div>
+            </div>
+        }
         {
           /* 个人其他联系方式和主联系人其他联系方式 */
           custType === 'per' ? this.constructOtherContact(personalContactInfo.otherTelInfo)
@@ -386,6 +396,7 @@ export default class CreateContactModal extends PureComponent {
         <Collapse
           data={serviceRecordData}
           executeTypes={executeTypes}
+          serveWay={serveWay}
         />
       </Modal>
     );
