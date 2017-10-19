@@ -3,7 +3,7 @@
 * @Author: XuWenKang
 * @Date:   2017-09-21 15:17:50
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-19 15:43:29
+ * @Last Modified time: 2017-10-19 21:03:52
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -291,7 +291,7 @@ export default class AddForm extends PureComponent {
     const operation = {
       column: {
         key: 'delete', // 'check'\'delete'\'view'
-        title: '',
+        title: '操作',
       },
       operate: this.deleteTableData,
     };

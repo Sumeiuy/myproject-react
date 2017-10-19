@@ -3,11 +3,12 @@
 * @Author: XuWenKang
 * @Date:   2017-09-19 14:47:08
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-12 21:05:44
+ * @Last Modified time: 2017-10-19 21:03:44
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
 // import moment from 'moment';
 // import { message } from 'antd';
 import { Icon } from 'antd';
@@ -30,7 +31,7 @@ import styles from './editForm.less';
 // const EMPTY_OBJECT = {};
 // const EMPTY_ARRAY = [];
 const BOOL_TRUE = true;
-// 合约条款的表头
+// 合约条款的表头、状态
 const { contract: { titleList } } = seibelConfig;
 // 临时数据 待删
 // const approvalRecordList = [{
@@ -90,18 +91,6 @@ export default class EditForm extends PureComponent {
     const { onSearchCutList } = this.props;
     onSearchCutList();
   }
-
-  // 不需要
-  // componentWillReceiveProps(nextProps) {
-  //   const newTerms = nextProps.contractDetail.terms;
-  //   this.setState({
-  //     ...this.state,
-  //     formData: {
-  //       ...this.state.formData,
-  //       terms: newTerms,
-  //     },
-  //   });
-  // }
 
   // 审批意见
   @autobind
@@ -221,7 +210,21 @@ export default class EditForm extends PureComponent {
       this.props.onChangeForm(this.state.appravalInfo);
     });
   }
-
+  // 表格删除事件
+  @autobind
+  deleteTableData(record, index) {
+    const { formData: { terms } } = this.state;
+    const testArr = _.cloneDeep(terms);
+    const newTerms = _.remove(testArr, (n, i) => i !== index);
+    this.setState({
+      formData: {
+        ...this.state.formData,
+        terms: newTerms,
+      },
+    }, () => {
+      this.props.onChangeForm(this.state.formData);
+    });
+  }
 
   render() {
     const {
@@ -262,6 +265,14 @@ export default class EditForm extends PureComponent {
         key,
       };
     });
+    // 表格中需要的操作
+    const operation = {
+      column: {
+        key: 'delete', // 'check'\'delete'\'view'
+        title: '操作',
+      },
+      operate: this.deleteTableData,
+    };
     return (
       <div className={styles.editComponent}>
         <div className={styles.dcHeader}>
@@ -283,6 +294,7 @@ export default class EditForm extends PureComponent {
           <CommonTable
             data={formData.terms}
             titleList={titleList}
+            operation={operation}
           />
         </div>
         <UploadFile

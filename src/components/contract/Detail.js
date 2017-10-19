@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-19 09:37:42
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-19 15:44:12
+ * @Last Modified time: 2017-10-19 19:16:58
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -21,6 +21,7 @@ import { dateFormat } from '../../utils/helper';
 
 // 子类型列表
 const childTypeList = _.filter(seibelConfig.contract.subType, v => v.label !== '全部');
+const EMPTY_PARAM = '暂无';
 // 合约条款的表头、状态对应值
 const { contract: { titleList, status } } = seibelConfig;
 export default class Detail extends PureComponent {
@@ -80,7 +81,6 @@ export default class Detail extends PureComponent {
     const uploadProps = {
       attachmentList,
       uploadAttachment,
-      edit: true,
       attachment: baseInfo.attachment || '',
     };
     const nowStep = {
@@ -90,7 +90,7 @@ export default class Detail extends PureComponent {
       userName: baseInfo.workflowName,
     };
     let statusLabel = '';
-    if (typeof (baseInfo.status) === 'number') {
+    if (baseInfo.status) {
       statusLabel = status[Number(baseInfo.status)].label;
     } else {
       statusLabel = '';
@@ -106,19 +106,19 @@ export default class Detail extends PureComponent {
         </div>
         <div className={styles.detailWrapper}>
           <InfoTitle head="基本信息" />
-          <InfoItem label="操作类型" value={operationType} />
-          <InfoItem label="子类型" value={childTypeList[0].label} />
-          <InfoItem label="客户" value={`${baseInfo.custName} ${baseInfo.econNum || ''}`} />
-          <InfoItem label="合约开始日期" value={dateFormat(baseInfo.startDt)} />
-          <InfoItem label="合约有效期" value={dateFormat(baseInfo.vailDt)} />
-          <InfoItem label="合约终止日期" value={dateFormat(baseInfo.endDt)} />
-          <InfoItem label="备注" value={baseInfo.description} />
+          <InfoItem label="操作类型" value={operationType || EMPTY_PARAM} />
+          <InfoItem label="子类型" value={childTypeList[0].label || EMPTY_PARAM} />
+          <InfoItem label="客户" value={`${baseInfo.custName || EMPTY_PARAM} ${baseInfo.econNum || EMPTY_PARAM}`} />
+          <InfoItem label="合约开始日期" value={dateFormat(baseInfo.startDt) || EMPTY_PARAM} />
+          <InfoItem label="合约有效期" value={dateFormat(baseInfo.vailDt) || EMPTY_PARAM} />
+          <InfoItem label="合约终止日期" value={dateFormat(baseInfo.endDt) || EMPTY_PARAM} />
+          <InfoItem label="备注" value={baseInfo.description || EMPTY_PARAM} />
         </div>
         <div className={styles.detailWrapper}>
           <InfoTitle head="拟稿信息" />
-          <InfoItem label="拟稿人" value={`${baseInfo.divisionName} ${baseInfo.createdName}`} />
-          <InfoItem label="提请时间" value={createTime} />
-          <InfoItem label="状态" value={statusLabel} />
+          <InfoItem label="拟稿人" value={`${baseInfo.divisionName || EMPTY_PARAM} ${baseInfo.createdName || EMPTY_PARAM}`} />
+          <InfoItem label="提请时间" value={createTime || EMPTY_PARAM} />
+          <InfoItem label="状态" value={statusLabel || EMPTY_PARAM} />
         </div>
         <div className={styles.detailWrapper}>
           <InfoTitle head="合约条款" />

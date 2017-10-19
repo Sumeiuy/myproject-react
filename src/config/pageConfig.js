@@ -268,7 +268,7 @@ const pageConfig = {
       },
       {
         show: true,
-        label: '限售股解禁',
+        label: '受限股解禁',
         value: '0301',
         status: [
           {

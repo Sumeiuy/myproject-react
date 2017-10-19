@@ -3,7 +3,7 @@
 * @Author: XuWenKang
 * @Date:   2017-09-21 15:27:31
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-13 17:11:50
+ * @Last Modified time: 2017-10-19 21:11:48
 */
 
 import React, { PureComponent } from 'react';
@@ -299,8 +299,8 @@ export default class BaseInfoEdit extends PureComponent {
           <DropDownSelect
             placeholder="经纪客户号/客户名称"
             showObjKey="custName"
-            objId="cusId"
-            value={this.state.client.cusId || ''}
+            objId="brokerNumber"
+            value={this.state.client.brokerNumber || ''}
             searchList={custList}
             emitSelectItem={this.handleSelectClient}
             emitToSearch={this.handleSearchClient}

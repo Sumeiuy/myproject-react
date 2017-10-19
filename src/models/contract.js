@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-20 15:13:30
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-13 15:41:16
+ * @Last Modified time: 2017-10-19 19:55:53
  */
 import { contract as api, seibel as seibelApi } from '../api';
 import { getEmpId } from '../utils/helper';
@@ -56,15 +56,6 @@ export default {
       return {
         ...state,
         attachmentList: resultData,
-      };
-    },
-    // 删除附件
-    deleteAttachmentSuccess(state, action) {
-      const { payload: { resultData = EMPTY_OBJECT } } = action;
-      const { attaches = EMPTY_LIST } = resultData;
-      return {
-        ...state,
-        attachmentList: attaches,
       };
     },
     getCutListSuccess(state, action) {
@@ -171,7 +162,7 @@ export default {
       // 获取审批人的 payload
       const flowStepInfoPayload = {
         flowId: payload.flowId,
-        operate: payload. operate || '',
+        operate: payload.operate || '',
       };
       const flowStepInfoResponse = yield call(api.getFlowStepInfo, flowStepInfoPayload);
       if (payload.type === 'unsubscribeDetail') {
