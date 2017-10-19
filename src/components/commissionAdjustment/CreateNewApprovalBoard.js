@@ -82,6 +82,8 @@ export default class CreateNewApprovalBoard extends PureComponent {
     onBatchSubmit: PropTypes.func.isRequired,
     otherRatios: PropTypes.array,
     empInfo: PropTypes.object.isRequired,
+    gjCommission: PropTypes.array.isRequired,
+    queryGJCommission: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
