@@ -103,6 +103,7 @@ export default class PerformanceIndicators extends PureComponent {
       purAddCust, newProdCust, purAddNoretailcust, purAddHighprodcust,
     } = indicators || {};
 
+    // 控制是否显示 暂无数据
     const isEmpty = _.isEmpty(indicators);
 
     // 新增客户（经营指标）
@@ -175,7 +176,7 @@ export default class PerformanceIndicators extends PureComponent {
             <Row gutter={16}>
               <Col span={8}>
                 <RectFrame dataSource={pureAddHead}>
-                  <IfEmpty isEmpty={isEmpty} className={styles.empty}>
+                  <IfEmpty isEmpty={isEmpty}>
                     <ProgressList
                       key={'pureAdd'}
                       dataSource={pureAddItems}
@@ -188,7 +189,7 @@ export default class PerformanceIndicators extends PureComponent {
               </Col>
               <Col span={8}>
                 <RectFrame dataSource={clientHead}>
-                  <IfEmpty isEmpty={isEmpty} className={styles.empty}>
+                  <IfEmpty isEmpty={isEmpty}>
                     <IECharts
                       onReady={this.handleBusinessOpenClick}
                       option={clientItems}
@@ -202,7 +203,7 @@ export default class PerformanceIndicators extends PureComponent {
               </Col>
               <Col span={8}>
                 <RectFrame dataSource={hsRateHead}>
-                  <IfEmpty isEmpty={isEmpty} className={styles.empty}>
+                  <IfEmpty isEmpty={isEmpty}>
                     <IECharts
                       option={hsRateData}
                       resizable
@@ -219,7 +220,7 @@ export default class PerformanceIndicators extends PureComponent {
             <Row gutter={16}>
               <Col span={8}>
                 <RectFrame dataSource={tradeVolumeHead}>
-                  <IfEmpty isEmpty={isEmpty} className={styles.empty}>
+                  <IfEmpty isEmpty={isEmpty}>
                     <CheckLayout dataSource={tradeItems} />
                   </IfEmpty>
                 </RectFrame>
@@ -233,7 +234,7 @@ export default class PerformanceIndicators extends PureComponent {
               </Col>
               <Col span={8}>
                 <RectFrame dataSource={serviceIndicatorHead}>
-                  <IfEmpty isEmpty={isEmpty} className={styles.empty}>
+                  <IfEmpty isEmpty={isEmpty}>
                     <CustomerService data={customerServiceData} />
                   </IfEmpty>
                 </RectFrame>

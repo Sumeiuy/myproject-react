@@ -5,10 +5,12 @@
  */
 import React, { PropTypes } from 'react';
 
+import styles from './ifEmpty.less';
+
 function IfEmpty(props) {
-  const { isEmpty, children, className } = props;
+  const { isEmpty, children } = props;
   if (isEmpty) {
-    return <div className={className}>暂无数据</div>;
+    return <div className={styles.empty}>暂无数据</div>;
   }
   return children;
 }
@@ -16,11 +18,6 @@ function IfEmpty(props) {
 IfEmpty.propTypes = {
   isEmpty: PropTypes.bool.isRequired,
   children: PropTypes.object.isRequired,
-  className: PropTypes.string,
-};
-
-IfEmpty.defaultProps = {
-  className: '',
 };
 
 export default IfEmpty;

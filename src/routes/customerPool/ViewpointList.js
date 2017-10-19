@@ -128,6 +128,8 @@ export default class ViewpointList extends PureComponent {
       return <a><Icon type="xiangzuo" className={styles.zuoIcon} />上一页</a>;
     } else if (type === 'next') {
       return <a>下一页<Icon type="xiangyou" className={styles.youIcon} /></a>;
+    } else if (type === 'page') {
+      return <span>{current}</span>;
     }
     return originalElement;
   }
@@ -150,12 +152,12 @@ export default class ViewpointList extends PureComponent {
     const pagination = {
       itemRender: this.renderItem,
       showTotal: () => `共 ${totalCount} 项`,
-      defaultPageSize: 18,
+      // defaultPageSize: 18,
       pageSize: 18,
-      total: (_.toNumber(totalCount) || 0),
+      total: Number(totalCount),
       onChange: this.handlePageClick,
       current: curPageNum,
-      defaultCurrent: 1,
+      // defaultCurrent: 1,
     };
     return (
       <div className={styles.listContainer}>

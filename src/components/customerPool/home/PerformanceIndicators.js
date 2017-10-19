@@ -184,7 +184,7 @@ export default class PerformanceIndicators extends PureComponent {
     return (
       <Col span={8}>
         <RectFrame dataSource={headLine}>
-          <IfEmpty isEmpty={_.isEmpty(param.data)} className={styles.empty}>
+          <IfEmpty isEmpty={_.isEmpty(param.data)}>
             <Funney dataSource={data} />
           </IfEmpty>
         </RectFrame>
@@ -227,7 +227,7 @@ export default class PerformanceIndicators extends PureComponent {
     return (
       <Col span={8}>
         <RectFrame dataSource={headLine}>
-          <IfEmpty isEmpty={_.isEmpty(param.data)} className={styles.empty}>
+          <IfEmpty isEmpty={_.isEmpty(param.data)}>
             <IECharts
               onReady={this.handleBusinessOpenClick}
               option={items}
@@ -250,7 +250,7 @@ export default class PerformanceIndicators extends PureComponent {
     return (
       <Col span={8}>
         <RectFrame dataSource={headLine}>
-          <IfEmpty isEmpty={_.isEmpty(param.data)} className={styles.empty}>
+          <IfEmpty isEmpty={_.isEmpty(param.data)}>
             <IECharts
               option={data}
               resizable
@@ -281,7 +281,7 @@ export default class PerformanceIndicators extends PureComponent {
     return (
       <Col span={8}>
         <RectFrame dataSource={headLine}>
-          <IfEmpty isEmpty={_.isEmpty(param.data)} className={styles.empty}>
+          <IfEmpty isEmpty={_.isEmpty(param.data)}>
             <ProgressList dataSource={items} key={param.key} />
           </IfEmpty>
         </RectFrame>
@@ -307,7 +307,7 @@ export default class PerformanceIndicators extends PureComponent {
     return (
       <Col span={8}>
         <RectFrame dataSource={headLine}>
-          <IfEmpty isEmpty={_.isEmpty(param.data)} className={styles.empty}>
+          <IfEmpty isEmpty={_.isEmpty(param.data)}>
             <IECharts
               option={option}
               resizable
