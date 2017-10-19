@@ -8,6 +8,8 @@ import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
 
+import { fspContainer } from '../../../config';
+import { fspGlobal, helper } from '../../../utils';
 import styles from './viewpoint.less';
 
 export default class Viewpoint extends PureComponent {
@@ -21,19 +23,29 @@ export default class Viewpoint extends PureComponent {
   }
 
   @autobind
-  handleMoreClick() {
-    const { push } = this.props;
-    // 跳转到资讯列表界面
-    push({ pathname: '/customerPool/viewpointList' });
+  openNewTab(url, query) {
+    const param = { id: 'tab-viewpoint', title: '首席观点' };
+    if (document.querySelector(fspContainer.container)) {
+      fspGlobal.openRctTab({ url: `${url}${helper.queryToString(query)}`, param });
+    } else {
+      const { push } = this.props;
+      push({
+        pathname: url,
+        query,
+      });
+    }
   }
+
+  @autobind
+  handleMoreClick() {
+    // 跳转到资讯列表界面
+    this.openNewTab('/customerPool/viewpointList');
+  }
+
   @autobind
   handleDetailClick(index) {
-    const { push } = this.props;
     // 跳转到资讯详情界面
-    push({
-      pathname: '/customerPool/viewpointDetail',
-      query: { detailIndex: `${index}` },
-    });
+    this.openNewTab('/customerPool/viewpointDetail', { detailIndex: `${index}` });
   }
 
   @autobind

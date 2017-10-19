@@ -8,8 +8,11 @@ import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
+import { Tooltip } from 'antd';
 import _ from 'lodash';
 
+import wordSrc from '../../../static/images/word.png';
+import pdfSrc from '../../../static/images/pdf.png';
 import Icon from '../../components/common/Icon';
 import styles from './viewpointDetail.less';
 
@@ -38,20 +41,31 @@ export default class ViewpointDetail extends PureComponent {
     goBack();
   }
 
-  handleWordClick() {}
-
-  handlePDFClick() {}
+  renderDownLoad({ loadUrl, format, fileName }) {
+    return (
+      _.isEmpty(loadUrl) ? (
+        <Tooltip title={`暂不支持下载 ${_.toUpper(format)} 格式`}>
+          {`${_.toUpper(format)} 全文`}
+        </Tooltip>
+      ) : (
+        <a href={loadUrl} download={fileName || `${_.toUpper(format)} 全文.${_.toLower(format)}`}>
+          {`${_.toUpper(format)} 全文`}
+        </a>
+      )
+    );
+  }
 
   render() {
     const { location: { query }, information: { infoVOList = [] } } = this.props;
     const { detailIndex = '0' } = query;
     const {
-      texttitle = '',
-      abstract = '',
+      texttitle = '暂无标题',
+      abstract = '暂无内容',
       secuabbr = '',
       authors = '',
       pubdata = '',
       annexpathpdf = '',
+      annexpathword = '',
     } = infoVOList[_.toNumber(detailIndex)] || {};
     // 分割成段，展示
     const formateAbstract = _.isEmpty(abstract) ? (
@@ -70,11 +84,11 @@ export default class ViewpointDetail extends PureComponent {
                   onClick={this.handleBackClick}
                 >
                   <div className={styles.iconContainer}>
-                    <Icon type="xiangzuo" className={styles.backIcon} />
+                    <Icon type="fanhui" className={styles.backIcon} />
                   </div>
                   <div className={styles.backTitle}>返回列表</div>
                 </div>
-                <div className={styles.title}>{texttitle || '暂无数据'}</div>
+                <div className={styles.title}>{texttitle}</div>
               </div>
               <div className={styles.infoRow}>
                 <div className={styles.column}>
@@ -90,20 +104,20 @@ export default class ViewpointDetail extends PureComponent {
             </div>
             <div className={styles.body} dangerouslySetInnerHTML={{ __html: formateAbstract }} />
             <div className={styles.footer}>
-              <div className={styles.fileColumn} onClick={this.handleWordClick}>
+              <div className={styles.fileColumn}>
                 <div className={styles.fileIconContainer}>
-                  <Icon type="xiazai" className={classnames(styles.fileIcon, styles.word)} />
+                  <img src={wordSrc} alt="WORD 图标" />
                 </div>
                 <div className={styles.fileName}>
-                  <a href={annexpathpdf} download={texttitle || 'WORD 全文.word'}>WORD 全文</a>
+                  {this.renderDownLoad({ loadUrl: annexpathword, format: 'WORD', fileName: texttitle })}
                 </div>
               </div>
-              <div className={styles.fileColumn} onClick={this.handlePDFClick}>
+              <div className={styles.fileColumn}>
                 <div className={styles.fileIconContainer}>
-                  <Icon type="xiazai" className={styles.fileIcon} />
+                  <img src={pdfSrc} alt="PDF 图标" />
                 </div>
                 <div className={styles.fileName}>
-                  <a href={annexpathpdf} download={texttitle || 'PDF 全文.pdf'}>PDF 全文</a>
+                  {this.renderDownLoad({ loadUrl: annexpathpdf, format: 'PDF', fileName: texttitle })}
                 </div>
               </div>
               <div
@@ -111,7 +125,7 @@ export default class ViewpointDetail extends PureComponent {
                 onClick={this.handleBackClick}
               >
                 <div className={styles.iconContainer}>
-                  <Icon type="xiangzuo" className={styles.backIcon} />
+                  <Icon type="fanhui" className={styles.backIcon} />
                 </div>
                 <div className={styles.backTitle}>返回列表</div>
               </div>

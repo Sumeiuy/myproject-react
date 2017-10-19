@@ -25,6 +25,19 @@ import {
   getServiceIndicatorOfPerformance,
 } from './homeIndicators_';
 
+export function IfEmpty(props) {
+  const { isEmpty, children } = props;
+  if (isEmpty) {
+    return <div className={styles.empty}>暂无数据</div>;
+  }
+  return children;
+}
+
+IfEmpty.propTypes = {
+  isEmpty: PropTypes.bool.isRequired,
+  children: PropTypes.object.isRequired,
+};
+
 export default class PerformanceIndicators extends PureComponent {
   static propTypes = {
     indicators: PropTypes.array,
@@ -38,74 +51,80 @@ export default class PerformanceIndicators extends PureComponent {
     cycle: [],
   }
 
+  // 过滤掉假值(false, null, 0, '', undefined, NaN)的数组
+  filterFalsityArray(array) {
+    return _.isEmpty(_.compact(array)) ? [] : array;
+  }
+
   formatIndicators(indicatorArray) {
     const custAndProperty = {
       key: 'kehujizichan',
       headLine: '客户及资产',
       data: [
-        indicatorArray[0],
-        indicatorArray[1],
-        indicatorArray[2],
-        indicatorArray[3],
-        indicatorArray[9],
-        indicatorArray[4],
+        indicatorArray[0],  // 服务客户数
+        indicatorArray[1],  // 服务客户资产
+        indicatorArray[2],  // 签约客户数
+        indicatorArray[3],  // 签约客户资产
+        indicatorArray[9],  // 新开客户数
+        indicatorArray[4],  // 新开客户资产
       ],
     };
     const establishBusiness = {
       key: 'yewukaitong',
       headLine: '业务开通',
       data: [
-        indicatorArray[10],
-        indicatorArray[11],
-        indicatorArray[12],
-        indicatorArray[13],
-        indicatorArray[14],
-        indicatorArray[15],
-        indicatorArray[16],
+        indicatorArray[10], // 天天发
+        indicatorArray[11], // 港股通
+        indicatorArray[12], // 深港通
+        indicatorArray[13], // 融资融券
+        indicatorArray[14], // 新三板
+        indicatorArray[15], // 股票期权
+        indicatorArray[16], // 创业板
       ],
     };
     const hsRate = {
       key: 'hushenguijilv',
       headLine: '沪深归集率',
       data: [
-        indicatorArray[17],
+        indicatorArray[17], // 沪深归集率
       ],
     };
     const productSale = {
       key: 'chanpinxiaoshou',
       headLine: '产品销售',
       data: [
-        indicatorArray[21],
-        indicatorArray[22],
-        indicatorArray[23],
-        indicatorArray[24],
+        indicatorArray[21], // 公募
+        indicatorArray[22], // 私模
+        indicatorArray[23], // 紫金
+        indicatorArray[24], // OTC
       ],
     };
     const pureIcome = {
       key: 'jingchuangshou',
       headLine: '净创收',
       data: [
-        indicatorArray[18],
-        indicatorArray[19],
-        indicatorArray[20],
+        indicatorArray[18], // 净佣金收入
+        indicatorArray[19], // 产品净手续费收入
+        indicatorArray[20], // 净利息收入
       ],
     };
     const serviceIndicator = {
       key: 'fuwuzhibiao',
       headLine: '服务指标',
       data: [
-        indicatorArray[5],
-        indicatorArray[6],
-        indicatorArray[7],
-        indicatorArray[8],
+        indicatorArray[5],  // MOT 完成率
+        indicatorArray[6],  // 服务覆盖率
+        indicatorArray[7],  // 资产配置覆盖率
+        indicatorArray[8],  // 信息完备率
       ],
     };
     const newIndicators = [
-      custAndProperty,
-      establishBusiness,
-      hsRate, productSale,
-      pureIcome,
-      serviceIndicator,
+      { ...custAndProperty, data: this.filterFalsityArray(custAndProperty.data) },  // 客户及资产指标块
+      { ...establishBusiness, data: this.filterFalsityArray(establishBusiness.data) },  // 业务开通指标块
+      { ...hsRate, data: this.filterFalsityArray(hsRate.data) }, // 沪深归集率指标块
+      { ...productSale, data: this.filterFalsityArray(productSale.data) },  // 产品销售指标块
+      { ...pureIcome, data: this.filterFalsityArray(pureIcome.data) },  // 净创收指标块
+      { ...serviceIndicator, data: this.filterFalsityArray(serviceIndicator.data) },  // 服务指标
     ];
     return newIndicators;
   }
@@ -133,7 +152,9 @@ export default class PerformanceIndicators extends PureComponent {
     return (
       <Col span={8}>
         <RectFrame dataSource={headLine}>
-          <Funney dataSource={data} />
+          <IfEmpty isEmpty={_.isEmpty(param.data)}>
+            <Funney dataSource={data} />
+          </IfEmpty>
         </RectFrame>
       </Col>
     );
@@ -174,13 +195,15 @@ export default class PerformanceIndicators extends PureComponent {
     return (
       <Col span={8}>
         <RectFrame dataSource={headLine}>
-          <IECharts
-            option={items}
-            resizable
-            style={{
-              height: '170px',
-            }}
-          />
+          <IfEmpty isEmpty={_.isEmpty(param.data)}>
+            <IECharts
+              option={items}
+              resizable
+              style={{
+                height: '170px',
+              }}
+            />
+          </IfEmpty>
         </RectFrame>
       </Col>
     );
@@ -188,19 +211,21 @@ export default class PerformanceIndicators extends PureComponent {
 
   // 沪深归集率（投顾绩效）
   renderHSRateIndicators(param) {
-    const { value = '' } = param.data[0];
+    const { value = '' } = param.data[0] || {};
     const data = getHSRate([filterEmptyToNumber(value)]);
     const headLine = { icon: 'jiaoyiliang', title: param.headLine };
     return (
       <Col span={8}>
         <RectFrame dataSource={headLine}>
-          <IECharts
-            option={data}
-            resizable
-            style={{
-              height: '180px',
-            }}
-          />
+          <IfEmpty isEmpty={_.isEmpty(param.data)}>
+            <IECharts
+              option={data}
+              resizable
+              style={{
+                height: '180px',
+              }}
+            />
+          </IfEmpty>
         </RectFrame>
       </Col>
     );
@@ -223,7 +248,9 @@ export default class PerformanceIndicators extends PureComponent {
     return (
       <Col span={8}>
         <RectFrame dataSource={headLine}>
-          <ProgressList dataSource={items} key={param.key} />
+          <IfEmpty isEmpty={_.isEmpty(param.data)}>
+            <ProgressList dataSource={items} key={param.key} />
+          </IfEmpty>
         </RectFrame>
       </Col>
     );
@@ -247,75 +274,39 @@ export default class PerformanceIndicators extends PureComponent {
     return (
       <Col span={8}>
         <RectFrame dataSource={headLine}>
-          <IECharts
-            option={option}
-            resizable
-            style={{
-              height: '170px',
-            }}
-          />
+          <IfEmpty isEmpty={_.isEmpty(param.data)}>
+            <IECharts
+              option={option}
+              resizable
+              style={{
+                height: '170px',
+              }}
+            />
+          </IfEmpty>
         </RectFrame>
       </Col>
     );
   }
 
-  renderEmptyRow(headArray) {
-    return _.map(
-      headArray,
-      item => (
-        <Col span={8}>
-          <RectFrame dataSource={item}>
-            <div className={styles.empty}>暂无数据</div>
-          </RectFrame>
-        </Col>
-      ),
-    );
-  }
-
   render() {
     const { indicators } = this.props;
-    const isEmpty = _.isEmpty(indicators);
-    const headArray = [
-      { icon: 'kehu', title: '客户及资产' },
-      { icon: 'kehuzhibiao', title: '业务开通' },
-      { icon: 'jiaoyiliang', title: '沪深归集率' },
-      { icon: 'chanpinxiaoshou', title: '产品销售' },
-      { icon: 'shouru', title: '净创收' },
-      { icon: 'kehufuwu', title: '服务指标' },
-    ];
-    const formatIndicator = isEmpty ? [] : this.formatIndicators(indicators);
+    const formatIndicator = this.formatIndicators(indicators);
 
     return (
       <div className={styles.indexBox}>
         <div className={`${styles.listItem} ${styles.firstListItem}`}>
-          {
-            isEmpty ? (
-              <Row gutter={16}>
-                {this.renderEmptyRow(_.dropRight(headArray, 3))}
-              </Row>
-            ) : (
-              <Row gutter={16}>
-                {this.renderIndictors(formatIndicator[0])}
-                {this.renderIndictors(formatIndicator[1])}
-                {this.renderIndictors(formatIndicator[2])}
-              </Row>
-            )
-          }
+          <Row gutter={16}>
+            {this.renderIndictors(formatIndicator[0])}
+            {this.renderIndictors(formatIndicator[1])}
+            {this.renderIndictors(formatIndicator[2])}
+          </Row>
         </div>
         <div className={styles.listItem}>
-          {
-            isEmpty ? (
-              <Row gutter={16}>
-                {this.renderEmptyRow(_.drop(headArray, 3))}
-              </Row>
-            ) : (
-              <Row gutter={16}>
-                {this.renderIndictors(formatIndicator[3])}
-                {this.renderIndictors(formatIndicator[4])}
-                {this.renderIndictors(formatIndicator[5])}
-              </Row>
-            )
-          }
+          <Row gutter={16}>
+            {this.renderIndictors(formatIndicator[3])}
+            {this.renderIndictors(formatIndicator[4])}
+            {this.renderIndictors(formatIndicator[5])}
+          </Row>
         </div>
       </div>
     );

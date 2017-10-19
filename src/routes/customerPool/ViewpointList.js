@@ -119,6 +119,10 @@ export default class ViewpointList extends PureComponent {
     }
   }
 
+  formatString(str) {
+    return _.isEmpty(str) ? '--' : str;
+  }
+
   renderItem(current, type, originalElement) {
     if (type === 'prev') {
       return <a><Icon type="xiangzuo" className={styles.zuoIcon} />上一页</a>;
@@ -134,8 +138,12 @@ export default class ViewpointList extends PureComponent {
     const newInfoVOList = _.map(
       pageList,
       (item, index) => ({
-        ...item,
-        aboutStock: `${item.secuabbr} / ${item.tradingcode}`,
+        texttitle: this.formatString(item.texttitle),
+        textcategory: this.formatString(item.textcategory),
+        secucategorycodel: this.formatString(item.secucategorycodel),
+        pubdata: this.formatString(item.pubdata),
+        authors: this.formatString(item.authors),
+        aboutStock: `${this.formatString(item.secuabbr)} / ${this.formatString(item.tradingcode)}`,
         id: `${index}`,
       }),
     );
