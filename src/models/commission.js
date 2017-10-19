@@ -3,7 +3,7 @@
  * @author sunweibin
  */
 import _ from 'lodash';
-import { commission as api } from '../api';
+import { commission as api, seibel as seibelApi } from '../api';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -21,7 +21,7 @@ export default {
     approvalRecord: {},
     // 查询审批记录流程状态
     recordLoading: false,
-    // 筛选的客户列表
+    // 筛选的已申请客户列表
     filterCustList: [],
     // 筛选的拟稿人列表
     filterDrafterList: [],
@@ -29,6 +29,10 @@ export default {
     validataLoading: false,
     // 检验结果
     validateResult: '',
+    // 筛选的可申请客户列表
+    canApplyCustList: [],
+    // 提交批量佣金调整申请后的BatchNum
+    batchnum: '',
   },
   reducers: {
     getProductListSuccess(state, action) {
@@ -88,27 +92,35 @@ export default {
       };
     },
 
-    searchCustListSuccess(state, action) {
-      const { payload: { resultData } } = action;
-      return {
-        ...state,
-        filterCustList: resultData.custList,
-      };
-    },
-
-    searchDrafterListSuccess(state, action) {
-      const { payload: { resultData } } = action;
-      return {
-        ...state,
-        filterDrafterList: resultData.empList,
-      };
-    },
-
     validateCustInfoSuccess(state, action) {
       const { payload: { msg } } = action;
       return {
         ...state,
         validateResult: msg,
+      };
+    },
+
+    getCanApplyCustListSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      let canApplyCustList = [];
+      if (resultData && !_.isEmpty(resultData.custList)) {
+        canApplyCustList = resultData.custList;
+      }
+      return {
+        ...state,
+        canApplyCustList,
+      };
+    },
+
+    submitBatchSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      let batchnum = 'fail';
+      if (resultData && resultData.batchnum) {
+        batchnum = resultData.batchnum;
+      }
+      return {
+        ...state,
+        batchnum,
       };
     },
 
@@ -132,6 +144,7 @@ export default {
 
     // 批量佣金调整Home的右侧详情
     * getCommissionDetail({ payload }, { call, put }) {
+      console.warn('getCommissionDetail', payload);
       const detailRes = yield call(api.getCommissionDetail, { type: 'BatchProcess', ...payload });
       const custListRes = yield call(api.getCommissionDetailCustList, {
         batchNum: payload.batchNum,
@@ -153,7 +166,10 @@ export default {
         },
       });
       const { flowCode, loginuser, ...reset } = payload;
-      const recordResponse = yield call(api.querySingleCustApprovalRecord, { flowCode, loginuser });
+      const recordResponse = yield call(api.querySingleCustApprovalRecord, {
+        flowCode: '618C53D2EA54F8408E10F9E8338716FC',
+        loginuser,
+      });
       yield put({
         type: 'getApprovalRecordsSuccess',
         payload: { recordResponse, cust: reset },
@@ -199,6 +215,24 @@ export default {
           value: false,
           message: '结束校验',
         },
+      });
+    },
+
+    // 筛选可申请的客户列表
+    * getCanApplyCustList({ payload }, { call, put }) {
+      const response = yield call(seibelApi.getCanApplyCustList, payload);
+      yield put({
+        type: 'getCanApplyCustListSuccess',
+        payload: response,
+      });
+    },
+
+    // 提交批量佣金调整申请
+    * submitBatchCommission({ payload }, { call, put }) {
+      const response = yield call(api.submitBatchCommission, payload);
+      yield put({
+        type: 'submitBatchSuccess',
+        payload: response,
       });
     },
   },

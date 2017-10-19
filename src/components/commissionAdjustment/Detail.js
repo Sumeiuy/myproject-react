@@ -1,6 +1,6 @@
 /**
  * @file components/commissionAdjustment/Detail.js
- *  佣金详情
+ *  批量佣金详情
  * @author baojiajia
  */
 
@@ -65,7 +65,7 @@ export default class Commissiondetail extends PureComponent {
       createdByLogin,
       created,
       status,
-      newCommission, // 目标佣金率（股基)
+      newCommission, // 目标股基佣金率
       prodCode, // 目标产品
       bgCommission, // B股
       zqCommission, // 债券
@@ -148,7 +148,7 @@ export default class Commissiondetail extends PureComponent {
             <div className={styles.modContent}>
               <ul className={styles.propertyList}>
                 <li className={styles.item}>
-                  <InfoItem label="目标佣金率（股基）" value={targetCom} />
+                  <InfoItem label="目标股基佣金率" value={targetCom} />
                 </li>
                 <li className={styles.item}>
                   <InfoItem label="目标产品" value={prodCode} />

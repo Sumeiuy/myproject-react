@@ -21,6 +21,7 @@ const columns = [
   {
     title: '客户名称',
     dataIndex: 'custName',
+    width: '300px',
   },
   {
     title: '客户等级',
@@ -35,7 +36,7 @@ const columns = [
 export default class CutomerTableList extends PureComponent {
   static propTypes = {
     customerList: PropTypes.array,
-    onDeleteCustomer: PropTypes.func.isRequired,
+    onSelectCustomerList: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -49,10 +50,20 @@ export default class CutomerTableList extends PureComponent {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    const { customerList: prevList } = this.props;
+    const { customerList: nextList } = nextProps;
+    if (!_.isEqual(prevList, nextList)) {
+      this.setState({
+        selectedRowKeys: [],
+      });
+    }
+  }
+
   @autobind
   onSelectChange(selectedRowKeys) {
     this.setState({ selectedRowKeys });
-    this.props.onDeleteCustomer(selectedRowKeys);
+    this.props.onSelectCustomerList(selectedRowKeys);
   }
 
   render() {

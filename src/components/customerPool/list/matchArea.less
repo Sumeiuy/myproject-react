@@ -1,5 +1,6 @@
 .relatedInfo {
   margin-top: 10px;
+  border-top: 1px dashed #c2c2c2;
   ul {
     list-style-type: none;
     font-size: 13px;
@@ -7,6 +8,11 @@
     margin-top: 10px;
     li {
       margin-top: 4px;
+      width: 335px;
+      height: 18px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
       :global .marked {
         position: relative;
         color: #ff784e;
@@ -31,11 +37,13 @@
           box-shadow: 0 0 15px #EAEBEB;
         }
       }
-      :global .label {
+      :global i {
         padding: 0;
-        color: #ff784e;
         font-style: normal;
         font-weight: normal;
+        &.label {
+          color: #ff784e;
+        }
       }
     }
   }

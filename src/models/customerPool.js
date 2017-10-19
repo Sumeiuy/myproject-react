@@ -11,7 +11,8 @@ import { toastM } from '../utils/sagaEffects';
 
 
 const EMPTY_LIST = [];
-// const EMPTY_OBJECT = {};
+const EMPTY_OBJECT = {};
+const LIST_MAX = 1e4;
 
 export default {
   namespace: 'customerPool',
@@ -32,8 +33,6 @@ export default {
     custRange: [],
     // 时间周期：本年、本季、本月
     cycle: [],
-    // 用户当前所在岗位
-    position: window.forReactPosition || {},
     process: {},
     empInfo: {},
     // 客户列表中对应的每个客户的近6个月的收益
@@ -100,11 +99,17 @@ export default {
     currentTab: '',
     // 提交任务流程结果
     submitTaskFlowResult: '',
+    // 可查询服务人员列表
+    searchServerPersonList: EMPTY_LIST,
+    // 列表页的服务营业部
+    serviceDepartment: EMPTY_LIST,
+    // 标签圈人
     circlePeopleData: [],
     peopleOfLabelData: [],
   },
   subscriptions: {
     setup({ dispatch, history }) {
+      dispatch({ type: 'getCustRangeByAuthority' });
       history.listen(({ pathname, search }) => {
         const params = queryString.parse(search);
         const serviceLogUrl = pathToRegexp('customerPool/serviceLog').exec(pathname);
@@ -133,18 +138,19 @@ export default {
     * getHSRate({ payload }, { call, put }) {  //eslint-disable-line
       const response = yield call(api.getHSRate, payload);
       const { resultData } = response;
-      const data = resultData.length > 0 ? resultData[0] : {};
+      const { value = '' } = resultData.length > 0 ? resultData[0] : '';
       yield put({
         type: 'getHSRateSuccess',
-        payload: data.value,
+        payload: { value },
       });
     },
     // 资讯列表和详情
     * getInformation({ payload }, { call, put }) {  //eslint-disable-line
       const response = yield call(api.getInformation, payload);
+      const { curPageNum = 1 } = payload;
       yield put({
-        type: 'getinformationSuccess',
-        payload: response,
+        type: 'getInformationSuccess',
+        payload: { ...response, resultData: { ...response.resultData, curPageNum } },
       });
     },
     // 代办流程任务列表
@@ -174,7 +180,7 @@ export default {
     },
     // (首页总数)
     * getToBeDone({ payload }, { call, put }) {
-      const queryNumbers = yield call(api.getQueryNumbers);
+      const queryNumbers = yield call(api.getQueryNumbers, payload);
       yield put({
         type: 'getWorkFlowTaskCountSuccess',
         payload: { queryNumbers },
@@ -364,15 +370,6 @@ export default {
         },
       });
     },
-    // * getStatisticalPeriod({ }, { call, put }) { //eslint-disable-line
-    //   // 统计周期
-    //   const statisticalPeriod = yield call(api.getStatisticalPeriod);
-    //   // debugger;
-    //   yield put({
-    //     type: 'getStatisticalPeriodSuccess',
-    //     payload: { statisticalPeriod },
-    //   });
-    // },
     // 列表页添加服务记录
     * addServeRecord({ payload }, { call, put }) {
       const res = yield call(api.addServeRecord, payload);
@@ -502,6 +499,23 @@ export default {
         payload: { resultData },
       });
     },
+    * getSearchServerPersonList({ payload }, { call, put, select }) {
+      const { resultData = EMPTY_OBJECT } = yield call(api.getSearchServerPersonelList, payload);
+      const { empInfo } = yield select(state => state.app.empInfo);
+      const myInfo = {
+        ptyMngName: empInfo.empName,
+        ptyMngId: empInfo.empNum,
+      };
+      const all = {
+        ptyMngName: '所有人',
+        ptyMngId: '',
+      };
+      const { servicePeopleList = EMPTY_LIST } = resultData;
+      yield put({
+        type: 'getSearchServerPersonListSuccess',
+        payload: [all, myInfo, ...servicePeopleList],
+      });
+    },
     // 360服务记录查询更多服务
     * getServiceLogMore({ payload }, { call, put }) {
       const response = yield call(api.queryAllServiceRecord, payload);
@@ -517,6 +531,16 @@ export default {
       const { resultData } = response;
       yield put({
         type: 'priviewCustFileSuccess',
+        payload: resultData,
+      });
+    },
+    // 根据权限获取组织机构树
+    * getCustRangeByAuthority({ payload }, { call, put }) {
+      console.log('1111111111111111');
+      const resultData = yield call(api.getCustRangeByAuthority);
+      console.log('resultData>>>>>>>', resultData);
+      yield put({
+        type: 'getCustRangeByAuthoritySuccess',
         payload: resultData,
       });
     },
@@ -557,17 +581,23 @@ export default {
       };
     },
     getHSRateSuccess(state, action) {
-      const { payload } = action;
+      const { payload: { value } } = action;
       return {
         ...state,
-        hsRate: payload,
+        hsRate: value,
       };
     },
-    getinformationSuccess(state, action) {
-      const { payload: { resultData } } = action;
+    getInformationSuccess(state, action) {
+      const {
+        payload: {
+          resultData, resultData: { curPageNum, infoVOList = [] },
+        },
+      } = action;
+      const { information: { list } } = state;
+      // 记录页码对应的列表数据
       return {
         ...state,
-        information: resultData,
+        information: { ...resultData, list: [...(list || []), { curPageNum, infoVOList }] },
       };
     },
     getToDoListSuccess(state, action) {
@@ -624,15 +654,6 @@ export default {
         manageIndicators,
       };
     },
-    // 统计周期
-    // getStatisticalPeriodSuccess(state, action) {
-    //   const { payload: { statisticalPeriod } } = action;
-    //   const cycle = statisticalPeriod.resultData.kPIDateScopeType;
-    //   return {
-    //     ...state,
-    //     cycle,
-    //   };
-    // },
     // (首页总数)
     getWorkFlowTaskCountSuccess(state, action) {
       const { payload: { queryNumbers } } = action;
@@ -640,14 +661,6 @@ export default {
       return {
         ...state,
         process,
-      };
-    },
-    // 职责切换
-    getPositionSuccess(state, action) {
-      const { payload } = action;
-      return {
-        ...state,
-        position: payload,
       };
     },
     // 默认推荐词及热词推荐列表
@@ -684,7 +697,7 @@ export default {
       const custPage = {
         pageSize: custListVO.pageSize,
         pageNo: Number(custListVO.curPageNum),
-        total: custListVO.totalCount,
+        total: custListVO.totalCount > LIST_MAX ? LIST_MAX : custListVO.totalCount,
       };
       return {
         ...state,
@@ -889,23 +902,6 @@ export default {
     getCustomerHotPossibleWdsSuccess(state, action) {
       const { payload } = action;
       const { custList } = payload;
-      // {
-      //   "id": 1,
-      //   "tagNumId": "499_1",
-      //   "labelMapping": "shi_fou_cai_zhang_die",
-      //   "labelNameVal": "乐米版猜涨跌1",
-      //   "labelDesc": "乐米版猜涨跌客户"
-      // },
-      // {
-      //     "cusId": "1-41G4URN",
-      //     "custName": "郭**",
-      //     "brokerNumber": "666626898217",
-      //     "custLevelCode": "805040",
-      //     "custLevelName": "空",
-      //     "custTotalAsset": 5998.59,
-      //     "custType": "per",
-      //     "custOpenDate": "2016-10-12 00:00:00"
-      // }
       // 构造成联想列表识别的
       const finalPossibleHotCust = _.map(custList, item => ({
         id: item.cusId,
@@ -959,6 +955,12 @@ export default {
         serviceLogData: resultData,
       };
     },
+    getSearchServerPersonListSuccess(state, action) {
+      return {
+        ...state,
+        searchServerPersonList: action.payload,
+      };
+    },
     // 360服务记录查询更多服务成功
     getServiceLogMoreSuccess(state, action) {
       const { payload: { resultData } } = action;
@@ -989,6 +991,13 @@ export default {
       return {
         ...state,
         storedTaskFlowData: payload,
+      };
+    },
+    getCustRangeByAuthoritySuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        serviceDepartment: resultData,
       };
     },
     // 标签圈人成功

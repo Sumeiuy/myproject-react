@@ -2,8 +2,8 @@
 * @Description: 合作合约 附件上传
 * @Author: XuWenKang
 * @Date:   2017-09-26 10:51:52
-* @Last Modified by:   XuWenKang
-* @Last Modified time: 2017-09-26 10:57:50
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2017-10-09 17:17:32
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -14,7 +14,7 @@ import style from './uploadFile.less';
 export default class UploadFile extends PureComponent {
   static propTypes = {
     fileList: PropTypes.array,
-    edit: PropTypes.boolean,
+    edit: PropTypes.bool,
   }
 
   static defaultProps = {

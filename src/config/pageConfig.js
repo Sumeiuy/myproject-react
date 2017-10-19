@@ -327,6 +327,28 @@ const pageConfig = {
         value: '2',
       },
     ],
+    titleList: [
+      {
+        dataIndex: 'termsName',
+        key: 'termsName',
+        title: '条款名称',
+      },
+      {
+        dataIndex: 'paraName',
+        key: 'paraName',
+        title: '明细参数',
+      },
+      {
+        dataIndex: 'paraVal',
+        key: 'paraVal',
+        title: '值',
+      },
+      {
+        dataIndex: 'divName',
+        key: 'divName',
+        title: '合作部门',
+      },
+    ],
   },
 };
 

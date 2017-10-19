@@ -75,6 +75,7 @@ export default class ProgressList extends PureComponent {
       (item, index) => {
         const rowId = `row${index}`;
         const param = {
+          source: 'custIndicator',
           value: (index + 1),  // 提供给列表页传给后端的customerType的值
           bname: item.cust,
           cycle,

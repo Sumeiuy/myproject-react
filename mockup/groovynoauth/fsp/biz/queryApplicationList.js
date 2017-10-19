@@ -36,7 +36,7 @@ exports.response = function (req, res) {
               isMain: false,
             },
           ],
-          business2: null,
+          business2: '订购',
           business3: null,
         },
         {
@@ -65,7 +65,7 @@ exports.response = function (req, res) {
               isMain: false,
             },
           ],
-          business2: null,
+          business2: '订购',
           business3: null,
         },
         {
@@ -94,7 +94,7 @@ exports.response = function (req, res) {
               isMain: false,
             },
           ],
-          business2: null,
+          business2: '订购',
           business3: null,
         },
         {
@@ -123,7 +123,7 @@ exports.response = function (req, res) {
               isMain: false,
             },
           ],
-          business2: null,
+          business2: '订购',
           business3: null,
         },
         {
@@ -152,7 +152,7 @@ exports.response = function (req, res) {
               isMain: false,
             },
           ],
-          business2: null,
+          business2: '订购',
           business3: null,
         },
         {
@@ -181,7 +181,7 @@ exports.response = function (req, res) {
               isMain: false,
             },
           ],
-          business2: null,
+          business2: '订购',
           business3: null,
         },
         {
@@ -210,7 +210,7 @@ exports.response = function (req, res) {
               isMain: false,
             },
           ],
-          business2: null,
+          business2: '订购',
           business3: null,
         },
         {
@@ -239,7 +239,7 @@ exports.response = function (req, res) {
               isMain: false,
             },
           ],
-          business2: null,
+          business2: '订购',
           business3: null,
         },
         {
@@ -268,7 +268,7 @@ exports.response = function (req, res) {
               isMain: false,
             },
           ],
-          business2: null,
+          business2: '订购',
           business3: null,
         },
         {
@@ -297,7 +297,7 @@ exports.response = function (req, res) {
               isMain: false,
             },
           ],
-          business2: null,
+          business2: '订购',
           business3: null,
         },
       ],

@@ -397,4 +397,3 @@ export default class Permission extends PureComponent {
     );
   }
 }
-

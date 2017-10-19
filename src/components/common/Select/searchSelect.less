@@ -10,6 +10,16 @@
 .dropDownBox{
    height: 32px;
 }
+.searchBox {
+  :global {
+    & .ant-input {
+      padding-right: 26px !important;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+  }
+}
 .searchDropDown{
   color: #666; 
   font-weight: bold;
@@ -37,7 +47,7 @@
   color: #6E6E6E;
   display: inline-block;
   transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
-  font-size: 16px;
+  font-size: 14px;
 }
 .prodValue{
   display: inline-block;
