@@ -140,7 +140,6 @@ export default class Home extends PureComponent {
     super(props);
     this.state = {
       cycleSelect: '',
-      fspOrgId: '', // 主服务经理
       createCustRange: [],
       expandAll: false,
     };
@@ -491,7 +490,6 @@ export default class Home extends PureComponent {
       performanceIndicators,
       hsRate,
     } = this.props;
-    const { fspOrgId } = this.state;
     return (
       <div className={styles.customerPoolWrap}>
         <Search
@@ -500,7 +498,6 @@ export default class Home extends PureComponent {
           queryHistoryWdsList={this.queryHistoryWdsList}
           queryHotWdsData={hotPossibleWdsList}
           push={push}
-          orgId={fspOrgId}
           historyWdsList={historyWdsList}
           clearSuccess={clearState}
           clearFun={this.clearHistoryList}
