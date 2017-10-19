@@ -48,6 +48,9 @@ export default class Confirm extends PureComponent {
       case 'changeproduct':
         content = '选择新的目标产品后，您之前所选择的客户会被清空哟！！！';
         break;
+      case 'wrongInput':
+        content = '请输入数字,并且不低于0.15! ';
+        break;
       default:
         content = '';
     }
