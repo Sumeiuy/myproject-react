@@ -92,7 +92,7 @@ export function getPureAddCust({ pureAddData }) {
 // 产品销售
 export function getProductSale({
   productSaleData,
-  nameArray = ['公募基金', '证券投资类私募', '资金产品', 'OTC'],
+  nameArray = ['公募基金', '证券投资类私募', '紫金产品', 'OTC'],
 }) {
   const param = {
     dataArray: productSaleData,
@@ -206,7 +206,7 @@ export function getServiceIndicatorOfPerformance({ performanceData }) {
     },
     xAxis: {
       type: 'category',
-      data: ['MOT\n完成率', '服务\n覆盖率', '多元配\n置覆盖率', '信息\n完备率'],
+      data: ['MOT\n完成率', '服务\n覆盖率', '资产配\n置覆盖率', '信息\n完备率'],
       axisTick: { show: false },
       axisLine: { show: false },
       axisLabel: {
@@ -234,10 +234,10 @@ export function getCustAndProperty(dataArray) {
   const custArray = [];
   const properyArray = [];
   for (let i = 0; i < dataArray.length; i += 2) {
-    const custItem = dataArray[i];
-    const propertyItem = dataArray[(i + 1)];
-    custArray.push({ value: filterEmptyToInteger(custItem.value), name: custItem.name });
-    properyArray.push(filterEmptyToNumber(propertyItem.value));
+    const { value = '', name = '' } = dataArray[i];
+    const { value: propertyValue } = dataArray[(i + 1)];
+    custArray.push({ value: filterEmptyToInteger(value), name });
+    properyArray.push(filterEmptyToNumber(propertyValue || ''));
   }
   // formatter 资产数据，获得 unit
   const { newUnit: propertyUnit, newSeries } = toFixedMoney(properyArray);
@@ -269,6 +269,7 @@ export function getHSRate(array) {
       name: '沪深归集率',
       amplitude: '3%',
       waveLength: '40%',
+      radius: '112px',
       waveAnimation: false,
       animationDuration: 0,
       animationDurationUpdate: 0,
@@ -276,7 +277,7 @@ export function getHSRate(array) {
       outline: { show: false },
       backgroundStyle: {
         borderWidth: 5,
-        borderColor: '#ccc',
+        borderColor: '#f0f0f0',
         color: 'white',
       },
       itemStyle: {
@@ -291,7 +292,8 @@ export function getHSRate(array) {
           show: true,
           color: '#294D99',
           insideColor: '#fff',
-          fontSize: 50,
+          fontSize: 24,
+          fontFamily: 'PingFangSC-Regular',
           align: 'center',
           baseline: 'middle',
           position: ['50%', '70%'],

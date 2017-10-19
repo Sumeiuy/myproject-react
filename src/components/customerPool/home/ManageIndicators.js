@@ -5,23 +5,24 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import { Row, Col } from 'antd';
 import { autobind } from 'core-decorators';
+import { Row, Col } from 'antd';
+import 'echarts-liquidfill';
+import _ from 'lodash';
 
 import RectFrame from './RectFrame';
 import IECharts from '../../IECharts';
 import CheckLayout from './CheckLayout';
 import ProgressList from './ProgressList';
 import CustomerService from './CustomerService';
-// import CycleProgressList from './CycleProgressList';
+import { IfEmpty } from './PerformanceIndicators';
 import styles from './performanceIndicators.less';
 import {
-  // getHSRate,
+  getHSRate,
   getPureAddCust,
   getProductSale,
   getClientsNumber,
   getTradingVolume,
-  // getServiceIndicatorOfManage,
   filterEmptyToInteger,
   filterEmptyToNumber,
   businessOpenNumLabelList,
@@ -88,12 +89,11 @@ export default class PerformanceIndicators extends PureComponent {
   render() {
     const {
       indicators,
-      // hsRate,
+      hsRate,
       cycle,
       push,
       location,
     } = this.props;
-
     // 字段语义，在mock文件内：/mockup/groovynoauth/fsp/emp/kpi/queryEmpKPIs.js
     const {
       motOkMnt, motTotMnt, taskCust, totCust, startupCust,
@@ -102,7 +102,9 @@ export default class PerformanceIndicators extends PureComponent {
       purAddCustaset, purRakeGjpdt, tranAmtBasicpdt, tranAmtTotpdt,
       purAddCust, newProdCust, purAddNoretailcust, purAddHighprodcust,
     } = indicators || {};
-    // _.toNumber(null) 值为0，_.parseInt(null) 值为NaN
+
+    const isEmpty = _.isEmpty(indicators);
+
     // 新增客户（经营指标）
     const pureAddData = [
       filterEmptyToInteger(purAddCust),
@@ -130,10 +132,10 @@ export default class PerformanceIndicators extends PureComponent {
       colourfulTotalNumber: filterEmptyToInteger(hkCust),
     };
     const { newUnit: clientUnit, items: clientItems } = getClientsNumber(param);
-    const clientHead = { icon: 'kehuzhibiao', title: `业务开通数（${clientUnit}）` };
+    const clientHead = { icon: 'kehuzhibiao', title: `业务开通数（${clientUnit}次）` };
 
     // 沪深归集率
-    // const hsRateData = getHSRate([_.toNumber(hsRate)]);
+    const hsRateData = getHSRate([filterEmptyToNumber(hsRate)]);
     const hsRateHead = { icon: 'jiaoyiliang', title: '沪深归集率' };
 
     // 资产和交易量（经营指标）
@@ -164,7 +166,6 @@ export default class PerformanceIndicators extends PureComponent {
 
     // 服务指标（经营业绩）
     const customerServiceData = { motOkMnt, motTotMnt, taskCust, totCust };
-    // const serviceIndicator = getServiceIndicatorOfManage(customerServiceData);
     const serviceIndicatorHead = { icon: 'kehufuwu', title: '服务指标' };
 
     return (
@@ -174,37 +175,42 @@ export default class PerformanceIndicators extends PureComponent {
             <Row gutter={16}>
               <Col span={8}>
                 <RectFrame dataSource={pureAddHead}>
-                  <ProgressList
-                    key={'pureAdd'}
-                    dataSource={pureAddItems}
-                    cycle={cycle}
-                    push={push}
-                    location={location}
-                  />
+                  <IfEmpty isEmpty={isEmpty}>
+                    <ProgressList
+                      key={'pureAdd'}
+                      dataSource={pureAddItems}
+                      cycle={cycle}
+                      push={push}
+                      location={location}
+                    />
+                  </IfEmpty>
                 </RectFrame>
               </Col>
               <Col span={8}>
                 <RectFrame dataSource={clientHead}>
-                  <IECharts
-                    onReady={this.handleBusinessOpenClick}
-                    option={clientItems}
-                    resizable
-                    style={{
-                      height: '170px',
-                    }}
-                  />
+                  <IfEmpty isEmpty={isEmpty}>
+                    <IECharts
+                      onReady={this.handleBusinessOpenClick}
+                      option={clientItems}
+                      resizable
+                      style={{
+                        height: '170px',
+                      }}
+                    />
+                  </IfEmpty>
                 </RectFrame>
               </Col>
               <Col span={8}>
                 <RectFrame dataSource={hsRateHead}>
-                  <div />
-                  {/* <IECharts
-                    option={liquidOption}
-                    resizable
-                    style={{
-                      height: '170px',
-                    }}
-                  /> */}
+                  <IfEmpty isEmpty={isEmpty}>
+                    <IECharts
+                      option={hsRateData}
+                      resizable
+                      style={{
+                        height: '180px',
+                      }}
+                    />
+                  </IfEmpty>
                 </RectFrame>
               </Col>
             </Row>
@@ -213,20 +219,23 @@ export default class PerformanceIndicators extends PureComponent {
             <Row gutter={16}>
               <Col span={8}>
                 <RectFrame dataSource={tradeVolumeHead}>
-                  <CheckLayout dataSource={tradeItems} />
+                  <IfEmpty isEmpty={isEmpty}>
+                    <CheckLayout dataSource={tradeItems} />
+                  </IfEmpty>
                 </RectFrame>
               </Col>
               <Col span={8}>
                 <RectFrame dataSource={productSaleHead}>
-                  <ProgressList dataSource={productSaleItems} key={'productSale'} />
+                  <IfEmpty isEmpty={isEmpty}>
+                    <ProgressList dataSource={productSaleItems} key={'productSale'} />
+                  </IfEmpty>
                 </RectFrame>
               </Col>
               <Col span={8}>
-                {/* <CycleProgressList dataSource={serviceIndicator} /> */}
                 <RectFrame dataSource={serviceIndicatorHead}>
-                  <CustomerService
-                    data={customerServiceData}
-                  />
+                  <IfEmpty isEmpty={isEmpty}>
+                    <CustomerService data={customerServiceData} />
+                  </IfEmpty>
                 </RectFrame>
               </Col>
             </Row>

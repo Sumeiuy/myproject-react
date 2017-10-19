@@ -8,6 +8,8 @@ import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
 
+import { fspContainer } from '../../../config';
+import { fspGlobal, helper } from '../../../utils';
 import styles from './viewpoint.less';
 
 export default class Viewpoint extends PureComponent {
@@ -21,22 +23,29 @@ export default class Viewpoint extends PureComponent {
   }
 
   @autobind
-  handleMoreClick() {
-    const { push } = this.props;
-    // 跳转到资讯详情界面
-    push({
-      pathname: '/customerPool/viewpointList',
-      query: { detailIndex: '0' },
-    });
+  openNewTab(url, query) {
+    const param = { id: 'tab-viewpoint', title: '首席观点' };
+    if (document.querySelector(fspContainer.container)) {
+      fspGlobal.openRctTab({ url: `${url}${helper.queryToString(query)}`, param });
+    } else {
+      const { push } = this.props;
+      push({
+        pathname: url,
+        query,
+      });
+    }
   }
+
+  @autobind
+  handleMoreClick() {
+    // 跳转到资讯列表界面
+    this.openNewTab('/customerPool/viewpointList');
+  }
+
   @autobind
   handleDetailClick(index) {
-    const { push } = this.props;
     // 跳转到资讯详情界面
-    push({
-      pathname: '/customerPool/viewpointDetail',
-      query: { detailIndex: `${index}` },
-    });
+    this.openNewTab('/customerPool/viewpointDetail', { detailIndex: `${index}` });
   }
 
   @autobind
@@ -57,8 +66,17 @@ export default class Viewpoint extends PureComponent {
   }
 
   render() {
-    const { information: { infoVOList = [] } } = this.props;
-    const { texttitle, abstract } = infoVOList[0] || {};
+    const { information: { list = [] } } = this.props;
+    // 展示第一个新闻
+    const pageList = _.filter(
+      list,
+      (item) => {
+        const { curPageNum = 0 } = item;
+        return curPageNum === 1;
+      },
+    );
+    const { infoVOList = [] } = _.isEmpty(pageList) ? {} : pageList[0];
+    const { texttitle = '', abstract = '' } = _.isEmpty(infoVOList) ? {} : infoVOList[0];
     const isShowMore = infoVOList.length > 12;
     const isHiddenDetail = _.isEmpty(abstract);
     const newInfoVOList = _.map(infoVOList, (item, index) => ({ ...item, id: `${index}` }));
