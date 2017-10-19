@@ -151,7 +151,7 @@ export default class Home extends PureComponent {
     const {
       custRange,
       cycle = EMPTY_LIST,
-      location: { query: { orgId = '', cycleSelect = '' } },
+      location: { query: { orgId = '', cycleSelect = '', ptyMngId = '' } },
       empInfo: { empInfo, empRespList },
       getInformation,
       getToBeDone,
@@ -174,11 +174,11 @@ export default class Home extends PureComponent {
       this.orgId = occDivnNum;
     }
     // 热词搜索 orgId, empNo 两个参数必传一个，两个同时传时以orgId为准
-    getHotWds({ orgId: this.orgId || orgId, empNo: empNum });
+    getHotWds({ orgId: orgId || this.orgId, empNo: empNum });
     // 历史搜索记录 orgId, empNo 两个参数必传一个，两个同时传时以orgId为准
-    getHistoryWdsList({ orgId: this.orgId || orgId, empNo: empNum });
+    getHistoryWdsList({ orgId: orgId || this.orgId, empNo: empNum });
     // 待办事项
-    getToBeDone();
+    getToBeDone({ orgId: orgId || this.orgId, ptyMngId: ptyMngId || empNum });
 
     // 首席投顾观点
     getInformation({ curPageNum: 1, pageSize: 18 });
@@ -188,7 +188,7 @@ export default class Home extends PureComponent {
     this.getIndicators({
       begin,
       end,
-      orgId: this.orgId || orgId,
+      orgId: orgId || this.orgId,
       cycleSelect: (cycle[0] || {}).key || cycleSelect,
     });
 
@@ -196,7 +196,7 @@ export default class Home extends PureComponent {
     this.fetchHSRate({
       begin,
       end,
-      orgId: this.orgId || orgId,
+      orgId: orgId || this.orgId,
       cycleSelect: (cycle[0] || {}).key || cycleSelect,
     });
     // 根据岗位orgId生成对应的组织机构树

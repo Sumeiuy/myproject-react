@@ -170,7 +170,7 @@ export default {
     },
     // (首页总数)
     * getToBeDone({ payload }, { call, put }) {
-      const queryNumbers = yield call(api.getQueryNumbers);
+      const queryNumbers = yield call(api.getQueryNumbers, payload);
       yield put({
         type: 'getWorkFlowTaskCountSuccess',
         payload: { queryNumbers },
