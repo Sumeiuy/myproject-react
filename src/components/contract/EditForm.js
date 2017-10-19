@@ -3,11 +3,12 @@
 * @Author: XuWenKang
 * @Date:   2017-09-19 14:47:08
 * @Last Modified by:   XuWenKang
-* @Last Modified time: 2017-09-27 18:45:14
+* @Last Modified time: 2017-10-11 15:31:48
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+// import moment from 'moment';
 // import { message } from 'antd';
 
 import BaseInfoEdit from './BaseInfoEdit';
@@ -15,46 +16,27 @@ import DraftInfo from './DraftInfo';
 import UploadFile from './UploadFile';
 import InfoTitle from '../common/InfoTitle';
 import CommonTable from '../common/biz/CommonTable';
+import ApproveList from '../common/approveList';
 import Approval from '../permission/Approval';
-import ApprovalRecord from '../permission/ApprovalRecord';
 import Button from '../common/Button';
 import AddClause from './AddClause';
 
+import { seibelConfig } from '../../config';
 import styles from './editForm.less';
 
 // const EMPTY_OBJECT = {};
-const EMPTY_ARRAY = [];
+// const EMPTY_ARRAY = [];
 const BOOL_TRUE = true;
-const titleList = [
-  {
-    dataIndex: 'termsName',
-    key: 'termsName',
-    title: '条款名称',
-  },
-  {
-    dataIndex: 'paraName',
-    key: 'paraName',
-    title: '明细参数',
-  },
-  {
-    dataIndex: 'paraVal',
-    key: 'paraVal',
-    title: '值',
-  },
-  {
-    dataIndex: 'divName',
-    key: 'divName',
-    title: '合作部门',
-  },
-];
+// 合约条款的表头
+const { contract: { titleList } } = seibelConfig;
 // 临时数据 待删
-const approvalRecordList = [{
-  isOk: true,
-  handler: '张三',
-  handleTime: '2017/08/31',
-  stepName: '流程发起',
-  comment: 'asdasdadasd',
-}];
+// const approvalRecordList = [{
+//   isOk: true,
+//   handler: '张三',
+//   handleTime: '2017/08/31',
+//   stepName: '流程发起',
+//   comment: 'asdasdadasd',
+// }];
 export default class EditForm extends PureComponent {
   static propTypes = {
     // 客户列表
@@ -66,6 +48,11 @@ export default class EditForm extends PureComponent {
     operationType: PropTypes.string.isRequired,
     // 合约详情
     contractDetail: PropTypes.object.isRequired,
+    // 条款名称列表
+    clauseNameList: PropTypes.array.isRequired,
+    // 合作部门列表
+    searchCooperDeparment: PropTypes.func.isRequired,
+    cooperDeparment: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -78,7 +65,7 @@ export default class EditForm extends PureComponent {
       formData: {
         formType: 'edit',
         attachment: '',
-        terms: [],
+        terms: props.contractDetail.baseInfo.terms,
       },
       // 是否显示添加合约条款组件
       showAddClauseModal: false,
@@ -90,16 +77,17 @@ export default class EditForm extends PureComponent {
     onSearchCutList();
   }
 
-  componentWillReceiveProps(nextProps) {
-    const newTerms = nextProps.contractDetail.terms;
-    this.setState({
-      ...this.state,
-      formData: {
-        ...this.state.formData,
-        terms: newTerms,
-      },
-    });
-  }
+  // 不需要
+  // componentWillReceiveProps(nextProps) {
+  //   const newTerms = nextProps.contractDetail.terms;
+  //   this.setState({
+  //     ...this.state,
+  //     formData: {
+  //       ...this.state.formData,
+  //       terms: newTerms,
+  //     },
+  //   });
+  // }
 
   // 审批意见
   @autobind
@@ -129,6 +117,7 @@ export default class EditForm extends PureComponent {
   // 上传文件成功
   @autobind
   handleUploadSuccess(attachment) {
+    console.warn('上传成功', attachment);
     this.setState({
       ...this.state,
       formData: {
@@ -161,12 +150,39 @@ export default class EditForm extends PureComponent {
   // 添加合约条款
   @autobind
   handleAddClause(clauseData) {
-    console.log('添加合约条款', clauseData);
+    const { formData: { terms } } = this.state;
+    const termItem = {
+      termsName: clauseData.termsName.termVal, // 条款名称
+      termsVal: clauseData.termsName.value, // 条款code
+      paraName: clauseData.paraName.val, // 明细参数名称
+      paraValue: clauseData.paraName.value, // 明细参数code
+      paraVal: clauseData.paraVal, // 值
+      divName: clauseData.divName.name, // 合作部门名称
+      divValue: clauseData.value, // 合作部门code
+    };
+    console.log('添加合约条款', clauseData, terms);
+    this.setState({
+      ...this.state,
+      formData: {
+        ...this.state.formData,
+        terms: [...terms, termItem],
+      },
+    }, () => {
+      this.props.onChangeForm(this.state.formData);
+      this.handleCloseModal();
+    });
   }
 
 
   render() {
-    const { custList, contractDetail, operationType } = this.props;
+    const {
+      custList,
+      contractDetail,
+      operationType,
+      clauseNameList,
+      cooperDeparment,
+      searchCooperDeparment,
+    } = this.props;
     const { formData, showAddClauseModal } = this.state;
     const buttonProps = {
       type: 'primary',
@@ -174,6 +190,11 @@ export default class EditForm extends PureComponent {
       className: styles.addClauseButton,
       ghost: true,
       onClick: this.handleShowAddClause,
+    };
+    const draftInfo = {
+      name: contractDetail.baseInfo.createdName,
+      date: contractDetail.baseInfo.createTime,
+      status: contractDetail.baseInfo.status,
     };
     return (
       <div className={styles.editComponent}>
@@ -188,7 +209,7 @@ export default class EditForm extends PureComponent {
           onSearchClient={this.handleSearchClient}
           operationType={operationType}
         />
-        <DraftInfo />
+        <DraftInfo data={draftInfo} />
         <div className={styles.editWrapper}>
           <InfoTitle head="合约条款" />
           <Button {...buttonProps}>新建</Button>
@@ -199,8 +220,8 @@ export default class EditForm extends PureComponent {
         </div>
         <UploadFile
           edit={BOOL_TRUE}
-          fileList={EMPTY_ARRAY}
-          attachment={formData.attachment}
+          fileList={contractDetail.attachmentList}
+          attachment={contractDetail.baseInfo.attachment}
           uploadAttachment={this.handleUploadSuccess}
         />
         <Approval
@@ -209,16 +230,18 @@ export default class EditForm extends PureComponent {
           textValue=""
           onEmitEvent={this.handleChangeAppraval}
         />
-        <ApprovalRecord
-          head="审批记录"
-          info={approvalRecordList}
-          statusType=""
-        />
+        <div className={styles.editWrapper}>
+          <InfoTitle head="审批记录" />
+          <ApproveList data={contractDetail.flowHistory} />
+        </div>
         <div className={styles.cutSpace} />
         <AddClause
           isShow={showAddClauseModal}
-          onAdd={this.handleAddClause}
+          onConfirm={this.handleAddClause}
           onCloseModal={this.handleCloseModal}
+          clauseNameList={clauseNameList}
+          departmentList={cooperDeparment}
+          searchDepartment={searchCooperDeparment}
         />
       </div>
     );

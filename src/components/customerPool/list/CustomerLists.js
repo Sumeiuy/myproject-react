@@ -9,8 +9,11 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { Pagination, Checkbox, message } from 'antd';
 
+import SaleDepartmentFilter from './SaleDepartmentFilter';
+import ServiceManagerFilter from './ServiceManagerFilter';
 import CustomerRow from './CustomerRow';
 import CreateContactModal from './CreateContactModal';
+import Reorder from './Reorder';
 import Loading from '../../../layouts/Loading';
 
 import { fspContainer } from '../../../config';
@@ -81,7 +84,6 @@ export default class CustomerLists extends PureComponent {
     replace: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
     entertype: PropTypes.string.isRequired,
-    custRange: PropTypes.array.isRequired,
     condition: PropTypes.object.isRequired,
     getCustContact: PropTypes.func.isRequired,
     getCustEmail: PropTypes.func.isRequired,
@@ -91,9 +93,19 @@ export default class CustomerLists extends PureComponent {
     custEmail: PropTypes.object.isRequired,
     serviceRecordData: PropTypes.object.isRequired,
     dict: PropTypes.object.isRequired,
-    isSms: PropTypes.bool.isRequired,
+    authority: PropTypes.bool.isRequired,
     custIncomeReqState: PropTypes.bool,
     toggleServiceRecordModal: PropTypes.func.isRequired,
+    reorderValue: PropTypes.object.isRequired,
+    onReorderChange: PropTypes.func.isRequired,
+    collectCustRange: PropTypes.func,
+    custRange: PropTypes.array.isRequired,
+    expandAll: PropTypes.bool,
+    orgId: PropTypes.string,
+    searchServerPersonList: PropTypes.array.isRequired,
+    isLoadingEnd: PropTypes.bool.isRequired,
+    onRequestLoading: PropTypes.func.isRequired,
+    empInfo: PropTypes.object.isRequired,
     isLoadingEnd: PropTypes.bool.isRequired,
     onRequestLoading: PropTypes.func.isRequired,
   }
@@ -105,6 +117,14 @@ export default class CustomerLists extends PureComponent {
     fllowCustData: {},
     followLoading: false,
     custIncomeReqState: false,
+
+    expandAll: false,
+    orgId: null,
+    collectCustRange: () => { },
+  }
+
+  static contextTypes = {
+    getSearchServerPersonList: PropTypes.func,
   }
 
   constructor(props) {
@@ -114,8 +134,6 @@ export default class CustomerLists extends PureComponent {
       currentCustId: '',
       isShowContactModal: false,
       modalKey: `modalKeyCount${modalKeyCount}`,
-      // 判断是否是主服务经理
-      isSms: false,
       isFollows: {},
       currentFollowCustId: '',
       emailCustId: '',
@@ -472,6 +490,58 @@ export default class CustomerLists extends PureComponent {
     });
   }
 
+  // 选服务经理
+  @autobind
+  dropdownSelectedItem(item) {
+    const {
+      location: {
+        query,
+        pathname,
+      },
+      replace,
+    } = this.props;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        ptyMng: `${item.ptyMngName}_${item.ptyMngId}`,
+        curPageNum: 1,
+        selectAll: false,
+        selectedIds: '',
+      },
+    });
+  }
+
+  @autobind
+  dropdownToSearchInfo(value) {
+    // 下拉菜单搜错查询关键字
+    this.context.getSearchServerPersonList(value);
+  }
+
+  // 服务营业部
+  @autobind
+  changeSaleDepartment(state) {
+    const {
+      replace,
+      location: { query, pathname },
+    } = this.props;
+    const { orgId } = state;
+    const obj = {};
+    if (orgId) {
+      obj.orgId = orgId;
+    }
+    replace({
+      pathname,
+      query: {
+        ...query,
+        ...obj,
+        curPageNum: 1,
+        selectAll: false,
+        selectedIds: '',
+      },
+    });
+  }
+
   // 分组只针对服务经理，也就是说：
   // 1、搜素、标签客户池列表：客户列表是“我的客户”时可以添加用户分组
   // 2、业务办理客户池：默认是只显示自己负责客户的，所以可以添加用户分组
@@ -487,7 +557,7 @@ export default class CustomerLists extends PureComponent {
     // const fromBusiness = source === 'business';
     // // 从绩效、搜索和热词进入,通过客户范围切换到我的客户
     // const inMyCustomer = _.includes(tmpArr, source) && orgId && orgId === 'msm';
-    if (this.props.isSms) {
+    if (!this.props.authority) {
       return (<button
         onClick={() => { this.handleClick('/customerPool/customerGroup', '新建分组', 'RCT_FSP_CUSTOMER_LIST'); }}
       >
@@ -524,10 +594,18 @@ export default class CustomerLists extends PureComponent {
       custContactData,
       serviceRecordData,
       dict,
-      isSms,
+      authority,
       custIncomeReqState,
       toggleServiceRecordModal,
+      onReorderChange,
+      reorderValue,
+      custRange,
+      orgId,
+      collectCustRange,
+      expandAll,
       isLoadingEnd,
+      searchServerPersonList,
+      empInfo,
     } = this.props;
     // console.log('1---', this.props)
     // 服务记录执行方式字典
@@ -538,10 +616,8 @@ export default class CustomerLists extends PureComponent {
     const {
       selectedIds = '',
       selectAll,
+      ptyMng,
     } = location.query;
-    if (!custList.length) {
-      return <div className="list-box"><NoData /></div>;
-    }
     // current: 默认第一页
     // pageSize: 默认每页大小10
     // curTotal: 当前列表数据总数
@@ -568,50 +644,99 @@ export default class CustomerLists extends PureComponent {
     const isShow = (!_.isEmpty(selectIdsArr) || isAllSelectBool) ? 'block' : 'none';
     // 已选中的条数：选择全选显示所有数据量，非全选显示选中的条数
     const selectCount = isAllSelectBool ? page.total : selectIdsArr.length;
-    // debugger
-    // console.log('current: ', current, page, selectIdsArr, isAllSelectBool);
+    // 默认服务经理
+    let serviceManagerDefaultValue = `${empInfo.empName}（${empInfo.empNum}）`;
+    if (authority) {
+      if (ptyMng) {
+        serviceManagerDefaultValue = `${ptyMng.split('_')[0]}（${ptyMng.split('_')[1]}）`;
+      } else {
+        serviceManagerDefaultValue = '所有人';
+      }
+    }
+    // 当前所处的orgId
+    let curOrgId = '';
+    if (orgId) {
+      curOrgId = orgId;
+    } else if (authority) {
+      if (document.querySelector(fspContainer.container)) {
+        curOrgId = window.forReactPosition.orgId;
+      }
+    } else {
+      curOrgId = null;
+    }
     return (
       <div className="list-box">
-        <div className={styles.selectAllBox}>
+        <div className={styles.listHeader}>
           <div className="selectAll">
             <Checkbox
               checked={isAllSelectBool}
               onChange={this.selectAll}
+              disabled={_.isEmpty(custList)}
             >
               全选
             </Checkbox>
             <span className="hint">自动选择所有符合条件的客户</span>
           </div>
+          <div className={styles.reorder}>
+            <Reorder
+              value={reorderValue}
+              onChange={onReorderChange}
+            />
+          </div>
+          <div className={styles.reorder}>
+            <div className={styles.selectBox}>
+              <SaleDepartmentFilter
+                orgId={curOrgId}
+                custRange={custRange}
+                updateQueryState={this.changeSaleDepartment}
+                collectData={collectCustRange}
+                expandAll={expandAll}
+              />
+            </div>
+            <div className={styles.selectBox}>
+              <ServiceManagerFilter
+                disable={!authority}
+                searchServerPersonList={searchServerPersonList}
+                serviceManagerDefaultValue={serviceManagerDefaultValue}
+                dropdownSelectedItem={this.dropdownSelectedItem}
+                dropdownToSearchInfo={this.dropdownToSearchInfo}
+              />
+            </div>
+          </div>
         </div>
-        <div className="list-wrapper">
-          {
-            custList.map(
-              item => <CustomerRow
-                isSms={isSms}
-                dict={dict}
-                location={location}
-                getCustIncome={getCustIncome}
-                monthlyProfits={monthlyProfits}
-                listItem={item}
-                q={q}
-                isAllSelect={isAllSelectBool}
-                selectedIds={selectIdsArr}
-                onChange={this.handleSingleSelect}
-                onSendEmail={this.handleSendEmail}
-                onAddFollow={this.handleAddFollow}
-                createContact={this.showCreateContact}
-                key={`${item.empId}-${item.custId}-${item.idNum}-${item.telephone}-${item.asset}`}
-                custEmail={finalEmailData}
-                currentFollowCustId={currentFollowCustId}
-                isFollows={isFollows}
-                emailCustId={emailCustId}
-                custIncomeReqState={custIncomeReqState}
-                toggleServiceRecordModal={toggleServiceRecordModal}
-                formatAsset={formatAsset}
-              />,
-            )
-          }
-        </div>
+        {
+          !_.isEmpty(custList) ?
+            <div className="list-wrapper">
+              {
+                custList.map(
+                  item => <CustomerRow
+                    authority={authority}
+                    dict={dict}
+                    location={location}
+                    getCustIncome={getCustIncome}
+                    monthlyProfits={monthlyProfits}
+                    listItem={item}
+                    q={q}
+                    isAllSelect={isAllSelectBool}
+                    selectedIds={selectIdsArr}
+                    onChange={this.handleSingleSelect}
+                    onSendEmail={this.handleSendEmail}
+                    onAddFollow={this.handleAddFollow}
+                    createContact={this.showCreateContact}
+                    key={`${item.empId}-${item.custId}-${item.idNum}-${item.telephone}-${item.asset}`}
+                    custEmail={finalEmailData}
+                    currentFollowCustId={currentFollowCustId}
+                    isFollows={isFollows}
+                    emailCustId={emailCustId}
+                    custIncomeReqState={custIncomeReqState}
+                    toggleServiceRecordModal={toggleServiceRecordModal}
+                    formatAsset={formatAsset}
+                  />,
+                )
+              }
+            </div>
+            : <NoData />
+        }
         <div className="list-pagination">
           <Pagination
             current={current}
@@ -627,6 +752,7 @@ export default class CustomerLists extends PureComponent {
             checked={isAllSelectBool}
             onChange={this.selectAll}
             className={styles.selectAllTwo}
+            disabled={_.isEmpty(custList)}
           >
             全选
           </Checkbox>

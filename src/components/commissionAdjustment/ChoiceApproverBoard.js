@@ -21,11 +21,13 @@ const tableHeader = [
     dataIndex: 'empNo',
     key: 'empNo',
     title: '工号',
+    width: 120,
   },
   {
     dataIndex: 'empName',
     key: 'empName',
     title: '姓名',
+    width: 120,
   },
   {
     dataIndex: 'belowDept',
@@ -109,10 +111,10 @@ export default class ChoiceApproverBoard extends PureComponent {
         key: 'radio', // 'check'\'delete'\'view'
         title: '',
         radio: approverRadio,
+        width: 60,
       },
       operate: this.handleApproverRadio,
     };
-
     return (
       <CommonModal
         title="选择审批人员"
@@ -142,6 +144,7 @@ export default class ChoiceApproverBoard extends PureComponent {
               titleList={tableHeader}
               operation={operation}
               scroll={{ y: 294 }}
+              size="middle"
             />
           </div>
         </div>

@@ -55,7 +55,7 @@ export default class PerformanceIndicators extends PureComponent {
       title: '客户列表',
     };
     if (document.querySelector(fspContainer.container)) {
-      fspGlobal.openRctTab({ url: `${url}?source=business`, param });
+      fspGlobal.openRctTab({ url: `${url}?source=business&orgId=${window.forReactPosition.orgId}`, param });
     } else {
       this.props.push({
         pathname: url,

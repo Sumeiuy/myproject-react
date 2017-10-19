@@ -1,4 +1,5 @@
 import apiCreator from '../utils/apiCreator';
+import common from './common';
 import report from './report';
 import feedback from './feedback';
 import permission from './permission';
@@ -13,6 +14,8 @@ const api = apiCreator();
 export default {
   // 暴露api上的几个底层方法: get / post
   ...api,
+  // ========= 公用接口
+  common: common(api),
   // ========= 客户资源池
   customerPool: customerPool(api),
   // ========= 绩效视图
@@ -29,7 +32,5 @@ export default {
   commission: commission(api),
   // 全渠道服务记录数据接口api
   fullChannelServiceRecord: fullChannelServiceRecord(api),
-  // 员工职责与职位
-  getEmpInfo: query => api.post('/groovynoauth/fsp/emp/info/queryEmpInfo', query),
 };
 

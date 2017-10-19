@@ -17,6 +17,8 @@ export default {
     serviceRecordModalVisible: false,
     // 服务弹窗对应的客户的经纪客户号
     serviceRecordModalVisibleOfId: '',
+    // 服务弹窗对应的客户的经纪客户名
+    serviceRecordModalVisibleOfName: '',
     empInfo: EMPTY_OBJECT,
     // 列表
     seibleList: EMPTY_OBJECT,
@@ -49,6 +51,7 @@ export default {
     },
     // 获取可申请客户列表
     getCanApplyCustListSuccess(state, action) {
+      console.warn('action', action);
       const { payload: { resultData = EMPTY_OBJECT } } = action;
       const { custList = EMPTY_LIST } = resultData;
       return {
@@ -101,6 +104,7 @@ export default {
         ...state,
         serviceRecordModalVisible: payload.flag,
         serviceRecordModalVisibleOfId: payload.custId,
+        serviceRecordModalVisibleOfName: payload.custName,
       };
     },
     getDictionarySuccess(state, action) {
@@ -138,7 +142,7 @@ export default {
     // 获取字典
     * getDictionary({ payload }, { call, put }) {
       const response = yield call(custApi.getStatisticalPeriod);
-      // console.log('dict', response);
+      console.log('dict00000', response);
       yield put({
         type: 'getDictionarySuccess',
         payload: { response },

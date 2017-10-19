@@ -22,6 +22,8 @@ import {
   filterEmptyToNumber,
   filterEmptyToInteger,
   getServiceIndicatorOfPerformance,
+  businessOpenNumLabelList,
+  linkTo,
 } from './homeIndicators_';
 
 export default class PerformanceIndicators extends PureComponent {
@@ -35,6 +37,48 @@ export default class PerformanceIndicators extends PureComponent {
   static defaultProps = {
     indicators: [],
     cycle: [],
+  }
+
+  @autobind
+  handleBusinessOpenClick(instance) {
+    const {
+      push,
+      cycle,
+      location,
+    } = this.props;
+    instance.on('click', (arg) => {
+      console.log('instance arg >>>>', arg);
+      if (arg.componentType !== 'xAxis') {
+        return;
+      }
+      const param = {
+        source: 'numOfCustOpened',
+        cycle,
+        push,
+        location,
+      };
+      if (arg.value === businessOpenNumLabelList[0]) {
+        param.value = 'ttfCust';
+        param.bname = arg.value;
+        linkTo(param);
+      } else if (arg.value === businessOpenNumLabelList[1]) {
+        param.value = 'shHkCust';
+        param.bname = arg.value;
+        linkTo(param);
+      } else if (arg.value === businessOpenNumLabelList[2]) {
+        param.value = 'rzrqCust';
+        param.bname = arg.value;
+        linkTo(param);
+      } else if (arg.value === businessOpenNumLabelList[3]) {
+        param.value = 'optCust';
+        param.bname = arg.value;
+        linkTo(param);
+      } else if (arg.value === businessOpenNumLabelList[4]) {
+        param.value = 'cyb';
+        param.bname = arg.value;
+        linkTo(param);
+      }
+    });
   }
 
   formatIndicators(indicatorArray) {
@@ -176,6 +220,7 @@ export default class PerformanceIndicators extends PureComponent {
       <Col span={8}>
         <RectFrame dataSource={headLine}>
           <IECharts
+            onReady={this.handleBusinessOpenClick}
             option={items}
             resizable
             style={{
