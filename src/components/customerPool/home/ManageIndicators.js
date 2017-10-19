@@ -5,6 +5,7 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
+import { autobind } from 'core-decorators';
 import { Row, Col } from 'antd';
 import 'echarts-liquidfill';
 import _ from 'lodash';
@@ -24,6 +25,8 @@ import {
   getTradingVolume,
   filterEmptyToInteger,
   filterEmptyToNumber,
+  businessOpenNumLabelList,
+  linkTo,
 } from './homeIndicators_';
 
 export default class PerformanceIndicators extends PureComponent {
@@ -39,6 +42,48 @@ export default class PerformanceIndicators extends PureComponent {
     indicators: {},
     cycle: [],
     hsRate: '',
+  }
+
+  @autobind
+  handleBusinessOpenClick(instance) {
+    const {
+      push,
+      cycle,
+      location,
+    } = this.props;
+    instance.on('click', (arg) => {
+      console.log('instance arg >>>>', arg);
+      if (arg.componentType !== 'xAxis') {
+        return;
+      }
+      const param = {
+        source: 'numOfCustOpened',
+        cycle,
+        push,
+        location,
+      };
+      if (arg.value === businessOpenNumLabelList[0]) {
+        param.value = 'ttfCust';
+        param.bname = arg.value;
+        linkTo(param);
+      } else if (arg.value === businessOpenNumLabelList[1]) {
+        param.value = 'shHkCust';
+        param.bname = arg.value;
+        linkTo(param);
+      } else if (arg.value === businessOpenNumLabelList[2]) {
+        param.value = 'rzrqCust';
+        param.bname = arg.value;
+        linkTo(param);
+      } else if (arg.value === businessOpenNumLabelList[3]) {
+        param.value = 'optCust';
+        param.bname = arg.value;
+        linkTo(param);
+      } else if (arg.value === businessOpenNumLabelList[4]) {
+        param.value = 'cyb';
+        param.bname = arg.value;
+        linkTo(param);
+      }
+    });
   }
 
   render() {
@@ -57,6 +102,7 @@ export default class PerformanceIndicators extends PureComponent {
       purAddCustaset, purRakeGjpdt, tranAmtBasicpdt, tranAmtTotpdt,
       purAddCust, newProdCust, purAddNoretailcust, purAddHighprodcust,
     } = indicators || {};
+
     const isEmpty = _.isEmpty(indicators);
 
     // 新增客户（经营指标）
@@ -144,6 +190,7 @@ export default class PerformanceIndicators extends PureComponent {
                 <RectFrame dataSource={clientHead}>
                   <IfEmpty isEmpty={isEmpty}>
                     <IECharts
+                      onReady={this.handleBusinessOpenClick}
                       option={clientItems}
                       resizable
                       style={{

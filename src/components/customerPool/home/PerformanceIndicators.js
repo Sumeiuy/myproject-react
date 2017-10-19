@@ -23,6 +23,8 @@ import {
   filterEmptyToNumber,
   filterEmptyToInteger,
   getServiceIndicatorOfPerformance,
+  businessOpenNumLabelList,
+  linkTo,
 } from './homeIndicators_';
 
 export function IfEmpty(props) {
@@ -54,6 +56,48 @@ export default class PerformanceIndicators extends PureComponent {
   // 过滤掉假值(false, null, 0, '', undefined, NaN)的数组
   filterFalsityArray(array) {
     return _.isEmpty(_.compact(array)) ? [] : array;
+  }
+
+  @autobind
+  handleBusinessOpenClick(instance) {
+    const {
+      push,
+      cycle,
+      location,
+    } = this.props;
+    instance.on('click', (arg) => {
+      console.log('instance arg >>>>', arg);
+      if (arg.componentType !== 'xAxis') {
+        return;
+      }
+      const param = {
+        source: 'numOfCustOpened',
+        cycle,
+        push,
+        location,
+      };
+      if (arg.value === businessOpenNumLabelList[0]) {
+        param.value = 'ttfCust';
+        param.bname = arg.value;
+        linkTo(param);
+      } else if (arg.value === businessOpenNumLabelList[1]) {
+        param.value = 'shHkCust';
+        param.bname = arg.value;
+        linkTo(param);
+      } else if (arg.value === businessOpenNumLabelList[2]) {
+        param.value = 'rzrqCust';
+        param.bname = arg.value;
+        linkTo(param);
+      } else if (arg.value === businessOpenNumLabelList[3]) {
+        param.value = 'optCust';
+        param.bname = arg.value;
+        linkTo(param);
+      } else if (arg.value === businessOpenNumLabelList[4]) {
+        param.value = 'cyb';
+        param.bname = arg.value;
+        linkTo(param);
+      }
+    });
   }
 
   formatIndicators(indicatorArray) {
@@ -197,6 +241,7 @@ export default class PerformanceIndicators extends PureComponent {
         <RectFrame dataSource={headLine}>
           <IfEmpty isEmpty={_.isEmpty(param.data)}>
             <IECharts
+              onReady={this.handleBusinessOpenClick}
               option={items}
               resizable
               style={{

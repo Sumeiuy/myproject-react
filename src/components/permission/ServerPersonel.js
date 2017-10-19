@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import { message } from 'antd';
 import _ from 'lodash';
 import InfoTitle from '../common/InfoTitle';
 import TableList from '../common/TableList';
@@ -15,6 +16,7 @@ export default class ServerPersonel extends PureComponent {
     onEmitEvent: PropTypes.func,
     type: PropTypes.string.isRequired,
     searchServerPersonList: PropTypes.array,
+    radioName: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -94,7 +96,7 @@ export default class ServerPersonel extends PureComponent {
   @autobind
   dropdownSelectedItem(item) {
     // 下拉菜单添加选中对象
-    this.setState({ addSelectedValue: item });
+    this.setState({ addSelectedValue: { ...item, isMain: 'false' } });
   }
 
   @autobind
@@ -124,7 +126,9 @@ export default class ServerPersonel extends PureComponent {
   @autobind
   removeServerPerson() { // 移除服务人员按钮
     const { removeSelectedValue } = this.state;
-    if (!_.isEmpty(this.state.removeSelectedValue)) {
+    if (removeSelectedValue.isMain === 'true') {
+      message.error('主服务经理不能删除');
+    } else if (!_.isEmpty(this.state.removeSelectedValue)) {
       this.setState(prevState => ({
         serverInfo: prevState.serverInfo.filter(
           item => item.ptyMngId !== removeSelectedValue.ptyMngId,
@@ -147,6 +151,7 @@ export default class ServerPersonel extends PureComponent {
         {this.modifyDom}
         <TableList
           info={this.state.serverInfo}
+          radioName={this.props.radioName}
           statusType={this.props.statusType}
           selectValue={this.state.removeSelectedValue}
           onEmitUpdateValue={this.updateRadioValue}

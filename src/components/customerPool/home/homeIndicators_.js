@@ -103,11 +103,14 @@ export function getProductSale({
   return getProgressDataSource(param);
 }
 
+// 首页经营业绩和投顾业绩柱状图label 数组
+export const businessOpenNumLabelList = ['天天发', '港股通', '两融', '期权', '创业版'];
+
 // 经营指标的开通业务数
 // 一柱多彩
 export function getClientsNumber({
   clientNumberData,
-  names = ['天天发', '港股通', '两融', '期权', '创业版'],
+  names = businessOpenNumLabelList,
   colourfulIndex,
   colourfulData,
   colourfulTotalNumber,
@@ -132,6 +135,7 @@ export function getClientsNumber({
     xAxis: [
       {
         data: names,
+        type: 'category',
         axisTick: { show: false },
         axisLabel: {
           interval: 0,
@@ -140,12 +144,14 @@ export function getClientsNumber({
           fontSize: 12,
           color: '#666666',
           showMinLabel: true,
+          clickable: true,
         },
         axisLine: {
           lineStyle: {
             color: '#999',
           },
         },
+        triggerEvent: true,
       },
     ],
     yAxis: [{ show: false }],
@@ -297,14 +303,14 @@ export function getHSRate(array) {
   };
 }
 
-export function linkTo({ value, bname, cycle, push, location }) {
+export function linkTo({ source, value, bname, cycle, push, location }) {
   if (_.isEmpty(location)) {
     return;
   }
   const { query: { orgId, cycleSelect } } = location;
   const pathname = '/customerPool/list';
   const obj = {
-    source: 'numOfCustOpened',
+    source,
     rightType: value,
     bname: encodeURIComponent(bname),
     orgId: orgId || '',
@@ -317,7 +323,7 @@ export function linkTo({ value, bname, cycle, push, location }) {
       forceRefresh: true,
       isSpecialTab: true,
       id: 'RCT_FSP_CUSTOMER_LIST',
-      title: '目标客户',
+      title: '客户列表',
     };
     fspGlobal.openRctTab({ url, param });
   } else {

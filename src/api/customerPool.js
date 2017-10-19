@@ -13,6 +13,9 @@ export default function customerPool(api) {
     // 获取组织机构树完整版
     getCustRangeAll: query => api.post('/groovynoauth/fsp/emp/org/queryEmpOrgTree', query),
 
+    // 按权限获取组织机构树
+    getCustRangeByAuthority: query => api.post('/groovynoauth/fsp/emp/org/queryEmpPostnsOrgTree', query),
+
     // 员工职责与职位
     getEmpInfo: query => api.post('/groovynoauth/fsp/emp/info/queryEmpInfo', query),
 
@@ -95,6 +98,11 @@ export default function customerPool(api) {
     deleteCustomerFromGroup: query => api.post('/groovynoauth/fsp/cust/custgroup/operateCust', query),
 
     // 360服务记录查询
+    queryServeRecords: query => api.post('/groovynoauth/fsp/cust/task/queryServeRecords', query),
+
+    // 查询某客户的服务人员待选择列表
+    getSearchServerPersonelList: query => api.post('/groovynoauth/fsp/biz/privateCustApplication/queryEmpList', query),
+
     queryAllServiceRecord: query => api.post('/groovynoauth/fsp/cust/custlist/queryAllServiceRecord', query),
 
     // 标签圈人查询

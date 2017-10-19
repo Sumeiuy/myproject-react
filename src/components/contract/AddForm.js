@@ -2,8 +2,8 @@
 * @Description: 合作合约新建 页面
 * @Author: XuWenKang
 * @Date:   2017-09-21 15:17:50
-* @Last Modified by:   XuWenKang
-* @Last Modified time: 2017-09-27 18:07:16
+ * @Last Modified by: XuWenKang
+ * @Last Modified time: 2017-10-11 14:06:01
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -14,34 +14,21 @@ import BaseInfoAdd from './BaseInfoAdd';
 import UploadFile from './UploadFile';
 import InfoTitle from '../common/InfoTitle';
 import CommonTable from '../common/biz/CommonTable';
+import Button from '../common/Button';
+import AddClause from './AddClause';
 
+import { seibelConfig } from '../../config';
 import styles from './addForm.less';
-
+// 操作类型列表
+const { contract: { operationList } } = seibelConfig;
+// 订购的类型
+const subscribe = operationList[0].value;
+// 合约条款的表头
+const { contract: { titleList } } = seibelConfig;
 const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
 const BOOL_TRUE = true;
-const titleList = [
-  {
-    dataIndex: 'termsName',
-    key: 'termsName',
-    title: '条款名称',
-  },
-  {
-    dataIndex: 'paraName',
-    key: 'paraName',
-    title: '明细参数',
-  },
-  {
-    dataIndex: 'paraVal',
-    key: 'paraVal',
-    title: '值',
-  },
-  {
-    dataIndex: 'divName',
-    key: 'divName',
-    title: '合作部门',
-  },
-];
+
 export default class AddForm extends PureComponent {
   static propTypes = {
     // 客户列表
@@ -57,6 +44,11 @@ export default class AddForm extends PureComponent {
     contractNumList: PropTypes.array.isRequired,
     // 合约详情
     contractDetail: PropTypes.object,
+    // 条款名称列表
+    clauseNameList: PropTypes.array.isRequired,
+    // 合作部门列表
+    searchCooperDeparment: PropTypes.func.isRequired,
+    cooperDeparment: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -71,6 +63,10 @@ export default class AddForm extends PureComponent {
         attachment: '',
         terms: [],
       },
+      // 是否显示添加合约条款组件
+      showAddClauseModal: false,
+      // 操作类型
+      operationType: subscribe,
     };
   }
 
@@ -85,6 +81,7 @@ export default class AddForm extends PureComponent {
     const { formData } = this.state;
     this.setState({
       ...this.state,
+      operationType: data.operation,
       formData: Object.assign(formData, data),
     }, () => {
       this.props.onChangeForm(this.state.formData);
@@ -128,6 +125,50 @@ export default class AddForm extends PureComponent {
     });
   }
 
+  // 显示添加条款组件
+  @autobind
+  handleShowAddClause() {
+    this.setState({
+      ...this.state,
+      showAddClauseModal: true,
+    });
+  }
+
+  // 关闭添加条款组件
+  @autobind
+  handleCloseModal() {
+    this.setState({
+      ...this.state,
+      showAddClauseModal: false,
+    });
+  }
+
+  // 添加合约条款
+  @autobind
+  handleAddClause(clauseData) {
+    const { formData: { terms } } = this.state;
+    const termItem = {
+      termsName: clauseData.termsName.termVal, // 条款名称
+      termsVal: clauseData.termsName.value, // 条款code
+      paraName: clauseData.paraName.val, // 明细参数名称
+      paraValue: clauseData.paraName.value, // 明细参数code
+      paraVal: clauseData.paraVal, // 值
+      divName: clauseData.divName.name, // 合作部门名称
+      divValue: clauseData.value, // 合作部门code
+    };
+    console.log('添加合约条款', clauseData, terms);
+    this.setState({
+      ...this.state,
+      formData: {
+        ...this.state.formData,
+        terms: [...terms, termItem],
+      },
+    }, () => {
+      this.props.onChangeForm(this.state.formData);
+      this.handleCloseModal();
+    });
+  }
+
   // 子组件更改操作类型 重置所有数据
   @autobind
   handleReset() {
@@ -142,8 +183,22 @@ export default class AddForm extends PureComponent {
   }
 
   render() {
-    const { custList, contractDetail, contractNumList } = this.props;
-    const { formData } = this.state;
+    const {
+      custList,
+      contractDetail,
+      contractNumList,
+      clauseNameList,
+      cooperDeparment,
+      searchCooperDeparment,
+    } = this.props;
+    const { formData, showAddClauseModal, operationType } = this.state;
+    const buttonProps = {
+      type: 'primary',
+      size: 'large',
+      className: styles.addClauseButton,
+      ghost: true,
+      onClick: this.handleShowAddClause,
+    };
     return (
       <div className={styles.editComponent}>
         <BaseInfoAdd
@@ -161,6 +216,12 @@ export default class AddForm extends PureComponent {
         />
         <div className={styles.editWrapper}>
           <InfoTitle head="合约条款" />
+          {
+            operationType === subscribe ?
+              <Button {...buttonProps}>新建</Button>
+            :
+            null
+          }
           <CommonTable
             data={formData.terms}
             titleList={titleList}
@@ -173,6 +234,14 @@ export default class AddForm extends PureComponent {
           uploadAttachment={this.handleUploadSuccess}
         />
         <div className={styles.cutSpace} />
+        <AddClause
+          isShow={showAddClauseModal}
+          onConfirm={this.handleAddClause}
+          onCloseModal={this.handleCloseModal}
+          clauseNameList={clauseNameList}
+          departmentList={cooperDeparment}
+          searchDepartment={searchCooperDeparment}
+        />
       </div>
     );
   }
