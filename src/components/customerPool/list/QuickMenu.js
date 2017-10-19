@@ -18,7 +18,6 @@ let hrefUrl = '';
 export default class QuickMenu extends PureComponent {
 
   static propTypes = {
-    authority: PropTypes.bool.isRequired,
     listItem: PropTypes.object.isRequired,
     createModal: PropTypes.func.isRequired,
     toggleServiceRecordModal: PropTypes.func.isRequired,
@@ -97,7 +96,6 @@ export default class QuickMenu extends PureComponent {
 
   render() {
     const {
-      authority,
       listItem,
       createModal,
       toggleServiceRecordModal,
@@ -108,9 +106,6 @@ export default class QuickMenu extends PureComponent {
     const {
       addressEmail,
     } = this.state;
-    if (authority) {
-      return null;
-    }
     const isFollow = (currentFollowCustId === listItem.custId && isFollows[currentFollowCustId])
       || isFollows[listItem.custId];
     return (

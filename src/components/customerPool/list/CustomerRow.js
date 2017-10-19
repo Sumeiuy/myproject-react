@@ -113,7 +113,6 @@ export default class CustomerRow extends PureComponent {
     onAddFollow: PropTypes.func.isRequired,
     dict: PropTypes.object.isRequired,
     createContact: PropTypes.func.isRequired,
-    authority: PropTypes.bool.isRequired,
     custEmail: PropTypes.object.isRequired,
     currentFollowCustId: PropTypes.string.isRequired,
     emailCustId: PropTypes.string.isRequired,
@@ -121,6 +120,7 @@ export default class CustomerRow extends PureComponent {
     custIncomeReqState: PropTypes.bool.isRequired,
     toggleServiceRecordModal: PropTypes.func.isRequired,
     formatAsset: PropTypes.func.isRequired,
+    mainServiceManager: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -191,7 +191,6 @@ export default class CustomerRow extends PureComponent {
 
   render() {
     const { q, listItem, monthlyProfits, isAllSelect, selectedIds,
-      authority,
       onAddFollow,
       currentFollowCustId,
       isFollows,
@@ -204,6 +203,7 @@ export default class CustomerRow extends PureComponent {
       location,
       dict,
       formatAsset,
+      mainServiceManager,
     } = this.props;
     const rskLev = _.trim(listItem.riskLvl);
     const str = `${listItem.custId}.${listItem.name}`;
@@ -229,18 +229,20 @@ export default class CustomerRow extends PureComponent {
       <div
         className={styles.customerRow}
       >
-        <QuickMenu
-          authority={authority}
-          listItem={listItem}
-          createModal={this.createModal}
-          toggleServiceRecordModal={toggleServiceRecordModal}
-          custEmail={custEmail}
-          emailCustId={emailCustId}
-          onSendEmail={onSendEmail}
-          currentFollowCustId={currentFollowCustId}
-          isFollows={isFollows}
-          onAddFollow={onAddFollow}
-        />
+        {
+          mainServiceManager ?
+            <QuickMenu
+              listItem={listItem}
+              createModal={this.createModal}
+              toggleServiceRecordModal={toggleServiceRecordModal}
+              custEmail={custEmail}
+              emailCustId={emailCustId}
+              onSendEmail={onSendEmail}
+              currentFollowCustId={currentFollowCustId}
+              isFollows={isFollows}
+              onAddFollow={onAddFollow}
+            /> : null
+        }
         <div className={styles.selectIcon}>
           <Checkbox
             disabled={isAllSelect}

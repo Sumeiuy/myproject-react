@@ -96,17 +96,19 @@ export default class CreateServiceRecord extends PureComponent {
     this.subFeedBackType = generateSubType(custFeedBackDict);
     // 当前日期的时间戳
     const currentDate = new Date().getTime();
+    const serviceType = (serviceTypeTree[0] || {}).key;
+    const feedbackType = custFeedBackDict[0].key;
     this.state = {
-      serviceWay: serveWay[0].key,
-      serviceType: serviceTypeTree[0].key,
-      serviceTypeChild: (this.subServiceType[serviceTypeTree[0].key][0] || {}).key,
-      serviceTypeChildArr: this.subServiceType[serviceTypeTree[0].key],
+      serviceWay: (serveWay[0] || {}).key,
+      serviceType,
+      serviceTypeChild: (this.subServiceType[serviceType][0] || {}).key,
+      serviceTypeChildArr: this.subServiceType[serviceType],
       serviceDate: moment(currentDate).format(dateFormat),
       serviceTime: moment(currentDate).format(timeFormat),
       feedbackDate: moment(currentDate).format(dateFormat),
-      feedbackType: custFeedBackDict[0].key,
-      feedbackTypeChild: (this.subFeedBackType[custFeedBackDict[0].key][0] || {}).value,
-      feedbackTypeChildArr: this.subFeedBackType[custFeedBackDict[0].key],
+      feedbackType,
+      feedbackTypeChild: (this.subFeedBackType[feedbackType][0] || {}).value,
+      feedbackTypeChildArr: this.subFeedBackType[feedbackType],
     };
   }
 
