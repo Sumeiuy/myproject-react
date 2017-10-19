@@ -17,6 +17,7 @@ import CustomerTotal from '../../components/customerPool/list/CustomerTotal';
 import Filter from '../../components/customerPool/list/Filter';
 import CustomerLists from '../../components/customerPool/list/CustomerLists';
 import { fspContainer } from '../../config';
+import { permission } from '../../utils';
 
 import styles from './customerlist.less';
 
@@ -178,9 +179,9 @@ export default class CustomerList extends PureComponent {
       cycleSelect: '',
       // 初始化没有loading
       isLoadingEnd: true,
-      // 是否有首页指标查询权限
-      authority: false,
     };
+    // 首页指标查询权限
+    this.authority = permission.hasIndexViewPermission();
   }
 
   getChildContext() {
@@ -201,14 +202,7 @@ export default class CustomerList extends PureComponent {
       empInfo: { empRespList = EMPTY_LIST },
       // location: { query: { source } },
     } = this.props;
-    const respIdOfPosition = _.findIndex(empRespList, item => (item.respId === HTSC_RESPID));
-    if (respIdOfPosition >= 0) {
-      this.setState({ // eslint-disable-line
-        authority: true,
-      });
-    }
-    // 生成组织机构树
-    // this.generateCustRange(this.props);
+    
     // 请求客户列表
     this.getCustomerList(this.props);
   }
@@ -312,7 +306,7 @@ export default class CustomerList extends PureComponent {
       }
       // 我的客户 和 没有权限时，custType=1,其余情况custType=3
       param.custType = CUST_MANAGER;
-      if (this.state.authority || query.ptyMngId !== empNum) {
+      if (this.authority || query.ptyMngId !== empNum) {
         param.custType = ORG;
       }
     }
@@ -342,10 +336,10 @@ export default class CustomerList extends PureComponent {
       }
     }
     // 服务经理ptyMngId
-    if (!this.state.authority) {
+    if (!this.authority) {
       param.ptyMngId = empNum;
     }
-    if (this.state.authority && query.ptyMng) {
+    if (query.ptyMng) {
       param.ptyMngId = query.ptyMng.split('_')[1];
     }
     // 过滤数组
@@ -540,7 +534,7 @@ export default class CustomerList extends PureComponent {
     if (sortType && sortDirection) {
       reorderValue = { sortType, sortDirection };
     }
-    const { expandAll, createCustRange, queryParam, authority, isLoadingEnd } = this.state;
+    const { expandAll, createCustRange, queryParam, isLoadingEnd } = this.state;
     const custRangeProps = {
       orgId,
       custRange: serviceDepartment,
@@ -575,7 +569,7 @@ export default class CustomerList extends PureComponent {
           onFilterChange={this.filterChange}
         />
         <CustomerLists
-          authority={authority}
+          authority={this.authority}
           dict={dict}
           empInfo={empInfo}
           condition={queryParam}
