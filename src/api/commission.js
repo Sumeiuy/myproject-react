@@ -19,10 +19,22 @@ export default function commission(api) {
     // 提交批量佣金调整
     submitBatchCommission: query => api.post('/groovynoauth/fsp/biz/chgcommsion/saveBatchJustCommionInfo', query),
     // 查询咨询订阅/退订详情接口
-    queryConsultSubscribeDetail: query => api.post('/groovynoauth/fsp/biz/mailsubscription/saveMailSubscriptionInfo', query),
+    queryConsultDetail: query => api.post('/groovynoauth/fsp/biz/mailsubscription/saveMailSubscriptionInfo', query),
     // 获取附件信息
     getAttachment: query => api.post('/file/ceFileList', query),
     // 根据用户输入的数值查询目标股基佣金率的码值
     queryGJCommissionRate: query => api.post('/groovynoauth/fsp/biz/chgcommsion/querySingelCommionJustRate', query),
+    // 查询客户可以订阅的资讯产品
+    queryConsultSubscribeProductList: query => api.post('/groovynoauth/fsp/biz/mailsubscription/queryMailSubscriptionProds', query),
+    // 查询客户可以退订的资讯服务
+    queryConsultUnSubProductList: query => api.post('/groovynoauth/fsp/biz/mailsubscription/queryMailUnsubscriptionProds', query),
+    // 新增资讯订阅申请或者资讯退订
+    newConsultApply: query => api.post('/groovynoauth/fsp/biz/mailsubscription/saveMailSubscriptionInfo', query),
+    // 查询单佣金调整中的产品列表信息
+    querySingleCommissionProductList: query => api.post('/groovynoauth/fsp/biz/chgcommsion/queryProDuctInfo', query),
+    // 查询用户选择的产品三匹配信息
+    queryThreeMatchInfo: query => api.post('/groovynoauth/fsp/biz/chgcommsion/queryThreeMatchInfo', query),
+    // 单佣金调整中的其他佣金费率选项
+    queryOtherCommissionOptions: query => api.post('/groovynoauth/fsp/biz/chgcommsion/querySingelCommionJustRate', query),
   };
 }

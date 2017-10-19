@@ -201,7 +201,6 @@ export default class Singlecommissiondetail extends PureComponent {
     const { data, location: { query: { currentId = '' } } } = this.props;
     const {
       custList = [],
-      businessType,
       comments,
       divisionName,
       createdByName,
@@ -242,7 +241,7 @@ export default class Singlecommissiondetail extends PureComponent {
             <div className={styles.modContent}>
               <ul className={styles.propertyList}>
                 <li className={styles.item}>
-                  <InfoItem label="子类型" value={businessType} />
+                  <InfoItem label="子类型" value="佣金调整" />
                 </li>
                 <li className={styles.item}>
                   <InfoItem label="备注" value={comments} />
