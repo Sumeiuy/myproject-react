@@ -4,7 +4,7 @@
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by:   XuWenKang
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-13 16:03:06
+ * @Last Modified time: 2017-10-19 15:36:08
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
@@ -32,7 +32,7 @@ const EMPTY_OBJECT = {};
 // 退订的类型
 const unsubscribe = '2';
 const OMIT_ARRAY = ['isResetPageNum', 'currentId'];
-const { contract, contract: { pageType, subType, status } } = seibelConfig;
+const { contract, contract: { pageType, subType, operationList, status } } = seibelConfig;
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
   payload: query || {},
@@ -75,6 +75,8 @@ const mapStateToProps = state => ({
   addFlowStepInfo: state.contract.addFlowStepInfo,
   doApprove: state.contract.doApprove,
   unsubFlowStepInfo: state.contract.unsubFlowStepInfo,
+  // 登陆人信息
+  empInfo: state.app.empInfo,
 });
 
 const mapDispatchToProps = {
@@ -168,6 +170,8 @@ export default class Contract extends PureComponent {
     // 审批接口
     postDoApprove: PropTypes.func.isRequired,
     doApprove: PropTypes.object,
+    // 登陆人信息
+    empInfo: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -279,7 +283,6 @@ export default class Contract extends PureComponent {
 
     // 获取到新建订购时的按钮
     if (!_.isEqual(preAFSI, nextAFSI)) {
-      console.warn('获取到订购时的按钮');
       // 获取到 flowStepInfo
       const list = nextAFSI.flowButtons;
       this.setState({
@@ -294,7 +297,6 @@ export default class Contract extends PureComponent {
     }
     // 获取到新建退订时的按钮
     if (!_.isEqual(preUFSI, nextUFSI)) {
-      console.warn('获取到退订时的按钮');
       const list = nextUFSI.flowButtons;
       this.setState({
         unsubFlowStepInfo: nextUFSI,
@@ -317,7 +319,6 @@ export default class Contract extends PureComponent {
         const item = _.filter(seibleList.resultData, o => String(o.id) === String(currentId));
         // 表示左侧列表获取完毕
         // 因此此时获取Detail
-        console.warn('获取详情', item);
         getBaseInfo({
           flowId: item[0].flowId,
           id: '',
@@ -343,7 +344,6 @@ export default class Contract extends PureComponent {
   // 上传成功后回调
   @autobind
   onUploadComplete(formData) {
-    console.warn('上传成功后的数据', formData);
     this.setState({
       ...this.state,
       contractFormData: formData,
@@ -408,7 +408,6 @@ export default class Contract extends PureComponent {
   // 接收AddForm数据
   @autobind
   handleChangeContractForm(formData) {
-    console.warn('接收AddForm数据', formData);
     this.setState({
       ...this.state,
       contractFormData: {
@@ -430,7 +429,6 @@ export default class Contract extends PureComponent {
   @autobind
   saveContractData(itemBtn) {
     const { contractFormData, editFormModal } = this.state;
-    console.warn('保存数据', contractFormData);
     if (!contractFormData.subType) {
       message.error('请选择子类型');
       return;
@@ -447,7 +445,6 @@ export default class Contract extends PureComponent {
         if (!contractFormData.contractNum.flowId) {
           message.error('请选择合约编号');
         }
-        console.log('退订', contractFormData);
         // const condition = {
         //   flowId: contractFormData.contractNum.flowId,
         //   auditors: '',
@@ -532,7 +529,6 @@ export default class Contract extends PureComponent {
   @autobind
   handleCreateBtnClick() {
     const { addFlowStepInfo } = this.props;
-    console.warn('addFlowStepInfo', addFlowStepInfo);
     if (_.isEmpty(addFlowStepInfo)) {
       this.props.getFlowStepInfo({
         operate: 1,
@@ -566,7 +562,6 @@ export default class Contract extends PureComponent {
 
   @autobind
   closeModal(modalKey) {
-    console.warn('点击了关闭弹窗', modalKey);
     this.setState({
       [modalKey]: false,
     }, () => {
@@ -587,7 +582,6 @@ export default class Contract extends PureComponent {
   // 弹窗底部按钮事件
   @autobind
   footerBtnHandle(item) {
-    console.warn('item', item);
     this.saveContractData(item);
   }
 
@@ -601,7 +595,6 @@ export default class Contract extends PureComponent {
     } else {
       list = flowStepInfo.flowButtons;
     }
-    console.warn('设定 addOrEditSelfBtnGroup', this.state.addOrEditSelfBtnGroup);
     this.setState({
       addOrEditSelfBtnGroup: <BottonGroup
         list={list}
@@ -626,6 +619,7 @@ export default class Contract extends PureComponent {
       flowStepInfo,
       addFlowStepInfo,
       getFlowStepInfo,
+      empInfo,
     } = this.props;
     const {
       addFormModal,
@@ -651,6 +645,9 @@ export default class Contract extends PureComponent {
         customerList={customerList}
         custRange={custRange}
         creatSeibelModal={this.handleCreateBtnClick}
+        operateOptions={operationList}
+        needOperate
+        empInfo={empInfo}
       />
     );
 
@@ -674,28 +671,6 @@ export default class Contract extends PureComponent {
         showEditModal={this.handleShowEditForm}
       />
     );
-    // 新建弹窗下的按钮
-    /* const addSelfBtnGroup = (<BottonGroup
-      list={addFlowStepInfo.flowButtons}
-      onEmitEvent={this.footerBtnHandle}
-    />);
-    const unsubSelfBtnGroup = (<BottonGroup
-      list={unsubFlowStepInfo.flowButtons}
-      onEmitEvent={this.footerBtnHandle}
-    />); */
-    /* let addOrEditSelfBtnGroup;
-    console.warn('unsubFlowStepInfo', unsubFlowStepInfo);
-    if (unsubFlowStepInfo) {
-      addOrEditSelfBtnGroup = (<BottonGroup
-        list={unsubFlowStepInfo.flowButtons}
-        onEmitEvent={this.footerBtnHandle}
-      />);
-    } else {
-      addOrEditSelfBtnGroup = (<BottonGroup
-        list={addFlowStepInfo.flowButtons}
-        onEmitEvent={this.footerBtnHandle}
-      />);
-    } */
     // 新建表单props
     const addFormProps = {
       // 合约编号

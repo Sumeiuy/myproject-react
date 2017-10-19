@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 15:02:49
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-09-29 21:39:36
+ * @Last Modified time: 2017-10-18 16:15:57
  */
 /**
  * 常用说明
@@ -65,6 +65,7 @@ export default class CommonUpload extends PureComponent {
     attachment: PropTypes.string,
     attachmentList: PropTypes.array,
     edit: PropTypes.bool,
+    needDefaultText: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -73,6 +74,7 @@ export default class CommonUpload extends PureComponent {
     attachment: '',
     attachmentList: [],
     edit: false,
+    needDefaultText: true,
   }
 
   constructor(props) {
@@ -90,8 +92,11 @@ export default class CommonUpload extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
+    console.warn('componentWillReceiveProps 的 nextProps', nextProps);
     const props = this.props;
     if (!_.isEqual(props, nextProps)) {
+      console.warn('新旧 props 不一样的 props', this.props);
+      console.warn('新旧 props 不一样的 nextProps', nextProps);
       const { attachmentList = EMPTY_LIST, attachment = '' } = nextProps;
       this.setState({
         fileList: attachmentList, // 文件列表
@@ -154,7 +159,7 @@ export default class CommonUpload extends PureComponent {
       status,
       statusText,
     } = this.state;
-    const { edit } = this.props;
+    const { edit, needDefaultText } = this.props;
     const uploadProps = {
       data: {
         empId,
@@ -166,89 +171,98 @@ export default class CommonUpload extends PureComponent {
       showUploadList: false,
       fileList,
     };
-    return (
-      <div className={`${styles.fileListMain} fileListMain`}>
+
+    let fileListElement;
+    if (fileList && fileList.length) {
+      fileListElement = (
         <div className={styles.fileList}>
-          { /* 判断是否有 fileList */ }
-          {
-            (fileList && fileList.length) ?
-              <Row>
-                {
-                  fileList.map((item, index) => {
-                    const fileName = item.name.substring(0, item.name.lastIndexOf('.'));
-                    const popoverHtml = (
-                      <div>
-                        <p title={fileName}>
-                          <Icon type="fujian1" />
+          <Row>
+            {
+              fileList.map((item, index) => {
+                const fileName = item.name.substring(0, item.name.lastIndexOf('.'));
+                const popoverHtml = (
+                  <div>
+                    <p title={fileName}>
+                      <Icon type="fujian1" />
+                      {fileName}
+                    </p>
+                    <p>
+                      上传人：{item.creator}
+                      <span className="fileListItemSize">大小：{`${item.size} kb`}</span>
+                    </p>
+                    <p>
+                      上传于：{moment(item.lastModified).format('YYYY-MM-DD')}
+                      <span>
+                        {
+                          edit ?
+                            <em>
+                              <Icon type="shanchu" onClick={() => this.onRemove(item.attachId)} />
+                            </em>
+                          :
+                            null
+                        }
+                        <em>
+                          <a href={`${request.prefix}/file/ceFileDownload?attachId=${item.attachId}&empId=${empId}&filename=${item.name}`}>
+                            <Icon type="xiazai1" />
+                          </a>
+                        </em>
+                      </span>
+                    </p>
+                  </div>
+                );
+                return (
+                  <Col
+                    span={8}
+                    key={item.attachId}
+                  >
+                    <div className={styles.fileItem}>
+                      <Popover
+                        placement="right"
+                        content={popoverHtml}
+                        trigger="hover"
+                        getPopupContainer={this.findFileListNode}
+                      >
+                        <p className={styles.fileItemText} title={fileName}>
+                          <Icon type="fujian" />
                           {fileName}
                         </p>
-                        <p>
-                          上传人：{item.creator}
-                          <span className="fileListItemSize">大小：{`${item.size} kb`}</span>
-                        </p>
-                        <p>
-                          上传于：{moment(item.lastModified).format('YYYY-MM-DD')}
-                          <span>
-                            {
-                              edit ?
-                                <em>
-                                  <Icon type="shanchu" onClick={() => this.onRemove(item.attachId)} />
-                                </em>
-                              :
-                                null
-                            }
-                            <em>
-                              <a href={`${request.prefix}/file/ceFileDownload?attachId=${item.attachId}&empId=${empId}&filename=${item.name}`}>
-                                <Icon type="xiazai1" />
-                              </a>
-                            </em>
-                          </span>
-                        </p>
-                      </div>
-                    );
-                    return (
-                      <Col
-                        span={8}
-                        key={item.attachId}
+                      </Popover>
+                      <Popover
+                        placement="bottom"
+                        content={statusText}
+                        trigger="hover"
                       >
-                        <div className={styles.fileItem}>
-                          <Popover
-                            placement="right"
-                            content={popoverHtml}
-                            trigger="hover"
-                            getPopupContainer={this.findFileListNode}
-                          >
-                            <p className={styles.fileItemText} title={fileName}>
-                              <Icon type="fujian" />
-                              {fileName}
-                            </p>
-                          </Popover>
-                          <Popover
-                            placement="bottom"
-                            content={statusText}
-                            trigger="hover"
-                          >
-                            {
-                              (index === fileList.length - 1 && Number(percent) !== 0) ?
-                                <Progress
-                                  percent={Number(percent).toFixed(0)}
-                                  strokeWidth={4}
-                                  status={status}
-                                />
-                              :
-                                null
-                            }
-                          </Popover>
-                        </div>
-                      </Col>
-                    );
-                  })
-                }
-              </Row>
-            :
-              <div className={styles.noFile}>暂无附件</div>
-          }
+                        {
+                          (index === fileList.length - 1 && Number(percent) !== 0) ?
+                            <Progress
+                              percent={Number.parseInt(percent, 10)}
+                              strokeWidth={4}
+                              status={status}
+                            />
+                          :
+                            null
+                        }
+                      </Popover>
+                    </div>
+                  </Col>
+                );
+              })
+            }
+          </Row>
         </div>
+      );
+    } else if (needDefaultText) {
+      fileListElement = (
+        <div className={styles.fileList}>
+          <div className={styles.noFile}>暂无附件</div>
+        </div>
+      );
+    } else {
+      fileListElement = null;
+    }
+    return (
+      <div className={`${styles.fileListMain} fileListMain`}>
+        { fileListElement }
         {
           edit ?
             <Upload {...uploadProps} {...this.props}>

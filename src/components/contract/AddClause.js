@@ -2,8 +2,8 @@
 * @Description: 新建合约条款 弹层
 * @Author: XuWenKang
 * @Date:   2017-09-27 17:10:08
- * @Last Modified by:   XuWenKang
- * @Last Modified time: 2017-10-12 10:23:07
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2017-10-19 15:31:44
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -162,6 +162,10 @@ export default class EditForm extends PureComponent {
       value: '',
       department: EMPTY_OBJECT,
       detailParamList: EMPTY_ARRAY,
+    }, () => {
+      if (this.selectDivComponent) {
+        this.selectDivComponent.clearValue();
+      }
     });
   }
 
@@ -235,6 +239,7 @@ export default class EditForm extends PureComponent {
                 emitSelectItem={this.handleSelectDepartment}
                 emitToSearch={this.handleSearchDepartment}
                 boxStyle={dropDownSelectBoxStyle}
+                ref={selectDivComponent => this.selectDivComponent = selectDivComponent}
               />
             </div>
           </div>

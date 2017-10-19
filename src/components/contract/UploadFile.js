@@ -3,7 +3,7 @@
 * @Author: XuWenKang
 * @Date:   2017-09-26 10:51:52
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-12 11:14:39
+ * @Last Modified time: 2017-10-18 14:39:49
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -36,6 +36,7 @@ export default class UploadFile extends PureComponent {
           edit={edit}
           uploadAttachment={uploadAttachment}
           attachment={attachment}
+          needDefaultText={false}
         />
       </div>
     );

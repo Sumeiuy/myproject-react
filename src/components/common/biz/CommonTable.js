@@ -2,8 +2,8 @@
  * @Description: 公用的表格组件
  * @Author: LiuJianShu
  * @Date: 2017-09-19 14:27:39
- * @Last Modified by:   XuWenKang
- * @Last Modified time: 2017-10-11 15:52:47
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2017-10-19 15:03:39
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -35,7 +35,7 @@ export default class CommonTable extends PureComponent {
         case 'delete':
           operation.column.render = (text, record, index) => (
             <span key={`delete-${record.key}`}>
-              <Icon type="close" onClick={() => operation.operate(record, index)} />
+              <Icon type="shanchu" onClick={() => operation.operate(record, index)} />
             </span>
           );
           newTitleList.push(operation.column);
