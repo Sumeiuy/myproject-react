@@ -291,7 +291,6 @@ export default class CustomerSegment extends PureComponent {
                   // 列的总宽度加上固定列的宽度
                   scrollX={scrollX}
                   columnWidth={COLUMN_WIDTH}
-                  isFirstColumnLink={false}
                   bordered
                 />
               }
