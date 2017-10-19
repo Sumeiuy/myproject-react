@@ -106,8 +106,6 @@ export default class CustomerLists extends PureComponent {
     isLoadingEnd: PropTypes.bool.isRequired,
     onRequestLoading: PropTypes.func.isRequired,
     empInfo: PropTypes.object.isRequired,
-    isLoadingEnd: PropTypes.bool.isRequired,
-    onRequestLoading: PropTypes.func.isRequired,
   }
 
   static defaultProps = {

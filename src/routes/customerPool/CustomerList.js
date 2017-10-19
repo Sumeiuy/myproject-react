@@ -27,7 +27,8 @@ const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const CUR_PAGE = 1; // 默认当前页
 const CUR_PAGESIZE = 10; // 默认页大小
-const HTSC_RESPID = '1-46IDNZI'; // 首页指标查询
+// const HTSC_RESPID = '1-46IDNZI'; // 首页指标查询
+// 根据不同的url中source的值，传给后端enterType值不同
 const ENTER_TYPE = {
   search: 'searchCustPool',
   tag: 'searchCustPool',
@@ -198,11 +199,6 @@ export default class CustomerList extends PureComponent {
   }
 
   componentDidMount() {
-    const {
-      empInfo: { empRespList = EMPTY_LIST },
-      // location: { query: { source } },
-    } = this.props;
-    
     // 请求客户列表
     this.getCustomerList(this.props);
   }
@@ -213,7 +209,6 @@ export default class CustomerList extends PureComponent {
       location: {
         query: preQuery,
       },
-      empInfo: { empRespList: PreEmpRespList },
       isContactLoading = false,
       isRecordLoading = false,
     } = this.props;
@@ -222,7 +217,6 @@ export default class CustomerList extends PureComponent {
       location: {
         query,
       },
-      empInfo: { empRespList },
       isContactLoading: nextContactLoading = false,
       isRecordLoading: nextRecordLoading = false,
     } = nextProps;
@@ -237,8 +231,7 @@ export default class CustomerList extends PureComponent {
       selectAll,
       ...otherQuery
     } = query;
-    if (!_.isEqual(preOtherQuery, otherQuery) ||
-      !_.isEqual(PreEmpRespList, empRespList)) {
+    if (!_.isEqual(preOtherQuery, otherQuery)) {
       this.getCustomerList(nextProps);
     }
 
@@ -299,11 +292,7 @@ export default class CustomerList extends PureComponent {
       ];
     } else if (_.includes(['custIndicator', 'numOfCustOpened'], query.source)) {
       // 业绩中的时间周期
-      if (query.cycleSelect) {
-        param.dateType = query.cycleSelect;
-      } else {
-        param.dateType = (cycle[0] || {}).key;
-      }
+      param.dateType = query.cycleSelect || (cycle[0] || {}).key;
       // 我的客户 和 没有权限时，custType=1,其余情况custType=3
       param.custType = CUST_MANAGER;
       if (this.authority || query.ptyMngId !== empNum) {
@@ -327,7 +316,8 @@ export default class CustomerList extends PureComponent {
     // orgId默认取岗位对应的orgId，服务营业部选 '所有' 不传，其余情况取对应的orgId
     if (query.orgId && query.orgId !== 'all') {
       param.orgId = query.orgId;
-    } else if (!query.orgId) {
+    } else if (!query.orgId && this.authority) {
+      // 有权限，第一次进入列表页传所处岗位对应orgId
       // 在fsp外壳中取岗位切换的id， 本地取empinfo中的occDivnNum
       if (document.querySelector(fspContainer.container)) {
         param.orgId = window.forReactPosition.orgId;
@@ -534,7 +524,7 @@ export default class CustomerList extends PureComponent {
     if (sortType && sortDirection) {
       reorderValue = { sortType, sortDirection };
     }
-    const { expandAll, createCustRange, queryParam, isLoadingEnd } = this.state;
+    const { expandAll, queryParam, isLoadingEnd } = this.state;
     const custRangeProps = {
       orgId,
       custRange: serviceDepartment,

@@ -9,7 +9,7 @@ let permissionList = [];
 
 const HTSC_RESPID = '1-46IDNZI'; // 首页指标查询匹配值
 
-const permission =  {
+const permission = {
   // 初始化
   init(list) {
     permissionList = list;

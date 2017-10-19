@@ -27,7 +27,7 @@ const CUST_MANAGER = '1'; // 客户经理
 const ORG = '3'; // 组织机构
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
-const HTSC_RESPID = '1-46IDNZI'; // 首页指标查询
+// const HTSC_RESPID = '1-46IDNZI'; // 首页指标查询
 // 主服务经理id，用于url和custrange组件中，不传给后端
 const MAIN_MAGEGER_ID = 'msm';
 // const LOCAL_MONTH = '518003';
@@ -151,9 +151,9 @@ export default class Home extends PureComponent {
   componentDidMount() {
     const {
       custRange,
-      cycle = EMPTY_LIST,
-      location: { query: { orgId = '', cycleSelect = '', ptyMng = '' } },
-      empInfo: { empInfo, empRespList },
+      // cycle = EMPTY_LIST,
+      location: { query: { orgId = '' } },
+      empInfo: { empInfo },
       getInformation,
       getToBeDone,
       getHotWds,
@@ -161,7 +161,7 @@ export default class Home extends PureComponent {
     } = this.props;
     // 获取登录用户empId和occDivnNum
     const { empNum, occDivnNum } = empInfo;
-    
+
     // 登录用户orgId，默认在fsp中中取出来的当前用户岗位对应orgId，本地时取用户信息中的occDivnNum
     if (document.querySelector(fspContainer.container)) {
       this.orgId = window.forReactPosition.orgId;
@@ -183,7 +183,6 @@ export default class Home extends PureComponent {
     this.handleCreateCustRange({
       custRange,
       empInfo,
-      empRespList,
       posOrgId: this.orgId,
     });
   }
@@ -203,35 +202,6 @@ export default class Home extends PureComponent {
       // 发送绩效指标和沪深归集率请求
       this.sendIndicatorAndHSRateReq(nextProps);
     }
-  }
-
-  // 发送绩效指标和沪深归集率请求
-  sendIndicatorAndHSRateReq(props) {
-    const {
-      cycle,
-      location: {
-        query: {
-          cycleSelect,
-          orgId,
-        },
-      },
-    } = props;
-    // 根据cycle获取对应的begin和end值
-    const { begin, end } = this.getTimeSelectBeginAndEnd(props);
-    const tempObj = {
-      begin,
-      end,
-      cycleSelect: cycleSelect || (cycle[0] || {}).key,
-    };
-    if (orgId && orgId !== MAIN_MAGEGER_ID) {
-      tempObj.orgId = orgId;
-    } else if (this.isHasAuthorize) {
-      tempObj.orgId = this.orgId;
-    }
-    // 绩效指标
-    this.getIndicators(tempObj);
-    // 沪深归集率（经营指标）
-    this.fetchHSRate(tempObj);
   }
 
   // 我的客户时custType=CUST_MANAGER，非我的客户时custType=ORG， custType用来传给后端
@@ -284,6 +254,35 @@ export default class Home extends PureComponent {
       begin,
       end,
     };
+  }
+
+  // 发送绩效指标和沪深归集率请求
+  sendIndicatorAndHSRateReq(props) {
+    const {
+      cycle,
+      location: {
+        query: {
+          cycleSelect,
+          orgId,
+        },
+      },
+    } = props;
+    // 根据cycle获取对应的begin和end值
+    const { begin, end } = this.getTimeSelectBeginAndEnd(props);
+    const tempObj = {
+      begin,
+      end,
+      cycleSelect: cycleSelect || (cycle[0] || {}).key,
+    };
+    if (orgId && orgId !== MAIN_MAGEGER_ID) {
+      tempObj.orgId = orgId;
+    } else if (this.isHasAuthorize) {
+      tempObj.orgId = this.orgId;
+    }
+    // 绩效指标
+    this.getIndicators(tempObj);
+    // 沪深归集率（经营指标）
+    this.fetchHSRate(tempObj);
   }
 
   @autobind
@@ -373,7 +372,6 @@ export default class Home extends PureComponent {
   handleCreateCustRange({
     custRange,
     empInfo,
-    empRespList,
     posOrgId,
   }) {
     const myCustomer = {
