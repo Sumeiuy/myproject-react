@@ -125,18 +125,19 @@ export default {
     * getHSRate({ payload }, { call, put }) {  //eslint-disable-line
       const response = yield call(api.getHSRate, payload);
       const { resultData } = response;
-      const data = resultData.length > 0 ? resultData[0] : {};
+      const { value = '' } = resultData.length > 0 ? resultData[0] : '';
       yield put({
         type: 'getHSRateSuccess',
-        payload: data.value,
+        payload: { value },
       });
     },
     // 资讯列表和详情
     * getInformation({ payload }, { call, put }) {  //eslint-disable-line
       const response = yield call(api.getInformation, payload);
+      const { curPageNum = 1 } = payload;
       yield put({
-        type: 'getinformationSuccess',
-        payload: response,
+        type: 'getInformationSuccess',
+        payload: { ...response, resultData: { ...response.resultData, curPageNum } },
       });
     },
     // 代办流程任务列表
@@ -531,17 +532,23 @@ export default {
       };
     },
     getHSRateSuccess(state, action) {
-      const { payload } = action;
+      const { payload: { value } } = action;
       return {
         ...state,
-        hsRate: payload,
+        hsRate: value,
       };
     },
-    getinformationSuccess(state, action) {
-      const { payload: { resultData } } = action;
+    getInformationSuccess(state, action) {
+      const {
+        payload: {
+          resultData, resultData: { curPageNum, infoVOList = [] },
+        },
+      } = action;
+      const { information: { list } } = state;
+      // 记录页码对应的列表数据
       return {
         ...state,
-        information: resultData,
+        information: { ...resultData, list: [...(list || []), { curPageNum, infoVOList }] },
       };
     },
     getToDoListSuccess(state, action) {

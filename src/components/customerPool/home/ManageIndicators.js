@@ -6,6 +6,8 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { Row, Col } from 'antd';
+import 'echarts-liquidfill';
+import _ from 'lodash';
 
 import RectFrame from './RectFrame';
 import IECharts from '../../IECharts';
@@ -15,7 +17,7 @@ import CustomerService from './CustomerService';
 // import CycleProgressList from './CycleProgressList';
 import styles from './performanceIndicators.less';
 import {
-  // getHSRate,
+  getHSRate,
   getPureAddCust,
   getProductSale,
   getClientsNumber,
@@ -43,12 +45,12 @@ export default class PerformanceIndicators extends PureComponent {
   render() {
     const {
       indicators,
-      // hsRate,
+      hsRate,
       cycle,
       push,
       location,
     } = this.props;
-
+    const isEmpty = _.isEmpty(indicators);
     // 字段语义，在mock文件内：/mockup/groovynoauth/fsp/emp/kpi/queryEmpKPIs.js
     const {
       motOkMnt, motTotMnt, taskCust, totCust, startupCust,
@@ -86,10 +88,10 @@ export default class PerformanceIndicators extends PureComponent {
       colourfulTotalNumber: filterEmptyToInteger(hkCust),
     };
     const { newUnit: clientUnit, items: clientItems } = getClientsNumber(param);
-    const clientHead = { icon: 'kehuzhibiao', title: `业务开通数（${clientUnit}）` };
+    const clientHead = { icon: 'kehuzhibiao', title: `业务开通数（${clientUnit}次）` };
 
     // 沪深归集率
-    // const hsRateData = getHSRate([_.toNumber(hsRate)]);
+    const hsRateData = getHSRate([filterEmptyToNumber(hsRate)]);
     const hsRateHead = { icon: 'jiaoyiliang', title: '沪深归集率' };
 
     // 资产和交易量（经营指标）
@@ -130,36 +132,53 @@ export default class PerformanceIndicators extends PureComponent {
             <Row gutter={16}>
               <Col span={8}>
                 <RectFrame dataSource={pureAddHead}>
-                  <ProgressList
-                    key={'pureAdd'}
-                    dataSource={pureAddItems}
-                    cycle={cycle}
-                    push={push}
-                    location={location}
-                  />
+                  {
+                    isEmpty ? (
+                      <div className={styles.empty}>暂无数据</div>
+                    ) : (
+                      <ProgressList
+                        key={'pureAdd'}
+                        dataSource={pureAddItems}
+                        cycle={cycle}
+                        push={push}
+                        location={location}
+                      />
+                    )
+                  }
                 </RectFrame>
               </Col>
               <Col span={8}>
                 <RectFrame dataSource={clientHead}>
-                  <IECharts
-                    option={clientItems}
-                    resizable
-                    style={{
-                      height: '170px',
-                    }}
-                  />
+                  {
+                    isEmpty ? (
+                      <div className={styles.empty}>暂无数据</div>
+                    ) : (
+                      <IECharts
+                        option={clientItems}
+                        resizable
+                        style={{
+                          height: '170px',
+                        }}
+                      />
+                    )
+                  }
                 </RectFrame>
               </Col>
               <Col span={8}>
                 <RectFrame dataSource={hsRateHead}>
-                  <div />
-                  {/* <IECharts
-                    option={liquidOption}
-                    resizable
-                    style={{
-                      height: '170px',
-                    }}
-                  /> */}
+                  {
+                    isEmpty ? (
+                      <div className={styles.empty}>暂无数据</div>
+                    ) : (
+                      <IECharts
+                        option={hsRateData}
+                        resizable
+                        style={{
+                          height: '180px',
+                        }}
+                      />
+                    )
+                  }
                 </RectFrame>
               </Col>
             </Row>
@@ -168,20 +187,36 @@ export default class PerformanceIndicators extends PureComponent {
             <Row gutter={16}>
               <Col span={8}>
                 <RectFrame dataSource={tradeVolumeHead}>
-                  <CheckLayout dataSource={tradeItems} />
+                  {
+                    isEmpty ? (
+                      <div className={styles.empty}>暂无数据</div>
+                    ) : (
+                      <CheckLayout dataSource={tradeItems} />
+                    )
+                  }
                 </RectFrame>
               </Col>
               <Col span={8}>
                 <RectFrame dataSource={productSaleHead}>
-                  <ProgressList dataSource={productSaleItems} key={'productSale'} />
+                  {
+                    isEmpty ? (
+                      <div className={styles.empty}>暂无数据</div>
+                    ) : (
+                      <ProgressList dataSource={productSaleItems} key={'productSale'} />
+                    )
+                  }
                 </RectFrame>
               </Col>
               <Col span={8}>
                 {/* <CycleProgressList dataSource={serviceIndicator} /> */}
                 <RectFrame dataSource={serviceIndicatorHead}>
-                  <CustomerService
-                    data={customerServiceData}
-                  />
+                  {
+                    isEmpty ? (
+                      <div className={styles.empty}>暂无数据</div>
+                    ) : (
+                      <CustomerService data={customerServiceData} />
+                    )
+                  }
                 </RectFrame>
               </Col>
             </Row>

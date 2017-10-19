@@ -17,13 +17,13 @@ const mapStateToProps = state => ({
   information: state.customerPool.information, // 首席投顾观点
 });
 const mapDispatchToProps = {
-  push: routerRedux.push,
+  goBack: routerRedux.goBack,
 };
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 export default class ViewpointDetail extends PureComponent {
   static propTypes = {
-    push: PropTypes.func.isRequired,
+    goBack: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     information: PropTypes.object,
   }
@@ -34,8 +34,8 @@ export default class ViewpointDetail extends PureComponent {
 
   @autobind
   handleBackClick() {
-    const { push } = this.props;
-    push({ pathname: '/customerPool/viewpointList' });
+    const { goBack } = this.props;
+    goBack();
   }
 
   handleWordClick() {}
@@ -51,7 +51,14 @@ export default class ViewpointDetail extends PureComponent {
       secuabbr = '',
       authors = '',
       pubdata = '',
-    } = infoVOList[_.toNumber(detailIndex)];
+      annexpathpdf = '',
+    } = infoVOList[_.toNumber(detailIndex)] || {};
+    // 分割成段，展示
+    const formateAbstract = _.isEmpty(abstract) ? (
+      '<p>暂无数据</p>'
+    ) : (
+      _.replace(_.trim(abstract), /\s{2,}/gi, '<br /><span></span>')
+    );
     return (
       <div className={styles.listContainer}>
         <div className={styles.inner} >
@@ -81,19 +88,23 @@ export default class ViewpointDetail extends PureComponent {
                 </div>
               </div>
             </div>
-            <div className={styles.body}>{_.isEmpty(abstract) ? '暂无数据' : abstract}</div>
+            <div className={styles.body} dangerouslySetInnerHTML={{ __html: formateAbstract }} />
             <div className={styles.footer}>
               <div className={styles.fileColumn} onClick={this.handleWordClick}>
                 <div className={styles.fileIconContainer}>
                   <Icon type="xiazai" className={classnames(styles.fileIcon, styles.word)} />
                 </div>
-                <div className={styles.fileName}>WORD 全文</div>
+                <div className={styles.fileName}>
+                  <a href={annexpathpdf} download={texttitle || 'WORD 全文.word'}>WORD 全文</a>
+                </div>
               </div>
               <div className={styles.fileColumn} onClick={this.handlePDFClick}>
                 <div className={styles.fileIconContainer}>
                   <Icon type="xiazai" className={styles.fileIcon} />
                 </div>
-                <div className={styles.fileName}>PDF 全文</div>
+                <div className={styles.fileName}>
+                  <a href={annexpathpdf} download={texttitle || 'PDF 全文.pdf'}>PDF 全文</a>
+                </div>
               </div>
               <div
                 className={classnames(styles.backColumn, styles.under)}

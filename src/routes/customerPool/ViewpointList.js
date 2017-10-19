@@ -44,10 +44,17 @@ const columns = [{
   key: 'authors',
 }];
 
+const fetchDataFunction = (globalLoading, type) => query => ({
+  type,
+  payload: query || {},
+  loading: globalLoading,
+});
+
 const mapStateToProps = state => ({
   information: state.customerPool.information, // 首席投顾观点
 });
 const mapDispatchToProps = {
+  getInformation: fetchDataFunction(true, 'customerPool/getInformation'),
   push: routerRedux.push,
 };
 @connect(mapStateToProps, mapDispatchToProps)
@@ -57,10 +64,32 @@ export default class ViewpointList extends PureComponent {
     push: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     information: PropTypes.object,
+    getInformation: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
     information: {},
+  }
+
+  constructor(props) {
+    super(props);
+    const { information: { list = [] } } = props;
+    const { curPageNum = 1, infoVOList = [] } = _.head(list) || {};
+    this.state = {
+      curPageNum, // 记录当前展示的页码
+      pageList: infoVOList, // 当前页码对应的列表数据
+    };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { information: { list = [] } } = nextProps;
+    if (!_.isEmpty(list)) {
+      const { curPageNum: nextPageNum, infoVOList: nextPageList } = _.last(list) || {};
+      const { curPageNum } = this.state;
+      if (curPageNum !== nextPageNum) {
+        this.setState({ curPageNum: nextPageNum, pageList: nextPageList });
+      }
+    }
   }
 
   @autobind
@@ -72,8 +101,22 @@ export default class ViewpointList extends PureComponent {
     });
   }
 
-  totalPage(total) {
-    return `共 ${total} 项`;
+  @autobind
+  handlePageClick(page) {
+    const { getInformation, information: { list = [] } } = this.props;
+    const pageList = _.filter(
+      list,
+      (item) => {
+        const { curPageNum = 0 } = item;
+        return curPageNum === page;
+      },
+    );
+    const { infoVOList = [] } = _.isEmpty(pageList) ? {} : pageList[0];
+    if (_.isEmpty(infoVOList)) {
+      getInformation({ curPageNum: page, pageSize: 18 });
+    } else {
+      this.setState({ curPageNum: page, pageList: infoVOList });
+    }
   }
 
   renderItem(current, type, originalElement) {
@@ -86,17 +129,25 @@ export default class ViewpointList extends PureComponent {
   }
 
   render() {
-    const { information: { infoVOList = [] } } = this.props;
+    const { information: { totalCount } } = this.props;
+    const { curPageNum = 1, pageList = [] } = this.state;
     const newInfoVOList = _.map(
-      infoVOList,
-      item => ({ ...item, aboutStock: `${item.secuabbr} / ${item.comcode}` }),
+      pageList,
+      (item, index) => ({
+        ...item,
+        aboutStock: `${item.secuabbr} / ${item.tradingcode}`,
+        id: `${index}`,
+      }),
     );
     const pagination = {
       itemRender: this.renderItem,
-      showTotal: this.totalPage,
+      showTotal: () => `共 ${totalCount} 项`,
       defaultPageSize: 18,
       pageSize: 18,
-      // total: viewpointData.length,
+      total: (_.toNumber(totalCount) || 0),
+      onChange: this.handlePageClick,
+      current: curPageNum,
+      defaultCurrent: 1,
     };
     return (
       <div className={styles.listContainer}>
