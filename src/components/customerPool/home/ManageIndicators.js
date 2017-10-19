@@ -12,10 +12,10 @@ import _ from 'lodash';
 
 import RectFrame from './RectFrame';
 import IECharts from '../../IECharts';
+import IfEmpty from '../common/IfEmpty';
 import CheckLayout from './CheckLayout';
 import ProgressList from './ProgressList';
 import CustomerService from './CustomerService';
-import { IfEmpty } from './PerformanceIndicators';
 import styles from './performanceIndicators.less';
 import {
   getHSRate,
@@ -103,6 +103,7 @@ export default class PerformanceIndicators extends PureComponent {
       purAddCust, newProdCust, purAddNoretailcust, purAddHighprodcust,
     } = indicators || {};
 
+    // 控制是否显示 暂无数据
     const isEmpty = _.isEmpty(indicators);
 
     // 新增客户（经营指标）
@@ -226,7 +227,7 @@ export default class PerformanceIndicators extends PureComponent {
               </Col>
               <Col span={8}>
                 <RectFrame dataSource={productSaleHead}>
-                  <IfEmpty isEmpty={isEmpty}>
+                  <IfEmpty isEmpty={isEmpty} className={styles.empty}>
                     <ProgressList dataSource={productSaleItems} key={'productSale'} />
                   </IfEmpty>
                 </RectFrame>

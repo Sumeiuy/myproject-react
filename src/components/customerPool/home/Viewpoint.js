@@ -26,7 +26,7 @@ export default class Viewpoint extends PureComponent {
   openNewTab(url, query) {
     const param = { id: 'tab-viewpoint', title: '首席观点' };
     if (document.querySelector(fspContainer.container)) {
-      fspGlobal.openRctTab({ url: `${url}${helper.queryToString(query)}`, param });
+      fspGlobal.openRctTab({ url: `${url}?${helper.queryToString(query)}`, param });
     } else {
       const { push } = this.props;
       push({
