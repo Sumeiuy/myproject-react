@@ -12,12 +12,14 @@ export default class UploadFile extends PureComponent {
     attachment: PropTypes.string,
     type: PropTypes.string.isRequired,
     onEmitEvent: PropTypes.func.isRequired,
+    needDefaultText: PropTypes.bool,
   }
 
   static defaultProps = {
     fileList: [],
     edit: false,
     attachment: '',
+    needDefaultText: true,
   }
 
   constructor() {
@@ -39,6 +41,7 @@ export default class UploadFile extends PureComponent {
       edit: this.props.edit,
       uploadAttachment: this.uploadAttachment,
       attachment: this.props.attachment,
+      needDefaultText: this.props.needDefaultText,
     };
 
     return (

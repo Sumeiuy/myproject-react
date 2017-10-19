@@ -238,6 +238,7 @@ export default class CreatePrivateClient extends PureComponent {
             type="attachment"
             attachment={this.state.attachment}
             onEmitEvent={this.updateValue}
+            needDefaultText={false}
           />
           <TableDialog {...searchProps} />
         </div>
