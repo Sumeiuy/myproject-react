@@ -11,8 +11,9 @@ import Select from '../Select';
 import CustRange from '../../pageCommon/SeibelCustRange';
 import DropDownSelect from '../dropdownSelect';
 import Button from '../Button';
-
 import styles from '../../style/jiraLayout.less';
+
+const allowPermission = 'HTSC 综合服务-营业部执行岗';
 
 export default class Pageheader extends PureComponent {
   static propTypes = {
@@ -36,6 +37,11 @@ export default class Pageheader extends PureComponent {
     customerList: PropTypes.array,
     // 部门
     custRange: PropTypes.array,
+    // 操作类型
+    needOperate: PropTypes.bool,
+    operateOptions: PropTypes.array,
+    // 新建权限
+    empInfo: PropTypes.object,
   }
 
   static defaultProps = {
@@ -43,6 +49,9 @@ export default class Pageheader extends PureComponent {
     drafterList: [],
     customerList: [],
     custRange: [],
+    needOperate: false,
+    operateOptions: [],
+    empInfo: {},
   }
 
   // 选中客户下拉对象中对应的某个对象
@@ -116,7 +125,10 @@ export default class Pageheader extends PureComponent {
       custRange,
       replace,
       page,
-      location: { query: { subType, status } },
+      operateOptions,
+      needOperate,
+      location: { pathname, query: { subType, status, business2 } },
+      empInfo,
     } = this.props;
 
     const customerAllList = !_.isEmpty(customerList) ?
@@ -124,7 +136,30 @@ export default class Pageheader extends PureComponent {
 
     const drafterAllList = !_.isEmpty(drafterList) ?
     [{ empName: '全部', empId: '' }, ...drafterList] : customerList;
+    // 新建按钮权限
+    let hasPermission = true;
+    if (pathname === '/contract') {
+      // 合约合约时判断权限
+      const permissionList = empInfo.empRespList;
+      const filterResult = _.filter(permissionList, o => o.respName === allowPermission);
+      hasPermission = Boolean(filterResult.length);
+    }
 
+    const operateElement = needOperate ?
+      (
+        <div className={styles.dropDownSelectBox}>
+          <span>操作类型:</span>
+          <Select
+            name="business2"
+            value={business2}
+            data={operateOptions}
+            onChange={this.handleSelectChange}
+            style={{ width: '20%' }}
+          />
+        </div>
+      )
+    :
+      null;
     return (
       <div className={styles.pageCommonHeader}>
         <div className={styles.dropDownSelectBox}>
@@ -139,7 +174,8 @@ export default class Pageheader extends PureComponent {
             name={`${page}-custName`}
           />
         </div>
-
+        { /* 操作类型 */ }
+        { operateElement }
         子类型:
         <Select
           name="subType"
@@ -178,16 +214,19 @@ export default class Pageheader extends PureComponent {
           replace={replace}
           updateQueryState={this.selectCustRange}
         />
-
-
-        <Button
-          type="primary"
-          icon="plus"
-          size="small"
-          onClick={creatSeibelModal}
-        >
-          新建
-        </Button>
+        {
+          hasPermission ?
+            <Button
+              type="primary"
+              icon="plus"
+              size="small"
+              onClick={creatSeibelModal}
+            >
+              新建
+            </Button>
+          :
+            null
+        }
       </div>
     );
   }

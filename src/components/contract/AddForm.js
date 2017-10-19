@@ -3,17 +3,19 @@
 * @Author: XuWenKang
 * @Date:   2017-09-21 15:17:50
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-13 15:46:45
+ * @Last Modified time: 2017-10-19 15:43:29
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Icon } from 'antd';
+import _ from 'lodash';
 
 import BaseInfoAdd from './BaseInfoAdd';
-import UploadFile from './UploadFile';
+// import UploadFile from './UploadFile';
 import InfoTitle from '../common/InfoTitle';
 import CommonTable from '../common/biz/CommonTable';
+import CommonUpload from '../common/biz/CommonUpload';
 import Button from '../common/Button';
 import AddClause from './AddClause';
 import ChoiceApproverBoard from '../commissionAdjustment/ChoiceApproverBoard';
@@ -70,7 +72,7 @@ export default class AddForm extends PureComponent {
     this.state = {
       formData: {
         formType: 'add',
-        attachment: '',
+        uuid: '',
         terms: [],
       },
       // 是否显示添加合约条款组件
@@ -172,7 +174,6 @@ export default class AddForm extends PureComponent {
       paraVal: clauseData.paraVal, // 值
       divName: clauseData.divName.name, // 合作部门名称
       divIntegrationId: clauseData.divName.value, // 合作部门code
-
     };
     this.setState({
       ...this.state,
@@ -233,6 +234,22 @@ export default class AddForm extends PureComponent {
     });
   }
 
+  // 表格删除事件
+  @autobind
+  deleteTableData(record, index) {
+    const { formData: { terms } } = this.state;
+    const testArr = _.cloneDeep(terms);
+    const newTerms = _.remove(testArr, (n, i) => i !== index);
+    this.setState({
+      formData: {
+        ...this.state.formData,
+        terms: newTerms,
+      },
+    }, () => {
+      this.props.onChangeForm(this.state.formData);
+    });
+  }
+
   render() {
     const {
       custList,
@@ -269,6 +286,15 @@ export default class AddForm extends PureComponent {
       };
     });
     const termsData = (operationType === subscribe) ? formData.terms : contractDetail.terms || [];
+
+    // 表格中需要的操作
+    const operation = {
+      column: {
+        key: 'delete', // 'check'\'delete'\'view'
+        title: '',
+      },
+      operate: this.deleteTableData,
+    };
     return (
       <div className={styles.editComponent}>
         <BaseInfoAdd
@@ -297,13 +323,22 @@ export default class AddForm extends PureComponent {
           <CommonTable
             data={termsData}
             titleList={titleList}
+            operation={operation}
           />
         </div>
-        <UploadFile
+        {/* <UploadFile
           edit={BOOL_TRUE}
           fileList={EMPTY_ARRAY}
-          attachment={formData.attachment}
+          attachment={formData.uuid}
           uploadAttachment={this.handleUploadSuccess}
+        /> */}
+        <InfoTitle head="附件" />
+        <CommonUpload
+          attachmentList={EMPTY_ARRAY}
+          edit={BOOL_TRUE}
+          uploadAttachment={this.handleUploadSuccess}
+          attachment={formData.uuid}
+          needDefaultText={false}
         />
         <div className={styles.editWrapper}>
           <InfoTitle head="审批人" />

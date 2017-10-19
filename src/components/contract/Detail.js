@@ -3,11 +3,10 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-19 09:37:42
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-12 09:51:00
+ * @Last Modified time: 2017-10-19 15:44:12
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
 
@@ -50,15 +49,18 @@ export default class Detail extends PureComponent {
     this.state = {
       radio: 0,
       statusType: 'ready',
+      terms: props.baseInfo.terms,
     };
   }
 
-  // 表格删除事件
-  @autobind
-  deleteTableData(record, index) {
-    this.setState({
-      radio: index,
-    });
+  componentWillReceiveProps(nextProps) {
+    const { baseInfo: preBI } = this.props;
+    const { baseInfo: nextBI } = nextProps;
+    if (!_.isEqual(preBI, nextBI)) {
+      this.setState({
+        terms: nextBI.terms,
+      });
+    }
   }
 
   render() {
@@ -71,12 +73,14 @@ export default class Detail extends PureComponent {
       operationType,
       createTime,
     } = this.props;
+    const { terms } = this.state;
     const modifyBtnClass = classnames([styles.dcHeaderModifyBtn,
       { hide: this.state.statusType !== 'ready' },
     ]);
     const uploadProps = {
       attachmentList,
       uploadAttachment,
+      edit: true,
       attachment: baseInfo.attachment || '',
     };
     const nowStep = {
@@ -91,14 +95,6 @@ export default class Detail extends PureComponent {
     } else {
       statusLabel = '';
     }
-    // 表格中需要的操作
-    // const operation = {
-    //   column: {
-    //     key: 'delete', // 'check'\'delete'\'view'
-    //     title: '',
-    //   },
-    //   operate: this.deleteTableData,
-    // };
     return (
       <div className={styles.detailComponent}>
         <div className={styles.dcHeader}>
@@ -112,7 +108,7 @@ export default class Detail extends PureComponent {
           <InfoTitle head="基本信息" />
           <InfoItem label="操作类型" value={operationType} />
           <InfoItem label="子类型" value={childTypeList[0].label} />
-          <InfoItem label="客户" value={`${baseInfo.custName} ${baseInfo.custId || ''}`} />
+          <InfoItem label="客户" value={`${baseInfo.custName} ${baseInfo.econNum || ''}`} />
           <InfoItem label="合约开始日期" value={dateFormat(baseInfo.startDt)} />
           <InfoItem label="合约有效期" value={dateFormat(baseInfo.vailDt)} />
           <InfoItem label="合约终止日期" value={dateFormat(baseInfo.endDt)} />
@@ -127,7 +123,7 @@ export default class Detail extends PureComponent {
         <div className={styles.detailWrapper}>
           <InfoTitle head="合约条款" />
           <CommonTable
-            data={baseInfo.terms || []}
+            data={terms || []}
             titleList={titleList}
           />
         </div>

@@ -54,7 +54,7 @@ export default class CommonModal extends PureComponent {
     cancelText: PropTypes.string,
     modalKey: PropTypes.string.isRequired,
     closeModal: PropTypes.func.isRequired,
-    onOk: PropTypes.func.isRequired,
+    onOk: PropTypes.func,
     btnStatus: PropTypes.bool,
     showOkBtn: PropTypes.bool,
     showCancelBtn: PropTypes.bool,
@@ -65,7 +65,12 @@ export default class CommonModal extends PureComponent {
       PropTypes.element,
       PropTypes.node,
     ]),
-    selfBtnGroup: PropTypes.object,
+    selfBtnGroup: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.object,
+      PropTypes.element,
+      PropTypes.node,
+    ]),
   }
 
   static defaultProps = {
@@ -79,6 +84,7 @@ export default class CommonModal extends PureComponent {
     size: 'normal',
     wrapClassName: '',
     selfBtnGroup: {},
+    onOk: () => {},
   }
 
   render() {
