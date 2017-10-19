@@ -18,7 +18,7 @@ import PerformanceIndicators from '../../components/customerPool/home/Performanc
 import ManageIndicators from '../../components/customerPool/home/ManageIndicators';
 import Viewpoint from '../../components/customerPool/home/Viewpoint';
 import ToBeDone from '../../components/customerPool/home/ToBeDone';
-import { helper } from '../../utils';
+import { helper, permission } from '../../utils';
 import Search from '../../components/customerPool/home/Search';
 import styles from './home.less';
 
@@ -27,7 +27,7 @@ const CUST_MANAGER = '1'; // 客户经理
 const ORG = '3'; // 组织机构
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
-const HTSC_RESPID = '1-46IDNZI'; // 首页指标查询
+// const HTSC_RESPID = '1-46IDNZI'; // 首页指标查询
 // 主服务经理id，用于url和custrange组件中，不传给后端
 const MAIN_MAGEGER_ID = 'msm';
 // const LOCAL_MONTH = '518003';
@@ -143,30 +143,25 @@ export default class Home extends PureComponent {
       fspOrgId: '', // 主服务经理
       createCustRange: [],
       expandAll: false,
-      isHasAuthorize: false,
     };
+    // 首页指标查询权限
+    this.isHasAuthorize = permission.hasIndexViewPermission();
   }
 
   componentDidMount() {
     const {
       custRange,
-      cycle = EMPTY_LIST,
-      location: { query: { orgId = '', cycleSelect = '', ptyMngId = '' } },
-      empInfo: { empInfo, empRespList },
+      // cycle = EMPTY_LIST,
+      location: { query: { orgId = '' } },
+      empInfo: { empInfo },
       getInformation,
       getToBeDone,
       getHotWds,
       getHistoryWdsList,
     } = this.props;
-    // 判断权限
-    const respIdOfPosition = _.findIndex(empRespList, item => (item.respId === HTSC_RESPID));
-    if (respIdOfPosition >= 0) {
-      this.setState({ // eslint-disable-line
-        isHasAuthorize: true,
-      });
-    }
     // 获取登录用户empId和occDivnNum
     const { empNum, occDivnNum } = empInfo;
+
     // 登录用户orgId，默认在fsp中中取出来的当前用户岗位对应orgId，本地时取用户信息中的occDivnNum
     if (document.querySelector(fspContainer.container)) {
       this.orgId = window.forReactPosition.orgId;
@@ -178,32 +173,16 @@ export default class Home extends PureComponent {
     // 历史搜索记录 orgId, empNo 两个参数必传一个，两个同时传时以orgId为准
     getHistoryWdsList({ orgId: orgId || this.orgId, empNo: empNum });
     // 待办事项
-    getToBeDone({ orgId: orgId || this.orgId, ptyMngId: ptyMngId || empNum });
+    getToBeDone({ orgId: orgId || this.orgId, ptyMngId: empNum });
 
     // 首席投顾观点
     getInformation({ curPageNum: 1, pageSize: 18 });
-    // 根据cycle获取对应的begin和end值
-    const { begin, end } = this.getTimeSelectBeginAndEnd(this.props);
-    // 绩效指标
-    this.getIndicators({
-      begin,
-      end,
-      orgId: orgId || this.orgId,
-      cycleSelect: (cycle[0] || {}).key || cycleSelect,
-    });
-
-    // 沪深归集率（经营指标）
-    this.fetchHSRate({
-      begin,
-      end,
-      orgId: orgId || this.orgId,
-      cycleSelect: (cycle[0] || {}).key || cycleSelect,
-    });
+    // 发送绩效指标和沪深归集率请求
+    this.sendIndicatorAndHSRateReq(this.props);
     // 根据岗位orgId生成对应的组织机构树
     this.handleCreateCustRange({
       custRange,
       empInfo,
-      empRespList,
       posOrgId: this.orgId,
     });
   }
@@ -220,29 +199,16 @@ export default class Home extends PureComponent {
     // 重新请求绩效指标数据和净创收数据
     if (prevQuery.orgId !== nextQuery.orgId
       || prevQuery.cycleSelect !== nextQuery.cycleSelect) {
-      const { begin, end } = this.getTimeSelectBeginAndEnd(nextProps);
-      const tempObj = {
-        begin,
-        end,
-        cycleSelect: nextQuery.cycleSelect,
-      };
-      if (nextQuery.orgId) {
-        tempObj.orgId = nextQuery.orgId === MAIN_MAGEGER_ID ? '' : nextQuery.orgId;
-      } else if (this.state.isHasAuthorize) {
-        tempObj.orgId = this.orgId;
-      }
-      this.getIndicators(tempObj);
-      // 沪深归集率（经营指标）
-      this.fetchHSRate(tempObj);
+      // 发送绩效指标和沪深归集率请求
+      this.sendIndicatorAndHSRateReq(nextProps);
     }
   }
 
   // 我的客户时custType=CUST_MANAGER，非我的客户时custType=ORG， custType用来传给后端
   @autobind
   getCustType(orgId) {
-    const { isHasAuthorize } = this.state;
     let custType = CUST_MANAGER;
-    if (isHasAuthorize || orgId !== MAIN_MAGEGER_ID) {
+    if (this.isHasAuthorize || orgId !== MAIN_MAGEGER_ID) {
       custType = ORG;
     }
     return custType;
@@ -288,6 +254,35 @@ export default class Home extends PureComponent {
       begin,
       end,
     };
+  }
+
+  // 发送绩效指标和沪深归集率请求
+  sendIndicatorAndHSRateReq(props) {
+    const {
+      cycle,
+      location: {
+        query: {
+          cycleSelect,
+          orgId,
+        },
+      },
+    } = props;
+    // 根据cycle获取对应的begin和end值
+    const { begin, end } = this.getTimeSelectBeginAndEnd(props);
+    const tempObj = {
+      begin,
+      end,
+      cycleSelect: cycleSelect || (cycle[0] || {}).key,
+    };
+    if (orgId && orgId !== MAIN_MAGEGER_ID) {
+      tempObj.orgId = orgId;
+    } else if (this.isHasAuthorize) {
+      tempObj.orgId = this.orgId;
+    }
+    // 绩效指标
+    this.getIndicators(tempObj);
+    // 沪深归集率（经营指标）
+    this.fetchHSRate(tempObj);
   }
 
   @autobind
@@ -377,26 +372,19 @@ export default class Home extends PureComponent {
   handleCreateCustRange({
     custRange,
     empInfo,
-    empRespList,
     posOrgId,
   }) {
-    // 判断是否存在首页绩效指标查看权限
-    const respIdOfPosition = _.find(empRespList, item => (item.respId === HTSC_RESPID));
     const myCustomer = {
       id: MAIN_MAGEGER_ID,
       name: '我的客户',
     };
     // 无‘HTSC 首页指标查询’职责的普通用户，取值 '我的客户'
-    if (!respIdOfPosition) {
+    if (!this.isHasAuthorize) {
       this.setState({
         createCustRange: [myCustomer],
-        isHasAuthorize: false,
       });
       return;
     }
-    this.setState({
-      isHasAuthorize: true,
-    });
     // 只要不是我的客户，都展开组织机构树
     // 用户职位是经总
     if (posOrgId === (custRange[0] || {}).id) {
@@ -460,7 +448,6 @@ export default class Home extends PureComponent {
       expandAll,
       // cycleSelect,
       createCustRange,
-      isHasAuthorize,
     } = this.state;
     const { query: {
       orgId,
@@ -470,7 +457,7 @@ export default class Home extends PureComponent {
     let curCycleSelect = (cycle[0] || {}).key;
     if (orgId) {
       curOrgId = orgId;
-    } else if (!isHasAuthorize) {
+    } else if (!this.isHasAuthorize) {
       curOrgId = MAIN_MAGEGER_ID;
     }
     if (cycleSelect) {
