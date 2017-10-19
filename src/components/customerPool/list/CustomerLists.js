@@ -98,17 +98,16 @@ export default class CustomerLists extends PureComponent {
     toggleServiceRecordModal: PropTypes.func.isRequired,
     reorderValue: PropTypes.object.isRequired,
     onReorderChange: PropTypes.func.isRequired,
-
     collectCustRange: PropTypes.func,
     custRange: PropTypes.array.isRequired,
     expandAll: PropTypes.bool,
     orgId: PropTypes.string,
-
     searchServerPersonList: PropTypes.array.isRequired,
     isLoadingEnd: PropTypes.bool.isRequired,
     onRequestLoading: PropTypes.func.isRequired,
-
     empInfo: PropTypes.object.isRequired,
+    isLoadingEnd: PropTypes.bool.isRequired,
+    onRequestLoading: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -598,17 +597,14 @@ export default class CustomerLists extends PureComponent {
       authority,
       custIncomeReqState,
       toggleServiceRecordModal,
-
       onReorderChange,
       reorderValue,
-
       custRange,
       orgId,
       collectCustRange,
       expandAll,
       isLoadingEnd,
       searchServerPersonList,
-
       empInfo,
     } = this.props;
     // console.log('1---', this.props)

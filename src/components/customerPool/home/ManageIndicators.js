@@ -112,6 +112,7 @@ export default class PerformanceIndicators extends PureComponent {
     ];
     const { newUnit: pureAddUnit, items: pureAddItems } = getPureAddCust({ pureAddData });
     const pureAddHead = { icon: 'kehu', title: `新增客户（${pureAddUnit}）` };
+
     // 业务开通数（经营指标）
     const clientNumberData = [
       filterEmptyToInteger(ttfCust),
@@ -130,6 +131,7 @@ export default class PerformanceIndicators extends PureComponent {
     };
     const { newUnit: clientUnit, items: clientItems } = getClientsNumber(param);
     const clientHead = { icon: 'kehuzhibiao', title: `业务开通数（${clientUnit}）` };
+
     // 沪深归集率
     // const hsRateData = getHSRate([_.toNumber(hsRate)]);
     const hsRateHead = { icon: 'jiaoyiliang', title: '沪深归集率' };

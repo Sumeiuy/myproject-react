@@ -32,8 +32,8 @@ const ENTER_TYPE = {
   tag: 'searchCustPool',
   association: 'searchCustPool',
   business: 'businessCustPool',
-  custIndicator: 'performanceCustPool',
-  numOfCustOpened: 'performanceCustPool',
+  custIndicator: 'performanceIncrementCustPool',
+  numOfCustOpened: 'performanceBusinessOpenCustPool',
 };
 
 const DEFAULT_SORT = { sortType: 'Aset', sortDirection: 'desc' }; // 默认排序方式
@@ -62,8 +62,6 @@ const mapStateToProps = state => ({
   custRange: state.customerPool.custRange,
   // 职位信息
   empInfo: state.app.empInfo,
-  // 职责切换
-  position: state.customerPool.position,
   // 职责切换
   dict: state.app.dict,
   custList: state.customerPool.custList,
@@ -124,7 +122,6 @@ export default class CustomerList extends PureComponent {
     getAllInfo: PropTypes.func.isRequired,
     custRange: PropTypes.array,
     empInfo: PropTypes.object,
-    position: PropTypes.object,
     dict: PropTypes.object.isRequired,
     getCustomerData: PropTypes.func.isRequired,
     getCustIncome: PropTypes.func.isRequired,
@@ -157,7 +154,6 @@ export default class CustomerList extends PureComponent {
 
   static defaultProps = {
     custRange: [],
-    position: {},
     empInfo: {},
     custContactData: EMPTY_OBJECT,
     custEmail: EMPTY_OBJECT,
@@ -224,7 +220,6 @@ export default class CustomerList extends PureComponent {
         query: preQuery,
       },
       empInfo: { empRespList: PreEmpRespList },
-      position: { orgId: preOrgId },
       isContactLoading = false,
       isRecordLoading = false,
     } = this.props;
@@ -234,14 +229,9 @@ export default class CustomerList extends PureComponent {
         query,
       },
       empInfo: { empRespList },
-      position: { orgId },
       isContactLoading: nextContactLoading = false,
       isRecordLoading: nextRecordLoading = false,
     } = nextProps;
-    // 组织机构树数据变化和职位切换重新生成组织机构树组件的数据
-    // if (!_.isEqual(preCustRange, custRange) || orgId !== preOrgId) {
-    //   this.generateCustRange(nextProps);
-    // }
     // query变化、权限列表存在变化和职位切换时，重新获取列表数据
     const {
       selectedIds: preSelectedIds,
@@ -254,20 +244,19 @@ export default class CustomerList extends PureComponent {
       ...otherQuery
     } = query;
     if (!_.isEqual(preOtherQuery, otherQuery) ||
-      !_.isEqual(PreEmpRespList, empRespList) ||
-      orgId !== preOrgId) {
+      !_.isEqual(PreEmpRespList, empRespList)) {
       this.getCustomerList(nextProps);
     }
 
-    // if (query.orgId) {
-    //   this.setState({
-    //     isSms: query.orgId === MAIN_MAGEGER_ID,
-    //   });
-    // } else if (query.source === 'business') {
-    //   this.setState({
-    //     isSms: true,
-    //   });
-    // }
+    // loading状态
+    // 只有全部loading完毕才触发isLoadingEnd
+    if ((isContactLoading && !nextContactLoading && isRecordLoading && !nextRecordLoading)
+      || (!nextContactLoading && !nextRecordLoading)) {
+      // debugger;
+      this.setState({
+        isLoadingEnd: true,
+      });
+    }
 
     // loading状态
     // 只有全部loading完毕才触发isLoadingEnd
@@ -288,7 +277,7 @@ export default class CustomerList extends PureComponent {
       getCustomerData, location: { query },
       empInfo: { empInfo = EMPTY_OBJECT },
     } = props;
-    const { occDivnNum = '' } = empInfo;
+    const { occDivnNum = '', empNum } = empInfo;
     const keyword = decodeURIComponent(query.q);
     const param = {
       // 必传，当前页
@@ -298,10 +287,6 @@ export default class CustomerList extends PureComponent {
       // 不同的入口进入列表页面
       enterType: ENTER_TYPE[query.source],
     };
-    // 服务经理id
-    if (query.ptyMng) {
-      param.ptyMngId = query.ptyMng.split('_')[1];
-    }
     // 从热词列表搜索 :FromWdsListErea, 从联想下拉框搜索: FromAssociatedErea, 匹配的全字符: FromFullTextType
     if (query.source === 'search') {
       param.searchTypeReq = 'FromFullTextType';
@@ -327,7 +312,7 @@ export default class CustomerList extends PureComponent {
       }
       // 我的客户 和 没有权限时，custType=1,其余情况custType=3
       param.custType = CUST_MANAGER;
-      if (this.state.authority || query.ptyMngId !== empInfo.empNum) {
+      if (this.state.authority || query.ptyMngId !== empNum) {
         param.custType = ORG;
       }
     }
@@ -355,6 +340,13 @@ export default class CustomerList extends PureComponent {
       } else {
         param.orgId = occDivnNum;
       }
+    }
+    // 服务经理ptyMngId
+    if (!this.state.authority) {
+      param.ptyMngId = empNum;
+    }
+    if (this.state.authority && query.ptyMng) {
+      param.ptyMngId = query.ptyMng.split('_')[1];
     }
     // 过滤数组
     const filtersReq = [];
@@ -416,88 +408,6 @@ export default class CustomerList extends PureComponent {
       isLoadingEnd: false,
     });
   }
-
-  // 生成组织机构树的数据
-  // @autobind
-  // generateCustRange(props) {
-  //   const {
-  //     custRange,
-  //     empInfo: {
-  //       empInfo = EMPTY_OBJECT,
-  //       empRespList = EMPTY_LIST,
-  //     },
-  //     position: { orgId: posOrgId },
-  //   } = props;
-  //   // 判断是否存在首页绩效指标查看权限
-  //   const respIdOfPosition = _.findIndex(empRespList, item => (item.respId === HTSC_RESPID));
-  //   const myCustomer = {
-  //     id: MAIN_MAGEGER_ID,
-  //     name: '我的客户',
-  //   };
-  //   // 无‘HTSC 首页指标查询’职责的普通用户，取值 '我的客户'
-  //   if (respIdOfPosition < 0) {
-  //     this.setState({
-  //       createCustRange: [myCustomer],
-  //       isSms: true,
-  //     });
-  //     return false;
-  //   }
-  //   // 保证全局的职位存在的情况下取职位, 取不到时从empInfo中取值
-  //   const occDivnNum = empInfo.occDivnNum || '';
-  //   // let fspJobOrgId = 'ZZ001041020';
-  //   // let fspJobOrgId = !_.isEmpty(window.forReactPosition) ?
-  //   //   window.forReactPosition.orgId :
-  //   //   occDivnNum;
-  //   // if (posOrgId) {
-  //   //   fspJobOrgId = posOrgId;
-  //   // }
-  //   const fspJobOrgId = posOrgId || occDivnNum;
-  //   // 用户职位是经总
-  //   if (fspJobOrgId === (custRange[0] || {}).id) {
-  //     this.setState({
-  //       createCustRange: custRange,
-  //       expandAll: true,
-  //       isSms: false,
-  //     });
-  //     return false;
-  //   }
-  //   // fspJobOrgId 在机构树中所处的分公司位置
-  //   const groupInCustRange = _.find(custRange, item => item.id === fspJobOrgId);
-  //   if (groupInCustRange) {
-  //     this.setState({
-  //       createCustRange: [groupInCustRange, myCustomer],
-  //       expandAll: true,
-  //       isSms: false,
-  //     });
-  //     return false;
-  //   }
-  //   // fspJobOrgId 在机构树中所处的营业部位置
-  //   let department;
-  //   _(custRange).forEach((obj) => {
-  //     if (obj.children && !_.isEmpty(obj.children)) {
-  //       const targetValue = _.find(obj.children, o => o.id === fspJobOrgId);
-  //       if (targetValue) {
-  //         department = [targetValue, myCustomer];
-  //       }
-  //     }
-  //   });
-  //   if (department) {
-  //     this.setState({
-  //       createCustRange: department,
-  //       isSms: false,
-  //     });
-  //     return false;
-  //   }
-  //   // 有权限，但是用户信息中获取到的occDivnNum不在empOrg（组织机构树）中，显示用户信息中的数据
-  //   this.setState({
-  //     createCustRange: [{
-  //       id: empInfo.occDivnNum,
-  //       name: empInfo.occupation,
-  //       isSms: false,
-  //     }],
-  //   });
-  //   return false;
-  // }
 
   // 组织机构树切换和时间周期切换
   @autobind
@@ -630,7 +540,7 @@ export default class CustomerList extends PureComponent {
     if (sortType && sortDirection) {
       reorderValue = { sortType, sortDirection };
     }
-    const { expandAll, queryParam, isLoadingEnd, authority } = this.state;
+    const { expandAll, createCustRange, queryParam, authority, isLoadingEnd } = this.state;
     const custRangeProps = {
       orgId,
       custRange: serviceDepartment,
