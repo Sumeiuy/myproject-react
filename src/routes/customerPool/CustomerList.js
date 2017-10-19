@@ -540,7 +540,7 @@ export default class CustomerList extends PureComponent {
     if (sortType && sortDirection) {
       reorderValue = { sortType, sortDirection };
     }
-    const { expandAll, createCustRange, queryParam, authority, isLoadingEnd } = this.state;
+    const { expandAll, queryParam, authority, isLoadingEnd } = this.state;
     const custRangeProps = {
       orgId,
       custRange: serviceDepartment,
