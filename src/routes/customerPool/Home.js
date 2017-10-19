@@ -140,7 +140,6 @@ export default class Home extends PureComponent {
     super(props);
     this.state = {
       cycleSelect: '',
-      fspOrgId: '', // 主服务经理
       createCustRange: [],
       expandAll: false,
     };
@@ -151,8 +150,6 @@ export default class Home extends PureComponent {
   componentDidMount() {
     const {
       custRange,
-      // cycle = EMPTY_LIST,
-      location: { query: { orgId = '' } },
       empInfo: { empInfo },
       getInformation,
       getToBeDone,
@@ -168,12 +165,14 @@ export default class Home extends PureComponent {
     } else {
       this.orgId = occDivnNum;
     }
+    // 权限控制是否传给后端orgId
+    const authOrgId = this.isHasAuthorize ? this.orgId : '';
     // 热词搜索 orgId, empNo 两个参数必传一个，两个同时传时以orgId为准
-    getHotWds({ orgId: orgId || this.orgId, empNo: empNum });
+    getHotWds({ orgId: authOrgId, empNo: empNum });
     // 历史搜索记录 orgId, empNo 两个参数必传一个，两个同时传时以orgId为准
-    getHistoryWdsList({ orgId: orgId || this.orgId, empNo: empNum });
+    getHistoryWdsList({ orgId: authOrgId, empNo: empNum });
     // 待办事项
-    getToBeDone({ orgId: orgId || this.orgId, ptyMngId: empNum });
+    getToBeDone({ orgId: authOrgId });
 
     // 首席投顾观点
     getInformation({ curPageNum: 1, pageSize: 18 });
@@ -325,9 +324,8 @@ export default class Home extends PureComponent {
   @autobind
   queryHotPossibleWds(state) {
     const { getHotPossibleWds } = this.props;
-    const { fspOrgId } = this.state;
     const setData = {
-      orgId: fspOrgId, // 组织ID
+      orgId: this.isHasAuthorize ? this.orgId : '', // 组织ID
       empNo: helper.getEmpId(), // 用户ID
     };
     getHotPossibleWds({
@@ -340,9 +338,8 @@ export default class Home extends PureComponent {
   @autobind
   queryHistoryWdsList() {
     const { getHistoryWdsList } = this.props;
-    const { fspOrgId } = this.state;
     const setData = {
-      orgId: fspOrgId === '' ? null : fspOrgId, // 组织ID
+      orgId: this.isHasAuthorize ? this.orgId : '', // 组织ID
       empNo: helper.getEmpId(), // 用户ID
     };
     getHistoryWdsList({
@@ -354,9 +351,8 @@ export default class Home extends PureComponent {
   @autobind
   clearHistoryList() {
     const { clearSearchHistoryList } = this.props;
-    const { fspOrgId } = this.state;
     const setData = {
-      orgId: fspOrgId === '' ? null : fspOrgId, // 组织ID
+      orgId: this.isHasAuthorize ? this.orgId : '', // 组织ID
       empNo: helper.getEmpId(), // 用户ID
     };
     clearSearchHistoryList({
@@ -494,7 +490,6 @@ export default class Home extends PureComponent {
       performanceIndicators,
       hsRate,
     } = this.props;
-    const { fspOrgId } = this.state;
     return (
       <div className={styles.customerPoolWrap}>
         <Search
@@ -503,7 +498,6 @@ export default class Home extends PureComponent {
           queryHistoryWdsList={this.queryHistoryWdsList}
           queryHotWdsData={hotPossibleWdsList}
           push={push}
-          orgId={fspOrgId}
           historyWdsList={historyWdsList}
           clearSuccess={clearState}
           clearFun={this.clearHistoryList}
@@ -518,6 +512,7 @@ export default class Home extends PureComponent {
               push={push}
               data={process}
               motTaskCountData={motTaskCount}
+              authority={this.isHasAuthorize}
             />
             <Tabs
               tabBarExtraContent={this.renderTabsExtra()}
