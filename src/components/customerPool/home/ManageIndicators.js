@@ -12,10 +12,10 @@ import _ from 'lodash';
 
 import RectFrame from './RectFrame';
 import IECharts from '../../IECharts';
+import IfEmpty from '../common/IfEmpty';
 import CheckLayout from './CheckLayout';
 import ProgressList from './ProgressList';
 import CustomerService from './CustomerService';
-import { IfEmpty } from './PerformanceIndicators';
 import styles from './performanceIndicators.less';
 import {
   getHSRate,
@@ -175,7 +175,7 @@ export default class PerformanceIndicators extends PureComponent {
             <Row gutter={16}>
               <Col span={8}>
                 <RectFrame dataSource={pureAddHead}>
-                  <IfEmpty isEmpty={isEmpty}>
+                  <IfEmpty isEmpty={isEmpty} className={styles.empty}>
                     <ProgressList
                       key={'pureAdd'}
                       dataSource={pureAddItems}
@@ -188,7 +188,7 @@ export default class PerformanceIndicators extends PureComponent {
               </Col>
               <Col span={8}>
                 <RectFrame dataSource={clientHead}>
-                  <IfEmpty isEmpty={isEmpty}>
+                  <IfEmpty isEmpty={isEmpty} className={styles.empty}>
                     <IECharts
                       onReady={this.handleBusinessOpenClick}
                       option={clientItems}
@@ -202,7 +202,7 @@ export default class PerformanceIndicators extends PureComponent {
               </Col>
               <Col span={8}>
                 <RectFrame dataSource={hsRateHead}>
-                  <IfEmpty isEmpty={isEmpty}>
+                  <IfEmpty isEmpty={isEmpty} className={styles.empty}>
                     <IECharts
                       option={hsRateData}
                       resizable
@@ -219,21 +219,21 @@ export default class PerformanceIndicators extends PureComponent {
             <Row gutter={16}>
               <Col span={8}>
                 <RectFrame dataSource={tradeVolumeHead}>
-                  <IfEmpty isEmpty={isEmpty}>
+                  <IfEmpty isEmpty={isEmpty} className={styles.empty}>
                     <CheckLayout dataSource={tradeItems} />
                   </IfEmpty>
                 </RectFrame>
               </Col>
               <Col span={8}>
                 <RectFrame dataSource={productSaleHead}>
-                  <IfEmpty isEmpty={isEmpty}>
+                  <IfEmpty isEmpty={isEmpty} className={styles.empty}>
                     <ProgressList dataSource={productSaleItems} key={'productSale'} />
                   </IfEmpty>
                 </RectFrame>
               </Col>
               <Col span={8}>
                 <RectFrame dataSource={serviceIndicatorHead}>
-                  <IfEmpty isEmpty={isEmpty}>
+                  <IfEmpty isEmpty={isEmpty} className={styles.empty}>
                     <CustomerService data={customerServiceData} />
                   </IfEmpty>
                 </RectFrame>

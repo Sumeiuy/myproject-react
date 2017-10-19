@@ -11,6 +11,7 @@ import _ from 'lodash';
 import 'echarts-liquidfill';
 
 import Funney from './Funney';
+import IfEmpty from '../common/IfEmpty';
 import RectFrame from './RectFrame';
 import IECharts from '../../IECharts';
 import ProgressList from './ProgressList';
@@ -26,19 +27,6 @@ import {
   businessOpenNumLabelList,
   linkTo,
 } from './homeIndicators_';
-
-export function IfEmpty(props) {
-  const { isEmpty, children } = props;
-  if (isEmpty) {
-    return <div className={styles.empty}>暂无数据</div>;
-  }
-  return children;
-}
-
-IfEmpty.propTypes = {
-  isEmpty: PropTypes.bool.isRequired,
-  children: PropTypes.object.isRequired,
-};
 
 export default class PerformanceIndicators extends PureComponent {
   static propTypes = {
@@ -196,7 +184,7 @@ export default class PerformanceIndicators extends PureComponent {
     return (
       <Col span={8}>
         <RectFrame dataSource={headLine}>
-          <IfEmpty isEmpty={_.isEmpty(param.data)}>
+          <IfEmpty isEmpty={_.isEmpty(param.data)} className={styles.empty}>
             <Funney dataSource={data} />
           </IfEmpty>
         </RectFrame>
@@ -239,7 +227,7 @@ export default class PerformanceIndicators extends PureComponent {
     return (
       <Col span={8}>
         <RectFrame dataSource={headLine}>
-          <IfEmpty isEmpty={_.isEmpty(param.data)}>
+          <IfEmpty isEmpty={_.isEmpty(param.data)} className={styles.empty}>
             <IECharts
               onReady={this.handleBusinessOpenClick}
               option={items}
@@ -262,7 +250,7 @@ export default class PerformanceIndicators extends PureComponent {
     return (
       <Col span={8}>
         <RectFrame dataSource={headLine}>
-          <IfEmpty isEmpty={_.isEmpty(param.data)}>
+          <IfEmpty isEmpty={_.isEmpty(param.data)} className={styles.empty}>
             <IECharts
               option={data}
               resizable
@@ -293,7 +281,7 @@ export default class PerformanceIndicators extends PureComponent {
     return (
       <Col span={8}>
         <RectFrame dataSource={headLine}>
-          <IfEmpty isEmpty={_.isEmpty(param.data)}>
+          <IfEmpty isEmpty={_.isEmpty(param.data)} className={styles.empty}>
             <ProgressList dataSource={items} key={param.key} />
           </IfEmpty>
         </RectFrame>
@@ -319,7 +307,7 @@ export default class PerformanceIndicators extends PureComponent {
     return (
       <Col span={8}>
         <RectFrame dataSource={headLine}>
-          <IfEmpty isEmpty={_.isEmpty(param.data)}>
+          <IfEmpty isEmpty={_.isEmpty(param.data)} className={styles.empty}>
             <IECharts
               option={option}
               resizable
