@@ -5,9 +5,10 @@ import { withRouter, routerRedux } from 'dva/router';
 import { Steps, message, Button } from 'antd';
 // import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import events from 'events';
 import { autobind } from 'core-decorators';
 import PickTargetCustomer from '../../components/customerPool/taskFlow/PickTargetCustomer';
-import TaskOverview from '../../components/customerPool/taskFlow/TaskOverview';
+import TaskPreview from '../../components/customerPool/taskFlow/TaskPreview';
 import CreateTaskForm from '../../components/customerPool/createTask/CreateTaskForm';
 // import Button from '../../components/common/Button';
 import styles from './taskFlow.less';
@@ -20,8 +21,9 @@ const EMPTY_OBJECT = {};
 const effects = {
   // 预览客户细分数据
   priviewCustFile: 'customerPool/priviewCustFile',
-  getLabelCirclePeople: 'customerPool/getLabelCirclePeople',
+  getCirclePeople: 'customerPool/getCirclePeople',
   getPeopleOfLabel: 'customerPool/getPeopleOfLabel',
+  submitTaskFlow: 'customerPool/submitTaskFlow',
 };
 
 const fetchData = (type, loading) => query => ({
@@ -35,10 +37,8 @@ const mapStateToProps = state => ({
   dict: state.app.dict,
   // 客户细分导入数据
   priviewCustFileData: state.customerPool.priviewCustFileData,
-  // 客户细分存储的数据
-  storedCustSegmentData: state.customerPool.storedCustSegmentData,
-  // 标签圈人储存的数据
-  storedLabelCustData: state.customerPool.storedLabelCustData,
+  // 储存的数据
+  storedTaskFlowData: state.customerPool.storedTaskFlowData,
   circlePeopleData: state.customerPool.circlePeopleData,
   peopleOfLabelData: state.customerPool.peopleOfLabelData,
   currentTab: state.customerPool.currentTab,
@@ -47,15 +47,15 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   push: routerRedux.push,
   replace: routerRedux.replace,
-  // 存储客户细分数据
-  saveCustSegmentData: query => ({
-    type: 'customerPool/saveCustSegmentData',
+  // 存储任务流程数据
+  saveTaskFlowData: query => ({
+    type: 'customerPool/saveTaskFlowData',
     payload: query,
   }),
-  // 存储标签圈人数据
-  saveLabelCustData: query => ({
-    type: 'customerPool/saveLabelCustData',
-    payload: query,
+  // 清除任务流程数据
+  clearTaskFlowData: query => ({
+    type: 'customerPool/clearTaskFlowData',
+    payload: query || {},
   }),
   // 保存选中的tab
   saveCurrentTab: query => ({
@@ -65,7 +65,12 @@ const mapDispatchToProps = {
   priviewCustFile: fetchData(effects.priviewCustFile, true),
   getCirclePeople: fetchData(true, effects.getCirclePeople),
   getPeopleOfLabel: fetchData(true, effects.getPeopleOfLabel),
+  submitTaskFlow: fetchData(true, effects.submitTaskFlow),
 };
+
+const EventEmitter = events;
+// new一个事件监听，用来发射缓存数据事件
+const saveDataEmitter = new EventEmitter();
 
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
@@ -73,13 +78,8 @@ export default class TaskFlow extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
-    replace: PropTypes.func.isRequired,
     priviewCustFileData: PropTypes.object.isRequired,
     priviewCustFile: PropTypes.func.isRequired,
-    saveCustSegmentData: PropTypes.func.isRequired,
-    saveLabelCustData: PropTypes.func.isRequired,
-    storedCustSegmentData: PropTypes.object.isRequired,
-    storedLabelCustData: PropTypes.object.isRequired,
     getCirclePeople: PropTypes.func.isRequired,
     getPeopleOfLabel: PropTypes.func.isRequired,
     circlePeopleData: PropTypes.array.isRequired,
@@ -87,6 +87,10 @@ export default class TaskFlow extends PureComponent {
     dict: PropTypes.object,
     saveCurrentTab: PropTypes.func.isRequired,
     currentTab: PropTypes.string.isRequired,
+    storedTaskFlowData: PropTypes.object.isRequired,
+    saveTaskFlowData: PropTypes.func.isRequired,
+    clearTaskFlowData: PropTypes.func.isRequired,
+    submitTaskFlow: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -98,28 +102,25 @@ export default class TaskFlow extends PureComponent {
     super(props);
     this.state = {
       current: 0,
-      storeWhichData: [],
-      restoreWhichData: [],
+      currentStep: 0,
     };
   }
 
   @autobind
-  next() {
+  handleNextStep() {
+    // 下一步
     const { current } = this.state;
-    // 下一步时，存储当前数据
-    this.setState({
-      storeWhichData: [current],
-    });
+    if (current === 0) {
+      saveDataEmitter.emit('saveTaskFormData');
+    } else if (current === 1) {
+      saveDataEmitter.emit('saveSelectCustData');
+    }
   }
 
   @autobind
-  prev() {
+  handlePreviousStep() {
     const { current } = this.state;
-    // 恢复上一步数据
-    this.setState({
-      restoreWhichData: [current - 1],
-    });
-
+    // 上一步
     this.setState({
       current: current - 1,
     });
@@ -142,70 +143,70 @@ export default class TaskFlow extends PureComponent {
   }
 
   @autobind
-  handleStepUpdate({ type }) {
+  handleStepUpdate() {
     const { current } = this.state;
-    if (type === 'next') {
-      this.setState({
-        current: current + 1,
-        storeWhichData: [],
-        restoreWhichData: [],
-      });
-    }
+    this.setState({
+      current: current + 1,
+    });
+  }
+
+  @autobind
+  handleSubmitTaskFlow() {
+    const { clearTaskFlowData, submitTaskFlow, storedTaskFlowData } = this.props;
+    submitTaskFlow({
+      storedTaskFlowData,
+    });
+    clearTaskFlowData();
   }
 
   render() {
-    const { current, storeWhichData, restoreWhichData, dict } = this.state;
     const {
+      current,
+    } = this.state;
+
+    const {
+      dict,
       priviewCustFileData,
-      storedCustSegmentData,
-      saveCustSegmentData,
-      replace,
-      location,
-      saveLabelCustData,
-      storedLabelCustData,
       currentTab,
       saveCurrentTab,
+      storedTaskFlowData,
+      saveTaskFlowData,
+      getCirclePeople,
+      getPeopleOfLabel,
+      peopleOfLabelData,
+      circlePeopleData,
     } = this.props;
 
     const steps = [{
       title: '基本信息',
       content: <CreateTaskForm
-        location={location}
-        replace={replace}
         dict={dict}
+        location={location}
+        storedTaskFlowData={storedTaskFlowData}
+        saveTaskFlowData={saveTaskFlowData}
         onStepUpdate={this.handleStepUpdate}
-        storedData={storedCustSegmentData}
-        storeData={saveCustSegmentData}
-        // 第一步需要store data，不需要restore data
-        isStoreData={!_.isEmpty(storeWhichData) && _.includes(storeWhichData, 0)}
-        isRestoreData={!_.isEmpty(restoreWhichData) && _.includes(restoreWhichData, 0)}
+        saveDataEmitter={saveDataEmitter}
       />,
     }, {
       title: '目标客户',
       content: <PickTargetCustomer
         currentTab={currentTab}
         saveCurrentTab={saveCurrentTab}
-        location={location}
-        replace={replace}
         onPreview={this.handlePreview}
-        onStepUpdate={this.handleStepUpdate}
-        storedCustSegmentData={storedCustSegmentData}
-        saveCustSegmentData={saveCustSegmentData}
-        storedLabelCustData={storedLabelCustData}
-        saveLabelCustData={saveLabelCustData}
         priviewCustFileData={priviewCustFileData}
-        // 0代表第一步，1代表第二步，2代表第三步
-        isRestoreData={!_.isEmpty(restoreWhichData) && _.includes(restoreWhichData, 1)}
-        // 0代表第一步，1代表第二步，2代表第三步
-        isStoreData={!_.isEmpty(storeWhichData) && _.includes(storeWhichData, 1)}
+        storedTaskFlowData={storedTaskFlowData}
+        saveTaskFlowData={saveTaskFlowData}
+        getCirclePeople={getCirclePeople}
+        circlePeopleData={circlePeopleData}
+        getPeopleOfLabel={getPeopleOfLabel}
+        peopleOfLabelData={peopleOfLabelData}
+        onStepUpdate={this.handleStepUpdate}
+        saveDataEmitter={saveDataEmitter}
       />,
     }, {
       title: '提交',
-      content: <TaskOverview
-        location={location}
-        replace={replace}
-        isRestoreData={!_.isEmpty(restoreWhichData) && _.includes(restoreWhichData, 2)}
-        isStoreData={!_.isEmpty(storeWhichData) && _.includes(storeWhichData, 2)}
+      content: <TaskPreview
+        storedTaskFlowData={storedTaskFlowData}
       />,
     }];
 
@@ -237,7 +238,7 @@ export default class TaskFlow extends PureComponent {
             <Button
               className={styles.prevStepBtn}
               type="default"
-              onClick={this.prev}
+              onClick={this.handlePreviousStep}
             >
               上一步
             </Button>
@@ -248,7 +249,7 @@ export default class TaskFlow extends PureComponent {
             <Button
               className={styles.nextStepBtn}
               type="primary"
-              onClick={this.next}
+              onClick={this.handleNextStep}
             >下一步</Button>
           }
           {
@@ -257,7 +258,7 @@ export default class TaskFlow extends PureComponent {
             <Button
               className={styles.confirmBtn}
               type="primary"
-              onClick={() => message.success('Processing complete!')}
+              onClick={this.handleSubmitTaskFlow}
             >确认无误，提交</Button>
           }
         </div>

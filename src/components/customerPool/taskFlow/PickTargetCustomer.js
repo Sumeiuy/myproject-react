@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 10:29:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-18 17:26:38
+ * @Last Modified time: 2017-10-19 14:11:28
  */
 
 import React, { PureComponent } from 'react';
@@ -18,30 +18,19 @@ export default class PickTargetCustomer extends PureComponent {
   static propTypes = {
     onPreview: PropTypes.func.isRequired,
     priviewCustFileData: PropTypes.object.isRequired,
-    isRestoreData: PropTypes.bool,
-    isStoreData: PropTypes.bool,
-    storedCustSegmentData: PropTypes.object,
-    saveCustSegmentData: PropTypes.func.isRequired,
-    storedLabelCustData: PropTypes.object,
-    saveLabelCustData: PropTypes.func.isRequired,
-    onStepUpdate: PropTypes.func.isRequired,
-    replace: PropTypes.func.isRequired,
-    location: PropTypes.object.isRequired,
     getCirclePeople: PropTypes.func.isRequired,
     getPeopleOfLabel: PropTypes.func.isRequired,
     circlePeopleData: PropTypes.array.isRequired,
     peopleOfLabelData: PropTypes.array.isRequired,
     currentTab: PropTypes.string.isRequired,
     saveCurrentTab: PropTypes.func.isRequired,
+    storedTaskFlowData: PropTypes.object.isRequired,
+    saveTaskFlowData: PropTypes.func.isRequired,
+    saveDataEmitter: PropTypes.object.isRequired,
+    onStepUpdate: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
-    isRestoreData: false,
-    isStoreData: false,
-    storeData: () => { },
-    restoreData: () => { },
-    storedCustSegmentData: {},
-    storedLabelCustData: {},
   };
 
   constructor(props) {
@@ -58,23 +47,17 @@ export default class PickTargetCustomer extends PureComponent {
       currentKey: key,
     });
     saveCurrentTab(key);
-    console.log(key);
   }
 
   render() {
     const {
       onPreview,
       priviewCustFileData,
-      isRestoreData,
-      isStoreData,
-      storedCustSegmentData,
-      storedLabelCustData,
-      onStepUpdate,
-      replace,
-      location,
-      saveCustSegmentData,
-      saveLabelCustData,
       currentTab,
+      saveTaskFlowData,
+      storedTaskFlowData,
+      onStepUpdate,
+      saveDataEmitter,
     } = this.props;
     const { currentKey } = this.state;
 
@@ -91,28 +74,22 @@ export default class PickTargetCustomer extends PureComponent {
           <Tabs defaultActiveKey={currentActiveKey} onChange={this.handleTabChange} type="card">
             <TabPane tab="客户细分" key="1">
               <CustomerSegment
-                location={location}
-                replace={replace}
                 onPreview={onPreview}
                 priviewCustFileData={priviewCustFileData}
-                // 只有当前tab是客户细分，并且需要存储数据时，才存储数据
-                isStoreData={isStoreData && currentActiveKey === '1'}
-                isRestoreData={isRestoreData}
-                storeData={saveCustSegmentData}
-                storedData={storedCustSegmentData}
+                storeData={saveTaskFlowData}
+                storedData={storedTaskFlowData}
                 onStepUpdate={onStepUpdate}
+                saveDataEmitter={saveDataEmitter}
               />
             </TabPane>
             <TabPane tab="标签圈人" key="2">
               <SelectLabelCust
                 circlePeopleData={circlePeopleData}
                 getCirclePeople={getCirclePeople}
+                storeData={saveTaskFlowData}
+                storedData={storedTaskFlowData}
+                saveDataEmitter={saveDataEmitter}
                 onStepUpdate={onStepUpdate}
-                // 只有当前tab是标签圈人，并且需要存储数据时，才存储数据
-                isStoreData={isStoreData && currentActiveKey === '2'}
-                isRestoreData={isRestoreData}
-                storeData={saveLabelCustData}
-                storedData={storedLabelCustData}
               />
             </TabPane>
           </Tabs>

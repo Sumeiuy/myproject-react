@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-18 17:33:15
+ * @Last Modified time: 2017-10-19 17:03:03
  */
 
 import React, { PropTypes, PureComponent } from 'react';
@@ -11,6 +11,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import Confirm from '../../common/Confirm';
 // import Button from '../../common/Button';
+import Icon from '../../common/Icon';
 import { request } from '../../../config';
 import { helper } from '../../../utils';
 import uploadRequest from '../../../utils/uploadRequest';
@@ -29,16 +30,18 @@ export default class Uploader extends PureComponent {
     onOperateFile: PropTypes.func.isRequired,
     onHandleOverview: PropTypes.func.isRequired,
     onDeleteFile: PropTypes.func.isRequired,
+    originFileName: PropTypes.string,
   }
 
   static defaultProps = {
     attachModel: {},
     fileKey: '',
+    originFileName: '',
   }
 
   constructor(props) {
     super(props);
-    const { attachModel = EMPTY_OBJECT, fileKey = '' } = props;
+    const { attachModel = EMPTY_OBJECT, fileKey = '', originFileName = '' } = props;
     this.state = {
       fList: [],
       lastFile: attachModel,
@@ -49,6 +52,8 @@ export default class Uploader extends PureComponent {
       },
       isShowDeleteConfirm: false,
       isShowUpload: !(attachModel && fileKey),
+      isShowError: false,
+      originFileName,
     };
   }
 
@@ -104,7 +109,7 @@ export default class Uploader extends PureComponent {
     //   "status": "done"
     // }
 
-    const { status, response } = currentFile;
+    const { status, response, name } = currentFile;
     const { resultData, msg } = response || {};
 
     if (status === 'uploading') {
@@ -130,6 +135,7 @@ export default class Uploader extends PureComponent {
           onOperateFile({
             currentFile: lastFile,
             uploadedFileKey: lastData,
+            originFileName: name,
           });
         }
       }
@@ -140,18 +146,24 @@ export default class Uploader extends PureComponent {
       onOperateFile({
         currentFile,
         uploadedFileKey: resultData,
+        originFileName: name,
       });
       this.setState({
         lastFile: currentFile,
         uploadedFileKey: resultData,
         // 不展示upload组件
         isShowUpload: false,
+        isShowError: false,
+        originFileName: name,
       });
     }
 
     if (status === 'error') {
       const errorMsg = _.isEmpty(msg) ? '文件上传失败' : msg;
       message.error(`${errorMsg}.`, 2);
+      this.setState({
+        isShowError: true,
+      });
     }
 
     // this.setState({
@@ -187,7 +199,7 @@ export default class Uploader extends PureComponent {
         name="file"
         defaultFileList={fileList}
         data={upData}
-        action={`${request.prefix}/file/khxfFileUpload`} //  feedbackFileUpload
+        action={`${request.prefix}/file/khxfFileUpload`}
         onRemove={this.handleFileRemove}
         onChange={this.handleFileChange}
         customRequest={this.fileCustomRequest}
@@ -220,7 +232,6 @@ export default class Uploader extends PureComponent {
 
   @autobind
   handleDeleteFile() {
-    // const { uploadedFileKey } = this.state;
     this.setState({
       isShowDeleteConfirm: true,
     });
@@ -234,34 +245,41 @@ export default class Uploader extends PureComponent {
   }
 
   render() {
-    const { isShowDeleteConfirm, isShowUpload } = this.state;
+    const { isShowDeleteConfirm, isShowUpload, isShowError, originFileName } = this.state;
     return (
-      <div className="uploadBox">
+      <div>
+        <div className="uploadBox">
+          {
+            isShowUpload ? this.createUpload() : null
+          }
+          {
+            !isShowUpload ? <div className="previewSection">
+              <div className="uploadedFile">
+                <Icon className="excelIcon" type="excel" />
+                <span>{originFileName}</span>
+              </div>
+              <div
+                className="overview"
+                onClick={this.handlePreview}
+              >预览</div>
+              <div
+                className="delete"
+                onClick={this.handleDeleteFile}
+              >删除</div>
+            </div> : null
+          }
+          {
+            isShowDeleteConfirm ?
+              <Confirm
+                type="delete"
+                onCancelHandler={this.handleCancel}
+                onOkHandler={this.handleDeleteConfirm}
+              /> : null
+          }
+        </div>
         {
-          isShowUpload ? this.createUpload() : null
-        }
-        {
-          !isShowUpload ? <div className="previewSection">
-            <div className="uploadedFile">
-              我的客户细分.xls
-            </div>
-            <div
-              className="overview"
-              onClick={this.handlePreview}
-            >预览</div>
-            <div
-              className="delete"
-              onClick={this.handleDeleteFile}
-            >删除</div>
-          </div> : null
-        }
-        {
-          isShowDeleteConfirm ?
-            <Confirm
-              type="delete"
-              onCancelHandler={this.handleCancel}
-              onOkHandler={this.handleDeleteConfirm}
-            /> : null
+          (isShowUpload && isShowError) ?
+            <div className="errorInfo">导入数据失败，上传格式不正确！</div> : null
         }
       </div>
     );

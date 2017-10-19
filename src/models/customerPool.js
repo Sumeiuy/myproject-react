@@ -6,7 +6,6 @@
 import _ from 'lodash';
 import queryString from 'query-string';
 import pathToRegexp from 'path-to-regexp';
-import { custSelectType } from '../config';
 import { customerPool as api } from '../api';
 import { toastM } from '../utils/sagaEffects';
 
@@ -95,37 +94,19 @@ export default {
     serviceLogMoreData: [],
     // 预览客户细分数据
     priviewCustFileData: {},
-    // 存储的客户细分数据
-    storedCustSegmentData: {},
-    // 存储的标签圈人数据
-    storedLabelCustData: {},
+    // 存储的任务流程数据
+    storedTaskFlowData: {},
     // 当前选中tab
     currentTab: '',
+    // 提交任务流程结果
+    submitTaskFlowResult: '',
+    circlePeopleData: [],
+    peopleOfLabelData: [],
   },
   subscriptions: {
     setup({ dispatch, history }) {
-      history.listen(({ pathname, search, state }) => {
+      history.listen(({ pathname, search }) => {
         const params = queryString.parse(search);
-        const taskFlowUrl = pathToRegexp('/customerPool/taskFlow').exec(pathname);
-        if (taskFlowUrl) {
-          const { isStoreData, step, type } = params;
-          if (isStoreData === 'Y') {
-            if (step === 'second') {
-              // 第二步
-              if (type === custSelectType[0].key) {
-                // 客户细分
-                const { data } = state;
-                dispatch({
-                  type: 'saveCustSegmentData',
-                  payload: data,
-                });
-              } else if (type === custSelectType[1].key) {
-                // 标签圈人
-              }
-            }
-          }
-        }
-
         const serviceLogUrl = pathToRegexp('customerPool/serviceLog').exec(pathname);
         if (serviceLogUrl) {
           const { pageSize, serveDateToPaged } = params;
@@ -557,6 +538,15 @@ export default {
         payload: { resultData },
       });
     },
+    // 提交任务流程
+    * submitTaskFlow({ payload }, { call, put }) {
+      const response = yield call(api.submitTaskFlow, payload);
+      const { resultData } = response;
+      yield put({
+        type: 'submitTaskFlowSuccess',
+        payload: resultData,
+      });
+    },
   },
   reducers: {
     getPerformanceIndicatorsSuccess(state, action) {
@@ -985,20 +975,20 @@ export default {
         priviewCustFileData: payload,
       };
     },
-    // 存储客户细分
-    saveCustSegmentData(state, action) {
+    // 存储任务流程数据
+    saveTaskFlowData(state, action) {
       const { payload } = action;
       return {
         ...state,
-        storedCustSegmentData: payload,
+        storedTaskFlowData: payload,
       };
     },
-    // 存储标签圈人
-    saveLabelCustData(state, action) {
+    // 清除任务流程数据
+    clearTaskFlowData(state, action) {
       const { payload } = action;
       return {
         ...state,
-        storedLabelCustData: payload,
+        storedTaskFlowData: payload,
       };
     },
     // 标签圈人成功
@@ -1023,6 +1013,14 @@ export default {
       return {
         ...state,
         currentTab: payload,
+      };
+    },
+    // 提交任务流程成功
+    submitTaskFlowSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        submitTaskFlowResult: payload,
       };
     },
   },

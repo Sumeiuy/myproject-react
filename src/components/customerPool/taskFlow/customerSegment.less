@@ -172,3 +172,29 @@
 //   margin: 0 auto;
 //   left: 0px;
 // }
+.custListTable {
+  padding: 0 !important;
+  table > thead > tr > th, tbody > tr > td {
+    padding: 0px;
+    padding-bottom: 7px;
+    padding-top: 7px;
+    padding-left: 8px;
+    text-align: center !important;
+    border-bottom: 1px solid #e9e9e9;
+    font-size: 14px;
+    color: #727272;
+  }
+  table > tbody > tr:nth-child(odd) {
+    background-color: #ffffff;
+  }
+  tbody > tr > td > div,  tbody > tr > th{
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin: 0;
+  }
+  table > thead > tr > th {
+    background-color: #f7f7f7;
+  }
+}

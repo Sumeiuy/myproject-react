@@ -17,7 +17,6 @@ import { responseCode, excludeCode } from './errorCode';
 import permissionOptions from './permissionOptions';
 import seibelConfig from './pageConfig';
 import contract from './contract';
-import { steps, custSelectType } from './stepOptions';
 
 export default {
   constants,
@@ -40,6 +39,4 @@ export default {
   permissionOptions,
   seibelConfig,
   contract,
-  steps,
-  custSelectType,
 };

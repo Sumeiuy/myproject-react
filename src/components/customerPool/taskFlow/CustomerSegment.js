@@ -2,43 +2,34 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 13:43:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-18 17:34:15
+ * @Last Modified time: 2017-10-19 17:25:42
  * 客户细分组件
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import classnames from 'classnames';
 import _ from 'lodash';
 import GroupTable from '../groupManage/GroupTable';
 import Uploader from './Uploader';
-import { steps, custSelectType } from '../../../config';
-import tableStyles from '../groupManage/groupTable.less';
+import Button from '../../common/Button';
+import GroupModal from '../groupManage/CustomerGroupUpdateModal';
 import styles from './customerSegment.less';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
-const COLUMN_WIDTH = 140;
+const COLUMN_WIDTH = 115;
 
 export default class CustomerSegment extends PureComponent {
   static propTypes = {
     onPreview: PropTypes.func.isRequired,
     priviewCustFileData: PropTypes.object.isRequired,
-    // 是否需要恢复数据
-    isRestoreData: PropTypes.bool.isRequired,
-    // 是否需要保存数据
-    isStoreData: PropTypes.bool.isRequired,
     // 保存数据方法
     storeData: PropTypes.func.isRequired,
     // 保存的数据
     storedData: PropTypes.object,
-    // 步骤更新回调
+    saveDataEmitter: PropTypes.object.isRequired,
     onStepUpdate: PropTypes.func.isRequired,
-    // replace
-    replace: PropTypes.func.isRequired,
-    // location
-    location: PropTypes.object.isRequired,
   };
 
   static defaultProps = {
@@ -48,54 +39,37 @@ export default class CustomerSegment extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { storedData } = props;
-    const { attachModel, fileKey } = storedData;
+    const { storedData = EMPTY_OBJECT } = props;
+    const { custSegment = EMPTY_OBJECT } = storedData;
+    const { currentFile = {}, uploadedFileKey = '', originFileName = '' } = custSegment;
     this.state = {
       curPageNum: 1,
       curPageSize: 10,
       dataSource: EMPTY_LIST,
       totalRecordNum: 10,
       isShowTable: false,
-      currentFile: attachModel,
-      uploadedFileKey: fileKey,
-      attachModel,
-      fileKey,
+      currentFile,
+      uploadedFileKey,
+      originFileName,
     };
   }
 
   componentWillMount() {
-    const { replace, location: { query, pathname } } = this.props;
-    replace({
-      pathname,
-      query: {
-        ...query,
-        // 页面初始化时，恢复option
-        isStoreData: 'N',
-        step: steps[1].key,
-        type: custSelectType[0].key,
-      },
-    });
+    const { saveDataEmitter } = this.props;
+    saveDataEmitter.on('saveSelectCustData', this.handleSaveData);
   }
 
   componentWillReceiveProps(nextProps) {
     const {
       priviewCustFileData = EMPTY_LIST,
-      isRestoreData,
-      isStoreData,
-      // storeData,
-      storedData,
-      onStepUpdate,
-      replace,
-      location: { query, pathname, state },
      } = this.props;
     const {
       priviewCustFileData: nextData = EMPTY_LIST,
-      isRestoreData: nextIsRestoreData,
-      isStoreData: nextIsStoreData,
      } = nextProps;
     const { custInfos = EMPTY_LIST } = priviewCustFileData;
     const { custInfos: nextInfos = EMPTY_LIST, page: nextPage = EMPTY_OBJECT } = nextData;
     const { totalCount: nextTotalCount, pageNum, pageSize } = nextPage;
+
     if (custInfos !== nextInfos) {
       // 展示预览数据
       const columns = _.head(nextInfos);
@@ -109,43 +83,11 @@ export default class CustomerSegment extends PureComponent {
         columnSize: _.size(columns),
       });
     }
+  }
 
-    if (isStoreData !== nextIsStoreData || isStoreData) {
-      const { currentFile, uploadedFileKey } = this.state;
-      replace({
-        pathname,
-        query: {
-          ...query,
-          isStoreData: nextIsStoreData ? 'Y' : 'N',
-          // 第二步
-          step: steps[1].key,
-          // 客户细分
-          type: custSelectType[0].key,
-        },
-        state: {
-          ...state,
-          // currentSelect 1 代表第一个tab
-          data: { attachModel: currentFile, fileKey: uploadedFileKey },
-        },
-      });
-
-      onStepUpdate({
-        type: 'next',
-      });
-    }
-
-    if (isRestoreData !== nextIsRestoreData || isRestoreData) {
-      // 恢复数据
-      const {
-        attachModel,
-        fileKey,
-      } = storedData;
-      this.setState({
-        attachModel,
-        currentFile: attachModel,
-        fileKey,
-      });
-    }
+  componentWillUnmount() {
+    const { saveDataEmitter } = this.props;
+    saveDataEmitter.removeListener('saveSelectCustData', this.handleSaveData);
   }
 
   @autobind
@@ -166,10 +108,11 @@ export default class CustomerSegment extends PureComponent {
   @autobind
   handleFileUpload(lastFile) {
     // 当前上传的file
-    const { currentFile = {}, uploadedFileKey = '' } = lastFile;
+    const { currentFile = {}, uploadedFileKey = '', originFileName = '' } = lastFile;
     this.setState({
       currentFile,
       uploadedFileKey,
+      originFileName,
     });
   }
 
@@ -242,6 +185,28 @@ export default class CustomerSegment extends PureComponent {
   }
 
   @autobind
+  handleSaveData() {
+    const { storeData, storedData, onStepUpdate } = this.props;
+    const { currentFile, uploadedFileKey, originFileName } = this.state;
+    storeData({
+      ...storedData,
+      custSegment: {
+        currentFile,
+        uploadedFileKey,
+        originFileName,
+      },
+    });
+    onStepUpdate();
+  }
+
+  @autobind
+  handleCloseModal() {
+    this.setState({
+      isShowTable: false,
+    });
+  }
+
+  @autobind
   renderDataSource(column, data) {
     const dataSource = _.map(data, (item) => {
       const rowData = {};
@@ -253,11 +218,6 @@ export default class CustomerSegment extends PureComponent {
   }
 
   renderColumnTitle(columns) {
-    // "custName":"1-5TTJ-3900",
-    // "custId":"118000119822",
-    // "levelName":"钻石",
-    // "riskLevelName":"稳定"
-
     // 随着导入表格列的变化而变化
     return _.map(columns, item => ({
       key: item,
@@ -274,11 +234,12 @@ export default class CustomerSegment extends PureComponent {
       isShowTable,
       titleColumn,
       columnSize,
-      attachModel,
-      fileKey,
+      currentFile,
+      uploadedFileKey,
+      originFileName,
     } = this.state;
 
-    const scrollX = ((columnSize + 1) * COLUMN_WIDTH);
+    const scrollX = (columnSize * COLUMN_WIDTH);
 
     // 添加id到dataSource
     const newDataSource = this.addIdToDataSource(dataSource);
@@ -289,48 +250,54 @@ export default class CustomerSegment extends PureComponent {
           <Uploader
             onOperateFile={this.handleFileUpload}
             onHandleOverview={this.handleShowMatchCustTable}
-            attachModel={attachModel}
-            fileKey={fileKey}
+            attachModel={currentFile}
+            fileKey={uploadedFileKey}
             onDeleteFile={this.handleDeleteFile}
+            originFileName={originFileName}
           />
         </div>
         <div className={styles.tipSection}>
           注：支持从客户细分导出的Excel或CSV格式文件。文件第一列必须是客户号，第二列必须是客户名称。
         </div>
-        <div className={styles.tableSection}>
-          {
-            isShowTable ?
-              <div className={styles.title}>共匹配到<span>{totalRecordNum}</span>客户</div> : null
-          }
-          {
-            isShowTable ?
-              <GroupTable
-                pageData={{
-                  curPageNum,
-                  curPageSize,
-                  totalRecordNum,
-                }}
-                listData={newDataSource}
-                onSizeChange={this.handleShowSizeChange}
-                onPageChange={this.handlePageChange}
-                tableClass={
-                  classnames({
-                    [tableStyles.groupTable]: true,
-                    [styles.custListTable]: true,
-                  })
-                }
-                titleColumn={titleColumn}
-                isFixedColumn={false}
-                // 前三列固定，如果太长，后面的就滚动
-                fixedColumn={[0, 1, 2]}
-                // 列的总宽度加上固定列的宽度
-                scrollX={scrollX}
-                columnWidth={COLUMN_WIDTH}
-                isFirstColumnLink={false}
-                bordered
-              /> : null
-          }
-        </div>
+        {
+          isShowTable ?
+            <GroupModal
+              // 为了每次都能打开一个新的modal
+              visible={isShowTable}
+              title={'客户预览'}
+              okText={'提交'}
+              okType={'primary'}
+              onOkHandler={this.handleCloseModal}
+              footer={
+                <Button type="primary" size="default" onClick={this.handleCloseModal}>
+                  确定
+                </Button>
+              }
+              modalContent={
+                <GroupTable
+                  pageData={{
+                    curPageNum,
+                    curPageSize,
+                    totalRecordNum,
+                  }}
+                  listData={newDataSource}
+                  onSizeChange={this.handleShowSizeChange}
+                  onPageChange={this.handlePageChange}
+                  tableClass={styles.custListTable}
+                  titleColumn={titleColumn}
+                  isFixedColumn
+                  // 前三列固定，如果太长，后面的就滚动
+                  fixedColumn={[0, 1]}
+                  // 列的总宽度加上固定列的宽度
+                  scrollX={scrollX}
+                  columnWidth={COLUMN_WIDTH}
+                  isFirstColumnLink={false}
+                  bordered
+                />
+              }
+            />
+            : null
+        }
       </div>
     );
   }
