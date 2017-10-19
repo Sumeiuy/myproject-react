@@ -64,34 +64,45 @@ function findOrgNameByOrgId(orgId) {
 export default class CustRange extends PureComponent {
 
   static propTypes = {
-    location: PropTypes.object.isRequired,
-    replace: PropTypes.func.isRequired,
     collectData: PropTypes.func.isRequired,
     updateQueryState: PropTypes.func.isRequired,
     custRange: PropTypes.array.isRequired,
     expandAll: PropTypes.bool,
     orgId: PropTypes.string,
-    beginTime: PropTypes.string,
-    endTime: PropTypes.string,
+    // 是否默认显示第一条数据
+    defaultFirst: PropTypes.bool,
+    // 组件宽度
+    selectBoxStyle: PropTypes.object,
+    // 下拉菜单的宽度
+    dropdownWidth: PropTypes.number,
   }
 
   static defaultProps = {
     expandAll: false,
     orgId: null,
-    beginTime: '',
-    endTime: '',
+    defaultFirst: false,
+    width: 200,
+    dropdownWidth: 200,
+    selectBoxStyle: {},
   }
 
   constructor(props) {
     super(props);
-    const { custRange, orgId } = this.props;
-    console.log('CustRange>>>>', custRange);
+    const { custRange, orgId, defaultFirst } = this.props;
     const formatCustRange = transformCustRangeData(custRange);
     walk(formatCustRange, findOrgNameByOrgId(orgId || custRange[0].id), '');
-    const initValue = {
-      label: custRangeNameDedault,
-      value: custRange[0].id,
-    };
+    let initValue = null;
+    if (defaultFirst) {
+      initValue = {
+        label: custRangeNameDedault,
+        value: custRange[0].id,
+      };
+    } else {
+      initValue = {
+        label: '所有',
+        value: '',
+      };
+    }
     this.state = {
       formatCustRange,
       value: initValue,
@@ -99,15 +110,12 @@ export default class CustRange extends PureComponent {
     };
   }
 
-  componentDidMount() {
-  }
-
   @autobind
   onChange(value) {
     if (!value) {
       return;
     }
-    const { updateQueryState, custRange, collectData, beginTime, endTime } = this.props;
+    const { updateQueryState, custRange, collectData } = this.props;
     const tmpArr = value.value.split('-');
     const custRangeLevel = tmpArr[0];
     const orgId = tmpArr[1];
@@ -130,13 +138,11 @@ export default class CustRange extends PureComponent {
       custRangeLevel,
       level: custRangeLevel,
       scope: Number(custRangeLevel) + 1,
-      begin: beginTime,
-      end: endTime,
     });
   }
 
   render() {
-    const { custRange, expandAll } = this.props;
+    const { custRange, expandAll, selectBoxStyle, dropdownWidth } = this.props;
     const { value } = this.state;
     const formatCustRange = transformCustRangeData(custRange);
     return (
@@ -147,13 +153,14 @@ export default class CustRange extends PureComponent {
         treeDefaultExpandAll={expandAll}
         treeData={formatCustRange}
         onChange={this.onChange}
-        dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
         treeNodeFilterProp={'title'}
         showSearch
-        dropdownMatchSelectWidth
-        style={{ width: 200 }}
+        style={selectBoxStyle}
         labelInValue
+        dropdownMatchSelectWidth={false}
+        dropdownStyle={{ width: dropdownWidth, maxHeight: 400, overflow: 'auto' }}
         getPopupContainer={() => document.querySelector(constants.container)}
+        searchPlaceholder="客户范围"
       />
     );
   }

@@ -18,11 +18,11 @@ exports.response = function (req, res) {
                 },
                 {
                     "groupId": "002",
-                    "groupName": "test2",
+                    "groupName": "test2dsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsdsds",
                     "relatCust": 0,
                     "createdTm": "2017-02-02 00:00:00",
                     "createLogin": null,
-                    "xComments": "这是test"
+                    "xComments": "这是testdsdssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssdsdsds"
                 },
                 {
                     "groupId": "003",

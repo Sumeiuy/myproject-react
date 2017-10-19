@@ -54,8 +54,12 @@
       margin-top: 2px;
     }
   }
+  & > .emptyTable {
+    height: 230px;
+  }
   & > .customerListTable {
     display: block;
+    height: 230px;
     .custListTable {
       padding: 0 !important;
       table > thead > tr > th, tbody > tr > td {
@@ -64,6 +68,9 @@
         padding-top: 7px !important;
         text-align: center !important;
       }
+      // tbody {
+      //   overflow-y: scroll;
+      // }
       tbody > tr > td > div {
         max-width: 100px;
         overflow: hidden;
@@ -74,12 +81,21 @@
       table > thead > tr > th {
         text-align: center !important;
       }
+      :global {
+        .ant-table-header {
+          background-color: #ffffff;
+          table {
+            border-bottom: 0px;
+          }
+        }
+      }
     }
   }
   .operationBtnSection {
     display: flex;
     justify-content: flex-end;
     align-items: center;
+    width: 100%;
     .cancel {
       width: 68px;
       height: 28px;

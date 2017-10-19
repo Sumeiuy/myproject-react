@@ -70,7 +70,7 @@ export default class CustomerIndicators extends PureComponent {
 
   @autobind
   linkTo(value, bname) {
-    const { cycle, push, location: { query: { orgId, cycleSelect } } } = this.props;
+    const { cycle, push, location: { query, query: { orgId, cycleSelect } } } = this.props;
     const pathname = '/customerPool/list';
     const obj = {
       source: 'custIndicator',
@@ -93,6 +93,10 @@ export default class CustomerIndicators extends PureComponent {
       push({
         pathname,
         query: obj,
+        // 方便返回页面时，记住首页的query，在本地环境里
+        state: {
+          ...query,
+        },
       });
     }
   }
@@ -129,7 +133,7 @@ export default class CustomerIndicators extends PureComponent {
                           >
                             {this.numFormat(purAddCust)}
                           </p>
-                        :
+                          :
                           <p>{'--'}</p>
                       }
                       <div>新增有效户</div>
@@ -147,7 +151,7 @@ export default class CustomerIndicators extends PureComponent {
                           >
                             {this.numFormat(purAddNoretailcust)}
                           </p>
-                        :
+                          :
                           <p>{'--'}</p>
                       }
                       <div>新增非零售客户</div>
@@ -167,7 +171,7 @@ export default class CustomerIndicators extends PureComponent {
                           >
                             {this.numFormat(purAddHighprodcust)}
                           </p>
-                        :
+                          :
                           <p>{'--'}</p>
                       }
                       <div>新增高端产品户</div>
@@ -185,7 +189,7 @@ export default class CustomerIndicators extends PureComponent {
                           >
                             {this.numFormat(newProdCust || '--')}
                           </p>
-                        :
+                          :
                           <p>{'--'}</p>
                       }
                       <div>新增产品客户</div>

@@ -4,15 +4,22 @@
  * @author wangjunjun
  */
 import _ from 'lodash';
+import queryString from 'query-string';
+import pathToRegexp from 'path-to-regexp';
 import { customerPool as api } from '../api';
 import { toastM } from '../utils/sagaEffects';
 
+
 const EMPTY_LIST = [];
-// const EMPTY_OBJECT = {};
+const EMPTY_OBJECT = {};
+const LIST_MAX = 1e4;
 
 export default {
   namespace: 'customerPool',
   state: {
+    information: {},     // 资讯
+    performanceIndicators: [],  // 投顾指标
+    hsRate: '',  // 沪深归集率（经营指标）
     // 存放从服务端获取的全部代办数据
     todolist: [],
     // 存放筛选后数据
@@ -21,13 +28,11 @@ export default {
     todoPage: {
       curPageNum: 1,
     },
-    performanceIndicators: {},
+    manageIndicators: {},
     // 组织机构树
     custRange: [],
     // 时间周期：本年、本季、本月
     cycle: [],
-    // 用户当前所在岗位
-    position: window.forReactPosition || {},
     process: {},
     empInfo: {},
     // 客户列表中对应的每个客户的近6个月的收益
@@ -83,9 +88,61 @@ export default {
     // 删除分组下客户结果
     deleteCustomerFromGroupResult: {},
     serviceLogData: [], // 360服务记录查询数据
+    // 可查询服务人员列表
+    searchServerPersonList: EMPTY_LIST,
+    serviceLogMoreData: [], // 360服务记录查询更多数据
+    // 列表页的服务营业部
+    serviceDepartment: EMPTY_LIST,
+    // 标签圈人
+    circlePeopleData: [],
+    // 标签圈人-id查询客户列表
+    peopleOfLabelData: [],
   },
-  subscriptions: {},
+  subscriptions: {
+    setup({ dispatch, history }) {
+      dispatch({ type: 'getCustRangeByAuthority' });
+      history.listen(({ pathname, search }) => {
+        const params = queryString.parse(search);
+        const url = pathToRegexp('customerPool/serviceLog').exec(pathname);
+        if (url) {
+          const { pageSize, serveDateToPaged } = params;
+          if (_.isEmpty(pageSize)) params.pageSize = null;
+          if (_.isEmpty(serveDateToPaged)) params.serveDateToPaged = null;
+          dispatch({
+            type: 'getServiceLog',
+            payload: params,
+          });
+        }
+      });
+    },
+  },
   effects: {
+    // 投顾绩效
+    * getPerformanceIndicators({ payload }, { call, put }) {  //eslint-disable-line
+      const response = yield call(api.getPerformanceIndicators, payload);
+      yield put({
+        type: 'getPerformanceIndicatorsSuccess',
+        payload: response,
+      });
+    },
+    // 沪深归集率（经营指标）
+    * getHSRate({ payload }, { call, put }) {  //eslint-disable-line
+      const response = yield call(api.getHSRate, payload);
+      const { resultData } = response;
+      const data = resultData.length > 0 ? resultData[0] : {};
+      yield put({
+        type: 'getHSRateSuccess',
+        payload: data.value,
+      });
+    },
+    // 资讯列表和详情
+    * getInformation({ payload }, { call, put }) {  //eslint-disable-line
+      const response = yield call(api.getInformation, payload);
+      yield put({
+        type: 'getinformationSuccess',
+        payload: response,
+      });
+    },
     // 代办流程任务列表
     * getToDoList({ }, { call, put }) {  //eslint-disable-line
       const response = yield call(api.getToDoList);
@@ -103,11 +160,11 @@ export default {
       });
     },
     // 绩效指标
-    * getPerformanceIndicators({ payload }, { call, put }) {
+    * getManageIndicators({ payload }, { call, put }) {
       const indicators =
-        yield call(api.getPerformanceIndicators, payload);
+        yield call(api.getManageIndicators, payload);
       yield put({
-        type: 'getPerformanceIndicatorsSuccess',
+        type: 'getManageIndicatorsSuccess',
         payload: { indicators },
       });
     },
@@ -303,15 +360,6 @@ export default {
         },
       });
     },
-    // * getStatisticalPeriod({ }, { call, put }) { //eslint-disable-line
-    //   // 统计周期
-    //   const statisticalPeriod = yield call(api.getStatisticalPeriod);
-    //   // debugger;
-    //   yield put({
-    //     type: 'getStatisticalPeriodSuccess',
-    //     payload: { statisticalPeriod },
-    //   });
-    // },
     // 列表页添加服务记录
     * addServeRecord({ payload }, { call, put }) {
       const res = yield call(api.addServeRecord, payload);
@@ -434,15 +482,90 @@ export default {
     },
     // 360服务记录查询
     * getServiceLog({ payload }, { call, put }) {
-      const response = yield call(api.queryServeRecords, payload);
+      const response = yield call(api.queryAllServiceRecord, payload);
       const { resultData } = response;
       yield put({
         type: 'getServiceLogSuccess',
         payload: { resultData },
       });
     },
+    * getSearchServerPersonList({ payload }, { call, put, select }) {
+      const { resultData = EMPTY_OBJECT } = yield call(api.getSearchServerPersonelList, payload);
+      const { empInfo } = yield select(state => state.app.empInfo);
+      const myInfo = {
+        ptyMngName: empInfo.empName,
+        ptyMngId: empInfo.empNum,
+      };
+      const all = {
+        ptyMngName: '所有人',
+        ptyMngId: '',
+      };
+      const { servicePeopleList = EMPTY_LIST } = resultData;
+      yield put({
+        type: 'getSearchServerPersonListSuccess',
+        payload: [all, myInfo, ...servicePeopleList],
+      });
+    },
+    // 360服务记录查询更多服务
+    * getServiceLogMore({ payload }, { call, put }) {
+      const response = yield call(api.queryAllServiceRecord, payload);
+      const { resultData } = response;
+      yield put({
+        type: 'getServiceLogMoreSuccess',
+        payload: { resultData },
+      });
+    },
+    // 根据权限获取组织机构树
+    * getCustRangeByAuthority({ payload }, { call, put }) {
+      console.log('1111111111111111');
+      const resultData = yield call(api.getCustRangeByAuthority);
+      console.log('resultData>>>>>>>', resultData);
+      yield put({
+        type: 'getCustRangeByAuthoritySuccess',
+        payload: resultData,
+      });
+    },
+    // 标签圈人
+    * getCirclePeople({ payload }, { call, put }) {
+      const response = yield call(api.labelCirclePeople, payload);
+      const { resultData } = response;
+      yield put({
+        type: 'getCirclePeopleSuccess',
+        payload: { resultData },
+      });
+    },
+    // 标签圈人-id查询客户列表
+    * getPeopleOfLabel({ payload }, { call, put }) {
+      const response = yield call(api.labelCirclePeople, payload);
+      const { resultData } = response;
+      yield put({
+        type: 'getPeopleOfLabelSuccess',
+        payload: { resultData },
+      });
+    },
   },
   reducers: {
+    getPerformanceIndicatorsSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        performanceIndicators: resultData,
+      };
+    },
+    getHSRateSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        hsRate: payload,
+      };
+    },
+    getinformationSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        information: resultData,
+      };
+    },
     getToDoListSuccess(state, action) {
       const { payload: { resultData: { empWorkFlowList } } } = action;
       empWorkFlowList.forEach((item) => {
@@ -488,24 +611,15 @@ export default {
         custRange,
       };
     },
-    // 绩效指标
-    getPerformanceIndicatorsSuccess(state, action) {
+    // 经营指标
+    getManageIndicatorsSuccess(state, action) {
       const { payload: { indicators } } = action;
-      const performanceIndicators = indicators.resultData;
+      const manageIndicators = indicators.resultData;
       return {
         ...state,
-        performanceIndicators,
+        manageIndicators,
       };
     },
-    // 统计周期
-    // getStatisticalPeriodSuccess(state, action) {
-    //   const { payload: { statisticalPeriod } } = action;
-    //   const cycle = statisticalPeriod.resultData.kPIDateScopeType;
-    //   return {
-    //     ...state,
-    //     cycle,
-    //   };
-    // },
     // (首页总数)
     getWorkFlowTaskCountSuccess(state, action) {
       const { payload: { queryNumbers } } = action;
@@ -513,14 +627,6 @@ export default {
       return {
         ...state,
         process,
-      };
-    },
-    // 职责切换
-    getPositionSuccess(state, action) {
-      const { payload } = action;
-      return {
-        ...state,
-        position: payload,
       };
     },
     // 默认推荐词及热词推荐列表
@@ -557,7 +663,7 @@ export default {
       const custPage = {
         pageSize: custListVO.pageSize,
         pageNo: Number(custListVO.curPageNum),
-        total: custListVO.totalCount,
+        total: custListVO.totalCount > LIST_MAX ? LIST_MAX : custListVO.totalCount,
       };
       return {
         ...state,
@@ -762,23 +868,6 @@ export default {
     getCustomerHotPossibleWdsSuccess(state, action) {
       const { payload } = action;
       const { custList } = payload;
-      // {
-      //   "id": 1,
-      //   "tagNumId": "499_1",
-      //   "labelMapping": "shi_fou_cai_zhang_die",
-      //   "labelNameVal": "乐米版猜涨跌1",
-      //   "labelDesc": "乐米版猜涨跌客户"
-      // },
-      // {
-      //     "cusId": "1-41G4URN",
-      //     "custName": "郭**",
-      //     "brokerNumber": "666626898217",
-      //     "custLevelCode": "805040",
-      //     "custLevelName": "空",
-      //     "custTotalAsset": 5998.59,
-      //     "custType": "per",
-      //     "custOpenDate": "2016-10-12 00:00:00"
-      // }
       // 构造成联想列表识别的
       const finalPossibleHotCust = _.map(custList, item => ({
         id: item.cusId,
@@ -799,6 +888,8 @@ export default {
         ...state,
         // success
         operateGroupResult: payload,
+        // 成功
+        cusGroupSaveResult: payload,
       };
     },
     // 删除分组成功
@@ -828,6 +919,43 @@ export default {
       return {
         ...state,
         serviceLogData: resultData,
+      };
+    },
+    getSearchServerPersonListSuccess(state, action) {
+      return {
+        ...state,
+        searchServerPersonList: action.payload,
+      };
+    },
+    // 360服务记录查询更多服务成功
+    getServiceLogMoreSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        serviceLogMoreData: resultData,
+      };
+    },
+    getCustRangeByAuthoritySuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        serviceDepartment: resultData,
+      };
+    },
+    // 标签圈人成功
+    getCirclePeopleSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        circlePeopleData: resultData,
+      };
+    },
+    // 标签圈人-id客户列表查询
+    getPeopleOfLabelSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        peopleOfLabelData: resultData,
       };
     },
   },

@@ -118,8 +118,14 @@ export default class PermissionList extends PureComponent {
         currentId: resultData[index].id,
       },
     });
-    const params = backKeys.map(item => record[item]);
-    clickRow(resultData[index].id, ...params);
+    const params = backKeys.map(item => ({
+      [item]: record[item],
+    }));
+    const obj = {
+      id: resultData[index].id,
+      ...Object.assign({}, ...params),
+    };
+    clickRow(obj);
   }
 
   /**

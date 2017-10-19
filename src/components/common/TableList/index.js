@@ -9,6 +9,7 @@ export default class TableList extends PureComponent {
     statusType: PropTypes.string.isRequired,
     selectValue: PropTypes.object,
     onEmitUpdateValue: PropTypes.func,
+    radioName: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -18,7 +19,7 @@ export default class TableList extends PureComponent {
   }
 
   get eleList() {
-    const { statusType, onEmitUpdateValue, selectValue, info } = this.props;
+    const { statusType, onEmitUpdateValue, selectValue, info, radioName } = this.props;
     const result = info.map((item) => {
       const callBack = () => {
         onEmitUpdateValue(item);
@@ -35,7 +36,7 @@ export default class TableList extends PureComponent {
             ])}
           >
             <label
-              htmlFor={`radio-${item.ptyMngId}`}
+              htmlFor={`${radioName}-${item.ptyMngId}`}
               className={
                 item.ptyMngId === selectValue.ptyMngId
                 ? 'label-btn-circle checked'
@@ -44,8 +45,8 @@ export default class TableList extends PureComponent {
             >&nbsp;</label>
             <input
               type="radio"
-              id={`radio-${item.ptyMngId}`}
-              name="serverPersonel"
+              id={`${radioName}-${item.ptyMngId}`}
+              name={radioName}
               className="hide"
               checked={item.ptyMngId === selectValue.ptyMngId}
               onChange={callBack}
@@ -58,7 +59,7 @@ export default class TableList extends PureComponent {
             className="flex-base_2 text-center"
           >
             <span
-              className={item.isMain === 'Y' ? style.mainManager : ''}
+              className={item.isMain === 'true' ? style.mainManager : ''}
             >{item.ptyMngName}</span>
           </span>
           <span

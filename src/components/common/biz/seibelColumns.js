@@ -47,7 +47,7 @@ export default function seibelColumns(props) {
     render: (text, record) => (
       <div className="rightSection">
         <div className="tagArea">
-          {pageName === 'contract' ? <Tag type="yellow" text={record.status} /> : null}
+          {(pageName === 'contract' && record.business2) ? <Tag type="yellow" text={record.business2} /> : null}
           <Tag type="blue" text={changeDisplay(record.status, status)} />
         </div>
         <div className="date">{(record.createTime &&

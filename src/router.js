@@ -1,7 +1,7 @@
- /**
- * @file routes.js
- * @author maoquan(maoquan@htsc.com)
- */
+/**
+* @file routes.js
+* @author maoquan(maoquan@htsc.com)
+*/
 
 import React from 'react';
 import {
@@ -35,8 +35,10 @@ import CreateTask from './routes/customerPool/CreateTask';
 import Contract from './routes/contract/Home';
 import FullChannelServiceRecord from './routes/fullChannelServiceRecord/Home';
 import CustomerGroupManage from './routes/customerPool/CustomerGroupManage';
+import ViewpointList from './routes/customerPool/ViewpointList';
+import ViewpointDetail from './routes/customerPool/ViewpointDetail';
 import ServiceLog from './routes/customerPool/ServiceLog';
-
+import TaskFlow from './routes/customerPool/TaskFlow';
 
 function switchRouter() {
   const fsp = document.querySelector(fspContainer.container);
@@ -67,12 +69,15 @@ const routes = ({ history }) => (// eslint-disable-line
       <Route path="approval" component={Approval} />
       <Route path="customerPool">
         <IndexRoute component={CustomerPoolHome} />
+        <Route path="viewpointDetail" component={ViewpointDetail} />
+        <Route path="viewpointList" component={ViewpointList} />
         <Route path="todo" component={ToDo} />
         <Route path="list" component={CustomerList} />
         <Route path="customerGroup" component={CustomerGroup} />
         <Route path="createTask" component={CreateTask} />
         <Route path="customerGroupManage" component={CustomerGroupManage} />
         <Route path="serviceLog" component={ServiceLog} />
+        <Route path="taskFlow" component={TaskFlow} />
       </Route>
       <Route path="contract">
         <IndexRoute component={Contract} />

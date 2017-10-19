@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-09-27 17:43:57
+ * @Last Modified time: 2017-10-16 11:06:15
  */
 
 import React, { PureComponent } from 'react';
@@ -12,6 +12,7 @@ import { autobind } from 'core-decorators';
 // import { Link } from 'dva/router';
 import classnames from 'classnames';
 import _ from 'lodash';
+import Paganation from '../../common/Paganation';
 import styles from './groupTable.less';
 
 const EMPTY_LIST = [];
@@ -35,6 +36,24 @@ export default class GroupTable extends PureComponent {
     isFirstColumnLink: PropTypes.bool,
     // 表格第一列点击的回调
     firstColumnHandler: PropTypes.func,
+    // 是否展示表格边框
+    bordered: PropTypes.bool,
+    // 是否固定列
+    isFixedColumn: PropTypes.bool,
+    // 是否固定标题
+    isFixedTitle: PropTypes.bool,
+    // 固定列的区间
+    fixedColumn: PropTypes.array,
+    // 滚动的x范围
+    scrollX: PropTypes.number,
+    // 滚动Y范围
+    scrollY: PropTypes.number,
+    // 列的宽度
+    columnWidth: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.number,
+      PropTypes.array,
+    ]),
   };
 
   static defaultProps = {
@@ -42,13 +61,23 @@ export default class GroupTable extends PureComponent {
     listData: EMPTY_LIST,
     actionSource: [],
     isFirstColumnLink: false,
+    bordered: false,
+    isFixedColumn: false,
+    fixedColumn: [],
+    scrollX: 0,
+    scrollY: 0,
+    isFixedTitle: false,
+    columnWidth: ['20%', '20%', '20%', '20%', '20%'],
     firstColumnHandler: () => { },
   };
 
   constructor(props) {
     super(props);
+    const { curPageSize } = props.pageData;
     this.state = {
       curSelectedRow: -1,
+      // 记住原始分页数，用于换算pageSizeOptions
+      originPageSizeUnit: curPageSize,
     };
   }
 
@@ -65,11 +94,13 @@ export default class GroupTable extends PureComponent {
    * @param {*} totalRecordNum 总条目
    * @param {*} curPageSize 当前分页数
    */
-  renderPageSizeOptions(totalRecordNum, curPageSize) {
+  renderPageSizeOptions(totalRecordNum) {
+    const { originPageSizeUnit } = this.state;
     const pageSizeOption = [];
-    const maxPage = Math.ceil(totalRecordNum / Number(curPageSize));
+    const maxPage = Math.ceil(totalRecordNum / originPageSizeUnit);
+
     for (let i = 1; i <= maxPage; i++) {
-      pageSizeOption.push((curPageSize * i).toString());
+      pageSizeOption.push((originPageSizeUnit * i).toString());
     }
 
     return pageSizeOption;
@@ -99,7 +130,7 @@ export default class GroupTable extends PureComponent {
        </span>,
       showSizeChanger: true,
       onShowSizeChange: onSizeChange,
-      pageSizeOptions: this.renderPageSizeOptions(totalRecordNum, curPageSize),
+      pageSizeOptions: this.renderPageSizeOptions(totalRecordNum, Number(curPageSize)),
     };
 
     return paginationOptions;
@@ -115,6 +146,9 @@ export default class GroupTable extends PureComponent {
       actionSource,
       isFirstColumnLink,
       firstColumnHandler,
+      isFixedColumn,
+      fixedColumn,
+      columnWidth,
     } = this.props;
     const len = titleColumn.length - 1;
     if (_.isEmpty(listData)) {
@@ -128,8 +162,9 @@ export default class GroupTable extends PureComponent {
           // operation column
           return {
             dataIndex: item.key,
-            width: '20%',
+            width: _.isArray(columnWidth) ? columnWidth[index] : columnWidth,
             title: item.value,
+            fixed: (isFixedColumn && _.includes(fixedColumn, index)) ? 'left' : false,
             render: (text, record) =>
               <div className={styles.operation}>
                 {
@@ -149,8 +184,9 @@ export default class GroupTable extends PureComponent {
           // 第一列可以Link，有handler
           return {
             dataIndex: item.key,
-            width: '20%',
+            width: _.isArray(columnWidth) ? columnWidth[index] : columnWidth,
             title: item.value,
+            fixed: (isFixedColumn && _.includes(fixedColumn, index)) ? 'left' : false,
             render: (text, record) =>
               <div className={styles.operation}>
                 <span
@@ -158,7 +194,7 @@ export default class GroupTable extends PureComponent {
                   className={styles.link}
                   onClick={() => firstColumnHandler(record)}
                 >
-                  {record[item.key] || '--'}
+                  {(record[item.key] === 0 || record[item.key]) ? record[item.key] : '--'}
                 </span>
               </div>,
           };
@@ -166,8 +202,9 @@ export default class GroupTable extends PureComponent {
 
         return {
           dataIndex: item.key,
-          width: '20%',
+          width: _.isArray(columnWidth) ? columnWidth[index] : columnWidth,
           title: item.value,
+          fixed: (isFixedColumn && _.includes(fixedColumn, index)) ? 'left' : false,
           render: (text, record) => {
             if (index === 0 && isFirstColumnLink) {
               return (
@@ -177,14 +214,15 @@ export default class GroupTable extends PureComponent {
                     className={styles.link}
                     onClick={() => firstColumnHandler(record)}
                   >
-                    {record[item.key] || '--'}
+                    {(record[item.key] === 0 || record[item.key]) ? record[item.key] : '--'}
                   </span>
                 </div>
               );
             }
             return (
               <div className={styles.column}>
-                <span title={record[item.key]}>{record[item.key] || '--'}</span>
+                <span title={record[item.key]}>
+                  {(record[item.key] === 0 || record[item.key]) ? record[item.key] : '--'}</span>
               </div>
             );
           },
@@ -192,13 +230,16 @@ export default class GroupTable extends PureComponent {
       });
     }
 
-    return _.map(titleColumn, item => ({
+    return _.map(titleColumn, (item, index) => ({
       dataIndex: item.key,
-      width: '20%',
+      width: _.isArray(columnWidth) ? columnWidth[index] : columnWidth,
       title: item.value,
+      fixed: (isFixedColumn && _.includes(fixedColumn, index)) ? 'left' : false,
       render: (text, record) =>
         <div className={styles.column}>
-          <span title={record[item.key]}>{record[item.key] || '--'}</span>
+          <span title={record[item.key]}>
+            {(record[item.key] === 0 || record[item.key]) ? record[item.key] : '--'}
+          </span>
         </div>,
     }));
   }
@@ -219,32 +260,52 @@ export default class GroupTable extends PureComponent {
       listData = EMPTY_LIST,
       pageData: { curPageNum, curPageSize, totalRecordNum },
       tableClass,
+      bordered,
+      isFixedColumn,
+      scrollX,
+      scrollY,
+      isFixedTitle,
+      onPageChange,
+      onSizeChange,
      } = this.props;
-    const { curSelectedRow } = this.state;
-    const paginationOptions = this.renderPaganation(
+    const { curSelectedRow, originPageSizeUnit } = this.state;
+    // const paginationOptions = this.renderPaganation(
+    //   curPageNum,
+    //   totalRecordNum,
+    //   curPageSize,
+    // );
+    const paganationOption = {
       curPageNum,
       totalRecordNum,
       curPageSize,
-    );
+      onPageChange,
+      onSizeChange,
+      originPageSizeUnit,
+    };
     const columns = this.renderColumns();
-
+    const scrollYArea = isFixedTitle ? { y: scrollY } : {};
+    const scrollXArea = isFixedColumn ? { x: scrollX } : {};
     return (
-      <Table
-        className={tableClass}
-        columns={columns}
-        dataSource={this.renderTableDatas(listData)}
-        pagination={paginationOptions}
-        bordered={false}
-        onRowClick={this.handleRowClick}
-        rowClassName={(record, index) => {
-          if (curSelectedRow === index) {
-            return classnames({
-              [styles.rowSelected]: true,
-            });
-          }
-          return null;
-        }}
-      />
+      <div>
+        <Table
+          className={tableClass}
+          columns={columns}
+          dataSource={this.renderTableDatas(listData)}
+          bordered={bordered}
+          pagination={false}
+          scroll={_.merge(scrollXArea, scrollYArea)}
+          onRowClick={this.handleRowClick}
+          rowClassName={(record, index) => {
+            if (curSelectedRow === index) {
+              return classnames({
+                [styles.rowSelected]: true,
+              });
+            }
+            return null;
+          }}
+        />
+        <Paganation {...paganationOption} />
+      </div>
     );
   }
 }

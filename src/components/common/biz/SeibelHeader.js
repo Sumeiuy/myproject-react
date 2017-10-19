@@ -6,6 +6,7 @@
 
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
 import Select from '../Select';
 import CustRange from '../../pageCommon/SeibelCustRange';
 import DropDownSelect from '../dropdownSelect';
@@ -114,8 +115,15 @@ export default class Pageheader extends PureComponent {
       customerList,
       custRange,
       replace,
+      page,
       location: { query: { subType, status } },
     } = this.props;
+
+    const customerAllList = !_.isEmpty(customerList) ?
+    [{ custName: '全部', custNumber: '' }, ...customerList] : customerList;
+
+    const drafterAllList = !_.isEmpty(drafterList) ?
+    [{ empName: '全部', empId: '' }, ...drafterList] : customerList;
 
     return (
       <div className={styles.pageCommonHeader}>
@@ -123,11 +131,12 @@ export default class Pageheader extends PureComponent {
           <DropDownSelect
             value="全部"
             placeholder="经纪客户号/客户名称"
-            searchList={customerList}
+            searchList={customerAllList}
             showObjKey="custName"
             objId="custNumber"
             emitSelectItem={this.selectCustItem}
             emitToSearch={toSearchCust}
+            name={`${page}-custName`}
           />
         </div>
 
@@ -152,11 +161,12 @@ export default class Pageheader extends PureComponent {
           <DropDownSelect
             value="全部"
             placeholder="工号/名称"
-            searchList={drafterList}
+            searchList={drafterAllList}
             showObjKey="empName"
             objId="empId"
             emitSelectItem={this.selectDrafterItem}
             emitToSearch={toSearchDrafter}
+            name={`${page}-empName`}
           />
         </div>
 

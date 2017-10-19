@@ -30,7 +30,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   createTask: fectchDataFunction(true, effects.createTask),
-  goBack: routerRedux.goBack,
+  push: routerRedux.push,
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -43,7 +43,7 @@ export default class CreateTask extends PureComponent {
     dict: PropTypes.object,
     createTask: PropTypes.func.isRequired,
     createTaskResult: PropTypes.object,
-    goBack: PropTypes.func.isRequired,
+    push: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -68,7 +68,7 @@ export default class CreateTask extends PureComponent {
     if (preCreateTaskResult !== nextcreateTaskResult) {
       this.handleCreateTaskSuccess(nextcreateTaskResult);
     }
-    console.log(nextcreateTaskResult);
+    // console.log(nextcreateTaskResult);
   }
 
   @autobind
@@ -84,25 +84,25 @@ export default class CreateTask extends PureComponent {
   @autobind
   handleCreateTask(value) {
     const { createTask } = this.props;
-    console.log(value);
+    // console.log(value);
     createTask(value);
   }
 
   render() {
-    const { dict, location, goBack } = this.props;
+    const { dict, location, push } = this.props;
     const { isSuccess } = this.state;
-    console.log(isSuccess);
+    // console.log(isSuccess);
     return (
       <div className={styles.taskBox}>
         {!isSuccess ?
           <CreateTaskFrom
-            goBack={goBack}
             location={location}
             dict={dict}
             createTask={this.handleCreateTask}
           /> :
           <CreateTaskSuccess
             successType={isSuccess}
+            push={push}
           />
         }
       </div>

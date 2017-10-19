@@ -68,7 +68,7 @@ export default class CreateContactModal extends PureComponent {
       width: '20%',
       render: record =>
         // 当前行记录
-        <div className="contactSection">
+        <div className="recordSection" title={record}>
           {record}
         </div>,
     },
@@ -78,7 +78,7 @@ export default class CreateContactModal extends PureComponent {
       width: '20%',
       render: record =>
         // 当前行记录
-        <div className="phoneSection">
+        <div className="recordSection" title={record}>
           {record}
         </div>,
     },
@@ -88,7 +88,7 @@ export default class CreateContactModal extends PureComponent {
       width: '20%',
       render: record =>
         // 当前行记录
-        <div className="workSection">
+        <div className="recordSection" title={record}>
           {record}
         </div>,
     },
@@ -97,7 +97,7 @@ export default class CreateContactModal extends PureComponent {
       title: '住宅',
       width: '20%',
       render: record =>
-        <div className="homeSection">
+        <div className="recordSection" title={record}>
           {record}
         </div>,
     },
@@ -106,7 +106,7 @@ export default class CreateContactModal extends PureComponent {
       title: '人员类型',
       width: '20%',
       render: record =>
-        <div className="personTypeSection">
+        <div className="recordSection" title={record}>
           {record}
         </div>,
     }];
@@ -361,7 +361,7 @@ export default class CreateContactModal extends PureComponent {
                       mainContactInfo.cellInfo
                       }
                     </span>
-                  </div> : <div className={styles.noneInfo} />
+                  </div> : null
               }
               <div className={styles.rightSection}>
                 <Button onClick={this.handleServiceRecordClick}>添加服务记录</Button>

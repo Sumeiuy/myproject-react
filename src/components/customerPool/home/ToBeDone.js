@@ -5,9 +5,9 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import { Row, Col } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+
 import { fspGlobal } from '../../../utils';
 import { fspContainer } from '../../../config';
 import styles from './toBeDone.less';
@@ -16,6 +16,7 @@ export default class PerformanceIndicators extends PureComponent {
   static propTypes = {
     data: PropTypes.object,
     push: PropTypes.func.isRequired,
+    location: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -44,7 +45,8 @@ export default class PerformanceIndicators extends PureComponent {
   // 跳转到满足业务办理客户列表
   @autobind
   linkToBusiness() {
-    const url = '/customerPool/list?source=business';
+    const { location: { query } } = this.props;
+    const url = '/customerPool/list';
     const param = {
       closable: true,
       forceRefresh: true,
@@ -53,9 +55,18 @@ export default class PerformanceIndicators extends PureComponent {
       title: '客户列表',
     };
     if (document.querySelector(fspContainer.container)) {
-      fspGlobal.openRctTab({ url, param });
+      fspGlobal.openRctTab({ url: `${url}?source=business&orgId=${window.forReactPosition.orgId}`, param });
     } else {
-      this.props.push(url);
+      this.props.push({
+        pathname: url,
+        query: {
+          source: 'business',
+        },
+        // 方便返回页面时，记住首页的query，在本地环境里
+        state: {
+          ...query,
+        },
+      });
     }
   }
 
@@ -80,63 +91,69 @@ export default class PerformanceIndicators extends PureComponent {
     };
     return (
       <div className={styles.toBeDoneBox}>
-        <div className={styles.inner}>
-          <div className={styles.title}>
-            <span className={styles.name}>我的待办事项</span>
+        <div className={styles.title}>
+          <span className={styles.name}>任务概览</span>
+        </div>
+        <div className={styles.row}>
+          <div className={`${styles.item} ${styles.item_a}`}>
+            <a className="item" onClick={() => fspGlobal.myMotTask()}>
+              <div className={styles.content}>
+                <div className={styles.description}>
+                  <div className={styles.count}>
+                    {this.farmtNum(todayToDoNumbers)}
+                  </div>
+                  <div className={styles.intro}>今日可做任务</div>
+                </div>
+              </div>
+            </a>
           </div>
-          <Row gutter={20}>
-            <Col span={6}>
-              <div className={`${styles.item} ${styles.item_a}`}>
-                <a className="item" onClick={() => fspGlobal.myMotTask()}>
-                  <div className={styles.content}>
-                    <h1>{this.farmtNum(todayToDoNumbers)}</h1>
-                    <p>今日可做任务</p>
+          <div className={`${styles.item} ${styles.item_b}`}>
+            <a
+              className="item"
+              onClick={this.linkToBusiness}
+            >
+              <div className={styles.content}>
+                <div className={styles.description}>
+                  <div className={styles.count}>
+                    {this.farmtNum(businessNumbers)}
                   </div>
-                </a>
+                  <div className={styles.intro}>满足业务开通客户</div>
+                </div>
               </div>
-            </Col>
-            <Col span={6}>
-              <div className={`${styles.item} ${styles.item_b}`}>
-                <a
-                  className="item"
-                  onClick={this.linkToBusiness}
-                >
-                  <div className={styles.content}>
-                    <h1>{this.farmtNum(businessNumbers)}</h1>
-                    <p>满足业务办理条件客户</p>
+            </a>
+          </div>
+          <div className={`${styles.item} ${styles.item_c}`}>
+            <a className="item" onClick={() => fspGlobal.openRctTab({ url, param })}>
+              <div className={styles.content}>
+                <div className={styles.description}>
+                  <div className={styles.count}>
+                    {this.processNum(workFlowNumbers)}
                   </div>
-                </a>
+                  <div className={styles.intro}>待办流程</div>
+                </div>
               </div>
-            </Col>
-            <Col span={6}>
-              <div className={`${styles.item} ${styles.item_c}`}>
-                <a className="item" onClick={() => fspGlobal.openRctTab({ url, param })}>
-                  <div className={styles.content}>
-                    <h1>{this.processNum(workFlowNumbers)}</h1>
-                    <p>待办流程</p>
+            </a>
+          </div>
+          <div className={`${styles.item} ${styles.item_d}`}>
+            <a
+              className="item"
+              onClick={
+                () => fspGlobal.openFspTab({
+                  url: notificationUrl,
+                  param: notificationParam,
+                })
+              }
+            >
+              <div className={styles.content}>
+                <div className={styles.description}>
+                  <div className={styles.count}>
+                    {this.processNum(notificationNumbers)}
                   </div>
-                </a>
+                  <div className={styles.intro}>消息提醒</div>
+                </div>
               </div>
-            </Col>
-            <Col span={6}>
-              <div className={`${styles.item} ${styles.item_d}`}>
-                <a
-                  className="item"
-                  onClick={
-                    () => fspGlobal.openFspTab({
-                      url: notificationUrl,
-                      param: notificationParam,
-                    })
-                  }
-                >
-                  <div className={styles.content}>
-                    <h1>{this.processNum(notificationNumbers)}</h1>
-                    <p>消息提醒</p>
-                  </div>
-                </a>
-              </div>
-            </Col>
-          </Row>
+            </a>
+          </div>
         </div>
       </div>
     );
