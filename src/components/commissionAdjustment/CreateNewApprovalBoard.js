@@ -267,7 +267,9 @@ export default class CreateNewApprovalBoard extends PureComponent {
   // 客户输入目标股基佣金率调用方法
   @autobind
   changeTargetGJCommission(v) {
-    console.warn('vvvv', v);
+    this.props.queryGJCommission({
+      codeValue: v,
+    });
   }
 
   @autobind
@@ -381,6 +383,8 @@ export default class CreateNewApprovalBoard extends PureComponent {
       validateResult,
       customerList,
       otherRatios,
+      gjCommission,
+
     } = this.props;
     const newApproverList = approverList.map((item, index) => {
       const key = `${new Date().getTime()}-${index}`;
@@ -575,7 +579,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
                     }
                   >
                     <AutoComplete
-                      dataSource={[]}
+                      dataSource={gjCommission}
                       onChangeValue={this.changeTargetGJCommission}
                       onSelectValue={this.selectTargetGJCommission}
                       width="100px"

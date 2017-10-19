@@ -161,7 +161,7 @@ export default {
     },
 
     getGJCommissionRateSuccess(state, action) {
-      const { rate: { resultData } } = action;
+      const { payload: { resultData } } = action;
       return {
         ...state,
         gjCommission: resultData,
@@ -282,14 +282,13 @@ export default {
 
     // 查询目标股基佣金率码值
     * getGJCommissionRate({ payload }, { call, put }) {
-      const rate = yield call(api.queryGJCommissionRate,
-        {
-          ...payload,
-          codeType: 'HTSC_COMMISSION_LEVEL',
-        });
+      const rate = yield call(api.queryGJCommissionRate, {
+        ...payload,
+        codeType: 'HTSC_COMMISSION_LEVEL',
+      });
       yield put({
         type: 'getGJCommissionRateSuccess',
-        payload: { rate },
+        payload: rate,
       });
     },
 

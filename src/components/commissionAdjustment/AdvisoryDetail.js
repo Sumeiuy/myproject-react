@@ -101,6 +101,7 @@ export default class AdvisoryDetail extends PureComponent {
       serviceManagerLogin,
     } = data;
     return [{
+      key: custNum,
       custNum,
       custName,
       custLevel,
@@ -118,6 +119,7 @@ export default class AdvisoryDetail extends PureComponent {
   changeProductJson(product) {
     const { riskMatch, termMatch, prodMatch, prodCode, aliasName, agrType } = product;
     return {
+      key: prodCode,
       prodCode, // 产品代码
       aliasName, // 产品名称
       agrType, // 签署确认书类型

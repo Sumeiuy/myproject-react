@@ -6,11 +6,11 @@
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
-import { AutoComplete, Modal } from 'antd';
+import { AutoComplete } from 'antd';
+import Confirm from '../Confirm';
 import styles from './index.less';
 
 const Option = AutoComplete.Option;
-const confirm = Modal.confirm;
 
 export default class SearchSelect extends PureComponent {
 
@@ -30,9 +30,8 @@ export default class SearchSelect extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      selectItem: {},
       inputValue: '',
-      inputTimeout: '',
+      showWrongInputConfirm: false,
     };
   }
 
@@ -43,6 +42,8 @@ export default class SearchSelect extends PureComponent {
     this.props.onSelectValue(selectItem);
   }
 
+  inputTimeout = 0;
+
   @autobind
   clearInput() {
     this.setState({
@@ -52,33 +53,21 @@ export default class SearchSelect extends PureComponent {
 
   @autobind
   handlerSearch(value) {
-    let { timeout } = this.state;
-    if (timeout !== '') {
-      clearTimeout(timeout);
+    if (this.inputTimeout !== 0) {
+      clearTimeout(this.inputTimeout);
     }
-    timeout = setTimeout(() => this.validateInput(value), 600);
+    this.inputTimeout = setTimeout(() => this.validateInput(value), 600);
     this.setState({
       inputValue: value,
-      timeout,
     });
   }
 
   @autobind
   validateInput(value) {
-    this.setState({
-      timeout: '',
-    });
-    const clearValue = this.clearInput;
+    this.inputTimeout = 0;
     if (isNaN(value) || value <= 0.15) {
-      confirm({
-        title: '错误',
-        content: '请输入数字,并且不低于0.15',
-        onOk() {
-          clearValue();
-        },
-        onCancel() {
-          clearValue();
-        },
+      this.setState({
+        showWrongInputConfirm: true,
       });
     } else {
       this.props.onChangeValue(value);
@@ -88,7 +77,7 @@ export default class SearchSelect extends PureComponent {
 
   render() {
     const { dataSource, width, defaultInput } = this.props;
-    const { inputValue } = this.state;
+    const { inputValue, showWrongInputConfirm } = this.state;
     const newDataSource = dataSource.map(item => ({ key: item.id, ...item }));
     const options = newDataSource.map(opt => (
       <Option key={opt.id} value={opt.codeValue} text={opt.codeValue}>
@@ -110,6 +99,16 @@ export default class SearchSelect extends PureComponent {
           onSelect={this.setSelectValue}
           onSearch={this.handlerSearch}
         />
+        {
+          !showWrongInputConfirm ? null
+          : (
+            <Confirm
+              type="wrongInput"
+              onOkHandler={this.clearInput}
+              onCancelHandler={this.clearInput}
+            />
+          )
+        }
       </div>
     );
   }

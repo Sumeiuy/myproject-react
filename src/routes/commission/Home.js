@@ -122,7 +122,7 @@ const mapDispatchToProps = {
   getCanApplyCustList: getDataFunction(false, effects.applyCustList),
   // 提交批量佣金调整申请
   submitBatch: getDataFunction(false, effects.submitBatch),
-  // 获取目标估计佣金率
+  // 获取目标股基佣金率
   getGJCommissionRate: getDataFunction(false, effects.gjCommissionRate),
 };
 

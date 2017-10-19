@@ -3,7 +3,6 @@
  * @author baojiajia
  */
 exports.response = function (req, res) {
-  if(req.action === 'query'){
     return  {
       "code": "0",
       "msg": "OK",
@@ -55,7 +54,7 @@ exports.response = function (req, res) {
         "item": [
           {
             "prodCode": "SPDK04",
-            "aliasName": "",
+            "aliasName": "前端测试产品",
             "prodCommission": "0.3",
             "riskMatch": "Y",
             "prodMatch": "N",
@@ -64,7 +63,7 @@ exports.response = function (req, res) {
             "subItem": [
             {
               "prodCode": "SPDK041",
-              "aliasName": "",
+              "aliasName": "前端测试子产品",
               "prodCommission": "0.3",
               "riskMatch": "Y",
               "prodMatch": "N",
@@ -76,5 +75,5 @@ exports.response = function (req, res) {
           }
         ]
       }
-    }
+    };
 };
