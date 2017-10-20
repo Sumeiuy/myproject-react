@@ -35,8 +35,8 @@ export default class TaskFormInfo extends PureComponent {
     suggestions: PropTypes.array.isRequired,
     showText: PropTypes.bool.isRequired,
     users: PropTypes.array.isRequired,
-    taskTypes: PropTypes.array.isRequired,
-    executeTypes: PropTypes.array.isRequired,
+    taskTypes: PropTypes.array,
+    executeTypes: PropTypes.array,
     onSubmit: PropTypes.func.isRequired,
     getFieldDecorator: PropTypes.func.isRequired,
     startValue: PropTypes.object.isRequired,
@@ -44,6 +44,8 @@ export default class TaskFormInfo extends PureComponent {
   }
 
   static defaultProps = {
+    taskTypes: [],
+    executeTypes: [],
   }
 
   constructor(props) {
