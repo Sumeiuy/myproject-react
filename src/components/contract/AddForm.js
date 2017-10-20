@@ -313,7 +313,10 @@ export default class AddForm extends PureComponent {
           ref={(BaseInfoAddComponent) => { this.BaseInfoAddComponent = BaseInfoAddComponent; }}
         />
         <div className={styles.editWrapper}>
-          <InfoTitle head="合约条款" />
+          <InfoTitle
+            head="合约条款"
+            isRequired
+          />
           {
             operationType === subscribe ?
               <Button {...buttonProps}>新建</Button>
@@ -342,7 +345,7 @@ export default class AddForm extends PureComponent {
         />
         <div className={styles.editWrapper}>
           <InfoTitle head="审批人" />
-          <CommissionLine label="选择审批人" labelWidth="110px">
+          <CommissionLine label="选择审批人" labelWidth="110px" required>
             <div className={styles.checkApprover} onClick={this.openApproverBoard}>
               {approverName === '' ? '' : `${approverName}(${approverId})`}
               <div className={styles.searchIcon}>

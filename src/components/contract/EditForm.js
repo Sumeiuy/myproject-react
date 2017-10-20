@@ -289,7 +289,10 @@ export default class EditForm extends PureComponent {
         { /* 拟稿人信息 */ }
         <DraftInfo data={draftInfo} />
         <div className={styles.editWrapper}>
-          <InfoTitle head="合约条款" />
+          <InfoTitle
+            head="合约条款"
+            isRequired
+          />
           <Button {...buttonProps}>新建</Button>
           <CommonTable
             data={formData.terms}
@@ -315,7 +318,7 @@ export default class EditForm extends PureComponent {
         </div>
         <div className={styles.editWrapper}>
           <InfoTitle head="审批人" />
-          <CommissionLine label="选择审批人" labelWidth="110px">
+          <CommissionLine label="选择审批人" labelWidth="110px" required>
             <div className={styles.checkApprover} onClick={this.openApproverBoard}>
               {approverName === '' ? '' : `${approverName}(${approverId})`}
               <div className={styles.searchIcon}>
