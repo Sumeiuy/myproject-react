@@ -2,7 +2,7 @@
  * @Author: zhuyanwen
  * @Date: 2017-10-09 13:25:51
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-20 08:40:02
+ * @Last Modified time: 2017-10-20 15:41:59
  * @description: 客户分组功能
  */
 
@@ -62,6 +62,7 @@ const columns = [
   {
     title: '分组名称',
     dataIndex: 'groupName',
+    width: '20%',
     key: 'groupName',
     render: item => <a title={item} className="groupNames">
       {item}
@@ -71,6 +72,7 @@ const columns = [
     title: '分组描述',
     dataIndex: 'xComments',
     key: 'xComments',
+    width: '60%',
     render: item =>
       <div className="groupDescription">
         <div className="showtext"> {item}</div>
@@ -83,20 +85,21 @@ const columns = [
     title: '创建时间',
     dataIndex: 'createdTm',
     key: 'createdTm',
-    render: item => <a title={item} className="groupNames">
-      {_.truncate(item, { length: 25, omission: '...' })}
-    </a>,
+    width: '20%',
+    render: item => <span title={item} className="groupNames">
+      {item}
+    </span>,
   },
 ];
 let selectGroupName = '';
-let selectGroupDescription = '';
+// let selectGroupDescription = '';
 /* 列表checkbox按钮 */
 const rowSelection = {
   type: 'radio',
   onChange: (selectedRowKeys, selectedRows) => {
     groupId = selectedRows[0].groupId;
     selectGroupName = selectedRows[0].groupName;
-    selectGroupDescription = selectedRows[0].xComments;
+    // selectGroupDescription = selectedRows[0].xComments;
   },
 };
 let onOff = false;
@@ -222,16 +225,16 @@ export default class CustomerGroup extends PureComponent {
   parseQuery() {
     const { location: { query: { ids, condition } } } = this.props;
     let custCondition = {};
-    let includeCustIdList = [];
+    let custIdList = [];
 
     if (!_.isEmpty(ids)) {
-      includeCustIdList = decodeURIComponent(ids).split(',');
+      custIdList = decodeURIComponent(ids).split(',');
     } else {
       custCondition = JSON.parse(decodeURIComponent(condition));
     }
 
     return {
-      includeCustIdList,
+      custIdList,
       custCondition,
     };
   }
@@ -254,7 +257,7 @@ export default class CustomerGroup extends PureComponent {
       /* 获取所选目标分组客户：ids表示选择客户，condition表示全选,将筛选条件传入后台。 */
       const { addCustomerToGroup } = this.props;
       const {
-        includeCustIdList,
+        custIdList,
         custCondition,
       } = this.parseQuery();
       const {
@@ -286,21 +289,19 @@ export default class CustomerGroup extends PureComponent {
       //   },
       // });
 
+      // 添加分组
       addCustomerToGroup({
         groupId,
-        ptyMngId: helper.getEmpId(),
-        groupName: selectGroupName,
-        groupDesc: selectGroupDescription,
-        includeCustIdList,
-        excludeCustIdList: null,
-        includeCustSearchReq: {
+        custIdList,
+        searchReq: _.isEmpty(custIdList) ? {
+          ptyMngId: helper.getEmpId(),
           orgId: null,
           searchTypeReq,
           paramsReqList,
           filtersReq,
           sortsReqList,
           enterType,
-        },
+        } : null,
       });
     } else if (!onOff) {
       message.error('请选择分组', 2, () => {
@@ -315,7 +316,7 @@ export default class CustomerGroup extends PureComponent {
     const { groupName, groupDesc } = value;
     const { createCustGroup } = this.props;
     const {
-      includeCustIdList,
+      custIdList,
       custCondition,
     } = this.parseQuery();
     const {
@@ -328,21 +329,20 @@ export default class CustomerGroup extends PureComponent {
     this.setState({
       groupName,
     });
-    // 新建分组
+    // 创建分组
     createCustGroup({
       groupName,
       groupDesc,
-      ptyMngId: helper.getEmpId(),
-      includeCustIdList,
-      excludeCustIdList: null,
-      includeCustSearchReq: {
+      custIdList,
+      searchReq: _.isEmpty(custIdList) ? {
+        ptyMngId: helper.getEmpId(),
         orgId: null,
         searchTypeReq,
         paramsReqList,
         filtersReq,
         sortsReqList,
         enterType,
-      },
+      } : null,
     });
   }
 

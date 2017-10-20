@@ -9,6 +9,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Tabs } from 'antd';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
 import CustomerSegment from './CustomerSegment';
 import SelectLabelCust from './SelectLabelCust';
 import styles from './pickTargetCustomer.less';
@@ -25,9 +26,6 @@ export default class PickTargetCustomer extends PureComponent {
     currentTab: PropTypes.string.isRequired,
     saveCurrentTab: PropTypes.func.isRequired,
     storedTaskFlowData: PropTypes.object.isRequired,
-    saveTaskFlowData: PropTypes.func.isRequired,
-    saveDataEmitter: PropTypes.object.isRequired,
-    onStepUpdate: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -38,6 +36,19 @@ export default class PickTargetCustomer extends PureComponent {
     this.state = {
       currentKey: '1',
     };
+  }
+
+  @autobind
+  getData() {
+    let custData = {};
+    let labelCustData = {};
+    if (this.customerSegmentRef) {
+      custData = this.customerSegmentRef.getData();
+    }
+    if (this.selectLabelCustRef) {
+      labelCustData = this.selectLabelCustRef.getData();
+    }
+    return _.merge(custData, labelCustData);
   }
 
   @autobind
@@ -54,10 +65,7 @@ export default class PickTargetCustomer extends PureComponent {
       onPreview,
       priviewCustFileData,
       currentTab,
-      saveTaskFlowData,
       storedTaskFlowData,
-      onStepUpdate,
-      saveDataEmitter,
     } = this.props;
     const { currentKey } = this.state;
 
@@ -74,22 +82,18 @@ export default class PickTargetCustomer extends PureComponent {
           <Tabs defaultActiveKey={currentActiveKey} onChange={this.handleTabChange} type="card">
             <TabPane tab="客户细分" key="1">
               <CustomerSegment
+                ref={ref => (this.customerSegmentRef = ref)}
                 onPreview={onPreview}
                 priviewCustFileData={priviewCustFileData}
-                storeData={saveTaskFlowData}
                 storedData={storedTaskFlowData}
-                onStepUpdate={onStepUpdate}
-                saveDataEmitter={saveDataEmitter}
               />
             </TabPane>
             <TabPane tab="标签圈人" key="2">
               <SelectLabelCust
+                ref={ref => (this.selectLabelCustRef = ref)}
                 circlePeopleData={circlePeopleData}
                 getCirclePeople={getCirclePeople}
-                storeData={saveTaskFlowData}
                 storedData={storedTaskFlowData}
-                saveDataEmitter={saveDataEmitter}
-                onStepUpdate={onStepUpdate}
               />
             </TabPane>
           </Tabs>

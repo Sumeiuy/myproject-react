@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-16 11:06:15
+ * @Last Modified time: 2017-10-20 09:51:09
  */
 
 import React, { PureComponent } from 'react';
@@ -48,6 +48,14 @@ export default class GroupTable extends PureComponent {
     scrollX: PropTypes.number,
     // 滚动Y范围
     scrollY: PropTypes.number,
+    // row selection
+    isNeedRowSelection: PropTypes.bool,
+    // 选择单列的回调
+    onSingleRowSelectionChange: PropTypes.func,
+    // 选择列回调
+    onRowSelectionChange: PropTypes.func,
+    // 当前选中项的key数组
+    currentSelectRowKeys: PropTypes.array,
     // 列的宽度
     columnWidth: PropTypes.oneOfType([
       PropTypes.string,
@@ -69,6 +77,10 @@ export default class GroupTable extends PureComponent {
     isFixedTitle: false,
     columnWidth: ['20%', '20%', '20%', '20%', '20%'],
     firstColumnHandler: () => { },
+    isNeedRowSelection: false,
+    onSingleRowSelectionChange: () => { },
+    onRowSelectionChange: () => { },
+    currentSelectRowKeys: [],
   };
 
   constructor(props) {
@@ -255,6 +267,18 @@ export default class GroupTable extends PureComponent {
     return newDataSource;
   }
 
+  @autobind
+  renderRowSelection() {
+    const { onRowSelectionChange, onSingleRowSelectionChange, currentSelectRowKeys } = this.props;
+    return {
+      type: 'radio',
+      selectedRowKeys: currentSelectRowKeys,
+      onChange: onRowSelectionChange,
+      hideDefaultSelections: true,
+      onSelect: onSingleRowSelectionChange,
+    };
+  }
+
   render() {
     const {
       listData = EMPTY_LIST,
@@ -267,6 +291,7 @@ export default class GroupTable extends PureComponent {
       isFixedTitle,
       onPageChange,
       onSizeChange,
+      isNeedRowSelection,
      } = this.props;
     const { curSelectedRow, originPageSizeUnit } = this.state;
     // const paginationOptions = this.renderPaganation(
@@ -295,6 +320,7 @@ export default class GroupTable extends PureComponent {
           pagination={false}
           scroll={_.merge(scrollXArea, scrollYArea)}
           onRowClick={this.handleRowClick}
+          rowSelection={isNeedRowSelection ? this.renderRowSelection() : null}
           rowClassName={(record, index) => {
             if (curSelectedRow === index) {
               return classnames({

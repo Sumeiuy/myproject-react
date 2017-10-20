@@ -1,3 +1,13 @@
+.modalContainer {
+  .searchWrapper {
+    margin-bottom: 30px;
+    :global {
+      .ant-input-affix-wrapper .ant-input-suffix {
+        right: -46px;
+      }
+    }
+  }
+}
 .taskOverViewContainer {
   width: 80%;
   margin: 0 auto;
@@ -91,10 +101,16 @@
       overflow-y: scroll;
       height: e("calc(80vh - 130px)");
     }
+    & .ant-pagination-options .ant-select {
+      width: 80px;
+    }
   }
 }
 .approvalListTable {
   padding: 0 !important;
+  table {
+    border: 1px solid #dddddd;
+  }
   table > thead > tr > th, tbody > tr > td {
     padding: 0px;
     padding-bottom: 7px;

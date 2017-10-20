@@ -97,7 +97,7 @@ export default class CreateServiceRecord extends PureComponent {
     // 当前日期的时间戳
     const currentDate = new Date().getTime();
     this.state = {
-      serviceWay: serveWay[0].key,
+      serviceWay: !_.isEmpty(serveWay) && serveWay[0].key,
       serviceType: serviceTypeTree[0].key,
       serviceTypeChild: (this.subServiceType[serviceTypeTree[0].key][0] || {}).key,
       serviceTypeChildArr: this.subServiceType[serviceTypeTree[0].key],
@@ -444,7 +444,7 @@ export default class CreateServiceRecord extends PureComponent {
                 />
               </div>
             </div>
-          :
+            :
             <Loading loading={loading} />
         }
 

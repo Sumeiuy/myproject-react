@@ -106,6 +106,8 @@ export default {
     // 标签圈人
     circlePeopleData: [],
     peopleOfLabelData: [],
+    // 审批人列表
+    approvalList: [],
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -571,6 +573,15 @@ export default {
         payload: resultData,
       });
     },
+    // 获取审批人列表
+    * getApprovalList({ payload }, { call, put }) {
+      const response = yield call(api.getApprovalList, payload);
+      const { resultData } = response;
+      yield put({
+        type: 'getApprovalListSuccess',
+        payload: resultData,
+      });
+    },
   },
   reducers: {
     getPerformanceIndicatorsSuccess(state, action) {
@@ -1030,6 +1041,14 @@ export default {
       return {
         ...state,
         submitTaskFlowResult: payload,
+      };
+    },
+    // 获取审批人列表成功
+    getApprovalListSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        approvalList: payload,
       };
     },
   },
