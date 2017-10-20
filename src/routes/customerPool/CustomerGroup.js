@@ -2,7 +2,7 @@
  * @Author: zhuyanwen
  * @Date: 2017-10-09 13:25:51
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-20 15:41:59
+ * @Last Modified time: 2017-10-20 16:19:36
  * @description: 客户分组功能
  */
 
@@ -225,7 +225,7 @@ export default class CustomerGroup extends PureComponent {
   parseQuery() {
     const { location: { query: { ids, condition } } } = this.props;
     let custCondition = {};
-    let custIdList = [];
+    let custIdList = null;
 
     if (!_.isEmpty(ids)) {
       custIdList = decodeURIComponent(ids).split(',');
