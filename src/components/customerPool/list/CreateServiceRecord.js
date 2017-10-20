@@ -446,7 +446,7 @@ export default class CreateServiceRecord extends PureComponent {
                 />
               </div>
             </div>
-          :
+            :
             <Loading loading={loading} />
         }
 

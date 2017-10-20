@@ -37,8 +37,6 @@ export default class CreateTaskForm extends PureComponent {
     createTaskResult: PropTypes.object,
     storedTaskFlowData: PropTypes.object.isRequired,
     saveTaskFlowData: PropTypes.func.isRequired,
-    saveDataEmitter: PropTypes.object.isRequired,
-    onStepUpdate: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -65,7 +63,7 @@ export default class CreateTaskForm extends PureComponent {
   }
 
   componentWillMount() {
-    const { location: { query }, saveDataEmitter, dict: { custIdexPlaceHolders } } = this.props;
+    const { location: { query }, dict: { custIdexPlaceHolders } } = this.props;
     // const { statusData } = this.state;
     const arr = [];
     _.map(custIdexPlaceHolders, (item) => {
@@ -76,23 +74,6 @@ export default class CreateTaskForm extends PureComponent {
       statusData: arr,
     });
     this.handleInit(query);
-
-    saveDataEmitter.on('saveTaskFormData', this.handleSaveData);
-  }
-
-  componentWillUnmount() {
-    const { saveDataEmitter } = this.props;
-    saveDataEmitter.removeListener('saveTaskFormData', this.handleSaveData);
-  }
-
-  @autobind
-  handleSaveData() {
-    const { onStepUpdate, saveTaskFlowData, storedTaskFlowData } = this.props;
-    saveTaskFlowData({
-      ...storedTaskFlowData,
-      taskForm: {},
-    });
-    onStepUpdate();
   }
 
   // 自建任务提交

@@ -10,12 +10,8 @@ export default class SelectLabelCust extends PureComponent {
   static propTypes = {
     getCirclePeople: PropTypes.func.isRequired,
     circlePeopleData: PropTypes.array.isRequired,
-    // 保存数据方法
-    storeData: PropTypes.func.isRequired,
     // 保存的数据
     storedData: PropTypes.object,
-    saveDataEmitter: PropTypes.object.isRequired,
-    onStepUpdate: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -33,19 +29,12 @@ export default class SelectLabelCust extends PureComponent {
     this.bigBtn = true;
   }
 
-  componentWillMount() {
-    const { saveDataEmitter } = this.props;
-    saveDataEmitter.on('saveSelectCustData', this.handleSaveData);
-  }
-
-  componentWillUnmount() {
-    const { saveDataEmitter } = this.props;
-    saveDataEmitter.removeListener('saveSelectCustData', this.handleSaveData);
-  }
-
   @autobind
-  handleRadioChange(value) {
-    console.log('value--', value);
+  getData() {
+    const { data } = this.state;
+    return {
+      labelCust: data,
+    };
   }
 
   @autobind
@@ -60,16 +49,8 @@ export default class SelectLabelCust extends PureComponent {
   }
 
   @autobind
-  handleSaveData() {
-    const { storeData, storedData, onStepUpdate } = this.props;
-    const { data } = this.state;
-
-    storeData({
-      ...storedData,
-      labelCust: data,
-    });
-
-    onStepUpdate();
+  handleRadioChange(value) {
+    console.log('value--', value);
   }
 
   render() {

@@ -2,12 +2,12 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 17:09:13
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-11 10:18:29
+ * @Last Modified time: 2017-10-20 14:52:33
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Input } from 'antd';
+import { Input, Icon, Button } from 'antd';
 import { autobind } from 'core-decorators';
 import styles from './customerGroupListSearch.less';
 
@@ -16,10 +16,12 @@ const Search = Input.Search;
 export default class CustomerGroupListSearch extends PureComponent {
   static propTypes = {
     onSearch: PropTypes.func,
+    isNeedBtn: PropTypes.bool,
   };
 
   static defaultProps = {
     onSearch: () => { },
+    isNeedBtn: false,
   };
 
   constructor(props) {
@@ -47,6 +49,7 @@ export default class CustomerGroupListSearch extends PureComponent {
   }
 
   render() {
+    const { isNeedBtn } = this.props;
     const { curSearchValue } = this.state;
     return (
       <div className={styles.searchWrapper}>
@@ -60,6 +63,12 @@ export default class CustomerGroupListSearch extends PureComponent {
             height: '30px',
             width: '250px',
           }}
+          suffix={
+            isNeedBtn ? (
+              <Button className="search-btn" size="large" type="primary">
+                <Icon type="search" />
+              </Button>
+            ) : null}
         />
       </div>
     );
