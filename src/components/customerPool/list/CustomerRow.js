@@ -120,12 +120,13 @@ export default class CustomerRow extends PureComponent {
     custIncomeReqState: PropTypes.bool.isRequired,
     toggleServiceRecordModal: PropTypes.func.isRequired,
     formatAsset: PropTypes.func.isRequired,
-    mainServiceManager: PropTypes.bool.isRequired,
+    mainServiceManager: PropTypes.bool,
   }
 
   static defaultProps = {
     q: '',
     selectedIds: [],
+    mainServiceManager: false,
   }
 
   constructor(props) {

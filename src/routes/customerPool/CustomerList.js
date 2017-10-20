@@ -34,8 +34,8 @@ const ENTER_TYPE = {
   tag: 'searchCustPool',
   association: 'searchCustPool',
   business: 'businessCustPool',
-  custIndicator: 'performanceIncrementCustPool',
-  numOfCustOpened: 'performanceBusinessOpenCustPool',
+  custIndicator: 'performanceCustPool',
+  numOfCustOpened: 'performanceCustPool',
 };
 
 const DEFAULT_SORT = { sortType: 'Aset', sortDirection: 'desc' }; // 默认排序方式
@@ -295,7 +295,7 @@ export default class CustomerList extends PureComponent {
       param.dateType = query.cycleSelect || (cycle[0] || {}).key;
       // 我的客户 和 没有权限时，custType=1,其余情况custType=3
       param.custType = CUST_MANAGER;
-      if (this.authority || query.ptyMngId !== empNum) {
+      if (this.authority || (query.ptyMngId && query.ptyMngId !== empNum)) {
         param.custType = ORG;
       }
     }
