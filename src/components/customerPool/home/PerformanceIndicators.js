@@ -24,7 +24,6 @@ import {
   filterEmptyToNumber,
   filterEmptyToInteger,
   getServiceIndicatorOfPerformance,
-  businessOpenNumLabelList,
   linkTo,
 } from './homeIndicators_';
 
@@ -52,9 +51,15 @@ export default class PerformanceIndicators extends PureComponent {
       push,
       cycle,
       location,
+      indicators,
     } = this.props;
+    let formatIndicator = [];
+    const tempArr = this.formatIndicators(indicators);
+    if (!_.isEmpty(tempArr)) {
+      formatIndicator = (tempArr[1] || {}).data;
+    }
     instance.on('click', (arg) => {
-      console.log('instance arg >>>>', arg);
+      // console.log('instance arg >>>>', arg, formatIndicator);
       if (arg.componentType !== 'xAxis') {
         return;
       }
@@ -64,23 +69,31 @@ export default class PerformanceIndicators extends PureComponent {
         push,
         location,
       };
-      if (arg.value === businessOpenNumLabelList[0]) {
+      if (arg.value === (formatIndicator[0] || {}).name) {
         param.value = 'ttfCust';
         param.bname = arg.value;
         linkTo(param);
-      } else if (arg.value === businessOpenNumLabelList[1]) {
+      } else if (arg.value === (formatIndicator[1] || {}).name) {
         param.value = 'shHkCust';
         param.bname = arg.value;
         linkTo(param);
-      } else if (arg.value === businessOpenNumLabelList[2]) {
+      } else if (arg.value === (formatIndicator[2] || {}).name) {
+        param.value = 'szHkCust';
+        param.bname = arg.value;
+        linkTo(param);
+      } else if (arg.value === (formatIndicator[3] || {}).name) {
         param.value = 'rzrqCust';
         param.bname = arg.value;
         linkTo(param);
-      } else if (arg.value === businessOpenNumLabelList[3]) {
+      } else if (arg.value === (formatIndicator[4] || {}).name) {
+        param.value = 'xsb';
+        param.bname = arg.value;
+        linkTo(param);
+      } else if (arg.value === (formatIndicator[5] || {}).name) {
         param.value = 'optCust';
         param.bname = arg.value;
         linkTo(param);
-      } else if (arg.value === businessOpenNumLabelList[4]) {
+      } else if (arg.value === (formatIndicator[6] || {}).name) {
         param.value = 'cyb';
         param.bname = arg.value;
         linkTo(param);
