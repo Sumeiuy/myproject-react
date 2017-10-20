@@ -30,8 +30,8 @@ const columns = [{
   width: '15%',
 }, {
   title: '行业',
-  dataIndex: 'secucategorycodel',
-  key: 'secucategorycodel',
+  dataIndex: 'induname',
+  key: 'induname',
   width: '12%',
 }, {
   title: '报告日期',
@@ -142,7 +142,7 @@ export default class ViewpointList extends PureComponent {
       (item, index) => ({
         texttitle: this.formatString(item.texttitle),
         textcategory: this.formatString(item.textcategory),
-        secucategorycodel: this.formatString(item.secucategorycodel),
+        induname: this.formatString(item.induname),
         pubdata: this.formatString(item.pubdata),
         authors: this.formatString(item.authors),
         aboutStock: `${this.formatString(item.secuabbr)} / ${this.formatString(item.tradingcode)}`,

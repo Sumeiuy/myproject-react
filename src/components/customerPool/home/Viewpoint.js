@@ -24,7 +24,7 @@ export default class Viewpoint extends PureComponent {
 
   @autobind
   openNewTab(url, query) {
-    const param = { id: 'tab-viewpoint', title: '首席观点' };
+    const param = { id: 'tab-viewpoint', title: '资讯' };
     if (document.querySelector(fspContainer.container)) {
       fspGlobal.openRctTab({ url: `${url}?${helper.queryToString(query)}`, param });
     } else {
@@ -84,9 +84,9 @@ export default class Viewpoint extends PureComponent {
       <div className={styles.container}>
         <div className={styles.head}>首席投顾观点</div>
         <div className={styles.up}>
-          <div className={styles.title}>{texttitle || '暂无数据'}</div>
+          <div className={styles.title}>{texttitle || '暂无标题'}</div>
           <div className={styles.article}>
-            <div className={styles.text}>{abstract || '暂无数据'}</div>
+            <div className={styles.text}>{abstract || '暂无内容'}</div>
             <div
               className={classnames(
                 styles.details,
