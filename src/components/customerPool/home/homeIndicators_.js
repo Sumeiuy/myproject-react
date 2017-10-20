@@ -141,7 +141,7 @@ export function getClientsNumber({
           interval: 0,
           margin: 6,
           fontFamily: 'PingFangSC-Regular',
-          fontSize: 12,
+          fontSize: 11,
           color: '#666666',
           showMinLabel: true,
           clickable: true,
