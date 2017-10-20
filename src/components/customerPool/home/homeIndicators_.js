@@ -126,8 +126,8 @@ export function getClientsNumber({
   const items = {
     tooltip: {},    // 使用默认值
     grid: {
-      left: '14px',
-      right: '10px',
+      left: '12px',
+      right: '12px',
       bottom: '34px',
       top: '32px',
       containLabel: false,
@@ -141,11 +141,12 @@ export function getClientsNumber({
           interval: 0,
           margin: 6,
           fontFamily: 'PingFangSC-Regular',
-          fontSize: 11,
+          fontSize: 12,
           color: '#666666',
           showMinLabel: true,
           clickable: true,
           rotate: 30,
+          padding: [6, -8, -6, 8],
         },
         axisLine: {
           lineStyle: {
