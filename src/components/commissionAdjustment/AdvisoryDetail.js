@@ -120,12 +120,18 @@ export default class AdvisoryDetail extends PureComponent {
     const { riskMatch, termMatch, prodMatch, prodCode, aliasName, agrType } = product;
     return {
       key: prodCode,
-      prodCode, // 产品代码
-      aliasName, // 产品名称
-      agrType, // 签署确认书类型
-      riskMatch: this.convertNY2ZN(riskMatch), // 风险是否匹配
-      termMatch: this.convertNY2ZN(termMatch), // 期限是否匹配
-      prodMatch: this.convertNY2ZN(prodMatch), // 产品是否匹配
+      // 产品代码
+      prodCode,
+      // 产品名称
+      aliasName,
+      // 签署确认书类型
+      agrType,
+      // 风险是否匹配
+      riskMatch: this.convertNY2ZN(riskMatch),
+      // 期限是否匹配
+      termMatch: this.convertNY2ZN(termMatch),
+      // 产品是否匹配
+      prodMatch: this.convertNY2ZN(prodMatch),
     };
   }
 
@@ -150,14 +156,22 @@ export default class AdvisoryDetail extends PureComponent {
     const { name, data: { base, attachmentList, approvalHistory } } = this.props;
     if (_.isEmpty(base)) return null;
     const {
-      orderId, // 订单Id
-      comments, // 备注
-      divisionName, // 营业部名称
-      createdByName, // 创建者姓名
-      createdByLogin, // 创建者工号
-      created, // 创建时间
-      status, // 状态
-      item, // 产品
+      // 订单Id
+      orderId,
+      // 备注
+      comments,
+      // 营业部名称
+      divisionName,
+      // 创建者姓名
+      createdByName,
+      // 创建者工号
+      createdByLogin,
+      // 创建时间
+      created,
+      // 状态
+      status,
+      // 产品
+      item,
     } = base;
     const custList = this.createCustList(base);
     const proList = this.createProList(item);
