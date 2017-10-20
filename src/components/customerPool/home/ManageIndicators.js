@@ -171,7 +171,7 @@ export default class PerformanceIndicators extends PureComponent {
       <div className={styles.indexBox}>
         <div>
           <div className={`${styles.listItem} ${styles.firstListItem}`}>
-            <Row gutter={30}>
+            <Row gutter={28}>
               <Col span={8}>
                 <RectFrame dataSource={pureAddHead}>
                   <IfEmpty isEmpty={isEmpty}>
@@ -215,7 +215,7 @@ export default class PerformanceIndicators extends PureComponent {
             </Row>
           </div>
           <div className={styles.listItem}>
-            <Row gutter={30}>
+            <Row gutter={28}>
               <Col span={8}>
                 <RectFrame dataSource={tradeVolumeHead}>
                   <IfEmpty isEmpty={isEmpty}>
