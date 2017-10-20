@@ -66,16 +66,8 @@ export default class Viewpoint extends PureComponent {
   }
 
   render() {
-    const { information: { list = [] } } = this.props;
+    const { information: { infoVOList = [] } } = this.props;
     // 展示第一个新闻
-    const pageList = _.filter(
-      list,
-      (item) => {
-        const { curPageNum = 0 } = item;
-        return curPageNum === 1;
-      },
-    );
-    const { infoVOList = [] } = _.isEmpty(pageList) ? {} : pageList[0];
     const { texttitle = '', abstract = '' } = _.isEmpty(infoVOList) ? {} : infoVOList[0];
     const isShowMore = infoVOList.length > 12;
     const isHiddenDetail = _.isEmpty(abstract);
