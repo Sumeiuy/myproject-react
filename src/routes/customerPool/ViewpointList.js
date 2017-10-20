@@ -92,6 +92,7 @@ export default class ViewpointList extends PureComponent {
     push({
       pathname: '/customerPool/viewpointDetail',
       query: { detailIndex: `${index}` },
+      state: 'formList',
     });
   }
 
