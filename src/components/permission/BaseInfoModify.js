@@ -32,7 +32,7 @@ export default class BaseInfoModify extends PureComponent {
   constructor() {
     super();
     this.state = {
-      subTypeTxt: '请选择',
+      subTypeTxt: '请先选择客户',
       subTypeList: [],
     };
   }
@@ -107,7 +107,7 @@ export default class BaseInfoModify extends PureComponent {
           <div className={style.inputComponentContent}>
             <DropdownSelect
               value={this.props.customer}
-              placeholder="经济客户号/客户名称"
+              placeholder="经纪客户号/客户名称"
               searchList={this.props.canApplyCustList}
               showObjKey="custName"
               objId="cusId"
