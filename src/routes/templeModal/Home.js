@@ -247,7 +247,6 @@ export default class TemplModal extends PureComponent {
       secondColumns: productColumns,
       transferChange: this.handleTransferChange,
       checkChange: this.handleCheckChange,
-      onSearch: this.handleSearch,
       rowKey: 'key',
       defaultCheckKey: 'default',
       showSearch: true,
