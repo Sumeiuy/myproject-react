@@ -2,7 +2,7 @@
  * @Author: zhuyanwen
  * @Date: 2017-10-09 13:25:51
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-19 17:18:55
+ * @Last Modified time: 2017-10-20 08:40:02
  * @description: 客户分组功能
  */
 
@@ -288,6 +288,7 @@ export default class CustomerGroup extends PureComponent {
 
       addCustomerToGroup({
         groupId,
+        ptyMngId: helper.getEmpId(),
         groupName: selectGroupName,
         groupDesc: selectGroupDescription,
         includeCustIdList,
@@ -331,6 +332,7 @@ export default class CustomerGroup extends PureComponent {
     createCustGroup({
       groupName,
       groupDesc,
+      ptyMngId: helper.getEmpId(),
       includeCustIdList,
       excludeCustIdList: null,
       includeCustSearchReq: {
