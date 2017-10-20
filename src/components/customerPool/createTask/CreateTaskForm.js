@@ -12,6 +12,7 @@ import moment from 'moment';
 import { autobind } from 'core-decorators';
 import styles from './createTaskForm.less';
 import { fspGlobal } from '../../../utils';
+// import { steps } from '../../../config';
 // import Button from '../../common/Button';
 import TaskFormInfo from './TaskFormInfo';
 
@@ -34,12 +35,16 @@ export default class CreateTaskForm extends PureComponent {
     dict: PropTypes.object,
     createTask: PropTypes.func,
     createTaskResult: PropTypes.object,
+    storedTaskFlowData: PropTypes.object.isRequired,
+    saveTaskFlowData: PropTypes.func.isRequired,
+    saveDataEmitter: PropTypes.object.isRequired,
+    onStepUpdate: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
     dict: {},
     createTaskResult: {},
-    createTask: () => {},
+    createTask: () => { },
   }
 
   constructor(props) {
@@ -60,7 +65,7 @@ export default class CreateTaskForm extends PureComponent {
   }
 
   componentWillMount() {
-    const { location: { query }, dict: { custIdexPlaceHolders } } = this.props;
+    const { location: { query }, saveDataEmitter, dict: { custIdexPlaceHolders } } = this.props;
     // const { statusData } = this.state;
     const arr = [];
     _.map(custIdexPlaceHolders, (item) => {
@@ -71,16 +76,24 @@ export default class CreateTaskForm extends PureComponent {
       statusData: arr,
     });
     this.handleInit(query);
+
+    saveDataEmitter.on('saveTaskFormData', this.handleSaveData);
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { createTaskResult: preCreateTaskResult } = this.props;
-    const { createTaskResult: nextcreateTaskResult } = nextProps;
-    if (preCreateTaskResult !== nextcreateTaskResult) {
-      // this.handleCreateTaskSuccess(nextcreateTaskResult);
-    }
+  componentWillUnmount() {
+    const { saveDataEmitter } = this.props;
+    saveDataEmitter.removeListener('saveTaskFormData', this.handleSaveData);
   }
 
+  @autobind
+  handleSaveData() {
+    const { onStepUpdate, saveTaskFlowData, storedTaskFlowData } = this.props;
+    saveTaskFlowData({
+      ...storedTaskFlowData,
+      taskForm: {},
+    });
+    onStepUpdate();
+  }
 
   // 自建任务提交
   handleSubmit = (e) => {
@@ -129,8 +142,14 @@ export default class CreateTaskForm extends PureComponent {
   // 绩效目标客户 - 业务开通：performanceBusinessOpenCustPool
 
   @autobind
-  handleInit(query) {
-    const entertype = query.entertype || '';
+  handleInit(query = {}) {
+    let entertype = '';
+    let count = '0';
+    if (!_.isEmpty(query)) {
+      entertype = query.entertype;
+      count = query.count;
+    }
+
     const { dict: { custIdexPlaceHolders } } = this.props;
     let defaultMissionName = '';
     let defaultMissionType = '';
@@ -141,7 +160,7 @@ export default class CreateTaskForm extends PureComponent {
     let custIdList = null;
     let searchReq = null;
     let firstUserName = '';
-    const count = query.count || '0';
+
     if (query.ids) {
       custIdList = decodeURIComponent(query.ids).split(',');
     } else if (query.condition) {
@@ -234,12 +253,14 @@ export default class CreateTaskForm extends PureComponent {
     this.handleCreatAddDate(startTime, 'start');
     this.handleCreatAddDate(endTime, 'end');
   }
+
   @autobind
   closeTab() {
     // fspGlobal.closeRctTabById('RCT_FSP_TASK');
     fspGlobal.closeRctTabById('RCT_FSP_CUSTOMER_LIST');
     // this.props.goBack();
   }
+
   render() {
     const { dict, form } = this.props;
     const { taskTypes, executeTypes } = dict;

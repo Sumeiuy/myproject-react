@@ -22,7 +22,7 @@
     & > .infoDescription {
       padding-top: 10px;
       padding-left: 30px;
-      padding-bottom: 20px;
+      padding-bottom: 40px;
       & > .descriptionOrNameSection {
         display: flex;
         justify-content: flex-start;
@@ -65,4 +65,65 @@
       }
     }
   }
+  & > .selectApprover {
+    width: 300px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    & > span {
+      font-size: 14px;
+      margin-right: 10px;
+    }
+    :global {
+      .ant-input-affix-wrapper {
+        width: 150px;
+      }
+    }
+  }
+}
+.approvalModalContainer {
+  :global {
+    & .ant-modal-body {
+      padding: 0px;
+      padding-top: 14px;
+      padding-left: 25px;
+      padding-right: 20px;
+      overflow-y: scroll;
+      height: e("calc(80vh - 130px)");
+    }
+  }
+}
+.approvalListTable {
+  padding: 0 !important;
+  table > thead > tr > th, tbody > tr > td {
+    padding: 0px;
+    padding-bottom: 7px;
+    padding-top: 7px;
+    padding-left: 8px;
+    text-align: center !important;
+    border-bottom: 1px solid #e9e9e9;
+    font-size: 14px;
+    color: #727272;
+  }
+  table > tbody > tr:nth-child(odd) {
+    background-color: #ffffff;
+  }
+  tbody > tr > td > div,  tbody > tr > th{
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin: 0;
+  }
+  table > thead > tr > th {
+    background-color: #f7f7f7;
+  }
+}
+.btnSection {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+.confirmBtn {
+  margin-left: 10px;
 }

@@ -91,10 +91,7 @@ export default class TaskSearchRow extends PureComponent {
       dataSource: tabData,
     });
   }
-  // componentWillReceiveProps(nextProps) {
-  // }
-  componentDidUpdate() {
-  }
+
   @autobind
   change(e) {
     console.log(1111111111);
@@ -102,6 +99,7 @@ export default class TaskSearchRow extends PureComponent {
     const { onChange } = this.props;
     onChange(e.target.value);
   }
+
   @autobind
   handleSeeCust() {
     console.log(1);
@@ -109,6 +107,7 @@ export default class TaskSearchRow extends PureComponent {
       visible: true,
     });
   }
+
   @autobind
   handleCancel() {
     this.setState({ visible: false });
@@ -134,6 +133,7 @@ export default class TaskSearchRow extends PureComponent {
     //   pageSize: changedPageSize,
     // });
   }
+
   @autobind
   handlePageChange(nextPage, currentPageSize) {
     console.log('nextPage---', nextPage, 'currentPageSize---', currentPageSize);
@@ -153,6 +153,7 @@ export default class TaskSearchRow extends PureComponent {
     //   pageSize: currentPageSize,
     // });
   }
+
   renderColumnTitle() {
     return [{
       key: 'custName',
@@ -175,6 +176,7 @@ export default class TaskSearchRow extends PureComponent {
       value: '客户类型',
     }];
   }
+
   renderActionSource() {
     return [{
       type: '编辑',
@@ -189,7 +191,6 @@ export default class TaskSearchRow extends PureComponent {
       handler: this.lanuchTask,
     }];
   }
-
 
   render() {
     console.log(this.props);
