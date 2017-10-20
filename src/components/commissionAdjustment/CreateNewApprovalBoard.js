@@ -84,6 +84,8 @@ export default class CreateNewApprovalBoard extends PureComponent {
     empInfo: PropTypes.object.isRequired,
     gjCommission: PropTypes.array.isRequired,
     queryGJCommission: PropTypes.func.isRequired,
+    querySingleCustList: PropTypes.func.isRequired,
+    singleCustList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -111,6 +113,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       otherComReset: new Date().getTime(), // 用来判断是否重置
       showCloseApprovalBoardConfirm: false, // 用来展示关闭弹出层时的确认提示框
       showSwitchProductConfirm: false, // 用来展示切换目标产品后的确认提示框
+      customerRowId: '', // 客户rowid
     };
   }
 
@@ -146,6 +149,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       approverId: '',
       custLists: [],
       otherComReset: new Date().getTime(),
+      customerRowId: '',
     });
   }
 
@@ -344,6 +348,14 @@ export default class CreateNewApprovalBoard extends PureComponent {
     });
   }
 
+  // 根据用户输入查询单佣金客户列表
+  @autobind
+  handleChangeAssembly(keyword) {
+    this.props.querySingleCustList({
+      keyword,
+    });
+  }
+
   // 将用户选择添加的客户列表返回到弹出层，以便提交试用
   @autobind
   saveSelectedCustomerList(list) {
@@ -373,6 +385,15 @@ export default class CreateNewApprovalBoard extends PureComponent {
     });
   }
 
+  // 单佣金、咨询订阅、退订基本信息选择客户
+  @autobind
+  handleSelectAssembly(customer) {
+    const { id } = customer;
+    this.setState({
+      customerRowId: id,
+    });
+  }
+
   render() {
     const {
       modalKey,
@@ -384,7 +405,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       customerList,
       otherRatios,
       gjCommission,
-
+      singleCustList,
     } = this.props;
     const newApproverList = approverList.map((item, index) => {
       const key = `${new Date().getTime()}-${index}`;
@@ -536,7 +557,9 @@ export default class CreateNewApprovalBoard extends PureComponent {
                 : (
                   <CommissionLine label="客户" labelWidth="90px" needInputBox={false}>
                     <SelectAssembly
-                      onSearchValue={() => {}}
+                      dataSource={singleCustList}
+                      onSearchValue={this.handleChangeAssembly}
+                      onSelectValue={this.handleSelectAssembly}
                     />
                   </CommissionLine>
                 )

@@ -36,5 +36,7 @@ export default function commission(api) {
     queryThreeMatchInfo: query => api.post('/groovynoauth/fsp/biz/chgcommsion/queryThreeMatchInfo', query),
     // 单佣金调整中的其他佣金费率选项
     queryOtherCommissionOptions: query => api.post('/groovynoauth/fsp/biz/chgcommsion/querySingelCommionJustRate', query),
+    // 单佣金调整页面 客户查询
+    querySingleCustomer: query => api.post('/groovynoauth/fsp/biz/chgcommsion/queryCustInfo', query),
   };
 }

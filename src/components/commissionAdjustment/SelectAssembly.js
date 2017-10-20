@@ -7,6 +7,8 @@
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
 import { Icon, Input, AutoComplete } from 'antd';
+import _ from 'lodash';
+
 import styles from './selectAssembly.less';
 
 const Option = AutoComplete.Option;
@@ -14,42 +16,25 @@ const Option = AutoComplete.Option;
 export default class SelectAssembly extends PureComponent {
 
   static propTypes = {
-    dataSource: PropTypes.array,
+    dataSource: PropTypes.array.isRequired,
     onSearchValue: PropTypes.func.isRequired,
+    onSelectValue: PropTypes.func.isRequired,
     width: PropTypes.string,
   }
 
   static defaultProps = {
-    dataSource: [
-      {
-        custId: '12345',
-        custName: '张三',
-        custType: '保守型',
-      },
-      {
-        custId: '12346',
-        custName: '李四',
-        custType: '保守型',
-      },
-      {
-        custId: '12347',
-        custName: '王五',
-        custType: '保守型',
-      },
-    ],
     width: '200px',
   }
 
   constructor(props) {
     super(props);
     this.state = {
-      selectItem: {},
       inputValue: '',
       typeStyle: 'search',
     };
   }
 
-   @autobind
+  @autobind
   handleInputValue(value) {
     this.setState({
       inputValue: value,
@@ -61,14 +46,17 @@ export default class SelectAssembly extends PureComponent {
     }
   }
 
+
   // 根据用户选中的option的value值获取对应的数组值
   @autobind
-  handleSelectedValue(value, option) {
+  handleSelectedValue(value) {
     if (value) {
       this.setState({
         typeStyle: 'close',
-        selectItem: this.props.dataSource[option.props.index],
       });
+      const { dataSource, onSelectValue } = this.props;
+      const item = _.filter(dataSource, o => o.id === value)[0];
+      onSelectValue(item);
     } else {
       this.setState({
         inputValue: '',
@@ -80,7 +68,7 @@ export default class SelectAssembly extends PureComponent {
   @autobind
   changeDataSource() {
     if (this.state.typeStyle === 'search') {
-      this.props.onSearchValue(this.state.selectItem);
+      this.props.onSearchValue(this.state.inputValue);
     } else if (this.state.typeStyle === 'close') {
       this.setState({
         inputValue: '',
@@ -94,8 +82,8 @@ export default class SelectAssembly extends PureComponent {
     const { dataSource, width } = this.props;
     const { inputValue, typeStyle } = this.state;
     const options = dataSource.map(opt => (
-      <Option key={opt.custId} value={`${opt.custName}（${opt.custId}） - ${opt.custType}`}>
-        <span className={styles.prodValue}>{opt.custName}（{opt.custId}） - {opt.custType}</span>
+      <Option key={opt.id} value={opt.id} text={`${opt.custName}（${opt.custEcon}） - ${opt.riskLevel}`}>
+        <span className={styles.prodValue}>{opt.custName}（{opt.custEcon}） - {opt.riskLevel}</span>
       </Option>
     ));
     return (
@@ -109,7 +97,7 @@ export default class SelectAssembly extends PureComponent {
           size="large"
           style={{ width }}
           dataSource={options}
-          optionLabelProp="value"
+          optionLabelProp="text"
           onChange={this.handleInputValue}
           onSelect={this.handleSelectedValue}
           value={inputValue}

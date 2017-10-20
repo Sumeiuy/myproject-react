@@ -49,6 +49,8 @@ export default {
     consultUnsubId: '',
     // 单佣金调整中的其他佣金费率的选项列表
     singleOtherCommissionOptions: {},
+    // 单佣金调整页面客户查询列表
+    singleCustomerList: [],
   },
   reducers: {
     getProductListSuccess(state, action) {
@@ -218,6 +220,18 @@ export default {
       return {
         ...state,
         singleOtherCommissionOptions: resultData,
+      };
+    },
+
+    getSingleCustListSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      let list = [];
+      if (!_.isEmpty(resultData)) {
+        list = resultData.custInfo;
+      }
+      return {
+        ...state,
+        singleCustomerList: list,
       };
     },
 
@@ -438,6 +452,16 @@ export default {
       const response = yield call(api.queryOtherCommissionOptions, payload);
       yield put({
         type: 'getOtherCommissionOptionsSuccess',
+        payload: response,
+      });
+    },
+
+    // 单佣金调整页面客户查询列表
+    * getSingleCustList({ payload }, { call, put }) {
+      console.warn('getSingleCustList', payload);
+      const response = yield call(api.querySingleCustomer, payload);
+      yield put({
+        type: 'getSingleCustListSuccess',
         payload: response,
       });
     },
