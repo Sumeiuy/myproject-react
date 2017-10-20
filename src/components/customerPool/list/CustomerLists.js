@@ -658,16 +658,17 @@ export default class CustomerLists extends PureComponent {
         serviceManagerDefaultValue = '所有人';
       }
     }
-    // 当前所处的orgId
-    let curOrgId = '';
+    // 当前所处的orgId,默认所有
+    let curOrgId = 'all';
+    // 根据url中的orgId赋值，没有时判断权限，有权限取岗位对应的orgId,无权限取‘all’
     if (orgId) {
       curOrgId = orgId;
     } else if (authority) {
       if (document.querySelector(fspContainer.container)) {
         curOrgId = window.forReactPosition.orgId;
+      } else {
+        curOrgId = empInfo.occDivnNum;
       }
-    } else {
-      curOrgId = null;
     }
     return (
       <div className="list-box">
