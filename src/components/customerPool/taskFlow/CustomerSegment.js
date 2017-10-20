@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 13:43:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-19 17:25:42
+ * @Last Modified time: 2017-10-20 13:29:03
  * 客户细分组件
  */
 
@@ -24,12 +24,8 @@ export default class CustomerSegment extends PureComponent {
   static propTypes = {
     onPreview: PropTypes.func.isRequired,
     priviewCustFileData: PropTypes.object.isRequired,
-    // 保存数据方法
-    storeData: PropTypes.func.isRequired,
     // 保存的数据
     storedData: PropTypes.object,
-    saveDataEmitter: PropTypes.object.isRequired,
-    onStepUpdate: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -52,11 +48,6 @@ export default class CustomerSegment extends PureComponent {
       uploadedFileKey,
       originFileName,
     };
-  }
-
-  componentWillMount() {
-    const { saveDataEmitter } = this.props;
-    saveDataEmitter.on('saveSelectCustData', this.handleSaveData);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -85,35 +76,16 @@ export default class CustomerSegment extends PureComponent {
     }
   }
 
-  componentWillUnmount() {
-    const { saveDataEmitter } = this.props;
-    saveDataEmitter.removeListener('saveSelectCustData', this.handleSaveData);
-  }
-
   @autobind
-  handleShowMatchCustTable(uploadedFileKey) {
-    // 已经上传的file key
-    // 用来预览客户列表时，用
-    const { onPreview } = this.props;
-    const { curPageNum, curPageSize, fileKey } = this.state;
-    this.setState({
-      uploadedFileKey: uploadedFileKey || fileKey,
-    });
-    onPreview({ uploadKey: uploadedFileKey, pageNum: curPageNum, pageSize: curPageSize });
-  }
-
-  /**
-   * @param {*} result 本次上传结果
-   */
-  @autobind
-  handleFileUpload(lastFile) {
-    // 当前上传的file
-    const { currentFile = {}, uploadedFileKey = '', originFileName = '' } = lastFile;
-    this.setState({
-      currentFile,
-      uploadedFileKey,
-      originFileName,
-    });
+  getData() {
+    const { currentFile, uploadedFileKey, originFileName } = this.state;
+    return {
+      custSegment: {
+        currentFile,
+        uploadedFileKey,
+        originFileName,
+      },
+    };
   }
 
   /**
@@ -184,19 +156,30 @@ export default class CustomerSegment extends PureComponent {
     });
   }
 
+  /**
+   * @param {*} result 本次上传结果
+   */
   @autobind
-  handleSaveData() {
-    const { storeData, storedData, onStepUpdate } = this.props;
-    const { currentFile, uploadedFileKey, originFileName } = this.state;
-    storeData({
-      ...storedData,
-      custSegment: {
-        currentFile,
-        uploadedFileKey,
-        originFileName,
-      },
+  handleFileUpload(lastFile) {
+    // 当前上传的file
+    const { currentFile = {}, uploadedFileKey = '', originFileName = '' } = lastFile;
+    this.setState({
+      currentFile,
+      uploadedFileKey,
+      originFileName,
     });
-    onStepUpdate();
+  }
+
+  @autobind
+  handleShowMatchCustTable(uploadedFileKey) {
+    // 已经上传的file key
+    // 用来预览客户列表时，用
+    const { onPreview } = this.props;
+    const { curPageNum, curPageSize, fileKey } = this.state;
+    this.setState({
+      uploadedFileKey: uploadedFileKey || fileKey,
+    });
+    onPreview({ uploadKey: uploadedFileKey, pageNum: curPageNum, pageSize: curPageSize });
   }
 
   @autobind
