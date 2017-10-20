@@ -39,6 +39,16 @@ export default {
     batchnum: '',
     // 目标股基佣金率列表项
     gjCommission: [],
+    // 资讯订阅可供用户订阅的产品
+    consultSubProductList: [],
+    // 资讯退订中用户可退订的服务
+    consultUnsubProductList: [],
+    // 新增资讯订阅申请的orderId
+    consultSubId: '',
+    // 新增资讯退订申请的orderId
+    consultUnsubId: '',
+    // 单佣金调整中的其他佣金费率的选项列表
+    singleOtherCommissionOptions: {},
   },
   reducers: {
     getProductListSuccess(state, action) {
@@ -168,6 +178,49 @@ export default {
       };
     },
 
+    getSubscribeProductListSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        consultSubProductList: resultData,
+      };
+    },
+
+    getUnSubscribeProductListSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        consultUnsubProductList: resultData,
+      };
+    },
+
+    submitConsultSubscribeSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      const orderId = resultData && resultData.orderId;
+      return {
+        ...state,
+        consultSubId: orderId,
+      };
+    },
+
+    submitConsultUnSubscribeSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      const orderId = resultData && resultData.orderId;
+      return {
+        ...state,
+        consultUnsubId: orderId,
+      };
+    },
+
+    getOtherCommissionOptionsSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      // TODO 此处明天需要进一步修改
+      return {
+        ...state,
+        singleOtherCommissionOptions: resultData,
+      };
+    },
+
     opertateState(state, action) {
       const { payload: { name, value } } = action;
       return {
@@ -294,7 +347,7 @@ export default {
 
     // 查询咨询订阅详情数据
     * getSubscribeDetail({ payload }, { call, put }) {
-      const detailRes = yield call(api.queryConsultSubscribeDetail,
+      const detailRes = yield call(api.queryConsultDetail,
         {
           action: 'query',
           applyType: 'Internal',
@@ -316,7 +369,7 @@ export default {
 
     // 查询咨询订阅详情数据
     * getUnSubscribeDetail({ payload }, { call, put }) {
-      const detailRes = yield call(api.queryConsultSubscribeDetail,
+      const detailRes = yield call(api.queryConsultDetail,
         {
           action: 'query',
           applyType: 'Internal',
@@ -333,6 +386,59 @@ export default {
       yield put({
         type: 'getUnSubscribeDetailSuccess',
         payload: { detailRes, attachmentRes, approvalRes },
+      });
+    },
+
+    // 查询资讯订阅产品列表
+    * getSubscribeProductList({ payload }, { call, put }) {
+      const response = yield call(api.queryConsultSubscribeProductList, payload);
+      yield put({
+        type: 'getSubscribeProductListSuccess',
+        payload: response,
+      });
+    },
+
+    // 查询资讯退订中的可退订产品列表
+    * getUnSubscribeProductList({ payload }, { call, put }) {
+      const response = yield call(api.queryConsultUnSubProductList, payload);
+      yield put({
+        type: 'getUnSubscribeProductListSuccess',
+        payload: response,
+      });
+    },
+
+    // 新增资讯订阅申请
+    * submitConsultSubscribe({ payload }, { call, put }) {
+      const response = yield call(api.newConsultApply, {
+        action: 'new',
+        operationType: 'subscribe',
+        ...payload,
+      });
+      yield put({
+        type: 'submitConsultSubscribeSuccess',
+        payload: response,
+      });
+    },
+
+     // 新增资讯退订申请
+    * submitConsultUnSubscribe({ payload }, { call, put }) {
+      const response = yield call(api.newConsultApply, {
+        action: 'new',
+        operationType: 'unsubscribe',
+        ...payload,
+      });
+      yield put({
+        type: 'submitConsultUnSubscribeSuccess',
+        payload: response,
+      });
+    },
+
+    // 查询单佣金调整中的其他佣金费率选项
+    * getOtherCommissionOptions({ payload }, { call, put }) {
+      const response = yield call(api.queryOtherCommissionOptions, payload);
+      yield put({
+        type: 'getOtherCommissionOptionsSuccess',
+        payload: response,
       });
     },
   },
