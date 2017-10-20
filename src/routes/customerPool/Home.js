@@ -207,7 +207,7 @@ export default class Home extends PureComponent {
   @autobind
   getCustType(orgId) {
     let custType = CUST_MANAGER;
-    if (this.isHasAuthorize || orgId !== MAIN_MAGEGER_ID) {
+    if (this.isHasAuthorize || (orgId && orgId !== MAIN_MAGEGER_ID)) {
       custType = ORG;
     }
     return custType;

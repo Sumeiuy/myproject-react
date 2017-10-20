@@ -21,6 +21,7 @@ const mapStateToProps = state => ({
 });
 const mapDispatchToProps = {
   goBack: routerRedux.goBack,
+  push: routerRedux.push,
 };
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
@@ -29,6 +30,7 @@ export default class ViewpointDetail extends PureComponent {
     goBack: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     information: PropTypes.object,
+    push: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -37,8 +39,12 @@ export default class ViewpointDetail extends PureComponent {
 
   @autobind
   handleBackClick() {
-    const { goBack } = this.props;
-    goBack();
+    const { goBack, push, location: { state = '' } } = this.props;
+    if (_.isEmpty(state)) {
+      push({ pathname: '/customerPool/viewpointList' });
+    } else {
+      goBack();
+    }
   }
 
   renderDownLoad({ loadUrl, format, fileName }) {
@@ -69,7 +75,7 @@ export default class ViewpointDetail extends PureComponent {
     } = infoVOList[_.toNumber(detailIndex)] || {};
     // 分割成段，展示
     const formateAbstract = _.isEmpty(abstract) ? (
-      '<p>暂无数据</p>'
+      '<p>暂无内容</p>'
     ) : (
       _.replace(_.trim(abstract), /\s{2,}/gi, '<br /><span></span>')
     );
@@ -86,9 +92,11 @@ export default class ViewpointDetail extends PureComponent {
                   <div className={styles.iconContainer}>
                     <Icon type="fanhui" className={styles.backIcon} />
                   </div>
-                  <div className={styles.backTitle}>返回列表</div>
+                  <div className={styles.backTitle}>资讯列表</div>
                 </div>
-                <div className={styles.title}>{texttitle}</div>
+                <div className={styles.title}>
+                  {_.isEmpty(texttitle) ? '暂无标题' : texttitle}
+                </div>
               </div>
               <div className={styles.infoRow}>
                 <div className={styles.column}>
@@ -127,7 +135,7 @@ export default class ViewpointDetail extends PureComponent {
                 <div className={styles.iconContainer}>
                   <Icon type="fanhui" className={styles.backIcon} />
                 </div>
-                <div className={styles.backTitle}>返回列表</div>
+                <div className={styles.backTitle}>资讯列表</div>
               </div>
             </div>
           </div>

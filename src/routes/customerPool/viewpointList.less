@@ -18,66 +18,7 @@
   :global {
     .ant-table-wrapper {
       background-color: #fff;
-      .ant-table-pagination {
-        float: right !important;
-        margin: 30px auto 0px !important;
-        .ant-pagination-total-text  {
-          margin-right: 20px;
-          font-size: 14px;
-          font-family:PingFangSC-Medium;
-        }
-        .ant-pagination-item {
-          margin-bottom: 0px;
-          border-radius: 0px;
-          border: 1px solid #6395e4;
-          color: #6395e4;
-          font-size: 10px;
-          font-family:PingFangSC-Medium;
-        }
-        .ant-pagination-item-active {
-          background-color: transparent;
-          border-color: rgba(0, 0, 0, 0.25);
-          span {
-            color: rgba(0, 0, 0, 0.25);
-          }
-        }
-        .ant-pagination-prev, .ant-pagination-next {
-          display: inline-table;
-          height: 25px;
-          line-height: 25px;
-          border: 1px solid #6395e4;
-          border-radius: 0px;
-          font-size: 10px;
-          font-family:PingFangSC-Medium;
-          color: #6395e4;
-        }
-        .ant-pagination-prev {
-          padding-right: 6px;
-        }
-        .ant-pagination-next {
-          padding-left: 6px;
-        }
-        // .ant-pagination-prev a:after, .ant-pagination-next a:after {
-        //   display: none;
-        // }
-        .ant-pagination-prev a, .ant-pagination-next a {
-          color: #6395e4;
-          display: -webkit-inline-flex;
-          display: inline-flex;
-          &:after {
-            display: none;
-          }
-        }
-        .ant-pagination-disabled {
-          border: 1px solid rgba(0, 0, 0, 0.25);
-          a {
-            color: rgba(0, 0, 0, 0.25);
-            i {
-              color: rgba(0, 0, 0, 0.25);
-            }
-          }
-        }
-      }
+      margin-bottom: 30px;
       .ant-table {
         height: 677px;
         table {
@@ -117,6 +58,10 @@
           }
           tr {
             height: 36px;
+            cursor: pointer;
+          }
+          tr:first-child {
+            cursor: auto;
           }
           tr:nth-child(odd){background-color:#fff;}
           tr:nth-child(even){background-color:#f9f9f9;}

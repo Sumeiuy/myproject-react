@@ -149,10 +149,9 @@ export default {
     // 资讯列表和详情
     * getInformation({ payload }, { call, put }) {  //eslint-disable-line
       const response = yield call(api.getInformation, payload);
-      const { curPageNum = 1 } = payload;
       yield put({
         type: 'getInformationSuccess',
-        payload: { ...response, resultData: { ...response.resultData, curPageNum } },
+        payload: response,
       });
     },
     // 代办流程任务列表
@@ -599,16 +598,11 @@ export default {
       };
     },
     getInformationSuccess(state, action) {
-      const {
-        payload: {
-          resultData, resultData: { curPageNum, infoVOList = [] },
-        },
-      } = action;
-      const { information: { list } } = state;
+      const { payload: { resultData } } = action;
       // 记录页码对应的列表数据
       return {
         ...state,
-        information: { ...resultData, list: [...(list || []), { curPageNum, infoVOList }] },
+        information: resultData,
       };
     },
     getToDoListSuccess(state, action) {

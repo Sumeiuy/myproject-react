@@ -24,7 +24,6 @@ import {
   filterEmptyToNumber,
   filterEmptyToInteger,
   getServiceIndicatorOfPerformance,
-  businessOpenNumLabelList,
   linkTo,
 } from './homeIndicators_';
 
@@ -52,9 +51,15 @@ export default class PerformanceIndicators extends PureComponent {
       push,
       cycle,
       location,
+      indicators,
     } = this.props;
+    let formatIndicator = [];
+    const tempArr = this.formatIndicators(indicators);
+    if (!_.isEmpty(tempArr)) {
+      formatIndicator = (tempArr[1] || {}).data;
+    }
     instance.on('click', (arg) => {
-      console.log('instance arg >>>>', arg);
+      // console.log('instance arg >>>>', arg, formatIndicator);
       if (arg.componentType !== 'xAxis') {
         return;
       }
@@ -64,23 +69,31 @@ export default class PerformanceIndicators extends PureComponent {
         push,
         location,
       };
-      if (arg.value === businessOpenNumLabelList[0]) {
+      if (arg.value === (formatIndicator[0] || {}).name) {
         param.value = 'ttfCust';
         param.bname = arg.value;
         linkTo(param);
-      } else if (arg.value === businessOpenNumLabelList[1]) {
+      } else if (arg.value === (formatIndicator[1] || {}).name) {
         param.value = 'shHkCust';
         param.bname = arg.value;
         linkTo(param);
-      } else if (arg.value === businessOpenNumLabelList[2]) {
+      } else if (arg.value === (formatIndicator[2] || {}).name) {
+        param.value = 'szHkCust';
+        param.bname = arg.value;
+        linkTo(param);
+      } else if (arg.value === (formatIndicator[3] || {}).name) {
         param.value = 'rzrqCust';
         param.bname = arg.value;
         linkTo(param);
-      } else if (arg.value === businessOpenNumLabelList[3]) {
+      } else if (arg.value === (formatIndicator[4] || {}).name) {
+        param.value = 'xsb';
+        param.bname = arg.value;
+        linkTo(param);
+      } else if (arg.value === (formatIndicator[5] || {}).name) {
         param.value = 'optCust';
         param.bname = arg.value;
         linkTo(param);
-      } else if (arg.value === businessOpenNumLabelList[4]) {
+      } else if (arg.value === (formatIndicator[6] || {}).name) {
         param.value = 'cyb';
         param.bname = arg.value;
         linkTo(param);
@@ -196,31 +209,16 @@ export default class PerformanceIndicators extends PureComponent {
   renderBusinessIndicator(param) {
     const numberArray = [];
     const nameArray = [];
-    let shangHaiStock = 0; // 沪港通
-    let shenZhenStock = 0; // 深港通
-    let colourfulIndex = 0;
     _.forEach(
       param.data,
-      (item, index) => {
-        if (index === 1) {
-          shangHaiStock = filterEmptyToInteger(item.value);
-          colourfulIndex = index;
-          numberArray.push(filterEmptyToInteger(item.value));
-          nameArray.push('港股通');
-        } else if (index === 2) {
-          shenZhenStock = filterEmptyToInteger(item.value);
-        } else {
-          numberArray.push(filterEmptyToInteger(item.value));
-          nameArray.push(item.name);
-        }
+      (item) => {
+        numberArray.push(filterEmptyToInteger(item.value));
+        nameArray.push(item.name);
       },
     );
     const argument = {
-      colourfulIndex,
       names: nameArray,
       clientNumberData: numberArray,
-      colourfulTotalNumber: (shangHaiStock + shenZhenStock),
-      colourfulData: [{ value: shenZhenStock, color: '#38d8e8' }],
     };
     const { newUnit, items } = getClientsNumber(argument);
     const headLine = { icon: 'kehuzhibiao', title: `${param.headLine}（${newUnit}次）` };
@@ -328,14 +326,14 @@ export default class PerformanceIndicators extends PureComponent {
     return (
       <div className={styles.indexBox}>
         <div className={`${styles.listItem} ${styles.firstListItem}`}>
-          <Row gutter={16}>
+          <Row gutter={28}>
             {this.renderIndictors(formatIndicator[0])}
             {this.renderIndictors(formatIndicator[1])}
             {this.renderIndictors(formatIndicator[2])}
           </Row>
         </div>
         <div className={styles.listItem}>
-          <Row gutter={16}>
+          <Row gutter={28}>
             {this.renderIndictors(formatIndicator[3])}
             {this.renderIndictors(formatIndicator[4])}
             {this.renderIndictors(formatIndicator[5])}

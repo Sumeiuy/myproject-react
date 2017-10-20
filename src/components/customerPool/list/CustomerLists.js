@@ -146,6 +146,12 @@ export default class CustomerLists extends PureComponent {
       sidebarShowBtn.addEventListener('click', this.updateLeftPos);
     }
     // console.log('this.props----', this.props);
+    const { location: { query: { ptyMng } }, authority, empInfo } = this.props;
+    let bool = false;
+    if (ptyMng) {
+      bool = ptyMng.split('_')[1] === empInfo.empNum;
+    }
+    this.mainServiceManager = !!(bool) || !authority;
   }
   componentWillReceiveProps(nextProps) {
     const {
@@ -154,6 +160,11 @@ export default class CustomerLists extends PureComponent {
       followLoading: preFL,
       custList,
       custEmail,
+      location: {
+        query: {
+          ptyMng: prePtyMng,
+        },
+      },
      } = this.props;
     const {
       custContactData: nextCustContactData = EMPTY_OBJECT,
@@ -162,6 +173,13 @@ export default class CustomerLists extends PureComponent {
       fllowCustData,
       custList: nextCustList,
       custEmail: nextCustEmail,
+      empInfo,
+      authority,
+      location: {
+        query: {
+          ptyMng,
+        },
+      },
      } = nextProps;
     const { currentCustId, isShowContactModal, currentFollowCustId } = this.state;
     const prevContact = prevCustContactData[currentCustId] || EMPTY_OBJECT;
@@ -217,6 +235,13 @@ export default class CustomerLists extends PureComponent {
         ...this.state.isFollows,
         isFollows,
       });
+    }
+    if (prePtyMng !== ptyMng) {
+      let bool = false;
+      if (ptyMng) {
+        bool = ptyMng.split('_')[1] === empInfo.empNum;
+      }
+      this.mainServiceManager = !!(bool) || !authority;
     }
   }
 
@@ -541,21 +566,9 @@ export default class CustomerLists extends PureComponent {
   }
 
   // 分组只针对服务经理，也就是说：
-  // 1、搜素、标签客户池列表：客户列表是“我的客户”时可以添加用户分组
-  // 2、业务办理客户池：默认是只显示自己负责客户的，所以可以添加用户分组
-  // 3、业绩目标客户池：客户列表是“我的客户”时可以添加用户分组
+  // 有首页指标查看权限或者服务经理筛选选的是当前登录用户时显示用户分组
   renderGroup() {
-    // const { custRange, source, location: { query: { orgId } } } = this.props;
-    // const tmpArr = ['custIndicator', 'numOfCustOpened', 'search', 'tag'];
-    // // 从绩效、搜索和热词进入且只有我的客户
-    // const onlyMyCustomer = _.includes(tmpArr, source) &&
-    // custRange.length === 1 &&
-    // custRange[0].id === 'msm';
-    // // 从业务入口进入的
-    // const fromBusiness = source === 'business';
-    // // 从绩效、搜索和热词进入,通过客户范围切换到我的客户
-    // const inMyCustomer = _.includes(tmpArr, source) && orgId && orgId === 'msm';
-    if (!this.props.authority) {
+    if (this.mainServiceManager) {
       return (<button
         onClick={() => { this.handleClick('/customerPool/customerGroup', '新建分组', 'RCT_FSP_CUSTOMER_LIST'); }}
       >
@@ -645,22 +658,23 @@ export default class CustomerLists extends PureComponent {
     // 默认服务经理
     let serviceManagerDefaultValue = `${empInfo.empName}（${empInfo.empNum}）`;
     if (authority) {
-      if (ptyMng) {
+      if (ptyMng && ptyMng.split('_')[1]) {
         serviceManagerDefaultValue = `${ptyMng.split('_')[0]}（${ptyMng.split('_')[1]}）`;
       } else {
         serviceManagerDefaultValue = '所有人';
       }
     }
-    // 当前所处的orgId
-    let curOrgId = '';
+    // 当前所处的orgId,默认所有
+    let curOrgId = 'all';
+    // 根据url中的orgId赋值，没有时判断权限，有权限取岗位对应的orgId,无权限取‘all’
     if (orgId) {
       curOrgId = orgId;
     } else if (authority) {
       if (document.querySelector(fspContainer.container)) {
         curOrgId = window.forReactPosition.orgId;
+      } else {
+        curOrgId = empInfo.occDivnNum;
       }
-    } else {
-      curOrgId = null;
     }
     return (
       <div className="list-box">
@@ -673,7 +687,7 @@ export default class CustomerLists extends PureComponent {
             >
               全选
             </Checkbox>
-            <span className="hint">自动选择所有符合条件的客户</span>
+            { _.isEmpty(custList) ? null : <span className="hint">自动选择所有符合条件的客户</span> }
           </div>
           <div className={styles.reorder}>
             <Reorder
@@ -708,6 +722,7 @@ export default class CustomerLists extends PureComponent {
               {
                 custList.map(
                   item => <CustomerRow
+                    mainServiceManager={this.mainServiceManager}
                     authority={authority}
                     dict={dict}
                     location={location}

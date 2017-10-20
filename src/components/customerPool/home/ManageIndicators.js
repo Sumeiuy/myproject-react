@@ -71,14 +71,18 @@ export default class PerformanceIndicators extends PureComponent {
         param.bname = arg.value;
         linkTo(param);
       } else if (arg.value === businessOpenNumLabelList[2]) {
-        param.value = 'rzrqCust';
+        param.value = 'szHkCust';
         param.bname = arg.value;
         linkTo(param);
       } else if (arg.value === businessOpenNumLabelList[3]) {
-        param.value = 'optCust';
+        param.value = 'rzrqCust';
         param.bname = arg.value;
         linkTo(param);
       } else if (arg.value === businessOpenNumLabelList[4]) {
+        param.value = 'optCust';
+        param.bname = arg.value;
+        linkTo(param);
+      } else if (arg.value === businessOpenNumLabelList[5]) {
         param.value = 'cyb';
         param.bname = arg.value;
         linkTo(param);
@@ -97,7 +101,7 @@ export default class PerformanceIndicators extends PureComponent {
     // 字段语义，在mock文件内：/mockup/groovynoauth/fsp/emp/kpi/queryEmpKPIs.js
     const {
       motOkMnt, motTotMnt, taskCust, totCust, startupCust,
-      ttfCust, rzrqCust, shHkCust, szHkCust, optCust, hkCust,
+      ttfCust, rzrqCust, shHkCust, szHkCust, optCust,
       otcTranAmt, fundTranAmt, finaTranAmt, privateTranAmt,
       purAddCustaset, purRakeGjpdt, tranAmtBasicpdt, tranAmtTotpdt,
       purAddCust, newProdCust, purAddNoretailcust, purAddHighprodcust,
@@ -120,18 +124,12 @@ export default class PerformanceIndicators extends PureComponent {
     const clientNumberData = [
       filterEmptyToInteger(ttfCust),
       filterEmptyToInteger(shHkCust),
+      filterEmptyToInteger(szHkCust),
       filterEmptyToInteger(rzrqCust),
       filterEmptyToInteger(optCust),
       filterEmptyToInteger(startupCust),
     ];
-    const param = {
-      clientNumberData,
-      colourfulIndex: 1,
-      colourfulData: [
-        { value: filterEmptyToInteger(szHkCust), color: '#38d8e8' },
-      ],
-      colourfulTotalNumber: filterEmptyToInteger(hkCust),
-    };
+    const param = { clientNumberData };
     const { newUnit: clientUnit, items: clientItems } = getClientsNumber(param);
     const clientHead = { icon: 'kehuzhibiao', title: `业务开通数（${clientUnit}次）` };
 
@@ -173,7 +171,7 @@ export default class PerformanceIndicators extends PureComponent {
       <div className={styles.indexBox}>
         <div>
           <div className={`${styles.listItem} ${styles.firstListItem}`}>
-            <Row gutter={16}>
+            <Row gutter={28}>
               <Col span={8}>
                 <RectFrame dataSource={pureAddHead}>
                   <IfEmpty isEmpty={isEmpty}>
@@ -217,7 +215,7 @@ export default class PerformanceIndicators extends PureComponent {
             </Row>
           </div>
           <div className={styles.listItem}>
-            <Row gutter={16}>
+            <Row gutter={28}>
               <Col span={8}>
                 <RectFrame dataSource={tradeVolumeHead}>
                   <IfEmpty isEmpty={isEmpty}>
