@@ -4,7 +4,7 @@
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by:   XuWenKang
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-19 15:36:08
+ * @Last Modified time: 2017-10-19 21:26:30
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
@@ -428,6 +428,19 @@ export default class Contract extends PureComponent {
   // 保存合作合约 新建/修改 数据
   @autobind
   saveContractData(itemBtn) {
+    const {
+      location: {
+        query,
+        query: {
+          pageNum,
+          pageSize,
+        },
+      },
+      saveContractData,
+      getSeibleList,
+      getBaseInfo,
+    } = this.props;
+
     const { contractFormData, editFormModal } = this.state;
     if (!contractFormData.subType) {
       message.error('请选择子类型');
@@ -445,10 +458,6 @@ export default class Contract extends PureComponent {
         if (!contractFormData.contractNum.flowId) {
           message.error('请选择合约编号');
         }
-        // const condition = {
-        //   flowId: contractFormData.contractNum.flowId,
-        //   auditors: '',
-        // };
         if (!contractFormData.approverId) {
           message.error('请选择审批人');
         }
@@ -479,8 +488,15 @@ export default class Contract extends PureComponent {
             operate: '1',
           },
         };
-        this.props.saveContractData(payload);
+        saveContractData(payload);
       }
+      // 新建窗口关闭后，请求左侧列表
+      const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
+      // 默认筛选条件
+      getSeibleList({
+        ...params,
+        type: pageType,
+      });
     } else {
       // 编辑窗口
       if (!contractFormData.startDt) {
@@ -501,7 +517,12 @@ export default class Contract extends PureComponent {
         type: 'edit',
         data: contractFormData,
       };
-      this.props.saveContractData(payload);
+      saveContractData(payload);
+      // 编辑窗口关闭后，请求此 flowId 的详情
+      getBaseInfo({
+        flowId: this.state.flowId,
+        id: '',
+      });
     }
   }
 
@@ -533,7 +554,6 @@ export default class Contract extends PureComponent {
       this.props.getFlowStepInfo({
         operate: 1,
         flowId: '',
-        itemId: '',
       });
     } else {
       this.showModal('addFormModal');
@@ -567,6 +587,9 @@ export default class Contract extends PureComponent {
     }, () => {
       if (modalKey === 'addFormModal' && this.AddFormComponent) {
         this.AddFormComponent.handleReset();
+        this.setState({
+          contractFormData: EMPTY_OBJECT,
+        });
       }
     });
   }
@@ -752,12 +775,17 @@ export default class Contract extends PureComponent {
           rightPanel={rightPanel}
           leftListClassName="contractList"
         />
-        <CommonModal {...addFormModalProps} >
-          <AddForm
-            {...addFormProps}
-            ref={(AddFormComponent) => { this.AddFormComponent = AddFormComponent; }}
-          />
-        </CommonModal>
+        {
+          addFormModal ?
+            <CommonModal {...addFormModalProps} >
+              <AddForm
+                {...addFormProps}
+                ref={(AddFormComponent) => { this.AddFormComponent = AddFormComponent; }}
+              />
+            </CommonModal>
+          :
+            null
+        }
         {
           editFormModal ?
             <CommonModal {...editFormModalProps}>

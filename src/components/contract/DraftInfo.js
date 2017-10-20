@@ -27,7 +27,7 @@ export default class DraftInfo extends PureComponent {
     const { data: { name, date, status } } = this.props;
 
     let statusLabel = '';
-    if (typeof (status) === 'number') {
+    if (status) {
       statusLabel = configStatus[Number(status)].label;
     } else {
       statusLabel = '';

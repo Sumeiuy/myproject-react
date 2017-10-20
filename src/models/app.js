@@ -28,6 +28,8 @@ export default {
     customerList: EMPTY_LIST,
     // 可申请客户列表
     canApplyCustList: EMPTY_LIST,
+    // 删除后的附件列表
+    deleteAttachmentList: EMPTY_LIST,
   },
   reducers: {
     // 获取员工职责与职位
@@ -112,6 +114,15 @@ export default {
         dict,
       };
     },
+    // 删除附件
+    deleteAttachmentSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      const { attaches = EMPTY_LIST } = resultData;
+      return {
+        ...state,
+        deleteAttachmentList: attaches,
+      };
+    },
   },
   effects: {
     // 获取员工职责与职位
@@ -181,6 +192,14 @@ export default {
       const response = yield call(seibelApi.getCustRange, payload);
       yield put({
         type: 'getCustRangeSuccess',
+        payload: response,
+      });
+    },
+    // 删除附件
+    * deleteAttachment({ payload }, { call, put }) {
+      const response = yield call(seibelApi.deleteAttachment, payload);
+      yield put({
+        type: 'deleteAttachmentSuccess',
         payload: response,
       });
     },
