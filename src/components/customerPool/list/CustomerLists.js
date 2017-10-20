@@ -146,6 +146,12 @@ export default class CustomerLists extends PureComponent {
       sidebarShowBtn.addEventListener('click', this.updateLeftPos);
     }
     // console.log('this.props----', this.props);
+    const { location: { query: { ptyMng } }, authority, empInfo } = this.props;
+    let bool = false;
+    if (ptyMng) {
+      bool = ptyMng.split('_')[1] === empInfo.empNum;
+    }
+    this.mainServiceManager = !!(bool) || !authority;
   }
   componentWillReceiveProps(nextProps) {
     const {

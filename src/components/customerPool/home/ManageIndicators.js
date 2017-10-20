@@ -83,7 +83,7 @@ export default class PerformanceIndicators extends PureComponent {
         param.bname = arg.value;
         linkTo(param);
       } else if (arg.value === businessOpenNumLabelList[5]) {
-        param.value = 'startupCust';
+        param.value = 'cyb';
         param.bname = arg.value;
         linkTo(param);
       }
