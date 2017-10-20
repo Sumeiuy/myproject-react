@@ -104,7 +104,7 @@ export function getProductSale({
 }
 
 // 首页经营业绩和投顾业绩柱状图label 数组
-export const businessOpenNumLabelList = ['天天发', '港股通', '两融', '期权', '创业版'];
+export const businessOpenNumLabelList = ['天天发', '沪股通', '深股通', '融资融券', '股票期权', '创业版'];
 
 // 经营指标的开通业务数
 // 一柱多彩
@@ -126,7 +126,7 @@ export function getClientsNumber({
   const items = {
     tooltip: {},    // 使用默认值
     grid: {
-      left: '10px',
+      left: '14px',
       right: '10px',
       bottom: '34px',
       top: '32px',
@@ -141,10 +141,11 @@ export function getClientsNumber({
           interval: 0,
           margin: 6,
           fontFamily: 'PingFangSC-Regular',
-          fontSize: 12,
+          fontSize: 11,
           color: '#666666',
           showMinLabel: true,
           clickable: true,
+          rotate: 30,
         },
         axisLine: {
           lineStyle: {
@@ -269,28 +270,29 @@ export function getHSRate(array) {
       name: '沪深归集率',
       amplitude: '3%',
       waveLength: '40%',
-      radius: '112px',
+      radius: '120px',
       waveAnimation: false,
       animationDuration: 0,
       animationDurationUpdate: 0,
       data: array,
       outline: { show: false },
       backgroundStyle: {
-        borderWidth: 5,
+        borderWidth: 3,
         borderColor: '#f0f0f0',
         color: 'white',
       },
       itemStyle: {
         normal: {
           opacity: 0.95,
-          color: '#60bbea',
+          color: '#5eade5',
+          shadowBlur: 0,
         },
         emphasis: { opacity: 0.8 },
       },
       label: {
         normal: {
           show: true,
-          color: '#294D99',
+          color: '#5eade5',
           insideColor: '#fff',
           fontSize: 24,
           fontFamily: 'PingFangSC-Regular',

@@ -1,67 +1,75 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { withRouter, routerRedux } from 'dva/router';
 import { autobind } from 'core-decorators';
-// import { Radio } from 'antd';
-// import { autobind } from 'core-decorators';
-// import _ from 'lodash';
-// import Button from '../../components/common/Button';
 import Search from '../../common/Search/index';
 import TaskSearchRow from './TaskSearchRow';
-import styles from './taskFlowSecond.less';
+import styles from './selectLabelCust.less';
 
-// const EMPTY_LIST = [];
-// const EMPTY_OBJECT = {};
-
-// const effects = {
-//   getHotPossibleWds: 'customerPool/getCustomerHotPossibleWds',
-// };
-
-// const fetchData = (type, loading) => query => ({
-//   type,
-//   payload: query || EMPTY_OBJECT,
-//   loading,
-// });
-
-const mapStateToProps = state => ({
-  // 字典信息
-  dict: state.app.dict,
-});
-
-const mapDispatchToProps = {
-  push: routerRedux.push,
-  replace: routerRedux.replace,
-};
-
-@connect(mapStateToProps, mapDispatchToProps)
-@withRouter
-export default class TaskFlow extends PureComponent {
+const EMPTY_OBJECT = {};
+export default class SelectLabelCust extends PureComponent {
   static propTypes = {
     getCirclePeople: PropTypes.func.isRequired,
     circlePeopleData: PropTypes.array.isRequired,
+    // 保存数据方法
+    storeData: PropTypes.func.isRequired,
+    // 保存的数据
+    storedData: PropTypes.object,
+    saveDataEmitter: PropTypes.object.isRequired,
+    onStepUpdate: PropTypes.func.isRequired,
   };
+
+  static defaultProps = {
+    storedData: {},
+  };
+
   constructor(props) {
     super(props);
+    const { storedData = EMPTY_OBJECT } = props;
+    const { labelCust = EMPTY_OBJECT } = storedData;
     this.state = {
       current: 0,
+      data: labelCust,
     };
     this.bigBtn = true;
   }
+
+  componentWillMount() {
+    const { saveDataEmitter } = this.props;
+    saveDataEmitter.on('saveSelectCustData', this.handleSaveData);
+  }
+
+  componentWillUnmount() {
+    const { saveDataEmitter } = this.props;
+    saveDataEmitter.removeListener('saveSelectCustData', this.handleSaveData);
+  }
+
   @autobind
   handleRadioChange(value) {
     console.log('value--', value);
   }
+
   @autobind
   handleSearchClick({ value, selectedItem }) {
     console.log('search click---', value, '--', JSON.stringify(selectedItem));
     const { getCirclePeople } = this.props;
-    // const condition = value;
     const param = {
       condition: value,
     };
     console.log(param);
     getCirclePeople(param);
+  }
+
+  @autobind
+  handleSaveData() {
+    const { storeData, storedData, onStepUpdate } = this.props;
+    const { data } = this.state;
+
+    storeData({
+      ...storedData,
+      labelCust: data,
+    });
+
+    onStepUpdate();
   }
 
   render() {

@@ -87,15 +87,24 @@ export default {
     deleteGroupResult: '',
     // 删除分组下客户结果
     deleteCustomerFromGroupResult: {},
-    serviceLogData: [], // 360服务记录查询数据
+    // 360服务记录查询数据
+    serviceLogData: [],
+    // 360服务记录查询更多数据
+    serviceLogMoreData: [],
+    // 预览客户细分数据
+    priviewCustFileData: {},
+    // 存储的任务流程数据
+    storedTaskFlowData: {},
+    // 当前选中tab
+    currentTab: '',
+    // 提交任务流程结果
+    submitTaskFlowResult: '',
     // 可查询服务人员列表
     searchServerPersonList: EMPTY_LIST,
-    serviceLogMoreData: [], // 360服务记录查询更多数据
     // 列表页的服务营业部
     serviceDepartment: EMPTY_LIST,
     // 标签圈人
     circlePeopleData: [],
-    // 标签圈人-id查询客户列表
     peopleOfLabelData: [],
   },
   subscriptions: {
@@ -103,8 +112,8 @@ export default {
       dispatch({ type: 'getCustRangeByAuthority' });
       history.listen(({ pathname, search }) => {
         const params = queryString.parse(search);
-        const url = pathToRegexp('customerPool/serviceLog').exec(pathname);
-        if (url) {
+        const serviceLogUrl = pathToRegexp('customerPool/serviceLog').exec(pathname);
+        if (serviceLogUrl) {
           const { pageSize, serveDateToPaged } = params;
           if (_.isEmpty(pageSize)) params.pageSize = null;
           if (_.isEmpty(serveDateToPaged)) params.serveDateToPaged = null;
@@ -138,10 +147,9 @@ export default {
     // 资讯列表和详情
     * getInformation({ payload }, { call, put }) {  //eslint-disable-line
       const response = yield call(api.getInformation, payload);
-      const { curPageNum = 1 } = payload;
       yield put({
         type: 'getInformationSuccess',
-        payload: { ...response, resultData: { ...response.resultData, curPageNum } },
+        payload: response,
       });
     },
     // 代办流程任务列表
@@ -516,6 +524,15 @@ export default {
         payload: { resultData },
       });
     },
+    // 预览客户细分导入数据
+    * priviewCustFile({ payload }, { call, put }) {
+      const response = yield call(api.priviewCustFile, payload);
+      const { resultData } = response;
+      yield put({
+        type: 'priviewCustFileSuccess',
+        payload: resultData,
+      });
+    },
     // 根据权限获取组织机构树
     * getCustRangeByAuthority({ payload }, { call, put }) {
       console.log('1111111111111111');
@@ -544,6 +561,15 @@ export default {
         payload: { resultData },
       });
     },
+    // 提交任务流程
+    * submitTaskFlow({ payload }, { call, put }) {
+      const response = yield call(api.submitTaskFlow, payload);
+      const { resultData } = response;
+      yield put({
+        type: 'submitTaskFlowSuccess',
+        payload: resultData,
+      });
+    },
   },
   reducers: {
     getPerformanceIndicatorsSuccess(state, action) {
@@ -561,16 +587,11 @@ export default {
       };
     },
     getInformationSuccess(state, action) {
-      const {
-        payload: {
-          resultData, resultData: { curPageNum, infoVOList = [] },
-        },
-      } = action;
-      const { information: { list } } = state;
+      const { payload: { resultData } } = action;
       // 记录页码对应的列表数据
       return {
         ...state,
-        information: { ...resultData, list: [...(list || []), { curPageNum, infoVOList }] },
+        information: resultData,
       };
     },
     getToDoListSuccess(state, action) {
@@ -942,6 +963,30 @@ export default {
         serviceLogMoreData: resultData,
       };
     },
+    // 获取客户细分列表成功
+    priviewCustFileSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        priviewCustFileData: payload,
+      };
+    },
+    // 存储任务流程数据
+    saveTaskFlowData(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        storedTaskFlowData: payload,
+      };
+    },
+    // 清除任务流程数据
+    clearTaskFlowData(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        storedTaskFlowData: payload,
+      };
+    },
     getCustRangeByAuthoritySuccess(state, action) {
       const { payload: { resultData } } = action;
       return {
@@ -963,6 +1008,22 @@ export default {
       return {
         ...state,
         peopleOfLabelData: resultData,
+      };
+    },
+    // 保存当前选中tab
+    saveCurrentTab(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        currentTab: payload,
+      };
+    },
+    // 提交任务流程成功
+    submitTaskFlowSuccess(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        submitTaskFlowResult: payload,
       };
     },
   },

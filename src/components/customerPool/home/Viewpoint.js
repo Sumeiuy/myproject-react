@@ -24,7 +24,7 @@ export default class Viewpoint extends PureComponent {
 
   @autobind
   openNewTab(url, query) {
-    const param = { id: 'tab-viewpoint', title: '首席观点' };
+    const param = { id: 'tab-viewpoint', title: '资讯' };
     if (document.querySelector(fspContainer.container)) {
       fspGlobal.openRctTab({ url: `${url}?${helper.queryToString(query)}`, param });
     } else {
@@ -66,16 +66,8 @@ export default class Viewpoint extends PureComponent {
   }
 
   render() {
-    const { information: { list = [] } } = this.props;
+    const { information: { infoVOList = [] } } = this.props;
     // 展示第一个新闻
-    const pageList = _.filter(
-      list,
-      (item) => {
-        const { curPageNum = 0 } = item;
-        return curPageNum === 1;
-      },
-    );
-    const { infoVOList = [] } = _.isEmpty(pageList) ? {} : pageList[0];
     const { texttitle = '', abstract = '' } = _.isEmpty(infoVOList) ? {} : infoVOList[0];
     const isShowMore = infoVOList.length > 12;
     const isHiddenDetail = _.isEmpty(abstract);
@@ -84,9 +76,9 @@ export default class Viewpoint extends PureComponent {
       <div className={styles.container}>
         <div className={styles.head}>首席投顾观点</div>
         <div className={styles.up}>
-          <div className={styles.title}>{texttitle || '暂无数据'}</div>
+          <div className={styles.title}>{texttitle || '暂无标题'}</div>
           <div className={styles.article}>
-            <div className={styles.text}>{abstract || '暂无数据'}</div>
+            <div className={styles.text}>{abstract || '暂无内容'}</div>
             <div
               className={classnames(
                 styles.details,

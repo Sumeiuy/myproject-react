@@ -11,6 +11,9 @@ const getColourfulItem = ({
   colourfulData,
   colourfulTotal,
 }) => {
+  if (_.isEmpty(colourfulData)) {
+    return {};
+  }
   const maxIndex = colourfulData.length - 1;
   return colourfulData.map(
     (item, index) => {
@@ -172,7 +175,9 @@ export const singleColorBar = ({
           fontSize: 12,
           color: '#4a4a4a',
           formatter: (params) => {
-            if (params.value !== 0 && params.dataIndex !== colourfulIndex) {
+            if (_.isEmpty(colourfulData)) {
+              return `${params.value}`;
+            } else if (params.value !== 0 && params.dataIndex !== colourfulIndex) {
               return `${params.value}`;
             }
             return '';
