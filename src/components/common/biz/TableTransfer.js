@@ -11,21 +11,18 @@
   />
  * subscribeColumns：必要，第一表的表头定义，需要指定 column 的 width 属性，否则列头和内容可能不对齐。
  * unsubscribeColumns：必要，第二个表的表头定义，需要指定 column 的 width 属性，否则列头和内容可能不对齐。
- * rowKey： 必要，唯一的标识
+ * rowKey： 必要，唯一的标识,用于生成row时内部做唯一的key使用
  * subscribeTitle: 不必要，有默认值（‘当前订阅服务’），第一个表的title
  * unsubscribeTitle： 不必要，有默认值（‘退订服务’），第二个表的title
- * subscribeData：不必要，有默认值（空数据），第一个标的数据源
- * unsubscribeData：不必要，有默认值（空数据），第二个标的数据源
- * checkChange： 不必要，向组件外传递信息，返回当前child，此父元素下选中所有child，所有选中的child
+ * subscribeData：不必要，有默认值（空数据），第一个表的数据源
+ * unsubscribeData：不必要，有默认值（空数据），第二个表的数据源
+ * checkChange： 不必要，向组件外传递信息，返回此父元素下选中所有child，所有选中的child
  * transferChange： 不必要，向组件外传递信息，返回第二个table的数据源
  * defaultCheckKey: 不必要，标识子项的默认选中key
  * placeholder： 不必要，搜索框的提示文字
- * finishTips： 不必要，成功的提示，类型数组
- * warningTips：不必要，警告的提示文字，类型数组
- * showSearch： 不必要，是否显示search框
- * pagination： 不必要，页码
- * onSearch: 不必要，搜索框触发的发放
- * supportSearchKey: 不必要,支持通过搜索的key（筛选用），
+ * showSearch： 不必要，是否显示search框,内部根据传入的属性supportSearchKey值，在现有的数据（除右边表中的）进行搜索
+ * pagination： 不必要，页码（不需要页码时，值为false，要页码时，值为对象）
+ * supportSearchKey: 不必要,支持通过搜索的key（筛选用），时一个二维数组。
  *                  二维数组（匹配分：模糊和精准），数据顺序固定，第一个是精准匹配数组，第二个是模糊匹配数组
  * aboutRate: 不必要, 长度，内容顺序 固定,第一个是目标佣金率（string类型），第二个是拿到表中对象佣金率的key（string类型）
  * totalData: 不必要, 总数据源（搜索用的）
@@ -112,8 +109,6 @@ export default class TableTransfer extends Component {
     transferChange: PropTypes.func,
     checkChange: PropTypes.func,
     placeholder: PropTypes.string,
-    tips: PropTypes.array,
-    onSearch: PropTypes.func,
     showSearch: PropTypes.bool,
     pagination: React.PropTypes.oneOfType([
       PropTypes.object,
@@ -136,8 +131,6 @@ export default class TableTransfer extends Component {
     transferChange: () => {},
     checkChange: () => {},
     placeholder: '',
-    tips: [],
-    onSearch: () => {},
     showSearch: true,
     defaultCheckKey: '',
     supportSearchKey: [],
