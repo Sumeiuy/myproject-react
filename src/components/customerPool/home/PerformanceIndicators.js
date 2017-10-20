@@ -328,14 +328,14 @@ export default class PerformanceIndicators extends PureComponent {
     return (
       <div className={styles.indexBox}>
         <div className={`${styles.listItem} ${styles.firstListItem}`}>
-          <Row gutter={30}>
+          <Row gutter={28}>
             {this.renderIndictors(formatIndicator[0])}
             {this.renderIndictors(formatIndicator[1])}
             {this.renderIndictors(formatIndicator[2])}
           </Row>
         </div>
         <div className={styles.listItem}>
-          <Row gutter={30}>
+          <Row gutter={28}>
             {this.renderIndictors(formatIndicator[3])}
             {this.renderIndictors(formatIndicator[4])}
             {this.renderIndictors(formatIndicator[5])}

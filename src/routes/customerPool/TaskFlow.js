@@ -5,7 +5,6 @@ import { withRouter, routerRedux } from 'dva/router';
 import { Steps, message, Button } from 'antd';
 // import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import events from 'events';
 import { autobind } from 'core-decorators';
 import PickTargetCustomer from '../../components/customerPool/taskFlow/PickTargetCustomer';
 import TaskPreview from '../../components/customerPool/taskFlow/TaskPreview';
@@ -24,6 +23,7 @@ const effects = {
   getCirclePeople: 'customerPool/getCirclePeople',
   getPeopleOfLabel: 'customerPool/getPeopleOfLabel',
   submitTaskFlow: 'customerPool/submitTaskFlow',
+  getApprovalList: 'customerPool/getApprovalList',
 };
 
 const fetchData = (type, loading) => query => ({
@@ -42,6 +42,7 @@ const mapStateToProps = state => ({
   circlePeopleData: state.customerPool.circlePeopleData,
   peopleOfLabelData: state.customerPool.peopleOfLabelData,
   currentTab: state.customerPool.currentTab,
+  approvalList: state.customerPool.approvalList,
 });
 
 const mapDispatchToProps = {
@@ -66,11 +67,8 @@ const mapDispatchToProps = {
   getCirclePeople: fetchData(true, effects.getCirclePeople),
   getPeopleOfLabel: fetchData(true, effects.getPeopleOfLabel),
   submitTaskFlow: fetchData(true, effects.submitTaskFlow),
+  getApprovalList: fetchData(true, effects.getApprovalList),
 };
-
-const EventEmitter = events;
-// new一个事件监听，用来发射缓存数据事件
-const saveDataEmitter = new EventEmitter();
 
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
@@ -91,6 +89,8 @@ export default class TaskFlow extends PureComponent {
     saveTaskFlowData: PropTypes.func.isRequired,
     clearTaskFlowData: PropTypes.func.isRequired,
     submitTaskFlow: PropTypes.func.isRequired,
+    getApprovalList: PropTypes.func.isRequired,
+    approvalList: PropTypes.array.isRequired,
   };
 
   static defaultProps = {
@@ -98,23 +98,32 @@ export default class TaskFlow extends PureComponent {
   };
 
   constructor(props) {
-    console.warn('props--', props);
     super(props);
     this.state = {
       current: 0,
-      currentStep: 0,
     };
   }
 
   @autobind
   handleNextStep() {
     // 下一步
+    const { saveTaskFlowData, storedTaskFlowData } = this.props;
     const { current } = this.state;
+    let taskFormData = {};
+    let pickTargetCustomerData = {};
     if (current === 0) {
-      saveDataEmitter.emit('saveTaskFormData');
+      taskFormData = this.createTaskFormRef.getFieldsValue();
     } else if (current === 1) {
-      saveDataEmitter.emit('saveSelectCustData');
+      pickTargetCustomerData = this.pickTargetCustomerRef.getData();
     }
+    this.setState({
+      current: current + 1,
+    });
+    saveTaskFlowData({
+      ...storedTaskFlowData,
+      taskFormData,
+      ...pickTargetCustomerData,
+    });
   }
 
   @autobind
@@ -170,43 +179,44 @@ export default class TaskFlow extends PureComponent {
       currentTab,
       saveCurrentTab,
       storedTaskFlowData,
-      saveTaskFlowData,
       getCirclePeople,
       getPeopleOfLabel,
       peopleOfLabelData,
       circlePeopleData,
+      approvalList,
+      getApprovalList,
     } = this.props;
 
     const steps = [{
       title: '基本信息',
       content: <CreateTaskForm
+        ref={ref => (this.createTaskFormRef = ref)}
         dict={dict}
         location={location}
         storedTaskFlowData={storedTaskFlowData}
-        saveTaskFlowData={saveTaskFlowData}
-        onStepUpdate={this.handleStepUpdate}
-        saveDataEmitter={saveDataEmitter}
       />,
     }, {
       title: '目标客户',
       content: <PickTargetCustomer
+        ref={ref => (this.pickTargetCustomerRef = ref)}
         currentTab={currentTab}
         saveCurrentTab={saveCurrentTab}
         onPreview={this.handlePreview}
         priviewCustFileData={priviewCustFileData}
         storedTaskFlowData={storedTaskFlowData}
-        saveTaskFlowData={saveTaskFlowData}
         getCirclePeople={getCirclePeople}
         circlePeopleData={circlePeopleData}
         getPeopleOfLabel={getPeopleOfLabel}
         peopleOfLabelData={peopleOfLabelData}
-        onStepUpdate={this.handleStepUpdate}
-        saveDataEmitter={saveDataEmitter}
       />,
     }, {
       title: '提交',
       content: <TaskPreview
+        ref={ref => (this.taskPreviewRef = ref)}
         storedTaskFlowData={storedTaskFlowData}
+        approvalList={approvalList}
+        currentTab={currentTab}
+        getApprovalList={getApprovalList}
       />,
     }];
 
