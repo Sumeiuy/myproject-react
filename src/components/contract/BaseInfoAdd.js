@@ -212,6 +212,8 @@ export default class BaseInfoEdit extends PureComponent {
     };
     if (data.operation === unsubscribe) {
       obj.contractNum = data.contractNum;
+    } else {
+      obj.contractNum = null;
     }
     this.props.onChange(obj);
   }

@@ -425,6 +425,15 @@ export default class Contract extends PureComponent {
     }
   }
 
+
+  // 判断合约有效期是否大于当前日期+5天
+  @autobind
+  isVaildtBigThanToday(vailDt) {
+    const vailDateHs = new Date(vailDt).getTime();
+    const date = new Date();
+    return vailDateHs > (date.getTime() + (86400000 * 5));
+  }
+
   // 保存合作合约 新建/修改 数据
   @autobind
   saveContractData(itemBtn) {
@@ -440,7 +449,6 @@ export default class Contract extends PureComponent {
       getSeibleList,
       getBaseInfo,
     } = this.props;
-
     const { contractFormData, editFormModal } = this.state;
     if (!contractFormData.subType) {
       message.error('请选择子类型');
@@ -457,9 +465,11 @@ export default class Contract extends PureComponent {
       if (operationType === unsubscribe) {
         if (!contractFormData.contractNum.flowId) {
           message.error('请选择合约编号');
+          return;
         }
         if (!contractFormData.approverId) {
           message.error('请选择审批人');
+          return;
         }
         this.props.postDoApprove({
           flowId: contractFormData.contractNum.flowId,
@@ -474,8 +484,17 @@ export default class Contract extends PureComponent {
           message.error('请选择合约开始日期');
           return;
         }
+        if (contractFormData.vailDt && !this.isVaildtBigThanToday(contractFormData.vailDt)) {
+          message.error('合约有效期必须大于当前日期加5天');
+          return;
+        }
+        if (!contractFormData.terms.length) {
+          message.error('请添加合约条款');
+          return;
+        }
         if (!contractFormData.approverId) {
           message.error('请选择审批人');
+          return;
         }
         const payload = {
           type: 'add',
@@ -503,8 +522,17 @@ export default class Contract extends PureComponent {
         message.error('请选择合约开始日期');
         return;
       }
+      if (contractFormData.vailDt && !this.isVaildtBigThanToday(contractFormData.vailDt)) {
+        message.error('合约有效期必须大于当前日期加5天');
+        return;
+      }
+      if (!contractFormData.terms.length) {
+        message.error('请添加合约条款');
+        return;
+      }
       if (!contractFormData.approverId) {
         message.error('请选择审批人');
+        return;
       }
       this.props.postDoApprove({
         flowId: this.state.flowId,
@@ -625,6 +653,7 @@ export default class Contract extends PureComponent {
       />,
     });
   }
+
 
   render() {
     const {
