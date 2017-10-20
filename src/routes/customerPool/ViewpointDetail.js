@@ -39,8 +39,12 @@ export default class ViewpointDetail extends PureComponent {
 
   @autobind
   handleBackClick() {
-    const { push } = this.props;
-    push({ pathname: '/customerPool/viewpointList' });
+    const { goBack, push, location: { state = '' } } = this.props;
+    if (_.isEmpty(state)) {
+      push({ pathname: '/customerPool/viewpointList' });
+    } else {
+      goBack();
+    }
   }
 
   renderDownLoad({ loadUrl, format, fileName }) {
