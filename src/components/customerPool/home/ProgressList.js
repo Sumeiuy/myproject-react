@@ -20,12 +20,14 @@ export default class ProgressList extends PureComponent {
     cycle: PropTypes.array,
     push: PropTypes.func,
     location: PropTypes.object,
+    empInfo: PropTypes.object,
   }
 
   static defaultProps = {
     cycle: [],
     location: {},
     push: () => {},
+    empInfo: {},
   }
 
   componentDidMount() {
@@ -66,7 +68,7 @@ export default class ProgressList extends PureComponent {
   }
 
   renderList(dataSource) {
-    const { cycle, push, location } = this.props;
+    const { cycle, push, location, empInfo } = this.props;
     // 动态设置progress间距
     const length = dataSource.length;
     const style = { marginTop: `${(172 - (length * 25)) / (length + 1)}px` };
@@ -76,11 +78,13 @@ export default class ProgressList extends PureComponent {
         const rowId = `row${index}`;
         const param = {
           source: 'custIndicator',
+          type: 'customerType',
           value: (index + 1),  // 提供给列表页传给后端的customerType的值
           bname: item.cust,
           cycle,
           push,
           location,
+          empInfo,
         };
         return (
           <div
