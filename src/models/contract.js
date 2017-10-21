@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-20 15:13:30
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-19 19:55:53
+ * @Last Modified time: 2017-10-20 17:48:56
  */
 import { contract as api, seibel as seibelApi } from '../api';
 import { getEmpId } from '../utils/helper';
@@ -164,8 +164,8 @@ export default {
         flowId: payload.flowId,
         operate: payload.operate || '',
       };
-      const flowStepInfoResponse = yield call(api.getFlowStepInfo, flowStepInfoPayload);
       if (payload.type === 'unsubscribeDetail') {
+        const flowStepInfoResponse = yield call(api.getFlowStepInfo, flowStepInfoPayload);
         // 退订时请求详情
         yield put({
           type: 'getUnsubscribeDetailSuccess',
@@ -181,10 +181,14 @@ export default {
           type: 'getBaseInfoSuccess',
           payload: response,
         });
-        yield put({
-          type: 'getFlowStepInfoSuccess',
-          payload: flowStepInfoResponse,
-        });
+        // 如果详情的审批人与当前登陆人一致时，请求按钮接口
+        if (empId === response.resultData.approver) {
+          const flowStepInfoResponse = yield call(api.getFlowStepInfo, flowStepInfoPayload);
+          yield put({
+            type: 'getFlowStepInfoSuccess',
+            payload: flowStepInfoResponse,
+          });
+        }
       }
       // 获取附件列表的 payload
       const attachPayload = {
@@ -243,7 +247,13 @@ export default {
         yield put({
           type: 'postDoApproveSuccess',
           payload: approveResponse,
-        })
+        });
+        // 新建时保存并调用审批接口后，获取列表
+        const listResponse = yield call(seibelApi.getCanApplyCustList, payload);
+        yield put({
+          type: 'getCutListSuccess',
+          payload: listResponse,
+        });
       }
       yield put({
         type: 'saveContractDataSuccess',

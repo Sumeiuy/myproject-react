@@ -4,7 +4,7 @@
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by:   XuWenKang
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-19 21:26:30
+ * @Last Modified time: 2017-10-20 17:22:31
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
@@ -12,7 +12,7 @@ import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import { message } from 'antd';
 import _ from 'lodash';
-import { constructSeibelPostBody } from '../../utils/helper';
+import { constructSeibelPostBody, getEmpId } from '../../utils/helper';
 import SplitPanel from '../../components/common/splitPanel/SplitPanel';
 import ContractHeader from '../../components/common/biz/SeibelHeader';
 import Detail from '../../components/contract/Detail';
@@ -53,6 +53,7 @@ const mapStateToProps = state => ({
   customerList: state.app.customerList,
   // 查询右侧详情
   baseInfo: state.contract.baseInfo,
+  baseInfoLoading: state.loading.effects['contract/getBaseInfo'],
   // 退订时查询详情
   unsubscribeBaseInfo: state.contract.unsubscribeBaseInfo,
   // 附件列表
@@ -138,6 +139,7 @@ export default class Contract extends PureComponent {
     // 查询右侧详情
     getBaseInfo: PropTypes.func.isRequired,
     baseInfo: PropTypes.object.isRequired,
+    baseInfoLoading: PropTypes.bool,
     resetUnsubscribeDetail: PropTypes.func.isRequired,
     // 退订
     unsubscribeBaseInfo: PropTypes.object.isRequired,
@@ -180,6 +182,7 @@ export default class Contract extends PureComponent {
     flowHistory: EMPTY_LIST,
     contractDetail: EMPTY_OBJECT,
     saveContractDataLoading: false,
+    baseInfoLoading: false,
     flowStepInfo: EMPTY_OBJECT,
     addFlowStepInfo: EMPTY_OBJECT,
     unsubFlowStepInfo: EMPTY_OBJECT,
@@ -204,6 +207,8 @@ export default class Contract extends PureComponent {
       addFlowStepInfo: EMPTY_OBJECT,
       unsubFlowStepInfo: EMPTY_OBJECT,
       addOrEditSelfBtnGroup: '',
+      // 是否有修改的权限
+      hasEditPermission: false,
       // 修改合作合约对象的操作类型和id
       editContractInfo: {
         operationType: '',
@@ -241,6 +246,7 @@ export default class Contract extends PureComponent {
     const {
       seibleListLoading: prevSLL,
       baseInfo: preBI,
+      baseInfoLoading: preBIL,
       addFlowStepInfo: preAFSI,
       unsubFlowStepInfo: preUFSI,
       doApprove: preDA,
@@ -251,6 +257,7 @@ export default class Contract extends PureComponent {
       getBaseInfo,
       location: { query: { currentId } },
       baseInfo: nextBI,
+      baseInfoLoading: nextBIL,
       addFlowStepInfo: nextAFSI,
       unsubFlowStepInfo: nextUFSI,
       doApprove: nextDA,
@@ -273,6 +280,16 @@ export default class Contract extends PureComponent {
           type: pageType,
         });
       }
+    }
+    if ((preBIL && !nextBIL)) {
+      let hasEditPermission = false;
+      // 如果当前登陆人与详情里的审批人相等，显示编辑按钮
+      if (getEmpId() === nextBI.approver) {
+        hasEditPermission = true;
+      }
+      this.setState({
+        hasEditPermission,
+      });
     }
     // 获取到基本信息
     if (!_.isEqual(preBI, nextBI)) {
@@ -679,6 +696,7 @@ export default class Contract extends PureComponent {
       business2,
       createTime,
       addOrEditSelfBtnGroup,
+      hasEditPermission,
     } = this.state;
     if (!custRange || !custRange.length) {
       return null;
@@ -720,6 +738,7 @@ export default class Contract extends PureComponent {
         createTime={createTime}
         attachmentList={attachmentList}
         flowHistory={flowHistory}
+        hasEditPermission={hasEditPermission}
         showEditModal={this.handleShowEditForm}
       />
     );

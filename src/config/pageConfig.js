@@ -329,13 +329,13 @@ const pageConfig = {
     ],
     titleList: [
       {
-        dataIndex: 'termsName',
-        key: 'termsName',
+        dataIndex: 'termsDisplayName',
+        key: 'termsDisplayName',
         title: '条款名称',
       },
       {
-        dataIndex: 'paraName',
-        key: 'paraName',
+        dataIndex: 'paraDisplayName',
+        key: 'paraDisplayName',
         title: '明细参数',
       },
       {

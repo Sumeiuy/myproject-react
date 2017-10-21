@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-19 09:37:42
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-19 19:16:58
+ * @Last Modified time: 2017-10-20 17:24:02
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -33,6 +33,7 @@ export default class Detail extends PureComponent {
     flowHistory: PropTypes.array,
     operationType: PropTypes.string,
     createTime: PropTypes.string,
+    hasEditPermission: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -43,6 +44,7 @@ export default class Detail extends PureComponent {
     showEditModal: () => {},
     operationType: '',
     createTime: '',
+    hasEditPermission: false,
   }
 
   constructor(props) {
@@ -73,6 +75,7 @@ export default class Detail extends PureComponent {
       flowHistory,
       operationType,
       createTime,
+      hasEditPermission,
     } = this.props;
     const { terms } = this.state;
     const modifyBtnClass = classnames([styles.dcHeaderModifyBtn,
@@ -85,9 +88,9 @@ export default class Detail extends PureComponent {
     };
     const nowStep = {
       // 当前步骤
-      stepName: baseInfo.workflowNode,
+      stepName: baseInfo.workflowNode || EMPTY_PARAM,
       // 当前审批人
-      userName: baseInfo.workflowName,
+      handleName: baseInfo.approver || EMPTY_PARAM,
     };
     let statusLabel = '';
     if (baseInfo.status) {
@@ -95,14 +98,36 @@ export default class Detail extends PureComponent {
     } else {
       statusLabel = '';
     }
+    // 表格中需要的操作--测试数据
+    // const operation = {
+    //   column: {
+    //     // beizhu = edit , shanchu = delete
+    //     key: [
+    //       {
+    //         key: 'beizhu',
+    //         operate: this.editTableData,
+    //       },
+    //       {
+    //         key: 'shanchu',
+    //         operate: this.deleteTableData,
+    //       },
+    //     ], // 'check'\'delete'\'view'
+    //     title: '操作',
+    //   },
+    // };
     return (
       <div className={styles.detailComponent}>
         <div className={styles.dcHeader}>
           <span className={styles.dcHaderNumb}>编号{baseInfo.contractNum}</span>
-          <span
-            onClick={showEditModal}
-            className={modifyBtnClass}
-          >修改</span>
+          {
+            hasEditPermission ?
+              <span
+                onClick={showEditModal}
+                className={modifyBtnClass}
+              >修改</span>
+            :
+              null
+          }
         </div>
         <div className={styles.detailWrapper}>
           <InfoTitle head="基本信息" />
