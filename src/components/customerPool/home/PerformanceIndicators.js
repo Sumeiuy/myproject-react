@@ -33,6 +33,7 @@ export default class PerformanceIndicators extends PureComponent {
     push: PropTypes.func.isRequired,
     cycle: PropTypes.array,
     location: PropTypes.object.isRequired,
+    empInfo: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -50,7 +51,7 @@ export default class PerformanceIndicators extends PureComponent {
     const {
       push,
       cycle,
-      location,
+      empInfo,
       indicators,
     } = this.props;
     let formatIndicator = [];
@@ -67,7 +68,8 @@ export default class PerformanceIndicators extends PureComponent {
         source: 'numOfCustOpened',
         cycle,
         push,
-        location,
+        location: this.props.location,
+        empInfo,
       };
       if (arg.value === (formatIndicator[0] || {}).name) {
         param.value = 'ttfCust';

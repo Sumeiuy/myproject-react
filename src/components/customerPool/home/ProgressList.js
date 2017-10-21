@@ -20,12 +20,14 @@ export default class ProgressList extends PureComponent {
     cycle: PropTypes.array,
     push: PropTypes.func,
     location: PropTypes.object,
+    empInfo: PropTypes.object,
   }
 
   static defaultProps = {
     cycle: [],
     location: {},
     push: () => {},
+    empInfo: {},
   }
 
   componentDidMount() {
@@ -65,8 +67,24 @@ export default class ProgressList extends PureComponent {
     );
   }
 
+  @autobind
+  handleClick(index, item) {
+    const { cycle, push, location, empInfo } = this.props;
+    const param = {
+      source: 'custIndicator',
+      type: 'customerType',
+      value: (index + 1),  // 提供给列表页传给后端的customerType的值
+      bname: item.cust,
+      cycle,
+      push,
+      location,
+      empInfo,
+    };
+    linkTo(param);
+  }
+
   renderList(dataSource) {
-    const { cycle, push, location } = this.props;
+    // const { cycle, push, location, empInfo } = this.props;
     // 动态设置progress间距
     const length = dataSource.length;
     const style = { marginTop: `${(172 - (length * 25)) / (length + 1)}px` };
@@ -74,19 +92,11 @@ export default class ProgressList extends PureComponent {
     return dataSource.map(
       (item, index) => {
         const rowId = `row${index}`;
-        const param = {
-          source: 'custIndicator',
-          value: (index + 1),  // 提供给列表页传给后端的customerType的值
-          bname: item.cust,
-          cycle,
-          push,
-          location,
-        };
         return (
           <div
             className={styles.row} style={style}
             key={item.id}
-            onClick={() => { linkTo(param); }}
+            onClick={() => { this.handleClick(index, item); }}
             ref={ref => (this[rowId] = ref)}
           >
             <div className={styles.intro}>
