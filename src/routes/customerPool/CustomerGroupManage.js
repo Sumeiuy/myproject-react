@@ -1,3 +1,10 @@
+/*
+ * @Author: xuxiaoqin
+ * @Date: 2017-10-22 19:02:56
+ * @Last Modified by:   xuxiaoqin
+ * @Last Modified time: 2017-10-22 19:02:56
+ */
+
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';

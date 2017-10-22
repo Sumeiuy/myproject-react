@@ -2,11 +2,12 @@
  * @Author: zhuyanwen
  * @Date: 2017-10-09 13:25:51
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-22 18:53:39
+ * @Last Modified time: 2017-10-22 19:12:06
  * @description: 客户分组功能
  */
 
-import React, { PureComponent, PropTypes } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { withRouter, routerRedux } from 'dva/router';
 import { autobind } from 'core-decorators';
 import { connect } from 'react-redux';
@@ -334,8 +335,14 @@ export default class CustomerGroup extends PureComponent {
   }
 
   render() {
-    const { goBack, push, cusgroupList, cusgroupPage = {},
-      location: { query: { count } } } = this.props;
+    const {
+      goBack,
+      push,
+      cusgroupList,
+      cusgroupPage = {},
+      location: { query: { count } },
+    } = this.props;
+
     const {
       groupName,
       showGroupPanel,
