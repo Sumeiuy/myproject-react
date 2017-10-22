@@ -8,11 +8,14 @@ import queryString from 'query-string';
 import pathToRegexp from 'path-to-regexp';
 import { customerPool as api } from '../api';
 import { toastM } from '../utils/sagaEffects';
+import { helper } from '../utils';
 
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const LIST_MAX = 1e4;
+const INITIAL_PAGE_NUM = 1;
+const INITIAL_PAGE_SIZE = 10;
 
 export default {
   namespace: 'customerPool',
@@ -115,6 +118,7 @@ export default {
       history.listen(({ pathname, search }) => {
         const params = queryString.parse(search);
         const serviceLogUrl = pathToRegexp('customerPool/serviceLog').exec(pathname);
+        const custGroupUrl = pathToRegexp('/customerPool/customerGroup').exec(pathname);
         if (serviceLogUrl) {
           const { pageSize, serveDateToPaged } = params;
           if (_.isEmpty(pageSize)) params.pageSize = null;
@@ -122,6 +126,19 @@ export default {
           dispatch({
             type: 'getServiceLog',
             payload: params,
+          });
+        }
+
+        if (custGroupUrl) {
+          const { curPageNum, curPageSize, keyWord = null } = params;
+          dispatch({
+            type: 'customerGroupList',
+            payload: {
+              pageNum: curPageNum || INITIAL_PAGE_NUM,
+              pageSize: curPageSize || INITIAL_PAGE_SIZE,
+              empId: helper.getEmpId(),
+              keyWord,
+            },
           });
         }
       });
@@ -488,6 +505,14 @@ export default {
         type: 'toastM',
         message: '删除分组下客户成功',
         duration: 2,
+      });
+      // 删除成功之后，更新分组信息
+      yield put({
+        type: 'getCustomerGroupList',
+        payload: {
+          pageNum: 1,
+          pageSize: 10,
+        },
       });
     },
     // 360服务记录查询
