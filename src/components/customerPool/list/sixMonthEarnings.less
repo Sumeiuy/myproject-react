@@ -13,8 +13,8 @@
 .showCharts {
   display: none;
   border: 1px solid antiquewhite;
-  height: 135px;
-  width: 510px;
+  height: 152px;
+  width: 423px;
   position: absolute;
   left: -5px;
   top: 25px;
@@ -23,17 +23,46 @@
   border-radius: 8px;
   .chartsContent {
     display: inline-block;
-    width:300px;
-    height: 135px;
+    width:305px;
+    height: 100%;
   }
   .chartsText {
-    display: inline-block;
-    width: 200px;
+    float: right;
+    margin: 0 20px 0 0;
+    // width: 200px;
     font-size: 13px;
     color:#808080;
-    vertical-align:top;
     div {
-      margin-top: 10px;
+      margin-top: 8px;
+    }
+    :global {
+      p {
+        height: 18px;
+        line-height: 18px;
+      }
+      .tit {
+        font-size:12px;
+        color:#888;
+        text-align: right;
+      }
+      .asset {
+        text-align: right;
+        .num {
+          font-weight: bold;
+          font-size: 16px;
+          color: #4a4a4a;
+          &.redNum {
+            color: #e64340;
+          }
+        }
+        .unit {
+          font-size: 12px;
+          color: #888;
+          &.redUnit {
+            color:#e64340;
+          }
+        }
+      }
     }
     .numA{
       font-weight: bold;
