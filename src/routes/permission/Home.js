@@ -470,8 +470,6 @@ export default class Permission extends PureComponent {
               onEmitClearModal={this.clearModal}
               canApplyCustList={canApplyCustList}
               searchServerPersonList={searchServerPersonList}
-              nextApproverList={nextApproverList}
-              getNextApproverList={getNextApproverList}
               getBottonList={getBottonList}
               bottonList={bottonList}
               getModifyCustApplication={getModifyCustApplication}

@@ -8,7 +8,7 @@ import _ from 'lodash';
 import style from './bottonGroup.less';
 
 export default function BottnGroup(props) {
-  const list = props.list ? props.list : [];
+  const list = props.list.flowButtons ? props.list.flowButtons : [];
   const resultMap = list.map((item) => {
     const clickBotton = () => {
       if (typeof (props.onEmitEvent) === 'function') {
@@ -34,10 +34,10 @@ export default function BottnGroup(props) {
 }
 
 BottnGroup.propTypes = {
-  list: PropTypes.array,
+  list: PropTypes.object,
   onEmitEvent: PropTypes.func,
 };
 BottnGroup.defaultProps = {
-  list: [],
+  list: {},
   onEmitEvent: null,
 };

@@ -14,16 +14,16 @@ const confirm = Modal.confirm;
 const columns = [
   {
     title: '工号',
-    dataIndex: 'ptyMngId',
-    key: 'ptyMngId',
+    dataIndex: 'login',
+    key: 'login',
   }, {
     title: '姓名',
-    dataIndex: 'ptyMngName',
-    key: 'ptyMngName',
+    dataIndex: 'empName',
+    key: 'empName',
   }, {
     title: '所属营业部',
-    dataIndex: 'businessDepartment',
-    key: 'businessDepartment',
+    dataIndex: 'occupation',
+    key: 'occupation',
   },
 ];
 
@@ -171,7 +171,7 @@ export default class CreatePrivateClient extends PureComponent {
       remark,
       empList: serverInfo,
       attachment,
-      approvalIds: this.state.nextApproverList.concat(value.ptyMngId),
+      approvalIds: this.state.nextApproverList.concat(value.login),
       empId,
       empName,
       type: '01',
@@ -197,6 +197,7 @@ export default class CreatePrivateClient extends PureComponent {
       rowKey: 'ptyMngId',
       searchShow: false,
     };
+    console.log('nextApproverList', this.props.nextApproverList);
 
     return (
       <CommonModal
