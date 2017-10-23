@@ -2,12 +2,11 @@
  * @Author: zhuyanwen
  * @Date: 2017-10-09 13:25:51
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-23 10:43:13
+ * @Last Modified time: 2017-10-23 16:27:18
  * @description: 客户分组功能
  */
 
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
+import React, { PureComponent, PropTypes } from 'react';
 import { withRouter, routerRedux } from 'dva/router';
 import { autobind } from 'core-decorators';
 import { connect } from 'react-redux';
@@ -21,11 +20,12 @@ import AddNewGroup from '../../components/customerPool/group/AddNewGroup';
 import AddCusSuccess from '../../components/customerPool/group/AddCusSuccess';
 import { fspGlobal, helper } from '../../utils';
 
-
-const CUR_PAGE = 1; // 默认当前页 0->1, 后端入参变化
-const CUR_PAGESIZE = 10; // 默认页大小
+const CUR_PAGE = 1;
+const CUR_PAGESIZE = 10;
+const CUR_PAGE_COUNT = 10;
 const TabPane = Tabs.TabPane;
 const CUR_KEYWORD = null;
+let onOff = false;
 
 const mapStateToProps = state => ({
   cusgroupList: state.customerPool.cusgroupList,
@@ -61,8 +61,6 @@ const mapDispatchToProps = {
   }),
 };
 
-let onOff = false;
-
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 export default class CustomerGroup extends PureComponent {
@@ -74,8 +72,8 @@ export default class CustomerGroup extends PureComponent {
     cusgroupPage: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
     addCustomerToGroup: PropTypes.func.isRequired,
-    cusGroupSaveResult: PropTypes.string,
-    resultgroupId: PropTypes.string,
+    cusGroupSaveResult: PropTypes.string.isRequired,
+    resultgroupId: PropTypes.string.isRequired,
     goBack: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
     // 操作分组结果
@@ -83,11 +81,6 @@ export default class CustomerGroup extends PureComponent {
     // 操作分组（编辑、删除）
     operateGroup: PropTypes.func.isRequired,
   }
-
-  static defaultProps = {
-    cusGroupSaveResult: '',
-    resultgroupId: '',
-  };
 
   constructor(props) {
     super(props);
@@ -105,32 +98,12 @@ export default class CustomerGroup extends PureComponent {
   componentWillReceiveProps(nextProps) {
     // 根据分组结果，重新渲染组件
     const { cusGroupSaveResult, resultgroupId } = nextProps;
-    // const { location: { query: preQuery } } = this.props;
     this.setState({
       showGroupPanel: cusGroupSaveResult !== 'success',
       showOperateGroupSuccess: cusGroupSaveResult === 'success',
       cusgroupId: resultgroupId,
     });
-
-    // if (query !== preQuery) {
-    //   this.getCustomerGroup({ ...nextProps });
-    // }
   }
-
-  // @autobind
-  // getCustomerGroup() {
-  //   const { location: { query: { curPageNum, curPageSize, keyWord } },
-  //     getCustomerGroupList } = this.props;
-
-  //   const param = {
-  //     // 必传，页大小
-  //     pageNum: curPageNum || CUR_PAGE,
-  //     pageSize: curPageSize || CUR_PAGESIZE,
-  //     empId: helper.getEmpId(),
-  //     keyWord: keyWord || CUR_KEYWORD,
-  //   };
-  //   getCustomerGroupList(param);
-  // }
 
   @autobind
   handleSearch(value) {
@@ -195,7 +168,6 @@ export default class CustomerGroup extends PureComponent {
         filtersReq,
         sortsReqList,
         enterType,
-        orgId = null,
       } = custCondition;
 
       // 添加分组
@@ -204,7 +176,7 @@ export default class CustomerGroup extends PureComponent {
         custIdList,
         searchReq: _.isEmpty(custIdList) ? {
           ptyMngId: helper.getEmpId(),
-          orgId,
+          orgId: null,
           searchTypeReq,
           paramsReqList,
           filtersReq,
@@ -235,7 +207,6 @@ export default class CustomerGroup extends PureComponent {
       filtersReq,
       sortsReqList,
       enterType,
-      orgId = null,
     } = custCondition;
     this.setState({
       groupName,
@@ -247,7 +218,7 @@ export default class CustomerGroup extends PureComponent {
       custIdList,
       searchReq: _.isEmpty(custIdList) ? {
         ptyMngId: helper.getEmpId(),
-        orgId,
+        orgId: null,
         searchTypeReq,
         paramsReqList,
         filtersReq,
@@ -325,10 +296,10 @@ export default class CustomerGroup extends PureComponent {
   @autobind
   handleSingleRowSelectionChange(record, selected, selectedRows) {
     console.log(record, selected, selectedRows);
-    const { custId, groupId, groupName } = record;
+    const { groupId, groupName } = record;
     this.setState({
       currentSelect: record,
-      currentSelectRowKeys: [custId],
+      currentSelectRowKeys: [groupId],
       groupId,
       groupName,
     });
@@ -339,8 +310,8 @@ export default class CustomerGroup extends PureComponent {
       goBack,
       push,
       cusgroupList,
-      cusgroupPage = {},
-      location: { query: { count } },
+      cusgroupPage,
+      location: { query: { count = '', curPageNum, curPageSize } },
     } = this.props;
 
     const {
@@ -352,10 +323,8 @@ export default class CustomerGroup extends PureComponent {
     } = this.state;
 
     const {
-      totalRecordNum = 10,
-      curPageNum = 1,
-      pageSize = 10,
-    } = cusgroupPage;
+      totalRecordNum,
+    } = cusgroupPage || {};
 
     return (
       <div>
@@ -372,16 +341,14 @@ export default class CustomerGroup extends PureComponent {
           <Tabs defaultActiveKey="addhasGroup" type="card">
             <TabPane tab="添加到已有分组" key="addhasGroup">
               <div className={styles.Grouplist}>
-                <Row type="flex" justify="space-between" align="middle">
-                  <Col span={12}>
-                    <p className={styles.description}>已选目标客户<b>&nbsp;{count}&nbsp;</b>户</p>
-                  </Col>
-                  <Col span={12}>
+                <Row type="flex" justify="start" align="middle">
+                  <Col span={24}>
                     <div className={styles.searchBox}>
                       <Input.Search
                         className="search-input"
                         placeholder="请输入分组名称"
                         onSearch={this.handleSearch}
+                        width={200}
                       />
                     </div>
                   </Col>
@@ -390,10 +357,10 @@ export default class CustomerGroup extends PureComponent {
                   <CustomerGrouplist
                     className="CustomerGrouplist"
                     data={cusgroupList}
-                    page={{
-                      totalRecordNum,
-                      curPageNum,
-                      curPageSize: pageSize,
+                    pageData={{
+                      totalRecordNum: totalRecordNum || CUR_PAGE_COUNT,
+                      curPageNum: curPageNum || CUR_PAGE,
+                      curPageSize: curPageSize || CUR_PAGESIZE,
                     }}
                     onPageChange={this.handlePageChange}
                     onSizeChange={this.handleShowSizeChange}
@@ -403,22 +370,23 @@ export default class CustomerGroup extends PureComponent {
                   />
                 </Row>
                 <Row className={styles.BtnContent}>
-                  <Button onClick={goBack}>取消</Button>
-                  <Button onClick={this.handleSubmit} type="primary">保存</Button>
+                  <Col span={12}>
+                    <p className={styles.description}>已选目标客户<b>&nbsp;{count}&nbsp;</b>户</p>
+                  </Col>
+                  <Col span={12}>
+                    <Button onClick={goBack}>取消</Button>
+                    <Button onClick={this.handleSubmit} type="primary">保存</Button>
+                  </Col>
                 </Row>
               </div>
             </TabPane>
             <TabPane tab="添加到新建分组" key="addNewGroup">
               <div className={styles.newGroupForm}>
-                <Row type="flex" justify="space-between" align="middle">
-                  <Col span={12}>
-                    <p className={styles.description}>已选目标客户<b>&nbsp;{count}&nbsp;</b>户</p>
-                  </Col>
-                </Row>
                 <Row className={styles.groupForm}>
                   <AddNewGroup
                     goBack={goBack}
                     onSubmit={this.handleNewGroupSubmit}
+                    count={count}
                   />
                   <Row className={styles.BtnContent} />
                 </Row>

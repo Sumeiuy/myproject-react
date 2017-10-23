@@ -64,10 +64,10 @@ const mapDispatchToProps = {
     payload: query,
   }),
   priviewCustFile: fetchData(effects.priviewCustFile, true),
-  getCirclePeople: fetchData(true, effects.getCirclePeople),
-  getPeopleOfLabel: fetchData(true, effects.getPeopleOfLabel),
-  submitTaskFlow: fetchData(true, effects.submitTaskFlow),
-  getApprovalList: fetchData(true, effects.getApprovalList),
+  getCirclePeople: fetchData(effects.getCirclePeople, true),
+  getPeopleOfLabel: fetchData(effects.getPeopleOfLabel, true),
+  submitTaskFlow: fetchData(effects.submitTaskFlow, true),
+  getApprovalList: fetchData(effects.getApprovalList, true),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)

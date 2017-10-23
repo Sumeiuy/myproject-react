@@ -598,11 +598,13 @@ export default {
     },
     // 获取审批人列表
     * getApprovalList({ payload }, { call, put }) {
-      const response = yield call(api.getApprovalList, payload);
-      const { resultData } = response;
+      const response = yield call(api.queryFlowStepInfo, payload);
+      const { resultData = EMPTY_OBJECT } = response;
+      const { flowButtons: [{ flowAuditors }] } = resultData;
+
       yield put({
         type: 'getApprovalListSuccess',
-        payload: resultData,
+        payload: flowAuditors,
       });
     },
   },

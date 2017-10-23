@@ -12,7 +12,7 @@ import GroupTable from '../groupManage/GroupTable';
 import tableStyles from '../groupManage/groupTable.less';
 import './customerGrouplist.less';
 
-const renderColumnTitle = () => [
+const renderColumnTitle = [
   {
     key: 'groupName',
     value: '分组名称',
@@ -29,7 +29,7 @@ const renderColumnTitle = () => [
 export default class CustomerGrouplist extends PureComponent {
   static propTypes = {
     data: PropTypes.array.isRequired,
-    page: PropTypes.object.isRequired,
+    pageData: PropTypes.object.isRequired,
     onPageChange: PropTypes.func.isRequired,
     onSizeChange: PropTypes.func.isRequired,
     onRowSelectionChange: PropTypes.func.isRequired,
@@ -55,29 +55,16 @@ export default class CustomerGrouplist extends PureComponent {
       onRowSelectionChange,
       onSingleRowSelectionChange,
       currentSelectRowKeys,
-      page,
+      pageData,
       onSizeChange,
       onPageChange,
     } = this.props;
-
-    const {
-      totalRecordNum,
-      curPageNum,
-      curPageSize,
-    } = page;
-
-    // 构造表格头部
-    const titleColumn = renderColumnTitle();
 
     const dataSource = this.addIdToDataSource(data);
 
     return (
       <GroupTable
-        pageData={{
-          curPageNum,
-          curPageSize,
-          totalRecordNum,
-        }}
+        pageData={pageData}
         listData={dataSource}
         onSizeChange={onSizeChange}
         onPageChange={onPageChange}
@@ -86,7 +73,8 @@ export default class CustomerGrouplist extends PureComponent {
             [tableStyles.groupTable]: true,
           })
         }
-        titleColumn={titleColumn}
+        // 构造表格头部
+        titleColumn={renderColumnTitle}
         columnWidth={['35%', '35%', '20%']}
         isNeedRowSelection
         onSingleRowSelectionChange={onSingleRowSelectionChange}

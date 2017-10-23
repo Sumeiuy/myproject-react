@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 10:29:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-20 15:14:52
+ * @Last Modified time: 2017-10-23 14:04:58
  */
 
 import React, { PureComponent } from 'react';
@@ -22,11 +22,35 @@ const EMPTY_OBJECT = {};
 const Search = Input.Search;
 const COLUMN_WIDTH = 100;
 
+const renderColumnTitle = () => {
+  // empName: '1-5TTJ-39weqq00',
+  // login: '11800011qq9822',
+  // occupation: '南京长江路营业部',
+
+  const columns = [
+    {
+      key: 'login',
+      value: '工号',
+    },
+    {
+      key: 'empName',
+      value: '姓名',
+    },
+    {
+      key: 'occupation',
+      value: '所在营业部',
+    },
+  ];
+
+  return columns;
+};
+
 export default class TaskPreview extends PureComponent {
   static propTypes = {
     storedTaskFlowData: PropTypes.object.isRequired,
     approvalList: PropTypes.array,
     currentTab: PropTypes.string.isRequired,
+    getApprovalList: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -39,37 +63,8 @@ export default class TaskPreview extends PureComponent {
       currentSelectRowKeys: EMPTY_LIST,
       currentSelect: EMPTY_OBJECT,
       isShowTable: false,
-      curPageNum: 1,
-      curPageSize: 8,
-      totalRecordNum: 8,
-      titleColumn: this.renderColumnTitle(),
-      dataSource: [
-        {
-          custName: '1-5TTJ-3901230',
-          custId: '1180001198232',
-          custDepartment: '南京长江路营业部',
-        },
-        {
-          custName: '1-5TTJ-3902213310',
-          custId: '1180001196822',
-          custDepartment: '南京长江路营业部',
-        },
-        {
-          custName: '1-5TTJ-3901230',
-          custId: '1180001119822',
-          custDepartment: '南京长江路营业部',
-        },
-        {
-          custName: '1-5TTJ-39weqq00',
-          custId: '11800011qq9822',
-          custDepartment: '南京长江路营业部',
-        },
-        {
-          custName: '1-5TTJ-39dsa00',
-          custId: '1180001ww19822',
-          custDepartment: '南京长江路营业部',
-        },
-      ],
+      titleColumn: renderColumnTitle(),
+      dataSource: [],
     };
   }
 
@@ -80,59 +75,13 @@ export default class TaskPreview extends PureComponent {
     const {
       approvalList: nextData = EMPTY_LIST,
      } = nextProps;
-    const { custInfos = EMPTY_LIST } = approvalList;
-    const { custInfos: nextInfos = EMPTY_LIST, page: nextPage = EMPTY_OBJECT } = nextData;
-    const { totalCount: nextTotalCount, pageNum, pageSize } = nextPage;
 
-    if (custInfos !== nextInfos) {
+    if (approvalList !== nextData) {
       // 审批人数据
       this.setState({
-        totalRecordNum: nextTotalCount,
-        curPageNum: pageNum,
-        curPageSize: pageSize,
-        dataSource: nextInfos,
+        dataSource: nextData,
       });
     }
-  }
-
-  /**
-  * 页码改变事件，翻页事件
-  * @param {*} nextPage 下一页码
-  * @param {*} curPageSize 当前页条目
-  */
-  @autobind
-  handlePageChange(nextPage, currentPageSize) {
-    console.log(nextPage, currentPageSize);
-    // const { getApprovalList } = this.props;
-    this.setState({
-      curPageNum: nextPage,
-      curPageSize: currentPageSize,
-    });
-    // 审批人员数据
-    // getApprovalList({
-    //   pageNum: nextPage,
-    //   pageSize: currentPageSize,
-    // });
-  }
-
-  /**
-   * 改变每一页的条目
-   * @param {*} currentPageNum 当前页码
-   * @param {*} changedPageSize 当前每页条目
-   */
-  @autobind
-  handleShowSizeChange(currentPageNum, changedPageSize) {
-    console.log(currentPageNum, changedPageSize);
-    // const { getApprovalList } = this.props;
-    this.setState({
-      curPageNum: currentPageNum,
-      curPageSize: changedPageSize,
-    });
-    // 审批人员数据
-    // getApprovalList({
-    //   pageNum: currentPageNum,
-    //   pageSize: changedPageSize,
-    // });
   }
 
   /**
@@ -141,7 +90,7 @@ export default class TaskPreview extends PureComponent {
    */
   addIdToDataSource(listData) {
     if (!_.isEmpty(listData)) {
-      return _.map(listData, item => _.merge(item, { id: item.custId }));
+      return _.map(listData, item => _.merge(item, { id: item.login }));
     }
 
     return [];
@@ -149,6 +98,8 @@ export default class TaskPreview extends PureComponent {
 
   @autobind
   handleClick() {
+    const { getApprovalList } = this.props;
+    getApprovalList();
     this.setState({
       isShowTable: true,
     });
@@ -172,46 +123,19 @@ export default class TaskPreview extends PureComponent {
   @autobind
   handleSingleRowSelectionChange(record, selected, selectedRows) {
     console.log(record, selected, selectedRows);
-    const { custId } = record;
+    const { login } = record;
     this.setState({
       currentSelect: record,
-      currentSelectRowKeys: [custId],
+      currentSelectRowKeys: [login],
     });
   }
 
   @autobind
   handleSearchApproval() {
     console.log('search approval');
-    // const { getApprovalList } = this.props;
-    // const { curPageNum, curPageSize } = this.state;
+    const { getApprovalList } = this.props;
     // 审批人员数据
-    // getApprovalList({
-    //   pageNum: currentPageNum,
-    //   pageSize: changedPageSize,
-    // });
-  }
-
-  renderColumnTitle() {
-    // custName: '1-5TTJ-39dsa00',
-    // custId: '1180001ww19822',
-    // custDepartment: '南京长江路营业部',
-
-    const columns = [
-      {
-        key: 'custId',
-        value: '工号',
-      },
-      {
-        key: 'custName',
-        value: '姓名',
-      },
-      {
-        key: 'custDepartment',
-        value: '所在营业部',
-      },
-    ];
-
-    return columns;
+    getApprovalList();
   }
 
   render() {
@@ -239,15 +163,12 @@ export default class TaskPreview extends PureComponent {
     const {
       dataSource,
       isShowTable,
-      curPageNum = 1,
-      curPageSize = 10,
-      totalRecordNum,
       titleColumn,
       currentSelectRowKeys,
       currentSelect,
      } = this.state;
 
-    const { custName = '' } = currentSelect;
+    const { empName = '' } = currentSelect;
 
     // 添加id到dataSource
     const newDataSource = this.addIdToDataSource(dataSource);
@@ -318,7 +239,7 @@ export default class TaskPreview extends PureComponent {
 
         <div className={styles.selectApprover} onClick={this.handleClick}>
           <span>选择审批人：</span>
-          <Search className={styles.searchSection} readOnly value={custName} />
+          <Search className={styles.searchSection} readOnly value={empName} />
         </div>
         {
           isShowTable ?
@@ -366,14 +287,8 @@ export default class TaskPreview extends PureComponent {
                     />
                   </div>
                   <GroupTable
-                    pageData={{
-                      curPageNum,
-                      curPageSize,
-                      totalRecordNum,
-                    }}
+                    isNeedPaganation={false}
                     listData={newDataSource}
-                    onSizeChange={this.handleShowSizeChange}
-                    onPageChange={this.handlePageChange}
                     tableClass={styles.approvalListTable}
                     titleColumn={titleColumn}
                     columnWidth={COLUMN_WIDTH}

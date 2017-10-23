@@ -112,5 +112,8 @@ export default function customerPool(api) {
 
     // 标签圈人-标签id查询客户列表明细
     queryPeopleOfLabel: query => api.post('/groovynoauth/fsp/cust/task/queryPeopleOfLabel', query),
+
+    // 查询审批人列表
+    queryFlowStepInfo: query => api.post('/groovynoauth/fsp/cust/task/queryFlowStepInfo', query),
   };
 }
