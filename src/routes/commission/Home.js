@@ -21,6 +21,7 @@ import CommissionList from '../../components/common/biz/CommonList';
 import seibelColumns from '../../components/common/biz/seibelColumns';
 import { constructSeibelPostBody, getEmpId } from '../../utils/helper';
 import { seibelConfig } from '../../config';
+import Barable from '../../decorators/selfBar';
 import './home.less';
 
 // const EMPTY_LIST = [];
@@ -44,6 +45,9 @@ const effects = {
   submitBatch: 'commission/submitBatchCommission',
   gjCommissionRate: 'commission/getGJCommissionRate',
   singleCustList: 'commission/getSingleCustList',
+  singleComOptions: 'commission/getSingleOtherCommissionOptions',
+  singleProList: 'commission/getSingleComProductList',
+  threeMatchInfo: 'commission/queryThreeMatchInfo',
 };
 
 const mapStateToProps = state => ({
@@ -87,8 +91,14 @@ const mapStateToProps = state => ({
   batchSubmitProcess: state.loading.effects[effects.submitBatch],
   // 目标股基佣金率码值列表
   gjCommissionList: state.commission.gjCommission,
+  // 单佣金调整的其他佣金费率码值
+  singleOtherRatio: state.commission.singleOtherCommissionOptions,
   // 单佣金调整页面客户查询列表
   singleCustomerList: state.commission.singleCustomerList,
+ // 单佣金调整可选产品列表
+  singleComProductList: state.commission.singleComProductList,
+  // 客户与产品的三匹配信息
+  threeMatchInfo: state.commission.threeMatchInfo,
 });
 
 const getDataFunction = (loading, type) => query => ({
@@ -127,12 +137,19 @@ const mapDispatchToProps = {
   submitBatch: getDataFunction(false, effects.submitBatch),
   // 获取目标股基佣金率
   getGJCommissionRate: getDataFunction(false, effects.gjCommissionRate),
+  // 获取单佣金调整中的其他佣金费率选项
+  getSingleOtherRates: getDataFunction(false, effects.singleComOptions),
   // 查询单佣金调整页面客户列表
   getSingleCustList: getDataFunction(false, effects.singleCustList),
+  // 获取单佣金调整中的可选产品列表
+  getSingleProductList: getDataFunction(false, effects.singleProList),
+  // 查询产品与客户的三匹配信息
+  queryThreeMatchInfo: getDataFunction(false, effects.threeMatchInfo),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
+@Barable
 export default class CommissionHome extends PureComponent {
 
   static propTypes = {
@@ -173,6 +190,12 @@ export default class CommissionHome extends PureComponent {
     submitBatch: PropTypes.func.isRequired,
     getGJCommissionRate: PropTypes.func.isRequired,
     gjCommissionList: PropTypes.array.isRequired,
+    getSingleOtherRates: PropTypes.func.isRequired,
+    singleOtherRatio: PropTypes.array.isRequired,
+    getSingleProductList: PropTypes.func.isRequired,
+    singleComProductList: PropTypes.array.isRequired,
+    threeMatchInfo: PropTypes.object.isRequired,
+    queryThreeMatchInfo: PropTypes.func.isRequired,
     singleCustomerList: PropTypes.array.isRequired,
   }
 
@@ -215,10 +238,6 @@ export default class CommissionHome extends PureComponent {
     getCommissionList({ ...params, type: pageType });
   }
 
-  componentDidMount() {
-    // 给元素添加该class修改滚动条颜色，以避免其他页面受影响
-    document.querySelector('body').classList.add('selfScrollBarStyle');
-  }
 
   componentWillReceiveProps(nextProps) {
     const { listProcess: prevLP } = this.props;
@@ -298,11 +317,6 @@ export default class CommissionHome extends PureComponent {
         },
       });
     }
-  }
-
-  componentWillUnmount() {
-    // 给元素添加该class修改滚动条颜色，以避免其他页面受影响
-    document.querySelector('body').classList.remove('selfScrollBarStyle');
   }
 
   // 查询佣金调整4个子类型的详情信息
@@ -494,6 +508,12 @@ export default class CommissionHome extends PureComponent {
       empInfo: { empInfo },
       getGJCommissionRate,
       gjCommissionList,
+      getSingleOtherRates,
+      singleOtherRatio,
+      getSingleProductList,
+      singleComProductList,
+      threeMatchInfo,
+      queryThreeMatchInfo,
       singleCustomerList,
     } = this.props;
     if (_.isEmpty(custRange)) {
@@ -561,6 +581,12 @@ export default class CommissionHome extends PureComponent {
           onBatchSubmit={submitBatch}
           gjCommission={gjCommissionList}
           queryGJCommission={getGJCommissionRate}
+          getSingleOtherRates={getSingleOtherRates}
+          singleOtherRatio={singleOtherRatio}
+          getSingleProductList={getSingleProductList}
+          singleComProductList={singleComProductList}
+          threeMatchInfo={threeMatchInfo}
+          queryThreeMatchInfo={queryThreeMatchInfo}
           querySingleCustList={getSingleCustList}
           singleCustList={singleCustomerList}
         />

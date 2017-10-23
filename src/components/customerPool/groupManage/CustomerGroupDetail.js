@@ -12,7 +12,7 @@ import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
 import Button from '../../common/Button';
-import Confirm from '../../common/Confirm';
+import confirm from '../../common/Confirm/confirm';
 import GroupTable from './GroupTable';
 import Search from '../../common/Search';
 
@@ -74,7 +74,7 @@ export default class CustomerGroupDetail extends PureComponent {
       dataSource: EMPTY_LIST,
       includeCustIdList: [],
       needDeleteCustId: '',
-      isShowDeleteConfirm: false,
+      // isShowDeleteConfirm: false,
     };
   }
 
@@ -269,8 +269,12 @@ export default class CustomerGroupDetail extends PureComponent {
       });
     } else {
       // 不存在，直接提示删除确认框，然后删除
+      confirm({
+        shortCut: 'delete',
+        onOk: this.handleConfirmOk,
+      });
       this.setState({
-        isShowDeleteConfirm: true,
+        // isShowDeleteConfirm: true,
         needDeleteCustId: custId,
       });
     }
@@ -349,18 +353,18 @@ export default class CustomerGroupDetail extends PureComponent {
 
   @autobind
   handleConfirmOk() {
-    this.setState({
-      isShowDeleteConfirm: false,
-    });
+    // this.setState({
+    //   isShowDeleteConfirm: false,
+    // });
     this.deleteCustomerFromGroupForever();
   }
 
-  @autobind
-  handleConfirmCancel() {
-    this.setState({
-      isShowDeleteConfirm: false,
-    });
-  }
+  // @autobind
+  // handleConfirmCancel() {
+  //   this.setState({
+  //     isShowDeleteConfirm: false,
+  //   });
+  // }
 
   @autobind
   handleDeleteBtnClick(record) {
@@ -434,7 +438,7 @@ export default class CustomerGroupDetail extends PureComponent {
       curPageNum,
       curPageSize,
       dataSource = EMPTY_LIST,
-      isShowDeleteConfirm,
+      // isShowDeleteConfirm,
       totalRecordNum,
     } = this.state;
     const {
@@ -579,14 +583,14 @@ export default class CustomerGroupDetail extends PureComponent {
           </Button>
           </div>
         </FormItem>
-        {
+        {/*
           isShowDeleteConfirm ?
             <Confirm
               type={'delete'}
               onCancelHandler={this.handleConfirmCancel}
               onOkHandler={this.handleConfirmOk}
             /> : null
-        }
+        */}
       </Form>
     );
   }

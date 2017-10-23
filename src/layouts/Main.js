@@ -40,6 +40,8 @@ const mapStateToProps = state => ({
   addServeRecordSuccess: state.customerPool.addServeRecordSuccess,
   // 服务弹窗对应的客户的经纪客户号
   serviceRecordModalVisibleOfId: state.app.serviceRecordModalVisibleOfId,
+  // 服务弹窗对应的客户的经纪客户名
+  serviceRecordModalVisibleOfName: state.app.serviceRecordModalVisibleOfName,
 });
 
 const mapDispatchToProps = {
@@ -68,6 +70,7 @@ export default class Main extends Component {
     empInfo: PropTypes.object.isRequired,
     serviceRecordModalVisible: PropTypes.bool,
     serviceRecordModalVisibleOfId: PropTypes.string,
+    serviceRecordModalVisibleOfName: PropTypes.string,
     addServeRecordSuccess: PropTypes.bool.isRequired,
     addServeRecord: PropTypes.func.isRequired,
     toggleServiceRecordModal: PropTypes.func.isRequired,
@@ -76,6 +79,7 @@ export default class Main extends Component {
   static defaultProps = {
     serviceRecordModalVisible: false,
     serviceRecordModalVisibleOfId: '',
+    serviceRecordModalVisibleOfName: '',
   }
 
   componentDidMount() {
@@ -95,6 +99,7 @@ export default class Main extends Component {
       addServeRecordSuccess,
       addServeRecord,
       serviceRecordModalVisibleOfId,
+      serviceRecordModalVisibleOfName,
       serviceRecordModalVisible,
       toggleServiceRecordModal,
     } = this.props;
@@ -114,7 +119,9 @@ export default class Main extends Component {
                         {children}
                         <CreateServiceRecord
                           loading={interfaceState[effects.addServeRecord]}
+                          key={serviceRecordModalVisibleOfId}
                           id={serviceRecordModalVisibleOfId}
+                          name={serviceRecordModalVisibleOfName}
                           dict={dict}
                           empInfo={empInfo}
                           isShow={serviceRecordModalVisible}

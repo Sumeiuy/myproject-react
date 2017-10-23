@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-10-16 11:09:39
- * @Last Modified by:   xuxiaoqin
- * @Last Modified time: 2017-10-16 11:09:39
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2017-10-19 16:09:11
  */
 
 import React from 'react';
@@ -20,7 +20,11 @@ function renderPageSizeOptions(totalRecordNum, originPageSizeUnit) {
   const maxPage = Math.ceil(totalRecordNum / originPageSizeUnit);
 
   for (let i = 1; i <= maxPage; i++) {
-    pageSizeOption.push((originPageSizeUnit * i).toString());
+    if (originPageSizeUnit * i <= 40) {
+      pageSizeOption.push((originPageSizeUnit * i).toString());
+    } else {
+      break;
+    }
   }
 
   return pageSizeOption;

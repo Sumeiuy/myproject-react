@@ -23,7 +23,7 @@ import EditForm from '../../components/contract/EditForm';
 import AddForm from '../../components/contract/AddForm';
 import BottonGroup from '../../components/permission/BottonGroup';
 import { seibelConfig } from '../../config';
-
+import Barable from '../../decorators/selfBar';
 
 import styles from './home.less';
 
@@ -116,6 +116,7 @@ const mapDispatchToProps = {
 
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
+@Barable
 export default class Contract extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -366,6 +367,7 @@ export default class Contract extends PureComponent {
       contractFormData: formData,
     });
   }
+
   /**
    * 点击列表每条的时候对应请求详情
    */
@@ -373,11 +375,11 @@ export default class Contract extends PureComponent {
   getListRowId(obj) {
     const { getBaseInfo } = this.props;
     getBaseInfo({
-      flowId: obj.flowId,
+      // flowId: obj.flowId,
+      flowId: '47D97E3A0E52E84ABE1CFBB388F869C3',
       id: '',
     });
     this.setState({
-      flowId: obj.flowId,
       business2: obj.business2,
       createTime: obj.createTime,
     });
@@ -441,7 +443,6 @@ export default class Contract extends PureComponent {
       this.props.getCooperDeparmentList({ name: keyword });
     }
   }
-
 
   // 判断合约有效期是否大于当前日期+5天
   @autobind
@@ -639,6 +640,7 @@ export default class Contract extends PureComponent {
 
   @autobind
   closeModal(modalKey) {
+    console.warn('点击了关闭弹窗', modalKey);
     this.setState({
       [modalKey]: false,
     }, () => {
@@ -682,7 +684,6 @@ export default class Contract extends PureComponent {
       />,
     });
   }
-
 
   render() {
     const {

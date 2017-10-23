@@ -30,6 +30,10 @@ export default class DropdownSelect extends PureComponent {
     emitToSearch: PropTypes.func.isRequired,
     // 用户自定义style
     boxStyle: PropTypes.object,
+    // 样式主题
+    theme: PropTypes.string,
+    // 是否可操作
+    disable: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -39,6 +43,8 @@ export default class DropdownSelect extends PureComponent {
     searchList: [],
     objId: '',
     boxStyle: {},
+    theme: 'theme1',
+    disable: false,
   }
 
   constructor() {
@@ -123,21 +129,42 @@ export default class DropdownSelect extends PureComponent {
   }
 
   render() {
+    const { theme, disable } = this.props;
     const modalClass = classnames([style.ddsDrapMenu,
       { hide: !this.state.isSHowModal },
     ]);
     const ddsShowBoxClass = classnames([style.ddsShowBox,
       { [style.active]: this.state.isSHowModal },
     ]);
+    const ddsShowBoxClass2 = classnames([
+      style.ddsShowBox2,
+      { [style.disable]: disable },
+      { [style.active]: this.state.isSHowModal },
+    ]);
+    if (disable) {
+      return (
+        <div
+          className={theme === 'theme1' ? style.drapDowmSelect : style.drapDowmSelect2}
+        >
+          <div
+            className={theme === 'theme1' ? ddsShowBoxClass : ddsShowBoxClass2}
+            data-id={this.state.id}
+            style={this.props.boxStyle || {}}
+          >
+            {this.state.value}
+          </div>
+        </div>
+      );
+    }
     return (
       <div
-        className={style.drapDowmSelect}
+        className={theme === 'theme1' ? style.drapDowmSelect : style.drapDowmSelect2}
       >
         <div
           onClick={this.showDrapDown}
-          className={ddsShowBoxClass}
+          className={theme === 'theme1' ? ddsShowBoxClass : ddsShowBoxClass2}
           data-id={this.state.id}
-          style={this.props.boxStyle}
+          style={this.props.boxStyle || {}}
         >
           {this.state.value}
         </div>

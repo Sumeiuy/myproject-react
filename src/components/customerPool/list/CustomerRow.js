@@ -32,32 +32,32 @@ import iconEmpty from '../../../../static/images/icon-empty.png';
 // 风险等级配置
 const riskLevelConfig = {
   704010: {
-    name: '激进',
+    name: '激',
     title: '激进型',
     colorCls: 'jijin',
   },
   704040: {
-    name: '最低',
+    name: '低',
     title: '保守型（最低类别）',
     colorCls: 'zuidi',
   },
   704030: {
-    name: '保守',
+    name: '保',
     title: '保守型',
     colorCls: 'baoshou',
   },
   704020: {
-    name: '稳健',
+    name: '稳',
     title: '稳健型',
     colorCls: 'wenjian',
   },
   704025: {
-    name: '谨慎',
+    name: '谨',
     title: '谨慎型',
     colorCls: 'jinshen',
   },
   704015: {
-    name: '积极',
+    name: '积',
     title: '积极型',
     colorCls: 'jiji',
   },
@@ -113,7 +113,6 @@ export default class CustomerRow extends PureComponent {
     onAddFollow: PropTypes.func.isRequired,
     dict: PropTypes.object.isRequired,
     createContact: PropTypes.func.isRequired,
-    isSms: PropTypes.bool.isRequired,
     custEmail: PropTypes.object.isRequired,
     currentFollowCustId: PropTypes.string.isRequired,
     emailCustId: PropTypes.string.isRequired,
@@ -121,11 +120,13 @@ export default class CustomerRow extends PureComponent {
     custIncomeReqState: PropTypes.bool.isRequired,
     toggleServiceRecordModal: PropTypes.func.isRequired,
     formatAsset: PropTypes.func.isRequired,
+    mainServiceManager: PropTypes.bool,
   }
 
   static defaultProps = {
     q: '',
     selectedIds: [],
+    mainServiceManager: false,
   }
 
   constructor(props) {
@@ -177,10 +178,13 @@ export default class CustomerRow extends PureComponent {
   renderAgeOrOrgName() {
     const { listItem } = this.props;
     if (listItem.pOrO === 'P') {
+      // 客户性质为个人
       return <span>{listItem.genderValue}/{listItem.age}岁</span>;
     } else if (listItem.pOrO === 'O' && listItem.orgTypeName) {
+      // 客户性质为一般机构
       return <span>{listItem.orgTypeName}</span>;
     } else if (listItem.pOrO === 'F' && listItem.prodTypeCode) {
+      // 客户性质为产品机构
       return <span>{listItem.prodTypeCode}</span>;
     }
     return '';
@@ -188,7 +192,6 @@ export default class CustomerRow extends PureComponent {
 
   render() {
     const { q, listItem, monthlyProfits, isAllSelect, selectedIds,
-      isSms,
       onAddFollow,
       currentFollowCustId,
       isFollows,
@@ -201,6 +204,7 @@ export default class CustomerRow extends PureComponent {
       location,
       dict,
       formatAsset,
+      mainServiceManager,
     } = this.props;
     const rskLev = _.trim(listItem.riskLvl);
     const str = `${listItem.custId}.${listItem.name}`;
@@ -217,22 +221,29 @@ export default class CustomerRow extends PureComponent {
     if (listItem.miniFee !== null) {
       miniFee = `${(listItem.miniFee * 1000).toFixed(2)}‰`;
     }
+    // 归集率
+    let hsRate = '--';
+    if (listItem.hsRate !== null) {
+      hsRate = `${listItem.hsRate}%`;
+    }
     return (
       <div
         className={styles.customerRow}
       >
-        <QuickMenu
-          isSms={isSms}
-          listItem={listItem}
-          createModal={this.createModal}
-          toggleServiceRecordModal={toggleServiceRecordModal}
-          custEmail={custEmail}
-          emailCustId={emailCustId}
-          onSendEmail={onSendEmail}
-          currentFollowCustId={currentFollowCustId}
-          isFollows={isFollows}
-          onAddFollow={onAddFollow}
-        />
+        {
+          mainServiceManager ?
+            <QuickMenu
+              listItem={listItem}
+              createModal={this.createModal}
+              toggleServiceRecordModal={toggleServiceRecordModal}
+              custEmail={custEmail}
+              emailCustId={emailCustId}
+              onSendEmail={onSendEmail}
+              currentFollowCustId={currentFollowCustId}
+              isFollows={isFollows}
+              onAddFollow={onAddFollow}
+            /> : null
+        }
         <div className={styles.selectIcon}>
           <Checkbox
             disabled={isAllSelect}
@@ -242,24 +253,41 @@ export default class CustomerRow extends PureComponent {
         </div>
         <div
           className={styles.customerRowContent}
-          onClick={this.toDetail}
         >
           <div className={`${styles.customerRowLeft} clear`}>
             <div className={styles.avatorContent}>
-              <img className={styles.avatorImage} src={custNature[listItem.pOrO].imgSrc} alt="" />
+              <img
+                className={styles.avatorImage}
+                src={custNature[listItem.pOrO].imgSrc}
+                alt=""
+                onClick={this.toDetail}
+              />
               <div className={styles.avatorText}>{custNature[listItem.pOrO].name}</div>
               <img className={styles.iconMoneyImage} src={rankImgSrcConfig[listItem.levelCode]} alt="" />
             </div>
           </div>
           <div className={styles.customerRowRight}>
-            <div className="row-one">{listItem.name ? <span className="name">{listItem.name}</span> : null}
+            <div className="row-one">
               {
-                listItem.contactFlag ?
-                  <div className="iconSingned">
-                    <div className="itemText">签约客户</div>
-                  </div> : null
+                listItem.name ?
+                  <span className="name" onClick={this.toDetail}>{listItem.name}</span> :
+                  null
               }
-              {listItem.highWorthFlag ? <div className="highWorthFlag">高净值</div> : null}
+              <span>{listItem.custId}</span>
+              <span className="cutOffLine">|</span>
+              {
+                listItem.genderValue && listItem.age
+                  ? <span>{listItem.genderValue}/{listItem.age}岁</span>
+                  : null
+              }
+              {
+                listItem.genderValue && listItem.age
+                  ? <span className="cutOffLine">|</span>
+                  : null
+              }
+              <span>
+                {`${listItem.openDt.slice(0, 4)}-${listItem.openDt.slice(4, 6)}-${listItem.openDt.slice(6, 8)} 开户`}
+              </span>
               {
                 (rskLev === '' || rskLev === 'null')
                   ? '' :
@@ -270,17 +298,23 @@ export default class CustomerRow extends PureComponent {
                     {riskLevelConfig[rskLev].name}
                   </div>
               }
+              {listItem.highWorthFlag ? <div className="highWorthFlag">高净值</div> : null}
+              {
+                listItem.contactFlag ?
+                  <div className="iconSingned">
+                    签约
+                    <div className="itemText">签约客户</div>
+                  </div> : null
+              }
             </div>
             <div className="row-two">
-              <span>{listItem.custId}</span>
+              <span className="imputation">归集率: <em>{hsRate}</em></span>
               <span className="cutOffLine">|</span>
-              {this.renderAgeOrOrgName()}
               <span className="commission">佣金率: <em>{miniFee}</em></span>
-            </div>
-            <div className="row-three">
+              <span className="cutOffLine">|</span>
               <span>总资产：</span>
               <span className="asset">{assetValue}</span>
-              <span>{assetUnit}</span>
+              <span className="assetunit">{assetUnit}</span>
               <SixMonthEarnings
                 listItem={listItem}
                 monthlyProfits={monthlyProfits}
@@ -289,9 +323,12 @@ export default class CustomerRow extends PureComponent {
                 formatAsset={formatAsset}
               />
               <div className="department">
-                <span>{listItem.orgName}</span>
-                <span className="cutOffLine">|</span>
-                <span>{`服务经理：${listItem.empName || '无'}`}</span>
+                <span>
+                  服务经理：
+                  {
+                    `${listItem.orgName || '无'}-${listItem.empName || '无'}`
+                  }
+                </span>
               </div>
             </div>
             <MatchArea

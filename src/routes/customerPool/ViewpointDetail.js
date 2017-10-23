@@ -8,8 +8,11 @@ import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
+import { Tooltip } from 'antd';
 import _ from 'lodash';
 
+import wordSrc from '../../../static/images/word.png';
+import pdfSrc from '../../../static/images/pdf.png';
 import Icon from '../../components/common/Icon';
 import styles from './viewpointDetail.less';
 
@@ -17,15 +20,17 @@ const mapStateToProps = state => ({
   information: state.customerPool.information, // 首席投顾观点
 });
 const mapDispatchToProps = {
+  goBack: routerRedux.goBack,
   push: routerRedux.push,
 };
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 export default class ViewpointDetail extends PureComponent {
   static propTypes = {
-    push: PropTypes.func.isRequired,
+    goBack: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     information: PropTypes.object,
+    push: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -34,24 +39,46 @@ export default class ViewpointDetail extends PureComponent {
 
   @autobind
   handleBackClick() {
-    const { push } = this.props;
-    push({ pathname: '/customerPool/viewpointList' });
+    const { goBack, push, location: { state = '' } } = this.props;
+    if (_.isEmpty(state)) {
+      push({ pathname: '/customerPool/viewpointList' });
+    } else {
+      goBack();
+    }
   }
 
-  handleWordClick() {}
-
-  handlePDFClick() {}
+  renderDownLoad({ loadUrl, format, fileName }) {
+    return (
+      _.isEmpty(loadUrl) ? (
+        <Tooltip title={`暂不支持下载 ${_.toUpper(format)} 格式`}>
+          {`${_.toUpper(format)} 全文`}
+        </Tooltip>
+      ) : (
+        <a href={loadUrl} download={fileName || `${_.toUpper(format)} 全文.${_.toLower(format)}`}>
+          {`${_.toUpper(format)} 全文`}
+        </a>
+      )
+    );
+  }
 
   render() {
     const { location: { query }, information: { infoVOList = [] } } = this.props;
     const { detailIndex = '0' } = query;
     const {
-      texttitle = '',
-      abstract = '',
+      texttitle = '暂无标题',
+      abstract = '暂无内容',
       secuabbr = '',
       authors = '',
       pubdata = '',
-    } = infoVOList[_.toNumber(detailIndex)];
+      annexpathpdf = '',
+      annexpathword = '',
+    } = infoVOList[_.toNumber(detailIndex)] || {};
+    // 分割成段，展示
+    const formateAbstract = _.isEmpty(abstract) ? (
+      '<p>暂无内容</p>'
+    ) : (
+      _.replace(_.trim(abstract), /\s{2,}/gi, '<br /><span></span>')
+    );
     return (
       <div className={styles.listContainer}>
         <div className={styles.inner} >
@@ -63,11 +90,13 @@ export default class ViewpointDetail extends PureComponent {
                   onClick={this.handleBackClick}
                 >
                   <div className={styles.iconContainer}>
-                    <Icon type="xiangzuo" className={styles.backIcon} />
+                    <Icon type="fanhui" className={styles.backIcon} />
                   </div>
-                  <div className={styles.backTitle}>返回列表</div>
+                  <div className={styles.backTitle}>资讯列表</div>
                 </div>
-                <div className={styles.title}>{texttitle || '暂无数据'}</div>
+                <div className={styles.title}>
+                  {_.isEmpty(texttitle) ? '暂无标题' : texttitle}
+                </div>
               </div>
               <div className={styles.infoRow}>
                 <div className={styles.column}>
@@ -81,28 +110,32 @@ export default class ViewpointDetail extends PureComponent {
                 </div>
               </div>
             </div>
-            <div className={styles.body}>{_.isEmpty(abstract) ? '暂无数据' : abstract}</div>
+            <div className={styles.body} dangerouslySetInnerHTML={{ __html: formateAbstract }} />
             <div className={styles.footer}>
-              <div className={styles.fileColumn} onClick={this.handleWordClick}>
+              <div className={styles.fileColumn}>
                 <div className={styles.fileIconContainer}>
-                  <Icon type="xiazai" className={classnames(styles.fileIcon, styles.word)} />
+                  <img src={wordSrc} alt="WORD 图标" />
                 </div>
-                <div className={styles.fileName}>WORD 全文</div>
+                <div className={styles.fileName}>
+                  {this.renderDownLoad({ loadUrl: annexpathword, format: 'WORD', fileName: texttitle })}
+                </div>
               </div>
-              <div className={styles.fileColumn} onClick={this.handlePDFClick}>
+              <div className={styles.fileColumn}>
                 <div className={styles.fileIconContainer}>
-                  <Icon type="xiazai" className={styles.fileIcon} />
+                  <img src={pdfSrc} alt="PDF 图标" />
                 </div>
-                <div className={styles.fileName}>PDF 全文</div>
+                <div className={styles.fileName}>
+                  {this.renderDownLoad({ loadUrl: annexpathpdf, format: 'PDF', fileName: texttitle })}
+                </div>
               </div>
               <div
                 className={classnames(styles.backColumn, styles.under)}
                 onClick={this.handleBackClick}
               >
                 <div className={styles.iconContainer}>
-                  <Icon type="xiangzuo" className={styles.backIcon} />
+                  <Icon type="fanhui" className={styles.backIcon} />
                 </div>
-                <div className={styles.backTitle}>返回列表</div>
+                <div className={styles.backTitle}>资讯列表</div>
               </div>
             </div>
           </div>

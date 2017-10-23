@@ -12,26 +12,26 @@ import { Tabs } from 'antd';
 import _ from 'lodash';
 
 import { getDurationString } from '../../utils/helper';
-import { optionsMap } from '../../config';
+import { optionsMap, fspContainer } from '../../config';
 import TabsExtra from '../../components/customerPool/home/TabsExtra';
 import PerformanceIndicators from '../../components/customerPool/home/PerformanceIndicators';
 import ManageIndicators from '../../components/customerPool/home/ManageIndicators';
 import Viewpoint from '../../components/customerPool/home/Viewpoint';
 import ToBeDone from '../../components/customerPool/home/ToBeDone';
-import { helper } from '../../utils';
+import { helper, permission } from '../../utils';
 import Search from '../../components/customerPool/home/Search';
 import styles from './home.less';
 
 const TabPane = Tabs.TabPane;
 const CUST_MANAGER = '1'; // 客户经理
-// const CUST_MANAGER_TEAM = 2; // 客户经理团队
 const ORG = '3'; // 组织机构
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
-const HTSC_RESPID = '1-46IDNZI'; // 首页指标查询
-// 主服务经理id
+// const HTSC_RESPID = '1-46IDNZI'; // 首页指标查询
+// 主服务经理id，用于url和custrange组件中，不传给后端
 const MAIN_MAGEGER_ID = 'msm';
-const LOCAL_MONTH = '518003';
+// const LOCAL_MONTH = '518003';
+
 const effects = {
   toBeTone: 'customerPool/getToBeDone',
   manageIndicators: 'customerPool/getManageIndicators',
@@ -55,7 +55,6 @@ const mapStateToProps = state => ({
   manageIndicators: state.customerPool.manageIndicators, // 经营指标
   custRange: state.customerPool.custRange, // 客户池用户范围
   cycle: state.app.dict.kPIDateScopeType,  // 统计周期
-  position: state.customerPool.position, // 职责切换
   process: state.customerPool.process, // 代办流程(首页总数)
   motTaskCount: state.customerPool.motTaskCount, // 今日可做任务总数
   empInfo: state.app.empInfo, // 职位信息
@@ -103,7 +102,6 @@ export default class Home extends PureComponent {
     saveSearchVal: PropTypes.func.isRequired,
     custRange: PropTypes.array,
     cycle: PropTypes.array,
-    position: PropTypes.object,
     process: PropTypes.object,
     motTaskCount: PropTypes.number,
     empInfo: PropTypes.object,
@@ -125,7 +123,6 @@ export default class Home extends PureComponent {
     custRange: EMPTY_LIST,
     cycle: EMPTY_LIST,
     collectCustRange: () => { },
-    position: EMPTY_OBJECT,
     process: EMPTY_OBJECT,
     motTaskCount: 0,
     empInfo: EMPTY_OBJECT,
@@ -143,99 +140,74 @@ export default class Home extends PureComponent {
     super(props);
     this.state = {
       cycleSelect: '',
-      fspOrgId: '', // 主服务经理
       createCustRange: [],
       expandAll: false,
-      isHasAuthorize: false,
     };
+    // 首页指标查询权限
+    this.isHasAuthorize = permission.hasIndexViewPermission();
   }
 
   componentDidMount() {
     const {
       custRange,
-      cycle = EMPTY_LIST,
-      location: { query: { orgId = '', cycleSelect = '' } },
-      empInfo: { empInfo, empRespList },
-      position: { orgId: posOrgId = '' },
+      empInfo: { empInfo },
+      getInformation,
+      getToBeDone,
+      getHotWds,
+      getHistoryWdsList,
     } = this.props;
+    // 获取登录用户empId和occDivnNum
+    const { empNum, occDivnNum } = empInfo;
 
-    // 初始化时，判断url上存在orgId
-    let fspOrgId = '';
-    if (orgId === '') {
-      fspOrgId = posOrgId;
+    // 登录用户orgId，默认在fsp中中取出来的当前用户岗位对应orgId，本地时取用户信息中的occDivnNum
+    if (document.querySelector(fspContainer.container)) {
+      this.orgId = window.forReactPosition.orgId;
     } else {
-      fspOrgId = orgId;
+      this.orgId = occDivnNum;
     }
+    // 权限控制是否传给后端orgId
+    const authOrgId = this.isHasAuthorize ? this.orgId : '';
+    // 热词搜索 orgId, empNo 两个参数必传一个，两个同时传时以orgId为准
+    getHotWds({ orgId: authOrgId, empNo: empNum });
+    // 历史搜索记录 orgId, empNo 两个参数必传一个，两个同时传时以orgId为准
+    getHistoryWdsList({ orgId: authOrgId, empNo: empNum });
+    // 待办事项
+    getToBeDone({ orgId: authOrgId });
 
-    const { begin, end } = this.getTimeSelectBeginAndEnd();
-    const initialCycleSelect = !_.isEmpty(cycle) ? cycle[0].key : '';
-
-    this.getAllInfo({
+    // 首席投顾观点
+    getInformation({ curPageNum: 1, pageSize: 18 });
+    // 发送绩效指标和沪深归集率请求
+    this.sendIndicatorAndHSRateReq(this.props);
+    // 根据岗位orgId生成对应的组织机构树
+    this.handleCreateCustRange({
       custRange,
       empInfo,
-      empRespList,
-      posOrgId: fspOrgId,
-      cycleSelect: cycleSelect || initialCycleSelect,
-      begin,
-      end,
+      posOrgId: this.orgId,
     });
   }
 
   componentWillReceiveProps(nextProps) {
     const {
-      position: prePosition,
-      empInfo: { empInfo, empRespList },
       location: { query: prevQuery = EMPTY_OBJECT },
-      custRange,
     } = this.props;
-
     const {
-      position: nextPosition,
-      cycle: nextCycle,
-      location: { query: { cycleSelect: nextCycleSelect = '' } },
-   } = nextProps;
+      location: { query: nextQuery = EMPTY_OBJECT },
+    } = nextProps;
 
-    const { cycleSelect = '' } = prevQuery;
-
-    const { orgId: preOrgId } = prePosition;
-    const { orgId: nextOrgId } = nextPosition;
-    // FSP职责切换，position变化
-    if (preOrgId !== nextOrgId) {
-      this.setState({
-        fspOrgId: nextOrgId,
-      }, () => {
-        const { begin, end } = this.getTimeSelectBeginAndEnd();
-        this.getAllInfo({
-          custRange,
-          empInfo,
-          empRespList,
-          posOrgId: nextOrgId,
-          cycleSelect: nextCycleSelect,
-          begin,
-          end,
-        });
-      });
-    }
-    // 当url上没有cycleSelect时，默认选中第一个，本月
-    if (!cycleSelect) {
-      this.setState({
-        cycleSelect: (nextCycle[0] || {}).key,
-      });
-    }
-
-    // 当url上有cycleSelect时，更新state
-    if (cycleSelect !== nextCycleSelect) {
-      this.setState({
-        cycleSelect: nextCycleSelect,
-      });
+    // 时间或者组织机构树变化
+    // 重新请求绩效指标数据和净创收数据
+    if (prevQuery.orgId !== nextQuery.orgId
+      || prevQuery.cycleSelect !== nextQuery.cycleSelect) {
+      // 发送绩效指标和沪深归集率请求
+      this.sendIndicatorAndHSRateReq(nextProps);
     }
   }
 
+  // 我的客户时custType=CUST_MANAGER，非我的客户时custType=ORG， custType用来传给后端
   @autobind
   getCustType(orgId) {
-    const { fspOrgId } = this.state;
     let custType = CUST_MANAGER;
-    if (!_.isEmpty(orgId || fspOrgId)) { // 判断客户范围类型
+    if (this.isHasAuthorize || (orgId && orgId !== MAIN_MAGEGER_ID)) {
       custType = ORG;
     }
     return custType;
@@ -250,16 +222,12 @@ export default class Home extends PureComponent {
 
   @autobind
   getIndicators({ begin, end, orgId, cycleSelect }) {
-    const { getPerformanceIndicators, getManageIndicators, custRange } = this.props;
-    const { fspOrgId } = this.state;
+    const { getPerformanceIndicators, getManageIndicators } = this.props;
     const custType = this.getCustType(orgId);
-    if (custRange.length < 1) {
-      return null;
-    }
     getManageIndicators({
       custType, // 客户范围类型
       dateType: this.getDateType(cycleSelect), // 周期类型
-      orgId: orgId || fspOrgId, // 组织ID
+      orgId, // 组织ID
     });
     getPerformanceIndicators({
       begin,
@@ -267,18 +235,17 @@ export default class Home extends PureComponent {
       empId: helper.getEmpId(),
       custType, // 客户范围类型
       dateType: this.getDateType(cycleSelect), // 周期类型
-      orgId: orgId || fspOrgId, // 组织ID
+      orgId, // 组织ID
     });
-    return null;
   }
 
   @autobind
-  getTimeSelectBeginAndEnd() {
-    const { location: { query: { cycleSelect } } } = this.props;
+  getTimeSelectBeginAndEnd(props) {
+    const { cycle, location: { query: { cycleSelect } } } = props;
     const { historyTime, customerPoolTimeSelect } = optionsMap;
     const currentSelect = _.find(historyTime, itemData =>
       itemData.name === _.find(customerPoolTimeSelect, item =>
-        item.key === (cycleSelect || LOCAL_MONTH)).name) || {}; // 本月
+        item.key === (cycleSelect || (cycle[0] || {}).key)).name) || {}; // 本月
     const nowDuration = getDurationString(currentSelect.key);
     const begin = nowDuration.begin;
     const end = nowDuration.end;
@@ -288,88 +255,47 @@ export default class Home extends PureComponent {
     };
   }
 
-  @autobind
-  getAllInfo({ custRange, empInfo, empRespList, posOrgId, cycleSelect, begin, end }) {
-    this.setState({
-      cycleSelect,
-      createCustRange: this.handleCreateCustRange({
-        begin,
-        end,
-        custRange,
-        empInfo,
-        empRespList,
-        posOrgId,
-        cycleSelect,
-      }),
-    });
+  // 发送绩效指标和沪深归集率请求
+  sendIndicatorAndHSRateReq(props) {
+    const {
+      cycle,
+      location: {
+        query: {
+          cycleSelect,
+          orgId,
+        },
+      },
+    } = props;
+    // 根据cycle获取对应的begin和end值
+    const { begin, end } = this.getTimeSelectBeginAndEnd(props);
+    const tempObj = {
+      begin,
+      end,
+      cycleSelect: cycleSelect || (cycle[0] || {}).key,
+    };
+    if (orgId && orgId !== MAIN_MAGEGER_ID) {
+      tempObj.orgId = orgId;
+    } else if (this.isHasAuthorize) {
+      tempObj.orgId = this.orgId;
+    }
+    // 绩效指标
+    this.getIndicators(tempObj);
+    // 沪深归集率（经营指标）
+    this.fetchHSRate(tempObj);
   }
 
   @autobind
   fetchHSRate({ begin, end, orgId, cycleSelect }) {
-    const { getHSRate, custRange } = this.props;
-    const { fspOrgId } = this.state;
+    const { getHSRate } = this.props;
     const custType = this.getCustType(orgId);
-    if (custRange.length < 1) {
-      return null;
-    }
     getHSRate({
       custType, // 客户范围类型
       dateType: this.getDateType(cycleSelect), // 周期类型
-      orgId: orgId || fspOrgId, // 组织ID
+      orgId, // 组织ID
       empId: helper.getEmpId(),
       fieldList: ['shzNpRate'],
       begin,
       end,
-    });
-    return null;
-  }
-
-  @autobind
-  handleGetAllInfo(begin, end, cycleSelect) {
-    const { fspOrgId } = this.state;
-    const {
-      getInformation,
-      getToBeDone,
-      getHotWds,
-      getHistoryWdsList,
-      location: { pathname, query },
-      replace,
-    } = this.props;
-
-    const orgId = fspOrgId === '' ? null : fspOrgId; // 组织ID
-    const empNo = helper.getEmpId();
-
-    // 热词搜索
-    getHotWds({ orgId, empNo });
-    // 历史搜索记录
-    getHistoryWdsList({ orgId, empNo });
-    // 待办事项
-    getToBeDone();
-
-    // 首席投顾观点
-    getInformation({ curPageNum: 1, pageSize: 18 });
-    // 指标
-    // 已和下面接口合并
-    // this.getIndicators({ begin, end, orgId, cycleSelect });
-    // 绩效指标
-    this.getIndicators({ begin, end, orgId: fspOrgId, cycleSelect: cycleSelect || LOCAL_MONTH });
-
-    // 沪深归集率（经营指标）
-    this.fetchHSRate({ begin, end, orgId, cycleSelect });
-
-    // 净创收数据
-    // 已删除
-    // this.getIncomes({ begin, end, orgId: fspOrgId, cycleSelect: cycleSelect || LOCAL_MONTH });
-
-
-    // 替换url orgId
-    replace({
-      pathname,
-      query: {
-        ...query,
-        orgId: fspOrgId,
-        cycleSelect: cycleSelect || LOCAL_MONTH,
-      },
     });
   }
 
@@ -377,41 +303,20 @@ export default class Home extends PureComponent {
   @autobind
   updateQueryState(params) {
     const { replace, location: { pathname, query } } = this.props;
-    const { begin, end, cycleSelect = '', orgId = '' } = params;
-    const { fspOrgId, cycleSelect: currentCycleSelect } = this.state;
-    // 切换Duration和Orig时候，需要将数据全部恢复到默认值
-    this.setState({
-      cycleSelect: cycleSelect || currentCycleSelect, // 切换组织机构树的时候并没有cycleSelect
-      fspOrgId: orgId === 'msm' ? '' : fspOrgId, // 切换时间的时候并没有组织机构
-    }, () => {
-      if (orgId) {
-        replace({
-          pathname,
-          query: {
-            ...query,
-            orgId,
-          },
-        });
-      } else if (cycleSelect) {
-        replace({
-          pathname,
-          query: {
-            ...query,
-            cycleSelect,
-          },
-        });
-      }
-
-      // 时间或者组织机构树变化
-      // 重新请求绩效指标数据和净创收数据
-      this.getIndicators({
-        begin,
-        end,
-        orgId: orgId === 'msm' ? '' : orgId,
-        cycleSelect: cycleSelect || currentCycleSelect,
-      });
-      // 沪深归集率（经营指标）
-      this.fetchHSRate({ begin, end, orgId, cycleSelect });
+    const { cycleSelect, orgId } = params;
+    // 切换Duration和Orig
+    const obj = {};
+    if (orgId) {
+      obj.orgId = orgId;
+    } else if (cycleSelect) {
+      obj.cycleSelect = cycleSelect;
+    }
+    replace({
+      pathname,
+      query: {
+        ...query,
+        ...obj,
+      },
     });
   }
 
@@ -419,9 +324,8 @@ export default class Home extends PureComponent {
   @autobind
   queryHotPossibleWds(state) {
     const { getHotPossibleWds } = this.props;
-    const { fspOrgId } = this.state;
     const setData = {
-      orgId: fspOrgId, // 组织ID
+      orgId: this.isHasAuthorize ? this.orgId : '', // 组织ID
       empNo: helper.getEmpId(), // 用户ID
     };
     getHotPossibleWds({
@@ -434,9 +338,8 @@ export default class Home extends PureComponent {
   @autobind
   queryHistoryWdsList() {
     const { getHistoryWdsList } = this.props;
-    const { fspOrgId } = this.state;
     const setData = {
-      orgId: fspOrgId === '' ? null : fspOrgId, // 组织ID
+      orgId: this.isHasAuthorize ? this.orgId : '', // 组织ID
       empNo: helper.getEmpId(), // 用户ID
     };
     getHistoryWdsList({
@@ -448,9 +351,8 @@ export default class Home extends PureComponent {
   @autobind
   clearHistoryList() {
     const { clearSearchHistoryList } = this.props;
-    const { fspOrgId } = this.state;
     const setData = {
-      orgId: fspOrgId === '' ? null : fspOrgId, // 组织ID
+      orgId: this.isHasAuthorize ? this.orgId : '', // 组织ID
       empNo: helper.getEmpId(), // 用户ID
     };
     clearSearchHistoryList({
@@ -459,85 +361,49 @@ export default class Home extends PureComponent {
   }
 
   /**
-   * 创建客户范围
+   * 创建客户范围组件的tree数据
    * @param {*} props 最新的props
    */
   @autobind
   handleCreateCustRange({
-    begin,
-    end,
     custRange,
     empInfo,
-    empRespList,
     posOrgId,
-    cycleSelect,
   }) {
-    // 判断是否存在首页绩效指标查看权限
-    const respIdOfPosition = _.find(empRespList, item => (item.respId === HTSC_RESPID));
     const myCustomer = {
       id: MAIN_MAGEGER_ID,
       name: '我的客户',
     };
     // 无‘HTSC 首页指标查询’职责的普通用户，取值 '我的客户'
-    if (!respIdOfPosition) {
+    if (!this.isHasAuthorize) {
       this.setState({
-        fspOrgId: '',
-      }, () => {
-        this.handleGetAllInfo(begin, end, cycleSelect);
+        createCustRange: [myCustomer],
       });
-      return [myCustomer];
+      return;
     }
-
-    // 保证全局的职位存在的情况下取职位, 取不到时从empInfo中取值
-    const occDivnNum = empInfo.occDivnNum || '';
-    // let fspJobOrgId = 'ZZ001041048';
-    let fspJobOrgId = !_.isEmpty(window.forReactPosition) ?
-      window.forReactPosition.orgId :
-      occDivnNum;
-    if (posOrgId) {
-      fspJobOrgId = posOrgId;
-    }
-    this.setState({
-      fspOrgId: fspJobOrgId,
-      isHasAuthorize: true,
-    }, () => {
-      this.handleGetAllInfo(begin, end, cycleSelect);
-    });
     // 只要不是我的客户，都展开组织机构树
     // 用户职位是经总
-    if (fspJobOrgId === (custRange[0] || {}).id) {
+    if (posOrgId === (custRange[0] || {}).id) {
       this.setState({
         expandAll: true,
+        createCustRange: custRange,
       });
-      return custRange;
+      return;
     }
-    // fspJobOrgId 在机构树中所处的分公司位置
-    const groupInCustRange = _.find(custRange, item => item.id === fspJobOrgId);
+    // posOrgId 在机构树中所处的分公司位置
+    const groupInCustRange = _.find(custRange, item => item.id === posOrgId);
     if (groupInCustRange) {
       this.setState({
         expandAll: true,
+        createCustRange: [groupInCustRange, myCustomer],
       });
-      return [groupInCustRange, myCustomer];
+      return;
     }
-    // fspJobOrgId 在机构树中所处的营业部位置
-    // let tempData = custRange;
-    // tempData = _.filter(_.filter(tempData, i => i.level !== '1'),
-    //   (itemData) => {
-    //     if (_.isEmpty(itemData.children)) {
-    //       return itemData.id === fspJobOrgId;
-    //     }
-    //     return !_.isEmpty(_.filter(itemData.children, c => c.id === fspJobOrgId) || []);
-    //   }) || [];
-    // if (!_.isEmpty(tempData)) {
-    //   this.setState({
-    //     expandAll: true,
-    //   });
-    //   return [...tempData, myCustomer];
-
+    // posOrgId 在机构树的营业部位置
     let department;
     _(custRange).forEach((obj) => {
       if (obj.children && !_.isEmpty(obj.children)) {
-        const targetValue = _.find(obj.children, o => o.id === fspJobOrgId);
+        const targetValue = _.find(obj.children, o => o.id === posOrgId);
         if (targetValue) {
           department = [targetValue, myCustomer];
         }
@@ -545,13 +411,18 @@ export default class Home extends PureComponent {
     });
 
     if (department) {
-      return department;
+      this.setState({
+        createCustRange: department,
+      });
+      return;
     }
     // 有权限，但是用户信息中获取到的occDivnNum不在empOrg（组织机构树）中，显示用户信息中的数据
-    return [{
-      id: empInfo.occDivnNum,
-      name: empInfo.occupation,
-    }];
+    this.setState({
+      createCustRange: [{
+        id: empInfo.occDivnNum,
+        name: empInfo.occupation,
+      }],
+    });
   }
 
   @autobind
@@ -563,7 +434,6 @@ export default class Home extends PureComponent {
   @autobind
   renderTabsExtra() {
     const {
-      custRange,
       replace,
       collectCustRange,
       cycle,
@@ -571,11 +441,25 @@ export default class Home extends PureComponent {
     } = this.props;
     const {
       expandAll,
-      cycleSelect,
+      // cycleSelect,
       createCustRange,
-      fspOrgId,
-      isHasAuthorize,
     } = this.state;
+    const { query: {
+      orgId,
+      cycleSelect,
+    } } = location;
+    // curOrgId   客户范围回填
+    // 当url中由 orgId 则使用orgId
+    // 有权限时默认取所在岗位的orgId
+    // 无权限取 MAIN_MAGEGER_ID
+    let curOrgId = this.orgId;
+    // curCycleSelect  时间周期，先从url中取值，url中没有值时，取时间周期第一个
+    const curCycleSelect = cycleSelect || (cycle[0] || {}).key;
+    if (orgId) {
+      curOrgId = orgId;
+    } else if (!this.isHasAuthorize) {
+      curOrgId = MAIN_MAGEGER_ID;
+    }
     const extraProps = {
       custRange: createCustRange,
       replace,
@@ -583,9 +467,9 @@ export default class Home extends PureComponent {
       collectCustRange,
       cycle,
       expandAll,
-      selectValue: cycleSelect,
+      selectValue: curCycleSelect,
       location,
-      orgId: isHasAuthorize ? (fspOrgId || custRange[0].id) : null,
+      orgId: curOrgId,
     };
     return (<TabsExtra {...extraProps} />);
   }
@@ -606,8 +490,8 @@ export default class Home extends PureComponent {
       information,
       performanceIndicators,
       hsRate,
+      empInfo,
     } = this.props;
-    const { fspOrgId } = this.state;
     return (
       <div className={styles.customerPoolWrap}>
         <Search
@@ -616,7 +500,6 @@ export default class Home extends PureComponent {
           queryHistoryWdsList={this.queryHistoryWdsList}
           queryHotWdsData={hotPossibleWdsList}
           push={push}
-          orgId={fspOrgId}
           historyWdsList={historyWdsList}
           clearSuccess={clearState}
           clearFun={this.clearHistoryList}
@@ -627,9 +510,11 @@ export default class Home extends PureComponent {
         <div className={styles.poolContainer}>
           <div className={styles.content}>
             <ToBeDone
+              location={location}
               push={push}
               data={process}
               motTaskCountData={motTaskCount}
+              authority={this.isHasAuthorize}
             />
             <Tabs
               tabBarExtraContent={this.renderTabsExtra()}
@@ -638,6 +523,7 @@ export default class Home extends PureComponent {
             >
               <TabPane tab="经营指标" key="1">
                 <ManageIndicators
+                  empInfo={empInfo}
                   push={push}
                   indicators={manageIndicators}
                   location={location}
@@ -647,6 +533,7 @@ export default class Home extends PureComponent {
               </TabPane>
               <TabPane tab="投顾绩效" key="2">
                 <PerformanceIndicators
+                  empInfo={empInfo}
                   push={push}
                   indicators={performanceIndicators}
                   location={location}

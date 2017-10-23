@@ -111,6 +111,7 @@ export default class TabsExtra extends PureComponent {
           {
             !_.isEmpty(custRange) ?
               <CustRange
+                defaultFirst
                 orgId={orgId}
                 custRange={custRange}
                 location={location}
