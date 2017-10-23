@@ -6,8 +6,9 @@
  * @author zhangjunli
  */
 import React, { PropTypes, PureComponent } from 'react';
-import { Progress } from 'antd';
 import _ from 'lodash';
+import { Progress } from 'antd';
+import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import { linkTo } from './homeIndicators_';
 
@@ -50,6 +51,7 @@ export default class ProgressList extends PureComponent {
         // 拿到容纳了progress的div
         const rowElem = this[`row${index}`];
         if (rowElem && !_.isEmpty(location)) {
+          // 支持下钻，鼠标为小手形状
           rowElem.style.cursor = 'pointer';
         }
         // progress 组件
@@ -66,7 +68,9 @@ export default class ProgressList extends PureComponent {
       },
     );
   }
+/*
 
+*/
   @autobind
   handleClick(index, item) {
     const { cycle, push, location, empInfo } = this.props;
@@ -83,8 +87,10 @@ export default class ProgressList extends PureComponent {
     linkTo(param);
   }
 
-  renderList(dataSource) {
+  @autobind
+  renderList() {
     // const { cycle, push, location, empInfo } = this.props;
+    const { dataSource, location } = this.props;
     // 动态设置progress间距
     const length = dataSource.length;
     const style = { marginTop: `${(172 - (length * 25)) / (length + 1)}px` };
@@ -101,7 +107,12 @@ export default class ProgressList extends PureComponent {
           >
             <div className={styles.intro}>
               <div className={styles.title}>{item.cust}</div>
-              <div className={styles.count}>{item.thousandsCount}</div>
+              <div
+                className={classnames(
+                  styles.count,
+                  { [styles.supportClick]: !_.isEmpty(location) },
+                )}
+              >{item.thousandsCount}</div>
             </div>
             <Progress
               percent={(item.percent < 0 ? 0 : item.percent)}
@@ -115,10 +126,9 @@ export default class ProgressList extends PureComponent {
   }
 
   render() {
-    const { dataSource } = this.props;
     return (
       <div className={styles.container}>
-        {this.renderList(dataSource)}
+        {this.renderList()}
       </div>
     );
   }
