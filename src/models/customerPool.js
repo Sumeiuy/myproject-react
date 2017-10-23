@@ -288,8 +288,7 @@ export default {
         yield put({
           type: 'addCusToGroupSuccess',
           payload: {
-            groupId: resultData.groupId,
-            result: resultData.result,
+            result: resultData,
           },
         });
       }

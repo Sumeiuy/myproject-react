@@ -104,7 +104,7 @@ export function getProductSale({
 }
 
 // 首页经营业绩和投顾业绩柱状图label 数组
-export const businessOpenNumLabelList = ['天天发', '沪股通', '深股通', '融资融券', '股票期权', '创业版'];
+export const businessOpenNumLabelList = ['天天发', '沪港通', '深港通', '融资融券', '股票期权', '创业版'];
 
 // 经营指标的开通业务数
 // 一柱多彩
