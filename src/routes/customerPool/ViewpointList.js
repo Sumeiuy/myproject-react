@@ -28,8 +28,8 @@ const columns = [{
   ),
 }, {
   title: '类型',
-  dataIndex: 'textcategory',
-  key: 'textcategory',
+  dataIndex: 'textcategorychinese',
+  key: 'textcategorychinese',
   width: '18%',
   render: item => (
     <div className={classnames(styles.td, styles.category)}>{formatString(item)}</div>
