@@ -59,7 +59,7 @@ export default class TimeCycle extends PureComponent {
       );
     }
     return (
-      <div className="custRange">
+      <div className={`custRange ${styles.timeCycle}`}>
         {timeEle}
       </div>
     );

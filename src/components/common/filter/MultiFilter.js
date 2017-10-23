@@ -16,7 +16,7 @@ import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
-// import { helper } from '../../../utils';
+import { helper } from '../../../utils';
 
 import styles from './filter.less';
 
@@ -51,18 +51,27 @@ export default class MultiFilter extends PureComponent {
     const { value, separator } = props;
     this.state = {
       keyArr: value ? value.split(separator) : [],
+      moreBtnVisible: false,
     };
   }
 
   componentDidMount() {
-    // if (this.domNode) {
-    //   const domNodeHeight = helper.getCssStyle(this.domNode, 'height');
-    //   const domNodeLineHeight = helper.getCssStyle(this.domNode, 'line-height');
-    //   // 超过两行，显示...
-    //   if (parseInt(domNodeHeight) >= 2*parseInt(domNodeLineHeight)) {
+    this.addMoreBtn();
+  }
 
-    //   }
-    // }
+  // 判断是否超过一行，超过则显示 ... , 点击 ... 展开所有
+  @autobind
+  addMoreBtn() {
+    if (this.domNode) {
+      const domNodeHeight = helper.getCssStyle(this.domNode, 'height');
+      const domNodeLineHeight = helper.getCssStyle(this.domNode, 'line-height');
+      if (parseInt(domNodeHeight, 10) >= 2 * parseInt(domNodeLineHeight, 10)) {
+        this.domNode.style.height = domNodeLineHeight;
+        this.setState({
+          moreBtnVisible: true,
+        });
+      }
+    }
   }
 
   @autobind
@@ -91,6 +100,14 @@ export default class MultiFilter extends PureComponent {
   }
 
   @autobind
+  handleMore() {
+    this.domNode.style.height = 'auto';
+    this.setState({
+      moreBtnVisible: false,
+    });
+  }
+
+  @autobind
   renderList() {
     const { filterField } = this.props;
     const { keyArr } = this.state;
@@ -107,15 +124,23 @@ export default class MultiFilter extends PureComponent {
 
   render() {
     const { filterLabel, filterField } = this.props;
+    const { moreBtnVisible } = this.state;
     if (_.isEmpty(filterField)) {
       return null;
     }
     return (
       <div className={styles.filter}>
         <span>{filterLabel}:</span>
-        <ul ref={r => this.domNode = r}>
+        <ul
+          ref={r => this.domNode = r}
+        >
           {
             this.renderList()
+          }
+          {
+            moreBtnVisible ?
+              <li className={styles.moreBtn} onClick={this.handleMore}>...</li> :
+            null
           }
         </ul>
       </div>
