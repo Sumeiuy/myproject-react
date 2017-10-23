@@ -2,8 +2,8 @@
 * @Description: 新建合约条款 弹层
 * @Author: XuWenKang
 * @Date:   2017-09-27 17:10:08
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-19 15:31:44
+* @Last Modified by: LiuJianShu
+* @Last Modified time: 2017-10-20 18:36:27
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -37,35 +37,51 @@ export default class EditForm extends PureComponent {
     onCloseModal: PropTypes.func.isRequired,
     // 根据关键词搜索部门
     searchDepartment: PropTypes.func.isRequired,
+    // 默认数据
+    defaultData: PropTypes.object,
+    // 是否是编辑
+    edit: PropTypes.bool,
   }
 
   static defaultProps = {
-
+    defaultData: EMPTY_OBJECT,
+    edit: false,
   }
 
   constructor(props) {
     super(props);
+    const { defaultData, defaultData: { data, index }, edit } = props;
+    let clauseName = EMPTY_OBJECT;
+    let detailParam = EMPTY_OBJECT;
+    let department = EMPTY_OBJECT;
+    let value = '';
+    let editIndex = '';
+    if (!_.isEmpty(defaultData)) {
+      clauseName = {
+        termVal: data.termsDisplayName,
+        value: data.termsName,
+      };
+      detailParam = {
+        val: data.paraDisplayName,
+        value: data.paraName,
+      };
+      value = data.paraVal;
+      department = {
+        name: data.divName,
+        value: data.divIntegrationId,
+      };
+      editIndex = index;
+    }
     this.state = {
-      clauseName: EMPTY_OBJECT,
-      detailParam: EMPTY_OBJECT,
-      value: '',
-      department: EMPTY_OBJECT,
+      clauseName,
+      detailParam,
+      value,
+      department,
       detailParamList: EMPTY_ARRAY, // 明细参数列表
+      editIndex,
+      edit,
     };
   }
-
-  // componentDidMount() {
-  //   timer = setInterval(() => {
-  //     const wrap = document.querySelector('.addClauseWrap');
-  //     if (wrap) {
-  //       wrap.previousElementSibling.style.backgroundColor = 'rgba(0,0,0,0)';
-  //     }
-  //   }, 50);
-  // }
-
-  // componentWillUnmount() {
-  //   clearInterval(timer);
-  // }
 
   @autobind
   onOk() {
@@ -74,6 +90,8 @@ export default class EditForm extends PureComponent {
       detailParam,
       value,
       department,
+      edit,
+      editIndex,
     } = this.state;
     if (!clauseName.value) {
       message.error('请选择条款名称');
@@ -91,12 +109,28 @@ export default class EditForm extends PureComponent {
       message.error('请选择合作部门');
       return;
     }
-    this.props.onConfirm({
-      termsName: clauseName,
-      paraName: detailParam,
+    const termItem = {
+      // 条款名称
+      termsDisplayName: clauseName.termVal,
+      // 条款 ID
+      termsName: clauseName.value,
+      // 明细参数名称
+      paraDisplayName: detailParam.val,
+      // 明细参数 ID
+      paraName: detailParam.value,
+      // 值
       paraVal: value,
-      divName: department,
-    });
+      // 合作部门名称
+      divName: department.name,
+      // 合作部门 ID
+      divIntegrationId: department.value,
+    };
+    const termData = {
+      edit,
+      editIndex,
+      termItem,
+    };
+    this.props.onConfirm(termData);
     this.resetData();
   }
 
@@ -181,6 +215,13 @@ export default class EditForm extends PureComponent {
       wrapClassName: 'addClauseWrap',
     };
     const { clauseNameList, departmentList } = this.props;
+    const {
+      clauseName,
+      detailParamList,
+      detailParam,
+      value,
+      department,
+    } = this.state;
     return (
       <div className={styles.addClauseBox}>
         <CommonModal {...clasueProps} >
@@ -193,7 +234,7 @@ export default class EditForm extends PureComponent {
               <Select
                 name="clauseName"
                 data={clauseNameList}
-                value={this.state.clauseName.value || ''}
+                value={clauseName.value || ''}
                 onChange={this.handleSelectChange}
               />
             </div>
@@ -206,8 +247,8 @@ export default class EditForm extends PureComponent {
             <div className={`${styles.componentBox} ${styles.selectBox}`}>
               <Select
                 name="detailParam"
-                data={this.state.detailParamList}
-                value={this.state.detailParam.value || ''}
+                data={detailParamList}
+                value={detailParam.val || ''}
                 onChange={this.handleSelectChange}
               />
             </div>
@@ -220,7 +261,7 @@ export default class EditForm extends PureComponent {
             <div className={`${styles.componentBox} ${styles.inputBox}`}>
               <Input
                 onChange={this.changeValue}
-                value={this.state.value}
+                value={value}
               />
             </div>
           </div>
@@ -234,7 +275,7 @@ export default class EditForm extends PureComponent {
                 placeholder="合作部门"
                 showObjKey="name"
                 objId="value"
-                value={this.state.department.value || ''}
+                value={department.name || ''}
                 searchList={departmentList}
                 emitSelectItem={this.handleSelectDepartment}
                 emitToSearch={this.handleSearchDepartment}
