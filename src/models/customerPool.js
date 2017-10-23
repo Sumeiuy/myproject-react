@@ -7,9 +7,9 @@ import _ from 'lodash';
 import queryString from 'query-string';
 import pathToRegexp from 'path-to-regexp';
 import { customerPool as api } from '../api';
-import { toastM } from '../utils/sagaEffects';
-import { helper } from '../utils';
+import { helper, sagaEffects } from '../utils';
 
+const { toastM } = sagaEffects;
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
@@ -117,7 +117,7 @@ export default {
       dispatch({ type: 'getCustRangeByAuthority' });
       history.listen(({ pathname, search }) => {
         const params = queryString.parse(search);
-        const serviceLogUrl = pathToRegexp('customerPool/serviceLog').exec(pathname);
+        const serviceLogUrl = pathToRegexp('/customerPool/serviceLog').exec(pathname);
         const custGroupUrl = pathToRegexp('/customerPool/customerGroup').exec(pathname);
         if (serviceLogUrl) {
           const { pageSize, serveDateToPaged } = params;

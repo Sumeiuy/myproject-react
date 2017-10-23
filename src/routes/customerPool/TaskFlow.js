@@ -152,14 +152,6 @@ export default class TaskFlow extends PureComponent {
   }
 
   @autobind
-  handleStepUpdate() {
-    const { current } = this.state;
-    this.setState({
-      current: current + 1,
-    });
-  }
-
-  @autobind
   handleSubmitTaskFlow() {
     const { clearTaskFlowData, submitTaskFlow, storedTaskFlowData } = this.props;
     submitTaskFlow({

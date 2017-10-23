@@ -3,13 +3,14 @@
  *客户分组列表
  *@author zhuyanwen
  * */
-import React, { PureComponent, PropTypes } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 // import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import classnames from 'classnames';
 import GroupTable from '../groupManage/GroupTable';
-import './customerGrouplist.less';
 import tableStyles from '../groupManage/groupTable.less';
+import './customerGrouplist.less';
 
 const renderColumnTitle = () => [
   {
