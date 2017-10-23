@@ -194,10 +194,9 @@ export default class CreatePrivateClient extends PureComponent {
       title: '选择下一审批人员',
       placeholder: '员工号/员工姓名',
       modalKey: 'nextApproverModal',
-      rowKey: 'ptyMngId',
+      rowKey: 'login',
       searchShow: false,
     };
-    console.log('nextApproverList', this.props.nextApproverList);
 
     return (
       <CommonModal
