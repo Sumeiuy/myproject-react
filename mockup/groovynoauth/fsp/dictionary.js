@@ -3,8 +3,8 @@
 */
 exports.response = function (req, res) {
   return {
-    "code": "0", 
-    "msg": "OK", 
+    "code": "402", 
+    "msg": "000000", 
     "resultData": {
       "custRiskBearing": [
         {

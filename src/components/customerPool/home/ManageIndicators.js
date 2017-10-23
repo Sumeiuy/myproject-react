@@ -36,6 +36,7 @@ export default class PerformanceIndicators extends PureComponent {
     cycle: PropTypes.array,
     location: PropTypes.object.isRequired,
     hsRate: PropTypes.string,
+    empInfo: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -46,13 +47,13 @@ export default class PerformanceIndicators extends PureComponent {
 
   @autobind
   handleBusinessOpenClick(instance) {
-    const {
-      push,
-      cycle,
-      location,
-    } = this.props;
     instance.on('click', (arg) => {
-      console.log('instance arg >>>>', arg);
+      const {
+        push,
+        cycle,
+        location,
+        empInfo,
+      } = this.props;
       if (arg.componentType !== 'xAxis') {
         return;
       }
@@ -61,6 +62,7 @@ export default class PerformanceIndicators extends PureComponent {
         cycle,
         push,
         location,
+        empInfo,
       };
       if (arg.value === businessOpenNumLabelList[0]) {
         param.value = 'ttfCust';
@@ -97,6 +99,7 @@ export default class PerformanceIndicators extends PureComponent {
       cycle,
       push,
       location,
+      empInfo,
     } = this.props;
     // 字段语义，在mock文件内：/mockup/groovynoauth/fsp/emp/kpi/queryEmpKPIs.js
     const {
@@ -181,6 +184,7 @@ export default class PerformanceIndicators extends PureComponent {
                       cycle={cycle}
                       push={push}
                       location={location}
+                      empInfo={empInfo}
                     />
                   </IfEmpty>
                 </RectFrame>

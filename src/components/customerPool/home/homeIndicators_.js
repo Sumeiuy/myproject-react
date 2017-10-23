@@ -104,7 +104,7 @@ export function getProductSale({
 }
 
 // 首页经营业绩和投顾业绩柱状图label 数组
-export const businessOpenNumLabelList = ['天天发', '沪股通', '深股通', '融资融券', '股票期权', '创业版'];
+export const businessOpenNumLabelList = ['天天发', '沪港通', '深港通', '融资融券', '股票期权', '创业版'];
 
 // 经营指标的开通业务数
 // 一柱多彩
@@ -306,19 +306,27 @@ export function getHSRate(array) {
   };
 }
 
-export function linkTo({ source, value, bname, cycle, push, location }) {
+export function linkTo({ source, value, bname, cycle, push, location, empInfo, type = 'rightType' }) {
   if (_.isEmpty(location)) {
     return;
   }
   const { query: { orgId, cycleSelect } } = location;
   const pathname = '/customerPool/list';
+  const MAIN_MAGEGER_ID = 'msm';
   const obj = {
     source,
-    rightType: value,
+    [type]: value,
     bname: encodeURIComponent(bname),
-    orgId: orgId || '',
     cycleSelect: cycleSelect || (cycle[0] || {}).key,
   };
+  const { empInfo: { empName, empNum } } = empInfo;
+  if (orgId) {
+    if (orgId === MAIN_MAGEGER_ID) {
+      obj.ptyMng = `${empName}_${empNum}`;
+    } else {
+      obj.orgId = orgId;
+    }
+  }
   if (document.querySelector(fspContainer.container)) {
     const url = `${pathname}?${helper.queryToString(obj)}`;
     const param = {
