@@ -104,7 +104,6 @@ export default class CommonUpload extends PureComponent {
     const { deleteAttachmentLoading: preDAL } = this.props;
     const { deleteAttachmentLoading: nextDAL } = nextProps;
     if ((preDAL && !nextDAL)) {
-      console.warn('删除附件接口完毕', nextProps.deleteAttachmentList);
       const { deleteAttachmentList } = nextProps;
       this.setState({
         fileList: deleteAttachmentList, // 文件列表

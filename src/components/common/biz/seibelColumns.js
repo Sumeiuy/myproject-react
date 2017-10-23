@@ -35,7 +35,7 @@ export default function seibelColumns(props) {
       <div className="leftSection">
         <div className="id">
           <Icon type={type} className="seibelListIcon" />
-          <span className="serialNumber">编号{record.id || '无'}</span>
+          <span className="serialNumber">编号{(pageName === 'contract' ? record.business1 : record.id) || '暂无'}</span>
           <span className="type">{changeTypeDisplay(record.type, pageData)}</span>
         </div>
         <div className="subType">{changeDisplay(record.subType, subType)}</div>
