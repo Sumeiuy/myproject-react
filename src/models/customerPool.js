@@ -7,9 +7,9 @@ import _ from 'lodash';
 import queryString from 'query-string';
 import pathToRegexp from 'path-to-regexp';
 import { customerPool as api } from '../api';
-import { helper, sagaEffects } from '../utils';
+import { helper } from '../utils';
+import { toastM } from '../utils/sagaEffects';
 
-const { toastM } = sagaEffects;
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
