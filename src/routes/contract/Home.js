@@ -436,7 +436,7 @@ export default class Contract extends PureComponent {
 
   // 判断合约有效期是否大于开始日期
   @autobind
-  vdtBigStd(contractFormData) {
+  isVaildtBigThanStartday(contractFormData) {
     const startDate = new Date(contractFormData.startDt).getTime();
     const vailDate = new Date(contractFormData.vailDt).getTime();
     return startDate > vailDate;
@@ -492,7 +492,7 @@ export default class Contract extends PureComponent {
           message.error('请选择合约开始日期');
           return;
         }
-        if (contractFormData.vailDt && this.vdtBigStd(contractFormData)) {
+        if (contractFormData.vailDt && this.isVaildtBigThanStartday(contractFormData)) {
           message.error('合约开始日期不能大于合约有效期');
           return;
         }
