@@ -472,8 +472,6 @@ export default class Permission extends PureComponent {
               searchServerPersonList={searchServerPersonList}
               getBottonList={getBottonList}
               bottonList={bottonList}
-              nextApproverList={nextApproverList}
-              getNextApproverList={getNextApproverList}
               getModifyCustApplication={getModifyCustApplication}
               modifyCustApplication={modifyCustApplication}
               addListenModify={addListenModify}

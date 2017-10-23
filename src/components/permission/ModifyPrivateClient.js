@@ -50,8 +50,6 @@ export default class modifyPrivateClient extends PureComponent {
     attaches: PropTypes.array,
     attachment: PropTypes.string,
     searchServerPersonList: PropTypes.array.isRequired,
-    // nextApproverList: PropTypes.array.isRequired,
-    // getNextApproverList: PropTypes.func.isRequired,
     bottonList: PropTypes.object.isRequired,
     getBottonList: PropTypes.func.isRequired,
     canApplyCustList: PropTypes.array.isRequired,
@@ -136,13 +134,6 @@ export default class modifyPrivateClient extends PureComponent {
     });
     // 获取下一步骤按钮列表
     this.props.getBottonList({ flowId: this.props.flowId });
-
-    // // 按照给出的条件 搜索查询 下一审批人列表
-    // this.props.getNextApproverList({
-    //   approverNum: 'single',
-    //   btnId: this.state.btnId,
-    //   flowId: this.props.flowId,
-    // });
   }
 
   componentWillReceiveProps(nextProps) {
