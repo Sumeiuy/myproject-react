@@ -231,21 +231,6 @@ export default class ChartLineWidget extends PureComponent {
       yAxis: [
         {
           ...yAxisOptions,
-          min: minAssetProfit,
-          max: maxAssetProfit,
-          interval: assetProfitInterval,
-          axisLabel: {
-            ...yAxisOptions.axisLabel,
-            formatter(value, index) {
-              if (index === 1 || index === 3) {
-                return '';
-              }
-              return parseFloat(value).toFixed(2);
-            },
-          },
-        },
-        {
-          ...yAxisOptions,
           splitLine: {
             show: false,
           },
@@ -264,6 +249,21 @@ export default class ChartLineWidget extends PureComponent {
           min: minAssetProfitRate,
           max: maxAssetProfitRate,
           interval: assetProfitRateInterval,
+        },
+        {
+          ...yAxisOptions,
+          min: minAssetProfit,
+          max: maxAssetProfit,
+          interval: assetProfitInterval,
+          axisLabel: {
+            ...yAxisOptions.axisLabel,
+            formatter(value, index) {
+              if (index === 1 || index === 3) {
+                return '';
+              }
+              return parseFloat(value).toFixed(2);
+            },
+          },
         },
       ],
       series: {
@@ -293,7 +293,7 @@ export default class ChartLineWidget extends PureComponent {
 
 
     return (
-      <IECharts option={options} style={{ width: 300, height: 135 }} />
+      <IECharts option={options} style={{ width: 305, height: 152 }} />
     );
   }
 }
