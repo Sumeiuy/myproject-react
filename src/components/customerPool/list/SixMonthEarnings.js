@@ -122,26 +122,25 @@ export default class SixMonthEarnings extends PureComponent {
             <ChartLineWidget chartData={thisProfits} />
           </div>
           <div className={styles.chartsText}>
-            <div className={styles.lh28}>
-              <span>年最大时点资产：</span>
-              <span className={styles.numA}>{maxTotAsetYValue}</span>
-              {maxTotAsetYUnit}
+            <div>
+              <p className="tit">12个月峰值</p>
+              <p className="asset">
+                <span className="num">{maxTotAsetYValue}</span>
+                <span className="unit">{maxTotAsetYUnit}</span>
+              </p>
             </div>
-            <div className={styles.lh28}>
-              <span>本月收益率：</span>
-              <span className={styles.numB}>
-                {lastestPrifitsRate}
-              </span>
+            <div>
+              <p className="tit">本月收益：</p>
+              <p className="asset">
+                <span className="num redNum">{lastestPrifitsValue}</span>
+                <span className="unit redUnit">{lastestPrifitsUnit}</span>
+              </p>
             </div>
-            <div className={styles.lh28}>
-              <span>本月收益：</span>
-              <span className={styles.numB}>
-                {lastestPrifitsValue}
-                &nbsp;
-              </span>
-              <span>
-                {lastestPrifitsUnit}
-              </span>
+            <div>
+              <p className="tit">本月收益率：</p>
+              <p className="asset">
+                <span className="num redNum">{lastestPrifitsRate}</span>
+              </p>
             </div>
           </div>
         </div>

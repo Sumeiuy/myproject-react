@@ -35,14 +35,14 @@ export default class PerformanceIndicators extends PureComponent {
     push: PropTypes.func.isRequired,
     cycle: PropTypes.array,
     location: PropTypes.object.isRequired,
-    hsRate: PropTypes.string,
+    hsRateAndBusinessIndicator: PropTypes.array,
     empInfo: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
     indicators: {},
     cycle: [],
-    hsRate: '',
+    hsRateAndBusinessIndicator: [],
   }
 
   @autobind
@@ -65,46 +65,75 @@ export default class PerformanceIndicators extends PureComponent {
         empInfo,
       };
       if (arg.value === businessOpenNumLabelList[0]) {
-        param.value = 'ttfCust';
+        param.value = 'ttfBusi';
         param.bname = arg.value;
         linkTo(param);
       } else if (arg.value === businessOpenNumLabelList[1]) {
-        param.value = 'shHkCust';
+        param.value = 'hgtBusi';
         param.bname = arg.value;
         linkTo(param);
       } else if (arg.value === businessOpenNumLabelList[2]) {
-        param.value = 'szHkCust';
+        param.value = 'sgtBusi';
         param.bname = arg.value;
         linkTo(param);
       } else if (arg.value === businessOpenNumLabelList[3]) {
-        param.value = 'rzrqCust';
+        param.value = 'rzrqBusi';
         param.bname = arg.value;
         linkTo(param);
       } else if (arg.value === businessOpenNumLabelList[4]) {
-        param.value = 'optCust';
+        param.value = 'xsbBusi';
         param.bname = arg.value;
         linkTo(param);
       } else if (arg.value === businessOpenNumLabelList[5]) {
-        param.value = 'cyb';
+        param.value = 'gpqqBusi';
+        param.bname = arg.value;
+        linkTo(param);
+      } else if (arg.value === businessOpenNumLabelList[6]) {
+        param.value = 'cybBusi';
         param.bname = arg.value;
         linkTo(param);
       }
     });
   }
 
+  @autobind
+  analyticHSRateAndBusinessIndicator() {
+    // 返回数据是数组，元素的位置是固定的，根据位置取元素，最后一个是沪深归集率，其余的是业务开通的指标
+    const { hsRateAndBusinessIndicator } = this.props;
+    // 沪深归集率
+    let hsRate = 0;
+    // 业务开通数据
+    const clientNumberData = [];
+    // 业务开通name
+    const clientNameData = [];
+    const length = hsRateAndBusinessIndicator.length;
+    _.forEach(
+      hsRateAndBusinessIndicator,
+      (item, index) => {
+        if (index === (length - 1)) {
+          hsRate = filterEmptyToNumber(item.value).toFixed(2);
+        } else {
+          clientNumberData.push(filterEmptyToInteger(item.value));
+          clientNameData.push(item.name);
+        }
+      },
+    );
+    return { hsRate, clientNumberData, clientNameData };
+  }
+
   render() {
     const {
       indicators,
-      hsRate,
       cycle,
       push,
       location,
       empInfo,
     } = this.props;
+    // 解析hsRateAndBusinessIndicator数据
+    const { hsRate, clientNumberData, clientNameData } = this.analyticHSRateAndBusinessIndicator();
     // 字段语义，在mock文件内：/mockup/groovynoauth/fsp/emp/kpi/queryEmpKPIs.js
     const {
-      motOkMnt, motTotMnt, taskCust, totCust, startupCust,
-      ttfCust, rzrqCust, shHkCust, szHkCust, optCust,
+      motOkMnt, motTotMnt, taskCust, totCust,
       otcTranAmt, fundTranAmt, finaTranAmt, privateTranAmt,
       purAddCustaset, purRakeGjpdt, tranAmtBasicpdt, tranAmtTotpdt,
       purAddCust, newProdCust, purAddNoretailcust, purAddHighprodcust,
@@ -124,19 +153,12 @@ export default class PerformanceIndicators extends PureComponent {
     const pureAddHead = { icon: 'kehu', title: `新增客户（${pureAddUnit}）` };
 
     // 业务开通数（经营指标）
-    const clientNumberData = [
-      filterEmptyToInteger(ttfCust),
-      filterEmptyToInteger(shHkCust),
-      filterEmptyToInteger(szHkCust),
-      filterEmptyToInteger(rzrqCust),
-      filterEmptyToInteger(optCust),
-      filterEmptyToInteger(startupCust),
-    ];
-    const param = { clientNumberData };
+    const param = { clientNumberData, names: clientNameData };
     const { newUnit: clientUnit, items: clientItems } = getClientsNumber(param);
     const clientHead = { icon: 'kehuzhibiao', title: `业务开通数（${clientUnit}次）` };
 
     // 沪深归集率
+
     const hsRateData = getHSRate([filterEmptyToNumber(hsRate)]);
     const hsRateHead = { icon: 'jiaoyiliang', title: '沪深归集率' };
 
