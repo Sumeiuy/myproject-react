@@ -301,11 +301,10 @@ export default class Contract extends PureComponent {
     // 获取到新建订购时的按钮
     if (!_.isEqual(preAFSI, nextAFSI)) {
       // 获取到 flowStepInfo
-      const list = nextAFSI.flowButtons;
       this.setState({
         addFlowStepInfo: nextAFSI,
         addOrEditSelfBtnGroup: <BottonGroup
-          list={list}
+          list={nextAFSI}
           onEmitEvent={this.footerBtnHandle}
         />,
       }, () => {
@@ -314,11 +313,10 @@ export default class Contract extends PureComponent {
     }
     // 获取到新建退订时的按钮
     if (!_.isEqual(preUFSI, nextUFSI)) {
-      const list = nextUFSI.flowButtons;
       this.setState({
         unsubFlowStepInfo: nextUFSI,
         addOrEditSelfBtnGroup: <BottonGroup
-          list={list}
+          list={nextUFSI}
           onEmitEvent={this.footerBtnHandle}
         />,
       });
@@ -671,9 +669,9 @@ export default class Contract extends PureComponent {
     const { flowStepInfo, unsubFlowStepInfo } = this.state;
     let list = [];
     if (unsubFlowStepInfo) {
-      list = unsubFlowStepInfo.flowButtons;
+      list = unsubFlowStepInfo;
     } else {
-      list = flowStepInfo.flowButtons;
+      list = flowStepInfo;
     }
     this.setState({
       addOrEditSelfBtnGroup: <BottonGroup

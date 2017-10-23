@@ -7,7 +7,9 @@ import _ from 'lodash';
 import React from 'react';
 import Icon from '../Icon';
 import Tag from '../tag';
+import { seibelConfig } from '../../../config';
 
+const operationList = _.filter(seibelConfig.contract.operationList, v => v.label !== '全部');
 export default function seibelColumns(props) {
   const { pageName, type, pageData } = props;
   const { subType, status } = pageData;
@@ -24,6 +26,13 @@ export default function seibelColumns(props) {
   const changeDisplay = (st, options) => {
     if (st && !_.isEmpty(st)) {
       const nowStatus = _.find(options, o => o.value === st) || {};
+      return nowStatus.label || '无';
+    }
+    return '无';
+  };
+  const operationType = (value) => {
+    if (operationList && value) {
+      const nowStatus = _.find(operationList, o => o.value === value) || {};
       return nowStatus.label || '无';
     }
     return '无';
@@ -47,7 +56,7 @@ export default function seibelColumns(props) {
     render: (text, record) => (
       <div className="rightSection">
         <div className="tagArea">
-          {(pageName === 'contract' && record.business2) ? <Tag type="yellow" text={record.business2} /> : null}
+          {(pageName === 'contract' && record.business2) ? <Tag type="yellow" text={operationType(record.business2)} /> : null}
           <Tag type="blue" text={changeDisplay(record.status, status)} />
         </div>
         <div className="date">{(record.createTime && record.createTime.slice(0, 10)) || '无'}</div>
