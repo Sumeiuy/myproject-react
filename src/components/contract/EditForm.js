@@ -33,14 +33,6 @@ import styles from './editForm.less';
 const BOOL_TRUE = true;
 // 合约条款的表头、状态
 const { contract: { titleList } } = seibelConfig;
-// 临时数据 待删
-// const approvalRecordList = [{
-//   isOk: true,
-//   handler: '张三',
-//   handleTime: '2017/08/31',
-//   stepName: '流程发起',
-//   comment: 'asdasdadasd',
-// }];
 export default class EditForm extends PureComponent {
   static propTypes = {
     // 客户列表
@@ -76,14 +68,19 @@ export default class EditForm extends PureComponent {
         terms: props.contractDetail.baseInfo.terms,
       },
       // 是否显示添加合约条款组件
-      showAddClauseModal: false,
+      addClauseModal: false,
       // 选择审批人弹窗
       appravalInfo: {
         appraval: '',
         approverName: '',
         approverId: '',
       },
+      // 是否显示审批人弹窗
       choiceApprover: false,
+      // 合约条款默认数据
+      defaultData: {},
+      // 是否是编辑
+      editClause: false,
     };
   }
 
@@ -138,65 +135,6 @@ export default class EditForm extends PureComponent {
     });
   }
 
-  // 显示添加条款组件
-  @autobind
-  handleShowAddClause() {
-    this.setState({
-      ...this.state,
-      showAddClauseModal: true,
-    });
-  }
-
-  // 关闭添加条款组件
-  @autobind
-  handleCloseModal() {
-    this.setState({
-      ...this.state,
-      showAddClauseModal: false,
-    });
-  }
-
-  // 添加合约条款
-  @autobind
-  handleAddClause(clauseData) {
-    const { formData: { terms } } = this.state;
-    const termItem = {
-      termsName: clauseData.termsName.termVal, // 条款名称
-      termsVal: clauseData.termsName.value, // 条款code
-      paraName: clauseData.paraName.val, // 明细参数名称
-      paraValue: clauseData.paraName.value, // 明细参数code
-      paraVal: clauseData.paraVal, // 值
-      divName: clauseData.divName.name, // 合作部门名称
-      divValue: clauseData.value, // 合作部门code
-    };
-    this.setState({
-      ...this.state,
-      formData: {
-        ...this.state.formData,
-        terms: [...terms, termItem],
-      },
-    }, () => {
-      this.props.onChangeForm(this.state.formData);
-      this.handleCloseModal();
-    });
-  }
-
-  // 打开选择审批人弹窗
-  @autobind
-  openApproverBoard() {
-    this.setState({
-      choiceApprover: true,
-    });
-  }
-
-  // 关闭审批人员选择弹出窗
-  @autobind
-  closeChoiceApproverModal() {
-    this.setState({
-      choiceApprover: false,
-    });
-  }
-
   // 审批人弹出框确认按钮
   @autobind
   handleApproverModalOK(approver) {
@@ -209,6 +147,40 @@ export default class EditForm extends PureComponent {
     }, () => {
       this.props.onChangeForm(this.state.appravalInfo);
     });
+  }
+  // 合约条款弹窗提交事件
+  @autobind
+  handleAddClause(termData) {
+    const { formData: { terms } } = this.state;
+    const { edit, editIndex, termItem } = termData;
+    const newTerms = terms;
+    if (edit) {
+      newTerms[editIndex] = termItem;
+    } else {
+      newTerms.push(termItem);
+    }
+    this.setState({
+      ...this.state,
+      formData: {
+        ...this.state.formData,
+        terms: newTerms,
+      },
+    }, () => {
+      this.props.onChangeForm(this.state.formData);
+      this.closeModal('addClauseModal');
+    });
+  }
+  // 表格编辑事件
+  @autobind
+  editTableData(record, index) {
+    // 更新数据，打开合约条款弹窗
+    this.setState({
+      editClause: true,
+      defaultData: {
+        data: record,
+        index,
+      },
+    }, this.showModal('addClauseModal'));
   }
   // 表格删除事件
   @autobind
@@ -225,6 +197,22 @@ export default class EditForm extends PureComponent {
       this.props.onChangeForm(this.state.formData);
     });
   }
+  // 打开弹窗
+  @autobind
+  showModal(modalKey) {
+    this.setState({
+      [modalKey]: true,
+    });
+  }
+  // 关闭弹窗
+  @autobind
+  closeModal(modalKey) {
+    this.setState({
+      [modalKey]: false,
+      defaultData: {},
+      editClause: false,
+    });
+  }
 
   render() {
     const {
@@ -239,16 +227,18 @@ export default class EditForm extends PureComponent {
     } = this.props;
     const {
       formData,
-      showAddClauseModal,
+      addClauseModal,
       choiceApprover,
       appravalInfo: { appraval, approverName, approverId },
+      defaultData,
+      editClause,
     } = this.state;
     const buttonProps = {
       type: 'primary',
       size: 'large',
       className: styles.addClauseButton,
       ghost: true,
-      onClick: this.handleShowAddClause,
+      onClick: () => this.showModal('addClauseModal'),
     };
     const draftInfo = {
       name: baseInfo.createdName,
@@ -268,10 +258,19 @@ export default class EditForm extends PureComponent {
     // 表格中需要的操作
     const operation = {
       column: {
-        key: 'delete', // 'check'\'delete'\'view'
+        // beizhu = edit , shanchu = delete
+        key: [
+          {
+            key: 'beizhu',
+            operate: this.editTableData,
+          },
+          {
+            key: 'shanchu',
+            operate: this.deleteTableData,
+          },
+        ], // 'check'\'delete'\'view'
         title: '操作',
       },
-      operate: this.deleteTableData,
     };
     return (
       <div className={styles.editComponent}>
@@ -289,7 +288,10 @@ export default class EditForm extends PureComponent {
         { /* 拟稿人信息 */ }
         <DraftInfo data={draftInfo} />
         <div className={styles.editWrapper}>
-          <InfoTitle head="合约条款" />
+          <InfoTitle
+            head="合约条款"
+            isRequired
+          />
           <Button {...buttonProps}>新建</Button>
           <CommonTable
             data={formData.terms}
@@ -315,8 +317,8 @@ export default class EditForm extends PureComponent {
         </div>
         <div className={styles.editWrapper}>
           <InfoTitle head="审批人" />
-          <CommissionLine label="选择审批人" labelWidth="110px">
-            <div className={styles.checkApprover} onClick={this.openApproverBoard}>
+          <CommissionLine label="选择审批人" labelWidth="110px" required>
+            <div className={styles.checkApprover} onClick={() => this.showModal('choiceApprover')}>
               {approverName === '' ? '' : `${approverName}(${approverId})`}
               <div className={styles.searchIcon}>
                 <Icon type="search" />
@@ -325,20 +327,32 @@ export default class EditForm extends PureComponent {
           </CommissionLine>
         </div>
         <div className={styles.cutSpace} />
-        <AddClause
-          isShow={showAddClauseModal}
-          onConfirm={this.handleAddClause}
-          onCloseModal={this.handleCloseModal}
-          clauseNameList={clauseNameList}
-          departmentList={cooperDeparment}
-          searchDepartment={searchCooperDeparment}
-        />
-        <ChoiceApproverBoard
-          visible={choiceApprover}
-          approverList={newApproverList}
-          onClose={this.closeChoiceApproverModal}
-          onOk={this.handleApproverModalOK}
-        />
+        {
+          addClauseModal ?
+            <AddClause
+              isShow={addClauseModal}
+              onConfirm={this.handleAddClause}
+              onCloseModal={() => this.closeModal('addClauseModal')}
+              edit={editClause}
+              clauseNameList={clauseNameList}
+              departmentList={cooperDeparment}
+              searchDepartment={searchCooperDeparment}
+              defaultData={defaultData}
+            />
+          :
+            null
+        }
+        {
+          choiceApprover ?
+            <ChoiceApproverBoard
+              visible={choiceApprover}
+              approverList={newApproverList}
+              onClose={() => this.closeModal('choiceApprover')}
+              onOk={this.handleApproverModalOK}
+            />
+          :
+            null
+        }
       </div>
     );
   }

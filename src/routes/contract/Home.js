@@ -4,7 +4,7 @@
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by:   XuWenKang
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-19 21:26:30
+ * @Last Modified time: 2017-10-20 17:22:31
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
@@ -12,7 +12,7 @@ import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import { message } from 'antd';
 import _ from 'lodash';
-import { constructSeibelPostBody } from '../../utils/helper';
+import { constructSeibelPostBody, getEmpId } from '../../utils/helper';
 import SplitPanel from '../../components/common/splitPanel/SplitPanel';
 import ContractHeader from '../../components/common/biz/SeibelHeader';
 import Detail from '../../components/contract/Detail';
@@ -53,6 +53,7 @@ const mapStateToProps = state => ({
   customerList: state.app.customerList,
   // 查询右侧详情
   baseInfo: state.contract.baseInfo,
+  baseInfoLoading: state.loading.effects['contract/getBaseInfo'],
   // 退订时查询详情
   unsubscribeBaseInfo: state.contract.unsubscribeBaseInfo,
   // 附件列表
@@ -138,6 +139,7 @@ export default class Contract extends PureComponent {
     // 查询右侧详情
     getBaseInfo: PropTypes.func.isRequired,
     baseInfo: PropTypes.object.isRequired,
+    baseInfoLoading: PropTypes.bool,
     resetUnsubscribeDetail: PropTypes.func.isRequired,
     // 退订
     unsubscribeBaseInfo: PropTypes.object.isRequired,
@@ -180,6 +182,7 @@ export default class Contract extends PureComponent {
     flowHistory: EMPTY_LIST,
     contractDetail: EMPTY_OBJECT,
     saveContractDataLoading: false,
+    baseInfoLoading: false,
     flowStepInfo: EMPTY_OBJECT,
     addFlowStepInfo: EMPTY_OBJECT,
     unsubFlowStepInfo: EMPTY_OBJECT,
@@ -204,6 +207,8 @@ export default class Contract extends PureComponent {
       addFlowStepInfo: EMPTY_OBJECT,
       unsubFlowStepInfo: EMPTY_OBJECT,
       addOrEditSelfBtnGroup: '',
+      // 是否有修改的权限
+      hasEditPermission: false,
       // 修改合作合约对象的操作类型和id
       editContractInfo: {
         operationType: '',
@@ -241,6 +246,7 @@ export default class Contract extends PureComponent {
     const {
       seibleListLoading: prevSLL,
       baseInfo: preBI,
+      baseInfoLoading: preBIL,
       addFlowStepInfo: preAFSI,
       unsubFlowStepInfo: preUFSI,
       doApprove: preDA,
@@ -251,6 +257,7 @@ export default class Contract extends PureComponent {
       getBaseInfo,
       location: { query: { currentId } },
       baseInfo: nextBI,
+      baseInfoLoading: nextBIL,
       addFlowStepInfo: nextAFSI,
       unsubFlowStepInfo: nextUFSI,
       doApprove: nextDA,
@@ -273,6 +280,16 @@ export default class Contract extends PureComponent {
           type: pageType,
         });
       }
+    }
+    if ((preBIL && !nextBIL)) {
+      let hasEditPermission = false;
+      // 如果当前登陆人与详情里的审批人相等，显示编辑按钮
+      if (getEmpId() === nextBI.approver) {
+        hasEditPermission = true;
+      }
+      this.setState({
+        hasEditPermission,
+      });
     }
     // 获取到基本信息
     if (!_.isEqual(preBI, nextBI)) {
@@ -425,6 +442,23 @@ export default class Contract extends PureComponent {
     }
   }
 
+
+  // 判断合约有效期是否大于当前日期+5天
+  @autobind
+  isBiggerThanTodayAddFive(vailDt) {
+    const vailDateHs = new Date(vailDt).getTime();
+    const date = new Date();
+    return vailDateHs > (date.getTime() + (86400000 * 5));
+  }
+
+  // 判断合约有效期是否大于开始日期
+  @autobind
+  isBiggerThanStartDate(contractFormData) {
+    const startDate = new Date(contractFormData.startDt).getTime();
+    const vailDate = new Date(contractFormData.vailDt).getTime();
+    return startDate > vailDate;
+  }
+
   // 保存合作合约 新建/修改 数据
   @autobind
   saveContractData(itemBtn) {
@@ -440,7 +474,6 @@ export default class Contract extends PureComponent {
       getSeibleList,
       getBaseInfo,
     } = this.props;
-
     const { contractFormData, editFormModal } = this.state;
     if (!contractFormData.subType) {
       message.error('请选择子类型');
@@ -457,9 +490,11 @@ export default class Contract extends PureComponent {
       if (operationType === unsubscribe) {
         if (!contractFormData.contractNum.flowId) {
           message.error('请选择合约编号');
+          return;
         }
         if (!contractFormData.approverId) {
           message.error('请选择审批人');
+          return;
         }
         this.props.postDoApprove({
           flowId: contractFormData.contractNum.flowId,
@@ -474,8 +509,21 @@ export default class Contract extends PureComponent {
           message.error('请选择合约开始日期');
           return;
         }
+        if (contractFormData.vailDt && this.isBiggerThanStartDate(contractFormData)) {
+          message.error('合约开始日期不能大于合约有效期');
+          return;
+        }
+        if (contractFormData.vailDt && !this.isBiggerThanTodayAddFive(contractFormData.vailDt)) {
+          message.error('合约有效期必须大于当前日期加5天');
+          return;
+        }
+        if (!contractFormData.terms.length) {
+          message.error('请添加合约条款');
+          return;
+        }
         if (!contractFormData.approverId) {
           message.error('请选择审批人');
+          return;
         }
         const payload = {
           type: 'add',
@@ -503,8 +551,17 @@ export default class Contract extends PureComponent {
         message.error('请选择合约开始日期');
         return;
       }
+      if (contractFormData.vailDt && !this.isVaildtBigThanToday(contractFormData.vailDt)) {
+        message.error('合约有效期必须大于当前日期加5天');
+        return;
+      }
+      if (!contractFormData.terms.length) {
+        message.error('请添加合约条款');
+        return;
+      }
       if (!contractFormData.approverId) {
         message.error('请选择审批人');
+        return;
       }
       this.props.postDoApprove({
         flowId: this.state.flowId,
@@ -626,6 +683,7 @@ export default class Contract extends PureComponent {
     });
   }
 
+
   render() {
     const {
       location,
@@ -650,6 +708,7 @@ export default class Contract extends PureComponent {
       business2,
       createTime,
       addOrEditSelfBtnGroup,
+      hasEditPermission,
     } = this.state;
     if (!custRange || !custRange.length) {
       return null;
@@ -691,6 +750,7 @@ export default class Contract extends PureComponent {
         createTime={createTime}
         attachmentList={attachmentList}
         flowHistory={flowHistory}
+        hasEditPermission={hasEditPermission}
         showEditModal={this.handleShowEditForm}
       />
     );

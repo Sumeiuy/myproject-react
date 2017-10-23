@@ -43,6 +43,7 @@ const effects = {
   validate: 'commission/validateCustInfo',
   submitBatch: 'commission/submitBatchCommission',
   gjCommissionRate: 'commission/getGJCommissionRate',
+  singleCustList: 'commission/getSingleCustList',
 };
 
 const mapStateToProps = state => ({
@@ -86,6 +87,8 @@ const mapStateToProps = state => ({
   batchSubmitProcess: state.loading.effects[effects.submitBatch],
   // 目标股基佣金率码值列表
   gjCommissionList: state.commission.gjCommission,
+  // 单佣金调整页面客户查询列表
+  singleCustomerList: state.commission.singleCustomerList,
 });
 
 const getDataFunction = (loading, type) => query => ({
@@ -124,6 +127,8 @@ const mapDispatchToProps = {
   submitBatch: getDataFunction(false, effects.submitBatch),
   // 获取目标股基佣金率
   getGJCommissionRate: getDataFunction(false, effects.gjCommissionRate),
+  // 查询单佣金调整页面客户列表
+  getSingleCustList: getDataFunction(false, effects.singleCustList),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -144,6 +149,7 @@ export default class CommissionHome extends PureComponent {
     getSubscribeDetail: PropTypes.func.isRequired,
     getUnSubscribeDetail: PropTypes.func.isRequired,
     getApprovalRecords: PropTypes.func.isRequired,
+    getSingleCustList: PropTypes.func.isRequired,
     searchCustList: PropTypes.func.isRequired,
     searchDrafter: PropTypes.func.isRequired,
     getProductList: PropTypes.func.isRequired,
@@ -167,6 +173,7 @@ export default class CommissionHome extends PureComponent {
     submitBatch: PropTypes.func.isRequired,
     getGJCommissionRate: PropTypes.func.isRequired,
     gjCommissionList: PropTypes.array.isRequired,
+    singleCustomerList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -476,6 +483,7 @@ export default class CommissionHome extends PureComponent {
       productList,
       getProductList,
       getCanApplyCustList,
+      getSingleCustList,
       submitBatch,
       approvalUserList,
       canApplyCustList,
@@ -486,6 +494,7 @@ export default class CommissionHome extends PureComponent {
       empInfo: { empInfo },
       getGJCommissionRate,
       gjCommissionList,
+      singleCustomerList,
     } = this.props;
     if (_.isEmpty(custRange)) {
       return null;
@@ -552,6 +561,8 @@ export default class CommissionHome extends PureComponent {
           onBatchSubmit={submitBatch}
           gjCommission={gjCommissionList}
           queryGJCommission={getGJCommissionRate}
+          querySingleCustList={getSingleCustList}
+          singleCustList={singleCustomerList}
         />
       </div>
     );

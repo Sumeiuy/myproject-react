@@ -2,8 +2,8 @@
 * @Description: 合作合约新建 页面
 * @Author: XuWenKang
 * @Date:   2017-09-21 15:17:50
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-19 21:03:52
+* @Last Modified by: LiuJianShu
+* @Last Modified time: 2017-10-20 17:51:01
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -76,18 +76,21 @@ export default class AddForm extends PureComponent {
         terms: [],
       },
       // 是否显示添加合约条款组件
-      showAddClauseModal: false,
+      addClauseModal: false,
       // 操作类型
       operationType: subscribe,
       // 选择审批人弹窗
       choiceApprover: false,
-
       // 选择审批人弹窗
       appravalInfo: {
         appraval: '',
         approverName: '',
         approverId: '',
       },
+      // 合约条款默认数据
+      defaultData: {},
+      // 是否是编辑
+      editClause: false,
     };
   }
 
@@ -144,46 +147,26 @@ export default class AddForm extends PureComponent {
     });
   }
 
-  // 显示添加条款组件
-  @autobind
-  handleShowAddClause() {
-    this.setState({
-      ...this.state,
-      showAddClauseModal: true,
-    });
-  }
-
-  // 关闭添加条款组件
-  @autobind
-  handleCloseModal() {
-    this.setState({
-      ...this.state,
-      showAddClauseModal: false,
-    });
-  }
-
   // 添加合约条款
   @autobind
-  handleAddClause(clauseData) {
+  handleAddClause(termData) {
     const { formData: { terms } } = this.state;
-    const termItem = {
-      termsName: clauseData.termsName.termVal, // 条款名称
-      termsVal: clauseData.termsName.value, // 条款code
-      paraName: clauseData.paraName.val, // 明细参数名称
-      paraValue: clauseData.paraName.value, // 明细参数code
-      paraVal: clauseData.paraVal, // 值
-      divName: clauseData.divName.name, // 合作部门名称
-      divIntegrationId: clauseData.divName.value, // 合作部门code
-    };
+    const { edit, editIndex, termItem } = termData;
+    const newTerms = terms;
+    if (edit) {
+      newTerms[editIndex] = termItem;
+    } else {
+      newTerms.push(termItem);
+    }
     this.setState({
       ...this.state,
       formData: {
         ...this.state.formData,
-        terms: [...terms, termItem],
+        terms: newTerms,
       },
     }, () => {
       this.props.onChangeForm(this.state.formData);
-      this.handleCloseModal();
+      this.closeModal('addClauseModal');
     });
   }
 
@@ -204,11 +187,21 @@ export default class AddForm extends PureComponent {
     });
   }
 
-  // 打开选择审批人弹窗
+  // 打开弹窗
   @autobind
-  openApproverBoard() {
+  showModal(modalKey) {
     this.setState({
-      choiceApprover: true,
+      [modalKey]: true,
+    });
+  }
+
+  // 关闭弹窗
+  @autobind
+  closeModal(modalKey) {
+    this.setState({
+      [modalKey]: false,
+      defaultData: {},
+      editClause: false,
     });
   }
 
@@ -234,6 +227,18 @@ export default class AddForm extends PureComponent {
     });
   }
 
+  // 表格编辑事件
+  @autobind
+  editTableData(record, index) {
+    // 更新数据，打开合约条款弹窗
+    this.setState({
+      editClause: true,
+      defaultData: {
+        data: record,
+        index,
+      },
+    }, this.showModal('addClauseModal'));
+  }
   // 表格删除事件
   @autobind
   deleteTableData(record, index) {
@@ -263,17 +268,19 @@ export default class AddForm extends PureComponent {
     } = this.props;
     const {
       formData,
-      showAddClauseModal,
+      addClauseModal,
       operationType,
       choiceApprover,
       appravalInfo: { approverName, approverId },
+      defaultData,
+      editClause,
     } = this.state;
     const buttonProps = {
       type: 'primary',
       size: 'large',
       className: styles.addClauseButton,
       ghost: true,
-      onClick: this.handleShowAddClause,
+      onClick: () => this.showModal('addClauseModal'),
     };
     const listData = flowStepInfo.flowButtons[0].flowAuditors;
     const newApproverList = listData.map((item, index) => {
@@ -290,10 +297,19 @@ export default class AddForm extends PureComponent {
     // 表格中需要的操作
     const operation = {
       column: {
-        key: 'delete', // 'check'\'delete'\'view'
+        // beizhu = edit , shanchu = delete
+        key: [
+          {
+            key: 'beizhu',
+            operate: this.editTableData,
+          },
+          {
+            key: 'shanchu',
+            operate: this.deleteTableData,
+          },
+        ], // 'check'\'delete'\'view'
         title: '操作',
       },
-      operate: this.deleteTableData,
     };
     return (
       <div className={styles.editComponent}>
@@ -313,7 +329,10 @@ export default class AddForm extends PureComponent {
           ref={(BaseInfoAddComponent) => { this.BaseInfoAddComponent = BaseInfoAddComponent; }}
         />
         <div className={styles.editWrapper}>
-          <InfoTitle head="合约条款" />
+          <InfoTitle
+            head="合约条款"
+            isRequired
+          />
           {
             operationType === subscribe ?
               <Button {...buttonProps}>新建</Button>
@@ -342,8 +361,8 @@ export default class AddForm extends PureComponent {
         />
         <div className={styles.editWrapper}>
           <InfoTitle head="审批人" />
-          <CommissionLine label="选择审批人" labelWidth="110px">
-            <div className={styles.checkApprover} onClick={this.openApproverBoard}>
+          <CommissionLine label="选择审批人" labelWidth="110px" required>
+            <div className={styles.checkApprover} onClick={() => this.showModal('choiceApprover')}>
               {approverName === '' ? '' : `${approverName}(${approverId})`}
               <div className={styles.searchIcon}>
                 <Icon type="search" />
@@ -352,20 +371,32 @@ export default class AddForm extends PureComponent {
           </CommissionLine>
         </div>
         <div className={styles.cutSpace} />
-        <AddClause
-          isShow={showAddClauseModal}
-          onConfirm={this.handleAddClause}
-          onCloseModal={this.handleCloseModal}
-          clauseNameList={clauseNameList}
-          departmentList={cooperDeparment}
-          searchDepartment={searchCooperDeparment}
-        />
-        <ChoiceApproverBoard
-          visible={choiceApprover}
-          approverList={newApproverList}
-          onClose={this.closeChoiceApproverModal}
-          onOk={this.handleApproverModalOK}
-        />
+        {
+          addClauseModal ?
+            <AddClause
+              isShow={addClauseModal}
+              onConfirm={this.handleAddClause}
+              onCloseModal={() => this.closeModal('addClauseModal')}
+              edit={editClause}
+              clauseNameList={clauseNameList}
+              departmentList={cooperDeparment}
+              searchDepartment={searchCooperDeparment}
+              defaultData={defaultData}
+            />
+          :
+            null
+        }
+        {
+          choiceApprover ?
+            <ChoiceApproverBoard
+              visible={choiceApprover}
+              approverList={newApproverList}
+              onClose={this.closeChoiceApproverModal}
+              onOk={this.handleApproverModalOK}
+            />
+          :
+            null
+        }
       </div>
     );
   }
