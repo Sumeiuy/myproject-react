@@ -201,7 +201,7 @@ export default {
       });
       // 获取审批记录的 payload
       const flowPayload = {
-        flowCode: response.resultData.workflowCode || '',
+        flowCode: response.resultData.flowid || '',
         loginuser: empId,
       };
       const flowHistoryResponse = yield call(api.getFlowHistory, flowPayload);

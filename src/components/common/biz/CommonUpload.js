@@ -29,7 +29,7 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Progress, Upload, message, Popover, Row, Col } from 'antd';
+import { Progress, Popconfirm, Upload, message, Popover, Row, Col } from 'antd';
 import { autobind } from 'core-decorators';
 import moment from 'moment';
 // import _ from 'lodash';
@@ -142,14 +142,12 @@ export default class CommonUpload extends PureComponent {
   onRemove(attachId) {
     const { deleteAttachment } = this.props;
     const { empId, attachment } = this.state;
-    if (confirm('确定要删除此附件吗？')) {// eslint-disable-line
-      const deleteObj = {
-        empId,
-        attachId,
-        attachment,
-      };
-      deleteAttachment(deleteObj);
-    }
+    const deleteObj = {
+      empId,
+      attachId,
+      attachment,
+    };
+    deleteAttachment(deleteObj);
   }
 
   @autobind
@@ -204,7 +202,15 @@ export default class CommonUpload extends PureComponent {
                         {
                           edit ?
                             <em>
-                              <Icon type="shanchu" onClick={() => this.onRemove(item.attachId)} />
+                              <Popconfirm
+                                placement="top"
+                                onConfirm={() => this.onRemove(item.attachId)}
+                                okText="是"
+                                cancelText="否"
+                                title={'是否删除该附件？'}
+                              >
+                                <Icon type="shanchu" />
+                              </Popconfirm>
                             </em>
                           :
                             null

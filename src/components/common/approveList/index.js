@@ -40,7 +40,7 @@ export default class ApproveList extends PureComponent {
         <div className={styles.approveList}>
           {
             data.map(item => (
-              <div key={item.handleTime}>
+              <div key={item.entryTime}>
                 <p>
                   审批人：{item.handleName}
                   于{item.handleTime}，
