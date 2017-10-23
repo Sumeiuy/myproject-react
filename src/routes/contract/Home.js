@@ -434,6 +434,14 @@ export default class Contract extends PureComponent {
     return vailDateHs > (date.getTime() + (86400000 * 5));
   }
 
+  // 判断合约有效期是否大于开始日期
+  @autobind
+  vdtBigStd(contractFormData) {
+    const startDate = new Date(contractFormData.startDt).getTime();
+    const vailDate = new Date(contractFormData.vailDt).getTime();
+    return startDate > vailDate;
+  }
+
   // 保存合作合约 新建/修改 数据
   @autobind
   saveContractData(itemBtn) {
@@ -482,6 +490,10 @@ export default class Contract extends PureComponent {
       } else {
         if (!contractFormData.startDt) {
           message.error('请选择合约开始日期');
+          return;
+        }
+        if (contractFormData.vailDt && this.vdtBigStd(contractFormData)) {
+          message.error('合约开始日期不能大于合约有效期');
           return;
         }
         if (contractFormData.vailDt && !this.isVaildtBigThanToday(contractFormData.vailDt)) {
