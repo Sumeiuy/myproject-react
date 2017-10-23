@@ -38,8 +38,6 @@ const mapStateToProps = state => ({
   list: state.app.seibleList,
   // 服务人员列表
   searchServerPersonList: state.permission.searchServerPersonList,
-  // 拟稿人
-  drafterList: state.app.drafterList,
   // 部门
   custRange: state.app.custRange,
   // 已申请客户
@@ -78,8 +76,6 @@ const mapDispatchToProps = {
   getServerPersonelList: fetchDataFunction(false, 'permission/getServerPersonelList'),
   // 搜索服务人员列表
   getSearchServerPersonList: fetchDataFunction(false, 'permission/getSearchServerPersonList'),
-  // 获取拟稿人
-  getDrafterList: fetchDataFunction(false, 'app/getDrafterList'),
   // 获取部门
   getCustRange: fetchDataFunction(false, 'app/getCustRange'),
   // 获取已申请客户列表
@@ -106,10 +102,8 @@ export default class Permission extends PureComponent {
   static propTypes = {
     list: PropTypes.object.isRequired,
     seibelListLoading: PropTypes.bool,
-    drafterList: PropTypes.array.isRequired,
     custRange: PropTypes.array.isRequired,
     getPermissionList: PropTypes.func.isRequired,
-    getDrafterList: PropTypes.func.isRequired,
     getCustRange: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     getDetailMessage: PropTypes.func.isRequired,
@@ -125,7 +119,7 @@ export default class Permission extends PureComponent {
     getHasServerPersonList: PropTypes.func.isRequired,
     getNextApproverList: PropTypes.func.isRequired,
     nextApproverList: PropTypes.array.isRequired,
-    bottonList: PropTypes.array.isRequired,
+    bottonList: PropTypes.object.isRequired,
     getBottonList: PropTypes.func.isRequired,
     getModifyCustApplication: PropTypes.func.isRequired,
     modifyCustApplication: PropTypes.object.isRequired,
@@ -285,10 +279,12 @@ export default class Permission extends PureComponent {
   // 查询拟稿人
   @autobind
   toSearchDrafter(value) {
-    const { getDrafterList } = this.props;
-    getDrafterList({
+    const { getSearchServerPersonList } = this.props;
+    getSearchServerPersonList({
       keyword: value,
       type: pageType,
+      pageSize: 10,
+      pageNum: 1,
     });
   }
 
@@ -374,7 +370,6 @@ export default class Permission extends PureComponent {
       list,
       location,
       replace,
-      drafterList,
       custRange,
       customerList,
       canApplyCustList,
@@ -412,7 +407,7 @@ export default class Permission extends PureComponent {
         creatSeibelModal={this.creatPermossionModal}
         toSearchDrafter={this.toSearchDrafter}
         toSearchCust={this.toSearchCust}
-        drafterList={drafterList}
+        drafterList={searchServerPersonList}
         customerList={customerList}
         custRange={custRange}
       />
