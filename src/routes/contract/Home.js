@@ -445,7 +445,7 @@ export default class Contract extends PureComponent {
 
   // 判断合约有效期是否大于当前日期+5天
   @autobind
-  isVaildtBigThanToday(vailDt) {
+  isBiggerThanTodayAddFive(vailDt) {
     const vailDateHs = new Date(vailDt).getTime();
     const date = new Date();
     return vailDateHs > (date.getTime() + (86400000 * 5));
@@ -453,7 +453,7 @@ export default class Contract extends PureComponent {
 
   // 判断合约有效期是否大于开始日期
   @autobind
-  isVaildtBigThanStartday(contractFormData) {
+  isBiggerThanStartDate(contractFormData) {
     const startDate = new Date(contractFormData.startDt).getTime();
     const vailDate = new Date(contractFormData.vailDt).getTime();
     return startDate > vailDate;
@@ -509,11 +509,11 @@ export default class Contract extends PureComponent {
           message.error('请选择合约开始日期');
           return;
         }
-        if (contractFormData.vailDt && this.isVaildtBigThanStartday(contractFormData)) {
+        if (contractFormData.vailDt && this.isBiggerThanStartDate(contractFormData)) {
           message.error('合约开始日期不能大于合约有效期');
           return;
         }
-        if (contractFormData.vailDt && !this.isVaildtBigThanToday(contractFormData.vailDt)) {
+        if (contractFormData.vailDt && !this.isBiggerThanTodayAddFive(contractFormData.vailDt)) {
           message.error('合约有效期必须大于当前日期加5天');
           return;
         }
