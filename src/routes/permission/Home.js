@@ -125,7 +125,7 @@ export default class Permission extends PureComponent {
     getHasServerPersonList: PropTypes.func.isRequired,
     getNextApproverList: PropTypes.func.isRequired,
     nextApproverList: PropTypes.array.isRequired,
-    bottonList: PropTypes.array.isRequired,
+    bottonList: PropTypes.object.isRequired,
     getBottonList: PropTypes.func.isRequired,
     getModifyCustApplication: PropTypes.func.isRequired,
     modifyCustApplication: PropTypes.object.isRequired,
