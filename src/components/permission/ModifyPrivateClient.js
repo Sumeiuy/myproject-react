@@ -17,19 +17,21 @@ import style from './modifyPrivateClient.less';
 const subTypeList = seibelConfig.permission.subType;
 const statusList = seibelConfig.permission.status;
 const overFlowBtnId = 118006; // 终止按钮的flowBtnId
-const columns = [{
-  title: '工号',
-  dataIndex: 'ptyMngId',
-  key: 'ptyMngId',
-}, {
-  title: '姓名',
-  dataIndex: 'ptyMngName',
-  key: 'ptyMngName',
-}, {
-  title: '所属营业部',
-  dataIndex: 'businessDepartment',
-  key: 'businessDepartment',
-}];
+const columns = [
+  {
+    title: '工号',
+    dataIndex: 'login',
+    key: 'login',
+  }, {
+    title: '姓名',
+    dataIndex: 'empName',
+    key: 'empName',
+  }, {
+    title: '所属营业部',
+    dataIndex: 'occupation',
+    key: 'occupation',
+  },
+];
 
 export default class modifyPrivateClient extends PureComponent {
   static propTypes = {
@@ -48,9 +50,9 @@ export default class modifyPrivateClient extends PureComponent {
     attaches: PropTypes.array,
     attachment: PropTypes.string,
     searchServerPersonList: PropTypes.array.isRequired,
-    nextApproverList: PropTypes.array.isRequired,
-    getNextApproverList: PropTypes.func.isRequired,
-    bottonList: PropTypes.array.isRequired,
+    // nextApproverList: PropTypes.array.isRequired,
+    // getNextApproverList: PropTypes.func.isRequired,
+    bottonList: PropTypes.object.isRequired,
     getBottonList: PropTypes.func.isRequired,
     canApplyCustList: PropTypes.array.isRequired,
     getModifyCustApplication: PropTypes.func.isRequired,
@@ -110,7 +112,7 @@ export default class modifyPrivateClient extends PureComponent {
       routeId: '',
       // 下一审批人列表
       nextApproverList: [],
-      bottonList: [],
+      bottonList: {},
     };
   }
 
@@ -135,12 +137,12 @@ export default class modifyPrivateClient extends PureComponent {
     // 获取下一步骤按钮列表
     this.props.getBottonList({ flowId: this.props.flowId });
 
-    // 按照给出的条件 搜索查询 下一审批人列表
-    this.props.getNextApproverList({
-      approverNum: 'single',
-      btnId: this.state.btnId,
-      flowId: this.props.flowId,
-    });
+    // // 按照给出的条件 搜索查询 下一审批人列表
+    // this.props.getNextApproverList({
+    //   approverNum: 'single',
+    //   btnId: this.state.btnId,
+    //   flowId: this.props.flowId,
+    // });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -188,11 +190,13 @@ export default class modifyPrivateClient extends PureComponent {
     // 修改状态下的提交按钮
     // 点击按钮后 弹出下一审批人 模态框
     this.setState({
-      routeId: item.routeId,
+      routeId: item.operate,
       btnName: item.btnName,
-      btnId: item.btnId,
-      nextGroupId: item.nextGroupId,
+      btnId: item.flowBtnId,
+      nextGroupId: item.nextGroupName,
+      nextApproverList: item.flowAuditors,
     }, () => {
+      console.warn('nextApproverList', item.flowAuditors);
       if (item.flowBtnId !== overFlowBtnId) {
         this.setState({
           nextApproverModal: true,
@@ -227,7 +231,7 @@ export default class modifyPrivateClient extends PureComponent {
       // 备注
       remark: this.state.remark,
       // 下一审批人
-      approvalIds: !_.isEmpty(value) ? this.state.nextApproverList.concat(value.ptyMngId) : [],
+      approvalIds: !_.isEmpty(value) ? [value.login] : [],
       // 下一组ID
       nextGroupId: this.state.nextGroupId,
       btnName: this.state.btnName,
@@ -301,12 +305,12 @@ export default class modifyPrivateClient extends PureComponent {
       visible: this.state.nextApproverModal,
       onOk: this.confirmSubmit,
       onCancel: () => { this.setState({ nextApproverModal: false }); },
-      dataSource: this.props.nextApproverList,
+      dataSource: this.state.nextApproverList,
       columns,
       title: '选择下一审批人员',
       placeholder: '员工号/员工姓名',
       modalKey: 'nextApproverModal',
-      rowKey: 'ptyMngId',
+      rowKey: 'login',
       searchShow: false,
     };
     const btnGroupElement = (<BottonGroup
