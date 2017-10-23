@@ -205,14 +205,6 @@ export default class AddForm extends PureComponent {
     });
   }
 
-  // 关闭审批人员选择弹出窗
-  @autobind
-  closeChoiceApproverModal() {
-    this.setState({
-      choiceApprover: false,
-    });
-  }
-
   // 审批人弹出框确认按钮
   @autobind
   handleApproverModalOK(approver) {
@@ -391,7 +383,7 @@ export default class AddForm extends PureComponent {
             <ChoiceApproverBoard
               visible={choiceApprover}
               approverList={newApproverList}
-              onClose={this.closeChoiceApproverModal}
+              onClose={() => this.closeModal('choiceApprover')}
               onOk={this.handleApproverModalOK}
             />
           :
