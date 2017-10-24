@@ -124,7 +124,6 @@ export default class CreatePrivateClient extends PureComponent {
 
   @autobind
   updateValue(name, value) {
-    console.log(name, value);
     this.setState({ [name]: value });
     switch (name) {
       case 'subType':
