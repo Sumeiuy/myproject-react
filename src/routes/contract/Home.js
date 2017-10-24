@@ -8,7 +8,11 @@
  * @Last Modified time: 2017-10-24 16:47:47
 =======
  * @Last Modified by: LiuJianShu
+<<<<<<< HEAD
  * @Last Modified time: 2017-10-24 17:20:02
+>>>>>>> group/seibel
+=======
+ * @Last Modified time: 2017-10-24 18:13:16
 >>>>>>> group/seibel
  */
 import React, { PureComponent, PropTypes } from 'react';
@@ -260,7 +264,7 @@ export default class Contract extends PureComponent {
   componentWillReceiveProps(nextProps) {
     const {
       seibleListLoading: prevSLL,
-      baseInfo: preBI,
+      // baseInfo: preBI,
       baseInfoLoading: preBIL,
       unsubFlowStepInfo: preUFSI,
       doApprove: preDA,
@@ -305,12 +309,12 @@ export default class Contract extends PureComponent {
         hasEditPermission,
       });
     }
-    // 获取到基本信息
-    if (!_.isEqual(preBI, nextBI)) {
-      this.setState({
-        contractFormData: nextBI,
-      });
-    }
+    // // 获取到基本信息
+    // if (!_.isEqual(preBI, nextBI)) {
+    //   this.setState({
+    //     contractFormData: nextBI,
+    //   });
+    // }
 
     // 获取到新建订购时的按钮
     if (!_.isEmpty(nextAFSI)) {
@@ -518,7 +522,7 @@ export default class Contract extends PureComponent {
     // 新建合作合约弹窗
     if (!editFormModal) {
       const operationType = contractFormData.workflowname;
-      // 判断是退订还是订购
+      // 判断是退订
       if (operationType === unsubscribe) {
         if (!contractFormData.contractNum.flowId) {
           message.error('请选择合约编号');

@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-10-24 15:29:16
  * @Last Modified by: zhufeiyang(zhufeiyang@htsc.com)
- * @Last Modified time: 2017-10-24 18:28:13
+ * @Last Modified time: 2017-10-24 18:40:46
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
