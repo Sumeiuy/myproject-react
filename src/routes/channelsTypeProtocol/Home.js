@@ -1,10 +1,9 @@
 /*
- * @Description: 合作合约 home 页面
- * @Author: LiuJianShu
- * @Date: 2017-09-22 14:49:16
+ * @Description: 通道类型协议 home 页面
+ * @Author: XuWenKang
+ * @Date: 2017-10-24 15:29:16
  * @Last Modified by:   XuWenKang
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-20 17:22:31
+ * @Last Modified time: 2017-10-24 15:29:16
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
@@ -464,37 +463,6 @@ export default class Contract extends PureComponent {
     return startDate > vailDate;
   }
 
-
-  // 检查合约条款值是否合法
-  @autobind
-  checkClauseIsLegal(list) {
-    const uniqedArr = _.uniqBy(list, 'paraName');
-    const arr1 = [];
-    let clauseStatus = true;
-    uniqedArr.forEach((v) => {
-      const paraName = v.paraName;
-      let arr2 = [];
-      list.forEach((sv) => {
-        if (paraName === sv.paraName) {
-          arr2.push(sv);
-        }
-      });
-      arr1.push(arr2);
-      arr2 = [];
-    });
-    for (let i = 0; i < arr1.length; i++) {
-      let result = 0;
-      arr1[i].forEach((v) => {
-        result += Number(v.paraVal);
-      });
-      if (+result !== 1) {
-        clauseStatus = false;
-        break;
-      }
-    }
-    return clauseStatus;
-  }
-
   // 保存合作合约 新建/修改 数据
   @autobind
   saveContractData() {
@@ -558,10 +526,6 @@ export default class Contract extends PureComponent {
           message.error('请添加合约条款');
           return;
         }
-        if (!this.checkClauseIsLegal(contractFormData.terms)) {
-          message.error('合约条款中每种明细参数的值加起来必须要等于1');
-          return;
-        }
         const payload = {
           type: 'add',
           data: contractFormData,
@@ -599,10 +563,6 @@ export default class Contract extends PureComponent {
       }
       if (!contractFormData.terms.length) {
         message.error('请添加合约条款');
-        return;
-      }
-      if (!this.checkClauseIsLegal(contractFormData.terms)) {
-        message.error('合约条款中每种明细参数的值加起来必须要等于1');
         return;
       }
       const payload = {
