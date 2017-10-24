@@ -274,7 +274,6 @@ export default class EditForm extends PureComponent {
               <DropDownSelect
                 placeholder="合作部门"
                 showObjKey="name"
-                objId="value"
                 value={department.name || ''}
                 searchList={departmentList}
                 emitSelectItem={this.handleSelectDepartment}
