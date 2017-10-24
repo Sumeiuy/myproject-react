@@ -11,7 +11,7 @@ export default class SelectLabelCust extends PureComponent {
     getLabelInfo: PropTypes.func.isRequired,
     circlePeopleData: PropTypes.array.isRequired,
     getLabelPeople: PropTypes.func.isRequired,
-    peopleOfLabelData: PropTypes.object.isRequired,
+    peopleOfLabelData: PropTypes.array.isRequired,
     // 保存的数据
     storedData: PropTypes.object,
   };

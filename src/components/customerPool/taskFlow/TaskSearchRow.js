@@ -8,8 +8,10 @@ import React, { PropTypes, PureComponent } from 'react';
 import { Radio, Modal, Button } from 'antd';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
+import classnames from 'classnames';
 import GroupTable from '../groupManage/GroupTable';
 import styles from './taskSearchRow.less';
+import tableStyles from '../groupManage/groupTable.less';
 
 
 const RadioGroup = Radio.Group;
@@ -20,7 +22,7 @@ export default class TaskSearchRow extends PureComponent {
   static propTypes = {
     circlePeopleData: PropTypes.array.isRequired,
     condition: PropTypes.string,
-    peopleOfLabelData: PropTypes.object.isRequired,
+    peopleOfLabelData: PropTypes.array.isRequired,
     getLabelPeople: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
@@ -35,22 +37,19 @@ export default class TaskSearchRow extends PureComponent {
     this.state = {
       visible: false,
       curPageNum: 1,
-      curPageSize: 10,
+      pageSize: 10,
       totalRecordNum: 0,
-      seeCustId: '',
+      custNum: '',
     };
   }
   componentWillMount() {
   }
   componentWillReceiveProps(nextProps) {
     // console.log(nextProps);
-    const { circlePeopleData, peopleOfLabelData, condition } = nextProps;
+    const { circlePeopleData, condition } = nextProps;
     _.map(circlePeopleData, (item) => {
       const newDesc = item.labelDesc.replace(condition, `<span>${condition}</span>`);
       item.labelDesc = newDesc; // eslint-disable-line
-    });
-    this.setState({
-      totalRecordNum: peopleOfLabelData.totalCount,
     });
     // console.log(circlePeopleData)
   }
@@ -62,19 +61,19 @@ export default class TaskSearchRow extends PureComponent {
 
   @autobind
   handleSeeCust(value) {
-    console.log(1);
-    console.log(value);
     const { getLabelPeople } = this.props;
     const { curPageNum, pageSize } = this.state;
     getLabelPeople({
-      labelId: value,
+      labelId: value.id,
       curPageNum,
       pageSize,
     });
     this.setState({
       visible: true,
-      seeCustId: value,
+      custNum: value.customNum,
+      totalRecordNum: value.customNum,
     });
+    console.log('curPageNum--', curPageNum, 'pageSize---', pageSize);
   }
 
   @autobind
@@ -86,17 +85,7 @@ export default class TaskSearchRow extends PureComponent {
   @autobind
   handleShowSizeChange(currentPageNum, changedPageSize) {
     console.log('currentPageNum--', currentPageNum, 'changedPageSize--', changedPageSize);
-    const { location: { query, pathname }, replace } = this.props;
     const { getLabelPeople } = this.props;
-    // 替换当前页码和分页条目
-    replace({
-      pathname,
-      query: {
-        ...query,
-        curPageNum: 1,
-        pageSize: changedPageSize,
-      },
-    });
     getLabelPeople({
       curPageNum: currentPageNum,
       pageSize: changedPageSize,
@@ -106,20 +95,9 @@ export default class TaskSearchRow extends PureComponent {
   @autobind
   handlePageChange(nextPage, currentPageSize) {
     console.log('nextPage---', nextPage, 'currentPageSize---', currentPageSize);
-    const { location: { query, pathname }, replace } = this.props;
     const { getLabelPeople } = this.props;
-    // 替换当前页码和分页条目
-    replace({
-      pathname,
-      query: {
-        ...query,
-        curPageNum: nextPage,
-        pageSize: currentPageSize,
-      },
-    });
     getLabelPeople({
       curPageNum: nextPage,
-      pageSize: currentPageSize,
     });
   }
 
@@ -150,14 +128,15 @@ export default class TaskSearchRow extends PureComponent {
     // console.log(this.props);
     const {
       curPageNum,
-      curPageSize,
+      pageSize,
       totalRecordNum,
       visible,
+      custNum,
     } = this.state;
-    const { circlePeopleData, peopleOfLabelData } = this.props;
+    const { circlePeopleData, peopleOfLabelData, condition } = this.props;
     const titleColumn = this.renderColumnTitle();
     return (
-      <div>
+      <div className={styles.divContent}>
         <RadioGroup name="radiogroup" onChange={this.change}>
           {_.map(circlePeopleData,
             item => <div className={styles.divRows}>
@@ -170,13 +149,13 @@ export default class TaskSearchRow extends PureComponent {
               <h4
                 dangerouslySetInnerHTML={{ __html: item.labelDesc }}
               />
-              <a className={styles.seeCust} onClick={() => this.handleSeeCust(item.id)}>查看客户</a>
+              <a className={styles.seeCust} onClick={() => this.handleSeeCust(item)}>查看客户</a>
             </div>)}
         </RadioGroup>
         <div className={styles.seeCust}>
           <Modal
             visible={visible}
-            title={`满足标签为‘客户画像’的共有${peopleOfLabelData.totalCount}位`}
+            title={`满足标签为 ${condition} 的共有${custNum}位`}
             onOk={this.handleOk}
             maskClosable={false}
             onCancel={this.handleCancel}
@@ -190,13 +169,18 @@ export default class TaskSearchRow extends PureComponent {
             <GroupTable
               pageData={{
                 curPageNum,
-                curPageSize,
+                pageSize,
                 totalRecordNum,
               }}
-              tableClass={styles.center}
+              tableClass={
+                classnames({
+                  [styles.center]: true,
+                  [tableStyles.groupTable]: true,
+                })
+              }
               onSizeChange={this.handleShowSizeChange}
               onPageChange={this.handlePageChange}
-              listData={peopleOfLabelData.eleContents}
+              listData={peopleOfLabelData}
               titleColumn={titleColumn}
               isFirstColumnLink={false}
             />
