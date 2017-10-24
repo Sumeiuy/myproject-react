@@ -6,6 +6,7 @@
  * @Last Modified time: 2017-10-20 17:24:02
  */
 import React, { PureComponent } from 'react';
+import { autobind } from 'core-decorators';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import _ from 'lodash';
@@ -19,6 +20,8 @@ import CommonTable from '../common/biz/CommonTable';
 import { seibelConfig } from '../../config';
 import { dateFormat } from '../../utils/helper';
 
+// 操作类型列表
+const { contract: { operationList } } = seibelConfig;
 // 子类型列表
 const childTypeList = _.filter(seibelConfig.contract.subType, v => v.label !== '全部');
 const EMPTY_PARAM = '暂无';
@@ -32,7 +35,6 @@ export default class Detail extends PureComponent {
     showEditModal: PropTypes.func,
     flowHistory: PropTypes.array,
     operationType: PropTypes.string,
-    createTime: PropTypes.string,
     hasEditPermission: PropTypes.bool,
   }
 
@@ -43,7 +45,6 @@ export default class Detail extends PureComponent {
     uploadAttachment: () => {},
     showEditModal: () => {},
     operationType: '',
-    createTime: '',
     hasEditPermission: false,
   }
 
@@ -66,6 +67,24 @@ export default class Detail extends PureComponent {
     }
   }
 
+  // 处理接口返回的拟稿提请时间
+  @autobind
+  getCreatedDate(date) {
+    if (date) {
+      return `${dateFormat(date.split(' ')[0])} ${date.split(' ')[1]}`;
+    }
+    return EMPTY_PARAM;
+  }
+
+  // 根据code返回操作类型name
+  @autobind
+  getOperationType(type) {
+    if (type) {
+      return _.filter(operationList, v => v.value === type)[0].label;
+    }
+    return EMPTY_PARAM;
+  }
+
   render() {
     const {
       baseInfo,
@@ -74,7 +93,6 @@ export default class Detail extends PureComponent {
       showEditModal,
       flowHistory,
       operationType,
-      createTime,
       hasEditPermission,
     } = this.props;
     const { terms } = this.state;
@@ -131,7 +149,7 @@ export default class Detail extends PureComponent {
         </div>
         <div className={styles.detailWrapper}>
           <InfoTitle head="基本信息" />
-          <InfoItem label="操作类型" value={operationType || EMPTY_PARAM} />
+          <InfoItem label="操作类型" value={this.getOperationType(operationType)} />
           <InfoItem label="子类型" value={childTypeList[0].label || EMPTY_PARAM} />
           <InfoItem label="客户" value={`${baseInfo.custName || EMPTY_PARAM} ${baseInfo.econNum || EMPTY_PARAM}`} />
           <InfoItem label="合约开始日期" value={dateFormat(baseInfo.startDt) || EMPTY_PARAM} />
@@ -142,7 +160,7 @@ export default class Detail extends PureComponent {
         <div className={styles.detailWrapper}>
           <InfoTitle head="拟稿信息" />
           <InfoItem label="拟稿人" value={`${baseInfo.divisionName || EMPTY_PARAM} ${baseInfo.createdName || EMPTY_PARAM}`} />
-          <InfoItem label="提请时间" value={createTime || EMPTY_PARAM} />
+          <InfoItem label="提请时间" value={this.getCreatedDate(baseInfo.createdDt)} />
           <InfoItem label="状态" value={statusLabel || EMPTY_PARAM} />
         </div>
         <div className={styles.detailWrapper}>
