@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 10:29:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-19 14:11:28
+ * @Last Modified time: 2017-10-24 09:10:43
  */
 
 import React, { PureComponent } from 'react';
@@ -28,9 +28,6 @@ export default class PickTargetCustomer extends PureComponent {
     currentTab: PropTypes.string.isRequired,
     saveCurrentTab: PropTypes.func.isRequired,
     storedTaskFlowData: PropTypes.object.isRequired,
-    // saveTaskFlowData: PropTypes.func.isRequired,
-    // saveDataEmitter: PropTypes.object.isRequired,
-    // onStepUpdate: PropTypes.func.isRequired,
   };
 
   static defaultProps = {

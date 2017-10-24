@@ -2,7 +2,7 @@
  * @Author: zhuyanwen
  * @Date: 2017-10-09 13:25:51
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-20 15:41:59
+ * @Last Modified time: 2017-10-24 09:23:40
  * @description: 客户分组功能
  */
 
@@ -20,12 +20,13 @@ import AddNewGroup from '../../components/customerPool/group/AddNewGroup';
 import AddCusSuccess from '../../components/customerPool/group/AddCusSuccess';
 import { fspGlobal, helper } from '../../utils';
 
-
-const CUR_PAGE = 1; // 默认当前页 0->1, 后端入参变化
-const CUR_PAGESIZE = 10; // 默认页大小
+const CUR_PAGE = 1;
+const CUR_PAGESIZE = 10;
+const CUR_PAGE_COUNT = 10;
 const TabPane = Tabs.TabPane;
 const CUR_KEYWORD = null;
-let groupId = '';
+let onOff = false;
+
 const mapStateToProps = state => ({
   cusgroupList: state.customerPool.cusgroupList,
   cusgroupPage: state.customerPool.cusgroupPage,
@@ -35,6 +36,7 @@ const mapStateToProps = state => ({
   // 更新分组信息成功与否
   operateGroupResult: state.customerPool.operateGroupResult,
 });
+
 const mapDispatchToProps = {
   goBack: routerRedux.goBack,
   go: routerRedux.go,
@@ -58,52 +60,7 @@ const mapDispatchToProps = {
     payload: query || {},
   }),
 };
-const columns = [
-  {
-    title: '分组名称',
-    dataIndex: 'groupName',
-    width: '20%',
-    key: 'groupName',
-    render: item => <a title={item} className="groupNames">
-      {item}
-    </a>,
-  },
-  {
-    title: '分组描述',
-    dataIndex: 'xComments',
-    key: 'xComments',
-    width: '60%',
-    render: item =>
-      <div className="groupDescription">
-        <div className="showtext"> {item}</div>
-        <div className="hiddentext">
-          <div>{item}</div>
-        </div>
-      </div>,
-  },
-  {
-    title: '创建时间',
-    dataIndex: 'createdTm',
-    key: 'createdTm',
-    width: '20%',
-    render: item => <span title={item} className="groupNames">
-      {item}
-    </span>,
-  },
-];
-let selectGroupName = '';
-// let selectGroupDescription = '';
-/* 列表checkbox按钮 */
-const rowSelection = {
-  type: 'radio',
-  onChange: (selectedRowKeys, selectedRows) => {
-    groupId = selectedRows[0].groupId;
-    selectGroupName = selectedRows[0].groupName;
-    // selectGroupDescription = selectedRows[0].xComments;
-  },
-};
-let onOff = false;
-// {_.truncate(item.text, { length: 18, omission: '...' })}
+
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 export default class CustomerGroup extends PureComponent {
@@ -115,8 +72,8 @@ export default class CustomerGroup extends PureComponent {
     cusgroupPage: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
     addCustomerToGroup: PropTypes.func.isRequired,
-    cusGroupSaveResult: PropTypes.string,
-    resultgroupId: PropTypes.string,
+    cusGroupSaveResult: PropTypes.string.isRequired,
+    resultgroupId: PropTypes.string.isRequired,
     goBack: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
     // 操作分组结果
@@ -124,6 +81,7 @@ export default class CustomerGroup extends PureComponent {
     // 操作分组（编辑、删除）
     operateGroup: PropTypes.func.isRequired,
   }
+
   constructor(props) {
     super(props);
     /* 初始化classname,首次渲染显示分组tab,隐藏分组成功组件 */
@@ -132,75 +90,18 @@ export default class CustomerGroup extends PureComponent {
       showOperateGroupSuccess: false,
       cusgroupId: '',
       groupName: '',
+      groupId: '',
+      currentSelectRowKeys: [],
     };
-  }
-
-  componentWillMount() {
-    /* 获取客户分组列表 */
-    this.getCustomerGroup(this.props);
   }
 
   componentWillReceiveProps(nextProps) {
     // 根据分组结果，重新渲染组件
-    const { cusGroupSaveResult, resultgroupId, location: { query } } = nextProps;
-    const { location: { query: preQuery } } = this.props;
+    const { cusGroupSaveResult, resultgroupId } = nextProps;
     this.setState({
       showGroupPanel: cusGroupSaveResult !== 'success',
       showOperateGroupSuccess: cusGroupSaveResult === 'success',
       cusgroupId: resultgroupId,
-    });
-
-    if (query !== preQuery) {
-      this.getCustomerGroup({ ...nextProps });
-    }
-  }
-
-  @autobind
-  getCustomerGroup(props) {
-    const { location: { query }, getCustomerGroupList } = props;
-    console.log('props---', query.value);
-    const param = {
-      // 必传，页大小
-      pageNum: query.curPageNum || CUR_PAGE,
-      pageSize: query.pageSize || CUR_PAGESIZE,
-      empId: helper.getEmpId(),
-      keyWord: query.keyWord || CUR_KEYWORD,
-    };
-    getCustomerGroupList(param);
-  }
-  /**
-   * 页码改变事件
-   * @param {*} nextPage 下一页码
-   * @param {*} curPageSize 当前页
-   */
-  @autobind
-  handlePageChange(page) {
-    const { location: { query, pathname }, replace } = this.props;
-    replace({
-      pathname,
-      query: {
-        ...query,
-        curPageNum: page.nextPage,
-        curPageSize: page.currentPageSize,
-      },
-    });
-  }
-
-  /**
-   *
-   * @param current
-   * @param size
-   */
-  @autobind
-  handleSizeChange(current, size) {
-    const { replace, location: { query, pathname } } = this.props;
-    replace({
-      pathname,
-      query: {
-        ...query,
-        curPageSize: size,
-        curPageNum: 1,
-      },
     });
   }
 
@@ -225,7 +126,7 @@ export default class CustomerGroup extends PureComponent {
   parseQuery() {
     const { location: { query: { ids, condition } } } = this.props;
     let custCondition = {};
-    let custIdList = [];
+    let custIdList = null;
 
     if (!_.isEmpty(ids)) {
       custIdList = decodeURIComponent(ids).split(',');
@@ -252,6 +153,7 @@ export default class CustomerGroup extends PureComponent {
   /*  添加到已有分组 */
   @autobind
   handleSubmit() {
+    const { groupId } = this.state;
     /* groupId不为空，表示已经选中了分组 */
     if (groupId !== '') {
       /* 获取所选目标分组客户：ids表示选择客户，condition表示全选,将筛选条件传入后台。 */
@@ -268,27 +170,7 @@ export default class CustomerGroup extends PureComponent {
         enterType,
       } = custCondition;
 
-      this.setState({
-        groupName: selectGroupName,
-      });
-
-      // 编辑分组
-      // operateGroup({
-      //   groupId,
-      //   groupName: selectGroupName,
-      //   groupDesc: selectGroupDescription,
-      //   includeCustIdList,
-      //   excludeCustIdList: null,
-      //   includeCustSearchReq: {
-      //     orgId: null,
-      //     searchTypeReq,
-      //     paramsReqList,
-      //     filtersReq,
-      //     sortsReqList,
-      //     enterType,
-      //   },
-      // });
-
+      // 添加分组
       addCustomerToGroup({
         groupId,
         custIdList,
@@ -309,6 +191,7 @@ export default class CustomerGroup extends PureComponent {
       onOff = true;
     }
   }
+
   /* 添加到新建分组 */
   @autobind
   handleNewGroupSubmit(value) {
@@ -347,15 +230,102 @@ export default class CustomerGroup extends PureComponent {
 
   @autobind
   closeTab() {
-    // fspGlobal.closeRctTabById('FSP_GROUP');
     fspGlobal.closeRctTabById('RCT_FSP_CUSTOMER_LIST');
-    // this.props.goBack();
+  }
+
+  /**
+   * 页码改变事件，翻页事件
+   * @param {*} nextPage 下一页码
+   * @param {*} curPageSize 当前页条目
+   */
+  @autobind
+  handlePageChange(nextPage, currentPageSize) {
+    const { location: { query, query: { keyWord }, pathname }, replace,
+      getCustomerGroupList } = this.props;
+
+    // 替换当前页码和分页条目
+    replace({
+      pathname,
+      query: {
+        ...query,
+        curPageNum: nextPage,
+        curPageSize: currentPageSize,
+      },
+    });
+    getCustomerGroupList({
+      pageNum: nextPage,
+      pageSize: currentPageSize,
+      keyWord: keyWord || CUR_KEYWORD,
+    });
+  }
+
+  /**
+   * 改变每一页的条目
+   * @param {*} currentPageNum 当前页码
+   * @param {*} changedPageSize 当前每页条目
+   */
+  @autobind
+  handleShowSizeChange(currentPageNum, changedPageSize) {
+    const { location: { query, query: { keyWord }, pathname }, replace,
+      getCustomerGroupList } = this.props;
+
+    // 替换当前页码和分页条目
+    replace({
+      pathname,
+      query: {
+        ...query,
+        curPageNum: 1,
+        curPageSize: changedPageSize,
+      },
+    });
+    getCustomerGroupList({
+      pageNum: currentPageNum,
+      pageSize: changedPageSize,
+      keyWord: keyWord || CUR_KEYWORD,
+    });
+  }
+
+  @autobind
+  handleRowSelectionChange(selectedRowKeys, selectedRows) {
+    console.log(selectedRowKeys, selectedRows);
+    this.setState({
+      currentSelectRowKeys: selectedRowKeys,
+    });
+  }
+
+  @autobind
+  handleSingleRowSelectionChange(record, selected, selectedRows) {
+    console.log(record, selected, selectedRows);
+    const { groupId, groupName } = record;
+    this.setState({
+      currentSelect: record,
+      currentSelectRowKeys: [groupId],
+      groupId,
+      groupName,
+    });
   }
 
   render() {
-    const { goBack, push, cusgroupList, cusgroupPage, location: { query, state } } = this.props;
-    const { groupName, showGroupPanel, showOperateGroupSuccess } = this.state;
-    const count = query.count;
+    const {
+      goBack,
+      push,
+      cusgroupList,
+      cusgroupPage,
+      location: { query: { count = '', curPageNum, curPageSize } },
+    } = this.props;
+
+    const {
+      groupName,
+      showGroupPanel,
+      showOperateGroupSuccess,
+      currentSelectRowKeys,
+      cusgroupId,
+    } = this.state;
+
+    const {
+      totalRecordNum,
+    } = cusgroupPage || {};
+
     return (
       <div>
         <div
@@ -371,16 +341,14 @@ export default class CustomerGroup extends PureComponent {
           <Tabs defaultActiveKey="addhasGroup" type="card">
             <TabPane tab="添加到已有分组" key="addhasGroup">
               <div className={styles.Grouplist}>
-                <Row type="flex" justify="space-between" align="middle">
-                  <Col span={12}>
-                    <p className={styles.description}>已选目标客户<b>&nbsp;{count}&nbsp;</b>户</p>
-                  </Col>
-                  <Col span={12}>
+                <Row type="flex" justify="start" align="middle">
+                  <Col span={24}>
                     <div className={styles.searchBox}>
                       <Input.Search
                         className="search-input"
                         placeholder="请输入分组名称"
                         onSearch={this.handleSearch}
+                        width={200}
                       />
                     </div>
                   </Col>
@@ -388,32 +356,37 @@ export default class CustomerGroup extends PureComponent {
                 <Row className="groupListRow">
                   <CustomerGrouplist
                     className="CustomerGrouplist"
-                    locationPage={query}
                     data={cusgroupList}
-                    columns={columns}
-                    cusgroupPage={cusgroupPage}
+                    pageData={{
+                      totalRecordNum: totalRecordNum || CUR_PAGE_COUNT,
+                      curPageNum: curPageNum || CUR_PAGE,
+                      curPageSize: curPageSize || CUR_PAGESIZE,
+                    }}
                     onPageChange={this.handlePageChange}
-                    onSizeChange={this.handleSizeChange}
-                    rowSelection={rowSelection}
+                    onSizeChange={this.handleShowSizeChange}
+                    onRowSelectionChange={this.handleRowSelectionChange}
+                    onSingleRowSelectionChange={this.handleSingleRowSelectionChange}
+                    currentSelectRowKeys={currentSelectRowKeys}
                   />
                 </Row>
                 <Row className={styles.BtnContent}>
-                  <Button onClick={goBack}>取消</Button>
-                  <Button onClick={this.handleSubmit} type="primary">保存</Button>
+                  <Col span={12}>
+                    <p className={styles.description}>已选目标客户<b>&nbsp;{count}&nbsp;</b>户</p>
+                  </Col>
+                  <Col span={12}>
+                    <Button onClick={goBack}>取消</Button>
+                    <Button onClick={this.handleSubmit} type="primary">保存</Button>
+                  </Col>
                 </Row>
               </div>
             </TabPane>
             <TabPane tab="添加到新建分组" key="addNewGroup">
               <div className={styles.newGroupForm}>
-                <Row type="flex" justify="space-between" align="middle">
-                  <Col span={12}>
-                    <p className={styles.description}>已选目标客户<b>&nbsp;{count}&nbsp;</b>户</p>
-                  </Col>
-                </Row>
                 <Row className={styles.groupForm}>
                   <AddNewGroup
                     goBack={goBack}
                     onSubmit={this.handleNewGroupSubmit}
+                    count={count}
                   />
                   <Row className={styles.BtnContent} />
                 </Row>
@@ -431,10 +404,11 @@ export default class CustomerGroup extends PureComponent {
         >
           <AddCusSuccess
             closeTab={this.closeTab}
-            groupName={groupName} groupId={this.state.cusgroupId}
+            groupName={groupName}
+            groupId={cusgroupId}
             onDestroy={this.clearSuccessFlag}
             push={push}
-            state={state}
+            location={location}
           />
         </div>
       </div>

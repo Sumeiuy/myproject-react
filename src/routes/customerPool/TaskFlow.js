@@ -2,10 +2,10 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter, routerRedux } from 'dva/router';
-import { Steps, message, Button } from 'antd';
+import { Steps, message, Button, Mention } from 'antd';
 // import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import events from 'events';
+import moment from 'moment';
 import { autobind } from 'core-decorators';
 import PickTargetCustomer from '../../components/customerPool/taskFlow/PickTargetCustomer';
 import TaskPreview from '../../components/customerPool/taskFlow/TaskPreview';
@@ -14,6 +14,7 @@ import CreateTaskForm from '../../components/customerPool/createTask/CreateTaskF
 import styles from './taskFlow.less';
 
 const Step = Steps.Step;
+const { toString } = Mention;
 
 // const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
@@ -54,11 +55,6 @@ const mapDispatchToProps = {
     type: 'customerPool/saveTaskFlowData',
     payload: query,
   }),
-  // 清除任务流程数据
-  clearTaskFlowData: query => ({
-    type: 'customerPool/clearTaskFlowData',
-    payload: query || {},
-  }),
   // 保存选中的tab
   saveCurrentTab: query => ({
     type: 'customerPool/saveCurrentTab',
@@ -70,10 +66,6 @@ const mapDispatchToProps = {
   submitTaskFlow: fetchData(effects.submitTaskFlow, true),
   getApprovalList: fetchData(effects.getApprovalList, true),
 };
-
-const EventEmitter = events;
-// new一个事件监听，用来发射缓存数据事件
-const saveDataEmitter = new EventEmitter();
 
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
@@ -92,7 +84,6 @@ export default class TaskFlow extends PureComponent {
     currentTab: PropTypes.string.isRequired,
     storedTaskFlowData: PropTypes.object.isRequired,
     saveTaskFlowData: PropTypes.func.isRequired,
-    clearTaskFlowData: PropTypes.func.isRequired,
     submitTaskFlow: PropTypes.func.isRequired,
     getApprovalList: PropTypes.func.isRequired,
     approvalList: PropTypes.array.isRequired,
@@ -106,21 +97,30 @@ export default class TaskFlow extends PureComponent {
     super(props);
     this.state = {
       current: 0,
-      currentStep: 0,
+      currentSelectRecord: {},
+      currentSelectRowKeys: [],
     };
   }
 
   @autobind
   handleNextStep() {
     // 下一步
+    const { saveTaskFlowData, storedTaskFlowData = EMPTY_OBJECT } = this.props;
     const { current } = this.state;
-    // let taskFormData = {};
-    // let pickTargetCustomerData = {};
+
+    let taskFormData = storedTaskFlowData.taskFormData;
+    let pickTargetCustomerData = {};
     if (current === 0) {
-      // taskFormData = this.createTaskFormRef.getFieldsValue();
+      taskFormData = this.createTaskFormRef.getFieldsValue();
     } else if (current === 1) {
-      // pickTargetCustomerData = this.pickTargetCustomerRef.getData();
+      pickTargetCustomerData = this.pickTargetCustomerRef.getData();
     }
+
+    saveTaskFlowData({
+      ...storedTaskFlowData,
+      taskFormData,
+      ...pickTargetCustomerData,
+    });
     this.setState({
       current: current + 1,
     });
@@ -153,28 +153,98 @@ export default class TaskFlow extends PureComponent {
     });
   }
 
-
   @autobind
   handleSubmitTaskFlow() {
-    const { clearTaskFlowData, submitTaskFlow, storedTaskFlowData } = this.props;
-    submitTaskFlow({
-      storedTaskFlowData,
+    const { submitTaskFlow, storedTaskFlowData, currentTab = '1' } = this.props;
+
+    const { currentSelectRecord: { login: flowAuditorId = null } } = this.state;
+
+    const {
+      taskFormData = EMPTY_OBJECT,
+      labelCust = EMPTY_OBJECT,
+      custSegment = EMPTY_OBJECT,
+    } = storedTaskFlowData;
+
+    let finalData = {};
+    finalData = {
+      ...taskFormData,
+      ...labelCust,
+      ...custSegment,
+    };
+
+    const {
+      labelId,
+      uploadedFileKey: fileId,
+      closingDate,
+      executionType,
+      serviceStrategySuggestion,
+      taskName,
+      taskType,
+      templetDesc,
+      triggerDate,
+    } = finalData;
+
+    const postBody = {
+      closingDate: moment(closingDate).format('YYYY-MM-DD'),
+      executionType,
+      serviceStrategySuggestion,
+      taskName,
+      taskType,
+      templetDesc: toString(templetDesc),
+      triggerDate: moment(triggerDate).format('YYYY-MM-DD'),
+    };
+
+    if (currentTab === '1') {
+      submitTaskFlow({
+        fileId,
+        ...postBody,
+        flowAuditorId,
+      });
+    } else {
+      submitTaskFlow({
+        labelId,
+        ...postBody,
+        flowAuditorId,
+      });
+    }
+
+    // 成功之后再clear
+    // clearTaskFlowData();
+  }
+
+  @autobind
+  handleRowSelectionChange(selectedRowKeys, selectedRows) {
+    console.log(selectedRowKeys, selectedRows);
+    this.setState({
+      currentSelectRowKeys: selectedRowKeys,
     });
-    clearTaskFlowData();
+  }
+
+  @autobind
+  handleSingleRowSelectionChange(record, selected, selectedRows) {
+    console.log(record, selected, selectedRows);
+    const { login } = record;
+    this.setState({
+      currentSelectRecord: record,
+      currentSelectRowKeys: [login],
+    });
   }
 
 
   render() {
     const {
       current,
+      currentSelectRecord,
+      currentSelectRowKeys,
     } = this.state;
+
     const {
       dict,
+      dict: { executeTypes, taskTypes },
       priviewCustFileData,
       currentTab,
       saveCurrentTab,
       storedTaskFlowData,
-      saveTaskFlowData,
       getLabelInfo,
       getLabelPeople,
       peopleOfLabelData,
@@ -185,12 +255,13 @@ export default class TaskFlow extends PureComponent {
 
     const steps = [{
       title: '基本信息',
-      content: <div className={styles.taskInner}><CreateTaskForm
-        ref={ref => (this.createTaskFormRef = ref)}
-        dict={dict}
-        location={location}
-        storedTaskFlowData={storedTaskFlowData}
-      />
+      content: <div className={styles.taskInner}>
+        <CreateTaskForm
+          ref={ref => (this.createTaskFormRef = ref)}
+          dict={dict}
+          location={location}
+          storedTaskFlowData={storedTaskFlowData}
+        />
       </div>,
     }, {
       title: '目标客户',
@@ -201,12 +272,10 @@ export default class TaskFlow extends PureComponent {
         onPreview={this.handlePreview}
         priviewCustFileData={priviewCustFileData}
         storedTaskFlowData={storedTaskFlowData}
-        saveTaskFlowData={saveTaskFlowData}
         getLabelInfo={getLabelInfo}
         circlePeopleData={circlePeopleData}
         getLabelPeople={getLabelPeople}
         peopleOfLabelData={peopleOfLabelData}
-        saveDataEmitter={saveDataEmitter}
       />,
     }, {
       title: '提交',
@@ -216,6 +285,13 @@ export default class TaskFlow extends PureComponent {
         approvalList={approvalList}
         currentTab={currentTab}
         getApprovalList={getApprovalList}
+        executeTypes={executeTypes}
+        taskTypes={taskTypes}
+        onSingleRowSelectionChange={this.handleSingleRowSelectionChange}
+        onRowSelectionChange={this.handleRowSelectionChange}
+        currentSelectRecord={currentSelectRecord}
+        currentSelectRowKeys={currentSelectRowKeys}
+        isNeedApproval
       />,
     }];
 

@@ -3,49 +3,83 @@
  *客户分组列表
  *@author zhuyanwen
  * */
-import React, { PureComponent, PropTypes } from 'react';
-import { autobind } from 'core-decorators';
-import { withRouter } from 'dva/router';
-import { Table } from 'antd';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
+// import { autobind } from 'core-decorators';
+import _ from 'lodash';
+import classnames from 'classnames';
+import GroupTable from '../groupManage/GroupTable';
+import tableStyles from '../groupManage/groupTable.less';
+import './customerGrouplist.less';
 
-@withRouter
+const renderColumnTitle = [
+  {
+    key: 'groupName',
+    value: '分组名称',
+  },
+  {
+    key: 'xComments',
+    value: '分组描述',
+  },
+  {
+    key: 'createdTm',
+    value: '创建时间',
+  },
+];
 export default class CustomerGrouplist extends PureComponent {
   static propTypes = {
     data: PropTypes.array.isRequired,
-    columns: PropTypes.array.isRequired,
-    cusgroupPage: PropTypes.object.isRequired,
+    pageData: PropTypes.object.isRequired,
     onPageChange: PropTypes.func.isRequired,
     onSizeChange: PropTypes.func.isRequired,
-    rowSelection: PropTypes.object.isRequired,
-    className: PropTypes.string.isRequired,
-    locationPage: PropTypes.object.isRequired,
+    onRowSelectionChange: PropTypes.func.isRequired,
+    onSingleRowSelectionChange: PropTypes.func.isRequired,
+    currentSelectRowKeys: PropTypes.array.isRequired,
   }
-  @autobind
-  handleChange(nextPage, currentPageSize) {
-    this.props.onPageChange({
-      nextPage,
-      currentPageSize,
-    });
+
+  /**
+  * 为数据源的每一项添加一个id属性
+  * @param {*} listData 数据源
+  */
+  addIdToDataSource(listData) {
+    if (!_.isEmpty(listData)) {
+      return _.map(listData, item => _.merge(item, { id: item.groupId }));
+    }
+
+    return [];
   }
+
   render() {
-    const { data, columns, cusgroupPage, onSizeChange,
-        rowSelection, className, locationPage } = this.props;
+    const {
+      data,
+      onRowSelectionChange,
+      onSingleRowSelectionChange,
+      currentSelectRowKeys,
+      pageData,
+      onSizeChange,
+      onPageChange,
+    } = this.props;
+
+    const dataSource = this.addIdToDataSource(data);
+
     return (
-      <Table
-        className={className}
-        rowSelection={rowSelection}
-        columns={columns}
-        dataSource={data}
-        pagination={{
-          total: cusgroupPage.totalRecordNum,
-          pageSize: +locationPage.curPageSize || cusgroupPage.pageSize,
-          current: +locationPage.curPageNum || cusgroupPage.curPageNum,
-          size: 'small',
-          onChange: this.handleChange,
-          showTotal: () => (`共${cusgroupPage.totalRecordNum}项`),
-          showSizeChanger: true,
-          onShowSizeChange: onSizeChange,
-        }}
+      <GroupTable
+        pageData={pageData}
+        listData={dataSource}
+        onSizeChange={onSizeChange}
+        onPageChange={onPageChange}
+        tableClass={
+          classnames({
+            [tableStyles.groupTable]: true,
+          })
+        }
+        // 构造表格头部
+        titleColumn={renderColumnTitle}
+        columnWidth={['35%', '35%', '20%']}
+        isNeedRowSelection
+        onSingleRowSelectionChange={onSingleRowSelectionChange}
+        onRowSelectionChange={onRowSelectionChange}
+        currentSelectRowKeys={currentSelectRowKeys}
       />
     );
   }
