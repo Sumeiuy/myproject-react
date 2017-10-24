@@ -56,9 +56,9 @@ export default class Commissiondetail extends PureComponent {
   }
 
   render() {
-    const { data, location: { query: { currentId = '' } } } = this.props;
     const {
       custList = [],
+      batchNum, // 批量佣金调整的批处理号
       businessType,
       comments,
       divisionName,
@@ -84,13 +84,13 @@ export default class Commissiondetail extends PureComponent {
       ddCommission, // 担保品大宗
       stbCommission, // 股转
       dCommission, // 大宗交易
-    } = data;
+    } = this.props.data;
 
     if (_.isEmpty(businessType) || _.isEmpty(custList)) {
       return null;
     }
 
-    const bugTitle = `编号${currentId}`;
+    const bugTitle = `CRM编号:${batchNum}`;
     const drafter = `${divisionName} - ${createdByName} (${createdByLogin})`;
     const targetCom = `${newCommission}‰`;
     // 表格中需要的操作
@@ -112,7 +112,7 @@ export default class Commissiondetail extends PureComponent {
               <div className={styles.modContent}>
                 <ul className={styles.propertyList}>
                   <li className={styles.item}>
-                    <InfoItem label="子类型" value={businessType} />
+                    <InfoItem label="子类型" value="批量佣金调整" />
                   </li>
                   <li className={styles.item}>
                     <InfoItem label="备注" value={comments} />
