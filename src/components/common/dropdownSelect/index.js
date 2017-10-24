@@ -41,26 +41,26 @@ export default class DropdownSelect extends PureComponent {
     boxStyle: {},
   }
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       // 查询信息
       searchValue: '',
       // 下拉选框是否展示
       isSHowModal: false,
       // 选中的值
-      value: '',
+      value: props.value,
       // 添加id标识
-      id: '',
+      id: new Date().getTime() + parseInt(Math.random() * 1000000, 10),
     };
   }
 
-  componentWillMount() {
-    this.setState({
-      value: this.props.value,
-      id: new Date().getTime() + parseInt(Math.random() * 1000000, 10),
-    });
-  }
+  // componentWillMount() {
+  //   this.setState({
+  //     value: this.props.value,
+  //     id: new Date().getTime() + parseInt(Math.random() * 1000000, 10),
+  //   });
+  // }
 
   componentDidMount() {
     document.addEventListener('click', this.hideModal);

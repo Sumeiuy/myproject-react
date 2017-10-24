@@ -2,16 +2,14 @@
 * @Description: 合作合约修改 页面
 * @Author: XuWenKang
 * @Date:   2017-09-19 14:47:08
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-19 21:03:44
+* @Last Modified by: LiuJianShu
+* @Last Modified time: 2017-10-24 09:24:54
 */
+
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-// import moment from 'moment';
-// import { message } from 'antd';
-import { Icon } from 'antd';
 
 import BaseInfoEdit from './BaseInfoEdit';
 import DraftInfo from './DraftInfo';
@@ -22,8 +20,6 @@ import ApproveList from '../common/approveList';
 import Approval from '../permission/Approval';
 import Button from '../common/Button';
 import AddClause from './AddClause';
-import ChoiceApproverBoard from '../commissionAdjustment/ChoiceApproverBoard';
-import CommissionLine from '../commissionAdjustment/CommissionLine';
 
 import { seibelConfig } from '../../config';
 import styles from './editForm.less';
@@ -69,14 +65,8 @@ export default class EditForm extends PureComponent {
       },
       // 是否显示添加合约条款组件
       addClauseModal: false,
-      // 选择审批人弹窗
-      appravalInfo: {
-        appraval: '',
-        approverName: '',
-        approverId: '',
-      },
-      // 是否显示审批人弹窗
-      choiceApprover: false,
+      // 审批意见
+      appraval: '',
       // 合约条款默认数据
       defaultData: {},
       // 是否是编辑
@@ -93,12 +83,13 @@ export default class EditForm extends PureComponent {
   @autobind
   handleChangeAppraval(type, value) {
     this.setState({
-      appravalInfo: {
-        ...this.state.appravalInfo,
+      ...this.state,
+      formData: {
+        ...this.state.formData,
         [type]: value,
       },
     }, () => {
-      this.props.onChangeForm(this.state.appravalInfo);
+      this.props.onChangeForm(this.state.formData);
     });
   }
 
@@ -135,19 +126,6 @@ export default class EditForm extends PureComponent {
     });
   }
 
-  // 审批人弹出框确认按钮
-  @autobind
-  handleApproverModalOK(approver) {
-    this.setState({
-      appravalInfo: {
-        ...this.state.appravalInfo,
-        approverName: approver.empName,
-        approverId: approver.empNo,
-      },
-    }, () => {
-      this.props.onChangeForm(this.state.appravalInfo);
-    });
-  }
   // 合约条款弹窗提交事件
   @autobind
   handleAddClause(termData) {
@@ -223,13 +201,10 @@ export default class EditForm extends PureComponent {
       cooperDeparment,
       searchCooperDeparment,
       contractDetail: { baseInfo, attachmentList },
-      flowStepInfo,
     } = this.props;
     const {
       formData,
       addClauseModal,
-      choiceApprover,
-      appravalInfo: { appraval, approverName, approverId },
       defaultData,
       editClause,
     } = this.state;
@@ -245,16 +220,6 @@ export default class EditForm extends PureComponent {
       date: baseInfo.createTime,
       status: baseInfo.status,
     };
-    const listData = flowStepInfo.flowButtons[0].flowAuditors;
-    const newApproverList = listData.map((item, index) => {
-      const key = `${new Date().getTime()}-${index}`;
-      return {
-        empNo: item.login || '',
-        empName: item.empName || '无',
-        belowDept: item.occupation || '无',
-        key,
-      };
-    });
     // 表格中需要的操作
     const operation = {
       column: {
@@ -308,23 +273,12 @@ export default class EditForm extends PureComponent {
         <Approval
           type="appraval"
           head="审批"
-          textValue={appraval}
+          textValue={formData.appraval}
           onEmitEvent={this.handleChangeAppraval}
         />
         <div className={styles.editWrapper}>
           <InfoTitle head="审批记录" />
           <ApproveList data={contractDetail.flowHistory} />
-        </div>
-        <div className={styles.editWrapper}>
-          <InfoTitle head="审批人" />
-          <CommissionLine label="选择审批人" labelWidth="110px" required>
-            <div className={styles.checkApprover} onClick={() => this.showModal('choiceApprover')}>
-              {approverName === '' ? '' : `${approverName}(${approverId})`}
-              <div className={styles.searchIcon}>
-                <Icon type="search" />
-              </div>
-            </div>
-          </CommissionLine>
         </div>
         <div className={styles.cutSpace} />
         {
@@ -338,17 +292,6 @@ export default class EditForm extends PureComponent {
               departmentList={cooperDeparment}
               searchDepartment={searchCooperDeparment}
               defaultData={defaultData}
-            />
-          :
-            null
-        }
-        {
-          choiceApprover ?
-            <ChoiceApproverBoard
-              visible={choiceApprover}
-              approverList={newApproverList}
-              onClose={() => this.closeModal('choiceApprover')}
-              onOk={this.handleApproverModalOK}
             />
           :
             null
