@@ -10,7 +10,7 @@ import { autobind } from 'core-decorators';
 import { Table } from 'antd';
 import _ from 'lodash';
 
-import Icon from '../../components/common/Icon';
+import Paganation from '../../components/common/Paganation';
 import styles from './viewpointList.less';
 
 const columns = [{
@@ -20,8 +20,8 @@ const columns = [{
   width: '36%',
 }, {
   title: '类型',
-  dataIndex: 'textcategory',
-  key: 'textcategory',
+  dataIndex: 'textcategorychinese',
+  key: 'textcategorychinese',
   width: '18%',
 }, {
   title: '相关股票',
@@ -30,8 +30,8 @@ const columns = [{
   width: '15%',
 }, {
   title: '行业',
-  dataIndex: 'secucategorycodel',
-  key: 'secucategorycodel',
+  dataIndex: 'induname',
+  key: 'induname',
   width: '12%',
 }, {
   title: '报告日期',
@@ -44,10 +44,17 @@ const columns = [{
   key: 'authors',
 }];
 
+const fetchDataFunction = (globalLoading, type) => query => ({
+  type,
+  payload: query || {},
+  loading: globalLoading,
+});
+
 const mapStateToProps = state => ({
   information: state.customerPool.information, // 首席投顾观点
 });
 const mapDispatchToProps = {
+  getInformation: fetchDataFunction(true, 'customerPool/getInformation'),
   push: routerRedux.push,
 };
 @connect(mapStateToProps, mapDispatchToProps)
@@ -57,10 +64,26 @@ export default class ViewpointList extends PureComponent {
     push: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     information: PropTypes.object,
+    getInformation: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
     information: {},
+  }
+
+  constructor(props) {
+    super(props);
+    const { information: { infoVOList = [] } } = props;
+    this.state = {
+      curPageNum: 1, // 记录当前展示的页码
+      curPageSize: 18, // 记录当前每页的容量
+      pageList: infoVOList, // 当前页码对应的列表数据
+    };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { information: { infoVOList = [] } } = nextProps;
+    this.setState({ pageList: infoVOList });
   }
 
   @autobind
@@ -69,34 +92,56 @@ export default class ViewpointList extends PureComponent {
     push({
       pathname: '/customerPool/viewpointDetail',
       query: { detailIndex: `${index}` },
+      state: 'formList',
     });
   }
 
-  totalPage(total) {
-    return `共 ${total} 项`;
+  @autobind
+  handlePageClick(page) {
+    const { getInformation } = this.props;
+    const { curPageSize } = this.state;
+    this.setState(
+      { curPageNum: page },
+      () => getInformation({ curPageNum: page, pageSize: curPageSize }),
+    );
   }
 
-  renderItem(current, type, originalElement) {
-    if (type === 'prev') {
-      return <a><Icon type="xiangzuo" className={styles.zuoIcon} />上一页</a>;
-    } else if (type === 'next') {
-      return <a>下一页<Icon type="xiangyou" className={styles.youIcon} /></a>;
-    }
-    return originalElement;
+  @autobind
+  handlePageSizeClick(current, size) {
+    const { getInformation } = this.props;
+    const { curPageNum } = this.state;
+    this.setState(
+      { curPageSize: size },
+      () => getInformation({ curPageNum, pageSize: size }),
+    );
+  }
+
+  formatString(str) {
+    return _.isEmpty(str) ? '--' : str;
   }
 
   render() {
-    const { information: { infoVOList = [] } } = this.props;
+    const { information: { totalCount } } = this.props;
+    const { curPageNum = 1, pageList = [], curPageSize = 18 } = this.state;
     const newInfoVOList = _.map(
-      infoVOList,
-      item => ({ ...item, aboutStock: `${item.secuabbr} / ${item.comcode}` }),
+      pageList,
+      (item, index) => ({
+        texttitle: this.formatString(item.texttitle),
+        textcategory: this.formatString(item.textcategory),
+        induname: this.formatString(item.induname),
+        pubdata: this.formatString(item.pubdata),
+        authors: this.formatString(item.authors),
+        aboutStock: `${this.formatString(item.secuabbr)} / ${this.formatString(item.tradingcode)}`,
+        id: `${index}`,
+      }),
     );
-    const pagination = {
-      itemRender: this.renderItem,
-      showTotal: this.totalPage,
-      defaultPageSize: 18,
-      pageSize: 18,
-      // total: viewpointData.length,
+    const paganationOption = {
+      curPageNum,
+      curPageSize,
+      totalRecordNum: totalCount,
+      onPageChange: this.handlePageClick,
+      onSizeChange: this.handlePageSizeClick,
+      originPageSizeUnit: 18,
     };
     return (
       <div className={styles.listContainer}>
@@ -105,9 +150,10 @@ export default class ViewpointList extends PureComponent {
             rowKey={'id'}
             columns={columns}
             dataSource={newInfoVOList}
-            pagination={pagination}
+            pagination={false}
             onRowClick={this.handleRowClick}
           />
+          <Paganation {...paganationOption} />
         </div>
       </div>
     );

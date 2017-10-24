@@ -77,7 +77,7 @@ export default class BaseInfoModify extends PureComponent {
     // 选中客户
     this.props.onEmitEvent('customer', item);
     this.context.getSubTypeList({
-      customerId: item.cusId,
+      customerId: item.brokerNumber,
       customerType: item.custType,
     });
   }

@@ -18,6 +18,7 @@ export default class CreateTaskSuccess extends PureComponent {
   static propTypes = {
     data: PropTypes.object,
     successType: PropTypes.bool,
+    push: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -74,6 +75,22 @@ export default class CreateTaskSuccess extends PureComponent {
     this.closeTab();
   }
   @autobind
+  goToTask(){
+    const { push, state } = this.props;
+    const url = '/mot/selfbuildTask/selfBuildTaskMain';
+    const param ={
+      id: 'FSP_MOT_SELFBUILT_TASK',
+      closable: true,
+      forceRefresh:true,
+      title: '自建任务管理'
+    }
+    debugger;
+    fspGlobal.openFspTab({ url, param })
+    debugger
+    this.closeTab();
+  }
+  // #FSP_MOT_SELFBUILT_TASK
+  @autobind
   handleMovTime() {
     this.setState({
       changeTime: COUNT--,
@@ -97,7 +114,7 @@ export default class CreateTaskSuccess extends PureComponent {
             </div>
             <div className={styles.taskSuccess_msg}>
               <p>提交成功！</p>
-              <p>创建任务请求已提交至后台，后台需要一些时间处理，您可以在“任务中心 → <a>任务管理</a>”中查看处理状态。</p>
+              <p>创建任务请求已提交至后台，后台需要一些时间处理，您可以在“任务中心 → <a onClick={this.goToTask}>任务管理</a>”中查看处理状态。</p>
               <p>页面会在 <b>{changeTime}</b> 秒内自动关闭</p>
             </div>
             <div className={styles.taskSuccess_btn}>

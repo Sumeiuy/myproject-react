@@ -1,97 +1,97 @@
-  .taskInner{
-    // display: none;
-    padding:20px;
-    .taskcontent{
-      padding:10px;
-      background: #FFF;
-      .task_title{
-        font-size:18px;
-        font-weight: bold;
-        color:#33393c;
-        border-bottom: 1px solid #dddddd;
-        padding:5px 0 10px 0;
-        b{
-          color:#ff784e;
-        }
-      }
-      .task_from{
+    
+.task_title{
+  font-size:18px;
+  font-weight: bold;
+  color:#33393c;
+  border-bottom: 1px solid #dddddd;
+  padding:5px 0 10px 0;
+  b{
+    color:#ff784e;
+  }
+}
+.task_from{
+  font-size: 14px;
+  padding: 20px 0;
+  .info{
+    color:#ff784e;
+    font-size: 14px;
+  }
+  .task_selectList{
+    overflow: hidden;
+    li{
+      position: relative;
+      float:left;
+      width: 33%;
+      .task_label{
+        text-align: right;
+        vertical-align: middle;
+        line-height: 32px;
+        display: inline-block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        float: left;
+        padding-right: 5px;
         font-size: 14px;
-        padding: 20px 0;
-        .info{
-          color:#ff784e;
-          font-size: 14px;
+        color:#666666;
+      }
+      .required_i{
+        color:#ff0000;
+        font-style: normal;
+      }
+      :global{
+        .ant-form-item-label{
+          label{
+            font-size: 14px;
+            color:#666666;
+          }
         }
-        .task_selectList{
+        .ant-select-selection{
+          border: 1px solid #d9d9d9;
+          &:hover {
+            border-color: #49a9ee;
+          }
+          &:active, &:focus{
+            border-color: #49a9ee;
+            outline: 0;
+            box-shadow: 0 0 0 2px rgba(16,142,233,.2);
+          }
+        }
+        .has-error .ant-form-explain, .has-error .ant-form-split{
           overflow: hidden;
-          li{
-            position: relative;
-            float:left;
-            width: 33%;
-            .task_label{
-              text-align: right;
-              vertical-align: middle;
-              line-height: 32px;
-              display: inline-block;
-              overflow: hidden;
-              text-overflow: ellipsis;
-              white-space: nowrap;
-              float: left;
-              padding-right: 5px;
-              font-size: 14px;
-              color:#666666;
-            }
-            .required_i{
-              color:#ff0000;
-              font-style: normal;
-            }
-            :global{
-              .ant-form-item-label{
-                label{
-                  font-size: 14px;
-                  color:#666666;
-                }
-              }
-              .ant-select-selection{
-                border: 1px solid #d9d9d9;
-                &:hover {
-                  border-color: #49a9ee;
-                }
-                &:active, &:focus{
-                  border-color: #49a9ee;
-                  outline: 0;
-                  box-shadow: 0 0 0 2px rgba(16,142,233,.2);
-                }
-              }
-              .has-error .ant-form-explain, .has-error .ant-form-split{
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-              }
-            }
-          }
-        }
-        .task_textArea{
-          p{
-            padding:5px 0;
-            label{
-              font-size: 14px;
-              color:#666666;
-              i{
-                font-style: normal;
-                color:#ff0000;
-              }
-            }
-          }
-        }
-        .task_btn{
-          text-align: right;
-          button{
-            margin-left: 15px;
-          }
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
       }
     }
   }
+  .task_textArea{
+    p{
+      padding:5px 0;
+      label{
+        font-size: 14px;
+        color:#666666;
+        i{
+          font-style: normal;
+          color:#ff0000;
+        }
+      }
+    }
+  }
+}
+
+
+.pageFoot{
+  padding:20px;
+  text-align: right;      
+}
+.submitBtn{
+  text-align: right;
+  button{
+    margin-left:15px;
+  }
+}
+  
 :global{
   @-webkit-keyframes loadingCircle
   {

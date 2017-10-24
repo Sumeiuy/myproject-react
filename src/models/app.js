@@ -5,6 +5,7 @@
  */
 import { report as api, seibel as seibelApi, customerPool as custApi } from '../api';
 import { EVENT_PROFILE_ACTION } from '../config/log';
+import { permission } from '../utils';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -17,6 +18,8 @@ export default {
     serviceRecordModalVisible: false,
     // 服务弹窗对应的客户的经纪客户号
     serviceRecordModalVisibleOfId: '',
+    // 服务弹窗对应的客户的经纪客户名
+    serviceRecordModalVisibleOfName: '',
     empInfo: EMPTY_OBJECT,
     // 列表
     seibleList: EMPTY_OBJECT,
@@ -104,6 +107,7 @@ export default {
         ...state,
         serviceRecordModalVisible: payload.flag,
         serviceRecordModalVisibleOfId: payload.custId,
+        serviceRecordModalVisibleOfName: payload.custName,
       };
     },
     getDictionarySuccess(state, action) {
@@ -130,6 +134,8 @@ export default {
       const response = yield call(api.getEmpInfo);
       const data = response.resultData;
       if (data) {
+        // 初始化权方法
+        permission.init(data.empRespList);
         yield put({
           type: 'getEmpInfoSuccess',
           payload: data,
@@ -150,7 +156,7 @@ export default {
     // 获取字典
     * getDictionary({ payload }, { call, put }) {
       const response = yield call(custApi.getStatisticalPeriod);
-      // console.log('dict', response);
+      console.log('dict00000', response);
       yield put({
         type: 'getDictionarySuccess',
         payload: { response },
@@ -206,6 +212,9 @@ export default {
   },
   subscriptions: {
     setup({ dispatch }) {
+      // 加载员工职责与职位
+      dispatch({ type: 'getEmpInfo' });
+      // 获取字典
       dispatch({ type: 'getDictionary' });
     },
   },

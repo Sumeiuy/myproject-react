@@ -5,6 +5,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+// import { message } from 'antd';
 import _ from 'lodash';
 import classnames from 'classnames';
 import style from './detail.less';
@@ -55,8 +56,6 @@ export default class Detail extends PureComponent {
     searchServerPersonList: PropTypes.array.isRequired,
     nextApproverList: PropTypes.array.isRequired,
     getNextApproverList: PropTypes.func.isRequired,
-    bottonList: PropTypes.array.isRequired,
-    getBottonList: PropTypes.func.isRequired,
     canApplyCustList: PropTypes.array.isRequired,
     subTypeList: PropTypes.array.isRequired,
     onEmitEvent: PropTypes.func.isRequired,
@@ -243,9 +242,6 @@ export default class Detail extends PureComponent {
   }
   @autobind
   toChangeStatus() {
-    // this.setState({ statusType: 'modify' });
-    // 获取下一步骤按钮
-    // this.props.getBottonList({ flowId: this.props.flowId });
     this.props.onEmitEvent();
   }
 

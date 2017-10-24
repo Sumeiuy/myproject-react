@@ -1,16 +1,19 @@
 .customerPoolWrap{
   background:#FFF;
-  padding: 0px 50px;
+  padding: 0px 30px 0px 35px;
   .poolContainer {
     display: -webkit-flex; /* Safari */
     display: flex;
-    margin: 30px 60px 42px;
+    justify-content: center;
+    margin: 30px auto 42px;
     .content{
-      width: 747px;
+      min-width: 747px;
+      width: 75%;
       margin-right:32px;
     }
     .viewpoint {
-      width: 228px;
+      min-width: 228px;
+      width: 25%;
     }
     :global {
       .ant-tabs-nav-container {
@@ -20,7 +23,6 @@
         font-family:PingFangSC-Medium;
       }
       .ant-tabs-nav .ant-tabs-tab-active {
-        font-weight: 600;
         color:#4a4a4a;
       }
       .ant-tabs-nav .ant-tabs-tab {

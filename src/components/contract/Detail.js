@@ -20,10 +20,16 @@ import CommonTable from '../common/biz/CommonTable';
 import { seibelConfig } from '../../config';
 import { dateFormat } from '../../utils/helper';
 
-// 操作类型列表
-const { contract: { operationList } } = seibelConfig;
 // 子类型列表
 const childTypeList = _.filter(seibelConfig.contract.subType, v => v.label !== '全部');
+const operationList = _.filter(seibelConfig.contract.operationList, v => v.label !== '全部');
+const operationLabel = (value) => {
+  if (operationList && value) {
+    const nowStatus = _.find(operationList, o => o.value === value) || {};
+    return nowStatus.label || '无';
+  }
+  return '无';
+};
 const EMPTY_PARAM = '暂无';
 // 合约条款的表头、状态对应值
 const { contract: { titleList, status } } = seibelConfig;
@@ -72,15 +78,6 @@ export default class Detail extends PureComponent {
   getCreatedDate(date) {
     if (date) {
       return `${dateFormat(date.split(' ')[0])} ${date.split(' ')[1]}`;
-    }
-    return EMPTY_PARAM;
-  }
-
-  // 根据code返回操作类型name
-  @autobind
-  getOperationType(type) {
-    if (type) {
-      return _.filter(operationList, v => v.value === type)[0].label;
     }
     return EMPTY_PARAM;
   }
@@ -149,7 +146,7 @@ export default class Detail extends PureComponent {
         </div>
         <div className={styles.detailWrapper}>
           <InfoTitle head="基本信息" />
-          <InfoItem label="操作类型" value={this.getOperationType(operationType)} />
+          <InfoItem label="操作类型" value={operationLabel(operationType) || EMPTY_PARAM} />
           <InfoItem label="子类型" value={childTypeList[0].label || EMPTY_PARAM} />
           <InfoItem label="客户" value={`${baseInfo.custName || EMPTY_PARAM} ${baseInfo.econNum || EMPTY_PARAM}`} />
           <InfoItem label="合约开始日期" value={dateFormat(baseInfo.startDt) || EMPTY_PARAM} />

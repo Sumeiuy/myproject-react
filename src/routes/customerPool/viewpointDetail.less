@@ -11,20 +11,24 @@
         height: 20px;
         display: -webkit-flex; /* Safari */
         display: flex;
+        color: #108ee9;
+        cursor: pointer;
         .backIcon {
           font-size: 12px;
-          color: #108ee9;
+          font-weight: 600px;
           vertical-align: 2px;
         }
         .backTitle {
           font-family:PingFangSC-Light;
           font-size:14px;
-          color:#108ee9;
           letter-spacing:-0.09px;
           text-align:left;
           margin-left: 4px;
         }
       }
+      .backColumn:hover {
+          color: #10AEFF;
+        }
       .head {
         border-bottom: 1px solid #ccc;
         padding-bottom: 15px;
@@ -74,6 +78,12 @@
         letter-spacing:0.2px;
         line-height:26px;
         text-align:justify;
+        text-indent: 30px;
+        min-height: 365px;
+        span {
+          display: inline-block;
+          width: 30px;
+        }
       }
       .footer {
         display: -webkit-flex; /* Safari */
@@ -85,19 +95,23 @@
           margin-right: 47px;
           display: -webkit-flex; /* Safari */
           display: flex;
-          .fileIcon {
-            font-size: 16px;
+          img {
+            display: inline-block;
+            outline: 0;
+            border: 0;
+            width: 12px;
+            height: 12px;
+            vertical-align: 1px;
             margin-right: 6px;
-            color: #ff3c54;
           }
           .fileName {
             font-family:PingFangSC-Regular;
             font-size:14px;
             color:#108ee9;
             letter-spacing:0.2px;
-          }
-          .word {
-            color: #108ee9;
+            a:hover {
+              color: #10AEFF;
+            }
           }
         }
         .under {

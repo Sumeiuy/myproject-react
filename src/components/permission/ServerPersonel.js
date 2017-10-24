@@ -143,12 +143,17 @@ export default class ServerPersonel extends PureComponent {
   @autobind
   addServerPerson() {
     // 添加服务人员按钮
-    if (!_.isEmpty(this.state.addSelectedValue)) {
-      this.setState(prevState => ({
-        serverInfo: [].concat(this.state.addSelectedValue, prevState.serverInfo),
-      }), () => {
-        this.props.onEmitEvent(this.props.type, this.state.serverInfo);
-      });
+    // 不能重复添加
+    if (_.isEmpty(_.find(this.state.serverInfo, this.state.addSelectedValue))) {
+      if (!_.isEmpty(this.state.addSelectedValue)) {
+        this.setState(prevState => ({
+          serverInfo: _.concat(prevState.serverInfo, this.state.addSelectedValue),
+        }), () => {
+          this.props.onEmitEvent(this.props.type, this.state.serverInfo);
+        });
+      }
+    } else {
+      message.error('服务经理不能重复添加');
     }
   }
 

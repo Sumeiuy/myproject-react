@@ -180,16 +180,19 @@ export const unsubcribeData = [{
     productName: '持仓异动提醒111',
     productCode: 'TC02',
     type: '综合定价产品',
+    default: true,
   }, {
     key: '112',
     productName: '福享套餐112',
     productCode: 'TC02',
     type: '综合定价产品',
+    default: false,
   }, {
     key: '113',
     productName: '持仓异动提醒113',
     productCode: 'TC02',
     type: '综合定价产品',
+    default: true,
   }],
 }, {
   key: '12',
@@ -208,16 +211,19 @@ export const unsubcribeData = [{
     productName: '研报掘金套餐131',
     productCode: 'TC02',
     type: '综合定价产品',
+    default: true,
   }, {
     key: '132',
     productName: '福享套餐132',
     productCode: 'TC02',
     type: '综合定价产品',
+    default: true,
   }, {
     key: '133',
     productName: '福享套餐133',
     productCode: 'TC02',
     type: '综合定价产品',
+    default: false,
   }],
 }, {
   key: '14',
@@ -236,16 +242,19 @@ export const unsubcribeData = [{
     productName: '福享套餐151',
     productCode: 'TC02',
     type: '综合定价产品',
+    default: false,
   }, {
     key: '152',
     productName: '福享套餐152',
     productCode: 'TC02',
     type: '综合定价产品',
+    default: false,
   }, {
     key: '153',
     productName: '福享套餐113',
     productCode: 'TC02',
     type: '综合定价产品',
+    default: true,
   }],
 }, {
   key: '16',
@@ -279,25 +288,27 @@ export const unsubcribeData = [{
   rate: '0.0009',
 }];
 
-export const productColumns = [{
-  title: '产品代码',
-  dataIndex: 'productCode',
-  key: 'productCode',
-  width: '15%',
-}, {
-  title: '产品名称',
-  dataIndex: 'productName',
-  key: 'productName',
-  width: '30%',
-}, {
-  title: '类型',
-  dataIndex: 'type',
-  key: 'type',
-  width: '25%',
-}, {
-  title: '佣金率',
-  dataIndex: 'rate',
-  key: 'rate',
-  width: '15%',
-}];
+export const productColumns = [
+  {
+    title: '产品代码',
+    dataIndex: 'productCode',
+    key: 'productCode',
+    width: '15%',
+  }, {
+    title: '产品名称',
+    dataIndex: 'productName',
+    key: 'productName',
+    width: '30%',
+  }, {
+    title: '类型',
+    dataIndex: 'type',
+    key: 'type',
+    width: '25%',
+  }, {
+    title: '佣金率',
+    dataIndex: 'rate',
+    key: 'rate',
+    width: '15%',
+  },
+];
 

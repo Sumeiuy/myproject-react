@@ -40,12 +40,12 @@ const mapStateToProps = state => ({
   addServeRecordSuccess: state.customerPool.addServeRecordSuccess,
   // 服务弹窗对应的客户的经纪客户号
   serviceRecordModalVisibleOfId: state.app.serviceRecordModalVisibleOfId,
+  // 服务弹窗对应的客户的经纪客户名
+  serviceRecordModalVisibleOfName: state.app.serviceRecordModalVisibleOfName,
 });
 
 const mapDispatchToProps = {
   getCustomerScope: fectchDataFunction(false, effects.customerScope),
-  getEmpInfo: fectchDataFunction(false, effects.empInfo),
-  getDictionary: fectchDataFunction(false, effects.dictionary),
   toggleServiceRecordModal: query => ({
     type: 'app/toggleServiceRecordModal',
     payload: query || false,
@@ -61,13 +61,12 @@ export default class Main extends Component {
     children: PropTypes.node.isRequired,
     loading: PropTypes.bool.isRequired,
     getCustomerScope: PropTypes.func.isRequired,
-    getEmpInfo: PropTypes.func.isRequired,
     interfaceState: PropTypes.object.isRequired,
-    getDictionary: PropTypes.func.isRequired,
     dict: PropTypes.object.isRequired,
     empInfo: PropTypes.object.isRequired,
     serviceRecordModalVisible: PropTypes.bool,
     serviceRecordModalVisibleOfId: PropTypes.string,
+    serviceRecordModalVisibleOfName: PropTypes.string,
     addServeRecordSuccess: PropTypes.bool.isRequired,
     addServeRecord: PropTypes.func.isRequired,
     toggleServiceRecordModal: PropTypes.func.isRequired,
@@ -76,13 +75,12 @@ export default class Main extends Component {
   static defaultProps = {
     serviceRecordModalVisible: false,
     serviceRecordModalVisibleOfId: '',
+    serviceRecordModalVisibleOfName: '',
   }
 
   componentDidMount() {
-    const { getCustomerScope, getEmpInfo, getDictionary } = this.props;
+    const { getCustomerScope } = this.props;
     getCustomerScope(); // 加载客户池客户范围
-    getEmpInfo(); // 加载员工职责与职位
-    getDictionary(); // 获取字典
   }
 
   render() {
@@ -95,6 +93,7 @@ export default class Main extends Component {
       addServeRecordSuccess,
       addServeRecord,
       serviceRecordModalVisibleOfId,
+      serviceRecordModalVisibleOfName,
       serviceRecordModalVisible,
       toggleServiceRecordModal,
     } = this.props;
@@ -114,7 +113,9 @@ export default class Main extends Component {
                         {children}
                         <CreateServiceRecord
                           loading={interfaceState[effects.addServeRecord]}
+                          key={serviceRecordModalVisibleOfId}
                           id={serviceRecordModalVisibleOfId}
+                          name={serviceRecordModalVisibleOfName}
                           dict={dict}
                           empInfo={empInfo}
                           isShow={serviceRecordModalVisible}

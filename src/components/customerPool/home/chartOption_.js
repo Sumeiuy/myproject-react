@@ -11,6 +11,9 @@ const getColourfulItem = ({
   colourfulData,
   colourfulTotal,
 }) => {
+  if (_.isEmpty(colourfulData)) {
+    return {};
+  }
   const maxIndex = colourfulData.length - 1;
   return colourfulData.map(
     (item, index) => {
@@ -124,7 +127,6 @@ export default ({
   bgColor,
   maxValue,
 }) => {
-  console.log('#############data############', data);
   const length = data.length;
   const items = [];
   data.forEach(
@@ -170,9 +172,11 @@ export const singleColorBar = ({
           position: 'top',
           fontFamily: 'PingFangSC-Regular',
           fontSize: 12,
-          color: '#4a4a4a',
+          color: '#2782d7',
           formatter: (params) => {
-            if (params.value !== 0 && params.dataIndex !== colourfulIndex) {
+            if (_.isEmpty(colourfulData)) {
+              return `${params.value}`;
+            } else if (params.value !== 0 && params.dataIndex !== colourfulIndex) {
               return `${params.value}`;
             }
             return '';

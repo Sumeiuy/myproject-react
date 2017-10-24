@@ -92,7 +92,7 @@ export function getPureAddCust({ pureAddData }) {
 // 产品销售
 export function getProductSale({
   productSaleData,
-  nameArray = ['公募基金', '证券投资类私募', '资金产品', 'OTC'],
+  nameArray = ['公募基金', '证券投资类私募', '紫金产品', 'OTC'],
 }) {
   const param = {
     dataArray: productSaleData,
@@ -103,11 +103,14 @@ export function getProductSale({
   return getProgressDataSource(param);
 }
 
+// 首页经营业绩和投顾业绩柱状图label 数组
+export const businessOpenNumLabelList = ['天天发', '沪港通', '深港通', '融资融券', '股票期权', '创业版'];
+
 // 经营指标的开通业务数
 // 一柱多彩
 export function getClientsNumber({
   clientNumberData,
-  names = ['天天发', '港股通', '两融', '期权', '创业版'],
+  names = businessOpenNumLabelList,
   colourfulIndex,
   colourfulData,
   colourfulTotalNumber,
@@ -123,8 +126,8 @@ export function getClientsNumber({
   const items = {
     tooltip: {},    // 使用默认值
     grid: {
-      left: '10px',
-      right: '10px',
+      left: '12px',
+      right: '12px',
       bottom: '34px',
       top: '32px',
       containLabel: false,
@@ -132,6 +135,7 @@ export function getClientsNumber({
     xAxis: [
       {
         data: names,
+        type: 'category',
         axisTick: { show: false },
         axisLabel: {
           interval: 0,
@@ -140,12 +144,16 @@ export function getClientsNumber({
           fontSize: 12,
           color: '#666666',
           showMinLabel: true,
+          clickable: true,
+          rotate: 30,
+          padding: [6, -8, -6, 8],
         },
         axisLine: {
           lineStyle: {
             color: '#999',
           },
         },
+        triggerEvent: true,
       },
     ],
     yAxis: [{ show: false }],
@@ -200,7 +208,7 @@ export function getServiceIndicatorOfPerformance({ performanceData }) {
     },
     xAxis: {
       type: 'category',
-      data: ['MOT\n完成率', '服务\n覆盖率', '多元配\n置覆盖率', '信息\n完备率'],
+      data: ['MOT\n完成率', '服务\n覆盖率', '资产配\n置覆盖率', '信息\n完备率'],
       axisTick: { show: false },
       axisLine: { show: false },
       axisLabel: {
@@ -228,10 +236,10 @@ export function getCustAndProperty(dataArray) {
   const custArray = [];
   const properyArray = [];
   for (let i = 0; i < dataArray.length; i += 2) {
-    const custItem = dataArray[i];
-    const propertyItem = dataArray[(i + 1)];
-    custArray.push({ value: filterEmptyToInteger(custItem.value), name: custItem.name });
-    properyArray.push(filterEmptyToNumber(propertyItem.value));
+    const { value = '', name = '' } = dataArray[i];
+    const { value: propertyValue } = dataArray[(i + 1)];
+    custArray.push({ value: filterEmptyToInteger(value), name });
+    properyArray.push(filterEmptyToNumber(propertyValue || ''));
   }
   // formatter 资产数据，获得 unit
   const { newUnit: propertyUnit, newSeries } = toFixedMoney(properyArray);
@@ -245,8 +253,8 @@ export function getCustAndProperty(dataArray) {
   const custNumberArray = [];
   _.forEach(descData, item => custNumberArray.push(item.value));
   const { newUnit: custUnit, newSeries: newCustArray } = toFixedCust(custNumberArray);
-  // 设置背景色
-  const colors = ['#756fb8', '#7d9be0', '#38d8e8'];
+  // 设置背景色 #7D9BE0
+  const colors = ['#7D9BE0', '#60BBEA', '#38D8E8'];
   const newDatas = _.map(
     descData,
     (item, index) => ({ ...item, bgColor: colors[index], value: newCustArray[index] }),
@@ -263,29 +271,32 @@ export function getHSRate(array) {
       name: '沪深归集率',
       amplitude: '3%',
       waveLength: '40%',
+      radius: '120px',
       waveAnimation: false,
       animationDuration: 0,
       animationDurationUpdate: 0,
       data: array,
       outline: { show: false },
       backgroundStyle: {
-        borderWidth: 5,
-        borderColor: '#ccc',
+        borderWidth: 3,
+        borderColor: '#f0f0f0',
         color: 'white',
       },
       itemStyle: {
         normal: {
           opacity: 0.95,
-          color: '#60bbea',
+          color: '#5eade5',
+          shadowBlur: 0,
         },
         emphasis: { opacity: 0.8 },
       },
       label: {
         normal: {
           show: true,
-          color: '#294D99',
+          color: '#5eade5',
           insideColor: '#fff',
-          fontSize: 50,
+          fontSize: 24,
+          fontFamily: 'PingFangSC-Regular',
           align: 'center',
           baseline: 'middle',
           position: ['50%', '70%'],
@@ -295,19 +306,27 @@ export function getHSRate(array) {
   };
 }
 
-export function linkTo({ value, bname, cycle, push, location }) {
+export function linkTo({ source, value, bname, cycle, push, location, empInfo, type = 'rightType' }) {
   if (_.isEmpty(location)) {
     return;
   }
   const { query: { orgId, cycleSelect } } = location;
   const pathname = '/customerPool/list';
+  const MAIN_MAGEGER_ID = 'msm';
   const obj = {
-    source: 'numOfCustOpened',
-    rightType: value,
+    source,
+    [type]: value,
     bname: encodeURIComponent(bname),
-    orgId: orgId || '',
     cycleSelect: cycleSelect || (cycle[0] || {}).key,
   };
+  const { empInfo: { empName, empNum } } = empInfo;
+  if (orgId) {
+    if (orgId === MAIN_MAGEGER_ID) {
+      obj.ptyMng = `${empName}_${empNum}`;
+    } else {
+      obj.orgId = orgId;
+    }
+  }
   if (document.querySelector(fspContainer.container)) {
     const url = `${pathname}?${helper.queryToString(obj)}`;
     const param = {
@@ -315,7 +334,7 @@ export function linkTo({ value, bname, cycle, push, location }) {
       forceRefresh: true,
       isSpecialTab: true,
       id: 'RCT_FSP_CUSTOMER_LIST',
-      title: '目标客户',
+      title: '客户列表',
     };
     fspGlobal.openRctTab({ url, param });
   } else {

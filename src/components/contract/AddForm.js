@@ -2,13 +2,12 @@
 * @Description: 合作合约新建 页面
 * @Author: XuWenKang
 * @Date:   2017-09-21 15:17:50
-* @Last Modified by: LiuJianShu
-* @Last Modified time: 2017-10-20 17:51:01
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2017-10-24 10:23:05
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Icon } from 'antd';
 import _ from 'lodash';
 
 import BaseInfoAdd from './BaseInfoAdd';
@@ -18,8 +17,6 @@ import CommonTable from '../common/biz/CommonTable';
 import CommonUpload from '../common/biz/CommonUpload';
 import Button from '../common/Button';
 import AddClause from './AddClause';
-import ChoiceApproverBoard from '../commissionAdjustment/ChoiceApproverBoard';
-import CommissionLine from '../commissionAdjustment/CommissionLine';
 
 import { seibelConfig } from '../../config';
 import styles from './addForm.less';
@@ -79,14 +76,6 @@ export default class AddForm extends PureComponent {
       addClauseModal: false,
       // 操作类型
       operationType: subscribe,
-      // 选择审批人弹窗
-      choiceApprover: false,
-      // 选择审批人弹窗
-      appravalInfo: {
-        appraval: '',
-        approverName: '',
-        approverId: '',
-      },
       // 合约条款默认数据
       defaultData: {},
       // 是否是编辑
@@ -205,28 +194,6 @@ export default class AddForm extends PureComponent {
     });
   }
 
-  // 关闭审批人员选择弹出窗
-  @autobind
-  closeChoiceApproverModal() {
-    this.setState({
-      choiceApprover: false,
-    });
-  }
-
-  // 审批人弹出框确认按钮
-  @autobind
-  handleApproverModalOK(approver) {
-    this.setState({
-      appravalInfo: {
-        ...this.state.appravalInfo,
-        approverName: approver.empName,
-        approverId: approver.empNo,
-      },
-    }, () => {
-      this.props.onChangeForm(this.state.appravalInfo);
-    });
-  }
-
   // 表格编辑事件
   @autobind
   editTableData(record, index) {
@@ -264,14 +231,11 @@ export default class AddForm extends PureComponent {
       cooperDeparment,
       searchCooperDeparment,
       getFlowStepInfo,
-      flowStepInfo,
     } = this.props;
     const {
       formData,
       addClauseModal,
       operationType,
-      choiceApprover,
-      appravalInfo: { approverName, approverId },
       defaultData,
       editClause,
     } = this.state;
@@ -282,16 +246,6 @@ export default class AddForm extends PureComponent {
       ghost: true,
       onClick: () => this.showModal('addClauseModal'),
     };
-    const listData = flowStepInfo.flowButtons[0].flowAuditors;
-    const newApproverList = listData.map((item, index) => {
-      const key = `${new Date().getTime()}-${index}`;
-      return {
-        empNo: item.login || '',
-        empName: item.empName || '无',
-        belowDept: item.occupation || '无',
-        key,
-      };
-    });
     const termsData = (operationType === subscribe) ? formData.terms : contractDetail.terms || [];
 
     // 表格中需要的操作
@@ -359,17 +313,6 @@ export default class AddForm extends PureComponent {
           attachment={formData.uuid}
           needDefaultText={false}
         />
-        <div className={styles.editWrapper}>
-          <InfoTitle head="审批人" />
-          <CommissionLine label="选择审批人" labelWidth="110px" required>
-            <div className={styles.checkApprover} onClick={() => this.showModal('choiceApprover')}>
-              {approverName === '' ? '' : `${approverName}(${approverId})`}
-              <div className={styles.searchIcon}>
-                <Icon type="search" />
-              </div>
-            </div>
-          </CommissionLine>
-        </div>
         <div className={styles.cutSpace} />
         {
           addClauseModal ?
@@ -382,17 +325,6 @@ export default class AddForm extends PureComponent {
               departmentList={cooperDeparment}
               searchDepartment={searchCooperDeparment}
               defaultData={defaultData}
-            />
-          :
-            null
-        }
-        {
-          choiceApprover ?
-            <ChoiceApproverBoard
-              visible={choiceApprover}
-              approverList={newApproverList}
-              onClose={this.closeChoiceApproverModal}
-              onOk={this.handleApproverModalOK}
             />
           :
             null

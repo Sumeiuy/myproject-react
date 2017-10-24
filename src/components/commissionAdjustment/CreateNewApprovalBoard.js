@@ -10,7 +10,7 @@ import { autobind } from 'core-decorators';
 import { Input, Icon, message } from 'antd';
 import _ from 'lodash';
 
-import Confirm from '../common/Confirm';
+import confirm from '../common/Confirm/confirm';
 import CommonModal from '../common/biz/CommonModal';
 import CommonUpload from '../common/biz/CommonUpload';
 import Transfer from '../common/biz/TableTransfer';
@@ -24,6 +24,10 @@ import OtherCommissionSelectList from './OtherCommissionSelectList';
 import CommissionLine from './CommissionLine';
 import SelectAssembly from './SelectAssembly';
 import { seibelConfig } from '../../config';
+import {
+  pagination,
+  singleColumns,
+} from './commissionTransferHelper/transferPropsHelper';
 
 import styles from './createNewApprovalBoard.less';
 
@@ -34,7 +38,6 @@ import {
   productColumns,
 } from '../../routes/templeModal/MockTableData';
 
-// const confirm = Modal.confirm;
 const { TextArea } = Input;
 const { commission: { subType }, comsubs: commadj } = seibelConfig;
 // 给subType去除全部的选项
@@ -84,6 +87,15 @@ export default class CreateNewApprovalBoard extends PureComponent {
     empInfo: PropTypes.object.isRequired,
     gjCommission: PropTypes.array.isRequired,
     queryGJCommission: PropTypes.func.isRequired,
+    getSingleOtherRates: PropTypes.func.isRequired,
+    singleOtherRatio: PropTypes.array.isRequired,
+    // 获取单佣金调整中的产品列表
+    getSingleProductList: PropTypes.func.isRequired,
+    singleComProductList: PropTypes.array.isRequired,
+    // 产品与客户的三匹配信息
+    threeMatchInfo: PropTypes.object.isRequired,
+    queryThreeMatchInfo: PropTypes.func.isRequired,
+    // 单佣金调整客户列表
     querySingleCustList: PropTypes.func.isRequired,
     singleCustList: PropTypes.array.isRequired,
   }
@@ -111,17 +123,8 @@ export default class CreateNewApprovalBoard extends PureComponent {
       approverId: '',
       custLists: [],
       otherComReset: new Date().getTime(), // 用来判断是否重置
-      showCloseApprovalBoardConfirm: false, // 用来展示关闭弹出层时的确认提示框
-      showSwitchProductConfirm: false, // 用来展示切换目标产品后的确认提示框
       customerRowId: '', // 客户rowid
     };
-  }
-
-  componentWillMount() {
-    if (this.judgeSubtypeNow(commadj.batch)) {
-      // 如果是初次进入，则需要查下产品列表
-      this.props.queryProductList({ prodCommision: 0.16 });
-    }
   }
 
   // 判断当前是否某个子类型
@@ -156,8 +159,10 @@ export default class CreateNewApprovalBoard extends PureComponent {
   // 关闭弹窗
   @autobind
   closeModal() {
-    this.setState({
-      showCloseApprovalBoardConfirm: true,
+    // 此处需要弹出确认框
+    confirm({
+      shortCut: 'close',
+      onOk: this.clearBoardAllData,
     });
   }
 
@@ -167,21 +172,6 @@ export default class CreateNewApprovalBoard extends PureComponent {
     const { modalKey, onClose } = this.props;
     this.clearApprovalBoard();
     onClose(modalKey);
-    this.closeBoardConfirm();
-  }
-
-  @autobind
-  closeBoardConfirm() {
-    this.setState({
-      showCloseApprovalBoardConfirm: false,
-    });
-  }
-
-  @autobind
-  closeProductChangeConfirm() {
-    this.setState({
-      showSwitchProductConfirm: false,
-    });
   }
 
   // 提交
@@ -255,17 +245,34 @@ export default class CreateNewApprovalBoard extends PureComponent {
     });
   }
 
+  // 根据目标佣金率查询批量佣金调整产品
+  @autobind
+  queryBatchProductList(param) {
+    const { empInfo: { occDivnNum } } = this.props;
+    this.props.queryProductList({ ...param, orgId: occDivnNum });
+  }
+
+  // 查询单佣金调整产品
+  @autobind
+  querySingleProductList(param) {
+    this.props.getSingleProductList(param);
+  }
+
   // 切换目标产品股基佣金率
   @autobind
   selectTargetGJCommission(v) {
     this.setState({
       newCommission: v.codeValue,
     });
-    const { empInfo: { occDivnNum } } = this.props;
-    this.props.queryProductList({
-      prodCommision: v.codeValue,
-      orgId: occDivnNum,
-    });
+    if (this.judgeSubtypeNow(commadj.batch)) {
+      this.queryBatchProductList({ prodCommision: v.codeValue });
+    }
+    if (this.judgeSubtypeNow(commadj.single)) {
+      this.querySingleProductList({
+        custRowId: '1-xxxxxx', // TODO 此参数等客户接口写好需要修改
+        commRate: v.codeValue,
+      });
+    }
   }
 
   // 客户输入目标股基佣金率调用方法
@@ -290,7 +297,6 @@ export default class CreateNewApprovalBoard extends PureComponent {
   @autobind
   clearCustList() {
     this.addCustomer.clearCustList();
-    this.closeProductChangeConfirm();
   }
 
   // 切换选择某个产品
@@ -301,8 +307,9 @@ export default class CreateNewApprovalBoard extends PureComponent {
       targetProduct,
     });
     if (!_.isEmpty(custLists)) {
-      this.setState({
-        showSwitchProductConfirm: true,
+      confirm({
+        shortCut: 'changeproduct',
+        onOk: this.clearCustList,
       });
     }
   }
@@ -394,6 +401,25 @@ export default class CreateNewApprovalBoard extends PureComponent {
     });
   }
 
+  // 单佣金调整穿梭变化的时候处理程序
+  @autobind
+  handleSingleTransferChange(item, array) {
+    const { prodID } = item;
+    this.props.queryThreeMatchInfo({
+      custRowId: '1-xxxxxx', // TODO 后面需要修改成取客户row_id
+      custType: 'per', // TODO 后面需要修改成取客户的类型
+      prdCode: prodID,
+    });
+    // TODO需要根据接口将值传进state里面
+    console.warn('handleSingleTransferChange', array);
+  }
+
+  // 单佣金调整选择子产品的时候的处理程序
+  @autobind
+  handleSingleTransferSubProductCheck() {
+
+  }
+
   render() {
     const {
       modalKey,
@@ -405,6 +431,8 @@ export default class CreateNewApprovalBoard extends PureComponent {
       customerList,
       otherRatios,
       gjCommission,
+      singleOtherRatio,
+      singleComProductList,
       singleCustList,
     } = this.props;
     const newApproverList = approverList.map((item, index) => {
@@ -414,15 +442,15 @@ export default class CreateNewApprovalBoard extends PureComponent {
         key,
       };
     });
+    const newSingleProList = singleComProductList.map(p => ({ key: p.id, ...p }));
     const {
+      newCommission,
       approvalType,
       remark,
       choiceApprover,
       approverName,
       approverId,
       otherComReset,
-      showCloseApprovalBoardConfirm,
-      showSwitchProductConfirm,
     } = this.state;
     const needBtn = !this.judgeSubtypeNow('');
 
@@ -457,25 +485,20 @@ export default class CreateNewApprovalBoard extends PureComponent {
     };
 
     // 单佣金调整中的产品选择配置
-    const transferProps = {
-      firstData: subscribelData,
-      secondData: unsubcribeData,
-      firstColumns: productColumns,
-      secondColumns: productColumns,
-      transferChange: this.handleTransferChange,
-      checkChange: this.handleCheckChange,
-      onSearch: this.handleSearch,
+    const singleTransferProps = {
+      firstData: newSingleProList,
+      secondData: [],
+      firstColumns: singleColumns,
+      secondColumns: singleColumns,
+      transferChange: this.handleSingleTransferChange,
+      checkChange: this.handleSingleTransferSubProductCheck,
       rowKey: 'key',
       defaultCheckKey: 'default',
-      showSearch: true,
       placeholder: '产品代码/产品名称',
-      pagination: {
-        defaultPageSize: 5,
-        pageSize: 5,
-        size: 'small',
-      },
-      finishTips: ['产品组合等于目标佣金值', '产品组合等于目标佣金值'],
-      warningTips: ['产品组合比目标佣金高 0.5%', '产品组合离目标佣金还差 0.63%'],
+      pagination,
+      aboutRate: [newCommission, 'prodRate'],
+      supportSearchKey: [['prodCode'], ['prodName']],
+      totalData: newSingleProList,
     };
     // 资讯订阅中的产品选择配置
     const subScribetransferProps = {
@@ -492,13 +515,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       defaultCheckKey: 'default',
       showSearch: true,
       placeholder: '产品代码/产品名称',
-      pagination: {
-        defaultPageSize: 5,
-        pageSize: 5,
-        size: 'small',
-      },
-      finishTips: ['产品组合等于目标佣金值', '产品组合等于目标佣金值'],
-      warningTips: ['产品组合比目标佣金高 0.5%', '产品组合离目标佣金还差 0.63%'],
+      pagination,
     };
     // 资讯退订中的服务产品退订配置
     const unsubScribetransferProps = {
@@ -588,6 +605,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
                   <CommissionLine
                     label="目标股基佣金率"
                     labelWidth={this.judgeSubtypeNow([commadj.single]) ? '110px' : '135px'}
+                    needInputBox={false}
                     extra={
                       <span
                         style={{
@@ -623,7 +641,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
                     // 单佣金调整中的产品选择
                     !this.judgeSubtypeNow(commadj.single) ? null
                     : (
-                      <Transfer {...transferProps} />
+                      <Transfer {...singleTransferProps} />
                     )
                   }
                 </div>
@@ -658,7 +676,10 @@ export default class CreateNewApprovalBoard extends PureComponent {
                   <OtherCommissionSelectList
                     showTip={!this.judgeSubtypeNow(commadj.batch)}
                     reset={otherComReset}
-                    otherRatios={otherRatios}
+                    otherRatios={
+                      this.judgeSubtypeNow(commadj.batch) ? otherRatios
+                      : singleOtherRatio
+                    }
                     onChange={this.changeOtherCommission}
                   />
                 </div>
@@ -717,26 +738,6 @@ export default class CreateNewApprovalBoard extends PureComponent {
           onClose={this.closeChoiceApproverModal}
           onOk={this.handleApproverModalOK}
         />
-        {
-          !showCloseApprovalBoardConfirm ? null
-          : (
-            <Confirm
-              type="close"
-              onOkHandler={this.clearBoardAllData}
-              onCancelHandler={this.closeBoardConfirm}
-            />
-          )
-        }
-        {
-          !showSwitchProductConfirm ? null
-          : (
-            <Confirm
-              type="changeproduct"
-              onOkHandler={this.clearCustList}
-              onCancelHandler={this.closeProductChangeConfirm}
-            />
-          )
-        }
       </div>
     );
   }

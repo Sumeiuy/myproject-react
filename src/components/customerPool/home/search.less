@@ -27,7 +27,7 @@
     padding-top: 32px;
     .inputBox{
       width: 716px;
-      margin: 0px 206px 11px;
+      margin: 0px auto 11px;
       :global {
         .ant-select-auto-complete.ant-select-lg .ant-input {
           padding: 6px 106px 6px 20px;
@@ -45,6 +45,22 @@
         }
         .ant-btn {
           border: none;
+          background-color: transparent;
+        }
+        .ant-btn:hover {
+          background-color: #10AEFF;
+        }
+        .ant-select-combobox .ant-select-search__field {
+          overflow: hidden;
+        }
+        .ant-input-suffix {
+          right: 0;
+          background-color: #108ee9;
+          padding-left: 2px;
+          transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+        }
+        .ant-input-suffix:hover {
+          background-color: #10AEFF;
         }
       }
     }
@@ -62,15 +78,12 @@
     .global-search.ant-select-auto-complete .ant-input-affix-wrapper .ant-input:not(:last-child) {
       padding-right: 62px;
     }
-    .ant-input-affix-wrapper .ant-input-suffix{
-      right: 0;
-    }
   }
   .historyList{
     width: 716px;
     height: 20px;
     line-height: 20px;
-    margin-left: 206px;
+    margin: auto;
     font-size: 14px;
     .s_title{
       float: left;

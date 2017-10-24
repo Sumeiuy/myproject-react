@@ -25,7 +25,6 @@ export default class OtherCommissionSelectList extends PureComponent {
 
   static defaultProps = {
     otherRatios: [],
-    singleOtherRatios: {},
     onChange: () => {},
   };
 
