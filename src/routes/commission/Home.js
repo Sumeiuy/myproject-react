@@ -48,6 +48,8 @@ const effects = {
   singleComOptions: 'commission/getSingleOtherCommissionOptions',
   singleProList: 'commission/getSingleComProductList',
   threeMatchInfo: 'commission/queryThreeMatchInfo',
+  subscribelProList: 'commission/getSubscribelProList',
+  unSubscribelProList: 'commission/getUnSubscribelProList',
 };
 
 const mapStateToProps = state => ({
@@ -99,6 +101,11 @@ const mapStateToProps = state => ({
   singleComProductList: state.commission.singleComProductList,
   // 客户与产品的三匹配信息
   threeMatchInfo: state.commission.threeMatchInfo,
+  // 新建咨讯订阅可选产品列表
+  subscribelProList: state.commission.subscribelProList,
+  // 新建咨讯订阅可选产品列表
+  unSubscribelProList: state.commission.unSubscribelProList,
+
 });
 
 const getDataFunction = (loading, type) => query => ({
@@ -145,6 +152,10 @@ const mapDispatchToProps = {
   getSingleProductList: getDataFunction(false, effects.singleProList),
   // 查询产品与客户的三匹配信息
   queryThreeMatchInfo: getDataFunction(false, effects.threeMatchInfo),
+  // 获取新建咨讯订阅可选产品列表
+  getSubscribelProList: getDataFunction(false, effects.subscribelProList),
+  // 获取新建咨讯退订可选产品列表
+  getUnSubscribelProList: getDataFunction(false, effects.unSubscribelProList),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -197,6 +208,10 @@ export default class CommissionHome extends PureComponent {
     threeMatchInfo: PropTypes.object.isRequired,
     queryThreeMatchInfo: PropTypes.func.isRequired,
     singleCustomerList: PropTypes.array.isRequired,
+    getSubscribelProList: PropTypes.func.isRequired,
+    getUnSubscribelProList: PropTypes.func.isRequired,
+    subscribelProList: PropTypes.array.isRequired,
+    unSubscribelProList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -515,6 +530,10 @@ export default class CommissionHome extends PureComponent {
       threeMatchInfo,
       queryThreeMatchInfo,
       singleCustomerList,
+      getSubscribelProList,
+      subscribelProList,
+      getUnSubscribelProList,
+      unSubscribelProList,
     } = this.props;
     if (_.isEmpty(custRange)) {
       return null;
@@ -589,6 +608,10 @@ export default class CommissionHome extends PureComponent {
           queryThreeMatchInfo={queryThreeMatchInfo}
           querySingleCustList={getSingleCustList}
           singleCustList={singleCustomerList}
+          getSubscribelProList={getSubscribelProList}
+          subscribelProList={subscribelProList}
+          getUnSubscribelProList={getUnSubscribelProList}
+          unSubscribelProList={unSubscribelProList}
         />
       </div>
     );

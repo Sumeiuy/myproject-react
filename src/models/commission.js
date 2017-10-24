@@ -55,6 +55,10 @@ export default {
     singleComProductList: [],
     // 产品三匹配信息
     threeMatchInfo: {},
+    // 新建咨讯订阅可选产品列表
+    subscribelProList: [],
+    // 新建咨讯退订可选产品列表
+    unSubscribelProList: [],
   },
   reducers: {
     getProductListSuccess(state, action) {
@@ -243,6 +247,22 @@ export default {
       return {
         ...state,
         singleComProductList: resultData,
+      };
+    },
+
+    getSubscribelProListSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        subscribelProList: resultData,
+      };
+    },
+
+    getUnSubscribelProListSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        unSubscribelProList: resultData,
       };
     },
 
@@ -496,6 +516,22 @@ export default {
       const response = yield call(api.queryThreeMatchInfo, payload);
       yield put({
         type: 'queryThreeMatchInfoSuccess',
+        payload: response,
+      });
+    },
+    // 查询咨讯订阅中的可选产品列表
+    * getSubscribelProList({ payload }, { call, put }) {
+      const response = yield call(api.queryConsultSubscribeProductList, payload);
+      yield put({
+        type: 'getSubscribelProListSuccess',
+        payload: response,
+      });
+    },
+    // 查询咨讯退订中的可选产品列表
+    * getUnSubscribelProList({ payload }, { call, put }) {
+      const response = yield call(api.queryConsultUnSubProductList, payload);
+      yield put({
+        type: 'getUnSubscribelProListSuccess',
         payload: response,
       });
     },
