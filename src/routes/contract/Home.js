@@ -22,6 +22,7 @@ import CommonModal from '../../components/common/biz/CommonModal';
 import EditForm from '../../components/contract/EditForm';
 import AddForm from '../../components/contract/AddForm';
 import BottonGroup from '../../components/permission/BottonGroup';
+import ChoiceApproverBoard from '../../components/commissionAdjustment/ChoiceApproverBoard';
 import { seibelConfig } from '../../config';
 import Barable from '../../decorators/selfBar';
 
@@ -215,6 +216,14 @@ export default class Contract extends PureComponent {
         operationType: '',
         id: '',
       },
+      // 审批人弹窗是否可见
+      approverModal: false,
+      // 审批人列表
+      flowAuditors: EMPTY_LIST,
+      // 弹窗底部按钮数据
+      footerBtnData: EMPTY_OBJECT,
+      // 所选择的审批人
+      selectApproveData: EMPTY_OBJECT,
     };
   }
 
@@ -248,7 +257,6 @@ export default class Contract extends PureComponent {
       seibleListLoading: prevSLL,
       baseInfo: preBI,
       baseInfoLoading: preBIL,
-      addFlowStepInfo: preAFSI,
       unsubFlowStepInfo: preUFSI,
       doApprove: preDA,
     } = this.props;
@@ -300,7 +308,7 @@ export default class Contract extends PureComponent {
     }
 
     // 获取到新建订购时的按钮
-    if (!_.isEqual(preAFSI, nextAFSI)) {
+    if (!_.isEmpty(nextAFSI)) {
       // 获取到 flowStepInfo
       this.setState({
         addFlowStepInfo: nextAFSI,
@@ -308,8 +316,6 @@ export default class Contract extends PureComponent {
           list={nextAFSI}
           onEmitEvent={this.footerBtnHandle}
         />,
-      }, () => {
-        this.showModal('addFormModal');
       });
     }
     // 获取到新建退订时的按钮
@@ -460,7 +466,7 @@ export default class Contract extends PureComponent {
 
   // 保存合作合约 新建/修改 数据
   @autobind
-  saveContractData(itemBtn) {
+  saveContractData() {
     const {
       location: {
         query,
@@ -473,7 +479,8 @@ export default class Contract extends PureComponent {
       getSeibleList,
       getBaseInfo,
     } = this.props;
-    const { contractFormData, editFormModal } = this.state;
+    const { contractFormData, editFormModal, footerBtnData, selectApproveData: { approverId = '' } } = this.state;
+    console.warn('contractFormData', contractFormData);
     if (!contractFormData.subType) {
       message.error('请选择子类型');
       return;
@@ -498,8 +505,8 @@ export default class Contract extends PureComponent {
         this.props.postDoApprove({
           flowId: contractFormData.contractNum.flowId,
           approverIdea: contractFormData.appraval || '',
-          groupName: itemBtn.nextGroupName,
-          auditors: contractFormData.approverId || '',
+          groupName: footerBtnData.nextGroupName,
+          auditors: approverId,
           operate: '2',
         });
         // this.props.contractUnSubscribe(condition);
@@ -520,21 +527,18 @@ export default class Contract extends PureComponent {
           message.error('请添加合约条款');
           return;
         }
-        if (!contractFormData.approverId) {
-          message.error('请选择审批人');
-          return;
-        }
         const payload = {
           type: 'add',
           data: contractFormData,
           approveData: {
             flowId: '',
             approverIdea: contractFormData.appraval || '',
-            groupName: itemBtn.nextGroupName,
-            auditors: contractFormData.approverId || '',
+            groupName: footerBtnData.nextGroupName,
+            auditors: approverId,
             operate: '1',
           },
         };
+        console.warn('新建保存时的数据', payload);
         saveContractData(payload);
       }
       // 新建窗口关闭后，请求左侧列表
@@ -545,12 +549,16 @@ export default class Contract extends PureComponent {
         type: pageType,
       });
     } else {
-      // 编辑窗口
+      // 编辑合作合约弹窗
       if (!contractFormData.startDt) {
         message.error('请选择合约开始日期');
         return;
       }
-      if (contractFormData.vailDt && !this.isVaildtBigThanToday(contractFormData.vailDt)) {
+      if (contractFormData.vailDt && this.isBiggerThanStartDate(contractFormData)) {
+        message.error('合约开始日期不能大于合约有效期');
+        return;
+      }
+      if (contractFormData.vailDt && !this.isBiggerThanTodayAddFive(contractFormData.vailDt)) {
         message.error('合约有效期必须大于当前日期加5天');
         return;
       }
@@ -558,21 +566,18 @@ export default class Contract extends PureComponent {
         message.error('请添加合约条款');
         return;
       }
-      if (!contractFormData.approverId) {
-        message.error('请选择审批人');
-        return;
-      }
-      this.props.postDoApprove({
-        flowId: this.state.flowId,
-        approverIdea: contractFormData.appraval || '',
-        groupName: itemBtn.nextGroupName,
-        auditors: contractFormData.approverId || '',
-        operate: itemBtn.operate,
-      });
       const payload = {
         type: 'edit',
         data: contractFormData,
       };
+      console.warn('编辑保存时的 payload', payload);
+      this.props.postDoApprove({
+        flowId: this.state.flowId,
+        approverIdea: contractFormData.appraval || '',
+        groupName: footerBtnData.nextGroupName,
+        auditors: approverId,
+        operate: footerBtnData.operate,
+      });
       saveContractData(payload);
       // 编辑窗口关闭后，请求此 flowId 的详情
       getBaseInfo({
@@ -605,17 +610,14 @@ export default class Contract extends PureComponent {
   // 头部新建按钮点击事件处理程序
   @autobind
   handleCreateBtnClick() {
-    const { addFlowStepInfo } = this.props;
-    if (_.isEmpty(addFlowStepInfo)) {
-      this.props.getFlowStepInfo({
-        operate: 1,
-        flowId: '',
-      });
-    } else {
-      this.showModal('addFormModal');
-    }
+    const { getFlowStepInfo, resetUnsubscribeDetail } = this.props;
+    getFlowStepInfo({
+      operate: 1,
+      flowId: '',
+    });
+    this.showModal('addFormModal');
     // 每次打开弹窗的时候重置退订详情数据
-    this.props.resetUnsubscribeDetail();
+    resetUnsubscribeDetail();
   }
 
   // 显示修改合作合约弹框
@@ -659,10 +661,34 @@ export default class Contract extends PureComponent {
       pageData: contract,
     });
   }
+
   // 弹窗底部按钮事件
   @autobind
-  footerBtnHandle(item) {
-    this.saveContractData(item);
+  footerBtnHandle(btnItem) {
+    console.warn('item', btnItem);
+    // item 不为空，并且 approverNum 不等于 'none'
+    if (!_.isEmpty(btnItem) && btnItem.approverNum !== 'none') {
+      const listData = btnItem.flowAuditors;
+      const newApproverList = listData.map((item, index) => {
+        const key = `${new Date().getTime()}-${index}`;
+        return {
+          empNo: item.login || '',
+          empName: item.empName || '无',
+          belowDept: item.occupation || '无',
+          key,
+        };
+      });
+      this.setState({
+        flowAuditors: newApproverList,
+        footerBtnData: btnItem,
+      }, this.showModal('approverModal'));
+    } else {
+      console.warn('不需要选择审批人');
+      this.setState({
+        flowAuditors: EMPTY_LIST,
+        footerBtnData: btnItem,
+      }, this.saveContractData);
+    }
   }
 
   // 构造底部按钮集合
@@ -681,6 +707,17 @@ export default class Contract extends PureComponent {
         onEmitEvent={this.footerBtnHandle}
       />,
     });
+  }
+  // 审批人弹出框确认按钮
+  @autobind
+  handleApproverModalOK(approver) {
+    console.warn('approver', approver);
+    this.setState({
+      selectApproveData: {
+        approverName: approver.empName,
+        approverId: approver.empNo,
+      },
+    }, this.saveContractData);
   }
 
   render() {
@@ -704,10 +741,12 @@ export default class Contract extends PureComponent {
     const {
       addFormModal,
       editFormModal,
+      approverModal,
       business2,
       createTime,
       addOrEditSelfBtnGroup,
       hasEditPermission,
+      flowAuditors,
     } = this.state;
     if (!custRange || !custRange.length) {
       return null;
@@ -731,7 +770,6 @@ export default class Contract extends PureComponent {
         empInfo={empInfo}
       />
     );
-
     const leftPanel = (
       <ContractList
         list={seibleList}
@@ -814,7 +852,7 @@ export default class Contract extends PureComponent {
       flowStepInfo,
     };
     const selfBtnGroup = (<BottonGroup
-      list={flowStepInfo.flowButtons}
+      list={flowStepInfo}
       onEmitEvent={this.footerBtnHandle}
     />);
     const editFormModalProps = {
@@ -850,6 +888,17 @@ export default class Contract extends PureComponent {
             <CommonModal {...editFormModalProps}>
               <EditForm {...editFormProps} />
             </CommonModal>
+          :
+            null
+        }
+        {
+          approverModal ?
+            <ChoiceApproverBoard
+              visible={approverModal}
+              approverList={flowAuditors}
+              onClose={() => this.closeModal('approverModal')}
+              onOk={this.handleApproverModalOK}
+            />
           :
             null
         }
