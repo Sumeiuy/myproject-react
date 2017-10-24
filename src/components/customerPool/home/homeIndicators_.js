@@ -253,8 +253,8 @@ export function getCustAndProperty(dataArray) {
   const custNumberArray = [];
   _.forEach(descData, item => custNumberArray.push(item.value));
   const { newUnit: custUnit, newSeries: newCustArray } = toFixedCust(custNumberArray);
-  // 设置背景色
-  const colors = ['#756fb8', '#7d9be0', '#38d8e8'];
+  // 设置背景色 #7D9BE0
+  const colors = ['#7D9BE0', '#60BBEA', '#38D8E8'];
   const newDatas = _.map(
     descData,
     (item, index) => ({ ...item, bgColor: colors[index], value: newCustArray[index] }),

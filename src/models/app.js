@@ -212,6 +212,9 @@ export default {
   },
   subscriptions: {
     setup({ dispatch }) {
+      // 加载员工职责与职位
+      dispatch({ type: 'getEmpInfo' });
+      // 获取字典
       dispatch({ type: 'getDictionary' });
     },
   },

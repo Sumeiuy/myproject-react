@@ -16,6 +16,8 @@ import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
+// import { helper } from '../../../utils';
+
 import styles from './filter.less';
 
 const currentClass = 'current';
@@ -50,6 +52,17 @@ export default class MultiFilter extends PureComponent {
     this.state = {
       keyArr: value ? value.split(separator) : [],
     };
+  }
+
+  componentDidMount() {
+    // if (this.domNode) {
+    //   const domNodeHeight = helper.getCssStyle(this.domNode, 'height');
+    //   const domNodeLineHeight = helper.getCssStyle(this.domNode, 'line-height');
+    //   // 超过两行，显示...
+    //   if (parseInt(domNodeHeight) >= 2*parseInt(domNodeLineHeight)) {
+
+    //   }
+    // }
   }
 
   @autobind
@@ -100,7 +113,7 @@ export default class MultiFilter extends PureComponent {
     return (
       <div className={styles.filter}>
         <span>{filterLabel}:</span>
-        <ul>
+        <ul ref={r => this.domNode = r}>
           {
             this.renderList()
           }

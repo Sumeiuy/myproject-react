@@ -8,22 +8,18 @@ import React, { PropTypes, PureComponent } from 'react';
 import { Form, Select, Input, DatePicker, Mention } from 'antd';
 import _ from 'lodash';
 import moment from 'moment';
-import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import styles from './createTaskForm.less';
-import Button from '../../common/Button';
 
 
 const FormItem = Form.Item;
-const create = Form.create;
 const Option = Select.Option;
 const { TextArea } = Input;
 const { toContentState } = Mention;
 const WEEK = ['日', '一', '二', '三', '四', '五', '六'];
 const { toString } = Mention;
-// let users = [];
 
-@create()
+
 export default class TaskFormInfo extends PureComponent {
 
   static propTypes = {
@@ -32,13 +28,10 @@ export default class TaskFormInfo extends PureComponent {
     defaultMissionType: PropTypes.string.isRequired,
     defaultExecutionType: PropTypes.string.isRequired,
     defaultMissionDesc: PropTypes.string.isRequired,
-    suggestions: PropTypes.array.isRequired,
-    showText: PropTypes.bool.isRequired,
+    defaultServiceStrategySuggestion: PropTypes.string,
     users: PropTypes.array.isRequired,
     taskTypes: PropTypes.array,
     executeTypes: PropTypes.array,
-    onSubmit: PropTypes.func.isRequired,
-    getFieldDecorator: PropTypes.func.isRequired,
     startValue: PropTypes.object.isRequired,
     endValue: PropTypes.object.isRequired,
   }
@@ -46,6 +39,7 @@ export default class TaskFormInfo extends PureComponent {
   static defaultProps = {
     taskTypes: [],
     executeTypes: [],
+    defaultServiceStrategySuggestion: '',
   }
 
   constructor(props) {
@@ -55,6 +49,7 @@ export default class TaskFormInfo extends PureComponent {
       endValue: null,
       startFormat: 'YYYY/MM/DD(E)',
       endFormat: 'YYYY/MM/DD(E)',
+      suggestions: [],
     };
   }
 
@@ -64,6 +59,7 @@ export default class TaskFormInfo extends PureComponent {
       startValue,
       endValue,
     });
+    // users = this.props.users;
   }
   @autobind
   onChange(field, value) {
@@ -89,11 +85,12 @@ export default class TaskFormInfo extends PureComponent {
   onSelect(suggestion) {
     console.log('onSelect', suggestion);
   }
-
-  onSearchChange = (value, trigger) => {
+  // @autobind
+  handleSearchChange=(value, trigger) => {
     console.log('onSearchChange', value, trigger);
     const { users } = this.props;
     const dataSource = trigger === '$' ? users : [];
+    console.log('dataSource---', users);
     this.setState({
       suggestions: dataSource.filter(item => item.indexOf(value) !== -1),
     });
@@ -101,7 +98,7 @@ export default class TaskFormInfo extends PureComponent {
   @autobind
   handleChange(editorState) {
     console.log(toString(editorState));
-    console.log(typeof editorState);
+    // console.log(typeof editorState);
   }
   checkMention = (rule, value, callback) => {
     // const { getFieldValue } = this.props.form;
@@ -169,10 +166,6 @@ export default class TaskFormInfo extends PureComponent {
     }
   }
 
-  // 从业务目标池客户：businessCustPool
-  // 标签、搜索目标客户：searchCustPool
-  // 绩效目标客户 - 净新增客户： performanceCustPool
-  // 绩效目标客户 - 业务开通：performanceBusinessOpenCustPool
 
   render() {
     const {
@@ -180,21 +173,22 @@ export default class TaskFormInfo extends PureComponent {
       endFormat,
       startValue,
       endValue,
+      suggestions,
     } = this.state;
     const {
       defaultMissionName,
       defaultMissionType,
       defaultExecutionType,
+      defaultServiceStrategySuggestion,
       defaultMissionDesc,
-      suggestions,
-      showText,
-      getFieldDecorator,
       taskTypes,
       executeTypes,
-      onSubmit,
+      form,
     } = this.props;
+    const { getFieldDecorator } = form;
+    // console.log('onSubmit--', onSubmit);
     return (
-      <Form onSubmit={onSubmit}>
+      <Form >
         <ul className={styles.task_selectList}>
           <li>
             <label htmlFor="dd" className={styles.task_label}><i className={styles.required_i}>*</i>任务名称</label>
@@ -313,6 +307,7 @@ export default class TaskFormInfo extends PureComponent {
             {getFieldDecorator('serviceStrategySuggestion',
               {
                 rules: [{ required: true, min: 10, message: '服务策略不能小于10个字符!' }],
+                initialValue: defaultServiceStrategySuggestion,
               })(
                 <TextArea
                   id="desc"
@@ -339,7 +334,7 @@ export default class TaskFormInfo extends PureComponent {
                 onChange={this.handleChange}
                 placeholder="请在描述客户经理联系客户钱需要了解的客户相关信息，比如持仓情况。（字数限制：10-1000字）"
                 prefix={['$']}
-                onSearchChange={this.onSearchChange}
+                onSearchChange={this.handleSearchChange}
                 suggestions={suggestions}
                 onSelect={this.onSelect}
               />,
@@ -347,21 +342,6 @@ export default class TaskFormInfo extends PureComponent {
             <div className={styles.info}>
               任务描述中 &#123;XXXX&#125; 部分后台会根据客户自动替换为该客户对应的属性值，编辑任务描述时请尽量避免修改这些参数描述。
             </div>
-          </FormItem>
-        </div>
-        <div className={styles.task_btn}>
-          <FormItem
-            className={
-              classnames({
-                [styles.hideTextArea]: showText,
-                [styles.showTextArea]: !showText,
-              })
-            }
-          >
-            <Button onClick={this.closeTab}>
-              取消
-              </Button>
-            <Button type="primary" htmlType="submit">提交</Button> { /* loading */}
           </FormItem>
         </div>
       </Form>

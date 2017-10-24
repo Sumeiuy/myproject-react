@@ -225,8 +225,7 @@ export default class CustomerGroup extends PureComponent {
   parseQuery() {
     const { location: { query: { ids, condition } } } = this.props;
     let custCondition = {};
-
-    let custIdList = null;
+    let custIdList = [];
 
     if (!_.isEmpty(ids)) {
       custIdList = decodeURIComponent(ids).split(',');
@@ -290,7 +289,6 @@ export default class CustomerGroup extends PureComponent {
       //   },
       // });
 
-      // 添加分组
       addCustomerToGroup({
         groupId,
         custIdList,
