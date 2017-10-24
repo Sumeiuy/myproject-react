@@ -5,6 +5,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+// import { message } from 'antd';
 import _ from 'lodash';
 import classnames from 'classnames';
 import style from './detail.less';

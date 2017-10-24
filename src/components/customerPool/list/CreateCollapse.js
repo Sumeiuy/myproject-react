@@ -161,7 +161,7 @@ export default class CreateCollapse extends PureComponent {
                           </div> :
                           <div
                             className={styles.headerLeft}
-                            itle={`${item.taskType || '--'}：${item.activityContent || '--'}`}
+                            title={`${item.taskType || '--'}：${item.activityContent || '--'}`}
                           >
                             {item.taskType || '--'}：{item.activityContent || '--'}
                           </div>

@@ -48,18 +48,19 @@ export default class SearchSelect extends PureComponent {
   clearInput() {
     this.setState({
       inputValue: '',
+      showWrongInputConfirm: false,
     });
   }
 
   @autobind
-  handlerSearch(value) {
+  handleSearch(value) {
+    this.setState({
+      inputValue: value,
+    });
     if (this.inputTimeout !== 0) {
       clearTimeout(this.inputTimeout);
     }
     this.inputTimeout = setTimeout(() => this.validateInput(value), 600);
-    this.setState({
-      inputValue: value,
-    });
   }
 
   @autobind
@@ -97,7 +98,7 @@ export default class SearchSelect extends PureComponent {
           optionLabelProp="text"
           value={inputValue}
           onSelect={this.setSelectValue}
-          onSearch={this.handlerSearch}
+          onSearch={this.handleSearch}
         />
         {
           !showWrongInputConfirm ? null

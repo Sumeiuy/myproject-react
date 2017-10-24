@@ -13,7 +13,7 @@ import CustomerGroupDetail from '../../components/customerPool/groupManage/Custo
 import SimpleSearch from '../../components/customerPool/groupManage/CustomerGroupListSearch';
 import { fspContainer } from '../../config';
 import { fspGlobal } from '../../utils';
-import Confirm from '../../components/common/Confirm';
+import confirm from '../../components/common/Confirm/confirm';
 import styles from './customerGroupManage.less';
 import tableStyles from '../../components/customerPool/groupManage/groupTable.less';
 
@@ -129,7 +129,7 @@ export default class CustomerGroupManage extends PureComponent {
       modalTitle: '新建用户分组',
       groupId: '',
       record: {},
-      isShowDeleteConfirm: false,
+      // isShowDeleteConfirm: false,
     };
   }
 
@@ -298,24 +298,27 @@ export default class CustomerGroupManage extends PureComponent {
   @autobind
   handleConfirmOk() {
     this.deleteCustomerGroup();
-    this.setState({
-      isShowDeleteConfirm: false,
-    });
+    // this.setState({
+    //   isShowDeleteConfirm: false,
+    // });
   }
 
-  @autobind
-  handleConfirmCancel() {
-    this.setState({
-      isShowDeleteConfirm: false,
-    });
-  }
+  // @autobind
+  // handleConfirmCancel() {
+  //   this.setState({
+  //     isShowDeleteConfirm: false,
+  //   });
+  // }
 
   @autobind
   handleDeleteBtnClick(record) {
     this.setState({
       // 当前删除行记录数据
       record,
-      isShowDeleteConfirm: true,
+      // isShowDeleteConfirm: true,
+    });
+    confirm({
+      onOk: this.handleConfirmOk,
     });
   }
 
@@ -475,7 +478,7 @@ export default class CustomerGroupManage extends PureComponent {
       description,
       modalTitle,
       groupId,
-      isShowDeleteConfirm,
+      // isShowDeleteConfirm,
     } = this.state;
 
     const {
@@ -575,14 +578,6 @@ export default class CustomerGroupManage extends PureComponent {
                 />
               }
               onOkHandler={this.handleUpdateGroup}
-            /> : null
-        }
-        {
-          isShowDeleteConfirm ?
-            <Confirm
-              type={'delete'}
-              onCancelHandler={this.handleConfirmCancel}
-              onOkHandler={this.handleConfirmOk}
             /> : null
         }
       </div>

@@ -19,7 +19,7 @@ import seibelColumns from '../../components/common/biz/seibelColumns';
 import { seibelConfig } from '../../config';
 import ModifyPrivateClient from '../../components/permission/ModifyPrivateClient';
 import CreatePrivateClient from '../../components/permission/CreatePrivateClient_';
-
+import Barable from '../../decorators/selfBar';
 import styles from './home.less';
 
 const EMPTY_OBJECT = {};
@@ -98,6 +98,7 @@ const mapDispatchToProps = {
 
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
+@Barable
 export default class Permission extends PureComponent {
   static propTypes = {
     list: PropTypes.object.isRequired,
@@ -478,4 +479,3 @@ export default class Permission extends PureComponent {
     );
   }
 }
-

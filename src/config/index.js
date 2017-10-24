@@ -1,5 +1,5 @@
-import constants from './constants';
 import fspContainer from './fspContainer';
+import constants from './constants';
 import log from './log';
 import menu from './menu';
 import persist from './persist';

@@ -46,7 +46,6 @@ export default class SelectAssembly extends PureComponent {
     }
   }
 
-
   // 根据用户选中的option的value值获取对应的数组值
   @autobind
   handleSelectedValue(value) {

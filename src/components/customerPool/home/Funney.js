@@ -7,6 +7,7 @@ import _ from 'lodash';
 
 import IECharts from '../../IECharts';
 import styles from './funney.less';
+import { fspGlobal } from '../../../utils';
 
 function getDataConfig(data) {
   return data.map(item => ({
@@ -71,12 +72,33 @@ function Funney({ dataSource }) {
       },
     ],
   };
+
+  const onReady = (instance) => {
+    instance.on('click', (arg) => {
+      if (arg.componentType !== 'series') {
+        return;
+      }
+      // 点击'服务客户数'时，跳转到 客户中心 > 客户管理 页面
+      if (arg.name === '服务客户数') {
+        fspGlobal.openFspTab({
+          url: '/customer/manage/showCustManageTabWin',
+          param: {
+            id: 'FSP_CUST_TAB_CENTER_MANAGE',
+            title: '正式客户管理',
+            forceRefresh: true,
+          },
+        });
+      }
+    });
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.uintRow}>{`户数/资产(${propertyUnit})`}</div>
       <div className={styles.content}>
         <div className={styles.left}>
           <IECharts
+            onReady={onReady}
             option={funnelOption}
             resizable
             style={{

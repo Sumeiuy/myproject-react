@@ -10,8 +10,11 @@
   position: relative;
   background-color: #fff;
   border-bottom: 1px solid #ddd;
+  &:nth-child(2n) {
+    background-color: #f9f9f9;
+  }
   .customerRowContent {
-    padding: 18px 0;
+    padding: 14px 0;
   }
   &:hover {
     background-color: #F1F8FF;
@@ -57,6 +60,7 @@
   width: 35px;
   height: 35px;
   vertical-align: top;
+  cursor: pointer;
 }
 .avatorText {
   height: 22px;
@@ -70,28 +74,42 @@
 }
 .customerRowRight {
   padding-left: 160px;
-  padding-right: 30px;
+  padding-right: 20px;
   width: 100%;
   box-sizing: border-box;
   :global {
     .row-one {
-      height: 30px;
-      line-height: 30px;
+      height: 22px;
+      line-height: 22px;
+      span {
+        font-size: 12px;
+        &.cutOffLine {
+          padding: 0 3px;
+        }
+      }
       .name {
-        margin-right: 14px;
-        color: #515151;
+        margin-right: 8px;
+        color: #4a4a4a;
         font-weight: bold;
-        font-size: 16px;
+        font-size: 15px;
+        cursor: pointer;
+        &:hover {
+          color: #63aee5;
+        }
       }
       .iconSingned {
         position: relative;
-        display: inline-block;
-        margin-right: 14px;
-        background: url("../../../../static/images/icon-signed.png");
-        width: 28px;
-        height: 30px;
-        background-repeat: no-repeat;
-        background-size:contain;
+        float: right;
+        padding: 0 3px;
+        // background: url("../../../../static/images/icon-signed.png");
+        height: 17px;
+        line-height: 17px;
+        font-size:12px;
+        color:#fff;
+        border-radius:1px;
+        background-color: #FF784E;
+        // background-repeat: no-repeat;
+        // background-size:contain;
         vertical-align: middle;
         &:hover {
           .itemText {
@@ -106,33 +124,35 @@
           padding: 0 8px;
           line-height: 18px;
           top: -25px;
-          left: 0;
+          right: -10px;
           box-shadow: 0 0 15px #EAEBEB;
           background-color: #FFFFCD;
+          color: #333;
           white-space: nowrap;
         }
       }
       .highWorthFlag {
-        display: inline-block;
-        margin-right: 5px;
+        float: right;
+        margin-left: 10px;
+        padding: 0 3px;
         border: 1px solid #7D9BE0;
-        border-radius: 5px;
-        color: #7D9BE0;
+        border-radius: 1px;
+        color: #7d9be0;
         font-size: 12px;
-        width: 50px;
-        height: 18px;
-        line-height: 18px;
+        height: 17px;
+        line-height: 17px;
         text-align: center;
         box-sizing: content-box;
       }
       .riskLevel {
-        width: 30px;
-        height: 20px;
-        line-height: 20px;
+        float: right;
+        padding: 0 3px;
+        margin-left: 10px;
+        height: 17px;
+        line-height: 17px;
         text-align: center;
         position: relative;
-        display: inline-block;
-        border-radius: 5px;
+        border-radius: 1px;
         color: white;
         font-size: 12px;
         background-color: #60C1EA;
@@ -166,7 +186,7 @@
           display: none;
           position: absolute;
           top: -25px;
-          left: 0;
+          right: -10px;
           padding: 0 10px;
           line-height: 18px;
           border-radius: 3px;
@@ -179,45 +199,56 @@
       }
     }
     .row-two {
-      height: 28px;
-      line-height: 28px;
+      margin-top: 5px;
+      height: 22px;
+      line-height: 22px;
       span {
+        float: left;
         display: inline-block;
-        font-size: 14px;
+        font-size: 12px;
         color: #777;
         &.cutOffLine {
-          padding: 0 10px;
+          padding: 0 7px;
         }
-        &.commission {
-          float: right;
+        &.commission, &.imputation {
           em {
             font-weight: bold;
             font-style: normal;
           }
         }
-      }
-    }
-    .row-three {
-      height: 28px;
-      line-height: 28px;
-      padding-bottom: 10px;
-      border-bottom: 1px dashed #c2c2c2;
-      box-sizing: content-box;
-      span {
-        float: left;
-        font-size: 14px;
-        color: #777;
         &.asset {
+          font-size: 14px;
           font-weight: bold;
+        }
+        &.assetunit{
+          font-size: 13px;
         }
       }
       .department {
         float: right;
-        .cutOffLine {
-          padding: 0 10px;
-        }
       }
     }
+    // .row-three {
+    //   height: 28px;
+    //   line-height: 28px;
+    //   padding-bottom: 10px;
+    //   border-bottom: 1px dashed #c2c2c2;
+    //   box-sizing: content-box;
+    //   span {
+    //     float: left;
+    //     font-size: 14px;
+    //     color: #777;
+    //     &.asset {
+    //       font-weight: bold;
+    //     }
+    //   }
+    //   .department {
+    //     float: right;
+    //     .cutOffLine {
+    //       padding: 0 10px;
+    //     }
+    //   }
+    // }
   }
 }
 

@@ -17,6 +17,14 @@
       .service_label{
         text-align: center;
       }
+      :global {
+        .ant-select-selection{
+          border: 1px solid #d9d9d9;
+        }
+        .ant-select,.ant-calendar-picker{
+          width:85%;
+        }
+      }
     }
     /*服务记录样式*/
     .serviceLog{
@@ -41,6 +49,9 @@
           }
         }
       }
+    }
+    .showBtn{
+      display: none;
     }
     .more{
       text-align: center;
@@ -84,12 +95,6 @@
       -webkit-transform: rotate(1turn);
       transform: rotate(1turn)
     }
-  }
-  .ant-select-selection{
-    border: 1px solid #d9d9d9;
-  }
-  .ant-select,.ant-calendar-picker{
-    width:85%;
   }
 }
 /*子组件样式修改*/
