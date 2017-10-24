@@ -119,7 +119,7 @@ export default class PerformanceIndicators extends PureComponent {
                   <div className={styles.count}>
                     {this.farmtNum(businessNumbers)}
                   </div>
-                  <div className={styles.intro}>满足业务开通客户</div>
+                  <div className={styles.intro}>潜在业务客户</div>
                 </div>
               </div>
             </a>
