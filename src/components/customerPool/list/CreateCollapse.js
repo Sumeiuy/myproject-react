@@ -96,6 +96,107 @@ export default class CreateCollapse extends PureComponent {
   //   return serveChannel;
   // }
 
+  renderHeaderLeft(item) {
+    if (_.isEmpty(item)) {
+      return null;
+    }
+
+    if (!_.isEmpty(item.taskType)) {
+      if (item.taskType.indexOf('MOT') !== -1) {
+        // MOT任务
+        return (
+          <div
+            className={styles.headerLeft}
+            title={`${item.taskName || '--'}：${item.serveRecord || '--'}`}
+          >
+            {item.taskName || '--'}：{item.serveRecord || '--'}
+          </div>
+        );
+      } else if (item.taskType.indexOf('MOT') === -1 && item.taskType.indexOf('OCRM') !== -1) {
+        // 不是MOT任务，但是是从OCRM来的
+        return (
+          <div
+            className={styles.headerLeft}
+            title={`${item.taskType || '--'}：${item.serveRecord || '--'}`}
+          >
+            {item.taskType || '--'}：{item.serveRecord || '--'}
+          </div>
+        );
+      }
+
+      return (
+        <div
+          className={styles.headerLeft}
+        >
+          -- ： --
+      </div>
+      );
+    }
+
+    return (
+      <div
+        className={styles.headerLeft}
+      >
+        -- ：--
+      </div>
+    );
+  }
+
+  renderHeaderRight(item, currentActiveIndex, index) {
+    if (_.isEmpty(item)) {
+      return null;
+    }
+
+    if (!_.isEmpty(item.taskType) && item.taskType.indexOf('MOT System') !== -1) {
+      // 从MOT系统来，没有活动方式
+      return (
+        <div className={styles.headerRight}>
+          <span>{this.renderServiceRecordSource(item)}</span>
+          <div
+            className={
+              classnames({
+                [styles.upIcon]: _.includes(currentActiveIndex, String(index)),
+                [styles.downIcon]: !_.includes(currentActiveIndex, String(index)),
+              })
+            }
+          />
+        </div>
+      );
+    }
+
+    return (
+      <div className={styles.headerRight}>
+        {/* 来源 */}
+        <span>{this.renderServiceRecordSource(item)}</span>
+        <span> - </span>
+        {/* 活动方式 */}
+        <span className={styles.activityType}>{item.activityType || '--'}</span>
+        <div
+          className={
+            classnames({
+              [styles.upIcon]: _.includes(currentActiveIndex, String(index)),
+              [styles.downIcon]: !_.includes(currentActiveIndex, String(index)),
+            })
+          }
+        />
+      </div>
+    );
+  }
+
+  renderServiceRecordSource(item) {
+    // 来源
+    if (_.isEmpty(item)) {
+      return '--';
+    }
+    if (!_.isEmpty(item.taskType) && item.taskType.indexOf('MOT') !== -1) {
+      return 'MOT任务';
+    } else if (!_.isEmpty(item.serveChannel) && item.serveChannel.indexOf('经理') !== -1) {
+      return '自建任务';
+    }
+
+    return (item.serveChannel === '短信' || item.serveChannel === '短信新') ? '短信' : (item.serveChannel || '--');
+  }
+
   renderPanel(serveTime) {
     const { data, executeTypes } = this.props;
     const { currentActiveIndex } = this.state;
@@ -107,6 +208,8 @@ export default class CreateCollapse extends PureComponent {
     return (
       <div className={styles.panelContainer}>
         <Collapse
+          /* 只打开一个panel */
+          accordion
           className={styles.serviceCollapse}
           defaultActiveKey={['0']}
           onChange={this.handleCollapseChange}
@@ -152,32 +255,11 @@ export default class CreateCollapse extends PureComponent {
                     </div>
                     <div className={styles.collapsePanel}>
                       {
-                        item.taskType.indexOf('MOT') !== -1 ?
-                          <div
-                            className={styles.headerLeft}
-                            title={`${item.taskName || '--'}：${item.serveStrategy || '--'}`}
-                          >
-                            {item.taskName || '--'}：{item.serveStrategy || '--'}
-                          </div> :
-                          <div
-                            className={styles.headerLeft}
-                            title={`${item.taskType || '--'}：${item.activityContent || '--'}`}
-                          >
-                            {item.taskType || '--'}：{item.activityContent || '--'}
-                          </div>
+                        this.renderHeaderLeft(item)
                       }
-                      <div className={styles.headerRight}>
-                        <span>{item.serveChannel || '--'}</span>
-                        <span className={styles.serviceStatus}>{item.serveStatus || '--'}</span>
-                        <div
-                          className={
-                            classnames({
-                              [styles.upIcon]: _.includes(currentActiveIndex, String(index)),
-                              [styles.downIcon]: !_.includes(currentActiveIndex, String(index)),
-                            })
-                          }
-                        />
-                      </div>
+                      {
+                        this.renderHeaderRight(item, currentActiveIndex, index)
+                      }
                     </div>
                   </div>
                 }
@@ -187,7 +269,6 @@ export default class CreateCollapse extends PureComponent {
                 <ServiceRecordContent
                   executeTypes={executeTypes}
                   item={item}
-                  type={item.taskType}
                 />
               </Panel>,
             )
@@ -204,12 +285,7 @@ export default class CreateCollapse extends PureComponent {
 
     if (_.isEmpty(data)) {
       return (
-        <div>
-          <div className={styles.noServiceRecord}>
-            <div className={styles.imgData} />
-          </div>
-          <div className={styles.noInfo}>没有相关服务记录</div>
-        </div>
+        <div className={styles.noServiceRecord}>无服务记录</div>
       );
     }
 

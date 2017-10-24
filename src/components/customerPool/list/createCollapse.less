@@ -1,19 +1,13 @@
  .noServiceRecord {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     background: #fff;
-    & > .imgData {
-      width: 125px;
-      height: 150px;
-      background: url("../../../../static/images/empty.png");
-      background-size: 125px 150px;
-      background-repeat: no-repeat;
-    }
-  }
-  .noInfo {
-    text-align: center;
-    padding-top: 10px;
+    font-size:15px;
+    color:#c2c2c2;
+    letter-spacing:-0.09px;
+    text-align:left;
+    margin-top: 25px;
   }
   .stepCollection {
     :global {
@@ -106,7 +100,7 @@
     width: 6px;
     height: 6px;
     border-radius: 6px;
-    left: -20px;
+    left: -10px;
     transition: top 0.1s ease-in-out;
     transform: translateX(-50%);
     border: 3px solid #108ee9;
@@ -119,49 +113,43 @@
     width: 6px;
     height: 6px;
     border-radius: 6px;
-    left: -20px;
+    left: -10px;
     transition: top 0.1s ease-in-out;
     transform: translateX(-50%);
     border: 1px solid #c2c2c2;
     background-color: #c2c2c2;
     z-index: 10;
-     }
-  // .leftAnchor::before {
-  //      content: "";
-  //      position: absolute;
-  //      width: 2px;
-  //      height: 98%;
-  //      display: block;
-  //      background-color: #e9e9e9;
-  //      margin: 0 auto;
-  //      left: -20px;
-  //      top: 15px;
-  //   }
+    }
     .panelHeader::before {
     content: "";
     position: absolute;
-    width: 2px;
-    height: 100%;
+    width: 1px;
+    height: 105%;
     display: block;
-    background-color: #e9e9e9;
+    background-color: #dddddd;
     margin: 0 auto;
-    left: -20px;
-    top: 20px;
+    left: -10px;
+    top: 0px;
     }
   .serviceCollapse {
     background: white;
     border: 0;
-    // padding-top: 20px;
     position: relative;
-    // padding-left: 30px;
-    margin-left: 80px;
+    margin-left: 90px;
+    margin-top: 14px;
     & > .panelHeader {
       margin-bottom: 10px;
       border: 1px solid #efefef;
       border-radius: 3px;
+      background: #f6fafe;
+      border: 1px solid #dddddd;
       :global {
         & .arrow {
           display: none !important;
+        }
+        & .ant-collapse-content {
+          background-color: #fff;
+          background: #f6fafe;
         }
       }
       .serviceContainer {
@@ -170,6 +158,10 @@
         align-items: center;
         flex-wrap: wrap;
         padding-bottom: 10px;
+        padding-left: 20px;
+        & > div:not(:last-child) {
+          border-right: 1px solid #dddddd;
+        }
         & > div:nth-child(even) {
           // 偶数行
           padding-left: 45px;
@@ -204,34 +196,35 @@
         }
         & > .leftSection {
           width: 50%;
-        & > div:nth-child(2), div:nth-child(3), div:nth-child(4) {
-            border-right: 1px solid #dddddd;
-        }
-        & > .leftModule {
-          display: flex;
-          justify-content: flex-start;
-          align-items: center;
-          width: 100%;
-          padding-bottom: 5px;
-          & > span:first-child {
-            font-size: 12px;
-            color: #a1a1a1;
-            text-align: right;
-            width: 50px;
-            display: inline-block;
+          & > .leftModule {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            width: 100%;
+            padding-bottom: 5px;
+            & > span:first-child {
+              font-size: 12px;
+              color: #a1a1a1;
+              text-align: right;
+              width: 50px;
+              display: inline-block;
+              font-size: 12px;
+              color: #888888;
+            }
+            & > span:last-child {
+              font-size: 12px;
+              text-align: left;
+              padding-left: 15px;
+              color: #666666;
+              text-overflow: ellipsis;
+              overflow: hidden;
+              white-space: nowrap;
+              display: inline-block;
+              max-width: 70%;
+              font-size:12px;
+              color:#000000;
+            }
           }
-          & > span:last-child {
-            font-size: 12px;
-            text-align: left;
-            padding-left: 15px;
-            color: #666666;
-            text-overflow: ellipsis;
-            overflow: hidden;
-            white-space: nowrap;
-            display: inline-block;
-            max-width: 70%;
-          }
-        }
         }
         & > .splitLine {
           position: absolute;
@@ -255,17 +248,21 @@
           min-width: 62px;
           & > .yearTime {
             font-size: 12px;
-            color: #777777;
+            color: #4a4a4a;
+            margin-top: -1px;
           }
           & > .dayTime {
             font-size: 12px;
-            color: #a1a1a1;
+            color: #888888;
+            margin-top: -5px;
           }
           & > .activeTime {
-            color: #108ee9;
+            // color: #108ee9;
+            color: #888888;
+            margin-top: -5px;
           }
           & > .onlyDayTime {
-            margin-top: 13px;
+            margin-top: 16px;
           }
         }
         & > .collapsePanel {
@@ -279,6 +276,8 @@
           white-space: nowrap;
           color: #666666;
           font-size: 12px;
+          font-size:12px;
+          color:#4a4a4a;
         }
         & .headerRight {
           width: 50%;
@@ -288,10 +287,12 @@
           text-overflow: ellipsis;
           white-space: nowrap;
           color: #a1a1a1;
+          font-size:12px;
+          color:#9b9b9b;
           &  span {
             font-size: 12px;
           }
-          & .serviceStatus {
+          & .activityType {
             font-size: 12px;
             margin-left: 10px;
           }
@@ -319,4 +320,4 @@
         }
       }
       }
-    }
+  }

@@ -7,19 +7,22 @@ import _ from 'lodash';
 import queryString from 'query-string';
 import pathToRegexp from 'path-to-regexp';
 import { customerPool as api } from '../api';
+import { helper } from '../utils';
 import { toastM } from '../utils/sagaEffects';
 
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const LIST_MAX = 1e4;
+const INITIAL_PAGE_NUM = 1;
+const INITIAL_PAGE_SIZE = 10;
 
 export default {
   namespace: 'customerPool',
   state: {
     information: {},     // 资讯
     performanceIndicators: [],  // 投顾指标
-    hsRate: '',  // 沪深归集率（经营指标）
+    hsRateAndBusinessIndicator: [],  // 沪深归集率和开通业务指标（经营指标）
     // 存放从服务端获取的全部代办数据
     todolist: [],
     // 存放筛选后数据
@@ -115,8 +118,10 @@ export default {
       history.listen(({ pathname, search }) => {
         const params = queryString.parse(search);
         const serviceLogUrl = pathToRegexp('/customerPool/serviceLog').exec(pathname);
+        const custGroupUrl = pathToRegexp('/customerPool/customerGroup').exec(pathname);
         console.log('pathname---', pathname);
         console.log('serviceLogUrl--', serviceLogUrl);
+
         if (serviceLogUrl) {
           const { pageSize, serveDateToPaged } = params;
           if (_.isEmpty(pageSize)) params.pageSize = null;
@@ -124,6 +129,21 @@ export default {
           dispatch({
             type: 'getServiceLog',
             payload: params,
+          });
+
+          return;
+        }
+
+        if (custGroupUrl) {
+          const { curPageNum, curPageSize, keyWord = null } = params;
+          dispatch({
+            type: 'customerGroupList',
+            payload: {
+              pageNum: curPageNum || INITIAL_PAGE_NUM,
+              pageSize: curPageSize || INITIAL_PAGE_SIZE,
+              empId: helper.getEmpId(),
+              keyWord,
+            },
           });
         }
       });
@@ -138,14 +158,12 @@ export default {
         payload: response,
       });
     },
-    // 沪深归集率（经营指标）
-    * getHSRate({ payload }, { call, put }) {  //eslint-disable-line
-      const response = yield call(api.getHSRate, payload);
-      const { resultData } = response;
-      const { value = '' } = resultData.length > 0 ? resultData[0] : '';
+    // 沪深归集率和开通业务指标（经营指标）
+    * getHSRateAndBusinessIndicator({ payload }, { call, put }) {  //eslint-disable-line
+      const response = yield call(api.getHSRateAndBusinessIndicator, payload);
       yield put({
-        type: 'getHSRateSuccess',
-        payload: { value },
+        type: 'getHSRateAndBusinessIndicatorSuccess',
+        payload: response,
       });
     },
     // 资讯列表和详情
@@ -492,6 +510,14 @@ export default {
         message: '删除分组下客户成功',
         duration: 2,
       });
+      // 删除成功之后，更新分组信息
+      yield put({
+        type: 'getCustomerGroupList',
+        payload: {
+          pageNum: 1,
+          pageSize: 10,
+        },
+      });
     },
     // 360服务记录查询
     * getServiceLog({ payload }, { call, put }) {
@@ -573,14 +599,21 @@ export default {
         type: 'submitTaskFlowSuccess',
         payload: resultData,
       });
+      // 提交成功之后，清除taskFlow数据
+      yield put({
+        type: 'clearTaskFlowData',
+        payload: {},
+      });
     },
     // 获取审批人列表
     * getApprovalList({ payload }, { call, put }) {
-      const response = yield call(api.getApprovalList, payload);
-      const { resultData } = response;
+      const response = yield call(api.queryFlowStepInfo, payload);
+      const { resultData = EMPTY_OBJECT } = response;
+      const { flowButtons: [{ flowAuditors }] } = resultData;
+
       yield put({
         type: 'getApprovalListSuccess',
-        payload: resultData,
+        payload: flowAuditors,
       });
     },
   },
@@ -592,11 +625,11 @@ export default {
         performanceIndicators: resultData,
       };
     },
-    getHSRateSuccess(state, action) {
-      const { payload: { value } } = action;
+    getHSRateAndBusinessIndicatorSuccess(state, action) {
+      const { payload: { resultData } } = action;
       return {
         ...state,
-        hsRate: value,
+        hsRateAndBusinessIndicator: resultData,
       };
     },
     getInformationSuccess(state, action) {

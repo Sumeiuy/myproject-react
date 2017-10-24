@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 13:43:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-20 13:29:03
+ * @Last Modified time: 2017-10-24 09:12:13
  * 客户细分组件
  */
 
@@ -24,12 +24,8 @@ export default class CustomerSegment extends PureComponent {
   static propTypes = {
     onPreview: PropTypes.func.isRequired,
     priviewCustFileData: PropTypes.object.isRequired,
-    // 保存数据方法
-    // storeData: PropTypes.func.isRequired,
     // 保存的数据
     storedData: PropTypes.object,
-    // saveDataEmitter: PropTypes.object.isRequired,
-    // onStepUpdate: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -54,14 +50,6 @@ export default class CustomerSegment extends PureComponent {
     };
   }
 
-// <<<<<<< HEAD
-//   componentWillMount() {
-//     const { saveDataEmitter } = this.props;
-//     saveDataEmitter.on('saveSelectCustData', this.handleSaveData);
-//   }
-
-// =======
-// >>>>>>> a8c0de3e215a654a6ef6cfbe71c7834001d5795e
   componentWillReceiveProps(nextProps) {
     const {
       priviewCustFileData = EMPTY_LIST,
@@ -155,10 +143,6 @@ export default class CustomerSegment extends PureComponent {
     }
 
     return [];
-  }
-
-  handleTabChange(key) {
-    console.log(key);
   }
 
   @autobind

@@ -41,7 +41,7 @@ const effects = {
   clearSearchHistoryList: 'customerPool/clearSearchHistoryList',
   saveSearchVal: 'customerPool/saveSearchVal',
   getInformation: 'customerPool/getInformation',
-  getHSRate: 'customerPool/getHSRate',
+  getHSRateAndBusinessIndicator: 'customerPool/getHSRateAndBusinessIndicator',
   getPerformanceIndicators: 'customerPool/getPerformanceIndicators',
 };
 
@@ -65,11 +65,11 @@ const mapStateToProps = state => ({
   searchHistoryVal: state.customerPool.searchHistoryVal, // 保存搜索内容
   information: state.customerPool.information, // 首席投顾观点
   performanceIndicators: state.customerPool.performanceIndicators, // 绩效指标
-  hsRate: state.customerPool.hsRate, // 沪深归集率（经营指标）
+  hsRateAndBusinessIndicator: state.customerPool.hsRateAndBusinessIndicator, // 沪深归集率和业务开通指标（经营指标）
 });
 
 const mapDispatchToProps = {
-  getHSRate: fetchDataFunction(true, effects.getHSRate),
+  getHSRateAndBusinessIndicator: fetchDataFunction(true, effects.getHSRateAndBusinessIndicator),
   getPerformanceIndicators: fetchDataFunction(true, effects.getPerformanceIndicators),
   getInformation: fetchDataFunction(true, effects.getInformation),
   getToBeDone: fetchDataFunction(true, effects.toBeTone),
@@ -114,8 +114,8 @@ export default class Home extends PureComponent {
     information: PropTypes.object,
     performanceIndicators: PropTypes.array,
     getPerformanceIndicators: PropTypes.func.isRequired,
-    hsRate: PropTypes.string,
-    getHSRate: PropTypes.func.isRequired,
+    hsRateAndBusinessIndicator: PropTypes.array,
+    getHSRateAndBusinessIndicator: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -133,7 +133,7 @@ export default class Home extends PureComponent {
     searchHistoryVal: '',
     information: EMPTY_OBJECT,
     performanceIndicators: EMPTY_LIST,
-    hsRate: '',
+    hsRateAndBusinessIndicator: EMPTY_LIST,
   }
 
   constructor(props) {
@@ -150,14 +150,14 @@ export default class Home extends PureComponent {
   componentDidMount() {
     const {
       custRange,
-      empInfo: { empInfo },
+      empInfo: { empInfo = {} },
       getInformation,
       getToBeDone,
       getHotWds,
       getHistoryWdsList,
     } = this.props;
     // 获取登录用户empId和occDivnNum
-    const { empNum, occDivnNum } = empInfo;
+    const { empNum = '', occDivnNum = '' } = empInfo;
 
     // 登录用户orgId，默认在fsp中中取出来的当前用户岗位对应orgId，本地时取用户信息中的occDivnNum
     if (document.querySelector(fspContainer.container)) {
@@ -280,20 +280,19 @@ export default class Home extends PureComponent {
     }
     // 绩效指标
     this.getIndicators(tempObj);
-    // 沪深归集率（经营指标）
-    this.fetchHSRate(tempObj);
+    // 沪深归集率和业务开通指标（经营指标）
+    this.fetchHSRateAndBusinessIndicator(tempObj);
   }
 
   @autobind
-  fetchHSRate({ begin, end, orgId, cycleSelect }) {
-    const { getHSRate } = this.props;
+  fetchHSRateAndBusinessIndicator({ begin, end, orgId, cycleSelect }) {
+    const { getHSRateAndBusinessIndicator } = this.props;
     const custType = this.getCustType(orgId);
-    getHSRate({
+    getHSRateAndBusinessIndicator({
       custType, // 客户范围类型
       dateType: this.getDateType(cycleSelect), // 周期类型
       orgId, // 组织ID
       empId: helper.getEmpId(),
-      fieldList: ['shzNpRate'],
       begin,
       end,
     });
@@ -489,7 +488,7 @@ export default class Home extends PureComponent {
       searchHistoryVal,
       information,
       performanceIndicators,
-      hsRate,
+      hsRateAndBusinessIndicator,
       empInfo,
     } = this.props;
     return (
@@ -528,7 +527,7 @@ export default class Home extends PureComponent {
                   indicators={manageIndicators}
                   location={location}
                   cycle={cycle}
-                  hsRate={hsRate}
+                  hsRateAndBusinessIndicator={hsRateAndBusinessIndicator}
                 />
               </TabPane>
               <TabPane tab="投顾绩效" key="2">

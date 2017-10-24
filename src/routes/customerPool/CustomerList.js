@@ -239,17 +239,6 @@ export default class CustomerList extends PureComponent {
     // 只有全部loading完毕才触发isLoadingEnd
     if ((isContactLoading && !nextContactLoading && isRecordLoading && !nextRecordLoading)
       || (!nextContactLoading && !nextRecordLoading)) {
-      // debugger;
-      this.setState({
-        isLoadingEnd: true,
-      });
-    }
-
-    // loading状态
-    // 只有全部loading完毕才触发isLoadingEnd
-    if ((isContactLoading && !nextContactLoading && isRecordLoading && !nextRecordLoading)
-      || (!nextContactLoading && !nextRecordLoading)) {
-      // debugger;
       this.setState({
         isLoadingEnd: true,
       });
