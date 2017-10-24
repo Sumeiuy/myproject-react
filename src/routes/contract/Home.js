@@ -4,7 +4,7 @@
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by:   XuWenKang
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-20 17:22:31
+ * @Last Modified time: 2017-10-24 17:20:02
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
@@ -379,8 +379,7 @@ export default class Contract extends PureComponent {
   getListRowId(obj) {
     const { getBaseInfo } = this.props;
     getBaseInfo({
-      // flowId: obj.flowId,
-      flowId: '47D97E3A0E52E84ABE1CFBB388F869C3',
+      flowId: obj.flowId,
       id: '',
     });
     this.setState({
@@ -468,16 +467,7 @@ export default class Contract extends PureComponent {
   @autobind
   saveContractData() {
     const {
-      location: {
-        query,
-        query: {
-          pageNum,
-          pageSize,
-        },
-      },
       saveContractData,
-      getSeibleList,
-      getBaseInfo,
     } = this.props;
     const { contractFormData, editFormModal, footerBtnData, selectApproveData: { approverId = '' } } = this.state;
     console.warn('contractFormData', contractFormData);
@@ -541,13 +531,13 @@ export default class Contract extends PureComponent {
         console.warn('新建保存时的数据', payload);
         saveContractData(payload);
       }
-      // 新建窗口关闭后，请求左侧列表
-      const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
-      // 默认筛选条件
-      getSeibleList({
-        ...params,
-        type: pageType,
-      });
+      // // 新建窗口关闭后，请求左侧列表
+      // const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
+      // // 默认筛选条件
+      // getSeibleList({
+      //   ...params,
+      //   type: pageType,
+      // });
     } else {
       // 编辑合作合约弹窗
       if (!contractFormData.startDt) {
@@ -580,10 +570,10 @@ export default class Contract extends PureComponent {
       });
       saveContractData(payload);
       // 编辑窗口关闭后，请求此 flowId 的详情
-      getBaseInfo({
-        flowId: this.state.flowId,
-        id: '',
-      });
+      // getBaseInfo({
+      //   flowId: this.state.flowId,
+      //   id: '',
+      // });
     }
   }
 
@@ -631,6 +621,7 @@ export default class Contract extends PureComponent {
     });
   }
 
+  // 打开弹窗
   @autobind
   showModal(modalKey) {
     this.setState({
@@ -638,6 +629,7 @@ export default class Contract extends PureComponent {
     });
   }
 
+  // 关闭弹窗
   @autobind
   closeModal(modalKey) {
     console.warn('点击了关闭弹窗', modalKey);
