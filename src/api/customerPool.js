@@ -7,7 +7,7 @@ export default function customerPool(api) {
     // 获取资讯中心统一接口
     getInformation: query => api.post('/groovynoauth/fsp/info/queryInfo', query),
     // 获取客户池沪深归集率（经营指标）
-    getHSRateAndBusinessIndicator: query => api.post('/groovynoauth/fsp/emp/kpi/queryHsRate', query),
+    getHSRate: query => api.post('/groovynoauth/fsp/emp/kpi/queryHsRate', query),
     // 获取客户池投顾绩效
     getPerformanceIndicators: query => api.post('/groovynoauth/fsp/emp/kpi/queryPerformance', query),
     // 获取组织机构树完整版
@@ -108,12 +108,14 @@ export default function customerPool(api) {
     // 预览客户细分数据
     priviewCustFile: query => api.post('/groovynoauth/fsp/priviewCustFile', query),
     // 标签圈人查询
-    labelCirclePeople: query => api.post('/groovynoauth/fsp/cust/task/labelCirclePeople', query),
-
-    // 标签圈人-标签id查询客户列表明细
-    queryPeopleOfLabel: query => api.post('/groovynoauth/fsp/cust/task/queryPeopleOfLabel', query),
+    queryLabelInfo: query => api.post('/groovynoauth/fsp/cust/task/queryLabelInfo', query),
 
     // 查询审批人列表
     queryFlowStepInfo: query => api.post('/groovynoauth/fsp/cust/task/queryFlowStepInfo', query),
+
+    queryLabelPeople: query => api.post('/groovynoauth/fsp/cust/task/queryLabelPeople', query),
+
+    // 提交任务流程
+    submitTaskFlow: query => api.post('/groovynoauth/fsp/cust/task/createTaskBak', query),
   };
 }

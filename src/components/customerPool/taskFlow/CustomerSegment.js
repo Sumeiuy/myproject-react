@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 13:43:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-20 13:29:03
+ * @Last Modified time: 2017-10-24 09:12:13
  * 客户细分组件
  */
 
@@ -76,6 +76,7 @@ export default class CustomerSegment extends PureComponent {
     }
   }
 
+
   @autobind
   getData() {
     const { currentFile, uploadedFileKey, originFileName } = this.state;
@@ -142,10 +143,6 @@ export default class CustomerSegment extends PureComponent {
     }
 
     return [];
-  }
-
-  handleTabChange(key) {
-    console.log(key);
   }
 
   @autobind

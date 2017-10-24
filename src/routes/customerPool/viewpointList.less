@@ -4,34 +4,15 @@
     margin: 20px 20px 44px 20px;
     padding: 7px 30px 60px;
     background-color: #fff;
-    .td {
-      font-family:PingFangSC-Regular;
-      font-size:14px;
-      color:#9b9b9b;
-      letter-spacing:0.2px;
-      border: none;
-      text-align: left;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      overflow: hidden;
+    i {
+      font-size: 12px;
+      color: #6395e4;
     }
-    .headLine {
-      color: #4a4a4a;
-      width: 300px;
+    .zuoIcon {
+      margin-right: 4px;
     }
-    .authors {
-      font-family:PingFangSC-Light;
-      color:#4a4a4a;
-      width: 150px;
-    }
-    .category {
-      width: 170px;
-    }
-    .stock {
-      width: 160px;
-    }
-    .induname, .pubdatelist {
-      width: 150px;
+    .youIcon {
+      margin-left: 4px;
     }
   }
   :global {
@@ -42,6 +23,9 @@
         height: 677px;
         table {
           border: none;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          overflow: hidden;
           .ant-table-thead > tr > th {
             font-family:PingFangSC-Medium;
             font-size:14px;
@@ -53,19 +37,24 @@
             padding: 4px 8px;
             background: #fff;
             text-align: left;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            overflow: hidden;
           }
           .ant-table-tbody > tr > td {
             padding: 8px 8px;
             line-height: 20px;
+            white-space: nowrap;
             font-family:PingFangSC-Regular;
             font-size:14px;
             color:#9b9b9b;
             letter-spacing:0.2px;
             border: none;
             text-align: left;
+          }
+          .ant-table-tbody > tr > td:first-child {
+            color:#4a4a4a;
+          }
+          .ant-table-tbody > tr > td:last-child {
+            font-family:PingFangSC-Light;
+            color:#4a4a4a;
           }
           tr {
             height: 36px;

@@ -2,19 +2,22 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 10:29:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-23 14:04:58
+ * @Last Modified time: 2017-10-24 14:31:30
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Input, Icon } from 'antd';
+import { Input, Icon, Mention } from 'antd';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
+import moment from 'moment';
 import _ from 'lodash';
 import GroupTable from '../groupManage/GroupTable';
 import Button from '../../common/Button';
 import GroupModal from '../groupManage/CustomerGroupUpdateModal';
 import styles from './taskPreview.less';
+
+const { toString } = Mention;
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
@@ -51,22 +54,29 @@ export default class TaskPreview extends PureComponent {
     approvalList: PropTypes.array,
     currentTab: PropTypes.string.isRequired,
     getApprovalList: PropTypes.func.isRequired,
+    executeTypes: PropTypes.array.isRequired,
+    taskTypes: PropTypes.array.isRequired,
+    currentSelectRowKeys: PropTypes.array.isRequired,
+    currentSelectRecord: PropTypes.array.isRequired,
+    onSingleRowSelectionChange: PropTypes.func.isRequired,
+    onRowSelectionChange: PropTypes.func.isRequired,
+    isNeedApproval: PropTypes.bool,
   };
 
   static defaultProps = {
     approvalList: EMPTY_LIST,
+    isNeedApproval: true,
   };
 
   constructor(props) {
     super(props);
     this.state = {
-      currentSelectRowKeys: EMPTY_LIST,
-      currentSelect: EMPTY_OBJECT,
       isShowTable: false,
       titleColumn: renderColumnTitle(),
       dataSource: [],
     };
   }
+
 
   componentWillReceiveProps(nextProps) {
     const {
@@ -113,24 +123,6 @@ export default class TaskPreview extends PureComponent {
   }
 
   @autobind
-  handleRowSelectionChange(selectedRowKeys, selectedRows) {
-    console.log(selectedRowKeys, selectedRows);
-    this.setState({
-      currentSelectRowKeys: selectedRowKeys,
-    });
-  }
-
-  @autobind
-  handleSingleRowSelectionChange(record, selected, selectedRows) {
-    console.log(record, selected, selectedRows);
-    const { login } = record;
-    this.setState({
-      currentSelect: record,
-      currentSelectRowKeys: [login],
-    });
-  }
-
-  @autobind
   handleSearchApproval() {
     console.log('search approval');
     const { getApprovalList } = this.props;
@@ -139,36 +131,70 @@ export default class TaskPreview extends PureComponent {
   }
 
   render() {
-    // const {
-    //   taskFormData = EMPTY_OBJECT,
-    //   labelCust = EMPTY_OBJECT,
-    //   custSegment = EMPTY_OBJECT,
-    //   currentTab = '1',
-    // } = storedTaskFlowData;
+    const {
+      storedTaskFlowData,
+      isNeedApproval,
+      currentTab = '1',
+      executeTypes,
+      taskTypes,
+      currentSelectRowKeys,
+      currentSelectRecord,
+      onSingleRowSelectionChange,
+      onRowSelectionChange,
+    } = this.props;
+    const {
+      taskFormData = EMPTY_OBJECT,
+      labelCust = EMPTY_OBJECT,
+      custSegment = EMPTY_OBJECT,
+    } = storedTaskFlowData;
 
-    // let finalData = {};
-    // if (currentTab === '1') {
-    //   // 第一个tab
-    //   finalData = {
-    //     taskFormData,
-    //     custSegment,
-    //   };
-    // } else if (currentTab === '2') {
-    //   finalData = {
-    //     taskFormData,
-    //     labelCust,
-    //   };
-    // }
+    let finalData = {};
+    if (currentTab === '1') {
+      // 第一个tab
+      finalData = {
+        ...taskFormData,
+        ...custSegment,
+      };
+    } else if (currentTab === '2') {
+      finalData = {
+        ...taskFormData,
+        ...labelCust,
+      };
+    }
+
+    const {
+      labelDesc,
+      customNum,
+      originFileName,
+      totalCust,
+      closingDate,
+      executionType,
+      serviceStrategySuggestion,
+      taskName,
+      taskType,
+      templetDesc,
+      triggerDate,
+    } = finalData;
+
+    let finalExecutionType = executionType;
+    const executionTypeDictionary = _.find(executeTypes, item => item.key === executionType);
+    if (executionTypeDictionary) {
+      finalExecutionType = executionTypeDictionary.value;
+    }
+
+    let finalTaskType = taskType;
+    const taskTypeDictionary = _.find(taskTypes, item => item.key === taskType);
+    if (taskTypeDictionary) {
+      finalTaskType = taskTypeDictionary.value;
+    }
 
     const {
       dataSource,
       isShowTable,
       titleColumn,
-      currentSelectRowKeys,
-      currentSelect,
      } = this.state;
 
-    const { empName = '' } = currentSelect;
+    const { empName = '' } = currentSelectRecord;
 
     // 添加id到dataSource
     const newDataSource = this.addIdToDataSource(dataSource);
@@ -181,39 +207,35 @@ export default class TaskPreview extends PureComponent {
           <div className={styles.infoDescription}>
             <div className={styles.descriptionOrNameSection}>
               <div>任务名称：</div>
-              <div>wewqewqewqewqewqewqewqewq</div>
-            </div>
-            <div className={styles.descriptionOrNameSection}>
-              <div>任务描述：</div>
-              <div>123213213213213委屈二无群二无群二无群二无群二其味无穷二无群额外企鹅我去服务器服务器让我去让我去</div>
+              <div>{taskName || '--'}</div>
             </div>
             <div className={styles.taskSection}>
               <div>
                 <div>任务类型：</div>
-                <div>wewqewqewqewqewqewqewqewq</div>
+                <div>{finalTaskType || '--'}</div>
               </div>
               <div>
                 <div>执行方式：</div>
-                <div>wewqewqewqewqewqewqewqewq</div>
+                <div>{finalExecutionType || '--'}</div>
               </div>
             </div>
             <div className={styles.taskSection}>
               <div>
                 <div>触发时间：</div>
-                <div>2017/08/07（一）</div>
+                <div>{!_.isEmpty(triggerDate) ? moment(triggerDate).format('YYYY-MM-DD') : '--'}</div>
               </div>
               <div>
                 <div>截止时间：</div>
-                <div>2017/08/07（一）</div>
+                <div>{!_.isEmpty(closingDate) ? moment(closingDate).format('YYYY-MM-DD') : '--'}</div>
               </div>
             </div>
             <div className={styles.descriptionOrNameSection}>
               <div>服务策略：</div>
-              <div>wewqewqewqewqewqewqewqewq</div>
+              <div>{serviceStrategySuggestion || '--'}</div>
             </div>
             <div className={styles.descriptionOrNameSection}>
               <div>任务提示：</div>
-              <div>123213213213213委屈二无群二无群二无群二无群二其味无穷二无群额外企鹅我去服务器服务器让我去让我去</div>
+              <div>{!_.isEmpty(templetDesc) ? toString(templetDesc) : '--'}</div>
             </div>
           </div>
         </div>
@@ -221,26 +243,45 @@ export default class TaskPreview extends PureComponent {
         <div className={styles.basicInfoSection}>
           <div className={styles.title}>目标客户</div>
           <div className={styles.divider} />
-          <div className={styles.infoDescription}>
-            <div className={styles.descriptionOrNameSection}>
-              <div>客户来源：</div>
-              <div>标签圈人</div>
-            </div>
-            <div className={styles.descriptionOrNameSection}>
-              <div>客户数量：</div>
-              <div>12321123户</div>
-            </div>
-            <div className={styles.descriptionOrNameSection}>
-              <div>标签说明：</div>
-              <div>123213213213213委屈二无群二无群二无群二无群二其味无穷二无群额外企鹅我去服务器服务器让我去让我去</div>
-            </div>
-          </div>
+          {
+            currentTab === '1' ?
+              <div className={styles.infoDescription}>
+                <div className={styles.descriptionOrNameSection}>
+                  <div>客户来源：</div>
+                  <div>导入客户</div>
+                </div>
+                <div className={styles.descriptionOrNameSection}>
+                  <div>客户数量：</div>
+                  <div>{totalCust || 0}户</div>
+                </div>
+                <div className={styles.descriptionOrNameSection}>
+                  <div>数据来源：</div>
+                  <div>{originFileName || '--'}</div>
+                </div>
+              </div>
+              : <div className={styles.infoDescription}>
+                <div className={styles.descriptionOrNameSection}>
+                  <div>客户来源：</div>
+                  <div>标签圈人</div>
+                </div>
+                <div className={styles.descriptionOrNameSection}>
+                  <div>客户数量：</div>
+                  <div>{customNum || 0}户</div>
+                </div>
+                <div className={styles.descriptionOrNameSection}>
+                  <div>标签说明：</div>
+                  <div>{labelDesc || '--'}</div>
+                </div>
+              </div>
+          }
         </div>
-
-        <div className={styles.selectApprover} onClick={this.handleClick}>
-          <span>选择审批人：</span>
-          <Search className={styles.searchSection} readOnly value={empName} />
-        </div>
+        {
+          isNeedApproval ?
+            <div className={styles.selectApprover} onClick={this.handleClick}>
+              <span>选择审批人：</span>
+              <Search className={styles.searchSection} readOnly value={empName} />
+            </div> : null
+        }
         {
           isShowTable ?
             <GroupModal
@@ -294,8 +335,8 @@ export default class TaskPreview extends PureComponent {
                     columnWidth={COLUMN_WIDTH}
                     bordered={false}
                     isNeedRowSelection
-                    onSingleRowSelectionChange={this.handleSingleRowSelectionChange}
-                    onRowSelectionChange={this.handleRowSelectionChange}
+                    onSingleRowSelectionChange={onSingleRowSelectionChange}
+                    onRowSelectionChange={onRowSelectionChange}
                     currentSelectRowKeys={currentSelectRowKeys}
                   />
                 </div>

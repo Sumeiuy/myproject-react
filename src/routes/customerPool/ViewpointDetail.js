@@ -8,6 +8,7 @@ import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
+import { Tooltip } from 'antd';
 import _ from 'lodash';
 
 import wordSrc from '../../../static/images/word.png';
@@ -48,30 +49,30 @@ export default class ViewpointDetail extends PureComponent {
 
   renderDownLoad({ loadUrl, format, fileName }) {
     return (
-      <a
-        href={loadUrl}
-        download={fileName || `${_.toUpper(format)} 全文.${_.toLower(format)}`}
-      >
-        {`${_.toUpper(format)} 全文`}
-      </a>
+      _.isEmpty(loadUrl) ? (
+        <Tooltip title={`暂不支持下载 ${_.toUpper(format)} 格式`}>
+          {`${_.toUpper(format)} 全文`}
+        </Tooltip>
+      ) : (
+        <a href={loadUrl} download={fileName || `${_.toUpper(format)} 全文.${_.toLower(format)}`}>
+          {`${_.toUpper(format)} 全文`}
+        </a>
+      )
     );
   }
 
   render() {
-    const { location: { query = {} }, information: { infoVOList = [] } } = this.props;
+    const { location: { query }, information: { infoVOList = [] } } = this.props;
     const { detailIndex = '0' } = query;
-    const index = _.isNaN(_.toNumber(detailIndex)) ? 0 : _.toNumber(detailIndex);
     const {
       texttitle = '暂无标题',
       abstract = '暂无内容',
       secuabbr = '',
       authors = '',
-      pubdatedetail = '',
+      pubdata = '',
       annexpathpdf = '',
       annexpathword = '',
-    } = infoVOList[index] || {};
-    const dateArray = _.split(pubdatedetail, ' ');
-    const date = _.isEmpty(dateArray) ? '' : _.head(dateArray);
+    } = infoVOList[_.toNumber(detailIndex)] || {};
     // 分割成段，展示
     const formateAbstract = _.isEmpty(abstract) ? (
       '<p>暂无内容</p>'
@@ -105,18 +106,13 @@ export default class ViewpointDetail extends PureComponent {
                   {_.isEmpty(authors) ? '作者：--' : `作者：${authors}`}
                 </div>
                 <div className={styles.column}>
-                  {_.isEmpty(date) ? '发布日期：--' : `发布日期：${date}`}
+                  {_.isEmpty(pubdata) ? '发布日期：--' : `发布日期：${pubdata}`}
                 </div>
               </div>
             </div>
             <div className={styles.body} dangerouslySetInnerHTML={{ __html: formateAbstract }} />
             <div className={styles.footer}>
-              <div
-                className={classnames(
-                  styles.fileColumn,
-                  { [styles.downLoadNone]: _.isEmpty(annexpathword) })
-                }
-              >
+              <div className={styles.fileColumn}>
                 <div className={styles.fileIconContainer}>
                   <img src={wordSrc} alt="WORD 图标" />
                 </div>
@@ -124,12 +120,7 @@ export default class ViewpointDetail extends PureComponent {
                   {this.renderDownLoad({ loadUrl: annexpathword, format: 'WORD', fileName: texttitle })}
                 </div>
               </div>
-              <div
-                className={classnames(
-                  styles.fileColumn,
-                  { [styles.downLoadNone]: _.isEmpty(annexpathpdf) })
-                }
-              >
+              <div className={styles.fileColumn}>
                 <div className={styles.fileIconContainer}>
                   <img src={pdfSrc} alt="PDF 图标" />
                 </div>

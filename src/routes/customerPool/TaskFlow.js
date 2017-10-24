@@ -2,9 +2,10 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter, routerRedux } from 'dva/router';
-import { Steps, message, Button } from 'antd';
+import { Steps, message, Button, Mention } from 'antd';
 // import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import moment from 'moment';
 import { autobind } from 'core-decorators';
 import PickTargetCustomer from '../../components/customerPool/taskFlow/PickTargetCustomer';
 import TaskPreview from '../../components/customerPool/taskFlow/TaskPreview';
@@ -13,6 +14,7 @@ import CreateTaskForm from '../../components/customerPool/createTask/CreateTaskF
 import styles from './taskFlow.less';
 
 const Step = Steps.Step;
+const { toString } = Mention;
 
 // const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
@@ -20,8 +22,8 @@ const EMPTY_OBJECT = {};
 const effects = {
   // 预览客户细分数据
   priviewCustFile: 'customerPool/priviewCustFile',
-  getCirclePeople: 'customerPool/getCirclePeople',
-  getPeopleOfLabel: 'customerPool/getPeopleOfLabel',
+  getLabelInfo: 'customerPool/getLabelInfo',
+  getLabelPeople: 'customerPool/getLabelPeople',
   submitTaskFlow: 'customerPool/submitTaskFlow',
   getApprovalList: 'customerPool/getApprovalList',
 };
@@ -53,19 +55,14 @@ const mapDispatchToProps = {
     type: 'customerPool/saveTaskFlowData',
     payload: query,
   }),
-  // 清除任务流程数据
-  clearTaskFlowData: query => ({
-    type: 'customerPool/clearTaskFlowData',
-    payload: query || {},
-  }),
   // 保存选中的tab
   saveCurrentTab: query => ({
     type: 'customerPool/saveCurrentTab',
     payload: query,
   }),
   priviewCustFile: fetchData(effects.priviewCustFile, true),
-  getCirclePeople: fetchData(effects.getCirclePeople, true),
-  getPeopleOfLabel: fetchData(effects.getPeopleOfLabel, true),
+  getLabelInfo: fetchData(effects.getLabelInfo, true),
+  getLabelPeople: fetchData(effects.getLabelPeople, true),
   submitTaskFlow: fetchData(effects.submitTaskFlow, true),
   getApprovalList: fetchData(effects.getApprovalList, true),
 };
@@ -78,16 +75,15 @@ export default class TaskFlow extends PureComponent {
     push: PropTypes.func.isRequired,
     priviewCustFileData: PropTypes.object.isRequired,
     priviewCustFile: PropTypes.func.isRequired,
-    getCirclePeople: PropTypes.func.isRequired,
-    getPeopleOfLabel: PropTypes.func.isRequired,
+    getLabelInfo: PropTypes.func.isRequired,
+    getLabelPeople: PropTypes.func.isRequired,
     circlePeopleData: PropTypes.array.isRequired,
-    peopleOfLabelData: PropTypes.array.isRequired,
+    peopleOfLabelData: PropTypes.object.isRequired,
     dict: PropTypes.object,
     saveCurrentTab: PropTypes.func.isRequired,
     currentTab: PropTypes.string.isRequired,
     storedTaskFlowData: PropTypes.object.isRequired,
     saveTaskFlowData: PropTypes.func.isRequired,
-    clearTaskFlowData: PropTypes.func.isRequired,
     submitTaskFlow: PropTypes.func.isRequired,
     getApprovalList: PropTypes.func.isRequired,
     approvalList: PropTypes.array.isRequired,
@@ -101,30 +97,35 @@ export default class TaskFlow extends PureComponent {
     super(props);
     this.state = {
       current: 0,
+      currentSelectRecord: {},
+      currentSelectRowKeys: [],
     };
   }
 
   @autobind
   handleNextStep() {
     // 下一步
-    const { saveTaskFlowData, storedTaskFlowData } = this.props;
+    const { saveTaskFlowData, storedTaskFlowData = EMPTY_OBJECT } = this.props;
     const { current } = this.state;
-    let taskFormData = {};
+
+    let taskFormData = storedTaskFlowData.taskFormData;
     let pickTargetCustomerData = {};
     if (current === 0) {
       taskFormData = this.createTaskFormRef.getFieldsValue();
     } else if (current === 1) {
       pickTargetCustomerData = this.pickTargetCustomerRef.getData();
     }
-    this.setState({
-      current: current + 1,
-    });
+
     saveTaskFlowData({
       ...storedTaskFlowData,
       taskFormData,
       ...pickTargetCustomerData,
     });
+    this.setState({
+      current: current + 1,
+    });
   }
+
 
   @autobind
   handlePreviousStep() {
@@ -134,6 +135,7 @@ export default class TaskFlow extends PureComponent {
       current: current - 1,
     });
   }
+
 
   @autobind
   handlePreview({ uploadKey, pageNum, pageSize }) {
@@ -153,26 +155,98 @@ export default class TaskFlow extends PureComponent {
 
   @autobind
   handleSubmitTaskFlow() {
-    const { clearTaskFlowData, submitTaskFlow, storedTaskFlowData } = this.props;
-    submitTaskFlow({
-      storedTaskFlowData,
-    });
-    clearTaskFlowData();
+    const { submitTaskFlow, storedTaskFlowData, currentTab = '1' } = this.props;
+
+    const { currentSelectRecord: { login: flowAuditorId = null } } = this.state;
+
+    const {
+      taskFormData = EMPTY_OBJECT,
+      labelCust = EMPTY_OBJECT,
+      custSegment = EMPTY_OBJECT,
+    } = storedTaskFlowData;
+
+    let finalData = {};
+    finalData = {
+      ...taskFormData,
+      ...labelCust,
+      ...custSegment,
+    };
+
+    const {
+      labelId,
+      uploadedFileKey: fileId,
+      closingDate,
+      executionType,
+      serviceStrategySuggestion,
+      taskName,
+      taskType,
+      templetDesc,
+      triggerDate,
+    } = finalData;
+
+    const postBody = {
+      closingDate: moment(closingDate).format('YYYY-MM-DD'),
+      executionType,
+      serviceStrategySuggestion,
+      taskName,
+      taskType,
+      templetDesc: toString(templetDesc),
+      triggerDate: moment(triggerDate).format('YYYY-MM-DD'),
+    };
+
+    if (currentTab === '1') {
+      submitTaskFlow({
+        fileId,
+        ...postBody,
+        flowAuditorId,
+      });
+    } else {
+      submitTaskFlow({
+        labelId,
+        ...postBody,
+        flowAuditorId,
+      });
+    }
+
+    // 成功之后再clear
+    // clearTaskFlowData();
   }
+
+  @autobind
+  handleRowSelectionChange(selectedRowKeys, selectedRows) {
+    console.log(selectedRowKeys, selectedRows);
+    this.setState({
+      currentSelectRowKeys: selectedRowKeys,
+    });
+  }
+
+  @autobind
+  handleSingleRowSelectionChange(record, selected, selectedRows) {
+    console.log(record, selected, selectedRows);
+    const { login } = record;
+    this.setState({
+      currentSelectRecord: record,
+      currentSelectRowKeys: [login],
+    });
+  }
+
 
   render() {
     const {
       current,
+      currentSelectRecord,
+      currentSelectRowKeys,
     } = this.state;
 
     const {
       dict,
+      dict: { executeTypes, taskTypes },
       priviewCustFileData,
       currentTab,
       saveCurrentTab,
       storedTaskFlowData,
-      getCirclePeople,
-      getPeopleOfLabel,
+      getLabelInfo,
+      getLabelPeople,
       peopleOfLabelData,
       circlePeopleData,
       approvalList,
@@ -181,12 +255,14 @@ export default class TaskFlow extends PureComponent {
 
     const steps = [{
       title: '基本信息',
-      content: <CreateTaskForm
-        ref={ref => (this.createTaskFormRef = ref)}
-        dict={dict}
-        location={location}
-        storedTaskFlowData={storedTaskFlowData}
-      />,
+      content: <div className={styles.taskInner}>
+        <CreateTaskForm
+          ref={ref => (this.createTaskFormRef = ref)}
+          dict={dict}
+          location={location}
+          storedTaskFlowData={storedTaskFlowData}
+        />
+      </div>,
     }, {
       title: '目标客户',
       content: <PickTargetCustomer
@@ -196,9 +272,9 @@ export default class TaskFlow extends PureComponent {
         onPreview={this.handlePreview}
         priviewCustFileData={priviewCustFileData}
         storedTaskFlowData={storedTaskFlowData}
-        getCirclePeople={getCirclePeople}
+        getLabelInfo={getLabelInfo}
         circlePeopleData={circlePeopleData}
-        getPeopleOfLabel={getPeopleOfLabel}
+        getLabelPeople={getLabelPeople}
         peopleOfLabelData={peopleOfLabelData}
       />,
     }, {
@@ -209,11 +285,17 @@ export default class TaskFlow extends PureComponent {
         approvalList={approvalList}
         currentTab={currentTab}
         getApprovalList={getApprovalList}
+        executeTypes={executeTypes}
+        taskTypes={taskTypes}
+        onSingleRowSelectionChange={this.handleSingleRowSelectionChange}
+        onRowSelectionChange={this.handleRowSelectionChange}
+        currentSelectRecord={currentSelectRecord}
+        currentSelectRowKeys={currentSelectRowKeys}
+        isNeedApproval
       />,
     }];
 
     const stepsCount = _.size(steps);
-
     return (
       <div className={styles.taskFlowContainer}>
         <Steps current={current} className={styles.stepsSection}>

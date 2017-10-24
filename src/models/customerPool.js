@@ -22,7 +22,7 @@ export default {
   state: {
     information: {},     // 资讯
     performanceIndicators: [],  // 投顾指标
-    hsRateAndBusinessIndicator: [],  // 沪深归集率和开通业务指标（经营指标）
+    hsRate: '',  // 沪深归集率（经营指标）
     // 存放从服务端获取的全部代办数据
     todolist: [],
     // 存放筛选后数据
@@ -108,7 +108,7 @@ export default {
     serviceDepartment: EMPTY_LIST,
     // 标签圈人
     circlePeopleData: [],
-    peopleOfLabelData: [],
+    peopleOfLabelData: {},
     // 审批人列表
     approvalList: [],
   },
@@ -119,6 +119,9 @@ export default {
         const params = queryString.parse(search);
         const serviceLogUrl = pathToRegexp('/customerPool/serviceLog').exec(pathname);
         const custGroupUrl = pathToRegexp('/customerPool/customerGroup').exec(pathname);
+        console.log('pathname---', pathname);
+        console.log('serviceLogUrl--', serviceLogUrl);
+
         if (serviceLogUrl) {
           const { pageSize, serveDateToPaged } = params;
           if (_.isEmpty(pageSize)) params.pageSize = null;
@@ -127,6 +130,8 @@ export default {
             type: 'getServiceLog',
             payload: params,
           });
+
+          return;
         }
 
         if (custGroupUrl) {
@@ -153,12 +158,14 @@ export default {
         payload: response,
       });
     },
-    // 沪深归集率和开通业务指标（经营指标）
-    * getHSRateAndBusinessIndicator({ payload }, { call, put }) {  //eslint-disable-line
-      const response = yield call(api.getHSRateAndBusinessIndicator, payload);
+    // 沪深归集率（经营指标）
+    * getHSRate({ payload }, { call, put }) {  //eslint-disable-line
+      const response = yield call(api.getHSRate, payload);
+      const { resultData } = response;
+      const { value = '' } = resultData.length > 0 ? resultData[0] : '';
       yield put({
-        type: 'getHSRateAndBusinessIndicatorSuccess',
-        payload: response,
+        type: 'getHSRateSuccess',
+        payload: { value },
       });
     },
     // 资讯列表和详情
@@ -303,7 +310,8 @@ export default {
         yield put({
           type: 'addCusToGroupSuccess',
           payload: {
-            result: resultData,
+            groupId: resultData.groupId,
+            result: resultData.result,
           },
         });
       }
@@ -568,20 +576,20 @@ export default {
       });
     },
     // 标签圈人
-    * getCirclePeople({ payload }, { call, put }) {
-      const response = yield call(api.labelCirclePeople, payload);
+    * getLabelInfo({ payload }, { call, put }) {
+      const response = yield call(api.queryLabelInfo, payload);
       const { resultData } = response;
       yield put({
-        type: 'getCirclePeopleSuccess',
+        type: 'getLabelInfoSuccess',
         payload: { resultData },
       });
     },
     // 标签圈人-id查询客户列表
-    * getPeopleOfLabel({ payload }, { call, put }) {
-      const response = yield call(api.labelCirclePeople, payload);
+    * getLabelPeople({ payload }, { call, put }) {
+      const response = yield call(api.queryLabelPeople, payload);
       const { resultData } = response;
       yield put({
-        type: 'getPeopleOfLabelSuccess',
+        type: 'getLabelPeopleSuccess',
         payload: { resultData },
       });
     },
@@ -592,6 +600,11 @@ export default {
       yield put({
         type: 'submitTaskFlowSuccess',
         payload: resultData,
+      });
+      // 提交成功之后，清除taskFlow数据
+      yield put({
+        type: 'clearTaskFlowData',
+        payload: {},
       });
     },
     // 获取审批人列表
@@ -614,11 +627,11 @@ export default {
         performanceIndicators: resultData,
       };
     },
-    getHSRateAndBusinessIndicatorSuccess(state, action) {
-      const { payload: { resultData } } = action;
+    getHSRateSuccess(state, action) {
+      const { payload: { value } } = action;
       return {
         ...state,
-        hsRateAndBusinessIndicator: resultData,
+        hsRate: value,
       };
     },
     getInformationSuccess(state, action) {
@@ -1030,7 +1043,7 @@ export default {
       };
     },
     // 标签圈人成功
-    getCirclePeopleSuccess(state, action) {
+    getLabelInfoSuccess(state, action) {
       const { payload: { resultData } } = action;
       return {
         ...state,
@@ -1038,7 +1051,7 @@ export default {
       };
     },
     // 标签圈人-id客户列表查询
-    getPeopleOfLabelSuccess(state, action) {
+    getLabelPeopleSuccess(state, action) {
       const { payload: { resultData } } = action;
       return {
         ...state,
