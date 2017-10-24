@@ -6,7 +6,7 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { Input, Tooltip, Button, message } from 'antd';
 import { autobind } from 'core-decorators';
-import { withRouter, routerRedux } from 'dva/router';
+import { withRouter, routerRedux } from 'dva-react-router-3/router';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 

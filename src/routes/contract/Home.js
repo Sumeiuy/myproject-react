@@ -3,12 +3,21 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by:   XuWenKang
+<<<<<<< HEAD
+ * @Last Modified by: zhufeiyang(zhufeiyang@htsc.com)
+ * @Last Modified time: 2017-10-24 16:47:47
+=======
  * @Last Modified by: LiuJianShu
+<<<<<<< HEAD
+ * @Last Modified time: 2017-10-24 17:20:02
+>>>>>>> group/seibel
+=======
  * @Last Modified time: 2017-10-24 18:13:16
+>>>>>>> group/seibel
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
-import { withRouter, routerRedux } from 'dva/router';
+import { withRouter, routerRedux } from 'dva-react-router-3/router';
 import { connect } from 'react-redux';
 import { message } from 'antd';
 import _ from 'lodash';

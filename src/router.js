@@ -10,7 +10,7 @@ import {
   IndexRedirect,
   IndexRoute,
   Redirect,
-} from 'dva/router';
+} from 'dva-react-router-3/router';
 
 import { fspContainer } from './config';
 

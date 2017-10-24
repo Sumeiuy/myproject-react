@@ -2,12 +2,12 @@
  * @Description: 通道类型协议 home 页面
  * @Author: XuWenKang
  * @Date: 2017-10-24 15:29:16
- * @Last Modified by:   XuWenKang
- * @Last Modified time: 2017-10-24 15:29:16
+ * @Last Modified by: zhufeiyang(zhufeiyang@htsc.com)
+ * @Last Modified time: 2017-10-24 18:40:46
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
-import { withRouter, routerRedux } from 'dva/router';
+import { withRouter, routerRedux } from 'dva-react-router-3/router';
 import { connect } from 'react-redux';
 import { message } from 'antd';
 import _ from 'lodash';
