@@ -175,7 +175,7 @@ export default class AdvisoryDetail extends PureComponent {
     } = base;
     const custList = this.createCustList(base);
     const proList = this.createProList(item);
-    const bugTitle = `编号${orderId}`;
+    const bugTitle = `CRM编号:${orderId}`;
     const drafter = `${divisionName} - ${createdByName} (${createdByLogin})`;
 
     return (

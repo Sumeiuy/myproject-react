@@ -65,6 +65,7 @@ app.model(require('./models/customerPool'));
 app.model(require('./models/contract'));
 app.model(require('./models/fullChannelServiceRecord'));
 app.model(require('./models/commission'));
+app.model(require('./models/channelsTypeProtocol'));
 
 // 4. Router
 app.router(routerConfig);
