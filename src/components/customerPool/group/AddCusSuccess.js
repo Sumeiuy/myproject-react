@@ -4,7 +4,6 @@
  * 客户分组添加成功页面
  * */
 import React, { PureComponent, PropTypes } from 'react';
-import { withRouter } from 'dva/router';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import Button from '../../common/Button';
@@ -12,7 +11,6 @@ import { fspContainer } from '../../../config';
 import styles from './addCusSuccess.less';
 import { fspGlobal } from '../../../utils';
 
-@withRouter
 export default class AddCusSuccess extends PureComponent {
   static propTypes = {
     closeTab: PropTypes.func.isRequired,
@@ -20,7 +18,7 @@ export default class AddCusSuccess extends PureComponent {
     groupName: PropTypes.string.isRequired,
     onDestroy: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
-    state: PropTypes.object.isRequired,
+    location: PropTypes.object.isRequired,
   }
 
   componentWillUnmount() {
@@ -40,7 +38,7 @@ export default class AddCusSuccess extends PureComponent {
   // 返回首页
   @autobind
   goToIndex() {
-    const { closeTab, push, state } = this.props;
+    const { closeTab, push, location: { state } } = this.props;
     const url = '/customerPool';
     const param = {
       id: 'tab-home',

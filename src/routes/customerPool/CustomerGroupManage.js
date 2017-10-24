@@ -1,9 +1,17 @@
+/*
+ * @Author: xuxiaoqin
+ * @Date: 2017-10-22 19:02:56
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2017-10-24 17:19:38
+ */
+
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter, routerRedux } from 'dva/router';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
+import { message } from 'antd';
 import _ from 'lodash';
 import Button from '../../components/common/Button';
 import GroupTable from '../../components/customerPool/groupManage/GroupTable';
@@ -395,6 +403,55 @@ export default class CustomerGroupManage extends PureComponent {
     });
   }
 
+  @autobind
+  handleSubmit(e) {
+    if (this.detailRef) {
+      const { groupId, includeCustIdList } = this.detailRef.refs
+        .wrappedComponent.refs.formWrappedComponent.getData();
+
+      const { location: { pathname, query }, replace, operateGroup } = this.props;
+
+      // this.props.form.resetFields(); 清除value
+      e.preventDefault();
+      this.detailRef.validateFields((err, values) => {
+        if (!err) {
+          console.log('Received values of form: ', values);
+          const { name, description } = values;
+          if (groupId) {
+            // 编辑分组
+            operateGroup({
+              groupId,
+              groupName: name,
+              groupDesc: description,
+              includeCustIdList: _.isEmpty(includeCustIdList) ? null : includeCustIdList,
+              excludeCustIdList: null,
+            });
+          } else {
+            // 新增分组
+            operateGroup({
+              groupName: name,
+              groupDesc: description,
+              includeCustIdList: _.isEmpty(includeCustIdList) ? null : includeCustIdList,
+              excludeCustIdList: null,
+            });
+          }
+          // 重置分页
+          replace({
+            pathname,
+            query: {
+              ...query,
+              curPageNum: 1,
+            },
+          });
+          // 关闭弹窗
+          this.handleCloseModal();
+        } else {
+          message.error('分组描述或分组名称有误');
+        }
+      });
+    }
+  }
+
   /**
   * 为数据源的每一项添加一个id属性
   * @param {*} listData 数据源
@@ -551,9 +608,26 @@ export default class CustomerGroupManage extends PureComponent {
               cancelText={'取消'}
               okType={'primary'}
               onCancelHandler={this.handleCloseModal}
-              footer={null}
+              footer={<div className={styles.operationBtnSection}>
+                <Button
+                  className={styles.cancel}
+                  onClick={this.handleCloseModal}
+                >
+                  取消
+                </Button>
+                <Button
+                  htmlType="submit"
+                  className={styles.submit}
+                  type="primary"
+                  // 加入节流函数
+                  onClick={_.debounce(event => this.handleSubmit(event), 250)}
+                >
+                  提交
+              </Button>
+              </div>}
               modalContent={
                 <CustomerGroupDetail
+                  ref={ref => (this.detailRef = ref)}
                   deleteCustomerFromGroupResult={deleteCustomerFromGroupResult}
                   deleteCustomerFromGroup={deleteCustomerFromGroup}
                   custRiskBearing={custRiskBearing}

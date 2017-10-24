@@ -72,6 +72,7 @@ export default class CreateTaskForm extends PureComponent {
     this.setState({
       statusData: arr,
     });
+
     if (_.isEmpty(previousData)) {
       this.handleInit(query);
     } else {

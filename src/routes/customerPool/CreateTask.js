@@ -9,6 +9,7 @@ import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import { fspGlobal } from '../../utils';
 import CreateTaskSuccess from '../../components/customerPool/createTask/CreateTaskSuccess';
 import CreateTaskFormFlow from '../../components/customerPool/createTask/CreateTaskFormFlow';
 import styles from './createTask.less';
@@ -97,6 +98,13 @@ export default class CreateTask extends PureComponent {
     createTask(value);
   }
 
+  @autobind
+  /* 关闭当前页 */
+  handleCloseTab() {
+    // fspGlobal.closeRctTabById('RCT_FSP_TASK');
+    fspGlobal.closeRctTabById('RCT_FSP_CUSTOMER_LIST');
+  }
+
   render() {
     const { dict, location, push, storedTaskFlowData, saveTaskFlowData } = this.props;
     const { isSuccess } = this.state;
@@ -114,6 +122,7 @@ export default class CreateTask extends PureComponent {
           <CreateTaskSuccess
             successType={isSuccess}
             push={push}
+            onCloseTab={this.handleCloseTab}
           />
         }
       </div>

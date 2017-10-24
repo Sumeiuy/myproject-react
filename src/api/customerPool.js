@@ -110,7 +110,12 @@ export default function customerPool(api) {
     // 标签圈人查询
     queryLabelInfo: query => api.post('/groovynoauth/fsp/cust/task/queryLabelInfo', query),
 
-    // 标签圈人-标签id查询客户列表明细
+    // 查询审批人列表
+    queryFlowStepInfo: query => api.post('/groovynoauth/fsp/cust/task/queryFlowStepInfo', query),
+
     queryLabelPeople: query => api.post('/groovynoauth/fsp/cust/task/queryLabelPeople', query),
+
+    // 提交任务流程
+    submitTaskFlow: query => api.post('/groovynoauth/fsp/cust/task/createTaskBak', query),
   };
 }

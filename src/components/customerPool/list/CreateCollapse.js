@@ -83,18 +83,50 @@ export default class CreateCollapse extends PureComponent {
     return newDate;
   }
 
-  // /**
-  //  * 格式化服务渠道
-  //  * @param {*} serveChannel 服务渠道
-  //  */
-  // formatServeStrategy(serveChannel) {
-  //   const { serveWay } = this.props;
-  //   const item = _.find(serveWay, i => i.key === serveChannel);
-  //   if (item) {
-  //     return item.value;
-  //   }
-  //   return serveChannel;
-  // }
+  renderHeaderLeft(item) {
+    if (_.isEmpty(item)) {
+      return null;
+    }
+
+    if (!_.isEmpty(item.subtypeCd) && item.subtypeCd.indexOf('MOT服务记录') === -1) {
+      // 不是MOT任务，但是是从OCRM来的
+      return (
+        <div
+          className={styles.headerLeft}
+          title={`${item.taskType || '--'}：${item.serveRecord || '--'}`}
+        >
+          {item.taskType || '--'}：{item.serveRecord || '--'}
+        </div>
+      );
+    }
+    // MOT服务记录
+    // MOT系统来的，短信、呼叫中心
+    return (
+      <div
+        className={styles.headerLeft}
+        title={`${item.taskName || '--'}：${item.serveRecord || '--'}`}
+      >
+        {item.taskName || '--'}：{item.serveRecord || '--'}
+      </div>
+    );
+  }
+
+  renderHeaderRight(item) {
+    if (_.isEmpty(item)) {
+      return null;
+    }
+
+    if (_.isEmpty(item.subtypeCd)) {
+      // 从MOT系统来，没有活动方式
+      return (
+        <span>{item.serveChannel || '--'}</span>
+      );
+    }
+
+    return (
+      <span className={styles.activityType}>{item.serveOrigin}</span>
+    );
+  }
 
   renderPanel(serveTime) {
     const { data, executeTypes } = this.props;
@@ -107,6 +139,8 @@ export default class CreateCollapse extends PureComponent {
     return (
       <div className={styles.panelContainer}>
         <Collapse
+          /* 只打开一个panel */
+          accordion
           className={styles.serviceCollapse}
           defaultActiveKey={['0']}
           onChange={this.handleCollapseChange}
@@ -152,23 +186,12 @@ export default class CreateCollapse extends PureComponent {
                     </div>
                     <div className={styles.collapsePanel}>
                       {
-                        item.taskType.indexOf('MOT') !== -1 ?
-                          <div
-                            className={styles.headerLeft}
-                            title={`${item.taskName || '--'}：${item.serveStrategy || '--'}`}
-                          >
-                            {item.taskName || '--'}：{item.serveStrategy || '--'}
-                          </div> :
-                          <div
-                            className={styles.headerLeft}
-                            title={`${item.taskType || '--'}：${item.activityContent || '--'}`}
-                          >
-                            {item.taskType || '--'}：{item.activityContent || '--'}
-                          </div>
+                        this.renderHeaderLeft(item)
                       }
                       <div className={styles.headerRight}>
-                        <span>{item.serveChannel || '--'}</span>
-                        <span className={styles.serviceStatus}>{item.serveStatus || '--'}</span>
+                        {
+                          this.renderHeaderRight(item)
+                        }
                         <div
                           className={
                             classnames({
@@ -187,13 +210,12 @@ export default class CreateCollapse extends PureComponent {
                 <ServiceRecordContent
                   executeTypes={executeTypes}
                   item={item}
-                  type={item.taskType}
                 />
               </Panel>,
             )
           }
         </Collapse>
-      </div>
+      </div >
     );
   }
 
@@ -204,12 +226,7 @@ export default class CreateCollapse extends PureComponent {
 
     if (_.isEmpty(data)) {
       return (
-        <div>
-          <div className={styles.noServiceRecord}>
-            <div className={styles.imgData} />
-          </div>
-          <div className={styles.noInfo}>没有相关服务记录</div>
-        </div>
+        <div className={styles.noServiceRecord}>无服务记录</div>
       );
     }
 

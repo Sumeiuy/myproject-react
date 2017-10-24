@@ -7,12 +7,15 @@ import _ from 'lodash';
 import queryString from 'query-string';
 import pathToRegexp from 'path-to-regexp';
 import { customerPool as api } from '../api';
+import { helper } from '../utils';
 import { toastM } from '../utils/sagaEffects';
 
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const LIST_MAX = 1e4;
+const INITIAL_PAGE_NUM = 1;
+const INITIAL_PAGE_SIZE = 10;
 
 export default {
   namespace: 'customerPool',
@@ -96,7 +99,7 @@ export default {
     // 存储的任务流程数据
     storedTaskFlowData: {},
     // 当前选中tab
-    currentTab: '',
+    currentTab: '1',
     // 提交任务流程结果
     submitTaskFlowResult: '',
     // 可查询服务人员列表
@@ -115,8 +118,10 @@ export default {
       history.listen(({ pathname, search }) => {
         const params = queryString.parse(search);
         const serviceLogUrl = pathToRegexp('/customerPool/serviceLog').exec(pathname);
+        const custGroupUrl = pathToRegexp('/customerPool/customerGroup').exec(pathname);
         console.log('pathname---', pathname);
         console.log('serviceLogUrl--', serviceLogUrl);
+
         if (serviceLogUrl) {
           const { pageSize, serveDateToPaged } = params;
           if (_.isEmpty(pageSize)) params.pageSize = null;
@@ -124,6 +129,21 @@ export default {
           dispatch({
             type: 'getServiceLog',
             payload: params,
+          });
+
+          return;
+        }
+
+        if (custGroupUrl) {
+          const { curPageNum, curPageSize, keyWord = null } = params;
+          dispatch({
+            type: 'customerGroupList',
+            payload: {
+              pageNum: curPageNum || INITIAL_PAGE_NUM,
+              pageSize: curPageSize || INITIAL_PAGE_SIZE,
+              empId: helper.getEmpId(),
+              keyWord,
+            },
           });
         }
       });
@@ -288,8 +308,7 @@ export default {
         yield put({
           type: 'addCusToGroupSuccess',
           payload: {
-            groupId: resultData.groupId,
-            result: resultData.result,
+            result: resultData,
           },
         });
       }
@@ -490,6 +509,14 @@ export default {
         message: '删除分组下客户成功',
         duration: 2,
       });
+      // 删除成功之后，更新分组信息
+      yield put({
+        type: 'getCustomerGroupList',
+        payload: {
+          pageNum: 1,
+          pageSize: 10,
+        },
+      });
     },
     // 360服务记录查询
     * getServiceLog({ payload }, { call, put }) {
@@ -571,14 +598,21 @@ export default {
         type: 'submitTaskFlowSuccess',
         payload: resultData,
       });
+      // 提交成功之后，清除taskFlow数据
+      yield put({
+        type: 'clearTaskFlowData',
+        payload: {},
+      });
     },
     // 获取审批人列表
     * getApprovalList({ payload }, { call, put }) {
-      const response = yield call(api.getApprovalList, payload);
-      const { resultData } = response;
+      const response = yield call(api.queryFlowStepInfo, payload);
+      const { resultData = EMPTY_OBJECT } = response;
+      const { flowButtons: [{ flowAuditors }] } = resultData;
+
       yield put({
         type: 'getApprovalListSuccess',
-        payload: resultData,
+        payload: flowAuditors,
       });
     },
   },
