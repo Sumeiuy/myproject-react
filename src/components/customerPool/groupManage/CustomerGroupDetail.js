@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 14:15:22
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-12 16:05:42
+ * @Last Modified time: 2017-10-22 18:56:32
  */
 
 import React, { PureComponent } from 'react';
@@ -11,7 +11,7 @@ import { Input, Form, message } from 'antd';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
-import Button from '../../common/Button';
+// import Button from '../../common/Button';
 import Confirm from '../../common/Confirm';
 import GroupTable from './GroupTable';
 import Search from '../../common/Search';
@@ -23,8 +23,8 @@ const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 
 const FormItem = Form.Item;
-
-@Form.create()
+// withRef 拿到被包裹的wrappedComponent
+@Form.create({ withRef: true })
 export default class CustomerGroupDetail extends PureComponent {
   static propTypes = {
     detailData: PropTypes.object,
@@ -127,6 +127,15 @@ export default class CustomerGroupDetail extends PureComponent {
         }
       });
     }
+  }
+
+  @autobind
+  getData() {
+    const { groupId, includeCustIdList } = this.state;
+    return {
+      groupId,
+      includeCustIdList,
+    };
   }
 
   /**
@@ -441,7 +450,7 @@ export default class CustomerGroupDetail extends PureComponent {
       form: { getFieldDecorator },
       customerHotPossibleWordsList = EMPTY_LIST,
       getHotPossibleWds,
-      onCloseModal,
+      // onCloseModal,
       canEditDetail,
   } = this.props;
 
@@ -562,23 +571,6 @@ export default class CustomerGroupDetail extends PureComponent {
               />
             </div> : <div className={styles.emptyTable} />
         }
-        <FormItem>
-          <div className={styles.operationBtnSection}>
-            <Button
-              className={styles.cancel}
-              onClick={onCloseModal}
-            >
-              取消
-          </Button>
-            <Button
-              htmlType="submit"
-              className={styles.submit}
-              type="primary"
-            >
-              提交
-          </Button>
-          </div>
-        </FormItem>
         {
           isShowDeleteConfirm ?
             <Confirm

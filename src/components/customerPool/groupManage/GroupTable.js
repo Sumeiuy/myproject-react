@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-20 09:51:09
+ * @Last Modified time: 2017-10-23 14:04:34
  */
 
 import React, { PureComponent } from 'react';
@@ -23,9 +23,9 @@ export default class GroupTable extends PureComponent {
     pageData: PropTypes.object,
     listData: PropTypes.array,
     // 页目change的时候
-    onSizeChange: PropTypes.func.isRequired,
+    onSizeChange: PropTypes.func,
     // 页码change的时候
-    onPageChange: PropTypes.func.isRequired,
+    onPageChange: PropTypes.func,
     // 表格的className
     tableClass: PropTypes.string.isRequired,
     // 表格标题
@@ -62,6 +62,8 @@ export default class GroupTable extends PureComponent {
       PropTypes.number,
       PropTypes.array,
     ]),
+    // 是否需要分页
+    isNeedPaganation: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -81,6 +83,9 @@ export default class GroupTable extends PureComponent {
     onSingleRowSelectionChange: () => { },
     onRowSelectionChange: () => { },
     currentSelectRowKeys: [],
+    isNeedPaganation: true,
+    onPageChange: () => { },
+    onSizeChange: () => { },
   };
 
   constructor(props) {
@@ -292,13 +297,9 @@ export default class GroupTable extends PureComponent {
       onPageChange,
       onSizeChange,
       isNeedRowSelection,
+      isNeedPaganation,
      } = this.props;
     const { curSelectedRow, originPageSizeUnit } = this.state;
-    // const paginationOptions = this.renderPaganation(
-    //   curPageNum,
-    //   totalRecordNum,
-    //   curPageSize,
-    // );
     const paganationOption = {
       curPageNum,
       totalRecordNum,
@@ -330,7 +331,9 @@ export default class GroupTable extends PureComponent {
             return null;
           }}
         />
-        <Paganation {...paganationOption} />
+        {
+          isNeedPaganation ? <Paganation {...paganationOption} /> : null
+        }
       </div>
     );
   }

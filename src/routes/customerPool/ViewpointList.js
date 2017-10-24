@@ -5,43 +5,70 @@
  */
 import React, { PropTypes, PureComponent } from 'react';
 import { withRouter, routerRedux } from 'dva/router';
-import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
+import { connect } from 'react-redux';
+import classnames from 'classnames';
 import { Table } from 'antd';
 import _ from 'lodash';
 
 import Paganation from '../../components/common/Paganation';
 import styles from './viewpointList.less';
 
+function formatString(str) {
+  return _.isEmpty(str) ? '--' : str;
+}
+
 const columns = [{
   title: '标题',
   dataIndex: 'texttitle',
   key: 'texttitle',
-  width: '36%',
+  width: '35%',
+  render: item => (
+    <div className={classnames(styles.td, styles.headLine)}>{formatString(item)}</div>
+  ),
 }, {
   title: '类型',
-  dataIndex: 'textcategory',
-  key: 'textcategory',
+  dataIndex: 'textcategorychinese',
+  key: 'textcategorychinese',
   width: '18%',
+  render: item => (
+    <div className={classnames(styles.td, styles.category)}>{formatString(item)}</div>
+  ),
 }, {
   title: '相关股票',
   dataIndex: 'aboutStock',
   key: 'aboutStock',
   width: '15%',
+  render: item => (
+    <div className={classnames(styles.td, styles.stock)}>{formatString(item)}</div>
+  ),
 }, {
   title: '行业',
   dataIndex: 'induname',
   key: 'induname',
   width: '12%',
+  render: item => (
+    <div className={classnames(styles.td, styles.induname)}>{formatString(item)}</div>
+  ),
 }, {
   title: '报告日期',
-  dataIndex: 'pubdata',
-  key: 'pubdata',
+  dataIndex: 'pubdatelist',
+  key: 'pubdatelist',
   width: '12%',
+  render: (item) => {
+    const dateArray = _.split(item, ' ');
+    const date = _.isEmpty(dateArray) ? '' : _.head(dateArray);
+    return (
+      <div className={classnames(styles.td, styles.pubdatelist)}>{formatString(date)}</div>
+    );
+  },
 }, {
   title: '作者',
   dataIndex: 'authors',
   key: 'authors',
+  render: item => (
+    <div className={classnames(styles.td, styles.authors)}>{formatString(item)}</div>
+  ),
 }];
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -116,22 +143,14 @@ export default class ViewpointList extends PureComponent {
     );
   }
 
-  formatString(str) {
-    return _.isEmpty(str) ? '--' : str;
-  }
-
   render() {
     const { information: { totalCount } } = this.props;
     const { curPageNum = 1, pageList = [], curPageSize = 18 } = this.state;
     const newInfoVOList = _.map(
       pageList,
       (item, index) => ({
-        texttitle: this.formatString(item.texttitle),
-        textcategory: this.formatString(item.textcategory),
-        induname: this.formatString(item.induname),
-        pubdata: this.formatString(item.pubdata),
-        authors: this.formatString(item.authors),
-        aboutStock: `${this.formatString(item.secuabbr)} / ${this.formatString(item.tradingcode)}`,
+        ...item,
+        aboutStock: `${formatString(item.secuabbr)} / ${formatString(item.tradingcode)}`,
         id: `${index}`,
       }),
     );

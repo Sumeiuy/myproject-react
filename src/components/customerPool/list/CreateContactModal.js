@@ -74,7 +74,7 @@ export default class CreateContactModal extends PureComponent {
     },
     {
       dataIndex: 'phone',
-      title: '电话',
+      title: '手机',
       width: '20%',
       render: record =>
         // 当前行记录
@@ -84,7 +84,7 @@ export default class CreateContactModal extends PureComponent {
     },
     {
       dataIndex: 'work',
-      title: '单位',
+      title: '单位电话',
       width: '20%',
       render: record =>
         // 当前行记录
@@ -94,7 +94,7 @@ export default class CreateContactModal extends PureComponent {
     },
     {
       dataIndex: 'home',
-      title: '住宅',
+      title: '住宅电话',
       width: '20%',
       render: record =>
         <div className="recordSection" title={record}>
@@ -317,7 +317,7 @@ export default class CreateContactModal extends PureComponent {
         visible={visible}
         title={'联系客户'}
         maskClosable={false}
-        width={700}
+        width={892}
         onCancel={this.handleCancel}
         closable={false}
         footer={[
@@ -342,10 +342,13 @@ export default class CreateContactModal extends PureComponent {
           (!isPersonHasContact && !isOrgMainContactHasTel) ?
             <div className={styles.noneInfoSection}>
               <div className={styles.noneInfo}>
-                  暂无客户联系电话，请与客户沟通尽快完善信息
+                  客户未预留主要联系方式，请尽快完善信息
               </div>
               <div className={styles.rightSection}>
-                <Button onClick={this.handleServiceRecordClick}>添加服务记录</Button>
+                <Button onClick={this.handleServiceRecordClick}>
+                  <Icon type="jia" className={styles.addIcon} />
+                  <span>添加服务记录</span>
+                </Button>
               </div>
             </div> :
             <div className={styles.number}>
@@ -364,7 +367,10 @@ export default class CreateContactModal extends PureComponent {
                   </div> : null
               }
               <div className={styles.rightSection}>
-                <Button onClick={this.handleServiceRecordClick}>添加服务记录</Button>
+                <Button onClick={this.handleServiceRecordClick}>
+                  <Icon type="jia" className={styles.addIcon} />
+                  <span>添加服务记录</span>
+                </Button>
               </div>
             </div>
         }
@@ -390,8 +396,7 @@ export default class CreateContactModal extends PureComponent {
           <Icon className={styles.tipIcon} type="dengpao" />
           <span>温馨提醒：联系过客户后请及时创建服务记录</span>
         </div>
-        <div className={styles.split} />
-        <div className={styles.serviceTitle}>最近服务记录：</div>
+        <div className={styles.serviceTitle}>最近服务记录</div>
         {/* 折叠面板 */}
         <Collapse
           data={serviceRecordData}

@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
 import Search from '../../common/Search/index';
 import TaskSearchRow from './TaskSearchRow';
 import styles from './selectLabelCust.less';
@@ -32,22 +33,21 @@ export default class SelectLabelCust extends PureComponent {
     this.bigBtn = true;
   }
 
-  // componentWillReceiveProps(nextProps) {
-  //   this.getData();
-  // }
-
   @autobind
   getData() {
-    const { custId, condition } = this.state;
+    const { labelId = '', condition } = this.state;
     const { circlePeopleData } = this.props;
+    const matchedData = _.find(circlePeopleData, item => item.id === labelId);
+    const { labelDesc = '', customNum = '' } = matchedData || EMPTY_OBJECT;
     const labelCust = {
-      custId,
-      circlePeopleData,
+      labelId,
+      labelDesc,
       condition,
+      customNum,
     };
-    console.log('data---', { data: labelCust });
+
     return {
-      data: labelCust,
+      labelCust,
     };
   }
 
@@ -61,7 +61,7 @@ export default class SelectLabelCust extends PureComponent {
     this.setState({
       condition: value,
     });
-    // console.log(param);
+
     getLabelInfo(param);
   }
 
@@ -69,12 +69,11 @@ export default class SelectLabelCust extends PureComponent {
   handleRadioChange(value) {
     console.log('value--', value);
     this.setState({
-      custId: value,
+      labelId: value,
     });
   }
 
   render() {
-    // console.log(Search);
     const {
       getLabelPeople,
       circlePeopleData,
