@@ -105,7 +105,7 @@ export default {
     serviceDepartment: EMPTY_LIST,
     // 标签圈人
     circlePeopleData: [],
-    peopleOfLabelData: [],
+    peopleOfLabelData: {},
     // 审批人列表
     approvalList: [],
   },
@@ -114,7 +114,9 @@ export default {
       dispatch({ type: 'getCustRangeByAuthority' });
       history.listen(({ pathname, search }) => {
         const params = queryString.parse(search);
-        const serviceLogUrl = pathToRegexp('customerPool/serviceLog').exec(pathname);
+        const serviceLogUrl = pathToRegexp('/customerPool/serviceLog').exec(pathname);
+        console.log('pathname---', pathname);
+        console.log('serviceLogUrl--', serviceLogUrl);
         if (serviceLogUrl) {
           const { pageSize, serveDateToPaged } = params;
           if (_.isEmpty(pageSize)) params.pageSize = null;
@@ -288,7 +290,8 @@ export default {
         yield put({
           type: 'addCusToGroupSuccess',
           payload: {
-            result: resultData,
+            groupId: resultData.groupId,
+            result: resultData.result,
           },
         });
       }
@@ -545,20 +548,20 @@ export default {
       });
     },
     // 标签圈人
-    * getCirclePeople({ payload }, { call, put }) {
-      const response = yield call(api.labelCirclePeople, payload);
+    * getLabelInfo({ payload }, { call, put }) {
+      const response = yield call(api.queryLabelInfo, payload);
       const { resultData } = response;
       yield put({
-        type: 'getCirclePeopleSuccess',
+        type: 'getLabelInfoSuccess',
         payload: { resultData },
       });
     },
     // 标签圈人-id查询客户列表
-    * getPeopleOfLabel({ payload }, { call, put }) {
-      const response = yield call(api.labelCirclePeople, payload);
+    * getLabelPeople({ payload }, { call, put }) {
+      const response = yield call(api.queryLabelPeople, payload);
       const { resultData } = response;
       yield put({
-        type: 'getPeopleOfLabelSuccess',
+        type: 'getLabelPeopleSuccess',
         payload: { resultData },
       });
     },
@@ -1005,7 +1008,7 @@ export default {
       };
     },
     // 标签圈人成功
-    getCirclePeopleSuccess(state, action) {
+    getLabelInfoSuccess(state, action) {
       const { payload: { resultData } } = action;
       return {
         ...state,
@@ -1013,7 +1016,7 @@ export default {
       };
     },
     // 标签圈人-id客户列表查询
-    getPeopleOfLabelSuccess(state, action) {
+    getLabelPeopleSuccess(state, action) {
       const { payload: { resultData } } = action;
       return {
         ...state,

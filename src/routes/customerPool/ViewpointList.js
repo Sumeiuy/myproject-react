@@ -20,8 +20,8 @@ const columns = [{
   width: '36%',
 }, {
   title: '类型',
-  dataIndex: 'textcategory',
-  key: 'textcategory',
+  dataIndex: 'textcategorychinese',
+  key: 'textcategorychinese',
   width: '18%',
 }, {
   title: '相关股票',

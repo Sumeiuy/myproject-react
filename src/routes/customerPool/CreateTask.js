@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import CreateTaskSuccess from '../../components/customerPool/createTask/CreateTaskSuccess';
-import CreateTaskFrom from '../../components/customerPool/createTask/CreateTaskForm';
+import CreateTaskFormFlow from '../../components/customerPool/createTask/CreateTaskFormFlow';
 import styles from './createTask.less';
 
 const effects = {
@@ -26,10 +26,15 @@ const fectchDataFunction = (globalLoading, type) => query => ({
 const mapStateToProps = state => ({
   dict: state.app.dict,
   createTaskResult: state.customerPool.createTaskResult,
+  storedTaskFlowData: state.customerPool.storedTaskFlowData,
 });
 
 const mapDispatchToProps = {
   createTask: fectchDataFunction(true, effects.createTask),
+  saveTaskFlowData: query => ({
+    type: 'customerPool/saveTaskFlowData',
+    payload: query,
+  }),
   push: routerRedux.push,
 };
 
@@ -44,6 +49,8 @@ export default class CreateTask extends PureComponent {
     createTask: PropTypes.func.isRequired,
     createTaskResult: PropTypes.object,
     push: PropTypes.func.isRequired,
+    storedTaskFlowData: PropTypes.object.isRequired,
+    saveTaskFlowData: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -83,22 +90,26 @@ export default class CreateTask extends PureComponent {
 
   @autobind
   handleCreateTask(value) {
-    const { createTask } = this.props;
+    const {
+      createTask,
+    } = this.props;
     // console.log(value);
     createTask(value);
   }
 
   render() {
-    const { dict, location, push } = this.props;
+    const { dict, location, push, storedTaskFlowData, saveTaskFlowData } = this.props;
     const { isSuccess } = this.state;
     // console.log(isSuccess);
     return (
       <div className={styles.taskBox}>
         {!isSuccess ?
-          <CreateTaskFrom
+          <CreateTaskFormFlow
             location={location}
             dict={dict}
             createTask={this.handleCreateTask}
+            storedTaskFlowData={storedTaskFlowData}
+            saveTaskFlowData={saveTaskFlowData}
           /> :
           <CreateTaskSuccess
             successType={isSuccess}
