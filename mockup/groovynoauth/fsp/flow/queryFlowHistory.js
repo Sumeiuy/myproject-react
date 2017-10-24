@@ -9,7 +9,7 @@ exports.response = function (req, res) {
     msg: 'OK',
     resultData: [
       {
-        entryTime: '2017-09-18 17:34:19',
+        entryTime: '2017-09-18 17:34:20',
         handler: '002332',
         handleName: '鲍佳佳',
         handleTime: '2017-09-18 17:34:19',
