@@ -44,7 +44,6 @@ export default class TimeCycle extends PureComponent {
     if (_.includes(['custIndicator', 'numOfCustOpened'], source)) {
       timeEle = (
         <div className={styles.item}>
-          <i className={styles.bd} />
           <Icon type="rili" />
           <Select
             style={{ width: 60 }}

@@ -16,6 +16,7 @@ import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
+import Icon from '../Icon';
 import { helper } from '../../../utils';
 
 import styles from './filter.less';
@@ -52,7 +53,9 @@ export default class MultiFilter extends PureComponent {
     this.state = {
       keyArr: value ? value.split(separator) : [],
       moreBtnVisible: false,
+      fold: true,
     };
+    this.domNodeLineHeight = '0px';
   }
 
   componentDidMount() {
@@ -64,9 +67,9 @@ export default class MultiFilter extends PureComponent {
   addMoreBtn() {
     if (this.domNode) {
       const domNodeHeight = helper.getCssStyle(this.domNode, 'height');
-      const domNodeLineHeight = helper.getCssStyle(this.domNode, 'line-height');
-      if (parseInt(domNodeHeight, 10) >= 2 * parseInt(domNodeLineHeight, 10)) {
-        this.domNode.style.height = domNodeLineHeight;
+      this.domNodeLineHeight = helper.getCssStyle(this.domNode, 'line-height');
+      if (parseInt(domNodeHeight, 10) >= 2 * parseInt(this.domNodeLineHeight, 10)) {
+        this.domNode.style.height = this.domNodeLineHeight;
         this.setState({
           moreBtnVisible: true,
         });
@@ -101,10 +104,9 @@ export default class MultiFilter extends PureComponent {
 
   @autobind
   handleMore() {
-    this.domNode.style.height = 'auto';
-    this.setState({
-      moreBtnVisible: false,
-    });
+    const { fold } = this.state;
+    this.domNode.style.height = fold ? 'auto' : this.domNodeLineHeight;
+    this.setState({ fold: !fold });
   }
 
   @autobind
@@ -124,14 +126,16 @@ export default class MultiFilter extends PureComponent {
 
   render() {
     const { filterLabel, filterField } = this.props;
-    const { moreBtnVisible } = this.state;
+    const { moreBtnVisible, fold } = this.state;
     if (_.isEmpty(filterField)) {
       return null;
     }
+    const isFold = fold ? 'fold' : 'unfold';
     return (
       <div className={styles.filter}>
         <span>{filterLabel}:</span>
         <ul
+          className={fold ? 'single' : 'multi'}
           ref={r => this.domNode = r}
         >
           {
@@ -139,7 +143,10 @@ export default class MultiFilter extends PureComponent {
           }
           {
             moreBtnVisible ?
-              <li className={styles.moreBtn} onClick={this.handleMore}>...</li> :
+              <li className={`${styles.moreBtn} ${isFold}`} onClick={this.handleMore}>
+                { fold ? '展开' : '收起' }&nbsp;
+                <Icon type="more-down-copy" />
+              </li> :
             null
           }
         </ul>
