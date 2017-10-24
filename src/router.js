@@ -39,6 +39,7 @@ import ViewpointList from './routes/customerPool/ViewpointList';
 import ViewpointDetail from './routes/customerPool/ViewpointDetail';
 import ServiceLog from './routes/customerPool/ServiceLog';
 import TaskFlow from './routes/customerPool/TaskFlow';
+// import ChannelsTypeProtocol from './routes/ChannelsTypeProtocol/Home';
 
 function switchRouter() {
   const fsp = document.querySelector(fspContainer.container);
