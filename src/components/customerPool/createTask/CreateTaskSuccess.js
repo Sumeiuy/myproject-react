@@ -16,13 +16,12 @@ let successSetInterval;
 let COUNT = 10;
 export default class CreateTaskSuccess extends PureComponent {
   static propTypes = {
-    data: PropTypes.object,
     successType: PropTypes.bool,
     push: PropTypes.func.isRequired,
+    closeTab: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
-    data: {},
     successType: false,
   }
 
@@ -41,7 +40,7 @@ export default class CreateTaskSuccess extends PureComponent {
     if (UTBContentElem) {
       taskSuccessBox.style.height = (docElemHeight - 55 - 60) + 'px';
     } else {
-      if(taskSuccessBox) {
+      if (taskSuccessBox) {
         taskSuccessBox.style.height = (docElemHeight - 40) + 'px';
       }
     }
@@ -58,49 +57,51 @@ export default class CreateTaskSuccess extends PureComponent {
       successSetInterval = setInterval(this.handleMovTime, 1000);
     }
   }
-  @autobind
-  /* 关闭当前页 */
-  closeTab() {
-      // fspGlobal.closeRctTabById('RCT_FSP_TASK');
-      fspGlobal.closeRctTabById('RCT_FSP_CUSTOMER_LIST');
-  }
+
   @autobind
   goToIndex() {
+    const { closeTab, push, location: { state } } = this.props;
     const url = '/customerPool';
     const param = {
       id: 'tab-home',
       title: '首页',
     };
-    fspGlobal.openRctTab({ url, param });
-    this.closeTab();
+    if (document.querySelector(fspContainer.container)) {
+      fspGlobal.openRctTab({ url, param });
+      closeTab();
+    } else {
+      push({
+        pathname: url,
+        query: _.omit(state, 'noScrollTop'),
+      });
+    }
   }
+
   @autobind
-  goToTask(){
+  goToTask() {
     const { push, state } = this.props;
     const url = '/mot/selfbuildTask/selfBuildTaskMain';
-    const param ={
+    const param = {
       id: 'FSP_MOT_SELFBUILT_TASK',
       closable: true,
-      forceRefresh:true,
+      forceRefresh: true,
       title: '自建任务管理'
     }
-    debugger;
     fspGlobal.openFspTab({ url, param })
-    debugger
-    this.closeTab();
+    closeTab();
   }
-  // #FSP_MOT_SELFBUILT_TASK
+
   @autobind
   handleMovTime() {
     this.setState({
       changeTime: COUNT--,
     }, () => {
-      if (COUNT < 0){
+      if (COUNT < 0) {
         console.log('页面关闭');
         this.goToIndex();
         clearInterval(successSetInterval);
       }
-    });    
+    });
   }
 
   render() {

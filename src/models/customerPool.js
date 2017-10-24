@@ -99,7 +99,7 @@ export default {
     // 存储的任务流程数据
     storedTaskFlowData: {},
     // 当前选中tab
-    currentTab: '',
+    currentTab: '1',
     // 提交任务流程结果
     submitTaskFlowResult: '',
     // 可查询服务人员列表
@@ -310,8 +310,7 @@ export default {
         yield put({
           type: 'addCusToGroupSuccess',
           payload: {
-            groupId: resultData.groupId,
-            result: resultData.result,
+            result: resultData,
           },
         });
       }

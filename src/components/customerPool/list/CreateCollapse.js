@@ -83,118 +83,49 @@ export default class CreateCollapse extends PureComponent {
     return newDate;
   }
 
-  // /**
-  //  * 格式化服务渠道
-  //  * @param {*} serveChannel 服务渠道
-  //  */
-  // formatServeStrategy(serveChannel) {
-  //   const { serveWay } = this.props;
-  //   const item = _.find(serveWay, i => i.key === serveChannel);
-  //   if (item) {
-  //     return item.value;
-  //   }
-  //   return serveChannel;
-  // }
-
   renderHeaderLeft(item) {
     if (_.isEmpty(item)) {
       return null;
     }
 
-    if (!_.isEmpty(item.taskType)) {
-      if (item.taskType.indexOf('MOT') !== -1) {
-        // MOT任务
-        return (
-          <div
-            className={styles.headerLeft}
-            title={`${item.taskName || '--'}：${item.serveRecord || '--'}`}
-          >
-            {item.taskName || '--'}：{item.serveRecord || '--'}
-          </div>
-        );
-      } else if (item.taskType.indexOf('MOT') === -1 && item.taskType.indexOf('OCRM') !== -1) {
-        // 不是MOT任务，但是是从OCRM来的
-        return (
-          <div
-            className={styles.headerLeft}
-            title={`${item.taskType || '--'}：${item.serveRecord || '--'}`}
-          >
-            {item.taskType || '--'}：{item.serveRecord || '--'}
-          </div>
-        );
-      }
-
+    if (!_.isEmpty(item.subtypeCd) && item.subtypeCd.indexOf('MOT服务记录') === -1) {
+      // 不是MOT任务，但是是从OCRM来的
       return (
         <div
           className={styles.headerLeft}
+          title={`${item.taskType || '--'}：${item.serveRecord || '--'}`}
         >
-          -- ： --
-      </div>
+          {item.taskType || '--'}：{item.serveRecord || '--'}
+        </div>
       );
     }
-
+    // MOT服务记录
+    // MOT系统来的，短信、呼叫中心
     return (
       <div
         className={styles.headerLeft}
+        title={`${item.taskName || '--'}：${item.serveRecord || '--'}`}
       >
-        -- ：--
+        {item.taskName || '--'}：{item.serveRecord || '--'}
       </div>
     );
   }
 
-  renderHeaderRight(item, currentActiveIndex, index) {
+  renderHeaderRight(item) {
     if (_.isEmpty(item)) {
       return null;
     }
 
-    if (!_.isEmpty(item.taskType) && item.taskType.indexOf('MOT System') !== -1) {
+    if (_.isEmpty(item.subtypeCd)) {
       // 从MOT系统来，没有活动方式
       return (
-        <div className={styles.headerRight}>
-          <span>{this.renderServiceRecordSource(item)}</span>
-          <div
-            className={
-              classnames({
-                [styles.upIcon]: _.includes(currentActiveIndex, String(index)),
-                [styles.downIcon]: !_.includes(currentActiveIndex, String(index)),
-              })
-            }
-          />
-        </div>
+        <span>{item.serveChannel || '--'}</span>
       );
     }
 
     return (
-      <div className={styles.headerRight}>
-        {/* 来源 */}
-        <span>{this.renderServiceRecordSource(item)}</span>
-        <span> - </span>
-        {/* 活动方式 */}
-        <span className={styles.activityType}>{item.activityType || '--'}</span>
-        <div
-          className={
-            classnames({
-              [styles.upIcon]: _.includes(currentActiveIndex, String(index)),
-              [styles.downIcon]: !_.includes(currentActiveIndex, String(index)),
-            })
-          }
-        />
-      </div>
+      <span className={styles.activityType}>{item.serveOrigin}</span>
     );
-  }
-
-  renderServiceRecordSource(item) {
-    // 来源
-    if (_.isEmpty(item)) {
-      return '--';
-    }
-    if (!_.isEmpty(item.taskType) && item.taskType.indexOf('MOT') !== -1) {
-      return 'MOT任务';
-    } else if (!_.isEmpty(item.serveChannel) && item.serveChannel.indexOf('经理') !== -1) {
-      return '自建任务';
-    }
-
-    return (item.serveChannel === '短信' || item.serveChannel === '短信新') ? '短信' : (item.serveChannel || '--');
   }
 
   renderPanel(serveTime) {
@@ -257,9 +188,19 @@ export default class CreateCollapse extends PureComponent {
                       {
                         this.renderHeaderLeft(item)
                       }
-                      {
-                        this.renderHeaderRight(item, currentActiveIndex, index)
-                      }
+                      <div className={styles.headerRight}>
+                        {
+                          this.renderHeaderRight(item)
+                        }
+                        <div
+                          className={
+                            classnames({
+                              [styles.upIcon]: _.includes(currentActiveIndex, String(index)),
+                              [styles.downIcon]: !_.includes(currentActiveIndex, String(index)),
+                            })
+                          }
+                        />
+                      </div>
                     </div>
                   </div>
                 }
@@ -274,7 +215,7 @@ export default class CreateCollapse extends PureComponent {
             )
           }
         </Collapse>
-      </div>
+      </div >
     );
   }
 

@@ -7,9 +7,11 @@ import { Steps, message, Button, Mention } from 'antd';
 import _ from 'lodash';
 import moment from 'moment';
 import { autobind } from 'core-decorators';
+import { permission, fspGlobal } from '../../utils';
 import PickTargetCustomer from '../../components/customerPool/taskFlow/PickTargetCustomer';
 import TaskPreview from '../../components/customerPool/taskFlow/TaskPreview';
 import CreateTaskForm from '../../components/customerPool/createTask/CreateTaskForm';
+import CreateTaskSuccess from '../../components/customerPool/createTask/CreateTaskSuccess';
 // import Button from '../../components/common/Button';
 import styles from './taskFlow.less';
 
@@ -45,6 +47,7 @@ const mapStateToProps = state => ({
   peopleOfLabelData: state.customerPool.peopleOfLabelData,
   currentTab: state.customerPool.currentTab,
   approvalList: state.customerPool.approvalList,
+  submitTaskFlowResult: state.customerPool.submitTaskFlowResult,
 });
 
 const mapDispatchToProps = {
@@ -87,6 +90,7 @@ export default class TaskFlow extends PureComponent {
     submitTaskFlow: PropTypes.func.isRequired,
     getApprovalList: PropTypes.func.isRequired,
     approvalList: PropTypes.array.isRequired,
+    submitTaskFlowResult: PropTypes.string.isRequired,
   };
 
   static defaultProps = {
@@ -99,7 +103,20 @@ export default class TaskFlow extends PureComponent {
       current: 0,
       currentSelectRecord: {},
       currentSelectRowKeys: [],
+      isSuccess: false,
     };
+    // 首页指标查询权限
+    this.isHasAuthorize = permission.hasIndexViewPermission();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { submitTaskFlowResult } = this.props;
+    const { submitTaskFlowResult: nextResult } = nextProps;
+    if (nextResult !== submitTaskFlowResult) {
+      this.setState({
+        isSuccess: true,
+      });
+    }
   }
 
   @autobind
@@ -110,20 +127,37 @@ export default class TaskFlow extends PureComponent {
 
     let taskFormData = storedTaskFlowData.taskFormData;
     let pickTargetCustomerData = {};
+    let isFormValidate = !_.isEmpty(taskFormData);
+    let isSelectCust = true;
     if (current === 0) {
-      taskFormData = this.createTaskFormRef.getFieldsValue();
+      this.createTaskFormRef.validateFields((err, values) => {
+        if (!err) {
+          isFormValidate = true;
+          console.log('Received values of form: ', values);
+          taskFormData = this.createTaskFormRef.getFieldsValue();
+        } else {
+          message.error('请填写任务基本信息');
+        }
+      });
     } else if (current === 1) {
       pickTargetCustomerData = this.pickTargetCustomerRef.getData();
+      const { labelCust: { labelId }, custSegment: { uploadedFileKey } } = pickTargetCustomerData;
+      if (_.isEmpty(labelId) && _.isEmpty(uploadedFileKey)) {
+        isSelectCust = false;
+        message.error('请选择导入客户或者标签圈人');
+      }
     }
 
-    saveTaskFlowData({
-      ...storedTaskFlowData,
-      taskFormData,
-      ...pickTargetCustomerData,
-    });
-    this.setState({
-      current: current + 1,
-    });
+    if (isFormValidate && isSelectCust) {
+      saveTaskFlowData({
+        ...storedTaskFlowData,
+        taskFormData,
+        ...pickTargetCustomerData,
+      });
+      this.setState({
+        current: current + 1,
+      });
+    }
   }
 
 
@@ -174,6 +208,7 @@ export default class TaskFlow extends PureComponent {
 
     const {
       labelId,
+      customNum: labelCustNums,
       uploadedFileKey: fileId,
       closingDate,
       executionType,
@@ -184,7 +219,7 @@ export default class TaskFlow extends PureComponent {
       triggerDate,
     } = finalData;
 
-    const postBody = {
+    let postBody = {
       closingDate: moment(closingDate).format('YYYY-MM-DD'),
       executionType,
       serviceStrategySuggestion,
@@ -194,17 +229,23 @@ export default class TaskFlow extends PureComponent {
       triggerDate: moment(triggerDate).format('YYYY-MM-DD'),
     };
 
+    if (this.isHasAuthorize) {
+      postBody = {
+        ...postBody,
+        flowAuditorId,
+      };
+    }
+
     if (currentTab === '1') {
       submitTaskFlow({
         fileId,
         ...postBody,
-        flowAuditorId,
       });
     } else {
       submitTaskFlow({
         labelId,
+        labelCustNums,
         ...postBody,
-        flowAuditorId,
       });
     }
 
@@ -230,12 +271,20 @@ export default class TaskFlow extends PureComponent {
     });
   }
 
+  @autobind
+  /**
+   * 关闭当前tab页
+   */
+  handleCloseTab() {
+    fspGlobal.closeRctTabById('RCT_FSP_TASK_FLOW');
+  }
 
   render() {
     const {
       current,
       currentSelectRecord,
       currentSelectRowKeys,
+      isSuccess,
     } = this.state;
 
     const {
@@ -251,7 +300,10 @@ export default class TaskFlow extends PureComponent {
       circlePeopleData,
       approvalList,
       getApprovalList,
+      push,
     } = this.props;
+
+    const { taskFormData = EMPTY_OBJECT } = storedTaskFlowData;
 
     const steps = [{
       title: '基本信息',
@@ -260,7 +312,7 @@ export default class TaskFlow extends PureComponent {
           ref={ref => (this.createTaskFormRef = ref)}
           dict={dict}
           location={location}
-          storedTaskFlowData={storedTaskFlowData}
+          previousData={{ ...taskFormData }}
         />
       </div>,
     }, {
@@ -291,7 +343,7 @@ export default class TaskFlow extends PureComponent {
         onRowSelectionChange={this.handleRowSelectionChange}
         currentSelectRecord={currentSelectRecord}
         currentSelectRowKeys={currentSelectRowKeys}
-        isNeedApproval
+        isNeedApproval={this.isHasAuthorize}
       />,
     }];
 
@@ -311,7 +363,7 @@ export default class TaskFlow extends PureComponent {
             <Button
               className={styles.cancelBtn}
               type="default"
-              onClick={() => { }}
+              onClick={this.handleCloseTab}
             >
               取消
             </Button>
@@ -346,6 +398,14 @@ export default class TaskFlow extends PureComponent {
             >确认无误，提交</Button>
           }
         </div>
+        {
+          isSuccess ?
+            <CreateTaskSuccess
+              successType={isSuccess}
+              push={push}
+              onCloseTab={this.handleCloseTab}
+            /> : null
+        }
       </div>
     );
   }

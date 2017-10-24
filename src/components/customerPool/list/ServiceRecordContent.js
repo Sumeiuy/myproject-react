@@ -1,12 +1,13 @@
 import React, { PropTypes } from 'react';
+import _ from 'lodash';
 import ServiceRecordItem from './ServiceRecordItem';
 import styles from './createCollapse.less';
 
 export default function ServiceRecordContent(props) {
   const { item, executeTypes } = props;
-  const { taskType = '', type = '' } = item;
-  // 包含MOT则为MOT任务服务记录
-  if (taskType.indexOf('MOT') !== -1) {
+  const { subtypeCd = '' } = item;
+  // 包含MOT服务记录则为MOT任务服务记录
+  if (subtypeCd.indexOf('MOT服务记录') !== -1) {
     return (
       <div className={styles.serviceContainer} id="serviceContainer" key={item.id}>
         <div className={styles.leftSection}>
@@ -34,7 +35,7 @@ export default function ServiceRecordContent(props) {
             type={'right'}
           />
           <ServiceRecordItem
-            content={`${type || taskType}${`-${item.activityContent}`}`}
+            content={`${item.taskType}`}
             title={'任务类型'}
             type={'right'}
           />
@@ -75,14 +76,17 @@ export default function ServiceRecordContent(props) {
         />
       </div>
       {
-        (taskType.indexOf('MOT') === -1 && taskType.indexOf('OCRM') !== -1) ?
+        !_.isEmpty(subtypeCd) ?
+          // 不是MOT任务，但是是从OCRM来的
           <div className={styles.rightSection}>
             <ServiceRecordItem
-              content={`${type || taskType}${`-${item.activityContent}`}`}
+              content={item.taskType}
               title={'任务类型'}
               type={'right'}
             />
-          </div> : null
+          </div> :
+          // MOT系统来的，短信、呼叫中心
+          null
       }
     </div>
   );

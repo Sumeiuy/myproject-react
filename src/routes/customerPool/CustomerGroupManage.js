@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-22 19:02:56
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-23 09:19:01
+ * @Last Modified time: 2017-10-24 17:19:38
  */
 
 import React, { PureComponent } from 'react';
@@ -619,7 +619,8 @@ export default class CustomerGroupManage extends PureComponent {
                   htmlType="submit"
                   className={styles.submit}
                   type="primary"
-                  onClick={event => this.handleSubmit(event)}
+                  // 加入节流函数
+                  onClick={_.debounce(event => this.handleSubmit(event), 250)}
                 >
                   提交
               </Button>

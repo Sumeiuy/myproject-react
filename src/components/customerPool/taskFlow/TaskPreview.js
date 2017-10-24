@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 10:29:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-24 14:31:30
+ * @Last Modified time: 2017-10-24 17:04:39
  */
 
 import React, { PureComponent } from 'react';
@@ -65,7 +65,7 @@ export default class TaskPreview extends PureComponent {
 
   static defaultProps = {
     approvalList: EMPTY_LIST,
-    isNeedApproval: true,
+    isNeedApproval: false,
   };
 
   constructor(props) {
@@ -328,7 +328,6 @@ export default class TaskPreview extends PureComponent {
                     />
                   </div>
                   <GroupTable
-                    isNeedPaganation={false}
                     listData={newDataSource}
                     tableClass={styles.approvalListTable}
                     titleColumn={titleColumn}
