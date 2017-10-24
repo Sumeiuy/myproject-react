@@ -19,7 +19,7 @@ export default {
   state: {
     information: {},     // 资讯
     performanceIndicators: [],  // 投顾指标
-    hsRate: '',  // 沪深归集率（经营指标）
+    hsRateAndBusinessIndicator: [],  // 沪深归集率和开通业务指标（经营指标）
     // 存放从服务端获取的全部代办数据
     todolist: [],
     // 存放筛选后数据
@@ -138,14 +138,12 @@ export default {
         payload: response,
       });
     },
-    // 沪深归集率（经营指标）
-    * getHSRate({ payload }, { call, put }) {  //eslint-disable-line
-      const response = yield call(api.getHSRate, payload);
-      const { resultData } = response;
-      const { value = '' } = resultData.length > 0 ? resultData[0] : '';
+    // 沪深归集率和开通业务指标（经营指标）
+    * getHSRateAndBusinessIndicator({ payload }, { call, put }) {  //eslint-disable-line
+      const response = yield call(api.getHSRateAndBusinessIndicator, payload);
       yield put({
-        type: 'getHSRateSuccess',
-        payload: { value },
+        type: 'getHSRateAndBusinessIndicatorSuccess',
+        payload: response,
       });
     },
     // 资讯列表和详情
@@ -592,11 +590,11 @@ export default {
         performanceIndicators: resultData,
       };
     },
-    getHSRateSuccess(state, action) {
-      const { payload: { value } } = action;
+    getHSRateAndBusinessIndicatorSuccess(state, action) {
+      const { payload: { resultData } } = action;
       return {
         ...state,
-        hsRate: value,
+        hsRateAndBusinessIndicator: resultData,
       };
     },
     getInformationSuccess(state, action) {
