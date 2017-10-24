@@ -8,7 +8,7 @@ import React, { PureComponent, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { withRouter, routerRedux } from 'dva/router';
+import { withRouter, routerRedux } from 'dva-react-router-3/router';
 import SplitPanel from '../../components/common/splitPanel/SplitPanel';
 import LeftPanel from '../../components/common/leftPanel';
 import Detail from '../../components/feedback/Detail';

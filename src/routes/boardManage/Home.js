@@ -1,13 +1,13 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-06-23 13:30:03
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-07-01 21:15:46
+ * @Last Modified by: zhufeiyang(zhufeiyang@htsc.com)
+ * @Last Modified time: 2017-10-24 16:47:37
  */
 
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
-import { withRouter, routerRedux } from 'dva/router';
+import { withRouter, routerRedux } from 'dva-react-router-3/router';
 import { connect } from 'react-redux';
 import { Col, Row, message } from 'antd';
 import _ from 'lodash';

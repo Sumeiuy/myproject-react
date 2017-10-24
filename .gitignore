@@ -12,3 +12,4 @@ iconfont.css
 *.sublime-project
 *.sublime-workspace
 .editorconfig
+jsconfig.json

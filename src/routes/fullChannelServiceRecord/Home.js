@@ -1,7 +1,7 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
-import { withRouter, routerRedux } from 'dva/router';
+import { withRouter, routerRedux } from 'dva-react-router-3/router';
 
 // import Search from '../../components/fullChannelServiceRecord/Search';
 import Filter from '../../components/fullChannelServiceRecord/Filter';

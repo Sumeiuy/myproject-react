@@ -3,8 +3,8 @@
  * @author maoquan(maoquan@htsc.com)
  */
 
-import dva from 'dva';
-import { hashHistory, routerRedux } from 'dva/router';
+import dva from 'dva-react-router-3';
+import { hashHistory, routerRedux } from 'dva-react-router-3/router';
 
 import createLoading from 'dva-loading';
 import createLogger from 'redux-logger';

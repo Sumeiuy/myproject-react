@@ -5,8 +5,8 @@
 
 import React, { Component, PropTypes } from 'react';
 import _ from 'lodash';
-import { withRouter } from 'dva/router';
-import { connect } from 'dva';
+import { withRouter } from 'dva-react-router-3/router';
+import { connect } from 'dva-react-router-3';
 import Loading from './Loading';
 
 import CreateServiceRecord from '../components/customerPool/list/CreateServiceRecord';
