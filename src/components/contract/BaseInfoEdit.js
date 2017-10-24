@@ -24,7 +24,10 @@ import { dateFormat } from '../../utils/helper';
 
 import styles from './baseInfoEdit.less';
 
+// 操作类型列表
+const { contract: { operationList } } = seibelConfig;
 const { TextArea } = Input;
+const EMPTY_PARAM = '暂无';
 // 子类型列表
 const childTypeList = _.filter(seibelConfig.contract.subType, v => v.label !== '全部');
 // const EMPTY_OBJECT = {};
@@ -70,6 +73,15 @@ export default class BaseInfoEdit extends PureComponent {
         ...baseInfo,
       },
     };
+  }
+
+  // 根据code返回操作类型name
+  @autobind
+  getOperationType(type) {
+    if (type) {
+      return _.filter(operationList, v => v.value === type)[0].label;
+    }
+    return EMPTY_PARAM;
   }
 
   // 通用Select Change方法
@@ -148,7 +160,7 @@ export default class BaseInfoEdit extends PureComponent {
     return (
       <div className={styles.editWrapper}>
         <InfoTitle head="基本信息" />
-        <InfoItem label="操作类型" value={baseInfo.business2} />
+        <InfoItem label="操作类型" value={this.getOperationType(baseInfo.business2)} />
         <InfoForm label="子类型" required>
           <Select
             name="childType"
