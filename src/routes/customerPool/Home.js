@@ -43,6 +43,8 @@ const effects = {
   getInformation: 'customerPool/getInformation',
   getHSRateAndBusinessIndicator: 'customerPool/getHSRateAndBusinessIndicator',
   getPerformanceIndicators: 'customerPool/getPerformanceIndicators',
+  redirectionPage: 'customerPool/redirectionPage',
+  switchTab: 'customerPool/switchTab',
 };
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -81,6 +83,8 @@ const mapDispatchToProps = {
   saveSearchVal: fetchDataFunction(false, effects.saveSearchVal),
   push: routerRedux.push,
   replace: routerRedux.replace,
+  redirectionPage: fetchDataFunction(false, effects.redirectionPage), // 跳转，上报日志
+  switchTab: fetchDataFunction(false, effects.switchTab), // 切换，上报日志
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -116,6 +120,8 @@ export default class Home extends PureComponent {
     getPerformanceIndicators: PropTypes.func.isRequired,
     hsRateAndBusinessIndicator: PropTypes.array,
     getHSRateAndBusinessIndicator: PropTypes.func.isRequired,
+    redirectionPage: PropTypes.func.isRequired,
+    switchTab: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -431,6 +437,13 @@ export default class Home extends PureComponent {
   }
 
   @autobind
+  handleTabClick(param) {
+    const { switchTab } = this.props;
+    // 发送日志
+    switchTab(param);
+  }
+
+  @autobind
   renderTabsExtra() {
     const {
       custRange,
@@ -489,6 +502,7 @@ export default class Home extends PureComponent {
       performanceIndicators,
       hsRateAndBusinessIndicator,
       empInfo,
+      redirectionPage,
     } = this.props;
     return (
       <div className={styles.customerPoolWrap}>
@@ -513,13 +527,14 @@ export default class Home extends PureComponent {
               data={process}
               motTaskCountData={motTaskCount}
               authority={this.isHasAuthorize}
+              redirectionPage={redirectionPage}
             />
             <Tabs
               tabBarExtraContent={this.renderTabsExtra()}
-              defaultActiveKey="1"
-              onChange={this.callback}
+              defaultActiveKey="manage"
+              onTabClick={this.handleTabClick}
             >
-              <TabPane tab="经营指标" key="1">
+              <TabPane tab="经营指标" key="manage">
                 <ManageIndicators
                   push={push}
                   indicators={manageIndicators}
@@ -529,7 +544,7 @@ export default class Home extends PureComponent {
                   empInfo={empInfo}
                 />
               </TabPane>
-              <TabPane tab="投顾绩效" key="2">
+              <TabPane tab="投顾绩效" key="performance">
                 <PerformanceIndicators
                   push={push}
                   indicators={performanceIndicators}

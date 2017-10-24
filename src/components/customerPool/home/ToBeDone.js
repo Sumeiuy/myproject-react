@@ -18,6 +18,7 @@ export default class PerformanceIndicators extends PureComponent {
     push: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     authority: PropTypes.bool.isRequired,
+    redirectionPage: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -72,24 +73,46 @@ export default class PerformanceIndicators extends PureComponent {
     }
   }
 
+  @autobind
+  handleMotClick() {
+    const { redirectionPage } = this.props;
+    // 手动上传日志
+    redirectionPage('todo_MotClick');
+    // 点击事件
+    fspGlobal.myMotTask();
+  }
+
+  @autobind
+  handleMessageClick() {
+    const { redirectionPage } = this.props;
+    // 手动上传日志
+    redirectionPage('todo_MessageClick');
+
+    // 点击事件
+    const notificationUrl = '/messgeCenter';
+    const notificationParam = {
+      forceRefresh: false,
+      id: 'MESSAGE_CENTER',
+      title: '消息中心',
+    };
+    fspGlobal.openFspTab({
+      url: notificationUrl,
+      param: notificationParam,
+    });
+  }
+
   render() {
     const { data: { businessNumbers,
       notificationNumbers,
       todayToDoNumbers,
       workFlowNumbers } } = this.props;
     const url = '/customerPool/todo';
-    const notificationUrl = '/messgeCenter';
     const param = {
       closable: true,
       forceRefresh: true,
       isSpecialTab: true,
       id: 'FSP_TODOLIST',
       title: '待办流程列表',
-    };
-    const notificationParam = {
-      forceRefresh: false,
-      id: 'MESSAGE_CENTER',
-      title: '消息中心',
     };
     return (
       <div className={styles.toBeDoneBox}>
@@ -98,7 +121,7 @@ export default class PerformanceIndicators extends PureComponent {
         </div>
         <div className={styles.row}>
           <div className={`${styles.item} ${styles.item_a}`}>
-            <a className="item" onClick={() => fspGlobal.myMotTask()}>
+            <a className="item" onClick={this.handleMotClick}>
               <div className={styles.content}>
                 <div className={styles.description}>
                   <div className={styles.count}>
@@ -139,12 +162,7 @@ export default class PerformanceIndicators extends PureComponent {
           <div className={`${styles.item} ${styles.item_d}`}>
             <a
               className="item"
-              onClick={
-                () => fspGlobal.openFspTab({
-                  url: notificationUrl,
-                  param: notificationParam,
-                })
-              }
+              onClick={this.handleMessageClick}
             >
               <div className={styles.content}>
                 <div className={styles.description}>

@@ -21,6 +21,10 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   goBack: routerRedux.goBack,
   push: routerRedux.push,
+  downloadFile: query => ({
+    type: 'customerPool/downloadFile',
+    payload: query,
+  }),
 };
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
@@ -30,6 +34,7 @@ export default class ViewpointDetail extends PureComponent {
     location: PropTypes.object.isRequired,
     information: PropTypes.object,
     push: PropTypes.func.isRequired,
+    downloadFile: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -46,11 +51,12 @@ export default class ViewpointDetail extends PureComponent {
     }
   }
 
-  renderDownLoad({ loadUrl, format, fileName }) {
+  renderDownLoad({ loadUrl, format, fileName, downloadFile }) {
     return (
       <a
         href={loadUrl}
         download={fileName || `${_.toUpper(format)} 全文.${_.toLower(format)}`}
+        onClick={() => downloadFile(`${format}_download`)}
       >
         {`${_.toUpper(format)} 全文`}
       </a>
@@ -69,6 +75,7 @@ export default class ViewpointDetail extends PureComponent {
       pubdatedetail = '',
       annexpathpdf = '',
       annexpathword = '',
+      downloadFile,
     } = infoVOList[index] || {};
     const dateArray = _.split(pubdatedetail, ' ');
     const date = _.isEmpty(dateArray) ? '' : _.head(dateArray);
@@ -121,7 +128,12 @@ export default class ViewpointDetail extends PureComponent {
                   <img src={wordSrc} alt="WORD 图标" />
                 </div>
                 <div className={styles.fileName}>
-                  {this.renderDownLoad({ loadUrl: annexpathword, format: 'WORD', fileName: texttitle })}
+                  {this.renderDownLoad({
+                    loadUrl: annexpathword,
+                    format: 'WORD',
+                    fileName: texttitle,
+                    downloadFile,
+                  })}
                 </div>
               </div>
               <div
@@ -134,7 +146,12 @@ export default class ViewpointDetail extends PureComponent {
                   <img src={pdfSrc} alt="PDF 图标" />
                 </div>
                 <div className={styles.fileName}>
-                  {this.renderDownLoad({ loadUrl: annexpathpdf, format: 'PDF', fileName: texttitle })}
+                  {this.renderDownLoad({
+                    loadUrl: annexpathpdf,
+                    format: 'PDF',
+                    fileName: texttitle,
+                    downloadFile,
+                  })}
                 </div>
               </div>
               <div

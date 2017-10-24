@@ -138,7 +138,6 @@ export default class PerformanceIndicators extends PureComponent {
       purAddCustaset, purRakeGjpdt, tranAmtBasicpdt, tranAmtTotpdt,
       purAddCust, newProdCust, purAddNoretailcust, purAddHighprodcust,
     } = indicators || {};
-
     // 控制是否显示 暂无数据
     const isEmpty = _.isEmpty(indicators);
 

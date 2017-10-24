@@ -51,6 +51,9 @@ const effects = {
   getCustomerScope: 'customerPool/getCustomerScope',
   getFollowCust: 'customerPool/getFollowCust',
   getSearchServerPersonList: 'customerPool/getSearchServerPersonList',
+  handleFilter: 'customerPool/handleFilter',  // 手动上传日志
+  handleSelect: 'customerPool/handleSelect',  // 手动上传日志
+  handleOrder: 'customerPool/handleOrder', // 手动上传日志
 };
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -102,6 +105,9 @@ const mapDispatchToProps = {
   getCustContact: fetchDataFunction(true, effects.getCustContact),
   getCustEmail: fetchDataFunction(true, effects.getCustEmail),
   getFollowCust: fetchDataFunction(true, effects.getFollowCust),
+  handleFilter: fetchDataFunction(false, effects.handleFilter),
+  handleSelect: fetchDataFunction(false, effects.handleSelect),
+  handleOrder: fetchDataFunction(false, effects.handleOrder),
   // 搜索服务服务经理
   getSearchServerPersonList: fetchDataFunction(false, effects.getSearchServerPersonList),
   push: routerRedux.push,
@@ -152,6 +158,10 @@ export default class CustomerList extends PureComponent {
     // 服务记录接口loading
     isRecordLoading: PropTypes.bool,
     serviceDepartment: PropTypes.array.isRequired,
+    // 手动上传日志
+    handleFilter: PropTypes.func.isRequired,
+    handleSelect: PropTypes.func.isRequired,
+    handleOrder: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -425,7 +435,11 @@ export default class CustomerList extends PureComponent {
     const {
       replace,
       location: { query, pathname },
+      handleFilter,
     } = this.props;
+    // 手动上传日志
+    handleFilter(`${obj.name}${obj.value}`);
+
     replace({
       pathname,
       query: {
@@ -441,7 +455,14 @@ export default class CustomerList extends PureComponent {
   // 排序条件变化
   @autobind
   orderChange(obj) {
-    const { replace, location: { query, pathname } } = this.props;
+    const {
+      replace,
+      location: { query, pathname },
+      handleOrder,
+    } = this.props;
+    // 手动上传日志
+    handleOrder(`sortType${obj.sortType}_sortDirection${obj.sortDirection}`);
+
     replace({
       pathname,
       query: {
@@ -507,6 +528,7 @@ export default class CustomerList extends PureComponent {
       searchServerPersonList,
       empInfo: { empInfo = EMPTY_OBJECT },
       serviceDepartment,
+      handleSelect,
     } = this.props;
     const {
       sortDirection,
@@ -559,6 +581,7 @@ export default class CustomerList extends PureComponent {
           onFilterChange={this.filterChange}
         />
         <CustomerLists
+          handleSelect={handleSelect}
           authority={this.authority}
           dict={dict}
           empInfo={empInfo}
