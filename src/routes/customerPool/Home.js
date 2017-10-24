@@ -41,7 +41,7 @@ const effects = {
   clearSearchHistoryList: 'customerPool/clearSearchHistoryList',
   saveSearchVal: 'customerPool/saveSearchVal',
   getInformation: 'customerPool/getInformation',
-  getHSRateAndBusinessIndicator: 'customerPool/getHSRateAndBusinessIndicator',
+  getHSRate: 'customerPool/getHSRate',
   getPerformanceIndicators: 'customerPool/getPerformanceIndicators',
 };
 
@@ -65,11 +65,11 @@ const mapStateToProps = state => ({
   searchHistoryVal: state.customerPool.searchHistoryVal, // 保存搜索内容
   information: state.customerPool.information, // 首席投顾观点
   performanceIndicators: state.customerPool.performanceIndicators, // 绩效指标
-  hsRateAndBusinessIndicator: state.customerPool.hsRateAndBusinessIndicator, // 沪深归集率（经营指标）
+  hsRate: state.customerPool.hsRate, // 沪深归集率（经营指标）
 });
 
 const mapDispatchToProps = {
-  getHSRateAndBusinessIndicator: fetchDataFunction(true, effects.getHSRateAndBusinessIndicator),
+  getHSRate: fetchDataFunction(true, effects.getHSRate),
   getPerformanceIndicators: fetchDataFunction(true, effects.getPerformanceIndicators),
   getInformation: fetchDataFunction(true, effects.getInformation),
   getToBeDone: fetchDataFunction(true, effects.toBeTone),
@@ -114,8 +114,8 @@ export default class Home extends PureComponent {
     information: PropTypes.object,
     performanceIndicators: PropTypes.array,
     getPerformanceIndicators: PropTypes.func.isRequired,
-    hsRateAndBusinessIndicator: PropTypes.array,
-    getHSRateAndBusinessIndicator: PropTypes.func.isRequired,
+    hsRate: PropTypes.string,
+    getHSRate: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -133,7 +133,7 @@ export default class Home extends PureComponent {
     searchHistoryVal: '',
     information: EMPTY_OBJECT,
     performanceIndicators: EMPTY_LIST,
-    hsRateAndBusinessIndicator: EMPTY_LIST,
+    hsRate: '',
   }
 
   constructor(props) {
@@ -150,14 +150,14 @@ export default class Home extends PureComponent {
   componentDidMount() {
     const {
       custRange,
-      empInfo: { empInfo = {} },
+      empInfo: { empInfo },
       getInformation,
       getToBeDone,
       getHotWds,
       getHistoryWdsList,
     } = this.props;
     // 获取登录用户empId和occDivnNum
-    const { empNum = '', occDivnNum = '' } = empInfo;
+    const { empNum, occDivnNum } = empInfo;
 
     // 登录用户orgId，默认在fsp中中取出来的当前用户岗位对应orgId，本地时取用户信息中的occDivnNum
     if (document.querySelector(fspContainer.container)) {
@@ -280,19 +280,20 @@ export default class Home extends PureComponent {
     }
     // 绩效指标
     this.getIndicators(tempObj);
-    // 沪深归集率和业务开通指标（经营指标）
-    this.fetchHSRateAndBusinessIndicator(tempObj);
+    // 沪深归集率（经营指标）
+    this.fetchHSRate(tempObj);
   }
 
   @autobind
-  fetchHSRateAndBusinessIndicator({ begin, end, orgId, cycleSelect }) {
-    const { getHSRateAndBusinessIndicator } = this.props;
+  fetchHSRate({ begin, end, orgId, cycleSelect }) {
+    const { getHSRate } = this.props;
     const custType = this.getCustType(orgId);
-    getHSRateAndBusinessIndicator({
+    getHSRate({
       custType, // 客户范围类型
       dateType: this.getDateType(cycleSelect), // 周期类型
       orgId, // 组织ID
       empId: helper.getEmpId(),
+      fieldList: ['shzNpRate'],
       begin,
       end,
     });
@@ -433,6 +434,7 @@ export default class Home extends PureComponent {
   @autobind
   renderTabsExtra() {
     const {
+      custRange,
       replace,
       collectCustRange,
       cycle,
@@ -447,17 +449,15 @@ export default class Home extends PureComponent {
       orgId,
       cycleSelect,
     } } = location;
-    // curOrgId   客户范围回填
-    // 当url中由 orgId 则使用orgId
-    // 有权限时默认取所在岗位的orgId
-    // 无权限取 MAIN_MAGEGER_ID
-    let curOrgId = this.orgId;
-    // curCycleSelect  时间周期，先从url中取值，url中没有值时，取时间周期第一个
-    const curCycleSelect = cycleSelect || (cycle[0] || {}).key;
+    let curOrgId = custRange[0].id;
+    let curCycleSelect = (cycle[0] || {}).key;
     if (orgId) {
       curOrgId = orgId;
     } else if (!this.isHasAuthorize) {
       curOrgId = MAIN_MAGEGER_ID;
+    }
+    if (cycleSelect) {
+      curCycleSelect = cycleSelect;
     }
     const extraProps = {
       custRange: createCustRange,
@@ -488,8 +488,7 @@ export default class Home extends PureComponent {
       searchHistoryVal,
       information,
       performanceIndicators,
-      hsRateAndBusinessIndicator,
-      empInfo,
+      hsRate,
     } = this.props;
     return (
       <div className={styles.customerPoolWrap}>
@@ -522,17 +521,15 @@ export default class Home extends PureComponent {
             >
               <TabPane tab="经营指标" key="1">
                 <ManageIndicators
-                  empInfo={empInfo}
                   push={push}
                   indicators={manageIndicators}
                   location={location}
                   cycle={cycle}
-                  hsRateAndBusinessIndicator={hsRateAndBusinessIndicator}
+                  hsRate={hsRate}
                 />
               </TabPane>
               <TabPane tab="投顾绩效" key="2">
                 <PerformanceIndicators
-                  empInfo={empInfo}
                   push={push}
                   indicators={performanceIndicators}
                   location={location}

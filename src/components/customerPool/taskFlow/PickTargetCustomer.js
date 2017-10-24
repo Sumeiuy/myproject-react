@@ -15,17 +15,22 @@ import SelectLabelCust from './SelectLabelCust';
 import styles from './pickTargetCustomer.less';
 
 const TabPane = Tabs.TabPane;
+
+
 export default class PickTargetCustomer extends PureComponent {
   static propTypes = {
     onPreview: PropTypes.func.isRequired,
     priviewCustFileData: PropTypes.object.isRequired,
-    getCirclePeople: PropTypes.func.isRequired,
-    getPeopleOfLabel: PropTypes.func.isRequired,
+    getLabelInfo: PropTypes.func.isRequired,
+    getLabelPeople: PropTypes.func.isRequired,
     circlePeopleData: PropTypes.array.isRequired,
-    peopleOfLabelData: PropTypes.array.isRequired,
+    peopleOfLabelData: PropTypes.object.isRequired,
     currentTab: PropTypes.string.isRequired,
     saveCurrentTab: PropTypes.func.isRequired,
     storedTaskFlowData: PropTypes.object.isRequired,
+    // saveTaskFlowData: PropTypes.func.isRequired,
+    // saveDataEmitter: PropTypes.object.isRequired,
+    // onStepUpdate: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -66,14 +71,16 @@ export default class PickTargetCustomer extends PureComponent {
       priviewCustFileData,
       currentTab,
       storedTaskFlowData,
+      getLabelInfo,
+      circlePeopleData,
+      getLabelPeople,
+      peopleOfLabelData,
     } = this.props;
     const { currentKey } = this.state;
 
     // 当前激活的tab
     // 根据缓存数据或者默认初始化数据，恢复tab
     const currentActiveKey = currentTab || currentKey;
-
-    const { getCirclePeople, circlePeopleData } = this.props;
     return (
       <div className={styles.pickCustomerSection}>
         <div className={styles.title}>目标客户</div>
@@ -90,10 +97,12 @@ export default class PickTargetCustomer extends PureComponent {
             </TabPane>
             <TabPane tab="标签圈人" key="2">
               <SelectLabelCust
-                ref={ref => (this.selectLabelCustRef = ref)}
                 circlePeopleData={circlePeopleData}
-                getCirclePeople={getCirclePeople}
+                getLabelInfo={getLabelInfo}
+                peopleOfLabelData={peopleOfLabelData}
+                getLabelPeople={getLabelPeople}
                 storedData={storedTaskFlowData}
+                ref={ref => (this.selectLabelCustRef = ref)}
               />
             </TabPane>
           </Tabs>
