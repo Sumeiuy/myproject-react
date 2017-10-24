@@ -84,7 +84,7 @@ function Funney({ dataSource }) {
           url: '/customer/manage/showCustManageTabWin',
           param: {
             id: 'FSP_CUST_TAB_CENTER_MANAGE',
-            title: '正式客户管理',
+            title: '客户管理',
             forceRefresh: true,
           },
         });
