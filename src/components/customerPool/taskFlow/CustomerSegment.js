@@ -24,8 +24,12 @@ export default class CustomerSegment extends PureComponent {
   static propTypes = {
     onPreview: PropTypes.func.isRequired,
     priviewCustFileData: PropTypes.object.isRequired,
+    // 保存数据方法
+    // storeData: PropTypes.func.isRequired,
     // 保存的数据
     storedData: PropTypes.object,
+    // saveDataEmitter: PropTypes.object.isRequired,
+    // onStepUpdate: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -50,6 +54,14 @@ export default class CustomerSegment extends PureComponent {
     };
   }
 
+// <<<<<<< HEAD
+//   componentWillMount() {
+//     const { saveDataEmitter } = this.props;
+//     saveDataEmitter.on('saveSelectCustData', this.handleSaveData);
+//   }
+
+// =======
+// >>>>>>> a8c0de3e215a654a6ef6cfbe71c7834001d5795e
   componentWillReceiveProps(nextProps) {
     const {
       priviewCustFileData = EMPTY_LIST,
@@ -75,6 +87,7 @@ export default class CustomerSegment extends PureComponent {
       });
     }
   }
+
 
   @autobind
   getData() {

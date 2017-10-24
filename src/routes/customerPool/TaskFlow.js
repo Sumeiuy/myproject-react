@@ -5,6 +5,7 @@ import { withRouter, routerRedux } from 'dva/router';
 import { Steps, message, Button } from 'antd';
 // import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import events from 'events';
 import { autobind } from 'core-decorators';
 import PickTargetCustomer from '../../components/customerPool/taskFlow/PickTargetCustomer';
 import TaskPreview from '../../components/customerPool/taskFlow/TaskPreview';
@@ -20,8 +21,8 @@ const EMPTY_OBJECT = {};
 const effects = {
   // 预览客户细分数据
   priviewCustFile: 'customerPool/priviewCustFile',
-  getCirclePeople: 'customerPool/getCirclePeople',
-  getPeopleOfLabel: 'customerPool/getPeopleOfLabel',
+  getLabelInfo: 'customerPool/getLabelInfo',
+  getLabelPeople: 'customerPool/getLabelPeople',
   submitTaskFlow: 'customerPool/submitTaskFlow',
   getApprovalList: 'customerPool/getApprovalList',
 };
@@ -64,11 +65,15 @@ const mapDispatchToProps = {
     payload: query,
   }),
   priviewCustFile: fetchData(effects.priviewCustFile, true),
-  getCirclePeople: fetchData(true, effects.getCirclePeople),
-  getPeopleOfLabel: fetchData(true, effects.getPeopleOfLabel),
-  submitTaskFlow: fetchData(true, effects.submitTaskFlow),
-  getApprovalList: fetchData(true, effects.getApprovalList),
+  getLabelInfo: fetchData(effects.getLabelInfo, true),
+  getLabelPeople: fetchData(effects.getLabelPeople, true),
+  submitTaskFlow: fetchData(effects.submitTaskFlow, true),
+  getApprovalList: fetchData(effects.getApprovalList, true),
 };
+
+const EventEmitter = events;
+// new一个事件监听，用来发射缓存数据事件
+const saveDataEmitter = new EventEmitter();
 
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
@@ -78,10 +83,10 @@ export default class TaskFlow extends PureComponent {
     push: PropTypes.func.isRequired,
     priviewCustFileData: PropTypes.object.isRequired,
     priviewCustFile: PropTypes.func.isRequired,
-    getCirclePeople: PropTypes.func.isRequired,
-    getPeopleOfLabel: PropTypes.func.isRequired,
+    getLabelInfo: PropTypes.func.isRequired,
+    getLabelPeople: PropTypes.func.isRequired,
     circlePeopleData: PropTypes.array.isRequired,
-    peopleOfLabelData: PropTypes.array.isRequired,
+    peopleOfLabelData: PropTypes.object.isRequired,
     dict: PropTypes.object,
     saveCurrentTab: PropTypes.func.isRequired,
     currentTab: PropTypes.string.isRequired,
@@ -101,30 +106,26 @@ export default class TaskFlow extends PureComponent {
     super(props);
     this.state = {
       current: 0,
+      currentStep: 0,
     };
   }
 
   @autobind
   handleNextStep() {
     // 下一步
-    const { saveTaskFlowData, storedTaskFlowData } = this.props;
     const { current } = this.state;
-    let taskFormData = {};
-    let pickTargetCustomerData = {};
+    // let taskFormData = {};
+    // let pickTargetCustomerData = {};
     if (current === 0) {
-      taskFormData = this.createTaskFormRef.getFieldsValue();
+      // taskFormData = this.createTaskFormRef.getFieldsValue();
     } else if (current === 1) {
-      pickTargetCustomerData = this.pickTargetCustomerRef.getData();
+      // pickTargetCustomerData = this.pickTargetCustomerRef.getData();
     }
     this.setState({
       current: current + 1,
     });
-    saveTaskFlowData({
-      ...storedTaskFlowData,
-      taskFormData,
-      ...pickTargetCustomerData,
-    });
   }
+
 
   @autobind
   handlePreviousStep() {
@@ -134,6 +135,7 @@ export default class TaskFlow extends PureComponent {
       current: current - 1,
     });
   }
+
 
   @autobind
   handlePreview({ uploadKey, pageNum, pageSize }) {
@@ -151,13 +153,6 @@ export default class TaskFlow extends PureComponent {
     });
   }
 
-  @autobind
-  handleStepUpdate() {
-    const { current } = this.state;
-    this.setState({
-      current: current + 1,
-    });
-  }
 
   @autobind
   handleSubmitTaskFlow() {
@@ -168,19 +163,20 @@ export default class TaskFlow extends PureComponent {
     clearTaskFlowData();
   }
 
+
   render() {
     const {
       current,
     } = this.state;
-
     const {
       dict,
       priviewCustFileData,
       currentTab,
       saveCurrentTab,
       storedTaskFlowData,
-      getCirclePeople,
-      getPeopleOfLabel,
+      saveTaskFlowData,
+      getLabelInfo,
+      getLabelPeople,
       peopleOfLabelData,
       circlePeopleData,
       approvalList,
@@ -189,12 +185,13 @@ export default class TaskFlow extends PureComponent {
 
     const steps = [{
       title: '基本信息',
-      content: <CreateTaskForm
+      content: <div className={styles.taskInner}><CreateTaskForm
         ref={ref => (this.createTaskFormRef = ref)}
         dict={dict}
         location={location}
         storedTaskFlowData={storedTaskFlowData}
-      />,
+      />
+      </div>,
     }, {
       title: '目标客户',
       content: <PickTargetCustomer
@@ -204,10 +201,12 @@ export default class TaskFlow extends PureComponent {
         onPreview={this.handlePreview}
         priviewCustFileData={priviewCustFileData}
         storedTaskFlowData={storedTaskFlowData}
-        getCirclePeople={getCirclePeople}
+        saveTaskFlowData={saveTaskFlowData}
+        getLabelInfo={getLabelInfo}
         circlePeopleData={circlePeopleData}
-        getPeopleOfLabel={getPeopleOfLabel}
+        getLabelPeople={getLabelPeople}
         peopleOfLabelData={peopleOfLabelData}
+        saveDataEmitter={saveDataEmitter}
       />,
     }, {
       title: '提交',
@@ -221,7 +220,6 @@ export default class TaskFlow extends PureComponent {
     }];
 
     const stepsCount = _.size(steps);
-
     return (
       <div className={styles.taskFlowContainer}>
         <Steps current={current} className={styles.stepsSection}>

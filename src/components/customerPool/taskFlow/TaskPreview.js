@@ -16,6 +16,7 @@ import Button from '../../common/Button';
 import GroupModal from '../groupManage/CustomerGroupUpdateModal';
 import styles from './taskPreview.less';
 
+
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 
@@ -26,7 +27,6 @@ export default class TaskPreview extends PureComponent {
   static propTypes = {
     storedTaskFlowData: PropTypes.object.isRequired,
     approvalList: PropTypes.array,
-    currentTab: PropTypes.string.isRequired,
   };
 
   static defaultProps = {
@@ -72,6 +72,7 @@ export default class TaskPreview extends PureComponent {
       ],
     };
   }
+
 
   componentWillReceiveProps(nextProps) {
     const {
@@ -161,6 +162,7 @@ export default class TaskPreview extends PureComponent {
     });
   }
 
+
   @autobind
   handleRowSelectionChange(selectedRowKeys, selectedRows) {
     console.log(selectedRowKeys, selectedRows);
@@ -216,6 +218,13 @@ export default class TaskPreview extends PureComponent {
 
   render() {
     // const {
+
+    //   taskForm = EMPTY_OBJECT,
+    //   labelCust = EMPTY_OBJECT,
+    //   custSegment = EMPTY_OBJECT,
+    // } = storedTaskFlowData;
+
+
     //   taskFormData = EMPTY_OBJECT,
     //   labelCust = EMPTY_OBJECT,
     //   custSegment = EMPTY_OBJECT,

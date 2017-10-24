@@ -46,8 +46,6 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   getCustomerScope: fectchDataFunction(false, effects.customerScope),
-  getEmpInfo: fectchDataFunction(false, effects.empInfo),
-  getDictionary: fectchDataFunction(false, effects.dictionary),
   toggleServiceRecordModal: query => ({
     type: 'app/toggleServiceRecordModal',
     payload: query || false,
@@ -63,9 +61,7 @@ export default class Main extends Component {
     children: PropTypes.node.isRequired,
     loading: PropTypes.bool.isRequired,
     getCustomerScope: PropTypes.func.isRequired,
-    getEmpInfo: PropTypes.func.isRequired,
     interfaceState: PropTypes.object.isRequired,
-    getDictionary: PropTypes.func.isRequired,
     dict: PropTypes.object.isRequired,
     empInfo: PropTypes.object.isRequired,
     serviceRecordModalVisible: PropTypes.bool,
@@ -83,10 +79,8 @@ export default class Main extends Component {
   }
 
   componentDidMount() {
-    const { getCustomerScope, getEmpInfo, getDictionary } = this.props;
+    const { getCustomerScope } = this.props;
     getCustomerScope(); // 加载客户池客户范围
-    getEmpInfo(); // 加载员工职责与职位
-    getDictionary(); // 获取字典
   }
 
   render() {

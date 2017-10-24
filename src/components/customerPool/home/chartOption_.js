@@ -127,7 +127,6 @@ export default ({
   bgColor,
   maxValue,
 }) => {
-  console.log('#############data############', data);
   const length = data.length;
   const items = [];
   data.forEach(
@@ -173,7 +172,7 @@ export const singleColorBar = ({
           position: 'top',
           fontFamily: 'PingFangSC-Regular',
           fontSize: 12,
-          color: '#4a4a4a',
+          color: '#2782d7',
           formatter: (params) => {
             if (_.isEmpty(colourfulData)) {
               return `${params.value}`;
