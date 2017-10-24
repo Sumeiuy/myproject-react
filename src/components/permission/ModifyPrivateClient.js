@@ -160,7 +160,6 @@ export default class modifyPrivateClient extends PureComponent {
   @autobind
   updateValue(name, value) {
     // 更新state
-    console.log(name, value);
     if (name === 'customer') {
       this.setState({ customer: {
         custName: value.custName,
@@ -187,7 +186,6 @@ export default class modifyPrivateClient extends PureComponent {
       nextGroupId: item.nextGroupName,
       nextApproverList: item.flowAuditors,
     }, () => {
-      console.warn('nextApproverList', item.flowAuditors);
       if (item.flowBtnId !== overFlowBtnId) {
         this.setState({
           nextApproverModal: true,

@@ -76,7 +76,7 @@ export default class Pageheader extends PureComponent {
       pathname,
       query: {
         ...query,
-        drafterId: item.empId,
+        drafterId: item.ptyMngId,
         isResetPageNum: 'Y',
       },
     });
@@ -135,7 +135,7 @@ export default class Pageheader extends PureComponent {
     [{ custName: '全部', custNumber: '' }, ...customerList] : customerList;
 
     const drafterAllList = !_.isEmpty(drafterList) ?
-    [{ empName: '全部', empId: '' }, ...drafterList] : customerList;
+    [{ ptyMngName: '全部', ptyMngId: '' }, ...drafterList] : drafterList;
     // 新建按钮权限
     let hasPermission = true;
     if (pathname === '/contract') {
@@ -198,11 +198,11 @@ export default class Pageheader extends PureComponent {
             value="全部"
             placeholder="工号/名称"
             searchList={drafterAllList}
-            showObjKey="empName"
-            objId="empId"
+            showObjKey="ptyMngName"
+            objId="ptyMngId"
             emitSelectItem={this.selectDrafterItem}
             emitToSearch={toSearchDrafter}
-            name={`${page}-empName`}
+            name={`${page}-ptyMngName`}
           />
         </div>
 
