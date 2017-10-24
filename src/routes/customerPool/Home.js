@@ -433,7 +433,6 @@ export default class Home extends PureComponent {
   @autobind
   renderTabsExtra() {
     const {
-      custRange,
       replace,
       collectCustRange,
       cycle,
@@ -448,15 +447,17 @@ export default class Home extends PureComponent {
       orgId,
       cycleSelect,
     } } = location;
-    let curOrgId = custRange[0].id;
-    let curCycleSelect = (cycle[0] || {}).key;
+    // curOrgId   客户范围回填
+    // 当url中由 orgId 则使用orgId
+    // 有权限时默认取所在岗位的orgId
+    // 无权限取 MAIN_MAGEGER_ID
+    let curOrgId = this.orgId;
+    // curCycleSelect  时间周期，先从url中取值，url中没有值时，取时间周期第一个
+    const curCycleSelect = cycleSelect || (cycle[0] || {}).key;
     if (orgId) {
       curOrgId = orgId;
     } else if (!this.isHasAuthorize) {
       curOrgId = MAIN_MAGEGER_ID;
-    }
-    if (cycleSelect) {
-      curCycleSelect = cycleSelect;
     }
     const extraProps = {
       custRange: createCustRange,
@@ -521,21 +522,21 @@ export default class Home extends PureComponent {
             >
               <TabPane tab="经营指标" key="1">
                 <ManageIndicators
+                  empInfo={empInfo}
                   push={push}
                   indicators={manageIndicators}
                   location={location}
                   cycle={cycle}
                   hsRateAndBusinessIndicator={hsRateAndBusinessIndicator}
-                  empInfo={empInfo}
                 />
               </TabPane>
               <TabPane tab="投顾绩效" key="2">
                 <PerformanceIndicators
+                  empInfo={empInfo}
                   push={push}
                   indicators={performanceIndicators}
                   location={location}
                   cycle={cycle}
-                  empInfo={empInfo}
                 />
               </TabPane>
             </Tabs>
