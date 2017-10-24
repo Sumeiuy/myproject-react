@@ -9,7 +9,7 @@ import React, { PropTypes, PureComponent } from 'react';
 import { Upload, message } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import Confirm from '../../common/Confirm';
+import confirm from '../../common/Confirm/confirm';
 import Button from '../../common/Button';
 import { request } from '../../../config';
 import { helper } from '../../../utils';
@@ -41,7 +41,7 @@ export default class UploadFile extends PureComponent {
         empId: helper.getEmpId(),
       },
       delData: {},
-      isShowDeleteConfirm: false,
+      // isShowDeleteConfirm: false,
     };
   }
 
@@ -135,7 +135,10 @@ export default class UploadFile extends PureComponent {
   showConfirm(delData) {
     this.setState({
       delData,
-      isShowDeleteConfirm: true,
+      // isShowDeleteConfirm: true,
+    });
+    confirm({
+      onOk: this.deleteFile,
     });
   }
 
@@ -167,20 +170,20 @@ export default class UploadFile extends PureComponent {
     const { onOperateFile } = this.props;
     const { delData } = this.state;
     onOperateFile(delData, 'DELETE');
-    this.setState({
-      isShowDeleteConfirm: false,
-    });
+    // this.setState({
+    //   isShowDeleteConfirm: false,
+    // });
   }
 
-  @autobind
-  cancelDeleteFile() {
-    this.setState({
-      isShowDeleteConfirm: false,
-    });
-  }
+  // @autobind
+  // cancelDeleteFile() {
+  //   this.setState({
+  //     isShowDeleteConfirm: false,
+  //   });
+  // }
 
   render() {
-    const { isShowDeleteConfirm } = this.state;
+    // const { isShowDeleteConfirm } = this.state;
     const { onHandleOverview } = this.props;
     return (
       <div className="uploadBox">
@@ -199,14 +202,14 @@ export default class UploadFile extends PureComponent {
             onClick={onHandleOverview}
           >预览</Button>
         </div>
-        {
+        {/*
           isShowDeleteConfirm ?
             <Confirm
               type="delete"
               onCancelHandler={this.cancelDeleteFile}
               onOkHandler={this.deleteFile}
             /> : null
-        }
+        */}
       </div>
     );
   }

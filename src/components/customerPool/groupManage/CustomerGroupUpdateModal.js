@@ -14,7 +14,7 @@ import styles from './customerGroupUpdateModal.less';
 export default class CustomerGroupUpdateModal extends PureComponent {
   static propTypes = {
     visible: PropTypes.bool,
-    wrapperClass: PropTypes.string.isRequired,
+    wrapperClass: PropTypes.string,
     title: PropTypes.string,
     okText: PropTypes.string.isRequired,
     cancelText: PropTypes.string,
@@ -26,6 +26,7 @@ export default class CustomerGroupUpdateModal extends PureComponent {
   };
 
   static defaultProps = {
+    wrapperClass: '',
     visible: false,
     title: '',
     okType: 'primary',
@@ -41,28 +42,6 @@ export default class CustomerGroupUpdateModal extends PureComponent {
       visible: props.visible,
       footer: props.footer,
     };
-  }
-
-  /*
-  // 设置默认footer
-  componentWillMount() {
-    this.setState({
-      footer: <div className={styles.footerSection}>
-        <Button key="back" size="default" onClick={this.handleCancel} className="cancel">取消</Button>
-        <Button key="submit" type="primary" size="default" className="submit">
-          提交
-        </Button>
-      </div>,
-    });
-  }
-  */
-
-  @autobind
-  handleOk() {
-    const { visible } = this.state;
-    this.setState({
-      visible: !visible,
-    });
   }
 
   @autobind
@@ -86,9 +65,7 @@ export default class CustomerGroupUpdateModal extends PureComponent {
       modalContent,
     } = this.props;
     const { visible, footer } = this.state;
-    // if (!visible) {
-    //   return null;
-    // }
+
     return (
       <div className={styles.groupUpdateWrapper}>
         <Modal

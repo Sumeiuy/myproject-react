@@ -173,6 +173,10 @@ export default class TableTransfer extends Component {
     */
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.resetDataSource(nextProps);
+  }
+
   // 获取所有默认选中
   getAllDefaultCheck(dataArray, rowKey) {
     let defaultCheck = {};
@@ -192,7 +196,7 @@ export default class TableTransfer extends Component {
 
   // 重置数据源
   @autobind
-  resetDataSource() {
+  resetDataSource(nextProps) {
     const {
       firstData,
       secondData,
@@ -200,7 +204,7 @@ export default class TableTransfer extends Component {
       secondColumns,
       rowKey,
       defaultCheckKey,
-    } = this.props;
+    } = nextProps || this.props;
     const initFirstArray = this.initTableData(firstData, rowKey, defaultCheckKey);
     const initSecondArray = this.initTableData(secondData, rowKey, defaultCheckKey);
     const initSecondColumns = this.initTableColumn(secondColumns);
@@ -224,7 +228,8 @@ export default class TableTransfer extends Component {
   // tip属性，显示子项勾选框对应的提示，（对用户是透明的）
   // 默认项defaultChecked属性，便于操作
   initTableData(dataArray, rowKey, defaultCheckedKey) {
-    const newData = dataArray.map(
+    const newDatatArray = _.cloneDeep(dataArray);
+    const newData = newDatatArray.map(
       (item) => {
         if (!_.isEmpty(item.children)) {
           const newChildren = item.children.map(
@@ -322,7 +327,7 @@ export default class TableTransfer extends Component {
       checked: [...checked, ...clearChildren],
       firstArray: updateFirstArray,
       secondArray: updateSecondArray,
-    }, transferChange(updateSecondArray));
+    }, transferChange(seleted, updateSecondArray));
   }
 
   // 子项勾选和取消勾选，为显示不同的提示，需要更新所在的数据源
@@ -406,11 +411,11 @@ export default class TableTransfer extends Component {
         this.setState({ tip: { type: 'finish', content: '产品组合等于目标佣金率' } });
       } else if (result > 0) {
         this.setState({
-          tip: { type: 'warning', content: `产品组合比目标佣金率高${(1000 * Math.abs(result)).toFixed(2)}‰` } },
+          tip: { type: 'warning', content: `产品组合比目标佣金率高${(Math.abs(result)).toFixed(2)}‰` } },
         );
       } else {
         this.setState({
-          tip: { type: 'warning', content: `产品组合离目标佣金率还差${(1000 * Math.abs(result)).toFixed(2)}‰` } },
+          tip: { type: 'warning', content: `产品组合离目标佣金率还差${(Math.abs(result)).toFixed(2)}‰` } },
         );
       }
     }

@@ -124,6 +124,7 @@ export default class EditForm extends PureComponent {
   // 上传文件成功
   @autobind
   handleUploadSuccess(attachment) {
+    console.warn('上传成功', attachment);
     this.setState({
       ...this.state,
       formData: {

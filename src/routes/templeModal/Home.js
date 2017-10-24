@@ -251,7 +251,6 @@ export default class TemplModal extends PureComponent {
       defaultCheckKey: 'default',
       showSearch: true,
       placeholder: '产品代码/产品名称',
-      // pagination: false,
       pagination,
       aboutRate: ['0.0004', 'rate'],
       supportSearchKey: [['productCode'], ['productName']],

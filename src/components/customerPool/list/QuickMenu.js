@@ -18,7 +18,6 @@ let hrefUrl = '';
 export default class QuickMenu extends PureComponent {
 
   static propTypes = {
-    isSms: PropTypes.bool.isRequired,
     listItem: PropTypes.object.isRequired,
     createModal: PropTypes.func.isRequired,
     toggleServiceRecordModal: PropTypes.func.isRequired,
@@ -97,7 +96,6 @@ export default class QuickMenu extends PureComponent {
 
   render() {
     const {
-      isSms,
       listItem,
       createModal,
       toggleServiceRecordModal,
@@ -108,13 +106,10 @@ export default class QuickMenu extends PureComponent {
     const {
       addressEmail,
     } = this.state;
-    if (!isSms) {
-      return null;
-    }
     const isFollow = (currentFollowCustId === listItem.custId && isFollows[currentFollowCustId])
       || isFollows[listItem.custId];
     return (
-      <div className={`${styles.basicInfoD} showQuickMenu`}>
+      <div className={styles.basicInfoD}>
         <ul className={styles.operationIcon}>
           <li onClick={() => createModal(listItem)}>
             <Icon type="dianhua" />
@@ -125,17 +120,21 @@ export default class QuickMenu extends PureComponent {
             <span><a ref={ref => this.sendEmail = ref} href={_.isEmpty(addressEmail[listItem.custId]) ? NO_EMAIL_HREF : `mailto:${addressEmail[listItem.custId]}`}> 邮件联系 </a></span>
           </li>
           <li
-            onClick={() => toggleServiceRecordModal({ custId: listItem.custId, flag: true })}
-          >
-            <Icon type="jilu" />
-            <span>添加服务记录</span>
-          </li>
-          <li
             onClick={() => onAddFollow(listItem)}
             className={isFollow ? styles.follows : ''}
           >
             <Icon type="guanzhu" />
             <span>{isFollow ? '已关注' : '关注'}</span>
+          </li>
+          <li
+            onClick={() => toggleServiceRecordModal({
+              custId: listItem.custId,
+              custName: listItem.name,
+              flag: true,
+            })}
+          >
+            <Icon type="jilu" />
+            <span>添加服务记录</span>
           </li>
         </ul>
       </div>

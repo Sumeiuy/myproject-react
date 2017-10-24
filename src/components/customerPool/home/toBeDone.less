@@ -20,7 +20,7 @@
       width: 161px;
       border-radius: 3px;
       color:#FFF;
-      margin-right: 35px;
+      margin-left: 35px;
       a,a:hover{
         color:#FFF;
       }
@@ -32,13 +32,14 @@
           overflow: hidden;
           position: relative;
           .count {
-            font-family:PingFangSC-Regular;
-            font-size:28px;
-            font-weight: 500;
-            color:#ffffff;
-            letter-spacing:0.12px;
             height: 40px;
             line-height: 40px;
+            height: 40px;
+            line-height: 40px;
+            font-family:PingFangSC-Semibold;
+            font-size:30px;
+            color:#ffffff;
+            letter-spacing:0.3px;
           }
           .intro {
             font-family:PingFangSC-Regular;
@@ -53,6 +54,9 @@
           }
         }
       }
+    }
+    .item:first-child {
+      margin-left: 0px;
     }
     .item_a{
       background: #38d8e8 url(../../../../static/images/customer_db_bg_a.png) no-repeat bottom left;
@@ -71,16 +75,20 @@
       background-size: 47px 48px;
     }
     .item_a:hover{
-       box-shadow: 0 0 5px 5px #38d8e8;
+      -moz-box-shadow: -1px 0px 6px rgba(56,216,232, 0.6); /* 老的 Firefox */
+      box-shadow: -1px 0px 6px rgba(56,216,232, 0.6);
     }
     .item_b:hover{
-       box-shadow: 0 0 5px 5px #60bbea;
+      -moz-box-shadow: -1px 0px 6px rgba(81,173,229, 0.6); /* 老的 Firefox */
+      box-shadow: -1px 0px 6px rgba(81,173,229, 0.6);
     }
     .item_c:hover{
-       box-shadow: 0 0 5px 5px #7d9be0;
+      -moz-box-shadow: -1px 0px 6px rgba(107,135,217, 0.6); /* 老的 Firefox */
+      box-shadow: -1px 0px 6px rgba(107,135,217, 0.6);
     }
     .item_d:hover{
-       box-shadow: 0 0 5px 5px #756fb8;
+      -moz-box-shadow: -1px 0px 6px rgba(98,88,170, 0.6); /* 老的 Firefox */
+      box-shadow: -1px 0px 6px rgba(98,88,170, 0.6);
     }
   }
 }

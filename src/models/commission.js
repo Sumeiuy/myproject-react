@@ -48,9 +48,13 @@ export default {
     // 新增资讯退订申请的orderId
     consultUnsubId: '',
     // 单佣金调整中的其他佣金费率的选项列表
-    singleOtherCommissionOptions: {},
+    singleOtherCommissionOptions: [],
     // 单佣金调整页面客户查询列表
     singleCustomerList: [],
+    // 单佣金调整中的可选产品列表
+    singleComProductList: [],
+    // 产品三匹配信息
+    threeMatchInfo: {},
   },
   reducers: {
     getProductListSuccess(state, action) {
@@ -216,7 +220,6 @@ export default {
 
     getOtherCommissionOptionsSuccess(state, action) {
       const { payload: { resultData } } = action;
-      // TODO 此处明天需要进一步修改
       return {
         ...state,
         singleOtherCommissionOptions: resultData,
@@ -232,6 +235,22 @@ export default {
       return {
         ...state,
         singleCustomerList: list,
+      };
+    },
+
+    getSingleComProductListSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        singleComProductList: resultData,
+      };
+    },
+
+    queryThreeMatchInfoSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        threeMatchInfo: resultData,
       };
     },
 
@@ -448,7 +467,7 @@ export default {
     },
 
     // 查询单佣金调整中的其他佣金费率选项
-    * getOtherCommissionOptions({ payload }, { call, put }) {
+    * getSingleOtherCommissionOptions({ payload }, { call, put }) {
       const response = yield call(api.queryOtherCommissionOptions, payload);
       yield put({
         type: 'getOtherCommissionOptionsSuccess',
@@ -458,10 +477,25 @@ export default {
 
     // 单佣金调整页面客户查询列表
     * getSingleCustList({ payload }, { call, put }) {
-      console.warn('getSingleCustList', payload);
       const response = yield call(api.querySingleCustomer, payload);
       yield put({
         type: 'getSingleCustListSuccess',
+        payload: response,
+      });
+    },
+    // 查询单佣金调整中的可选产品列表
+    * getSingleComProductList({ payload }, { call, put }) {
+      const response = yield call(api.querySingleCommissionProductList, payload);
+      yield put({
+        type: 'getSingleComProductListSuccess',
+        payload: response,
+      });
+    },
+    // 查询产品与客户的三匹配信息
+    * queryThreeMatchInfo({ payload }, { call, put }) {
+      const response = yield call(api.queryThreeMatchInfo, payload);
+      yield put({
+        type: 'queryThreeMatchInfoSuccess',
         payload: response,
       });
     },

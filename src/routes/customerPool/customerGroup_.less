@@ -128,12 +128,15 @@
           }
           .ant-table-tbody {
             tr > td {
+              text-overflow: ellipsis;
+              overflow: hidden;
+              white-space: nowrap;
               padding: 11px 44px;
               border-bottom: 0;
               font-size: 14px;
               color: #666;
               text-align: left;
-              a {
+              a{
                 color: #108ee9;
               }
               a.groupNames {
@@ -147,17 +150,20 @@
               background-color: #FFFFFF;
             }
             tr > td:nth-child(3) {
-              width: 45%;
+              width:40%;
               .groupDescription {
+                cursor: pointer;
                 &:hover {
                   .hiddentext {
                     display: block;
                   }
                 }
                 .showtext {
-                  width: 50%;
+                  text-overflow: ellipsis;
+                  white-space: nowrap;
                   overflow: hidden;
-                  height: 22px;
+                  min-width: 200px;
+                  max-width: 280px;
                 }
                 .hiddentext {
                   display: none;
