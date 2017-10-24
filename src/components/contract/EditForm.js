@@ -22,10 +22,12 @@ import Button from '../common/Button';
 import AddClause from './AddClause';
 
 import { seibelConfig } from '../../config';
+import { dateFormat } from '../../utils/helper';
 import styles from './editForm.less';
 
 // const EMPTY_OBJECT = {};
 // const EMPTY_ARRAY = [];
+const EMPTY_PARAM = '暂无';
 const BOOL_TRUE = true;
 // 合约条款的表头、状态
 const { contract: { titleList } } = seibelConfig;
@@ -77,6 +79,15 @@ export default class EditForm extends PureComponent {
   componentDidMount() {
     const { onSearchCutList } = this.props;
     onSearchCutList();
+  }
+
+  // 处理接口返回的拟稿提请时间
+  @autobind
+  getCreatedDate(date) {
+    if (date) {
+      return `${dateFormat(date.split(' ')[0])} ${date.split(' ')[1]}`;
+    }
+    return EMPTY_PARAM;
   }
 
   // 审批意见
@@ -218,7 +229,7 @@ export default class EditForm extends PureComponent {
     };
     const draftInfo = {
       name: baseInfo.createdName,
-      date: baseInfo.createTime,
+      date: this.getCreatedDate(baseInfo.createdDt),
       status: baseInfo.status,
     };
     // 表格中需要的操作
