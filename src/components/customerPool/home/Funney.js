@@ -34,13 +34,8 @@ function renderIntro(data) {
 }
 
 function Funney({ dataSource }) {
-  const { data, color, custUnit, propertyUnit } = dataSource;
+  const { data, color, propertyUnit } = dataSource;
   const funnelOption = {
-    tooltip: {
-      trigger: 'item',
-      formatter: `{b} : {c} ${custUnit}`,
-      position: ['10%', '35%'],
-    },
     series: [
       {
         name: '漏斗图',

@@ -38,9 +38,9 @@ export default class CustomerService extends PureComponent {
       series: [{
         // name: '访问来源',
         type: 'pie',
-        radius: ['70%', '80%'], // 这里是控制环形内半径和外半径
+        radius: ['70%', '83%'], // 这里是控制环形内半径和外半径
         avoidLabelOverlap: false,
-        hoverAnimation: true, // 控制鼠标放置在环上时候的交互
+        hoverAnimation: false, // 控制鼠标放置在环上时候的交互
         label: {
           normal: {
             show: true,
@@ -62,12 +62,6 @@ export default class CustomerService extends PureComponent {
           name: '',
         },
         ],
-        itemStyle: {
-          emphasis: {
-            shadowColor: '#ccc',
-            shadowBlur: 10,
-          },
-        },
       }],
       color: colors, // 38d8e8
     };
