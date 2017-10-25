@@ -8,7 +8,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import { autobind } from 'core-decorators';
 import { permission, fspGlobal } from '../../utils';
-import { fspContainer } from '../../../config';
+import { fspContainer } from '../../config';
 import PickTargetCustomer from '../../components/customerPool/taskFlow/PickTargetCustomer';
 import TaskPreview from '../../components/customerPool/taskFlow/TaskPreview';
 import CreateTaskForm from '../../components/customerPool/createTask/CreateTaskForm';
