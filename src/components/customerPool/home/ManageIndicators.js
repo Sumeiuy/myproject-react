@@ -54,46 +54,33 @@ export default class PerformanceIndicators extends PureComponent {
         location,
         empInfo,
       } = this.props;
+      console.log('arg>>', arg);
       console.log('clientNameData: ', clientNameData);
-      if (arg.componentType !== 'xAxis') {
-        return;
-      }
+
       const param = {
         source: 'numOfCustOpened',
         cycle,
         push,
         location,
         empInfo,
+        bname: arg.name || arg.value,
       };
-      if (arg.value === clientNameData[0]) {
+      if (_.includes([arg.name, arg.value], clientNameData[0])) {
         param.value = 'ttfCust';
-        param.bname = arg.value;
-        linkTo(param);
-      } else if (arg.value === clientNameData[1]) {
+      } else if (_.includes([arg.name, arg.value], clientNameData[1])) {
         param.value = 'shHkCust';
-        param.bname = arg.value;
-        linkTo(param);
-      } else if (arg.value === clientNameData[2]) {
+      } else if (_.includes([arg.name, arg.value], clientNameData[2])) {
         param.value = 'szHkCust';
-        param.bname = arg.value;
-        linkTo(param);
-      } else if (arg.value === clientNameData[3]) {
+      } else if (_.includes([arg.name, arg.value], clientNameData[3])) {
         param.value = 'rzrqCust';
-        param.bname = arg.value;
-        linkTo(param);
-      } else if (arg.value === clientNameData[4]) {
+      } else if (_.includes([arg.name, arg.value], clientNameData[4])) {
         param.value = 'xsb';
-        param.bname = arg.value;
-        linkTo(param);
-      } else if (arg.value === clientNameData[5]) {
+      } else if (_.includes([arg.name, arg.value], clientNameData[5])) {
         param.value = 'optCust';
-        param.bname = arg.value;
-        linkTo(param);
-      } else if (arg.value === clientNameData[6]) {
+      } else if (_.includes([arg.name, arg.value], clientNameData[6])) {
         param.value = 'cyb';
-        param.bname = arg.value;
-        linkTo(param);
       }
+      linkTo(param);
     });
   }
 
@@ -157,7 +144,7 @@ export default class PerformanceIndicators extends PureComponent {
     const param = { clientNumberData, names: clientNameData };
     const { newUnit: clientUnit, items: clientItems } = getClientsNumber(param);
     const clientHead = { icon: 'kehuzhibiao', title: `业务开通数（${clientUnit}次）` };
-
+    console.log('clientItems>>>>', clientItems);
     // 沪深归集率
     const hsRateData = getHSRate([filterEmptyToNumber(hsRate)]);
     const hsRateHead = { icon: 'jiaoyiliang', title: '沪深归集率' };
