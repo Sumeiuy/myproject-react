@@ -18,7 +18,7 @@ export default {
     hasServerPersonList: EMPTY_LIST, // 已有服务人员列表
     searchServerPersonList: EMPTY_LIST, // 可查询服务人员列表
     nextApproverList: EMPTY_LIST, // 按照条件查询下一审批人列表
-    bottonList: EMPTY_LIST, // 按钮组
+    bottonList: EMPTY_OBJECT, // 按钮组
     modifyCustApplication: EMPTY_OBJECT, // 获取修改私密客户申请 的结果
     createCustApplication: EMPTY_OBJECT, // 获取创建私密客户申请 的结果
     subTypeList: EMPTY_LIST, // 返回的子类型
