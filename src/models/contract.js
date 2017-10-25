@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-20 15:13:30
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-20 17:48:56
+ * @Last Modified time: 2017-10-25 13:25:46
  */
 import { contract as api, seibel as seibelApi } from '../api';
 import { getEmpId } from '../utils/helper';
@@ -219,8 +219,8 @@ export default {
           type: 'getBaseInfoSuccess',
           payload: response,
         });
-        // 如果详情的审批人与当前登陆人一致时，请求按钮接口
-        if (empId === response.resultData.approver) {
+        // 如果详情的审批人与当前登陆人一致时，并且状态等于驳回时请求按钮接口
+        if (empId === response.resultData.approver && response.resultData.status == '04') {
           const flowStepInfoResponse = yield call(api.getFlowStepInfo, flowStepInfoPayload);
           yield put({
             type: 'getFlowStepInfoSuccess',
@@ -274,28 +274,34 @@ export default {
     },
     // 保存详情
     * saveContractData({ payload }, { call, put }) {
-      const response = yield call(api.saveContractData, payload.data);
-      if (payload.type === 'add') {
+      const response = yield call(api.saveContractData, payload.payload);
+      let approvePayload = {};
+      // 新建时获取保存后返回的 id 传给审批接口
+      if (payload.approveData.type === 'add') {
         const itemId = response.resultData;
-        const newPayload = {
+        approvePayload = {
+          ...payload.approveData,
           itemId,
+        }
+        // 新建时保存并调用审批接口后，获取列表
+        // const listResponse = yield call(seibelApi.getCanApplyCustList, payload);
+        // yield put({
+        //   type: 'getCutListSuccess',
+        //   payload: listResponse,
+        // });
+      } else {
+        approvePayload = {
           ...payload.approveData,
         }
-        const approveResponse = yield call(api.postDoApprove, newPayload);
-        yield put({
-          type: 'postDoApproveSuccess',
-          payload: approveResponse,
-        });
-        // 新建时保存并调用审批接口后，获取列表
-        const listResponse = yield call(seibelApi.getCanApplyCustList, payload);
-        yield put({
-          type: 'getCutListSuccess',
-          payload: listResponse,
-        });
       }
       yield put({
         type: 'saveContractDataSuccess',
         payload: response,
+      });
+      const approveResponse = yield call(api.postDoApprove, approvePayload);
+      yield put({
+        type: 'postDoApproveSuccess',
+        payload: approveResponse,
       });
     },
     // 获取合约编号列表

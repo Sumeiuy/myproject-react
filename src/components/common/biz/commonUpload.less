@@ -68,37 +68,38 @@
       height:102px;
       border-radius: 3px;
       .ant-popover-inner-content{
-        line-height: 28px;
-        p{
-          height: 28px;
+        h3{
+          line-height: 28px;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
-          &:first-child{
+          span{
+            float: right;
+            i{
+              cursor: pointer;
+              color: #357bf0;
+            }
+          }
+          .fileListItemSize{
+            color: #f5a623;
+          }
+          &:first-child {
             color: #357bf0;
             i{
               color: #333;
               margin-right: 4px;
             }
           }
-          span{
-            float: right;
-            em{
-              cursor: pointer;
-              i {
-                color: #357bf0;
+          &:last-child{
+            span{
+              em:first-child{
+                margin-right: 10px;
+              }
+              em:nth-child(2){
+                padding-left: 10px;
+                border-left: 1px solid #d9d9d9;
               }
             }
-            em:first-child{
-              margin-right: 10px;
-            }
-            em:nth-child(2){
-              padding-left: 10px;
-              border-left: 1px solid #d9d9d9;
-            }
-          }
-          .fileListItemSize{
-            color: #f5a623;
           }
         }
       }
