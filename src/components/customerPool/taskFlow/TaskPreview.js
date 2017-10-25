@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 10:29:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-24 17:04:39
+ * @Last Modified time: 2017-10-25 18:17:46
  */
 
 import React, { PureComponent } from 'react';
@@ -57,7 +57,7 @@ export default class TaskPreview extends PureComponent {
     executeTypes: PropTypes.array.isRequired,
     taskTypes: PropTypes.array.isRequired,
     currentSelectRowKeys: PropTypes.array.isRequired,
-    currentSelectRecord: PropTypes.array.isRequired,
+    currentSelectRecord: PropTypes.object.isRequired,
     onSingleRowSelectionChange: PropTypes.func.isRequired,
     onRowSelectionChange: PropTypes.func.isRequired,
     isNeedApproval: PropTypes.bool,
@@ -74,6 +74,7 @@ export default class TaskPreview extends PureComponent {
       isShowTable: false,
       titleColumn: renderColumnTitle(),
       dataSource: [],
+      dataSize: 0,
     };
   }
 
@@ -90,6 +91,7 @@ export default class TaskPreview extends PureComponent {
       // 审批人数据
       this.setState({
         dataSource: nextData,
+        dataSize: _.size(nextData),
       });
     }
   }
@@ -166,7 +168,6 @@ export default class TaskPreview extends PureComponent {
       labelDesc,
       customNum,
       originFileName,
-      totalCust,
       closingDate,
       executionType,
       serviceStrategySuggestion,
@@ -174,6 +175,7 @@ export default class TaskPreview extends PureComponent {
       taskType,
       templetDesc,
       triggerDate,
+      totalCount: custTotalCount,
     } = finalData;
 
     let finalExecutionType = executionType;
@@ -192,6 +194,7 @@ export default class TaskPreview extends PureComponent {
       dataSource,
       isShowTable,
       titleColumn,
+      dataSize,
      } = this.state;
 
     const { empName = '' } = currentSelectRecord;
@@ -252,7 +255,7 @@ export default class TaskPreview extends PureComponent {
                 </div>
                 <div className={styles.descriptionOrNameSection}>
                   <div>客户数量：</div>
-                  <div>{totalCust || 0}户</div>
+                  <div>{custTotalCount || 0}户</div>
                 </div>
                 <div className={styles.descriptionOrNameSection}>
                   <div>数据来源：</div>
@@ -328,6 +331,11 @@ export default class TaskPreview extends PureComponent {
                     />
                   </div>
                   <GroupTable
+                    pageData={{
+                      curPageNum: 1,
+                      curPageSize: 8,
+                      totalRecordNum: dataSize,
+                    }}
                     listData={newDataSource}
                     tableClass={styles.approvalListTable}
                     titleColumn={titleColumn}

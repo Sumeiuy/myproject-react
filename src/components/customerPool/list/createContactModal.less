@@ -118,6 +118,13 @@
       display: flex;
       align-items: center;
       text-align: left;
+      & > .phoneIcon {
+        width: 39px;
+        height: 39px;
+        color: #10aeff;
+        font-size: 42px;
+        margin-top: -15px;
+      }
       & > img {
         display: inline-block;
         vertical-align: middle;
@@ -188,8 +195,8 @@
       justify-content: flex-start;
       align-items: center;
       & > .telSection {
-        width: 200px;
-        margin-right: 20px;
+        // width: 200px;
+        margin-right: 10px;
         display: block;
         font-size: 14px;
         padding-bottom: 5px;
@@ -200,9 +207,14 @@
           width: 145px;
         }
       }
-      & > .telSection:not(:last-child) {
-        border-right: 1px solid #dddddd;
+      & > .telSection:not(:last-child):after {
+        content: ';';
+        display: inline-block;
+        margin-left: 5px;
       }
+      // & > .telSection:not(:last-child) {
+      //   border-right: 1px solid #dddddd;
+      // }
     }
   }
   .otherTelsSection:last-child {
@@ -213,13 +225,11 @@
     justify-content: flex-start;
     align-items: center;
     & > .tipIcon {
-      color: white;
-      height: 20px;
-      width: 20px;
-      background: #fdb02b;
-      border-radius: 4px;
+      background: #e46575;
       text-align: center;
-      font-size: 14px;
+      font-size: 12px;
+      border-radius: 50%;
+      color: white;
       & > i {
         vertical-align: baseline;
         line-height: 20px;
