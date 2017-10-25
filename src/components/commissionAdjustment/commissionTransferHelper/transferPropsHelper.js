@@ -31,6 +31,20 @@ const transferPropsHelper = {
       sorter: (a, b) => Number(a.prodRate) - Number(b.prodRate),
     },
   ],
+  subScribeProColumns: [
+    {
+      title: '产品代码',
+      dataIndex: 'prodCode',
+      key: 'prodCode',
+      width: '25%',
+    },
+    {
+      title: '产品名称',
+      dataIndex: 'prodName',
+      key: 'prodName',
+      width: '40%',
+    },
+  ],
 };
 
 export default transferPropsHelper;

@@ -54,14 +54,6 @@ export default class CustomerSegment extends PureComponent {
     };
   }
 
-// <<<<<<< HEAD
-//   componentWillMount() {
-//     const { saveDataEmitter } = this.props;
-//     saveDataEmitter.on('saveSelectCustData', this.handleSaveData);
-//   }
-
-// =======
-// >>>>>>> a8c0de3e215a654a6ef6cfbe71c7834001d5795e
   componentWillReceiveProps(nextProps) {
     const {
       priviewCustFileData = EMPTY_LIST,
