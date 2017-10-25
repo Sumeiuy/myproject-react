@@ -104,6 +104,7 @@ export default class TaskFlow extends PureComponent {
       currentSelectRecord: {},
       currentSelectRowKeys: [],
       isSuccess: false,
+      custSource: '',
     };
     // 首页指标查询权限
     this.isHasAuthorize = permission.hasIndexViewPermission();
@@ -285,6 +286,7 @@ export default class TaskFlow extends PureComponent {
       currentSelectRecord,
       currentSelectRowKeys,
       isSuccess,
+      custSource,
     } = this.state;
 
     const {
@@ -344,6 +346,7 @@ export default class TaskFlow extends PureComponent {
         currentSelectRecord={currentSelectRecord}
         currentSelectRowKeys={currentSelectRowKeys}
         isNeedApproval={this.isHasAuthorize}
+        custSource={custSource}
       />,
     }];
 

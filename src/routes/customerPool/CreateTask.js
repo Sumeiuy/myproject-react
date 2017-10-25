@@ -16,6 +16,7 @@ import styles from './createTask.less';
 
 const effects = {
   createTask: 'customerPool/createTask',
+  getApprovalList: 'customerPool/getApprovalList',
 };
 
 const fectchDataFunction = (globalLoading, type) => query => ({
@@ -28,6 +29,7 @@ const mapStateToProps = state => ({
   dict: state.app.dict,
   createTaskResult: state.customerPool.createTaskResult,
   storedTaskFlowData: state.customerPool.storedTaskFlowData,
+  approvalList: state.customerPool.approvalList,
 });
 
 const mapDispatchToProps = {
@@ -37,6 +39,7 @@ const mapDispatchToProps = {
     payload: query,
   }),
   push: routerRedux.push,
+  getApprovalList: fectchDataFunction(true, effects.getApprovalList),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -52,6 +55,8 @@ export default class CreateTask extends PureComponent {
     push: PropTypes.func.isRequired,
     storedTaskFlowData: PropTypes.object.isRequired,
     saveTaskFlowData: PropTypes.func.isRequired,
+    getApprovalList: PropTypes.func.isRequired,
+    approvalList: PropTypes.array.isRequired,
   };
 
   static defaultProps = {
@@ -106,7 +111,15 @@ export default class CreateTask extends PureComponent {
   }
 
   render() {
-    const { dict, location, push, storedTaskFlowData, saveTaskFlowData } = this.props;
+    const {
+      dict,
+      location,
+      push,
+      storedTaskFlowData,
+      saveTaskFlowData,
+      approvalList,
+      getApprovalList,
+    } = this.props;
     const { isSuccess } = this.state;
     // console.log(isSuccess);
     return (
@@ -118,6 +131,8 @@ export default class CreateTask extends PureComponent {
             createTask={this.handleCreateTask}
             storedTaskFlowData={storedTaskFlowData}
             saveTaskFlowData={saveTaskFlowData}
+            approvalList={approvalList}
+            getApprovalList={getApprovalList}
           /> :
           <CreateTaskSuccess
             successType={isSuccess}

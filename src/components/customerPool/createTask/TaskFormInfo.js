@@ -15,9 +15,8 @@ import styles from './createTaskForm.less';
 const FormItem = Form.Item;
 const Option = Select.Option;
 const { TextArea } = Input;
-const { toContentState } = Mention;
+const { toContentState, toString } = Mention;
 const WEEK = ['日', '一', '二', '三', '四', '五', '六'];
-const { toString } = Mention;
 
 
 export default class TaskFormInfo extends PureComponent {
