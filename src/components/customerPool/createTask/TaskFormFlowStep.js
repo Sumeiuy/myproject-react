@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 // import { connect } from 'react-redux';
-import { withRouter } from 'dva/router';
+import { withRouter } from 'dva-react-router-3/router';
 import { Button, Mention } from 'antd';
 // import { autobind } from 'core-decorators';
 import _ from 'lodash';

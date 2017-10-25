@@ -229,7 +229,7 @@ export default class Singlecommissiondetail extends PureComponent {
       approveList = testApproveList, // 审批记录
     } = data;
 
-    const bugTitle = `编号${currentId}`;
+    const bugTitle = `CRM编号:${currentId}`;
     const drafter = `${divisionName} - ${createdByName} (${createdByLogin})`;
     const targetCom = `${newCommission}‰`;
     return (

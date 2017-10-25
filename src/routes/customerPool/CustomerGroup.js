@@ -1,13 +1,13 @@
 /*
  * @Author: zhuyanwen
  * @Date: 2017-10-09 13:25:51
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-20 15:41:59
+ * @Last Modified by: zhufeiyang(zhufeiyang@htsc.com)
+ * @Last Modified time: 2017-10-24 16:48:55
  * @description: 客户分组功能
  */
 
 import React, { PureComponent, PropTypes } from 'react';
-import { withRouter, routerRedux } from 'dva/router';
+import { withRouter, routerRedux } from 'dva-react-router-3/router';
 import { autobind } from 'core-decorators';
 import { connect } from 'react-redux';
 import _ from 'lodash';

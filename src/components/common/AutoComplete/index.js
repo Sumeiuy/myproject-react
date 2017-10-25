@@ -7,7 +7,7 @@
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
 import { AutoComplete } from 'antd';
-import Confirm from '../Confirm';
+import confirm from '../Confirm/confirm';
 import styles from './index.less';
 
 const Option = AutoComplete.Option;
@@ -31,7 +31,6 @@ export default class SearchSelect extends PureComponent {
     super(props);
     this.state = {
       inputValue: '',
-      showWrongInputConfirm: false,
     };
   }
 
@@ -48,7 +47,6 @@ export default class SearchSelect extends PureComponent {
   clearInput() {
     this.setState({
       inputValue: '',
-      showWrongInputConfirm: false,
     });
   }
 
@@ -60,15 +58,17 @@ export default class SearchSelect extends PureComponent {
     if (this.inputTimeout !== 0) {
       clearTimeout(this.inputTimeout);
     }
-    this.inputTimeout = setTimeout(() => this.validateInput(value), 600);
+    this.inputTimeout = setTimeout(() => this.validateInput(value), 1000);
   }
 
   @autobind
   validateInput(value) {
     this.inputTimeout = 0;
     if (isNaN(value) || value <= 0.15) {
-      this.setState({
-        showWrongInputConfirm: true,
+      confirm({
+        shortCut: 'wrongInput',
+        onOk: this.clearInput,
+        onCancel: this.clearInput,
       });
     } else {
       this.props.onChangeValue(value);
@@ -78,7 +78,7 @@ export default class SearchSelect extends PureComponent {
 
   render() {
     const { dataSource, width, defaultInput } = this.props;
-    const { inputValue, showWrongInputConfirm } = this.state;
+    const { inputValue } = this.state;
     const newDataSource = dataSource.map(item => ({ key: item.id, ...item }));
     const options = newDataSource.map(opt => (
       <Option key={opt.id} value={opt.codeValue} text={opt.codeValue}>
@@ -100,16 +100,6 @@ export default class SearchSelect extends PureComponent {
           onSelect={this.setSelectValue}
           onSearch={this.handleSearch}
         />
-        {
-          !showWrongInputConfirm ? null
-          : (
-            <Confirm
-              type="wrongInput"
-              onOkHandler={this.clearInput}
-              onCancelHandler={this.clearInput}
-            />
-          )
-        }
       </div>
     );
   }

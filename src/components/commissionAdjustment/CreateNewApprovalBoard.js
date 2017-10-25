@@ -23,6 +23,7 @@ import ProductsDropBox from './ProductsDropBox';
 import OtherCommissionSelectList from './OtherCommissionSelectList';
 import CommissionLine from './CommissionLine';
 import SelectAssembly from './SelectAssembly';
+import ThreeMatchTip from './ThreeMatchTip';
 import { seibelConfig } from '../../config';
 import {
   pagination,
@@ -123,7 +124,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       approverId: '',
       custLists: [],
       otherComReset: new Date().getTime(), // 用来判断是否重置
-      customer: {}, // 客户
+      customer: {}, // 单佣金、资讯退订、资讯订阅选择的客户
     };
   }
 
@@ -268,8 +269,9 @@ export default class CreateNewApprovalBoard extends PureComponent {
       this.queryBatchProductList({ prodCommision: v.codeValue });
     }
     if (this.judgeSubtypeNow(commadj.single)) {
+      const { id } = this.state.customer; // 取出客户的row_id
       this.querySingleProductList({
-        custRowId: '1-xxxxxx', // TODO 此参数等客户接口写好需要修改
+        custRowId: id,
         commRate: v.codeValue,
       });
     }
@@ -286,11 +288,6 @@ export default class CreateNewApprovalBoard extends PureComponent {
   @autobind
   addCustomerRef(input) {
     this.addCustomer = input;
-  }
-
-  @autobind
-  digitalRef(input) {
-    this.digital = input;
   }
 
   // 清空用户选择的客户列表
@@ -347,7 +344,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     });
   }
 
-  // 根据用户输入查询客户列表
+  // 根据用户输入查询客户列表(批量佣金)
   @autobind
   handleCustomerListSearch(keyword) {
     this.props.onSearchApplyCust({
@@ -358,12 +355,15 @@ export default class CreateNewApprovalBoard extends PureComponent {
   // 根据用户输入查询单佣金客户列表
   @autobind
   handleChangeAssembly(keyword) {
+    const { postnId, occDivnNum } = this.props.empInfo;
     this.props.querySingleCustList({
       keyword,
+      postionId: postnId,
+      deptCode: occDivnNum,
     });
   }
 
-  // 将用户选择添加的客户列表返回到弹出层，以便提交试用
+  // 将用户选择添加的客户列表返回到弹出层，以便提交试用（批量佣金）
   @autobind
   saveSelectedCustomerList(list) {
     this.setState({
@@ -377,7 +377,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     const { approvalType, newCommission, targetProduct } = this.state;
     const { cusId, custType } = customer;
     if (_.isEmpty(targetProduct)) {
-      message.error('请选择目标产品', 2);
+      message.error('请选择目标产品');
       return;
     }
     // 如果是批量佣金则传递businessType = 'BatchProcess'
@@ -543,6 +543,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       singleCustList,
       subscribelProList,
       unSubscribelProList,
+      threeMatchInfo,
     } = this.props;
     const newApproverList = approverList.map((item, index) => {
       const key = `${new Date().getTime()}-${index}`;
@@ -759,6 +760,11 @@ export default class CreateNewApprovalBoard extends PureComponent {
                     : (
                       <Transfer {...singleTransferProps} />
                     )
+                  }
+                  {
+                    // 单佣金调整产品三匹配信息
+                    !this.judgeSubtypeNow([commadj.single, commadj.subscribe]) ? null
+                    : (<ThreeMatchTip info={threeMatchInfo} />)
                   }
                 </div>
               )

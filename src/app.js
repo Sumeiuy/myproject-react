@@ -3,8 +3,8 @@
  * @author maoquan(maoquan@htsc.com)
  */
 
-import dva from 'dva';
-import { hashHistory, routerRedux } from 'dva/router';
+import dva from 'dva-react-router-3';
+import { hashHistory, routerRedux } from 'dva-react-router-3/router';
 
 import createLoading from 'dva-loading';
 import createLogger from 'redux-logger';
@@ -65,6 +65,7 @@ app.model(require('./models/customerPool'));
 app.model(require('./models/contract'));
 app.model(require('./models/fullChannelServiceRecord'));
 app.model(require('./models/commission'));
+app.model(require('./models/channelsTypeProtocol'));
 
 // 4. Router
 app.router(routerConfig);
