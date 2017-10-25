@@ -1,21 +1,16 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-// import { connect } from 'react-redux';
 import { withRouter } from 'dva/router';
 import { Button, Mention } from 'antd';
-// import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import moment from 'moment';
 import { autobind } from 'core-decorators';
 import CreateTaskForm from './CreateTaskForm';
 import TaskPreview from '../taskFlow/TaskPreview';
-// import Button from '../../components/common/Button';
 import { fspGlobal } from '../../../utils';
 import styles from './taskFormFlowStep.less';
 
 
-// const Step = Steps.Step;
-// const EMPTY_OBJECT = {};
 const { toString } = Mention;
 
 
@@ -54,6 +49,9 @@ export default class TaskFlow extends PureComponent {
     });
   }
 
+// @
+
+
   @autobind
   handleNextStep() {
     console.log(this.createTaskForm);
@@ -61,7 +59,6 @@ export default class TaskFlow extends PureComponent {
     const { saveTaskFlowData } = this.props;
     this.createTaskForm.validateFields((err, values) => {
       if (!err) {
-        // console.warn('templetDesc-----', values);
         saveTaskFlowData(values);
         this.setState({
           current: current + 1,
@@ -77,7 +74,6 @@ export default class TaskFlow extends PureComponent {
     // fspGlobal.closeRctTabById('RCT_FSP_TASK');
     console.log(this.createTaskForm.getFieldsValue());
     fspGlobal.closeRctTabById('RCT_FSP_CUSTOMER_LIST');
-    // this.props.goBack();
   }
 
   // 自建任务提交
