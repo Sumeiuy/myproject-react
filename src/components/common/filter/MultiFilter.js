@@ -130,7 +130,7 @@ export default class MultiFilter extends PureComponent {
     if (_.isEmpty(filterField)) {
       return null;
     }
-    const isFold = fold ? 'fold' : 'unfold';
+    const isFold = fold ? '' : 'up';
     return (
       <div className={styles.filter}>
         <span>{filterLabel}:</span>
@@ -143,9 +143,9 @@ export default class MultiFilter extends PureComponent {
           }
           {
             moreBtnVisible ?
-              <li className={`${styles.moreBtn} ${isFold}`} onClick={this.handleMore}>
+              <li className={styles.moreBtn} onClick={this.handleMore}>
                 { fold ? '展开' : '收起' }&nbsp;
-                <Icon type="more-down-copy" />
+                <Icon type="more-down-copy" className={isFold} />
               </li> :
             null
           }

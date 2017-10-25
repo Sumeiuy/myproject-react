@@ -108,7 +108,7 @@ export default {
     serviceDepartment: EMPTY_LIST,
     // 标签圈人
     circlePeopleData: [],
-    peopleOfLabelData: {},
+    peopleOfLabelData: [],
     // 审批人列表
     approvalList: [],
   },

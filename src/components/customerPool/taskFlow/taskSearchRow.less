@@ -1,76 +1,85 @@
-.matchArea {
-  padding-top: 20px;
-  .divRows{
-    width:100%;
-    padding: 10px 15px;
-    position:relative;
-    &:hover{
-      background:#F1F8FF;
-      .seeCust{
-        display:block;
-      }
-    }
-    .title{
-      font-size:14px;
-      font-weight:bold
-    }
-    h4{
-      font-size:14px;
-      line-height:24px;
-      span{
-        color:#ff784e;
-        padding:0 5px;
-      }
-    }
-    h4.titExp{
-      color:#999;
-      span{
-        color:#108ee9;
 
-      }
-    }
-    .seeCust{
-      position: absolute;
-        right: 15px;
-        top: 15px;
-        font-size: 14px;
-        display:none;		
-    }	
-    :global{
-      .ant-radio-group{
-        width:100%;
-        padding:15px 0 0 0;
-      }
-      .ant-radio-wrapper{
-        margin-bottom:5px;
-        .ant-radio-inner{
-          top:-1px;
-        }
-      }
-      .ant-modal-title{
-        font-size:15px;
-      }
-      .ant-modal-content{
-        padding:20px;
-        .ant-modal-header {
-          padding: 0px 0px 13px 0;
-        }
-        .ant-table-thead > tr > th, .ant-table-tbody > tr > td{
-          text-align: center;
-        }
-        .ant-modal-footer{
-          border:0px;
-        }
-      }
-    }
-  }
+.divContent{
+	.divRows{
+		width:100%;
+		padding: 10px 15px;
+		position:relative;
+		&:hover{
+			background:#F1F8FF;
+			.seeCust{
+				display:block;
+			}
+		}
+		.title{
+			font-size:14px;
+			font-weight:bold
+		}
+		h4{
+			font-size:14px;
+			line-height:24px;
+			span{
+				color:#ff784e;
+				padding:0 5px;
+			}
+		}
+		h4.titExp{
+			color:#999;
+			span{
+				color:#108ee9;
+
+			}
+		}
+		.seeCust{
+			position: absolute;
+			right: 15px;
+			top: 15px;
+			font-size: 14px;
+			display:none;		
+		}
+	}
+	:global{
+		.ant-radio-group{
+			width:100%;
+			padding:15px 0 0 0;
+		}
+		.ant-radio-wrapper{
+			margin-bottom:5px;
+			.ant-radio-inner{
+				top:-1px;
+			}
+		}
+		.ant-modal-title{
+			font-size:15px;
+		}
+		.ant-modal-content{
+			padding:20px;
+			.ant-modal-header {
+				padding: 0px 0px 13px 0;
+			}
+			.ant-table-thead > tr > th, .ant-table-tbody > tr > td{
+				text-align: center;
+			}
+			.ant-modal-footer{
+				border:0px;
+			}
+		}
+	}
 }
-.labelCustTable{
-  text-align: center;
-  div.column{
-    width: 109px !important;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
+
+.center{
+	text-align: center;
+	div.column{
+		width: 109px !important;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	table > thead > tr > th, tbody > tr > td {	
+		text-align: center !important;
+	}
+	:global{
+		.ant-table-tbody{
+			text-align: center;
+		}
+	}
 }

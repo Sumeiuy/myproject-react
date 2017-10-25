@@ -25,7 +25,6 @@ import {
   getTradingVolume,
   filterEmptyToInteger,
   filterEmptyToNumber,
-  businessOpenNumLabelList,
   linkTo,
 } from './homeIndicators_';
 
@@ -48,12 +47,14 @@ export default class PerformanceIndicators extends PureComponent {
   @autobind
   handleBusinessOpenClick(instance) {
     instance.on('click', (arg) => {
+      const { clientNameData } = this.analyticHSRateAndBusinessIndicator();
       const {
         push,
         cycle,
         location,
         empInfo,
       } = this.props;
+      console.log('clientNameData: ', clientNameData);
       if (arg.componentType !== 'xAxis') {
         return;
       }
@@ -64,32 +65,32 @@ export default class PerformanceIndicators extends PureComponent {
         location,
         empInfo,
       };
-      if (arg.value === businessOpenNumLabelList[0]) {
-        param.value = 'ttfBusi';
+      if (arg.value === clientNameData[0]) {
+        param.value = 'ttfCust';
         param.bname = arg.value;
         linkTo(param);
-      } else if (arg.value === businessOpenNumLabelList[1]) {
-        param.value = 'hgtBusi';
+      } else if (arg.value === clientNameData[1]) {
+        param.value = 'shHkCust';
         param.bname = arg.value;
         linkTo(param);
-      } else if (arg.value === businessOpenNumLabelList[2]) {
-        param.value = 'sgtBusi';
+      } else if (arg.value === clientNameData[2]) {
+        param.value = 'szHkCust';
         param.bname = arg.value;
         linkTo(param);
-      } else if (arg.value === businessOpenNumLabelList[3]) {
-        param.value = 'rzrqBusi';
+      } else if (arg.value === clientNameData[3]) {
+        param.value = 'rzrqCust';
         param.bname = arg.value;
         linkTo(param);
-      } else if (arg.value === businessOpenNumLabelList[4]) {
-        param.value = 'xsbBusi';
+      } else if (arg.value === clientNameData[4]) {
+        param.value = 'xsb';
         param.bname = arg.value;
         linkTo(param);
-      } else if (arg.value === businessOpenNumLabelList[5]) {
-        param.value = 'gpqqBusi';
+      } else if (arg.value === clientNameData[5]) {
+        param.value = 'optCust';
         param.bname = arg.value;
         linkTo(param);
-      } else if (arg.value === businessOpenNumLabelList[6]) {
-        param.value = 'cybBusi';
+      } else if (arg.value === clientNameData[6]) {
+        param.value = 'cyb';
         param.bname = arg.value;
         linkTo(param);
       }

@@ -8,8 +8,10 @@ import React, { PropTypes, PureComponent } from 'react';
 import { Radio, Modal, Button } from 'antd';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
+import classnames from 'classnames';
 import GroupTable from '../groupManage/GroupTable';
 import styles from './taskSearchRow.less';
+import tableStyles from '../groupManage/groupTable.less';
 
 
 const RadioGroup = Radio.Group;
@@ -40,7 +42,7 @@ export default class TaskSearchRow extends PureComponent {
   static propTypes = {
     circlePeopleData: PropTypes.array.isRequired,
     condition: PropTypes.string,
-    peopleOfLabelData: PropTypes.object.isRequired,
+    peopleOfLabelData: PropTypes.array.isRequired,
     getLabelPeople: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired,
     currentSelectLabel: PropTypes.string.isRequired,
@@ -54,9 +56,9 @@ export default class TaskSearchRow extends PureComponent {
     this.state = {
       visible: false,
       curPageNum: 1,
-      curPageSize: 10,
+      pageSize: 10,
       totalRecordNum: 0,
-      seeCustId: '',
+      custNum: '',
     };
   }
 
@@ -75,19 +77,19 @@ export default class TaskSearchRow extends PureComponent {
 
   @autobind
   handleSeeCust(value) {
-    console.log(1);
-    console.log(value);
     const { getLabelPeople } = this.props;
     const { curPageNum, pageSize } = this.state;
     getLabelPeople({
-      labelId: value,
+      labelId: value.id,
       curPageNum,
       pageSize,
     });
     this.setState({
       visible: true,
-      seeCustId: value,
+      custNum: value.customNum,
+      totalRecordNum: value.customNum,
     });
+    console.log('curPageNum--', curPageNum, 'pageSize---', pageSize);
   }
 
   @autobind
@@ -100,7 +102,6 @@ export default class TaskSearchRow extends PureComponent {
   handleShowSizeChange(currentPageNum, changedPageSize) {
     console.log('currentPageNum--', currentPageNum, 'changedPageSize--', changedPageSize);
     const { getLabelPeople } = this.props;
-    // 替换当前页码和分页条目
     getLabelPeople({
       curPageNum: currentPageNum,
       pageSize: changedPageSize,
@@ -113,7 +114,6 @@ export default class TaskSearchRow extends PureComponent {
     const { getLabelPeople } = this.props;
     getLabelPeople({
       curPageNum: nextPage,
-      pageSize: currentPageSize,
     });
   }
 
@@ -150,14 +150,16 @@ export default class TaskSearchRow extends PureComponent {
   render() {
     const {
       curPageNum,
-      curPageSize,
+      pageSize,
       totalRecordNum,
       visible,
+      custNum,
     } = this.state;
-    const { peopleOfLabelData, currentSelectLabel } = this.props;
+
+    const { peopleOfLabelData, currentSelectLabel, condition } = this.props;
 
     return (
-      <div className={styles.matchArea}>
+      <div className={styles.divContent}>
         <RadioGroup name="radiogroup" onChange={this.change} defaultValue={currentSelectLabel}>
           {
             this.renderRadioSection()
@@ -166,7 +168,7 @@ export default class TaskSearchRow extends PureComponent {
         <div className={styles.seeCust}>
           <Modal
             visible={visible}
-            title={`满足标签为‘客户画像’的共有${peopleOfLabelData.totalCount}位`}
+            title={`满足标签为 ${condition} 的共有${custNum}位`}
             onOk={this.handleOk}
             maskClosable={false}
             onCancel={this.handleCancel}
@@ -180,13 +182,18 @@ export default class TaskSearchRow extends PureComponent {
             <GroupTable
               pageData={{
                 curPageNum,
-                curPageSize,
+                pageSize,
                 totalRecordNum,
               }}
-              tableClass={styles.labelCustTable}
+              tableClass={
+                classnames({
+                  [styles.labelCustTable]: true,
+                  [tableStyles.groupTable]: true,
+                })
+              }
               onSizeChange={this.handleShowSizeChange}
               onPageChange={this.handlePageChange}
-              listData={peopleOfLabelData.eleContents}
+              listData={peopleOfLabelData}
               titleColumn={renderColumnTitle}
               isFirstColumnLink={false}
             />

@@ -24,7 +24,7 @@ export default class PickTargetCustomer extends PureComponent {
     getLabelInfo: PropTypes.func.isRequired,
     getLabelPeople: PropTypes.func.isRequired,
     circlePeopleData: PropTypes.array.isRequired,
-    peopleOfLabelData: PropTypes.object.isRequired,
+    peopleOfLabelData: PropTypes.array.isRequired,
     currentTab: PropTypes.string.isRequired,
     saveCurrentTab: PropTypes.func.isRequired,
     storedTaskFlowData: PropTypes.object.isRequired,
