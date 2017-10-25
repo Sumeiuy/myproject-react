@@ -3,7 +3,7 @@
 * @Author: XuWenKang
 * @Date:   2017-09-21 15:27:31
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-19 21:11:48
+ * @Last Modified time: 2017-10-24 21:08:22
 */
 
 import React, { PureComponent } from 'react';
@@ -20,7 +20,7 @@ import InfoForm from '../common/infoForm';
 import DropDownSelect from '../common/dropdownSelect';
 import DatePicker from '../common/datePicker';
 import { seibelConfig } from '../../config';
-
+import { dateFormat } from '../../utils/helper';
 import styles from './baseInfoAdd.less';
 
 const { TextArea } = Input;
@@ -79,6 +79,7 @@ export default class BaseInfoEdit extends PureComponent {
       contractStarDate: '',
       contractPalidity: '',
       remark: '',
+      tdDescription: '',
     };
   }
 
@@ -180,9 +181,11 @@ export default class BaseInfoEdit extends PureComponent {
   // 修改备注
   @autobind
   handleChangeRemark(e) {
+    const { operation } = this.state;
+    const desc = operation !== unsubscribe ? 'remark' : 'tdDescription';
     this.setState({
       ...this.state,
-      remark: e.target.value,
+      [desc]: e.target.value,
     }, this.transferDataToHome);
   }
 
@@ -209,6 +212,8 @@ export default class BaseInfoEdit extends PureComponent {
       vailDt: data.contractPalidity,
       // 备注
       description: data.remark,
+      // 退订备注
+      tdDescription: data.tdDescription,
     };
     if (data.operation === unsubscribe) {
       obj.contractNum = data.contractNum;
@@ -220,7 +225,7 @@ export default class BaseInfoEdit extends PureComponent {
 
   render() {
     const { custList, contractDetail, contractNumList } = this.props;
-    const { operation } = this.state;
+    const { operation, tdDescription, remark } = this.state;
     const contractNumComponent = operation === unsubscribe ?
       (<InfoForm label="合约编号" required>
         <DropDownSelect
@@ -252,7 +257,7 @@ export default class BaseInfoEdit extends PureComponent {
         />
       </InfoForm>)
       :
-      <InfoItem label="合约开始日期" value={contractDetail.startDt || ''} />;
+      <InfoItem label="合约开始日期" value={dateFormat(contractDetail.startDt) || ''} />;
     const contractPalidityComponent = operation !== unsubscribe ?
       (<InfoForm label="合约有效期">
         <DatePicker
@@ -268,16 +273,14 @@ export default class BaseInfoEdit extends PureComponent {
         />
       </InfoForm>)
       :
-      <InfoItem label="合约有效期" value={contractDetail.vailDt || ''} />;
-    const remarkComponent = operation !== unsubscribe ?
-      (<InfoForm label="备注">
-        <TextArea
-          value={this.state.remark}
-          onChange={this.handleChangeRemark}
-        />
-      </InfoForm>)
-      :
-      <InfoItem label="备注" value={contractDetail.description || ''} />;
+      <InfoItem label="合约有效期" value={dateFormat(contractDetail.vailDt) || ''} />;
+    const desc = operation !== unsubscribe ? remark : tdDescription;
+    const remarkComponent = (<InfoForm label="备注">
+      <TextArea
+        value={desc}
+        onChange={this.handleChangeRemark}
+      />
+    </InfoForm>);
     return (
       <div className={styles.editWrapper}>
         <InfoTitle head="基本信息" />
