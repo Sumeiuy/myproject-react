@@ -8,6 +8,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import { autobind } from 'core-decorators';
 import { permission, fspGlobal } from '../../utils';
+import { fspContainer } from '../../config';
 import PickTargetCustomer from '../../components/customerPool/taskFlow/PickTargetCustomer';
 import TaskPreview from '../../components/customerPool/taskFlow/TaskPreview';
 import CreateTaskForm from '../../components/customerPool/createTask/CreateTaskForm';
@@ -112,6 +113,7 @@ export default class TaskFlow extends PureComponent {
   componentWillReceiveProps(nextProps) {
     const { submitTaskFlowResult } = this.props;
     const { submitTaskFlowResult: nextResult } = nextProps;
+
     if (nextResult !== submitTaskFlowResult) {
       this.setState({
         isSuccess: true,
@@ -122,7 +124,7 @@ export default class TaskFlow extends PureComponent {
   @autobind
   handleNextStep() {
     // 下一步
-    const { saveTaskFlowData, storedTaskFlowData = EMPTY_OBJECT } = this.props;
+    const { saveTaskFlowData, storedTaskFlowData = EMPTY_OBJECT, currentTab } = this.props;
     const { current } = this.state;
 
     let taskFormData = storedTaskFlowData.taskFormData;
@@ -142,9 +144,13 @@ export default class TaskFlow extends PureComponent {
     } else if (current === 1) {
       pickTargetCustomerData = this.pickTargetCustomerRef.getData();
       const { labelCust: { labelId }, custSegment: { uploadedFileKey } } = pickTargetCustomerData;
-      if (_.isEmpty(labelId) && _.isEmpty(uploadedFileKey)) {
+      if (currentTab === '2' && _.isEmpty(labelId)) {
         isSelectCust = false;
-        message.error('请选择导入客户或者标签圈人');
+        message.error('请利用标签圈出目标客户');
+      }
+      if (currentTab === '1' && _.isEmpty(uploadedFileKey)) {
+        isSelectCust = false;
+        message.error('请导入Excel或CSV文件');
       }
     }
 
@@ -227,6 +233,8 @@ export default class TaskFlow extends PureComponent {
       taskType,
       templetDesc: toString(templetDesc),
       triggerDate: moment(triggerDate).format('YYYY-MM-DD'),
+      // 新增字段，不知道是干啥的，不加后台就报错，内容随便写
+      missionDesc: '13213',
     };
 
     if (this.isHasAuthorize) {
@@ -271,12 +279,19 @@ export default class TaskFlow extends PureComponent {
     });
   }
 
-  @autobind
   /**
    * 关闭当前tab页
    */
+  @autobind
   handleCloseTab() {
-    fspGlobal.closeRctTabById('RCT_FSP_TASK_FLOW');
+    if (document.querySelector(fspContainer.container)) {
+      fspGlobal.closeRctTabById('RCT_FSP_TASK_FLOW');
+    } else {
+      console.log('close tab');
+      this.setState({
+        isSuccess: false,
+      });
+    }
   }
 
   render() {
@@ -348,65 +363,65 @@ export default class TaskFlow extends PureComponent {
     }];
 
     const stepsCount = _.size(steps);
+
     return (
-      <div className={styles.taskFlowContainer}>
-        <Steps current={current} className={styles.stepsSection}>
-          {_.map(steps, item => <Step key={item.title} title={item.title} />)}
-        </Steps>
-        <div className={styles.stepsContent}>
-          {steps[current].content}
-        </div>
-        <div className={styles.stepsAction}>
-          {
-            current === 0
-            &&
-            <Button
-              className={styles.cancelBtn}
-              type="default"
-              onClick={this.handleCloseTab}
-            >
-              取消
+      isSuccess ?
+        <CreateTaskSuccess
+          successType={isSuccess}
+          push={push}
+          location={location}
+          onCloseTab={this.handleCloseTab}
+        /> :
+        <div className={styles.taskFlowContainer}>
+          <Steps current={current} className={styles.stepsSection}>
+            {_.map(steps, item => <Step key={item.title} title={item.title} />)}
+          </Steps>
+          <div className={styles.stepsContent}>
+            {steps[current].content}
+          </div>
+          <div className={styles.stepsAction}>
+            {
+              current === 0
+              &&
+              <Button
+                className={styles.cancelBtn}
+                type="default"
+                onClick={this.handleCloseTab}
+              >
+                取消
             </Button>
-          }
-          {
-            current > 0
-            &&
-            <Button
-              className={styles.prevStepBtn}
-              type="default"
-              onClick={this.handlePreviousStep}
-            >
-              上一步
+            }
+            {
+              current > 0
+              &&
+              <Button
+                className={styles.prevStepBtn}
+                type="default"
+                onClick={this.handlePreviousStep}
+              >
+                上一步
             </Button>
-          }
-          {
-            current < stepsCount - 1
-            &&
-            <Button
-              className={styles.nextStepBtn}
-              type="primary"
-              onClick={this.handleNextStep}
-            >下一步</Button>
-          }
-          {
-            current === stepsCount - 1
-            &&
-            <Button
-              className={styles.confirmBtn}
-              type="primary"
-              onClick={this.handleSubmitTaskFlow}
-            >确认无误，提交</Button>
-          }
+            }
+            {
+              current < stepsCount - 1
+              &&
+              <Button
+                className={styles.nextStepBtn}
+                type="primary"
+                onClick={_.debounce(this.handleNextStep, 250)}
+              >下一步</Button>
+            }
+            {
+              current === stepsCount - 1
+              &&
+              <Button
+                className={styles.confirmBtn}
+                type="primary"
+                onClick={_.debounce(this.handleSubmitTaskFlow, 250)}
+              >确认无误，提交</Button>
+            }
+          </div>
         </div>
-        {
-          isSuccess ?
-            <CreateTaskSuccess
-              successType={isSuccess}
-              push={push}
-              onCloseTab={this.handleCloseTab}
-            /> : null
-        }
-      </div>
     );
   }
 }

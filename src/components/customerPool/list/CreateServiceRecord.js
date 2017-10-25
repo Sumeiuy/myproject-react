@@ -172,6 +172,7 @@ export default class CreateServiceRecord extends PureComponent {
       custId: id,
       serveWay: serviceWay,
       serveType: serviceType,
+      type: serviceType,
       serveTime: `${serviceDate.replace(/\//g, '-')} ${serviceTime}`,
       serveContentDesc: serviceContent,
       feedBackTime: feedbackDate.replace(/\//g, '-'),
@@ -247,10 +248,11 @@ export default class CreateServiceRecord extends PureComponent {
   // 保存反馈类型的值
   @autobind
   handleFeedbackType(value) {
+    const feedbackTypeArr = this.feedbackTypeObj[value];
     this.setState({
       feedbackType: value,
-      feedbackTypeChild: _.isEmpty(this.feedbackTypeObj[value]) ? '' : this.feedbackTypeObj[value][0].value,
-      feedbackTypeChildArr: this.feedbackTypeObj[value],
+      feedbackTypeChild: _.isEmpty(feedbackTypeArr) ? '' : feedbackTypeArr[0].value,
+      feedbackTypeChildArr: feedbackTypeArr,
     });
   }
 

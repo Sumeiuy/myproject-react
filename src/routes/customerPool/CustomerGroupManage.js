@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-22 19:02:56
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-24 17:19:38
+ * @Last Modified time: 2017-10-25 16:58:15
  */
 
 import React, { PureComponent } from 'react';
@@ -138,6 +138,7 @@ export default class CustomerGroupManage extends PureComponent {
       groupId: '',
       record: {},
       isShowDeleteConfirm: false,
+      keyWord: '',
     };
   }
 
@@ -183,8 +184,8 @@ export default class CustomerGroupManage extends PureComponent {
    */
   @autobind
   handlePageChange(nextPage, currentPageSize) {
-    const { location: { query, pathname }, replace } = this.props;
-    const { getCustomerGroupList } = this.props;
+    const { location: { query, pathname }, replace, getCustomerGroupList } = this.props;
+    const { keyWord } = this.state;
     // 替换当前页码和分页条目
     replace({
       pathname,
@@ -197,6 +198,7 @@ export default class CustomerGroupManage extends PureComponent {
     getCustomerGroupList({
       pageNum: nextPage,
       pageSize: currentPageSize,
+      keyWord,
     });
   }
 
@@ -207,8 +209,8 @@ export default class CustomerGroupManage extends PureComponent {
    */
   @autobind
   handleShowSizeChange(currentPageNum, changedPageSize) {
-    const { location: { query, pathname }, replace } = this.props;
-    const { getCustomerGroupList } = this.props;
+    const { location: { query, pathname }, replace, getCustomerGroupList } = this.props;
+    const { keyWord } = this.state;
     // 替换当前页码和分页条目
     replace({
       pathname,
@@ -219,8 +221,9 @@ export default class CustomerGroupManage extends PureComponent {
       },
     });
     getCustomerGroupList({
-      pageNum: currentPageNum,
+      pageNum: 1,
       pageSize: changedPageSize,
+      keyWord,
     });
   }
 
@@ -247,20 +250,25 @@ export default class CustomerGroupManage extends PureComponent {
   @autobind
   deleteCustomerGroup() {
     console.log('delete customer group list');
-    const { record } = this.state;
+    const { record, keyWord } = this.state;
     const { groupId } = record;
-    const { deleteGroup, location: { query, pathname }, replace } = this.props;
+    const { deleteGroup, location: { query: { curPageNum, curPageSize } } } = this.props;
     deleteGroup({
-      groupId,
-    });
-    // 重置分页
-    replace({
-      pathname,
-      query: {
-        ...query,
-        curPageNum: 1,
+      request: {
+        groupId,
       },
+      keyWord,
+      pageNum: curPageNum,
+      pageSize: curPageSize,
     });
+    // // 重置分页
+    // replace({
+    //   pathname,
+    //   query: {
+    //     ...query,
+    //     curPageNum: 1,
+    //   },
+    // });
   }
 
   // 发起任务
@@ -389,6 +397,10 @@ export default class CustomerGroupManage extends PureComponent {
       replace,
       location: { pathname, query, query: { curPageSize = 10 } },
     } = this.props;
+    // 保存当前搜索值
+    this.setState({
+      keyWord: value,
+    });
     getCustomerGroupList({
       keyWord: value,
       pageNum: 1,
@@ -409,7 +421,8 @@ export default class CustomerGroupManage extends PureComponent {
       const { groupId, includeCustIdList } = this.detailRef.refs
         .wrappedComponent.refs.formWrappedComponent.getData();
 
-      const { location: { pathname, query }, replace, operateGroup } = this.props;
+      const { operateGroup, location: { query: { curPageNum, curPageSize } } } = this.props;
+      const { keyWord } = this.state;
 
       // this.props.form.resetFields(); 清除value
       e.preventDefault();
@@ -420,33 +433,43 @@ export default class CustomerGroupManage extends PureComponent {
           if (groupId) {
             // 编辑分组
             operateGroup({
-              groupId,
-              groupName: name,
-              groupDesc: description,
-              includeCustIdList: _.isEmpty(includeCustIdList) ? null : includeCustIdList,
-              excludeCustIdList: null,
+              request: {
+                groupId,
+                groupName: name,
+                groupDesc: description,
+                includeCustIdList: _.isEmpty(includeCustIdList) ? null : includeCustIdList,
+                excludeCustIdList: null,
+              },
+              keyWord,
+              pageNum: curPageNum,
+              pageSize: curPageSize,
             });
           } else {
             // 新增分组
             operateGroup({
-              groupName: name,
-              groupDesc: description,
-              includeCustIdList: _.isEmpty(includeCustIdList) ? null : includeCustIdList,
-              excludeCustIdList: null,
+              request: {
+                groupName: name,
+                groupDesc: description,
+                includeCustIdList: _.isEmpty(includeCustIdList) ? null : includeCustIdList,
+                excludeCustIdList: null,
+              },
+              keyWord,
+              pageNum: curPageNum,
+              pageSize: curPageSize,
             });
           }
-          // 重置分页
-          replace({
-            pathname,
-            query: {
-              ...query,
-              curPageNum: 1,
-            },
-          });
+          // // 重置分页
+          // replace({
+          //   pathname,
+          //   query: {
+          //     ...query,
+          //     curPageNum: 1,
+          //   },
+          // });
           // 关闭弹窗
           this.handleCloseModal();
         } else {
-          message.error('分组描述或分组名称有误');
+          message.error('请输入分组名称');
         }
       });
     }
@@ -560,6 +583,14 @@ export default class CustomerGroupManage extends PureComponent {
           <div className={styles.leftSection}>
             <SimpleSearch
               onSearch={this.handleSearchGroup}
+              placeholder={'分组名称'}
+              titleNode={
+                <span className={styles.name}>分组名称：</span>
+              }
+              searchStyle={{
+                height: '30px',
+                width: '250px',
+              }}
             />
           </div>
           <div className={styles.rightSection}>
@@ -620,7 +651,7 @@ export default class CustomerGroupManage extends PureComponent {
                   className={styles.submit}
                   type="primary"
                   // 加入节流函数
-                  onClick={_.debounce(event => this.handleSubmit(event), 250)}
+                  onClick={_.debounce(this.handleSubmit, 250)}
                 >
                   提交
               </Button>

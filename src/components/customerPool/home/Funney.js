@@ -21,12 +21,26 @@ function getDataConfig(data) {
   }));
 }
 
+function linkToList(data) {
+  if (data.name !== '服务客户数') {
+    return;
+  }
+  fspGlobal.openFspTab({
+    url: '/customer/manage/showCustManageTabWin',
+    param: {
+      id: 'FSP_CUST_TAB_CENTER_MANAGE',
+      title: '客户管理',
+      forceRefresh: true,
+    },
+  });
+}
+
 function renderIntro(data) {
   return _.map(
     data,
     (item, index) => (
       <div className={styles.row} key={`row${index}`}>
-        <div className={styles.count1}>{item.value}</div>
+        <div className={styles.count1} onClick={() => linkToList(item)}>{item.value}</div>
         <div className={styles.count2}>{`/${item.property}`}</div>
       </div>
     ),
@@ -70,6 +84,7 @@ function Funney({ dataSource }) {
 
   const onReady = (instance) => {
     instance.on('click', (arg) => {
+      console.log('sdfsadf', arg);
       if (arg.componentType !== 'series') {
         return;
       }

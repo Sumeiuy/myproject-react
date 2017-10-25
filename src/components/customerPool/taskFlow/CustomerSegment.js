@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 13:43:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-24 09:12:13
+ * @Last Modified time: 2017-10-25 15:58:42
  * 客户细分组件
  */
 
@@ -37,7 +37,7 @@ export default class CustomerSegment extends PureComponent {
     super(props);
     const { storedData = EMPTY_OBJECT } = props;
     const { custSegment = EMPTY_OBJECT } = storedData;
-    const { currentFile = {}, uploadedFileKey = '', originFileName = '' } = custSegment;
+    const { currentFile = {}, uploadedFileKey = '', originFileName = '', totalCount = 0 } = custSegment;
     this.state = {
       curPageNum: 1,
       curPageSize: 10,
@@ -47,6 +47,7 @@ export default class CustomerSegment extends PureComponent {
       currentFile,
       uploadedFileKey,
       originFileName,
+      totalCount,
     };
   }
 
@@ -79,12 +80,13 @@ export default class CustomerSegment extends PureComponent {
 
   @autobind
   getData() {
-    const { currentFile, uploadedFileKey, originFileName } = this.state;
+    const { currentFile, uploadedFileKey, originFileName, totalCount } = this.state;
     return {
       custSegment: {
         currentFile,
         uploadedFileKey,
         originFileName,
+        totalCount,
       },
     };
   }
@@ -159,11 +161,12 @@ export default class CustomerSegment extends PureComponent {
   @autobind
   handleFileUpload(lastFile) {
     // 当前上传的file
-    const { currentFile = {}, uploadedFileKey = '', originFileName = '' } = lastFile;
+    const { currentFile = {}, uploadedFileKey = '', originFileName = '', totalCount = 0 } = lastFile;
     this.setState({
       currentFile,
       uploadedFileKey,
       originFileName,
+      totalCount,
     });
   }
 
@@ -217,6 +220,7 @@ export default class CustomerSegment extends PureComponent {
       currentFile,
       uploadedFileKey,
       originFileName,
+      totalCount,
     } = this.state;
 
     const scrollX = (columnSize * COLUMN_WIDTH);
@@ -234,6 +238,7 @@ export default class CustomerSegment extends PureComponent {
             fileKey={uploadedFileKey}
             onDeleteFile={this.handleDeleteFile}
             originFileName={originFileName}
+            totalCount={totalCount}
           />
         </div>
         <div className={styles.tipSection}>
