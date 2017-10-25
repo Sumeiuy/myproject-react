@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 10:29:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-25 14:26:38
+ * @Last Modified time: 2017-10-25 18:17:46
  */
 
 import React, { PureComponent } from 'react';
@@ -74,6 +74,7 @@ export default class TaskPreview extends PureComponent {
       isShowTable: false,
       titleColumn: renderColumnTitle(),
       dataSource: [],
+      dataSize: 0,
     };
   }
 
@@ -90,6 +91,7 @@ export default class TaskPreview extends PureComponent {
       // 审批人数据
       this.setState({
         dataSource: nextData,
+        dataSize: _.size(nextData),
       });
     }
   }
@@ -192,6 +194,7 @@ export default class TaskPreview extends PureComponent {
       dataSource,
       isShowTable,
       titleColumn,
+      dataSize,
      } = this.state;
 
     const { empName = '' } = currentSelectRecord;
@@ -328,6 +331,11 @@ export default class TaskPreview extends PureComponent {
                     />
                   </div>
                   <GroupTable
+                    pageData={{
+                      curPageNum: 1,
+                      curPageSize: 8,
+                      totalRecordNum: dataSize,
+                    }}
                     listData={newDataSource}
                     tableClass={styles.approvalListTable}
                     titleColumn={titleColumn}

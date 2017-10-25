@@ -26,7 +26,7 @@ export default class SelectLabelCust extends PureComponent {
     super(props);
     const { storedData = EMPTY_OBJECT } = props;
     const { labelCust = EMPTY_OBJECT } = storedData;
-    const { condition = '', labelId = '' } = labelCust || EMPTY_OBJECT;
+    const { condition = '', labelId = '', customNum = 0 } = labelCust || EMPTY_OBJECT;
 
     this.state = {
       current: 0,
@@ -34,6 +34,7 @@ export default class SelectLabelCust extends PureComponent {
       condition,
       currentSelectLabel: labelId,
       labelId,
+      totalCustNum: customNum || 0,
     };
     this.bigBtn = true;
   }
@@ -51,6 +52,10 @@ export default class SelectLabelCust extends PureComponent {
       condition,
       customNum,
     };
+
+    this.setState({
+      totalCustNum: customNum,
+    });
 
     return {
       labelCust,
@@ -87,7 +92,7 @@ export default class SelectLabelCust extends PureComponent {
       circlePeopleData,
       peopleOfLabelData,
     } = this.props;
-    const { condition, currentSelectLabel } = this.state;
+    const { condition, currentSelectLabel, totalCustNum } = this.state;
 
     return (
       <div className={styles.searchContact}>
@@ -107,6 +112,7 @@ export default class SelectLabelCust extends PureComponent {
           peopleOfLabelData={peopleOfLabelData}
           condition={condition}
           currentSelectLabel={currentSelectLabel}
+          totalCustNum={totalCustNum}
         />
       </div>
     );

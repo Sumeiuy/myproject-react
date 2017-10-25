@@ -46,6 +46,7 @@ export default class TaskSearchRow extends PureComponent {
     getLabelPeople: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired,
     currentSelectLabel: PropTypes.string.isRequired,
+    totalCustNum: PropTypes.number.isRequired,
   }
   static defaultProps = {
     condition: '',
@@ -56,9 +57,8 @@ export default class TaskSearchRow extends PureComponent {
     this.state = {
       visible: false,
       curPageNum: 1,
-      pageSize: 10,
+      pageSize: 8,
       totalRecordNum: 0,
-      custNum: '',
     };
   }
 
@@ -86,7 +86,6 @@ export default class TaskSearchRow extends PureComponent {
     });
     this.setState({
       visible: true,
-      custNum: value.customNum,
       totalRecordNum: value.customNum,
     });
     console.log('curPageNum--', curPageNum, 'pageSize---', pageSize);
@@ -149,14 +148,13 @@ export default class TaskSearchRow extends PureComponent {
 
   render() {
     const {
-      curPageNum,
-      pageSize,
-      totalRecordNum,
+      curPageNum = 1,
+      pageSize = 8,
+      totalRecordNum = 0,
       visible,
-      custNum,
     } = this.state;
 
-    const { peopleOfLabelData, currentSelectLabel, condition } = this.props;
+    const { peopleOfLabelData, currentSelectLabel, condition, totalCustNum } = this.props;
 
     return (
       <div className={styles.divContent}>
@@ -168,7 +166,7 @@ export default class TaskSearchRow extends PureComponent {
         <div className={styles.seeCust}>
           <Modal
             visible={visible}
-            title={`满足标签为 ${condition} 的共有${custNum}位`}
+            title={`满足标签为 ${condition} 的共有${totalCustNum || 0}位`}
             onOk={this.handleOk}
             maskClosable={false}
             onCancel={this.handleCancel}
