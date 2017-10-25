@@ -79,10 +79,18 @@ export default class SelectLabelCust extends PureComponent {
 
   @autobind
   handleRadioChange(value) {
-    console.log('value--', value);
+    let totalCustNum = 0;
+    const { circlePeopleData } = this.props;
+    const matchedData = _.find(circlePeopleData, item => item.id === value);
+    if (matchedData) {
+      const { customNum = 0 } = matchedData || EMPTY_OBJECT;
+      totalCustNum = customNum;
+    }
+
     this.setState({
       labelId: value,
       currentSelectLabel: value,
+      totalCustNum,
     });
   }
 
