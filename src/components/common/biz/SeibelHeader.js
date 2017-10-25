@@ -29,10 +29,14 @@ export default class Pageheader extends PureComponent {
     creatSeibelModal: PropTypes.func.isRequired,
     // 搜索拟稿人方法
     toSearchDrafter: PropTypes.func.isRequired,
+    // 搜索审批人方法
+    toSearchApprove: PropTypes.func.isRequired,
     // 搜索客户方法
     toSearchCust: PropTypes.func.isRequired,
     // 拟稿人数据
     drafterList: PropTypes.array,
+    // 审批人数据
+    approveList: PropTypes.array,
     // 客户数据
     customerList: PropTypes.array,
     // 部门
@@ -48,6 +52,7 @@ export default class Pageheader extends PureComponent {
     page: '',
     drafterList: [],
     customerList: [],
+    approveList: [],
     custRange: [],
     needOperate: false,
     operateOptions: [],
@@ -77,6 +82,20 @@ export default class Pageheader extends PureComponent {
       query: {
         ...query,
         drafterId: item.ptyMngId,
+        isResetPageNum: 'Y',
+      },
+    });
+  }
+
+  // 选中审批人下拉对象中对应的某个对象
+  @autobind
+  selectApproveItem(item) {
+    const { replace, location: { pathname, query } } = this.props;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        approvalId: item.ptyMngId,
         isResetPageNum: 'Y',
       },
     });
@@ -119,8 +138,10 @@ export default class Pageheader extends PureComponent {
       stateOptions,
       creatSeibelModal,
       toSearchDrafter,
+      toSearchApprove,
       toSearchCust,
       drafterList,
+      approveList,
       customerList,
       custRange,
       replace,
@@ -136,6 +157,9 @@ export default class Pageheader extends PureComponent {
 
     const drafterAllList = !_.isEmpty(drafterList) ?
     [{ ptyMngName: '全部', ptyMngId: '' }, ...drafterList] : drafterList;
+
+    const approveAllList = !_.isEmpty(approveList) ?
+    [{ ptyMngName: '全部', ptyMngId: '' }, ...approveList] : approveList;
     // 新建按钮权限
     let hasPermission = true;
     if (pathname === '/contract') {
@@ -162,58 +186,90 @@ export default class Pageheader extends PureComponent {
       null;
     return (
       <div className={styles.pageCommonHeader}>
-        <div className={styles.dropDownSelectBox}>
-          <DropDownSelect
-            value="全部"
-            placeholder="经纪客户号/客户名称"
-            searchList={customerAllList}
-            showObjKey="custName"
-            objId="custNumber"
-            emitSelectItem={this.selectCustItem}
-            emitToSearch={toSearchCust}
-            name={`${page}-custName`}
-          />
-        </div>
-        { /* 操作类型 */ }
-        { operateElement }
-        子类型:
-        <Select
-          name="subType"
-          value={subType}
-          data={subtypeOptions}
-          onChange={this.handleSelectChange}
-          style={{ width: '20%' }}
-        />
-        状态:
-        <Select
-          name="status"
-          value={status}
-          data={stateOptions}
-          onChange={this.handleSelectChange}
-        />
+        <div className={styles.filterBox}>
+          <div className={styles.filterFl}>
+            <div className={styles.dropDownSelectBox}>
+              <DropDownSelect
+                value="全部"
+                placeholder="经纪客户号/客户名称"
+                searchList={customerAllList}
+                showObjKey="custName"
+                objId="custNumber"
+                emitSelectItem={this.selectCustItem}
+                emitToSearch={toSearchCust}
+                name={`${page}-custName`}
+              />
+            </div>
+          </div>
 
-        拟稿人:
-        <div className={styles.dropDownSelectBox}>
-          <DropDownSelect
-            value="全部"
-            placeholder="工号/名称"
-            searchList={drafterAllList}
-            showObjKey="ptyMngName"
-            objId="ptyMngId"
-            emitSelectItem={this.selectDrafterItem}
-            emitToSearch={toSearchDrafter}
-            name={`${page}-ptyMngName`}
-          />
-        </div>
+          <div className={styles.filterFl}>
+            { /* 操作类型 */ }
+            { operateElement }
+          </div>
+          <div className={styles.filterFl}>
+            子类型:
+            <Select
+              name="subType"
+              value={subType}
+              data={subtypeOptions}
+              onChange={this.handleSelectChange}
+              style={{ width: '20%' }}
+            />
+          </div>
 
-        部门:
-        <CustRange
-          style={{ width: '20%' }}
-          custRange={custRange}
-          location={location}
-          replace={replace}
-          updateQueryState={this.selectCustRange}
-        />
+          <div className={styles.filterFl}>
+            状态:
+            <Select
+              name="status"
+              value={status}
+              data={stateOptions}
+              onChange={this.handleSelectChange}
+            />
+          </div>
+
+          <div className={styles.filterFl}>
+            拟稿人:
+            <div className={styles.dropDownSelectBox}>
+              <DropDownSelect
+                value="全部"
+                placeholder="工号/名称"
+                searchList={drafterAllList}
+                showObjKey="ptyMngName"
+                objId="ptyMngId"
+                emitSelectItem={this.selectDrafterItem}
+                emitToSearch={toSearchDrafter}
+                name={`${page}-ptyMngName`}
+              />
+            </div>
+          </div>
+
+          <div className={styles.filterFl}>
+            部门:
+            <CustRange
+              style={{ width: '20%' }}
+              custRange={custRange}
+              location={location}
+              replace={replace}
+              updateQueryState={this.selectCustRange}
+            />
+          </div>
+
+          <div className={styles.filterFl}>
+            审批人:
+            <div className={styles.dropDownSelectBox}>
+              <DropDownSelect
+                value="全部"
+                placeholder="工号/名称"
+                searchList={approveAllList}
+                showObjKey="ptyMngName"
+                objId="ptyMngId"
+                emitSelectItem={this.selectApproveItem}
+                emitToSearch={toSearchApprove}
+                name={`${page}-ptyMngName`}
+              />
+            </div>
+          </div>
+        </div>
         {
           hasPermission ?
             <Button
