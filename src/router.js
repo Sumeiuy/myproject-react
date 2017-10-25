@@ -19,6 +19,7 @@ import Main from './layouts/Main';
 import Empty from './routes/empty/Home';
 import FeedBack from './routes/feedback/Home';
 import CommissionHome from './routes/commission/Home';
+import RejectionAndAmendment from './components/commissionAdjustment/RejectionAndAmendment';
 import TemplModal from './routes/templeModal/Home';
 import BoardManageHome from './routes/boardManage/Home';
 import BoardEditHome from './routes/boardEdit/Home';
@@ -63,6 +64,7 @@ const routes = ({ history }) => (// eslint-disable-line
       <Route path="history" component={HistoryHome} />
       <Route path="feedback" component={FeedBack} />
       <Route path="commission" component={CommissionHome} />
+      <Route path="rejectAmendment" component={RejectionAndAmendment} />
       <Route path="modal" component={TemplModal} />
       <Route path="boardManage" component={BoardManageHome} />
       <Route path="boardEdit" component={BoardEditHome} />

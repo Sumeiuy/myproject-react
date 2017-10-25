@@ -245,11 +245,19 @@ export default class SplitPanel extends PureComponent {
     }
   }
 
+  // FSP系统中显示隐藏侧边栏需要重置分割区域
+  @autobind
+  handleSidebarToggle() {
+    const { defaultSize } = splitConfig;
+    this.panMov(defaultSize);
+    this.onResizeChange();
+  }
+
   @autobind
   registerSidebarToggle() {
     if (this.sildebarShow && this.sildebarShow) {
-      this.sidebarHide.addEventListener('click', this.initPane, false);
-      this.sidebarShow.addEventListener('click', this.initPane, false);
+      this.sidebarHide.addEventListener('click', this.handleSidebarToggle, false);
+      this.sidebarShow.addEventListener('click', this.handleSidebarToggle, false);
     }
   }
 
@@ -257,8 +265,8 @@ export default class SplitPanel extends PureComponent {
   @autobind
   removeListenerLeftMenu() {
     if (this.sildebarShow && this.sildebarShow) {
-      this.sidebarHide.removeEventListener('click', this.initPane, false);
-      this.sidebarShow.removeEventListener('click', this.initPane, false);
+      this.sidebarHide.removeEventListener('click', this.handleSidebarToggle, false);
+      this.sidebarShow.removeEventListener('click', this.handleSidebarToggle, false);
     }
   }
 

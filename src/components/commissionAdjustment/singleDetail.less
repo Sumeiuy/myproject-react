@@ -3,7 +3,7 @@
     clear: both;
     height: 0;
     line-height: 0;
-    font-size: 0
+    font-size: 0;
   }
   background-color: #f3f3f4;
   padding: 0 10px 0 0;
@@ -17,10 +17,13 @@
   }
   .inner {
     border-radius: 5px;
-    background-color: #FFF;
+    background-color: #fff;
     padding: 20px;
     height: 100%;
     overflow: auto;
+    .innerWrap {
+      min-width: 650px;
+    }
     .modHeader {
       position: relative;
       padding-left: 10px;
@@ -36,7 +39,7 @@
     }
     .bugTitle {
       border-bottom: 1px solid #c2c2c2;
-      padding: 0 0 15px 0;
+      padding: 0 0 15px;
     }
     .module {
       padding: 15px 0;
@@ -70,9 +73,9 @@
       }
     }
   }
-:global {
-  .ant-table-row-expand-icon{
-    float: left;
+  :global {
+    .ant-table-row-expand-icon {
+      float: left;
+    }
   }
-}
 }
