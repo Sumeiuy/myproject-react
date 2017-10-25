@@ -51,13 +51,27 @@ function range(start, end) {
   return result;
 }
 
-function generateSubType(arr) {
+// {key:1, children: [{key: 11}]} 转成 {1: [{key: 11}]}
+function generateObjOfKey(arr) {
   const subObj = {};
   arr.forEach((obj) => {
     if (obj.children && !_.isEmpty(obj.children)) {
       subObj[obj.key] = obj.children;
     } else {
       subObj[obj.key] = EMPTY_LIST;
+    }
+  });
+  return subObj;
+}
+
+// {value:2, children: [{key: 222}]} 转成 {2: [{key: 222}]}
+function generateObjOfValue(arr) {
+  const subObj = {};
+  arr.forEach((obj) => {
+    if (obj.children && !_.isEmpty(obj.children)) {
+      subObj[obj.value] = obj.children;
+    } else {
+      subObj[obj.value] = EMPTY_LIST;
     }
   });
   return subObj;
@@ -87,28 +101,31 @@ export default class CreateServiceRecord extends PureComponent {
     super(props);
     const {
       serveWay = [{}],
-      serviceTypeTree = [{}],
-      custFeedBackDict = [{}],
+      custServerTypeFeedBackDict = [{}],
     } = props.dict;
-    // 服务子类型
-    this.subServiceType = generateSubType(serviceTypeTree);
-    // 反馈子类型
-    this.subFeedBackType = generateSubType(custFeedBackDict);
+    // 服务类型value对应服务类型数组
+    this.serviceTypeObj = generateObjOfKey(custServerTypeFeedBackDict);
+    // 反馈类型数组
+    const feedbackTypeArr = (custServerTypeFeedBackDict[0] || {}).children || EMPTY_LIST;
+    // 反馈类型value对应反馈类型数组
+    this.feedbackTypeObj = generateObjOfValue(feedbackTypeArr);
+    // 反馈子类型数组
+    const feedbackTypeChildArr = (feedbackTypeArr[0] || {}).children || EMPTY_LIST;
     // 当前日期的时间戳
     const currentDate = new Date().getTime();
-    const serviceType = (serviceTypeTree[0] || {}).key;
-    const feedbackType = custFeedBackDict[0].key;
+    const serviceType = (custServerTypeFeedBackDict[0] || {}).key || '';
+    const feedbackType = (feedbackTypeArr[0] || {}).value || '';
+    const feedbackTypeChild = (feedbackTypeChildArr[0] || {}).value || '';
     this.state = {
       serviceWay: (serveWay[0] || {}).key,
       serviceType,
-      serviceTypeChild: (this.subServiceType[serviceType][0] || {}).key,
-      serviceTypeChildArr: this.subServiceType[serviceType],
       serviceDate: moment(currentDate).format(dateFormat),
       serviceTime: moment(currentDate).format(timeFormat),
       feedbackDate: moment(currentDate).format(dateFormat),
       feedbackType,
-      feedbackTypeChild: (this.subFeedBackType[feedbackType][0] || {}).value,
-      feedbackTypeChildArr: this.subFeedBackType[feedbackType],
+      feedbackTypeChild,
+      feedbackTypeArr,
+      feedbackTypeChildArr,
     };
   }
 
@@ -140,7 +157,6 @@ export default class CreateServiceRecord extends PureComponent {
     const {
       serviceWay,
       serviceType,
-      serviceTypeChild,
       serviceDate,
       serviceTime,
       feedbackDate,
@@ -155,12 +171,11 @@ export default class CreateServiceRecord extends PureComponent {
       custId: id,
       serveWay: serviceWay,
       serveType: serviceType,
-      type: serviceTypeChild,
       serveTime: `${serviceDate.replace(/\//g, '-')} ${serviceTime}`,
       serveContentDesc: serviceContent,
       feedBackTime: feedbackDate.replace(/\//g, '-'),
       serveFeedBack: feedbackType,
-      serveFeedBack2: feedbackTypeChild,
+      serveFeedBack2: feedbackTypeChild || '',
     });
     serviceContentNode.value = '';
   }
@@ -183,18 +198,16 @@ export default class CreateServiceRecord extends PureComponent {
   // 保存服务类型的值
   @autobind
   handleServiceType(value) {
+    const feedbackTypeArr = this.serviceTypeObj[value];
+    const feedbackType = (feedbackTypeArr[0] || {}).value;
+    const feedbackTypeChildArr = (feedbackTypeArr[0] || {}).children || EMPTY_LIST;
+    const feedbackTypeChild = (feedbackTypeChildArr[0] || {}).value;
     this.setState({
       serviceType: value,
-      serviceTypeChild: this.subServiceType[value][0].key,
-      serviceTypeChildArr: this.subServiceType[value],
-    });
-  }
-
-  // 保存服务子类型的值
-  @autobind
-  handleServiceTypeChild(value) {
-    this.setState({
-      serviceTypeChild: value,
+      feedbackType,
+      feedbackTypeArr,
+      feedbackTypeChild,
+      feedbackTypeChildArr,
     });
   }
 
@@ -233,8 +246,8 @@ export default class CreateServiceRecord extends PureComponent {
   handleFeedbackType(value) {
     this.setState({
       feedbackType: value,
-      feedbackTypeChild: this.subFeedBackType[value][0].value,
-      feedbackTypeChildArr: this.subFeedBackType[value],
+      feedbackTypeChild: _.isEmpty(this.feedbackTypeObj[value]) ? '' : this.feedbackTypeObj[value][0].value,
+      feedbackTypeChildArr: this.feedbackTypeObj[value],
     });
   }
 
@@ -296,10 +309,9 @@ export default class CreateServiceRecord extends PureComponent {
       serviceTime,
       serviceDate,
       feedbackDate,
-      serviceTypeChildArr,
-      serviceTypeChild,
       feedbackType,
       feedbackTypeChild,
+      feedbackTypeArr,
       feedbackTypeChildArr,
     } = this.state;
     if (!dict) {
@@ -317,7 +329,6 @@ export default class CreateServiceRecord extends PureComponent {
         <a className={styles.submitBtn} onClick={this.handleSubmit}>提交</a>
       </div>
     );
-    console.log('eeee', this.state);
     return (
       <Modal
         width={688}
@@ -378,19 +389,7 @@ export default class CreateServiceRecord extends PureComponent {
                   onChange={this.handleServiceType}
                 >
                   {
-                    (dict.serviceTypeTree || EMPTY_LIST).map(obj => (
-                      <Option key={obj.key} value={obj.key}>{obj.value}</Option>
-                    ))
-                  }
-                </Select>
-                <Select
-                  style={width}
-                  className={styles.ml34}
-                  value={serviceTypeChild}
-                  onChange={this.handleServiceTypeChild}
-                >
-                  {
-                    (serviceTypeChildArr || EMPTY_LIST).map(obj => (
+                    (dict.custServerTypeFeedBackDict || EMPTY_LIST).map(obj => (
                       <Option key={obj.key} value={obj.key}>{obj.value}</Option>
                     ))
                   }
@@ -415,23 +414,26 @@ export default class CreateServiceRecord extends PureComponent {
                   onChange={this.handleFeedbackType}
                 >
                   {
-                    (dict.custFeedBackDict || EMPTY_LIST).map(obj => (
-                      <Option key={obj.key} value={obj.key}>{obj.value}</Option>
-                    ))
-                  }
-                </Select>
-                <Select
-                  style={width}
-                  className={styles.ml34}
-                  value={feedbackTypeChild}
-                  onChange={this.handleFeedbackTypeChild}
-                >
-                  {
-                    (feedbackTypeChildArr || EMPTY_LIST).map(obj => (
+                    (feedbackTypeArr).map(obj => (
                       <Option key={obj.key} value={obj.value}>{obj.value}</Option>
                     ))
                   }
                 </Select>
+                {
+                  _.isEmpty(feedbackTypeChildArr) ? null :
+                  <Select
+                    value={feedbackTypeChild}
+                    style={width}
+                    className={styles.ml34}
+                    onChange={this.handleFeedbackTypeChild}
+                  >
+                    {
+                      (feedbackTypeChildArr).map(obj => (
+                        <Option key={obj.key} value={obj.value}>{obj.value}</Option>
+                      ))
+                    }
+                  </Select>
+                }
               </div>
               <div className={styles.row}>
                 <i className={styles.dot}>*</i>
@@ -449,7 +451,6 @@ export default class CreateServiceRecord extends PureComponent {
             :
             <Loading loading={loading} />
         }
-
       </Modal>
     );
   }
