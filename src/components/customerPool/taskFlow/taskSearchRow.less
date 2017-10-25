@@ -1,40 +1,42 @@
 
-.divRows{
-	width:100%;
-	padding: 10px 15px;
-	position:relative;
-	&:hover{
-		background:#F1F8FF;
-		.seeCust{
-			display:block;
+.divContent{
+	.divRows{
+		width:100%;
+		padding: 10px 15px;
+		position:relative;
+		&:hover{
+			background:#F1F8FF;
+			.seeCust{
+				display:block;
+			}
 		}
-	}
-	.title{
-		font-size:14px;
-		font-weight:bold
-	}
-	h4{
-		font-size:14px;
-		line-height:24px;
-		span{
-			color:#ff784e;
-			padding:0 5px;
+		.title{
+			font-size:14px;
+			font-weight:bold
 		}
-	}
-	h4.titExp{
-		color:#999;
-		span{
-			color:#108ee9;
+		h4{
+			font-size:14px;
+			line-height:24px;
+			span{
+				color:#ff784e;
+				padding:0 5px;
+			}
+		}
+		h4.titExp{
+			color:#999;
+			span{
+				color:#108ee9;
 
+			}
+		}
+		.seeCust{
+			position: absolute;
+			right: 15px;
+			top: 15px;
+			font-size: 14px;
+			display:none;		
 		}
 	}
-	.seeCust{
-		position: absolute;
-	    right: 15px;
-	    top: 15px;
-	    font-size: 14px;
-	    display:none;		
-	}	
 	:global{
 		.ant-radio-group{
 			width:100%;
@@ -63,6 +65,7 @@
 		}
 	}
 }
+
 .center{
 	text-align: center;
 	div.column{
@@ -70,5 +73,13 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
+	}
+	table > thead > tr > th, tbody > tr > td {	
+		text-align: center !important;
+	}
+	:global{
+		.ant-table-tbody{
+			text-align: center;
+		}
 	}
 }

@@ -6,7 +6,7 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { Mention } from 'antd';
-// import _ from 'lodash';
+import _ from 'lodash';
 import moment from 'moment';
 import classnames from 'classnames';
 import { autobind } from 'core-decorators';
@@ -56,7 +56,10 @@ export default class CreateTaskFormFlow extends PureComponent {
   componentWillMount() {
     const { location: { query } } = this.props;
     console.log('location---', location);
-    this.handleBtn(query);
+    this.setState({
+      showBtn: _.includes(['custGroupList'], query.entertype),
+    });
+    // this.handleBtn(query);
   }
 
   // 从业务目标池客户：businessCustPool
@@ -142,9 +145,7 @@ export default class CreateTaskFormFlow extends PureComponent {
   render() {
     const { dict, location, storedTaskFlowData, saveTaskFlowData, createTask } = this.props;
     const { showBtn } = this.state;
-    // const { getFieldDecorator } = form;
     console.warn('showBtn', showBtn);
-    // console.warn('statusData', statusData);
     return (
       <div className={styles.taskInner}>
         {showBtn ?
