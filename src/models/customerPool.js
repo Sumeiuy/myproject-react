@@ -443,8 +443,8 @@ export default {
     },
     // 新增，编辑客户分组
     * operateGroup({ payload }, { call, put }) {
-      const { groupId } = payload;
-      const response = yield call(api.operateGroup, payload);
+      const { request, request: { groupId }, keyWord, pageNum, pageSize } = payload;
+      const response = yield call(api.operateGroup, request);
       const { resultData } = response;
       let message;
       yield put({
@@ -466,8 +466,9 @@ export default {
       yield put({
         type: 'getCustomerGroupList',
         payload: {
-          pageNum: 1,
-          pageSize: 10,
+          pageNum,
+          pageSize,
+          keyWord,
         },
       });
     },
@@ -476,7 +477,8 @@ export default {
     },
     // 删除客户分组
     * deleteGroup({ payload }, { call, put }) {
-      const response = yield call(api.deleteGroup, payload);
+      const { request, keyWord, pageNum, pageSize } = payload;
+      const response = yield call(api.deleteGroup, request);
       const { resultData } = response;
       yield put({
         type: 'deleteGroupSuccess',
@@ -491,8 +493,9 @@ export default {
       yield put({
         type: 'getCustomerGroupList',
         payload: {
-          pageNum: 1,
-          pageSize: 10,
+          pageNum,
+          pageSize,
+          keyWord,
         },
       });
     },
@@ -597,6 +600,12 @@ export default {
       yield put({
         type: 'submitTaskFlowSuccess',
         payload: resultData,
+      });
+      // 弹出提交成功提示信息
+      yield put({
+        type: 'toastM',
+        message: '提交任务成功',
+        duration: 2,
       });
       // 提交成功之后，清除taskFlow数据
       yield put({

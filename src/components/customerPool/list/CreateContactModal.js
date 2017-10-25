@@ -14,7 +14,7 @@ import Collapse from './CreateCollapse';
 import { checkFormat } from '../../../utils/helper';
 
 import styles from './createContactModal.less';
-import Phone from '../../../../static/images/phone.png';
+// import Phone from '../../../../static/images/phone.png';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -356,7 +356,7 @@ export default class CreateContactModal extends PureComponent {
                 ((isOrgMainContactHasTel && !_.isEmpty(mainContactInfo.cellInfo)) ||
                 (isPersonHasContact && personalContactInfo.mainTelInfo.type !== 'none')) ?
                   <div className={styles.mainContact}>
-                    <img src={Phone} alt={'电话联系'} />
+                    <Icon type="dianhua1" className={styles.phoneIcon} />
                     <span>
                       {
                       custType === 'per' ?
@@ -393,7 +393,7 @@ export default class CreateContactModal extends PureComponent {
         }
         { /* 提示信息 */}
         <div className={styles.tipSection}>
-          <Icon className={styles.tipIcon} type="dengpao" />
+          <Icon className={styles.tipIcon} type="wenxintishi" />
           <span>温馨提醒：联系过客户后请及时创建服务记录</span>
         </div>
         <div className={styles.serviceTitle}>最近服务记录</div>

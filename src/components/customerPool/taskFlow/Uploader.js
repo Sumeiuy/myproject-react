@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-19 17:03:03
+ * @Last Modified time: 2017-10-25 15:57:45
  */
 
 import React, { PropTypes, PureComponent } from 'react';
@@ -31,17 +31,19 @@ export default class Uploader extends PureComponent {
     onHandleOverview: PropTypes.func.isRequired,
     onDeleteFile: PropTypes.func.isRequired,
     originFileName: PropTypes.string,
+    totalCount: PropTypes.number,
   }
 
   static defaultProps = {
     attachModel: {},
     fileKey: '',
     originFileName: '',
+    totalCount: 0,
   }
 
   constructor(props) {
     super(props);
-    const { attachModel = EMPTY_OBJECT, fileKey = '', originFileName = '' } = props;
+    const { attachModel = EMPTY_OBJECT, fileKey = '', originFileName = '', totalCount = 0 } = props;
     this.state = {
       fList: [],
       lastFile: attachModel,
@@ -54,6 +56,7 @@ export default class Uploader extends PureComponent {
       isShowUpload: !(attachModel && fileKey),
       isShowError: false,
       originFileName,
+      totalCount,
     };
   }
 
@@ -127,34 +130,40 @@ export default class Uploader extends PureComponent {
         if (!_.isEmpty(newFileList)) {
           const lastFile = newFileList[newFileList.length - 1];
           const { response: lastResponse } = lastFile;
-          const { resultData: lastData } = lastResponse || {};
+          const { resultData: lastData = {} } = lastResponse || {};
+          const { fileName, totalCustNum } = lastData;
           this.setState({
             lastFile,
-            uploadedFileKey: lastData,
+            uploadedFileKey: fileName,
+            totalCount: totalCustNum,
           });
           onOperateFile({
             currentFile: lastFile,
             uploadedFileKey: lastData,
             originFileName: name,
+            totalCount: totalCustNum,
           });
         }
       }
     }
 
     if (status === 'done') {
+      const { fileName, totalCustNum } = resultData;
       message.success('文件上传成功', 2);
       onOperateFile({
         currentFile,
-        uploadedFileKey: resultData,
+        uploadedFileKey: fileName,
         originFileName: name,
+        totalCount: totalCustNum,
       });
       this.setState({
         lastFile: currentFile,
-        uploadedFileKey: resultData,
+        uploadedFileKey: fileName,
         // 不展示upload组件
         isShowUpload: false,
         isShowError: false,
         originFileName: name,
+        totalCount: totalCustNum,
       });
     }
 

@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 10:29:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-24 17:04:39
+ * @Last Modified time: 2017-10-25 14:26:38
  */
 
 import React, { PureComponent } from 'react';
@@ -57,7 +57,7 @@ export default class TaskPreview extends PureComponent {
     executeTypes: PropTypes.array.isRequired,
     taskTypes: PropTypes.array.isRequired,
     currentSelectRowKeys: PropTypes.array.isRequired,
-    currentSelectRecord: PropTypes.array.isRequired,
+    currentSelectRecord: PropTypes.object.isRequired,
     onSingleRowSelectionChange: PropTypes.func.isRequired,
     onRowSelectionChange: PropTypes.func.isRequired,
     isNeedApproval: PropTypes.bool,
@@ -166,7 +166,6 @@ export default class TaskPreview extends PureComponent {
       labelDesc,
       customNum,
       originFileName,
-      totalCust,
       closingDate,
       executionType,
       serviceStrategySuggestion,
@@ -174,6 +173,7 @@ export default class TaskPreview extends PureComponent {
       taskType,
       templetDesc,
       triggerDate,
+      totalCount: custTotalCount,
     } = finalData;
 
     let finalExecutionType = executionType;
@@ -252,7 +252,7 @@ export default class TaskPreview extends PureComponent {
                 </div>
                 <div className={styles.descriptionOrNameSection}>
                   <div>客户数量：</div>
-                  <div>{totalCust || 0}户</div>
+                  <div>{custTotalCount || 0}户</div>
                 </div>
                 <div className={styles.descriptionOrNameSection}>
                   <div>数据来源：</div>

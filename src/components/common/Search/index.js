@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-21 13:39:44
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-12 09:26:24
+ * @Last Modified time: 2017-10-25 15:42:14
  * 通用搜索组件，包含搜索历史记录，搜索热词联想，添加按钮
  */
 

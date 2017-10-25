@@ -2,8 +2,9 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import Search from '../../common/Search/index';
+// import Search from '../../common/Search/index';
 import TaskSearchRow from './TaskSearchRow';
+import SimpleSearch from '../groupManage/CustomerGroupListSearch';
 import styles from './selectLabelCust.less';
 
 const EMPTY_OBJECT = {};
@@ -25,10 +26,14 @@ export default class SelectLabelCust extends PureComponent {
     super(props);
     const { storedData = EMPTY_OBJECT } = props;
     const { labelCust = EMPTY_OBJECT } = storedData;
+    const { condition = '', labelId = '' } = labelCust || EMPTY_OBJECT;
+
     this.state = {
       current: 0,
-      data: labelCust,
-      condition: '',
+      labelCust,
+      condition,
+      currentSelectLabel: labelId,
+      labelId,
     };
     this.bigBtn = true;
   }
@@ -39,6 +44,7 @@ export default class SelectLabelCust extends PureComponent {
     const { circlePeopleData } = this.props;
     const matchedData = _.find(circlePeopleData, item => item.id === labelId);
     const { labelDesc = '', customNum = '' } = matchedData || EMPTY_OBJECT;
+
     const labelCust = {
       labelId,
       labelDesc,
@@ -52,12 +58,13 @@ export default class SelectLabelCust extends PureComponent {
   }
 
   @autobind
-  handleSearchClick({ value, selectedItem }) {
-    console.log('search click---', value, '--', JSON.stringify(selectedItem));
+  handleSearchClick(value) {
     const { getLabelInfo } = this.props;
+
     const param = {
       condition: value,
     };
+
     this.setState({
       condition: value,
     });
@@ -70,6 +77,7 @@ export default class SelectLabelCust extends PureComponent {
     console.log('value--', value);
     this.setState({
       labelId: value,
+      currentSelectLabel: value,
     });
   }
 
@@ -79,16 +87,18 @@ export default class SelectLabelCust extends PureComponent {
       circlePeopleData,
       peopleOfLabelData,
     } = this.props;
-    const { condition } = this.state;
+    const { condition, currentSelectLabel } = this.state;
+
     return (
       <div className={styles.searchContact}>
-        <Search
+        <SimpleSearch
+          onSearch={this.handleSearchClick}
           searchStyle={{
-            height: '50px',
-            width: '390px',
+            height: '30px',
+            width: '350px',
           }}
-          onSearchClick={this.handleSearchClick}
-          isNeedLgSearch={this.bigBtn}
+          defaultValue={condition}
+          isNeedBtn
         />
         <TaskSearchRow
           onChange={this.handleRadioChange}
@@ -96,6 +106,7 @@ export default class SelectLabelCust extends PureComponent {
           getLabelPeople={getLabelPeople}
           peopleOfLabelData={peopleOfLabelData}
           condition={condition}
+          currentSelectLabel={currentSelectLabel}
         />
       </div>
     );
