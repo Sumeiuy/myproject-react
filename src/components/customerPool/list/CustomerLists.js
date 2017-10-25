@@ -352,7 +352,7 @@ export default class CustomerLists extends PureComponent {
       handleSelect,
     } = this.props;
     // 手动发送日志
-    handleSelect('customerList_selectAll');
+    handleSelect({ module: 'customerList_check', param: 'check_all' });
 
     replace({
       pathname,
@@ -533,7 +533,7 @@ export default class CustomerLists extends PureComponent {
       handleSelect,
     } = this.props;
     // 手动上传日志
-    handleSelect(`fuwujingli_${item.ptyMngName}_${item.ptyMngId}`);
+    handleSelect({ module: 'customerList_选服务经理', param: `${item.ptyMngName}_${item.ptyMngId}` });
 
     replace({
       pathname,
@@ -550,7 +550,7 @@ export default class CustomerLists extends PureComponent {
   @autobind
   dropdownToSearchInfo(value) {
     const { handleSelect } = this.props;
-    handleSelect('fuwujingli_searchKeyword');
+    handleSelect({ module: 'customerList_选服务经理下拉搜索', param: `keyword_${value}` });
     // 下拉菜单搜错查询关键字
     this.context.getSearchServerPersonList(value);
   }
@@ -569,7 +569,7 @@ export default class CustomerLists extends PureComponent {
       obj.orgId = orgId;
     }
     // 手动上传日志
-    handleSelect('fuwuyingyebu');
+    handleSelect({ module: 'customerList_服务营业部', param: obj.orgId });
 
     replace({
       pathname,

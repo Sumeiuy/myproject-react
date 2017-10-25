@@ -18,7 +18,6 @@ export default class PerformanceIndicators extends PureComponent {
     push: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     authority: PropTypes.bool.isRequired,
-    redirectionPage: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -75,19 +74,12 @@ export default class PerformanceIndicators extends PureComponent {
 
   @autobind
   handleMotClick() {
-    const { redirectionPage } = this.props;
-    // 手动上传日志
-    redirectionPage('todo_MotClick');
     // 点击事件
     fspGlobal.myMotTask();
   }
 
   @autobind
   handleMessageClick() {
-    const { redirectionPage } = this.props;
-    // 手动上传日志
-    redirectionPage('todo_MessageClick');
-
     // 点击事件
     const notificationUrl = '/messgeCenter';
     const notificationParam = {

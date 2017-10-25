@@ -427,7 +427,7 @@ export default class CustomerList extends PureComponent {
       handleFilter,
     } = this.props;
     // 手动上传日志
-    handleFilter(`${obj.name}${obj.value}`);
+    handleFilter({ module: 'customerList_filter', name: obj.name, value: obj.value });
 
     replace({
       pathname,
@@ -450,7 +450,7 @@ export default class CustomerList extends PureComponent {
       handleOrder,
     } = this.props;
     // 手动上传日志
-    handleOrder(`sortType${obj.sortType}_sortDirection${obj.sortDirection}`);
+    handleOrder({ module: 'customerList_order', sortType: obj.sortType, sortDirection: obj.sortDirection });
 
     replace({
       pathname,

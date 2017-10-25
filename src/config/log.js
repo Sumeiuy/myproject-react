@@ -28,53 +28,26 @@ const config = {
         'query',
       ],
     },
-    // 跳转不发action 和 locaiton change
-    'customerPool/redirectionPage': {
-      values: [
-        '*', // *表示payload所有第一层字段
-      ],
-    },
     // 切换操作
     'customerPool/switchTab': {
-      values: [
-        '*',
-      ],
     },
     // 下载操作
     'customerPool/downloadFile': {
-      values: [
-        '*',
-      ],
     },
     // 客户列表筛选
     'customerPool/handleFilter': {
-      values: [
-        '*',
-      ],
     },
     // 客户列表排序
     'customerPool/handleOrder': {
-      values: [
-        '*',
-      ],
     },
     // 客户列表选中
     'customerPool/handleSelect': {
-      values: [
-        '*',
-      ],
     },
     // 点击
     'customerPool/handleClick': {
-      values: [
-        '*',
-      ],
     },
     // toolTip
     'customerPool/hoverToolTip': {
-      values: [
-        '*',
-      ],
     },
   },
   // 神策系统保留属性，未避免冲突，对这些属性+后缀处理

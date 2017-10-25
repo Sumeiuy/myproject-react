@@ -51,12 +51,18 @@ export default class ViewpointDetail extends PureComponent {
     }
   }
 
-  renderDownLoad({ loadUrl, format, fileName, downloadFile }) {
+  @autobind
+  handleDownloadClick({ format }) {
+    const { downloadFile } = this.props;
+    downloadFile({ module: 'viewpointDetail', param: `${format}_download` });
+  }
+
+  renderDownLoad({ loadUrl, format, fileName }) {
     return (
       <a
         href={loadUrl}
         download={fileName || `${_.toUpper(format)} 全文.${_.toLower(format)}`}
-        onClick={() => downloadFile(`${format}_download`)}
+        onClick={() => this.handleDownloadClick({ format })}
       >
         {`${_.toUpper(format)} 全文`}
       </a>
@@ -75,7 +81,6 @@ export default class ViewpointDetail extends PureComponent {
       pubdatedetail = '',
       annexpathpdf = '',
       annexpathword = '',
-      downloadFile,
     } = infoVOList[index] || {};
     const dateArray = _.split(pubdatedetail, ' ');
     const date = _.isEmpty(dateArray) ? '' : _.head(dateArray);
@@ -132,7 +137,6 @@ export default class ViewpointDetail extends PureComponent {
                     loadUrl: annexpathword,
                     format: 'WORD',
                     fileName: texttitle,
-                    downloadFile,
                   })}
                 </div>
               </div>
@@ -150,7 +154,6 @@ export default class ViewpointDetail extends PureComponent {
                     loadUrl: annexpathpdf,
                     format: 'PDF',
                     fileName: texttitle,
-                    downloadFile,
                   })}
                 </div>
               </div>

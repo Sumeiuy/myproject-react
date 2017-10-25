@@ -163,7 +163,7 @@ export default class CustomerRow extends PureComponent {
   handleSelect() {
     const { onChange, listItem: { custId, name }, handleSelect } = this.props;
     // 手动发送日志
-    handleSelect(`customerList_${custId}${name}`);
+    handleSelect({ module: 'customerList', custId, name });
     onChange(custId, name);
   }
 

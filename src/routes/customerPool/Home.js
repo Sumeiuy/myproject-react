@@ -43,7 +43,6 @@ const effects = {
   getInformation: 'customerPool/getInformation',
   getHSRateAndBusinessIndicator: 'customerPool/getHSRateAndBusinessIndicator',
   getPerformanceIndicators: 'customerPool/getPerformanceIndicators',
-  redirectionPage: 'customerPool/redirectionPage',
   switchTab: 'customerPool/switchTab',
 };
 
@@ -83,7 +82,6 @@ const mapDispatchToProps = {
   saveSearchVal: fetchDataFunction(false, effects.saveSearchVal),
   push: routerRedux.push,
   replace: routerRedux.replace,
-  redirectionPage: fetchDataFunction(false, effects.redirectionPage), // 跳转，上报日志
   switchTab: fetchDataFunction(false, effects.switchTab), // 切换，上报日志
 };
 
@@ -120,7 +118,6 @@ export default class Home extends PureComponent {
     getPerformanceIndicators: PropTypes.func.isRequired,
     hsRateAndBusinessIndicator: PropTypes.array,
     getHSRateAndBusinessIndicator: PropTypes.func.isRequired,
-    redirectionPage: PropTypes.func.isRequired,
     switchTab: PropTypes.func.isRequired,
   }
 
@@ -440,7 +437,10 @@ export default class Home extends PureComponent {
   handleTabClick(param) {
     const { switchTab } = this.props;
     // 发送日志
-    switchTab(param);
+    switchTab({
+      module: 'customerPoolHome',
+      param: param === 'performance' ? '投顾绩效' : '经营业绩',
+    });
   }
 
   @autobind
@@ -503,7 +503,6 @@ export default class Home extends PureComponent {
       performanceIndicators,
       hsRateAndBusinessIndicator,
       empInfo,
-      redirectionPage,
     } = this.props;
     return (
       <div className={styles.customerPoolWrap}>
@@ -528,7 +527,6 @@ export default class Home extends PureComponent {
               data={process}
               motTaskCountData={motTaskCount}
               authority={this.isHasAuthorize}
-              redirectionPage={redirectionPage}
             />
             <Tabs
               tabBarExtraContent={this.renderTabsExtra()}
