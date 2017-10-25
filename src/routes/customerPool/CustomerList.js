@@ -51,9 +51,14 @@ const effects = {
   getCustomerScope: 'customerPool/getCustomerScope',
   getFollowCust: 'customerPool/getFollowCust',
   getSearchServerPersonList: 'customerPool/getSearchServerPersonList',
-  handleFilter: 'customerPool/handleFilter',  // 手动上传日志
-  handleSelect: 'customerPool/handleSelect',  // 手动上传日志
-  handleOrder: 'customerPool/handleOrder', // 手动上传日志
+  handleFilter: 'customerList/handleFilter',  // 手动上传日志
+  handleSelect: 'customerList/handleDropDownSelect',  // 手动上传日志
+  handleOrder: 'customerList/handleOrder', // 手动上传日志
+  handleCheck: 'customerList/handleCheck',  // 手动上传日志
+  handleSearch: 'customerList/handleSearch',  // 手动上传日志
+  handleCloseClick: 'contactModal/handleCloseClick',  // 手动上传日志
+  handleAddServiceRecord: 'contactModal/handleAddServiceRecord',  // 手动上传日志
+  handleCollapseClick: 'contactModal/handleCollapseClick',  // 手动上传日志
 };
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -108,6 +113,11 @@ const mapDispatchToProps = {
   handleFilter: fetchDataFunction(false, effects.handleFilter),
   handleSelect: fetchDataFunction(false, effects.handleSelect),
   handleOrder: fetchDataFunction(false, effects.handleOrder),
+  handleCheck: fetchDataFunction(false, effects.handleCheck),
+  handleSearch: fetchDataFunction(false, effects.handleSearch),
+  handleCloseClick: fetchDataFunction(false, effects.handleCloseClick),
+  handleAddServiceRecord: fetchDataFunction(false, effects.handleAddServiceRecord),
+  handleCollapseClick: fetchDataFunction(false, effects.handleCollapseClick),
   // 搜索服务服务经理
   getSearchServerPersonList: fetchDataFunction(false, effects.getSearchServerPersonList),
   push: routerRedux.push,
@@ -162,6 +172,11 @@ export default class CustomerList extends PureComponent {
     handleFilter: PropTypes.func.isRequired,
     handleSelect: PropTypes.func.isRequired,
     handleOrder: PropTypes.func.isRequired,
+    handleCheck: PropTypes.func.isRequired,
+    handleSearch: PropTypes.func.isRequired,
+    handleCloseClick: PropTypes.func.isRequired,
+    handleAddServiceRecord: PropTypes.func.isRequired,
+    handleCollapseClick: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -427,7 +442,7 @@ export default class CustomerList extends PureComponent {
       handleFilter,
     } = this.props;
     // 手动上传日志
-    handleFilter({ module: 'customerList_filter', name: obj.name, value: obj.value });
+    handleFilter({ name: obj.name, value: obj.value });
 
     replace({
       pathname,
@@ -450,7 +465,7 @@ export default class CustomerList extends PureComponent {
       handleOrder,
     } = this.props;
     // 手动上传日志
-    handleOrder({ module: 'customerList_order', sortType: obj.sortType, sortDirection: obj.sortDirection });
+    handleOrder({ sortType: obj.sortType, sortDirection: obj.sortDirection });
 
     replace({
       pathname,
@@ -518,6 +533,11 @@ export default class CustomerList extends PureComponent {
       empInfo: { empInfo = EMPTY_OBJECT },
       serviceDepartment,
       handleSelect,
+      handleCheck,
+      handleSearch,
+      handleCloseClick,
+      handleAddServiceRecord,
+      handleCollapseClick,
     } = this.props;
     const {
       sortDirection,
@@ -570,6 +590,11 @@ export default class CustomerList extends PureComponent {
           onFilterChange={this.filterChange}
         />
         <CustomerLists
+          handleCollapseClick={handleCollapseClick}
+          handleAddServiceRecord={handleAddServiceRecord}
+          handleCloseClick={handleCloseClick}
+          handleSearch={handleSearch}
+          handleCheck={handleCheck}
           handleSelect={handleSelect}
           authority={this.authority}
           dict={dict}

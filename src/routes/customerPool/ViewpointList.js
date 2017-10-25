@@ -66,6 +66,7 @@ const columns = [{
   title: '作者',
   dataIndex: 'authors',
   key: 'authors',
+  width: '13%',
   render: item => (
     <div className={classnames(styles.td, styles.authors)}>{formatString(item)}</div>
   ),
@@ -164,13 +165,16 @@ export default class ViewpointList extends PureComponent {
     };
     return (
       <div className={styles.listContainer}>
-        <div className={styles.inner}>
+        <div
+          className={styles.inner}
+        >
           <Table
             rowKey={'id'}
             columns={columns}
             dataSource={newInfoVOList}
             pagination={false}
             onRowClick={this.handleRowClick}
+            scroll={{ x: 1100 }}
           />
           <Paganation {...paganationOption} />
         </div>

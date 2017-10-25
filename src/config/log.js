@@ -28,27 +28,32 @@ const config = {
         'query',
       ],
     },
-    // 切换操作
-    'customerPool/switchTab': {
-    },
+    // 客户资源池 tab 切换操作
+    'customerPoolHome/switchTab': {},
     // 下载操作
-    'customerPool/downloadFile': {
-    },
+    'viewpointDetail/downloadFile': {},
     // 客户列表筛选
-    'customerPool/handleFilter': {
-    },
+    'customerList/handleFilter': {},
     // 客户列表排序
-    'customerPool/handleOrder': {
-    },
-    // 客户列表选中
-    'customerPool/handleSelect': {
-    },
-    // 点击
-    'customerPool/handleClick': {
-    },
-    // toolTip
-    'customerPool/hoverToolTip': {
-    },
+    'customerList/handleOrder': {},
+    // 客户列表 check 框选中
+    'customerList/handleCheck': {},
+    // 客户列表 下拉框选中
+    'customerList/handleDropDownSelect': {},
+    // 客户列表 check 框选中
+    'customerGroup/handleRadio': {},
+    // 添加分组 tab 切换操作
+    'customerGroup/switchTab': {},
+    // 客户列表 搜索框（下拉框中的）
+    'customerList/handleSearch': {},
+    // 联系方式弹框 关闭 按钮
+    'contactModal/handleCloseClick': {},
+    // 联系方式弹框 添加服务记录 按钮
+    'contactModal/handleAddServiceRecord': {},
+    // 联系方式弹框 服务记录面板 按钮
+    'contactModal/handleCollapseClick': {},
+    // 联系方式弹框 服务记录面板 按钮
+    'serviceRecordModal/handleCloseClick': {},
   },
   // 神策系统保留属性，未避免冲突，对这些属性+后缀处理
   // 如 time ==> time_0

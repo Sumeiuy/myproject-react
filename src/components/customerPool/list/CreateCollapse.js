@@ -21,6 +21,7 @@ export default class CreateCollapse extends PureComponent {
     data: PropTypes.array,
     executeTypes: PropTypes.array.isRequired,
     serveWay: PropTypes.array.isRequired,
+    handleCollapseClick: PropTypes.array.isRequired,
   };
 
   static defaultProps = {
@@ -40,6 +41,9 @@ export default class CreateCollapse extends PureComponent {
    */
   @autobind
   handleCollapseChange(currentKey) {
+    const { handleCollapseClick } = this.props;
+    // 手动上报日志
+    handleCollapseClick({ currentKey });
     this.setState({
       currentActiveIndex: currentKey,
     });

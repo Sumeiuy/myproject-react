@@ -88,6 +88,7 @@ export default class CreateServiceRecord extends PureComponent {
     addServeRecordSuccess: PropTypes.bool.isRequired,
     dict: PropTypes.object.isRequired,
     loading: PropTypes.bool,
+    handleCloseClick: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -183,7 +184,9 @@ export default class CreateServiceRecord extends PureComponent {
   // 关闭弹窗
   @autobind
   handleCancel() {
-    const { onToggleServiceRecordModal } = this.props;
+    const { onToggleServiceRecordModal, handleCloseClick } = this.props;
+    // 手动上传日志
+    handleCloseClick();
     onToggleServiceRecordModal(false);
   }
 

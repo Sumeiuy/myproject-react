@@ -43,7 +43,7 @@ const effects = {
   getInformation: 'customerPool/getInformation',
   getHSRateAndBusinessIndicator: 'customerPool/getHSRateAndBusinessIndicator',
   getPerformanceIndicators: 'customerPool/getPerformanceIndicators',
-  switchTab: 'customerPool/switchTab',
+  switchTab: 'customerPoolHome/switchTab',
 };
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -437,10 +437,7 @@ export default class Home extends PureComponent {
   handleTabClick(param) {
     const { switchTab } = this.props;
     // 发送日志
-    switchTab({
-      module: 'customerPoolHome',
-      param: param === 'performance' ? '投顾绩效' : '经营业绩',
-    });
+    switchTab({ param });
   }
 
   @autobind

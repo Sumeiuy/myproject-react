@@ -121,7 +121,7 @@ export default class CustomerRow extends PureComponent {
     toggleServiceRecordModal: PropTypes.func.isRequired,
     formatAsset: PropTypes.func.isRequired,
     mainServiceManager: PropTypes.bool,
-    handleSelect: PropTypes.func.isRequired,
+    handleCheck: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -161,9 +161,9 @@ export default class CustomerRow extends PureComponent {
 
   @autobind
   handleSelect() {
-    const { onChange, listItem: { custId, name }, handleSelect } = this.props;
+    const { onChange, listItem: { custId, name }, handleCheck } = this.props;
     // 手动发送日志
-    handleSelect({ module: 'customerList', custId, name });
+    handleCheck({ custId, name });
     onChange(custId, name);
   }
 

@@ -19,6 +19,7 @@ const effects = {
   customerScope: 'customerPool/getCustomerScope',
   empInfo: 'app/getEmpInfo',
   addServeRecord: 'customerPool/addServeRecord',
+  handleCloseClick: 'serviceRecordModal/handleCloseClick', // 手动上传日志
 };
 
 const fectchDataFunction = (globalLoading, type) => query => ({
@@ -51,6 +52,7 @@ const mapDispatchToProps = {
     payload: query || false,
   }),
   addServeRecord: fectchDataFunction(false, effects.addServeRecord),
+  handleCloseClick: fectchDataFunction(false, effects.handleCloseClick),
 };
 
 @withRouter
@@ -70,6 +72,7 @@ export default class Main extends Component {
     addServeRecordSuccess: PropTypes.bool.isRequired,
     addServeRecord: PropTypes.func.isRequired,
     toggleServiceRecordModal: PropTypes.func.isRequired,
+    handleCloseClick: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -96,6 +99,7 @@ export default class Main extends Component {
       serviceRecordModalVisibleOfName,
       serviceRecordModalVisible,
       toggleServiceRecordModal,
+      handleCloseClick,
     } = this.props;
     return (
       <div>
@@ -112,6 +116,7 @@ export default class Main extends Component {
                       <div>
                         {children}
                         <CreateServiceRecord
+                          handleCloseClick={handleCloseClick}
                           loading={interfaceState[effects.addServeRecord]}
                           key={serviceRecordModalVisibleOfId}
                           id={serviceRecordModalVisibleOfId}

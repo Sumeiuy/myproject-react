@@ -107,6 +107,11 @@ export default class CustomerLists extends PureComponent {
     onRequestLoading: PropTypes.func.isRequired,
     empInfo: PropTypes.object.isRequired,
     handleSelect: PropTypes.func.isRequired,
+    handleCheck: PropTypes.func.isRequired,
+    handleSearch: PropTypes.func.isRequired,
+    handleCloseClick: PropTypes.func.isRequired,
+    handleAddServiceRecord: PropTypes.func.isRequired,
+    handleCollapseClick: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -349,10 +354,10 @@ export default class CustomerLists extends PureComponent {
     const {
       replace,
       location: { query, pathname },
-      handleSelect,
+      handleCheck,
     } = this.props;
     // 手动发送日志
-    handleSelect({ module: 'customerList_check', param: 'check_all' });
+    handleCheck({ param: 'check_all' });
 
     replace({
       pathname,
@@ -533,7 +538,7 @@ export default class CustomerLists extends PureComponent {
       handleSelect,
     } = this.props;
     // 手动上传日志
-    handleSelect({ module: 'customerList_选服务经理', param: `${item.ptyMngName}_${item.ptyMngId}` });
+    handleSelect({ param: `${item.ptyMngName}_${item.ptyMngId}` });
 
     replace({
       pathname,
@@ -549,8 +554,8 @@ export default class CustomerLists extends PureComponent {
 
   @autobind
   dropdownToSearchInfo(value) {
-    const { handleSelect } = this.props;
-    handleSelect({ module: 'customerList_选服务经理下拉搜索', param: `keyword_${value}` });
+    const { handleSearch } = this.props;
+    handleSearch({ param: `keyword_${value}` });
     // 下拉菜单搜错查询关键字
     this.context.getSearchServerPersonList(value);
   }
@@ -569,7 +574,7 @@ export default class CustomerLists extends PureComponent {
       obj.orgId = orgId;
     }
     // 手动上传日志
-    handleSelect({ module: 'customerList_服务营业部', param: obj.orgId });
+    handleSelect({ param: obj.orgId });
 
     replace({
       pathname,
@@ -635,7 +640,10 @@ export default class CustomerLists extends PureComponent {
       isLoadingEnd,
       searchServerPersonList,
       empInfo,
-      handleSelect,
+      handleCheck,
+      handleCloseClick,
+      handleAddServiceRecord,
+      handleCollapseClick,
     } = this.props;
     // console.log('1---', this.props)
     // 服务记录执行方式字典
@@ -741,7 +749,7 @@ export default class CustomerLists extends PureComponent {
               {
                 custList.map(
                   item => <CustomerRow
-                    handleSelect={handleSelect}
+                    handleCheck={handleCheck}
                     mainServiceManager={this.mainServiceManager}
                     authority={authority}
                     dict={dict}
@@ -815,6 +823,9 @@ export default class CustomerLists extends PureComponent {
         {
           (isShowContactModal && isLoadingEnd) ?
             <CreateContactModal
+              handleCollapseClick={handleCollapseClick}
+              handleAddServiceRecord={handleAddServiceRecord}
+              handleCloseClick={handleCloseClick}
               key={modalKey}
               visible={isShowContactModal}
               custContactData={finalContactData}

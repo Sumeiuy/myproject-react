@@ -22,7 +22,7 @@ const mapDispatchToProps = {
   goBack: routerRedux.goBack,
   push: routerRedux.push,
   downloadFile: query => ({
-    type: 'customerPool/downloadFile',
+    type: 'viewpointDetail/downloadFile',
     payload: query,
   }),
 };
