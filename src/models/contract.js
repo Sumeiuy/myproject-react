@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-20 15:13:30
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-25 13:25:46
+ * @Last Modified time: 2017-10-25 20:24:23
  */
 import { contract as api, seibel as seibelApi } from '../api';
 import { getEmpId } from '../utils/helper';
@@ -199,7 +199,7 @@ export default {
 
       // 获取审批人的 payload
       const flowStepInfoPayload = {
-        flowId: payload.flowId,
+        flowId: response.resultData.flowid,
         operate: payload.operate || '',
       };
       if (payload.type === 'unsubscribeDetail') {
@@ -229,14 +229,18 @@ export default {
         }
       }
       // 获取附件列表的 payload
+      const rData = response.resultData;
+      const attachment = rData.workflowname === '2' ? rData.tduuid : rData.uuid;
       const attachPayload = {
-        attachment: response.resultData.uuid || '',
+        attachment: attachment || '',
       };
-      const attachResponse = yield call(api.getAttachmentList, attachPayload);
-      yield put({
-        type: 'getAttachmentListSuccess',
-        payload: attachResponse,
-      });
+      if (attachment) {
+        const attachResponse = yield call(api.getAttachmentList, attachPayload);
+        yield put({
+          type: 'getAttachmentListSuccess',
+          payload: attachResponse,
+        });
+      }
       // 获取审批记录的 payload
       const flowPayload = {
         flowCode: response.resultData.flowid || '',

@@ -1,9 +1,12 @@
 .listContainer {
   background-color: #f3f3f4;
   .inner {
-    margin: 20px 20px 44px 20px;
+    margin: 20px 20px 44px;
     padding: 7px 30px 60px;
     background-color: #fff;
+    ::-webkit-scrollbar {
+      display: block;
+    }
     i {
       font-size: 12px;
       color: #6395e4;
@@ -20,41 +23,41 @@
       background-color: #fff;
       margin-bottom: 30px;
       .ant-table {
-        height: 677px;
+        // height: 677px;
         table {
-          border: none;
-          white-space: nowrap;
-          text-overflow: ellipsis;
-          overflow: hidden;
+          // border: none;
+          // white-space: nowrap;
+          // text-overflow: ellipsis;
+          // overflow: hidden;
           .ant-table-thead > tr > th {
-            font-family:PingFangSC-Medium;
-            font-size:14px;
-            color:#4a4a4a;
-            letter-spacing:0.2px;
+            font-family: PingFangSC-Medium;
+            font-size: 14px;
+            color: #4a4a4a;
+            letter-spacing: 0.2px;
             border-bottom: 1px solid #ccc;
-            white-space: nowrap;
+            // white-space: nowrap;
             line-height: 20px;
             padding: 4px 8px;
             background: #fff;
             text-align: left;
           }
           .ant-table-tbody > tr > td {
-            padding: 8px 8px;
+            padding: 8px;
             line-height: 20px;
-            white-space: nowrap;
-            font-family:PingFangSC-Regular;
-            font-size:14px;
-            color:#9b9b9b;
-            letter-spacing:0.2px;
-            border: none;
+            // white-space: nowrap;
+            font-family: PingFangSC-Regular;
+            font-size: 14px;
+            color: #9b9b9b;
+            letter-spacing: 0.2px;
+            // border: none;
             text-align: left;
           }
           .ant-table-tbody > tr > td:first-child {
-            color:#4a4a4a;
+            color: #4a4a4a;
           }
           .ant-table-tbody > tr > td:last-child {
-            font-family:PingFangSC-Light;
-            color:#4a4a4a;
+            font-family: PingFangSC-Light;
+            color: #4a4a4a;
           }
           tr {
             height: 36px;
@@ -63,8 +66,12 @@
           tr:first-child {
             cursor: auto;
           }
-          tr:nth-child(odd){background-color:#fff;}
-          tr:nth-child(even){background-color:#f9f9f9;}
+          tr:nth-child(odd) {
+            background-color: #fff;
+          }
+          tr:nth-child(even) {
+            background-color: #f9f9f9;
+          }
         }
       }
     }
