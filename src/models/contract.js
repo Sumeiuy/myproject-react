@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-20 15:13:30
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-25 20:24:23
+ * @Last Modified time: 2017-10-25 21:22:36
  */
 import { contract as api, seibel as seibelApi } from '../api';
 import { getEmpId } from '../utils/helper';
@@ -279,6 +279,7 @@ export default {
     // 保存详情
     * saveContractData({ payload }, { call, put }) {
       const response = yield call(api.saveContractData, payload.payload);
+      console.warn('调用接口时的 payload', payload);
       let approvePayload = {};
       // 新建时获取保存后返回的 id 传给审批接口
       if (payload.approveData.type === 'add') {
