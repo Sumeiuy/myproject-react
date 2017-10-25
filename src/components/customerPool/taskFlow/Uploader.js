@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-25 15:57:45
+ * @Last Modified time: 2017-10-25 17:35:45
  */
 
 import React, { PropTypes, PureComponent } from 'react';
@@ -264,7 +264,11 @@ export default class Uploader extends PureComponent {
           {
             !isShowUpload ? <div className="previewSection">
               <div className="uploadedFile">
-                <Icon className="excelIcon" type="excel" />
+                {
+                  originFileName.indexOf('csv') !== -1 ?
+                    <Icon className="csvIcon" type="CSV" /> :
+                    <Icon className="excelIcon" type="excel" />
+                }
                 <span>{originFileName}</span>
               </div>
               <div

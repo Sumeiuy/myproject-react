@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 14:15:22
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-22 18:56:32
+ * @Last Modified time: 2017-10-25 17:39:46
  */
 
 import React, { PureComponent } from 'react';
@@ -117,8 +117,10 @@ export default class CustomerGroupDetail extends PureComponent {
         // 总记录数减1
         totalRecordNum: newRecordNum - 1,
       }, () => {
-        if (_.isEmpty(newDataSource)) {
-          // 判断数据是否不存在了，不存在请求数据
+        if (_.isEmpty(newDataSource) && groupId) {
+          // 判断数据是否不存在了，
+          // 并且不是新增
+          // 不存在请求数据
           getGroupCustomerList({
             groupId,
             pageNum: 1,
@@ -267,8 +269,10 @@ export default class CustomerGroupDetail extends PureComponent {
         totalRecordNum: totalRecordNum - 1,
         needDeleteCustId: custId,
       }, () => {
-        if (_.isEmpty(newDataSource)) {
-          // 判断数据是否不存在了，不存在请求数据
+        if (_.isEmpty(newDataSource) && groupId) {
+          // 判断数据是否不存在了，
+          // 并且不是新增
+          // 不存在请求数据
           getGroupCustomerList({
             groupId,
             pageNum: 1,
