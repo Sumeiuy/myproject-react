@@ -13,17 +13,15 @@
     position: absolute;
     right: 0;
     color:#108ee9;
-    &.unfold {
-      :global {
-        .icon-more-down-copy {
-          transform: rotate(180deg)
-        }
-      }
-    }
     :global {
       .icon-more-down-copy {
+        display: inline-block;
         font-weight: bold;
         transition: transform 0.2s ease;
+        transform: rotate(0deg);
+        &.up {
+          transform: rotate(180deg);
+        }
       }
     }
   }
