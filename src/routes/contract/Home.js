@@ -4,7 +4,7 @@
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by:   XuWenKang
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-25 20:47:02
+ * @Last Modified time: 2017-10-25 22:12:58
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
@@ -55,6 +55,8 @@ const mapStateToProps = state => ({
   // 查询客户
   customerList: state.app.customerList,
   // 查询右侧详情
+  // 审批人列表
+  approvePersonList: state.app.approvePersonList,
   baseInfo: state.contract.baseInfo,
   baseInfoLoading: state.loading.effects['contract/getBaseInfo'],
   // 退订时查询详情
@@ -78,6 +80,8 @@ const mapStateToProps = state => ({
   // 新建时的审批人
   addFlowStepInfo: state.contract.addFlowStepInfo,
   doApprove: state.contract.doApprove,
+  // 审批进程
+  postDoApproveLoading: state.loading.effects['contract/postDoApprove'],
   unsubFlowStepInfo: state.contract.unsubFlowStepInfo,
   // 登陆人信息
   empInfo: state.app.empInfo,
@@ -178,9 +182,11 @@ export default class Contract extends PureComponent {
     // 审批接口
     postDoApprove: PropTypes.func.isRequired,
     doApprove: PropTypes.object,
+    postDoApproveLoading: PropTypes.bool,
     // 登陆人信息
     empInfo: PropTypes.object.isRequired,
     getApprovePersonList: PropTypes.func.isRequired,
+    approvePersonList: PropTypes.array,
   }
 
   static defaultProps = {
@@ -190,10 +196,12 @@ export default class Contract extends PureComponent {
     contractDetail: EMPTY_OBJECT,
     saveContractDataLoading: false,
     baseInfoLoading: false,
+    postDoApproveLoading: false,
     flowStepInfo: EMPTY_OBJECT,
     addFlowStepInfo: EMPTY_OBJECT,
     unsubFlowStepInfo: EMPTY_OBJECT,
     doApprove: EMPTY_OBJECT,
+    approvePersonList: EMPTY_LIST,
   }
 
   constructor(props) {
@@ -259,7 +267,8 @@ export default class Contract extends PureComponent {
       // baseInfo: preBI,
       baseInfoLoading: preBIL,
       unsubFlowStepInfo: preUFSI,
-      doApprove: preDA,
+      // doApprove: preDA,
+      postDoApproveLoading: prePDA,
       location: { query: { currentId: prevCurrentId } },
     } = this.props;
     const {
@@ -269,7 +278,8 @@ export default class Contract extends PureComponent {
       baseInfoLoading: nextBIL,
       addFlowStepInfo: nextAFSI,
       unsubFlowStepInfo: nextUFSI,
-      doApprove: nextDA,
+      // doApprove: nextDA,
+      postDoApproveLoading: nextPDA,
       location: { query: { currentId } },
     } = nextProps;
 
@@ -339,10 +349,34 @@ export default class Contract extends PureComponent {
         />,
       });
     }
-
-    if (!_.isEqual(preDA, nextDA)) {
-      // 获取到 flowStepInfo
+    // postDoApprove 方法结束后，关闭所有弹窗，清空审批信息
+    if (prePDA && !nextPDA) {
+      this.setState({
+        tempApproveData: EMPTY_OBJECT,
+      });
+      this.closeModal('approverModal');
       this.closeModal('addFormModal');
+      this.closeModal('editFormModal');
+    }
+
+    // if (!_.isEqual(preDA, nextDA)) {
+    //   // 获取到 flowStepInfo
+    //   this.closeModal('addFormModal');
+    // }
+  }
+
+  componentDidUpdate() {
+    const { location: { pathname, query, query: { isResetPageNum } }, replace } = this.props;
+    // 重置pageNum和pageSize
+    if (isResetPageNum === 'Y') {
+      replace({
+        pathname,
+        query: {
+          ...query,
+          isResetPageNum: 'N',
+          pageNum: 1,
+        },
+      });
     }
   }
 
@@ -692,6 +726,7 @@ export default class Contract extends PureComponent {
     // TODO-设定好相应的值传过去，注意 operation
     const { unsubscribeBaseInfo } = this.props;
     const { editFormModal, contractFormData } = this.state;
+    console.warn('contractFormData', contractFormData);
     let payload = EMPTY_OBJECT;
     // 操作类型
     const operationType = contractFormData.workflowname;
@@ -803,7 +838,7 @@ export default class Contract extends PureComponent {
       // 编辑
       tempApproveData = {
         type: 'edit',
-        flowId: contractFormData.flowId,
+        flowId: contractFormData.flowid,
         approverIdea: contractFormData.appraval || '',
         operate: btnItem.operate || '',
       };
@@ -897,6 +932,7 @@ export default class Contract extends PureComponent {
       footerBtnData,
       selectApproveData,
     };
+    console.warn('审批人确认时的 sendPayload', sendPayload);
     this.sendRequest(sendPayload);
   }
 
@@ -927,6 +963,7 @@ export default class Contract extends PureComponent {
       addFlowStepInfo,
       getFlowStepInfo,
       empInfo,
+      approvePersonList,
     } = this.props;
     const {
       addFormModal,
@@ -950,6 +987,7 @@ export default class Contract extends PureComponent {
         toSearchDrafter={this.toSearchDrafter}
         toSearchCust={this.toSearchCust}
         toSearchApprove={this.toSearchApprove}
+        approveList={approvePersonList}
         drafterList={drafterList}
         customerList={customerList}
         custRange={custRange}
