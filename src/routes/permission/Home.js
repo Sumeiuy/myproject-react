@@ -38,6 +38,10 @@ const mapStateToProps = state => ({
   list: state.app.seibleList,
   // 服务人员列表
   searchServerPersonList: state.permission.searchServerPersonList,
+  // 审批人列表
+  approvePersonList: state.app.approvePersonList,
+  // 拟稿人列表
+  drafterList: state.app.drafterList,
   // 部门
   custRange: state.app.custRange,
   // 已申请客户
@@ -76,6 +80,10 @@ const mapDispatchToProps = {
   getServerPersonelList: fetchDataFunction(false, 'permission/getServerPersonelList'),
   // 搜索服务人员列表
   getSearchServerPersonList: fetchDataFunction(false, 'permission/getSearchServerPersonList'),
+  // 获取审批人列表
+  getApprovePersonList: fetchDataFunction(false, 'app/getApprovePersonList'),
+  // 获取拟稿人列表
+  getDrafterList: fetchDataFunction(false, 'app/getDrafterList'),
   // 获取部门
   getCustRange: fetchDataFunction(false, 'app/getCustRange'),
   // 获取已申请客户列表
@@ -110,10 +118,14 @@ export default class Permission extends PureComponent {
     getDetailMessage: PropTypes.func.isRequired,
     detailMessage: PropTypes.object,
     replace: PropTypes.func.isRequired,
-    getSearchServerPersonList: PropTypes.func.isRequired,
     getCustomerList: PropTypes.func.isRequired,
     getCanApplyCustList: PropTypes.func.isRequired,
     searchServerPersonList: PropTypes.array.isRequired,
+    getSearchServerPersonList: PropTypes.func.isRequired,
+    drafterList: PropTypes.array.isRequired,
+    getDrafterList: PropTypes.func.isRequired,
+    approvePersonList: PropTypes.array.isRequired,
+    getApprovePersonList: PropTypes.func.isRequired,
     customerList: PropTypes.array.isRequired,
     canApplyCustList: PropTypes.array.isRequired,
     hasServerPersonList: PropTypes.array.isRequired,
@@ -280,8 +292,20 @@ export default class Permission extends PureComponent {
   // 查询拟稿人
   @autobind
   toSearchDrafter(value) {
-    const { getSearchServerPersonList } = this.props;
-    getSearchServerPersonList({
+    const { getDrafterList } = this.props;
+    getDrafterList({
+      keyword: value,
+      type: pageType,
+      pageSize: 10,
+      pageNum: 1,
+    });
+  }
+
+  // 查询审批人
+  @autobind
+  toSearchApprove(value) {
+    const { getApprovePersonList } = this.props;
+    getApprovePersonList({
       keyword: value,
       type: pageType,
       pageSize: 10,
@@ -298,6 +322,7 @@ export default class Permission extends PureComponent {
       type: pageType,
     });
   }
+
   @autobind
   showModifyModal() {
     this.setState(prevState => ({ isShowModifyModal: !prevState.isShowModifyModal }));
@@ -375,6 +400,8 @@ export default class Permission extends PureComponent {
       customerList,
       canApplyCustList,
       searchServerPersonList,
+      approvePersonList,
+      drafterList,
       hasServerPersonList,
       getHasServerPersonList,
       nextApproverList,
@@ -407,8 +434,10 @@ export default class Permission extends PureComponent {
         stateOptions={status}
         creatSeibelModal={this.creatPermossionModal}
         toSearchDrafter={this.toSearchDrafter}
+        toSearchApprove={this.toSearchApprove}
         toSearchCust={this.toSearchCust}
-        drafterList={searchServerPersonList}
+        drafterList={drafterList}
+        approveList={approvePersonList}
         customerList={customerList}
         custRange={custRange}
       />

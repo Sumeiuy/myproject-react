@@ -65,6 +65,7 @@ export default class SplitPanel extends PureComponent {
     this.splitPanel = document.querySelector(splitPanel);
     this.leftPanel = document.querySelector(leftPanel);
     this.rightPanel = document.querySelector(rightPanel);
+    this.topPanel = document.querySelector(`.${styles.splitPanel}>.${styles.header}`);
     // 因为内容区域为内滚动，而不滚动页面，所以需要设置列表和详情区域的高度
     this.setDocumentScroll();
     this.panMov(defaultSize);
@@ -134,13 +135,9 @@ export default class SplitPanel extends PureComponent {
     const listWrapper = leftPanelElm.querySelector('.ant-table');
     // 分割柱条元素，鼠标hover时会需要改变分割区域大小
     const splitBarElm = this.splitPanel.querySelector('.Resizer');
-    // TODO 无数据的dom，后面需要更新
-    // const nullElem = document.getElementById('empty');
-    // const leftPanelList = document.querySelector(`.${this.props.leftListClassName}`);
-    // const nullDivSectionElem = document.querySelector('.null_dv_section');
 
     // 此为头部面板的高度固定值为58px
-    const topPanelHeight = 58;
+    const topPanelHeight = this.topPanel.getBoundingClientRect().height;
     // 分页器区域所占高度
     const paginationHeight = 54;
     // 头部面板距离分割区域的高度

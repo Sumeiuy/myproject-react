@@ -17,5 +17,7 @@ export default function seibelCommon(api) {
     getCanApplyCustList: query => api.post('/groovynoauth/fsp/biz/custList', query),
     // 删除附件
     deleteAttachment: query => api.post('/file/ceFileDelete', query),
+    // 查询某客户的服务人员待选择列表
+    getSearchServerPersonelList: query => api.post('/groovynoauth/fsp/biz/privateCustApplication/queryEmpList', query),
   };
 }
