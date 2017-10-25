@@ -174,7 +174,11 @@ export default class TableTransfer extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.resetDataSource(nextProps);
+    const { firstData: nextData } = nextProps;
+    const { firstData: prevData } = this.props;
+    if (!_.isEqual(prevData, nextData)) {
+      this.resetDataSource(nextProps);
+    }
   }
 
   // 获取所有默认选中

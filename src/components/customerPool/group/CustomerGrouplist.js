@@ -5,7 +5,7 @@
  * */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
-import { withRouter } from 'dva/router';
+import { withRouter } from 'dva-react-router-3/router';
 import { Table } from 'antd';
 
 @withRouter

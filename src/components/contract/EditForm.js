@@ -228,7 +228,7 @@ export default class EditForm extends PureComponent {
       onClick: () => this.showModal('addClauseModal'),
     };
     const draftInfo = {
-      name: baseInfo.createdName,
+      name: `${baseInfo.divisionName || EMPTY_PARAM} ${baseInfo.createdName || EMPTY_PARAM}`,
       date: this.getCreatedDate(baseInfo.createdDt),
       status: baseInfo.status,
     };

@@ -7,7 +7,7 @@ import React, { PropTypes, PureComponent } from 'react';
 import { Button, message } from 'antd';
 import { autobind } from 'core-decorators';
 import { connect } from 'react-redux';
-import { withRouter, routerRedux } from 'dva/router';
+import { withRouter, routerRedux } from 'dva-react-router-3/router';
 import _ from 'lodash';
 
 import ReportHome from './Home';
