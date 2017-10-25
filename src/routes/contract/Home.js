@@ -482,13 +482,15 @@ export default class Contract extends PureComponent {
       arr2 = [];
     });
     for (let i = 0; i < arr1.length; i++) {
-      let result = 0;
-      arr1[i].forEach((v) => {
-        result += Number(v.paraVal);
-      });
-      if (+result !== 1) {
-        clauseStatus = false;
-        break;
+      if (arr1[i][0].paraDisplayName.indexOf('比例') > -1) {
+        let result = 0;
+        arr1[i].forEach((v) => {
+          result += Number(v.paraVal);
+        });
+        if (+result !== 1) {
+          clauseStatus = false;
+          break;
+        }
       }
     }
     return clauseStatus;
@@ -758,7 +760,7 @@ export default class Contract extends PureComponent {
           return;
         }
         if (!this.checkClauseIsLegal(contractFormData.terms)) {
-          message.error('合约条款中每种明细参数的值加起来必须要等于1');
+          message.error('合约条款中比例明细参数的值加起来必须要等于1');
           return;
         }
         payload = contractFormData;
@@ -784,7 +786,7 @@ export default class Contract extends PureComponent {
         return;
       }
       if (!this.checkClauseIsLegal(contractFormData.terms)) {
-        message.error('合约条款中每种明细参数的值加起来必须要等于1');
+        message.error('合约条款中比例明细参数的值加起来必须要等于1');
         return;
       }
       payload = contractFormData;
