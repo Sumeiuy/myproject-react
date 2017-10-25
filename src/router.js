@@ -39,7 +39,7 @@ import ViewpointList from './routes/customerPool/ViewpointList';
 import ViewpointDetail from './routes/customerPool/ViewpointDetail';
 import ServiceLog from './routes/customerPool/ServiceLog';
 import TaskFlow from './routes/customerPool/TaskFlow';
-// import ChannelsTypeProtocol from './routes/ChannelsTypeProtocol/Home';
+import ChannelsTypeProtocol from './routes/channelsTypeProtocol/Home';
 
 function switchRouter() {
   const fsp = document.querySelector(fspContainer.container);
@@ -83,6 +83,10 @@ const routes = ({ history }) => (// eslint-disable-line
       <Route path="contract">
         <IndexRoute component={Contract} />
         <Route path="edit" component={Contract} />
+      </Route>
+      <Route path="channelsTypeProtocol">
+        <IndexRoute component={ChannelsTypeProtocol} />
+        <Route path="edit" component={ChannelsTypeProtocol} />
       </Route>
       <Route path="fullChannelServiceRecord" component={FullChannelServiceRecord} />
     </Route>
