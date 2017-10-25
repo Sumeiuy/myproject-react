@@ -124,7 +124,6 @@ export function getClientsNumber({
   //   item => numFormat(item),
   // );
   const items = {
-    tooltip: {},    // 使用默认值
     grid: {
       left: '12px',
       right: '12px',
@@ -265,7 +264,6 @@ export function getCustAndProperty(dataArray) {
 // 投顾绩效/经营指标的沪深归集率
 export function getHSRate(array) {
   return {
-    tooltip: { show: true },
     series: [{
       type: 'liquidFill',
       name: '沪深归集率',
