@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-19 09:37:42
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-20 17:24:02
+ * @Last Modified time: 2017-10-24 18:59:08
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -151,7 +151,6 @@ export default class Detail extends PureComponent {
           <InfoItem label="客户" value={`${baseInfo.custName || EMPTY_PARAM} ${baseInfo.econNum || EMPTY_PARAM}`} />
           <InfoItem label="合约开始日期" value={dateFormat(baseInfo.startDt) || EMPTY_PARAM} />
           <InfoItem label="合约有效期" value={dateFormat(baseInfo.vailDt) || EMPTY_PARAM} />
-          <InfoItem label="合约终止日期" value={dateFormat(baseInfo.endDt) || EMPTY_PARAM} />
           <InfoItem label="备注" value={baseInfo.description || EMPTY_PARAM} />
         </div>
         <div className={styles.detailWrapper}>
