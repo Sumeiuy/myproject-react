@@ -124,7 +124,6 @@ export function getClientsNumber({
   //   item => numFormat(item),
   // );
   const items = {
-    tooltip: {},    // 使用默认值
     grid: {
       left: '12px',
       right: '12px',

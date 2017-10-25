@@ -13,6 +13,7 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
+import classnames from 'classnames';
 
 import Icon from '../Icon';
 import { helper } from '../../../utils';
@@ -83,7 +84,7 @@ export default class SingleFilter extends PureComponent {
   render() {
     const { filterLabel, filterField, value } = this.props;
     const { moreBtnVisible, fold } = this.state;
-    const isFold = fold ? '' : 'up';
+    const foldClass = classnames({ up: !fold });
     return (
       <div className={styles.filter}>
         <span>{filterLabel}:</span>
@@ -106,7 +107,7 @@ export default class SingleFilter extends PureComponent {
             moreBtnVisible ?
               <li className={styles.moreBtn} onClick={this.handleMore}>
                 { fold ? '展开' : '收起' }&nbsp;
-                <Icon type="more-down-copy" className={isFold} />
+                <Icon type="more-down-copy" className={foldClass} />
               </li> :
             null
           }
