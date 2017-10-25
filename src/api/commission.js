@@ -38,5 +38,9 @@ export default function commission(api) {
     queryOtherCommissionOptions: query => api.post('/groovynoauth/fsp/biz/chgcommsion/querySingelCommionJustRate', query),
     // 单佣金调整页面 客户查询
     querySingleCustomer: query => api.post('/groovynoauth/fsp/biz/chgcommsion/queryCustInfo', query),
+    // 单佣金调整详情页面 当前审批步骤接口
+    queryCurrentStep: query => api.post('/groovynoauth/fsp/biz/chgcommsion/queryFlowCurrentStepInfo', query),
+    // 单佣金调整详情页面 基础数据接口
+    querySingleDetail: query => api.post('/groovynoauth/fsp/biz/chgcommsion/querySingleCommChgOrderInfo', query),
   };
 }

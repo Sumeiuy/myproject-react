@@ -11,10 +11,15 @@ exports.response = function (req, res) {
     resultData: {
       applicationBaseInfoList: [
         {
+          id: 333,
+          custType: 'per',
+          subType: '0201',
+        },
+        {
           id: 334,
           custType: 'per',
           subType: '0203',
-        },  
+        },
         {
           id: 380,
           flowId: '37254B296C3B9D46AFD93F919D207566',

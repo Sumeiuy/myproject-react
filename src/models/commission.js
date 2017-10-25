@@ -17,6 +17,8 @@ export default {
     approvalUserList: [],
     // 批量佣金右侧详情
     detail: {},
+    // 单佣金调整右侧详情
+    singleDetail: {},
     // 咨询订阅详情
     subscribeDetail: {},
     // 资讯退订详情
@@ -99,32 +101,53 @@ export default {
       };
     },
 
-    getSubscribeDetailSuccess(state, action) {
-      const { payload: { detailRes, attachmentRes, approvalRes } } = action;
+    querySingleDetailSuccess(state, action) {
+      const { payload: { detailRes, attachmentRes, approvalRes, stepRes } } = action;
       const detailResult = detailRes.resultData;
       const attachmentResult = attachmentRes.resultData;
       const approvalResult = approvalRes.resultData;
+      const stepResult = stepRes.resultData;
+      return {
+        ...state,
+        singleDetail: {
+          base: detailResult,
+          attachmentList: attachmentResult,
+          approvalHistory: approvalResult,
+          currentStep: stepResult,
+        },
+      };
+    },
+
+    getSubscribeDetailSuccess(state, action) {
+      const { payload: { detailRes, attachmentRes, approvalRes, stepRes } } = action;
+      const detailResult = detailRes.resultData;
+      const attachmentResult = attachmentRes.resultData;
+      const approvalResult = approvalRes.resultData;
+      const stepResult = stepRes.resultData;
       return {
         ...state,
         subscribeDetail: {
           base: detailResult,
           attachmentList: attachmentResult,
           approvalHistory: approvalResult,
+          currentStep: stepResult,
         },
       };
     },
 
     getUnSubscribeDetailSuccess(state, action) {
-      const { payload: { detailRes, attachmentRes, approvalRes } } = action;
+      const { payload: { detailRes, attachmentRes, approvalRes, stepRes } } = action;
       const detailResult = detailRes.resultData;
       const attachmentResult = attachmentRes.resultData;
       const approvalResult = approvalRes.resultData;
+      const stepResult = stepRes.resultData;
       return {
         ...state,
         unsubscribeDetail: {
           base: detailResult,
           attachmentList: attachmentResult,
           approvalHistory: approvalResult,
+          currentStep: stepResult,
         },
       };
     },
@@ -398,6 +421,24 @@ export default {
       });
     },
 
+    // 单佣金调整详情数据
+    * getSingleDetail({ payload }, { call, put }) {
+      const detailRes = yield call(api.querySingleDetail, payload);
+      // 通过查询到的详情数据的attachmentNum获取附件信息
+      const detailRD = detailRes.resultData;
+      const attachmentRes = yield call(api.getAttachment, { attachment: detailRD.attachmentNum });
+      const approvalRes = yield call(api.querySingleCustApprovalRecord, {
+        flowCode: detailRD.flowCode,
+      });
+      const stepRes = yield call(api.queryCurrentStep, {
+        flowCode: detailRD.flowCode,
+      });
+      yield put({
+        type: 'querySingleDetailSuccess',
+        payload: { detailRes, attachmentRes, approvalRes, stepRes },
+      });
+    },
+
     // 查询咨询订阅详情数据
     * getSubscribeDetail({ payload }, { call, put }) {
       const detailRes = yield call(api.queryConsultDetail,
@@ -413,10 +454,12 @@ export default {
       const approvalRes = yield call(api.querySingleCustApprovalRecord, {
         flowCode: detailRD.flowCode,
       });
-      // TODO 还差一个当前审批步骤的接口
+      const stepRes = yield call(api.queryCurrentStep, {
+        flowCode: detailRD.flowCode,
+      });
       yield put({
         type: 'getSubscribeDetailSuccess',
-        payload: { detailRes, attachmentRes, approvalRes },
+        payload: { detailRes, attachmentRes, approvalRes, stepRes },
       });
     },
 
@@ -435,10 +478,12 @@ export default {
       const approvalRes = yield call(api.querySingleCustApprovalRecord, {
         flowCode: detailRD.flowCode,
       });
-      // TODO 还差一个当前审批步骤的接口
+      const stepRes = yield call(api.queryCurrentStep, {
+        flowCode: detailRD.flowCode,
+      });
       yield put({
         type: 'getUnSubscribeDetailSuccess',
-        payload: { detailRes, attachmentRes, approvalRes },
+        payload: { detailRes, attachmentRes, approvalRes, stepRes },
       });
     },
 

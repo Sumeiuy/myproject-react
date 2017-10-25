@@ -71,9 +71,13 @@ export default class AddCustomer extends PureComponent {
 
   // 选出需要传递给接口的值
   @autobind
-  pickValue(list, key) {
+  pickValue(list) {
     const tempList = _.cloneDeep(list);
-    return tempList.map(item => ({ custId: item[key] }));
+    return tempList.map(item => ({
+      custId: item.custId,
+      custEcon: item.brokerNumber,
+      custName: item.custName,
+    }));
   }
 
   @autobind
@@ -104,7 +108,7 @@ export default class AddCustomer extends PureComponent {
     this.setState({
       customerList: newList,
     });
-    this.passData2Home(this.pickValue(newList, 'cusId'));
+    this.passData2Home(this.pickValue(newList));
   }
 
   // 删除选择的用户
@@ -117,7 +121,7 @@ export default class AddCustomer extends PureComponent {
       customerList: newList,
       selectList: [],
     });
-    this.passData2Home(this.pickValue(newList, 'cusId'));
+    this.passData2Home(this.pickValue(newList));
   }
 
   @autobind
