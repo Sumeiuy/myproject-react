@@ -403,7 +403,7 @@ export default class Contract extends PureComponent {
   // 根据子类型和客户查询合约编号
   @autobind
   handleSearchContractNum(data) {
-    this.props.getContractNumList({ subType: data.subType, Type: '3' });
+    this.props.getContractNumList({ subType: data.subType, Type: '3', custId: data.client.cusId });
   }
 
   // 查询客户
