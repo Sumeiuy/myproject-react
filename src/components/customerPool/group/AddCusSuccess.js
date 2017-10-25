@@ -4,7 +4,7 @@
  * 客户分组添加成功页面
  * */
 import React, { PureComponent, PropTypes } from 'react';
-import { withRouter } from 'dva/router';
+import { withRouter } from 'dva-react-router-3/router';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import Button from '../../common/Button';

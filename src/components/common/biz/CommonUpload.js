@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 15:02:49
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-19 21:35:52
+ * @Last Modified time: 2017-10-25 13:30:17
  */
 /**
  * 常用说明
@@ -188,16 +188,15 @@ export default class CommonUpload extends PureComponent {
                 const fileName = item.name.substring(0, item.name.lastIndexOf('.'));
                 const popoverHtml = (
                   <div>
-                    <p title={fileName}>
+                    <h3>
                       <Icon type="fujian1" />
                       {fileName}
-                    </p>
-                    <p>
-                      上传人：{item.creator}
+                    </h3>
+                    <h3>
                       <span className="fileListItemSize">大小：{`${item.size} kb`}</span>
-                    </p>
-                    <p>
-                      上传于：{moment(item.lastModified).format('YYYY-MM-DD')}
+                      上传人：{item.creator}
+                    </h3>
+                    <h3>
                       <span>
                         {
                           edit ?
@@ -221,7 +220,8 @@ export default class CommonUpload extends PureComponent {
                           </a>
                         </em>
                       </span>
-                    </p>
+                      上传于：{moment(item.lastModified).format('YYYY-MM-DD')}
+                    </h3>
                   </div>
                 );
                 return (
@@ -234,6 +234,7 @@ export default class CommonUpload extends PureComponent {
                         placement="right"
                         content={popoverHtml}
                         trigger="hover"
+                        mouseLeaveDelay="0.3"
                         getPopupContainer={this.findFileListNode}
                       >
                         <p className={styles.fileItemText} title={fileName}>

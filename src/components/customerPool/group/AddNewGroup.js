@@ -5,7 +5,7 @@
 
  * */
 import React, { PureComponent, PropTypes } from 'react';
-import { withRouter } from 'dva/router';
+import { withRouter } from 'dva-react-router-3/router';
 import { Form, Input } from 'antd';
 import Button from '../../common/Button';
 import styles from './addNewGroup.less';

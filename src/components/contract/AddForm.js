@@ -3,7 +3,7 @@
 * @Author: XuWenKang
 * @Date:   2017-09-21 15:17:50
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-24 10:23:05
+ * @Last Modified time: 2017-10-24 20:46:08
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -125,11 +125,22 @@ export default class AddForm extends PureComponent {
   // 文件上传成功
   @autobind
   handleUploadSuccess(attachment) {
+    const {
+      operationType,
+    } = this.state;
+    let uuid = '';
+    let tduuid = '';
+    if (operationType === subscribe) {
+      uuid = attachment;
+    } else {
+      tduuid = attachment;
+    }
     this.setState({
       ...this.state,
       formData: {
         ...this.state.formData,
-        uuid: attachment,
+        uuid,
+        tduuid,
       },
     }, () => {
       this.props.onChangeForm(this.state.formData);
@@ -249,9 +260,8 @@ export default class AddForm extends PureComponent {
     const termsData = (operationType === subscribe) ? formData.terms : contractDetail.terms || [];
 
     // 表格中需要的操作
-    const operation = {
+    const operation = operationType === subscribe ? {
       column: {
-        // beizhu = edit , shanchu = delete
         key: [
           {
             key: 'beizhu',
@@ -264,7 +274,7 @@ export default class AddForm extends PureComponent {
         ], // 'check'\'delete'\'view'
         title: '操作',
       },
-    };
+    } : null;
     return (
       <div className={styles.editComponent}>
         <BaseInfoAdd
@@ -299,18 +309,12 @@ export default class AddForm extends PureComponent {
             operation={operation}
           />
         </div>
-        {/* <UploadFile
-          edit={BOOL_TRUE}
-          fileList={EMPTY_ARRAY}
-          attachment={formData.uuid}
-          uploadAttachment={this.handleUploadSuccess}
-        /> */}
         <InfoTitle head="附件" />
         <CommonUpload
           attachmentList={EMPTY_ARRAY}
           edit={BOOL_TRUE}
           uploadAttachment={this.handleUploadSuccess}
-          attachment={formData.uuid}
+          attachment={''}
           needDefaultText={false}
         />
         <div className={styles.cutSpace} />

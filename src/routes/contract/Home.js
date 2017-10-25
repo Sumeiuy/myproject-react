@@ -3,14 +3,13 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by:   XuWenKang
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-20 17:22:31
+ * @Last Modified time: 2017-10-25 16:47:47
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
-import { withRouter, routerRedux } from 'dva/router';
+import { withRouter, routerRedux } from 'dva-react-router-3/router';
 import { connect } from 'react-redux';
-import { message } from 'antd';
+import { message, Modal } from 'antd';
 import _ from 'lodash';
 import { constructSeibelPostBody, getEmpId } from '../../utils/helper';
 import SplitPanel from '../../components/common/splitPanel/SplitPanel';
@@ -28,6 +27,8 @@ import Barable from '../../decorators/selfBar';
 
 import styles from './home.less';
 
+
+const confirm = Modal.confirm;
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 // 退订的类型
@@ -211,11 +212,6 @@ export default class Contract extends PureComponent {
       addOrEditSelfBtnGroup: '',
       // 是否有修改的权限
       hasEditPermission: false,
-      // 修改合作合约对象的操作类型和id
-      editContractInfo: {
-        operationType: '',
-        id: '',
-      },
       // 审批人弹窗是否可见
       approverModal: false,
       // 审批人列表
@@ -224,6 +220,10 @@ export default class Contract extends PureComponent {
       footerBtnData: EMPTY_OBJECT,
       // 所选择的审批人
       selectApproveData: EMPTY_OBJECT,
+      // 最终传递的数据
+      payload: EMPTY_OBJECT,
+      // 临时审批人数据
+      tempApproveData: EMPTY_OBJECT,
     };
   }
 
@@ -255,7 +255,7 @@ export default class Contract extends PureComponent {
   componentWillReceiveProps(nextProps) {
     const {
       seibleListLoading: prevSLL,
-      baseInfo: preBI,
+      // baseInfo: preBI,
       baseInfoLoading: preBIL,
       unsubFlowStepInfo: preUFSI,
       doApprove: preDA,
@@ -292,20 +292,20 @@ export default class Contract extends PureComponent {
     }
     if ((preBIL && !nextBIL)) {
       let hasEditPermission = false;
-      // 如果当前登陆人与详情里的审批人相等，显示编辑按钮
-      if (getEmpId() === nextBI.approver) {
+      // 如果当前登陆人与详情里的审批人相等，并且状态是驳回时显示编辑按钮
+      if (getEmpId() === nextBI.approver && nextBI.status === '04') {
         hasEditPermission = true;
       }
       this.setState({
         hasEditPermission,
       });
     }
-    // 获取到基本信息
-    if (!_.isEqual(preBI, nextBI)) {
-      this.setState({
-        contractFormData: nextBI,
-      });
-    }
+    // // 获取到基本信息
+    // if (!_.isEqual(preBI, nextBI)) {
+    //   this.setState({
+    //     contractFormData: nextBI,
+    //   });
+    // }
 
     // 获取到新建订购时的按钮
     if (!_.isEmpty(nextAFSI)) {
@@ -379,8 +379,7 @@ export default class Contract extends PureComponent {
   getListRowId(obj) {
     const { getBaseInfo } = this.props;
     getBaseInfo({
-      // flowId: obj.flowId,
-      flowId: '47D97E3A0E52E84ABE1CFBB388F869C3',
+      flowId: obj.flowId,
       id: '',
     });
     this.setState({
@@ -405,7 +404,7 @@ export default class Contract extends PureComponent {
   // 根据子类型和客户查询合约编号
   @autobind
   handleSearchContractNum(data) {
-    this.props.getContractNumList({ subType: data.subType, Type: '3' });
+    this.props.getContractNumList({ subType: data.subType, Type: '3', custId: data.client.cusId });
   }
 
   // 查询客户
@@ -464,128 +463,163 @@ export default class Contract extends PureComponent {
     return startDate > vailDate;
   }
 
-  // 保存合作合约 新建/修改 数据
+
+  // 检查合约条款值是否合法
   @autobind
-  saveContractData() {
-    const {
-      location: {
-        query,
-        query: {
-          pageNum,
-          pageSize,
-        },
-      },
-      saveContractData,
-      getSeibleList,
-      getBaseInfo,
-    } = this.props;
-    const { contractFormData, editFormModal, footerBtnData, selectApproveData: { approverId = '' } } = this.state;
-    console.warn('contractFormData', contractFormData);
-    if (!contractFormData.subType) {
-      message.error('请选择子类型');
-      return;
-    }
-    if (!contractFormData.custName) {
-      message.error('请选择客户');
-      return;
-    }
-    // 新建合作合约弹窗
-    if (!editFormModal) {
-      const operationType = contractFormData.workflowname;
-      // 判断是退订还是订购
-      if (operationType === unsubscribe) {
-        if (!contractFormData.contractNum.flowId) {
-          message.error('请选择合约编号');
-          return;
+  checkClauseIsLegal(list) {
+    const uniqedArr = _.uniqBy(list, 'paraName');
+    const arr1 = [];
+    let clauseStatus = true;
+    uniqedArr.forEach((v) => {
+      const paraName = v.paraName;
+      let arr2 = [];
+      list.forEach((sv) => {
+        if (paraName === sv.paraName) {
+          arr2.push(sv);
         }
-        if (!contractFormData.approverId) {
-          message.error('请选择审批人');
-          return;
-        }
-        this.props.postDoApprove({
-          flowId: contractFormData.contractNum.flowId,
-          approverIdea: contractFormData.appraval || '',
-          groupName: footerBtnData.nextGroupName,
-          auditors: approverId,
-          operate: '2',
-        });
-        // this.props.contractUnSubscribe(condition);
-      } else {
-        if (!contractFormData.startDt) {
-          message.error('请选择合约开始日期');
-          return;
-        }
-        if (contractFormData.vailDt && this.isBiggerThanStartDate(contractFormData)) {
-          message.error('合约开始日期不能大于合约有效期');
-          return;
-        }
-        if (contractFormData.vailDt && !this.isBiggerThanTodayAddFive(contractFormData.vailDt)) {
-          message.error('合约有效期必须大于当前日期加5天');
-          return;
-        }
-        if (!contractFormData.terms.length) {
-          message.error('请添加合约条款');
-          return;
-        }
-        const payload = {
-          type: 'add',
-          data: contractFormData,
-          approveData: {
-            flowId: '',
-            approverIdea: contractFormData.appraval || '',
-            groupName: footerBtnData.nextGroupName,
-            auditors: approverId,
-            operate: '1',
-          },
-        };
-        console.warn('新建保存时的数据', payload);
-        saveContractData(payload);
-      }
-      // 新建窗口关闭后，请求左侧列表
-      const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
-      // 默认筛选条件
-      getSeibleList({
-        ...params,
-        type: pageType,
       });
-    } else {
-      // 编辑合作合约弹窗
-      if (!contractFormData.startDt) {
-        message.error('请选择合约开始日期');
-        return;
-      }
-      if (contractFormData.vailDt && this.isBiggerThanStartDate(contractFormData)) {
-        message.error('合约开始日期不能大于合约有效期');
-        return;
-      }
-      if (contractFormData.vailDt && !this.isBiggerThanTodayAddFive(contractFormData.vailDt)) {
-        message.error('合约有效期必须大于当前日期加5天');
-        return;
-      }
-      if (!contractFormData.terms.length) {
-        message.error('请添加合约条款');
-        return;
-      }
-      const payload = {
-        type: 'edit',
-        data: contractFormData,
-      };
-      console.warn('编辑保存时的 payload', payload);
-      this.props.postDoApprove({
-        flowId: this.state.flowId,
-        approverIdea: contractFormData.appraval || '',
-        groupName: footerBtnData.nextGroupName,
-        auditors: approverId,
-        operate: footerBtnData.operate,
+      arr1.push(arr2);
+      arr2 = [];
+    });
+    for (let i = 0; i < arr1.length; i++) {
+      let result = 0;
+      arr1[i].forEach((v) => {
+        result += Number(v.paraVal);
       });
-      saveContractData(payload);
-      // 编辑窗口关闭后，请求此 flowId 的详情
-      getBaseInfo({
-        flowId: this.state.flowId,
-        id: '',
-      });
+      if (+result !== 1) {
+        clauseStatus = false;
+        break;
+      }
     }
+    return clauseStatus;
   }
+
+  // 保存合作合约 新建/修改 数据
+  // @autobind
+  // saveContractData() {
+  //   const {
+  //     saveContractData,
+  //   } = this.props;
+  //   const {
+  //     contractFormData,
+  //     editFormModal,
+  //     footerBtnData,
+  //     selectApproveData: { approverId = '' }
+  //   } = this.state;
+  //   console.warn('contractFormData', contractFormData);
+  //   if (!contractFormData.subType) {
+  //     message.error('请选择子类型');
+  //     return;
+  //   }
+  //   if (!contractFormData.custName) {
+  //     message.error('请选择客户');
+  //     return;
+  //   }
+  //   // 新建合作合约弹窗
+  //   if (!editFormModal) {
+  //     const operationType = contractFormData.workflowname;
+  //     // 判断是退订
+  //     if (operationType === unsubscribe) {
+  //       if (!contractFormData.contractNum.flowId) {
+  //         message.error('请选择合约编号');
+  //         return;
+  //       }
+  //       if (!contractFormData.approverId) {
+  //         message.error('请选择审批人');
+  //         return;
+  //       }
+  //       this.props.postDoApprove({
+  //         flowId: contractFormData.contractNum.flowId,
+  //         approverIdea: contractFormData.appraval || '',
+  //         groupName: footerBtnData.nextGroupName,
+  //         auditors: approverId,
+  //         operate: '2',
+  //       });
+  //       // this.props.contractUnSubscribe(condition);
+  //     } else {
+  //       if (!contractFormData.startDt) {
+  //         message.error('请选择合约开始日期');
+  //         return;
+  //       }
+  //       if (contractFormData.vailDt && this.isBiggerThanStartDate(contractFormData)) {
+  //         message.error('合约开始日期不能大于合约有效期');
+  //         return;
+  //       }
+  //       if (contractFormData.vailDt && !this.isBiggerThanTodayAddFive(contractFormData.vailDt)) {
+  //         message.error('合约有效期必须大于当前日期加5天');
+  //         return;
+  //       }
+  //       if (!contractFormData.terms.length) {
+  //         message.error('请添加合约条款');
+  //         return;
+  //       }
+  //       if (!this.checkClauseIsLegal(contractFormData.terms)) {
+  //         message.error('合约条款中每种明细参数的值加起来必须要等于1');
+  //         return;
+  //       }
+  //       const payload = {
+  //         type: 'add',
+  //         data: contractFormData,
+  //         approveData: {
+  //           flowId: '',
+  //           approverIdea: contractFormData.appraval || '',
+  //           groupName: footerBtnData.nextGroupName,
+  //           auditors: approverId,
+  //           operate: '1',
+  //         },
+  //       };
+  //       console.warn('新建保存时的数据', payload);
+  //       saveContractData(payload);
+  //     }
+  //     // // 新建窗口关闭后，请求左侧列表
+  //     // const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
+  //     // // 默认筛选条件
+  //     // getSeibleList({
+  //     //   ...params,
+  //     //   type: pageType,
+  //     // });
+  //   } else {
+  //     // 编辑合作合约弹窗
+  //     if (!contractFormData.startDt) {
+  //       message.error('请选择合约开始日期');
+  //       return;
+  //     }
+  //     if (contractFormData.vailDt && this.isBiggerThanStartDate(contractFormData)) {
+  //       message.error('合约开始日期不能大于合约有效期');
+  //       return;
+  //     }
+  //     if (contractFormData.vailDt && !this.isBiggerThanTodayAddFive(contractFormData.vailDt)) {
+  //       message.error('合约有效期必须大于当前日期加5天');
+  //       return;
+  //     }
+  //     if (!contractFormData.terms.length) {
+  //       message.error('请添加合约条款');
+  //       return;
+  //     }
+  //     if (!this.checkClauseIsLegal(contractFormData.terms)) {
+  //       message.error('合约条款中每种明细参数的值加起来必须要等于1');
+  //       return;
+  //     }
+  //     const payload = {
+  //       type: 'edit',
+  //       data: contractFormData,
+  //     };
+  //     console.warn('编辑保存时的 payload', payload);
+  //     this.props.postDoApprove({
+  //       flowId: this.state.flowId,
+  //       approverIdea: contractFormData.appraval || '',
+  //       groupName: footerBtnData.nextGroupName,
+  //       auditors: approverId,
+  //       operate: footerBtnData.operate,
+  //     });
+  //     saveContractData(payload);
+  //     // 编辑窗口关闭后，请求此 flowId 的详情
+  //     // getBaseInfo({
+  //     //   flowId: this.state.flowId,
+  //     //   id: '',
+  //     // });
+  //   }
+  // }
 
   // 查询拟稿人
   @autobind
@@ -625,12 +659,13 @@ export default class Contract extends PureComponent {
   handleShowEditForm() {
     this.setState({
       ...this.state,
-      editContractInfo: this.props.baseInfo,
+      contractFormData: this.props.baseInfo,
     }, () => {
       this.showModal('editFormModal');
     });
   }
 
+  // 打开弹窗
   @autobind
   showModal(modalKey) {
     this.setState({
@@ -638,9 +673,10 @@ export default class Contract extends PureComponent {
     });
   }
 
+  // 关闭弹窗
   @autobind
   closeModal(modalKey) {
-    console.warn('点击了关闭弹窗', modalKey);
+    // 可能需要清空 contractFormData--TODO
     this.setState({
       [modalKey]: false,
     }, () => {
@@ -666,7 +702,126 @@ export default class Contract extends PureComponent {
   @autobind
   footerBtnHandle(btnItem) {
     console.warn('item', btnItem);
-    // item 不为空，并且 approverNum 不等于 'none'
+    // TODO-设定好相应的值传过去，注意 operation
+    const { unsubscribeBaseInfo } = this.props;
+    const { editFormModal, contractFormData } = this.state;
+    let payload = EMPTY_OBJECT;
+    // 操作类型
+    const operationType = contractFormData.workflowname;
+    // 新建窗口时
+    if (!editFormModal) {
+      // 操作类型是退订时
+      if (operationType === unsubscribe) {
+        if (!contractFormData.subType) {
+          message.error('请选择子类型');
+          return;
+        }
+        if (!contractFormData.custName) {
+          message.error('请选择客户');
+          return;
+        }
+        if (!contractFormData.contractNum.flowId) {
+          message.error('请选择合约编号');
+          return;
+        }
+        payload = {
+          ...unsubscribeBaseInfo,
+          tduuid: contractFormData.tduuid || '',
+          tdDescription: contractFormData.tdDescription || '',
+        };
+        console.warn('新建窗口，退订所有数据完毕', payload);
+        // 数据判断完毕，请求接口
+      } else {
+        // 操作类型是订购时
+        if (!contractFormData.subType) {
+          message.error('请选择子类型');
+          return;
+        }
+        if (!contractFormData.custName) {
+          message.error('请选择客户');
+          return;
+        }
+        if (!contractFormData.startDt) {
+          message.error('请选择合约开始日期');
+          return;
+        }
+        if (contractFormData.vailDt && this.isBiggerThanStartDate(contractFormData)) {
+          message.error('合约开始日期不能大于合约有效期');
+          return;
+        }
+        if (contractFormData.vailDt && !this.isBiggerThanTodayAddFive(contractFormData.vailDt)) {
+          message.error('合约有效期必须大于当前日期加5天');
+          return;
+        }
+        if (!contractFormData.terms.length) {
+          message.error('请添加合约条款');
+          return;
+        }
+        if (!this.checkClauseIsLegal(contractFormData.terms)) {
+          message.error('合约条款中每种明细参数的值加起来必须要等于1');
+          return;
+        }
+        payload = contractFormData;
+        console.warn('新建窗口所有数据完毕 payload', payload);
+        // 数据判断完毕，请求接口
+      }
+    } else {
+      // 编辑窗口
+      if (!contractFormData.startDt) {
+        message.error('请选择合约开始日期');
+        return;
+      }
+      if (contractFormData.vailDt && this.isBiggerThanStartDate(contractFormData)) {
+        message.error('合约开始日期不能大于合约有效期');
+        return;
+      }
+      if (contractFormData.vailDt && !this.isBiggerThanTodayAddFive(contractFormData.vailDt)) {
+        message.error('合约有效期必须大于当前日期加5天');
+        return;
+      }
+      if (!contractFormData.terms.length) {
+        message.error('请添加合约条款');
+        return;
+      }
+      if (!this.checkClauseIsLegal(contractFormData.terms)) {
+        message.error('合约条款中每种明细参数的值加起来必须要等于1');
+        return;
+      }
+      payload = contractFormData;
+      console.warn('编辑窗口所有数据完毕', payload);
+      // 数据判断完毕，请求接口
+    }
+    let tempApproveData = EMPTY_OBJECT;
+    // 判断弹窗类型，生成不同数据--新建
+    if (!editFormModal) {
+      // 操作类型是退订时
+      if (operationType === unsubscribe) {
+        tempApproveData = {
+          type: 'unsubscribe',
+          flowId: contractFormData.contractNum.flowId,
+          approverIdea: contractFormData.appraval || '',
+          operate: '2',
+        };
+      } else {
+        // 订购
+        tempApproveData = {
+          type: 'add',
+          flowId: '',
+          approverIdea: contractFormData.appraval || '',
+          operate: '1',
+        };
+      }
+    } else {
+      // 编辑
+      tempApproveData = {
+        type: 'edit',
+        flowId: contractFormData.flowId,
+        approverIdea: contractFormData.appraval || '',
+        operate: btnItem.operate || '',
+      };
+    }
+    // item 不为空，并且 approverNum 不等于 'none'，
+    // 需要选择审批人
     if (!_.isEmpty(btnItem) && btnItem.approverNum !== 'none') {
       const listData = btnItem.flowAuditors;
       const newApproverList = listData.map((item, index) => {
@@ -681,43 +836,90 @@ export default class Contract extends PureComponent {
       this.setState({
         flowAuditors: newApproverList,
         footerBtnData: btnItem,
+        payload,
+        tempApproveData,
       }, this.showModal('approverModal'));
     } else {
-      console.warn('不需要选择审批人');
-      this.setState({
-        flowAuditors: EMPTY_LIST,
-        footerBtnData: btnItem,
-      }, this.saveContractData);
+      // 不需要审批人
+      // 设置审批人信息
+      const selectApproveData = {
+        approverName: btnItem.flowAuditors[0].empName,
+        approverId: btnItem.flowAuditors[0].login,
+      };
+      // 设置按钮信息
+      const footerBtnData = btnItem;
+      const sendPayload = {
+        payload,
+        approveData: {
+          ...tempApproveData,
+          groupName: btnItem.nextGroupName,
+          auditors: btnItem.flowAuditors[0].login,
+        },
+        selectApproveData,
+        footerBtnData,
+      };
+      // 按钮是终止时，弹出确认框，确定之后调用接口
+      if (btnItem.btnName === '终止') {
+        const that = this;
+        confirm({
+          title: '确认要终止此任务吗?',
+          content: '确认后，操作将不可取消。',
+          onOk() {
+            that.sendRequest(sendPayload);
+          },
+        });
+      } else {
+        this.sendRequest(sendPayload);
+      }
     }
   }
 
   // 构造底部按钮集合
-  @autobind
-  constructSelfBtnGroup() {
-    const { flowStepInfo, unsubFlowStepInfo } = this.state;
-    let list = [];
-    if (unsubFlowStepInfo) {
-      list = unsubFlowStepInfo;
-    } else {
-      list = flowStepInfo;
-    }
-    this.setState({
-      addOrEditSelfBtnGroup: <BottonGroup
-        list={list}
-        onEmitEvent={this.footerBtnHandle}
-      />,
-    });
-  }
+  // @autobind
+  // constructSelfBtnGroup() {
+  //   const { flowStepInfo, unsubFlowStepInfo } = this.state;
+  //   let list = [];
+  //   if (unsubFlowStepInfo) {
+  //     list = unsubFlowStepInfo;
+  //   } else {
+  //     list = flowStepInfo;
+  //   }
+  //   this.setState({
+  //     addOrEditSelfBtnGroup: <BottonGroup
+  //       list={list}
+  //       onEmitEvent={this.footerBtnHandle}
+  //     />,
+  //   });
+  // }
   // 审批人弹出框确认按钮
   @autobind
   handleApproverModalOK(approver) {
-    console.warn('approver', approver);
-    this.setState({
-      selectApproveData: {
-        approverName: approver.empName,
-        approverId: approver.empNo,
+    const { payload, footerBtnData, tempApproveData } = this.state;
+    const selectApproveData = {
+      approverName: approver.empName,
+      approverId: approver.empNo,
+    };
+    const sendPayload = {
+      payload,
+      approveData: {
+        ...tempApproveData,
+        groupName: footerBtnData.nextGroupName,
+        auditors: approver.empNo,
       },
-    }, this.saveContractData);
+      footerBtnData,
+      selectApproveData,
+    };
+    this.sendRequest(sendPayload);
+  }
+
+  // 最终发出接口请求
+  @autobind
+  sendRequest(sendPayload) {
+    const {
+      saveContractData,
+    } = this.props;
+    console.warn('sendPayload', sendPayload);
+    saveContractData(sendPayload);
   }
 
   render() {
@@ -827,11 +1029,7 @@ export default class Contract extends PureComponent {
     };
     // 修改表单props
     const contractDetail = {
-      baseInfo: {
-        ...baseInfo,
-        business2,
-        createTime,
-      },
+      baseInfo,
       attachmentList,
       flowHistory,
     };
@@ -841,7 +1039,6 @@ export default class Contract extends PureComponent {
       onSearchCutList: this.toSearchCust,
       onChangeForm: this.handleChangeContractForm,
       uploadAttachment: this.onUploadComplete,
-      operationType: this.state.editContractInfo.operationType || '',
       // 条款名称列表
       clauseNameList: this.props.clauseNameList,
       // 合作部门列表
