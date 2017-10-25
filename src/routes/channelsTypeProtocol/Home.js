@@ -1,9 +1,9 @@
 /*
- * @Description: 通道类型协议 home 页面
- * @Author: XuWenKang
- * @Date: 2017-10-24 15:29:16
- * @Last Modified by: zhufeiyang(zhufeiyang@htsc.com)
- * @Last Modified time: 2017-10-24 18:40:46
+ * @Description: 合作合约 home 页面
+ * @Author: LiuJianShu
+ * @Date: 2017-09-22 14:49:16
+ * @Last Modified by:   XuWenKang
+ * @Last Modified time: 2017-10-24 16:47:47
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
@@ -117,7 +117,7 @@ const mapDispatchToProps = {
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
 @Barable
-export default class Contract extends PureComponent {
+export default class ChannelsTypeProtocol extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
@@ -254,7 +254,7 @@ export default class Contract extends PureComponent {
   componentWillReceiveProps(nextProps) {
     const {
       seibleListLoading: prevSLL,
-      baseInfo: preBI,
+      // baseInfo: preBI,
       baseInfoLoading: preBIL,
       unsubFlowStepInfo: preUFSI,
       doApprove: preDA,
@@ -299,12 +299,12 @@ export default class Contract extends PureComponent {
         hasEditPermission,
       });
     }
-    // 获取到基本信息
-    if (!_.isEqual(preBI, nextBI)) {
-      this.setState({
-        contractFormData: nextBI,
-      });
-    }
+    // // 获取到基本信息
+    // if (!_.isEqual(preBI, nextBI)) {
+    //   this.setState({
+    //     contractFormData: nextBI,
+    //   });
+    // }
 
     // 获取到新建订购时的按钮
     if (!_.isEmpty(nextAFSI)) {
@@ -378,8 +378,7 @@ export default class Contract extends PureComponent {
   getListRowId(obj) {
     const { getBaseInfo } = this.props;
     getBaseInfo({
-      // flowId: obj.flowId,
-      flowId: '47D97E3A0E52E84ABE1CFBB388F869C3',
+      flowId: obj.flowId,
       id: '',
     });
     this.setState({
@@ -404,7 +403,7 @@ export default class Contract extends PureComponent {
   // 根据子类型和客户查询合约编号
   @autobind
   handleSearchContractNum(data) {
-    this.props.getContractNumList({ subType: data.subType, Type: '3' });
+    this.props.getContractNumList({ subType: data.subType, Type: '3', business1: data.client.cusId });
   }
 
   // 查询客户
@@ -463,20 +462,42 @@ export default class Contract extends PureComponent {
     return startDate > vailDate;
   }
 
+
+  // 检查合约条款值是否合法
+  @autobind
+  checkClauseIsLegal(list) {
+    const uniqedArr = _.uniqBy(list, 'paraName');
+    const arr1 = [];
+    let clauseStatus = true;
+    uniqedArr.forEach((v) => {
+      const paraName = v.paraName;
+      let arr2 = [];
+      list.forEach((sv) => {
+        if (paraName === sv.paraName) {
+          arr2.push(sv);
+        }
+      });
+      arr1.push(arr2);
+      arr2 = [];
+    });
+    for (let i = 0; i < arr1.length; i++) {
+      let result = 0;
+      arr1[i].forEach((v) => {
+        result += Number(v.paraVal);
+      });
+      if (+result !== 1) {
+        clauseStatus = false;
+        break;
+      }
+    }
+    return clauseStatus;
+  }
+
   // 保存合作合约 新建/修改 数据
   @autobind
   saveContractData() {
     const {
-      location: {
-        query,
-        query: {
-          pageNum,
-          pageSize,
-        },
-      },
       saveContractData,
-      getSeibleList,
-      getBaseInfo,
     } = this.props;
     const { contractFormData, editFormModal, footerBtnData, selectApproveData: { approverId = '' } } = this.state;
     console.warn('contractFormData', contractFormData);
@@ -491,7 +512,7 @@ export default class Contract extends PureComponent {
     // 新建合作合约弹窗
     if (!editFormModal) {
       const operationType = contractFormData.workflowname;
-      // 判断是退订还是订购
+      // 判断是退订
       if (operationType === unsubscribe) {
         if (!contractFormData.contractNum.flowId) {
           message.error('请选择合约编号');
@@ -526,6 +547,10 @@ export default class Contract extends PureComponent {
           message.error('请添加合约条款');
           return;
         }
+        if (!this.checkClauseIsLegal(contractFormData.terms)) {
+          message.error('合约条款中每种明细参数的值加起来必须要等于1');
+          return;
+        }
         const payload = {
           type: 'add',
           data: contractFormData,
@@ -540,13 +565,13 @@ export default class Contract extends PureComponent {
         console.warn('新建保存时的数据', payload);
         saveContractData(payload);
       }
-      // 新建窗口关闭后，请求左侧列表
-      const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
-      // 默认筛选条件
-      getSeibleList({
-        ...params,
-        type: pageType,
-      });
+      // // 新建窗口关闭后，请求左侧列表
+      // const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
+      // // 默认筛选条件
+      // getSeibleList({
+      //   ...params,
+      //   type: pageType,
+      // });
     } else {
       // 编辑合作合约弹窗
       if (!contractFormData.startDt) {
@@ -565,6 +590,10 @@ export default class Contract extends PureComponent {
         message.error('请添加合约条款');
         return;
       }
+      if (!this.checkClauseIsLegal(contractFormData.terms)) {
+        message.error('合约条款中每种明细参数的值加起来必须要等于1');
+        return;
+      }
       const payload = {
         type: 'edit',
         data: contractFormData,
@@ -579,10 +608,10 @@ export default class Contract extends PureComponent {
       });
       saveContractData(payload);
       // 编辑窗口关闭后，请求此 flowId 的详情
-      getBaseInfo({
-        flowId: this.state.flowId,
-        id: '',
-      });
+      // getBaseInfo({
+      //   flowId: this.state.flowId,
+      //   id: '',
+      // });
     }
   }
 
@@ -630,6 +659,7 @@ export default class Contract extends PureComponent {
     });
   }
 
+  // 打开弹窗
   @autobind
   showModal(modalKey) {
     this.setState({
@@ -637,6 +667,7 @@ export default class Contract extends PureComponent {
     });
   }
 
+  // 关闭弹窗
   @autobind
   closeModal(modalKey) {
     console.warn('点击了关闭弹窗', modalKey);
