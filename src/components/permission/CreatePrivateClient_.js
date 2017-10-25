@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import PropTypes from 'prop-types';
-import { Modal } from 'antd';
 import _ from 'lodash';
 import CommonModal from '../common/biz/CommonModal';
 import ServerPersonel from './ServerPersonel';
@@ -9,8 +8,8 @@ import BaseInfoModify from './BaseInfoModify';
 import UploadFile from './UploadFile';
 import TableDialog from '../common/biz/TableDialog';
 import { getEmpId } from '../../utils/helper';
+import confirm from '../common/Confirm/confirm';
 
-const confirm = Modal.confirm;
 const columns = [
   {
     title: '工号',
@@ -107,14 +106,17 @@ export default class CreatePrivateClient extends PureComponent {
   @autobind
   closeModal() {
     // 关闭 新建私密客户 模态框
-    const that = this;
     confirm({
-      title: '真的要关闭此弹框嘛?',
-      content: '亲~~弹框关闭以后，您所填写的信息是不会保存的哟！！！',
-      onOk() {
-        that.setState({ isShowModal: false });
-      },
+      shortCut: 'close',
+      onOk: this.clearBoardAllData,
     });
+  }
+
+  // 清空弹出层数据
+  @autobind
+  clearBoardAllData() {
+    const that = this;
+    that.setState({ isShowModal: false });
   }
 
   @autobind

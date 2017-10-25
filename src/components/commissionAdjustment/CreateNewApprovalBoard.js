@@ -28,16 +28,10 @@ import { seibelConfig } from '../../config';
 import {
   pagination,
   singleColumns,
+  subScribeProColumns,
 } from './commissionTransferHelper/transferPropsHelper';
 
 import styles from './createNewApprovalBoard.less';
-
-// 临时设置的单佣金调整需要的产品结构Mock数据
-import {
-  subscribelData,
-  unsubcribeData,
-  productColumns,
-} from '../../routes/templeModal/MockTableData';
 
 const { TextArea } = Input;
 const { commission: { subType }, comsubs: commadj } = seibelConfig;
@@ -99,6 +93,12 @@ export default class CreateNewApprovalBoard extends PureComponent {
     // 单佣金调整客户列表
     querySingleCustList: PropTypes.func.isRequired,
     singleCustList: PropTypes.array.isRequired,
+    // 新建咨讯订阅可选产品列表
+    getSubscribelProList: PropTypes.func.isRequired,
+    subscribelProList: PropTypes.array.isRequired,
+    // 新建咨讯订阅可选产品列表
+    getUnSubscribelProList: PropTypes.func.isRequired,
+    unSubscribelProList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -395,9 +395,31 @@ export default class CreateNewApprovalBoard extends PureComponent {
   // 单佣金、咨询订阅、退订基本信息选择客户
   @autobind
   handleSelectAssembly(customer) {
+    const { id } = customer;
     this.setState({
       customer,
     });
+    if (this.judgeSubtypeNow(commadj.subscribe)) {
+      this.querySubscribelProList({
+        custId: id, // TODO 此参数等客户接口写好需要修改
+        custType: 'per', // TODO 此参数等客户接口写好需要修改
+      });
+    } else if (this.judgeSubtypeNow(commadj.unsubscribe)) {
+      this.queryUnSubscribelProList({
+        custRowId: id, // TODO 此参数等客户接口写好需要修改
+      });
+    }
+  }
+
+  // 查询咨讯订阅调整产品
+  @autobind
+  querySubscribelProList(param) {
+    this.props.getSubscribelProList(param);
+  }
+  // 查询咨讯退订调整产品
+  @autobind
+  queryUnSubscribelProList(param) {
+    this.props.getUnSubscribelProList(param);
   }
 
   // 单佣金调整穿梭变化的时候处理程序
@@ -419,6 +441,92 @@ export default class CreateNewApprovalBoard extends PureComponent {
 
   }
 
+  @autobind
+  changeSubscriProList(product) {
+    const { prodRowId, prodId, prodName } = product;
+    return {
+      key: prodRowId,
+      // 产品代码
+      prodCode: prodId,
+      // 产品名称
+      prodName,
+    };
+  }
+
+  @autobind
+  changeUnSubscriProList(product) {
+    const { prodRowId, prodId, prodName } = product;
+    return {
+      key: prodRowId,
+      // 产品代码
+      prodCode: prodId,
+      // 产品名称
+      prodName,
+    };
+  }
+
+  // 重组咨讯订阅可选产品子产品
+  @autobind
+  changeSubscriProChildren(product) {
+    const { prodRowid, prodCode, prodName, xDefaultOpenFlag } = product;
+    return {
+      key: prodRowid,
+      // 产品代码
+      prodCode,
+      // 产品名称
+      prodName,
+      // 是否默认选择
+      xDefaultOpenFlag,
+    };
+  }
+
+  // 重组咨讯退订可选产品子产品
+  @autobind
+  changeUnSubscriProChildren(product) {
+    const { rowId, prodId, prodName } = product;
+    return {
+      key: rowId,
+      // 产品代码
+      prodCode: prodId,
+      // 产品名称
+      prodName,
+    };
+  }
+
+  // 重组咨讯订阅可选产品List
+  @autobind
+  createSubscribelProList(data) {
+    const newSubscriProList = data.map((product) => {
+      const { subProds } = product;
+      const newSubscribel = this.changeSubscriProList(product);
+      let children = null;
+      if (!_.isEmpty(subProds)) {
+        // 存在子产品
+        children = subProds.map(this.changeSubscriProChildren);
+        return { ...newSubscribel, children };
+      }
+      return newSubscribel;
+    });
+    return newSubscriProList;
+  }
+
+ // 重组咨讯退订可选产品List
+  @autobind
+  createUnSubscribelProList(data) {
+    const newUnSubscriProList = data.map((product) => {
+      const { subProds } = product;
+      const newUnSubscribel = this.changeUnSubscriProList(product);
+      let children = null;
+      if (!_.isEmpty(subProds)) {
+        // 存在子产品
+        children = subProds.map(this.changeUnSubscriProChildren);
+        return { ...newUnSubscribel, children };
+      }
+      return newUnSubscribel;
+    });
+    return newUnSubscriProList;
+  }
+
   render() {
     const {
       modalKey,
@@ -433,6 +541,8 @@ export default class CreateNewApprovalBoard extends PureComponent {
       singleOtherRatio,
       singleComProductList,
       singleCustList,
+      subscribelProList,
+      unSubscribelProList,
       threeMatchInfo,
     } = this.props;
     const newApproverList = approverList.map((item, index) => {
@@ -442,7 +552,10 @@ export default class CreateNewApprovalBoard extends PureComponent {
         key,
       };
     });
+
     const newSingleProList = singleComProductList.map(p => ({ key: p.id, ...p }));
+    const newSubscribelProList = this.createSubscribelProList(subscribelProList);
+    const newUnSubscribelProList = this.createUnSubscribelProList(unSubscribelProList);
     const {
       newCommission,
       approvalType,
@@ -504,27 +617,29 @@ export default class CreateNewApprovalBoard extends PureComponent {
     const subScribetransferProps = {
       firstTitle: '可选服务',
       secondTitle: '已选服务',
-      firstData: subscribelData,
-      secondData: unsubcribeData,
-      firstColumns: productColumns,
-      secondColumns: productColumns,
-      transferChange: this.handleTransferChange,
+      firstData: newSubscribelProList,
+      secondData: [],
+      firstColumns: subScribeProColumns,
+      secondColumns: subScribeProColumns,
+      transferChange: this.handleTransferChange, // 三匹配未做
       checkChange: this.handleCheckChange,
       onSearch: this.handleSearch,
       rowKey: 'key',
-      defaultCheckKey: 'default',
       showSearch: true,
       placeholder: '产品代码/产品名称',
       pagination,
+      defaultCheckKey: 'xDefaultOpenFlag',
+      supportSearchKey: [['prodId'], ['prodName']],
+      totalData: newSubscribelProList,
     };
     // 资讯退订中的服务产品退订配置
     const unsubScribetransferProps = {
       firstTitle: '可退订服务',
       secondTitle: '已选服务',
-      firstData: subscribelData,
-      secondData: unsubcribeData,
-      firstColumns: productColumns,
-      secondColumns: productColumns,
+      firstData: newUnSubscribelProList,
+      secondData: [],
+      firstColumns: subScribeProColumns,
+      secondColumns: subScribeProColumns,
       transferChange: this.handleTransferChange,
       checkChange: this.handleCheckChange,
       onSearch: this.handleSearch,
@@ -537,6 +652,8 @@ export default class CreateNewApprovalBoard extends PureComponent {
         pageSize: 5,
         size: 'small',
       },
+      supportSearchKey: [['prodId'], ['prodName']],
+      totalData: newUnSubscribelProList,
       finishTips: ['产品组合等于目标佣金值', '产品组合等于目标佣金值'],
       warningTips: ['产品组合比目标佣金高 0.5%', '产品组合离目标佣金还差 0.63%'],
     };
@@ -663,7 +780,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
               )
             }
             {
-              // 资讯订阅中的资讯产品选择
+              // 资讯退订中的资讯产品选择
               !this.judgeSubtypeNow(commadj.unsubscribe) ? null
               : (
                 <div className={styles.approvalBlock}>
