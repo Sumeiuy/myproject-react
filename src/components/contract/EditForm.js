@@ -2,8 +2,8 @@
 * @Description: 合作合约修改 页面
 * @Author: XuWenKang
 * @Date:   2017-09-19 14:47:08
-* @Last Modified by: LiuJianShu
-* @Last Modified time: 2017-10-24 09:24:54
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2017-10-24 21:30:32
 */
 
 import React, { PureComponent } from 'react';
@@ -38,8 +38,6 @@ export default class EditForm extends PureComponent {
     // 查询客户列表
     onSearchCutList: PropTypes.func.isRequired,
     onChangeForm: PropTypes.func.isRequired,
-    // 操作类型
-    operationType: PropTypes.string.isRequired,
     // 合约详情
     contractDetail: PropTypes.object.isRequired,
     // 条款名称列表
@@ -114,13 +112,6 @@ export default class EditForm extends PureComponent {
     }, () => {
       this.props.onChangeForm(this.state.formData);
     });
-  }
-
-  // 根据关键字查询客户
-  @autobind
-  handleSearchClient(value) {
-    const { onSearchCutList } = this.props;
-    onSearchCutList(value);
   }
 
   // 上传文件成功
@@ -206,9 +197,7 @@ export default class EditForm extends PureComponent {
 
   render() {
     const {
-      custList,
       contractDetail,
-      operationType,
       clauseNameList,
       cooperDeparment,
       searchCooperDeparment,
@@ -256,11 +245,8 @@ export default class EditForm extends PureComponent {
         </div>
         <BaseInfoEdit
           contractName="合约名称"
-          custList={custList}
           contractDetail={contractDetail}
           onChange={this.handleChangeBaseInfo}
-          onSearchClient={this.handleSearchClient}
-          operationType={operationType}
         />
         { /* 拟稿人信息 */ }
         <DraftInfo data={draftInfo} />
