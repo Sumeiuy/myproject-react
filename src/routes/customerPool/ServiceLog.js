@@ -74,6 +74,10 @@ export default class CreateTaskForm extends PureComponent {
   }
   componentWillMount() {
     // this.handleData();
+    const { serviceLogData } = this.props;
+    this.setState({
+      showBtn: !_.isEmpty(serviceLogData),
+    });
   }
   componentDidMount() {
   }
@@ -128,26 +132,6 @@ export default class CreateTaskForm extends PureComponent {
   // >serveDateTo:结束服务日期（格式：xxxx-xx-xx，如果不填默认为今天，不能大于今天）
   // >serveDateToPaged: 上一页返回的最大日期（本次查询将从此日期-1天开始查询，如果不传，默认从serveDateTo开始）
   // >pageSize: 每页返回的日期总数（默认7天）
-  // @autobind
-  // handleData() {
-  //   const { location: { query, pathname }, replace, getServiceLog } = this.props;
-  //   console.log(query);
-  //   // const params = { // 模拟 query 穿过来的数据
-  //   //   custId: '666621585446',
-  //   //   empId: null,
-  //   //   serveSource: '短信',
-  //   //   serveType: 'MOT服务记录',
-  //   //   serveDateFrom: sixDate,
-  //   //   serveDateTo: today,
-  //   //   serveDateToPaged: null,
-  //   //   pageSize: null,
-  //   // };
-  //   // replace({
-  //   //   pathname,
-  //   //   query: params,
-  //   // });
-  //   getServiceLog(query);
-  // }
   // @autobind
   // handleScroll(e) {
   //   alert('111');
@@ -208,7 +192,7 @@ export default class CreateTaskForm extends PureComponent {
     const { dict } = this.props;
     const { serveAllSource, serveAllType } = dict;
     const { logData, showBtn } = this.state;
-    console.warn('dict--', dict);
+    console.warn('showBtn--', showBtn, !showBtn);
     return (
       <div className={styles.serviceInner}>
         <div
