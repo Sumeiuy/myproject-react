@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-19 09:37:42
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-26 15:18:11
+ * @Last Modified time: 2017-10-26 17:44:27
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -42,9 +42,7 @@ export default class Detail extends PureComponent {
     uploadAttachment: PropTypes.func,
     showEditModal: PropTypes.func,
     flowHistory: PropTypes.array,
-    operationType: PropTypes.string,
     hasEditPermission: PropTypes.bool,
-    currentId: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -53,7 +51,6 @@ export default class Detail extends PureComponent {
     flowHistory: [],
     uploadAttachment: () => {},
     showEditModal: () => {},
-    operationType: '',
     hasEditPermission: false,
   }
 
@@ -92,9 +89,7 @@ export default class Detail extends PureComponent {
       uploadAttachment,
       showEditModal,
       flowHistory,
-      operationType,
       hasEditPermission,
-      currentId,
     } = this.props;
     const { terms } = this.state;
     const modifyBtnClass = classnames([styles.dcHeaderModifyBtn,
@@ -102,12 +97,12 @@ export default class Detail extends PureComponent {
     ]);
     let uuid;
     let description;
-    if (operationType === unsubscribe) {
-      uuid = baseInfo.uuid;
-      description = baseInfo.description;
-    } else {
+    if (baseInfo.workflowName === unsubscribe) {
       uuid = baseInfo.tduuid;
       description = baseInfo.tdDescription;
+    } else {
+      uuid = baseInfo.uuid;
+      description = baseInfo.description;
     }
     const uploadProps = {
       attachmentList,
@@ -146,7 +141,7 @@ export default class Detail extends PureComponent {
     return (
       <div className={styles.detailComponent}>
         <div className={styles.dcHeader}>
-          <span className={styles.dcHaderNumb}>编号{currentId}</span>
+          <span className={styles.dcHaderNumb}>编号{baseInfo.applyId}</span>
           {
             hasEditPermission ?
               <span

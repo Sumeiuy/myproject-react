@@ -3,10 +3,14 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-20 15:13:30
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-26 14:57:31
+ * @Last Modified time: 2017-10-26 18:42:39
  */
+import { message } from 'antd';
 import { contract as api, seibel as seibelApi } from '../api';
-import { getEmpId } from '../utils/helper';
+import { getEmpId, constructSeibelPostBody } from '../utils/helper';
+import { seibelConfig } from '../config';
+
+const { contract: { pageType } } = seibelConfig;
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -283,6 +287,7 @@ export default {
     },
     // 保存详情
     * saveContractData({ payload }, { call, put }) {
+      const { currentQuery, currentQuery: { pageNum, pageSize } } = payload;
       const response = yield call(api.saveContractData, payload.payload);
       console.warn('调用接口时的 payload', payload);
       let approvePayload = {};
@@ -293,25 +298,37 @@ export default {
           ...payload.approveData,
           itemId,
         }
+        yield put({
+          type: 'saveContractDataSuccess',
+          payload: response,
+        });
+        yield put({
+          type: 'postDoApprove',
+          payload: approvePayload,
+        })
+        message.success('操作成功！');
         // 新建时保存并调用审批接口后，获取列表
-        // const listResponse = yield call(seibelApi.getCanApplyCustList, payload);
-        // yield put({
-        //   type: 'getCutListSuccess',
-        //   payload: listResponse,
-        // });
+        const params = constructSeibelPostBody(currentQuery, pageNum || 1, pageSize || 10);
+        yield put({
+          type: 'app/getSeibleList',
+          payload: {
+            ...params,
+            type: pageType,
+          },
+        });
       } else {
         approvePayload = {
           ...payload.approveData,
         }
+        yield put({
+          type: 'saveContractDataSuccess',
+          payload: response,
+        });
+        yield put({
+          type: 'postDoApprove',
+          payload: approvePayload,
+        })
       }
-      yield put({
-        type: 'saveContractDataSuccess',
-        payload: response,
-      });
-      yield put({
-        type: 'postDoApprove',
-        payload: approvePayload,
-      })
     },
     * postDoApprove({ payload }, { call, put }) {
       const approveResponse = yield call(api.postDoApprove, payload);

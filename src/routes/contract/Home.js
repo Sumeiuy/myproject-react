@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-26 16:51:40
+ * @Last Modified time: 2017-10-26 17:50:46
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
@@ -684,7 +684,10 @@ export default class Contract extends PureComponent {
     // 可能需要清空 contractFormData--TODO
     this.setState({
       [modalKey]: false,
-      contractFormData: EMPTY_OBJECT,
+      contractFormData: modalKey === 'approverModal' ?
+        this.state.contractFormData
+      :
+        EMPTY_OBJECT,
     }, () => {
       if (modalKey === 'addFormModal' && this.AddFormComponent) {
         this.AddFormComponent.handleReset();
@@ -931,9 +934,14 @@ export default class Contract extends PureComponent {
   sendRequest(sendPayload) {
     const {
       saveContractData,
+      location: { query },
     } = this.props;
-    console.warn('sendPayload', sendPayload);
-    saveContractData(sendPayload);
+    const payload = {
+      ...sendPayload,
+      currentQuery: query,
+    };
+    console.warn('sendRequest payload', payload);
+    saveContractData(payload);
   }
 
   render() {
@@ -951,11 +959,6 @@ export default class Contract extends PureComponent {
       addFlowStepInfo,
       getFlowStepInfo,
       empInfo,
-      location: {
-        query: {
-          currentId,
-        },
-      },
       resetUnsubscribeDetail,
     } = this.props;
     const {
@@ -993,7 +996,6 @@ export default class Contract extends PureComponent {
       <Detail
         baseInfo={baseInfo}
         attachmentList={attachmentList}
-        currentId={currentId}
         flowHistory={flowHistory}
         hasEditPermission={hasEditPermission}
         showEditModal={this.handleShowEditForm}

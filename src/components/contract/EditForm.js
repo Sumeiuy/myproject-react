@@ -3,7 +3,7 @@
 * @Author: XuWenKang
 * @Date:   2017-09-19 14:47:08
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-26 15:45:31
+ * @Last Modified time: 2017-10-26 17:37:07
 */
 
 import React, { PureComponent } from 'react';
@@ -245,7 +245,7 @@ export default class EditForm extends PureComponent {
     return (
       <div className={styles.editComponent}>
         <div className={styles.dcHeader}>
-          <span className={styles.dcHaderNumb}>编号{baseInfo.contractNum}</span>
+          <span className={styles.dcHaderNumb}>编号{baseInfo.applyId}</span>
         </div>
         <BaseInfoEdit
           contractName="合约名称"
