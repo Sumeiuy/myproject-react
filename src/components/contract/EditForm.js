@@ -3,7 +3,7 @@
 * @Author: XuWenKang
 * @Date:   2017-09-19 14:47:08
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-24 21:30:32
+ * @Last Modified time: 2017-10-26 15:45:31
 */
 
 import React, { PureComponent } from 'react';
@@ -29,6 +29,8 @@ import styles from './editForm.less';
 // const EMPTY_ARRAY = [];
 const EMPTY_PARAM = '暂无';
 const BOOL_TRUE = true;
+// 退订
+const unsubscribe = '2';
 // 合约条款的表头、状态
 const { contract: { titleList } } = seibelConfig;
 export default class EditForm extends PureComponent {
@@ -221,8 +223,10 @@ export default class EditForm extends PureComponent {
       date: this.getCreatedDate(baseInfo.createdDt),
       status: baseInfo.status,
     };
+    // 是否是退订
+    const isSubscribe = baseInfo.workflowName === unsubscribe;
     // 表格中需要的操作
-    const operation = {
+    const operation = isSubscribe ? null : {
       column: {
         // beizhu = edit , shanchu = delete
         key: [
@@ -255,7 +259,12 @@ export default class EditForm extends PureComponent {
             head="合约条款"
             isRequired
           />
-          <Button {...buttonProps}>新建</Button>
+          {
+            isSubscribe ?
+              null
+            :
+              <Button {...buttonProps}>新建</Button>
+          }
           <CommonTable
             data={formData.terms}
             titleList={titleList}

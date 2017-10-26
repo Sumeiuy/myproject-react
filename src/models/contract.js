@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-20 15:13:30
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-25 21:22:36
+ * @Last Modified time: 2017-10-26 14:57:31
  */
 import { contract as api, seibel as seibelApi } from '../api';
 import { getEmpId } from '../utils/helper';
@@ -230,7 +230,7 @@ export default {
       }
       // 获取附件列表的 payload
       const rData = response.resultData;
-      const attachment = rData.workflowname === '2' ? rData.tduuid : rData.uuid;
+      const attachment = rData.workflowName === '2' ? rData.tduuid : rData.uuid;
       const attachPayload = {
         attachment: attachment || '',
       };
@@ -239,6 +239,11 @@ export default {
         yield put({
           type: 'getAttachmentListSuccess',
           payload: attachResponse,
+        });
+      } else {
+        yield put({
+          type: 'getAttachmentListSuccess',
+          payload: {},
         });
       }
       // 获取审批记录的 payload
@@ -303,7 +308,13 @@ export default {
         type: 'saveContractDataSuccess',
         payload: response,
       });
-      const approveResponse = yield call(api.postDoApprove, approvePayload);
+      yield put({
+        type: 'postDoApprove',
+        payload: approvePayload,
+      })
+    },
+    * postDoApprove({ payload }, { call, put }) {
+      const approveResponse = yield call(api.postDoApprove, payload);
       yield put({
         type: 'postDoApproveSuccess',
         payload: approveResponse,
