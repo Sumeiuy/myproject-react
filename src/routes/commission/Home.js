@@ -17,7 +17,7 @@ import SingleDetail from '../../components/commissionAdjustment/SingleDetail';
 import AdvisoryDetail from '../../components/commissionAdjustment/AdvisoryDetail';
 import ApprovalRecordBoard from '../../components/commissionAdjustment/ApprovalRecordBoard';
 import CreateNewApprovalBoard from '../../components/commissionAdjustment/CreateNewApprovalBoard';
-import CommissionHeader from '../../components/common/biz/SeibelHeader';
+import CommissionHeader from '../../components/common/biz/ConnectedSeibelHeader';
 import CommissionList from '../../components/common/biz/CommonList';
 import seibelColumns from '../../components/common/biz/seibelColumns';
 import { constructSeibelPostBody, getEmpId } from '../../utils/helper';
@@ -32,10 +32,6 @@ const { comsubs, commission, commission: { pageType, subType, status } } = seibe
 
 const effects = {
   list: 'app/getSeibleList',
-  searchDrafter: 'app/getDrafterList',
-  searchCust: 'app/getCustomerList',
-  custRange: 'app/getCustRange',
-  filterApproval: 'app/getApprovePersonList',
   detail: 'commission/getCommissionDetail',
   singleDetail: 'commission/getSingleDetail',
   subscribeDetail: 'commission/getSubscribeDetail',
@@ -46,7 +42,8 @@ const effects = {
   approver: 'commission/getAprovalUserList',
   validate: 'commission/validateCustInfo',
   submitBatch: 'commission/submitBatchCommission',
-  gjCommissionRate: 'commission/getGJCommissionRate',
+  batchgj: 'commission/getGJCommissionRate',
+  singlegj: 'commission/getSingleGJCommissionRate',
   singleCustList: 'commission/getSingleCustList',
   singleComOptions: 'commission/getSingleOtherCommissionOptions',
   singleProList: 'commission/getSingleComProductList',
@@ -62,16 +59,8 @@ const mapStateToProps = state => ({
   empInfo: state.app.empInfo,
   // 左侧里诶包
   list: state.app.seibleList,
-  // 审批人列表
-  approvePersonList: state.app.approvePersonList,
-  // 组织结构树
-  custRange: state.app.custRange,
   // 获取列表数据进程
   listProcess: state.loading.effects[effects.list],
-  // 拟稿人列表
-  filterDrafterList: state.app.drafterList,
-  // 已申请的客户列表
-  filterCustList: state.app.customerList,
   // 可申请的客户列表
   canApplyCustList: state.commission.canApplyCustList,
   // 目标产品列表
@@ -100,6 +89,8 @@ const mapStateToProps = state => ({
   batchSubmitProcess: state.loading.effects[effects.submitBatch],
   // 目标股基佣金率码值列表
   gjCommissionList: state.commission.gjCommission,
+  // 单佣金调整佣金率码值列表
+  singleGJCommission: state.commission.singleGJCommission,
   // 单佣金调整的其他佣金费率码值
   singleOtherRatio: state.commission.singleOtherCommissionOptions,
   // 单佣金调整页面客户查询列表
@@ -124,8 +115,6 @@ const mapDispatchToProps = {
   replace: routerRedux.replace,
   // 获取批量佣金调整List
   getCommissionList: getDataFunction(true, effects.list),
-  // 获取批量佣金调整List
-  getCustRange: getDataFunction(true, effects.custRange),
   // 获取批量佣金调整Detail
   getBatchCommissionDetail: getDataFunction(true, effects.detail),
   // 获取单佣金调整Detail
@@ -136,24 +125,20 @@ const mapDispatchToProps = {
   getUnSubscribeDetail: getDataFunction(true, effects.unsubDetail),
   // 获取用户审批记录
   getApprovalRecords: getDataFunction(false, effects.record),
-  // 通过关键字，查询可选的已申请用户列表
-  searchCustList: getDataFunction(false, effects.searchCust),
-  // 通过关键字，查询可选拟稿人列表
-  searchDrafter: getDataFunction(false, effects.searchDrafter),
   // 查询目标产品列表
   getProductList: getDataFunction(false, effects.productList),
   // 查询审批人员列表
   getAprovalUserList: getDataFunction(false, effects.approver),
-  // 获取审批人列表
-  getApprovePersonList: getDataFunction(false, effects.filterApproval),
   // 校验用户资格
   validateCustInfo: getDataFunction(false, effects.validate),
   // 通过关键字，查询可选的可申请用户列表
   getCanApplyCustList: getDataFunction(false, effects.applyCustList),
   // 提交批量佣金调整申请
   submitBatch: getDataFunction(false, effects.submitBatch),
-  // 获取目标股基佣金率
-  getGJCommissionRate: getDataFunction(false, effects.gjCommissionRate),
+  // 获取批量佣金目标股基佣金率
+  getGJCommissionRate: getDataFunction(false, effects.batchgj),
+  // 获取单佣金目标股基佣金率
+  getSingleGJ: getDataFunction(false, effects.singlegj),
   // 获取单佣金调整中的其他佣金费率选项
   getSingleOtherRates: getDataFunction(false, effects.singleComOptions),
   // 查询单佣金调整页面客户列表
@@ -178,7 +163,6 @@ export default class CommissionHome extends PureComponent {
     replace: PropTypes.func.isRequired,
     dict: PropTypes.object.isRequired,
     empInfo: PropTypes.object.isRequired,
-    getCustRange: PropTypes.func.isRequired,
     validateCustInfo: PropTypes.func.isRequired,
     getCanApplyCustList: PropTypes.func.isRequired,
     getAprovalUserList: PropTypes.func.isRequired,
@@ -189,10 +173,7 @@ export default class CommissionHome extends PureComponent {
     getSingleDetail: PropTypes.func.isRequired,
     getApprovalRecords: PropTypes.func.isRequired,
     getSingleCustList: PropTypes.func.isRequired,
-    searchCustList: PropTypes.func.isRequired,
-    searchDrafter: PropTypes.func.isRequired,
     getProductList: PropTypes.func.isRequired,
-    custRange: PropTypes.array.isRequired,
     productList: PropTypes.array.isRequired,
     list: PropTypes.object.isRequired,
     detail: PropTypes.object.isRequired,
@@ -206,9 +187,7 @@ export default class CommissionHome extends PureComponent {
     validataLoading: PropTypes.bool.isRequired,
     validateResult: PropTypes.string.isRequired,
     approvalUserList: PropTypes.array.isRequired,
-    filterCustList: PropTypes.array.isRequired,
     canApplyCustList: PropTypes.array.isRequired,
-    filterDrafterList: PropTypes.array.isRequired,
     batchnum: PropTypes.string.isRequired,
     submitBatch: PropTypes.func.isRequired,
     getGJCommissionRate: PropTypes.func.isRequired,
@@ -224,8 +203,8 @@ export default class CommissionHome extends PureComponent {
     getUnSubscribelProList: PropTypes.func.isRequired,
     subscribelProList: PropTypes.array.isRequired,
     unSubscribelProList: PropTypes.array.isRequired,
-    approvePersonList: PropTypes.array.isRequired,
-    getApprovePersonList: PropTypes.func.isRequired,
+    singleGJCommission: PropTypes.array.isRequired,
+    getSingleGJ: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -247,8 +226,6 @@ export default class CommissionHome extends PureComponent {
     const {
       getCommissionList,
       getAprovalUserList,
-      getCustRange,
-      custRange,
       location: {
         query,
         query: {
@@ -258,9 +235,6 @@ export default class CommissionHome extends PureComponent {
       },
     } = this.props;
     const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
-    if (_.isEmpty(custRange)) {
-      getCustRange({});
-    }
     // 获取审批人员列表
     getAprovalUserList({ loginUser: getEmpId() });
     // 默认筛选条件
@@ -419,6 +393,7 @@ export default class CommissionHome extends PureComponent {
           <AdvisoryDetail
             name="资讯订阅"
             data={subscribeDetail}
+            location={location}
           />
         );
         break;
@@ -427,6 +402,7 @@ export default class CommissionHome extends PureComponent {
           <AdvisoryDetail
             name="资讯退订"
             data={unsubscribeDetail}
+            location={location}
           />
         );
         break;
@@ -466,24 +442,6 @@ export default class CommissionHome extends PureComponent {
   @autobind
   handleCreateBtnClick() {
     this.openCreateApprovalBoard();
-  }
-
-  // 根据用户输入查询查询拟稿人
-  @autobind
-  searDrafterList(keyword) {
-    this.props.searchDrafter({
-      type: pageType,
-      keyword,
-    });
-  }
-
-  // 根据用户输入的客户关键字查询客户List
-  @autobind
-  searchCustList(keyword) {
-    this.props.searchCustList({
-      type: pageType,
-      keyword,
-    });
   }
 
   // 生成左侧列表页面的数据列
@@ -528,25 +486,11 @@ export default class CommissionHome extends PureComponent {
     });
   }
 
-  // 筛选审批人
-  @autobind
-  toSearchApprove(value) {
-    this.props.getApprovePersonList({
-      keyword: value,
-      type: pageType,
-      pageSize: 10,
-      pageNum: 1,
-    });
-  }
-
   render() {
     const {
       location,
       replace,
       list,
-      filterDrafterList,
-      filterCustList,
-      custRange,
       approvalRecord,
       productList,
       getProductList,
@@ -559,7 +503,7 @@ export default class CommissionHome extends PureComponent {
       validateResult,
       validateCustInfo,
       dict: { otherRatio },
-      empInfo: { empInfo },
+      empInfo: { empInfo, empPostnList },
       getGJCommissionRate,
       gjCommissionList,
       getSingleOtherRates,
@@ -573,11 +517,9 @@ export default class CommissionHome extends PureComponent {
       subscribelProList,
       getUnSubscribelProList,
       unSubscribelProList,
-      approvePersonList,
+      singleGJCommission,
+      getSingleGJ,
     } = this.props;
-    if (_.isEmpty(custRange)) {
-      return null;
-    }
     const isEmpty = _.isEmpty(list.resultData);
     // 此处需要提供一个方法给返回的接口查询设置是否查询到数据
     const { approvalBoard, createApprovalBoard, currentSubtype } = this.state;
@@ -586,16 +528,10 @@ export default class CommissionHome extends PureComponent {
         location={location}
         replace={replace}
         page="commission"
+        pageType={pageType}
         subtypeOptions={subType}
         stateOptions={status}
-        toSearchDrafter={this.searDrafterList}
-        drafterList={filterDrafterList}
-        toSearchCust={this.searchCustList}
-        customerList={filterCustList}
-        custRange={custRange}
         creatSeibelModal={this.handleCreateBtnClick}
-        toSearchApprove={this.toSearchApprove}
-        approveList={approvePersonList}
       />
     );
     const leftPanel = (
@@ -627,6 +563,7 @@ export default class CommissionHome extends PureComponent {
         />
         <CreateNewApprovalBoard
           empInfo={empInfo}
+          empPostnList={empPostnList}
           modalKey="createApprovalBoard"
           visible={createApprovalBoard}
           onClose={this.closeNewApprovalBoard}
@@ -654,6 +591,8 @@ export default class CommissionHome extends PureComponent {
           subscribelProList={subscribelProList}
           getUnSubscribelProList={getUnSubscribelProList}
           unSubscribelProList={unSubscribelProList}
+          singleGJCommission={singleGJCommission}
+          getSingleGJ={getSingleGJ}
         />
       </div>
     );

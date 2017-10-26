@@ -18,6 +18,8 @@ export default function commission(api) {
     validateCustInfo: query => api.post('/groovynoauth/fsp/biz/chgcommsion/validateBatCommChgCust', query),
     // 提交批量佣金调整
     submitBatchCommission: query => api.post('/groovynoauth/fsp/biz/chgcommsion/saveBatchJustCommionInfo', query),
+    // 提交单佣金调整申请
+    submitSingleCommission: query => api.post('/groovynoauth/fsp/biz/chgcommsion/saveSingleJustCommionInfo', query),
     // 查询咨询订阅/退订详情接口
     queryConsultDetail: query => api.post('/groovynoauth/fsp/biz/mailsubscription/saveMailSubscriptionInfo', query),
     // 获取附件信息
@@ -35,12 +37,14 @@ export default function commission(api) {
     // 查询用户选择的产品三匹配信息
     queryThreeMatchInfo: query => api.post('/groovynoauth/fsp/biz/chgcommsion/queryThreeMatchInfo', query),
     // 单佣金调整中的其他佣金费率选项
-    queryOtherCommissionOptions: query => api.post('/groovynoauth/fsp/biz/chgcommsion/querySingelCommionJustRate', query),
+    queryOtherCommissionOptions: query => api.post('/groovynoauth/fsp/biz/chgcommsion/queryOtherCommissionRate', query),
     // 单佣金调整页面 客户查询
     querySingleCustomer: query => api.post('/groovynoauth/fsp/biz/chgcommsion/queryCustInfo', query),
     // 单佣金调整详情页面 当前审批步骤接口
     queryCurrentStep: query => api.post('/groovynoauth/fsp/biz/chgcommsion/queryFlowCurrentStepInfo', query),
     // 单佣金调整详情页面 基础数据接口
     querySingleDetail: query => api.post('/groovynoauth/fsp/biz/chgcommsion/querySingleCommChgOrderInfo', query),
+    // 单佣金调整新建页面中的目标股基佣金率
+    querySingleGJCommissionRate: query => api.post('/groovynoauth/fsp/biz/chgcommsion/querySingleCommision', query),
   };
 }

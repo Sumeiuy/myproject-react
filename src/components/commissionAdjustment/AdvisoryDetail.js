@@ -26,14 +26,16 @@ export default class AdvisoryDetail extends PureComponent {
   static propTypes = {
     name: PropTypes.string.isRequired,
     data: PropTypes.object.isRequired,
+    location: PropTypes.object.isRequired,
   }
 
   render() {
     const { name, data: { base, attachmentList, approvalHistory, currentStep } } = this.props;
+    const { location: { query: { currentId = '' } } } = this.props;
     if (_.isEmpty(base)) return null;
     const {
       // 订单Id
-      orderId,
+      // orderId,
       // 备注
       comments,
       // 营业部名称
@@ -51,7 +53,7 @@ export default class AdvisoryDetail extends PureComponent {
     } = base;
     const custList = createCustTableData(base);
     const proList = createProTableData(item);
-    const bugTitle = `CRM编号:${orderId}`;
+    const bugTitle = `CRM编号:${currentId}`;
     const drafter = `${divisionName} - ${createdByName} (${createdByLogin})`;
     const stepName = (currentStep && currentStep.curentStep) || '';
     const handleName = (currentStep && currentStep.curentUser) || '';
