@@ -8,7 +8,7 @@ import { withRouter, routerRedux } from 'dva/router';
 import { autobind } from 'core-decorators';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
-import { Table } from 'antd';
+import { Table, Tooltip } from 'antd';
 import _ from 'lodash';
 
 import Paganation from '../../components/common/Paganation';
@@ -24,7 +24,9 @@ const columns = [{
   key: 'texttitle',
   width: '30%',
   render: item => (
-    <div className={classnames(styles.td, styles.headLine)}>{formatString(item)}</div>
+    <Tooltip title={formatString(item)}>
+      <div className={classnames(styles.td, styles.headLine)}>{formatString(item)}</div>
+    </Tooltip>
   ),
 }, {
   title: '类型',
@@ -68,7 +70,9 @@ const columns = [{
   key: 'authors',
   width: '13%',
   render: item => (
-    <div className={classnames(styles.td, styles.authors)}>{formatString(item)}</div>
+    <Tooltip title={formatString(item)}>
+      <div className={classnames(styles.td, styles.authors)}>{formatString(item)}</div>
+    </Tooltip>
   ),
 }];
 
