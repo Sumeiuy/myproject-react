@@ -369,14 +369,14 @@ export default class ChannelsTypeProtocol extends PureComponent {
   // 头部新建按钮点击事件处理程序
   @autobind
   handleCreateBtnClick() {
-    const { getFlowStepInfo, resetUnsubscribeDetail } = this.props;
-    getFlowStepInfo({
-      operate: 1,
-      flowId: '',
-    });
-    this.showModal('addFormModal');
+    // const { getFlowStepInfo, resetUnsubscribeDetail } = this.props;
+    // getFlowStepInfo({
+    //   operate: 1,
+    //   flowId: '',
+    // });
+    this.showModal('editFormModal');
     // 每次打开弹窗的时候重置退订详情数据
-    resetUnsubscribeDetail();
+    // resetUnsubscribeDetail();
   }
 
   // 显示修改合作合约弹框
@@ -612,15 +612,16 @@ export default class ChannelsTypeProtocol extends PureComponent {
       list={flowStepInfo}
       onEmitEvent={this.footerBtnHandle}
     />);
+
+    */
     const editFormModalProps = {
       modalKey: 'editFormModal',
       title: '修改合约申请',
       closeModal: this.closeModal,
       visible: editFormModal,
       size: 'large',
-      selfBtnGroup,
+      // selfBtnGroup,
     };
-    */
     return (
       <div className={styles.premissionbox} >
         <SplitPanel
@@ -630,7 +631,17 @@ export default class ChannelsTypeProtocol extends PureComponent {
           rightPanel={rightPanel}
           leftListClassName="contractList"
         />
-
+        {
+          editFormModal ?
+            <CommonModal {...editFormModalProps} >
+              <EditForm
+                {...editFormModalProps}
+                ref={(ref) => { this.EditFormComponent = ref; }}
+              />
+            </CommonModal>
+            :
+            null
+        }
         {
           approverModal ?
             <ChoiceApproverBoard
