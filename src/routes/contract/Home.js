@@ -3,7 +3,8 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by:   XuWenKang
- * @Last Modified time: 2017-10-25 16:47:47
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2017-10-25 22:12:58
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
@@ -54,6 +55,8 @@ const mapStateToProps = state => ({
   // 查询客户
   customerList: state.app.customerList,
   // 查询右侧详情
+  // 审批人列表
+  approvePersonList: state.app.approvePersonList,
   baseInfo: state.contract.baseInfo,
   baseInfoLoading: state.loading.effects['contract/getBaseInfo'],
   // 退订时查询详情
@@ -77,6 +80,8 @@ const mapStateToProps = state => ({
   // 新建时的审批人
   addFlowStepInfo: state.contract.addFlowStepInfo,
   doApprove: state.contract.doApprove,
+  // 审批进程
+  postDoApproveLoading: state.loading.effects['contract/postDoApprove'],
   unsubFlowStepInfo: state.contract.unsubFlowStepInfo,
   // 登陆人信息
   empInfo: state.app.empInfo,
@@ -92,6 +97,8 @@ const mapDispatchToProps = {
   getCustRange: fetchDataFunction(false, 'app/getCustRange'),
   // 获取客户列表
   getCustomerList: fetchDataFunction(false, 'app/getCustomerList'),
+  // 获取审批人列表
+  getApprovePersonList: fetchDataFunction(false, 'app/getApprovePersonList'),
   // 获取右侧详情
   getBaseInfo: fetchDataFunction(true, 'contract/getBaseInfo'),
   // 重置退订合约详情数据
@@ -175,8 +182,11 @@ export default class Contract extends PureComponent {
     // 审批接口
     postDoApprove: PropTypes.func.isRequired,
     doApprove: PropTypes.object,
+    postDoApproveLoading: PropTypes.bool,
     // 登陆人信息
     empInfo: PropTypes.object.isRequired,
+    getApprovePersonList: PropTypes.func.isRequired,
+    approvePersonList: PropTypes.array,
   }
 
   static defaultProps = {
@@ -186,18 +196,17 @@ export default class Contract extends PureComponent {
     contractDetail: EMPTY_OBJECT,
     saveContractDataLoading: false,
     baseInfoLoading: false,
+    postDoApproveLoading: false,
     flowStepInfo: EMPTY_OBJECT,
     addFlowStepInfo: EMPTY_OBJECT,
     unsubFlowStepInfo: EMPTY_OBJECT,
     doApprove: EMPTY_OBJECT,
+    approvePersonList: EMPTY_LIST,
   }
 
   constructor(props) {
     super(props);
     this.state = {
-      // 操作类型
-      business2: '',
-      createTime: '',
       isEmpty: true,
       // 默认状态下新建弹窗不可见 false 不可见  true 可见
       createApprovalBoard: false,
@@ -258,18 +267,20 @@ export default class Contract extends PureComponent {
       // baseInfo: preBI,
       baseInfoLoading: preBIL,
       unsubFlowStepInfo: preUFSI,
-      doApprove: preDA,
+      // doApprove: preDA,
+      postDoApproveLoading: prePDA,
+      location: { query: { currentId: prevCurrentId } },
     } = this.props;
     const {
       seibleListLoading: nextSLL,
-      seibleList,
       getBaseInfo,
-      location: { query: { currentId } },
       baseInfo: nextBI,
       baseInfoLoading: nextBIL,
       addFlowStepInfo: nextAFSI,
       unsubFlowStepInfo: nextUFSI,
-      doApprove: nextDA,
+      // doApprove: nextDA,
+      postDoApproveLoading: nextPDA,
+      location: { query: { currentId } },
     } = nextProps;
 
     const { location: { query: prevQuery = EMPTY_OBJECT }, getSeibleList } = this.props;
@@ -300,6 +311,16 @@ export default class Contract extends PureComponent {
         hasEditPermission,
       });
     }
+    /* currentId变化重新请求 */
+    if ((prevSLL && !nextSLL) || (currentId && (currentId !== prevCurrentId))) {
+      getBaseInfo({
+        id: currentId,
+      });
+      this.setState({
+        addFormModal: false,
+        editFormModal: false,
+      });
+    }
     // // 获取到基本信息
     // if (!_.isEqual(preBI, nextBI)) {
     //   this.setState({
@@ -328,31 +349,34 @@ export default class Contract extends PureComponent {
         />,
       });
     }
-
-    if (!_.isEqual(preDA, nextDA)) {
-      // 获取到 flowStepInfo
+    // postDoApprove 方法结束后，关闭所有弹窗，清空审批信息
+    if (prePDA && !nextPDA) {
+      this.setState({
+        tempApproveData: EMPTY_OBJECT,
+      });
+      this.closeModal('approverModal');
       this.closeModal('addFormModal');
+      this.closeModal('editFormModal');
     }
 
-    // 判断是否取到 seibleList
-    // || (preSCD && !nextSCD)
-    if ((prevSLL && !nextSLL)) {
-      if (!_.isEmpty(seibleList.resultData)) {
-        const item = _.filter(seibleList.resultData, o => String(o.id) === String(currentId));
-        // 表示左侧列表获取完毕
-        // 因此此时获取Detail
-        getBaseInfo({
-          flowId: item[0].flowId,
-          id: '',
-        });
-        this.setState({
-          flowId: item[0].flowId,
-          addFormModal: false,
-          editFormModal: false,
-          business2: item[0].business2,
-          createTime: item[0].createTime,
-        });
-      }
+    // if (!_.isEqual(preDA, nextDA)) {
+    //   // 获取到 flowStepInfo
+    //   this.closeModal('addFormModal');
+    // }
+  }
+
+  componentDidUpdate() {
+    const { location: { pathname, query, query: { isResetPageNum } }, replace } = this.props;
+    // 重置pageNum和pageSize
+    if (isResetPageNum === 'Y') {
+      replace({
+        pathname,
+        query: {
+          ...query,
+          isResetPageNum: 'N',
+          pageNum: 1,
+        },
+      });
     }
   }
 
@@ -372,21 +396,6 @@ export default class Contract extends PureComponent {
     });
   }
 
-  /**
-   * 点击列表每条的时候对应请求详情
-   */
-  @autobind
-  getListRowId(obj) {
-    const { getBaseInfo } = this.props;
-    getBaseInfo({
-      flowId: obj.flowId,
-      id: '',
-    });
-    this.setState({
-      business2: obj.business2,
-      createTime: obj.createTime,
-    });
-  }
   /**
    * 检查部分属性是否相同
    * @param {*} prevQuery 前一次query
@@ -482,13 +491,15 @@ export default class Contract extends PureComponent {
       arr2 = [];
     });
     for (let i = 0; i < arr1.length; i++) {
-      let result = 0;
-      arr1[i].forEach((v) => {
-        result += Number(v.paraVal);
-      });
-      if (+result !== 1) {
-        clauseStatus = false;
-        break;
+      if (arr1[i][0].paraDisplayName.indexOf('比例') > -1) {
+        let result = 0;
+        arr1[i].forEach((v) => {
+          result += Number(v.paraVal);
+        });
+        if (+result !== 1) {
+          clauseStatus = false;
+          break;
+        }
       }
     }
     return clauseStatus;
@@ -631,6 +642,18 @@ export default class Contract extends PureComponent {
     });
   }
 
+  // 查询审批人
+  @autobind
+  toSearchApprove(value) {
+    const { getApprovePersonList } = this.props;
+    getApprovePersonList({
+      keyword: value,
+      type: pageType,
+      pageSize: 10,
+      pageNum: 1,
+    });
+  }
+
   // 查询客户
   @autobind
   toSearchCust(value) {
@@ -679,12 +702,10 @@ export default class Contract extends PureComponent {
     // 可能需要清空 contractFormData--TODO
     this.setState({
       [modalKey]: false,
+      contractFormData: EMPTY_OBJECT,
     }, () => {
       if (modalKey === 'addFormModal' && this.AddFormComponent) {
         this.AddFormComponent.handleReset();
-        this.setState({
-          contractFormData: EMPTY_OBJECT,
-        });
       }
     });
   }
@@ -705,6 +726,7 @@ export default class Contract extends PureComponent {
     // TODO-设定好相应的值传过去，注意 operation
     const { unsubscribeBaseInfo } = this.props;
     const { editFormModal, contractFormData } = this.state;
+    console.warn('contractFormData', contractFormData);
     let payload = EMPTY_OBJECT;
     // 操作类型
     const operationType = contractFormData.workflowname;
@@ -726,6 +748,7 @@ export default class Contract extends PureComponent {
         }
         payload = {
           ...unsubscribeBaseInfo,
+          workflowName: '2',
           tduuid: contractFormData.tduuid || '',
           tdDescription: contractFormData.tdDescription || '',
         };
@@ -758,7 +781,7 @@ export default class Contract extends PureComponent {
           return;
         }
         if (!this.checkClauseIsLegal(contractFormData.terms)) {
-          message.error('合约条款中每种明细参数的值加起来必须要等于1');
+          message.error('合约条款中比例明细参数的值加起来必须要等于1');
           return;
         }
         payload = contractFormData;
@@ -784,7 +807,7 @@ export default class Contract extends PureComponent {
         return;
       }
       if (!this.checkClauseIsLegal(contractFormData.terms)) {
-        message.error('合约条款中每种明细参数的值加起来必须要等于1');
+        message.error('合约条款中比例明细参数的值加起来必须要等于1');
         return;
       }
       payload = contractFormData;
@@ -815,7 +838,7 @@ export default class Contract extends PureComponent {
       // 编辑
       tempApproveData = {
         type: 'edit',
-        flowId: contractFormData.flowId,
+        flowId: contractFormData.flowid,
         approverIdea: contractFormData.appraval || '',
         operate: btnItem.operate || '',
       };
@@ -909,6 +932,7 @@ export default class Contract extends PureComponent {
       footerBtnData,
       selectApproveData,
     };
+    console.warn('审批人确认时的 sendPayload', sendPayload);
     this.sendRequest(sendPayload);
   }
 
@@ -939,13 +963,12 @@ export default class Contract extends PureComponent {
       addFlowStepInfo,
       getFlowStepInfo,
       empInfo,
+      approvePersonList,
     } = this.props;
     const {
       addFormModal,
       editFormModal,
       approverModal,
-      business2,
-      createTime,
       addOrEditSelfBtnGroup,
       hasEditPermission,
       flowAuditors,
@@ -963,6 +986,8 @@ export default class Contract extends PureComponent {
         stateOptions={status}
         toSearchDrafter={this.toSearchDrafter}
         toSearchCust={this.toSearchCust}
+        toSearchApprove={this.toSearchApprove}
+        approveList={approvePersonList}
         drafterList={drafterList}
         customerList={customerList}
         custRange={custRange}
@@ -978,15 +1003,11 @@ export default class Contract extends PureComponent {
         replace={replace}
         location={location}
         columns={this.constructTableColumns()}
-        clickRow={this.getListRowId}
-        backKeys={['flowId', 'business2', 'createTime']}
       />
     );
     const rightPanel = (
       <Detail
         baseInfo={baseInfo}
-        operationType={business2}
-        createTime={createTime}
         attachmentList={attachmentList}
         flowHistory={flowHistory}
         hasEditPermission={hasEditPermission}

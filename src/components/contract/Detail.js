@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-19 09:37:42
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-24 18:59:08
+ * @Last Modified time: 2017-10-25 20:25:22
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -30,6 +30,8 @@ const operationLabel = (value) => {
   }
   return '无';
 };
+// 退订的类型
+const unsubscribe = '2';
 const EMPTY_PARAM = '暂无';
 // 合约条款的表头、状态对应值
 const { contract: { titleList, status } } = seibelConfig;
@@ -99,7 +101,7 @@ export default class Detail extends PureComponent {
     const uploadProps = {
       attachmentList,
       uploadAttachment,
-      attachment: baseInfo.attachment || '',
+      attachment: (operationType === unsubscribe ? baseInfo.uuid : baseInfo.tduuid) || '',
     };
     const nowStep = {
       // 当前步骤
@@ -146,7 +148,7 @@ export default class Detail extends PureComponent {
         </div>
         <div className={styles.detailWrapper}>
           <InfoTitle head="基本信息" />
-          <InfoItem label="操作类型" value={operationLabel(operationType) || EMPTY_PARAM} />
+          <InfoItem label="操作类型" value={operationLabel(baseInfo.workflowName) || EMPTY_PARAM} />
           <InfoItem label="子类型" value={childTypeList[0].label || EMPTY_PARAM} />
           <InfoItem label="客户" value={`${baseInfo.custName || EMPTY_PARAM} ${baseInfo.econNum || EMPTY_PARAM}`} />
           <InfoItem label="合约开始日期" value={dateFormat(baseInfo.startDt) || EMPTY_PARAM} />

@@ -14,6 +14,7 @@ import Button from '../Button';
 import styles from '../../style/jiraLayout.less';
 
 const allowPermission = 'HTSC 综合服务-营业部执行岗';
+const permissionText = '营业部服务岗';
 
 export default class Pageheader extends PureComponent {
   static propTypes = {
@@ -152,23 +153,29 @@ export default class Pageheader extends PureComponent {
       empInfo,
     } = this.props;
 
+    const ptyMngAll = { ptyMngName: '全部', ptyMngId: '' };
+
     const customerAllList = !_.isEmpty(customerList) ?
     [{ custName: '全部', custNumber: '' }, ...customerList] : customerList;
 
     const drafterAllList = !_.isEmpty(drafterList) ?
-    [{ ptyMngName: '全部', ptyMngId: '' }, ...drafterList] : drafterList;
+    [ptyMngAll, ...drafterList] : drafterList;
 
     const approveAllList = !_.isEmpty(approveList) ?
-    [{ ptyMngName: '全部', ptyMngId: '' }, ...approveList] : approveList;
+    [ptyMngAll, ...approveList] : approveList;
     // 新建按钮权限
     let hasPermission = true;
     if (pathname === '/contract') {
       // 合约合约时判断权限
-      const permissionList = empInfo.empRespList;
-      const filterResult = _.filter(permissionList, o => o.respName === allowPermission);
-      hasPermission = Boolean(filterResult.length);
+      // 职责
+      const empRespList = empInfo.empRespList;
+      // 职位
+      const empPostnList = empInfo.empPostnList;
+      const filterResp = _.filter(empRespList, o => o.respName === allowPermission);
+      const filterPostn = _.filter(empPostnList, o => o.postnName.indexOf(permissionText) !== -1);
+      hasPermission = Boolean(filterResp.length) && Boolean(filterPostn.length);
     }
-
+    console.warn('hasPermission', hasPermission);
     const operateElement = needOperate ?
       (
         <div className={styles.dropDownSelectBox}>

@@ -17,27 +17,27 @@ const columns = [{
   title: '标题',
   dataIndex: 'texttitle',
   key: 'texttitle',
-  width: '36%',
+  width: 500,
 }, {
   title: '类型',
   dataIndex: 'textcategorychinese',
   key: 'textcategorychinese',
-  width: '18%',
+  width: 500,
 }, {
   title: '相关股票',
   dataIndex: 'aboutStock',
   key: 'aboutStock',
-  width: '15%',
+  width: 500,
 }, {
   title: '行业',
   dataIndex: 'induname',
   key: 'induname',
-  width: '12%',
+  width: 500,
 }, {
   title: '报告日期',
   dataIndex: 'pubdata',
   key: 'pubdata',
-  width: '12%',
+  width: 500,
 }, {
   title: '作者',
   dataIndex: 'authors',
@@ -152,6 +152,7 @@ export default class ViewpointList extends PureComponent {
             dataSource={newInfoVOList}
             pagination={false}
             onRowClick={this.handleRowClick}
+            scroll={{ x: 2500 }}
           />
           <Paganation {...paganationOption} />
         </div>

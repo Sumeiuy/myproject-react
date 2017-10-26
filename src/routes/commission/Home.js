@@ -13,6 +13,7 @@ import { message } from 'antd';
 
 import SplitPanel from '../../components/common/splitPanel/SplitPanel';
 import Detail from '../../components/commissionAdjustment/Detail';
+import SingleDetail from '../../components/commissionAdjustment/SingleDetail';
 import AdvisoryDetail from '../../components/commissionAdjustment/AdvisoryDetail';
 import ApprovalRecordBoard from '../../components/commissionAdjustment/ApprovalRecordBoard';
 import CreateNewApprovalBoard from '../../components/commissionAdjustment/CreateNewApprovalBoard';
@@ -34,7 +35,9 @@ const effects = {
   searchDrafter: 'app/getDrafterList',
   searchCust: 'app/getCustomerList',
   custRange: 'app/getCustRange',
+  filterApproval: 'app/getApprovePersonList',
   detail: 'commission/getCommissionDetail',
+  singleDetail: 'commission/getSingleDetail',
   subscribeDetail: 'commission/getSubscribeDetail',
   unsubDetail: 'commission/getUnSubscribeDetail',
   record: 'commission/getApprovalRecords',
@@ -59,6 +62,8 @@ const mapStateToProps = state => ({
   empInfo: state.app.empInfo,
   // 左侧里诶包
   list: state.app.seibleList,
+  // 审批人列表
+  approvePersonList: state.app.approvePersonList,
   // 组织结构树
   custRange: state.app.custRange,
   // 获取列表数据进程
@@ -79,6 +84,8 @@ const mapStateToProps = state => ({
   validateResult: state.commission.validateResult,
   // 右侧批量佣金详情
   detail: state.commission.detail,
+  // 右侧单佣金调整详情
+  singleDetail: state.commission.singleDetail,
   // 右侧咨询订阅详情
   subscribeDetail: state.commission.subscribeDetail,
   // 右侧资讯退订详情
@@ -105,7 +112,6 @@ const mapStateToProps = state => ({
   subscribelProList: state.commission.subscribelProList,
   // 新建咨讯订阅可选产品列表
   unSubscribelProList: state.commission.unSubscribelProList,
-
 });
 
 const getDataFunction = (loading, type) => query => ({
@@ -122,6 +128,8 @@ const mapDispatchToProps = {
   getCustRange: getDataFunction(true, effects.custRange),
   // 获取批量佣金调整Detail
   getBatchCommissionDetail: getDataFunction(true, effects.detail),
+  // 获取单佣金调整Detail
+  getSingleDetail: getDataFunction(true, effects.singleDetail),
   // 获取咨询订阅详情Detail
   getSubscribeDetail: getDataFunction(true, effects.subscribeDetail),
   // 获取资讯退订详情Detail
@@ -136,6 +144,8 @@ const mapDispatchToProps = {
   getProductList: getDataFunction(false, effects.productList),
   // 查询审批人员列表
   getAprovalUserList: getDataFunction(false, effects.approver),
+  // 获取审批人列表
+  getApprovePersonList: getDataFunction(false, effects.filterApproval),
   // 校验用户资格
   validateCustInfo: getDataFunction(false, effects.validate),
   // 通过关键字，查询可选的可申请用户列表
@@ -176,6 +186,7 @@ export default class CommissionHome extends PureComponent {
     getBatchCommissionDetail: PropTypes.func.isRequired,
     getSubscribeDetail: PropTypes.func.isRequired,
     getUnSubscribeDetail: PropTypes.func.isRequired,
+    getSingleDetail: PropTypes.func.isRequired,
     getApprovalRecords: PropTypes.func.isRequired,
     getSingleCustList: PropTypes.func.isRequired,
     searchCustList: PropTypes.func.isRequired,
@@ -185,6 +196,7 @@ export default class CommissionHome extends PureComponent {
     productList: PropTypes.array.isRequired,
     list: PropTypes.object.isRequired,
     detail: PropTypes.object.isRequired,
+    singleDetail: PropTypes.object.isRequired,
     subscribeDetail: PropTypes.object.isRequired,
     unsubscribeDetail: PropTypes.object.isRequired,
     approvalRecord: PropTypes.object.isRequired,
@@ -212,6 +224,8 @@ export default class CommissionHome extends PureComponent {
     getUnSubscribelProList: PropTypes.func.isRequired,
     subscribelProList: PropTypes.array.isRequired,
     unSubscribelProList: PropTypes.array.isRequired,
+    approvePersonList: PropTypes.array.isRequired,
+    getApprovePersonList: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -341,12 +355,14 @@ export default class CommissionHome extends PureComponent {
       getBatchCommissionDetail,
       getSubscribeDetail,
       getUnSubscribeDetail,
+      getSingleDetail,
     } = this.props;
     switch (st) {
       case comsubs.batch:
         getBatchCommissionDetail({ batchNum: business1 });
         break;
       case comsubs.single:
+        getSingleDetail({ flowCode: business1 });
         break;
       case comsubs.subscribe:
         getSubscribeDetail({ orderId: id, type: custType });
@@ -372,7 +388,13 @@ export default class CommissionHome extends PureComponent {
    */
   @autobind
   getDetailComponentBySubType(st) {
-    const { detail, location, subscribeDetail, unsubscribeDetail } = this.props;
+    const {
+      detail,
+      location,
+      subscribeDetail,
+      unsubscribeDetail,
+      singleDetail,
+    } = this.props;
     let detailComponent = null;
     switch (st) {
       case comsubs.batch:
@@ -385,6 +407,12 @@ export default class CommissionHome extends PureComponent {
         );
         break;
       case comsubs.single:
+        detailComponent = (
+          <SingleDetail
+            data={singleDetail}
+            location={location}
+          />
+        );
         break;
       case comsubs.subscribe:
         detailComponent = (
@@ -500,6 +528,17 @@ export default class CommissionHome extends PureComponent {
     });
   }
 
+  // 筛选审批人
+  @autobind
+  toSearchApprove(value) {
+    this.props.getApprovePersonList({
+      keyword: value,
+      type: pageType,
+      pageSize: 10,
+      pageNum: 1,
+    });
+  }
+
   render() {
     const {
       location,
@@ -534,6 +573,7 @@ export default class CommissionHome extends PureComponent {
       subscribelProList,
       getUnSubscribelProList,
       unSubscribelProList,
+      approvePersonList,
     } = this.props;
     if (_.isEmpty(custRange)) {
       return null;
@@ -554,6 +594,8 @@ export default class CommissionHome extends PureComponent {
         customerList={filterCustList}
         custRange={custRange}
         creatSeibelModal={this.handleCreateBtnClick}
+        toSearchApprove={this.toSearchApprove}
+        approveList={approvePersonList}
       />
     );
     const leftPanel = (
