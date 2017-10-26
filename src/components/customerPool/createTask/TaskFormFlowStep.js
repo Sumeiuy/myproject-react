@@ -1,18 +1,18 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'dva/router';
-import { Button, Mention } from 'antd';
+import { Button, Mention, message } from 'antd';
 import _ from 'lodash';
 import moment from 'moment';
 import { autobind } from 'core-decorators';
 import CreateTaskForm from './CreateTaskForm';
 import TaskPreview from '../taskFlow/TaskPreview';
-import { fspGlobal } from '../../../utils';
+import { fspGlobal, helper } from '../../../utils';
 import styles from './taskFormFlowStep.less';
 
 
 const { toString } = Mention;
-
+const orgId = window.orgId;
 
 @withRouter
 export default class TaskFlow extends PureComponent {
@@ -23,6 +23,9 @@ export default class TaskFlow extends PureComponent {
     dict: PropTypes.object,
     saveTaskFlowData: PropTypes.func.isRequired,
     createTask: PropTypes.func.isRequired,
+    parseQuery: PropTypes.func.isRequired,
+    approvalList: PropTypes.array.isRequired,
+    getApprovalList: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -36,7 +39,13 @@ export default class TaskFlow extends PureComponent {
       current: 0,
       currentStep: 0,
       previousData: {},
+      currentSelectRecord: {},
+      currentSelectRowKeys: [],
+      currentTab: '1',
+      custSource: '',
     };
+    // this.isHasAuthorize = permission.hasIndexViewPermission();
+    this.isHasAuthorize = true;
   }
 
   @autobind
@@ -45,26 +54,50 @@ export default class TaskFlow extends PureComponent {
     const { current } = this.state;
     this.setState({
       current: current - 1,
-      previousData: storedTaskFlowData,
+      previousData: storedTaskFlowData.taskFormData,
     });
   }
 
-// @
+  @autobind
+  handleCustSource(value) {
+    let custSources = '';
+    switch (value) {
+      case 'businessCustPool':
+        custSources = '业务目标客户';
+        break;
+      case 'searchCustPool':
+        custSources = '搜索目标客户';
+        break;
+      case 'performanceIncrementCustPool':
+        custSources = '绩效目标客户';
+        break;
+      case 'performanceBusinessOpenCustPool':
+        custSources = '绩效目标客户';
+        break;
+      default:
+        break;
+    }
+    return custSources;
+  }
 
 
   @autobind
   handleNextStep() {
-    console.log(this.createTaskForm);
     const { current } = this.state;
-    const { saveTaskFlowData } = this.props;
+    const { saveTaskFlowData, location: { query } } = this.props;
     this.createTaskForm.validateFields((err, values) => {
       if (!err) {
-        saveTaskFlowData(values);
+        saveTaskFlowData({
+          taskFormData: values,
+          totalCust: query.count,
+        });
         this.setState({
           current: current + 1,
+          custSource: this.handleCustSource(query.entertype),
         });
       } else {
         console.warn('templetDesc-----', values.templetDesc);
+        message.error('请填写任务基本信息');
       }
     });
   }
@@ -72,32 +105,88 @@ export default class TaskFlow extends PureComponent {
   @autobind
   closeTab() {
     // fspGlobal.closeRctTabById('RCT_FSP_TASK');
-    console.log(this.createTaskForm.getFieldsValue());
     fspGlobal.closeRctTabById('RCT_FSP_CUSTOMER_LIST');
   }
 
   // 自建任务提交
   @autobind
   handleSubmit() {
-    const { storedTaskFlowData, createTask } = this.props;
-    const params = storedTaskFlowData;
-    params.templetDesc = toString(params.templetDesc); // eslint-disable-line
-    params.triggerDate = moment(params.triggerDate).format('YYYY-MM-DD'); // eslint-disable-line
-    params.closingDate = moment(params.closingDate).format('YYYY-MM-DD'); // eslint-disable-line
-    createTask(params);
+    const { storedTaskFlowData, createTask, parseQuery } = this.props;
+    const { currentSelectRecord: { login: flowAuditorId = null } } = this.state;
+    const {
+        custIdList,
+        custCondition,
+      } = parseQuery();
+    const {
+      curPageNum,
+      enterType,
+      pageSize,
+      sortsReqList,
+    } = custCondition;
+    const params = storedTaskFlowData.taskFormData;
+    // console.warn('custCondition--', custCondition);
+    const data = {
+      closingDate: moment(params.closingDate).format('YYYY-MM-DD'),
+      executionType: params.executionType,
+      serviceStrategySuggestion: params.serviceStrategySuggestion,
+      taskName: params.taskName,
+      taskType: params.taskType,
+      templetDesc: toString(params.templetDesc),
+      triggerDate: moment(params.triggerDate).format('YYYY-MM-DD'),
+      missionDesc: '1111',
+    };
+    createTask({
+      ...data,
+      flowAuditorId,
+      custIdList,
+      orgId,
+      ptyMngId: helper.getEmpId(),
+      searchReq: {
+        curPageNum,
+        enterType,
+        pageSize,
+        sortsReqList,
+      },
+    });
+  }
+
+  @autobind
+  handleRowSelectionChange(selectedRowKeys, selectedRows) {
+    console.log(selectedRowKeys, selectedRows);
+    this.setState({
+      currentSelectRowKeys: selectedRowKeys,
+    });
+  }
+
+  @autobind
+  handleSingleRowSelectionChange(record, selected, selectedRows) {
+    console.log(record, selected, selectedRows);
+    const { login } = record;
+    this.setState({
+      currentSelectRecord: record,
+      currentSelectRowKeys: [login],
+    });
   }
 
   render() {
     const {
       current,
       previousData,
+      currentSelectRecord,
+      currentSelectRowKeys,
+      currentTab,
+      custSource,
     } = this.state;
 
     const {
       dict,
       location,
+      approvalList,
+      getApprovalList,
+      storedTaskFlowData,
     } = this.props;
-    console.log('current----', current);
+    const { executeTypes, taskTypes } = dict;
+    const { query: { count } } = location;
     const steps = [{
       title: '基本信息',
       content: <CreateTaskForm
@@ -110,6 +199,19 @@ export default class TaskFlow extends PureComponent {
       title: '目标客户',
       content: <TaskPreview
         ref={ref => (this.taskPreviewRef = ref)}
+        storedTaskFlowData={storedTaskFlowData}
+        approvalList={approvalList}
+        currentTab={currentTab}
+        getApprovalList={getApprovalList}
+        executeTypes={executeTypes}
+        taskTypes={taskTypes}
+        onSingleRowSelectionChange={this.handleSingleRowSelectionChange}
+        onRowSelectionChange={this.handleRowSelectionChange}
+        currentSelectRecord={currentSelectRecord}
+        currentSelectRowKeys={currentSelectRowKeys}
+        isNeedApproval={this.isHasAuthorize}
+        custSource={custSource}
+        custTotal={count}
       />,
     }];
 

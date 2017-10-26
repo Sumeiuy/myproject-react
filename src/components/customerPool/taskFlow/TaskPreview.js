@@ -26,10 +26,6 @@ const Search = Input.Search;
 const COLUMN_WIDTH = 100;
 
 const renderColumnTitle = () => {
-  // empName: '1-5TTJ-39weqq00',
-  // login: '11800011qq9822',
-  // occupation: '南京长江路营业部',
-
   const columns = [
     {
       key: 'login',
@@ -61,11 +57,15 @@ export default class TaskPreview extends PureComponent {
     onSingleRowSelectionChange: PropTypes.func.isRequired,
     onRowSelectionChange: PropTypes.func.isRequired,
     isNeedApproval: PropTypes.bool,
+    custSource: PropTypes.string,
+    custTotal: PropTypes.string,
   };
 
   static defaultProps = {
     approvalList: EMPTY_LIST,
     isNeedApproval: false,
+    custSource: '',
+    custTotal: '',
   };
 
   constructor(props) {
@@ -143,6 +143,8 @@ export default class TaskPreview extends PureComponent {
       currentSelectRecord,
       onSingleRowSelectionChange,
       onRowSelectionChange,
+      custSource,
+      custTotal,
     } = this.props;
     const {
       taskFormData = EMPTY_OBJECT,
@@ -177,7 +179,7 @@ export default class TaskPreview extends PureComponent {
       triggerDate,
       totalCount: custTotalCount,
     } = finalData;
-
+    console.warn('totalCust----->>', finalData);
     let finalExecutionType = executionType;
     const executionTypeDictionary = _.find(executeTypes, item => item.key === executionType);
     if (executionTypeDictionary) {
@@ -251,16 +253,20 @@ export default class TaskPreview extends PureComponent {
               <div className={styles.infoDescription}>
                 <div className={styles.descriptionOrNameSection}>
                   <div>客户来源：</div>
-                  <div>导入客户</div>
+                  <div>{_.isEmpty(custSource) ? '导入客户' : custSource}</div>
                 </div>
                 <div className={styles.descriptionOrNameSection}>
                   <div>客户数量：</div>
-                  <div>{custTotalCount || 0}户</div>
+                  <div>{_.isEmpty(custSource) ? custTotalCount || 0 : custTotal}户</div>
                 </div>
-                <div className={styles.descriptionOrNameSection}>
-                  <div>数据来源：</div>
-                  <div>{originFileName || '--'}</div>
-                </div>
+                {_.isEmpty(custSource) ?
+                  <div className={styles.descriptionOrNameSection}>
+                    <div>数据来源：</div>
+                    <div>{originFileName || '--'}</div>
+                  </div>
+                  :
+                  null
+                }
               </div>
               : <div className={styles.infoDescription}>
                 <div className={styles.descriptionOrNameSection}>

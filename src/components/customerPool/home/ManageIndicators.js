@@ -54,8 +54,8 @@ export default class PerformanceIndicators extends PureComponent {
         location,
         empInfo,
       } = this.props;
-      console.log('arg>>', arg);
-      console.log('clientNameData: ', clientNameData);
+      // console.log('arg>>', arg);
+      // console.log('clientNameData: ', clientNameData);
 
       const param = {
         source: 'numOfCustOpened',
@@ -65,19 +65,23 @@ export default class PerformanceIndicators extends PureComponent {
         empInfo,
         bname: arg.name || arg.value,
       };
-      if (_.includes([arg.name, arg.value], clientNameData[0])) {
+      // 点击柱子，arg.name，arg.value都有值
+      // 点击x轴， arg.value有值，不存在arg.name
+      // 数组的顺序不能变
+      const arr = [arg.name, arg.value];
+      if (_.includes(arr, clientNameData[0])) {
         param.value = 'ttfCust';
-      } else if (_.includes([arg.name, arg.value], clientNameData[1])) {
+      } else if (_.includes(arr, clientNameData[1])) {
         param.value = 'shHkCust';
-      } else if (_.includes([arg.name, arg.value], clientNameData[2])) {
+      } else if (_.includes(arr, clientNameData[2])) {
         param.value = 'szHkCust';
-      } else if (_.includes([arg.name, arg.value], clientNameData[3])) {
+      } else if (_.includes(arr, clientNameData[3])) {
         param.value = 'rzrqCust';
-      } else if (_.includes([arg.name, arg.value], clientNameData[4])) {
+      } else if (_.includes(arr, clientNameData[4])) {
         param.value = 'xsb';
-      } else if (_.includes([arg.name, arg.value], clientNameData[5])) {
+      } else if (_.includes(arr, clientNameData[5])) {
         param.value = 'optCust';
-      } else if (_.includes([arg.name, arg.value], clientNameData[6])) {
+      } else if (_.includes(arr, clientNameData[6])) {
         param.value = 'cyb';
       }
       linkTo(param);
@@ -143,7 +147,6 @@ export default class PerformanceIndicators extends PureComponent {
     const param = { clientNumberData, names: clientNameData };
     const { newUnit: clientUnit, items: clientItems } = getClientsNumber(param);
     const clientHead = { icon: 'kehuzhibiao', title: `业务开通数（${clientUnit}次）` };
-    console.log('clientItems>>>>', clientItems);
     // 沪深归集率
     const hsRateData = getHSRate([filterEmptyToNumber(hsRate)]);
     const hsRateHead = { icon: 'jiaoyiliang', title: '沪深归集率' };
