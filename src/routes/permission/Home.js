@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import { constructSeibelPostBody } from '../../utils/helper';
 import SplitPanel from '../../components/common/splitPanel/SplitPanel';
-import PermissionHeader from '../../components/common/biz/SeibelHeader';
+import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
 import Detail from '../../components/permission/Detail';
 import PermissionList from '../../components/common/biz/CommonList';
 import seibelColumns from '../../components/common/biz/seibelColumns';
@@ -38,14 +38,6 @@ const mapStateToProps = state => ({
   list: state.app.seibleList,
   // 服务人员列表
   searchServerPersonList: state.permission.searchServerPersonList,
-  // 审批人列表
-  approvePersonList: state.app.approvePersonList,
-  // 拟稿人列表
-  drafterList: state.app.drafterList,
-  // 部门
-  custRange: state.app.custRange,
-  // 已申请客户
-  customerList: state.app.customerList,
   // 可申请客户
   canApplyCustList: state.app.canApplyCustList,
   // 查询已有服务任务列表
@@ -80,14 +72,6 @@ const mapDispatchToProps = {
   getServerPersonelList: fetchDataFunction(false, 'permission/getServerPersonelList'),
   // 搜索服务人员列表
   getSearchServerPersonList: fetchDataFunction(false, 'permission/getSearchServerPersonList'),
-  // 获取审批人列表
-  getApprovePersonList: fetchDataFunction(false, 'app/getApprovePersonList'),
-  // 获取拟稿人列表
-  getDrafterList: fetchDataFunction(false, 'app/getDrafterList'),
-  // 获取部门
-  getCustRange: fetchDataFunction(false, 'app/getCustRange'),
-  // 获取已申请客户列表
-  getCustomerList: fetchDataFunction(false, 'app/getCustomerList'),
   // 获取可申请客户列表
   getCanApplyCustList: fetchDataFunction(false, 'app/getCanApplyCustList'),
   // 查询已有服务任务列表
@@ -111,22 +95,14 @@ export default class Permission extends PureComponent {
   static propTypes = {
     list: PropTypes.object.isRequired,
     seibelListLoading: PropTypes.bool,
-    custRange: PropTypes.array.isRequired,
     getPermissionList: PropTypes.func.isRequired,
-    getCustRange: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     getDetailMessage: PropTypes.func.isRequired,
     detailMessage: PropTypes.object,
     replace: PropTypes.func.isRequired,
-    getCustomerList: PropTypes.func.isRequired,
     getCanApplyCustList: PropTypes.func.isRequired,
     searchServerPersonList: PropTypes.array.isRequired,
     getSearchServerPersonList: PropTypes.func.isRequired,
-    drafterList: PropTypes.array.isRequired,
-    getDrafterList: PropTypes.func.isRequired,
-    approvePersonList: PropTypes.array.isRequired,
-    getApprovePersonList: PropTypes.func.isRequired,
-    customerList: PropTypes.array.isRequired,
     canApplyCustList: PropTypes.array.isRequired,
     hasServerPersonList: PropTypes.array.isRequired,
     getHasServerPersonList: PropTypes.func.isRequired,
@@ -198,7 +174,6 @@ export default class Permission extends PureComponent {
         },
       },
       getPermissionList,
-      getCustRange,
     } = this.props;
     const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
     // 默认筛选条件
@@ -206,7 +181,6 @@ export default class Permission extends PureComponent {
       ...params,
       type: pageType,
     });
-    getCustRange({});
     this.setState({ detailMessage: this.props.detailMessage });
   }
 
@@ -289,40 +263,6 @@ export default class Permission extends PureComponent {
     this.setState({ isShowCreateModal: true });
   }
 
-  // 查询拟稿人
-  @autobind
-  toSearchDrafter(value) {
-    const { getDrafterList } = this.props;
-    getDrafterList({
-      keyword: value,
-      type: pageType,
-      pageSize: 10,
-      pageNum: 1,
-    });
-  }
-
-  // 查询审批人
-  @autobind
-  toSearchApprove(value) {
-    const { getApprovePersonList } = this.props;
-    getApprovePersonList({
-      keyword: value,
-      type: pageType,
-      pageSize: 10,
-      pageNum: 1,
-    });
-  }
-
-  // 查询客户
-  @autobind
-  toSearchCust(value) {
-    const { getCustomerList } = this.props;
-    getCustomerList({
-      keyword: value,
-      type: pageType,
-    });
-  }
-
   @autobind
   showModifyModal() {
     this.setState(prevState => ({ isShowModifyModal: !prevState.isShowModifyModal }));
@@ -396,12 +336,8 @@ export default class Permission extends PureComponent {
       list,
       location,
       replace,
-      custRange,
-      customerList,
       canApplyCustList,
       searchServerPersonList,
-      approvePersonList,
-      drafterList,
       hasServerPersonList,
       getHasServerPersonList,
       nextApproverList,
@@ -420,26 +356,17 @@ export default class Permission extends PureComponent {
       },
     } = this.props;
 
-    if (!custRange || !custRange.length) {
-      return null;
-    }
     const isEmpty = _.isEmpty(list.resultData);
     const { isShowCreateModal, isShowModifyModal } = this.state;
     const topPanel = (
-      <PermissionHeader
+      <ConnectedSeibelHeader
         location={location}
         replace={replace}
         page="premissionPage"
+        pageType={pageType}
         subtypeOptions={subType}
         stateOptions={status}
         creatSeibelModal={this.creatPermossionModal}
-        toSearchDrafter={this.toSearchDrafter}
-        toSearchApprove={this.toSearchApprove}
-        toSearchCust={this.toSearchCust}
-        drafterList={drafterList}
-        approveList={approvePersonList}
-        customerList={customerList}
-        custRange={custRange}
       />
     );
 

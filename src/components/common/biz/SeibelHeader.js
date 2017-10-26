@@ -15,7 +15,6 @@ import styles from '../../style/jiraLayout.less';
 
 const allowPermission = 'HTSC 综合服务-营业部执行岗';
 const permissionText = '营业部服务岗';
-
 export default class Pageheader extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -28,36 +27,40 @@ export default class Pageheader extends PureComponent {
     stateOptions: PropTypes.array.isRequired,
     // 新建
     creatSeibelModal: PropTypes.func.isRequired,
-    // 搜索拟稿人方法
-    toSearchDrafter: PropTypes.func.isRequired,
-    // 搜索审批人方法
-    toSearchApprove: PropTypes.func.isRequired,
-    // 搜索客户方法
-    toSearchCust: PropTypes.func.isRequired,
-    // 拟稿人数据
-    drafterList: PropTypes.array,
-    // 审批人数据
-    approveList: PropTypes.array,
-    // 客户数据
-    customerList: PropTypes.array,
-    // 部门
-    custRange: PropTypes.array,
     // 操作类型
     needOperate: PropTypes.bool,
     operateOptions: PropTypes.array,
     // 新建权限
     empInfo: PropTypes.object,
+    // 页面类型
+    pageType: PropTypes.string.isRequired,
+    // 部门列表
+    custRange: PropTypes.array.isRequired,
+    // 获取部门列表
+    getCustRange: PropTypes.func.isRequired,
+    // 拟稿人列表
+    drafterList: PropTypes.array.isRequired,
+    // 获取拟稿人列表
+    getDrafterList: PropTypes.func.isRequired,
+    // 审批人列表
+    approvePersonList: PropTypes.array.isRequired,
+    // 获取审批人列表
+    getApprovePersonList: PropTypes.func.isRequired,
+    // 客户列表
+    customerList: PropTypes.array.isRequired,
+    // 获取客户列表
+    getCustomerList: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
     page: '',
-    drafterList: [],
-    customerList: [],
-    approveList: [],
-    custRange: [],
     needOperate: false,
     operateOptions: [],
     empInfo: {},
+  }
+
+  componentWillMount() {
+    this.props.getCustRange({});
   }
 
   // 选中客户下拉对象中对应的某个对象
@@ -74,29 +77,15 @@ export default class Pageheader extends PureComponent {
     });
   }
 
-  // 选中拟稿人下拉对象中对应的某个对象
+  // 选中拟稿人/审批人下拉对象中对应的某个对象
   @autobind
-  selectDrafterItem(item) {
+  selectItem(name, item) {
     const { replace, location: { pathname, query } } = this.props;
     replace({
       pathname,
       query: {
         ...query,
-        drafterId: item.ptyMngId,
-        isResetPageNum: 'Y',
-      },
-    });
-  }
-
-  // 选中审批人下拉对象中对应的某个对象
-  @autobind
-  selectApproveItem(item) {
-    const { replace, location: { pathname, query } } = this.props;
-    replace({
-      pathname,
-      query: {
-        ...query,
-        approvalId: item.ptyMngId,
+        [name]: item.ptyMngId,
         isResetPageNum: 'Y',
       },
     });
@@ -133,16 +122,25 @@ export default class Pageheader extends PureComponent {
     });
   }
 
+  // 查询客户、拟稿人、审批人公共调接口方法
+  @autobind
+  toSearch(method, value) {
+    method({
+      keyword: value,
+      type: this.props.pageType,
+    });
+  }
+
   render() {
     const {
+      getCustomerList,
+      getApprovePersonList,
+      getDrafterList,
       subtypeOptions,
       stateOptions,
       creatSeibelModal,
-      toSearchDrafter,
-      toSearchApprove,
-      toSearchCust,
       drafterList,
-      approveList,
+      approvePersonList,
       customerList,
       custRange,
       replace,
@@ -161,8 +159,8 @@ export default class Pageheader extends PureComponent {
     const drafterAllList = !_.isEmpty(drafterList) ?
     [ptyMngAll, ...drafterList] : drafterList;
 
-    const approveAllList = !_.isEmpty(approveList) ?
-    [ptyMngAll, ...approveList] : approveList;
+    const approvePersonAllList = !_.isEmpty(approvePersonList) ?
+    [ptyMngAll, ...approvePersonList] : approvePersonList;
     // 新建按钮权限
     let hasPermission = true;
     if (pathname === '/contract') {
@@ -191,6 +189,9 @@ export default class Pageheader extends PureComponent {
       )
     :
       null;
+    if (!custRange || !custRange.length) {
+      return null;
+    }
     return (
       <div className={styles.pageCommonHeader}>
         <div className={styles.filterBox}>
@@ -203,7 +204,7 @@ export default class Pageheader extends PureComponent {
                 showObjKey="custName"
                 objId="custNumber"
                 emitSelectItem={this.selectCustItem}
-                emitToSearch={toSearchCust}
+                emitToSearch={value => this.toSearch(getCustomerList, value)}
                 name={`${page}-custName`}
               />
             </div>
@@ -243,8 +244,8 @@ export default class Pageheader extends PureComponent {
                 searchList={drafterAllList}
                 showObjKey="ptyMngName"
                 objId="ptyMngId"
-                emitSelectItem={this.selectDrafterItem}
-                emitToSearch={toSearchDrafter}
+                emitSelectItem={item => this.selectItem('drafterId', item)}
+                emitToSearch={value => this.toSearch(getDrafterList, value)}
                 name={`${page}-ptyMngName`}
               />
             </div>
@@ -267,11 +268,11 @@ export default class Pageheader extends PureComponent {
               <DropDownSelect
                 value="全部"
                 placeholder="工号/名称"
-                searchList={approveAllList}
+                searchList={approvePersonAllList}
                 showObjKey="ptyMngName"
                 objId="ptyMngId"
-                emitSelectItem={this.selectApproveItem}
-                emitToSearch={toSearchApprove}
+                emitSelectItem={item => this.selectItem('approvalId', item)}
+                emitToSearch={value => this.toSearch(getApprovePersonList, value)}
                 name={`${page}-ptyMngName`}
               />
             </div>
