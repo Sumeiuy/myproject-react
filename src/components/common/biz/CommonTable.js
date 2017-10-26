@@ -2,8 +2,8 @@
  * @Description: 公用的表格组件
  * @Author: LiuJianShu
  * @Date: 2017-09-19 14:27:39
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-19 15:03:39
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-10-25 17:04:00
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -89,7 +89,7 @@ export default class CommonTable extends PureComponent {
         <Table
           {...resetProps}
           scroll={scroll}
-          pagination={this.props.pagination}
+          pagination={_.isEmpty(this.props.pagination) ? false : this.props.pagination}
           dataSource={data}
           columns={newTitleList}
         />

@@ -63,7 +63,7 @@ export default function seibelColumns(props) {
         {
           record.subType === '0202' ?
           (
-            <div className="cust">共{record.business2 || 0}人,成功{record.business3 || 0}人</div>
+            <div className="cust">共{record.business2 || 0}人,已完成{record.business3 || 0}人</div>
           )
           :
           (
