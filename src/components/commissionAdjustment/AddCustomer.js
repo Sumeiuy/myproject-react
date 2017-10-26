@@ -74,7 +74,7 @@ export default class AddCustomer extends PureComponent {
   pickValue(list) {
     const tempList = _.cloneDeep(list);
     return tempList.map(item => ({
-      custId: item.custId,
+      custId: item.cusId,
       custEcon: item.brokerNumber,
       custName: item.custName,
     }));

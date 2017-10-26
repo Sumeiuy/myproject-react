@@ -774,6 +774,11 @@ export default class RejectionAndAmendment extends PureComponent {
             )
           }
           {
+            // 咨讯订阅调整产品三匹配信息
+            !this.judgeSubtypeNow([commadj.single, commadj.subscribe]) ? null
+            : (<ThreeMatchTip info={threeMatchInfo} />)
+          }
+          {
             // 资讯退订中的资讯产品选择
             !this.judgeSubtypeNow(commadj.unsubscribe) ? null
             : (

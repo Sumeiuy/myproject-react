@@ -35,6 +35,7 @@ const effects = {
   searchDrafter: 'app/getDrafterList',
   searchCust: 'app/getCustomerList',
   custRange: 'app/getCustRange',
+  filterApproval: 'app/getApprovePersonList',
   detail: 'commission/getCommissionDetail',
   singleDetail: 'commission/getSingleDetail',
   subscribeDetail: 'commission/getSubscribeDetail',
@@ -61,6 +62,8 @@ const mapStateToProps = state => ({
   empInfo: state.app.empInfo,
   // 左侧里诶包
   list: state.app.seibleList,
+  // 审批人列表
+  approvePersonList: state.app.approvePersonList,
   // 组织结构树
   custRange: state.app.custRange,
   // 获取列表数据进程
@@ -141,6 +144,8 @@ const mapDispatchToProps = {
   getProductList: getDataFunction(false, effects.productList),
   // 查询审批人员列表
   getAprovalUserList: getDataFunction(false, effects.approver),
+  // 获取审批人列表
+  getApprovePersonList: getDataFunction(false, effects.filterApproval),
   // 校验用户资格
   validateCustInfo: getDataFunction(false, effects.validate),
   // 通过关键字，查询可选的可申请用户列表
@@ -219,6 +224,8 @@ export default class CommissionHome extends PureComponent {
     getUnSubscribelProList: PropTypes.func.isRequired,
     subscribelProList: PropTypes.array.isRequired,
     unSubscribelProList: PropTypes.array.isRequired,
+    approvePersonList: PropTypes.array.isRequired,
+    getApprovePersonList: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -521,6 +528,17 @@ export default class CommissionHome extends PureComponent {
     });
   }
 
+  // 筛选审批人
+  @autobind
+  toSearchApprove(value) {
+    this.props.getApprovePersonList({
+      keyword: value,
+      type: pageType,
+      pageSize: 10,
+      pageNum: 1,
+    });
+  }
+
   render() {
     const {
       location,
@@ -555,6 +573,7 @@ export default class CommissionHome extends PureComponent {
       subscribelProList,
       getUnSubscribelProList,
       unSubscribelProList,
+      approvePersonList,
     } = this.props;
     if (_.isEmpty(custRange)) {
       return null;
@@ -575,6 +594,8 @@ export default class CommissionHome extends PureComponent {
         customerList={filterCustList}
         custRange={custRange}
         creatSeibelModal={this.handleCreateBtnClick}
+        toSearchApprove={this.toSearchApprove}
+        approveList={approvePersonList}
       />
     );
     const leftPanel = (
