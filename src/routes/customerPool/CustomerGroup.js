@@ -1,8 +1,8 @@
 /*
  * @Author: zhuyanwen
  * @Date: 2017-10-09 13:25:51
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-24 09:23:40
+ * @Last Modified by:   K0240008
+ * @Last Modified time: 2017-10-26 16:36:07
  * @description: 客户分组功能
  */
 
@@ -329,7 +329,6 @@ export default class CustomerGroup extends PureComponent {
 
   render() {
     const {
-      goBack,
       push,
       cusgroupList,
       cusgroupPage,
@@ -400,7 +399,7 @@ export default class CustomerGroup extends PureComponent {
                     <p className={styles.description}>已选目标客户<b>&nbsp;{count}&nbsp;</b>户</p>
                   </Col>
                   <Col span={12}>
-                    <Button onClick={goBack}>取消</Button>
+                    <Button onClick={this.closeTab}>取消</Button>
                     <Button onClick={this.handleSubmit} type="primary">保存</Button>
                   </Col>
                 </Row>
@@ -410,7 +409,7 @@ export default class CustomerGroup extends PureComponent {
               <div className={styles.newGroupForm}>
                 <Row className={styles.groupForm}>
                   <AddNewGroup
-                    goBack={goBack}
+                    goBack={this.closeTab}
                     onSubmit={this.handleNewGroupSubmit}
                     count={count}
                   />
