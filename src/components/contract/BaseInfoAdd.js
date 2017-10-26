@@ -61,6 +61,8 @@ export default class BaseInfoEdit extends PureComponent {
     // 更改操作类型时重置表单数据
     onReset: PropTypes.func.isRequired,
     getFlowStepInfo: PropTypes.func.isRequired,
+    // 清除退订时所查询合约详情
+    resetUnsubscribeDetail: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -115,10 +117,17 @@ export default class BaseInfoEdit extends PureComponent {
       [key]: value,
     }, () => {
       this.transferDataToHome();
-      const { operation, subType, client } = this.state;
+      const { operation } = this.state;
       // 当前操作类型为“退订”并且子类型变化的时候触发合作合约编号查询
       if (operation === unsubscribe && key === 'subType') {
-        this.props.onSearchContractNum({ subType, client });
+        this.setState({
+          ...this.state,
+          contractNum: {
+            id: '',
+          },
+        }, () => {
+          this.changeSubTypeOrClient();
+        });
       }
       // 操作类型发生变化时重置所有填入的数据
       if (key === 'operation' && value !== oldOperation) {
@@ -136,12 +145,29 @@ export default class BaseInfoEdit extends PureComponent {
       client: value,
     }, () => {
       this.transferDataToHome();
-      const { operation, subType, client } = this.state;
+      const { operation } = this.state;
       // 当前操作类型为“退订”并且子类型变化的时候触发合作合约编号查询
       if (operation === unsubscribe) {
-        this.props.onSearchContractNum({ subType, client });
+        this.setState({
+          ...this.state,
+          contractNum: {
+            id: '',
+          },
+        }, () => {
+          this.changeSubTypeOrClient();
+        });
       }
     });
+  }
+
+  // 子类型或客户发生变化时的操作
+  @autobind
+  changeSubTypeOrClient() {
+    const { subType, client } = this.state;
+    this.selectContractComponent.clearValue();
+    this.props.resetUnsubscribeDetail();
+    this.props.onSearchContractNum({ subType, client });
+    this.transferDataToHome();
   }
 
   // 根据关键字查询客户
@@ -231,7 +257,6 @@ export default class BaseInfoEdit extends PureComponent {
         <DropDownSelect
           placeholder="合约编号"
           showObjKey="id"
-          objId="id"
           value={this.state.contractNum.id || ''}
           searchList={contractNumList}
           emitSelectItem={this.handleSelectContractNum}
