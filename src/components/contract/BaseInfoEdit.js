@@ -3,7 +3,7 @@
 * @Author: XuWenKang
 * @Date:   2017-09-20 13:47:07
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-24 21:33:15
+ * @Last Modified time: 2017-10-26 17:01:53
 */
 
 import React, { PureComponent } from 'react';
@@ -29,6 +29,8 @@ const EMPTY_PARAM = '暂无';
 // 子类型列表
 const childTypeList = _.filter(seibelConfig.contract.subType, v => v.label !== '全部');
 console.warn('childtypelist', childTypeList);
+// 退订
+const unsubscribe = '2';
 // const EMPTY_OBJECT = {};
 // const EMPTY_ARRAY = [];
 // 时间选择组件样式
@@ -57,6 +59,7 @@ export default class BaseInfoEdit extends PureComponent {
       contractStarDate: dateFormat(baseInfo.startDt),
       contractPalidity: dateFormat(baseInfo.vailDt),
       remark: baseInfo.description,
+      tdDescription: baseInfo.tdDescription,
       id: '',
       oldData: {
         ...baseInfo,
@@ -94,9 +97,15 @@ export default class BaseInfoEdit extends PureComponent {
   // 更改备注
   @autobind
   handleChangeRemark(e) {
+    const {
+      contractDetail: { baseInfo },
+    } = this.props;
+    // 是否是退订
+    const isSubscribe = baseInfo.workflowName === unsubscribe;
+    const desc = isSubscribe ? 'tdDescription' : 'remark';
     this.setState({
       ...this.state,
-      remark: e.target.value,
+      [desc]: e.target.value,
     }, this.transferDataToHome);
   }
 
@@ -122,6 +131,7 @@ export default class BaseInfoEdit extends PureComponent {
       vailDt: data.contractPalidity || oldData.vailDt,
       // 备注
       description: data.remark || oldData.description,
+      tdDescription: data.tdDescription || oldData.tdDescription,
     };
     this.props.onChange(obj);
   }
@@ -130,42 +140,55 @@ export default class BaseInfoEdit extends PureComponent {
     const {
       contractDetail: { baseInfo },
     } = this.props;
-    const { oldData } = this.state;
+    console.warn('edit contractDetail', baseInfo);
+    const { oldData, contractStarDate, contractPalidity } = this.state;
+    // 是否是退订
+    const isSubscribe = baseInfo.workflowName === unsubscribe;
     return (
       <div className={styles.editWrapper}>
         <InfoTitle head="基本信息" />
         <InfoItem label="操作类型" value={this.getOperationType(baseInfo.workflowName)} />
         <InfoItem label="子类型" value={this.state.childType} />
         <InfoItem label="客户" value={`${oldData.custName} ${oldData.econNum}`} />
-        <InfoForm label="合约开始日期" required>
-          <DatePicker
-            name="contractStarDate"
-            value={
-              this.state.contractStarDate ?
-              moment(this.state.contractStarDate, 'YYYY-MM-DD')
-              :
-              ''
-            }
-            onChange={this.handleChangeDate}
-            boxStyle={datePickerBoxStyle}
-          />
-        </InfoForm>
-        <InfoForm label="合约有效期">
-          <DatePicker
-            name="contractPalidity"
-            value={
-              this.state.contractPalidity ?
-              moment(this.state.contractPalidity, 'YYYY-MM-DD')
-              :
-              ''
-            }
-            onChange={this.handleChangeDate}
-            boxStyle={datePickerBoxStyle}
-          />
-        </InfoForm>
+        {
+          isSubscribe ?
+            <InfoItem label="合约开始日期" value={contractStarDate} />
+          :
+            <InfoForm label="合约开始日期" required>
+              <DatePicker
+                name="contractStarDate"
+                value={
+                  contractStarDate ?
+                  moment(contractStarDate, 'YYYY-MM-DD')
+                  :
+                  ''
+                }
+                onChange={this.handleChangeDate}
+                boxStyle={datePickerBoxStyle}
+              />
+            </InfoForm>
+        }
+        {
+          isSubscribe ?
+            <InfoItem label="合约有效期" value={contractPalidity} />
+          :
+            <InfoForm label="合约有效期">
+              <DatePicker
+                name="contractPalidity"
+                value={
+                  contractPalidity ?
+                  moment(contractPalidity, 'YYYY-MM-DD')
+                  :
+                  ''
+                }
+                onChange={this.handleChangeDate}
+                boxStyle={datePickerBoxStyle}
+              />
+            </InfoForm>
+        }
         <InfoForm label="备注">
           <TextArea
-            value={this.state.remark}
+            value={isSubscribe ? baseInfo.tdDescription : baseInfo.description}
             onChange={this.handleChangeRemark}
           />
         </InfoForm>

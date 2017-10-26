@@ -12,6 +12,7 @@ import CustRange from '../../pageCommon/SeibelCustRange';
 import DropDownSelect from '../dropdownSelect';
 import Button from '../Button';
 import styles from '../../style/jiraLayout.less';
+import { fspContainer } from '../../../config';
 
 const allowPermission = 'HTSC 综合服务-营业部执行岗';
 const permissionText = '营业部服务岗';
@@ -164,14 +165,18 @@ export default class Pageheader extends PureComponent {
     // 新建按钮权限
     let hasPermission = true;
     if (pathname === '/contract') {
-      // 合约合约时判断权限
-      // 职责
-      const empRespList = empInfo.empRespList;
-      // 职位
-      const empPostnList = empInfo.empPostnList;
-      const filterResp = _.filter(empRespList, o => o.respName === allowPermission);
-      const filterPostn = _.filter(empPostnList, o => o.postnName.indexOf(permissionText) !== -1);
-      hasPermission = Boolean(filterResp.length) && Boolean(filterPostn.length);
+      const fsp = document.querySelector(fspContainer.container);
+      if (fsp) {
+        // 合约合约时判断权限
+        // 职责 职位
+        const { empRespList, empPostnList } = empInfo;
+        // fsp 里的职位字段
+        const fspPostnId = window.forReactPosition ? (window.forReactPosition.pstnId || '') : '';
+        const filterResp = _.filter(empRespList, o => o.respName === allowPermission);
+        const filterPtId = _.filter(empPostnList, o => o.postnId === fspPostnId);
+        const filterPostn = _.filter(filterPtId, o => o.postnName.indexOf(permissionText) !== -1);
+        hasPermission = Boolean(filterResp.length) && Boolean(filterPostn.length);
+      }
     }
     console.warn('hasPermission', hasPermission);
     const operateElement = needOperate ?

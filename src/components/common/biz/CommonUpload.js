@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 15:02:49
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-25 13:30:17
+ * @Last Modified time: 2017-10-26 15:22:48
  */
 /**
  * 常用说明
@@ -32,7 +32,7 @@ import PropTypes from 'prop-types';
 import { Progress, Popconfirm, Upload, message, Popover, Row, Col } from 'antd';
 import { autobind } from 'core-decorators';
 import moment from 'moment';
-// import _ from 'lodash';
+import _ from 'lodash';
 import { connect } from 'react-redux';
 import Button from '../Button';
 import { request } from '../../../config';
@@ -67,7 +67,7 @@ export default class CommonUpload extends PureComponent {
     uploadAttachment: PropTypes.func,
     // 每个单子对应的唯一附件表 ID，默认为 ''
     attachment: PropTypes.string,
-    attachmentList: PropTypes.array,
+    attachmentList: PropTypes.array.isRequired,
     edit: PropTypes.bool,
     // 是否需要默认文字-“暂无附件”，默认为 true
     needDefaultText: PropTypes.bool,
@@ -79,7 +79,6 @@ export default class CommonUpload extends PureComponent {
     deleteAttachment: () => {},
     uploadAttachment: () => {},
     attachment: '',
-    attachmentList: [],
     deleteAttachmentList: [],
     edit: false,
     needDefaultText: true,
@@ -101,13 +100,18 @@ export default class CommonUpload extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { deleteAttachmentLoading: preDAL } = this.props;
-    const { deleteAttachmentLoading: nextDAL } = nextProps;
+    const { deleteAttachmentLoading: preDAL, attachmentList: preAL } = this.props;
+    const { deleteAttachmentLoading: nextDAL, attachmentList: nextAL } = nextProps;
     if ((preDAL && !nextDAL)) {
       const { deleteAttachmentList } = nextProps;
       this.setState({
         fileList: deleteAttachmentList, // 文件列表
         percent: 0,
+      });
+    }
+    if (!_.isEqual(preAL, nextAL)) {
+      this.setState({
+        fileList: nextAL, // 文件列表
       });
     }
   }
@@ -234,7 +238,7 @@ export default class CommonUpload extends PureComponent {
                         placement="right"
                         content={popoverHtml}
                         trigger="hover"
-                        mouseLeaveDelay="0.3"
+                        mouseLeaveDelay={0.3}
                         getPopupContainer={this.findFileListNode}
                       >
                         <p className={styles.fileItemText} title={fileName}>
