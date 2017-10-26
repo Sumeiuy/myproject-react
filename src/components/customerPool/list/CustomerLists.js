@@ -388,7 +388,7 @@ export default class CustomerLists extends PureComponent {
     } = this.props;
     if (selectedIds) {
       const selectedIdsArr = selectedIds.split(',');
-      this.openByIds(url, selectedIdsArr, selectedIdsArr.length, title, id, entertype);
+      this.openByIds(url, condition, selectedIdsArr, selectedIdsArr.length, title, id, entertype);
     } else if (selectAll) {
       this.openByAllSelect(url, condition, page.total, title, id, entertype);
     }
@@ -396,7 +396,7 @@ export default class CustomerLists extends PureComponent {
 
   // 单个点击选中时跳转到新建分组或者发起任务
   @autobind
-  openByIds(url, ids, count, title, id, entertype) {
+  openByIds(url, condition, ids, count, title, id, entertype) {
     // debugger
     const tmpArr = [];
     _(ids).forEach((item) => {
@@ -404,11 +404,13 @@ export default class CustomerLists extends PureComponent {
     });
     const idStr = encodeURIComponent(tmpArr.join(','));
     const name = encodeURIComponent(ids[0].split('.')[1]);
+    const condt = encodeURIComponent(JSON.stringify(condition));
     const obj = {
       ids: idStr,
       count,
       entertype,
       name,
+      condition: condt,
     };
     if (document.querySelector(fspContainer.container)) {
       const newurl = `${url}?${helper.queryToString(obj)}`;
