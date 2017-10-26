@@ -110,7 +110,7 @@ export default class SixMonthEarnings extends PureComponent {
           onMouseEnter={this.debounced}
           onMouseLeave={this.handleMouseLeave}
         >
-          查看详情
+          详情
         </p>
         <div
           className={`${styles.showCharts}`}

@@ -30,9 +30,18 @@ export default class AddCusSuccess extends PureComponent {
   @autobind
   LinkToGroupManage() {
     const { push } = this.props;
-    push({
-      pathname: '/customerPool/customerGroupManage',
-    });
+    const url = '/customerPool/customerGroupManage';
+    const param = {
+      id: 'FSP_CUST_GROUP_MANAGE',
+      title: '客户分组管理',
+    };
+    if (document.querySelector(fspContainer.container)) {
+      fspGlobal.openRctTab({ url, param });
+    } else {
+      push({
+        pathname: url,
+      });
+    }
   }
 
   // 返回首页
