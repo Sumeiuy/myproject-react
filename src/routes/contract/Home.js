@@ -499,10 +499,12 @@ export default class Contract extends PureComponent {
     let clauseStatus = true;
     tmpArr.forEach((v) => {
       v.forEach((sv) => {
-        if (tmpObj[sv.divIntegrationId]) {
-          clauseStatus = false;
-        } else {
-          tmpObj[sv.divIntegrationId] = 1;
+        if (v.length > 1) {
+          if (tmpObj[sv.divIntegrationId]) {
+            clauseStatus = false;
+          } else {
+            tmpObj[sv.divIntegrationId] = 1;
+          }
         }
       });
     });
