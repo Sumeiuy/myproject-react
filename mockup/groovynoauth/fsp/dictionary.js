@@ -1450,8 +1450,7 @@ exports.response = function (req, res) {
           "userType": "performanceBusinessOpenCustPool", 
           "defaultTaskType": "stockCustVisit", 
           "taskName": null, 
-          "taskDesc": "用户在#{开户日}开户，建议跟踪服务了解客户是否有问题需要解决。
-  注：如果客户状态为流失，则：用户在#{流失日}流失，建议跟踪服务了解客户是否有问题需要解决。", 
+          "taskDesc": "用户在#{开户日}开户，建议跟踪服务了解客户是否有问题需要解决。  注：如果客户状态为流失，则：用户在#{流失日}流失，建议跟踪服务了解客户是否有问题需要解决。", 
           "defaultExecuteType": "Chance"
         }, 
         {

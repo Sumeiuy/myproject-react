@@ -169,9 +169,10 @@ export default class CustomerRow extends PureComponent {
 
   @autobind
   createModal(listItem) {
-    const { pOrO, custId } = listItem;
+    const { pOrO, custId, name } = listItem;
     const { createContact } = this.props;
     createContact({
+      custName: name,
       custId,
       custType: (!pOrO || pOrO === 'P') ? 'per' : 'org',
     });
