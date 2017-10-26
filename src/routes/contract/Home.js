@@ -396,6 +396,25 @@ export default class Contract extends PureComponent {
     });
   }
 
+  // 根据传入的条款列表和Key返回分类后的二维数组
+  @autobind
+  getTwoDimensionClauseList(list, key) {
+    const uniqedArr = _.uniqBy(list, key);
+    const tmpArr1 = [];
+    uniqedArr.forEach((v) => {
+      const paraName = v[key];
+      let tmpArr2 = [];
+      list.forEach((sv) => {
+        if (paraName === sv[key]) {
+          tmpArr2.push(sv);
+        }
+      });
+      tmpArr1.push(tmpArr2);
+      tmpArr2 = [];
+    });
+    return tmpArr1;
+  }
+
   /**
    * 检查部分属性是否相同
    * @param {*} prevQuery 前一次query
@@ -472,28 +491,33 @@ export default class Contract extends PureComponent {
     return startDate > vailDate;
   }
 
+  // 检查每个每个部门只能选一种合约条款
+  @autobind
+  checkClauseIsUniqueness(list) {
+    const tmpArr = this.getTwoDimensionClauseList(list, 'termsName');
+    const tmpObj = {};
+    let clauseStatus = true;
+    tmpArr.forEach((v) => {
+      v.forEach((sv) => {
+        if (tmpObj[sv.divIntegrationId]) {
+          clauseStatus = false;
+        } else {
+          tmpObj[sv.divIntegrationId] = 1;
+        }
+      });
+    });
+    return clauseStatus;
+  }
 
   // 检查合约条款值是否合法
   @autobind
   checkClauseIsLegal(list) {
-    const uniqedArr = _.uniqBy(list, 'paraName');
-    const arr1 = [];
+    const tmpArr = this.getTwoDimensionClauseList(list, 'paraName');
     let clauseStatus = true;
-    uniqedArr.forEach((v) => {
-      const paraName = v.paraName;
-      let arr2 = [];
-      list.forEach((sv) => {
-        if (paraName === sv.paraName) {
-          arr2.push(sv);
-        }
-      });
-      arr1.push(arr2);
-      arr2 = [];
-    });
-    for (let i = 0; i < arr1.length; i++) {
-      if (arr1[i][0].paraDisplayName.indexOf('比例') > -1) {
+    for (let i = 0; i < tmpArr.length; i++) {
+      if (tmpArr[i][0].paraDisplayName.indexOf('比例') > -1) {
         let result = 0;
-        arr1[i].forEach((v) => {
+        tmpArr[i].forEach((v) => {
           result += Number(v.paraVal);
         });
         if (+result !== 1) {
@@ -784,6 +808,10 @@ export default class Contract extends PureComponent {
           message.error('合约条款中比例明细参数的值加起来必须要等于1');
           return;
         }
+        if (!this.checkClauseIsUniqueness(contractFormData.terms)) {
+          message.error('合约条款中每个部门不能有相同的合约条款！');
+          return;
+        }
         payload = contractFormData;
         console.warn('新建窗口所有数据完毕 payload', payload);
         // 数据判断完毕，请求接口
@@ -808,6 +836,10 @@ export default class Contract extends PureComponent {
       }
       if (!this.checkClauseIsLegal(contractFormData.terms)) {
         message.error('合约条款中比例明细参数的值加起来必须要等于1');
+        return;
+      }
+      if (!this.checkClauseIsUniqueness(contractFormData.terms)) {
+        message.error('合约条款中每个部门不能有相同的合约条款！');
         return;
       }
       payload = contractFormData;
@@ -964,6 +996,7 @@ export default class Contract extends PureComponent {
       getFlowStepInfo,
       empInfo,
       approvePersonList,
+      resetUnsubscribeDetail,
     } = this.props;
     const {
       addFormModal,
@@ -1038,6 +1071,8 @@ export default class Contract extends PureComponent {
       flowStepInfo: addFlowStepInfo,
       // 获取审批人
       getFlowStepInfo,
+      // 清空退订合作合约详情
+      resetUnsubscribeDetail,
     };
     const addFormModalProps = {
       modalKey: 'addFormModal',
