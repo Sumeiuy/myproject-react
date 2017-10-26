@@ -25,7 +25,6 @@
  * supportSearchKey: 不必要,支持通过搜索的key（筛选用），时一个二维数组。
  *                  二维数组（匹配分：模糊和精准），数据顺序固定，第一个是精准匹配数组，第二个是模糊匹配数组
  * aboutRate: 不必要, 长度，内容顺序 固定,第一个是目标佣金率（string类型），第二个是拿到表中对象佣金率的key（string类型）
- * totalData: 不必要, 总数据源（搜索用的）
  */
 import React, { PropTypes, Component } from 'react';
 import { Table, Input, Checkbox, Tooltip } from 'antd';
@@ -120,7 +119,6 @@ export default class TableTransfer extends Component {
     defaultCheckKey: PropTypes.string,
     supportSearchKey: PropTypes.array,
     aboutRate: PropTypes.array,
-    totalData: PropTypes.array,
   }
 
   static defaultProps = {
@@ -135,7 +133,6 @@ export default class TableTransfer extends Component {
     defaultCheckKey: '',
     supportSearchKey: [],
     aboutRate: ['', ''],
-    totalData: [],
   }
 
   constructor(props) {
@@ -153,6 +150,7 @@ export default class TableTransfer extends Component {
     const initFirstColumns = this.initTableColumn(firstColumns);
     const initSecondColumns = this.initTableColumn(secondColumns);
     this.state = {
+      totalData: [...firstData, ...secondData], // 搜索筛选的数据源，对使用者透明
       checked: this.getAllDefaultCheck(initSecondArray, rowKey),
       firstArray: this.hiddenChildren(initFirstArray),
       secondArray: initSecondArray,
@@ -238,13 +236,14 @@ export default class TableTransfer extends Component {
         if (!_.isEmpty(item.children)) {
           const newChildren = item.children.map(
             (child) => {
+              const checkFlag = child[defaultCheckedKey] === 'Y';
               const newChild = {
                 ...child,
                 parentKey: item[rowKey],
-                tip: `${child.default ? '取消可选产品' : '标记可选产品'}`,
+                tip: checkFlag ? '取消可选产品' : '标记可选产品',
               };
               return _.isEmpty(defaultCheckedKey) ?
-                newChild : { ...newChild, defaultChecked: child[defaultCheckedKey] };
+                newChild : { ...newChild, defaultChecked: checkFlag };
             },
           );
           return { ...item, children: newChildren };
@@ -461,8 +460,8 @@ export default class TableTransfer extends Component {
 
   @autobind
   handleSearch(keyword) {
-    const { supportSearchKey, totalData, rowKey, defaultCheckKey } = this.props;
-    const { secondArray } = this.state;
+    const { supportSearchKey, rowKey, defaultCheckKey } = this.props;
+    const { secondArray, totalData } = this.state;
     // 左边表中数据，不能展开
     const initFistData = this.hiddenChildren(
       this.initTableData(totalData, rowKey, defaultCheckKey),
