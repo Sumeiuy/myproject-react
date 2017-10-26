@@ -2,9 +2,8 @@
  * @Description: 合作合约 home 页面
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
- * @Last Modified by:   XuWenKang
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-25 22:12:58
+ * @Last Modified time: 2017-10-26 16:51:40
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
@@ -14,7 +13,8 @@ import { message, Modal } from 'antd';
 import _ from 'lodash';
 import { constructSeibelPostBody, getEmpId } from '../../utils/helper';
 import SplitPanel from '../../components/common/splitPanel/SplitPanel';
-import ContractHeader from '../../components/common/biz/SeibelHeader';
+// import ContractHeader from '../../components/common/biz/SeibelHeader';
+import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
 import Detail from '../../components/contract/Detail';
 import ContractList from '../../components/common/biz/CommonList';
 import seibelColumns from '../../components/common/biz/seibelColumns';
@@ -48,15 +48,9 @@ const mapStateToProps = state => ({
   // 列表请求状态
   // 获取列表数据进程
   seibleListLoading: state.loading.effects['app/getSeibleList'],
-  // 查询拟稿人
-  drafterList: state.app.drafterList,
-  // 查询部门
-  custRange: state.app.custRange,
   // 查询客户
   customerList: state.app.customerList,
   // 查询右侧详情
-  // 审批人列表
-  approvePersonList: state.app.approvePersonList,
   baseInfo: state.contract.baseInfo,
   baseInfoLoading: state.loading.effects['contract/getBaseInfo'],
   // 退订时查询详情
@@ -91,14 +85,8 @@ const mapDispatchToProps = {
   replace: routerRedux.replace,
   // 获取左侧列表
   getSeibleList: fetchDataFunction(true, 'app/getSeibleList'),
-  // 获取拟稿人
-  getDrafterList: fetchDataFunction(false, 'app/getDrafterList'),
-  // 获取部门
-  getCustRange: fetchDataFunction(false, 'app/getCustRange'),
   // 获取客户列表
   getCustomerList: fetchDataFunction(false, 'app/getCustomerList'),
-  // 获取审批人列表
-  getApprovePersonList: fetchDataFunction(false, 'app/getApprovePersonList'),
   // 获取右侧详情
   getBaseInfo: fetchDataFunction(true, 'contract/getBaseInfo'),
   // 重置退订合约详情数据
@@ -134,12 +122,6 @@ export default class Contract extends PureComponent {
     getSeibleList: PropTypes.func.isRequired,
     seibleList: PropTypes.object.isRequired,
     seibleListLoading: PropTypes.bool,
-    // 查询拟稿人
-    getDrafterList: PropTypes.func.isRequired,
-    drafterList: PropTypes.array.isRequired,
-    // 查询部门
-    getCustRange: PropTypes.func.isRequired,
-    custRange: PropTypes.array.isRequired,
     // 查询客户
     getCustomerList: PropTypes.func.isRequired,
     customerList: PropTypes.array.isRequired,
@@ -185,8 +167,6 @@ export default class Contract extends PureComponent {
     postDoApproveLoading: PropTypes.bool,
     // 登陆人信息
     empInfo: PropTypes.object.isRequired,
-    getApprovePersonList: PropTypes.func.isRequired,
-    approvePersonList: PropTypes.array,
   }
 
   static defaultProps = {
@@ -201,7 +181,6 @@ export default class Contract extends PureComponent {
     addFlowStepInfo: EMPTY_OBJECT,
     unsubFlowStepInfo: EMPTY_OBJECT,
     doApprove: EMPTY_OBJECT,
-    approvePersonList: EMPTY_LIST,
   }
 
   constructor(props) {
@@ -246,12 +225,10 @@ export default class Contract extends PureComponent {
         },
       },
       getSeibleList,
-      getCustRange,
       getClauseNameList,
     } = this.props;
     const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
 
-    getCustRange(EMPTY_OBJECT);
     // 默认筛选条件
     getSeibleList({
       ...params,
@@ -354,6 +331,7 @@ export default class Contract extends PureComponent {
       this.setState({
         tempApproveData: EMPTY_OBJECT,
       });
+      console.warn('doApprove 结束，关闭弹窗');
       this.closeModal('approverModal');
       this.closeModal('addFormModal');
       this.closeModal('editFormModal');
@@ -657,28 +635,6 @@ export default class Contract extends PureComponent {
   //     // });
   //   }
   // }
-
-  // 查询拟稿人
-  @autobind
-  toSearchDrafter(value) {
-    const { getDrafterList } = this.props;
-    getDrafterList({
-      keyword: value,
-      type: pageType,
-    });
-  }
-
-  // 查询审批人
-  @autobind
-  toSearchApprove(value) {
-    const { getApprovePersonList } = this.props;
-    getApprovePersonList({
-      keyword: value,
-      type: pageType,
-      pageSize: 10,
-      pageNum: 1,
-    });
-  }
 
   // 查询客户
   @autobind
@@ -985,8 +941,6 @@ export default class Contract extends PureComponent {
       location,
       replace,
       seibleList,
-      drafterList,
-      custRange,
       customerList,
       baseInfo,
       attachmentList,
@@ -997,7 +951,11 @@ export default class Contract extends PureComponent {
       addFlowStepInfo,
       getFlowStepInfo,
       empInfo,
-      approvePersonList,
+      location: {
+        query: {
+          currentId,
+        },
+      },
       resetUnsubscribeDetail,
     } = this.props;
     const {
@@ -1008,24 +966,15 @@ export default class Contract extends PureComponent {
       hasEditPermission,
       flowAuditors,
     } = this.state;
-    if (!custRange || !custRange.length) {
-      return null;
-    }
     const isEmpty = _.isEmpty(seibleList.resultData);
     const topPanel = (
-      <ContractHeader
+      <ConnectedSeibelHeader
         location={location}
         replace={replace}
         page="contractPage"
+        pageType={pageType}
         subtypeOptions={subType}
         stateOptions={status}
-        toSearchDrafter={this.toSearchDrafter}
-        toSearchCust={this.toSearchCust}
-        toSearchApprove={this.toSearchApprove}
-        approveList={approvePersonList}
-        drafterList={drafterList}
-        customerList={customerList}
-        custRange={custRange}
         creatSeibelModal={this.handleCreateBtnClick}
         operateOptions={operationList}
         needOperate
@@ -1044,6 +993,7 @@ export default class Contract extends PureComponent {
       <Detail
         baseInfo={baseInfo}
         attachmentList={attachmentList}
+        currentId={currentId}
         flowHistory={flowHistory}
         hasEditPermission={hasEditPermission}
         showEditModal={this.handleShowEditForm}
@@ -1056,7 +1006,6 @@ export default class Contract extends PureComponent {
       contractNumList,
       // 可申请客户列表
       onSearchCutList: this.handleSearchCutList,
-      // onSearchCutList: this.toSearchCust,
       custList: canApplyCustList,
       // 基本信息
       onSearchContractDetail: this.handleSearchContractDetail,
