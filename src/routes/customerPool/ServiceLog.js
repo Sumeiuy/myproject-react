@@ -31,6 +31,7 @@ const sixDate = moment(sixDay).format('YYYY-MM-DD HH:mm:ss');
 const effects = {
   getServiceLog: 'customerPool/getServiceLog',
   getServiceLogMore: 'customerPool/getServiceLogMore',
+  handleCollapseClick: 'contactModal/handleCollapseClick',  // 手动上传日志
 };
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
@@ -46,6 +47,7 @@ const mapDispatchToProps = {
   replace: routerRedux.replace,
   getServiceLog: fetchDataFunction(true, effects.getServiceLog),
   getServiceLogMore: fetchDataFunction(true, effects.getServiceLogMore),
+  handleCollapseClick: fetchDataFunction(false, effects.handleCollapseClick),
 };
 @connect(mapStateToProps, mapDispatchToProps)
 // @create()
@@ -57,6 +59,7 @@ export default class CreateTaskForm extends PureComponent {
     getServiceLogMore: PropTypes.func.isRequired,
     serviceLogData: PropTypes.array.isRequired,
     serviceLogMoreData: PropTypes.array.isRequired,
+    handleCollapseClick: PropTypes.func.isRequired,
     dict: PropTypes.object,
   };
   static defaultProps = {
@@ -91,9 +94,9 @@ export default class CreateTaskForm extends PureComponent {
         logData: serviceLogData,
       });
     }
-    this.setState({
-      showBtn: _.isEmpty(serviceLogData),
-    });
+    // this.setState({
+    //   showBtn: _.isEmpty(serviceLogData),
+    // });
     if (!_.isEqual(serviceLogMoreData, prevServiceLogMoreData)) {
       const newServiceLogData = _.concat(serviceLogData, serviceLogMoreData);
       this.setState({
@@ -189,10 +192,10 @@ export default class CreateTaskForm extends PureComponent {
   }
 
   render() {
-    const { dict } = this.props;
-    const { serveAllSource, serveAllType } = dict;
+    const { dict, handleCollapseClick } = this.props;
+    const { serveAllSource, serveAllType, executeTypes, serveWay } = dict;
     const { logData, showBtn } = this.state;
-    console.warn('showBtn--', showBtn, !showBtn);
+    console.warn('showBtn--', showBtn);
     return (
       <div className={styles.serviceInner}>
         <div
@@ -205,7 +208,7 @@ export default class CreateTaskForm extends PureComponent {
               <Col span={2} offset={1} className={styles.service_label}>
                 <label htmlFor="dd" >服务时间：</label>
               </Col>
-              <Col span={7} >
+              <Col span={8} >
                 <RangePicker
                   defaultValue={[moment(sixDate, dateFormat), moment(today, dateFormat)]}
                   format="YYYY-MM-DD HH:mm"
@@ -239,14 +242,16 @@ export default class CreateTaskForm extends PureComponent {
             <Col span={20} offset={2} className={styles.serviceLog}>
               <Collapse
                 data={logData}
-              // executeTypes={executeTypes}
+                executeTypes={executeTypes}
+                serveWay={serveWay}
+                handleCollapseClick={handleCollapseClick}
               />
             </Col>
           </Row>
           <Row
             className={
               classnames({
-                [styles.showBtn]: !showBtn,
+                [styles.showBtn]: showBtn,
               })
             }
           >

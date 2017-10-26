@@ -82,7 +82,7 @@ export default class TaskFlow extends PureComponent {
     getLabelInfo: PropTypes.func.isRequired,
     getLabelPeople: PropTypes.func.isRequired,
     circlePeopleData: PropTypes.array.isRequired,
-    peopleOfLabelData: PropTypes.array.isRequired,
+    peopleOfLabelData: PropTypes.object.isRequired,
     dict: PropTypes.object,
     saveCurrentTab: PropTypes.func.isRequired,
     currentTab: PropTypes.string.isRequired,
@@ -321,7 +321,7 @@ export default class TaskFlow extends PureComponent {
     } = this.props;
 
     const { taskFormData = EMPTY_OBJECT } = storedTaskFlowData;
-
+    const isShowTitle = true;
     const steps = [{
       title: '基本信息',
       content: <div className={styles.taskInner}>
@@ -330,6 +330,7 @@ export default class TaskFlow extends PureComponent {
           dict={dict}
           location={location}
           previousData={{ ...taskFormData }}
+          isShowTitle={isShowTitle}
         />
       </div>,
     }, {
