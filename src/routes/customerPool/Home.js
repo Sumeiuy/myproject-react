@@ -502,60 +502,62 @@ export default class Home extends PureComponent {
       empInfo,
     } = this.props;
     return (
-      <div className={styles.customerPoolWrap}>
-        <Search
-          data={hotWds}
-          queryHotPossibleWds={this.queryHotPossibleWds}
-          queryHistoryWdsList={this.queryHistoryWdsList}
-          queryHotWdsData={hotPossibleWdsList}
-          push={push}
-          historyWdsList={historyWdsList}
-          clearSuccess={clearState}
-          clearFun={this.clearHistoryList}
-          searchHistoryVal={searchHistoryVal}
-          saveSearchVal={this.handleSaveSearchVal}
-          location={location}
-        />
-        <div className={styles.poolContainer}>
-          <div className={styles.content}>
-            <ToBeDone
-              location={location}
-              push={push}
-              data={process}
-              motTaskCountData={motTaskCount}
-              authority={this.isHasAuthorize}
-            />
-            <Tabs
-              tabBarExtraContent={this.renderTabsExtra()}
-              defaultActiveKey="manage"
-              onTabClick={this.handleTabClick}
-            >
-              <TabPane tab="经营指标" key="manage">
-                <ManageIndicators
-                  empInfo={empInfo}
-                  push={push}
-                  indicators={manageIndicators}
-                  location={location}
-                  cycle={cycle}
-                  hsRateAndBusinessIndicator={hsRateAndBusinessIndicator}
-                />
-              </TabPane>
-              <TabPane tab="投顾绩效" key="performance">
-                <PerformanceIndicators
-                  empInfo={empInfo}
-                  push={push}
-                  indicators={performanceIndicators}
-                  location={location}
-                  cycle={cycle}
-                />
-              </TabPane>
-            </Tabs>
-          </div>
-          <div className={styles.viewpoint}>
-            <Viewpoint
-              information={information}
-              push={push}
-            />
+      <div className={styles.container}>
+        <div className={styles.customerPoolWrap}>
+          <Search
+            data={hotWds}
+            queryHotPossibleWds={this.queryHotPossibleWds}
+            queryHistoryWdsList={this.queryHistoryWdsList}
+            queryHotWdsData={hotPossibleWdsList}
+            push={push}
+            historyWdsList={historyWdsList}
+            clearSuccess={clearState}
+            clearFun={this.clearHistoryList}
+            searchHistoryVal={searchHistoryVal}
+            saveSearchVal={this.handleSaveSearchVal}
+            location={location}
+          />
+          <div className={styles.poolContainer}>
+            <div className={styles.content}>
+              <ToBeDone
+                location={location}
+                push={push}
+                data={process}
+                motTaskCountData={motTaskCount}
+                authority={this.isHasAuthorize}
+              />
+              <Tabs
+                tabBarExtraContent={this.renderTabsExtra()}
+                defaultActiveKey="manage"
+                onTabClick={this.handleTabClick}
+              >
+                <TabPane tab="经营指标" key="manage">
+                  <ManageIndicators
+                    empInfo={empInfo}
+                    push={push}
+                    indicators={manageIndicators}
+                    location={location}
+                    cycle={cycle}
+                    hsRateAndBusinessIndicator={hsRateAndBusinessIndicator}
+                  />
+                </TabPane>
+                <TabPane tab="投顾绩效" key="performance">
+                  <PerformanceIndicators
+                    empInfo={empInfo}
+                    push={push}
+                    indicators={performanceIndicators}
+                    location={location}
+                    cycle={cycle}
+                  />
+                </TabPane>
+              </Tabs>
+            </div>
+            <div className={styles.viewpoint}>
+              <Viewpoint
+                information={information}
+                push={push}
+              />
+            </div>
           </div>
         </div>
       </div>

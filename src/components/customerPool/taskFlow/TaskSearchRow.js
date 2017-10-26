@@ -9,12 +9,14 @@ import { Radio, Modal, Button } from 'antd';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
+import { helper } from '../../../utils';
 import GroupTable from '../groupManage/GroupTable';
 import styles from './taskSearchRow.less';
 import tableStyles from '../groupManage/groupTable.less';
 
 
 const RadioGroup = Radio.Group;
+const orgId = window.orgId;
 // const EMPTY_LIST = [];
 
 const renderColumnTitle = [{
@@ -61,7 +63,6 @@ export default class TaskSearchRow extends PureComponent {
       totalRecordNum: 0,
     };
   }
-
   componentWillReceiveProps(nextProps) {
     const { peopleOfLabelData } = nextProps;
     this.setState({
@@ -83,12 +84,13 @@ export default class TaskSearchRow extends PureComponent {
       labelId: value.id,
       curPageNum,
       pageSize,
+      orgId,
+      ptyMngId: helper.getEmpId(),
     });
     this.setState({
       visible: true,
       totalRecordNum: value.customNum,
     });
-    console.log('curPageNum--', curPageNum, 'pageSize---', pageSize);
   }
 
   @autobind
@@ -99,7 +101,7 @@ export default class TaskSearchRow extends PureComponent {
   // 表格信息
   @autobind
   handleShowSizeChange(currentPageNum, changedPageSize) {
-    console.log('currentPageNum--', currentPageNum, 'changedPageSize--', changedPageSize);
+    // console.log('currentPageNum--', currentPageNum, 'changedPageSize--', changedPageSize);
     const { getLabelPeople } = this.props;
     getLabelPeople({
       curPageNum: currentPageNum,

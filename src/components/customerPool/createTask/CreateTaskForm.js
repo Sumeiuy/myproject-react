@@ -8,17 +8,12 @@ import React, { PropTypes, PureComponent } from 'react';
 import { Form, Mention } from 'antd';
 import _ from 'lodash';
 import moment from 'moment';
-// import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import styles from './createTaskForm.less';
 import TaskFormInfo from './TaskFormInfo';
 
 
-// const FormItem = Form.Item;
 const create = Form.create;
-// const Option = Select.Option;
-// const { TextArea } = Input;
-// const { toContentState } = Mention;
 const WEEK = ['日', '一', '二', '三', '四', '五', '六'];
 const { toString } = Mention;
 
@@ -63,10 +58,8 @@ export default class CreateTaskForm extends PureComponent {
       dict: { custIdexPlaceHolders },
       previousData,
     } = this.props;
-    // const { statusData } = this.state;
     const arr = [];
     _.map(custIdexPlaceHolders, (item) => {
-      // item.substring(1, item.length);
       arr.push(item.substring(1, item.length));
     });
     this.setState({
@@ -151,7 +144,6 @@ export default class CreateTaskForm extends PureComponent {
         firstUserName += '等';
       }
     }
-    console.warn('entertype--', entertype);
     switch (entertype) {
       case 'businessCustPool':
         defaultMissionName = '提醒客户办理已满足条件的业务';
@@ -229,7 +221,7 @@ export default class CreateTaskForm extends PureComponent {
       count,
       statusData,
     } = this.state;
-    console.log('state--', this.state);
+    // console.log('state--', this.state);
     return (
       <div>
         <div className={styles.task_title}>为{firstUserName} <b>{count}</b> 位客户新建任务</div>

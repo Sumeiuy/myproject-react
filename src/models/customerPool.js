@@ -119,8 +119,8 @@ export default {
         const params = queryString.parse(search);
         const serviceLogUrl = pathToRegexp('/customerPool/serviceLog').exec(pathname);
         const custGroupUrl = pathToRegexp('/customerPool/customerGroup').exec(pathname);
-        console.log('pathname---', pathname);
-        console.log('serviceLogUrl--', serviceLogUrl);
+        // console.log('pathname---', pathname);
+        // console.log('serviceLogUrl--', serviceLogUrl);
 
         if (serviceLogUrl) {
           const { pageSize, serveDateToPaged } = params;
