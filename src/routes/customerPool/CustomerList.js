@@ -11,7 +11,6 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { Row, Col } from 'antd';
 
-// import Icon from '../../components/common/Icon';
 import TimeCycle from '../../components/customerPool/list/TimeCycle';
 import CustomerTotal from '../../components/customerPool/list/CustomerTotal';
 import Filter from '../../components/customerPool/list/Filter';
@@ -27,7 +26,7 @@ const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const CUR_PAGE = 1; // 默认当前页
 const CUR_PAGESIZE = 10; // 默认页大小
-// const HTSC_RESPID = '1-46IDNZI'; // 首页指标查询
+
 // 根据不同的url中source的值，传给后端enterType值不同
 const ENTER_TYPE = {
   search: 'searchCustPool',
@@ -309,7 +308,7 @@ export default class CustomerList extends PureComponent {
       param.dateType = query.cycleSelect || (cycle[0] || {}).key;
       // 我的客户 和 没有权限时，custType=1,其余情况custType=3
       param.custType = CUST_MANAGER;
-      if (this.authority || (query.ptyMngId && query.ptyMngId !== empNum)) {
+      if (this.authority || (query.ptyMng && query.ptyMng.split('_')[1] !== empNum)) {
         param.custType = ORG;
       }
     }
