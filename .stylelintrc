@@ -17,6 +17,7 @@
     "selector-pseudo-element-colon-notation": null,
     "unit-no-unknown": null,
     "value-list-max-empty-lines": null,
-    "selector-pseudo-class-no-unknown": null
+    "selector-pseudo-class-no-unknown": null,
+    "property-no-unknown": null
   }
 }

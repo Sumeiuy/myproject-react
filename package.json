@@ -131,10 +131,19 @@
     "npm": ">= 3.0.0"
   },
   "lint-staged": {
-    "src/**/*.js": "eslint --ext .js",
-    "src/**/*.less": "stylelint --syntax less"
+    "renderer": "silent",
+    "subTaskConcurrency": 1,
+    "concurrent": false,
+    "linters": {
+      "src/**/*.js": "eslint --ext .js",
+      "src/**/*.less": "stylelint --syntax less"
+    }
   },
-  "pre-commit": [
-    "lint-staged"
-  ]
+  "pre-commit": {
+    "silent": true,
+    "run": [
+      "lint-staged"
+    ]
+  }
 }
+
