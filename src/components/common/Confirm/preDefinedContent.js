@@ -10,6 +10,8 @@ const preDefine = {
   close: '关闭弹框后，您编辑的信息将不会被保存，确认关闭？',
   changeproduct: '选择新的目标产品后，您之前所选择的客户会被清空!',
   wrongInput: '请输入数字,并且不低于0.15! ',
+  custExist: '客户已经存在',
+  custListMaxLength: '所添加的客户列表长度已经超过200人，不能再添加！',
 };
 
 export default preDefine;

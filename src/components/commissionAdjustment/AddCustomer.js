@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
+import confirm from '../common/Confirm/confirm';
 import OperationOfCustermorList from './OperationOfCustermorList';
 import CustomerTableList from './CutomerTableList';
 import ProcessConfirm from '../common/biz/ProcessConfirm';
@@ -90,7 +91,20 @@ export default class AddCustomer extends PureComponent {
     const { customerList } = this.state;
     // 判断是否已经存在改用户
     const exist = _.findIndex(customerList, o => o.cusId === customer.cusId) > -1;
-    if (exist) return;
+    // 如果存在，则不给添加
+    if (exist) {
+      confirm({
+        shortCut: 'custExist',
+      });
+      return;
+    }
+    // 如果客户列表中已经有200个客户，则不让再添加
+    if (customerList.length >= 200) {
+      confirm({
+        shortCut: 'custListMaxLength',
+      });
+      return;
+    }
     this.setState({
       customer,
     });
@@ -116,7 +130,7 @@ export default class AddCustomer extends PureComponent {
   handleDeleteCustomer() {
     const { customerList, selectList } = this.state;
     if (_.isEmpty(selectList)) return;
-    const newList = _.filter(customerList, item => _.includes(selectList, item.cusId));
+    const newList = _.filter(customerList, item => !_.includes(selectList, item.cusId));
     this.setState({
       customerList: newList,
       selectList: [],

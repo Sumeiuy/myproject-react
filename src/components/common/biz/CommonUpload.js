@@ -1,8 +1,8 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-09-22 15:02:49
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-26 15:22:48
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-10-26 18:32:48
  */
 /**
  * 常用说明
@@ -58,7 +58,6 @@ const mapDispatchToProps = {
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
-
 export default class CommonUpload extends PureComponent {
   static propTypes = {
     // 删除附件方法
@@ -296,4 +295,3 @@ export default class CommonUpload extends PureComponent {
     );
   }
 }
-
