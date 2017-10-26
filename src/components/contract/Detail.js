@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-19 09:37:42
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-25 20:25:22
+ * @Last Modified time: 2017-10-26 15:18:11
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -44,6 +44,7 @@ export default class Detail extends PureComponent {
     flowHistory: PropTypes.array,
     operationType: PropTypes.string,
     hasEditPermission: PropTypes.bool,
+    currentId: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -93,15 +94,25 @@ export default class Detail extends PureComponent {
       flowHistory,
       operationType,
       hasEditPermission,
+      currentId,
     } = this.props;
     const { terms } = this.state;
     const modifyBtnClass = classnames([styles.dcHeaderModifyBtn,
       { hide: this.state.statusType !== 'ready' },
     ]);
+    let uuid;
+    let description;
+    if (operationType === unsubscribe) {
+      uuid = baseInfo.uuid;
+      description = baseInfo.description;
+    } else {
+      uuid = baseInfo.tduuid;
+      description = baseInfo.tdDescription;
+    }
     const uploadProps = {
       attachmentList,
       uploadAttachment,
-      attachment: (operationType === unsubscribe ? baseInfo.uuid : baseInfo.tduuid) || '',
+      attachment: uuid || EMPTY_PARAM,
     };
     const nowStep = {
       // 当前步骤
@@ -135,7 +146,7 @@ export default class Detail extends PureComponent {
     return (
       <div className={styles.detailComponent}>
         <div className={styles.dcHeader}>
-          <span className={styles.dcHaderNumb}>编号{baseInfo.contractNum}</span>
+          <span className={styles.dcHaderNumb}>编号{currentId}</span>
           {
             hasEditPermission ?
               <span
@@ -153,7 +164,7 @@ export default class Detail extends PureComponent {
           <InfoItem label="客户" value={`${baseInfo.custName || EMPTY_PARAM} ${baseInfo.econNum || EMPTY_PARAM}`} />
           <InfoItem label="合约开始日期" value={dateFormat(baseInfo.startDt) || EMPTY_PARAM} />
           <InfoItem label="合约有效期" value={dateFormat(baseInfo.vailDt) || EMPTY_PARAM} />
-          <InfoItem label="备注" value={baseInfo.description || EMPTY_PARAM} />
+          <InfoItem label="备注" value={description || EMPTY_PARAM} />
         </div>
         <div className={styles.detailWrapper}>
           <InfoTitle head="拟稿信息" />
