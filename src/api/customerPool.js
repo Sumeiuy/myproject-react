@@ -116,6 +116,6 @@ export default function customerPool(api) {
     queryLabelPeople: query => api.post('/groovynoauth/fsp/cust/task/queryLabelPeople', query),
 
     // 提交任务流程
-    submitTaskFlow: query => api.post('/groovynoauth/fsp/cust/task/createTaskBak', query),
+    submitTaskFlow: query => api.post('/groovynoauth/fsp/cust/task/createTask', query),
   };
 }

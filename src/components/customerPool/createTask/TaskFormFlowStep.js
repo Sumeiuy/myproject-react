@@ -59,38 +59,30 @@ export default class TaskFlow extends PureComponent {
   }
 
   @autobind
-  handleCustSource() {
-    const { location: { query } } = this.props;
-    switch (query.entertype) {
+  handleCustSource(value) {
+    let custSources = '';
+    switch (value) {
       case 'businessCustPool':
-        this.setState({
-          custSource: '业务目标客户',
-        });
+        custSources = '业务目标客户';
         break;
       case 'searchCustPool':
-        this.setState({
-          custSource: '搜索目标客户',
-        });
+        custSources = '搜索目标客户';
         break;
       case 'performanceIncrementCustPool':
-        this.setState({
-          custSource: '绩效目标客户',
-        });
+        custSources = '绩效目标客户';
         break;
       case 'performanceBusinessOpenCustPool':
-        this.setState({
-          custSource: '绩效目标客户',
-        });
+        custSources = '绩效目标客户';
         break;
       default:
         break;
     }
+    return custSources;
   }
 
 
   @autobind
   handleNextStep() {
-    console.log(this.createTaskForm);
     const { current } = this.state;
     const { saveTaskFlowData, location: { query } } = this.props;
     this.createTaskForm.validateFields((err, values) => {
@@ -101,8 +93,8 @@ export default class TaskFlow extends PureComponent {
         });
         this.setState({
           current: current + 1,
+          custSource: this.handleCustSource(query.entertype),
         });
-        this.handleCustSource();
       } else {
         console.warn('templetDesc-----', values.templetDesc);
         message.error('请填写任务基本信息');
@@ -113,7 +105,6 @@ export default class TaskFlow extends PureComponent {
   @autobind
   closeTab() {
     // fspGlobal.closeRctTabById('RCT_FSP_TASK');
-    console.log(this.createTaskForm.getFieldsValue());
     fspGlobal.closeRctTabById('RCT_FSP_CUSTOMER_LIST');
   }
 
@@ -132,9 +123,8 @@ export default class TaskFlow extends PureComponent {
       pageSize,
       sortsReqList,
     } = custCondition;
-    console.warn(storedTaskFlowData.taskFormData);
     const params = storedTaskFlowData.taskFormData;
-    console.warn('custCondition--', custCondition);
+    // console.warn('custCondition--', custCondition);
     const data = {
       closingDate: moment(params.closingDate).format('YYYY-MM-DD'),
       executionType: params.executionType,
@@ -145,7 +135,6 @@ export default class TaskFlow extends PureComponent {
       triggerDate: moment(params.triggerDate).format('YYYY-MM-DD'),
       missionDesc: '1111',
     };
-    // console.warn()
     createTask({
       ...data,
       flowAuditorId,
@@ -153,7 +142,6 @@ export default class TaskFlow extends PureComponent {
       orgId,
       ptyMngId: helper.getEmpId(),
       searchReq: {
-          // ptyMngId: helper.getEmpId(),
         curPageNum,
         enterType,
         pageSize,
@@ -199,7 +187,6 @@ export default class TaskFlow extends PureComponent {
     } = this.props;
     const { executeTypes, taskTypes } = dict;
     const { query: { count } } = location;
-    console.log('storedTaskFlowData----', storedTaskFlowData);
     const steps = [{
       title: '基本信息',
       content: <CreateTaskForm

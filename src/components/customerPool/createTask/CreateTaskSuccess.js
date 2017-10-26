@@ -6,10 +6,12 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
+// import { withRouter } from 'dva/router';
 import ReactDOM from 'react-dom';
 import styles from './createTaskSuccess.less';
 import imgSrc from '../../../../static/images/createTask_success.png';
 import { fspGlobal } from '../../../utils';
+import { fspContainer } from '../../../config';
 import Button from '../../common/Button';
 
 let successSetInterval;
@@ -18,7 +20,8 @@ export default class CreateTaskSuccess extends PureComponent {
   static propTypes = {
     successType: PropTypes.bool,
     push: PropTypes.func.isRequired,
-    closeTab: PropTypes.func.isRequired,
+    onCloseTab: PropTypes.func.isRequired,
+    location: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -59,8 +62,8 @@ export default class CreateTaskSuccess extends PureComponent {
   }
 
   @autobind
-  goToIndex() {
-    const { closeTab, push, location: { state } } = this.props;
+  goToHome() {
+    const { onCloseTab, push, location: { state, query } } = this.props;
     const url = '/customerPool';
     const param = {
       id: 'tab-home',
@@ -68,11 +71,12 @@ export default class CreateTaskSuccess extends PureComponent {
     };
     if (document.querySelector(fspContainer.container)) {
       fspGlobal.openRctTab({ url, param });
-      closeTab();
+      onCloseTab();
     } else {
       push({
         pathname: url,
-        query: _.omit(state, 'noScrollTop'),
+        query,
+        state: _.omit(state, 'noScrollTop'),
       });
     }
   }
@@ -88,7 +92,7 @@ export default class CreateTaskSuccess extends PureComponent {
       title: '自建任务管理'
     }
     fspGlobal.openFspTab({ url, param })
-    closeTab();
+    onCloseTab();
   }
 
   @autobind
@@ -98,8 +102,10 @@ export default class CreateTaskSuccess extends PureComponent {
     }, () => {
       if (COUNT < 0) {
         console.log('页面关闭');
-        this.goToIndex();
         clearInterval(successSetInterval);
+        successSetInterval = null;
+        // 跳转之前关闭interval
+        this.goToHome();
       }
     });
   }
@@ -119,7 +125,7 @@ export default class CreateTaskSuccess extends PureComponent {
               <p>页面会在 <b>{changeTime}</b> 秒内自动关闭</p>
             </div>
             <div className={styles.taskSuccess_btn}>
-              <Button type="primary" onClick={this.goToIndex}>
+              <Button type="primary" onClick={this.goToHome}>
                 返回首页
               </Button>
             </div>

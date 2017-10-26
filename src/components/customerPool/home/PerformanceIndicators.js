@@ -60,46 +60,30 @@ export default class PerformanceIndicators extends PureComponent {
       formatIndicator = (tempArr[1] || {}).data;
     }
     instance.on('click', (arg) => {
-      // console.log('instance arg >>>>', arg, formatIndicator);
-      if (arg.componentType !== 'xAxis') {
-        return;
-      }
       const param = {
         source: 'numOfCustOpened',
         cycle,
         push,
         location: this.props.location,
         empInfo,
+        bname: arg.name || arg.value,
       };
-      if (arg.value === (formatIndicator[0] || {}).name) {
+      if (_.includes([arg.name, arg.value], (formatIndicator[0] || {}).name)) {
         param.value = 'ttfCust';
-        param.bname = arg.value;
-        linkTo(param);
-      } else if (arg.value === (formatIndicator[1] || {}).name) {
+      } else if (_.includes([arg.name, arg.value], (formatIndicator[1] || {}).name)) {
         param.value = 'shHkCust';
-        param.bname = arg.value;
-        linkTo(param);
-      } else if (arg.value === (formatIndicator[2] || {}).name) {
+      } else if (_.includes([arg.name, arg.value], (formatIndicator[2] || {}).name)) {
         param.value = 'szHkCust';
-        param.bname = arg.value;
-        linkTo(param);
-      } else if (arg.value === (formatIndicator[3] || {}).name) {
+      } else if (_.includes([arg.name, arg.value], (formatIndicator[3] || {}).name)) {
         param.value = 'rzrqCust';
-        param.bname = arg.value;
-        linkTo(param);
-      } else if (arg.value === (formatIndicator[4] || {}).name) {
+      } else if (_.includes([arg.name, arg.value], (formatIndicator[4] || {}).name)) {
         param.value = 'xsb';
-        param.bname = arg.value;
-        linkTo(param);
-      } else if (arg.value === (formatIndicator[5] || {}).name) {
+      } else if (_.includes([arg.name, arg.value], (formatIndicator[5] || {}).name)) {
         param.value = 'optCust';
-        param.bname = arg.value;
-        linkTo(param);
-      } else if (arg.value === (formatIndicator[6] || {}).name) {
+      } else if (_.includes([arg.name, arg.value], (formatIndicator[6] || {}).name)) {
         param.value = 'cyb';
-        param.bname = arg.value;
-        linkTo(param);
       }
+      linkTo(param);
     });
   }
 

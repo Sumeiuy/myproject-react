@@ -80,38 +80,28 @@ export default class TaskFormInfo extends PureComponent {
   }
 
   // 提及
-  @autobind
-  onSelect(suggestion) {
-    console.log('onSelect', suggestion);
-  }
+  // @autobind
+  // onSelect(suggestion) {
+  //   console.log('onSelect', suggestion);
+  // }
   // @autobind
   handleSearchChange=(value, trigger) => {
-    console.log('onSearchChange', value, trigger);
     const { users } = this.props;
     const dataSource = trigger === '$' ? users : [];
-    console.log('dataSource---', users);
     this.setState({
       suggestions: dataSource.filter(item => item.indexOf(value) !== -1),
     });
   }
-  @autobind
-  handleChange(editorState) {
-    console.log(toString(editorState));
-    // console.log(typeof editorState);
-  }
+  // @autobind
+  // handleChange(editorState) {
+  //   console.log(toString(editorState));
+  // }
   checkMention = (rule, value, callback) => {
-    // const { getFieldValue } = this.props.form;
-    // const mentions = getMentions(getFieldValue('templetDesc'));
     if (toString(value).length < 10) {
       callback(new Error('任务描述不能小于10个字符!'));
     } else {
       callback();
     }
-    // if (mentions.length < 2) {
-    //   callback(new Error('More than one must be selected!'));
-    // } else {
-    //   callback();
-    // }
   }
   // 提及
 
@@ -185,7 +175,6 @@ export default class TaskFormInfo extends PureComponent {
       form,
     } = this.props;
     const { getFieldDecorator } = form;
-    // console.log('onSubmit--', onSubmit);
     return (
       <Form >
         <ul className={styles.task_selectList}>

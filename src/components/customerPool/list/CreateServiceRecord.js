@@ -88,6 +88,7 @@ export default class CreateServiceRecord extends PureComponent {
     addServeRecordSuccess: PropTypes.bool.isRequired,
     dict: PropTypes.object.isRequired,
     loading: PropTypes.bool,
+    handleCloseClick: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -171,6 +172,7 @@ export default class CreateServiceRecord extends PureComponent {
       custId: id,
       serveWay: serviceWay,
       serveType: serviceType,
+      type: serviceType,
       serveTime: `${serviceDate.replace(/\//g, '-')} ${serviceTime}`,
       serveContentDesc: serviceContent,
       feedBackTime: feedbackDate.replace(/\//g, '-'),
@@ -183,7 +185,9 @@ export default class CreateServiceRecord extends PureComponent {
   // 关闭弹窗
   @autobind
   handleCancel() {
-    const { onToggleServiceRecordModal } = this.props;
+    const { onToggleServiceRecordModal, handleCloseClick } = this.props;
+    // 手动上传日志
+    handleCloseClick();
     onToggleServiceRecordModal(false);
   }
 
@@ -244,10 +248,11 @@ export default class CreateServiceRecord extends PureComponent {
   // 保存反馈类型的值
   @autobind
   handleFeedbackType(value) {
+    const feedbackTypeArr = this.feedbackTypeObj[value];
     this.setState({
       feedbackType: value,
-      feedbackTypeChild: _.isEmpty(this.feedbackTypeObj[value]) ? '' : this.feedbackTypeObj[value][0].value,
-      feedbackTypeChildArr: this.feedbackTypeObj[value],
+      feedbackTypeChild: _.isEmpty(feedbackTypeArr) ? '' : feedbackTypeArr[0].value,
+      feedbackTypeChildArr: feedbackTypeArr,
     });
   }
 

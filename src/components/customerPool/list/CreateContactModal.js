@@ -14,7 +14,7 @@ import Collapse from './CreateCollapse';
 import { checkFormat } from '../../../utils/helper';
 
 import styles from './createContactModal.less';
-import Phone from '../../../../static/images/phone.png';
+// import Phone from '../../../../static/images/phone.png';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -36,6 +36,9 @@ export default class CreateContactModal extends PureComponent {
     onClose: PropTypes.func.isRequired,
     executeTypes: PropTypes.array.isRequired, // 执行方式字典
     serveWay: PropTypes.array.isRequired, // 服务渠道字典
+    handleCloseClick: PropTypes.func.isRequired,
+    handleAddServiceRecord: PropTypes.func.isRequired,
+    handleCollapseClick: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -52,7 +55,9 @@ export default class CreateContactModal extends PureComponent {
 
   @autobind
   handleCancel() {
-    const { onClose } = this.props;
+    const { onClose, handleCloseClick } = this.props;
+    // 手动发送日志
+    handleCloseClick();
     onClose();
     this.setState({ visible: false });
   }
@@ -182,7 +187,9 @@ export default class CreateContactModal extends PureComponent {
 
   @autobind
   handleServiceRecordClick() {
-    const { onClose, createServiceRecord, currentCustId } = this.props;
+    const { onClose, createServiceRecord, currentCustId, handleAddServiceRecord } = this.props;
+    // 手动上传日志
+    handleAddServiceRecord();
     // 先关闭联系方式对话框
     this.setState({
       visible: false,
@@ -205,6 +212,7 @@ export default class CreateContactModal extends PureComponent {
       currentCustId,
       executeTypes,
       serveWay,
+      handleCollapseClick,
     } = this.props;
 
     if (!currentCustId || !visible) {
@@ -356,7 +364,7 @@ export default class CreateContactModal extends PureComponent {
                 ((isOrgMainContactHasTel && !_.isEmpty(mainContactInfo.cellInfo)) ||
                 (isPersonHasContact && personalContactInfo.mainTelInfo.type !== 'none')) ?
                   <div className={styles.mainContact}>
-                    <img src={Phone} alt={'电话联系'} />
+                    <Icon type="dianhua1" className={styles.phoneIcon} />
                     <span>
                       {
                       custType === 'per' ?
@@ -393,7 +401,7 @@ export default class CreateContactModal extends PureComponent {
         }
         { /* 提示信息 */}
         <div className={styles.tipSection}>
-          <Icon className={styles.tipIcon} type="dengpao" />
+          <Icon className={styles.tipIcon} type="wenxintishi" />
           <span>温馨提醒：联系过客户后请及时创建服务记录</span>
         </div>
         <div className={styles.serviceTitle}>最近服务记录</div>
@@ -402,6 +410,7 @@ export default class CreateContactModal extends PureComponent {
           data={serviceRecordData}
           executeTypes={executeTypes}
           serveWay={serveWay}
+          handleCollapseClick={handleCollapseClick}
         />
       </Modal>
     );

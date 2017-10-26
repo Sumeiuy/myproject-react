@@ -3,8 +3,8 @@
 */
 exports.response = function (req, res) {
   return {
-    "code": "402", 
-    "msg": "000000", 
+    "code": "0", 
+    "msg": "OK", 
     "resultData": {
       "custRiskBearing": [
         {
@@ -42,23 +42,19 @@ exports.response = function (req, res) {
           "value": "不限"
         }, 
         {
-          "key": "服务经理", 
-          "value": "服务经理"
-        }, 
-        {
           "key": "呼叫中心", 
           "value": "呼叫中心"
         }, 
         {
           "key": "短信", 
           "value": "短信"
+        }, 
+        {
+          "key": "理财服务平台", 
+          "value": "理财服务平台"
         }
       ], 
       "serveType": [
-        {
-          "key": "Campaign Action", 
-          "value": "服务营销"
-        }, 
         {
           "key": "Complaints Dealing", 
           "value": "投诉处理"
@@ -68,28 +64,64 @@ exports.response = function (req, res) {
           "value": "新客户回访"
         }, 
         {
-          "key": "Investment Bank Account", 
-          "value": "投行活动"
+          "key": "BusinessRecomm", 
+          "value": "业务推荐"
+        }, 
+        {
+          "key": "ActiveCare", 
+          "value": "活动关怀"
         }, 
         {
           "key": "Cancellation Tracking", 
           "value": "销户跟踪"
         }, 
         {
-          "key": "Margin Trading", 
-          "value": "新开融资融券客户回访"
-        }, 
-        {
           "key": "Old Customer Visit", 
           "value": "存量客户回访"
         }, 
         {
-          "key": "Warm Care", 
-          "value": "温馨关怀"
-        }, 
-        {
           "key": "TG Exists Custotmer Visit", 
           "value": "投顾存量客户回访"
+        }, 
+        {
+          "key": "TradeService", 
+          "value": "交易服务"
+        }, 
+        {
+          "key": "Resp", 
+          "value": "体征服务回访"
+        }, 
+        {
+          "key": "Fins Su", 
+          "value": "理财建议"
+        }, 
+        {
+          "key": "System Alert", 
+          "value": "通知提醒"
+        }, 
+        {
+          "key": "ProdMarketing", 
+          "value": "产品营销"
+        }, 
+        {
+          "key": "Campaign Action", 
+          "value": "服务营销"
+        }, 
+        {
+          "key": "AccoutService", 
+          "value": "账户服务"
+        }, 
+        {
+          "key": "Investment Bank Account", 
+          "value": "投行活动"
+        }, 
+        {
+          "key": "Margin Trading", 
+          "value": "新开融资融券客户回访"
+        }, 
+        {
+          "key": "Warm Care", 
+          "value": "温馨关怀"
         }, 
         {
           "key": "Trust Products Sale", 
@@ -104,10 +136,6 @@ exports.response = function (req, res) {
           "value": "异动确认"
         }, 
         {
-          "key": "Resp", 
-          "value": "体征服务回访"
-        }, 
-        {
           "key": "MOT Action", 
           "value": "MOT服务记录"
         }, 
@@ -120,16 +148,12 @@ exports.response = function (req, res) {
           "value": "常规"
         }, 
         {
-          "key": "Fins Su", 
-          "value": "理财建议"
-        }, 
-        {
-          "key": "System Alert", 
-          "value": "通知提醒"
-        }, 
-        {
           "key": "Customer Infor Verify", 
           "value": "客户信息核实"
+        }, 
+        {
+          "key": "AfterSales", 
+          "value": "产品售后"
         }
       ], 
       "serviceTypeTree": [
@@ -784,6 +808,35 @@ exports.response = function (req, res) {
               "childrenType": null
             }
           ]
+        }, 
+        {
+          "key": "04", 
+          "value": null, 
+          "parentKey": null, 
+          "parentName": null, 
+          "childrenType": [
+            {
+              "key": "0401", 
+              "value": null, 
+              "parentKey": "04", 
+              "parentName": null, 
+              "childrenType": null
+            }
+          ]
+        }, 
+        {
+          "key": "05", 
+          "value": null, 
+          "parentKey": null, 
+          "parentName": null, 
+          "childrenType": [ ]
+        }, 
+        {
+          "key": "06", 
+          "value": null, 
+          "parentKey": null, 
+          "parentName": null, 
+          "childrenType": [ ]
         }
       ], 
       "executeTypes": [
@@ -954,6 +1007,327 @@ exports.response = function (req, res) {
           "value": "本年"
         }
       ], 
+      "custServerTypeFeedBackDict": [
+        {
+          "key": "ProdMarketing", 
+          "value": "产品营销", 
+          "children": [
+            {
+              "key": "T900100", 
+              "value": "拒绝接听", 
+              "children": null
+            }, 
+            {
+              "key": "T900110", 
+              "value": "拒绝所有产品推介", 
+              "children": [
+                {
+                  "key": "T900110", 
+                  "value": "交易型客户", 
+                  "children": null
+                }, 
+                {
+                  "key": "T900111", 
+                  "value": "原因示知", 
+                  "children": null
+                }
+              ]
+            }, 
+            {
+              "key": "T900120", 
+              "value": "不感兴趣", 
+              "children": [
+                {
+                  "key": "T900120", 
+                  "value": "收益低", 
+                  "children": null
+                }, 
+                {
+                  "key": "T900121", 
+                  "value": "期限长", 
+                  "children": null
+                }, 
+                {
+                  "key": "T900122", 
+                  "value": "风险高", 
+                  "children": null
+                }, 
+                {
+                  "key": "T900123", 
+                  "value": "择机买股", 
+                  "children": null
+                }, 
+                {
+                  "key": "T900124", 
+                  "value": "原因示知", 
+                  "children": null
+                }
+              ]
+            }, 
+            {
+              "key": "T900130", 
+              "value": "略有兴趣，再考虑", 
+              "children": [
+                {
+                  "key": "T900130", 
+                  "value": "电话", 
+                  "children": null
+                }, 
+                {
+                  "key": "T900131", 
+                  "value": "邮件", 
+                  "children": null
+                }, 
+                {
+                  "key": "T900132", 
+                  "value": "上门拜访", 
+                  "children": null
+                }, 
+                {
+                  "key": "T900133", 
+                  "value": "现场路演", 
+                  "children": null
+                }
+              ]
+            }, 
+            {
+              "key": "T900140", 
+              "value": "感兴趣的产品类型", 
+              "children": null
+            }, 
+            {
+              "key": "T900150", 
+              "value": "愿意购买", 
+              "children": null
+            }, 
+            {
+              "key": "T900160", 
+              "value": "无人接听", 
+              "children": null
+            }, 
+            {
+              "key": "T900170", 
+              "value": "无效电话（停机、空号）", 
+              "children": null
+            }, 
+            {
+              "key": "T900180", 
+              "value": "其它", 
+              "children": null
+            }
+          ]
+        }, 
+        {
+          "key": "AfterSales", 
+          "value": "产品售后", 
+          "children": [
+            {
+              "key": "T900200", 
+              "value": "继续持有", 
+              "children": null
+            }, 
+            {
+              "key": "T900220", 
+              "value": "赎回，暂不购买", 
+              "children": null
+            }, 
+            {
+              "key": "T900210", 
+              "value": "转为其它产品", 
+              "children": null
+            }, 
+            {
+              "key": "T900230", 
+              "value": "赎回，不再购买", 
+              "children": null
+            }, 
+            {
+              "key": "T900240", 
+              "value": "无人接听", 
+              "children": null
+            }, 
+            {
+              "key": "T900250", 
+              "value": "无效电话（停机、空号）", 
+              "children": null
+            }, 
+            {
+              "key": "T900260", 
+              "value": "其它", 
+              "children": null
+            }
+          ]
+        }, 
+        {
+          "key": "BusinessRecomm", 
+          "value": "业务推荐", 
+          "children": [
+            {
+              "key": "T900300", 
+              "value": "拒绝接听", 
+              "children": null
+            }, 
+            {
+              "key": "T900320", 
+              "value": "略有兴趣，再考虑", 
+              "children": null
+            }, 
+            {
+              "key": "T900330", 
+              "value": "愿意开通", 
+              "children": null
+            }, 
+            {
+              "key": "T900340", 
+              "value": "无人接听", 
+              "children": null
+            }, 
+            {
+              "key": "T900350", 
+              "value": "无效电话（停机、空号）", 
+              "children": null
+            }, 
+            {
+              "key": "T900310", 
+              "value": "不感兴趣", 
+              "children": null
+            }, 
+            {
+              "key": "T900360", 
+              "value": "其它", 
+              "children": null
+            }
+          ]
+        }, 
+        {
+          "key": "AccoutService", 
+          "value": "账户服务", 
+          "children": [
+            {
+              "key": "T900400", 
+              "value": "已知晓", 
+              "children": null
+            }, 
+            {
+              "key": "T900410", 
+              "value": "了解业务流程，再考虑", 
+              "children": null
+            }, 
+            {
+              "key": "T900420", 
+              "value": "愿意接受推荐服务/产品", 
+              "children": null
+            }, 
+            {
+              "key": "T900430", 
+              "value": "拒绝任何服务/产品推荐", 
+              "children": null
+            }, 
+            {
+              "key": "T900440", 
+              "value": "有流失倾向", 
+              "children": null
+            }, 
+            {
+              "key": "T900450", 
+              "value": "无人接听", 
+              "children": null
+            }, 
+            {
+              "key": "T900460", 
+              "value": "无效电话（停机、空号）", 
+              "children": null
+            }, 
+            {
+              "key": "T900470", 
+              "value": "其它", 
+              "children": null
+            }
+          ]
+        }, 
+        {
+          "key": "TradeService", 
+          "value": "交易服务", 
+          "children": [
+            {
+              "key": "T900500", 
+              "value": "配股配债意向", 
+              "children": null
+            }, 
+            {
+              "key": "T900510", 
+              "value": "已知晓", 
+              "children": null
+            }, 
+            {
+              "key": "T900520", 
+              "value": "无人接听", 
+              "children": null
+            }, 
+            {
+              "key": "T900530", 
+              "value": "无效电话（停机、空号）", 
+              "children": null
+            }, 
+            {
+              "key": "T900540", 
+              "value": "其它", 
+              "children": null
+            }
+          ]
+        }, 
+        {
+          "key": "ActiveCare", 
+          "value": "活动关怀", 
+          "children": [
+            {
+              "key": "T900600", 
+              "value": "拒绝", 
+              "children": null
+            }, 
+            {
+              "key": "T900610", 
+              "value": "略有兴趣，再考虑", 
+              "children": null
+            }, 
+            {
+              "key": "T900620", 
+              "value": "很感兴趣", 
+              "children": null
+            }, 
+            {
+              "key": "T900630", 
+              "value": "愿意参加", 
+              "children": null
+            }, 
+            {
+              "key": "T900640", 
+              "value": "满意", 
+              "children": null
+            }, 
+            {
+              "key": "T900650", 
+              "value": "不满意", 
+              "children": null
+            }, 
+            {
+              "key": "T900660", 
+              "value": "无人接听", 
+              "children": null
+            }, 
+            {
+              "key": "T900670", 
+              "value": "无效电话（停机、空号）", 
+              "children": null
+            }, 
+            {
+              "key": "T900680", 
+              "value": "其它", 
+              "children": null
+            }
+          ]
+        }
+      ], 
       "serveWay": [
         {
           "key": "HTSC Phone", 
@@ -1022,72 +1396,32 @@ exports.response = function (req, res) {
           "value": "不限"
         }, 
         {
-          "key": "通知提醒", 
-          "value": "通知提醒"
+          "key": "AccoutService", 
+          "value": "账户服务"
         }, 
         {
-          "key": "体征服务回访", 
-          "value": "体征服务回访"
+          "key": "TradeService", 
+          "value": "交易服务"
         }, 
         {
-          "key": "MOT服务记录", 
-          "value": "MOT服务记录"
+          "key": "BusinessRecomm", 
+          "value": "业务推荐"
         }, 
         {
-          "key": "异动确认", 
-          "value": "异动确认"
+          "key": "ActiveCare", 
+          "value": "活动关怀"
         }, 
         {
-          "key": "新开融资融券客户回访", 
-          "value": "新开融资融券客户回访"
+          "key": "ProdMarketing", 
+          "value": "产品营销"
         }, 
         {
-          "key": "投顾存量客户回访", 
-          "value": "投顾存量客户回访"
+          "key": "AfterSales", 
+          "value": "产品售后"
         }, 
         {
-          "key": "信托产品销售回访", 
-          "value": "信托产品销售回访"
-        }, 
-        {
-          "key": "理财建议", 
-          "value": "理财建议"
-        }, 
-        {
-          "key": "存量客户回访", 
-          "value": "存量客户回访"
-        }, 
-        {
-          "key": "服务营销", 
-          "value": "服务营销"
-        }, 
-        {
-          "key": "温馨关怀", 
-          "value": "温馨关怀"
-        }, 
-        {
-          "key": "销售活动", 
-          "value": "销售活动"
-        }, 
-        {
-          "key": "投顾新客户回访", 
-          "value": "投顾新客户回访"
-        }, 
-        {
-          "key": "客户信息核实", 
-          "value": "客户信息核实"
-        }, 
-        {
-          "key": "投诉处理", 
-          "value": "投诉处理"
-        }, 
-        {
-          "key": "新客户回访", 
-          "value": "新客户回访"
-        }, 
-        {
-          "key": "销户跟踪", 
-          "value": "销户跟踪"
+          "key": "other", 
+          "value": "其他"
         }
       ], 
       "custType": [
@@ -1116,7 +1450,8 @@ exports.response = function (req, res) {
           "userType": "performanceBusinessOpenCustPool", 
           "defaultTaskType": "stockCustVisit", 
           "taskName": null, 
-          "taskDesc": "用户在#{开户日}开户，建议跟踪服务了解客户是否有问题需要解决。注：如果客户状态为流失，则：用户在#{流失日}流失，建议跟踪服务了解客户是否有问题需要解决。", 
+          "taskDesc": "用户在#{开户日}开户，建议跟踪服务了解客户是否有问题需要解决。
+  注：如果客户状态为流失，则：用户在#{流失日}流失，建议跟踪服务了解客户是否有问题需要解决。", 
           "defaultExecuteType": "Chance"
         }, 
         {
@@ -1243,1098 +1578,6 @@ exports.response = function (req, res) {
               "codeDesc": "万0.6", 
               "id": "1-2VATTML", 
               "codeValue": "8106"
-            }
-          ]
-        }, 
-        {
-          "code": "HTSC_DBFARE_RATIO", 
-          "codeType": "华泰担保股基费用类型", 
-          "options": [
-            {
-              "codeDesc": "万1.9", 
-              "id": "1-42AQX82", 
-              "codeValue": "7219"
-            }, 
-            {
-              "codeDesc": "千1.6", 
-              "id": "1-42AQX5N", 
-              "codeValue": "7360"
-            }, 
-            {
-              "codeDesc": "万6.9", 
-              "id": "1-42AQX6O", 
-              "codeValue": "7269"
-            }, 
-            {
-              "codeDesc": "千1.0", 
-              "id": "1-42AQX5T", 
-              "codeValue": "7300"
-            }, 
-            {
-              "codeDesc": "千2.5", 
-              "id": "1-42AQX5E", 
-              "codeValue": "7450"
-            }, 
-            {
-              "codeDesc": "万2.4", 
-              "id": "1-42AQX7X", 
-              "codeValue": "7224"
-            }, 
-            {
-              "codeDesc": "万4.5", 
-              "id": "1-42AQX7C", 
-              "codeValue": "7245"
-            }, 
-            {
-              "codeDesc": "千1.4", 
-              "id": "1-42AQX5P", 
-              "codeValue": "7340"
-            }, 
-            {
-              "codeDesc": "千1.8", 
-              "id": "1-42AQX5L", 
-              "codeValue": "7380"
-            }, 
-            {
-              "codeDesc": "万6.4", 
-              "id": "1-42AQX6T", 
-              "codeValue": "7264"
-            }, 
-            {
-              "codeDesc": "万1.1", 
-              "id": "1-42AQX8A", 
-              "codeValue": "7211"
-            }, 
-            {
-              "codeDesc": "万8.0", 
-              "id": "1-42AQX6D", 
-              "codeValue": "7280"
-            }, 
-            {
-              "codeDesc": "千2.8", 
-              "id": "1-42AQX5B", 
-              "codeValue": "7480"
-            }, 
-            {
-              "codeDesc": "万3.2", 
-              "id": "1-42AQX7P", 
-              "codeValue": "7232"
-            }, 
-            {
-              "codeDesc": "万7.6", 
-              "id": "1-42AQX6H", 
-              "codeValue": "7276"
-            }, 
-            {
-              "codeDesc": "万7.0", 
-              "id": "1-42AQX6N", 
-              "codeValue": "7270"
-            }, 
-            {
-              "codeDesc": "万3.4", 
-              "id": "1-42AQX7N", 
-              "codeValue": "7234"
-            }, 
-            {
-              "codeDesc": "万5.3", 
-              "id": "1-42AQX74", 
-              "codeValue": "7253"
-            }, 
-            {
-              "codeDesc": "万3.7", 
-              "id": "1-42AQX7K", 
-              "codeValue": "7237"
-            }, 
-            {
-              "codeDesc": "万2.3", 
-              "id": "1-42AQX7Y", 
-              "codeValue": "7223"
-            }, 
-            {
-              "codeDesc": "万6.8", 
-              "id": "1-42AQX6P", 
-              "codeValue": "7268"
-            }, 
-            {
-              "codeDesc": "千2.3", 
-              "id": "1-42AQX5G", 
-              "codeValue": "7430"
-            }, 
-            {
-              "codeDesc": "万3.8", 
-              "id": "1-42AQX7J", 
-              "codeValue": "7238"
-            }, 
-            {
-              "codeDesc": "万3.5", 
-              "id": "1-42AQX7M", 
-              "codeValue": "7235"
-            }, 
-            {
-              "codeDesc": "万2.6", 
-              "id": "1-42AQX7V", 
-              "codeValue": "7226"
-            }, 
-            {
-              "codeDesc": "万7.8", 
-              "id": "1-42AQX6F", 
-              "codeValue": "7278"
-            }, 
-            {
-              "codeDesc": "万7.7", 
-              "id": "1-42AQX6G", 
-              "codeValue": "7277"
-            }, 
-            {
-              "codeDesc": "千2.2", 
-              "id": "1-42AQX5H", 
-              "codeValue": "7420"
-            }, 
-            {
-              "codeDesc": "万7.5", 
-              "id": "1-42AQX6I", 
-              "codeValue": "7275"
-            }, 
-            {
-              "codeDesc": "万5.4", 
-              "id": "1-42AQX73", 
-              "codeValue": "7254"
-            }, 
-            {
-              "codeDesc": "万4.4", 
-              "id": "1-42AQX7D", 
-              "codeValue": "7244"
-            }, 
-            {
-              "codeDesc": "万8.1", 
-              "id": "1-42AQX6C", 
-              "codeValue": "7281"
-            }, 
-            {
-              "codeDesc": "万1.7", 
-              "id": "1-42AQX84", 
-              "codeValue": "7217"
-            }, 
-            {
-              "codeDesc": "万3.6", 
-              "id": "1-42AQX7L", 
-              "codeValue": "7236"
-            }, 
-            {
-              "codeDesc": "万5.7", 
-              "id": "1-42AQX70", 
-              "codeValue": "7257"
-            }, 
-            {
-              "codeDesc": "万7.9", 
-              "id": "1-42AQX6E", 
-              "codeValue": "7279"
-            }, 
-            {
-              "codeDesc": "万1.3", 
-              "id": "1-42AQX88", 
-              "codeValue": "7213"
-            }, 
-            {
-              "codeDesc": "万4.7", 
-              "id": "1-42AQX7A", 
-              "codeValue": "7247"
-            }, 
-            {
-              "codeDesc": "万8.9", 
-              "id": "1-42AQX64", 
-              "codeValue": "7289"
-            }, 
-            {
-              "codeDesc": "万6.0", 
-              "id": "1-42AQX6X", 
-              "codeValue": "7260"
-            }, 
-            {
-              "codeDesc": "万7.3", 
-              "id": "1-42AQX6K", 
-              "codeValue": "7273"
-            }, 
-            {
-              "codeDesc": "千2.7", 
-              "id": "1-42AQX5C", 
-              "codeValue": "7470"
-            }, 
-            {
-              "codeDesc": "万1.8", 
-              "id": "1-42AQX83", 
-              "codeValue": "7218"
-            }, 
-            {
-              "codeDesc": "万3.9", 
-              "id": "1-42AQX7I", 
-              "codeValue": "7239"
-            }, 
-            {
-              "codeDesc": "万3.1", 
-              "id": "1-42AQX7Q", 
-              "codeValue": "7231"
-            }, 
-            {
-              "codeDesc": "万6.7", 
-              "id": "1-42AQX6Q", 
-              "codeValue": "7267"
-            }, 
-            {
-              "codeDesc": "万4.0", 
-              "id": "1-42AQX7H", 
-              "codeValue": "7240"
-            }, 
-            {
-              "codeDesc": "万9.3", 
-              "id": "1-42AQX60", 
-              "codeValue": "7293"
-            }, 
-            {
-              "codeDesc": "千2.6", 
-              "id": "1-42AQX5D", 
-              "codeValue": "7460"
-            }, 
-            {
-              "codeDesc": "万5.2", 
-              "id": "1-42AQX75", 
-              "codeValue": "7252"
-            }, 
-            {
-              "codeDesc": "万4.1", 
-              "id": "1-42AQX7G", 
-              "codeValue": "7241"
-            }, 
-            {
-              "codeDesc": "万1.5", 
-              "id": "1-42AQX86", 
-              "codeValue": "7215"
-            }, 
-            {
-              "codeDesc": "万7.2", 
-              "id": "1-42AQX6L", 
-              "codeValue": "7272"
-            }, 
-            {
-              "codeDesc": "万9.8", 
-              "id": "1-42AQX5V", 
-              "codeValue": "7298"
-            }, 
-            {
-              "codeDesc": "千1.7", 
-              "id": "1-42AQX5M", 
-              "codeValue": "7370"
-            }, 
-            {
-              "codeDesc": "万6.1", 
-              "id": "1-42AQX6W", 
-              "codeValue": "7261"
-            }, 
-            {
-              "codeDesc": "万9.4", 
-              "id": "1-42AQX5Z", 
-              "codeValue": "7294"
-            }, 
-            {
-              "codeDesc": "万8.2", 
-              "id": "1-42AQX6B", 
-              "codeValue": "7282"
-            }, 
-            {
-              "codeDesc": "万9.6", 
-              "id": "1-42AQX5X", 
-              "codeValue": "7296"
-            }, 
-            {
-              "codeDesc": "万4.6", 
-              "id": "1-42AQX7B", 
-              "codeValue": "7246"
-            }, 
-            {
-              "codeDesc": "万2.2", 
-              "id": "1-42AQX7Z", 
-              "codeValue": "7222"
-            }, 
-            {
-              "codeDesc": "万2.5", 
-              "id": "1-42AQX7W", 
-              "codeValue": "7225"
-            }, 
-            {
-              "codeDesc": "万8.7", 
-              "id": "1-42AQX66", 
-              "codeValue": "7287"
-            }, 
-            {
-              "codeDesc": "万9.1", 
-              "id": "1-42AQX62", 
-              "codeValue": "7291"
-            }, 
-            {
-              "codeDesc": "万2.1", 
-              "id": "1-42AQX80", 
-              "codeValue": "7221"
-            }, 
-            {
-              "codeDesc": "万4.2", 
-              "id": "1-42AQX7F", 
-              "codeValue": "7242"
-            }, 
-            {
-              "codeDesc": "万5.0", 
-              "id": "1-42AQX77", 
-              "codeValue": "7250"
-            }, 
-            {
-              "codeDesc": "万8.3", 
-              "id": "1-42AQX6A", 
-              "codeValue": "7283"
-            }, 
-            {
-              "codeDesc": "万7.4", 
-              "id": "1-42AQX6J", 
-              "codeValue": "7274"
-            }, 
-            {
-              "codeDesc": "万4.3", 
-              "id": "1-42AQX7E", 
-              "codeValue": "7243"
-            }, 
-            {
-              "codeDesc": "万5.5", 
-              "id": "1-42AQX72", 
-              "codeValue": "7255"
-            }, 
-            {
-              "codeDesc": "万4.9", 
-              "id": "1-42AQX78", 
-              "codeValue": "7249"
-            }, 
-            {
-              "codeDesc": "千1.3", 
-              "id": "1-42AQX5Q", 
-              "codeValue": "7330"
-            }, 
-            {
-              "codeDesc": "千1.2", 
-              "id": "1-42AQX5R", 
-              "codeValue": "7320"
-            }, 
-            {
-              "codeDesc": "千2.9", 
-              "id": "1-42AQX5A", 
-              "codeValue": "7490"
-            }, 
-            {
-              "codeDesc": "千1.1", 
-              "id": "1-42AQX5S", 
-              "codeValue": "7310"
-            }, 
-            {
-              "codeDesc": "万5.9", 
-              "id": "1-42AQX6Y", 
-              "codeValue": "7259"
-            }, 
-            {
-              "codeDesc": "万8.4", 
-              "id": "1-42AQX69", 
-              "codeValue": "7284"
-            }, 
-            {
-              "codeDesc": "万8.6", 
-              "id": "1-42AQX67", 
-              "codeValue": "7286"
-            }, 
-            {
-              "codeDesc": "万9.5", 
-              "id": "1-42AQX5Y", 
-              "codeValue": "7295"
-            }, 
-            {
-              "codeDesc": "万3.0", 
-              "id": "1-42AQX7R", 
-              "codeValue": "7230"
-            }, 
-            {
-              "codeDesc": "千1.5", 
-              "id": "1-42AQX5O", 
-              "codeValue": "7350"
-            }, 
-            {
-              "codeDesc": "千2.0", 
-              "id": "1-42AQX5J", 
-              "codeValue": "7400"
-            }, 
-            {
-              "codeDesc": "标准", 
-              "id": "1-2VATTTR", 
-              "codeValue": "9999"
-            }, 
-            {
-              "codeDesc": "万6.6", 
-              "id": "1-42AQX6R", 
-              "codeValue": "7266"
-            }, 
-            {
-              "codeDesc": "万8.5", 
-              "id": "1-42AQX68", 
-              "codeValue": "7285"
-            }, 
-            {
-              "codeDesc": "万9.0", 
-              "id": "1-42AQX63", 
-              "codeValue": "7290"
-            }, 
-            {
-              "codeDesc": "万6.2", 
-              "id": "1-42AQX6V", 
-              "codeValue": "7262"
-            }, 
-            {
-              "codeDesc": "万3.3", 
-              "id": "1-42AQX7O", 
-              "codeValue": "7233"
-            }, 
-            {
-              "codeDesc": "万9.2", 
-              "id": "1-42AQX61", 
-              "codeValue": "7292"
-            }, 
-            {
-              "codeDesc": "万9.7", 
-              "id": "1-42AQX5W", 
-              "codeValue": "7297"
-            }, 
-            {
-              "codeDesc": "万6.3", 
-              "id": "1-42AQX6U", 
-              "codeValue": "7263"
-            }, 
-            {
-              "codeDesc": "千2.1", 
-              "id": "1-42AQX5I", 
-              "codeValue": "7410"
-            }, 
-            {
-              "codeDesc": "千1.9", 
-              "id": "1-42AQX5K", 
-              "codeValue": "7390"
-            }, 
-            {
-              "codeDesc": "万2.0", 
-              "id": "1-42AQX81", 
-              "codeValue": "7220"
-            }, 
-            {
-              "codeDesc": "万8.8", 
-              "id": "1-42AQX65", 
-              "codeValue": "7288"
-            }, 
-            {
-              "codeDesc": "万2.8", 
-              "id": "1-42AQX7T", 
-              "codeValue": "7228"
-            }, 
-            {
-              "codeDesc": "万9.9", 
-              "id": "1-42AQX5U", 
-              "codeValue": "7299"
-            }, 
-            {
-              "codeDesc": "万5.6", 
-              "id": "1-42AQX71", 
-              "codeValue": "7256"
-            }, 
-            {
-              "codeDesc": "万2.9", 
-              "id": "1-42AQX7S", 
-              "codeValue": "7229"
-            }, 
-            {
-              "codeDesc": "千2.4", 
-              "id": "1-42AQX5F", 
-              "codeValue": "7440"
-            }, 
-            {
-              "codeDesc": "万7.1", 
-              "id": "1-42AQX6M", 
-              "codeValue": "7271"
-            }, 
-            {
-              "codeDesc": "万2.7", 
-              "id": "1-42AQX7U", 
-              "codeValue": "7227"
-            }, 
-            {
-              "codeDesc": "万5.8", 
-              "id": "1-42AQX6Z", 
-              "codeValue": "7258"
-            }, 
-            {
-              "codeDesc": "万1.0", 
-              "id": "1-42AQX8B", 
-              "codeValue": "7210"
-            }, 
-            {
-              "codeDesc": "万6.5", 
-              "id": "1-42AQX6S", 
-              "codeValue": "7265"
-            }, 
-            {
-              "codeDesc": "万5.1", 
-              "id": "1-42AQX76", 
-              "codeValue": "7251"
-            }, 
-            {
-              "codeDesc": "万4.8", 
-              "id": "1-42AQX79", 
-              "codeValue": "7248"
-            }
-          ]
-        }, 
-        {
-          "code": "HTSC_CBFARE_RATIO", 
-          "codeType": "华泰信用股基费用类型", 
-          "options": [
-            {
-              "codeDesc": "万9.3", 
-              "id": "1-42AQX92", 
-              "codeValue": "7293"
-            }, 
-            {
-              "codeDesc": "万3.7", 
-              "id": "1-42AQXAM", 
-              "codeValue": "7237"
-            }, 
-            {
-              "codeDesc": "万2.3", 
-              "id": "1-42AQXB0", 
-              "codeValue": "7223"
-            }, 
-            {
-              "codeDesc": "万9.8", 
-              "id": "1-42AQX8X", 
-              "codeValue": "7298"
-            }, 
-            {
-              "codeDesc": "万4.2", 
-              "id": "1-42AQXAH", 
-              "codeValue": "7242"
-            }, 
-            {
-              "codeDesc": "万5.3", 
-              "id": "1-42AQXA6", 
-              "codeValue": "7253"
-            }, 
-            {
-              "codeDesc": "万6.5", 
-              "id": "1-42AQX9U", 
-              "codeValue": "7265"
-            }, 
-            {
-              "codeDesc": "千1.9", 
-              "id": "1-42AQX8M", 
-              "codeValue": "7390"
-            }, 
-            {
-              "codeDesc": "万5.1", 
-              "id": "1-42AQXA8", 
-              "codeValue": "7251"
-            }, 
-            {
-              "codeDesc": "万7.5", 
-              "id": "1-42AQX9K", 
-              "codeValue": "7275"
-            }, 
-            {
-              "codeDesc": "千1.4", 
-              "id": "1-42AQX8R", 
-              "codeValue": "7340"
-            }, 
-            {
-              "codeDesc": "万5.0", 
-              "id": "1-42AQXA9", 
-              "codeValue": "7250"
-            }, 
-            {
-              "codeDesc": "万8.2", 
-              "id": "1-42AQX9D", 
-              "codeValue": "7282"
-            }, 
-            {
-              "codeDesc": "万4.0", 
-              "id": "1-42AQXAJ", 
-              "codeValue": "7240"
-            }, 
-            {
-              "codeDesc": "千1.2", 
-              "id": "1-42AQX8T", 
-              "codeValue": "7320"
-            }, 
-            {
-              "codeDesc": "万9.1", 
-              "id": "1-42AQX94", 
-              "codeValue": "7291"
-            }, 
-            {
-              "codeDesc": "千2.9", 
-              "id": "1-42AQX8C", 
-              "codeValue": "7490"
-            }, 
-            {
-              "codeDesc": "万2.2", 
-              "id": "1-42AQXB1", 
-              "codeValue": "7222"
-            }, 
-            {
-              "codeDesc": "千1.6", 
-              "id": "1-42AQX8P", 
-              "codeValue": "7360"
-            }, 
-            {
-              "codeDesc": "万6.0", 
-              "id": "1-42AQX9Z", 
-              "codeValue": "7260"
-            }, 
-            {
-              "codeDesc": "万5.2", 
-              "id": "1-42AQXA7", 
-              "codeValue": "7252"
-            }, 
-            {
-              "codeDesc": "万1.1", 
-              "id": "1-42AQXBC", 
-              "codeValue": "7211"
-            }, 
-            {
-              "codeDesc": "万6.3", 
-              "id": "1-42AQX9W", 
-              "codeValue": "7263"
-            }, 
-            {
-              "codeDesc": "万6.9", 
-              "id": "1-42AQX9Q", 
-              "codeValue": "7269"
-            }, 
-            {
-              "codeDesc": "万9.4", 
-              "id": "1-42AQX91", 
-              "codeValue": "7294"
-            }, 
-            {
-              "codeDesc": "千1.1", 
-              "id": "1-42AQX8U", 
-              "codeValue": "7310"
-            }, 
-            {
-              "codeDesc": "万4.5", 
-              "id": "1-42AQXAE", 
-              "codeValue": "7245"
-            }, 
-            {
-              "codeDesc": "万1.7", 
-              "id": "1-42AQXB6", 
-              "codeValue": "7217"
-            }, 
-            {
-              "codeDesc": "万2.1", 
-              "id": "1-42AQXB2", 
-              "codeValue": "7221"
-            }, 
-            {
-              "codeDesc": "标准", 
-              "id": "1-2VAV0J4", 
-              "codeValue": "9999"
-            }, 
-            {
-              "codeDesc": "万3.5", 
-              "id": "1-42AQXAO", 
-              "codeValue": "7235"
-            }, 
-            {
-              "codeDesc": "万8.9", 
-              "id": "1-42AQX96", 
-              "codeValue": "7289"
-            }, 
-            {
-              "codeDesc": "万7.2", 
-              "id": "1-42AQX9N", 
-              "codeValue": "7272"
-            }, 
-            {
-              "codeDesc": "万2.9", 
-              "id": "1-42AQXAU", 
-              "codeValue": "7229"
-            }, 
-            {
-              "codeDesc": "万1.5", 
-              "id": "1-42AQXB8", 
-              "codeValue": "7215"
-            }, 
-            {
-              "codeDesc": "千2.1", 
-              "id": "1-42AQX8K", 
-              "codeValue": "7410"
-            }, 
-            {
-              "codeDesc": "万8.3", 
-              "id": "1-42AQX9C", 
-              "codeValue": "7283"
-            }, 
-            {
-              "codeDesc": "万6.7", 
-              "id": "1-42AQX9S", 
-              "codeValue": "7267"
-            }, 
-            {
-              "codeDesc": "万9.9", 
-              "id": "1-42AQX8W", 
-              "codeValue": "7299"
-            }, 
-            {
-              "codeDesc": "万9.0", 
-              "id": "1-42AQX95", 
-              "codeValue": "7290"
-            }, 
-            {
-              "codeDesc": "万1.0", 
-              "id": "1-42AQXBD", 
-              "codeValue": "7210"
-            }, 
-            {
-              "codeDesc": "万8.5", 
-              "id": "1-42AQX9A", 
-              "codeValue": "7285"
-            }, 
-            {
-              "codeDesc": "万4.3", 
-              "id": "1-42AQXAG", 
-              "codeValue": "7243"
-            }, 
-            {
-              "codeDesc": "千2.4", 
-              "id": "1-42AQX8H", 
-              "codeValue": "7440"
-            }, 
-            {
-              "codeDesc": "千2.6", 
-              "id": "1-42AQX8F", 
-              "codeValue": "7460"
-            }, 
-            {
-              "codeDesc": "万8.0", 
-              "id": "1-42AQX9F", 
-              "codeValue": "7280"
-            }, 
-            {
-              "codeDesc": "万7.6", 
-              "id": "1-42AQX9J", 
-              "codeValue": "7276"
-            }, 
-            {
-              "codeDesc": "万1.3", 
-              "id": "1-42AQXBA", 
-              "codeValue": "7213"
-            }, 
-            {
-              "codeDesc": "万1.8", 
-              "id": "1-42AQXB5", 
-              "codeValue": "7218"
-            }, 
-            {
-              "codeDesc": "万3.0", 
-              "id": "1-42AQXAT", 
-              "codeValue": "7230"
-            }, 
-            {
-              "codeDesc": "万8.4", 
-              "id": "1-42AQX9B", 
-              "codeValue": "7284"
-            }, 
-            {
-              "codeDesc": "万6.4", 
-              "id": "1-42AQX9V", 
-              "codeValue": "7264"
-            }, 
-            {
-              "codeDesc": "万2.6", 
-              "id": "1-42AQXAX", 
-              "codeValue": "7226"
-            }, 
-            {
-              "codeDesc": "万2.0", 
-              "id": "1-42AQXB3", 
-              "codeValue": "7220"
-            }, 
-            {
-              "codeDesc": "千1.7", 
-              "id": "1-42AQX8O", 
-              "codeValue": "7370"
-            }, 
-            {
-              "codeDesc": "万3.1", 
-              "id": "1-42AQXAS", 
-              "codeValue": "7231"
-            }, 
-            {
-              "codeDesc": "万5.9", 
-              "id": "1-42AQXA0", 
-              "codeValue": "7259"
-            }, 
-            {
-              "codeDesc": "万9.7", 
-              "id": "1-42AQX8Y", 
-              "codeValue": "7297"
-            }, 
-            {
-              "codeDesc": "万5.6", 
-              "id": "1-42AQXA3", 
-              "codeValue": "7256"
-            }, 
-            {
-              "codeDesc": "万3.2", 
-              "id": "1-42AQXAR", 
-              "codeValue": "7232"
-            }, 
-            {
-              "codeDesc": "万4.7", 
-              "id": "1-42AQXAC", 
-              "codeValue": "7247"
-            }, 
-            {
-              "codeDesc": "万6.6", 
-              "id": "1-42AQX9T", 
-              "codeValue": "7266"
-            }, 
-            {
-              "codeDesc": "万6.2", 
-              "id": "1-42AQX9X", 
-              "codeValue": "7262"
-            }, 
-            {
-              "codeDesc": "万7.7", 
-              "id": "1-42AQX9I", 
-              "codeValue": "7277"
-            }, 
-            {
-              "codeDesc": "万5.7", 
-              "id": "1-42AQXA2", 
-              "codeValue": "7257"
-            }, 
-            {
-              "codeDesc": "万5.4", 
-              "id": "1-42AQXA5", 
-              "codeValue": "7254"
-            }, 
-            {
-              "codeDesc": "千1.5", 
-              "id": "1-42AQX8Q", 
-              "codeValue": "7350"
-            }, 
-            {
-              "codeDesc": "万8.7", 
-              "id": "1-42AQX98", 
-              "codeValue": "7287"
-            }, 
-            {
-              "codeDesc": "万7.4", 
-              "id": "1-42AQX9L", 
-              "codeValue": "7274"
-            }, 
-            {
-              "codeDesc": "万2.5", 
-              "id": "1-42AQXAY", 
-              "codeValue": "7225"
-            }, 
-            {
-              "codeDesc": "万7.8", 
-              "id": "1-42AQX9H", 
-              "codeValue": "7278"
-            }, 
-            {
-              "codeDesc": "万3.9", 
-              "id": "1-42AQXAK", 
-              "codeValue": "7239"
-            }, 
-            {
-              "codeDesc": "万7.1", 
-              "id": "1-42AQX9O", 
-              "codeValue": "7271"
-            }, 
-            {
-              "codeDesc": "万7.0", 
-              "id": "1-42AQX9P", 
-              "codeValue": "7270"
-            }, 
-            {
-              "codeDesc": "万3.3", 
-              "id": "1-42AQXAQ", 
-              "codeValue": "7233"
-            }, 
-            {
-              "codeDesc": "千2.8", 
-              "id": "1-42AQX8D", 
-              "codeValue": "7480"
-            }, 
-            {
-              "codeDesc": "千1.0", 
-              "id": "1-42AQX8V", 
-              "codeValue": "7300"
-            }, 
-            {
-              "codeDesc": "千2.3", 
-              "id": "1-42AQX8I", 
-              "codeValue": "7430"
-            }, 
-            {
-              "codeDesc": "万3.8", 
-              "id": "1-42AQXAL", 
-              "codeValue": "7238"
-            }, 
-            {
-              "codeDesc": "万4.8", 
-              "id": "1-42AQXAB", 
-              "codeValue": "7248"
-            }, 
-            {
-              "codeDesc": "万7.9", 
-              "id": "1-42AQX9G", 
-              "codeValue": "7279"
-            }, 
-            {
-              "codeDesc": "万4.1", 
-              "id": "1-42AQXAI", 
-              "codeValue": "7241"
-            }, 
-            {
-              "codeDesc": "万9.5", 
-              "id": "1-42AQX90", 
-              "codeValue": "7295"
-            }, 
-            {
-              "codeDesc": "万2.7", 
-              "id": "1-42AQXAW", 
-              "codeValue": "7227"
-            }, 
-            {
-              "codeDesc": "万1.9", 
-              "id": "1-42AQXB4", 
-              "codeValue": "7219"
-            }, 
-            {
-              "codeDesc": "万8.1", 
-              "id": "1-42AQX9E", 
-              "codeValue": "7281"
-            }, 
-            {
-              "codeDesc": "千1.8", 
-              "id": "1-42AQX8N", 
-              "codeValue": "7380"
-            }, 
-            {
-              "codeDesc": "千2.7", 
-              "id": "1-42AQX8E", 
-              "codeValue": "7470"
-            }, 
-            {
-              "codeDesc": "万5.8", 
-              "id": "1-42AQXA1", 
-              "codeValue": "7258"
-            }, 
-            {
-              "codeDesc": "万8.8", 
-              "id": "1-42AQX97", 
-              "codeValue": "7288"
-            }, 
-            {
-              "codeDesc": "万6.1", 
-              "id": "1-42AQX9Y", 
-              "codeValue": "7261"
-            }, 
-            {
-              "codeDesc": "万7.3", 
-              "id": "1-42AQX9M", 
-              "codeValue": "7273"
-            }, 
-            {
-              "codeDesc": "千2.5", 
-              "id": "1-42AQX8G", 
-              "codeValue": "7450"
-            }, 
-            {
-              "codeDesc": "千2.0", 
-              "id": "1-42AQX8L", 
-              "codeValue": "7400"
-            }, 
-            {
-              "codeDesc": "千1.3", 
-              "id": "1-42AQX8S", 
-              "codeValue": "7330"
-            }, 
-            {
-              "codeDesc": "万4.6", 
-              "id": "1-42AQXAD", 
-              "codeValue": "7246"
-            }, 
-            {
-              "codeDesc": "万3.4", 
-              "id": "1-42AQXAP", 
-              "codeValue": "7234"
-            }, 
-            {
-              "codeDesc": "万6.8", 
-              "id": "1-42AQX9R", 
-              "codeValue": "7268"
-            }, 
-            {
-              "codeDesc": "万9.2", 
-              "id": "1-42AQX93", 
-              "codeValue": "7292"
-            }, 
-            {
-              "codeDesc": "万4.9", 
-              "id": "1-42AQXAA", 
-              "codeValue": "7249"
-            }, 
-            {
-              "codeDesc": "千2.2", 
-              "id": "1-42AQX8J", 
-              "codeValue": "7420"
-            }, 
-            {
-              "codeDesc": "万5.5", 
-              "id": "1-42AQXA4", 
-              "codeValue": "7255"
-            }, 
-            {
-              "codeDesc": "万4.4", 
-              "id": "1-42AQXAF", 
-              "codeValue": "7244"
-            }, 
-            {
-              "codeDesc": "万9.6", 
-              "id": "1-42AQX8Z", 
-              "codeValue": "7296"
-            }, 
-            {
-              "codeDesc": "万3.6", 
-              "id": "1-42AQXAN", 
-              "codeValue": "7236"
-            }, 
-            {
-              "codeDesc": "万2.8", 
-              "id": "1-42AQXAV", 
-              "codeValue": "7228"
-            }, 
-            {
-              "codeDesc": "万2.4", 
-              "id": "1-42AQXAZ", 
-              "codeValue": "7224"
-            }, 
-            {
-              "codeDesc": "万8.6", 
-              "id": "1-42AQX99", 
-              "codeValue": "7286"
             }
           ]
         }, 
@@ -2570,109 +1813,9 @@ exports.response = function (req, res) {
           "codeType": "华泰担保债券费用类型", 
           "options": [
             {
-              "codeDesc": "万1.6", 
-              "id": "1-2VATTLP", 
-              "codeValue": "8116"
-            }, 
-            {
               "codeDesc": "万2", 
               "id": "1-2VATTLL", 
               "codeValue": "8120"
-            }, 
-            {
-              "codeDesc": "万1.2", 
-              "id": "1-2VATTLT", 
-              "codeValue": "8112"
-            }, 
-            {
-              "codeDesc": "万0.3", 
-              "id": "1-2VATTM2", 
-              "codeValue": "8103"
-            }, 
-            {
-              "codeDesc": "万1.5", 
-              "id": "1-2VATTLQ", 
-              "codeValue": "8115"
-            }, 
-            {
-              "codeDesc": "万1.8", 
-              "id": "1-2VATTLN", 
-              "codeValue": "8118"
-            }, 
-            {
-              "codeDesc": "万0.4", 
-              "id": "1-2VATTM1", 
-              "codeValue": "8104"
-            }, 
-            {
-              "codeDesc": "万1.3", 
-              "id": "1-2VATTLS", 
-              "codeValue": "8113"
-            }, 
-            {
-              "codeDesc": "万0.9", 
-              "id": "1-2VATTLW", 
-              "codeValue": "8109"
-            }, 
-            {
-              "codeDesc": "万1.1", 
-              "id": "1-2VATTLU", 
-              "codeValue": "8111"
-            }, 
-            {
-              "codeDesc": "万1.7", 
-              "id": "1-2VATTLO", 
-              "codeValue": "8117"
-            }, 
-            {
-              "codeDesc": "万0.1", 
-              "id": "1-2VATTM4", 
-              "codeValue": "8101"
-            }, 
-            {
-              "codeDesc": "万0.5", 
-              "id": "1-2VATTM0", 
-              "codeValue": "8105"
-            }, 
-            {
-              "codeDesc": "标准", 
-              "id": "1-2VATTLK", 
-              "codeValue": "9999"
-            }, 
-            {
-              "codeDesc": "万1.4", 
-              "id": "1-2VATTLR", 
-              "codeValue": "8114"
-            }, 
-            {
-              "codeDesc": "万0.8", 
-              "id": "1-2VATTLX", 
-              "codeValue": "8108"
-            }, 
-            {
-              "codeDesc": "万0.7", 
-              "id": "1-2VATTLY", 
-              "codeValue": "8107"
-            }, 
-            {
-              "codeDesc": "万1", 
-              "id": "1-2VATTLV", 
-              "codeValue": "8110"
-            }, 
-            {
-              "codeDesc": "万0.2", 
-              "id": "1-2VATTM3", 
-              "codeValue": "8102"
-            }, 
-            {
-              "codeDesc": "万1.9", 
-              "id": "1-2VATTLM", 
-              "codeValue": "8119"
-            }, 
-            {
-              "codeDesc": "万0.6", 
-              "id": "1-2VATTLZ", 
-              "codeValue": "8106"
             }
           ]
         }, 
@@ -4685,16 +3828,6 @@ exports.response = function (req, res) {
               "codeValue": "8643"
             }, 
             {
-              "codeDesc": "万0.2", 
-              "id": "HKFARE_RATIO71", 
-              "codeValue": "8612"
-            }, 
-            {
-              "codeDesc": "万0.3", 
-              "id": "HKFARE_RATIO70", 
-              "codeValue": "8613"
-            }, 
-            {
               "codeDesc": "万2.8", 
               "id": "HKFARE_RATIO45", 
               "codeValue": "8638"
@@ -4745,11 +3878,6 @@ exports.response = function (req, res) {
               "codeValue": "8634"
             }, 
             {
-              "codeDesc": "万0.5", 
-              "id": "HKFARE_RATIO68", 
-              "codeValue": "8615"
-            }, 
-            {
               "codeDesc": "千2.1", 
               "id": "HKFARE_RATIO10", 
               "codeValue": "8673"
@@ -4783,11 +3911,6 @@ exports.response = function (req, res) {
               "codeDesc": "万3.5", 
               "id": "HKFARE_RATIO38", 
               "codeValue": "8645"
-            }, 
-            {
-              "codeDesc": "万0.4", 
-              "id": "HKFARE_RATIO69", 
-              "codeValue": "8614"
             }, 
             {
               "codeDesc": "万2.2", 
@@ -4860,19 +3983,9 @@ exports.response = function (req, res) {
               "codeValue": "8631"
             }, 
             {
-              "codeDesc": "万0.8", 
-              "id": "HKFARE_RATIO65", 
-              "codeValue": "8618"
-            }, 
-            {
               "codeDesc": "万2.3", 
               "id": "HKFARE_RATIO50", 
               "codeValue": "8633"
-            }, 
-            {
-              "codeDesc": "万0.9", 
-              "id": "HKFARE_RATIO64", 
-              "codeValue": "8619"
             }, 
             {
               "codeDesc": "标准千3", 
@@ -4880,19 +3993,9 @@ exports.response = function (req, res) {
               "codeValue": "9999"
             }, 
             {
-              "codeDesc": "万1.1", 
-              "id": "HKFARE_RATIO62", 
-              "codeValue": "8621"
-            }, 
-            {
               "codeDesc": "千1.2", 
               "id": "HKFARE_RATIO19", 
               "codeValue": "8664"
-            }, 
-            {
-              "codeDesc": "万0.1", 
-              "id": "HKFARE_RATIO72", 
-              "codeValue": "8611"
             }, 
             {
               "codeDesc": "万8", 
@@ -4920,11 +4023,6 @@ exports.response = function (req, res) {
               "codeValue": "8642"
             }, 
             {
-              "codeDesc": "万0.6", 
-              "id": "HKFARE_RATIO67", 
-              "codeValue": "8616"
-            }, 
-            {
               "codeDesc": "万1.5", 
               "id": "HKFARE_RATIO58", 
               "codeValue": "8625"
@@ -4950,11 +4048,6 @@ exports.response = function (req, res) {
               "codeValue": "8676"
             }, 
             {
-              "codeDesc": "万1", 
-              "id": "HKFARE_RATIO63", 
-              "codeValue": "8620"
-            }, 
-            {
               "codeDesc": "万3.1", 
               "id": "HKFARE_RATIO42", 
               "codeValue": "8641"
@@ -4963,11 +4056,6 @@ exports.response = function (req, res) {
               "codeDesc": "万4", 
               "id": "HKFARE_RATIO33", 
               "codeValue": "8650"
-            }, 
-            {
-              "codeDesc": "万0.7", 
-              "id": "HKFARE_RATIO66", 
-              "codeValue": "8617"
             }, 
             {
               "codeDesc": "千2.9", 
@@ -5919,17 +5007,6 @@ exports.response = function (req, res) {
           ]
         }, 
         {
-          "code": "HTSC_OPTFARE_RATIO", 
-          "codeType": "华泰个股期权费用类型", 
-          "options": [
-            {
-              "codeDesc": "标准个股期权费用", 
-              "id": "1-3N2CJY2", 
-              "codeValue": "9999"
-            }
-          ]
-        }, 
-        {
           "code": "HTSC_DFARE_RATIO", 
           "codeType": "华泰大宗交易费用类型", 
           "options": [
@@ -6097,31 +5174,55 @@ exports.response = function (req, res) {
           "value": "存量客户回访", 
           "defaultExecuteType": "Chance"
         }
-      ],
+      ], 
       "custFeedBackDict": [
         {
-          "key": "920000",
-          "value": "客户评价",
           "children": [
             {
-              "key": "920001",
-              "value": "态度不明确",
-              "children": null,
-            },
-          ],
-        },
+              "value": "态度不明确", 
+              "key": "920001"
+            }
+          ], 
+          "value": "客户评价", 
+          "key": "920000"
+        }, 
         {
-          "key": "930000",
-          "value": "响应结果",
           "children": [
             {
-              "key": "930001",
-              "value": "比较反感",
-              "children": null,
-            },
-          ],
-        },
-      ],
+              "value": "比较反感", 
+              "key": "930001"
+            }, 
+            {
+              "value": "其它", 
+              "key": "930003"
+            }, 
+            {
+              "value": "拒绝", 
+              "key": "930002"
+            }
+          ], 
+          "value": "响应结果", 
+          "key": "930000"
+        }, 
+        {
+          "children": [
+            {
+              "value": "确认参加", 
+              "key": "910001"
+            }, 
+            {
+              "value": "愿意进一步沟通", 
+              "key": "910003"
+            }, 
+            {
+              "value": "很感兴趣", 
+              "key": "910002"
+            }
+          ], 
+          "value": "反馈结果", 
+          "key": "910000"
+        }
+      ]
     }
   }
 };

@@ -59,6 +59,15 @@ const mapDispatchToProps = {
     type: 'customerPool/operateGroup',
     payload: query || {},
   }),
+  // 手动上传日志
+  switchTab: query => ({
+    type: 'customerGroup/switchTab',
+    payload: query || {},
+  }),
+  handleRadio: query => ({
+    type: 'customerGroup/handleRadio',
+    payload: query || {},
+  }),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -80,6 +89,8 @@ export default class CustomerGroup extends PureComponent {
     operateGroupResult: PropTypes.string.isRequired,
     // 操作分组（编辑、删除）
     operateGroup: PropTypes.func.isRequired,
+    switchTab: PropTypes.func.isRequired,
+    handleRadio: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -296,13 +307,24 @@ export default class CustomerGroup extends PureComponent {
   @autobind
   handleSingleRowSelectionChange(record, selected, selectedRows) {
     console.log(record, selected, selectedRows);
+    const { handleRadio } = this.props;
     const { groupId, groupName } = record;
+    // 手动发送日志
+    handleRadio({ groupId, groupName, selected });
+
     this.setState({
       currentSelect: record,
       currentSelectRowKeys: [groupId],
       groupId,
       groupName,
     });
+  }
+
+  @autobind
+  handleTabClick(param) {
+    const { switchTab } = this.props;
+    // 发送日志
+    switchTab({ param });
   }
 
   render() {
@@ -338,7 +360,11 @@ export default class CustomerGroup extends PureComponent {
         >
           <div className={styles.text}>添加分组</div>
           <hr />
-          <Tabs defaultActiveKey="addhasGroup" type="card">
+          <Tabs
+            defaultActiveKey="addhasGroup"
+            type="card"
+            onTabClick={this.handleTabClick}
+          >
             <TabPane tab="添加到已有分组" key="addhasGroup">
               <div className={styles.Grouplist}>
                 <Row type="flex" justify="start" align="middle">

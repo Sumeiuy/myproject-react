@@ -69,6 +69,9 @@ export default class Viewpoint extends PureComponent {
     const { information: { infoVOList = [] } } = this.props;
     // 展示第一个新闻
     const { texttitle = '', abstract = '' } = _.isEmpty(infoVOList) ? {} : infoVOList[0];
+    // : 为中文符号，英文的：不匹配
+    const titleArray = _.split(texttitle, '：');
+    const newTitle = _.last(titleArray);
     const isShowMore = infoVOList.length > 12;
     const isHiddenDetail = _.isEmpty(abstract);
     const newInfoVOList = _.map(infoVOList, (item, index) => ({ ...item, id: `${index}` }));
@@ -76,7 +79,7 @@ export default class Viewpoint extends PureComponent {
       <div className={styles.container}>
         <div className={styles.head}>首席投顾观点</div>
         <div className={styles.up}>
-          <div className={styles.title}>{texttitle || '暂无标题'}</div>
+          <div className={styles.title}>{newTitle || '暂无标题'}</div>
           <div className={styles.article}>
             <div className={styles.text}>{abstract || '暂无内容'}</div>
             <div

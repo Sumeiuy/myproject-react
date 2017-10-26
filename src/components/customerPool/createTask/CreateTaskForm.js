@@ -69,7 +69,6 @@ export default class CreateTaskForm extends PureComponent {
     if (_.isEmpty(previousData)) {
       this.handleInit(query);
     } else {
-      console.log('previousData--', previousData);
       this.setState({
         defaultMissionName: previousData.taskName,
         defaultMissionType: previousData.taskType, // 'Mission'
@@ -145,7 +144,6 @@ export default class CreateTaskForm extends PureComponent {
         firstUserName += '等';
       }
     }
-    console.warn('entertype--', entertype);
     switch (entertype) {
       case 'businessCustPool':
         defaultMissionName = '提醒客户办理已满足条件的业务';

@@ -137,6 +137,7 @@ export default class CreateTask extends PureComponent {
           <CreateTaskSuccess
             successType={isSuccess}
             push={push}
+            location={location}
             onCloseTab={this.handleCloseTab}
           />
         }

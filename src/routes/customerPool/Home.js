@@ -43,6 +43,7 @@ const effects = {
   getInformation: 'customerPool/getInformation',
   getHSRateAndBusinessIndicator: 'customerPool/getHSRateAndBusinessIndicator',
   getPerformanceIndicators: 'customerPool/getPerformanceIndicators',
+  switchTab: 'customerPoolHome/switchTab',
 };
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -81,6 +82,7 @@ const mapDispatchToProps = {
   saveSearchVal: fetchDataFunction(false, effects.saveSearchVal),
   push: routerRedux.push,
   replace: routerRedux.replace,
+  switchTab: fetchDataFunction(false, effects.switchTab), // 切换，上报日志
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -116,6 +118,7 @@ export default class Home extends PureComponent {
     getPerformanceIndicators: PropTypes.func.isRequired,
     hsRateAndBusinessIndicator: PropTypes.array,
     getHSRateAndBusinessIndicator: PropTypes.func.isRequired,
+    switchTab: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -431,6 +434,13 @@ export default class Home extends PureComponent {
   }
 
   @autobind
+  handleTabClick(param) {
+    const { switchTab } = this.props;
+    // 发送日志
+    switchTab({ param });
+  }
+
+  @autobind
   renderTabsExtra() {
     const {
       replace,
@@ -517,10 +527,10 @@ export default class Home extends PureComponent {
             />
             <Tabs
               tabBarExtraContent={this.renderTabsExtra()}
-              defaultActiveKey="1"
-              onChange={this.callback}
+              defaultActiveKey="manage"
+              onTabClick={this.handleTabClick}
             >
-              <TabPane tab="经营指标" key="1">
+              <TabPane tab="经营指标" key="manage">
                 <ManageIndicators
                   empInfo={empInfo}
                   push={push}
@@ -530,7 +540,7 @@ export default class Home extends PureComponent {
                   hsRateAndBusinessIndicator={hsRateAndBusinessIndicator}
                 />
               </TabPane>
-              <TabPane tab="投顾绩效" key="2">
+              <TabPane tab="投顾绩效" key="performance">
                 <PerformanceIndicators
                   empInfo={empInfo}
                   push={push}

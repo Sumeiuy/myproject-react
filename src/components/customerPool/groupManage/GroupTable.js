@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-23 14:04:34
+ * @Last Modified time: 2017-10-25 18:23:23
  */
 
 import React, { PureComponent } from 'react';
@@ -332,7 +332,7 @@ export default class GroupTable extends PureComponent {
           }}
         />
         {
-          isNeedPaganation ? <Paganation {...paganationOption} /> : null
+          (isNeedPaganation && totalRecordNum > 0) ? <Paganation {...paganationOption} /> : null
         }
       </div>
     );

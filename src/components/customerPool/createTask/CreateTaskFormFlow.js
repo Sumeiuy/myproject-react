@@ -48,7 +48,6 @@ export default class CreateTaskFormFlow extends PureComponent {
 
   componentWillMount() {
     const { location: { query } } = this.props;
-    console.log('location---', location);
     this.setState({
       showBtn: _.includes(['custGroupList'], query.entertype),
     });
@@ -63,7 +62,6 @@ export default class CreateTaskFormFlow extends PureComponent {
   @autobind
   closeTab() {
     // fspGlobal.closeRctTabById('RCT_FSP_TASK');
-    console.log(this.createTaskForm.getFieldsValue());
     fspGlobal.closeRctTabById('RCT_FSP_CUSTOMER_LIST');
   }
 
@@ -91,7 +89,6 @@ export default class CreateTaskFormFlow extends PureComponent {
     // const { custIdList, searchReq } = this.state;
     this.createTaskForm.validateFields((err, values) => {
       if (!err) {
-        console.warn('templetDesc-----', values);
         values.closingDate = moment(values.closingDate).format('YYYY-MM-DD');// eslint-disable-line
         values.triggerDate = moment(values.triggerDate).format('YYYY-MM-DD');// eslint-disable-line
         values.templetDesc = toString(values.templetDesc);// eslint-disable-line
@@ -115,7 +112,6 @@ export default class CreateTaskFormFlow extends PureComponent {
       getApprovalList,
       approvalList } = this.props;
     const { showBtn } = this.state;
-    // console.warn('showBtn', showBtn);
     return (
       <div className={styles.taskInner}>
         {showBtn ?

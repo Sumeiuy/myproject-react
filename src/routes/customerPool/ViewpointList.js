@@ -22,7 +22,7 @@ const columns = [{
   title: '标题',
   dataIndex: 'texttitle',
   key: 'texttitle',
-  width: '35%',
+  width: '30%',
   render: item => (
     <div className={classnames(styles.td, styles.headLine)}>{formatString(item)}</div>
   ),
@@ -30,7 +30,7 @@ const columns = [{
   title: '类型',
   dataIndex: 'textcategorychinese',
   key: 'textcategorychinese',
-  width: '18%',
+  width: '14%',
   render: item => (
     <div className={classnames(styles.td, styles.category)}>{formatString(item)}</div>
   ),
@@ -38,7 +38,7 @@ const columns = [{
   title: '相关股票',
   dataIndex: 'aboutStock',
   key: 'aboutStock',
-  width: '15%',
+  width: '16%',
   render: item => (
     <div className={classnames(styles.td, styles.stock)}>{formatString(item)}</div>
   ),
@@ -46,7 +46,7 @@ const columns = [{
   title: '行业',
   dataIndex: 'induname',
   key: 'induname',
-  width: '12%',
+  width: '13%',
   render: item => (
     <div className={classnames(styles.td, styles.induname)}>{formatString(item)}</div>
   ),
@@ -54,7 +54,7 @@ const columns = [{
   title: '报告日期',
   dataIndex: 'pubdatelist',
   key: 'pubdatelist',
-  width: '12%',
+  width: '13%',
   render: (item) => {
     const dateArray = _.split(item, ' ');
     const date = _.isEmpty(dateArray) ? '' : _.head(dateArray);
@@ -66,6 +66,7 @@ const columns = [{
   title: '作者',
   dataIndex: 'authors',
   key: 'authors',
+  width: '13%',
   render: item => (
     <div className={classnames(styles.td, styles.authors)}>{formatString(item)}</div>
   ),
@@ -164,13 +165,16 @@ export default class ViewpointList extends PureComponent {
     };
     return (
       <div className={styles.listContainer}>
-        <div className={styles.inner}>
+        <div
+          className={styles.inner}
+        >
           <Table
             rowKey={'id'}
             columns={columns}
             dataSource={newInfoVOList}
             pagination={false}
             onRowClick={this.handleRowClick}
+            scroll={{ x: 1100 }}
           />
           <Paganation {...paganationOption} />
         </div>

@@ -21,6 +21,10 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   goBack: routerRedux.goBack,
   push: routerRedux.push,
+  downloadFile: query => ({
+    type: 'viewpointDetail/downloadFile',
+    payload: query,
+  }),
 };
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
@@ -30,6 +34,7 @@ export default class ViewpointDetail extends PureComponent {
     location: PropTypes.object.isRequired,
     information: PropTypes.object,
     push: PropTypes.func.isRequired,
+    downloadFile: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -46,11 +51,18 @@ export default class ViewpointDetail extends PureComponent {
     }
   }
 
+  @autobind
+  handleDownloadClick({ format }) {
+    const { downloadFile } = this.props;
+    downloadFile({ module: 'viewpointDetail', param: `${format}_download` });
+  }
+
   renderDownLoad({ loadUrl, format, fileName }) {
     return (
       <a
         href={loadUrl}
         download={fileName || `${_.toUpper(format)} 全文.${_.toLower(format)}`}
+        onClick={() => this.handleDownloadClick({ format })}
       >
         {`${_.toUpper(format)} 全文`}
       </a>
@@ -121,7 +133,11 @@ export default class ViewpointDetail extends PureComponent {
                   <img src={wordSrc} alt="WORD 图标" />
                 </div>
                 <div className={styles.fileName}>
-                  {this.renderDownLoad({ loadUrl: annexpathword, format: 'WORD', fileName: texttitle })}
+                  {this.renderDownLoad({
+                    loadUrl: annexpathword,
+                    format: 'WORD',
+                    fileName: texttitle,
+                  })}
                 </div>
               </div>
               <div
@@ -134,7 +150,11 @@ export default class ViewpointDetail extends PureComponent {
                   <img src={pdfSrc} alt="PDF 图标" />
                 </div>
                 <div className={styles.fileName}>
-                  {this.renderDownLoad({ loadUrl: annexpathpdf, format: 'PDF', fileName: texttitle })}
+                  {this.renderDownLoad({
+                    loadUrl: annexpathpdf,
+                    format: 'PDF',
+                    fileName: texttitle,
+                  })}
                 </div>
               </div>
               <div
