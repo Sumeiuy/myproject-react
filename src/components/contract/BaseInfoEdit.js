@@ -3,7 +3,7 @@
 * @Author: XuWenKang
 * @Date:   2017-09-20 13:47:07
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-26 17:01:53
+ * @Last Modified time: 2017-10-26 17:57:32
 */
 
 import React, { PureComponent } from 'react';
@@ -141,7 +141,13 @@ export default class BaseInfoEdit extends PureComponent {
       contractDetail: { baseInfo },
     } = this.props;
     console.warn('edit contractDetail', baseInfo);
-    const { oldData, contractStarDate, contractPalidity } = this.state;
+    const {
+      oldData,
+      contractStarDate,
+      contractPalidity,
+      remark,
+      tdDescription,
+    } = this.state;
     // 是否是退订
     const isSubscribe = baseInfo.workflowName === unsubscribe;
     return (
@@ -188,7 +194,7 @@ export default class BaseInfoEdit extends PureComponent {
         }
         <InfoForm label="备注">
           <TextArea
-            value={isSubscribe ? baseInfo.tdDescription : baseInfo.description}
+            value={isSubscribe ? tdDescription : remark}
             onChange={this.handleChangeRemark}
           />
         </InfoForm>
