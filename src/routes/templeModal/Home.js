@@ -242,7 +242,6 @@ export default class TemplModal extends PureComponent {
       firstData: subscribelData,
       // secondData: data,
       secondData: unsubcribeData,
-      totalData: [...subscribelData, ...unsubcribeData],
       firstColumns: productColumns,
       secondColumns: productColumns,
       transferChange: this.handleTransferChange,
