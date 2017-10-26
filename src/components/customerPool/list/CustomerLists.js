@@ -463,9 +463,10 @@ export default class CustomerLists extends PureComponent {
   }
 
   @autobind
-  showCreateContact({ custId, custType }) {
+  showCreateContact({ custName, custId, custType }) {
     const { getCustContact, getServiceRecord, custContactData, onRequestLoading } = this.props;
     this.setState({
+      custName,
       currentCustId: custId,
       custType,
     }, () => {
@@ -615,6 +616,7 @@ export default class CustomerLists extends PureComponent {
       custType,
       modalKey,
       isFollows,
+      custName,
     } = this.state;
 
     const {
@@ -838,6 +840,7 @@ export default class CustomerLists extends PureComponent {
               createServiceRecord={toggleServiceRecordModal} /* 创建服务记录 */
               onClose={this.resetModalState}
               currentCustId={currentCustId}
+              currentCustName={custName}
               executeTypes={executeTypes}
               serveWay={serveWay}
             /> : null
