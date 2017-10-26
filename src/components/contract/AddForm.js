@@ -55,6 +55,8 @@ export default class AddForm extends PureComponent {
     getFlowStepInfo: PropTypes.func.isRequired,
     // 审批人
     flowStepInfo: PropTypes.object,
+    // 清除退订时所查询合约详情
+    resetUnsubscribeDetail: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -242,6 +244,7 @@ export default class AddForm extends PureComponent {
       cooperDeparment,
       searchCooperDeparment,
       getFlowStepInfo,
+      resetUnsubscribeDetail,
     } = this.props;
     const {
       formData,
@@ -290,6 +293,7 @@ export default class AddForm extends PureComponent {
           onSearchContractDetail={this.handleSearchContractDetail}
           onReset={this.handleReset}
           getFlowStepInfo={getFlowStepInfo}
+          resetUnsubscribeDetail={resetUnsubscribeDetail}
           ref={(BaseInfoAddComponent) => { this.BaseInfoAddComponent = BaseInfoAddComponent; }}
         />
         <div className={styles.editWrapper}>
