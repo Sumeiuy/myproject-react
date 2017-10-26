@@ -108,7 +108,7 @@ export default {
     serviceDepartment: EMPTY_LIST,
     // 标签圈人
     circlePeopleData: [],
-    peopleOfLabelData: [],
+    peopleOfLabelData: {},
     // 审批人列表
     approvalList: [],
   },
@@ -119,8 +119,6 @@ export default {
         const params = queryString.parse(search);
         const serviceLogUrl = pathToRegexp('/customerPool/serviceLog').exec(pathname);
         const custGroupUrl = pathToRegexp('/customerPool/customerGroup').exec(pathname);
-        // console.log('pathname---', pathname);
-        // console.log('serviceLogUrl--', serviceLogUrl);
 
         if (serviceLogUrl) {
           const { pageSize, serveDateToPaged } = params;
