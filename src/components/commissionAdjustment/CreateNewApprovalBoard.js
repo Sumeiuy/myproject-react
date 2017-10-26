@@ -422,7 +422,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     this.props.getUnSubscribelProList(param);
   }
 
-  // 单佣金调整穿梭变化的时候处理程序
+  // 单佣金、咨讯订阅调整穿梭变化的时候处理程序
   @autobind
   handleSingleTransferChange(item, array) {
     const { prodID } = item;
@@ -654,8 +654,6 @@ export default class CreateNewApprovalBoard extends PureComponent {
       },
       supportSearchKey: [['prodId'], ['prodName']],
       totalData: newUnSubscribelProList,
-      finishTips: ['产品组合等于目标佣金值', '产品组合等于目标佣金值'],
-      warningTips: ['产品组合比目标佣金高 0.5%', '产品组合离目标佣金还差 0.63%'],
     };
 
     const wrapClassName = this.judgeSubtypeNow(commadj.noSelected) ? 'commissionModal' : '';
@@ -778,6 +776,11 @@ export default class CreateNewApprovalBoard extends PureComponent {
                   <Transfer {...subScribetransferProps} />
                 </div>
               )
+            }
+            {
+              // 咨讯订阅产品三匹配信息
+              !this.judgeSubtypeNow(commadj.subscribe) ? null
+              : (<ThreeMatchTip info={threeMatchInfo} />)
             }
             {
               // 资讯退订中的资讯产品选择
