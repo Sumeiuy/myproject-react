@@ -3,6 +3,7 @@
  * @author maoquan(maoquan@htsc.com)
  */
 
+import 'babel-polyfill';
 import dva from 'dva-react-router-3';
 import { hashHistory, routerRedux } from 'dva-react-router-3/router';
 
