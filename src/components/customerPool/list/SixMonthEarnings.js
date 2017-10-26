@@ -12,9 +12,9 @@ import ChartLineWidget from './ChartLine';
 
 import styles from './sixMonthEarnings.less';
 
-// const formatNumber = value => helper.toUnit(value, '元').value;
+// const formatNumber = value => helper.toUnit(value, '元', 3).value;
 
-// const formatUnit = value => helper.toUnit(value, '元').unit;
+// const formatUnit = value => helper.toUnit(value, '元', 3).unit;
 
 const getLastestData = (arr) => {
   if (arr && arr instanceof Array && arr.length !== 0) {

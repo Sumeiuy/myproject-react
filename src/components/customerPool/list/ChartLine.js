@@ -9,6 +9,12 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import IECharts from '../../IECharts';
 
+import { helper } from '../../../utils';
+
+const formatNumber = value => helper.toUnit(value, '元', 4).value;
+
+const formatUnit = value => helper.toUnit(value, '元', 4).unit;
+
 // y轴通用配置项
 const yAxisOptions = {
   type: 'value',
@@ -261,7 +267,7 @@ export default class ChartLineWidget extends PureComponent {
               if (index === 1 || index === 3) {
                 return '';
               }
-              return parseFloat(value).toFixed(2);
+              return `${formatNumber(value)}${formatUnit(value)}`;
             },
           },
         },

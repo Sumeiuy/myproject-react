@@ -39,6 +39,7 @@ export default class CreateContactModal extends PureComponent {
     handleCloseClick: PropTypes.func.isRequired,
     handleAddServiceRecord: PropTypes.func.isRequired,
     handleCollapseClick: PropTypes.func.isRequired,
+    currentCustName: PropTypes.string.isRequired,
   };
 
   static defaultProps = {
@@ -187,7 +188,13 @@ export default class CreateContactModal extends PureComponent {
 
   @autobind
   handleServiceRecordClick() {
-    const { onClose, createServiceRecord, currentCustId, handleAddServiceRecord } = this.props;
+    const {
+      onClose,
+      createServiceRecord,
+      currentCustName,
+      currentCustId,
+      handleAddServiceRecord,
+    } = this.props;
     // 手动上传日志
     handleAddServiceRecord();
     // 先关闭联系方式对话框
@@ -195,7 +202,7 @@ export default class CreateContactModal extends PureComponent {
       visible: false,
     });
     // 打开创建服务记录对话框
-    createServiceRecord({ custId: currentCustId, flag: true });
+    createServiceRecord({ custName: currentCustName, custId: currentCustId, flag: true });
     // 回调，关闭父组件state状态
     onClose();
   }
