@@ -21,7 +21,7 @@ export default class CreateCollapse extends PureComponent {
     data: PropTypes.array,
     executeTypes: PropTypes.array.isRequired,
     serveWay: PropTypes.array.isRequired,
-    handleCollapseClick: PropTypes.array.isRequired,
+    handleCollapseClick: PropTypes.func.isRequired,
   };
 
   static defaultProps = {

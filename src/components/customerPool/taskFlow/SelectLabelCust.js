@@ -13,9 +13,11 @@ export default class SelectLabelCust extends PureComponent {
     getLabelInfo: PropTypes.func.isRequired,
     circlePeopleData: PropTypes.array.isRequired,
     getLabelPeople: PropTypes.func.isRequired,
-    peopleOfLabelData: PropTypes.array.isRequired,
+    peopleOfLabelData: PropTypes.object.isRequired,
     // 保存的数据
     storedData: PropTypes.object,
+    isLoadingEnd: PropTypes.bool.isRequired,
+    onCancel: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -26,7 +28,7 @@ export default class SelectLabelCust extends PureComponent {
     super(props);
     const { storedData = EMPTY_OBJECT } = props;
     const { labelCust = EMPTY_OBJECT } = storedData;
-    const { condition = '', labelId = '', customNum = 0 } = labelCust || EMPTY_OBJECT;
+    const { condition = '', labelId = '' } = labelCust || EMPTY_OBJECT;
 
     this.state = {
       current: 0,
@@ -34,7 +36,6 @@ export default class SelectLabelCust extends PureComponent {
       condition,
       currentSelectLabel: labelId,
       labelId,
-      totalCustNum: customNum || 0,
     };
     this.bigBtn = true;
   }
@@ -52,10 +53,6 @@ export default class SelectLabelCust extends PureComponent {
       condition,
       customNum,
     };
-
-    this.setState({
-      totalCustNum: customNum,
-    });
 
     return {
       labelCust,
@@ -79,18 +76,9 @@ export default class SelectLabelCust extends PureComponent {
 
   @autobind
   handleRadioChange(value) {
-    let totalCustNum = 0;
-    const { circlePeopleData } = this.props;
-    const matchedData = _.find(circlePeopleData, item => item.id === value);
-    if (matchedData) {
-      const { customNum = 0 } = matchedData || EMPTY_OBJECT;
-      totalCustNum = customNum;
-    }
-
     this.setState({
       labelId: value,
       currentSelectLabel: value,
-      totalCustNum,
     });
   }
 
@@ -99,8 +87,10 @@ export default class SelectLabelCust extends PureComponent {
       getLabelPeople,
       circlePeopleData,
       peopleOfLabelData,
+      isLoadingEnd,
+      onCancel,
     } = this.props;
-    const { condition, currentSelectLabel, totalCustNum } = this.state;
+    const { condition, currentSelectLabel } = this.state;
 
     return (
       <div className={styles.searchContact}>
@@ -114,13 +104,14 @@ export default class SelectLabelCust extends PureComponent {
           isNeedBtn
         />
         <TaskSearchRow
+          onCancel={onCancel}
+          isLoadingEnd={isLoadingEnd}
           onChange={this.handleRadioChange}
           circlePeopleData={circlePeopleData}
           getLabelPeople={getLabelPeople}
           peopleOfLabelData={peopleOfLabelData}
           condition={condition}
           currentSelectLabel={currentSelectLabel}
-          totalCustNum={totalCustNum}
         />
       </div>
     );

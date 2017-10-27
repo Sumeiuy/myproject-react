@@ -33,7 +33,7 @@ export default class QuickMenu extends PureComponent {
     super(props);
     this.state = {
       addressEmail: {},
-      isEmail: false,
+      isEmail: false, // 用于判断 isFollows更改
     };
   }
 
@@ -53,6 +53,7 @@ export default class QuickMenu extends PureComponent {
     const { emailCustId, listItem } = this.props;
     const { addressEmail, isEmail } = this.state;
     const email = addressEmail[emailCustId];
+    // 在此以isEmail判断是否是isFollows更新渲染完成
     if (!_.isEmpty(email) && (emailCustId === listItem.custId) && isEmail) {
       const evt = new MouseEvent('click', { bubbles: false, cancelable: false, view: window });
       this.sendEmail.dispatchEvent(evt);

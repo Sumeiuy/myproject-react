@@ -9,7 +9,6 @@ import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { fspGlobal } from '../../utils';
 import CreateTaskSuccess from '../../components/customerPool/createTask/CreateTaskSuccess';
 import CreateTaskFormFlow from '../../components/customerPool/createTask/CreateTaskFormFlow';
 import styles from './createTask.less';
@@ -39,6 +38,7 @@ const mapDispatchToProps = {
     payload: query,
   }),
   push: routerRedux.push,
+  goBack: routerRedux.goBack,
   getApprovalList: fectchDataFunction(true, effects.getApprovalList),
 };
 
@@ -50,6 +50,7 @@ export default class CreateTask extends PureComponent {
     location: PropTypes.object.isRequired,
     data: PropTypes.array,
     dict: PropTypes.object,
+    goBack: PropTypes.func.isRequired,
     createTask: PropTypes.func.isRequired,
     createTaskResult: PropTypes.object,
     push: PropTypes.func.isRequired,
@@ -106,8 +107,8 @@ export default class CreateTask extends PureComponent {
   @autobind
   /* 关闭当前页 */
   handleCloseTab() {
-    // fspGlobal.closeRctTabById('RCT_FSP_TASK');
-    fspGlobal.closeRctTabById('RCT_FSP_CUSTOMER_LIST');
+    const { goBack } = this.props;
+    goBack();
   }
 
   render() {
@@ -133,6 +134,7 @@ export default class CreateTask extends PureComponent {
             saveTaskFlowData={saveTaskFlowData}
             approvalList={approvalList}
             getApprovalList={getApprovalList}
+            goBack={this.handleCloseTab}
           /> :
           <CreateTaskSuccess
             successType={isSuccess}

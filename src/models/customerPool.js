@@ -15,7 +15,8 @@ const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const LIST_MAX = 1e4;
 const INITIAL_PAGE_NUM = 1;
-const INITIAL_PAGE_SIZE = 10;
+const INITIAL_PAGE_TEN_SIZE = 10;
+const INITIAL_PAGE_FIVE_SIZE = 5;
 
 export default {
   namespace: 'customerPool',
@@ -108,7 +109,7 @@ export default {
     serviceDepartment: EMPTY_LIST,
     // 标签圈人
     circlePeopleData: [],
-    peopleOfLabelData: [],
+    peopleOfLabelData: {},
     // 审批人列表
     approvalList: [],
   },
@@ -119,8 +120,6 @@ export default {
         const params = queryString.parse(search);
         const serviceLogUrl = pathToRegexp('/customerPool/serviceLog').exec(pathname);
         const custGroupUrl = pathToRegexp('/customerPool/customerGroup').exec(pathname);
-        // console.log('pathname---', pathname);
-        // console.log('serviceLogUrl--', serviceLogUrl);
 
         if (serviceLogUrl) {
           const { pageSize, serveDateToPaged } = params;
@@ -140,7 +139,7 @@ export default {
             type: 'customerGroupList',
             payload: {
               pageNum: curPageNum || INITIAL_PAGE_NUM,
-              pageSize: curPageSize || INITIAL_PAGE_SIZE,
+              pageSize: curPageSize || INITIAL_PAGE_TEN_SIZE,
               empId: helper.getEmpId(),
               keyWord,
             },
@@ -466,11 +465,22 @@ export default {
       yield put({
         type: 'getCustomerGroupList',
         payload: {
-          pageNum,
-          pageSize,
+          pageNum: pageNum || INITIAL_PAGE_NUM,
+          pageSize: pageSize || INITIAL_PAGE_TEN_SIZE,
           keyWord,
         },
       });
+      if (groupId) {
+        // 成功之后，更新分组下客户信息
+        yield put({
+          type: 'getGroupCustomerList',
+          payload: {
+            pageNum: INITIAL_PAGE_NUM,
+            pageSize: INITIAL_PAGE_FIVE_SIZE,
+            groupId,
+          },
+        });
+      }
     },
     * toastM({ message, duration }) {
       yield toastM(message, duration);

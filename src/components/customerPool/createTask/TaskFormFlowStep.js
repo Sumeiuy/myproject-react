@@ -7,12 +7,13 @@ import moment from 'moment';
 import { autobind } from 'core-decorators';
 import CreateTaskForm from './CreateTaskForm';
 import TaskPreview from '../taskFlow/TaskPreview';
-import { fspGlobal, helper } from '../../../utils';
+import { helper, permission } from '../../../utils';
 import styles from './taskFormFlowStep.less';
 
 
 const { toString } = Mention;
-const orgId = window.orgId;
+// const orgId = window.forReactPosition.orgId || 'ZZ001041051';
+const orgId = 'ZZ001041051';
 
 @withRouter
 export default class TaskFlow extends PureComponent {
@@ -26,6 +27,7 @@ export default class TaskFlow extends PureComponent {
     parseQuery: PropTypes.func.isRequired,
     approvalList: PropTypes.array.isRequired,
     getApprovalList: PropTypes.func.isRequired,
+    goBack: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -44,8 +46,8 @@ export default class TaskFlow extends PureComponent {
       currentTab: '1',
       custSource: '',
     };
-    // this.isHasAuthorize = permission.hasIndexViewPermission();
-    this.isHasAuthorize = true;
+    this.isHasAuthorize = permission.hasIndexViewPermission();
+    // this.isHasAuthorize = true;
   }
 
   @autobind
@@ -102,12 +104,6 @@ export default class TaskFlow extends PureComponent {
     });
   }
 
-  @autobind
-  closeTab() {
-    // fspGlobal.closeRctTabById('RCT_FSP_TASK');
-    fspGlobal.closeRctTabById('RCT_FSP_CUSTOMER_LIST');
-  }
-
   // 自建任务提交
   @autobind
   handleSubmit() {
@@ -124,7 +120,7 @@ export default class TaskFlow extends PureComponent {
       sortsReqList,
     } = custCondition;
     const params = storedTaskFlowData.taskFormData;
-    // console.warn('custCondition--', custCondition);
+    console.warn('orgId--', orgId);
     const data = {
       closingDate: moment(params.closingDate).format('YYYY-MM-DD'),
       executionType: params.executionType,
@@ -184,6 +180,7 @@ export default class TaskFlow extends PureComponent {
       approvalList,
       getApprovalList,
       storedTaskFlowData,
+      goBack,
     } = this.props;
     const { executeTypes, taskTypes } = dict;
     const { query: { count } } = location;
@@ -229,7 +226,7 @@ export default class TaskFlow extends PureComponent {
             <Button
               className={styles.cancelBtn}
               type="default"
-              onClick={this.closeTab}
+              onClick={goBack}
             >
               取消
             </Button>
