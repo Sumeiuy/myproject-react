@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 13:43:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-25 15:58:42
+ * @Last Modified time: 2017-10-26 11:15:41
  * 客户细分组件
  */
 
@@ -19,6 +19,8 @@ import styles from './customerSegment.less';
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const COLUMN_WIDTH = 115;
+const INITIAL_PAGE_SIZE = 10;
+const COLUMN_HEIGHT = 36;
 
 export default class CustomerSegment extends PureComponent {
   static propTypes = {
@@ -225,6 +227,8 @@ export default class CustomerSegment extends PureComponent {
 
     const scrollX = (columnSize * COLUMN_WIDTH);
 
+    const scrollY = (INITIAL_PAGE_SIZE * COLUMN_HEIGHT);
+
     // 添加id到dataSource
     const newDataSource = this.addIdToDataSource(dataSource);
 
@@ -271,10 +275,14 @@ export default class CustomerSegment extends PureComponent {
                   tableClass={styles.custListTable}
                   titleColumn={titleColumn}
                   isFixedColumn
-                  // 前三列固定，如果太长，后面的就滚动
+                  // 前两列固定，如果太长，后面的就滚动
                   fixedColumn={[0, 1]}
                   // 列的总宽度加上固定列的宽度
                   scrollX={scrollX}
+                  // 纵向滚动
+                  scrollY={scrollY}
+                  // title fixed
+                  isFixedTitle
                   columnWidth={COLUMN_WIDTH}
                   bordered
                 />

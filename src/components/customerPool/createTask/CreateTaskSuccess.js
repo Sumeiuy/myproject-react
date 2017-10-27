@@ -15,7 +15,7 @@ import { fspContainer } from '../../../config';
 import Button from '../../common/Button';
 
 let successSetInterval;
-let COUNT = 10;
+let intervalCount = 10;
 export default class CreateTaskSuccess extends PureComponent {
   static propTypes = {
     successType: PropTypes.bool,
@@ -31,7 +31,7 @@ export default class CreateTaskSuccess extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      changeTime: COUNT,
+      changeTime: intervalCount,
     };
   }
 
@@ -48,9 +48,6 @@ export default class CreateTaskSuccess extends PureComponent {
       }
     }
     this.handleShowSuccess(this.props);
-  }
-
-  componentWillReceiveProps(nextProps) {
   }
 
   @autobind
@@ -98,12 +95,13 @@ export default class CreateTaskSuccess extends PureComponent {
   @autobind
   handleMovTime() {
     this.setState({
-      changeTime: COUNT--,
+      changeTime: intervalCount--,
     }, () => {
-      if (COUNT < 0) {
+      if (intervalCount < 0) {
         console.log('页面关闭');
         clearInterval(successSetInterval);
         successSetInterval = null;
+        intervalCount = 10;
         // 跳转之前关闭interval
         this.goToHome();
       }

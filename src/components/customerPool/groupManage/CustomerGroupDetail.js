@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 14:15:22
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-25 17:39:46
+ * @Last Modified time: 2017-10-27 10:29:01
  */
 
 import React, { PureComponent } from 'react';
@@ -46,6 +46,8 @@ export default class CustomerGroupDetail extends PureComponent {
     deleteCustomerFromGroup: PropTypes.func.isRequired,
     // 删除分组下指定客户结果
     deleteCustomerFromGroupResult: PropTypes.object.isRequired,
+    // 编辑情况下，添加客户到分组下的列表
+    onAddCustomerToGroup: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
   };
@@ -75,6 +77,7 @@ export default class CustomerGroupDetail extends PureComponent {
       includeCustIdList: [],
       needDeleteCustId: '',
       isShowDeleteConfirm: false,
+      curPageCustList: EMPTY_LIST,
     };
   }
 
@@ -88,7 +91,7 @@ export default class CustomerGroupDetail extends PureComponent {
       deleteCustomerFromGroupResult: nextDeleteResult = EMPTY_OBJECT } = nextProps;
     const { resultData: nextData = EMPTY_LIST, page = EMPTY_OBJECT } = nextList;
     const { totalRecordNum } = page;
-    const { includeCustListSize,
+    const {
       dataSource,
       groupId,
       needDeleteCustId,
@@ -99,12 +102,10 @@ export default class CustomerGroupDetail extends PureComponent {
     const nextResult = nextDeleteResult[`${groupId}_${needDeleteCustId}`];
 
     if (prevData !== nextData) {
-      // 将新数据与旧数据concat,合并去重
-      // const newDataSource = _.uniqBy(_.concat(dataSource, nextData), 'custId');
       this.setState({
         dataSource: nextData,
         // 总条目与当前新增cust条目相加
-        totalRecordNum: totalRecordNum + includeCustListSize,
+        totalRecordNum,
       });
     }
 
@@ -141,6 +142,31 @@ export default class CustomerGroupDetail extends PureComponent {
   }
 
   /**
+   * 获取本页数据，从服务器获取或者本地分页
+   * @param {*} curPage 当前页
+   * @param {*} curPageSize 当前分页条目
+   */
+  @autobind
+  getCurPageData(curPage, curPageSize) {
+    const { getGroupCustomerList } = this.props;
+    const { groupId = '', includeCustList } = this.state;
+    if (_.isEmpty(groupId)) {
+      // 如果groupId是空，则直接取includeCustList中的数据
+      const data = _.slice(includeCustList, (curPage - 1) * curPageSize,
+        curPage * curPageSize);
+      this.setState({
+        curPageCustList: data,
+      });
+    } else {
+      getGroupCustomerList({
+        groupId,
+        pageNum: curPage,
+        pageSize: curPageSize,
+      });
+    }
+  }
+
+  /**
   * 页码改变事件，翻页事件
   * @param {*} nextPage 下一页码
   * @param {*} curPageSize 当前页条目
@@ -148,29 +174,11 @@ export default class CustomerGroupDetail extends PureComponent {
   @autobind
   handlePageChange(nextPage, currentPageSize) {
     console.log(nextPage, currentPageSize);
-    const { getGroupCustomerList } = this.props;
-    const { groupId = '', includeCustListSize, includeCustList } = this.state;
     this.setState({
       curPageNum: nextPage,
       curPageSize: currentPageSize,
     });
-
-    if ((nextPage * currentPageSize) > includeCustListSize) {
-      // 当分页条目*分页数，大于新增总条目时，去请求下一页数据，不然用本地数据
-      // 获取分组下的客户列表
-      getGroupCustomerList({
-        groupId,
-        pageNum: nextPage,
-        pageSize: currentPageSize,
-      });
-    } else {
-      const curPage = nextPage * currentPageSize;
-      // 截取includeList指定序列
-      const newDataSource = _.slice(includeCustList, curPage - currentPageSize, curPage);
-      this.setState({
-        dataSource: newDataSource,
-      });
-    }
+    this.getCurPageData(nextPage, currentPageSize);
   }
 
   /**
@@ -181,66 +189,11 @@ export default class CustomerGroupDetail extends PureComponent {
   @autobind
   handleShowSizeChange(currentPageNum, changedPageSize) {
     console.log(currentPageNum, changedPageSize);
-    const { getGroupCustomerList } = this.props;
-    const { groupId = '', includeCustListSize } = this.state;
     this.setState({
       curPageNum: currentPageNum,
       curPageSize: changedPageSize,
     });
-    if ((currentPageNum * changedPageSize) > includeCustListSize) {
-      // 当分页条目*分页数，大于新增总条目时，去请求下一页数据，不然用本地数据
-      // 获取分组下的客户列表
-      getGroupCustomerList({
-        groupId,
-        pageNum: currentPageNum,
-        pageSize: changedPageSize,
-      });
-    }
-  }
-
-  @autobind
-  handleSubmit(e) {
-    const { location: { pathname, query }, replace } = this.props;
-    // this.props.form.resetFields(); 清除value
-    e.preventDefault();
-    this.props.form.validateFields((err, values) => {
-      if (!err) {
-        console.log('Received values of form: ', values);
-        const { name, description } = values;
-        const { groupId, includeCustIdList } = this.state;
-        const { operateGroup, onCloseModal } = this.props;
-        if (groupId) {
-          // 编辑分组
-          operateGroup({
-            groupId,
-            groupName: name,
-            groupDesc: description,
-            includeCustIdList: _.isEmpty(includeCustIdList) ? null : includeCustIdList,
-            excludeCustIdList: null,
-          });
-        } else {
-          // 新增分组
-          operateGroup({
-            groupName: name,
-            groupDesc: description,
-            includeCustIdList: _.isEmpty(includeCustIdList) ? null : includeCustIdList,
-            excludeCustIdList: null,
-          });
-        }
-        // 重置分页
-        replace({
-          pathname,
-          query: {
-            ...query,
-            curPageNum: 1,
-          },
-        });
-        // 关闭弹窗
-        onCloseModal();
-      } else {
-        message.error('分组描述或分组名称有误');
-      }
-    });
+    this.getCurPageData(currentPageNum, changedPageSize);
   }
 
   @autobind
@@ -248,40 +201,36 @@ export default class CustomerGroupDetail extends PureComponent {
     console.log('delete customer from group');
     const {
       includeCustIdList,
-      dataSource,
       totalRecordNum,
       includeCustList,
       groupId,
+      curPageSize,
     } = this.state;
-    const { getGroupCustomerList } = this.props;
     const { custId } = record;
 
-    // 判断删除的custId在includeCustIdList中有没有
-    if (_.includes(includeCustIdList, custId)) {
-      const newDataSource = _.filter(dataSource, item => item.custId !== custId);
+    if (_.isEmpty(groupId)) {
+      // 新增下删除客户从includeCustIdList删除
+      const newIncludeCustList = _.filter(includeCustList, item => item.custId !== custId);
+
+      const {
+        curPageCustList,
+        includeCustListSize,
+        curPage,
+      } = this.generateLocalPageAndDataSource(newIncludeCustList, curPageSize);
+
       // 存在则只是将includeCustIdList减少一条
       this.setState({
         includeCustIdList: _.filter(includeCustIdList, item => item !== custId),
-        includeCustList: _.filter(includeCustList, item => item.custId !== custId),
-        includeCustListSize: _.size(includeCustIdList) - 1,
-        dataSource: newDataSource,
+        includeCustList: newIncludeCustList,
         // 总记录数减1
         totalRecordNum: totalRecordNum - 1,
         needDeleteCustId: custId,
-      }, () => {
-        if (_.isEmpty(newDataSource) && groupId) {
-          // 判断数据是否不存在了，
-          // 并且不是新增
-          // 不存在请求数据
-          getGroupCustomerList({
-            groupId,
-            pageNum: 1,
-            pageSize: 5,
-          });
-        }
+        curPageCustList,
+        includeCustListSize,
+        curPageNum: curPage,
       });
     } else {
-      // 不存在，直接提示删除确认框，然后删除
+      // 不然，直接提示删除确认框，然后删除
       this.setState({
         isShowDeleteConfirm: true,
         needDeleteCustId: custId,
@@ -322,42 +271,88 @@ export default class CustomerGroupDetail extends PureComponent {
     console.log('receive value, add customer to table', selectedItem);
     const { custName, cusId, custLevelName, riskLevel, brokerNumber } = selectedItem;
     console.log(custName, cusId, custLevelName, riskLevel);
-    const { includeCustIdList, dataSource, totalRecordNum, includeCustList } = this.state;
-    const { custRiskBearing } = this.props;
+    const {
+      includeCustIdList,
+      totalRecordNum,
+      includeCustList,
+      groupId,
+      // curPageNum,
+      curPageSize,
+      name,
+      description,
+    } = this.state;
+    const { custRiskBearing, onAddCustomerToGroup } = this.props;
     const riskLevelObject = _.find(custRiskBearing, item => item.key === riskLevel) || EMPTY_OBJECT;
     // 判断includeCustIdList是否存在custId
     if (_.includes(includeCustIdList, brokerNumber)) {
       message.info('此客户已经添加过！');
       return;
     }
+
+    const newCustIdList = _.concat(includeCustIdList, brokerNumber);
+
+    // 如果groupId不为空，则添加直接调用接口，添加
+    if (_.isEmpty(groupId)) {
+      // 数据添加进表格
+      // 新添加的数据放在表格的前面
+      const newIncludeCustList = _.concat([{
+        custName,
+        custId: brokerNumber,
+        levelName: custLevelName,
+        riskLevelName: riskLevelObject.value,
+        id: cusId,
+        brokerNumber,
+      }], includeCustList);
+
+      const {
+        curPageCustList,
+        includeCustListSize,
+        curPage,
+      } = this.generateLocalPageAndDataSource(newIncludeCustList, curPageSize);
+
+      this.setState({
+        // 手动新增的所有数据集合
+        includeCustList: newIncludeCustList,
+        includeCustListSize,
+        totalRecordNum: totalRecordNum + 1,
+        curPageCustList,
+        curPageNum: curPage,
+      });
+    } else {
+      // groupId不为空，直接调用add接口
+      onAddCustomerToGroup({
+        includeCustIdList: newCustIdList,
+        name,
+        description,
+      });
+    }
+
     // 将数据添加进includeCustIdList
     this.setState({
-      includeCustIdList: _.concat(includeCustIdList, brokerNumber),
+      includeCustIdList: newCustIdList,
     });
+  }
 
-    // 数据添加进表格
-    // 新添加的数据放在表格的前面
-    this.setState({
-      dataSource: _.concat([{
-        custName,
-        custId: brokerNumber,
-        levelName: custLevelName,
-        riskLevelName: riskLevelObject.value,
-        id: cusId,
-        brokerNumber,
-      }], dataSource),
-      // 手动新增的所有数据集合
-      includeCustList: _.concat([{
-        custName,
-        custId: brokerNumber,
-        levelName: custLevelName,
-        riskLevelName: riskLevelObject.value,
-        id: cusId,
-        brokerNumber,
-      }], includeCustList),
-      includeCustListSize: _.size(includeCustIdList) + 1,
-      totalRecordNum: totalRecordNum + 1,
-    });
+  @autobind
+  generateLocalPageAndDataSource(newIncludeCustList, curPageSize) {
+    const includeCustListSize = _.size(newIncludeCustList);
+    let curPageCustList = EMPTY_LIST;
+    const curPage = Math.ceil(includeCustListSize / curPageSize);
+
+    if (curPage <= 1) {
+      // 第一页
+      curPageCustList = _.slice(newIncludeCustList, 0, includeCustListSize);
+    } else {
+      // 大于一页
+      curPageCustList = _.slice(newIncludeCustList,
+        (curPage - 1) * curPageSize, includeCustListSize);
+    }
+
+    return {
+      curPageCustList,
+      includeCustListSize,
+      curPage,
+    };
   }
 
   @autobind
@@ -449,12 +444,13 @@ export default class CustomerGroupDetail extends PureComponent {
       dataSource = EMPTY_LIST,
       isShowDeleteConfirm,
       totalRecordNum,
+      curPageCustList,
+      groupId,
     } = this.state;
     const {
       form: { getFieldDecorator },
       customerHotPossibleWordsList = EMPTY_LIST,
       getHotPossibleWds,
-      // onCloseModal,
       canEditDetail,
   } = this.props;
 
@@ -462,11 +458,22 @@ export default class CustomerGroupDetail extends PureComponent {
     const titleColumn = this.renderColumnTitle();
     // 构造operation
     const actionSource = this.renderActionSource();
+
+    let newDataSource = EMPTY_LIST;
+
+    if (_.isEmpty(groupId)) {
+      // 如果存在groupId，则用dataSource
+      // 不然用includeCustList
+      newDataSource = curPageCustList;
+    } else {
+      newDataSource = dataSource;
+    }
+
     // 添加id到dataSource
-    const newDataSource = this.addIdToDataSource(dataSource);
+    newDataSource = this.addIdToDataSource(newDataSource);
 
     return (
-      <Form onSubmit={this.handleSubmit} className={styles.groupDetail}>
+      <Form className={styles.groupDetail}>
         <div className={styles.nameSection}>
           <div className={styles.name}>
             分组名称
@@ -570,7 +577,7 @@ export default class CustomerGroupDetail extends PureComponent {
                 actionSource={actionSource}
                 isFirstColumnLink={false}
                 // 固定标题，内容滚动
-                scrollY={142}
+                scrollY={175}
                 isFixedTitle
               />
             </div> : <div className={styles.emptyTable} />
