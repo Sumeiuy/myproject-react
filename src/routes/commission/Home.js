@@ -42,6 +42,7 @@ const effects = {
   approver: 'commission/getAprovalUserList',
   validate: 'commission/validateCustInfo',
   submitBatch: 'commission/submitBatchCommission',
+  submitSingle: 'commission/submitSingleCommission',
   batchgj: 'commission/getGJCommissionRate',
   singlegj: 'commission/getSingleGJCommissionRate',
   singleCustList: 'commission/getSingleCustList',
@@ -95,7 +96,7 @@ const mapStateToProps = state => ({
   singleOtherRatio: state.commission.singleOtherCommissionOptions,
   // 单佣金调整页面客户查询列表
   singleCustomerList: state.commission.singleCustomerList,
- // 单佣金调整可选产品列表
+  // 单佣金调整可选产品列表
   singleComProductList: state.commission.singleComProductList,
   // 客户与产品的三匹配信息
   threeMatchInfo: state.commission.threeMatchInfo,
@@ -103,6 +104,8 @@ const mapStateToProps = state => ({
   subscribelProList: state.commission.subscribelProList,
   // 新建咨讯订阅可选产品列表
   unSubscribelProList: state.commission.unSubscribelProList,
+  // 单佣金调整申请结果
+  singleSubmit: state.commission.singleSubmit,
 });
 
 const getDataFunction = (loading, type) => query => ({
@@ -135,6 +138,8 @@ const mapDispatchToProps = {
   getCanApplyCustList: getDataFunction(false, effects.applyCustList),
   // 提交批量佣金调整申请
   submitBatch: getDataFunction(false, effects.submitBatch),
+  // 提交单佣金调整申请
+  submitSingle: getDataFunction(false, effects.submitSingle),
   // 获取批量佣金目标股基佣金率
   getGJCommissionRate: getDataFunction(false, effects.batchgj),
   // 获取单佣金目标股基佣金率
@@ -205,6 +210,8 @@ export default class CommissionHome extends PureComponent {
     unSubscribelProList: PropTypes.array.isRequired,
     singleGJCommission: PropTypes.array.isRequired,
     getSingleGJ: PropTypes.func.isRequired,
+    submitSingle: PropTypes.func.isRequired,
+    singleSubmit: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -519,6 +526,8 @@ export default class CommissionHome extends PureComponent {
       unSubscribelProList,
       singleGJCommission,
       getSingleGJ,
+      submitSingle,
+      singleSubmit,
     } = this.props;
     const isEmpty = _.isEmpty(list.resultData);
     // 此处需要提供一个方法给返回的接口查询设置是否查询到数据
@@ -593,6 +602,8 @@ export default class CommissionHome extends PureComponent {
           unSubscribelProList={unSubscribelProList}
           singleGJCommission={singleGJCommission}
           getSingleGJ={getSingleGJ}
+          onSubmitSingle={submitSingle}
+          singleSubmit={singleSubmit}
         />
       </div>
     );

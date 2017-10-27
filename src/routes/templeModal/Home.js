@@ -102,13 +102,13 @@ export default class TemplModal extends PureComponent {
   }
 
   @autobind
-  handleTransferChange(updateArray) {
-    console.log(updateArray);
+  handleTransferChange(flag, selected, updateArray) {
+    console.log(flag, selected, updateArray);
   }
 
   @autobind
-  handleCheckChange(selectedChildren, selectedAll) {
-    console.log(selectedChildren, selectedAll);
+  handleCheckChange(selectedItem, updateArray) {
+    console.log(selectedItem, updateArray);
   }
 
   @autobind

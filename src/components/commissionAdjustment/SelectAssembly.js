@@ -50,12 +50,13 @@ export default class SelectAssembly extends PureComponent {
   @autobind
   handleSelectedValue(value) {
     if (value) {
-      this.setState({
-        typeStyle: 'close',
-      });
       const { dataSource, onSelectValue } = this.props;
       const item = _.filter(dataSource, o => o.id === value)[0];
       onSelectValue(item);
+      this.setState({
+        inputValue: `${item.custName}（${item.custEcom}） - ${item.riskLevelLabel}`,
+        typeStyle: 'close',
+      });
     } else {
       this.setState({
         inputValue: '',
@@ -81,8 +82,14 @@ export default class SelectAssembly extends PureComponent {
     const { dataSource, width } = this.props;
     const { inputValue, typeStyle } = this.state;
     const options = dataSource.map(opt => (
-      <Option key={opt.id} value={opt.id} text={`${opt.custName}（${opt.custEcon}） - ${opt.riskLevel}`}>
-        <span className={styles.prodValue}>{opt.custName}（{opt.custEcon}） - {opt.riskLevel}</span>
+      <Option
+        key={opt.id}
+        value={opt.id}
+        text={`${opt.custName}（${opt.custEcom}） - ${opt.riskLevelLabel}`}
+      >
+        <span className={styles.prodValue}>
+          {opt.custName}（{opt.custEcom}） - {opt.riskLevelLabel}
+        </span>
       </Option>
     ));
     return (
