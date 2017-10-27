@@ -491,6 +491,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
       addFlowStepInfo,
       getFlowStepInfo,
       empInfo,
+      getCustRange,
     } = this.props;
     const {
       addFormModal,
@@ -522,6 +523,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
         operateOptions={operationList}
         needOperate
         empInfo={empInfo}
+        getCustRange={getCustRange}
       />
     );
     const leftPanel = (
@@ -590,22 +592,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
       attachmentList,
       flowHistory,
     };
-    const editFormProps = {
-      custList: customerList,
-      contractDetail,
-      onSearchCutList: this.toSearchCust,
-      onChangeForm: this.handleChangeContractForm,
-      uploadAttachment: this.onUploadComplete,
-      operationType: this.state.editContractInfo.operationType || '',
-      // 条款名称列表
-      clauseNameList: this.props.clauseNameList,
-      // 合作部门列表
-      cooperDeparment: this.props.cooperDeparment,
-      // 根据管检测查询合作部门
-      searchCooperDeparment: this.handleSearchCooperDeparment,
-      // 审批人相关信息
-      flowStepInfo,
-    };
+
 
 
     const selfBtnGroup = (<BottonGroup
@@ -622,6 +609,16 @@ export default class ChannelsTypeProtocol extends PureComponent {
       size: 'large',
       // selfBtnGroup,
     };
+    const editFormProps = {
+      // 客户列表
+      custList: customerList,
+      // 查询客户
+      onSearchCutList: this.toSearchCust,
+      // 查询协议模板
+      onSearchProtocolTemplate: ()=>{},
+      // 协议模板列表
+      protocolTemplateList: [],
+    };
     return (
       <div className={styles.premissionbox} >
         <SplitPanel
@@ -635,7 +632,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
           editFormModal ?
             <CommonModal {...editFormModalProps} >
               <EditForm
-                {...editFormModalProps}
+                {...editFormProps}
                 ref={(ref) => { this.EditFormComponent = ref; }}
               />
             </CommonModal>

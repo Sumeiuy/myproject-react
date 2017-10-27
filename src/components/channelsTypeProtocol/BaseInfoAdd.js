@@ -21,7 +21,7 @@ import DropDownSelect from '../common/dropdownSelect';
 import DatePicker from '../common/datePicker';
 import { seibelConfig } from '../../config';
 
-import styles from './baseInfoAdd.less';
+import styles from './editBaseInfo.less';
 
 const { TextArea } = Input;
 
