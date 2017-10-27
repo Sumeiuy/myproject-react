@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-22 19:02:56
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-27 14:47:42
+ * @Last Modified time: 2017-10-27 16:24:54
  */
 
 import React, { PureComponent } from 'react';
@@ -17,7 +17,6 @@ import Button from '../../components/common/Button';
 import GroupTable from '../../components/customerPool/groupManage/GroupTable';
 import GroupModal from '../../components/customerPool/groupManage/CustomerGroupUpdateModal';
 import CustomerGroupDetail from '../../components/customerPool/groupManage/CustomerGroupDetail';
-// import Search from '../../components/common/Search';
 import SimpleSearch from '../../components/customerPool/groupManage/CustomerGroupListSearch';
 import { fspContainer } from '../../config';
 import { fspGlobal } from '../../utils';
@@ -32,9 +31,6 @@ const effects = {
   getGroupList: 'customerPool/getCustomerGroupList',
   getCustList: 'customerPool/getGroupCustomerList',
   getHotPossibleWds: 'customerPool/getCustomerHotPossibleWds',
-  // getHistoryWdsList: 'customerPool/getCustomerHistoryWdsList',
-  // clearSearchHistoryList: 'customerPool/clearCustomerSearchHistoryList',
-  // saveSearchVal: 'customerPool/saveCustomerSearchVal',
   operateGroup: 'customerPool/operateGroup',
   deleteGroup: 'customerPool/deleteGroup',
   deleteCustomerFromGroup: 'customerPool/deleteCustomerFromGroup',
@@ -53,12 +49,6 @@ const mapStateToProps = state => ({
   groupCustomerList: state.customerPool.groupCustomerList,
   // 联想的推荐热词列表
   customerHotPossibleWordsList: state.customerPool.customerHotPossibleWordsList,
-  // 历史搜索
-  // customerHistoryWordsList: state.customerPool.customerHistoryWordsList,
-  // 清除历史列表
-  // isClearCustomerHistorySuccess: state.customerPool.isClearCustomerHistorySuccess,
-  // 保存的搜索内容
-  // customerSearchHistoryVal: state.customerPool.customerSearchHistoryVal,
   // 更新分组信息成功与否
   operateGroupResult: state.customerPool.operateGroupResult,
   // 字典信息
@@ -76,12 +66,6 @@ const mapDispatchToProps = {
   getGroupCustomerList: fetchData(effects.getCustList, false),
   // 获取热词列表
   getHotPossibleWds: fetchData(effects.getHotPossibleWds, false),
-  // 获取搜索记录列表
-  // getHistoryWdsList: fetchData(effects.getHistoryWdsList, false),
-  // 清除搜索记录
-  // clearSearchHistoryList: fetchData(effects.clearSearchHistoryList, false),
-  // 保存搜索关键字
-  // saveSearchVal: fetchData(effects.saveSearchVal, false),
   // 新增、编辑客户分组
   operateGroup: fetchData(effects.operateGroup, true),
   // 删除分组
@@ -106,13 +90,7 @@ export default class CustomerGroupManage extends PureComponent {
     getGroupCustomerList: PropTypes.func.isRequired,
     groupCustomerList: PropTypes.object.isRequired,
     customerHotPossibleWordsList: PropTypes.array.isRequired,
-    // customerHistoryWordsList: PropTypes.array.isRequired,
-    // isClearCustomerHistorySuccess: PropTypes.bool.isRequired,
-    // customerSearchHistoryVal: PropTypes.string.isRequired,
     getHotPossibleWds: PropTypes.func.isRequired,
-    // getHistoryWdsList: PropTypes.func.isRequired,
-    // clearSearchHistoryList: PropTypes.func.isRequired,
-    // saveSearchVal: PropTypes.func.isRequired,
     operateGroupResult: PropTypes.string.isRequired,
     operateGroup: PropTypes.func.isRequired,
     dict: PropTypes.object.isRequired,
@@ -129,18 +107,18 @@ export default class CustomerGroupManage extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      visible: false, // 控制显示更新分组弹出层
+      // 控制显示更新分组弹出层
+      visible: false,
       modalKey: `groupModalKey${modalKeyCount}`,
       canEditDetail: true,
-      name: '', // 分组名称
-      description: '', // 分组描述
+      // 分组名称
+      name: '',
+      // 分组描述
+      description: '',
       modalTitle: '新建用户分组',
       groupId: '',
       record: {},
-      isShowDeleteConfirm: false,
       keyWord: '',
-      isShowConfirmTip: false,
-      isShowNewModelConfirmTip: false,
     };
   }
 
@@ -171,13 +149,6 @@ export default class CustomerGroupManage extends PureComponent {
       pageSize: 10,
     });
   }
-
-  // // 获取历史搜索
-  // @autobind
-  // queryHistoryWdsList() {
-  //   const { getHistoryWdsList } = this.props;
-  //   getHistoryWdsList();
-  // }
 
   /**
    * 页码改变事件，翻页事件
@@ -263,14 +234,6 @@ export default class CustomerGroupManage extends PureComponent {
       pageNum: curPageNum,
       pageSize: curPageSize,
     });
-    // // 重置分页
-    // replace({
-    //   pathname,
-    //   query: {
-    //     ...query,
-    //     curPageNum: 1,
-    //   },
-    // });
   }
 
   // 发起任务
@@ -282,16 +245,17 @@ export default class CustomerGroupManage extends PureComponent {
       groupId,
       count: relatCust,
       enterType: 'custGroupList',
+      source: 'custGroupList',
     }, '自建任务', 'RCT_FSP_CREATE_TASK');
   }
 
   @autobind
   handleOpenTab(obj, titles, ids) {
-    const { groupId, count, enterType } = obj;
+    const { groupId, count, enterType, source } = obj;
     const { push } = this.props;
     const firstUrl = '/customerPool/createTask';
     if (document.querySelector(fspContainer.container)) {
-      const url = `${firstUrl}?groupId=${groupId}&count=${count}&enterType=${enterType}`;
+      const url = `${firstUrl}?groupId=${groupId}&count=${count}&enterType=${enterType}&source=${source}`;
       const param = {
         closable: true,
         forceRefresh: true,
@@ -316,44 +280,33 @@ export default class CustomerGroupManage extends PureComponent {
   @autobind
   handleConfirmOk() {
     this.deleteCustomerGroup();
-    this.setState({
-      isShowDeleteConfirm: false,
-    });
   }
 
   @autobind
   handleConfirmCancel() {
-    this.setState({
-      isShowDeleteConfirm: false,
-    });
+    console.log('cancel');
   }
 
   @autobind
   handleConfirmTipCancel() {
-    this.setState({
-      isShowConfirmTip: false,
-    });
+    console.log('cancel');
   }
 
   @autobind
   handleConfirmTipOk() {
     this.setState({
-      isShowConfirmTip: false,
       visible: false,
     });
   }
 
   @autobind
   handleNewModelConfirmTipCancel() {
-    this.setState({
-      isShowNewModelConfirmTip: false,
-    });
+    console.log('cancel');
   }
 
   @autobind
   handleNewModelConfirmTipOk() {
     this.setState({
-      isShowNewModelConfirmTip: false,
       visible: false,
     });
   }
@@ -363,7 +316,11 @@ export default class CustomerGroupManage extends PureComponent {
     this.setState({
       // 当前删除行记录数据
       record,
-      isShowDeleteConfirm: true,
+    });
+    Confirm({
+      type: 'delete',
+      onOkHandler: this.handleConfirmOk,
+      onCancelHandler: this.handleConfirmCancel,
     });
   }
 
@@ -418,8 +375,10 @@ export default class CustomerGroupManage extends PureComponent {
       // 编辑模式下
       if (!_.isEmpty(includeCustIdList)) {
         // 存在custIdList,在取消的时候提示
-        this.setState({
-          isShowConfirmTip: true,
+        Confirm({
+          content: '客户已添加成功，如需取消添加的客户请在列表中删除',
+          onOkHandler: this.handleConfirmTipOk,
+          onCancelHandler: this.handleConfirmTipCancel,
         });
       } else {
         this.setState({
@@ -427,8 +386,10 @@ export default class CustomerGroupManage extends PureComponent {
         });
       }
     } else if (!_.isEmpty(includeCustIdList)) {
-      this.setState({
-        isShowNewModelConfirmTip: true,
+      Confirm({
+        content: '在新增模式下，添加客户需要提交才能生效，确认取消？',
+        onOkHandler: this.handleNewModelConfirmTipOk,
+        onCancelHandler: this.handleNewModelConfirmTipCancel,
       });
     } else {
       this.setState({
@@ -627,9 +588,6 @@ export default class CustomerGroupManage extends PureComponent {
       description,
       modalTitle,
       groupId,
-      isShowDeleteConfirm,
-      isShowConfirmTip,
-      isShowNewModelConfirmTip,
     } = this.state;
 
     const {
@@ -754,32 +712,6 @@ export default class CustomerGroupManage extends PureComponent {
                 />
               }
               onOkHandler={this.handleUpdateGroup}
-            /> : null
-        }
-        {
-          isShowDeleteConfirm ?
-            <Confirm
-              type={'delete'}
-              onCancelHandler={this.handleConfirmCancel}
-              onOkHandler={this.handleConfirmOk}
-            /> : null
-        }
-        {
-          isShowConfirmTip ?
-            <Confirm
-              type={'tooltip'}
-              content={'客户已添加成功，如需取消添加的客户请在列表中删除'}
-              onCancelHandler={this.handleConfirmTipCancel}
-              onOkHandler={this.handleConfirmTipOk}
-            /> : null
-        }
-        {
-          isShowNewModelConfirmTip ?
-            <Confirm
-              type={'tooltip'}
-              content={'在新增模式下，添加客户需要提交才能生效，确认取消？'}
-              onCancelHandler={this.handleNewModelConfirmTipCancel}
-              onOkHandler={this.handleNewModelConfirmTipOk}
             /> : null
         }
       </div>
