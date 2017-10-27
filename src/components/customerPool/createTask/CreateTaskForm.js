@@ -117,7 +117,6 @@ export default class CreateTaskForm extends PureComponent {
       source = query.source;
       count = query.count;
     }
-    console.warn('query-->', query);
     const { dict: { custIdexPlaceHolders } } = this.props;
     let defaultMissionName = '';
     let defaultMissionType = '';
