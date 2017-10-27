@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-22 19:02:56
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-27 17:33:05
+ * @Last Modified time: 2017-10-27 17:53:06
  */
 
 import React, { PureComponent } from 'react';
@@ -462,33 +462,27 @@ export default class CustomerGroupManage extends PureComponent {
   submitFormContent(name, description, groupId, includeCustIdList) {
     const { operateGroup, location: { query: { curPageNum, curPageSize } } } = this.props;
     const { keyWord } = this.state;
+    const postBody = {
+      request: {
+        groupName: name,
+        groupDesc: description,
+        includeCustIdList: _.isEmpty(includeCustIdList) ? null : includeCustIdList,
+        excludeCustIdList: null,
+      },
+      keyWord,
+      pageNum: curPageNum,
+      pageSize: curPageSize,
+    };
     if (groupId) {
       // 编辑分组
-      operateGroup({
+      operateGroup(_.merge(postBody, {
         request: {
           groupId,
-          groupName: name,
-          groupDesc: description,
-          includeCustIdList: _.isEmpty(includeCustIdList) ? null : includeCustIdList,
-          excludeCustIdList: null,
         },
-        keyWord,
-        pageNum: curPageNum,
-        pageSize: curPageSize,
-      });
+      }));
     } else {
       // 新增分组
-      operateGroup({
-        request: {
-          groupName: name,
-          groupDesc: description,
-          includeCustIdList: _.isEmpty(includeCustIdList) ? null : includeCustIdList,
-          excludeCustIdList: null,
-        },
-        keyWord,
-        pageNum: curPageNum,
-        pageSize: curPageSize,
-      });
+      operateGroup(postBody);
     }
     // 关闭弹窗
     this.handleSubmitCloseModal();
