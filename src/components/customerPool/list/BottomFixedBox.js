@@ -17,6 +17,7 @@ export default class BottomFixedBox extends PureComponent {
     selectCount: PropTypes.number.isRequired,
     isShow: PropTypes.string.isRequired,
     mainServiceManager: PropTypes.bool.isRequired,
+    entertype: PropTypes.string.isRequired,
   }
 
   constructor(props) {
@@ -74,6 +75,7 @@ export default class BottomFixedBox extends PureComponent {
     const {
       page,
       condition,
+      entertype,
       location: {
         query: {
           selectedIds,
@@ -84,15 +86,24 @@ export default class BottomFixedBox extends PureComponent {
     } = this.props;
     if (selectedIds) {
       const selectedIdsArr = selectedIds.split(',');
-      this.openByIds(url, condition, selectedIdsArr, selectedIdsArr.length, title, id, source);
+      this.openByIds(
+        url,
+        condition,
+        selectedIdsArr,
+        selectedIdsArr.length,
+        title,
+        id,
+        entertype,
+        source,
+      );
     } else if (selectAll) {
-      this.openByAllSelect(url, condition, page.total, title, id, source);
+      this.openByAllSelect(url, condition, page.total, title, id, entertype, source);
     }
   }
 
   // 单个点击选中时跳转到新建分组或者发起任务
   @autobind
-  openByIds(url, condition, ids, count, title, id, source) {
+  openByIds(url, condition, ids, count, title, id, entertype, source) {
     // debugger
     const tmpArr = [];
     _(ids).forEach((item) => {
@@ -104,7 +115,8 @@ export default class BottomFixedBox extends PureComponent {
     const obj = {
       ids: idStr,
       count,
-      entertype: source,
+      entertype,
+      source,
       name,
       condition: condt,
     };
@@ -128,14 +140,15 @@ export default class BottomFixedBox extends PureComponent {
 
   // 全选按钮选中时跳转到新建分组或者发起任务
   @autobind
-  openByAllSelect(url, condition, count, title, id, source) {
+  openByAllSelect(url, condition, count, title, id, entertype, source) {
     // 全选时取整个列表的第一个数据的name属性值传给后续页面
     const name = encodeURIComponent(this.props.custList[0].name);
     const condt = encodeURIComponent(JSON.stringify(condition));
     const obj = {
       condition: condt,
       count,
-      entertype: source,
+      entertype,
+      source,
       name,
     };
     if (document.querySelector(fspContainer.container)) {

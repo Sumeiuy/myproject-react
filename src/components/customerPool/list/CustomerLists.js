@@ -515,6 +515,7 @@ export default class CustomerLists extends PureComponent {
       handleCollapseClick,
       condition,
       push,
+      entertype,
     } = this.props;
     // console.log('1---', this.props)
     // 服务记录执行方式字典
@@ -678,6 +679,7 @@ export default class CustomerLists extends PureComponent {
           location={location}
           push={push}
           custList={custList}
+          entertype={entertype}
         />
         {
           (isShowContactModal && isLoadingEnd) ?
