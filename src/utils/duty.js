@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-10-26 10:46:14
- * @Last Modified by: sunweibin
- * @Last Modified time: 2017-10-26 12:13:04
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2017-10-27 18:03:48
  * @description 华泰职责ID视图
  * duty的key值取名规范为中文拼音名称首字母小写,使用下划线'_'连接,value值为职责ID
  */
@@ -16,6 +16,7 @@ const duty = {
   htsc_htggst: '1-FCQM-2', // HTSC 华泰公共视图
   htsc_xsfu_zbzxg: '1-FCQM-29', // HTSC 销售服务-总部执行岗
   htsc_hlwfwjl: '1-45X0P96', // HTSC 互联网服务经理
+  string_yybfwg: '营业部服务岗', // 营业部服务岗
 };
 
 export const commission = {

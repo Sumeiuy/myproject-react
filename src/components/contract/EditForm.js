@@ -3,7 +3,7 @@
 * @Author: XuWenKang
 * @Date:   2017-09-19 14:47:08
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-27 15:09:16
+ * @Last Modified time: 2017-10-27 17:46:23
 */
 
 import React, { PureComponent } from 'react';
@@ -119,7 +119,6 @@ export default class EditForm extends PureComponent {
   // 上传文件成功
   @autobind
   handleUploadSuccess(attachment) {
-    console.warn('上传成功', attachment);
     this.setState({
       ...this.state,
       formData: {

@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 15:02:49
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-27 14:53:49
+ * @Last Modified time: 2017-10-27 17:43:44
  */
 /**
  * 常用说明
@@ -118,7 +118,6 @@ export default class CommonUpload extends PureComponent {
   // 上传事件
   @autobind
   onChange(info) {
-    console.warn('info', info);
     const { uploadAttachment } = this.props;
     const uploadFile = info.file;
     this.setState({
@@ -128,6 +127,7 @@ export default class CommonUpload extends PureComponent {
     });
     if (uploadFile.response && uploadFile.response.code) {
       if (uploadFile.response.code === '0') {
+        // 上传成功的返回值 0
         const data = uploadFile.response.resultData;
         this.setState({
           status: 'success',
@@ -137,8 +137,7 @@ export default class CommonUpload extends PureComponent {
           attachment: data.attachment,
         }, uploadAttachment(data.attachment));
       } else if (uploadFile.response.code === 'MAG0005') {
-        console.warn('this.state.fileList', this.state.fileList);
-        console.warn('this.state.oldFileList', this.state.oldFileList);
+        // 上传失败的返回值 MAG0005
         this.setState({
           status: 'active',
           fileList: this.state.oldFileList,

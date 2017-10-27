@@ -3,7 +3,7 @@
 * @Author: XuWenKang
 * @Date:   2017-09-20 13:47:07
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-27 15:48:08
+ * @Last Modified time: 2017-10-27 17:46:12
 */
 
 import React, { PureComponent } from 'react';
@@ -29,7 +29,6 @@ const { TextArea } = Input;
 const EMPTY_PARAM = '暂无';
 // 子类型列表
 const childTypeList = _.filter(seibelConfig.contract.subType, v => v.label !== '全部');
-console.warn('childtypelist', childTypeList);
 // 退订
 const unsubscribe = '2';
 // const EMPTY_OBJECT = {};
@@ -53,7 +52,6 @@ export default class BaseInfoEdit extends PureComponent {
   constructor(props) {
     super(props);
     const { contractDetail: { baseInfo } } = props;
-    console.warn('baseinfo', baseInfo);
     // econNum
     this.state = {
       childType: _.filter(childTypeList, v => v.value === '0301')[0].label,
@@ -141,7 +139,6 @@ export default class BaseInfoEdit extends PureComponent {
     const {
       contractDetail: { baseInfo },
     } = this.props;
-    console.warn('edit contractDetail', baseInfo);
     const {
       oldData,
       contractStarDate,
