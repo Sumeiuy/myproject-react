@@ -2,11 +2,11 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-23 16:50:28
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-23 16:50:51
+ * @Last Modified time: 2017-10-27 17:21:51
  */
 
 import React, { PureComponent, PropTypes } from 'react';
-import { Form, Input } from 'antd';
+import { Form, Input, message } from 'antd';
 import Button from '../../common/Button';
 import styles from './addNewGroup.less';
 
@@ -49,6 +49,11 @@ export default class AddNewGroup extends PureComponent {
     const { onSubmit } = this.props;
     this.props.form.validateFields((err, values) => {
       if (!err) {
+        const { groupName } = values;
+        if (groupName.indexOf('%') > -1 || groupName.indexOf('_') > -1) {
+          message.error('分组名称不要包含特殊字符');
+          return;
+        }
         onSubmit(values);
       }
     });

@@ -12,7 +12,7 @@ import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
 // import Button from '../../common/Button';
-import Confirm from '../../common/Confirm';
+import confirm from '../../common/confirm';
 import GroupTable from './GroupTable';
 import Search from '../../common/Search';
 
@@ -231,7 +231,7 @@ export default class CustomerGroupDetail extends PureComponent {
         needDeleteCustId: custId,
       });
       // 直接提示删除确认框，然后删除
-      Confirm({
+      confirm({
         type: 'delete',
         onOkHandler: this.handleConfirmOk,
         onCancelHandler: this.handleConfirmCancel,
