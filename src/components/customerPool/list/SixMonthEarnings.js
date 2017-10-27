@@ -8,13 +8,11 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
 import ChartLineWidget from './ChartLine';
-// import { helper } from '../../../utils';
+import { helper } from '../../../utils';
 
 import styles from './sixMonthEarnings.less';
 
-// const formatNumber = value => helper.toUnit(value, '元', 3).value;
-
-// const formatUnit = value => helper.toUnit(value, '元', 3).unit;
+const formatAsset = value => helper.toUnit(value, '元', 5);
 
 const getLastestData = (arr) => {
   if (arr && arr instanceof Array && arr.length !== 0) {
@@ -71,7 +69,6 @@ export default class SixMonthEarnings extends PureComponent {
       listItem,
       monthlyProfits,
       custIncomeReqState,
-      formatAsset,
     } = this.props;
     const {
       isShowCharts,
@@ -88,7 +85,7 @@ export default class SixMonthEarnings extends PureComponent {
         const obj = formatAsset(lastestProfit);
         lastestPrifitsValue = obj.value;
         lastestPrifitsUnit = obj.unit;
-        lastestPrifitsRate = `${lastestProfitRate.toFixed(2)}%`;
+        lastestPrifitsRate = helper.toUnit(lastestProfitRate, '%', 3, 3);
       }
     }
     // 格式化年最大时点资产的值和单位
