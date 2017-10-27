@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 15:02:49
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-26 15:22:48
+ * @Last Modified time: 2017-10-27 17:43:44
  */
 /**
  * 常用说明
@@ -58,7 +58,6 @@ const mapDispatchToProps = {
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
-
 export default class CommonUpload extends PureComponent {
   static propTypes = {
     // 删除附件方法
@@ -95,6 +94,7 @@ export default class CommonUpload extends PureComponent {
       statusText: '', // 上传状态对应文字
       file: {}, // 当前上传的文件
       fileList: attachmentList, // 文件列表
+      oldFileList: attachmentList, // 旧的文件列表
       attachment, // 上传后的唯一 ID
     };
   }
@@ -119,25 +119,33 @@ export default class CommonUpload extends PureComponent {
   @autobind
   onChange(info) {
     const { uploadAttachment } = this.props;
+    const uploadFile = info.file;
     this.setState({
       percent: info.file.percent,
       fileList: info.fileList,
-      file: info.file,
+      file: uploadFile,
     });
-    if (info.file.status === 'done') {
-      const data = info.file.response.resultData;
-      this.setState({
-        status: 'success',
-        statusText: '上传完成',
-        fileList: data.attaches,
-        attachment: data.attachment,
-      }, uploadAttachment(data.attachment));
-    } else if (info.file.status === 'error') {
-      this.setState({
-        status: 'exception ',
-        statusText: '上传失败',
-      });
-      message.error(`${info.file.name} file upload failed.`);
+    if (uploadFile.response && uploadFile.response.code) {
+      if (uploadFile.response.code === '0') {
+        // 上传成功的返回值 0
+        const data = uploadFile.response.resultData;
+        this.setState({
+          status: 'success',
+          statusText: '上传完成',
+          fileList: data.attaches,
+          oldFileList: data.attaches,
+          attachment: data.attachment,
+        }, uploadAttachment(data.attachment));
+      } else if (uploadFile.response.code === 'MAG0005') {
+        // 上传失败的返回值 MAG0005
+        this.setState({
+          status: 'active',
+          fileList: this.state.oldFileList,
+          file: {},
+          percent: 0,
+        });
+        message.error(uploadFile.response.msg);
+      }
     }
   }
 
@@ -296,4 +304,3 @@ export default class CommonUpload extends PureComponent {
     );
   }
 }
-

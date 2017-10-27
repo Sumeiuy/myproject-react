@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-26 16:51:40
+ * @Last Modified time: 2017-10-27 19:51:54
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
@@ -11,7 +11,8 @@ import { withRouter, routerRedux } from 'dva-react-router-3/router';
 import { connect } from 'react-redux';
 import { message, Modal } from 'antd';
 import _ from 'lodash';
-import { constructSeibelPostBody, getEmpId } from '../../utils/helper';
+
+import { constructSeibelPostBody, getEmpId, hasPermissionOfPostion } from '../../utils/helper';
 import SplitPanel from '../../components/common/splitPanel/SplitPanel';
 // import ContractHeader from '../../components/common/biz/SeibelHeader';
 import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
@@ -249,6 +250,7 @@ export default class Contract extends PureComponent {
       location: { query: { currentId: prevCurrentId } },
     } = this.props;
     const {
+      seibleList: nextSL,
       seibleListLoading: nextSLL,
       getBaseInfo,
       baseInfo: nextBI,
@@ -258,6 +260,7 @@ export default class Contract extends PureComponent {
       // doApprove: nextDA,
       postDoApproveLoading: nextPDA,
       location: { query: { currentId } },
+      empInfo,
     } = nextProps;
 
     const { location: { query: prevQuery = EMPTY_OBJECT }, getSeibleList } = this.props;
@@ -280,16 +283,21 @@ export default class Contract extends PureComponent {
     }
     if ((preBIL && !nextBIL)) {
       let hasEditPermission = false;
+      hasEditPermission = hasPermissionOfPostion(empInfo);
       // 如果当前登陆人与详情里的审批人相等，并且状态是驳回时显示编辑按钮
       if (getEmpId() === nextBI.approver && nextBI.status === '04') {
         hasEditPermission = true;
+      } else {
+        hasEditPermission = false;
       }
       this.setState({
         hasEditPermission,
       });
     }
     /* currentId变化重新请求 */
-    if ((prevSLL && !nextSLL) || (currentId && (currentId !== prevCurrentId))) {
+    // 获取到 seibleList,并且 seibleList 的 resultData 有数据
+    if (((prevSLL && !nextSLL) && nextSL.resultData.length) ||
+    (currentId && (currentId !== prevCurrentId))) {
       getBaseInfo({
         id: currentId,
       });
@@ -331,16 +339,10 @@ export default class Contract extends PureComponent {
       this.setState({
         tempApproveData: EMPTY_OBJECT,
       });
-      console.warn('doApprove 结束，关闭弹窗');
       this.closeModal('approverModal');
       this.closeModal('addFormModal');
       this.closeModal('editFormModal');
     }
-
-    // if (!_.isEqual(preDA, nextDA)) {
-    //   // 获取到 flowStepInfo
-    //   this.closeModal('addFormModal');
-    // }
   }
 
   componentDidUpdate() {
@@ -684,7 +686,10 @@ export default class Contract extends PureComponent {
     // 可能需要清空 contractFormData--TODO
     this.setState({
       [modalKey]: false,
-      contractFormData: EMPTY_OBJECT,
+      contractFormData: modalKey === 'approverModal' ?
+        this.state.contractFormData
+      :
+        EMPTY_OBJECT,
     }, () => {
       if (modalKey === 'addFormModal' && this.AddFormComponent) {
         this.AddFormComponent.handleReset();
@@ -704,11 +709,8 @@ export default class Contract extends PureComponent {
   // 弹窗底部按钮事件
   @autobind
   footerBtnHandle(btnItem) {
-    console.warn('item', btnItem);
-    // TODO-设定好相应的值传过去，注意 operation
     const { unsubscribeBaseInfo } = this.props;
     const { editFormModal, contractFormData } = this.state;
-    console.warn('contractFormData', contractFormData);
     let payload = EMPTY_OBJECT;
     // 操作类型
     const operationType = contractFormData.workflowname;
@@ -730,11 +732,9 @@ export default class Contract extends PureComponent {
         }
         payload = {
           ...unsubscribeBaseInfo,
-          workflowName: '2',
           tduuid: contractFormData.tduuid || '',
           tdDescription: contractFormData.tdDescription || '',
         };
-        console.warn('新建窗口，退订所有数据完毕', payload);
         // 数据判断完毕，请求接口
       } else {
         // 操作类型是订购时
@@ -771,7 +771,6 @@ export default class Contract extends PureComponent {
           return;
         }
         payload = contractFormData;
-        console.warn('新建窗口所有数据完毕 payload', payload);
         // 数据判断完毕，请求接口
       }
     } else {
@@ -801,7 +800,6 @@ export default class Contract extends PureComponent {
         return;
       }
       payload = contractFormData;
-      console.warn('编辑窗口所有数据完毕', payload);
       // 数据判断完毕，请求接口
     }
     let tempApproveData = EMPTY_OBJECT;
@@ -922,7 +920,6 @@ export default class Contract extends PureComponent {
       footerBtnData,
       selectApproveData,
     };
-    console.warn('审批人确认时的 sendPayload', sendPayload);
     this.sendRequest(sendPayload);
   }
 
@@ -931,9 +928,13 @@ export default class Contract extends PureComponent {
   sendRequest(sendPayload) {
     const {
       saveContractData,
+      location: { query },
     } = this.props;
-    console.warn('sendPayload', sendPayload);
-    saveContractData(sendPayload);
+    const payload = {
+      ...sendPayload,
+      currentQuery: query,
+    };
+    saveContractData(payload);
   }
 
   render() {
@@ -951,11 +952,6 @@ export default class Contract extends PureComponent {
       addFlowStepInfo,
       getFlowStepInfo,
       empInfo,
-      location: {
-        query: {
-          currentId,
-        },
-      },
       resetUnsubscribeDetail,
     } = this.props;
     const {
@@ -993,7 +989,6 @@ export default class Contract extends PureComponent {
       <Detail
         baseInfo={baseInfo}
         attachmentList={attachmentList}
-        currentId={currentId}
         flowHistory={flowHistory}
         hasEditPermission={hasEditPermission}
         showEditModal={this.handleShowEditForm}

@@ -3,7 +3,7 @@
 * @Author: XuWenKang
 * @Date:   2017-09-20 13:47:07
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-26 17:01:53
+ * @Last Modified time: 2017-10-27 17:46:12
 */
 
 import React, { PureComponent } from 'react';
@@ -13,6 +13,7 @@ import _ from 'lodash';
 import { Input } from 'antd';
 import moment from 'moment';
 
+import Select from '../common/Select';
 import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
 import InfoForm from '../common/infoForm';
@@ -28,7 +29,6 @@ const { TextArea } = Input;
 const EMPTY_PARAM = '暂无';
 // 子类型列表
 const childTypeList = _.filter(seibelConfig.contract.subType, v => v.label !== '全部');
-console.warn('childtypelist', childTypeList);
 // 退订
 const unsubscribe = '2';
 // const EMPTY_OBJECT = {};
@@ -52,7 +52,6 @@ export default class BaseInfoEdit extends PureComponent {
   constructor(props) {
     super(props);
     const { contractDetail: { baseInfo } } = props;
-    console.warn('baseinfo', baseInfo);
     // econNum
     this.state = {
       childType: _.filter(childTypeList, v => v.value === '0301')[0].label,
@@ -101,7 +100,7 @@ export default class BaseInfoEdit extends PureComponent {
       contractDetail: { baseInfo },
     } = this.props;
     // 是否是退订
-    const isSubscribe = baseInfo.workflowName === unsubscribe;
+    const isSubscribe = baseInfo.applyType === unsubscribe;
     const desc = isSubscribe ? 'tdDescription' : 'remark';
     this.setState({
       ...this.state,
@@ -140,14 +139,19 @@ export default class BaseInfoEdit extends PureComponent {
     const {
       contractDetail: { baseInfo },
     } = this.props;
-    console.warn('edit contractDetail', baseInfo);
-    const { oldData, contractStarDate, contractPalidity } = this.state;
+    const {
+      oldData,
+      contractStarDate,
+      contractPalidity,
+      remark,
+      tdDescription,
+    } = this.state;
     // 是否是退订
-    const isSubscribe = baseInfo.workflowName === unsubscribe;
+    const isSubscribe = baseInfo.applyType === unsubscribe;
     return (
       <div className={styles.editWrapper}>
         <InfoTitle head="基本信息" />
-        <InfoItem label="操作类型" value={this.getOperationType(baseInfo.workflowName)} />
+        <InfoItem label="操作类型" value={this.getOperationType(baseInfo.applyType)} />
         <InfoItem label="子类型" value={this.state.childType} />
         <InfoItem label="客户" value={`${oldData.custName} ${oldData.econNum}`} />
         {
@@ -186,9 +190,27 @@ export default class BaseInfoEdit extends PureComponent {
               />
             </InfoForm>
         }
+        {
+          isSubscribe ?
+            <InfoForm label="合约编号">
+              <Select
+                name="contractNum"
+                data={[
+                  {
+                    show: true,
+                    label: baseInfo.contractNum,
+                    value: baseInfo.contractNum,
+                  },
+                ]}
+                value={baseInfo.contractNum}
+              />
+            </InfoForm>
+          :
+            null
+        }
         <InfoForm label="备注">
           <TextArea
-            value={isSubscribe ? baseInfo.tdDescription : baseInfo.description}
+            value={isSubscribe ? tdDescription : remark}
             onChange={this.handleChangeRemark}
           />
         </InfoForm>

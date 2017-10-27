@@ -58,7 +58,7 @@ export default class Commissiondetail extends PureComponent {
   render() {
     const {
       custList = [],
-      batchNum, // 批量佣金调整的批处理号
+      // batchNum, // 批量佣金调整的批处理号
       businessType,
       comments,
       divisionName,
@@ -85,12 +85,12 @@ export default class Commissiondetail extends PureComponent {
       stbCommission, // 股转
       dCommission, // 大宗交易
     } = this.props.data;
-
+    const { location: { query: { currentId = '' } } } = this.props;
     if (_.isEmpty(businessType) || _.isEmpty(custList)) {
       return null;
     }
 
-    const bugTitle = `CRM编号:${batchNum}`;
+    const bugTitle = `编号:${currentId}`;
     const drafter = `${divisionName} - ${createdByName} (${createdByLogin})`;
     const targetCom = `${newCommission}‰`;
     // 表格中需要的操作

@@ -25,6 +25,7 @@ import CommissionLine from './CommissionLine';
 import SelectAssembly from './SelectAssembly';
 import ThreeMatchTip from './ThreeMatchTip';
 import { seibelConfig } from '../../config';
+import { permission } from '../../utils';
 import {
   pagination,
   singleColumns,
@@ -80,6 +81,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     onBatchSubmit: PropTypes.func.isRequired,
     otherRatios: PropTypes.array,
     empInfo: PropTypes.object.isRequired,
+    empPostnList: PropTypes.array.isRequired,
     gjCommission: PropTypes.array.isRequired,
     queryGJCommission: PropTypes.func.isRequired,
     getSingleOtherRates: PropTypes.func.isRequired,
@@ -99,6 +101,9 @@ export default class CreateNewApprovalBoard extends PureComponent {
     // 新建咨讯订阅可选产品列表
     getUnSubscribelProList: PropTypes.func.isRequired,
     unSubscribelProList: PropTypes.array.isRequired,
+    // 单佣金调整目标股基佣金率码值
+    singleGJCommission: PropTypes.array.isRequired,
+    getSingleGJ: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -125,6 +130,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       custLists: [],
       otherComReset: new Date().getTime(), // 用来判断是否重置
       customer: {}, // 单佣金、资讯退订、资讯订阅选择的客户
+      attachment: '',
     };
   }
 
@@ -154,6 +160,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       custLists: [],
       otherComReset: new Date().getTime(),
       customer: {},
+      attachment: '',
     });
   }
 
@@ -175,9 +182,9 @@ export default class CreateNewApprovalBoard extends PureComponent {
     onClose(modalKey);
   }
 
-  // 提交
+  // 批量佣金调整提交
   @autobind
-  handleSubmitApprovals(key) {
+  batchSubmit() {
     const {
       newCommission,
       targetProduct,
@@ -213,6 +220,36 @@ export default class CreateNewApprovalBoard extends PureComponent {
     };
     // 提交
     this.props.onBatchSubmit(submitParams);
+  }
+
+  // 单佣金调整提交
+  @autobind
+  singleSubmit() {
+
+  }
+
+  // 资讯订阅提交
+  @autobind
+  advisorySub() {
+
+  }
+
+  @autobind
+  advisoryUnSub() {
+
+  }
+
+  // 提交
+  @autobind
+  handleSubmitApprovals(key) {
+    const judge = this.judgeSubtypeNow;
+    if (judge(commadj.batch)) {
+      this.batchSubmit();
+    }
+    // else if (judge(commadj.single)) {
+    // } else if (judge(commadj.subscribe)) {
+    // } else if (judge(commadj.unsubscribe)) {
+    // }
     this.props.onClose(key);
     this.clearApprovalBoard();
   }
@@ -280,9 +317,24 @@ export default class CreateNewApprovalBoard extends PureComponent {
   // 客户输入目标股基佣金率调用方法
   @autobind
   changeTargetGJCommission(v) {
-    this.props.queryGJCommission({
-      codeValue: v,
-    });
+    if (this.judgeSubtypeNow(commadj.batch)) {
+      // 批量
+      this.props.queryGJCommission({
+        codeValue: v,
+      });
+    } else {
+      // 单佣金 , 如果没有选择客户，提示用户选择客户
+      const { customer } = this.state;
+      if (_.isEmpty(customer)) {
+        confirm({
+          content: '请先选择需要申请的客户',
+        });
+      }
+      this.props.getSingleGJ({
+        custId: customer.custEcon,
+        commision: v,
+      });
+    }
   }
 
   @autobind
@@ -399,14 +451,20 @@ export default class CreateNewApprovalBoard extends PureComponent {
     this.setState({
       customer,
     });
-    if (this.judgeSubtypeNow(commadj.subscribe)) {
+    const typeNow = this.this.judgeSubtypeNow;
+    if (typeNow(commadj.subscribe)) {
       this.querySubscribelProList({
         custId: id, // TODO 此参数等客户接口写好需要修改
         custType: 'per', // TODO 此参数等客户接口写好需要修改
       });
-    } else if (this.judgeSubtypeNow(commadj.unsubscribe)) {
+    } else if (typeNow(commadj.unsubscribe)) {
       this.queryUnSubscribelProList({
         custRowId: id, // TODO 此参数等客户接口写好需要修改
+      });
+    } else if (typeNow(commadj.single)) {
+      // 根据选择的用户，查询该用户所能选的其他佣金费率
+      this.props.getSingleOtherRates({
+        custRowId: id,
       });
     }
   }
@@ -510,7 +568,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     return newSubscriProList;
   }
 
- // 重组咨讯退订可选产品List
+  // 重组咨讯退订可选产品List
   @autobind
   createUnSubscribelProList(data) {
     const newUnSubscriProList = data.map((product) => {
@@ -527,6 +585,38 @@ export default class CreateNewApprovalBoard extends PureComponent {
     return newUnSubscriProList;
   }
 
+  // 附件上传成功后的回调
+  @autobind
+  uploadCallBack(attachment) {
+    this.setState({
+      attachment,
+    });
+  }
+
+  // 根据职责权限进行子类型选项
+  @autobind
+  authorityOptions(subTypes) {
+    console.warn('subTypes', subTypes);
+    return subTypes.map((item) => {
+      const newItem = {};
+      const { value } = item;
+      if (value === commadj.batch) {
+        newItem.show = permission.hasCommissionBatchAuthority();
+      } else if (value === commadj.single) {
+        const { empPostnList } = this.props;
+        newItem.show = permission.hasCommissionSingleAuthority(empPostnList);
+      } else if (value === commadj.subscribe) {
+        newItem.show = permission.hasCommissionADSubscribeAuthority();
+      } else if (value === commadj.unsubscribe) {
+        newItem.show = permission.hasCommissionADUnSubscribeAuthority();
+      }
+      return {
+        ...item,
+        ...newItem,
+      };
+    });
+  }
+
   render() {
     const {
       modalKey,
@@ -538,6 +628,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       customerList,
       otherRatios,
       gjCommission,
+      singleGJCommission,
       singleOtherRatio,
       singleComProductList,
       singleCustList,
@@ -564,37 +655,17 @@ export default class CreateNewApprovalBoard extends PureComponent {
       approverName,
       approverId,
       otherComReset,
+      attachment,
     } = this.state;
     const needBtn = !this.judgeSubtypeNow('');
 
+    // 附件上传配置项
     const uploadProps = {
-      attachmentList: [{
-        creator: '002332',
-        attachId: '{6795CB98-B0CD-4CEC-8677-3B0B9298B209}',
-        name: '新建文本文档 (3).txt',
-        size: '0',
-        createTime: '2017/09/12 13:37:45',
-        downloadURL: 'http://ceflow:8086/unstructured/downloadDocument?sessionId=675fd3be-baca-4099-8b52-bf9dde9f2b59&documentId={6795CB98-B0CD-4CEC-8677-3B0B9298B209}',
-        realDownloadURL: '/attach/download?filename=%E6%96%B0%E5%BB%BA%E6%96%87%E6%9C%AC%E6%96%87%E6%A1%A3+%283%29.txt&attachId={6795CB98-B0CD-4CEC-8677-3B0B9298B209',
-      },
-      {
-        creator: '002332',
-        attachId: '{2EF837DE-508C-4FCA-93B8-99CEA68DCB0D}',
-        name: '测试.docx',
-        size: '11',
-        createTime: '2017/09/12 11:53:36',
-        downloadURL: 'http://ceflow:8086/unstructured/downloadDocument?sessionId=675fd3be-baca-4099-8b52-bf9dde9f2b59&documentId={2EF837DE-508C-4FCA-93B8-99CEA68DCB0D}',
-        realDownloadURL: '/attach/download?filename=%E6%B5%8B%E8%AF%95.docx&attachId={2EF837DE-508C-4FCA-93B8-99CEA68DCB0D',
-      },
-      {
-        creator: '002332',
-        attachId: '{24C098F0-9DE3-4DC6-9E7D-FECE683E4B6F}',
-        name: '生产sql和修改后sql.txt',
-        size: '2',
-        createTime: '2017/09/12 11:55:32',
-        downloadURL: 'http://ceflow:8086/unstructured/downloadDocument?sessionId=675fd3be-baca-4099-8b52-bf9dde9f2b59&documentId={24C098F0-9DE3-4DC6-9E7D-FECE683E4B6F}',
-        realDownloadURL: '/attach/download?filename=%E7%94%9F%E4%BA%A7sql%E5%92%8C%E4%BF%AE%E6%94%B9%E5%90%8Esql.txt&attachId={24C098F0-9DE3-4DC6-9E7D-FECE683E4B6F',
-      }],
+      // 上传成功callback
+      uploadAttachment: this.uploadCallBack,
+      // 附件Id
+      attachment,
+      needDefaultText: false,
     };
 
     // 单佣金调整中的产品选择配置
@@ -645,18 +716,15 @@ export default class CreateNewApprovalBoard extends PureComponent {
       onSearch: this.handleSearch,
       rowKey: 'key',
       defaultCheckKey: 'default',
-      showSearch: true,
+      showSearch: false,
       placeholder: '产品代码/产品名称',
-      pagination: {
-        defaultPageSize: 5,
-        pageSize: 5,
-        size: 'small',
-      },
-      supportSearchKey: [['prodId'], ['prodName']],
+      pagination,
       totalData: newUnSubscribelProList,
     };
 
     const wrapClassName = this.judgeSubtypeNow(commadj.noSelected) ? 'commissionModal' : '';
+    console.warn('newSubTypes', newSubTypes);
+    const subTypesAfterAuthority = this.authorityOptions(newSubTypes);
 
     return (
       <div>
@@ -679,9 +747,10 @@ export default class CreateNewApprovalBoard extends PureComponent {
               <CommissionLine label="子类型" labelWidth="90px" required>
                 <Select
                   name="approvalType"
-                  data={newSubTypes}
+                  data={subTypesAfterAuthority}
                   value={approvalType}
                   onChange={this.choiceApprovalSubType}
+                  width="300px"
                 />
               </CommissionLine>
               {
@@ -735,7 +804,9 @@ export default class CreateNewApprovalBoard extends PureComponent {
                     }
                   >
                     <AutoComplete
-                      dataSource={gjCommission}
+                      dataSource={
+                        this.judgeSubtypeNow(commadj.batch) ? gjCommission : singleGJCommission
+                      }
                       onChangeValue={this.changeTargetGJCommission}
                       onSelectValue={this.selectTargetGJCommission}
                       width="100px"

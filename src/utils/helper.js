@@ -8,7 +8,9 @@ import moment from 'moment';
 import bowser from 'bowser';
 import _ from 'lodash';
 
-import { ZHUNICODE, constants, seibelConfig } from '../config';
+import { hasPermissionOfPostion } from './permission';
+
+import { ZHUNICODE, constants, seibelConfig, fspContainer } from '../config';
 
 function getOS() {
   const osList = ['mac', 'windows', 'windowsphone'];
@@ -523,6 +525,16 @@ const helper = {
     isEmail(value) {
       return /\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/.test(value);
     },
+  },
+
+  // 检测是否有相应的职责、职位权限
+  hasPermissionOfPostion(empInfo) {
+    const fsp = document.querySelector(fspContainer.container);
+    let hasPermission = true;
+    if (fsp) {
+      hasPermission = hasPermissionOfPostion(empInfo);
+    }
+    return hasPermission;
   },
 };
 

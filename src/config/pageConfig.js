@@ -351,16 +351,177 @@ const pageConfig = {
       },
     ],
   },
-  // 进行佣金调整子类型比对需要用到的数据
-  comsubs: {
-    noSelected: '', // 用户未选择子类型的情况
-    single: '0201', // 单佣金调整
-    batch: '0202', // 批量佣金调整
-    subscribe: '0203', // 资讯订阅
-    unsubscribe: '0204', // 资讯退订
-  },
   // 通道类型协议
   channelsTypeProtocol: {
+    pageName: '通道类型协议',
+    pageType: '04',
+    subType: [
+      {
+        show: true,
+        label: '全部',
+        value: '',
+      },
+      {
+        show: true,
+        label: '高速通道类协议',
+        value: '0401',
+        status: [
+          {
+            show: true,
+            label: '处理中',
+            value: '',
+          },
+          {
+            show: true,
+            label: '完成',
+            value: '',
+          },
+          {
+            show: true,
+            label: '终止',
+            value: '',
+          },
+        ],
+      },
+      {
+        show: true,
+        label: '紫金快车道协议',
+        value: '0402',
+        status: [
+          {
+            show: true,
+            label: '处理中',
+            value: '',
+          },
+          {
+            show: true,
+            label: '完成',
+            value: '',
+          },
+          {
+            show: true,
+            label: '终止',
+            value: '',
+          },
+        ],
+      },
+      {
+        show: true,
+        label: '套利软件',
+        value: '0403',
+        status: [
+          {
+            show: true,
+            label: '处理中',
+            value: '',
+          },
+          {
+            show: true,
+            label: '完成',
+            value: '',
+          },
+          {
+            show: true,
+            label: '终止',
+            value: '',
+          },
+        ],
+      },
+      {
+        show: true,
+        label: '期权软件',
+        value: '0404',
+        status: [
+          {
+            show: true,
+            label: '处理中',
+            value: '',
+          },
+          {
+            show: true,
+            label: '完成',
+            value: '',
+          },
+          {
+            show: true,
+            label: '终止',
+            value: '',
+          },
+        ],
+      },
+    ],
+    status: [
+      {
+        show: true,
+        label: '全部',
+        value: '',
+      },
+      {
+        show: true,
+        label: '处理中',
+        value: '01',
+      },
+      {
+        show: true,
+        label: '完成',
+        value: '02',
+      },
+      {
+        show: true,
+        label: '终止',
+        value: '03',
+      },
+      {
+        show: true,
+        label: '驳回',
+        value: '04',
+      },
+    ],
+    operateType: [
+      {
+        show: true,
+        label: '协议订购',
+        value: '1',
+      },
+      {
+        show: true,
+        label: '协议退订',
+        value: '2',
+      },
+      {
+        show: true,
+        label: '协议续订',
+        value: '3',
+      },
+      {
+        show: true,
+        label: '新增或删除下挂客户',
+        value: '4',
+      },
+    ],
+    titleList: [
+      {
+        dataIndex: 'termsDisplayName',
+        key: 'termsDisplayName',
+        title: '条款名称',
+      },
+      {
+        dataIndex: 'paraDisplayName',
+        key: 'paraDisplayName',
+        title: '明细参数',
+      },
+      {
+        dataIndex: 'paraVal',
+        key: 'paraVal',
+        title: '值',
+        width: 40,
+      },
+      {
+        dataIndex: 'divName',
+        key: 'divName',
+        title: '合作部门',
+      },
+    ],
     subTypeList: [
       {
         show: true,
@@ -525,6 +686,14 @@ const pageConfig = {
         title: '未来承诺',
       },
     ],
+  },
+  // 进行佣金调整子类型比对需要用到的数据
+  comsubs: {
+    noSelected: '', // 用户未选择子类型的情况
+    single: '0201', // 单佣金调整
+    batch: '0202', // 批量佣金调整
+    subscribe: '0203', // 资讯订阅
+    unsubscribe: '0204', // 资讯退订
   },
 };
 

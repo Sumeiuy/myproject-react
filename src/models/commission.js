@@ -39,8 +39,10 @@ export default {
     canApplyCustList: [],
     // 提交批量佣金调整申请后的BatchNum
     batchnum: '',
-    // 目标股基佣金率列表项
+    // 批量佣金目标股基佣金率列表项
     gjCommission: [],
+    // 单佣金目标股基佣金率码值列表
+    singleGJCommission: [],
     // 资讯订阅可供用户订阅的产品
     consultSubProductList: [],
     // 资讯退订中用户可退订的服务
@@ -61,6 +63,8 @@ export default {
     subscribelProList: [],
     // 新建咨讯退订可选产品列表
     unSubscribelProList: [],
+    // 单佣金调整申请成功
+    singleSubmit: '',
   },
   reducers: {
     getProductListSuccess(state, action) {
@@ -207,7 +211,15 @@ export default {
       const { payload: { resultData } } = action;
       return {
         ...state,
-        gjCommission: resultData,
+        gjCommission: resultData || [],
+      };
+    },
+
+    getSingleGJCommissionRateSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        singleGJCommission: resultData || [],
       };
     },
 
@@ -242,6 +254,15 @@ export default {
       return {
         ...state,
         consultUnsubId: orderId,
+      };
+    },
+
+    submitSingleCommissionSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      const singleSubmit = resultData && resultData.id;
+      return {
+        ...state,
+        singleSubmit,
       };
     },
 
@@ -317,7 +338,6 @@ export default {
 
     // 批量佣金调整Home的右侧详情
     * getCommissionDetail({ payload }, { call, put }) {
-      console.warn('getCommissionDetail', payload);
       const detailRes = yield call(api.getCommissionDetail, { type: 'BatchProcess', ...payload });
       const custListRes = yield call(api.getCommissionDetailCustList, {
         batchNum: payload.batchNum,
@@ -409,7 +429,16 @@ export default {
       });
     },
 
-    // 查询目标股基佣金率码值
+    // 提交单佣金调整申请
+    * submitSingleCommission({ payload }, { call, put }) {
+      const submitRes = yield call(api.submitSingleCommission, payload);
+      yield put({
+        type: 'submitSingleCommissionSuccess',
+        payload: submitRes,
+      });
+    },
+
+    // 查询批量佣金目标股基佣金率码值
     * getGJCommissionRate({ payload }, { call, put }) {
       const rate = yield call(api.queryGJCommissionRate, {
         ...payload,
@@ -418,6 +447,15 @@ export default {
       yield put({
         type: 'getGJCommissionRateSuccess',
         payload: rate,
+      });
+    },
+
+    // 查询单佣金目标股基佣金率码值
+    * getSingleGJCommissionRate({ payload }, { call, put }) {
+      const singleRes = yield call(api.querySingleGJCommissionRate, payload);
+      yield put({
+        type: 'getSingleGJCommissionRateSuccess',
+        payload: singleRes,
       });
     },
 

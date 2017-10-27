@@ -3,7 +3,7 @@
 * @Author: XuWenKang
 * @Date:   2017-09-19 14:47:08
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-26 15:45:31
+ * @Last Modified time: 2017-10-27 17:46:23
 */
 
 import React, { PureComponent } from 'react';
@@ -119,7 +119,6 @@ export default class EditForm extends PureComponent {
   // 上传文件成功
   @autobind
   handleUploadSuccess(attachment) {
-    console.warn('上传成功', attachment);
     this.setState({
       ...this.state,
       formData: {
@@ -219,8 +218,8 @@ export default class EditForm extends PureComponent {
       onClick: () => this.showModal('addClauseModal'),
     };
     const draftInfo = {
-      name: `${baseInfo.divisionName || EMPTY_PARAM} ${baseInfo.createdName || EMPTY_PARAM}`,
-      date: this.getCreatedDate(baseInfo.createdDt),
+      name: `${baseInfo.applyDiv || EMPTY_PARAM} ${baseInfo.applyName || EMPTY_PARAM}`,
+      date: this.getCreatedDate(baseInfo.applyTime),
       status: baseInfo.status,
     };
     // 是否是退订
@@ -245,7 +244,7 @@ export default class EditForm extends PureComponent {
     return (
       <div className={styles.editComponent}>
         <div className={styles.dcHeader}>
-          <span className={styles.dcHaderNumb}>编号{baseInfo.contractNum}</span>
+          <span className={styles.dcHaderNumb}>编号{baseInfo.applyId}</span>
         </div>
         <BaseInfoEdit
           contractName="合约名称"
