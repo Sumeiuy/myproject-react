@@ -30,7 +30,6 @@ export default class CustomerGroupDetail extends PureComponent {
     detailData: PropTypes.object,
     form: PropTypes.object.isRequired,
     customerList: PropTypes.object.isRequired,
-    onCloseModal: PropTypes.func,
     customerHotPossibleWordsList: PropTypes.array.isRequired,
     getHotPossibleWds: PropTypes.func.isRequired,
     canEditDetail: PropTypes.bool,
@@ -54,7 +53,6 @@ export default class CustomerGroupDetail extends PureComponent {
 
   static defaultProps = {
     detailData: EMPTY_OBJECT,
-    onCloseModal: () => { },
     canEditDetail: true,
     custRiskBearing: [],
   };

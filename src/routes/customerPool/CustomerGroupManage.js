@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-22 19:02:56
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-27 10:24:27
+ * @Last Modified time: 2017-10-27 14:47:42
  */
 
 import React, { PureComponent } from 'react';
@@ -139,6 +139,8 @@ export default class CustomerGroupManage extends PureComponent {
       record: {},
       isShowDeleteConfirm: false,
       keyWord: '',
+      isShowConfirmTip: false,
+      isShowNewModelConfirmTip: false,
     };
   }
 
@@ -327,6 +329,36 @@ export default class CustomerGroupManage extends PureComponent {
   }
 
   @autobind
+  handleConfirmTipCancel() {
+    this.setState({
+      isShowConfirmTip: false,
+    });
+  }
+
+  @autobind
+  handleConfirmTipOk() {
+    this.setState({
+      isShowConfirmTip: false,
+      visible: false,
+    });
+  }
+
+  @autobind
+  handleNewModelConfirmTipCancel() {
+    this.setState({
+      isShowNewModelConfirmTip: false,
+    });
+  }
+
+  @autobind
+  handleNewModelConfirmTipOk() {
+    this.setState({
+      isShowNewModelConfirmTip: false,
+      visible: false,
+    });
+  }
+
+  @autobind
   handleDeleteBtnClick(record) {
     this.setState({
       // 当前删除行记录数据
@@ -380,6 +412,33 @@ export default class CustomerGroupManage extends PureComponent {
 
   @autobind
   handleCloseModal() {
+    const { groupId, includeCustIdList } = this.detailRef.refs
+      .wrappedComponent.refs.formWrappedComponent.getData();
+    if (groupId) {
+      // 编辑模式下
+      if (!_.isEmpty(includeCustIdList)) {
+        // 存在custIdList,在取消的时候提示
+        this.setState({
+          isShowConfirmTip: true,
+        });
+      } else {
+        this.setState({
+          visible: false,
+        });
+      }
+    } else if (!_.isEmpty(includeCustIdList)) {
+      this.setState({
+        isShowNewModelConfirmTip: true,
+      });
+    } else {
+      this.setState({
+        visible: false,
+      });
+    }
+  }
+
+  @autobind
+  handleSubmitCloseModal() {
     this.setState({
       visible: false,
     });
@@ -459,7 +518,7 @@ export default class CustomerGroupManage extends PureComponent {
             });
           }
           // 关闭弹窗
-          this.handleCloseModal();
+          this.handleSubmitCloseModal();
         } else {
           message.error('请输入分组名称');
         }
@@ -569,6 +628,8 @@ export default class CustomerGroupManage extends PureComponent {
       modalTitle,
       groupId,
       isShowDeleteConfirm,
+      isShowConfirmTip,
+      isShowNewModelConfirmTip,
     } = this.state;
 
     const {
@@ -679,7 +740,6 @@ export default class CustomerGroupManage extends PureComponent {
                   customerHotPossibleWordsList={customerHotPossibleWordsList}
                   getHotPossibleWds={this.queryHotPossibleWds}
                   customerList={groupCustomerList}
-                  onCloseModal={this.handleCloseModal}
                   getGroupCustomerList={getGroupCustomerList}
                   operateGroup={operateGroup}
                   operateGroupResult={operateGroupResult}
@@ -702,6 +762,24 @@ export default class CustomerGroupManage extends PureComponent {
               type={'delete'}
               onCancelHandler={this.handleConfirmCancel}
               onOkHandler={this.handleConfirmOk}
+            /> : null
+        }
+        {
+          isShowConfirmTip ?
+            <Confirm
+              type={'tooltip'}
+              content={'客户已添加成功，如需取消添加的客户请在列表中删除'}
+              onCancelHandler={this.handleConfirmTipCancel}
+              onOkHandler={this.handleConfirmTipOk}
+            /> : null
+        }
+        {
+          isShowNewModelConfirmTip ?
+            <Confirm
+              type={'tooltip'}
+              content={'在新增模式下，添加客户需要提交才能生效，确认取消？'}
+              onCancelHandler={this.handleNewModelConfirmTipCancel}
+              onOkHandler={this.handleNewModelConfirmTipOk}
             /> : null
         }
       </div>
