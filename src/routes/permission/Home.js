@@ -193,6 +193,7 @@ export default class Permission extends PureComponent {
       location: { query: prevQuery = EMPTY_OBJECT },
       getPermissionList,
       location: { query: { currentId: prevCurrentId } },
+      list,
      } = this.props;
     const { isResetPageNum = 'N', pageNum, pageSize } = nextQuery;
     // 深比较值是否相等
@@ -212,8 +213,10 @@ export default class Permission extends PureComponent {
     }
     const { seibelListLoading: prevSLL } = this.props;
     const { seibelListLoading: nextSLL } = nextProps;
+    const applicationBaseInfoList = list.resultData;
     /* currentId变化重新请求 */
-    if ((prevSLL && !nextSLL) || (currentId && (currentId !== prevCurrentId))) {
+    if ((prevSLL && !nextSLL && !_.isEmpty(applicationBaseInfoList)) ||
+    (currentId && (currentId !== prevCurrentId) && !_.isEmpty(applicationBaseInfoList))) {
       const { getDetailMessage } = this.props;
       getDetailMessage({
         id: currentId,
