@@ -2,11 +2,13 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-23 16:50:28
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-23 16:50:51
+ * @Last Modified time: 2017-10-27 17:37:29
  */
 
 import React, { PureComponent, PropTypes } from 'react';
 import { Form, Input } from 'antd';
+import { autobind } from 'core-decorators';
+import { checkSpecialCharacter } from '../../../decorators/checkSpecialCharacter';
 import Button from '../../common/Button';
 import styles from './addNewGroup.less';
 
@@ -46,13 +48,24 @@ export default class AddNewGroup extends PureComponent {
 
   addNewGroupSubmit = (e) => {
     e.preventDefault();
-    const { onSubmit } = this.props;
+
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        onSubmit(values);
+        const { groupName, groupDesc } = values;
+        this.submitFormContent(groupName, groupDesc);
       }
     });
   };
+
+  @autobind
+  @checkSpecialCharacter
+  submitFormContent(groupName, groupDesc) {
+    const { onSubmit } = this.props;
+    onSubmit({
+      groupName,
+      groupDesc,
+    });
+  }
 
   render() {
     const { getFieldDecorator } = this.props.form;

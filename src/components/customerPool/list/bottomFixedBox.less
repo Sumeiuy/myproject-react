@@ -1,0 +1,37 @@
+.taskAndGroup {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  height: 76px;
+  line-height: 76px;
+  padding: 0 20px;
+  background-color: rgba(0, 0, 0, .6);
+  :global {
+    .left {
+      float: left;
+      font-size: 14px;
+      color: #fff;
+      .marked {
+        color: #ff784e;
+      }
+    }
+    .right {
+      float: right;
+      button {
+        padding: 7px 11px;
+        margin-left: 30px;
+        border: 1px solid #fff;
+        color: #fff;
+        cursor: pointer;
+        font-size: 12px;
+        border-radius: 3px;
+        background-color: transparent;
+        line-height: initial;
+        &:hover {
+          background-color: #fff;
+          color: #108ee9;
+        }
+      }
+    }
+  }
+}

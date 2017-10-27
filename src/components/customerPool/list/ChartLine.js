@@ -11,9 +11,11 @@ import IECharts from '../../IECharts';
 
 import { helper } from '../../../utils';
 
-const formatNumber = value => helper.toUnit(value, '元', 4).value;
+const formatNumber = value => helper.toUnit(value, '元', 5).value;
 
-const formatUnit = value => helper.toUnit(value, '元', 4).unit;
+const formatUnit = value => helper.toUnit(value, '元', 5).unit;
+
+const formatRate = value => helper.toUnit(value, '%', 3, 3).value;
 
 // y轴通用配置项
 const yAxisOptions = {
@@ -247,9 +249,9 @@ export default class ChartLineWidget extends PureComponent {
                 return '';
               }
               if (value >= 0) {
-                return `+${parseFloat(value).toFixed(2)}%`;
+                return `+${formatRate(value)}%`;
               }
-              return `${parseFloat(value).toFixed(2)}%`;
+              return `${formatRate(value)}%`;
             },
           },
           min: minAssetProfitRate,
@@ -276,7 +278,7 @@ export default class ChartLineWidget extends PureComponent {
         name: '收益',
         type: 'line',
         smooth: true,
-        data: chartData.map(item => item.assetProfit),
+        data: chartData.map(item => item.assetProfitRate),
         lineStyle: {
           normal: {
             color: '#f8cc6d',

@@ -2,14 +2,14 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-25 17:35:45
+ * @Last Modified time: 2017-10-27 16:18:05
  */
 
 import React, { PropTypes, PureComponent } from 'react';
 import { Upload, message } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import Confirm from '../../common/Confirm';
+import confirm from '../../common/confirm';
 // import Button from '../../common/Button';
 import Icon from '../../common/Icon';
 import { request } from '../../../config';
@@ -52,7 +52,6 @@ export default class Uploader extends PureComponent {
       upData: {
         empId: helper.getEmpId(),
       },
-      isShowDeleteConfirm: false,
       isShowUpload: !(attachModel && fileKey),
       isShowError: false,
       originFileName,
@@ -193,8 +192,10 @@ export default class Uploader extends PureComponent {
 
   @autobind
   showConfirm() {
-    this.setState({
-      isShowDeleteConfirm: true,
+    confirm({
+      type: 'delete',
+      onOkHandler: this.handleDeleteConfirm,
+      onCancelHandler: this.handleCancel,
     });
   }
 
@@ -224,7 +225,6 @@ export default class Uploader extends PureComponent {
   handleDeleteConfirm() {
     const { onDeleteFile } = this.props;
     this.setState({
-      isShowDeleteConfirm: false,
       lastFile: {},
       uploadedFileKey: '',
       isShowUpload: true,
@@ -234,15 +234,15 @@ export default class Uploader extends PureComponent {
 
   @autobind
   handleCancel() {
-    this.setState({
-      isShowDeleteConfirm: false,
-    });
+    console.log('cancel');
   }
 
   @autobind
   handleDeleteFile() {
-    this.setState({
-      isShowDeleteConfirm: true,
+    confirm({
+      type: 'delete',
+      onOkHandler: this.handleDeleteConfirm,
+      onCancelHandler: this.handleCancel,
     });
   }
 
@@ -254,7 +254,7 @@ export default class Uploader extends PureComponent {
   }
 
   render() {
-    const { isShowDeleteConfirm, isShowUpload, isShowError, originFileName } = this.state;
+    const { isShowUpload, isShowError, originFileName } = this.state;
     return (
       <div>
         <div className="uploadBox">
@@ -280,14 +280,6 @@ export default class Uploader extends PureComponent {
                 onClick={this.handleDeleteFile}
               >删除</div>
             </div> : null
-          }
-          {
-            isShowDeleteConfirm ?
-              <Confirm
-                type="delete"
-                onCancelHandler={this.handleCancel}
-                onOkHandler={this.handleDeleteConfirm}
-              /> : null
           }
         </div>
         {

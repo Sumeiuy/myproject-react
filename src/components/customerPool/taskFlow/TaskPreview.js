@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 10:29:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-25 18:17:46
+ * @Last Modified time: 2017-10-27 14:50:35
  */
 
 import React, { PureComponent } from 'react';
@@ -10,7 +10,6 @@ import PropTypes from 'prop-types';
 import { Input, Icon, Mention } from 'antd';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
-import moment from 'moment';
 import _ from 'lodash';
 import GroupTable from '../groupManage/GroupTable';
 import Button from '../../common/Button';
@@ -170,16 +169,15 @@ export default class TaskPreview extends PureComponent {
       labelDesc,
       customNum,
       originFileName,
-      closingDate,
       executionType,
       serviceStrategySuggestion,
       taskName,
       taskType,
       templetDesc,
-      triggerDate,
       totalCount: custTotalCount,
+      timelyIntervalValue,
     } = finalData;
-    console.warn('totalCust----->>', finalData);
+
     let finalExecutionType = executionType;
     const executionTypeDictionary = _.find(executeTypes, item => item.key === executionType);
     if (executionTypeDictionary) {
@@ -226,12 +224,8 @@ export default class TaskPreview extends PureComponent {
             </div>
             <div className={styles.taskSection}>
               <div>
-                <div>触发时间：</div>
-                <div>{!_.isEmpty(triggerDate) ? moment(triggerDate).format('YYYY-MM-DD') : '--'}</div>
-              </div>
-              <div>
-                <div>截止时间：</div>
-                <div>{!_.isEmpty(closingDate) ? moment(closingDate).format('YYYY-MM-DD') : '--'}</div>
+                <div>有效期（天）：</div>
+                <div>{timelyIntervalValue || '--'}</div>
               </div>
             </div>
             <div className={styles.descriptionOrNameSection}>
