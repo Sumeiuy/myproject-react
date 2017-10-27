@@ -104,6 +104,7 @@ export default class CreateTaskSuccess extends PureComponent {
         console.log('页面关闭');
         clearInterval(successSetInterval);
         successSetInterval = null;
+        COUNT = 10;
         // 跳转之前关闭interval
         this.goToHome();
       }

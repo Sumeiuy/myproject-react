@@ -146,33 +146,34 @@ export default class CreateTaskForm extends PureComponent {
         firstUserName += '等';
       }
     }
+    console.log(entertype);
     switch (entertype) {
       case 'businessCustPool':
         defaultMissionName = '提醒客户办理已满足条件的业务';
-        defaultMissionType = 'businessRecommend';
+        defaultMissionType = 'BusinessRecomm';
         defaultExecutionType = 'Mission';
         defaultMissionDesc = `用户已达到到办理 ${custIdexPlaceHolders[0]} 业务的条件，请联系客户办理相关业务。注意提醒客户准备业务办理必须的文件。`;
         startTime = 1;
         endTime = 8;
         break;
       case 'searchCustPool':
-        defaultMissionType = 'other';
+        defaultMissionType = '请选择';
         defaultExecutionType = 'Chance';
         defaultMissionDesc = '';
         startTime = 1;
         endTime = 4;
         break;
-      case 'performanceIncrementCustPool':
+      case 'performanceCustPool':
         defaultMissionName = '新客户回访';
-        defaultMissionType = 'newCustVisit';
+        defaultMissionType = 'AccoutService';
         defaultExecutionType = 'Chance';
         defaultMissionDesc = `用户在 ${custIdexPlaceHolders[1]} 开户，建议跟踪服务了解客户是否有问题需要解决。注：如果客户状态为流失，则：用户在 {流失日}流失，建议跟踪服务了解客户是否有问题需要解决。`;
         startTime = 1;
         endTime = 8;
         break;
-      case 'performanceBusinessOpenCustPool':
+      case 'performanceCustPoola':
         defaultMissionName = '业务开通回访';
-        defaultMissionType = 'stockCustVisit';
+        defaultMissionType = 'AccoutService';
         defaultExecutionType = 'Chance';
         defaultMissionDesc = `用户在 2 周内办理了 ${custIdexPlaceHolders[2]} 业务，建议跟踪服务了解客户是否有问题需要解决。`;
         startTime = 1;
@@ -209,8 +210,7 @@ export default class CreateTaskForm extends PureComponent {
 
   render() {
     const { dict, form, isShowTitle = false } = this.props;
-    const { taskTypes, executeTypes } = dict;
-    // const { getFieldDecorator } = form;
+    const { custServerTypeFeedBackDict, executeTypes } = dict;
     const {
       startValue,
       endValue,
@@ -223,7 +223,6 @@ export default class CreateTaskForm extends PureComponent {
       count,
       statusData,
     } = this.state;
-    // console.log('state--', this.state);
     return (
       <div>
         {!isShowTitle ?
@@ -240,7 +239,7 @@ export default class CreateTaskForm extends PureComponent {
             defaultMissionDesc={defaultMissionDesc}
             defaultServiceStrategySuggestion={defaultServiceStrategySuggestion}
             users={statusData}
-            taskTypes={taskTypes}
+            taskTypes={custServerTypeFeedBackDict}
             executeTypes={executeTypes}
             startValue={startValue}
             endValue={endValue}

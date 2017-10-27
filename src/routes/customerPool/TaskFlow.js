@@ -8,7 +8,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import { autobind } from 'core-decorators';
 import { permission, fspGlobal } from '../../utils';
-import { fspContainer } from '../../config';
+import { fspContainer, getOrgId } from '../../config';
 import PickTargetCustomer from '../../components/customerPool/taskFlow/PickTargetCustomer';
 import TaskPreview from '../../components/customerPool/taskFlow/TaskPreview';
 import CreateTaskForm from '../../components/customerPool/createTask/CreateTaskForm';
@@ -19,7 +19,7 @@ import styles from './taskFlow.less';
 const Step = Steps.Step;
 const { toString } = Mention;
 
-// const EMPTY_LIST = [];
+const orgId = getOrgId;
 const EMPTY_OBJECT = {};
 
 const effects = {
@@ -346,6 +346,7 @@ export default class TaskFlow extends PureComponent {
         circlePeopleData={circlePeopleData}
         getLabelPeople={getLabelPeople}
         peopleOfLabelData={peopleOfLabelData}
+        orgId={orgId}
       />,
     }, {
       title: '提交',

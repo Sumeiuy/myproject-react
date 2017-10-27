@@ -12,8 +12,6 @@ import styles from './taskFormFlowStep.less';
 
 
 const { toString } = Mention;
-// const orgId = window.forReactPosition.orgId || 'ZZ001041051';
-const orgId = 'ZZ001041051';
 
 @withRouter
 export default class TaskFlow extends PureComponent {
@@ -28,11 +26,13 @@ export default class TaskFlow extends PureComponent {
     approvalList: PropTypes.array.isRequired,
     getApprovalList: PropTypes.func.isRequired,
     goBack: PropTypes.func.isRequired,
+    orgId: PropTypes.string,
   };
 
   static defaultProps = {
     dict: {},
     storedTaskFlowData: {},
+    orgId: '',
   };
 
   constructor(props) {
@@ -107,7 +107,7 @@ export default class TaskFlow extends PureComponent {
   // 自建任务提交
   @autobind
   handleSubmit() {
-    const { storedTaskFlowData, createTask, parseQuery } = this.props;
+    const { storedTaskFlowData, createTask, parseQuery, orgId } = this.props;
     const { currentSelectRecord: { login: flowAuditorId = null } } = this.state;
     const {
         custIdList,
@@ -120,7 +120,6 @@ export default class TaskFlow extends PureComponent {
       sortsReqList,
     } = custCondition;
     const params = storedTaskFlowData.taskFormData;
-    console.warn('orgId--', orgId);
     const data = {
       closingDate: moment(params.closingDate).format('YYYY-MM-DD'),
       executionType: params.executionType,

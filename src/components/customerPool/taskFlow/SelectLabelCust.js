@@ -16,6 +16,7 @@ export default class SelectLabelCust extends PureComponent {
     peopleOfLabelData: PropTypes.object.isRequired,
     // 保存的数据
     storedData: PropTypes.object,
+    orgId: PropTypes.string.isRequired,
   };
 
   static defaultProps = {
@@ -85,6 +86,7 @@ export default class SelectLabelCust extends PureComponent {
       getLabelPeople,
       circlePeopleData,
       peopleOfLabelData,
+      orgId,
     } = this.props;
     const { condition, currentSelectLabel } = this.state;
 
@@ -106,6 +108,7 @@ export default class SelectLabelCust extends PureComponent {
           peopleOfLabelData={peopleOfLabelData}
           condition={condition}
           currentSelectLabel={currentSelectLabel}
+          orgId={orgId}
         />
       </div>
     );
