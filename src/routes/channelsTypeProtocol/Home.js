@@ -35,7 +35,7 @@ const EMPTY_OBJECT = {};
 // 退订的类型
 const unsubscribe = '2';
 const OMIT_ARRAY = ['isResetPageNum', 'currentId'];
-const { 
+const {
   channelsTypeProtocol,
   channelsTypeProtocol: { pageType, subType, operationList, status },
 } = seibelConfig;
