@@ -153,7 +153,6 @@ export default class ChartLineWidget extends PureComponent {
     let assetProfitRateInterval = 0.5;
 
     let chartDataIsEmpty = false;
-    console.log('chartData000000>>>>>', chartData);
     // 如果是空数据的情况
     if (_.isEmpty(chartData)) {
       chartDataIsEmpty = true;

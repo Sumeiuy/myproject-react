@@ -9,7 +9,7 @@ import React, { PropTypes, PureComponent } from 'react';
 import { Upload, message } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import Confirm from '../../common/Confirm';
+import confirm from '../../common/confirm';
 // import Button from '../../common/Button';
 import Icon from '../../common/Icon';
 import { request } from '../../../config';
@@ -192,7 +192,7 @@ export default class Uploader extends PureComponent {
 
   @autobind
   showConfirm() {
-    Confirm({
+    confirm({
       type: 'delete',
       onOkHandler: this.handleDeleteConfirm,
       onCancelHandler: this.handleCancel,
@@ -239,7 +239,7 @@ export default class Uploader extends PureComponent {
 
   @autobind
   handleDeleteFile() {
-    Confirm({
+    confirm({
       type: 'delete',
       onOkHandler: this.handleDeleteConfirm,
       onCancelHandler: this.handleCancel,

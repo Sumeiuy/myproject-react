@@ -1,3 +1,8 @@
+/**
+ * @file components/customerPool/BottomFixedBox.js
+ *  目标客户池列表页底部悬浮框，当列表中的数据被选中时显示
+ * @author wangjunjun
+ */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
