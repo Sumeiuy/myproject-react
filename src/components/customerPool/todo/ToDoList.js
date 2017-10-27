@@ -8,28 +8,32 @@ import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { Table } from 'antd';
-import { fspGlobal } from '../../../utils';
+// import { fspGlobal } from '../../../utils';
 
 import styles from './toDoList.less';
 
 import emptyImg from '../../../../static/images/empty.png';
 
+// 待办流程详情新tab打开代码
+// onClick={() => {
+//   const url = `${item.dispatchUri}&workFlowName=${encodeURI(item.flowClass)}`;
+//   const param = {
+//     closable: true,
+//     forceRefresh: true,
+//     id: 'FSP_TODOLIST_DETAIL',
+//     title: '待办流程详情',
+//   };
+//   fspGlobal.openFspIframeTab({ url, param });
+// }}
 const columns = [
   {
     title: '任务名称',
     dataIndex: 'task',
     key: 'task',
     render: item => <a
-      onClick={() => {
-        const url = `${item.dispatchUri}&workFlowName=${encodeURI(item.flowClass)}`;
-        const param = {
-          closable: true,
-          forceRefresh: true,
-          id: 'FSP_TODOLIST_DETAIL',
-          title: '待办流程详情',
-        };
-        fspGlobal.openFspIframeTab({ url, param });
-      }}
+      href={`${item.dispatchUri}&workFlowName=${encodeURI(item.flowClass)}`}
+      target="_blank"
+      rel="noopener noreferrer"
       title={item.text}
     >
       {_.truncate(item.text, { length: 18, omission: '...' })}
@@ -141,7 +145,7 @@ export default class ToDoList extends PureComponent {
     return (
       <Table
         className={className}
-        // rowKey={record => record.applyId}
+        rowKey={record => record.applyId}
         columns={columns}
         dataSource={data}
         pagination={{
