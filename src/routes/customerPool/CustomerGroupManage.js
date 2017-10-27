@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-22 19:02:56
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-27 17:18:38
+ * @Last Modified time: 2017-10-27 17:33:05
  */
 
 import React, { PureComponent } from 'react';
@@ -444,54 +444,54 @@ export default class CustomerGroupManage extends PureComponent {
       const { groupId, includeCustIdList } = this.detailRef.refs
         .wrappedComponent.refs.formWrappedComponent.getData();
 
-      const { operateGroup, location: { query: { curPageNum, curPageSize } } } = this.props;
-      const { keyWord } = this.state;
-
-      // this.props.form.resetFields(); 清除value
       e.preventDefault();
       this.detailRef.validateFields((err, values) => {
         if (!err) {
           console.log('Received values of form: ', values);
           const { name = '', description } = values;
-          if (name.indexOf('%') > -1 || name.indexOf('_') > -1) {
-            message.error('分组名称不要包含特殊字符');
-            return;
-          }
-          if (groupId) {
-            // 编辑分组
-            operateGroup({
-              request: {
-                groupId,
-                groupName: name,
-                groupDesc: description,
-                includeCustIdList: _.isEmpty(includeCustIdList) ? null : includeCustIdList,
-                excludeCustIdList: null,
-              },
-              keyWord,
-              pageNum: curPageNum,
-              pageSize: curPageSize,
-            });
-          } else {
-            // 新增分组
-            operateGroup({
-              request: {
-                groupName: name,
-                groupDesc: description,
-                includeCustIdList: _.isEmpty(includeCustIdList) ? null : includeCustIdList,
-                excludeCustIdList: null,
-              },
-              keyWord,
-              pageNum: curPageNum,
-              pageSize: curPageSize,
-            });
-          }
-          // 关闭弹窗
-          this.handleSubmitCloseModal();
+          this.submitFormContent(name, description, groupId, includeCustIdList);
         } else {
           message.error('请输入分组名称');
         }
       });
     }
+  }
+
+  @autobind
+  @checkSpecialCharacter
+  submitFormContent(name, description, groupId, includeCustIdList) {
+    const { operateGroup, location: { query: { curPageNum, curPageSize } } } = this.props;
+    const { keyWord } = this.state;
+    if (groupId) {
+      // 编辑分组
+      operateGroup({
+        request: {
+          groupId,
+          groupName: name,
+          groupDesc: description,
+          includeCustIdList: _.isEmpty(includeCustIdList) ? null : includeCustIdList,
+          excludeCustIdList: null,
+        },
+        keyWord,
+        pageNum: curPageNum,
+        pageSize: curPageSize,
+      });
+    } else {
+      // 新增分组
+      operateGroup({
+        request: {
+          groupName: name,
+          groupDesc: description,
+          includeCustIdList: _.isEmpty(includeCustIdList) ? null : includeCustIdList,
+          excludeCustIdList: null,
+        },
+        keyWord,
+        pageNum: curPageNum,
+        pageSize: curPageSize,
+      });
+    }
+    // 关闭弹窗
+    this.handleSubmitCloseModal();
   }
 
   /**
