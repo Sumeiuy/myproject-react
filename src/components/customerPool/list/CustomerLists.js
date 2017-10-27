@@ -229,6 +229,8 @@ export default class CustomerLists extends PureComponent {
         }
       }
     }
+    // 因列表返回字段whetherExist表明是否关注，
+    // 故讲以isFollows：{[custiId]: whetherExist}的形式存入isFollows，并下穿到QuickMenu组件
     if (nextCustList !== custList) {
       nextCustList.map((item) => {
         isFollows = {

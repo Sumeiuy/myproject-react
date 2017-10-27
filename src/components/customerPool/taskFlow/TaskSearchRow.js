@@ -16,7 +16,8 @@ import tableStyles from '../groupManage/groupTable.less';
 
 
 const RadioGroup = Radio.Group;
-const orgId = window.orgId;
+// const orgId = window.forReactPosition.orgId;
+const orgId = 'ZZ001041051';
 // const EMPTY_LIST = [];
 
 const renderColumnTitle = [{
@@ -44,11 +45,10 @@ export default class TaskSearchRow extends PureComponent {
   static propTypes = {
     circlePeopleData: PropTypes.array.isRequired,
     condition: PropTypes.string,
-    peopleOfLabelData: PropTypes.array.isRequired,
+    peopleOfLabelData: PropTypes.object.isRequired,
     getLabelPeople: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired,
     currentSelectLabel: PropTypes.string.isRequired,
-    totalCustNum: PropTypes.number.isRequired,
   }
   static defaultProps = {
     condition: '',
@@ -59,8 +59,10 @@ export default class TaskSearchRow extends PureComponent {
     this.state = {
       visible: false,
       curPageNum: 1,
-      pageSize: 8,
+      pageSize: 10,
       totalRecordNum: 0,
+      totalCustNums: 0,
+      labelId: '',
     };
   }
   componentWillReceiveProps(nextProps) {
@@ -80,6 +82,7 @@ export default class TaskSearchRow extends PureComponent {
   handleSeeCust(value) {
     const { getLabelPeople } = this.props;
     const { curPageNum, pageSize } = this.state;
+    console.log(value);
     getLabelPeople({
       labelId: value.id,
       curPageNum,
@@ -89,7 +92,9 @@ export default class TaskSearchRow extends PureComponent {
     });
     this.setState({
       visible: true,
-      totalRecordNum: value.customNum,
+      // totalRecordNum: value.customNum,
+      totalCustNums: value.customNum,
+      labelId: value.id,
     });
   }
 
@@ -101,10 +106,18 @@ export default class TaskSearchRow extends PureComponent {
   // 表格信息
   @autobind
   handleShowSizeChange(currentPageNum, changedPageSize) {
-    // console.log('currentPageNum--', currentPageNum, 'changedPageSize--', changedPageSize);
+    console.log('currentPageNum--', currentPageNum, 'changedPageSize--', changedPageSize);
     const { getLabelPeople } = this.props;
+    const { labelId } = this.state;
     getLabelPeople({
-      curPageNum: currentPageNum,
+      curPageNum: 1,
+      pageSize: changedPageSize,
+      orgId,
+      ptyMngId: helper.getEmpId(),
+      labelId,
+    });
+    this.setState({
+      curPageNum: 1,
       pageSize: changedPageSize,
     });
   }
@@ -113,7 +126,15 @@ export default class TaskSearchRow extends PureComponent {
   handlePageChange(nextPage, currentPageSize) {
     console.log('nextPage---', nextPage, 'currentPageSize---', currentPageSize);
     const { getLabelPeople } = this.props;
+    const { labelId, pageSize } = this.state;
     getLabelPeople({
+      curPageNum: nextPage,
+      pageSize,
+      orgId,
+      ptyMngId: helper.getEmpId(),
+      labelId,
+    });
+    this.setState({
       curPageNum: nextPage,
     });
   }
@@ -142,7 +163,7 @@ export default class TaskSearchRow extends PureComponent {
             <h4
               dangerouslySetInnerHTML={{ __html: newDesc }} // eslint-disable-line
             />
-            <a className={styles.seeCust} onClick={() => this.handleSeeCust(item.id)}>查看客户</a>
+            <a className={styles.seeCust} onClick={() => this.handleSeeCust(item)}>查看客户</a>
           </div>
         );
       });
@@ -151,13 +172,14 @@ export default class TaskSearchRow extends PureComponent {
   render() {
     const {
       curPageNum = 1,
-      pageSize = 8,
+      pageSize = 10,
       totalRecordNum = 0,
       visible,
+      totalCustNums,
     } = this.state;
 
-    const { peopleOfLabelData, currentSelectLabel, condition, totalCustNum } = this.props;
-
+    const { peopleOfLabelData, currentSelectLabel, condition } = this.props;
+    console.log(condition);
     return (
       <div className={styles.divContent}>
         <RadioGroup name="radiogroup" onChange={this.change} defaultValue={currentSelectLabel}>
@@ -168,7 +190,7 @@ export default class TaskSearchRow extends PureComponent {
         <div className={styles.seeCust}>
           <Modal
             visible={visible}
-            title={`满足标签为 ${condition} 的共有${totalCustNum || 0}位`}
+            title={`满足标签为 ${condition} 的共有${totalCustNums}位`}
             onOk={this.handleOk}
             maskClosable={false}
             onCancel={this.handleCancel}
@@ -178,7 +200,6 @@ export default class TaskSearchRow extends PureComponent {
             ]}
             width={700}
           >
-            此处应该有表格
             <GroupTable
               pageData={{
                 curPageNum,
@@ -191,9 +212,11 @@ export default class TaskSearchRow extends PureComponent {
                   [tableStyles.groupTable]: true,
                 })
               }
+              isFixedTitle
+              scrollY={400}
               onSizeChange={this.handleShowSizeChange}
               onPageChange={this.handlePageChange}
-              listData={peopleOfLabelData}
+              listData={peopleOfLabelData.userObjectFormList}
               titleColumn={renderColumnTitle}
               isFirstColumnLink={false}
             />

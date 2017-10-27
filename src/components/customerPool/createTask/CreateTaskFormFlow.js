@@ -10,7 +10,6 @@ import _ from 'lodash';
 import moment from 'moment';
 import classnames from 'classnames';
 import { autobind } from 'core-decorators';
-import { fspGlobal } from '../../../utils';
 import Button from '../../common/Button';
 import CreateTaskForm from './CreateTaskForm';
 import TaskFormFlowStep from './TaskFormFlowStep';
@@ -31,6 +30,7 @@ export default class CreateTaskFormFlow extends PureComponent {
     saveTaskFlowData: PropTypes.func.isRequired,
     approvalList: PropTypes.array.isRequired,
     getApprovalList: PropTypes.func.isRequired,
+    goBack: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -60,18 +60,13 @@ export default class CreateTaskFormFlow extends PureComponent {
 
 
   @autobind
-  closeTab() {
-    // fspGlobal.closeRctTabById('RCT_FSP_TASK');
-    fspGlobal.closeRctTabById('RCT_FSP_CUSTOMER_LIST');
-  }
-
-  @autobind
   parseQuery() {
     const { location: { query: { ids, condition } } } = this.props;
     let custCondition = {};
     let custIdList = null;
     if (!_.isEmpty(ids)) {
       custIdList = decodeURIComponent(ids).split(',');
+      custCondition = JSON.parse(decodeURIComponent(condition));
     } else {
       custCondition = JSON.parse(decodeURIComponent(condition));
     }
@@ -110,7 +105,8 @@ export default class CreateTaskFormFlow extends PureComponent {
       saveTaskFlowData,
       createTask,
       getApprovalList,
-      approvalList } = this.props;
+      approvalList,
+      goBack } = this.props;
     const { showBtn } = this.state;
     return (
       <div className={styles.taskInner}>
@@ -130,7 +126,7 @@ export default class CreateTaskFormFlow extends PureComponent {
                 }
             >
               <div className={styles.task_btn}>
-                <Button onClick={this.closeTab}>取消</Button>
+                <Button onClick={goBack}>取消</Button>
                 <Button type="primary" onClick={this.handleSubmit}>提交</Button>
               </div>
             </div>
@@ -145,6 +141,7 @@ export default class CreateTaskFormFlow extends PureComponent {
             approvalList={approvalList}
             getApprovalList={getApprovalList}
             parseQuery={this.parseQuery}
+            goBack={goBack}
           />
           }
       </div>
