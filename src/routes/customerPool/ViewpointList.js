@@ -18,63 +18,74 @@ function formatString(str) {
   return _.isEmpty(str) ? '--' : str;
 }
 
-const columns = [{
-  title: '标题',
-  dataIndex: 'texttitle',
-  key: 'texttitle',
-  width: '30%',
-  render: item => (
-    <Tooltip title={formatString(item)}>
-      <div className={classnames(styles.td, styles.headLine)}>{formatString(item)}</div>
-    </Tooltip>
-  ),
-}, {
-  title: '类型',
-  dataIndex: 'textcategorychinese',
-  key: 'textcategorychinese',
-  width: '14%',
-  render: item => (
-    <div className={classnames(styles.td, styles.category)}>{formatString(item)}</div>
-  ),
-}, {
-  title: '相关股票',
-  dataIndex: 'aboutStock',
-  key: 'aboutStock',
-  width: '16%',
-  render: item => (
-    <div className={classnames(styles.td, styles.stock)}>{formatString(item)}</div>
-  ),
-}, {
-  title: '行业',
-  dataIndex: 'induname',
-  key: 'induname',
-  width: '13%',
-  render: item => (
-    <div className={classnames(styles.td, styles.induname)}>{formatString(item)}</div>
-  ),
-}, {
-  title: '报告日期',
-  dataIndex: 'pubdatelist',
-  key: 'pubdatelist',
-  width: '13%',
-  render: (item) => {
-    const dateArray = _.split(item, ' ');
-    const date = _.isEmpty(dateArray) ? '' : _.head(dateArray);
-    return (
-      <div className={classnames(styles.td, styles.pubdatelist)}>{formatString(date)}</div>
-    );
-  },
-}, {
-  title: '作者',
-  dataIndex: 'authors',
-  key: 'authors',
-  width: '13%',
-  render: item => (
-    <Tooltip title={formatString(item)}>
-      <div className={classnames(styles.td, styles.authors)}>{formatString(item)}</div>
-    </Tooltip>
-  ),
-}];
+const columns = ({ actionClick }) => {
+  function handleClick(item) {
+    if (_.isFunction(actionClick)) {
+      actionClick(item);
+    }
+  }
+  return [{
+    title: '标题',
+    key: 'texttitle',
+    width: '30%',
+    render: item => (
+      <Tooltip title={formatString(item.texttitle)}>
+        <div
+          className={classnames(styles.td, styles.headLine)}
+          onClick={() => { handleClick(item); }}
+        >
+          <a>{formatString(item.texttitle)}</a>
+        </div>
+      </Tooltip>
+    ),
+  }, {
+    title: '类型',
+    dataIndex: 'textcategorychinese',
+    key: 'textcategorychinese',
+    width: '14%',
+    render: item => (
+      <div className={classnames(styles.td, styles.category)}>{formatString(item)}</div>
+    ),
+  }, {
+    title: '相关股票',
+    dataIndex: 'aboutStock',
+    key: 'aboutStock',
+    width: '16%',
+    render: item => (
+      <div className={classnames(styles.td, styles.stock)}>{formatString(item)}</div>
+    ),
+  }, {
+    title: '行业',
+    dataIndex: 'induname',
+    key: 'induname',
+    width: '13%',
+    render: item => (
+      <div className={classnames(styles.td, styles.induname)}>{formatString(item)}</div>
+    ),
+  }, {
+    title: '报告日期',
+    dataIndex: 'pubdatelist',
+    key: 'pubdatelist',
+    width: '13%',
+    render: (item) => {
+      const dateArray = _.split(item, ' ');
+      const date = _.isEmpty(dateArray) ? '' : _.head(dateArray);
+      return (
+        <div className={classnames(styles.td, styles.pubdatelist)}>{formatString(date)}</div>
+      );
+    },
+  }, {
+    title: '作者',
+    dataIndex: 'authors',
+    key: 'authors',
+    width: '13%',
+    render: item => (
+      <Tooltip title={formatString(item)}>
+        <div className={classnames(styles.td, styles.authors)}>{formatString(item)}</div>
+      </Tooltip>
+    ),
+  }];
+};
 
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
@@ -119,11 +130,11 @@ export default class ViewpointList extends PureComponent {
   }
 
   @autobind
-  handleRowClick(record, index) {
+  handleTitleClick(item) {
     const { push } = this.props;
     push({
       pathname: '/customerPool/viewpointDetail',
-      query: { detailIndex: `${index}` },
+      query: { detailIndex: item.id },
       state: 'formList',
     });
   }
@@ -167,6 +178,7 @@ export default class ViewpointList extends PureComponent {
       onSizeChange: this.handlePageSizeClick,
       originPageSizeUnit: 18,
     };
+    const tableColumns = columns({ actionClick: this.handleTitleClick });
     return (
       <div className={styles.listContainer}>
         <div
@@ -174,10 +186,9 @@ export default class ViewpointList extends PureComponent {
         >
           <Table
             rowKey={'id'}
-            columns={columns}
+            columns={tableColumns}
             dataSource={newInfoVOList}
             pagination={false}
-            onRowClick={this.handleRowClick}
             scroll={{ x: 1100 }}
           />
           <Paganation {...paganationOption} />
