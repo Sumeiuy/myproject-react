@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 10:53:22
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-27 16:11:03
+ * @Last Modified time: 2017-10-27 16:28:51
  * 确认提示框，用于删除提示与表单返回提示，传入type
  * type === delete，删除提示
  * type ==== edit，表单返回提示
@@ -34,11 +34,7 @@ export default function (params) {
     okText: '确认',
     okType: type === 'delete' ? 'danger' : 'primary',
     cancelText: '取消',
-    onOk() {
-      onOkHandler();
-    },
-    onCancel() {
-      onCancelHandler();
-    },
+    onOk: onOkHandler,
+    onCancel: onCancelHandler,
   });
 }
