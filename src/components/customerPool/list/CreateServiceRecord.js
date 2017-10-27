@@ -18,25 +18,10 @@ import styles from './createServiceRecord.less';
 const { Option } = Select;
 const { TextArea } = Input;
 
-// const d = new Date();
 // 日期组件的显示格式
 const dateFormat = 'YYYY/MM/DD';
 const timeFormat = 'HH:mm';
-// 当前日期的时间戳
-// const currentDate = d.getTime();
-// formatCurrentTime: 20:20   formatCurrentDate: 2017/12/12
-// let formatCurrentDate = moment(currentDate).format(dateFormat);
-// let formatCurrentTime = moment(currentDate).format(timeFormat);
 const width = { width: 142 };
-// 根据服务方式的key来记录对应的iconname
-// const SERVICE_ICON = {
-//   'HTSC Phone': 'dianhua',
-//   'HTSC Email': 'youjian',
-//   'HTSC SMS': 'duanxin',
-//   wx: 'weixin',
-//   Interview: 'beizi',
-//   'HTSC Other': 'other',
-// };
 
 // 服务内容和反馈内容字数限制
 const MAX_LENGTH = 1000;
@@ -376,7 +361,7 @@ export default class CreateServiceRecord extends PureComponent {
                 />
                 <TimePicker
                   style={width}
-                  className={styles.ml34}
+                  className={`${styles.ml34} ${styles.hide}`}
                   placeholder={'选择时间'}
                   value={moment(serviceTime, timeFormat)}
                   onChange={this.handleServiceTime}
