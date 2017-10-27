@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-22 19:02:56
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-25 16:58:15
+ * @Last Modified time: 2017-10-27 10:24:27
  */
 
 import React, { PureComponent } from 'react';
@@ -285,11 +285,11 @@ export default class CustomerGroupManage extends PureComponent {
 
   @autobind
   handleOpenTab(obj, titles, ids) {
-    const { groupId, count } = obj;
+    const { groupId, count, enterType } = obj;
     const { push } = this.props;
     const firstUrl = '/customerPool/createTask';
     if (document.querySelector(fspContainer.container)) {
-      const url = `${firstUrl}?groupId=${groupId}&count=${count}`;
+      const url = `${firstUrl}?groupId=${groupId}&count=${count}&enterType=${enterType}`;
       const param = {
         closable: true,
         forceRefresh: true,
@@ -458,14 +458,6 @@ export default class CustomerGroupManage extends PureComponent {
               pageSize: curPageSize,
             });
           }
-          // // 重置分页
-          // replace({
-          //   pathname,
-          //   query: {
-          //     ...query,
-          //     curPageNum: 1,
-          //   },
-          // });
           // 关闭弹窗
           this.handleCloseModal();
         } else {
@@ -473,6 +465,27 @@ export default class CustomerGroupManage extends PureComponent {
         }
       });
     }
+  }
+
+  /**
+   * 添加客户到已经存在的分组中
+   * 调用接口
+   * @param {*object} param0 添加分组对象
+   */
+  @autobind
+  addCustomerToExistedGroup({ includeCustIdList, name, description }) {
+    const { groupId, keyWord } = this.state;
+    const { operateGroup } = this.props;
+    operateGroup({
+      request: {
+        groupId,
+        groupName: name,
+        groupDesc: description,
+        includeCustIdList: _.isEmpty(includeCustIdList) ? null : includeCustIdList,
+        excludeCustIdList: null,
+      },
+      keyWord,
+    });
   }
 
   /**
@@ -677,6 +690,7 @@ export default class CustomerGroupManage extends PureComponent {
                   }}
                   location={location}
                   replace={replace}
+                  onAddCustomerToGroup={this.addCustomerToExistedGroup}
                 />
               }
               onOkHandler={this.handleUpdateGroup}

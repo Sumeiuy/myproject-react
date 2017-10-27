@@ -1,5 +1,13 @@
-
 .divContent {
+	overflow: scroll;
+	min-height: 100px;
+	max-height: e("calc(100vh - 400px)");
+	margin-top: 15px;
+	:global {
+		.ant-radio-group {
+			padding-top: 0;
+		}
+	}
   .divRows {
     width: 100%;
     padding: 10px 15px;

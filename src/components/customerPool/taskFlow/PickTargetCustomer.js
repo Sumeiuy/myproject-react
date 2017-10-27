@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 10:29:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-25 11:17:36
+ * @Last Modified time: 2017-10-26 14:16:11
  */
 
 import React, { PureComponent } from 'react';
@@ -28,6 +28,8 @@ export default class PickTargetCustomer extends PureComponent {
     currentTab: PropTypes.string.isRequired,
     saveCurrentTab: PropTypes.func.isRequired,
     storedTaskFlowData: PropTypes.object.isRequired,
+    isLoadingEnd: PropTypes.bool.isRequired,
+    onCancel: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -76,6 +78,8 @@ export default class PickTargetCustomer extends PureComponent {
       circlePeopleData,
       getLabelPeople,
       peopleOfLabelData,
+      isLoadingEnd,
+      onCancel,
     } = this.props;
     const { currentKey } = this.state;
 
@@ -98,6 +102,8 @@ export default class PickTargetCustomer extends PureComponent {
             </TabPane>
             <TabPane tab="标签圈人" key="2">
               <SelectLabelCust
+                onCancel={onCancel}
+                isLoadingEnd={isLoadingEnd}
                 circlePeopleData={circlePeopleData}
                 getLabelInfo={getLabelInfo}
                 peopleOfLabelData={peopleOfLabelData}
