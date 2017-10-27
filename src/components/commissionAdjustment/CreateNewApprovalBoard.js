@@ -750,6 +750,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
                   data={subTypesAfterAuthority}
                   value={approvalType}
                   onChange={this.choiceApprovalSubType}
+                  width="300px"
                 />
               </CommissionLine>
               {

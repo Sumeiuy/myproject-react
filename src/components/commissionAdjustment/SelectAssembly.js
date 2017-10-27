@@ -23,7 +23,7 @@ export default class SelectAssembly extends PureComponent {
   }
 
   static defaultProps = {
-    width: '200px',
+    width: '300px',
   }
 
   constructor(props) {

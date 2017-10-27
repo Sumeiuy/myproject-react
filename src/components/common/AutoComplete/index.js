@@ -12,7 +12,7 @@ import styles from './index.less';
 
 const Option = AutoComplete.Option;
 
-export default class SearchSelect extends PureComponent {
+export default class autoComplete extends PureComponent {
 
   static propTypes = {
     dataSource: PropTypes.array.isRequired,
@@ -72,6 +72,9 @@ export default class SearchSelect extends PureComponent {
       });
     } else {
       this.props.onChangeValue(value);
+      this.setState({
+        inputValue: '',
+      });
     }
   }
 
