@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-19 09:37:42
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-26 17:44:27
+ * @Last Modified time: 2017-10-27 15:20:40
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -97,7 +97,7 @@ export default class Detail extends PureComponent {
     ]);
     let uuid;
     let description;
-    if (baseInfo.workflowName === unsubscribe) {
+    if (baseInfo.applyType === unsubscribe) {
       uuid = baseInfo.tduuid;
       description = baseInfo.tdDescription;
     } else {
@@ -154,17 +154,18 @@ export default class Detail extends PureComponent {
         </div>
         <div className={styles.detailWrapper}>
           <InfoTitle head="基本信息" />
-          <InfoItem label="操作类型" value={operationLabel(baseInfo.workflowName) || EMPTY_PARAM} />
+          <InfoItem label="操作类型" value={operationLabel(baseInfo.applyType) || EMPTY_PARAM} />
           <InfoItem label="子类型" value={childTypeList[0].label || EMPTY_PARAM} />
           <InfoItem label="客户" value={`${baseInfo.custName || EMPTY_PARAM} ${baseInfo.econNum || EMPTY_PARAM}`} />
+          <InfoItem label="合约编号" value={baseInfo.contractNum || EMPTY_PARAM} />
           <InfoItem label="合约开始日期" value={dateFormat(baseInfo.startDt) || EMPTY_PARAM} />
           <InfoItem label="合约有效期" value={dateFormat(baseInfo.vailDt) || EMPTY_PARAM} />
           <InfoItem label="备注" value={description || EMPTY_PARAM} />
         </div>
         <div className={styles.detailWrapper}>
           <InfoTitle head="拟稿信息" />
-          <InfoItem label="拟稿人" value={`${baseInfo.divisionName || EMPTY_PARAM} ${baseInfo.createdName || EMPTY_PARAM}`} />
-          <InfoItem label="提请时间" value={this.getCreatedDate(baseInfo.createdDt)} />
+          <InfoItem label="拟稿人" value={`${baseInfo.applyDiv || EMPTY_PARAM} ${baseInfo.applyName || EMPTY_PARAM}`} />
+          <InfoItem label="提请时间" value={this.getCreatedDate(baseInfo.applyTime)} />
           <InfoItem label="状态" value={statusLabel || EMPTY_PARAM} />
         </div>
         <div className={styles.detailWrapper}>

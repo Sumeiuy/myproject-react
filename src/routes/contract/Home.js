@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-26 17:50:46
+ * @Last Modified time: 2017-10-27 17:24:57
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
@@ -11,7 +11,8 @@ import { withRouter, routerRedux } from 'dva-react-router-3/router';
 import { connect } from 'react-redux';
 import { message, Modal } from 'antd';
 import _ from 'lodash';
-import { constructSeibelPostBody, getEmpId } from '../../utils/helper';
+
+import { constructSeibelPostBody, getEmpId, hasPermissionOfPostion } from '../../utils/helper';
 import SplitPanel from '../../components/common/splitPanel/SplitPanel';
 // import ContractHeader from '../../components/common/biz/SeibelHeader';
 import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
@@ -249,6 +250,7 @@ export default class Contract extends PureComponent {
       location: { query: { currentId: prevCurrentId } },
     } = this.props;
     const {
+      seibleList: nextSL,
       seibleListLoading: nextSLL,
       getBaseInfo,
       baseInfo: nextBI,
@@ -258,6 +260,7 @@ export default class Contract extends PureComponent {
       // doApprove: nextDA,
       postDoApproveLoading: nextPDA,
       location: { query: { currentId } },
+      empInfo,
     } = nextProps;
 
     const { location: { query: prevQuery = EMPTY_OBJECT }, getSeibleList } = this.props;
@@ -284,12 +287,15 @@ export default class Contract extends PureComponent {
       if (getEmpId() === nextBI.approver && nextBI.status === '04') {
         hasEditPermission = true;
       }
+      hasEditPermission = hasPermissionOfPostion(empInfo);
       this.setState({
         hasEditPermission,
       });
     }
     /* currentId变化重新请求 */
-    if ((prevSLL && !nextSLL) || (currentId && (currentId !== prevCurrentId))) {
+    // 获取到 seibleList,并且 seibleList 的 resultData 有数据
+    if (((prevSLL && !nextSLL) && nextSL.resultData.length) ||
+    (currentId && (currentId !== prevCurrentId))) {
       getBaseInfo({
         id: currentId,
       });
@@ -666,6 +672,7 @@ export default class Contract extends PureComponent {
       ...this.state,
       contractFormData: this.props.baseInfo,
     }, () => {
+      console.warn('baseInfo', this.props.baseInfo);
       this.showModal('editFormModal');
     });
   }
@@ -733,7 +740,6 @@ export default class Contract extends PureComponent {
         }
         payload = {
           ...unsubscribeBaseInfo,
-          workflowName: '2',
           tduuid: contractFormData.tduuid || '',
           tdDescription: contractFormData.tdDescription || '',
         };

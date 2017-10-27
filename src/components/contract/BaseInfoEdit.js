@@ -3,7 +3,7 @@
 * @Author: XuWenKang
 * @Date:   2017-09-20 13:47:07
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-26 17:57:32
+ * @Last Modified time: 2017-10-27 15:48:08
 */
 
 import React, { PureComponent } from 'react';
@@ -13,6 +13,7 @@ import _ from 'lodash';
 import { Input } from 'antd';
 import moment from 'moment';
 
+import Select from '../common/Select';
 import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
 import InfoForm from '../common/infoForm';
@@ -101,7 +102,7 @@ export default class BaseInfoEdit extends PureComponent {
       contractDetail: { baseInfo },
     } = this.props;
     // 是否是退订
-    const isSubscribe = baseInfo.workflowName === unsubscribe;
+    const isSubscribe = baseInfo.applyType === unsubscribe;
     const desc = isSubscribe ? 'tdDescription' : 'remark';
     this.setState({
       ...this.state,
@@ -149,11 +150,11 @@ export default class BaseInfoEdit extends PureComponent {
       tdDescription,
     } = this.state;
     // 是否是退订
-    const isSubscribe = baseInfo.workflowName === unsubscribe;
+    const isSubscribe = baseInfo.applyType === unsubscribe;
     return (
       <div className={styles.editWrapper}>
         <InfoTitle head="基本信息" />
-        <InfoItem label="操作类型" value={this.getOperationType(baseInfo.workflowName)} />
+        <InfoItem label="操作类型" value={this.getOperationType(baseInfo.applyType)} />
         <InfoItem label="子类型" value={this.state.childType} />
         <InfoItem label="客户" value={`${oldData.custName} ${oldData.econNum}`} />
         {
@@ -191,6 +192,24 @@ export default class BaseInfoEdit extends PureComponent {
                 boxStyle={datePickerBoxStyle}
               />
             </InfoForm>
+        }
+        {
+          isSubscribe ?
+            <InfoForm label="合约编号">
+              <Select
+                name="contractNum"
+                data={[
+                  {
+                    show: true,
+                    label: baseInfo.contractNum,
+                    value: baseInfo.contractNum,
+                  },
+                ]}
+                value={baseInfo.contractNum}
+              />
+            </InfoForm>
+          :
+            null
         }
         <InfoForm label="备注">
           <TextArea

@@ -1,8 +1,8 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-09-22 15:02:49
- * @Last Modified by: sunweibin
- * @Last Modified time: 2017-10-26 18:32:48
+ * @Last Modified by: LiuJianShu
+ * @Last Modified time: 2017-10-27 14:53:49
  */
 /**
  * 常用说明
@@ -94,6 +94,7 @@ export default class CommonUpload extends PureComponent {
       statusText: '', // 上传状态对应文字
       file: {}, // 当前上传的文件
       fileList: attachmentList, // 文件列表
+      oldFileList: attachmentList, // 旧的文件列表
       attachment, // 上传后的唯一 ID
     };
   }
@@ -117,26 +118,35 @@ export default class CommonUpload extends PureComponent {
   // 上传事件
   @autobind
   onChange(info) {
+    console.warn('info', info);
     const { uploadAttachment } = this.props;
+    const uploadFile = info.file;
     this.setState({
       percent: info.file.percent,
       fileList: info.fileList,
-      file: info.file,
+      file: uploadFile,
     });
-    if (info.file.status === 'done') {
-      const data = info.file.response.resultData;
-      this.setState({
-        status: 'success',
-        statusText: '上传完成',
-        fileList: data.attaches,
-        attachment: data.attachment,
-      }, uploadAttachment(data.attachment));
-    } else if (info.file.status === 'error') {
-      this.setState({
-        status: 'exception ',
-        statusText: '上传失败',
-      });
-      message.error(`${info.file.name} file upload failed.`);
+    if (uploadFile.response && uploadFile.response.code) {
+      if (uploadFile.response.code === '0') {
+        const data = uploadFile.response.resultData;
+        this.setState({
+          status: 'success',
+          statusText: '上传完成',
+          fileList: data.attaches,
+          oldFileList: data.attaches,
+          attachment: data.attachment,
+        }, uploadAttachment(data.attachment));
+      } else if (uploadFile.response.code === 'MAG0005') {
+        console.warn('this.state.fileList', this.state.fileList);
+        console.warn('this.state.oldFileList', this.state.oldFileList);
+        this.setState({
+          status: 'active',
+          fileList: this.state.oldFileList,
+          file: {},
+          percent: 0,
+        });
+        message.error(uploadFile.response.msg);
+      }
     }
   }
 
