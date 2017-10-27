@@ -3,7 +3,7 @@
 * @Author: XuWenKang
 * @Date:   2017-09-19 14:47:08
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-26 17:37:07
+ * @Last Modified time: 2017-10-27 15:09:16
 */
 
 import React, { PureComponent } from 'react';
@@ -219,8 +219,8 @@ export default class EditForm extends PureComponent {
       onClick: () => this.showModal('addClauseModal'),
     };
     const draftInfo = {
-      name: `${baseInfo.divisionName || EMPTY_PARAM} ${baseInfo.createdName || EMPTY_PARAM}`,
-      date: this.getCreatedDate(baseInfo.createdDt),
+      name: `${baseInfo.applyDiv || EMPTY_PARAM} ${baseInfo.applyName || EMPTY_PARAM}`,
+      date: this.getCreatedDate(baseInfo.applyTime),
       status: baseInfo.status,
     };
     // 是否是退订
