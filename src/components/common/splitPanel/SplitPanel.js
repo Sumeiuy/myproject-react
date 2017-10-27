@@ -40,24 +40,16 @@ export default class SplitPanel extends PureComponent {
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     // 当前系统
     this.UTBContentElem = document.querySelector(splitConfig.utb);
-    if (this.UTBContentElem) {
-      this.tabPanel = this.UTBContentElem.querySelector('tab-pane.active');
-    }
-  }
-
-  componentDidMount() {
     const {
-      fspSidebarHideBtn,
-      fspSidebarShowBtn,
       splitPanel,
       leftPanel,
       rightPanel,
-      defaultSize,
+      fspSidebarHideBtn,
+      fspSidebarShowBtn,
     } = splitConfig;
-
     // fsp系统中的左侧侧边栏显示/隐藏的按钮
     this.sidebarHide = document.querySelector(fspSidebarHideBtn);
     this.sidebarShow = document.querySelector(fspSidebarShowBtn);
@@ -66,16 +58,14 @@ export default class SplitPanel extends PureComponent {
     this.leftPanel = document.querySelector(leftPanel);
     this.rightPanel = document.querySelector(rightPanel);
     this.topPanel = document.querySelector(`.${styles.splitPanel}>.${styles.header}`);
-    // 因为内容区域为内滚动，而不滚动页面，所以需要设置列表和详情区域的高度
-    this.setDocumentScroll();
-    this.panMov(defaultSize);
-    this.initPane();
     // 监听侧边栏显示/隐藏按钮
     this.registerSidebarToggle();
     window.addEventListener('resize', this.onResizeChange, false);
   }
 
   componentDidUpdate() {
+    this.initPane();
+    this.panMov(splitConfig.defaultSize);
     this.setDocumentScroll();
   }
 
@@ -135,7 +125,6 @@ export default class SplitPanel extends PureComponent {
     const listWrapper = leftPanelElm.querySelector('.ant-table');
     // 分割柱条元素，鼠标hover时会需要改变分割区域大小
     const splitBarElm = this.splitPanel.querySelector('.Resizer');
-
     // 此为头部面板的高度固定值为58px
     const topPanelHeight = this.topPanel.getBoundingClientRect().height;
     // 分页器区域所占高度
@@ -198,6 +187,12 @@ export default class SplitPanel extends PureComponent {
   panelBdRef(input) {
     this.panelWrapper = input;
   }
+
+  @autobind
+  splitPanelRef(input) {
+    this.split = input;
+  }
+
   // 左侧列表区域
   @autobind
   leftPanelRef(input) {
@@ -248,15 +243,15 @@ export default class SplitPanel extends PureComponent {
   // FSP系统中显示隐藏侧边栏需要重置分割区域
   @autobind
   handleSidebarToggle() {
-    const { defaultSize } = splitConfig;
-    this.panMov(defaultSize);
-    this.onResizeChange();
+    this.initPane();
   }
 
   @autobind
   registerSidebarToggle() {
-    if (this.sildebarShow && this.sildebarShow) {
+    if (this.sidebarHide) {
       this.sidebarHide.addEventListener('click', this.handleSidebarToggle, false);
+    }
+    if (this.sidebarShow) {
       this.sidebarShow.addEventListener('click', this.handleSidebarToggle, false);
     }
   }
@@ -264,7 +259,7 @@ export default class SplitPanel extends PureComponent {
   // 取消左侧菜单控制按键事件监听
   @autobind
   removeListenerLeftMenu() {
-    if (this.sildebarShow && this.sildebarShow) {
+    if (this.sidebarHide && this.sidebarShow) {
       this.sidebarHide.removeEventListener('click', this.handleSidebarToggle, false);
       this.sidebarShow.removeEventListener('click', this.handleSidebarToggle, false);
     }
@@ -306,7 +301,13 @@ export default class SplitPanel extends PureComponent {
           </div>
         </div>
         <div className={hasDataClass} ref={this.panelBdRef}>
-          <div style={{ height: '100%', position: 'relative' }}>
+          <div
+            style={{
+              width: '100%',
+              height: '100%',
+              position: 'relative',
+            }}
+          >
             <SplitPane
               onChange={this.panchange}
               split="vertical"
@@ -314,6 +315,7 @@ export default class SplitPanel extends PureComponent {
               maxSize={paneMaxSize}
               defaultSize={splitConfig.defaultSize}
               className="primary"
+              ref={this.splitPanelRef}
             >
               <div className={styles.leftPanel} ref={this.leftPanelRef}>{leftPanel}</div>
               <div className={styles.rightPanel} ref={this.rightPanelRef}>{rightPanel}</div>

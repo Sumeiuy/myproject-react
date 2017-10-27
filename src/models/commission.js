@@ -278,7 +278,7 @@ export default {
       const { payload: { resultData } } = action;
       let list = [];
       if (!_.isEmpty(resultData)) {
-        list = resultData.custInfo;
+        list = resultData.custInfos;
       }
       return {
         ...state,
@@ -311,10 +311,11 @@ export default {
     },
 
     queryThreeMatchInfoSuccess(state, action) {
-      const { payload: { resultData } } = action;
+      const { payload: { response, prdCode } } = action;
+      const resultData = response.resultData || {};
       return {
         ...state,
-        threeMatchInfo: resultData,
+        threeMatchInfo: { ...resultData, productCode: prdCode },
       };
     },
 
@@ -597,9 +598,10 @@ export default {
     // 查询产品与客户的三匹配信息
     * queryThreeMatchInfo({ payload }, { call, put }) {
       const response = yield call(api.queryThreeMatchInfo, payload);
+      const { prdCode } = payload;
       yield put({
         type: 'queryThreeMatchInfoSuccess',
-        payload: response,
+        payload: { response, prdCode },
       });
     },
     // 查询咨讯订阅中的可选产品列表

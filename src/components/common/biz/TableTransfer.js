@@ -16,7 +16,7 @@
  * unsubscribeTitle： 不必要，有默认值（‘退订服务’），第二个表的title
  * subscribeData：不必要，有默认值（空数据），第一个表的数据源
  * unsubscribeData：不必要，有默认值（空数据），第二个表的数据源
- * checkChange： 不必要，向组件外传递信息，返回此父元素下选中所有child，所有选中的child
+ * checkChange： 不必要，向组件外传递信息，返回此父元素(children：仅为选中的child)
  * transferChange： 不必要，向组件外传递信息，返回第二个table的数据源
  * defaultCheckKey: 不必要，标识子项的默认选中key
  * placeholder： 不必要，搜索框的提示文字
@@ -60,7 +60,7 @@ const actionColumns = (type, handleAction) => {
   };
 };
 
-const checkColumns = (column, handleAction) => {
+const checkColumns = (column, defaultCheckKey, handleAction) => {
   function handleClick(item, event) {
     if (_.isFunction(handleAction)) {
       handleAction(item, event);
@@ -74,7 +74,7 @@ const checkColumns = (column, handleAction) => {
         return (
           <Checkbox
             onChange={event => handleClick(item, event)}
-            defaultChecked={item.defaultChecked || false}
+            defaultChecked={item[defaultCheckKey] === 'Y'}
           >
             {item[key]}
           </Checkbox>
@@ -147,11 +147,11 @@ export default class TableTransfer extends Component {
     } = props || this.props;
     const initFirstArray = this.initTableData(firstData, rowKey, defaultCheckKey);
     const initSecondArray = this.initTableData(secondData, rowKey, defaultCheckKey);
-    const initFirstColumns = this.initTableColumn(firstColumns);
-    const initSecondColumns = this.initTableColumn(secondColumns);
+    const initFirstColumns = this.initTableColumn(firstColumns, defaultCheckKey);
+    const initSecondColumns = this.initTableColumn(secondColumns, defaultCheckKey);
     this.state = {
       totalData: [...firstData, ...secondData], // 搜索筛选的数据源，对使用者透明
-      checked: this.getAllDefaultCheck(initSecondArray, rowKey),
+      checked: this.getAllDefaultCheck(initSecondArray, rowKey, defaultCheckKey),
       firstArray: this.hiddenChildren(initFirstArray),
       secondArray: initSecondArray,
       firstColumns: [
@@ -180,14 +180,14 @@ export default class TableTransfer extends Component {
   }
 
   // 获取所有默认选中
-  getAllDefaultCheck(dataArray, rowKey) {
+  getAllDefaultCheck(dataArray, rowKey, defaultCheckKey) {
     let defaultCheck = {};
     dataArray.forEach(
       (item) => {
         if (!_.isEmpty(item.children)) {
           const defaultChildCheck = _.filter(
             item.children,
-            child => child.defaultChecked,
+            child => child[defaultCheckKey] === 'Y', // 真实数据源字段为 'Y'
           );
           defaultCheck = { ...defaultCheck, [item[rowKey]]: defaultChildCheck };
         }
@@ -209,9 +209,9 @@ export default class TableTransfer extends Component {
     } = nextProps || this.props;
     const initFirstArray = this.initTableData(firstData, rowKey, defaultCheckKey);
     const initSecondArray = this.initTableData(secondData, rowKey, defaultCheckKey);
-    const initSecondColumns = this.initTableColumn(secondColumns);
+    const initSecondColumns = this.initTableColumn(secondColumns, defaultCheckKey);
     this.setState({
-      checked: this.getAllDefaultCheck(initSecondArray, rowKey),
+      checked: this.getAllDefaultCheck(initSecondArray, rowKey, defaultCheckKey),
       firstArray: this.hiddenChildren(initFirstArray),
       secondArray: initSecondArray,
       firstColumns: [
@@ -228,22 +228,21 @@ export default class TableTransfer extends Component {
   // 添加属性，方便操作.初始操作为show children状态
   // parentKey:辨识子元素挂在哪个父元素上
   // tip属性，显示子项勾选框对应的提示，（对用户是透明的）
-  // 默认项defaultChecked属性，便于操作
-  initTableData(dataArray, rowKey, defaultCheckedKey) {
+  initTableData(dataArray, rowKey, defaultCheckKey) {
     const newDatatArray = _.cloneDeep(dataArray);
     const newData = newDatatArray.map(
       (item) => {
         if (!_.isEmpty(item.children)) {
           const newChildren = item.children.map(
             (child) => {
-              const checkFlag = child[defaultCheckedKey] === 'Y';
+              const checkFlag = child[defaultCheckKey] === 'Y';
               const newChild = {
                 ...child,
                 parentKey: item[rowKey],
                 tip: checkFlag ? '取消可选产品' : '标记可选产品',
               };
-              return _.isEmpty(defaultCheckedKey) ?
-                newChild : { ...newChild, defaultChecked: checkFlag };
+              return _.isEmpty(defaultCheckKey) ?
+                newChild : { ...newChild };
             },
           );
           return { ...item, children: newChildren };
@@ -256,11 +255,11 @@ export default class TableTransfer extends Component {
 
   // 为child行，第一列增加check框
   @autobind
-  initTableColumn(columnArray) {
+  initTableColumn(columnArray, defaultCheckKey) {
     return columnArray.map(
       (item, index) => {
         if (index === 0) {
-          return checkColumns(_.omit(item, 'dataIndex'), this.handleCheck);
+          return checkColumns(_.omit(item, 'dataIndex'), defaultCheckKey, this.handleCheck);
         } else if (index === 1) {
           return tooltipColumns(_.omit(item, 'dataIndex'));
         }
@@ -316,21 +315,36 @@ export default class TableTransfer extends Component {
     return newDataArray;
   }
 
+  // 去除右表未选中的child
+  @autobind
+  filterSecondData(secondArray, newCheck) {
+    const { rowKey } = this.props;
+    return _.map(
+      secondArray,
+      (item) => {
+        if (!_.isEmpty(item.children)) {
+          const itemChecked = newCheck[item[rowKey]] || {};
+          return { ...item, children: itemChecked };
+        }
+        return item;
+      },
+    );
+  }
+
+
   // 更新数据源，触发render
   @autobind
-  updateAllData(seleted, modifyRemoveArray, modifyAddArray, currentTableType) {
-    const { transferChange, rowKey } = this.props;
-    const { checked } = this.state;
+  updateAllData(flag, newSelect, newChecked, modifyRemoveArray, modifyAddArray, currentTableType) {
+    const { transferChange } = this.props;
     const isOperateFirstTable = currentTableType === 'first';
     const updateFirstArray = isOperateFirstTable ? modifyRemoveArray : modifyAddArray;
     const updateSecondArray = isOperateFirstTable ? modifyAddArray : modifyRemoveArray;
-    // 清空对应的children选中
-    const clearChildren = { [seleted[rowKey]]: [] };
+    const changeSecondArray = this.filterSecondData(updateSecondArray, newChecked);
     this.setState({
-      checked: [...checked, ...clearChildren],
+      checked: newChecked,
       firstArray: updateFirstArray,
       secondArray: updateSecondArray,
-    }, transferChange(seleted, updateSecondArray));
+    }, transferChange(flag, newSelect, changeSecondArray));
   }
 
   // 子项勾选和取消勾选，为显示不同的提示，需要更新所在的数据源
@@ -359,23 +373,16 @@ export default class TableTransfer extends Component {
     );
   }
 
-  // 更新带有children属性的元素，取消child的默认选中
-  updateItem(selected) {
-    if (!_.isEmpty(selected.children)) {
-      const newChildren = selected.children.map(
-        item => _.omit(item, 'defaultChecked'),
-      );
-      return { ...selected, children: newChildren };
-    }
-    return selected;
-  }
-
   // 点击check框触发事件，此父元素下选中所有child，所有选中的child
   @autobind
   handleCheck(selected, event) {
-    const { checked } = this.state;
+    const { checked, secondArray } = this.state;
     const { checkChange, rowKey } = this.props;
     const selectChildren = checked[selected.parentKey] || [];
+    const parentItem = _.head(_.filter(
+      secondArray,
+      item => item[rowKey] === selected.parentKey,
+    ));
     // 根据check的状态，添加或移除
     let newSelectChildren = [];
     if (event.target.checked) {
@@ -395,10 +402,12 @@ export default class TableTransfer extends Component {
     });
     // 更新选中的项
     const selectAll = { ...checked, [selected.parentKey]: newSelectChildren };
+    const newParentItem = { ...parentItem, children: newSelectChildren };
+    const changeSecondData = this.filterSecondData(newSecondData, selectAll);
     this.setState({
       checked: selectAll,
       secondArray: newSecondData,
-    }, checkChange(newSelectChildren, selectAll));
+    }, checkChange(newParentItem, changeSecondData));
   }
 
   // 更新提示
@@ -426,8 +435,8 @@ export default class TableTransfer extends Component {
 
   @autobind
   handleClick(currentTableType, selected) {
-    const { rowKey } = this.props;
-    const { secondArray, firstArray } = this.state;
+    const { rowKey, defaultCheckKey } = this.props;
+    const { secondArray, firstArray, checked, totalData } = this.state;
     const isOperateFirstTable = currentTableType === 'first';
     const needAddArray = isOperateFirstTable ? secondArray : firstArray;
     const needRemoveArray = isOperateFirstTable ? firstArray : secondArray;
@@ -440,22 +449,42 @@ export default class TableTransfer extends Component {
 
     // 更新当前对象
     let modifySelected = {};
+    let flag = 'add';
+    let newSelect = selected;
+    let currentChecked = { [selected[rowKey]]: [] };
     if (isOperateFirstTable) {
-      modifySelected = this.showChildren([selected]);
+      modifySelected = this.initTableData(this.showChildren([selected]), rowKey, defaultCheckKey);
+      if (!_.isEmpty(_.head(modifySelected).children)) {
+        currentChecked = this.getAllDefaultCheck(modifySelected, rowKey, defaultCheckKey);
+        newSelect = { ...modifySelected, children: currentChecked[selected[rowKey]] };
+      } else {
+        newSelect = modifySelected;
+      }
       // 展示提示
-      this.updateTips(selected);
+      this.updateTips(modifySelected);
     } else {
-      // 移除当前child的默认选中，否则，从左侧表穿梭到右侧表时，还是默认选中状态
-      const newSelected = this.updateItem(selected);
-      modifySelected = this.hiddenChildren([newSelected]);
+      flag = 'remove';
+      const recoverSelect = _.head(_.filter(
+        totalData,
+        item => item[rowKey] === selected[rowKey],
+      ));
+      modifySelected = this.hiddenChildren([recoverSelect]);
       // 移除提示
       this.setState({ tip: { type: '', content: '' } });
     }
-
+    // 更新选中的数组
+    const newChecked = { ...checked, ...currentChecked };
     // 更新数据源，添加要移动的元素
     const modifyAddArray = [...modifySelected, ...needAddArray];
     // 更新数据源
-    this.updateAllData(selected, modifyRemoveArray, modifyAddArray, currentTableType);
+    this.updateAllData(
+      flag,
+      newSelect,
+      newChecked,
+      modifyRemoveArray,
+      modifyAddArray,
+      currentTableType,
+    );
   }
 
   @autobind

@@ -167,15 +167,17 @@ export default class Pageheader extends PureComponent {
     }
     const operateElement = needOperate ?
       (
-        <div className={styles.dropDownSelectBox}>
-          <span>操作类型:</span>
-          <Select
-            name="business2"
-            value={business2}
-            data={operateOptions}
-            onChange={this.handleSelectChange}
-            style={{ width: '20%' }}
-          />
+        <div className={styles.filterFl}>
+          <div className={styles.dropDownSelectBox}>
+            <span>操作类型:</span>
+            <Select
+              name="business2"
+              value={business2}
+              data={operateOptions}
+              onChange={this.handleSelectChange}
+              style={{ width: '20%' }}
+            />
+          </div>
         </div>
       )
     :
@@ -200,11 +202,8 @@ export default class Pageheader extends PureComponent {
               />
             </div>
           </div>
-
-          <div className={styles.filterFl}>
-            { /* 操作类型 */ }
-            { operateElement }
-          </div>
+          { /* 操作类型 */ }
+          { operateElement }
           <div className={styles.filterFl}>
             子类型:
             <Select
@@ -251,7 +250,6 @@ export default class Pageheader extends PureComponent {
               updateQueryState={this.selectCustRange}
             />
           </div>
-
           <div className={styles.filterFl}>
             审批人:
             <div className={styles.dropDownSelectBox}>

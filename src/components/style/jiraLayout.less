@@ -3,6 +3,11 @@
   .filterBox {
     width: 90%;
     display: inline-block;
+    &:after {
+      content: "";
+      display: table;
+      clear: both;
+    }
     .filterFl {
       float: left;
       height: 32px;
