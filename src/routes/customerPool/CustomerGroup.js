@@ -1,8 +1,8 @@
 /*
  * @Author: zhuyanwen
  * @Date: 2017-10-09 13:25:51
- * @Last Modified by:   K0240008
- * @Last Modified time: 2017-10-26 16:36:07
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2017-10-27 17:21:55
  * @description: 客户分组功能
  */
 
@@ -19,6 +19,7 @@ import CustomerGrouplist from '../../components/customerPool/group/CustomerGroup
 import AddNewGroup from '../../components/customerPool/group/AddNewGroup';
 import AddCusSuccess from '../../components/customerPool/group/AddCusSuccess';
 import { fspGlobal, helper } from '../../utils';
+import { checkSpecialCharacter } from '../../decorators/checkSpecialCharacter';
 
 const CUR_PAGE = 1;
 const CUR_PAGESIZE = 10;
@@ -117,6 +118,7 @@ export default class CustomerGroup extends PureComponent {
   }
 
   @autobind
+  @checkSpecialCharacter
   handleSearch(value) {
     const { replace, location: { query, pathname } } = this.props;
     replace({
