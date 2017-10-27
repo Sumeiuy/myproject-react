@@ -111,13 +111,13 @@ export default class CreateTaskForm extends PureComponent {
 
   @autobind
   handleInit(query = {}) {
-    let entertype = '';
+    let source = '';
     let count = '0';
     if (!_.isEmpty(query)) {
-      entertype = query.entertype;
+      source = query.source;
       count = query.count;
     }
-
+    console.warn('query-->', query);
     const { dict: { custIdexPlaceHolders } } = this.props;
     let defaultMissionName = '';
     let defaultMissionType = '';
@@ -146,9 +146,9 @@ export default class CreateTaskForm extends PureComponent {
         firstUserName += '等';
       }
     }
-    console.log(entertype);
-    switch (entertype) {
-      case 'businessCustPool':
+    console.log(source);
+    switch (source) {
+      case 'business':
         defaultMissionName = '提醒客户办理已满足条件的业务';
         defaultMissionType = 'BusinessRecomm';
         defaultExecutionType = 'Mission';
@@ -156,14 +156,14 @@ export default class CreateTaskForm extends PureComponent {
         startTime = 1;
         endTime = 8;
         break;
-      case 'searchCustPool':
+      case 'search':
         defaultMissionType = '请选择';
         defaultExecutionType = 'Chance';
         defaultMissionDesc = '';
         startTime = 1;
         endTime = 4;
         break;
-      case 'performanceCustPool':
+      case 'custIndicator':
         defaultMissionName = '新客户回访';
         defaultMissionType = 'AccoutService';
         defaultExecutionType = 'Chance';
@@ -171,7 +171,7 @@ export default class CreateTaskForm extends PureComponent {
         startTime = 1;
         endTime = 8;
         break;
-      case 'performanceCustPoola':
+      case 'numOfCustOpened':
         defaultMissionName = '业务开通回访';
         defaultMissionType = 'AccoutService';
         defaultExecutionType = 'Chance';

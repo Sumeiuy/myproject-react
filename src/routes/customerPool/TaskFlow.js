@@ -3,11 +3,10 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter, routerRedux } from 'dva/router';
 import { Steps, message, Button, Mention } from 'antd';
-// import { autobind } from 'core-decorators';
+import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import moment from 'moment';
-import { autobind } from 'core-decorators';
-import { permission, fspGlobal } from '../../utils';
+import { permission, fspGlobal, helper } from '../../utils';
 import { fspContainer, getOrgId } from '../../config';
 import PickTargetCustomer from '../../components/customerPool/taskFlow/PickTargetCustomer';
 import TaskPreview from '../../components/customerPool/taskFlow/TaskPreview';
@@ -49,6 +48,7 @@ const mapStateToProps = state => ({
   currentTab: state.customerPool.currentTab,
   approvalList: state.customerPool.approvalList,
   submitTaskFlowResult: state.customerPool.submitTaskFlowResult,
+  getLabelPeopleLoading: state.loading.effects[effects.getLabelPeople],
 });
 
 const mapDispatchToProps = {
@@ -92,10 +92,12 @@ export default class TaskFlow extends PureComponent {
     getApprovalList: PropTypes.func.isRequired,
     approvalList: PropTypes.array.isRequired,
     submitTaskFlowResult: PropTypes.string.isRequired,
+    getLabelPeopleLoading: PropTypes.bool,
   };
 
   static defaultProps = {
     dict: {},
+    getLabelPeopleLoading: false,
   };
 
   constructor(props) {
@@ -106,18 +108,27 @@ export default class TaskFlow extends PureComponent {
       currentSelectRowKeys: [],
       isSuccess: false,
       custSource: '',
+      isLoadingEnd: true,
     };
     // 首页指标查询权限
     this.isHasAuthorize = permission.hasIndexViewPermission();
   }
 
   componentWillReceiveProps(nextProps) {
-    const { submitTaskFlowResult } = this.props;
-    const { submitTaskFlowResult: nextResult } = nextProps;
+    const { submitTaskFlowResult, getLabelPeopleLoading } = this.props;
+    const { submitTaskFlowResult: nextResult, getLabelPeopleLoading: nextLoading } = nextProps;
 
     if (nextResult !== submitTaskFlowResult) {
       this.setState({
         isSuccess: true,
+      });
+    }
+
+    // loading状态
+    // 只有全部loading完毕才触发isLoadingEnd
+    if (getLabelPeopleLoading && !nextLoading) {
+      this.setState({
+        isLoadingEnd: true,
       });
     }
   }
@@ -234,8 +245,6 @@ export default class TaskFlow extends PureComponent {
       taskType,
       templetDesc: toString(templetDesc),
       triggerDate: moment(triggerDate).format('YYYY-MM-DD'),
-      // 新增字段，不知道是干啥的，不加后台就报错，内容随便写
-      missionDesc: '13213',
     };
 
     if (this.isHasAuthorize) {
@@ -253,6 +262,10 @@ export default class TaskFlow extends PureComponent {
     } else {
       submitTaskFlow({
         labelId,
+        queryLabelDTO: {
+          ptyMngId: helper.getEmpId(),
+          orgId,
+        },
         labelCustNums,
         ...postBody,
       });
@@ -295,6 +308,13 @@ export default class TaskFlow extends PureComponent {
     }
   }
 
+  @autobind
+  resetLoading() {
+    this.setState({
+      isLoadingEnd: false,
+    });
+  }
+
   render() {
     const {
       current,
@@ -302,6 +322,7 @@ export default class TaskFlow extends PureComponent {
       currentSelectRowKeys,
       isSuccess,
       custSource,
+      isLoadingEnd,
     } = this.state;
 
     const {
@@ -347,6 +368,8 @@ export default class TaskFlow extends PureComponent {
         getLabelPeople={getLabelPeople}
         peopleOfLabelData={peopleOfLabelData}
         orgId={orgId}
+        isLoadingEnd={isLoadingEnd}
+        onCancel={this.resetLoading}
       />,
     }, {
       title: '提交',

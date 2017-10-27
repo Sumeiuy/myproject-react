@@ -132,7 +132,6 @@ export default class CreateTask extends PureComponent {
       getApprovalList,
     } = this.props;
     const { isSuccess } = this.state;
-    // console.log(isSuccess);
     return (
       <div className={styles.taskBox}>
         {!isSuccess ?

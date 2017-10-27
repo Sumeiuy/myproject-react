@@ -309,7 +309,7 @@ export default class TaskFormInfo extends PureComponent {
         </div>
         <div className={styles.task_textArea}>
           <p>
-            <label htmlFor="desc"><i>*</i>任务描述</label>
+            <label htmlFor="desc"><i>*</i>任务提示</label>
           </p>
           <FormItem>
             {getFieldDecorator('templetDesc', {

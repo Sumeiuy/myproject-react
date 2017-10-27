@@ -71,19 +71,14 @@ export default class CreateTaskForm extends PureComponent {
       custId: '',
       startValue: null,
       endValue: null,
-      showBtn: false,
+      showBtn: true,
       logData: [],
     };
   }
-  componentWillMount() {
-    // this.handleData();
-    const { serviceLogData } = this.props;
-    this.setState({
-      showBtn: !_.isEmpty(serviceLogData),
-    });
-  }
+
   componentDidMount() {
   }
+
   componentWillReceiveProps(nextProps) {
     console.log('nextProps---', nextProps);
     const { serviceLogMoreData, serviceLogData } = nextProps;
@@ -94,9 +89,9 @@ export default class CreateTaskForm extends PureComponent {
         logData: serviceLogData,
       });
     }
-    // this.setState({
-    //   showBtn: _.isEmpty(serviceLogData),
-    // });
+    this.setState({
+      showBtn: _.isEmpty(serviceLogData),
+    });
     if (!_.isEqual(serviceLogMoreData, prevServiceLogMoreData)) {
       const newServiceLogData = _.concat(serviceLogData, serviceLogMoreData);
       this.setState({
@@ -104,6 +99,7 @@ export default class CreateTaskForm extends PureComponent {
       });
     }
   }
+
   @autobind
   onChange(value) {
     const { location: { query, pathname }, replace } = this.props;
@@ -153,40 +149,56 @@ export default class CreateTaskForm extends PureComponent {
     } = this.props;
     const lastTime = serviceLogData[serviceLogData.length - 1].serveTime;
     const params = query;
-    params.serveDateToPaged = lastTime;
+    params.serveDateToPaged = moment(lastTime).format('YYYY-MM-DD HH:mm:ss');
     getServiceLogMore(params);
   }
+
   @autobind
   serveAllSourceChange(value) {
     console.log(value);
+    let source = '';
     const { location: { query, pathname }, replace } = this.props;
+    if (value === '') {
+      source = '不限';
+    } else {
+      source = value;
+    }
     replace({
       pathname,
       query: {
         ...query,
-        serveSource: value,
+        serveSource: source,
       },
     });
   }
+
   @autobind
-  handleCreatOptions(data) {
-    if (!_.isEmpty(data)) {
+  handleCreatOptions(data, boolen) {
+    if (!_.isEmpty(data) && boolen === 'serveType') {
       return data.map(item =>
-        <Option key={`task${item.key}`} value={item.key}>{item.value}</Option>,
+        <Option key={`task${item.key}`} value={item.value}>{item.value}</Option>,
       );
     }
-    return null;
+    return data.map(item =>
+      <Option key={`task${item.key}`} value={item.key}>{item.value}</Option>,
+    );
   }
+
   @autobind
   serveAllTypeChange(value) {
     console.log(value);
-    console.log(value);
+    let type = '';
     const { location: { query, pathname }, replace } = this.props;
+    if (value === '') {
+      type = '不限';
+    } else {
+      type = value;
+    }
     replace({
       pathname,
       query: {
         ...query,
-        serveType: value,
+        serveType: type,
       },
     });
   }
@@ -195,7 +207,7 @@ export default class CreateTaskForm extends PureComponent {
     const { dict, handleCollapseClick } = this.props;
     const { serveAllSource, serveAllType, executeTypes, serveWay } = dict;
     const { logData, showBtn } = this.state;
-    console.warn('showBtn--', showBtn);
+    console.warn('showBtn--', dict);
     return (
       <div className={styles.serviceInner}>
         <div
@@ -218,7 +230,7 @@ export default class CreateTaskForm extends PureComponent {
               </Col>
               <Col span={5}>
                 {!_.isEmpty(serveAllSource) ?
-                  <Select defaultValue="所有渠道" onChange={this.serveAllSourceChange}>
+                  <Select defaultValue="不限" onChange={this.serveAllSourceChange}>
                     {this.handleCreatOptions(serveAllSource)}
                   </Select> :
                   <Select defaultValue="暂无数据">
@@ -228,8 +240,8 @@ export default class CreateTaskForm extends PureComponent {
               </Col>
               <Col span={5}>
                 {!_.isEmpty(serveAllType) ?
-                  <Select defaultValue="所有类型" onChange={this.serveAllTypeChange}>
-                    {this.handleCreatOptions(serveAllType)}
+                  <Select defaultValue="不限" onChange={this.serveAllTypeChange}>
+                    {this.handleCreatOptions(serveAllType, 'serveType')}
                   </Select> :
                   <Select defaultValue="暂无数据">
                     <Option key="null" value="0" >暂无数据</Option>

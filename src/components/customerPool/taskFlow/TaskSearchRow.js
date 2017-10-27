@@ -47,6 +47,8 @@ export default class TaskSearchRow extends PureComponent {
     onChange: PropTypes.func.isRequired,
     currentSelectLabel: PropTypes.string.isRequired,
     orgId: PropTypes.string.isRequired,
+    isLoadingEnd: PropTypes.bool.isRequired,
+    onCancel: PropTypes.func.isRequired,
   }
   static defaultProps = {
     condition: '',
@@ -55,12 +57,12 @@ export default class TaskSearchRow extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      visible: false,
       curPageNum: 1,
       pageSize: 10,
       totalRecordNum: 0,
       totalCustNums: 0,
       labelId: '',
+      visible: false,
     };
   }
   componentWillReceiveProps(nextProps) {
@@ -98,7 +100,9 @@ export default class TaskSearchRow extends PureComponent {
 
   @autobind
   handleCancel() {
+    const { onCancel } = this.props;
     this.setState({ visible: false });
+    onCancel();
   }
 
   // 表格信息
@@ -176,8 +180,13 @@ export default class TaskSearchRow extends PureComponent {
       totalCustNums,
     } = this.state;
 
-    const { peopleOfLabelData, currentSelectLabel, condition } = this.props;
-    console.log(condition);
+    const {
+      peopleOfLabelData,
+      currentSelectLabel,
+      condition,
+      isLoadingEnd,
+    } = this.props;
+
     return (
       <div className={styles.divContent}>
         <RadioGroup name="radiogroup" onChange={this.change} defaultValue={currentSelectLabel}>
@@ -187,8 +196,8 @@ export default class TaskSearchRow extends PureComponent {
         </RadioGroup>
         <div className={styles.seeCust}>
           <Modal
-            visible={visible}
-            title={`满足标签为 ${condition} 的共有${totalCustNums}位`}
+            visible={visible && isLoadingEnd}
+            title={`满足标签为 ${condition} 的共有${totalCustNums || 0}位`}
             onOk={this.handleOk}
             maskClosable={false}
             onCancel={this.handleCancel}

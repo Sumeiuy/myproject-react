@@ -17,6 +17,8 @@ export default class SelectLabelCust extends PureComponent {
     // 保存的数据
     storedData: PropTypes.object,
     orgId: PropTypes.string.isRequired,
+    isLoadingEnd: PropTypes.bool.isRequired,
+    onCancel: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -87,6 +89,8 @@ export default class SelectLabelCust extends PureComponent {
       circlePeopleData,
       peopleOfLabelData,
       orgId,
+      isLoadingEnd,
+      onCancel,
     } = this.props;
     const { condition, currentSelectLabel } = this.state;
 
@@ -102,6 +106,8 @@ export default class SelectLabelCust extends PureComponent {
           isNeedBtn
         />
         <TaskSearchRow
+          onCancel={onCancel}
+          isLoadingEnd={isLoadingEnd}
           onChange={this.handleRadioChange}
           circlePeopleData={circlePeopleData}
           getLabelPeople={getLabelPeople}
