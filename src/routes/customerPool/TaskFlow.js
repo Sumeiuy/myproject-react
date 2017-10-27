@@ -246,8 +246,6 @@ export default class TaskFlow extends PureComponent {
       taskType,
       templetDesc: toString(templetDesc),
       triggerDate: moment(triggerDate).format('YYYY-MM-DD'),
-      // // 新增字段，不知道是干啥的，不加后台就报错，内容随便写
-      // missionDesc: '13213',
     };
 
     if (this.isHasAuthorize) {
