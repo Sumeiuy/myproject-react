@@ -921,21 +921,6 @@ export default class ChannelsTypeProtocol extends PureComponent {
       attachmentList,
       flowHistory,
     };
-    const editFormProps = {
-      custList: customerList,
-      contractDetail,
-      onSearchCutList: this.toSearchCust,
-      onChangeForm: this.handleChangeContractForm,
-      uploadAttachment: this.onUploadComplete,
-      // 条款名称列表
-      clauseNameList: this.props.clauseNameList,
-      // 合作部门列表
-      cooperDeparment: this.props.cooperDeparment,
-      // 根据管检测查询合作部门
-      searchCooperDeparment: this.handleSearchCooperDeparment,
-      // 审批人相关信息
-      flowStepInfo,
-    };
     const selfBtnGroup = (<BottonGroup
       list={flowStepInfo}
       onEmitEvent={this.footerBtnHandle}
