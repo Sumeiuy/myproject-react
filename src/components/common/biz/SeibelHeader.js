@@ -226,7 +226,6 @@ export default class Pageheader extends PureComponent {
               value={subType}
               data={subtypeOptions}
               onChange={this.handleSelectChange}
-              style={{ width: '20%' }}
             />
           </div>
 
@@ -237,7 +236,6 @@ export default class Pageheader extends PureComponent {
               value={status}
               data={stateOptions}
               onChange={this.handleSelectChange}
-              style={{ width: '20%' }}
             />
           </div>
 

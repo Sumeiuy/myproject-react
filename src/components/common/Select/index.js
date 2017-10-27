@@ -24,7 +24,7 @@ export default class CommonSelect extends PureComponent {
 
   static defaultProps = {
     value: '全部',
-    width: '220px',
+    width: '',
   }
 
   @autobind
