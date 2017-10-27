@@ -551,7 +551,7 @@ export default class CustomerLists extends PureComponent {
       selectedIds.split(',') : EMPTY_ARRAY;
     const isAllSelectBool = !((!selectAll || selectAll === 'false'));
     // 是否显示底部的发起任务和分组，全选或者有选中数据时才显示
-    const isShow = (!_.isEmpty(selectIdsArr) || isAllSelectBool) ? 'block' : 'none';
+    const BottomFixedBoxVisible = (!_.isEmpty(selectIdsArr) || isAllSelectBool);
     // 已选中的条数：选择全选显示所有数据量，非全选显示选中的条数
     const selectCount = isAllSelectBool ? page.total : selectIdsArr.length;
     // 默认服务经理
@@ -670,17 +670,19 @@ export default class CustomerLists extends PureComponent {
             全选
           </Checkbox>
         </div>
-        <BottomFixedBox
-          selectCount={selectCount}
-          isShow={isShow}
-          mainServiceManager={this.mainServiceManager}
-          page={page}
-          condition={condition}
-          location={location}
-          push={push}
-          custList={custList}
-          entertype={entertype}
-        />
+        {
+          BottomFixedBoxVisible ?
+            <BottomFixedBox
+              selectCount={selectCount}
+              mainServiceManager={this.mainServiceManager}
+              page={page}
+              condition={condition}
+              location={location}
+              push={push}
+              custList={custList}
+              entertype={entertype}
+            /> : null
+        }
         {
           (isShowContactModal && isLoadingEnd) ?
             <CreateContactModal

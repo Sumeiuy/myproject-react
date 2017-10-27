@@ -15,7 +15,6 @@ export default class BottomFixedBox extends PureComponent {
     push: PropTypes.func.isRequired,
     condition: PropTypes.object.isRequired,
     selectCount: PropTypes.number.isRequired,
-    isShow: PropTypes.string.isRequired,
     mainServiceManager: PropTypes.bool.isRequired,
     entertype: PropTypes.string.isRequired,
   }
@@ -188,7 +187,6 @@ export default class BottomFixedBox extends PureComponent {
     } = this.state;
     const {
       selectCount,
-      isShow,
     } = this.props;
     return (
       <div
@@ -196,7 +194,6 @@ export default class BottomFixedBox extends PureComponent {
         className={styles.taskAndGroup}
         style={{
           left: taskAndGroupLeftPos,
-          display: isShow,
         }}
       >
         <p className="left">
