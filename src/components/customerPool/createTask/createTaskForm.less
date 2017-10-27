@@ -1,29 +1,27 @@
-    
-.task_title{
-  font-size:18px;
+.task_title {
+  font-size: 18px;
   font-weight: bold;
-  color:#33393c;
-  border-bottom: 1px solid #dddddd;
-  padding:5px 0 10px 0;
-  b{
-    color:#ff784e;
+  color: #33393c;
+  border-bottom: 1px solid #ddd;
+  padding: 5px 0 10px;
+  b {
+    color: #ff784e;
   }
 }
-.task_from{
+.task_from {
   font-size: 14px;
   padding: 20px 0;
-  .info{
-    color:#ff784e;
+  .info {
+    color: #ff784e;
     font-size: 14px;
   }
-  .task_selectList{
+  .task_selectList {
     overflow: hidden;
-    li{
+    li {
       position: relative;
-      float:left;
+      float: left;
       width: 33%;
-      .task_label{
-        text-align: right;
+      .task_label {
         vertical-align: middle;
         line-height: 32px;
         display: inline-block;
@@ -33,31 +31,33 @@
         float: left;
         padding-right: 5px;
         font-size: 14px;
-        color:#666666;
+        color: #666;
+        width: 80px;
+        text-align: left;
       }
-      .required_i{
-        color:#ff0000;
+      .required_i {
+        color: #f00;
         font-style: normal;
       }
-      :global{
-        .ant-form-item-label{
-          label{
+      :global {
+        .ant-form-item-label {
+          label {
             font-size: 14px;
-            color:#666666;
+            color: #666;
           }
         }
-        .ant-select-selection{
+        .ant-select-selection {
           border: 1px solid #d9d9d9;
           &:hover {
             border-color: #49a9ee;
           }
-          &:active, &:focus{
+          &:active, &:focus {
             border-color: #49a9ee;
             outline: 0;
-            box-shadow: 0 0 0 2px rgba(16,142,233,.2);
+            box-shadow: 0 0 0 2px rgba(16, 142, 233, .2);
           }
         }
-        .has-error .ant-form-explain, .has-error .ant-form-split{
+        .has-error .ant-form-explain, .has-error .ant-form-split {
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
@@ -65,69 +65,62 @@
       }
     }
   }
-  .task_textArea{
-    p{
-      padding:5px 0;
-      label{
+  .task_textArea {
+    p {
+      padding: 5px 0;
+      label {
         font-size: 14px;
-        color:#666666;
-        i{
+        color: #666;
+        i {
           font-style: normal;
-          color:#ff0000;
+          color: #f00;
         }
       }
     }
   }
 }
 
-
-.pageFoot{
-  padding:20px;
-  text-align: right;      
-}
-.submitBtn{
+.pageFoot {
+  padding: 20px;
   text-align: right;
-  button{
-    margin-left:15px;
+}
+.submitBtn {
+  text-align: right;
+  button {
+    margin-left: 15px;
   }
 }
-  
-:global{
-  @-webkit-keyframes loadingCircle
-  {
-    0%
-    {
+
+:global {
+  @-webkit-keyframes loadingCircle {
+    0% {
       -webkit-transform-origin: 50% 50%;
       transform-origin: 50% 50%;
       -webkit-transform: rotate(0deg);
-      transform: rotate(0deg)
+      transform: rotate(0deg);
     }
 
-    to
-    {
+    to {
       -webkit-transform-origin: 50% 50%;
       transform-origin: 50% 50%;
       -webkit-transform: rotate(1turn);
-      transform: rotate(1turn)
+      transform: rotate(1turn);
     }
   }
 
-  @keyframes loadingCircle
-  {
-    0%
-    {
+  @keyframes loadingCircle {
+    0% {
       -webkit-transform-origin: 50% 50%;
       transform-origin: 50% 50%;
       -webkit-transform: rotate(0deg);
-      transform: rotate(0deg)
+      transform: rotate(0deg);
     }
 
-    to
-    {
+    to {
       -webkit-transform-origin: 50% 50%;
       transform-origin: 50% 50%;
       -webkit-transform: rotate(1turn);
-      transform: rotate(1turn)
+      transform: rotate(1turn);
     }
   }
 }
