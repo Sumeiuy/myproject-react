@@ -237,6 +237,7 @@ export default class Pageheader extends PureComponent {
               value={status}
               data={stateOptions}
               onChange={this.handleSelectChange}
+              style={{ width: '20%' }}
             />
           </div>
 
