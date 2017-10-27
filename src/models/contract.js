@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-20 15:13:30
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-26 18:42:39
+ * @Last Modified time: 2017-10-27 17:47:53
  */
 import { message } from 'antd';
 import { contract as api, seibel as seibelApi } from '../api';
@@ -289,7 +289,6 @@ export default {
     * saveContractData({ payload }, { call, put }) {
       const { currentQuery, currentQuery: { pageNum, pageSize } } = payload;
       const response = yield call(api.saveContractData, payload.payload);
-      console.warn('调用接口时的 payload', payload);
       let approvePayload = {};
       // 新建时获取保存后返回的 id 传给审批接口
       if (payload.approveData.type === 'add') {

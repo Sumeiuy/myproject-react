@@ -8,6 +8,8 @@ import moment from 'moment';
 import bowser from 'bowser';
 import _ from 'lodash';
 
+import { hasPermissionOfPostion } from './permission';
+
 import { ZHUNICODE, constants, seibelConfig, fspContainer } from '../config';
 
 function getOS() {
@@ -527,20 +529,10 @@ const helper = {
 
   // 检测是否有相应的职责、职位权限
   hasPermissionOfPostion(empInfo) {
-    let hasPermission = true;
-    const allowPermission = 'HTSC 综合服务-营业部执行岗';
-    const permissionText = '营业部服务岗';
     const fsp = document.querySelector(fspContainer.container);
+    let hasPermission = true;
     if (fsp) {
-      // 合约合约时判断权限
-      // 职责 职位
-      const { empRespList = [], empPostnList = [] } = empInfo;
-      // fsp 里的职位字段
-      const fspPostnId = window.forReactPosition ? (window.forReactPosition.pstnId || '') : '';
-      const filterResp = _.filter(empRespList, o => o.respName === allowPermission);
-      const filterPtId = _.filter(empPostnList, o => o.postnId === fspPostnId);
-      const filterPostn = _.filter(filterPtId, o => o.postnName.indexOf(permissionText) !== -1);
-      hasPermission = Boolean(filterResp.length) && Boolean(filterPostn.length);
+      hasPermission = hasPermissionOfPostion(empInfo);
     }
     return hasPermission;
   },

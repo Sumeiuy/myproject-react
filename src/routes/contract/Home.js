@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-27 17:24:57
+ * @Last Modified time: 2017-10-27 19:51:54
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
@@ -283,11 +283,13 @@ export default class Contract extends PureComponent {
     }
     if ((preBIL && !nextBIL)) {
       let hasEditPermission = false;
+      hasEditPermission = hasPermissionOfPostion(empInfo);
       // 如果当前登陆人与详情里的审批人相等，并且状态是驳回时显示编辑按钮
       if (getEmpId() === nextBI.approver && nextBI.status === '04') {
         hasEditPermission = true;
+      } else {
+        hasEditPermission = false;
       }
-      hasEditPermission = hasPermissionOfPostion(empInfo);
       this.setState({
         hasEditPermission,
       });
@@ -337,16 +339,10 @@ export default class Contract extends PureComponent {
       this.setState({
         tempApproveData: EMPTY_OBJECT,
       });
-      console.warn('doApprove 结束，关闭弹窗');
       this.closeModal('approverModal');
       this.closeModal('addFormModal');
       this.closeModal('editFormModal');
     }
-
-    // if (!_.isEqual(preDA, nextDA)) {
-    //   // 获取到 flowStepInfo
-    //   this.closeModal('addFormModal');
-    // }
   }
 
   componentDidUpdate() {
@@ -672,7 +668,6 @@ export default class Contract extends PureComponent {
       ...this.state,
       contractFormData: this.props.baseInfo,
     }, () => {
-      console.warn('baseInfo', this.props.baseInfo);
       this.showModal('editFormModal');
     });
   }
@@ -714,11 +709,8 @@ export default class Contract extends PureComponent {
   // 弹窗底部按钮事件
   @autobind
   footerBtnHandle(btnItem) {
-    console.warn('item', btnItem);
-    // TODO-设定好相应的值传过去，注意 operation
     const { unsubscribeBaseInfo } = this.props;
     const { editFormModal, contractFormData } = this.state;
-    console.warn('contractFormData', contractFormData);
     let payload = EMPTY_OBJECT;
     // 操作类型
     const operationType = contractFormData.workflowname;
@@ -743,7 +735,6 @@ export default class Contract extends PureComponent {
           tduuid: contractFormData.tduuid || '',
           tdDescription: contractFormData.tdDescription || '',
         };
-        console.warn('新建窗口，退订所有数据完毕', payload);
         // 数据判断完毕，请求接口
       } else {
         // 操作类型是订购时
@@ -780,7 +771,6 @@ export default class Contract extends PureComponent {
           return;
         }
         payload = contractFormData;
-        console.warn('新建窗口所有数据完毕 payload', payload);
         // 数据判断完毕，请求接口
       }
     } else {
@@ -810,7 +800,6 @@ export default class Contract extends PureComponent {
         return;
       }
       payload = contractFormData;
-      console.warn('编辑窗口所有数据完毕', payload);
       // 数据判断完毕，请求接口
     }
     let tempApproveData = EMPTY_OBJECT;
@@ -931,7 +920,6 @@ export default class Contract extends PureComponent {
       footerBtnData,
       selectApproveData,
     };
-    console.warn('审批人确认时的 sendPayload', sendPayload);
     this.sendRequest(sendPayload);
   }
 
@@ -946,7 +934,6 @@ export default class Contract extends PureComponent {
       ...sendPayload,
       currentQuery: query,
     };
-    console.warn('sendRequest payload', payload);
     saveContractData(payload);
   }
 

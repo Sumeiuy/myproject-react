@@ -165,7 +165,6 @@ export default class Pageheader extends PureComponent {
     if (pathname === '/contract') {
       hasPermission = hasPermissionOfPostion(empInfo);
     }
-    console.warn('hasPermission', hasPermission);
     const operateElement = needOperate ?
       (
         <div className={styles.dropDownSelectBox}>
