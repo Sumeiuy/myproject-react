@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 14:15:22
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-27 10:29:01
+ * @Last Modified time: 2017-10-27 16:10:56
  */
 
 import React, { PureComponent } from 'react';
@@ -30,7 +30,6 @@ export default class CustomerGroupDetail extends PureComponent {
     detailData: PropTypes.object,
     form: PropTypes.object.isRequired,
     customerList: PropTypes.object.isRequired,
-    onCloseModal: PropTypes.func,
     customerHotPossibleWordsList: PropTypes.array.isRequired,
     getHotPossibleWds: PropTypes.func.isRequired,
     canEditDetail: PropTypes.bool,
@@ -54,7 +53,6 @@ export default class CustomerGroupDetail extends PureComponent {
 
   static defaultProps = {
     detailData: EMPTY_OBJECT,
-    onCloseModal: () => { },
     canEditDetail: true,
     custRiskBearing: [],
   };
@@ -76,7 +74,6 @@ export default class CustomerGroupDetail extends PureComponent {
       dataSource: EMPTY_LIST,
       includeCustIdList: [],
       needDeleteCustId: '',
-      isShowDeleteConfirm: false,
       curPageCustList: EMPTY_LIST,
     };
   }
@@ -230,10 +227,14 @@ export default class CustomerGroupDetail extends PureComponent {
         curPageNum: curPage,
       });
     } else {
-      // 不然，直接提示删除确认框，然后删除
       this.setState({
-        isShowDeleteConfirm: true,
         needDeleteCustId: custId,
+      });
+      // 直接提示删除确认框，然后删除
+      Confirm({
+        type: 'delete',
+        onOkHandler: this.handleConfirmOk,
+        onCancelHandler: this.handleConfirmCancel,
       });
     }
   }
@@ -357,17 +358,12 @@ export default class CustomerGroupDetail extends PureComponent {
 
   @autobind
   handleConfirmOk() {
-    this.setState({
-      isShowDeleteConfirm: false,
-    });
     this.deleteCustomerFromGroupForever();
   }
 
   @autobind
   handleConfirmCancel() {
-    this.setState({
-      isShowDeleteConfirm: false,
-    });
+    console.log('cancel');
   }
 
   @autobind
@@ -442,7 +438,6 @@ export default class CustomerGroupDetail extends PureComponent {
       curPageNum,
       curPageSize,
       dataSource = EMPTY_LIST,
-      isShowDeleteConfirm,
       totalRecordNum,
       curPageCustList,
       groupId,
@@ -581,14 +576,6 @@ export default class CustomerGroupDetail extends PureComponent {
                 isFixedTitle
               />
             </div> : <div className={styles.emptyTable} />
-        }
-        {
-          isShowDeleteConfirm ?
-            <Confirm
-              type={'delete'}
-              onCancelHandler={this.handleConfirmCancel}
-              onOkHandler={this.handleConfirmOk}
-            /> : null
         }
       </Form>
     );

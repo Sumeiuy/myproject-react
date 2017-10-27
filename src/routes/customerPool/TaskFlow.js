@@ -5,7 +5,6 @@ import { withRouter, routerRedux } from 'dva/router';
 import { Steps, message, Button, Mention } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import moment from 'moment';
 import { permission, fspGlobal, helper } from '../../utils';
 import { fspContainer, getOrgId } from '../../config';
 import PickTargetCustomer from '../../components/customerPool/taskFlow/PickTargetCustomer';
@@ -228,23 +227,21 @@ export default class TaskFlow extends PureComponent {
       labelId,
       customNum: labelCustNums,
       uploadedFileKey: fileId,
-      closingDate,
       executionType,
       serviceStrategySuggestion,
       taskName,
       taskType,
       templetDesc,
-      triggerDate,
+      timelyIntervalValue,
     } = finalData;
 
     let postBody = {
-      closingDate: moment(closingDate).format('YYYY-MM-DD'),
       executionType,
       serviceStrategySuggestion,
       taskName,
       taskType,
       templetDesc: toString(templetDesc),
-      triggerDate: moment(triggerDate).format('YYYY-MM-DD'),
+      timelyIntervalValue,
     };
 
     if (this.isHasAuthorize) {

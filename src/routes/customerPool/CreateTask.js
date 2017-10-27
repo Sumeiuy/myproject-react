@@ -16,7 +16,7 @@ import styles from './createTask.less';
 import { fspGlobal } from '../../utils';
 
 
-const orgId = getOrgId;
+const orgId = getOrgId || null;
 
 const effects = {
   createTask: 'customerPool/createTask',

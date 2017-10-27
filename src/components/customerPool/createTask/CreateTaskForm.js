@@ -7,14 +7,12 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { Form, Mention } from 'antd';
 import _ from 'lodash';
-import moment from 'moment';
 import { autobind } from 'core-decorators';
 import styles from './createTaskForm.less';
 import TaskFormInfo from './TaskFormInfo';
 
 
 const create = Form.create;
-const WEEK = ['日', '一', '二', '三', '四', '五', '六'];
 const { toString } = Mention;
 
 @create()
@@ -41,9 +39,6 @@ export default class CreateTaskForm extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      startValue: null,
-      endValue: null,
-      endOpen: false,
       fromShow: true,
       successShow: false,
       firstUserName: '',
@@ -76,30 +71,8 @@ export default class CreateTaskForm extends PureComponent {
         defaultMissionType: previousData.taskType, // 'Mission'
         defaultExecutionType: previousData.executionType,
         defaultMissionDesc: toString(previousData.templetDesc),
+        defaultInitialValue: previousData.timelyIntervalValue,
         defaultServiceStrategySuggestion: previousData.serviceStrategySuggestion,
-        startValue: previousData.triggerDate,
-        endValue: previousData.closingDate,
-      });
-    }
-  }
-
-
-  @autobind
-  handleCreatAddDate(days, type) {
-    const d = new Date();
-    d.setDate(d.getDate() + days);
-    const m = d.getMonth() + 1;
-    const newDay = `${d.getFullYear()}/${m}/${d.getDate()}`;
-    const e = d.getDay();
-    if (type === 'end') {
-      this.setState({
-        endValue: moment(newDay, `YYYY/MM/DD(${WEEK[e]})`),
-        endFormat: `YYYY/MM/DD(${WEEK[e]})`,
-      });
-    } else {
-      this.setState({
-        startValue: moment(newDay, `YYYY/MM/DD(${WEEK[e]})`),
-        startFormat: `YYYY/MM/DD(${WEEK[e]})`,
       });
     }
   }
@@ -122,9 +95,8 @@ export default class CreateTaskForm extends PureComponent {
     let defaultMissionType = '';
     let defaultExecutionType = '';
     const defaultServiceStrategySuggestion = '';
+    const defaultInitialValue = null;
     let defaultMissionDesc = '';
-    let startTime = 1;
-    let endTime = 4;
     let custIdList = null;
     let searchReq = null;
     let firstUserName = '';
@@ -145,46 +117,35 @@ export default class CreateTaskForm extends PureComponent {
         firstUserName += '等';
       }
     }
-    console.log(source);
     switch (source) {
       case 'business':
         defaultMissionName = '提醒客户办理已满足条件的业务';
         defaultMissionType = 'BusinessRecomm';
         defaultExecutionType = 'Mission';
         defaultMissionDesc = `用户已达到到办理 ${custIdexPlaceHolders[0]} 业务的条件，请联系客户办理相关业务。注意提醒客户准备业务办理必须的文件。`;
-        startTime = 1;
-        endTime = 8;
         break;
       case 'search':
         defaultMissionType = '请选择';
         defaultExecutionType = 'Chance';
         defaultMissionDesc = '';
-        startTime = 1;
-        endTime = 4;
         break;
       case 'custIndicator':
         defaultMissionName = '新客户回访';
         defaultMissionType = 'AccoutService';
         defaultExecutionType = 'Chance';
         defaultMissionDesc = `用户在 ${custIdexPlaceHolders[1]} 开户，建议跟踪服务了解客户是否有问题需要解决。注：如果客户状态为流失，则：用户在 {流失日}流失，建议跟踪服务了解客户是否有问题需要解决。`;
-        startTime = 1;
-        endTime = 8;
         break;
       case 'numOfCustOpened':
         defaultMissionName = '业务开通回访';
         defaultMissionType = 'AccoutService';
         defaultExecutionType = 'Chance';
         defaultMissionDesc = `用户在 2 周内办理了 ${custIdexPlaceHolders[2]} 业务，建议跟踪服务了解客户是否有问题需要解决。`;
-        startTime = 1;
-        endTime = 8;
         // {14日内开通的业务}
         break;
       case 'custGroupList':
         defaultMissionName = '';
         defaultMissionType = '请选择';
         defaultExecutionType = '请选择';
-        startTime = 1;
-        endTime = 8;
         break;
       default:
         defaultMissionType = '请选择';
@@ -196,14 +157,13 @@ export default class CreateTaskForm extends PureComponent {
       defaultMissionType,
       defaultExecutionType,
       defaultMissionDesc,
+      defaultInitialValue,
       defaultServiceStrategySuggestion,
       firstUserName,
       count,
       custIdList,
       searchReq,
     });
-    this.handleCreatAddDate(startTime, 'start');
-    this.handleCreatAddDate(endTime, 'end');
   }
 
 
@@ -211,17 +171,17 @@ export default class CreateTaskForm extends PureComponent {
     const { dict, form, isShowTitle = false } = this.props;
     const { custServerTypeFeedBackDict, executeTypes } = dict;
     const {
-      startValue,
-      endValue,
       defaultMissionName,
       defaultMissionType,
       defaultExecutionType,
       defaultMissionDesc,
+      defaultInitialValue,
       defaultServiceStrategySuggestion,
       firstUserName,
       count,
       statusData,
     } = this.state;
+
     return (
       <div>
         {!isShowTitle ?
@@ -236,12 +196,11 @@ export default class CreateTaskForm extends PureComponent {
             defaultMissionType={defaultMissionType}
             defaultExecutionType={defaultExecutionType}
             defaultMissionDesc={defaultMissionDesc}
+            defaultInitialValue={defaultInitialValue}
             defaultServiceStrategySuggestion={defaultServiceStrategySuggestion}
             users={statusData}
             taskTypes={custServerTypeFeedBackDict}
             executeTypes={executeTypes}
-            startValue={startValue}
-            endValue={endValue}
             form={form}
           />
         </div>

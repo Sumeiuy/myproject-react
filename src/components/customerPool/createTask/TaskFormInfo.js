@@ -5,9 +5,8 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import { Form, Select, Input, DatePicker, Mention } from 'antd';
+import { Form, Select, Input, Mention } from 'antd';
 import _ from 'lodash';
-import moment from 'moment';
 import { autobind } from 'core-decorators';
 import styles from './createTaskForm.less';
 
@@ -16,8 +15,6 @@ const FormItem = Form.Item;
 const Option = Select.Option;
 const { TextArea } = Input;
 const { toContentState, toString } = Mention;
-const WEEK = ['日', '一', '二', '三', '四', '五', '六'];
-
 
 export default class TaskFormInfo extends PureComponent {
 
@@ -28,38 +25,26 @@ export default class TaskFormInfo extends PureComponent {
     defaultExecutionType: PropTypes.string.isRequired,
     defaultMissionDesc: PropTypes.string.isRequired,
     defaultServiceStrategySuggestion: PropTypes.string,
+    defaultInitialValue: PropTypes.string,
     users: PropTypes.array.isRequired,
     taskTypes: PropTypes.array,
     executeTypes: PropTypes.array,
-    startValue: PropTypes.object.isRequired,
-    endValue: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
     taskTypes: [],
     executeTypes: [],
     defaultServiceStrategySuggestion: '',
+    defaultInitialValue: null,
   }
 
   constructor(props) {
     super(props);
     this.state = {
-      startValue: null,
-      endValue: null,
-      startFormat: 'YYYY/MM/DD(E)',
-      endFormat: 'YYYY/MM/DD(E)',
       suggestions: [],
     };
   }
 
-  componentWillMount() {
-    const { startValue, endValue } = this.props;
-    this.setState({
-      startValue,
-      endValue,
-    });
-    // users = this.props.users;
-  }
   @autobind
   onChange(field, value) {
     this.setState({
@@ -67,66 +52,21 @@ export default class TaskFormInfo extends PureComponent {
     });
   }
 
-  @autobind
-  onStartChange(value) {
-    this.onChange('startValue', value);
-    this.handleDateFormat(value, 'start');
-  }
-
-  @autobind
-  onEndChange(value) {
-    this.onChange('endValue', value);
-    this.handleDateFormat(value, 'end');
-  }
-
-  // 提及
   // @autobind
-  // onSelect(suggestion) {
-  //   console.log('onSelect', suggestion);
-  // }
-  // @autobind
-  handleSearchChange=(value, trigger) => {
+  handleSearchChange = (value, trigger) => {
     const { users } = this.props;
     const dataSource = trigger === '$' ? users : [];
     this.setState({
       suggestions: dataSource.filter(item => item.indexOf(value) !== -1),
     });
   }
-  // @autobind
-  // handleChange(editorState) {
-  //   console.log(toString(editorState));
-  // }
+
   checkMention = (rule, value, callback) => {
     if (toString(value).length < 10) {
       callback(new Error('任务描述不能小于10个字符!'));
     } else {
       callback();
     }
-  }
-  // 提及
-
-  @autobind
-  disabledStartDate(startValue) {
-    const endValue = this.state.endValue;
-    if (!startValue || !endValue) {
-      return false;
-    }
-    const d = new Date();
-    d.setDate(d.getDate() - 1);
-    const m = d.getMonth() + 1;
-    const newDay = `${d.getFullYear()}/${m}/${d.getDate()}`;
-    const e = d.getDay();
-    const nowDay = moment(newDay, `YYYY/MM/DD(${WEEK[e]})`);
-    return startValue.valueOf() <= nowDay.valueOf() || startValue.valueOf() > endValue.valueOf();
-  }
-
-  @autobind
-  disabledEndDate(endValue) {
-    const startValue = this.state.startValue;
-    if (!endValue || !startValue) {
-      return false;
-    }
-    return endValue.valueOf() <= startValue.valueOf();
   }
 
   handleCreatOptions(data) {
@@ -138,30 +78,8 @@ export default class TaskFormInfo extends PureComponent {
     return null;
   }
 
-  handleDateFormat(value, type) {
-    if (!_.isEmpty(value)) {
-      const { _d } = value;
-      const d = new Date(_d);
-      const e = d.getDay();
-      if (type === 'end') {
-        this.setState({
-          endFormat: `YYYY/MM/DD(${WEEK[e]})`,
-        });
-      } else {
-        this.setState({
-          startFormat: `YYYY/MM/DD(${WEEK[e]})`,
-        });
-      }
-    }
-  }
-
-
   render() {
     const {
-      startFormat,
-      endFormat,
-      startValue,
-      endValue,
       suggestions,
     } = this.state;
     const {
@@ -169,6 +87,7 @@ export default class TaskFormInfo extends PureComponent {
       defaultMissionType,
       defaultExecutionType,
       defaultServiceStrategySuggestion,
+      defaultInitialValue,
       defaultMissionDesc,
       taskTypes,
       executeTypes,
@@ -245,45 +164,15 @@ export default class TaskFormInfo extends PureComponent {
             }
           </li>
           <li>
-            <label htmlFor="dd" className={styles.task_label}><i className={styles.required_i}>*</i>触发日期</label>
+            <label htmlFor="dd" className={styles.task_label}><i className={styles.required_i}>*</i>有效期(天)</label>
             <FormItem
               wrapperCol={{ span: 12 }}
             >
-              {getFieldDecorator('triggerDate',
+              {getFieldDecorator('timelyIntervalValue',
                 {
-                  initialValue: startValue,
-                })(
-                  <DatePicker
-                    disabledDate={this.disabledStartDate}
-                    allowClear={false}
-                    showToday={false}
-                    format={startFormat}
-                    placeholder="开始时间"
-                    onChange={this.onStartChange}
-                    style={{ width: '100%' }}
-                  />,
-              )}
-            </FormItem>
-          </li>
-          <li>
-            <label htmlFor="dd" className={styles.task_label}><i className={styles.required_i}>*</i>截止日期</label>
-            <FormItem
-              wrapperCol={{ span: 12 }}
-            >
-              {getFieldDecorator('closingDate',
-                {
-                  initialValue: endValue,
-                })(
-                  <DatePicker
-                    disabledDate={this.disabledEndDate}
-                    allowClear={false}
-                    showToday={false}
-                    format={endFormat}
-                    placeholder="结束时间"
-                    onChange={this.onEndChange}
-                    style={{ width: '100%' }}
-                  />,
-              )}
+                  rules: [{ required: true, message: '有效期不能为空!' }],
+                  initialValue: defaultInitialValue,
+                })(<Input placeholder="" type="number" min="0" />)}
             </FormItem>
           </li>
         </ul>
