@@ -26,6 +26,7 @@ export default class CreateTaskForm extends PureComponent {
     createTaskResult: PropTypes.object,
     previousData: PropTypes.object,
     isShowTitle: PropTypes.bool,
+    isShowErrorInfo: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -34,6 +35,7 @@ export default class CreateTaskForm extends PureComponent {
     createTask: () => { },
     previousData: {},
     isShowTitle: false,
+    isShowErrorInfo: false,
   }
 
   constructor(props) {
@@ -168,7 +170,7 @@ export default class CreateTaskForm extends PureComponent {
 
 
   render() {
-    const { dict, form, isShowTitle = false } = this.props;
+    const { dict, form, isShowTitle = false, isShowErrorInfo } = this.props;
     const { custServerTypeFeedBackDict, executeTypes } = dict;
     const {
       defaultMissionName,
@@ -189,7 +191,6 @@ export default class CreateTaskForm extends PureComponent {
           :
           <div className={styles.task_title}>任务基本信息</div>
         }
-
         <div className={styles.task_from}>
           <TaskFormInfo
             defaultMissionName={defaultMissionName}
@@ -202,6 +203,7 @@ export default class CreateTaskForm extends PureComponent {
             taskTypes={custServerTypeFeedBackDict}
             executeTypes={executeTypes}
             form={form}
+            isShowErrorInfo={isShowErrorInfo}
           />
         </div>
       </div>
