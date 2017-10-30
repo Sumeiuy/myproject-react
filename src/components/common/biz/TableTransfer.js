@@ -643,10 +643,7 @@ export default class TableTransfer extends Component {
 
     return (
       <div className={styles.container}>
-        <div
-          className={styles.leftContent}
-          ref={(ref) => { this.firstTableElem = ref; }}
-        >
+        <div className={styles.leftContent}>
           <div className={classnames(styles.header, styles.leftHeader)}>
             <div className={styles.titleLabel}>{firstTitle}</div>
             {
@@ -668,10 +665,7 @@ export default class TableTransfer extends Component {
             scroll={scroll}
           />
         </div>
-        <div
-          className={styles.rightContent}
-          ref={(ref) => { this.secondTableElem = ref; }}
-        >
+        <div className={styles.rightContent}>
           <div className={classnames(styles.header, styles.rightHeader)}>
             <div className={styles.titleLabel}>{secondTitle}</div>
             <div className={styles.tipContainer}>
