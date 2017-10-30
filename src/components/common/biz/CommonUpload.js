@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 15:02:49
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-27 17:43:44
+ * @Last Modified time: 2017-10-30 10:27:08
  */
 /**
  * 常用说明
@@ -72,6 +72,8 @@ export default class CommonUpload extends PureComponent {
     needDefaultText: PropTypes.bool,
     deleteAttachmentList: PropTypes.array,
     deleteAttachmentLoading: PropTypes.bool,
+    // 标题
+    title: PropTypes.string,
   }
 
   static defaultProps = {
@@ -82,6 +84,7 @@ export default class CommonUpload extends PureComponent {
     edit: false,
     needDefaultText: true,
     deleteAttachmentLoading: false,
+    title: '',
   }
 
   constructor(props) {
@@ -177,7 +180,7 @@ export default class CommonUpload extends PureComponent {
       status,
       statusText,
     } = this.state;
-    const { edit, needDefaultText } = this.props;
+    const { edit, needDefaultText, title } = this.props;
     const uploadProps = {
       data: {
         empId,
@@ -289,6 +292,12 @@ export default class CommonUpload extends PureComponent {
     }
     return (
       <div className={`${styles.fileListMain} fileListMain`}>
+        {
+          _.isEmpty(title) ?
+            null
+          :
+            <h3 className={styles.title}>{title}</h3>
+        }
         { fileListElement }
         {
           edit ?

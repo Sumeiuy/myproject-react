@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-20 15:13:30
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-27 17:47:53
+ * @Last Modified time: 2017-10-30 15:03:47
  */
 import { message } from 'antd';
 import { contract as api, seibel as seibelApi } from '../api';
@@ -234,7 +234,7 @@ export default {
       }
       // 获取附件列表的 payload
       const rData = response.resultData;
-      const attachment = rData.workflowName === '2' ? rData.tduuid : rData.uuid;
+      const attachment = rData.applyType === '2' ? rData.tduuid : rData.uuid;
       const attachPayload = {
         attachment: attachment || '',
       };

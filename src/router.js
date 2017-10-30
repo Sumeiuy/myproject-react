@@ -69,6 +69,8 @@ const routes = ({ history }) => (// eslint-disable-line
       <Route path="boardManage" component={BoardManageHome} />
       <Route path="boardEdit" component={BoardEditHome} />
       <Route path="permission" component={PermissonHome} />
+      <Route path="contract" component={Contract} />
+      <Route path="channelsTypeProtocol" component={ChannelsTypeProtocol} />
       <Route path="approval" component={Approval} />
       <Route path="customerPool">
         <IndexRoute component={CustomerPoolHome} />
@@ -81,14 +83,6 @@ const routes = ({ history }) => (// eslint-disable-line
         <Route path="customerGroupManage" component={CustomerGroupManage} />
         <Route path="serviceLog" component={ServiceLog} />
         <Route path="taskFlow" component={TaskFlow} />
-      </Route>
-      <Route path="contract">
-        <IndexRoute component={Contract} />
-        <Route path="edit" component={Contract} />
-      </Route>
-      <Route path="channelsTypeProtocol">
-        <IndexRoute component={ChannelsTypeProtocol} />
-        <Route path="edit" component={ChannelsTypeProtocol} />
       </Route>
       <Route path="fullChannelServiceRecord" component={FullChannelServiceRecord} />
     </Route>
