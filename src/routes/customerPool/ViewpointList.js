@@ -8,7 +8,7 @@ import { withRouter, routerRedux } from 'dva/router';
 import { autobind } from 'core-decorators';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
-import { Table, Tooltip } from 'antd';
+import { Table } from 'antd';
 import _ from 'lodash';
 
 import Paganation from '../../components/common/Paganation';
@@ -29,14 +29,13 @@ const columns = ({ actionClick }) => {
     key: 'texttitle',
     width: '30%',
     render: item => (
-      <Tooltip title={formatString(item.texttitle)}>
-        <div
-          className={classnames(styles.td, styles.headLine)}
-          onClick={() => { handleClick(item); }}
-        >
-          <a>{formatString(item.texttitle)}</a>
-        </div>
-      </Tooltip>
+      <div
+        className={classnames(styles.td, styles.headLine)}
+        onClick={() => { handleClick(item); }}
+        title={formatString(item.texttitle)}
+      >
+        <a>{formatString(item.texttitle)}</a>
+      </div>
     ),
   }, {
     title: '类型',
@@ -80,9 +79,12 @@ const columns = ({ actionClick }) => {
     key: 'authors',
     width: '13%',
     render: item => (
-      <Tooltip title={formatString(item)}>
-        <div className={classnames(styles.td, styles.authors)}>{formatString(item)}</div>
-      </Tooltip>
+      <div
+        className={classnames(styles.td, styles.authors)}
+        title={formatString(item)}
+      >
+        {formatString(item)}
+      </div>
     ),
   }];
 };

@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { withRouter } from 'dva/router';
 import { Button, Mention, message } from 'antd';
 import _ from 'lodash';
-import moment from 'moment';
 import { autobind } from 'core-decorators';
 import CreateTaskForm from './CreateTaskForm';
 import TaskPreview from '../taskFlow/TaskPreview';
@@ -12,8 +11,6 @@ import styles from './taskFormFlowStep.less';
 
 
 const { toString } = Mention;
-// const orgId = window.forReactPosition.orgId || 'ZZ001041051';
-const orgId = 'ZZ001041051';
 
 @withRouter
 export default class TaskFlow extends PureComponent {
@@ -28,11 +25,13 @@ export default class TaskFlow extends PureComponent {
     approvalList: PropTypes.array.isRequired,
     getApprovalList: PropTypes.func.isRequired,
     goBack: PropTypes.func.isRequired,
+    orgId: PropTypes.string,
   };
 
   static defaultProps = {
     dict: {},
     storedTaskFlowData: {},
+    orgId: '',
   };
 
   constructor(props) {
@@ -58,22 +57,23 @@ export default class TaskFlow extends PureComponent {
       current: current - 1,
       previousData: storedTaskFlowData.taskFormData,
     });
+    console.log(storedTaskFlowData.taskFormData);
   }
 
   @autobind
   handleCustSource(value) {
     let custSources = '';
     switch (value) {
-      case 'businessCustPool':
+      case 'business':
         custSources = '业务目标客户';
         break;
-      case 'searchCustPool':
+      case 'search':
         custSources = '搜索目标客户';
         break;
-      case 'performanceIncrementCustPool':
+      case 'custIndicator':
         custSources = '绩效目标客户';
         break;
-      case 'performanceBusinessOpenCustPool':
+      case 'numOfCustOpened':
         custSources = '绩效目标客户';
         break;
       default:
@@ -95,7 +95,7 @@ export default class TaskFlow extends PureComponent {
         });
         this.setState({
           current: current + 1,
-          custSource: this.handleCustSource(query.entertype),
+          custSource: this.handleCustSource(query.source),
         });
       } else {
         console.warn('templetDesc-----', values.templetDesc);
@@ -107,7 +107,7 @@ export default class TaskFlow extends PureComponent {
   // 自建任务提交
   @autobind
   handleSubmit() {
-    const { storedTaskFlowData, createTask, parseQuery } = this.props;
+    const { storedTaskFlowData, createTask, parseQuery, orgId } = this.props;
     const { currentSelectRecord: { login: flowAuditorId = null } } = this.state;
     const {
         custIdList,
@@ -120,28 +120,26 @@ export default class TaskFlow extends PureComponent {
       sortsReqList,
     } = custCondition;
     const params = storedTaskFlowData.taskFormData;
-    console.warn('orgId--', orgId);
     const data = {
-      closingDate: moment(params.closingDate).format('YYYY-MM-DD'),
       executionType: params.executionType,
       serviceStrategySuggestion: params.serviceStrategySuggestion,
       taskName: params.taskName,
       taskType: params.taskType,
       templetDesc: toString(params.templetDesc),
-      triggerDate: moment(params.triggerDate).format('YYYY-MM-DD'),
+      timelyIntervalue: params.timelyIntervalValue,
       missionDesc: '1111',
     };
     createTask({
       ...data,
       flowAuditorId,
       custIdList,
-      orgId,
-      ptyMngId: helper.getEmpId(),
       searchReq: {
         curPageNum,
         enterType,
         pageSize,
         sortsReqList,
+        ptyMngId: helper.getEmpId(),
+        orgId,
       },
     });
   }

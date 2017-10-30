@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-22 19:02:56
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-27 16:24:54
+ * @Last Modified time: 2017-10-27 17:53:06
  */
 
 import React, { PureComponent } from 'react';
@@ -19,8 +19,9 @@ import GroupModal from '../../components/customerPool/groupManage/CustomerGroupU
 import CustomerGroupDetail from '../../components/customerPool/groupManage/CustomerGroupDetail';
 import SimpleSearch from '../../components/customerPool/groupManage/CustomerGroupListSearch';
 import { fspContainer } from '../../config';
+import { checkSpecialCharacter } from '../../decorators/checkSpecialCharacter';
 import { fspGlobal } from '../../utils';
-import Confirm from '../../components/common/Confirm';
+import confirm from '../../components/common/confirm';
 import styles from './customerGroupManage.less';
 import tableStyles from '../../components/customerPool/groupManage/groupTable.less';
 
@@ -317,7 +318,7 @@ export default class CustomerGroupManage extends PureComponent {
       // 当前删除行记录数据
       record,
     });
-    Confirm({
+    confirm({
       type: 'delete',
       onOkHandler: this.handleConfirmOk,
       onCancelHandler: this.handleConfirmCancel,
@@ -375,7 +376,7 @@ export default class CustomerGroupManage extends PureComponent {
       // 编辑模式下
       if (!_.isEmpty(includeCustIdList)) {
         // 存在custIdList,在取消的时候提示
-        Confirm({
+        confirm({
           content: '客户已添加成功，如需取消添加的客户请在列表中删除',
           onOkHandler: this.handleConfirmTipOk,
           onCancelHandler: this.handleConfirmTipCancel,
@@ -386,7 +387,7 @@ export default class CustomerGroupManage extends PureComponent {
         });
       }
     } else if (!_.isEmpty(includeCustIdList)) {
-      Confirm({
+      confirm({
         content: '在新增模式下，添加客户需要提交才能生效，确认取消？',
         onOkHandler: this.handleNewModelConfirmTipOk,
         onCancelHandler: this.handleNewModelConfirmTipCancel,
@@ -410,8 +411,10 @@ export default class CustomerGroupManage extends PureComponent {
    * @param {*} value 搜索值
    */
   @autobind
+  @checkSpecialCharacter
   handleSearchGroup(value) {
     console.log('search value', value);
+
     const {
       getCustomerGroupList,
       replace,
@@ -441,50 +444,48 @@ export default class CustomerGroupManage extends PureComponent {
       const { groupId, includeCustIdList } = this.detailRef.refs
         .wrappedComponent.refs.formWrappedComponent.getData();
 
-      const { operateGroup, location: { query: { curPageNum, curPageSize } } } = this.props;
-      const { keyWord } = this.state;
-
-      // this.props.form.resetFields(); 清除value
       e.preventDefault();
       this.detailRef.validateFields((err, values) => {
         if (!err) {
           console.log('Received values of form: ', values);
-          const { name, description } = values;
-          if (groupId) {
-            // 编辑分组
-            operateGroup({
-              request: {
-                groupId,
-                groupName: name,
-                groupDesc: description,
-                includeCustIdList: _.isEmpty(includeCustIdList) ? null : includeCustIdList,
-                excludeCustIdList: null,
-              },
-              keyWord,
-              pageNum: curPageNum,
-              pageSize: curPageSize,
-            });
-          } else {
-            // 新增分组
-            operateGroup({
-              request: {
-                groupName: name,
-                groupDesc: description,
-                includeCustIdList: _.isEmpty(includeCustIdList) ? null : includeCustIdList,
-                excludeCustIdList: null,
-              },
-              keyWord,
-              pageNum: curPageNum,
-              pageSize: curPageSize,
-            });
-          }
-          // 关闭弹窗
-          this.handleSubmitCloseModal();
+          const { name = '', description } = values;
+          this.submitFormContent(name, description, groupId, includeCustIdList);
         } else {
           message.error('请输入分组名称');
         }
       });
     }
+  }
+
+  @autobind
+  @checkSpecialCharacter
+  submitFormContent(name, description, groupId, includeCustIdList) {
+    const { operateGroup, location: { query: { curPageNum, curPageSize } } } = this.props;
+    const { keyWord } = this.state;
+    const postBody = {
+      request: {
+        groupName: name,
+        groupDesc: description,
+        includeCustIdList: _.isEmpty(includeCustIdList) ? null : includeCustIdList,
+        excludeCustIdList: null,
+      },
+      keyWord,
+      pageNum: curPageNum,
+      pageSize: curPageSize,
+    };
+    if (groupId) {
+      // 编辑分组
+      operateGroup(_.merge(postBody, {
+        request: {
+          groupId,
+        },
+      }));
+    } else {
+      // 新增分组
+      operateGroup(postBody);
+    }
+    // 关闭弹窗
+    this.handleSubmitCloseModal();
   }
 
   /**
