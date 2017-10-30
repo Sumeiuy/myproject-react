@@ -513,6 +513,20 @@ const helper = {
       return /\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/.test(value);
     },
   },
+
+  /**
+   * 模拟鼠标点击事件
+   * @param  ele 触发事件的html节点
+   * @param  eventType 事件类型 例如 ‘click’
+   * @param  canBubble  canBubble
+   * @param  cancelable 是否可以用 preventDefault() 方法取消事件。
+   */
+  trigger(eleDom, eventType, canBubble = true, cancelable = true) {
+    const evt = document.createEvent('MouseEvent');
+    evt.initEvent(eventType, canBubble, cancelable);
+    eleDom.dispatchEvent(evt);
+  },
+
 };
 
 export default helper;
