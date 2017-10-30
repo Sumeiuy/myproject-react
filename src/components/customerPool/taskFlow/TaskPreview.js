@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 10:29:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-30 10:55:26
+ * @Last Modified time: 2017-10-30 11:58:32
  */
 
 import React, { PureComponent } from 'react';
@@ -74,7 +74,6 @@ export default class TaskPreview extends PureComponent {
       titleColumn: renderColumnTitle(),
       dataSource: [],
       dataSize: 0,
-      originDataSource: [],
     };
   }
 
@@ -91,9 +90,9 @@ export default class TaskPreview extends PureComponent {
       // 审批人数据
       this.setState({
         dataSource: nextData,
-        originDataSource: nextData,
         dataSize: _.size(nextData),
       });
+      this.originDataSource = nextData;
     }
   }
 
@@ -127,14 +126,13 @@ export default class TaskPreview extends PureComponent {
 
   @autobind
   filterDataSource(value) {
-    const { originDataSource } = this.state;
     if (_.isEmpty(value)) {
       this.setState({
-        dataSource: originDataSource,
+        dataSource: this.originDataSource,
       });
       return;
     }
-    const newDataSource = _.filter(originDataSource, item =>
+    const newDataSource = _.filter(this.originDataSource, item =>
       item.login === value || item.empName === value);
     this.setState({
       dataSource: newDataSource,
