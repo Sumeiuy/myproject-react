@@ -620,7 +620,12 @@ export default {
       // 提交成功之后，清除taskFlow数据
       yield put({
         type: 'clearTaskFlowData',
-        payload: {},
+      });
+      // 提交成功之后，清除tab
+      yield put({
+        type: 'resetActiveTab',
+        // 1表示第一个默认激活第一个tab
+        payload: '1',
       });
     },
     // 获取审批人列表
@@ -1045,7 +1050,7 @@ export default {
     },
     // 清除任务流程数据
     clearTaskFlowData(state, action) {
-      const { payload } = action;
+      const { payload = {} } = action;
       return {
         ...state,
         storedTaskFlowData: payload,
@@ -1076,6 +1081,14 @@ export default {
     },
     // 保存当前选中tab
     saveCurrentTab(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        currentTab: payload,
+      };
+    },
+    // 清除保存的tab
+    resetActiveTab(state, action) {
       const { payload } = action;
       return {
         ...state,

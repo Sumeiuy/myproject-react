@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 10:29:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-26 14:16:11
+ * @Last Modified time: 2017-10-30 09:17:24
  */
 
 import React, { PureComponent } from 'react';
@@ -34,7 +34,7 @@ export default class PickTargetCustomer extends PureComponent {
   };
 
   static defaultProps = {
-    orgId: null,
+    orgId: '',
   };
 
   constructor(props) {

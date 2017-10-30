@@ -53,7 +53,7 @@ const helper = {
   // 获取 empId
   getEmpId() {
     // 临时 ID
-    const tempId = '002332'; // '001423''002727','002332' '001206' '001410';
+    const tempId = '001206'; // '001423''002727','002332' '001206' '001410';
     const nativeQuery = helper.getQuery(window.location.search);
     const empId = window.curUserCode || nativeQuery.empId || tempId;
     return empId;
@@ -523,6 +523,18 @@ const helper = {
       orgId = window.forReactPosition.orgId;
     }
     return orgId;
+  },
+  /**
+   * 模拟鼠标点击事件
+   * @param  ele 触发事件的html节点
+   * @param  eventType 事件类型 例如 ‘click’
+   * @param  canBubble  canBubble
+   * @param  cancelable 是否可以用 preventDefault() 方法取消事件。
+   */
+  trigger(eleDom, eventType, canBubble = true, cancelable = true) {
+    const evt = document.createEvent('MouseEvent');
+    evt.initEvent(eventType, canBubble, cancelable);
+    eleDom.dispatchEvent(evt);
   },
 };
 
