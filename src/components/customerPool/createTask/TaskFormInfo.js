@@ -29,6 +29,7 @@ export default class TaskFormInfo extends PureComponent {
     users: PropTypes.array.isRequired,
     taskTypes: PropTypes.array,
     executeTypes: PropTypes.array,
+    isShowErrorInfo: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -36,37 +37,48 @@ export default class TaskFormInfo extends PureComponent {
     executeTypes: [],
     defaultServiceStrategySuggestion: '',
     defaultInitialValue: null,
+    isShowErrorInfo: false,
   }
 
   constructor(props) {
     super(props);
     this.state = {
       suggestions: [],
+      inputValue: '',
+      isShowErrorInfo: false,
     };
   }
 
-  @autobind
-  onChange(field, value) {
-    this.setState({
-      [field]: value,
-    });
+  componentWillReceiveProps(nextProps) {
+    const { isShowErrorInfo: nextError } = nextProps;
+    const { isShowErrorInfo } = this.props;
+    if (nextError !== isShowErrorInfo) {
+      this.setState({
+        isShowErrorInfo: nextError,
+      });
+    }
   }
 
-  // @autobind
+  @autobind
+  onChange(contentState) {
+    const content = toString(contentState);
+    if (content.length >= 10) {
+      this.setState({
+        isShowErrorInfo: false,
+      });
+    } else if (content.length > 0) {
+      this.setState({
+        isShowErrorInfo: true,
+      });
+    }
+  }
+
   handleSearchChange = (value, trigger) => {
     const { users } = this.props;
     const dataSource = trigger === '$' ? users : [];
     this.setState({
       suggestions: dataSource.filter(item => item.indexOf(value) !== -1),
     });
-  }
-
-  checkMention = (rule, value, callback) => {
-    if (toString(value).length < 10) {
-      callback(new Error('任务描述不能小于10个字符!'));
-    } else {
-      callback();
-    }
   }
 
   handleCreatOptions(data) {
@@ -78,9 +90,37 @@ export default class TaskFormInfo extends PureComponent {
     return null;
   }
 
+  renderMention() {
+    const { form: { getFieldDecorator }, defaultMissionDesc } = this.props;
+    const { suggestions } = this.state;
+    return (
+      getFieldDecorator('templetDesc', {
+        initialValue: toContentState(defaultMissionDesc),
+      })(
+        <Mention
+          style={{ width: '100%', height: 100 }}
+          multiLines
+          placeholder="请在描述客户经理联系客户钱需要了解的客户相关信息，比如持仓情况。（字数限制：10-1000字）"
+          prefix={'$'}
+          onChange={this.onChange}
+          onSearchChange={this.handleSearchChange}
+          suggestions={suggestions}
+        />,
+      )
+    );
+  }
+
+  renderTipSection() {
+    return (
+      <div className={styles.info}>
+        任务描述中 &#123;XXXX&#125; 部分后台会根据客户自动替换为该客户对应的属性值，编辑任务描述时请尽量避免修改这些参数描述。
+      </div>
+    );
+  }
+
   render() {
     const {
-      suggestions,
+      isShowErrorInfo,
     } = this.state;
     const {
       defaultMissionName,
@@ -88,12 +128,13 @@ export default class TaskFormInfo extends PureComponent {
       defaultExecutionType,
       defaultServiceStrategySuggestion,
       defaultInitialValue,
-      defaultMissionDesc,
       taskTypes,
       executeTypes,
       form,
     } = this.props;
+
     const { getFieldDecorator } = form;
+
     return (
       <Form >
         <ul className={styles.task_selectList}>
@@ -200,28 +241,31 @@ export default class TaskFormInfo extends PureComponent {
           <p>
             <label htmlFor="desc"><i>*</i>任务提示</label>
           </p>
-          <FormItem>
-            {getFieldDecorator('templetDesc', {
-              rules: [{ validator: this.checkMention }],
-              initialValue: toContentState(defaultMissionDesc),
-            })(
-              <Mention
-                style={{ width: '100%', height: 100 }}
-                multiLines
-                onChange={this.handleChange}
-                placeholder="请在描述客户经理联系客户钱需要了解的客户相关信息，比如持仓情况。（字数限制：10-1000字）"
-                prefix={['$']}
-                onSearchChange={this.handleSearchChange}
-                suggestions={suggestions}
-                onSelect={this.onSelect}
-              />,
-            )}
-            <div className={styles.info}>
-              任务描述中 &#123;XXXX&#125; 部分后台会根据客户自动替换为该客户对应的属性值，编辑任务描述时请尽量避免修改这些参数描述。
-            </div>
-          </FormItem>
+          {
+            isShowErrorInfo ?
+              <FormItem
+                hasFeedback
+                validateStatus="error"
+                help="任务描述不能小于10个字符"
+              >
+                {
+                  this.renderMention()
+                }
+                {
+                  this.renderTipSection()
+                }
+              </FormItem> :
+              <FormItem>
+                {
+                  this.renderMention()
+                }
+                {
+                  this.renderTipSection()
+                }
+              </FormItem>
+          }
         </div>
-      </Form>
+      </Form >
     );
   }
 }
