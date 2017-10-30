@@ -1,15 +1,15 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-27 16:18:05
+ * @Last Modified by:   011200
+ * @Last Modified time: 2017-10-30 10:03:57
  */
 
 import React, { PropTypes, PureComponent } from 'react';
 import { Upload, message } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import confirm from '../../common/confirm';
+import confirm from '../../common/Confirm';
 // import Button from '../../common/Button';
 import Icon from '../../common/Icon';
 import { request } from '../../../config';

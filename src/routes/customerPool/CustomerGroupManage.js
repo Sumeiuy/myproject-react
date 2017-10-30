@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-10-22 19:02:56
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-27 17:53:06
+ * @Last Modified by:   011200
+ * @Last Modified time: 2017-10-30 10:04:04
  */
 
 import React, { PureComponent } from 'react';
@@ -21,7 +21,7 @@ import SimpleSearch from '../../components/customerPool/groupManage/CustomerGrou
 import { fspContainer } from '../../config';
 import { checkSpecialCharacter } from '../../decorators/checkSpecialCharacter';
 import { fspGlobal } from '../../utils';
-import confirm from '../../components/common/confirm';
+import confirm from '../../components/common/Confirm';
 import styles from './customerGroupManage.less';
 import tableStyles from '../../components/customerPool/groupManage/groupTable.less';
 
