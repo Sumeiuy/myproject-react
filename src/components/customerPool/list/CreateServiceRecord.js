@@ -23,8 +23,8 @@ const dateFormat = 'YYYY/MM/DD';
 const timeFormat = 'HH:mm';
 const width = { width: 142 };
 
-// 服务内容和反馈内容字数限制
-const MAX_LENGTH = 1000;
+// 服务内容字数限制
+const MAX_LENGTH = 100;
 
 const EMPTY_LIST = [];
 

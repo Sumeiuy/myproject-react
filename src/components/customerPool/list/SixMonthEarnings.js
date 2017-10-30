@@ -28,7 +28,6 @@ export default class SixMonthEarnings extends PureComponent {
     monthlyProfits: PropTypes.object.isRequired,
     custIncomeReqState: PropTypes.bool.isRequired,
     getCustIncome: PropTypes.func.isRequired,
-    formatAsset: PropTypes.func.isRequired,
   }
 
   constructor(props) {
