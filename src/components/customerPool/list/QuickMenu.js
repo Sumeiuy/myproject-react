@@ -55,7 +55,9 @@ export default class QuickMenu extends PureComponent {
     const email = addressEmail[emailCustId];
     // 在此以isEmail判断是否是isFollows更新渲染完成
     if (!_.isEmpty(email) && (emailCustId === listItem.custId) && isEmail) {
-      const evt = new MouseEvent('click', { bubbles: false, cancelable: false, view: window });
+      // const evt = new MouseEvent('click', { bubbles: false, cancelable: false, view: window });
+      const evt = document.createEvent('MouseEvent');
+      evt.initEvent('click', false, false);
       this.sendEmail.dispatchEvent(evt);
     }
   }

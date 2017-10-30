@@ -167,7 +167,9 @@ export default class CustRange extends PureComponent {
       return;
     }
     this.addDropDownMouseWheel();
-    const evt = new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window });
+    // const evt = new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window });
+    const evt = document.createEvent('MouseEvent');
+    evt.initEvent('mousedown', true, true);
     document.querySelector(constants.container).dispatchEvent(evt);
   }
 
