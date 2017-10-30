@@ -37,7 +37,10 @@ export default (options = {}) => (ComposedComponent) => {
         return;
       }
       this.addDropDownMouseWheel();
-      const evt = new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window });
+      // const evt = new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window });
+      // ie11 不支持直接 new MouseEvent
+      const evt = document.createEvent('MouseEvent');
+      evt.initEvent('mousedown', true, true);
       document.querySelector(container).dispatchEvent(evt);
     }
 
