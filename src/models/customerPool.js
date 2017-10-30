@@ -621,6 +621,11 @@ export default {
         type: 'clearTaskFlowData',
         payload: {},
       });
+      // 提交成功之后，清除tab
+      yield put({
+        type: 'clearCurrentTab',
+        payload: '1',
+      });
     },
     // 获取审批人列表
     * getApprovalList({ payload }, { call, put }) {
@@ -1075,6 +1080,14 @@ export default {
     },
     // 保存当前选中tab
     saveCurrentTab(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        currentTab: payload,
+      };
+    },
+    // 清除保存的tab
+    clearCurrentTab(state, action) {
       const { payload } = action;
       return {
         ...state,
