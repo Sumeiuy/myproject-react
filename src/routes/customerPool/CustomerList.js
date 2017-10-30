@@ -550,7 +550,7 @@ export default class CustomerList extends PureComponent {
       bname,
     } = location.query;
     // 排序的默认值 ： 总资产降序
-    let reorderValue = { sortType: 'Aset', sortDirection: 'desc' };
+    let reorderValue = DEFAULT_SORT;
     if (sortType && sortDirection) {
       reorderValue = { sortType, sortDirection };
     }

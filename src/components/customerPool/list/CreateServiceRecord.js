@@ -24,7 +24,7 @@ const timeFormat = 'HH:mm';
 const width = { width: 142 };
 
 // 服务内容字数限制
-const MAX_LENGTH = 1000;
+const MAX_LENGTH = 100;
 
 const EMPTY_LIST = [];
 
