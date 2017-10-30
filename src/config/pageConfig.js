@@ -522,6 +522,170 @@ const pageConfig = {
         title: '合作部门',
       },
     ],
+    subTypeList: [
+      {
+        show: true,
+        label: '紫金快车道协议',
+        value: '1',
+        operationList: [
+          {
+            show: true,
+            label: '协议订购',
+            value: '1',
+          }, {
+            show: true,
+            label: '协议退订',
+            value: '2',
+          }, {
+            show: true,
+            label: '协议续订',
+            value: '3',
+          }, {
+            show: true,
+            label: '新增或删除下挂客户',
+            value: '4',
+          },
+        ],
+      }, {
+        show: false,
+        label: '高速通道类协议',
+        value: '2',
+        operationList: [
+          {
+            show: true,
+            label: '协议订购',
+            value: '1',
+          }, {
+            show: true,
+            label: '协议退订',
+            value: '2',
+          }, {
+            show: true,
+            label: '协议续订',
+            value: '3',
+          },
+        ],
+      }, {
+        show: false,
+        label: '套利软件',
+        value: '3',
+        operationList: [
+          {
+            show: true,
+            label: '协议订购',
+            value: '1',
+          },
+        ],
+      }, {
+        show: false,
+        label: '期权软件',
+        value: '4',
+        operationList: [
+          {
+            show: true,
+            label: '协议订购',
+            value: '1',
+          },
+        ],
+      },
+    ],
+    businessType: [
+      {
+        show: true,
+        label: '开通权限',
+        value: '1',
+      }, {
+        show: true,
+        label: '开通软件',
+        value: '2',
+      }, {
+        show: true,
+        label: '开通软件+权限',
+        value: '3',
+      }, {
+        show: true,
+        label: '软件续用',
+        value: '4',
+      }, {
+        show: true,
+        label: '套利软件',
+        value: '5',
+      },
+    ],
+    protocolProductTitleList: [
+      {
+        dataIndex: 'termsDisplayName',
+        key: 'termsDisplayName',
+        title: '产品代码',
+      },
+      {
+        dataIndex: 'paraDisplayName',
+        key: 'paraDisplayName',
+        title: '产品名称',
+      },
+      {
+        dataIndex: 'paraVal',
+        key: 'paraVal',
+        title: '产品类型',
+      },
+      {
+        dataIndex: 'divName',
+        key: 'divName',
+        title: '子类型',
+      },
+      {
+        dataIndex: 'divName',
+        key: 'divName',
+        title: '风险是否匹配',
+      },
+      {
+        dataIndex: 'divName',
+        key: 'divName',
+        title: '期限是否匹配',
+      },
+      {
+        dataIndex: 'divName',
+        key: 'divName',
+        title: '投资品种是否匹配',
+      },
+      {
+        dataIndex: 'divName',
+        key: 'divName',
+        title: '签署确认书类型',
+      },
+      {
+        dataIndex: 'divName',
+        key: 'divName',
+        title: '价格',
+      },
+    ],
+    protocolClauseTitleList: [
+      {
+        dataIndex: 'termsDisplayName',
+        key: 'termsDisplayName',
+        title: '条款名称',
+      },
+      {
+        dataIndex: 'paraDisplayName',
+        key: 'paraDisplayName',
+        title: '明细参数',
+      },
+      {
+        dataIndex: 'paraVal',
+        key: 'paraVal',
+        title: '值',
+      },
+      {
+        dataIndex: 'divName',
+        key: 'divName',
+        title: '前提条件',
+      },
+      {
+        dataIndex: 'divName',
+        key: 'divName',
+        title: '未来承诺',
+      },
+    ],
   },
   // 进行佣金调整子类型比对需要用到的数据
   comsubs: {

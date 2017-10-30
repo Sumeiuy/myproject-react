@@ -13,173 +13,152 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
 import { Input } from 'antd';
-import moment from 'moment';
+// import moment from 'moment';
 import Select from '../common/Select';
 import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
 import InfoForm from '../common/infoForm';
 import DropDownSelect from '../common/dropdownSelect';
-import DatePicker from '../common/datePicker';
+import CustomSwitch from '../common/customSwitch';
 import { seibelConfig } from '../../config';
 
-import styles from './baseInfoAdd.less';
+import styles from './editBaseInfo.less';
 
 const { TextArea } = Input;
 
-// 操作类型列表
-const { contract: { operationList } } = seibelConfig;
-// 退订的类型
-const unsubscribe = operationList[1].value;
 // 子类型列表
-const childTypeList = _.filter(seibelConfig.contract.subType, v => v.label !== '全部');
+const { channelsTypeProtocol: { subTypeList } } = seibelConfig;
 // 下拉搜索组件样式
 const dropDownSelectBoxStyle = {
   width: 220,
   height: 32,
   border: '1px solid #d9d9d9',
 };
-// 时间选择组件样式
-const datePickerBoxStyle = {
-  width: 220,
-  height: 32,
-};
 const EMPTY_OBJECT = {};
-export default class BaseInfoEdit extends PureComponent {
+const EMPTY_ARRAY = [];
+export default class EditBaseInfo extends PureComponent {
   static propTypes = {
-    onChange: PropTypes.func.isRequired,
-        // 查询客户
-    onSearchClient: PropTypes.func.isRequired,
-        // 查询合约编号
-    onSearchContractNum: PropTypes.func.isRequired,
-        // 查询合约详情
-    onSearchContractDetail: PropTypes.func.isRequired,
-        // 客户列表
+    // 查询客户
+    onSearchCutList: PropTypes.func.isRequired,
     custList: PropTypes.array.isRequired,
-        // 合约详情
-    contractDetail: PropTypes.object.isRequired,
-        // 合约编号列表
-    contractNumList: PropTypes.array.isRequired,
-        // 更改操作类型时重置表单数据
-    onReset: PropTypes.func.isRequired,
-    getFlowStepInfo: PropTypes.func.isRequired,
+    // 查询协议模板
+    onSearchProtocolTemplate: PropTypes.func.isRequired,
+    protocolTemplateList: PropTypes.array.isRequired,
+    // 查询协议编号
+    // onSearchProtocolNum: PropTypes.func.isRequired,
+    // protocolNumList: PropTypes.array,
+    //编辑时传入元数据
+    formData: PropTypes.object,
   }
 
   static defaultProps = {
-
+    formData: EMPTY_OBJECT,
+    protocolNumList: EMPTY_ARRAY,
   }
 
   constructor(props) {
     super(props);
+    const { formData } = props;
+    const stateObj = {
+      // 操作类型列表
+      operationList: EMPTY_ARRAY,
+      // 所选操作类型
+      operation: '',
+      // 所选子类型
+      subType: '',
+      // 所选客户
+      client: EMPTY_OBJECT,
+      // 所选协议模板
+      protocolTemplate: EMPTY_OBJECT,
+      // 是否多账户
+      isMultiAccount: false,
+      // 是否订购十档行情
+      isTenMarket: false,
+      // 备注
+      remark: '',
+    }
+    // 判断是否传入formData
+    if(!_.isEmpty(formData)) {
+      stateObj.operation = formData.operation;
+      stateObj.subType = formData.subType;
+      stateObj.client = formData.client;
+      stateObj.protocolTemplate = formData.protocolTemplate;
+      stateObj.isMultiAccount = formData.isMultiAccount;
+      stateObj.isTenMarket = formData.isTenMarket;
+      stateObj.remark = formData.remark;
+    }
     this.state = {
-      operation: '1',
-      contractNum: {
-        id: '',
-      },
-      subType: '',
-      client: EMPTY_OBJECT,
-      contractStarDate: '',
-      contractPalidity: '',
-      remark: '',
-    };
+      ...stateObj,
+    }
   }
 
-    // 更改操作类型时重置表单数据
-    @autobind
-  resetState() {
-    this.setState({
-      contractNum: {
-        value: '',
-      },
-      subType: '',
-      client: EMPTY_OBJECT,
-      contractStarDate: '',
-      contractPalidity: '',
-      remark: '',
-    }, () => {
-      this.transferDataToHome();
-      if (this.selectCustComponent) {
-        this.selectCustComponent.clearValue();
-      }
-      if (this.selectContractComponent) {
-        this.selectContractComponent.clearValue();
-      }
-    });
+  // 查询协议编号
+  @autobind
+  handleSearchProtocolNum() {
+
   }
 
-    // 通用Select Change方法
-    @autobind
+  // 通用Select Change方法
+  @autobind
   handleSelectChange(key, value) {
-    const { oldOperation } = this.state.operation;
     this.setState({
       ...this.state,
       [key]: value,
-    }, () => {
-      this.transferDataToHome();
-      const { operation, subType, client } = this.state;
-            // 当前操作类型为“退订”并且子类型变化的时候触发合作合约编号查询
-      if (operation === unsubscribe && key === 'subType') {
-        this.props.onSearchContractNum({ subType, client });
+    }, ()=> {
+      if(key === 'subType') {
+        const operationList = _.filter(subTypeList, (v)=>v.value === value)[0].operationList;
+        this.setState({
+          ...this.state,
+          operation: '',
+          operationList: operationList,
+        })
       }
-            // 操作类型发生变化时重置所有填入的数据
-      if (key === 'operation' && value !== oldOperation) {
-        this.resetState();
-        this.props.onReset();
+      // 操作类型是“协议退订”、“协议续订”、“新增或删除下挂客户”时查询协议编号
+      const { operation } = this.state;
+      if(operation > 1) {
+        this.handleSearchProtocolNum();
       }
     });
   }
 
-    // 选择客户
-    @autobind
+  // 选择客户
+  @autobind
   handleSelectClient(value) {
     this.setState({
       ...this.state,
       client: value,
     }, () => {
-      this.transferDataToHome();
-      const { operation, subType, client } = this.state;
-            // 当前操作类型为“退订”并且子类型变化的时候触发合作合约编号查询
-      if (operation === unsubscribe) {
-        this.props.onSearchContractNum({ subType, client });
+      // 操作类型是“协议退订”、“协议续订”、“新增或删除下挂客户”时查询协议编号
+      const { operation } = this.state;
+      if (operation > 1) {
+        this.handleSearchProtocolNum();
       }
     });
   }
 
-    // 根据关键字查询客户
-    @autobind
+  // 根据关键字查询客户
+  @autobind
   handleSearchClient(v) {
-    this.props.onSearchClient(v);
+    this.props.onSearchCutList(v);
   }
 
-    // 选择合约编号
-    @autobind
-  handleSelectContractNum(value) {
+  // 选择协议模板
+  @autobind
+  handleSelectTemplate(value) {
     this.setState({
       ...this.state,
-      contractNum: value,
-    }, () => {
-      this.transferDataToHome();
-            // 退订选择合约编号后搜索该合约详情
-      this.props.onSearchContractDetail(value);
+      protocolTemplate: value,
     });
   }
 
-    // 根据填入关键词筛选合约编号
-    @autobind
-  handleSearchContractNum(value) {
-    console.log('筛选合约编号', value);
+  // 根据填入关键词筛选协议模板
+  @autobind
+  handleSearchTemplate(value) {
+    this.props.onSearchProtocolTemplate(value)
   }
 
-    // 通用 Date组件更新方法
-    @autobind
-  handleChangeDate(obj) {
-    this.setState({
-      ...this.state,
-      [obj.name]: obj.value,
-    }, this.transferDataToHome);
-  }
-
-    // 修改备注
-    @autobind
+  // 修改备注
+  @autobind
   handleChangeRemark(e) {
     this.setState({
       ...this.state,
@@ -187,57 +166,46 @@ export default class BaseInfoEdit extends PureComponent {
     }, this.transferDataToHome);
   }
 
-    // 向外传递数据
-    @autobind
-  transferDataToHome() {
-    const data = this.state;
-    const obj = {
-            // 操作类型--必填
-      workflowname: data.operation,
-            // 子类型--必填
-      subType: data.subType,
-            // 客户名称--必填
-      custName: data.client.custName,
-            // 客户 ID--必填
-      custId: data.client.cusId,
-            // 客户类型--必填
-      custType: data.client.custType,
-            // 经济客户号
-      econNum: data.client.brokerNumber,
-            // 合约开始日期--订购状态下必填，退订不可编辑
-      startDt: data.contractStarDate,
-            // 合约有效期
-      vailDt: data.contractPalidity,
-            // 备注
-      description: data.remark,
-    };
-    if (data.operation === unsubscribe) {
-      obj.contractNum = data.contractNum;
-    } else {
-      obj.contractNum = null;
-    }
-    this.props.onChange(obj);
+  //修改开关
+  @autobind
+  handleChangeSwitchValue(name, value) {
+    this.setState({
+      ...this.state,
+      [name]: value,
+    })
+  }
+
+  // 向外传递数据
+  @autobind
+  getData() {
+    return this.state;
+  }
+
+  // 判断是否显示switch开关
+  @autobind
+  isShowSwitch() {
+    return true;
   }
 
   render() {
-    const { custList, contractDetail, contractNumList } = this.props;
-    const { operation } = this.state;
+    const { custList, protocolTemplateList } = this.props;
+    const { subType, operation, isMultiAccount, isTenMarket, operationList } = this.state;
     return (
       <div className={styles.editWrapper}>
         <InfoTitle head="基本信息" />
+        <InfoForm label="子类型" required>
+          <Select
+            name="subType"
+            data={subTypeList}
+            value={subType}
+            onChange={this.handleSelectChange}
+          />
+        </InfoForm>
         <InfoForm label="操作类型" required>
           <Select
             name="operation"
             data={operationList}
-            value={this.state.operation}
-            onChange={this.handleSelectChange}
-          />
-        </InfoForm>
-        <InfoForm label="子类型" required>
-          <Select
-            name="subType"
-            data={childTypeList}
-            value={this.state.subType}
+            value={operation}
             onChange={this.handleSelectChange}
           />
         </InfoForm>
@@ -251,27 +219,49 @@ export default class BaseInfoEdit extends PureComponent {
             emitSelectItem={this.handleSelectClient}
             emitToSearch={this.handleSearchClient}
             boxStyle={dropDownSelectBoxStyle}
-            ref={selectCustComponent => this.selectCustComponent = selectCustComponent}
+            ref={ref => this.selectCustComponent = ref}
           />
         </InfoForm>
         <InfoForm label="协议模板" required>
           <DropDownSelect
-            placeholder="合约编号"
+            placeholder="协议模板"
             showObjKey="custName"
             objId="brokerNumber"
-            value={this.state.client.brokerNumber || ''}
-            searchList={custList}
-            emitSelectItem={this.handleSelectClient}
-            emitToSearch={this.handleSearchClient}
+            value={this.state.protocolTemplate.brokerNumber || ''}
+            searchList={protocolTemplateList}
+            emitSelectItem={this.handleSelectTemplate}
+            emitToSearch={this.handleSearchTemplate}
             boxStyle={dropDownSelectBoxStyle}
-            ref={selectCustComponent => this.selectCustComponent = selectCustComponent}
+            ref={ref => this.selectTemplateComponent = ref}
           />
         </InfoForm>
-        <InfoForm label="是否多账户使用" required />
-        <InfoForm label="是否订购十档行情" required />
+        {
+          this.isShowSwitch()?
+            <InfoForm label="是否多账户使用" >
+              <CustomSwitch
+                  name='isMultiAccount'
+                  value={isMultiAccount}
+                  onChange={this.handleChangeSwitchValue}
+              />
+            </InfoForm>
+          :
+          null
+        }
+        {
+          this.isShowSwitch()?
+            <InfoForm label="是否订购十档行情">
+              <CustomSwitch
+                  name='isTenMarket'
+                  value={isTenMarket}
+                  onChange={this.handleChangeSwitchValue}
+              />
+            </InfoForm>
+            :
+            null
+        }
         <InfoItem label="协议开始日期" value={'2017/08/31'} />
         <InfoItem label="协议有效期" value={'2017/08/31'} />
-        <InfoForm label="协议模板" required>
+        <InfoForm label="备注">
           <TextArea />
         </InfoForm>
       </div>
