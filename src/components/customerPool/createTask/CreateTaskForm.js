@@ -71,6 +71,7 @@ export default class CreateTaskForm extends PureComponent {
         defaultMissionType: previousData.taskType, // 'Mission'
         defaultExecutionType: previousData.executionType,
         defaultMissionDesc: toString(previousData.templetDesc),
+        defaultInitialValue: previousData.timelyIntervalValue,
         defaultServiceStrategySuggestion: previousData.serviceStrategySuggestion,
       });
     }
@@ -83,18 +84,18 @@ export default class CreateTaskForm extends PureComponent {
 
   @autobind
   handleInit(query = {}) {
-    let entertype = '';
+    let source = '';
     let count = '0';
     if (!_.isEmpty(query)) {
-      entertype = query.entertype;
+      source = query.source;
       count = query.count;
     }
-
     const { dict: { custIdexPlaceHolders } } = this.props;
     let defaultMissionName = '';
     let defaultMissionType = '';
     let defaultExecutionType = '';
     const defaultServiceStrategySuggestion = '';
+    const defaultInitialValue = null;
     let defaultMissionDesc = '';
     let custIdList = null;
     let searchReq = null;
@@ -116,27 +117,27 @@ export default class CreateTaskForm extends PureComponent {
         firstUserName += '等';
       }
     }
-    switch (entertype) {
-      case 'businessCustPool':
+    switch (source) {
+      case 'business':
         defaultMissionName = '提醒客户办理已满足条件的业务';
-        defaultMissionType = 'businessRecommend';
+        defaultMissionType = 'BusinessRecomm';
         defaultExecutionType = 'Mission';
         defaultMissionDesc = `用户已达到到办理 ${custIdexPlaceHolders[0]} 业务的条件，请联系客户办理相关业务。注意提醒客户准备业务办理必须的文件。`;
         break;
-      case 'searchCustPool':
-        defaultMissionType = 'other';
+      case 'search':
+        defaultMissionType = '请选择';
         defaultExecutionType = 'Chance';
         defaultMissionDesc = '';
         break;
-      case 'performanceIncrementCustPool':
+      case 'custIndicator':
         defaultMissionName = '新客户回访';
-        defaultMissionType = 'newCustVisit';
+        defaultMissionType = 'AccoutService';
         defaultExecutionType = 'Chance';
         defaultMissionDesc = `用户在 ${custIdexPlaceHolders[1]} 开户，建议跟踪服务了解客户是否有问题需要解决。注：如果客户状态为流失，则：用户在 {流失日}流失，建议跟踪服务了解客户是否有问题需要解决。`;
         break;
-      case 'performanceBusinessOpenCustPool':
+      case 'numOfCustOpened':
         defaultMissionName = '业务开通回访';
-        defaultMissionType = 'stockCustVisit';
+        defaultMissionType = 'AccoutService';
         defaultExecutionType = 'Chance';
         defaultMissionDesc = `用户在 2 周内办理了 ${custIdexPlaceHolders[2]} 业务，建议跟踪服务了解客户是否有问题需要解决。`;
         // {14日内开通的业务}
@@ -156,6 +157,7 @@ export default class CreateTaskForm extends PureComponent {
       defaultMissionType,
       defaultExecutionType,
       defaultMissionDesc,
+      defaultInitialValue,
       defaultServiceStrategySuggestion,
       firstUserName,
       count,
@@ -167,12 +169,13 @@ export default class CreateTaskForm extends PureComponent {
 
   render() {
     const { dict, form, isShowTitle = false } = this.props;
-    const { taskTypes, executeTypes } = dict;
+    const { custServerTypeFeedBackDict, executeTypes } = dict;
     const {
       defaultMissionName,
       defaultMissionType,
       defaultExecutionType,
       defaultMissionDesc,
+      defaultInitialValue,
       defaultServiceStrategySuggestion,
       firstUserName,
       count,
@@ -193,9 +196,10 @@ export default class CreateTaskForm extends PureComponent {
             defaultMissionType={defaultMissionType}
             defaultExecutionType={defaultExecutionType}
             defaultMissionDesc={defaultMissionDesc}
+            defaultInitialValue={defaultInitialValue}
             defaultServiceStrategySuggestion={defaultServiceStrategySuggestion}
             users={statusData}
-            taskTypes={taskTypes}
+            taskTypes={custServerTypeFeedBackDict}
             executeTypes={executeTypes}
             form={form}
           />

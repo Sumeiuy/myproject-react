@@ -3,11 +3,10 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter, routerRedux } from 'dva/router';
 import { Steps, message, Button, Mention } from 'antd';
-// import { autobind } from 'core-decorators';
-import _ from 'lodash';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
 import { permission, fspGlobal, helper } from '../../utils';
-import { fspContainer } from '../../config';
+import { fspContainer, getOrgId } from '../../config';
 import PickTargetCustomer from '../../components/customerPool/taskFlow/PickTargetCustomer';
 import TaskPreview from '../../components/customerPool/taskFlow/TaskPreview';
 import CreateTaskForm from '../../components/customerPool/createTask/CreateTaskForm';
@@ -18,7 +17,7 @@ import styles from './taskFlow.less';
 const Step = Steps.Step;
 const { toString } = Mention;
 
-// const EMPTY_LIST = [];
+const orgId = getOrgId;
 const EMPTY_OBJECT = {};
 
 const effects = {
@@ -258,11 +257,6 @@ export default class TaskFlow extends PureComponent {
         ...postBody,
       });
     } else {
-      let orgId = null;
-      const fspPosition = window.forReactPosition;
-      if (!_.isEmpty(fspPosition)) {
-        orgId = fspPosition.orgId;
-      }
       submitTaskFlow({
         labelId,
         queryLabelDTO: {
@@ -370,6 +364,7 @@ export default class TaskFlow extends PureComponent {
         circlePeopleData={circlePeopleData}
         getLabelPeople={getLabelPeople}
         peopleOfLabelData={peopleOfLabelData}
+        orgId={orgId}
         isLoadingEnd={isLoadingEnd}
         onCancel={this.resetLoading}
       />,

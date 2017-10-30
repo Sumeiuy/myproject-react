@@ -9,9 +9,14 @@ import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import { getOrgId } from '../../config';
 import CreateTaskSuccess from '../../components/customerPool/createTask/CreateTaskSuccess';
 import CreateTaskFormFlow from '../../components/customerPool/createTask/CreateTaskFormFlow';
 import styles from './createTask.less';
+import { fspGlobal } from '../../utils';
+
+
+const orgId = getOrgId || null;
 
 const effects = {
   createTask: 'customerPool/createTask',
@@ -111,6 +116,11 @@ export default class CreateTask extends PureComponent {
     goBack();
   }
 
+  @autobind
+  handleCancleTab() {
+    fspGlobal.closeRctTabById('RCT_FSP_CUSTOMER_LIST');
+  }
+
   render() {
     const {
       dict,
@@ -134,12 +144,14 @@ export default class CreateTask extends PureComponent {
             approvalList={approvalList}
             getApprovalList={getApprovalList}
             goBack={this.handleCloseTab}
+            orgId={orgId}
+            onCloseTab={this.handleCancleTab}
           /> :
           <CreateTaskSuccess
             successType={isSuccess}
             push={push}
             location={location}
-            onCloseTab={this.handleCloseTab}
+            onCloseTab={this.handleCancleTab}
           />
         }
       </div>
