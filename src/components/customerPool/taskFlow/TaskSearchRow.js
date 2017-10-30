@@ -16,9 +16,6 @@ import tableStyles from '../groupManage/groupTable.less';
 
 
 const RadioGroup = Radio.Group;
-// const orgId = window.forReactPosition.orgId;
-const orgId = 'ZZ001041051';
-// const EMPTY_LIST = [];
 
 const renderColumnTitle = [{
   key: 'name',
@@ -49,6 +46,7 @@ export default class TaskSearchRow extends PureComponent {
     getLabelPeople: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired,
     currentSelectLabel: PropTypes.string.isRequired,
+    orgId: PropTypes.string.isRequired,
     isLoadingEnd: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired,
   }
@@ -82,7 +80,7 @@ export default class TaskSearchRow extends PureComponent {
 
   @autobind
   handleSeeCust(value) {
-    const { getLabelPeople } = this.props;
+    const { getLabelPeople, orgId } = this.props;
     const { curPageNum, pageSize } = this.state;
     console.log(value);
     getLabelPeople({
@@ -111,7 +109,7 @@ export default class TaskSearchRow extends PureComponent {
   @autobind
   handleShowSizeChange(currentPageNum, changedPageSize) {
     console.log('currentPageNum--', currentPageNum, 'changedPageSize--', changedPageSize);
-    const { getLabelPeople } = this.props;
+    const { getLabelPeople, orgId } = this.props;
     const { labelId } = this.state;
     getLabelPeople({
       curPageNum: 1,
@@ -129,7 +127,7 @@ export default class TaskSearchRow extends PureComponent {
   @autobind
   handlePageChange(nextPage, currentPageSize) {
     console.log('nextPage---', nextPage, 'currentPageSize---', currentPageSize);
-    const { getLabelPeople } = this.props;
+    const { getLabelPeople, orgId } = this.props;
     const { labelId, pageSize } = this.state;
     getLabelPeople({
       curPageNum: nextPage,

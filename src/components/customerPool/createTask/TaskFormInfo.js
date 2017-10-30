@@ -25,6 +25,7 @@ export default class TaskFormInfo extends PureComponent {
     defaultExecutionType: PropTypes.string.isRequired,
     defaultMissionDesc: PropTypes.string.isRequired,
     defaultServiceStrategySuggestion: PropTypes.string,
+    defaultInitialValue: PropTypes.string,
     users: PropTypes.array.isRequired,
     taskTypes: PropTypes.array,
     executeTypes: PropTypes.array,
@@ -34,6 +35,7 @@ export default class TaskFormInfo extends PureComponent {
     taskTypes: [],
     executeTypes: [],
     defaultServiceStrategySuggestion: '',
+    defaultInitialValue: null,
   }
 
   constructor(props) {
@@ -85,6 +87,7 @@ export default class TaskFormInfo extends PureComponent {
       defaultMissionType,
       defaultExecutionType,
       defaultServiceStrategySuggestion,
+      defaultInitialValue,
       defaultMissionDesc,
       taskTypes,
       executeTypes,
@@ -168,7 +171,7 @@ export default class TaskFormInfo extends PureComponent {
               {getFieldDecorator('timelyIntervalValue',
                 {
                   rules: [{ required: true, message: '有效期不能为空!' }],
-                  initialValue: '',
+                  initialValue: defaultInitialValue,
                 })(<Input placeholder="" type="number" min="0" />)}
             </FormItem>
           </li>
@@ -195,7 +198,7 @@ export default class TaskFormInfo extends PureComponent {
         </div>
         <div className={styles.task_textArea}>
           <p>
-            <label htmlFor="desc"><i>*</i>任务描述</label>
+            <label htmlFor="desc"><i>*</i>任务提示</label>
           </p>
           <FormItem>
             {getFieldDecorator('templetDesc', {

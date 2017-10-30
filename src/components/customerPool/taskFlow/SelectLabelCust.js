@@ -16,6 +16,7 @@ export default class SelectLabelCust extends PureComponent {
     peopleOfLabelData: PropTypes.object.isRequired,
     // 保存的数据
     storedData: PropTypes.object,
+    orgId: PropTypes.string.isRequired,
     isLoadingEnd: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired,
   };
@@ -87,6 +88,7 @@ export default class SelectLabelCust extends PureComponent {
       getLabelPeople,
       circlePeopleData,
       peopleOfLabelData,
+      orgId,
       isLoadingEnd,
       onCancel,
     } = this.props;
@@ -112,6 +114,7 @@ export default class SelectLabelCust extends PureComponent {
           peopleOfLabelData={peopleOfLabelData}
           condition={condition}
           currentSelectLabel={currentSelectLabel}
+          orgId={orgId}
         />
       </div>
     );

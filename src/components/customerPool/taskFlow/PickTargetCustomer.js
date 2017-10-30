@@ -28,6 +28,7 @@ export default class PickTargetCustomer extends PureComponent {
     currentTab: PropTypes.string.isRequired,
     saveCurrentTab: PropTypes.func.isRequired,
     storedTaskFlowData: PropTypes.object.isRequired,
+    orgId: PropTypes.string.isRequired,
     isLoadingEnd: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired,
   };
@@ -78,6 +79,7 @@ export default class PickTargetCustomer extends PureComponent {
       circlePeopleData,
       getLabelPeople,
       peopleOfLabelData,
+      orgId,
       isLoadingEnd,
       onCancel,
     } = this.props;
@@ -110,6 +112,7 @@ export default class PickTargetCustomer extends PureComponent {
                 getLabelPeople={getLabelPeople}
                 storedData={storedTaskFlowData}
                 ref={ref => (this.selectLabelCustRef = ref)}
+                orgId={orgId}
               />
             </TabPane>
           </Tabs>

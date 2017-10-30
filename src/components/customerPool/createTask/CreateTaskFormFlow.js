@@ -7,13 +7,13 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { Mention, message } from 'antd';
 import _ from 'lodash';
-import moment from 'moment';
 import classnames from 'classnames';
 import { autobind } from 'core-decorators';
 import Button from '../../common/Button';
 import CreateTaskForm from './CreateTaskForm';
 import TaskFormFlowStep from './TaskFormFlowStep';
 import styles from './createTaskFormFlow.less';
+import { fspGlobal } from '../../../utils/fspGlobal';
 
 
 const { toString } = Mention;
@@ -31,12 +31,15 @@ export default class CreateTaskFormFlow extends PureComponent {
     approvalList: PropTypes.array.isRequired,
     getApprovalList: PropTypes.func.isRequired,
     goBack: PropTypes.func.isRequired,
+    onCloseTab: PropTypes.func.isRequired,
+    orgId: PropTypes.string,
   }
 
   static defaultProps = {
     dict: {},
     createTaskResult: {},
     createTask: () => {},
+    orgId: '',
   }
 
   constructor(props) {
@@ -84,8 +87,6 @@ export default class CreateTaskFormFlow extends PureComponent {
     // const { custIdList, searchReq } = this.state;
     this.createTaskForm.validateFields((err, values) => {
       if (!err) {
-        values.closingDate = moment(values.closingDate).format('YYYY-MM-DD');// eslint-disable-line
-        values.triggerDate = moment(values.triggerDate).format('YYYY-MM-DD');// eslint-disable-line
         values.templetDesc = toString(values.templetDesc);// eslint-disable-line
         const value = { ...values, groupId };
         createTask(value);
@@ -95,7 +96,10 @@ export default class CreateTaskFormFlow extends PureComponent {
       }
     });
   }
-
+  @autobind
+  handleCancleTab() {
+    fspGlobal.closeRctTabById('RCT_FSP_CREATE_TASK');
+  }
 
   render() {
     const {
@@ -106,6 +110,8 @@ export default class CreateTaskFormFlow extends PureComponent {
       createTask,
       getApprovalList,
       approvalList,
+      orgId,
+      onCloseTab,
       goBack } = this.props;
     const { showBtn } = this.state;
     return (
@@ -126,7 +132,7 @@ export default class CreateTaskFormFlow extends PureComponent {
                 }
             >
               <div className={styles.task_btn}>
-                <Button onClick={goBack}>取消</Button>
+                <Button onClick={this.handleCancleTab}>取消</Button>
                 <Button type="primary" onClick={this.handleSubmit}>提交</Button>
               </div>
             </div>
@@ -142,6 +148,8 @@ export default class CreateTaskFormFlow extends PureComponent {
             getApprovalList={getApprovalList}
             parseQuery={this.parseQuery}
             goBack={goBack}
+            orgId={orgId}
+            onCloseTab={onCloseTab}
           />
           }
       </div>

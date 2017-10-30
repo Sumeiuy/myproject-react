@@ -120,7 +120,6 @@ export default {
         const params = queryString.parse(search);
         const serviceLogUrl = pathToRegexp('/customerPool/serviceLog').exec(pathname);
         const custGroupUrl = pathToRegexp('/customerPool/customerGroup').exec(pathname);
-
         if (serviceLogUrl) {
           const { pageSize, serveDateToPaged } = params;
           if (_.isEmpty(pageSize)) params.pageSize = null;
