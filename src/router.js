@@ -18,21 +18,16 @@ import Main from './layouts/Main';
 
 import Empty from './routes/empty/Home';
 import FeedBack from './routes/feedback/Home';
-import CommissionHome from './routes/commission/Home';
-import TemplModal from './routes/templeModal/Home';
 import BoardManageHome from './routes/boardManage/Home';
 import BoardEditHome from './routes/boardEdit/Home';
 import ReportHome from './routes/reports/Home';
 import PreviewReport from './routes/reports/PreviewReport';
 import HistoryHome from './routes/history/Home';
-import PermissonHome from './routes/permission/Home';
-import Approval from './routes/approval/Home';
 import CustomerPoolHome from './routes/customerPool/Home';
 import ToDo from './routes/customerPool/ToDo';
 import CustomerList from './routes/customerPool/CustomerList';
 import CustomerGroup from './routes/customerPool/CustomerGroup';
 import CreateTask from './routes/customerPool/CreateTask';
-import Contract from './routes/contract/Home';
 import FullChannelServiceRecord from './routes/fullChannelServiceRecord/Home';
 import CustomerGroupManage from './routes/customerPool/CustomerGroupManage';
 import ViewpointList from './routes/customerPool/ViewpointList';
@@ -61,12 +56,8 @@ const routes = ({ history }) => (// eslint-disable-line
       <Route path="preview" component={PreviewReport} />
       <Route path="history" component={HistoryHome} />
       <Route path="feedback" component={FeedBack} />
-      <Route path="commission" component={CommissionHome} />
-      <Route path="modal" component={TemplModal} />
       <Route path="boardManage" component={BoardManageHome} />
       <Route path="boardEdit" component={BoardEditHome} />
-      <Route path="permission" component={PermissonHome} />
-      <Route path="approval" component={Approval} />
       <Route path="customerPool">
         <IndexRoute component={CustomerPoolHome} />
         <Route path="viewpointDetail" component={ViewpointDetail} />
@@ -78,10 +69,6 @@ const routes = ({ history }) => (// eslint-disable-line
         <Route path="customerGroupManage" component={CustomerGroupManage} />
         <Route path="serviceLog" component={ServiceLog} />
         <Route path="taskFlow" component={TaskFlow} />
-      </Route>
-      <Route path="contract">
-        <IndexRoute component={Contract} />
-        <Route path="edit" component={Contract} />
       </Route>
       <Route path="fullChannelServiceRecord" component={FullChannelServiceRecord} />
     </Route>
