@@ -23,6 +23,12 @@ import { dateFormat } from '../../utils/helper';
 // 子类型列表
 const childTypeList = _.filter(seibelConfig.contract.subType, v => v.label !== '全部');
 const operationList = _.filter(seibelConfig.contract.operationList, v => v.label !== '全部');
+// 协议产品的表头、状态
+const {
+    channelsTypeProtocol: {
+      protocolProductTitleList, protocolClauseTitleList,
+    },
+  } = seibelConfig;
 const operationLabel = (value) => {
   if (operationList && value) {
     const nowStatus = _.find(operationList, o => o.value === value) || {};
@@ -32,7 +38,7 @@ const operationLabel = (value) => {
 };
 const EMPTY_PARAM = '暂无';
 // 合约条款的表头、状态对应值
-const { contract: { titleList, status } } = seibelConfig;
+const { contract: { status } } = seibelConfig;
 export default class Detail extends PureComponent {
   static propTypes = {
     baseInfo: PropTypes.object,
@@ -107,6 +113,9 @@ export default class Detail extends PureComponent {
       // 当前审批人
       handleName: baseInfo.approver || EMPTY_PARAM,
     };
+    const scroll = {
+      x: true,
+    };
     let statusLabel = '';
     if (baseInfo.status) {
       statusLabel = status[Number(baseInfo.status)].label;
@@ -149,9 +158,11 @@ export default class Detail extends PureComponent {
           <InfoItem label="操作类型" value={operationLabel(operationType) || EMPTY_PARAM} />
           <InfoItem label="子类型" value={childTypeList[0].label || EMPTY_PARAM} />
           <InfoItem label="客户" value={`${baseInfo.custName || EMPTY_PARAM} ${baseInfo.econNum || EMPTY_PARAM}`} />
-          <InfoItem label="合约开始日期" value={dateFormat(baseInfo.startDt) || EMPTY_PARAM} />
+          <InfoItem label="协议模板" value="紫金快车道闪电下单" />
+          <InfoItem label="是否多账户使用" value="是" />
+          <InfoItem label="是否订购十档行情" value="是" />
+          <InfoItem label="协议开始日期" value={dateFormat(baseInfo.startDt) || EMPTY_PARAM} />
           <InfoItem label="合约有效期" value={dateFormat(baseInfo.vailDt) || EMPTY_PARAM} />
-          <InfoItem label="合约终止日期" value={dateFormat(baseInfo.endDt) || EMPTY_PARAM} />
           <InfoItem label="备注" value={baseInfo.description || EMPTY_PARAM} />
         </div>
         <div className={styles.detailWrapper}>
@@ -161,10 +172,18 @@ export default class Detail extends PureComponent {
           <InfoItem label="状态" value={statusLabel || EMPTY_PARAM} />
         </div>
         <div className={styles.detailWrapper}>
-          <InfoTitle head="合约条款" />
+          <InfoTitle head="协议产品" />
           <CommonTable
             data={terms || []}
-            titleList={titleList}
+            titleList={protocolProductTitleList}
+            scroll={scroll}
+          />
+        </div>
+        <div className={styles.detailWrapper}>
+          <InfoTitle head="协议条款" />
+          <CommonTable
+            data={terms || []}
+            titleList={protocolClauseTitleList}
           />
         </div>
         <div className={styles.detailWrapper}>
