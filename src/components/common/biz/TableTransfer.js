@@ -132,7 +132,7 @@ export default class TableTransfer extends Component {
     showSearch: true,
     defaultCheckKey: '',
     supportSearchKey: [],
-    aboutRate: ['', ''],
+    aboutRate: [],
   }
 
   constructor(props) {
@@ -154,7 +154,7 @@ export default class TableTransfer extends Component {
     const rateFlag = !_.isEmpty(aboutRate);
     let differenceRate = 0;
     if (rateFlag) {
-      differenceRate = totalRate - _.toNumber(_.head(aboutRate)).toFixed(2);
+      differenceRate = totalRate - _.toNumber(_.head(aboutRate));
     }
     this.state = {
       totalData: [...firstData, ...secondData], // 搜索筛选的数据源，对使用者透明
@@ -209,6 +209,7 @@ export default class TableTransfer extends Component {
   }
 
   // 获取右表所有的佣金率
+  @autobind
   getTotalRate() {
     const { aboutRate, secondData } = this.props;
     if (_.isEmpty(aboutRate)) {
@@ -234,11 +235,19 @@ export default class TableTransfer extends Component {
       secondColumns,
       rowKey,
       defaultCheckKey,
+      aboutRate,
     } = nextProps || this.props;
     const initFirstArray = this.initTableData(firstData, rowKey, defaultCheckKey);
     const initSecondArray = this.initTableData(secondData, rowKey, defaultCheckKey);
     const initSecondColumns = this.initTableColumn(secondColumns, defaultCheckKey);
+    const totalRate = this.getTotalRate();
+    const rateFlag = !_.isEmpty(aboutRate);
+    let differenceRate = 0;
+    if (rateFlag) {
+      differenceRate = totalRate - _.toNumber(_.head(aboutRate));
+    }
     this.setState({
+      totalData: [...firstData, ...secondData],
       checked: this.getAllDefaultCheck(initSecondArray, rowKey, defaultCheckKey),
       firstArray: this.hiddenChildren(initFirstArray),
       secondArray: initSecondArray,
@@ -250,6 +259,12 @@ export default class TableTransfer extends Component {
         ...initSecondColumns,
         actionColumns('second', this.handleClick),
       ],
+      rate: {
+        rateFlag, // 是否计算佣金率
+        differenceRate,  // 差值：右表totalRate-目标佣金率
+        totalRate,   // 右表totalRate
+        tip: { type: '', content: '' }, // 佣金率提示
+      },
     });
   }
 
@@ -511,7 +526,6 @@ export default class TableTransfer extends Component {
     const needAddArray = isOperateFirstTable ? secondArray : firstArray;
     const needRemoveArray = isOperateFirstTable ? firstArray : secondArray;
     let modifyRate = {};
-
     // 更新操作表格的数据源。remove要移动的元素
     const modifyRemoveArray = _.filter(
       needRemoveArray,
