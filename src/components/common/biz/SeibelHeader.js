@@ -12,7 +12,7 @@ import CustRange from '../../pageCommon/SeibelCustRange';
 import DropDownSelect from '../dropdownSelect';
 import Button from '../Button';
 import styles from '../../style/jiraLayout.less';
-import { hasPermissionOfPostion } from '../../../utils/helper';
+import { hasPermission } from '../../../utils/helper';
 
 export default class Pageheader extends PureComponent {
   static propTypes = {
@@ -146,7 +146,7 @@ export default class Pageheader extends PureComponent {
       page,
       operateOptions,
       needOperate,
-      location: { pathname, query: { subType, status, business2 } },
+      location: { query: { subType, status, business2 } },
       empInfo,
     } = this.props;
 
@@ -161,9 +161,9 @@ export default class Pageheader extends PureComponent {
     const approvePersonAllList = !_.isEmpty(approvePersonList) ?
     [ptyMngAll, ...approvePersonList] : approvePersonList;
     // 新建按钮权限
-    let hasPermission = true;
-    if (pathname === '/contract') {
-      hasPermission = hasPermissionOfPostion(empInfo);
+    let hasCreatePermission = true;
+    if (page === 'contractPage') {
+      hasCreatePermission = hasPermission(empInfo);
     }
     const operateElement = needOperate ?
       (
@@ -267,7 +267,7 @@ export default class Pageheader extends PureComponent {
           </div>
         </div>
         {
-          hasPermission ?
+          hasCreatePermission ?
             <Button
               type="primary"
               icon="plus"
