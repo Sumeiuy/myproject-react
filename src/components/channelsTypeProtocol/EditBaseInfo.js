@@ -1,6 +1,5 @@
-/*eslint-disable */
 /*
- * @Description: 合作合约新建 -基本信息
+ * @Description: 通道类型协议新建/编辑 -基本信息
  * @Author: XuWenKang
  * @Date:   2017-09-21 15:27:31
  * @Last Modified by: LiuJianShu
@@ -27,7 +26,7 @@ import styles from './editBaseInfo.less';
 const { TextArea } = Input;
 
 // 子类型列表
-const { channelsTypeProtocol: { subTypeList } } = seibelConfig;
+const subTypeList = _.filter(seibelConfig.channelsTypeProtocol.subType, v => v.label !== '全部');
 // 下拉搜索组件样式
 const dropDownSelectBoxStyle = {
   width: 220,
@@ -47,7 +46,7 @@ export default class EditBaseInfo extends PureComponent {
     // 查询协议编号
     // onSearchProtocolNum: PropTypes.func.isRequired,
     // protocolNumList: PropTypes.array,
-    //编辑时传入元数据
+    // 编辑时传入元数据
     formData: PropTypes.object,
   }
 
@@ -76,9 +75,9 @@ export default class EditBaseInfo extends PureComponent {
       isTenMarket: false,
       // 备注
       remark: '',
-    }
+    };
     // 判断是否传入formData
-    if(!_.isEmpty(formData)) {
+    if (!_.isEmpty(formData)) {
       stateObj.operation = formData.operation;
       stateObj.subType = formData.subType;
       stateObj.client = formData.client;
@@ -89,13 +88,13 @@ export default class EditBaseInfo extends PureComponent {
     }
     this.state = {
       ...stateObj,
-    }
+    };
   }
 
-  // 查询协议编号
+  // 向外传递数据
   @autobind
-  handleSearchProtocolNum() {
-
+  getData() {
+    return this.state;
   }
 
   // 通用Select Change方法
@@ -104,18 +103,18 @@ export default class EditBaseInfo extends PureComponent {
     this.setState({
       ...this.state,
       [key]: value,
-    }, ()=> {
-      if(key === 'subType') {
-        const operationList = _.filter(subTypeList, (v)=>v.value === value)[0].operationList;
+    }, () => {
+      if (key === 'subType') {
+        const operationList = _.filter(subTypeList, v => v.value === value)[0].operationList;
         this.setState({
           ...this.state,
           operation: '',
-          operationList: operationList,
-        })
+          operationList,
+        });
       }
       // 操作类型是“协议退订”、“协议续订”、“新增或删除下挂客户”时查询协议编号
       const { operation } = this.state;
-      if(operation > 1) {
+      if (operation > 1) {
         this.handleSearchProtocolNum();
       }
     });
@@ -154,7 +153,7 @@ export default class EditBaseInfo extends PureComponent {
   // 根据填入关键词筛选协议模板
   @autobind
   handleSearchTemplate(value) {
-    this.props.onSearchProtocolTemplate(value)
+    this.props.onSearchProtocolTemplate(value);
   }
 
   // 修改备注
@@ -166,19 +165,19 @@ export default class EditBaseInfo extends PureComponent {
     }, this.transferDataToHome);
   }
 
-  //修改开关
+  // 修改开关
   @autobind
   handleChangeSwitchValue(name, value) {
     this.setState({
       ...this.state,
       [name]: value,
-    })
+    });
   }
 
-  // 向外传递数据
+  // 查询协议编号
   @autobind
-  getData() {
-    return this.state;
+  handleSearchProtocolNum() {
+
   }
 
   // 判断是否显示switch开关
@@ -236,24 +235,24 @@ export default class EditBaseInfo extends PureComponent {
           />
         </InfoForm>
         {
-          this.isShowSwitch()?
+          this.isShowSwitch() ?
             <InfoForm label="是否多账户使用" >
               <CustomSwitch
-                  name='isMultiAccount'
-                  value={isMultiAccount}
-                  onChange={this.handleChangeSwitchValue}
+                name="isMultiAccount"
+                value={isMultiAccount}
+                onChange={this.handleChangeSwitchValue}
               />
             </InfoForm>
           :
           null
         }
         {
-          this.isShowSwitch()?
+          this.isShowSwitch() ?
             <InfoForm label="是否订购十档行情">
               <CustomSwitch
-                  name='isTenMarket'
-                  value={isTenMarket}
-                  onChange={this.handleChangeSwitchValue}
+                name="isTenMarket"
+                value={isTenMarket}
+                onChange={this.handleChangeSwitchValue}
               />
             </InfoForm>
             :
@@ -262,11 +261,10 @@ export default class EditBaseInfo extends PureComponent {
         <InfoItem label="协议开始日期" value={'2017/08/31'} />
         <InfoItem label="协议有效期" value={'2017/08/31'} />
         <InfoForm label="备注">
-          <TextArea />
+          <TextArea onChange={this.handleChangeRemark} />
         </InfoForm>
       </div>
     );
   }
 
 }
-/*eslint-disable */

@@ -382,6 +382,21 @@ const pageConfig = {
             value: '',
           },
         ],
+        operationList: [
+          {
+            show: true,
+            label: '协议订购',
+            value: '1',
+          }, {
+            show: true,
+            label: '协议退订',
+            value: '2',
+          }, {
+            show: true,
+            label: '协议续订',
+            value: '3',
+          },
+        ],
       },
       {
         show: true,
@@ -402,6 +417,25 @@ const pageConfig = {
             show: true,
             label: '终止',
             value: '',
+          },
+        ],
+        operationList: [
+          {
+            show: true,
+            label: '协议订购',
+            value: '1',
+          }, {
+            show: true,
+            label: '协议退订',
+            value: '2',
+          }, {
+            show: true,
+            label: '协议续订',
+            value: '3',
+          }, {
+            show: true,
+            label: '新增或删除下挂客户',
+            value: '4',
           },
         ],
       },
@@ -426,6 +460,13 @@ const pageConfig = {
             value: '',
           },
         ],
+        operationList: [
+          {
+            show: true,
+            label: '协议订购',
+            value: '1',
+          },
+        ],
       },
       {
         show: true,
@@ -446,6 +487,13 @@ const pageConfig = {
             show: true,
             label: '终止',
             value: '',
+          },
+        ],
+        operationList: [
+          {
+            show: true,
+            label: '协议订购',
+            value: '1',
           },
         ],
       },
@@ -497,96 +545,6 @@ const pageConfig = {
         show: true,
         label: '新增或删除下挂客户',
         value: '4',
-      },
-    ],
-    titleList: [
-      {
-        dataIndex: 'termsDisplayName',
-        key: 'termsDisplayName',
-        title: '条款名称',
-      },
-      {
-        dataIndex: 'paraDisplayName',
-        key: 'paraDisplayName',
-        title: '明细参数',
-      },
-      {
-        dataIndex: 'paraVal',
-        key: 'paraVal',
-        title: '值',
-        width: 40,
-      },
-      {
-        dataIndex: 'divName',
-        key: 'divName',
-        title: '合作部门',
-      },
-    ],
-    subTypeList: [
-      {
-        show: true,
-        label: '紫金快车道协议',
-        value: '1',
-        operationList: [
-          {
-            show: true,
-            label: '协议订购',
-            value: '1',
-          }, {
-            show: true,
-            label: '协议退订',
-            value: '2',
-          }, {
-            show: true,
-            label: '协议续订',
-            value: '3',
-          }, {
-            show: true,
-            label: '新增或删除下挂客户',
-            value: '4',
-          },
-        ],
-      }, {
-        show: false,
-        label: '高速通道类协议',
-        value: '2',
-        operationList: [
-          {
-            show: true,
-            label: '协议订购',
-            value: '1',
-          }, {
-            show: true,
-            label: '协议退订',
-            value: '2',
-          }, {
-            show: true,
-            label: '协议续订',
-            value: '3',
-          },
-        ],
-      }, {
-        show: false,
-        label: '套利软件',
-        value: '3',
-        operationList: [
-          {
-            show: true,
-            label: '协议订购',
-            value: '1',
-          },
-        ],
-      }, {
-        show: false,
-        label: '期权软件',
-        value: '4',
-        operationList: [
-          {
-            show: true,
-            label: '协议订购',
-            value: '1',
-          },
-        ],
       },
     ],
     businessType: [
