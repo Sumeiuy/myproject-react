@@ -36,13 +36,17 @@ import Icon from '../../common/Icon';
 import styles from './tableTransfer.less';
 
 const Search = Input.Search;
-const actionColumns = (type, handleAction) => {
+const actionColumns = (type, isScrollX, handleAction) => {
   function handleClick(flag, item) {
     if (_.isFunction(handleAction)) {
       handleAction(flag, item);
     }
   }
+  const param = isScrollX ? (
+    { fixed: 'right', width: 40 }
+  ) : ({});
   return {
+    ...param,
     title: '操作',
     key: 'action',
     render: (item) => {
@@ -119,6 +123,7 @@ export default class TableTransfer extends Component {
     defaultCheckKey: PropTypes.string,
     supportSearchKey: PropTypes.array,
     aboutRate: PropTypes.array,
+    isScrollX: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -133,61 +138,19 @@ export default class TableTransfer extends Component {
     defaultCheckKey: '',
     supportSearchKey: [],
     aboutRate: [],
+    isScrollX: false,
   }
 
   constructor(props) {
     super(props);
-    const {
-      firstData,
-      secondData,
-      firstColumns,
-      secondColumns,
-      rowKey,
-      defaultCheckKey,
-      aboutRate,
-    } = props || this.props;
-    const initFirstArray = this.initTableData(firstData, rowKey, defaultCheckKey);
-    const initSecondArray = this.initTableData(secondData, rowKey, defaultCheckKey);
-    const initFirstColumns = this.initTableColumn(firstColumns, defaultCheckKey);
-    const initSecondColumns = this.initTableColumn(secondColumns, defaultCheckKey);
-    const totalRate = this.getTotalRate();
-    const rateFlag = !_.isEmpty(aboutRate);
-    let differenceRate = 0;
-    if (rateFlag) {
-      differenceRate = totalRate - _.toNumber(_.head(aboutRate));
-    }
-    this.state = {
-      totalData: [...firstData, ...secondData], // 搜索筛选的数据源，对使用者透明
-      checked: this.getAllDefaultCheck(initSecondArray, rowKey, defaultCheckKey),
-      firstArray: this.hiddenChildren(initFirstArray),
-      secondArray: initSecondArray,
-      firstColumns: [
-        ...initFirstColumns,
-        actionColumns('first', this.handleClick),
-      ],
-      secondColumns: [
-        ...initSecondColumns,
-        actionColumns('second', this.handleClick),
-      ],
-      rate: {
-        rateFlag, // 是否计算佣金率
-        differenceRate,  // 差值：右表totalRate-目标佣金率
-        totalRate,   // 右表totalRate
-        tip: { type: '', content: '' }, // 佣金率提示
-      },
-    };
-    /*
-     tip 有且只出现一条
-         有三种情况（等于，高于，低于)
-         两种类型（finish(等于时出现)，warning(高于，低于时出现)）
-    */
+    this.state = this.resetDataSource();
   }
 
   componentWillReceiveProps(nextProps) {
     const { firstData: nextData } = nextProps;
     const { firstData: prevData } = this.props;
     if (!_.isEqual(prevData, nextData)) {
-      this.resetDataSource(nextProps);
+      this.setState(this.resetDataSource(nextProps));
     }
   }
 
@@ -236,6 +199,7 @@ export default class TableTransfer extends Component {
       rowKey,
       defaultCheckKey,
       aboutRate,
+      isScrollX,
     } = nextProps || this.props;
     const initFirstArray = this.initTableData(firstData, rowKey, defaultCheckKey);
     const initSecondArray = this.initTableData(secondData, rowKey, defaultCheckKey);
@@ -246,18 +210,18 @@ export default class TableTransfer extends Component {
     if (rateFlag) {
       differenceRate = totalRate - _.toNumber(_.head(aboutRate));
     }
-    this.setState({
+    return {
       totalData: [...firstData, ...secondData],
       checked: this.getAllDefaultCheck(initSecondArray, rowKey, defaultCheckKey),
       firstArray: this.hiddenChildren(initFirstArray),
       secondArray: initSecondArray,
       firstColumns: [
         ...firstColumns,
-        actionColumns('first', this.handleClick),
+        actionColumns('first', isScrollX, this.handleClick),
       ],
       secondColumns: [
         ...initSecondColumns,
-        actionColumns('second', this.handleClick),
+        actionColumns('second', isScrollX, this.handleClick),
       ],
       rate: {
         rateFlag, // 是否计算佣金率
@@ -265,7 +229,12 @@ export default class TableTransfer extends Component {
         totalRate,   // 右表totalRate
         tip: { type: '', content: '' }, // 佣金率提示
       },
-    });
+    };
+    /*
+     tip 有且只出现一条
+         有三种情况（等于，高于，低于)
+         两种类型（finish(等于时出现)，warning(高于，低于时出现)）
+    */
   }
 
   // 添加属性，方便操作.初始操作为show children状态
@@ -658,6 +627,7 @@ export default class TableTransfer extends Component {
       showSearch,
       pagination,
       rowKey,
+      isScrollX,
     } = this.props;
     const {
       firstArray,
@@ -665,9 +635,18 @@ export default class TableTransfer extends Component {
       firstColumns,
       secondColumns,
     } = this.state;
+    const scroll = isScrollX ? (
+      { y: 268, x: '130%' }
+    ) : (
+      { y: 260 }
+    );
+
     return (
       <div className={styles.container}>
-        <div className={styles.leftContent}>
+        <div
+          className={styles.leftContent}
+          ref={(ref) => { this.firstTableElem = ref; }}
+        >
           <div className={classnames(styles.header, styles.leftHeader)}>
             <div className={styles.titleLabel}>{firstTitle}</div>
             {
@@ -686,10 +665,13 @@ export default class TableTransfer extends Component {
             columns={firstColumns}
             dataSource={firstArray}
             pagination={pagination}
-            scroll={{ y: 260 }}
+            scroll={scroll}
           />
         </div>
-        <div className={styles.rightContent}>
+        <div
+          className={styles.rightContent}
+          ref={(ref) => { this.secondTableElem = ref; }}
+        >
           <div className={classnames(styles.header, styles.rightHeader)}>
             <div className={styles.titleLabel}>{secondTitle}</div>
             <div className={styles.tipContainer}>
@@ -701,7 +683,7 @@ export default class TableTransfer extends Component {
             columns={secondColumns}
             dataSource={secondArray}
             pagination={pagination}
-            scroll={{ y: 260 }}
+            scroll={scroll}
           />
         </div>
       </div>
