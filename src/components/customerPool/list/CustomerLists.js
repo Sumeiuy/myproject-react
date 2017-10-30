@@ -267,54 +267,48 @@ export default class CustomerLists extends PureComponent {
     }
   }
 
-  // 单选列表中的数据
+  /**
+   * 单选列表中的数据
+   * 数据： url中：selectedIds=id1.name1,id2.name2,id3.name3
+   * 逻辑：
+   * url中没有selectedIds时，选中id=id1， selectedIds=id1.name1
+   * url中selectedIds=id1.name1,id2.name2，并且选中id=id1，过滤id1.name1 => selectedIds=id1.name1
+   * url中selectedIds=id1.name1，并且选中id=id2时  => selectedIds=id1.name1,id2.name2
+  */
   @autobind
   handleSingleSelect(id, name) {
-    const { replace, location: { query, pathname } } = this.props;
-    const str = `${id}.${name}`;
-    if (!query.selectedIds) {
-      replace({
+    const {
+      replace,
+      location: {
+        query,
         pathname,
-        query: {
-          ...query,
-          selectedIds: str,
-          selectAll: false,
-        },
-        state: {
-          noScrollTop: true,
-        },
-      });
+      },
+    } = this.props;
+    const { selectedIds } = query;
+    const cur = `${id}.${name}`;
+    let tmpStr = '';
+    if (!selectedIds) {
+      tmpStr = cur;
     } else {
-      const selectedIdsArr = query.selectedIds.split(',');
-      if (_.includes(selectedIdsArr, str)) {
-        replace({
-          pathname,
-          query: {
-            ...query,
-            selectedIds: selectedIdsArr.filter(v => v !== str).join(','),
-            selectAll: false,
-          },
-          state: {
-            noScrollTop: true,
-          },
-        });
-      } else {
-        replace({
-          pathname,
-          query: {
-            ...query,
-            selectedIds: [...selectedIdsArr, str].join(','),
-            selectAll: false,
-          },
-          state: {
-            noScrollTop: true,
-          },
-        });
-      }
+      const selectedIdsArr = selectedIds.split(',');
+      tmpStr = _.includes(selectedIdsArr, cur) ?
+        selectedIdsArr.filter(v => v !== cur).join(',') :
+        [...selectedIdsArr, cur].join(',');
     }
+    replace({
+      pathname,
+      query: {
+        ...query,
+        selectedIds: tmpStr,
+        selectAll: false,
+      },
+      state: {
+        noScrollTop: true,
+      },
+    });
   }
 
-  // 点击全选
+  // 点击全选，获取按钮的状态赋值url中的selectAll,并且将selectedIds置空
   @autobind
   selectAll(e) {
     const status = e.target.checked;
