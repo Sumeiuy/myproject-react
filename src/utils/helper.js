@@ -528,13 +528,13 @@ const helper = {
   },
 
   // 检测是否有相应的职责、职位权限
-  hasPermissionOfPostion(empInfo) {
+  hasPermission(empInfo) {
     const fsp = document.querySelector(fspContainer.container);
-    let hasPermission = true;
+    let hasPermissionOnBtn = true;
     if (fsp) {
-      hasPermission = hasPermissionOfPostion(empInfo);
+      hasPermissionOnBtn = hasPermissionOfPostion(empInfo);
     }
-    return hasPermission;
+    return hasPermissionOnBtn;
   },
 };
 

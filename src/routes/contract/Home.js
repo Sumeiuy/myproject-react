@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-27 19:51:54
+ * @Last Modified time: 2017-10-30 16:50:36
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 import { message, Modal } from 'antd';
 import _ from 'lodash';
 
-import { constructSeibelPostBody, getEmpId, hasPermissionOfPostion } from '../../utils/helper';
+import { constructSeibelPostBody, getEmpId, hasPermission } from '../../utils/helper';
 import SplitPanel from '../../components/common/splitPanel/SplitPanel';
 // import ContractHeader from '../../components/common/biz/SeibelHeader';
 import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
@@ -283,9 +283,9 @@ export default class Contract extends PureComponent {
     }
     if ((preBIL && !nextBIL)) {
       let hasEditPermission = false;
-      hasEditPermission = hasPermissionOfPostion(empInfo);
+      hasEditPermission = hasPermission(empInfo);
       // 如果当前登陆人与详情里的审批人相等，并且状态是驳回时显示编辑按钮
-      if (getEmpId() === nextBI.approver && nextBI.status === '04') {
+      if (getEmpId() === nextBI.approver && nextBI.status === '04' && hasEditPermission) {
         hasEditPermission = true;
       } else {
         hasEditPermission = false;

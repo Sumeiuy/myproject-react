@@ -26,8 +26,8 @@ import {
   employeeData,
   employeeColumns,
   subscribelData,
-  unsubcribeData,
-  // data,
+  // unsubcribeData,
+  data,
   productColumns,
 } from './MockTableData';
 import styles from './home.less';
@@ -92,8 +92,8 @@ export default class TemplModal extends PureComponent {
   }
 
   @autobind
-  handleOk(data) {
-    console.log(data);
+  handleOk(param) {
+    console.log(param);
   }
 
   @autobind
@@ -102,8 +102,8 @@ export default class TemplModal extends PureComponent {
   }
 
   @autobind
-  handleTransferChange(flag, selected, updateArray) {
-    console.log(flag, selected, updateArray);
+  handleTransferChange(flag, selected, updateArray, differenceRate) {
+    console.log(flag, selected, updateArray, differenceRate);
   }
 
   @autobind
@@ -240,8 +240,8 @@ export default class TemplModal extends PureComponent {
 
     const transferProps = {
       firstData: subscribelData,
-      // secondData: data,
-      secondData: unsubcribeData,
+      secondData: data,
+      // secondData: unsubcribeData,
       firstColumns: productColumns,
       secondColumns: productColumns,
       transferChange: this.handleTransferChange,
@@ -253,6 +253,7 @@ export default class TemplModal extends PureComponent {
       pagination,
       aboutRate: ['0.0004', 'rate'],
       supportSearchKey: [['productCode'], ['productName']],
+      isScrollX: true,
     };
 
 
@@ -345,7 +346,9 @@ export default class TemplModal extends PureComponent {
         <ProcessConfirm {...confirmProps} />
         <br />
         <br />
-        <Transfer {...transferProps} />
+        <div className={styles.tranfer}>
+          <Transfer {...transferProps} />
+        </div>
         <CommonModal {...commonModalProps} />
         <br />
         <InfoItem label="备注" value="这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值这是备注的值" />
