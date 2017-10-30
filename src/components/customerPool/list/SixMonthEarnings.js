@@ -28,7 +28,6 @@ export default class SixMonthEarnings extends PureComponent {
     monthlyProfits: PropTypes.object.isRequired,
     custIncomeReqState: PropTypes.bool.isRequired,
     getCustIncome: PropTypes.func.isRequired,
-    formatAsset: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -38,7 +37,7 @@ export default class SixMonthEarnings extends PureComponent {
     };
     this.debounced = _.debounce(
       this.getCustIncome,
-      800,
+      500,
       { leading: false },
     );
   }
@@ -85,7 +84,7 @@ export default class SixMonthEarnings extends PureComponent {
         const obj = formatAsset(lastestProfit);
         lastestPrifitsValue = obj.value;
         lastestPrifitsUnit = obj.unit;
-        lastestPrifitsRate = helper.toUnit(lastestProfitRate, '%', 3, 3);
+        lastestPrifitsRate = `${helper.toUnit(lastestProfitRate, '%', 3, 3).value}%`;
       }
     }
     // 格式化年最大时点资产的值和单位
@@ -97,7 +96,7 @@ export default class SixMonthEarnings extends PureComponent {
       maxTotAsetYUnit = obj.unit;
     }
     return (
-      <span
+      <div
         className={styles.showChartBtn}
         style={{
           cursor: custIncomeReqState ? 'wait' : 'pointer',
@@ -141,7 +140,7 @@ export default class SixMonthEarnings extends PureComponent {
             </div>
           </div>
         </div>
-      </span>
+      </div>
     );
   }
 }
