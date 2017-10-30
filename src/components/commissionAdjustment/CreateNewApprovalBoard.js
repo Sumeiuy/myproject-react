@@ -578,12 +578,16 @@ export default class CreateNewApprovalBoard extends PureComponent {
 
   // 单佣金、咨讯订阅调整穿梭变化的时候处理程序
   @autobind
-  handleSingleTransferChange(flag, item, array) {
+  handleSingleTransferChange(flag, item, array, dValue) {
+    console.warn('handleSingleTransferChange>flag', flag);
+    console.warn('handleSingleTransferChange>item', item);
+    console.warn('handleSingleTransferChange>array', array);
+    console.warn('handleSingleTransferChange>dValue', dValue);
     this.setState({
       singleProductList: array,
     });
     if (this.judgeSubtypeNow(commadj.single)) {
-      const { prodCode } = item[0];
+      const { prodCode } = item;
       const { customer } = this.state;
       this.props.queryThreeMatchInfo({
         custRowId: customer.id,
