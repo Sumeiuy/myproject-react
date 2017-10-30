@@ -11,6 +11,7 @@ import Select from '../Select';
 import CustRange from '../../pageCommon/SeibelCustRange';
 import DropDownSelect from '../dropdownSelect';
 import Button from '../Button';
+import Icon from '../Icon';
 import styles from '../../style/jiraLayout.less';
 import { hasPermissionOfPostion } from '../../../utils/helper';
 
@@ -58,8 +59,48 @@ export default class Pageheader extends PureComponent {
     empInfo: {},
   }
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      showMore: true,
+    };
+  }
+
   componentWillMount() {
     this.props.getCustRange({});
+  }
+
+  componentDidUpdate() {
+    this.pageCommonHeader = document.querySelector(`.${styles.pageCommonHeader}`);
+    this.filterBox = document.querySelector(`.${styles.filterBox}`);
+    this.filterMore = document.querySelector(`.${styles.filterMore}`);
+    this.onWindowResize();
+    window.addEventListener('resize', this.onWindowResize, false);
+  }
+
+  @autobind
+  onWindowResize() {
+    const filterBoxHeight = this.filterBox.getBoundingClientRect().height;
+    if (filterBoxHeight <= 32) {
+      this.filterMore.classList.remove('filterMoreIcon');
+      this.filterMore.classList.add('filterNoneIcon');
+    } else {
+      this.filterMore.classList.remove('filterNoneIcon');
+      this.filterMore.classList.add('filterMoreIcon');
+    }
+  }
+
+  @autobind
+  handleMoreChange() {
+    this.setState({
+      showMore: !this.state.showMore,
+    });
+    if (this.state.showMore) {
+      this.pageCommonHeader.classList.add('HeaderOverflow');
+    } else {
+      this.pageCommonHeader.classList.remove('HeaderOverflow');
+    }
+    this.onWindowResize();
   }
 
   // 选中客户下拉对象中对应的某个对象
@@ -265,6 +306,12 @@ export default class Pageheader extends PureComponent {
               />
             </div>
           </div>
+          {
+            this.state.showMore ?
+              <div className={styles.filterMore} onClick={this.handleMoreChange}>更多<Icon type="xiangxia" /></div>
+            :
+              <div className={styles.filterMore} onClick={this.handleMoreChange}>收起<Icon type="xiangshang" /></div>
+          }
         </div>
         {
           hasPermission ?

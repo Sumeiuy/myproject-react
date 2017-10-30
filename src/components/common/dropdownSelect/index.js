@@ -5,9 +5,9 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import { Dropdown, Icon } from 'antd';
 import classnames from 'classnames';
 import _ from 'lodash';
-import Icon from '../Icon';
 import style from './style.less';
 
 export default class DropdownSelect extends PureComponent {
@@ -141,33 +141,13 @@ export default class DropdownSelect extends PureComponent {
       { [style.disable]: disable },
       { [style.active]: this.state.isSHowModal },
     ]);
-    if (disable) {
-      return (
-        <div
-          className={theme === 'theme1' ? style.drapDowmSelect : style.drapDowmSelect2}
-        >
-          <div
-            className={theme === 'theme1' ? ddsShowBoxClass : ddsShowBoxClass2}
-            data-id={this.state.id}
-            style={this.props.boxStyle || {}}
-          >
-            {this.state.value}
-          </div>
-        </div>
-      );
-    }
-    return (
+    console.warn('this.state.isSHowModal', this.state.isSHowModal);
+
+    const menu = (
       <div
         className={theme === 'theme1' ? style.drapDowmSelect : style.drapDowmSelect2}
+        onClick={this.handleMenuClick}
       >
-        <div
-          onClick={this.showDrapDown}
-          className={theme === 'theme1' ? ddsShowBoxClass : ddsShowBoxClass2}
-          data-id={this.state.id}
-          style={this.props.boxStyle || {}}
-        >
-          {this.state.value}
-        </div>
         <div className={modalClass}>
           <div
             className={style.ddsDrapMenuSearch}
@@ -184,7 +164,7 @@ export default class DropdownSelect extends PureComponent {
               className={style.searchSub}
               onClick={this.toSearch}
             >
-              <Icon type="Shape" />
+              <Icon type="search" />
             </span>
           </div>
           {
@@ -197,6 +177,39 @@ export default class DropdownSelect extends PureComponent {
           </ul>
         </div>
       </div>
+    );
+    if (disable) {
+      return (
+        <div>
+          <div
+            className={theme === 'theme1' ? ddsShowBoxClass : ddsShowBoxClass2}
+            data-id={this.state.id}
+            style={this.props.boxStyle || {}}
+          >
+            {this.state.value}
+          </div>
+        </div>
+      );
+    }
+    return (
+      <Dropdown
+        overlay={menu}
+        trigger={['click']}
+        visible={this.state.isSHowModal}
+      >
+        <div
+          className={theme === 'theme1' ? style.drapDowmSelect : style.drapDowmSelect2}
+        >
+          <div
+            onClick={this.showDrapDown}
+            className={theme === 'theme1' ? ddsShowBoxClass : ddsShowBoxClass2}
+            data-id={this.state.id}
+            style={this.props.boxStyle || {}}
+          >
+            {this.state.value}
+          </div>
+        </div>
+      </Dropdown>
     );
   }
 }
