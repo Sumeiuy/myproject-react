@@ -143,11 +143,11 @@ export default class TaskFlow extends PureComponent {
     let isFormValidate = !_.isEmpty(taskFormData);
     let isSelectCust = true;
     if (current === 0) {
-      this.createTaskFormRef.validateFields((err, values) => {
+      this.formRef.props.form.validateFields((err, values) => {
         if (!err) {
           isFormValidate = true;
           console.log('Received values of form: ', values);
-          taskFormData = this.createTaskFormRef.getFieldsValue();
+          taskFormData = this.formRef.props.form.getFieldsValue();
         } else {
           message.error('请填写任务基本信息');
         }
@@ -344,7 +344,7 @@ export default class TaskFlow extends PureComponent {
       title: '基本信息',
       content: <div className={styles.taskInner}>
         <CreateTaskForm
-          ref={ref => (this.createTaskFormRef = ref)}
+          wrappedComponentRef={inst => (this.formRef = inst)}
           dict={dict}
           location={location}
           previousData={{ ...taskFormData }}
