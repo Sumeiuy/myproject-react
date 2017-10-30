@@ -120,7 +120,7 @@ export default class Search extends PureComponent {
     }
     if (e && e.keyCode === 13) {
       let searchVal = e.target.value;
-      if (searchVal.replace(/\s+/, '').length === 0 && searchVal.length > 0) {
+      if (searchVal.length > 0 && searchVal.replace(/\s+/, '').length === 0) {
         console.log('全是空格');
         return false;
       }
@@ -268,7 +268,7 @@ export default class Search extends PureComponent {
   handleSearchBtn() {
     const { inputVal } = this.state;
     const { data: { hotWds = EMPTY_OBJECT } } = this.props;
-    if (inputVal.replace(/\s+/, '').length === 0 && inputVal.length > 0) {
+    if (inputVal.length > 0 && inputVal.replace(/\s+/, '').length === 0) {
       console.log('全是空格');
       return;
     }
