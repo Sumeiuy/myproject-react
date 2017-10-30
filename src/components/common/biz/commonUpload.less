@@ -1,20 +1,25 @@
-.fileListMain{
-  .fileList{
-    font-size:13px;
-    color:#666;
-    margin: 0 0 20px 0;
+.fileListMain {
+  .title {
+    font-size: 13px;
+    color: #666;
+    line-height: 26px;
+  }
+  .fileList {
+    font-size: 13px;
+    color: #666;
+    margin: 0 0 20px;
     // background: #ccc;
-    background:#f7f7f7;
-    border:1px solid #e9e9e9;
-    .fileItem{
+    background: #f7f7f7;
+    border: 1px solid #e9e9e9;
+    .fileItem {
       margin: 0 28px;
-      height:49px;
+      height: 49px;
       position: relative;
-      .fileItemText{
+      .fileItemText {
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-        i{
+        i {
           font-size: 18px;
           margin: 0 15px 0 0;
           color: #f5a623;
@@ -23,8 +28,8 @@
       }
     }
   }
-  .commonUploadBtn{
-    border:1px solid #348cf0 !important;
+  .commonUploadBtn {
+    border: 1px solid #348cf0 !important;
     background: transparent;
     border-radius: 2px;
     width: 278px;
@@ -40,62 +45,61 @@
       color: #2d7bd4;
     }
   }
-  .noFile{
+  .noFile {
     line-height: 49px;
     text-indent: 28px;
   }
-  :global{
-    .ant-progress{
+  :global {
+    .ant-progress {
       position: absolute;
       bottom: 10px;
       height: 4px;
-      .ant-progress-outer{
+      .ant-progress-outer {
         height: 4px;
       }
-      .ant-progress-text{
+      .ant-progress-text {
         visibility: hidden;
       }
     }
     .ant-popover-arrow,
-    .ant-popover-arrow:after{
+    .ant-popover-arrow:after {
       border-right-color: transparent !important;
       border-left-color: transparent !important;
     }
-    .ant-popover-inner{
-      border:1px solid #d9d9d9;
-      border-radius:2px;
-      width:302px;
-      height:102px;
+    .ant-popover-inner {
+      border: 1px solid #d9d9d9;
+      width: 302px;
+      height: 102px;
       border-radius: 3px;
-      .ant-popover-inner-content{
-        h3{
+      .ant-popover-inner-content {
+        h3 {
           line-height: 28px;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
-          span{
+          span {
             float: right;
-            i{
+            i {
               cursor: pointer;
               color: #357bf0;
             }
           }
-          .fileListItemSize{
+          .fileListItemSize {
             color: #f5a623;
           }
           &:first-child {
             color: #357bf0;
-            i{
+            i {
               color: #333;
               margin-right: 4px;
             }
           }
-          &:last-child{
-            span{
-              em:first-child{
+          &:last-child {
+            span {
+              em:first-child {
                 margin-right: 10px;
               }
-              em:nth-child(2){
+              em:nth-child(2) {
                 padding-left: 10px;
                 border-left: 1px solid #d9d9d9;
               }
