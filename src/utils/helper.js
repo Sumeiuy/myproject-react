@@ -513,6 +513,17 @@ const helper = {
       return /\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/.test(value);
     },
   },
+
+  // 获取ogrId
+  getOrgId() {
+    let orgId = '';
+    if (_.isEmpty(window.forReactPosition)) {
+      orgId = null;
+    } else {
+      orgId = window.forReactPosition.orgId;
+    }
+    return orgId;
+  },
 };
 
 export default helper;

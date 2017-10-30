@@ -52,21 +52,26 @@ export default class TaskFormInfo extends PureComponent {
     });
   }
 
-  // @autobind
+
   handleSearchChange = (value, trigger) => {
     const { users } = this.props;
     const dataSource = trigger === '$' ? users : [];
+    console.log('dataSource-->', dataSource);
     this.setState({
       suggestions: dataSource.filter(item => item.indexOf(value) !== -1),
     });
   }
 
   checkMention = (rule, value, callback) => {
+    console.log(!_.isEmpty(value));
+    console.log('value----', toString(value));
+    // if (_.isEmpty(toString(value))) {
     if (toString(value).length < 10) {
       callback(new Error('任务描述不能小于10个字符!'));
     } else {
       callback();
     }
+    // }
   }
 
   handleCreatOptions(data) {
@@ -94,6 +99,8 @@ export default class TaskFormInfo extends PureComponent {
       form,
     } = this.props;
     const { getFieldDecorator } = form;
+    console.log('users-->', this.props.users);
+    console.log('suggestions-->', suggestions);
     return (
       <Form >
         <ul className={styles.task_selectList}>
@@ -202,18 +209,18 @@ export default class TaskFormInfo extends PureComponent {
           </p>
           <FormItem>
             {getFieldDecorator('templetDesc', {
-              rules: [{ validator: this.checkMention }],
+              rules: [
+                { validator: this.checkMention },
+              ],
               initialValue: toContentState(defaultMissionDesc),
             })(
               <Mention
                 style={{ width: '100%', height: 100 }}
-                multiLines
-                onChange={this.handleChange}
-                placeholder="请在描述客户经理联系客户钱需要了解的客户相关信息，比如持仓情况。（字数限制：10-1000字）"
                 prefix={['$']}
                 onSearchChange={this.handleSearchChange}
                 suggestions={suggestions}
-                onSelect={this.onSelect}
+                placeholder="请在描述客户经理联系客户钱需要了解的客户相关信息，比如持仓情况。（字数限制：10-1000字）"
+                multiLines
               />,
             )}
             <div className={styles.info}>

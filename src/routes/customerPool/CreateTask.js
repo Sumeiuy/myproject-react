@@ -9,14 +9,13 @@ import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import { getOrgId } from '../../config';
 import CreateTaskSuccess from '../../components/customerPool/createTask/CreateTaskSuccess';
 import CreateTaskFormFlow from '../../components/customerPool/createTask/CreateTaskFormFlow';
 import styles from './createTask.less';
-import { fspGlobal } from '../../utils';
+import { fspGlobal, helper } from '../../utils';
 
 
-const orgId = getOrgId || null;
+const orgId = helper.getOrgId();
 
 const effects = {
   createTask: 'customerPool/createTask',

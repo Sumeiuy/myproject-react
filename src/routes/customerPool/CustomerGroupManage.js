@@ -21,7 +21,7 @@ import SimpleSearch from '../../components/customerPool/groupManage/CustomerGrou
 import { fspContainer } from '../../config';
 import { checkSpecialCharacter } from '../../decorators/checkSpecialCharacter';
 import { fspGlobal } from '../../utils';
-import confirm from '../../components/common/confirm';
+import confirm from '../../components/common/Confirm';
 import styles from './customerGroupManage.less';
 import tableStyles from '../../components/customerPool/groupManage/groupTable.less';
 

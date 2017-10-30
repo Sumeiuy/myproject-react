@@ -28,12 +28,13 @@ export default class PickTargetCustomer extends PureComponent {
     currentTab: PropTypes.string.isRequired,
     saveCurrentTab: PropTypes.func.isRequired,
     storedTaskFlowData: PropTypes.object.isRequired,
-    orgId: PropTypes.string.isRequired,
+    orgId: PropTypes.string,
     isLoadingEnd: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
+    orgId: null,
   };
 
   constructor(props) {

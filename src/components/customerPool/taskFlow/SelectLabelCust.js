@@ -16,13 +16,14 @@ export default class SelectLabelCust extends PureComponent {
     peopleOfLabelData: PropTypes.object.isRequired,
     // 保存的数据
     storedData: PropTypes.object,
-    orgId: PropTypes.string.isRequired,
+    orgId: PropTypes.string,
     isLoadingEnd: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
     storedData: {},
+    orgId: null,
   };
 
   constructor(props) {

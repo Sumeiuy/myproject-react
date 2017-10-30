@@ -12,7 +12,7 @@ import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
 // import Button from '../../common/Button';
-import confirm from '../../common/confirm';
+import confirm from '../../common/Confirm';
 import GroupTable from './GroupTable';
 import Search from '../../common/Search';
 

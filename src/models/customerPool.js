@@ -122,6 +122,7 @@ export default {
         const custGroupUrl = pathToRegexp('/customerPool/customerGroup').exec(pathname);
         if (serviceLogUrl) {
           const { pageSize, serveDateToPaged } = params;
+          params.custId = '02006619';
           if (_.isEmpty(pageSize)) params.pageSize = null;
           if (_.isEmpty(serveDateToPaged)) params.serveDateToPaged = null;
           dispatch({

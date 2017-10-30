@@ -7,7 +7,7 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { Select, DatePicker, Row, Col, Button } from 'antd';
 import { connect } from 'react-redux';
-import { routerRedux } from 'dva/router';
+import { routerRedux, withRouter } from 'dva/router';
 import classnames from 'classnames';
 import _ from 'lodash';
 import moment from 'moment';
@@ -16,10 +16,8 @@ import Collapse from '../../components/customerPool/list/CreateCollapse';
 import styles from './serviceLog.less';
 
 
-// const create = Form.create;
 const Option = Select.Option;
 const RangePicker = DatePicker.RangePicker;
-// const WEEK = ['日', '一', '二', '三', '四', '五', '六'];
 const dateFormat = 'YYYY-MM-DD HH:mm:ss';
 const newDay = moment(new Date()).subtract(1, 'minutes');
 const today = moment(newDay).format('YYYY-MM-DD HH:mm:ss');
@@ -42,6 +40,7 @@ const mapStateToProps = state => ({
   dict: state.app.dict,
   serviceLogData: state.customerPool.serviceLogData, // 最近服务记录
   serviceLogMoreData: state.customerPool.serviceLogMoreData,
+  serviceLogDataLoading: state.loading.effects[effects.serviceLogData],
 });
 const mapDispatchToProps = {
   replace: routerRedux.replace,
@@ -49,8 +48,9 @@ const mapDispatchToProps = {
   getServiceLogMore: fetchDataFunction(true, effects.getServiceLogMore),
   handleCollapseClick: fetchDataFunction(false, effects.handleCollapseClick),
 };
+
 @connect(mapStateToProps, mapDispatchToProps)
-// @create()
+@withRouter
 export default class CreateTaskForm extends PureComponent {
   static propTypes = {
     replace: PropTypes.func.isRequired,
@@ -61,9 +61,11 @@ export default class CreateTaskForm extends PureComponent {
     serviceLogMoreData: PropTypes.array.isRequired,
     handleCollapseClick: PropTypes.func.isRequired,
     dict: PropTypes.object,
+    serviceLogDataLoading: PropTypes.bool,
   };
   static defaultProps = {
     dict: {},
+    serviceLogDataLoading: false,
   };
   constructor(props) {
     super(props);
@@ -84,6 +86,8 @@ export default class CreateTaskForm extends PureComponent {
     const { serviceLogMoreData, serviceLogData } = nextProps;
     const { serviceLogMoreData: prevServiceLogMoreData,
       serviceLogData: prevServiceLogData } = this.props;
+    console.log('serviceLogData---', serviceLogData);
+    console.log('prevServiceLogData---', prevServiceLogData);
     if (!_.isEqual(serviceLogData, prevServiceLogData)) {
       this.setState({
         logData: serviceLogData,
@@ -94,6 +98,12 @@ export default class CreateTaskForm extends PureComponent {
     });
     if (!_.isEqual(serviceLogMoreData, prevServiceLogMoreData)) {
       const newServiceLogData = _.concat(serviceLogData, serviceLogMoreData);
+      const lastData = newServiceLogData[newServiceLogData.length - 1].serveTime;
+      if (moment(lastData).isBefore(sixDate)) {
+        this.setState({
+          showBtn: true,
+        });
+      }
       this.setState({
         logData: newServiceLogData,
       });
@@ -124,14 +134,6 @@ export default class CreateTaskForm extends PureComponent {
     const nowDay = sixDate;
     return startValue.valueOf() <= nowDay.valueOf();
   }
-  // >custId: 客户经纪客户号（必填）
-  // >serveSource: 服务渠道来源
-  // >serveType: 服务类型
-  // >serveDateFrom:开始服务日期（格式：xxxx-xx-xx，如果不填默认为6个月前，不能小于6个月前）
-  // >serveDateTo:结束服务日期（格式：xxxx-xx-xx，如果不填默认为今天，不能大于今天）
-  // >serveDateToPaged: 上一页返回的最大日期（本次查询将从此日期-1天开始查询，如果不传，默认从serveDateTo开始）
-  // >pageSize: 每页返回的日期总数（默认7天）
-  // @autobind
   // handleScroll(e) {
   //   alert('111');
   //   console.log(this.serviceScroll);
@@ -147,7 +149,9 @@ export default class CreateTaskForm extends PureComponent {
       serviceLogData,
       getServiceLogMore,
     } = this.props;
-    const lastTime = serviceLogData[serviceLogData.length - 1].serveTime;
+    const { logData } = this.state;
+    console.log(logData);
+    const lastTime = serviceLogData[logData.length - 1].serveTime;
     const params = query;
     params.serveDateToPaged = moment(lastTime).format('YYYY-MM-DD HH:mm:ss');
     getServiceLogMore(params);
