@@ -144,11 +144,18 @@ export default class TableTransfer extends Component {
       secondColumns,
       rowKey,
       defaultCheckKey,
+      aboutRate,
     } = props || this.props;
     const initFirstArray = this.initTableData(firstData, rowKey, defaultCheckKey);
     const initSecondArray = this.initTableData(secondData, rowKey, defaultCheckKey);
     const initFirstColumns = this.initTableColumn(firstColumns, defaultCheckKey);
     const initSecondColumns = this.initTableColumn(secondColumns, defaultCheckKey);
+    const totalRate = this.getTotalRate();
+    const rateFlag = !_.isEmpty(aboutRate);
+    let differenceRate = 0;
+    if (rateFlag) {
+      differenceRate = totalRate - _.toNumber(_.head(aboutRate)).toFixed(2);
+    }
     this.state = {
       totalData: [...firstData, ...secondData], // 搜索筛选的数据源，对使用者透明
       checked: this.getAllDefaultCheck(initSecondArray, rowKey, defaultCheckKey),
@@ -162,7 +169,12 @@ export default class TableTransfer extends Component {
         ...initSecondColumns,
         actionColumns('second', this.handleClick),
       ],
-      tip: { type: '', content: '' },
+      rate: {
+        rateFlag, // 是否计算佣金率
+        differenceRate,  // 差值：右表totalRate-目标佣金率
+        totalRate,   // 右表totalRate
+        tip: { type: '', content: '' }, // 佣金率提示
+      },
     };
     /*
      tip 有且只出现一条
@@ -194,6 +206,22 @@ export default class TableTransfer extends Component {
       },
     );
     return defaultCheck;
+  }
+
+  // 获取右表所有的佣金率
+  getTotalRate() {
+    const { aboutRate, secondData } = this.props;
+    if (_.isEmpty(aboutRate)) {
+      return 0;
+    }
+    const rateKey = _.last(aboutRate);
+    let totalRate = 0;
+    secondData.forEach(
+      (item) => {
+        totalRate += _.toNumber(item[rateKey]);
+      },
+    );
+    return totalRate;
   }
 
   // 重置数据源
@@ -334,8 +362,17 @@ export default class TableTransfer extends Component {
 
   // 更新数据源，触发render
   @autobind
-  updateAllData(flag, newSelect, newChecked, modifyRemoveArray, modifyAddArray, currentTableType) {
+  updateAllData(
+    modifyrate,
+    flag,
+    newSelect,
+    newChecked,
+    modifyRemoveArray,
+    modifyAddArray,
+    currentTableType,
+  ) {
     const { transferChange } = this.props;
+    const { rate, rate: { rateFlag } } = this.state;
     const isOperateFirstTable = currentTableType === 'first';
     const updateFirstArray = isOperateFirstTable ? modifyRemoveArray : modifyAddArray;
     const updateSecondArray = isOperateFirstTable ? modifyAddArray : modifyRemoveArray;
@@ -344,7 +381,13 @@ export default class TableTransfer extends Component {
       checked: newChecked,
       firstArray: updateFirstArray,
       secondArray: updateSecondArray,
-    }, transferChange(flag, newSelect, changeSecondArray));
+      rate: { ...rate, ...modifyrate },
+    }, transferChange(
+      flag,
+      newSelect,
+      changeSecondArray,
+      (rateFlag ? modifyrate.differenceRate : undefined),
+    ));
   }
 
   // 子项勾选和取消勾选，为显示不同的提示，需要更新所在的数据源
@@ -410,36 +453,64 @@ export default class TableTransfer extends Component {
     }, checkChange(newParentItem, changeSecondData));
   }
 
-  // 更新提示
+  // 佣金率相关
   @autobind
-  updateTips(selected) {
+  updateAboutRates(selected, state) {
     const { aboutRate } = this.props;
-    if (!_.isEmpty(aboutRate)) {
-      const targetRate = aboutRate[0] || '0';
-      const rateKey = aboutRate[1] || '';
-      const selectRate = selected[rateKey] || '0';
-      const result = _.toNumber(selectRate) - _.toNumber(targetRate);
-      if (result === 0) {
-        this.setState({ tip: { type: 'finish', content: '产品组合等于目标佣金率' } });
-      } else if (result > 0) {
-        this.setState({
-          tip: { type: 'warning', content: `产品组合比目标佣金率高${(Math.abs(result)).toFixed(2)}‰` } },
-        );
-      } else {
-        this.setState({
-          tip: { type: 'warning', content: `产品组合离目标佣金率还差${(Math.abs(result)).toFixed(2)}‰` } },
-        );
-      }
+    const { rate: { rateFlag, totalRate } } = this.state;
+    if (!rateFlag) {
+      return {
+        rateFlag: false, // 是否计算佣金率
+        differenceRate: 0,  // 差值：右表totalRate-目标佣金率
+        totalRate: 0,   // 右表totalRate
+        tip: { type: '', content: '' }, // 佣金率提示
+      };
     }
+
+    const rateKey = _.last(aboutRate);
+    const targetRate = _.head(aboutRate);
+    let modifyTotalRate = 0;
+    let modifyDifferenceRate = 0;
+    let modifyTip = {};
+    if (state === 'add') {
+      modifyTotalRate = totalRate + _.toNumber(selected[rateKey]);
+    } else {
+      modifyTotalRate = totalRate - _.toNumber(selected[rateKey]);
+    }
+    modifyDifferenceRate = 1000 * (modifyTotalRate - _.toNumber(targetRate));
+    if (modifyDifferenceRate === 0) {
+      modifyTip = { type: 'finish', content: '产品组合等于目标佣金率' };
+    } else if (modifyDifferenceRate > 0) {
+      modifyTip = {
+        type: 'warning',
+        content: `产品组合比目标佣金率高${(Math.abs(modifyDifferenceRate)).toFixed(2)}‰`,
+      };
+    } else {
+      modifyTip = {
+        type: 'warning',
+        content: `产品组合离目标佣金率还差${(Math.abs(modifyDifferenceRate)).toFixed(2)}‰`,
+      };
+    }
+    return {
+      totalRate: modifyTotalRate,
+      differenceRate: modifyDifferenceRate,
+      tip: modifyTip,
+    };
   }
 
   @autobind
   handleClick(currentTableType, selected) {
     const { rowKey, defaultCheckKey } = this.props;
-    const { secondArray, firstArray, checked, totalData } = this.state;
+    const {
+      secondArray,
+      firstArray,
+      checked,
+      totalData,
+    } = this.state;
     const isOperateFirstTable = currentTableType === 'first';
     const needAddArray = isOperateFirstTable ? secondArray : firstArray;
     const needRemoveArray = isOperateFirstTable ? firstArray : secondArray;
+    let modifyRate = {};
 
     // 更新操作表格的数据源。remove要移动的元素
     const modifyRemoveArray = _.filter(
@@ -453,31 +524,38 @@ export default class TableTransfer extends Component {
     let newSelect = selected;
     let currentChecked = { [selected[rowKey]]: [] };
     if (isOperateFirstTable) {
-      modifySelected = this.initTableData(this.showChildren([selected]), rowKey, defaultCheckKey);
-      if (!_.isEmpty(_.head(modifySelected).children)) {
-        currentChecked = this.getAllDefaultCheck(modifySelected, rowKey, defaultCheckKey);
+      modifySelected = _.head(
+        this.initTableData(
+          this.showChildren([selected]),
+          rowKey,
+          defaultCheckKey,
+        ),
+      );
+      if (!_.isEmpty(modifySelected.children)) {
+        currentChecked = _.head(this.getAllDefaultCheck(modifySelected, rowKey, defaultCheckKey));
         newSelect = { ...modifySelected, children: currentChecked[selected[rowKey]] };
       } else {
         newSelect = modifySelected;
       }
-      // 展示提示
-      this.updateTips(modifySelected);
+      // 更新佣金率相关项
+      modifyRate = this.updateAboutRates(modifySelected, 'add');
     } else {
       flag = 'remove';
       const recoverSelect = _.head(_.filter(
         totalData,
         item => item[rowKey] === selected[rowKey],
       ));
-      modifySelected = this.hiddenChildren([recoverSelect]);
-      // 移除提示
-      this.setState({ tip: { type: '', content: '' } });
+      modifySelected = _.head(this.hiddenChildren([recoverSelect]));
+      // 更新佣金率相关项
+      modifyRate = this.updateAboutRates(modifySelected, 'remove');
     }
     // 更新选中的数组
     const newChecked = { ...checked, ...currentChecked };
     // 更新数据源，添加要移动的元素
-    const modifyAddArray = [...modifySelected, ...needAddArray];
+    const modifyAddArray = [modifySelected, ...needAddArray];
     // 更新数据源
     this.updateAllData(
+      modifyRate,
       flag,
       newSelect,
       newChecked,
@@ -529,7 +607,7 @@ export default class TableTransfer extends Component {
 
   @autobind
   renderTips() {
-    const { tip } = this.state;
+    const { rate: { tip } } = this.state;
     if (_.isEmpty(tip.type)) {
       return null;
     }
