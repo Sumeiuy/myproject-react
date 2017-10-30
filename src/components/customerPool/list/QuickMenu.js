@@ -8,6 +8,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
 import Icon from '../../common/Icon';
+import { helper } from '../../../utils';
 
 import styles from './quickMenu.less';
 
@@ -55,10 +56,8 @@ export default class QuickMenu extends PureComponent {
     const email = addressEmail[emailCustId];
     // 在此以isEmail判断是否是isFollows更新渲染完成
     if (!_.isEmpty(email) && (emailCustId === listItem.custId) && isEmail) {
-      // const evt = new MouseEvent('click', { bubbles: false, cancelable: false, view: window });
-      const evt = document.createEvent('MouseEvent');
-      evt.initEvent('click', false, false);
-      this.sendEmail.dispatchEvent(evt);
+      // 模拟 fsp '#workspace-content>.wrapper' 上的鼠标mousedown事件
+      helper.trigger(this.sendEmail, 'click', false, false);
     }
   }
   @autobind
