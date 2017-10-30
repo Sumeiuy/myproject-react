@@ -110,6 +110,15 @@ export default class Search extends PureComponent {
   }
 
   @autobind
+  checkInputValue(value) {
+    if (value.length > 0 && value.replace(/\s+/, '').length === 0) {
+      console.log('全是空格');
+      return false;
+    }
+    return true;
+  }
+
+  @autobind
   handleSearchInput(event) {
     const e = event || window.event; // || arguments.callee.caller.arguments[0];
     const { data: { hotWds = EMPTY_OBJECT } } = this.props;
@@ -120,8 +129,7 @@ export default class Search extends PureComponent {
     }
     if (e && e.keyCode === 13) {
       let searchVal = e.target.value;
-      if (searchVal.length > 0 && searchVal.replace(/\s+/, '').length === 0) {
-        console.log('全是空格');
+      if (!this.checkInputValue(searchVal)) {
         return false;
       }
       if (_.isEmpty(searchVal)) {
@@ -268,9 +276,8 @@ export default class Search extends PureComponent {
   handleSearchBtn() {
     const { inputVal } = this.state;
     const { data: { hotWds = EMPTY_OBJECT } } = this.props;
-    if (inputVal.length > 0 && inputVal.replace(/\s+/, '').length === 0) {
-      console.log('全是空格');
-      return;
+    if (!this.checkInputValue(inputVal)) {
+      return false;
     }
     if (_.isEmpty(inputVal)) {
       // 搜索的时候，如果搜索框没有内容，将hotWds塞入搜索框
@@ -288,6 +295,7 @@ export default class Search extends PureComponent {
         q: encodeURIComponent(inputVal),
       }, '客户列表', 'RCT_FSP_CUSTOMER_LIST');
     }
+    return true;
   }
 
   @autobind
