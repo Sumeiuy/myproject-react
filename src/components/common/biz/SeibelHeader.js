@@ -164,9 +164,7 @@ export default class Pageheader extends PureComponent {
     let hasCreatePermission = true;
     if (page === 'contractPage') {
       hasCreatePermission = hasPermission(empInfo);
-      console.warn('contractPage', hasCreatePermission);
     }
-    console.warn('hasCreatePermission', hasCreatePermission);
     const operateElement = needOperate ?
       (
         <div className={styles.filterFl}>
