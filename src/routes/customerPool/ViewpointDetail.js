@@ -43,7 +43,7 @@ export default class ViewpointDetail extends PureComponent {
 
   @autobind
   handleBackClick() {
-    const { goBack, push, location: { state = '' } } = this.props;
+    const { goBack, push, location: { query: { state } } } = this.props;
     if (_.isEmpty(state)) {
       push({ pathname: '/customerPool/viewpointList' });
     } else {
@@ -72,7 +72,7 @@ export default class ViewpointDetail extends PureComponent {
   render() {
     const { location: { query = {} }, information: { infoVOList = [] } } = this.props;
     const { detailIndex = '0' } = query;
-    const index = _.isNaN(_.toNumber(detailIndex)) ? 0 : _.toNumber(detailIndex);
+    const index = _.toNumber(detailIndex);
     const {
       texttitle = '暂无标题',
       abstract = '暂无内容',
