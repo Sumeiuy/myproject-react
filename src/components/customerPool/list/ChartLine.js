@@ -6,7 +6,6 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import IECharts from '../../IECharts';
 
@@ -16,7 +15,7 @@ const formatNumber = value => helper.toUnit(value, '元', 5).value;
 
 const formatUnit = value => helper.toUnit(value, '元', 5).unit;
 
-const formatRate = value => helper.toUnit(value, '%', 3, 3).value;
+const formatRate = value => helper.toUnit(value, '%', 3).value;
 
 // y轴通用配置项
 const yAxisOptions = {
@@ -91,54 +90,6 @@ export default class ChartLineWidget extends PureComponent {
     this.state = {
       isLoading: false,
     };
-  }
-
-  @autobind
-  rateFilter(val) {
-    let value = val;
-    if (value && value !== undefined) {
-      if (value > 0) {
-        value = `+${parseFloat(value).toFixed(2)}%`;
-      } else {
-        value = `${parseFloat(value).toFixed(2)}%`;
-      }
-      return value;
-    } else if (value === 0) {
-      return '0.00%';
-    }
-    return '--';
-  }
-
-  @autobind
-  profitFilter(val) {
-    let value = val;
-    if (value && value !== undefined) {
-      value = parseFloat(value).toFixed(2);
-      let result = '';
-      let counter = 0;
-      value = (value || 0).toString();
-      const numList = value.split('.');
-      const intPart = numList[0].toString();
-      for (let i = intPart.length - 1; i >= 0; i--) {
-        counter++;
-        result = intPart.charAt(i) + result;
-        if (!(counter % 3) && i !== 0) { result = `,${result}`; }
-      }
-      result = result.replace('-,', '-');
-      if (numList[1]) {
-        if (value >= 0) {
-          value = `+${result}.${numList[1]}`;
-        } else {
-          value = `${result}.${numList[1]}`;
-        }
-      } else {
-        value = `${result}.00`;
-      }
-      return value;
-    } else if (value === 0) {
-      return '0.00';
-    }
-    return '--';
   }
 
   render() {
@@ -249,7 +200,10 @@ export default class ChartLineWidget extends PureComponent {
               if (index === 1 || index === 3) {
                 return '';
               }
-              if (value >= 0) {
+              if (value === 0) {
+                return 0;
+              }
+              if (value > 0) {
                 return `+${formatRate(value)}%`;
               }
               return `${formatRate(value)}%`;
@@ -270,7 +224,7 @@ export default class ChartLineWidget extends PureComponent {
               if (index === 1 || index === 3) {
                 return '';
               }
-              return `${formatNumber(value)}${formatUnit(value)}`;
+              return value === 0 ? 0 : `${formatNumber(value)}${formatUnit(value)}`;
             },
           },
         },

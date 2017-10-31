@@ -198,7 +198,7 @@ const helper = {
               tempValue = Number.parseFloat(Number(_.trimEnd(tempStr, '.')).toFixed(2));
               tempValue = tempValue === 0.00 ? 0 : tempValue;
             }
-            obj.value = tempValue || value;
+            obj.value = tempValue || newValue;
             obj.unit = unit;
           }
         }

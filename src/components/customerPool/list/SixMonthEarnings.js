@@ -80,20 +80,29 @@ export default class SixMonthEarnings extends PureComponent {
     let lastestPrifitsUnit = '';
     let lastestPrifitsRate = '--';
     if (thisProfits.length) {
-      if (lastestProfit) {
-        const obj = formatAsset(lastestProfit);
-        lastestPrifitsValue = obj.value;
-        lastestPrifitsUnit = obj.unit;
-        lastestPrifitsRate = `${helper.toUnit(lastestProfitRate, '%', 3, 3).value}%`;
+      if (lastestProfit !== null) {
+        if (lastestProfit !== 0) {
+          const obj = formatAsset(lastestProfit);
+          lastestPrifitsValue = obj.value;
+          lastestPrifitsUnit = obj.unit;
+          lastestPrifitsRate = `${helper.toUnit(lastestProfitRate, '%', 3, 3).value}%`;
+        } else {
+          lastestPrifitsValue = '0';
+          lastestPrifitsRate = '0';
+        }
       }
     }
     // 格式化年最大时点资产的值和单位
     let maxTotAsetYValue = '--';
     let maxTotAsetYUnit = '';
-    if (listItem.maxTotAsetY) {
-      const obj = formatAsset(listItem.maxTotAsetY);
-      maxTotAsetYValue = obj.value;
-      maxTotAsetYUnit = obj.unit;
+    if (listItem.maxTotAsetY !== null) {
+      if (listItem.maxTotAsetY !== 0) {
+        const obj = formatAsset(listItem.maxTotAsetY);
+        maxTotAsetYValue = obj.value;
+        maxTotAsetYUnit = obj.unit;
+      } else {
+        maxTotAsetYValue = '0';
+      }
     }
     return (
       <div
