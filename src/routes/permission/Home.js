@@ -148,7 +148,10 @@ export default class Permission extends PureComponent {
   getChildContext() {
     return {
       getCanApplyCustList: (data) => {
-        this.props.getCanApplyCustList({ keyword: data });
+        this.props.getCanApplyCustList({
+          keyword: data,
+          type: pageType,
+        });
       },
       // 获取 查询服务人员列表
       getSearchServerPersonList: (data) => {
