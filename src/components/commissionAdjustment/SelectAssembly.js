@@ -20,10 +20,12 @@ export default class SelectAssembly extends PureComponent {
     onSearchValue: PropTypes.func.isRequired,
     onSelectValue: PropTypes.func.isRequired,
     width: PropTypes.string,
+    ref: PropTypes.func,
   }
 
   static defaultProps = {
     width: '300px',
+    ref: () => {},
   }
 
   constructor(props) {

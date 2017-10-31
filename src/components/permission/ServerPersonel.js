@@ -17,7 +17,6 @@ export default class ServerPersonel extends PureComponent {
     onEmitEvent: PropTypes.func,
     type: PropTypes.string.isRequired,
     searchServerPersonList: PropTypes.array,
-    radioName: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -60,7 +59,10 @@ export default class ServerPersonel extends PureComponent {
         >
           <span className={style.spAlertsCircle}>&nbsp;</span>
           <span className={style.spAlertsCon}>
-            私密客户交易权限分配、私密客户设置 在下面客户服务团队视图中编辑；仅具有柜台系统交易信息查询权限的A类员工才能通过柜台查询该客户交易信息。
+            私密客户交易权限分配、私密客户设置 在下面客户服务团队视图中编辑；
+          </span>
+          <span className={style.spAlertsCon}>
+            仅具有柜台系统交易信息查询权限的A类员工才能通过柜台查询该客户交易信息。
           </span>
         </div>
       );
@@ -98,24 +100,6 @@ export default class ServerPersonel extends PureComponent {
               添加
             </Button>
           }
-          {
-            !_.isEmpty(this.state.removeSelectedValue) ?
-              <Button
-                type="primary"
-                onClick={this.removeServerPerson}
-                className={style.spClearBtn}
-              >
-              移除
-            </Button>
-            :
-              <Button
-                type="primary"
-                disabled
-                className={style.spClearBtn}
-              >
-              移除
-            </Button>
-          }
         </div>
       );
     }
@@ -135,9 +119,11 @@ export default class ServerPersonel extends PureComponent {
   }
 
   @autobind
-  updateRadioValue(item) {
+  updateDeleteValue(item) {
     // 更新table列表的选中值
-    this.setState({ removeSelectedValue: item });
+    this.setState({ removeSelectedValue: item }, () => {
+      this.removeServerPerson();
+    });
   }
 
   @autobind
@@ -186,10 +172,8 @@ export default class ServerPersonel extends PureComponent {
         {this.modifyDom}
         <TableList
           info={this.state.serverInfo}
-          radioName={this.props.radioName}
           statusType={this.props.statusType}
-          selectValue={this.state.removeSelectedValue}
-          onEmitUpdateValue={this.updateRadioValue}
+          onEmitUpdateValue={this.updateDeleteValue}
         />
       </div>
     );

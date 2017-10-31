@@ -53,7 +53,7 @@ export default class AdvisoryDetail extends PureComponent {
     } = base;
     const custList = createCustTableData(base);
     const proList = createProTableData(item);
-    const bugTitle = `CRM编号:${currentId}`;
+    const bugTitle = `编号:${currentId}`;
     const drafter = `${divisionName} - ${createdByName} (${createdByLogin})`;
     const stepName = (currentStep && currentStep.curentStep) || '';
     const handleName = (currentStep && currentStep.curentUser) || '';

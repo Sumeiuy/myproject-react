@@ -329,7 +329,6 @@ export default class modifyPrivateClient extends PureComponent {
             head="服务人员"
             type="empList"
             info={this.props.empList}
-            radioName="modifyRadio"
             statusType="modify"
             onEmitEvent={this.updateValue}
             searchServerPersonList={this.props.searchServerPersonList}

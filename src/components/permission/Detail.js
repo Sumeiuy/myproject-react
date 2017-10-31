@@ -364,7 +364,6 @@ export default class Detail extends PureComponent {
           head="服务人员"
           type="empList"
           info={this.props.empList}
-          radioName="readyRadio"
           statusType={this.state.statusType}
           onEmitEvent={this.updateValue}
           searchServerPersonList={this.props.searchServerPersonList}
