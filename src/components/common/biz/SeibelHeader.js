@@ -77,6 +77,10 @@ export default class Pageheader extends PureComponent {
     window.addEventListener('resize', this.onWindowResize, false);
   }
 
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.onWindowResize, false);
+  }
+
   @autobind
   onWindowResize() {
     const filterBoxHeight = this.filterBox.getBoundingClientRect().height;
