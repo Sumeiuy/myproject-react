@@ -36,6 +36,7 @@ export default class Singlecommissiondetail extends PureComponent {
     } = this.props;
     if (_.isEmpty(base)) return null;
     const {
+      orderId,
       comments,
       divisionName,
       createdByName,
@@ -81,6 +82,9 @@ export default class Singlecommissiondetail extends PureComponent {
                 <ul className={styles.propertyList}>
                   <li className={styles.item}>
                     <InfoItem label="子类型" value="佣金调整" />
+                  </li>
+                  <li className={styles.item}>
+                    <InfoItem label="CRM编号" value={orderId} />
                   </li>
                   <li className={styles.item}>
                     <InfoItem label="备注" value={comments} />
