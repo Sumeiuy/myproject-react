@@ -55,6 +55,8 @@ export default {
     singleOtherCommissionOptions: [],
     // 单佣金调整页面客户查询列表
     singleCustomerList: [],
+    // 咨询订阅、咨询退订调整页面客户查询列表
+    subscribeCustomerList: [],
     // 单佣金调整中的可选产品列表
     singleComProductList: [],
     // 产品三匹配信息
@@ -283,6 +285,18 @@ export default {
       return {
         ...state,
         singleCustomerList: list,
+      };
+    },
+
+    getSubscribelCustListSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      let list = [];
+      if (!_.isEmpty(resultData)) {
+        list = resultData;
+      }
+      return {
+        ...state,
+        subscribeCustomerList: list,
       };
     },
 
@@ -584,6 +598,14 @@ export default {
       const response = yield call(api.querySingleCustomer, payload);
       yield put({
         type: 'getSingleCustListSuccess',
+        payload: response,
+      });
+    },
+    // 查询咨讯退订、咨询退订中的查询客户列表
+    * getSubscribelCustList({ payload }, { call, put }) {
+      const response = yield call(api.querySubscriptionCustomer, payload);
+      yield put({
+        type: 'getSubscribelCustListSuccess',
         payload: response,
       });
     },
