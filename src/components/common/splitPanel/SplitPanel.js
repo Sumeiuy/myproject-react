@@ -7,6 +7,8 @@ import React, { PureComponent, PropTypes } from 'react';
 import SplitPane from 'react-split-pane';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
+import _ from 'lodash';
+import Resize from 'element-resize-detector';
 
 import splitConfig from './config';
 import { getEnv } from '../../../utils/helper';
@@ -57,10 +59,11 @@ export default class SplitPanel extends PureComponent {
     this.splitPanel = document.querySelector(splitPanel);
     this.leftPanel = document.querySelector(leftPanel);
     this.rightPanel = document.querySelector(rightPanel);
-    this.topPanel = document.querySelector(`.${styles.splitPanel}>.${styles.header}`);
+    // this.topPanel = document.querySelector(`.${styles.splitPanel}>.${styles.header}`);
     // 监听侧边栏显示/隐藏按钮
     this.registerSidebarToggle();
     window.addEventListener('resize', this.onResizeChange, false);
+    this.registerTopPanelListen();
   }
 
   componentDidUpdate() {
@@ -163,6 +166,38 @@ export default class SplitPanel extends PureComponent {
       }
     }
   }
+
+  // 注册对TopPanel的监听
+  @autobind
+  registerTopPanelListen() {
+    const fnResize = _.debounce(this.setDocumentScroll, 250, {
+      leading: true,
+      trailing: true,
+    });
+    const resize = Resize({
+      strategy: 'scroll',
+    });
+    resize.listenTo(this.topPanel, () => fnResize());
+    this.topResize = resize;
+    this.topResizeFn = fnResize;
+  }
+
+  @autobind
+  removeTopPanelListen() {
+    if (this.topResize && this.topResize.uninstall) {
+      this.topResize.uninstall(this.topPanel);
+    }
+    if (this.topResizeFn && this.topResizeFn.cancel) {
+      this.topResizeFn.cancel();
+    }
+  }
+
+  // 将头部的面板提取出来监听其区域变化
+  @autobind
+  splitTPRef(input) {
+    this.topPanel = input;
+  }
+
 
   // 重置系统容器样式
   @autobind
@@ -293,7 +328,7 @@ export default class SplitPanel extends PureComponent {
     });
     return (
       <div className={styles.splitPanel}>
-        <div className={styles.header}>
+        <div className={styles.header} ref={this.splitTPRef}>
           {topPanel}
         </div>
         <div className={noDataClass} ref={this.noDataRef}>
