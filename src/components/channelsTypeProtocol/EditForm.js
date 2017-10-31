@@ -170,6 +170,7 @@ export default class EditForm extends PureComponent {
           custList={custList}
           onSearchProtocolTemplate={onSearchProtocolTemplate}
           protocolTemplateList={protocolTemplateList}
+          templateDetail={templateDetail}
           ref={ref=>this.editBaseInfoComponent = ref}
         />
         {

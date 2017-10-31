@@ -6,6 +6,7 @@ import permission from './permission';
 import commission from './commission';
 import customerPool from './customerPool';
 import contract from './contract';
+import channelsTypeProtocol from './channelsTypeProtocol';
 import fullChannelServiceRecord from './fullChannelServiceRecord';
 import seibelCommon from './seibelCommon';
 
@@ -28,6 +29,8 @@ export default {
   permission: permission(api),
   // 合作合约相关接口
   contract: contract(api),
+  // 通道类型协议相关接口
+  channelsTypeProtocol: channelsTypeProtocol(api),
   // ==========佣金调整的数据接口end
   commission: commission(api),
   // 全渠道服务记录数据接口api
