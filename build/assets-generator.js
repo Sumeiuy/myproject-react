@@ -55,7 +55,7 @@ module.exports = function (assets) {
       if (suffix === 'css') {
         return 'document.writeln("<link href=' + asset + '  rel=stylesheet>");'
       } else if (suffix === 'js') {
-        return 'document.writeln("<script type=text/javascript src=' + asset + '></script>");'
+        return 'document.writeln("<script type=text/javascript src=' + asset + ' defer></script>");'
       }
       return '';
     }

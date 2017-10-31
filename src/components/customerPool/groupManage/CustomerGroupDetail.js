@@ -244,7 +244,6 @@ export default class CustomerGroupDetail extends PureComponent {
     const { getHotPossibleWds } = this.props;
     getHotPossibleWds({
       keyword: value,
-      type: '',
     });
     console.log('search click', value, JSON.stringify(selectedItem));
   }
