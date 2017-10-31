@@ -19,14 +19,14 @@ import InfoItem from '../common/infoItem';
 import InfoForm from '../common/infoForm';
 import DropDownSelect from '../common/dropdownSelect';
 import CustomSwitch from '../common/customSwitch';
-import { seibelConfig } from '../../config';
+// import { seibelConfig } from '../../config';
 
 import styles from './editBaseInfo.less';
 
 const { TextArea } = Input;
 
 // 子类型列表
-const subTypeList = _.filter(seibelConfig.channelsTypeProtocol.subType, v => v.label !== '全部');
+// const subTypeList = _.filter(seibelConfig.channelsTypeProtocol.subType, v => v.label !== '全部');
 // 下拉搜索组件样式
 const dropDownSelectBoxStyle = {
   width: 220,
@@ -43,6 +43,10 @@ export default class EditBaseInfo extends PureComponent {
     // 查询协议模板
     onSearchProtocolTemplate: PropTypes.func.isRequired,
     protocolTemplateList: PropTypes.array.isRequired,
+    // 查询子类型/操作类型
+    queryTypeVaules: PropTypes.func.isRequired,
+    operationList: PropTypes.array.isRequired,
+    subTypeList: PropTypes.array.isRequired,
     // 查询协议编号
     // onSearchProtocolNum: PropTypes.func.isRequired,
     // protocolNumList: PropTypes.array,
@@ -60,7 +64,7 @@ export default class EditBaseInfo extends PureComponent {
     const { formData } = props;
     const stateObj = {
       // 操作类型列表
-      operationList: EMPTY_ARRAY,
+      // operationList: EMPTY_ARRAY,
       // 所选操作类型
       operationType: '',
       // 所选子类型
@@ -105,18 +109,17 @@ export default class EditBaseInfo extends PureComponent {
       [key]: value,
     }, () => {
       if (key === 'subType') {
-        const operationList = _.filter(subTypeList, v => v.value === value)[0].operationList;
-        this.setState({
-          ...this.state,
-          operationType: '',
-          operationList,
+        const { queryTypeVaules } = this.props;
+        queryTypeVaules({
+          typeCode: key,
+          subType: value,
         });
       }
       // 操作类型是“协议退订”、“协议续订”、“新增或删除下挂客户”时查询协议编号
-      const { operationType } = this.state;
-      if (operationType > 1) {
-        this.handleSearchProtocolNum();
-      }
+      // const { operationType } = this.state;
+      // if (operationType > 1) {
+      //   this.handleSearchProtocolNum();
+      // }
     });
   }
 
@@ -128,10 +131,10 @@ export default class EditBaseInfo extends PureComponent {
       client: value,
     }, () => {
       // 操作类型是“协议退订”、“协议续订”、“新增或删除下挂客户”时查询协议编号
-      const { operationType } = this.state;
-      if (operationType > 1) {
-        this.handleSearchProtocolNum();
-      }
+      // const { operationType } = this.state;
+      // if (operationType > 1) {
+      //   this.handleSearchProtocolNum();
+      // }
     });
   }
 
@@ -187,8 +190,8 @@ export default class EditBaseInfo extends PureComponent {
   }
 
   render() {
-    const { custList, protocolTemplateList } = this.props;
-    const { subType, operationType, multiUsedFlag, levelTenFlag, operationList } = this.state;
+    const { custList, protocolTemplateList, operationList, subTypeList } = this.props;
+    const { subType, operationType, multiUsedFlag, levelTenFlag } = this.state;
     return (
       <div className={styles.editWrapper}>
         <InfoTitle head="基本信息" />

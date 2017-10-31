@@ -29,7 +29,6 @@ import styles from './editForm.less';
 // test
 import {
     subscribelData,
-    productColumns,
 } from '../../routes/templeModal/MockTableData';
 
 const EMPTY_OBJECT = {};
@@ -48,6 +47,10 @@ export default class EditForm extends PureComponent {
     // 查询协议模板
     onSearchProtocolTemplate: PropTypes.func.isRequired,
     protocolTemplateList: PropTypes.array.isRequired,
+    // 查询子类型/操作类型
+    queryTypeVaules: PropTypes.func.isRequired,
+    operationList: PropTypes.array.isRequired,
+    subTypeList: PropTypes.array.isRequired,
     // 查询协议编号
     // onSearchProtocolNum: PropTypes.func.isRequired,
     // protocolNumList: PropTypes.array,
@@ -108,7 +111,10 @@ export default class EditForm extends PureComponent {
       onSearchCutList,
       onSearchProtocolTemplate,
       protocolTemplateList,
-      templateDetail
+      templateDetail,
+      queryTypeVaules,
+      operationList,
+      subTypeList,
     } = this.props;
     const {
       isEdit,
@@ -151,13 +157,14 @@ export default class EditForm extends PureComponent {
         size: 'small',
     };
     const transferProps = {
-        subscribeTitle: '待选协议产品',
-        unsubscribeTitle: '已选协议产品',
+        firstTitle: '待选协议产品',
+        secondTitle: '已选协议产品',
         firstData: subscribelData,
         firstColumns: protocolProductTitleList,
         secondColumns: protocolProductTitleList,
         transferChange: this.handleTransferChange,
         rowKey: 'key',
+        isScrollX: true,
         showSearch: true,
         placeholder: '产品代码/产品名称',
         pagination,
@@ -172,6 +179,9 @@ export default class EditForm extends PureComponent {
           protocolTemplateList={protocolTemplateList}
           templateDetail={templateDetail}
           ref={ref=>this.editBaseInfoComponent = ref}
+          queryTypeVaules={queryTypeVaules}
+          operationList={operationList}
+          subTypeList={subTypeList}
         />
         {
           isEdit?
