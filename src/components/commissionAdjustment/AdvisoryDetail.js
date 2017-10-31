@@ -35,7 +35,7 @@ export default class AdvisoryDetail extends PureComponent {
     if (_.isEmpty(base)) return null;
     const {
       // 订单Id
-      // orderId,
+      orderId,
       // 备注
       comments,
       // 营业部名称
@@ -68,6 +68,9 @@ export default class AdvisoryDetail extends PureComponent {
                 <ul className={styles.propertyList}>
                   <li className={styles.item}>
                     <InfoItem label="子类型" value={name} />
+                  </li>
+                  <li className={styles.item}>
+                    <InfoItem label="CRM编号" value={orderId} />
                   </li>
                   <li className={styles.item}>
                     <InfoItem label="备注" value={comments} />

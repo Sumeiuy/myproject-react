@@ -58,7 +58,7 @@ export default class Commissiondetail extends PureComponent {
   render() {
     const {
       custList = [],
-      // batchNum, // 批量佣金调整的批处理号
+      batchNum, // 批量佣金调整的批处理号
       businessType,
       comments,
       divisionName,
@@ -113,6 +113,9 @@ export default class Commissiondetail extends PureComponent {
                 <ul className={styles.propertyList}>
                   <li className={styles.item}>
                     <InfoItem label="子类型" value="批量佣金调整" />
+                  </li>
+                  <li className={styles.item}>
+                    <InfoItem label="CRM编号" value={batchNum} />
                   </li>
                   <li className={styles.item}>
                     <InfoItem label="备注" value={comments} />
