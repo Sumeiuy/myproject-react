@@ -46,6 +46,7 @@ export default class CreateTaskFormFlow extends PureComponent {
     super(props);
     this.state = {
       showBtn: false,
+      isShowErrorInfo: false,
     };
   }
 
@@ -84,9 +85,16 @@ export default class CreateTaskFormFlow extends PureComponent {
     e.preventDefault();
     const { createTask, location: { query } } = this.props;
     const { groupId } = query;
-    // const { custIdList, searchReq } = this.state;
+    let isShowErrorInfo = false;
     this.createTaskForm.validateFields((err, values) => {
-      if (!err) {
+      const { templetDesc } = values;
+      if (toString(templetDesc).length < 10) {
+        isShowErrorInfo = true;
+        this.setState({
+          isShowErrorInfo: true,
+        });
+      }
+      if (!err && !isShowErrorInfo) {
         values.templetDesc = toString(values.templetDesc);// eslint-disable-line
         const value = { ...values, groupId };
         createTask(value);
@@ -113,7 +121,7 @@ export default class CreateTaskFormFlow extends PureComponent {
       orgId,
       onCloseTab,
       goBack } = this.props;
-    const { showBtn } = this.state;
+    const { showBtn, isShowErrorInfo } = this.state;
     return (
       <div className={styles.taskInner}>
         {showBtn ?
@@ -122,6 +130,7 @@ export default class CreateTaskFormFlow extends PureComponent {
               location={location}
               dict={dict}
               ref={ref => this.createTaskForm = ref}
+              isShowErrorInfo={isShowErrorInfo}
             />
             <div
               className={

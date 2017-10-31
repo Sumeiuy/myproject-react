@@ -34,7 +34,7 @@ export default class PickTargetCustomer extends PureComponent {
   };
 
   static defaultProps = {
-    orgId: '',
+    orgId: null,
   };
 
   constructor(props) {

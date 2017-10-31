@@ -5,7 +5,7 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import { Form, Select, Input, Mention } from 'antd';
+import { Form, Select, Input, Mention, InputNumber } from 'antd';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import styles from './createTaskForm.less';
@@ -74,6 +74,7 @@ export default class TaskFormInfo extends PureComponent {
   }
 
   handleSearchChange = (value, trigger) => {
+    console.log('value-->', value, 'trigger--->', trigger);
     const { users } = this.props;
     const dataSource = trigger === '$' ? users : [];
     console.log('dataSource-->', dataSource);
@@ -100,12 +101,12 @@ export default class TaskFormInfo extends PureComponent {
       })(
         <Mention
           style={{ width: '100%', height: 100 }}
-          multiLines
+          onChange={this.onChange}
           placeholder="请在描述客户经理联系客户钱需要了解的客户相关信息，比如持仓情况。（字数限制：10-1000字）"
           prefix={'$'}
-          onChange={this.onChange}
           onSearchChange={this.handleSearchChange}
           suggestions={suggestions}
+          multiLines
         />,
       )
     );
@@ -218,9 +219,9 @@ export default class TaskFormInfo extends PureComponent {
             >
               {getFieldDecorator('timelyIntervalValue',
                 {
-                  rules: [{ required: true, message: '有效期不能为空!' }],
+                  rules: [{ required: true, message: '有效期不能为空!', pattern: /^\+?[1-9][0-9]*$/ }],
                   initialValue: defaultInitialValue,
-                })(<Input placeholder="" type="number" min="0" />)}
+                })(<InputNumber step={1} min="0" style={{ width: '100%' }} />)}
             </FormItem>
           </li>
         </ul>
