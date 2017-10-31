@@ -228,8 +228,9 @@ export default class Home extends PureComponent {
     const {
       getPerformanceIndicators,
       getManageIndicators,
-      empInfo: { empInfo: { tgQyFlag } },
+      empInfo = {},
     } = this.props;
+    const { tgQyFlag = false } = empInfo.empInfo || {};
     const custType = this.getCustType(orgId);
     getManageIndicators({
       custType, // 客户范围类型
@@ -506,10 +507,10 @@ export default class Home extends PureComponent {
       information,
       performanceIndicators,
       hsRateAndBusinessIndicator,
-      empInfo,
+      empInfo = {},
     } = this.props;
     // 是否能看投顾绩效的标记
-    const { empInfo: { tgQyFlag } } = empInfo;
+    const { tgQyFlag = false } = empInfo.empInfo || {};
     return (
       <div className={styles.customerPoolWrap}>
         <Search
