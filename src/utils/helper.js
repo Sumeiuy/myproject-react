@@ -126,6 +126,24 @@ const helper = {
   hasClass(elem, className) {
     return elem.className.indexOf(className) > -1;
   },
+
+  addClass(elem, cls) {
+    const ele = elem;
+    if (!helper.hasClass(ele, cls)) {
+      const oldCls = ele.className;
+      ele.className = _.isEmpty(oldCls) ? cls : `${oldCls} ${cls}`;
+    }
+  },
+
+  removeClass(elem, cls) {
+    const ele = elem;
+    if (helper.hasClass(ele, cls)) {
+      const oldCls = ` ${ele.className} `;
+      const newCls = oldCls.replace(` ${cls} `, ' ');
+      ele.className = newCls.trim();
+    }
+  },
+
   /**
      * toUnit('123456', '元', 5) => {vale: 12.34, unit:'万元'}
      * @param  { string } str  需要转换的字符串数字

@@ -13,7 +13,7 @@ import DropDownSelect from '../dropdownSelect';
 import Button from '../Button';
 import Icon from '../Icon';
 import styles from '../../style/jiraLayout.less';
-import { hasPermission } from '../../../utils/helper';
+import { hasPermission, addClass, removeClass } from '../../../utils/helper';
 
 // 头部筛选filterBox的高度
 const FILTERBOX_HEIGHT = 32;
@@ -85,11 +85,11 @@ export default class Pageheader extends PureComponent {
   onWindowResize() {
     const filterBoxHeight = this.filterBox.getBoundingClientRect().height;
     if (filterBoxHeight <= FILTERBOX_HEIGHT) {
-      this.filterMore.classList.remove('filterMoreIcon');
-      this.filterMore.classList.add('filterNoneIcon');
+      removeClass(this.filterMore, 'filterMoreIcon');
+      addClass(this.filterMore, 'filterNoneIcon');
     } else {
-      this.filterMore.classList.remove('filterNoneIcon');
-      this.filterMore.classList.add('filterMoreIcon');
+      removeClass(this.filterMore, 'filterNoneIcon');
+      addClass(this.filterMore, 'filterMoreIcon');
     }
   }
 
@@ -114,9 +114,9 @@ export default class Pageheader extends PureComponent {
       showMore: !this.state.showMore,
     });
     if (this.state.showMore) {
-      this.pageCommonHeader.classList.add('HeaderOverflow');
+      addClass(this.pageCommonHeader, 'HeaderOverflow');
     } else {
-      this.pageCommonHeader.classList.remove('HeaderOverflow');
+      removeClass(this.pageCommonHeader, 'HeaderOverflow');
     }
     this.onWindowResize();
   }
