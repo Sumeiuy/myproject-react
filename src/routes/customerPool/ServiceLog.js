@@ -5,7 +5,7 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import { Select, DatePicker, Row, Col, Button } from 'antd';
+import { Select, DatePicker, Row, Col, Button, message } from 'antd';
 import { connect } from 'react-redux';
 import { routerRedux, withRouter } from 'dva/router';
 import classnames from 'classnames';
@@ -58,8 +58,8 @@ export default class CreateTaskForm extends PureComponent {
     location: PropTypes.object.isRequired,
     getServiceLog: PropTypes.func.isRequired,
     getServiceLogMore: PropTypes.func.isRequired,
-    serviceLogData: PropTypes.array.isRequired,
-    serviceLogMoreData: PropTypes.array.isRequired,
+    serviceLogData: PropTypes.array,
+    serviceLogMoreData: PropTypes.array,
     handleCollapseClick: PropTypes.func.isRequired,
     dict: PropTypes.object,
     serviceLogDataLoading: PropTypes.bool,
@@ -68,6 +68,8 @@ export default class CreateTaskForm extends PureComponent {
   static defaultProps = {
     dict: {},
     serviceLogDataLoading: false,
+    serviceLogData: [],
+    serviceLogMoreData: [],
   };
 
   constructor(props) {
@@ -83,13 +85,11 @@ export default class CreateTaskForm extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log('nextProps.serviceLogDataLoading---', nextProps.serviceLogDataLoading);
     const { serviceLogMoreData, serviceLogData, serviceLogDataLoading } = nextProps;
     const { serviceLogMoreData: prevServiceLogMoreData,
       serviceLogData: prevServiceLogData,
       serviceLogDataLoading: prevServiceLogDataLoading } = this.props;
-    console.log('serviceLogData---', serviceLogData);
-    console.log('prevServiceLogData---', prevServiceLogData);
+    const { logData } = this.state;
     if (!_.isEqual(serviceLogData, prevServiceLogData)) {
       this.setState({
         logData: serviceLogData,
@@ -99,8 +99,14 @@ export default class CreateTaskForm extends PureComponent {
       showBtn: _.isEmpty(serviceLogData),
     });
     if (!_.isEqual(serviceLogMoreData, prevServiceLogMoreData)) {
-      const newServiceLogData = _.concat(serviceLogData, serviceLogMoreData);
-      const lastData = newServiceLogData[newServiceLogData.length - 1].serveTime;
+      if (_.isEmpty(serviceLogMoreData)) {
+        this.setState({
+          showBtn: true,
+        });
+        message.error('已经是最后一条了');
+      }
+      const newServiceLogData = _.concat(logData, serviceLogMoreData);
+      const lastData = logData[logData.length - 1].serveTime;
       if (moment(lastData).isBefore(sixDate)) {
         this.setState({
           showBtn: true,
@@ -153,32 +159,25 @@ export default class CreateTaskForm extends PureComponent {
   handleMore() {
     console.log(this.props);
     const { location: { query },
-      serviceLogData,
       getServiceLogMore,
     } = this.props;
     const { logData } = this.state;
-    console.log(logData);
-    const lastTime = serviceLogData[logData.length - 1].serveTime;
+    const lastTime = logData[logData.length - 1].serveTime;
     const params = query;
     params.serveDateToPaged = moment(lastTime).format('YYYY-MM-DD HH:mm:ss');
+    params.custId = '02006619';
     getServiceLogMore(params);
   }
 
   @autobind
   serveAllSourceChange(value) {
     console.log(value);
-    let source = '';
     const { location: { query, pathname }, replace } = this.props;
-    if (value === '') {
-      source = '不限';
-    } else {
-      source = value;
-    }
     replace({
       pathname,
       query: {
         ...query,
-        serveSource: source,
+        serveSource: value,
       },
     });
   }
@@ -200,8 +199,8 @@ export default class CreateTaskForm extends PureComponent {
     console.log(value);
     let type = '';
     const { location: { query, pathname }, replace } = this.props;
-    if (value === '') {
-      type = '不限';
+    if (value === '不限') {
+      type = '';
     } else {
       type = value;
     }
@@ -218,7 +217,6 @@ export default class CreateTaskForm extends PureComponent {
     const { dict, handleCollapseClick } = this.props;
     const { serveAllSource, serveAllType, executeTypes, serveWay } = dict;
     const { logData, showBtn, loading } = this.state;
-    console.log('loading--', loading);
     return (
       <div className={styles.serviceInner}>
         <div
