@@ -9,7 +9,7 @@ import React, { PropTypes, PureComponent } from 'react';
 import { Upload, message } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import confirm from '../../common/Confirm';
+import confirm from '../../common/confirm_';
 // import Button from '../../common/Button';
 import Icon from '../../common/Icon';
 import { request } from '../../../config';

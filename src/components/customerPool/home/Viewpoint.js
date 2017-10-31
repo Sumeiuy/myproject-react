@@ -24,7 +24,7 @@ export default class Viewpoint extends PureComponent {
 
   @autobind
   openNewTab(url, query) {
-    const param = { id: 'tab-viewpoint', title: '资讯' };
+    const param = { id: 'RTC_TAB_VIEWPOINT', title: '资讯' };
     if (document.querySelector(fspContainer.container)) {
       fspGlobal.openRctTab({ url: `${url}?${helper.queryToString(query)}`, param });
     } else {
@@ -45,7 +45,7 @@ export default class Viewpoint extends PureComponent {
   @autobind
   handleDetailClick(index) {
     // 跳转到资讯详情界面
-    this.openNewTab('/customerPool/viewpointDetail', { detailIndex: `${index}` });
+    this.openNewTab('/customerPool/viewpointDetail', { detailIndex: _.toString(index) });
   }
 
   @autobind
@@ -88,7 +88,7 @@ export default class Viewpoint extends PureComponent {
                 { [styles.detailsNone]: isHiddenDetail },
               )}
             >
-              <a onClick={this.handleDetailClick}>详情</a>
+              <a onClick={() => { this.handleDetailClick(0); }}>详情</a>
             </div>
           </div>
         </div>

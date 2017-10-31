@@ -18,7 +18,8 @@ import styles from './customerGroup.less';
 import CustomerGrouplist from '../../components/customerPool/group/CustomerGrouplist';
 import AddNewGroup from '../../components/customerPool/group/AddNewGroup';
 import AddCusSuccess from '../../components/customerPool/group/AddCusSuccess';
-import { fspGlobal, helper } from '../../utils';
+import { helper } from '../../utils';
+// import { fspContainer } from '../../config';
 import { checkSpecialCharacter } from '../../decorators/checkSpecialCharacter';
 
 const CUR_PAGE = 1;
@@ -94,7 +95,7 @@ export default class CustomerGroup extends PureComponent {
     handleRadio: PropTypes.func.isRequired,
   }
 
-  constructor(props) {
+  constructor(props) { // RCT_FSP_CUSTOMER_LIST
     super(props);
     /* 初始化classname,首次渲染显示分组tab,隐藏分组成功组件 */
     this.state = {
@@ -104,6 +105,7 @@ export default class CustomerGroup extends PureComponent {
       groupName: '',
       groupId: '',
       currentSelectRowKeys: [],
+      fromState: '',
     };
   }
 
@@ -243,7 +245,9 @@ export default class CustomerGroup extends PureComponent {
 
   @autobind
   closeTab() {
-    fspGlobal.closeRctTabById('RCT_FSP_CUSTOMER_LIST');
+    const { goBack } = this.props;
+    goBack();
+    // fspGlobal.closeRctTabById('RCT_FSP_CUSTOMER_LIST');
   }
 
   /**

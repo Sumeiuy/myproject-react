@@ -514,6 +514,16 @@ const helper = {
     },
   },
 
+  // 获取ogrId
+  getOrgId() {
+    let orgId = '';
+    if (_.isEmpty(window.forReactPosition)) {
+      orgId = null;
+    } else {
+      orgId = window.forReactPosition.orgId;
+    }
+    return orgId;
+  },
   /**
    * 模拟鼠标点击事件
    * @param  ele 触发事件的html节点
@@ -526,7 +536,6 @@ const helper = {
     evt.initEvent(eventType, canBubble, cancelable);
     eleDom.dispatchEvent(evt);
   },
-
 };
 
 export default helper;

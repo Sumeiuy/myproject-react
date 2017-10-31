@@ -76,6 +76,7 @@ export default class TaskFormInfo extends PureComponent {
   handleSearchChange = (value, trigger) => {
     const { users } = this.props;
     const dataSource = trigger === '$' ? users : [];
+    console.log('dataSource-->', dataSource);
     this.setState({
       suggestions: dataSource.filter(item => item.indexOf(value) !== -1),
     });
@@ -134,6 +135,12 @@ export default class TaskFormInfo extends PureComponent {
     } = this.props;
 
     const { getFieldDecorator } = form;
+
+    const errorProps = isShowErrorInfo ? {
+      hasFeedback: true,
+      validateStatus: 'error',
+      help: '任务描述不能小于10个字符',
+    } : null;
 
     return (
       <Form >
@@ -241,29 +248,16 @@ export default class TaskFormInfo extends PureComponent {
           <p>
             <label htmlFor="desc"><i>*</i>任务提示</label>
           </p>
-          {
-            isShowErrorInfo ?
-              <FormItem
-                hasFeedback
-                validateStatus="error"
-                help="任务描述不能小于10个字符"
-              >
-                {
-                  this.renderMention()
-                }
-                {
-                  this.renderTipSection()
-                }
-              </FormItem> :
-              <FormItem>
-                {
-                  this.renderMention()
-                }
-                {
-                  this.renderTipSection()
-                }
-              </FormItem>
-          }
+          <FormItem
+            {...errorProps}
+          >
+            {
+              this.renderMention()
+            }
+            {
+              this.renderTipSection()
+            }
+          </FormItem>
         </div>
       </Form >
     );
