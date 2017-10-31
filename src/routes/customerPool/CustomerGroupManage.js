@@ -123,17 +123,6 @@ export default class CustomerGroupManage extends PureComponent {
     };
   }
 
-  componentWillMount() {
-    const {
-      getCustomerGroupList,
-    } = this.props;
-    // 获取客户分组列表
-    getCustomerGroupList({
-      pageNum: 1,
-      pageSize: 10,
-    });
-  }
-
   componentWillUnmount() {
     this.setState({
       visible: false, // 控制显示更新分组弹出层

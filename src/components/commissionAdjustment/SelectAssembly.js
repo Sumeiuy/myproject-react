@@ -4,7 +4,8 @@
  *  当输入或者选中值后icon变化成关闭点击后清除input的value值
  * @author baojiajia
  */
-import React, { PureComponent, PropTypes } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { Icon, Input, AutoComplete } from 'antd';
 import styles from './selectAssembly.less';

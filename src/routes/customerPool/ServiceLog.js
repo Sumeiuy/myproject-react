@@ -41,7 +41,7 @@ const mapStateToProps = state => ({
   dict: state.app.dict,
   serviceLogData: state.customerPool.serviceLogData, // 最近服务记录
   serviceLogMoreData: state.customerPool.serviceLogMoreData,
-  serviceLogDataLoading: state.loading.effects[effects.getServiceLog],
+  serviceLogDataLoading: state.loading.effects[effects.getServiceLog] || false,
 });
 const mapDispatchToProps = {
   replace: routerRedux.replace,
@@ -64,10 +64,12 @@ export default class CreateTaskForm extends PureComponent {
     dict: PropTypes.object,
     serviceLogDataLoading: PropTypes.bool,
   };
+
   static defaultProps = {
     dict: {},
     serviceLogDataLoading: false,
   };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -76,20 +78,8 @@ export default class CreateTaskForm extends PureComponent {
       endValue: null,
       showBtn: true,
       logData: [],
-      loading: false,
+      loading: props.serviceLogDataLoading,
     };
-  }
-
-  componentWillMount() {
-    if (this.props.serviceLogDataLoading) {
-      this.setState({
-        loading: this.props.serviceLogDataLoading,
-      });
-    }
-  }
-
-  componentDidMount() {
-    console.log('serviceLogDataLoading--did--', this.props.serviceLogDataLoading);
   }
 
   componentWillReceiveProps(nextProps) {

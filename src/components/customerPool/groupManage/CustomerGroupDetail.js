@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 14:15:22
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-31 09:11:38
+ * @Last Modified time: 2017-10-31 13:55:33
  */
 
 import React, { PureComponent } from 'react';
@@ -244,6 +244,7 @@ export default class CustomerGroupDetail extends PureComponent {
     const { getHotPossibleWds } = this.props;
     getHotPossibleWds({
       keyword: value,
+      type: '',
     });
     console.log('search click', value, JSON.stringify(selectedItem));
   }
