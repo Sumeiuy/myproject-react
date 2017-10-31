@@ -235,8 +235,10 @@ export default class SplitPanel extends PureComponent {
 
   // 重新给pan2样式赋值
   panMov(size) {
-    if (BROWSER.$browser === 'Internet Explorer') {
-      this.rightPanel.style.paddingLeft = `${size + 20}px`;
+    console.warn('后面可能需要的size', size);
+    const browser = BROWSER.$browser;
+    if (browser === 'Internet Explorer') {
+      this.rightPanel.style.paddingLeft = 0;
     }
   }
 

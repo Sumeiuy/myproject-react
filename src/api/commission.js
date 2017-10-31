@@ -29,7 +29,7 @@ export default function commission(api) {
     // 查询客户可以订阅的资讯产品
     queryConsultSubscribeProductList: query => api.post('/groovynoauth/fsp/biz/mailsubscription/queryMailSubscriptionProds', query),
     // 查询客户可以退订的资讯服务
-    queryConsultUnSubProductList: query => api.post('/groovynoauth/fsp/biz/mailsubscription/queryMailUnsubscriptionProds', query),
+    queryConsultUnSubProductList: query => api.post('/groovynoauth/fsp/biz/mailunsubscription/queryMailUnsubscriptionProds', query),
     // 新增资讯订阅申请或者资讯退订
     newConsultApply: query => api.post('/groovynoauth/fsp/biz/mailsubscription/saveMailSubscriptionInfo', query),
     // 查询单佣金调整中的产品列表信息
@@ -40,6 +40,8 @@ export default function commission(api) {
     queryOtherCommissionOptions: query => api.post('/groovynoauth/fsp/biz/chgcommsion/queryOtherCommissionRate', query),
     // 单佣金调整页面 客户查询
     querySingleCustomer: query => api.post('/groovynoauth/fsp/biz/chgcommsion/queryCustInfo', query),
+    // 资讯订阅与退订客户列表查询接口
+    querySubscriptionCustomer: query => api.post('/groovynoauth/fsp/biz/mailsubscription/queryMailSubscriptionCusts', query),
     // 单佣金调整详情页面 当前审批步骤接口
     queryCurrentStep: query => api.post('/groovynoauth/fsp/biz/chgcommsion/queryFlowCurrentStepInfo', query),
     // 单佣金调整详情页面 基础数据接口
