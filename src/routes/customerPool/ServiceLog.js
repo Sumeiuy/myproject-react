@@ -12,6 +12,7 @@ import classnames from 'classnames';
 import _ from 'lodash';
 import moment from 'moment';
 import { autobind } from 'core-decorators';
+import Loading from '../../layouts/Loading';
 import Collapse from '../../components/customerPool/list/CreateCollapse';
 import styles from './serviceLog.less';
 
@@ -40,7 +41,7 @@ const mapStateToProps = state => ({
   dict: state.app.dict,
   serviceLogData: state.customerPool.serviceLogData, // 最近服务记录
   serviceLogMoreData: state.customerPool.serviceLogMoreData,
-  serviceLogDataLoading: state.loading.effects[effects.serviceLogData],
+  serviceLogDataLoading: state.loading.effects[effects.getServiceLog],
 });
 const mapDispatchToProps = {
   replace: routerRedux.replace,
@@ -75,17 +76,28 @@ export default class CreateTaskForm extends PureComponent {
       endValue: null,
       showBtn: true,
       logData: [],
+      loading: false,
     };
   }
 
+  componentWillMount() {
+    if (this.props.serviceLogDataLoading) {
+      this.setState({
+        loading: this.props.serviceLogDataLoading,
+      });
+    }
+  }
+
   componentDidMount() {
+    console.log('serviceLogDataLoading--did--', this.props.serviceLogDataLoading);
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log('nextProps---', nextProps);
-    const { serviceLogMoreData, serviceLogData } = nextProps;
+    console.log('nextProps.serviceLogDataLoading---', nextProps.serviceLogDataLoading);
+    const { serviceLogMoreData, serviceLogData, serviceLogDataLoading } = nextProps;
     const { serviceLogMoreData: prevServiceLogMoreData,
-      serviceLogData: prevServiceLogData } = this.props;
+      serviceLogData: prevServiceLogData,
+      serviceLogDataLoading: prevServiceLogDataLoading } = this.props;
     console.log('serviceLogData---', serviceLogData);
     console.log('prevServiceLogData---', prevServiceLogData);
     if (!_.isEqual(serviceLogData, prevServiceLogData)) {
@@ -106,6 +118,11 @@ export default class CreateTaskForm extends PureComponent {
       }
       this.setState({
         logData: newServiceLogData,
+      });
+    }
+    if (!_.isEqual(serviceLogDataLoading, prevServiceLogDataLoading)) {
+      this.setState({
+        loading: serviceLogDataLoading,
       });
     }
   }
@@ -210,7 +227,8 @@ export default class CreateTaskForm extends PureComponent {
   render() {
     const { dict, handleCollapseClick } = this.props;
     const { serveAllSource, serveAllType, executeTypes, serveWay } = dict;
-    const { logData, showBtn } = this.state;
+    const { logData, showBtn, loading } = this.state;
+    console.log('loading--', loading);
     return (
       <div className={styles.serviceInner}>
         <div
@@ -274,6 +292,9 @@ export default class CreateTaskForm extends PureComponent {
               <Button onClick={this.handleMore}>加载更多服务记录</Button>
             </Col>
           </Row>
+        </div>
+        <div>
+          <Loading loading={loading} />
         </div>
       </div>
     );
