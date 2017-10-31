@@ -1,6 +1,6 @@
 /**
  * @description 资讯退订，可退订的服务
- * @author sunweibin
+ * @author baojiajia
  */
 
 exports.response = function (req, res) {

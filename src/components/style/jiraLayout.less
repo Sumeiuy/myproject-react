@@ -1,17 +1,37 @@
 .pageCommonHeader {
   font-size: 14px;
+  height: 37px;
+  overflow: hidden;
   .filterBox {
     width: 90%;
     display: inline-block;
+    position: relative;
     &:after {
       content: "";
       display: table;
       clear: both;
     }
+
     .filterFl {
       float: left;
       height: 32px;
       color: #a1a1a1;
+    }
+    .filterMore {
+      float: right;
+      height: 32px;
+      position: absolute;
+      right: 0;
+      top: 3px;
+    }
+
+    :global {
+      .filterNoneIcon {
+        display: none;
+      }
+      .filterMoreIcon {
+        display: inline-block;
+      }
     }
   }
   .dropDownSelectBox {
@@ -70,6 +90,10 @@
 }
 
 :global {
+  .HeaderOverflow {
+    height: auto;
+    overflow: auto;
+  }
   .react-app {
     .pageCommonList {
       background-color: #f3f3f4;
@@ -136,6 +160,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
         margin-top: 5px;
+        color: #666;
       }
       .leftSection {
         width: 100%;
@@ -144,12 +169,14 @@
         margin-top: 5px;
       }
       .type {
+        color: #7d9be0;
         margin-left: 15px;
       }
       .drafterName {
         margin-right: 15px;
       }
       .serialNumber {
+        color: #7d9be0;
         margin-left: 10px;
       }
       .rightSection {

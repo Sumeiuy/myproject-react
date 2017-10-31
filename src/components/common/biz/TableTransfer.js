@@ -157,7 +157,8 @@ export default class TableTransfer extends Component {
   // 获取所有默认选中
   getAllDefaultCheck(dataArray, rowKey, defaultCheckKey) {
     let defaultCheck = {};
-    dataArray.forEach(
+    _.forEach(
+      dataArray,
       (item) => {
         if (!_.isEmpty(item.children)) {
           const defaultChildCheck = _.filter(
@@ -461,7 +462,7 @@ export default class TableTransfer extends Component {
     } else {
       modifyTotalRate = totalRate - _.toNumber(selected[rateKey]);
     }
-    modifyDifferenceRate = 1000 * (modifyTotalRate - _.toNumber(targetRate));
+    modifyDifferenceRate = modifyTotalRate - _.toNumber(targetRate);
     if (modifyDifferenceRate === 0) {
       modifyTip = { type: 'finish', content: '产品组合等于目标佣金率' };
     } else if (modifyDifferenceRate > 0) {
@@ -515,7 +516,7 @@ export default class TableTransfer extends Component {
         ),
       );
       if (!_.isEmpty(modifySelected.children)) {
-        currentChecked = _.head(this.getAllDefaultCheck(modifySelected, rowKey, defaultCheckKey));
+        currentChecked = this.getAllDefaultCheck([modifySelected], rowKey, defaultCheckKey);
         newSelect = { ...modifySelected, children: currentChecked[selected[rowKey]] };
       } else {
         newSelect = modifySelected;

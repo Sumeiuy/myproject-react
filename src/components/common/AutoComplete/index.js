@@ -7,6 +7,8 @@
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
 import { AutoComplete } from 'antd';
+import _ from 'lodash';
+
 import confirm from '../Confirm/confirm';
 import styles from './index.less';
 
@@ -33,7 +35,17 @@ export default class autoComplete extends PureComponent {
       inputValue: '',
     };
   }
-
+  componentWillReceiveProps(nextProps) {
+    const { dataSource: prev } = this.props;
+    const { dataSource: next } = nextProps;
+    if (!_.isEqual(prev, next)) {
+      if (!_.isEmpty(next)) {
+        this.setState({
+          inputValue: '',
+        });
+      }
+    }
+  }
   // 根据用户选中的option的value值获取对应的数组值
   @autobind
   setSelectValue(value, option) {
@@ -64,7 +76,7 @@ export default class autoComplete extends PureComponent {
   @autobind
   validateInput(value) {
     this.inputTimeout = 0;
-    if (isNaN(value) || value <= 0.15) {
+    if (isNaN(value)) {
       confirm({
         shortCut: 'wrongInput',
         onOk: this.clearInput,
@@ -72,9 +84,6 @@ export default class autoComplete extends PureComponent {
       });
     } else {
       this.props.onChangeValue(value);
-      this.setState({
-        inputValue: '',
-      });
     }
   }
 
@@ -82,10 +91,10 @@ export default class autoComplete extends PureComponent {
   render() {
     const { dataSource, width, defaultInput } = this.props;
     const { inputValue } = this.state;
-    const newDataSource = dataSource.map(item => ({ key: `${item.id}-${item.codevalue}`, ...item }));
+    const newDataSource = dataSource.map(item => ({ key: item.id, ...item }));
     const options = newDataSource.map(opt => (
-      <Option key={opt.id} value={opt.codevalue} text={opt.codevalue}>
-        <span className={styles.prodValue}>{opt.codevalue}</span>
+      <Option key={opt.id} value={opt.codeValue} text={opt.codeValue}>
+        <span className={styles.prodValue}>{opt.codeValue}</span>
       </Option>
     ));
     return (
