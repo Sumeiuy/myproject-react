@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 10:29:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-30 11:58:32
+ * @Last Modified time: 2017-10-30 13:22:57
  */
 
 import React, { PureComponent } from 'react';
@@ -92,7 +92,6 @@ export default class TaskPreview extends PureComponent {
         dataSource: nextData,
         dataSize: _.size(nextData),
       });
-      this.originDataSource = nextData;
     }
   }
 
@@ -126,13 +125,14 @@ export default class TaskPreview extends PureComponent {
 
   @autobind
   filterDataSource(value) {
+    const { approvalList } = this.props;
     if (_.isEmpty(value)) {
       this.setState({
-        dataSource: this.originDataSource,
+        dataSource: approvalList,
       });
       return;
     }
-    const newDataSource = _.filter(this.originDataSource, item =>
+    const newDataSource = _.filter(approvalList, item =>
       item.login === value || item.empName === value);
     this.setState({
       dataSource: newDataSource,
@@ -140,15 +140,8 @@ export default class TaskPreview extends PureComponent {
   }
 
   @autobind
-  handleSearchApprovalEnter() {
-    const value = this.inputRef.refs.input.value;
-    this.filterDataSource(value);
-  }
-
-  @autobind
   handleSearchApproval() {
     const value = this.inputRef.refs.input.value;
-    console.log('search approval');
     this.filterDataSource(value);
   }
 
@@ -180,6 +173,7 @@ export default class TaskPreview extends PureComponent {
         ...custSegment,
       };
     } else if (currentTab === '2') {
+      // 第二个tab
       finalData = {
         ...taskFormData,
         ...labelCust,
@@ -334,7 +328,7 @@ export default class TaskPreview extends PureComponent {
                   <div className={styles.searchWrapper}>
                     <Input
                       placeholder="员工号/员工姓名"
-                      onPressEnter={this.handleSearchApprovalEnter}
+                      onPressEnter={this.handleSearchApproval}
                       style={{
                         height: '30px',
                         width: '250px',
