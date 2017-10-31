@@ -189,7 +189,7 @@ export default class TaskFlow extends PureComponent {
       storedTaskFlowData,
       goBack,
     } = this.props;
-    const { executeTypes, taskTypes } = dict;
+    const { executeTypes, custServerTypeFeedBackDict } = dict;
     const { query: { count } } = location;
     const steps = [{
       title: '基本信息',
@@ -209,7 +209,7 @@ export default class TaskFlow extends PureComponent {
         currentTab={currentTab}
         getApprovalList={getApprovalList}
         executeTypes={executeTypes}
-        taskTypes={taskTypes}
+        taskTypes={custServerTypeFeedBackDict}
         onSingleRowSelectionChange={this.handleSingleRowSelectionChange}
         onRowSelectionChange={this.handleRowSelectionChange}
         currentSelectRecord={currentSelectRecord}

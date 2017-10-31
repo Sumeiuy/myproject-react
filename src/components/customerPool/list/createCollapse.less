@@ -3,10 +3,10 @@
     justify-content: flex-start;
     align-items: center;
     background: #fff;
-    font-size:15px;
-    color:#c2c2c2;
-    letter-spacing:-0.09px;
-    text-align:left;
+    font-size: 15px;
+    color: #c2c2c2;
+    letter-spacing: -0.09px;
+    text-align: left;
     margin-top: 25px;
   }
   .stepCollection {
@@ -85,7 +85,7 @@
         padding-right: 0;
       }
       .ant-steps-description {
-        padding-bottom: 0px;
+        padding-bottom: 0;
         width: 100%;
         float: left;
       }
@@ -126,29 +126,27 @@
     width: 1px;
     height: 105%;
     display: block;
-    background-color: #dddddd;
+    background-color: #ddd;
     margin: 0 auto;
     left: -10px;
-    top: 0px;
+    top: 0;
     }
   .serviceCollapse {
     background: white;
-    border: 0;
+    border: 0 !important;
     position: relative;
     margin-left: 90px;
     margin-top: 14px;
     & > .panelHeader {
       margin-bottom: 10px;
-      border: 1px solid #efefef;
       border-radius: 3px;
       background: #f6fafe;
-      border: 1px solid #dddddd;
+      border: 1px solid #ddd;
       :global {
         & .arrow {
           display: none !important;
         }
         & .ant-collapse-content {
-          background-color: #fff;
           background: #f6fafe;
         }
       }
@@ -160,7 +158,7 @@
         padding-bottom: 10px;
         padding-left: 20px;
         & > div:not(:last-child) {
-          border-right: 1px solid #dddddd;
+          border-right: 1px solid #ddd;
         }
         & > div:nth-child(even) {
           // 偶数行
@@ -185,7 +183,7 @@
             font-size: 12px;
             text-align: left;
             padding-left: 15px;
-            color: #666666;
+            color: #666;
             text-overflow: ellipsis;
             overflow: hidden;
             white-space: nowrap;
@@ -203,26 +201,22 @@
             width: 100%;
             padding-bottom: 5px;
             & > span:first-child {
-              font-size: 12px;
-              color: #a1a1a1;
               text-align: right;
               width: 50px;
               display: inline-block;
               font-size: 12px;
-              color: #888888;
+              color: #888;
             }
             & > span:last-child {
-              font-size: 12px;
               text-align: left;
               padding-left: 15px;
-              color: #666666;
               text-overflow: ellipsis;
               overflow: hidden;
               white-space: nowrap;
               display: inline-block;
               max-width: 70%;
-              font-size:12px;
-              color:#000000;
+              font-size: 12px;
+              color: #000;
             }
           }
         }
@@ -253,12 +247,12 @@
           }
           & > .dayTime {
             font-size: 12px;
-            color: #888888;
+            color: #888;
             margin-top: -5px;
           }
           & > .activeTime {
             // color: #108ee9;
-            color: #888888;
+            color: #888;
             margin-top: -5px;
           }
           & > .onlyDayTime {
@@ -274,10 +268,8 @@
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
-          color: #666666;
           font-size: 12px;
-          font-size:12px;
-          color:#4a4a4a;
+          color: #4a4a4a;
         }
         & .headerRight {
           width: 50%;
@@ -286,10 +278,9 @@
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
-          color: #a1a1a1;
-          font-size:12px;
-          color:#9b9b9b;
-          &  span {
+          font-size: 12px;
+          color: #9b9b9b;
+          & span {
             font-size: 12px;
           }
           & .activityType {
@@ -297,7 +288,7 @@
             margin-left: 10px;
             letter-spacing: 0.6px;
           }
-          &  .distance {
+          & .distance {
             margin-left: 5px;
             margin-right: 5px;
           }
@@ -320,5 +311,5 @@
           }
         }
       }
-      }
-  }
+    }
+}
