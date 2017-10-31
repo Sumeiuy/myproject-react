@@ -39,7 +39,7 @@ export default class CreateTaskFormFlow extends PureComponent {
     dict: {},
     createTaskResult: {},
     createTask: () => {},
-    orgId: '',
+    orgId: null,
   }
 
   constructor(props) {
@@ -52,7 +52,7 @@ export default class CreateTaskFormFlow extends PureComponent {
   componentWillMount() {
     const { location: { query } } = this.props;
     this.setState({
-      showBtn: _.includes(['custGroupList'], query.entertype),
+      showBtn: _.includes(['custGroupList'], query.source),
     });
   }
 

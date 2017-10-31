@@ -44,6 +44,7 @@ export default class TaskFlow extends PureComponent {
       currentSelectRowKeys: [],
       currentTab: '1',
       custSource: '',
+      isShowErrorInfo: false,
     };
     this.isHasAuthorize = permission.hasIndexViewPermission();
     // this.isHasAuthorize = true;
@@ -87,8 +88,16 @@ export default class TaskFlow extends PureComponent {
   handleNextStep() {
     const { current } = this.state;
     const { saveTaskFlowData, location: { query } } = this.props;
+    let isShowErrorInfo = false;
     this.createTaskForm.validateFields((err, values) => {
-      if (!err) {
+      const { templetDesc } = values;
+      if (toString(templetDesc).length < 10) {
+        isShowErrorInfo = true;
+        this.setState({
+          isShowErrorInfo: true,
+        });
+      }
+      if (!err && !isShowErrorInfo) {
         saveTaskFlowData({
           taskFormData: values,
           totalCust: query.count,
@@ -111,7 +120,7 @@ export default class TaskFlow extends PureComponent {
     const { currentSelectRecord: { login: flowAuditorId = null } } = this.state;
     const {
         custIdList,
-        custCondition,
+      custCondition,
       } = parseQuery();
     const {
       curPageNum,
@@ -127,7 +136,6 @@ export default class TaskFlow extends PureComponent {
       taskType: params.taskType,
       templetDesc: toString(params.templetDesc),
       timelyIntervalue: params.timelyIntervalValue,
-      missionDesc: '1111',
     };
     createTask({
       ...data,
@@ -170,6 +178,7 @@ export default class TaskFlow extends PureComponent {
       currentSelectRowKeys,
       currentTab,
       custSource,
+      isShowErrorInfo,
     } = this.state;
 
     const {
@@ -189,6 +198,7 @@ export default class TaskFlow extends PureComponent {
         dict={dict}
         ref={ref => this.createTaskForm = ref}
         previousData={previousData}
+        isShowErrorInfo={isShowErrorInfo}
       />,
     }, {
       title: '目标客户',

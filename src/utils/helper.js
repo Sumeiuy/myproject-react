@@ -6,9 +6,11 @@
 
 import moment from 'moment';
 import bowser from 'bowser';
+import pathToRegexp from 'path-to-regexp';
 import _ from 'lodash';
-
 import { ZHUNICODE, constants, seibelConfig } from '../config';
+
+const routerPrefix = '/customerPool';
 
 function getOS() {
   const osList = ['mac', 'windows', 'windowsphone'];
@@ -514,6 +516,16 @@ const helper = {
     },
   },
 
+  // 获取ogrId
+  getOrgId() {
+    let orgId = '';
+    if (_.isEmpty(window.forReactPosition)) {
+      orgId = null;
+    } else {
+      orgId = window.forReactPosition.orgId;
+    }
+    return orgId;
+  },
   /**
    * 模拟鼠标点击事件
    * @param  ele 触发事件的html节点
@@ -526,7 +538,14 @@ const helper = {
     evt.initEvent(eventType, canBubble, cancelable);
     eleDom.dispatchEvent(evt);
   },
-
+  /**
+   * 检查当前页面路径是否匹配指定子路由
+   * @param {*} route 当前子路由
+   * @param {*} pathname 当前页面路径
+   */
+  matchRoute(route, pathname) {
+    return pathToRegexp(`${routerPrefix}/${route}`).exec(pathname);
+  },
 };
 
 export default helper;

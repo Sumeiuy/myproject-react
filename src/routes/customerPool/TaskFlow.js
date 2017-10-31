@@ -6,18 +6,17 @@ import { Steps, message, Button, Mention } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { permission, fspGlobal, helper } from '../../utils';
-import { fspContainer, getOrgId } from '../../config';
+import { fspContainer } from '../../config';
 import PickTargetCustomer from '../../components/customerPool/taskFlow/PickTargetCustomer';
 import TaskPreview from '../../components/customerPool/taskFlow/TaskPreview';
 import CreateTaskForm from '../../components/customerPool/createTask/CreateTaskForm';
 import CreateTaskSuccess from '../../components/customerPool/createTask/CreateTaskSuccess';
-// import Button from '../../components/common/Button';
 import styles from './taskFlow.less';
 
 const Step = Steps.Step;
 const { toString } = Mention;
 
-const orgId = getOrgId;
+const orgId = helper.getOrgId();
 const EMPTY_OBJECT = {};
 
 const effects = {

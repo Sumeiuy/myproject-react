@@ -3,7 +3,8 @@
  * @author honggaunqging
  */
 
-import React, { PureComponent, PropTypes } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { TreeSelect, Select } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';

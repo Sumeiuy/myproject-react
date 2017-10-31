@@ -5,9 +5,8 @@
  */
 import _ from 'lodash';
 import queryString from 'query-string';
-import pathToRegexp from 'path-to-regexp';
 import { customerPool as api } from '../api';
-import { helper } from '../utils';
+import { matchRoute, getEmpId } from '../utils/helper';
 import { toastM } from '../utils/sagaEffects';
 
 
@@ -118,8 +117,7 @@ export default {
       dispatch({ type: 'getCustRangeByAuthority' });
       history.listen(({ pathname, search }) => {
         const params = queryString.parse(search);
-        const serviceLogUrl = pathToRegexp('/customerPool/serviceLog').exec(pathname);
-        const custGroupUrl = pathToRegexp('/customerPool/customerGroup').exec(pathname);
+        const serviceLogUrl = matchRoute('serviceLog', pathname);
         if (serviceLogUrl) {
           const { pageSize, serveDateToPaged } = params;
           if (_.isEmpty(pageSize)) params.pageSize = null;
@@ -132,6 +130,7 @@ export default {
           return;
         }
 
+        const custGroupUrl = matchRoute('customerGroup', pathname);
         if (custGroupUrl) {
           const { curPageNum, curPageSize, keyWord = null } = params;
           dispatch({
@@ -139,9 +138,31 @@ export default {
             payload: {
               pageNum: curPageNum || INITIAL_PAGE_NUM,
               pageSize: curPageSize || INITIAL_PAGE_TEN_SIZE,
-              empId: helper.getEmpId(),
+              empId: getEmpId(),
               keyWord,
             },
+          });
+
+          return;
+        }
+
+        const customerGroupManageUrl = matchRoute('customerGroupManage', pathname);
+        if (customerGroupManageUrl) {
+          dispatch({
+            type: 'getCustomerGroupList',
+            payload: {
+              pageNum: INITIAL_PAGE_NUM,
+              pageSize: INITIAL_PAGE_TEN_SIZE,
+            },
+          });
+
+          return;
+        }
+
+        const todoListUrl = matchRoute('todo', pathname);
+        if (todoListUrl) {
+          dispatch({
+            type: 'getToDoList',
           });
         }
       });

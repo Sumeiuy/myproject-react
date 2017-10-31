@@ -46,12 +46,13 @@ export default class TaskSearchRow extends PureComponent {
     getLabelPeople: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired,
     currentSelectLabel: PropTypes.string.isRequired,
-    orgId: PropTypes.string.isRequired,
+    orgId: PropTypes.string,
     isLoadingEnd: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired,
   }
   static defaultProps = {
     condition: '',
+    orgId: null,
   };
 
   constructor(props) {

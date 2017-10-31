@@ -3,7 +3,8 @@
  *  全渠道服务记录搜索区
  * @author wangjunjun
  */
-import React, { PureComponent, PropTypes } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { Icon as AntdIcon, Button, Input, AutoComplete } from 'antd';
 
 const Option = AutoComplete.Option;

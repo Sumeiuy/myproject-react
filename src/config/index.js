@@ -17,7 +17,6 @@ import { responseCode, excludeCode } from './errorCode';
 import permissionOptions from './permissionOptions';
 import seibelConfig from './pageConfig';
 import contract from './contract';
-import orgId from './getOrgId';
 
 export default {
   constants,
@@ -40,5 +39,4 @@ export default {
   permissionOptions,
   seibelConfig,
   contract,
-  orgId,
 };
