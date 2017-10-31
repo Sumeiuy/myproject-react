@@ -91,14 +91,14 @@ export default class PerformanceIndicators extends PureComponent {
   @autobind
   analyticHSRateAndBusinessIndicator() {
     // 返回数据是数组，元素的位置是固定的，根据位置取元素，最后一个是沪深归集率，其余的是业务开通的指标
-    const { hsRateAndBusinessIndicator } = this.props;
+    const { hsRateAndBusinessIndicator = [] } = this.props;
     // 沪深归集率
     let hsRate = 0;
     // 业务开通数据
     const clientNumberData = [];
     // 业务开通name
     const clientNameData = [];
-    const length = hsRateAndBusinessIndicator.length;
+    const length = hsRateAndBusinessIndicator.length || 0;
     _.forEach(
       hsRateAndBusinessIndicator,
       (item, index) => {
