@@ -135,6 +135,12 @@ export default class TaskFormInfo extends PureComponent {
 
     const { getFieldDecorator } = form;
 
+    const errorProps = isShowErrorInfo ? {
+      hasFeedback: true,
+      validateStatus: 'error',
+      help: '任务描述不能小于10个字符',
+    } : null;
+
     return (
       <Form >
         <ul className={styles.task_selectList}>
@@ -241,29 +247,16 @@ export default class TaskFormInfo extends PureComponent {
           <p>
             <label htmlFor="desc"><i>*</i>任务提示</label>
           </p>
-          {
-            isShowErrorInfo ?
-              <FormItem
-                hasFeedback
-                validateStatus="error"
-                help="任务描述不能小于10个字符"
-              >
-                {
-                  this.renderMention()
-                }
-                {
-                  this.renderTipSection()
-                }
-              </FormItem> :
-              <FormItem>
-                {
-                  this.renderMention()
-                }
-                {
-                  this.renderTipSection()
-                }
-              </FormItem>
-          }
+          <FormItem
+            {...errorProps}
+          >
+            {
+              this.renderMention()
+            }
+            {
+              this.renderTipSection()
+            }
+          </FormItem>
         </div>
       </Form >
     );
