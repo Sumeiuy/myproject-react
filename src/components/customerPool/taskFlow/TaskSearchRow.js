@@ -224,7 +224,7 @@ export default class TaskSearchRow extends PureComponent {
               scrollY={400}
               onSizeChange={this.handleShowSizeChange}
               onPageChange={this.handlePageChange}
-              listData={peopleOfLabelData.eleContents}
+              listData={peopleOfLabelData.userObjectFormList}
               titleColumn={renderColumnTitle}
               isFirstColumnLink={false}
             />
