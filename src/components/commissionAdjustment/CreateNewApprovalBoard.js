@@ -172,12 +172,13 @@ export default class CreateNewApprovalBoard extends PureComponent {
 
   @autobind
   merge3MatchInfo(info) {
-    const { riskRankMhrt, investProdMhrt, investTypeMhrt, productCode } = info;
+    const { riskRankMhrt, investProdMhrt, investTypeMhrt, productCode, isMatch } = info;
     const matchInfo = {
       productCode,
       riskMatch: riskRankMhrt,
       prodMatch: investProdMhrt,
       termMatch: investTypeMhrt,
+      isMatch,
     };
     const { singleProductMatchInfo } = this.state;
     const exsit = _.findIndex(singleProductMatchInfo, o => o.productCode === productCode) > -1;
@@ -696,23 +697,35 @@ export default class CreateNewApprovalBoard extends PureComponent {
   // 根据用户输入查询单佣金客户列表
   @autobind
   handleChangeSingleAssembly(keywords) {
-    const { postnId, occDivnNum } = this.props.empInfo;
-    this.props.querySingleCustList({
-      keywords,
-      postionId: postnId,
-      deptCode: occDivnNum,
-    });
+    if (_.isEmpty(keywords)) {
+      confirm({
+        content: '请输入经纪客户号/客户名称',
+      });
+    } else {
+      const { postnId, occDivnNum } = this.props.empInfo;
+      this.props.querySingleCustList({
+        keywords,
+        postionId: postnId,
+        deptCode: occDivnNum,
+      });
+    }
   }
 
   // 根据用户输入查询咨讯订阅、咨讯退订客户列表
   @autobind
   handleChangeSubscribeAssembly(keyword) {
-    const { postnId, occDivnNum } = this.props.empInfo;
-    this.props.querySubscribelCustList({
-      keyword,
-      postnId,
-      deptId: occDivnNum,
-    });
+    if (_.isEmpty(keyword)) {
+      confirm({
+        content: '请输入经纪客户号/客户名称',
+      });
+    } else {
+      const { postnId, occDivnNum } = this.props.empInfo;
+      this.props.querySubscribelCustList({
+        keyword,
+        postnId,
+        deptId: occDivnNum,
+      });
+    }
   }
 
   // 将用户选择添加的客户列表返回到弹出层，以便提交试用（批量佣金）
@@ -996,7 +1009,6 @@ export default class CreateNewApprovalBoard extends PureComponent {
       };
     });
 
-    const newSingleProList = singleComProductList.map(p => ({ key: p.id, ...p }));
     const newSubscribelProList = this.createSubscribelProList(subscribelProList);
     const newUnSubscribelProList = this.createUnSubscribelProList(unSubscribelProList);
     const {
@@ -1025,19 +1037,19 @@ export default class CreateNewApprovalBoard extends PureComponent {
 
     // 单佣金调整中的产品选择配置
     const singleTransferProps = {
-      firstData: newSingleProList,
+      firstData: singleComProductList,
       secondData: [],
       firstColumns: singleColumns,
       secondColumns: singleColumns,
       transferChange: this.handleSingleTransferChange,
       checkChange: this.handleSingleTransferSubProductCheck,
-      rowKey: 'key',
+      rowKey: 'id',
       defaultCheckKey: 'default',
       placeholder: '产品代码/产品名称',
       pagination,
       aboutRate: [newCommission, 'prodRate'],
       supportSearchKey: [['prodCode'], ['prodName']],
-      totalData: newSingleProList,
+      totalData: singleComProductList,
     };
     // 资讯订阅中的产品选择配置
     const subScribetransferProps = {
