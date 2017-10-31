@@ -45,7 +45,7 @@ export default class ViewpointDetail extends PureComponent {
 
   @autobind
   handleBackClick() {
-    const { push, location: { query: { curPageNum, curPageSize } } } = this.props;
+    const { push, location: { query: { curPageNum = 1, curPageSize = 18 } } } = this.props;
     const param = { id: 'RTC_TAB_VIEWPOINT', title: '资讯' };
     const url = '/customerPool/viewpointList';
     const newQuery = { curPageNum, curPageSize };

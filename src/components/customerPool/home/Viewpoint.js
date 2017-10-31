@@ -45,7 +45,7 @@ export default class Viewpoint extends PureComponent {
   @autobind
   handleDetailClick(index) {
     // 跳转到资讯详情界面
-    this.openNewTab('/customerPool/viewpointDetail', { detailIndex: _.toString(index) });
+    this.openNewTab('/customerPool/viewpointDetail', { detailIndex: index });
   }
 
   @autobind
