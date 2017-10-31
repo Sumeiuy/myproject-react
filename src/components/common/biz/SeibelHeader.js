@@ -15,8 +15,8 @@ import Icon from '../Icon';
 import styles from '../../style/jiraLayout.less';
 import { hasPermission } from '../../../utils/helper';
 
-//头部筛选filterBox的高度
-const filterBoxClientHeight = 32
+// 头部筛选filterBox的高度
+const filterBoxClientHeight = 32;
 export default class Pageheader extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
