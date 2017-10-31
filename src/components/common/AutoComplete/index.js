@@ -76,7 +76,7 @@ export default class autoComplete extends PureComponent {
   @autobind
   validateInput(value) {
     this.inputTimeout = 0;
-    if (isNaN(value) || value <= 0.15) {
+    if (isNaN(value)) {
       confirm({
         shortCut: 'wrongInput',
         onOk: this.clearInput,
@@ -91,10 +91,10 @@ export default class autoComplete extends PureComponent {
   render() {
     const { dataSource, width, defaultInput } = this.props;
     const { inputValue } = this.state;
-    const newDataSource = dataSource.map(item => ({ key: `${item.id}-${item.codevalue}`, ...item }));
+    const newDataSource = dataSource.map(item => ({ key: item.id, ...item }));
     const options = newDataSource.map(opt => (
-      <Option key={opt.id} value={opt.codevalue} text={opt.codevalue}>
-        <span className={styles.prodValue}>{opt.codevalue}</span>
+      <Option key={opt.id} value={opt.codeValue} text={opt.codeValue}>
+        <span className={styles.prodValue}>{opt.codeValue}</span>
       </Option>
     ));
     return (

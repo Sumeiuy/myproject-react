@@ -31,6 +31,7 @@ import {
   singleColumns,
   subScribeProColumns,
 } from './commissionTransferHelper/transferPropsHelper';
+import approvalConfig from './choiceApprovalUserConfig';
 
 import styles from './createNewApprovalBoard.less';
 
@@ -114,6 +115,10 @@ export default class CreateNewApprovalBoard extends PureComponent {
     submitSub: PropTypes.func.isRequired,
     // 新建咨询退订提交接口
     submitUnSub: PropTypes.func.isRequired,
+    // 查询审批人
+    queryApprovalUser: PropTypes.func.isRequired,
+    // 清空redux的state
+    clearReduxState: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -211,10 +216,34 @@ export default class CreateNewApprovalBoard extends PureComponent {
     return approvalType === assert;
   }
 
+  @autobind
+  clearRedux() {
+    // 清空redux的state
+    this.props.clearReduxState({
+      clearList: [
+        {
+          name: 'singleOtherCommissionOptions',
+        },
+        {
+          name: 'singleCustomerList',
+        },
+        {
+          name: 'singleComProductList',
+        },
+        {
+          name: 'threeMatchInfo',
+          value: {},
+        },
+        {
+          name: 'singleGJCommission',
+        },
+      ],
+    });
+  }
+
   // 关闭弹出框后，清空页面数据
   @autobind
   clearApprovalBoard() {
-    if (this.digital) this.digital.reset();
     if (this.addCustomer) this.addCustomer.clearCustList();
     this.setState({
       approvalType: '',
@@ -234,6 +263,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       subscribelProductMatchInfo: [],
       unSubProList: [],
     });
+    this.clearRedux();
   }
 
   // 关闭弹窗
@@ -506,17 +536,32 @@ export default class CreateNewApprovalBoard extends PureComponent {
   // 选择申请子类型
   @autobind
   choiceApprovalSubType(name, key) {
+    if (key === '') return;
     this.setState({
       [name]: key,
     });
-    // 如果切换批量佣金需要，先查一把0.16下目标产品
+    let btnId = '';
+    const { empInfo: { occDivnNum, empNum } } = this.props;
+    const { approvalBtnId } = approvalConfig;
     if (commadj.batch === key) {
-      const { empInfo: { occDivnNum } } = this.props;
+      // 如果切换批量佣金需要，先查一把0.16下目标产品
       this.props.queryProductList({
         prodCommision: 0.16,
         orgId: occDivnNum,
       });
+      // 审批人的BtnId
+      btnId = approvalBtnId.batch;
+    } else if (commadj.single === key) {
+      btnId = approvalBtnId.single;
+    } else if (commadj.subscribe === key) {
+      btnId = approvalBtnId.subscribe;
+    } else if (commadj.unsubscribe === key) {
+      btnId = approvalBtnId.unsubscribe;
     }
+    this.props.queryApprovalUser({
+      loginUser: empNum,
+      btnId,
+    });
   }
 
   // 填写备注
@@ -544,7 +589,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
   @autobind
   selectTargetGJCommission(v) {
     this.setState({
-      newCommission: v.codevalue,
+      newCommission: v.codeValue,
     });
     if (this.judgeSubtypeNow(commadj.batch)) {
       this.queryBatchProductList({ prodCommision: v.codeValue });
@@ -553,7 +598,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       const { id } = this.state.customer; // 取出客户的row_id
       this.querySingleProductList({
         custRowId: id,
-        commRate: v.codevalue,
+        commRate: v.codeValue,
       });
     }
   }
@@ -739,14 +784,11 @@ export default class CreateNewApprovalBoard extends PureComponent {
   // 单佣金调整穿梭变化的时候处理程序
   @autobind
   handleSingleTransferChange(flag, item, array, dValue) {
-    console.warn('handleSingleTransferChange>flag', flag);
-    console.warn('handleSingleTransferChange>item', item);
-    console.warn('handleSingleTransferChange>array', array);
-    console.warn('handleSingleTransferChange>dValue', dValue);
     this.setState({
       singleProductList: array,
     });
-    if (this.judgeSubtypeNow(commadj.single)) {
+    if (flag === 'add') {
+      // 如果是左侧列表添加到右侧列表,则需要查询三匹配信息
       const { prodCode } = item;
       const { customer } = this.state;
       this.props.queryThreeMatchInfo({
@@ -755,6 +797,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
         prdCode: prodCode,
       });
     }
+    console.warn('还差多少', dValue);
   }
 
    // 咨讯订阅调整穿梭变化的时候处理程序
@@ -1033,7 +1076,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     };
 
     const wrapClassName = this.judgeSubtypeNow(commadj.noSelected) ? 'commissionModal' : '';
-    const subTypesAfterAuthority = newSubTypes; // this.authorityOptions(newSubTypes);
+    const subTypesAfterAuthority = this.authorityOptions(newSubTypes);
 
     return (
       <div>

@@ -50,12 +50,16 @@ const permission = {
 
   // 佣金调整单佣金调整申请权限
   hasCommissionSingleAuthority(empPostnList) {
-    // 单佣金调整需要的权限
+    // 单佣金调整需要的权限(1)
     const resp1 = commission.single_1;
     const resp2 = commission.single_2;
+    // FSP系统中的职位字段
     const pstnId = window.forReactPosition && window.forReactPosition.pstnId;
+    // 是否拥有第一种权限
     const isInResp1 = _.findIndex(permissionList, item => _.includes(resp1, item.respId));
+    // 是否拥有第二种权限
     const isInResp2 = _.findIndex(permissionList, item => _.includes(resp2, item.respId));
+    // 找出目前登录人的职位名称
     const postInfo = _.filter(empPostnList, item => item.postnId === pstnId);
     const postName = postInfo && postInfo.postnName;
     // 判断岗位名称
