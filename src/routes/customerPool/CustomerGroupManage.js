@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-22 19:02:56
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-31 14:23:22
+ * @Last Modified time: 2017-10-31 14:23:56
  */
 
 import React, { PureComponent } from 'react';
@@ -137,7 +137,7 @@ export default class CustomerGroupManage extends PureComponent {
       keyword, // 搜索关键字（客户号或客户名字）
       pageNum: 1,
       pageSize: 10,
-      // 后台需要传，不传报错，没啥意义
+      // 后台需要传，不传报错，对前端没啥意义
       type: '06',
     });
   }
