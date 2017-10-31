@@ -4,7 +4,8 @@
  * @author honggaunqging
  */
 
-import React, { PureComponent, PropTypes } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { Col } from 'antd';
 import { autobind } from 'core-decorators';
 import { withRouter, routerRedux } from 'dva/router';

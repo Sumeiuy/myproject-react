@@ -3,7 +3,8 @@
  * @description 经营业绩看板页内导航
  * @author hongguangqing
  */
-import React, { PureComponent, PropTypes } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import Icon from '../common/Icon';

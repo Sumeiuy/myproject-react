@@ -3,7 +3,8 @@
  *@author zhuyanwen
  * 客户分组添加成功页面
  * */
-import React, { PureComponent, PropTypes } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import Button from '../../common/Button';

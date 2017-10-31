@@ -62,9 +62,11 @@ export default class CreateTaskForm extends PureComponent {
     handleCollapseClick: PropTypes.func.isRequired,
     dict: PropTypes.object,
   };
+
   static defaultProps = {
     dict: {},
   };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -74,9 +76,6 @@ export default class CreateTaskForm extends PureComponent {
       showBtn: true,
       logData: [],
     };
-  }
-
-  componentDidMount() {
   }
 
   componentWillReceiveProps(nextProps) {
