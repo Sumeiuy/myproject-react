@@ -60,7 +60,7 @@ const permission = {
     // 是否拥有第二种权限
     const isInResp2 = _.findIndex(permissionList, item => _.includes(resp2, item.respId));
     // 找出目前登录人的职位名称
-    const postInfo = _.filter(empPostnList, item => item.postnId === pstnId);
+    const postInfo = _.filter(empPostnList, item => item.postnId === pstnId)[0];
     const postName = postInfo && postInfo.postnName;
     // 判断岗位名称
     let isServicePost = false;
