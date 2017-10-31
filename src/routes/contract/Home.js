@@ -421,6 +421,8 @@ export default class Contract extends PureComponent {
     const { getCanApplyCustList } = this.props;
     getCanApplyCustList({
       keyword: value,
+      type: '03',
+      subtype: '0301',
     });
   }
 

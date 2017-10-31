@@ -62,7 +62,7 @@ export default class EditBaseInfo extends PureComponent {
       // 操作类型列表
       operationList: EMPTY_ARRAY,
       // 所选操作类型
-      operation: '',
+      operationType: '',
       // 所选子类型
       subType: '',
       // 所选客户
@@ -70,21 +70,21 @@ export default class EditBaseInfo extends PureComponent {
       // 所选协议模板
       protocolTemplate: EMPTY_OBJECT,
       // 是否多账户
-      isMultiAccount: false,
+      multiUsedFlag: false,
       // 是否订购十档行情
-      isTenMarket: false,
+      levelTenFlag: false,
       // 备注
-      remark: '',
+      content: '',
     };
     // 判断是否传入formData
     if (!_.isEmpty(formData)) {
-      stateObj.operation = formData.operation;
+      stateObj.operationType = formData.operationType;
       stateObj.subType = formData.subType;
       stateObj.client = formData.client;
       stateObj.protocolTemplate = formData.protocolTemplate;
-      stateObj.isMultiAccount = formData.isMultiAccount;
-      stateObj.isTenMarket = formData.isTenMarket;
-      stateObj.remark = formData.remark;
+      stateObj.multiUsedFlag = formData.multiUsedFlag;
+      stateObj.levelTenFlag = formData.levelTenFlag;
+      stateObj.content = formData.content;
     }
     this.state = {
       ...stateObj,
@@ -108,13 +108,13 @@ export default class EditBaseInfo extends PureComponent {
         const operationList = _.filter(subTypeList, v => v.value === value)[0].operationList;
         this.setState({
           ...this.state,
-          operation: '',
+          operationType: '',
           operationList,
         });
       }
       // 操作类型是“协议退订”、“协议续订”、“新增或删除下挂客户”时查询协议编号
-      const { operation } = this.state;
-      if (operation > 1) {
+      const { operationType } = this.state;
+      if (operationType > 1) {
         this.handleSearchProtocolNum();
       }
     });
@@ -128,8 +128,8 @@ export default class EditBaseInfo extends PureComponent {
       client: value,
     }, () => {
       // 操作类型是“协议退订”、“协议续订”、“新增或删除下挂客户”时查询协议编号
-      const { operation } = this.state;
-      if (operation > 1) {
+      const { operationType } = this.state;
+      if (operationType > 1) {
         this.handleSearchProtocolNum();
       }
     });
@@ -158,10 +158,10 @@ export default class EditBaseInfo extends PureComponent {
 
   // 修改备注
   @autobind
-  handleChangeRemark(e) {
+  handleChangeContent(e) {
     this.setState({
       ...this.state,
-      remark: e.target.value,
+      content: e.target.value,
     }, this.transferDataToHome);
   }
 
@@ -188,7 +188,7 @@ export default class EditBaseInfo extends PureComponent {
 
   render() {
     const { custList, protocolTemplateList } = this.props;
-    const { subType, operation, isMultiAccount, isTenMarket, operationList } = this.state;
+    const { subType, operationType, multiUsedFlag, levelTenFlag, operationList } = this.state;
     return (
       <div className={styles.editWrapper}>
         <InfoTitle head="基本信息" />
@@ -202,9 +202,9 @@ export default class EditBaseInfo extends PureComponent {
         </InfoForm>
         <InfoForm label="操作类型" required>
           <Select
-            name="operation"
+            name="operationType"
             data={operationList}
-            value={operation}
+            value={operationType}
             onChange={this.handleSelectChange}
           />
         </InfoForm>
@@ -238,8 +238,8 @@ export default class EditBaseInfo extends PureComponent {
           this.isShowSwitch() ?
             <InfoForm label="是否多账户使用" >
               <CustomSwitch
-                name="isMultiAccount"
-                value={isMultiAccount}
+                name="multiUsedFlag"
+                value={multiUsedFlag}
                 onChange={this.handleChangeSwitchValue}
               />
             </InfoForm>
@@ -250,8 +250,8 @@ export default class EditBaseInfo extends PureComponent {
           this.isShowSwitch() ?
             <InfoForm label="是否订购十档行情">
               <CustomSwitch
-                name="isTenMarket"
-                value={isTenMarket}
+                name="levelTenFlag"
+                value={levelTenFlag}
                 onChange={this.handleChangeSwitchValue}
               />
             </InfoForm>
@@ -261,7 +261,7 @@ export default class EditBaseInfo extends PureComponent {
         <InfoItem label="协议开始日期" value={'2017/08/31'} />
         <InfoItem label="协议有效期" value={'2017/08/31'} />
         <InfoForm label="备注">
-          <TextArea onChange={this.handleChangeRemark} />
+          <TextArea onChange={this.handleChangeContent} />
         </InfoForm>
       </div>
     );

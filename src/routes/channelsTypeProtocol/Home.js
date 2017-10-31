@@ -33,7 +33,7 @@ const confirm = Modal.confirm;
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 // 退订的类型
-const unsubscribe = '2';
+// const unsubscribe = '2';
 const OMIT_ARRAY = ['isResetPageNum', 'currentId'];
 const {
   channelsTypeProtocol,
@@ -60,34 +60,16 @@ const mapStateToProps = state => ({
   // 获取列表数据进程
   seibleListLoading: state.loading.effects['app/getSeibleList'],
   // 查询客户
-  customerList: state.app.customerList,
+  canApplyCustList: state.app.canApplyCustList,
   // 查询右侧详情
-  baseInfo: state.contract.baseInfo,
-  baseInfoLoading: state.loading.effects['contract/getBaseInfo'],
-  // 退订时查询详情
-  unsubscribeBaseInfo: state.contract.unsubscribeBaseInfo,
+  protocolDetail: state.channelsTypeProtocol.protocolDetail,
+  protocolDetailLoading: state.loading.effects['channelsTypeProtocol/getProtocolDetail'],
   // 附件列表
   attachmentList: state.contract.attachmentList,
-  // 新建/修改 客户列表
-  canApplyCustList: state.app.canApplyCustList,
-  // 合作合约编号列表
-  contractNumList: state.contract.contractNumList,
+
   // 审批记录
   flowHistory: state.contract.flowHistory,
-  // 新增合约条款-条款名称
-  clauseNameList: state.contract.clauseNameList,
-  // 新增合约条款-合作部门
-  cooperDeparment: state.contract.cooperDeparment,
-  // 列表请求状态  // 获取列表数据进程
-  saveContractDataLoading: state.loading.effects['contract/saveContractData'],
-  // 审批人
-  flowStepInfo: state.contract.flowStepInfo,
-  // 新建时的审批人
-  addFlowStepInfo: state.contract.addFlowStepInfo,
-  doApprove: state.contract.doApprove,
-  // 审批进程
-  postDoApproveLoading: state.loading.effects['contract/postDoApprove'],
-  unsubFlowStepInfo: state.contract.unsubFlowStepInfo,
+
   // 登陆人信息
   empInfo: state.app.empInfo,
 });
@@ -97,7 +79,7 @@ const mapDispatchToProps = {
   // 获取左侧列表
   getSeibleList: fetchDataFunction(true, 'app/getSeibleList'),
   // 获取客户列表
-  getCustomerList: fetchDataFunction(false, 'app/getCustomerList'),
+  getCanApplyCustList: fetchDataFunction(false, 'app/getCanApplyCustList'),
   // 获取右侧详情
   getBaseInfo: fetchDataFunction(true, 'contract/getBaseInfo'),
   // 重置退订合约详情数据
