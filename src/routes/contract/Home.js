@@ -421,6 +421,9 @@ export default class Contract extends PureComponent {
     const { getCanApplyCustList } = this.props;
     getCanApplyCustList({
       keyword: value,
+      // 合作合约查询可申请客户增加'type, subtype'字段写死在前端
+      type: '03',
+      subtype: '0301',
     });
   }
 
