@@ -10,6 +10,8 @@ import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
 
+import { fspContainer } from '../../config';
+import { fspGlobal, helper } from '../../utils';
 import wordSrc from '../../../static/images/word.png';
 import pdfSrc from '../../../static/images/pdf.png';
 import Icon from '../../components/common/Icon';
@@ -43,11 +45,14 @@ export default class ViewpointDetail extends PureComponent {
 
   @autobind
   handleBackClick() {
-    const { goBack, push, location: { query: { state } } } = this.props;
-    if (_.isEmpty(state)) {
-      push({ pathname: '/customerPool/viewpointList' });
+    const { push, location: { query: { curPageNum, curPageSize } } } = this.props;
+    const param = { id: 'RTC_TAB_VIEWPOINT', title: '资讯' };
+    const url = '/customerPool/viewpointList';
+    const newQuery = { curPageNum, curPageSize };
+    if (document.querySelector(fspContainer.container)) {
+      fspGlobal.openRctTab({ url: `${url}?${helper.queryToString(newQuery)}`, param });
     } else {
-      goBack();
+      push({ pathname: url, query: newQuery });
     }
   }
 
