@@ -11,6 +11,8 @@ import classnames from 'classnames';
 import { Table } from 'antd';
 import _ from 'lodash';
 
+import { fspContainer } from '../../config';
+import { fspGlobal, helper } from '../../utils';
 import Paganation from '../../components/common/Paganation';
 import styles from './viewpointList.less';
 
@@ -101,6 +103,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   getInformation: fetchDataFunction(true, 'customerPool/getInformation'),
   push: routerRedux.push,
+  replace: routerRedux.replace,
 };
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
@@ -110,6 +113,7 @@ export default class ViewpointList extends PureComponent {
     location: PropTypes.object.isRequired,
     information: PropTypes.object,
     getInformation: PropTypes.func.isRequired,
+    replace: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -118,10 +122,14 @@ export default class ViewpointList extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { information: { infoVOList = [] } } = props;
+    const {
+      information: { infoVOList = [] },
+      location: { query: { curPageNum = '1', curPageSize = '18' } },
+    } = props;
+    // 注意 location的query中的字段，无论是key还是value都是字符串
     this.state = {
-      curPageNum: 1, // 记录当前展示的页码
-      curPageSize: 18, // 记录当前每页的容量
+      curPageNum: _.toNumber(curPageNum), // 记录当前展示的页码
+      curPageSize: _.toNumber(curPageSize), // 记录当前每页的容量
       pageList: infoVOList, // 当前页码对应的列表数据
     };
   }
@@ -133,31 +141,46 @@ export default class ViewpointList extends PureComponent {
 
   @autobind
   handleTitleClick(item) {
-    const { push } = this.props;
-    push({
-      pathname: '/customerPool/viewpointDetail',
-      query: { detailIndex: item.id },
-      state: 'formList',
-    });
+    const { curPageSize, curPageNum } = this.state;
+    const param = { id: 'RTC_TAB_VIEWPOINT', title: '资讯' };
+    const url = '/customerPool/viewpointDetail';
+    const query = { detailIndex: item.id, curPageSize, curPageNum };
+    if (document.querySelector(fspContainer.container)) {
+      fspGlobal.openRctTab({ url: `${url}?${helper.queryToString(query)}`, param });
+    } else {
+      const { push } = this.props;
+      push({
+        pathname: url,
+        query,
+      });
+    }
   }
 
   @autobind
   handlePageClick(page) {
-    const { getInformation } = this.props;
+    const { getInformation, replace, location: { pathname, query } } = this.props;
     const { curPageSize } = this.state;
     this.setState(
       { curPageNum: page },
-      () => getInformation({ curPageNum: page, pageSize: curPageSize }),
+      () => {
+        const newQuery = { curPageNum: page, pageSize: curPageSize };
+        getInformation(newQuery);
+        replace({ pathname, query: { ...query, ...newQuery } });
+      },
     );
   }
 
   @autobind
   handlePageSizeClick(current, size) {
-    const { getInformation } = this.props;
+    const { getInformation, replace, location: { pathname, query } } = this.props;
     const { curPageNum } = this.state;
     this.setState(
       { curPageSize: size },
-      () => getInformation({ curPageNum, pageSize: size }),
+      () => {
+        const newQuery = { curPageNum, pageSize: size };
+        getInformation(newQuery);
+        replace({ pathname, query: { ...query, ...newQuery } });
+      },
     );
   }
 
