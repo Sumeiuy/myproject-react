@@ -3,7 +3,8 @@
  *  全渠道服务记录筛选区日期选择筛选
  * @author wangjunjun
  */
-import React, { PureComponent, PropTypes } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { DatePicker } from 'antd';
 import moment from 'moment';

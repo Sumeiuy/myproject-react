@@ -120,7 +120,7 @@ export default class TaskFlow extends PureComponent {
     const { currentSelectRecord: { login: flowAuditorId = null } } = this.state;
     const {
         custIdList,
-        custCondition,
+      custCondition,
       } = parseQuery();
     const {
       curPageNum,
