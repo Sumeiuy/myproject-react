@@ -60,6 +60,7 @@ export default class CreateTaskSuccess extends PureComponent {
 
   @autobind
   goToHome() {
+    this.clearTimeInterval();
     const { onCloseTab, push, location: { state, query } } = this.props;
     const url = '/customerPool';
     const param = {
@@ -80,6 +81,7 @@ export default class CreateTaskSuccess extends PureComponent {
 
   @autobind
   goToTask() {
+    this.clearTimeInterval();
     const { push, state } = this.props;
     const url = '/mot/selfbuildTask/selfBuildTaskMain';
     const param = {
@@ -99,13 +101,19 @@ export default class CreateTaskSuccess extends PureComponent {
     }, () => {
       if (intervalCount < 0) {
         console.log('页面关闭');
-        clearInterval(successSetInterval);
-        successSetInterval = null;
-        intervalCount = 10;
+        this.clearTimeInterval();
         // 跳转之前关闭interval
         this.goToHome();
       }
     });
+  }
+
+  @autobind
+  clearTimeInterval() {
+    // 清除interval
+    clearInterval(successSetInterval);
+    successSetInterval = null;
+    intervalCount = 10;
   }
 
   render() {

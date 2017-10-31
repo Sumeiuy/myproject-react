@@ -1,5 +1,4 @@
 .contactModal {
-  // background: #ffffff;
   :global {
     & .ant-modal-title {
       color: #696969;
@@ -7,11 +6,9 @@
       font-weight: 600;
     }
     & .ant-modal-header {
-      padding: 0;
-      border-bottom: 0px;
-      padding: 0px 20px 0px 25px;
+      border-bottom: 0;
+      padding: 0 20px 0 25px;
       height: 40px;
-      // overflow: hidden;
       vertical-align: middle;
       & > .ant-modal-title {
         line-height: 40px;
@@ -19,7 +16,7 @@
     }
     & .ant-modal-footer {
       height: 55px;
-      border-top: 0px;
+      border-top: 0;
     }
     & .ant-modal-header::after {
       display: block;
@@ -30,7 +27,7 @@
       border-bottom: 1px solid #efefef;
     }
     & .ant-modal-body {
-      padding: 0px;
+      padding: 0;
       padding-top: 14px;
       padding-left: 25px;
       padding-right: 20px;
@@ -49,7 +46,7 @@
         }
         .ant-collapse-content {
           .ant-collapse-content-box {
-          padding: 0px;
+          padding: 0;
           }
         }
       }
@@ -59,19 +56,19 @@
           content: '';
           height: 1px;
           width: 100%;
-          border-bottom: 1px dashed #dddddd;
+          border-bottom: 1px dashed #ddd;
           padding-top: 8px;
-          margin-left: 0px;
+          margin-left: 0;
         }
       }
     }
   }
   .title {
     font-size: 15px;
-    color: #888888;
+    color: #888;
   }
   .noneInfo {
-    color: #333333;
+    color: #333;
     font-size: 16px;
     width: 60%;
     padding-bottom: 10px;
@@ -85,9 +82,8 @@
       padding-right: 10px;
       & > button {
         border: 1px solid #108ee9;
-        height: 100%;
-        background:#108ee9;
-        border-radius:3px;
+        background: #108ee9;
+        border-radius: 3px;
         padding-left: 5px;
         padding-right: 10px;
         height: 40px;
@@ -95,10 +91,10 @@
         font-size: 15px;
         & > span {
           font-size: 15px;
-          color: #ffffff;
+          color: #fff;
         }
         & > .addIcon {
-          color: #ffffff;
+          color: #fff;
           font-size: 20px;
           margin-right: 5px;
         }
@@ -114,7 +110,7 @@
     padding-bottom: 5px;
     position: relative;
     & > .mainContact {
-      width: 100%;
+      width: 50%;
       display: flex;
       align-items: center;
       text-align: left;
@@ -141,27 +137,28 @@
       }
     }
     & > .rightSection {
-      width: 100%;
+      width: 50%;
       text-align: right;
-      height: 32px;
       padding-right: 10px;
       position: absolute;
+      height: 60px;
+      right: 0;
+      top: 20px;
       & > button {
         border: 1px solid #108ee9;
-        height: 100%;
-        background:#108ee9;
-        border-radius:3px;
+        background: #108ee9;
+        border-radius: 3px;
         padding-left: 5px;
         padding-right: 10px;
-        height: 40px;
+        height: 35px;
         width: 135px;
         font-size: 15px;
         & > span {
           font-size: 15px;
-          color: #ffffff;
+          color: #fff;
         }
         & > .addIcon {
-          color: #ffffff;
+          color: #fff;
           font-size: 20px;
           margin-right: 5px;
           font-weight: 600;
@@ -174,15 +171,13 @@
     justify-content: flex-start;
     align-items: flex-start;
     margin-bottom: 5px;
-    // padding-top: 5px;
     & > .leftSection {
       display: flex;
       justify-content: flex-end;
       align-items: center;
       height: 20px;
-      height: 20px;
       font-size: 15px;
-      color: #888888;
+      color: #888;
       letter-spacing: -0.09px;
       & > span {
         width: 75px;
@@ -195,7 +190,6 @@
       justify-content: flex-start;
       align-items: center;
       & > .telSection {
-        // width: 200px;
         margin-right: 10px;
         display: block;
         font-size: 14px;
@@ -212,9 +206,6 @@
         display: inline-block;
         margin-left: 5px;
       }
-      // & > .telSection:not(:last-child) {
-      //   border-right: 1px solid #dddddd;
-      // }
     }
   }
   .otherTelsSection:last-child {
@@ -236,29 +227,24 @@
       }
     }
     & > span:last-child {
-      font-size:12px;
-      color:#576b95;
+      font-size: 12px;
+      color: #576b95;
       padding-left: 5px;
     }
   }
-  // .split {
-  //   display: block;
-  //   border: 1px dashed #c2c2c2;
-  //   margin-top: 10px;
-  // }
   .serviceTitle {
     font-size: 14px;
     color: #808080;
     padding-bottom: 10px;
     padding-top: 30px;
-    border-bottom: 1px solid #dddddd;
+    border-bottom: 1px solid #ddd;
   }
   .orgCustOtherTelsSection {
     padding-top: 10px;
     & > .telTable {
       padding-bottom: 10px;
       table {
-        border: 1px solid #dddddd;
+        border: 1px solid #ddd;
       }
       table > tbody > tr:nth-child(odd) {
         background-color: #f9f9f9;
@@ -271,16 +257,16 @@
         text-align: center;
       }
       table > thead > tr > th {
-        background-color: #ffffff;
-        color: #666666;
+        background-color: #fff;
+        color: #666;
         text-align: center;
         font-weight: 600;
-        max-width:129px;
+        max-width: 129px;
       }
       table > tbody > tr > td {
-        border-bottom: 0px;
-        :global{
-          .recordSection{
+        border-bottom: 0;
+        :global {
+          .recordSection {
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -288,7 +274,6 @@
           }
         }
       }
-
     }
   }
   .serviceCollapse {
@@ -344,7 +329,7 @@
           font-size: 12px;
           & > .yearTime {
             font-size: 12px;
-            color: #777777;
+            color: #777;
           }
           & > .dayTime {
             font-size: 12px;
@@ -374,12 +359,12 @@
         }
         & > .rightSection {
           width: 50%;
-          & > .actionOwner, 
-          .custFeedback, 
-          .feedbackTime, 
-          .serviceRecord, 
-          .result, 
-          .custFeedbackP, 
+          & > .actionOwner,
+          .custFeedback,
+          .feedbackTime,
+          .serviceRecord,
+          .result,
+          .custFeedbackP,
           .feedbackTimeP,
           .resultP {
             display: flex;
@@ -398,7 +383,7 @@
             font-size: 12px;
             text-align: left;
             padding-left: 15px;
-            color: #666666;
+            color: #666;
             text-overflow: ellipsis;
             overflow: hidden;
             white-space: nowrap;
@@ -410,11 +395,11 @@
         & > .leftSection {
           width: 50%;
         & > div:nth-child(2), div:nth-child(3), div:nth-child(4) {
-            border-right: 1px solid #dddddd;
+            border-right: 1px solid #ddd;
         }
         & > .taskNameSection,
         .taskContent,
-        .taskType, 
+        .taskType,
         .excuteType,
         .typeP,
         .actionContentP,
@@ -437,7 +422,7 @@
             font-size: 12px;
             text-align: left;
             padding-left: 15px;
-            color: #666666;
+            color: #666;
             text-overflow: ellipsis;
             overflow: hidden;
             white-space: nowrap;
@@ -459,7 +444,7 @@
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
-          color: #666666;
+          color: #666;
           font-size: 12px;
         }
         & > .headerRight {
@@ -470,7 +455,7 @@
           text-overflow: ellipsis;
           white-space: nowrap;
           color: #a1a1a1;
-          &  span {
+          & span {
             font-size: 12px;
           }
           & > .serviceStatus {
@@ -500,6 +485,6 @@
           }
         }
       }
-      }
     }
+  }
 }

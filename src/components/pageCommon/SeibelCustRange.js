@@ -8,6 +8,7 @@ import React, { PureComponent, PropTypes } from 'react';
 import { TreeSelect } from 'antd';
 import { autobind } from 'core-decorators';
 import { constants } from '../../config';
+import { trigger } from '../../utils/helper';
 
 import styles from './seibelCustRange.less';
 
@@ -154,8 +155,11 @@ export default class CustRange extends PureComponent {
       return;
     }
     this.addDropDownMouseWheel();
-    const evt = new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window });
-    document.querySelector(constants.container).dispatchEvent(evt);
+    // const evt = new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window });
+    // const evt = document.createEvent('MouseEvent');
+    // evt.initEvent('mousedown', true, true);
+    // document.querySelector(constants.container).dispatchEvent(evt);
+    trigger(document.querySelector(constants.container), 'mousedown');
   }
 
   @autobind

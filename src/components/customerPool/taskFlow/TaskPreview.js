@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 10:29:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-27 14:50:35
+ * @Last Modified time: 2017-10-30 13:22:57
  */
 
 import React, { PureComponent } from 'react';
@@ -124,11 +124,25 @@ export default class TaskPreview extends PureComponent {
   }
 
   @autobind
+  filterDataSource(value) {
+    const { approvalList } = this.props;
+    if (_.isEmpty(value)) {
+      this.setState({
+        dataSource: approvalList,
+      });
+      return;
+    }
+    const newDataSource = _.filter(approvalList, item =>
+      item.login === value || item.empName === value);
+    this.setState({
+      dataSource: newDataSource,
+    });
+  }
+
+  @autobind
   handleSearchApproval() {
-    console.log('search approval');
-    const { getApprovalList } = this.props;
-    // 审批人员数据
-    getApprovalList();
+    const value = this.inputRef.refs.input.value;
+    this.filterDataSource(value);
   }
 
   render() {
@@ -159,6 +173,7 @@ export default class TaskPreview extends PureComponent {
         ...custSegment,
       };
     } else if (currentTab === '2') {
+      // 第二个tab
       finalData = {
         ...taskFormData,
         ...labelCust,
@@ -318,6 +333,7 @@ export default class TaskPreview extends PureComponent {
                         height: '30px',
                         width: '250px',
                       }}
+                      ref={inst => (this.inputRef = inst)}
                       suffix={(
                         <Button
                           className="search-btn"

@@ -7,7 +7,7 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { Select, DatePicker, Row, Col, Button } from 'antd';
 import { connect } from 'react-redux';
-import { routerRedux } from 'dva/router';
+import { routerRedux, withRouter } from 'dva/router';
 import classnames from 'classnames';
 import _ from 'lodash';
 import moment from 'moment';
@@ -50,7 +50,7 @@ const mapDispatchToProps = {
   handleCollapseClick: fetchDataFunction(false, effects.handleCollapseClick),
 };
 @connect(mapStateToProps, mapDispatchToProps)
-// @create()
+@withRouter
 export default class CreateTaskForm extends PureComponent {
   static propTypes = {
     replace: PropTypes.func.isRequired,

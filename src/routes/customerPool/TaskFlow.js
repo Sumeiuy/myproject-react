@@ -108,6 +108,7 @@ export default class TaskFlow extends PureComponent {
       isSuccess: false,
       custSource: '',
       isLoadingEnd: true,
+      isShowErrorInfo: false,
     };
     // 首页指标查询权限
     this.isHasAuthorize = permission.hasIndexViewPermission();
@@ -142,12 +143,20 @@ export default class TaskFlow extends PureComponent {
     let pickTargetCustomerData = {};
     let isFormValidate = !_.isEmpty(taskFormData);
     let isSelectCust = true;
+    let isShowErrorInfo = false;
     if (current === 0) {
-      this.createTaskFormRef.validateFields((err, values) => {
-        if (!err) {
+      this.formRef.props.form.validateFields((err, values) => {
+        const { templetDesc } = values;
+        if (toString(templetDesc).length < 10) {
+          isShowErrorInfo = true;
+          this.setState({
+            isShowErrorInfo: true,
+          });
+        }
+        if (!err && !isShowErrorInfo) {
           isFormValidate = true;
           console.log('Received values of form: ', values);
-          taskFormData = this.createTaskFormRef.getFieldsValue();
+          taskFormData = this.formRef.props.form.getFieldsValue();
         } else {
           message.error('请填写任务基本信息');
         }
@@ -296,7 +305,7 @@ export default class TaskFlow extends PureComponent {
   @autobind
   handleCloseTab() {
     if (document.querySelector(fspContainer.container)) {
-      fspGlobal.closeRctTabById('RCT_FSP_TASK_FLOW');
+      fspGlobal.closeRctTabById('FSP_ST_TAB_MOT_SELFBUILD_ADD');
     } else {
       console.log('close tab');
       this.setState({
@@ -320,11 +329,12 @@ export default class TaskFlow extends PureComponent {
       isSuccess,
       custSource,
       isLoadingEnd,
+      isShowErrorInfo,
     } = this.state;
 
     const {
       dict,
-      dict: { executeTypes, taskTypes },
+      dict: { executeTypes, custServerTypeFeedBackDict },
       priviewCustFileData,
       currentTab,
       saveCurrentTab,
@@ -344,11 +354,12 @@ export default class TaskFlow extends PureComponent {
       title: '基本信息',
       content: <div className={styles.taskInner}>
         <CreateTaskForm
-          ref={ref => (this.createTaskFormRef = ref)}
+          wrappedComponentRef={inst => (this.formRef = inst)}
           dict={dict}
           location={location}
           previousData={{ ...taskFormData }}
           isShowTitle={isShowTitle}
+          isShowErrorInfo={isShowErrorInfo}
         />
       </div>,
     }, {
@@ -377,7 +388,7 @@ export default class TaskFlow extends PureComponent {
         currentTab={currentTab}
         getApprovalList={getApprovalList}
         executeTypes={executeTypes}
-        taskTypes={taskTypes}
+        taskTypes={custServerTypeFeedBackDict}
         onSingleRowSelectionChange={this.handleSingleRowSelectionChange}
         onRowSelectionChange={this.handleRowSelectionChange}
         currentSelectRecord={currentSelectRecord}
