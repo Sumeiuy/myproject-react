@@ -248,7 +248,10 @@ export default class ChartLineWidget extends PureComponent {
               if (index === 1 || index === 3) {
                 return '';
               }
-              if (value >= 0) {
+              if (value === 0) {
+                return 0;
+              }
+              if (value > 0) {
                 return `+${formatRate(value)}%`;
               }
               return `${formatRate(value)}%`;
@@ -269,7 +272,7 @@ export default class ChartLineWidget extends PureComponent {
               if (index === 1 || index === 3) {
                 return '';
               }
-              return `${formatNumber(value)}${formatUnit(value)}`;
+              return value === 0 ? 0 : `${formatNumber(value)}${formatUnit(value)}`;
             },
           },
         },
