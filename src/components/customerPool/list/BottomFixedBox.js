@@ -187,6 +187,16 @@ export default class BottomFixedBox extends PureComponent {
     return null;
   }
 
+  renderCreateTaskBtn() {
+    return (
+      <button
+        onClick={() => { this.handleClick('/customerPool/createTask', '发起任务', 'RCT_FSP_CUSTOMER_LIST'); }}
+      >
+        发起任务
+      </button>
+    );
+  }
+
   render() {
     const {
       taskAndGroupLeftPos,
@@ -209,11 +219,7 @@ export default class BottomFixedBox extends PureComponent {
         </p>
         <div className="right">
           {this.renderGroup()}
-          <button
-            onClick={() => { this.handleClick('/customerPool/createTask', '发起任务', 'RCT_FSP_CUSTOMER_LIST'); }}
-          >
-            发起任务
-          </button>
+          {this.renderCreateTaskBtn()}
         </div>
       </div>
     );
