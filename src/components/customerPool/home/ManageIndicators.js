@@ -110,7 +110,7 @@ export default class PerformanceIndicators extends PureComponent {
         }
       },
     );
-    return { hsRate, clientNumberData, clientNameData };
+    return { isEmpty: (length === 0), hsRate, clientNumberData, clientNameData };
   }
 
   render() {
@@ -122,7 +122,12 @@ export default class PerformanceIndicators extends PureComponent {
       empInfo,
     } = this.props;
     // 解析hsRateAndBusinessIndicator数据
-    const { hsRate, clientNumberData, clientNameData } = this.analyticHSRateAndBusinessIndicator();
+    const {
+      isEmpty: isIndicatorEmpty, // 控制对应的指标区域，是否显示 暂无数据
+      hsRate,
+      clientNumberData,
+      clientNameData,
+    } = this.analyticHSRateAndBusinessIndicator();
     // 字段语义，在mock文件内：/mockup/groovynoauth/fsp/emp/kpi/queryEmpKPIs.js
     const {
       motOkMnt, motTotMnt, taskCust, totCust,
@@ -202,7 +207,7 @@ export default class PerformanceIndicators extends PureComponent {
               </Col>
               <Col span={8}>
                 <RectFrame dataSource={clientHead}>
-                  <IfEmpty isEmpty={isEmpty}>
+                  <IfEmpty isEmpty={isIndicatorEmpty}>
                     <IECharts
                       onReady={this.handleBusinessOpenClick}
                       option={clientItems}
@@ -216,7 +221,7 @@ export default class PerformanceIndicators extends PureComponent {
               </Col>
               <Col span={8}>
                 <RectFrame dataSource={hsRateHead}>
-                  <IfEmpty isEmpty={isEmpty}>
+                  <IfEmpty isEmpty={isIndicatorEmpty}>
                     <IECharts
                       option={hsRateData}
                       resizable
