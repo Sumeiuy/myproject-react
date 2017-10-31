@@ -17,6 +17,8 @@ export default {
     protocolDetail: EMPTY_OBJECT, // 协议详情
     attachmentList: EMPTY_LIST, // 附件信息
     flowHistory: EMPTY_LIST,  // 审批记录
+    operationList: EMPTY_LIST, // 操作类型列表
+    subTypeList: EMPTY_LIST, // 子类型列表
   },
   reducers: {
     // 获取协议详情
@@ -41,6 +43,22 @@ export default {
       return {
         ...state,
         flowHistory: resultData,
+      };
+    },
+    // 查询操作类型
+    queryOperationListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_LIST } } = action;
+      return {
+        ...state,
+        operationList: resultData,
+      };
+    },
+    // 查询子类型
+    querySubTypeListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_LIST } } = action;
+      return {
+        ...state,
+        subTypeList: resultData,
       };
     },
   },
@@ -80,14 +98,46 @@ export default {
         payload: response,
       });
     },
+    // 查询操作类型/子类型
+    * queryTypeVaules({ payload }, { call, put }) {
+      console.log('payload', payload);
+      const response = yield call(api.queryTypeVaules, payload);
+        /*eslint-disable */
+        response.resultData.forEach((v)=>{
+          v.show = true;
+          v.label = v.val;
+          v.value = v.name;
+        })
+        /*eslint-disable */
+      switch(payload.typeCode){
+        case 'operationType':
+          yield put({
+            type: 'queryOperationListSuccess',
+            payload: response,
+          });
+          break;
+        case 'subType':
+          yield put({
+            type: 'querySubTypeListSuccess',
+            payload: response,
+          });
+          break;
+      }
+
+    }
   },
   subscriptions: {
     setup({ dispatch, history }) {
-      return history.listen(({ pathname, params }) => {
-        console.log('params', params);
+      return history.listen(({ pathname, query }) => {
+        console.log('query', query);
+        // 查询子类型列表参数
+        const subTypeListParam = {
+          typeCode: 'subType',
+        };
         if (pathname === '/channelsTypeProtocol') {
           // 请求客户列表
           dispatch({ type: 'app/getCanApplyCustList' });
+          dispatch({type: 'queryTypeVaules', payload: subTypeListParam});
         }
       });
     },

@@ -10,7 +10,7 @@ export default function channels(api) {
     saveProtocolData: query => api.post('/groovynoauth/fsp/protocol/saveProtocol', query),
     // 不明
     getTemplate: query => api.post('/groovynoauth/fsp/protocol/getTemplate', query),
-    // 不明
+    // 查询操作类型/子类型
     queryTypeVaules: query => api.post('/groovynoauth/fsp/protocol/queryTypeVaules', query),
   };
 }

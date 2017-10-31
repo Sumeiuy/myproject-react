@@ -223,12 +223,12 @@ export default class ChannelsTypeProtocol extends PureComponent {
     const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
 
     // 默认筛选条件
-    getSeibleList({
-      ...params,
-      type: pageType,
-    });
-
-    getClauseNameList({});
+    // getSeibleList({
+    //   ...params,
+    //   type: pageType,
+    // });
+    //
+    // getClauseNameList({});
   }
 
   componentWillReceiveProps(nextProps) {
@@ -669,7 +669,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
     );
     const rightPanel = (
       <Detail
-        baseInfo={baseInfo}
+        protocolDetail={EMPTY_OBJECT}
         attachmentList={attachmentList}
         flowHistory={flowHistory}
         hasEditPermission={hasEditPermission}

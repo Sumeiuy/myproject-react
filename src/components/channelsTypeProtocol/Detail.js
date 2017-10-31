@@ -37,6 +37,8 @@ const {
 //   return '无';
 // };
 const EMPTY_PARAM = '暂无';
+// const EMPTY_OBJECT = {};
+const EMPTY_ARRAY = [];
 // 合约条款的表头、状态对应值
 const { contract: { status } } = seibelConfig;
 export default class Detail extends PureComponent {
@@ -50,9 +52,8 @@ export default class Detail extends PureComponent {
   }
 
   static defaultProps = {
-    baseInfo: {},
-    attachmentList: [],
-    flowHistory: [],
+    attachmentList: EMPTY_ARRAY,
+    flowHistory: EMPTY_ARRAY,
     uploadAttachment: () => {},
     showEditModal: () => {},
     hasEditPermission: false,
@@ -83,7 +84,6 @@ export default class Detail extends PureComponent {
       protocolDetail,
       flowHistory,
     } = this.props;
-    // const { terms } = this.state;
     const uploadProps = {
       attachmentList,
       uploadAttachment,
@@ -138,7 +138,7 @@ export default class Detail extends PureComponent {
         <div className={styles.detailWrapper}>
           <InfoTitle head="协议条款" />
           <CommonTable
-            data={protocolDetail.term || []}
+            data={protocolDetail.term || EMPTY_ARRAY}
             titleList={protocolClauseTitleList}
           />
         </div>
