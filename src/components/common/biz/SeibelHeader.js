@@ -16,7 +16,7 @@ import styles from '../../style/jiraLayout.less';
 import { hasPermission } from '../../../utils/helper';
 
 // 头部筛选filterBox的高度
-const filterBoxClientHeight = 32;
+const FILTERBOX_HEIGHT = 32;
 export default class Pageheader extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -73,9 +73,6 @@ export default class Pageheader extends PureComponent {
   }
 
   componentDidUpdate() {
-    this.pageCommonHeader = document.querySelector(`.${styles.pageCommonHeader}`);
-    this.filterBox = document.querySelector(`.${styles.filterBox}`);
-    this.filterMore = document.querySelector(`.${styles.filterMore}`);
     this.onWindowResize();
     window.addEventListener('resize', this.onWindowResize, false);
   }
@@ -83,13 +80,28 @@ export default class Pageheader extends PureComponent {
   @autobind
   onWindowResize() {
     const filterBoxHeight = this.filterBox.getBoundingClientRect().height;
-    if (filterBoxHeight <= filterBoxClientHeight) {
+    if (filterBoxHeight <= FILTERBOX_HEIGHT) {
       this.filterMore.classList.remove('filterMoreIcon');
       this.filterMore.classList.add('filterNoneIcon');
     } else {
       this.filterMore.classList.remove('filterNoneIcon');
       this.filterMore.classList.add('filterMoreIcon');
     }
+  }
+
+  @autobind
+  pageCommonHeaderRef(input) {
+    this.pageCommonHeader = input;
+  }
+
+  @autobind
+  filterBoxRef(input) {
+    this.filterBox = input;
+  }
+
+  @autobind
+  filterMoreRef(input) {
+    this.filterMore = input;
   }
 
   @autobind
@@ -229,8 +241,8 @@ export default class Pageheader extends PureComponent {
       return null;
     }
     return (
-      <div className={styles.pageCommonHeader}>
-        <div className={styles.filterBox}>
+      <div className={styles.pageCommonHeader} ref={this.pageCommonHeaderRef}>
+        <div className={styles.filterBox} ref={this.filterBoxRef}>
           <div className={styles.filterFl}>
             <div className={styles.dropDownSelectBox}>
               <DropDownSelect
@@ -310,9 +322,23 @@ export default class Pageheader extends PureComponent {
           </div>
           {
             this.state.showMore ?
-              <div className={styles.filterMore} onClick={this.handleMoreChange}>更多<Icon type="xiangxia" /></div>
+              <div
+                className={styles.filterMore}
+                onClick={this.handleMoreChange}
+                ref={this.filterMoreRef}
+              >
+                <span>更多</span>
+                <Icon type="xiangxia" />
+              </div>
             :
-              <div className={styles.filterMore} onClick={this.handleMoreChange}>收起<Icon type="xiangshang" /></div>
+              <div
+                className={styles.filterMore}
+                onClick={this.handleMoreChange}
+                ref={this.filterMoreRef}
+              >
+                <span>收起</span>
+                <Icon type="xiangshang" />
+              </div>
           }
         </div>
         {

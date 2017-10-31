@@ -141,7 +141,6 @@ export default class DropdownSelect extends PureComponent {
       { [style.disable]: disable },
       { [style.active]: this.state.isSHowModal },
     ]);
-    console.warn('this.state.isSHowModal', this.state.isSHowModal);
 
     const menu = (
       <div
