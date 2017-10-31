@@ -51,6 +51,7 @@ const effects = {
   threeMatchInfo: 'commission/queryThreeMatchInfo',
   subscribelProList: 'commission/getSubscribelProList',
   unSubscribelProList: 'commission/getUnSubscribelProList',
+  clearReduxState: 'commission/clearReduxState',
 };
 
 const mapStateToProps = state => ({
@@ -156,6 +157,8 @@ const mapDispatchToProps = {
   getSubscribelProList: getDataFunction(false, effects.subscribelProList),
   // 获取新建咨讯退订可选产品列表
   getUnSubscribelProList: getDataFunction(false, effects.unSubscribelProList),
+  // 清空redux保存的state
+  clearReduxState: getDataFunction(false, effects.clearReduxState),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -212,6 +215,7 @@ export default class CommissionHome extends PureComponent {
     getSingleGJ: PropTypes.func.isRequired,
     submitSingle: PropTypes.func.isRequired,
     singleSubmit: PropTypes.string.isRequired,
+    clearReduxState: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -232,7 +236,6 @@ export default class CommissionHome extends PureComponent {
   componentWillMount() {
     const {
       getCommissionList,
-      getAprovalUserList,
       location: {
         query,
         query: {
@@ -242,8 +245,6 @@ export default class CommissionHome extends PureComponent {
       },
     } = this.props;
     const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
-    // 获取审批人员列表
-    getAprovalUserList({ loginUser: getEmpId() });
     // 默认筛选条件
     getCommissionList({ ...params, type: pageType });
   }
@@ -338,12 +339,13 @@ export default class CommissionHome extends PureComponent {
       getUnSubscribeDetail,
       getSingleDetail,
     } = this.props;
+    const loginuser = getEmpId();
     switch (st) {
       case comsubs.batch:
         getBatchCommissionDetail({ batchNum: business1 });
         break;
       case comsubs.single:
-        getSingleDetail({ flowCode: business1 });
+        getSingleDetail({ orderId: business1, loginuser });
         break;
       case comsubs.subscribe:
         getSubscribeDetail({ orderId: id, type: custType });
@@ -528,6 +530,8 @@ export default class CommissionHome extends PureComponent {
       getSingleGJ,
       submitSingle,
       singleSubmit,
+      getAprovalUserList,
+      clearReduxState,
     } = this.props;
     const isEmpty = _.isEmpty(list.resultData);
     // 此处需要提供一个方法给返回的接口查询设置是否查询到数据
@@ -604,6 +608,8 @@ export default class CommissionHome extends PureComponent {
           getSingleGJ={getSingleGJ}
           onSubmitSingle={submitSingle}
           singleSubmit={singleSubmit}
+          queryApprovalUser={getAprovalUserList}
+          clearReduxState={clearReduxState}
         />
       </div>
     );
