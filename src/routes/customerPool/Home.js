@@ -225,21 +225,28 @@ export default class Home extends PureComponent {
 
   @autobind
   getIndicators({ begin, end, orgId, cycleSelect }) {
-    const { getPerformanceIndicators, getManageIndicators } = this.props;
+    const {
+      getPerformanceIndicators,
+      getManageIndicators,
+      empInfo: { empInfo: { tgQyFlag } },
+    } = this.props;
     const custType = this.getCustType(orgId);
     getManageIndicators({
       custType, // 客户范围类型
       dateType: this.getDateType(cycleSelect), // 周期类型
       orgId, // 组织ID
     });
-    getPerformanceIndicators({
-      begin,
-      end,
-      empId: helper.getEmpId(),
-      custType, // 客户范围类型
-      dateType: this.getDateType(cycleSelect), // 周期类型
-      orgId, // 组织ID
-    });
+    // tgQyFlag：为是否能查看投顾绩效的开关
+    if (tgQyFlag) {
+      getPerformanceIndicators({
+        begin,
+        end,
+        empId: helper.getEmpId(),
+        custType, // 客户范围类型
+        dateType: this.getDateType(cycleSelect), // 周期类型
+        orgId, // 组织ID
+      });
+    }
   }
 
   @autobind
@@ -501,6 +508,8 @@ export default class Home extends PureComponent {
       hsRateAndBusinessIndicator,
       empInfo,
     } = this.props;
+    // 是否能看投顾绩效的标记
+    const { empInfo: { tgQyFlag } } = empInfo;
     return (
       <div className={styles.customerPoolWrap}>
         <Search
@@ -540,15 +549,19 @@ export default class Home extends PureComponent {
                   hsRateAndBusinessIndicator={hsRateAndBusinessIndicator}
                 />
               </TabPane>
-              <TabPane tab="投顾绩效" key="performance">
-                <PerformanceIndicators
-                  empInfo={empInfo}
-                  push={push}
-                  indicators={performanceIndicators}
-                  location={location}
-                  cycle={cycle}
-                />
-              </TabPane>
+              {
+                tgQyFlag ? (
+                  <TabPane tab="投顾绩效" key="performance">
+                    <PerformanceIndicators
+                      empInfo={empInfo}
+                      push={push}
+                      indicators={performanceIndicators}
+                      location={location}
+                      cycle={cycle}
+                    />
+                  </TabPane>
+                ) : (null)
+              }
             </Tabs>
           </div>
           <div className={styles.viewpoint}>
