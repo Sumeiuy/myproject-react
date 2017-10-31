@@ -5,7 +5,8 @@
  * @Last Modified time: 2017-10-30 17:35:50
  */
 
-import React, { PureComponent, PropTypes } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { Form, Input } from 'antd';
 import { autobind } from 'core-decorators';
 import { checkSpecialCharacter } from '../../../decorators/checkSpecialCharacter';

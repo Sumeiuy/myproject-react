@@ -3,7 +3,8 @@
  * @author sunweibin
  */
 
-import React, { PureComponent, PropTypes } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import SplitPane from 'react-split-pane';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';

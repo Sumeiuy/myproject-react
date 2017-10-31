@@ -4,7 +4,8 @@
  * @author zhuyanwen
  */
 
-import React, { PureComponent, PropTypes } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import IECharts from '../../IECharts';

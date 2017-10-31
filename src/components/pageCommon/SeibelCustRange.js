@@ -4,7 +4,8 @@
  * @author hongguangqing
  */
 
-import React, { PureComponent, PropTypes } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { TreeSelect } from 'antd';
 import { autobind } from 'core-decorators';
 import { constants } from '../../config';

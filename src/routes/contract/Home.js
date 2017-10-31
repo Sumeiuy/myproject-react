@@ -5,7 +5,8 @@
  * @Last Modified by:   XuWenKang
  * @Last Modified time: 2017-10-11 15:30:19
  */
-import React, { PureComponent, PropTypes } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { withRouter, routerRedux } from 'dva/router';
 import { connect } from 'react-redux';

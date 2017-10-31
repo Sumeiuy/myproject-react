@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 13:43:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-26 11:15:41
+ * @Last Modified time: 2017-10-31 13:25:39
  * 客户细分组件
  */
 
@@ -246,7 +246,7 @@ export default class CustomerSegment extends PureComponent {
           />
         </div>
         <div className={styles.tipSection}>
-          注：支持从客户细分导出的Excel或CSV格式文件。文件第一列必须是客户号，第二列必须是客户名称。
+          注：支持从客户细分导出的excel或csv格式文件。文件中必须包含”经纪客户号“字段。
         </div>
         {
           isShowTable ?
