@@ -12,7 +12,6 @@ import { Modal, Select, DatePicker, TimePicker, Input, message } from 'antd';
 import moment from 'moment';
 
 import Loading from '../../../layouts/Loading';
-import { helper } from '../../../utils';
 
 import styles from './createServiceRecord.less';
 
@@ -137,7 +136,7 @@ export default class CreateServiceRecord extends PureComponent {
       message.error('请输入此次服务的内容');
       return;
     }
-    if (helper.getStrLen(serviceContent) > MAX_LENGTH) {
+    if (serviceContent.length > MAX_LENGTH) {
       message.error(`服务的内容字数不能超过${MAX_LENGTH}`);
       return;
     }
