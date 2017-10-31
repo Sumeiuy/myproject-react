@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
- * @Last Modified by:   011200
- * @Last Modified time: 2017-10-30 10:03:57
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2017-10-31 16:48:03
  */
 
 import React, { PropTypes, PureComponent } from 'react';
@@ -10,7 +10,6 @@ import { Upload, message } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import confirm from '../../common/confirm_';
-// import Button from '../../common/Button';
 import Icon from '../../common/Icon';
 import { request } from '../../../config';
 import { helper } from '../../../utils';
@@ -18,10 +17,8 @@ import uploadRequest from '../../../utils/uploadRequest';
 import './uploader.less';
 
 let count = 0;
-// const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const Dragger = Upload.Dragger;
-// const confirm = Modal.confirm;
 
 export default class Uploader extends PureComponent {
   static propTypes = {
@@ -56,6 +53,7 @@ export default class Uploader extends PureComponent {
       isShowError: false,
       originFileName,
       totalCount,
+      showUploadList: true,
     };
   }
 
@@ -163,6 +161,7 @@ export default class Uploader extends PureComponent {
         isShowError: false,
         originFileName: name,
         totalCount: totalCustNum,
+        showUploadList: true,
       });
     }
 
@@ -171,12 +170,9 @@ export default class Uploader extends PureComponent {
       message.error(`${errorMsg}.`, 2);
       this.setState({
         isShowError: true,
+        showUploadList: false,
       });
     }
-
-    // this.setState({
-    //   fileList,
-    // });
   }
 
   @autobind
@@ -201,7 +197,7 @@ export default class Uploader extends PureComponent {
 
   @autobind
   createUpload() {
-    const { upData, fileList } = this.state;
+    const { upData, fileList, showUploadList } = this.state;
     const uploadKey = `uploadKey${count++}`;
     return (
       <Dragger
@@ -213,6 +209,7 @@ export default class Uploader extends PureComponent {
         onRemove={this.handleFileRemove}
         onChange={this.handleFileChange}
         customRequest={this.fileCustomRequest}
+        showUploadList={showUploadList}
       >
         <div className="upload_txt">
           + 上传客户列表
