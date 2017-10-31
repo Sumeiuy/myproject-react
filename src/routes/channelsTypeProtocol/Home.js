@@ -40,6 +40,14 @@ const {
   channelsTypeProtocol,
   channelsTypeProtocol: { pageType, subType, operationList, status },
 } = seibelConfig;
+// 新建/编辑弹窗按钮，暂时写死在前端
+const FLOW_BUTTONS = {
+  flowButtons: [
+    {
+      btnName: '提交',
+    }
+  ]
+}
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
   payload: query || {},
@@ -531,7 +539,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
       operate: 1,
       flowId: '',
     });
-    this.showModal('addFormModal');
+    this.showModal('editFormModal');
     // 每次打开弹窗的时候重置退订详情数据
     resetUnsubscribeDetail();
   }
@@ -587,203 +595,10 @@ export default class ChannelsTypeProtocol extends PureComponent {
     console.warn('item', btnItem);
     // TODO-设定好相应的值传过去，注意 operation
     const { unsubscribeBaseInfo } = this.props;
-    const { editFormModal, contractFormData } = this.state;
-    console.warn('contractFormData', contractFormData);
-    let payload = EMPTY_OBJECT;
-    // 操作类型
-    const operationType = contractFormData.workflowname;
-    // 新建窗口时
-    if (!editFormModal) {
-      // 操作类型是退订时
-      if (operationType === unsubscribe) {
-        if (!contractFormData.subType) {
-          message.error('请选择子类型');
-          return;
-        }
-        if (!contractFormData.custName) {
-          message.error('请选择客户');
-          return;
-        }
-        if (!contractFormData.contractNum.flowId) {
-          message.error('请选择合约编号');
-          return;
-        }
-        payload = {
-          ...unsubscribeBaseInfo,
-          workflowName: '2',
-          tduuid: contractFormData.tduuid || '',
-          tdDescription: contractFormData.tdDescription || '',
-        };
-        console.warn('新建窗口，退订所有数据完毕', payload);
-        // 数据判断完毕，请求接口
-      } else {
-        // 操作类型是订购时
-        if (!contractFormData.subType) {
-          message.error('请选择子类型');
-          return;
-        }
-        if (!contractFormData.custName) {
-          message.error('请选择客户');
-          return;
-        }
-        if (!contractFormData.startDt) {
-          message.error('请选择合约开始日期');
-          return;
-        }
-        if (contractFormData.vailDt && this.isBiggerThanStartDate(contractFormData)) {
-          message.error('合约开始日期不能大于合约有效期');
-          return;
-        }
-        if (contractFormData.vailDt && !this.isBiggerThanTodayAddFive(contractFormData.vailDt)) {
-          message.error('合约有效期必须大于当前日期加5天');
-          return;
-        }
-        if (!contractFormData.terms.length) {
-          message.error('请添加合约条款');
-          return;
-        }
-        if (!this.checkClauseIsLegal(contractFormData.terms)) {
-          message.error('合约条款中比例明细参数的值加起来必须要等于1');
-          return;
-        }
-        if (!this.checkClauseIsUniqueness(contractFormData.terms)) {
-          message.error('合约条款中每个部门不能有相同的合约条款！');
-          return;
-        }
-        payload = contractFormData;
-        console.warn('新建窗口所有数据完毕 payload', payload);
-        // 数据判断完毕，请求接口
-      }
-    } else {
-      // 编辑窗口
-      if (!contractFormData.startDt) {
-        message.error('请选择合约开始日期');
-        return;
-      }
-      if (contractFormData.vailDt && this.isBiggerThanStartDate(contractFormData)) {
-        message.error('合约开始日期不能大于合约有效期');
-        return;
-      }
-      if (contractFormData.vailDt && !this.isBiggerThanTodayAddFive(contractFormData.vailDt)) {
-        message.error('合约有效期必须大于当前日期加5天');
-        return;
-      }
-      if (!contractFormData.terms.length) {
-        message.error('请添加合约条款');
-        return;
-      }
-      if (!this.checkClauseIsLegal(contractFormData.terms)) {
-        message.error('合约条款中比例明细参数的值加起来必须要等于1');
-        return;
-      }
-      if (!this.checkClauseIsUniqueness(contractFormData.terms)) {
-        message.error('合约条款中每个部门不能有相同的合约条款！');
-        return;
-      }
-      payload = contractFormData;
-      console.warn('编辑窗口所有数据完毕', payload);
-      // 数据判断完毕，请求接口
-    }
-    let tempApproveData = EMPTY_OBJECT;
-    // 判断弹窗类型，生成不同数据--新建
-    if (!editFormModal) {
-      // 操作类型是退订时
-      if (operationType === unsubscribe) {
-        tempApproveData = {
-          type: 'unsubscribe',
-          flowId: contractFormData.contractNum.flowId,
-          approverIdea: contractFormData.appraval || '',
-          operate: '2',
-        };
-      } else {
-        // 订购
-        tempApproveData = {
-          type: 'add',
-          flowId: '',
-          approverIdea: contractFormData.appraval || '',
-          operate: '1',
-        };
-      }
-    } else {
-      // 编辑
-      tempApproveData = {
-        type: 'edit',
-        flowId: contractFormData.flowid,
-        approverIdea: contractFormData.appraval || '',
-        operate: btnItem.operate || '',
-      };
-    }
-    // item 不为空，并且 approverNum 不等于 'none'，
-    // 需要选择审批人
-    if (!_.isEmpty(btnItem) && btnItem.approverNum !== 'none') {
-      const listData = btnItem.flowAuditors;
-      const newApproverList = listData.map((item, index) => {
-        const key = `${new Date().getTime()}-${index}`;
-        return {
-          empNo: item.login || '',
-          empName: item.empName || '无',
-          belowDept: item.occupation || '无',
-          key,
-        };
-      });
-      this.setState({
-        flowAuditors: newApproverList,
-        footerBtnData: btnItem,
-        payload,
-        tempApproveData,
-      }, this.showModal('approverModal'));
-    } else {
-      // 不需要审批人
-      // 设置审批人信息
-      const selectApproveData = {
-        approverName: btnItem.flowAuditors[0].empName,
-        approverId: btnItem.flowAuditors[0].login,
-      };
-      // 设置按钮信息
-      const footerBtnData = btnItem;
-      const sendPayload = {
-        payload,
-        approveData: {
-          ...tempApproveData,
-          groupName: btnItem.nextGroupName,
-          auditors: btnItem.flowAuditors[0].login,
-        },
-        selectApproveData,
-        footerBtnData,
-      };
-      // 按钮是终止时，弹出确认框，确定之后调用接口
-      if (btnItem.btnName === '终止') {
-        const that = this;
-        confirm({
-          title: '确认要终止此任务吗?',
-          content: '确认后，操作将不可取消。',
-          onOk() {
-            that.sendRequest(sendPayload);
-          },
-        });
-      } else {
-        this.sendRequest(sendPayload);
-      }
-    }
+    const formData = this.EditFormComponent.getData();
+    console.log('formData',formData)
   }
 
-  // 构造底部按钮集合
-  // @autobind
-  // constructSelfBtnGroup() {
-  //   const { flowStepInfo, unsubFlowStepInfo } = this.state;
-  //   let list = [];
-  //   if (unsubFlowStepInfo) {
-  //     list = unsubFlowStepInfo;
-  //   } else {
-  //     list = flowStepInfo;
-  //   }
-  //   this.setState({
-  //     addOrEditSelfBtnGroup: <BottonGroup
-  //       list={list}
-  //       onEmitEvent={this.footerBtnHandle}
-  //     />,
-  //   });
-  // }
   // 审批人弹出框确认按钮
   @autobind
   handleApproverModalOK(approver) {
@@ -880,49 +695,14 @@ export default class ChannelsTypeProtocol extends PureComponent {
         showEditModal={this.handleShowEditForm}
       />
     );
-    // 新建表单props
-    const addFormProps = {
-      // 合约编号
-      onSearchContractNum: this.handleSearchContractNum,
-      contractNumList,
-      // 可申请客户列表
-      onSearchCutList: this.handleSearchCutList,
-      custList: canApplyCustList,
-      // 基本信息
-      onSearchContractDetail: this.handleSearchContractDetail,
-      contractDetail: this.props.unsubscribeBaseInfo,
-      // 表单变化
-      onChangeForm: this.handleChangeContractForm,
-      // 条款名称列表
-      clauseNameList: this.props.clauseNameList,
-      // 合作部门列表
-      cooperDeparment: this.props.cooperDeparment,
-      // 根据管检测查询合作部门
-      searchCooperDeparment: this.handleSearchCooperDeparment,
-      // 审批人
-      flowStepInfo: addFlowStepInfo,
-      // 获取审批人
-      getFlowStepInfo,
-      // 清空退订合作合约详情
-      resetUnsubscribeDetail,
-    };
-    const addFormModalProps = {
-      modalKey: 'addFormModal',
-      title: '新建合约申请',
-      closeModal: this.closeModal,
-      visible: addFormModal,
-      size: 'large',
-      // 底部按钮
-      selfBtnGroup: addOrEditSelfBtnGroup,
-    };
-    // 修改表单props
+    // 新建/修改表单props
     const contractDetail = {
       baseInfo,
       attachmentList,
       flowHistory,
     };
     const selfBtnGroup = (<BottonGroup
-      list={flowStepInfo}
+      list={FLOW_BUTTONS}
       onEmitEvent={this.footerBtnHandle}
     />);
     const editFormModalProps = {
