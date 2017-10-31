@@ -15,6 +15,8 @@ import Icon from '../Icon';
 import styles from '../../style/jiraLayout.less';
 import { hasPermission } from '../../../utils/helper';
 
+//头部筛选filterBox的高度
+const filterBoxClientHeight = 32
 export default class Pageheader extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
@@ -81,7 +83,7 @@ export default class Pageheader extends PureComponent {
   @autobind
   onWindowResize() {
     const filterBoxHeight = this.filterBox.getBoundingClientRect().height;
-    if (filterBoxHeight <= 32) {
+    if (filterBoxHeight <= filterBoxClientHeight) {
       this.filterMore.classList.remove('filterMoreIcon');
       this.filterMore.classList.add('filterNoneIcon');
     } else {
