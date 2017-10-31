@@ -7,6 +7,8 @@
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
 import { AutoComplete } from 'antd';
+import _ from 'lodash';
+
 import confirm from '../Confirm/confirm';
 import styles from './index.less';
 
@@ -33,7 +35,17 @@ export default class autoComplete extends PureComponent {
       inputValue: '',
     };
   }
-
+  componentWillReceiveProps(nextProps) {
+    const { dataSource: prev } = this.props;
+    const { dataSource: next } = nextProps;
+    if (!_.isEqual(prev, next)) {
+      if (!_.isEmpty(next)) {
+        this.setState({
+          inputValue: '',
+        });
+      }
+    }
+  }
   // 根据用户选中的option的value值获取对应的数组值
   @autobind
   setSelectValue(value, option) {
@@ -72,9 +84,6 @@ export default class autoComplete extends PureComponent {
       });
     } else {
       this.props.onChangeValue(value);
-      this.setState({
-        inputValue: '',
-      });
     }
   }
 

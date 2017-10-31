@@ -46,11 +46,14 @@ const effects = {
   batchgj: 'commission/getGJCommissionRate',
   singlegj: 'commission/getSingleGJCommissionRate',
   singleCustList: 'commission/getSingleCustList',
+  subscribeCustList: 'commission/getSubscribelCustList',
   singleComOptions: 'commission/getSingleOtherCommissionOptions',
   singleProList: 'commission/getSingleComProductList',
   threeMatchInfo: 'commission/queryThreeMatchInfo',
   subscribelProList: 'commission/getSubscribelProList',
   unSubscribelProList: 'commission/getUnSubscribelProList',
+  subSubscribe: 'commission/submitConsultSubscribe',
+  unSubSubscribe: 'commission/submitConsultUnSubscribe',
   clearReduxState: 'commission/clearReduxState',
 };
 
@@ -97,6 +100,8 @@ const mapStateToProps = state => ({
   singleOtherRatio: state.commission.singleOtherCommissionOptions,
   // 单佣金调整页面客户查询列表
   singleCustomerList: state.commission.singleCustomerList,
+  // 咨询订阅、咨询退订客户查询列表
+  subscribeCustomerList: state.commission.subscribeCustomerList,
   // 单佣金调整可选产品列表
   singleComProductList: state.commission.singleComProductList,
   // 客户与产品的三匹配信息
@@ -107,6 +112,10 @@ const mapStateToProps = state => ({
   unSubscribelProList: state.commission.unSubscribelProList,
   // 单佣金调整申请结果
   singleSubmit: state.commission.singleSubmit,
+  // 咨询订阅提交后返回的id
+  consultSubId: state.commission.consultSubId,
+  // 咨询退订提交后返回的id
+  consultUnsubId: state.commission.consultUnsubId,
 });
 
 const getDataFunction = (loading, type) => query => ({
@@ -149,6 +158,8 @@ const mapDispatchToProps = {
   getSingleOtherRates: getDataFunction(false, effects.singleComOptions),
   // 查询单佣金调整页面客户列表
   getSingleCustList: getDataFunction(false, effects.singleCustList),
+  // 咨讯订阅、咨讯退订客户列表
+  getSubscribelCustList: getDataFunction(false, effects.subscribeCustList),
   // 获取单佣金调整中的可选产品列表
   getSingleProductList: getDataFunction(false, effects.singleProList),
   // 查询产品与客户的三匹配信息
@@ -157,6 +168,10 @@ const mapDispatchToProps = {
   getSubscribelProList: getDataFunction(false, effects.subscribelProList),
   // 获取新建咨讯退订可选产品列表
   getUnSubscribelProList: getDataFunction(false, effects.unSubscribelProList),
+  // 咨询订阅提交
+  submitSub: getDataFunction(false, effects.subSubscribe),
+  // 咨询退订提交
+  submitUnSub: getDataFunction(false, effects.unSubSubscribe),
   // 清空redux保存的state
   clearReduxState: getDataFunction(false, effects.clearReduxState),
 };
@@ -181,6 +196,7 @@ export default class CommissionHome extends PureComponent {
     getSingleDetail: PropTypes.func.isRequired,
     getApprovalRecords: PropTypes.func.isRequired,
     getSingleCustList: PropTypes.func.isRequired,
+    getSubscribelCustList: PropTypes.func.isRequired,
     getProductList: PropTypes.func.isRequired,
     productList: PropTypes.array.isRequired,
     list: PropTypes.object.isRequired,
@@ -207,6 +223,7 @@ export default class CommissionHome extends PureComponent {
     threeMatchInfo: PropTypes.object.isRequired,
     queryThreeMatchInfo: PropTypes.func.isRequired,
     singleCustomerList: PropTypes.array.isRequired,
+    subscribeCustomerList: PropTypes.array.isRequired,
     getSubscribelProList: PropTypes.func.isRequired,
     getUnSubscribelProList: PropTypes.func.isRequired,
     subscribelProList: PropTypes.array.isRequired,
@@ -215,6 +232,10 @@ export default class CommissionHome extends PureComponent {
     getSingleGJ: PropTypes.func.isRequired,
     submitSingle: PropTypes.func.isRequired,
     singleSubmit: PropTypes.string.isRequired,
+    submitSub: PropTypes.func.isRequired,
+    consultSubId: PropTypes.string.isRequired,
+    submitUnSub: PropTypes.func.isRequired,
+    consultUnsubId: PropTypes.string.isRequired,
     clearReduxState: PropTypes.func.isRequired,
   }
 
@@ -505,7 +526,10 @@ export default class CommissionHome extends PureComponent {
       getProductList,
       getCanApplyCustList,
       getSingleCustList,
+      getSubscribelCustList,
       submitBatch,
+      submitSub,
+      submitUnSub,
       approvalUserList,
       canApplyCustList,
       validataLoading,
@@ -522,6 +546,7 @@ export default class CommissionHome extends PureComponent {
       threeMatchInfo,
       queryThreeMatchInfo,
       singleCustomerList,
+      subscribeCustomerList,
       getSubscribelProList,
       subscribelProList,
       getUnSubscribelProList,
@@ -599,7 +624,9 @@ export default class CommissionHome extends PureComponent {
           threeMatchInfo={threeMatchInfo}
           queryThreeMatchInfo={queryThreeMatchInfo}
           querySingleCustList={getSingleCustList}
+          querySubscribelCustList={getSubscribelCustList}
           singleCustList={singleCustomerList}
+          subscribeCustList={subscribeCustomerList}
           getSubscribelProList={getSubscribelProList}
           subscribelProList={subscribelProList}
           getUnSubscribelProList={getUnSubscribelProList}
@@ -608,6 +635,8 @@ export default class CommissionHome extends PureComponent {
           getSingleGJ={getSingleGJ}
           onSubmitSingle={submitSingle}
           singleSubmit={singleSubmit}
+          submitSub={submitSub}
+          submitUnSub={submitUnSub}
           queryApprovalUser={getAprovalUserList}
           clearReduxState={clearReduxState}
         />

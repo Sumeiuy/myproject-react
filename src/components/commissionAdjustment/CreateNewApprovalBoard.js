@@ -96,6 +96,9 @@ export default class CreateNewApprovalBoard extends PureComponent {
     // 单佣金调整客户列表
     querySingleCustList: PropTypes.func.isRequired,
     singleCustList: PropTypes.array.isRequired,
+    // 咨讯订阅、咨讯退订客户列表
+    querySubscribelCustList: PropTypes.func.isRequired,
+    subscribeCustList: PropTypes.array.isRequired,
     // 新建咨讯订阅可选产品列表
     getSubscribelProList: PropTypes.func.isRequired,
     subscribelProList: PropTypes.array.isRequired,
@@ -108,6 +111,10 @@ export default class CreateNewApprovalBoard extends PureComponent {
     // 单佣金调整提交
     onSubmitSingle: PropTypes.func.isRequired,
     singleSubmit: PropTypes.string.isRequired,
+    // 新建咨询订阅提交接口
+    submitSub: PropTypes.func.isRequired,
+    // 新建咨询退订提交接口
+    submitUnSub: PropTypes.func.isRequired,
     // 查询审批人
     queryApprovalUser: PropTypes.func.isRequired,
     // 清空redux的state
@@ -123,6 +130,8 @@ export default class CreateNewApprovalBoard extends PureComponent {
     customerList: [],
     approverList: [],
     otherRatios: [],
+    consultSubId: '',
+    consultUnsubId: '',
   }
 
   constructor(props) {
@@ -141,6 +150,9 @@ export default class CreateNewApprovalBoard extends PureComponent {
       attachment: '',
       singleProductList: [], // 单佣金调整选择的产品列表
       singleProductMatchInfo: [], // 单佣金调整选择的产品的三匹配信息
+      subProList: [], // 咨询订阅产品列表
+      subscribelProductMatchInfo: [], // 咨询订阅的产品的三匹配信息
+      unSubProList: [], // 咨询退订产品列表
     };
   }
 
@@ -153,6 +165,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
         this.merge3MatchInfo(next3);
       } else if (this.judgeSubtypeNow(commadj.subscribe)) {
         // 资讯订阅的
+        this.merge3MatchSubInfo(next3);
       }
     }
   }
@@ -171,6 +184,24 @@ export default class CreateNewApprovalBoard extends PureComponent {
     if (!exsit) {
       this.setState({
         singleProductMatchInfo: [matchInfo, ...singleProductMatchInfo],
+      });
+    }
+  }
+
+  @autobind
+  merge3MatchSubInfo(info) {
+    const { riskRankMhrt, investProdMhrt, investTypeMhrt, productCode } = info;
+    const matchInfo = {
+      productCode,
+      riskMatch: riskRankMhrt,
+      prodMatch: investProdMhrt,
+      termMatch: investTypeMhrt,
+    };
+    const { subscribelProductMatchInfo } = this.state;
+    const exsit = _.findIndex(subscribelProductMatchInfo, o => o.productCode === productCode) > -1;
+    if (!exsit) {
+      this.setState({
+        subscribelProductMatchInfo: [matchInfo, ...subscribelProductMatchInfo],
       });
     }
   }
@@ -228,6 +259,9 @@ export default class CreateNewApprovalBoard extends PureComponent {
       attachment: '',
       singleProductList: [],
       singleProductMatchInfo: [],
+      subProList: [],
+      subscribelProductMatchInfo: [],
+      unSubProList: [],
     });
     this.clearRedux();
   }
@@ -250,7 +284,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     onClose(modalKey);
   }
 
-  // 修改父产品参数
+  // 修改单佣金父产品参数
   @autobind
   updateParamsProduct(product, matchInfos) {
     const { prodCode, prodName, prodRate } = product;
@@ -263,7 +297,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     };
   }
 
-  // 修改子产品参数
+  // 修改单佣金子产品参数
   @autobind
   updateParamChildProduct(product) {
     const { prodCode, prodName } = product;
@@ -326,6 +360,78 @@ export default class CreateNewApprovalBoard extends PureComponent {
     this.props.onBatchSubmit(submitParams);
   }
 
+  // 选中的咨询订阅父产品数据结构改为提交所需
+  @autobind
+  changeSubmitscriProList(product, matchInfos) {
+    const {
+      prodId,
+      prodName,
+    } = product.product;
+    const matchInfo = _.filter(matchInfos, item => item.productCode === prodId)[0] || {};
+    return {
+      prodCode: prodId,
+      aliasName: prodName,
+      ...matchInfo,
+    };
+  }
+
+  // 选中的咨询退订父产品数据结构改为提交所需
+  @autobind
+  changeSubmitUnscriProList(product) {
+    const {
+      prodId,
+      prodName,
+    } = product.product;
+    return {
+      prodCode: prodId,
+      aliasName: prodName,
+    };
+  }
+
+  // 选中的咨询订阅、退订子产品数据结构改为提交所需
+  @autobind
+  changeSubmitSubscriProChildren(product) {
+    const {
+      parProdCode,
+      prodName,
+    } = product;
+    return {
+      prodCode: parProdCode,
+      aliasName: prodName,
+    };
+  }
+
+
+  // 将选中的咨询订阅产品数据结构改为提交所需
+  @autobind
+  changeSubmitSubProList(list, matchInfos) {
+    const newSubmitSubscriProList = list.map((product) => {
+      const { children } = product;
+      const newSubmitSubscribel = this.changeSubmitscriProList(product, matchInfos);
+      if (!_.isEmpty(children)) {
+        // 存在子产品
+        newSubmitSubscribel.subItem = children.map(this.changeSubmitSubscriProChildren);
+      }
+      return newSubmitSubscribel;
+    });
+    return newSubmitSubscriProList;
+  }
+
+  // 将选中的咨询退订产品数据结构改为提交所需
+  @autobind
+  changeSubmitUnSubProList(list) {
+    const newSubmitUnSubscriProList = list.map((product) => {
+      const { children } = product;
+      const newSubmitUnSubscribel = this.changeSubmitUnscriProList(product);
+      if (!_.isEmpty(children)) {
+        // 存在子产品
+        newSubmitUnSubscribel.subItem = children.map(this.changeSubmitSubscriProChildren);
+      }
+      return newSubmitUnSubscribel;
+    });
+    return newSubmitUnSubscriProList;
+  }
+
   // 单佣金调整提交
   @autobind
   singleSubmit() {
@@ -355,12 +461,54 @@ export default class CreateNewApprovalBoard extends PureComponent {
   // 资讯订阅提交
   @autobind
   advisorySub() {
-
+    const { empNum } = this.props.empInfo;
+    const {
+      customer,
+      remark,
+      subProList,
+      subscribelProductMatchInfo,
+      approverId, // 审批人工号
+      attachment, // 附件编号
+    } = this.state;
+    const newSubProList = this.changeSubmitSubProList(subProList, subscribelProductMatchInfo);
+    const params = {
+      type: customer.custType,
+      aprovaluser: approverId,
+      custNum: customer.custEcom,
+      custId: customer.id,
+      createdBy: empNum,
+      comments: remark,
+      attachmentNum: attachment,
+      item: newSubProList,
+    };
+    // 提交
+    this.props.submitSub(params);
   }
 
+  // 资讯退订提交
   @autobind
   advisoryUnSub() {
-
+    const { empNum } = this.props.empInfo;
+    const {
+      customer,
+      unSubProList,
+      remark,
+      approverId, // 审批人工号
+      attachment, // 附件编号
+    } = this.state;
+    const newUnSubProList = this.changeSubmitUnSubProList(unSubProList);
+    const unParams = {
+      type: customer.custType,
+      aprovaluser: approverId,
+      custNum: customer.custEcom,
+      custId: customer.id,
+      createdBy: empNum,
+      comments: remark,
+      attachmentNum: attachment,
+      item: newUnSubProList,
+    };
+    // 提交
+    this.props.submitUnSub(unParams);
   }
 
   // 提交
@@ -547,12 +695,23 @@ export default class CreateNewApprovalBoard extends PureComponent {
 
   // 根据用户输入查询单佣金客户列表
   @autobind
-  handleChangeAssembly(keywords) {
+  handleChangeSingleAssembly(keywords) {
     const { postnId, occDivnNum } = this.props.empInfo;
     this.props.querySingleCustList({
       keywords,
       postionId: postnId,
       deptCode: occDivnNum,
+    });
+  }
+
+  // 根据用户输入查询咨讯订阅、咨讯退订客户列表
+  @autobind
+  handleChangeSubscribeAssembly(keyword) {
+    const { postnId, occDivnNum } = this.props.empInfo;
+    this.props.querySubscribelCustList({
+      keyword,
+      postnId,
+      deptId: occDivnNum,
     });
   }
 
@@ -588,12 +747,13 @@ export default class CreateNewApprovalBoard extends PureComponent {
   // 单佣金、咨询订阅、退订基本信息选择客户
   @autobind
   handleSelectAssembly(customer) {
-    const { id, custType } = customer;
+    const { id } = customer;
     this.setState({
       customer,
     });
     const typeNow = this.judgeSubtypeNow;
     if (typeNow(commadj.subscribe)) {
+      const { custType } = customer;
       this.querySubscribelProList({
         custId: id,
         custType,
@@ -621,7 +781,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     this.props.getUnSubscribelProList(param);
   }
 
-  // 单佣金、咨讯订阅调整穿梭变化的时候处理程序
+  // 单佣金调整穿梭变化的时候处理程序
   @autobind
   handleSingleTransferChange(flag, item, array, dValue) {
     this.setState({
@@ -640,11 +800,50 @@ export default class CreateNewApprovalBoard extends PureComponent {
     console.warn('还差多少', dValue);
   }
 
+   // 咨讯订阅调整穿梭变化的时候处理程序
+  @autobind
+  handleSubscribelTransferChange(flag, item, array) {
+    this.setState({
+      subProList: array,
+    });
+    const { prodCode } = item;
+    const { id, custType } = this.state.customer;
+    this.props.queryThreeMatchInfo({
+      custRowId: id,
+      custType,
+      prdCode: prodCode,
+    });
+  }
+
+  // 咨讯退订调整穿梭变化的时候处理程序
+  @autobind
+  handleUnSubscribelTransferChange(flag, item, array) {
+    this.setState({
+      unSubProList: array,
+    });
+  }
+
   // 单佣金调整选择子产品的时候的处理程序
   @autobind
   handleSingleTransferSubProductCheck(item, array) {
     this.setState({
       singleProductList: array,
+    });
+  }
+
+  // 咨讯订阅选择子产品的时候的处理程序
+  @autobind
+  handleSubscribelTransferSubProductCheck(item, array) {
+    this.setState({
+      subProList: array,
+    });
+  }
+
+  // 咨讯订阅选择子产品的时候的处理程序
+  @autobind
+  handleUnSubscribelTransferSubProductCheck(item, array) {
+    this.setState({
+      unSubProList: array,
     });
   }
 
@@ -657,6 +856,8 @@ export default class CreateNewApprovalBoard extends PureComponent {
       prodCode: prodId,
       // 产品名称
       prodName,
+      // 传入的产品原始数据
+      product,
     };
   }
 
@@ -669,6 +870,8 @@ export default class CreateNewApprovalBoard extends PureComponent {
       prodCode: prodId,
       // 产品名称
       prodName,
+      // 传入的产品原始数据
+      product,
     };
   }
 
@@ -684,6 +887,8 @@ export default class CreateNewApprovalBoard extends PureComponent {
       prodName,
       // 是否默认选择
       xDefaultOpenFlag,
+      // 传入的产品原始数据
+      product,
     };
   }
 
@@ -697,6 +902,8 @@ export default class CreateNewApprovalBoard extends PureComponent {
       prodCode: prodId,
       // 产品名称
       prodName,
+      // 传入的产品原始数据
+      product,
     };
   }
 
@@ -706,11 +913,9 @@ export default class CreateNewApprovalBoard extends PureComponent {
     const newSubscriProList = data.map((product) => {
       const { subProds } = product;
       const newSubscribel = this.changeSubscriProList(product);
-      let children = null;
       if (!_.isEmpty(subProds)) {
         // 存在子产品
-        children = subProds.map(this.changeSubscriProChildren);
-        return { ...newSubscribel, children };
+        newSubscribel.children = subProds.map(this.changeSubscriProChildren);
       }
       return newSubscribel;
     });
@@ -723,11 +928,9 @@ export default class CreateNewApprovalBoard extends PureComponent {
     const newUnSubscriProList = data.map((product) => {
       const { subProds } = product;
       const newUnSubscribel = this.changeUnSubscriProList(product);
-      let children = null;
       if (!_.isEmpty(subProds)) {
         // 存在子产品
-        children = subProds.map(this.changeUnSubscriProChildren);
-        return { ...newUnSubscribel, children };
+        newUnSubscribel.children = subProds.map(this.changeUnSubscriProChildren);
       }
       return newUnSubscribel;
     });
@@ -780,6 +983,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       singleOtherRatio,
       singleComProductList,
       singleCustList,
+      subscribeCustList,
       subscribelProList,
       unSubscribelProList,
       threeMatchInfo,
@@ -843,8 +1047,8 @@ export default class CreateNewApprovalBoard extends PureComponent {
       secondData: [],
       firstColumns: subScribeProColumns,
       secondColumns: subScribeProColumns,
-      transferChange: this.handleTransferChange, // 三匹配未做
-      checkChange: this.handleCheckChange,
+      transferChange: this.handleSubscribelTransferChange,
+      checkChange: this.handleSubscribelTransferSubProductCheck,
       onSearch: this.handleSearch,
       rowKey: 'key',
       showSearch: true,
@@ -852,7 +1056,6 @@ export default class CreateNewApprovalBoard extends PureComponent {
       pagination,
       defaultCheckKey: 'xDefaultOpenFlag',
       supportSearchKey: [['prodId'], ['prodName']],
-      totalData: newSubscribelProList,
     };
     // 资讯退订中的服务产品退订配置
     const unsubScribetransferProps = {
@@ -862,15 +1065,14 @@ export default class CreateNewApprovalBoard extends PureComponent {
       secondData: [],
       firstColumns: subScribeProColumns,
       secondColumns: subScribeProColumns,
-      transferChange: this.handleTransferChange,
-      checkChange: this.handleCheckChange,
+      transferChange: this.handleUnSubscribelTransferChange,
+      checkChange: this.handleUnSubscribelTransferSubProductCheck,
       onSearch: this.handleSearch,
       rowKey: 'key',
       defaultCheckKey: 'default',
       showSearch: false,
       placeholder: '产品代码/产品名称',
       pagination,
-      totalData: newUnSubscribelProList,
     };
 
     const wrapClassName = this.judgeSubtypeNow(commadj.noSelected) ? 'commissionModal' : '';
@@ -904,12 +1106,24 @@ export default class CreateNewApprovalBoard extends PureComponent {
                 />
               </CommissionLine>
               {
-                this.judgeSubtypeNow([commadj.batch, commadj.noSelected]) ? null
+                !this.judgeSubtypeNow([commadj.single]) ? null
                 : (
                   <CommissionLine label="客户" labelWidth="90px" needInputBox={false}>
                     <SelectAssembly
                       dataSource={singleCustList}
-                      onSearchValue={this.handleChangeAssembly}
+                      onSearchValue={this.handleChangeSingleAssembly}
+                      onSelectValue={this.handleSelectAssembly}
+                    />
+                  </CommissionLine>
+                )
+              }
+              {
+                !this.judgeSubtypeNow([commadj.subscribe, commadj.unsubscribe]) ? null
+                : (
+                  <CommissionLine label="客户" labelWidth="90px" needInputBox={false}>
+                    <SelectAssembly
+                      dataSource={subscribeCustList}
+                      onSearchValue={this.handleChangeSubscribeAssembly}
                       onSelectValue={this.handleSelectAssembly}
                     />
                   </CommissionLine>
