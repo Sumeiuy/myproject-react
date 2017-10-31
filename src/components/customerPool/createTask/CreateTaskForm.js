@@ -117,13 +117,15 @@ export default class CreateTaskForm extends PureComponent {
         firstUserName += '等';
       }
     }
+    // 判断source不同值，从什么页面进来，给不同的默认值
     switch (source) {
       case 'business':
-        defaultMissionName = '提醒客户办理已满足条件的业务';
-        defaultMissionType = 'BusinessRecomm';
-        defaultExecutionType = 'Mission';
+        defaultMissionName = '提醒客户办理已满足条件的业务'; // 任务名称
+        defaultMissionType = 'BusinessRecomm'; // 任务类型
+        defaultExecutionType = 'Mission'; // 执行方式
+        // 任务提示
         defaultMissionDesc = `用户已达到到办理 ${custIdexPlaceHolders[0]} 业务的条件，请联系客户办理相关业务。注意提醒客户准备业务办理必须的文件。`;
-        defaultInitialValue = 8;
+        defaultInitialValue = 8; // 有效期
         break;
       case 'search':
         defaultMissionType = '请选择';
