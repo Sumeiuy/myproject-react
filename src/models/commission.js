@@ -106,18 +106,19 @@ export default {
     },
 
     querySingleDetailSuccess(state, action) {
-      const { payload: { detailRes, attachmentRes, approvalRes, stepRes } } = action;
+      // const { payload: { detailRes, attachmentRes, approvalRes, stepRes } } = action;
+      const { payload: { detailRes, attachmentRes, approvalRes } } = action;
       const detailResult = detailRes.resultData;
       const attachmentResult = attachmentRes.resultData;
       const approvalResult = approvalRes.resultData;
-      const stepResult = stepRes.resultData;
+      // const stepResult = stepRes.resultData;
       return {
         ...state,
         singleDetail: {
           base: detailResult,
           attachmentList: attachmentResult,
           approvalHistory: approvalResult,
-          currentStep: stepResult,
+          // currentStep: stepResult,
         },
       };
     },
@@ -462,19 +463,23 @@ export default {
 
     // 单佣金调整详情数据
     * getSingleDetail({ payload }, { call, put }) {
-      const detailRes = yield call(api.querySingleDetail, payload);
+      const { loginuser, ...resetPayload } = payload;
+      const detailRes = yield call(api.querySingleDetail, resetPayload);
       // 通过查询到的详情数据的attachmentNum获取附件信息
       const detailRD = detailRes.resultData;
       const attachmentRes = yield call(api.getAttachment, { attachment: detailRD.attachmentNum });
       const approvalRes = yield call(api.querySingleCustApprovalRecord, {
         flowCode: detailRD.flowCode,
+        loginuser,
       });
-      const stepRes = yield call(api.queryCurrentStep, {
-        flowCode: detailRD.flowCode,
-      });
+      // TODO 先注销，后面接口好了再弄
+      // const stepRes = yield call(api.queryCurrentStep, {
+      //   flowCode: detailRD.flowCode,
+      // });
       yield put({
         type: 'querySingleDetailSuccess',
-        payload: { detailRes, attachmentRes, approvalRes, stepRes },
+        // payload: { detailRes, attachmentRes, approvalRes, stepRes },
+        payload: { detailRes, attachmentRes, approvalRes },
       });
     },
 
@@ -619,6 +624,20 @@ export default {
         type: 'getUnSubscribelProListSuccess',
         payload: response,
       });
+    },
+    // 清空在redux中保存的查询结果
+    * clearReduxState({ payload }, { put }) {
+      const { clearList } = payload;
+      for (let i = 0; i < clearList.length; i++) {
+        const { name, value = [] } = clearList[i];
+        yield put({
+          type: 'opertateState',
+          payload: {
+            name,
+            value,
+          },
+        });
+      }
     },
   },
   subscriptions: {},
