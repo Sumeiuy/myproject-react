@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 15:02:49
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-30 10:27:08
+ * @Last Modified time: 2017-10-31 09:17:45
  */
 /**
  * 常用说明
@@ -66,7 +66,7 @@ export default class CommonUpload extends PureComponent {
     uploadAttachment: PropTypes.func,
     // 每个单子对应的唯一附件表 ID，默认为 ''
     attachment: PropTypes.string,
-    attachmentList: PropTypes.array.isRequired,
+    attachmentList: PropTypes.array,
     edit: PropTypes.bool,
     // 是否需要默认文字-“暂无附件”，默认为 true
     needDefaultText: PropTypes.bool,
@@ -81,6 +81,7 @@ export default class CommonUpload extends PureComponent {
     uploadAttachment: () => {},
     attachment: '',
     deleteAttachmentList: [],
+    attachmentList: [],
     edit: false,
     needDefaultText: true,
     deleteAttachmentLoading: false,

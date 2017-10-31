@@ -3,68 +3,41 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-19 09:37:42
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-20 17:24:02
+ * @Last Modified time: 2017-10-31 18:13:22
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import PropTypes from 'prop-types';
-// import classnames from 'classnames';
-// import _ from 'lodash';
 
 import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
 import ApproveList from '../common/approveList';
 import styles from './detail.less';
-import CommonUpload from '../common/biz/CommonUpload';
+import MultiUpload from '../common/biz/MultiUpload';
 import CommonTable from '../common/biz/CommonTable';
 import { seibelConfig } from '../../config';
 import { dateFormat } from '../../utils/helper';
 
-// 子类型列表
-// const childTypeList = _.filter(seibelConfig.contract.subType, v => v.label !== '全部');
-// const operationList = _.filter(seibelConfig.contract.operationList, v => v.label !== '全部');
-// 协议产品的表头、状态
 const {
-    channelsTypeProtocol: {
-      protocolProductTitleList, protocolClauseTitleList,
-    },
-  } = seibelConfig;
-// const operationLabel = (value) => {
-//   if (operationList && value) {
-//     const nowStatus = _.find(operationList, o => o.value === value) || {};
-//     return nowStatus.label || '无';
-//   }
-//   return '无';
-// };
+  underCustTitleList,  // 下挂客户表头集合
+  protocolClauseTitleList,  // 协议条款表头集合
+  protocolProductTitleList,  // 协议产品表头集合
+} = seibelConfig.channelsTypeProtocol;
+
 const EMPTY_PARAM = '暂无';
 // 合约条款的表头、状态对应值
 const { contract: { status } } = seibelConfig;
 export default class Detail extends PureComponent {
   static propTypes = {
     protocolDetail: PropTypes.object.isRequired,
-    attachmentList: PropTypes.array,
-    uploadAttachment: PropTypes.func,
-    showEditModal: PropTypes.func,
     flowHistory: PropTypes.array,
     hasEditPermission: PropTypes.bool,
   }
 
   static defaultProps = {
     baseInfo: {},
-    attachmentList: [],
     flowHistory: [],
-    uploadAttachment: () => {},
-    showEditModal: () => {},
     hasEditPermission: false,
-  }
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      // radio: 0,
-      // statusType: 'ready',
-      // terms: props.baseInfo.terms,
-    };
   }
 
   // 处理接口返回的拟稿提请时间
@@ -78,17 +51,9 @@ export default class Detail extends PureComponent {
 
   render() {
     const {
-      attachmentList,
-      uploadAttachment,
       protocolDetail,
       flowHistory,
     } = this.props;
-    // const { terms } = this.state;
-    const uploadProps = {
-      attachmentList,
-      uploadAttachment,
-      attachment: protocolDetail.attachment || '',
-    };
     const nowStep = {
       // 当前步骤
       stepName: protocolDetail.workflowNode || EMPTY_PARAM,
@@ -143,8 +108,26 @@ export default class Detail extends PureComponent {
           />
         </div>
         <div className={styles.detailWrapper}>
+          <InfoTitle head="下挂客户" />
+          <CommonTable
+            data={[]}
+            titleList={underCustTitleList}
+          />
+        </div>
+        <div className={styles.detailWrapper}>
           <InfoTitle head="附件信息" />
-          <CommonUpload {...uploadProps} />
+          <MultiUpload
+            attachmentList={[]}
+            attachment={''}
+            title={'影像资料（必填）'}
+            edit
+          />
+          <MultiUpload
+            attachmentList={[]}
+            attachment={''}
+            title={'影像资料（必填）'}
+            edit
+          />
         </div>
         <div className={styles.detailWrapper}>
           <InfoTitle head="审批记录" />

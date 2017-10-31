@@ -354,7 +354,7 @@ const pageConfig = {
   // 通道类型协议
   channelsTypeProtocol: {
     pageName: '通道类型协议',
-    pageType: '04',
+    pageType: '05',
     subType: [
       {
         show: true,
@@ -570,6 +570,7 @@ const pageConfig = {
         value: '5',
       },
     ],
+    // 协议产品表格表头数组
     protocolProductTitleList: [
       {
         dataIndex: 'prodCode',
@@ -617,6 +618,7 @@ const pageConfig = {
         title: '价格',
       },
     ],
+    // 协议条款表格表头数组
     protocolClauseTitleList: [
       {
         dataIndex: 'termsName',
