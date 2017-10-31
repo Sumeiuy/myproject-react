@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-23 16:50:28
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-27 17:37:29
+ * @Last Modified time: 2017-10-30 17:35:50
  */
 
 import React, { PureComponent, PropTypes } from 'react';
@@ -87,7 +87,7 @@ export default class AddNewGroup extends PureComponent {
           label="分组描述"
         >
           {getFieldDecorator('groupDesc', { rules: [{ max: 500, message: '字数限制：0-500字' }], initialValue: '' })(
-            <Input type="textarea" placeholder="客户已达到办理业务的各项条件，可以联系客户并给客户介绍符合开通条件的业务，根据客户的反馈情况决定是否需要向客户推荐开通相关业务。" rows={5} style={{ width: '100%' }} />,
+            <Input type="textarea" placeholder="请输入分组描述" rows={5} style={{ width: '100%' }} />,
           )}
         </FormItem>
         <FormItem className={styles.btnContent}>

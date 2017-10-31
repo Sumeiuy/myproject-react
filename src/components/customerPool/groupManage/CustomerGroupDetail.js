@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 14:15:22
- * @Last Modified by:   011200
- * @Last Modified time: 2017-10-30 10:03:14
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2017-10-30 17:45:07
  */
 
 import React, { PureComponent } from 'react';
@@ -286,7 +286,7 @@ export default class CustomerGroupDetail extends PureComponent {
     const riskLevelObject = _.find(custRiskBearing, item => item.key === riskLevel) || EMPTY_OBJECT;
     // 判断includeCustIdList是否存在custId
     if (_.includes(includeCustIdList, brokerNumber)) {
-      message.info('此客户已经添加过！');
+      message.error('此客户已经添加过');
       return;
     }
 
