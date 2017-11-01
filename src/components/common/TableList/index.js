@@ -83,7 +83,7 @@ export default class TableList extends PureComponent {
               { 'flex-base_0': this.props.statusType === 'ready' },
               { 'flex-base_1': this.props.statusType !== 'ready' },
             ])}
-          />
+          >操作</span>
         </li>
         {this.eleList}
       </ul>
