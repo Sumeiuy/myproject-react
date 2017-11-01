@@ -70,7 +70,9 @@ export default class Pageheader extends PureComponent {
   }
 
   componentWillMount() {
-    this.props.getCustRange({});
+    this.props.getCustRange({
+      type: this.props.pageType,
+    });
   }
 
   componentDidUpdate() {
