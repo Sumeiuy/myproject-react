@@ -135,14 +135,14 @@ export default class SixMonthEarnings extends PureComponent {
               </p>
             </div>
             <div>
-              <p className="tit">本月收益：</p>
+              <p className="tit">本月收益</p>
               <p className="asset">
                 <span className="num redNum">{lastestPrifitsValue}</span>
                 <span className="unit redUnit">{lastestPrifitsUnit}</span>
               </p>
             </div>
             <div>
-              <p className="tit">本月收益率：</p>
+              <p className="tit">本月收益率</p>
               <p className="asset">
                 <span className="num redNum">{lastestPrifitsRate}</span>
               </p>

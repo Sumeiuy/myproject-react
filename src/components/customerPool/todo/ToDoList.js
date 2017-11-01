@@ -7,7 +7,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import _ from 'lodash';
 import { Table } from 'antd';
 // import { fspGlobal } from '../../../utils';
 
@@ -32,12 +31,13 @@ const columns = [
     dataIndex: 'task',
     key: 'task',
     render: item => <a
+      className={styles.title}
       href={`${item.dispatchUri}&workFlowName=${encodeURI(item.flowClass)}`}
       target="_blank"
       rel="noopener noreferrer"
       title={item.text}
     >
-      {_.truncate(item.text, { length: 18, omission: '...' })}
+      {item.text}
     </a>,
   },
   {
@@ -112,7 +112,7 @@ export default class ToDoList extends PureComponent {
       return (<div className={styles.empty}>
         <Table
           className={`${className} ${styles.todoListEmpty}`}
-          rowKey={record => record.applyId}
+          rowKey={record => record.id}
           columns={columns}
           dataSource={todolist}
           locale={{ emptyText: '' }}
@@ -130,7 +130,7 @@ export default class ToDoList extends PureComponent {
       return (<div className={styles.empty}>
         <Table
           className={`${className} ${styles.todoListEmpty}`}
-          rowKey={record => record.applyId}
+          rowKey={record => record.id}
           columns={columns}
           dataSource={data}
           locale={{ emptyText: '' }}
@@ -146,7 +146,7 @@ export default class ToDoList extends PureComponent {
     return (
       <Table
         className={className}
-        rowKey={record => record.applyId}
+        rowKey={record => record.id}
         columns={columns}
         dataSource={data}
         pagination={{
