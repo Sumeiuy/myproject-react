@@ -57,7 +57,7 @@ export default function ServiceRecordContent(props) {
       );
     }
   }
-  
+
 
   return (
     <div className={styles.serviceContainer} id="serviceContainer">
