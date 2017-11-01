@@ -136,7 +136,7 @@ export default class TaskFlow extends PureComponent {
       taskName: params.taskName,
       taskType: params.taskType,
       templetDesc: toString(params.templetDesc),
-      timelyIntervalue: params.timelyIntervalValue,
+      timelyIntervalValue: params.timelyIntervalValue,
     };
     createTask({
       ...data,
