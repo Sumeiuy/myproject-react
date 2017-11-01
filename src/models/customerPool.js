@@ -412,10 +412,12 @@ export default {
     // 列表页添加服务记录
     * addServeRecord({ payload }, { call, put }) {
       const res = yield call(api.addServeRecord, payload);
-      yield put({
-        type: 'addServeRecordSuccess',
-        payload: res,
-      });
+      if (res.msg === 'OK') {
+        yield put({
+          type: 'addServeRecordSuccess',
+          payload: res,
+        });
+      }
     },
     // 获取客户分组
     * getCustomerGroupList({ payload }, { call, put }) {
