@@ -524,7 +524,6 @@ export default class Home extends PureComponent {
     } = this.props;
     // 是否能看投顾绩效的标记
     const { isShowPerformance = false } = this.state;
-
     return (
       <div className={styles.customerPoolWrap}>
         <Search
