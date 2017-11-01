@@ -1,5 +1,5 @@
 /**
- * @file components/commissionAdjustment/RejectionAndAmendment.js
+ * @file routes/commissionChange/Home.js
  * @description 佣金调整、资讯订阅、资讯退订驳回再修改页面
  * @author baojiajia
  */
@@ -12,61 +12,47 @@ import { autobind } from 'core-decorators';
 import { Input, Icon, message } from 'antd';
 import _ from 'lodash';
 
-import confirm from '../common/Confirm/confirm';
-import CommonUpload from '../common/biz/CommonUpload';
-import Transfer from '../common/biz/TableTransfer';
-import ChoiceApproverBoard from './ChoiceApproverBoard';
-import InfoTitle from '../common/InfoTitle';
-import AutoComplete from '../common/AutoComplete';
-import OtherCommissionSelectList from './OtherCommissionSelectList';
-import CommissionLine from './CommissionLine';
-import Button from '../common/Button';
-import ThreeMatchTip from './ThreeMatchTip';
-import { seibelConfig } from '../../config';
+import confirm from '../../components/common/Confirm/confirm';
+import CommonUpload from '../../components/common/biz/CommonUpload';
+import Transfer from '../../components/common/biz/TableTransfer';
+import ChoiceApproverBoard from '../../components/commissionAdjustment/ChoiceApproverBoard';
+import InfoTitle from '../../components/common/InfoTitle';
+import AutoComplete from '../../components/common/AutoComplete';
+import OtherCommissionSelectList from '../../components/commissionAdjustment/OtherCommissionSelectList';
+import CommissionLine from '../../components/commissionAdjustment/CommissionLine';
+import Button from '../../components/common/Button';
+import ThreeMatchTip from '../../components/commissionAdjustment/ThreeMatchTip';
+import { seibelConfig } from '../../../config';
 import Barable from '../../decorators/selfBar';
 import {
   pagination,
   singleColumns,
   subScribeProColumns,
-} from './commissionTransferHelper/transferPropsHelper';
+} from '../../components/commissionAdjustment/commissionTransferHelper/transferPropsHelper';
 
-import styles from './rejectionAndAmendment.less';
+import styles from './home.less';
 
 const { TextArea } = Input;
 const { commadj } = seibelConfig;
 
-// 其他佣金率的参数名称数组
-const otherComs = [
-  'zqCommission',
-  'stkCommission',
-  'creditCommission',
-  'ddCommission',
-  'hCommission',
-  'dzCommission',
-  'coCommission',
-  'stbCommission',
-  'oCommission',
-  'doCommission',
-  'hkCommission',
-  'bgCommission',
-  'qCommission',
-  'dqCommission',
-  'opCommission',
-  'dCommission',
-];
 const effects = {
-  applyCustList: 'commission/getCanApplyCustList',
-  productList: 'commission/getProductList',
-  validate: 'commission/validateCustInfo',
-  submitBatch: 'commission/submitBatchCommission',
-  gjCommissionRate: 'commission/getGJCommissionRate',
-  singleCustList: 'commission/getSingleCustList',
-  singleComOptions: 'commission/getSingleOtherCommissionOptions',
-  singleProList: 'commission/getSingleComProductList',
-  threeMatchInfo: 'commission/queryThreeMatchInfo',
-  subscribelProList: 'commission/getSubscribelProList',
-  unSubscribelProList: 'commission/getUnSubscribelProList',
-
+  applyCustList: 'commissionChange/getCanApplyCustList',
+  productList: 'commissionChange/getProductList',
+  validate: 'commissionChange/validateCustInfo',
+  submitBatch: 'commissionChange/submitBatchCommission',
+  gjCommissionRate: 'commissionChange/getGJCommissionRate',
+  singleCustList: 'commissionChange/getSingleCustList',
+  singleComOptions: 'commissionChange/getSingleOtherCommissionOptions',
+  singleProList: 'commissionChange/getSingleComProductList',
+  threeMatchInfo: 'commissionChange/queryThreeMatchInfo',
+  subscribelProList: 'commissionChange/getSubscribelProList',
+  unSubscribelProList: 'commissionChange/getUnSubscribelProList',
+  // 数据库中订单待修改数据（详情）
+  // 单佣金
+  singleDetailToChange: 'commissionChange/getSingleDetailToChange',
+  // 订阅、退订详情
+  subscribeDetailToChange: 'commissionChange/getSubscribeDetailToChange',
+  unsubDetailToChange: 'commissionChange/getUnSubscribeDetailToChange',
 
 };
 
@@ -76,31 +62,37 @@ const mapStateToProps = state => ({
   // empInfo:
   empInfo: state.app.empInfo,
   // 目标产品列表
-  productList: state.commission.productList,
+  productList: state.commissionChange.productList,
   // 审批人员列表
-  approvalUserList: state.commission.approvalUserList,
+  approvalUserList: state.commissionChange.approvalUserList,
   // 可申请的客户列表
-  canApplyCustList: state.commission.canApplyCustList,
+  canApplyCustList: state.commissionChange.canApplyCustList,
   // 验证结果描述
-  validateResult: state.commission.validateResult,
+  validateResult: state.commissionChange.validateResult,
   // 验证过程
-  validataLoading: state.commission.validataLoading,
+  validataLoading: state.commissionChange.validataLoading,
   // 提交批量佣金申请调整的进程
   batchSubmitProcess: state.loading.effects[effects.submitBatch],
   // 目标股基佣金率码值列表
-  gjCommissionList: state.commission.gjCommission,
+  gjCommissionList: state.commissionChange.gjCommission,
   // 单佣金调整的其他佣金费率码值
-  singleOtherRatio: state.commission.singleOtherCommissionOptions,
+  singleOtherRatio: state.commissionChange.singleOtherCommissionOptions,
   // 单佣金调整页面客户查询列表
-  singleCustomerList: state.commission.singleCustomerList,
+  singleCustomerList: state.commissionChange.singleCustomerList,
   // 单佣金调整可选产品列表
-  singleComProductList: state.commission.singleComProductList,
+  singleComProductList: state.commissionChange.singleComProductList,
   // 客户与产品的三匹配信息
-  threeMatchInfo: state.commission.threeMatchInfo,
+  threeMatchInfo: state.commissionChange.threeMatchInfo,
   // 新建咨讯订阅可选产品列表
-  subscribelProList: state.commission.subscribelProList,
+  subscribelProList: state.commissionChange.subscribelProList,
   // 新建咨讯订阅可选产品列表
-  unSubscribelProList: state.commission.unSubscribelProList,
+  unSubscribelProList: state.commissionChange.unSubscribelProList,
+  // 单佣金佣金详情
+  singleDetailToChange: state.commissionChange.singleDetail,
+  // 咨询订阅详情
+  subscribeDetailToChange: state.commissionChange.subscribeDetail,
+  // 咨询退订详情
+  unsubDetailToChange: state.commissionChange.subscribeDetail,
 });
 
 const getDataFunction = (loading, type) => query => ({
@@ -133,7 +125,12 @@ const mapDispatchToProps = {
   getSubscribelProList: getDataFunction(false, effects.subscribelProList),
   // 获取新建咨讯退订可选产品列表
   getUnSubscribelProList: getDataFunction(false, effects.unSubscribelProList),
-
+  // 获取单佣金调整Detail
+  getSingleDetailToChange: getDataFunction(true, effects.singleDetailToChange),
+  // 获取咨询订阅详情Detail
+  getSubscribeDetailToChange: getDataFunction(true, effects.subscribeDetailToChange),
+  // 获取资讯退订详情Detail
+  getUnSubscribeDetailToChange: getDataFunction(true, effects.unsubDetailToChange),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -141,6 +138,7 @@ const mapDispatchToProps = {
 @Barable
 export default class RejectionAndAmendment extends PureComponent {
   static propTypes = {
+    location: PropTypes.object.isRequired,
     dict: PropTypes.object.isRequired,
     getCanApplyCustList: PropTypes.func.isRequired,
     productList: PropTypes.array,
@@ -172,6 +170,13 @@ export default class RejectionAndAmendment extends PureComponent {
     // 新建咨讯订阅可选产品列表
     getUnSubscribelProList: PropTypes.func.isRequired,
     unSubscribelProList: PropTypes.array.isRequired,
+    // 单佣金、订阅、退订详情
+    getSubscribeDetailToChange: PropTypes.func.isRequired,
+    getUnSubscribeDetailToChange: PropTypes.func.isRequired,
+    getSingleDetailToChange: PropTypes.func.isRequired,
+    singleDetailToChange: PropTypes.object.isRequired,
+    subscribeDetailToChange: PropTypes.object.isRequired,
+    unsubscribeDetailToChange: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -199,6 +204,34 @@ export default class RejectionAndAmendment extends PureComponent {
       otherComReset: new Date().getTime(), // 用来判断是否重置
       customer: {}, // 单佣金、资讯退订、资讯订阅选择的客户
     };
+  }
+
+  componentDidMount() {
+    const { location: { query } } = this.props;
+    this.getDetail3Subtye(query);
+  }
+
+  // 查询佣金调整3个子类型的详情信息
+  getDetail3Subtye(record) {
+    const { flowCode, custType, subType } = record;
+    const {
+      getSubscribeDetailToChange,
+      getUnSubscribeDetailToChange,
+      getSingleDetailToChange,
+    } = this.props;
+    switch (subType) {
+      case '佣金':
+        getSingleDetailToChange({ flowCode });
+        break;
+      case '订购':
+        getSubscribeDetailToChange({ flowCode, type: custType });
+        break;
+      case '退订':
+        getUnSubscribeDetailToChange({ flowCode, type: custType });
+        break;
+      default:
+        break;
+    }
   }
 
    // 判断当前是否某个子类型
@@ -230,46 +263,6 @@ export default class RejectionAndAmendment extends PureComponent {
     });
   }
 
-  // 提交
-  @autobind
-  handleSubmitApprovals() {
-    const {
-      newCommission,
-      targetProduct,
-      remark,
-      approverId,
-      custLists,
-    } = this.state;
-    // 判断什么时候能够提交
-    if (_.isEmpty(targetProduct)) {
-      message.error('请选择目标产品');
-      return;
-    }
-    if (_.isEmpty(custLists)) {
-      message.error('请添加客户');
-      return;
-    }
-    if (_.isEmpty(approverId)) {
-      message.error('审批人员不能为空');
-      return;
-    }
-    // 挑选出用户选择的其他佣金率
-    const otherCommissions = _.pick(this.state, otherComs);
-    const { empInfo: { occDivnNum, empNum } } = this.props;
-    const submitParams = {
-      custLists,
-      newCommsion: newCommission,
-      prodInfo: { prdCode: targetProduct },
-      aprovaluser: approverId,
-      remark,
-      loginUser: empNum,
-      orgId: occDivnNum,
-      ...otherCommissions,
-    };
-    // 提交
-    this.props.submitBatch(submitParams);
-    this.clearApprovalBoard();
-  }
 
   @autobind
   newApprovalBoxRef(input) {
