@@ -161,8 +161,8 @@ export default class CreateServiceRecord extends PureComponent {
       serveTime: `${serviceDate.replace(/\//g, '-')} ${serviceTime}`,
       serveContentDesc: serviceContent,
       feedBackTime: feedbackDate.replace(/\//g, '-'),
-      serveFeedBack: feedbackType,
-      serveFeedBack2: feedbackTypeChild || '',
+      serveCustFeedBack: feedbackType,
+      serveCustFeedBack2: feedbackTypeChild || '',
     });
     serviceContentNode.value = '';
   }
