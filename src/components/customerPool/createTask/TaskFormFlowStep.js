@@ -93,9 +93,7 @@ export default class TaskFlow extends PureComponent {
       if (!_.isEmpty(err)) {
         isFormError = true;
       }
-      this.submitFormContent(_.merge(values, {
-        isFormError,
-      }));
+      this.submitFormContent({ ...values, isFormError });
     });
   }
 

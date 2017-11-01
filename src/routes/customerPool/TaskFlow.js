@@ -171,9 +171,7 @@ export default class TaskFlow extends PureComponent {
         if (!_.isEmpty(err)) {
           isFormError = true;
         }
-        const formDataValidation = this.checkFormField(_.merge(values, {
-          isFormError,
-        }));
+        const formDataValidation = this.checkFormField({ ...values, isFormError });
         if (formDataValidation) {
           taskFormData = this.formRef.props.form.getFieldsValue();
           isFormValidate = true;
