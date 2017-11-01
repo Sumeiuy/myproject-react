@@ -22,7 +22,7 @@ export default {
     serviceRecordModalVisibleOfName: '',
     empInfo: EMPTY_OBJECT,
     // 列表
-    seibleList: EMPTY_OBJECT,
+    seibleList: [{}],
     // 部门组织机构树
     custRange: EMPTY_LIST,
     // 拟稿人

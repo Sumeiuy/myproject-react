@@ -1,4 +1,3 @@
-/*eslint-disable */
 /*
  * @Description: 通道类型协议新建/修改 页面
  * @Author: XuWenKang
@@ -23,7 +22,7 @@ import Transfer from '../../components/common/biz/TableTransfer';
 import Button from '../common/Button';
 
 import { seibelConfig } from '../../config';
-import { dateFormat } from '../../utils/helper';
+// import { dateFormat } from '../../utils/helper';
 import styles from './editForm.less';
 
 // test
@@ -46,8 +45,8 @@ export default class EditForm extends PureComponent {
     custList: PropTypes.array.isRequired,
     // 查询协议模板
     onSearchProtocolTemplate: PropTypes.func.isRequired,
-    protocolTemplateList: PropTypes.array.isRequired,
-    // 查询子类型/操作类型
+    templateList: PropTypes.array.isRequired,
+    // 查询子类型/操作类型/模板列表
     queryTypeVaules: PropTypes.func.isRequired,
     operationList: PropTypes.array.isRequired,
     subTypeList: PropTypes.array.isRequired,
@@ -78,7 +77,7 @@ export default class EditForm extends PureComponent {
   @autobind
   getData() {
     const baseInfoData = this.editBaseInfoComponent.getData();
-    return Object.assign(EMPTY_OBJECT,baseInfoData,this.state);
+    return Object.assign(EMPTY_OBJECT, baseInfoData, this.state);
   }
 
   // 打开弹窗
@@ -102,7 +101,7 @@ export default class EditForm extends PureComponent {
   // 添加协议产品
   @autobind
   handleTransferChange(flag, newSelect, changeSecondArray) {
-    console.log('protocolList',flag, newSelect, changeSecondArray);
+    console.log('protocolList', flag, newSelect, changeSecondArray);
   }
 
   render() {
@@ -110,7 +109,7 @@ export default class EditForm extends PureComponent {
       custList,
       onSearchCutList,
       onSearchProtocolTemplate,
-      protocolTemplateList,
+      templateList,
       templateDetail,
       queryTypeVaules,
       operationList,
@@ -129,7 +128,7 @@ export default class EditForm extends PureComponent {
     };
     // 拟稿人信息
     const draftInfo = {
-      name: `南京营业部 张全蛋`,
+      name: '南京营业部 张全蛋',
       date: '2017/08/31',
       status: '1',
     };
@@ -152,23 +151,23 @@ export default class EditForm extends PureComponent {
     };
     // 添加协议产品组件props
     const pagination = {
-        defaultPageSize: 5,
-        pageSize: 5,
-        size: 'small',
+      defaultPageSize: 5,
+      pageSize: 5,
+      size: 'small',
     };
     const transferProps = {
-        firstTitle: '待选协议产品',
-        secondTitle: '已选协议产品',
-        firstData: subscribelData,
-        firstColumns: protocolProductTitleList,
-        secondColumns: protocolProductTitleList,
-        transferChange: this.handleTransferChange,
-        rowKey: 'key',
-        isScrollX: true,
-        showSearch: true,
-        placeholder: '产品代码/产品名称',
-        pagination,
-        supportSearchKey: [['productCode'], ['productName']],
+      firstTitle: '待选协议产品',
+      secondTitle: '已选协议产品',
+      firstData: subscribelData,
+      firstColumns: protocolProductTitleList,
+      secondColumns: protocolProductTitleList,
+      transferChange: this.handleTransferChange,
+      rowKey: 'key',
+      isScrollX: true,
+      showSearch: true,
+      placeholder: '产品代码/产品名称',
+      pagination,
+      supportSearchKey: [['productCode'], ['productName']],
     };
     return (
       <div className={styles.editComponent}>
@@ -176,16 +175,16 @@ export default class EditForm extends PureComponent {
           onSearchCutList={onSearchCutList}
           custList={custList}
           onSearchProtocolTemplate={onSearchProtocolTemplate}
-          protocolTemplateList={protocolTemplateList}
+          templateList={templateList}
           templateDetail={templateDetail}
-          ref={ref=>this.editBaseInfoComponent = ref}
+          ref={ref => this.editBaseInfoComponent = ref}
           queryTypeVaules={queryTypeVaules}
           operationList={operationList}
           subTypeList={subTypeList}
         />
         {
-          isEdit?
-          <DraftInfo data={draftInfo} />:
+          isEdit ?
+            <DraftInfo data={draftInfo} /> :
           null
         }
         <div className={styles.editWrapper}>
@@ -199,7 +198,7 @@ export default class EditForm extends PureComponent {
         </div>
         <div className={styles.editWrapper}>
           <InfoTitle
-              head="协议条款"
+            head="协议条款"
           />
           <CommonTable
             data={EMPTY_ARRAY}
@@ -212,4 +211,3 @@ export default class EditForm extends PureComponent {
   }
 
 }
-/*eslint-disable */

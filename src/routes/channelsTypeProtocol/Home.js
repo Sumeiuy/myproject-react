@@ -72,6 +72,13 @@ const mapStateToProps = state => ({
 
   // 登陆人信息
   empInfo: state.app.empInfo,
+  // 操作类型列表
+  operationList: state.channelsTypeProtocol.operationList,
+  // 子类型列表
+  subTypeList: state.channelsTypeProtocol.subTypeList,
+  // 模板列表
+  templateList: state.channelsTypeProtocol.templateList,
+
 });
 
 const mapDispatchToProps = {
@@ -102,6 +109,7 @@ const mapDispatchToProps = {
   getFlowStepInfo: fetchDataFunction(true, 'contract/getFlowStepInfo'),
   // 审批接口
   postDoApprove: fetchDataFunction(true, 'contract/postDoApprove'),
+  queryTypeVaules: fetchDataFunction(false, 'channelsTypeProtocol/queryTypeVaules'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -160,6 +168,12 @@ export default class ChannelsTypeProtocol extends PureComponent {
     postDoApproveLoading: PropTypes.bool,
     // 登陆人信息
     empInfo: PropTypes.object.isRequired,
+
+    // 查询操作类型/子类型/模板列表
+    queryTypeVaules: PropTypes.func.isRequired,
+    operationList: PropTypes.array.isRequired,
+    subTypeList: PropTypes.array.isRequired,
+    templateList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -408,11 +422,9 @@ export default class ChannelsTypeProtocol extends PureComponent {
 
   // 查询客户
   @autobind
-  handleSearchCutList(value) {
+  handleSearchCutList(param) {
     const { getCanApplyCustList } = this.props;
-    getCanApplyCustList({
-      keyword: value,
-    });
+    getCanApplyCustList(param);
   }
 
   // 查询合约详情
@@ -634,6 +646,11 @@ export default class ChannelsTypeProtocol extends PureComponent {
       empInfo,
       resetUnsubscribeDetail,
       getCustRange,
+      queryTypeVaules,
+      operationList,
+      subTypeList,
+      templateList,
+      getCanApplyCustList,
     } = this.props;
     const {
       addFormModal,
@@ -696,13 +713,19 @@ export default class ChannelsTypeProtocol extends PureComponent {
     };
     const editFormProps = {
       // 客户列表
-      custList: customerList,
+      custList: canApplyCustList,
       // 查询客户
-      onSearchCutList: this.toSearchCust,
+      onSearchCutList: getCanApplyCustList,
       // 查询协议模板
       onSearchProtocolTemplate: ()=>{},
+      // 查询操作类型/子类型/模板列表
+      queryTypeVaules,
+      // 操作类型列表
+      operationList,
+      // 子类型列表
+      subTypeList,
       // 协议模板列表
-      protocolTemplateList: [],
+      templateList,
     };
     return (
       <div className={styles.premissionbox} >

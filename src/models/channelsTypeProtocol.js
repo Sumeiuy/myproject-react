@@ -19,6 +19,7 @@ export default {
     flowHistory: EMPTY_LIST,  // 审批记录
     operationList: EMPTY_LIST, // 操作类型列表
     subTypeList: EMPTY_LIST, // 子类型列表
+    templateList: EMPTY_LIST, // 模板列表
   },
   reducers: {
     // 获取协议详情
@@ -59,6 +60,14 @@ export default {
       return {
         ...state,
         subTypeList: resultData,
+      };
+    },
+    // 查询模板列表
+    queryTemplateListSuccess(state, action) {
+      const { payload: { resultData = EMPTY_LIST } } = action;
+      return {
+        ...state,
+        templateList: resultData,
       };
     },
   },
@@ -102,6 +111,7 @@ export default {
     * queryTypeVaules({ payload }, { call, put }) {
       console.log('payload', payload);
       const response = yield call(api.queryTypeVaules, payload);
+      if (payload.typeCode === 'operationType' || payload.typeCode === 'subType') {
         /*eslint-disable */
         response.resultData.forEach((v)=>{
           v.show = true;
@@ -109,6 +119,7 @@ export default {
           v.value = v.name;
         })
         /*eslint-disable */
+      };
       switch(payload.typeCode){
         case 'operationType':
           yield put({
@@ -119,6 +130,12 @@ export default {
         case 'subType':
           yield put({
             type: 'querySubTypeListSuccess',
+            payload: response,
+          });
+          break;
+        case 'templateId':
+          yield put({
+            type: 'queryTemplateListSuccess',
             payload: response,
           });
           break;
@@ -135,9 +152,12 @@ export default {
           typeCode: 'subType',
         };
         if (pathname === '/channelsTypeProtocol') {
-          // 请求客户列表
-          dispatch({ type: 'app/getCanApplyCustList' });
+          // 进入页面查询客户列表
+          // dispatch({ type: 'app/getCanApplyCustList' });
+          // 进入页面查询子类型列表
           dispatch({type: 'queryTypeVaules', payload: subTypeListParam});
+
+          dispatch({type: 'getProtocolDetail', payload: {id: 5120}})
         }
       });
     },
