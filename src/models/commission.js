@@ -499,18 +499,20 @@ export default {
 
     // 查询咨询订阅详情数据
     * getSubscribeDetail({ payload }, { call, put }) {
+      const { loginuser, ...resetPayload } = payload;
       const detailRes = yield call(api.queryConsultDetail,
         {
           action: 'query',
           applyType: 'Internal',
           operationType: 'subscribe',
-          ...payload,
+          ...resetPayload,
         });
       // 通过查询到的详情数据的attachmentNum获取附件信息
       const detailRD = detailRes.resultData;
       const attachmentRes = yield call(api.getAttachment, { attachment: detailRD.attachmentNum });
       const approvalRes = yield call(api.querySingleCustApprovalRecord, {
         flowCode: detailRD.flowCode,
+        loginuser,
       });
       const stepRes = yield call(api.queryCurrentStep, {
         flowCode: detailRD.flowCode,
@@ -521,20 +523,22 @@ export default {
       });
     },
 
-    // 查询咨询订阅详情数据
+    // 查询咨询退订详情数据
     * getUnSubscribeDetail({ payload }, { call, put }) {
+      const { loginuser, ...resetPayload } = payload;
       const detailRes = yield call(api.queryConsultDetail,
         {
           action: 'query',
           applyType: 'Internal',
           operationType: 'unsubscribe',
-          ...payload,
+          ...resetPayload,
         });
       // 通过查询到的详情数据的attachmentNum获取附件信息
       const detailRD = detailRes.resultData;
       const attachmentRes = yield call(api.getAttachment, { attachment: detailRD.attachmentNum });
       const approvalRes = yield call(api.querySingleCustApprovalRecord, {
         flowCode: detailRD.flowCode,
+        loginuser,
       });
       const stepRes = yield call(api.queryCurrentStep, {
         flowCode: detailRD.flowCode,

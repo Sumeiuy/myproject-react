@@ -1,5 +1,5 @@
 /**
- * @file models/report.js
+ * @file models/commissionChange.js
  * @author baojiajia
  */
 import _ from 'lodash';
@@ -9,7 +9,7 @@ const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
 
 export default {
-  namespace: 'commission',
+  namespace: 'commissionChange',
   state: {
     // 查询到的目标产品列表
     productList: [],
