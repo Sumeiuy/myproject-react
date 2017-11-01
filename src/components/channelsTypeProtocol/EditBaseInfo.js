@@ -40,13 +40,13 @@ export default class EditBaseInfo extends PureComponent {
     // 查询客户
     onSearchCutList: PropTypes.func.isRequired,
     custList: PropTypes.array.isRequired,
-    // 查询协议模板
-    onSearchProtocolTemplate: PropTypes.func.isRequired,
     templateList: PropTypes.array.isRequired,
     // 查询子类型/操作类型
     queryTypeVaules: PropTypes.func.isRequired,
     operationList: PropTypes.array.isRequired,
     subTypeList: PropTypes.array.isRequired,
+    // 根据所选模板id查询模板对应协议条款
+    queryChannelProtocolItem: PropTypes.func.isRequired,
     // 查询协议编号
     // onSearchProtocolNum: PropTypes.func.isRequired,
     // protocolNumList: PropTypes.array,
@@ -165,13 +165,18 @@ export default class EditBaseInfo extends PureComponent {
     this.setState({
       ...this.state,
       protocolTemplate: value,
+    }, () => {
+      console.log('value', value);
+      const { queryChannelProtocolItem } = this.props;
+      queryChannelProtocolItem();
     });
   }
 
   // 根据填入关键词筛选协议模板
   @autobind
   handleSearchTemplate(value) {
-    this.props.onSearchProtocolTemplate(value);
+    console.log('value', value);
+    // this.props.onSearchProtocolTemplate(value);
   }
 
   // 修改备注
@@ -218,7 +223,12 @@ export default class EditBaseInfo extends PureComponent {
   }
 
   render() {
-    const { custList, templateList, operationList, subTypeList } = this.props;
+    const {
+      custList,
+      templateList,
+      operationList,
+      subTypeList,
+    } = this.props;
     const { subType, operationType, multiUsedFlag, levelTenFlag } = this.state;
     return (
       <div className={styles.editWrapper}>
@@ -289,8 +299,8 @@ export default class EditBaseInfo extends PureComponent {
             :
             null
         }
-        <InfoItem label="协议开始日期" value={'2017/08/31'} />
-        <InfoItem label="协议有效期" value={'2017/08/31'} />
+        <InfoItem label="协议开始日期" value={''} />
+        <InfoItem label="协议有效期" value={''} />
         <InfoForm label="备注">
           <TextArea onChange={this.handleChangeContent} />
         </InfoForm>

@@ -6,7 +6,12 @@
  * @Last Modified time: 2017-10-30 15:13:30
  */
 import { channelsTypeProtocol as api } from '../api';
-import { getEmpId } from '../utils/helper';
+import { constructSeibelPostBody, getEmpId } from '../utils/helper';
+import { seibelConfig } from '../config';
+
+const {
+    channelsTypeProtocol: { pageType },
+} = seibelConfig;
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -20,6 +25,7 @@ export default {
     operationList: EMPTY_LIST, // 操作类型列表
     subTypeList: EMPTY_LIST, // 子类型列表
     templateList: EMPTY_LIST, // 模板列表
+    protocolClauseList: EMPTY_LIST, // 所选模板对应协议条款列表
   },
   reducers: {
     // 获取协议详情
@@ -68,6 +74,14 @@ export default {
       return {
         ...state,
         templateList: resultData,
+      };
+    },
+    // 根据所选模板id查询对应协议条款
+    queryChannelProtocolItemSuccess(state, action) {
+      const { payload: { resultData: { channelItem = EMPTY_LIST } } } = action;
+      return {
+        ...state,
+        protocolClauseList: channelItem,
       };
     },
   },
@@ -140,8 +154,15 @@ export default {
           });
           break;
       }
-
-    }
+    },
+    // 根据所选模板id查询对应协议条款
+    * queryChannelProtocolItem({ payload }, { call, put }) {
+      const response = yield call(api.queryChannelProtocolItem, payload);
+      yield put({
+          type: 'queryChannelProtocolItemSuccess',
+          payload: response,
+      });
+    },
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -151,13 +172,19 @@ export default {
         const subTypeListParam = {
           typeCode: 'subType',
         };
+        // 查询左侧列表参数
+        const { pageNum,pageSize  } = query;
+        const seibleListParam = {
+          ...constructSeibelPostBody(query, pageNum || 1, pageSize || 10),
+          type: pageType,
+        }
         if (pathname === '/channelsTypeProtocol') {
-          // 进入页面查询客户列表
-          // dispatch({ type: 'app/getCanApplyCustList' });
           // 进入页面查询子类型列表
           dispatch({type: 'queryTypeVaules', payload: subTypeListParam});
+          // 进入页面是查询左侧列表
+          dispatch({type: 'app/getSeibleList', payload: seibleListParam})
 
-          dispatch({type: 'getProtocolDetail', payload: {id: 5120}})
+          // dispatch({type: 'getProtocolDetail', payload: {id: 5120}})
         }
       });
     },

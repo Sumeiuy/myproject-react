@@ -31,7 +31,7 @@ import {
 } from '../../routes/templeModal/MockTableData';
 
 const EMPTY_OBJECT = {};
-const EMPTY_ARRAY = [];
+// const EMPTY_ARRAY = [];
 // const EMPTY_PARAM = '暂无';
 // const BOOL_TRUE = true;
 // 协议产品的表头、状态
@@ -43,9 +43,10 @@ export default class EditForm extends PureComponent {
     // 查询客户
     onSearchCutList: PropTypes.func.isRequired,
     custList: PropTypes.array.isRequired,
-    // 查询协议模板
-    onSearchProtocolTemplate: PropTypes.func.isRequired,
+    // 模板列表
     templateList: PropTypes.array.isRequired,
+    // 协议详情-编辑时传入
+    protocolDetail: PropTypes.object,
     // 查询子类型/操作类型/模板列表
     queryTypeVaules: PropTypes.func.isRequired,
     operationList: PropTypes.array.isRequired,
@@ -53,17 +54,19 @@ export default class EditForm extends PureComponent {
     // 查询协议编号
     // onSearchProtocolNum: PropTypes.func.isRequired,
     // protocolNumList: PropTypes.array,
-    // 模板详情
-    templateDetail: PropTypes.object,
+    // 根据所选模板id查询模板对应协议条款
+    queryChannelProtocolItem: PropTypes.func.isRequired,
+    // 所选模板对应协议条款列表
+    protocolClauseList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
-    templateDetail: EMPTY_OBJECT,
+    protocolDetail: EMPTY_OBJECT,
   }
 
   constructor(props) {
     super(props);
-    const isEdit = !_.isEmpty(props.templateDetail);
+    const isEdit = !_.isEmpty(props.protocolDetail);
     this.state = {
       isEdit,
     };
@@ -106,14 +109,22 @@ export default class EditForm extends PureComponent {
 
   render() {
     const {
+      // 客户列表
       custList,
+      // 查询客户
       onSearchCutList,
-      onSearchProtocolTemplate,
-      templateList,
-      templateDetail,
+      // 查询操作类型/子类型/模板列表
       queryTypeVaules,
+      // 模板列表
+      templateList,
+      // 操作类型列表
       operationList,
+      // 子类型列表
       subTypeList,
+      // 根据所选模板id查询模板对应协议条款
+      queryChannelProtocolItem,
+      // 所选模板对应协议条款列表
+      protocolClauseList,
     } = this.props;
     const {
       isEdit,
@@ -131,23 +142,6 @@ export default class EditForm extends PureComponent {
       name: '南京营业部 张全蛋',
       date: '2017/08/31',
       status: '1',
-    };
-    // 表格中需要的操作
-    const operation = {
-      column: {
-        // beizhu = edit , shanchu = delete
-        key: [
-          {
-            key: 'beizhu',
-            operate: this.editTableData,
-          },
-          {
-            key: 'shanchu',
-            operate: this.deleteTableData,
-          },
-        ], // 'check'\'delete'\'view'
-        title: '操作',
-      },
     };
     // 添加协议产品组件props
     const pagination = {
@@ -172,11 +166,10 @@ export default class EditForm extends PureComponent {
     return (
       <div className={styles.editComponent}>
         <EditBaseInfo
+          queryChannelProtocolItem={queryChannelProtocolItem}
           onSearchCutList={onSearchCutList}
           custList={custList}
-          onSearchProtocolTemplate={onSearchProtocolTemplate}
           templateList={templateList}
-          templateDetail={templateDetail}
           ref={ref => this.editBaseInfoComponent = ref}
           queryTypeVaules={queryTypeVaules}
           operationList={operationList}
@@ -201,9 +194,8 @@ export default class EditForm extends PureComponent {
             head="协议条款"
           />
           <CommonTable
-            data={EMPTY_ARRAY}
+            data={protocolClauseList}
             titleList={protocolClauseTitleList}
-            operation={operation}
           />
         </div>
       </div>
