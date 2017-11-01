@@ -40,13 +40,13 @@ export default class EditBaseInfo extends PureComponent {
     // 查询客户
     onSearchCutList: PropTypes.func.isRequired,
     custList: PropTypes.array.isRequired,
-    // 查询协议模板
-    onSearchProtocolTemplate: PropTypes.func.isRequired,
-    protocolTemplateList: PropTypes.array.isRequired,
+    templateList: PropTypes.array.isRequired,
     // 查询子类型/操作类型
     queryTypeVaules: PropTypes.func.isRequired,
     operationList: PropTypes.array.isRequired,
     subTypeList: PropTypes.array.isRequired,
+    // 根据所选模板id查询模板对应协议条款
+    queryChannelProtocolItem: PropTypes.func.isRequired,
     // 查询协议编号
     // onSearchProtocolNum: PropTypes.func.isRequired,
     // protocolNumList: PropTypes.array,
@@ -63,8 +63,6 @@ export default class EditBaseInfo extends PureComponent {
     super(props);
     const { formData } = props;
     const stateObj = {
-      // 操作类型列表
-      // operationList: EMPTY_ARRAY,
       // 所选操作类型
       operationType: '',
       // 所选子类型
@@ -109,11 +107,23 @@ export default class EditBaseInfo extends PureComponent {
       [key]: value,
     }, () => {
       if (key === 'subType') {
-        const { queryTypeVaules } = this.props;
+        const { queryTypeVaules, onSearchCutList } = this.props;
+        // 子类型发生变化查询操作类型
         queryTypeVaules({
-          typeCode: key,
+          typeCode: 'operationType',
           subType: value,
         });
+        // 子类型发生变化查询客户列表 type 根据后端要求写死，subType取子类型
+        onSearchCutList({
+          type: '05',
+          subType: value,
+        });
+        // 子类型发生变化查询协议模板列表
+        queryTypeVaules({
+          typeCode: 'templateId',
+          subType: value,
+        });
+        this.clearValue();
       }
       // 操作类型是“协议退订”、“协议续订”、“新增或删除下挂客户”时查询协议编号
       // const { operationType } = this.state;
@@ -141,7 +151,12 @@ export default class EditBaseInfo extends PureComponent {
   // 根据关键字查询客户
   @autobind
   handleSearchClient(v) {
-    this.props.onSearchCutList(v);
+    const { subType } = this.state;
+    this.props.onSearchCutList({
+      keyword: v,
+      type: '05', // type 根据后端要求写死
+      subType,
+    });
   }
 
   // 选择协议模板
@@ -150,13 +165,18 @@ export default class EditBaseInfo extends PureComponent {
     this.setState({
       ...this.state,
       protocolTemplate: value,
+    }, () => {
+      console.log('value', value);
+      const { queryChannelProtocolItem } = this.props;
+      queryChannelProtocolItem();
     });
   }
 
   // 根据填入关键词筛选协议模板
   @autobind
   handleSearchTemplate(value) {
-    this.props.onSearchProtocolTemplate(value);
+    console.log('value', value);
+    // this.props.onSearchProtocolTemplate(value);
   }
 
   // 修改备注
@@ -189,8 +209,26 @@ export default class EditBaseInfo extends PureComponent {
     return true;
   }
 
+  // 切换子类型清空所选模板和所选客户
+  @autobind
+  clearValue() {
+    this.setState({
+      ...this.state,
+      client: EMPTY_OBJECT,
+      protocolTemplate: EMPTY_OBJECT,
+    }, () => {
+      this.selectCustComponent.clearValue();
+      this.selectTemplateComponent.clearValue();
+    });
+  }
+
   render() {
-    const { custList, protocolTemplateList, operationList, subTypeList } = this.props;
+    const {
+      custList,
+      templateList,
+      operationList,
+      subTypeList,
+    } = this.props;
     const { subType, operationType, multiUsedFlag, levelTenFlag } = this.state;
     return (
       <div className={styles.editWrapper}>
@@ -227,10 +265,10 @@ export default class EditBaseInfo extends PureComponent {
         <InfoForm label="协议模板" required>
           <DropDownSelect
             placeholder="协议模板"
-            showObjKey="custName"
-            objId="brokerNumber"
-            value={this.state.protocolTemplate.brokerNumber || ''}
-            searchList={protocolTemplateList}
+            showObjKey="prodName"
+            objId="rowId"
+            value={this.state.protocolTemplate.rowId || ''}
+            searchList={templateList}
             emitSelectItem={this.handleSelectTemplate}
             emitToSearch={this.handleSearchTemplate}
             boxStyle={dropDownSelectBoxStyle}
@@ -261,8 +299,8 @@ export default class EditBaseInfo extends PureComponent {
             :
             null
         }
-        <InfoItem label="协议开始日期" value={'2017/08/31'} />
-        <InfoItem label="协议有效期" value={'2017/08/31'} />
+        <InfoItem label="协议开始日期" value={''} />
+        <InfoItem label="协议有效期" value={''} />
         <InfoForm label="备注">
           <TextArea onChange={this.handleChangeContent} />
         </InfoForm>
