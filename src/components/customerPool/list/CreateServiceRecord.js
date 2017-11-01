@@ -161,8 +161,8 @@ export default class CreateServiceRecord extends PureComponent {
       serveTime: `${serviceDate.replace(/\//g, '-')} ${serviceTime}`,
       serveContentDesc: serviceContent,
       feedBackTime: feedbackDate.replace(/\//g, '-'),
-      serveFeedBack: feedbackType,
-      serveFeedBack2: feedbackTypeChild || '',
+      serveCustFeedBack: feedbackType,
+      serveCustFeedBack2: feedbackTypeChild || '',
     });
     serviceContentNode.value = '';
   }
@@ -233,11 +233,13 @@ export default class CreateServiceRecord extends PureComponent {
   // 保存反馈类型的值
   @autobind
   handleFeedbackType(value) {
-    const feedbackTypeArr = this.feedbackTypeObj[value];
+    const { feedbackTypeArr } = this.state;
+    this.feedbackTypeObj = generateObjOfValue(feedbackTypeArr);
+    const curFeedbackTypeArr = this.feedbackTypeObj[value];
     this.setState({
       feedbackType: value,
-      feedbackTypeChild: _.isEmpty(feedbackTypeArr) ? '' : feedbackTypeArr[0].value,
-      feedbackTypeChildArr: feedbackTypeArr,
+      feedbackTypeChild: _.isEmpty(curFeedbackTypeArr) ? '' : curFeedbackTypeArr[0].value,
+      feedbackTypeChildArr: curFeedbackTypeArr,
     });
   }
 
@@ -319,6 +321,10 @@ export default class CreateServiceRecord extends PureComponent {
         <a className={styles.submitBtn} onClick={this.handleSubmit}>提交</a>
       </div>
     );
+    console.log('dict>>>>', dict.custServerTypeFeedBackDict);
+    console.log('服务类型', dict.custServerTypeFeedBackDict);
+    console.log('反馈类型一级', feedbackTypeArr);
+    console.log('反馈类型二级', feedbackTypeChildArr);
     return (
       <Modal
         width={688}
