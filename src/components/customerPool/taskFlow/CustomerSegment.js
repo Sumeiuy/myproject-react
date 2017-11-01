@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 13:43:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-31 13:25:39
+ * @Last Modified time: 2017-11-01 16:22:09
  * 客户细分组件
  */
 
@@ -227,6 +227,21 @@ export default class CustomerSegment extends PureComponent {
 
     const scrollX = (columnSize * COLUMN_WIDTH);
 
+    // if (columnSize < 6) {
+    //   const averageWidth = Math.floor(newColumnWidth / columnSize);
+
+    //   newColumnWidth = [];
+    // }
+
+    const scrollXProps = columnSize >= 6 ? {
+      isFixedColumn: true,
+      // 前两列固定，如果太长，后面的就滚动
+      fixedColumn: [0, 1],
+      // 列的总宽度加上固定列的宽度
+      scrollX,
+    } : null;
+
+
     const scrollY = (INITIAL_PAGE_SIZE * COLUMN_HEIGHT);
 
     // 添加id到dataSource
@@ -274,15 +289,11 @@ export default class CustomerSegment extends PureComponent {
                   onPageChange={this.handlePageChange}
                   tableClass={styles.custListTable}
                   titleColumn={titleColumn}
-                  isFixedColumn
-                  // 前两列固定，如果太长，后面的就滚动
-                  fixedColumn={[0, 1]}
-                  // 列的总宽度加上固定列的宽度
-                  scrollX={scrollX}
-                  // 纵向滚动
-                  scrollY={scrollY}
                   // title fixed
                   isFixedTitle
+                  // 纵向滚动
+                  scrollY={scrollY}
+                  {...scrollXProps}
                   columnWidth={COLUMN_WIDTH}
                   bordered
                 />

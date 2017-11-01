@@ -4,8 +4,8 @@
 @background-color-base: #fff;
 @dark-half: #494949;
 @purple: #d897eb; // Shadow
-@shadow-1: 4px 4px 20px 0 rgba(0,0,0,0.01);
-@shadow-2: 4px 4px 40px 0 rgba(0,0,0,0.05); //transition
+@shadow-1: 4px 4px 20px 0 rgba(0, 0, 0, 0.01);
+@shadow-2: 4px 4px 40px 0 rgba(0, 0, 0, 0.05); //transition
 @transition-ease-in: all 0.3s @ease-in;
 @transition-ease-out: all 0.3s @ease-out; //mix
 
@@ -23,4 +23,15 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* IE滚动条样式变量 */
+.scrollBarIEStyle() {
+  scrollbar-face-color: #e2e2e2; /*滚动条3D表面（ThreedFace）的颜色*/
+  scrollbar-highlight-color: #fff; /*滚动条3D界面的亮边（ThreedHighlight）颜色*/
+  scrollbar-shadow-color: #eee; /*滚动条3D界面的暗边（ThreedShadow）颜色*/
+  scrollbar-3dlight-color: #eee; /*滚动条亮边框颜色*/
+  scrollbar-arrow-color: #fff; /*滚动条方向箭头的颜色 */
+  scrollbar-track-color: #fff; /*滚动条的拖动区域(TrackBar)颜色*/
+  scrollbar-darkshadow-color: #fff; /*滚动条暗边框（ThreedDarkShadow）颜色*/
 }

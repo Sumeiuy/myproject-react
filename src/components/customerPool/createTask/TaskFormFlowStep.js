@@ -1,14 +1,14 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'dva/router';
-import { Button, Mention, message } from 'antd';
+import { Button, Mention } from 'antd';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import CreateTaskForm from './CreateTaskForm';
 import TaskPreview from '../taskFlow/TaskPreview';
 import { helper, permission } from '../../../utils';
+import { validateFormContent } from '../../../decorators/validateFormContent';
 import styles from './taskFormFlowStep.less';
-
 
 const { toString } = Mention;
 
@@ -45,6 +45,8 @@ export default class TaskFlow extends PureComponent {
       currentTab: '1',
       custSource: '',
       isShowErrorInfo: false,
+      isShowErrorExcuteType: false,
+      isShowErrorTaskType: false,
     };
     this.isHasAuthorize = permission.hasIndexViewPermission();
     // this.isHasAuthorize = true;
@@ -86,30 +88,29 @@ export default class TaskFlow extends PureComponent {
 
   @autobind
   handleNextStep() {
+    this.createTaskForm.validateFields((err, values) => {
+      let isFormError = false;
+      if (!_.isEmpty(err)) {
+        isFormError = true;
+      }
+      this.submitFormContent(_.merge(values, {
+        isFormError,
+      }));
+    });
+  }
+
+  @autobind
+  @validateFormContent
+  submitFormContent(values) {
     const { current } = this.state;
     const { saveTaskFlowData, location: { query } } = this.props;
-    let isShowErrorInfo = false;
-    this.createTaskForm.validateFields((err, values) => {
-      const { templetDesc } = values;
-      if (toString(templetDesc).length < 10) {
-        isShowErrorInfo = true;
-        this.setState({
-          isShowErrorInfo: true,
-        });
-      }
-      if (!err && !isShowErrorInfo) {
-        saveTaskFlowData({
-          taskFormData: values,
-          totalCust: query.count,
-        });
-        this.setState({
-          current: current + 1,
-          custSource: this.handleCustSource(query.source),
-        });
-      } else {
-        console.warn('templetDesc-----', values.templetDesc);
-        message.error('请填写任务基本信息');
-      }
+    saveTaskFlowData({
+      taskFormData: values,
+      totalCust: query.count,
+    });
+    this.setState({
+      current: current + 1,
+      custSource: this.handleCustSource(query.source),
     });
   }
 
@@ -119,9 +120,9 @@ export default class TaskFlow extends PureComponent {
     const { storedTaskFlowData, createTask, parseQuery, orgId } = this.props;
     const { currentSelectRecord: { login: flowAuditorId = null } } = this.state;
     const {
-        custIdList,
+      custIdList,
       custCondition,
-      } = parseQuery();
+    } = parseQuery();
     const {
       curPageNum,
       enterType,
@@ -179,6 +180,8 @@ export default class TaskFlow extends PureComponent {
       currentTab,
       custSource,
       isShowErrorInfo,
+      isShowErrorExcuteType,
+      isShowErrorTaskType,
     } = this.state;
 
     const {
@@ -199,6 +202,8 @@ export default class TaskFlow extends PureComponent {
         ref={ref => this.createTaskForm = ref}
         previousData={previousData}
         isShowErrorInfo={isShowErrorInfo}
+        isShowErrorExcuteType={isShowErrorExcuteType}
+        isShowErrorTaskType={isShowErrorTaskType}
       />,
     }, {
       title: '目标客户',

@@ -66,6 +66,7 @@ export default class TaskSearchRow extends PureComponent {
       visible: false,
     };
   }
+
   componentWillReceiveProps(nextProps) {
     const { peopleOfLabelData } = nextProps;
     this.setState({
@@ -211,7 +212,7 @@ export default class TaskSearchRow extends PureComponent {
             <GroupTable
               pageData={{
                 curPageNum,
-                pageSize,
+                curPageSize: pageSize,
                 totalRecordNum,
               }}
               tableClass={
