@@ -7,6 +7,8 @@
 import React, { PureComponent, PropTypes } from 'react';
 import { TreeSelect } from 'antd';
 import { autobind } from 'core-decorators';
+import _ from 'lodash';
+
 import { constants } from '../../config';
 
 import styles from './seibelCustRange.less';
@@ -79,12 +81,23 @@ export default class CustRange extends PureComponent {
   constructor(props) {
     super(props);
     const { custRange } = this.props;
-    const formatCustRange = transformCustRangeData(custRange);
-    walk(formatCustRange, findOrgNameByOrgId(custRange[0].id), '');
-    const initValue = {
-      label: custRangeNameDedault,
-      value: custRange[0].id,
-    };
+    let initValue = {};
+    let formatCustRange = null;
+    if (!_.isEmpty(custRange)) {
+      formatCustRange = transformCustRangeData(custRange);
+      walk(formatCustRange, findOrgNameByOrgId(custRange[0].id), '');
+      initValue = {
+        label: custRangeNameDedault,
+        value: custRange[0].id,
+      };
+    } else {
+      formatCustRange = [];
+      initValue = {
+        label: '全部',
+        value: '',
+      };
+    }
+
     this.state = {
       formatCustRange,
       value: initValue,
