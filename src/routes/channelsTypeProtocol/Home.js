@@ -10,7 +10,7 @@ import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
 import { withRouter, routerRedux } from 'dva-react-router-3/router';
 import { connect } from 'react-redux';
-// import { message, Modal } from 'antd';
+import { Modal } from 'antd';
 import _ from 'lodash';
 import { constructSeibelPostBody, getEmpId } from '../../utils/helper';
 import SplitPanel from '../../components/common/splitPanel/SplitPanel';
