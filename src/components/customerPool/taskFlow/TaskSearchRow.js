@@ -64,12 +64,28 @@ export default class TaskSearchRow extends PureComponent {
       totalCustNums: 0,
       labelId: '',
       visible: false,
+      title: '',
     };
   }
   componentWillReceiveProps(nextProps) {
     const { peopleOfLabelData } = nextProps;
+    const { userObjectFormList } = peopleOfLabelData;
     this.setState({
       totalRecordNum: peopleOfLabelData.totalCount,
+    });
+    _.map(userObjectFormList, (item) => {
+      let custType = '';
+      switch (item.cust_type) {
+        case 'Y':
+          custType = '高净值';
+          break;
+        case 'N':
+          custType = '非高净值';
+          break;
+        default:
+          break;
+      }
+      item.cust_type = custType; // eslint-disable-line
     });
   }
 
@@ -82,20 +98,21 @@ export default class TaskSearchRow extends PureComponent {
   @autobind
   handleSeeCust(value) {
     const { getLabelPeople, orgId } = this.props;
-    const { curPageNum, pageSize } = this.state;
     console.log(value);
     getLabelPeople({
       labelId: value.id,
-      curPageNum,
-      pageSize,
+      curPageNum: 1,
+      pageSize: 10,
       orgId,
       ptyMngId: helper.getEmpId(),
     });
     this.setState({
       visible: true,
-      // totalRecordNum: value.customNum,
+      title: value.labelName,
       totalCustNums: value.customNum,
       labelId: value.id,
+      curPageNum: 1,
+      pageSize: 10,
     });
   }
 
@@ -141,15 +158,17 @@ export default class TaskSearchRow extends PureComponent {
       curPageNum: nextPage,
     });
   }
-
+// Y为高净值、N为非高净值
   @autobind
   renderRadioSection() {
     const { condition, circlePeopleData } = this.props;
     return _.map(circlePeopleData,
       (item) => {
         let newDesc = item.labelDesc;
+        let newTitle = item.labelName;
         if (!_.isEmpty(condition)) {
           newDesc = newDesc.replace(condition, `<span>${condition}</span>`);
+          newTitle = newTitle.replace(condition, `<span>${condition}</span>`);
         }
 
         return (
@@ -158,7 +177,13 @@ export default class TaskSearchRow extends PureComponent {
               value={item.id}
               key={item.tagNumId}
             >
-              <span className={styles.title}>{item.labelName}</span>
+              <span
+                className={styles.title}
+                dangerouslySetInnerHTML={{ __html: newTitle }} // eslint-disable-line
+              />
+              <Button className={styles.seeCust} onClick={() => this.handleSeeCust(item)}>
+                查看客户
+              </Button>
             </Radio>
             <h4 className={styles.titExp}>瞄准镜标签，共有
                 <span>{item.customNum}</span>客户。创建时间{item.createDate}，创建人：{item.createrName}
@@ -166,7 +191,6 @@ export default class TaskSearchRow extends PureComponent {
             <h4
               dangerouslySetInnerHTML={{ __html: newDesc }} // eslint-disable-line
             />
-            <a className={styles.seeCust} onClick={() => this.handleSeeCust(item)}>查看客户</a>
           </div>
         );
       });
@@ -179,12 +203,12 @@ export default class TaskSearchRow extends PureComponent {
       totalRecordNum = 0,
       visible,
       totalCustNums,
+      title,
     } = this.state;
 
     const {
       peopleOfLabelData,
       currentSelectLabel,
-      condition,
       isLoadingEnd,
     } = this.props;
 
@@ -198,7 +222,7 @@ export default class TaskSearchRow extends PureComponent {
         <div className={styles.seeCust}>
           <Modal
             visible={visible && isLoadingEnd}
-            title={`满足标签为 ${condition} 的共有${totalCustNums || 0}位`}
+            title={`满足标签为 ${title} 的共有${totalCustNums || 0}位`}
             onOk={this.handleOk}
             maskClosable={false}
             onCancel={this.handleCancel}

@@ -38,8 +38,19 @@ export default class SelectLabelCust extends PureComponent {
       condition,
       currentSelectLabel: labelId,
       labelId,
+      tipsSize: 0,
     };
     this.bigBtn = true;
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { circlePeopleData } = nextProps;
+    const { circlePeopleData: prevCirclePeopleData } = this.props;
+    if (!_.isEqual(circlePeopleData, prevCirclePeopleData)) {
+      this.setState({
+        tipsSize: _.size(circlePeopleData),
+      });
+    }
   }
 
   @autobind
@@ -93,8 +104,7 @@ export default class SelectLabelCust extends PureComponent {
       isLoadingEnd,
       onCancel,
     } = this.props;
-    const { condition, currentSelectLabel } = this.state;
-
+    const { condition, currentSelectLabel, tipsSize } = this.state;
     return (
       <div className={styles.searchContact}>
         <SimpleSearch
@@ -106,6 +116,11 @@ export default class SelectLabelCust extends PureComponent {
           defaultValue={condition}
           isNeedBtn
         />
+        {!_.isEmpty(circlePeopleData)
+          ? <h4 className={styles.tipsWord}>共找到<span>{tipsSize}</span>条相关标签</h4>
+          :
+          null
+        }
         <TaskSearchRow
           onCancel={onCancel}
           isLoadingEnd={isLoadingEnd}

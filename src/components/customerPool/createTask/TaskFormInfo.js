@@ -62,6 +62,11 @@ export default class TaskFormInfo extends PureComponent {
   @autobind
   onChange(contentState) {
     const content = toString(contentState);
+    // console.log(content.substring(content.length - 1, content.length));
+    const lastWord = content.substring(content.length - 1, content.length);
+    if (lastWord === '$') {
+      // this.handleSearchChange('', lastWord);
+    }
     if (content.length >= 10) {
       this.setState({
         isShowErrorInfo: false,
@@ -102,7 +107,7 @@ export default class TaskFormInfo extends PureComponent {
         <Mention
           style={{ width: '100%', height: 100 }}
           onChange={this.onChange}
-          placeholder="请在描述客户经理联系客户钱需要了解的客户相关信息，比如持仓情况。（字数限制：10-1000字）"
+          placeholder="请在描述客户经理联系客户前需要了解的客户相关信息，比如持仓情况。（字数限制：10-1000字）"
           prefix={'$'}
           onSearchChange={this.handleSearchChange}
           suggestions={suggestions}
@@ -115,7 +120,7 @@ export default class TaskFormInfo extends PureComponent {
   renderTipSection() {
     return (
       <div className={styles.info}>
-        任务描述中 &#123;XXXX&#125; 部分后台会根据客户自动替换为该客户对应的属性值，编辑任务描述时请尽量避免修改这些参数描述。
+        任务提示中 &#123;XXXX&#125; 部分后台会根据客户自动替换为该客户对应的属性值，编辑任务提示时请尽量避免修改这些参数描述。
       </div>
     );
   }
