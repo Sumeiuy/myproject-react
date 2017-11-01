@@ -321,10 +321,6 @@ export default class CreateServiceRecord extends PureComponent {
         <a className={styles.submitBtn} onClick={this.handleSubmit}>提交</a>
       </div>
     );
-    console.log('dict>>>>', dict.custServerTypeFeedBackDict);
-    console.log('服务类型', dict.custServerTypeFeedBackDict);
-    console.log('反馈类型一级', feedbackTypeArr);
-    console.log('反馈类型二级', feedbackTypeChildArr);
     return (
       <Modal
         width={688}
@@ -341,7 +337,7 @@ export default class CreateServiceRecord extends PureComponent {
               <p className={styles.categoryTitle}>服务信息</p>
               <div className={styles.row}>
                 <i className={styles.dot}>*</i>
-                <span className={styles.lable}>服务渠道：</span>
+                <span className={styles.lable}>服务方式：</span>
                 <Select
                   value={serviceWay}
                   style={width}
