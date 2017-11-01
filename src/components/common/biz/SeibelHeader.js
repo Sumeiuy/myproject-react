@@ -99,6 +99,7 @@ export default class Pageheader extends PureComponent {
   @autobind
   onWindowResize() {
     const filterBoxHeight = this.filterBox.getBoundingClientRect().height;
+    console.warn('filterBoxHeight', filterBoxHeight);
     if (filterBoxHeight <= FILTERBOX_HEIGHT) {
       removeClass(this.filterMore, 'filterMoreIcon');
       addClass(this.filterMore, 'filterNoneIcon');
