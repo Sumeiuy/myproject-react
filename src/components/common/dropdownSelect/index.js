@@ -8,6 +8,7 @@ import { autobind } from 'core-decorators';
 import { Dropdown, Icon } from 'antd';
 import classnames from 'classnames';
 import _ from 'lodash';
+import { addWheelEvent, removeWheelEvent } from '../../../utils/helper';
 import style from './style.less';
 
 export default class DropdownSelect extends PureComponent {
@@ -70,9 +71,7 @@ export default class DropdownSelect extends PureComponent {
 
   componentDidMount() {
     document.addEventListener('click', this.hideModal, false);
-    document.addEventListener('wheel', this.hideModal, false);
-    document.addEventListener('mousewheel', this.hideModal, false);
-    document.addEventListener('DOMMouseScroll', this.hideModal, false);
+    addWheelEvent(document, this.hideModal);
   }
 
   get getSearchListDom() {
@@ -109,9 +108,7 @@ export default class DropdownSelect extends PureComponent {
 
   componentWillUnMount() {
     document.removeEventListener('click', this.hideModal, false);
-    document.removeEventListener('wheel', this.hideModal, false);
-    document.removeEventListener('mousewheel', this.hideModal, false);
-    document.removeEventListener('DOMMouseScroll', this.hideModal, false);
+    removeWheelEvent(document, this.hideModal);
   }
 
   @autobind

@@ -256,9 +256,6 @@ export default class Pageheader extends PureComponent {
       )
     :
       null;
-    if (!custRange || !custRange.length) {
-      return null;
-    }
     return (
       <div className={styles.pageCommonHeader} ref={this.pageCommonHeaderRef}>
         <div className={styles.filterBox} ref={this.filterBoxRef}>
