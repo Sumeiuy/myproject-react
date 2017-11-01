@@ -568,7 +568,6 @@ export default class CustomerList extends PureComponent {
       cycleTimeProps.cycle = cycle;
       cycleTimeProps.selectValue = selectValue;
     }
-    // console.log('routes>>>>>>>>>>>>>>>>>>>>>>>>', this.props.routes);
     return (
       <div className={styles.customerlist}>
         <Row type="flex" justify="space-between" align="middle">
