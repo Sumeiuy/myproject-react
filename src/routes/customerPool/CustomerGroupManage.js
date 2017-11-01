@@ -606,6 +606,7 @@ export default class CustomerGroupManage extends PureComponent {
         <div className={styles.operationRow}>
           <div className={styles.leftSection}>
             <SimpleSearch
+              className={styles.groupSearch}
               onSearch={this.handleSearchGroup}
               placeholder={'分组名称'}
               titleNode={
