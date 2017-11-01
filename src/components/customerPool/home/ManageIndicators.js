@@ -91,14 +91,14 @@ export default class PerformanceIndicators extends PureComponent {
   @autobind
   analyticHSRateAndBusinessIndicator() {
     // 返回数据是数组，元素的位置是固定的，根据位置取元素，最后一个是沪深归集率，其余的是业务开通的指标
-    const { hsRateAndBusinessIndicator } = this.props;
+    const { hsRateAndBusinessIndicator = [] } = this.props;
     // 沪深归集率
     let hsRate = 0;
     // 业务开通数据
     const clientNumberData = [];
     // 业务开通name
     const clientNameData = [];
-    const length = hsRateAndBusinessIndicator.length;
+    const length = hsRateAndBusinessIndicator.length || 0;
     _.forEach(
       hsRateAndBusinessIndicator,
       (item, index) => {
@@ -110,7 +110,7 @@ export default class PerformanceIndicators extends PureComponent {
         }
       },
     );
-    return { hsRate, clientNumberData, clientNameData };
+    return { isEmpty: (length === 0), hsRate, clientNumberData, clientNameData };
   }
 
   render() {
@@ -122,7 +122,12 @@ export default class PerformanceIndicators extends PureComponent {
       empInfo,
     } = this.props;
     // 解析hsRateAndBusinessIndicator数据
-    const { hsRate, clientNumberData, clientNameData } = this.analyticHSRateAndBusinessIndicator();
+    const {
+      isEmpty: isIndicatorEmpty, // 控制对应的指标区域，是否显示 暂无数据
+      hsRate,
+      clientNumberData,
+      clientNameData,
+    } = this.analyticHSRateAndBusinessIndicator();
     // 字段语义，在mock文件内：/mockup/groovynoauth/fsp/emp/kpi/queryEmpKPIs.js
     const {
       motOkMnt, motTotMnt, taskCust, totCust,
@@ -202,7 +207,7 @@ export default class PerformanceIndicators extends PureComponent {
               </Col>
               <Col span={8}>
                 <RectFrame dataSource={clientHead}>
-                  <IfEmpty isEmpty={isEmpty}>
+                  <IfEmpty isEmpty={isIndicatorEmpty}>
                     <IECharts
                       onReady={this.handleBusinessOpenClick}
                       option={clientItems}
@@ -216,7 +221,7 @@ export default class PerformanceIndicators extends PureComponent {
               </Col>
               <Col span={8}>
                 <RectFrame dataSource={hsRateHead}>
-                  <IfEmpty isEmpty={isEmpty}>
+                  <IfEmpty isEmpty={isIndicatorEmpty}>
                     <IECharts
                       option={hsRateData}
                       resizable

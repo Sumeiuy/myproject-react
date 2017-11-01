@@ -31,7 +31,7 @@ export default class TaskFlow extends PureComponent {
   static defaultProps = {
     dict: {},
     storedTaskFlowData: {},
-    orgId: '',
+    orgId: null,
   };
 
   constructor(props) {
