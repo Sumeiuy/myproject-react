@@ -35,6 +35,9 @@ const dropDownSelectBoxStyle = {
 };
 const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
+// 十档行情rowID和紫金快车道子类型ID 根据后端要去写死在前端用做判断
+const TENLEVEL_TEMPLATEID = '1-43OZSYG';
+const ZJKCD_ID = '';
 export default class EditBaseInfo extends PureComponent {
   static propTypes = {
     // 查询客户
@@ -47,6 +50,8 @@ export default class EditBaseInfo extends PureComponent {
     subTypeList: PropTypes.array.isRequired,
     // 根据所选模板id查询模板对应协议条款
     queryChannelProtocolItem: PropTypes.func.isRequired,
+    // 查询协议产品列表
+    queryChannelProtocolProduct: PropTypes.func.isRequired,
     // 查询协议编号
     // onSearchProtocolNum: PropTypes.func.isRequired,
     // protocolNumList: PropTypes.array,
@@ -145,7 +150,25 @@ export default class EditBaseInfo extends PureComponent {
       // if (operationType > 1) {
       //   this.handleSearchProtocolNum();
       // }
+      // 选择客户之后查询协议产品列表
+      this.queryChannelProtocolProduct();
     });
+  }
+
+  // 查询协议产品列表
+  @autobind
+  queryChannelProtocolProduct() {
+    const { client, protocolTemplate } = this.state;
+    const { queryChannelProtocolProduct } = this.props;
+    if (!_.isEmpty(client) && !_.isEmpty(protocolTemplate)) {
+      queryChannelProtocolProduct({
+        custId: client.cusId,
+        custType: client.custType,
+        promotionId: protocolTemplate.rowId,
+        pageNum: 1,
+        pageSize: 100,
+      });
+    }
   }
 
   // 根据关键字查询客户
@@ -169,6 +192,8 @@ export default class EditBaseInfo extends PureComponent {
       console.log('value', value);
       const { queryChannelProtocolItem } = this.props;
       queryChannelProtocolItem();
+      // 触发查询协议产品列表
+      this.queryChannelProtocolProduct();
     });
   }
 
@@ -206,7 +231,9 @@ export default class EditBaseInfo extends PureComponent {
   // 判断是否显示switch开关
   @autobind
   isShowSwitch() {
-    return true;
+    const { protocolTemplate, subType } = this.state;
+    console.log('abcdefg', protocolTemplate.rowId === TENLEVEL_TEMPLATEID && subType === ZJKCD_ID);
+    return (protocolTemplate.rowId !== TENLEVEL_TEMPLATEID && subType === ZJKCD_ID);
   }
 
   // 切换子类型清空所选模板和所选客户

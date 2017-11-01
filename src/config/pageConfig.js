@@ -592,18 +592,18 @@ const pageConfig = {
         title: '子类型',
       },
       {
-        dataIndex: 'riskMatchFlag',
-        key: 'riskMatchFlag',
+        dataIndex: 'riskMatch',
+        key: 'riskMatch',
         title: '风险是否匹配',
       },
       {
-        dataIndex: 'termMatchFlag',
-        key: 'termMatchFlag',
+        dataIndex: 'termMatch',
+        key: 'termMatch',
         title: '期限是否匹配',
       },
       {
-        dataIndex: 'varietyMatchFlag',
-        key: 'varietyMatchFlag',
+        dataIndex: 'varietyMatch',
+        key: 'varietyMatch',
         title: '投资品种是否匹配',
       },
       {

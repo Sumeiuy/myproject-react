@@ -26,6 +26,7 @@ export default {
     subTypeList: EMPTY_LIST, // 子类型列表
     templateList: EMPTY_LIST, // 模板列表
     protocolClauseList: EMPTY_LIST, // 所选模板对应协议条款列表
+    protocolProductList: EMPTY_LIST, // 协议产品列表
   },
   reducers: {
     // 获取协议详情
@@ -82,6 +83,14 @@ export default {
       return {
         ...state,
         protocolClauseList: channelItem,
+      };
+    },
+    // 查询协议产品列表
+    queryChannelProtocolProductSuccess(state, action) {
+      const { payload: { resultData = EMPTY_LIST } } = action;
+      return {
+        ...state,
+        protocolProductList: resultData,
       };
     },
   },
@@ -161,6 +170,14 @@ export default {
       yield put({
           type: 'queryChannelProtocolItemSuccess',
           payload: response,
+      });
+    },
+    // 查询协议产品列表
+    * queryChannelProtocolProduct({ payload }, { call, put }) {
+      const response = yield call(api.queryChannelProtocolProduct, payload);
+      yield put({
+        type: 'queryChannelProtocolProductSuccess',
+        payload: response,
       });
     },
   },
