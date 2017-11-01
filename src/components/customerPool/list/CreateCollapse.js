@@ -22,10 +22,12 @@ export default class CreateCollapse extends PureComponent {
     executeTypes: PropTypes.array.isRequired,
     serveWay: PropTypes.array.isRequired,
     handleCollapseClick: PropTypes.func.isRequired,
+    loading: PropTypes.bool,
   };
 
   static defaultProps = {
     data: EMPTY_LIST,
+    loading: false,
   };
 
   constructor(props) {
@@ -226,9 +228,10 @@ export default class CreateCollapse extends PureComponent {
   render() {
     const {
       data = EMPTY_LIST,
+      loading,
      } = this.props;
 
-    if (_.isEmpty(data)) {
+    if (_.isEmpty(data) && !loading) {
       return (
         <div className={styles.noServiceRecord}>无服务记录</div>
       );

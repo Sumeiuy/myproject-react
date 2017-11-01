@@ -64,6 +64,7 @@ export default class TaskSearchRow extends PureComponent {
       totalCustNums: 0,
       labelId: '',
       visible: false,
+      title: '',
     };
   }
   componentWillReceiveProps(nextProps) {
@@ -93,7 +94,7 @@ export default class TaskSearchRow extends PureComponent {
     });
     this.setState({
       visible: true,
-      // totalRecordNum: value.customNum,
+      title: value.labelName,
       totalCustNums: value.customNum,
       labelId: value.id,
     });
@@ -148,8 +149,10 @@ export default class TaskSearchRow extends PureComponent {
     return _.map(circlePeopleData,
       (item) => {
         let newDesc = item.labelDesc;
+        let newTitle = item.labelName;
         if (!_.isEmpty(condition)) {
           newDesc = newDesc.replace(condition, `<span>${condition}</span>`);
+          newTitle = newTitle.replace(condition, `<span>${condition}</span>`);
         }
 
         return (
@@ -158,7 +161,10 @@ export default class TaskSearchRow extends PureComponent {
               value={item.id}
               key={item.tagNumId}
             >
-              <span className={styles.title}>{item.labelName}</span>
+              <span
+                className={styles.title}
+                dangerouslySetInnerHTML={{ __html: newTitle }} // eslint-disable-line
+              />
             </Radio>
             <h4 className={styles.titExp}>瞄准镜标签，共有
                 <span>{item.customNum}</span>客户。创建时间{item.createDate}，创建人：{item.createrName}
@@ -179,17 +185,18 @@ export default class TaskSearchRow extends PureComponent {
       totalRecordNum = 0,
       visible,
       totalCustNums,
+      title,
     } = this.state;
 
     const {
       peopleOfLabelData,
       currentSelectLabel,
-      condition,
       isLoadingEnd,
     } = this.props;
 
     return (
       <div className={styles.divContent}>
+        <h4>共找到23条相关标签</h4>
         <RadioGroup name="radiogroup" onChange={this.change} defaultValue={currentSelectLabel}>
           {
             this.renderRadioSection()
@@ -198,7 +205,7 @@ export default class TaskSearchRow extends PureComponent {
         <div className={styles.seeCust}>
           <Modal
             visible={visible && isLoadingEnd}
-            title={`满足标签为 ${condition} 的共有${totalCustNums || 0}位`}
+            title={`满足标签为 ${title} 的共有${totalCustNums || 0}位`}
             onOk={this.handleOk}
             maskClosable={false}
             onCancel={this.handleCancel}
