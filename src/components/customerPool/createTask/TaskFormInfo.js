@@ -62,6 +62,11 @@ export default class TaskFormInfo extends PureComponent {
   @autobind
   onChange(contentState) {
     const content = toString(contentState);
+    // console.log(content.substring(content.length - 1, content.length));
+    const lastWord = content.substring(content.length - 1, content.length);
+    if (lastWord === '$') {
+      // this.handleSearchChange('', lastWord);
+    }
     if (content.length >= 10) {
       this.setState({
         isShowErrorInfo: false,

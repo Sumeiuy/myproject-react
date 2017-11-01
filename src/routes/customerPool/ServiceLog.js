@@ -219,7 +219,7 @@ export default class CreateTaskForm extends PureComponent {
     const { dict, handleCollapseClick } = this.props;
     const { serveAllSource, serveAllType, executeTypes, serveWay } = dict;
     const { logData, showBtn, loading } = this.state;
-    console.log('loading-->', loading);
+    console.log('dict-->', dict);
     return (
       <div className={styles.serviceInner}>
         <div
