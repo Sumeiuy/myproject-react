@@ -1,6 +1,10 @@
-.commomSelect{
+.commomSelect {
   display: inline-block;
-  :global{
+  :global {
+    // 兼容ie下拉图标旋转样式
+    .ant-select-arrow {
+      transform: scale(0.75);
+    }
     //多选下拉小图标样式
     .ant-select-arrow:before {
       content: "";
@@ -9,7 +13,6 @@
       right: 2px;
       top: 5px;
       width: 0;
-      height: 0;
       border: none;
       border-top: 10px solid #c2c2c2;
       border-left: 6px solid transparent;
@@ -22,5 +25,4 @@
       transform: rotate(0deg);
     }
   }
-  
 }

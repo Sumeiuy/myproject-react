@@ -14,6 +14,7 @@ import Button from '../Button';
 import Icon from '../Icon';
 import styles from '../../style/jiraLayout.less';
 import { hasPermission, addClass, removeClass } from '../../../utils/helper';
+import { fspContainer } from '../../../config';
 
 // 头部筛选filterBox的高度
 const FILTERBOX_HEIGHT = 32;
@@ -69,16 +70,30 @@ export default class Pageheader extends PureComponent {
   }
 
   componentWillMount() {
-    this.props.getCustRange({});
+    this.props.getCustRange({
+      type: this.props.pageType,
+    });
   }
 
   componentDidUpdate() {
     this.onWindowResize();
     window.addEventListener('resize', this.onWindowResize, false);
+    const sidebarHideBtn = document.querySelector(fspContainer.sidebarHideBtn);
+    const sidebarShowBtn = document.querySelector(fspContainer.sidebarShowBtn);
+    if (sidebarHideBtn && sidebarShowBtn) {
+      sidebarHideBtn.addEventListener('click', this.onWindowResize, false);
+      sidebarShowBtn.addEventListener('click', this.onWindowResize, false);
+    }
   }
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.onWindowResize, false);
+    const sidebarHideBtn = document.querySelector(fspContainer.sidebarHideBtn);
+    const sidebarShowBtn = document.querySelector(fspContainer.sidebarShowBtn);
+    if (sidebarHideBtn && sidebarShowBtn) {
+      sidebarHideBtn.removeEventListener('click', this.onWindowResize, false);
+      sidebarShowBtn.removeEventListener('click', this.onWindowResize, false);
+    }
   }
 
   @autobind
