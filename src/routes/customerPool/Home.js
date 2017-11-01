@@ -145,13 +145,7 @@ export default class Home extends PureComponent {
       cycleSelect: '',
       createCustRange: [],
       expandAll: false,
-      isShowPerformance: false,  // 是否能够查看投顾绩效
     };
-    /*
-    * 是否能查看投顾绩效开关，有两个。具备任何一个，就可开启
-    * 第一个是：empinfo返回的权限指标字段（tgQyFlag：bool）
-    * 第二个是：有指标查看权限+营业部
-    */
     // 首页指标查询权限
     this.isHasAuthorize = permission.hasIndexViewPermission();
   }
@@ -245,13 +239,8 @@ export default class Home extends PureComponent {
       orgId, // 组织ID
     });
 
-    // 是否能查看投顾绩效开关，有两个。具备任何一个，就可开启
-    // 第一个是：empinfo返回的权限指标字段（tgQyFlag：bool）
-    // 第二个是：有指标查看权限+营业部
-    const factor = this.isHasAuthorize && !_.isEmpty(orgId) && orgId !== MAIN_MAGEGER_ID;
-    const author = factor || tgQyFlag;
-    this.setState({ isShowPerformance: author });
-    if (author) {
+    // 查看投顾绩效开关:empinfo返回的权限指标字段（tgQyFlag：bool）
+    if (tgQyFlag) {
       getPerformanceIndicators({
         begin,
         end,
@@ -523,7 +512,7 @@ export default class Home extends PureComponent {
       empInfo = {},
     } = this.props;
     // 是否能看投顾绩效的标记
-    const { isShowPerformance = false } = this.state;
+    const { tgQyFlag = false } = empInfo.empInfo || {};
 
     return (
       <div className={styles.customerPoolWrap}>
@@ -565,7 +554,7 @@ export default class Home extends PureComponent {
                 />
               </TabPane>
               {
-                isShowPerformance ? (
+                tgQyFlag ? (
                   <TabPane tab="投顾绩效" key="performance">
                     <PerformanceIndicators
                       empInfo={empInfo}

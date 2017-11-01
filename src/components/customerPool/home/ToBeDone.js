@@ -24,6 +24,41 @@ export default class PerformanceIndicators extends PureComponent {
     data: {},
   }
 
+  componentDidMount() {
+    this.setMinFontSizeByWidth();
+    window.addEventListener('resize', () => {
+      this.setMinFontSizeByWidth();
+    });
+  }
+
+  componentDidUpdate() {
+    this.setMinFontSizeByWidth();
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', () => this.setMinFontSizeByWidth());
+  }
+
+  // 根据宽度，按一定比例缩放字号
+  @autobind
+  setMinFontSizeByWidth() {
+    const { data: { businessNumbers } } = this.props;
+    // 十万起，数字展示不下，要缩放
+    if (businessNumbers > 99999 && this.itemBElem) {
+      const currentWidth = Math.ceil(this.itemBElem.offsetWidth);
+      const minWidth = Math.ceil(
+        parseFloat(
+          window.getComputedStyle(
+            this.itemBElem,
+          ).getPropertyValue('min-width'),
+        ),
+      );
+      // 按照一定比例缩放(自测出来的)
+      const percentSize = Math.floor((currentWidth - minWidth) * 0.2);
+      this.itemBElem.style.fontSize = `${Math.min((20 + percentSize), 30)}px`;
+    }
+  }
+
   // 处理数值（大于99+）
   processNum(num) {
     const nowNum = parseInt(num); // eslint-disable-line
@@ -131,7 +166,10 @@ export default class PerformanceIndicators extends PureComponent {
             >
               <div className={styles.content}>
                 <div className={styles.description}>
-                  <div className={styles.count}>
+                  <div
+                    className={styles.count}
+                    ref={(ref) => { this.itemBElem = ref; }}
+                  >
                     {this.farmtNum(businessNumbers)}
                   </div>
                   <div className={styles.intro}>潜在业务客户</div>
