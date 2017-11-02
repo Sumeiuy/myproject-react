@@ -55,6 +55,7 @@ const effects = {
   subSubscribe: 'commission/submitConsultSubscribe',
   unSubSubscribe: 'commission/submitConsultUnSubscribe',
   clearReduxState: 'commission/clearReduxState',
+  singleCustValidate: 'commission/validateCustomerInSingle',
 };
 
 const mapStateToProps = state => ({
@@ -178,6 +179,8 @@ const mapDispatchToProps = {
   submitUnSub: getDataFunction(false, effects.unSubSubscribe),
   // 清空redux保存的state
   clearReduxState: getDataFunction(false, effects.clearReduxState),
+  // 单佣金调整客户校验
+  singleCustValidate: getDataFunction(false, effects.singleCustValidate),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -241,6 +244,7 @@ export default class CommissionHome extends PureComponent {
     submitUnSub: PropTypes.func.isRequired,
     consultUnsubId: PropTypes.string.isRequired,
     clearReduxState: PropTypes.func.isRequired,
+    singleCustValidate: PropTypes.func.isRequired,
     subsciSubmitProcess: PropTypes.bool,
     unSubsciSubmitProcess: PropTypes.bool,
   }
@@ -589,6 +593,7 @@ export default class CommissionHome extends PureComponent {
       singleSubmit,
       getAprovalUserList,
       clearReduxState,
+      singleCustValidate,
     } = this.props;
     const isEmpty = _.isEmpty(list.resultData);
     // 此处需要提供一个方法给返回的接口查询设置是否查询到数据
@@ -674,6 +679,7 @@ export default class CommissionHome extends PureComponent {
               submitUnSub={submitUnSub}
               queryApprovalUser={getAprovalUserList}
               clearReduxState={clearReduxState}
+              onValidateSingleCust={singleCustValidate}
             />
           )
         }

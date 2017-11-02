@@ -554,6 +554,12 @@ const helper = {
     }
     return hasPermissionOnBtn;
   },
+
+  // 判断当前是否在FSP系统中
+  isInFsp() {
+    const fsp = document.querySelector(fspContainer.container);
+    return !!fsp;
+  },
 };
 
 export default helper;
