@@ -84,6 +84,10 @@ export default class SelectLabelCust extends PureComponent {
       condition: value,
     });
 
+    if (_.isEmpty(value)) {
+      return;
+    }
+
     getLabelInfo(param);
   }
 

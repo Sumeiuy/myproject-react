@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-25 18:23:23
+ * @Last Modified time: 2017-11-02 15:56:19
  */
 
 import React, { PureComponent } from 'react';
@@ -237,10 +237,9 @@ export default class GroupTable extends PureComponent {
               );
             }
             return (
-              <div className={styles.column}>
-                <span title={record[item.key]}>
-                  {(record[item.key] === 0 || record[item.key]) ? record[item.key] : '--'}</span>
-              </div>
+              <span title={record[item.key]} className={styles.column}>
+                {(record[item.key] === 0 || record[item.key]) ? record[item.key] : '--'}
+              </span>
             );
           },
         };
@@ -253,11 +252,9 @@ export default class GroupTable extends PureComponent {
       title: item.value,
       fixed: (isFixedColumn && _.includes(fixedColumn, index)) ? 'left' : false,
       render: (text, record) =>
-        <div className={styles.column}>
-          <span title={record[item.key]}>
-            {(record[item.key] === 0 || record[item.key]) ? record[item.key] : '--'}
-          </span>
-        </div>,
+        <span title={record[item.key]} className={styles.column}>
+          {(record[item.key] === 0 || record[item.key]) ? record[item.key] : '--'}
+        </span>,
     }));
   }
 

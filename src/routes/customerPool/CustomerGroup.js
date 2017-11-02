@@ -1,8 +1,8 @@
 /*
  * @Author: zhuyanwen
  * @Date: 2017-10-09 13:25:51
- * @Last Modified by:   K0240008
- * @Last Modified time: 2017-11-02 10:42:28
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2017-11-02 18:40:14
  * @description: 客户分组功能
  */
 
@@ -45,10 +45,6 @@ const mapDispatchToProps = {
   go: routerRedux.go,
   push: routerRedux.push,
   replace: routerRedux.replace,
-  getCustomerGroupList: query => ({
-    type: 'customerPool/customerGroupList',
-    payload: query || {},
-  }),
   addCustomerToGroup: query => ({
     type: 'customerPool/addCustomerToGroup',
     payload: query || {},
@@ -79,7 +75,6 @@ export default class CustomerGroup extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
     cusgroupList: PropTypes.array.isRequired,
-    getCustomerGroupList: PropTypes.func.isRequired,
     createCustGroup: PropTypes.func.isRequired,
     cusgroupPage: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
@@ -246,8 +241,7 @@ export default class CustomerGroup extends PureComponent {
    */
   @autobind
   handlePageChange(nextPage, currentPageSize) {
-    const { location: { query, query: { keyWord }, pathname }, replace,
-      getCustomerGroupList } = this.props;
+    const { location: { query, query: { keyWord }, pathname }, replace } = this.props;
 
     // 替换当前页码和分页条目
     replace({
@@ -256,12 +250,8 @@ export default class CustomerGroup extends PureComponent {
         ...query,
         curPageNum: nextPage,
         curPageSize: currentPageSize,
+        keyWord: keyWord || CUR_KEYWORD,
       },
-    });
-    getCustomerGroupList({
-      pageNum: nextPage,
-      pageSize: currentPageSize,
-      keyWord: keyWord || CUR_KEYWORD,
     });
   }
 
@@ -272,8 +262,7 @@ export default class CustomerGroup extends PureComponent {
    */
   @autobind
   handleShowSizeChange(currentPageNum, changedPageSize) {
-    const { location: { query, query: { keyWord }, pathname }, replace,
-      getCustomerGroupList } = this.props;
+    const { location: { query, query: { keyWord }, pathname }, replace } = this.props;
 
     // 替换当前页码和分页条目
     replace({
@@ -282,12 +271,8 @@ export default class CustomerGroup extends PureComponent {
         ...query,
         curPageNum: 1,
         curPageSize: changedPageSize,
+        keyWord: keyWord || CUR_KEYWORD,
       },
-    });
-    getCustomerGroupList({
-      pageNum: currentPageNum,
-      pageSize: changedPageSize,
-      keyWord: keyWord || CUR_KEYWORD,
     });
   }
 

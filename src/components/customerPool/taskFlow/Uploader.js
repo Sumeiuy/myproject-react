@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-31 16:48:03
+ * @Last Modified time: 2017-11-02 14:20:14
  */
 
 import React, { PropTypes, PureComponent } from 'react';
@@ -225,6 +225,8 @@ export default class Uploader extends PureComponent {
       lastFile: {},
       uploadedFileKey: '',
       isShowUpload: true,
+      // 删除完毕之后，打开上传进度开关
+      showUploadList: true,
     });
     onDeleteFile();
   }

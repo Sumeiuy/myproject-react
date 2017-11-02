@@ -205,9 +205,14 @@ export default class TaskSearchRow extends PureComponent {
     } = this.state;
 
     const {
-    currentSelectLabel,
+      currentSelectLabel,
       isLoadingEnd,
+      condition,
     } = this.props;
+
+    if (_.isEmpty(condition)) {
+      return null;
+    }
 
     return (
       <div className={styles.divContent}>
@@ -217,39 +222,42 @@ export default class TaskSearchRow extends PureComponent {
           }
         </RadioGroup>
         <div className={styles.seeCust}>
-          <Modal
-            visible={visible && isLoadingEnd}
-            title={`满足标签为 ${title} 的共有${totalCustNums || 0}位`}
-            onOk={this.handleOk}
-            maskClosable={false}
-            onCancel={this.handleCancel}
-            closable={false}
-            footer={[
-              <Button key="back" size="large" onClick={this.handleCancel}>关闭</Button>,
-            ]}
-            width={700}
-          >
-            <GroupTable
-              pageData={{
-                curPageNum,
-                curPageSize: pageSize,
-                totalRecordNum,
-              }}
-              tableClass={
-                classnames({
-                  [styles.labelCustTable]: true,
-                  [tableStyles.groupTable]: true,
-                })
-              }
-              isFixedTitle
-              scrollY={400}
-              onSizeChange={this.handleShowSizeChange}
-              onPageChange={this.handlePageChange}
-              listData={custTableData}
-              titleColumn={renderColumnTitle}
-              isFirstColumnLink={false}
-            />
-          </Modal>
+          {
+            (isLoadingEnd && visible) ?
+              <Modal
+                visible
+                title={`满足标签为 ${title} 的共有${totalCustNums || 0}位`}
+                onOk={this.handleOk}
+                maskClosable={false}
+                onCancel={this.handleCancel}
+                closable={false}
+                footer={[
+                  <Button key="back" size="large" onClick={this.handleCancel}>关闭</Button>,
+                ]}
+                width={700}
+              >
+                <GroupTable
+                  pageData={{
+                    curPageNum,
+                    curPageSize: pageSize,
+                    totalRecordNum,
+                  }}
+                  tableClass={
+                    classnames({
+                      [styles.labelCustTable]: true,
+                      [tableStyles.groupTable]: true,
+                    })
+                  }
+                  isFixedTitle
+                  scrollY={400}
+                  onSizeChange={this.handleShowSizeChange}
+                  onPageChange={this.handlePageChange}
+                  listData={custTableData}
+                  titleColumn={renderColumnTitle}
+                  isFirstColumnLink={false}
+                />
+              </Modal> : null
+          }
         </div>
       </div>
 

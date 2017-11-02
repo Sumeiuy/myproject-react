@@ -1,3 +1,5 @@
+@import '../../../css/variable.less';
+
 :global {
   .react-app .ant-pagination-options .ant-select {
     width: 80px;
@@ -6,13 +8,13 @@
 .groupTable {
   padding: 15px 20px 20px 15px;
   table {
-    border: 1px solid #dddddd;
+    border: 1px solid #ddd;
   }
   table > tbody > tr:nth-child(odd) {
     background-color: #f9f9f9;
   }
   table > thead > tr > th, tbody > tr > td {
-    padding: 0px;
+    padding: 0;
     padding-bottom: 11px;
     padding-top: 11px;
     font-size: 14px;
@@ -24,19 +26,20 @@
     padding-right: 10px;
   }
   table > thead > tr > th {
-    background-color: #ffffff;
-    color: #333333;
+    background-color: #fff;
+    color: #333;
     text-align: left !important;
     font-weight: 600;
   }
   table > tbody > tr > td {
-    border-bottom: 0px;
+    border-bottom: 0;
   }
   .column {
     max-width: 200px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    display: inline-block;
   }
   :global {
     .mini {
@@ -44,7 +47,10 @@
       justify-content: flex-end;
     }
     .ant-select-selection {
-      border: 1px solid #dddddd;
+      border: 1px solid #ddd;
+    }
+    .ant-table-scroll {
+      .scrollBarIEStyle;
     }
   }
   .totalPageSection {
@@ -68,16 +74,6 @@
       transition: color .3s ease;
       padding-right: 8px;
     }
-    // & > .link:not(:last-child)::after {
-    //   content: '';
-    //   display: inline-block;
-    //   border-right: 1px solid #108ee9;
-    //   height: 12px;
-    //   width: 1px;
-    //   margin-left: 4px;
-    //   margin-right: 4px;
-    //   vertical-align: middle
-    // }
   }
   .rowSelected {
     background-color: rgb(237, 246, 253) !important;
