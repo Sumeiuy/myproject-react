@@ -111,7 +111,7 @@ export default class SelectLabelCust extends PureComponent {
           onSearch={this.handleSearchClick}
           searchStyle={{
             height: '30px',
-            width: '350px',
+            width: '400px',
           }}
           defaultValue={condition}
           isNeedBtn

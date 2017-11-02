@@ -30,6 +30,8 @@ export default class TaskFormInfo extends PureComponent {
     taskTypes: PropTypes.array,
     executeTypes: PropTypes.array,
     isShowErrorInfo: PropTypes.bool,
+    isShowErrorTaskType: PropTypes.bool,
+    isShowErrorExcuteType: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -38,6 +40,8 @@ export default class TaskFormInfo extends PureComponent {
     defaultServiceStrategySuggestion: '',
     defaultInitialValue: null,
     isShowErrorInfo: false,
+    isShowErrorTaskType: false,
+    isShowErrorExcuteType: false,
   }
 
   constructor(props) {
@@ -46,15 +50,30 @@ export default class TaskFormInfo extends PureComponent {
       suggestions: [],
       inputValue: '',
       isShowErrorInfo: false,
+      isShowErrorTaskType: false,
+      isShowErrorExcuteType: false,
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    const { isShowErrorInfo: nextError } = nextProps;
-    const { isShowErrorInfo } = this.props;
+    const { isShowErrorInfo: nextError,
+      isShowErrorExcuteType: nextExcuteTypeError,
+      isShowErrorTaskType: nextTaskTypeError,
+    } = nextProps;
+    const { isShowErrorInfo, isShowErrorExcuteType, isShowErrorTaskType } = this.props;
     if (nextError !== isShowErrorInfo) {
       this.setState({
         isShowErrorInfo: nextError,
+      });
+    }
+    if (nextExcuteTypeError !== isShowErrorExcuteType) {
+      this.setState({
+        isShowErrorExcuteType: nextExcuteTypeError,
+      });
+    }
+    if (nextTaskTypeError !== isShowErrorTaskType) {
+      this.setState({
+        isShowErrorTaskType: nextTaskTypeError,
       });
     }
   }
@@ -86,6 +105,34 @@ export default class TaskFormInfo extends PureComponent {
     this.setState({
       suggestions: dataSource.filter(item => item.indexOf(value) !== -1),
     });
+  }
+
+  @autobind
+  handleTaskTypeChange(value) {
+    console.log(value);
+    if (!_.isEmpty(value) && value !== '请选择' && value !== '暂无数据') {
+      this.setState({
+        isShowErrorTaskType: false,
+      });
+    } else {
+      this.setState({
+        isShowErrorTaskType: true,
+      });
+    }
+  }
+
+  @autobind
+  handleExcuteTypeChange(value) {
+    console.log(value);
+    if (!_.isEmpty(value) && value !== '请选择' && value !== '暂无数据') {
+      this.setState({
+        isShowErrorExcuteType: false,
+      });
+    } else {
+      this.setState({
+        isShowErrorExcuteType: true,
+      });
+    }
   }
 
   handleCreatOptions(data) {
@@ -128,6 +175,8 @@ export default class TaskFormInfo extends PureComponent {
   render() {
     const {
       isShowErrorInfo,
+      isShowErrorTaskType,
+      isShowErrorExcuteType,
     } = this.state;
     const {
       defaultMissionName,
@@ -146,6 +195,18 @@ export default class TaskFormInfo extends PureComponent {
       hasFeedback: true,
       validateStatus: 'error',
       help: '任务描述不能小于10个字符',
+    } : null;
+
+    const taskTypeErrorSelectProps = isShowErrorTaskType ? {
+      hasFeedback: true,
+      validateStatus: 'error',
+      help: '请选择任务类型',
+    } : null;
+
+    const excuteTypeErrorSelectProps = isShowErrorExcuteType ? {
+      hasFeedback: true,
+      validateStatus: 'error',
+      help: '请选择执行方式',
     } : null;
 
     return (
@@ -171,12 +232,15 @@ export default class TaskFormInfo extends PureComponent {
               !_.isEmpty(taskTypes) ?
                 <FormItem
                   wrapperCol={{ span: 12 }}
+                  {...taskTypeErrorSelectProps}
                 >
                   {getFieldDecorator('taskType',
                     {
                       initialValue: defaultMissionType,
                     })(
-                      <Select>
+                      <Select
+                        onChange={this.handleTaskTypeChange}
+                      >
                         {this.handleCreatOptions(taskTypes)}
                       </Select>,
                   )}
@@ -197,12 +261,15 @@ export default class TaskFormInfo extends PureComponent {
               !_.isEmpty(executeTypes) ?
                 <FormItem
                   wrapperCol={{ span: 12 }}
+                  {...excuteTypeErrorSelectProps}
                 >
                   {getFieldDecorator('executionType',
                     {
                       initialValue: defaultExecutionType,
                     })(
-                      <Select>
+                      <Select
+                        onChange={this.handleExcuteTypeChange}
+                      >
                         {this.handleCreatOptions(executeTypes)}
                       </Select>,
                   )}
@@ -226,7 +293,7 @@ export default class TaskFormInfo extends PureComponent {
                 {
                   rules: [{ required: true, message: '有效期不能为空!', pattern: /^\+?[1-9][0-9]*$/ }],
                   initialValue: defaultInitialValue,
-                })(<InputNumber step={1} min="0" style={{ width: '100%' }} />)}
+                })(<InputNumber step={1} min={0} max={365} style={{ width: '100%' }} />)}
             </FormItem>
           </li>
         </ul>

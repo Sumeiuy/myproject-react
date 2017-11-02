@@ -68,6 +68,7 @@ export default class TaskSearchRow extends PureComponent {
       custTableData: [],
     };
   }
+
   componentWillReceiveProps(nextProps) {
     const { peopleOfLabelData } = nextProps;
     const { userObjectFormList } = peopleOfLabelData;
@@ -227,7 +228,7 @@ export default class TaskSearchRow extends PureComponent {
             <GroupTable
               pageData={{
                 curPageNum,
-                pageSize,
+                curPageSize: pageSize,
                 totalRecordNum,
               }}
               tableClass={

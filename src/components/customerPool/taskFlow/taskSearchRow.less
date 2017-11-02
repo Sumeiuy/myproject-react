@@ -1,7 +1,13 @@
+@import '../../../css/variable.less';
+
 .divContent {
 	overflow: scroll;
 	min-height: 100px;
 	max-height: e("calc(100vh - 400px)");
+	margin-top: 15px;
+	overflow-x: hidden;
+  /* 以下是给IE浏览器用的滚动条样式 */
+  .scrollBarIEStyle;
 	// margin-top: 15px;
 	:global {
 		.ant-radio-group {
@@ -101,6 +107,9 @@
       }
     .ant-table-tbody {
       text-align: center;
+    }
+    .ant-table-scroll {
+      .scrollBarIEStyle;
     }
   }
 }
