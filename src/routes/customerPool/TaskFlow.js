@@ -22,7 +22,7 @@ const EMPTY_OBJECT = {};
 
 const effects = {
   // 预览客户细分数据
-  priviewCustFile: 'customerPool/priviewCustFile',
+  previewCustFile: 'customerPool/previewCustFile',
   getLabelInfo: 'customerPool/getLabelInfo',
   getLabelPeople: 'customerPool/getLabelPeople',
   submitTaskFlow: 'customerPool/submitTaskFlow',
@@ -73,7 +73,7 @@ const mapDispatchToProps = {
     type: 'customerPool/resetActiveTab',
     payload: query || {},
   }),
-  priviewCustFile: fetchData(effects.priviewCustFile, true),
+  previewCustFile: fetchData(effects.previewCustFile, true),
   getLabelInfo: fetchData(effects.getLabelInfo, true),
   getLabelPeople: fetchData(effects.getLabelPeople, true),
   submitTaskFlow: fetchData(effects.submitTaskFlow, true),
@@ -87,7 +87,7 @@ export default class TaskFlow extends PureComponent {
     location: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
     priviewCustFileData: PropTypes.object.isRequired,
-    priviewCustFile: PropTypes.func.isRequired,
+    previewCustFile: PropTypes.func.isRequired,
     getLabelInfo: PropTypes.func.isRequired,
     getLabelPeople: PropTypes.func.isRequired,
     circlePeopleData: PropTypes.array.isRequired,
@@ -226,9 +226,9 @@ export default class TaskFlow extends PureComponent {
       message.error('请先上传文件');
       return;
     }
-    const { priviewCustFile } = this.props;
+    const { previewCustFile } = this.props;
     // 预览数据
-    priviewCustFile({
+    previewCustFile({
       filename: uploadKey,
       pageNum,
       pageSize,
