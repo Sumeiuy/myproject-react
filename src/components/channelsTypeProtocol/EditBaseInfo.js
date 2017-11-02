@@ -19,14 +19,12 @@ import InfoItem from '../common/infoItem';
 import InfoForm from '../common/infoForm';
 import DropDownSelect from '../common/dropdownSelect';
 import CustomSwitch from '../common/customSwitch';
-import { seibelConfig } from '../../config';
+import { protocolIsShowSwitch } from '../../utils/permission';
 
 import styles from './editBaseInfo.less';
 
 const { TextArea } = Input;
 
-// 子类型列表
-// const subTypeList = _.filter(seibelConfig.channelsTypeProtocol.subType, v => v.label !== '全部');
 // 下拉搜索组件样式
 const dropDownSelectBoxStyle = {
   width: 220,
@@ -35,7 +33,6 @@ const dropDownSelectBoxStyle = {
 };
 const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
-const { channelsTypeProtocol: { tenLevelTemplateId, zjkcdId } } = seibelConfig;
 export default class EditBaseInfo extends PureComponent {
   static propTypes = {
     // 查询客户
@@ -165,6 +162,7 @@ export default class EditBaseInfo extends PureComponent {
         promotionId: protocolTemplate.rowId,
         pageNum: 1,
         pageSize: 100,
+        keyword: '',
       });
     }
   }
@@ -226,14 +224,6 @@ export default class EditBaseInfo extends PureComponent {
 
   }
 
-  // 判断是否显示switch开关
-  @autobind
-  isShowSwitch() {
-    const { protocolTemplate, subType } = this.state;
-    console.log('abcdefg', protocolTemplate.rowId === tenLevelTemplateId && subType === zjkcdId);
-    return (protocolTemplate.rowId !== tenLevelTemplateId && subType === zjkcdId);
-  }
-
   // 切换子类型清空所选模板和所选客户
   @autobind
   clearValue() {
@@ -254,7 +244,13 @@ export default class EditBaseInfo extends PureComponent {
       operationList,
       subTypeList,
     } = this.props;
-    const { subType, operationType, multiUsedFlag, levelTenFlag } = this.state;
+    const {
+      subType,
+      operationType,
+      multiUsedFlag,
+      levelTenFlag,
+      protocolTemplate,
+    } = this.state;
     return (
       <div className={styles.editWrapper}>
         <InfoTitle head="基本信息" />
@@ -301,7 +297,7 @@ export default class EditBaseInfo extends PureComponent {
           />
         </InfoForm>
         {
-          this.isShowSwitch() ?
+          protocolIsShowSwitch(protocolTemplate.rowId, subType) ?
             <InfoForm label="是否多账户使用" >
               <CustomSwitch
                 name="multiUsedFlag"
@@ -313,7 +309,7 @@ export default class EditBaseInfo extends PureComponent {
           null
         }
         {
-          this.isShowSwitch() ?
+          protocolIsShowSwitch(protocolTemplate.rowId, subType) ?
             <InfoForm label="是否订购十档行情">
               <CustomSwitch
                 name="levelTenFlag"
