@@ -49,6 +49,7 @@ export default class SearchSelect extends PureComponent {
   setSelectValue(value, option) {
     this.setState({
       selectItem: this.props.dataSource[option.props.index],
+      proValue: value,
     });
   }
 
@@ -59,6 +60,7 @@ export default class SearchSelect extends PureComponent {
     this.setState({
       proValue: '',
       inputValue: '',
+      selectItem: {},
     });
   }
 

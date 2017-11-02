@@ -101,10 +101,8 @@ export default class RejectionAndAmendment extends PureComponent {
     getAprovalUserList: PropTypes.func.isRequired,
     // 咨讯订阅修改相关
     subDetail: PropTypes.object.isRequired,
-    subscribelProList: PropTypes.array.isRequired,
     consultSubId: PropTypes.string.isRequired,
     getSubscribeDetail: PropTypes.func.isRequired,
-    getSubscribelProList: PropTypes.func.isRequired,
     empInfo: PropTypes.object.isRequired,
     submitSub: PropTypes.func.isRequired,
     // 驳回后修改单佣金调整相关

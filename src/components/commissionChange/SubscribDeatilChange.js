@@ -29,6 +29,7 @@ const { TextArea } = Input;
 
 export default class SubscribeDetailToChange extends PureComponent {
   static propTypes = {
+    empInfo: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
     // 订阅详情
     getSubscribeDetailToChange: PropTypes.func.isRequired,
@@ -42,8 +43,6 @@ export default class SubscribeDetailToChange extends PureComponent {
     submitSub: PropTypes.func.isRequired,
     // 修改咨讯订阅提交后返回值
     consultSubId: PropTypes.string.isRequired,
-    // 审批人员列表
-    approvalUserList: PropTypes.array.isRequired,
   }
 
   constructor(props) {
@@ -107,7 +106,6 @@ export default class SubscribeDetailToChange extends PureComponent {
       attachment: '',
       subProList: [], // 咨询订阅产品列表
       subscribelProductMatchInfo: [], // 咨询订阅的产品的三匹配信息
-      unSubProList: [], // 咨询退订产品列表
     });
   }
 
@@ -200,33 +198,11 @@ export default class SubscribeDetailToChange extends PureComponent {
     };
   }
 
-  // 重组咨讯订阅可选产品子产品
-  @autobind
-  changeSubscriProChildren(product) {
-    const { prodRowid, prodCode, prodName, xDefaultOpenFlag } = product;
-    return {
-      key: prodRowid,
-      // 产品代码
-      prodCode,
-      // 产品名称
-      prodName,
-      // 是否默认选择
-      xDefaultOpenFlag,
-      // 传入的产品原始数据
-      product,
-    };
-  }
-
   // 重组咨讯订阅可选产品List
   @autobind
   createSubscribelProList(data) {
     const newSubscriProList = data.map((product) => {
-      const { subProds } = product;
       const newSubscribel = this.changeSubscriProList(product);
-      if (!_.isEmpty(subProds)) {
-        // 存在子产品
-        newSubscribel.children = subProds.map(this.changeSubscriProChildren);
-      }
       return newSubscribel;
     });
     return newSubscriProList;
@@ -236,8 +212,42 @@ export default class SubscribeDetailToChange extends PureComponent {
   // TODO
   @autobind
   choiceSubProList(data, preProList) {
-    console.warn('###preProList###', preProList);
-    return [];
+    const newChoiceProList = [];
+    data.forEach((product) => {
+      const { prodCode, subItem } = product;
+      const tableProList = product;
+      preProList.forEach((item) => {
+        const { prodCode: choiceProCode, children } = item;
+        if (prodCode === choiceProCode) {
+          const {
+            riskMatch,
+            prodMatch,
+            termMatch,
+          } = tableProList;
+          const proList = {
+            riskMatch,
+            prodMatch,
+            termMatch,
+            ...item,
+          };
+          if (!_.isEmpty(subItem)) {
+            const { prodCode: choiceChildCode } = subItem;
+            proList.children = children.map((pro) => {
+              const { prodCode: childProCode } = pro;
+              if (childProCode === choiceChildCode) {
+                return {
+                  xDefaultOpenFlag: 'Y',
+                  ...pro,
+                };
+              }
+              return pro;
+            });
+          }
+          newChoiceProList.push(proList);
+        }
+      });
+    });
+    return newChoiceProList;
   }
 
   // 附件上传成功后的回调
@@ -248,9 +258,85 @@ export default class SubscribeDetailToChange extends PureComponent {
     });
   }
 
+  // 将原本订单所选中的产品从可选中去除
+  filterProList(choiceList, proList) {
+    const productCodeList = choiceList.map(item => item.prodCode);
+    return _.filter(proList, product => !_.includes(productCodeList, product.prodCode));
+  }
+
+  // 选中的咨询订阅父产品数据结构改为提交所需
+  @autobind
+  changeSubmitscriProList(product, matchInfos) {
+    const {
+      prodCode,
+      prodName,
+    } = product;
+    const matchInfo = _.filter(matchInfos, item => item.productCode === prodCode)[0] || {};
+    return {
+      prodCode,
+      aliasName: prodName,
+      ...matchInfo,
+    };
+  }
+
+  // 选中的咨询订阅、退订子产品数据结构改为提交所需
+  @autobind
+  changeSubmitSubscriProChildren(product) {
+    const {
+      prodCode,
+      prodName,
+    } = product;
+    return {
+      prodCode,
+      aliasName: prodName,
+    };
+  }
+
+  // 将选中的咨询订阅产品数据结构改为提交所需
+  @autobind
+  changeSubmitSubProList(list, matchInfos) {
+    const newSubmitSubscriProList = list.map((product) => {
+      const { children } = product;
+      const newSubmitSubscribel = this.changeSubmitscriProList(product, matchInfos);
+      if (!_.isEmpty(children)) {
+        // 存在子产品
+        newSubmitSubscribel.subItem = children.map(this.changeSubmitSubscriProChildren);
+      }
+      return newSubmitSubscribel;
+    });
+    return newSubmitSubscriProList;
+  }
+
+  // 资讯订阅提交
+  @autobind
+  advisorySub() {
+    if (!this.submitCheck()) return;
+    const { empNum } = this.props.empInfo;
+    const {
+      customer,
+      remark,
+      subProList,
+      subscribelProductMatchInfo,
+      approverId, // 审批人工号
+      attachment, // 附件编号
+    } = this.state;
+    const newSubProList = this.changeSubmitSubProList(subProList, subscribelProductMatchInfo);
+    const params = {
+      type: customer.custType,
+      aprovaluser: approverId,
+      custNum: customer.custEcom,
+      custId: customer.id,
+      createdBy: empNum,
+      comments: remark,
+      attachmentNum: attachment,
+      item: newSubProList,
+    };
+    // 提交
+    this.props.submitSub(params);
+  }
+
   render() {
     const {
-      approvalUserList,
       threeMatchInfo,
     } = this.props;
     const {
@@ -259,6 +345,7 @@ export default class SubscribeDetailToChange extends PureComponent {
         attachmentList,
         subscribeCustList,
         subProList,
+        approvList,
       },
     } = this.props;
     if (_.isEmpty(base)) return null;
@@ -275,19 +362,21 @@ export default class SubscribeDetailToChange extends PureComponent {
       item: choiceProList,
     } = base;
     const customer = `${custName}（${custNum}） - ${riskLevelLabel}`;
-    const newApproverList = approvalUserList.map((item, index) => {
+    const newApproverList = approvList.map((item, index) => {
       const key = `${new Date().getTime()}-${index}`;
       return {
         ...item,
         key,
       };
     });
-    const newSubscribelProList = this.createSubscribelProList(subProList);
-    const choiceSubscribelProList = this.choiceSubProList(choiceProList, newSubscribelProList);
+    const newSubscriProList = this.createSubscribelProList(subProList);
+    const choiceSubscribelProList = this.choiceSubProList(choiceProList, newSubscriProList);
+    const newSubscribelProList = this.filterProList(choiceSubscribelProList, newSubscriProList);
     const {
       choiceApprover,
       approverName,
       approverId,
+      remark,
     } = this.state;
 
     // 资讯订阅中的产品选择配置
@@ -300,14 +389,12 @@ export default class SubscribeDetailToChange extends PureComponent {
       secondColumns: subScribeProColumns,
       transferChange: this.handleTransferChange, // 三匹配未做
       checkChange: this.handleCheckChange,
-      onSearch: this.handleSearch,
       rowKey: 'key',
       showSearch: true,
       placeholder: '产品代码/产品名称',
       pagination,
       defaultCheckKey: 'xDefaultOpenFlag',
-      supportSearchKey: [['prodId'], ['prodName']],
-      totalData: newSubscribelProList,
+      supportSearchKey: [['prodCode'], ['prodName']],
     };
 
     return (
@@ -319,18 +406,20 @@ export default class SubscribeDetailToChange extends PureComponent {
               <Input
                 value="咨询订阅"
                 disabled
+                className={styles.inputValue}
               />
             </CommissionLine>
             <CommissionLine label="客户" labelWidth="90px" needInputBox={false}>
               <Input
                 value={customer}
                 disabled
+                className={styles.inputValue}
               />
             </CommissionLine>
             <CommissionLine label="备注" labelWidth="90px">
               <TextArea
-                placeholder="备注内容"
-                value={comments}
+                placeholder={comments}
+                value={remark}
                 onChange={this.handleChangeRemark}
                 style={{
                   fontSize: '14px',

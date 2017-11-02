@@ -88,10 +88,19 @@ export default {
     },
 
     getSubscribeDetailToChangeSuccess(state, action) {
-      const { payload: { detailRes, attachmentRes, subscribeCustListRs, subProListRs } } = action;
+      const {
+        payload: {
+        detailRes,
+        attachmentRes,
+        subscribeCustListRs,
+        subProListRs,
+        approvListRs,
+        },
+      } = action;
       const detailResult = detailRes.resultData;
       const attachmentResult = attachmentRes.resultData;
       const { resultData: custResultData } = subscribeCustListRs;
+      const approvList = approvListRs.resultData.employList;
       let list = {};
       if (!_.isEmpty(custResultData)) {
         list = custResultData[0];
@@ -104,6 +113,7 @@ export default {
           subscribeCustList: list,
           subProList,
           attachmentList: attachmentResult,
+          approvList,
         },
       };
     },
@@ -384,7 +394,7 @@ export default {
     * getSubscribeDetailToChange({ payload }, { call, put, select }) {
       const { empInfo } = yield select(state => state.app.empInfo);
       const { flowId } = payload;
-      const { postnId, occDivnNum } = empInfo;
+      const { postnId, occDivnNum, empNum } = empInfo;
       const detailRes = yield call(api.queryConsultDetail,
         {
           action: 'query',
@@ -409,9 +419,13 @@ export default {
         custId: id,
         custType,
       });
+      const approvListRs = yield call(api.queryAprovalUserList, {
+        loginUser: empNum,
+        btnId: '140000',
+      });
       yield put({
         type: 'getSubscribeDetailToChangeSuccess',
-        payload: { detailRes, attachmentRes, subscribeCustListRs, subProListRs },
+        payload: { detailRes, attachmentRes, subscribeCustListRs, subProListRs, approvListRs },
       });
     },
 
