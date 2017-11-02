@@ -19,8 +19,6 @@ import styles from './home.less';
 const effects = {
   // 咨讯订阅驳回待修改的详情
   subDetail: 'commissionChange/getSubscribeDetailToChange',
-  // 修改页面咨讯订阅可选产品列表
-  subscribelProList: 'commissionChange/getSubscribelProList',
   // 修改页面产品与客户的三匹配信息
   threeMatchInfo: 'commissionChange/queryThreeMatchInfo',
   // 修改页面获取审批人员列表
@@ -44,7 +42,6 @@ const mapStateToProps = state => ({
   empInfo: state.app.empInfo,
   subDetail: state.commissionChange.subscribeDetailToChange,
   threeMatchInfo: state.commissionChange.threeMatchInfo,
-  subscribelProList: state.commissionChange.subscribelProList,
   // 咨询订阅提交后返回的id
   consultSubId: state.commissionChange.consultSubId,
   // 审批人员列表
@@ -77,8 +74,6 @@ const mapDispatchToProps = {
   getAprovalUserList: getDataFunction(false, effects.approver),
   // 三匹配
   queryThreeMatchInfo: getDataFunction(false, effects.threeMatchInfo),
-  // 获取修改页面咨讯订阅可选产品列表
-  getSubscribelProList: getDataFunction(false, effects.subscribelProList),
   // 咨询订阅提交
   submitSub: getDataFunction(false, effects.subSubscribe),
   // 获取驳回后修改的单佣金调整详情
@@ -110,6 +105,7 @@ export default class RejectionAndAmendment extends PureComponent {
     consultSubId: PropTypes.string.isRequired,
     getSubscribeDetail: PropTypes.func.isRequired,
     getSubscribelProList: PropTypes.func.isRequired,
+    empInfo: PropTypes.object.isRequired,
     submitSub: PropTypes.func.isRequired,
     // 驳回后修改单佣金调整相关
     singleDetailLoading: PropTypes.bool,
@@ -179,23 +175,21 @@ export default class RejectionAndAmendment extends PureComponent {
     } else if (type === 'SUBSCRIBE') {
       // 咨讯订阅
       const {
+        location,
         subDetail,
         threeMatchInfo,
-        subscribelProList,
-        consultSubId,
         getSubscribeDetail,
+        consultSubId,
         getAprovalUserList,
         queryThreeMatchInfo,
-        getSubscribelProList,
         submitSub,
         approvalUserList,
       } = this.props;
       return (
         <SubscribDeatilChange
-          getSubscribeDetailToChange={getSubscribeDetail}
+          location={location}
           subscribeDetailToChange={subDetail}
-          getSubscribelProList={getSubscribelProList}
-          subscribelProList={subscribelProList}
+          getSubscribeDetailToChange={getSubscribeDetail}
           threeMatchInfo={threeMatchInfo}
           queryThreeMatchInfo={queryThreeMatchInfo}
           queryApprovalUser={getAprovalUserList}

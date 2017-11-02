@@ -92,6 +92,10 @@ const mapStateToProps = state => ({
   batchnum: state.commission.batchnum,
   // 提交批量佣金申请调整的进程
   batchSubmitProcess: state.loading.effects[effects.submitBatch],
+  // 提交咨讯订阅申请调整的进程
+  subsciSubmitProcess: state.loading.effects[effects.subSubscribe],
+  // 提交咨讯退订申请调整的进程
+  unSubsciSubmitProcess: state.loading.effects[effects.unSubSubscribe],
   // 目标股基佣金率码值列表
   gjCommissionList: state.commission.gjCommission,
   // 单佣金调整佣金率码值列表
@@ -237,11 +241,15 @@ export default class CommissionHome extends PureComponent {
     submitUnSub: PropTypes.func.isRequired,
     consultUnsubId: PropTypes.string.isRequired,
     clearReduxState: PropTypes.func.isRequired,
+    subsciSubmitProcess: PropTypes.bool,
+    unSubsciSubmitProcess: PropTypes.bool,
   }
 
   static defaultProps = {
     listProcess: false,
     batchSubmitProcess: false,
+    subsciSubmitProcess: false,
+    unSubsciSubmitProcess: false,
   }
 
   constructor(props) {
@@ -325,6 +333,30 @@ export default class CommissionHome extends PureComponent {
         message.success('提交成功');
       } else {
         message.error('提交失败');
+      }
+    }
+
+    // 用户提交咨询订阅申请
+    const { subsciSubmitProcess: prevSSP } = this.props;
+    const { subsciSubmitProcess: nextSSP, consultSubId: nextSub } = nextProps;
+    if (!nextSSP && prevSSP) {
+      if (nextSub !== '') {
+        // 成功
+        message.success('咨讯订阅提交成功');
+      } else {
+        message.error('咨讯订阅提交失败');
+      }
+    }
+
+    // 用户提交咨询退订申请
+    const { unSubsciSubmitProcess: prevUSP } = this.props;
+    const { unSubsciSubmitProcess: nextUSP, consultUnsubId: nextUnSub } = nextProps;
+    if (!nextUSP && prevUSP) {
+      if (nextUnSub !== '') {
+        // 成功
+        message.success('咨讯退订提交成功');
+      } else {
+        message.error('咨讯退订提交失败');
       }
     }
   }
