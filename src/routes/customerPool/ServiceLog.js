@@ -165,7 +165,6 @@ export default class CreateTaskForm extends PureComponent {
     const lastTime = logData[logData.length - 1].serveTime;
     const params = query;
     params.serveDateToPaged = moment(lastTime).format('YYYY-MM-DD HH:mm:ss');
-    params.custId = '02006619';
     getServiceLogMore(params);
   }
 
