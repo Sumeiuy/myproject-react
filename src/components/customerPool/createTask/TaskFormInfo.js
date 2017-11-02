@@ -14,7 +14,7 @@ import styles from './createTaskForm.less';
 const FormItem = Form.Item;
 const Option = Select.Option;
 const { TextArea } = Input;
-const { toContentState, toString } = Mention;
+const { toContentState } = Mention;
 
 export default class TaskFormInfo extends PureComponent {
 
@@ -78,24 +78,6 @@ export default class TaskFormInfo extends PureComponent {
     }
   }
 
-  @autobind
-  onChange(contentState) {
-    const content = toString(contentState);
-    // console.log(content.substring(content.length - 1, content.length));
-    const lastWord = content.substring(content.length - 1, content.length);
-    if (lastWord === '$') {
-      // this.handleSearchChange('', lastWord);
-    }
-    if (content.length >= 10) {
-      this.setState({
-        isShowErrorInfo: false,
-      });
-    } else if (content.length > 0) {
-      this.setState({
-        isShowErrorInfo: true,
-      });
-    }
-  }
 
   handleSearchChange = (value, trigger) => {
     console.log('value-->', value, 'trigger--->', trigger);
@@ -153,7 +135,6 @@ export default class TaskFormInfo extends PureComponent {
       })(
         <Mention
           style={{ width: '100%', height: 100 }}
-          onChange={this.onChange}
           placeholder="请在描述客户经理联系客户前需要了解的客户相关信息，比如持仓情况。（字数限制：10-1000字）"
           prefix={'$'}
           onSearchChange={this.handleSearchChange}
