@@ -2,7 +2,7 @@
  * @Author: zhuyanwen
  * @Date: 2017-10-09 13:25:51
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-27 17:21:55
+ * @Last Modified time: 2017-11-01 17:58:18
  * @description: 客户分组功能
  */
 
@@ -19,7 +19,7 @@ import styles from './customerGroup.less';
 import CustomerGrouplist from '../../components/customerPool/group/CustomerGrouplist';
 import AddNewGroup from '../../components/customerPool/group/AddNewGroup';
 import AddCusSuccess from '../../components/customerPool/group/AddCusSuccess';
-import { helper } from '../../utils';
+import { helper, fspGlobal } from '../../utils';
 // import { fspContainer } from '../../config';
 import { checkSpecialCharacter } from '../../decorators/checkSpecialCharacter';
 
@@ -178,13 +178,6 @@ export default class CustomerGroup extends PureComponent {
         custIdList,
         custCondition,
       } = this.parseQuery();
-      const {
-        searchTypeReq,
-        paramsReqList,
-        filtersReq,
-        sortsReqList,
-        enterType,
-      } = custCondition;
 
       // 添加分组
       addCustomerToGroup({
@@ -193,11 +186,7 @@ export default class CustomerGroup extends PureComponent {
         searchReq: _.isEmpty(custIdList) ? {
           ptyMngId: helper.getEmpId(),
           orgId: null,
-          searchTypeReq,
-          paramsReqList,
-          filtersReq,
-          sortsReqList,
-          enterType,
+          ...custCondition,
         } : null,
       });
     } else if (!onOff) {
@@ -217,13 +206,6 @@ export default class CustomerGroup extends PureComponent {
       custIdList,
       custCondition,
     } = this.parseQuery();
-    const {
-      searchTypeReq,
-      paramsReqList,
-      filtersReq,
-      sortsReqList,
-      enterType,
-    } = custCondition;
     this.setState({
       groupName,
     });
@@ -235,20 +217,20 @@ export default class CustomerGroup extends PureComponent {
       searchReq: _.isEmpty(custIdList) ? {
         ptyMngId: helper.getEmpId(),
         orgId: null,
-        searchTypeReq,
-        paramsReqList,
-        filtersReq,
-        sortsReqList,
-        enterType,
+        ...custCondition,
       } : null,
     });
   }
 
   @autobind
   closeTab() {
+    fspGlobal.closeRctTabById('RCT_FSP_CUSTOMER_LIST');
+  }
+
+  @autobind
+  handleCancel() {
     const { goBack } = this.props;
     goBack();
-    // fspGlobal.closeRctTabById('RCT_FSP_CUSTOMER_LIST');
   }
 
   /**
@@ -406,7 +388,7 @@ export default class CustomerGroup extends PureComponent {
                     <p className={styles.description}>已选目标客户<b>&nbsp;{count}&nbsp;</b>户</p>
                   </Col>
                   <Col span={12}>
-                    <Button onClick={this.closeTab}>取消</Button>
+                    <Button onClick={this.handleCancel}>取消</Button>
                     <Button onClick={this.handleSubmit} type="primary">保存</Button>
                   </Col>
                 </Row>
@@ -416,7 +398,7 @@ export default class CustomerGroup extends PureComponent {
               <div className={styles.newGroupForm}>
                 <Row className={styles.groupForm}>
                   <AddNewGroup
-                    goBack={this.closeTab}
+                    goBack={this.handleCancel}
                     onSubmit={this.handleNewGroupSubmit}
                     count={count}
                   />

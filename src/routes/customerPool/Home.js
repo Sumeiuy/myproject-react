@@ -512,8 +512,8 @@ export default class Home extends PureComponent {
       empInfo = {},
     } = this.props;
     // 是否能看投顾绩效的标记
+    // const { isShowPerformance = false } = this.state;
     const { tgQyFlag = false } = empInfo.empInfo || {};
-
     return (
       <div className={styles.customerPoolWrap}>
         <Search

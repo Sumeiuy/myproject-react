@@ -30,6 +30,8 @@ export default class TaskFormInfo extends PureComponent {
     taskTypes: PropTypes.array,
     executeTypes: PropTypes.array,
     isShowErrorInfo: PropTypes.bool,
+    isShowErrorTaskType: PropTypes.bool,
+    isShowErrorExcuteType: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -38,6 +40,8 @@ export default class TaskFormInfo extends PureComponent {
     defaultServiceStrategySuggestion: '',
     defaultInitialValue: null,
     isShowErrorInfo: false,
+    isShowErrorTaskType: false,
+    isShowErrorExcuteType: false,
   }
 
   constructor(props) {
@@ -46,15 +50,30 @@ export default class TaskFormInfo extends PureComponent {
       suggestions: [],
       inputValue: '',
       isShowErrorInfo: false,
+      isShowErrorTaskType: false,
+      isShowErrorExcuteType: false,
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    const { isShowErrorInfo: nextError } = nextProps;
-    const { isShowErrorInfo } = this.props;
+    const { isShowErrorInfo: nextError,
+      isShowErrorExcuteType: nextExcuteTypeError,
+      isShowErrorTaskType: nextTaskTypeError,
+    } = nextProps;
+    const { isShowErrorInfo, isShowErrorExcuteType, isShowErrorTaskType } = this.props;
     if (nextError !== isShowErrorInfo) {
       this.setState({
         isShowErrorInfo: nextError,
+      });
+    }
+    if (nextExcuteTypeError !== isShowErrorExcuteType) {
+      this.setState({
+        isShowErrorExcuteType: nextExcuteTypeError,
+      });
+    }
+    if (nextTaskTypeError !== isShowErrorTaskType) {
+      this.setState({
+        isShowErrorTaskType: nextTaskTypeError,
       });
     }
   }
@@ -62,6 +81,11 @@ export default class TaskFormInfo extends PureComponent {
   @autobind
   onChange(contentState) {
     const content = toString(contentState);
+    // console.log(content.substring(content.length - 1, content.length));
+    const lastWord = content.substring(content.length - 1, content.length);
+    if (lastWord === '$') {
+      // this.handleSearchChange('', lastWord);
+    }
     if (content.length >= 10) {
       this.setState({
         isShowErrorInfo: false,
@@ -83,6 +107,34 @@ export default class TaskFormInfo extends PureComponent {
     });
   }
 
+  @autobind
+  handleTaskTypeChange(value) {
+    console.log(value);
+    if (!_.isEmpty(value) && value !== '请选择' && value !== '暂无数据') {
+      this.setState({
+        isShowErrorTaskType: false,
+      });
+    } else {
+      this.setState({
+        isShowErrorTaskType: true,
+      });
+    }
+  }
+
+  @autobind
+  handleExcuteTypeChange(value) {
+    console.log(value);
+    if (!_.isEmpty(value) && value !== '请选择' && value !== '暂无数据') {
+      this.setState({
+        isShowErrorExcuteType: false,
+      });
+    } else {
+      this.setState({
+        isShowErrorExcuteType: true,
+      });
+    }
+  }
+
   handleCreatOptions(data) {
     if (!_.isEmpty(data)) {
       return data.map(item =>
@@ -102,7 +154,7 @@ export default class TaskFormInfo extends PureComponent {
         <Mention
           style={{ width: '100%', height: 100 }}
           onChange={this.onChange}
-          placeholder="请在描述客户经理联系客户钱需要了解的客户相关信息，比如持仓情况。（字数限制：10-1000字）"
+          placeholder="请在描述客户经理联系客户前需要了解的客户相关信息，比如持仓情况。（字数限制：10-1000字）"
           prefix={'$'}
           onSearchChange={this.handleSearchChange}
           suggestions={suggestions}
@@ -115,7 +167,7 @@ export default class TaskFormInfo extends PureComponent {
   renderTipSection() {
     return (
       <div className={styles.info}>
-        任务描述中 &#123;XXXX&#125; 部分后台会根据客户自动替换为该客户对应的属性值，编辑任务描述时请尽量避免修改这些参数描述。
+        任务提示中 &#123;XXXX&#125; 部分后台会根据客户自动替换为该客户对应的属性值，编辑任务提示时请尽量避免修改这些参数描述。
       </div>
     );
   }
@@ -123,6 +175,8 @@ export default class TaskFormInfo extends PureComponent {
   render() {
     const {
       isShowErrorInfo,
+      isShowErrorTaskType,
+      isShowErrorExcuteType,
     } = this.state;
     const {
       defaultMissionName,
@@ -141,6 +195,18 @@ export default class TaskFormInfo extends PureComponent {
       hasFeedback: true,
       validateStatus: 'error',
       help: '任务描述不能小于10个字符',
+    } : null;
+
+    const taskTypeErrorSelectProps = isShowErrorTaskType ? {
+      hasFeedback: true,
+      validateStatus: 'error',
+      help: '请选择任务类型',
+    } : null;
+
+    const excuteTypeErrorSelectProps = isShowErrorExcuteType ? {
+      hasFeedback: true,
+      validateStatus: 'error',
+      help: '请选择执行方式',
     } : null;
 
     return (
@@ -166,12 +232,15 @@ export default class TaskFormInfo extends PureComponent {
               !_.isEmpty(taskTypes) ?
                 <FormItem
                   wrapperCol={{ span: 12 }}
+                  {...taskTypeErrorSelectProps}
                 >
                   {getFieldDecorator('taskType',
                     {
                       initialValue: defaultMissionType,
                     })(
-                      <Select>
+                      <Select
+                        onChange={this.handleTaskTypeChange}
+                      >
                         {this.handleCreatOptions(taskTypes)}
                       </Select>,
                   )}
@@ -192,12 +261,15 @@ export default class TaskFormInfo extends PureComponent {
               !_.isEmpty(executeTypes) ?
                 <FormItem
                   wrapperCol={{ span: 12 }}
+                  {...excuteTypeErrorSelectProps}
                 >
                   {getFieldDecorator('executionType',
                     {
                       initialValue: defaultExecutionType,
                     })(
-                      <Select>
+                      <Select
+                        onChange={this.handleExcuteTypeChange}
+                      >
                         {this.handleCreatOptions(executeTypes)}
                       </Select>,
                   )}
@@ -221,7 +293,7 @@ export default class TaskFormInfo extends PureComponent {
                 {
                   rules: [{ required: true, message: '有效期不能为空!', pattern: /^\+?[1-9][0-9]*$/ }],
                   initialValue: defaultInitialValue,
-                })(<InputNumber step={1} min="0" style={{ width: '100%' }} />)}
+                })(<InputNumber step={1} min={0} max={365} style={{ width: '100%' }} />)}
             </FormItem>
           </li>
         </ul>

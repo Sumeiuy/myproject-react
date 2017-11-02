@@ -1,8 +1,7 @@
+@import '../../../css/variable.less';
+
 .customerSegmentSection {
   position: relative;
-  & > .conditionSection {
-
-  }
   & > .conditionSection:nth-child(2)::before {
     content: "";
     position: absolute;
@@ -11,7 +10,7 @@
     display: block;
     background-color: #e9e9e9;
     margin: 0 auto;
-    left: 0px;
+    left: 0;
   }
   & > .conditionSection:nth-child(1) {
     position: absolute;
@@ -37,7 +36,7 @@
     display: block;
     background-color: #e9e9e9;
     margin: 0 auto;
-    left: 0px;
+    left: 0;
   }
   & > .conditionSection {
     display: block;
@@ -76,18 +75,18 @@
         max-width: 150px;
         :global {
           .ant-select-selection--multiple .ant-select-selection__choice {
-            background:#fef7f0;
-            border:1px solid #fcd2a6;
-            border-radius:2px;
-            width:40px;
-            height:20px;
+            background: #fef7f0;
+            border: 1px solid #fcd2a6;
+            border-radius: 2px;
+            width: 40px;
+            height: 20px;
           }
           .ant-select-selection--multiple .ant-select-selection__choice__content {
-            font-size:12px;
-            color:#d67c1e;
+            font-size: 12px;
+            color: #d67c1e;
           }
           .ant-select-selection--multiple .ant-select-selection__choice__remove {
-            color:#d67c1e;
+            color: #d67c1e;
           }
         }
       }
@@ -110,25 +109,25 @@
   margin-bottom: 8px;
   margin-top: 8px;
   font-size: 12px;
-  color: #666666;
+  color: #666;
 }
 .tableSection {
   display: block;
   & > .title {
-    font-size:12px;
-    color:rgba(0,0,0,0.75);
-    text-align:left;
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.75);
+    text-align: left;
     margin-bottom: 15px;
     margin-top: 15px;
     & > span {
-      font-size:12px;
-      color:#d67c1e;
+      font-size: 12px;
+      color: #d67c1e;
     }
   }
   .custListTable {
     padding: 0 !important;
     table > thead > tr > th, tbody > tr > td {
-      padding: 0px !important;
+      padding: 0 !important;
       padding-bottom: 7px !important;
       padding-top: 7px !important;
       padding-left: 20px !important;
@@ -137,10 +136,9 @@
       text-overflow: ellipsis;
       white-space: nowrap;
       border-bottom: 1px solid #e9e9e9;
-
     }
     table > tbody > tr:nth-child(odd) {
-      background-color: #ffffff;
+      background-color: #fff;
     }
     tbody > tr > td > div {
       max-width: 100px;
@@ -175,7 +173,7 @@
 .custListTable {
   padding: 0 !important;
   table > thead > tr > th, tbody > tr > td {
-    padding: 0px;
+    padding: 0;
     padding-bottom: 7px;
     padding-top: 7px;
     padding-left: 8px;
@@ -185,16 +183,25 @@
     color: #727272;
   }
   table > tbody > tr:nth-child(odd) {
-    background-color: #ffffff;
+    background-color: #fff;
   }
-  tbody > tr > td > div,  tbody > tr > th{
-    max-width: 100px;
+  tbody > tr > td > div,  tbody > tr > th {
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
     margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
   }
   table > thead > tr > th {
     background-color: #f7f7f7;
+  }
+  :global {
+    .ant-table-fixed-header .ant-table-scroll .ant-table-header {
+      background-color: #fff;
+    }
+    .ant-table-scroll {
+      .scrollBarIEStyle;
+    }
   }
 }

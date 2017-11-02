@@ -178,6 +178,7 @@ export default class CreateTaskForm extends PureComponent {
       query: {
         ...query,
         serveSource: value,
+        serveDateToPaged: null,
       },
     });
   }
@@ -209,6 +210,7 @@ export default class CreateTaskForm extends PureComponent {
       query: {
         ...query,
         serveType: type,
+        serveDateToPaged: null,
       },
     });
   }
@@ -217,6 +219,7 @@ export default class CreateTaskForm extends PureComponent {
     const { dict, handleCollapseClick } = this.props;
     const { serveAllSource, serveAllType, executeTypes, serveWay } = dict;
     const { logData, showBtn, loading } = this.state;
+    console.log('dict-->', dict);
     return (
       <div className={styles.serviceInner}>
         <div
@@ -239,7 +242,7 @@ export default class CreateTaskForm extends PureComponent {
               </Col>
               <Col span={5}>
                 {!_.isEmpty(serveAllSource) ?
-                  <Select defaultValue="不限" onChange={this.serveAllSourceChange}>
+                  <Select defaultValue="所有渠道" onChange={this.serveAllSourceChange}>
                     {this.handleCreatOptions(serveAllSource)}
                   </Select> :
                   <Select defaultValue="暂无数据">
@@ -249,7 +252,7 @@ export default class CreateTaskForm extends PureComponent {
               </Col>
               <Col span={5}>
                 {!_.isEmpty(serveAllType) ?
-                  <Select defaultValue="不限" onChange={this.serveAllTypeChange}>
+                  <Select defaultValue="所有类型" onChange={this.serveAllTypeChange}>
                     {this.handleCreatOptions(serveAllType, 'serveType')}
                   </Select> :
                   <Select defaultValue="暂无数据">
@@ -266,6 +269,7 @@ export default class CreateTaskForm extends PureComponent {
                 executeTypes={executeTypes}
                 serveWay={serveWay}
                 handleCollapseClick={handleCollapseClick}
+                loading={loading}
               />
             </Col>
           </Row>

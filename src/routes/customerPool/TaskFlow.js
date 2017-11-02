@@ -7,6 +7,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { permission, fspGlobal, helper } from '../../utils';
 import { fspContainer } from '../../config';
+import { validateFormContent } from '../../decorators/validateFormContent';
 import PickTargetCustomer from '../../components/customerPool/taskFlow/PickTargetCustomer';
 import TaskPreview from '../../components/customerPool/taskFlow/TaskPreview';
 import CreateTaskForm from '../../components/customerPool/createTask/CreateTaskForm';
@@ -62,6 +63,16 @@ const mapDispatchToProps = {
     type: 'customerPool/saveCurrentTab',
     payload: query,
   }),
+  // 清除数据
+  clearTaskFlowData: query => ({
+    type: 'customerPool/clearTaskFlowData',
+    payload: query || {},
+  }),
+  // 重置tab
+  resetActiveTab: query => ({
+    type: 'customerPool/resetActiveTab',
+    payload: query || {},
+  }),
   priviewCustFile: fetchData(effects.priviewCustFile, true),
   getLabelInfo: fetchData(effects.getLabelInfo, true),
   getLabelPeople: fetchData(effects.getLabelPeople, true),
@@ -91,6 +102,8 @@ export default class TaskFlow extends PureComponent {
     approvalList: PropTypes.array.isRequired,
     submitTaskFlowResult: PropTypes.string.isRequired,
     getLabelPeopleLoading: PropTypes.bool,
+    clearTaskFlowData: PropTypes.func.isRequired,
+    resetActiveTab: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -108,6 +121,8 @@ export default class TaskFlow extends PureComponent {
       custSource: '',
       isLoadingEnd: true,
       isShowErrorInfo: false,
+      isShowErrorTaskType: false,
+      isShowErrorExcuteType: false,
     };
     // 首页指标查询权限
     this.isHasAuthorize = permission.hasIndexViewPermission();
@@ -132,6 +147,14 @@ export default class TaskFlow extends PureComponent {
     }
   }
 
+  componentWillUnmount() {
+    const { clearTaskFlowData, resetActiveTab } = this.props;
+    // 清除数据
+    clearTaskFlowData();
+    // 恢复默认tab
+    resetActiveTab();
+  }
+
   @autobind
   handleNextStep() {
     // 下一步
@@ -142,22 +165,16 @@ export default class TaskFlow extends PureComponent {
     let pickTargetCustomerData = {};
     let isFormValidate = !_.isEmpty(taskFormData);
     let isSelectCust = true;
-    let isShowErrorInfo = false;
     if (current === 0) {
       this.formRef.props.form.validateFields((err, values) => {
-        const { templetDesc } = values;
-        if (toString(templetDesc).length < 10) {
-          isShowErrorInfo = true;
-          this.setState({
-            isShowErrorInfo: true,
-          });
+        let isFormError = false;
+        if (!_.isEmpty(err)) {
+          isFormError = true;
         }
-        if (!err && !isShowErrorInfo) {
-          isFormValidate = true;
-          console.log('Received values of form: ', values);
+        const formDataValidation = this.checkFormField({ ...values, isFormError });
+        if (formDataValidation) {
           taskFormData = this.formRef.props.form.getFieldsValue();
-        } else {
-          message.error('请填写任务基本信息');
+          isFormValidate = true;
         }
       });
     } else if (current === 1) {
@@ -183,6 +200,12 @@ export default class TaskFlow extends PureComponent {
         current: current + 1,
       });
     }
+  }
+
+  @autobind
+  @validateFormContent
+  checkFormField(values) {
+    console.log(values);
   }
 
 
@@ -329,6 +352,8 @@ export default class TaskFlow extends PureComponent {
       custSource,
       isLoadingEnd,
       isShowErrorInfo,
+      isShowErrorExcuteType,
+      isShowErrorTaskType,
     } = this.state;
 
     const {
@@ -359,6 +384,8 @@ export default class TaskFlow extends PureComponent {
           previousData={{ ...taskFormData }}
           isShowTitle={isShowTitle}
           isShowErrorInfo={isShowErrorInfo}
+          isShowErrorExcuteType={isShowErrorExcuteType}
+          isShowErrorTaskType={isShowErrorTaskType}
         />
       </div>,
     }, {

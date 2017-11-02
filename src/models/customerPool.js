@@ -412,10 +412,12 @@ export default {
     // 列表页添加服务记录
     * addServeRecord({ payload }, { call, put }) {
       const res = yield call(api.addServeRecord, payload);
-      yield put({
-        type: 'addServeRecordSuccess',
-        payload: res,
-      });
+      if (res.msg === 'OK') {
+        yield put({
+          type: 'addServeRecordSuccess',
+          payload: res,
+        });
+      }
     },
     // 获取客户分组
     * getCustomerGroupList({ payload }, { call, put }) {
@@ -644,8 +646,6 @@ export default {
       // 提交成功之后，清除tab
       yield put({
         type: 'resetActiveTab',
-        // 1表示第一个默认激活第一个tab
-        payload: '1',
       });
     },
     // 获取审批人列表
@@ -1108,11 +1108,10 @@ export default {
       };
     },
     // 清除保存的tab
-    resetActiveTab(state, action) {
-      const { payload } = action;
+    resetActiveTab(state) {
       return {
         ...state,
-        currentTab: payload,
+        currentTab: '1',
       };
     },
     // 提交任务流程成功
