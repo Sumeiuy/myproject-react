@@ -40,7 +40,12 @@ function renderIntro(data) {
     data,
     (item, index) => (
       <div className={styles.row} key={`row${index}`}>
-        <div className={styles.count1} onClick={() => linkToList(item)}>{item.value}</div>
+        <div
+          className={`${index === 0 ? styles.canClick : ''} ${styles.count1}`}
+          onClick={() => linkToList(item)}
+        >
+          {item.value}
+        </div>
         <div className={styles.count2}>{`/${item.property}`}</div>
       </div>
     ),
