@@ -188,10 +188,12 @@
   tbody > tr > td > div,  tbody > tr > th {
     overflow: hidden;
     text-overflow: ellipsis;
-    margin: 0;
     display: -webkit-box;
     -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
+    white-space: nowrap;
+    margin: 0 auto;
+    max-width: 100px;
   }
   table > thead > tr > th {
     background-color: #f7f7f7;
