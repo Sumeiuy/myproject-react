@@ -24,7 +24,6 @@ export default class TaskFlow extends PureComponent {
     parseQuery: PropTypes.func.isRequired,
     approvalList: PropTypes.array.isRequired,
     getApprovalList: PropTypes.func.isRequired,
-    goBack: PropTypes.func.isRequired,
     orgId: PropTypes.string,
   };
 
@@ -169,6 +168,17 @@ export default class TaskFlow extends PureComponent {
     });
   }
 
+  @autobind
+  handleCancel() {
+    const {
+      push,
+      location: {
+        query: { fr },
+      },
+    } = this.props;
+    push(decodeURIComponent(fr));
+  }
+
   render() {
     const {
       current,
@@ -188,7 +198,6 @@ export default class TaskFlow extends PureComponent {
       approvalList,
       getApprovalList,
       storedTaskFlowData,
-      goBack,
     } = this.props;
     const { executeTypes, custServerTypeFeedBackDict } = dict;
     const { query: { count } } = location;
@@ -237,7 +246,7 @@ export default class TaskFlow extends PureComponent {
             <Button
               className={styles.cancelBtn}
               type="default"
-              onClick={goBack}
+              onClick={this.handleCancel}
             >
               取消
             </Button>

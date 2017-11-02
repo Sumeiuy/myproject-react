@@ -139,9 +139,8 @@ export function getClientsNumber({
         axisLabel: {
           interval: 0,
           margin: 6,
-          fontFamily: 'PingFangSC-Regular',
           fontSize: 12,
-          color: '#666666',
+          color: '#666',
           showMinLabel: true,
           clickable: true,
           rotate: 30,
@@ -248,7 +247,7 @@ export function getCustAndProperty(dataArray) {
   // 降序排列
   const descData = _.orderBy(datas, ['value'], ['desc']);
   // 设置背景色 #7D9BE0
-  const colors = ['#7D9BE0', '#60BBEA', '#38D8E8'];
+  const colors = ['#7D9be0', '#60bbea', '#38d8e8'];
   const newDatas = _.map(
     descData,
     (item, index) => ({ ...item, bgColor: colors[index] }),
@@ -289,7 +288,6 @@ export function getHSRate(array) {
           color: '#5eade5',
           insideColor: '#fff',
           fontSize: 24,
-          fontFamily: 'PingFangSC-Regular',
           align: 'center',
           baseline: 'middle',
           position: ['50%', '70%'],
