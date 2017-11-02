@@ -5,7 +5,7 @@
  */
 
 import React, { PropTypes, PureComponent } from 'react';
-import { Mention, message } from 'antd';
+import { Mention } from 'antd';
 import _ from 'lodash';
 import classnames from 'classnames';
 import { autobind } from 'core-decorators';
@@ -14,6 +14,7 @@ import CreateTaskForm from './CreateTaskForm';
 import TaskFormFlowStep from './TaskFormFlowStep';
 import styles from './createTaskFormFlow.less';
 import { fspGlobal } from '../../../utils/fspGlobal';
+import { validateFormContent } from '../../../decorators/validateFormContent';
 
 
 const { toString } = Mention;
@@ -30,15 +31,15 @@ export default class CreateTaskFormFlow extends PureComponent {
     saveTaskFlowData: PropTypes.func.isRequired,
     approvalList: PropTypes.array.isRequired,
     getApprovalList: PropTypes.func.isRequired,
-    goBack: PropTypes.func.isRequired,
     onCloseTab: PropTypes.func.isRequired,
     orgId: PropTypes.string,
+    push: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
     dict: {},
     createTaskResult: {},
-    createTask: () => {},
+    createTask: () => { },
     orgId: null,
   }
 
@@ -47,6 +48,8 @@ export default class CreateTaskFormFlow extends PureComponent {
     this.state = {
       showBtn: false,
       isShowErrorInfo: false,
+      isShowErrorTaskType: false,
+      isShowErrorExcuteType: false,
     };
   }
 
@@ -85,25 +88,26 @@ export default class CreateTaskFormFlow extends PureComponent {
     e.preventDefault();
     const { createTask, location: { query } } = this.props;
     const { groupId } = query;
-    let isShowErrorInfo = false;
     this.createTaskForm.validateFields((err, values) => {
-      const { templetDesc } = values;
-      if (toString(templetDesc).length < 10) {
-        isShowErrorInfo = true;
-        this.setState({
-          isShowErrorInfo: true,
-        });
+      let isFormError = false;
+      if (!_.isEmpty(err)) {
+        isFormError = true;
       }
-      if (!err && !isShowErrorInfo) {
+      const formDataValidation = this.checkFormField({ ...values, isFormError });
+      if (formDataValidation) {
         values.templetDesc = toString(values.templetDesc);// eslint-disable-line
         const value = { ...values, groupId };
         createTask(value);
-      } else {
-        console.warn('templetDesc-----', values.templetDesc);
-        message.error('请填写任务基本信息');
       }
     });
   }
+
+  @autobind
+  @validateFormContent
+  checkFormField(values) {
+    console.log(values);
+  }
+
   @autobind
   handleCancleTab() {
     fspGlobal.closeRctTabById('RCT_FSP_CREATE_TASK');
@@ -120,8 +124,13 @@ export default class CreateTaskFormFlow extends PureComponent {
       approvalList,
       orgId,
       onCloseTab,
-      goBack } = this.props;
-    const { showBtn, isShowErrorInfo } = this.state;
+      push,
+    } = this.props;
+    const { showBtn,
+      isShowErrorInfo,
+      isShowErrorExcuteType,
+      isShowErrorTaskType,
+    } = this.state;
     return (
       <div className={styles.taskInner}>
         {showBtn ?
@@ -131,14 +140,16 @@ export default class CreateTaskFormFlow extends PureComponent {
               dict={dict}
               ref={ref => this.createTaskForm = ref}
               isShowErrorInfo={isShowErrorInfo}
+              isShowErrorExcuteType={isShowErrorExcuteType}
+              isShowErrorTaskType={isShowErrorTaskType}
             />
             <div
               className={
-                    classnames({
-                      [styles.hideTextArea]: !showBtn,
-                      [styles.showTextArea]: showBtn,
-                    })
-                }
+                classnames({
+                  [styles.hideTextArea]: !showBtn,
+                  [styles.showTextArea]: showBtn,
+                })
+              }
             >
               <div className={styles.task_btn}>
                 <Button onClick={this.handleCancleTab}>取消</Button>
@@ -146,7 +157,7 @@ export default class CreateTaskFormFlow extends PureComponent {
               </div>
             </div>
           </div>
-             :
+          :
           <TaskFormFlowStep
             location={location}
             dict={dict}
@@ -156,11 +167,11 @@ export default class CreateTaskFormFlow extends PureComponent {
             approvalList={approvalList}
             getApprovalList={getApprovalList}
             parseQuery={this.parseQuery}
-            goBack={goBack}
+            push={push}
             orgId={orgId}
             onCloseTab={onCloseTab}
           />
-          }
+        }
       </div>
     );
   }

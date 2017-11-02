@@ -2,7 +2,7 @@
  * @Author: zhuyanwen
  * @Date: 2017-10-09 13:25:51
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-02 14:54:57
+ * @Last Modified time: 2017-11-02 18:40:14
  * @description: 客户分组功能
  */
 
@@ -222,10 +222,16 @@ export default class CustomerGroup extends PureComponent {
     fspGlobal.closeRctTabById('RCT_FSP_CUSTOMER_LIST');
   }
 
+  // 点击取消按钮回到列表页
   @autobind
   handleCancel() {
-    const { goBack } = this.props;
-    goBack();
+    const {
+      push,
+      location: {
+        query: { fr },
+      },
+    } = this.props;
+    push(decodeURIComponent(fr));
   }
 
   /**

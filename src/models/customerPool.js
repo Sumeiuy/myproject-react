@@ -126,7 +126,6 @@ export default {
             type: 'getServiceLog',
             payload: params,
           });
-
           return;
         }
 
@@ -415,6 +414,10 @@ export default {
     * addServeRecord({ payload }, { call, put }) {
       const res = yield call(api.addServeRecord, payload);
       if (res.msg === 'OK') {
+        yield put({
+          type: 'getServiceLog',
+          payload: { custId: payload.custId },
+        });
         yield put({
           type: 'addServeRecordSuccess',
           payload: res,

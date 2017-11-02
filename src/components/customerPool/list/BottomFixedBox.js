@@ -87,8 +87,11 @@ export default class BottomFixedBox extends PureComponent {
           selectAll,
           source,
         },
+        pathname,
+        search,
       },
     } = this.props;
+    const fr = encodeURIComponent(`${pathname}${search}`);
     if (selectedIds) {
       const selectedIdsArr = selectedIds.split(',');
       this.openByIds(
@@ -100,15 +103,16 @@ export default class BottomFixedBox extends PureComponent {
         id,
         entertype,
         source,
+        fr,
       );
     } else if (selectAll) {
-      this.openByAllSelect(url, condition, page.total, title, id, entertype, source);
+      this.openByAllSelect(url, condition, page.total, title, id, entertype, source, fr);
     }
   }
 
   // 单个点击选中时跳转到新建分组或者发起任务
   @autobind
-  openByIds(url, condition, ids, count, title, id, entertype, source) {
+  openByIds(url, condition, ids, count, title, id, entertype, source, fr) {
     // debugger
     const tmpArr = [];
     _(ids).forEach((item) => {
@@ -124,6 +128,7 @@ export default class BottomFixedBox extends PureComponent {
       source,
       name,
       condition: condt,
+      fr,
     };
     if (document.querySelector(fspContainer.container)) {
       const newurl = `${url}?${helper.queryToString(obj)}`;
@@ -145,7 +150,7 @@ export default class BottomFixedBox extends PureComponent {
 
   // 全选按钮选中时跳转到新建分组或者发起任务
   @autobind
-  openByAllSelect(url, condition, count, title, id, entertype, source) {
+  openByAllSelect(url, condition, count, title, id, entertype, source, fr) {
     // 全选时取整个列表的第一个数据的name属性值传给后续页面
     const name = encodeURIComponent(this.props.custList[0].name);
     const condt = encodeURIComponent(JSON.stringify(condition));
@@ -155,6 +160,7 @@ export default class BottomFixedBox extends PureComponent {
       entertype,
       source,
       name,
+      fr,
     };
     if (document.querySelector(fspContainer.container)) {
       const newurl = `${url}?${helper.queryToString(obj)}`;

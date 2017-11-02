@@ -108,13 +108,7 @@ export default class CreateTask extends PureComponent {
     createTask(value);
   }
 
-  @autobind
   /* 关闭当前页 */
-  handleCloseTab() {
-    const { goBack } = this.props;
-    goBack();
-  }
-
   @autobind
   handleCancleTab() {
     fspGlobal.closeRctTabById('RCT_FSP_CUSTOMER_LIST');
@@ -142,7 +136,7 @@ export default class CreateTask extends PureComponent {
             saveTaskFlowData={saveTaskFlowData}
             approvalList={approvalList}
             getApprovalList={getApprovalList}
-            goBack={this.handleCloseTab}
+            push={push}
             orgId={orgId}
             onCloseTab={this.handleCancleTab}
           /> :
