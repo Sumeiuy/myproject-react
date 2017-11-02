@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-01 18:37:35
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-01 23:50:12
+ * @Last Modified time: 2017-11-02 16:49:39
  * @description 单佣金调整驳回后修改页面
  */
 
@@ -35,19 +35,15 @@ export default class SingleDetailChange extends PureComponent {
     flowCode: PropTypes.string.isRequired,
     detailLoading: PropTypes.bool.isRequired,
     detail: PropTypes.object.isRequired,
-    customer: PropTypes.object.isRequired,
     singleGJ: PropTypes.array.isRequired,
     optionalList: PropTypes.array.isRequired,
     threeMatchInfo: PropTypes.object.isRequired,
     otherRate: PropTypes.array.isRequired,
-    approvalUserList: PropTypes.array.isRequired,
     onQueryDetail: PropTypes.func.isRequired,
     onQueryGJ: PropTypes.func.isRequired,
     onQueryProductList: PropTypes.func.isRequired,
     onQuery3Match: PropTypes.func.isRequired,
     onQueryOtherRate: PropTypes.func.isRequired,
-    onQueryApprovalUser: PropTypes.func.isRequired,
-    onQueryCustomer: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -65,7 +61,6 @@ export default class SingleDetailChange extends PureComponent {
       approverId: '',
       attachment: '',
       otherComReset: new Date().getTime(), // 用来判断是否重置
-      customer: {},
     };
   }
 
@@ -80,27 +75,17 @@ export default class SingleDetailChange extends PureComponent {
     const { detailLoading: prevDL } = this.props;
     const { detailLoading: nextDL } = nextProps;
     if (prevDL && !nextDL) {
-      const {
-        detail,
-        customer,
-        approvalUserList,
-      } = nextProps;
+      const { detail: { base } } = nextProps;
       // 表示初始化将detail的数据获取完毕
       const {
         newCommission,
         comments,
         attachmentNum,
-        nextProcessLogin,
-      } = detail.base;
-      const currentApproval = _.filter(approvalUserList,
-        user => user.empNo === nextProcessLogin)[0] || {};
+      } = base;
       this.setState({
-        customer,
         newCommission,
         remark: comments,
         attachment: attachmentNum,
-        approverName: currentApproval.empName,
-        approverId: currentApproval.empNo,
       });
     }
   }
@@ -116,7 +101,7 @@ export default class SingleDetailChange extends PureComponent {
   // 客户修改的目标估计佣金率来查询码值列表
   @autobind
   changeTargetGJCommission(v) {
-    const { customer } = this.state;
+    const { customer } = this.props.detail;
     this.props.onQueryGJ({
       custId: customer.custEcom,
       commision: v,
@@ -129,7 +114,7 @@ export default class SingleDetailChange extends PureComponent {
     this.setState({
       newCommission: v.codeValue,
     });
-    const { id } = this.state.customer; // 取出客户的row_id
+    const { customer: { id } } = this.props.detail; // 取出客户的row_id
     this.props.onQueryProductList({
       custRowId: id,
       commRate: v.codeValue,
@@ -187,7 +172,86 @@ export default class SingleDetailChange extends PureComponent {
 
   }
 
+  @autobind
+  mergeChildrenProduct(original, merged) {
+    const productCodeList = merged.map(o => o.prodCode);
+    return original.map((child) => {
+      // 判断child在不在productCodeList中
+      // TODO 此处需要进行一个判断就是有些子产品是默认选中的，用户可以取消勾选
+      const { prodCode, xDefaultOpenFlag } = child;
+      if (_.includes(productCodeList, prodCode)) {
+        return {
+          ...child,
+          xDefaultOpenFlag: 'Y',
+        };
+      }
+      if (xDefaultOpenFlag === 'Y') {
+        // 表示该子产品默认勾选,此时代表该子产品已经被用户取消勾选了
+        return {
+          ...child,
+          xDefaultOpenFlag: 'N',
+        };
+      }
+      return child;
+    });
+  }
+
+  // 将原始数据与用户选择的数据进行合并
+  @autobind
+  mergeOrigianl2User(original, user) {
+    // original和user为含有相同父产品的产品数组
+    // 合并的目的在于将original中的相关子产品的xDefaultOpenFlag设为true
+    return original.map((product) => {
+      const { children, ...resetInfo } = product;
+      const newProduct = resetInfo;
+      if (!_.isEmpty(children)) {
+        // 存在子产品列表
+        // 找到user中的相关产品
+        const userRelativeProd = _.find(user, p => p.prodCode === product.prodCode);
+        // 判断有无子产品
+        const userChildren = (userRelativeProd && userRelativeProd.subItem) || [];
+        newProduct.children = this.mergeChildrenProduct(children, userChildren);
+      }
+      return newProduct;
+    });
+  }
+
+  // 根据可选产品列表和用户选择的列表进行比对
+  // 生成Transfer左右两侧需要的数组
+  @autobind
+  makeTransferNeedData(list, selectedList) {
+    console.warn('makeTransferNeedData>list', list);
+    console.warn('makeTransferNeedData>selectedList', selectedList);
+    // 用户选择的产品列表信息,此处需要先删除里面action为删除的产品,该种产品不显示到左侧列表中去
+    const userProList = _.filter(selectedList, product => product.action !== '删除');
+    console.warn('makeTransferNeedData>userProList', userProList);
+    const userProdCodeList = userProList.map(p => p.prodCode);
+    console.warn('makeTransferNeedData>userProdCodeList', userProdCodeList);
+    // 将原始数据中的数据根据用户选择的数据的父产品进行比对，选出用户添加的原始数据，以及没有选择的数据
+    // 用户选择的原始数据
+    const userSelectOriginalList = _.filter(list,
+      product => _.includes(userProdCodeList, product.prodCode));
+    console.warn('makeTransferNeedData>userSelectOriginalList', userSelectOriginalList);
+    // 左侧列表
+    const userOptionalList = _.filter(list,
+      product => !_.includes(userProdCodeList, product.prodCode));
+    console.warn('makeTransferNeedData>userOptionalList', userOptionalList);
+    // 将用户选择的原始数据和用户选择的数据进行比对，生成右侧列表项
+    const rightList = this.mergeOrigianl2User(userSelectOriginalList, userProList);
+    console.warn('makeTransferNeedData>rightList', rightList);
+    return {
+      first: userOptionalList,
+      second: rightList,
+    };
+  }
+
   render() {
+    const { detail } = this.props;
+    if (_.isEmpty(detail.base)) {
+      return null;
+    }
+    const { customer, approvalList, attachmentList } = detail;
+    const { item } = detail.base;
     const {
       newCommission,
       remark,
@@ -196,22 +260,22 @@ export default class SingleDetailChange extends PureComponent {
       approverId,
       attachment,
       otherComReset,
-      customer,
     } = this.state;
     const {
       singleGJ,
       optionalList,
       threeMatchInfo,
-      approvalUserList,
       otherRate,
     } = this.props;
 
+    // 1. 针对用户选择的单佣金调整的申请中添加的item产品列表
+    const transferData = this.makeTransferNeedData(optionalList, item);
     // 单佣金调整中的产品选择配置
     const singleTransferProps = {
       firstTitle: '可选佣金产品',
       secondTitle: '已选产品',
-      firstData: optionalList,
-      secondData: [],
+      firstData: transferData.first,
+      secondData: transferData.second,
       firstColumns: singleColumns,
       secondColumns: singleColumns,
       transferChange: this.handleSingleTransferChange,
@@ -229,7 +293,7 @@ export default class SingleDetailChange extends PureComponent {
     const uploadProps = {
       // 可上传，可编辑
       edit: true,
-      attachmentList: [],
+      attachmentList,
       // 上传成功callback
       uploadAttachment: this.uploadCallBack,
       // 附件Id
@@ -239,86 +303,88 @@ export default class SingleDetailChange extends PureComponent {
 
     return (
       <div className={styles.newApprovalBox}>
-        <div className={styles.approvalBlock}>
-          <InfoTitle head="基本信息" />
-          <CommissionLine label="子类型" labelWidth="90px" required>
-            <Input
-              value="佣金调整"
-              disabled
-              style={{ width: '300px' }}
-            />
-          </CommissionLine>
-          <CommissionLine label="客户" labelWidth="90px" needInputBox={false}>
-            <Input
-              value={`${customer.custName}(${customer.custEcom})-${customer.riskLevelLabel}`}
-              disabled
-              style={{ width: '300px' }}
-            />
-          </CommissionLine>
-          <CommissionLine label="备注" labelWidth="90px">
-            <TextArea
-              placeholder="备注内容"
-              value={remark}
-              onChange={this.handleChangeRemark}
-              style={{
-                fontSize: '14px',
-              }}
-            />
-          </CommissionLine>
-        </div>
-        <div className={styles.approvalBlock}>
-          <InfoTitle head="佣金产品选择" />
-          <CommissionLine
-            label="目标股基佣金率"
-            labelWidth="110px"
-            needInputBox={false}
-            extra={
-              <span
+        <div className={styles.approvalContent}>
+          <div className={styles.approvalBlock}>
+            <InfoTitle head="基本信息" />
+            <CommissionLine label="子类型" labelWidth="90px" required>
+              <Input
+                value="佣金调整"
+                disabled
+                style={{ width: '300px' }}
+              />
+            </CommissionLine>
+            <CommissionLine label="客户" labelWidth="90px" needInputBox={false}>
+              <Input
+                value={`${customer.custName}(${customer.custEcom})-${customer.riskLevelLabel}`}
+                disabled
+                style={{ width: '300px' }}
+              />
+            </CommissionLine>
+            <CommissionLine label="备注" labelWidth="90px">
+              <TextArea
+                placeholder="备注内容"
+                value={remark}
+                onChange={this.handleChangeRemark}
                 style={{
                   fontSize: '14px',
-                  color: '#9b9b9b',
-                  lineHeight: '26px',
-                  paddingLeft: '4px',
                 }}
-              >
-                ‰
-              </span>
-            }
-          >
-            <AutoComplete
-              initValue={newCommission}
-              dataSource={singleGJ}
-              onChangeValue={this.changeTargetGJCommission}
-              onSelectValue={this.selectTargetGJCommission}
-              width="100px"
+              />
+            </CommissionLine>
+          </div>
+          <div className={styles.approvalBlock}>
+            <InfoTitle head="佣金产品选择" />
+            <CommissionLine
+              label="目标股基佣金率"
+              labelWidth="110px"
+              needInputBox={false}
+              extra={
+                <span
+                  style={{
+                    fontSize: '14px',
+                    color: '#9b9b9b',
+                    lineHeight: '26px',
+                    paddingLeft: '4px',
+                  }}
+                >
+                  ‰
+                </span>
+              }
+            >
+              <AutoComplete
+                defaultInput={newCommission}
+                dataSource={singleGJ}
+                onChangeValue={this.changeTargetGJCommission}
+                onSelectValue={this.selectTargetGJCommission}
+                width="100px"
+              />
+            </CommissionLine>
+            <Transfer {...singleTransferProps} />
+            <ThreeMatchTip info={threeMatchInfo} />
+          </div>
+          <div className={styles.approvalBlock}>
+            <InfoTitle head="其他佣金费率" />
+            <OtherCommissionSelectList
+              showTip
+              reset={otherComReset}
+              otherRatios={otherRate}
+              onChange={this.changeOtherCommission}
             />
-          </CommissionLine>
-          <Transfer {...singleTransferProps} />
-          <ThreeMatchTip info={threeMatchInfo} />
-        </div>
-        <div className={styles.approvalBlock}>
-          <InfoTitle head="其他佣金费率" />
-          <OtherCommissionSelectList
-            showTip
-            reset={otherComReset}
-            otherRatios={otherRate}
-            onChange={this.changeOtherCommission}
-          />
-        </div>
-        <div className={styles.approvalBlock}>
-          <InfoTitle head="附件信息" />
-          <CommonUpload {...uploadProps} />
-        </div>
-        <div className={styles.approvalBlock}>
-          <InfoTitle head="审批人" />
-          <CommissionLine label="选择审批人" labelWidth="110px">
-            <div className={styles.checkApprover} onClick={this.openApproverBoard}>
-              {approverName === '' ? '' : `${approverName}(${approverId})`}
-              <div className={styles.searchIcon}>
-                <Icon type="search" />
+          </div>
+          <div className={styles.approvalBlock}>
+            <InfoTitle head="附件信息" />
+            <CommonUpload {...uploadProps} />
+          </div>
+          <div className={styles.approvalBlock}>
+            <InfoTitle head="审批人" />
+            <CommissionLine label="选择审批人" labelWidth="110px">
+              <div className={styles.checkApprover} onClick={this.openApproverBoard}>
+                {approverName === '' ? '' : `${approverName}(${approverId})`}
+                <div className={styles.searchIcon}>
+                  <Icon type="search" />
+                </div>
               </div>
-            </div>
-          </CommissionLine>
+            </CommissionLine>
+          </div>
         </div>
         <RejectButtons
           onSubmit={this.handleSubmit}
@@ -327,7 +393,7 @@ export default class SingleDetailChange extends PureComponent {
         />
         <ChoiceApproverBoard
           visible={choiceApprover}
-          approverList={approvalUserList}
+          approverList={approvalList}
           onClose={this.closeChoiceApproverModal}
           onOk={this.handleApproverModalOK}
         />

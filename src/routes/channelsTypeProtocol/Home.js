@@ -32,7 +32,7 @@ const EMPTY_OBJECT = {};
 const OMIT_ARRAY = ['isResetPageNum', 'currentId'];
 const {
   channelsTypeProtocol,
-  channelsTypeProtocol: { pageType, subType, status },
+  channelsTypeProtocol: { pageType, subType, status, operationList },
 } = seibelConfig;
 // 新建/编辑弹窗按钮，暂时写死在前端
 const FLOW_BUTTONS = {
@@ -66,7 +66,7 @@ const mapStateToProps = state => ({
   // 登陆人信息
   empInfo: state.app.empInfo,
   // 操作类型列表
-  operationList: state.channelsTypeProtocol.operationList,
+  operationTypeList: state.channelsTypeProtocol.operationList,
   // 子类型列表
   subTypeList: state.channelsTypeProtocol.subTypeList,
   // 模板列表
@@ -124,7 +124,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
     empInfo: PropTypes.object.isRequired,
     // 查询操作类型/子类型/模板列表
     queryTypeVaules: PropTypes.func.isRequired,
-    operationList: PropTypes.array.isRequired,
+    operationTypeList: PropTypes.array.isRequired,
     subTypeList: PropTypes.array.isRequired,
     templateList: PropTypes.array.isRequired,
     // 根据所选模板id查询模板对应协议条款
@@ -343,7 +343,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
       getCanApplyCustList, // 查询可申请客户列表
       canApplyCustList, // 可申请客户列表
       queryTypeVaules, // 查询操作类型/子类型/模板列表
-      operationList, // 操作类型列表
+      operationTypeList, // 操作类型列表
       subTypeList, // 子类型列表
       templateList, // 模板列表
       protocolDetail, // 协议详情
@@ -408,7 +408,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
       // 查询操作类型/子类型/模板列表
       queryTypeVaules,
       // 操作类型列表
-      operationList,
+      operationTypeList,
       // 子类型列表
       subTypeList,
       // 协议模板列表

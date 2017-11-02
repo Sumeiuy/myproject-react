@@ -73,16 +73,15 @@ export default {
     },
 
     getSingleDetailToChangeSuccess(state, action) {
-      const { payload: { detailRes, attachmentRes, approvalListRes } } = action;
-      const baseRD = detailRes.resultData;
-      const attachmentResult = attachmentRes.resultData;
-      const approvalRD = approvalListRes.resultData && approvalListRes.resultData.employList;
+      const { payload: { base, customer, attachment, approval } } = action;
+
       return {
         ...state,
         singleDetailToChange: {
-          base: baseRD,
-          attachmentList: attachmentResult,
-          approvalList: approvalRD,
+          base,
+          customer,
+          attachmentList: attachment || [],
+          approvalList: approval.employList || [],
         },
       };
     },
@@ -347,10 +346,6 @@ export default {
         postionId: empInfo.postnId,
         deptCode: empInfo.occDivnNum,
       });
-      yield put({
-        type: 'getSingleCustListSuccess',
-        payload: customerRes,
-      });
       const customerRD = customerRes.resultData.custInfos[0];
       // 获取目前目标股基佣金率下的可选产品
       yield put({
@@ -369,14 +364,21 @@ export default {
       });
       // 查询附件信息
       const attachmentRes = yield call(api.getAttachment, { attachment: detailRD.attachmentNum });
+      const attachRD = attachmentRes.resultData;
       // 查询当前审批人列表
       const approvalListRes = yield call(api.queryAprovalUserList, {
         loginUser: empInfo.empNum,
         btnId: '130000', // 该参数为单佣金查询审批人的固定参数
       });
+      const approvalUserRD = approvalListRes.resultData;
       yield put({
         type: 'getSingleDetailToChangeSuccess',
-        payload: { detailRes, attachmentRes, approvalListRes },
+        payload: {
+          base: detailRD,
+          customer: customerRD,
+          attachment: attachRD,
+          approval: approvalUserRD,
+        },
       });
     },
 
