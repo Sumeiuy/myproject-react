@@ -56,16 +56,15 @@ export default class CreateTaskForm extends PureComponent {
   componentWillMount() {
     const {
       location: { query },
-      dict: { custIdexPlaceHolders },
       previousData,
     } = this.props;
-    const arr = [];
-    _.map(custIdexPlaceHolders, (item) => {
-      arr.push(item.substring(1, item.length));
-    });
-    this.setState({
-      statusData: arr,
-    });
+    // const arr = [];
+    // _.map(custIdexPlaceHolders, (item) => {
+    //   arr.push(item.substring(1, item.length));
+    // });
+    // this.setState({
+    //   statusData: arr,
+    // });
 
     if (_.isEmpty(previousData)) {
       this.handleInit(query);

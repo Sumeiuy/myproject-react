@@ -126,7 +126,6 @@ export default {
             type: 'getServiceLog',
             payload: params,
           });
-
           return;
         }
 
@@ -529,8 +528,8 @@ export default {
       yield put({
         type: 'getCustomerGroupList',
         payload: {
-          pageNum,
-          pageSize,
+          pageNum: pageNum || INITIAL_PAGE_NUM,
+          pageSize: pageSize || INITIAL_PAGE_TEN_SIZE,
           keyWord,
         },
       });
@@ -548,14 +547,14 @@ export default {
         message: '删除分组下客户成功',
         duration: 2,
       });
-      // 删除成功之后，更新分组信息
-      yield put({
-        type: 'getCustomerGroupList',
-        payload: {
-          pageNum: 1,
-          pageSize: 10,
-        },
-      });
+      // // 删除成功之后，更新分组信息
+      // yield put({
+      //   type: 'getCustomerGroupList',
+      //   payload: {
+      //     pageNum: INITIAL_PAGE_NUM,
+      //     pageSize: INITIAL_PAGE_TEN_SIZE,
+      //   },
+      // });
     },
     // 360服务记录查询
     * getServiceLog({ payload }, { call, put }) {
