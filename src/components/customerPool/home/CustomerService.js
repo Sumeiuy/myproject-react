@@ -49,6 +49,7 @@ export default class CustomerService extends PureComponent {
               fontSize: '16',
               color: '#a1a1a1',
               fontWeight: 'bold',
+              fontFamily: 'Microsoft YaHei',
             },
           },
         },

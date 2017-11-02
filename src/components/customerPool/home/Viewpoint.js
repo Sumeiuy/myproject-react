@@ -59,7 +59,7 @@ export default class Viewpoint extends PureComponent {
           className={styles.news}
           onClick={() => { this.handleDetailClick(index); }}
         >
-          {item.texttitle}
+          {_.isEmpty(item.subtitle) ? '--' : item.subtitle}
         </a>
       </div>
     ));
