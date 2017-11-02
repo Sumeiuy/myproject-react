@@ -28,15 +28,15 @@ const columns = ({ actionClick }) => {
   }
   return [{
     title: '标题',
-    key: 'texttitle',
+    key: 'subtitle',
     width: '30%',
     render: item => (
       <div
         className={classnames(styles.td, styles.headLine)}
         onClick={() => { handleClick(item); }}
-        title={formatString(item.texttitle)}
+        title={formatString(item.subtitle)}
       >
-        <a>{formatString(item.texttitle)}</a>
+        <a>{formatString(item.subtitle)}</a>
       </div>
     ),
   }, {
