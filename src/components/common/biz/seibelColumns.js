@@ -7,12 +7,12 @@ import _ from 'lodash';
 import React from 'react';
 import Icon from '../Icon';
 import Tag from '../tag';
-import { seibelConfig } from '../../../config';
 
-const operationList = _.filter(seibelConfig.contract.operationList, v => v.label !== '全部');
 export default function seibelColumns(props) {
   const { pageName, type, pageData } = props;
-  const { subType, status } = pageData;
+  const { subType, status, operationList } = pageData;
+
+  const operateType = _.filter(operationList, v => v.label !== '全部');
 
   // 后台返回的类型字段转化为对应的中文显示
   const changeTypeDisplay = (st, options) => {
@@ -30,13 +30,6 @@ export default function seibelColumns(props) {
     }
     return '无';
   };
-  const operationType = (value) => {
-    if (operationList && value) {
-      const nowStatus = _.find(operationList, o => o.value === value) || {};
-      return nowStatus.label || '无';
-    }
-    return '无';
-  };
 
   const columns = [{
     width: '60%',
@@ -45,7 +38,12 @@ export default function seibelColumns(props) {
         <div className="id">
           <Icon type={type} className="seibelListIcon" />
           <span className="serialNumber">编号{record.id || '暂无'}</span>
-          <span className="type">{changeTypeDisplay(record.type, pageData)}</span>
+          {
+            (pageName === 'channelsTypeProtocol' && record.business2) ?
+              <span className="type">{changeDisplay(record.business2, operateType)}</span>
+            :
+              <span className="type">{changeTypeDisplay(record.type, pageData)}</span>
+          }
         </div>
         <div className="subType">{changeDisplay(record.subType, subType)}</div>
         <div className="drafter">拟稿人：<span className="drafterName">{record.empName}({record.empId})</span>{`${record.orgName || ''}` || '无'}</div>
@@ -56,7 +54,7 @@ export default function seibelColumns(props) {
     render: (text, record) => (
       <div className="rightSection">
         <div className="tagArea">
-          {(pageName === 'contract' && record.business2) ? <Tag type="yellow" text={operationType(record.business2)} /> : null}
+          {(pageName === 'contract' && record.business2) ? <Tag type="yellow" text={changeDisplay(record.business2, operateType)} /> : null}
           <Tag type="blue" text={changeDisplay(record.status, status)} />
         </div>
         <div className="date">{(record.createTime && record.createTime.slice(0, 10)) || '无'}</div>

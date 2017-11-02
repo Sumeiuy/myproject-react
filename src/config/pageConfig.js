@@ -319,9 +319,15 @@ const pageConfig = {
     operationList: [
       {
         show: true,
+        label: '全部',
+        value: '',
+      },
+      {
+        show: true,
         label: '订购',
         value: '1',
-      }, {
+      },
+      {
         show: true,
         label: '退订',
         value: '2',
@@ -354,7 +360,7 @@ const pageConfig = {
   // 通道类型协议
   channelsTypeProtocol: {
     pageName: '通道类型协议',
-    pageType: '04',
+    pageType: '05',
     // 十档行情rowID和紫金快车道子类型ID 根据后端要去写死在前端用做判断
     tenLevelTemplateId: '1-43OZSYG',
     zjkcdId: '507070',
@@ -367,7 +373,7 @@ const pageConfig = {
       {
         show: true,
         label: '高速通道类协议',
-        value: '0401',
+        value: '0501',
         status: [
           {
             show: true,
@@ -404,7 +410,7 @@ const pageConfig = {
       {
         show: true,
         label: '紫金快车道协议',
-        value: '0402',
+        value: '0502',
         status: [
           {
             show: true,
@@ -445,7 +451,7 @@ const pageConfig = {
       {
         show: true,
         label: '套利软件',
-        value: '0403',
+        value: '0503',
         status: [
           {
             show: true,
@@ -474,7 +480,7 @@ const pageConfig = {
       {
         show: true,
         label: '期权软件',
-        value: '0404',
+        value: '0504',
         status: [
           {
             show: true,
@@ -528,26 +534,31 @@ const pageConfig = {
         value: '04',
       },
     ],
-    operateType: [
+    operationList: [
+      {
+        show: true,
+        label: '全部',
+        value: '',
+      },
       {
         show: true,
         label: '协议订购',
-        value: '1',
+        value: 'Subscribe',
       },
       {
         show: true,
         label: '协议退订',
-        value: '2',
+        value: 'Unsubscribe',
       },
       {
         show: true,
         label: '协议续订',
-        value: '3',
+        value: 'Renewal',
       },
       {
         show: true,
         label: '新增或删除下挂客户',
-        value: '4',
+        value: 'AddDel',
       },
     ],
     businessType: [

@@ -306,13 +306,14 @@ export default class BaseInfoEdit extends PureComponent {
         onChange={this.handleChangeRemark}
       />
     </InfoForm>);
+    const operateType = _.filter(operationList, v => v.label !== '全部');
     return (
       <div className={styles.editWrapper}>
         <InfoTitle head="基本信息" />
         <InfoForm label="操作类型" required>
           <Select
             name="operation"
-            data={operationList}
+            data={operateType}
             value={this.state.operation}
             onChange={this.handleSelectChange}
           />
