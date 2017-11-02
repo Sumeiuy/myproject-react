@@ -9,6 +9,9 @@ import IECharts from '../../IECharts';
 import styles from './funney.less';
 import { fspGlobal } from '../../../utils';
 
+// 服务客户数的 key
+const SERVICE_CUST_NUM = 'custNum';
+
 function getDataConfig(data) {
   return data.map(item => ({
     value: item.value,
@@ -22,7 +25,7 @@ function getDataConfig(data) {
 }
 
 function linkToList(data) {
-  if (data.name !== '服务客户数') {
+  if (data.key !== SERVICE_CUST_NUM) {
     return;
   }
   fspGlobal.openFspTab({
@@ -41,7 +44,7 @@ function renderIntro(data) {
     (item, index) => (
       <div className={styles.row} key={`row${index}`}>
         <div
-          className={`${index === 0 ? styles.canClick : ''} ${styles.count1}`}
+          className={`${item.key === SERVICE_CUST_NUM ? styles.canClick : ''} ${styles.count1}`}
           onClick={() => linkToList(item)}
         >
           {item.value}
@@ -88,7 +91,6 @@ function Funney({ dataSource }) {
 
   const onReady = (instance) => {
     instance.on('click', (arg) => {
-      console.log('sdfsadf', arg);
       if (arg.componentType !== 'series') {
         return;
       }
