@@ -108,19 +108,19 @@ export default {
     },
 
     querySingleDetailSuccess(state, action) {
-      // const { payload: { detailRes, attachmentRes, approvalRes, stepRes } } = action;
-      const { payload: { detailRes, attachmentRes, approvalRes } } = action;
+      const { payload: { detailRes, attachmentRes, approvalRes, stepRes } } = action;
+      // const { payload: { detailRes, attachmentRes, approvalRes } } = action;
       const detailResult = detailRes.resultData;
       const attachmentResult = attachmentRes.resultData;
       const approvalResult = approvalRes.resultData;
-      // const stepResult = stepRes.resultData;
+      const stepResult = stepRes.resultData;
       return {
         ...state,
         singleDetail: {
           base: detailResult,
           attachmentList: attachmentResult,
           approvalHistory: approvalResult,
-          // currentStep: stepResult,
+          currentStep: stepResult,
         },
       };
     },
@@ -487,13 +487,12 @@ export default {
         loginuser,
       });
       // TODO 先注销，后面接口好了再弄
-      // const stepRes = yield call(api.queryCurrentStep, {
-      //   flowCode: detailRD.flowCode,
-      // });
+      const stepRes = yield call(api.queryCurrentStep, {
+        flowCode: detailRD.flowCode,
+      });
       yield put({
         type: 'querySingleDetailSuccess',
-        // payload: { detailRes, attachmentRes, approvalRes, stepRes },
-        payload: { detailRes, attachmentRes, approvalRes },
+        payload: { detailRes, attachmentRes, approvalRes, stepRes },
       });
     },
 
