@@ -3,13 +3,15 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-11-02 13:58:24
+ * @Last Modified time: 2017-11-02 20:47:29
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
 import { withRouter, routerRedux } from 'dva-react-router-3/router';
 import { connect } from 'react-redux';
+import { message } from 'antd';
 import _ from 'lodash';
+
 import { constructSeibelPostBody } from '../../utils/helper';
 import SplitPanel from '../../components/common/splitPanel/SplitPanel';
 import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
@@ -72,7 +74,7 @@ const mapStateToProps = state => ({
   protocolClauseList: state.channelsTypeProtocol.protocolClauseList,
   // 协议产品列表
   protocolProductList: state.channelsTypeProtocol.protocolProductList,
-  underCustList: state.channelsTypeProtocol.queryCust,
+  underCustList: state.channelsTypeProtocol.underCustList,
 });
 
 const mapDispatchToProps = {
@@ -286,13 +288,35 @@ export default class ChannelsTypeProtocol extends PureComponent {
     });
   }
 
+  // 检查附件必传项目
+  @autobind
+  checkAttachment(attachmentList) {
+    const newAttachment = [];
+    for (let i = 0; i < attachmentList.length; i++) {
+      const item = attachmentList[i];
+      if (item.length <= 0 && item.required) {
+        message.error(`${item.title}附件为必传项`);
+        return;
+      }
+      newAttachment.push({
+        uuid: item.uuid,
+        attachmentType: item.title,
+        attachmentComments: '',
+      });
+    }
+    _.remove(newAttachment, o => _.isEmpty(o.uuid));
+    console.warn('check newAttachment', newAttachment);
+  }
   // 弹窗底部按钮事件
   @autobind
   footerBtnHandle(btnItem) {
     // 从editFormComponent组件中取出值
     const formData = this.EditFormComponent.getData();
-    console.log('btnItem', btnItem);
-    console.log('formData', formData);
+    const { attachmentTypeList } = formData;
+    const attachmentResult = this.checkAttachment(attachmentTypeList);
+    console.warn('attachmentResult', attachmentResult);
+    console.warn('btnItem', btnItem);
+    console.warn('formData', formData);
   }
 
   // 最终发出接口请求

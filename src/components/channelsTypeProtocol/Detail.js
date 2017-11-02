@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-19 09:37:42
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-11-02 14:02:38
+ * @Last Modified time: 2017-11-02 20:50:56
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -23,7 +23,6 @@ const {
   underCustTitleList,  // 下挂客户表头集合
   protocolClauseTitleList,  // 协议条款表头集合
   protocolProductTitleList,  // 协议产品表头集合
-  // attachmentType,  // 附件集合
 } = seibelConfig.channelsTypeProtocol;
 
 const EMPTY_PARAM = '暂无';
