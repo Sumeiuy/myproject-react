@@ -599,47 +599,52 @@ export default class CommissionHome extends PureComponent {
           visible={approvalBoard}
           onClose={this.closeApprovalBoard}
         />
-        <CreateNewApprovalBoard
-          empInfo={empInfo}
-          empPostnList={empPostnList}
-          modalKey="createApprovalBoard"
-          visible={createApprovalBoard}
-          onClose={this.closeNewApprovalBoard}
-          queryProductList={getProductList}
-          targetProductList={productList}
-          approverList={approvalUserList}
-          onSearchApplyCust={getCanApplyCustList}
-          customerList={canApplyCustList}
-          validataLoading={validataLoading}
-          validateResult={validateResult}
-          validateCust={validateCustInfo}
-          otherRatios={otherRatio}
-          onBatchSubmit={submitBatch}
-          gjCommission={gjCommissionList}
-          queryGJCommission={getGJCommissionRate}
-          getSingleOtherRates={getSingleOtherRates}
-          singleOtherRatio={singleOtherRatio}
-          getSingleProductList={getSingleProductList}
-          singleComProductList={singleComProductList}
-          threeMatchInfo={threeMatchInfo}
-          queryThreeMatchInfo={queryThreeMatchInfo}
-          querySingleCustList={getSingleCustList}
-          querySubscribelCustList={getSubscribelCustList}
-          singleCustList={singleCustomerList}
-          subscribeCustList={subscribeCustomerList}
-          getSubscribelProList={getSubscribelProList}
-          subscribelProList={subscribelProList}
-          getUnSubscribelProList={getUnSubscribelProList}
-          unSubscribelProList={unSubscribelProList}
-          singleGJCommission={singleGJCommission}
-          getSingleGJ={getSingleGJ}
-          onSubmitSingle={submitSingle}
-          singleSubmit={singleSubmit}
-          submitSub={submitSub}
-          submitUnSub={submitUnSub}
-          queryApprovalUser={getAprovalUserList}
-          clearReduxState={clearReduxState}
-        />
+        {
+          !createApprovalBoard ? null
+          : (
+            <CreateNewApprovalBoard
+              empInfo={empInfo}
+              empPostnList={empPostnList}
+              modalKey="createApprovalBoard"
+              visible={createApprovalBoard}
+              onClose={this.closeNewApprovalBoard}
+              queryProductList={getProductList}
+              targetProductList={productList}
+              approverList={approvalUserList}
+              onSearchApplyCust={getCanApplyCustList}
+              customerList={canApplyCustList}
+              validataLoading={validataLoading}
+              validateResult={validateResult}
+              validateCust={validateCustInfo}
+              otherRatios={otherRatio}
+              onBatchSubmit={submitBatch}
+              gjCommission={gjCommissionList}
+              queryGJCommission={getGJCommissionRate}
+              getSingleOtherRates={getSingleOtherRates}
+              singleOtherRatio={singleOtherRatio}
+              getSingleProductList={getSingleProductList}
+              singleComProductList={singleComProductList}
+              threeMatchInfo={threeMatchInfo}
+              queryThreeMatchInfo={queryThreeMatchInfo}
+              querySingleCustList={getSingleCustList}
+              querySubscribelCustList={getSubscribelCustList}
+              singleCustList={singleCustomerList}
+              subscribeCustList={subscribeCustomerList}
+              getSubscribelProList={getSubscribelProList}
+              subscribelProList={subscribelProList}
+              getUnSubscribelProList={getUnSubscribelProList}
+              unSubscribelProList={unSubscribelProList}
+              singleGJCommission={singleGJCommission}
+              getSingleGJ={getSingleGJ}
+              onSubmitSingle={submitSingle}
+              singleSubmit={singleSubmit}
+              submitSub={submitSub}
+              submitUnSub={submitUnSub}
+              queryApprovalUser={getAprovalUserList}
+              clearReduxState={clearReduxState}
+            />
+          )
+        }
       </div>
     );
   }

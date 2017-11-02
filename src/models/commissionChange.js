@@ -3,7 +3,7 @@
  * @author baojiajia
  */
 import _ from 'lodash';
-import { commission as api, seibel as seibelApi } from '../api';
+import { commission as api } from '../api';
 
 const EMPTY_OBJECT = {};
 const EMPTY_LIST = [];
@@ -11,36 +11,14 @@ const EMPTY_LIST = [];
 export default {
   namespace: 'commissionChange',
   state: {
-    // 查询到的目标产品列表
-    productList: [],
     // 审批人员列表
     approvalUserList: [],
-    // 批量佣金右侧详情
-    detail: {},
-    // 单佣金调整右侧详情
+    // 驳回后修改的单佣金调整详情
     singleDetailToChange: {},
     // 咨询订阅详情
     subscribeDetailToChange: {},
     // 资讯退订详情
     unsubscribeDetailToChange: {},
-    // 单个用户的审批记录
-    approvalRecord: {},
-    // 查询审批记录流程状态k
-    recordLoading: false,
-    // 筛选的已申请客户列表
-    filterCustList: [],
-    // 筛选的拟稿人列表
-    filterDrafterList: [],
-    // 校验进程
-    validataLoading: false,
-    // 检验结果
-    validateResult: '',
-    // 筛选的可申请客户列表
-    canApplyCustList: [],
-    // 提交批量佣金调整申请后的BatchNum
-    batchnum: '',
-    // 批量佣金目标股基佣金率列表项
-    gjCommission: [],
     // 单佣金目标股基佣金率码值列表
     singleGJCommission: [],
     // 资讯订阅可供用户订阅的产品
@@ -53,8 +31,6 @@ export default {
     consultUnsubId: '',
     // 单佣金调整中的其他佣金费率的选项列表
     singleOtherCommissionOptions: [],
-    // 单佣金调整页面客户查询列表
-    singleCustomerList: [],
     // 咨询订阅、咨询退订调整页面客户查询列表
     subscribeCustomerList: [],
     // 单佣金调整中的可选产品列表
@@ -67,6 +43,8 @@ export default {
     unSubscribelProList: [],
     // 单佣金调整申请成功
     singleSubmit: '',
+    // 单佣金调整页面客户查询列表
+    singleCustomerList: {},
   },
   reducers: {
     getProductListSuccess(state, action) {
@@ -94,27 +72,17 @@ export default {
       };
     },
 
-    getCommissionDetailSuccess(state, action) {
-      const { payload: { detailRes, custListRes } } = action;
-      const detailResult = detailRes.resultData;
-      const listResult = custListRes.resultData;
-      return {
-        ...state,
-        detail: {
-          ...detailResult,
-          custList: listResult,
-        },
-      };
-    },
-
     getSingleDetailToChangeSuccess(state, action) {
-      const { payload: { detailRes, attachmentRes } } = action;
+      const { payload: { detailRes, attachmentRes, approvalListRes } } = action;
+      const baseRD = detailRes.resultData;
       const attachmentResult = attachmentRes.resultData;
+      const approvalRD = approvalListRes.resultData && approvalListRes.resultData.employList;
       return {
         ...state,
         singleDetailToChange: {
-          base: detailRes,
+          base: baseRD,
           attachmentList: attachmentResult,
+          approvalList: approvalRD,
         },
       };
     },
@@ -271,7 +239,7 @@ export default {
       }
       return {
         ...state,
-        singleCustomerList: list,
+        singleCustomerList: list[0] || {},
       };
     },
 
@@ -329,104 +297,11 @@ export default {
     },
   },
   effects: {
-    // 新建批量佣金调整用户选择的目标产品列表
-    * getProductList({ payload }, { call, put }) {
-      const response = yield call(api.queryProductList, payload);
-      yield put({
-        type: 'getProductListSuccess',
-        payload: response,
-      });
-    },
-
-    // 批量佣金调整Home的右侧详情
-    * getCommissionDetail({ payload }, { call, put }) {
-      const detailRes = yield call(api.getCommissionDetail, { type: 'BatchProcess', ...payload });
-      const custListRes = yield call(api.getCommissionDetailCustList, {
-        batchNum: payload.batchNum,
-      });
-      yield put({
-        type: 'getCommissionDetailSuccess',
-        payload: { detailRes, custListRes },
-      });
-    },
-
-    // 批量佣金调整详情页面中单个客户的审批记录
-    * getApprovalRecords({ payload }, { call, put }) {
-      yield put({
-        type: 'opertateState',
-        payload: {
-          name: 'recordLoading',
-          value: true,
-          message: '开始查询审批记录',
-        },
-      });
-      const { flowCode, loginuser, ...reset } = payload;
-      const recordResponse = yield call(api.querySingleCustApprovalRecord, {
-        flowCode,
-        loginuser,
-      });
-      yield put({
-        type: 'getApprovalRecordsSuccess',
-        payload: { recordResponse, cust: reset },
-      });
-      yield put({
-        type: 'opertateState',
-        payload: {
-          name: 'recordLoading',
-          value: false,
-          message: '查询审批记录结束',
-        },
-      });
-    },
-
     // 获取审批人员列表
     * getAprovalUserList({ payload }, { call, put }) {
       const response = yield call(api.queryAprovalUserList, payload);
       yield put({
         type: 'getAprovalUserListSuccess',
-        payload: response,
-      });
-    },
-
-    // 校验客户信息
-    * validateCustInfo({ payload }, { call, put }) {
-      yield put({
-        type: 'opertateState',
-        payload: {
-          name: 'validataLoading',
-          value: true,
-          message: '开始校验',
-        },
-      });
-      const response = yield call(api.validateCustInfo, payload);
-      yield put({
-        type: 'validateCustInfoSuccess',
-        payload: response,
-      });
-      yield put({
-        type: 'opertateState',
-        payload: {
-          name: 'validataLoading',
-          value: false,
-          message: '结束校验',
-        },
-      });
-    },
-
-    // 筛选可申请的客户列表
-    * getCanApplyCustList({ payload }, { call, put }) {
-      const response = yield call(seibelApi.getCanApplyCustList, payload);
-      yield put({
-        type: 'getCanApplyCustListSuccess',
-        payload: response,
-      });
-    },
-
-    // 提交批量佣金调整申请
-    * submitBatchCommission({ payload }, { call, put }) {
-      const response = yield call(api.submitBatchCommission, payload);
-      yield put({
-        type: 'submitBatchSuccess',
         payload: response,
       });
     },
@@ -440,18 +315,6 @@ export default {
       });
     },
 
-    // 查询批量佣金目标股基佣金率码值
-    * getGJCommissionRate({ payload }, { call, put }) {
-      const rate = yield call(api.queryGJCommissionRate, {
-        ...payload,
-        codeType: 'HTSC_COMMISSION_LEVEL',
-      });
-      yield put({
-        type: 'getGJCommissionRateSuccess',
-        payload: rate,
-      });
-    },
-
     // 查询单佣金目标股基佣金率码值
     * getSingleGJCommissionRate({ payload }, { call, put }) {
       const singleRes = yield call(api.querySingleGJCommissionRate, payload);
@@ -462,16 +325,50 @@ export default {
     },
 
     // 驳回后修改单佣金调整详情数据
-    * getSingleDetailToChange({ payload }, { call, put }) {
+    * getSingleDetailToChange({ payload }, { call, put, select }) {
+      const { empInfo } = yield select(state => state.app.empInfo);
       const { flowCode } = payload;
+      // 查询驳回后单佣金调整的详情基本数据
       const detailRes = yield call(api.querySingleDetail, {
         flowCode,
       });
       const detailRD = detailRes.resultData;
+      // 获取客户信息
+      const customerRes = yield call(api.querySingleCustomer, {
+        keywords: detailRD.custNum,
+        postionId: empInfo.postnId,
+        deptCode: empInfo.occDivnNum,
+      });
+      yield put({
+        type: 'getSingleCustListSuccess',
+        payload: customerRes,
+      });
+      const customerRD = customerRes.resultData.custInfos[0];
+      // 获取目前目标股基佣金率下的可选产品
+      yield put({
+        type: 'getSingleComProductList',
+        payload: {
+          custRowId: customerRD.id,
+          commRate: detailRD.newCommission,
+        },
+      });
+      // 获取当前用户的其他佣金率选项
+      yield put({
+        type: 'getSingleOtherCommissionOptions',
+        payload: {
+          custRowId: customerRD.id,
+        },
+      });
+      // 查询附件信息
       const attachmentRes = yield call(api.getAttachment, { attachment: detailRD.attachmentNum });
+      // 查询当前审批人列表
+      const approvalListRes = yield call(api.queryAprovalUserList, {
+        loginUser: empInfo.empNum,
+        btnId: '130000', // 该参数为单佣金查询审批人的固定参数
+      });
       yield put({
         type: 'getSingleDetailToChangeSuccess',
-        payload: { detailRes, attachmentRes },
+        payload: { detailRes, attachmentRes, approvalListRes },
       });
     },
 
@@ -557,6 +454,15 @@ export default {
       });
     },
 
+    // 单佣金调整页面客户查询列表
+    * getSingleCustList({ payload }, { call, put }) {
+      const response = yield call(api.querySingleCustomer, payload);
+      yield put({
+        type: 'getSingleCustListSuccess',
+        payload: response,
+      });
+    },
+
     // 查询单佣金调整中的其他佣金费率选项
     * getSingleOtherCommissionOptions({ payload }, { call, put }) {
       const response = yield call(api.queryOtherCommissionOptions, payload);
@@ -566,22 +472,6 @@ export default {
       });
     },
 
-    // 单佣金调整页面客户查询列表
-    * getSingleCustList({ payload }, { call, put }) {
-      const response = yield call(api.querySingleCustomer, payload);
-      yield put({
-        type: 'getSingleCustListSuccess',
-        payload: response,
-      });
-    },
-    // 查询咨讯退订、咨询退订中的查询客户列表
-    * getSubscribelCustList({ payload }, { call, put }) {
-      const response = yield call(api.querySubscriptionCustomer, payload);
-      yield put({
-        type: 'getSubscribelCustListSuccess',
-        payload: response,
-      });
-    },
     // 查询单佣金调整中的可选产品列表
     * getSingleComProductList({ payload }, { call, put }) {
       const response = yield call(api.querySingleCommissionProductList, payload);

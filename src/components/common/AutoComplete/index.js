@@ -22,17 +22,20 @@ export default class autoComplete extends PureComponent {
     onSelectValue: PropTypes.func.isRequired,
     width: PropTypes.string,
     defaultInput: PropTypes.string,
+    initValue: PropTypes.string,
   }
 
   static defaultProps = {
     width: '300px',
     defaultInput: '',
+    initValue: '',
   }
 
   constructor(props) {
     super(props);
+    const { initValue } = props;
     this.state = {
-      inputValue: '',
+      inputValue: initValue,
     };
   }
   componentWillReceiveProps(nextProps) {
