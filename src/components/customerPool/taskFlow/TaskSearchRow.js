@@ -65,28 +65,20 @@ export default class TaskSearchRow extends PureComponent {
       labelId: '',
       visible: false,
       title: '',
+      custTableData: [],
     };
   }
 
   componentWillReceiveProps(nextProps) {
     const { peopleOfLabelData } = nextProps;
     const { userObjectFormList } = peopleOfLabelData;
+    const list = _.map(userObjectFormList, item => ({
+      ...item,
+      cust_type: item.cust_type === 'Y' ? '高净值' : '非高净值',
+    }));
     this.setState({
       totalRecordNum: peopleOfLabelData.totalCount,
-    });
-    _.map(userObjectFormList, (item) => {
-      let custType = '';
-      switch (item.cust_type) {
-        case 'Y':
-          custType = '高净值';
-          break;
-        case 'N':
-          custType = '非高净值';
-          break;
-        default:
-          break;
-      }
-      item.cust_type = custType; // eslint-disable-line
+      custTableData: list,
     });
   }
 
@@ -159,7 +151,7 @@ export default class TaskSearchRow extends PureComponent {
       curPageNum: nextPage,
     });
   }
-// Y为高净值、N为非高净值
+  // Y为高净值、N为非高净值
   @autobind
   renderRadioSection() {
     const { condition, circlePeopleData } = this.props;
@@ -205,11 +197,11 @@ export default class TaskSearchRow extends PureComponent {
       visible,
       totalCustNums,
       title,
+      custTableData,
     } = this.state;
 
     const {
-      peopleOfLabelData,
-      currentSelectLabel,
+    currentSelectLabel,
       isLoadingEnd,
     } = this.props;
 
@@ -249,7 +241,7 @@ export default class TaskSearchRow extends PureComponent {
               scrollY={400}
               onSizeChange={this.handleShowSizeChange}
               onPageChange={this.handlePageChange}
-              listData={peopleOfLabelData.userObjectFormList}
+              listData={custTableData}
               titleColumn={renderColumnTitle}
               isFirstColumnLink={false}
             />
