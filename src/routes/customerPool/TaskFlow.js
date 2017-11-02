@@ -168,14 +168,17 @@ export default class TaskFlow extends PureComponent {
     if (current === 0) {
       this.formRef.props.form.validateFields((err, values) => {
         let isFormError = false;
+        console.log('err-->', err);
         if (!_.isEmpty(err)) {
           isFormError = true;
+          isFormValidate = false;
         }
         const formDataValidation = this.checkFormField({ ...values, isFormError });
         if (formDataValidation) {
           taskFormData = this.formRef.props.form.getFieldsValue();
           isFormValidate = true;
         }
+        this.props.clearTaskFlowData();
       });
     } else if (current === 1) {
       pickTargetCustomerData = this.pickTargetCustomerRef.getData();

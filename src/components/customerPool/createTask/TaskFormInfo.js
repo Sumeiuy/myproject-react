@@ -80,19 +80,16 @@ export default class TaskFormInfo extends PureComponent {
 
 
   handleSearchChange = (value, trigger) => {
-    console.log('value-->', value, 'trigger--->', trigger);
     const { users } = this.props;
-    console.log('users-->', users)
     const dataSource = trigger === '{' ? users : [];
-    console.log('dataSource-->', dataSource);
     this.setState({
       suggestions: dataSource.filter(item => item.indexOf(value) !== -1),
     });
   }
 
   @autobind
-  handileSelect(suggestion, data) {    
-    console.log('onSelect',typeof suggestion, 'data', data);
+  handileSelect(suggestion, data) {
+    console.log('onSelect', typeof suggestion, 'data', data);
   }
 
 
@@ -208,10 +205,10 @@ export default class TaskFormInfo extends PureComponent {
             >
               {getFieldDecorator('taskName',
                 {
-                  rules: [{ required: true, message: '任务名称不能为空!' }],
+                  rules: [{ required: true, message: '任务名称不能为空' }],
                   initialValue: defaultMissionName,
                 })(
-                <Input placeholder="请输入任务名称" />,
+                  <Input placeholder="请输入任务名称" />,
               )}
             </FormItem>
           </li>
@@ -227,11 +224,11 @@ export default class TaskFormInfo extends PureComponent {
                     {
                       initialValue: defaultMissionType,
                     })(
-                    <Select
-                      onChange={this.handleTaskTypeChange}
-                    >
-                      {this.handleCreatOptions(taskTypes)}
-                    </Select>,
+                      <Select
+                        onChange={this.handleTaskTypeChange}
+                      >
+                        {this.handleCreatOptions(taskTypes)}
+                      </Select>,
                   )}
                 </FormItem>
                 :
@@ -256,11 +253,11 @@ export default class TaskFormInfo extends PureComponent {
                     {
                       initialValue: defaultExecutionType,
                     })(
-                    <Select
-                      onChange={this.handleExcuteTypeChange}
-                    >
-                      {this.handleCreatOptions(executeTypes)}
-                    </Select>,
+                      <Select
+                        onChange={this.handleExcuteTypeChange}
+                      >
+                        {this.handleCreatOptions(executeTypes)}
+                      </Select>,
                   )}
                 </FormItem>
                 :
@@ -280,7 +277,7 @@ export default class TaskFormInfo extends PureComponent {
             >
               {getFieldDecorator('timelyIntervalValue',
                 {
-                  rules: [{ required: true, message: '有效期不能为空!', pattern: /^\+?[1-9][0-9]*$/ }],
+                  rules: [{ required: true, message: '有效期只能为正整数', pattern: /^\+?[1-9][0-9]*$/ }],
                   initialValue: defaultInitialValue,
                 })(<InputNumber step={1} min={0} max={365} style={{ width: '100%' }} />)}
             </FormItem>
@@ -293,16 +290,16 @@ export default class TaskFormInfo extends PureComponent {
           <FormItem>
             {getFieldDecorator('serviceStrategySuggestion',
               {
-                rules: [{ required: true, min: 10, message: '服务策略不能小于10个字符!' }],
+                rules: [{ required: true, min: 10, message: '服务策略不能小于10个字符' }],
                 initialValue: defaultServiceStrategySuggestion,
               })(
-              <TextArea
-                id="desc"
-                rows={5}
-                placeholder="请在此介绍该新建任务的服务策略，以指导客户经理或投顾实施任务。（字数限制：10-1000字）"
-                style={{ width: '100%' }}
-                maxLength={1000}
-              />,
+                <TextArea
+                  id="desc"
+                  rows={5}
+                  placeholder="请在此介绍该新建任务的服务策略，以指导客户经理或投顾实施任务。（字数限制：10-1000字）"
+                  style={{ width: '100%' }}
+                  maxLength={1000}
+                />,
             )}
           </FormItem>
         </div>

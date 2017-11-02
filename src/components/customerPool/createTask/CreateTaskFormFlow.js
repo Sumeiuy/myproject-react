@@ -90,6 +90,7 @@ export default class CreateTaskFormFlow extends PureComponent {
     const { groupId } = query;
     this.createTaskForm.validateFields((err, values) => {
       let isFormError = false;
+      console.log(err);
       if (!_.isEmpty(err)) {
         isFormError = true;
       }

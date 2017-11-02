@@ -56,15 +56,18 @@ export default class CreateTaskForm extends PureComponent {
   componentWillMount() {
     const {
       location: { query },
+      dict: { custIdexPlaceHolders },
       previousData,
     } = this.props;
-    // const arr = [];
-    // _.map(custIdexPlaceHolders, (item) => {
-    //   arr.push(item.substring(1, item.length));
-    // });
-    // this.setState({
-    //   statusData: arr,
-    // });
+    const arr = [];
+    _.map(custIdexPlaceHolders, (item) => {
+      arr.push(item.substring(1, item.length - 1));
+    });
+    this.setState({
+      statusData: arr,
+    }, () => {
+      console.log(this.state.statusData);
+    });
 
     if (_.isEmpty(previousData)) {
       this.handleInit(query);
@@ -185,7 +188,7 @@ export default class CreateTaskForm extends PureComponent {
       isShowErrorTaskType,
       isShowErrorExcuteType,
     } = this.props;
-    const { custServerTypeFeedBackDict, executeTypes, custIdexPlaceHolders } = dict;
+    const { custServerTypeFeedBackDict, executeTypes } = dict;
     const {
       defaultMissionName,
       defaultMissionType,
@@ -195,6 +198,7 @@ export default class CreateTaskForm extends PureComponent {
       defaultServiceStrategySuggestion,
       firstUserName,
       count,
+      statusData,
     } = this.state;
 
     return (
@@ -212,7 +216,7 @@ export default class CreateTaskForm extends PureComponent {
             defaultMissionDesc={defaultMissionDesc}
             defaultInitialValue={defaultInitialValue}
             defaultServiceStrategySuggestion={defaultServiceStrategySuggestion}
-            users={custIdexPlaceHolders}
+            users={statusData}
             taskTypes={custServerTypeFeedBackDict}
             executeTypes={executeTypes}
             form={form}

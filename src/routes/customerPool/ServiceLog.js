@@ -129,6 +129,7 @@ export default class CreateTaskForm extends PureComponent {
         ...query,
         serveDateFrom: start,
         serveDateTo: end,
+        serveDateToPaged: null,
       },
     });
   }

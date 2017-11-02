@@ -18,6 +18,10 @@ import tableStyles from '../groupManage/groupTable.less';
 const RadioGroup = Radio.Group;
 
 const renderColumnTitle = [{
+  key: 'brok_id',
+  value: '经纪客户号',
+},
+{
   key: 'name',
   value: '客户名称',
 },
@@ -74,7 +78,7 @@ export default class TaskSearchRow extends PureComponent {
     const { userObjectFormList } = peopleOfLabelData;
     const list = _.map(userObjectFormList, item => ({
       ...item,
-      cust_type: item.cust_type === 'Y' ? '高净值' : '非高净值',
+      cust_type: item.cust_type === 'Y' ? '高净值' : '零售',
     }));
     this.setState({
       totalRecordNum: peopleOfLabelData.totalCount,
