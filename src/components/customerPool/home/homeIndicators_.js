@@ -235,9 +235,9 @@ export function getCustAndProperty(dataArray) {
   const custArray = [];
   const properyArray = [];
   for (let i = 0; i < dataArray.length; i += 2) {
-    const { value = '', name = '' } = dataArray[i];
+    const { value = '', name = '', key } = dataArray[i];
     const { value: propertyValue } = dataArray[(i + 1)];
-    custArray.push({ value: filterEmptyToInteger(value), name });
+    custArray.push({ value: filterEmptyToInteger(value), name, key });
     properyArray.push(filterEmptyToNumber(propertyValue || ''));
   }
   // formatter 资产数据，获得 unit
