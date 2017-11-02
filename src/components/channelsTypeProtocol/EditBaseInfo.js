@@ -3,9 +3,8 @@
  * @Author: XuWenKang
  * @Date:   2017-09-21 15:27:31
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-19 21:11:48
+ * @Last Modified time: 2017-11-02 13:51:57
 */
-
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
@@ -224,6 +223,7 @@ export default class EditBaseInfo extends PureComponent {
 
   }
 
+
   // 切换子类型清空所选模板和所选客户
   @autobind
   clearValue() {
@@ -328,5 +328,4 @@ export default class EditBaseInfo extends PureComponent {
       </div>
     );
   }
-
 }

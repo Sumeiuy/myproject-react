@@ -354,7 +354,7 @@ const pageConfig = {
   // 通道类型协议
   channelsTypeProtocol: {
     pageName: '通道类型协议',
-    pageType: '04',
+    pageType: '05',
     subType: [
       {
         show: true,
@@ -570,6 +570,7 @@ const pageConfig = {
         value: '5',
       },
     ],
+    // 协议产品表格表头数组
     protocolProductTitleList: [
       {
         dataIndex: 'prodCode',
@@ -625,6 +626,7 @@ const pageConfig = {
         title: '价格',
       },
     ],
+    // 协议条款表格表头数组
     protocolClauseTitleList: [
       {
         dataIndex: 'termsName',
@@ -652,6 +654,7 @@ const pageConfig = {
         title: '未来承诺',
       },
     ],
+    // 下挂客户
     underCustTitleList: [
       {
         dataIndex: 'subCustType',
@@ -659,19 +662,85 @@ const pageConfig = {
         title: '客户类型',
       },
       {
-        dataIndex: 'perEconNum',
-        key: 'perEconNum',
+        dataIndex: 'econNum',
+        key: 'econNum',
         title: '经纪客户号',
       },
       {
-        dataIndex: 'perCustName',
-        key: 'perCustName',
+        dataIndex: 'custName',
+        key: 'custName',
         title: '客户名称',
       },
       {
-        dataIndex: 'custStatus',
-        key: 'custStatus',
+        dataIndex: 'status',
+        key: 'status',
         title: '状态',
+      },
+    ],
+    // 附件类型
+    attachmentType: [
+      {
+        attachmentType: 'sqb',
+        uuid: '',
+        attachmentComments: '',
+        title: '申请表',
+        show: true,
+        required: true,
+        length: 0,
+      },
+      {
+        attachmentType: 'jzdcb',
+        uuid: '',
+        attachmentComments: '',
+        title: '尽职调查表',
+        show: true,
+        required: true,
+        length: 0,
+      },
+      {
+        attachmentType: 'fwxy',
+        uuid: '',
+        attachmentComments: '',
+        title: '服务协议',
+        show: true,
+        required: true,
+        length: 0,
+      },
+      {
+        attachmentType: 'cns',
+        uuid: '',
+        attachmentComments: '',
+        title: '承诺书',
+        show: true,
+        required: true,
+        length: 0,
+      },
+      {
+        attachmentType: 'sqwts',
+        uuid: '',
+        attachmentComments: '',
+        title: '授权委托书',
+        show: true,
+        required: true,
+        length: 0,
+      },
+      {
+        attachmentType: 'yxzl',
+        uuid: '',
+        attachmentComments: '',
+        title: '影像资料',
+        show: true,
+        required: true,
+        length: 0,
+      },
+      {
+        attachmentType: 'qt',
+        uuid: '',
+        attachmentComments: '',
+        title: '其他',
+        show: true,
+        required: true,
+        length: 0,
       },
     ],
   },

@@ -3,6 +3,7 @@
  *  全局模型管理
  * @author maoquan(maoquan@htsc.com)
  */
+
 import { report as api, seibel as seibelApi, customerPool as custApi } from '../api';
 import { EVENT_PROFILE_ACTION } from '../config/log';
 import { permission } from '../utils';

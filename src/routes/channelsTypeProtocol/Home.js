@@ -10,6 +10,7 @@ import { autobind } from 'core-decorators';
 import { withRouter, routerRedux } from 'dva-react-router-3/router';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import { Modal } from 'antd';
 import { constructSeibelPostBody } from '../../utils/helper';
 import SplitPanel from '../../components/common/splitPanel/SplitPanel';
 import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
@@ -23,6 +24,8 @@ import { seibelConfig } from '../../config';
 import Barable from '../../decorators/selfBar';
 
 import styles from './home.less';
+
+const confirm = Modal.confirm;
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
@@ -286,13 +289,41 @@ export default class ChannelsTypeProtocol extends PureComponent {
     });
   }
 
+  // 点击提交按钮弹提示框
+  @autobind
+  showconFirm() {
+    confirm({
+      title: '提示',
+      content: '经对客户与服务产品三匹配结果，请确认客户是否已签署服务计划书及适当确认书！',
+      onOk: () => {
+        // 从editFormComponent组件中取出值
+        const formData = this.EditFormComponent.getData();
+        const {
+          location: {
+            query,
+          },
+          saveProtocolData,
+        } = this.props;
+        const params = {
+          ...constructSeibelPostBody(query, 1, 10),
+          type: pageType,
+        };
+        saveProtocolData({
+          formData,
+          params,
+        });
+      },
+      onCancel: () => {
+        console.log('Cancel');
+      },
+    });
+  }
+
   // 弹窗底部按钮事件
   @autobind
-  footerBtnHandle(btnItem) {
-    // 从editFormComponent组件中取出值
-    const formData = this.EditFormComponent.getData();
-    console.log('btnItem', btnItem);
-    console.log('formData', formData);
+  footerBtnHandle() {
+    // 弹出提示窗
+    this.showconFirm();
   }
 
   // 最终发出接口请求
@@ -387,7 +418,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
       // 所选模板对应协议条款列表
       protocolClauseList,
       // 协议详情 - 编辑时传入
-      protocolDetail,
+      protocolDetail: EMPTY_OBJECT,
       // 查询协议产品列表
       queryChannelProtocolProduct,
       // 协议产品列表

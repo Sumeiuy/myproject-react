@@ -3,52 +3,44 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-19 09:37:42
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-20 17:24:02
+ * @Last Modified time: 2017-11-02 14:02:38
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import PropTypes from 'prop-types';
-// import classnames from 'classnames';
-// import _ from 'lodash';
+import _ from 'lodash';
 
 import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
 import ApproveList from '../common/approveList';
 import styles from './detail.less';
-import CommonUpload from '../common/biz/CommonUpload';
+import MultiUploader from '../common/biz/MultiUploader';
 import CommonTable from '../common/biz/CommonTable';
 import { seibelConfig } from '../../config';
 import { dateFormat } from '../../utils/helper';
 
-// 子类型列表
-// const childTypeList = _.filter(seibelConfig.contract.subType, v => v.label !== '全部');
-// const operationList = _.filter(seibelConfig.contract.operationList, v => v.label !== '全部');
-// 协议产品的表头、状态
 const {
-    channelsTypeProtocol: {
-      protocolProductTitleList, protocolClauseTitleList,
-    },
-  } = seibelConfig;
-// const operationLabel = (value) => {
-//   if (operationList && value) {
-//     const nowStatus = _.find(operationList, o => o.value === value) || {};
-//     return nowStatus.label || '无';
-//   }
-//   return '无';
-// };
+  underCustTitleList,  // 下挂客户表头集合
+  protocolClauseTitleList,  // 协议条款表头集合
+  protocolProductTitleList,  // 协议产品表头集合
+  // attachmentType,  // 附件集合
+} = seibelConfig.channelsTypeProtocol;
+
 const EMPTY_PARAM = '暂无';
 // const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
+// bool MAP数据
+const mapBoolData = {
+  Y: '是',
+  N: '否',
+};
 // 合约条款的表头、状态对应值
 const { contract: { status } } = seibelConfig;
 export default class Detail extends PureComponent {
   static propTypes = {
     protocolDetail: PropTypes.object.isRequired,
+    flowHistory: PropTypes.array.isRequired,
     attachmentList: PropTypes.array,
-    uploadAttachment: PropTypes.func,
-    showEditModal: PropTypes.func,
-    flowHistory: PropTypes.array,
-    hasEditPermission: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -56,15 +48,22 @@ export default class Detail extends PureComponent {
     flowHistory: EMPTY_ARRAY,
     uploadAttachment: () => {},
     showEditModal: () => {},
-    hasEditPermission: false,
   }
 
   constructor(props) {
     super(props);
     this.state = {
-      // radio: 0,
-      // statusType: 'ready',
-      // terms: props.baseInfo.terms,
+      customerList: [
+        {
+          key: 0,
+          subCustType: '白金',
+          custLevelCode: '805015',
+          perEconNum: '666626443512',
+          perCustName: '刘**',
+          customerId: '1-3YOO83T',
+          custStatus: '无',
+        },
+      ],
     };
   }
 
@@ -77,18 +76,27 @@ export default class Detail extends PureComponent {
     return EMPTY_PARAM;
   }
 
+  // 表格删除事件
+  @autobind
+  deleteTableData(record, index) {
+    const { customerList } = this.state;
+    const testArr = _.cloneDeep(customerList);
+    const newCustomerList = _.remove(testArr, (n, i) => i !== index);
+    console.warn('newCustomerList', newCustomerList);
+    this.setState({
+      customerList: newCustomerList,
+    });
+  }
+
   render() {
     const {
-      attachmentList,
-      uploadAttachment,
       protocolDetail,
       flowHistory,
-    } = this.props;
-    const uploadProps = {
       attachmentList,
-      uploadAttachment,
-      attachment: protocolDetail.attachment || '',
-    };
+    } = this.props;
+    const {
+      customerList,
+    } = this.state;
     const nowStep = {
       // 当前步骤
       stepName: protocolDetail.workflowNode || EMPTY_PARAM,
@@ -104,10 +112,19 @@ export default class Detail extends PureComponent {
     } else {
       statusLabel = '';
     }
+
+    // 下挂客户表格中需要的操作
+    const customerOperation = {
+      column: {
+        key: 'delete', // 'check'\'delete'\'view'
+        title: '操作',
+      },
+      operate: this.deleteTableData,
+    };
     return (
       <div className={styles.detailComponent}>
         <div className={styles.dcHeader}>
-          <span className={styles.dcHaderNumb}>编号{protocolDetail.agreementNum}</span>
+          <span className={styles.dcHaderNumb}>编号{protocolDetail.applyId}</span>
         </div>
         <div className={styles.detailWrapper}>
           <InfoTitle head="基本信息" />
@@ -115,8 +132,8 @@ export default class Detail extends PureComponent {
           <InfoItem label="子类型" value={protocolDetail.subType || EMPTY_PARAM} />
           <InfoItem label="客户" value={`${(protocolDetail.contactName || protocolDetail.accountName) || EMPTY_PARAM} ${protocolDetail.econNum || EMPTY_PARAM}`} />
           <InfoItem label="协议模板" value={protocolDetail.templateName} />
-          <InfoItem label="是否多账户使用" value={protocolDetail.multiUsedFlag} />
-          <InfoItem label="是否订购十档行情" value={protocolDetail.levelTenFlag} />
+          <InfoItem label="是否多账户使用" value={mapBoolData[protocolDetail.multiUsedFlag]} />
+          <InfoItem label="是否订购十档行情" value={mapBoolData[protocolDetail.levelTenFlag]} />
           <InfoItem label="协议开始日期" value={dateFormat(protocolDetail.startDt) || EMPTY_PARAM} />
           <InfoItem label="合约有效期" value={dateFormat(protocolDetail.vailDt) || EMPTY_PARAM} />
           <InfoItem label="备注" value={protocolDetail.content || EMPTY_PARAM} />
@@ -143,8 +160,22 @@ export default class Detail extends PureComponent {
           />
         </div>
         <div className={styles.detailWrapper}>
+          <InfoTitle head="下挂客户" />
+          <CommonTable
+            data={customerList || []}
+            titleList={underCustTitleList}
+            operation={customerOperation}
+          />
+        </div>
+        <div className={styles.detailWrapper}>
           <InfoTitle head="附件信息" />
-          <CommonUpload {...uploadProps} />
+          {
+            attachmentList.map(item => (<MultiUploader
+              attachmentList={item.attachmentList}
+              attachment={''}
+              title={item.title}
+            />))
+          }
         </div>
         <div className={styles.detailWrapper}>
           <InfoTitle head="审批记录" />

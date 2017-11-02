@@ -79,6 +79,8 @@ export default class EditForm extends PureComponent {
       attachmentTypeList: attachmentType,
       // 下挂客户表格数据
       customerTableList: [],
+      // 所选协议产品列表
+      protocolProductList: EMPTY_ARRAY,
     };
   }
 
@@ -86,31 +88,34 @@ export default class EditForm extends PureComponent {
   @autobind
   getData() {
     const baseInfoData = this.editBaseInfoComponent.getData();
-    return Object.assign(EMPTY_OBJECT, baseInfoData, this.state);
-  }
-
-  // 打开弹窗
-  @autobind
-  showModal(modalKey) {
-    this.setState({
-      [modalKey]: true,
-    });
-  }
-
-  // 关闭弹窗
-  @autobind
-  closeModal(modalKey) {
-    this.setState({
-      [modalKey]: false,
-      defaultData: {},
-      editClause: false,
-    });
+    const { protocolClauseList } = this.props;
+    const tmpData = Object.assign(EMPTY_OBJECT, baseInfoData, this.state);
+    console.log('tmpData', tmpData);
+    const formData = {
+      subType: baseInfoData.subType,
+      custId: baseInfoData.client.cusId,
+      custType: baseInfoData.client.custType,
+      startDt: '',
+      vailDt: '',
+      content: baseInfoData.content,
+      operationType: baseInfoData.operationType,
+      templateId: baseInfoData.protocolTemplate.rowId,
+      multiUsedFlag: baseInfoData.multiUsedFlag ? 'Y' : 'N',
+      levelTenFlag: baseInfoData.levelTenFlag ? 'Y' : 'N',
+      item: this.state.protocolProductList,
+      term: protocolClauseList,
+    };
+    return formData;
   }
 
   // 添加协议产品
   @autobind
   handleTransferChange(flag, newSelect, changeSecondArray) {
-    console.log('protocolList', flag, newSelect, changeSecondArray);
+    console.log('changeSecondArray', flag, newSelect, changeSecondArray);
+    this.setState({
+      ...this.state,
+      protocolProductList: changeSecondArray,
+    });
   }
 
   // 下挂客户添加事件
@@ -333,14 +338,6 @@ export default class EditForm extends PureComponent {
       customerTableList,
       attachmentTypeList,
     } = this.state;
-    // 新建协议产品按钮
-    const buttonProps = {
-      type: 'primary',
-      size: 'large',
-      className: styles.addClauseButton,
-      ghost: true,
-      onClick: () => this.showModal('addProtocolProductModal'),
-    };
     // 拟稿人信息 TODO 暂时写死在前端
     const draftInfo = {
       name: '南京营业部 张全蛋',
@@ -430,12 +427,11 @@ export default class EditForm extends PureComponent {
           <InfoTitle
             head="协议产品"
           />
-          <Button {...buttonProps}>新建</Button>
           <Transfer
             {...transferProps}
           />
         </div>
-        <div className={`${styles.editWrapper} ${styles.transferWrapper}`}>
+        <div className={styles.editWrapper}>
           <InfoTitle
             head="协议条款"
           />
@@ -487,7 +483,7 @@ export default class EditForm extends PureComponent {
             })
           }
         </div>
-        <button onClick={this.sendPayload}>提交</button>
+        <Button onClick={this.sendPayload}>提交</Button>
       </div>
     );
   }

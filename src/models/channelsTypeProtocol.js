@@ -238,10 +238,15 @@ export default {
     },
     // 保存详情
     * saveProtocolData({ payload }, { call, put }) {
-      const response = yield call(api.saveProtocolData, payload);
+      const response = yield call(api.saveProtocolData, payload.formData);
       yield put({
         type: 'saveProtocolDataSuccess',
         payload: response,
+      });
+      // 保存成功之后重新请求左侧列表
+      yield put({
+        type: 'app/getSeibleList',
+        payload: payload.params,
       });
     },
     // 查询客户
