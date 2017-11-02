@@ -117,7 +117,6 @@ export default {
       dispatch({ type: 'getCustRangeByAuthority' });
       history.listen(({ pathname, search }) => {
         const params = queryString.parse(search);
-        console.log('params--->', params);
         const serviceLogUrl = matchRoute('serviceLog', pathname);
         if (serviceLogUrl) {
           const { pageSize, serveDateToPaged } = params;
@@ -127,7 +126,6 @@ export default {
             type: 'getServiceLog',
             payload: params,
           });
-
           return;
         }
 
