@@ -82,7 +82,7 @@ export default class TaskFormInfo extends PureComponent {
   handleSearchChange = (value, trigger) => {
     console.log('value-->', value, 'trigger--->', trigger);
     const { users } = this.props;
-    const dataSource = trigger === '$' ? users : [];
+    const dataSource = trigger === '{' ? users : [];
     console.log('dataSource-->', dataSource);
     this.setState({
       suggestions: dataSource.filter(item => item.indexOf(value) !== -1),
