@@ -126,7 +126,6 @@ export default {
             type: 'getServiceLog',
             payload: params,
           });
-
           return;
         }
 

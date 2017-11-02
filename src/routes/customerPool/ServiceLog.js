@@ -165,7 +165,6 @@ export default class CreateTaskForm extends PureComponent {
     const lastTime = logData[logData.length - 1].serveTime;
     const params = query;
     params.serveDateToPaged = moment(lastTime).format('YYYY-MM-DD HH:mm:ss');
-    params.custId = '02006619';
     getServiceLogMore(params);
   }
 
@@ -200,7 +199,7 @@ export default class CreateTaskForm extends PureComponent {
     console.log(value);
     let type = '';
     const { location: { query, pathname }, replace } = this.props;
-    if (value === '不限') {
+    if (value === '所有类型') {
       type = '';
     } else {
       type = value;
