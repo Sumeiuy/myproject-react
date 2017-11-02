@@ -14,5 +14,8 @@ export default function channels(api) {
     queryTypeVaules: query => api.post('/groovynoauth/fsp/protocol/queryTypeVaules', query),
     // 根据所选模板id查询协议条款
     queryChannelProtocolItem: query => api.post('/groovynoauth/fsp/channel/queryChannelProtocolItem', query),
+    // 查询协议产品列表
+    queryChannelProtocolProduct: query => api.post('/groovynoauth/fsp/channel/queryChannelProtocolProduct', query),
+
   };
 }

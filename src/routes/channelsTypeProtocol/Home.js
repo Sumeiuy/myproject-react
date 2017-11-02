@@ -79,6 +79,8 @@ const mapStateToProps = state => ({
   templateList: state.channelsTypeProtocol.templateList,
   // 模板对应协议条款列表
   protocolClauseList: state.channelsTypeProtocol.protocolClauseList,
+  // 协议产品列表
+  protocolProductList: state.channelsTypeProtocol.protocolProductList,
 });
 
 const mapDispatchToProps = {
@@ -95,6 +97,8 @@ const mapDispatchToProps = {
   queryTypeVaules: fetchDataFunction(false, 'channelsTypeProtocol/queryTypeVaules'),
   // 根据所选模板id查询模板对应协议条款
   queryChannelProtocolItem: fetchDataFunction(false, 'channelsTypeProtocol/queryChannelProtocolItem'),
+  // 查询协议产品列表
+  queryChannelProtocolProduct: fetchDataFunction(false, 'channelsTypeProtocol/queryChannelProtocolProduct'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -130,6 +134,9 @@ export default class ChannelsTypeProtocol extends PureComponent {
     // 根据所选模板id查询模板对应协议条款
     queryChannelProtocolItem: PropTypes.func.isRequired,
     protocolClauseList: PropTypes.array.isRequired,
+    // 查询协议产品列表
+    queryChannelProtocolProduct: PropTypes.func.isRequired,
+    protocolProductList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -144,7 +151,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
     this.state = {
       isEmpty: true,
       // 新建/编辑弹窗状态
-      editFormModal: false,
+      editFormModal: true,
       // 是否有修改的权限
       hasEditPermission: false,
       // 最终传递的数据
@@ -305,6 +312,8 @@ export default class ChannelsTypeProtocol extends PureComponent {
       protocolDetail, // 协议详情
       queryChannelProtocolItem, // 根据所选模板id查询模板对应协议条款
       protocolClauseList, // 所选模板对应协议条款列表
+      queryChannelProtocolProduct, // 查询协议产品列表
+      protocolProductList, // 协议产品列表
     } = this.props;
     const {
       editFormModal,
@@ -374,6 +383,10 @@ export default class ChannelsTypeProtocol extends PureComponent {
       protocolClauseList,
       // 协议详情 - 编辑时传入
       protocolDetail,
+      // 查询协议产品列表
+      queryChannelProtocolProduct,
+      // 协议产品列表
+      protocolProductList,
     };
     return (
       <div className={styles.premissionbox} >

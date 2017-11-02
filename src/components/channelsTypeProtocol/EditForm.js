@@ -25,11 +25,6 @@ import { seibelConfig } from '../../config';
 // import { dateFormat } from '../../utils/helper';
 import styles from './editForm.less';
 
-// test
-import {
-    subscribelData,
-} from '../../routes/templeModal/MockTableData';
-
 const EMPTY_OBJECT = {};
 // const EMPTY_ARRAY = [];
 // const EMPTY_PARAM = '暂无';
@@ -58,6 +53,10 @@ export default class EditForm extends PureComponent {
     queryChannelProtocolItem: PropTypes.func.isRequired,
     // 所选模板对应协议条款列表
     protocolClauseList: PropTypes.array.isRequired,
+    // 查询协议产品列表
+    queryChannelProtocolProduct: PropTypes.func.isRequired,
+    // 协议产品列表
+    protocolProductList: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -125,6 +124,10 @@ export default class EditForm extends PureComponent {
       queryChannelProtocolItem,
       // 所选模板对应协议条款列表
       protocolClauseList,
+      // 协议产品列表
+      protocolProductList,
+      // 查询协议产品列表
+      queryChannelProtocolProduct,
     } = this.props;
     const {
       isEdit,
@@ -137,7 +140,7 @@ export default class EditForm extends PureComponent {
       ghost: true,
       onClick: () => this.showModal('addProtocolProductModal'),
     };
-    // 拟稿人信息
+    // 拟稿人信息 TODO 暂时写死在前端
     const draftInfo = {
       name: '南京营业部 张全蛋',
       date: '2017/08/31',
@@ -152,7 +155,7 @@ export default class EditForm extends PureComponent {
     const transferProps = {
       firstTitle: '待选协议产品',
       secondTitle: '已选协议产品',
-      firstData: subscribelData,
+      firstData: protocolProductList,
       firstColumns: protocolProductTitleList,
       secondColumns: protocolProductTitleList,
       transferChange: this.handleTransferChange,
@@ -174,6 +177,7 @@ export default class EditForm extends PureComponent {
           queryTypeVaules={queryTypeVaules}
           operationList={operationList}
           subTypeList={subTypeList}
+          queryChannelProtocolProduct={queryChannelProtocolProduct}
         />
         {
           isEdit ?

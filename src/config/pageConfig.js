@@ -355,6 +355,9 @@ const pageConfig = {
   channelsTypeProtocol: {
     pageName: '通道类型协议',
     pageType: '04',
+    // 十档行情rowID和紫金快车道子类型ID 根据后端要去写死在前端用做判断
+    tenLevelTemplateId: '1-43OZSYG',
+    zjkcdId: '507070',
     subType: [
       {
         show: true,
@@ -592,18 +595,18 @@ const pageConfig = {
         title: '子类型',
       },
       {
-        dataIndex: 'riskMatchFlag',
-        key: 'riskMatchFlag',
+        dataIndex: 'riskMatch',
+        key: 'riskMatch',
         title: '风险是否匹配',
       },
       {
-        dataIndex: 'termMatchFlag',
-        key: 'termMatchFlag',
+        dataIndex: 'termMatch',
+        key: 'termMatch',
         title: '期限是否匹配',
       },
       {
-        dataIndex: 'varietyMatchFlag',
-        key: 'varietyMatchFlag',
+        dataIndex: 'varietyMatch',
+        key: 'varietyMatch',
         title: '投资品种是否匹配',
       },
       {
