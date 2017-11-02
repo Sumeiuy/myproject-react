@@ -238,7 +238,8 @@ export default class CreateCollapse extends PureComponent {
     }
 
     // 左边服务时间字段
-    const serveTimeCollection = _.filter(data, item => !_.isEmpty(item.serveTime)) || EMPTY_LIST;
+    const serveTimeCollection = _.isEmpty(data) ?
+      EMPTY_LIST : _.filter(data, item => !_.isEmpty(item.serveTime));
 
     const serveTime = this.separateDate(serveTimeCollection);
 

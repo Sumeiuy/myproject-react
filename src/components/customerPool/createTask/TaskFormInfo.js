@@ -25,7 +25,7 @@ export default class TaskFormInfo extends PureComponent {
     defaultExecutionType: PropTypes.string.isRequired,
     defaultMissionDesc: PropTypes.string.isRequired,
     defaultServiceStrategySuggestion: PropTypes.string,
-    defaultInitialValue: PropTypes.string,
+    defaultInitialValue: PropTypes.number,
     users: PropTypes.array.isRequired,
     taskTypes: PropTypes.array,
     executeTypes: PropTypes.array,
@@ -80,14 +80,18 @@ export default class TaskFormInfo extends PureComponent {
 
 
   handleSearchChange = (value, trigger) => {
-    console.log('value-->', value, 'trigger--->', trigger);
     const { users } = this.props;
     const dataSource = trigger === '{' ? users : [];
-    console.log('dataSource-->', dataSource);
     this.setState({
       suggestions: dataSource.filter(item => item.indexOf(value) !== -1),
     });
   }
+
+  @autobind
+  handileSelect(suggestion, data) {
+    console.log('onSelect', typeof suggestion, 'data', data);
+  }
+
 
   @autobind
   handleTaskTypeChange(value) {
@@ -136,9 +140,10 @@ export default class TaskFormInfo extends PureComponent {
         <Mention
           style={{ width: '100%', height: 100 }}
           placeholder="请在描述客户经理联系客户前需要了解的客户相关信息，比如持仓情况。（字数限制：10-1000字）"
-          prefix={'$'}
+          prefix={'{'}
           onSearchChange={this.handleSearchChange}
           suggestions={suggestions}
+          onSelect={this.handileSelect}
           multiLines
         />,
       )
@@ -200,7 +205,7 @@ export default class TaskFormInfo extends PureComponent {
             >
               {getFieldDecorator('taskName',
                 {
-                  rules: [{ required: true, message: '任务名称不能为空!' }],
+                  rules: [{ required: true, message: '任务名称不能为空' }],
                   initialValue: defaultMissionName,
                 })(
                   <Input placeholder="请输入任务名称" />,
@@ -272,7 +277,7 @@ export default class TaskFormInfo extends PureComponent {
             >
               {getFieldDecorator('timelyIntervalValue',
                 {
-                  rules: [{ required: true, message: '有效期不能为空!', pattern: /^\+?[1-9][0-9]*$/ }],
+                  rules: [{ required: true, message: '有效期只能为正整数', pattern: /^\+?[1-9][0-9]*$/ }],
                   initialValue: defaultInitialValue,
                 })(<InputNumber step={1} min={0} max={365} style={{ width: '100%' }} />)}
             </FormItem>
@@ -285,7 +290,7 @@ export default class TaskFormInfo extends PureComponent {
           <FormItem>
             {getFieldDecorator('serviceStrategySuggestion',
               {
-                rules: [{ required: true, min: 10, message: '服务策略不能小于10个字符!' }],
+                rules: [{ required: true, min: 10, message: '服务策略不能小于10个字符' }],
                 initialValue: defaultServiceStrategySuggestion,
               })(
                 <TextArea
