@@ -119,6 +119,8 @@ export default class CreateNewApprovalBoard extends PureComponent {
     queryApprovalUser: PropTypes.func.isRequired,
     // 清空redux的state
     clearReduxState: PropTypes.func.isRequired,
+    // 单佣金调整客户校验
+    onValidateSingleCust: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -588,10 +590,10 @@ export default class CreateNewApprovalBoard extends PureComponent {
         btnId = approvalBtnId.batch;
         break;
       case commadj.subscribe:
-        btnId = approvalBtnId.subscribe;
+        btnId = approvalBtnId.sub;
         break;
       case commadj.unsubscribe:
-        btnId = approvalBtnId.unsubscribe;
+        btnId = approvalBtnId.unsub;
         break;
       default:
         break;
@@ -815,13 +817,12 @@ export default class CreateNewApprovalBoard extends PureComponent {
   // 单佣金、咨询订阅、退订基本信息选择客户
   @autobind
   handleSelectAssembly(customer) {
-    const { id } = customer;
+    const { id, custType } = customer;
     this.setState({
       customer,
     });
     const typeNow = this.judgeSubtypeNow;
     if (typeNow(commadj.subscribe)) {
-      const { custType } = customer;
       this.querySubscribelProList({
         custId: id,
         custType,
@@ -832,6 +833,13 @@ export default class CreateNewApprovalBoard extends PureComponent {
       });
     } else if (typeNow(commadj.single)) {
       // 根据选择的用户，查询该用户所能选的其他佣金费率
+      // TODO 此处需要针对客户进行资格校验
+      // this.props.onValidateSingleCust({
+      //   custRowId: id,
+      //   custType,
+      // }).then((resolved) => {
+      //   console.warn('onValidateSingleCust>', resolved);
+      // });
       this.props.getSingleOtherRates({
         custRowId: id,
       });
@@ -1090,7 +1098,6 @@ export default class CreateNewApprovalBoard extends PureComponent {
       approverName,
       approverId,
       otherComReset,
-      attachment,
     } = this.state;
     const needBtn = !this.judgeSubtypeNow('');
 
@@ -1102,7 +1109,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       // 上传成功callback
       uploadAttachment: this.uploadCallBack,
       // 附件Id
-      attachment,
+      attachment: '',
       needDefaultText: false,
     };
 
