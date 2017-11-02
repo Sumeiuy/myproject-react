@@ -177,7 +177,7 @@ export default class SplitPanel extends PureComponent {
     const resize = Resize({
       strategy: 'scroll',
     });
-    resize.listenTo(this.topPanel, () => fnResize());
+    resize.listenTo(this.topPanel, fnResize);
     this.topResize = resize;
     this.topResizeFn = fnResize;
   }

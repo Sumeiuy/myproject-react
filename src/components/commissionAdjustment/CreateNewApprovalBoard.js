@@ -136,8 +136,10 @@ export default class CreateNewApprovalBoard extends PureComponent {
 
   constructor(props) {
     super(props);
+    const approvalType = this.authorityEmp();
     this.state = {
-      approvalType: '',
+      approvalType,
+      initType: approvalType,
       remark: '',
       targetProduct: '',
       choiceApprover: false,
@@ -153,7 +155,13 @@ export default class CreateNewApprovalBoard extends PureComponent {
       subProList: [], // 咨询订阅产品列表
       subscribelProductMatchInfo: [], // 咨询订阅的产品的三匹配信息
       unSubProList: [], // 咨询退订产品列表
+      singleDValue: 0, // 单佣金调整产品选择后的差值
     };
+  }
+
+  componentDidMount() {
+    const { approvalType } = this.state;
+    this.queryApprovalUser4SubType(approvalType);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -246,8 +254,9 @@ export default class CreateNewApprovalBoard extends PureComponent {
   @autobind
   clearApprovalBoard() {
     if (this.addCustomer) this.addCustomer.clearCustList();
+    const { initType } = this.state;
     this.setState({
-      approvalType: '',
+      approvalType: initType,
       remark: '',
       targetProduct: '',
       choiceApprover: false,
@@ -259,6 +268,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       customer: {},
       attachment: '',
       singleProductList: [],
+      singleDValue: 0,
       singleProductMatchInfo: [],
       subProList: [],
       subscribelProductMatchInfo: [],
@@ -321,9 +331,53 @@ export default class CreateNewApprovalBoard extends PureComponent {
     });
   }
 
+  // 提交前检查各项输入的值是否符合要求
+  @autobind
+  submitCheck() {
+    let result = true;
+    if (this.judgeSubtypeNow(commadj.batch)) {
+      const {
+        targetProduct,
+        approverId,
+        custLists,
+      } = this.state;
+       // 判断什么时候能够提交
+      if (_.isEmpty(targetProduct)) {
+        message.error('请选择目标产品');
+        result = false;
+      }
+      if (_.isEmpty(custLists)) {
+        message.error('请添加客户');
+        result = false;
+      }
+      if (_.isEmpty(approverId)) {
+        message.error('审批人员不能为空');
+        result = false;
+      }
+    } else if (this.judgeSubtypeNow(commadj.single)) {
+      const { singleDValue, approverId } = this.state;
+      if (singleDValue !== 0) {
+        result = false;
+        confirm({
+          content: '请确保所选产品佣金率与目标股基佣金率一致',
+        });
+      }
+      if (_.isEmpty(approverId)) {
+        message.error('审批人员不能为空');
+        result = false;
+      }
+    } else if (this.judgeSubtypeNow(commadj.subscribe)) {
+      // 检查资讯订阅
+    } else if (this.judgeSubtypeNow(commadj.unsubscribe)) {
+      // 检查资讯退订
+    }
+    return result;
+  }
+
   // 批量佣金调整提交
   @autobind
   batchSubmit() {
+    if (!this.submitCheck()) return;
     const {
       newCommission,
       targetProduct,
@@ -331,19 +385,6 @@ export default class CreateNewApprovalBoard extends PureComponent {
       approverId,
       custLists,
     } = this.state;
-    // 判断什么时候能够提交
-    if (_.isEmpty(targetProduct)) {
-      message.error('请选择目标产品');
-      return;
-    }
-    if (_.isEmpty(custLists)) {
-      message.error('请添加客户');
-      return;
-    }
-    if (_.isEmpty(approverId)) {
-      message.error('审批人员不能为空');
-      return;
-    }
     // 挑选出用户选择的其他佣金率
     const otherCommissions = _.pick(this.state, otherComs);
     const { empInfo: { occDivnNum, empNum } } = this.props;
@@ -436,6 +477,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
   // 单佣金调整提交
   @autobind
   singleSubmit() {
+    if (!this.submitCheck()) return;
     const {
       remark,
       newCommission,
@@ -449,6 +491,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     const productList = this.pickSingleProductList(singleProductList, singleProductMatchInfo);
     const params = {
       custRowId: customer.id,
+      custType: customer.custType,
       newComm: newCommission,
       comments: remark,
       attachmentNum: attachment,
@@ -462,6 +505,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
   // 资讯订阅提交
   @autobind
   advisorySub() {
+    if (!this.submitCheck()) return;
     const { empNum } = this.props.empInfo;
     const {
       customer,
@@ -489,6 +533,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
   // 资讯退订提交
   @autobind
   advisoryUnSub() {
+    if (!this.submitCheck()) return;
     const { empNum } = this.props.empInfo;
     const {
       customer,
@@ -529,9 +574,32 @@ export default class CreateNewApprovalBoard extends PureComponent {
     this.clearApprovalBoard();
   }
 
+  // 根据子类型查询审批人
   @autobind
-  newApprovalBoxRef(input) {
-    this.approvalBody = input;
+  queryApprovalUser4SubType(key) {
+    const { queryApprovalUser, empInfo: { empNum } } = this.props;
+    const { approvalBtnId } = approvalConfig;
+    let btnId = '';
+    switch (key) {
+      case commadj.single:
+        btnId = approvalBtnId.single;
+        break;
+      case commadj.batch:
+        btnId = approvalBtnId.batch;
+        break;
+      case commadj.subscribe:
+        btnId = approvalBtnId.subscribe;
+        break;
+      case commadj.unsubscribe:
+        btnId = approvalBtnId.unsubscribe;
+        break;
+      default:
+        break;
+    }
+    queryApprovalUser({
+      loginUser: empNum,
+      btnId,
+    });
   }
 
   // 选择申请子类型
@@ -541,28 +609,15 @@ export default class CreateNewApprovalBoard extends PureComponent {
     this.setState({
       [name]: key,
     });
-    let btnId = '';
-    const { empInfo: { occDivnNum, empNum } } = this.props;
-    const { approvalBtnId } = approvalConfig;
+    const { empInfo: { occDivnNum } } = this.props;
     if (commadj.batch === key) {
       // 如果切换批量佣金需要，先查一把0.16下目标产品
       this.props.queryProductList({
         prodCommision: 0.16,
         orgId: occDivnNum,
       });
-      // 审批人的BtnId
-      btnId = approvalBtnId.batch;
-    } else if (commadj.single === key) {
-      btnId = approvalBtnId.single;
-    } else if (commadj.subscribe === key) {
-      btnId = approvalBtnId.subscribe;
-    } else if (commadj.unsubscribe === key) {
-      btnId = approvalBtnId.unsubscribe;
     }
-    this.props.queryApprovalUser({
-      loginUser: empNum,
-      btnId,
-    });
+    this.queryApprovalUser4SubType(key);
   }
 
   // 填写备注
@@ -799,6 +854,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
   handleSingleTransferChange(flag, item, array, dValue) {
     this.setState({
       singleProductList: array,
+      singleDValue: dValue,
     });
     if (flag === 'add') {
       // 如果是左侧列表添加到右侧列表,则需要查询三匹配信息
@@ -810,7 +866,6 @@ export default class CreateNewApprovalBoard extends PureComponent {
         prdCode: prodCode,
       });
     }
-    console.warn('还差多少', dValue);
   }
 
    // 咨讯订阅调整穿梭变化的时候处理程序
@@ -981,6 +1036,22 @@ export default class CreateNewApprovalBoard extends PureComponent {
     });
   }
 
+  // 判断当前登录人子类型权限,来决定初始化的时候展示的是哪一个子类型
+  @autobind
+  authorityEmp() {
+    // 1. 首先判断当前登录人是否有单佣金调整的权限
+    const { empPostnList } = this.props;
+    const singlePermission = permission.hasCommissionSingleAuthority(empPostnList);
+    const batchPermission = permission.hasCommissionBatchAuthority();
+    const subscribePermission = permission.hasCommissionADSubscribeAuthority();
+    const unsubscribePermission = permission.hasCommissionADUnSubscribeAuthority();
+    if (singlePermission) return commadj.single;
+    if (batchPermission) return commadj.batch;
+    if (subscribePermission) return commadj.subscribe;
+    if (unsubscribePermission) return commadj.unsubscribe;
+    return commadj.noSelected;
+  }
+
   render() {
     const {
       modalKey,
@@ -1037,6 +1108,8 @@ export default class CreateNewApprovalBoard extends PureComponent {
 
     // 单佣金调整中的产品选择配置
     const singleTransferProps = {
+      firstTitle: '可选佣金产品',
+      secondTitle: '已选产品',
       firstData: singleComProductList,
       secondData: [],
       firstColumns: singleColumns,
@@ -1044,7 +1117,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       transferChange: this.handleSingleTransferChange,
       checkChange: this.handleSingleTransferSubProductCheck,
       rowKey: 'id',
-      defaultCheckKey: 'default',
+      defaultCheckKey: 'xDefaultOpenFlag',
       placeholder: '产品代码/产品名称',
       pagination,
       aboutRate: [newCommission, 'prodRate'],
@@ -1105,7 +1178,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
           onOk={this.handleSubmitApprovals}
           wrapClassName={wrapClassName}
         >
-          <div className={styles.newApprovalBox} ref={this.newApprovalBoxRef}>
+          <div className={styles.newApprovalBox}>
             <div className={styles.approvalBlock}>
               <InfoTitle head="基本信息" />
               <CommissionLine label="子类型" labelWidth="90px" required>
@@ -1208,7 +1281,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
                   }
                   {
                     // 单佣金调整产品三匹配信息
-                    !this.judgeSubtypeNow([commadj.single, commadj.subscribe]) ? null
+                    !this.judgeSubtypeNow([commadj.single]) ? null
                     : (<ThreeMatchTip info={threeMatchInfo} />)
                   }
                 </div>
