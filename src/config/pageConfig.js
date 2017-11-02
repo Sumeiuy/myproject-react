@@ -355,6 +355,9 @@ const pageConfig = {
   channelsTypeProtocol: {
     pageName: '通道类型协议',
     pageType: '04',
+    // 十档行情rowID和紫金快车道子类型ID 根据后端要去写死在前端用做判断
+    tenLevelTemplateId: '1-43OZSYG',
+    zjkcdId: '507070',
     subType: [
       {
         show: true,

@@ -19,7 +19,7 @@ import InfoItem from '../common/infoItem';
 import InfoForm from '../common/infoForm';
 import DropDownSelect from '../common/dropdownSelect';
 import CustomSwitch from '../common/customSwitch';
-// import { seibelConfig } from '../../config';
+import { seibelConfig } from '../../config';
 
 import styles from './editBaseInfo.less';
 
@@ -35,9 +35,7 @@ const dropDownSelectBoxStyle = {
 };
 const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
-// 十档行情rowID和紫金快车道子类型ID 根据后端要去写死在前端用做判断
-const TENLEVEL_TEMPLATEID = '1-43OZSYG';
-const ZJKCD_ID = '';
+const { channelsTypeProtocol: { tenLevelTemplateId, zjkcdId } } = seibelConfig;
 export default class EditBaseInfo extends PureComponent {
   static propTypes = {
     // 查询客户
@@ -232,8 +230,8 @@ export default class EditBaseInfo extends PureComponent {
   @autobind
   isShowSwitch() {
     const { protocolTemplate, subType } = this.state;
-    console.log('abcdefg', protocolTemplate.rowId === TENLEVEL_TEMPLATEID && subType === ZJKCD_ID);
-    return (protocolTemplate.rowId !== TENLEVEL_TEMPLATEID && subType === ZJKCD_ID);
+    console.log('abcdefg', protocolTemplate.rowId === tenLevelTemplateId && subType === zjkcdId);
+    return (protocolTemplate.rowId !== tenLevelTemplateId && subType === zjkcdId);
   }
 
   // 切换子类型清空所选模板和所选客户
