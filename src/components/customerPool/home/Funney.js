@@ -77,7 +77,6 @@ function Funney({ dataSource }) {
             position: 'inside',
             fontSize: 12,
             color,
-            fontFamily: 'Microsoft YaHei',
           },
         },
         itemStyle: {

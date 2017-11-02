@@ -44,7 +44,6 @@ const getColourfulItem = ({
           normal: {
             show: true,
             position: 'top',
-            fontFamily: 'Microsoft YaHei',
             fontSize: 12,
             color: '#4a4a4a',
             formatter: (params) => {

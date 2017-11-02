@@ -139,7 +139,6 @@ export function getClientsNumber({
         axisLabel: {
           interval: 0,
           margin: 6,
-          fontFamily: 'Microsoft YaHei',
           fontSize: 12,
           color: '#666',
           showMinLabel: true,
@@ -214,7 +213,6 @@ export function getServiceIndicatorOfPerformance({ performanceData }) {
         fontSize: '12',
         interval: 0,
         margin: 6,
-        fontFamily: 'Microsoft YaHei',
       },
     },
     yAxis: {
@@ -290,7 +288,6 @@ export function getHSRate(array) {
           color: '#5eade5',
           insideColor: '#fff',
           fontSize: 24,
-          fontFamily: 'Microsoft YaHei',
           align: 'center',
           baseline: 'middle',
           position: ['50%', '70%'],
