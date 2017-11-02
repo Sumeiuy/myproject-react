@@ -185,7 +185,7 @@ export default class CreateTaskForm extends PureComponent {
       isShowErrorTaskType,
       isShowErrorExcuteType,
     } = this.props;
-    const { custServerTypeFeedBackDict, executeTypes } = dict;
+    const { custServerTypeFeedBackDict, executeTypes, custIdexPlaceHolders } = dict;
     const {
       defaultMissionName,
       defaultMissionType,
@@ -195,7 +195,6 @@ export default class CreateTaskForm extends PureComponent {
       defaultServiceStrategySuggestion,
       firstUserName,
       count,
-      statusData,
     } = this.state;
 
     return (
@@ -213,7 +212,7 @@ export default class CreateTaskForm extends PureComponent {
             defaultMissionDesc={defaultMissionDesc}
             defaultInitialValue={defaultInitialValue}
             defaultServiceStrategySuggestion={defaultServiceStrategySuggestion}
-            users={statusData}
+            users={custIdexPlaceHolders}
             taskTypes={custServerTypeFeedBackDict}
             executeTypes={executeTypes}
             form={form}

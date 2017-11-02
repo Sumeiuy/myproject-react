@@ -25,7 +25,7 @@ export default class TaskFormInfo extends PureComponent {
     defaultExecutionType: PropTypes.string.isRequired,
     defaultMissionDesc: PropTypes.string.isRequired,
     defaultServiceStrategySuggestion: PropTypes.string,
-    defaultInitialValue: PropTypes.string,
+    defaultInitialValue: PropTypes.number,
     users: PropTypes.array.isRequired,
     taskTypes: PropTypes.array,
     executeTypes: PropTypes.array,
@@ -82,12 +82,19 @@ export default class TaskFormInfo extends PureComponent {
   handleSearchChange = (value, trigger) => {
     console.log('value-->', value, 'trigger--->', trigger);
     const { users } = this.props;
+    console.log('users-->', users)
     const dataSource = trigger === '{' ? users : [];
     console.log('dataSource-->', dataSource);
     this.setState({
       suggestions: dataSource.filter(item => item.indexOf(value) !== -1),
     });
   }
+
+  @autobind
+  handileSelect(suggestion, data) {    
+    console.log('onSelect',typeof suggestion, 'data', data);
+  }
+
 
   @autobind
   handleTaskTypeChange(value) {
@@ -136,9 +143,10 @@ export default class TaskFormInfo extends PureComponent {
         <Mention
           style={{ width: '100%', height: 100 }}
           placeholder="请在描述客户经理联系客户前需要了解的客户相关信息，比如持仓情况。（字数限制：10-1000字）"
-          prefix={'$'}
+          prefix={'{'}
           onSearchChange={this.handleSearchChange}
           suggestions={suggestions}
+          onSelect={this.handileSelect}
           multiLines
         />,
       )
@@ -203,7 +211,7 @@ export default class TaskFormInfo extends PureComponent {
                   rules: [{ required: true, message: '任务名称不能为空!' }],
                   initialValue: defaultMissionName,
                 })(
-                  <Input placeholder="请输入任务名称" />,
+                <Input placeholder="请输入任务名称" />,
               )}
             </FormItem>
           </li>
@@ -219,11 +227,11 @@ export default class TaskFormInfo extends PureComponent {
                     {
                       initialValue: defaultMissionType,
                     })(
-                      <Select
-                        onChange={this.handleTaskTypeChange}
-                      >
-                        {this.handleCreatOptions(taskTypes)}
-                      </Select>,
+                    <Select
+                      onChange={this.handleTaskTypeChange}
+                    >
+                      {this.handleCreatOptions(taskTypes)}
+                    </Select>,
                   )}
                 </FormItem>
                 :
@@ -248,11 +256,11 @@ export default class TaskFormInfo extends PureComponent {
                     {
                       initialValue: defaultExecutionType,
                     })(
-                      <Select
-                        onChange={this.handleExcuteTypeChange}
-                      >
-                        {this.handleCreatOptions(executeTypes)}
-                      </Select>,
+                    <Select
+                      onChange={this.handleExcuteTypeChange}
+                    >
+                      {this.handleCreatOptions(executeTypes)}
+                    </Select>,
                   )}
                 </FormItem>
                 :
@@ -288,13 +296,13 @@ export default class TaskFormInfo extends PureComponent {
                 rules: [{ required: true, min: 10, message: '服务策略不能小于10个字符!' }],
                 initialValue: defaultServiceStrategySuggestion,
               })(
-                <TextArea
-                  id="desc"
-                  rows={5}
-                  placeholder="请在此介绍该新建任务的服务策略，以指导客户经理或投顾实施任务。（字数限制：10-1000字）"
-                  style={{ width: '100%' }}
-                  maxLength={1000}
-                />,
+              <TextArea
+                id="desc"
+                rows={5}
+                placeholder="请在此介绍该新建任务的服务策略，以指导客户经理或投顾实施任务。（字数限制：10-1000字）"
+                style={{ width: '100%' }}
+                maxLength={1000}
+              />,
             )}
           </FormItem>
         </div>

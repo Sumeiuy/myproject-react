@@ -104,17 +104,12 @@ export default class CreateTaskForm extends PureComponent {
           showBtn: true,
         });
         message.error('已经是最后一条了');
-      }
-      const newServiceLogData = _.concat(logData, serviceLogMoreData);
-      const lastData = logData[logData.length - 1].serveTime;
-      if (moment(lastData).isBefore(sixDate)) {
+      } else {
+        const newServiceLogData = _.concat(logData, serviceLogMoreData);
         this.setState({
-          showBtn: true,
+          logData: newServiceLogData,
         });
       }
-      this.setState({
-        logData: newServiceLogData,
-      });
     }
     if (!_.isEqual(serviceLogDataLoading, prevServiceLogDataLoading)) {
       this.setState({
@@ -165,7 +160,15 @@ export default class CreateTaskForm extends PureComponent {
     const lastTime = logData[logData.length - 1].serveTime;
     const params = query;
     params.serveDateToPaged = moment(lastTime).format('YYYY-MM-DD HH:mm:ss');
-    getServiceLogMore(params);
+    // params.custId = '02001404'; // 本地测试用的数据
+    if (moment(lastTime).isBefore(sixDate)) {
+      this.setState({
+        showBtn: true,
+      });
+      message.error('已经是最后一条了');
+    } else {
+      getServiceLogMore(params);
+    }
   }
 
   @autobind
@@ -218,7 +221,8 @@ export default class CreateTaskForm extends PureComponent {
     const { dict, handleCollapseClick } = this.props;
     const { serveAllSource, serveAllType, executeTypes, serveWay } = dict;
     const { logData, showBtn, loading } = this.state;
-    console.log('dict-->', dict);
+    console.log('showBtn-->', showBtn);
+    console.log('loading-->', loading);
     return (
       <div className={styles.serviceInner}>
         <div
