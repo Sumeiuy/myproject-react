@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 15:02:49
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-31 14:33:28
+ * @Last Modified time: 2017-11-01 16:54:43
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -11,10 +11,11 @@ import { autobind } from 'core-decorators';
 import moment from 'moment';
 import _ from 'lodash';
 import { connect } from 'react-redux';
+
 import Button from '../Button';
 import { request } from '../../../config';
 import { helper } from '../../../utils';
-import styles from './multiUpload.less';
+import styles from './multiUploader.less';
 import Icon from '../Icon';
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -24,40 +25,52 @@ const fetchDataFunction = (globalLoading, type) => query => ({
 });
 
 const mapStateToProps = state => ({
-  deleteAttachmentList: state.app.deleteAttachmentList,
-  deleteAttachmentLoading: state.loading.effects['app/deleteAttachment'],
+  deleteAttachmentLoading: state.loading.effects['channelsTypeProtocol/deleteAttachment'],
 });
 
 const mapDispatchToProps = {
   // 删除附件
-  deleteAttachment: fetchDataFunction(true, 'app/deleteAttachment'),
+  deleteAttachment: fetchDataFunction(true, 'channelsTypeProtocol/deleteAttachment'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
 export default class MultiUpload extends PureComponent {
   static propTypes = {
+    // 上传组件的索引
+    index: PropTypes.number.isRequired,
+    // 上传成功后回调方法
+    uploadCallback: PropTypes.func,
+    // 删除成功后回调方法
+    deleteCallback: PropTypes.func,
     // 删除附件方法
     deleteAttachment: PropTypes.func,
-    // 上传附件方法
-    uploadAttachment: PropTypes.func,
+    // 删除事件的状态
+    deleteAttachmentLoading: PropTypes.bool,
+    // 组件的元素 list
+    attachmentList: PropTypes.array,
     // 每个单子对应的唯一附件表 ID，默认为 ''
     attachment: PropTypes.string,
-    attachmentList: PropTypes.array.isRequired,
+    // 是否可删除、上传
     edit: PropTypes.bool,
-    deleteAttachmentList: PropTypes.array,
-    deleteAttachmentLoading: PropTypes.bool,
     // 标题
     title: PropTypes.string,
+    // 是否必须
+    required: PropTypes.bool,
+    // 上传组件的 type
+    type: PropTypes.string,
   }
 
   static defaultProps = {
+    uploadCallback: () => {},
+    deleteCallback: () => {},
     deleteAttachment: () => {},
-    uploadAttachment: () => {},
-    attachment: '',
-    deleteAttachmentList: [],
-    edit: false,
     deleteAttachmentLoading: false,
+    attachmentList: [],
+    attachment: '',
+    edit: false,
     title: '',
+    required: false,
+    type: '',
   }
 
   constructor(props) {
@@ -72,29 +85,31 @@ export default class MultiUpload extends PureComponent {
       fileList: attachmentList, // 文件列表
       oldFileList: attachmentList, // 旧的文件列表
       attachment, // 上传后的唯一 ID
+      deleteObj: {},
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    const { deleteAttachmentLoading: preDAL, attachmentList: preAL } = this.props;
-    const { deleteAttachmentLoading: nextDAL, attachmentList: nextAL } = nextProps;
-    if ((preDAL && !nextDAL)) {
-      const { deleteAttachmentList } = nextProps;
+    const { deleteAttachmentLoading: preDAL } = this.props;
+    const {
+      deleteAttachmentLoading: nextDAL,
+      type,
+      index,
+      deleteCallback,
+    } = nextProps;
+    const { deleteObj: { deleteType, deleteAttachId }, fileList } = this.state;
+    if ((preDAL && !nextDAL) && deleteType === type) {
+      const newFileList = _.cloneDeep(fileList);
+      _.remove(newFileList, o => o.attachId === deleteAttachId);
       this.setState({
-        fileList: deleteAttachmentList, // 文件列表
-        percent: 0,
-      });
-    }
-    if (!_.isEqual(preAL, nextAL)) {
-      this.setState({
-        fileList: nextAL, // 文件列表
-      });
+        fileList: newFileList, // 文件列表
+      }, () => deleteCallback(index));
     }
   }
   // 上传事件
   @autobind
   onChange(info) {
-    const { uploadAttachment } = this.props;
+    const { index, uploadCallback } = this.props;
     const uploadFile = info.file;
     this.setState({
       percent: info.file.percent,
@@ -111,7 +126,7 @@ export default class MultiUpload extends PureComponent {
           fileList: data.attaches,
           oldFileList: data.attaches,
           attachment: data.attachment,
-        }, uploadAttachment(data.attachment));
+        }, uploadCallback(index, data.attachment));
       } else if (uploadFile.response.code === 'MAG0005') {
         // 上传失败的返回值 MAG0005
         this.setState({
@@ -128,19 +143,24 @@ export default class MultiUpload extends PureComponent {
   // 删除事件
   @autobind
   onRemove(attachId) {
-    const { deleteAttachment } = this.props;
+    const { type, deleteAttachment } = this.props;
     const { empId, attachment } = this.state;
     const deleteObj = {
       empId,
       attachId,
       attachment,
     };
-    deleteAttachment(deleteObj);
+    this.setState({
+      deleteObj: {
+        deleteType: type,
+        deleteAttachId: attachId,
+      },
+    }, () => deleteAttachment(deleteObj));
   }
 
   @autobind
-  findFileListNode() {
-    return document.querySelectorAll('.fileListMultiMain')[0];
+  findContainer() {
+    return this.fileListMultiMain;
   }
 
   render() {
@@ -153,7 +173,7 @@ export default class MultiUpload extends PureComponent {
       status,
       statusText,
     } = this.state;
-    const { edit, title } = this.props;
+    const { edit, title, required } = this.props;
     const uploadProps = {
       data: {
         empId,
@@ -230,7 +250,7 @@ export default class MultiUpload extends PureComponent {
                     content={popoverHtml}
                     trigger="hover"
                     mouseLeaveDelay={0.3}
-                    getPopupContainer={this.findFileListNode}
+                    getPopupContainer={this.findContainer}
                   >
                     <p className={styles.fileItemText} title={fileName}>
                       <Icon type="fujian" />
@@ -259,9 +279,7 @@ export default class MultiUpload extends PureComponent {
             })
           }
           <div className={styles.fileItem}>
-            <p>
-              { uploadElement }
-            </p>
+            { uploadElement }
           </div>
         </div>
       );
@@ -276,19 +294,21 @@ export default class MultiUpload extends PureComponent {
           </p>
         </div>
         <div className={styles.fileItem}>
-          <p>
-            { uploadElement }
-          </p>
+          { uploadElement }
         </div>
       </div>);
     }
     return (
-      <div className={`${styles.fileListMultiMain} fileListMultiMain`}>
+      <div
+        className={`${styles.fileListMultiMain}
+        fileListMultiMain`}
+        ref={fileListMultiMain => this.fileListMultiMain = fileListMultiMain}
+      >
         {
           _.isEmpty(title) ?
             null
           :
-            <h3 className={styles.title}>{title}</h3>
+            <h3 className={styles.title}>{title}{required ? '(必填)' : null}</h3>
         }
         { fileListElement }
       </div>

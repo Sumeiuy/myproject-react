@@ -92,6 +92,10 @@ const mapStateToProps = state => ({
   batchnum: state.commission.batchnum,
   // 提交批量佣金申请调整的进程
   batchSubmitProcess: state.loading.effects[effects.submitBatch],
+  // 提交咨讯订阅申请调整的进程
+  subsciSubmitProcess: state.loading.effects[effects.subSubscribe],
+  // 提交咨讯退订申请调整的进程
+  unSubsciSubmitProcess: state.loading.effects[effects.unSubSubscribe],
   // 目标股基佣金率码值列表
   gjCommissionList: state.commission.gjCommission,
   // 单佣金调整佣金率码值列表
@@ -237,11 +241,15 @@ export default class CommissionHome extends PureComponent {
     submitUnSub: PropTypes.func.isRequired,
     consultUnsubId: PropTypes.string.isRequired,
     clearReduxState: PropTypes.func.isRequired,
+    subsciSubmitProcess: PropTypes.bool,
+    unSubsciSubmitProcess: PropTypes.bool,
   }
 
   static defaultProps = {
     listProcess: false,
     batchSubmitProcess: false,
+    subsciSubmitProcess: false,
+    unSubsciSubmitProcess: false,
   }
 
   constructor(props) {
@@ -327,6 +335,30 @@ export default class CommissionHome extends PureComponent {
         message.error('提交失败');
       }
     }
+
+    // 用户提交咨询订阅申请
+    const { subsciSubmitProcess: prevSSP } = this.props;
+    const { subsciSubmitProcess: nextSSP, consultSubId: nextSub } = nextProps;
+    if (!nextSSP && prevSSP) {
+      if (nextSub !== '') {
+        // 成功
+        message.success('咨讯订阅提交成功');
+      } else {
+        message.error('咨讯订阅提交失败');
+      }
+    }
+
+    // 用户提交咨询退订申请
+    const { unSubsciSubmitProcess: prevUSP } = this.props;
+    const { unSubsciSubmitProcess: nextUSP, consultUnsubId: nextUnSub } = nextProps;
+    if (!nextUSP && prevUSP) {
+      if (nextUnSub !== '') {
+        // 成功
+        message.success('咨讯退订提交成功');
+      } else {
+        message.error('咨讯退订提交失败');
+      }
+    }
   }
 
   componentDidUpdate() {
@@ -353,7 +385,7 @@ export default class CommissionHome extends PureComponent {
 
   // 查询佣金调整4个子类型的详情信息
   getDetail4Subtye(record) {
-    const { subType: st, id, business1, custType } = record;
+    const { subType: st, business1, custType } = record;
     const {
       getBatchCommissionDetail,
       getSubscribeDetail,
@@ -369,10 +401,10 @@ export default class CommissionHome extends PureComponent {
         getSingleDetail({ orderId: business1, loginuser });
         break;
       case comsubs.subscribe:
-        getSubscribeDetail({ orderId: id, type: custType });
+        getSubscribeDetail({ orderId: business1, type: custType, loginuser });
         break;
       case comsubs.unsubscribe:
-        getUnSubscribeDetail({ orderId: id, type: custType });
+        getUnSubscribeDetail({ orderId: business1, type: custType, loginuser });
         break;
       default:
         break;
@@ -599,47 +631,52 @@ export default class CommissionHome extends PureComponent {
           visible={approvalBoard}
           onClose={this.closeApprovalBoard}
         />
-        <CreateNewApprovalBoard
-          empInfo={empInfo}
-          empPostnList={empPostnList}
-          modalKey="createApprovalBoard"
-          visible={createApprovalBoard}
-          onClose={this.closeNewApprovalBoard}
-          queryProductList={getProductList}
-          targetProductList={productList}
-          approverList={approvalUserList}
-          onSearchApplyCust={getCanApplyCustList}
-          customerList={canApplyCustList}
-          validataLoading={validataLoading}
-          validateResult={validateResult}
-          validateCust={validateCustInfo}
-          otherRatios={otherRatio}
-          onBatchSubmit={submitBatch}
-          gjCommission={gjCommissionList}
-          queryGJCommission={getGJCommissionRate}
-          getSingleOtherRates={getSingleOtherRates}
-          singleOtherRatio={singleOtherRatio}
-          getSingleProductList={getSingleProductList}
-          singleComProductList={singleComProductList}
-          threeMatchInfo={threeMatchInfo}
-          queryThreeMatchInfo={queryThreeMatchInfo}
-          querySingleCustList={getSingleCustList}
-          querySubscribelCustList={getSubscribelCustList}
-          singleCustList={singleCustomerList}
-          subscribeCustList={subscribeCustomerList}
-          getSubscribelProList={getSubscribelProList}
-          subscribelProList={subscribelProList}
-          getUnSubscribelProList={getUnSubscribelProList}
-          unSubscribelProList={unSubscribelProList}
-          singleGJCommission={singleGJCommission}
-          getSingleGJ={getSingleGJ}
-          onSubmitSingle={submitSingle}
-          singleSubmit={singleSubmit}
-          submitSub={submitSub}
-          submitUnSub={submitUnSub}
-          queryApprovalUser={getAprovalUserList}
-          clearReduxState={clearReduxState}
-        />
+        {
+          !createApprovalBoard ? null
+          : (
+            <CreateNewApprovalBoard
+              empInfo={empInfo}
+              empPostnList={empPostnList}
+              modalKey="createApprovalBoard"
+              visible={createApprovalBoard}
+              onClose={this.closeNewApprovalBoard}
+              queryProductList={getProductList}
+              targetProductList={productList}
+              approverList={approvalUserList}
+              onSearchApplyCust={getCanApplyCustList}
+              customerList={canApplyCustList}
+              validataLoading={validataLoading}
+              validateResult={validateResult}
+              validateCust={validateCustInfo}
+              otherRatios={otherRatio}
+              onBatchSubmit={submitBatch}
+              gjCommission={gjCommissionList}
+              queryGJCommission={getGJCommissionRate}
+              getSingleOtherRates={getSingleOtherRates}
+              singleOtherRatio={singleOtherRatio}
+              getSingleProductList={getSingleProductList}
+              singleComProductList={singleComProductList}
+              threeMatchInfo={threeMatchInfo}
+              queryThreeMatchInfo={queryThreeMatchInfo}
+              querySingleCustList={getSingleCustList}
+              querySubscribelCustList={getSubscribelCustList}
+              singleCustList={singleCustomerList}
+              subscribeCustList={subscribeCustomerList}
+              getSubscribelProList={getSubscribelProList}
+              subscribelProList={subscribelProList}
+              getUnSubscribelProList={getUnSubscribelProList}
+              unSubscribelProList={unSubscribelProList}
+              singleGJCommission={singleGJCommission}
+              getSingleGJ={getSingleGJ}
+              onSubmitSingle={submitSingle}
+              singleSubmit={singleSubmit}
+              submitSub={submitSub}
+              submitUnSub={submitUnSub}
+              queryApprovalUser={getAprovalUserList}
+              clearReduxState={clearReduxState}
+            />
+          )
+        }
       </div>
     );
   }

@@ -18,6 +18,7 @@
       color: #a1a1a1;
     }
     .filterMore {
+      display: none;
       float: right;
       height: 32px;
       position: absolute;
@@ -65,6 +66,11 @@
         border: 1px solid #348cf0;
         box-shadow: 0 0 0 2px rgba(16, 142, 233, 0.2);
       }
+    }
+
+    // 兼容ie下拉图标旋转样式
+    .ant-select-arrow {
+      transform: scale(0.75);
     }
 
     //多选下拉小图标样式

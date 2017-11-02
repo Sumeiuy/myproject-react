@@ -3,17 +3,18 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-19 09:37:42
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-31 18:13:22
+ * @Last Modified time: 2017-11-02 14:02:38
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 
 import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
 import ApproveList from '../common/approveList';
 import styles from './detail.less';
-import MultiUpload from '../common/biz/MultiUpload';
+import MultiUploader from '../common/biz/MultiUploader';
 import CommonTable from '../common/biz/CommonTable';
 import { seibelConfig } from '../../config';
 import { dateFormat } from '../../utils/helper';
@@ -22,22 +23,43 @@ const {
   underCustTitleList,  // 下挂客户表头集合
   protocolClauseTitleList,  // 协议条款表头集合
   protocolProductTitleList,  // 协议产品表头集合
+  // attachmentType,  // 附件集合
 } = seibelConfig.channelsTypeProtocol;
 
 const EMPTY_PARAM = '暂无';
+// const EMPTY_OBJECT = {};
+const EMPTY_ARRAY = [];
 // 合约条款的表头、状态对应值
 const { contract: { status } } = seibelConfig;
 export default class Detail extends PureComponent {
   static propTypes = {
     protocolDetail: PropTypes.object.isRequired,
-    flowHistory: PropTypes.array,
-    hasEditPermission: PropTypes.bool,
+    flowHistory: PropTypes.array.isRequired,
+    attachmentList: PropTypes.array,
   }
 
   static defaultProps = {
-    baseInfo: {},
-    flowHistory: [],
-    hasEditPermission: false,
+    attachmentList: EMPTY_ARRAY,
+    flowHistory: EMPTY_ARRAY,
+    uploadAttachment: () => {},
+    showEditModal: () => {},
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      customerList: [
+        {
+          key: 0,
+          subCustType: '白金',
+          custLevelCode: '805015',
+          perEconNum: '666626443512',
+          perCustName: '刘**',
+          customerId: '1-3YOO83T',
+          custStatus: '无',
+        },
+      ],
+    };
   }
 
   // 处理接口返回的拟稿提请时间
@@ -49,11 +71,27 @@ export default class Detail extends PureComponent {
     return EMPTY_PARAM;
   }
 
+  // 表格删除事件
+  @autobind
+  deleteTableData(record, index) {
+    const { customerList } = this.state;
+    const testArr = _.cloneDeep(customerList);
+    const newCustomerList = _.remove(testArr, (n, i) => i !== index);
+    console.warn('newCustomerList', newCustomerList);
+    this.setState({
+      customerList: newCustomerList,
+    });
+  }
+
   render() {
     const {
       protocolDetail,
       flowHistory,
+      attachmentList,
     } = this.props;
+    const {
+      customerList,
+    } = this.state;
     const nowStep = {
       // 当前步骤
       stepName: protocolDetail.workflowNode || EMPTY_PARAM,
@@ -69,10 +107,19 @@ export default class Detail extends PureComponent {
     } else {
       statusLabel = '';
     }
+
+    // 下挂客户表格中需要的操作
+    const customerOperation = {
+      column: {
+        key: 'delete', // 'check'\'delete'\'view'
+        title: '操作',
+      },
+      operate: this.deleteTableData,
+    };
     return (
       <div className={styles.detailComponent}>
         <div className={styles.dcHeader}>
-          <span className={styles.dcHaderNumb}>编号{protocolDetail.agreementNum}</span>
+          <span className={styles.dcHaderNumb}>编号{protocolDetail.applyId}</span>
         </div>
         <div className={styles.detailWrapper}>
           <InfoTitle head="基本信息" />
@@ -103,31 +150,27 @@ export default class Detail extends PureComponent {
         <div className={styles.detailWrapper}>
           <InfoTitle head="协议条款" />
           <CommonTable
-            data={protocolDetail.term || []}
+            data={protocolDetail.term || EMPTY_ARRAY}
             titleList={protocolClauseTitleList}
           />
         </div>
         <div className={styles.detailWrapper}>
           <InfoTitle head="下挂客户" />
           <CommonTable
-            data={[]}
+            data={customerList || []}
             titleList={underCustTitleList}
+            operation={customerOperation}
           />
         </div>
         <div className={styles.detailWrapper}>
           <InfoTitle head="附件信息" />
-          <MultiUpload
-            attachmentList={[]}
-            attachment={''}
-            title={'影像资料（必填）'}
-            edit
-          />
-          <MultiUpload
-            attachmentList={[]}
-            attachment={''}
-            title={'影像资料（必填）'}
-            edit
-          />
+          {
+            attachmentList.map(item => (<MultiUploader
+              attachmentList={item.attachmentList}
+              attachment={''}
+              title={item.title}
+            />))
+          }
         </div>
         <div className={styles.detailWrapper}>
           <InfoTitle head="审批记录" />

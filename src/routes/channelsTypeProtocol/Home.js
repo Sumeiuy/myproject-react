@@ -3,14 +3,13 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-31 18:12:45
+ * @Last Modified time: 2017-11-02 13:58:24
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
 import { withRouter, routerRedux } from 'dva-react-router-3/router';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-
 import { constructSeibelPostBody } from '../../utils/helper';
 import SplitPanel from '../../components/common/splitPanel/SplitPanel';
 import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
@@ -30,12 +29,13 @@ const EMPTY_OBJECT = {};
 const OMIT_ARRAY = ['isResetPageNum', 'currentId'];
 const {
   channelsTypeProtocol,
-  channelsTypeProtocol: { pageType, subType, operationList, status },
+  channelsTypeProtocol: { pageType, subType, status },
 } = seibelConfig;
 // 新建/编辑弹窗按钮，暂时写死在前端
 const FLOW_BUTTONS = {
   flowButtons: [
     {
+      key: 'submit',
       btnName: '提交',
     },
   ],
@@ -51,13 +51,28 @@ const mapStateToProps = state => ({
   seibleList: state.app.seibleList,
   // 列表请求状态
   seibleListLoading: state.loading.effects['app/getSeibleList'],
+  // 查询客户
+  canApplyCustList: state.app.canApplyCustList,
   // 查询右侧详情
   protocolDetail: state.channelsTypeProtocol.protocolDetail,
   protocolDetailLoading: state.loading.effects['channelsTypeProtocol/getProtocolDetail'],
+  // 附件
+  attachmentList: state.channelsTypeProtocol.attachmentList,
   // 审批记录
-  flowHistory: state.contract.flowHistory,
+  flowHistory: state.channelsTypeProtocol.flowHistory,
   // 登陆人信息
   empInfo: state.app.empInfo,
+  // 操作类型列表
+  operationList: state.channelsTypeProtocol.operationList,
+  // 子类型列表
+  subTypeList: state.channelsTypeProtocol.subTypeList,
+  // 模板列表
+  templateList: state.channelsTypeProtocol.templateList,
+  // 模板对应协议条款列表
+  protocolClauseList: state.channelsTypeProtocol.protocolClauseList,
+  // 协议产品列表
+  protocolProductList: state.channelsTypeProtocol.protocolProductList,
+  underCustList: state.channelsTypeProtocol.queryCust,
 });
 
 const mapDispatchToProps = {
@@ -65,9 +80,19 @@ const mapDispatchToProps = {
   // 获取左侧列表
   getSeibleList: fetchDataFunction(true, 'app/getSeibleList'),
   // 获取客户列表
-  getCustomerList: fetchDataFunction(false, 'app/getCustomerList'),
+  getCanApplyCustList: fetchDataFunction(false, 'app/getCanApplyCustList'),
   // 获取右侧详情
   getProtocolDetail: fetchDataFunction(true, 'channelsTypeProtocol/getProtocolDetail'),
+  // 查询操作类型/子类型/模板列表
+  queryTypeVaules: fetchDataFunction(false, 'channelsTypeProtocol/queryTypeVaules'),
+  // 根据所选模板id查询模板对应协议条款
+  queryChannelProtocolItem: fetchDataFunction(false, 'channelsTypeProtocol/queryChannelProtocolItem'),
+  // 查询协议产品列表
+  queryChannelProtocolProduct: fetchDataFunction(false, 'channelsTypeProtocol/queryChannelProtocolProduct'),
+    // 保存详情
+  saveProtocolData: fetchDataFunction(true, 'channelsTypeProtocol/saveProtocolData'),
+  // 查询客户
+  queryCust: fetchDataFunction(true, 'channelsTypeProtocol/queryCust'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -81,32 +106,50 @@ export default class ChannelsTypeProtocol extends PureComponent {
     getSeibleList: PropTypes.func.isRequired,
     seibleList: PropTypes.object.isRequired,
     seibleListLoading: PropTypes.bool,
+    // 查询可申请客户列表
+    getCanApplyCustList: PropTypes.func.isRequired,
+    canApplyCustList: PropTypes.array.isRequired,
     // 查询右侧详情
-    protocolDetail: PropTypes.object.isRequired,
     getProtocolDetail: PropTypes.func.isRequired,
-    // 查询客户
-    getCustomerList: PropTypes.func.isRequired,
-    customerList: PropTypes.array.isRequired,
+    protocolDetail: PropTypes.object.isRequired,
+    // 附件
+    attachmentList: PropTypes.array,
+
     // 审批记录
     flowHistory: PropTypes.array,
     // 登陆人信息
     empInfo: PropTypes.object.isRequired,
+    // 查询操作类型/子类型/模板列表
+    queryTypeVaules: PropTypes.func.isRequired,
+    operationList: PropTypes.array.isRequired,
+    subTypeList: PropTypes.array.isRequired,
+    templateList: PropTypes.array.isRequired,
+    // 根据所选模板id查询模板对应协议条款
+    queryChannelProtocolItem: PropTypes.func.isRequired,
+    protocolClauseList: PropTypes.array.isRequired,
+    // 查询协议产品列表
+    queryChannelProtocolProduct: PropTypes.func.isRequired,
+    protocolProductList: PropTypes.array.isRequired,
+        // 保存详情
+    saveProtocolData: PropTypes.func.isRequired,
+    // 下挂客户接口
+    queryCust: PropTypes.func.isRequired,
+    // 下挂客户列表
+    underCustList: PropTypes.array,
   }
 
   static defaultProps = {
+    attachmentList: EMPTY_LIST,
     seibleListLoading: false,
     flowHistory: EMPTY_LIST,
+    underCustList: EMPTY_LIST,
   }
 
   constructor(props) {
     super(props);
     this.state = {
-      // 新建合作合约弹窗状态
-      addFormModal: false,
-      // 是否有修改的权限
-      hasEditPermission: false,
-      // 弹窗底部按钮数据
-      footerBtnData: EMPTY_OBJECT,
+      // 新建编辑弹窗状态
+      editFormModal: false,
       // 最终传递的数据
       payload: EMPTY_OBJECT,
     };
@@ -169,10 +212,9 @@ export default class ChannelsTypeProtocol extends PureComponent {
       getProtocolDetail({
         id: currentId,
       });
-      this.setState({
-        addFormModal: false,
-        editFormModal: false,
-      });
+      // this.setState({
+      //   editFormModal: false,
+      // });
     }
   }
 
@@ -207,12 +249,9 @@ export default class ChannelsTypeProtocol extends PureComponent {
 
   // 查询客户
   @autobind
-  toSearchCust(value) {
-    const { getCustomerList } = this.props;
-    getCustomerList({
-      keyword: value,
-      type: pageType,
-    });
+  handleSearchCutList(param) {
+    const { getCanApplyCustList } = this.props;
+    getCanApplyCustList(param);
   }
 
   // 头部新建按钮点击事件处理程序
@@ -250,10 +289,16 @@ export default class ChannelsTypeProtocol extends PureComponent {
   // 弹窗底部按钮事件
   @autobind
   footerBtnHandle(btnItem) {
-    console.warn('item', btnItem);
-    // TODO-设定好相应的值传过去，注意 operation
+    // 从editFormComponent组件中取出值
     const formData = this.EditFormComponent.getData();
+    console.log('btnItem', btnItem);
     console.log('formData', formData);
+  }
+
+  // 最终发出接口请求
+  @autobind
+  sendRequest(sendPayload) {
+    console.warn('sendPayload', sendPayload);
   }
 
   render() {
@@ -261,10 +306,23 @@ export default class ChannelsTypeProtocol extends PureComponent {
       location,
       replace,
       seibleList,
-      customerList,
-      protocolDetail,
+      attachmentList,
       flowHistory,
       empInfo,
+      getCanApplyCustList, // 查询可申请客户列表
+      canApplyCustList, // 可申请客户列表
+      queryTypeVaules, // 查询操作类型/子类型/模板列表
+      operationList, // 操作类型列表
+      subTypeList, // 子类型列表
+      templateList, // 模板列表
+      protocolDetail, // 协议详情
+      queryChannelProtocolItem, // 根据所选模板id查询模板对应协议条款
+      protocolClauseList, // 所选模板对应协议条款列表
+      queryChannelProtocolProduct, // 查询协议产品列表
+      protocolProductList, // 协议产品列表
+      saveProtocolData,  // 保存详情
+      underCustList,  // 下挂客户列表
+      queryCust,  // 请求下挂客户接口
     } = this.props;
     const {
       editFormModal,
@@ -295,6 +353,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
     const rightPanel = (
       <Detail
         protocolDetail={protocolDetail}
+        attachmentList={attachmentList}
         flowHistory={flowHistory}
       />
     );
@@ -312,13 +371,33 @@ export default class ChannelsTypeProtocol extends PureComponent {
     };
     const editFormProps = {
       // 客户列表
-      custList: customerList,
+      canApplyCustList,
       // 查询客户
-      onSearchCutList: this.toSearchCust,
-      // 查询协议模板
-      onSearchProtocolTemplate: () => {},
+      onSearchCutList: getCanApplyCustList,
+      // 查询操作类型/子类型/模板列表
+      queryTypeVaules,
+      // 操作类型列表
+      operationList,
+      // 子类型列表
+      subTypeList,
       // 协议模板列表
-      protocolTemplateList: [],
+      templateList,
+      // 根据所选模板id查询模板对应协议条款
+      queryChannelProtocolItem,
+      // 所选模板对应协议条款列表
+      protocolClauseList,
+      // 协议详情 - 编辑时传入
+      protocolDetail,
+      // 查询协议产品列表
+      queryChannelProtocolProduct,
+      // 协议产品列表
+      protocolProductList,
+            // 保存详情
+      saveProtocolData,
+      // 下挂客户
+      underCustList,
+      // 下挂客户接口
+      onQueryCust: queryCust,
     };
     return (
       <div className={styles.premissionbox} >

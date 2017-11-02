@@ -8,7 +8,7 @@ import DropdownSelect from '../common/dropdownSelect';
 import Select from '../common/Select';
 import { seibelConfig } from '../../config';
 
-const { permission: { subType } } = seibelConfig;
+const { permission: { subType, pageType } } = seibelConfig;
 
 export default class BaseInfoModify extends PureComponent {
   static propTypes = {
@@ -79,6 +79,7 @@ export default class BaseInfoModify extends PureComponent {
     this.context.getSubTypeList({
       customerId: item.brokerNumber,
       customerType: item.custType,
+      type: pageType,
     });
   }
 

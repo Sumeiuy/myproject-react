@@ -2,24 +2,22 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import style from './tablelist.less';
+import Icon from '../Icon';
 
 export default class TableList extends PureComponent {
   static propTypes = {
     info: PropTypes.array,
     statusType: PropTypes.string.isRequired,
-    selectValue: PropTypes.object,
     onEmitUpdateValue: PropTypes.func,
-    radioName: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
     info: [],
     onEmitUpdateValue: null,
-    selectValue: {},
   }
 
   get eleList() {
-    const { statusType, onEmitUpdateValue, selectValue, info, radioName } = this.props;
+    const { statusType, onEmitUpdateValue, info } = this.props;
     const result = info.map((item, index) => {
       const callBack = () => {
         onEmitUpdateValue(item);
@@ -30,29 +28,6 @@ export default class TableList extends PureComponent {
           key={key}
           className={style.spServerPersonelItem}
         >
-          <div
-            className={classnames(['text-center',
-              { 'flex-base_0': statusType === 'ready' },
-              { 'flex-base_1': statusType !== 'ready' },
-            ])}
-          >
-            <label
-              htmlFor={`${radioName}-${item.ptyMngId}`}
-              className={
-                item.ptyMngId === selectValue.ptyMngId
-                ? 'label-btn-circle checked'
-                : 'label-btn-circle'
-              }
-            >&nbsp;</label>
-            <input
-              type="radio"
-              id={`${radioName}-${item.ptyMngId}`}
-              name={radioName}
-              className="hide"
-              checked={item.ptyMngId === selectValue.ptyMngId}
-              onChange={callBack}
-            />
-          </div>
           <span
             className="flex-base_2 text-center"
           >{item.ptyMngId}</span>
@@ -69,6 +44,16 @@ export default class TableList extends PureComponent {
           <span
             className="flex-base_3 text-center"
           >{item.businessDepartment}</span>
+          <div
+            className={classnames(['text-center',
+              { 'flex-base_0': statusType === 'ready' },
+              { 'flex-base_1': statusType !== 'ready' },
+            ])}
+          >
+            <span key={`delete-${item.ptyMngId}`}>
+              <Icon type="shanchu" onClick={callBack} />
+            </span>
+          </div>
         </li>
       );
     });
@@ -82,12 +67,6 @@ export default class TableList extends PureComponent {
           className={classnames([style.spServerPersonelItem, style.firstItem])}
         >
           <span
-            className={classnames(['text-center',
-              { 'flex-base_0': this.props.statusType === 'ready' },
-              { 'flex-base_1': this.props.statusType !== 'ready' },
-            ])}
-          />
-          <span
             className="flex-base_2 text-center"
           >工号</span>
           <span
@@ -99,6 +78,12 @@ export default class TableList extends PureComponent {
           <span
             className="flex-base_3 text-center"
           >所属营业部</span>
+          <span
+            className={classnames(['text-center',
+              { 'flex-base_0': this.props.statusType === 'ready' },
+              { 'flex-base_1': this.props.statusType !== 'ready' },
+            ])}
+          >操作</span>
         </li>
         {this.eleList}
       </ul>
