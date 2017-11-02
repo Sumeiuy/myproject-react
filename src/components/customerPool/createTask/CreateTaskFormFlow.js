@@ -31,9 +31,9 @@ export default class CreateTaskFormFlow extends PureComponent {
     saveTaskFlowData: PropTypes.func.isRequired,
     approvalList: PropTypes.array.isRequired,
     getApprovalList: PropTypes.func.isRequired,
-    goBack: PropTypes.func.isRequired,
     onCloseTab: PropTypes.func.isRequired,
     orgId: PropTypes.string,
+    push: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -124,7 +124,8 @@ export default class CreateTaskFormFlow extends PureComponent {
       approvalList,
       orgId,
       onCloseTab,
-      goBack } = this.props;
+      push,
+    } = this.props;
     const { showBtn,
       isShowErrorInfo,
       isShowErrorExcuteType,
@@ -166,7 +167,7 @@ export default class CreateTaskFormFlow extends PureComponent {
             approvalList={approvalList}
             getApprovalList={getApprovalList}
             parseQuery={this.parseQuery}
-            goBack={goBack}
+            push={push}
             orgId={orgId}
             onCloseTab={onCloseTab}
           />
