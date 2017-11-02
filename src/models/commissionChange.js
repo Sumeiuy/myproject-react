@@ -32,7 +32,7 @@ export default {
     // 单佣金调整中的其他佣金费率的选项列表
     singleOtherCommissionOptions: [],
     // 咨询订阅、咨询退订调整页面客户查询列表
-    subscribeCustomerList: [],
+    subscribeCustomerList: {},
     // 单佣金调整中的可选产品列表
     singleComProductList: [],
     // 产品三匹配信息
@@ -88,13 +88,21 @@ export default {
     },
 
     getSubscribeDetailToChangeSuccess(state, action) {
-      const { payload: { detailRes, attachmentRes } } = action;
+      const { payload: { detailRes, attachmentRes, subscribeCustListRs, subProListRs } } = action;
       const detailResult = detailRes.resultData;
       const attachmentResult = attachmentRes.resultData;
+      const { resultData: custResultData } = subscribeCustListRs;
+      let list = {};
+      if (!_.isEmpty(custResultData)) {
+        list = custResultData[0];
+      }
+      const subProList = subProListRs.resultData;
       return {
         ...state,
         subscribeDetailToChange: {
           base: detailResult,
+          subscribeCustList: list,
+          subProList,
           attachmentList: attachmentResult,
         },
       };
@@ -245,9 +253,9 @@ export default {
 
     getSubscribelCustListSuccess(state, action) {
       const { payload: { resultData } } = action;
-      let list = [];
+      let list = {};
       if (!_.isEmpty(resultData)) {
-        list = resultData;
+        list = resultData[0];
       }
       return {
         ...state,
@@ -373,33 +381,48 @@ export default {
     },
 
     // 驳回后修改查询咨询订阅详情数据
-    * getSubscribeDetailToChange({ payload }, { call, put }) {
-      const { flowCode, custType } = payload;
+    * getSubscribeDetailToChange({ payload }, { call, put, select }) {
+      const { empInfo } = yield select(state => state.app.empInfo);
+      const { flowId } = payload;
+      const { postnId, occDivnNum } = empInfo;
       const detailRes = yield call(api.queryConsultDetail,
         {
           action: 'query',
           operationType: 'subscribe',
-          workFlowNumber: flowCode,
-          type: custType,
+          flowId,
         });
       // 通过查询到的详情数据的attachmentNum获取附件信息
       const detailRD = detailRes.resultData;
       const attachmentRes = yield call(api.getAttachment, { attachment: detailRD.attachmentNum });
+      const subscribeCustListRs = yield call(api.querySubscriptionCustomer, {
+        keyword: detailRD.custNum,
+        postionId: postnId,
+        deptId: occDivnNum,
+      });
+      let list = {};
+      if (!_.isEmpty(subscribeCustListRs)) {
+        list = subscribeCustListRs.resultData[0];
+      }
+      const custRs = list;
+      const { id, custType } = custRs;
+      const subProListRs = yield call(api.queryConsultSubscribeProductList, {
+        custId: id,
+        custType,
+      });
       yield put({
         type: 'getSubscribeDetailToChangeSuccess',
-        payload: { detailRes, attachmentRes },
+        payload: { detailRes, attachmentRes, subscribeCustListRs, subProListRs },
       });
     },
 
     // 驳回后修改查询咨询退订详情数据
     * getUnSubscribeDetailToChange({ payload }, { call, put }) {
-      const { flowCode, custType } = payload;
+      const { flowId } = payload;
       const detailRes = yield call(api.queryConsultDetail,
         {
           action: 'query',
           operationType: 'unsubscribe',
-          workFlowNumber: flowCode,
-          type: custType,
+          flowId,
         });
       // 通过查询到的详情数据的attachmentNum获取附件信息
       const detailRD = detailRes.resultData;

@@ -29,12 +29,10 @@ const { TextArea } = Input;
 
 export default class SubscribeDetailToChange extends PureComponent {
   static propTypes = {
+    location: PropTypes.object.isRequired,
     // 订阅详情
     getSubscribeDetailToChange: PropTypes.func.isRequired,
     subscribeDetailToChange: PropTypes.object.isRequired,
-    // 新建咨讯订阅可选产品列表
-    getSubscribelProList: PropTypes.func.isRequired,
-    subscribelProList: PropTypes.array.isRequired,
     // 产品与客户的三匹配信息
     threeMatchInfo: PropTypes.object.isRequired,
     queryThreeMatchInfo: PropTypes.func.isRequired,
@@ -45,7 +43,7 @@ export default class SubscribeDetailToChange extends PureComponent {
     // 修改咨讯订阅提交后返回值
     consultSubId: PropTypes.string.isRequired,
     // 审批人员列表
-    approvalUserList: PropTypes.string.isRequired,
+    approvalUserList: PropTypes.array.isRequired,
   }
 
   constructor(props) {
@@ -56,11 +54,42 @@ export default class SubscribeDetailToChange extends PureComponent {
       approverName: '',
       approverId: '',
       custLists: [],
-      customer: {}, // 资讯订阅选择的客户
       attachment: '',
       subProList: [], // 咨询订阅产品列表
       subscribelProductMatchInfo: [], // 咨询订阅的产品的三匹配信息
     };
+  }
+
+  componentDidMount() {
+    const { location: { query: { flowId } } } = this.props;
+    this.props.getSubscribeDetailToChange({ flowId });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { threeMatchInfo: prev3 } = this.props;
+    const { threeMatchInfo: next3 } = nextProps;
+    if (!_.isEqual(prev3, next3)) {
+      // 资讯订阅的
+      this.merge3MatchSubInfo(next3);
+    }
+  }
+
+  @autobind
+  merge3MatchSubInfo(info) {
+    const { riskRankMhrt, investProdMhrt, investTypeMhrt, productCode } = info;
+    const matchInfo = {
+      productCode,
+      riskMatch: riskRankMhrt,
+      prodMatch: investProdMhrt,
+      termMatch: investTypeMhrt,
+    };
+    const { subscribelProductMatchInfo } = this.state;
+    const exsit = _.findIndex(subscribelProductMatchInfo, o => o.productCode === productCode) > -1;
+    if (!exsit) {
+      this.setState({
+        subscribelProductMatchInfo: [matchInfo, ...subscribelProductMatchInfo],
+      });
+    }
   }
 
   // 清空页面数据
@@ -149,25 +178,6 @@ export default class SubscribeDetailToChange extends PureComponent {
     });
   }
 
-  // 咨询订阅基本信息选择客户
-  @autobind
-  handleSelectAssembly(customer) {
-    const { id, custType } = customer;
-    this.setState({
-      customer,
-    });
-    this.querySubscribelProList({
-      custId: id,
-      custType,
-    });
-  }
-
-  // 查询咨讯订阅调整产品
-  @autobind
-  querySubscribelProList(param) {
-    this.props.getSubscribelProList(param);
-  }
-
   // 咨讯订阅选择子产品的时候的处理程序
   @autobind
   handleSubscribelTransferSubProductCheck(item, array) {
@@ -222,6 +232,14 @@ export default class SubscribeDetailToChange extends PureComponent {
     return newSubscriProList;
   }
 
+  // 重组咨讯订阅已选产品List
+  // TODO
+  @autobind
+  choiceSubProList(data, preProList) {
+    console.warn('###preProList###', preProList);
+    return [];
+  }
+
   // 附件上传成功后的回调
   @autobind
   uploadCallBack(attachment) {
@@ -234,8 +252,29 @@ export default class SubscribeDetailToChange extends PureComponent {
     const {
       approvalUserList,
       threeMatchInfo,
-      subscribelProList,
     } = this.props;
+    const {
+      subscribeDetailToChange: {
+        base,
+        attachmentList,
+        subscribeCustList,
+        subProList,
+      },
+    } = this.props;
+    if (_.isEmpty(base)) return null;
+    if (_.isEmpty(subscribeCustList)) return null;
+    const { riskLevelLabel } = subscribeCustList;
+    const {
+      // 客户名称
+      custName,
+      // 经纪客户号
+      custNum,
+      // 备注
+      comments,
+      // 产品
+      item: choiceProList,
+    } = base;
+    const customer = `${custName}（${custNum}） - ${riskLevelLabel}`;
     const newApproverList = approvalUserList.map((item, index) => {
       const key = `${new Date().getTime()}-${index}`;
       return {
@@ -243,50 +282,20 @@ export default class SubscribeDetailToChange extends PureComponent {
         key,
       };
     });
-    const newSubscribelProList = this.createSubscribelProList(subscribelProList);
+    const newSubscribelProList = this.createSubscribelProList(subProList);
+    const choiceSubscribelProList = this.choiceSubProList(choiceProList, newSubscribelProList);
     const {
-      remark,
       choiceApprover,
       approverName,
       approverId,
     } = this.state;
-
-    const uploadProps = {
-      attachmentList: [{
-        creator: '002332',
-        attachId: '{6795CB98-B0CD-4CEC-8677-3B0B9298B209}',
-        name: '新建文本文档 (3).txt',
-        size: '0',
-        createTime: '2017/09/12 13:37:45',
-        downloadURL: 'http://ceflow:8086/unstructured/downloadDocument?sessionId=675fd3be-baca-4099-8b52-bf9dde9f2b59&documentId={6795CB98-B0CD-4CEC-8677-3B0B9298B209}',
-        realDownloadURL: '/attach/download?filename=%E6%96%B0%E5%BB%BA%E6%96%87%E6%9C%AC%E6%96%87%E6%A1%A3+%283%29.txt&attachId={6795CB98-B0CD-4CEC-8677-3B0B9298B209',
-      },
-      {
-        creator: '002332',
-        attachId: '{2EF837DE-508C-4FCA-93B8-99CEA68DCB0D}',
-        name: '测试.docx',
-        size: '11',
-        createTime: '2017/09/12 11:53:36',
-        downloadURL: 'http://ceflow:8086/unstructured/downloadDocument?sessionId=675fd3be-baca-4099-8b52-bf9dde9f2b59&documentId={2EF837DE-508C-4FCA-93B8-99CEA68DCB0D}',
-        realDownloadURL: '/attach/download?filename=%E6%B5%8B%E8%AF%95.docx&attachId={2EF837DE-508C-4FCA-93B8-99CEA68DCB0D',
-      },
-      {
-        creator: '002332',
-        attachId: '{24C098F0-9DE3-4DC6-9E7D-FECE683E4B6F}',
-        name: '生产sql和修改后sql.txt',
-        size: '2',
-        createTime: '2017/09/12 11:55:32',
-        downloadURL: 'http://ceflow:8086/unstructured/downloadDocument?sessionId=675fd3be-baca-4099-8b52-bf9dde9f2b59&documentId={24C098F0-9DE3-4DC6-9E7D-FECE683E4B6F}',
-        realDownloadURL: '/attach/download?filename=%E7%94%9F%E4%BA%A7sql%E5%92%8C%E4%BF%AE%E6%94%B9%E5%90%8Esql.txt&attachId={24C098F0-9DE3-4DC6-9E7D-FECE683E4B6F',
-      }],
-    };
 
     // 资讯订阅中的产品选择配置
     const subScribetransferProps = {
       firstTitle: '可选服务',
       secondTitle: '已选服务',
       firstData: newSubscribelProList,
-      secondData: [],
+      secondData: choiceSubscribelProList,
       firstColumns: subScribeProColumns,
       secondColumns: subScribeProColumns,
       transferChange: this.handleTransferChange, // 三匹配未做
@@ -314,14 +323,14 @@ export default class SubscribeDetailToChange extends PureComponent {
             </CommissionLine>
             <CommissionLine label="客户" labelWidth="90px" needInputBox={false}>
               <Input
-                value="测试数据-张三"
+                value={customer}
                 disabled
               />
             </CommissionLine>
             <CommissionLine label="备注" labelWidth="90px">
               <TextArea
                 placeholder="备注内容"
-                value={remark}
+                value={comments}
                 onChange={this.handleChangeRemark}
                 style={{
                   fontSize: '14px',
@@ -336,7 +345,10 @@ export default class SubscribeDetailToChange extends PureComponent {
           <ThreeMatchTip info={threeMatchInfo} />
           <div className={styles.approvalBlock}>
             <InfoTitle head="附件信息" />
-            <CommonUpload edit {...uploadProps} />
+            <CommonUpload
+              edit
+              attachmentList={attachmentList}
+            />
           </div>
           <div className={styles.approvalBlock}>
             <InfoTitle head="审批人" />
