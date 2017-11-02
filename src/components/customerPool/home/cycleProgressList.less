@@ -1,10 +1,11 @@
+@import "../../../css/variable.less";
 .container {
-  padding: 28px 0px;
+  padding: 28px 0;
   .row {
     display: -webkit-flex; /* Safari */
     display: flex;
     align-items: center;
-    .column{
+    .column {
       overflow: hidden;
       width: 50%;
       text-align: center;
@@ -28,9 +29,9 @@
         overflow: hidden;
         text-overflow: ellipsis;
         text-align: center;
-        font-family:PingFangSC-Regular;
-        color:#666666;
-        letter-spacing:0.2px;
+        font-family: @font-family;
+        color: #666;
+        letter-spacing: 0.2px;
         font-size: 6px;
       }
     }
@@ -42,7 +43,7 @@
     .firstColumn {
       :global {
         .ant-progress-circle-path {
-          stroke: #33D0E2;
+          stroke: #33d0e2;
         }
       }
     }

@@ -44,7 +44,7 @@ const getColourfulItem = ({
           normal: {
             show: true,
             position: 'top',
-            fontFamily: 'PingFangSC-Regular',
+            fontFamily: 'Microsoft YaHei',
             fontSize: 12,
             color: '#4a4a4a',
             formatter: (params) => {
@@ -106,7 +106,7 @@ const getBgItem = ({
       normal: {
         show: true,
         position: 'top',
-        fontFamily: 'PingFangSC-Regular',
+        fontFamily: 'Microsoft YaHei',
         fontSize: 12,
         color: '#4a4a4a',
         formatter: (params) => {
@@ -184,7 +184,7 @@ export const singleColorBar = ({
         normal: {
           show: true,
           position: 'top',
-          fontFamily: 'PingFangSC-Regular',
+          fontFamily: 'Microsoft YaHei',
           fontSize: 12,
           color: '#2782d7',
           formatter: (params) => {

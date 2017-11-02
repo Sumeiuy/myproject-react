@@ -53,13 +53,11 @@ export default class Viewpoint extends PureComponent {
     return titleArray.map((item, index) => (
       <div
         className={classnames(styles.row, { [styles.none]: (index >= 12) })}
+        onClick={() => { this.handleDetailClick(index); }}
         key={item.id}
       >
-        <a
-          className={styles.news}
-          onClick={() => { this.handleDetailClick(index); }}
-        >
-          {item.texttitle}
+        <a className={styles.news}>
+          {_.isEmpty(item.subtitle) ? '--' : item.subtitle}
         </a>
       </div>
     ));
