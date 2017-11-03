@@ -91,6 +91,17 @@ const checkColumns = (column, defaultCheckKey, handleAction) => {
   };
 };
 
+// 浮点数转换到整数的倍数
+const times = 100;
+
+function float2Integer(v) {
+  return v * times;
+}
+
+function int2Float(v) {
+  return v / times;
+}
+
 export default class TableTransfer extends Component {
   static propTypes = {
     firstTitle: PropTypes.string,
@@ -171,10 +182,10 @@ export default class TableTransfer extends Component {
     let totalRate = 0;
     secondData.forEach(
       (item) => {
-        totalRate += _.toNumber(item[rateKey]);
+        totalRate += float2Integer(_.toNumber(item[rateKey]));
       },
     );
-    return totalRate;
+    return int2Float(totalRate);
   }
 
   // 重置数据源
@@ -204,7 +215,7 @@ export default class TableTransfer extends Component {
     const rateFlag = !_.isEmpty(aboutRate);
     let differenceRate = 0;
     if (rateFlag) {
-      differenceRate = totalRate - _.toNumber(_.head(aboutRate));
+      differenceRate = float2Integer(totalRate) - float2Integer(_.toNumber(_.head(aboutRate)));
     }
     // 第四步，返回组合对象
     return {
@@ -222,7 +233,7 @@ export default class TableTransfer extends Component {
       ],
       rate: {
         rateFlag, // 是否计算佣金率
-        differenceRate,  // 差值：右表totalRate-目标佣金率
+        differenceRate: int2Float(differenceRate),  // 差值：右表totalRate-目标佣金率
         totalRate,   // 右表totalRate
         tip: { type: '', content: '' }, // 佣金率提示
       },
@@ -462,28 +473,29 @@ export default class TableTransfer extends Component {
     let modifyTotalRate = 0;
     let modifyDifferenceRate = 0;
     let modifyTip = {};
+    // JS浮点数精度问题修改
     if (state === 'add') {
-      modifyTotalRate = totalRate + _.toNumber(selected[rateKey]);
+      modifyTotalRate = float2Integer(totalRate) + float2Integer(_.toNumber(selected[rateKey]));
     } else {
-      modifyTotalRate = totalRate - _.toNumber(selected[rateKey]);
+      modifyTotalRate = float2Integer(totalRate) - float2Integer(_.toNumber(selected[rateKey]));
     }
-    modifyDifferenceRate = modifyTotalRate - _.toNumber(targetRate);
+    modifyDifferenceRate = modifyTotalRate - float2Integer(_.toNumber(targetRate));
     if (modifyDifferenceRate === 0) {
       modifyTip = { type: 'finish', content: '产品组合等于目标佣金率' };
     } else if (modifyDifferenceRate > 0) {
       modifyTip = {
         type: 'warning',
-        content: `产品组合比目标佣金率高${(Math.abs(modifyDifferenceRate)).toFixed(2)}‰`,
+        content: `产品组合比目标佣金率高${(Math.abs(int2Float(modifyDifferenceRate))).toFixed(2)}‰`,
       };
     } else {
       modifyTip = {
         type: 'warning',
-        content: `产品组合离目标佣金率还差${(Math.abs(modifyDifferenceRate)).toFixed(2)}‰`,
+        content: `产品组合离目标佣金率还差${(Math.abs(int2Float(modifyDifferenceRate))).toFixed(2)}‰`,
       };
     }
     return {
-      totalRate: modifyTotalRate,
-      differenceRate: modifyDifferenceRate,
+      totalRate: int2Float(modifyTotalRate),
+      differenceRate: int2Float(modifyDifferenceRate),
       tip: modifyTip,
     };
   }

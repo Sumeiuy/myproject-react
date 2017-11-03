@@ -36,6 +36,12 @@ const effects = {
   otherRate: 'commissionChange/getSingleOtherCommissionOptions',
   // 获取驳回后单佣金调整的客户信息
   singleCustomer: 'commissionChange/getSingleCustList',
+  // 驳回后页面的按钮
+  btns: 'commissionChange/queryApprovalBtns',
+  // 单佣金提交
+  singleSubmit: 'commissionChange/submitSingleCommission',
+  // 更新流程
+  updateFlow: 'commissionChange/updateFlowStatus',
 };
 
 const mapStateToProps = state => ({
@@ -59,6 +65,10 @@ const mapStateToProps = state => ({
   singleCustomer: state.commissionChange.singleCustomerList,
   // 获取驳回后单佣金调整详情数据的Loading
   singleDetailLoading: state.loading.effects[effects.singleDetail],
+  // 驳回后修改页面的按钮列表
+  approvalBtns: state.commissionChange.approvalBtns,
+  // 驳回后修改提交成功提示
+  singleSubmit: state.commissionChange.singleSubmit,
 });
 
 const getDataFunction = (loading, type) => query => ({
@@ -87,6 +97,12 @@ const mapDispatchToProps = {
   queryOtherRate: getDataFunction(false, effects.otherRate),
   // 获取驳回后的单佣金调整的客户信息
   querySingleCustomer: getDataFunction(false, effects.singleCustomer),
+  // 获取驳回后的按钮列表
+  queryApprovalBtns: getDataFunction(false, effects.btns),
+  // 提交单佣金
+  updateSingle: getDataFunction(false, effects.singleSubmit),
+  // 更新流程
+  updateFlow: getDataFunction(false, effects.updateFlow),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -122,6 +138,13 @@ export default class RejectionAndAmendment extends PureComponent {
     // 驳回后的单佣金调整的客户信息
     singleCustomer: PropTypes.object.isRequired,
     querySingleCustomer: PropTypes.func.isRequired,
+    // 驳回后页面按钮
+    queryApprovalBtns: PropTypes.func.isRequired,
+    approvalBtns: PropTypes.array.isRequired,
+    // 单佣金调整提交后的结果
+    singleSubmit: PropTypes.string.isRequired,
+    updateSingle: PropTypes.func.isRequired,
+    updateFlow: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -165,6 +188,11 @@ export default class RejectionAndAmendment extends PureComponent {
         queryThreeMatchInfo,
         queryOtherRate,
         singleOtherRate,
+        queryApprovalBtns,
+        approvalBtns,
+        singleSubmit,
+        updateSingle,
+        updateFlow,
       } = this.props;
       return (
         <SingleDetailChange
@@ -180,6 +208,11 @@ export default class RejectionAndAmendment extends PureComponent {
           onQueryProductList={querySingleProductList}
           onQuery3Match={queryThreeMatchInfo}
           onQueryOtherRate={queryOtherRate}
+          onQueryBtns={queryApprovalBtns}
+          approvalBtns={approvalBtns}
+          submitResult={singleSubmit}
+          onSubmit={updateSingle}
+          onUpdateFlow={updateFlow}
         />
       );
     } else if (type === 'SUBSCRIBE') {
