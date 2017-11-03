@@ -160,7 +160,7 @@ export default class TaskFormInfo extends PureComponent {
   renderTipSection() {
     return (
       <div className={styles.info}>
-        任务提示中 &#123;XXXX&#125; 部分后台会根据客户自动替换为该客户对应的属性值，编辑任务提示时请尽量避免修改这些参数描述。
+        如果要在任务提示中包含对应每个客户的属性数值，可以用  &#123;xx&#125;插入参数，比如  &#123;已开通业务&#125;。注意“ &#123;”前要有空格。
       </div>
     );
   }
