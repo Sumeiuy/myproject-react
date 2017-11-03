@@ -219,17 +219,7 @@ export default class SubscribeDetailToChange extends PureComponent {
       preProList.forEach((item) => {
         const { prodCode: choiceProCode, children } = item;
         if (prodCode === choiceProCode) {
-          const {
-            riskMatch,
-            prodMatch,
-            termMatch,
-          } = tableProList;
-          const proList = {
-            riskMatch,
-            prodMatch,
-            termMatch,
-            ...item,
-          };
+          const proList = { ...tableProList, ...item };
           if (!_.isEmpty(subItem)) {
             const { prodCode: choiceChildCode } = subItem;
             proList.children = children.map((pro) => {

@@ -248,6 +248,18 @@ export default class CreateNewApprovalBoard extends PureComponent {
         {
           name: 'singleGJCommission',
         },
+        {
+          name: 'subscribelProList',
+          value: [],
+        },
+        {
+          name: 'unSubscribelProList',
+          value: [],
+        },
+        {
+          name: 'subscribeCustList',
+          value: [],
+        },
       ],
     });
   }
@@ -883,13 +895,16 @@ export default class CreateNewApprovalBoard extends PureComponent {
     this.setState({
       subProList: array,
     });
-    const { prodCode } = item;
-    const { id, custType } = this.state.customer;
-    this.props.queryThreeMatchInfo({
-      custRowId: id,
-      custType,
-      prdCode: prodCode,
-    });
+    if (flag === 'add') {
+      // 如果是左侧列表添加到右侧列表,则需要查询三匹配信息
+      const { prodCode } = item;
+      const { id, custType } = this.state.customer;
+      this.props.queryThreeMatchInfo({
+        custRowId: id,
+        custType,
+        prdCode: prodCode,
+      });
+    }
   }
 
   // 咨讯退订调整穿梭变化的时候处理程序
@@ -955,6 +970,16 @@ export default class CreateNewApprovalBoard extends PureComponent {
   createSubscribelProList(data) {
     const newSubscriProList = data.map((product) => {
       const newSubscribel = this.changeSubscriProList(product);
+      const { children } = product;
+      if (!_.isEmpty(children)) {
+        newSubscribel.children = children.map((item) => {
+          const { prodRowid } = item;
+          return {
+            key: prodRowid,
+            ...item,
+          };
+        });
+      }
       return newSubscribel;
     });
     return newSubscriProList;
@@ -965,6 +990,16 @@ export default class CreateNewApprovalBoard extends PureComponent {
   createUnSubscribelProList(data) {
     const newUnSubscriProList = data.map((product) => {
       const newUnSubscribel = this.changeUnSubscriProList(product);
+      const { children } = product;
+      if (!_.isEmpty(children)) {
+        newUnSubscribel.children = children.map((item) => {
+          const { prodRowid } = item;
+          return {
+            key: prodRowid,
+            ...item,
+          };
+        });
+      }
       return newUnSubscribel;
     });
     return newUnSubscriProList;
