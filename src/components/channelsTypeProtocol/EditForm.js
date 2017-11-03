@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date:   2017-09-19 14:47:08
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-11-02 20:50:35
+ * @Last Modified time: 2017-11-03 10:37:14
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -17,7 +17,6 @@ import SearchSelect from '../common/Select/SearchSelect';
 import CommonTable from '../common/biz/CommonTable';
 import MultiUploader from '../common/biz/MultiUploader';
 import Transfer from '../../components/common/biz/TableTransfer';
-import Button from '../common/Button';
 import { seibelConfig } from '../../config';
 import styles from './editForm.less';
 
@@ -52,7 +51,7 @@ export default class EditForm extends PureComponent {
     protocolDetail: PropTypes.object,
     // 查询子类型/操作类型/模板列表
     queryTypeVaules: PropTypes.func.isRequired,
-    operationList: PropTypes.array.isRequired,
+    operationTypeList: PropTypes.array.isRequired,
     subTypeList: PropTypes.array.isRequired,
     // 查询协议编号
     // onSearchProtocolNum: PropTypes.func.isRequired,
@@ -65,7 +64,7 @@ export default class EditForm extends PureComponent {
     queryChannelProtocolProduct: PropTypes.func.isRequired,
     // 协议产品列表
     protocolProductList: PropTypes.array.isRequired,
-        // 保存详情
+    // 保存详情
     saveProtocolData: PropTypes.func.isRequired,
     // 下挂客户列表
     underCustList: PropTypes.array.isRequired,
@@ -86,6 +85,10 @@ export default class EditForm extends PureComponent {
       attachmentTypeList: attachmentMap,
       // 下挂客户表格数据
       cust: EMPTY_LIST,
+      // 所选协议产品列表
+      protocolProductList: EMPTY_LIST,
+      // 是否多账户
+      multiUsedFlag: false,
     };
   }
 
@@ -95,11 +98,37 @@ export default class EditForm extends PureComponent {
     this.setUploadConfig(hasCust);
   }
 
+  // 切换多账户
+  @autobind
+  onChangeMultiCustomer(boolean) {
+    this.setState({
+      multiUsedFlag: boolean,
+    });
+  }
+
   // 向父组件提供数据
   @autobind
   getData() {
     const baseInfoData = this.editBaseInfoComponent.getData();
-    return Object.assign(EMPTY_OBJECT, baseInfoData, this.state);
+    const { protocolClauseList } = this.props;
+    const { protocolProductList, attachmentTypeList, cust } = this.state;
+    const formData = {
+      subType: baseInfoData.subType,
+      custId: baseInfoData.client.cusId,
+      custType: baseInfoData.client.custType,
+      startDt: '',
+      vailDt: '',
+      content: baseInfoData.content,
+      operationType: baseInfoData.operationType,
+      templateId: baseInfoData.protocolTemplate.rowId,
+      multiUsedFlag: baseInfoData.multiUsedFlag ? 'Y' : 'N',
+      levelTenFlag: baseInfoData.levelTenFlag ? 'Y' : 'N',
+      item: protocolProductList,
+      term: protocolClauseList,
+      attachment: attachmentTypeList,
+      cust,
+    };
+    return formData;
   }
 
   // 设置上传配置项
@@ -141,14 +170,18 @@ export default class EditForm extends PureComponent {
   // 添加协议产品
   @autobind
   handleTransferChange(flag, newSelect, changeSecondArray) {
-    console.log('protocolList', flag, newSelect, changeSecondArray);
+    // console.log('changeSecondArray', flag, newSelect, changeSecondArray);
+    this.setState({
+      ...this.state,
+      protocolProductList: changeSecondArray,
+    });
   }
 
   // 下挂客户添加事件
   @autobind
   changeFunction(value) {
     const { cust } = this.state;
-    console.warn('value', value);
+    // console.warn('value', value);
     const filterCust = _.filter(cust, o => o.econNum === value.econNum);
     if (_.isEmpty(value)) {
       message.error('请选择客户');
@@ -213,8 +246,6 @@ export default class EditForm extends PureComponent {
   @autobind
   handleDeleteCallback(attachmentType) {
     const { attachmentTypeList } = this.state;
-    console.warn('handleDeleteCallback attachmentType', attachmentType);
-    console.warn('handleDeleteCallback attachmentTypeList', attachmentTypeList);
     const newAttachmentTypeList = attachmentTypeList.map((item) => {
       const { type, length } = item;
       if (type === attachmentType && length > 0) {
@@ -229,6 +260,7 @@ export default class EditForm extends PureComponent {
       attachmentTypeList: newAttachmentTypeList,
     });
   }
+
   render() {
     const {
       // 客户列表
@@ -240,7 +272,7 @@ export default class EditForm extends PureComponent {
       // 模板列表
       templateList,
       // 操作类型列表
-      operationList,
+      operationTypeList,
       // 子类型列表
       subTypeList,
       // 根据所选模板id查询模板对应协议条款
@@ -257,15 +289,8 @@ export default class EditForm extends PureComponent {
     const {
       cust,
       attachmentTypeList,
+      multiUsedFlag,
     } = this.state;
-    // 新建协议产品按钮
-    const buttonProps = {
-      type: 'primary',
-      size: 'large',
-      className: styles.addClauseButton,
-      ghost: true,
-      onClick: () => this.showModal('addProtocolProductModal'),
-    };
     // 下挂客户表格中需要的操作
     const customerOperation = {
       column: {
@@ -298,7 +323,7 @@ export default class EditForm extends PureComponent {
     const customerSelectList = underCustList.length ? underCustList.map(item => ({
       ...item,
       key: item.econNum,
-      custStatus: '订购处理中',
+      custStatus: '开通处理中',
     })) : EMPTY_LIST;
     return (
       <div className={styles.editComponent}>
@@ -309,15 +334,15 @@ export default class EditForm extends PureComponent {
           templateList={templateList}
           ref={ref => this.editBaseInfoComponent = ref}
           queryTypeVaules={queryTypeVaules}
-          operationList={operationList}
+          operationTypeList={operationTypeList}
           subTypeList={subTypeList}
           queryChannelProtocolProduct={queryChannelProtocolProduct}
+          onChangeMultiCustomer={this.onChangeMultiCustomer}
         />
         <div className={styles.editWrapper}>
           <InfoTitle
             head="协议产品"
           />
-          <Button {...buttonProps}>新建</Button>
           <Transfer
             {...transferProps}
           />
@@ -331,23 +356,28 @@ export default class EditForm extends PureComponent {
             titleList={protocolClauseTitleList}
           />
         </div>
-        <div className={styles.editWrapper}>
-          <InfoTitle head="下挂客户" />
-          <SearchSelect
-            onAddCustomer={this.changeFunction}
-            onChangeValue={this.changeValue}
-            width="184px"
-            labelName="客户"
-            dataSource={customerSelectList}
-          />
-          <div className={styles.customerTable}>
-            <CommonTable
-              data={cust}
-              titleList={underCustTitleList}
-              operation={customerOperation}
-            />
-          </div>
-        </div>
+        {
+          multiUsedFlag ?
+            <div className={styles.editWrapper}>
+              <InfoTitle head="下挂客户" />
+              <SearchSelect
+                onAddCustomer={this.changeFunction}
+                onChangeValue={this.changeValue}
+                width="184px"
+                labelName="客户"
+                dataSource={customerSelectList}
+              />
+              <div className={styles.customerTable}>
+                <CommonTable
+                  data={cust}
+                  titleList={underCustTitleList}
+                  operation={customerOperation}
+                />
+              </div>
+            </div>
+          :
+            null
+        }
         <div className={styles.editWrapper}>
           <InfoTitle head="附件" />
           {

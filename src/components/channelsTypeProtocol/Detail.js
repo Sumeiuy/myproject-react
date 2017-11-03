@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-19 09:37:42
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-11-02 20:50:56
+ * @Last Modified time: 2017-11-02 21:37:34
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -28,6 +28,11 @@ const {
 const EMPTY_PARAM = '暂无';
 // const EMPTY_OBJECT = {};
 const EMPTY_ARRAY = [];
+// bool MAP数据
+const mapBoolData = {
+  Y: '是',
+  N: '否',
+};
 // 合约条款的表头、状态对应值
 const { contract: { status } } = seibelConfig;
 export default class Detail extends PureComponent {
@@ -76,7 +81,6 @@ export default class Detail extends PureComponent {
     const { customerList } = this.state;
     const testArr = _.cloneDeep(customerList);
     const newCustomerList = _.remove(testArr, (n, i) => i !== index);
-    console.warn('newCustomerList', newCustomerList);
     this.setState({
       customerList: newCustomerList,
     });
@@ -126,8 +130,8 @@ export default class Detail extends PureComponent {
           <InfoItem label="子类型" value={protocolDetail.subType || EMPTY_PARAM} />
           <InfoItem label="客户" value={`${(protocolDetail.contactName || protocolDetail.accountName) || EMPTY_PARAM} ${protocolDetail.econNum || EMPTY_PARAM}`} />
           <InfoItem label="协议模板" value={protocolDetail.templateName} />
-          <InfoItem label="是否多账户使用" value={protocolDetail.multiUsedFlag} />
-          <InfoItem label="是否订购十档行情" value={protocolDetail.levelTenFlag} />
+          <InfoItem label="是否多账户使用" value={mapBoolData[protocolDetail.multiUsedFlag]} />
+          <InfoItem label="是否订购十档行情" value={mapBoolData[protocolDetail.levelTenFlag]} />
           <InfoItem label="协议开始日期" value={dateFormat(protocolDetail.startDt) || EMPTY_PARAM} />
           <InfoItem label="合约有效期" value={dateFormat(protocolDetail.vailDt) || EMPTY_PARAM} />
           <InfoItem label="备注" value={protocolDetail.content || EMPTY_PARAM} />

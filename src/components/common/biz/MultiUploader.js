@@ -175,7 +175,7 @@ export default class MultiUpload extends PureComponent {
           <Icon type="xiazai" />上传附件
         </Button>
       </Upload>)
-    :
+      :
       null;
 
     let fileListElement;
@@ -210,7 +210,7 @@ export default class MultiUpload extends PureComponent {
                               <Icon type="shanchu" />
                             </Popconfirm>
                           </em>
-                        :
+                          :
                           null
                       }
                       <em>
@@ -253,7 +253,7 @@ export default class MultiUpload extends PureComponent {
                           strokeWidth={4}
                           status={status}
                         />
-                      :
+                        :
                         null
                     }
                   </Popover>
@@ -290,7 +290,7 @@ export default class MultiUpload extends PureComponent {
         {
           _.isEmpty(title) ?
             null
-          :
+            :
             <h3 className={styles.title}>{title}{required ? '(必填)' : null}</h3>
         }
         { fileListElement }

@@ -319,9 +319,15 @@ const pageConfig = {
     operationList: [
       {
         show: true,
+        label: '全部',
+        value: '',
+      },
+      {
+        show: true,
         label: '订购',
         value: '1',
-      }, {
+      },
+      {
         show: true,
         label: '退订',
         value: '2',
@@ -364,7 +370,7 @@ const pageConfig = {
       {
         show: true,
         label: '高速通道类协议',
-        value: '0401',
+        value: '0501',
         status: [
           {
             show: true,
@@ -401,7 +407,7 @@ const pageConfig = {
       {
         show: true,
         label: '紫金快车道协议',
-        value: '0402',
+        value: '0502',
         status: [
           {
             show: true,
@@ -442,7 +448,7 @@ const pageConfig = {
       {
         show: true,
         label: '套利软件',
-        value: '0403',
+        value: '0503',
         status: [
           {
             show: true,
@@ -471,7 +477,7 @@ const pageConfig = {
       {
         show: true,
         label: '期权软件',
-        value: '0404',
+        value: '0504',
         status: [
           {
             show: true,
@@ -525,26 +531,31 @@ const pageConfig = {
         value: '04',
       },
     ],
-    operateType: [
+    operationList: [
+      {
+        show: true,
+        label: '全部',
+        value: '',
+      },
       {
         show: true,
         label: '协议订购',
-        value: '1',
+        value: 'Subscribe',
       },
       {
         show: true,
         label: '协议退订',
-        value: '2',
+        value: 'Unsubscribe',
       },
       {
         show: true,
         label: '协议续订',
-        value: '3',
+        value: 'Renewal',
       },
       {
         show: true,
         label: '新增或删除下挂客户',
-        value: '4',
+        value: 'AddDel',
       },
     ],
     businessType: [
@@ -576,41 +587,49 @@ const pageConfig = {
         dataIndex: 'prodCode',
         key: 'prodCode',
         title: '产品代码',
+        width: 72,
       },
       {
         dataIndex: 'prodName',
         key: 'prodName',
         title: '产品名称',
+        width: 72,
       },
       {
         dataIndex: 'prodType',
         key: 'prodType',
         title: '产品类型',
+        width: 72,
       },
       {
         dataIndex: 'prodSubType',
         key: 'prodSubType',
         title: '子类型',
+        width: 58,
       },
       {
-        dataIndex: 'riskMatchFlag',
-        key: 'riskMatchFlag',
+        dataIndex: 'riskMatch',
+        key: 'riskMatch',
         title: '风险是否匹配',
+        width: 100,
       },
       {
-        dataIndex: 'termMatchFlag',
-        key: 'termMatchFlag',
+        dataIndex: 'termMatch',
+        key: 'termMatch',
         title: '期限是否匹配',
+        width: 100,
       },
       {
-        dataIndex: 'varietyMatchFlag',
-        key: 'varietyMatchFlag',
+        dataIndex: 'varietyMatch',
+        key: 'varietyMatch',
         title: '投资品种是否匹配',
+        width: 128,
       },
       {
         dataIndex: 'confirmType',
         key: 'confirmType',
         title: '签署确认书类型',
+        width: 114,
       },
       {
         dataIndex: 'price',

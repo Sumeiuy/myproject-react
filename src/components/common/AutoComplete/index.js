@@ -33,9 +33,8 @@ export default class autoComplete extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { initValue } = props;
     this.state = {
-      inputValue: initValue,
+      inputValue: '',
     };
   }
   componentWillReceiveProps(nextProps) {

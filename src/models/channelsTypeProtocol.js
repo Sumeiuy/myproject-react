@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-10-30 15:13:30
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-11-02 20:50:01
+ * @Last Modified time: 2017-11-03 10:05:36
  */
 // import _ from 'lodash';
 
@@ -173,13 +173,13 @@ export default {
     * queryTypeVaules({ payload }, { call, put }) {
       console.log('payload', payload);
       const response = yield call(api.queryTypeVaules, payload);
-        /*eslint-disable */
-        response.resultData.forEach((v)=>{
-          v.show = true;
-          v.label = v.val;
-          v.value = v.name;
-        })
-        /*eslint-disable */
+      /*eslint-disable */
+      response.resultData.forEach((v)=>{
+        v.show = true;
+        v.label = v.val;
+        v.value = v.name;
+      })
+      /*eslint-disable */
       switch(payload.typeCode){
         case 'operationType':
           yield put({
@@ -197,10 +197,15 @@ export default {
     },
     // 保存详情
     * saveProtocolData({ payload }, { call, put }) {
-      const response = yield call(api.saveProtocolData, payload);
+      const response = yield call(api.saveProtocolData, payload.formData);
       yield put({
         type: 'saveProtocolDataSuccess',
         payload: response,
+      });
+      // 保存成功之后重新请求左侧列表
+      yield put({
+        type: 'app/getSeibleList',
+        payload: payload.params,
       });
     },
     // 查询客户
@@ -249,8 +254,8 @@ export default {
     * queryChannelProtocolItem({ payload }, { call, put }) {
       const response = yield call(api.queryChannelProtocolItem, payload);
       yield put({
-          type: 'queryChannelProtocolItemSuccess',
-          payload: response,
+        type: 'queryChannelProtocolItemSuccess',
+        payload: response,
       });
     },
     // 查询协议产品列表
@@ -299,8 +304,8 @@ export default {
     * queryChannelProtocolItem({ payload }, { call, put }) {
       const response = yield call(api.queryChannelProtocolItem, payload);
       yield put({
-          type: 'queryChannelProtocolItemSuccess',
-          payload: response,
+        type: 'queryChannelProtocolItemSuccess',
+        payload: response,
       });
     },
     // 查询协议产品列表
