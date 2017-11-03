@@ -183,7 +183,7 @@ export default class TaskSearchRow extends PureComponent {
               </Button>
             </Radio>
             <h4 className={styles.titExp}>瞄准镜标签，共有
-                <span>{item.customNum}</span>客户。创建时间{item.createDate}，创建人：{item.createrName}
+                <span>{item.customNum}</span>客户。创建时间：{item.createDate || '--'}，创建人：{item.createrName || '--'}
             </h4>
             <h4
               dangerouslySetInnerHTML={{ __html: newDesc }} // eslint-disable-line
@@ -255,6 +255,7 @@ export default class TaskSearchRow extends PureComponent {
                   listData={custTableData}
                   titleColumn={renderColumnTitle}
                   isFirstColumnLink={false}
+                  columnWidth={100}
                 />
               </Modal> : null
           }
