@@ -440,7 +440,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
     />);
     const editFormModalProps = {
       modalKey: 'editFormModal',
-      title: '修改合约申请',
+      title: '新建协议管理',
       closeModal: this.closeModal,
       visible: editFormModal,
       size: 'large',
