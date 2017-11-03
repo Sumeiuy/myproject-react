@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 15:02:49
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-11-01 16:54:43
+ * @Last Modified time: 2017-11-02 20:27:35
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -36,41 +36,41 @@ const mapDispatchToProps = {
 @connect(mapStateToProps, mapDispatchToProps)
 export default class MultiUpload extends PureComponent {
   static propTypes = {
-    // 上传组件的索引
-    index: PropTypes.number.isRequired,
-    // 上传成功后回调方法
-    uploadCallback: PropTypes.func,
-    // 删除成功后回调方法
-    deleteCallback: PropTypes.func,
     // 删除附件方法
-    deleteAttachment: PropTypes.func,
+    deleteAttachment: PropTypes.func.isRequired,
     // 删除事件的状态
     deleteAttachmentLoading: PropTypes.bool,
-    // 组件的元素 list
-    attachmentList: PropTypes.array,
-    // 每个单子对应的唯一附件表 ID，默认为 ''
-    attachment: PropTypes.string,
-    // 是否可删除、上传
+    // key 值
+    key: PropTypes.string,
+    // 编辑状态
     edit: PropTypes.bool,
+    // 上传组件的 type
+    type: PropTypes.string,
     // 标题
     title: PropTypes.string,
     // 是否必须
     required: PropTypes.bool,
-    // 上传组件的 type
-    type: PropTypes.string,
+    // 每个单子对应的唯一附件表 ID，默认为 ''
+    attachment: PropTypes.string,
+    // 组件的元素 list
+    attachmentList: PropTypes.array,
+    // 上传成功后回调方法
+    uploadCallback: PropTypes.func,
+    // 删除成功后回调方法
+    deleteCallback: PropTypes.func,
   }
 
   static defaultProps = {
-    uploadCallback: () => {},
-    deleteCallback: () => {},
-    deleteAttachment: () => {},
-    deleteAttachmentLoading: false,
-    attachmentList: [],
-    attachment: '',
+    key: '',
     edit: false,
+    type: '',
     title: '',
     required: false,
-    type: '',
+    attachment: '',
+    attachmentList: [],
+    uploadCallback: () => {},
+    deleteCallback: () => {},
+    deleteAttachmentLoading: false,
   }
 
   constructor(props) {
@@ -85,31 +85,13 @@ export default class MultiUpload extends PureComponent {
       fileList: attachmentList, // 文件列表
       oldFileList: attachmentList, // 旧的文件列表
       attachment, // 上传后的唯一 ID
-      deleteObj: {},
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { deleteAttachmentLoading: preDAL } = this.props;
-    const {
-      deleteAttachmentLoading: nextDAL,
-      type,
-      index,
-      deleteCallback,
-    } = nextProps;
-    const { deleteObj: { deleteType, deleteAttachId }, fileList } = this.state;
-    if ((preDAL && !nextDAL) && deleteType === type) {
-      const newFileList = _.cloneDeep(fileList);
-      _.remove(newFileList, o => o.attachId === deleteAttachId);
-      this.setState({
-        fileList: newFileList, // 文件列表
-      }, () => deleteCallback(index));
-    }
-  }
   // 上传事件
   @autobind
   onChange(info) {
-    const { index, uploadCallback } = this.props;
+    const { type, uploadCallback } = this.props;
     const uploadFile = info.file;
     this.setState({
       percent: info.file.percent,
@@ -126,8 +108,8 @@ export default class MultiUpload extends PureComponent {
           fileList: data.attaches,
           oldFileList: data.attaches,
           attachment: data.attachment,
-        }, uploadCallback(index, data.attachment));
-      } else if (uploadFile.response.code === 'MAG0005') {
+        }, uploadCallback(type, data.attachment));
+      } else {
         // 上传失败的返回值 MAG0005
         this.setState({
           status: 'active',
@@ -143,19 +125,20 @@ export default class MultiUpload extends PureComponent {
   // 删除事件
   @autobind
   onRemove(attachId) {
-    const { type, deleteAttachment } = this.props;
-    const { empId, attachment } = this.state;
+    const { type, deleteAttachment, deleteCallback } = this.props;
+    const { empId, attachment, fileList } = this.state;
     const deleteObj = {
       empId,
       attachId,
       attachment,
     };
-    this.setState({
-      deleteObj: {
-        deleteType: type,
-        deleteAttachId: attachId,
-      },
-    }, () => deleteAttachment(deleteObj));
+    deleteAttachment(deleteObj).then(() => {
+      const newFileList = _.cloneDeep(fileList);
+      _.remove(newFileList, o => o.attachId === attachId);
+      this.setState({
+        fileList: newFileList, // 文件列表
+      }, deleteCallback(type));
+    });
   }
 
   @autobind

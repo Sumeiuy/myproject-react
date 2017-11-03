@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-10-30 15:13:30
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-11-02 13:42:17
+ * @Last Modified time: 2017-11-03 10:05:36
  */
 // import _ from 'lodash';
 
@@ -12,7 +12,6 @@ import { constructSeibelPostBody, getEmpId } from '../utils/helper';
 import { seibelConfig } from '../config';
 
 const {
-  // attachmentType,  // 附件类型数组
   pageType,  // 页面类型
 } = seibelConfig.channelsTypeProtocol;
 const EMPTY_OBJECT = {};
@@ -38,6 +37,7 @@ export default {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
       return {
         ...state,
+        attachmentList: EMPTY_LIST,
         protocolDetail: resultData,
       };
     },
@@ -116,7 +116,7 @@ export default {
       const { payload: { resultData = EMPTY_LIST } } = action;
       return {
         ...state,
-        underCustList: resultData,
+        underCustList: [resultData],
       };
     },
   },
@@ -129,48 +129,7 @@ export default {
         type: 'getProtocolDetailSuccess',
         payload: response,
       });
-      const attachment = [
-        {
-          attachmentComments: '',
-          attachmentType: '申请表',
-          uuid: '03f1f8eb-e338-41da-b8d1-c28565ff29a1',
-        },
-        {
-          attachmentComments: '',
-          attachmentType: '尽职调查表',
-          uuid: '17442e87-4139-4511-a1f2-34e8322652c4',
-        },
-        {
-          attachmentComments: '',
-          attachmentType: '服务协议',
-          uuid: '86c10985-99db-493a-a2ce-b3a932ffed51',
-        },
-        {
-          attachmentComments: '',
-          attachmentType: '承诺书',
-          uuid: 'ad16723a-cbee-4e2f-b323-07f28b9286ff',
-        },
-        {
-          attachmentComments: '',
-          attachmentType: '授权委托书',
-          uuid: 'cb8ded7a-6b6f-4eae-b27e-47962b86c12c',
-        },
-        {
-          attachmentComments: '',
-          attachmentType: '影像资料',
-          uuid: 'a69e81ca-f3fe-4d21-81b0-213fd03d31be',
-        },
-        {
-          attachmentComments: '',
-          attachmentType: '其他',
-          uuid: 'efe22106-3193-4b4a-9604-89bff1586270',
-        },
-      ];
-      // const newAttachment = attachment.map(item => ({
-      //   ...item,
-      //   type: _.filter(attachmentType, o => o.title === item.attachmentType)[0].attachmentType,
-      // }));
-      // console.warn('newAttachment', newAttachment);
+      const attachment = response.resultData.attachment;
 
       for (let i = 0; i < attachment.length; i++) {
         const item = attachment[i];

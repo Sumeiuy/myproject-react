@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date:   2017-09-21 15:27:31
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-11-02 13:51:57
+ * @Last Modified time: 2017-11-03 10:27:26
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -40,7 +40,7 @@ export default class EditBaseInfo extends PureComponent {
     templateList: PropTypes.array.isRequired,
     // 查询子类型/操作类型
     queryTypeVaules: PropTypes.func.isRequired,
-    operationList: PropTypes.array.isRequired,
+    operationTypeList: PropTypes.array.isRequired,
     subTypeList: PropTypes.array.isRequired,
     // 根据所选模板id查询模板对应协议条款
     queryChannelProtocolItem: PropTypes.func.isRequired,
@@ -51,11 +51,14 @@ export default class EditBaseInfo extends PureComponent {
     // protocolNumList: PropTypes.array,
     // 编辑时传入元数据
     formData: PropTypes.object,
+    // 多账户切换
+    onChangeMultiCustomer: PropTypes.func,
   }
 
   static defaultProps = {
     formData: EMPTY_OBJECT,
     protocolNumList: EMPTY_ARRAY,
+    onChangeMultiCustomer: () => {},
   }
 
   constructor(props) {
@@ -184,7 +187,6 @@ export default class EditBaseInfo extends PureComponent {
       ...this.state,
       protocolTemplate: value,
     }, () => {
-      console.log('value', value);
       const { queryChannelProtocolItem } = this.props;
       queryChannelProtocolItem();
       // 触发查询协议产品列表
@@ -211,9 +213,15 @@ export default class EditBaseInfo extends PureComponent {
   // 修改开关
   @autobind
   handleChangeSwitchValue(name, value) {
+    const { onChangeMultiCustomer } = this.props;
     this.setState({
       ...this.state,
       [name]: value,
+    }, () => {
+      // 判断是否是多账户的切换
+      if (name === 'multiUsedFlag') {
+        onChangeMultiCustomer(value);
+      }
     });
   }
 
@@ -241,7 +249,7 @@ export default class EditBaseInfo extends PureComponent {
     const {
       custList,
       templateList,
-      operationList,
+      operationTypeList,
       subTypeList,
     } = this.props;
     const {
@@ -265,7 +273,7 @@ export default class EditBaseInfo extends PureComponent {
         <InfoForm label="操作类型" required>
           <Select
             name="operationType"
-            data={operationList}
+            data={operationTypeList}
             value={operationType}
             onChange={this.handleSelectChange}
           />

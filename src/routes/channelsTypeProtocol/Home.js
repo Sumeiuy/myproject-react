@@ -3,14 +3,15 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-11-02 13:58:24
+ * @Last Modified time: 2017-11-03 10:05:27
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
 import { withRouter, routerRedux } from 'dva-react-router-3/router';
 import { connect } from 'react-redux';
+import { message, Modal } from 'antd';
 import _ from 'lodash';
-import { Modal } from 'antd';
+
 import { constructSeibelPostBody } from '../../utils/helper';
 import SplitPanel from '../../components/common/splitPanel/SplitPanel';
 import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
@@ -75,7 +76,7 @@ const mapStateToProps = state => ({
   protocolClauseList: state.channelsTypeProtocol.protocolClauseList,
   // 协议产品列表
   protocolProductList: state.channelsTypeProtocol.protocolProductList,
-  underCustList: state.channelsTypeProtocol.queryCust,
+  underCustList: state.channelsTypeProtocol.underCustList,
 });
 
 const mapDispatchToProps = {
@@ -289,15 +290,35 @@ export default class ChannelsTypeProtocol extends PureComponent {
     });
   }
 
+  // 检查保存数据是否合法
+  @autobind
+  checkFormDataIsLegal(formData) {
+    if (!formData.subType) {
+      message.error('请选择子类型');
+      return false;
+    }
+    if (!formData.operationType) {
+      message.error('请选择操作类型');
+      return false;
+    }
+    if (!formData.custId) {
+      message.error('请选择客户');
+      return false;
+    }
+    if (!formData.templateId) {
+      message.error('请选择协议模板');
+      return false;
+    }
+    return true;
+  }
+
   // 点击提交按钮弹提示框
   @autobind
-  showconFirm() {
+  showconFirm(formData) {
     confirm({
       title: '提示',
       content: '经对客户与服务产品三匹配结果，请确认客户是否已签署服务计划书及适当确认书！',
       onOk: () => {
-        // 从editFormComponent组件中取出值
-        const formData = this.EditFormComponent.getData();
         const {
           location: {
             query,
@@ -311,6 +332,8 @@ export default class ChannelsTypeProtocol extends PureComponent {
         saveProtocolData({
           formData,
           params,
+        }).then(() => {
+          this.closeModal('editFormModal');
         });
       },
       onCancel: () => {
@@ -322,14 +345,32 @@ export default class ChannelsTypeProtocol extends PureComponent {
   // 弹窗底部按钮事件
   @autobind
   footerBtnHandle() {
-    // 弹出提示窗
-    this.showconFirm();
-  }
-
-  // 最终发出接口请求
-  @autobind
-  sendRequest(sendPayload) {
-    console.warn('sendPayload', sendPayload);
+    const formData = this.EditFormComponent.getData();
+    // 对formData校验
+    if (this.checkFormDataIsLegal(formData)) {
+      const { attachment } = formData;
+      console.warn('formData', formData);
+      const newAttachment = [];
+      for (let i = 0; i < attachment.length; i++) {
+        const item = attachment[i];
+        if (item.length <= 0 && item.required) {
+          message.error(`${item.title}附件为必传项`);
+          return;
+        }
+        newAttachment.push({
+          uuid: item.uuid,
+          attachmentType: item.title,
+          attachmentComments: '',
+        });
+      }
+      _.remove(newAttachment, o => _.isEmpty(o.uuid));
+      const payload = {
+        ...formData,
+        attachment: newAttachment,
+      };
+      // 弹出提示窗
+      this.showconFirm(payload);
+    }
   }
 
   render() {
