@@ -70,6 +70,8 @@ export default class EditForm extends PureComponent {
     underCustList: PropTypes.array.isRequired,
     // 下挂客户接口
     onQueryCust: PropTypes.func.isRequired,
+    // 清空协议产品列表
+    clearProtocolProductList: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -96,6 +98,12 @@ export default class EditForm extends PureComponent {
     // 更新附件组件必传项
     const hasCust = false;
     this.setUploadConfig(hasCust);
+  }
+
+  componentWillUnmount() {
+    // 销毁组件时清空协议产品列表
+    const { clearProtocolProductList } = this.props;
+    clearProtocolProductList();
   }
 
   // 切换多账户
@@ -317,7 +325,7 @@ export default class EditForm extends PureComponent {
       showSearch: true,
       placeholder: '产品代码/产品名称',
       pagination,
-      supportSearchKey: [['productCode'], ['productName']],
+      supportSearchKey: [['prodCode'], ['prodName']],
     };
     // 下挂客户组件需要的数据列表
     const customerSelectList = underCustList.length ? underCustList.map(item => ({
@@ -339,7 +347,7 @@ export default class EditForm extends PureComponent {
           queryChannelProtocolProduct={queryChannelProtocolProduct}
           onChangeMultiCustomer={this.onChangeMultiCustomer}
         />
-        <div className={styles.editWrapper}>
+        <div className={`${styles.editWrapper} ${styles.transferWrapper}`}>
           <InfoTitle
             head="协议产品"
           />

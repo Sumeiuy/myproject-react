@@ -30,7 +30,7 @@ import styles from './editForm.less';
 const EMPTY_PARAM = '暂无';
 const BOOL_TRUE = true;
 // 退订
-const unsubscribe = '2';
+const { contract: { unsubscribe } } = seibelConfig;
 // 合约条款的表头、状态
 const { contract: { titleList } } = seibelConfig;
 export default class EditForm extends PureComponent {
