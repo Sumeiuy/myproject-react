@@ -20,12 +20,10 @@ import styles from './serviceLog.less';
 const Option = Select.Option;
 const RangePicker = DatePicker.RangePicker;
 const dateFormat = 'YYYY-MM-DD HH:mm:ss';
-const newDay = moment(new Date()).subtract(1, 'minutes');
-const today = moment(newDay).format('YYYY-MM-DD HH:mm:ss');
+const today = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
 
 const sixMonth = moment(today).subtract(6, 'months');
-const sixDay = moment(sixMonth).add(1, 'days');
-const sixDate = moment(sixDay).format('YYYY-MM-DD HH:mm:ss');
+const sixDate = moment(sixMonth).format('YYYY-MM-DD HH:mm:ss');
 
 const effects = {
   getServiceLog: 'customerPool/getServiceLog',
@@ -140,8 +138,10 @@ export default class CreateTaskForm extends PureComponent {
     if (!startValue) {
       return false;
     }
+
     const nowDay = sixDate;
-    return startValue.valueOf() <= nowDay.valueOf();
+    const currentDay = moment(startValue).format('YYYY-MM-DD HH:mm:ss');
+    return currentDay <= nowDay;
   }
   // handleScroll(e) {
   //   alert('111');
@@ -241,7 +241,8 @@ export default class CreateTaskForm extends PureComponent {
                   defaultValue={[moment(sixDate, dateFormat), moment(today, dateFormat)]}
                   format="YYYY-MM-DD HH:mm"
                   showTime={{ format: 'HH:mm' }}
-                  onOk={this.onChange} disabledDate={this.disabledDate}
+                  onOk={this.onChange}
+                  disabledDate={this.disabledDate}
                 />
               </Col>
               <Col span={5}>
