@@ -361,9 +361,6 @@ const pageConfig = {
   channelsTypeProtocol: {
     pageName: '通道类型协议',
     pageType: '05',
-    // 十档行情rowID和紫金快车道子类型ID 根据后端要去写死在前端用做判断
-    tenLevelTemplateId: '1-43OZSYG',
-    zjkcdId: '507070',
     subType: [
       {
         show: true,
@@ -584,46 +581,55 @@ const pageConfig = {
         value: '5',
       },
     ],
+    // 协议产品表格表头数组
     protocolProductTitleList: [
       {
         dataIndex: 'prodCode',
         key: 'prodCode',
         title: '产品代码',
+        width: 72,
       },
       {
         dataIndex: 'prodName',
         key: 'prodName',
         title: '产品名称',
+        width: 72,
       },
       {
         dataIndex: 'prodType',
         key: 'prodType',
         title: '产品类型',
+        width: 72,
       },
       {
         dataIndex: 'prodSubType',
         key: 'prodSubType',
         title: '子类型',
+        width: 58,
       },
       {
         dataIndex: 'riskMatch',
         key: 'riskMatch',
         title: '风险是否匹配',
+        width: 100,
       },
       {
         dataIndex: 'termMatch',
         key: 'termMatch',
         title: '期限是否匹配',
+        width: 100,
       },
       {
         dataIndex: 'varietyMatch',
         key: 'varietyMatch',
         title: '投资品种是否匹配',
+        width: 128,
       },
       {
         dataIndex: 'confirmType',
         key: 'confirmType',
         title: '签署确认书类型',
+        width: 114,
       },
       {
         dataIndex: 'price',
@@ -631,6 +637,7 @@ const pageConfig = {
         title: '价格',
       },
     ],
+    // 协议条款表格表头数组
     protocolClauseTitleList: [
       {
         dataIndex: 'termsName',
@@ -658,6 +665,7 @@ const pageConfig = {
         title: '未来承诺',
       },
     ],
+    // 下挂客户
     underCustTitleList: [
       {
         dataIndex: 'subCustType',
@@ -665,19 +673,64 @@ const pageConfig = {
         title: '客户类型',
       },
       {
-        dataIndex: 'perEconNum',
-        key: 'perEconNum',
+        dataIndex: 'econNum',
+        key: 'econNum',
         title: '经纪客户号',
       },
       {
-        dataIndex: 'perCustName',
-        key: 'perCustName',
+        dataIndex: 'custName',
+        key: 'custName',
         title: '客户名称',
       },
       {
         dataIndex: 'custStatus',
         key: 'custStatus',
         title: '状态',
+      },
+    ],
+    // 附件类型
+    attachmentMap: [
+      {
+        type: 'sqb',
+        title: '申请表',
+        show: true,
+        length: 0,
+      },
+      {
+        type: 'yxzl',
+        title: '影像资料',
+        show: true,
+        length: 0,
+      },
+      {
+        type: 'sqwts',
+        title: '授权委托书',
+        show: true,
+        length: 0,
+      },
+      {
+        type: 'jzdcb',
+        title: '尽职调查表',
+        show: true,
+        length: 0,
+      },
+      {
+        type: 'fwxy',
+        title: '服务协议',
+        show: true,
+        length: 0,
+      },
+      {
+        type: 'cns',
+        title: '承诺书',
+        show: true,
+        length: 0,
+      },
+      {
+        type: 'qt',
+        title: '其他',
+        show: true,
+        length: 0,
       },
     ],
   },

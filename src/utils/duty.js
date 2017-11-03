@@ -17,6 +17,8 @@ const duty = {
   htsc_xsfu_zbzxg: '1-FCQM-29', // HTSC 销售服务-总部执行岗
   htsc_hlwfwjl: '1-45X0P96', // HTSC 互联网服务经理
   string_yybfwg: '营业部服务岗', // 营业部服务岗
+  ten_level_template_id: '1-43OZSYG', // 十档行情模板ID
+  zjkcd_id: '507070', // 紫金快车道子类型ID
 };
 
 export const commission = {

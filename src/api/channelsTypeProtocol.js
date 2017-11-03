@@ -16,6 +16,9 @@ export default function channels(api) {
     queryChannelProtocolItem: query => api.post('/groovynoauth/fsp/channel/queryChannelProtocolItem', query),
     // 查询协议产品列表
     queryChannelProtocolProduct: query => api.post('/groovynoauth/fsp/channel/queryChannelProtocolProduct', query),
-
+    // 查询客户
+    queryCust: query => api.post('/groovynoauth/fsp/protocol/queryCust', query),
+    // 获取附件列表
+    getAttachmentList: query => api.post('/file/ceFileList', query),
   };
 }
