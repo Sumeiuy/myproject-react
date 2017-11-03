@@ -3,6 +3,11 @@
  * @description 组件的mock数据
  * @author zhangjunli
  */
+import React from 'react';
+import classnames from 'classnames';
+
+import styles from './mockTableData.less';
+
 export const confirmData = [
   ['待审批人', '002332'],
   ['待审意见', '通过通过通过通过通过通过通过通过过通过通过通过通过通过通过过通过通过通过'],
@@ -291,24 +296,51 @@ export const unsubcribeData = [{
 export const productColumns = [
   {
     title: '产品代码',
-    dataIndex: 'productCode',
     key: 'productCode',
+    dataIndex: 'productCode',
     width: '15%',
+    render: item => (
+      <div className={classnames(styles.column, styles.productCode)} title={item}>
+        {item}
+      </div>
+    ),
   }, {
     title: '产品名称',
     dataIndex: 'productName',
     key: 'productName',
     width: '30%',
+    render: item => (
+      <div className={classnames(styles.column, styles.productName)} title={item}>
+        {item}
+      </div>
+    ),
   }, {
     title: '类型',
     dataIndex: 'type',
     key: 'type',
     width: '25%',
+    render: item => (
+      <div className={classnames(styles.column, styles.type)} title={item}>
+        {item}
+      </div>
+    ),
   }, {
     title: '佣金率',
     dataIndex: 'rate',
     key: 'rate',
     width: '15%',
+    render: item => (
+      <div className={classnames(styles.column, styles.rate)} title={item}>
+        {item}
+      </div>
+    ),
   },
 ];
-
+/*
+* 套路：要求table的td内容 不换行，打点显示的做法是：
+* 1.在column数组的对应对象上，添加render属性，如上，添加div标签
+* 2.设置div的样式为不换行，打点（参考对应的mockTableData.less文件）
+* 设置div样式width套路：
+* 1.当确定内容小于列宽时，可用百分比设置width，比如：width：90%（因为相邻的td，之前没有间距。可通过此，设置间距）
+* 2.确定内容有大于列宽时，只能用值设置width，比如：width：150px（如果此处用百分比，会造成列头和列值不对齐）
+*/

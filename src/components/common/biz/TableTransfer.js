@@ -12,8 +12,8 @@
  * subscribeColumns：必要，第一表的表头定义，需要指定 column 的 width 属性，否则列头和内容可能不对齐。
  * unsubscribeColumns：必要，第二个表的表头定义，需要指定 column 的 width 属性，否则列头和内容可能不对齐。
  * rowKey： 必要，唯一的标识,用于生成row时内部做唯一的key使用
- * subscribeTitle: 不必要，有默认值（‘当前订阅服务’），第一个表的title
- * unsubscribeTitle： 不必要，有默认值（‘退订服务’），第二个表的title
+ * firstTitle: 不必要，有默认值（‘当前订阅服务’），第一个表的title
+ * secondTitle： 不必要，有默认值（‘退订服务’），第二个表的title
  * subscribeData：不必要，有默认值（空数据），第一个表的数据源
  * unsubscribeData：不必要，有默认值（空数据），第二个表的数据源
  * checkChange： 不必要，向组件外传递信息，返回此父元素(children：仅为选中的child)
@@ -27,7 +27,7 @@
  * aboutRate: 不必要, 长度，内容顺序 固定,第一个是目标佣金率（string类型），第二个是拿到表中对象佣金率的key（string类型）
  */
 import React, { PropTypes, Component } from 'react';
-import { Table, Input, Checkbox, Tooltip } from 'antd';
+import { Table, Input, Checkbox } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import classnames from 'classnames';
@@ -89,20 +89,6 @@ const checkColumns = (column, defaultCheckKey, handleAction) => {
   };
 };
 
-const tooltipColumns = column => (
-  {
-    ...column,
-    render: (item) => {
-      const { key } = column;
-      return (
-        <Tooltip title={`${item[key]}`}>
-          <span>{item[key]}</span>
-        </Tooltip>
-      );
-    },
-  }
-);
-
 export default class TableTransfer extends Component {
   static propTypes = {
     firstTitle: PropTypes.string,
@@ -123,7 +109,7 @@ export default class TableTransfer extends Component {
     defaultCheckKey: PropTypes.string,
     supportSearchKey: PropTypes.array,
     aboutRate: PropTypes.array,
-    isScrollX: PropTypes.bool,
+    scrollX: PropTypes.string,
   }
 
   static defaultProps = {
@@ -138,7 +124,7 @@ export default class TableTransfer extends Component {
     defaultCheckKey: '',
     supportSearchKey: [],
     aboutRate: [],
-    isScrollX: false,
+    scrollX: '',
   }
 
   constructor(props) {
@@ -200,29 +186,37 @@ export default class TableTransfer extends Component {
       rowKey,
       defaultCheckKey,
       aboutRate,
-      isScrollX,
+      scrollX,
     } = nextProps || this.props;
+    // 第一步，添加方便操作的key
     const initFirstArray = this.initTableData(firstData, rowKey, defaultCheckKey);
     const initSecondArray = this.initTableData(secondData, rowKey, defaultCheckKey);
-    const initSecondColumns = this.initTableColumn(secondColumns, defaultCheckKey);
+    // 第二步，是否为右表首列子项添加 check 框
+    const totalData = [...firstData, ...secondData];
+    const checkFlag = this.isNeedCheckColumn(totalData);
+    const initSecondColumns = checkFlag ? (
+      this.initTableColumn(secondColumns, defaultCheckKey)
+    ) : secondColumns;
+    // 第三步，佣金率相关
     const totalRate = this.getTotalRate();
     const rateFlag = !_.isEmpty(aboutRate);
     let differenceRate = 0;
     if (rateFlag) {
       differenceRate = totalRate - _.toNumber(_.head(aboutRate));
     }
+    // 第四步，返回组合对象
     return {
-      totalData: [...firstData, ...secondData],
+      totalData,
       checked: this.getAllDefaultCheck(initSecondArray, rowKey, defaultCheckKey),
       firstArray: this.hiddenChildren(initFirstArray),
       secondArray: initSecondArray,
       firstColumns: [
         ...firstColumns,
-        actionColumns('first', isScrollX, this.handleClick),
+        actionColumns('first', !_.isEmpty(scrollX), this.handleClick),
       ],
       secondColumns: [
         ...initSecondColumns,
-        actionColumns('second', isScrollX, this.handleClick),
+        actionColumns('second', !_.isEmpty(scrollX), this.handleClick),
       ],
       rate: {
         rateFlag, // 是否计算佣金率
@@ -267,6 +261,16 @@ export default class TableTransfer extends Component {
     return newData;
   }
 
+  // 判断，有children，则需展示check column
+  // check column 和 用户自定义 column，因都操作了render，故是互斥的。
+  isNeedCheckColumn(data) {
+    const newData = _.filter(
+      data,
+      item => item.children,
+    );
+    return !_.isEmpty(newData);
+  }
+
   // 为child行，第一列增加check框
   @autobind
   initTableColumn(columnArray, defaultCheckKey) {
@@ -274,8 +278,6 @@ export default class TableTransfer extends Component {
       (item, index) => {
         if (index === 0) {
           return checkColumns(_.omit(item, 'dataIndex'), defaultCheckKey, this.handleCheck);
-        } else if (index === 1) {
-          return tooltipColumns(_.omit(item, 'dataIndex'));
         }
         return item;
       },
@@ -631,7 +633,7 @@ export default class TableTransfer extends Component {
       showSearch,
       pagination,
       rowKey,
-      isScrollX,
+      scrollX,
     } = this.props;
     const {
       firstArray,
@@ -639,11 +641,11 @@ export default class TableTransfer extends Component {
       firstColumns,
       secondColumns,
     } = this.state;
-    const scroll = isScrollX ? (
-      { y: 253, x: '130%' }
-    ) : (
-      { y: 245 }
-    );
+    let scroll = { y: 245 };
+    if (!_.isEmpty(scrollX)) {
+      const x = (scrollX.indexOf('%') !== -1) ? (scrollX) : _.toNumber(scrollX);
+      scroll = { y: 253, x };
+    }
 
     return (
       <div className={styles.container}>
