@@ -11,6 +11,7 @@ import _ from 'lodash';
 import { withRouter, routerRedux } from 'dva-react-router-3/router';
 import { message } from 'antd';
 
+import confirm from '../../components/common/Confirm/confirm';
 import SplitPanel from '../../components/common/splitPanel/SplitPanel';
 import Detail from '../../components/commissionAdjustment/Detail';
 import SingleDetail from '../../components/commissionAdjustment/SingleDetail';
@@ -22,6 +23,7 @@ import CommissionList from '../../components/common/biz/CommonList';
 import seibelColumns from '../../components/common/biz/seibelColumns';
 import { constructSeibelPostBody, getEmpId } from '../../utils/helper';
 import { seibelConfig } from '../../config';
+import { permission } from '../../utils';
 import Barable from '../../decorators/selfBar';
 import './home.less';
 
@@ -504,10 +506,32 @@ export default class CommissionHome extends PureComponent {
     return true;
   }
 
+  // 判断该登录人四个子类型是否有权限申请
+  @autobind
+  hasCreatApplyAuthority() {
+    const {
+      empInfo: { empPostnList },
+    } = this.props;
+    const {
+      hasCommissionBatchAuthority: batchAuth,
+      hasCommissionSingleAuthority: singleAuth,
+      hasCommissionADSubscribeAuthority: subAuth,
+      hasCommissionADUnSubscribeAuthority: unSubAuth,
+    } = permission;
+    return batchAuth() || singleAuth(empPostnList) || subAuth() || unSubAuth();
+  }
+
   // 头部新建按钮点击事件处理程序
   @autobind
   handleCreateBtnClick() {
-    this.openCreateApprovalBoard();
+    // TODO 此处需要新增一个判断，如果用户所有申请的权限都没有则提示不能点击新建
+    if (this.hasCreatApplyAuthority()) {
+      this.openCreateApprovalBoard();
+    } else {
+      confirm({
+        content: '您目前无创建新服务申请的权限',
+      });
+    }
   }
 
   // 生成左侧列表页面的数据列
