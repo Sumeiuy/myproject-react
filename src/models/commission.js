@@ -69,6 +69,8 @@ export default {
     singleSubmit: '',
     // 单佣金调整客户校验结果
     singleCustValidate: {},
+    // 咨讯订阅客户校验结果
+    sciCheckCustomer: {},
   },
   reducers: {
     getProductListSuccess(state, action) {
@@ -335,6 +337,14 @@ export default {
       };
     },
 
+    checkCustomerInSciSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        sciCheckCustomer: resultData,
+      };
+    },
+
     queryThreeMatchInfoSuccess(state, action) {
       const { payload: { response, prdCode } } = action;
       const resultData = response.resultData || {};
@@ -496,7 +506,6 @@ export default {
         flowCode: detailRD.flowCode,
         loginuser,
       });
-      // TODO 先注销，后面接口好了再弄
       const stepRes = yield call(api.queryCurrentStep, {
         flowCode: detailRD.flowCode,
       });
@@ -666,6 +675,19 @@ export default {
       const response = yield call(api.validateCustomer, payload);
       yield put({
         type: 'validateCustomerInSingleSuccess',
+        payload: response,
+      });
+    },
+
+    // 咨讯订阅页面客户检验
+    * validateCustomerInSub({ payload }, { call, put }) {
+      const response = yield call(api.checkCustomer, {
+        operationType: 'subscribe',
+        ...payload,
+      },
+      );
+      yield put({
+        type: 'checkCustomerInSciSuccess',
         payload: response,
       });
     },
