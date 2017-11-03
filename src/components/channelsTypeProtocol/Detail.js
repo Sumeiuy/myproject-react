@@ -129,7 +129,7 @@ export default class Detail extends PureComponent {
           <InfoItem label="操作类型" value={protocolDetail.operationType || EMPTY_PARAM} />
           <InfoItem label="子类型" value={protocolDetail.subType || EMPTY_PARAM} />
           <InfoItem label="客户" value={`${(protocolDetail.contactName || protocolDetail.accountName) || EMPTY_PARAM} ${protocolDetail.econNum || EMPTY_PARAM}`} />
-          <InfoItem label="协议模板" value={protocolDetail.templateName} />
+          <InfoItem label="协议模板" value={protocolDetail.templateId} />
           <InfoItem label="是否多账户使用" value={mapBoolData[protocolDetail.multiUsedFlag]} />
           <InfoItem label="是否订购十档行情" value={mapBoolData[protocolDetail.levelTenFlag]} />
           <InfoItem label="协议开始日期" value={dateFormat(protocolDetail.startDt) || EMPTY_PARAM} />
