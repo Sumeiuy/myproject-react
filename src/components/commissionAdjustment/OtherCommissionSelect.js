@@ -20,12 +20,14 @@ export default class OtherCommissionSelect extends PureComponent {
     name: PropTypes.string,
     onChange: PropTypes.func.isRequired,
     getPopupContainer: PropTypes.func.isRequired,
+    disabled: PropTypes.bool,
   }
 
   static defaultProps = {
     name: '',
     label: '',
     options: [],
+    disabled: false,
   }
 
   constructor(props) {
@@ -55,7 +57,7 @@ export default class OtherCommissionSelect extends PureComponent {
 
   render() {
     const { value } = this.state;
-    const { name, label, options, getPopupContainer } = this.props;
+    const { name, label, options, getPopupContainer, disabled } = this.props;
     const newOptions = _.cloneDeep(options);
     newOptions.unshift({
       label: '请选择',
@@ -69,6 +71,7 @@ export default class OtherCommissionSelect extends PureComponent {
         </div>
         <div className={`${styles.componentBox} ${styles.selectBox}`}>
           <Select
+            disabled={disabled}
             name={name}
             data={newOptions}
             value={value}

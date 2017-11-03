@@ -15,7 +15,7 @@ const preDefine = {
   custRisk: '该客户没有有效的风险测评！',
   custInvestRt: '该客户投资偏好信息缺失，先请客户补齐信息！',
   custInvestTerm: '该客户投资期限信息缺失，先请客户补齐信息！',
-  custHasOrder: '',
+  custPass: '该客户通过检验，可以创建申请！',
 };
 
 export default preDefine;
