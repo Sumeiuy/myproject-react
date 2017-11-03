@@ -1134,6 +1134,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       approverName,
       approverId,
       otherComReset,
+      customer: { openRzrq },
     } = this.state;
     const needBtn = !this.judgeSubtypeNow('');
 
@@ -1376,19 +1377,34 @@ export default class CreateNewApprovalBoard extends PureComponent {
               )
             }
             {
-              // 批量佣金调整和单佣金调整中的其他佣金匪类
-              !this.judgeSubtypeNow([commadj.batch, commadj.single]) ? null
+              // 批量佣金调整其他佣金匪类
+              !this.judgeSubtypeNow(commadj.batch) ? null
               : (
                 <div className={styles.approvalBlock}>
                   <InfoTitle head="其他佣金费率" />
                   <OtherCommissionSelectList
                     showTip={!this.judgeSubtypeNow(commadj.batch)}
                     reset={otherComReset}
-                    otherRatios={
-                      this.judgeSubtypeNow(commadj.batch) ? otherRatios
-                      : singleOtherRatio
-                    }
+                    otherRatios={otherRatios}
                     onChange={this.changeOtherCommission}
+                    subType={commadj.batch}
+                  />
+                </div>
+              )
+            }
+            {
+              // 单佣金调整中的其他佣金匪类
+              !this.judgeSubtypeNow(commadj.single) ? null
+              : (
+                <div className={styles.approvalBlock}>
+                  <InfoTitle head="其他佣金费率" />
+                  <OtherCommissionSelectList
+                    showTip={!this.judgeSubtypeNow(commadj.batch)}
+                    reset={otherComReset}
+                    otherRatios={singleOtherRatio}
+                    onChange={this.changeOtherCommission}
+                    custOpenRzrq={openRzrq}
+                    subType={commadj.single}
                   />
                 </div>
               )

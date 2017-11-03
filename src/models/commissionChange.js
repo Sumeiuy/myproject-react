@@ -45,6 +45,8 @@ export default {
     singleSubmit: '',
     // 单佣金调整页面客户查询列表
     singleCustomerList: {},
+    // 驳回后修改的页面按钮
+    approvalBtns: [],
   },
   reducers: {
     getProductListSuccess(state, action) {
@@ -305,6 +307,15 @@ export default {
       };
     },
 
+    queryApprovalBtnsSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      const approvalBtns = resultData.btnList || [];
+      return {
+        ...state,
+        approvalBtns,
+      };
+    },
+
     opertateState(state, action) {
       const { payload: { name, value } } = action;
       return {
@@ -357,6 +368,12 @@ export default {
         deptCode: empInfo.occDivnNum,
       });
       const customerRD = customerRes.resultData.custInfos[0];
+      // 获取客户的校验信息
+      const custRiskRes = yield call(api.validateCustomer, {
+        custRowId: customerRD.id,
+        custType: customerRD.custType,
+      });
+      const custRiskRD = custRiskRes.resultData;
       // 获取目前目标股基佣金率下的可选产品
       yield put({
         type: 'getSingleComProductList',
@@ -385,11 +402,25 @@ export default {
         type: 'getSingleDetailToChangeSuccess',
         payload: {
           base: detailRD,
-          customer: customerRD,
+          customer: { ...customerRD, ...custRiskRD },
           attachment: attachRD,
           approval: approvalUserRD,
         },
       });
+    },
+
+    // 获取驳回后修改的页面按钮
+    * queryApprovalBtns({ payload }, { call, put }) {
+      const response = yield call(api.queryApprovalBtns, payload);
+      yield put({
+        type: 'queryApprovalBtnsSuccess',
+        payload: response,
+      });
+    },
+
+    // 更改流程状态
+    * updateFlowStatus({ payload }, { call }) {
+      yield call(api.updateFlowStatus, payload);
     },
 
     // 驳回后修改查询咨询订阅详情数据

@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-01 18:37:35
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-02 16:49:39
+ * @Last Modified time: 2017-11-03 19:52:17
  * @description 单佣金调整驳回后修改页面
  */
 
@@ -44,6 +44,11 @@ export default class SingleDetailChange extends PureComponent {
     onQueryProductList: PropTypes.func.isRequired,
     onQuery3Match: PropTypes.func.isRequired,
     onQueryOtherRate: PropTypes.func.isRequired,
+    onQueryBtns: PropTypes.func.isRequired,
+    approvalBtns: PropTypes.array.isRequired,
+    submitResult: PropTypes.string.isRequired,
+    onSubmit: PropTypes.array.isRequired,
+    onUpdateFlow: PropTypes.array.isRequired,
   }
 
   static defaultProps = {
@@ -154,24 +159,6 @@ export default class SingleDetailChange extends PureComponent {
     });
   }
 
-  // 提交修改
-  @autobind
-  handleSubmit() {
-
-  }
-
-  // 终止
-  @autobind
-  handleTerminate() {
-
-  }
-
-  // 返回
-  @autobind
-  handleBack() {
-
-  }
-
   @autobind
   mergeChildrenProduct(original, merged) {
     const productCodeList = merged.map(o => o.prodCode);
@@ -220,29 +207,28 @@ export default class SingleDetailChange extends PureComponent {
   // 生成Transfer左右两侧需要的数组
   @autobind
   makeTransferNeedData(list, selectedList) {
-    console.warn('makeTransferNeedData>list', list);
-    console.warn('makeTransferNeedData>selectedList', selectedList);
     // 用户选择的产品列表信息,此处需要先删除里面action为删除的产品,该种产品不显示到左侧列表中去
     const userProList = _.filter(selectedList, product => product.action !== '删除');
-    console.warn('makeTransferNeedData>userProList', userProList);
     const userProdCodeList = userProList.map(p => p.prodCode);
-    console.warn('makeTransferNeedData>userProdCodeList', userProdCodeList);
     // 将原始数据中的数据根据用户选择的数据的父产品进行比对，选出用户添加的原始数据，以及没有选择的数据
     // 用户选择的原始数据
     const userSelectOriginalList = _.filter(list,
       product => _.includes(userProdCodeList, product.prodCode));
-    console.warn('makeTransferNeedData>userSelectOriginalList', userSelectOriginalList);
     // 左侧列表
     const userOptionalList = _.filter(list,
       product => !_.includes(userProdCodeList, product.prodCode));
-    console.warn('makeTransferNeedData>userOptionalList', userOptionalList);
     // 将用户选择的原始数据和用户选择的数据进行比对，生成右侧列表项
     const rightList = this.mergeOrigianl2User(userSelectOriginalList, userProList);
-    console.warn('makeTransferNeedData>rightList', rightList);
     return {
       first: userOptionalList,
       second: rightList,
     };
+  }
+
+  // 点击页面的按钮事件处理
+  @autobind
+  handleRejctBtnClick(btn) {
+    console.warn('handleRejctBtnClick>btn', btn);
   }
 
   render() {
@@ -266,6 +252,7 @@ export default class SingleDetailChange extends PureComponent {
       optionalList,
       threeMatchInfo,
       otherRate,
+      approvalBtns,
     } = this.props;
 
     // 1. 针对用户选择的单佣金调整的申请中添加的item产品列表
@@ -302,8 +289,8 @@ export default class SingleDetailChange extends PureComponent {
     };
 
     return (
-      <div className={styles.newApprovalBox}>
-        <div className={styles.approvalContent}>
+      <div className={styles.rejectContainer}>
+        <div className={styles.newApprovalBox}>
           <div className={styles.approvalBlock}>
             <InfoTitle head="基本信息" />
             <CommissionLine label="子类型" labelWidth="90px" required>
@@ -387,9 +374,8 @@ export default class SingleDetailChange extends PureComponent {
           </div>
         </div>
         <RejectButtons
-          onSubmit={this.handleSubmit}
-          onBack={this.handleBack}
-          onTerminate={this.handleTerminate}
+          btnList={approvalBtns}
+          onClick={this.handleRejctBtnClick}
         />
         <ChoiceApproverBoard
           visible={choiceApprover}

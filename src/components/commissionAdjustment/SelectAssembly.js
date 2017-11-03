@@ -71,11 +71,11 @@ export default class SelectAssembly extends PureComponent {
   handleOKAfterValidate() {
     if (this.canSelected) {
       // 可以选中
-      const { subType, onSearchValue, validResult: { openRzrq } } = this.props;
+      const { subType, onSelectValue, validResult: { openRzrq } } = this.props;
       if (subType === commadj.single) {
-        onSearchValue({ ...this.selectedCust, openRzrq });
+        onSelectValue({ ...this.selectedCust, openRzrq });
       } else {
-        onSearchValue(this.selectedCust);
+        onSelectValue(this.selectedCust);
       }
     } else {
       // 干掉客户
@@ -119,22 +119,26 @@ export default class SelectAssembly extends PureComponent {
       return;
     }
     // 偏好品种校验
-    if (investRt === 'N') {
+    if (investRt === 'Y') {
       this.fail2Validate('custInvestRt');
       return;
     }
     // 投资期限校验
-    if (investTerm === 'N') {
+    if (investTerm === 'Y') {
       this.fail2Validate('custInvestTerm');
       return;
     }
-    if (subType === commadj.single && hasorder === 'N') {
+    if (subType === commadj.single && hasorder === 'Y') {
       // 目前只有单佣金需要对在途订单
       confirm({ content: validmsg });
       this.canSelected = false;
       return;
     }
     this.canSelected = true;
+    confirm({
+      shortCut: 'custPass',
+      onOk: this.handleOKAfterValidate,
+    });
     const { custName, custEcom, riskLevelLabel } = this.selectedCust;
     this.setState({
       inputValue: `${custName}（${custEcom}） - ${riskLevelLabel || ''}`,
@@ -153,6 +157,7 @@ export default class SelectAssembly extends PureComponent {
       this.selectedCust = null;
       const { id, custType } = item;
       this.selectedCust = item;
+      // this.props.onSelectValue(item);
       this.props.onValidateCust({
         custRowId: id,
         custType,

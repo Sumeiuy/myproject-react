@@ -50,5 +50,9 @@ export default function commission(api) {
     querySingleGJCommissionRate: query => api.post('/groovynoauth/fsp/biz/chgcommsion/querySingleCommision', query),
     // 单佣金调整新建页面客户检验
     validateCustomer: query => api.post('/groovynoauth/fsp/biz/chgcommsion/queryCustRiskInfo', query),
+    // 单佣金调整的驳回修改,提交后，结转下个流程
+    updateFlowStatus: query => api.post('/groovynoauth/fsp/biz/chgcommsion/updateFlowStatus', query),
+    // 查询驳回后修改的页面按钮列表
+    queryAprovalBtns: query => api.post('/groovynoauth/fsp/biz/chgcommsion/queryAprovalBtns', query),
   };
 }
