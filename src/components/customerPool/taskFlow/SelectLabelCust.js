@@ -19,18 +19,20 @@ export default class SelectLabelCust extends PureComponent {
     orgId: PropTypes.string,
     isLoadingEnd: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired,
+    isHasAuthorize: PropTypes.bool,
   };
 
   static defaultProps = {
     storedData: {},
     orgId: null,
+    isHasAuthorize: false,
   };
 
   constructor(props) {
     super(props);
     const { storedData = EMPTY_OBJECT } = props;
     const { labelCust = EMPTY_OBJECT } = storedData;
-    const { condition = '', labelId = '' } = labelCust || EMPTY_OBJECT;
+    const { condition = '', labelId = '', tipsSize = 0 } = labelCust || EMPTY_OBJECT;
 
     this.state = {
       current: 0,
@@ -38,7 +40,7 @@ export default class SelectLabelCust extends PureComponent {
       condition,
       currentSelectLabel: labelId,
       labelId,
-      tipsSize: 0,
+      tipsSize,
     };
     this.bigBtn = true;
   }
@@ -46,7 +48,7 @@ export default class SelectLabelCust extends PureComponent {
   componentWillReceiveProps(nextProps) {
     const { circlePeopleData } = nextProps;
     const { circlePeopleData: prevCirclePeopleData } = this.props;
-    if (!_.isEqual(circlePeopleData, prevCirclePeopleData)) {
+    if (circlePeopleData !== prevCirclePeopleData) {
       this.setState({
         tipsSize: _.size(circlePeopleData),
       });
@@ -55,7 +57,13 @@ export default class SelectLabelCust extends PureComponent {
 
   @autobind
   getData() {
-    const { labelId = '', condition } = this.state;
+    const { labelId = '', condition, tipsSize } = this.state;
+    if (_.isEmpty(condition)) {
+      return {
+        labelCust: {},
+      };
+    }
+
     const { circlePeopleData } = this.props;
     const matchedData = _.find(circlePeopleData, item => item.id === labelId);
     const { labelDesc = '', customNum = '' } = matchedData || EMPTY_OBJECT;
@@ -65,6 +73,7 @@ export default class SelectLabelCust extends PureComponent {
       labelDesc,
       condition,
       customNum,
+      tipsSize,
     };
 
     return {
@@ -74,7 +83,7 @@ export default class SelectLabelCust extends PureComponent {
 
   @autobind
   handleSearchClick(value) {
-    const { getLabelInfo } = this.props;
+    const { getLabelInfo, isHasAuthorize, orgId } = this.props;
 
     const param = {
       condition: value,
@@ -82,13 +91,28 @@ export default class SelectLabelCust extends PureComponent {
 
     this.setState({
       condition: value,
+      labelId: '',
+      labelDesc: '',
+      customNum: 0,
+      currentSelectLabel: '',
     });
 
     if (_.isEmpty(value)) {
+      this.setState({
+        tipsSize: 0,
+      });
       return;
     }
 
-    getLabelInfo(param);
+    if (isHasAuthorize) {
+      // 有首页绩效指标查看权限
+      getLabelInfo({
+        ...param,
+        orgId,
+      });
+    } else {
+      getLabelInfo(param);
+    }
   }
 
   @autobind
@@ -120,7 +144,7 @@ export default class SelectLabelCust extends PureComponent {
           defaultValue={condition}
           isNeedBtn
         />
-        {!_.isEmpty(circlePeopleData)
+        {!_.isEmpty(circlePeopleData) && !_.isEmpty(condition)
           ? <h4 className={styles.tipsWord}>共找到<span>{tipsSize}</span>条相关标签</h4>
           :
           null

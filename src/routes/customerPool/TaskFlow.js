@@ -407,6 +407,7 @@ export default class TaskFlow extends PureComponent {
         orgId={orgId}
         isLoadingEnd={isLoadingEnd}
         onCancel={this.resetLoading}
+        isHasAuthorize={this.isHasAuthorize}
       />,
     }, {
       title: '提交',

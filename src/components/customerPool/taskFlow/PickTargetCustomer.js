@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 10:29:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-30 09:17:24
+ * @Last Modified time: 2017-11-03 10:35:21
  */
 
 import React, { PureComponent } from 'react';
@@ -31,10 +31,12 @@ export default class PickTargetCustomer extends PureComponent {
     orgId: PropTypes.string,
     isLoadingEnd: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired,
+    isHasAuthorize: PropTypes.bool,
   };
 
   static defaultProps = {
     orgId: null,
+    isHasAuthorize: false,
   };
 
   constructor(props) {
@@ -83,6 +85,7 @@ export default class PickTargetCustomer extends PureComponent {
       orgId,
       isLoadingEnd,
       onCancel,
+      isHasAuthorize,
     } = this.props;
     const { currentKey } = this.state;
 
@@ -114,6 +117,7 @@ export default class PickTargetCustomer extends PureComponent {
                 storedData={storedTaskFlowData}
                 ref={ref => (this.selectLabelCustRef = ref)}
                 orgId={orgId}
+                isHasAuthorize={isHasAuthorize}
               />
             </TabPane>
           </Tabs>
