@@ -36,7 +36,7 @@ import approvalConfig from './choiceApprovalUserConfig';
 import styles from './createNewApprovalBoard.less';
 
 const { TextArea } = Input;
-const { commission: { subType }, comsubs: commadj } = seibelConfig;
+const { commission: { pageType, subType }, comsubs: commadj } = seibelConfig;
 // 给subType去除全部的选项
 const newSubTypes = _.filter(subType, item => !!item.value);
 // 增加一个"请选择申请类型的option"
@@ -748,6 +748,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
   handleCustomerListSearch(keyword) {
     this.props.onSearchApplyCust({
       keyword,
+      type: pageType,
     });
   }
 

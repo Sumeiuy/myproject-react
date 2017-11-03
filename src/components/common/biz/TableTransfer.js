@@ -245,7 +245,8 @@ export default class TableTransfer extends Component {
     const newDatatArray = _.cloneDeep(dataArray);
     const newData = newDatatArray.map(
       (item) => {
-        if (!_.isEmpty(item.children)) {
+        // TODO sunweibin 首先判断它有children这个key不
+        if (Array.isArray(item.children) && !_.isEmpty(item.children)) {
           const newChildren = item.children.map(
             (child) => {
               const checkFlag = child[defaultCheckKey] === 'Y';
@@ -260,7 +261,7 @@ export default class TableTransfer extends Component {
           );
           return { ...item, children: newChildren };
         }
-        return item;
+        return _.head(this.hiddenChildren([item]));
       },
     );
     return newData;
@@ -305,7 +306,7 @@ export default class TableTransfer extends Component {
   hiddenChildren(dataArray) {
     const newDataArray = dataArray.map(
       (item) => {
-        if (!_.isEmpty(item.children)) {
+        if (item.children) {
           return this.replaceKeyOfObject(item, 'children', 'hidden');
         }
         return item;
@@ -319,7 +320,7 @@ export default class TableTransfer extends Component {
   showChildren(dataArray) {
     const newDataArray = dataArray.map(
       (item) => {
-        if (!_.isEmpty(item.hidden)) {
+        if (item.hidden) {
           return this.replaceKeyOfObject(item, 'hidden', 'children');
         }
         return item;
