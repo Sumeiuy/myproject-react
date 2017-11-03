@@ -106,7 +106,7 @@ export default function customerPool(api) {
     queryAllServiceRecord: query => api.post('/groovynoauth/fsp/cust/custlist/queryAllServiceRecord', query),
 
     // 预览客户细分数据
-    priviewCustFile: query => api.post('/groovynoauth/fsp/priviewCustFile', query),
+    previewCustFile: query => api.post('/groovynoauth/fsp/cust/custlist/previewCustFile', query),
     // 标签圈人查询
     queryLabelInfo: query => api.post('/groovynoauth/fsp/cust/task/queryLabelInfo', query),
 

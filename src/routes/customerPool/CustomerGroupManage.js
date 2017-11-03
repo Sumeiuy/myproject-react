@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-22 19:02:56
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-31 14:23:56
+ * @Last Modified time: 2017-11-02 14:51:15
  */
 
 import React, { PureComponent } from 'react';
@@ -29,7 +29,6 @@ const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 
 const effects = {
-  getGroupList: 'customerPool/getCustomerGroupList',
   getCustList: 'customerPool/getGroupCustomerList',
   getHotPossibleWds: 'customerPool/getCustomerHotPossibleWds',
   operateGroup: 'customerPool/operateGroup',
@@ -61,8 +60,6 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  // 获取客户分组列表
-  getCustomerGroupList: fetchData(effects.getGroupList, true),
   // 获取分组客户列表
   getGroupCustomerList: fetchData(effects.getCustList, false),
   // 获取热词列表
@@ -87,7 +84,6 @@ export default class CustomerGroupManage extends PureComponent {
     location: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
-    getCustomerGroupList: PropTypes.func.isRequired,
     getGroupCustomerList: PropTypes.func.isRequired,
     groupCustomerList: PropTypes.object.isRequired,
     customerHotPossibleWordsList: PropTypes.array.isRequired,
@@ -149,7 +145,7 @@ export default class CustomerGroupManage extends PureComponent {
    */
   @autobind
   handlePageChange(nextPage, currentPageSize) {
-    const { location: { query, pathname }, replace, getCustomerGroupList } = this.props;
+    const { location: { query, pathname }, replace } = this.props;
     const { keyWord } = this.state;
     // 替换当前页码和分页条目
     replace({
@@ -158,12 +154,8 @@ export default class CustomerGroupManage extends PureComponent {
         ...query,
         curPageNum: nextPage,
         curPageSize: currentPageSize,
+        keyWord,
       },
-    });
-    getCustomerGroupList({
-      pageNum: nextPage,
-      pageSize: currentPageSize,
-      keyWord,
     });
   }
 
@@ -174,7 +166,7 @@ export default class CustomerGroupManage extends PureComponent {
    */
   @autobind
   handleShowSizeChange(currentPageNum, changedPageSize) {
-    const { location: { query, pathname }, replace, getCustomerGroupList } = this.props;
+    const { location: { query, pathname }, replace } = this.props;
     const { keyWord } = this.state;
     // 替换当前页码和分页条目
     replace({
@@ -183,12 +175,8 @@ export default class CustomerGroupManage extends PureComponent {
         ...query,
         curPageNum: 1,
         curPageSize: changedPageSize,
+        keyWord,
       },
-    });
-    getCustomerGroupList({
-      pageNum: 1,
-      pageSize: changedPageSize,
-      keyWord,
     });
   }
 
@@ -407,7 +395,6 @@ export default class CustomerGroupManage extends PureComponent {
     console.log('search value', value);
 
     const {
-      getCustomerGroupList,
       replace,
       location: { pathname, query, query: { curPageSize = 10 } },
     } = this.props;
@@ -415,16 +402,13 @@ export default class CustomerGroupManage extends PureComponent {
     this.setState({
       keyWord: value,
     });
-    getCustomerGroupList({
-      keyWord: value,
-      pageNum: 1,
-      pageSize: Number(curPageSize),
-    });
     replace({
       pathname,
       query: {
         ...query,
         curPageNum: 1,
+        curPageSize,
+        keyWord: value,
       },
     });
   }

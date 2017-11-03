@@ -146,12 +146,14 @@ export default {
         }
 
         const customerGroupManageUrl = matchRoute('customerGroupManage', pathname);
+        const { curPageNum, curPageSize, keyWord = null } = params;
         if (customerGroupManageUrl) {
           dispatch({
             type: 'getCustomerGroupList',
             payload: {
-              pageNum: INITIAL_PAGE_NUM,
-              pageSize: INITIAL_PAGE_TEN_SIZE,
+              pageNum: curPageNum || INITIAL_PAGE_NUM,
+              pageSize: curPageSize || INITIAL_PAGE_TEN_SIZE,
+              keyWord,
             },
           });
 
@@ -592,8 +594,8 @@ export default {
       });
     },
     // 预览客户细分导入数据
-    * priviewCustFile({ payload }, { call, put }) {
-      const response = yield call(api.priviewCustFile, payload);
+    * previewCustFile({ payload }, { call, put }) {
+      const response = yield call(api.previewCustFile, payload);
       const { resultData } = response;
       yield put({
         type: 'priviewCustFileSuccess',
