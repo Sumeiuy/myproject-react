@@ -123,6 +123,8 @@ const mapStateToProps = state => ({
   consultSubId: state.commission.consultSubId,
   // 咨询退订提交后返回的id
   consultUnsubId: state.commission.consultUnsubId,
+  // 单佣金调整客户检验返回数据
+  singleCVR: state.commission.singleCustValidate,
 });
 
 const getDataFunction = (loading, type) => query => ({
@@ -247,6 +249,7 @@ export default class CommissionHome extends PureComponent {
     consultUnsubId: PropTypes.string.isRequired,
     clearReduxState: PropTypes.func.isRequired,
     singleCustValidate: PropTypes.func.isRequired,
+    singleCVR: PropTypes.object.isRequired,
     subsciSubmitProcess: PropTypes.bool,
     unSubsciSubmitProcess: PropTypes.bool,
   }
@@ -618,6 +621,7 @@ export default class CommissionHome extends PureComponent {
       getAprovalUserList,
       clearReduxState,
       singleCustValidate,
+      singleCVR,
     } = this.props;
     const isEmpty = _.isEmpty(list.resultData);
     // 此处需要提供一个方法给返回的接口查询设置是否查询到数据
@@ -704,6 +708,7 @@ export default class CommissionHome extends PureComponent {
               queryApprovalUser={getAprovalUserList}
               clearReduxState={clearReduxState}
               onValidateSingleCust={singleCustValidate}
+              singleCustVResult={singleCVR}
             />
           )
         }

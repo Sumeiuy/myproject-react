@@ -48,8 +48,9 @@ export default class SearchSelect extends PureComponent {
   @autobind
   setSelectValue(value, option) {
     this.setState({
-      selectItem: this.props.dataSource[option.props.index],
       proValue: value,
+      inputValue: '',
+      selectItem: this.props.dataSource[option.props.index],
     });
   }
 
