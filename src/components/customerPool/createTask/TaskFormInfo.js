@@ -15,6 +15,7 @@ const FormItem = Form.Item;
 const Option = Select.Option;
 const { TextArea } = Input;
 const { toContentState } = Mention;
+const Nav = Mention.Nav;
 
 export default class TaskFormInfo extends PureComponent {
 
@@ -81,10 +82,16 @@ export default class TaskFormInfo extends PureComponent {
 
   handleSearchChange = (value, trigger) => {
     const { users } = this.props;
-    const dataSource = trigger === '{' ? users : [];
-    this.setState({
-      suggestions: dataSource.filter(item => item.indexOf(value) !== -1),
-    });
+    const dataSource = trigger === '{' ? users : {};
+    const suggestions = dataSource.map(suggestion => (
+      <Nav
+        value={suggestion.type}
+        data={suggestion}
+      >
+        <span>{suggestion.name}</span>
+      </Nav>
+    ));
+    this.setState({ suggestions });
   }
 
   @autobind
@@ -95,7 +102,7 @@ export default class TaskFormInfo extends PureComponent {
 
   @autobind
   handleTaskTypeChange(value) {
-    console.log(value);
+    // console.log(value);
     if (!_.isEmpty(value) && value !== '请选择' && value !== '暂无数据') {
       this.setState({
         isShowErrorTaskType: false,
@@ -109,7 +116,7 @@ export default class TaskFormInfo extends PureComponent {
 
   @autobind
   handleExcuteTypeChange(value) {
-    console.log(value);
+    // console.log(value);
     if (!_.isEmpty(value) && value !== '请选择' && value !== '暂无数据') {
       this.setState({
         isShowErrorExcuteType: false,
@@ -140,7 +147,7 @@ export default class TaskFormInfo extends PureComponent {
         <Mention
           style={{ width: '100%', height: 100 }}
           placeholder="请在描述客户经理联系客户前需要了解的客户相关信息，比如持仓情况。（字数限制：10-1000字）"
-          prefix={'{'}
+          prefix={['{']}
           onSearchChange={this.handleSearchChange}
           suggestions={suggestions}
           onSelect={this.handileSelect}
@@ -153,7 +160,7 @@ export default class TaskFormInfo extends PureComponent {
   renderTipSection() {
     return (
       <div className={styles.info}>
-        任务提示中 &#123;XXXX&#125; 部分后台会根据客户自动替换为该客户对应的属性值，编辑任务提示时请尽量避免修改这些参数描述。
+        如果要在任务提示中包含对应每个客户的属性数值，可以用  &#123;xx&#125;插入参数，比如  &#123;已开通业务&#125;。注意“ &#123;”前要有空格。
       </div>
     );
   }
