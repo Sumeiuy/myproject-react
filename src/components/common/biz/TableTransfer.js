@@ -25,6 +25,8 @@
  * supportSearchKey: 不必要,支持通过搜索的key（筛选用），时一个二维数组。
  *                  二维数组（匹配分：模糊和精准），数据顺序固定，第一个是精准匹配数组，第二个是模糊匹配数组
  * aboutRate: 不必要, 长度，内容顺序 固定,第一个是目标佣金率（string类型），第二个是拿到表中对象佣金率的key（string类型）
+ * scrollX：不必要，表x方向滑动时，设置的最大宽度。
+ *          要考虑到，操作栏的宽度40px，虽然是组件内部添加的，用户传入的scrollX时，需要考虑在内。
  */
 import React, { PropTypes, Component } from 'react';
 import { Table, Input, Checkbox } from 'antd';
