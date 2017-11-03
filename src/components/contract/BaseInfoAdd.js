@@ -25,10 +25,8 @@ import styles from './baseInfoAdd.less';
 
 const { TextArea } = Input;
 
-// 操作类型列表
-const { contract: { operationList } } = seibelConfig;
-// 退订的类型
-const unsubscribe = operationList[1].value;
+// 操作类型列表,退订的类型
+const { contract: { operationList, unsubscribe } } = seibelConfig;
 // 子类型列表
 const childTypeList = _.filter(seibelConfig.contract.subType, v => v.label !== '全部');
 // 下拉搜索组件样式

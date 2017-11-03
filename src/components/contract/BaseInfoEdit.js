@@ -30,7 +30,7 @@ const EMPTY_PARAM = '暂无';
 // 子类型列表
 const childTypeList = _.filter(seibelConfig.contract.subType, v => v.label !== '全部');
 // 退订
-const unsubscribe = '2';
+const { contract: { unsubscribe } } = seibelConfig;
 // const EMPTY_OBJECT = {};
 // const EMPTY_ARRAY = [];
 // 时间选择组件样式
