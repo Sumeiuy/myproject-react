@@ -42,6 +42,7 @@ const effects = {
   singleSubmit: 'commissionChange/submitSingleCommission',
   // 更新流程
   updateFlow: 'commissionChange/updateFlowStatus',
+  clearReduxState: 'commissionChange/clearReduxState',
 };
 
 const mapStateToProps = state => ({
@@ -103,6 +104,7 @@ const mapDispatchToProps = {
   updateSingle: getDataFunction(false, effects.singleSubmit),
   // 更新流程
   updateFlow: getDataFunction(false, effects.updateFlow),
+  clearReduxState: getDataFunction(false, effects.clearReduxState),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -145,6 +147,7 @@ export default class RejectionAndAmendment extends PureComponent {
     singleSubmit: PropTypes.string.isRequired,
     updateSingle: PropTypes.func.isRequired,
     updateFlow: PropTypes.func.isRequired,
+    clearReduxState: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -193,6 +196,7 @@ export default class RejectionAndAmendment extends PureComponent {
         singleSubmit,
         updateSingle,
         updateFlow,
+        clearReduxState,
       } = this.props;
       return (
         <SingleDetailChange
@@ -213,6 +217,7 @@ export default class RejectionAndAmendment extends PureComponent {
           submitResult={singleSubmit}
           onSubmit={updateSingle}
           onUpdateFlow={updateFlow}
+          clearReduxState={clearReduxState}
         />
       );
     } else if (type === 'SUBSCRIBE') {

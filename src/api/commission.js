@@ -54,5 +54,7 @@ export default function commission(api) {
     updateFlowStatus: query => api.post('/groovynoauth/fsp/biz/chgcommsion/updateFlowStatus', query),
     // 查询驳回后修改的页面按钮列表
     queryAprovalBtns: query => api.post('/groovynoauth/fsp/biz/chgcommsion/queryAprovalBtns', query),
+    // 查询驳回后修改的详情页面
+    querySingleDetail4Update: query => api.post('/groovynoauth/fsp/biz/chgcommsion/querySingleCommChgOrderInfoForUpdate', query),
   };
 }
