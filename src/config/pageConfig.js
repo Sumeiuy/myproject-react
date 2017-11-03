@@ -260,6 +260,8 @@ const pageConfig = {
   contract: {
     pageName: '合作合约',
     pageType: '03',
+    subscribe: '1',
+    unsubscribe: '2',
     subType: [
       {
         show: true,
@@ -596,14 +598,14 @@ const pageConfig = {
         width: 72,
       },
       {
-        dataIndex: 'prodType',
-        key: 'prodType',
+        dataIndex: 'prodTypeName',
+        key: 'prodTypeName',
         title: '产品类型',
         width: 72,
       },
       {
-        dataIndex: 'prodSubType',
-        key: 'prodSubType',
+        dataIndex: 'prodSubTypeName',
+        key: 'prodSubTypeName',
         title: '子类型',
         width: 58,
       },
@@ -640,13 +642,13 @@ const pageConfig = {
     // 协议条款表格表头数组
     protocolClauseTitleList: [
       {
-        dataIndex: 'termsName',
-        key: 'termsName',
+        dataIndex: 'terms',
+        key: 'terms',
         title: '条款名称',
       },
       {
-        dataIndex: 'paraName',
-        key: 'paraName',
+        dataIndex: 'param',
+        key: 'param',
         title: '明细参数',
       },
       {

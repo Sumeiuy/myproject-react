@@ -70,6 +70,8 @@ export default class EditForm extends PureComponent {
     underCustList: PropTypes.array.isRequired,
     // 下挂客户接口
     onQueryCust: PropTypes.func.isRequired,
+    // 清空props数据
+    clearPropsData: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -98,6 +100,12 @@ export default class EditForm extends PureComponent {
     this.setUploadConfig(hasCust);
   }
 
+  componentWillUnmount() {
+    // 销毁组件时清空数据
+    const { clearPropsData } = this.props;
+    clearPropsData();
+  }
+
   // 切换多账户
   @autobind
   onChangeMultiCustomer(boolean) {
@@ -112,6 +120,14 @@ export default class EditForm extends PureComponent {
     const baseInfoData = this.editBaseInfoComponent.getData();
     const { protocolClauseList } = this.props;
     const { protocolProductList, attachmentTypeList, cust } = this.state;
+    // 根据后端要求将接口返回的字段转成他们要的字段再传给他们;
+    /*eslint-disable */
+    protocolProductList.forEach((v)=> {
+      v.riskMatchFlag = v.riskMatch;
+      v.termMatchFlag = v.termMatch;
+      v.varietyMatchFlag = v.varietyMatch;
+    })
+    /*eslint-disable */
     const formData = {
       subType: baseInfoData.subType,
       custId: baseInfoData.client.cusId,
@@ -317,7 +333,7 @@ export default class EditForm extends PureComponent {
       showSearch: true,
       placeholder: '产品代码/产品名称',
       pagination,
-      supportSearchKey: [['productCode'], ['productName']],
+      supportSearchKey: [['prodCode'], ['prodName']],
     };
     // 下挂客户组件需要的数据列表
     const customerSelectList = underCustList.length ? underCustList.map(item => ({
@@ -339,7 +355,7 @@ export default class EditForm extends PureComponent {
           queryChannelProtocolProduct={queryChannelProtocolProduct}
           onChangeMultiCustomer={this.onChangeMultiCustomer}
         />
-        <div className={styles.editWrapper}>
+        <div className={`${styles.editWrapper} ${styles.transferWrapper}`}>
           <InfoTitle
             head="协议产品"
           />

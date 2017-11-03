@@ -103,6 +103,15 @@ export default {
         protocolProductList: resultData,
       };
     },
+    // 清除数据
+    clearPropsDataSuccess(state, action) {
+      const { payload: { resultData = EMPTY_LIST } } = action;
+      return {
+        ...state,
+        protocolProductList: resultData,
+        protocolClauseList: resultData,
+      };
+    },
     // 保存详情
     saveProtocolDataSuccess(state, action) {
       const { payload: { resultData = EMPTY_OBJECT } } = action;
@@ -314,6 +323,15 @@ export default {
       yield put({
         type: 'queryChannelProtocolProductSuccess',
         payload: response,
+      });
+    },
+    // 清除协议产品列表
+    * clearPropsData({ payload }, { call, put }) {
+      yield put({
+        type: 'clearPropsDataSuccess',
+        payload: {
+          resultData: EMPTY_LIST,
+        },
       });
     },
   },

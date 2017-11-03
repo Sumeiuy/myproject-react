@@ -97,6 +97,8 @@ const mapDispatchToProps = {
   saveProtocolData: fetchDataFunction(true, 'channelsTypeProtocol/saveProtocolData'),
   // 查询客户
   queryCust: fetchDataFunction(true, 'channelsTypeProtocol/queryCust'),
+  // 清除协议产品列表
+  clearPropsData: fetchDataFunction(false, 'channelsTypeProtocol/clearPropsData'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -140,6 +142,8 @@ export default class ChannelsTypeProtocol extends PureComponent {
     queryCust: PropTypes.func.isRequired,
     // 下挂客户列表
     underCustList: PropTypes.array,
+    // 清除props数据
+    clearPropsData: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -395,6 +399,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
       saveProtocolData,  // 保存详情
       underCustList,  // 下挂客户列表
       queryCust,  // 请求下挂客户接口
+      clearPropsData, // 清除props数据
     } = this.props;
     const {
       editFormModal,
@@ -435,7 +440,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
     />);
     const editFormModalProps = {
       modalKey: 'editFormModal',
-      title: '修改合约申请',
+      title: '新建协议管理',
       closeModal: this.closeModal,
       visible: editFormModal,
       size: 'large',
@@ -470,6 +475,8 @@ export default class ChannelsTypeProtocol extends PureComponent {
       underCustList,
       // 下挂客户接口
       onQueryCust: queryCust,
+      // 清除props数据
+      clearPropsData,
     };
     return (
       <div className={styles.premissionbox} >
