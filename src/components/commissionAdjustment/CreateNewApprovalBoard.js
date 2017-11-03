@@ -121,6 +121,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     clearReduxState: PropTypes.func.isRequired,
     // 单佣金调整客户校验
     onValidateSingleCust: PropTypes.func.isRequired,
+    singleCustVResult: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -158,6 +159,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       subscribelProductMatchInfo: [], // 咨询订阅的产品的三匹配信息
       unSubProList: [], // 咨询退订产品列表
       singleDValue: 0, // 单佣金调整产品选择后的差值
+      openRzrq: true, // 两融开关
     };
   }
 
@@ -287,6 +289,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       subProList: [],
       subscribelProductMatchInfo: [],
       unSubProList: [],
+      openRzrq: true,
     });
     this.clearRedux();
   }
@@ -827,6 +830,37 @@ export default class CreateNewApprovalBoard extends PureComponent {
     });
   }
 
+  // 单佣金调用客户校验接口后
+  @autobind
+  afterValidateSingleCust() {
+    const {
+      riskRt,
+      investRt,
+      investTerm,
+      validmsg,
+      hasorder,
+      // openRzrq,
+    } = this.props.singleCustVResult;
+    if (riskRt === 'N') {
+      confirm({ shortCut: 'custRisk' });
+    }
+    if (investRt === 'N') {
+      confirm({ shortCut: 'custInvestRt' });
+    }
+    if (investTerm === 'N') {
+      confirm({ shortCut: 'custInvestTerm' });
+    }
+    if (hasorder === 'N') {
+      confirm({ content: validmsg });
+    }
+    // 两融开关
+    // if (openRzrq === 'N') {
+    //   this.setState({
+
+    //   });
+    // }
+  }
+
   // 单佣金、咨询订阅、退订基本信息选择客户
   @autobind
   handleSelectAssembly(customer) {
@@ -850,9 +884,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       // this.props.onValidateSingleCust({
       //   custRowId: id,
       //   custType,
-      // }).then((resolved) => {
-      //   console.warn('onValidateSingleCust>', resolved);
-      // });
+      // }).then(this.afterValidateSingleCust);
       this.props.getSingleOtherRates({
         custRowId: id,
       });
@@ -1071,6 +1103,8 @@ export default class CreateNewApprovalBoard extends PureComponent {
       subscribelProList,
       unSubscribelProList,
       threeMatchInfo,
+      onValidateSingleCust,
+      singleCustVResult,
     } = this.props;
     const newApproverList = approverList.map((item, index) => {
       const key = `${new Date().getTime()}-${index}`;
@@ -1157,7 +1191,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     };
 
     const wrapClassName = this.judgeSubtypeNow(commadj.noSelected) ? 'commissionModal' : '';
-    const subTypesAfterAuthority = this.authorityOptions(newSubTypes);
+    const subTypesAfterAuthority = newSubTypes; // this.authorityOptions(newSubTypes);
 
     return (
       <div>
@@ -1194,18 +1228,41 @@ export default class CreateNewApprovalBoard extends PureComponent {
                       dataSource={singleCustList}
                       onSearchValue={this.handleChangeSingleAssembly}
                       onSelectValue={this.handleSelectAssembly}
+                      onValidateCust={onValidateSingleCust}
+                      validResult={singleCustVResult}
+                      subType={commadj.single}
                     />
                   </CommissionLine>
                 )
               }
               {
-                !this.judgeSubtypeNow([commadj.subscribe, commadj.unsubscribe]) ? null
+                // 资讯订阅
+                !this.judgeSubtypeNow(commadj.subscribe) ? null
                 : (
                   <CommissionLine label="客户" labelWidth="90px" needInputBox={false}>
                     <SelectAssembly
                       dataSource={subscribeCustList}
                       onSearchValue={this.handleChangeSubscribeAssembly}
                       onSelectValue={this.handleSelectAssembly}
+                      onValidateCust={onValidateSingleCust}
+                      validResult={singleCustVResult}
+                      subType={commadj.single}
+                    />
+                  </CommissionLine>
+                )
+              }
+              {
+                // 资讯退订
+                !this.judgeSubtypeNow(commadj.unsubscribe) ? null
+                : (
+                  <CommissionLine label="客户" labelWidth="90px" needInputBox={false}>
+                    <SelectAssembly
+                      dataSource={subscribeCustList}
+                      onSearchValue={this.handleChangeSubscribeAssembly}
+                      onSelectValue={this.handleSelectAssembly}
+                      onValidateCust={onValidateSingleCust}
+                      validResult={singleCustVResult}
+                      subType={commadj.single}
                     />
                   </CommissionLine>
                 )
