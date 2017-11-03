@@ -17,6 +17,7 @@ import classnames from 'classnames';
 
 import Icon from '../Icon';
 import { helper } from '../../../utils';
+import { fspContainer } from '../../../config';
 
 import styles from './filter.less';
 
@@ -44,6 +45,21 @@ export default class SingleFilter extends PureComponent {
 
   componentDidMount() {
     this.addMoreBtn();
+    const sidebarHideBtn = document.querySelector(fspContainer.sidebarHideBtn);
+    const sidebarShowBtn = document.querySelector(fspContainer.sidebarShowBtn);
+    if (sidebarHideBtn && sidebarShowBtn) {
+      sidebarHideBtn.addEventListener('click', this.addMoreBtn);
+      sidebarShowBtn.addEventListener('click', this.addMoreBtn);
+    }
+  }
+
+  componentWillUnmount() {
+    const sidebarHideBtn = document.querySelector(fspContainer.sidebarHideBtn);
+    const sidebarShowBtn = document.querySelector(fspContainer.sidebarShowBtn);
+    if (sidebarHideBtn && sidebarShowBtn) {
+      sidebarHideBtn.removeEventListener('click', this.addMoreBtn);
+      sidebarShowBtn.removeEventListener('click', this.addMoreBtn);
+    }
   }
 
   // 判断是否超过一行，超过则显示 ... , 点击 ... 展开所有
@@ -56,6 +72,12 @@ export default class SingleFilter extends PureComponent {
         this.domNode.style.height = this.domNodeLineHeight;
         this.setState({
           moreBtnVisible: true,
+        });
+      } else {
+        this.domNode.style.height = 'auto';
+        this.setState({
+          moreBtnVisible: false,
+          fold: true,
         });
       }
     }
