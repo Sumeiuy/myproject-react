@@ -146,8 +146,18 @@ export default class Home extends PureComponent {
       createCustRange: [],
       expandAll: false,
     };
-    // 首页指标查询权限
-    this.isHasAuthorize = permission.hasIndexViewPermission();
+    // 首页指标查询,总部-营销活动管理岗,分公司-营销活动管理岗,营业部-营销活动管理岗权限
+    const {
+      hasIndexViewPermission,
+      hasHqMampPermission,
+      hasBoMampPermission,
+      hasBdMampPermission,
+    } = permission;
+    this.isHasAuthorize = hasIndexViewPermission();
+    this.orgTreeAuthorize = this.isHasAuthorize
+      || hasHqMampPermission()
+      || hasBoMampPermission()
+      || hasBdMampPermission();
   }
 
   componentDidMount() {
@@ -386,8 +396,9 @@ export default class Home extends PureComponent {
       id: MAIN_MAGEGER_ID,
       name: '我的客户',
     };
-    // 无‘HTSC 首页指标查询’职责的普通用户，取值 '我的客户'
-    if (!this.isHasAuthorize) {
+    // 无‘HTSC 首页指标查询’‘总部-营销活动管理岗’,
+    // ‘分公司-营销活动管理岗’,‘营业部-营销活动管理岗’职责的普通用户，取值 '我的客户'
+    if (!this.orgTreeAuthorize) {
       this.setState({
         createCustRange: [myCustomer],
       });
