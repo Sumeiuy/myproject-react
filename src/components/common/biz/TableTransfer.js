@@ -639,9 +639,9 @@ export default class TableTransfer extends Component {
       secondColumns,
     } = this.state;
     const scroll = isScrollX ? (
-      { y: 268, x: '130%' }
+      { y: 253, x: '130%' }
     ) : (
-      { y: 260 }
+      { y: 245 }
     );
 
     return (

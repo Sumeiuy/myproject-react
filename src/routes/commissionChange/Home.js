@@ -14,6 +14,7 @@ import { autobind } from 'core-decorators';
 import SubscribDeatilChange from '../../components/commissionChange/SubscribDeatilChange';
 import SingleDetailChange from '../../components/commissionChange/SingleDetailChange';
 import Barable from '../../decorators/selfBar';
+import { isInFsp, getCssStyle } from '../../utils/helper';
 import styles from './home.less';
 
 const effects = {
@@ -127,6 +128,25 @@ export default class RejectionAndAmendment extends PureComponent {
     singleDetailLoading: false,
   }
 
+  componentDidMount() {
+    this.setHomeHeight();
+  }
+
+  @autobind
+  setHomeHeight() {
+    // 判断是否在fsp系统
+    let height = getCssStyle(document.documentElement, 'height');
+    if (isInFsp()) {
+      height = `${Number.parseInt(height, 10) - 55}px`;
+    }
+    this.changeHome.style.height = height;
+  }
+
+  @autobind
+  changeHomeRef(input) {
+    this.changeHome = input;
+  }
+
   // 判断当前是哪个驳回修改页面
   @autobind
   judgeSubtypeNow() {
@@ -145,10 +165,6 @@ export default class RejectionAndAmendment extends PureComponent {
         queryThreeMatchInfo,
         queryOtherRate,
         singleOtherRate,
-        approvalUserList,
-        getAprovalUserList,
-        singleCustomer,
-        querySingleCustomer,
       } = this.props;
       return (
         <SingleDetailChange
@@ -156,18 +172,14 @@ export default class RejectionAndAmendment extends PureComponent {
           detail={singleDetail}
           detailLoading={singleDetailLoading}
           singleGJ={singleGJ}
-          customer={singleCustomer}
           optionalList={singleComProductList}
           threeMatchInfo={threeMatchInfo}
           otherRate={singleOtherRate}
-          approvalUserList={approvalUserList}
           onQueryDetail={querySingleDetail}
           onQueryGJ={querySingleGj}
           onQueryProductList={querySingleProductList}
           onQuery3Match={queryThreeMatchInfo}
           onQueryOtherRate={queryOtherRate}
-          onQueryApprovalUser={getAprovalUserList}
-          onQueryCustomer={querySingleCustomer}
         />
       );
     } else if (type === 'SUBSCRIBE') {
@@ -206,7 +218,7 @@ export default class RejectionAndAmendment extends PureComponent {
 
   render() {
     return (
-      <div className={styles.rejectAmend}>
+      <div className={styles.rejectAmend} ref={this.changeHomeRef}>
         {
           this.judgeSubtypeNow()
         }

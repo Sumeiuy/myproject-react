@@ -67,6 +67,8 @@ export default {
     unSubscribelProList: [],
     // 单佣金调整申请成功
     singleSubmit: '',
+    // 单佣金调整客户校验结果
+    singleCustValidate: {},
   },
   reducers: {
     getProductListSuccess(state, action) {
@@ -322,6 +324,14 @@ export default {
       return {
         ...state,
         unSubscribelProList: resultData,
+      };
+    },
+
+    validateCustomerInSingleSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        singleCustValidate: resultData,
       };
     },
 
@@ -650,6 +660,16 @@ export default {
         payload: response,
       });
     },
+
+    // 单佣金调整新建页面客户检验
+    * validateCustomerInSingle({ payload }, { call, put }) {
+      const response = yield call(api.validateCustomer, payload);
+      yield put({
+        type: 'validateCustomerInSingleSuccess',
+        payload: response,
+      });
+    },
+
     // 清空在redux中保存的查询结果
     * clearReduxState({ payload }, { put }) {
       const { clearList } = payload;

@@ -48,5 +48,7 @@ export default function commission(api) {
     querySingleDetail: query => api.post('/groovynoauth/fsp/biz/chgcommsion/querySingleCommChgOrderInfo', query),
     // 单佣金调整新建页面中的目标股基佣金率
     querySingleGJCommissionRate: query => api.post('/groovynoauth/fsp/biz/chgcommsion/querySingleCommision', query),
+    // 单佣金调整新建页面客户检验
+    validateCustomer: query => api.post('/groovynoauth/fsp/biz/chgcommsion/queryCustRiskInfo', query),
   };
 }
