@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-01 18:37:35
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-04 01:28:03
+ * @Last Modified time: 2017-11-04 07:26:27
  * @description 单佣金调整驳回后修改页面
  */
 
@@ -103,6 +103,10 @@ export default class SingleDetailChange extends PureComponent {
     const { flowCode } = this.props;
     this.props.onQueryDetail({
       flowCode,
+    });
+    // 获取当前驳回后修改的审批按钮
+    this.props.onQueryBtns({
+      flowId: flowCode,
     });
   }
 

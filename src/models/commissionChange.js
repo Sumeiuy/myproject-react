@@ -427,7 +427,7 @@ export default {
 
     // 获取驳回后修改的页面按钮
     * queryApprovalBtns({ payload }, { call, put }) {
-      const response = yield call(api.queryApprovalBtns, payload);
+      const response = yield call(api.queryAprovalBtns, payload);
       yield put({
         type: 'queryApprovalBtnsSuccess',
         payload: response,
