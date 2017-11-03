@@ -91,6 +91,14 @@ const permission = {
     const hasPermission = (filterResp.length > 0) && (filterPostn.length > 0);
     return hasPermission;
   },
+
+  // 通道类型协议，根据传入的子类型和模板id，判断是否显示选择多用户和十档行情按钮
+  protocolIsShowSwitch(templateId, subType) {
+    if (templateId && subType) {
+      return (templateId !== duty.ten_level_template_id && subType === duty.zjkcd_id);
+    }
+    return false;
+  },
 };
 
 export default permission;

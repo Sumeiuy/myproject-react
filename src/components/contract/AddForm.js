@@ -20,10 +20,8 @@ import AddClause from './AddClause';
 
 import { seibelConfig } from '../../config';
 import styles from './addForm.less';
-// 操作类型列表
-const { contract: { operationList } } = seibelConfig;
 // 订购的类型
-const subscribe = operationList[0].value;
+const { contract: { subscribe } } = seibelConfig;
 // 合约条款的表头
 const { contract: { titleList } } = seibelConfig;
 const EMPTY_OBJECT = {};

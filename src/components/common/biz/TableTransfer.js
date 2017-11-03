@@ -577,10 +577,12 @@ export default class TableTransfer extends Component {
           (keys, index) => {
             // 精准匹配
             if (index === 0) {
-              return !_.isEmpty(_.filter(keys, key => (item[key] === keyword)));
+              return !_.isEmpty(_.filter(keys, key =>
+                (_.isEmpty(item[key]) ? false : (item[key] === keyword))));
             }
             // 模糊匹配
-            return !_.isEmpty(_.filter(keys, key => (item[key].indexOf(keyword) !== -1)));
+            return !_.isEmpty(_.filter(keys, key =>
+              (_.isEmpty(item[key]) ? false : (item[key].indexOf(keyword) !== -1))));
           },
         );
         return !_.isEmpty(resultArray);

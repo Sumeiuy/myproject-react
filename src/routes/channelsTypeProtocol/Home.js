@@ -1,18 +1,18 @@
-/*eslint-disable */
 /*
  * @Description: 合作合约 home 页面
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-26 17:50:46
+ * @Last Modified time: 2017-11-03 10:05:27
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
 import { withRouter, routerRedux } from 'dva-react-router-3/router';
 import { connect } from 'react-redux';
-import { Modal } from 'antd';
+import { message, Modal } from 'antd';
 import _ from 'lodash';
-import { constructSeibelPostBody, getEmpId } from '../../utils/helper';
+
+import { constructSeibelPostBody } from '../../utils/helper';
 import SplitPanel from '../../components/common/splitPanel/SplitPanel';
 import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
 import Detail from '../../components/channelsTypeProtocol/Detail';
@@ -21,31 +21,29 @@ import seibelColumns from '../../components/common/biz/seibelColumns';
 import CommonModal from '../../components/common/biz/CommonModal';
 import EditForm from '../../components/channelsTypeProtocol/EditForm';
 import BottonGroup from '../../components/permission/BottonGroup';
-// import ChoiceApproverBoard from '../../components/commissionAdjustment/ChoiceApproverBoard';
 import { seibelConfig } from '../../config';
 import Barable from '../../decorators/selfBar';
 
 import styles from './home.less';
 
-
 const confirm = Modal.confirm;
+
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
-// 退订的类型
-// const unsubscribe = '2';
 const OMIT_ARRAY = ['isResetPageNum', 'currentId'];
 const {
   channelsTypeProtocol,
-  channelsTypeProtocol: { pageType, subType, operationList, status },
+  channelsTypeProtocol: { pageType, subType, status, operationList },
 } = seibelConfig;
-// 通道类型协议新建/编辑弹窗按钮，暂时写死在前端
+// 新建/编辑弹窗按钮，暂时写死在前端
 const FLOW_BUTTONS = {
   flowButtons: [
     {
+      key: 'submit',
       btnName: '提交',
-    }
-  ]
-}
+    },
+  ],
+};
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
   payload: query || {},
@@ -56,19 +54,16 @@ const mapStateToProps = state => ({
   // 查询左侧列表
   seibleList: state.app.seibleList,
   // 列表请求状态
-  // 获取列表数据进程
   seibleListLoading: state.loading.effects['app/getSeibleList'],
   // 查询客户
   canApplyCustList: state.app.canApplyCustList,
   // 查询右侧详情
   protocolDetail: state.channelsTypeProtocol.protocolDetail,
   protocolDetailLoading: state.loading.effects['channelsTypeProtocol/getProtocolDetail'],
-  // 附件列表
-  attachmentList: state.contract.attachmentList,
-
+  // 附件
+  attachmentList: state.channelsTypeProtocol.attachmentList,
   // 审批记录
-  flowHistory: state.contract.flowHistory,
-
+  flowHistory: state.channelsTypeProtocol.flowHistory,
   // 登陆人信息
   empInfo: state.app.empInfo,
   // 操作类型列表
@@ -81,6 +76,7 @@ const mapStateToProps = state => ({
   protocolClauseList: state.channelsTypeProtocol.protocolClauseList,
   // 协议产品列表
   protocolProductList: state.channelsTypeProtocol.protocolProductList,
+  underCustList: state.channelsTypeProtocol.underCustList,
 });
 
 const mapDispatchToProps = {
@@ -91,14 +87,18 @@ const mapDispatchToProps = {
   getCanApplyCustList: fetchDataFunction(false, 'app/getCanApplyCustList'),
   // 获取右侧详情
   getProtocolDetail: fetchDataFunction(true, 'channelsTypeProtocol/getProtocolDetail'),
-  // 获取附件列表
-  getAttachmentList: fetchDataFunction(true, 'channelsTypeProtocol/getAttachmentList'),
   // 查询操作类型/子类型/模板列表
   queryTypeVaules: fetchDataFunction(false, 'channelsTypeProtocol/queryTypeVaules'),
   // 根据所选模板id查询模板对应协议条款
   queryChannelProtocolItem: fetchDataFunction(false, 'channelsTypeProtocol/queryChannelProtocolItem'),
   // 查询协议产品列表
   queryChannelProtocolProduct: fetchDataFunction(false, 'channelsTypeProtocol/queryChannelProtocolProduct'),
+  // 保存详情
+  saveProtocolData: fetchDataFunction(true, 'channelsTypeProtocol/saveProtocolData'),
+  // 查询客户
+  queryCust: fetchDataFunction(true, 'channelsTypeProtocol/queryCust'),
+  // 清除协议产品列表
+  clearProtocolProductList: fetchDataFunction(false, 'channelsTypeProtocol/clearProtocolProductList'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -118,10 +118,9 @@ export default class ChannelsTypeProtocol extends PureComponent {
     // 查询右侧详情
     getProtocolDetail: PropTypes.func.isRequired,
     protocolDetail: PropTypes.object.isRequired,
-    protocolDetailLoading: PropTypes.bool,
-    // 附件列表
-    getAttachmentList: PropTypes.func.isRequired,
+    // 附件
     attachmentList: PropTypes.array,
+
     // 审批记录
     flowHistory: PropTypes.array,
     // 登陆人信息
@@ -137,26 +136,94 @@ export default class ChannelsTypeProtocol extends PureComponent {
     // 查询协议产品列表
     queryChannelProtocolProduct: PropTypes.func.isRequired,
     protocolProductList: PropTypes.array.isRequired,
+    // 保存详情
+    saveProtocolData: PropTypes.func.isRequired,
+    // 下挂客户接口
+    queryCust: PropTypes.func.isRequired,
+    // 下挂客户列表
+    underCustList: PropTypes.array,
+    // 清除协议产品列表
+    clearProtocolProductList: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
     attachmentList: EMPTY_LIST,
     seibleListLoading: false,
     flowHistory: EMPTY_LIST,
-    protocolDetailLoading: false,
+    underCustList: EMPTY_LIST,
   }
 
   constructor(props) {
     super(props);
     this.state = {
-      isEmpty: true,
-      // 新建/编辑弹窗状态
-      editFormModal: true,
-      // 是否有修改的权限
-      hasEditPermission: false,
+      // 新建编辑弹窗状态
+      editFormModal: false,
       // 最终传递的数据
       payload: EMPTY_OBJECT,
     };
+  }
+
+  componentWillMount() {
+    const {
+      location: {
+        query,
+        query: {
+          pageNum,
+          pageSize,
+        },
+      },
+      getSeibleList,
+    } = this.props;
+    const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
+
+    // 默认筛选条件
+    getSeibleList({
+      ...params,
+      type: pageType,
+    });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const {
+      seibleListLoading: prevSLL,
+      location: { query: { currentId: prevCurrentId } },
+    } = this.props;
+    const {
+      seibleList: nextSL,
+      seibleListLoading: nextSLL,
+      location: { query: { currentId } },
+      getProtocolDetail,
+    } = nextProps;
+
+    const { location: { query: prevQuery = EMPTY_OBJECT }, getSeibleList } = this.props;
+    const { location: { query: nextQuery = EMPTY_OBJECT } } = nextProps;
+    const { isResetPageNum = 'N', pageNum, pageSize } = nextQuery;
+    // 深比较值是否相等
+    // url发生变化，检测是否改变了筛选条件
+    if (!_.isEqual(prevQuery, nextQuery)) {
+      if (!this.diffObject(prevQuery, nextQuery)) {
+        // 只监测筛选条件是否变化
+        const params = constructSeibelPostBody(nextQuery,
+          isResetPageNum === 'Y' ? 1 : pageNum,
+          isResetPageNum === 'Y' ? 10 : pageSize,
+        );
+        getSeibleList({
+          ...params,
+          type: pageType,
+        });
+      }
+    }
+    /* currentId变化重新请求 */
+    // 获取到 seibleList,并且 seibleList 的 resultData 有数据
+    if (((prevSLL && !nextSLL) && nextSL.resultData.length) ||
+      (currentId && (currentId !== prevCurrentId))) {
+      getProtocolDetail({
+        id: currentId,
+      });
+      // this.setState({
+      //   editFormModal: false,
+      // });
+    }
   }
 
   componentDidUpdate() {
@@ -173,23 +240,6 @@ export default class ChannelsTypeProtocol extends PureComponent {
       });
     }
   }
-
-  @autobind
-  onOk(modalKey) {
-    this.setState({
-      [modalKey]: false,
-    });
-  }
-
-  // 上传成功后回调
-  @autobind
-  onUploadComplete(formData) {
-    this.setState({
-      ...this.state,
-      contractFormData: formData,
-    });
-  }
-
 
   /**
    * 检查部分属性是否相同
@@ -215,25 +265,8 @@ export default class ChannelsTypeProtocol extends PureComponent {
   // 头部新建按钮点击事件处理程序
   @autobind
   handleCreateBtnClick() {
-    const { getFlowStepInfo, resetUnsubscribeDetail } = this.props;
-    getFlowStepInfo({
-      operate: 1,
-      flowId: '',
-    });
+    console.warn('点击了新建按钮');
     this.showModal('editFormModal');
-    // 每次打开弹窗的时候重置退订详情数据
-    resetUnsubscribeDetail();
-  }
-
-  // 显示修改合作合约弹框
-  @autobind
-  handleShowEditForm() {
-    this.setState({
-      ...this.state,
-      contractFormData: this.props.baseInfo,
-    }, () => {
-      this.showModal('editFormModal');
-    });
   }
 
   // 打开弹窗
@@ -247,17 +280,8 @@ export default class ChannelsTypeProtocol extends PureComponent {
   // 关闭弹窗
   @autobind
   closeModal(modalKey) {
-    // 可能需要清空 contractFormData--TODO
     this.setState({
       [modalKey]: false,
-      contractFormData: modalKey === 'approverModal' ?
-        this.state.contractFormData
-      :
-        EMPTY_OBJECT,
-    }, () => {
-      if (modalKey === 'addFormModal' && this.AddFormComponent) {
-        this.AddFormComponent.handleReset();
-      }
     });
   }
 
@@ -270,27 +294,87 @@ export default class ChannelsTypeProtocol extends PureComponent {
     });
   }
 
-  // 弹窗底部按钮事件
+  // 检查保存数据是否合法
   @autobind
-  footerBtnHandle(btnItem) {
-    // 从editFormComponent组件中取出值
-    const formData = this.EditFormComponent.getData();
-    console.log('formData',formData)
+  checkFormDataIsLegal(formData) {
+    if (!formData.subType) {
+      message.error('请选择子类型');
+      return false;
+    }
+    if (!formData.operationType) {
+      message.error('请选择操作类型');
+      return false;
+    }
+    if (!formData.custId) {
+      message.error('请选择客户');
+      return false;
+    }
+    if (!formData.templateId) {
+      message.error('请选择协议模板');
+      return false;
+    }
+    return true;
   }
 
-  // 最终发出接口请求
+  // 点击提交按钮弹提示框
   @autobind
-  sendRequest(sendPayload) {
-    const {
-      saveContractData,
-      location: { query },
-    } = this.props;
-    const payload = {
-      ...sendPayload,
-      currentQuery: query,
-    };
-    console.warn('sendRequest payload', payload);
-    saveContractData(payload);
+  showconFirm(formData) {
+    confirm({
+      title: '提示',
+      content: '经对客户与服务产品三匹配结果，请确认客户是否已签署服务计划书及适当确认书！',
+      onOk: () => {
+        const {
+          location: {
+            query,
+          },
+          saveProtocolData,
+        } = this.props;
+        const params = {
+          ...constructSeibelPostBody(query, 1, 10),
+          type: pageType,
+        };
+        saveProtocolData({
+          formData,
+          params,
+        }).then(() => {
+          this.closeModal('editFormModal');
+        });
+      },
+      onCancel: () => {
+        console.log('Cancel');
+      },
+    });
+  }
+
+  // 弹窗底部按钮事件
+  @autobind
+  footerBtnHandle() {
+    const formData = this.EditFormComponent.getData();
+    // 对formData校验
+    if (this.checkFormDataIsLegal(formData)) {
+      const { attachment } = formData;
+      console.warn('formData', formData);
+      const newAttachment = [];
+      for (let i = 0; i < attachment.length; i++) {
+        const item = attachment[i];
+        if (item.length <= 0 && item.required) {
+          message.error(`${item.title}附件为必传项`);
+          return;
+        }
+        newAttachment.push({
+          uuid: item.uuid,
+          attachmentType: item.title,
+          attachmentComments: '',
+        });
+      }
+      _.remove(newAttachment, o => _.isEmpty(o.uuid));
+      const payload = {
+        ...formData,
+        attachment: newAttachment,
+      };
+      // 弹出提示窗
+      this.showconFirm(payload);
+    }
   }
 
   render() {
@@ -301,7 +385,6 @@ export default class ChannelsTypeProtocol extends PureComponent {
       attachmentList,
       flowHistory,
       empInfo,
-      getCustRange,
       getCanApplyCustList, // 查询可申请客户列表
       canApplyCustList, // 可申请客户列表
       queryTypeVaules, // 查询操作类型/子类型/模板列表
@@ -313,10 +396,13 @@ export default class ChannelsTypeProtocol extends PureComponent {
       protocolClauseList, // 所选模板对应协议条款列表
       queryChannelProtocolProduct, // 查询协议产品列表
       protocolProductList, // 协议产品列表
+      saveProtocolData,  // 保存详情
+      underCustList,  // 下挂客户列表
+      queryCust,  // 请求下挂客户接口
+      clearProtocolProductList, // 清除协议产品列表
     } = this.props;
     const {
       editFormModal,
-      hasEditPermission,
     } = this.state;
     const isEmpty = _.isEmpty(seibleList.resultData);
     const topPanel = (
@@ -329,9 +415,8 @@ export default class ChannelsTypeProtocol extends PureComponent {
         stateOptions={status}
         creatSeibelModal={this.handleCreateBtnClick}
         operateOptions={operationList}
-        needOperate
         empInfo={empInfo}
-        getCustRange={getCustRange}
+        needOperate
       />
     );
     const leftPanel = (
@@ -347,8 +432,6 @@ export default class ChannelsTypeProtocol extends PureComponent {
         protocolDetail={protocolDetail}
         attachmentList={attachmentList}
         flowHistory={flowHistory}
-        hasEditPermission={hasEditPermission}
-        showEditModal={this.handleShowEditForm}
       />
     );
     const selfBtnGroup = (<BottonGroup
@@ -365,7 +448,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
     };
     const editFormProps = {
       // 客户列表
-      custList: canApplyCustList,
+      canApplyCustList,
       // 查询客户
       onSearchCutList: getCanApplyCustList,
       // 查询操作类型/子类型/模板列表
@@ -381,11 +464,19 @@ export default class ChannelsTypeProtocol extends PureComponent {
       // 所选模板对应协议条款列表
       protocolClauseList,
       // 协议详情 - 编辑时传入
-      protocolDetail,
+      protocolDetail: EMPTY_OBJECT,
       // 查询协议产品列表
       queryChannelProtocolProduct,
       // 协议产品列表
       protocolProductList,
+      // 保存详情
+      saveProtocolData,
+      // 下挂客户
+      underCustList,
+      // 下挂客户接口
+      onQueryCust: queryCust,
+      // 清除协议产品列表
+      clearProtocolProductList,
     };
     return (
       <div className={styles.premissionbox} >
@@ -411,4 +502,3 @@ export default class ChannelsTypeProtocol extends PureComponent {
     );
   }
 }
-/*eslint-disable */

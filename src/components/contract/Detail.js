@@ -30,8 +30,8 @@ const operationLabel = (value) => {
   }
   return '无';
 };
-// 退订的类型
-const unsubscribe = '2';
+// 退订
+const { contract: { unsubscribe } } = seibelConfig;
 const EMPTY_PARAM = '暂无';
 // 合约条款的表头、状态对应值
 const { contract: { titleList, status } } = seibelConfig;
