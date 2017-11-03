@@ -642,13 +642,13 @@ const pageConfig = {
     // 协议条款表格表头数组
     protocolClauseTitleList: [
       {
-        dataIndex: 'termsName',
-        key: 'termsName',
+        dataIndex: 'terms',
+        key: 'terms',
         title: '条款名称',
       },
       {
-        dataIndex: 'paraName',
-        key: 'paraName',
+        dataIndex: 'param',
+        key: 'param',
         title: '明细参数',
       },
       {
