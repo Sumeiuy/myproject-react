@@ -9,6 +9,34 @@ import _ from 'lodash';
 
 import styles from './threeMatchTip.less';
 
+// 为了给提示文字一个标点符号
+function giveTipPause(array) {
+  return array.join('、');
+}
+
+// 将提示信息放到数组中
+function putMsg2Array(info) {
+  const {
+    riskRankMhrt,
+    investProdMhrt,
+    investTypeMhrt,
+    riskRankMhmsg,
+    investProdMhmsg,
+    investTypeMhmsg,
+  } = info;
+  const msgArray = [];
+  if (riskRankMhrt === 'N') {
+    msgArray.push(riskRankMhmsg);
+  }
+  if (investProdMhrt === 'N') {
+    msgArray.push(investProdMhmsg);
+  }
+  if (investTypeMhrt === 'N') {
+    msgArray.push(investTypeMhmsg);
+  }
+  return msgArray;
+}
+
 export default function ThreeMatchTip(props) {
   const { info } = props;
   if (_.isEmpty(info)) {
@@ -21,20 +49,12 @@ export default function ThreeMatchTip(props) {
       <div className={styles.tipsColor}>提示：经对客户与服务产品三匹配结果，请确认客户是否已签署服务计划书及适当确认书。</div>
     );
   }
-  const { riskRankMhmsg, investProdMhmsg, investTypeMhmsg } = info;
+  const msgs = putMsg2Array(info);
   return (
     <div className={styles.tipsColor}>
       <span>提示：经对客户与服务产品三匹配结果，</span>
-      {
-        riskRankMhrt === 'N' ? (<span>{riskRankMhmsg}</span>) : null
-      }
-      {
-        investProdMhrt === 'N' ? (<span>{investProdMhmsg}</span>) : null
-      }
-      {
-        investTypeMhrt === 'N' ? (<span>{investTypeMhmsg}</span>) : null
-      }
-      <span>,请确认客户是否已签署以下文件：服务计划书、不适当警示书、回访问卷。</span>
+      {giveTipPause(msgs)}
+      <span>，请确认客户是否已签署以下文件：服务计划书、不适当警示书、回访问卷。</span>
     </div>
   );
 }
