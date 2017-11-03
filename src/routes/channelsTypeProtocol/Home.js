@@ -313,6 +313,10 @@ export default class ChannelsTypeProtocol extends PureComponent {
       message.error('请选择协议模板');
       return false;
     }
+    if (!formData.item.length) {
+      message.error('请选择协议产品');
+      return false;
+    }
     return true;
   }
 
