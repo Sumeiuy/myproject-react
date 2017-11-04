@@ -133,8 +133,12 @@ export default {
       const { payload: { detailRes, attachmentRes, approvalRes, stepRes } } = action;
       const detailResult = detailRes.resultData;
       const attachmentResult = attachmentRes.resultData;
-      const approvalResult = approvalRes.resultData;
-      const stepResult = stepRes.resultData;
+      let approvalResult = [];
+      let stepResult = {};
+      if (!_.isEmpty(approvalRes)) {
+        approvalResult = approvalRes.resultData;
+        stepResult = stepRes.resultData;
+      }
       return {
         ...state,
         subscribeDetail: {
@@ -150,8 +154,12 @@ export default {
       const { payload: { detailRes, attachmentRes, approvalRes, stepRes } } = action;
       const detailResult = detailRes.resultData;
       const attachmentResult = attachmentRes.resultData;
-      const approvalResult = approvalRes.resultData;
-      const stepResult = stepRes.resultData;
+      let approvalResult = [];
+      let stepResult = {};
+      if (!_.isEmpty(approvalRes)) {
+        approvalResult = approvalRes.resultData;
+        stepResult = stepRes.resultData;
+      }
       return {
         ...state,
         unsubscribeDetail: {
@@ -528,13 +536,18 @@ export default {
       // 通过查询到的详情数据的attachmentNum获取附件信息
       const detailRD = detailRes.resultData;
       const attachmentRes = yield call(api.getAttachment, { attachment: detailRD.attachmentNum });
-      const approvalRes = yield call(api.querySingleCustApprovalRecord, {
-        flowCode: detailRD.flowCode,
-        loginuser,
-      });
-      const stepRes = yield call(api.queryCurrentStep, {
-        flowCode: detailRD.flowCode,
-      });
+      const { flowCode } = detailRD;
+      let approvalRes = {};
+      let stepRes = {};
+      if (!_.isEmpty(flowCode)) {
+        approvalRes = yield call(api.querySingleCustApprovalRecord, {
+          flowCode: detailRD.flowCode,
+          loginuser,
+        });
+        stepRes = yield call(api.queryCurrentStep, {
+          flowCode: detailRD.flowCode,
+        });
+      }
       yield put({
         type: 'getSubscribeDetailSuccess',
         payload: { detailRes, attachmentRes, approvalRes, stepRes },
@@ -554,13 +567,18 @@ export default {
       // 通过查询到的详情数据的attachmentNum获取附件信息
       const detailRD = detailRes.resultData;
       const attachmentRes = yield call(api.getAttachment, { attachment: detailRD.attachmentNum });
-      const approvalRes = yield call(api.querySingleCustApprovalRecord, {
-        flowCode: detailRD.flowCode,
-        loginuser,
-      });
-      const stepRes = yield call(api.queryCurrentStep, {
-        flowCode: detailRD.flowCode,
-      });
+      const { flowCode } = detailRD;
+      let approvalRes = {};
+      let stepRes = {};
+      if (!_.isEmpty(flowCode)) {
+        approvalRes = yield call(api.querySingleCustApprovalRecord, {
+          flowCode: detailRD.flowCode,
+          loginuser,
+        });
+        stepRes = yield call(api.queryCurrentStep, {
+          flowCode: detailRD.flowCode,
+        });
+      }
       yield put({
         type: 'getUnSubscribeDetailSuccess',
         payload: { detailRes, attachmentRes, approvalRes, stepRes },

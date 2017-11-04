@@ -96,13 +96,13 @@ export default class CreateNewApprovalBoard extends PureComponent {
     // 单佣金调整客户列表
     querySingleCustList: PropTypes.func.isRequired,
     singleCustList: PropTypes.array.isRequired,
-    // 咨讯订阅、咨讯退订客户列表
+    // 资讯订阅、资讯退订客户列表
     querySubscribelCustList: PropTypes.func.isRequired,
     subscribeCustList: PropTypes.array.isRequired,
-    // 新建咨讯订阅可选产品列表
+    // 新建资讯订阅可选产品列表
     getSubscribelProList: PropTypes.func.isRequired,
     subscribelProList: PropTypes.array.isRequired,
-    // 新建咨讯订阅可选产品列表
+    // 新建资讯订阅可选产品列表
     getUnSubscribelProList: PropTypes.func.isRequired,
     unSubscribelProList: PropTypes.array.isRequired,
     // 单佣金调整目标股基佣金率码值
@@ -111,9 +111,9 @@ export default class CreateNewApprovalBoard extends PureComponent {
     // 单佣金调整提交
     onSubmitSingle: PropTypes.func.isRequired,
     singleSubmit: PropTypes.string.isRequired,
-    // 新建咨讯订阅提交接口
+    // 新建资讯订阅提交接口
     submitSub: PropTypes.func.isRequired,
-    // 新建咨讯退订提交接口
+    // 新建资讯退订提交接口
     submitUnSub: PropTypes.func.isRequired,
     // 查询审批人
     queryApprovalUser: PropTypes.func.isRequired,
@@ -122,7 +122,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     // 单佣金调整客户校验
     onValidateSingleCust: PropTypes.func.isRequired,
     singleCustVResult: PropTypes.object.isRequired,
-    // 咨讯订阅调整客户校验
+    // 资讯订阅调整客户校验
     onCheckSubsciCust: PropTypes.func.isRequired,
     sciCheckCustomer: PropTypes.object.isRequired,
   }
@@ -158,12 +158,12 @@ export default class CreateNewApprovalBoard extends PureComponent {
       attachment: '',
       singleProductList: [], // 单佣金调整选择的产品列表
       singleProductMatchInfo: [], // 单佣金调整选择的产品的三匹配信息
-      subProList: [], // 咨讯订阅产品列表
-      subscribelProductMatchInfo: [], // 咨讯订阅的产品的三匹配信息
-      unSubProList: [], // 咨讯退订产品列表
+      subProList: [], // 资讯订阅产品列表
+      subscribelProductMatchInfo: [], // 资讯订阅的产品的三匹配信息
+      unSubProList: [], // 资讯退订产品列表
       singleDValue: 0, // 单佣金调整产品选择后的差值
       openRzrq: true, // 两融开关
-      canShowAppover: false, // 新建咨讯订阅和退订时是否需要选择审批人
+      canShowAppover: false, // 新建资讯订阅和退订时是否需要选择审批人
     };
   }
 
@@ -434,7 +434,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     this.props.onBatchSubmit(submitParams);
   }
 
-  // 选中的咨讯订阅父产品数据结构改为提交所需
+  // 选中的资讯订阅父产品数据结构改为提交所需
   @autobind
   changeSubmitscriProList(product, matchInfos) {
     const {
@@ -451,7 +451,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     };
   }
 
-  // 选中的咨讯退订父产品数据结构改为提交所需
+  // 选中的资讯退订父产品数据结构改为提交所需
   @autobind
   changeSubmitUnscriProList(product) {
     const {
@@ -466,7 +466,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     };
   }
 
-  // 选中的咨讯订阅、退订子产品数据结构改为提交所需
+  // 选中的资讯订阅、退订子产品数据结构改为提交所需
   @autobind
   changeSubmitSubscriProChildren(product) {
     const {
@@ -480,7 +480,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
   }
 
 
-  // 将选中的咨讯订阅产品数据结构改为提交所需
+  // 将选中的资讯订阅产品数据结构改为提交所需
   @autobind
   changeSubmitSubProList(list, matchInfos) {
     const newSubmitSubscriProList = list.map((product) => {
@@ -495,7 +495,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     return newSubmitSubscriProList;
   }
 
-  // 将选中的咨讯退订产品数据结构改为提交所需
+  // 将选中的资讯退订产品数据结构改为提交所需
   @autobind
   changeSubmitUnSubProList(list) {
     const newSubmitUnSubscriProList = list.map((product) => {
@@ -615,6 +615,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
   queryApprovalUser4SubType(key) {
     const { queryApprovalUser, empInfo: { empNum } } = this.props;
     const { approvalBtnId } = approvalConfig;
+    const { canShowAppover } = this.state;
     let btnId = '';
     switch (key) {
       case commadj.single:
@@ -632,10 +633,12 @@ export default class CreateNewApprovalBoard extends PureComponent {
       default:
         break;
     }
-    queryApprovalUser({
-      loginUser: empNum,
-      btnId,
-    });
+    if ((canShowAppover) || (!this.judgeSubtypeNow([commadj.unsubscribe], [commadj.subscribe]))) {
+      queryApprovalUser({
+        loginUser: empNum,
+        btnId,
+      });
+    }
   }
 
   // 选择申请子类型
@@ -803,7 +806,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     }
   }
 
-  // 根据用户输入查询咨讯订阅、咨讯退订客户列表
+  // 根据用户输入查询资讯订阅、资讯退订客户列表
   @autobind
   handleChangeSubscribeAssembly(keyword) {
     if (_.isEmpty(keyword)) {
@@ -910,12 +913,12 @@ export default class CreateNewApprovalBoard extends PureComponent {
     }
   }
 
-  // 查询咨讯订阅调整产品
+  // 查询资讯订阅调整产品
   @autobind
   querySubscribelProList(param) {
     this.props.getSubscribelProList(param);
   }
-  // 查询咨讯退订调整产品
+  // 查询资讯退订调整产品
   @autobind
   queryUnSubscribelProList(param) {
     this.props.getUnSubscribelProList(param);
@@ -940,7 +943,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     }
   }
 
-   // 咨讯订阅调整穿梭变化的时候处理程序
+   // 资讯订阅调整穿梭变化的时候处理程序
   @autobind
   handleSubscribelTransferChange(flag, item, array) {
     this.setState({
@@ -963,7 +966,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     }
   }
 
-  // 咨讯退订调整穿梭变化的时候处理程序
+  // 资讯退订调整穿梭变化的时候处理程序
   @autobind
   handleUnSubscribelTransferChange(flag, item, array) {
     this.setState({
@@ -979,7 +982,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     });
   }
 
-  // 咨讯订阅选择子产品的时候的处理程序
+  // 资讯订阅选择子产品的时候的处理程序
   @autobind
   handleSubscribelTransferSubProductCheck(item, array) {
     this.setState({
@@ -987,7 +990,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     });
   }
 
-  // 咨讯订阅选择子产品的时候的处理程序
+  // 资讯订阅选择子产品的时候的处理程序
   @autobind
   handleUnSubscribelTransferSubProductCheck(item, array) {
     this.setState({
@@ -1021,7 +1024,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     };
   }
 
-  // 重组咨讯订阅可选产品List
+  // 重组资讯订阅可选产品List
   @autobind
   createSubscribelProList(data) {
     const newSubscriProList = data.map((product) => {
@@ -1043,7 +1046,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     return newSubscriProList;
   }
 
-  // 重组咨讯退订可选产品List
+  // 重组资讯退订可选产品List
   @autobind
   createUnSubscribelProList(data) {
     const newUnSubscriProList = data.map((product) => {
@@ -1263,6 +1266,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
                       onValidateCust={onValidateSingleCust}
                       validResult={singleCustVResult}
                       subType={commadj.single}
+                      shouldeCheck
                     />
                   </CommissionLine>
                 )
@@ -1279,6 +1283,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
                       onValidateCust={onCheckSubsciCust}
                       validResult={sciCheckCustomer}
                       subType={commadj.subscribe}
+                      shouldeCheck
                     />
                   </CommissionLine>
                 )
@@ -1291,9 +1296,8 @@ export default class CreateNewApprovalBoard extends PureComponent {
                       dataSource={subscribeCustList}
                       onSearchValue={this.handleChangeSubscribeAssembly}
                       onSelectValue={this.handleSelectAssembly}
-                      onValidateCust={onValidateSingleCust}
-                      validResult={singleCustVResult}
                       subType={commadj.single}
+                      shouldeCheck={false}
                     />
                   </CommissionLine>
                 )
@@ -1382,7 +1386,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
               )
             }
             {
-              // 咨讯订阅产品三匹配信息
+              // 资讯订阅产品三匹配信息
               !this.judgeSubtypeNow(commadj.subscribe) ? null
               : (<ThreeMatchTip info={threeMatchInfo} />)
             }
@@ -1475,7 +1479,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
               ) : null
             }
             {
-              // 咨讯订阅或退订选择审批人
+              // 资讯订阅或退订选择审批人
               this.judgeSubtypeNow([commadj.subscribe, commadj.unsubscribe]) && canShowAppover ?
               (
                 <div className={styles.approvalBlock}>
