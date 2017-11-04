@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date:   2017-09-19 14:47:08
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-11-04 17:18:28
+ * @Last Modified time: 2017-11-04 18:00:28
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -148,9 +148,6 @@ export default class EditForm extends PureComponent {
     // 找出需要必传的数组
     const requiredArr = hasCust ? attachmentRequired.hasCust : attachmentRequired.noCust;
     // 将附件数组做必传项配置
-    console.warn('attachmentMap', attachmentMap);
-    console.warn('attachmentTypeList', this.state.attachmentTypeList);
-    console.warn('hasCust', hasCust);
     const attachmentMapRequired = attachmentTypeList.map((item) => {
       if (_.includes(requiredArr, item.type)) {
         return {
@@ -160,7 +157,6 @@ export default class EditForm extends PureComponent {
       }
       return item;
     });
-    console.warn('attachmentMapRequired', attachmentMapRequired);
     this.setState({
       attachmentTypeList: attachmentMapRequired,
     });
