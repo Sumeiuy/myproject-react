@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-19 09:37:42
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-27 15:20:40
+ * @Last Modified time: 2017-11-04 15:25:39
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -121,23 +121,6 @@ export default class Detail extends PureComponent {
     } else {
       statusLabel = '';
     }
-    // 表格中需要的操作--测试数据
-    // const operation = {
-    //   column: {
-    //     // beizhu = edit , shanchu = delete
-    //     key: [
-    //       {
-    //         key: 'beizhu',
-    //         operate: this.editTableData,
-    //       },
-    //       {
-    //         key: 'shanchu',
-    //         operate: this.deleteTableData,
-    //       },
-    //     ], // 'check'\'delete'\'view'
-    //     title: '操作',
-    //   },
-    // };
     return (
       <div className={styles.detailComponent}>
         <div className={styles.dcHeader}>
@@ -181,7 +164,11 @@ export default class Detail extends PureComponent {
         </div>
         <div className={styles.detailWrapper}>
           <InfoTitle head="审批记录" />
-          <ApproveList data={flowHistory} nowStep={nowStep} />
+          <ApproveList
+            data={flowHistory}
+            nowStep={nowStep}
+            needPagination
+          />
         </div>
       </div>
     );

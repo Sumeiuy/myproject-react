@@ -100,7 +100,6 @@ export default class SelectAssembly extends PureComponent {
     });
     this.canSelected = false;
   }
-
   // 客户校验
   @autobind
   afterValidateSingleCust() {

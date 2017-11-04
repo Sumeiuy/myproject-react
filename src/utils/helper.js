@@ -545,7 +545,7 @@ const helper = {
     },
   },
 
-  // 检测是否有相应的职责、职位权限
+  // 检测合作合约项目，当前用户是否有相应的职责、职位权限
   hasPermission(empInfo) {
     const fsp = document.querySelector(fspContainer.container);
     let hasPermissionOnBtn = true;
