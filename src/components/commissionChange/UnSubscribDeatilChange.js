@@ -10,6 +10,7 @@ import { autobind } from 'core-decorators';
 import { Input, Icon, message } from 'antd';
 import _ from 'lodash';
 
+import confirm from '../common/Confirm/confirm';
 import RejectButtons from './RejectButtons';
 import DisabledSelect from './DisabledSelect';
 import CommonUpload from '../../components/common/biz/CommonUpload';
@@ -21,7 +22,6 @@ import {
   pagination,
   subScribeProColumns,
 } from '../../components/commissionAdjustment/commissionTransferHelper/transferPropsHelper';
-import { getEmpId } from '../../utils/helper';
 
 import styles from './change.less';
 
@@ -293,13 +293,21 @@ export default class UnSubscribeDetailToChange extends PureComponent {
   @autobind
   launchFlow(flowBtn, idea) {
     const { base: { flowCode } } = this.props.unSubDetailToChange;
-    this.props.onUpdateFlow({
+    const { nextGroupName, operate, flowAuditors } = flowBtn;
+    const { approverId } = this.state;
+    // 根据按钮不同传递不同参数
+    const commParam = {
       flowId: flowCode,
-      groupName: flowBtn.nextGroupId,
+      groupName: nextGroupName,
       approverIdea: idea,
-      auditors: getEmpId(),
-      operate: flowBtn.routeId,
-    });
+      operate,
+    };
+    if (operate === 'commit') {
+      commParam.auditors = approverId;
+    } else {
+      commParam.auditors = flowAuditors[0].login;
+    }
+    this.props.onUpdateFlow(commParam).then(() => confirm({ content: '处理完成' }));
   }
 
   // 资讯退订提交修改
