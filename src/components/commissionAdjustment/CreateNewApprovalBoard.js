@@ -440,11 +440,13 @@ export default class CreateNewApprovalBoard extends PureComponent {
     const {
       prodCode,
       prodName,
+      approvalFlg,
     } = product;
     const matchInfo = _.filter(matchInfos, item => item.productCode === prodCode)[0] || {};
     return {
       prodCode,
       aliasName: prodName,
+      approvalFlg,
       ...matchInfo,
     };
   }
@@ -455,10 +457,12 @@ export default class CreateNewApprovalBoard extends PureComponent {
     const {
       prodCode,
       prodName,
+      approvalFlg,
     } = product;
     return {
       prodCode,
       aliasName: prodName,
+      approvalFlg,
     };
   }
 
