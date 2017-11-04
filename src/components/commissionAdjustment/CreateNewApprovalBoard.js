@@ -390,15 +390,15 @@ export default class CreateNewApprovalBoard extends PureComponent {
       }
     } else if (this.judgeSubtypeNow(commadj.subscribe)) {
       // 检查资讯订阅
-      const { approverId } = this.state;
-      if (_.isEmpty(approverId)) {
+      const { approverId, canShowAppover } = this.state;
+      if (_.isEmpty(approverId) && canShowAppover) {
         message.error('审批人员不能为空');
         result = false;
       }
     } else if (this.judgeSubtypeNow(commadj.unsubscribe)) {
       // 检查资讯退订
-      const { approverId } = this.state;
-      if (_.isEmpty(approverId)) {
+      const { approverId, canShowAppover } = this.state;
+      if (_.isEmpty(approverId) && canShowAppover) {
         message.error('审批人员不能为空');
         result = false;
       }

@@ -327,7 +327,7 @@ export default {
 
     queryApprovalBtnsSuccess(state, action) {
       const { payload: { resultData } } = action;
-      const approvalBtns = resultData.btnList || [];
+      const approvalBtns = resultData.flowButtons || [];
       return {
         ...state,
         approvalBtns,

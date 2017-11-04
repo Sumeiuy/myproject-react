@@ -249,6 +249,8 @@ export default class RejectionAndAmendment extends PureComponent {
         queryThreeMatchInfo,
         submitSub,
         approvalBtns,
+        queryApprovalBtns,
+        updateFlow,
       } = this.props;
       return (
         <SubscribDeatilChange
@@ -261,6 +263,8 @@ export default class RejectionAndAmendment extends PureComponent {
           consultSubId={consultSubId}
           approvalBtns={approvalBtns}
           submitSub={submitSub}
+          onQueryBtns={queryApprovalBtns}
+          onUpdateFlow={updateFlow}
         />
       );
     } else if (type === 'UNSUBSCRIBE') {
@@ -273,6 +277,8 @@ export default class RejectionAndAmendment extends PureComponent {
         getUnSubscribeDetail,
         submitUnSub,
         approvalBtns,
+        queryApprovalBtns,
+        updateFlow,
       } = this.props;
       return (
         <UnSubscribDeatilChange
@@ -283,6 +289,8 @@ export default class RejectionAndAmendment extends PureComponent {
           consultUnSubId={consultUnSubId}
           approvalBtns={approvalBtns}
           submitUnSub={submitUnSub}
+          onQueryBtns={queryApprovalBtns}
+          onUpdateFlow={updateFlow}
         />
       );
     }

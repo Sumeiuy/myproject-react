@@ -11,6 +11,7 @@ import { Input, Icon, message } from 'antd';
 import _ from 'lodash';
 
 import RejectButtons from './RejectButtons';
+import DisabledSelect from './DisabledSelect';
 import CommonUpload from '../../components/common/biz/CommonUpload';
 import Transfer from '../../components/common/biz/TableTransfer';
 import ChoiceApproverBoard from '../../components/commissionAdjustment/ChoiceApproverBoard';
@@ -21,6 +22,7 @@ import {
   pagination,
   subScribeProColumns,
 } from '../../components/commissionAdjustment/commissionTransferHelper/transferPropsHelper';
+import { getEmpId } from '../../utils/helper';
 
 import styles from './change.less';
 
@@ -42,6 +44,9 @@ export default class SubscribeDetailToChange extends PureComponent {
     consultSubId: PropTypes.string.isRequired,
     // 根据接口返回的操作按钮
     approvalBtns: PropTypes.array.isRequired,
+    onQueryBtns: PropTypes.func.isRequired,
+    // 更新流程
+    onUpdateFlow: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -62,6 +67,10 @@ export default class SubscribeDetailToChange extends PureComponent {
   componentDidMount() {
     const { location: { query: { flowId } } } = this.props;
     this.props.getSubscribeDetailToChange({ flowId });
+    // 获取当前驳回后修改的审批按钮
+    this.props.onQueryBtns({
+      flowId,
+    });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -89,6 +98,19 @@ export default class SubscribeDetailToChange extends PureComponent {
         subscribelProductMatchInfo: [matchInfo, ...subscribelProductMatchInfo],
       });
     }
+  }
+
+  // 发起流程
+  @autobind
+  launchFlow(flowBtn, idea) {
+    const { base: { flowCode } } = this.props.subscribeDetailToChange;
+    this.props.onUpdateFlow({
+      flowId: flowCode,
+      groupName: flowBtn.nextGroupId,
+      approverIdea: idea,
+      auditors: getEmpId(),
+      operate: flowBtn.routeId,
+    });
   }
 
   // 清空页面数据
@@ -223,7 +245,6 @@ export default class SubscribeDetailToChange extends PureComponent {
   }
 
   // 重组咨讯订阅已选产品List
-  // TODO
   @autobind
   choiceSubProList(data, preProList) {
     const newChoiceProList = [];
@@ -284,11 +305,13 @@ export default class SubscribeDetailToChange extends PureComponent {
     const {
       prodCode,
       prodName,
+      approvalFlg,
     } = product;
     const matchInfo = _.filter(matchInfos, item => item.productCode === prodCode)[0] || {};
     return {
       prodCode,
       aliasName: prodName,
+      approvalFlg,
       ...matchInfo,
     };
   }
@@ -335,7 +358,7 @@ export default class SubscribeDetailToChange extends PureComponent {
 
   // 资讯订阅提交修改
   @autobind
-  handleSubmit() {
+  handleSubmit(flowBtn) {
     if (!this.submitCheck()) return;
     const { empNum } = this.props.empInfo;
     const {
@@ -362,13 +385,21 @@ export default class SubscribeDetailToChange extends PureComponent {
       item: newSubProList,
     };
     // 提交
-    this.props.submitSub(params);
+    this.props.submitSub(params).then(() => this.launchFlow(flowBtn, '重新申请'));
   }
 
   // 点击页面的按钮事件处理
   @autobind
   handleRejctBtnClick(btn) {
-    console.warn('handleRejctBtnClick>btn', btn);
+    const { routeId } = btn;
+    if (routeId === 'commit') {
+      // 提交按钮
+      this.handleSubmit(btn);
+    }
+    if (routeId === 'falseOver') {
+      // 终止按钮
+      this.launchFlow(btn, '终止申请');
+    }
   }
 
   render() {
@@ -397,6 +428,7 @@ export default class SubscribeDetailToChange extends PureComponent {
       comments,
       // 产品
       item: choiceProList,
+      attachmentNum,
     } = base;
     const customer = `${custName}（${custNum}） - ${riskLevelLabel}`;
     const newApproverList = approvList.map((item, index) => {
@@ -440,18 +472,10 @@ export default class SubscribeDetailToChange extends PureComponent {
           <div className={styles.approvalBlock}>
             <InfoTitle head="基本信息" />
             <CommissionLine label="子类型" labelWidth="90px" required>
-              <Input
-                value="咨讯订阅"
-                disabled
-                className={styles.inputValue}
-              />
+              <DisabledSelect text="咨讯订阅" />
             </CommissionLine>
             <CommissionLine label="客户" labelWidth="90px" needInputBox={false}>
-              <Input
-                value={customer}
-                disabled
-                className={styles.inputValue}
-              />
+              <DisabledSelect text={customer} />
             </CommissionLine>
             <CommissionLine label="备注" labelWidth="90px">
               <TextArea
@@ -472,6 +496,7 @@ export default class SubscribeDetailToChange extends PureComponent {
           <div className={styles.approvalBlock}>
             <InfoTitle head="附件信息" />
             <CommonUpload
+              attachment={attachmentNum}
               edit
               attachmentList={attachmentList}
             />
