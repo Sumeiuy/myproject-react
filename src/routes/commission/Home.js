@@ -58,6 +58,7 @@ const effects = {
   unSubSubscribe: 'commission/submitConsultUnSubscribe',
   clearReduxState: 'commission/clearReduxState',
   singleCustValidate: 'commission/validateCustomerInSingle',
+  onCheckSubsciCust: 'commission/validateCustomerInSub',
 };
 
 const mapStateToProps = state => ({
@@ -86,7 +87,7 @@ const mapStateToProps = state => ({
   // 右侧咨询订阅详情
   subscribeDetail: state.commission.subscribeDetail,
   // 右侧资讯退订详情
-  unsubscribeDetail: state.commission.subscribeDetail,
+  unsubscribeDetail: state.commission.unsubscribeDetail,
   // 审批历史记录
   approvalRecord: state.commission.approvalRecord,
   // 查询审批记录进程
@@ -125,6 +126,8 @@ const mapStateToProps = state => ({
   consultUnsubId: state.commission.consultUnsubId,
   // 单佣金调整客户检验返回数据
   singleCVR: state.commission.singleCustValidate,
+  // 咨讯订阅客户校验
+  sciCheckCustomer: state.commission.sciCheckCustomer,
 });
 
 const getDataFunction = (loading, type) => query => ({
@@ -185,6 +188,8 @@ const mapDispatchToProps = {
   clearReduxState: getDataFunction(false, effects.clearReduxState),
   // 单佣金调整客户校验
   singleCustValidate: getDataFunction(false, effects.singleCustValidate),
+  // 咨讯订阅调整客户校验
+  onCheckSubsciCust: getDataFunction(false, effects.onCheckSubsciCust),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -252,6 +257,8 @@ export default class CommissionHome extends PureComponent {
     singleCVR: PropTypes.object.isRequired,
     subsciSubmitProcess: PropTypes.bool,
     unSubsciSubmitProcess: PropTypes.bool,
+    onCheckSubsciCust: PropTypes.func.isRequired,
+    sciCheckCustomer: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -622,6 +629,8 @@ export default class CommissionHome extends PureComponent {
       clearReduxState,
       singleCustValidate,
       singleCVR,
+      onCheckSubsciCust,
+      sciCheckCustomer,
     } = this.props;
     const isEmpty = _.isEmpty(list.resultData);
     // 此处需要提供一个方法给返回的接口查询设置是否查询到数据
@@ -709,6 +718,8 @@ export default class CommissionHome extends PureComponent {
               clearReduxState={clearReduxState}
               onValidateSingleCust={singleCustValidate}
               singleCustVResult={singleCVR}
+              onCheckSubsciCust={onCheckSubsciCust}
+              sciCheckCustomer={sciCheckCustomer}
             />
           )
         }

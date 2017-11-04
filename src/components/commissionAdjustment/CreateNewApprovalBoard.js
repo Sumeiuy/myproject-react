@@ -111,9 +111,9 @@ export default class CreateNewApprovalBoard extends PureComponent {
     // 单佣金调整提交
     onSubmitSingle: PropTypes.func.isRequired,
     singleSubmit: PropTypes.string.isRequired,
-    // 新建咨询订阅提交接口
+    // 新建咨讯订阅提交接口
     submitSub: PropTypes.func.isRequired,
-    // 新建咨询退订提交接口
+    // 新建咨讯退订提交接口
     submitUnSub: PropTypes.func.isRequired,
     // 查询审批人
     queryApprovalUser: PropTypes.func.isRequired,
@@ -122,6 +122,9 @@ export default class CreateNewApprovalBoard extends PureComponent {
     // 单佣金调整客户校验
     onValidateSingleCust: PropTypes.func.isRequired,
     singleCustVResult: PropTypes.object.isRequired,
+    // 咨讯订阅调整客户校验
+    onCheckSubsciCust: PropTypes.func.isRequired,
+    sciCheckCustomer: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -155,11 +158,12 @@ export default class CreateNewApprovalBoard extends PureComponent {
       attachment: '',
       singleProductList: [], // 单佣金调整选择的产品列表
       singleProductMatchInfo: [], // 单佣金调整选择的产品的三匹配信息
-      subProList: [], // 咨询订阅产品列表
-      subscribelProductMatchInfo: [], // 咨询订阅的产品的三匹配信息
-      unSubProList: [], // 咨询退订产品列表
+      subProList: [], // 咨讯订阅产品列表
+      subscribelProductMatchInfo: [], // 咨讯订阅的产品的三匹配信息
+      unSubProList: [], // 咨讯退订产品列表
       singleDValue: 0, // 单佣金调整产品选择后的差值
       openRzrq: true, // 两融开关
+      canShowAppover: false, // 新建咨讯订阅和退订时是否需要选择审批人
     };
   }
 
@@ -290,6 +294,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       subscribelProductMatchInfo: [],
       unSubProList: [],
       openRzrq: true,
+      canShowAppover: false,
     });
     this.clearRedux();
   }
@@ -385,15 +390,15 @@ export default class CreateNewApprovalBoard extends PureComponent {
       }
     } else if (this.judgeSubtypeNow(commadj.subscribe)) {
       // 检查资讯订阅
-      const { approverId } = this.state;
-      if (_.isEmpty(approverId)) {
+      const { approverId, canShowAppover } = this.state;
+      if (_.isEmpty(approverId) && canShowAppover) {
         message.error('审批人员不能为空');
         result = false;
       }
     } else if (this.judgeSubtypeNow(commadj.unsubscribe)) {
       // 检查资讯退订
-      const { approverId } = this.state;
-      if (_.isEmpty(approverId)) {
+      const { approverId, canShowAppover } = this.state;
+      if (_.isEmpty(approverId) && canShowAppover) {
         message.error('审批人员不能为空');
         result = false;
       }
@@ -429,7 +434,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     this.props.onBatchSubmit(submitParams);
   }
 
-  // 选中的咨询订阅父产品数据结构改为提交所需
+  // 选中的咨讯订阅父产品数据结构改为提交所需
   @autobind
   changeSubmitscriProList(product, matchInfos) {
     const {
@@ -444,7 +449,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     };
   }
 
-  // 选中的咨询退订父产品数据结构改为提交所需
+  // 选中的咨讯退订父产品数据结构改为提交所需
   @autobind
   changeSubmitUnscriProList(product) {
     const {
@@ -457,7 +462,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     };
   }
 
-  // 选中的咨询订阅、退订子产品数据结构改为提交所需
+  // 选中的咨讯订阅、退订子产品数据结构改为提交所需
   @autobind
   changeSubmitSubscriProChildren(product) {
     const {
@@ -471,7 +476,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
   }
 
 
-  // 将选中的咨询订阅产品数据结构改为提交所需
+  // 将选中的咨讯订阅产品数据结构改为提交所需
   @autobind
   changeSubmitSubProList(list, matchInfos) {
     const newSubmitSubscriProList = list.map((product) => {
@@ -486,7 +491,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     return newSubmitSubscriProList;
   }
 
-  // 将选中的咨询退订产品数据结构改为提交所需
+  // 将选中的咨讯退订产品数据结构改为提交所需
   @autobind
   changeSubmitUnSubProList(list) {
     const newSubmitUnSubscriProList = list.map((product) => {
@@ -939,13 +944,18 @@ export default class CreateNewApprovalBoard extends PureComponent {
     });
     if (flag === 'add') {
       // 如果是左侧列表添加到右侧列表,则需要查询三匹配信息
-      const { prodCode } = item;
+      const { prodCode, approvalFlg } = item;
       const { id, custType } = this.state.customer;
       this.props.queryThreeMatchInfo({
         custRowId: id,
         custType,
         prdCode: prodCode,
       });
+      if (approvalFlg === 'Y') {
+        this.setState({
+          canShowAppover: true,
+        });
+      }
     }
   }
 
@@ -1018,6 +1028,8 @@ export default class CreateNewApprovalBoard extends PureComponent {
           const { prodRowid } = item;
           return {
             key: prodRowid,
+            xDefaultOpenFlag: 'Y',
+            canNotBeChoice: 'Y',
             ...item,
           };
         });
@@ -1038,6 +1050,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
           const { prodRowid } = item;
           return {
             key: prodRowid,
+
             ...item,
           };
         });
@@ -1115,6 +1128,8 @@ export default class CreateNewApprovalBoard extends PureComponent {
       threeMatchInfo,
       onValidateSingleCust,
       singleCustVResult,
+      onCheckSubsciCust,
+      sciCheckCustomer,
     } = this.props;
     const newApproverList = approverList.map((item, index) => {
       const key = `${new Date().getTime()}-${index}`;
@@ -1135,6 +1150,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       approverId,
       otherComReset,
       customer: { openRzrq },
+      canShowAppover,
     } = this.state;
     const needBtn = !this.judgeSubtypeNow('');
 
@@ -1194,10 +1210,11 @@ export default class CreateNewApprovalBoard extends PureComponent {
       transferChange: this.handleUnSubscribelTransferChange,
       checkChange: this.handleUnSubscribelTransferSubProductCheck,
       rowKey: 'key',
-      defaultCheckKey: 'default',
       showSearch: false,
       placeholder: '产品代码/产品名称',
       pagination,
+      defaultCheckKey: 'xDefaultOpenFlag',
+      disableCheckKey: 'canNotBeChoice',
       supportSearchKey: [['prodCode'], ['prodName']],
     };
 
@@ -1263,8 +1280,22 @@ export default class CreateNewApprovalBoard extends PureComponent {
                 )
               }
               {
-                // 资讯退订
-                !this.judgeSubtypeNow(commadj.unsubscribe) ? null
+                !this.judgeSubtypeNow([commadj.subscribe]) ? null
+                : (
+                  <CommissionLine label="客户" labelWidth="90px" needInputBox={false}>
+                    <SelectAssembly
+                      dataSource={subscribeCustList}
+                      onSearchValue={this.handleChangeSubscribeAssembly}
+                      onSelectValue={this.handleSelectAssembly}
+                      onValidateCust={onCheckSubsciCust}
+                      validResult={sciCheckCustomer}
+                      subType={commadj.subscribe}
+                    />
+                  </CommissionLine>
+                )
+              }
+              {
+                !this.judgeSubtypeNow([commadj.unsubscribe]) ? null
                 : (
                   <CommissionLine label="客户" labelWidth="90px" needInputBox={false}>
                     <SelectAssembly
@@ -1439,8 +1470,8 @@ export default class CreateNewApprovalBoard extends PureComponent {
             }
             {
               // 选择审批人
-              this.judgeSubtypeNow(commadj.noSelected) ? null
-              : (
+              this.judgeSubtypeNow([commadj.batch, commadj.single]) ?
+              (
                 <div className={styles.approvalBlock}>
                   <InfoTitle head="审批人" />
                   <CommissionLine label="选择审批人" labelWidth="110px">
@@ -1452,7 +1483,24 @@ export default class CreateNewApprovalBoard extends PureComponent {
                     </div>
                   </CommissionLine>
                 </div>
-              )
+              ) : null
+            }
+            {
+              // 咨讯订阅或退订选择审批人
+              this.judgeSubtypeNow([commadj.subscribe, commadj.unsubscribe]) && canShowAppover ?
+              (
+                <div className={styles.approvalBlock}>
+                  <InfoTitle head="审批人" />
+                  <CommissionLine label="选择审批人" labelWidth="110px">
+                    <div className={styles.checkApprover} onClick={this.openApproverBoard}>
+                      {approverName === '' ? '' : `${approverName}(${approverId})`}
+                      <div className={styles.searchIcon}>
+                        <Icon type="search" />
+                      </div>
+                    </div>
+                  </CommissionLine>
+                </div>
+              ) : null
             }
           </div>
         </CommonModal>

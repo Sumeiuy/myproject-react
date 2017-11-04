@@ -1,6 +1,6 @@
 /**
- * @file components/commissionChange/SubscribDeatilChange.js
- * @description 资讯订阅驳回再修改页面
+ * @file components/commissionChange/UnSubscribDeatilChange.js
+ * @description 资讯退订驳回再修改页面
  * @author baojiajia
  */
 
@@ -17,7 +17,6 @@ import Transfer from '../../components/common/biz/TableTransfer';
 import ChoiceApproverBoard from '../../components/commissionAdjustment/ChoiceApproverBoard';
 import InfoTitle from '../../components/common/InfoTitle';
 import CommissionLine from '../../components/commissionAdjustment/CommissionLine';
-import ThreeMatchTip from '../../components/commissionAdjustment/ThreeMatchTip';
 import {
   pagination,
   subScribeProColumns,
@@ -28,23 +27,20 @@ import styles from './change.less';
 
 const { TextArea } = Input;
 
-export default class SubscribeDetailToChange extends PureComponent {
+export default class UnSubscribeDetailToChange extends PureComponent {
   static propTypes = {
     empInfo: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
-    // 订阅详情
-    getSubscribeDetailToChange: PropTypes.func.isRequired,
-    subscribeDetailToChange: PropTypes.object.isRequired,
-    // 产品与客户的三匹配信息
-    threeMatchInfo: PropTypes.object.isRequired,
-    queryThreeMatchInfo: PropTypes.func.isRequired,
-    // 新建咨讯订阅提交接口
-    submitSub: PropTypes.func.isRequired,
-    // 修改咨讯订阅提交后返回值
-    consultSubId: PropTypes.string.isRequired,
+    // 退订详情
+    getUnSubDetailToChange: PropTypes.func.isRequired,
+    unSubDetailToChange: PropTypes.object.isRequired,
+    // 新建咨讯退订提交接口
+    submitUnSub: PropTypes.func.isRequired,
+    // 修改咨讯退订提交后返回值
+    consultUnSubId: PropTypes.string.isRequired,
     // 根据接口返回的操作按钮
-    approvalBtns: PropTypes.array.isRequired,
     onQueryBtns: PropTypes.func.isRequired,
+    approvalBtns: PropTypes.array.isRequired,
     // 更新流程
     onUpdateFlow: PropTypes.func.isRequired,
   }
@@ -56,60 +52,17 @@ export default class SubscribeDetailToChange extends PureComponent {
       choiceApprover: false,
       approverName: '',
       approverId: '',
-      custLists: [],
       attachment: '',
-      subProList: [], // 咨讯订阅产品列表
-      subscribelProductMatchInfo: [], // 咨讯订阅的产品的三匹配信息
-      canShowAppover: false, // 新建咨讯订阅和退订时是否需要选择审批人
+      unSubProList: [], // 咨讯退订产品列表
     };
   }
 
   componentDidMount() {
     const { location: { query: { flowId } } } = this.props;
-    this.props.getSubscribeDetailToChange({ flowId });
+    this.props.getUnSubDetailToChange({ flowId });
     // 获取当前驳回后修改的审批按钮
     this.props.onQueryBtns({
       flowId,
-    });
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { threeMatchInfo: prev3 } = this.props;
-    const { threeMatchInfo: next3 } = nextProps;
-    if (!_.isEqual(prev3, next3)) {
-      // 资讯订阅的
-      this.merge3MatchSubInfo(next3);
-    }
-  }
-
-  @autobind
-  merge3MatchSubInfo(info) {
-    const { riskRankMhrt, investProdMhrt, investTypeMhrt, productCode } = info;
-    const matchInfo = {
-      productCode,
-      riskMatch: riskRankMhrt,
-      prodMatch: investProdMhrt,
-      termMatch: investTypeMhrt,
-    };
-    const { subscribelProductMatchInfo } = this.state;
-    const exsit = _.findIndex(subscribelProductMatchInfo, o => o.productCode === productCode) > -1;
-    if (!exsit) {
-      this.setState({
-        subscribelProductMatchInfo: [matchInfo, ...subscribelProductMatchInfo],
-      });
-    }
-  }
-
-  // 发起流程
-  @autobind
-  launchFlow(flowBtn, idea) {
-    const { base: { flowCode } } = this.props.subscribeDetailToChange;
-    this.props.onUpdateFlow({
-      flowId: flowCode,
-      groupName: flowBtn.nextGroupId,
-      approverIdea: idea,
-      auditors: getEmpId(),
-      operate: flowBtn.routeId,
     });
   }
 
@@ -123,11 +76,9 @@ export default class SubscribeDetailToChange extends PureComponent {
       choiceApprover: false,
       approverName: '',
       approverId: '',
-      custLists: [],
       customer: {},
       attachment: '',
-      subProList: [], // 咨讯订阅产品列表
-      subscribelProductMatchInfo: [], // 咨讯订阅的产品的三匹配信息
+      unSubProList: [], // 咨讯退订产品列表
     });
   }
 
@@ -183,40 +134,11 @@ export default class SubscribeDetailToChange extends PureComponent {
     });
   }
 
-  // 咨讯订阅调整穿梭变化的时候处理程序
-  @autobind
-  handleSubscribelTransferChange(flag, item, array) {
-    this.setState({
-      subProList: array,
-    });
-    if (flag === 'add') {
-      // 如果是左侧列表添加到右侧列表,则需要查询三匹配信息
-      const { prodCode } = item;
-      const {
-        subscribeDetailToChange: {
-          subscribeCustList,
-        },
-      } = this.props;
-      const { approvalFlg } = this.state;
-      const { id, custType } = subscribeCustList;
-      this.props.queryThreeMatchInfo({
-        custRowId: id,
-        custType,
-        prdCode: prodCode,
-      });
-      if (approvalFlg === 'Y') {
-        this.setState({
-          canShowAppover: true,
-        });
-      }
-    }
-  }
-
-  // 咨讯订阅选择子产品的时候的处理程序
+  // 咨讯退订选择子产品的时候的处理程序
   @autobind
   handleSubscribelTransferSubProductCheck(item, array) {
     this.setState({
-      subProList: array,
+      unSubProList: array,
     });
   }
 
@@ -234,53 +156,49 @@ export default class SubscribeDetailToChange extends PureComponent {
     };
   }
 
-  // 重组咨讯订阅可选产品List
+  // 重组咨讯退订可选产品List
   @autobind
   createSubscribelProList(data) {
     const newSubscriProList = data.map((product) => {
       const newSubscribel = this.changeSubscriProList(product);
+      const { children } = product;
+      if (!_.isEmpty(children)) {
+        newSubscribel.children = children.map(item => ({
+          xDefaultOpenFlag: 'Y',
+          canNotBeChoice: 'Y',
+          ...item,
+        }));
+      }
       return newSubscribel;
     });
     return newSubscriProList;
   }
 
-  // 重组咨讯订阅已选产品List
+  // 重组咨讯退订已选产品List
   @autobind
-  choiceSubProList(data, preProList) {
-    const newChoiceProList = [];
-    data.forEach((product) => {
-      const { prodCode, subItem } = product;
-      const tableProList = product;
-      preProList.forEach((item) => {
-        const { prodCode: choiceProCode, children: itemChildren } = item;
-        if (prodCode === choiceProCode) {
-          const proList = {
-            key: prodCode,
-            ...tableProList,
+  choiceSubProList(data) {
+    const newChoiceProList = data.map((product) => {
+      const { prodCode, aliasName, subItem } = product;
+      const choiceUnsubPro = {
+        key: prodCode,
+        // 产品代码
+        prodCode,
+        // 产品名称
+        prodName: aliasName,
+        ...product,
+      };
+      if (!_.isEmpty(subItem)) {
+        choiceUnsubPro.children = subItem.map((item) => {
+          const { prodCode: subItemCode } = item;
+          return {
+            key: subItemCode,
+            xDefaultOpenFlag: 'Y',
+            canNotBeChoice: 'Y',
             ...item,
           };
-          if (!_.isEmpty(subItem)) {
-            subItem.forEach((sub) => {
-              const { prodCode: choiceChildCode } = sub;
-              proList.children = itemChildren.map((pro) => {
-                const { prodCode: childProCode } = pro;
-                if (childProCode === choiceChildCode) {
-                  return {
-                    key: childProCode,
-                    ...pro,
-                    xDefaultOpenFlag: 'Y',
-                  };
-                }
-                return {
-                  key: childProCode,
-                  ...pro,
-                };
-              });
-            });
-          }
-          newChoiceProList.push(proList);
-        }
-      });
+        });
+      }
+      return choiceUnsubPro;
     });
     return newChoiceProList;
   }
@@ -299,7 +217,7 @@ export default class SubscribeDetailToChange extends PureComponent {
     return _.filter(proList, product => !_.includes(productCodeList, product.prodCode));
   }
 
-  // 选中的咨讯订阅父产品数据结构改为提交所需
+  // 选中的咨讯退订父产品数据结构改为提交所需
   @autobind
   changeSubmitscriProList(product, matchInfos) {
     const {
@@ -315,8 +233,23 @@ export default class SubscribeDetailToChange extends PureComponent {
       ...matchInfo,
     };
   }
+  // 咨讯退订调整穿梭变化的时候处理程序
+  @autobind
+  handleUnSubscribelTransferChange(flag, item, array) {
+    this.setState({
+      unSubProList: array,
+    });
+  }
 
-  // 选中的咨讯订阅、退订子产品数据结构改为提交所需
+  // 咨讯订阅选择子产品的时候的处理程序
+  @autobind
+  handleUnSubscribelTransferSubProductCheck(item, array) {
+    this.setState({
+      unSubProList: array,
+    });
+  }
+
+  // 选中的咨讯退订、退订子产品数据结构改为提交所需
   @autobind
   changeSubmitSubscriProChildren(product) {
     const {
@@ -329,7 +262,7 @@ export default class SubscribeDetailToChange extends PureComponent {
     };
   }
 
-  // 将选中的咨讯订阅产品数据结构改为提交所需
+  // 将选中的咨讯退订产品数据结构改为提交所需
   @autobind
   changeSubmitSubProList(list, matchInfos) {
     const newSubmitSubscriProList = list.map((product) => {
@@ -347,8 +280,8 @@ export default class SubscribeDetailToChange extends PureComponent {
 // 提交前检查各项输入的值是否符合要求
   @autobind
   submitCheck() {
-    const { approverId } = this.state;
     let result = true;
+    const { approverId } = this.state;
     if (_.isEmpty(approverId)) {
       message.error('审批人员不能为空');
       result = false;
@@ -356,36 +289,45 @@ export default class SubscribeDetailToChange extends PureComponent {
     return result;
   }
 
-  // 资讯订阅提交修改
+  // 发起流程
+  @autobind
+  launchFlow(flowBtn, idea) {
+    const { base: { flowCode } } = this.props.unSubDetailToChange;
+    this.props.onUpdateFlow({
+      flowId: flowCode,
+      groupName: flowBtn.nextGroupId,
+      approverIdea: idea,
+      auditors: getEmpId(),
+      operate: flowBtn.routeId,
+    });
+  }
+
+  // 资讯退订提交修改
   @autobind
   handleSubmit(flowBtn) {
     if (!this.submitCheck()) return;
     const { empNum } = this.props.empInfo;
     const {
-      subscribeDetailToChange: {
-        subscribeCustList,
-      },
-    } = this.props;
-    const {
+      customer,
       remark,
-      subProList,
+      unSubProList,
       subscribelProductMatchInfo,
       approverId, // 审批人工号
       attachment, // 附件编号
     } = this.state;
-    const newSubProList = this.changeSubmitSubProList(subProList, subscribelProductMatchInfo);
+    const newSubProList = this.changeSubmitSubProList(unSubProList, subscribelProductMatchInfo);
     const params = {
-      type: subscribeCustList.custType,
+      type: customer.custType,
       aprovaluser: approverId,
-      custNum: subscribeCustList.custEcom,
-      custId: subscribeCustList.id,
+      custNum: customer.custEcom,
+      custId: customer.id,
       createdBy: empNum,
       comments: remark,
       attachmentNum: attachment,
       item: newSubProList,
     };
     // 提交
-    this.props.submitSub(params).then(() => this.launchFlow(flowBtn, '重新申请'));
+    this.props.submitUnSub(params).then(() => this.launchFlow(flowBtn, '重新申请'));
   }
 
   // 点击页面的按钮事件处理
@@ -402,23 +344,21 @@ export default class SubscribeDetailToChange extends PureComponent {
     }
   }
 
+
   render() {
     const {
-      threeMatchInfo,
       approvalBtns,
-    } = this.props;
-    const {
-      subscribeDetailToChange: {
+      unSubDetailToChange: {
         base,
+        unSubscribeCustList,
+        unSubProList,
         attachmentList,
-        subscribeCustList,
-        subProList,
         approvList,
       },
     } = this.props;
     if (_.isEmpty(base)) return null;
-    if (_.isEmpty(subscribeCustList)) return null;
-    const { riskLevelLabel } = subscribeCustList;
+    if (_.isEmpty(unSubscribeCustList)) return null;
+    const { riskLevelLabel } = unSubscribeCustList;
     const {
       // 客户名称
       custName,
@@ -438,9 +378,9 @@ export default class SubscribeDetailToChange extends PureComponent {
         key,
       };
     });
-    const newSubscriProList = this.createSubscribelProList(subProList);
-    const choiceSubscribelProList = this.choiceSubProList(choiceProList, newSubscriProList);
-    const newSubscribelProList = this.filterProList(choiceSubscribelProList, newSubscriProList);
+    const newUnSubscriProList = this.createSubscribelProList(unSubProList);
+    const choiceUnSubProList = this.choiceSubProList(choiceProList);
+    const newUnSubscribelProList = this.filterProList(choiceUnSubProList, newUnSubscriProList);
     const {
       choiceApprover,
       approverName,
@@ -448,21 +388,22 @@ export default class SubscribeDetailToChange extends PureComponent {
       remark,
     } = this.state;
 
-    // 资讯订阅中的产品选择配置
-    const subScribetransferProps = {
-      firstTitle: '可选服务',
+    // 资讯退订中的产品选择配置
+    const unsubScribetransferProps = {
+      firstTitle: '可退订服务',
       secondTitle: '已选服务',
-      firstData: newSubscribelProList,
-      secondData: choiceSubscribelProList,
+      firstData: newUnSubscribelProList,
+      secondData: choiceUnSubProList,
       firstColumns: subScribeProColumns,
       secondColumns: subScribeProColumns,
-      transferChange: this.handleSubscribelTransferChange,
-      checkChange: this.handleSubscribelTransferSubProductCheck,
+      transferChange: this.handleUnSubscribelTransferChange,
+      checkChange: this.handleUnSubscribelTransferSubProductCheck,
       rowKey: 'key',
-      showSearch: true,
+      showSearch: false,
       placeholder: '产品代码/产品名称',
       pagination,
       defaultCheckKey: 'xDefaultOpenFlag',
+      disableCheckKey: 'canNotBeChoice',
       supportSearchKey: [['prodCode'], ['prodName']],
     };
 
@@ -472,7 +413,7 @@ export default class SubscribeDetailToChange extends PureComponent {
           <div className={styles.approvalBlock}>
             <InfoTitle head="基本信息" />
             <CommissionLine label="子类型" labelWidth="90px" required>
-              <DisabledSelect text="咨讯订阅" />
+              <DisabledSelect text="咨讯退订" />
             </CommissionLine>
             <CommissionLine label="客户" labelWidth="90px" needInputBox={false}>
               <DisabledSelect text={customer} />
@@ -490,9 +431,8 @@ export default class SubscribeDetailToChange extends PureComponent {
           </div>
           <div className={styles.approvalBlock}>
             <InfoTitle head="资讯产品选择" />
-            <Transfer {...subScribetransferProps} />
+            <Transfer {...unsubScribetransferProps} />
           </div>
-          <ThreeMatchTip info={threeMatchInfo} />
           <div className={styles.approvalBlock}>
             <InfoTitle head="附件信息" />
             <CommonUpload

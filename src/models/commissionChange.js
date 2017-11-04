@@ -15,7 +15,7 @@ export default {
     approvalUserList: [],
     // 驳回后修改的单佣金调整详情
     singleDetailToChange: {},
-    // 咨询订阅详情
+    // 咨讯订阅详情
     subscribeDetailToChange: {},
     // 资讯退订详情
     unsubscribeDetailToChange: {},
@@ -31,7 +31,7 @@ export default {
     consultUnsubId: '',
     // 单佣金调整中的其他佣金费率的选项列表
     singleOtherCommissionOptions: [],
-    // 咨询订阅、咨询退订调整页面客户查询列表
+    // 咨讯订阅、咨讯退订调整页面客户查询列表
     subscribeCustomerList: {},
     // 单佣金调整中的可选产品列表
     singleComProductList: [],
@@ -120,14 +120,32 @@ export default {
     },
 
     getUnSubscribeDetailToChangeSuccess(state, action) {
-      const { payload: { detailRes, attachmentRes } } = action;
+      const {
+        payload: {
+        detailRes,
+        attachmentRes,
+        unSubscriCustListRs,
+        unSubProListRs,
+        approvListRs,
+      },
+    } = action;
       const detailResult = detailRes.resultData;
       const attachmentResult = attachmentRes.resultData;
+      const { resultData: custResultData } = unSubscriCustListRs;
+      const approvList = approvListRs.resultData.employList;
+      let list = {};
+      if (!_.isEmpty(custResultData)) {
+        list = custResultData[0];
+      }
+      const unSubProList = unSubProListRs.resultData;
       return {
         ...state,
         unsubscribeDetailToChange: {
           base: detailResult,
+          unSubscribeCustList: list,
+          unSubProList,
           attachmentList: attachmentResult,
+          approvList,
         },
       };
     },
@@ -309,7 +327,7 @@ export default {
 
     queryApprovalBtnsSuccess(state, action) {
       const { payload: { resultData } } = action;
-      const approvalBtns = resultData.btnList || [];
+      const approvalBtns = resultData.flowButtons || [];
       return {
         ...state,
         approvalBtns,
@@ -478,9 +496,11 @@ export default {
       });
     },
 
-    // 驳回后修改查询咨询退订详情数据
-    * getUnSubscribeDetailToChange({ payload }, { call, put }) {
+    // 驳回后修改查询咨讯退订详情数据
+    * getUnSubscribeDetailToChange({ payload }, { call, put, select }) {
+      const { empInfo } = yield select(state => state.app.empInfo);
       const { flowId } = payload;
+      const { postnId, occDivnNum, empNum } = empInfo;
       const detailRes = yield call(api.queryConsultDetail,
         {
           action: 'query',
@@ -490,9 +510,27 @@ export default {
       // 通过查询到的详情数据的attachmentNum获取附件信息
       const detailRD = detailRes.resultData;
       const attachmentRes = yield call(api.getAttachment, { attachment: detailRD.attachmentNum });
+      const unSubscriCustListRs = yield call(api.querySubscriptionCustomer, {
+        keyword: detailRD.custNum,
+        postionId: postnId,
+        deptId: occDivnNum,
+      });
+      let list = {};
+      if (!_.isEmpty(unSubscriCustListRs)) {
+        list = unSubscriCustListRs.resultData[0];
+      }
+      const custRs = list;
+      const { id } = custRs;
+      const unSubProListRs = yield call(api.queryConsultUnSubProductList, {
+        custRowId: id,
+      });
+      const approvListRs = yield call(api.queryAprovalUserList, {
+        loginUser: empNum,
+        btnId: '150000',
+      });
       yield put({
         type: 'getUnSubscribeDetailToChangeSuccess',
-        payload: { detailRes, attachmentRes },
+        payload: { detailRes, attachmentRes, unSubscriCustListRs, unSubProListRs, approvListRs },
       });
     },
 
