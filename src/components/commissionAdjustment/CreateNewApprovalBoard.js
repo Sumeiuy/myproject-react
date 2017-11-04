@@ -606,8 +606,10 @@ export default class CreateNewApprovalBoard extends PureComponent {
     } else if (judge(commadj.unsubscribe)) {
       this.advisoryUnSub();
     }
-    this.props.onClose(key);
-    this.clearApprovalBoard();
+    // TODO 此处后面需要修改
+    console.log(key);
+    // this.props.onClose(key);
+    // this.clearApprovalBoard();
   }
 
   // 根据子类型查询审批人
@@ -1226,7 +1228,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     };
 
     const wrapClassName = this.judgeSubtypeNow(commadj.noSelected) ? 'commissionModal' : '';
-    const subTypesAfterAuthority = newSubTypes; // this.authorityOptions(newSubTypes);
+    const subTypesAfterAuthority = this.authorityOptions(newSubTypes);
 
     return (
       <div>
