@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-01 18:37:35
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-04 07:26:27
+ * @Last Modified time: 2017-11-04 16:08:46
  * @description 单佣金调整驳回后修改页面
  */
 
@@ -28,7 +28,6 @@ import {
   pagination,
   singleColumns,
 } from '../commissionAdjustment/commissionTransferHelper/transferPropsHelper';
-import { getEmpId } from '../../utils/helper';
 
 import styles from './change.less';
 
@@ -390,13 +389,21 @@ export default class SingleDetailChange extends PureComponent {
   @autobind
   launchFlow(flowBtn, idea) {
     const { base: { flowCode } } = this.props.detail;
-    this.props.onUpdateFlow({
+    const { nextGroupName, operate, flowAuditors } = flowBtn;
+    const { approverId } = this.state;
+    // 根据按钮不同传递不同参数
+    const commParam = {
       flowId: flowCode,
-      groupName: flowBtn.nextGroupId,
+      groupName: nextGroupName,
       approverIdea: idea,
-      auditors: getEmpId(),
-      operate: flowBtn.routeId,
-    });
+      operate,
+    };
+    if (operate === 'commit') {
+      commParam.auditors = approverId;
+    } else {
+      commParam.auditors = flowAuditors[0].login;
+    }
+    this.props.onUpdateFlow(commParam).then(() => confirm({ content: '处理完成' }));
   }
 
   // 单佣金调整提交
@@ -431,12 +438,12 @@ export default class SingleDetailChange extends PureComponent {
   // 点击页面的按钮事件处理
   @autobind
   handleRejctBtnClick(btn) {
-    const { routeId } = btn;
-    if (routeId === 'commit') {
+    const { operate } = btn;
+    if (operate === 'commit') {
       // 提交按钮
       this.singleSubmit(btn);
     }
-    if (routeId === 'falseOver') {
+    if (operate === 'falseOver') {
       // 终止按钮
       this.launchFlow(btn, '终止申请');
     }
@@ -496,12 +503,28 @@ export default class SingleDetailChange extends PureComponent {
     });
   }
 
+  // 将提交按钮中的审批人列表提取出来
+  @autobind
+  pickApprovalUserListInFlowBtns() {
+    const { approvalBtns } = this.props;
+    const list = _.filter(approvalBtns, btn => btn.operate === 'commit')[0].flowAuditors;
+    // 转化list的格式
+    return list.map((item) => {
+      const { empName, login, occupation } = item;
+      return {
+        empNo: login,
+        belowDept: occupation,
+        empName,
+      };
+    });
+  }
+
   render() {
-    const { detail } = this.props;
-    if (_.isEmpty(detail.base)) {
+    const { detail, approvalBtns } = this.props;
+    if (_.isEmpty(detail.base) && _.isEmpty(approvalBtns)) {
       return null;
     }
-    const { customer, approvalList, attachmentList } = detail;
+    const { customer, attachmentList } = detail;
     const { item, attachmentNum } = detail.base;
     const {
       newCommission,
@@ -516,9 +539,9 @@ export default class SingleDetailChange extends PureComponent {
       optionalList,
       threeMatchInfo,
       otherRate,
-      approvalBtns,
     } = this.props;
-
+    // 将提交按钮中的审批人列表提取出来
+    const approvalList = this.pickApprovalUserListInFlowBtns();
     // 1. 针对用户选择的单佣金调整的申请中添加的item产品列表
     const transferData = this.makeTransferNeedData(optionalList, item);
     // 单佣金调整中的产品选择配置
