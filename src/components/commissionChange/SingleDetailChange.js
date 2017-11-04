@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-01 18:37:35
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-04 16:08:46
+ * @Last Modified time: 2017-11-04 16:26:59
  * @description 单佣金调整驳回后修改页面
  */
 
@@ -84,6 +84,7 @@ export default class SingleDetailChange extends PureComponent {
     super(props);
     // TODO state里面的初始值，使用detail里面的字段值
     this.state = {
+      btnDisabled: false,
       remark: '',
       newCommission: '',
       choiceApprover: false,
@@ -385,6 +386,13 @@ export default class SingleDetailChange extends PureComponent {
     });
   }
 
+  @autobind
+  afterLauncher() {
+    this.setState({
+      btnDisabled: true,
+    });
+  }
+
   // 发起流程
   @autobind
   launchFlow(flowBtn, idea) {
@@ -403,7 +411,7 @@ export default class SingleDetailChange extends PureComponent {
     } else {
       commParam.auditors = flowAuditors[0].login;
     }
-    this.props.onUpdateFlow(commParam).then(() => confirm({ content: '处理完成' }));
+    this.props.onUpdateFlow(commParam).then(this.afterLauncher);
   }
 
   // 单佣金调整提交
@@ -533,6 +541,7 @@ export default class SingleDetailChange extends PureComponent {
       approverName,
       approverId,
       otherComReset,
+      btnDisabled,
     } = this.state;
     const {
       singleGJ,
@@ -659,6 +668,7 @@ export default class SingleDetailChange extends PureComponent {
           </div>
         </div>
         <RejectButtons
+          disabled={btnDisabled}
           btnList={approvalBtns}
           onClick={this.handleRejctBtnClick}
         />
