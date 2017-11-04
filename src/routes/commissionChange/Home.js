@@ -47,6 +47,7 @@ const effects = {
   unSubDetail: 'commissionChange/getUnSubscribeDetailToChange',
   // 咨讯退订提交
   unSubComit: 'commissionChange/submitConsultUnSubscribe',
+  clearReduxState: 'commissionChange/clearReduxState',
 };
 
 const mapStateToProps = state => ({
@@ -112,10 +113,10 @@ const mapDispatchToProps = {
   updateSingle: getDataFunction(false, effects.singleSubmit),
   // 更新流程
   updateFlow: getDataFunction(false, effects.updateFlow),
-  // 获取咨讯退订详情Detail
   getUnSubscribeDetail: getDataFunction(true, effects.unSubDetail),
   // 咨讯退订驳回后修改页面提交
   submitUnSub: getDataFunction(false, effects.unSubComit),
+  clearReduxState: getDataFunction(false, effects.clearReduxState),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -163,6 +164,7 @@ export default class RejectionAndAmendment extends PureComponent {
     consultUnSubId: PropTypes.string.isRequired,
     getUnSubscribeDetail: PropTypes.func.isRequired,
     submitUnSub: PropTypes.func.isRequired,
+    clearReduxState: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -211,6 +213,7 @@ export default class RejectionAndAmendment extends PureComponent {
         singleSubmit,
         updateSingle,
         updateFlow,
+        clearReduxState,
       } = this.props;
       return (
         <SingleDetailChange
@@ -231,6 +234,7 @@ export default class RejectionAndAmendment extends PureComponent {
           submitResult={singleSubmit}
           onSubmit={updateSingle}
           onUpdateFlow={updateFlow}
+          clearReduxState={clearReduxState}
         />
       );
     } else if (type === 'SUBSCRIBE') {

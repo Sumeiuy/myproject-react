@@ -21,6 +21,7 @@ export default class OtherCommissionSelect extends PureComponent {
     onChange: PropTypes.func.isRequired,
     getPopupContainer: PropTypes.func.isRequired,
     disabled: PropTypes.bool,
+    initValue: PropTypes.string,
   }
 
   static defaultProps = {
@@ -28,12 +29,13 @@ export default class OtherCommissionSelect extends PureComponent {
     label: '',
     options: [],
     disabled: false,
+    initValue: '',
   }
 
   constructor(props) {
     super(props);
     this.state = {
-      value: '',
+      value: props.initValue,
     };
   }
 

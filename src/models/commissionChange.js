@@ -375,7 +375,7 @@ export default {
       const { empInfo } = yield select(state => state.app.empInfo);
       const { flowCode } = payload;
       // 查询驳回后单佣金调整的详情基本数据
-      const detailRes = yield call(api.querySingleDetail, {
+      const detailRes = yield call(api.querySingleDetail4Update, {
         flowCode,
       });
       const detailRD = detailRes.resultData;
@@ -400,6 +400,22 @@ export default {
           commRate: detailRD.newCommission,
         },
       });
+      // 循环查询客户已经选择的产品的3匹配信息
+      const userProductList = detailRD.item || [];
+      const userProductListAfter3Match = [];
+      for (let i = 0; i < userProductList.length; i++) {
+        const product = userProductList[i];
+        const result = yield call(api.queryThreeMatchInfo, {
+          custRowId: customerRD.id,
+          custType: customerRD.custType,
+          prdCode: product.prodCode,
+        });
+        const matchRD = result.resultData;
+        userProductListAfter3Match.push({
+          ...product,
+          ...matchRD,
+        });
+      }
       // 获取当前用户的其他佣金率选项
       yield put({
         type: 'getSingleOtherCommissionOptions',
@@ -419,7 +435,7 @@ export default {
       yield put({
         type: 'getSingleDetailToChangeSuccess',
         payload: {
-          base: detailRD,
+          base: { ...detailRD, item: userProductListAfter3Match },
           customer: { ...customerRD, ...custRiskRD },
           attachment: attachRD,
           approval: approvalUserRD,
@@ -429,7 +445,7 @@ export default {
 
     // 获取驳回后修改的页面按钮
     * queryApprovalBtns({ payload }, { call, put }) {
-      const response = yield call(api.queryApprovalBtns, payload);
+      const response = yield call(api.queryAprovalBtns, payload);
       yield put({
         type: 'queryApprovalBtnsSuccess',
         payload: response,
