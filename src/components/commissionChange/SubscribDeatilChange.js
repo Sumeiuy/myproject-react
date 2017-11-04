@@ -38,9 +38,9 @@ export default class SubscribeDetailToChange extends PureComponent {
     // 产品与客户的三匹配信息
     threeMatchInfo: PropTypes.object.isRequired,
     queryThreeMatchInfo: PropTypes.func.isRequired,
-    // 新建咨讯订阅提交接口
+    // 新建资讯订阅提交接口
     submitSub: PropTypes.func.isRequired,
-    // 修改咨讯订阅提交后返回值
+    // 修改资讯订阅提交后返回值
     consultSubId: PropTypes.string.isRequired,
     // 根据接口返回的操作按钮
     approvalBtns: PropTypes.array.isRequired,
@@ -58,9 +58,9 @@ export default class SubscribeDetailToChange extends PureComponent {
       approverId: '',
       custLists: [],
       attachment: '',
-      subProList: [], // 咨讯订阅产品列表
-      subscribelProductMatchInfo: [], // 咨讯订阅的产品的三匹配信息
-      canShowAppover: false, // 新建咨讯订阅和退订时是否需要选择审批人
+      subProList: [], // 资讯订阅产品列表
+      subscribelProductMatchInfo: [], // 资讯订阅的产品的三匹配信息
+      canShowAppover: false, // 新建资讯订阅和退订时是否需要选择审批人
     };
   }
 
@@ -126,8 +126,8 @@ export default class SubscribeDetailToChange extends PureComponent {
       custLists: [],
       customer: {},
       attachment: '',
-      subProList: [], // 咨讯订阅产品列表
-      subscribelProductMatchInfo: [], // 咨讯订阅的产品的三匹配信息
+      subProList: [], // 资讯订阅产品列表
+      subscribelProductMatchInfo: [], // 资讯订阅的产品的三匹配信息
     });
   }
 
@@ -183,7 +183,7 @@ export default class SubscribeDetailToChange extends PureComponent {
     });
   }
 
-  // 咨讯订阅调整穿梭变化的时候处理程序
+  // 资讯订阅调整穿梭变化的时候处理程序
   @autobind
   handleSubscribelTransferChange(flag, item, array) {
     this.setState({
@@ -212,7 +212,7 @@ export default class SubscribeDetailToChange extends PureComponent {
     }
   }
 
-  // 咨讯订阅选择子产品的时候的处理程序
+  // 资讯订阅选择子产品的时候的处理程序
   @autobind
   handleSubscribelTransferSubProductCheck(item, array) {
     this.setState({
@@ -234,7 +234,7 @@ export default class SubscribeDetailToChange extends PureComponent {
     };
   }
 
-  // 重组咨讯订阅可选产品List
+  // 重组资讯订阅可选产品List
   @autobind
   createSubscribelProList(data) {
     const newSubscriProList = data.map((product) => {
@@ -244,7 +244,7 @@ export default class SubscribeDetailToChange extends PureComponent {
     return newSubscriProList;
   }
 
-  // 重组咨讯订阅已选产品List
+  // 重组资讯订阅已选产品List
   @autobind
   choiceSubProList(data, preProList) {
     const newChoiceProList = [];
@@ -299,7 +299,7 @@ export default class SubscribeDetailToChange extends PureComponent {
     return _.filter(proList, product => !_.includes(productCodeList, product.prodCode));
   }
 
-  // 选中的咨讯订阅父产品数据结构改为提交所需
+  // 选中的资讯订阅父产品数据结构改为提交所需
   @autobind
   changeSubmitscriProList(product, matchInfos) {
     const {
@@ -316,7 +316,7 @@ export default class SubscribeDetailToChange extends PureComponent {
     };
   }
 
-  // 选中的咨讯订阅、退订子产品数据结构改为提交所需
+  // 选中的资讯订阅、退订子产品数据结构改为提交所需
   @autobind
   changeSubmitSubscriProChildren(product) {
     const {
@@ -329,7 +329,7 @@ export default class SubscribeDetailToChange extends PureComponent {
     };
   }
 
-  // 将选中的咨讯订阅产品数据结构改为提交所需
+  // 将选中的资讯订阅产品数据结构改为提交所需
   @autobind
   changeSubmitSubProList(list, matchInfos) {
     const newSubmitSubscriProList = list.map((product) => {
@@ -472,7 +472,7 @@ export default class SubscribeDetailToChange extends PureComponent {
           <div className={styles.approvalBlock}>
             <InfoTitle head="基本信息" />
             <CommissionLine label="子类型" labelWidth="90px" required>
-              <DisabledSelect text="咨讯订阅" />
+              <DisabledSelect text="资讯订阅" />
             </CommissionLine>
             <CommissionLine label="客户" labelWidth="90px" needInputBox={false}>
               <DisabledSelect text={customer} />
