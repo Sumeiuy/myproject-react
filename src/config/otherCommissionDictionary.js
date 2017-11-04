@@ -72,3 +72,8 @@ export default {
     paramName: 'dCommission',
   },
 };
+
+export const disabledMap = [
+  'stkCommission',
+  'creditCommission',
+];

@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-10-30 15:13:30
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-11-03 10:05:36
+ * @Last Modified time: 2017-11-04 15:43:17
  */
 // import _ from 'lodash';
 
@@ -103,12 +103,13 @@ export default {
         protocolProductList: resultData,
       };
     },
-    // 清除协议产品列表
-    clearProtocolProductListSuccess(state, action) {
+    // 清除数据
+    clearPropsDataSuccess(state, action) {
       const { payload: { resultData = EMPTY_LIST } } = action;
       return {
         ...state,
         protocolProductList: resultData,
+        protocolClauseList: resultData,
       };
     },
     // 保存详情
@@ -325,9 +326,9 @@ export default {
       });
     },
     // 清除协议产品列表
-    * clearProtocolProductList({ payload }, { call, put }) {
+    * clearPropsData({ payload }, { call, put }) {
       yield put({
-        type: 'clearProtocolProductListSuccess',
+        type: 'clearPropsDataSuccess',
         payload: {
           resultData: EMPTY_LIST,
         },

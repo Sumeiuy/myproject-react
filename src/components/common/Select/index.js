@@ -20,11 +20,13 @@ export default class CommonSelect extends PureComponent {
     onChange: PropTypes.func.isRequired,
     value: PropTypes.string,
     width: PropTypes.string,
+    disabled: PropTypes.bool,
   }
 
   static defaultProps = {
     value: '全部',
     width: '',
+    disabled: false,
   }
 
   @autobind

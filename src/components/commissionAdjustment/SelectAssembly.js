@@ -65,17 +65,18 @@ export default class SelectAssembly extends PureComponent {
       typeStyle: 'search',
     });
     this.selectedCust = null;
+    this.canSelected = false;
   }
 
   @autobind
   handleOKAfterValidate() {
     if (this.canSelected) {
       // 可以选中
-      const { subType, onSearchValue, validResult: { openRzrq } } = this.props;
+      const { subType, onSelectValue, validResult: { openRzrq } } = this.props;
       if (subType === commadj.single) {
-        onSearchValue({ ...this.selectedCust, openRzrq });
+        onSelectValue({ ...this.selectedCust, openRzrq });
       } else {
-        onSearchValue(this.selectedCust);
+        onSelectValue(this.selectedCust);
       }
     } else {
       // 干掉客户
@@ -90,9 +91,10 @@ export default class SelectAssembly extends PureComponent {
 
   // 校验不通过，弹框
   @autobind
-  fail2Validate(shortCut) {
+  fail2Validate(shortCut, content) {
     confirm({
       shortCut,
+      content,
       onOk: this.handleOKAfterValidate,
       onCancel: this.handleCancelAfterValidate,
     });
@@ -119,22 +121,27 @@ export default class SelectAssembly extends PureComponent {
       return;
     }
     // 偏好品种校验
-    if (investRt === 'N') {
+    if (investRt === 'Y') {
       this.fail2Validate('custInvestRt');
       return;
     }
     // 投资期限校验
-    if (investTerm === 'N') {
+    if (investTerm === 'Y') {
       this.fail2Validate('custInvestTerm');
       return;
     }
-    if (subType === commadj.single && hasorder === 'N') {
+    if (subType === commadj.single && hasorder === 'Y') {
       // 目前只有单佣金需要对在途订单
-      confirm({ content: validmsg });
-      this.canSelected = false;
+      this.fail2Validate('', validmsg);
       return;
     }
     this.canSelected = true;
+    // TODO 测试说校验成功后，不用提示，不过还是觉得校验成功的时候，需要提示下用户
+    // confirm({
+    //   shortCut: 'custPass',
+    //   onOk: this.handleOKAfterValidate,
+    // });
+    this.handleOKAfterValidate();
     const { custName, custEcom, riskLevelLabel } = this.selectedCust;
     this.setState({
       inputValue: `${custName}（${custEcom}） - ${riskLevelLabel || ''}`,
@@ -153,6 +160,7 @@ export default class SelectAssembly extends PureComponent {
       this.selectedCust = null;
       const { id, custType } = item;
       this.selectedCust = item;
+      // this.props.onSelectValue(item);
       this.props.onValidateCust({
         custRowId: id,
         custType,

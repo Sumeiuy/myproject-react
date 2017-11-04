@@ -11,9 +11,13 @@ import _ from 'lodash';
 import cx from 'classnames';
 import { Icon } from 'antd';
 
-import dictMap from '../../config/otherCommissionDictionary';
+import dictMap, { disabledMap } from '../../config/otherCommissionDictionary';
 import OtherCommissionSelect from './OtherCommissionSelect';
+import { seibelConfig } from '../../config';
+
 import styles from './otherCommissionSelectList.less';
+
+const { comsubs: commadj } = seibelConfig;
 
 export default class OtherCommissionSelectList extends PureComponent {
   static propTypes = {
@@ -21,11 +25,16 @@ export default class OtherCommissionSelectList extends PureComponent {
     reset: PropTypes.number.isRequired,
     otherRatios: PropTypes.array,
     onChange: PropTypes.func,
+    subType: PropTypes.string.isRequired,
+    custOpenRzrq: PropTypes.string,
+    baseCommission: PropTypes.object,
   };
 
   static defaultProps = {
     otherRatios: [],
     onChange: () => {},
+    custOpenRzrq: 'Y',
+    baseCommission: {},
   };
 
   @autobind
@@ -40,16 +49,39 @@ export default class OtherCommissionSelectList extends PureComponent {
 
   @autobind
   makeSelect(item) {
-    const { onChange, reset } = this.props;
+    const { onChange, reset, subType, custOpenRzrq, baseCommission } = this.props;
+    // 单佣金调整需要针对两融开关进行下拉框disabled
+    let disabled = false;
     const { code, options } = item;
     const { brief, paramName } = dictMap[code];
+    if (subType === commadj.single
+      && custOpenRzrq === 'N'
+      && _.includes(disabledMap, paramName)) {
+      disabled = true;
+    }
     const newOptions = options.map(option => ({
       label: option.codeDesc,
       value: option.codeValue,
       show: true,
     }));
+    if (!_.isEmpty(baseCommission)) {
+      return (
+        <OtherCommissionSelect
+          initValue={baseCommission[paramName] || ''}
+          disabled={disabled}
+          reset={reset}
+          key={code}
+          label={brief}
+          name={paramName}
+          options={newOptions}
+          onChange={onChange}
+          getPopupContainer={this.getWrapRef}
+        />
+      );
+    }
     return (
       <OtherCommissionSelect
+        disabled={disabled}
         reset={reset}
         key={code}
         label={brief}

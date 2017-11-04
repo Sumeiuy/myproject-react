@@ -188,7 +188,9 @@ export default class EditBaseInfo extends PureComponent {
       protocolTemplate: value,
     }, () => {
       const { queryChannelProtocolItem } = this.props;
-      queryChannelProtocolItem();
+      queryChannelProtocolItem({
+        keyword: value.rowId,
+      });
       // 触发查询协议产品列表
       this.queryChannelProtocolProduct();
     });
