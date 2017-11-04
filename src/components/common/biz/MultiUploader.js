@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 15:02:49
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-11-02 20:27:35
+ * @Last Modified time: 2017-11-04 11:34:58
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -184,7 +184,7 @@ export default class MultiUpload extends PureComponent {
         <div className={`${styles.fileList} fileList`}>
           {
             fileList.map((item, index) => {
-              const fileName = item.name.substring(0, item.name.lastIndexOf('.'));
+              const fileName = item.name;
               const popoverHtml = (
                 <div>
                   <h3>

@@ -99,6 +99,21 @@ const permission = {
     }
     return false;
   },
+
+  // 通道类型协议，当前用户是否拥有新建按钮权限
+  hasPermissionOfProtocolCreate(empInfo) {
+    // 职责--HTSC 综合服务-营业部执行岗、HTSC 营业部服务岗
+    const permissionYYBZXG = duty.htsc_zhfw_yybzxg;
+    const permissionYYBFWG = duty.htsc_yybfwg;
+    // 从 empInfo 中取出 empRespList 职责列表
+    const { empRespList = [] } = empInfo;
+    // 从职责列表中找出 职责名称对应的 id 等于 需要检测的职责名称 id 的数组
+    const filterRespYYBZXG = _.filter(empRespList, o => o.respId === permissionYYBZXG);
+    const filterRespYYBFWG = _.filter(empRespList, o => o.respId === permissionYYBFWG);
+    // 判断两个职责列表，都有数据则有权限
+    const hasPermission = (filterRespYYBZXG.length > 0) || (filterRespYYBFWG.length > 0);
+    return hasPermission;
+  },
 };
 
 export default permission;
