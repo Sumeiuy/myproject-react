@@ -10,6 +10,7 @@ import { autobind } from 'core-decorators';
 import { Input, Icon, message } from 'antd';
 import _ from 'lodash';
 
+import confirm from '../common/Confirm/confirm';
 import RejectButtons from './RejectButtons';
 import DisabledSelect from './DisabledSelect';
 import CommonUpload from '../../components/common/biz/CommonUpload';
@@ -21,7 +22,6 @@ import {
   pagination,
   subScribeProColumns,
 } from '../../components/commissionAdjustment/commissionTransferHelper/transferPropsHelper';
-import { getEmpId } from '../../utils/helper';
 
 import styles from './change.less';
 
@@ -34,9 +34,9 @@ export default class UnSubscribeDetailToChange extends PureComponent {
     // 退订详情
     getUnSubDetailToChange: PropTypes.func.isRequired,
     unSubDetailToChange: PropTypes.object.isRequired,
-    // 新建咨讯退订提交接口
+    // 新建资讯退订提交接口
     submitUnSub: PropTypes.func.isRequired,
-    // 修改咨讯退订提交后返回值
+    // 修改资讯退订提交后返回值
     consultUnSubId: PropTypes.string.isRequired,
     // 根据接口返回的操作按钮
     onQueryBtns: PropTypes.func.isRequired,
@@ -53,7 +53,7 @@ export default class UnSubscribeDetailToChange extends PureComponent {
       approverName: '',
       approverId: '',
       attachment: '',
-      unSubProList: [], // 咨讯退订产品列表
+      unSubProList: [], // 资讯退订产品列表
     };
   }
 
@@ -78,7 +78,7 @@ export default class UnSubscribeDetailToChange extends PureComponent {
       approverId: '',
       customer: {},
       attachment: '',
-      unSubProList: [], // 咨讯退订产品列表
+      unSubProList: [], // 资讯退订产品列表
     });
   }
 
@@ -134,7 +134,7 @@ export default class UnSubscribeDetailToChange extends PureComponent {
     });
   }
 
-  // 咨讯退订选择子产品的时候的处理程序
+  // 资讯退订选择子产品的时候的处理程序
   @autobind
   handleSubscribelTransferSubProductCheck(item, array) {
     this.setState({
@@ -156,7 +156,7 @@ export default class UnSubscribeDetailToChange extends PureComponent {
     };
   }
 
-  // 重组咨讯退订可选产品List
+  // 重组资讯退订可选产品List
   @autobind
   createSubscribelProList(data) {
     const newSubscriProList = data.map((product) => {
@@ -174,7 +174,7 @@ export default class UnSubscribeDetailToChange extends PureComponent {
     return newSubscriProList;
   }
 
-  // 重组咨讯退订已选产品List
+  // 重组资讯退订已选产品List
   @autobind
   choiceSubProList(data) {
     const newChoiceProList = data.map((product) => {
@@ -217,7 +217,7 @@ export default class UnSubscribeDetailToChange extends PureComponent {
     return _.filter(proList, product => !_.includes(productCodeList, product.prodCode));
   }
 
-  // 选中的咨讯退订父产品数据结构改为提交所需
+  // 选中的资讯退订父产品数据结构改为提交所需
   @autobind
   changeSubmitscriProList(product, matchInfos) {
     const {
@@ -233,7 +233,7 @@ export default class UnSubscribeDetailToChange extends PureComponent {
       ...matchInfo,
     };
   }
-  // 咨讯退订调整穿梭变化的时候处理程序
+  // 资讯退订调整穿梭变化的时候处理程序
   @autobind
   handleUnSubscribelTransferChange(flag, item, array) {
     this.setState({
@@ -241,7 +241,7 @@ export default class UnSubscribeDetailToChange extends PureComponent {
     });
   }
 
-  // 咨讯订阅选择子产品的时候的处理程序
+  // 资讯订阅选择子产品的时候的处理程序
   @autobind
   handleUnSubscribelTransferSubProductCheck(item, array) {
     this.setState({
@@ -249,7 +249,7 @@ export default class UnSubscribeDetailToChange extends PureComponent {
     });
   }
 
-  // 选中的咨讯退订、退订子产品数据结构改为提交所需
+  // 选中的资讯退订、退订子产品数据结构改为提交所需
   @autobind
   changeSubmitSubscriProChildren(product) {
     const {
@@ -262,7 +262,7 @@ export default class UnSubscribeDetailToChange extends PureComponent {
     };
   }
 
-  // 将选中的咨讯退订产品数据结构改为提交所需
+  // 将选中的资讯退订产品数据结构改为提交所需
   @autobind
   changeSubmitSubProList(list, matchInfos) {
     const newSubmitSubscriProList = list.map((product) => {
@@ -293,13 +293,21 @@ export default class UnSubscribeDetailToChange extends PureComponent {
   @autobind
   launchFlow(flowBtn, idea) {
     const { base: { flowCode } } = this.props.unSubDetailToChange;
-    this.props.onUpdateFlow({
+    const { nextGroupName, operate, flowAuditors } = flowBtn;
+    const { approverId } = this.state;
+    // 根据按钮不同传递不同参数
+    const commParam = {
       flowId: flowCode,
-      groupName: flowBtn.nextGroupId,
+      groupName: nextGroupName,
       approverIdea: idea,
-      auditors: getEmpId(),
-      operate: flowBtn.routeId,
-    });
+      operate,
+    };
+    if (operate === 'commit') {
+      commParam.auditors = approverId;
+    } else {
+      commParam.auditors = flowAuditors[0].login;
+    }
+    this.props.onUpdateFlow(commParam).then(() => confirm({ content: '处理完成' }));
   }
 
   // 资讯退订提交修改
@@ -413,7 +421,7 @@ export default class UnSubscribeDetailToChange extends PureComponent {
           <div className={styles.approvalBlock}>
             <InfoTitle head="基本信息" />
             <CommissionLine label="子类型" labelWidth="90px" required>
-              <DisabledSelect text="咨讯退订" />
+              <DisabledSelect text="资讯退订" />
             </CommissionLine>
             <CommissionLine label="客户" labelWidth="90px" needInputBox={false}>
               <DisabledSelect text={customer} />

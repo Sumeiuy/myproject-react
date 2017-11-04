@@ -14,6 +14,25 @@ function changeProductJson(product) {
   const { riskMatch, termMatch, prodMatch, prodCode, aliasName, agrType, prodCommission } = product;
   const prodCom = {};
   if (!_.isEmpty(prodCommission)) { prodCom.prodCommission = prodCommission; }
+  if (!_.isEmpty(riskMatch)) {
+    return {
+      key: prodCode,
+      // 产品代码
+      prodCode,
+      // 产品名称
+      aliasName,
+      // 签署确认书类型
+      agrType,
+      // 风险是否匹配
+      riskMatch: convertNY2ZN(riskMatch),
+      // 期限是否匹配
+      termMatch: convertNY2ZN(termMatch),
+      // 产品是否匹配
+      prodMatch: convertNY2ZN(prodMatch),
+      // 单佣金产品中的佣金率
+      ...prodCom,
+    };
+  }
   return {
     key: prodCode,
     // 产品代码
@@ -22,13 +41,6 @@ function changeProductJson(product) {
     aliasName,
     // 签署确认书类型
     agrType,
-    // 风险是否匹配
-    riskMatch: convertNY2ZN(riskMatch),
-    // 期限是否匹配
-    termMatch: convertNY2ZN(termMatch),
-    // 产品是否匹配
-    prodMatch: convertNY2ZN(prodMatch),
-    // 单佣金产品中的佣金率
     ...prodCom,
   };
 }
