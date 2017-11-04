@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-30 16:50:36
+ * @Last Modified time: 2017-11-03 14:30:07
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
@@ -513,133 +513,6 @@ export default class Contract extends PureComponent {
     }
     return clauseStatus;
   }
-
-  // 保存合作合约 新建/修改 数据
-  // @autobind
-  // saveContractData() {
-  //   const {
-  //     saveContractData,
-  //   } = this.props;
-  //   const {
-  //     contractFormData,
-  //     editFormModal,
-  //     footerBtnData,
-  //     selectApproveData: { approverId = '' }
-  //   } = this.state;
-  //   console.warn('contractFormData', contractFormData);
-  //   if (!contractFormData.subType) {
-  //     message.error('请选择子类型');
-  //     return;
-  //   }
-  //   if (!contractFormData.custName) {
-  //     message.error('请选择客户');
-  //     return;
-  //   }
-  //   // 新建合作合约弹窗
-  //   if (!editFormModal) {
-  //     const operationType = contractFormData.workflowname;
-  //     // 判断是退订
-  //     if (operationType === unsubscribe) {
-  //       if (!contractFormData.contractNum.flowId) {
-  //         message.error('请选择合约编号');
-  //         return;
-  //       }
-  //       if (!contractFormData.approverId) {
-  //         message.error('请选择审批人');
-  //         return;
-  //       }
-  //       this.props.postDoApprove({
-  //         flowId: contractFormData.contractNum.flowId,
-  //         approverIdea: contractFormData.appraval || '',
-  //         groupName: footerBtnData.nextGroupName,
-  //         auditors: approverId,
-  //         operate: '2',
-  //       });
-  //       // this.props.contractUnSubscribe(condition);
-  //     } else {
-  //       if (!contractFormData.startDt) {
-  //         message.error('请选择合约开始日期');
-  //         return;
-  //       }
-  //       if (contractFormData.vailDt && this.isBiggerThanStartDate(contractFormData)) {
-  //         message.error('合约开始日期不能大于合约有效期');
-  //         return;
-  //       }
-  //       if (contractFormData.vailDt && !this.isBiggerThanTodayAddFive(contractFormData.vailDt)) {
-  //         message.error('合约有效期必须大于当前日期加5天');
-  //         return;
-  //       }
-  //       if (!contractFormData.terms.length) {
-  //         message.error('请添加合约条款');
-  //         return;
-  //       }
-  //       if (!this.checkClauseIsLegal(contractFormData.terms)) {
-  //         message.error('合约条款中每种明细参数的值加起来必须要等于1');
-  //         return;
-  //       }
-  //       const payload = {
-  //         type: 'add',
-  //         data: contractFormData,
-  //         approveData: {
-  //           flowId: '',
-  //           approverIdea: contractFormData.appraval || '',
-  //           groupName: footerBtnData.nextGroupName,
-  //           auditors: approverId,
-  //           operate: '1',
-  //         },
-  //       };
-  //       console.warn('新建保存时的数据', payload);
-  //       saveContractData(payload);
-  //     }
-  //     // // 新建窗口关闭后，请求左侧列表
-  //     // const params = constructSeibelPostBody(query, pageNum || 1, pageSize || 10);
-  //     // // 默认筛选条件
-  //     // getSeibleList({
-  //     //   ...params,
-  //     //   type: pageType,
-  //     // });
-  //   } else {
-  //     // 编辑合作合约弹窗
-  //     if (!contractFormData.startDt) {
-  //       message.error('请选择合约开始日期');
-  //       return;
-  //     }
-  //     if (contractFormData.vailDt && this.isBiggerThanStartDate(contractFormData)) {
-  //       message.error('合约开始日期不能大于合约有效期');
-  //       return;
-  //     }
-  //     if (contractFormData.vailDt && !this.isBiggerThanTodayAddFive(contractFormData.vailDt)) {
-  //       message.error('合约有效期必须大于当前日期加5天');
-  //       return;
-  //     }
-  //     if (!contractFormData.terms.length) {
-  //       message.error('请添加合约条款');
-  //       return;
-  //     }
-  //     if (!this.checkClauseIsLegal(contractFormData.terms)) {
-  //       message.error('合约条款中每种明细参数的值加起来必须要等于1');
-  //       return;
-  //     }
-  //     const payload = {
-  //       type: 'edit',
-  //       data: contractFormData,
-  //     };
-  //     console.warn('编辑保存时的 payload', payload);
-  //     this.props.postDoApprove({
-  //       flowId: this.state.flowId,
-  //       approverIdea: contractFormData.appraval || '',
-  //       groupName: footerBtnData.nextGroupName,
-  //       auditors: approverId,
-  //       operate: footerBtnData.operate,
-  //     });
-  //     saveContractData(payload);
-  //     // 编辑窗口关闭后，请求此 flowId 的详情
-  //     // getBaseInfo({
-  //     //   flowId: this.state.flowId,
-  //     //   id: '',
-  //     // });
-  //   }
-  // }
 
   // 查询客户
   @autobind

@@ -3,7 +3,7 @@
 * @Author: XuWenKang
 * @Date:   2017-09-19 14:47:08
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-27 17:46:23
+ * @Last Modified time: 2017-11-04 11:26:46
 */
 
 import React, { PureComponent } from 'react';
@@ -30,7 +30,7 @@ import styles from './editForm.less';
 const EMPTY_PARAM = '暂无';
 const BOOL_TRUE = true;
 // 退订
-const unsubscribe = '2';
+const { contract: { unsubscribe } } = seibelConfig;
 // 合约条款的表头、状态
 const { contract: { titleList } } = seibelConfig;
 export default class EditForm extends PureComponent {
@@ -223,7 +223,7 @@ export default class EditForm extends PureComponent {
       status: baseInfo.status,
     };
     // 是否是退订
-    const isSubscribe = baseInfo.workflowName === unsubscribe;
+    const isSubscribe = baseInfo.applyType === unsubscribe;
     // 表格中需要的操作
     const operation = isSubscribe ? null : {
       column: {
@@ -273,7 +273,7 @@ export default class EditForm extends PureComponent {
         <UploadFile
           edit={BOOL_TRUE}
           fileList={attachmentList}
-          attachment={baseInfo.uuid}
+          attachment={isSubscribe ? baseInfo.tduuid : baseInfo.uuid}
           uploadAttachment={this.handleUploadSuccess}
         />
         <Approval

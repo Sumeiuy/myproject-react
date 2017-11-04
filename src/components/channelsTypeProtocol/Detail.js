@@ -3,12 +3,11 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-19 09:37:42
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-11-02 21:37:34
+ * @Last Modified time: 2017-11-04 15:37:56
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
 
 import InfoTitle from '../common/InfoTitle';
 import InfoItem from '../common/infoItem';
@@ -49,23 +48,6 @@ export default class Detail extends PureComponent {
     showEditModal: () => {},
   }
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      customerList: [
-        {
-          key: 0,
-          subCustType: '白金',
-          custLevelCode: '805015',
-          perEconNum: '666626443512',
-          perCustName: '刘**',
-          customerId: '1-3YOO83T',
-          custStatus: '无',
-        },
-      ],
-    };
-  }
-
   // 处理接口返回的拟稿提请时间
   @autobind
   getCreatedDate(date) {
@@ -75,26 +57,12 @@ export default class Detail extends PureComponent {
     return EMPTY_PARAM;
   }
 
-  // 表格删除事件
-  @autobind
-  deleteTableData(record, index) {
-    const { customerList } = this.state;
-    const testArr = _.cloneDeep(customerList);
-    const newCustomerList = _.remove(testArr, (n, i) => i !== index);
-    this.setState({
-      customerList: newCustomerList,
-    });
-  }
-
   render() {
     const {
       protocolDetail,
       flowHistory,
       attachmentList,
     } = this.props;
-    const {
-      customerList,
-    } = this.state;
     const nowStep = {
       // 当前步骤
       stepName: protocolDetail.workflowNode || EMPTY_PARAM,
@@ -111,14 +79,6 @@ export default class Detail extends PureComponent {
       statusLabel = '';
     }
 
-    // 下挂客户表格中需要的操作
-    const customerOperation = {
-      column: {
-        key: 'delete', // 'check'\'delete'\'view'
-        title: '操作',
-      },
-      operate: this.deleteTableData,
-    };
     return (
       <div className={styles.detailComponent}>
         <div className={styles.dcHeader}>
@@ -160,9 +120,8 @@ export default class Detail extends PureComponent {
         <div className={styles.detailWrapper}>
           <InfoTitle head="下挂客户" />
           <CommonTable
-            data={customerList || []}
+            data={protocolDetail.cust}
             titleList={underCustTitleList}
-            operation={customerOperation}
           />
         </div>
         <div className={styles.detailWrapper}>
@@ -172,6 +131,7 @@ export default class Detail extends PureComponent {
               attachmentList={item.attachmentList}
               attachment={''}
               title={item.title}
+              key={item.title}
             />))
           }
         </div>

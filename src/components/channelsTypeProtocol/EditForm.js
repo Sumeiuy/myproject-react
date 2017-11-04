@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date:   2017-09-19 14:47:08
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-11-03 10:37:14
+ * @Last Modified time: 2017-11-04 15:36:06
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -78,7 +78,8 @@ export default class EditForm extends PureComponent {
 
   constructor(props) {
     super(props);
-    const isEdit = !_.isEmpty(props.protocolDetail);
+    const { underCustList } = props;
+    const isEdit = !_.isEmpty(props.protocolDetail);// 下挂客户组件需要的数据列表
     this.state = {
       isEdit,
       // 附件类型列表
@@ -89,6 +90,7 @@ export default class EditForm extends PureComponent {
       protocolProductList: EMPTY_LIST,
       // 是否多账户
       multiUsedFlag: false,
+      underCustList,
     };
   }
 
@@ -182,6 +184,9 @@ export default class EditForm extends PureComponent {
   changeFunction(value) {
     const { cust } = this.state;
     // console.warn('value', value);
+    this.setState({
+      underCustList: [],
+    });
     const filterCust = _.filter(cust, o => o.econNum === value.econNum);
     if (_.isEmpty(value)) {
       message.error('请选择客户');
@@ -207,6 +212,10 @@ export default class EditForm extends PureComponent {
     }
     onQueryCust({
       keyWord: value,
+    }).then(() => {
+      this.setState({
+        underCustList: this.props.underCustList,
+      });
     });
   }
   // 表格删除事件
@@ -283,13 +292,13 @@ export default class EditForm extends PureComponent {
       protocolProductList,
       // 查询协议产品列表
       queryChannelProtocolProduct,
-      // 下挂客户列表
-      underCustList,
     } = this.props;
     const {
       cust,
       attachmentTypeList,
       multiUsedFlag,
+      // 下挂客户列表
+      underCustList,
     } = this.state;
     // 下挂客户表格中需要的操作
     const customerOperation = {
@@ -319,10 +328,8 @@ export default class EditForm extends PureComponent {
       pagination,
       supportSearchKey: [['productCode'], ['productName']],
     };
-    // 下挂客户组件需要的数据列表
     const customerSelectList = underCustList.length ? underCustList.map(item => ({
       ...item,
-      key: item.econNum,
       custStatus: '开通处理中',
     })) : EMPTY_LIST;
     return (
