@@ -65,6 +65,7 @@ export default class SelectAssembly extends PureComponent {
       typeStyle: 'search',
     });
     this.selectedCust = null;
+    this.canSelected = false;
   }
 
   @autobind
@@ -90,14 +91,16 @@ export default class SelectAssembly extends PureComponent {
 
   // 校验不通过，弹框
   @autobind
-  fail2Validate(shortCut) {
+  fail2Validate(shortCut, content) {
     confirm({
       shortCut,
+      content,
       onOk: this.handleOKAfterValidate,
       onCancel: this.handleCancelAfterValidate,
     });
     this.canSelected = false;
   }
+
   // 客户校验
   @autobind
   afterValidateSingleCust() {
@@ -130,15 +133,16 @@ export default class SelectAssembly extends PureComponent {
     }
     if (subType === commadj.single && hasorder === 'Y') {
       // 目前只有单佣金需要对在途订单
-      confirm({ content: validmsg });
-      this.canSelected = false;
+      this.fail2Validate('', validmsg);
       return;
     }
     this.canSelected = true;
-    confirm({
-      shortCut: 'custPass',
-      onOk: this.handleOKAfterValidate,
-    });
+    // TODO 测试说校验成功后，不用提示，不过还是觉得校验成功的时候，需要提示下用户
+    // confirm({
+    //   shortCut: 'custPass',
+    //   onOk: this.handleOKAfterValidate,
+    // });
+    this.handleOKAfterValidate();
     const { custName, custEcom, riskLevelLabel } = this.selectedCust;
     this.setState({
       inputValue: `${custName}（${custEcom}） - ${riskLevelLabel || ''}`,
