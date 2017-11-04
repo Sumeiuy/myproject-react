@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-11-04 15:41:38
+ * @Last Modified time: 2017-11-04 15:54:21
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
@@ -311,6 +311,10 @@ export default class ChannelsTypeProtocol extends PureComponent {
     }
     if (!formData.templateId) {
       message.error('请选择协议模板');
+      return false;
+    }
+    if (!formData.item.length) {
+      message.error('请选择协议产品');
       return false;
     }
     if (formData.multiUsedFlag === 'Y' && !formData.cust.length) {
