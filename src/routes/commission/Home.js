@@ -96,9 +96,9 @@ const mapStateToProps = state => ({
   batchnum: state.commission.batchnum,
   // 提交批量佣金申请调整的进程
   batchSubmitProcess: state.loading.effects[effects.submitBatch],
-  // 提交咨讯订阅申请调整的进程
+  // 提交资讯订阅申请调整的进程
   subsciSubmitProcess: state.loading.effects[effects.subSubscribe],
-  // 提交咨讯退订申请调整的进程
+  // 提交资讯退订申请调整的进程
   unSubsciSubmitProcess: state.loading.effects[effects.unSubSubscribe],
   // 目标股基佣金率码值列表
   gjCommissionList: state.commission.gjCommission,
@@ -114,9 +114,9 @@ const mapStateToProps = state => ({
   singleComProductList: state.commission.singleComProductList,
   // 客户与产品的三匹配信息
   threeMatchInfo: state.commission.threeMatchInfo,
-  // 新建咨讯订阅可选产品列表
+  // 新建资讯订阅可选产品列表
   subscribelProList: state.commission.subscribelProList,
-  // 新建咨讯订阅可选产品列表
+  // 新建资讯订阅可选产品列表
   unSubscribelProList: state.commission.unSubscribelProList,
   // 单佣金调整申请结果
   singleSubmit: state.commission.singleSubmit,
@@ -126,7 +126,7 @@ const mapStateToProps = state => ({
   consultUnsubId: state.commission.consultUnsubId,
   // 单佣金调整客户检验返回数据
   singleCVR: state.commission.singleCustValidate,
-  // 咨讯订阅客户校验
+  // 资讯订阅客户校验
   sciCheckCustomer: state.commission.sciCheckCustomer,
 });
 
@@ -170,15 +170,15 @@ const mapDispatchToProps = {
   getSingleOtherRates: getDataFunction(false, effects.singleComOptions),
   // 查询单佣金调整页面客户列表
   getSingleCustList: getDataFunction(false, effects.singleCustList),
-  // 咨讯订阅、咨讯退订客户列表
+  // 资讯订阅、资讯退订客户列表
   getSubscribelCustList: getDataFunction(false, effects.subscribeCustList),
   // 获取单佣金调整中的可选产品列表
   getSingleProductList: getDataFunction(false, effects.singleProList),
   // 查询产品与客户的三匹配信息
   queryThreeMatchInfo: getDataFunction(false, effects.threeMatchInfo),
-  // 获取新建咨讯订阅可选产品列表
+  // 获取新建资讯订阅可选产品列表
   getSubscribelProList: getDataFunction(false, effects.subscribelProList),
-  // 获取新建咨讯退订可选产品列表
+  // 获取新建资讯退订可选产品列表
   getUnSubscribelProList: getDataFunction(false, effects.unSubscribelProList),
   // 咨询订阅提交
   submitSub: getDataFunction(false, effects.subSubscribe),
@@ -188,7 +188,7 @@ const mapDispatchToProps = {
   clearReduxState: getDataFunction(false, effects.clearReduxState),
   // 单佣金调整客户校验
   singleCustValidate: getDataFunction(false, effects.singleCustValidate),
-  // 咨讯订阅调整客户校验
+  // 资讯订阅调整客户校验
   onCheckSubsciCust: getDataFunction(false, effects.onCheckSubsciCust),
 };
 
@@ -358,9 +358,9 @@ export default class CommissionHome extends PureComponent {
     if (!nextSSP && prevSSP) {
       if (nextSub !== '') {
         // 成功
-        message.success('咨讯订阅提交成功');
+        message.success('资讯订阅提交成功');
       } else {
-        message.error('咨讯订阅提交失败');
+        message.error('资讯订阅提交失败');
       }
     }
 
@@ -370,9 +370,9 @@ export default class CommissionHome extends PureComponent {
     if (!nextUSP && prevUSP) {
       if (nextUnSub !== '') {
         // 成功
-        message.success('咨讯退订提交成功');
+        message.success('资讯退订提交成功');
       } else {
-        message.error('咨讯退订提交失败');
+        message.error('资讯退订提交失败');
       }
     }
   }

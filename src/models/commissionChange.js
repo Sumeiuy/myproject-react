@@ -555,7 +555,7 @@ export default {
     // 新增资讯订阅申请
     * submitConsultSubscribe({ payload }, { call, put }) {
       const response = yield call(api.newConsultApply, {
-        action: 'new',
+        action: 'update',
         operationType: 'subscribe',
         ...payload,
       });
@@ -568,7 +568,7 @@ export default {
      // 新增资讯退订申请
     * submitConsultUnSubscribe({ payload }, { call, put }) {
       const response = yield call(api.newConsultApply, {
-        action: 'new',
+        action: 'update',
         operationType: 'unsubscribe',
         ...payload,
       });
