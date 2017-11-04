@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date:   2017-09-21 15:27:31
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-11-03 10:27:26
+ * @Last Modified time: 2017-11-04 17:54:11
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -63,7 +63,7 @@ export default class EditBaseInfo extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { formData } = props;
+    const { formData, templateList } = props;
     const stateObj = {
       // 所选操作类型
       operationType: '',
@@ -92,7 +92,19 @@ export default class EditBaseInfo extends PureComponent {
     }
     this.state = {
       ...stateObj,
+      templateList,
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { templateList: preTL } = this.props;
+    const { templateList: nextTL } = nextProps;
+    // 设定新的模版列表数据
+    if (!_.isEqual(preTL, nextTL)) {
+      this.setState({
+        templateList: nextTL,
+      });
+    }
   }
 
   // 向外传递数据
@@ -199,8 +211,13 @@ export default class EditBaseInfo extends PureComponent {
   // 根据填入关键词筛选协议模板
   @autobind
   handleSearchTemplate(value) {
-    console.log('value', value);
-    // this.props.onSearchProtocolTemplate(value);
+    const {
+      templateList,
+    } = this.props;
+    const newTemplateList = _.filter(templateList, o => o.prodName.indexOf(value) !== -1);
+    this.setState({
+      templateList: newTemplateList,
+    });
   }
 
   // 修改备注
@@ -250,7 +267,6 @@ export default class EditBaseInfo extends PureComponent {
   render() {
     const {
       custList,
-      templateList,
       operationTypeList,
       subTypeList,
     } = this.props;
@@ -260,6 +276,7 @@ export default class EditBaseInfo extends PureComponent {
       multiUsedFlag,
       levelTenFlag,
       protocolTemplate,
+      templateList,
     } = this.state;
     return (
       <div className={styles.editWrapper}>

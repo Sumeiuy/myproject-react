@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date:   2017-09-19 14:47:08
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-11-04 15:36:06
+ * @Last Modified time: 2017-11-04 17:18:28
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -126,6 +126,7 @@ export default class EditForm extends PureComponent {
       subType: baseInfoData.subType,
       custId: baseInfoData.client.cusId,
       custType: baseInfoData.client.custType,
+      econNum: baseInfoData.client.brokerNumber,
       startDt: '',
       vailDt: '',
       content: baseInfoData.content,
@@ -143,10 +144,14 @@ export default class EditForm extends PureComponent {
 
   // 设置上传配置项
   setUploadConfig(hasCust) {
+    const { attachmentTypeList } = this.state;
     // 找出需要必传的数组
     const requiredArr = hasCust ? attachmentRequired.hasCust : attachmentRequired.noCust;
     // 将附件数组做必传项配置
-    const attachmentMapRequired = attachmentMap.map((item) => {
+    console.warn('attachmentMap', attachmentMap);
+    console.warn('attachmentTypeList', this.state.attachmentTypeList);
+    console.warn('hasCust', hasCust);
+    const attachmentMapRequired = attachmentTypeList.map((item) => {
       if (_.includes(requiredArr, item.type)) {
         return {
           ...item,
@@ -155,6 +160,7 @@ export default class EditForm extends PureComponent {
       }
       return item;
     });
+    console.warn('attachmentMapRequired', attachmentMapRequired);
     this.setState({
       attachmentTypeList: attachmentMapRequired,
     });
@@ -190,11 +196,15 @@ export default class EditForm extends PureComponent {
   // 下挂客户添加事件
   @autobind
   changeFunction(value) {
+    const baseInfoData = this.editBaseInfoComponent.getData();
     const { cust } = this.state;
-    // console.warn('value', value);
     this.setState({
       underCustList: [],
     });
+    if (baseInfoData.client.cusId === value.custId) {
+      message.error('已选择的客户不能添加到下挂客户');
+      return;
+    }
     const filterCust = _.filter(cust, o => o.econNum === value.econNum);
     if (_.isEmpty(value)) {
       message.error('请选择客户');
@@ -399,7 +409,7 @@ export default class EditForm extends PureComponent {
             attachmentTypeList.map((item) => {
               const uploaderElement = item.show ? (
                 <MultiUploader
-                  key={item.key}
+                  key={item.type}
                   edit
                   type={item.type}
                   title={item.title}

@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date: 2017-10-30 15:13:30
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-11-04 15:43:17
+ * @Last Modified time: 2017-11-04 17:20:42
  */
 // import _ from 'lodash';
 
@@ -110,6 +110,7 @@ export default {
         ...state,
         protocolProductList: resultData,
         protocolClauseList: resultData,
+        underCustList: resultData,
       };
     },
     // 保存详情
