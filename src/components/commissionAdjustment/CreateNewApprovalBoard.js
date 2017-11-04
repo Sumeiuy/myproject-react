@@ -1265,21 +1265,6 @@ export default class CreateNewApprovalBoard extends PureComponent {
               }
               {
                 // 资讯订阅
-                !this.judgeSubtypeNow(commadj.subscribe) ? null
-                : (
-                  <CommissionLine label="客户" labelWidth="90px" needInputBox={false}>
-                    <SelectAssembly
-                      dataSource={subscribeCustList}
-                      onSearchValue={this.handleChangeSubscribeAssembly}
-                      onSelectValue={this.handleSelectAssembly}
-                      onValidateCust={onValidateSingleCust}
-                      validResult={singleCustVResult}
-                      subType={commadj.single}
-                    />
-                  </CommissionLine>
-                )
-              }
-              {
                 !this.judgeSubtypeNow([commadj.subscribe]) ? null
                 : (
                   <CommissionLine label="客户" labelWidth="90px" needInputBox={false}>
