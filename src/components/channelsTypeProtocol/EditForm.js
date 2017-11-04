@@ -120,14 +120,6 @@ export default class EditForm extends PureComponent {
     const baseInfoData = this.editBaseInfoComponent.getData();
     const { protocolClauseList } = this.props;
     const { protocolProductList, attachmentTypeList, cust } = this.state;
-    // 根据后端要求将接口返回的字段转成他们要的字段再传给他们;
-    /*eslint-disable */
-    protocolProductList.forEach((v)=> {
-      v.riskMatchFlag = v.riskMatch;
-      v.termMatchFlag = v.termMatch;
-      v.varietyMatchFlag = v.varietyMatch;
-    })
-    /*eslint-disable */
     const formData = {
       subType: baseInfoData.subType,
       custId: baseInfoData.client.cusId,
@@ -328,7 +320,7 @@ export default class EditForm extends PureComponent {
       firstColumns: protocolProductTitleList,
       secondColumns: protocolProductTitleList,
       transferChange: this.handleTransferChange,
-      rowKey: 'key',
+      rowKey: 'prodRowId',
       isScrollX: true,
       showSearch: true,
       placeholder: '产品代码/产品名称',
