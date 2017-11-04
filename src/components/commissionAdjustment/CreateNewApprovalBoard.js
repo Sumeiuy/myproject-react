@@ -102,7 +102,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     // 新建资讯订阅可选产品列表
     getSubscribelProList: PropTypes.func.isRequired,
     subscribelProList: PropTypes.array.isRequired,
-    // 新建资讯订阅可选产品列表
+    // 新建资讯退订可选产品列表
     getUnSubscribelProList: PropTypes.func.isRequired,
     unSubscribelProList: PropTypes.array.isRequired,
     // 单佣金调整目标股基佣金率码值
@@ -535,7 +535,15 @@ export default class CreateNewApprovalBoard extends PureComponent {
       productInfo: productList,
       ...otherCommissions,
     };
-    this.props.onSubmitSingle(params);
+    // this.props.onSubmitSingle(params);
+    this.props.onSubmitSingle(params).then(() => {
+      message.success('单佣金调整提交成功');
+      const { modalKey, onClose } = this.props;
+      this.clearApprovalBoard();
+      onClose(modalKey);
+    }, () => {
+      message.error('单佣金调整提交失败');
+    });
   }
 
   // 资讯订阅提交
@@ -563,7 +571,15 @@ export default class CreateNewApprovalBoard extends PureComponent {
       item: newSubProList,
     };
     // 提交
-    this.props.submitSub(params);
+    // this.props.submitSub(params);
+    this.props.submitSub(params).then(() => {
+      message.success('资讯订阅提交成功');
+      const { modalKey, onClose } = this.props;
+      this.clearApprovalBoard();
+      onClose(modalKey);
+    }, () => {
+      message.error('资讯订阅提交失败');
+    });
   }
 
   // 资讯退订提交
@@ -590,12 +606,20 @@ export default class CreateNewApprovalBoard extends PureComponent {
       item: newUnSubProList,
     };
     // 提交
-    this.props.submitUnSub(unParams);
+    // this.props.submitUnSub(unParams);
+    this.props.submitUnSub(unParams).then(() => {
+      message.success('资讯退订提交成功');
+      const { modalKey, onClose } = this.props;
+      this.clearApprovalBoard();
+      onClose(modalKey);
+    }, () => {
+      message.error('资讯退订提交失败');
+    });
   }
 
   // 提交
   @autobind
-  handleSubmitApprovals(key) {
+  handleSubmitApprovals() {
     const judge = this.judgeSubtypeNow;
     if (judge(commadj.batch)) {
       this.batchSubmit();
@@ -607,7 +631,6 @@ export default class CreateNewApprovalBoard extends PureComponent {
       this.advisoryUnSub();
     }
     // TODO 此处后面需要修改
-    console.log(key);
     // this.props.onClose(key);
     // this.clearApprovalBoard();
   }

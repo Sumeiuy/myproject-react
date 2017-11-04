@@ -353,28 +353,29 @@ export default class CommissionHome extends PureComponent {
     }
 
     // 用户提交咨询订阅申请
-    const { subsciSubmitProcess: prevSSP } = this.props;
-    const { subsciSubmitProcess: nextSSP, consultSubId: nextSub } = nextProps;
-    if (!nextSSP && prevSSP) {
-      if (nextSub !== '') {
-        // 成功
-        message.success('资讯订阅提交成功');
-      } else {
-        message.error('资讯订阅提交失败');
-      }
-    }
+    // const { subsciSubmitProcess: prevSSP } = this.props;
+    // const { subsciSubmitProcess: nextSSP, consultSubId: nextSub } = nextProps;
+    // if (!nextSSP && prevSSP) {
+    //   if (nextSub !== '') {
+    //     // 成功
+    //     message.success('资讯订阅提交成功');
+    //   } else {
+    //     message.error('资讯订阅提交失败');
+    //   }
+    // }
 
     // 用户提交咨询退订申请
-    const { unSubsciSubmitProcess: prevUSP } = this.props;
-    const { unSubsciSubmitProcess: nextUSP, consultUnsubId: nextUnSub } = nextProps;
-    if (!nextUSP && prevUSP) {
-      if (nextUnSub !== '') {
-        // 成功
-        message.success('资讯退订提交成功');
-      } else {
-        message.error('资讯退订提交失败');
-      }
-    }
+    // const { unSubsciSubmitProcess: prevUSP } = this.props;
+    // const { unSubsciSubmitProcess: nextUSP, consultUnsubId: nextUnSub } = nextProps;
+    // if (!nextUSP && prevUSP) {
+    //   if (nextUnSub !== '') {
+    //     // 成功
+    //     message.success('资讯退订提交成功');
+    //     this.closeNewApprovalBoard();
+    //   } else {
+    //     message.error('资讯退订提交失败');
+    //   }
+    // }
   }
 
   componentDidUpdate() {
