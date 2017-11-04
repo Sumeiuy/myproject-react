@@ -10,7 +10,6 @@ import { autobind } from 'core-decorators';
 import { Input, Icon, message } from 'antd';
 import _ from 'lodash';
 
-import confirm from '../common/Confirm/confirm';
 import RejectButtons from './RejectButtons';
 import DisabledSelect from './DisabledSelect';
 import CommonUpload from '../../components/common/biz/CommonUpload';
@@ -61,12 +60,18 @@ export default class SubscribeDetailToChange extends PureComponent {
       subProList: [], // 资讯订阅产品列表
       subscribelProductMatchInfo: [], // 资讯订阅的产品的三匹配信息
       canShowAppover: false, // 新建资讯订阅和退订时是否需要选择审批人
+      btnDisabled: false,
     };
   }
 
   componentDidMount() {
     const { location: { query: { flowId } } } = this.props;
-    this.props.getSubscribeDetailToChange({ flowId });
+    this.props.getSubscribeDetailToChange({ flowId }).then(() => {
+      const { attachmentNum } = this.props.subscribeDetailToChange.base;
+      this.setState({
+        attachment: attachmentNum,
+      });
+    });
     // 获取当前驳回后修改的审批按钮
     this.props.onQueryBtns({
       flowId,
@@ -100,6 +105,13 @@ export default class SubscribeDetailToChange extends PureComponent {
     }
   }
 
+  @autobind
+  afterLauncher() {
+    this.setState({
+      btnDisabled: true,
+    });
+  }
+
   // 发起流程
   @autobind
   launchFlow(flowBtn, idea) {
@@ -118,7 +130,7 @@ export default class SubscribeDetailToChange extends PureComponent {
     } else {
       commParam.auditors = flowAuditors[0].login;
     }
-    this.props.onUpdateFlow(commParam).then(() => confirm({ content: '处理完成' }));
+    this.props.onUpdateFlow(commParam).then(this.afterLauncher);
   }
 
   // 清空页面数据
@@ -205,7 +217,7 @@ export default class SubscribeDetailToChange extends PureComponent {
           subscribeCustList,
         },
       } = this.props;
-      const { approvalFlg } = this.state;
+      const { approvalFlg } = item;
       const { id, custType } = subscribeCustList;
       this.props.queryThreeMatchInfo({
         custRowId: id,
@@ -355,9 +367,9 @@ export default class SubscribeDetailToChange extends PureComponent {
 // 提交前检查各项输入的值是否符合要求
   @autobind
   submitCheck() {
-    const { approverId } = this.state;
+    const { approverId, canShowAppover } = this.state;
     let result = true;
-    if (_.isEmpty(approverId)) {
+    if (_.isEmpty(approverId) && canShowAppover) {
       message.error('审批人员不能为空');
       result = false;
     }
@@ -371,9 +383,11 @@ export default class SubscribeDetailToChange extends PureComponent {
     const { empNum } = this.props.empInfo;
     const {
       subscribeDetailToChange: {
+        base,
         subscribeCustList,
       },
     } = this.props;
+    const { workFlowNumber, orderId } = base;
     const {
       remark,
       subProList,
@@ -390,6 +404,8 @@ export default class SubscribeDetailToChange extends PureComponent {
       createdBy: empNum,
       comments: remark,
       attachmentNum: attachment,
+      flowId: workFlowNumber,
+      orderId,
       item: newSubProList,
     };
     // 提交
@@ -399,12 +415,12 @@ export default class SubscribeDetailToChange extends PureComponent {
   // 点击页面的按钮事件处理
   @autobind
   handleRejctBtnClick(btn) {
-    const { routeId } = btn;
-    if (routeId === 'commit') {
+    const { operate } = btn;
+    if (operate === 'commit') {
       // 提交按钮
       this.handleSubmit(btn);
     }
-    if (routeId === 'falseOver') {
+    if (operate === 'falseOver') {
       // 终止按钮
       this.launchFlow(btn, '终止申请');
     }
@@ -454,6 +470,8 @@ export default class SubscribeDetailToChange extends PureComponent {
       approverName,
       approverId,
       remark,
+      btnDisabled,
+      canShowAppover,
     } = this.state;
 
     // 资讯订阅中的产品选择配置
@@ -472,6 +490,18 @@ export default class SubscribeDetailToChange extends PureComponent {
       pagination,
       defaultCheckKey: 'xDefaultOpenFlag',
       supportSearchKey: [['prodCode'], ['prodName']],
+    };
+
+    // 附件上传配置项
+    const uploadProps = {
+      // 可上传，可编辑
+      edit: true,
+      attachmentList,
+      // 上传成功callback
+      uploadAttachment: this.uploadCallBack,
+      // 附件Id
+      attachment: attachmentNum,
+      needDefaultText: false,
     };
 
     return (
@@ -503,25 +533,27 @@ export default class SubscribeDetailToChange extends PureComponent {
           <ThreeMatchTip info={threeMatchInfo} />
           <div className={styles.approvalBlock}>
             <InfoTitle head="附件信息" />
-            <CommonUpload
-              attachment={attachmentNum}
-              edit
-              attachmentList={attachmentList}
-            />
+            <CommonUpload {...uploadProps} />
           </div>
-          <div className={styles.approvalBlock}>
-            <InfoTitle head="审批人" />
-            <CommissionLine label="选择审批人" labelWidth="110px">
-              <div className={styles.checkApprover} onClick={this.openApproverBoard}>
-                {approverName === '' ? '' : `${approverName}(${approverId})`}
-                <div className={styles.searchIcon}>
-                  <Icon type="search" />
-                </div>
+          {
+            !canShowAppover ? null :
+            (
+              <div className={styles.approvalBlock}>
+                <InfoTitle head="审批人" />
+                <CommissionLine label="选择审批人" labelWidth="110px">
+                  <div className={styles.checkApprover} onClick={this.openApproverBoard}>
+                    {approverName === '' ? '' : `${approverName}(${approverId})`}
+                    <div className={styles.searchIcon}>
+                      <Icon type="search" />
+                    </div>
+                  </div>
+                </CommissionLine>
               </div>
-            </CommissionLine>
-          </div>
+            )
+          }
         </div>
         <RejectButtons
+          disabled={btnDisabled}
           btnList={approvalBtns}
           onClick={this.handleRejctBtnClick}
         />

@@ -997,6 +997,14 @@ export default class CreateNewApprovalBoard extends PureComponent {
     this.setState({
       unSubProList: array,
     });
+    if (flag === 'add') {
+      const { approvalFlg } = item;
+      if (approvalFlg === 'Y') {
+        this.setState({
+          canShowAppover: true,
+        });
+      }
+    }
   }
 
   // 单佣金调整选择子产品的时候的处理程序
@@ -1321,7 +1329,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
                       dataSource={subscribeCustList}
                       onSearchValue={this.handleChangeSubscribeAssembly}
                       onSelectValue={this.handleSelectAssembly}
-                      subType={commadj.single}
+                      subType={commadj.unsubscribe}
                       shouldeCheck={false}
                     />
                   </CommissionLine>

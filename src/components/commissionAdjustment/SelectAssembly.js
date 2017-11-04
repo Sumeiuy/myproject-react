@@ -170,6 +170,7 @@ export default class SelectAssembly extends PureComponent {
           custType,
         }).then(() => this.afterValidateSingleCust(item));
       } else {
+        this.props.onSelectValue(this.selectedCust);
         const { custName, custEcom, riskLevelLabel } = this.selectedCust;
         this.setState({
           inputValue: `${custName}（${custEcom}） - ${riskLevelLabel || ''}`,

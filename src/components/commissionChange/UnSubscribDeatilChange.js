@@ -10,7 +10,6 @@ import { autobind } from 'core-decorators';
 import { Input, Icon, message } from 'antd';
 import _ from 'lodash';
 
-import confirm from '../common/Confirm/confirm';
 import RejectButtons from './RejectButtons';
 import DisabledSelect from './DisabledSelect';
 import CommonUpload from '../../components/common/biz/CommonUpload';
@@ -54,12 +53,19 @@ export default class UnSubscribeDetailToChange extends PureComponent {
       approverId: '',
       attachment: '',
       unSubProList: [], // 资讯退订产品列表
+      canShowAppover: false, // 新建资讯订阅和退订时是否需要选择审批人
+      btnDisabled: false,
     };
   }
 
   componentDidMount() {
     const { location: { query: { flowId } } } = this.props;
-    this.props.getUnSubDetailToChange({ flowId });
+    this.props.getUnSubDetailToChange({ flowId }).then(() => {
+      const { attachmentNum } = this.props.unSubDetailToChange.base;
+      this.setState({
+        attachment: attachmentNum,
+      });
+    });
     // 获取当前驳回后修改的审批按钮
     this.props.onQueryBtns({
       flowId,
@@ -76,7 +82,6 @@ export default class UnSubscribeDetailToChange extends PureComponent {
       choiceApprover: false,
       approverName: '',
       approverId: '',
-      customer: {},
       attachment: '',
       unSubProList: [], // 资讯退订产品列表
     });
@@ -219,18 +224,16 @@ export default class UnSubscribeDetailToChange extends PureComponent {
 
   // 选中的资讯退订父产品数据结构改为提交所需
   @autobind
-  changeSubmitscriProList(product, matchInfos) {
+  changeSubmitscriProList(product) {
     const {
       prodCode,
       prodName,
       approvalFlg,
     } = product;
-    const matchInfo = _.filter(matchInfos, item => item.productCode === prodCode)[0] || {};
     return {
       prodCode,
       aliasName: prodName,
       approvalFlg,
-      ...matchInfo,
     };
   }
   // 资讯退订调整穿梭变化的时候处理程序
@@ -239,6 +242,14 @@ export default class UnSubscribeDetailToChange extends PureComponent {
     this.setState({
       unSubProList: array,
     });
+    if (flag === 'add') {
+      const { approvalFlg } = item;
+      if (approvalFlg === 'Y') {
+        this.setState({
+          canShowAppover: true,
+        });
+      }
+    }
   }
 
   // 资讯订阅选择子产品的时候的处理程序
@@ -264,10 +275,10 @@ export default class UnSubscribeDetailToChange extends PureComponent {
 
   // 将选中的资讯退订产品数据结构改为提交所需
   @autobind
-  changeSubmitSubProList(list, matchInfos) {
+  changeSubmitSubProList(list) {
     const newSubmitSubscriProList = list.map((product) => {
       const { children } = product;
-      const newSubmitSubscribel = this.changeSubmitscriProList(product, matchInfos);
+      const newSubmitSubscribel = this.changeSubmitscriProList(product);
       if (!_.isEmpty(children)) {
         // 存在子产品
         newSubmitSubscribel.subItem = children.map(this.changeSubmitSubscriProChildren);
@@ -289,6 +300,13 @@ export default class UnSubscribeDetailToChange extends PureComponent {
     return result;
   }
 
+  @autobind
+  afterLauncher() {
+    this.setState({
+      btnDisabled: true,
+    });
+  }
+
   // 发起流程
   @autobind
   launchFlow(flowBtn, idea) {
@@ -307,7 +325,7 @@ export default class UnSubscribeDetailToChange extends PureComponent {
     } else {
       commParam.auditors = flowAuditors[0].login;
     }
-    this.props.onUpdateFlow(commParam).then(() => confirm({ content: '处理完成' }));
+    this.props.onUpdateFlow(commParam).then(this.afterLauncher);
   }
 
   // 资讯退订提交修改
@@ -316,22 +334,29 @@ export default class UnSubscribeDetailToChange extends PureComponent {
     if (!this.submitCheck()) return;
     const { empNum } = this.props.empInfo;
     const {
-      customer,
+      unSubDetailToChange: {
+        base,
+        unSubscribeCustList,
+      },
+    } = this.props;
+    const { workFlowNumber, orderId } = base;
+    const {
       remark,
-      unSubProList,
-      subscribelProductMatchInfo,
       approverId, // 审批人工号
       attachment, // 附件编号
+      unSubProList,
     } = this.state;
-    const newSubProList = this.changeSubmitSubProList(unSubProList, subscribelProductMatchInfo);
+    const newSubProList = this.changeSubmitSubProList(unSubProList);
     const params = {
-      type: customer.custType,
+      type: unSubscribeCustList.custType,
       aprovaluser: approverId,
-      custNum: customer.custEcom,
-      custId: customer.id,
+      custNum: unSubscribeCustList.custEcom,
+      custId: unSubscribeCustList.id,
       createdBy: empNum,
       comments: remark,
       attachmentNum: attachment,
+      flowId: workFlowNumber,
+      orderId,
       item: newSubProList,
     };
     // 提交
@@ -341,12 +366,12 @@ export default class UnSubscribeDetailToChange extends PureComponent {
   // 点击页面的按钮事件处理
   @autobind
   handleRejctBtnClick(btn) {
-    const { routeId } = btn;
-    if (routeId === 'commit') {
+    const { operate } = btn;
+    if (operate === 'commit') {
       // 提交按钮
       this.handleSubmit(btn);
     }
-    if (routeId === 'falseOver') {
+    if (operate === 'falseOver') {
       // 终止按钮
       this.launchFlow(btn, '终止申请');
     }
@@ -394,6 +419,7 @@ export default class UnSubscribeDetailToChange extends PureComponent {
       approverName,
       approverId,
       remark,
+      btnDisabled,
     } = this.state;
 
     // 资讯退订中的产品选择配置
@@ -413,6 +439,18 @@ export default class UnSubscribeDetailToChange extends PureComponent {
       defaultCheckKey: 'xDefaultOpenFlag',
       disableCheckKey: 'canNotBeChoice',
       supportSearchKey: [['prodCode'], ['prodName']],
+    };
+
+    // 附件上传配置项
+    const uploadProps = {
+      // 可上传，可编辑
+      edit: true,
+      attachmentList,
+      // 上传成功callback
+      uploadAttachment: this.uploadCallBack,
+      // 附件Id
+      attachment: attachmentNum,
+      needDefaultText: false,
     };
 
     return (
@@ -443,11 +481,7 @@ export default class UnSubscribeDetailToChange extends PureComponent {
           </div>
           <div className={styles.approvalBlock}>
             <InfoTitle head="附件信息" />
-            <CommonUpload
-              attachment={attachmentNum}
-              edit
-              attachmentList={attachmentList}
-            />
+            <CommonUpload {...uploadProps} />
           </div>
           <div className={styles.approvalBlock}>
             <InfoTitle head="审批人" />
@@ -462,6 +496,7 @@ export default class UnSubscribeDetailToChange extends PureComponent {
           </div>
         </div>
         <RejectButtons
+          disabled={btnDisabled}
           btnList={approvalBtns}
           onClick={this.handleRejctBtnClick}
         />
