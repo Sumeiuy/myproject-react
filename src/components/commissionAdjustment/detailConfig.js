@@ -13,6 +13,27 @@ function convertNY2ZN(v) {
 function changeProductJson(product) {
   const { riskMatch, termMatch, prodMatch, prodCode, aliasName, agrType, prodCommission } = product;
   const prodCom = _.isEmpty(prodCommission) ? {} : { prodCommission };
+  return {
+    key: prodCode,
+    // 产品代码
+    prodCode,
+    // 产品名称
+    aliasName,
+    // 签署确认书类型
+    agrType,
+    // 风险是否匹配
+    riskMatch: convertNY2ZN(riskMatch),
+    // 期限是否匹配
+    termMatch: convertNY2ZN(termMatch),
+    // 产品是否匹配
+    prodMatch: convertNY2ZN(prodMatch),
+    ...prodCom,
+  };
+}
+
+function changeSubProductJson(product) {
+  const { riskMatch, termMatch, prodMatch, prodCode, aliasName, agrType, prodCommission } = product;
+  const prodCom = _.isEmpty(prodCommission) ? {} : { prodCommission };
   const proList = _.isEmpty(riskMatch) ? {
     key: prodCode,
     // 产品代码
@@ -37,8 +58,8 @@ function changeProductJson(product) {
     prodMatch: convertNY2ZN(prodMatch),
   };
   return {
-    ...proList,
     ...prodCom,
+    ...proList,
   };
 }
 
@@ -171,6 +192,21 @@ const detailConfig = {
       if (!_.isEmpty(subItem)) {
         // 存在子产品
         children = subItem.map(changeProductJson);
+        return { ...newProduct, children };
+      }
+      return newProduct;
+    });
+    return newProductLiet;
+  },
+  // 创建咨讯订阅和退订产品表数据
+  createSubProTableData(data) {
+    const newProductLiet = data.map((product) => {
+      const { subItem } = product;
+      const newProduct = changeSubProductJson(product);
+      let children = null;
+      if (!_.isEmpty(subItem)) {
+        // 存在子产品
+        children = subItem.map(changeSubProductJson);
         return { ...newProduct, children };
       }
       return newProduct;
