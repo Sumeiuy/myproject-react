@@ -99,9 +99,9 @@ export default class CreateCollapse extends PureComponent {
       return (
         <div
           className={styles.headerLeft}
-          title={`${item.taskType || '--'}：${item.serveRecord || '--'}`}
+          title={`${item.subtypeCd || '--'}：${item.serveRecord || '--'}`}
         >
-          {item.taskType || '--'}：{item.serveRecord || '--'}
+          {_.isEmpty(item.subtypeCd) ? '' : `${item.subtypeCd}：`}{item.serveRecord || '--'}
         </div>
       );
     }

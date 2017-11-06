@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 13:43:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-01 16:22:09
+ * @Last Modified time: 2017-11-06 14:23:32
  * 客户细分组件
  */
 
@@ -20,6 +20,7 @@ const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const COLUMN_WIDTH = 115;
 const INITIAL_PAGE_SIZE = 10;
+const INITIAL_PAGE_NUM = 1;
 const COLUMN_HEIGHT = 36;
 
 export default class CustomerSegment extends PureComponent {
@@ -177,11 +178,15 @@ export default class CustomerSegment extends PureComponent {
     // 已经上传的file key
     // 用来预览客户列表时，用
     const { onPreview } = this.props;
-    const { curPageNum, curPageSize, fileKey } = this.state;
+    const { fileKey } = this.state;
     this.setState({
       uploadedFileKey: uploadedFileKey || fileKey,
     });
-    onPreview({ uploadKey: uploadedFileKey, pageNum: curPageNum, pageSize: curPageSize });
+    onPreview({
+      uploadKey: uploadedFileKey,
+      pageNum: INITIAL_PAGE_NUM,
+      pageSize: INITIAL_PAGE_SIZE,
+    });
   }
 
   @autobind
