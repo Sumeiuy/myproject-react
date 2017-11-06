@@ -253,7 +253,7 @@ export default class TemplModal extends PureComponent {
       pagination,
       aboutRate: ['0.0004', 'rate'],
       supportSearchKey: [['productCode'], ['productName']],
-      isScrollX: true,
+      scrollX: '130%',
     };
 
 
