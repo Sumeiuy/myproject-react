@@ -66,7 +66,7 @@ const actionColumns = (type, isScrollX, handleAction) => {
   };
 };
 
-const checkColumns = (column, defaultCheckKey, handleAction) => {
+const checkColumns = (column, defaultCheckKey, disableCheckKey, handleAction) => {
   function handleClick(item, event) {
     if (_.isFunction(handleAction)) {
       handleAction(item, event);
@@ -81,6 +81,7 @@ const checkColumns = (column, defaultCheckKey, handleAction) => {
           <Checkbox
             onChange={event => handleClick(item, event)}
             defaultChecked={item[defaultCheckKey] === 'Y'}
+            disabled={item[disableCheckKey] === 'Y'}
           >
             {item[key]}
           </Checkbox>
@@ -120,6 +121,7 @@ export default class TableTransfer extends Component {
     secondColumns: PropTypes.array.isRequired,
     rowKey: PropTypes.string.isRequired,
     defaultCheckKey: PropTypes.string,
+    disableCheckKey: PropTypes.string,
     supportSearchKey: PropTypes.array,
     aboutRate: PropTypes.array,
     scrollX: PropTypes.string,
@@ -135,6 +137,7 @@ export default class TableTransfer extends Component {
     placeholder: '',
     showSearch: true,
     defaultCheckKey: '',
+    disableCheckKey: '',
     supportSearchKey: [],
     aboutRate: [],
     scrollX: '',
@@ -198,6 +201,7 @@ export default class TableTransfer extends Component {
       secondColumns,
       rowKey,
       defaultCheckKey,
+      disableCheckKey,
       aboutRate,
       scrollX,
     } = nextProps || this.props;
@@ -208,7 +212,7 @@ export default class TableTransfer extends Component {
     const totalData = [...firstData, ...secondData];
     const checkFlag = this.isNeedCheckColumn(totalData);
     const initSecondColumns = checkFlag ? (
-      this.initTableColumn(secondColumns, defaultCheckKey)
+      this.initTableColumn(secondColumns, defaultCheckKey, disableCheckKey)
     ) : secondColumns;
     // 第三步，佣金率相关
     const totalRate = this.getTotalRate();
@@ -286,11 +290,11 @@ export default class TableTransfer extends Component {
 
   // 为child行，第一列增加check框
   @autobind
-  initTableColumn(columnArray, defaultCheckKey) {
+  initTableColumn(columnArray, defaultCheckKey, disableCheckKey) {
     return columnArray.map(
       (item, index) => {
         if (index === 0) {
-          return checkColumns(_.omit(item, 'dataIndex'), defaultCheckKey, this.handleCheck);
+          return checkColumns(_.omit(item, 'dataIndex'), defaultCheckKey, disableCheckKey, this.handleCheck);
         }
         return item;
       },

@@ -186,18 +186,21 @@ export const unsubcribeData = [{
     productCode: 'TC02',
     type: '综合定价产品',
     default: 'Y',
+    disable: 'Y',
   }, {
     key: '112',
     productName: '福享套餐112',
     productCode: 'TC02',
     type: '综合定价产品',
     default: 'N',
+    disable: 'N',
   }, {
     key: '113',
     productName: '持仓异动提醒113',
     productCode: 'TC02',
     type: '综合定价产品',
     default: 'Y',
+    disable: 'Y',
   }],
 }, {
   key: '12',
@@ -217,18 +220,21 @@ export const unsubcribeData = [{
     productCode: 'TC02',
     type: '综合定价产品',
     default: 'Y',
+    disable: 'N',
   }, {
     key: '132',
     productName: '福享套餐132',
     productCode: 'TC02',
     type: '综合定价产品',
     default: 'Y',
+    disable: 'Y',
   }, {
     key: '133',
     productName: '福享套餐133',
     productCode: 'TC02',
     type: '综合定价产品',
     default: 'N',
+    disable: 'N',
   }],
 }, {
   key: '14',
@@ -248,18 +254,21 @@ export const unsubcribeData = [{
     productCode: 'TC02',
     type: '综合定价产品',
     default: 'N',
+    disable: 'N',
   }, {
     key: '152',
     productName: '福享套餐152',
     productCode: 'TC02',
     type: '综合定价产品',
     default: 'N',
+    disable: 'N',
   }, {
     key: '153',
     productName: '福享套餐113',
     productCode: 'TC02',
     type: '综合定价产品',
     default: 'Y',
+    disable: 'N',
   }],
 }, {
   key: '16',
@@ -299,11 +308,11 @@ export const productColumns = [
     key: 'productCode',
     dataIndex: 'productCode',
     width: '15%',
-    render: item => (
+    /* render: item => (
       <div className={classnames(styles.column, styles.productCode)} title={item}>
         {item}
       </div>
-    ),
+    ), */
   }, {
     title: '产品名称',
     dataIndex: 'productName',
