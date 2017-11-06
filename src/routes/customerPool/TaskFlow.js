@@ -1,8 +1,8 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
- * @Last Modified by:   xuxiaoqin
- * @Last Modified time: 2017-11-06 10:36:15
+ * @Last Modified by: xuxiaoqin
+ * @Last Modified time: 2017-11-06 14:44:46
  */
 
 import React, { PureComponent } from 'react';
@@ -136,10 +136,10 @@ export default class TaskFlow extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { submitTaskFlowResult, getLabelPeopleLoading } = this.props;
+    const { getLabelPeopleLoading } = this.props;
     const { submitTaskFlowResult: nextResult, getLabelPeopleLoading: nextLoading } = nextProps;
 
-    if (nextResult !== submitTaskFlowResult) {
+    if (nextResult === 'success') {
       this.setState({
         isSuccess: true,
       });
