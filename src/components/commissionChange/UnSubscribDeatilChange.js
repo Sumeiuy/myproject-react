@@ -149,8 +149,8 @@ export default class UnSubscribeDetailToChange extends PureComponent {
 
   @autobind
   changeSubscriProList(product) {
-    const { prodRowId, prodId, prodName } = product;
-    return {
+    const { prodRowId, prodId, prodName, children } = product;
+    const proList = {
       key: prodRowId,
       // 产品代码
       prodCode: prodId,
@@ -159,6 +159,17 @@ export default class UnSubscribeDetailToChange extends PureComponent {
       // 传入的产品原始数据
       ...product,
     };
+    if (!_.isEmpty(children)) {
+      const newChildren = _.map(children, (item) => {
+        const { prodRowid } = item;
+        return {
+          key: prodRowid,
+          ...item,
+        };
+      });
+      return { ...proList, children: newChildren };
+    }
+    return proList;
   }
 
   // 重组资讯退订可选产品List
