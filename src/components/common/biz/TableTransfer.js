@@ -124,7 +124,10 @@ export default class TableTransfer extends Component {
     disableCheckKey: PropTypes.string,
     supportSearchKey: PropTypes.array,
     aboutRate: PropTypes.array,
-    scrollX: PropTypes.string,
+    scrollX: React.PropTypes.oneOfType([
+      PropTypes.number,
+      PropTypes.string,
+    ]),
   }
 
   static defaultProps = {
@@ -229,11 +232,11 @@ export default class TableTransfer extends Component {
       secondArray: initSecondArray,
       firstColumns: [
         ...firstColumns,
-        actionColumns('first', !_.isEmpty(scrollX), this.handleClick),
+        actionColumns('first', scrollX !== '', this.handleClick), // scrollX 的默认值为 ''
       ],
       secondColumns: [
         ...initSecondColumns,
-        actionColumns('second', !_.isEmpty(scrollX), this.handleClick),
+        actionColumns('second', scrollX !== '', this.handleClick), // scrollX 的默认值为 ''
       ],
       rate: {
         rateFlag, // 是否计算佣金率
@@ -660,9 +663,9 @@ export default class TableTransfer extends Component {
       secondColumns,
     } = this.state;
     let scroll = { y: 245 };
-    if (!_.isEmpty(scrollX)) {
-      const x = (scrollX.indexOf('%') !== -1) ? (scrollX) : _.toNumber(scrollX);
-      scroll = { y: 253, x };
+    // scrollX 的默认值是 ''
+    if (scrollX !== '') {
+      scroll = { y: 253, x: scrollX };
     }
 
     return (
