@@ -242,8 +242,8 @@ export default class SubscribeDetailToChange extends PureComponent {
 
   @autobind
   changeSubscriProList(product) {
-    const { prodRowId, prodId, prodName } = product;
-    return {
+    const { prodRowId, prodId, prodName, children } = product;
+    const proList = {
       key: prodRowId,
       // 产品代码
       prodCode: prodId,
@@ -252,6 +252,17 @@ export default class SubscribeDetailToChange extends PureComponent {
       // 传入的产品原始数据
       ...product,
     };
+    if (!_.isEmpty(children)) {
+      const newChildren = _.map(children, (item) => {
+        const { prodRowid } = item;
+        return {
+          key: prodRowid,
+          ...item,
+        };
+      });
+      return { ...proList, children: newChildren };
+    }
+    return proList;
   }
 
   // 重组资讯订阅可选产品List
