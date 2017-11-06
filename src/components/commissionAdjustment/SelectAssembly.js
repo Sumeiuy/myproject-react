@@ -22,15 +22,18 @@ export default class SelectAssembly extends PureComponent {
     dataSource: PropTypes.array.isRequired,
     onSearchValue: PropTypes.func.isRequired,
     onSelectValue: PropTypes.func.isRequired,
-    onValidateCust: PropTypes.func.isRequired,
+    onValidateCust: PropTypes.func,
     width: PropTypes.string,
     subType: PropTypes.string,
-    validResult: PropTypes.object.isRequired,
+    validResult: PropTypes.object,
+    shouldeCheck: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
     width: '300px',
     subType: '',
+    validResult: {},
+    onValidateCust: () => {},
   }
 
   constructor(props) {
@@ -65,6 +68,7 @@ export default class SelectAssembly extends PureComponent {
       typeStyle: 'search',
     });
     this.selectedCust = null;
+    this.canSelected = false;
   }
 
   @autobind
@@ -90,9 +94,10 @@ export default class SelectAssembly extends PureComponent {
 
   // 校验不通过，弹框
   @autobind
-  fail2Validate(shortCut) {
+  fail2Validate(shortCut, content) {
     confirm({
       shortCut,
+      content,
       onOk: this.handleOKAfterValidate,
       onCancel: this.handleCancelAfterValidate,
     });
@@ -130,15 +135,16 @@ export default class SelectAssembly extends PureComponent {
     }
     if (subType === commadj.single && hasorder === 'Y') {
       // 目前只有单佣金需要对在途订单
-      confirm({ content: validmsg });
-      this.canSelected = false;
+      this.fail2Validate('', validmsg);
       return;
     }
     this.canSelected = true;
-    confirm({
-      shortCut: 'custPass',
-      onOk: this.handleOKAfterValidate,
-    });
+    // TODO 测试说校验成功后，不用提示，不过还是觉得校验成功的时候，需要提示下用户
+    // confirm({
+    //   shortCut: 'custPass',
+    //   onOk: this.handleOKAfterValidate,
+    // });
+    this.handleOKAfterValidate();
     const { custName, custEcom, riskLevelLabel } = this.selectedCust;
     this.setState({
       inputValue: `${custName}（${custEcom}） - ${riskLevelLabel || ''}`,
@@ -151,17 +157,26 @@ export default class SelectAssembly extends PureComponent {
   handleSelectedValue(value) {
     if (value) {
       // 找出那个用户选择的客户数据
-      const { dataSource } = this.props;
+      const { dataSource, shouldeCheck } = this.props;
       const item = _.filter(dataSource, o => o.id === value)[0];
       // 首先需要做客户校验
       this.selectedCust = null;
       const { id, custType } = item;
       this.selectedCust = item;
       // this.props.onSelectValue(item);
-      this.props.onValidateCust({
-        custRowId: id,
-        custType,
-      }).then(() => this.afterValidateSingleCust(item));
+      if (shouldeCheck) {
+        this.props.onValidateCust({
+          custRowId: id,
+          custType,
+        }).then(() => this.afterValidateSingleCust(item));
+      } else {
+        this.props.onSelectValue(this.selectedCust);
+        const { custName, custEcom, riskLevelLabel } = this.selectedCust;
+        this.setState({
+          inputValue: `${custName}（${custEcom}） - ${riskLevelLabel || ''}`,
+          typeStyle: 'close',
+        });
+      }
     } else {
       this.setState({
         inputValue: '',

@@ -2,16 +2,18 @@
  * @Author: sunweibin
  * @Date: 2017-11-01 18:37:35
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-03 19:52:17
+ * @Last Modified time: 2017-11-04 16:26:59
  * @description 单佣金调整驳回后修改页面
  */
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import { Input, Icon } from 'antd';
+import { Input, Icon, message } from 'antd';
 import _ from 'lodash';
 
+import confirm from '../common/Confirm/confirm';
+import DisabledSelect from './DisabledSelect';
 import RejectButtons from './RejectButtons';
 import InfoTitle from '../common/InfoTitle';
 import CommonUpload from '../common/biz/CommonUpload';
@@ -21,6 +23,7 @@ import Transfer from '../common/biz/TableTransfer';
 import ThreeMatchTip from '../commissionAdjustment/ThreeMatchTip';
 import ChoiceApproverBoard from '../commissionAdjustment/ChoiceApproverBoard';
 import OtherCommissionSelectList from '../commissionAdjustment/OtherCommissionSelectList';
+import { seibelConfig } from '../../config';
 import {
   pagination,
   singleColumns,
@@ -29,6 +32,27 @@ import {
 import styles from './change.less';
 
 const { TextArea } = Input;
+const { comsubs: commadj } = seibelConfig;
+
+// 其他佣金率的参数名称数组
+const otherComs = [
+  'zqCommission',
+  'stkCommission',
+  'creditCommission',
+  'ddCommission',
+  'hCommission',
+  'dzCommission',
+  'coCommission',
+  'stbCommission',
+  'oCommission',
+  'doCommission',
+  'hkCommission',
+  'bgCommission',
+  'qCommission',
+  'dqCommission',
+  'opCommission',
+  'dCommission',
+];
 
 export default class SingleDetailChange extends PureComponent {
   static propTypes = {
@@ -47,8 +71,9 @@ export default class SingleDetailChange extends PureComponent {
     onQueryBtns: PropTypes.func.isRequired,
     approvalBtns: PropTypes.array.isRequired,
     submitResult: PropTypes.string.isRequired,
-    onSubmit: PropTypes.array.isRequired,
-    onUpdateFlow: PropTypes.array.isRequired,
+    onSubmit: PropTypes.func.isRequired,
+    onUpdateFlow: PropTypes.func.isRequired,
+    clearReduxState: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -59,6 +84,7 @@ export default class SingleDetailChange extends PureComponent {
     super(props);
     // TODO state里面的初始值，使用detail里面的字段值
     this.state = {
+      btnDisabled: false,
       remark: '',
       newCommission: '',
       choiceApprover: false,
@@ -66,6 +92,10 @@ export default class SingleDetailChange extends PureComponent {
       approverId: '',
       attachment: '',
       otherComReset: new Date().getTime(), // 用来判断是否重置
+      userBaseCommission: {}, // 用户选择的其他佣金费率;
+      singleProductMatchInfo: [], // 单佣金调整选择的产品的三匹配信息
+      singleProductList: [], // 单佣金调整选择的产品列表
+      singleDValue: 0, // 产品差值
     };
   }
 
@@ -73,6 +103,10 @@ export default class SingleDetailChange extends PureComponent {
     const { flowCode } = this.props;
     this.props.onQueryDetail({
       flowCode,
+    });
+    // 获取当前驳回后修改的审批按钮
+    this.props.onQueryBtns({
+      flowId: flowCode,
     });
   }
 
@@ -86,11 +120,28 @@ export default class SingleDetailChange extends PureComponent {
         newCommission,
         comments,
         attachmentNum,
+        item,
       } = base;
+      const userBaseCommission = this.pickUserOtherCommission();
+      // 初始化将父产品的三匹配信息提取出来并保存
+      const initMatchs = item.map((p) => {
+        const { riskRankMhrt, investProdMhrt, investTypeMhrt, prodCode, isMatch } = p;
+        const matchInfo = {
+          productCode: prodCode,
+          riskMatch: riskRankMhrt,
+          prodMatch: investProdMhrt,
+          termMatch: investTypeMhrt,
+          isMatch,
+        };
+        return matchInfo;
+      });
       this.setState({
         newCommission,
         remark: comments,
         attachment: attachmentNum,
+        singleProductList: item,
+        singleProductMatchInfo: _.cloneDeep(initMatchs),
+        ...userBaseCommission,
       });
     }
   }
@@ -225,36 +276,281 @@ export default class SingleDetailChange extends PureComponent {
     };
   }
 
+  // 挑选出用户选择的其他佣金费率的值
+  @autobind
+  pickUserOtherCommission() {
+    const { detail: { base } } = this.props;
+    return _.pick(base, otherComs);
+  }
+
+  @autobind
+  clearRedux() {
+    // 清空redux的state
+    this.props.clearReduxState({
+      clearList: [
+        { name: 'singleOtherCommissionOptions' },
+        { name: 'singleComProductList' },
+        { name: 'threeMatchInfo', value: {} },
+        { name: 'singleDetailToChange', value: {} },
+        { name: 'singleGJCommission' },
+        { name: 'approvalBtns' },
+        { name: 'approvalUserList' },
+        { name: 'singleSubmit', value: '' },
+      ],
+    });
+  }
+
+  // 关闭弹出框后，清空页面数据
+  @autobind
+  clearApprovalBoard() {
+    this.setState({
+      remark: '',
+      approverName: '',
+      approverId: '',
+      otherComReset: new Date().getTime(),
+      customer: {},
+      attachment: '',
+      singleProductList: [],
+      singleDValue: 0,
+      singleProductMatchInfo: [],
+      newCommission: '',
+    });
+    this.clearRedux();
+  }
+
+  // 提交前检查各项输入的值是否符合要求
+  @autobind
+  submitCheck() {
+    let result = true;
+    const { singleDValue, approverId } = this.state;
+    if (singleDValue !== 0) {
+      result = false;
+      confirm({
+        content: '请确保所选产品佣金率与目标股基佣金率一致',
+      });
+    }
+    if (_.isEmpty(approverId)) {
+      message.error('审批人员不能为空');
+      result = false;
+    }
+    return result;
+  }
+
+  // 修改单佣金父产品参数
+  @autobind
+  updateParamsProduct(product, matchInfos) {
+    const { prodCode, prodName, prodRate } = product;
+    const matchInfo = _.filter(matchInfos, item => item.productCode === prodCode)[0] || {};
+    const { productCode, ...resetMatchInfo } = matchInfo;
+    return {
+      prodCode,
+      aliasName: prodName,
+      prodCommission: prodRate,
+      ...resetMatchInfo,
+    };
+  }
+
+  // 修改单佣金子产品参数
+  @autobind
+  updateParamChildProduct(product) {
+    const { prodCode, prodName } = product;
+    return {
+      prodCode,
+      aliasName: prodName,
+    };
+  }
+
+  // 将选择的产品进行筛选，并合并入3匹配信息
+  @autobind
+  pickSingleProductList(list, matchInfos) {
+    return list.map((item) => {
+      // 此处有aliasName为:没经过穿梭框处理前的详情数据
+      // 此处没有aliasName,经过穿梭框处理过的数据，
+      const { aliasName } = item;
+      if (_.isEmpty(aliasName)) {
+        const { children } = item;
+        const product = this.updateParamsProduct(item, matchInfos);
+        if (!_.isEmpty(children)) {
+          product.subProductVO = children.map(this.updateParamChildProduct);
+        }
+        return product;
+      }
+      // 表示初始化的数据
+      const { subItem } = item;
+      const needPickKey = ['prodMatch', 'isMatch', 'riskMatch', 'termMatch', 'aliasName', 'prodCode', 'prodCommission'];
+      const anotherProduct = _.pick(item, needPickKey);
+      if (!_.isEmpty(subItem)) {
+        anotherProduct.subProductVO = _.cloneDeep(subItem);
+      }
+      return anotherProduct;
+    });
+  }
+
+  @autobind
+  afterLauncher() {
+    this.setState({
+      btnDisabled: true,
+    });
+  }
+
+  // 发起流程
+  @autobind
+  launchFlow(flowBtn, idea) {
+    const { base: { flowCode } } = this.props.detail;
+    const { nextGroupName, operate, flowAuditors } = flowBtn;
+    const { approverId } = this.state;
+    // 根据按钮不同传递不同参数
+    const commParam = {
+      flowId: flowCode,
+      groupName: nextGroupName,
+      approverIdea: idea,
+      operate,
+    };
+    if (operate === 'commit') {
+      commParam.auditors = approverId;
+    } else {
+      commParam.auditors = flowAuditors[0].login;
+    }
+    this.props.onUpdateFlow(commParam).then(this.afterLauncher);
+  }
+
+  // 单佣金调整提交
+  @autobind
+  singleSubmit(flowBtn) {
+    if (!this.submitCheck()) return;
+    const {
+      remark,
+      newCommission,
+      approverId,
+      attachment,
+      singleProductList,
+      singleProductMatchInfo,
+    } = this.state;
+    const otherCommissions = _.pick(this.state, otherComs);
+    const productList = this.pickSingleProductList(singleProductList, singleProductMatchInfo);
+    const { customer, base: { orderId } } = this.props.detail;
+    const params = {
+      orderId,
+      custRowId: customer.id,
+      custType: customer.custType,
+      newComm: newCommission,
+      comments: remark,
+      attachmentNum: attachment,
+      aprovaluser: approverId,
+      productInfo: productList,
+      ...otherCommissions,
+    };
+    this.props.onSubmit(params).then(() => this.launchFlow(flowBtn, '重新申请'));
+  }
+
   // 点击页面的按钮事件处理
   @autobind
   handleRejctBtnClick(btn) {
-    console.warn('handleRejctBtnClick>btn', btn);
+    const { operate } = btn;
+    if (operate === 'commit') {
+      // 提交按钮
+      this.singleSubmit(btn);
+    }
+    if (operate === 'falseOver') {
+      // 终止按钮
+      this.launchFlow(btn, '终止申请');
+    }
+  }
+
+  @autobind
+  merge3MatchInfo(info) {
+    const { riskRankMhrt, investProdMhrt, investTypeMhrt, productCode, isMatch } = info;
+    const matchInfo = {
+      productCode,
+      riskMatch: riskRankMhrt,
+      prodMatch: investProdMhrt,
+      termMatch: investTypeMhrt,
+      isMatch,
+    };
+    const { singleProductMatchInfo } = this.state;
+    const exsit = _.findIndex(singleProductMatchInfo, o => o.productCode === productCode) > -1;
+    if (!exsit) {
+      this.setState({
+        singleProductMatchInfo: [matchInfo, ...singleProductMatchInfo],
+      });
+    }
+  }
+
+  // 单佣金调整穿梭变化的时候处理程序
+  @autobind
+  handleSingleTransferChange(flag, item, array, dValue) {
+    this.setState({
+      singleProductList: array,
+      singleDValue: dValue,
+    });
+    if (flag === 'add') {
+      // 如果是左侧列表添加到右侧列表,则需要查询三匹配信息
+      const { prodCode } = item;
+      const { customer } = this.props.detail;
+      this.props.onQuery3Match({
+        custRowId: customer.id,
+        custType: customer.custType,
+        prdCode: prodCode,
+      }).then(() => this.merge3MatchInfo(this.props.threeMatchInfo));
+    }
+  }
+
+  // 单佣金调整选择子产品的时候的处理程序
+  @autobind
+  handleSingleTransferSubProductCheck(item, array) {
+    this.setState({
+      singleProductList: array,
+    });
+  }
+
+  // 选择其他佣金比率
+  @autobind
+  changeOtherCommission(name, value) {
+    this.setState({
+      [name]: value,
+    });
+  }
+
+  // 将提交按钮中的审批人列表提取出来
+  @autobind
+  pickApprovalUserListInFlowBtns() {
+    const { approvalBtns } = this.props;
+    const list = _.filter(approvalBtns, btn => btn.operate === 'commit')[0].flowAuditors;
+    // 转化list的格式
+    return list.map((item) => {
+      const { empName, login, occupation } = item;
+      return {
+        empNo: login,
+        belowDept: occupation,
+        empName,
+      };
+    });
   }
 
   render() {
-    const { detail } = this.props;
-    if (_.isEmpty(detail.base)) {
+    const { detail, approvalBtns } = this.props;
+    if (_.isEmpty(detail.base) && _.isEmpty(approvalBtns)) {
       return null;
     }
-    const { customer, approvalList, attachmentList } = detail;
-    const { item } = detail.base;
+    const { customer, attachmentList } = detail;
+    const { item, attachmentNum } = detail.base;
     const {
       newCommission,
       remark,
       choiceApprover,
       approverName,
       approverId,
-      attachment,
       otherComReset,
+      btnDisabled,
     } = this.state;
     const {
       singleGJ,
       optionalList,
       threeMatchInfo,
       otherRate,
-      approvalBtns,
     } = this.props;
-
+    // 将提交按钮中的审批人列表提取出来
+    const approvalList = this.pickApprovalUserListInFlowBtns();
     // 1. 针对用户选择的单佣金调整的申请中添加的item产品列表
     const transferData = this.makeTransferNeedData(optionalList, item);
     // 单佣金调整中的产品选择配置
@@ -276,6 +572,9 @@ export default class SingleDetailChange extends PureComponent {
       totalData: optionalList,
     };
 
+    // 用户选择的其他佣金率的值
+    const userBaseCommission = this.pickUserOtherCommission();
+
     // 附件上传配置项
     const uploadProps = {
       // 可上传，可编辑
@@ -284,7 +583,7 @@ export default class SingleDetailChange extends PureComponent {
       // 上传成功callback
       uploadAttachment: this.uploadCallBack,
       // 附件Id
-      attachment,
+      attachment: attachmentNum,
       needDefaultText: false,
     };
 
@@ -294,18 +593,10 @@ export default class SingleDetailChange extends PureComponent {
           <div className={styles.approvalBlock}>
             <InfoTitle head="基本信息" />
             <CommissionLine label="子类型" labelWidth="90px" required>
-              <Input
-                value="佣金调整"
-                disabled
-                style={{ width: '300px' }}
-              />
+              <DisabledSelect text="佣金调整" />
             </CommissionLine>
             <CommissionLine label="客户" labelWidth="90px" needInputBox={false}>
-              <Input
-                value={`${customer.custName}(${customer.custEcom})-${customer.riskLevelLabel}`}
-                disabled
-                style={{ width: '300px' }}
-              />
+              <DisabledSelect text={`${customer.custName}(${customer.custEcom})-${customer.riskLevelLabel}`} />
             </CommissionLine>
             <CommissionLine label="备注" labelWidth="90px">
               <TextArea
@@ -355,6 +646,9 @@ export default class SingleDetailChange extends PureComponent {
               reset={otherComReset}
               otherRatios={otherRate}
               onChange={this.changeOtherCommission}
+              custOpenRzrq={customer.openRzrq}
+              subType={commadj.single}
+              baseCommission={userBaseCommission}
             />
           </div>
           <div className={styles.approvalBlock}>
@@ -374,6 +668,7 @@ export default class SingleDetailChange extends PureComponent {
           </div>
         </div>
         <RejectButtons
+          disabled={btnDisabled}
           btnList={approvalBtns}
           onClick={this.handleRejctBtnClick}
         />

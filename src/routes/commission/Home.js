@@ -58,6 +58,7 @@ const effects = {
   unSubSubscribe: 'commission/submitConsultUnSubscribe',
   clearReduxState: 'commission/clearReduxState',
   singleCustValidate: 'commission/validateCustomerInSingle',
+  onCheckSubsciCust: 'commission/validateCustomerInSub',
 };
 
 const mapStateToProps = state => ({
@@ -86,7 +87,7 @@ const mapStateToProps = state => ({
   // 右侧咨询订阅详情
   subscribeDetail: state.commission.subscribeDetail,
   // 右侧资讯退订详情
-  unsubscribeDetail: state.commission.subscribeDetail,
+  unsubscribeDetail: state.commission.unsubscribeDetail,
   // 审批历史记录
   approvalRecord: state.commission.approvalRecord,
   // 查询审批记录进程
@@ -95,9 +96,9 @@ const mapStateToProps = state => ({
   batchnum: state.commission.batchnum,
   // 提交批量佣金申请调整的进程
   batchSubmitProcess: state.loading.effects[effects.submitBatch],
-  // 提交咨讯订阅申请调整的进程
+  // 提交资讯订阅申请调整的进程
   subsciSubmitProcess: state.loading.effects[effects.subSubscribe],
-  // 提交咨讯退订申请调整的进程
+  // 提交资讯退订申请调整的进程
   unSubsciSubmitProcess: state.loading.effects[effects.unSubSubscribe],
   // 目标股基佣金率码值列表
   gjCommissionList: state.commission.gjCommission,
@@ -113,9 +114,9 @@ const mapStateToProps = state => ({
   singleComProductList: state.commission.singleComProductList,
   // 客户与产品的三匹配信息
   threeMatchInfo: state.commission.threeMatchInfo,
-  // 新建咨讯订阅可选产品列表
+  // 新建资讯订阅可选产品列表
   subscribelProList: state.commission.subscribelProList,
-  // 新建咨讯订阅可选产品列表
+  // 新建资讯订阅可选产品列表
   unSubscribelProList: state.commission.unSubscribelProList,
   // 单佣金调整申请结果
   singleSubmit: state.commission.singleSubmit,
@@ -125,6 +126,8 @@ const mapStateToProps = state => ({
   consultUnsubId: state.commission.consultUnsubId,
   // 单佣金调整客户检验返回数据
   singleCVR: state.commission.singleCustValidate,
+  // 资讯订阅客户校验
+  sciCheckCustomer: state.commission.sciCheckCustomer,
 });
 
 const getDataFunction = (loading, type) => query => ({
@@ -167,15 +170,15 @@ const mapDispatchToProps = {
   getSingleOtherRates: getDataFunction(false, effects.singleComOptions),
   // 查询单佣金调整页面客户列表
   getSingleCustList: getDataFunction(false, effects.singleCustList),
-  // 咨讯订阅、咨讯退订客户列表
+  // 资讯订阅、资讯退订客户列表
   getSubscribelCustList: getDataFunction(false, effects.subscribeCustList),
   // 获取单佣金调整中的可选产品列表
   getSingleProductList: getDataFunction(false, effects.singleProList),
   // 查询产品与客户的三匹配信息
   queryThreeMatchInfo: getDataFunction(false, effects.threeMatchInfo),
-  // 获取新建咨讯订阅可选产品列表
+  // 获取新建资讯订阅可选产品列表
   getSubscribelProList: getDataFunction(false, effects.subscribelProList),
-  // 获取新建咨讯退订可选产品列表
+  // 获取新建资讯退订可选产品列表
   getUnSubscribelProList: getDataFunction(false, effects.unSubscribelProList),
   // 咨询订阅提交
   submitSub: getDataFunction(false, effects.subSubscribe),
@@ -185,6 +188,8 @@ const mapDispatchToProps = {
   clearReduxState: getDataFunction(false, effects.clearReduxState),
   // 单佣金调整客户校验
   singleCustValidate: getDataFunction(false, effects.singleCustValidate),
+  // 资讯订阅调整客户校验
+  onCheckSubsciCust: getDataFunction(false, effects.onCheckSubsciCust),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -252,6 +257,8 @@ export default class CommissionHome extends PureComponent {
     singleCVR: PropTypes.object.isRequired,
     subsciSubmitProcess: PropTypes.bool,
     unSubsciSubmitProcess: PropTypes.bool,
+    onCheckSubsciCust: PropTypes.func.isRequired,
+    sciCheckCustomer: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -346,28 +353,29 @@ export default class CommissionHome extends PureComponent {
     }
 
     // 用户提交咨询订阅申请
-    const { subsciSubmitProcess: prevSSP } = this.props;
-    const { subsciSubmitProcess: nextSSP, consultSubId: nextSub } = nextProps;
-    if (!nextSSP && prevSSP) {
-      if (nextSub !== '') {
-        // 成功
-        message.success('咨讯订阅提交成功');
-      } else {
-        message.error('咨讯订阅提交失败');
-      }
-    }
+    // const { subsciSubmitProcess: prevSSP } = this.props;
+    // const { subsciSubmitProcess: nextSSP, consultSubId: nextSub } = nextProps;
+    // if (!nextSSP && prevSSP) {
+    //   if (nextSub !== '') {
+    //     // 成功
+    //     message.success('资讯订阅提交成功');
+    //   } else {
+    //     message.error('资讯订阅提交失败');
+    //   }
+    // }
 
     // 用户提交咨询退订申请
-    const { unSubsciSubmitProcess: prevUSP } = this.props;
-    const { unSubsciSubmitProcess: nextUSP, consultUnsubId: nextUnSub } = nextProps;
-    if (!nextUSP && prevUSP) {
-      if (nextUnSub !== '') {
-        // 成功
-        message.success('咨讯退订提交成功');
-      } else {
-        message.error('咨讯退订提交失败');
-      }
-    }
+    // const { unSubsciSubmitProcess: prevUSP } = this.props;
+    // const { unSubsciSubmitProcess: nextUSP, consultUnsubId: nextUnSub } = nextProps;
+    // if (!nextUSP && prevUSP) {
+    //   if (nextUnSub !== '') {
+    //     // 成功
+    //     message.success('资讯退订提交成功');
+    //     this.closeNewApprovalBoard();
+    //   } else {
+    //     message.error('资讯退订提交失败');
+    //   }
+    // }
   }
 
   componentDidUpdate() {
@@ -622,6 +630,8 @@ export default class CommissionHome extends PureComponent {
       clearReduxState,
       singleCustValidate,
       singleCVR,
+      onCheckSubsciCust,
+      sciCheckCustomer,
     } = this.props;
     const isEmpty = _.isEmpty(list.resultData);
     // 此处需要提供一个方法给返回的接口查询设置是否查询到数据
@@ -709,6 +719,8 @@ export default class CommissionHome extends PureComponent {
               clearReduxState={clearReduxState}
               onValidateSingleCust={singleCustValidate}
               singleCustVResult={singleCVR}
+              onCheckSubsciCust={onCheckSubsciCust}
+              sciCheckCustomer={sciCheckCustomer}
             />
           )
         }

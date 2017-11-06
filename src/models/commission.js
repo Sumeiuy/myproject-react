@@ -69,6 +69,8 @@ export default {
     singleSubmit: '',
     // 单佣金调整客户校验结果
     singleCustValidate: {},
+    // 咨讯订阅客户校验结果
+    sciCheckCustomer: {},
   },
   reducers: {
     getProductListSuccess(state, action) {
@@ -131,8 +133,12 @@ export default {
       const { payload: { detailRes, attachmentRes, approvalRes, stepRes } } = action;
       const detailResult = detailRes.resultData;
       const attachmentResult = attachmentRes.resultData;
-      const approvalResult = approvalRes.resultData;
-      const stepResult = stepRes.resultData;
+      let approvalResult = [];
+      let stepResult = {};
+      if (!_.isEmpty(approvalRes)) {
+        approvalResult = approvalRes.resultData;
+        stepResult = stepRes.resultData;
+      }
       return {
         ...state,
         subscribeDetail: {
@@ -148,8 +154,12 @@ export default {
       const { payload: { detailRes, attachmentRes, approvalRes, stepRes } } = action;
       const detailResult = detailRes.resultData;
       const attachmentResult = attachmentRes.resultData;
-      const approvalResult = approvalRes.resultData;
-      const stepResult = stepRes.resultData;
+      let approvalResult = [];
+      let stepResult = {};
+      if (!_.isEmpty(approvalRes)) {
+        approvalResult = approvalRes.resultData;
+        stepResult = stepRes.resultData;
+      }
       return {
         ...state,
         unsubscribeDetail: {
@@ -335,6 +345,14 @@ export default {
       };
     },
 
+    checkCustomerInSciSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        sciCheckCustomer: resultData,
+      };
+    },
+
     queryThreeMatchInfoSuccess(state, action) {
       const { payload: { response, prdCode } } = action;
       const resultData = response.resultData || {};
@@ -496,7 +514,6 @@ export default {
         flowCode: detailRD.flowCode,
         loginuser,
       });
-      // TODO 先注销，后面接口好了再弄
       const stepRes = yield call(api.queryCurrentStep, {
         flowCode: detailRD.flowCode,
       });
@@ -519,13 +536,18 @@ export default {
       // 通过查询到的详情数据的attachmentNum获取附件信息
       const detailRD = detailRes.resultData;
       const attachmentRes = yield call(api.getAttachment, { attachment: detailRD.attachmentNum });
-      const approvalRes = yield call(api.querySingleCustApprovalRecord, {
-        flowCode: detailRD.flowCode,
-        loginuser,
-      });
-      const stepRes = yield call(api.queryCurrentStep, {
-        flowCode: detailRD.flowCode,
-      });
+      const { flowCode } = detailRD;
+      let approvalRes = {};
+      let stepRes = {};
+      if (!_.isEmpty(flowCode)) {
+        approvalRes = yield call(api.querySingleCustApprovalRecord, {
+          flowCode: detailRD.flowCode,
+          loginuser,
+        });
+        stepRes = yield call(api.queryCurrentStep, {
+          flowCode: detailRD.flowCode,
+        });
+      }
       yield put({
         type: 'getSubscribeDetailSuccess',
         payload: { detailRes, attachmentRes, approvalRes, stepRes },
@@ -545,13 +567,18 @@ export default {
       // 通过查询到的详情数据的attachmentNum获取附件信息
       const detailRD = detailRes.resultData;
       const attachmentRes = yield call(api.getAttachment, { attachment: detailRD.attachmentNum });
-      const approvalRes = yield call(api.querySingleCustApprovalRecord, {
-        flowCode: detailRD.flowCode,
-        loginuser,
-      });
-      const stepRes = yield call(api.queryCurrentStep, {
-        flowCode: detailRD.flowCode,
-      });
+      const { flowCode } = detailRD;
+      let approvalRes = {};
+      let stepRes = {};
+      if (!_.isEmpty(flowCode)) {
+        approvalRes = yield call(api.querySingleCustApprovalRecord, {
+          flowCode: detailRD.flowCode,
+          loginuser,
+        });
+        stepRes = yield call(api.queryCurrentStep, {
+          flowCode: detailRD.flowCode,
+        });
+      }
       yield put({
         type: 'getUnSubscribeDetailSuccess',
         payload: { detailRes, attachmentRes, approvalRes, stepRes },
@@ -666,6 +693,19 @@ export default {
       const response = yield call(api.validateCustomer, payload);
       yield put({
         type: 'validateCustomerInSingleSuccess',
+        payload: response,
+      });
+    },
+
+    // 咨讯订阅页面客户检验
+    * validateCustomerInSub({ payload }, { call, put }) {
+      const response = yield call(api.checkCustomer, {
+        operationType: 'subscribe',
+        ...payload,
+      },
+      );
+      yield put({
+        type: 'checkCustomerInSciSuccess',
         payload: response,
       });
     },

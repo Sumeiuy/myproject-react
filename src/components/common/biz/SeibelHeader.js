@@ -14,7 +14,14 @@ import Button from '../Button';
 import Icon from '../Icon';
 import styles from '../../style/jiraLayout.less';
 import { hasPermission, addClass, removeClass } from '../../../utils/helper';
-import { fspContainer } from '../../../config';
+import { hasPermissionOfProtocolCreate } from '../../../utils/permission';
+import { fspContainer, seibelConfig } from '../../../config';
+
+const {
+  contract: { pageType: contractPageType },
+  channelsTypeProtocol: { pageType: channelsPageType },
+} = seibelConfig;
+
 
 // 头部筛选filterBox的高度
 const FILTERBOX_HEIGHT = 32;
@@ -218,6 +225,7 @@ export default class Pageheader extends PureComponent {
       custRange,
       replace,
       page,
+      pageType,
       operateOptions,
       needOperate,
       location: { query: { subType, status, business2 } },
@@ -236,8 +244,12 @@ export default class Pageheader extends PureComponent {
     [ptyMngAll, ...approvePersonList] : approvePersonList;
     // 新建按钮权限
     let hasCreatePermission = true;
-    if (page === 'contractPage') {
+    // 如果是合作合约页面
+    if (pageType === contractPageType) {
       hasCreatePermission = hasPermission(empInfo);
+    } else if (pageType === channelsPageType) {
+      // 如果是通道类协议页面
+      hasCreatePermission = hasPermissionOfProtocolCreate(empInfo);
     }
     const operateElement = needOperate ?
       (

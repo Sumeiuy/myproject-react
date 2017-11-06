@@ -1,3 +1,5 @@
+// font
+@font-family: "Microsoft YaHei", Helvetica, Tahoma, Arial, "Hiragino Sans GB", "Hiragino Sans GB W3", STXihei, STHeiti, Heiti, SimSun, sans-serif;
 .fileListMain {
   .title {
     font-size: 13px;
@@ -16,6 +18,7 @@
       height: 49px;
       position: relative;
       .fileItemText {
+        font-family: @font-family;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -73,6 +76,7 @@
       border-radius: 3px;
       .ant-popover-inner-content {
         h3 {
+          font-family: @font-family;
           line-height: 28px;
           overflow: hidden;
           text-overflow: ellipsis;

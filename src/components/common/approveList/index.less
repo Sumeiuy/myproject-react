@@ -1,9 +1,10 @@
-.approveWrapper{
-  .approveNow{
+.approveWrapper {
+  .approveNow {
     line-height: 17px;
     text-indent: 15px;
     color: #a1a1a1;
     font-size: 13px;
+    margin-bottom: 11px;
     span:nth-child(odd) {
       color: #333;
     }
@@ -12,8 +13,7 @@
     }
   }
   .approveList {
-    margin-top: 11px;
-    div {
+    .approveItem {
       padding: 20px;
       background: #f9f9f9;
       box-sizing: border-box;
@@ -34,6 +34,11 @@
           word-wrap: break-word;
         }
       }
+    }
+  }
+  :global {
+    .ant-pagination {
+      margin: 10px 0;
     }
   }
 }

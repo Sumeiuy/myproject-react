@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 15:02:49
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-31 09:17:45
+ * @Last Modified time: 2017-11-03 14:57:22
  */
 /**
  * 常用说明
@@ -201,7 +201,7 @@ export default class CommonUpload extends PureComponent {
           <Row>
             {
               fileList.map((item, index) => {
-                const fileName = item.name.substring(0, item.name.lastIndexOf('.'));
+                const fileName = item.name;
                 const popoverHtml = (
                   <div>
                     <h3>

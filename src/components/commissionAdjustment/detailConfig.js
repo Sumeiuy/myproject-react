@@ -12,9 +12,16 @@ function convertNY2ZN(v) {
 
 function changeProductJson(product) {
   const { riskMatch, termMatch, prodMatch, prodCode, aliasName, agrType, prodCommission } = product;
-  const prodCom = {};
-  if (!_.isEmpty(prodCommission)) { prodCom.prodCommission = prodCommission; }
-  return {
+  const prodCom = _.isEmpty(prodCommission) ? {} : { prodCommission };
+  const proList = _.isEmpty(riskMatch) ? {
+    key: prodCode,
+    // 产品代码
+    prodCode,
+    // 产品名称
+    aliasName,
+    // 签署确认书类型
+    agrType,
+  } : {
     key: prodCode,
     // 产品代码
     prodCode,
@@ -28,7 +35,9 @@ function changeProductJson(product) {
     termMatch: convertNY2ZN(termMatch),
     // 产品是否匹配
     prodMatch: convertNY2ZN(prodMatch),
-    // 单佣金产品中的佣金率
+  };
+  return {
+    ...proList,
     ...prodCom,
   };
 }

@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date:   2017-09-19 14:47:08
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-11-03 10:37:14
+ * @Last Modified time: 2017-11-04 18:00:28
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -80,7 +80,8 @@ export default class EditForm extends PureComponent {
 
   constructor(props) {
     super(props);
-    const isEdit = !_.isEmpty(props.protocolDetail);
+    const { underCustList } = props;
+    const isEdit = !_.isEmpty(props.protocolDetail);// 下挂客户组件需要的数据列表
     this.state = {
       isEdit,
       // 附件类型列表
@@ -91,6 +92,7 @@ export default class EditForm extends PureComponent {
       protocolProductList: EMPTY_LIST,
       // 是否多账户
       multiUsedFlag: false,
+      underCustList,
     };
   }
 
@@ -120,18 +122,11 @@ export default class EditForm extends PureComponent {
     const baseInfoData = this.editBaseInfoComponent.getData();
     const { protocolClauseList } = this.props;
     const { protocolProductList, attachmentTypeList, cust } = this.state;
-    // 根据后端要求将接口返回的字段转成他们要的字段再传给他们;
-    /*eslint-disable */
-    protocolProductList.forEach((v)=> {
-      v.riskMatchFlag = v.riskMatch;
-      v.termMatchFlag = v.termMatch;
-      v.varietyMatchFlag = v.varietyMatch;
-    })
-    /*eslint-disable */
     const formData = {
       subType: baseInfoData.subType,
       custId: baseInfoData.client.cusId,
       custType: baseInfoData.client.custType,
+      econNum: baseInfoData.client.brokerNumber,
       startDt: '',
       vailDt: '',
       content: baseInfoData.content,
@@ -149,10 +144,11 @@ export default class EditForm extends PureComponent {
 
   // 设置上传配置项
   setUploadConfig(hasCust) {
+    const { attachmentTypeList } = this.state;
     // 找出需要必传的数组
     const requiredArr = hasCust ? attachmentRequired.hasCust : attachmentRequired.noCust;
     // 将附件数组做必传项配置
-    const attachmentMapRequired = attachmentMap.map((item) => {
+    const attachmentMapRequired = attachmentTypeList.map((item) => {
       if (_.includes(requiredArr, item.type)) {
         return {
           ...item,
@@ -196,8 +192,15 @@ export default class EditForm extends PureComponent {
   // 下挂客户添加事件
   @autobind
   changeFunction(value) {
+    const baseInfoData = this.editBaseInfoComponent.getData();
     const { cust } = this.state;
-    // console.warn('value', value);
+    this.setState({
+      underCustList: [],
+    });
+    if (baseInfoData.client.cusId === value.custId) {
+      message.error('已选择的客户不能添加到下挂客户');
+      return;
+    }
     const filterCust = _.filter(cust, o => o.econNum === value.econNum);
     if (_.isEmpty(value)) {
       message.error('请选择客户');
@@ -223,6 +226,10 @@ export default class EditForm extends PureComponent {
     }
     onQueryCust({
       keyWord: value,
+    }).then(() => {
+      this.setState({
+        underCustList: this.props.underCustList,
+      });
     });
   }
   // 表格删除事件
@@ -299,13 +306,13 @@ export default class EditForm extends PureComponent {
       protocolProductList,
       // 查询协议产品列表
       queryChannelProtocolProduct,
-      // 下挂客户列表
-      underCustList,
     } = this.props;
     const {
       cust,
       attachmentTypeList,
       multiUsedFlag,
+      // 下挂客户列表
+      underCustList,
     } = this.state;
     // 下挂客户表格中需要的操作
     const customerOperation = {
@@ -328,17 +335,15 @@ export default class EditForm extends PureComponent {
       firstColumns: protocolProductTitleList,
       secondColumns: protocolProductTitleList,
       transferChange: this.handleTransferChange,
-      rowKey: 'key',
+      rowKey: 'prodRowId',
       isScrollX: true,
       showSearch: true,
       placeholder: '产品代码/产品名称',
       pagination,
       supportSearchKey: [['prodCode'], ['prodName']],
     };
-    // 下挂客户组件需要的数据列表
     const customerSelectList = underCustList.length ? underCustList.map(item => ({
       ...item,
-      key: item.econNum,
       custStatus: '开通处理中',
     })) : EMPTY_LIST;
     return (
@@ -400,7 +405,7 @@ export default class EditForm extends PureComponent {
             attachmentTypeList.map((item) => {
               const uploaderElement = item.show ? (
                 <MultiUploader
-                  key={item.key}
+                  key={item.type}
                   edit
                   type={item.type}
                   title={item.title}

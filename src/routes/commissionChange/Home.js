@@ -12,6 +12,7 @@ import { autobind } from 'core-decorators';
 // import _ from 'lodash';
 
 import SubscribDeatilChange from '../../components/commissionChange/SubscribDeatilChange';
+import UnSubscribDeatilChange from '../../components/commissionChange/UnSubscribDeatilChange';
 import SingleDetailChange from '../../components/commissionChange/SingleDetailChange';
 import Barable from '../../decorators/selfBar';
 import { isInFsp, getCssStyle } from '../../utils/helper';
@@ -42,6 +43,11 @@ const effects = {
   singleSubmit: 'commissionChange/submitSingleCommission',
   // 更新流程
   updateFlow: 'commissionChange/updateFlowStatus',
+  // 咨讯退订驳回待修改详情
+  unSubDetail: 'commissionChange/getUnSubscribeDetailToChange',
+  // 咨讯退订提交
+  unSubComit: 'commissionChange/submitConsultUnSubscribe',
+  clearReduxState: 'commissionChange/clearReduxState',
 };
 
 const mapStateToProps = state => ({
@@ -49,7 +55,7 @@ const mapStateToProps = state => ({
   empInfo: state.app.empInfo,
   subDetail: state.commissionChange.subscribeDetailToChange,
   threeMatchInfo: state.commissionChange.threeMatchInfo,
-  // 咨询订阅提交后返回的id
+  // 咨讯订阅提交后返回的id
   consultSubId: state.commissionChange.consultSubId,
   // 审批人员列表
   approvalUserList: state.commissionChange.approvalUserList,
@@ -69,6 +75,10 @@ const mapStateToProps = state => ({
   approvalBtns: state.commissionChange.approvalBtns,
   // 驳回后修改提交成功提示
   singleSubmit: state.commissionChange.singleSubmit,
+  // 咨讯退订详情
+  unSubDetail: state.commissionChange.unsubscribeDetailToChange,
+  // 咨讯退订提交后返回的id
+  consultUnSubId: state.commissionChange.consultUnsubId,
 });
 
 const getDataFunction = (loading, type) => query => ({
@@ -79,13 +89,13 @@ const getDataFunction = (loading, type) => query => ({
 
 
 const mapDispatchToProps = {
-  // 获取咨询订阅详情Detail
+  // 获取咨讯订阅详情Detail
   getSubscribeDetail: getDataFunction(true, effects.subDetail),
   // 查询审批人员列表
   getAprovalUserList: getDataFunction(false, effects.approver),
   // 三匹配
   queryThreeMatchInfo: getDataFunction(false, effects.threeMatchInfo),
-  // 咨询订阅提交
+  // 咨讯订阅提交
   submitSub: getDataFunction(false, effects.subSubscribe),
   // 获取驳回后修改的单佣金调整详情
   querySingleDetail: getDataFunction(false, effects.singleDetail),
@@ -103,6 +113,10 @@ const mapDispatchToProps = {
   updateSingle: getDataFunction(false, effects.singleSubmit),
   // 更新流程
   updateFlow: getDataFunction(false, effects.updateFlow),
+  getUnSubscribeDetail: getDataFunction(true, effects.unSubDetail),
+  // 咨讯退订驳回后修改页面提交
+  submitUnSub: getDataFunction(false, effects.unSubComit),
+  clearReduxState: getDataFunction(false, effects.clearReduxState),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -112,6 +126,7 @@ export default class RejectionAndAmendment extends PureComponent {
   static propTypes = {
     // 公共
     location: PropTypes.object.isRequired,
+    empInfo: PropTypes.object.isRequired,
     threeMatchInfo: PropTypes.object.isRequired,
     queryThreeMatchInfo: PropTypes.func.isRequired,
     approvalUserList: PropTypes.array.isRequired,
@@ -120,7 +135,6 @@ export default class RejectionAndAmendment extends PureComponent {
     subDetail: PropTypes.object.isRequired,
     consultSubId: PropTypes.string.isRequired,
     getSubscribeDetail: PropTypes.func.isRequired,
-    empInfo: PropTypes.object.isRequired,
     submitSub: PropTypes.func.isRequired,
     // 驳回后修改单佣金调整相关
     singleDetailLoading: PropTypes.bool,
@@ -145,6 +159,12 @@ export default class RejectionAndAmendment extends PureComponent {
     singleSubmit: PropTypes.string.isRequired,
     updateSingle: PropTypes.func.isRequired,
     updateFlow: PropTypes.func.isRequired,
+    // 驳回后修改咨讯退订相关
+    unSubDetail: PropTypes.object.isRequired,
+    consultUnSubId: PropTypes.string.isRequired,
+    getUnSubscribeDetail: PropTypes.func.isRequired,
+    submitUnSub: PropTypes.func.isRequired,
+    clearReduxState: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -193,6 +213,7 @@ export default class RejectionAndAmendment extends PureComponent {
         singleSubmit,
         updateSingle,
         updateFlow,
+        clearReduxState,
       } = this.props;
       return (
         <SingleDetailChange
@@ -213,38 +234,65 @@ export default class RejectionAndAmendment extends PureComponent {
           submitResult={singleSubmit}
           onSubmit={updateSingle}
           onUpdateFlow={updateFlow}
+          clearReduxState={clearReduxState}
         />
       );
     } else if (type === 'SUBSCRIBE') {
       // 咨讯订阅
       const {
         location,
+        empInfo,
         subDetail,
         threeMatchInfo,
         getSubscribeDetail,
         consultSubId,
-        getAprovalUserList,
         queryThreeMatchInfo,
         submitSub,
-        approvalUserList,
+        approvalBtns,
+        queryApprovalBtns,
+        updateFlow,
       } = this.props;
       return (
         <SubscribDeatilChange
           location={location}
+          empInfo={empInfo}
           subscribeDetailToChange={subDetail}
           getSubscribeDetailToChange={getSubscribeDetail}
           threeMatchInfo={threeMatchInfo}
           queryThreeMatchInfo={queryThreeMatchInfo}
-          queryApprovalUser={getAprovalUserList}
           consultSubId={consultSubId}
+          approvalBtns={approvalBtns}
           submitSub={submitSub}
-          approvalUserList={approvalUserList}
+          onQueryBtns={queryApprovalBtns}
+          onUpdateFlow={updateFlow}
         />
       );
     } else if (type === 'UNSUBSCRIBE') {
       // 咨讯退订
-      // TODO 等待单佣金修改组件完成
-      return null;
+      const {
+        location,
+        empInfo,
+        unSubDetail,
+        consultUnSubId,
+        getUnSubscribeDetail,
+        submitUnSub,
+        approvalBtns,
+        queryApprovalBtns,
+        updateFlow,
+      } = this.props;
+      return (
+        <UnSubscribDeatilChange
+          location={location}
+          empInfo={empInfo}
+          unSubDetailToChange={unSubDetail}
+          getUnSubDetailToChange={getUnSubscribeDetail}
+          consultUnSubId={consultUnSubId}
+          approvalBtns={approvalBtns}
+          submitUnSub={submitUnSub}
+          onQueryBtns={queryApprovalBtns}
+          onUpdateFlow={updateFlow}
+        />
+      );
     }
     return null;
   }
