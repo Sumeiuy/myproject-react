@@ -119,11 +119,6 @@ export function getClientsNumber({
     newUnit,
     newSeries,
   } = toFomatterCust(clientNumberData);
-  console.log('####newSeries######', newSeries);
-  // const thousandsFormatSeries = _.map(
-  //   newSeries,
-  //   item => numFormat(item),
-  // );
   const items = {
     grid: {
       left: '12px',
