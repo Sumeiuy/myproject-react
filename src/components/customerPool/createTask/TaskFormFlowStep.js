@@ -87,7 +87,7 @@ export default class TaskFlow extends PureComponent {
 
   @autobind
   handleNextStep() {
-    this.createTaskForm.validateFields((err, values) => {
+    this.createTaskForm.getWrappedInstance().validateFields((err, values) => {
       let isFormError = false;
       if (!_.isEmpty(err)) {
         isFormError = true;
