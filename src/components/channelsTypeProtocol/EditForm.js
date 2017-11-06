@@ -336,7 +336,7 @@ export default class EditForm extends PureComponent {
       secondColumns: protocolProductTitleList,
       transferChange: this.handleTransferChange,
       rowKey: 'prodRowId',
-      scrollX: '1010',
+      scrollX: 1010,
       showSearch: true,
       placeholder: '产品代码/产品名称',
       pagination,
