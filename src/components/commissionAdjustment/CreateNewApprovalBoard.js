@@ -32,7 +32,7 @@ import {
   subScribeProColumns,
 } from './commissionTransferHelper/transferPropsHelper';
 import approvalConfig from './choiceApprovalUserConfig';
-
+import { allCommissionParamName as otherComs } from '../../config/otherCommissionDictionary';
 import styles from './createNewApprovalBoard.less';
 
 const { TextArea } = Input;
@@ -45,26 +45,6 @@ newSubTypes.unshift({
   label: '请选择申请类型',
   value: '',
 });
-
-// 其他佣金率的参数名称数组
-const otherComs = [
-  'zqCommission',
-  'stkCommission',
-  'creditCommission',
-  'ddCommission',
-  'hCommission',
-  'dzCommission',
-  'coCommission',
-  'stbCommission',
-  'oCommission',
-  'doCommission',
-  'hkCommission',
-  'bgCommission',
-  'qCommission',
-  'dqCommission',
-  'opCommission',
-  'dCommission',
-];
 
 export default class CreateNewApprovalBoard extends PureComponent {
   static propTypes = {
@@ -238,34 +218,14 @@ export default class CreateNewApprovalBoard extends PureComponent {
     // 清空redux的state
     this.props.clearReduxState({
       clearList: [
-        {
-          name: 'singleOtherCommissionOptions',
-        },
-        {
-          name: 'singleCustomerList',
-        },
-        {
-          name: 'singleComProductList',
-        },
-        {
-          name: 'threeMatchInfo',
-          value: {},
-        },
-        {
-          name: 'singleGJCommission',
-        },
-        {
-          name: 'subscribelProList',
-          value: [],
-        },
-        {
-          name: 'unSubscribelProList',
-          value: [],
-        },
-        {
-          name: 'subscribeCustList',
-          value: [],
-        },
+        { name: 'singleOtherCommissionOptions' },
+        { name: 'singleCustomerList' },
+        { name: 'singleComProductList' },
+        { name: 'threeMatchInfo', value: {} },
+        { name: 'singleGJCommission' },
+        { name: 'subscribelProList', value: [] },
+        { name: 'unSubscribelProList', value: [] },
+        { name: 'subscribeCustList', value: [] },
       ],
     });
   }
@@ -877,37 +837,6 @@ export default class CreateNewApprovalBoard extends PureComponent {
     });
   }
 
-  // 单佣金调用客户校验接口后
-  @autobind
-  afterValidateSingleCust() {
-    const {
-      riskRt,
-      investRt,
-      investTerm,
-      validmsg,
-      hasorder,
-      // openRzrq,
-    } = this.props.singleCustVResult;
-    if (riskRt === 'N') {
-      confirm({ shortCut: 'custRisk' });
-    }
-    if (investRt === 'N') {
-      confirm({ shortCut: 'custInvestRt' });
-    }
-    if (investTerm === 'N') {
-      confirm({ shortCut: 'custInvestTerm' });
-    }
-    if (hasorder === 'N') {
-      confirm({ content: validmsg });
-    }
-    // 两融开关
-    // if (openRzrq === 'N') {
-    //   this.setState({
-
-    //   });
-    // }
-  }
-
   // 单佣金、咨询订阅、退订基本信息选择客户
   @autobind
   handleSelectAssembly(customer) {
@@ -927,11 +856,6 @@ export default class CreateNewApprovalBoard extends PureComponent {
       });
     } else if (typeNow(commadj.single)) {
       // 根据选择的用户，查询该用户所能选的其他佣金费率
-      // TODO 此处需要针对客户进行资格校验
-      // this.props.onValidateSingleCust({
-      //   custRowId: id,
-      //   custType,
-      // }).then(this.afterValidateSingleCust);
       this.props.getSingleOtherRates({
         custRowId: id,
       });
@@ -1259,7 +1183,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     };
 
     const wrapClassName = this.judgeSubtypeNow(commadj.noSelected) ? 'commissionModal' : '';
-    const subTypesAfterAuthority = this.authorityOptions(newSubTypes);
+    const subTypesAfterAuthority = newSubTypes; // this.authorityOptions(newSubTypes);
 
     return (
       <div>
