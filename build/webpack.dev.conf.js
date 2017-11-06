@@ -1,7 +1,9 @@
+var path = require('path')
 var utils = require('./utils')
 var webpack = require('webpack')
 var config = require('../config')
 var merge = require('webpack-merge')
+var HappyPack = require('happypack')
 var baseWebpackConfig = require('./webpack.base.conf')
 var HtmlWebpackPlugin = require('html-webpack-plugin')
 var FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
@@ -17,9 +19,24 @@ var cssLoaders = utils.getCSSLoaders({
   sourceMap: config.dev.cssSourceMap
 });
 
+function resolve (dir) {
+  return path.join(__dirname, '..', dir)
+}
+
 module.exports = merge(baseWebpackConfig, {
   module: {
     rules: [
+      {
+        test: /\.jsx?$/,
+        loader: 'happypack/loader?id=jsx',
+        include: [resolve('src')],
+        exclude: [
+          resolve('node_modules'),
+          resolve('build'),
+          resolve('dist'),
+          resolve('config'),
+        ],
+      },
       {
         test: /\.css$/,
         include: config.appSrc,
@@ -28,6 +45,12 @@ module.exports = merge(baseWebpackConfig, {
       {
         test: /\.less$/,
         include: config.appSrc,
+        exclude: [
+          resolve('node_modules'),
+          resolve('build'),
+          resolve('dist'),
+          resolve('config'),
+        ],
         use: ['style-loader'].concat(cssLoaders.own).concat({
           loader: 'less-loader',
           options: {
@@ -43,6 +66,12 @@ module.exports = merge(baseWebpackConfig, {
       {
         test: /\.less$/,
         include: config.appNodeModules,
+        exclude: [
+          resolve('src'),
+          resolve('build'),
+          resolve('dist'),
+          resolve('config'),
+        ],
         use: ['style-loader'].concat(cssLoaders.nodeModules).concat({
           loader: 'less-loader',
           options: {
@@ -66,6 +95,15 @@ module.exports = merge(baseWebpackConfig, {
       filename: 'index.html',
       template: 'index.html',
       inject: true
+    }),
+    new webpack.DllReferencePlugin({
+      context: __dirname,
+      manifest: require('../dist/vendor-manifest.json'),
+    }),
+    new HappyPack({
+      id: 'jsx',
+      threads: 4,
+      loaders: [ 'babel-loader' ]
     }),
     new FriendlyErrorsPlugin()
   ]
