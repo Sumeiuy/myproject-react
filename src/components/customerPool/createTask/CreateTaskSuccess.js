@@ -14,14 +14,13 @@ import { fspGlobal } from '../../../utils';
 import { fspContainer } from '../../../config';
 import Button from '../../common/Button';
 
-let successSetInterval;
-let intervalCount = 10;
 export default class CreateTaskSuccess extends PureComponent {
   static propTypes = {
     successType: PropTypes.bool,
     push: PropTypes.func.isRequired,
     onCloseTab: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
+    clearSubmitTaskFlowResult: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -31,7 +30,7 @@ export default class CreateTaskSuccess extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      changeTime: intervalCount,
+      changeTime: 10,
     };
   }
 
@@ -51,6 +50,8 @@ export default class CreateTaskSuccess extends PureComponent {
   }
 
   componentWillUnmount() {
+    const { clearSubmitTaskFlowResult } = this.props;
+    clearSubmitTaskFlowResult();
     this.clearTimeInterval();
   }
 
@@ -58,7 +59,7 @@ export default class CreateTaskSuccess extends PureComponent {
   handleShowSuccess(props) {
     const { successType } = props;
     if (successType) {
-      successSetInterval = setInterval(this.handleMovTime, 1000);
+      this.successSetInterval = setInterval(this.handleMovTime, 1000);
     }
   }
 
@@ -72,8 +73,8 @@ export default class CreateTaskSuccess extends PureComponent {
       title: '首页',
     };
     if (document.querySelector(fspContainer.container)) {
-      fspGlobal.openRctTab({ url, param });
       onCloseTab();
+      fspGlobal.switchFspTab('tab-home');
     } else {
       push({
         pathname: url,
@@ -94,18 +95,18 @@ export default class CreateTaskSuccess extends PureComponent {
       forceRefresh: true,
       title: '自建任务管理'
     }
-    fspGlobal.openFspTab({ url, param })
     onCloseTab();
+    fspGlobal.openFspTab({ url, param })
   }
 
   @autobind
   handleMovTime() {
+    let { changeTime } = this.state;
     this.setState({
-      changeTime: intervalCount--,
+      changeTime: --changeTime,
     }, () => {
-      if (intervalCount < 0) {
+      if (changeTime < 0) {
         console.log('页面关闭');
-        this.clearTimeInterval();
         // 跳转之前关闭interval
         this.goToHome();
       }
@@ -115,9 +116,8 @@ export default class CreateTaskSuccess extends PureComponent {
   @autobind
   clearTimeInterval() {
     // 清除interval
-    clearInterval(successSetInterval);
-    successSetInterval = null;
-    intervalCount = 10;
+    clearInterval(this.successSetInterval);
+    this.successSetInterval = null;
   }
 
   render() {

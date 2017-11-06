@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-06 14:44:46
+ * @Last Modified time: 2017-11-06 17:06:35
  */
 
 import React, { PureComponent } from 'react';
@@ -80,6 +80,11 @@ const mapDispatchToProps = {
     type: 'customerPool/resetActiveTab',
     payload: query || {},
   }),
+  // 清除提交结果
+  clearSubmitTaskFlowResult: query => ({
+    type: 'customerPool/clearSubmitTaskFlowResult',
+    payload: query || '',
+  }),
   previewCustFile: fetchData(effects.previewCustFile, true),
   getLabelInfo: fetchData(effects.getLabelInfo, true),
   getLabelPeople: fetchData(effects.getLabelPeople, true),
@@ -111,6 +116,7 @@ export default class TaskFlow extends PureComponent {
     getLabelPeopleLoading: PropTypes.bool,
     clearTaskFlowData: PropTypes.func.isRequired,
     resetActiveTab: PropTypes.func.isRequired,
+    clearSubmitTaskFlowResult: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -170,7 +176,7 @@ export default class TaskFlow extends PureComponent {
 
     let taskFormData = storedTaskFlowData.taskFormData;
     let pickTargetCustomerData = {};
-    let isFormValidate = !_.isEmpty(taskFormData);
+    let isFormValidate = false;
     let isSelectCust = true;
     if (current === 0) {
       this.formRef.props.form.validateFields((err, values) => {
@@ -188,6 +194,7 @@ export default class TaskFlow extends PureComponent {
         this.props.clearTaskFlowData();
       });
     } else if (current === 1) {
+      isFormValidate = true;
       pickTargetCustomerData = this.pickTargetCustomerRef.getWrappedInstance().getData();
       const { labelCust: { labelId }, custSegment: { uploadedFileKey } } = pickTargetCustomerData;
       if (currentTab === '2' && _.isEmpty(labelId)) {
@@ -380,6 +387,7 @@ export default class TaskFlow extends PureComponent {
       approvalList,
       getApprovalList,
       push,
+      clearSubmitTaskFlowResult,
     } = this.props;
 
     const { taskFormData = EMPTY_OBJECT } = storedTaskFlowData;
@@ -440,6 +448,7 @@ export default class TaskFlow extends PureComponent {
     return (
       isSuccess ?
         <CreateTaskSuccess
+          clearSubmitTaskFlowResult={clearSubmitTaskFlowResult}
           successType={isSuccess}
           push={push}
           location={location}

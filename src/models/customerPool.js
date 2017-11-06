@@ -1135,5 +1135,12 @@ export default {
         approvalList: payload,
       };
     },
+    // 清除当前提交结果
+    clearSubmitTaskFlowResult(state) {
+      return {
+        ...state,
+        submitTaskFlowResult: '',
+      };
+    },
   },
 };
