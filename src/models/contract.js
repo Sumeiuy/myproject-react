@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-20 15:13:30
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-30 15:03:47
+ * @Last Modified time: 2017-11-06 10:31:24
  */
 import { message } from 'antd';
 import { contract as api, seibel as seibelApi } from '../api';
@@ -290,6 +290,10 @@ export default {
       const { currentQuery, currentQuery: { pageNum, pageSize } } = payload;
       const response = yield call(api.saveContractData, payload.payload);
       let approvePayload = {};
+      yield put({
+        type: 'saveContractDataSuccess',
+        payload: response,
+      });
       // 新建时获取保存后返回的 id 传给审批接口
       if (payload.approveData.type === 'add') {
         const itemId = response.resultData;
@@ -297,14 +301,11 @@ export default {
           ...payload.approveData,
           itemId,
         }
+        const approveResponse = yield call(api.postDoApprove, approvePayload);
         yield put({
-          type: 'saveContractDataSuccess',
-          payload: response,
+          type: 'postDoApproveSuccess',
+          payload: approveResponse,
         });
-        yield put({
-          type: 'postDoApprove',
-          payload: approvePayload,
-        })
         message.success('操作成功！');
         // 新建时保存并调用审批接口后，获取列表
         const params = constructSeibelPostBody(currentQuery, pageNum || 1, pageSize || 10);
@@ -319,22 +320,13 @@ export default {
         approvePayload = {
           ...payload.approveData,
         }
+        const approveResponse = yield call(api.postDoApprove, approvePayload);
         yield put({
-          type: 'saveContractDataSuccess',
-          payload: response,
+          type: 'postDoApproveSuccess',
+          payload: approveResponse,
         });
-        yield put({
-          type: 'postDoApprove',
-          payload: approvePayload,
-        })
+        message.success('操作成功！');
       }
-    },
-    * postDoApprove({ payload }, { call, put }) {
-      const approveResponse = yield call(api.postDoApprove, payload);
-      yield put({
-        type: 'postDoApproveSuccess',
-        payload: approveResponse,
-      });
     },
     // 获取合约编号列表
     * getContractNumList({ payload }, { call, put }) {
@@ -383,14 +375,6 @@ export default {
         payload: response,
       });
     },
-    // 审批操作
-    * postDoApprove({ payload }, { call, put }) {
-      const response = yield call(api.postDoApprove, payload);
-      yield put({
-        type: 'postDoApproveSuccess',
-        payload: response,
-      })
-    }
   },
   subscriptions: {},
 };
