@@ -391,6 +391,7 @@ export default class CustomerLists extends PureComponent {
     }
     this.setState({
       currentFollowCustId: custId,
+      emailCustId: '',
     });
   }
   /**
@@ -409,7 +410,7 @@ export default class CustomerLists extends PureComponent {
     const {
       location: {
         query,
-        pathname,
+      pathname,
       },
       replace,
       handleSelect,
@@ -581,7 +582,7 @@ export default class CustomerLists extends PureComponent {
             >
               全选
             </Checkbox>
-            { _.isEmpty(custList) ? null : <span className="hint">自动选择所有符合条件的客户</span> }
+            {_.isEmpty(custList) ? null : <span className="hint">自动选择所有符合条件的客户</span>}
           </div>
           <div className={styles.reorder}>
             <Reorder
