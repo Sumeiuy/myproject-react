@@ -26,13 +26,14 @@ export default class SelectAssembly extends PureComponent {
     width: PropTypes.string,
     subType: PropTypes.string,
     validResult: PropTypes.object,
-    shouldeCheck: PropTypes.bool.isRequired,
+    shouldeCheck: PropTypes.bool,
   }
 
   static defaultProps = {
     width: '300px',
     subType: '',
     validResult: {},
+    shouldeCheck: true,
     onValidateCust: () => {},
   }
 
