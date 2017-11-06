@@ -26,8 +26,8 @@ import {
   employeeData,
   employeeColumns,
   subscribelData,
-  // unsubcribeData,
-  data,
+  unsubcribeData,
+  // data,
   productColumns,
 } from './MockTableData';
 import styles from './home.less';
@@ -240,20 +240,21 @@ export default class TemplModal extends PureComponent {
 
     const transferProps = {
       firstData: subscribelData,
-      secondData: data,
-      // secondData: unsubcribeData,
+      // secondData: data,
+      secondData: unsubcribeData,
       firstColumns: productColumns,
       secondColumns: productColumns,
       transferChange: this.handleTransferChange,
       checkChange: this.handleCheckChange,
       rowKey: 'key',
       defaultCheckKey: 'default',
+      disableCheckKey: 'disable',
       showSearch: true,
       placeholder: '产品代码/产品名称',
       pagination,
       aboutRate: ['0.0004', 'rate'],
       supportSearchKey: [['productCode'], ['productName']],
-      scrollX: '130%',
+      // scrollX: '130%',
     };
 
 
