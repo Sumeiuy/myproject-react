@@ -50,6 +50,10 @@ export default class CreateTaskSuccess extends PureComponent {
     this.handleShowSuccess(this.props);
   }
 
+  componentWillUnmount() {
+    this.clearTimeInterval();
+  }
+
   @autobind
   handleShowSuccess(props) {
     const { successType } = props;

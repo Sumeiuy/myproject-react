@@ -52,7 +52,7 @@ export default class Search extends PureComponent {
 
   state = {
     dataSource: EMPTY_LIST,
-    inputValue: '',
+    inputVal: '',
     historySource: [{
       title: '历史搜索',
       children: [{
@@ -227,11 +227,11 @@ export default class Search extends PureComponent {
       return;
     }
     const { queryHotPossibleWds } = this.props;
-    queryHotPossibleWds({
-      wd: value,
-    });
     this.setState({
       inputVal: value,
+    });
+    queryHotPossibleWds({
+      wd: value,
     });
   }
 
@@ -419,7 +419,7 @@ export default class Search extends PureComponent {
                 style={{ width: '100%' }}
                 dataSource={this.createOption()}
                 onSelect={this.onSelect}
-                onSearch={_.debounce(this.handleSearch, 250)}
+                onSearch={this.handleSearch}
                 placeholder={hotWds.labelNameVal || ''}
                 optionLabelProp="text"
                 defaultValue={searchHistoryVal}
