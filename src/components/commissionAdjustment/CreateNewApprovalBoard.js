@@ -1299,7 +1299,6 @@ export default class CreateNewApprovalBoard extends PureComponent {
                       onValidateCust={onValidateSingleCust}
                       validResult={singleCustVResult}
                       subType={commadj.single}
-                      shouldeCheck
                     />
                   </CommissionLine>
                 )
@@ -1316,7 +1315,6 @@ export default class CreateNewApprovalBoard extends PureComponent {
                       onValidateCust={onCheckSubsciCust}
                       validResult={sciCheckCustomer}
                       subType={commadj.subscribe}
-                      shouldeCheck
                     />
                   </CommissionLine>
                 )
