@@ -195,6 +195,12 @@ export default class CustomerRow extends PureComponent {
     return '';
   }
 
+  renderRankImg(listItem = {}) {
+    return rankImgSrcConfig[listItem.levelCode] ?
+      <img className={styles.iconMoneyImage} src={rankImgSrcConfig[listItem.levelCode]} alt="" />
+      : null;
+  }
+
   render() {
     const { q, listItem, monthlyProfits, isAllSelect, selectedIds,
       onAddFollow,
@@ -268,7 +274,9 @@ export default class CustomerRow extends PureComponent {
                 onClick={this.toDetail}
               />
               <div className={styles.avatorText}>{custNature[listItem.pOrO].name}</div>
-              <img className={styles.iconMoneyImage} src={rankImgSrcConfig[listItem.levelCode]} alt="" />
+              {
+                this.renderRankImg(listItem)
+              }
             </div>
           </div>
           <div className={styles.customerRowRight}>
@@ -340,6 +348,7 @@ export default class CustomerRow extends PureComponent {
               dict={dict}
               location={location}
               listItem={listItem}
+              mainServiceManager={mainServiceManager}
             />
           </div>
         </div>
