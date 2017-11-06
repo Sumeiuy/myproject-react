@@ -17,7 +17,7 @@ import {
   custTableColumns,
   createCustTableData,
   advisoryProColumns,
-  createProTableData,
+  createSubProTableData,
 } from './detailConfig';
 import styles from './advisoryDetail.less';
 
@@ -52,7 +52,7 @@ export default class AdvisoryDetail extends PureComponent {
       item,
     } = base;
     const custList = createCustTableData(base);
-    const proList = createProTableData(item);
+    const proList = createSubProTableData(item);
     const bugTitle = `编号:${currentId}`;
     const drafter = `${divisionName} - ${createdByName} (${createdByLogin})`;
     const stepName = (currentStep && currentStep.curentStep) || '';
