@@ -52,6 +52,7 @@ export default class SelectAssembly extends PureComponent {
 
   @autobind
   handleInputValue(value) {
+    console.warn('handleInputValue>value', value);
     this.setState({
       inputValue: value,
     });
@@ -140,26 +141,23 @@ export default class SelectAssembly extends PureComponent {
       return;
     }
     this.canSelected = true;
-    // TODO 测试说校验成功后，不用提示，不过还是觉得校验成功的时候，需要提示下用户
-    // confirm({
-    //   shortCut: 'custPass',
-    //   onOk: this.handleOKAfterValidate,
     // });
     this.handleOKAfterValidate();
-    const { custName, custEcom, riskLevelLabel } = this.selectedCust;
-    this.setState({
-      inputValue: `${custName}（${custEcom}） - ${riskLevelLabel || ''}`,
-      typeStyle: 'close',
-    });
+    // const { custName, custEcom, riskLevelLabel } = this.selectedCust;
+    // this.setState({
+    //   inputValue: `${custName}（${custEcom}） - ${riskLevelLabel || ''}`,
+    //   typeStyle: 'close',
+    // });
   }
 
   // 根据用户选中的option的value值获取对应的数组值
   @autobind
   handleSelectedValue(value) {
     if (value) {
+      const keyId = value.substr(0, value.length - 3);
       // 找出那个用户选择的客户数据
       const { dataSource, shouldeCheck } = this.props;
-      const item = _.filter(dataSource, o => o.id === value)[0];
+      const item = _.filter(dataSource, o => o.id === keyId)[0];
       // 首先需要做客户校验
       this.selectedCust = null;
       const { id, custType } = item;
@@ -198,7 +196,6 @@ export default class SelectAssembly extends PureComponent {
     }
   }
 
-
   render() {
     const { dataSource, width } = this.props;
     const { inputValue, typeStyle } = this.state;
@@ -208,7 +205,7 @@ export default class SelectAssembly extends PureComponent {
       return (
         <Option
           key={opt.id}
-          value={opt.id}
+          value={`${opt.id}%%%`}
           text={`${custName}（${custEcom}）${levelText}`}
         >
           <span className={styles.prodValue}>
