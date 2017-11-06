@@ -67,13 +67,13 @@ export default class QuickMenu extends PureComponent {
     let email = null;
     if (!_.isEmpty(address.orgCustomerContactInfoList)) {
       const index = _.findLastIndex(address.orgCustomerContactInfoList,
-          val => val.mainFlag);
+        val => val.mainFlag);
       finded = _.findLastIndex(address.orgCustomerContactInfoList[index].emailAddresses,
-          val => val.mainFlag);
+        val => val.mainFlag);
       addresses = address.orgCustomerContactInfoList[index];
     } else if (!_.isEmpty(address.perCustomerContactInfo)) {
       finded = _.findLastIndex(address.perCustomerContactInfo.emailAddresses,
-          val => val.mainFlag);
+        val => val.mainFlag);
       addresses = address.perCustomerContactInfo;
     } else {
       finded = -1;
