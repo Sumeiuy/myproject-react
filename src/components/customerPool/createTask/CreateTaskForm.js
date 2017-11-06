@@ -8,6 +8,7 @@ import React, { PropTypes, PureComponent } from 'react';
 import { Form, Mention } from 'antd';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
+import { RestoreScrollTop } from '../../common/hocComponent';
 import styles from './createTaskForm.less';
 import TaskFormInfo from './TaskFormInfo';
 
@@ -15,6 +16,7 @@ import TaskFormInfo from './TaskFormInfo';
 const create = Form.create;
 const { toString } = Mention;
 
+@RestoreScrollTop
 @create()
 export default class CreateTaskForm extends PureComponent {
 

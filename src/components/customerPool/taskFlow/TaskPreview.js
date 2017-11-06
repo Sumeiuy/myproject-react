@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 10:29:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-30 13:22:57
+ * @Last Modified time: 2017-11-06 10:20:26
  */
 
 import React, { PureComponent } from 'react';
@@ -13,6 +13,7 @@ import classnames from 'classnames';
 import _ from 'lodash';
 import GroupTable from '../groupManage/GroupTable';
 import Button from '../../common/Button';
+import { RestoreScrollTop } from '../../common/hocComponent';
 import GroupModal from '../groupManage/CustomerGroupUpdateModal';
 import styles from './taskPreview.less';
 
@@ -43,6 +44,7 @@ const renderColumnTitle = () => {
   return columns;
 };
 
+@RestoreScrollTop
 export default class TaskPreview extends PureComponent {
   static propTypes = {
     storedTaskFlowData: PropTypes.object.isRequired,

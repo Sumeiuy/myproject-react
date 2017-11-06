@@ -14,7 +14,7 @@ import styles from './createTaskForm.less';
 const FormItem = Form.Item;
 const Option = Select.Option;
 const { TextArea } = Input;
-const { toContentState } = Mention;
+const { toContentState, toString } = Mention;
 const Nav = Mention.Nav;
 
 export default class TaskFormInfo extends PureComponent {
@@ -95,14 +95,13 @@ export default class TaskFormInfo extends PureComponent {
   }
 
   @autobind
-  handileSelect(suggestion, data) {
+  handleSelect(suggestion, data) {
     console.log('onSelect', typeof suggestion, 'data', data);
   }
 
 
   @autobind
   handleTaskTypeChange(value) {
-    // console.log(value);
     if (!_.isEmpty(value) && value !== '请选择' && value !== '暂无数据') {
       this.setState({
         isShowErrorTaskType: false,
@@ -116,7 +115,6 @@ export default class TaskFormInfo extends PureComponent {
 
   @autobind
   handleExcuteTypeChange(value) {
-    // console.log(value);
     if (!_.isEmpty(value) && value !== '请选择' && value !== '暂无数据') {
       this.setState({
         isShowErrorExcuteType: false,
@@ -124,6 +122,20 @@ export default class TaskFormInfo extends PureComponent {
     } else {
       this.setState({
         isShowErrorExcuteType: true,
+      });
+    }
+  }
+
+  @autobind
+  handleMentionChange(contentState) {
+    const content = toString(contentState);
+    if (_.isEmpty(content) || content.length < 10) {
+      this.setState({
+        isShowErrorInfo: true,
+      });
+    } else {
+      this.setState({
+        isShowErrorInfo: false,
       });
     }
   }
@@ -150,8 +162,9 @@ export default class TaskFormInfo extends PureComponent {
           prefix={['{']}
           onSearchChange={this.handleSearchChange}
           suggestions={suggestions}
-          onSelect={this.handileSelect}
+          onSelect={this.handleSelect}
           multiLines
+          onChange={this.handleMentionChange}
         />,
       )
     );
@@ -187,7 +200,7 @@ export default class TaskFormInfo extends PureComponent {
     const errorProps = isShowErrorInfo ? {
       hasFeedback: true,
       validateStatus: 'error',
-      help: '任务描述不能小于10个字符',
+      help: '任务提示不能小于10个字符',
     } : null;
 
     const taskTypeErrorSelectProps = isShowErrorTaskType ? {
