@@ -2,11 +2,14 @@
  * @Author: sunweibin
  * @Date: 2017-10-25 15:55:35
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-10-25 17:08:05
+ * @Last Modified time: 2017-11-06 12:33:56
  */
 import _ from 'lodash';
 
 function convertNY2ZN(v) {
+  if (v) {
+    return '';
+  }
   return v === 'N' ? '否' : '是';
 }
 
