@@ -7,6 +7,10 @@
  * 现阶段子类型(subType)与状态(status)不做联动
  *
 */
+// TableTransfer 组件传入columns 需要引入;
+import React from 'react';
+import classnames from 'classnames';
+import styles from '../components/channelsTypeProtocol/editForm.less';
 
 const pageConfig = {
   // 权限分配
@@ -589,54 +593,100 @@ const pageConfig = {
         dataIndex: 'prodCode',
         key: 'prodCode',
         title: '产品代码',
-        width: 72,
+        width: 100,
+        render: item => (
+          <div className={classnames(styles.column, styles.prodCode)} title={item}>
+            {item}
+          </div>
+        ),
       },
       {
         dataIndex: 'prodName',
         key: 'prodName',
         title: '产品名称',
-        width: 72,
+        width: 120,
+        render: item => (
+          <div className={classnames(styles.column, styles.prodName)} title={item}>
+            {item}
+          </div>
+        ),
       },
       {
         dataIndex: 'prodTypeName',
         key: 'prodTypeName',
         title: '产品类型',
-        width: 72,
+        width: 110,
+        render: item => (
+          <div className={classnames(styles.column, styles.prodTypeName)} title={item}>
+            {item}
+          </div>
+        ),
       },
       {
         dataIndex: 'prodSubTypeName',
         key: 'prodSubTypeName',
         title: '子类型',
-        width: 58,
+        width: 110,
+        render: item => (
+          <div className={classnames(styles.column, styles.prodSubTypeName)} title={item}>
+            {item}
+          </div>
+        ),
       },
       {
         dataIndex: 'riskMatchFlag',
         key: 'riskMatchFlag',
         title: '风险是否匹配',
-        width: 100,
+        width: 110,
+        render: item => (
+          <div className={classnames(styles.column, styles.riskMatchFlag)} title={item}>
+            {item}
+          </div>
+        ),
       },
       {
         dataIndex: 'termMatchFlag',
         key: 'termMatchFlag',
         title: '期限是否匹配',
-        width: 100,
+        width: 110,
+        render: item => (
+          <div className={classnames(styles.column, styles.termMatchFlag)} title={item}>
+            {item}
+          </div>
+        ),
       },
       {
         dataIndex: 'varietyMatchFlag',
         key: 'varietyMatchFlag',
         title: '投资品种是否匹配',
-        width: 128,
+        width: 130,
+        render: item => (
+          <div className={classnames(styles.column, styles.varietyMatchFlag)} title={item}>
+            {item}
+          </div>
+        ),
       },
       {
         dataIndex: 'confirmType',
         key: 'confirmType',
         title: '签署确认书类型',
-        width: 114,
+        width: 120,
+        render: item => (
+          <div className={classnames(styles.column, styles.confirmType)} title={item}>
+            {item}
+          </div>
+        ),
       },
       {
         dataIndex: 'price',
         key: 'price',
         title: '价格',
+        width: 60,
+        render: item => (
+          <div className={classnames(styles.column, styles.price)} title={item}>
+            {item}
+          </div>
+        ),
       },
     ],
     // 协议条款表格表头数组
