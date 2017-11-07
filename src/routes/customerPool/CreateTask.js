@@ -41,6 +41,10 @@ const mapDispatchToProps = {
     type: 'customerPool/saveTaskFlowData',
     payload: query,
   }),
+  clearTaskFlowData: query => ({
+    type: 'customerPool/clearTaskFlowData',
+    payload: query || {},
+  }),
   push: routerRedux.push,
   goBack: routerRedux.goBack,
   getApprovalList: fectchDataFunction(true, effects.getApprovalList),
@@ -62,6 +66,7 @@ export default class CreateTask extends PureComponent {
     saveTaskFlowData: PropTypes.func.isRequired,
     getApprovalList: PropTypes.func.isRequired,
     approvalList: PropTypes.array.isRequired,
+    clearTaskFlowData: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -88,6 +93,13 @@ export default class CreateTask extends PureComponent {
     }
     // console.log(nextcreateTaskResult);
   }
+
+  componentWillUnmount() {
+    const { clearTaskFlowData } = this.props;
+    // 清除数据
+    clearTaskFlowData();
+  }
+
 
   @autobind
   handleCreateTaskSuccess(result) {
