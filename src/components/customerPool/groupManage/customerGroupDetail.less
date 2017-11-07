@@ -12,12 +12,20 @@
     justify-content: flex-start;
     align-items: flex-start;
     & > .name {
-      width: 10%;
+      width: 12%;
       font-size: 14px;
       padding-top: 5px;
     }
+    & > .name::before {
+      display: inline-block;
+      margin-right: 4px;
+      content: "*";
+      line-height: 1;
+      font-size: 12px;
+      color: #f04134;
+    }
     & > .nameContent {
-      width: 90%;
+      width: 88%;
     }
   }
   & > .descriptionSection {
@@ -26,12 +34,13 @@
     align-items: flex-start;
     padding-bottom: 20px;
     & > .description {
-      width: 10%;
+      width: 12%;
       padding-top: 5px;
       font-size: 14px;
+      padding-left: 10px;
     }
     & > .descriptionContent {
-      width: 90%;
+      width: 88%;
       textarea {
         resize: none !important;
         height: 82px !important;

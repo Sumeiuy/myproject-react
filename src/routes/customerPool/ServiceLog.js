@@ -134,15 +134,14 @@ export default class CreateTaskForm extends PureComponent {
 
   @autobind
   // 设置不可选日期
-  disabledDate(startValue, endValue) {
-    if (!startValue && !endValue) {
+  disabledDate(startValue) {
+    if (!startValue) {
       return false;
     }
 
     const nowDay = sixDate;
     const currentStartDate = moment(startValue).format('YYYY-MM-DD HH:mm:ss');
-    const currentEndDate = moment(endValue).format('YYYY-MM-DD HH:mm:ss');
-    return currentStartDate <= nowDay && currentEndDate > nowDay;
+    return currentStartDate <= nowDay;
   }
 
   @autobind
