@@ -549,14 +549,15 @@ export default {
         message: '删除分组下客户成功',
         duration: 2,
       });
-      // // 删除成功之后，更新分组信息
-      // yield put({
-      //   type: 'getCustomerGroupList',
-      //   payload: {
-      //     pageNum: INITIAL_PAGE_NUM,
-      //     pageSize: INITIAL_PAGE_TEN_SIZE,
-      //   },
-      // });
+      // 删除成功之后，更新分组下客户信息
+      yield put({
+        type: 'getGroupCustomerList',
+        payload: {
+          pageNum: INITIAL_PAGE_NUM,
+          pageSize: INITIAL_PAGE_FIVE_SIZE,
+          groupId,
+        },
+      });
     },
     // 360服务记录查询
     * getServiceLog({ payload }, { call, put }) {
