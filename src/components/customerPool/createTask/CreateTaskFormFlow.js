@@ -88,7 +88,7 @@ export default class CreateTaskFormFlow extends PureComponent {
     e.preventDefault();
     const { createTask, location: { query } } = this.props;
     const { groupId } = query;
-    this.createTaskForm.validateFields((err, values) => {
+    this.createTaskForm.getWrappedInstance().validateFields((err, values) => {
       let isFormError = false;
       console.log(err);
       if (!_.isEmpty(err)) {
