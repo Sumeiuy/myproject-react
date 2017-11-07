@@ -13,6 +13,10 @@ var theme = require('../src/theme')
 
 var env = config.build.env
 
+function resolve (dir) {
+  return path.join(__dirname, '..', dir)
+}
+
 var cssLoaders = utils.getCSSLoaders({
   disableCSSModules: !config.cssModules,
   sourceMap: config.build.productionSourceMap
@@ -21,6 +25,11 @@ var cssLoaders = utils.getCSSLoaders({
 var webpackConfig = merge(baseWebpackConfig, {
   module: {
     rules: [
+      {
+        test: /\.jsx?$/,
+        loader: 'babel-loader',
+        include: [resolve('src')]
+      },
       {
         test: /\.css$/,
         include: config.appSrc,
