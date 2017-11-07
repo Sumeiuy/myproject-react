@@ -82,7 +82,9 @@ export default class TaskFormInfo extends PureComponent {
   }
 
   componentDidUpdate() {
-    this.isFirstLoad = false;
+    if (this.isFirstLoad) {
+      this.isFirstLoad = false;
+    }
   }
 
   handleSearchChange = (value, trigger) => {
