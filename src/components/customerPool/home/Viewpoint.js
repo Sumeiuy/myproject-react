@@ -109,7 +109,9 @@ export default class Viewpoint extends PureComponent {
           }
           {
             isShowMore ? (
-              <div className={styles.fold} onClick={this.handleMoreClick} >{'更多'}</div>
+              <div className={styles.fold} >
+                <a onClick={this.handleMoreClick}>{'更多'}</a>
+              </div>
             ) : (
               null
             )
