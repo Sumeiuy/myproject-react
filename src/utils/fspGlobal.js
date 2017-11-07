@@ -38,6 +38,14 @@ function closeTab(arg) {
   }
 }
 
+function removeTabMenu(tabId) {
+  try {
+    window.$(`#exApp_${tabId}`).parent().remove();
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 const fspGlobal = {
   // 待办流程列表中进入详情页
   openAuditPage: (args) => {
@@ -111,6 +119,10 @@ const fspGlobal = {
   // 参数 id 为对应得tab标签的id
   closeRctTabById(id) {
     closeTab(`#exApp_${id}`);
+  },
+
+  closeTabMenu(tabId) {
+    removeTabMenu(tabId);
   },
 };
 
