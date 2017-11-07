@@ -13,7 +13,7 @@ import Button from '../../common/Button';
 import CreateTaskForm from './CreateTaskForm';
 import TaskFormFlowStep from './TaskFormFlowStep';
 import styles from './createTaskFormFlow.less';
-import { fspGlobal } from '../../../utils/fspGlobal';
+import { fspGlobal } from '../../../utils';
 import { validateFormContent } from '../../../decorators/validateFormContent';
 
 
