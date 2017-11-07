@@ -153,8 +153,7 @@ export default class Home extends PureComponent {
       hasBoMampPermission,
       hasBdMampPermission,
     } = permission;
-    this.isHasAuthorize = hasIndexViewPermission();
-    this.orgTreeAuthorize = this.isHasAuthorize
+    this.isHasAuthorize = hasIndexViewPermission()
       || hasHqMampPermission()
       || hasBoMampPermission()
       || hasBdMampPermission();
@@ -398,7 +397,7 @@ export default class Home extends PureComponent {
     };
     // 无‘HTSC 首页指标查询’‘总部-营销活动管理岗’,
     // ‘分公司-营销活动管理岗’,‘营业部-营销活动管理岗’职责的普通用户，取值 '我的客户'
-    if (!this.orgTreeAuthorize) {
+    if (!this.isHasAuthorize) {
       this.setState({
         createCustRange: [myCustomer],
       });
