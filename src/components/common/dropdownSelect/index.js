@@ -123,7 +123,7 @@ export default class DropdownSelect extends PureComponent {
   render() {
     const { theme, disable } = this.props;
     const modalClass = classnames([style.ddsDrapMenu,
-      { hide: !this.state.isSHowModal },
+      { [style.hide]: !this.state.isSHowModal },
     ]);
     const ddsShowBoxClass = classnames([style.ddsShowBox,
       { [style.active]: this.state.isSHowModal },

@@ -179,8 +179,8 @@ export default class Home extends PureComponent {
     }
     // 权限控制是否传给后端orgId
     const authOrgId = this.isHasAuthorize ? this.orgId : '';
-    // 热词搜索 orgId, empNo 两个参数必传一个，两个同时传时以orgId为准
-    getHotWds({ orgId: authOrgId, empNo: empNum });
+    // 猜你感兴趣模块接口，经需求确认此处与职责无关，删除以前传的orgId,2017\11\7
+    getHotWds({ empNo: empNum });
     // 历史搜索记录 orgId, empNo 两个参数必传一个，两个同时传时以orgId为准
     getHistoryWdsList({ orgId: authOrgId, empNo: empNum });
     // 待办事项
