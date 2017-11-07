@@ -7,7 +7,7 @@ import _ from 'lodash';
 import { fspContainer } from '../../../config';
 import { fspGlobal, helper } from '../../../utils';
 import getSeries, { singleColorBar } from './chartOption_';
-import { toFixedCust, getPercentage, toFixedMoney } from '../../chartRealTime/FixNumber';
+import { toFomatterCust, toFixedCust, getPercentage, toFixedMoney } from '../../chartRealTime/FixNumber';
 
 export function filterEmptyToInteger(number) {
   return ((_.isEmpty(number)) ? 0 : _.parseInt(number, 10));
@@ -118,11 +118,7 @@ export function getClientsNumber({
   const {
     newUnit,
     newSeries,
-  } = toFixedCust(clientNumberData);
-  // const thousandsFormatSeries = _.map(
-  //   newSeries,
-  //   item => numFormat(item),
-  // );
+  } = toFomatterCust(clientNumberData);
   const items = {
     grid: {
       left: '12px',

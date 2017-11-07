@@ -144,7 +144,7 @@ export default class SelectLabelCust extends PureComponent {
           defaultValue={condition}
           isNeedBtn
         />
-        {!_.isEmpty(circlePeopleData) && !_.isEmpty(condition)
+        {!_.isEmpty(condition)
           ? <h4 className={styles.tipsWord}>共找到<span>{tipsSize}</span>条相关标签</h4>
           :
           null
