@@ -47,6 +47,8 @@ export default class TaskFormInfo extends PureComponent {
 
   constructor(props) {
     super(props);
+    // 用来处理页面一进来会触发mentionChange事件
+    this.isFirstLoad = true;
     this.state = {
       suggestions: [],
       inputValue: '',
@@ -79,6 +81,9 @@ export default class TaskFormInfo extends PureComponent {
     }
   }
 
+  componentDidUpdate() {
+    this.isFirstLoad = false;
+  }
 
   handleSearchChange = (value, trigger) => {
     const { users } = this.props;
@@ -128,15 +133,17 @@ export default class TaskFormInfo extends PureComponent {
 
   @autobind
   handleMentionChange(contentState) {
-    const content = toString(contentState);
-    if (_.isEmpty(content) || content.length < 10) {
-      this.setState({
-        isShowErrorInfo: true,
-      });
-    } else {
-      this.setState({
-        isShowErrorInfo: false,
-      });
+    if (!this.isFirstLoad) {
+      const content = toString(contentState);
+      if (_.isEmpty(content) || content.length < 10) {
+        this.setState({
+          isShowErrorInfo: true,
+        });
+      } else {
+        this.setState({
+          isShowErrorInfo: false,
+        });
+      }
     }
   }
 
