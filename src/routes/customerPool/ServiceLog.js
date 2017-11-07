@@ -134,14 +134,24 @@ export default class CreateTaskForm extends PureComponent {
 
   @autobind
   // 设置不可选日期
-  disabledDate(startValue) {
-    if (!startValue) {
+  disabledDate(value) {
+    if (!value) {
       return false;
     }
 
+    // 设置间隔日期，只能在大于六个月之前日期和当前日期之间选择
     const nowDay = sixDate;
-    const currentStartDate = moment(startValue).format('YYYY-MM-DD HH:mm:ss');
-    return currentStartDate <= nowDay;
+    const currentMonth = moment(value).month() + 1;
+    const localMonth = moment(new Date()).month() + 1;
+    const currentDate = moment(value).format('YYYY-MM-DD HH:mm:ss');
+    const localDate = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
+
+    if (currentMonth === localMonth) {
+      // endValue
+      return currentDate > localDate;
+    }
+    // startValue
+    return currentDate <= nowDay;
   }
 
   @autobind
