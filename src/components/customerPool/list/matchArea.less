@@ -1,6 +1,11 @@
 .relatedInfo {
   margin-top: 10px;
   border-top: 1px dashed #c2c2c2;
+  &.ellipsis {
+    ul li {
+      width: 480px;
+    }
+  }
   ul {
     list-style-type: none;
     font-size: 13px;
@@ -8,7 +13,7 @@
     margin-top: 10px;
     li {
       margin-top: 4px;
-      width: 335px;
+      width: 100%;
       height: 18px;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -30,11 +35,11 @@
           height: 26px;
           line-height: 26px;
           padding: 0 5px;
-          background-color: #FFFFCD;
+          background-color: #ffffcd;
           font-style: normal;
           color: #333;
           white-space: nowrap;
-          box-shadow: 0 0 15px #EAEBEB;
+          box-shadow: 0 0 15px #eaebeb;
         }
       }
       :global i {
@@ -53,8 +58,8 @@
   float: right;
   font-size: 12px;
   .itemA {
-    color: #B9B9B9;
-    cursor:pointer;
+    color: #b9b9b9;
+    cursor: pointer;
     padding-right: 10px;
   }
 }

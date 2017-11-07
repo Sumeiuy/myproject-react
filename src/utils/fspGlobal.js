@@ -3,6 +3,7 @@
  *  封装fsp系统中window方法
  * @author wangjunjun
  */
+import { getProperty } from './helper';
 
 function exec(method, ...args) {
   try {
@@ -15,6 +16,15 @@ function exec(method, ...args) {
 function execOpenTab(method, ...args) {
   try {
     window.eb.app[method].run.apply(null, args);
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+function execSwitchTab(tabId) {
+  try {
+    const activeReactTab = getProperty(window, 'eb.component.SmartTab.activeReactTab');
+    activeReactTab($('#UTB'), { tabId });
   } catch (e) {
     console.log(e);
   }
@@ -64,6 +74,10 @@ const fspGlobal = {
     );
   },
 
+  switchFspTab(tabId) {
+    execSwitchTab(tabId);
+  },
+
   /**
    *  在fsp中新开一个iframe的tab
    */
@@ -85,15 +99,6 @@ const fspGlobal = {
         ...param,
       },
     );
-  },
-
-  // 第二次打開tab
-  openRctTabTwo(id) {
-    try {
-      window.$(id).tab('show');
-    } catch (e) {
-      console.log(e);
-    }
   },
 
   // 关闭fsp中原有的tab
