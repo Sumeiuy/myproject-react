@@ -12,7 +12,6 @@ import { Modal, Select, DatePicker, TimePicker, Input, message } from 'antd';
 import moment from 'moment';
 
 import Loading from '../../../layouts/Loading';
-
 import styles from './createServiceRecord.less';
 
 const { Option } = Select;
@@ -165,6 +164,12 @@ export default class CreateServiceRecord extends PureComponent {
       serveCustFeedBack2: feedbackTypeChild || '',
     });
     serviceContentNode.value = '';
+
+    const iframe = document.querySelector('#view360-tab-serviceRecord-iframe');
+    const iframeSrc = iframe.contentWindow.location.href;
+    const tmpArr = iframeSrc.split('?');
+    const queryStr = tmpArr[2];
+    iframe.src = `${tmpArr[0]}?${tmpArr[1]}?${queryStr.split('&')[0]}&s=${Date.now()}`;
   }
 
   // 关闭弹窗
