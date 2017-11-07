@@ -100,7 +100,14 @@ function float2Integer(v) {
 }
 
 function int2Float(v) {
-  return v / times;
+  return Number.parseFloat(v / times);
+}
+
+// 浮点数误差
+function withinErrorRange(left, right) {
+  // 下面注释的发现不好用
+  // return Math.abs(left - right) < Number.EPSILON * 4;
+  return Math.abs(left - right) < 0.000000001;
 }
 
 export default class TableTransfer extends Component {
@@ -487,7 +494,8 @@ export default class TableTransfer extends Component {
       modifyTotalRate = float2Integer(totalRate) - float2Integer(_.toNumber(selected[rateKey]));
     }
     modifyDifferenceRate = modifyTotalRate - float2Integer(_.toNumber(targetRate));
-    if (modifyDifferenceRate === 0) {
+    // if (modifyDifferenceRate === 0) {
+    if (withinErrorRange(modifyDifferenceRate, 0)) {
       modifyTip = { type: 'finish', content: '产品组合等于目标佣金率' };
     } else if (modifyDifferenceRate > 0) {
       modifyTip = {
