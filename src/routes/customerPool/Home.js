@@ -153,8 +153,7 @@ export default class Home extends PureComponent {
       hasBoMampPermission,
       hasBdMampPermission,
     } = permission;
-    this.isHasAuthorize = hasIndexViewPermission();
-    this.orgTreeAuthorize = this.isHasAuthorize
+    this.isHasAuthorize = hasIndexViewPermission()
       || hasHqMampPermission()
       || hasBoMampPermission()
       || hasBdMampPermission();
@@ -180,8 +179,8 @@ export default class Home extends PureComponent {
     }
     // 权限控制是否传给后端orgId
     const authOrgId = this.isHasAuthorize ? this.orgId : '';
-    // 热词搜索 orgId, empNo 两个参数必传一个，两个同时传时以orgId为准
-    getHotWds({ orgId: authOrgId, empNo: empNum });
+    // 猜你感兴趣模块接口，经需求确认此处与职责无关，删除以前传的orgId,2017\11\7
+    getHotWds({ empNo: empNum });
     // 历史搜索记录 orgId, empNo 两个参数必传一个，两个同时传时以orgId为准
     getHistoryWdsList({ orgId: authOrgId, empNo: empNum });
     // 待办事项
@@ -398,7 +397,7 @@ export default class Home extends PureComponent {
     };
     // 无‘HTSC 首页指标查询’‘总部-营销活动管理岗’,
     // ‘分公司-营销活动管理岗’,‘营业部-营销活动管理岗’职责的普通用户，取值 '我的客户'
-    if (!this.orgTreeAuthorize) {
+    if (!this.isHasAuthorize) {
       this.setState({
         createCustRange: [myCustomer],
       });
