@@ -377,31 +377,21 @@ export default class DurationSelect extends PureComponent {
                   </RadioGroup>
               }
             </div>
-            {
-              isHistory ?
-                <div className={styles.pickerFootCustom}>
-                  <a onClick={this.showSelfDatePicker}>自定义</a>
-                </div>
-              :
-                null
-            }
+            <div className={styles.pickerFootCustom}>
+              <a onClick={this.showSelfDatePicker}>自定义</a>
+            </div>
           </div>
         </div>
-        {
-          isHistory ?
-            <RangePicker
-              allowClear={false}
-              disabledDate={this.disabledDate}
-              value={[beginMoment, endMoment]}
-              getCalendarContainer={this.findContainer}
-              format="YYYY/MM/DD"
-              onChange={this.rangePickerChange}
-              open={selfDatePickerOpen}
-              onOpenChange={this.openChange}
-            />
-          :
-            null
-        }
+        <RangePicker
+          allowClear={false}
+          disabledDate={this.disabledDate}
+          value={[beginMoment, endMoment]}
+          getCalendarContainer={this.findContainer}
+          format="YYYY/MM/DD"
+          onChange={this.rangePickerChange}
+          open={selfDatePickerOpen}
+          onOpenChange={this.openChange}
+        />
       </div>
     );
   }
