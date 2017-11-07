@@ -67,7 +67,7 @@ export default {
     custContactData: {}, // 客户联系方式
     serviceRecordData: {}, // 服务记录
     // 添加服务记录成功的标记
-    addServeRecordSuccess: false,
+    addServeRecordSuccess: true,
     isFollow: {},
     followLoading: false,
     fllowCustData: {},
@@ -412,12 +412,15 @@ export default {
     },
     // 列表页添加服务记录
     * addServeRecord({ payload }, { call, put }) {
+      yield put({
+        type: 'resetServeRecord',
+      });
       const res = yield call(api.addServeRecord, payload);
       if (res.msg === 'OK') {
-        yield put({
-          type: 'getServiceLog',
-          payload: { custId: payload.custId },
-        });
+        // yield put({
+        //   type: 'getServiceLog',
+        //   payload: { custId: payload.custId },
+        // });
         yield put({
           type: 'addServeRecordSuccess',
           payload: res,
@@ -915,6 +918,12 @@ export default {
       return {
         ...state,
         addServeRecordSuccess: payload.resultData === 'success',
+      };
+    },
+    resetServeRecord(state) {
+      return {
+        ...state,
+        addServeRecordSuccess: false,
       };
     },
     // 关注成功
