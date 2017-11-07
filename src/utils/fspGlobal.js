@@ -40,7 +40,8 @@ function closeTab(arg) {
 
 function removeTabMenu(tabId) {
   try {
-    window.$(`#exApp_${tabId}`).parent().remove();
+    const removeTab = getProperty(window, 'eb.component.SmartTab.remove');
+    removeTab($('#UTB'), { tabId });
   } catch (e) {
     console.log(e);
   }
