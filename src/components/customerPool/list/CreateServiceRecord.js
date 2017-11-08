@@ -166,8 +166,10 @@ export default class CreateServiceRecord extends PureComponent {
     serviceContentNode.value = '';
     // 提交成功后，刷新360视图中的服务记录iframe
     const iframe = document.querySelector(fspContainer.view360Iframe);
-    const iframeHash = iframe.contentWindow.location.hash;
-    iframe.contentWindow.location.hash = `${iframeHash.split('&')[0]}&s=${Date.now()}`;
+    if (iframe) {
+      const iframeHash = iframe.contentWindow.location.hash;
+      iframe.contentWindow.location.hash = `${iframeHash.split('&')[0]}&s=${Date.now()}`;
+    }
   }
 
   // 关闭弹窗
