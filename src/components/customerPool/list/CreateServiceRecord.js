@@ -124,7 +124,6 @@ export default class CreateServiceRecord extends PureComponent {
     if (loading && !nextProps.loading && nextProps.addServeRecordSuccess === true) {
       onToggleServiceRecordModal(false);
       message.success('添加服务记录成功');
-      console.log('next');
       // 提交成功后，刷新360视图中的服务记录iframe
       const iframe = document.querySelector(fspContainer.view360Iframe);
       if (iframe) {
@@ -136,7 +135,6 @@ export default class CreateServiceRecord extends PureComponent {
           key => (`${key}=${obj[key]}`),
         ).join('&');
       }
-      console.log('done');
     }
   }
 
