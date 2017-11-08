@@ -139,6 +139,12 @@ export default class CreateTaskForm extends PureComponent {
         defaultMissionDesc = '';
         defaultInitialValue = 4;
         break;
+      case 'tag':
+        defaultMissionType = '请选择';
+        defaultExecutionType = 'Chance';
+        defaultMissionDesc = '';
+        defaultInitialValue = 4;
+        break;
       case 'custIndicator':
         defaultMissionName = '新客户回访';
         defaultMissionType = 'AccoutService';
