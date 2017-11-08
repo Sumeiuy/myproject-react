@@ -568,27 +568,15 @@ export default class CommissionHome extends PureComponent {
       replace,
       list,
       approvalRecord,
-      productList,
-      getProductList,
-      getCanApplyCustList,
       getSingleCustList,
       getSubscribelCustList,
       submitBatch,
       submitSub,
       submitUnSub,
-      approvalUserList,
-      canApplyCustList,
-      validataLoading,
-      validateResult,
-      validateCustInfo,
       dict: { otherRatio },
       empInfo: { empInfo, empPostnList },
-      getGJCommissionRate,
-      gjCommissionList,
       getSingleOtherRates,
       singleOtherRatio,
-      getSingleProductList,
-      singleComProductList,
       threeMatchInfo,
       queryThreeMatchInfo,
       singleCustomerList,
@@ -597,11 +585,8 @@ export default class CommissionHome extends PureComponent {
       subscribelProList,
       getUnSubscribelProList,
       unSubscribelProList,
-      singleGJCommission,
-      getSingleGJ,
       submitSingle,
       singleSubmit,
-      getAprovalUserList,
       clearReduxState,
       singleCustValidate,
       singleCVR,
@@ -658,22 +643,10 @@ export default class CommissionHome extends PureComponent {
               modalKey="createApprovalBoard"
               visible={createApprovalBoard}
               onClose={this.closeNewApprovalBoard}
-              queryProductList={getProductList}
-              targetProductList={productList}
-              approverList={approvalUserList}
-              onSearchApplyCust={getCanApplyCustList}
-              customerList={canApplyCustList}
-              validataLoading={validataLoading}
-              validateResult={validateResult}
-              validateCust={validateCustInfo}
               otherRatios={otherRatio}
               onBatchSubmit={submitBatch}
-              gjCommission={gjCommissionList}
-              queryGJCommission={getGJCommissionRate}
               getSingleOtherRates={getSingleOtherRates}
               singleOtherRatio={singleOtherRatio}
-              getSingleProductList={getSingleProductList}
-              singleComProductList={singleComProductList}
               threeMatchInfo={threeMatchInfo}
               queryThreeMatchInfo={queryThreeMatchInfo}
               querySingleCustList={getSingleCustList}
@@ -684,13 +657,10 @@ export default class CommissionHome extends PureComponent {
               subscribelProList={subscribelProList}
               getUnSubscribelProList={getUnSubscribelProList}
               unSubscribelProList={unSubscribelProList}
-              singleGJCommission={singleGJCommission}
-              getSingleGJ={getSingleGJ}
               onSubmitSingle={submitSingle}
               singleSubmit={singleSubmit}
               submitSub={submitSub}
               submitUnSub={submitUnSub}
-              queryApprovalUser={getAprovalUserList}
               clearReduxState={clearReduxState}
               onValidateSingleCust={singleCustValidate}
               singleCustVResult={singleCVR}
