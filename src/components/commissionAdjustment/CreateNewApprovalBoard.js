@@ -975,20 +975,26 @@ export default class CreateNewApprovalBoard extends PureComponent {
     this.setState({
       subProList: array,
     });
+    const appList = array.map(pro => pro.approvalFlg);
+    const approvFlag = _.includes(appList, 'Y');
+    if (approvFlag) {
+      this.setState({
+        canShowAppover: true,
+      });
+    } else {
+      this.setState({
+        canShowAppover: false,
+      });
+    }
     if (flag === 'add') {
       // 如果是左侧列表添加到右侧列表,则需要查询三匹配信息
-      const { prodCode, approvalFlg } = item;
+      const { prodCode } = item;
       const { id, custType } = this.state.customer;
       this.props.queryThreeMatchInfo({
         custRowId: id,
         custType,
         prdCode: prodCode,
       });
-      if (approvalFlg === 'Y') {
-        this.setState({
-          canShowAppover: true,
-        });
-      }
     }
   }
 
@@ -998,13 +1004,17 @@ export default class CreateNewApprovalBoard extends PureComponent {
     this.setState({
       unSubProList: array,
     });
-    if (flag === 'add') {
-      const { approvalFlg } = item;
-      if (approvalFlg === 'Y') {
-        this.setState({
-          canShowAppover: true,
-        });
-      }
+    const appList = array.map(pro => pro.approvalFlg);
+    const approvFlag = _.includes(appList, 'Y');
+    if (approvFlag) {
+      this.setState({
+        canShowAppover: true,
+      });
+    } else {
+      this.setState({
+        canShowAppover: false,
+        approverId: '',
+      });
     }
   }
 
