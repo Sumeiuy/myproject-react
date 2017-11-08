@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-01 22:05:14
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-04 16:30:30
+ * @Last Modified time: 2017-11-07 13:25:05
  */
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -18,7 +18,7 @@ export default function RejectButtons(props) {
     <div className={styles.approvalBtnGroup}>
       {
         btnList.map((btn, index) => {
-          const { btnName } = btn;
+          const { btnName, flowBtnId } = btn;
           let type = 'primary';
           if (index > 0) {
             type = 'default';
@@ -30,6 +30,7 @@ export default function RejectButtons(props) {
               onClick={() => onClick(btn)}
               type={type}
               size="large"
+              key={flowBtnId}
             >
               {btnName}
             </Button>

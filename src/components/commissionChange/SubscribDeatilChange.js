@@ -85,6 +85,22 @@ export default class SubscribeDetailToChange extends PureComponent {
       // 资讯订阅的
       this.merge3MatchSubInfo(next3);
     }
+    const { subscribeDetailToChange: preDetail } = this.props;
+    const { subscribeDetailToChange: nextDetail } = nextProps;
+    if (nextDetail !== preDetail) {
+      const { base, subProList } = nextDetail;
+      const { item: choiceProList } = base;
+      const proList = this.createSubscribelProList(subProList);
+      const choiceList = this.choiceSubProList(choiceProList, proList);
+      _.forEach(choiceList, (item) => {
+        const { approvalFlg } = item;
+        if (approvalFlg === 'Y') {
+          this.setState({
+            canShowAppover: true,
+          });
+        }
+      });
+    }
   }
 
   @autobind
@@ -107,6 +123,7 @@ export default class SubscribeDetailToChange extends PureComponent {
 
   @autobind
   afterLauncher() {
+    message.success('提交成功');
     this.setState({
       btnDisabled: true,
     });
@@ -275,45 +292,60 @@ export default class SubscribeDetailToChange extends PureComponent {
     return newSubscriProList;
   }
 
+  @autobind
+  mergeChildrenProduct(original, merged) {
+    const productCodeList = merged.map(o => o.prodCode);
+    return original.map((child) => {
+      // 判断child在不在productCodeList中
+      // TODO 此处需要进行一个判断就是有些子产品是默认选中的，用户可以取消勾选
+      const { prodCode, xDefaultOpenFlag } = child;
+      if (_.includes(productCodeList, prodCode)) {
+        return {
+          ...child,
+          xDefaultOpenFlag: 'Y',
+        };
+      }
+      if (xDefaultOpenFlag === 'Y') {
+        // 表示该子产品默认勾选,此时代表该子产品已经被用户取消勾选了
+        return {
+          ...child,
+          xDefaultOpenFlag: 'N',
+        };
+      }
+      return child;
+    });
+  }
+
+  // 将原始数据与用户选择的数据进行合并
+  @autobind
+  mergeOrigianl2User(original, user) {
+    // original和user为含有相同父产品的产品数组
+    // 合并的目的在于将original中的相关子产品的xDefaultOpenFlag设为true
+    return original.map((product) => {
+      const { children, ...resetInfo } = product;
+      const newProduct = resetInfo;
+      if (!_.isEmpty(children)) {
+        // 存在子产品列表
+        // 找到user中的相关产品
+        const userRelativeProd = _.find(user, p => p.prodCode === product.prodCode);
+        // 判断有无子产品
+        const userChildren = (userRelativeProd && userRelativeProd.subItem) || [];
+        newProduct.children = this.mergeChildrenProduct(children, userChildren);
+      }
+      return newProduct;
+    });
+  }
+
+
   // 重组资讯订阅已选产品List
   @autobind
-  choiceSubProList(data, preProList) {
-    const newChoiceProList = [];
-    data.forEach((product) => {
-      const { prodCode, subItem } = product;
-      const tableProList = product;
-      preProList.forEach((item) => {
-        const { prodCode: choiceProCode, children: itemChildren } = item;
-        if (prodCode === choiceProCode) {
-          const proList = {
-            key: prodCode,
-            ...tableProList,
-            ...item,
-          };
-          if (!_.isEmpty(subItem)) {
-            subItem.forEach((sub) => {
-              const { prodCode: choiceChildCode } = sub;
-              proList.children = itemChildren.map((pro) => {
-                const { prodCode: childProCode } = pro;
-                if (childProCode === choiceChildCode) {
-                  return {
-                    key: childProCode,
-                    ...pro,
-                    xDefaultOpenFlag: 'Y',
-                  };
-                }
-                return {
-                  key: childProCode,
-                  ...pro,
-                };
-              });
-            });
-          }
-          newChoiceProList.push(proList);
-        }
-      });
-    });
-    return newChoiceProList;
+  choiceSubProList(selectedList, preProList) {
+    const userProList = _.filter(selectedList, product => product.action !== '删除');
+    const userProdCodeList = userProList.map(p => p.prodCode);
+    const userSelectOriginalList = _.filter(preProList,
+      product => _.includes(userProdCodeList, product.prodCode));
+    const rightList = this.mergeOrigianl2User(userSelectOriginalList, userProList);
+    return rightList;
   }
 
   // 附件上传成功后的回调
