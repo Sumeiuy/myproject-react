@@ -198,10 +198,33 @@ export default class ChartTable extends PureComponent {
           width: this.getColumnWidth(child.name),
           key: `key${child.key}`,
         };
+        const hasThreeEle = child.children;
+        if (hasThreeEle) {
+          const threeEleArr = this.getThreeEle(child);
+          childObj.children = threeEleArr;
+        }
         return childrenArr.push(childObj);
       });
     }
     return childrenArr;
+  }
+
+  // 获取表格头部三级元素
+  @autobind
+  getThreeEle(item) {
+    const threeEleArr = [];
+    if (item.children) {
+      item.children.map((child) => {
+        const threeEleObj = {
+          title: this.getTitleHtml(child, false),
+          dataIndex: child.key,
+          width: this.getColumnWidth(child.name),
+          key: `key${child.key}`,
+        };
+        return threeEleArr.push(threeEleObj);
+      });
+    }
+    return threeEleArr;
   }
   @autobind
   handleTitleClick(item) {
