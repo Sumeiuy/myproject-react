@@ -41,6 +41,10 @@ const mapDispatchToProps = {
     type: 'customerPool/saveTaskFlowData',
     payload: query,
   }),
+  clearTaskFlowData: query => ({
+    type: 'customerPool/clearTaskFlowData',
+    payload: query || {},
+  }),
   push: routerRedux.push,
   goBack: routerRedux.goBack,
   getApprovalList: fectchDataFunction(true, effects.getApprovalList),
@@ -62,6 +66,7 @@ export default class CreateTask extends PureComponent {
     saveTaskFlowData: PropTypes.func.isRequired,
     getApprovalList: PropTypes.func.isRequired,
     approvalList: PropTypes.array.isRequired,
+    clearTaskFlowData: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -89,6 +94,13 @@ export default class CreateTask extends PureComponent {
     // console.log(nextcreateTaskResult);
   }
 
+  componentWillUnmount() {
+    const { clearTaskFlowData } = this.props;
+    // 清除数据
+    clearTaskFlowData();
+  }
+
+
   @autobind
   handleCreateTaskSuccess(result) {
     const { createTaskResult } = result;
@@ -111,7 +123,19 @@ export default class CreateTask extends PureComponent {
   /* 关闭当前页 */
   @autobind
   handleCancleTab() {
-    fspGlobal.closeRctTabById('RCT_FSP_CUSTOMER_LIST');
+    const { location: { query: { source = '' } } } = this.props;
+    const param = {
+      id: 'tab-home',
+      title: '首页',
+    };
+    if (source === 'custGroupList') {
+      // 从客户分组管理过来的，是另外开的tab，需要关闭当前新开的tab
+      // 并且不需要切换tab，直接open tab
+      fspGlobal.closeRctTabById('RCT_FSP_CREATE_TASK');
+    } else {
+      fspGlobal.closeRctTabById('RCT_FSP_CUSTOMER_LIST');
+    }
+    fspGlobal.openRctTab({ url: '/customerPool', param });
   }
 
   render() {

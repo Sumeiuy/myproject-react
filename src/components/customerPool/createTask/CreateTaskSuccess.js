@@ -20,11 +20,14 @@ export default class CreateTaskSuccess extends PureComponent {
     push: PropTypes.func.isRequired,
     onCloseTab: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
-    clearSubmitTaskFlowResult: PropTypes.func.isRequired,
+    clearSubmitTaskFlowResult: PropTypes.func,
+    onRemoveTab: PropTypes.func,
   }
 
   static defaultProps = {
     successType: false,
+    clearSubmitTaskFlowResult: () => {},
+    onRemoveTab: null,
   }
 
   constructor(props) {
@@ -66,15 +69,14 @@ export default class CreateTaskSuccess extends PureComponent {
   @autobind
   goToHome() {
     this.clearTimeInterval();
-    const { onCloseTab, push, location: { state, query } } = this.props;
-    const url = '/customerPool';
-    const param = {
-      id: 'tab-home',
-      title: '首页',
-    };
+    const { onCloseTab, onRemoveTab, push, location: { state, query } } = this.props;
     if (document.querySelector(fspContainer.container)) {
-      onCloseTab();
-      fspGlobal.switchFspTab('tab-home');
+      if(typeof onRemoveTab === 'function') {
+        onRemoveTab();
+        fspGlobal.switchFspTab('tab-home');
+      } else {
+        onCloseTab();
+      }
     } else {
       push({
         pathname: url,
@@ -82,21 +84,6 @@ export default class CreateTaskSuccess extends PureComponent {
         state: _.omit(state, 'noScrollTop'),
       });
     }
-  }
-
-  @autobind
-  goToTask() {
-    this.clearTimeInterval();
-    const { push, state } = this.props;
-    const url = '/mot/selfbuildTask/selfBuildTaskMain';
-    const param = {
-      id: 'FSP_MOT_SELFBUILT_TASK',
-      closable: true,
-      forceRefresh: true,
-      title: '自建任务管理'
-    }
-    onCloseTab();
-    fspGlobal.openFspTab({ url, param })
   }
 
   @autobind
@@ -131,7 +118,7 @@ export default class CreateTaskSuccess extends PureComponent {
             </div>
             <div className={styles.taskSuccess_msg}>
               <p>提交成功！</p>
-              <p>创建任务请求已提交至后台，后台需要一些时间处理，您可以在“任务中心 → <a onClick={this.goToTask}>任务管理</a>”中查看处理状态。</p>
+              <p>创建任务请求已提交至后台，后台需要一些时间处理。</p>
               <p>页面会在 <b>{changeTime}</b> 秒内自动关闭</p>
             </div>
             <div className={styles.taskSuccess_btn}>

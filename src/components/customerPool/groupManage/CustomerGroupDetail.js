@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 14:15:22
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-31 13:55:33
+ * @Last Modified time: 2017-11-07 17:28:18
  */
 
 import React, { PureComponent } from 'react';
@@ -202,34 +202,36 @@ export default class CustomerGroupDetail extends PureComponent {
       includeCustList,
       groupId,
       curPageSize,
+      includeCustListSize,
     } = this.state;
     const { custId } = record;
+    // 新增下删除客户从includeCustIdList删除
+    const newIncludeCustList = _.filter(includeCustList, item => item.custId !== custId);
+    const newIncludeCustIdList = _.filter(includeCustIdList, item => item !== custId);
+
+    if (_.includes(includeCustIdList, custId)) {
+      this.setState({
+        includeCustIdList: newIncludeCustIdList,
+        includeCustList: newIncludeCustList,
+        includeCustListSize: includeCustListSize - 1,
+      });
+    }
 
     if (_.isEmpty(groupId)) {
-      // 新增下删除客户从includeCustIdList删除
-      const newIncludeCustList = _.filter(includeCustList, item => item.custId !== custId);
-
       const {
         curPageCustList,
-        includeCustListSize,
+        includeCustListSize: newCustListSize,
         curPage,
       } = this.generateLocalPageAndDataSource(newIncludeCustList, curPageSize);
 
-      // 存在则只是将includeCustIdList减少一条
       this.setState({
-        includeCustIdList: _.filter(includeCustIdList, item => item !== custId),
-        includeCustList: newIncludeCustList,
         // 总记录数减1
         totalRecordNum: totalRecordNum - 1,
-        needDeleteCustId: custId,
         curPageCustList,
-        includeCustListSize,
+        includeCustListSize: newCustListSize,
         curPageNum: curPage,
       });
     } else {
-      this.setState({
-        needDeleteCustId: custId,
-      });
       // 直接提示删除确认框，然后删除
       confirm({
         type: 'delete',
@@ -237,6 +239,10 @@ export default class CustomerGroupDetail extends PureComponent {
         onCancelHandler: this.handleConfirmCancel,
       });
     }
+
+    this.setState({
+      needDeleteCustId: custId,
+    });
   }
 
   @autobind
@@ -284,6 +290,7 @@ export default class CustomerGroupDetail extends PureComponent {
     } = this.state;
     const { custRiskBearing, onAddCustomerToGroup } = this.props;
     const riskLevelObject = _.find(custRiskBearing, item => item.key === riskLevel) || EMPTY_OBJECT;
+
     // 判断includeCustIdList是否存在custId
     if (_.includes(includeCustIdList, brokerNumber)) {
       message.error('此客户已经添加过');

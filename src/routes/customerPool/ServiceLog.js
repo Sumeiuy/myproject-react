@@ -134,23 +134,26 @@ export default class CreateTaskForm extends PureComponent {
 
   @autobind
   // 设置不可选日期
-  disabledDate(startValue) {
-    if (!startValue) {
+  disabledDate(value) {
+    if (!value) {
       return false;
     }
 
+    // 设置间隔日期，只能在大于六个月之前日期和当前日期之间选择
     const nowDay = sixDate;
-    const currentDay = moment(startValue).format('YYYY-MM-DD HH:mm:ss');
-    return currentDay <= nowDay;
+    const currentMonth = moment(value).month() + 1;
+    const localMonth = moment(new Date()).month() + 1;
+    const currentDate = moment(value).format('YYYY-MM-DD HH:mm:ss');
+    const localDate = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
+
+    if (currentMonth === localMonth) {
+      // endValue
+      return currentDate > localDate;
+    }
+    // startValue
+    return currentDate <= nowDay;
   }
-  // handleScroll(e) {
-  //   alert('111');
-  //   console.log(this.serviceScroll);
-  //   const clientHeight = this.serviceScroll.clientHeight; // 可视区域高度
-  //   const scrollTop = this.serviceScroll.scrollTop;  // 滚动条滚动高度
-  //   const scrollHeight = this.serviceScroll.scrollHeight; // 滚动内容高度
-  //   // if((clientHeight+scrollTop)==(scrollHeight)){ //如果滚动到底部 }
-  // }
+
   @autobind
   handleMore() {
     console.log(this.props);
@@ -238,9 +241,12 @@ export default class CreateTaskForm extends PureComponent {
               </Col>
               <Col span={8} >
                 <RangePicker
+                  allowClear={false}
                   defaultValue={[moment(sixDate, dateFormat), moment(today, dateFormat)]}
                   format="YYYY-MM-DD HH:mm"
-                  showTime={{ format: 'HH:mm' }}
+                  showTime={{
+                    format: 'HH:mm',
+                  }}
                   onOk={this.onChange}
                   disabledDate={this.disabledDate}
                   allowClear={false}
