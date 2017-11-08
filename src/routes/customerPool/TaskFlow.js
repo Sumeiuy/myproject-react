@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-06 17:06:35
+ * @Last Modified time: 2017-11-07 19:40:23
  */
 
 import React, { PureComponent } from 'react';
@@ -354,6 +354,13 @@ export default class TaskFlow extends PureComponent {
   }
 
   @autobind
+  handleRemoveTab() {
+    if (document.querySelector(fspContainer.container)) {
+      fspGlobal.closeTabMenu('FSP_ST_TAB_MOT_SELFBUILD_ADD');
+    }
+  }
+
+  @autobind
   resetLoading() {
     this.setState({
       isLoadingEnd: false,
@@ -453,6 +460,7 @@ export default class TaskFlow extends PureComponent {
           push={push}
           location={location}
           onCloseTab={this.handleCloseTab}
+          onRemoveTab={this.handleRemoveTab}
         /> :
         <div className={styles.taskFlowContainer}>
           <Steps current={current} className={styles.stepsSection}>
