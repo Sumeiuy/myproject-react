@@ -38,11 +38,6 @@ module.exports = {
       //   }
       // },
       {
-        test: /\.jsx?$/,
-        loader: 'babel-loader',
-        include: [resolve('src')]
-      },
-      {
         test: /\.tsx?$/,
         loader: 'ts-loader'
       },

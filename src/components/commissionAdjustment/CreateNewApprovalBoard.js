@@ -771,6 +771,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     this.props.onSearchApplyCust({
       keyword,
       type: pageType,
+      subType: commadj.batch,
     });
   }
 

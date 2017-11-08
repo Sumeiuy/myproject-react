@@ -313,6 +313,7 @@ export default class UnSubscribeDetailToChange extends PureComponent {
 
   @autobind
   afterLauncher() {
+    message.success('提交成功');
     this.setState({
       btnDisabled: true,
     });
@@ -380,11 +381,15 @@ export default class UnSubscribeDetailToChange extends PureComponent {
     const { operate } = btn;
     if (operate === 'commit') {
       // 提交按钮
-      this.handleSubmit(btn);
+      this.handleSubmit(btn).then(() => {
+        message.success('资讯退订修改成功');
+      });
     }
     if (operate === 'falseOver') {
       // 终止按钮
-      this.launchFlow(btn, '终止申请');
+      this.launchFlow(btn, '终止申请').then(() => {
+        message.success('资讯退订终止成功');
+      });
     }
   }
 
