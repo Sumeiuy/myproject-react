@@ -541,7 +541,7 @@ export default {
     },
     * deleteCustomerFromGroup({ payload }, { call, put }) {
       const response = yield call(api.deleteCustomerFromGroup, payload);
-      const { custId, groupId } = payload;
+      const { custId, groupId, keyWord, curPageNum, curPageSize } = payload;
       const { resultData } = response;
       yield put({
         type: 'deleteCustomerFromGroupSuccess',
@@ -559,6 +559,15 @@ export default {
           pageNum: INITIAL_PAGE_NUM,
           pageSize: INITIAL_PAGE_FIVE_SIZE,
           groupId,
+        },
+      });
+      // 删除成功之后，更新分组信息
+      yield put({
+        type: 'getCustomerGroupList',
+        payload: {
+          pageNum: curPageNum || INITIAL_PAGE_NUM,
+          pageSize: curPageSize || INITIAL_PAGE_TEN_SIZE,
+          keyWord,
         },
       });
     },

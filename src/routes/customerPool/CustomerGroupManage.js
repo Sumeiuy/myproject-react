@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-22 19:02:56
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-02 14:51:15
+ * @Last Modified time: 2017-11-08 12:26:13
  */
 
 import React, { PureComponent } from 'react';
@@ -484,6 +484,20 @@ export default class CustomerGroupManage extends PureComponent {
     });
   }
 
+  @autobind
+  deleteCustomerFromGroup(param) {
+    const { deleteCustomerFromGroup,
+      location: { query: { curPageNum, curPageSize } },
+    } = this.props;
+    const { keyWord } = this.state;
+    deleteCustomerFromGroup({
+      ...param,
+      curPageNum,
+      curPageSize,
+      keyWord,
+    });
+  }
+
   /**
   * 为数据源的每一项添加一个id属性
   * @param {*} listData 数据源
@@ -550,7 +564,6 @@ export default class CustomerGroupManage extends PureComponent {
       operateGroup,
       operateGroupResult,
       dict,
-      deleteCustomerFromGroup,
       deleteCustomerFromGroupResult,
       location,
       replace,
@@ -669,7 +682,7 @@ export default class CustomerGroupManage extends PureComponent {
                 <CustomerGroupDetail
                   ref={ref => (this.detailRef = ref)}
                   deleteCustomerFromGroupResult={deleteCustomerFromGroupResult}
-                  deleteCustomerFromGroup={deleteCustomerFromGroup}
+                  deleteCustomerFromGroup={this.deleteCustomerFromGroup}
                   custRiskBearing={custRiskBearing}
                   canEditDetail={canEditDetail}
                   customerHotPossibleWordsList={customerHotPossibleWordsList}
