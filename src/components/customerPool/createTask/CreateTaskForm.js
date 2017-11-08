@@ -143,7 +143,7 @@ export default class CreateTaskForm extends PureComponent {
         defaultMissionName = '新客户回访';
         defaultMissionType = 'AccoutService';
         defaultExecutionType = 'Chance';
-        defaultMissionDesc = `用户在 ${custIdexPlaceHolders[2]} 开户，建议跟踪服务了解客户是否有问题需要解决。注：如果客户状态为流失，则：用户在 {流失日}流失，建议跟踪服务了解客户是否有问题需要解决。`;
+        defaultMissionDesc = `用户在 ${custIdexPlaceHolders[2]} 开户，建议跟踪服务了解客户是否有问题需要解决。`;
         defaultInitialValue = 8;
         break;
       case 'numOfCustOpened':
