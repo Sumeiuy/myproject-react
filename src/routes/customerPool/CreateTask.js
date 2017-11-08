@@ -130,8 +130,8 @@ export default class CreateTask extends PureComponent {
     };
     if (source === 'custGroupList') {
       // 从客户分组管理过来的，是另外开的tab，需要关闭当前新开的tab
-      // 并且不需要切换tab，直接open tab
-      fspGlobal.closeRctTabById('RCT_FSP_CREATE_TASK');
+      // 并且用closeTabMenu关闭
+      fspGlobal.closeTabMenu('RCT_FSP_CREATE_TASK');
     } else {
       fspGlobal.closeRctTabById('RCT_FSP_CUSTOMER_LIST');
     }
