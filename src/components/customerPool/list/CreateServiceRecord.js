@@ -11,6 +11,7 @@ import _ from 'lodash';
 import { Modal, Select, DatePicker, TimePicker, Input, message } from 'antd';
 import moment from 'moment';
 import { fspContainer } from '../../../config';
+import { helper } from '../../../utils';
 import Loading from '../../../layouts/Loading';
 import styles from './createServiceRecord.less';
 
@@ -168,7 +169,12 @@ export default class CreateServiceRecord extends PureComponent {
     const iframe = document.querySelector(fspContainer.view360Iframe);
     if (iframe) {
       const iframeHash = iframe.contentWindow.location.hash;
-      iframe.contentWindow.location.hash = `${iframeHash.split('&')[0]}&s=${Date.now()}`;
+      const newIframeHash = iframeHash.replace(/[&\?]?_k=[^&]+/g, ''); // eslint-disable-line
+      const obj = helper.getQuery(newIframeHash);
+      obj.s = Date.now();
+      iframe.contentWindow.location.hash = Object.keys(obj).map(
+        key => (`${key}=${obj[key]}`),
+      ).join('&');
     }
   }
 
