@@ -72,6 +72,9 @@ export default class TaskFlow extends PureComponent {
       case 'search':
         custSources = '搜索目标客户';
         break;
+      case 'tag':
+        custSources = '搜索目标客户';
+        break;
       case 'custIndicator':
         custSources = '绩效目标客户';
         break;
