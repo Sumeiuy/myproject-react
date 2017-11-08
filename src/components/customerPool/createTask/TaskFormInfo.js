@@ -133,21 +133,21 @@ export default class TaskFormInfo extends PureComponent {
     }
   }
 
-  @autobind
-  handleMentionChange(contentState) {
-    if (!this.isFirstLoad) {
-      const content = toString(contentState);
-      if (_.isEmpty(content) || content.length < 10) {
-        this.setState({
-          isShowErrorInfo: true,
-        });
-      } else {
-        this.setState({
-          isShowErrorInfo: false,
-        });
-      }
-    }
-  }
+  // @autobind
+  // handleMentionChange(contentState) {
+  //   if (!this.isFirstLoad) {
+  //     const content = toString(contentState);
+  //     if (_.isEmpty(content) || content.length < 10) {
+  //       this.setState({
+  //         isShowErrorInfo: true,
+  //       });
+  //     } else {
+  //       this.setState({
+  //         isShowErrorInfo: false,
+  //       });
+  //     }
+  //   }
+  // }
   checkMention = (rule, value, callback) => {
     console.log('value-->', value);
     if (!this.isFirstLoad) {
@@ -156,14 +156,13 @@ export default class TaskFormInfo extends PureComponent {
         this.setState({
           isShowErrorInfo: true,
         });
-        callback();
       } else {
         this.setState({
           isShowErrorInfo: false,
         });
-        callback();
       }
     }
+    callback();
   }
 
   handleCreatOptions(data) {

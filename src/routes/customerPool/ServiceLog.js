@@ -151,7 +151,7 @@ export default class CreateTaskForm extends PureComponent {
       return currentDate > localDate;
     }
     // startValue
-    return currentDate <= nowDay;
+    return currentDate < nowDay;
   }
 
   @autobind
