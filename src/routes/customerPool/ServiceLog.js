@@ -151,7 +151,7 @@ export default class CreateTaskForm extends PureComponent {
       return currentDate > localDate;
     }
     // startValue
-    return currentDate <= nowDay;
+    return currentDate < nowDay;
   }
 
   @autobind
@@ -225,8 +225,6 @@ export default class CreateTaskForm extends PureComponent {
     const { dict, handleCollapseClick } = this.props;
     const { serveAllSource, serveAllType, executeTypes, serveWay } = dict;
     const { logData, showBtn, loading } = this.state;
-    console.log('showBtn-->', showBtn);
-    console.log('loading-->', loading);
     return (
       <div className={styles.serviceInner}>
         <div

@@ -101,10 +101,10 @@ export default class TaskFormInfo extends PureComponent {
     this.setState({ suggestions });
   }
 
-  @autobind
-  handleSelect(suggestion, data) {
-    console.log('onSelect', typeof suggestion, 'data', data);
-  }
+  // @autobind
+  // handleSelect(suggestion, data) {
+  //   console.log('onSelect', typeof suggestion, 'data', data);
+  // }
 
 
   @autobind
@@ -133,10 +133,25 @@ export default class TaskFormInfo extends PureComponent {
     }
   }
 
-  @autobind
-  handleMentionChange(contentState) {
+  // @autobind
+  // handleMentionChange(contentState) {
+  //   if (!this.isFirstLoad) {
+  //     const content = toString(contentState);
+  //     if (_.isEmpty(content) || content.length < 10) {
+  //       this.setState({
+  //         isShowErrorInfo: true,
+  //       });
+  //     } else {
+  //       this.setState({
+  //         isShowErrorInfo: false,
+  //       });
+  //     }
+  //   }
+  // }
+  checkMention = (rule, value, callback) => {
+    console.log('value-->', value);
     if (!this.isFirstLoad) {
-      const content = toString(contentState);
+      const content = toString(value);
       if (_.isEmpty(content) || content.length < 10) {
         this.setState({
           isShowErrorInfo: true,
@@ -147,6 +162,7 @@ export default class TaskFormInfo extends PureComponent {
         });
       }
     }
+    callback();
   }
 
   handleCreatOptions(data) {
@@ -163,6 +179,7 @@ export default class TaskFormInfo extends PureComponent {
     const { suggestions } = this.state;
     return (
       getFieldDecorator('templetDesc', {
+        rules: [{ validator: this.checkMention }],
         initialValue: toContentState(defaultMissionDesc),
       })(
         <Mention
@@ -171,9 +188,7 @@ export default class TaskFormInfo extends PureComponent {
           prefix={['{']}
           onSearchChange={this.handleSearchChange}
           suggestions={suggestions}
-          onSelect={this.handleSelect}
           multiLines
-          onChange={this.handleMentionChange}
         />,
       )
     );
@@ -182,7 +197,7 @@ export default class TaskFormInfo extends PureComponent {
   renderTipSection() {
     return (
       <div className={styles.info}>
-        如果要在任务提示中包含对应每个客户的属性数值，可以用  &#123;xx&#125;插入参数，比如  &#123;已开通业务&#125;。注意“ &#123;”前要有空格。
+        如果要在任务提示中包含对应每个客户的属性数值，可以用 &#123;xx&#125; 插入参数，比如  &#123;已开通业务&#125;。注意“ &#123;”前要有空格。
       </div>
     );
   }
