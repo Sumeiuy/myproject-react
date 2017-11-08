@@ -21,6 +21,7 @@ import seibelColumns from '../../components/common/biz/seibelColumns';
 import CommonModal from '../../components/common/biz/CommonModal';
 import EditForm from '../../components/channelsTypeProtocol/EditForm';
 import BottonGroup from '../../components/permission/BottonGroup';
+import ChoiceApproverBoard from '../../components/commissionAdjustment/ChoiceApproverBoard';
 import { seibelConfig } from '../../config';
 import Barable from '../../decorators/selfBar';
 
@@ -77,6 +78,8 @@ const mapStateToProps = state => ({
   // 协议产品列表
   protocolProductList: state.channelsTypeProtocol.protocolProductList,
   underCustList: state.channelsTypeProtocol.underCustList,
+  // 审批人
+  flowStepInfo: state.channelsTypeProtocol.flowStepInfo,
 });
 
 const mapDispatchToProps = {
@@ -99,6 +102,8 @@ const mapDispatchToProps = {
   queryCust: fetchDataFunction(true, 'channelsTypeProtocol/queryCust'),
   // 清除协议产品列表
   clearPropsData: fetchDataFunction(false, 'channelsTypeProtocol/clearPropsData'),
+  // 获取审批人
+  getFlowStepInfo: fetchDataFunction(true, 'channelsTypeProtocol/getFlowStepInfo'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -144,6 +149,9 @@ export default class ChannelsTypeProtocol extends PureComponent {
     underCustList: PropTypes.array,
     // 清除props数据
     clearPropsData: PropTypes.func.isRequired,
+    // 审批人
+    flowStepInfo: PropTypes.object,
+    getFlowStepInfo: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -151,6 +159,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
     seibleListLoading: false,
     flowHistory: EMPTY_LIST,
     underCustList: EMPTY_LIST,
+    flowStepInfo: EMPTY_OBJECT,
   }
 
   constructor(props) {
@@ -160,6 +169,8 @@ export default class ChannelsTypeProtocol extends PureComponent {
       editFormModal: false,
       // 最终传递的数据
       payload: EMPTY_OBJECT,
+      // 选择审批人弹窗状态
+      approverModal: false,
     };
   }
 
@@ -265,7 +276,10 @@ export default class ChannelsTypeProtocol extends PureComponent {
   // 头部新建按钮点击事件处理程序
   @autobind
   handleCreateBtnClick() {
-    console.warn('点击了新建按钮');
+    const { getFlowStepInfo } = this.props;
+    getFlowStepInfo({
+      flowId: '',
+    });
     this.showModal('editFormModal');
   }
 
@@ -356,7 +370,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
 
   // 弹窗底部按钮事件
   @autobind
-  footerBtnHandle() {
+  footerBtnHandle(btnItem) {
     const formData = this.EditFormComponent.getData();
     // 对formData校验
     if (this.checkFormDataIsLegal(formData)) {
@@ -380,6 +394,8 @@ export default class ChannelsTypeProtocol extends PureComponent {
         ...formData,
         attachment: newAttachment,
       };
+      // test
+      console.log('btnItem', btnItem);
       // 弹出提示窗
       this.showconFirm(payload);
     }
@@ -411,6 +427,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
     } = this.props;
     const {
       editFormModal,
+      approverModal,
     } = this.state;
     const isEmpty = _.isEmpty(seibleList.resultData);
     const topPanel = (
@@ -503,6 +520,17 @@ export default class ChannelsTypeProtocol extends PureComponent {
                 ref={(ref) => { this.EditFormComponent = ref; }}
               />
             </CommonModal>
+            :
+            null
+        }
+        {
+          approverModal ?
+            <ChoiceApproverBoard
+              visible={approverModal}
+              approverList={EMPTY_LIST}
+              onClose={() => this.closeModal('approverModal')}
+              onOk={this.handleApproverModalOK}
+            />
             :
             null
         }

@@ -8,8 +8,6 @@ export default function channels(api) {
     getProtocolDetail: query => api.post('/groovynoauth/fsp/protocol/queryProtocolDetail', query),
     // 保存详情
     saveProtocolData: query => api.post('/groovynoauth/fsp/protocol/saveProtocol', query),
-    // 不明
-    getTemplate: query => api.post('/groovynoauth/fsp/protocol/getTemplate', query),
     // 查询操作类型/子类型
     queryTypeVaules: query => api.post('/groovynoauth/fsp/protocol/queryTypeVaules', query),
     // 根据所选模板id查询协议条款
@@ -20,5 +18,7 @@ export default function channels(api) {
     queryCust: query => api.post('/groovynoauth/fsp/protocol/queryCust', query),
     // 获取附件列表
     getAttachmentList: query => api.post('/file/ceFileList', query),
+    // 查询审批人列表
+    getFlowStepInfo: query => api.post('/groovynoauth/fsp/contract/cooper/queryFlowStepInfo', query),
   };
 }
