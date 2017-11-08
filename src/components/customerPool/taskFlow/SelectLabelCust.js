@@ -67,10 +67,11 @@ export default class SelectLabelCust extends PureComponent {
 
     const { circlePeopleData } = this.props;
     const matchedData = _.find(circlePeopleData, item => item.id === labelId);
-    const { labelDesc = '', customNum = '' } = matchedData || EMPTY_OBJECT;
+    const { labelDesc = '', customNum = '', labelMapping } = matchedData || EMPTY_OBJECT;
 
     const labelCust = {
       labelId,
+      labelMapping,
       labelDesc,
       condition,
       customNum,
