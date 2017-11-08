@@ -120,12 +120,6 @@ export default class TaskFlow extends PureComponent {
       custIdList,
       custCondition,
     } = parseQuery();
-    const {
-      curPageNum,
-      enterType,
-      pageSize,
-      sortsReqList,
-    } = custCondition;
     const params = storedTaskFlowData.taskFormData;
     const data = {
       executionType: params.executionType,
@@ -139,14 +133,11 @@ export default class TaskFlow extends PureComponent {
       ...data,
       flowAuditorId,
       custIdList,
-      searchReq: {
-        curPageNum,
-        enterType,
-        pageSize,
-        sortsReqList,
+      searchReq: _.isEmpty(custIdList) ? {
         ptyMngId: helper.getEmpId(),
         orgId,
-      },
+        ...custCondition,
+      } : null,
     });
   }
 
