@@ -97,7 +97,7 @@ export default class TaskSearchRow extends PureComponent {
     const { getLabelPeople, orgId } = this.props;
     console.log(value);
     getLabelPeople({
-      labelId: value.id,
+      labelId: value.labelMapping,
       curPageNum: 1,
       pageSize: 10,
       orgId,
@@ -107,7 +107,7 @@ export default class TaskSearchRow extends PureComponent {
       visible: true,
       title: value.labelName,
       totalCustNums: value.customNum,
-      labelId: value.id,
+      labelId: value.labelMapping,
       curPageNum: 1,
       pageSize: 10,
     });
