@@ -8,7 +8,7 @@
     & .echartTooltipTable {
       color: #777;
       .tooltipItem {
-        &>div {
+        & > div {
           display: inline-block;
           width: 100%;
           height: 100%;
@@ -20,29 +20,25 @@
         }
       }
       .itemValue {
-        &>span {
+        & > span {
           margin-left: 8px;
           margin-right: 8px;
-          color:#000;
+          color: #000;
           font-size: 16px;
         }
       }
     }
     & .echartTooltip {
-      display:inline-block;
+      display: inline-block;
       width: 10px;
       height: 10px;
-      margin-right:4px;
-      border-radius:100%;
+      margin-right: 4px;
+      border-radius: 100%;
     }
-    & .echartTooltipHD {
-      color:#4f596a;      
-    }
+    & .echartTooltipHD { color: #4f596a; }
   }
 }
-.ranking {
-  flex: 0 0 auto;
-}
+.ranking { flex: 0 0 auto; }
 .rankingchart {
   width: 100%;
   flex-grow: 1;
@@ -65,15 +61,15 @@
 }
 .rankUp {
   color: #ff4403;
-  composes: rankChangeIcon,
+  composes: rankChangeIcon;
 }
 .rankDown {
   color: #24d2af;
-  composes: rankChangeIcon,
+  composes: rankChangeIcon;
 }
 .rankHold {
   color: #357bf0;
-  composes: rankChangeIcon,
+  composes: rankChangeIcon;
 }
 .rankChange {
   font-size: 12px;

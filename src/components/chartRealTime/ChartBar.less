@@ -1,12 +1,12 @@
 @import '../common/shadow.less';
 
-.chartMain{
+.chartMain {
   display: flex;
   flex-direction: column;
   height: 380px;
   min-width: 247px;
   background: #fff;
-  padding-left:18px;
+  padding-left: 18px;
   margin: 0 2px 0 0;
   // &:hover{
   //   .z-depth-1;
@@ -16,7 +16,7 @@
     & .echartTooltipTable {
       color: #777;
       .tooltipItem {
-        &>div {
+        & > div {
           display: inline-block;
           width: 100%;
           height: 100%;
@@ -28,27 +28,25 @@
         }
       }
       .itemValue {
-        &>span {
+        & > span {
           margin-left: 8px;
           margin-right: 8px;
-          color:#000;
+          color: #000;
           font-size: 16px;
         }
       }
     }
     & .echartTooltip {
-      display:inline-block;
+      display: inline-block;
       width: 10px;
       height: 10px;
-      margin-right:4px;
-      border-radius:100%;
+      margin-right: 4px;
+      border-radius: 100%;
     }
-    & .echartTooltipHD {
-      color:#4f596a;      
-    }
+    & .echartTooltipHD { color: #4f596a; }
   }
 }
-.colWrapper .chartMain:nth-child(4){
+.colWrapper .chartMain:nth-child(4) {
   background: #fff;
 }
 .chartHeader {
@@ -67,7 +65,7 @@
   margin-bottom: 5px;
   color: #777;
   cursor: pointer;
-  user-select:none;
+  user-select: none;
 }
 .legendIcon {
   display: inline-block;
@@ -88,7 +86,7 @@
   margin-right: 8px;
   line-height: 22px;
   text-align: center;
-  color:#fff;
+  color: #fff;
   background-color: #1590e9;
   border-radius: 100%;
   vertical-align: middle;
@@ -106,7 +104,7 @@
   vertical-align: middle;
 }
 .seeIcon {
-  float:right;
+  float: right;
   margin-right: -6px;
   margin-left: -50px;
   width: 25px;
@@ -118,14 +116,14 @@
   // height: 200px;
   flex: 0 1 500px;
 }
-.noChart{
+.noChart {
   width: 100%;
   height: 100%;
-  display:relative;
-  img{
+  display: relative;
+  img {
     position: absolute;
     width: 180px;
-    transform: translate(-50%,-50%);
+    transform: translate(-50%, -50%);
     top: 50%;
     left: 50%;
   }
