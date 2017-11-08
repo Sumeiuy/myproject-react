@@ -21,6 +21,7 @@ export default class SelectLabelCust extends PureComponent {
     isLoadingEnd: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired,
     isHasAuthorize: PropTypes.bool,
+    visible: PropTypes.bool.isRequired,
   };
 
   static defaultProps = {
@@ -134,6 +135,7 @@ export default class SelectLabelCust extends PureComponent {
       orgId,
       isLoadingEnd,
       onCancel,
+      visible,
     } = this.props;
     const { condition, currentSelectLabel, tipsSize } = this.state;
     return (
@@ -155,6 +157,7 @@ export default class SelectLabelCust extends PureComponent {
         <TaskSearchRow
           onCancel={onCancel}
           isLoadingEnd={isLoadingEnd}
+          visible={visible}
           onChange={this.handleRadioChange}
           circlePeopleData={circlePeopleData}
           getLabelPeople={getLabelPeople}
