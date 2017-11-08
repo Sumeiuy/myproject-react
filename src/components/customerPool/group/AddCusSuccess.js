@@ -20,6 +20,18 @@ export default class AddCusSuccess extends PureComponent {
     onDestroy: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
+    replace: PropTypes.func.isRequired,
+  }
+
+  componentWillMount() {
+    const { replace, location: { query, pathname } } = this.props;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        isOperateSuccess: 'Y',
+      },
+    });
   }
 
   componentWillUnmount() {
