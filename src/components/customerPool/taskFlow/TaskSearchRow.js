@@ -10,6 +10,7 @@ import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import { helper } from '../../../utils';
+import Loading from '../../../layouts/Loading';
 import GroupTable from '../groupManage/GroupTable';
 import styles from './taskSearchRow.less';
 import tableStyles from '../groupManage/groupTable.less';
@@ -53,6 +54,7 @@ export default class TaskSearchRow extends PureComponent {
     orgId: PropTypes.string,
     isLoadingEnd: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired,
+    visible: PropTypes.bool.isRequired,
   }
   static defaultProps = {
     condition: '',
@@ -68,13 +70,14 @@ export default class TaskSearchRow extends PureComponent {
       totalCustNums: 0,
       labelId: '',
       visible: false,
+      isLoadingEnd: true,
       title: '',
       custTableData: [],
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    const { peopleOfLabelData } = nextProps;
+    const { peopleOfLabelData, visible } = nextProps;
     const { userObjectFormList } = peopleOfLabelData;
     const list = _.map(userObjectFormList, item => ({
       ...item,
@@ -83,6 +86,7 @@ export default class TaskSearchRow extends PureComponent {
     this.setState({
       totalRecordNum: peopleOfLabelData.totalCount,
       custTableData: list,
+      visible,
     });
   }
 
@@ -104,7 +108,6 @@ export default class TaskSearchRow extends PureComponent {
       ptyMngId: helper.getEmpId(),
     });
     this.setState({
-      visible: true,
       title: value.labelName,
       totalCustNums: value.customNum,
       labelId: value.labelMapping,
@@ -260,8 +263,10 @@ export default class TaskSearchRow extends PureComponent {
               </Modal> : null
           }
         </div>
+        {
+          <Loading loading={!isLoadingEnd} />
+        }
       </div>
-
     );
   }
 }
