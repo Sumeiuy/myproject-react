@@ -5,6 +5,7 @@ import _ from 'lodash';
 // import Search from '../../common/Search/index';
 import TaskSearchRow from './TaskSearchRow';
 import SimpleSearch from '../groupManage/CustomerGroupListSearch';
+import { helper } from '../../../utils';
 import styles from './selectLabelCust.less';
 
 const EMPTY_OBJECT = {};
@@ -87,6 +88,7 @@ export default class SelectLabelCust extends PureComponent {
 
     const param = {
       condition: value,
+      ptyMngId: helper.getEmpId(),
     };
 
     this.setState({
