@@ -124,6 +124,17 @@ export default class CreateServiceRecord extends PureComponent {
     if (loading && !nextProps.loading && nextProps.addServeRecordSuccess === true) {
       onToggleServiceRecordModal(false);
       message.success('添加服务记录成功');
+      // 提交成功后，刷新360视图中的服务记录iframe
+      const iframe = document.querySelector(fspContainer.view360Iframe);
+      if (iframe) {
+        const iframeHash = iframe.contentWindow.location.hash;
+        const newIframeHash = iframeHash.replace(/[&\?]?_k=[^&]+/g, ''); // eslint-disable-line
+        const obj = helper.getQuery(newIframeHash);
+        obj.s = Date.now();
+        iframe.contentWindow.location.hash = Object.keys(obj).map(
+          key => (`${key}=${obj[key]}`),
+        ).join('&');
+      }
     }
   }
 
@@ -165,17 +176,6 @@ export default class CreateServiceRecord extends PureComponent {
       serveCustFeedBack2: feedbackTypeChild || '',
     });
     serviceContentNode.value = '';
-    // 提交成功后，刷新360视图中的服务记录iframe
-    const iframe = document.querySelector(fspContainer.view360Iframe);
-    if (iframe) {
-      const iframeHash = iframe.contentWindow.location.hash;
-      const newIframeHash = iframeHash.replace(/[&\?]?_k=[^&]+/g, ''); // eslint-disable-line
-      const obj = helper.getQuery(newIframeHash);
-      obj.s = Date.now();
-      iframe.contentWindow.location.hash = Object.keys(obj).map(
-        key => (`${key}=${obj[key]}`),
-      ).join('&');
-    }
   }
 
   // 关闭弹窗
