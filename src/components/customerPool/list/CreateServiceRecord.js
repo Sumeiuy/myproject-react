@@ -10,7 +10,8 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { Modal, Select, DatePicker, TimePicker, Input, message } from 'antd';
 import moment from 'moment';
-
+import { fspContainer } from '../../../config';
+import { helper } from '../../../utils';
 import Loading from '../../../layouts/Loading';
 import styles from './createServiceRecord.less';
 
@@ -164,12 +165,17 @@ export default class CreateServiceRecord extends PureComponent {
       serveCustFeedBack2: feedbackTypeChild || '',
     });
     serviceContentNode.value = '';
-
-    const iframe = document.querySelector('#view360-tab-serviceRecord-iframe');
-    const iframeSrc = iframe.contentWindow.location.href;
-    const tmpArr = iframeSrc.split('?');
-    const queryStr = tmpArr[2];
-    iframe.src = `${tmpArr[0]}?${tmpArr[1]}?${queryStr.split('&')[0]}&s=${Date.now()}`;
+    // 提交成功后，刷新360视图中的服务记录iframe
+    const iframe = document.querySelector(fspContainer.view360Iframe);
+    if (iframe) {
+      const iframeHash = iframe.contentWindow.location.hash;
+      const newIframeHash = iframeHash.replace(/[&\?]?_k=[^&]+/g, ''); // eslint-disable-line
+      const obj = helper.getQuery(newIframeHash);
+      obj.s = Date.now();
+      iframe.contentWindow.location.hash = Object.keys(obj).map(
+        key => (`${key}=${obj[key]}`),
+      ).join('&');
+    }
   }
 
   // 关闭弹窗

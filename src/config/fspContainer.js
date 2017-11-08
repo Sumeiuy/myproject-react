@@ -25,4 +25,6 @@ export default {
   sidebarHideBtn: '#sidebar-hide-btn',
   // fsp 左边的展开侧栏按钮
   sidebarShowBtn: '#sidebar-show-btn',
+  // 360视图中服务记录的iframe
+  view360Iframe: '#view360-tab-serviceRecord-iframe',
 };
