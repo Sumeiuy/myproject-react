@@ -243,6 +243,7 @@ export default class CreateTaskForm extends PureComponent {
                   showTime={{ format: 'HH:mm' }}
                   onOk={this.onChange}
                   disabledDate={this.disabledDate}
+                  allowClear={false}
                 />
               </Col>
               <Col span={5}>
