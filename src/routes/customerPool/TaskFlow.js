@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-07 19:40:23
+ * @Last Modified time: 2017-11-08 15:01:51
  */
 
 import React, { PureComponent } from 'react';
@@ -272,7 +272,7 @@ export default class TaskFlow extends PureComponent {
     };
 
     const {
-      labelId,
+      labelMapping,
       customNum: labelCustNums,
       uploadedFileKey: fileId,
       executionType,
@@ -306,7 +306,7 @@ export default class TaskFlow extends PureComponent {
       });
     } else {
       submitTaskFlow({
-        labelId,
+        labelId: labelMapping,
         queryLabelDTO: {
           ptyMngId: helper.getEmpId(),
           orgId,
