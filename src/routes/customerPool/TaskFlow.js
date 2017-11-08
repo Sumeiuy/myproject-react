@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-08 15:01:51
+ * @Last Modified time: 2017-11-08 16:56:48
  */
 
 import React, { PureComponent } from 'react';
@@ -26,6 +26,7 @@ const { toString } = Mention;
 
 const orgId = helper.getOrgId();
 const EMPTY_OBJECT = {};
+const EMPTY_ARRAY = [];
 
 const effects = {
   // 预览客户细分数据
@@ -136,14 +137,18 @@ export default class TaskFlow extends PureComponent {
       isShowErrorInfo: false,
       isShowErrorTaskType: false,
       isShowErrorExcuteType: false,
+      visible: false,
     };
     // 首页指标查询权限
     this.isHasAuthorize = permission.hasIndexViewPermission();
   }
 
   componentWillReceiveProps(nextProps) {
-    const { getLabelPeopleLoading } = this.props;
-    const { submitTaskFlowResult: nextResult, getLabelPeopleLoading: nextLoading } = nextProps;
+    const { getLabelPeopleLoading, peopleOfLabelData = EMPTY_ARRAY } = this.props;
+    const { submitTaskFlowResult: nextResult,
+      getLabelPeopleLoading: nextLoading,
+      peopleOfLabelData: nextData = EMPTY_ARRAY,
+    } = nextProps;
 
     if (nextResult === 'success') {
       this.setState({
@@ -156,6 +161,12 @@ export default class TaskFlow extends PureComponent {
     if (getLabelPeopleLoading && !nextLoading) {
       this.setState({
         isLoadingEnd: true,
+      });
+    }
+
+    if (peopleOfLabelData !== nextData) {
+      this.setState({
+        visible: true,
       });
     }
   }
@@ -363,7 +374,8 @@ export default class TaskFlow extends PureComponent {
   @autobind
   resetLoading() {
     this.setState({
-      isLoadingEnd: false,
+      isLoadingEnd: true,
+      visible: false,
     });
   }
 
@@ -378,6 +390,7 @@ export default class TaskFlow extends PureComponent {
       isShowErrorInfo,
       isShowErrorExcuteType,
       isShowErrorTaskType,
+      visible,
     } = this.state;
 
     const {
@@ -428,6 +441,7 @@ export default class TaskFlow extends PureComponent {
         peopleOfLabelData={peopleOfLabelData}
         orgId={orgId}
         isLoadingEnd={isLoadingEnd}
+        visible={visible}
         onCancel={this.resetLoading}
         isHasAuthorize={this.isHasAuthorize}
       />,

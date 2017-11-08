@@ -31,6 +31,7 @@ export default class PickTargetCustomer extends PureComponent {
     storedTaskFlowData: PropTypes.object.isRequired,
     orgId: PropTypes.string,
     isLoadingEnd: PropTypes.bool.isRequired,
+    visible: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired,
     isHasAuthorize: PropTypes.bool,
   };
@@ -87,6 +88,7 @@ export default class PickTargetCustomer extends PureComponent {
       isLoadingEnd,
       onCancel,
       isHasAuthorize,
+      visible,
     } = this.props;
     const { currentKey } = this.state;
 
@@ -111,6 +113,7 @@ export default class PickTargetCustomer extends PureComponent {
               <SelectLabelCust
                 onCancel={onCancel}
                 isLoadingEnd={isLoadingEnd}
+                visible={visible}
                 circlePeopleData={circlePeopleData}
                 getLabelInfo={getLabelInfo}
                 peopleOfLabelData={peopleOfLabelData}

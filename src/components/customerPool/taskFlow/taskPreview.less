@@ -12,7 +12,7 @@
   width: 80%;
   margin: 0 auto;
   & > .basicInfoSection {
-    background: #ffffff;
+    background: #fff;
     border: 1px solid #979797;
     margin-bottom: 30px;
     & > .title {
@@ -27,7 +27,7 @@
     & > .divider {
       display: block;
       width: 100%;
-      border-bottom: 1px solid #dddddd;
+      border-bottom: 1px solid #ddd;
     }
     & > .infoDescription {
       padding-top: 10px;
@@ -90,11 +90,19 @@
       }
     }
   }
+  & > .selectApprover::before {
+    display: inline-block;
+    margin-right: 4px;
+    content: "*";
+    line-height: 1;
+    font-size: 12px;
+    color: #f04134;
+  }
 }
 .approvalModalContainer {
   :global {
     & .ant-modal-body {
-      padding: 0px;
+      padding: 0;
       padding-top: 14px;
       padding-left: 25px;
       padding-right: 20px;
@@ -109,10 +117,10 @@
 .approvalListTable {
   padding: 0 !important;
   table {
-    border: 1px solid #dddddd;
+    border: 1px solid #ddd;
   }
   table > thead > tr > th, tbody > tr > td {
-    padding: 0px;
+    padding: 0;
     padding-bottom: 7px;
     padding-top: 7px;
     padding-left: 8px;
@@ -122,9 +130,9 @@
     color: #727272;
   }
   table > tbody > tr:nth-child(odd) {
-    background-color: #ffffff;
+    background-color: #fff;
   }
-  tbody > tr > td > div,  tbody > tr > th{
+  tbody > tr > td > div,  tbody > tr > th {
     max-width: 200px;
     overflow: hidden;
     text-overflow: ellipsis;
