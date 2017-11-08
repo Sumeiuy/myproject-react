@@ -2,7 +2,7 @@
  * @Author: zhuyanwen
  * @Date: 2017-10-09 13:25:51
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-08 14:49:17
+ * @Last Modified time: 2017-11-08 15:41:19
  * @description: 客户分组功能
  */
 
@@ -180,7 +180,7 @@ export default class CustomerGroup extends PureComponent {
         custIdList,
         searchReq: _.isEmpty(custIdList) ? {
           ptyMngId: helper.getEmpId(),
-          orgId: null,
+          orgId: helper.getOrgId(),
           ...custCondition,
         } : null,
       });
@@ -211,7 +211,7 @@ export default class CustomerGroup extends PureComponent {
       custIdList,
       searchReq: _.isEmpty(custIdList) ? {
         ptyMngId: helper.getEmpId(),
-        orgId: null,
+        orgId: helper.getOrgId(),
         ...custCondition,
       } : null,
     });
