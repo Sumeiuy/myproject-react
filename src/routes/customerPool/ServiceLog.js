@@ -85,7 +85,6 @@ export default class CreateTaskForm extends PureComponent {
     // const { serviceLogData } = this.props;
     const { logData } = this.state;
     const { serviceLogData } = this.props;
-    console.log('will-->', serviceLogData);
     if (_.isEmpty(logData)) {
       this.setState({
         logData: serviceLogData,
@@ -117,8 +116,6 @@ export default class CreateTaskForm extends PureComponent {
         const newServiceLogData = _.concat(logData, serviceLogMoreData);
         this.setState({
           logData: newServiceLogData,
-        }, () => {
-          console.log('eee->', this.state.logData);
         });
       }
     }
