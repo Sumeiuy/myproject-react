@@ -47,8 +47,8 @@ export default class TaskFlow extends PureComponent {
       isShowErrorExcuteType: false,
       isShowErrorTaskType: false,
     };
-    this.isHasAuthorize = permission.hasIndexViewPermission();
-    // this.isHasAuthorize = true;
+    this.isHasAuthorize =  permission.hasIndexViewPermission() || permission.hasHqMampPermission()
+      || permission.hasBoMampPermission() || permission.hasBdMampPermission();
   }
 
   @autobind
