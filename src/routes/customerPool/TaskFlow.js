@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-08 16:56:48
+ * @Last Modified time: 2017-11-09 13:32:49
  */
 
 import React, { PureComponent } from 'react';
@@ -56,6 +56,7 @@ const mapStateToProps = state => ({
   approvalList: state.customerPool.approvalList,
   submitTaskFlowResult: state.customerPool.submitTaskFlowResult,
   getLabelPeopleLoading: state.loading.effects[effects.getLabelPeople],
+  getApprovalListLoading: state.loading.effects[effects.getApprovalList],
 });
 
 const mapDispatchToProps = {
@@ -118,11 +119,13 @@ export default class TaskFlow extends PureComponent {
     clearTaskFlowData: PropTypes.func.isRequired,
     resetActiveTab: PropTypes.func.isRequired,
     clearSubmitTaskFlowResult: PropTypes.func.isRequired,
+    getApprovalListLoading: PropTypes.bool,
   };
 
   static defaultProps = {
     dict: {},
     getLabelPeopleLoading: false,
+    getApprovalListLoading: false,
   };
 
   constructor(props) {
@@ -138,6 +141,8 @@ export default class TaskFlow extends PureComponent {
       isShowErrorTaskType: false,
       isShowErrorExcuteType: false,
       visible: false,
+      isApprovalListLoadingEnd: false,
+      isShowApprovalModal: false,
     };
     // 首页指标查询权限
     this.isHasAuthorize = permission.hasIndexViewPermission() || permission.hasHqMampPermission()
@@ -145,10 +150,16 @@ export default class TaskFlow extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { getLabelPeopleLoading, peopleOfLabelData = EMPTY_ARRAY } = this.props;
+    const { getLabelPeopleLoading,
+      peopleOfLabelData = EMPTY_ARRAY,
+      getApprovalListLoading,
+      approvalList = EMPTY_ARRAY,
+     } = this.props;
     const { submitTaskFlowResult: nextResult,
       getLabelPeopleLoading: nextLoading,
+      getApprovalListLoading: nextApprovalListLoading,
       peopleOfLabelData: nextData = EMPTY_ARRAY,
+      approvalList: nextList = EMPTY_ARRAY,
     } = nextProps;
 
     if (nextResult === 'success') {
@@ -168,6 +179,18 @@ export default class TaskFlow extends PureComponent {
     if (peopleOfLabelData !== nextData) {
       this.setState({
         visible: true,
+      });
+    }
+
+    if (getApprovalListLoading && !nextApprovalListLoading) {
+      this.setState({
+        isApprovalListLoadingEnd: true,
+      });
+    }
+
+    if (approvalList !== nextList) {
+      this.setState({
+        isShowApprovalModal: true,
       });
     }
   }
@@ -377,6 +400,8 @@ export default class TaskFlow extends PureComponent {
     this.setState({
       isLoadingEnd: true,
       visible: false,
+      isShowApprovalModal: false,
+      isApprovalListLoadingEnd: true,
     });
   }
 
@@ -392,6 +417,8 @@ export default class TaskFlow extends PureComponent {
       isShowErrorExcuteType,
       isShowErrorTaskType,
       visible,
+      isApprovalListLoadingEnd,
+      isShowApprovalModal,
     } = this.state;
 
     const {
@@ -462,6 +489,9 @@ export default class TaskFlow extends PureComponent {
         currentSelectRowKeys={currentSelectRowKeys}
         isNeedApproval={this.isHasAuthorize}
         custSource={custSource}
+        isShowApprovalModal={isShowApprovalModal}
+        isApprovalListLoadingEnd={isApprovalListLoadingEnd}
+        onCancel={this.resetLoading}
       />,
     }];
 
