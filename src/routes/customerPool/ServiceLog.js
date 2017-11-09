@@ -81,14 +81,25 @@ export default class CreateTaskForm extends PureComponent {
       loading: props.serviceLogDataLoading,
     };
   }
-
+  componentWillMount() {
+    // const { serviceLogData } = this.props;
+    const { logData } = this.state;
+    const { serviceLogData } = this.props;
+    console.log('will-->', serviceLogData);
+    if (_.isEmpty(logData)) {
+      this.setState({
+        logData: serviceLogData,
+        showBtn: _.isEmpty(serviceLogData),
+      });
+    }
+  }
   componentWillReceiveProps(nextProps) {
     const { serviceLogMoreData, serviceLogData, serviceLogDataLoading } = nextProps;
     const { serviceLogMoreData: prevServiceLogMoreData,
       serviceLogData: prevServiceLogData,
       serviceLogDataLoading: prevServiceLogDataLoading } = this.props;
     const { logData } = this.state;
-    if (!_.isEqual(serviceLogData, prevServiceLogData)) {
+    if (serviceLogData !== prevServiceLogData) {
       this.setState({
         logData: serviceLogData,
       });
@@ -96,7 +107,7 @@ export default class CreateTaskForm extends PureComponent {
     this.setState({
       showBtn: _.isEmpty(serviceLogData),
     });
-    if (!_.isEqual(serviceLogMoreData, prevServiceLogMoreData)) {
+    if (serviceLogMoreData !== prevServiceLogMoreData) {
       if (_.isEmpty(serviceLogMoreData)) {
         this.setState({
           showBtn: true,
@@ -106,6 +117,8 @@ export default class CreateTaskForm extends PureComponent {
         const newServiceLogData = _.concat(logData, serviceLogMoreData);
         this.setState({
           logData: newServiceLogData,
+        }, () => {
+          console.log('eee->', this.state.logData);
         });
       }
     }
@@ -115,6 +128,7 @@ export default class CreateTaskForm extends PureComponent {
       });
     }
   }
+
 
   @autobind
   onChange(value) {
@@ -164,7 +178,7 @@ export default class CreateTaskForm extends PureComponent {
     const lastTime = logData[logData.length - 1].serveTime;
     const params = query;
     params.serveDateToPaged = moment(lastTime).format('YYYY-MM-DD HH:mm:ss');
-    // params.custId = '02001404'; // 本地测试用的数据
+    params.custId = '02001404'; // 本地测试用的数据
     if (moment(lastTime).isBefore(sixDate)) {
       this.setState({
         showBtn: true,
