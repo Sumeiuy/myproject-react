@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-04 13:37:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-08 20:39:57
+ * @Last Modified time: 2017-11-09 16:29:40
  * @description 单佣金申请内容区域
  */
 
@@ -161,8 +161,8 @@ export default class SingleCreateBoard extends PureComponent {
 
   @autobind
   resetData() {
-    console.warn('resetData');
     this.cleanRedux();
+    this.uploadComponent.resetUpload();
     this.setState({
       approverName: '',
       approverId: '',
@@ -293,6 +293,13 @@ export default class SingleCreateBoard extends PureComponent {
     });
   }
 
+  // CommonUpload组件实例
+  @autobind
+  uploadRef(input) {
+    if (!input) return;
+    this.uploadComponent = input.getWrappedInstance();
+  }
+
   render() {
     const {
       customer: { openRzrq },
@@ -347,6 +354,7 @@ export default class SingleCreateBoard extends PureComponent {
       // 附件Id
       attachment: '',
       needDefaultText: false,
+      ref: this.uploadRef,
     };
 
     return (

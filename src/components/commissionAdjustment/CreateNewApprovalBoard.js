@@ -105,6 +105,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       singleDValue: 0, // 单佣金调整产品选择后的差值
       openRzrq: true, // 两融开关
       canShowAppover: false, // 新建资讯订阅和退订时是否需要选择审批人
+      modalLoading: false, // 点击提交后，弹出层区域的Loading
     };
   }
 
@@ -304,6 +305,9 @@ export default class CreateNewApprovalBoard extends PureComponent {
   @autobind
   batchSubmit() {
     if (!this.submitCheck()) return;
+    this.setState({
+      modalLoading: true,
+    });
     const {
       newCommission,
       targetProduct,
@@ -326,7 +330,11 @@ export default class CreateNewApprovalBoard extends PureComponent {
       ...otherCommissions,
     };
     // 提交
-    this.props.onBatchSubmit(submitParams);
+    this.props.onBatchSubmit(submitParams).then(() => {
+      this.setState({
+        modalLoading: false,
+      });
+    });
   }
 
   // 单佣金调整提交
@@ -360,10 +368,16 @@ export default class CreateNewApprovalBoard extends PureComponent {
     this.props.onSubmitSingle(params).then(() => {
       message.success('单佣金调整提交成功');
       const { modalKey, onClose } = this.props;
+      this.setState({
+        modalLoading: false,
+      });
       this.clearApprovalBoard();
       onClose(modalKey);
     }, () => {
       message.error('单佣金调整提交失败');
+      this.setState({
+        modalLoading: false,
+      });
     });
   }
 
@@ -394,10 +408,16 @@ export default class CreateNewApprovalBoard extends PureComponent {
     this.props.submitSub(params).then(() => {
       message.success('资讯订阅提交成功');
       const { modalKey, onClose } = this.props;
+      this.setState({
+        modalLoading: false,
+      });
       this.clearApprovalBoard();
       onClose(modalKey);
     }, () => {
       message.error('资讯订阅提交失败');
+      this.setState({
+        modalLoading: false,
+      });
     });
   }
 
@@ -427,10 +447,16 @@ export default class CreateNewApprovalBoard extends PureComponent {
     this.props.submitUnSub(unParams).then(() => {
       message.success('资讯退订提交成功');
       const { modalKey, onClose } = this.props;
+      this.setState({
+        modalLoading: false,
+      });
       this.clearApprovalBoard();
       onClose(modalKey);
     }, () => {
       message.error('资讯退订提交失败');
+      this.setState({
+        modalLoading: false,
+      });
     });
   }
 
@@ -608,6 +634,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       approvalType,
       remark,
       customer,
+      modalLoading, // 弹出层点击提交按钮后的页面loading
     } = this.state;
 
     const wrapClassName = this.judgeSubtypeNow(commadj.noSelected) ? 'commissionModal' : '';
@@ -620,6 +647,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
           modalKey={modalKey}
           needBtn
           maskClosable={false}
+          modalLoading={modalLoading}
           size="large"
           visible={visible}
           closeModal={this.closeModal}

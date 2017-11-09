@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-01 18:37:35
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-04 16:26:59
+ * @Last Modified time: 2017-11-09 16:54:19
  * @description 单佣金调整驳回后修改页面
  */
 
@@ -629,7 +629,7 @@ export default class SingleDetailChange extends PureComponent {
               }
             >
               <AutoComplete
-                defaultInput={newCommission}
+                initValue={newCommission}
                 dataSource={singleGJ}
                 onChangeValue={this.changeTargetGJCommission}
                 onSelectValue={this.selectTargetGJCommission}
