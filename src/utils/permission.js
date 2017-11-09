@@ -40,6 +40,22 @@ const permission = {
     return judgeAuthority(permissionList, HTSC_BD_MAMPID);
   },
 
+  // 目标客户池首页和列表页权限
+  hasCustomerPoolPermission() {
+    return permission.hasIndexViewPermission()
+      || permission.hasHqMampPermission()
+      || permission.hasBoMampPermission()
+      || permission.hasBdMampPermission();
+  },
+
+  // 目标客户池创建人物权限
+  hasCreateTaskPermission() {
+    return permission.hasIndexViewPermission()
+      || permission.hasHqMampPermission()
+      || permission.hasBoMampPermission()
+      || permission.hasBdMampPermission();
+  },
+
 };
 
 export default permission;
