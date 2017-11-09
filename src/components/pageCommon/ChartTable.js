@@ -364,7 +364,7 @@ export default class ChartTable extends PureComponent {
         ));
       });
       tempArr = columns.map((item) => {
-        const tempName = `${item.name}(${encodeURIComponent(item.unit) === encodeURIComponent('元') ? '万元' : item.unit})`;
+        const tempName = `${item.name}`;
         const column = {
           dataIndex: item.key,
           title: this.getTitleHtml(item),
