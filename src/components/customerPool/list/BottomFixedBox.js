@@ -71,6 +71,8 @@ export default class BottomFixedBox extends PureComponent {
     const fixedEleDom = document.querySelector('fixedEleDom');
     if (fixedEleDom && workspaceSidebar) {
       fixedEleDom.style.left = `${workspaceSidebar.offsetWidth}px`;
+    } else {
+      fixedEleDom.style.left = 0;
     }
   }
 
