@@ -14,7 +14,12 @@ import { linkTo } from './homeIndicators_';
 
 import styles from './progressList.less';
 
-// 新增客户传给列表页的参数
+/* 新增客户传给列表页的参数
+ * 净新增有效户： 817001
+ * 净新增非零售客户： 817002
+ * 净新增高端产品户： 817003
+ * 新增产品客户： 817004
+*/
 const newCustomerLinkIdx = ['817001', '817002', '817003', '817004'];
 
 export default class ProgressList extends PureComponent {
