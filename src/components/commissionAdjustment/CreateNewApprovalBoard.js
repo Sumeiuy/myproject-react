@@ -301,13 +301,19 @@ export default class CreateNewApprovalBoard extends PureComponent {
     return result;
   }
 
+  // 隐藏/显示提交Loading
+  @autobind
+  submitLoadiing(modalLoading) {
+    this.setState({
+      modalLoading,
+    });
+  }
+
   // 批量佣金调整提交
   @autobind
   batchSubmit() {
     if (!this.submitCheck()) return;
-    this.setState({
-      modalLoading: true,
-    });
+    this.submitLoadiing(true);
     const {
       newCommission,
       targetProduct,
@@ -331,9 +337,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     };
     // 提交
     this.props.onBatchSubmit(submitParams).then(() => {
-      this.setState({
-        modalLoading: false,
-      });
+      this.submitLoadiing(false);
     });
   }
 
@@ -342,6 +346,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
   singleSubmit() {
     if (!this.submitCheck()) return;
     // 单佣金调整需要的key
+    this.submitLoadiing(true);
     const {
       userProductList,
       singleProductMatchInfo,
@@ -368,16 +373,12 @@ export default class CreateNewApprovalBoard extends PureComponent {
     this.props.onSubmitSingle(params).then(() => {
       message.success('单佣金调整提交成功');
       const { modalKey, onClose } = this.props;
-      this.setState({
-        modalLoading: false,
-      });
+      this.submitLoadiing(false);
       this.clearApprovalBoard();
       onClose(modalKey);
     }, () => {
       message.error('单佣金调整提交失败');
-      this.setState({
-        modalLoading: false,
-      });
+      this.submitLoadiing(false);
     });
   }
 
@@ -385,6 +386,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
   @autobind
   advisorySub() {
     if (!this.submitCheck()) return;
+    this.submitLoadiing(true);
     const { rowId } = this.props.empInfo;
     const {
       customer,
@@ -408,16 +410,12 @@ export default class CreateNewApprovalBoard extends PureComponent {
     this.props.submitSub(params).then(() => {
       message.success('资讯订阅提交成功');
       const { modalKey, onClose } = this.props;
-      this.setState({
-        modalLoading: false,
-      });
+      this.submitLoadiing(false);
       this.clearApprovalBoard();
       onClose(modalKey);
     }, () => {
       message.error('资讯订阅提交失败');
-      this.setState({
-        modalLoading: false,
-      });
+      this.submitLoadiing(false);
     });
   }
 
@@ -425,6 +423,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
   @autobind
   advisoryUnSub() {
     if (!this.submitCheck()) return;
+    this.submitLoadiing(true);
     const { rowId } = this.props.empInfo;
     const {
       customer,
@@ -447,16 +446,12 @@ export default class CreateNewApprovalBoard extends PureComponent {
     this.props.submitUnSub(unParams).then(() => {
       message.success('资讯退订提交成功');
       const { modalKey, onClose } = this.props;
-      this.setState({
-        modalLoading: false,
-      });
+      this.submitLoadiing(false);
       this.clearApprovalBoard();
       onClose(modalKey);
     }, () => {
       message.error('资讯退订提交失败');
-      this.setState({
-        modalLoading: false,
-      });
+      this.submitLoadiing(false);
     });
   }
 
@@ -481,6 +476,8 @@ export default class CreateNewApprovalBoard extends PureComponent {
     if (key === '') return;
     this.setState({
       approvalType: key,
+      remark: '',
+      customer: {},
     });
   }
 
@@ -638,7 +635,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     } = this.state;
 
     const wrapClassName = this.judgeSubtypeNow(commadj.noSelected) ? 'commissionModal' : '';
-    const subTypesAfterAuthority = newSubTypes; // this.authorityOptions(newSubTypes);
+    const subTypesAfterAuthority = this.authorityOptions(newSubTypes);
 
     return (
       <div>
