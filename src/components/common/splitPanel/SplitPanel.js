@@ -115,7 +115,11 @@ export default class SplitPanel extends PureComponent {
     // 次变量用来判断是否在FSP系统中
     const utb = this.UTBContentElem;
     // 视口的高度
-    const viewHeight = document.documentElement.clientHeight;
+    let viewHeight = document.documentElement.clientHeight;
+    const browser = BROWSER.$browser;
+    if (browser === 'Internet Explorer') {
+      viewHeight -= 10;
+    }
     // 因为页面在开发过程中并不存在于FSP系统中，而在生产环境下是需要将本页面嵌入到FSP系统中
     // 需要给改容器设置高度，以防止页面出现滚动
     const pageContainer = document.querySelector(splitConfig.container);

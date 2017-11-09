@@ -57,7 +57,7 @@ const mapDispatchToProps = {
   deleteAttachment: fetchDataFunction(true, 'app/deleteAttachment'),
 };
 
-@connect(mapStateToProps, mapDispatchToProps)
+@connect(mapStateToProps, mapDispatchToProps, Object.assign, { withRef: true })
 export default class CommonUpload extends PureComponent {
   static propTypes = {
     // 删除附件方法
@@ -104,8 +104,14 @@ export default class CommonUpload extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { deleteAttachmentLoading: preDAL, attachmentList: preAL } = this.props;
-    const { deleteAttachmentLoading: nextDAL, attachmentList: nextAL } = nextProps;
+    const {
+      deleteAttachmentLoading: preDAL,
+      attachmentList: preAL,
+    } = this.props;
+    const {
+      deleteAttachmentLoading: nextDAL,
+      attachmentList: nextAL,
+    } = nextProps;
     if ((preDAL && !nextDAL)) {
       const { deleteAttachmentList } = nextProps;
       this.setState({
@@ -119,6 +125,7 @@ export default class CommonUpload extends PureComponent {
       });
     }
   }
+
   // 上传事件
   @autobind
   onChange(info) {
@@ -171,6 +178,19 @@ export default class CommonUpload extends PureComponent {
     return document.querySelectorAll('.fileListMain')[0];
   }
 
+  // 清空数据
+  @autobind
+  resetUpload() {
+    this.setState({
+      percent: 0, // 上传百分比
+      status: 'active', // 上传状态
+      statusText: '', // 上传状态对应文字
+      file: {}, // 当前上传的文件
+      fileList: [], // 文件列表
+      oldFileList: [], // 旧的文件列表
+      attachment: '', // 上传后的唯一 ID
+    });
+  }
   render() {
     const {
       empId,

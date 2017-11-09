@@ -5,11 +5,11 @@
 @invest-btn-border-hvr-color: @invest-btn-base-color;
 
 :global {
-  .react-app{
-    .ant-calendar-footer-btn{
+  .react-app {
+    .ant-calendar-footer-btn {
       height: 0;
       border: 0;
-      .ant-calendar-ok-btn{
+      .ant-calendar-ok-btn {
         width: 60px;
         height: 28px;
         line-height: 28px;
@@ -20,29 +20,29 @@
     }
   }
 }
-.extraFooter{
-  h4{
+.extraFooter {
+  h4 {
     line-height: 30px;
   }
-  .extraFooterBottom{
+  .extraFooterBottom {
     display: -webkit-box;
     -webkit-box-direction: normal;
     -webkit-box-orient: horizontal;
     margin-bottom: 8px;
-    .bottomTime{
+    .bottomTime {
       -webkit-box-flex: 1;
       margin-right: 10px;
-      h4{
+      h4 {
         display: block;
         line-height: 20px;
       }
     }
-    .bottomBtn{
+    .bottomBtn {
       width: 70px;
       margin-right: 70px;
     }
   }
-  :global{
+  :global {
     .ant-radio-group {
       display: block;
     }
@@ -51,31 +51,30 @@
       margin: 0 6px 6px;
       height: 28px;
       z-index: 1;
-      border:1px solid @invest-btn-border-color;
-      color:@invest-btn-text-color;
+      color: @invest-btn-text-color;
       text-align: center;
       border: 1px solid #d9d9d9;
       border-radius: 4px;
       &:hover {
         z-index: 2;
-        color:@invest-btn-text-hvr-color;
-        border-color:@invest-btn-border-hvr-color;
+        color: @invest-btn-text-hvr-color;
+        border-color: @invest-btn-border-hvr-color;
       }
       &:not(:first-child):before {
         display: none;
       }
     }
     .ant-radio-button-wrapper-checked {
-      border-color:@invest-btn-base-color;
-      color:#fff;
+      border-color: @invest-btn-base-color;
+      color: #fff;
       background-color: @invest-btn-base-color;
       box-shadow: none;
       &:first-child {
-        border-color:@invest-btn-base-color;
+        border-color: @invest-btn-base-color;
       }
       &:hover {
-        color:#fff;
-        border-color:@invest-btn-base-color;
+        color: #fff;
+        border-color: @invest-btn-base-color;
         box-shadow: none;
       }
     }
