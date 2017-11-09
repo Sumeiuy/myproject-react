@@ -82,16 +82,12 @@ export default class CreateTask extends PureComponent {
     };
   }
 
-  componentWillMount() {
-  }
-
   componentWillReceiveProps(nextProps) {
     const { createTaskResult: preCreateTaskResult } = this.props;
     const { createTaskResult: nextcreateTaskResult } = nextProps;
     if (preCreateTaskResult !== nextcreateTaskResult) {
       this.handleCreateTaskSuccess(nextcreateTaskResult);
     }
-    // console.log(nextcreateTaskResult);
   }
 
   componentWillUnmount() {
@@ -147,6 +143,7 @@ export default class CreateTask extends PureComponent {
       saveCreateTaskData,
       approvalList,
       getApprovalList,
+      clearCreateTaskData,
     } = this.props;
     const { isSuccess } = this.state;
     return (
@@ -163,6 +160,7 @@ export default class CreateTask extends PureComponent {
             push={push}
             orgId={orgId}
             onCloseTab={this.handleCancleTab}
+            clearCreateTaskData={clearCreateTaskData}
           /> :
           <CreateTaskSuccess
             successType={isSuccess}

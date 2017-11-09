@@ -19,7 +19,7 @@ export default class TaskFormFlowStep extends PureComponent {
     push: PropTypes.func.isRequired,
     dict: PropTypes.object,
     saveCreateTaskData: PropTypes.func.isRequired,
-    storedCreateTaskData: PropTypes.object.isRequired,
+    storedCreateTaskData: PropTypes.object,
     createTask: PropTypes.func.isRequired,
     parseQuery: PropTypes.func.isRequired,
     approvalList: PropTypes.array.isRequired,
@@ -35,10 +35,11 @@ export default class TaskFormFlowStep extends PureComponent {
 
   constructor(props) {
     super(props);
+    const { storedCreateTaskData: { taskFormData } } = props;
     this.state = {
       current: 0,
       currentStep: 0,
-      previousData: {},
+      previousData: taskFormData || {},
       currentSelectRecord: {},
       currentSelectRowKeys: [],
       currentTab: '1',
@@ -52,13 +53,12 @@ export default class TaskFormFlowStep extends PureComponent {
 
   @autobind
   handlePreviousStep() {
-    const { storedCreateTaskData } = this.props;
+    const { storedCreateTaskData: { taskFormData } } = this.props;
     const { current } = this.state;
     this.setState({
       current: current - 1,
-      previousData: storedCreateTaskData.taskFormData,
+      previousData: taskFormData,
     });
-    console.log(storedCreateTaskData.taskFormData);
   }
 
   @autobind
@@ -94,22 +94,22 @@ export default class TaskFormFlowStep extends PureComponent {
       if (!_.isEmpty(err)) {
         isFormError = true;
       }
-      this.submitFormContent({ ...values, isFormError });
+      this.saveFormContent({ ...values, isFormError });
     });
   }
 
   @autobind
   @validateFormContent
-  submitFormContent(values) {
+  saveFormContent(values) {
     const { current } = this.state;
-    const { saveCreateTaskData, location: { query } } = this.props;
+    const { saveCreateTaskData, location: { query: { source, count } } } = this.props;
     saveCreateTaskData({
       taskFormData: values,
-      totalCust: query.count,
+      totalCust: count,
     });
     this.setState({
       current: current + 1,
-      custSource: this.handleCustSource(query.source),
+      custSource: this.handleCustSource(source),
     });
   }
 

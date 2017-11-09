@@ -34,6 +34,7 @@ export default class CreateTaskFormFlow extends PureComponent {
     onCloseTab: PropTypes.func.isRequired,
     orgId: PropTypes.string,
     push: PropTypes.func.isRequired,
+    clearCreateTaskData: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -59,6 +60,12 @@ export default class CreateTaskFormFlow extends PureComponent {
     this.setState({
       showBtn: _.includes(['custGroupList'], source),
     });
+  }
+
+  componentWillUnmount() {
+    // 在关闭当前tab之后，才清楚缓存的数据
+    const { clearCreateTaskData } = this.props;
+    clearCreateTaskData();
   }
 
   // 从业务目标池客户：businessCustPool
