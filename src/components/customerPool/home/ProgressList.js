@@ -14,6 +14,7 @@ import { linkTo } from './homeIndicators_';
 
 import styles from './progressList.less';
 
+// 新增客户传给列表页的参数
 const newCustomerLinkIdx = ['817001', '817002', '817003', '817004'];
 
 export default class ProgressList extends PureComponent {
