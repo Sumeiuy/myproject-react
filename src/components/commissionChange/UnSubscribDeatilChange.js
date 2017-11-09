@@ -55,6 +55,7 @@ export default class UnSubscribeDetailToChange extends PureComponent {
       unSubProList: [], // 资讯退订产品列表
       canShowAppover: false, // 新建资讯订阅和退订时是否需要选择审批人
       btnDisabled: false,
+      orgList: [], // 原退订请求中选择的产品
     };
   }
 
@@ -72,6 +73,29 @@ export default class UnSubscribeDetailToChange extends PureComponent {
     });
   }
 
+  componentWillReceiveProps(nextProps) {
+    const { unSubDetailToChange: preDetail } = this.props;
+    const { unSubDetailToChange: nextDetail } = nextProps;
+    if (nextDetail !== preDetail) {
+      const { base, unSubProList } = nextDetail;
+      const { item: choiceProList } = base;
+      this.setState({
+        orgList: choiceProList,
+      });
+      const proList = this.createSubscribelProList(unSubProList);
+      const choiceList = this.choiceSubProList(choiceProList, proList);
+      _.forEach(choiceList, (item) => {
+        const { approvalFlg } = item;
+        if (approvalFlg === 'Y') {
+          this.setState({
+            canShowAppover: true,
+          });
+        }
+      });
+    }
+  }
+
+
   // 清空页面数据
   @autobind
   clearApprovalBoard() {
@@ -84,6 +108,7 @@ export default class UnSubscribeDetailToChange extends PureComponent {
       approverId: '',
       attachment: '',
       unSubProList: [], // 资讯退订产品列表
+      orgList: [],
     });
   }
 
@@ -291,8 +316,9 @@ export default class UnSubscribeDetailToChange extends PureComponent {
 
   // 将选中的资讯退订产品数据结构改为提交所需
   @autobind
-  changeSubmitSubProList(list) {
-    const newSubmitSubscriProList = list.map((product) => {
+  changeSubmitSubProList(orgList, list) {
+    const finSunProList = [...orgList, ...list];
+    const newSubmitSubscriProList = finSunProList.map((product) => {
       const { children } = product;
       const newSubmitSubscribel = this.changeSubmitscriProList(product);
       if (!_.isEmpty(children)) {
@@ -362,8 +388,9 @@ export default class UnSubscribeDetailToChange extends PureComponent {
       approverId, // 审批人工号
       attachment, // 附件编号
       unSubProList,
+      orgList,
     } = this.state;
-    const newSubProList = this.changeSubmitSubProList(unSubProList);
+    const newSubProList = this.changeSubmitSubProList(orgList, unSubProList);
     const params = {
       type: unSubscribeCustList.custType,
       aprovaluser: approverId,

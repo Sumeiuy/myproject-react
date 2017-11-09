@@ -96,7 +96,7 @@ const mapDispatchToProps = {
   // 三匹配
   queryThreeMatchInfo: getDataFunction(false, effects.threeMatchInfo),
   // 咨讯订阅提交
-  submitSub: getDataFunction(false, effects.subSubscribe),
+  submitSub: getDataFunction(true, effects.subSubscribe),
   // 获取驳回后修改的单佣金调整详情
   querySingleDetail: getDataFunction(false, effects.singleDetail),
   // 获取驳回后修改的单佣金调整中的目标股基佣金率码值列表
@@ -112,10 +112,10 @@ const mapDispatchToProps = {
   // 提交单佣金
   updateSingle: getDataFunction(false, effects.singleSubmit),
   // 更新流程
-  updateFlow: getDataFunction(false, effects.updateFlow),
+  updateFlow: getDataFunction(true, effects.updateFlow),
   getUnSubscribeDetail: getDataFunction(true, effects.unSubDetail),
   // 咨讯退订驳回后修改页面提交
-  submitUnSub: getDataFunction(false, effects.unSubComit),
+  submitUnSub: getDataFunction(true, effects.unSubComit),
   clearReduxState: getDataFunction(false, effects.clearReduxState),
 };
 

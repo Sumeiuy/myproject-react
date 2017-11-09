@@ -57,6 +57,7 @@ export default class SubscribeDetailToChange extends PureComponent {
       approverId: '',
       custLists: [],
       attachment: '',
+      orgList: [],
       subProSubList: [], // 资讯订阅产品列表
       subscribelProductMatchInfo: [], // 资讯订阅的产品的三匹配信息
       canShowAppover: false, // 新建资讯订阅和退订时是否需要选择审批人
@@ -91,6 +92,9 @@ export default class SubscribeDetailToChange extends PureComponent {
     if (nextDetail !== preDetail) {
       const { base, subProList } = nextDetail;
       const { item: choiceProList } = base;
+      this.setState({
+        orgList: choiceProList,
+      });
       const proList = this.createSubscribelProList(subProList);
       const choiceList = this.choiceSubProList(choiceProList, proList);
       _.forEach(choiceList, (item) => {
@@ -164,6 +168,7 @@ export default class SubscribeDetailToChange extends PureComponent {
       custLists: [],
       customer: {},
       attachment: '',
+      orgList: [],
       subProSubList: [], // 资讯订阅产品列表
       subscribelProductMatchInfo: [], // 资讯订阅的产品的三匹配信息
     });
@@ -410,8 +415,9 @@ export default class SubscribeDetailToChange extends PureComponent {
 
   // 将选中的资讯订阅产品数据结构改为提交所需
   @autobind
-  changeSubmitSubProList(list, matchInfos) {
-    const newSubmitSubscriProList = list.map((product) => {
+  changeSubmitSubProList(orgList, list, matchInfos) {
+    const finalProList = [...orgList, ...list];
+    const newSubmitSubscriProList = finalProList.map((product) => {
       // 此处有aliasName为:没经过穿梭框处理前的详情数据
       // 此处没有aliasName,经过穿梭框处理过的数据，
       const { aliasName } = product;
@@ -462,11 +468,16 @@ export default class SubscribeDetailToChange extends PureComponent {
     const {
       remark,
       subProSubList,
+      orgList,
       subscribelProductMatchInfo,
       approverId, // 审批人工号
       attachment, // 附件编号
     } = this.state;
-    const newSubProList = this.changeSubmitSubProList(subProSubList, subscribelProductMatchInfo);
+    const newSubProList = this.changeSubmitSubProList(
+      orgList,
+      subProSubList,
+      subscribelProductMatchInfo,
+    );
     const params = {
       type: subscribeCustList.custType,
       aprovaluser: approverId,
