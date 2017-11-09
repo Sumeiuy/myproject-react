@@ -11,20 +11,23 @@ import styles from './Loading.less';
 // 首先判断wrap存在与否
 const contentWrapper = document.getElementById('workspace-content');
 
-function Loading({
-  loading,
-}) {
+function Loading({ loading, forceFull }) {
   if (!loading) {
     return null;
   }
-
+  let top = contentWrapper ? '55px' : '0';
+  let left = contentWrapper ? getCssStyle(contentWrapper, 'left') : '0';
+  // 新增判断如果forceFull有值，则需要判断是Y或者N，
+  // 无值则按默认的方式处理
+  if (forceFull === 'Y') {
+    // 强制全屏
+    top = '0';
+    left = '0';
+  }
   return (
     <div
       className={styles.popmask}
-      style={{
-        top: contentWrapper ? '55px' : '0',
-        left: contentWrapper ? getCssStyle(contentWrapper, 'left') : '0',
-      }}
+      style={{ top, left }}
     >
       <Spin tip="Loading" spinning={loading} />
     </div>
@@ -33,6 +36,7 @@ function Loading({
 
 Loading.propTypes = {
   loading: PropTypes.bool.isRequired,
+  forceFull: PropTypes.string.isRequired,
 };
 
 export default Loading;

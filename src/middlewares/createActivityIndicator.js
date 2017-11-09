@@ -15,19 +15,21 @@ export default function createActivityIndicator(opts = {}) {
   };
 
   const extraReducers = {
-    [namespace](state = initialState, { type }) {
+    [namespace](state = initialState, { type, forceFull }) {
       let ret;
       switch (type) {
         case SHOW:
           ret = {
             ...state,
             global: true,
+            forceFull,
           };
           break;
         case HIDE:
           ret = {
             ...state,
             global: false,
+            forceFull,
           };
           break;
         default:
@@ -40,13 +42,13 @@ export default function createActivityIndicator(opts = {}) {
 
   function onEffect(effect, { put }) {
     return function* effectWrapper(...args) {
-      const { loading } = args[0];
+      const { loading, forceFull } = args[0];
       if (loading !== false) {
-        yield put({ type: SHOW });
+        yield put({ type: SHOW, forceFull });
       }
       yield effect(...args);
       if (loading !== false) {
-        yield put({ type: HIDE });
+        yield put({ type: HIDE, forceFull });
       }
     };
   }

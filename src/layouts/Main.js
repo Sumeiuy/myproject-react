@@ -30,6 +30,7 @@ const fectchDataFunction = (globalLoading, type) => query => ({
 const mapStateToProps = state => ({
   ...state.app,
   loading: state.activity.global,
+  loadingForceFull: state.activity.forceFull,
   custRange: state.customerPool.custRange,
   dict: state.app.dict,
   empInfo: state.app.empInfo,
@@ -60,6 +61,7 @@ export default class Main extends Component {
   static propTypes = {
     children: PropTypes.node.isRequired,
     loading: PropTypes.bool.isRequired,
+    loadingForceFull: PropTypes.string,
     getCustomerScope: PropTypes.func.isRequired,
     interfaceState: PropTypes.object.isRequired,
     dict: PropTypes.object.isRequired,
@@ -76,6 +78,7 @@ export default class Main extends Component {
     serviceRecordModalVisible: false,
     serviceRecordModalVisibleOfId: '',
     serviceRecordModalVisibleOfName: '',
+    loadingForceFull: '',
   }
 
   componentDidMount() {
@@ -96,6 +99,7 @@ export default class Main extends Component {
       serviceRecordModalVisibleOfName,
       serviceRecordModalVisible,
       toggleServiceRecordModal,
+      loadingForceFull,
     } = this.props;
     return (
       <div>
@@ -103,7 +107,7 @@ export default class Main extends Component {
           <div className={styles.main}>
             <div className={styles.container} id="container">
               <div className={styles.content} id="content">
-                <Loading loading={loading} />
+                <Loading loading={loading} forceFull={loadingForceFull} />
                 {
                   (!_.isEmpty(interfaceState) &&
                     !interfaceState[effects.dictionary] &&

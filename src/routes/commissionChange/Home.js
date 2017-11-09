@@ -110,7 +110,7 @@ const mapDispatchToProps = {
   // 获取驳回后的按钮列表
   queryApprovalBtns: getDataFunction(false, effects.btns),
   // 提交单佣金
-  updateSingle: getDataFunction(false, effects.singleSubmit),
+  updateSingle: getDataFunction(true, effects.singleSubmit),
   // 更新流程
   updateFlow: getDataFunction(true, effects.updateFlow),
   getUnSubscribeDetail: getDataFunction(true, effects.unSubDetail),
