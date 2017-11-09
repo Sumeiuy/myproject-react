@@ -29,7 +29,7 @@ export default {
     protocolClauseList: EMPTY_LIST, // 所选模板对应协议条款列表
     protocolProductList: EMPTY_LIST, // 协议产品列表
     underCustList: EMPTY_LIST,  // 客户列表
-    saveProtocol: EMPTY_OBJECT,
+    itemId: '', // 保存成功后返回itemId,提交审批流程所需
     flowStepInfo: EMPTY_OBJECT, // 审批人
   },
   reducers: {
@@ -116,10 +116,10 @@ export default {
     },
     // 保存详情
     saveProtocolDataSuccess(state, action) {
-      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      const { payload: { resultData = '' } } = action;
       return {
         ...state,
-        saveProtocol: resultData,
+        itemId: resultData,
       };
     },
     // 查询客户
@@ -190,15 +190,10 @@ export default {
     },
     // 保存详情
     * saveProtocolData({ payload }, { call, put }) {
-      const response = yield call(api.saveProtocolData, payload.formData);
+      const response = yield call(api.saveProtocolData, payload);
       yield put({
         type: 'saveProtocolDataSuccess',
         payload: response,
-      });
-      // 保存成功之后重新请求左侧列表
-      yield put({
-        type: 'app/getSeibleList',
-        payload: payload.params,
       });
     },
     // 查询客户
@@ -271,11 +266,34 @@ export default {
     // 新建时的获取审批人列表
     * getFlowStepInfo({ payload }, { call, put }) {
       const response = yield call(api.getFlowStepInfo, payload);
+      // response.resultData || {}.flowButtons || []
+      const { resultData: { flowButtons = []} } = response;
+      /*eslint-disable */
+      flowButtons.forEach(v=> {
+        v.flowAuditors.forEach((sv, index)=> {
+          sv.belowDept = sv.occupation;
+          sv.empNo = sv.login;
+          sv.key = `${new Date().getTime()}-${index}`;
+          sv.groupName = v.nextGroupName;
+          sv.operate = v.operate;
+        })
+      });
+      /*eslint-disable */
       yield put({
         type: 'getAddFlowStepInfoSuccess',
         payload: response,
       });
     },
+    // 提交审批流程
+    * doApprove({ payload }, { call }) {
+      yield call(api.postDoApprove, payload.formData);
+
+      // 提交成功之后重新请求左侧列表
+      yield put({
+        type: 'app/getSeibleList',
+        payload: payload.params,
+      });
+    }
   },
   subscriptions: {
     setup({ dispatch, history }) {

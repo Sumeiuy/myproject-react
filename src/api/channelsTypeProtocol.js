@@ -19,6 +19,8 @@ export default function channels(api) {
     // 获取附件列表
     getAttachmentList: query => api.post('/file/ceFileList', query),
     // 查询审批人列表
-    getFlowStepInfo: query => api.post('/groovynoauth/fsp/contract/cooper/queryFlowStepInfo', query),
+    getFlowStepInfo: query => api.post('/groovynoauth/fsp/protocol/queryFlowStepInfo', query),
+    // 审批流程
+    postDoApprove: query => api.post('/groovynoauth/fsp/protocol/doApprove', query),
   };
 }
