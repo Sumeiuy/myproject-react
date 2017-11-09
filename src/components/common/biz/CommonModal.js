@@ -1,8 +1,8 @@
 /*
  * @Author: LiuJianShu
  * @Date: 2017-09-14 14:44:35
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-13 09:16:30
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-11-09 12:33:13
  */
 /**
  * 常用说明
@@ -41,7 +41,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Modal, Button } from 'antd';
 import _ from 'lodash';
-// import Button from '../Button';
+import ModalLoading from './ModalLoading';
 import styles from './commonModal.less';
 
 export default class CommonModal extends PureComponent {
@@ -58,6 +58,7 @@ export default class CommonModal extends PureComponent {
     btnStatus: PropTypes.bool,
     showOkBtn: PropTypes.bool,
     showCancelBtn: PropTypes.bool,
+    modalLoading: PropTypes.bool,
     wrapClassName: PropTypes.string,
     children: PropTypes.oneOfType([
       PropTypes.string,
@@ -76,6 +77,7 @@ export default class CommonModal extends PureComponent {
   static defaultProps = {
     needBtn: true,
     btnStatus: false,
+    modalLoading: false,
     showCancelBtn: true,
     showOkBtn: true,
     okText: '确认',
@@ -134,6 +136,7 @@ export default class CommonModal extends PureComponent {
         footer={footerContent}
       >
         {children}
+        <ModalLoading loading={this.props.modalLoading} />
       </Modal>
     );
   }

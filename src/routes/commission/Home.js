@@ -130,10 +130,11 @@ const mapStateToProps = state => ({
   sciCheckCustomer: state.commission.sciCheckCustomer,
 });
 
-const getDataFunction = (loading, type) => query => ({
+const getDataFunction = (loading, type, forceFull) => query => ({
   type,
   payload: query || {},
   loading,
+  forceFull,
 });
 
 const mapDispatchToProps = {
