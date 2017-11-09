@@ -45,18 +45,19 @@ export default class CreateTaskFormFlow extends PureComponent {
 
   constructor(props) {
     super(props);
+    const { location: { query: { source } } } = props;
     this.state = {
-      showBtn: false,
+      showBtn: _.includes(['custGroupList'], source),
       isShowErrorInfo: false,
       isShowErrorTaskType: false,
       isShowErrorExcuteType: false,
     };
   }
 
-  componentWillMount() {
-    const { location: { query } } = this.props;
+  componentWillReceiveProps(nextProps) {
+    const { location: { query: { source } } } = nextProps;
     this.setState({
-      showBtn: _.includes(['custGroupList'], query.source),
+      showBtn: _.includes(['custGroupList'], source),
     });
   }
 
