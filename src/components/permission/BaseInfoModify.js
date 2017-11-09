@@ -67,12 +67,6 @@ export default class BaseInfoModify extends PureComponent {
   }
 
   @autobind
-  selectChildType(value) {
-    // 选择子类型
-    console.log('#####handleOk######', value);
-  }
-
-  @autobind
   selectCustomer(item) {
     // 选中客户
     this.props.onEmitEvent('customer', item);
