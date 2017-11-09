@@ -3,20 +3,20 @@
 @import "./icon";
 @import "./antd";
 
-body, html {
-  height: 100%;
-  font-family: sans-serif-light "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-  font-weight: 300;
-  background-color: #f2f2f2;
-  .scrollBarIEStyle;
-}
-
-p {
-  margin: 12px 0;
-}
-
 :global {
+
+  .ant-modal-wrap {
+  	// 覆盖FSP里的相关定义，避免react-app之外的react组件展现不正常
+	div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fieldset, legend, input, textarea, p, blockquote, th, td {
+	  font-family: @font-family;
+	}
+  }
   .react-app .ant-pagination-options .ant-select, .ant-modal-body .ant-pagination-options .ant-select {
     width: 80px;
+  }
+
+  .react-app {
+  	font-family: @font-family;
+	.scrollBarIEStyle;
   }
 }
