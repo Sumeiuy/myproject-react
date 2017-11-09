@@ -149,7 +149,6 @@ export default class TaskFormInfo extends PureComponent {
   //   }
   // }
   checkMention = (rule, value, callback) => {
-    console.log('value-->', value);
     if (!this.isFirstLoad) {
       const content = toString(value);
       if (_.isEmpty(content) || content.length < 10) {

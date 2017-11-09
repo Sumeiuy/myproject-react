@@ -21,6 +21,7 @@ export default class SelectLabelCust extends PureComponent {
     isLoadingEnd: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired,
     isHasAuthorize: PropTypes.bool,
+    visible: PropTypes.bool.isRequired,
   };
 
   static defaultProps = {
@@ -67,10 +68,11 @@ export default class SelectLabelCust extends PureComponent {
 
     const { circlePeopleData } = this.props;
     const matchedData = _.find(circlePeopleData, item => item.id === labelId);
-    const { labelDesc = '', customNum = '' } = matchedData || EMPTY_OBJECT;
+    const { labelDesc = '', customNum = '', labelMapping } = matchedData || EMPTY_OBJECT;
 
     const labelCust = {
       labelId,
+      labelMapping,
       labelDesc,
       condition,
       customNum,
@@ -133,6 +135,7 @@ export default class SelectLabelCust extends PureComponent {
       orgId,
       isLoadingEnd,
       onCancel,
+      visible,
     } = this.props;
     const { condition, currentSelectLabel, tipsSize } = this.state;
     return (
@@ -154,6 +157,7 @@ export default class SelectLabelCust extends PureComponent {
         <TaskSearchRow
           onCancel={onCancel}
           isLoadingEnd={isLoadingEnd}
+          visible={visible}
           onChange={this.handleRadioChange}
           circlePeopleData={circlePeopleData}
           getLabelPeople={getLabelPeople}
