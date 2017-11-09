@@ -252,14 +252,19 @@ export default class UnSubscribeDetailToChange extends PureComponent {
   handleUnSubscribelTransferChange(flag, item, array) {
     this.setState({
       unSubProList: array,
+      canShowAppover: false,
     });
-    if (flag === 'add') {
-      const { approvalFlg } = item;
-      if (approvalFlg === 'Y') {
-        this.setState({
-          canShowAppover: true,
-        });
-      }
+    const appList = array.map(pro => pro.approvalFlg);
+    const approvFlag = _.includes(appList, 'Y');
+    if (approvFlag) {
+      this.setState({
+        canShowAppover: true,
+      });
+    } else {
+      this.setState({
+        canShowAppover: false,
+        approverId: '',
+      });
     }
   }
 
