@@ -14,6 +14,14 @@ import { linkTo } from './homeIndicators_';
 
 import styles from './progressList.less';
 
+/* 新增客户传给列表页的参数
+ * 净新增有效户： 817001
+ * 净新增非零售客户： 817002
+ * 净新增高端产品户： 817003
+ * 新增产品客户： 817004
+*/
+const newCustomerLinkIdx = ['817001', '817002', '817003', '817004'];
+
 export default class ProgressList extends PureComponent {
 
   static propTypes = {
@@ -74,17 +82,33 @@ export default class ProgressList extends PureComponent {
   @autobind
   handleClick(index, item) {
     const { cycle, push, location, empInfo } = this.props;
+    const bname = this.transformName(item.cust);
     const param = {
       source: 'custIndicator',
       type: 'customerType',
-      value: (index + 1),  // 提供给列表页传给后端的customerType的值
-      bname: item.cust,
+      value: newCustomerLinkIdx[index],  // 提供给列表页传给后端的customerType的值
+      bname,
       cycle,
       push,
       location,
       empInfo,
     };
     linkTo(param);
+  }
+
+  // 根据现有的name返回列表页所需要展示的 name文案
+  @autobind
+  transformName(name) {
+    switch (name) {
+      case '净新增有效户':
+        return '净新增有效下钻客户';
+      case '净新增非零售客户':
+        return '净新增非零售下钻客户';
+      case '净新增高端产品户':
+        return '净新增高端产品下钻客户';
+      default:
+        return name;
+    }
   }
 
   @autobind

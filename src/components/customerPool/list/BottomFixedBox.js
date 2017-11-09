@@ -21,8 +21,12 @@ export default class BottomFixedBox extends PureComponent {
     push: PropTypes.func.isRequired,
     condition: PropTypes.object.isRequired,
     selectCount: PropTypes.number.isRequired,
-    mainServiceManager: PropTypes.bool.isRequired,
+    mainServiceManager: PropTypes.bool,
     entertype: PropTypes.string.isRequired,
+  }
+
+  static defaultProps = {
+    mainServiceManager: false,
   }
 
   constructor(props) {
@@ -68,7 +72,7 @@ export default class BottomFixedBox extends PureComponent {
   @autobind
   updateLeftPos() {
     const workspaceSidebar = document.querySelector(fspContainer.workspaceSidebar);
-    const fixedEleDom = document.querySelector('fixedEleDom');
+    const fixedEleDom = document.querySelector('#fixedEleDom');
     if (fixedEleDom && workspaceSidebar) {
       fixedEleDom.style.left = `${workspaceSidebar.offsetWidth}px`;
     }
