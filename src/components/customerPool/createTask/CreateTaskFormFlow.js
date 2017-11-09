@@ -27,8 +27,8 @@ export default class CreateTaskFormFlow extends PureComponent {
     dict: PropTypes.object,
     createTask: PropTypes.func,
     createTaskResult: PropTypes.object,
-    storedTaskFlowData: PropTypes.object.isRequired,
-    saveTaskFlowData: PropTypes.func.isRequired,
+    storedCreateTaskData: PropTypes.object.isRequired,
+    saveCreateTaskData: PropTypes.func.isRequired,
     approvalList: PropTypes.array.isRequired,
     getApprovalList: PropTypes.func.isRequired,
     onCloseTab: PropTypes.func.isRequired,
@@ -118,8 +118,8 @@ export default class CreateTaskFormFlow extends PureComponent {
     const {
       dict,
       location,
-      storedTaskFlowData,
-      saveTaskFlowData,
+      storedCreateTaskData,
+      saveCreateTaskData,
       createTask,
       getApprovalList,
       approvalList,
@@ -137,6 +137,8 @@ export default class CreateTaskFormFlow extends PureComponent {
         {showBtn ?
           <div className={styles.taskcontent}>
             <CreateTaskForm
+              previousData={storedCreateTaskData}
+              saveCreateTaskData={saveCreateTaskData}
               location={location}
               dict={dict}
               ref={ref => this.createTaskForm = ref}
@@ -162,8 +164,8 @@ export default class CreateTaskFormFlow extends PureComponent {
           <TaskFormFlowStep
             location={location}
             dict={dict}
-            saveTaskFlowData={saveTaskFlowData}
-            storedTaskFlowData={storedTaskFlowData}
+            saveCreateTaskData={saveCreateTaskData}
+            storedCreateTaskData={storedCreateTaskData}
             createTask={createTask}
             approvalList={approvalList}
             getApprovalList={getApprovalList}

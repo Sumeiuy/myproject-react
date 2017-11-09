@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 10:29:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-06 10:20:26
+ * @Last Modified time: 2017-11-09 10:34:28
  */
 
 import React, { PureComponent } from 'react';
@@ -47,7 +47,7 @@ const renderColumnTitle = () => {
 @RestoreScrollTop
 export default class TaskPreview extends PureComponent {
   static propTypes = {
-    storedTaskFlowData: PropTypes.object.isRequired,
+    storedData: PropTypes.object.isRequired,
     approvalList: PropTypes.array,
     currentTab: PropTypes.string.isRequired,
     getApprovalList: PropTypes.func.isRequired,
@@ -60,6 +60,9 @@ export default class TaskPreview extends PureComponent {
     isNeedApproval: PropTypes.bool,
     custSource: PropTypes.string,
     custTotal: PropTypes.string,
+    isApprovalListLoadingEnd: PropTypes.bool.isRequired,
+    isShowApprovalModal: PropTypes.bool.isRequired,
+    onCancel: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -83,9 +86,11 @@ export default class TaskPreview extends PureComponent {
   componentWillReceiveProps(nextProps) {
     const {
       approvalList = EMPTY_LIST,
+      isShowApprovalModal,
      } = this.props;
     const {
       approvalList: nextData = EMPTY_LIST,
+      isShowApprovalModal: nextApprovalModal,
      } = nextProps;
 
     if (approvalList !== nextData) {
@@ -93,6 +98,12 @@ export default class TaskPreview extends PureComponent {
       this.setState({
         dataSource: nextData,
         dataSize: _.size(nextData),
+      });
+    }
+
+    if (isShowApprovalModal !== nextApprovalModal) {
+      this.setState({
+        isShowTable: nextApprovalModal,
       });
     }
   }
@@ -113,16 +124,15 @@ export default class TaskPreview extends PureComponent {
   handleClick() {
     const { getApprovalList } = this.props;
     getApprovalList();
-    this.setState({
-      isShowTable: true,
-    });
   }
 
   @autobind
   handleCloseModal() {
+    const { onCancel } = this.props;
     this.setState({
       isShowTable: false,
     });
+    onCancel();
   }
 
   @autobind
@@ -149,7 +159,7 @@ export default class TaskPreview extends PureComponent {
 
   render() {
     const {
-      storedTaskFlowData,
+      storedData,
       isNeedApproval,
       currentTab = '1',
       executeTypes,
@@ -160,12 +170,13 @@ export default class TaskPreview extends PureComponent {
       onRowSelectionChange,
       custSource,
       custTotal,
+      isApprovalListLoadingEnd,
     } = this.props;
     const {
       taskFormData = EMPTY_OBJECT,
       labelCust = EMPTY_OBJECT,
       custSegment = EMPTY_OBJECT,
-    } = storedTaskFlowData;
+    } = storedData;
 
     let finalData = {};
     if (currentTab === '1') {
@@ -303,7 +314,7 @@ export default class TaskPreview extends PureComponent {
             </div> : null
         }
         {
-          isShowTable ?
+          isShowTable && isApprovalListLoadingEnd ?
             <GroupModal
               wrapperClass={
                 classnames({

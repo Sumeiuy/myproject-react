@@ -31,18 +31,18 @@ const fectchDataFunction = (globalLoading, type) => query => ({
 const mapStateToProps = state => ({
   dict: state.app.dict,
   createTaskResult: state.customerPool.createTaskResult,
-  storedTaskFlowData: state.customerPool.storedTaskFlowData,
+  storedCreateTaskData: state.customerPool.storedCreateTaskData,
   approvalList: state.customerPool.approvalList,
 });
 
 const mapDispatchToProps = {
   createTask: fectchDataFunction(true, effects.createTask),
-  saveTaskFlowData: query => ({
-    type: 'customerPool/saveTaskFlowData',
+  saveCreateTaskData: query => ({
+    type: 'customerPool/saveCreateTaskData',
     payload: query,
   }),
-  clearTaskFlowData: query => ({
-    type: 'customerPool/clearTaskFlowData',
+  clearCreateTaskData: query => ({
+    type: 'customerPool/clearCreateTaskData',
     payload: query || {},
   }),
   push: routerRedux.push,
@@ -62,11 +62,11 @@ export default class CreateTask extends PureComponent {
     createTask: PropTypes.func.isRequired,
     createTaskResult: PropTypes.object,
     push: PropTypes.func.isRequired,
-    storedTaskFlowData: PropTypes.object.isRequired,
-    saveTaskFlowData: PropTypes.func.isRequired,
+    storedCreateTaskData: PropTypes.object.isRequired,
+    saveCreateTaskData: PropTypes.func.isRequired,
     getApprovalList: PropTypes.func.isRequired,
     approvalList: PropTypes.array.isRequired,
-    clearTaskFlowData: PropTypes.func.isRequired,
+    clearCreateTaskData: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -95,9 +95,9 @@ export default class CreateTask extends PureComponent {
   }
 
   componentWillUnmount() {
-    const { clearTaskFlowData } = this.props;
+    const { clearCreateTaskData } = this.props;
     // 清除数据
-    clearTaskFlowData();
+    clearCreateTaskData();
   }
 
 
@@ -143,8 +143,8 @@ export default class CreateTask extends PureComponent {
       dict,
       location,
       push,
-      storedTaskFlowData,
-      saveTaskFlowData,
+      storedCreateTaskData,
+      saveCreateTaskData,
       approvalList,
       getApprovalList,
     } = this.props;
@@ -156,8 +156,8 @@ export default class CreateTask extends PureComponent {
             location={location}
             dict={dict}
             createTask={this.handleCreateTask}
-            storedTaskFlowData={storedTaskFlowData}
-            saveTaskFlowData={saveTaskFlowData}
+            storedCreateTaskData={storedCreateTaskData}
+            saveCreateTaskData={saveCreateTaskData}
             approvalList={approvalList}
             getApprovalList={getApprovalList}
             push={push}
