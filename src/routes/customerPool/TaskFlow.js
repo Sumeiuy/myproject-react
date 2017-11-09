@@ -145,7 +145,8 @@ export default class TaskFlow extends PureComponent {
       isShowApprovalModal: false,
     };
     // 首页指标查询权限
-    this.isHasAuthorize = permission.hasIndexViewPermission();
+    this.isHasAuthorize = permission.hasIndexViewPermission() || permission.hasHqMampPermission()
+      || permission.hasBoMampPermission() || permission.hasBdMampPermission();
   }
 
   componentWillReceiveProps(nextProps) {
