@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 14:15:22
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-08 12:21:28
+ * @Last Modified time: 2017-11-09 12:10:09
  */
 
 import React, { PureComponent } from 'react';
@@ -308,7 +308,7 @@ export default class CustomerGroupDetail extends PureComponent {
         custId: brokerNumber,
         levelName: custLevelName,
         riskLevelName: riskLevelObject.value,
-        id: cusId,
+        id: brokerNumber,
         brokerNumber,
       }], includeCustList);
 
