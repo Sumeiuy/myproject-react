@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-09 11:05:36
+ * @Last Modified time: 2017-11-09 13:32:49
  */
 
 import React, { PureComponent } from 'react';
@@ -476,7 +476,7 @@ export default class TaskFlow extends PureComponent {
       title: '提交',
       content: <TaskPreview
         ref={ref => (this.taskPreviewRef = ref)}
-        storedData={storedTaskFlowData}
+        storedTaskFlowData={storedTaskFlowData}
         approvalList={approvalList}
         currentTab={currentTab}
         getApprovalList={getApprovalList}
