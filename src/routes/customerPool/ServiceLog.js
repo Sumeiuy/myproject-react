@@ -175,7 +175,7 @@ export default class CreateTaskForm extends PureComponent {
     const lastTime = logData[logData.length - 1].serveTime;
     const params = query;
     params.serveDateToPaged = moment(lastTime).format('YYYY-MM-DD HH:mm:ss');
-    params.custId = '02001404'; // 本地测试用的数据
+    // params.custId = '02001404'; // 本地测试用的数据
     if (moment(lastTime).isBefore(sixDate)) {
       this.setState({
         showBtn: true,
