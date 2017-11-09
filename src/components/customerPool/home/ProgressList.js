@@ -100,12 +100,12 @@ export default class ProgressList extends PureComponent {
   @autobind
   transformName(name) {
     switch (name) {
-      case '净新增有效户':
-        return '净新增有效下钻客户';
-      case '净新增非零售客户':
-        return '净新增非零售下钻客户';
-      case '净新增高端产品户':
-        return '净新增高端产品下钻客户';
+      case '新增有效户':
+        return '新增有效下钻客户';
+      case '新增非零售客户':
+        return '新增非零售下钻客户';
+      case '新增高端产品户':
+        return '新增高端产品下钻客户';
       default:
         return name;
     }
