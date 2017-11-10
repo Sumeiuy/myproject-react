@@ -147,16 +147,7 @@ export default class Home extends PureComponent {
       expandAll: false,
     };
     // 首页指标查询,总部-营销活动管理岗,分公司-营销活动管理岗,营业部-营销活动管理岗权限
-    const {
-      hasIndexViewPermission,
-      hasHqMampPermission,
-      hasBoMampPermission,
-      hasBdMampPermission,
-    } = permission;
-    this.isHasAuthorize = hasIndexViewPermission()
-      || hasHqMampPermission()
-      || hasBoMampPermission()
-      || hasBdMampPermission();
+    this.isHasAuthorize = permission.hasCustomerPoolPermission();
   }
 
   componentDidMount() {
@@ -219,7 +210,9 @@ export default class Home extends PureComponent {
   @autobind
   getCustType(orgId) {
     let custType = CUST_MANAGER;
-    if (this.isHasAuthorize || (orgId && orgId !== MAIN_MAGEGER_ID)) {
+    if (orgId) {
+      custType = orgId !== MAIN_MAGEGER_ID ? ORG : CUST_MANAGER;
+    } else if (this.isHasAuthorize) {
       custType = ORG;
     }
     return custType;
@@ -233,14 +226,13 @@ export default class Home extends PureComponent {
   }
 
   @autobind
-  getIndicators({ begin, end, orgId, cycleSelect }) {
+  getIndicators({ begin, end, orgId, cycleSelect, custType }) {
     const {
       getPerformanceIndicators,
       getManageIndicators,
       empInfo = {},
     } = this.props;
     const { tgQyFlag = false } = empInfo.empInfo || {};
-    const custType = this.getCustType(orgId);
 
     getManageIndicators({
       custType, // 客户范围类型
@@ -290,13 +282,15 @@ export default class Home extends PureComponent {
     } = props;
     // 根据cycle获取对应的begin和end值
     const { begin, end } = this.getTimeSelectBeginAndEnd(props);
+    const custType = this.getCustType(orgId);
     const tempObj = {
       begin,
       end,
+      custType,
       cycleSelect: cycleSelect || (cycle[0] || {}).key,
     };
-    if (orgId && orgId !== MAIN_MAGEGER_ID) {
-      tempObj.orgId = orgId;
+    if (orgId) {
+      tempObj.orgId = orgId !== MAIN_MAGEGER_ID ? orgId : '';
     } else if (this.isHasAuthorize) {
       tempObj.orgId = this.orgId;
     }
@@ -307,9 +301,8 @@ export default class Home extends PureComponent {
   }
 
   @autobind
-  fetchHSRateAndBusinessIndicator({ begin, end, orgId, cycleSelect }) {
+  fetchHSRateAndBusinessIndicator({ begin, end, orgId, cycleSelect, custType }) {
     const { getHSRateAndBusinessIndicator } = this.props;
-    const custType = this.getCustType(orgId);
     getHSRateAndBusinessIndicator({
       custType, // 客户范围类型
       dateType: this.getDateType(cycleSelect), // 周期类型

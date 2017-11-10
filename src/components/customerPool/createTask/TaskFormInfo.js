@@ -89,8 +89,12 @@ export default class TaskFormInfo extends PureComponent {
 
   handleSearchChange = (value, trigger) => {
     const { users } = this.props;
+    const searchValue = value.toLowerCase();
     const dataSource = trigger === '{' ? users : {};
-    const suggestions = dataSource.map(suggestion => (
+    const filtered = dataSource.filter(item =>
+      item.name.toLowerCase().indexOf(searchValue) !== -1,
+    );
+    const suggestions = filtered.map(suggestion => (
       <Nav
         value={suggestion.type}
         data={suggestion}
@@ -133,21 +137,6 @@ export default class TaskFormInfo extends PureComponent {
     }
   }
 
-  // @autobind
-  // handleMentionChange(contentState) {
-  //   if (!this.isFirstLoad) {
-  //     const content = toString(contentState);
-  //     if (_.isEmpty(content) || content.length < 10) {
-  //       this.setState({
-  //         isShowErrorInfo: true,
-  //       });
-  //     } else {
-  //       this.setState({
-  //         isShowErrorInfo: false,
-  //       });
-  //     }
-  //   }
-  // }
   checkMention = (rule, value, callback) => {
     if (!this.isFirstLoad) {
       const content = toString(value);

@@ -65,15 +65,15 @@ const riskLevelConfig = {
 };
 // 客户性质配置
 const custNature = {
-  P: {
+  per: {
     name: '个人客户',
     imgSrc: iconavator,
   },
-  O: {
+  org: {
     name: '一般机构',
     imgSrc: iconGeneralGgency,
   },
-  F: {
+  prod: {
     name: '产品机构',
     imgSrc: iconProductAgency,
   },
@@ -148,7 +148,7 @@ export default class CustomerRow extends PureComponent {
         ptyId,
       },
     } = this.props;
-    const type = (!pOrO || pOrO === 'P') ? 'per' : 'org';
+    const type = (!pOrO || pOrO === 'per') ? 'per' : 'org';
     const param = {
       id: 'FSP_360VIEW_M_TAB',
       title: '客户360视图-客户信息',
@@ -175,20 +175,20 @@ export default class CustomerRow extends PureComponent {
     createContact({
       custName: name,
       custId,
-      custType: (!pOrO || pOrO === 'P') ? 'per' : 'org',
+      custType: (!pOrO || pOrO === 'per') ? 'per' : 'org',
     });
   }
 
   @autobind
   renderAgeOrOrgName() {
     const { listItem } = this.props;
-    if (listItem.pOrO === 'P') {
+    if (listItem.pOrO === 'per') {
       // 客户性质为个人
       return <span>{listItem.genderValue}/{listItem.age}岁</span>;
-    } else if (listItem.pOrO === 'O' && listItem.orgTypeName) {
+    } else if (listItem.pOrO === 'org' && listItem.orgTypeName) {
       // 客户性质为一般机构
       return <span>{listItem.orgTypeName}</span>;
-    } else if (listItem.pOrO === 'F' && listItem.prodTypeCode) {
+    } else if (listItem.pOrO === 'prod' && listItem.prodTypeCode) {
       // 客户性质为产品机构
       return <span>{listItem.prodTypeCode}</span>;
     }

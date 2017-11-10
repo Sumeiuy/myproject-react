@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 10:29:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-09 10:34:28
+ * @Last Modified time: 2017-11-10 10:41:33
  */
 
 import React, { PureComponent } from 'react';
@@ -60,8 +60,8 @@ export default class TaskPreview extends PureComponent {
     isNeedApproval: PropTypes.bool,
     custSource: PropTypes.string,
     custTotal: PropTypes.string,
-    isApprovalListLoadingEnd: PropTypes.bool.isRequired,
     isShowApprovalModal: PropTypes.bool.isRequired,
+    isApprovalListLoadingEnd: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired,
   };
 

@@ -48,7 +48,9 @@ export default class TaskFormFlowStep extends PureComponent {
       isShowErrorExcuteType: false,
       isShowErrorTaskType: false,
     };
-    this.isHasAuthorize = permission.hasIndexViewPermission();
+
+    this.isHasAuthorize = permission.hasIndexViewPermission() || permission.hasHqMampPermission()
+      || permission.hasBoMampPermission() || permission.hasBdMampPermission();
   }
 
   @autobind
@@ -135,11 +137,11 @@ export default class TaskFormFlowStep extends PureComponent {
       ...data,
       flowAuditorId,
       custIdList,
-      searchReq: _.isEmpty(custIdList) ? {
+      searchReq: {
         ptyMngId: helper.getEmpId(),
         orgId,
         ...custCondition,
-      } : null,
+      },
     });
   }
 

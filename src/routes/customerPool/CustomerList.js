@@ -205,17 +205,8 @@ export default class CustomerList extends PureComponent {
       // 初始化没有loading
       isLoadingEnd: true,
     };
-    const {
-      hasIndexViewPermission,
-      hasHqMampPermission,
-      hasBoMampPermission,
-      hasBdMampPermission,
-    } = permission;
     // 首页指标查询权限
-    this.authority = hasIndexViewPermission()
-      || hasHqMampPermission()
-      || hasBoMampPermission()
-      || hasBdMampPermission();
+    this.authority = permission.hasCustomerPoolPermission();
   }
 
   getChildContext() {

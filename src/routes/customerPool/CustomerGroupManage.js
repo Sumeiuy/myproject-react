@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-22 19:02:56
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-08 12:26:13
+ * @Last Modified time: 2017-11-09 13:58:50
  */
 
 import React, { PureComponent } from 'react';
@@ -221,6 +221,10 @@ export default class CustomerGroupManage extends PureComponent {
   lanuchTask(record) {
     console.log('launch task');
     const { groupId, relatCust } = record;
+    if (relatCust <= 0) {
+      message.error('该分组下没有客户，不能发起任务');
+      return;
+    }
     this.handleOpenTab({
       groupId,
       count: relatCust,
