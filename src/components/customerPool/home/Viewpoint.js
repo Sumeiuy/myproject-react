@@ -70,11 +70,15 @@ export default class Viewpoint extends PureComponent {
     // : 为中文符号，英文的：不匹配
     const titleArray = _.split(texttitle, '：');
     const newTitle = _.last(titleArray);
-    // 分割成段，展示，即使存在html标签，也可以正确展示
+    // 分割成段，展示，过滤掉span标签，因为自带样式不符合需求
     const formateAbstract = _.isEmpty(abstract) ? (
       '<p>暂无内容</p>'
     ) : (
-      _.replace(_.trim(abstract), /\s{2,}/gi, '<br /><span></span>')
+      _.replace(
+        _.trim(abstract),
+        /<\/?span[^>]*?>/g,
+        '',
+      )
     );
     const isShowMore = infoVOList.length > 12;
     const isHiddenDetail = _.isEmpty(abstract);
