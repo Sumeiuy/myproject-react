@@ -649,7 +649,6 @@ export default class CustomerLists extends PureComponent {
         }
         <div
           className="list-pagination"
-          ref={ref => this.pageRef = ref}
         >
           <Pagination
             current={current}
