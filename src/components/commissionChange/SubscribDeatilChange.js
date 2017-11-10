@@ -57,7 +57,6 @@ export default class SubscribeDetailToChange extends PureComponent {
       approverId: '',
       custLists: [],
       attachment: '',
-      orgList: [],
       subProSubList: [], // 资讯订阅产品列表
       subscribelProductMatchInfo: [], // 资讯订阅的产品的三匹配信息
       canShowAppover: false, // 新建资讯订阅和退订时是否需要选择审批人
@@ -68,12 +67,7 @@ export default class SubscribeDetailToChange extends PureComponent {
 
   componentDidMount() {
     const { location: { query: { flowId } } } = this.props;
-    this.props.getSubscribeDetailToChange({ flowId }).then(() => {
-      const { attachmentNum } = this.props.subscribeDetailToChange.base;
-      this.setState({
-        attachment: attachmentNum,
-      });
-    });
+    this.props.getSubscribeDetailToChange({ flowId });
     // 获取当前驳回后修改的审批按钮
     this.props.onQueryBtns({
       flowId,
@@ -90,21 +84,52 @@ export default class SubscribeDetailToChange extends PureComponent {
     const { subscribeDetailToChange: preDetail } = this.props;
     const { subscribeDetailToChange: nextDetail } = nextProps;
     if (nextDetail !== preDetail) {
-      const { base, subProList } = nextDetail;
-      const { item: choiceProList } = base;
+      const { base } = nextDetail;
+      const {
+        item,
+        comments,
+        attachmentNum,
+      } = base;
+      const findObj = _.find(item, ['approveFlag', 'Y']);
+      if (!_.isEmpty(findObj)) {
+        this.setState({
+          canShowAppover: true,
+        });
+      }
+      const initMatchs = item.map((p) => {
+        const { riskMatch, prodMatch, termMatch, prodCode, approvalFlg } = p;
+        const matchInfo = {
+          productCode: prodCode,
+          riskMatch,
+          prodMatch,
+          termMatch,
+          approvalFlg,
+        };
+        return matchInfo;
+      });
       this.setState({
-        orgList: choiceProList,
+        remark: comments,
+        attachment: attachmentNum,
+        subProSubList: item,
+        subscribelProductMatchInfo: _.cloneDeep(initMatchs),
       });
-      const proList = this.createSubscribelProList(subProList);
-      const choiceList = this.choiceSubProList(choiceProList, proList);
-      _.forEach(choiceList, (item) => {
-        const { approvalFlg } = item;
-        if (approvalFlg === 'Y') {
-          this.setState({
-            canShowAppover: true,
-          });
-        }
-      });
+    }
+    const { approvalBtns: preBtnList } = this.props;
+    const { approvalBtns: nextBtnList } = nextProps;
+    if (!_.isEqual(preBtnList, nextBtnList)) {
+      const { item: itemList } = nextDetail.base;
+      const findObj2 = _.find(itemList, ['approveFlag', 'Y']);
+      const approListBtns = _.filter(nextBtnList, o => String(o.operate) !== 'trueOver');
+      const unApproListBtns = _.filter(nextBtnList, o => String(o.operate) !== 'commit');
+      if (!_.isEmpty(findObj2)) {
+        this.setState({
+          buttonList: approListBtns,
+        });
+      } else {
+        this.setState({
+          buttonList: unApproListBtns,
+        });
+      }
     }
   }
 
@@ -168,7 +193,6 @@ export default class SubscribeDetailToChange extends PureComponent {
       custLists: [],
       customer: {},
       attachment: '',
-      orgList: [],
       subProSubList: [], // 资讯订阅产品列表
       subscribelProductMatchInfo: [], // 资讯订阅的产品的三匹配信息
     });
@@ -229,28 +253,25 @@ export default class SubscribeDetailToChange extends PureComponent {
   // 资讯订阅调整穿梭变化的时候处理程序
   @autobind
   handleSubscribelTransferChange(flag, item, array) {
-    // const { approvalBtns } = this.props;
-    // const approListBtns = _.remove(approvalBtns, function(n) {
-    //   return n.operate !== 'trueOver';
-    // });
-    // const unApproListBtns = _.remove(approvalBtns, function(n) {
-    //   return n.operate !== 'commit';
-    // });
     this.setState({
       subProSubList: array,
     });
+    const { approvalBtns } = this.props;
+    const approListBtns = _.filter(approvalBtns, o => String(o.operate) !== 'trueOver');
+    const unApproListBtns = _.filter(approvalBtns, o => String(o.operate) !== 'commit');
     const appList = array.map(pro => pro.approvalFlg);
     const approvFlag = _.includes(appList, 'Y');
     if (approvFlag) {
       this.setState({
         canShowAppover: true,
-        // buttonList: approListBtns,
+        buttonList: approListBtns,
       });
     } else {
       this.setState({
         canShowAppover: false,
         approverId: '',
-        // buttonList: unApproListBtns,
+        approverName: '',
+        buttonList: unApproListBtns,
       });
     }
     if (flag === 'add') {
@@ -415,9 +436,8 @@ export default class SubscribeDetailToChange extends PureComponent {
 
   // 将选中的资讯订阅产品数据结构改为提交所需
   @autobind
-  changeSubmitSubProList(orgList, list, matchInfos) {
-    const finalProList = [...orgList, ...list];
-    const newSubmitSubscriProList = finalProList.map((product) => {
+  changeSubmitSubProList(list, matchInfos) {
+    const newSubmitSubscriProList = list.map((product) => {
       // 此处有aliasName为:没经过穿梭框处理前的详情数据
       // 此处没有aliasName,经过穿梭框处理过的数据，
       const { aliasName } = product;
@@ -431,8 +451,9 @@ export default class SubscribeDetailToChange extends PureComponent {
       }
       // 表示初始化的数据
       const { subItem } = product;
-      const needPickKey = ['riskMatch', 'prodMatch', 'termMatch', 'aliasName', 'prodCode', 'aliasName', 'approvalFlg'];
+      const needPickKey = ['riskMatch', 'prodMatch', 'termMatch', 'aliasName', 'prodCode', 'aliasName', 'agrType'];
       const anotherProduct = _.pick(product, needPickKey);
+      anotherProduct.approvalFlg = product.approveFlag;
       if (!_.isEmpty(subItem)) {
         anotherProduct.subItem = _.cloneDeep(subItem);
       }
@@ -468,13 +489,11 @@ export default class SubscribeDetailToChange extends PureComponent {
     const {
       remark,
       subProSubList,
-      orgList,
       subscribelProductMatchInfo,
       approverId, // 审批人工号
       attachment, // 附件编号
     } = this.state;
     const newSubProList = this.changeSubmitSubProList(
-      orgList,
       subProSubList,
       subscribelProductMatchInfo,
     );
@@ -494,6 +513,7 @@ export default class SubscribeDetailToChange extends PureComponent {
     if (operate === 'commit') {
        // 提交
       this.props.submitSub(params).then(() => this.launchFlow(flowBtn, '重新申请'));
+      // this.props.submitSub(params).then(() => message.success('提交成功'));
     }
     if (operate === 'trueOver') {
       // 提交
@@ -518,7 +538,6 @@ export default class SubscribeDetailToChange extends PureComponent {
   render() {
     const {
       threeMatchInfo,
-      approvalBtns,
     } = this.props;
     const {
       subscribeDetailToChange: {
@@ -561,7 +580,7 @@ export default class SubscribeDetailToChange extends PureComponent {
       remark,
       btnDisabled,
       canShowAppover,
-      // buttonList,
+      buttonList,
     } = this.state;
 
     // 资讯订阅中的产品选择配置
@@ -644,7 +663,7 @@ export default class SubscribeDetailToChange extends PureComponent {
         </div>
         <RejectButtons
           disabled={btnDisabled}
-          btnList={approvalBtns}
+          btnList={buttonList}
           onClick={this.handleRejctBtnClick}
         />
         <ChoiceApproverBoard
