@@ -27,4 +27,6 @@ export default {
   sidebarShowBtn: '#sidebar-show-btn',
   // 360视图中服务记录的iframe
   view360Iframe: '#view360-tab-serviceRecord-iframe',
+  // 客户列表tab
+  custListTab: '#exApp_RCT_FSP_CUSTOMER_LIST',
 };
