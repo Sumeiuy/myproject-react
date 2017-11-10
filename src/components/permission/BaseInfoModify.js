@@ -68,11 +68,6 @@ export default class BaseInfoModify extends PureComponent {
   }
 
   @autobind
-  subTypeComponentRef(input) {
-    this.subTypeComponent = input;
-  }
-
-  @autobind
   selectCustomer(item) {
     // 选中客户
     this.props.onEmitEvent('customer', item);
@@ -136,7 +131,6 @@ export default class BaseInfoModify extends PureComponent {
                 name="subType"
                 onChange={this.updateSubTypeValue}
                 value={this.state.subTypeTxt}
-                ref={this.subTypeComponentRef}
               />
             </div>
           </div>
