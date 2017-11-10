@@ -29,7 +29,8 @@ export default {
     protocolClauseList: EMPTY_LIST, // 所选模板对应协议条款列表
     protocolProductList: EMPTY_LIST, // 协议产品列表
     underCustList: EMPTY_LIST,  // 客户列表
-    saveProtocol: EMPTY_OBJECT,
+    itemId: '', // 保存成功后返回itemId,提交审批流程所需
+    flowStepInfo: EMPTY_OBJECT, // 审批人
   },
   reducers: {
     // 获取协议详情
@@ -115,10 +116,10 @@ export default {
     },
     // 保存详情
     saveProtocolDataSuccess(state, action) {
-      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      const { payload: { resultData = '' } } = action;
       return {
         ...state,
-        saveProtocol: resultData,
+        itemId: resultData,
       };
     },
     // 查询客户
@@ -127,6 +128,14 @@ export default {
       return {
         ...state,
         underCustList: [resultData],
+      };
+    },
+    // 查询审批人
+    getAddFlowStepInfoSuccess(state, action) {
+      const { payload: { resultData = EMPTY_OBJECT } } = action;
+      return {
+        ...state,
+        flowStepInfo: resultData,
       };
     },
   },
@@ -179,43 +188,12 @@ export default {
     * deleteAttachment({ payload }, { call }) {
       yield call(seibelApi.deleteAttachment, payload);
     },
-    // 查询操作类型/子类型
-    * queryTypeVaules({ payload }, { call, put }) {
-      console.log('payload', payload);
-      const response = yield call(api.queryTypeVaules, payload);
-      /*eslint-disable */
-      response.resultData.forEach((v)=>{
-        v.show = true;
-        v.label = v.val;
-        v.value = v.name;
-      })
-      /*eslint-disable */
-      switch(payload.typeCode){
-        case 'operationType':
-          yield put({
-            type: 'queryOperationListSuccess',
-            payload: response,
-          });
-          break;
-        case 'subType':
-          yield put({
-            type: 'querySubTypeListSuccess',
-            payload: response,
-          });
-          break;
-      }
-    },
     // 保存详情
     * saveProtocolData({ payload }, { call, put }) {
-      const response = yield call(api.saveProtocolData, payload.formData);
+      const response = yield call(api.saveProtocolData, payload);
       yield put({
         type: 'saveProtocolDataSuccess',
         payload: response,
-      });
-      // 保存成功之后重新请求左侧列表
-      yield put({
-        type: 'app/getSeibleList',
-        payload: payload.params,
       });
     },
     // 查询客户
@@ -223,56 +201,6 @@ export default {
       const response = yield call(api.queryCust, payload);
       yield put({
         type: 'queryCustSuccess',
-        payload: response,
-      });
-    },
-    // 查询操作类型/子类型
-    * queryTypeVaules({ payload }, { call, put }) {
-      console.log('payload', payload);
-      const response = yield call(api.queryTypeVaules, payload);
-      if (payload.typeCode === 'operationType' || payload.typeCode === 'subType') {
-        /*eslint-disable */
-        response.resultData.forEach((v)=>{
-          v.show = true;
-          v.label = v.val;
-          v.value = v.name;
-        })
-        /*eslint-disable */
-      };
-      switch(payload.typeCode){
-        case 'operationType':
-          yield put({
-            type: 'queryOperationListSuccess',
-            payload: response,
-          });
-          break;
-        case 'subType':
-          yield put({
-            type: 'querySubTypeListSuccess',
-            payload: response,
-          });
-          break;
-        case 'templateId':
-          yield put({
-            type: 'queryTemplateListSuccess',
-            payload: response,
-          });
-          break;
-      }
-    },
-    // 根据所选模板id查询对应协议条款
-    * queryChannelProtocolItem({ payload }, { call, put }) {
-      const response = yield call(api.queryChannelProtocolItem, payload);
-      yield put({
-        type: 'queryChannelProtocolItemSuccess',
-        payload: response,
-      });
-    },
-    // 查询协议产品列表
-    * queryChannelProtocolProduct({ payload }, { call, put }) {
-      const response = yield call(api.queryChannelProtocolProduct, payload);
-      yield put({
-        type: 'queryChannelProtocolProductSuccess',
         payload: response,
       });
     },
@@ -335,6 +263,37 @@ export default {
         },
       });
     },
+    // 新建时的获取审批人列表
+    * getFlowStepInfo({ payload }, { call, put }) {
+      const response = yield call(api.getFlowStepInfo, payload);
+      // response.resultData || {}.flowButtons || []
+      const { resultData: { flowButtons = []} } = response;
+      /*eslint-disable */
+      flowButtons.forEach(v=> {
+        v.flowAuditors.forEach((sv, index)=> {
+          sv.belowDept = sv.occupation;
+          sv.empNo = sv.login;
+          sv.key = `${new Date().getTime()}-${index}`;
+          sv.groupName = v.nextGroupName;
+          sv.operate = v.operate;
+        })
+      });
+      /*eslint-disable */
+      yield put({
+        type: 'getAddFlowStepInfoSuccess',
+        payload: response,
+      });
+    },
+    // 提交审批流程
+    * doApprove({ payload }, { call }) {
+      yield call(api.postDoApprove, payload.formData);
+
+      // 提交成功之后重新请求左侧列表
+      yield put({
+        type: 'app/getSeibleList',
+        payload: payload.params,
+      });
+    }
   },
   subscriptions: {
     setup({ dispatch, history }) {

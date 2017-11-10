@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
+import { message } from 'antd';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import CommonModal from '../common/biz/CommonModal';
@@ -99,8 +100,14 @@ export default class CreatePrivateClient extends PureComponent {
 
   @autobind
   selectNextApproverList() {
-    // 显示 选择下一审批人模态框
-    this.setState({ nextApproverModal: true });
+    if (_.isEmpty(this.state.custId)) {
+      message.error('请选择客户');
+    } else if (_.isEmpty(this.state.subType)) {
+      message.error('请选择子类型');
+    } else {
+      // 显示 选择下一审批人模态框
+      this.setState({ nextApproverModal: true });
+    }
   }
 
   @autobind
@@ -128,12 +135,6 @@ export default class CreatePrivateClient extends PureComponent {
   updateValue(name, value) {
     this.setState({ [name]: value });
     switch (name) {
-      case 'subType':
-        this.props.getHasServerPersonList({
-          custId: this.state.custId,
-          custType: this.state.custType,
-        });
-        break;
       case 'customer':
         this.setState({
           customer: {
@@ -143,6 +144,11 @@ export default class CreatePrivateClient extends PureComponent {
           },
           custId: value.cusId,
           custType: value.custType,
+        }, () => {
+          this.props.getHasServerPersonList({
+            custId: this.state.custId,
+            custType: this.state.custType,
+          });
         });
         break;
       default: break;
@@ -160,7 +166,7 @@ export default class CreatePrivateClient extends PureComponent {
       remark,
     } = this.state;
 
-        // 登录人Id，新建私密客户必传
+    // 登录人Id，新建私密客户必传
     const empId = getEmpId();
     // 登录人custName，新建私密客户必传
     const empName = empInfo.empName;
