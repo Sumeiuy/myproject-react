@@ -1035,8 +1035,8 @@ export default {
       const { custList } = payload;
       // 构造成联想列表识别的
       const finalPossibleHotCust = _.map(custList, item => ({
-        id: item.cusId,
-        labelNameVal: item.cusId,
+        id: item.brokerNumber,
+        labelNameVal: item.brokerNumber,
         labelDesc: item.custName,
         ...item,
       }));
