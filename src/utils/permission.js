@@ -48,7 +48,7 @@ const permission = {
       || permission.hasBdMampPermission();
   },
 
-  // 目标客户池创建人物权限
+  // 目标客户池创建任务权限
   hasCreateTaskPermission() {
     return permission.hasIndexViewPermission()
       || permission.hasHqMampPermission()

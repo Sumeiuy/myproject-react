@@ -205,7 +205,7 @@ export default class CustomerList extends PureComponent {
       // 初始化没有loading
       isLoadingEnd: true,
     };
-    // 首页指标查询权限
+    // 首页指标查询,总部-营销活动管理岗,分公司-营销活动管理岗,营业部-营销活动管理岗权限
     this.authority = permission.hasCustomerPoolPermission();
   }
 

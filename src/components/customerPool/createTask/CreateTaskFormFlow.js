@@ -36,6 +36,9 @@ export default class CreateTaskFormFlow extends PureComponent {
     orgId: PropTypes.string,
     push: PropTypes.func.isRequired,
     clearCreateTaskData: PropTypes.func.isRequired,
+    isShowApprovalModal: PropTypes.bool.isRequired,
+    isApprovalListLoadingEnd: PropTypes.bool.isRequired,
+    onCancel: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -139,6 +142,9 @@ export default class CreateTaskFormFlow extends PureComponent {
       orgId,
       onCloseTab,
       push,
+      isShowApprovalModal,
+      isApprovalListLoadingEnd,
+      onCancel,
     } = this.props;
     const { showBtn,
       isShowErrorInfo,
@@ -186,6 +192,9 @@ export default class CreateTaskFormFlow extends PureComponent {
             push={push}
             orgId={orgId}
             onCloseTab={onCloseTab}
+            isShowApprovalModal={isShowApprovalModal}
+            isApprovalListLoadingEnd={isApprovalListLoadingEnd}
+            onCancel={onCancel}
           />
         }
       </div>
