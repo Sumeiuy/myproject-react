@@ -122,7 +122,10 @@ export default class Home extends PureComponent {
     hsRateAndBusinessIndicator: PropTypes.array,
     getHSRateAndBusinessIndicator: PropTypes.func.isRequired,
     switchTab: PropTypes.func.isRequired,
-    custCount: PropTypes.array,
+    custCount: React.PropTypes.oneOfType([
+      PropTypes.object,
+      PropTypes.array,
+    ]), // 问了后端的逻辑，当有报错时，反悔的时空对象，当正常时，反悔的时数组
     getCustCount: PropTypes.func.isRequired,
   }
 
