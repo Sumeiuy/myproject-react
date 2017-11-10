@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import style from './baseinfomodify.less';
 import InfoTitle from '../common/InfoTitle';
@@ -32,7 +33,7 @@ export default class BaseInfoModify extends PureComponent {
   constructor() {
     super();
     this.state = {
-      subTypeTxt: '请先选择客户',
+      subTypeTxt: '',
       subTypeList: [],
     };
   }
@@ -67,9 +68,21 @@ export default class BaseInfoModify extends PureComponent {
   }
 
   @autobind
+  subTypeComponentRef(input) {
+    this.subTypeComponent = input;
+  }
+
+  @autobind
   selectCustomer(item) {
     // 选中客户
     this.props.onEmitEvent('customer', item);
+    if (!_.isEmpty(this.state.subTypeTxt)) {
+      this.setState({
+        subTypeTxt: '',
+      }, () => {
+        this.props.onEmitEvent('subType', this.state.subTypeTxt);
+      });
+    }
     this.context.getSubTypeList({
       customerId: item.brokerNumber,
       customerType: item.custType,
@@ -123,6 +136,7 @@ export default class BaseInfoModify extends PureComponent {
                 name="subType"
                 onChange={this.updateSubTypeValue}
                 value={this.state.subTypeTxt}
+                ref={this.subTypeComponentRef}
               />
             </div>
           </div>

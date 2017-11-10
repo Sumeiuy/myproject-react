@@ -135,12 +135,6 @@ export default class CreatePrivateClient extends PureComponent {
   updateValue(name, value) {
     this.setState({ [name]: value });
     switch (name) {
-      case 'subType':
-        this.props.getHasServerPersonList({
-          custId: this.state.custId,
-          custType: this.state.custType,
-        });
-        break;
       case 'customer':
         this.setState({
           customer: {
@@ -150,6 +144,11 @@ export default class CreatePrivateClient extends PureComponent {
           },
           custId: value.cusId,
           custType: value.custType,
+        }, () => {
+          this.props.getHasServerPersonList({
+            custId: this.state.custId,
+            custType: this.state.custType,
+          });
         });
         break;
       default: break;
@@ -167,7 +166,7 @@ export default class CreatePrivateClient extends PureComponent {
       remark,
     } = this.state;
 
-        // 登录人Id，新建私密客户必传
+    // 登录人Id，新建私密客户必传
     const empId = getEmpId();
     // 登录人custName，新建私密客户必传
     const empName = empInfo.empName;
