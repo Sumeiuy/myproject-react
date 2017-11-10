@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 10:29:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-06 10:20:26
+ * @Last Modified time: 2017-11-09 13:41:08
  */
 
 import React, { PureComponent } from 'react';
@@ -60,6 +60,9 @@ export default class TaskPreview extends PureComponent {
     isNeedApproval: PropTypes.bool,
     custSource: PropTypes.string,
     custTotal: PropTypes.string,
+    isShowApprovalModal: PropTypes.bool.isRequired,
+    isApprovalListLoadingEnd: PropTypes.bool.isRequired,
+    onCancel: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -83,9 +86,11 @@ export default class TaskPreview extends PureComponent {
   componentWillReceiveProps(nextProps) {
     const {
       approvalList = EMPTY_LIST,
+      isShowApprovalModal,
      } = this.props;
     const {
       approvalList: nextData = EMPTY_LIST,
+      isShowApprovalModal: nextApprovalModal,
      } = nextProps;
 
     if (approvalList !== nextData) {
@@ -93,6 +98,12 @@ export default class TaskPreview extends PureComponent {
       this.setState({
         dataSource: nextData,
         dataSize: _.size(nextData),
+      });
+    }
+
+    if (isShowApprovalModal !== nextApprovalModal) {
+      this.setState({
+        isShowTable: nextApprovalModal,
       });
     }
   }
@@ -120,9 +131,11 @@ export default class TaskPreview extends PureComponent {
 
   @autobind
   handleCloseModal() {
+    const { onCancel } = this.props;
     this.setState({
       isShowTable: false,
     });
+    onCancel();
   }
 
   @autobind
@@ -160,6 +173,7 @@ export default class TaskPreview extends PureComponent {
       onRowSelectionChange,
       custSource,
       custTotal,
+      isApprovalListLoadingEnd,
     } = this.props;
     const {
       taskFormData = EMPTY_OBJECT,
@@ -303,7 +317,7 @@ export default class TaskPreview extends PureComponent {
             </div> : null
         }
         {
-          isShowTable ?
+          isShowTable && isApprovalListLoadingEnd ?
             <GroupModal
               wrapperClass={
                 classnames({
