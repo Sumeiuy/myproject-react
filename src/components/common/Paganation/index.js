@@ -2,12 +2,11 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-16 11:09:39
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-10 17:30:55
+ * @Last Modified time: 2017-11-10 17:44:03
  */
 
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
-import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { Pagination } from 'antd';
@@ -51,9 +50,10 @@ export default class Paganation extends PureComponent {
       const paganationNode = this.wrappedInstance.children[0];
       const lastPage = _.head(_.filter(paganationNode.childNodes,
         item => item.title === String(totalPage)));
-      lastPage.classList.add(classnames({
-        hideLastPage: true,
-      }));
+
+      // TODO
+      // 后面改一下，不要用style
+      lastPage.style.display = 'none';
     }
   }
 
