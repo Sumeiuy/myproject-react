@@ -152,6 +152,7 @@ export default class CustomerLists extends PureComponent {
       bool = ptyMng.split('_')[1] === empInfo.empNum;
     }
     this.mainServiceManager = !!(bool) || !authority;
+    this.hideLastPageButton();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -394,6 +395,32 @@ export default class CustomerLists extends PureComponent {
       emailCustId: '',
     });
   }
+
+  // 隐藏最后一页的按钮
+  hideLastPageButton() {
+    const pageNodeNextButton = document.querySelector('.ant-pagination .ant-pagination-jump-next');
+    if (pageNodeNextButton) {
+      pageNodeNextButton.nextElementSibling.style.display = 'none';
+    }
+  }
+
+  // 切换最后一页的按钮的显示与隐藏
+  toggleLastPageButton() {
+    const pageNodeNextButton = document.querySelector('.ant-pagination .ant-pagination-jump-next');
+    if (pageNodeNextButton) {
+      pageNodeNextButton.nextElementSibling.style.display = 'none';
+    } else {
+      pageNodeNextButton.nextElementSibling.style.display = 'block';
+    }
+  }
+
+  // 翻页和监听翻页按钮click，根据向下翻5页的按钮是否存在来判断是否显示最后一页
+  @autobind
+  handlePageChange(page, pageSize) {
+    this.props.onPageChange(page, pageSize);
+    this.toggleLastPageButton();
+  }
+
   /**
  * 回调，关闭modal打开state
  */
@@ -484,7 +511,6 @@ export default class CustomerLists extends PureComponent {
       custList,
       curPageNum,
       pageSize,
-      onPageChange,
       onSizeChange,
       getCustIncome,
       monthlyProfits,
@@ -651,7 +677,7 @@ export default class CustomerLists extends PureComponent {
             current={current}
             total={curTotal}
             pageSize={pagesize}
-            onChange={onPageChange}
+            onChange={this.handlePageChange}
             size="small"
             showSizeChanger
             showTotal={total => `共${total}项`}
