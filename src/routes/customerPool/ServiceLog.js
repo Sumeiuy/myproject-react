@@ -81,14 +81,24 @@ export default class CreateTaskForm extends PureComponent {
       loading: props.serviceLogDataLoading,
     };
   }
-
+  componentWillMount() {
+    // const { serviceLogData } = this.props;
+    const { logData } = this.state;
+    const { serviceLogData } = this.props;
+    if (_.isEmpty(logData)) {
+      this.setState({
+        logData: serviceLogData,
+        showBtn: _.isEmpty(serviceLogData),
+      });
+    }
+  }
   componentWillReceiveProps(nextProps) {
     const { serviceLogMoreData, serviceLogData, serviceLogDataLoading } = nextProps;
     const { serviceLogMoreData: prevServiceLogMoreData,
       serviceLogData: prevServiceLogData,
       serviceLogDataLoading: prevServiceLogDataLoading } = this.props;
     const { logData } = this.state;
-    if (!_.isEqual(serviceLogData, prevServiceLogData)) {
+    if (serviceLogData !== prevServiceLogData) {
       this.setState({
         logData: serviceLogData,
       });
@@ -96,7 +106,7 @@ export default class CreateTaskForm extends PureComponent {
     this.setState({
       showBtn: _.isEmpty(serviceLogData),
     });
-    if (!_.isEqual(serviceLogMoreData, prevServiceLogMoreData)) {
+    if (serviceLogMoreData !== prevServiceLogMoreData) {
       if (_.isEmpty(serviceLogMoreData)) {
         this.setState({
           showBtn: true,
@@ -115,6 +125,7 @@ export default class CreateTaskForm extends PureComponent {
       });
     }
   }
+
 
   @autobind
   onChange(value) {
@@ -151,7 +162,7 @@ export default class CreateTaskForm extends PureComponent {
       return currentDate > localDate;
     }
     // startValue
-    return currentDate <= nowDay;
+    return currentDate < nowDay;
   }
 
   @autobind
@@ -225,8 +236,6 @@ export default class CreateTaskForm extends PureComponent {
     const { dict, handleCollapseClick } = this.props;
     const { serveAllSource, serveAllType, executeTypes, serveWay } = dict;
     const { logData, showBtn, loading } = this.state;
-    console.log('showBtn-->', showBtn);
-    console.log('loading-->', loading);
     return (
       <div className={styles.serviceInner}>
         <div

@@ -38,6 +38,15 @@ function closeTab(arg) {
   }
 }
 
+function removeTabMenu(tabId) {
+  try {
+    const removeTab = getProperty(window, 'eb.component.SmartTab.remove');
+    removeTab($('#UTB'), { tabId });
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 const fspGlobal = {
   // 待办流程列表中进入详情页
   openAuditPage: (args) => {
@@ -111,6 +120,10 @@ const fspGlobal = {
   // 参数 id 为对应得tab标签的id
   closeRctTabById(id) {
     closeTab(`#exApp_${id}`);
+  },
+
+  closeTabMenu(tabId) {
+    removeTabMenu(tabId);
   },
 };
 

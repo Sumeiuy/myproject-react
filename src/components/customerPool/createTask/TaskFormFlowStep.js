@@ -47,8 +47,8 @@ export default class TaskFlow extends PureComponent {
       isShowErrorExcuteType: false,
       isShowErrorTaskType: false,
     };
-    this.isHasAuthorize = permission.hasIndexViewPermission();
-    // this.isHasAuthorize = true;
+    this.isHasAuthorize = permission.hasIndexViewPermission() || permission.hasHqMampPermission()
+      || permission.hasBoMampPermission() || permission.hasBdMampPermission();
   }
 
   @autobind
@@ -70,6 +70,9 @@ export default class TaskFlow extends PureComponent {
         custSources = '业务目标客户';
         break;
       case 'search':
+        custSources = '搜索目标客户';
+        break;
+      case 'tag':
         custSources = '搜索目标客户';
         break;
       case 'custIndicator':
@@ -120,12 +123,6 @@ export default class TaskFlow extends PureComponent {
       custIdList,
       custCondition,
     } = parseQuery();
-    const {
-      curPageNum,
-      enterType,
-      pageSize,
-      sortsReqList,
-    } = custCondition;
     const params = storedTaskFlowData.taskFormData;
     const data = {
       executionType: params.executionType,
@@ -140,12 +137,9 @@ export default class TaskFlow extends PureComponent {
       flowAuditorId,
       custIdList,
       searchReq: {
-        curPageNum,
-        enterType,
-        pageSize,
-        sortsReqList,
         ptyMngId: helper.getEmpId(),
         orgId,
+        ...custCondition,
       },
     });
   }

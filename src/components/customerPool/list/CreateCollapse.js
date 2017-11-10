@@ -99,9 +99,9 @@ export default class CreateCollapse extends PureComponent {
       return (
         <div
           className={styles.headerLeft}
-          title={`${item.subtypeCd || '--'}：${item.serveRecord || '--'}`}
+          title={`${item.subtypeCd || ''}：${item.serveRecord || ''}`}
         >
-          {_.isEmpty(item.subtypeCd) ? '' : `${item.subtypeCd}：`}{item.serveRecord || '--'}
+          {_.isEmpty(item.subtypeCd) ? '' : `${item.subtypeCd}：`}{item.serveRecord || ''}
         </div>
       );
     }
@@ -110,9 +110,9 @@ export default class CreateCollapse extends PureComponent {
     return (
       <div
         className={styles.headerLeft}
-        title={`${item.taskName || '--'}：${item.serveRecord || '--'}`}
+        title={`${item.taskName || ''}：${item.serveRecord || ''}`}
       >
-        {item.taskName || '--'}：{item.serveRecord || '--'}
+        {_.isEmpty(item.taskName) ? '' : `${item.taskName}：`}{item.serveRecord || ''}
       </div>
     );
   }
