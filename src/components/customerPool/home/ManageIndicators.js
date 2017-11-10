@@ -138,6 +138,7 @@ export default class PerformanceIndicators extends PureComponent {
     const isEmpty = _.isEmpty(indicators);
 
     // 新增客户（经营指标）
+    const isCustCountEmpty = _.isEmpty(custCount);
     const { newUnit: pureAddUnit, items: pureAddItems } = getPureAddCust({
       pureAddData: _.isEmpty(custCount) ? [0, 0, 0, 0] : custCount,
     });
@@ -188,7 +189,7 @@ export default class PerformanceIndicators extends PureComponent {
             <Row gutter={28}>
               <Col span={8}>
                 <RectFrame dataSource={pureAddHead}>
-                  <IfEmpty isEmpty={isEmpty}>
+                  <IfEmpty isEmpty={isCustCountEmpty}>
                     <ProgressList
                       key={'pureAdd'}
                       dataSource={pureAddItems}

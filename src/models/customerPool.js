@@ -20,7 +20,7 @@ const INITIAL_PAGE_FIVE_SIZE = 5;
 export default {
   namespace: 'customerPool',
   state: {
-    custCount: [0, 0, 0, 0],   // 经营指标中的新增客户数指标
+    custCount: [],   // 经营指标中的新增客户数指标
     information: {},     // 资讯
     performanceIndicators: [],  // 投顾指标
     hsRateAndBusinessIndicator: [],  // 沪深归集率和开通业务指标（经营指标）

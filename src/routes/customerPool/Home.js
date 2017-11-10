@@ -142,7 +142,7 @@ export default class Home extends PureComponent {
     information: EMPTY_OBJECT,
     performanceIndicators: EMPTY_LIST,
     hsRateAndBusinessIndicator: EMPTY_LIST,
-    custCount: [0, 0, 0, 0],
+    custCount: EMPTY_LIST,
   }
 
   constructor(props) {
