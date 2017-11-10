@@ -2,30 +2,43 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-16 11:09:39
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-10 15:45:15
+ * @Last Modified time: 2017-11-10 17:30:55
  */
 
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 import { Pagination } from 'antd';
 import styles from './index.less';
 
 export default class Paganation extends PureComponent {
   static propTypes = {
-    curPageNum: PropTypes.number,
-    totalRecordNum: PropTypes.number,
-    curPageSize: PropTypes.number,
+    curPageNum: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.number,
+    ]),
+    totalRecordNum: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.number,
+    ]),
+    curPageSize: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.number,
+    ]),
     onPageChange: PropTypes.func,
     onSizeChange: PropTypes.func,
-    originPageSizeUnit: PropTypes.number,
+    originPageSizeUnit: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.number,
+    ]),
   };
 
   static defaultProps = {
     curPageNum: 1,
     totalRecordNum: 10,
-    curPageSize: 1,
+    curPageSize: 10,
     onPageChange: () => { },
     onSizeChange: () => { },
     originPageSizeUnit: 10,
@@ -35,11 +48,26 @@ export default class Paganation extends PureComponent {
     const { totalRecordNum, curPageSize } = this.props;
     const totalPage = Math.ceil(totalRecordNum / curPageSize);
     if (totalPage > 10) {
-      const lastPage = document.querySelector(`li[title="${`${totalPage}`}"]`);
+      const paganationNode = this.wrappedInstance.children[0];
+      const lastPage = _.head(_.filter(paganationNode.childNodes,
+        item => item.title === String(totalPage)));
       lastPage.classList.add(classnames({
         hideLastPage: true,
       }));
     }
+  }
+
+  /**
+   * 获得组件
+   */
+  @autobind
+  getWrappedInstance() {
+    return this.wrappedInstance;
+  }
+
+  @autobind
+  setWrappedInstance(ref) {
+    this.wrappedInstance = ref;
   }
 
   /**
@@ -104,7 +132,12 @@ export default class Paganation extends PureComponent {
     const paginationOptionsProps = this.renderPaganation({ ...this.props });
 
     return (
-      <Pagination {...paginationOptionsProps} className={styles.commonPage} />
+      <div ref={this.setWrappedInstance}>
+        <Pagination
+          {...paginationOptionsProps}
+          className={styles.commonPage}
+        />
+      </div>
     );
   }
 }
