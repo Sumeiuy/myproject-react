@@ -136,6 +136,7 @@ export default class EditBaseInfo extends PureComponent {
         queryTypeVaules({
           typeCode: 'templateId',
           subType: value,
+          operationType: 'Subscribe',
         });
         this.clearValue();
       }
