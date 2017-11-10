@@ -16,6 +16,7 @@ import { fspGlobal, helper } from '../../utils';
 
 
 const orgId = helper.getOrgId();
+const EMPTY_ARRAY = [];
 
 const effects = {
   createTask: 'customerPool/createTask',
@@ -33,6 +34,7 @@ const mapStateToProps = state => ({
   createTaskResult: state.customerPool.createTaskResult,
   storedTaskFlowData: state.customerPool.storedTaskFlowData,
   approvalList: state.customerPool.approvalList,
+  getApprovalListLoading: state.loading.effects[effects.getApprovalList],
 });
 
 const mapDispatchToProps = {
@@ -67,31 +69,47 @@ export default class CreateTask extends PureComponent {
     getApprovalList: PropTypes.func.isRequired,
     approvalList: PropTypes.array.isRequired,
     clearTaskFlowData: PropTypes.func.isRequired,
+    getApprovalListLoading: PropTypes.bool,
   };
 
   static defaultProps = {
     data: [],
     dict: {},
     createTaskResult: {},
+    getApprovalListLoading: false,
   };
 
   constructor(props) {
     super(props);
     this.state = {
       isSuccess: false,
+      isApprovalListLoadingEnd: false,
+      isShowApprovalModal: false,
     };
   }
 
-  componentWillMount() {
-  }
-
   componentWillReceiveProps(nextProps) {
-    const { createTaskResult: preCreateTaskResult } = this.props;
-    const { createTaskResult: nextcreateTaskResult } = nextProps;
+    const { createTaskResult: preCreateTaskResult,
+      getApprovalListLoading,
+      approvalList = EMPTY_ARRAY } = this.props;
+    const { createTaskResult: nextcreateTaskResult,
+      approvalList: nextList = EMPTY_ARRAY,
+      getApprovalListLoading: nextApprovalListLoading } = nextProps;
     if (preCreateTaskResult !== nextcreateTaskResult) {
       this.handleCreateTaskSuccess(nextcreateTaskResult);
     }
-    // console.log(nextcreateTaskResult);
+
+    if (getApprovalListLoading && !nextApprovalListLoading) {
+      this.setState({
+        isApprovalListLoadingEnd: true,
+      });
+    }
+
+    if (approvalList !== nextList) {
+      this.setState({
+        isShowApprovalModal: true,
+      });
+    }
   }
 
   componentWillUnmount() {
@@ -138,6 +156,14 @@ export default class CreateTask extends PureComponent {
     fspGlobal.openRctTab({ url: '/customerPool', param });
   }
 
+  @autobind
+  resetLoading() {
+    this.setState({
+      isShowApprovalModal: false,
+      isApprovalListLoadingEnd: true,
+    });
+  }
+
   render() {
     const {
       dict,
@@ -148,7 +174,7 @@ export default class CreateTask extends PureComponent {
       approvalList,
       getApprovalList,
     } = this.props;
-    const { isSuccess } = this.state;
+    const { isSuccess, isApprovalListLoadingEnd, isShowApprovalModal } = this.state;
     return (
       <div className={styles.taskBox}>
         {!isSuccess ?
@@ -163,6 +189,9 @@ export default class CreateTask extends PureComponent {
             push={push}
             orgId={orgId}
             onCloseTab={this.handleCancleTab}
+            isShowApprovalModal={isShowApprovalModal}
+            isApprovalListLoadingEnd={isApprovalListLoadingEnd}
+            onCancel={this.resetLoading}
           /> :
           <CreateTaskSuccess
             successType={isSuccess}

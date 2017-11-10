@@ -25,6 +25,9 @@ export default class TaskFlow extends PureComponent {
     approvalList: PropTypes.array.isRequired,
     getApprovalList: PropTypes.func.isRequired,
     orgId: PropTypes.string,
+    isShowApprovalModal: PropTypes.bool.isRequired,
+    isApprovalListLoadingEnd: PropTypes.bool.isRequired,
+    onCancel: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -47,8 +50,8 @@ export default class TaskFlow extends PureComponent {
       isShowErrorExcuteType: false,
       isShowErrorTaskType: false,
     };
-    this.isHasAuthorize = permission.hasIndexViewPermission() || permission.hasHqMampPermission()
-      || permission.hasBoMampPermission() || permission.hasBdMampPermission();
+    // 创建任务权限
+    this.isHasAuthorize = permission.hasCreateTaskPermission();
   }
 
   @autobind
@@ -192,6 +195,9 @@ export default class TaskFlow extends PureComponent {
       approvalList,
       getApprovalList,
       storedTaskFlowData,
+      isApprovalListLoadingEnd,
+      isShowApprovalModal,
+      onCancel,
     } = this.props;
     const { executeTypes, custServerTypeFeedBackDict } = dict;
     const { query: { count } } = location;
@@ -223,6 +229,9 @@ export default class TaskFlow extends PureComponent {
         isNeedApproval={this.isHasAuthorize}
         custSource={custSource}
         custTotal={count}
+        isShowApprovalModal={isShowApprovalModal}
+        isApprovalListLoadingEnd={isApprovalListLoadingEnd}
+        onCancel={onCancel}
       />,
     }];
 
