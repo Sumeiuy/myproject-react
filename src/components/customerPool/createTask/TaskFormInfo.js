@@ -179,7 +179,7 @@ export default class TaskFormInfo extends PureComponent {
           prefix={['{']}
           onSearchChange={this.handleSearchChange}
           suggestions={suggestions}
-          getSuggestionContainer={() => document.getElementById('fatherMention')}
+          getSuggestionContainer={() => this.fatherMention}
           multiLines
         />,
       )
@@ -332,7 +332,7 @@ export default class TaskFormInfo extends PureComponent {
             )}
           </FormItem>
         </div>
-        <div className={styles.task_textArea} id="fatherMention">
+        <div className={styles.task_textArea} ref={ref => this.fatherMention = ref}>
           <p>
             <label htmlFor="desc"><i>*</i>任务提示</label>
           </p>
