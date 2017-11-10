@@ -76,7 +76,7 @@ export default class Viewpoint extends PureComponent {
     ) : (
       _.replace(
         _.trim(abstract),
-        /<\/?span\s*(style="(\w*\W*\w*:\W*\w*;?\s?){0,}")?\/?>/gi,
+        /<\/?span[^>]*?>/g,
         '',
       )
     );
