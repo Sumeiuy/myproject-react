@@ -161,6 +161,9 @@ export default class TaskFormInfo extends PureComponent {
     }
     return null;
   }
+  // getSuggestionContainer = () => {
+  //   return this.popover.getPopupDomNode();
+  // }
 
   renderMention() {
     const { form: { getFieldDecorator }, defaultMissionDesc } = this.props;
@@ -176,6 +179,7 @@ export default class TaskFormInfo extends PureComponent {
           prefix={['{']}
           onSearchChange={this.handleSearchChange}
           suggestions={suggestions}
+          getSuggestionContainer={() => this.fatherMention}
           multiLines
         />,
       )
@@ -328,7 +332,7 @@ export default class TaskFormInfo extends PureComponent {
             )}
           </FormItem>
         </div>
-        <div className={styles.task_textArea}>
+        <div className={styles.task_textArea} ref={ref => this.fatherMention = ref}>
           <p>
             <label htmlFor="desc"><i>*</i>任务提示</label>
           </p>
