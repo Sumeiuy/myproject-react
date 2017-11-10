@@ -47,7 +47,7 @@ export default class TaskFlow extends PureComponent {
       isShowErrorExcuteType: false,
       isShowErrorTaskType: false,
     };
-    this.isHasAuthorize =  permission.hasIndexViewPermission() || permission.hasHqMampPermission()
+    this.isHasAuthorize = permission.hasIndexViewPermission() || permission.hasHqMampPermission()
       || permission.hasBoMampPermission() || permission.hasBdMampPermission();
   }
 
@@ -136,11 +136,11 @@ export default class TaskFlow extends PureComponent {
       ...data,
       flowAuditorId,
       custIdList,
-      searchReq: _.isEmpty(custIdList) ? {
+      searchReq: {
         ptyMngId: helper.getEmpId(),
         orgId,
         ...custCondition,
-      } : null,
+      },
     });
   }
 
