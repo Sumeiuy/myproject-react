@@ -152,7 +152,7 @@ export default class CustomerLists extends PureComponent {
       bool = ptyMng.split('_')[1] === empInfo.empNum;
     }
     this.mainServiceManager = !!(bool) || !authority;
-    this.hideLastPageButton();
+    this.toggleLastPageButton();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -394,14 +394,6 @@ export default class CustomerLists extends PureComponent {
       currentFollowCustId: custId,
       emailCustId: '',
     });
-  }
-
-  // 隐藏最后一页的按钮
-  hideLastPageButton() {
-    const pageNodeNextButton = document.querySelector('.ant-pagination .ant-pagination-jump-next');
-    if (pageNodeNextButton) {
-      pageNodeNextButton.nextElementSibling.style.display = 'none';
-    }
   }
 
   // 切换最后一页的按钮的显示与隐藏
