@@ -34,18 +34,16 @@ export default class autoComplete extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      inputValue: '',
+      inputValue: props.initValue,
     };
   }
   componentWillReceiveProps(nextProps) {
-    const { dataSource: prev } = this.props;
-    const { dataSource: next } = nextProps;
-    if (!_.isEqual(prev, next)) {
-      if (!_.isEmpty(next)) {
-        this.setState({
-          inputValue: '',
-        });
-      }
+    const { initValue: prevValue } = this.props;
+    const { initValue: nextValue } = nextProps;
+    if (!_.isEqual(prevValue, nextValue)) {
+      this.setState({
+        inputValue: nextValue,
+      });
     }
   }
   // 根据用户选中的option的value值获取对应的数组值
