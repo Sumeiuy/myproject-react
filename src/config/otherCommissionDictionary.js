@@ -77,3 +77,23 @@ export const disabledMap = [
   'stkCommission',
   'creditCommission',
 ];
+
+// 所有的其他佣金费率的参数名
+export const allCommissionParamName = [
+  'zqCommission',
+  'stkCommission',
+  'creditCommission',
+  'ddCommission',
+  'hCommission',
+  'dzCommission',
+  'coCommission',
+  'stbCommission',
+  'oCommission',
+  'doCommission',
+  'hkCommission',
+  'bgCommission',
+  'qCommission',
+  'dqCommission',
+  'opCommission',
+  'dCommission',
+];
