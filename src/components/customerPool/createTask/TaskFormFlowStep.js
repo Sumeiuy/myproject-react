@@ -136,11 +136,11 @@ export default class TaskFlow extends PureComponent {
       ...data,
       flowAuditorId,
       custIdList,
-      searchReq: _.isEmpty(custIdList) ? {
+      searchReq: {
         ptyMngId: helper.getEmpId(),
         orgId,
         ...custCondition,
-      } : null,
+      },
     });
   }
 
