@@ -24,7 +24,7 @@ export default class Viewpoint extends PureComponent {
 
   @autobind
   openNewTab(url, query) {
-    const param = { id: 'tab-viewpoint', title: '资讯' };
+    const param = { id: 'RTC_TAB_VIEWPOINT', title: '资讯' };
     if (document.querySelector(fspContainer.container)) {
       fspGlobal.openRctTab({ url: `${url}?${helper.queryToString(query)}`, param });
     } else {
@@ -45,7 +45,7 @@ export default class Viewpoint extends PureComponent {
   @autobind
   handleDetailClick(index) {
     // 跳转到资讯详情界面
-    this.openNewTab('/customerPool/viewpointDetail', { detailIndex: `${index}` });
+    this.openNewTab('/customerPool/viewpointDetail', { detailIndex: index });
   }
 
   @autobind
@@ -53,13 +53,11 @@ export default class Viewpoint extends PureComponent {
     return titleArray.map((item, index) => (
       <div
         className={classnames(styles.row, { [styles.none]: (index >= 12) })}
+        onClick={() => { this.handleDetailClick(index); }}
         key={item.id}
       >
-        <a
-          className={styles.news}
-          onClick={() => { this.handleDetailClick(index); }}
-        >
-          {item.texttitle}
+        <a className={styles.news}>
+          {_.isEmpty(item.subtitle) ? '--' : item.subtitle}
         </a>
       </div>
     ));
@@ -69,6 +67,19 @@ export default class Viewpoint extends PureComponent {
     const { information: { infoVOList = [] } } = this.props;
     // 展示第一个新闻
     const { texttitle = '', abstract = '' } = _.isEmpty(infoVOList) ? {} : infoVOList[0];
+    // : 为中文符号，英文的：不匹配
+    const titleArray = _.split(texttitle, '：');
+    const newTitle = _.last(titleArray);
+    // 分割成段，展示，过滤掉span标签，因为自带样式不符合需求
+    const formateAbstract = _.isEmpty(abstract) ? (
+      '<p>暂无内容</p>'
+    ) : (
+      _.replace(
+        _.trim(abstract),
+        /<\/?span[^>]*?>/g,
+        '',
+      )
+    );
     const isShowMore = infoVOList.length > 12;
     const isHiddenDetail = _.isEmpty(abstract);
     const newInfoVOList = _.map(infoVOList, (item, index) => ({ ...item, id: `${index}` }));
@@ -76,16 +87,16 @@ export default class Viewpoint extends PureComponent {
       <div className={styles.container}>
         <div className={styles.head}>首席投顾观点</div>
         <div className={styles.up}>
-          <div className={styles.title}>{texttitle || '暂无标题'}</div>
+          <div className={styles.title}>{newTitle || '暂无标题'}</div>
           <div className={styles.article}>
-            <div className={styles.text}>{abstract || '暂无内容'}</div>
+            <div className={styles.text} dangerouslySetInnerHTML={{ __html: formateAbstract }} />
             <div
               className={classnames(
                 styles.details,
                 { [styles.detailsNone]: isHiddenDetail },
               )}
             >
-              <a onClick={this.handleDetailClick}>详情</a>
+              <a onClick={() => { this.handleDetailClick(0); }}>详情</a>
             </div>
           </div>
         </div>
@@ -102,7 +113,9 @@ export default class Viewpoint extends PureComponent {
           }
           {
             isShowMore ? (
-              <div className={styles.fold} onClick={this.handleMoreClick} >{'更多'}</div>
+              <div className={styles.fold} >
+                <a onClick={this.handleMoreClick}>{'更多'}</a>
+              </div>
             ) : (
               null
             )

@@ -6,11 +6,14 @@
 
 import moment from 'moment';
 import bowser from 'bowser';
+import pathToRegexp from 'path-to-regexp';
 import _ from 'lodash';
 
 import { hasPermissionOfPostion } from './permission';
 
 import { ZHUNICODE, constants, seibelConfig, fspContainer } from '../config';
+
+const routerPrefix = '/customerPool';
 
 function getOS() {
   const osList = ['mac', 'windows', 'windowsphone'];
@@ -559,6 +562,37 @@ const helper = {
   isInFsp() {
     const fsp = document.querySelector(fspContainer.container);
     return !!fsp;
+  },
+
+  // 获取ogrId
+  getOrgId() {
+    let orgId = '';
+    if (_.isEmpty(window.forReactPosition)) {
+      orgId = null;
+    } else {
+      orgId = window.forReactPosition.orgId;
+    }
+    return orgId;
+  },
+  /**
+   * 模拟鼠标点击事件
+   * @param  ele 触发事件的html节点
+   * @param  eventType 事件类型 例如 ‘click’
+   * @param  canBubble  canBubble
+   * @param  cancelable 是否可以用 preventDefault() 方法取消事件。
+   */
+  trigger(eleDom, eventType, canBubble = true, cancelable = true) {
+    const evt = document.createEvent('MouseEvent');
+    evt.initEvent(eventType, canBubble, cancelable);
+    eleDom.dispatchEvent(evt);
+  },
+  /**
+   * 检查当前页面路径是否匹配指定子路由
+   * @param {*} route 当前子路由
+   * @param {*} pathname 当前页面路径
+   */
+  matchRoute(route, pathname) {
+    return pathToRegexp(`${routerPrefix}/${route}`).exec(pathname);
   },
 };
 

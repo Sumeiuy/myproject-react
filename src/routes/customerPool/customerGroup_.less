@@ -1,60 +1,97 @@
-/***
- zhuyanwen
- */
-  .customerGroup {
+.customerGroup {
     background-color: #fff;
-    margin: 15px 20px 20px 20px;
-    padding: 0px 10px 0px 10px;
+    margin: 15px 20px 20px;
+    padding: 0 10px 10px;
     min-height: 800px;
+    .commonPage {
+      margin-bottom: 0;
+    }
     .text {
       font-size: 18px;
       font-weight: bold;
-      padding: 21px 0px 18px 0px;
+      padding: 21px 0 18px;
     }
     hr {
-      background-color: #DDDDDD;
+      background-color: #ddd;
       height: 2px;
       border: none;
     }
     .Grouplist {
       .description {
-        font-size: 16px;
-        color: #777474;
-        b {
-          color: #7d9be0;
-          font-size: 16px;
-        }
+        font-size: 15px;
+        color: #9b9b9b;
+        letter-spacing: -0.09px;
+        text-align: left;
       }
       .searchBox {
-        width: 320px;
+        width: 200px;
         height: 32px;
         position: relative;
-        float: right;
-
+        margin-left: 15px;
       }
       .BtnContent {
         margin-top: 20px;
         text-align: right;
-        Button{
-          margin-left:25px;
+        button {
+          margin-left: 25px;
           height: 30px;
+        }
+        div:first-child {
+          display: flex;
+          padding-left: 15px;
+        }
+        div:last-child {
+          padding-right: 15px;
+          display: flex;
+          justify-content: flex-end;
+        }
+        :global {
+          & button {
+            margin-left: 15px;
+            height: 30px;
+            padding: 0 16px;
+          }
         }
       }
     }
     .newGroupForm {
       .description {
-        font-size: 16px;
-        color: #777474;
-        b {
-          color: #7d9be0;
-          font-size: 16px;
-        }
+        font-size: 15px;
+        color: #9b9b9b;
+        letter-spacing: -0.09px;
+        text-align: left;
+        margin-left: 15px;
       }
       .groupForm {
         padding-top: 30px;
         label {
           font-size: 14px;
           color: #777474;
+        }
+        :global {
+          .ant-form-item-required:before {
+            display: inline-block;
+            margin-right: 4px;
+            content: "*";
+            font-family: SimSun;
+            line-height: 1;
+            font-size: 12px;
+            color: #f04134;
+          }
+        }
+      }
+      :global {
+        .ant-form-item-label {
+          text-align: right;
+          padding-left: 15px;
+          width: 100px;
+          padding-right: 5px;
+        }
+        .ant-form-item-required:before {
+          display: none;
+        }
+        .ant-form-item-control {
+          display: flex;
         }
       }
     }
@@ -70,6 +107,7 @@
       }
       .ant-tabs-bar {
         border-bottom: none;
+        padding-left: 15px;
       }
       .ant-tabs.ant-tabs-card > .ant-tabs-bar .ant-tabs-nav-container {
         height: 36px;
@@ -78,7 +116,7 @@
         border-color: #d9d9d9;
         color: #108ee9;
         padding-bottom: 5px;
-        border: 1px solid #108ee9;
+        border: 1px solid #108ee9 !important;
         background-image: url('../../../static/images/choosed-icon.png');
         background-repeat: no-repeat;
         background-size: 15px 15px;
@@ -103,7 +141,7 @@
     /* 自定义分组列表样式*/
     :global {
       .groupListRow {
-        padding-top: 20px;
+        // padding-top: 20px;
         .CustomerGrouplist {
           border: 1px solid #ddd;
           border-radius: 4px;
@@ -136,7 +174,7 @@
               font-size: 14px;
               color: #666;
               text-align: left;
-              a{
+              a {
                 color: #108ee9;
               }
               a.groupNames {
@@ -147,10 +185,10 @@
               background-color: #f9f9f9;
             }
             tr:nth-child(2n) > td {
-              background-color: #FFFFFF;
+              background-color: #fff;
             }
             tr > td:nth-child(3) {
-              width:40%;
+              width: 40%;
               .groupDescription {
                 cursor: pointer;
                 &:hover {
@@ -172,7 +210,7 @@
                   height: 80px;
                   background-color: #ffffcd;
                   div {
-                    padding: 4px 8px 0px 8px;
+                    padding: 4px 8px 0;
                     font-size: 17px;
                   }
                 }
@@ -190,13 +228,4 @@
         }
       }
     }
-  }
-  .hiddencustomerGroup {
-    display:none;
-  }
-  .showsaveSuccessTab {
-    display: block;
-  }
-  .hiddensaveSuccessTab {
-    display: none;
   }

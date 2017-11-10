@@ -1,23 +1,22 @@
+/**
+ * @Date: 2017-11-10 15:13:41
+ * @Last Modified by:   sunweibin
+ * @Last Modified time: 2017-11-10 15:13:41
+ */
+
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-// import { connect } from 'react-redux';
 import { withRouter } from 'dva-react-router-3/router';
 import { Button, Mention } from 'antd';
-// import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import moment from 'moment';
 import { autobind } from 'core-decorators';
 import CreateTaskForm from './CreateTaskForm';
 import TaskPreview from '../taskFlow/TaskPreview';
-// import Button from '../../components/common/Button';
-import { fspGlobal } from '../../../utils';
+import { helper, permission } from '../../../utils';
+import { validateFormContent } from '../../../decorators/validateFormContent';
 import styles from './taskFormFlowStep.less';
 
-
-// const Step = Steps.Step;
-// const EMPTY_OBJECT = {};
 const { toString } = Mention;
-
 
 @withRouter
 export default class TaskFlow extends PureComponent {
@@ -28,11 +27,19 @@ export default class TaskFlow extends PureComponent {
     dict: PropTypes.object,
     saveTaskFlowData: PropTypes.func.isRequired,
     createTask: PropTypes.func.isRequired,
+    parseQuery: PropTypes.func.isRequired,
+    approvalList: PropTypes.array.isRequired,
+    getApprovalList: PropTypes.func.isRequired,
+    orgId: PropTypes.string,
+    isShowApprovalModal: PropTypes.bool.isRequired,
+    isApprovalListLoadingEnd: PropTypes.bool.isRequired,
+    onCancel: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
     dict: {},
     storedTaskFlowData: {},
+    orgId: null,
   };
 
   constructor(props) {
@@ -41,7 +48,16 @@ export default class TaskFlow extends PureComponent {
       current: 0,
       currentStep: 0,
       previousData: {},
+      currentSelectRecord: {},
+      currentSelectRowKeys: [],
+      currentTab: '1',
+      custSource: '',
+      isShowErrorInfo: false,
+      isShowErrorExcuteType: false,
+      isShowErrorTaskType: false,
     };
+    // 创建任务权限
+    this.isHasAuthorize = permission.hasCreateTaskPermission();
   }
 
   @autobind
@@ -50,58 +66,147 @@ export default class TaskFlow extends PureComponent {
     const { current } = this.state;
     this.setState({
       current: current - 1,
-      previousData: storedTaskFlowData,
+      previousData: storedTaskFlowData.taskFormData,
     });
+    console.log(storedTaskFlowData.taskFormData);
   }
+
+  @autobind
+  handleCustSource(value) {
+    let custSources = '';
+    switch (value) {
+      case 'business':
+        custSources = '业务目标客户';
+        break;
+      case 'search':
+        custSources = '搜索目标客户';
+        break;
+      case 'tag':
+        custSources = '搜索目标客户';
+        break;
+      case 'custIndicator':
+        custSources = '绩效目标客户';
+        break;
+      case 'numOfCustOpened':
+        custSources = '绩效目标客户';
+        break;
+      default:
+        break;
+    }
+    return custSources;
+  }
+
 
   @autobind
   handleNextStep() {
-    console.log(this.createTaskForm);
-    const { current } = this.state;
-    const { saveTaskFlowData } = this.props;
-    this.createTaskForm.validateFields((err, values) => {
-      if (!err) {
-        // console.warn('templetDesc-----', values);
-        saveTaskFlowData(values);
-        this.setState({
-          current: current + 1,
-        });
-      } else {
-        console.warn('templetDesc-----', values.templetDesc);
+    this.createTaskForm.getWrappedInstance().validateFields((err, values) => {
+      let isFormError = false;
+      if (!_.isEmpty(err)) {
+        isFormError = true;
       }
+      this.submitFormContent({ ...values, isFormError });
     });
   }
 
   @autobind
-  closeTab() {
-    // fspGlobal.closeRctTabById('RCT_FSP_TASK');
-    console.log(this.createTaskForm.getFieldsValue());
-    fspGlobal.closeRctTabById('RCT_FSP_CUSTOMER_LIST');
-    // this.props.goBack();
+  @validateFormContent
+  submitFormContent(values) {
+    const { current } = this.state;
+    const { saveTaskFlowData, location: { query } } = this.props;
+    saveTaskFlowData({
+      taskFormData: values,
+      totalCust: query.count,
+    });
+    this.setState({
+      current: current + 1,
+      custSource: this.handleCustSource(query.source),
+    });
   }
 
   // 自建任务提交
   @autobind
   handleSubmit() {
-    const { storedTaskFlowData, createTask } = this.props;
-    const params = storedTaskFlowData;
-    params.templetDesc = toString(params.templetDesc); // eslint-disable-line
-    params.triggerDate = moment(params.triggerDate).format('YYYY-MM-DD'); // eslint-disable-line
-    params.closingDate = moment(params.closingDate).format('YYYY-MM-DD'); // eslint-disable-line
-    createTask(params);
+    const { storedTaskFlowData, createTask, parseQuery, orgId } = this.props;
+    const { currentSelectRecord: { login: flowAuditorId = null } } = this.state;
+    const {
+      custIdList,
+      custCondition,
+    } = parseQuery();
+    const params = storedTaskFlowData.taskFormData;
+    const data = {
+      executionType: params.executionType,
+      serviceStrategySuggestion: params.serviceStrategySuggestion,
+      taskName: params.taskName,
+      taskType: params.taskType,
+      templetDesc: toString(params.templetDesc),
+      timelyIntervalValue: params.timelyIntervalValue,
+    };
+    createTask({
+      ...data,
+      flowAuditorId,
+      custIdList,
+      searchReq: {
+        ptyMngId: helper.getEmpId(),
+        orgId,
+        ...custCondition,
+      },
+    });
+  }
+
+  @autobind
+  handleRowSelectionChange(selectedRowKeys, selectedRows) {
+    console.log(selectedRowKeys, selectedRows);
+    this.setState({
+      currentSelectRowKeys: selectedRowKeys,
+    });
+  }
+
+  @autobind
+  handleSingleRowSelectionChange(record, selected, selectedRows) {
+    console.log(record, selected, selectedRows);
+    const { login } = record;
+    this.setState({
+      currentSelectRecord: record,
+      currentSelectRowKeys: [login],
+    });
+  }
+
+  @autobind
+  handleCancel() {
+    const {
+      push,
+      location: {
+        query: { fr },
+      },
+    } = this.props;
+    push(decodeURIComponent(fr));
   }
 
   render() {
     const {
       current,
       previousData,
+      currentSelectRecord,
+      currentSelectRowKeys,
+      currentTab,
+      custSource,
+      isShowErrorInfo,
+      isShowErrorExcuteType,
+      isShowErrorTaskType,
     } = this.state;
 
     const {
       dict,
       location,
+      approvalList,
+      getApprovalList,
+      storedTaskFlowData,
+      isApprovalListLoadingEnd,
+      isShowApprovalModal,
+      onCancel,
     } = this.props;
-    console.log('current----', current);
+    const { executeTypes, custServerTypeFeedBackDict } = dict;
+    const { query: { count } } = location;
     const steps = [{
       title: '基本信息',
       content: <CreateTaskForm
@@ -109,11 +214,30 @@ export default class TaskFlow extends PureComponent {
         dict={dict}
         ref={ref => this.createTaskForm = ref}
         previousData={previousData}
+        isShowErrorInfo={isShowErrorInfo}
+        isShowErrorExcuteType={isShowErrorExcuteType}
+        isShowErrorTaskType={isShowErrorTaskType}
       />,
     }, {
       title: '目标客户',
       content: <TaskPreview
         ref={ref => (this.taskPreviewRef = ref)}
+        storedTaskFlowData={storedTaskFlowData}
+        approvalList={approvalList}
+        currentTab={currentTab}
+        getApprovalList={getApprovalList}
+        executeTypes={executeTypes}
+        taskTypes={custServerTypeFeedBackDict}
+        onSingleRowSelectionChange={this.handleSingleRowSelectionChange}
+        onRowSelectionChange={this.handleRowSelectionChange}
+        currentSelectRecord={currentSelectRecord}
+        currentSelectRowKeys={currentSelectRowKeys}
+        isNeedApproval={this.isHasAuthorize}
+        custSource={custSource}
+        custTotal={count}
+        isShowApprovalModal={isShowApprovalModal}
+        isApprovalListLoadingEnd={isApprovalListLoadingEnd}
+        onCancel={onCancel}
       />,
     }];
 
@@ -131,7 +255,7 @@ export default class TaskFlow extends PureComponent {
             <Button
               className={styles.cancelBtn}
               type="default"
-              onClick={this.closeTab}
+              onClick={this.handleCancel}
             >
               取消
             </Button>

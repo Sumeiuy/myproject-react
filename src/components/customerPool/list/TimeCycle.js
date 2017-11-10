@@ -4,7 +4,8 @@
  * @author wangjunjun
  */
 
-import React, { PureComponent, PropTypes } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { Select } from 'antd';
@@ -40,11 +41,12 @@ export default class TimeCycle extends PureComponent {
       selectValue,
       cycle,
     } = this.props;
-    let timeEle = null;
-    if (_.includes(['custIndicator', 'numOfCustOpened'], source)) {
-      timeEle = (
+    if (!_.includes(['custIndicator', 'numOfCustOpened'], source)) {
+      return null;
+    }
+    return (
+      <div className={`custRange ${styles.timeCycle}`}>
         <div className={styles.item}>
-          <i className={styles.bd} />
           <Icon type="rili" />
           <Select
             style={{ width: 60 }}
@@ -56,11 +58,6 @@ export default class TimeCycle extends PureComponent {
               <Select.Option key={item.key} value={item.key}>{item.value}</Select.Option>)}
           </Select>
         </div>
-      );
-    }
-    return (
-      <div className="custRange">
-        {timeEle}
       </div>
     );
   }

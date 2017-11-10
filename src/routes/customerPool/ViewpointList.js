@@ -7,42 +7,89 @@ import React, { PropTypes, PureComponent } from 'react';
 import { withRouter, routerRedux } from 'dva-react-router-3/router';
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
+import classnames from 'classnames';
 import { Table } from 'antd';
 import _ from 'lodash';
 
+import { fspContainer } from '../../config';
+import { fspGlobal, helper } from '../../utils';
 import Paganation from '../../components/common/Paganation';
 import styles from './viewpointList.less';
 
-const columns = [{
-  title: '标题',
-  dataIndex: 'texttitle',
-  key: 'texttitle',
-  width: 500,
-}, {
-  title: '类型',
-  dataIndex: 'textcategorychinese',
-  key: 'textcategorychinese',
-  width: 500,
-}, {
-  title: '相关股票',
-  dataIndex: 'aboutStock',
-  key: 'aboutStock',
-  width: 500,
-}, {
-  title: '行业',
-  dataIndex: 'induname',
-  key: 'induname',
-  width: 500,
-}, {
-  title: '报告日期',
-  dataIndex: 'pubdata',
-  key: 'pubdata',
-  width: 500,
-}, {
-  title: '作者',
-  dataIndex: 'authors',
-  key: 'authors',
-}];
+function formatString(str) {
+  return _.isEmpty(str) ? '--' : str;
+}
+
+const columns = ({ actionClick }) => {
+  function handleClick(item) {
+    if (_.isFunction(actionClick)) {
+      actionClick(item);
+    }
+  }
+  return [{
+    title: '标题',
+    key: 'texttitle',
+    width: '30%',
+    render: item => (
+      <div
+        className={classnames(styles.td, styles.headLine)}
+        onClick={() => { handleClick(item); }}
+        title={formatString(item.texttitle)}
+      >
+        <a>{formatString(item.texttitle)}</a>
+      </div>
+    ),
+  }, {
+    title: '类型',
+    dataIndex: 'textcategorychinese',
+    key: 'textcategorychinese',
+    width: '14%',
+    render: item => (
+      <div className={classnames(styles.td, styles.category)}>{formatString(item)}</div>
+    ),
+  }, {
+    title: '相关股票',
+    dataIndex: 'aboutStock',
+    key: 'aboutStock',
+    width: '16%',
+    render: item => (
+      <div className={classnames(styles.td, styles.stock)}>{formatString(item)}</div>
+    ),
+  }, {
+    title: '行业',
+    dataIndex: 'induname',
+    key: 'induname',
+    width: '13%',
+    render: item => (
+      <div className={classnames(styles.td, styles.induname)}>{formatString(item)}</div>
+    ),
+  }, {
+    title: '报告日期',
+    dataIndex: 'pubdatelist',
+    key: 'pubdatelist',
+    width: '13%',
+    render: (item) => {
+      const dateArray = _.split(item, ' ');
+      const date = _.isEmpty(dateArray) ? '' : _.head(dateArray);
+      return (
+        <div className={classnames(styles.td, styles.pubdatelist)}>{formatString(date)}</div>
+      );
+    },
+  }, {
+    title: '作者',
+    dataIndex: 'authors',
+    key: 'authors',
+    width: '13%',
+    render: item => (
+      <div
+        className={classnames(styles.td, styles.authors)}
+        title={formatString(item)}
+      >
+        {formatString(item)}
+      </div>
+    ),
+  }];
+};
 
 const fetchDataFunction = (globalLoading, type) => query => ({
   type,
@@ -56,6 +103,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   getInformation: fetchDataFunction(true, 'customerPool/getInformation'),
   push: routerRedux.push,
+  replace: routerRedux.replace,
 };
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
@@ -65,6 +113,7 @@ export default class ViewpointList extends PureComponent {
     location: PropTypes.object.isRequired,
     information: PropTypes.object,
     getInformation: PropTypes.func.isRequired,
+    replace: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -73,10 +122,14 @@ export default class ViewpointList extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { information: { infoVOList = [] } } = props;
+    const {
+      information: { infoVOList = [] },
+      location: { query: { curPageNum = '1', curPageSize = '18' } },
+    } = props;
+    // 注意 location的query中的字段，无论是key还是value都是字符串
     this.state = {
-      curPageNum: 1, // 记录当前展示的页码
-      curPageSize: 18, // 记录当前每页的容量
+      curPageNum: _.toNumber(curPageNum), // 记录当前展示的页码
+      curPageSize: _.toNumber(curPageSize), // 记录当前每页的容量
       pageList: infoVOList, // 当前页码对应的列表数据
     };
   }
@@ -87,37 +140,48 @@ export default class ViewpointList extends PureComponent {
   }
 
   @autobind
-  handleRowClick(record, index) {
-    const { push } = this.props;
-    push({
-      pathname: '/customerPool/viewpointDetail',
-      query: { detailIndex: `${index}` },
-      state: 'formList',
-    });
+  handleTitleClick(item) {
+    const { curPageSize, curPageNum } = this.state;
+    const param = { id: 'RTC_TAB_VIEWPOINT', title: '资讯' };
+    const url = '/customerPool/viewpointDetail';
+    const query = { detailIndex: item.id, curPageSize, curPageNum };
+    if (document.querySelector(fspContainer.container)) {
+      fspGlobal.openRctTab({ url: `${url}?${helper.queryToString(query)}`, param });
+    } else {
+      const { push } = this.props;
+      push({
+        pathname: url,
+        query,
+      });
+    }
   }
 
   @autobind
   handlePageClick(page) {
-    const { getInformation } = this.props;
+    const { getInformation, replace, location: { pathname, query } } = this.props;
     const { curPageSize } = this.state;
     this.setState(
       { curPageNum: page },
-      () => getInformation({ curPageNum: page, pageSize: curPageSize }),
+      () => {
+        const newQuery = { curPageNum: page, pageSize: curPageSize };
+        getInformation(newQuery);
+        replace({ pathname, query: { ...query, ...newQuery } });
+      },
     );
   }
 
   @autobind
   handlePageSizeClick(current, size) {
-    const { getInformation } = this.props;
+    const { getInformation, replace, location: { pathname, query } } = this.props;
     const { curPageNum } = this.state;
     this.setState(
       { curPageSize: size },
-      () => getInformation({ curPageNum, pageSize: size }),
+      () => {
+        const newQuery = { curPageNum, pageSize: size };
+        getInformation(newQuery);
+        replace({ pathname, query: { ...query, ...newQuery } });
+      },
     );
-  }
-
-  formatString(str) {
-    return _.isEmpty(str) ? '--' : str;
   }
 
   render() {
@@ -126,12 +190,8 @@ export default class ViewpointList extends PureComponent {
     const newInfoVOList = _.map(
       pageList,
       (item, index) => ({
-        texttitle: this.formatString(item.texttitle),
-        textcategory: this.formatString(item.textcategory),
-        induname: this.formatString(item.induname),
-        pubdata: this.formatString(item.pubdata),
-        authors: this.formatString(item.authors),
-        aboutStock: `${this.formatString(item.secuabbr)} / ${this.formatString(item.tradingcode)}`,
+        ...item,
+        aboutStock: `${formatString(item.secuabbr)} / ${formatString(item.tradingcode)}`,
         id: `${index}`,
       }),
     );
@@ -143,16 +203,18 @@ export default class ViewpointList extends PureComponent {
       onSizeChange: this.handlePageSizeClick,
       originPageSizeUnit: 18,
     };
+    const tableColumns = columns({ actionClick: this.handleTitleClick });
     return (
       <div className={styles.listContainer}>
-        <div className={styles.inner}>
+        <div
+          className={styles.inner}
+        >
           <Table
             rowKey={'id'}
-            columns={columns}
+            columns={tableColumns}
             dataSource={newInfoVOList}
             pagination={false}
-            onRowClick={this.handleRowClick}
-            scroll={{ x: 2500 }}
+            scroll={{ x: 1100 }}
           />
           <Paganation {...paganationOption} />
         </div>

@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 13:43:41
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-20 13:29:03
+ * @Last Modified time: 2017-11-06 14:23:32
  * 客户细分组件
  */
 
@@ -19,17 +19,16 @@ import styles from './customerSegment.less';
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const COLUMN_WIDTH = 115;
+const INITIAL_PAGE_SIZE = 10;
+const INITIAL_PAGE_NUM = 1;
+const COLUMN_HEIGHT = 36;
 
 export default class CustomerSegment extends PureComponent {
   static propTypes = {
     onPreview: PropTypes.func.isRequired,
     priviewCustFileData: PropTypes.object.isRequired,
-    // 保存数据方法
-    // storeData: PropTypes.func.isRequired,
     // 保存的数据
     storedData: PropTypes.object,
-    // saveDataEmitter: PropTypes.object.isRequired,
-    // onStepUpdate: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -41,7 +40,7 @@ export default class CustomerSegment extends PureComponent {
     super(props);
     const { storedData = EMPTY_OBJECT } = props;
     const { custSegment = EMPTY_OBJECT } = storedData;
-    const { currentFile = {}, uploadedFileKey = '', originFileName = '' } = custSegment;
+    const { currentFile = {}, uploadedFileKey = '', originFileName = '', totalCount = 0 } = custSegment;
     this.state = {
       curPageNum: 1,
       curPageSize: 10,
@@ -51,6 +50,7 @@ export default class CustomerSegment extends PureComponent {
       currentFile,
       uploadedFileKey,
       originFileName,
+      totalCount,
     };
   }
 
@@ -83,12 +83,13 @@ export default class CustomerSegment extends PureComponent {
 
   @autobind
   getData() {
-    const { currentFile, uploadedFileKey, originFileName } = this.state;
+    const { currentFile, uploadedFileKey, originFileName, totalCount } = this.state;
     return {
       custSegment: {
         currentFile,
         uploadedFileKey,
         originFileName,
+        totalCount,
       },
     };
   }
@@ -149,10 +150,6 @@ export default class CustomerSegment extends PureComponent {
     return [];
   }
 
-  handleTabChange(key) {
-    console.log(key);
-  }
-
   @autobind
   handleDeleteFile() {
     this.setState({
@@ -167,11 +164,12 @@ export default class CustomerSegment extends PureComponent {
   @autobind
   handleFileUpload(lastFile) {
     // 当前上传的file
-    const { currentFile = {}, uploadedFileKey = '', originFileName = '' } = lastFile;
+    const { currentFile = {}, uploadedFileKey = '', originFileName = '', totalCount = 0 } = lastFile;
     this.setState({
       currentFile,
       uploadedFileKey,
       originFileName,
+      totalCount,
     });
   }
 
@@ -180,11 +178,15 @@ export default class CustomerSegment extends PureComponent {
     // 已经上传的file key
     // 用来预览客户列表时，用
     const { onPreview } = this.props;
-    const { curPageNum, curPageSize, fileKey } = this.state;
+    const { fileKey } = this.state;
     this.setState({
       uploadedFileKey: uploadedFileKey || fileKey,
     });
-    onPreview({ uploadKey: uploadedFileKey, pageNum: curPageNum, pageSize: curPageSize });
+    onPreview({
+      uploadKey: uploadedFileKey,
+      pageNum: INITIAL_PAGE_NUM,
+      pageSize: INITIAL_PAGE_SIZE,
+    });
   }
 
   @autobind
@@ -225,9 +227,27 @@ export default class CustomerSegment extends PureComponent {
       currentFile,
       uploadedFileKey,
       originFileName,
+      totalCount,
     } = this.state;
 
     const scrollX = (columnSize * COLUMN_WIDTH);
+
+    // if (columnSize < 6) {
+    //   const averageWidth = Math.floor(newColumnWidth / columnSize);
+
+    //   newColumnWidth = [];
+    // }
+
+    const scrollXProps = columnSize >= 6 ? {
+      isFixedColumn: true,
+      // 前两列固定，如果太长，后面的就滚动
+      fixedColumn: [0, 1],
+      // 列的总宽度加上固定列的宽度
+      scrollX,
+    } : null;
+
+
+    const scrollY = (INITIAL_PAGE_SIZE * COLUMN_HEIGHT);
 
     // 添加id到dataSource
     const newDataSource = this.addIdToDataSource(dataSource);
@@ -242,10 +262,11 @@ export default class CustomerSegment extends PureComponent {
             fileKey={uploadedFileKey}
             onDeleteFile={this.handleDeleteFile}
             originFileName={originFileName}
+            totalCount={totalCount}
           />
         </div>
         <div className={styles.tipSection}>
-          注：支持从客户细分导出的Excel或CSV格式文件。文件第一列必须是客户号，第二列必须是客户名称。
+          注：支持从客户细分导出的excel或csv格式文件。文件中必须包含”经纪客户号“字段。
         </div>
         {
           isShowTable ?
@@ -273,11 +294,11 @@ export default class CustomerSegment extends PureComponent {
                   onPageChange={this.handlePageChange}
                   tableClass={styles.custListTable}
                   titleColumn={titleColumn}
-                  isFixedColumn
-                  // 前三列固定，如果太长，后面的就滚动
-                  fixedColumn={[0, 1]}
-                  // 列的总宽度加上固定列的宽度
-                  scrollX={scrollX}
+                  // title fixed
+                  isFixedTitle
+                  // 纵向滚动
+                  scrollY={scrollY}
+                  {...scrollXProps}
                   columnWidth={COLUMN_WIDTH}
                   bordered
                 />

@@ -8,13 +8,40 @@ import React, { PropTypes, PureComponent } from 'react';
 import { Radio, Modal, Button } from 'antd';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
+import classnames from 'classnames';
+import { helper } from '../../../utils';
+import Loading from '../../../layouts/Loading';
 import GroupTable from '../groupManage/GroupTable';
 import styles from './taskSearchRow.less';
+import tableStyles from '../groupManage/groupTable.less';
 
 
 const RadioGroup = Radio.Group;
-// const EMPTY_LIST = [];
 
+const renderColumnTitle = [{
+  key: 'brok_id',
+  value: '经纪客户号',
+},
+{
+  key: 'name',
+  value: '客户名称',
+},
+{
+  key: 'empName',
+  value: '服务经理',
+},
+{
+  key: 'orgName',
+  value: '所在营业部',
+},
+{
+  key: 'lever_code',
+  value: '客户等级',
+},
+{
+  key: 'cust_type',
+  value: '客户类型',
+}];
 export default class TaskSearchRow extends PureComponent {
 
   static propTypes = {
@@ -23,37 +50,46 @@ export default class TaskSearchRow extends PureComponent {
     peopleOfLabelData: PropTypes.object.isRequired,
     getLabelPeople: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired,
-    replace: PropTypes.func.isRequired,
-    location: PropTypes.object.isRequired,
+    currentSelectLabel: PropTypes.string.isRequired,
+    orgId: PropTypes.string,
+    isLoadingEnd: PropTypes.bool.isRequired,
+    onCancel: PropTypes.func.isRequired,
+    visible: PropTypes.bool.isRequired,
   }
   static defaultProps = {
     condition: '',
+    orgId: null,
   };
 
   constructor(props) {
     super(props);
     this.state = {
-      visible: false,
       curPageNum: 1,
-      curPageSize: 10,
+      pageSize: 10,
       totalRecordNum: 0,
-      seeCustId: '',
+      totalCustNums: 0,
+      labelId: '',
+      visible: false,
+      isLoadingEnd: true,
+      title: '',
+      custTableData: [],
     };
   }
-  componentWillMount() {
-  }
+
   componentWillReceiveProps(nextProps) {
-    // console.log(nextProps);
-    const { circlePeopleData, peopleOfLabelData, condition } = nextProps;
-    _.map(circlePeopleData, (item) => {
-      const newDesc = item.labelDesc.replace(condition, `<span>${condition}</span>`);
-      item.labelDesc = newDesc; // eslint-disable-line
-    });
+    const { peopleOfLabelData, visible } = nextProps;
+    const { userObjectFormList } = peopleOfLabelData;
+    const list = _.map(userObjectFormList, item => ({
+      ...item,
+      cust_type: item.cust_type === 'Y' ? '高净值' : '零售',
+    }));
     this.setState({
       totalRecordNum: peopleOfLabelData.totalCount,
+      custTableData: list,
+      visible,
     });
-    // console.log(circlePeopleData)
   }
+
   @autobind
   change(e) {
     const { onChange } = this.props;
@@ -62,43 +98,46 @@ export default class TaskSearchRow extends PureComponent {
 
   @autobind
   handleSeeCust(value) {
-    console.log(1);
+    const { getLabelPeople, orgId } = this.props;
     console.log(value);
-    const { getLabelPeople } = this.props;
-    const { curPageNum, pageSize } = this.state;
     getLabelPeople({
-      labelId: value,
-      curPageNum,
-      pageSize,
+      labelId: value.labelMapping,
+      curPageNum: 1,
+      pageSize: 10,
+      orgId,
+      ptyMngId: helper.getEmpId(),
     });
     this.setState({
-      visible: true,
-      seeCustId: value,
+      title: value.labelName,
+      totalCustNums: value.customNum,
+      labelId: value.labelMapping,
+      curPageNum: 1,
+      pageSize: 10,
     });
   }
 
   @autobind
   handleCancel() {
+    const { onCancel } = this.props;
     this.setState({ visible: false });
+    onCancel();
   }
 
   // 表格信息
   @autobind
   handleShowSizeChange(currentPageNum, changedPageSize) {
     console.log('currentPageNum--', currentPageNum, 'changedPageSize--', changedPageSize);
-    const { location: { query, pathname }, replace } = this.props;
-    const { getLabelPeople } = this.props;
-    // 替换当前页码和分页条目
-    replace({
-      pathname,
-      query: {
-        ...query,
-        curPageNum: 1,
-        pageSize: changedPageSize,
-      },
-    });
+    const { getLabelPeople, orgId } = this.props;
+    const { labelId } = this.state;
     getLabelPeople({
-      curPageNum: currentPageNum,
+      curPageNum: 1,
+      pageSize: changedPageSize,
+      orgId,
+      ptyMngId: helper.getEmpId(),
+      labelId,
+    });
+    this.setState({
+      curPageNum: 1,
       pageSize: changedPageSize,
     });
   }
@@ -106,104 +145,128 @@ export default class TaskSearchRow extends PureComponent {
   @autobind
   handlePageChange(nextPage, currentPageSize) {
     console.log('nextPage---', nextPage, 'currentPageSize---', currentPageSize);
-    const { location: { query, pathname }, replace } = this.props;
-    const { getLabelPeople } = this.props;
-    // 替换当前页码和分页条目
-    replace({
-      pathname,
-      query: {
-        ...query,
-        curPageNum: nextPage,
-        pageSize: currentPageSize,
-      },
-    });
+    const { getLabelPeople, orgId } = this.props;
+    const { labelId, pageSize } = this.state;
     getLabelPeople({
       curPageNum: nextPage,
-      pageSize: currentPageSize,
+      pageSize,
+      orgId,
+      ptyMngId: helper.getEmpId(),
+      labelId,
+    });
+    this.setState({
+      curPageNum: nextPage,
     });
   }
+  // Y为高净值、N为非高净值
+  @autobind
+  renderRadioSection() {
+    const { condition, circlePeopleData } = this.props;
+    return _.map(circlePeopleData,
+      (item) => {
+        let newDesc = item.labelDesc;
+        let newTitle = item.labelName;
+        if (!_.isEmpty(condition)) {
+          newDesc = newDesc.replace(condition, `<span>${condition}</span>`);
+          newTitle = newTitle.replace(condition, `<span>${condition}</span>`);
+        }
 
-  renderColumnTitle() {
-    return [{
-      key: 'name',
-      value: '客户名称',
-    },
-    {
-      key: 'empName',
-      value: '服务经理',
-    },
-    {
-      key: 'orgName',
-      value: '所在营业部',
-    },
-    {
-      key: 'lever_code',
-      value: '客户等级',
-    },
-    {
-      key: 'cust_type',
-      value: '客户类型',
-    }];
+        return (
+          <div className={styles.divRows} key={item.id}>
+            <Radio
+              value={item.id}
+              key={item.tagNumId}
+            >
+              <span
+                className={styles.title}
+                dangerouslySetInnerHTML={{ __html: newTitle }} // eslint-disable-line
+              />
+              <Button className={styles.seeCust} onClick={() => this.handleSeeCust(item)}>
+                查看客户
+              </Button>
+            </Radio>
+            <h4 className={styles.titExp}>瞄准镜标签，共有
+                <span>{item.customNum}</span>客户。创建时间：{item.createDate || '--'}，创建人：{item.createrName || '--'}
+            </h4>
+            <h4
+              dangerouslySetInnerHTML={{ __html: newDesc }} // eslint-disable-line
+            />
+          </div>
+        );
+      });
   }
 
   render() {
-    // console.log(this.props);
     const {
-      curPageNum,
-      curPageSize,
-      totalRecordNum,
+      curPageNum = 1,
+      pageSize = 10,
+      totalRecordNum = 0,
       visible,
+      totalCustNums,
+      title,
+      custTableData,
     } = this.state;
-    const { circlePeopleData, peopleOfLabelData } = this.props;
-    const titleColumn = this.renderColumnTitle();
+
+    const {
+      currentSelectLabel,
+      isLoadingEnd,
+      condition,
+    } = this.props;
+
+    if (_.isEmpty(condition)) {
+      return null;
+    }
+
     return (
-      <div>
-        <RadioGroup name="radiogroup" onChange={this.change}>
-          {_.map(circlePeopleData,
-            item => <div className={styles.divRows}>
-              <Radio value={item.id} key={item.tagNumId}>
-                <span className={styles.title}>{item.labelName}</span>
-              </Radio>
-              <h4 className={styles.titExp}>瞄准镜标签，共有
-                <span>{item.customNum}</span>客户。创建时间{item.createDate}，创建人：{item.createrName}
-              </h4>
-              <h4
-                dangerouslySetInnerHTML={{ __html: item.labelDesc }}
-              />
-              <a className={styles.seeCust} onClick={() => this.handleSeeCust(item.id)}>查看客户</a>
-            </div>)}
+      <div className={styles.divContent}>
+        <RadioGroup name="radiogroup" onChange={this.change} defaultValue={currentSelectLabel}>
+          {
+            this.renderRadioSection()
+          }
         </RadioGroup>
         <div className={styles.seeCust}>
-          <Modal
-            visible={visible}
-            title={`满足标签为‘客户画像’的共有${peopleOfLabelData.totalCount}位`}
-            onOk={this.handleOk}
-            maskClosable={false}
-            onCancel={this.handleCancel}
-            closable={false}
-            footer={[
-              <Button key="back" size="large" onClick={this.handleCancel}>关闭</Button>,
-            ]}
-            width={700}
-          >
-            此处应该有表格
-            <GroupTable
-              pageData={{
-                curPageNum,
-                curPageSize,
-                totalRecordNum,
-              }}
-              tableClass={styles.center}
-              onSizeChange={this.handleShowSizeChange}
-              onPageChange={this.handlePageChange}
-              listData={peopleOfLabelData.eleContents}
-              titleColumn={titleColumn}
-              isFirstColumnLink={false}
-            />
-          </Modal>
+          {
+            (isLoadingEnd && visible) ?
+              <Modal
+                visible
+                title={`满足标签为 ${title} 的共有${totalCustNums || 0}位`}
+                onOk={this.handleOk}
+                maskClosable={false}
+                onCancel={this.handleCancel}
+                closable={false}
+                footer={[
+                  <Button key="back" size="large" onClick={this.handleCancel}>关闭</Button>,
+                ]}
+                width={700}
+              >
+                <GroupTable
+                  pageData={{
+                    curPageNum,
+                    curPageSize: pageSize,
+                    totalRecordNum,
+                  }}
+                  tableClass={
+                    classnames({
+                      [styles.labelCustTable]: true,
+                      [tableStyles.groupTable]: true,
+                    })
+                  }
+                  isFixedTitle
+                  scrollY={400}
+                  onSizeChange={this.handleShowSizeChange}
+                  onPageChange={this.handlePageChange}
+                  listData={custTableData}
+                  titleColumn={renderColumnTitle}
+                  isFirstColumnLink={false}
+                  columnWidth={100}
+                />
+              </Modal> : null
+          }
         </div>
+        {
+          <Loading loading={!isLoadingEnd} />
+        }
       </div>
-
     );
   }
 }

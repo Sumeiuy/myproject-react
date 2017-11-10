@@ -1,16 +1,15 @@
 /*
  * @Author: xuxiaoqin
  * @Date: 2017-10-13 13:57:32
- * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-19 17:03:03
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-11-10 15:07:42
  */
 
 import React, { PropTypes, PureComponent } from 'react';
 import { Upload, message } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
-import confirm from '../../common/Confirm/confirm';
-// import Button from '../../common/Button';
+import confirm from '../../common/confirm_';
 import Icon from '../../common/Icon';
 import { request } from '../../../config';
 import { helper } from '../../../utils';
@@ -18,10 +17,8 @@ import uploadRequest from '../../../utils/uploadRequest';
 import './uploader.less';
 
 let count = 0;
-// const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const Dragger = Upload.Dragger;
-// const confirm = Modal.confirm;
 
 export default class Uploader extends PureComponent {
   static propTypes = {
@@ -31,17 +28,19 @@ export default class Uploader extends PureComponent {
     onHandleOverview: PropTypes.func.isRequired,
     onDeleteFile: PropTypes.func.isRequired,
     originFileName: PropTypes.string,
+    totalCount: PropTypes.number,
   }
 
   static defaultProps = {
     attachModel: {},
     fileKey: '',
     originFileName: '',
+    totalCount: 0,
   }
 
   constructor(props) {
     super(props);
-    const { attachModel = EMPTY_OBJECT, fileKey = '', originFileName = '' } = props;
+    const { attachModel = EMPTY_OBJECT, fileKey = '', originFileName = '', totalCount = 0 } = props;
     this.state = {
       fList: [],
       lastFile: attachModel,
@@ -50,10 +49,11 @@ export default class Uploader extends PureComponent {
       upData: {
         empId: helper.getEmpId(),
       },
-      // isShowDeleteConfirm: false,
       isShowUpload: !(attachModel && fileKey),
       isShowError: false,
       originFileName,
+      totalCount,
+      showUploadList: true,
     };
   }
 
@@ -79,36 +79,6 @@ export default class Uploader extends PureComponent {
     const fileList = info.fileList;
     // 当前操作upload项
     const currentFile = info.file;
-    // {
-    //    uid: 'uid',      // 文件唯一标识，建议设置为负数，防止和内部产生的 id 冲突
-    //    name: 'xx.png'   // 文件名
-    //    status: 'done', // 状态有：uploading done error removed
-    //    response: '{"status": "success"}', // 服务端响应内容
-    // }
-
-    //  {
-    //   "lastModified": 1247549551674,
-    //   "lastModifiedDate": "2009-07-14T05:32:31.674Z",
-    //   "name": "Lighthouse.jpg",
-    //   "size": 561276,
-    //   "type": "image/jpeg",
-    //   "uid": "rc-upload-1508129119030-2",
-    //   "response": {
-    //       "code": "0",
-    //       "msg": "OK",
-    //       "resultData": {
-    //           "attachName": "Lighthouse.jpg",
-    //           "attachUrl": "10dc4bd5-2a16-408f-a380-bfb077b65e59.jpg",
-    //           "attachUploader": "002332"
-    //       }
-    //   },
-    //   "percent": 100,
-    //   "originFileObj": {
-    //       "uid": "rc-upload-1508129119030-2"
-    //   },
-    //   "status": "done"
-    // }
-
     const { status, response, name } = currentFile;
     const { resultData, msg } = response || {};
 
@@ -127,34 +97,41 @@ export default class Uploader extends PureComponent {
         if (!_.isEmpty(newFileList)) {
           const lastFile = newFileList[newFileList.length - 1];
           const { response: lastResponse } = lastFile;
-          const { resultData: lastData } = lastResponse || {};
+          const { resultData: lastData = {} } = lastResponse || {};
+          const { fileName, totalCustNum } = lastData;
           this.setState({
             lastFile,
-            uploadedFileKey: lastData,
+            uploadedFileKey: fileName,
+            totalCount: totalCustNum,
           });
           onOperateFile({
             currentFile: lastFile,
             uploadedFileKey: lastData,
             originFileName: name,
+            totalCount: totalCustNum,
           });
         }
       }
     }
 
     if (status === 'done') {
+      const { fileName, totalCustNum } = resultData;
       message.success('文件上传成功', 2);
       onOperateFile({
         currentFile,
-        uploadedFileKey: resultData,
+        uploadedFileKey: fileName,
         originFileName: name,
+        totalCount: totalCustNum,
       });
       this.setState({
         lastFile: currentFile,
-        uploadedFileKey: resultData,
+        uploadedFileKey: fileName,
         // 不展示upload组件
         isShowUpload: false,
         isShowError: false,
         originFileName: name,
+        totalCount: totalCustNum,
+        showUploadList: true,
       });
     }
 
@@ -163,12 +140,9 @@ export default class Uploader extends PureComponent {
       message.error(`${errorMsg}.`, 2);
       this.setState({
         isShowError: true,
+        showUploadList: false,
       });
     }
-
-    // this.setState({
-    //   fileList,
-    // });
   }
 
   @autobind
@@ -184,17 +158,16 @@ export default class Uploader extends PureComponent {
 
   @autobind
   showConfirm() {
-    // this.setState({
-    //   isShowDeleteConfirm: true,
-    // });
     confirm({
-      onOk: this.handleDeleteConfirm,
+      type: 'delete',
+      onOkHandler: this.handleDeleteConfirm,
+      onCancelHandler: this.handleCancel,
     });
   }
 
   @autobind
   createUpload() {
-    const { upData, fileList } = this.state;
+    const { upData, fileList, showUploadList } = this.state;
     const uploadKey = `uploadKey${count++}`;
     return (
       <Dragger
@@ -206,6 +179,7 @@ export default class Uploader extends PureComponent {
         onRemove={this.handleFileRemove}
         onChange={this.handleFileChange}
         customRequest={this.fileCustomRequest}
+        showUploadList={showUploadList}
       >
         <div className="upload_txt">
           + 上传客户列表
@@ -218,28 +192,26 @@ export default class Uploader extends PureComponent {
   handleDeleteConfirm() {
     const { onDeleteFile } = this.props;
     this.setState({
-      // isShowDeleteConfirm: false,
       lastFile: {},
       uploadedFileKey: '',
       isShowUpload: true,
+      // 删除完毕之后，打开上传进度开关
+      showUploadList: true,
     });
     onDeleteFile();
   }
 
-  // @autobind
-  // handleCancel() {
-  //   this.setState({
-  //     isShowDeleteConfirm: false,
-  //   });
-  // }
+  @autobind
+  handleCancel() {
+    console.log('cancel');
+  }
 
   @autobind
   handleDeleteFile() {
-    // this.setState({
-    //   isShowDeleteConfirm: true,
-    // });
     confirm({
-      onOk: this.handleDeleteConfirm,
+      type: 'delete',
+      onOkHandler: this.handleDeleteConfirm,
+      onCancelHandler: this.handleCancel,
     });
   }
 
@@ -251,7 +223,7 @@ export default class Uploader extends PureComponent {
   }
 
   render() {
-    const {/* isShowDeleteConfirm, */ isShowUpload, isShowError, originFileName } = this.state;
+    const { isShowUpload, isShowError, originFileName } = this.state;
     return (
       <div>
         <div className="uploadBox">
@@ -261,7 +233,11 @@ export default class Uploader extends PureComponent {
           {
             !isShowUpload ? <div className="previewSection">
               <div className="uploadedFile">
-                <Icon className="excelIcon" type="excel" />
+                {
+                  originFileName.indexOf('csv') !== -1 ?
+                    <Icon className="csvIcon" type="CSV" /> :
+                    <Icon className="excelIcon" type="excel" />
+                }
                 <span>{originFileName}</span>
               </div>
               <div
@@ -274,14 +250,6 @@ export default class Uploader extends PureComponent {
               >删除</div>
             </div> : null
           }
-          {/*
-            isShowDeleteConfirm ?
-              <Confirm
-                type="delete"
-                onCancelHandler={this.handleCancel}
-                onOkHandler={this.handleDeleteConfirm}
-              /> : null
-          */}
         </div>
         {
           (isShowUpload && isShowError) ?

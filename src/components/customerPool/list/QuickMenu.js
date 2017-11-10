@@ -8,6 +8,7 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
 import Icon from '../../common/Icon';
+import { helper } from '../../../utils';
 
 import styles from './quickMenu.less';
 
@@ -33,12 +34,12 @@ export default class QuickMenu extends PureComponent {
     super(props);
     this.state = {
       addressEmail: {},
+      isEmail: false, // 用于判断 isFollows更改
     };
   }
 
   componentWillReceiveProps(nextProps) {
     const { custEmail } = this.props;
-    console.log(custEmail !== nextProps.custEmail);
     if (custEmail !== nextProps.custEmail) {
       const change = {
         ...this.state.addressEmail,
@@ -51,13 +52,12 @@ export default class QuickMenu extends PureComponent {
   }
   componentDidUpdate() {
     const { emailCustId, listItem } = this.props;
-    const { addressEmail } = this.state;
+    const { addressEmail, isEmail } = this.state;
     const email = addressEmail[emailCustId];
-    // debugger;
-    console.log(!_.isEmpty(email) && emailCustId === listItem.custId);
-    if (!_.isEmpty(email) && emailCustId === listItem.custId) {
-      const evt = new MouseEvent('click', { bubbles: false, cancelable: false, view: window });
-      this.sendEmail.dispatchEvent(evt);
+    // 在此以isEmail判断是否是isFollows更新渲染完成
+    if (!_.isEmpty(email) && (emailCustId === listItem.custId) && isEmail) {
+      // 模拟 fsp '#workspace-content>.wrapper' 上的鼠标mousedown事件
+      helper.trigger(this.sendEmail, 'click', false, false);
     }
   }
   @autobind
@@ -67,13 +67,13 @@ export default class QuickMenu extends PureComponent {
     let email = null;
     if (!_.isEmpty(address.orgCustomerContactInfoList)) {
       const index = _.findLastIndex(address.orgCustomerContactInfoList,
-          val => val.mainFlag);
+        val => val.mainFlag);
       finded = _.findLastIndex(address.orgCustomerContactInfoList[index].emailAddresses,
-          val => val.mainFlag);
+        val => val.mainFlag);
       addresses = address.orgCustomerContactInfoList[index];
     } else if (!_.isEmpty(address.perCustomerContactInfo)) {
       finded = _.findLastIndex(address.perCustomerContactInfo.emailAddresses,
-          val => val.mainFlag);
+        val => val.mainFlag);
       addresses = address.perCustomerContactInfo;
     } else {
       finded = -1;
@@ -92,6 +92,17 @@ export default class QuickMenu extends PureComponent {
     if (hrefUrl === NO_EMAIL_HREF) {
       onSendEmail(listItem);
     }
+    this.setState({
+      isEmail: true,
+    });
+  }
+  @autobind
+  handleAddFollow(listItem) {
+    const { onAddFollow } = this.props;
+    this.setState({
+      isEmail: false,
+    });
+    onAddFollow(listItem);
   }
 
   render() {
@@ -99,7 +110,6 @@ export default class QuickMenu extends PureComponent {
       listItem,
       createModal,
       toggleServiceRecordModal,
-      onAddFollow,
       currentFollowCustId,
       isFollows,
     } = this.props;
@@ -120,7 +130,7 @@ export default class QuickMenu extends PureComponent {
             <span><a ref={ref => this.sendEmail = ref} href={_.isEmpty(addressEmail[listItem.custId]) ? NO_EMAIL_HREF : `mailto:${addressEmail[listItem.custId]}`}> 邮件联系 </a></span>
           </li>
           <li
-            onClick={() => onAddFollow(listItem)}
+            onClick={() => this.handleAddFollow(listItem)}
             className={isFollow ? styles.follows : ''}
           >
             <Icon type="guanzhu" />

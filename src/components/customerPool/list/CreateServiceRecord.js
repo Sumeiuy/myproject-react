@@ -4,42 +4,27 @@
  * @author wangjunjun
  */
 
-import React, { PureComponent, PropTypes } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { Modal, Select, DatePicker, TimePicker, Input, message } from 'antd';
 import moment from 'moment';
-
-import Loading from '../../../layouts/Loading';
+import { fspContainer } from '../../../config';
 import { helper } from '../../../utils';
-
+import Loading from '../../../layouts/Loading';
 import styles from './createServiceRecord.less';
 
 const { Option } = Select;
 const { TextArea } = Input;
 
-// const d = new Date();
 // 日期组件的显示格式
 const dateFormat = 'YYYY/MM/DD';
 const timeFormat = 'HH:mm';
-// 当前日期的时间戳
-// const currentDate = d.getTime();
-// formatCurrentTime: 20:20   formatCurrentDate: 2017/12/12
-// let formatCurrentDate = moment(currentDate).format(dateFormat);
-// let formatCurrentTime = moment(currentDate).format(timeFormat);
 const width = { width: 142 };
-// 根据服务方式的key来记录对应的iconname
-// const SERVICE_ICON = {
-//   'HTSC Phone': 'dianhua',
-//   'HTSC Email': 'youjian',
-//   'HTSC SMS': 'duanxin',
-//   wx: 'weixin',
-//   Interview: 'beizi',
-//   'HTSC Other': 'other',
-// };
 
-// 服务内容和反馈内容字数限制
-const MAX_LENGTH = 1000;
+// 服务内容字数限制
+const MAX_LENGTH = 100;
 
 const EMPTY_LIST = [];
 
@@ -51,13 +36,27 @@ function range(start, end) {
   return result;
 }
 
-function generateSubType(arr) {
+// {key:1, children: [{key: 11}]} 转成 {1: [{key: 11}]}
+function generateObjOfKey(arr) {
   const subObj = {};
   arr.forEach((obj) => {
     if (obj.children && !_.isEmpty(obj.children)) {
       subObj[obj.key] = obj.children;
     } else {
       subObj[obj.key] = EMPTY_LIST;
+    }
+  });
+  return subObj;
+}
+
+// {value:2, children: [{key: 222}]} 转成 {2: [{key: 222}]}
+function generateObjOfValue(arr) {
+  const subObj = {};
+  arr.forEach((obj) => {
+    if (obj.children && !_.isEmpty(obj.children)) {
+      subObj[obj.value] = obj.children;
+    } else {
+      subObj[obj.value] = EMPTY_LIST;
     }
   });
   return subObj;
@@ -74,6 +73,7 @@ export default class CreateServiceRecord extends PureComponent {
     addServeRecordSuccess: PropTypes.bool.isRequired,
     dict: PropTypes.object.isRequired,
     loading: PropTypes.bool,
+    handleCloseClick: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -87,28 +87,31 @@ export default class CreateServiceRecord extends PureComponent {
     super(props);
     const {
       serveWay = [{}],
-      serviceTypeTree = [{}],
-      custFeedBackDict = [{}],
+      custServerTypeFeedBackDict = [{}],
     } = props.dict;
-    // 服务子类型
-    this.subServiceType = generateSubType(serviceTypeTree);
-    // 反馈子类型
-    this.subFeedBackType = generateSubType(custFeedBackDict);
+    // 服务类型value对应服务类型数组
+    this.serviceTypeObj = generateObjOfKey(custServerTypeFeedBackDict);
+    // 反馈类型数组
+    const feedbackTypeArr = (custServerTypeFeedBackDict[0] || {}).children || EMPTY_LIST;
+    // 反馈类型value对应反馈类型数组
+    this.feedbackTypeObj = generateObjOfValue(feedbackTypeArr);
+    // 反馈子类型数组
+    const feedbackTypeChildArr = (feedbackTypeArr[0] || {}).children || EMPTY_LIST;
     // 当前日期的时间戳
     const currentDate = new Date().getTime();
-    const serviceType = (serviceTypeTree[0] || {}).key;
-    const feedbackType = custFeedBackDict[0].key;
+    const serviceType = (custServerTypeFeedBackDict[0] || {}).key || '';
+    const feedbackType = (feedbackTypeArr[0] || {}).value || '';
+    const feedbackTypeChild = (feedbackTypeChildArr[0] || {}).value || '';
     this.state = {
       serviceWay: (serveWay[0] || {}).key,
       serviceType,
-      serviceTypeChild: (this.subServiceType[serviceType][0] || {}).key,
-      serviceTypeChildArr: this.subServiceType[serviceType],
       serviceDate: moment(currentDate).format(dateFormat),
       serviceTime: moment(currentDate).format(timeFormat),
       feedbackDate: moment(currentDate).format(dateFormat),
       feedbackType,
-      feedbackTypeChild: (this.subFeedBackType[feedbackType][0] || {}).value,
-      feedbackTypeChildArr: this.subFeedBackType[feedbackType],
+      feedbackTypeChild,
+      feedbackTypeArr,
+      feedbackTypeChildArr,
     };
   }
 
@@ -121,6 +124,17 @@ export default class CreateServiceRecord extends PureComponent {
     if (loading && !nextProps.loading && nextProps.addServeRecordSuccess === true) {
       onToggleServiceRecordModal(false);
       message.success('添加服务记录成功');
+      // 提交成功后，刷新360视图中的服务记录iframe
+      const iframe = document.querySelector(fspContainer.view360Iframe);
+      if (iframe) {
+        const iframeHash = iframe.contentWindow.location.hash;
+        const newIframeHash = iframeHash.replace(/[&\?]?_k=[^&]+/g, ''); // eslint-disable-line
+        const obj = helper.getQuery(newIframeHash);
+        obj.s = Date.now();
+        iframe.contentWindow.location.hash = Object.keys(obj).map(
+          key => (`${key}=${obj[key]}`),
+        ).join('&');
+      }
     }
   }
 
@@ -133,14 +147,13 @@ export default class CreateServiceRecord extends PureComponent {
       message.error('请输入此次服务的内容');
       return;
     }
-    if (helper.getStrLen(serviceContent) > MAX_LENGTH) {
+    if (serviceContent.length > MAX_LENGTH) {
       message.error(`服务的内容字数不能超过${MAX_LENGTH}`);
       return;
     }
     const {
       serviceWay,
       serviceType,
-      serviceTypeChild,
       serviceDate,
       serviceTime,
       feedbackDate,
@@ -155,12 +168,12 @@ export default class CreateServiceRecord extends PureComponent {
       custId: id,
       serveWay: serviceWay,
       serveType: serviceType,
-      type: serviceTypeChild,
+      type: serviceType,
       serveTime: `${serviceDate.replace(/\//g, '-')} ${serviceTime}`,
       serveContentDesc: serviceContent,
       feedBackTime: feedbackDate.replace(/\//g, '-'),
-      serveFeedBack: feedbackType,
-      serveFeedBack2: feedbackTypeChild,
+      serveCustFeedBack: feedbackType,
+      serveCustFeedBack2: feedbackTypeChild || '',
     });
     serviceContentNode.value = '';
   }
@@ -168,7 +181,9 @@ export default class CreateServiceRecord extends PureComponent {
   // 关闭弹窗
   @autobind
   handleCancel() {
-    const { onToggleServiceRecordModal } = this.props;
+    const { onToggleServiceRecordModal, handleCloseClick } = this.props;
+    // 手动上传日志
+    handleCloseClick();
     onToggleServiceRecordModal(false);
   }
 
@@ -183,18 +198,16 @@ export default class CreateServiceRecord extends PureComponent {
   // 保存服务类型的值
   @autobind
   handleServiceType(value) {
+    const feedbackTypeArr = this.serviceTypeObj[value];
+    const feedbackType = (feedbackTypeArr[0] || {}).value;
+    const feedbackTypeChildArr = (feedbackTypeArr[0] || {}).children || EMPTY_LIST;
+    const feedbackTypeChild = (feedbackTypeChildArr[0] || {}).value;
     this.setState({
       serviceType: value,
-      serviceTypeChild: this.subServiceType[value][0].key,
-      serviceTypeChildArr: this.subServiceType[value],
-    });
-  }
-
-  // 保存服务子类型的值
-  @autobind
-  handleServiceTypeChild(value) {
-    this.setState({
-      serviceTypeChild: value,
+      feedbackType,
+      feedbackTypeArr,
+      feedbackTypeChild,
+      feedbackTypeChildArr,
     });
   }
 
@@ -231,10 +244,13 @@ export default class CreateServiceRecord extends PureComponent {
   // 保存反馈类型的值
   @autobind
   handleFeedbackType(value) {
+    const { feedbackTypeArr } = this.state;
+    this.feedbackTypeObj = generateObjOfValue(feedbackTypeArr);
+    const curFeedbackTypeArr = this.feedbackTypeObj[value];
     this.setState({
       feedbackType: value,
-      feedbackTypeChild: this.subFeedBackType[value][0].value,
-      feedbackTypeChildArr: this.subFeedBackType[value],
+      feedbackTypeChild: _.isEmpty(curFeedbackTypeArr) ? '' : curFeedbackTypeArr[0].value,
+      feedbackTypeChildArr: curFeedbackTypeArr,
     });
   }
 
@@ -296,10 +312,9 @@ export default class CreateServiceRecord extends PureComponent {
       serviceTime,
       serviceDate,
       feedbackDate,
-      serviceTypeChildArr,
-      serviceTypeChild,
       feedbackType,
       feedbackTypeChild,
+      feedbackTypeArr,
       feedbackTypeChildArr,
     } = this.state;
     if (!dict) {
@@ -317,7 +332,6 @@ export default class CreateServiceRecord extends PureComponent {
         <a className={styles.submitBtn} onClick={this.handleSubmit}>提交</a>
       </div>
     );
-    console.log('eeee', this.state);
     return (
       <Modal
         width={688}
@@ -334,7 +348,7 @@ export default class CreateServiceRecord extends PureComponent {
               <p className={styles.categoryTitle}>服务信息</p>
               <div className={styles.row}>
                 <i className={styles.dot}>*</i>
-                <span className={styles.lable}>服务渠道：</span>
+                <span className={styles.lable}>服务方式：</span>
                 <Select
                   value={serviceWay}
                   style={width}
@@ -360,7 +374,7 @@ export default class CreateServiceRecord extends PureComponent {
                 />
                 <TimePicker
                   style={width}
-                  className={styles.ml34}
+                  className={`${styles.ml34} ${styles.hide}`}
                   placeholder={'选择时间'}
                   value={moment(serviceTime, timeFormat)}
                   onChange={this.handleServiceTime}
@@ -378,19 +392,7 @@ export default class CreateServiceRecord extends PureComponent {
                   onChange={this.handleServiceType}
                 >
                   {
-                    (dict.serviceTypeTree || EMPTY_LIST).map(obj => (
-                      <Option key={obj.key} value={obj.key}>{obj.value}</Option>
-                    ))
-                  }
-                </Select>
-                <Select
-                  style={width}
-                  className={styles.ml34}
-                  value={serviceTypeChild}
-                  onChange={this.handleServiceTypeChild}
-                >
-                  {
-                    (serviceTypeChildArr || EMPTY_LIST).map(obj => (
+                    (dict.custServerTypeFeedBackDict || EMPTY_LIST).map(obj => (
                       <Option key={obj.key} value={obj.key}>{obj.value}</Option>
                     ))
                   }
@@ -415,23 +417,26 @@ export default class CreateServiceRecord extends PureComponent {
                   onChange={this.handleFeedbackType}
                 >
                   {
-                    (dict.custFeedBackDict || EMPTY_LIST).map(obj => (
-                      <Option key={obj.key} value={obj.key}>{obj.value}</Option>
-                    ))
-                  }
-                </Select>
-                <Select
-                  style={width}
-                  className={styles.ml34}
-                  value={feedbackTypeChild}
-                  onChange={this.handleFeedbackTypeChild}
-                >
-                  {
-                    (feedbackTypeChildArr || EMPTY_LIST).map(obj => (
+                    (feedbackTypeArr).map(obj => (
                       <Option key={obj.key} value={obj.value}>{obj.value}</Option>
                     ))
                   }
                 </Select>
+                {
+                  _.isEmpty(feedbackTypeChildArr) ? null :
+                  <Select
+                    value={feedbackTypeChild}
+                    style={width}
+                    className={styles.ml34}
+                    onChange={this.handleFeedbackTypeChild}
+                  >
+                    {
+                      (feedbackTypeChildArr).map(obj => (
+                        <Option key={obj.key} value={obj.value}>{obj.value}</Option>
+                      ))
+                    }
+                  </Select>
+                }
               </div>
               <div className={styles.row}>
                 <i className={styles.dot}>*</i>
@@ -449,7 +454,6 @@ export default class CreateServiceRecord extends PureComponent {
             :
             <Loading loading={loading} />
         }
-
       </Modal>
     );
   }

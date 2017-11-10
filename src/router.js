@@ -15,7 +15,6 @@ import {
 import { fspContainer } from './config';
 
 import Main from './layouts/Main';
-
 import Empty from './routes/empty/Home';
 import FeedBack from './routes/feedback/Home';
 import CommissionHome from './routes/commission/Home';
@@ -26,14 +25,11 @@ import BoardEditHome from './routes/boardEdit/Home';
 import ReportHome from './routes/reports/Home';
 import PreviewReport from './routes/reports/PreviewReport';
 import HistoryHome from './routes/history/Home';
-import PermissonHome from './routes/permission/Home';
-import Approval from './routes/approval/Home';
 import CustomerPoolHome from './routes/customerPool/Home';
 import ToDo from './routes/customerPool/ToDo';
 import CustomerList from './routes/customerPool/CustomerList';
 import CustomerGroup from './routes/customerPool/CustomerGroup';
 import CreateTask from './routes/customerPool/CreateTask';
-import Contract from './routes/contract/Home';
 import FullChannelServiceRecord from './routes/fullChannelServiceRecord/Home';
 import CustomerGroupManage from './routes/customerPool/CustomerGroupManage';
 import ViewpointList from './routes/customerPool/ViewpointList';
@@ -41,6 +37,9 @@ import ViewpointDetail from './routes/customerPool/ViewpointDetail';
 import ServiceLog from './routes/customerPool/ServiceLog';
 import TaskFlow from './routes/customerPool/TaskFlow';
 import ChannelsTypeProtocol from './routes/channelsTypeProtocol/Home';
+import Approval from './routes/approval/Home';
+import PermissonHome from './routes/permission/Home';
+import Contract from './routes/contract/Home';
 
 function switchRouter() {
   const fsp = document.querySelector(fspContainer.container);

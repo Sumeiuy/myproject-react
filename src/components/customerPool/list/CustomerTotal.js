@@ -31,7 +31,7 @@ export default class CustomerTotal extends PureComponent {
         ele = <p className="total-num">找到满足标签条件的客户<em>&nbsp;{num}&nbsp;</em>户</p>;
         break;
       case 'business':
-        ele = <p className="total-num">找到满足业务办理条件的客户<em>&nbsp;{num}&nbsp;</em>户</p>;
+        ele = <p className="total-num">找到潜在业务客户<em>&nbsp;{num}&nbsp;</em>户</p>;
         break;
       case 'custIndicator':
         ele = <p className="total-num">找到{decodeURIComponent(bname)}<em>&nbsp;{num}&nbsp;</em>户</p>;

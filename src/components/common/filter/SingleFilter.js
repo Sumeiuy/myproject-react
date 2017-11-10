@@ -13,6 +13,11 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
+import classnames from 'classnames';
+
+import Icon from '../Icon';
+import { helper } from '../../../utils';
+import { fspContainer } from '../../../config';
 
 import styles from './filter.less';
 
@@ -29,6 +34,55 @@ export default class SingleFilter extends PureComponent {
     filterField: [],
   }
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      moreBtnVisible: false,
+      fold: true,
+    };
+    this.domNodeLineHeight = '0px';
+  }
+
+  componentDidMount() {
+    this.addMoreBtn();
+    const sidebarHideBtn = document.querySelector(fspContainer.sidebarHideBtn);
+    const sidebarShowBtn = document.querySelector(fspContainer.sidebarShowBtn);
+    if (sidebarHideBtn && sidebarShowBtn) {
+      sidebarHideBtn.addEventListener('click', this.addMoreBtn);
+      sidebarShowBtn.addEventListener('click', this.addMoreBtn);
+    }
+  }
+
+  componentWillUnmount() {
+    const sidebarHideBtn = document.querySelector(fspContainer.sidebarHideBtn);
+    const sidebarShowBtn = document.querySelector(fspContainer.sidebarShowBtn);
+    if (sidebarHideBtn && sidebarShowBtn) {
+      sidebarHideBtn.removeEventListener('click', this.addMoreBtn);
+      sidebarShowBtn.removeEventListener('click', this.addMoreBtn);
+    }
+  }
+
+  // 判断是否超过一行，超过则显示 ... , 点击 ... 展开所有
+  @autobind
+  addMoreBtn() {
+    if (this.domNode) {
+      const domNodeHeight = helper.getCssStyle(this.domNode, 'height');
+      this.domNodeLineHeight = helper.getCssStyle(this.domNode, 'line-height');
+      if (parseInt(domNodeHeight, 10) >= 2 * parseInt(this.domNodeLineHeight, 10)) {
+        this.domNode.style.height = this.domNodeLineHeight;
+        this.setState({
+          moreBtnVisible: true,
+        });
+      } else {
+        this.domNode.style.height = 'auto';
+        this.setState({
+          moreBtnVisible: false,
+          fold: true,
+        });
+      }
+    }
+  }
+
   @autobind
   handleClick(value) {
     const { filter, onChange } = this.props;
@@ -42,12 +96,24 @@ export default class SingleFilter extends PureComponent {
     });
   }
 
+  @autobind
+  handleMore() {
+    const { fold } = this.state;
+    this.domNode.style.height = fold ? 'auto' : this.domNodeLineHeight;
+    this.setState({ fold: !fold });
+  }
+
   render() {
     const { filterLabel, filterField, value } = this.props;
+    const { moreBtnVisible, fold } = this.state;
+    const foldClass = classnames({ up: !fold });
     return (
       <div className={styles.filter}>
         <span>{filterLabel}:</span>
-        <ul>
+        <ul
+          className={fold ? 'single' : 'multi'}
+          ref={r => this.domNode = r}
+        >
           {
             filterField.map(item => (
               <li
@@ -58,6 +124,14 @@ export default class SingleFilter extends PureComponent {
                 {item.value}
               </li>
             ))
+          }
+          {
+            moreBtnVisible ?
+              <li className={styles.moreBtn} onClick={this.handleMore}>
+                { fold ? '展开' : '收起' }&nbsp;
+                <Icon type="more-down-copy" className={foldClass} />
+              </li> :
+            null
           }
         </ul>
       </div>
