@@ -308,7 +308,7 @@ export default class CustomerList extends PureComponent {
       param.dateType = query.cycleSelect || (cycle[0] || {}).key;
       // 我的客户 和 没有权限时，custType=1,其余情况custType=3
       param.custType = CUST_MANAGER;
-      if (this.authority || (query.ptyMng && query.ptyMng.split('_')[1] !== empNum)) {
+      if ((query.ptyMng && query.ptyMng.split('_')[1] !== empNum) || this.authority) {
         param.custType = ORG;
       }
     }
