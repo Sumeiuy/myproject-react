@@ -20,6 +20,7 @@ const INITIAL_PAGE_FIVE_SIZE = 5;
 export default {
   namespace: 'customerPool',
   state: {
+    custCount: [0, 0, 0, 0],   // 经营指标中的新增客户数指标
     information: {},     // 资讯
     performanceIndicators: [],  // 投顾指标
     hsRateAndBusinessIndicator: [],  // 沪深归集率和开通业务指标（经营指标）
@@ -112,6 +113,7 @@ export default {
     // 审批人列表
     approvalList: [],
   },
+
   subscriptions: {
     setup({ dispatch, history }) {
       dispatch({ type: 'getCustRangeByAuthority' });
@@ -170,6 +172,14 @@ export default {
     },
   },
   effects: {
+    // 投顾绩效
+    * getCustCount({ payload }, { call, put }) {  //eslint-disable-line
+      const response = yield call(api.getCustCount, payload);
+      yield put({
+        type: 'getCustCountSuccess',
+        payload: response,
+      });
+    },
     // 投顾绩效
     * getPerformanceIndicators({ payload }, { call, put }) {  //eslint-disable-line
       const response = yield call(api.getPerformanceIndicators, payload);
@@ -679,6 +689,13 @@ export default {
     },
   },
   reducers: {
+    getCustCountSuccess(state, action) {
+      const { payload: { resultData } } = action;
+      return {
+        ...state,
+        custCount: resultData,
+      };
+    },
     getPerformanceIndicatorsSuccess(state, action) {
       const { payload: { resultData } } = action;
       return {

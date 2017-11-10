@@ -43,6 +43,7 @@ const effects = {
   getInformation: 'customerPool/getInformation',
   getHSRateAndBusinessIndicator: 'customerPool/getHSRateAndBusinessIndicator',
   getPerformanceIndicators: 'customerPool/getPerformanceIndicators',
+  getCustCount: 'customerPool/getCustCount',
   switchTab: 'customerPoolHome/switchTab',
 };
 
@@ -67,9 +68,11 @@ const mapStateToProps = state => ({
   information: state.customerPool.information, // 首席投顾观点
   performanceIndicators: state.customerPool.performanceIndicators, // 绩效指标
   hsRateAndBusinessIndicator: state.customerPool.hsRateAndBusinessIndicator, // 沪深归集率和业务开通指标（经营指标）
+  custCount: state.customerPool.custCount, // 绩效指标
 });
 
 const mapDispatchToProps = {
+  getCustCount: fetchDataFunction(true, effects.getCustCount),
   getHSRateAndBusinessIndicator: fetchDataFunction(true, effects.getHSRateAndBusinessIndicator),
   getPerformanceIndicators: fetchDataFunction(true, effects.getPerformanceIndicators),
   getInformation: fetchDataFunction(true, effects.getInformation),
@@ -119,6 +122,8 @@ export default class Home extends PureComponent {
     hsRateAndBusinessIndicator: PropTypes.array,
     getHSRateAndBusinessIndicator: PropTypes.func.isRequired,
     switchTab: PropTypes.func.isRequired,
+    custCount: PropTypes.array,
+    getCustCount: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -137,6 +142,7 @@ export default class Home extends PureComponent {
     information: EMPTY_OBJECT,
     performanceIndicators: EMPTY_LIST,
     hsRateAndBusinessIndicator: EMPTY_LIST,
+    custCount: [0, 0, 0, 0],
   }
 
   constructor(props) {
@@ -230,25 +236,29 @@ export default class Home extends PureComponent {
     const {
       getPerformanceIndicators,
       getManageIndicators,
+      getCustCount,
       empInfo = {},
     } = this.props;
     const { tgQyFlag = false } = empInfo.empInfo || {};
-
-    getManageIndicators({
+    const param = {
       custType, // 客户范围类型
       dateType: this.getDateType(cycleSelect), // 周期类型
       orgId, // 组织ID
+    };
+    // 经营指标新增客户数指标
+    getCustCount({
+      ...param,
+      empId: helper.getEmpId(),
     });
+    getManageIndicators(param);
 
     // 查看投顾绩效开关:empinfo返回的权限指标字段（tgQyFlag：bool）
     if (tgQyFlag) {
       getPerformanceIndicators({
-        begin,
+        ...param,
         end,
+        begin,
         empId: helper.getEmpId(),
-        custType, // 客户范围类型
-        dateType: this.getDateType(cycleSelect), // 周期类型
-        orgId, // 组织ID
       });
     }
   }
@@ -513,10 +523,11 @@ export default class Home extends PureComponent {
       performanceIndicators,
       hsRateAndBusinessIndicator,
       empInfo = {},
+      custCount, // 经营指标新增客户指标数据
     } = this.props;
     // 是否能看投顾绩效的标记
-    // const { isShowPerformance = false } = this.state;
     const { tgQyFlag = false } = empInfo.empInfo || {};
+    const manageIndi = { ...manageIndicators, custCount };
     return (
       <div className={styles.customerPoolWrap}>
         <Search
@@ -550,7 +561,7 @@ export default class Home extends PureComponent {
                 <ManageIndicators
                   empInfo={empInfo}
                   push={push}
-                  indicators={manageIndicators}
+                  indicators={manageIndi}
                   location={location}
                   cycle={cycle}
                   hsRateAndBusinessIndicator={hsRateAndBusinessIndicator}
