@@ -12,9 +12,15 @@ import _ from 'lodash';
 import CreateTaskSuccess from '../../components/customerPool/createTask/CreateTaskSuccess';
 import CreateTaskFormFlow from '../../components/customerPool/createTask/CreateTaskFormFlow';
 import styles from './createTask.less';
+import { fspGlobal, helper } from '../../utils';
+
+
+const orgId = helper.getOrgId();
+const EMPTY_ARRAY = [];
 
 const effects = {
   createTask: 'customerPool/createTask',
+  getApprovalList: 'customerPool/getApprovalList',
 };
 
 const fectchDataFunction = (globalLoading, type) => query => ({
@@ -27,6 +33,8 @@ const mapStateToProps = state => ({
   dict: state.app.dict,
   createTaskResult: state.customerPool.createTaskResult,
   storedTaskFlowData: state.customerPool.storedTaskFlowData,
+  approvalList: state.customerPool.approvalList,
+  getApprovalListLoading: state.loading.effects[effects.getApprovalList],
 });
 
 const mapDispatchToProps = {
@@ -35,7 +43,13 @@ const mapDispatchToProps = {
     type: 'customerPool/saveTaskFlowData',
     payload: query,
   }),
+  clearTaskFlowData: query => ({
+    type: 'customerPool/clearTaskFlowData',
+    payload: query || {},
+  }),
   push: routerRedux.push,
+  goBack: routerRedux.goBack,
+  getApprovalList: fectchDataFunction(true, effects.getApprovalList),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -46,37 +60,64 @@ export default class CreateTask extends PureComponent {
     location: PropTypes.object.isRequired,
     data: PropTypes.array,
     dict: PropTypes.object,
+    goBack: PropTypes.func.isRequired,
     createTask: PropTypes.func.isRequired,
     createTaskResult: PropTypes.object,
     push: PropTypes.func.isRequired,
     storedTaskFlowData: PropTypes.object.isRequired,
     saveTaskFlowData: PropTypes.func.isRequired,
+    getApprovalList: PropTypes.func.isRequired,
+    approvalList: PropTypes.array.isRequired,
+    clearTaskFlowData: PropTypes.func.isRequired,
+    getApprovalListLoading: PropTypes.bool,
   };
 
   static defaultProps = {
     data: [],
     dict: {},
     createTaskResult: {},
+    getApprovalListLoading: false,
   };
 
   constructor(props) {
     super(props);
     this.state = {
       isSuccess: false,
+      isApprovalListLoadingEnd: false,
+      isShowApprovalModal: false,
     };
   }
 
-  componentWillMount() {
-  }
-
   componentWillReceiveProps(nextProps) {
-    const { createTaskResult: preCreateTaskResult } = this.props;
-    const { createTaskResult: nextcreateTaskResult } = nextProps;
+    const { createTaskResult: preCreateTaskResult,
+      getApprovalListLoading,
+      approvalList = EMPTY_ARRAY } = this.props;
+    const { createTaskResult: nextcreateTaskResult,
+      approvalList: nextList = EMPTY_ARRAY,
+      getApprovalListLoading: nextApprovalListLoading } = nextProps;
     if (preCreateTaskResult !== nextcreateTaskResult) {
       this.handleCreateTaskSuccess(nextcreateTaskResult);
     }
-    // console.log(nextcreateTaskResult);
+
+    if (getApprovalListLoading && !nextApprovalListLoading) {
+      this.setState({
+        isApprovalListLoadingEnd: true,
+      });
+    }
+
+    if (approvalList !== nextList) {
+      this.setState({
+        isShowApprovalModal: true,
+      });
+    }
   }
+
+  componentWillUnmount() {
+    const { clearTaskFlowData } = this.props;
+    // 清除数据
+    clearTaskFlowData();
+  }
+
 
   @autobind
   handleCreateTaskSuccess(result) {
@@ -97,10 +138,43 @@ export default class CreateTask extends PureComponent {
     createTask(value);
   }
 
+  /* 关闭当前页 */
+  @autobind
+  handleCancleTab() {
+    const { location: { query: { source = '' } } } = this.props;
+    const param = {
+      id: 'tab-home',
+      title: '首页',
+    };
+    if (source === 'custGroupList') {
+      // 从客户分组管理过来的，是另外开的tab，需要关闭当前新开的tab
+      // 并且用closeTabMenu关闭
+      fspGlobal.closeTabMenu('RCT_FSP_CREATE_TASK');
+    } else {
+      fspGlobal.closeRctTabById('RCT_FSP_CUSTOMER_LIST');
+    }
+    fspGlobal.openRctTab({ url: '/customerPool', param });
+  }
+
+  @autobind
+  resetLoading() {
+    this.setState({
+      isShowApprovalModal: false,
+      isApprovalListLoadingEnd: true,
+    });
+  }
+
   render() {
-    const { dict, location, push, storedTaskFlowData, saveTaskFlowData } = this.props;
-    const { isSuccess } = this.state;
-    // console.log(isSuccess);
+    const {
+      dict,
+      location,
+      push,
+      storedTaskFlowData,
+      saveTaskFlowData,
+      approvalList,
+      getApprovalList,
+    } = this.props;
+    const { isSuccess, isApprovalListLoadingEnd, isShowApprovalModal } = this.state;
     return (
       <div className={styles.taskBox}>
         {!isSuccess ?
@@ -110,10 +184,20 @@ export default class CreateTask extends PureComponent {
             createTask={this.handleCreateTask}
             storedTaskFlowData={storedTaskFlowData}
             saveTaskFlowData={saveTaskFlowData}
+            approvalList={approvalList}
+            getApprovalList={getApprovalList}
+            push={push}
+            orgId={orgId}
+            onCloseTab={this.handleCancleTab}
+            isShowApprovalModal={isShowApprovalModal}
+            isApprovalListLoadingEnd={isApprovalListLoadingEnd}
+            onCancel={this.resetLoading}
           /> :
           <CreateTaskSuccess
             successType={isSuccess}
             push={push}
+            location={location}
+            onCloseTab={this.handleCancleTab}
           />
         }
       </div>

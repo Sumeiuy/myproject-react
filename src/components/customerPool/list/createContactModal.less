@@ -1,5 +1,4 @@
 .contactModal {
-  // background: #ffffff;
   :global {
     & .ant-modal-title {
       color: #696969;
@@ -7,11 +6,9 @@
       font-weight: 600;
     }
     & .ant-modal-header {
-      padding: 0;
-      border-bottom: 0px;
-      padding: 0px 20px 0px 25px;
+      border-bottom: 0;
+      padding: 0 20px 0 25px;
       height: 40px;
-      // overflow: hidden;
       vertical-align: middle;
       & > .ant-modal-title {
         line-height: 40px;
@@ -19,7 +16,7 @@
     }
     & .ant-modal-footer {
       height: 55px;
-      border-top: 0px;
+      border-top: 0;
     }
     & .ant-modal-header::after {
       display: block;
@@ -30,12 +27,14 @@
       border-bottom: 1px solid #efefef;
     }
     & .ant-modal-body {
-      padding: 0px;
+      padding: 0;
       padding-top: 14px;
       padding-left: 25px;
       padding-right: 20px;
       overflow-y: scroll;
-      height: e("calc(80vh - 110px)");
+      // height: e("calc(80vh - 110px)");
+      max-height: e("calc(80vh - 110px)");
+      min-height: e("calc(80vh - 200px)");
       .ant-collapse-item {
         margin-bottom: 10px;
         border: 1px solid #efefef;
@@ -47,7 +46,7 @@
         }
         .ant-collapse-content {
           .ant-collapse-content-box {
-          padding: 0px;
+          padding: 0;
           }
         }
       }
@@ -57,18 +56,19 @@
           content: '';
           height: 1px;
           width: 100%;
-          border-bottom: 1px dashed #dddddd;
+          border-bottom: 1px dashed #ddd;
           padding-top: 8px;
-          margin-left: 0px;
+          margin-left: 0;
         }
       }
     }
   }
   .title {
-    font-size: 14px;
+    font-size: 15px;
+    color: #888;
   }
   .noneInfo {
-    color: #333333;
+    color: #333;
     font-size: 16px;
     width: 60%;
     padding-bottom: 10px;
@@ -82,10 +82,21 @@
       padding-right: 10px;
       & > button {
         border: 1px solid #108ee9;
-        height: 100%;
+        background: #108ee9;
+        border-radius: 3px;
+        padding-left: 5px;
+        padding-right: 10px;
+        height: 40px;
+        width: 135px;
+        font-size: 15px;
         & > span {
-          font-size: 13px;
-          color: #108ee9;
+          font-size: 15px;
+          color: #fff;
+        }
+        & > .addIcon {
+          color: #fff;
+          font-size: 20px;
+          margin-right: 5px;
         }
       }
     }
@@ -99,36 +110,58 @@
     padding-bottom: 5px;
     position: relative;
     & > .mainContact {
-      width: 100%;
+      width: 50%;
       display: flex;
       align-items: center;
       text-align: left;
+      & > .phoneIcon {
+        width: 39px;
+        height: 39px;
+        color: #10aeff;
+        font-size: 42px;
+        margin-top: -20px;
+      }
       & > img {
         display: inline-block;
         vertical-align: middle;
         outline: 0;
         border: 0;
-        width: 30px;
-        height: 30px;
+        width: 40px;
+        height: 40px;
       }
       & > span {
-        font-size: 30px;
-        color: #696969;
         padding-left: 10px;
+        font-size: 40px;
+        color: #4a4a4a;
+        letter-spacing: -0.25px;
       }
     }
     & > .rightSection {
-      width: 100%;
+      width: 50%;
       text-align: right;
-      height: 32px;
       padding-right: 10px;
       position: absolute;
+      height: 60px;
+      right: 0;
+      top: 20px;
       & > button {
         border: 1px solid #108ee9;
-        height: 100%;
+        background: #108ee9;
+        border-radius: 3px;
+        padding-left: 5px;
+        padding-right: 10px;
+        height: 35px;
+        width: 135px;
+        font-size: 15px;
         & > span {
-          font-size: 13px;
-          color: #108ee9;
+          font-size: 15px;
+          color: #fff;
+        }
+        & > .addIcon {
+          color: #fff;
+          font-size: 20px;
+          margin-right: 5px;
+          font-weight: 600;
         }
       }
     }
@@ -137,13 +170,18 @@
     display: flex;
     justify-content: flex-start;
     align-items: flex-start;
-    padding-top: 5px;
+    margin-bottom: 5px;
     & > .leftSection {
-      width: 10%;
       display: flex;
-      justify-content: flex-end; // 右对齐
+      justify-content: flex-end;
       align-items: center;
       height: 20px;
+      font-size: 15px;
+      color: #888;
+      letter-spacing: -0.09px;
+      & > span {
+        width: 75px;
+      }
     }
     & > .rightSection {
       width: 90%;
@@ -152,22 +190,21 @@
       justify-content: flex-start;
       align-items: center;
       & > .telSection {
-        width: 33.3%;
+        margin-right: 10px;
         display: block;
         font-size: 14px;
         padding-bottom: 5px;
         text-overflow: ellipsis;
         overflow: hidden;
         white-space: nowrap;
-      }
-      & > .telSection:not(:last-child) {
-        & > span::after{
-          border-right: 2px solid #dddddd;
-          display: inline-block;
-          content: '';
-          height: 11px;
-          width: 50px;
+        & > span {
+          width: 145px;
         }
+      }
+      & > .telSection:not(:last-child):after {
+        content: ';';
+        display: inline-block;
+        margin-left: 5px;
       }
     }
   }
@@ -179,40 +216,35 @@
     justify-content: flex-start;
     align-items: center;
     & > .tipIcon {
-      color: white;
-      height: 20px;
-      width: 20px;
-      background: #fdb02b;
-      border-radius: 4px;
+      background: #e46575;
       text-align: center;
-      font-size: 14px;
+      font-size: 12px;
+      border-radius: 50%;
+      color: white;
       & > i {
         vertical-align: baseline;
         line-height: 20px;
       }
     }
     & > span:last-child {
-      color: #a1a1a1;
-      padding-left: 10px;
+      font-size: 12px;
+      color: #576b95;
+      padding-left: 5px;
     }
-  }
-  .split {
-    display: block;
-    border: 1px dashed #c2c2c2;
-    margin-top: 10px;
   }
   .serviceTitle {
     font-size: 14px;
     color: #808080;
     padding-bottom: 10px;
-    padding-top: 10px;
+    padding-top: 30px;
+    border-bottom: 1px solid #ddd;
   }
   .orgCustOtherTelsSection {
-    padding-top: 10px;
+    padding-top: 18px;
     & > .telTable {
       padding-bottom: 10px;
       table {
-        border: 1px solid #dddddd;
+        border: 1px solid #ddd;
       }
       table > tbody > tr:nth-child(odd) {
         background-color: #f9f9f9;
@@ -225,16 +257,16 @@
         text-align: center;
       }
       table > thead > tr > th {
-        background-color: #ffffff;
-        color: #666666;
+        background-color: #fff;
+        color: #666;
         text-align: center;
         font-weight: 600;
-        max-width:129px;
+        max-width: 129px;
       }
       table > tbody > tr > td {
-        border-bottom: 0px;
-        :global{
-          .recordSection{
+        border-bottom: 0;
+        :global {
+          .recordSection {
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -242,7 +274,6 @@
           }
         }
       }
-
     }
   }
   .serviceCollapse {
@@ -298,7 +329,7 @@
           font-size: 12px;
           & > .yearTime {
             font-size: 12px;
-            color: #777777;
+            color: #777;
           }
           & > .dayTime {
             font-size: 12px;
@@ -328,12 +359,12 @@
         }
         & > .rightSection {
           width: 50%;
-          & > .actionOwner, 
-          .custFeedback, 
-          .feedbackTime, 
-          .serviceRecord, 
-          .result, 
-          .custFeedbackP, 
+          & > .actionOwner,
+          .custFeedback,
+          .feedbackTime,
+          .serviceRecord,
+          .result,
+          .custFeedbackP,
           .feedbackTimeP,
           .resultP {
             display: flex;
@@ -352,7 +383,7 @@
             font-size: 12px;
             text-align: left;
             padding-left: 15px;
-            color: #666666;
+            color: #666;
             text-overflow: ellipsis;
             overflow: hidden;
             white-space: nowrap;
@@ -364,11 +395,11 @@
         & > .leftSection {
           width: 50%;
         & > div:nth-child(2), div:nth-child(3), div:nth-child(4) {
-            border-right: 1px solid #dddddd;
+            border-right: 1px solid #ddd;
         }
         & > .taskNameSection,
         .taskContent,
-        .taskType, 
+        .taskType,
         .excuteType,
         .typeP,
         .actionContentP,
@@ -391,7 +422,7 @@
             font-size: 12px;
             text-align: left;
             padding-left: 15px;
-            color: #666666;
+            color: #666;
             text-overflow: ellipsis;
             overflow: hidden;
             white-space: nowrap;
@@ -413,7 +444,7 @@
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
-          color: #666666;
+          color: #666;
           font-size: 12px;
         }
         & > .headerRight {
@@ -424,7 +455,7 @@
           text-overflow: ellipsis;
           white-space: nowrap;
           color: #a1a1a1;
-          &  span {
+          & span {
             font-size: 12px;
           }
           & > .serviceStatus {
@@ -454,6 +485,6 @@
           }
         }
       }
-      }
     }
+  }
 }

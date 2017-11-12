@@ -1,8 +1,11 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import Search from '../../common/Search/index';
+import _ from 'lodash';
+// import Search from '../../common/Search/index';
 import TaskSearchRow from './TaskSearchRow';
+import SimpleSearch from '../groupManage/CustomerGroupListSearch';
+import { helper } from '../../../utils';
 import styles from './selectLabelCust.less';
 
 const EMPTY_OBJECT = {};
@@ -14,89 +17,154 @@ export default class SelectLabelCust extends PureComponent {
     peopleOfLabelData: PropTypes.object.isRequired,
     // 保存的数据
     storedData: PropTypes.object,
+    orgId: PropTypes.string,
+    isLoadingEnd: PropTypes.bool.isRequired,
+    onCancel: PropTypes.func.isRequired,
+    isHasAuthorize: PropTypes.bool,
+    visible: PropTypes.bool.isRequired,
   };
 
   static defaultProps = {
     storedData: {},
+    orgId: null,
+    isHasAuthorize: false,
   };
 
   constructor(props) {
     super(props);
     const { storedData = EMPTY_OBJECT } = props;
     const { labelCust = EMPTY_OBJECT } = storedData;
+    const { condition = '', labelId = '', tipsSize = 0 } = labelCust || EMPTY_OBJECT;
+
     this.state = {
       current: 0,
-      data: labelCust,
-      condition: '',
+      labelCust,
+      condition,
+      currentSelectLabel: labelId,
+      labelId,
+      tipsSize,
     };
     this.bigBtn = true;
   }
 
-  // componentWillReceiveProps(nextProps) {
-  //   this.getData();
-  // }
+  componentWillReceiveProps(nextProps) {
+    const { circlePeopleData } = nextProps;
+    const { circlePeopleData: prevCirclePeopleData } = this.props;
+    if (circlePeopleData !== prevCirclePeopleData) {
+      this.setState({
+        tipsSize: _.size(circlePeopleData),
+      });
+    }
+  }
 
   @autobind
   getData() {
-    const { custId, condition } = this.state;
+    const { labelId = '', condition, tipsSize } = this.state;
+    if (_.isEmpty(condition)) {
+      return {
+        labelCust: {},
+      };
+    }
+
     const { circlePeopleData } = this.props;
+    const matchedData = _.find(circlePeopleData, item => item.id === labelId);
+    const { labelDesc = '', customNum = '', labelMapping } = matchedData || EMPTY_OBJECT;
+
     const labelCust = {
-      custId,
-      circlePeopleData,
+      labelId,
+      labelMapping,
+      labelDesc,
       condition,
+      customNum,
+      tipsSize,
     };
-    console.log('data---', { data: labelCust });
+
     return {
-      data: labelCust,
+      labelCust,
     };
   }
 
   @autobind
-  handleSearchClick({ value, selectedItem }) {
-    console.log('search click---', value, '--', JSON.stringify(selectedItem));
-    const { getLabelInfo } = this.props;
+  handleSearchClick(value) {
+    const { getLabelInfo, isHasAuthorize, orgId } = this.props;
+
     const param = {
       condition: value,
+      ptyMngId: helper.getEmpId(),
     };
+
     this.setState({
       condition: value,
+      labelId: '',
+      labelDesc: '',
+      customNum: 0,
+      currentSelectLabel: '',
     });
-    // console.log(param);
-    getLabelInfo(param);
+
+    if (_.isEmpty(value)) {
+      this.setState({
+        tipsSize: 0,
+      });
+      return;
+    }
+
+    if (isHasAuthorize) {
+      // 有首页绩效指标查看权限
+      getLabelInfo({
+        ...param,
+        orgId,
+      });
+    } else {
+      getLabelInfo(param);
+    }
   }
 
   @autobind
   handleRadioChange(value) {
-    console.log('value--', value);
     this.setState({
-      custId: value,
+      labelId: value,
+      currentSelectLabel: value,
     });
   }
 
   render() {
-    // console.log(Search);
     const {
       getLabelPeople,
       circlePeopleData,
       peopleOfLabelData,
+      orgId,
+      isLoadingEnd,
+      onCancel,
+      visible,
     } = this.props;
-    const { condition } = this.state;
+    const { condition, currentSelectLabel, tipsSize } = this.state;
     return (
       <div className={styles.searchContact}>
-        <Search
+        <SimpleSearch
+          onSearch={this.handleSearchClick}
           searchStyle={{
-            height: '50px',
-            width: '390px',
+            height: '30px',
+            width: '400px',
           }}
-          onSearchClick={this.handleSearchClick}
-          isNeedLgSearch={this.bigBtn}
+          defaultValue={condition}
+          isNeedBtn
         />
+        {!_.isEmpty(condition)
+          ? <h4 className={styles.tipsWord}>共找到<span>{tipsSize}</span>条相关标签</h4>
+          :
+          null
+        }
         <TaskSearchRow
+          onCancel={onCancel}
+          isLoadingEnd={isLoadingEnd}
+          visible={visible}
           onChange={this.handleRadioChange}
           circlePeopleData={circlePeopleData}
           getLabelPeople={getLabelPeople}
           peopleOfLabelData={peopleOfLabelData}
           condition={condition}
+          currentSelectLabel={currentSelectLabel}
+          orgId={orgId}
         />
       </div>
     );

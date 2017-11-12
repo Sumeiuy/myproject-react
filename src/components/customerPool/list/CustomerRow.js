@@ -4,7 +4,8 @@
  *@author zhuyanwen
 */
 
-import React, { PureComponent, PropTypes } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { Checkbox } from 'antd';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
@@ -64,15 +65,15 @@ const riskLevelConfig = {
 };
 // 客户性质配置
 const custNature = {
-  P: {
+  per: {
     name: '个人客户',
     imgSrc: iconavator,
   },
-  O: {
+  org: {
     name: '一般机构',
     imgSrc: iconGeneralGgency,
   },
-  F: {
+  prod: {
     name: '产品机构',
     imgSrc: iconProductAgency,
   },
@@ -121,6 +122,7 @@ export default class CustomerRow extends PureComponent {
     toggleServiceRecordModal: PropTypes.func.isRequired,
     formatAsset: PropTypes.func.isRequired,
     mainServiceManager: PropTypes.bool,
+    handleCheck: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -146,7 +148,7 @@ export default class CustomerRow extends PureComponent {
         ptyId,
       },
     } = this.props;
-    const type = (!pOrO || pOrO === 'P') ? 'per' : 'org';
+    const type = (!pOrO || pOrO === 'per') ? 'per' : 'org';
     const param = {
       id: 'FSP_360VIEW_M_TAB',
       title: '客户360视图-客户信息',
@@ -160,34 +162,43 @@ export default class CustomerRow extends PureComponent {
 
   @autobind
   handleSelect() {
-    const { onChange, listItem: { custId, name } } = this.props;
+    const { onChange, listItem: { custId, name }, handleCheck } = this.props;
+    // 手动发送日志
+    handleCheck({ custId, name });
     onChange(custId, name);
   }
 
   @autobind
   createModal(listItem) {
-    const { pOrO, custId } = listItem;
+    const { pOrO, custId, name } = listItem;
     const { createContact } = this.props;
     createContact({
+      custName: name,
       custId,
-      custType: (!pOrO || pOrO === 'P') ? 'per' : 'org',
+      custType: (!pOrO || pOrO === 'per') ? 'per' : 'org',
     });
   }
 
   @autobind
   renderAgeOrOrgName() {
     const { listItem } = this.props;
-    if (listItem.pOrO === 'P') {
+    if (listItem.pOrO === 'per') {
       // 客户性质为个人
       return <span>{listItem.genderValue}/{listItem.age}岁</span>;
-    } else if (listItem.pOrO === 'O' && listItem.orgTypeName) {
+    } else if (listItem.pOrO === 'org' && listItem.orgTypeName) {
       // 客户性质为一般机构
       return <span>{listItem.orgTypeName}</span>;
-    } else if (listItem.pOrO === 'F' && listItem.prodTypeCode) {
+    } else if (listItem.pOrO === 'prod' && listItem.prodTypeCode) {
       // 客户性质为产品机构
       return <span>{listItem.prodTypeCode}</span>;
     }
     return '';
+  }
+
+  renderRankImg(listItem = {}) {
+    return rankImgSrcConfig[listItem.levelCode] ?
+      <img className={styles.iconMoneyImage} src={rankImgSrcConfig[listItem.levelCode]} alt="" />
+      : null;
   }
 
   render() {
@@ -263,7 +274,9 @@ export default class CustomerRow extends PureComponent {
                 onClick={this.toDetail}
               />
               <div className={styles.avatorText}>{custNature[listItem.pOrO].name}</div>
-              <img className={styles.iconMoneyImage} src={rankImgSrcConfig[listItem.levelCode]} alt="" />
+              {
+                this.renderRankImg(listItem)
+              }
             </div>
           </div>
           <div className={styles.customerRowRight}>
@@ -320,7 +333,6 @@ export default class CustomerRow extends PureComponent {
                 monthlyProfits={monthlyProfits}
                 custIncomeReqState={custIncomeReqState}
                 getCustIncome={getCustIncome}
-                formatAsset={formatAsset}
               />
               <div className="department">
                 <span>
@@ -336,6 +348,7 @@ export default class CustomerRow extends PureComponent {
               dict={dict}
               location={location}
               listItem={listItem}
+              mainServiceManager={mainServiceManager}
             />
           </div>
         </div>

@@ -3,8 +3,8 @@
  *@author zhuyanwen
  * 客户分组添加成功页面
  * */
-import React, { PureComponent, PropTypes } from 'react';
-import { withRouter } from 'dva-react-router-3/router';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import Button from '../../common/Button';
@@ -12,7 +12,6 @@ import { fspContainer } from '../../../config';
 import styles from './addCusSuccess.less';
 import { fspGlobal } from '../../../utils';
 
-@withRouter
 export default class AddCusSuccess extends PureComponent {
   static propTypes = {
     closeTab: PropTypes.func.isRequired,
@@ -20,7 +19,21 @@ export default class AddCusSuccess extends PureComponent {
     groupName: PropTypes.string.isRequired,
     onDestroy: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
-    state: PropTypes.object.isRequired,
+    location: PropTypes.object.isRequired,
+    replace: PropTypes.func.isRequired,
+  }
+
+  componentWillMount() {
+    // 解决记住tab的问题
+    // 设置标志位
+    const { replace, location: { query, pathname } } = this.props;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        isOperateSuccess: 'Y',
+      },
+    });
   }
 
   componentWillUnmount() {
@@ -32,15 +45,24 @@ export default class AddCusSuccess extends PureComponent {
   @autobind
   LinkToGroupManage() {
     const { push } = this.props;
-    push({
-      pathname: '/customerPool/customerGroupManage',
-    });
+    const url = '/customerPool/customerGroupManage';
+    const param = {
+      id: 'FSP_CUST_GROUP_MANAGE',
+      title: '客户分组管理',
+    };
+    if (document.querySelector(fspContainer.container)) {
+      fspGlobal.openRctTab({ url, param });
+    } else {
+      push({
+        pathname: url,
+      });
+    }
   }
 
   // 返回首页
   @autobind
   goToIndex() {
-    const { closeTab, push, state } = this.props;
+    const { closeTab, push, location: { state } } = this.props;
     const url = '/customerPool';
     const param = {
       id: 'tab-home',

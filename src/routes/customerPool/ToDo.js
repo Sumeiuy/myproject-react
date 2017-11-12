@@ -4,7 +4,8 @@
  * @author wangjunjun
  */
 
-import React, { PureComponent, PropTypes } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { withRouter, routerRedux } from 'dva-react-router-3/router';
 import { connect } from 'react-redux';
@@ -23,10 +24,6 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   push: routerRedux.push,
   replace: routerRedux.replace,
-  getToDoList: query => ({
-    type: 'customerPool/getToDoList',
-    payload: query,
-  }),
   search: query => ({
     type: 'customerPool/search',
     payload: query,
@@ -45,16 +42,11 @@ export default class ToDo extends PureComponent {
     push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
-    getToDoList: PropTypes.func.isRequired,
     data: PropTypes.array.isRequired,
     todolist: PropTypes.array.isRequired,
     search: PropTypes.func.isRequired,
     todoPage: PropTypes.object.isRequired,
     pageChange: PropTypes.func.isRequired,
-  }
-
-  componentDidMount() {
-    this.props.getToDoList();
   }
 
   @autobind

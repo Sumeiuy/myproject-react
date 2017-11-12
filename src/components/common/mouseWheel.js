@@ -6,7 +6,7 @@
 
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
-import { addWheelEvent, removeWheelEvent } from '../../utils/helper';
+import { addWheelEvent, removeWheelEvent, trigger } from '../../utils/helper';
 
 export default (options = {}) => (ComposedComponent) => {
   const { container = '.react-app', eventDom = '' } = options;
@@ -37,8 +37,8 @@ export default (options = {}) => (ComposedComponent) => {
         return;
       }
       this.addDropDownMouseWheel();
-      const evt = new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window });
-      document.querySelector(container).dispatchEvent(evt);
+      // 模拟 fsp '#workspace-content>.wrapper' 上的鼠标mousedown事件
+      trigger(document.querySelector(container), 'mousedown');
     }
 
     @autobind

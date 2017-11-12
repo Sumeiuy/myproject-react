@@ -6,15 +6,15 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { Mention } from 'antd';
-// import _ from 'lodash';
-import moment from 'moment';
+import _ from 'lodash';
 import classnames from 'classnames';
 import { autobind } from 'core-decorators';
-import { fspGlobal } from '../../../utils';
 import Button from '../../common/Button';
 import CreateTaskForm from './CreateTaskForm';
 import TaskFormFlowStep from './TaskFormFlowStep';
 import styles from './createTaskFormFlow.less';
+import { fspGlobal } from '../../../utils';
+import { validateFormContent } from '../../../decorators/validateFormContent';
 
 
 const { toString } = Mention;
@@ -24,39 +24,44 @@ export default class CreateTaskFormFlow extends PureComponent {
 
   static propTypes = {
     location: PropTypes.object.isRequired,
-    form: PropTypes.object.isRequired,
     dict: PropTypes.object,
     createTask: PropTypes.func,
     createTaskResult: PropTypes.object,
     storedTaskFlowData: PropTypes.object.isRequired,
     saveTaskFlowData: PropTypes.func.isRequired,
+    approvalList: PropTypes.array.isRequired,
+    getApprovalList: PropTypes.func.isRequired,
+    onCloseTab: PropTypes.func.isRequired,
+    orgId: PropTypes.string,
+    push: PropTypes.func.isRequired,
+    isShowApprovalModal: PropTypes.bool.isRequired,
+    isApprovalListLoadingEnd: PropTypes.bool.isRequired,
+    onCancel: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
     dict: {},
     createTaskResult: {},
-    createTask: () => {},
+    createTask: () => { },
+    orgId: null,
   }
 
   constructor(props) {
     super(props);
+    const { location: { query: { source } } } = props;
     this.state = {
-      startValue: null,
-      endValue: null,
-      endOpen: false,
-      fromShow: true,
-      successShow: false,
-      showBtn: false,
-      statusData: [],
-      nextPage: false,
-      defauleData: {},
+      showBtn: _.includes(['custGroupList'], source),
+      isShowErrorInfo: false,
+      isShowErrorTaskType: false,
+      isShowErrorExcuteType: false,
     };
   }
 
-  componentWillMount() {
-    const { location: { query } } = this.props;
-    console.log('location---', location);
-    this.handleBtn(query);
+  componentWillReceiveProps(nextProps) {
+    const { location: { query: { source } } } = nextProps;
+    this.setState({
+      showBtn: _.includes(['custGroupList'], source),
+    });
   }
 
   // 从业务目标池客户：businessCustPool
@@ -66,85 +71,74 @@ export default class CreateTaskFormFlow extends PureComponent {
 
 
   @autobind
-  handleBtn(query) {
-    const entertype = query.entertype || '';
-    console.warn('entertype--', entertype);
-    switch (entertype) {
-      case 'businessCustPool':
-        this.setState({
-          showBtn: false,
-        });
-        break;
-      case 'searchCustPool':
-        this.setState({
-          showBtn: false,
-        });
-        break;
-      case 'performanceIncrementCustPool':
-        this.setState({
-          showBtn: false,
-        });
-        break;
-      case 'performanceBusinessOpenCustPool':
-        this.setState({
-          showBtn: false,
-        });
-        // {14日内开通的业务}
-        break;
-      case 'custGroupList':
-        this.setState({
-          showBtn: true,
-        });
-        break;
-      default:
-        this.setState({
-          showBtn: false,
-        });
-        break;
+  parseQuery() {
+    const { location: { query: { ids, condition } } } = this.props;
+    let custCondition = {};
+    let custIdList = null;
+    if (!_.isEmpty(ids)) {
+      custIdList = decodeURIComponent(ids).split(',');
+      custCondition = JSON.parse(decodeURIComponent(condition));
+    } else {
+      custCondition = JSON.parse(decodeURIComponent(condition));
     }
-  }
-
-  @autobind
-  closeTab() {
-    // fspGlobal.closeRctTabById('RCT_FSP_TASK');
-    console.log(this.createTaskForm.getFieldsValue());
-    fspGlobal.closeRctTabById('RCT_FSP_CUSTOMER_LIST');
-    // this.props.goBack();
-  }
-
-  @autobind
-  handleNextPage() {
-    this.setState({
-      nextPage: true,
-    });
+    return {
+      custIdList,
+      custCondition,
+    };
   }
 
   // 自建任务提交
   handleSubmit = (e) => {
     e.preventDefault();
-    const { createTask } = this.props;
-    const { custIdList, searchReq } = this.state;
-    this.createTaskForm.validateFields((err, values) => {
-      if (!err) {
-        console.warn('templetDesc-----', values);
-        values.closingDate = moment(values.closingDate).format('YYYY-MM-DD');// eslint-disable-line
-        values.triggerDate = moment(values.triggerDate).format('YYYY-MM-DD');// eslint-disable-line
+    const { createTask, location: { query } } = this.props;
+    const { groupId } = query;
+    this.createTaskForm.getWrappedInstance().validateFields((err, values) => {
+      let isFormError = false;
+      console.log(err);
+      if (!_.isEmpty(err)) {
+        isFormError = true;
+      }
+      const formDataValidation = this.checkFormField({ ...values, isFormError });
+      if (formDataValidation) {
         values.templetDesc = toString(values.templetDesc);// eslint-disable-line
-        const value = { ...values, custIdList, searchReq };
+        const value = { ...values, groupId };
         createTask(value);
-      } else {
-        console.warn('templetDesc-----', values.templetDesc);
       }
     });
   }
 
+  @autobind
+  @validateFormContent
+  checkFormField(values) {
+    console.log(values);
+  }
+
+  @autobind
+  handleCancleTab() {
+    fspGlobal.closeRctTabById('RCT_FSP_CREATE_TASK');
+  }
 
   render() {
-    const { dict, location, storedTaskFlowData, saveTaskFlowData, createTask } = this.props;
-    const { showBtn } = this.state;
-    // const { getFieldDecorator } = form;
-    console.warn('showBtn', showBtn);
-    // console.warn('statusData', statusData);
+    const {
+      dict,
+      location,
+      storedTaskFlowData,
+      saveTaskFlowData,
+      createTask,
+      getApprovalList,
+      approvalList,
+      orgId,
+      onCloseTab,
+      push,
+      isShowApprovalModal,
+      isApprovalListLoadingEnd,
+      onCancel,
+    } = this.props;
+    const { showBtn,
+      isShowErrorInfo,
+      isShowErrorExcuteType,
+      isShowErrorTaskType,
+    } = this.state;
     return (
       <div className={styles.taskInner}>
         {showBtn ?
@@ -153,30 +147,42 @@ export default class CreateTaskFormFlow extends PureComponent {
               location={location}
               dict={dict}
               ref={ref => this.createTaskForm = ref}
+              isShowErrorInfo={isShowErrorInfo}
+              isShowErrorExcuteType={isShowErrorExcuteType}
+              isShowErrorTaskType={isShowErrorTaskType}
             />
             <div
               className={
-                    classnames({
-                      [styles.hideTextArea]: !showBtn,
-                      [styles.showTextArea]: showBtn,
-                    })
-                }
+                classnames({
+                  [styles.hideTextArea]: !showBtn,
+                  [styles.showTextArea]: showBtn,
+                })
+              }
             >
               <div className={styles.task_btn}>
-                <Button onClick={this.closeTab}>取消</Button>
+                <Button onClick={this.handleCancleTab}>取消</Button>
                 <Button type="primary" onClick={this.handleSubmit}>提交</Button>
               </div>
             </div>
           </div>
-             :
+          :
           <TaskFormFlowStep
             location={location}
             dict={dict}
             saveTaskFlowData={saveTaskFlowData}
             storedTaskFlowData={storedTaskFlowData}
             createTask={createTask}
+            approvalList={approvalList}
+            getApprovalList={getApprovalList}
+            parseQuery={this.parseQuery}
+            push={push}
+            orgId={orgId}
+            onCloseTab={onCloseTab}
+            isShowApprovalModal={isShowApprovalModal}
+            isApprovalListLoadingEnd={isApprovalListLoadingEnd}
+            onCancel={onCancel}
           />
-          }
+        }
       </div>
     );
   }

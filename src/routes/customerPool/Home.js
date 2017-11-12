@@ -41,8 +41,9 @@ const effects = {
   clearSearchHistoryList: 'customerPool/clearSearchHistoryList',
   saveSearchVal: 'customerPool/saveSearchVal',
   getInformation: 'customerPool/getInformation',
-  getHSRate: 'customerPool/getHSRate',
+  getHSRateAndBusinessIndicator: 'customerPool/getHSRateAndBusinessIndicator',
   getPerformanceIndicators: 'customerPool/getPerformanceIndicators',
+  switchTab: 'customerPoolHome/switchTab',
 };
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -65,11 +66,11 @@ const mapStateToProps = state => ({
   searchHistoryVal: state.customerPool.searchHistoryVal, // 保存搜索内容
   information: state.customerPool.information, // 首席投顾观点
   performanceIndicators: state.customerPool.performanceIndicators, // 绩效指标
-  hsRate: state.customerPool.hsRate, // 沪深归集率（经营指标）
+  hsRateAndBusinessIndicator: state.customerPool.hsRateAndBusinessIndicator, // 沪深归集率和业务开通指标（经营指标）
 });
 
 const mapDispatchToProps = {
-  getHSRate: fetchDataFunction(true, effects.getHSRate),
+  getHSRateAndBusinessIndicator: fetchDataFunction(true, effects.getHSRateAndBusinessIndicator),
   getPerformanceIndicators: fetchDataFunction(true, effects.getPerformanceIndicators),
   getInformation: fetchDataFunction(true, effects.getInformation),
   getToBeDone: fetchDataFunction(true, effects.toBeTone),
@@ -81,6 +82,7 @@ const mapDispatchToProps = {
   saveSearchVal: fetchDataFunction(false, effects.saveSearchVal),
   push: routerRedux.push,
   replace: routerRedux.replace,
+  switchTab: fetchDataFunction(false, effects.switchTab), // 切换，上报日志
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -114,8 +116,9 @@ export default class Home extends PureComponent {
     information: PropTypes.object,
     performanceIndicators: PropTypes.array,
     getPerformanceIndicators: PropTypes.func.isRequired,
-    hsRate: PropTypes.string,
-    getHSRate: PropTypes.func.isRequired,
+    hsRateAndBusinessIndicator: PropTypes.array,
+    getHSRateAndBusinessIndicator: PropTypes.func.isRequired,
+    switchTab: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -133,7 +136,7 @@ export default class Home extends PureComponent {
     searchHistoryVal: '',
     information: EMPTY_OBJECT,
     performanceIndicators: EMPTY_LIST,
-    hsRate: '',
+    hsRateAndBusinessIndicator: EMPTY_LIST,
   }
 
   constructor(props) {
@@ -143,21 +146,21 @@ export default class Home extends PureComponent {
       createCustRange: [],
       expandAll: false,
     };
-    // 首页指标查询权限
-    this.isHasAuthorize = permission.hasIndexViewPermission();
+    // 首页指标查询,总部-营销活动管理岗,分公司-营销活动管理岗,营业部-营销活动管理岗权限
+    this.isHasAuthorize = permission.hasCustomerPoolPermission();
   }
 
   componentDidMount() {
     const {
       custRange,
-      empInfo: { empInfo },
+      empInfo: { empInfo = {} },
       getInformation,
       getToBeDone,
       getHotWds,
       getHistoryWdsList,
     } = this.props;
     // 获取登录用户empId和occDivnNum
-    const { empNum, occDivnNum } = empInfo;
+    const { empNum = '', occDivnNum = '' } = empInfo;
 
     // 登录用户orgId，默认在fsp中中取出来的当前用户岗位对应orgId，本地时取用户信息中的occDivnNum
     if (document.querySelector(fspContainer.container)) {
@@ -167,8 +170,8 @@ export default class Home extends PureComponent {
     }
     // 权限控制是否传给后端orgId
     const authOrgId = this.isHasAuthorize ? this.orgId : '';
-    // 热词搜索 orgId, empNo 两个参数必传一个，两个同时传时以orgId为准
-    getHotWds({ orgId: authOrgId, empNo: empNum });
+    // 猜你感兴趣模块接口，经需求确认此处与职责无关，删除以前传的orgId,2017\11\7
+    getHotWds({ empNo: empNum });
     // 历史搜索记录 orgId, empNo 两个参数必传一个，两个同时传时以orgId为准
     getHistoryWdsList({ orgId: authOrgId, empNo: empNum });
     // 待办事项
@@ -207,7 +210,9 @@ export default class Home extends PureComponent {
   @autobind
   getCustType(orgId) {
     let custType = CUST_MANAGER;
-    if (this.isHasAuthorize || (orgId && orgId !== MAIN_MAGEGER_ID)) {
+    if (orgId) {
+      custType = orgId !== MAIN_MAGEGER_ID ? ORG : CUST_MANAGER;
+    } else if (this.isHasAuthorize) {
       custType = ORG;
     }
     return custType;
@@ -221,22 +226,31 @@ export default class Home extends PureComponent {
   }
 
   @autobind
-  getIndicators({ begin, end, orgId, cycleSelect }) {
-    const { getPerformanceIndicators, getManageIndicators } = this.props;
-    const custType = this.getCustType(orgId);
+  getIndicators({ begin, end, orgId, cycleSelect, custType }) {
+    const {
+      getPerformanceIndicators,
+      getManageIndicators,
+      empInfo = {},
+    } = this.props;
+    const { tgQyFlag = false } = empInfo.empInfo || {};
+
     getManageIndicators({
       custType, // 客户范围类型
       dateType: this.getDateType(cycleSelect), // 周期类型
       orgId, // 组织ID
     });
-    getPerformanceIndicators({
-      begin,
-      end,
-      empId: helper.getEmpId(),
-      custType, // 客户范围类型
-      dateType: this.getDateType(cycleSelect), // 周期类型
-      orgId, // 组织ID
-    });
+
+    // 查看投顾绩效开关:empinfo返回的权限指标字段（tgQyFlag：bool）
+    if (tgQyFlag) {
+      getPerformanceIndicators({
+        begin,
+        end,
+        empId: helper.getEmpId(),
+        custType, // 客户范围类型
+        dateType: this.getDateType(cycleSelect), // 周期类型
+        orgId, // 组织ID
+      });
+    }
   }
 
   @autobind
@@ -268,32 +282,32 @@ export default class Home extends PureComponent {
     } = props;
     // 根据cycle获取对应的begin和end值
     const { begin, end } = this.getTimeSelectBeginAndEnd(props);
+    const custType = this.getCustType(orgId);
     const tempObj = {
       begin,
       end,
+      custType,
       cycleSelect: cycleSelect || (cycle[0] || {}).key,
     };
-    if (orgId && orgId !== MAIN_MAGEGER_ID) {
-      tempObj.orgId = orgId;
+    if (orgId) {
+      tempObj.orgId = orgId !== MAIN_MAGEGER_ID ? orgId : '';
     } else if (this.isHasAuthorize) {
       tempObj.orgId = this.orgId;
     }
     // 绩效指标
     this.getIndicators(tempObj);
-    // 沪深归集率（经营指标）
-    this.fetchHSRate(tempObj);
+    // 沪深归集率和业务开通指标（经营指标）
+    this.fetchHSRateAndBusinessIndicator(tempObj);
   }
 
   @autobind
-  fetchHSRate({ begin, end, orgId, cycleSelect }) {
-    const { getHSRate } = this.props;
-    const custType = this.getCustType(orgId);
-    getHSRate({
+  fetchHSRateAndBusinessIndicator({ begin, end, orgId, cycleSelect, custType }) {
+    const { getHSRateAndBusinessIndicator } = this.props;
+    getHSRateAndBusinessIndicator({
       custType, // 客户范围类型
       dateType: this.getDateType(cycleSelect), // 周期类型
       orgId, // 组织ID
       empId: helper.getEmpId(),
-      fieldList: ['shzNpRate'],
       begin,
       end,
     });
@@ -374,7 +388,8 @@ export default class Home extends PureComponent {
       id: MAIN_MAGEGER_ID,
       name: '我的客户',
     };
-    // 无‘HTSC 首页指标查询’职责的普通用户，取值 '我的客户'
+    // 无‘HTSC 首页指标查询’‘总部-营销活动管理岗’,
+    // ‘分公司-营销活动管理岗’,‘营业部-营销活动管理岗’职责的普通用户，取值 '我的客户'
     if (!this.isHasAuthorize) {
       this.setState({
         createCustRange: [myCustomer],
@@ -432,9 +447,15 @@ export default class Home extends PureComponent {
   }
 
   @autobind
+  handleTabClick(param) {
+    const { switchTab } = this.props;
+    // 发送日志
+    switchTab({ param });
+  }
+
+  @autobind
   renderTabsExtra() {
     const {
-      custRange,
       replace,
       collectCustRange,
       cycle,
@@ -449,15 +470,17 @@ export default class Home extends PureComponent {
       orgId,
       cycleSelect,
     } } = location;
-    let curOrgId = custRange[0].id;
-    let curCycleSelect = (cycle[0] || {}).key;
+    // curOrgId   客户范围回填
+    // 当url中由 orgId 则使用orgId
+    // 有权限时默认取所在岗位的orgId
+    // 无权限取 MAIN_MAGEGER_ID
+    let curOrgId = this.orgId;
+    // curCycleSelect  时间周期，先从url中取值，url中没有值时，取时间周期第一个
+    const curCycleSelect = cycleSelect || (cycle[0] || {}).key;
     if (orgId) {
       curOrgId = orgId;
     } else if (!this.isHasAuthorize) {
       curOrgId = MAIN_MAGEGER_ID;
-    }
-    if (cycleSelect) {
-      curCycleSelect = cycleSelect;
     }
     const extraProps = {
       custRange: createCustRange,
@@ -488,8 +511,12 @@ export default class Home extends PureComponent {
       searchHistoryVal,
       information,
       performanceIndicators,
-      hsRate,
+      hsRateAndBusinessIndicator,
+      empInfo = {},
     } = this.props;
+    // 是否能看投顾绩效的标记
+    // const { isShowPerformance = false } = this.state;
+    const { tgQyFlag = false } = empInfo.empInfo || {};
     return (
       <div className={styles.customerPoolWrap}>
         <Search
@@ -516,26 +543,32 @@ export default class Home extends PureComponent {
             />
             <Tabs
               tabBarExtraContent={this.renderTabsExtra()}
-              defaultActiveKey="1"
-              onChange={this.callback}
+              defaultActiveKey="manage"
+              onTabClick={this.handleTabClick}
             >
-              <TabPane tab="经营指标" key="1">
+              <TabPane tab="经营指标" key="manage">
                 <ManageIndicators
+                  empInfo={empInfo}
                   push={push}
                   indicators={manageIndicators}
                   location={location}
                   cycle={cycle}
-                  hsRate={hsRate}
+                  hsRateAndBusinessIndicator={hsRateAndBusinessIndicator}
                 />
               </TabPane>
-              <TabPane tab="投顾绩效" key="2">
-                <PerformanceIndicators
-                  push={push}
-                  indicators={performanceIndicators}
-                  location={location}
-                  cycle={cycle}
-                />
-              </TabPane>
+              {
+                tgQyFlag ? (
+                  <TabPane tab="投顾绩效" key="performance">
+                    <PerformanceIndicators
+                      empInfo={empInfo}
+                      push={push}
+                      indicators={performanceIndicators}
+                      location={location}
+                      cycle={cycle}
+                    />
+                  </TabPane>
+                ) : (null)
+              }
             </Tabs>
           </div>
           <div className={styles.viewpoint}>

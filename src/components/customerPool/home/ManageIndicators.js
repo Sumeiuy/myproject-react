@@ -25,7 +25,6 @@ import {
   getTradingVolume,
   filterEmptyToInteger,
   filterEmptyToNumber,
-  businessOpenNumLabelList,
   linkTo,
 } from './homeIndicators_';
 
@@ -48,65 +47,58 @@ export default class PerformanceIndicators extends PureComponent {
   @autobind
   handleBusinessOpenClick(instance) {
     instance.on('click', (arg) => {
+      const { clientNameData } = this.analyticHSRateAndBusinessIndicator();
       const {
         push,
         cycle,
         location,
         empInfo,
       } = this.props;
-      if (arg.componentType !== 'xAxis') {
-        return;
-      }
+      // console.log('arg>>', arg);
+      // console.log('clientNameData: ', clientNameData);
+
       const param = {
         source: 'numOfCustOpened',
         cycle,
         push,
         location,
         empInfo,
+        bname: arg.name || arg.value,
       };
-      if (arg.value === businessOpenNumLabelList[0]) {
-        param.value = 'ttfBusi';
-        param.bname = arg.value;
-        linkTo(param);
-      } else if (arg.value === businessOpenNumLabelList[1]) {
-        param.value = 'hgtBusi';
-        param.bname = arg.value;
-        linkTo(param);
-      } else if (arg.value === businessOpenNumLabelList[2]) {
-        param.value = 'sgtBusi';
-        param.bname = arg.value;
-        linkTo(param);
-      } else if (arg.value === businessOpenNumLabelList[3]) {
-        param.value = 'rzrqBusi';
-        param.bname = arg.value;
-        linkTo(param);
-      } else if (arg.value === businessOpenNumLabelList[4]) {
-        param.value = 'xsbBusi';
-        param.bname = arg.value;
-        linkTo(param);
-      } else if (arg.value === businessOpenNumLabelList[5]) {
-        param.value = 'gpqqBusi';
-        param.bname = arg.value;
-        linkTo(param);
-      } else if (arg.value === businessOpenNumLabelList[6]) {
-        param.value = 'cybBusi';
-        param.bname = arg.value;
-        linkTo(param);
+      // 点击柱子，arg.name，arg.value都有值
+      // 点击x轴， arg.value有值，不存在arg.name
+      // 数组的顺序不能变
+      const arr = [arg.name, arg.value];
+      if (_.includes(arr, clientNameData[0])) {
+        param.value = 'ttfCust';
+      } else if (_.includes(arr, clientNameData[1])) {
+        param.value = 'shHkCust';
+      } else if (_.includes(arr, clientNameData[2])) {
+        param.value = 'szHkCust';
+      } else if (_.includes(arr, clientNameData[3])) {
+        param.value = 'rzrqCust';
+      } else if (_.includes(arr, clientNameData[4])) {
+        param.value = 'xsb';
+      } else if (_.includes(arr, clientNameData[5])) {
+        param.value = 'optCust';
+      } else if (_.includes(arr, clientNameData[6])) {
+        param.value = 'cyb';
       }
+      linkTo(param);
     });
   }
 
   @autobind
   analyticHSRateAndBusinessIndicator() {
     // 返回数据是数组，元素的位置是固定的，根据位置取元素，最后一个是沪深归集率，其余的是业务开通的指标
-    const { hsRateAndBusinessIndicator } = this.props;
+    const { hsRateAndBusinessIndicator = [] } = this.props;
     // 沪深归集率
     let hsRate = 0;
     // 业务开通数据
     const clientNumberData = [];
     // 业务开通name
     const clientNameData = [];
-    const length = hsRateAndBusinessIndicator.length;
+    const length = hsRateAndBusinessIndicator.length || 0;
     _.forEach(
       hsRateAndBusinessIndicator,
       (item, index) => {
@@ -118,7 +110,7 @@ export default class PerformanceIndicators extends PureComponent {
         }
       },
     );
-    return { hsRate, clientNumberData, clientNameData };
+    return { isEmpty: (length === 0), hsRate, clientNumberData, clientNameData };
   }
 
   render() {
@@ -130,7 +122,12 @@ export default class PerformanceIndicators extends PureComponent {
       empInfo,
     } = this.props;
     // 解析hsRateAndBusinessIndicator数据
-    const { hsRate, clientNumberData, clientNameData } = this.analyticHSRateAndBusinessIndicator();
+    const {
+      isEmpty: isIndicatorEmpty, // 控制对应的指标区域，是否显示 暂无数据
+      hsRate,
+      clientNumberData,
+      clientNameData,
+    } = this.analyticHSRateAndBusinessIndicator();
     // 字段语义，在mock文件内：/mockup/groovynoauth/fsp/emp/kpi/queryEmpKPIs.js
     const {
       motOkMnt, motTotMnt, taskCust, totCust,
@@ -138,7 +135,6 @@ export default class PerformanceIndicators extends PureComponent {
       purAddCustaset, purRakeGjpdt, tranAmtBasicpdt, tranAmtTotpdt,
       purAddCust, newProdCust, purAddNoretailcust, purAddHighprodcust,
     } = indicators || {};
-
     // 控制是否显示 暂无数据
     const isEmpty = _.isEmpty(indicators);
 
@@ -156,9 +152,7 @@ export default class PerformanceIndicators extends PureComponent {
     const param = { clientNumberData, names: clientNameData };
     const { newUnit: clientUnit, items: clientItems } = getClientsNumber(param);
     const clientHead = { icon: 'kehuzhibiao', title: `业务开通数（${clientUnit}次）` };
-
     // 沪深归集率
-
     const hsRateData = getHSRate([filterEmptyToNumber(hsRate)]);
     const hsRateHead = { icon: 'jiaoyiliang', title: '沪深归集率' };
 
@@ -213,7 +207,7 @@ export default class PerformanceIndicators extends PureComponent {
               </Col>
               <Col span={8}>
                 <RectFrame dataSource={clientHead}>
-                  <IfEmpty isEmpty={isEmpty}>
+                  <IfEmpty isEmpty={isIndicatorEmpty}>
                     <IECharts
                       onReady={this.handleBusinessOpenClick}
                       option={clientItems}
@@ -227,7 +221,7 @@ export default class PerformanceIndicators extends PureComponent {
               </Col>
               <Col span={8}>
                 <RectFrame dataSource={hsRateHead}>
-                  <IfEmpty isEmpty={isEmpty}>
+                  <IfEmpty isEmpty={isIndicatorEmpty}>
                     <IECharts
                       option={hsRateData}
                       resizable

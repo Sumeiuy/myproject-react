@@ -1,9 +1,10 @@
+@import "../../../css/variable.less";
 .row {
   display: -webkit-flex; /* Safari */
   display: flex;
   align-items: center;
-  padding: 20px 0px;
-  .column{
+  padding: 20px 0;
+  .column {
     overflow: hidden;
     width: 50%;
     text-align: center;
@@ -26,10 +27,10 @@
       overflow: hidden;
       text-overflow: ellipsis;
       text-align: center;
-      font-family:PingFangSC-Regular;
-      color:#666666;
-      letter-spacing:0.2px;
-      font-size: 6px;
+      font-family: @font-family;
+      color: #666;
+      letter-spacing: 0.2px;
+      font-size: 12px;
     }
   }
 }

@@ -4,35 +4,40 @@
  * @author wangjunjun
  */
 
-import React, { PureComponent, PropTypes } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
-import _ from 'lodash';
 import { Table } from 'antd';
-import { fspGlobal } from '../../../utils';
+// import { fspGlobal } from '../../../utils';
 
 import styles from './toDoList.less';
 
 import emptyImg from '../../../../static/images/empty.png';
 
+// 待办流程详情新tab打开代码
+// onClick={() => {
+//   const url = `${item.dispatchUri}&workFlowName=${encodeURI(item.flowClass)}`;
+//   const param = {
+//     closable: true,
+//     forceRefresh: true,
+//     id: 'FSP_TODOLIST_DETAIL',
+//     title: '待办流程详情',
+//   };
+//   fspGlobal.openFspIframeTab({ url, param });
+// }}
 const columns = [
   {
     title: '任务名称',
     dataIndex: 'task',
     key: 'task',
     render: item => <a
-      onClick={() => {
-        const url = `${item.dispatchUri}&workFlowName=${encodeURI(item.flowClass)}`;
-        const param = {
-          closable: true,
-          forceRefresh: true,
-          id: 'FSP_TODOLIST_DETAIL',
-          title: '待办流程详情',
-        };
-        fspGlobal.openFspIframeTab({ url, param });
-      }}
+      className={styles.title}
+      href={`${item.dispatchUri}&workFlowName=${encodeURI(item.flowClass)}`}
+      target="_blank"
+      rel="noopener noreferrer"
       title={item.text}
     >
-      {_.truncate(item.text, { length: 18, omission: '...' })}
+      {item.text}
     </a>,
   },
   {
@@ -107,7 +112,7 @@ export default class ToDoList extends PureComponent {
       return (<div className={styles.empty}>
         <Table
           className={`${className} ${styles.todoListEmpty}`}
-          rowKey={record => record.applyId}
+          rowKey={record => record.id}
           columns={columns}
           dataSource={todolist}
           locale={{ emptyText: '' }}
@@ -125,7 +130,7 @@ export default class ToDoList extends PureComponent {
       return (<div className={styles.empty}>
         <Table
           className={`${className} ${styles.todoListEmpty}`}
-          rowKey={record => record.applyId}
+          rowKey={record => record.id}
           columns={columns}
           dataSource={data}
           locale={{ emptyText: '' }}
@@ -141,7 +146,7 @@ export default class ToDoList extends PureComponent {
     return (
       <Table
         className={className}
-        // rowKey={record => record.applyId}
+        rowKey={record => record.id}
         columns={columns}
         dataSource={data}
         pagination={{

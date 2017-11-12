@@ -6,6 +6,7 @@
 import React, { PropTypes, PureComponent } from 'react';
 // import { autobind } from 'core-decorators';
 import _ from 'lodash';
+import classnames from 'classnames';
 
 import styles from './matchArea.less';
 
@@ -31,6 +32,7 @@ export default class MatchArea extends PureComponent {
     location: PropTypes.object.isRequired,
     listItem: PropTypes.object.isRequired,
     q: PropTypes.string.isRequired,
+    mainServiceManager: PropTypes.bool.isRequired,
   }
 
   constructor(props) {
@@ -243,8 +245,12 @@ export default class MatchArea extends PureComponent {
   }
 
   render() {
+    const { mainServiceManager } = this.props;
+    const cls = classnames(styles.relatedInfo, {
+      [styles.ellipsis]: mainServiceManager,
+    });
     return (
-      <div className={styles.relatedInfo}>
+      <div className={cls}>
         <ul>
           {this.renderName()}
           {this.renderIdNum()}

@@ -27,6 +27,9 @@ import {
   linkTo,
 } from './homeIndicators_';
 
+// [{name: 1}, {name: 2}] 转成 [1,2]
+const getLabelList = arr => arr.map(v => (v || {}).name);
+
 export default class PerformanceIndicators extends PureComponent {
   static propTypes = {
     indicators: PropTypes.array,
@@ -59,47 +62,36 @@ export default class PerformanceIndicators extends PureComponent {
     if (!_.isEmpty(tempArr)) {
       formatIndicator = (tempArr[1] || {}).data;
     }
+    const labelList = getLabelList(formatIndicator);
     instance.on('click', (arg) => {
-      // console.log('instance arg >>>>', arg, formatIndicator);
-      if (arg.componentType !== 'xAxis') {
-        return;
-      }
       const param = {
         source: 'numOfCustOpened',
         cycle,
         push,
         location: this.props.location,
         empInfo,
+        bname: arg.name || arg.value,
       };
-      if (arg.value === (formatIndicator[0] || {}).name) {
+      // 点击柱子，arg.name，arg.value都有值
+      // 点击x轴， arg.value有值，不存在arg.name
+      // 数组的顺序不能变
+      const arr = [arg.name, arg.value];
+      if (_.includes(arr, labelList[0])) {
         param.value = 'ttfCust';
-        param.bname = arg.value;
-        linkTo(param);
-      } else if (arg.value === (formatIndicator[1] || {}).name) {
+      } else if (_.includes(arr, labelList[1])) {
         param.value = 'shHkCust';
-        param.bname = arg.value;
-        linkTo(param);
-      } else if (arg.value === (formatIndicator[2] || {}).name) {
+      } else if (_.includes(arr, labelList[2])) {
         param.value = 'szHkCust';
-        param.bname = arg.value;
-        linkTo(param);
-      } else if (arg.value === (formatIndicator[3] || {}).name) {
+      } else if (_.includes(arr, labelList[3])) {
         param.value = 'rzrqCust';
-        param.bname = arg.value;
-        linkTo(param);
-      } else if (arg.value === (formatIndicator[4] || {}).name) {
+      } else if (_.includes(arr, labelList[4])) {
         param.value = 'xsb';
-        param.bname = arg.value;
-        linkTo(param);
-      } else if (arg.value === (formatIndicator[5] || {}).name) {
+      } else if (_.includes(arr, labelList[5])) {
         param.value = 'optCust';
-        param.bname = arg.value;
-        linkTo(param);
-      } else if (arg.value === (formatIndicator[6] || {}).name) {
+      } else if (_.includes(arr, labelList[6])) {
         param.value = 'cyb';
-        param.bname = arg.value;
-        linkTo(param);
       }
+      linkTo(param);
     });
   }
 

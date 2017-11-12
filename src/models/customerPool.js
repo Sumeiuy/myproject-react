@@ -5,21 +5,24 @@
  */
 import _ from 'lodash';
 import queryString from 'query-string';
-import pathToRegexp from 'path-to-regexp';
 import { customerPool as api } from '../api';
+import { matchRoute, getEmpId } from '../utils/helper';
 import { toastM } from '../utils/sagaEffects';
 
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const LIST_MAX = 1e4;
+const INITIAL_PAGE_NUM = 1;
+const INITIAL_PAGE_TEN_SIZE = 10;
+const INITIAL_PAGE_FIVE_SIZE = 5;
 
 export default {
   namespace: 'customerPool',
   state: {
     information: {},     // 资讯
     performanceIndicators: [],  // 投顾指标
-    hsRate: '',  // 沪深归集率（经营指标）
+    hsRateAndBusinessIndicator: [],  // 沪深归集率和开通业务指标（经营指标）
     // 存放从服务端获取的全部代办数据
     todolist: [],
     // 存放筛选后数据
@@ -64,7 +67,7 @@ export default {
     custContactData: {}, // 客户联系方式
     serviceRecordData: {}, // 服务记录
     // 添加服务记录成功的标记
-    addServeRecordSuccess: false,
+    addServeRecordSuccess: true,
     isFollow: {},
     followLoading: false,
     fllowCustData: {},
@@ -96,7 +99,7 @@ export default {
     // 存储的任务流程数据
     storedTaskFlowData: {},
     // 当前选中tab
-    currentTab: '',
+    currentTab: '1',
     // 提交任务流程结果
     submitTaskFlowResult: '',
     // 可查询服务人员列表
@@ -114,9 +117,7 @@ export default {
       dispatch({ type: 'getCustRangeByAuthority' });
       history.listen(({ pathname, search }) => {
         const params = queryString.parse(search);
-        const serviceLogUrl = pathToRegexp('/customerPool/serviceLog').exec(pathname);
-        console.log('pathname---', pathname);
-        console.log('serviceLogUrl--', serviceLogUrl);
+        const serviceLogUrl = matchRoute('serviceLog', pathname);
         if (serviceLogUrl) {
           const { pageSize, serveDateToPaged } = params;
           if (_.isEmpty(pageSize)) params.pageSize = null;
@@ -124,6 +125,45 @@ export default {
           dispatch({
             type: 'getServiceLog',
             payload: params,
+          });
+          return;
+        }
+
+        const custGroupUrl = matchRoute('customerGroup', pathname);
+        if (custGroupUrl) {
+          const { curPageNum, curPageSize, keyWord = null } = params;
+          dispatch({
+            type: 'customerGroupList',
+            payload: {
+              pageNum: curPageNum || INITIAL_PAGE_NUM,
+              pageSize: curPageSize || INITIAL_PAGE_TEN_SIZE,
+              empId: getEmpId(),
+              keyWord,
+            },
+          });
+
+          return;
+        }
+
+        const customerGroupManageUrl = matchRoute('customerGroupManage', pathname);
+        const { curPageNum, curPageSize, keyWord = null } = params;
+        if (customerGroupManageUrl) {
+          dispatch({
+            type: 'getCustomerGroupList',
+            payload: {
+              pageNum: curPageNum || INITIAL_PAGE_NUM,
+              pageSize: curPageSize || INITIAL_PAGE_TEN_SIZE,
+              keyWord,
+            },
+          });
+
+          return;
+        }
+
+        const todoListUrl = matchRoute('todo', pathname);
+        if (todoListUrl) {
+          dispatch({
+            type: 'getToDoList',
           });
         }
       });
@@ -138,14 +178,12 @@ export default {
         payload: response,
       });
     },
-    // 沪深归集率（经营指标）
-    * getHSRate({ payload }, { call, put }) {  //eslint-disable-line
-      const response = yield call(api.getHSRate, payload);
-      const { resultData } = response;
-      const { value = '' } = resultData.length > 0 ? resultData[0] : '';
+    // 沪深归集率和开通业务指标（经营指标）
+    * getHSRateAndBusinessIndicator({ payload }, { call, put }) {  //eslint-disable-line
+      const response = yield call(api.getHSRateAndBusinessIndicator, payload);
       yield put({
-        type: 'getHSRateSuccess',
-        payload: { value },
+        type: 'getHSRateAndBusinessIndicatorSuccess',
+        payload: response,
       });
     },
     // 资讯列表和详情
@@ -290,8 +328,7 @@ export default {
         yield put({
           type: 'addCusToGroupSuccess',
           payload: {
-            groupId: resultData.groupId,
-            result: resultData.result,
+            result: resultData,
           },
         });
       }
@@ -375,11 +412,20 @@ export default {
     },
     // 列表页添加服务记录
     * addServeRecord({ payload }, { call, put }) {
-      const res = yield call(api.addServeRecord, payload);
       yield put({
-        type: 'addServeRecordSuccess',
-        payload: res,
+        type: 'resetServeRecord',
       });
+      const res = yield call(api.addServeRecord, payload);
+      if (res.msg === 'OK') {
+        // yield put({
+        //   type: 'getServiceLog',
+        //   payload: { custId: payload.custId },
+        // });
+        yield put({
+          type: 'addServeRecordSuccess',
+          payload: res,
+        });
+      }
     },
     // 获取客户分组
     * getCustomerGroupList({ payload }, { call, put }) {
@@ -426,8 +472,8 @@ export default {
     },
     // 新增，编辑客户分组
     * operateGroup({ payload }, { call, put }) {
-      const { groupId } = payload;
-      const response = yield call(api.operateGroup, payload);
+      const { request, request: { groupId }, keyWord, pageNum, pageSize } = payload;
+      const response = yield call(api.operateGroup, request);
       const { resultData } = response;
       let message;
       yield put({
@@ -449,17 +495,30 @@ export default {
       yield put({
         type: 'getCustomerGroupList',
         payload: {
-          pageNum: 1,
-          pageSize: 10,
+          pageNum: pageNum || INITIAL_PAGE_NUM,
+          pageSize: pageSize || INITIAL_PAGE_TEN_SIZE,
+          keyWord,
         },
       });
+      if (groupId) {
+        // 成功之后，更新分组下客户信息
+        yield put({
+          type: 'getGroupCustomerList',
+          payload: {
+            pageNum: INITIAL_PAGE_NUM,
+            pageSize: INITIAL_PAGE_FIVE_SIZE,
+            groupId,
+          },
+        });
+      }
     },
     * toastM({ message, duration }) {
       yield toastM(message, duration);
     },
     // 删除客户分组
     * deleteGroup({ payload }, { call, put }) {
-      const response = yield call(api.deleteGroup, payload);
+      const { request, keyWord, pageNum, pageSize } = payload;
+      const response = yield call(api.deleteGroup, request);
       const { resultData } = response;
       yield put({
         type: 'deleteGroupSuccess',
@@ -474,14 +533,15 @@ export default {
       yield put({
         type: 'getCustomerGroupList',
         payload: {
-          pageNum: 1,
-          pageSize: 10,
+          pageNum: pageNum || INITIAL_PAGE_NUM,
+          pageSize: pageSize || INITIAL_PAGE_TEN_SIZE,
+          keyWord,
         },
       });
     },
     * deleteCustomerFromGroup({ payload }, { call, put }) {
       const response = yield call(api.deleteCustomerFromGroup, payload);
-      const { custId, groupId } = payload;
+      const { custId, groupId, keyWord, curPageNum, curPageSize } = payload;
       const { resultData } = response;
       yield put({
         type: 'deleteCustomerFromGroupSuccess',
@@ -491,6 +551,24 @@ export default {
         type: 'toastM',
         message: '删除分组下客户成功',
         duration: 2,
+      });
+      // 删除成功之后，更新分组下客户信息
+      yield put({
+        type: 'getGroupCustomerList',
+        payload: {
+          pageNum: INITIAL_PAGE_NUM,
+          pageSize: INITIAL_PAGE_FIVE_SIZE,
+          groupId,
+        },
+      });
+      // 删除成功之后，更新分组信息
+      yield put({
+        type: 'getCustomerGroupList',
+        payload: {
+          pageNum: curPageNum || INITIAL_PAGE_NUM,
+          pageSize: curPageSize || INITIAL_PAGE_TEN_SIZE,
+          keyWord,
+        },
       });
     },
     // 360服务记录查询
@@ -529,8 +607,8 @@ export default {
       });
     },
     // 预览客户细分导入数据
-    * priviewCustFile({ payload }, { call, put }) {
-      const response = yield call(api.priviewCustFile, payload);
+    * previewCustFile({ payload }, { call, put }) {
+      const response = yield call(api.previewCustFile, payload);
       const { resultData } = response;
       yield put({
         type: 'priviewCustFileSuccess',
@@ -573,14 +651,30 @@ export default {
         type: 'submitTaskFlowSuccess',
         payload: resultData,
       });
+      // 弹出提交成功提示信息
+      yield put({
+        type: 'toastM',
+        message: '提交任务成功',
+        duration: 2,
+      });
+      // 提交成功之后，清除taskFlow数据
+      yield put({
+        type: 'clearTaskFlowData',
+      });
+      // 提交成功之后，清除tab
+      yield put({
+        type: 'resetActiveTab',
+      });
     },
     // 获取审批人列表
     * getApprovalList({ payload }, { call, put }) {
-      const response = yield call(api.getApprovalList, payload);
-      const { resultData } = response;
+      const response = yield call(api.queryFlowStepInfo, payload);
+      const { resultData = EMPTY_OBJECT } = response;
+      const { flowButtons: [{ flowAuditors }] } = resultData;
+
       yield put({
         type: 'getApprovalListSuccess',
-        payload: resultData,
+        payload: flowAuditors,
       });
     },
   },
@@ -592,11 +686,11 @@ export default {
         performanceIndicators: resultData,
       };
     },
-    getHSRateSuccess(state, action) {
-      const { payload: { value } } = action;
+    getHSRateAndBusinessIndicatorSuccess(state, action) {
+      const { payload: { resultData } } = action;
       return {
         ...state,
-        hsRate: value,
+        hsRateAndBusinessIndicator: resultData,
       };
     },
     getInformationSuccess(state, action) {
@@ -835,6 +929,12 @@ export default {
         addServeRecordSuccess: payload.resultData === 'success',
       };
     },
+    resetServeRecord(state) {
+      return {
+        ...state,
+        addServeRecordSuccess: false,
+      };
+    },
     // 关注成功
     getFollowCustSuccess(state, action) {
       const { payload: { value, message, fllowCustData } } = action;
@@ -994,7 +1094,7 @@ export default {
     },
     // 清除任务流程数据
     clearTaskFlowData(state, action) {
-      const { payload } = action;
+      const { payload = {} } = action;
       return {
         ...state,
         storedTaskFlowData: payload,
@@ -1031,6 +1131,13 @@ export default {
         currentTab: payload,
       };
     },
+    // 清除保存的tab
+    resetActiveTab(state) {
+      return {
+        ...state,
+        currentTab: '1',
+      };
+    },
     // 提交任务流程成功
     submitTaskFlowSuccess(state, action) {
       const { payload } = action;
@@ -1045,6 +1152,13 @@ export default {
       return {
         ...state,
         approvalList: payload,
+      };
+    },
+    // 清除当前提交结果
+    clearSubmitTaskFlowResult(state) {
+      return {
+        ...state,
+        submitTaskFlowResult: '',
       };
     },
   },
