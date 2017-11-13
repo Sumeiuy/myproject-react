@@ -3,6 +3,7 @@
  *  封装fsp系统中window方法
  * @author wangjunjun
  */
+import { getProperty } from './helper';
 
 function exec(method, ...args) {
   try {
@@ -20,9 +21,27 @@ function execOpenTab(method, ...args) {
   }
 }
 
+function execSwitchTab(tabId) {
+  try {
+    const activeReactTab = getProperty(window, 'eb.component.SmartTab.activeReactTab');
+    activeReactTab($('#UTB'), { tabId });
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 function closeTab(arg) {
   try {
     window.$(`${arg} .close`).click();
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+function removeTabMenu(tabId) {
+  try {
+    const removeTab = getProperty(window, 'eb.component.SmartTab.remove');
+    removeTab($('#UTB'), { tabId });
   } catch (e) {
     console.log(e);
   }
@@ -64,6 +83,10 @@ const fspGlobal = {
     );
   },
 
+  switchFspTab(tabId) {
+    execSwitchTab(tabId);
+  },
+
   /**
    *  在fsp中新开一个iframe的tab
    */
@@ -87,15 +110,6 @@ const fspGlobal = {
     );
   },
 
-  // 第二次打開tab
-  openRctTabTwo(id) {
-    try {
-      window.$(id).tab('show');
-    } catch (e) {
-      console.log(e);
-    }
-  },
-
   // 关闭fsp中原有的tab
   // 参数 hrefValue 为对应标签页关闭按钮的父级元素href的属性值
   closeFspTabByHref(hrefValue) {
@@ -106,6 +120,10 @@ const fspGlobal = {
   // 参数 id 为对应得tab标签的id
   closeRctTabById(id) {
     closeTab(`#exApp_${id}`);
+  },
+
+  closeTabMenu(tabId) {
+    removeTabMenu(tabId);
   },
 };
 

@@ -8,9 +8,10 @@ import { withRouter, routerRedux } from 'dva-react-router-3/router';
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
-import { Tooltip } from 'antd';
 import _ from 'lodash';
 
+import { fspContainer } from '../../config';
+import { fspGlobal, helper } from '../../utils';
 import wordSrc from '../../../static/images/word.png';
 import pdfSrc from '../../../static/images/pdf.png';
 import Icon from '../../components/common/Icon';
@@ -22,6 +23,10 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   goBack: routerRedux.goBack,
   push: routerRedux.push,
+  downloadFile: query => ({
+    type: 'viewpointDetail/downloadFile',
+    payload: query,
+  }),
 };
 @connect(mapStateToProps, mapDispatchToProps)
 @withRouter
@@ -31,6 +36,7 @@ export default class ViewpointDetail extends PureComponent {
     location: PropTypes.object.isRequired,
     information: PropTypes.object,
     push: PropTypes.func.isRequired,
+    downloadFile: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -39,45 +45,59 @@ export default class ViewpointDetail extends PureComponent {
 
   @autobind
   handleBackClick() {
-    const { goBack, push, location: { state = '' } } = this.props;
-    if (_.isEmpty(state)) {
-      push({ pathname: '/customerPool/viewpointList' });
+    const { push, location: { query: { curPageNum = 1, curPageSize = 18 } } } = this.props;
+    const param = { id: 'RTC_TAB_VIEWPOINT', title: '资讯' };
+    const url = '/customerPool/viewpointList';
+    const newQuery = { curPageNum, curPageSize };
+    if (document.querySelector(fspContainer.container)) {
+      fspGlobal.openRctTab({ url: `${url}?${helper.queryToString(newQuery)}`, param });
     } else {
-      goBack();
+      push({ pathname: url, query: newQuery });
     }
+  }
+
+  @autobind
+  handleDownloadClick({ format }) {
+    const { downloadFile } = this.props;
+    downloadFile({ module: 'viewpointDetail', param: `${format}_download` });
   }
 
   renderDownLoad({ loadUrl, format, fileName }) {
     return (
-      _.isEmpty(loadUrl) ? (
-        <Tooltip title={`暂不支持下载 ${_.toUpper(format)} 格式`}>
-          {`${_.toUpper(format)} 全文`}
-        </Tooltip>
-      ) : (
-        <a href={loadUrl} download={fileName || `${_.toUpper(format)} 全文.${_.toLower(format)}`}>
-          {`${_.toUpper(format)} 全文`}
-        </a>
-      )
+      <a
+        href={loadUrl}
+        download={fileName || `${_.toUpper(format)} 全文.${_.toLower(format)}`}
+        onClick={() => this.handleDownloadClick({ format })}
+      >
+        {`${_.toUpper(format)} 全文`}
+      </a>
     );
   }
 
   render() {
-    const { location: { query }, information: { infoVOList = [] } } = this.props;
+    const { location: { query = {} }, information: { infoVOList = [] } } = this.props;
     const { detailIndex = '0' } = query;
+    const index = _.toNumber(detailIndex);
     const {
       texttitle = '暂无标题',
       abstract = '暂无内容',
       secuabbr = '',
       authors = '',
-      pubdata = '',
+      pubdatedetail = '',
       annexpathpdf = '',
       annexpathword = '',
-    } = infoVOList[_.toNumber(detailIndex)] || {};
-    // 分割成段，展示
+    } = infoVOList[index] || {};
+    const dateArray = _.split(pubdatedetail, ' ');
+    const date = _.isEmpty(dateArray) ? '' : _.head(dateArray);
+    // 分割成段，展示，过滤掉span标签，因为自带样式不符合需求
     const formateAbstract = _.isEmpty(abstract) ? (
       '<p>暂无内容</p>'
     ) : (
-      _.replace(_.trim(abstract), /\s{2,}/gi, '<br /><span></span>')
+      _.replace(
+        _.trim(abstract),
+        /<\/?span[^>]*?>/g,
+        '',
+      )
     );
     return (
       <div className={styles.listContainer}>
@@ -106,26 +126,44 @@ export default class ViewpointDetail extends PureComponent {
                   {_.isEmpty(authors) ? '作者：--' : `作者：${authors}`}
                 </div>
                 <div className={styles.column}>
-                  {_.isEmpty(pubdata) ? '发布日期：--' : `发布日期：${pubdata}`}
+                  {_.isEmpty(date) ? '发布日期：--' : `发布日期：${date}`}
                 </div>
               </div>
             </div>
             <div className={styles.body} dangerouslySetInnerHTML={{ __html: formateAbstract }} />
             <div className={styles.footer}>
-              <div className={styles.fileColumn}>
+              <div
+                className={classnames(
+                  styles.fileColumn,
+                  { [styles.downLoadNone]: _.isEmpty(annexpathword) })
+                }
+              >
                 <div className={styles.fileIconContainer}>
                   <img src={wordSrc} alt="WORD 图标" />
                 </div>
                 <div className={styles.fileName}>
-                  {this.renderDownLoad({ loadUrl: annexpathword, format: 'WORD', fileName: texttitle })}
+                  {this.renderDownLoad({
+                    loadUrl: annexpathword,
+                    format: 'WORD',
+                    fileName: texttitle,
+                  })}
                 </div>
               </div>
-              <div className={styles.fileColumn}>
+              <div
+                className={classnames(
+                  styles.fileColumn,
+                  { [styles.downLoadNone]: _.isEmpty(annexpathpdf) })
+                }
+              >
                 <div className={styles.fileIconContainer}>
                   <img src={pdfSrc} alt="PDF 图标" />
                 </div>
                 <div className={styles.fileName}>
-                  {this.renderDownLoad({ loadUrl: annexpathpdf, format: 'PDF', fileName: texttitle })}
+                  {this.renderDownLoad({
+                    loadUrl: annexpathpdf,
+                    format: 'PDF',
+                    fileName: texttitle,
+                  })}
                 </div>
               </div>
               <div

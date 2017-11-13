@@ -5,14 +5,45 @@
       .ant-input-affix-wrapper .ant-input-suffix {
         right: -46px;
       }
+      .ant-input-affix-wrapper {
+        input {
+          width: 268px;
+          border-radius: 0;
+          cursor: pointer;
+        }
+        .ant-input-suffix {
+          right: 0;
+          & button {
+            position: relative;
+            border-radius: 0;
+            width: 30px;
+            height: 30px;
+            & i {
+              position: absolute;
+              top: 5px;
+              left: 7px;
+              font-size: 18px;
+            }
+          }
+        }
+      }
     }
+  }
+  .emptyContent {
+    position: relative;
+    padding: 16px 8px;
+    background: #fff;
+    border-bottom: 1px solid #e9e9e9;
+    text-align: center;
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.43);
   }
 }
 .taskOverViewContainer {
   width: 80%;
   margin: 0 auto;
   & > .basicInfoSection {
-    background: #ffffff;
+    background: #fff;
     border: 1px solid #979797;
     margin-bottom: 30px;
     & > .title {
@@ -27,7 +58,7 @@
     & > .divider {
       display: block;
       width: 100%;
-      border-bottom: 1px solid #dddddd;
+      border-bottom: 1px solid #ddd;
     }
     & > .infoDescription {
       padding-top: 10px;
@@ -90,11 +121,19 @@
       }
     }
   }
+  & > .selectApprover::before {
+    display: inline-block;
+    margin-right: 4px;
+    content: "*";
+    line-height: 1;
+    font-size: 12px;
+    color: #f04134;
+  }
 }
 .approvalModalContainer {
   :global {
     & .ant-modal-body {
-      padding: 0px;
+      padding: 0;
       padding-top: 14px;
       padding-left: 25px;
       padding-right: 20px;
@@ -109,10 +148,10 @@
 .approvalListTable {
   padding: 0 !important;
   table {
-    border: 1px solid #dddddd;
+    border: 1px solid #ddd;
   }
   table > thead > tr > th, tbody > tr > td {
-    padding: 0px;
+    padding: 0;
     padding-bottom: 7px;
     padding-top: 7px;
     padding-left: 8px;
@@ -122,9 +161,9 @@
     color: #727272;
   }
   table > tbody > tr:nth-child(odd) {
-    background-color: #ffffff;
+    background-color: #fff;
   }
-  tbody > tr > td > div,  tbody > tr > th{
+  tbody > tr > td > div,  tbody > tr > th {
     max-width: 200px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -133,6 +172,10 @@
   }
   table > thead > tr > th {
     background-color: #f7f7f7;
+  }
+  table > colgroup > col:first-child {
+    width: 10%;
+    min-width: 10%;
   }
 }
 .btnSection {

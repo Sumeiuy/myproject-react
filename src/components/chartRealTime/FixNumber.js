@@ -102,6 +102,28 @@ const FixNumber = {
     };
   },
 
+  // 1. 全部在万以下的数据不做处理
+  // 2.超过万的，以‘万户’为单位
+  toFomatterCust(series) {
+    let newUnit = '户';
+    const tempSeries = series.map(n => Math.abs(n));
+    let newSeries = series;
+    const max = Math.max(...tempSeries);
+
+    if (max >= 10000) {
+      newUnit = '万户';
+      newSeries = series.map(item => FixNumber.toFixedDecimal(item / 10000));
+    } else {
+      newUnit = '户';
+      newSeries = series.map(item => FixNumber.toFixedDecimal(item));
+    }
+
+    return {
+      newUnit,
+      newSeries,
+    };
+  },
+
   // 对登录次数进行特殊处理
   toFixedCI(series) {
     const newUnit = '次';

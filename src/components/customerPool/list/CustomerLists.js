@@ -4,7 +4,8 @@
  * @author wangjunjun
  */
 
-import React, { PureComponent, PropTypes } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { Pagination, Checkbox, message } from 'antd';
@@ -15,9 +16,10 @@ import CustomerRow from './CustomerRow';
 import CreateContactModal from './CreateContactModal';
 import Reorder from './Reorder';
 import Loading from '../../../layouts/Loading';
+import BottomFixedBox from './BottomFixedBox';
 
 import { fspContainer } from '../../../config';
-import { fspGlobal, helper } from '../../../utils';
+// import { fspGlobal, helper } from '../../../utils';
 import NoData from '../common/NoData';
 
 import styles from './customerLists.less';
@@ -106,6 +108,12 @@ export default class CustomerLists extends PureComponent {
     isLoadingEnd: PropTypes.bool.isRequired,
     onRequestLoading: PropTypes.func.isRequired,
     empInfo: PropTypes.object.isRequired,
+    handleSelect: PropTypes.func.isRequired,
+    handleCheck: PropTypes.func.isRequired,
+    handleSearch: PropTypes.func.isRequired,
+    handleCloseClick: PropTypes.func.isRequired,
+    handleAddServiceRecord: PropTypes.func.isRequired,
+    handleCollapseClick: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -128,7 +136,6 @@ export default class CustomerLists extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      taskAndGroupLeftPos: '0',
       currentCustId: '',
       isShowContactModal: false,
       modalKey: `modalKeyCount${modalKeyCount}`,
@@ -137,15 +144,8 @@ export default class CustomerLists extends PureComponent {
       emailCustId: '',
     };
   }
+
   componentDidMount() {
-    this.setTaskAndGroup();
-    const sidebarHideBtn = document.querySelector(fspContainer.sidebarHideBtn);
-    const sidebarShowBtn = document.querySelector(fspContainer.sidebarShowBtn);
-    if (sidebarHideBtn && sidebarShowBtn) {
-      sidebarHideBtn.addEventListener('click', this.updateLeftPos);
-      sidebarShowBtn.addEventListener('click', this.updateLeftPos);
-    }
-    // console.log('this.props----', this.props);
     const { location: { query: { ptyMng } }, authority, empInfo } = this.props;
     let bool = false;
     if (ptyMng) {
@@ -153,6 +153,7 @@ export default class CustomerLists extends PureComponent {
     }
     this.mainServiceManager = !!(bool) || !authority;
   }
+
   componentWillReceiveProps(nextProps) {
     const {
       custContactData: prevCustContactData = EMPTY_OBJECT,
@@ -223,6 +224,8 @@ export default class CustomerLists extends PureComponent {
         }
       }
     }
+    // 因列表返回字段whetherExist表明是否关注，
+    // 故讲以isFollows：{[custiId]: whetherExist}的形式存入isFollows，并下穿到QuickMenu组件
     if (nextCustList !== custList) {
       nextCustList.map((item) => {
         isFollows = {
@@ -245,28 +248,6 @@ export default class CustomerLists extends PureComponent {
     }
   }
 
-  componentDidUpdate() {
-    this.setTaskAndGroup();
-  }
-
-  componentWillUnmount() {
-    const sidebarHideBtn = document.querySelector(fspContainer.sidebarHideBtn);
-    const sidebarShowBtn = document.querySelector(fspContainer.sidebarShowBtn);
-    if (sidebarHideBtn && sidebarShowBtn) {
-      sidebarHideBtn.removeEventListener('click', this.updateLeftPos);
-      sidebarShowBtn.removeEventListener('click', this.updateLeftPos);
-    }
-  }
-
-  @autobind
-  setTaskAndGroup() {
-    const workspaceSidebar = document.querySelector(fspContainer.workspaceSidebar);
-    if (workspaceSidebar) {
-      this.setState({
-        taskAndGroupLeftPos: `${workspaceSidebar.offsetWidth}px`,
-      });
-    }
-  }
   // 判断已有信息邮箱是否存在
   @autobind
   getEmail(address) {
@@ -286,66 +267,60 @@ export default class CustomerLists extends PureComponent {
       message.error('暂无客户邮箱，请与客户沟通尽快完善信息');
     }
   }
-  updateLeftPos() {
-    const workspaceSidebar = document.querySelector(fspContainer.workspaceSidebar);
-    const fixedEleDom = document.querySelector('fixedEleDom');
-    if (fixedEleDom && workspaceSidebar) {
-      fixedEleDom.style.left = `${workspaceSidebar.offsetWidth}px`;
-    }
-  }
 
-  // 单选列表中的数据
+  /**
+   * 单选列表中的数据
+   * 数据： url中：selectedIds=id1.name1,id2.name2,id3.name3
+   * 逻辑：
+   * url中没有selectedIds时，选中id=id1， selectedIds=id1.name1
+   * url中selectedIds=id1.name1,id2.name2，并且选中id=id1，过滤id1.name1 => selectedIds=id1.name1
+   * url中selectedIds=id1.name1，并且选中id=id2时  => selectedIds=id1.name1,id2.name2
+  */
   @autobind
   handleSingleSelect(id, name) {
-    const { replace, location: { query, pathname } } = this.props;
-    const str = `${id}.${name}`;
-    if (!query.selectedIds) {
-      replace({
+    const {
+      replace,
+      location: {
+        query,
         pathname,
-        query: {
-          ...query,
-          selectedIds: str,
-          selectAll: false,
-        },
-        state: {
-          noScrollTop: true,
-        },
-      });
+      },
+    } = this.props;
+    const { selectedIds } = query;
+    const cur = `${id}.${name}`;
+    let tmpStr = '';
+    if (!selectedIds) {
+      tmpStr = cur;
     } else {
-      const selectedIdsArr = query.selectedIds.split(',');
-      if (_.includes(selectedIdsArr, str)) {
-        replace({
-          pathname,
-          query: {
-            ...query,
-            selectedIds: selectedIdsArr.filter(v => v !== str).join(','),
-            selectAll: false,
-          },
-          state: {
-            noScrollTop: true,
-          },
-        });
-      } else {
-        replace({
-          pathname,
-          query: {
-            ...query,
-            selectedIds: [...selectedIdsArr, str].join(','),
-            selectAll: false,
-          },
-          state: {
-            noScrollTop: true,
-          },
-        });
-      }
+      const selectedIdsArr = selectedIds.split(',');
+      tmpStr = _.includes(selectedIdsArr, cur) ?
+        selectedIdsArr.filter(v => v !== cur).join(',') :
+        [...selectedIdsArr, cur].join(',');
     }
+    replace({
+      pathname,
+      query: {
+        ...query,
+        selectedIds: tmpStr,
+        selectAll: false,
+      },
+      state: {
+        noScrollTop: true,
+      },
+    });
   }
 
-  // 点击全选
+  // 点击全选，获取按钮的状态赋值url中的selectAll,并且将selectedIds置空
   @autobind
   selectAll(e) {
     const status = e.target.checked;
-    const { replace, location: { query, pathname } } = this.props;
+    const {
+      replace,
+      location: { query, pathname },
+      handleCheck,
+    } = this.props;
+    // 手动发送日志
+    handleCheck({ param: 'check_all' });
+
     replace({
       pathname,
       query: {
@@ -359,96 +334,11 @@ export default class CustomerLists extends PureComponent {
     });
   }
 
-  // 点击新建分组或者发起任务按钮
   @autobind
-  handleClick(url, title, id) {
-    const {
-      page,
-      condition,
-      entertype,
-      location: {
-        query: {
-          selectedIds,
-        selectAll,
-        },
-      },
-    } = this.props;
-    if (selectedIds) {
-      const selectedIdsArr = selectedIds.split(',');
-      this.openByIds(url, selectedIdsArr, selectedIdsArr.length, title, id, entertype);
-    } else if (selectAll) {
-      this.openByAllSelect(url, condition, page.total, title, id, entertype);
-    }
-  }
-
-  // 单个点击选中时跳转到新建分组或者发起任务
-  @autobind
-  openByIds(url, ids, count, title, id, entertype) {
-    // debugger
-    const tmpArr = [];
-    _(ids).forEach((item) => {
-      tmpArr.push(item.split('.')[0]);
-    });
-    const idStr = encodeURIComponent(tmpArr.join(','));
-    const name = encodeURIComponent(ids[0].split('.')[1]);
-    const obj = {
-      ids: idStr,
-      count,
-      entertype,
-      name,
-    };
-    if (document.querySelector(fspContainer.container)) {
-      const newurl = `${url}?${helper.queryToString(obj)}`;
-      const param = {
-        closable: true,
-        forceRefresh: true,
-        isSpecialTab: true,
-        id,
-        title,
-      };
-      fspGlobal.openRctTab({ url: newurl, param });
-    } else {
-      this.props.push({
-        pathname: url,
-        query: obj,
-      });
-    }
-  }
-
-  // 全选按钮选中时跳转到新建分组或者发起任务
-  @autobind
-  openByAllSelect(url, condition, count, title, id, entertype) {
-    // 全选时取整个列表的第一个数据的name属性值传给后续页面
-    const name = encodeURIComponent(this.props.custList[0].name);
-    const condt = encodeURIComponent(JSON.stringify(condition));
-    const obj = {
-      condition: condt,
-      count,
-      entertype,
-      name,
-    };
-    if (document.querySelector(fspContainer.container)) {
-      const newurl = `${url}?${helper.queryToString(obj)}`;
-      const param = {
-        closable: true,
-        forceRefresh: true,
-        isSpecialTab: true,
-        id,
-        title,
-      };
-      fspGlobal.openRctTab({ url: newurl, param });
-    } else {
-      this.props.push({
-        pathname: url,
-        query: obj,
-      });
-    }
-  }
-
-  @autobind
-  showCreateContact({ custId, custType }) {
+  showCreateContact({ custName, custId, custType }) {
     const { getCustContact, getServiceRecord, custContactData, onRequestLoading } = this.props;
     this.setState({
+      custName,
       currentCustId: custId,
       custType,
     }, () => {
@@ -501,8 +391,10 @@ export default class CustomerLists extends PureComponent {
     }
     this.setState({
       currentFollowCustId: custId,
+      emailCustId: '',
     });
   }
+
   /**
  * 回调，关闭modal打开state
  */
@@ -519,10 +411,14 @@ export default class CustomerLists extends PureComponent {
     const {
       location: {
         query,
-        pathname,
+      pathname,
       },
       replace,
+      handleSelect,
     } = this.props;
+    // 手动上传日志
+    handleSelect({ param: `${item.ptyMngName}_${item.ptyMngId}` });
+
     replace({
       pathname,
       query: {
@@ -537,6 +433,8 @@ export default class CustomerLists extends PureComponent {
 
   @autobind
   dropdownToSearchInfo(value) {
+    const { handleSearch } = this.props;
+    handleSearch({ param: `keyword_${value}` });
     // 下拉菜单搜错查询关键字
     this.context.getSearchServerPersonList(value);
   }
@@ -547,12 +445,16 @@ export default class CustomerLists extends PureComponent {
     const {
       replace,
       location: { query, pathname },
+      handleSelect,
     } = this.props;
     const { orgId } = state;
     const obj = {};
     if (orgId) {
       obj.orgId = orgId;
     }
+    // 手动上传日志
+    handleSelect({ param: obj.orgId });
+
     replace({
       pathname,
       query: {
@@ -565,22 +467,8 @@ export default class CustomerLists extends PureComponent {
     });
   }
 
-  // 分组只针对服务经理，也就是说：
-  // 有首页指标查看权限或者服务经理筛选选的是当前登录用户时显示用户分组
-  renderGroup() {
-    if (this.mainServiceManager) {
-      return (<button
-        onClick={() => { this.handleClick('/customerPool/customerGroup', '新建分组', 'RCT_FSP_CUSTOMER_LIST'); }}
-      >
-        用户分组
-      </button>);
-    }
-    return null;
-  }
-
   render() {
     const {
-      taskAndGroupLeftPos,
       currentFollowCustId,
       isShowContactModal,
       currentCustId,
@@ -588,6 +476,7 @@ export default class CustomerLists extends PureComponent {
       custType,
       modalKey,
       isFollows,
+      custName,
     } = this.state;
 
     const {
@@ -596,8 +485,8 @@ export default class CustomerLists extends PureComponent {
       custList,
       curPageNum,
       pageSize,
-      onPageChange,
       onSizeChange,
+      onPageChange,
       getCustIncome,
       monthlyProfits,
       location,
@@ -617,6 +506,13 @@ export default class CustomerLists extends PureComponent {
       isLoadingEnd,
       searchServerPersonList,
       empInfo,
+      handleCheck,
+      handleCloseClick,
+      handleAddServiceRecord,
+      handleCollapseClick,
+      condition,
+      push,
+      entertype,
     } = this.props;
     // console.log('1---', this.props)
     // 服务记录执行方式字典
@@ -652,7 +548,7 @@ export default class CustomerLists extends PureComponent {
       selectedIds.split(',') : EMPTY_ARRAY;
     const isAllSelectBool = !((!selectAll || selectAll === 'false'));
     // 是否显示底部的发起任务和分组，全选或者有选中数据时才显示
-    const isShow = (!_.isEmpty(selectIdsArr) || isAllSelectBool) ? 'block' : 'none';
+    const BottomFixedBoxVisible = (!_.isEmpty(selectIdsArr) || isAllSelectBool);
     // 已选中的条数：选择全选显示所有数据量，非全选显示选中的条数
     const selectCount = isAllSelectBool ? page.total : selectIdsArr.length;
     // 默认服务经理
@@ -687,7 +583,7 @@ export default class CustomerLists extends PureComponent {
             >
               全选
             </Checkbox>
-            { _.isEmpty(custList) ? null : <span className="hint">自动选择所有符合条件的客户</span> }
+            {_.isEmpty(custList) ? null : <span className="hint">自动选择所有符合条件的客户</span>}
           </div>
           <div className={styles.reorder}>
             <Reorder
@@ -722,6 +618,7 @@ export default class CustomerLists extends PureComponent {
               {
                 custList.map(
                   item => <CustomerRow
+                    handleCheck={handleCheck}
                     mainServiceManager={this.mainServiceManager}
                     authority={authority}
                     dict={dict}
@@ -750,7 +647,9 @@ export default class CustomerLists extends PureComponent {
             </div>
             : <NoData />
         }
-        <div className="list-pagination">
+        <div
+          className="list-pagination"
+        >
           <Pagination
             current={current}
             total={curTotal}
@@ -770,31 +669,25 @@ export default class CustomerLists extends PureComponent {
             全选
           </Checkbox>
         </div>
-        <div
-          id="fixedEleDom"
-          className={styles.taskAndGroup}
-          style={{
-            left: taskAndGroupLeftPos,
-            display: isShow,
-          }}
-        >
-          <p className="left">
-            已选&nbsp;
-            <span className="marked">{selectCount}</span>
-            &nbsp;户，选择目标用户以创建自定义任务，或者把用户加入分组管理
-          </p>
-          <div className="right">
-            {this.renderGroup()}
-            <button
-              onClick={() => { this.handleClick('/customerPool/createTask', '发起任务', 'RCT_FSP_CUSTOMER_LIST'); }}
-            >
-              发起任务
-            </button>
-          </div>
-        </div>
+        {
+          BottomFixedBoxVisible ?
+            <BottomFixedBox
+              selectCount={selectCount}
+              mainServiceManager={this.mainServiceManager}
+              page={page}
+              condition={condition}
+              location={location}
+              push={push}
+              custList={custList}
+              entertype={entertype}
+            /> : null
+        }
         {
           (isShowContactModal && isLoadingEnd) ?
             <CreateContactModal
+              handleCollapseClick={handleCollapseClick}
+              handleAddServiceRecord={handleAddServiceRecord}
+              handleCloseClick={handleCloseClick}
               key={modalKey}
               visible={isShowContactModal}
               custContactData={finalContactData}
@@ -803,6 +696,7 @@ export default class CustomerLists extends PureComponent {
               createServiceRecord={toggleServiceRecordModal} /* 创建服务记录 */
               onClose={this.resetModalState}
               currentCustId={currentCustId}
+              currentCustName={custName}
               executeTypes={executeTypes}
               serveWay={serveWay}
             /> : null

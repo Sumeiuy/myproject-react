@@ -24,6 +24,41 @@ export default class PerformanceIndicators extends PureComponent {
     data: {},
   }
 
+  componentDidMount() {
+    this.setMinFontSizeByWidth();
+    window.addEventListener('resize', () => {
+      this.setMinFontSizeByWidth();
+    });
+  }
+
+  componentDidUpdate() {
+    this.setMinFontSizeByWidth();
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', () => this.setMinFontSizeByWidth());
+  }
+
+  // 根据宽度，按一定比例缩放字号
+  @autobind
+  setMinFontSizeByWidth() {
+    const { data: { businessNumbers } } = this.props;
+    // 十万起，数字展示不下，要缩放
+    if (businessNumbers > 99999 && this.itemBElem) {
+      const currentWidth = Math.ceil(this.itemBElem.offsetWidth);
+      const minWidth = Math.ceil(
+        parseFloat(
+          window.getComputedStyle(
+            this.itemBElem,
+          ).getPropertyValue('min-width'),
+        ),
+      );
+      // 按照一定比例缩放(自测出来的)
+      const percentSize = Math.floor((currentWidth - minWidth) * 0.2);
+      this.itemBElem.style.fontSize = `${Math.min((20 + percentSize), 30)}px`;
+    }
+  }
+
   // 处理数值（大于99+）
   processNum(num) {
     const nowNum = parseInt(num); // eslint-disable-line
@@ -72,24 +107,39 @@ export default class PerformanceIndicators extends PureComponent {
     }
   }
 
+  @autobind
+  handleMotClick() {
+    // 点击事件
+    fspGlobal.myMotTask();
+  }
+
+  @autobind
+  handleMessageClick() {
+    // 点击事件
+    const notificationUrl = '/messgeCenter';
+    const notificationParam = {
+      forceRefresh: false,
+      id: 'MESSAGE_CENTER',
+      title: '消息中心',
+    };
+    fspGlobal.openFspTab({
+      url: notificationUrl,
+      param: notificationParam,
+    });
+  }
+
   render() {
     const { data: { businessNumbers,
       notificationNumbers,
       todayToDoNumbers,
       workFlowNumbers } } = this.props;
     const url = '/customerPool/todo';
-    const notificationUrl = '/messgeCenter';
     const param = {
       closable: true,
       forceRefresh: true,
       isSpecialTab: true,
       id: 'FSP_TODOLIST',
       title: '待办流程列表',
-    };
-    const notificationParam = {
-      forceRefresh: false,
-      id: 'MESSAGE_CENTER',
-      title: '消息中心',
     };
     return (
       <div className={styles.toBeDoneBox}>
@@ -98,7 +148,7 @@ export default class PerformanceIndicators extends PureComponent {
         </div>
         <div className={styles.row}>
           <div className={`${styles.item} ${styles.item_a}`}>
-            <a className="item" onClick={() => fspGlobal.myMotTask()}>
+            <a className="item" onClick={this.handleMotClick}>
               <div className={styles.content}>
                 <div className={styles.description}>
                   <div className={styles.count}>
@@ -116,7 +166,10 @@ export default class PerformanceIndicators extends PureComponent {
             >
               <div className={styles.content}>
                 <div className={styles.description}>
-                  <div className={styles.count}>
+                  <div
+                    className={styles.count}
+                    ref={(ref) => { this.itemBElem = ref; }}
+                  >
                     {this.farmtNum(businessNumbers)}
                   </div>
                   <div className={styles.intro}>潜在业务客户</div>
@@ -139,12 +192,7 @@ export default class PerformanceIndicators extends PureComponent {
           <div className={`${styles.item} ${styles.item_d}`}>
             <a
               className="item"
-              onClick={
-                () => fspGlobal.openFspTab({
-                  url: notificationUrl,
-                  param: notificationParam,
-                })
-              }
+              onClick={this.handleMessageClick}
             >
               <div className={styles.content}>
                 <div className={styles.description}>

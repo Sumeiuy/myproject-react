@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 17:09:13
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-20 14:52:33
+ * @Last Modified time: 2017-10-25 15:52:00
  */
 
 import React, { PureComponent } from 'react';
@@ -17,17 +17,25 @@ export default class CustomerGroupListSearch extends PureComponent {
   static propTypes = {
     onSearch: PropTypes.func,
     isNeedBtn: PropTypes.bool,
+    searchStyle: PropTypes.object,
+    defaultValue: PropTypes.string,
+    titleNode: PropTypes.node,
+    placeholder: PropTypes.string,
   };
 
   static defaultProps = {
     onSearch: () => { },
     isNeedBtn: false,
+    searchStyle: {},
+    defaultValue: '',
+    titleNode: null,
+    placeholder: '',
   };
 
   constructor(props) {
     super(props);
     this.state = {
-      curSearchValue: '',
+      curSearchValue: props.defaultValue,
     };
   }
 
@@ -48,28 +56,48 @@ export default class CustomerGroupListSearch extends PureComponent {
     });
   }
 
-  render() {
-    const { isNeedBtn } = this.props;
+  @autobind
+  handleSearchEnter() {
+    const { onSearch } = this.props;
     const { curSearchValue } = this.state;
+    // 清空搜索值
+    // this.setState({
+    //   curSearchValue: '',
+    // });
+    onSearch(curSearchValue);
+  }
+
+  render() {
+    const { isNeedBtn, searchStyle, titleNode, placeholder } = this.props;
+    const { curSearchValue } = this.state;
+
     return (
       <div className={styles.searchWrapper}>
-        <span className={styles.name}>分组名称：</span>
-        <Search
-          placeholder="分组名称"
-          value={curSearchValue}
-          onChange={this.handleInputChange}
-          onSearch={this.handleSearch}
-          style={{
-            height: '30px',
-            width: '250px',
-          }}
-          suffix={
-            isNeedBtn ? (
-              <Button className="search-btn" size="large" type="primary">
-                <Icon type="search" />
-              </Button>
-            ) : null}
-        />
+        {
+          titleNode
+        }
+        {
+          isNeedBtn ?
+            <Input
+              placeholder={placeholder}
+              value={curSearchValue}
+              onChange={this.handleInputChange}
+              style={searchStyle}
+              onPressEnter={this.handleSearchEnter}
+              suffix={(
+                <Button className="search-btn" size="large" type="primary" onClick={this.handleSearchEnter}>
+                  <Icon type="search" />
+                </Button>
+              )}
+            /> :
+            <Search
+              placeholder={placeholder}
+              value={curSearchValue}
+              onChange={this.handleInputChange}
+              onSearch={this.handleSearch}
+              style={searchStyle}
+            />
+        }
       </div>
     );
   }

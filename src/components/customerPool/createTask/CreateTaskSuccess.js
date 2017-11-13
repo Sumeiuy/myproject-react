@@ -6,30 +6,34 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
+// import { withRouter } from 'dva/router';
 import ReactDOM from 'react-dom';
 import styles from './createTaskSuccess.less';
 import imgSrc from '../../../../static/images/createTask_success.png';
 import { fspGlobal } from '../../../utils';
+import { fspContainer } from '../../../config';
 import Button from '../../common/Button';
 
-let successSetInterval;
-let COUNT = 10;
 export default class CreateTaskSuccess extends PureComponent {
   static propTypes = {
-    data: PropTypes.object,
     successType: PropTypes.bool,
     push: PropTypes.func.isRequired,
+    onCloseTab: PropTypes.func.isRequired,
+    location: PropTypes.object.isRequired,
+    clearSubmitTaskFlowResult: PropTypes.func,
+    onRemoveTab: PropTypes.func,
   }
 
   static defaultProps = {
-    data: {},
     successType: false,
+    clearSubmitTaskFlowResult: () => {},
+    onRemoveTab: null,
   }
 
   constructor(props) {
     super(props);
     this.state = {
-      changeTime: COUNT,
+      changeTime: 2,
     };
   }
 
@@ -41,66 +45,66 @@ export default class CreateTaskSuccess extends PureComponent {
     if (UTBContentElem) {
       taskSuccessBox.style.height = (docElemHeight - 55 - 60) + 'px';
     } else {
-      if(taskSuccessBox) {
+      if (taskSuccessBox) {
         taskSuccessBox.style.height = (docElemHeight - 40) + 'px';
       }
     }
     this.handleShowSuccess(this.props);
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillUnmount() {
+    const { clearSubmitTaskFlowResult } = this.props;
+    clearSubmitTaskFlowResult();
+    this.clearTimeInterval();
   }
 
   @autobind
   handleShowSuccess(props) {
     const { successType } = props;
     if (successType) {
-      successSetInterval = setInterval(this.handleMovTime, 1000);
+      this.successSetInterval = setInterval(this.handleMovTime, 1000);
     }
   }
+
   @autobind
-  /* 关闭当前页 */
-  closeTab() {
-      // fspGlobal.closeRctTabById('RCT_FSP_TASK');
-      fspGlobal.closeRctTabById('RCT_FSP_CUSTOMER_LIST');
-  }
-  @autobind
-  goToIndex() {
-    const url = '/customerPool';
-    const param = {
-      id: 'tab-home',
-      title: '首页',
-    };
-    fspGlobal.openRctTab({ url, param });
-    this.closeTab();
-  }
-  @autobind
-  goToTask(){
-    const { push, state } = this.props;
-    const url = '/mot/selfbuildTask/selfBuildTaskMain';
-    const param ={
-      id: 'FSP_MOT_SELFBUILT_TASK',
-      closable: true,
-      forceRefresh:true,
-      title: '自建任务管理'
+  goToHome() {
+    this.clearTimeInterval();
+    const { onCloseTab, onRemoveTab, push, location: { state, query } } = this.props;
+    if (document.querySelector(fspContainer.container)) {
+      if(typeof onRemoveTab === 'function') {
+        onRemoveTab();
+        fspGlobal.switchFspTab('tab-home');
+      } else {
+        onCloseTab();
+      }
+    } else {
+      push({
+        pathname: '/customerPool',
+        query,
+        state: _.omit(state, 'noScrollTop'),
+      });
     }
-    debugger;
-    fspGlobal.openFspTab({ url, param })
-    debugger
-    this.closeTab();
   }
-  // #FSP_MOT_SELFBUILT_TASK
+
   @autobind
   handleMovTime() {
+    let { changeTime } = this.state;
     this.setState({
-      changeTime: COUNT--,
+      changeTime: --changeTime,
     }, () => {
-      if (COUNT < 0){
+      if (changeTime <= 0) {
         console.log('页面关闭');
-        this.goToIndex();
-        clearInterval(successSetInterval);
+        // 跳转之前关闭interval
+        this.goToHome();
       }
-    });    
+    });
+  }
+
+  @autobind
+  clearTimeInterval() {
+    // 清除interval
+    clearInterval(this.successSetInterval);
+    this.successSetInterval = null;
   }
 
   render() {
@@ -114,11 +118,12 @@ export default class CreateTaskSuccess extends PureComponent {
             </div>
             <div className={styles.taskSuccess_msg}>
               <p>提交成功！</p>
-              <p>创建任务请求已提交至后台，后台需要一些时间处理，您可以在“任务中心 → <a onClick={this.goToTask}>任务管理</a>”中查看处理状态。</p>
+              <p>创建任务请求已提交，后台需要一些时间处理。</p>
+              <p>5~10分钟后，您可以通过 任务中心-> MOT任务 查看并执行该任务。</p>
               <p>页面会在 <b>{changeTime}</b> 秒内自动关闭</p>
             </div>
             <div className={styles.taskSuccess_btn}>
-              <Button type="primary" onClick={this.goToIndex}>
+              <Button type="primary" onClick={this.goToHome}>
                 返回首页
               </Button>
             </div>

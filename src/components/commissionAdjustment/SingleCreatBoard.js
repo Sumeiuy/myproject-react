@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-04 13:37:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-09 16:29:40
+ * @Last Modified time: 2017-11-10 16:57:49
  * @description 单佣金申请内容区域
  */
 
@@ -186,7 +186,7 @@ export default class SingleCreateBoard extends PureComponent {
       });
     } else {
       queryGj({
-        custId: customer.custEcom,
+        custId: customer.id,
         commision: v,
       });
     }

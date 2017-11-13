@@ -4,18 +4,38 @@
     margin: 20px 20px 44px;
     padding: 7px 30px 60px;
     background-color: #fff;
-    ::-webkit-scrollbar {
-      display: block;
+    .td, a {
+      font-family: PingFangSC-Regular;
+      font-size: 14px;
+      color: #9b9b9b;
+      letter-spacing: 0.2px;
+      border: none;
+      text-align: left;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
     }
-    i {
-      font-size: 12px;
-      color: #6395e4;
+    .headLine {
+      width: 300px;
+      padding-right: 15px;
+      cursor: pointer;
+      a {
+        color: #4a4a4a;
+      }
+      a:hover {
+        color: #10aeff;
+      }
     }
-    .zuoIcon {
-      margin-right: 4px;
+    .authors {
+      font-family: PingFangSC-Light;
+      color: #4a4a4a;
+      width: 85%;
     }
-    .youIcon {
-      margin-left: 4px;
+    .category, .induname, .pubdatelist {
+      width: 90%;
+    }
+    .stock {
+      width: 90%;
     }
   }
   :global {
@@ -25,10 +45,7 @@
       .ant-table {
         // height: 677px;
         table {
-          // border: none;
-          // white-space: nowrap;
-          // text-overflow: ellipsis;
-          // overflow: hidden;
+          border: none;
           .ant-table-thead > tr > th {
             font-family: PingFangSC-Medium;
             font-size: 14px;
@@ -44,27 +61,15 @@
           .ant-table-tbody > tr > td {
             padding: 8px;
             line-height: 20px;
-            // white-space: nowrap;
             font-family: PingFangSC-Regular;
             font-size: 14px;
             color: #9b9b9b;
             letter-spacing: 0.2px;
-            // border: none;
+            border: none;
             text-align: left;
-          }
-          .ant-table-tbody > tr > td:first-child {
-            color: #4a4a4a;
-          }
-          .ant-table-tbody > tr > td:last-child {
-            font-family: PingFangSC-Light;
-            color: #4a4a4a;
           }
           tr {
             height: 36px;
-            cursor: pointer;
-          }
-          tr:first-child {
-            cursor: auto;
           }
           tr:nth-child(odd) {
             background-color: #fff;

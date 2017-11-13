@@ -1,8 +1,8 @@
 /**
  * @Author: sunweibin
  * @Date: 2017-10-26 10:46:14
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-10-27 18:03:48
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-11-10 14:18:07
  * @description 华泰职责ID视图
  * duty的key值取名规范为中文拼音名称首字母小写,使用下划线'_'连接,value值为职责ID
  */

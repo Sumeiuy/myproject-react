@@ -2,7 +2,8 @@
  * @file invest/item.js 单项数据统计组件
  * @author LiuJianShu
  */
-import React, { PureComponent, PropTypes } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { Tooltip } from 'antd';
 import { autobind } from 'core-decorators';
 
