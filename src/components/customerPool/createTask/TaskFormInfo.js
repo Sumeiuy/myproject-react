@@ -140,7 +140,8 @@ export default class TaskFormInfo extends PureComponent {
   checkMention = (rule, value, callback) => {
     if (!this.isFirstLoad) {
       const content = toString(value);
-      if (_.isEmpty(content) || content.length < 10) {
+      console.log(content.length);
+      if (_.isEmpty(content) || content.length < 10 || content.length > 341) {
         this.setState({
           isShowErrorInfo: true,
         });
@@ -175,7 +176,7 @@ export default class TaskFormInfo extends PureComponent {
       })(
         <Mention
           style={{ width: '100%', height: 100 }}
-          placeholder="请在描述客户经理联系客户前需要了解的客户相关信息，比如持仓情况。（字数限制：10-1000字）"
+          placeholder="请在描述客户经理联系客户前需要了解的客户相关信息，比如持仓情况。（字数限制：10-300字）"
           prefix={['{']}
           onSearchChange={this.handleSearchChange}
           suggestions={suggestions}
@@ -216,7 +217,7 @@ export default class TaskFormInfo extends PureComponent {
     const errorProps = isShowErrorInfo ? {
       hasFeedback: true,
       validateStatus: 'error',
-      help: '任务提示不能小于10个字符',
+      help: '任务提示不能小于10个字符，最多300个字符',
     } : null;
 
     const taskTypeErrorSelectProps = isShowErrorTaskType ? {
@@ -241,7 +242,7 @@ export default class TaskFormInfo extends PureComponent {
             >
               {getFieldDecorator('taskName',
                 {
-                  rules: [{ required: true, message: '任务名称不能为空' }],
+                  rules: [{ required: true, message: '任务名称不能为空，最多30个字符', max: 30 }],
                   initialValue: defaultMissionName,
                 })(<Input placeholder="请输入任务名称" />)}
             </FormItem>
@@ -320,12 +321,12 @@ export default class TaskFormInfo extends PureComponent {
           <FormItem>
             {getFieldDecorator('serviceStrategySuggestion',
               {
-                rules: [{ required: true, min: 10, message: '服务策略不能小于10个字符' }],
+                rules: [{ required: true, min: 10, max: 300, message: '服务策略不能小于10个字符，最多300个字符' }],
                 initialValue: defaultServiceStrategySuggestion,
               })(<TextArea
                 id="desc"
                 rows={5}
-                placeholder="请在此介绍该新建任务的服务策略，以指导客户经理或投顾实施任务。（字数限制：10-1000字）"
+                placeholder="请在此介绍该新建任务的服务策略，以指导客户经理或投顾实施任务。（字数限制：10-300字）"
                 style={{ width: '100%' }}
                 maxLength={1000}
               />,
