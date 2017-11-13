@@ -217,7 +217,7 @@ export default class TaskFormInfo extends PureComponent {
     const errorProps = isShowErrorInfo ? {
       hasFeedback: true,
       validateStatus: 'error',
-      help: '任务提示不能小于10个字符',
+      help: '任务提示不能小于10个字符，最多300个字符',
     } : null;
 
     const taskTypeErrorSelectProps = isShowErrorTaskType ? {
@@ -242,7 +242,7 @@ export default class TaskFormInfo extends PureComponent {
             >
               {getFieldDecorator('taskName',
                 {
-                  rules: [{ required: true, message: '任务名称不能为空', max: 30 }],
+                  rules: [{ required: true, message: '任务名称不能为空，最多30个字符', max: 30 }],
                   initialValue: defaultMissionName,
                 })(<Input placeholder="请输入任务名称" />)}
             </FormItem>
@@ -321,7 +321,7 @@ export default class TaskFormInfo extends PureComponent {
           <FormItem>
             {getFieldDecorator('serviceStrategySuggestion',
               {
-                rules: [{ required: true, min: 10, max: 300, message: '服务策略不能小于10个字符' }],
+                rules: [{ required: true, min: 10, max: 300, message: '服务策略不能小于10个字符，最多300个字符' }],
                 initialValue: defaultServiceStrategySuggestion,
               })(<TextArea
                 id="desc"
