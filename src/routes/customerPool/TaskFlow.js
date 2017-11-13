@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-11-06 10:36:15
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-06 17:06:35
+ * @Last Modified time: 2017-11-09 13:32:49
  */
 
 import React, { PureComponent } from 'react';
@@ -26,6 +26,7 @@ const { toString } = Mention;
 
 const orgId = helper.getOrgId();
 const EMPTY_OBJECT = {};
+const EMPTY_ARRAY = [];
 
 const effects = {
   // 预览客户细分数据
@@ -55,6 +56,7 @@ const mapStateToProps = state => ({
   approvalList: state.customerPool.approvalList,
   submitTaskFlowResult: state.customerPool.submitTaskFlowResult,
   getLabelPeopleLoading: state.loading.effects[effects.getLabelPeople],
+  getApprovalListLoading: state.loading.effects[effects.getApprovalList],
 });
 
 const mapDispatchToProps = {
@@ -117,11 +119,13 @@ export default class TaskFlow extends PureComponent {
     clearTaskFlowData: PropTypes.func.isRequired,
     resetActiveTab: PropTypes.func.isRequired,
     clearSubmitTaskFlowResult: PropTypes.func.isRequired,
+    getApprovalListLoading: PropTypes.bool,
   };
 
   static defaultProps = {
     dict: {},
     getLabelPeopleLoading: false,
+    getApprovalListLoading: false,
   };
 
   constructor(props) {
@@ -136,14 +140,27 @@ export default class TaskFlow extends PureComponent {
       isShowErrorInfo: false,
       isShowErrorTaskType: false,
       isShowErrorExcuteType: false,
+      visible: false,
+      isApprovalListLoadingEnd: false,
+      isShowApprovalModal: false,
     };
     // 首页指标查询权限
-    this.isHasAuthorize = permission.hasIndexViewPermission();
+    this.isHasAuthorize = permission.hasIndexViewPermission() || permission.hasHqMampPermission()
+      || permission.hasBoMampPermission() || permission.hasBdMampPermission();
   }
 
   componentWillReceiveProps(nextProps) {
-    const { getLabelPeopleLoading } = this.props;
-    const { submitTaskFlowResult: nextResult, getLabelPeopleLoading: nextLoading } = nextProps;
+    const { getLabelPeopleLoading,
+      peopleOfLabelData = EMPTY_ARRAY,
+      getApprovalListLoading,
+      approvalList = EMPTY_ARRAY,
+     } = this.props;
+    const { submitTaskFlowResult: nextResult,
+      getLabelPeopleLoading: nextLoading,
+      getApprovalListLoading: nextApprovalListLoading,
+      peopleOfLabelData: nextData = EMPTY_ARRAY,
+      approvalList: nextList = EMPTY_ARRAY,
+    } = nextProps;
 
     if (nextResult === 'success') {
       this.setState({
@@ -156,6 +173,24 @@ export default class TaskFlow extends PureComponent {
     if (getLabelPeopleLoading && !nextLoading) {
       this.setState({
         isLoadingEnd: true,
+      });
+    }
+
+    if (peopleOfLabelData !== nextData) {
+      this.setState({
+        visible: true,
+      });
+    }
+
+    if (getApprovalListLoading && !nextApprovalListLoading) {
+      this.setState({
+        isApprovalListLoadingEnd: true,
+      });
+    }
+
+    if (approvalList !== nextList) {
+      this.setState({
+        isShowApprovalModal: true,
       });
     }
   }
@@ -272,7 +307,7 @@ export default class TaskFlow extends PureComponent {
     };
 
     const {
-      labelId,
+      labelMapping,
       customNum: labelCustNums,
       uploadedFileKey: fileId,
       executionType,
@@ -306,7 +341,7 @@ export default class TaskFlow extends PureComponent {
       });
     } else {
       submitTaskFlow({
-        labelId,
+        labelId: labelMapping,
         queryLabelDTO: {
           ptyMngId: helper.getEmpId(),
           orgId,
@@ -354,9 +389,19 @@ export default class TaskFlow extends PureComponent {
   }
 
   @autobind
+  handleRemoveTab() {
+    if (document.querySelector(fspContainer.container)) {
+      fspGlobal.closeTabMenu('FSP_ST_TAB_MOT_SELFBUILD_ADD');
+    }
+  }
+
+  @autobind
   resetLoading() {
     this.setState({
-      isLoadingEnd: false,
+      isLoadingEnd: true,
+      visible: false,
+      isShowApprovalModal: false,
+      isApprovalListLoadingEnd: true,
     });
   }
 
@@ -371,6 +416,9 @@ export default class TaskFlow extends PureComponent {
       isShowErrorInfo,
       isShowErrorExcuteType,
       isShowErrorTaskType,
+      visible,
+      isApprovalListLoadingEnd,
+      isShowApprovalModal,
     } = this.state;
 
     const {
@@ -421,6 +469,7 @@ export default class TaskFlow extends PureComponent {
         peopleOfLabelData={peopleOfLabelData}
         orgId={orgId}
         isLoadingEnd={isLoadingEnd}
+        visible={visible}
         onCancel={this.resetLoading}
         isHasAuthorize={this.isHasAuthorize}
       />,
@@ -440,6 +489,9 @@ export default class TaskFlow extends PureComponent {
         currentSelectRowKeys={currentSelectRowKeys}
         isNeedApproval={this.isHasAuthorize}
         custSource={custSource}
+        isShowApprovalModal={isShowApprovalModal}
+        isApprovalListLoadingEnd={isApprovalListLoadingEnd}
+        onCancel={this.resetLoading}
       />,
     }];
 
@@ -453,6 +505,7 @@ export default class TaskFlow extends PureComponent {
           push={push}
           location={location}
           onCloseTab={this.handleCloseTab}
+          onRemoveTab={this.handleRemoveTab}
         /> :
         <div className={styles.taskFlowContainer}>
           <Steps current={current} className={styles.stepsSection}>

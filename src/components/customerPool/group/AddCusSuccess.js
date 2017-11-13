@@ -20,6 +20,20 @@ export default class AddCusSuccess extends PureComponent {
     onDestroy: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
+    replace: PropTypes.func.isRequired,
+  }
+
+  componentWillMount() {
+    // 解决记住tab的问题
+    // 设置标志位
+    const { replace, location: { query, pathname } } = this.props;
+    replace({
+      pathname,
+      query: {
+        ...query,
+        isOperateSuccess: 'Y',
+      },
+    });
   }
 
   componentWillUnmount() {

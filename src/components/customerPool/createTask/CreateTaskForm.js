@@ -67,8 +67,6 @@ export default class CreateTaskForm extends PureComponent {
     }));
     this.setState({
       statusData: arr,
-    }, () => {
-      console.log(this.state.statusData);
     });
 
     if (_.isEmpty(previousData)) {
@@ -132,10 +130,16 @@ export default class CreateTaskForm extends PureComponent {
         defaultMissionType = 'BusinessRecomm'; // 任务类型
         defaultExecutionType = 'Mission'; // 执行方式
         // 任务提示
-        defaultMissionDesc = `用户已达到到办理 ${custIdexPlaceHolders[0]} 业务的条件，请联系客户办理相关业务。注意提醒客户准备业务办理必须的文件。`;
+        defaultMissionDesc = `用户已达到办理 ${custIdexPlaceHolders[0]} 业务的条件，请联系客户办理相关业务。注意提醒客户准备业务办理必须的文件。`;
         defaultInitialValue = 8; // 有效期
         break;
       case 'search':
+        defaultMissionType = '请选择';
+        defaultExecutionType = 'Chance';
+        defaultMissionDesc = '';
+        defaultInitialValue = 4;
+        break;
+      case 'tag':
         defaultMissionType = '请选择';
         defaultExecutionType = 'Chance';
         defaultMissionDesc = '';
@@ -145,14 +149,14 @@ export default class CreateTaskForm extends PureComponent {
         defaultMissionName = '新客户回访';
         defaultMissionType = 'AccoutService';
         defaultExecutionType = 'Chance';
-        defaultMissionDesc = `用户在 ${custIdexPlaceHolders[1]} 开户，建议跟踪服务了解客户是否有问题需要解决。注：如果客户状态为流失，则：用户在 {流失日}流失，建议跟踪服务了解客户是否有问题需要解决。`;
+        defaultMissionDesc = `用户在 ${custIdexPlaceHolders[2]} 开户，建议跟踪服务了解客户是否有问题需要解决。`;
         defaultInitialValue = 8;
         break;
       case 'numOfCustOpened':
         defaultMissionName = '业务开通回访';
         defaultMissionType = 'AccoutService';
         defaultExecutionType = 'Chance';
-        defaultMissionDesc = `用户在 2 周内办理了 ${custIdexPlaceHolders[2]} 业务，建议跟踪服务了解客户是否有问题需要解决。`;
+        defaultMissionDesc = `用户在 2 周内办理了 ${custIdexPlaceHolders[1]} 业务，建议跟踪服务了解客户是否有问题需要解决。`;
         defaultInitialValue = 8;
         // {14日内开通的业务}
         break;
