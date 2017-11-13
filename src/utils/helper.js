@@ -435,17 +435,23 @@ const helper = {
    * 添加滚动监听
   */
   addWheelEvent(obj, handler) {
-    obj.addEventListener('mousewheel', handler, false);
-    obj.addEventListener('DOMMouseScroll', handler, false);
-    obj.addEventListener('wheel', handler, false);
+    if (window.addEventListener) {
+      obj.addEventListener('mousewheel', handler, false);
+      obj.addEventListener('DOMMouseScroll', handler, false);
+    } else if (window.attachEvent) {
+      obj.attachEvent('onmousewheel', handler);
+    }
   },
   /**
    * 删除滚动监听
   */
   removeWheelEvent(obj, handler) {
-    obj.removeEventListener('mousewheel', handler, false);
-    obj.removeEventListener('DOMMouseScroll', handler, false);
-    obj.removeEventListener('wheel', handler, false);
+    if (window.addEventListener) {
+      obj.removeEventListener('mousewheel', handler, false);
+      obj.removeEventListener('DOMMouseScroll', handler, false);
+    } else if (window.attachEvent) {
+      obj.detachEvent('onmousewheel', handler);
+    }
   },
 
   // 获取环比时间段事件
