@@ -142,6 +142,7 @@ export default class ChartTable extends PureComponent {
   // 组合表格头部 排序 html
   @autobind
   getTitleHtml(item, unitFlag = true) {
+    console.warn('item', item);
     const { orderIndicatorId, orderType } = this.state;
     let titleHtml = '';
     titleHtml = (<span
@@ -153,32 +154,38 @@ export default class ChartTable extends PureComponent {
       :
       item.name
       }
-      <span className={'ant-table-column-sorter'}>
-        <span
-          className={`
-            ant-table-column-sorter-up
-            ${(orderIndicatorId === item.key && (orderType !== 'desc')) ? 'on' : 'off'}
-          `}
-          title="↑"
-          onClick={(e) => {
-            this.arrowHandle(e, item, 'asc');
-          }}
-        >
-          <i className={'anticon anticon-caret-up'} />
+      {
+        !item.children ? 
+        <span className={'ant-table-column-sorter'}>
+          <span
+            className={`
+              ant-table-column-sorter-up
+              ${(orderIndicatorId === item.key && (orderType !== 'desc')) ? 'on' : 'off'}
+            `}
+            title="↑"
+            onClick={(e) => {
+              this.arrowHandle(e, item, 'asc');
+            }}
+          >
+            <i className={'anticon anticon-caret-up'} />
+          </span>
+          <span
+            className={`
+              ant-table-column-sorter-up
+              ${(orderIndicatorId === item.key && (orderType !== 'asc')) ? 'on' : 'off'}
+            `}
+            title="↓"
+            onClick={(e) => {
+              this.arrowHandle(e, item, 'desc');
+            }}
+          >
+            <i className={'anticon anticon-caret-down'} />
+          </span>
         </span>
-        <span
-          className={`
-            ant-table-column-sorter-up
-            ${(orderIndicatorId === item.key && (orderType !== 'asc')) ? 'on' : 'off'}
-          `}
-          title="↓"
-          onClick={(e) => {
-            this.arrowHandle(e, item, 'desc');
-          }}
-        >
-          <i className={'anticon anticon-caret-down'} />
-        </span>
-      </span>
+        :
+        null
+      }
+
     </span>);
     return titleHtml;
   }
