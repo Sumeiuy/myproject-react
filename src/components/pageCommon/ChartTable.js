@@ -142,7 +142,6 @@ export default class ChartTable extends PureComponent {
   // 组合表格头部 排序 html
   @autobind
   getTitleHtml(item, unitFlag = true) {
-    console.warn('item', item);
     const { orderIndicatorId, orderType } = this.state;
     let titleHtml = '';
     titleHtml = (<span
