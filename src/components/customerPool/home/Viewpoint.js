@@ -56,7 +56,10 @@ export default class Viewpoint extends PureComponent {
         onClick={() => { this.handleDetailClick(index); }}
         key={item.id}
       >
-        <a className={styles.news}>
+        <a
+          className={styles.news}
+          title={_.isEmpty(item.subtitle) ? '--' : item.subtitle}
+        >
           {_.isEmpty(item.subtitle) ? '--' : item.subtitle}
         </a>
       </div>
@@ -87,7 +90,12 @@ export default class Viewpoint extends PureComponent {
       <div className={styles.container}>
         <div className={styles.head}>首席投顾观点</div>
         <div className={styles.up}>
-          <div className={styles.title}>{newTitle || '暂无标题'}</div>
+          <div
+            className={styles.title}
+            title={newTitle || '暂无标题'}
+          >
+            {newTitle || '暂无标题'}
+          </div>
           <div className={styles.article}>
             <div className={styles.text} dangerouslySetInnerHTML={{ __html: formateAbstract }} />
             <div

@@ -168,8 +168,8 @@ export default class PerformanceIndicators extends PureComponent {
     // 产品销售（经营指标）
     const productSaleData = [
       filterEmptyToNumber(fundTranAmt),
-      filterEmptyToNumber(finaTranAmt),
       filterEmptyToNumber(privateTranAmt),
+      filterEmptyToNumber(finaTranAmt),
       filterEmptyToNumber(otcTranAmt),
     ];
     const {
