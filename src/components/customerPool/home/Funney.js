@@ -9,6 +9,9 @@ import IECharts from '../../IECharts';
 import styles from './funney.less';
 import { fspGlobal } from '../../../utils';
 
+// 服务客户数的 key
+const SERVICE_CUST_NUM = 'custNum';
+
 function getDataConfig(data) {
   return data.map(item => ({
     value: item.value,
@@ -21,12 +24,31 @@ function getDataConfig(data) {
   }));
 }
 
+function linkToList(data) {
+  if (data.key !== SERVICE_CUST_NUM) {
+    return;
+  }
+  fspGlobal.openFspTab({
+    url: '/customer/manage/showCustManageTabWin',
+    param: {
+      id: 'FSP_CUST_TAB_CENTER_MANAGE',
+      title: '客户管理',
+      forceRefresh: true,
+    },
+  });
+}
+
 function renderIntro(data) {
   return _.map(
     data,
     (item, index) => (
       <div className={styles.row} key={`row${index}`}>
-        <div className={styles.count1}>{item.value}</div>
+        <div
+          className={`${item.key === SERVICE_CUST_NUM ? styles.canClick : ''} ${styles.count1}`}
+          onClick={() => linkToList(item)}
+        >
+          {item.value}
+        </div>
         <div className={styles.count2}>{`/${item.property}`}</div>
       </div>
     ),
@@ -34,13 +56,8 @@ function renderIntro(data) {
 }
 
 function Funney({ dataSource }) {
-  const { data, color, custUnit, propertyUnit } = dataSource;
+  const { data, color, propertyUnit } = dataSource;
   const funnelOption = {
-    tooltip: {
-      trigger: 'item',
-      formatter: `{b} : {c} ${custUnit}`,
-      position: ['10%', '35%'],
-    },
     series: [
       {
         name: '漏斗图',
@@ -60,7 +77,6 @@ function Funney({ dataSource }) {
             position: 'inside',
             fontSize: 12,
             color,
-            fontFamily: 'PingFangSC-Regular',
           },
         },
         itemStyle: {
@@ -84,7 +100,7 @@ function Funney({ dataSource }) {
           url: '/customer/manage/showCustManageTabWin',
           param: {
             id: 'FSP_CUST_TAB_CENTER_MANAGE',
-            title: '正式客户管理',
+            title: '客户管理',
             forceRefresh: true,
           },
         });

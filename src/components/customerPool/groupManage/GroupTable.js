@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 08:57:00
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-10-20 09:51:09
+ * @Last Modified time: 2017-11-10 17:09:43
  */
 
 import React, { PureComponent } from 'react';
@@ -23,9 +23,9 @@ export default class GroupTable extends PureComponent {
     pageData: PropTypes.object,
     listData: PropTypes.array,
     // 页目change的时候
-    onSizeChange: PropTypes.func.isRequired,
+    onSizeChange: PropTypes.func,
     // 页码change的时候
-    onPageChange: PropTypes.func.isRequired,
+    onPageChange: PropTypes.func,
     // 表格的className
     tableClass: PropTypes.string.isRequired,
     // 表格标题
@@ -62,6 +62,8 @@ export default class GroupTable extends PureComponent {
       PropTypes.number,
       PropTypes.array,
     ]),
+    // 是否需要分页
+    isNeedPaganation: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -81,6 +83,9 @@ export default class GroupTable extends PureComponent {
     onSingleRowSelectionChange: () => { },
     onRowSelectionChange: () => { },
     currentSelectRowKeys: [],
+    isNeedPaganation: true,
+    onPageChange: () => { },
+    onSizeChange: () => { },
   };
 
   constructor(props) {
@@ -232,10 +237,9 @@ export default class GroupTable extends PureComponent {
               );
             }
             return (
-              <div className={styles.column}>
-                <span title={record[item.key]}>
-                  {(record[item.key] === 0 || record[item.key]) ? record[item.key] : '--'}</span>
-              </div>
+              <span title={record[item.key]} className={styles.column}>
+                {(record[item.key] === 0 || record[item.key]) ? record[item.key] : '--'}
+              </span>
             );
           },
         };
@@ -248,11 +252,9 @@ export default class GroupTable extends PureComponent {
       title: item.value,
       fixed: (isFixedColumn && _.includes(fixedColumn, index)) ? 'left' : false,
       render: (text, record) =>
-        <div className={styles.column}>
-          <span title={record[item.key]}>
-            {(record[item.key] === 0 || record[item.key]) ? record[item.key] : '--'}
-          </span>
-        </div>,
+        <span title={record[item.key]} className={styles.column}>
+          {(record[item.key] === 0 || record[item.key]) ? record[item.key] : '--'}
+        </span>,
     }));
   }
 
@@ -292,13 +294,9 @@ export default class GroupTable extends PureComponent {
       onPageChange,
       onSizeChange,
       isNeedRowSelection,
+      isNeedPaganation,
      } = this.props;
     const { curSelectedRow, originPageSizeUnit } = this.state;
-    // const paginationOptions = this.renderPaganation(
-    //   curPageNum,
-    //   totalRecordNum,
-    //   curPageSize,
-    // );
     const paganationOption = {
       curPageNum,
       totalRecordNum,
@@ -330,7 +328,10 @@ export default class GroupTable extends PureComponent {
             return null;
           }}
         />
-        <Paganation {...paganationOption} />
+        {
+          (isNeedPaganation && totalRecordNum > 0) ?
+            <Paganation {...paganationOption} /> : null
+        }
       </div>
     );
   }

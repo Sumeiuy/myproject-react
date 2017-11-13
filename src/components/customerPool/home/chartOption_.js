@@ -44,7 +44,6 @@ const getColourfulItem = ({
           normal: {
             show: true,
             position: 'top',
-            fontFamily: 'PingFangSC-Regular',
             fontSize: 12,
             color: '#4a4a4a',
             formatter: (params) => {
@@ -106,7 +105,7 @@ const getBgItem = ({
       normal: {
         show: true,
         position: 'top',
-        fontFamily: 'PingFangSC-Regular',
+        fontFamily: 'Microsoft YaHei',
         fontSize: 12,
         color: '#4a4a4a',
         formatter: (params) => {
@@ -157,7 +156,21 @@ export const singleColorBar = ({
     colourfulData,
     colourfulTotal,
   });
+  const dataShadow = [];
+  // 构造一个透明的柱子，柱子高度比实际柱子高100，使其覆盖label文字，感觉文字可点击
+  _(data).forEach(v => dataShadow.push(v + 100));
   return [
+    {
+      type: 'bar',
+      barWidth: width,
+      itemStyle: {
+        normal: { color: 'rgba(0,0,0,0)' },
+      },
+      barGap: '-100%',
+      barCategoryGap: '40%',
+      data: dataShadow,
+      animation: false,
+    },
     {
       stack: '总量',
       type: 'bar',
@@ -170,7 +183,7 @@ export const singleColorBar = ({
         normal: {
           show: true,
           position: 'top',
-          fontFamily: 'PingFangSC-Regular',
+          fontFamily: 'Microsoft YaHei',
           fontSize: 12,
           color: '#2782d7',
           formatter: (params) => {

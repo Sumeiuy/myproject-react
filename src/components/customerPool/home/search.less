@@ -1,36 +1,39 @@
-.delHistory_a{
+.delHistory_a {
   float: right;
-  color:#c2c2c2;
+  color: #c2c2c2;
   font-size: 12px;
-  i{
+  i {
     margin-right: 5px;
     font-size: 14px;
     vertical-align: -2px;
   }
 }
-:global{
-  .ant-select-dropdown-menu li em{
-    color:#fdb02b;
-    font-style: normal;
-  }
-  .ant-select-dropdown-menu li .desc{
-    padding-left: 10px;
-    color:#c2c2c2;
-  }
-  .ant-select-dropdown-menu li .ant-select-dropdown-menu-item-group-title span{
-    padding:0;
+
+:global {
+  .certain-category-search-dropdown {
+    .ant-select-dropdown-menu li em {
+      color: #fdb02b;
+      font-style: normal;
+    }
+    .ant-select-dropdown-menu li .desc {
+      padding-left: 10px;
+      color: #c2c2c2;
+    }
+    .ant-select-dropdown-menu li .ant-select-dropdown-menu-item-group-title span {
+      padding: 0;
+    }
   }
 }
-.searchBox{
-  background: #FFF;
-  .inner{
+.searchBox {
+  background: #fff;
+  .inner {
     padding-top: 32px;
-    .inputBox{
+    .inputBox {
       width: 716px;
-      margin: 0px auto 11px;
+      margin: 0 auto 11px;
       :global {
         .ant-select-auto-complete.ant-select-lg .ant-input {
-          padding: 6px 106px 6px 20px;
+          padding: 6px 106px 5px 20px;
         }
         .ant-select-auto-complete.ant-select .ant-select-selection__placeholder {
           margin-left: 20px;
@@ -38,7 +41,8 @@
         .ant-input {
           border: 1px solid #66b7f1;
           border-radius: 3px;
-          overflow: hidden; 
+          overflow: visible;
+          line-height: 18px;
         }
         .ant-select {
           font-size: 14px;
@@ -48,7 +52,7 @@
           background-color: transparent;
         }
         .ant-btn:hover {
-          background-color: #10AEFF;
+          background-color: #10aeff;
         }
         .ant-select-combobox .ant-select-search__field {
           overflow: hidden;
@@ -60,12 +64,12 @@
           transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
         }
         .ant-input-suffix:hover {
-          background-color: #10AEFF;
+          background-color: #10aeff;
         }
       }
     }
   }
-  :global{
+  :global {
     .global-search-wrapper {
       padding-right: 50px;
     }
@@ -79,50 +83,50 @@
       padding-right: 62px;
     }
   }
-  .historyList{
+  .historyList {
     width: 716px;
     height: 20px;
     line-height: 20px;
     margin: auto;
     font-size: 14px;
-    .s_title{
+    .s_title {
       float: left;
       font-size: 13px;
       color: #000;
-      i{
+      i {
         background-color: #fdb02b;
         border-radius: 3px;
         display: inline-block;
         width: 15px;
-        height:15px;
+        height: 15px;
         line-height: 15px;
         text-align: center;
-        color:#FFF;
+        color: #fff;
         font-size: 10px;
-        margin-right:7px;
+        margin-right: 7px;
         vertical-align: 1px;
       }
     }
-    div{
+    div {
       height: 30px;
       width: 75%;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-    a{
+    a {
       text-decoration: none;
-      color:#1486d8;
+      color: #1486d8;
       padding-left: 20px;
     }
     a:first-child {
       padding-left: 15px;
     }
-    .bd{
+    .bd {
       display: inline-block;
       width: 1px;
       background: #1486d8;
-      height:12px;
+      height: 12px;
       margin: 0 10px;
     }
   }

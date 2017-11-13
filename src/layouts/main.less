@@ -3,7 +3,7 @@
 
 .layout {
   position: relative;
-
+  min-width: 1076px;
   &.withnavbar {
     .main {
       margin-left: 0;
@@ -22,11 +22,16 @@
   }
 }
 :global {
-  .react-app, .ant-message {
-    div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fieldset, legend, input, textarea, p, blockquote, th, td, strong, .ant-form {
+
+  .react-app, .ant-message, .ant-modal-wrap {
+    // 覆盖FSP里的相关定义，避免react-app之外的react组件展现不正常
+    div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fieldset, legend, input, textarea, p, blockquote, th, td {
       font-family: @font-family;
     }
-    h1, h2, h3, h4, h5, h6{
+  }
+
+  .react-app, .ant-message {
+    h1, h2, h3, h4, h5, h6 {
        line-height: inherit;
     }
     .ant-menu-dark {

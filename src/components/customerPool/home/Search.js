@@ -52,7 +52,7 @@ export default class Search extends PureComponent {
 
   state = {
     dataSource: EMPTY_LIST,
-    inputValue: '',
+    inputVal: '',
     historySource: [{
       title: '历史搜索',
       children: [{
@@ -110,6 +110,15 @@ export default class Search extends PureComponent {
   }
 
   @autobind
+  checkInputValue(value) {
+    if (value.length > 0 && value.replace(/\s+/, '').length === 0) {
+      console.log('全是空格');
+      return false;
+    }
+    return true;
+  }
+
+  @autobind
   handleSearchInput(event) {
     const e = event || window.event; // || arguments.callee.caller.arguments[0];
     const { data: { hotWds = EMPTY_OBJECT } } = this.props;
@@ -120,7 +129,10 @@ export default class Search extends PureComponent {
     }
     if (e && e.keyCode === 13) {
       let searchVal = e.target.value;
-      if (_.isEmpty(_.trim(searchVal))) {
+      if (!this.checkInputValue(searchVal)) {
+        return false;
+      }
+      if (_.isEmpty(searchVal)) {
         // message.info('搜索内容不能为空', 1);
         // return;
         searchVal = hotWds.labelNameVal;
@@ -215,11 +227,11 @@ export default class Search extends PureComponent {
       return;
     }
     const { queryHotPossibleWds } = this.props;
-    queryHotPossibleWds({
-      wd: value,
-    });
     this.setState({
       inputVal: value,
+    });
+    queryHotPossibleWds({
+      wd: value,
     });
   }
 
@@ -264,7 +276,10 @@ export default class Search extends PureComponent {
   handleSearchBtn() {
     const { inputVal } = this.state;
     const { data: { hotWds = EMPTY_OBJECT } } = this.props;
-    if (_.isEmpty(_.trim(inputVal))) {
+    if (!this.checkInputValue(inputVal)) {
+      return false;
+    }
+    if (_.isEmpty(inputVal)) {
       // 搜索的时候，如果搜索框没有内容，将hotWds塞入搜索框
       this.setState({
         inputVal: hotWds.labelNameVal,
@@ -280,6 +295,7 @@ export default class Search extends PureComponent {
         q: encodeURIComponent(inputVal),
       }, '客户列表', 'RCT_FSP_CUSTOMER_LIST');
     }
+    return true;
   }
 
   @autobind
@@ -403,7 +419,7 @@ export default class Search extends PureComponent {
                 style={{ width: '100%' }}
                 dataSource={this.createOption()}
                 onSelect={this.onSelect}
-                onSearch={_.debounce(this.handleSearch, 200)}
+                onSearch={this.handleSearch}
                 placeholder={hotWds.labelNameVal || ''}
                 optionLabelProp="text"
                 defaultValue={searchHistoryVal}

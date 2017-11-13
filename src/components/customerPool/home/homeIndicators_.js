@@ -6,8 +6,8 @@
 import _ from 'lodash';
 import { fspContainer } from '../../../config';
 import { fspGlobal, helper } from '../../../utils';
-import getSeries, { tooltipConfig, singleColorBar } from './chartOption_';
-import { toFixedCust, getPercentage, toFixedMoney } from '../../chartRealTime/FixNumber';
+import getSeries, { singleColorBar } from './chartOption_';
+import { toFomatterCust, toFixedCust, getPercentage, toFixedMoney } from '../../chartRealTime/FixNumber';
 
 export function filterEmptyToInteger(number) {
   return ((_.isEmpty(number)) ? 0 : _.parseInt(number, 10));
@@ -81,7 +81,7 @@ function getProgressDataSource({
 export function getPureAddCust({ pureAddData }) {
   const param = {
     dataArray: pureAddData,
-    categoryArray: ['净新增有效户', '净新增非零售客户', '净新增高端产品户', '新增产品客户'],
+    categoryArray: ['新增有效户', '新增非零售客户', '新增高端产品户', '新增产品客户'],
     colorArray: ['#38d8e8', '#60bbea', '#7d9be0', '#756fb8'],
     formatterMethod: toFixedCust,
   };
@@ -118,13 +118,8 @@ export function getClientsNumber({
   const {
     newUnit,
     newSeries,
-  } = toFixedCust(clientNumberData);
-  // const thousandsFormatSeries = _.map(
-  //   newSeries,
-  //   item => numFormat(item),
-  // );
+  } = toFomatterCust(clientNumberData);
   const items = {
-    tooltip: {},    // 使用默认值
     grid: {
       left: '12px',
       right: '12px',
@@ -140,9 +135,8 @@ export function getClientsNumber({
         axisLabel: {
           interval: 0,
           margin: 6,
-          fontFamily: 'PingFangSC-Regular',
           fontSize: 12,
-          color: '#666666',
+          color: '#666',
           showMinLabel: true,
           clickable: true,
           rotate: 30,
@@ -198,7 +192,6 @@ export function getServiceIndicatorOfManage({ motOkMnt, motTotMnt, taskCust, tot
 // 投顾绩效的服务指标
 export function getServiceIndicatorOfPerformance({ performanceData }) {
   return {
-    ...tooltipConfig,
     grid: {
       left: '15px',
       right: '15px',
@@ -236,9 +229,9 @@ export function getCustAndProperty(dataArray) {
   const custArray = [];
   const properyArray = [];
   for (let i = 0; i < dataArray.length; i += 2) {
-    const { value = '', name = '' } = dataArray[i];
+    const { value = '', name = '', key } = dataArray[i];
     const { value: propertyValue } = dataArray[(i + 1)];
-    custArray.push({ value: filterEmptyToInteger(value), name });
+    custArray.push({ value: filterEmptyToInteger(value), name, key });
     properyArray.push(filterEmptyToNumber(propertyValue || ''));
   }
   // formatter 资产数据，获得 unit
@@ -249,23 +242,18 @@ export function getCustAndProperty(dataArray) {
   );
   // 降序排列
   const descData = _.orderBy(datas, ['value'], ['desc']);
-  // formatter 客户数，获得 unit
-  const custNumberArray = [];
-  _.forEach(descData, item => custNumberArray.push(item.value));
-  const { newUnit: custUnit, newSeries: newCustArray } = toFixedCust(custNumberArray);
   // 设置背景色 #7D9BE0
-  const colors = ['#7D9BE0', '#60BBEA', '#38D8E8'];
+  const colors = ['#7D9be0', '#60bbea', '#38d8e8'];
   const newDatas = _.map(
     descData,
-    (item, index) => ({ ...item, bgColor: colors[index], value: newCustArray[index] }),
+    (item, index) => ({ ...item, bgColor: colors[index] }),
   );
-  return { color: '#000', custUnit, propertyUnit, data: newDatas };
+  return { color: '#000', propertyUnit, data: newDatas };
 }
 
 // 投顾绩效/经营指标的沪深归集率
 export function getHSRate(array) {
   return {
-    tooltip: { show: true },
     series: [{
       type: 'liquidFill',
       name: '沪深归集率',
@@ -296,7 +284,6 @@ export function getHSRate(array) {
           color: '#5eade5',
           insideColor: '#fff',
           fontSize: 24,
-          fontFamily: 'PingFangSC-Regular',
           align: 'center',
           baseline: 'middle',
           position: ['50%', '70%'],

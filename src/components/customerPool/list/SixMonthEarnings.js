@@ -8,13 +8,11 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 
 import ChartLineWidget from './ChartLine';
-// import { helper } from '../../../utils';
+import { helper } from '../../../utils';
 
 import styles from './sixMonthEarnings.less';
 
-// const formatNumber = value => helper.toUnit(value, '元').value;
-
-// const formatUnit = value => helper.toUnit(value, '元').unit;
+const formatAsset = value => helper.toUnit(value, '元', 5);
 
 const getLastestData = (arr) => {
   if (arr && arr instanceof Array && arr.length !== 0) {
@@ -30,7 +28,6 @@ export default class SixMonthEarnings extends PureComponent {
     monthlyProfits: PropTypes.object.isRequired,
     custIncomeReqState: PropTypes.bool.isRequired,
     getCustIncome: PropTypes.func.isRequired,
-    formatAsset: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -40,7 +37,7 @@ export default class SixMonthEarnings extends PureComponent {
     };
     this.debounced = _.debounce(
       this.getCustIncome,
-      800,
+      500,
       { leading: false },
     );
   }
@@ -71,7 +68,6 @@ export default class SixMonthEarnings extends PureComponent {
       listItem,
       monthlyProfits,
       custIncomeReqState,
-      formatAsset,
     } = this.props;
     const {
       isShowCharts,
@@ -84,23 +80,32 @@ export default class SixMonthEarnings extends PureComponent {
     let lastestPrifitsUnit = '';
     let lastestPrifitsRate = '--';
     if (thisProfits.length) {
-      if (lastestProfit) {
-        const obj = formatAsset(lastestProfit);
-        lastestPrifitsValue = obj.value;
-        lastestPrifitsUnit = obj.unit;
-        lastestPrifitsRate = `${lastestProfitRate.toFixed(2)}%`;
+      if (lastestProfit !== null) {
+        if (lastestProfit !== 0) {
+          const obj = formatAsset(lastestProfit);
+          lastestPrifitsValue = obj.value;
+          lastestPrifitsUnit = obj.unit;
+          lastestPrifitsRate = `${helper.toUnit(lastestProfitRate, '%', 3, 3).value}%`;
+        } else {
+          lastestPrifitsValue = '0';
+          lastestPrifitsRate = '0';
+        }
       }
     }
     // 格式化年最大时点资产的值和单位
     let maxTotAsetYValue = '--';
     let maxTotAsetYUnit = '';
-    if (listItem.maxTotAsetY) {
-      const obj = formatAsset(listItem.maxTotAsetY);
-      maxTotAsetYValue = obj.value;
-      maxTotAsetYUnit = obj.unit;
+    if (listItem.maxTotAsetY !== null) {
+      if (listItem.maxTotAsetY !== 0) {
+        const obj = formatAsset(listItem.maxTotAsetY);
+        maxTotAsetYValue = obj.value;
+        maxTotAsetYUnit = obj.unit;
+      } else {
+        maxTotAsetYValue = '0';
+      }
     }
     return (
-      <span
+      <div
         className={styles.showChartBtn}
         style={{
           cursor: custIncomeReqState ? 'wait' : 'pointer',
@@ -110,7 +115,7 @@ export default class SixMonthEarnings extends PureComponent {
           onMouseEnter={this.debounced}
           onMouseLeave={this.handleMouseLeave}
         >
-          查看详情
+          详情
         </p>
         <div
           className={`${styles.showCharts}`}
@@ -130,21 +135,21 @@ export default class SixMonthEarnings extends PureComponent {
               </p>
             </div>
             <div>
-              <p className="tit">本月收益：</p>
+              <p className="tit">本月收益</p>
               <p className="asset">
                 <span className="num redNum">{lastestPrifitsValue}</span>
                 <span className="unit redUnit">{lastestPrifitsUnit}</span>
               </p>
             </div>
             <div>
-              <p className="tit">本月收益率：</p>
+              <p className="tit">本月收益率</p>
               <p className="asset">
                 <span className="num redNum">{lastestPrifitsRate}</span>
               </p>
             </div>
           </div>
         </div>
-      </span>
+      </div>
     );
   }
 }

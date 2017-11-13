@@ -11,7 +11,6 @@ import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { Row, Col } from 'antd';
 
-// import Icon from '../../components/common/Icon';
 import TimeCycle from '../../components/customerPool/list/TimeCycle';
 import CustomerTotal from '../../components/customerPool/list/CustomerTotal';
 import Filter from '../../components/customerPool/list/Filter';
@@ -27,7 +26,7 @@ const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 const CUR_PAGE = 1; // 默认当前页
 const CUR_PAGESIZE = 10; // 默认页大小
-// const HTSC_RESPID = '1-46IDNZI'; // 首页指标查询
+
 // 根据不同的url中source的值，传给后端enterType值不同
 const ENTER_TYPE = {
   search: 'searchCustPool',
@@ -51,6 +50,14 @@ const effects = {
   getCustomerScope: 'customerPool/getCustomerScope',
   getFollowCust: 'customerPool/getFollowCust',
   getSearchServerPersonList: 'customerPool/getSearchServerPersonList',
+  handleFilter: 'customerList/handleFilter',  // 手动上传日志
+  handleSelect: 'customerList/handleDropDownSelect',  // 手动上传日志
+  handleOrder: 'customerList/handleOrder', // 手动上传日志
+  handleCheck: 'customerList/handleCheck',  // 手动上传日志
+  handleSearch: 'customerList/handleSearch',  // 手动上传日志
+  handleCloseClick: 'contactModal/handleCloseClick',  // 手动上传日志
+  handleAddServiceRecord: 'contactModal/handleAddServiceRecord',  // 手动上传日志
+  handleCollapseClick: 'contactModal/handleCollapseClick',  // 手动上传日志
 };
 
 const fetchDataFunction = (globalLoading, type) => query => ({
@@ -102,6 +109,14 @@ const mapDispatchToProps = {
   getCustContact: fetchDataFunction(true, effects.getCustContact),
   getCustEmail: fetchDataFunction(true, effects.getCustEmail),
   getFollowCust: fetchDataFunction(true, effects.getFollowCust),
+  handleFilter: fetchDataFunction(false, effects.handleFilter),
+  handleSelect: fetchDataFunction(false, effects.handleSelect),
+  handleOrder: fetchDataFunction(false, effects.handleOrder),
+  handleCheck: fetchDataFunction(false, effects.handleCheck),
+  handleSearch: fetchDataFunction(false, effects.handleSearch),
+  handleCloseClick: fetchDataFunction(false, effects.handleCloseClick),
+  handleAddServiceRecord: fetchDataFunction(false, effects.handleAddServiceRecord),
+  handleCollapseClick: fetchDataFunction(false, effects.handleCollapseClick),
   // 搜索服务服务经理
   getSearchServerPersonList: fetchDataFunction(false, effects.getSearchServerPersonList),
   push: routerRedux.push,
@@ -152,6 +167,15 @@ export default class CustomerList extends PureComponent {
     // 服务记录接口loading
     isRecordLoading: PropTypes.bool,
     serviceDepartment: PropTypes.array.isRequired,
+    // 手动上传日志
+    handleFilter: PropTypes.func.isRequired,
+    handleSelect: PropTypes.func.isRequired,
+    handleOrder: PropTypes.func.isRequired,
+    handleCheck: PropTypes.func.isRequired,
+    handleSearch: PropTypes.func.isRequired,
+    handleCloseClick: PropTypes.func.isRequired,
+    handleAddServiceRecord: PropTypes.func.isRequired,
+    handleCollapseClick: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -181,8 +205,8 @@ export default class CustomerList extends PureComponent {
       // 初始化没有loading
       isLoadingEnd: true,
     };
-    // 首页指标查询权限
-    this.authority = permission.hasIndexViewPermission();
+    // 首页指标查询,总部-营销活动管理岗,分公司-营销活动管理岗,营业部-营销活动管理岗权限
+    this.authority = permission.hasCustomerPoolPermission();
   }
 
   getChildContext() {
@@ -239,17 +263,6 @@ export default class CustomerList extends PureComponent {
     // 只有全部loading完毕才触发isLoadingEnd
     if ((isContactLoading && !nextContactLoading && isRecordLoading && !nextRecordLoading)
       || (!nextContactLoading && !nextRecordLoading)) {
-      // debugger;
-      this.setState({
-        isLoadingEnd: true,
-      });
-    }
-
-    // loading状态
-    // 只有全部loading完毕才触发isLoadingEnd
-    if ((isContactLoading && !nextContactLoading && isRecordLoading && !nextRecordLoading)
-      || (!nextContactLoading && !nextRecordLoading)) {
-      // debugger;
       this.setState({
         isLoadingEnd: true,
       });
@@ -295,7 +308,7 @@ export default class CustomerList extends PureComponent {
       param.dateType = query.cycleSelect || (cycle[0] || {}).key;
       // 我的客户 和 没有权限时，custType=1,其余情况custType=3
       param.custType = CUST_MANAGER;
-      if (this.authority || (query.ptyMngId && query.ptyMngId !== empNum)) {
+      if (this.authority || (query.ptyMng && query.ptyMng.split('_')[1] !== empNum)) {
         param.custType = ORG;
       }
     }
@@ -425,7 +438,11 @@ export default class CustomerList extends PureComponent {
     const {
       replace,
       location: { query, pathname },
+      handleFilter,
     } = this.props;
+    // 手动上传日志
+    handleFilter({ name: obj.name, value: obj.value });
+
     replace({
       pathname,
       query: {
@@ -441,7 +458,14 @@ export default class CustomerList extends PureComponent {
   // 排序条件变化
   @autobind
   orderChange(obj) {
-    const { replace, location: { query, pathname } } = this.props;
+    const {
+      replace,
+      location: { query, pathname },
+      handleOrder,
+    } = this.props;
+    // 手动上传日志
+    handleOrder({ sortType: obj.sortType, sortDirection: obj.sortDirection });
+
     replace({
       pathname,
       query: {
@@ -507,6 +531,12 @@ export default class CustomerList extends PureComponent {
       searchServerPersonList,
       empInfo: { empInfo = EMPTY_OBJECT },
       serviceDepartment,
+      handleSelect,
+      handleCheck,
+      handleSearch,
+      handleCloseClick,
+      handleAddServiceRecord,
+      handleCollapseClick,
     } = this.props;
     const {
       sortDirection,
@@ -520,7 +550,7 @@ export default class CustomerList extends PureComponent {
       bname,
     } = location.query;
     // 排序的默认值 ： 总资产降序
-    let reorderValue = { sortType: 'Aset', sortDirection: 'desc' };
+    let reorderValue = DEFAULT_SORT;
     if (sortType && sortDirection) {
       reorderValue = { sortType, sortDirection };
     }
@@ -559,6 +589,12 @@ export default class CustomerList extends PureComponent {
           onFilterChange={this.filterChange}
         />
         <CustomerLists
+          handleCollapseClick={handleCollapseClick}
+          handleAddServiceRecord={handleAddServiceRecord}
+          handleCloseClick={handleCloseClick}
+          handleSearch={handleSearch}
+          handleCheck={handleCheck}
+          handleSelect={handleSelect}
           authority={this.authority}
           dict={dict}
           empInfo={empInfo}

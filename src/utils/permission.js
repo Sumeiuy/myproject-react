@@ -9,8 +9,12 @@ import duty, { commission } from './duty';
 
 let permissionList = [];
 
-// 下面的配置统一到duty中去了
-// const HTSC_RESPID = '1-46IDNZI'; // 首页指标查询匹配值
+const HTSC_RESPID = '1-46IDNZI'; // HTSC 首页指标查询
+const HTSC_HQ_MAMPID = '1-FCQM-27'; // HTSC 营销活动-总部执行岗
+const HTSC_BO_MAMPID = '1-FCQM-35'; // HTSC 营销活动-分中心管理岗
+const HTSC_BD_MAMPID = '1-FCQM-36'; // HTSC 营销活动-营业部执行岗
+
+const judgeAuthority = (list, id) => !!_.find(list, obj => (obj.respId === id));
 
 const permission = {
   // 初始化
@@ -18,10 +22,40 @@ const permission = {
     permissionList = list;
   },
 
-  // HTSC 首页指标查询 权限
+  // HTSC 首页指标查询
   hasIndexViewPermission() {
-    const index = _.findIndex(permissionList, item => (item.respId === duty.htsc_syzbcx));
-    return index >= 0;
+    return judgeAuthority(permissionList, HTSC_RESPID);
+  },
+
+  // HTSC 营销活动-总部执行岗
+  hasHqMampPermission() {
+    return judgeAuthority(permissionList, HTSC_HQ_MAMPID);
+  },
+
+  // HTSC 营销活动-分中心管理岗
+  hasBoMampPermission() {
+    return judgeAuthority(permissionList, HTSC_BO_MAMPID);
+  },
+
+  // HTSC 营销活动-营业部执行岗
+  hasBdMampPermission() {
+    return judgeAuthority(permissionList, HTSC_BD_MAMPID);
+  },
+
+  // 目标客户池首页和列表页权限
+  hasCustomerPoolPermission() {
+    return permission.hasIndexViewPermission()
+      || permission.hasHqMampPermission()
+      || permission.hasBoMampPermission()
+      || permission.hasBdMampPermission();
+  },
+
+  // 目标客户池创建任务权限
+  hasCreateTaskPermission() {
+    return permission.hasIndexViewPermission()
+      || permission.hasHqMampPermission()
+      || permission.hasBoMampPermission()
+      || permission.hasBdMampPermission();
   },
 
   // 佣金调整资讯订阅权限
