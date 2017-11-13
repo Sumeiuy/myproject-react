@@ -12,7 +12,7 @@ import { toastM } from '../utils/sagaEffects';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
-const LIST_MAX = 1e4;
+// const LIST_MAX = 1e4;
 const INITIAL_PAGE_NUM = 1;
 const INITIAL_PAGE_TEN_SIZE = 10;
 const INITIAL_PAGE_FIVE_SIZE = 5;
@@ -636,9 +636,7 @@ export default {
     },
     // 根据权限获取组织机构树
     * getCustRangeByAuthority({ payload }, { call, put }) {
-      console.log('1111111111111111');
       const resultData = yield call(api.getCustRangeByAuthority);
-      console.log('resultData>>>>>>>', resultData);
       yield put({
         type: 'getCustRangeByAuthoritySuccess',
         payload: resultData,
@@ -824,7 +822,7 @@ export default {
       const custPage = {
         pageSize: custListVO.pageSize,
         pageNo: Number(custListVO.curPageNum),
-        total: custListVO.totalCount > LIST_MAX ? LIST_MAX : custListVO.totalCount,
+        total: custListVO.totalCount,
       };
       return {
         ...state,
@@ -1037,8 +1035,8 @@ export default {
       const { custList } = payload;
       // 构造成联想列表识别的
       const finalPossibleHotCust = _.map(custList, item => ({
-        id: item.cusId,
-        labelNameVal: item.cusId,
+        id: item.brokerNumber,
+        labelNameVal: item.brokerNumber,
         labelDesc: item.custName,
         ...item,
       }));
