@@ -44,6 +44,8 @@ export default function commission(api) {
     querySubscriptionCustomer: query => api.post('/groovynoauth/fsp/biz/mailsubscription/queryMailSubscriptionCusts', query),
     // 单佣金调整详情页面 当前审批步骤接口
     queryCurrentStep: query => api.post('/groovynoauth/fsp/biz/chgcommsion/queryFlowCurrentStepInfo', query),
+    // 咨讯订阅和退订详情页面 当前审批步骤接口
+    querySubscriStep: query => api.post('/groovynoauth/fsp/biz/mailsubscription/queryMailFlowCurrentStepInfo', query),
     // 单佣金调整详情页面 基础数据接口
     querySingleDetail: query => api.post('/groovynoauth/fsp/biz/chgcommsion/querySingleCommChgOrderInfo', query),
     // 单佣金调整新建页面中的目标股基佣金率
