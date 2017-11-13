@@ -140,7 +140,8 @@ export default class TaskFormInfo extends PureComponent {
   checkMention = (rule, value, callback) => {
     if (!this.isFirstLoad) {
       const content = toString(value);
-      if (_.isEmpty(content) || content.length < 10) {
+      console.log(content.length);
+      if (_.isEmpty(content) || content.length < 10 || content.length > 341) {
         this.setState({
           isShowErrorInfo: true,
         });
@@ -241,7 +242,7 @@ export default class TaskFormInfo extends PureComponent {
             >
               {getFieldDecorator('taskName',
                 {
-                  rules: [{ required: true, message: '任务名称不能为空' }],
+                  rules: [{ required: true, message: '任务名称不能为空', max: 33 }],
                   initialValue: defaultMissionName,
                 })(<Input placeholder="请输入任务名称" />)}
             </FormItem>
@@ -320,7 +321,7 @@ export default class TaskFormInfo extends PureComponent {
           <FormItem>
             {getFieldDecorator('serviceStrategySuggestion',
               {
-                rules: [{ required: true, min: 10, message: '服务策略不能小于10个字符' }],
+                rules: [{ required: true, min: 10, max: 341, message: '服务策略不能小于10个字符' }],
                 initialValue: defaultServiceStrategySuggestion,
               })(<TextArea
                 id="desc"
