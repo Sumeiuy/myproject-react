@@ -4,11 +4,13 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Icon } from 'antd';
+import { Input } from 'antd';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
 import _ from 'lodash';
 import style from './style.less';
+
+const Search = Input.Search;
 
 export default class DropdownSelect extends PureComponent {
   static propTypes = {
@@ -72,6 +74,17 @@ export default class DropdownSelect extends PureComponent {
     document.addEventListener('click', this.hideModal);
   }
 
+  componentWillReceiveProps(nextProps) {
+    const { value = '' } = nextProps;
+    const { value: preValue = '' } = this.props;
+    if (value !== preValue) {
+      this.setState({
+        value,
+        id: new Date().getTime() + parseInt(Math.random() * 1000000, 10),
+      });
+    }
+  }
+
   get getSearchListDom() {
     const { searchList, emitSelectItem, showObjKey, objId, name } = this.props;
     const result = searchList.map((item, index) => {
@@ -106,9 +119,12 @@ export default class DropdownSelect extends PureComponent {
   }
 
   @autobind
-  toSearch() {
+  toSearch(value) {
     // 在这里去触发查询搜索信息的方法
-    this.props.emitToSearch(this.state.searchValue);
+    this.props.emitToSearch(value);
+    this.setState({
+      value,
+    });
   }
 
   @autobind
@@ -165,19 +181,11 @@ export default class DropdownSelect extends PureComponent {
             className={style.ddsDrapMenuSearch}
             onClick={(e) => { e.nativeEvent.stopImmediatePropagation(); }}
           >
-            <input
-              type="text"
+            <Search
               className={style.searhInput}
-              value={this.state.searchValue}
               placeholder={this.props.placeholder}
-              onChange={(e) => { this.setState({ searchValue: e.target.value }); }}
+              onSearch={this.toSearch}
             />
-            <span
-              className={style.searchSub}
-              onClick={this.toSearch}
-            >
-              <Icon type="search" />
-            </span>
           </div>
           {
             _.isEmpty(this.props.searchList)
