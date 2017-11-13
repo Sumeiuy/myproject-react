@@ -3,7 +3,6 @@
   float: left;
   margin-left: 10px;
   font-size: 14px;
-  color: #3983ff !important;
   cursor: pointer;
 }
 .lh28 {
@@ -11,20 +10,20 @@
   line-height: 28px;
 }
 .showCharts {
-  display: none;
+  // display: none;
   border: 1px solid antiquewhite;
   height: 152px;
   width: 423px;
-  position: absolute;
-  left: -5px;
-  top: 25px;
-  z-index: 2;
-  background-color: #FFFFFF;
+  // position: absolute;
+  // left: -5px;
+  // top: 25px;
+  // z-index: 2;
+  background-color: #fff;
   border-radius: 8px;
   box-shadow: 1px 1px 10px 2px #d2d2d2;
   .chartsContent {
     display: inline-block;
-    width:305px;
+    width: 305px;
     height: 100%;
   }
   .chartsText {
@@ -32,7 +31,7 @@
     margin: 0 20px 0 0;
     // width: 200px;
     font-size: 13px;
-    color:#808080;
+    color: #808080;
     div {
       margin-top: 8px;
     }
@@ -42,8 +41,8 @@
         line-height: 18px;
       }
       .tit {
-        font-size:12px;
-        color:#888;
+        font-size: 12px;
+        color: #888;
         text-align: right;
       }
       .asset {
@@ -63,10 +62,26 @@
           font-size: 12px;
           color: #888;
           &.redUnit {
-            color:#e64340;
+            color: #e64340;
           }
         }
       }
     }
   }
+}
+.sixMonthEarnings {
+  :global {
+    .ant-tooltip-arrow {
+      display: none;
+    }
+    .ant-tooltip-inner {
+      max-width: 423px;
+      padding: 0;
+      background-color: transparent;
+    }
+  }
+}
+.showDetail {
+  color: #3983ff;
+  font-style: normal;
 }

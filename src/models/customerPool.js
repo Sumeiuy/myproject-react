@@ -267,9 +267,9 @@ export default {
     },
     // 获取客户列表6个月收益率
     * getCustIncome({ payload }, { call, put }) {
-      yield put({
-        type: 'getCustIncomeReq',
-      });
+      // yield put({
+      //   type: 'getCustIncomeReq',
+      // });
       const { resultData: { monthlyProfits } } = yield call(api.getCustIncome, payload);
       yield put({
         type: 'getCustIncomeSuccess',
