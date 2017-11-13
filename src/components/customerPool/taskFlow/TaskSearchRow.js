@@ -5,7 +5,7 @@
  */
 import React, { PropTypes, PureComponent } from 'react';
 // import { autobind } from 'core-decorators';
-import { Radio, Modal, Button } from 'antd';
+import { Radio, Modal, Button, Icon } from 'antd';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
 import classnames from 'classnames';
@@ -78,13 +78,13 @@ export default class TaskSearchRow extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { peopleOfLabelData, visible } = nextProps;
-    const { userObjectFormList } = peopleOfLabelData;
+    const { userObjectFormList = [] } = peopleOfLabelData || {};
     const list = _.map(userObjectFormList, item => ({
       ...item,
       cust_type: item.cust_type === 'Y' ? '高净值' : '零售',
     }));
     this.setState({
-      totalRecordNum: peopleOfLabelData.totalCount,
+      totalRecordNum: _.isEmpty(peopleOfLabelData) ? 0 : peopleOfLabelData.totalCount,
       custTableData: list,
       visible,
     });
@@ -238,28 +238,38 @@ export default class TaskSearchRow extends PureComponent {
                   <Button key="back" size="large" onClick={this.handleCancel}>关闭</Button>,
                 ]}
                 width={700}
+                wrapClassName={styles.labelCustModalContainer}
               >
-                <GroupTable
-                  pageData={{
-                    curPageNum,
-                    curPageSize: pageSize,
-                    totalRecordNum,
-                  }}
-                  tableClass={
-                    classnames({
-                      [styles.labelCustTable]: true,
-                      [tableStyles.groupTable]: true,
-                    })
-                  }
-                  isFixedTitle
-                  scrollY={400}
-                  onSizeChange={this.handleShowSizeChange}
-                  onPageChange={this.handlePageChange}
-                  listData={custTableData}
-                  titleColumn={renderColumnTitle}
-                  isFirstColumnLink={false}
-                  columnWidth={100}
-                />
+                {
+                  _.isEmpty(custTableData) ?
+                    <div className={styles.emptyContent}>
+                      <span>
+                        <Icon className={styles.emptyIcon} type="frown-o" />
+                        暂无数据
+                      </span>
+                    </div> :
+                    <GroupTable
+                      pageData={{
+                        curPageNum,
+                        curPageSize: pageSize,
+                        totalRecordNum,
+                      }}
+                      tableClass={
+                        classnames({
+                          [styles.labelCustTable]: true,
+                          [tableStyles.groupTable]: true,
+                        })
+                      }
+                      isFixedTitle
+                      scrollY={400}
+                      onSizeChange={this.handleShowSizeChange}
+                      onPageChange={this.handlePageChange}
+                      listData={custTableData}
+                      titleColumn={renderColumnTitle}
+                      isFirstColumnLink={false}
+                      columnWidth={100}
+                    />
+                }
               </Modal> : null
           }
         </div>

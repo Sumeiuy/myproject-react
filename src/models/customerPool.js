@@ -1144,7 +1144,7 @@ export default {
       const { payload: { resultData } } = action;
       return {
         ...state,
-        peopleOfLabelData: resultData,
+        peopleOfLabelData: resultData || {},
       };
     },
     // 保存当前选中tab
