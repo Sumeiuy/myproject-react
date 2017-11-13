@@ -289,7 +289,7 @@ export default class PerformanceIndicators extends PureComponent {
       param.data,
       (item, index) => (
         performanceData.push({
-          value: filterEmptyToNumber(item.value).toFixed(2),
+          value: (filterEmptyToNumber(item.value) * 100),
           color: colors[index],
         })
       ),
