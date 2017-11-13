@@ -64,6 +64,7 @@ export default class ChartTable extends PureComponent {
       temp: [],
       allWidth: 100,
       scrollDisplay: false,
+      scrollLeft: 0,
     };
   }
 
@@ -108,6 +109,11 @@ export default class ChartTable extends PureComponent {
     const currentTable = this.currentTable;
     // 表格tbody
     const tableTbody = currentTable.querySelector('.ant-table-tbody');
+    // 表格body
+    const tableBody = currentTable.querySelector('.ant-table-body');
+    // console.warn('tableBody',tableBody);
+    // 表格向左滚动距离
+    const tableScrollLeft = tableBody.scrollLeft;
     // 窗口可视高度
     const docElemHeight = document.documentElement.clientHeight;
     // 表格tbody距离顶部距离
@@ -119,6 +125,7 @@ export default class ChartTable extends PureComponent {
       const visible = docElemHeight - tableTbodyHeight - topDistance;
       if (visible < 0 && topDistance > 0 && topDistance < docElemHeight) {
         this.setState({ scrollDisplay: true });
+        this.setState({ scrollLeft: tableScrollLeft });
       } else {
         this.setState({ scrollDisplay: false });
       }
@@ -141,7 +148,7 @@ export default class ChartTable extends PureComponent {
       className={styles.columnsTitle}
       onClick={() => { this.handleTitleClick(item); }}
     >
-      {unitFlag ?
+      {unitFlag && item.unit?
       `${item.name}(${encodeURIComponent(item.unit) === encodeURIComponent('元') ? '万元' : item.unit})`
       :
       item.name
@@ -177,12 +184,18 @@ export default class ChartTable extends PureComponent {
   }
   // 根据 column 的 name 计算 column 的宽度
   @autobind
-  getColumnWidth(str) {
+  getColumnWidth(str, unitStr = 0) {
     // 取出字符串对应的字节长度，汉字为 2，英文符号为 1，最终除以 2 当做字符串长度
     const length = getStrLen(str) / 2;
+    let unitLength;
+    if(!_.isEmpty(unitStr)){
+      unitLength = getStrLen(unitStr) / 2;
+    } else {
+      unitLength = 0;
+    }
     // TODO，取出每个文字的实际字体大小
-    // 设定每个 column 的宽度，16 为每个字的假想大小，20 为后面的箭头宽度
-    const width = (length * 16) + 20;
+    // 设定每个 column 的宽度，16 为每个字的假想大小，40 为后面的箭头宽度
+    const width = (length * 16) + (unitLength * 16) + 40;
     // 设定最小宽度，以防 name 太短，而对应的值过大，标题会换行
     return width < 120 ? 120 : width;
   }
@@ -193,9 +206,9 @@ export default class ChartTable extends PureComponent {
     if (item.children) {
       item.children.map((child) => {
         const childObj = {
-          title: this.getTitleHtml(child, false),
+          title: this.getTitleHtml(child),
           dataIndex: child.key,
-          width: this.getColumnWidth(child.name),
+          width: this.getColumnWidth(child.name, child.unit),
           key: `key${child.key}`,
         };
         const hasThreeEle = child.children;
@@ -216,9 +229,9 @@ export default class ChartTable extends PureComponent {
     if (item.children) {
       item.children.map((child) => {
         const threeEleObj = {
-          title: this.getTitleHtml(child, false),
+          title: this.getTitleHtml(child),
           dataIndex: child.key,
-          width: this.getColumnWidth(child.name),
+          width: this.getColumnWidth(child.name, child.unit),
           key: `key${child.key}`,
         };
         return threeEleArr.push(threeEleObj);
@@ -454,6 +467,7 @@ export default class ChartTable extends PureComponent {
             <ScrollBar
               allWidth={allWidth}
               setScrollLeft={this.setScrollLeft}
+              tableScrollLeft={this.state.scrollLeft}
             />
           :
             <div />
