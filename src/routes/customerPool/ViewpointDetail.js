@@ -45,10 +45,10 @@ export default class ViewpointDetail extends PureComponent {
 
   @autobind
   handleBackClick() {
-    const { push, location: { query: { curPageNum = 1, curPageSize = 18 } } } = this.props;
+    const { push, location: { query: { curPageNum = 1, pageSize = 20 } } } = this.props;
     const param = { id: 'RTC_TAB_VIEWPOINT', title: '资讯' };
     const url = '/customerPool/viewpointList';
-    const newQuery = { curPageNum, curPageSize };
+    const newQuery = { curPageNum, pageSize };
     if (document.querySelector(fspContainer.container)) {
       fspGlobal.openRctTab({ url: `${url}?${helper.queryToString(newQuery)}`, param });
     } else {
