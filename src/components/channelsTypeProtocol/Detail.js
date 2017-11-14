@@ -82,7 +82,7 @@ export default class Detail extends PureComponent {
     return (
       <div className={styles.detailComponent}>
         <div className={styles.dcHeader}>
-          <span className={styles.dcHaderNumb}>编号{protocolDetail.applyId}</span>
+          <span className={styles.dcHaderNumb}>编号{protocolDetail.appId}</span>
         </div>
         <div className={styles.detailWrapper}>
           <InfoTitle head="基本信息" />

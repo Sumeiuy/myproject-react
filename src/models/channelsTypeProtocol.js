@@ -285,7 +285,7 @@ export default {
       });
     },
     // 提交审批流程
-    * doApprove({ payload }, { call }) {
+    * doApprove({ payload }, { call, put }) {
       yield call(api.postDoApprove, payload.formData);
 
       // 提交成功之后重新请求左侧列表
