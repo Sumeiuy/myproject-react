@@ -90,7 +90,7 @@ const getBgItem = ({
   bgColor,
 }) => {
   const newData = data.map(
-    item => (maxValue - item.value).toFixed(2),
+    item => (maxValue - item.value),
   );
   return {
     stack: '总量',
@@ -108,7 +108,13 @@ const getBgItem = ({
         fontFamily: 'Microsoft YaHei',
         fontSize: 12,
         color: '#4a4a4a',
-        formatter: params => `${(maxValue - params.value)}%`,
+        formatter: (params) => {
+          const isNotFloat = `${params.value}`.indexOf('.') === -1;
+          const value = maxValue - params.value;
+          // 0%,100%没有小数点，其他保留两位小数
+          const newValue = isNotFloat ? value : value.toFixed(2);
+          return `${newValue}%`;
+        },
       },
     },
   };

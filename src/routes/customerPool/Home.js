@@ -532,7 +532,6 @@ export default class Home extends PureComponent {
     } = this.props;
     // 是否能看投顾绩效的标记
     const { tgQyFlag = false } = empInfo.empInfo || {};
-    const manageIndi = { ...manageIndicators, custCount };
     return (
       <div className={styles.customerPoolWrap}>
         <Search
@@ -566,7 +565,8 @@ export default class Home extends PureComponent {
                 <ManageIndicators
                   empInfo={empInfo}
                   push={push}
-                  indicators={manageIndi}
+                  custCount={custCount}
+                  indicators={manageIndicators}
                   location={location}
                   cycle={cycle}
                   hsRateAndBusinessIndicator={hsRateAndBusinessIndicator}
