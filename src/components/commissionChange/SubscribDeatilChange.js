@@ -517,7 +517,7 @@ export default class SubscribeDetailToChange extends PureComponent {
     }
     if (operate === 'trueOver') {
       // 提交
-      this.props.submitSub(params).then(() => message.success('提交成功'));
+      this.props.submitSub(params).then(this.afterLauncher);
     }
   }
 
