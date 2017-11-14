@@ -162,7 +162,7 @@ export default class Home extends PureComponent {
   componentDidMount() {
     const {
       custRange,
-      empInfo: { empInfo = {} },
+      empInfo: { empInfo = {}, empPostnList = {} },
       getInformation,
       getToBeDone,
       getHotWds,
@@ -193,8 +193,8 @@ export default class Home extends PureComponent {
     // 根据岗位orgId生成对应的组织机构树
     this.handleCreateCustRange({
       custRange,
-      empInfo,
       posOrgId: this.orgId,
+      empPostnList,
     });
   }
 
@@ -394,8 +394,8 @@ export default class Home extends PureComponent {
   @autobind
   handleCreateCustRange({
     custRange,
-    empInfo,
     posOrgId,
+    empPostnList,
   }) {
     const myCustomer = {
       id: MAIN_MAGEGER_ID,
@@ -444,12 +444,17 @@ export default class Home extends PureComponent {
       });
       return;
     }
-    // 有权限，但是用户信息中获取到的occDivnNum不在empOrg（组织机构树）中，显示用户信息中的数据
-    this.setState({
-      createCustRange: [{
-        id: empInfo.occDivnNum,
-        name: empInfo.occupation,
-      }],
+    // 有权限，但是posOrgId不在empOrg（组织机构树）中，
+    // 用posOrgId去empPostnList中匹配，找出对应岗位的信息显示出来
+    _(empPostnList).forEach((obj) => {
+      if (obj.orgId === posOrgId) {
+        this.setState({
+          createCustRange: [{
+            id: obj.orgId,
+            name: obj.orgName,
+          }],
+        });
+      }
     });
   }
 
