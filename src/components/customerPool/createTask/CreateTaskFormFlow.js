@@ -144,7 +144,6 @@ export default class CreateTaskFormFlow extends PureComponent {
         {showBtn ?
           <div className={styles.taskcontent}>
             <CreateTaskForm
-              previousData={storedCreateTaskData}
               location={location}
               dict={dict}
               ref={ref => this.createTaskForm = ref}

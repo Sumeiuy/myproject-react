@@ -1,6 +1,5 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { withRouter } from 'dva/router';
 import { Button, Mention } from 'antd';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
@@ -12,7 +11,6 @@ import styles from './taskFormFlowStep.less';
 
 const { toString } = Mention;
 
-@withRouter
 export default class TaskFormFlowStep extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
