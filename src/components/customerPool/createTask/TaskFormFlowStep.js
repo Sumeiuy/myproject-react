@@ -36,15 +36,14 @@ export default class TaskFormFlowStep extends PureComponent {
 
   constructor(props) {
     super(props);
-    const { storedCreateTaskData: { taskFormData } } = props;
+    const { storedCreateTaskData: { taskFormData, current, custSource } } = props;
     this.state = {
-      current: 0,
-      currentStep: 0,
+      current: current || 0,
       previousData: taskFormData || {},
       currentSelectRecord: {},
       currentSelectRowKeys: [],
       currentTab: '1',
-      custSource: '',
+      custSource: custSource || '',
       isShowErrorInfo: false,
       isShowErrorExcuteType: false,
       isShowErrorTaskType: false,
@@ -55,8 +54,14 @@ export default class TaskFormFlowStep extends PureComponent {
 
   @autobind
   handlePreviousStep() {
-    const { storedCreateTaskData: { taskFormData } } = this.props;
+    const { storedCreateTaskData,
+      storedCreateTaskData: { taskFormData },
+      saveCreateTaskData } = this.props;
     const { current } = this.state;
+    saveCreateTaskData({
+      ...storedCreateTaskData,
+      current: current - 1,
+    });
     this.setState({
       current: current - 1,
       previousData: taskFormData,
@@ -105,13 +110,17 @@ export default class TaskFormFlowStep extends PureComponent {
   saveFormContent(values) {
     const { current } = this.state;
     const { saveCreateTaskData, location: { query: { source, count } } } = this.props;
+    const custSource = this.handleCustSource(source);
     saveCreateTaskData({
       taskFormData: values,
       totalCust: count,
+      // 记住当前在第二步
+      current: current + 1,
+      custSource,
     });
     this.setState({
       current: current + 1,
-      custSource: this.handleCustSource(source),
+      custSource,
     });
   }
 
@@ -209,6 +218,7 @@ export default class TaskFormFlowStep extends PureComponent {
         isShowErrorInfo={isShowErrorInfo}
         isShowErrorExcuteType={isShowErrorExcuteType}
         isShowErrorTaskType={isShowErrorTaskType}
+        custCount={Number(count)}
       />,
     }, {
       title: '目标客户',
