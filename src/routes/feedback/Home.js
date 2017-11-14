@@ -44,6 +44,7 @@ const getDataFunction = loading => query => ({
 });
 
 const mapDispatchToProps = {
+  push: routerRedux.push,
   replace: routerRedux.replace,
   getFeedbackList: getDataFunction(true),
 };
@@ -56,6 +57,7 @@ export default class FeedBack extends PureComponent {
     getFeedbackList: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     replace: PropTypes.func.isRequired,
+    push: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -324,7 +326,7 @@ export default class FeedBack extends PureComponent {
   }
 
   render() {
-    const { list, location, replace } = this.props;
+    const { list, location, replace, push } = this.props;
     const { isEmpty, paneMaxSize, paneMinSize } = this.state;
     const emptyClass = classnames({
       none: !isEmpty,
@@ -377,6 +379,7 @@ export default class FeedBack extends PureComponent {
               <Col span="24" className="rightSection" id="rightSection">
                 <Detail
                   location={location}
+                  push={push}
                 />
               </Col>
             </Row>

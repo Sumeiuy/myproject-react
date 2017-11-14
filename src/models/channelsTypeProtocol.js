@@ -6,11 +6,11 @@
  * @Last Modified time: 2017-11-13 20:38:47
  */
 // import _ from 'lodash';
-
+import { parse } from 'query-string';
 import { channelsTypeProtocol as api, seibel as seibelApi } from '../api';
 import { constructSeibelPostBody, getEmpId } from '../utils/helper';
 import { seibelConfig } from '../config';
-import { parse } from 'query-string';
+
 const {
   pageType,  // 页面类型
 } = seibelConfig.channelsTypeProtocol;
