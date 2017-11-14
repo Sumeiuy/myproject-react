@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-04 13:37:00
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-10 16:57:49
+ * @Last Modified time: 2017-11-14 16:58:26
  * @description 单佣金申请内容区域
  */
 
@@ -208,7 +208,13 @@ export default class SingleCreateBoard extends PureComponent {
   @autobind
   mergeSingleMatchInfo() {
     const { matchInfo: info } = this.props;
-    const { riskRankMhrt, investProdMhrt, investTypeMhrt, productCode, isMatch } = info;
+    const {
+      riskRankMhrt,
+      investProdMhrt,
+      investTypeMhrt,
+      productCode,
+      isMatch,
+    } = info;
     const matchInfo = {
       productCode,
       riskMatch: riskRankMhrt,
@@ -304,7 +310,6 @@ export default class SingleCreateBoard extends PureComponent {
     const {
       customer: { openRzrq },
       gjList,
-      matchInfo,
       otherRations,
       approverList,
       productList,
@@ -315,6 +320,8 @@ export default class SingleCreateBoard extends PureComponent {
       approverName,
       approverId,
       choiceApprover,
+      singleProductMatchInfo,
+      userProductList,
     } = this.state;
 
     const newApproverList = approverList.map((item, index) => {
@@ -372,7 +379,7 @@ export default class SingleCreateBoard extends PureComponent {
             />
           </CommissionLine>
           <Transfer {...singleTransferProps} />
-          <ThreeMatchTip info={matchInfo} />
+          <ThreeMatchTip info={singleProductMatchInfo} userList={userProductList} />
         </div>
         {/* 其他佣金费率 */}
         <div className={styles.approvalBlock}>

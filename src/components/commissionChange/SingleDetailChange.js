@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-01 18:37:35
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-09 16:54:19
+ * @Last Modified time: 2017-11-14 17:06:35
  * @description 单佣金调整驳回后修改页面
  */
 
@@ -159,7 +159,7 @@ export default class SingleDetailChange extends PureComponent {
   changeTargetGJCommission(v) {
     const { customer } = this.props.detail;
     this.props.onQueryGJ({
-      custId: customer.custEcom,
+      custId: customer.id,
       commision: v,
     });
   }
@@ -542,11 +542,12 @@ export default class SingleDetailChange extends PureComponent {
       approverId,
       otherComReset,
       btnDisabled,
+      singleProductList,
+      singleProductMatchInfo,
     } = this.state;
     const {
       singleGJ,
       optionalList,
-      threeMatchInfo,
       otherRate,
     } = this.props;
     // 将提交按钮中的审批人列表提取出来
@@ -637,7 +638,7 @@ export default class SingleDetailChange extends PureComponent {
               />
             </CommissionLine>
             <Transfer {...singleTransferProps} />
-            <ThreeMatchTip info={threeMatchInfo} />
+            <ThreeMatchTip info={singleProductMatchInfo} userList={singleProductList} />
           </div>
           <div className={styles.approvalBlock}>
             <InfoTitle head="其他佣金费率" />
