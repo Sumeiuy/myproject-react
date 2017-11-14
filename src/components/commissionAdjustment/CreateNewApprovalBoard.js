@@ -109,35 +109,6 @@ export default class CreateNewApprovalBoard extends PureComponent {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { threeMatchInfo: prev3 } = this.props;
-    const { threeMatchInfo: next3 } = nextProps;
-    if (!_.isEqual(prev3, next3)) {
-      if (this.judgeSubtypeNow(commadj.subscribe)) {
-        // 资讯订阅的
-        this.merge3MatchSubInfo(next3);
-      }
-    }
-  }
-
-  @autobind
-  merge3MatchSubInfo(info) {
-    const { riskRankMhrt, investProdMhrt, investTypeMhrt, productCode } = info;
-    const matchInfo = {
-      productCode,
-      riskMatch: riskRankMhrt,
-      prodMatch: investProdMhrt,
-      termMatch: investTypeMhrt,
-    };
-    const { subscribelProductMatchInfo } = this.state;
-    const exsit = _.findIndex(subscribelProductMatchInfo, o => o.productCode === productCode) > -1;
-    if (!exsit) {
-      this.setState({
-        subscribelProductMatchInfo: [matchInfo, ...subscribelProductMatchInfo],
-      });
-    }
-  }
-
   // 判断当前是否某个子类型
   @autobind
   judgeSubtypeNow(assert) {
@@ -158,9 +129,9 @@ export default class CreateNewApprovalBoard extends PureComponent {
         { name: 'singleComProductList' },
         { name: 'threeMatchInfo', value: {} },
         { name: 'singleGJCommission' },
-        { name: 'subscribelProList', value: [] },
-        { name: 'unSubscribelProList', value: [] },
-        { name: 'subscribeCustList', value: [] },
+        { name: 'subscribelProList' },
+        { name: 'unSubscribelProList' },
+        { name: 'subscribeCustomerList' },
       ],
     });
   }
@@ -246,6 +217,20 @@ export default class CreateNewApprovalBoard extends PureComponent {
       }
       return product;
     });
+  }
+
+  // 咨讯订阅提交产品改造
+  @autobind
+  changeSubscriProList(product) {
+    const { prodRowId, prodId, prodName } = product;
+    return {
+      key: prodRowId,
+      // 产品代码
+      prodCode: prodId,
+      // 产品名称
+      prodName,
+      ...product,
+    };
   }
 
   // 提交前检查各项输入的值是否符合要求
@@ -389,14 +374,14 @@ export default class CreateNewApprovalBoard extends PureComponent {
     this.submitLoadiing(true);
     const { rowId } = this.props.empInfo;
     const {
+      newSubProList,
+      approverId,
+      attachment,
+    } = this.subBoard.getData();
+    const {
       customer,
       remark,
-      subProList,
-      subscribelProductMatchInfo,
-      approverId, // 审批人工号
-      attachment, // 附件编号
     } = this.state;
-    const newSubProList = this.changeSubmitSubProList(subProList, subscribelProductMatchInfo);
     const params = {
       type: customer.custType,
       aprovaluser: approverId,
@@ -426,13 +411,14 @@ export default class CreateNewApprovalBoard extends PureComponent {
     this.submitLoadiing(true);
     const { rowId } = this.props.empInfo;
     const {
-      customer,
-      unSubProList,
-      remark,
+      newUnSubProList,
       approverId, // 审批人工号
       attachment, // 附件编号
+    } = this.unSubBoard.getData();
+    const {
+      customer,
+      remark,
     } = this.state;
-    const newUnSubProList = this.changeSubmitUnSubProList(unSubProList);
     const unParams = {
       type: customer.custType,
       aprovaluser: approverId,
@@ -479,6 +465,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
       remark: '',
       customer: {},
     });
+    this.clearRedux();
   }
 
   // 填写备注
@@ -530,6 +517,17 @@ export default class CreateNewApprovalBoard extends PureComponent {
         deptId: occDivnNum,
       });
     }
+  }
+
+  // 查询资讯订阅调整产品
+  @autobind
+  querySubscribelProList(param) {
+    this.props.getSubscribelProList(param);
+  }
+  // 查询资讯退订调整产品
+  @autobind
+  queryUnSubscribelProList(param) {
+    this.props.getUnSubscribelProList(param);
   }
 
   // 单佣金、咨询订阅、退订基本信息选择客户
@@ -612,6 +610,22 @@ export default class CreateNewApprovalBoard extends PureComponent {
     this.singleBoard = input.getWrappedInstance();
   }
 
+  // 咨讯订阅内容组件
+  // 由于组件被connect包装过所以需要使用getWrappedInstance获取真实的组件
+  @autobind
+  subscriCreateBoardRef(input) {
+    if (!input) return;
+    this.subBoard = input.getWrappedInstance();
+  }
+
+  // 咨讯退订内容组件
+  // 由于组件被connect包装过所以需要使用getWrappedInstance获取真实的组件
+  @autobind
+  unSubscriCreateBoardRef(input) {
+    if (!input) return;
+    this.unSubBoard = input.getWrappedInstance();
+  }
+
   render() {
     const {
       modalKey,
@@ -625,8 +639,8 @@ export default class CreateNewApprovalBoard extends PureComponent {
       empInfo,
       otherRatios,
       singleOtherRatio,
+      subscribelProList,
     } = this.props;
-
     const {
       approvalType,
       remark,
@@ -754,14 +768,23 @@ export default class CreateNewApprovalBoard extends PureComponent {
             {
               !this.judgeSubtypeNow(commadj.subscribe) ? null
               : (
-                <SubscribeCreateBoard />
+                <SubscribeCreateBoard
+                  customer={customer}
+                  empInfo={empInfo}
+                  subscribelProList={subscribelProList}
+                  ref={this.subscriCreateBoardRef}
+                />
               )
             }
             {/* 资讯退订 */}
             {
               !this.judgeSubtypeNow(commadj.unsubscribe) ? null
               : (
-                <UnSubscribeCreateBoard />
+                <UnSubscribeCreateBoard
+                  customer={customer}
+                  empInfo={empInfo}
+                  ref={this.unSubscriCreateBoardRef}
+                />
               )
             }
           </div>

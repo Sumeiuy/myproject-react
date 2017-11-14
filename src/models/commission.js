@@ -544,8 +544,9 @@ export default {
           flowCode: detailRD.flowCode,
           loginuser,
         });
-        stepRes = yield call(api.queryCurrentStep, {
+        stepRes = yield call(api.querySubscriStep, {
           flowCode: detailRD.flowCode,
+          operationType: 'subscribe',
         });
       }
       yield put({
@@ -575,8 +576,9 @@ export default {
           flowCode: detailRD.flowCode,
           loginuser,
         });
-        stepRes = yield call(api.queryCurrentStep, {
+        stepRes = yield call(api.querySubscriStep, {
           flowCode: detailRD.flowCode,
+          operationType: 'unsubscribe',
         });
       }
       yield put({
