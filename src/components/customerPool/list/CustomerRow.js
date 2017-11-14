@@ -333,6 +333,7 @@ export default class CustomerRow extends PureComponent {
                 monthlyProfits={monthlyProfits}
                 custIncomeReqState={custIncomeReqState}
                 getCustIncome={getCustIncome}
+                formatAsset={formatAsset}
               />
               <div className="department">
                 <span>

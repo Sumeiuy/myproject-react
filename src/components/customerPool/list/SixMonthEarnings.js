@@ -13,8 +13,6 @@ import { helper } from '../../../utils';
 
 import styles from './sixMonthEarnings.less';
 
-const formatAsset = value => helper.toUnit(value, '元', 5);
-
 const getLastestData = (arr) => {
   if (arr && arr instanceof Array && arr.length !== 0) {
     return arr[arr.length - 1];
@@ -29,6 +27,7 @@ export default class SixMonthEarnings extends PureComponent {
     monthlyProfits: PropTypes.object.isRequired,
     custIncomeReqState: PropTypes.bool.isRequired,
     getCustIncome: PropTypes.func.isRequired,
+    formatAsset: PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -73,6 +72,7 @@ export default class SixMonthEarnings extends PureComponent {
       listItem,
       monthlyProfits,
       custIncomeReqState,
+      formatAsset,
     } = this.props;
     const {
       isShowCharts,
@@ -114,7 +114,7 @@ export default class SixMonthEarnings extends PureComponent {
         className={`${styles.showCharts}`}
       >
         <div className={styles.chartsContent}>
-          <ChartLineWidget chartData={thisProfits} />
+          <ChartLineWidget chartData={thisProfits} formatAsset={formatAsset} />
         </div>
         <div className={styles.chartsText}>
           <div>
