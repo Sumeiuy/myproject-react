@@ -103,7 +103,9 @@ export default class PerformanceIndicators extends PureComponent {
     const clientNumberData = [];
     // 业务开通name
     const clientNameData = [];
-    const length = hsRateAndBusinessIndicator.length || 0;
+    // 是否为空
+    const isEmpty = _.isEmpty(hsRateAndBusinessIndicator);
+    const length = isEmpty ? 0 : hsRateAndBusinessIndicator.length;
     _.forEach(
       hsRateAndBusinessIndicator,
       (item, index) => {
@@ -115,7 +117,7 @@ export default class PerformanceIndicators extends PureComponent {
         }
       },
     );
-    return { isEmpty: (length === 0), hsRate, clientNumberData, clientNameData };
+    return { isEmpty, hsRate, clientNumberData, clientNameData };
   }
 
   render() {
