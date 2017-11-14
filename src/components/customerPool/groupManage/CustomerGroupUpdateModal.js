@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-09-20 10:53:22
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-09-22 15:39:10
+ * @Last Modified time: 2017-11-14 16:25:21
  */
 
 import React, { PureComponent } from 'react';
@@ -42,6 +42,16 @@ export default class CustomerGroupUpdateModal extends PureComponent {
       visible: props.visible,
       footer: props.footer,
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { visible } = this.props;
+    const { visible: nextVisible } = nextProps;
+    if (visible !== nextVisible) {
+      this.setState({
+        visible: nextVisible,
+      });
+    }
   }
 
   @autobind
