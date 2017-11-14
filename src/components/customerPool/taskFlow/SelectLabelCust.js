@@ -136,6 +136,7 @@ export default class SelectLabelCust extends PureComponent {
       isLoadingEnd,
       onCancel,
       visible,
+      isHasAuthorize,
     } = this.props;
     const { condition, currentSelectLabel, tipsSize } = this.state;
     return (
@@ -165,6 +166,7 @@ export default class SelectLabelCust extends PureComponent {
           condition={condition}
           currentSelectLabel={currentSelectLabel}
           orgId={orgId}
+          isHasAuthorize={isHasAuthorize}
         />
       </div>
     );
