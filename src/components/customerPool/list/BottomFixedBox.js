@@ -213,20 +213,15 @@ export default class BottomFixedBox extends PureComponent {
       selectCount,
       mainServiceManager,
     } = this.props;
-    if (!mainServiceManager) {
-      return (
-        <p className="left">
-          已选&nbsp;
-          <span className="marked">{selectCount}</span>
-          &nbsp;户，选择目标用户以创建自定义任务
-        </p>
-      );
+    let str = '';
+    if (mainServiceManager) {
+      str = '，或者把用户加入分组管理';
     }
     return (
       <p className="left">
         已选&nbsp;
         <span className="marked">{selectCount}</span>
-        &nbsp;户，选择目标用户以创建自定义任务，或者把用户加入分组管理
+        &nbsp;户，选择目标用户以创建自定义任务{str}
       </p>
     );
   }

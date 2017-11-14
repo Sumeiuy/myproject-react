@@ -1,6 +1,5 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { withRouter } from 'dva/router';
 import { Button, Mention } from 'antd';
 import _ from 'lodash';
 import { autobind } from 'core-decorators';
@@ -12,14 +11,13 @@ import styles from './taskFormFlowStep.less';
 
 const { toString } = Mention;
 
-@withRouter
-export default class TaskFlow extends PureComponent {
+export default class TaskFormFlowStep extends PureComponent {
   static propTypes = {
     location: PropTypes.object.isRequired,
     push: PropTypes.func.isRequired,
-    storedTaskFlowData: PropTypes.object,
     dict: PropTypes.object,
-    saveTaskFlowData: PropTypes.func.isRequired,
+    saveCreateTaskData: PropTypes.func.isRequired,
+    storedCreateTaskData: PropTypes.object,
     createTask: PropTypes.func.isRequired,
     parseQuery: PropTypes.func.isRequired,
     approvalList: PropTypes.array.isRequired,
@@ -32,20 +30,20 @@ export default class TaskFlow extends PureComponent {
 
   static defaultProps = {
     dict: {},
-    storedTaskFlowData: {},
+    storedCreateTaskData: {},
     orgId: null,
   };
 
   constructor(props) {
     super(props);
+    const { storedCreateTaskData: { taskFormData, current, custSource } } = props;
     this.state = {
-      current: 0,
-      currentStep: 0,
-      previousData: {},
+      current: current || 0,
+      previousData: taskFormData || {},
       currentSelectRecord: {},
       currentSelectRowKeys: [],
       currentTab: '1',
-      custSource: '',
+      custSource: custSource || '',
       isShowErrorInfo: false,
       isShowErrorExcuteType: false,
       isShowErrorTaskType: false,
@@ -56,13 +54,18 @@ export default class TaskFlow extends PureComponent {
 
   @autobind
   handlePreviousStep() {
-    const { storedTaskFlowData } = this.props;
+    const { storedCreateTaskData,
+      storedCreateTaskData: { taskFormData },
+      saveCreateTaskData } = this.props;
     const { current } = this.state;
+    saveCreateTaskData({
+      ...storedCreateTaskData,
+      current: current - 1,
+    });
     this.setState({
       current: current - 1,
-      previousData: storedTaskFlowData.taskFormData,
+      previousData: taskFormData,
     });
-    console.log(storedTaskFlowData.taskFormData);
   }
 
   @autobind
@@ -76,7 +79,7 @@ export default class TaskFlow extends PureComponent {
         custSources = '搜索目标客户';
         break;
       case 'tag':
-        custSources = '搜索目标客户';
+        custSources = '标签目标客户池';
         break;
       case 'custIndicator':
         custSources = '绩效目标客户';
@@ -98,35 +101,39 @@ export default class TaskFlow extends PureComponent {
       if (!_.isEmpty(err)) {
         isFormError = true;
       }
-      this.submitFormContent({ ...values, isFormError });
+      this.saveFormContent({ ...values, isFormError });
     });
   }
 
   @autobind
   @validateFormContent
-  submitFormContent(values) {
+  saveFormContent(values) {
     const { current } = this.state;
-    const { saveTaskFlowData, location: { query } } = this.props;
-    saveTaskFlowData({
+    const { saveCreateTaskData, location: { query: { source, count } } } = this.props;
+    const custSource = this.handleCustSource(source);
+    saveCreateTaskData({
       taskFormData: values,
-      totalCust: query.count,
+      totalCust: count,
+      // 记住当前在第二步
+      current: current + 1,
+      custSource,
     });
     this.setState({
       current: current + 1,
-      custSource: this.handleCustSource(query.source),
+      custSource,
     });
   }
 
   // 自建任务提交
   @autobind
   handleSubmit() {
-    const { storedTaskFlowData, createTask, parseQuery, orgId } = this.props;
+    const { storedCreateTaskData, createTask, parseQuery, orgId } = this.props;
     const { currentSelectRecord: { login: flowAuditorId = null } } = this.state;
     const {
       custIdList,
       custCondition,
     } = parseQuery();
-    const params = storedTaskFlowData.taskFormData;
+    const params = storedCreateTaskData.taskFormData;
     const data = {
       executionType: params.executionType,
       serviceStrategySuggestion: params.serviceStrategySuggestion,
@@ -194,7 +201,7 @@ export default class TaskFlow extends PureComponent {
       location,
       approvalList,
       getApprovalList,
-      storedTaskFlowData,
+      storedCreateTaskData,
       isApprovalListLoadingEnd,
       isShowApprovalModal,
       onCancel,
@@ -211,12 +218,13 @@ export default class TaskFlow extends PureComponent {
         isShowErrorInfo={isShowErrorInfo}
         isShowErrorExcuteType={isShowErrorExcuteType}
         isShowErrorTaskType={isShowErrorTaskType}
+        custCount={Number(count)}
       />,
     }, {
       title: '目标客户',
       content: <TaskPreview
         ref={ref => (this.taskPreviewRef = ref)}
-        storedTaskFlowData={storedTaskFlowData}
+        storedData={storedCreateTaskData}
         approvalList={approvalList}
         currentTab={currentTab}
         getApprovalList={getApprovalList}
