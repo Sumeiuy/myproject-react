@@ -17,6 +17,13 @@ const { TextArea } = Input;
 const { toContentState, toString } = Mention;
 const Nav = Mention.Nav;
 
+const PREFIX = ['$'];
+const mentionTextStyle = {
+  color: '#2d84cc',
+  backgroundColor: '#ebf3fb',
+  borderColor: '#ebf3fb',
+};
+
 export default class TaskFormInfo extends PureComponent {
 
   static propTypes = {
@@ -81,16 +88,10 @@ export default class TaskFormInfo extends PureComponent {
     }
   }
 
-  componentDidUpdate() {
-    if (this.isFirstLoad) {
-      this.isFirstLoad = false;
-    }
-  }
-
   handleSearchChange = (value, trigger) => {
     const { users } = this.props;
     const searchValue = value.toLowerCase();
-    const dataSource = trigger === '{' ? users : {};
+    const dataSource = _.includes(PREFIX, trigger) ? users : {};
     const filtered = dataSource.filter(item =>
       item.name.toLowerCase().indexOf(searchValue) !== -1,
     );
@@ -140,7 +141,6 @@ export default class TaskFormInfo extends PureComponent {
   checkMention = (rule, value, callback) => {
     if (!this.isFirstLoad) {
       const content = toString(value);
-      console.log(content.length);
       if (_.isEmpty(content) || content.length < 10 || content.length > 341) {
         this.setState({
           isShowErrorInfo: true,
@@ -152,6 +152,11 @@ export default class TaskFormInfo extends PureComponent {
       }
     }
     callback();
+  }
+
+  @autobind
+  handleMentionBlur() {
+    this.isFirstLoad = false;
   }
 
   handleCreatOptions(data) {
@@ -175,12 +180,14 @@ export default class TaskFormInfo extends PureComponent {
         initialValue: toContentState(defaultMissionDesc),
       })(
         <Mention
+          mentionStyle={mentionTextStyle}
           style={{ width: '100%', height: 100 }}
           placeholder="请在描述客户经理联系客户前需要了解的客户相关信息，比如持仓情况。（字数限制：10-300字）"
-          prefix={['{']}
+          prefix={PREFIX}
           onSearchChange={this.handleSearchChange}
           suggestions={suggestions}
           getSuggestionContainer={() => this.fatherMention}
+          onBlur={this.handleMentionBlur}
           multiLines
         />,
       )
@@ -333,7 +340,17 @@ export default class TaskFormInfo extends PureComponent {
             )}
           </FormItem>
         </div>
-        <div className={styles.task_textArea} ref={ref => this.fatherMention = ref}>
+        <div
+          className={styles.task_textArea}
+          ref={
+            (ref) => {
+              // ref多次重绘可能是null, 这里要判断一下
+              if (!this.fatherMention && ref) {
+                this.fatherMention = ref;
+              }
+            }
+          }
+        >
           <p>
             <label htmlFor="desc"><i>*</i>任务提示</label>
           </p>
