@@ -89,11 +89,15 @@ export default class ViewpointDetail extends PureComponent {
     } = infoVOList[index] || {};
     const dateArray = _.split(pubdatedetail, ' ');
     const date = _.isEmpty(dateArray) ? '' : _.head(dateArray);
-    // 分割成段，展示
+    // 分割成段，展示，过滤掉span标签，因为自带样式不符合需求
     const formateAbstract = _.isEmpty(abstract) ? (
       '<p>暂无内容</p>'
     ) : (
-      _.replace(_.trim(abstract), /\s{2,}/gi, '<br /><span></span>')
+      _.replace(
+        _.trim(abstract),
+        /<\/?span[^>]*?>/g,
+        '',
+      )
     );
     return (
       <div className={styles.listContainer}>

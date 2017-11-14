@@ -1,5 +1,5 @@
 .customerlist {
-  margin: 5px 20px 20px 20px;
+  margin: 5px 20px 20px;
 
   :global {
     .total-num {
@@ -26,6 +26,9 @@
         background-color: #fff;
         .ant-pagination {
           display: inline-block;
+          .ant-pagination-jump-next + .ant-pagination-item {
+            display: none;
+          }
         }
       }
     }
