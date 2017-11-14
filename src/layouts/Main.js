@@ -5,12 +5,11 @@
 
 import React, { Component, PropTypes } from 'react';
 import _ from 'lodash';
-import { withRouter } from 'dva-react-router-3/router';
-import { connect } from 'dva-react-router-3';
+import { connect } from 'dva';
 import Loading from './Loading';
 
 import CreateServiceRecord from '../components/customerPool/list/CreateServiceRecord';
-
+import withRouter from '../decorators/withRouter';
 import styles from './main.less';
 import '../css/skin.less';
 

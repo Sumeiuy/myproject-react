@@ -10,7 +10,7 @@
 import { channelsTypeProtocol as api, seibel as seibelApi } from '../api';
 import { constructSeibelPostBody, getEmpId } from '../utils/helper';
 import { seibelConfig } from '../config';
-
+import { parse } from 'query-string';
 const {
   pageType,  // 页面类型
 } = seibelConfig.channelsTypeProtocol;
@@ -306,7 +306,8 @@ export default {
   },
   subscriptions: {
     setup({ dispatch, history }) {
-      return history.listen(({ pathname, query }) => {
+      return history.listen(({ pathname, search }) => {
+        const query = parse(search);
         // 查询子类型列表参数
         const subTypeListParam = {
           typeCode: 'subType',

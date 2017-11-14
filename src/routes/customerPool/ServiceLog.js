@@ -7,13 +7,14 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { Select, DatePicker, Row, Col, Button, message } from 'antd';
 import { connect } from 'react-redux';
-import { routerRedux, withRouter } from 'dva-react-router-3/router';
+import { routerRedux } from 'dva/router';
 import classnames from 'classnames';
 import _ from 'lodash';
 import moment from 'moment';
 import { autobind } from 'core-decorators';
 import Loading from '../../layouts/Loading';
 import Collapse from '../../components/customerPool/list/CreateCollapse';
+import withRouter from '../../decorators/withRouter';
 import styles from './serviceLog.less';
 
 

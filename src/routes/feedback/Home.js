@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import classnames from 'classnames';
 import { autobind } from 'core-decorators';
-import { withRouter, routerRedux } from 'dva-react-router-3/router';
+import { routerRedux } from 'dva/router';
 import { Row, Col } from 'antd';
 import SplitPane from 'react-split-pane';
 import Icon from '../../components/common/Icon';
@@ -19,6 +19,7 @@ import Detail from '../../components/feedback/Detail';
 import FeedbackList from '../../components/feedback/FeedbackList';
 import FeedbackHeader from '../../components/feedback/FeedbackHeader';
 import { constructPostBody, getEnv } from '../../utils/helper';
+import withRouter from '../../decorators/withRouter';
 import '../../css/react-split-pane-master.less';
 import './home.less';
 

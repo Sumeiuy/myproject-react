@@ -1,12 +1,13 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
-import { withRouter, routerRedux } from 'dva-react-router-3/router';
+import { routerRedux } from 'dva/router';
 
 // import Search from '../../components/fullChannelServiceRecord/Search';
 import Filter from '../../components/fullChannelServiceRecord/Filter';
 import DateFilter from '../../components/fullChannelServiceRecord/DateFilter';
 import RecordList from '../../components/fullChannelServiceRecord/RecordList';
+import withRouter from '../../decorators/withRouter';
 // import { helper } from '../../utils';
 import styles from './home.less';
 

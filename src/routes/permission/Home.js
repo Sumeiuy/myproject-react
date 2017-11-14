@@ -8,7 +8,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Col } from 'antd';
 import { autobind } from 'core-decorators';
-import { withRouter, routerRedux } from 'dva-react-router-3/router';
+import { routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { constructSeibelPostBody } from '../../utils/helper';
@@ -21,6 +21,7 @@ import { seibelConfig } from '../../config';
 import ModifyPrivateClient from '../../components/permission/ModifyPrivateClient';
 import CreatePrivateClient from '../../components/permission/CreatePrivateClient_';
 import Barable from '../../decorators/selfBar';
+import withRouter from '../../decorators/withRouter';
 import styles from './home.less';
 
 const EMPTY_OBJECT = {};

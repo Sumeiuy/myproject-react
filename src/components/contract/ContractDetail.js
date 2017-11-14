@@ -9,7 +9,7 @@ import { Form, Row, Col } from 'antd';
 import { createForm } from 'rc-form';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { routerRedux } from 'dva-react-router-3/router';
+import { routerRedux } from 'dva/router';
 import style from './contractDetail.less';
 import TextEditor from './TextEditor';
 

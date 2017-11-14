@@ -7,7 +7,7 @@
 
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
-import { withRouter, routerRedux } from 'dva-react-router-3/router';
+import { routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import { Col, Row, message } from 'antd';
 import _ from 'lodash';
@@ -18,7 +18,7 @@ import BoardItem from '../../components/pageCommon/BoardItem';
 import { CreateBoardModal, DeleteBoardModal, PublishConfirmModal } from '../../components/modals';
 import ImgAdd from '../../../static/images/bg_add.png';
 import ImgTGJX from '../../../static/images/bg_tgjx.png';
-
+import withRouter from '../../decorators/withRouter';
 import { fspContainer } from '../../config';
 
 import styles from './Home.less';

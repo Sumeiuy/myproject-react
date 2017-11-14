@@ -7,7 +7,7 @@
 
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
-import { withRouter, routerRedux } from 'dva-react-router-3/router';
+import { routerRedux } from 'dva/router';
 import { connect } from 'react-redux';
 import { message, Modal } from 'antd';
 import _ from 'lodash';
@@ -20,6 +20,7 @@ import BottonGroup from '../../components/permission/BottonGroup';
 import ChoiceApproverBoard from '../../components/commissionAdjustment/ChoiceApproverBoard';
 import { seibelConfig } from '../../config';
 import Barable from '../../decorators/selfBar';
+import withRouter from '../../decorators/withRouter';
 import styles from './edit.less';
 
 const confirm = Modal.confirm;
