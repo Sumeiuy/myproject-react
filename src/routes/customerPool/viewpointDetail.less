@@ -1,3 +1,4 @@
+@import "../../css/variable.less";
 .listContainer {
   background-color: #f3f3f4;
   .inner {
@@ -19,15 +20,15 @@
           vertical-align: 2px;
         }
         .backTitle {
-          font-family:PingFangSC-Light;
-          font-size:14px;
-          letter-spacing:-0.09px;
-          text-align:left;
+          font-family: @font-family;
+          font-size: 14px;
+          letter-spacing: -0.09px;
+          text-align: left;
           margin-left: 4px;
         }
       }
       .backColumn:hover {
-          color: #10AEFF;
+          color: #10aeff;
         }
       .head {
         border-bottom: 1px solid #ccc;
@@ -35,13 +36,13 @@
         .titleRow {
           position: relative;
           .upper {
-            left: 0px;
+            left: 0;
           }
           .title {
-            font-family:PingFangSC-Medium;
-            font-size:16px;
-            color:#4a4a4a;
-            letter-spacing:0.23px;
+            font-family: @font-family;
+            font-size: 16px;
+            color: #4a4a4a;
+            letter-spacing: 0.23px;
             text-align: center;
             margin-left: 120px;
             margin-right: 120px;
@@ -55,10 +56,10 @@
           .column {
             flex-grow: 1;
             text-align: right;
-            font-family:PingFangSC-Regular;
-            font-size:14px;
-            color:#9b9b9b;
-            letter-spacing:0.2px;
+            font-family: @font-family;
+            font-size: 14px;
+            color: #9b9b9b;
+            letter-spacing: 0.2px;
           }
           .middle {
             margin-left: 40px;
@@ -72,19 +73,15 @@
         }
       }
       .body {
-        margin: 9px 0px 58px;
-        font-family:PingFangSC-Regular;
-        font-size:14px;
-        color:#4a4a4a;
-        letter-spacing:0.2px;
-        line-height:26px;
-        text-align:justify;
+        margin: 9px 0 58px;
+        font-family: @font-family;
+        font-size: 14px;
+        color: #4a4a4a;
+        letter-spacing: 0.2px;
+        line-height: 26px;
+        text-align: justify;
         text-indent: 30px;
         min-height: 365px;
-        span {
-          display: inline-block;
-          width: 30px;
-        }
       }
       .footer {
         display: -webkit-flex; /* Safari */
@@ -106,12 +103,12 @@
             margin-right: 6px;
           }
           .fileName {
-            font-family:PingFangSC-Regular;
-            font-size:14px;
-            color:#108ee9;
-            letter-spacing:0.2px;
+            font-family: @font-family;
+            font-size: 14px;
+            color: #108ee9;
+            letter-spacing: 0.2px;
             a:hover {
-              color: #10AEFF;
+              color: #10aeff;
             }
           }
         }
@@ -119,7 +116,7 @@
           display: none;
         }
         .under {
-          right: 0px;
+          right: 0;
         }
       }
     }

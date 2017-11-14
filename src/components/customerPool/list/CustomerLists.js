@@ -394,6 +394,7 @@ export default class CustomerLists extends PureComponent {
       emailCustId: '',
     });
   }
+
   /**
  * 回调，关闭modal打开state
  */
@@ -484,8 +485,8 @@ export default class CustomerLists extends PureComponent {
       custList,
       curPageNum,
       pageSize,
-      onPageChange,
       onSizeChange,
+      onPageChange,
       getCustIncome,
       monthlyProfits,
       location,
@@ -646,7 +647,9 @@ export default class CustomerLists extends PureComponent {
             </div>
             : <NoData />
         }
-        <div className="list-pagination">
+        <div
+          className="list-pagination"
+        >
           <Pagination
             current={current}
             total={curTotal}
