@@ -177,7 +177,7 @@ export default class SubscribeDetailToChange extends PureComponent {
     } else {
       commParam.auditors = flowAuditors[0].login;
     }
-    this.props.onUpdateFlow(commParam).then(this.afterLauncher);
+    this.props.onUpdateFlow(commParam).then(this.afterLauncher, () => message.success('流程发起失败'));
   }
 
   // 清空页面数据
@@ -512,12 +512,13 @@ export default class SubscribeDetailToChange extends PureComponent {
     const { operate } = flowBtn;
     if (operate === 'commit') {
        // 提交
-      this.props.submitSub(params).then(() => this.launchFlow(flowBtn, '重新申请'));
+      this.props.submitSub(params).then(() => this.launchFlow(flowBtn, '重新申请'),
+        () => message.success('修改失败'));
       // this.props.submitSub(params).then(() => message.success('提交成功'));
     }
     if (operate === 'trueOver') {
       // 提交
-      this.props.submitSub(params).then(this.afterLauncher);
+      this.props.submitSub(params).then(this.afterLauncher, () => message.success('修改失败'));
     }
   }
 

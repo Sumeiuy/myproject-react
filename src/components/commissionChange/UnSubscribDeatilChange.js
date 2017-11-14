@@ -399,7 +399,7 @@ export default class UnSubscribeDetailToChange extends PureComponent {
     } else {
       commParam.auditors = flowAuditors[0].login;
     }
-    this.props.onUpdateFlow(commParam).then(this.afterLauncher);
+    this.props.onUpdateFlow(commParam).then(this.afterLauncher, () => message.success('流程发起失败'));
   }
 
   // 资讯退订提交修改
@@ -436,11 +436,12 @@ export default class UnSubscribeDetailToChange extends PureComponent {
     const { operate } = flowBtn;
     if (operate === 'commit') {
        // 提交
-      this.props.submitUnSub(params).then(() => this.launchFlow(flowBtn, '重新申请'));
+      this.props.submitUnSub(params).then(() => this.launchFlow(flowBtn, '重新申请'),
+        () => message.success('修改失败'));
     }
     if (operate === 'trueOver') {
       // 提交
-      this.props.submitUnSub(params).then(this.afterLauncher);
+      this.props.submitUnSub(params).then(this.afterLauncher, () => message.success('修改失败'));
     }
   }
 
