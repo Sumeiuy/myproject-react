@@ -2,7 +2,7 @@
  * @Author: sunweibin
  * @Date: 2017-11-10 10:12:18
  * @Last Modified by: sunweibin
- * @Last Modified time: 2017-11-10 13:43:39
+ * @Last Modified time: 2017-11-13 16:03:34
  * @description 分割组件
  */
 
@@ -15,13 +15,14 @@ import Resize from 'element-resize-detector';
 import { Icon } from 'antd';
 
 import splitConfig from './config';
-// import { getEnv } from '../../../utils/helper';
+import { getEnv } from '../../../utils/helper';
 
 import '../../../css/react-split-pane-master.less';
 import styles from './SplitPanel.less';
 import nodatapng from './nodata.png';
 
-// const BROWSER = getEnv();
+const BROWSER = getEnv();
+const isInIE = BROWSER.$browser === 'Internet Explorer';
 
 export default class CutScreen extends PureComponent {
   static propTypes = {
@@ -30,18 +31,20 @@ export default class CutScreen extends PureComponent {
     isEmpty: PropTypes.bool.isRequired,
     rightPanel: PropTypes.element,
     leftListClassName: PropTypes.string,
-    leftWidth: PropTypes.string,
+    leftWidth: PropTypes.number,
   }
 
   static defaultProps = {
     leftListClassName: 'pageCommonList',
     rightPanel: null,
-    leftWidth: '512px',
+    leftWidth: 520,
   }
 
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      stretchIcon: 'caret-left',
+    };
   }
 
   componentDidMount() {
@@ -53,6 +56,8 @@ export default class CutScreen extends PureComponent {
     this.registerWindowResize();
     // 监听头部TopPanel的高度变化
     this.registerTopHeightListen();
+    this.initPanel();
+    this.setDocumentScroll();
   }
 
 
@@ -67,7 +72,7 @@ export default class CutScreen extends PureComponent {
   // Resize事件
   @autobind
   onResizeChange() {
-
+    this.setDocumentScroll();
   }
 
   // 设置系统容器的局部样式
@@ -92,7 +97,63 @@ export default class CutScreen extends PureComponent {
   // 设置分割区域的滚动
   @autobind
   setDocumentScroll() {
+    // 次变量用来判断是否在FSP系统中
+    const isInFSP = this.UTBContentElem;
+    let viewHeight = document.documentElement.clientHeight;
+    if (isInIE) {
+      viewHeight -= 10;
+    }
+    // 因为页面在开发过程中并不存在于FSP系统中，而在生产环境下是需要将本页面嵌入到FSP系统中
+    // 需要给改容器设置高度，以防止页面出现滚动
+    const pageContainer = document.querySelector(splitConfig.container);
+    const pageContent = document.querySelector(splitConfig.content);
+    // 分割区域整体
+    const panelWrapper = this.panelWrapper;
+    // 左侧列表区域
+    const leftPanelElm = this.leftSection;
+    // 右侧详情区域
+    const rightPanelElm = this.rightSection;
+    // 因为左侧列表区域只滚动不包括分页器的区域，所以需要设置分页区域上面列表区域的大小
+    // 左侧使用ant的table组件
+    const listWrapper = leftPanelElm.querySelector('.ant-table');
+    // 分割区域竖条，现在新需求中修改为三角
+    const splitBarElm = this.stretch;
+    // 此为头部面板的高度固定值为58px
+    const topPanelHeight = this.topPanel.getBoundingClientRect().height;
+    // 分页器区域所占高度
+    const paginationHeight = 54;
+    // 头部面板距离分割区域的高度
+    const topDistance = 20;
+    // 分割面板距离浏览器底部的高度
+    const bottomDistance = 20;
+    // FSP头部Tab的高度
+    const fspTabHeight = 55;
 
+    // 设置系统容器高度
+    let pch = viewHeight;
+    if (isInFSP) {
+      pch = viewHeight - fspTabHeight;
+    }
+    this.setElementStyle(pageContainer, `${pch}px`);
+    this.setElementStyle(pageContent, '100%');
+    // 设置分割面板的高度
+    const pwh = pch - topPanelHeight;
+    this.setElementStyle(panelWrapper, `${pwh}px`);
+    // 设置左右分割区域的高度
+    if (leftPanelElm && rightPanelElm) {
+      this.setElementStyle(this.splitPanel, 'auto');
+      const sectionHeight = pwh - topDistance - bottomDistance;
+      this.setElementStyle(splitBarElm, `${sectionHeight}px`);
+      this.setElementStyle(splitBarElm, `${sectionHeight}px`, 'lineHeight');
+      this.setElementStyle(leftPanelElm, `${sectionHeight}px`);
+      this.setElementStyle(rightPanelElm, `${sectionHeight}px`);
+      // 并且设置左侧列表的高度
+      if (listWrapper) {
+        const listHeight = `${sectionHeight - paginationHeight}px`;
+        this.setElementStyle(listWrapper, listHeight);
+        this.setElementStyle(listWrapper, 'auto', 'overflow');
+      }
+    }
   }
 
   // 重置系统容器样式
@@ -110,7 +171,12 @@ export default class CutScreen extends PureComponent {
   // 初始化的时候，设置各自的宽度
   @autobind
   initPanel() {
-
+    const { leftWidth } = this.props;
+    let leftSectionWidth = leftWidth;
+    if (isInIE) {
+      leftSectionWidth += 20;
+    }
+    this.setElementStyle(this.leftSection, `${leftSectionWidth}px`, 'width');
   }
 
   // 监听TopPanel的Height的变化
@@ -136,6 +202,35 @@ export default class CutScreen extends PureComponent {
     }
     if (this.topResizeFn && this.topResizeFn.cancel) {
       this.topResizeFn.cancel();
+    }
+  }
+
+  @autobind
+  shrinkList() {
+    this.setState({
+      stretchIcon: 'caret-right',
+    });
+    this.setElementStyle(this.leftSection, 'none', 'display');
+  }
+
+  @autobind
+  growList() {
+    this.setState({
+      stretchIcon: 'caret-left',
+    });
+    this.setElementStyle(this.leftSection, 'block', 'display');
+  }
+
+  // 展开伸缩列表
+  @autobind
+  stretchList() {
+    const { stretchIcon } = this.state;
+    if (stretchIcon === 'caret-left') {
+      // 收缩列表
+      this.shrinkList();
+    } else {
+      // 展开列表
+      this.growList();
     }
   }
 
@@ -186,7 +281,7 @@ export default class CutScreen extends PureComponent {
       rightPanel,
       isEmpty,
     } = this.props;
-
+    const { stretchIcon } = this.state;
     const noDataClass = classnames({
       [styles.hide]: !isEmpty,
       [styles.noData]: true,
@@ -211,7 +306,7 @@ export default class CutScreen extends PureComponent {
           <div className={styles.cutScreenBd}>
             <div className={styles.listScreen} ref={this.leftPanelRef}>{leftPanel}</div>
             <div className={styles.stretch} ref={this.stretchRef}>
-              <Icon type="caret-left" />
+              <Icon type={stretchIcon} onClick={this.stretchList} />
             </div>
             <div className={styles.detailScreen} ref={this.rightPanelRef}>{rightPanel}</div>
           </div>

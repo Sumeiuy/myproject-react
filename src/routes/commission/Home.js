@@ -12,7 +12,7 @@ import { withRouter, routerRedux } from 'dva-react-router-3/router';
 import { message } from 'antd';
 
 import confirm from '../../components/common/Confirm/confirm';
-import SplitPanel from '../../components/common/splitPanel/SplitPanel';
+import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import Detail from '../../components/commissionAdjustment/Detail';
 import SingleDetail from '../../components/commissionAdjustment/SingleDetail';
 import AdvisoryDetail from '../../components/commissionAdjustment/AdvisoryDetail';
