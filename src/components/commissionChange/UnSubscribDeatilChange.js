@@ -55,7 +55,7 @@ export default class UnSubscribeDetailToChange extends PureComponent {
       unSubProList: [], // 资讯退订产品列表
       canShowAppover: false, // 新建资讯订阅和退订时是否需要选择审批人
       btnDisabled: false,
-      orgList: [], // 原退订请求中选择的产品
+      buttonList: [], // 审批按钮列表
     };
   }
 
@@ -77,21 +77,40 @@ export default class UnSubscribeDetailToChange extends PureComponent {
     const { unSubDetailToChange: preDetail } = this.props;
     const { unSubDetailToChange: nextDetail } = nextProps;
     if (nextDetail !== preDetail) {
-      const { base, unSubProList } = nextDetail;
-      const { item: choiceProList } = base;
+      const { base } = nextDetail;
+      const {
+        item,
+        comments,
+        attachmentNum,
+      } = base;
+      const findObj = _.find(item, ['approveFlag', 'Y']);
+      if (!_.isEmpty(findObj)) {
+        this.setState({
+          canShowAppover: true,
+        });
+      }
       this.setState({
-        orgList: choiceProList,
+        remark: comments,
+        attachment: attachmentNum,
+        unSubProList: item,
       });
-      const proList = this.createSubscribelProList(unSubProList);
-      const choiceList = this.choiceSubProList(choiceProList, proList);
-      _.forEach(choiceList, (item) => {
-        const { approvalFlg } = item;
-        if (approvalFlg === 'Y') {
-          this.setState({
-            canShowAppover: true,
-          });
-        }
-      });
+    }
+    const { approvalBtns: preBtnList } = this.props;
+    const { approvalBtns: nextBtnList } = nextProps;
+    if (!_.isEqual(preBtnList, nextBtnList)) {
+      const { item: itemList } = nextDetail.base;
+      const findObj2 = _.find(itemList, ['approveFlag', 'Y']);
+      const approListBtns = _.filter(nextBtnList, o => String(o.operate) !== 'trueOver');
+      const unApproListBtns = _.filter(nextBtnList, o => String(o.operate) !== 'commit');
+      if (!_.isEmpty(findObj2)) {
+        this.setState({
+          buttonList: approListBtns,
+        });
+      } else {
+        this.setState({
+          buttonList: unApproListBtns,
+        });
+      }
     }
   }
 
@@ -108,7 +127,6 @@ export default class UnSubscribeDetailToChange extends PureComponent {
       approverId: '',
       attachment: '',
       unSubProList: [], // 资讯退订产品列表
-      orgList: [],
     });
   }
 
@@ -219,15 +237,12 @@ export default class UnSubscribeDetailToChange extends PureComponent {
   @autobind
   choiceSubProList(data) {
     const newChoiceProList = data.map((product) => {
-      const { prodCode, aliasName, subItem } = product;
-      const choiceUnsubPro = {
-        key: prodCode,
-        // 产品代码
-        prodCode,
-        // 产品名称
-        prodName: aliasName,
-        ...product,
-      };
+      const { subItem } = product;
+      const needPickKey = ['riskMatch', 'prodMatch', 'termMatch', 'prodCode', 'agrType'];
+      const choiceUnsubPro = _.pick(product, needPickKey);
+      choiceUnsubPro.key = product.prodCode;
+      choiceUnsubPro.prodName = product.aliasName;
+      choiceUnsubPro.approvalFlg = product.approveFlag;
       if (!_.isEmpty(subItem)) {
         choiceUnsubPro.children = subItem.map((item) => {
           const { prodCode: subItemCode } = item;
@@ -277,18 +292,23 @@ export default class UnSubscribeDetailToChange extends PureComponent {
   handleUnSubscribelTransferChange(flag, item, array) {
     this.setState({
       unSubProList: array,
-      canShowAppover: false,
     });
+    const { approvalBtns } = this.props;
+    const approListBtns = _.filter(approvalBtns, o => String(o.operate) !== 'trueOver');
+    const unApproListBtns = _.filter(approvalBtns, o => String(o.operate) !== 'commit');
     const appList = array.map(pro => pro.approvalFlg);
     const approvFlag = _.includes(appList, 'Y');
     if (approvFlag) {
       this.setState({
         canShowAppover: true,
+        buttonList: approListBtns,
       });
     } else {
       this.setState({
         canShowAppover: false,
         approverId: '',
+        approverName: '',
+        buttonList: unApproListBtns,
       });
     }
   }
@@ -316,16 +336,27 @@ export default class UnSubscribeDetailToChange extends PureComponent {
 
   // 将选中的资讯退订产品数据结构改为提交所需
   @autobind
-  changeSubmitSubProList(orgList, list) {
-    const finSunProList = [...orgList, ...list];
-    const newSubmitSubscriProList = finSunProList.map((product) => {
-      const { children } = product;
-      const newSubmitSubscribel = this.changeSubmitscriProList(product);
-      if (!_.isEmpty(children)) {
-        // 存在子产品
-        newSubmitSubscribel.subItem = children.map(this.changeSubmitSubscriProChildren);
+  changeSubmitSubProList(list) {
+    const newSubmitSubscriProList = list.map((product) => {
+      const { aliasName } = product;
+      if (_.isEmpty(aliasName)) {
+        const { children } = product;
+        const newSubmitSubscribel = this.changeSubmitscriProList(product);
+        if (!_.isEmpty(children)) {
+          // 存在子产品
+          newSubmitSubscribel.subItem = children.map(this.changeSubmitSubscriProChildren);
+        }
+        return newSubmitSubscribel;
       }
-      return newSubmitSubscribel;
+      // 表示初始化的数据
+      const { subItem } = product;
+      const needPickKey = ['riskMatch', 'prodMatch', 'termMatch', 'prodCode', 'aliasName', 'agrType'];
+      const anotherProduct = _.pick(product, needPickKey);
+      anotherProduct.approvalFlg = product.approveFlag;
+      if (!_.isEmpty(subItem)) {
+        anotherProduct.subProductVO = _.cloneDeep(subItem);
+      }
+      return anotherProduct;
     });
     return newSubmitSubscriProList;
   }
@@ -334,8 +365,8 @@ export default class UnSubscribeDetailToChange extends PureComponent {
   @autobind
   submitCheck() {
     let result = true;
-    const { approverId } = this.state;
-    if (_.isEmpty(approverId)) {
+    const { approverId, canShowAppover } = this.state;
+    if (_.isEmpty(approverId) && canShowAppover) {
       message.error('审批人员不能为空');
       result = false;
     }
@@ -388,9 +419,8 @@ export default class UnSubscribeDetailToChange extends PureComponent {
       approverId, // 审批人工号
       attachment, // 附件编号
       unSubProList,
-      orgList,
     } = this.state;
-    const newSubProList = this.changeSubmitSubProList(orgList, unSubProList);
+    const newSubProList = this.changeSubmitSubProList(unSubProList);
     const params = {
       type: unSubscribeCustList.custType,
       aprovaluser: approverId,
@@ -403,32 +433,34 @@ export default class UnSubscribeDetailToChange extends PureComponent {
       orderId,
       item: newSubProList,
     };
-    // 提交
-    this.props.submitUnSub(params).then(() => this.launchFlow(flowBtn, '重新申请'));
+    const { operate } = flowBtn;
+    if (operate === 'commit') {
+       // 提交
+      this.props.submitUnSub(params).then(() => this.launchFlow(flowBtn, '重新申请'));
+    }
+    if (operate === 'trueOver') {
+      // 提交
+      this.props.submitUnSub(params).then(() => message.success('提交成功'));
+    }
   }
 
   // 点击页面的按钮事件处理
   @autobind
   handleRejctBtnClick(btn) {
     const { operate } = btn;
-    if (operate === 'commit') {
+    if (operate === 'commit' || operate === 'trueOver') {
       // 提交按钮
-      this.handleSubmit(btn).then(() => {
-        message.success('资讯退订修改成功');
-      });
+      this.handleSubmit(btn);
     }
     if (operate === 'falseOver') {
       // 终止按钮
-      this.launchFlow(btn, '终止申请').then(() => {
-        message.success('资讯退订终止成功');
-      });
+      this.launchFlow(btn, '终止申请');
     }
   }
 
 
   render() {
     const {
-      approvalBtns,
       unSubDetailToChange: {
         base,
         unSubscribeCustList,
@@ -468,6 +500,8 @@ export default class UnSubscribeDetailToChange extends PureComponent {
       approverId,
       remark,
       btnDisabled,
+      buttonList,
+      canShowAppover,
     } = this.state;
 
     // 资讯退订中的产品选择配置
@@ -531,21 +565,26 @@ export default class UnSubscribeDetailToChange extends PureComponent {
             <InfoTitle head="附件信息" />
             <CommonUpload {...uploadProps} />
           </div>
-          <div className={styles.approvalBlock}>
-            <InfoTitle head="审批人" />
-            <CommissionLine label="选择审批人" labelWidth="110px">
-              <div className={styles.checkApprover} onClick={this.openApproverBoard}>
-                {approverName === '' ? '' : `${approverName}(${approverId})`}
-                <div className={styles.searchIcon}>
-                  <Icon type="search" />
-                </div>
+          {
+            !canShowAppover ? null :
+            (
+              <div className={styles.approvalBlock}>
+                <InfoTitle head="审批人" />
+                <CommissionLine label="选择审批人" labelWidth="110px">
+                  <div className={styles.checkApprover} onClick={this.openApproverBoard}>
+                    {approverName === '' ? '' : `${approverName}(${approverId})`}
+                    <div className={styles.searchIcon}>
+                      <Icon type="search" />
+                    </div>
+                  </div>
+                </CommissionLine>
               </div>
-            </CommissionLine>
-          </div>
+            )
+          }
         </div>
         <RejectButtons
           disabled={btnDisabled}
-          btnList={approvalBtns}
+          btnList={buttonList}
           onClick={this.handleRejctBtnClick}
         />
         <ChoiceApproverBoard
