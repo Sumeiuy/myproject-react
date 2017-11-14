@@ -9,10 +9,9 @@ import { connect } from 'react-redux';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import { withRouter, routerRedux } from 'dva-react-router-3/router';
-import { message } from 'antd';
 
 import confirm from '../../components/common/Confirm/confirm';
-import SplitPanel from '../../components/common/splitPanel/SplitPanel';
+import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import Detail from '../../components/commissionAdjustment/Detail';
 import SingleDetail from '../../components/commissionAdjustment/SingleDetail';
 import AdvisoryDetail from '../../components/commissionAdjustment/AdvisoryDetail';
@@ -329,29 +328,6 @@ export default class CommissionHome extends PureComponent {
         });
       }
     }
-
-    // 判断用户点击查询审批记录
-    const { recordLoading: prevRL } = this.props;
-    const { recordLoading: nextRL } = nextProps;
-    if (prevRL && !nextRL) {
-      // 表示发起审批记录查询完成
-      // 打开弹出窗
-      this.openApprovalBoard();
-    }
-
-    // 用户提交批量佣金调整申请
-    const { batchSubmitProcess: prevBSP } = this.props;
-    const { batchSubmitProcess: nextBSP, batchnum } = nextProps;
-    if (prevBSP && !nextBSP) {
-      // 完成提交
-      // 以后看需要是否需要做相应操作
-      if (batchnum !== 'fail') {
-        // 成功
-        message.success('提交成功');
-      } else {
-        message.error('提交失败');
-      }
-    }
   }
 
   componentDidUpdate() {
@@ -408,7 +384,9 @@ export default class CommissionHome extends PureComponent {
   @autobind
   getApprovalBoardCustInfo(info) {
     const loginuser = getEmpId();
-    this.props.getApprovalRecords({ ...info, loginuser });
+    this.props.getApprovalRecords({ ...info, loginuser }).then(
+      () => { this.openApprovalBoard(); },
+    );
   }
 
   /**

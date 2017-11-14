@@ -12,7 +12,7 @@ import { withRouter, routerRedux } from 'dva-react-router-3/router';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { constructSeibelPostBody } from '../../utils/helper';
-import SplitPanel from '../../components/common/splitPanel/SplitPanel';
+import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
 import Detail from '../../components/permission/Detail';
 import PermissionList from '../../components/common/biz/CommonList';

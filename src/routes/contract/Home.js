@@ -14,7 +14,7 @@ import { message, Modal } from 'antd';
 import _ from 'lodash';
 
 import { constructSeibelPostBody, getEmpId, hasPermission } from '../../utils/helper';
-import SplitPanel from '../../components/common/splitPanel/SplitPanel';
+import SplitPanel from '../../components/common/splitPanel/CutScreen';
 // import ContractHeader from '../../components/common/biz/SeibelHeader';
 import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
 import Detail from '../../components/contract/Detail';

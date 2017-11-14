@@ -2,8 +2,8 @@
  * @Description: 合作合约 home 页面
  * @Author: LiuJianShu
  * @Date: 2017-09-22 14:49:16
- * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-11-04 15:54:21
+ * @Last Modified by: sunweibin
+ * @Last Modified time: 2017-11-14 17:22:16
  */
 import React, { PureComponent, PropTypes } from 'react';
 import { autobind } from 'core-decorators';
@@ -13,7 +13,7 @@ import { message, Modal } from 'antd';
 import _ from 'lodash';
 
 import { constructSeibelPostBody } from '../../utils/helper';
-import SplitPanel from '../../components/common/splitPanel/SplitPanel';
+import SplitPanel from '../../components/common/splitPanel/CutScreen';
 import ConnectedSeibelHeader from '../../components/common/biz/ConnectedSeibelHeader';
 import Detail from '../../components/channelsTypeProtocol/Detail';
 import ChannelsTypeProtocolList from '../../components/common/biz/CommonList';

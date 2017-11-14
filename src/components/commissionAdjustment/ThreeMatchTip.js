@@ -14,36 +14,39 @@ function giveTipPause(array) {
   return array.join('、');
 }
 
+function everyIsY(array, key) {
+  return _.every(array, a => a[key] === 'Y');
+}
+
 // 将提示信息放到数组中
 function putMsg2Array(info) {
-  const {
-    riskRankMhrt,
-    investProdMhrt,
-    investTypeMhrt,
-    riskRankMhmsg,
-    investProdMhmsg,
-    investTypeMhmsg,
-  } = info;
   const msgArray = [];
-  if (riskRankMhrt === 'N') {
-    msgArray.push(riskRankMhmsg);
+  if (!everyIsY(info, 'riskMatch')) {
+    msgArray.push('该客户风险与所选产品风险不匹配');
   }
-  if (investProdMhrt === 'N') {
-    msgArray.push(investProdMhmsg);
+  if (!everyIsY(info, 'prodMatch')) {
+    msgArray.push('客户投资期限与产品投资期限不匹配');
   }
-  if (investTypeMhrt === 'N') {
-    msgArray.push(investTypeMhmsg);
+  if (!everyIsY(info, 'termMatch')) {
+    msgArray.push('客户投资品种与产品投资品种不匹配');
   }
   return msgArray;
 }
 
 export default function ThreeMatchTip(props) {
-  const { info } = props;
-  if (_.isEmpty(info)) {
+  const { info, userList } = props;
+  if (_.isEmpty(info) || _.isEmpty(userList)) {
     return null;
   }
-  const { riskRankMhrt, investProdMhrt, investTypeMhrt } = info;
-  if (riskRankMhrt === 'Y' && investProdMhrt === 'Y' && investTypeMhrt === 'Y') {
+  // 需要根据用户选择的产品来显示三匹配信息
+  const userProductCode = userList.map(item => item.prodCode);
+  // 获取所有Code的三匹配信息
+  const matchInfos = _.filter(info, item => _.includes(userProductCode, item.productCode));
+  if (
+    everyIsY(matchInfos, 'riskMatch')
+    && everyIsY(matchInfos, 'prodMatch')
+    && everyIsY(matchInfos, 'termMatch')
+  ) {
     // 全匹配
     return (
       <div className={styles.tipsColor}>提示：经对客户与服务产品三匹配结果，请确认客户是否已签署服务计划书及适当确认书。</div>
@@ -60,8 +63,10 @@ export default function ThreeMatchTip(props) {
 }
 
 ThreeMatchTip.propTypes = {
-  info: PropTypes.object,
+  info: PropTypes.array,
+  userList: PropTypes.array,
 };
 ThreeMatchTip.defaultProps = {
   info: {},
+  userList: [],
 };

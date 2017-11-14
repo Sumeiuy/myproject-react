@@ -321,9 +321,19 @@ export default class CreateNewApprovalBoard extends PureComponent {
       ...otherCommissions,
     };
     // 提交
-    this.props.onBatchSubmit(submitParams).then(() => {
-      this.submitLoadiing(false);
-    });
+    this.props.onBatchSubmit(submitParams).then(
+      () => {
+        message.error('批量佣金调整提交成功');
+        this.submitLoadiing(false);
+        this.clearApprovalBoard();
+        const { modalKey, onClose } = this.props;
+        onClose(modalKey);
+      },
+      () => {
+        message.error('批量佣金调整提交失败');
+        this.submitLoadiing(false);
+      },
+    );
   }
 
   // 单佣金调整提交
@@ -649,7 +659,7 @@ export default class CreateNewApprovalBoard extends PureComponent {
     } = this.state;
 
     const wrapClassName = this.judgeSubtypeNow(commadj.noSelected) ? 'commissionModal' : '';
-    const subTypesAfterAuthority = this.authorityOptions(newSubTypes);
+    const subTypesAfterAuthority = newSubTypes; // this.authorityOptions(newSubTypes);
 
     return (
       <div>
