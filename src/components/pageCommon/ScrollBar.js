@@ -7,7 +7,7 @@ import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import _ from 'lodash';
 import styles from './scrollBar.less';
-import { getCssStyle } from '../../utils/helper';
+import { getCssStyle, addClickEvent, removeClickEvent } from '../../utils/helper';
 import { fspContainer } from '../../config';
 
 const clientWidthValue = document.querySelector('#exApp').clientWidth - 40;
@@ -50,16 +50,16 @@ export default class ScrollBar extends PureComponent {
     window.addEventListener('resize', this.onWindowResize, false);
     if(fsp){
       // 监听 FSP 侧边栏显示隐藏按钮点击事件
-      showBtn.addEventListener('click', this.onWindowResize, false);
-      hideBtn.addEventListener('click', this.onWindowResize, false);
+      addClickEvent(showBtn, this.onWindowResize);
+      addClickEvent(hideBtn, this.onWindowResize);
     }
   }
   componentWillUnmount() {
     window.removeEventListener('resize', this.onWindowResize, false);
     if(fsp){
       // remove FSP 侧边栏显示隐藏按钮点击事件
-      showBtn.removeEventListener('click', this.onWindowResize, false);
-      hideBtn.removeEventListener('click', this.onWindowResize, false);
+      removeClickEvent(showBtn, this.onWindowResize);
+      removeClickEvent(hideBtn, this.onWindowResize);
     }
   }
 
