@@ -200,6 +200,7 @@ export default class UnSubscribeCreateBoard extends PureComponent {
       this.setState({
         canShowAppover: false,
         approverId: '',
+        approverName: '',
       });
     }
   }
