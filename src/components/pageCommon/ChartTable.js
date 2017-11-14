@@ -8,6 +8,7 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { autobind } from 'core-decorators';
 import { Table, Pagination, Popover } from 'antd';
+import classnames from 'classnames';
 import _ from 'lodash';
 import ScrollBar from './ScrollBar';
 
@@ -143,6 +144,16 @@ export default class ChartTable extends PureComponent {
   @autobind
   getTitleHtml(item, unitFlag = true) {
     const { orderIndicatorId, orderType } = this.state;
+    const orderUp = classnames({
+      ['ant-table-column-sorter-up']: true,
+      ['on']: orderIndicatorId === item.key && (orderType !== 'desc'),
+      ['off']: orderIndicatorId === item.key && (orderType === 'desc'),
+    });
+    const orderDown = classnames({
+      ['ant-table-column-sorter-up']: true,
+      ['on']: orderIndicatorId === item.key && (orderType !== 'asc'),
+      ['off']: orderIndicatorId === item.key && (orderType === 'asc'),
+    });
     let titleHtml = '';
     titleHtml = (<span
       className={styles.columnsTitle}
@@ -157,10 +168,7 @@ export default class ChartTable extends PureComponent {
         !item.children ? 
         <span className={'ant-table-column-sorter'}>
           <span
-            className={`
-              ant-table-column-sorter-up
-              ${(orderIndicatorId === item.key && (orderType !== 'desc')) ? 'on' : 'off'}
-            `}
+            className={orderUp}
             title="↑"
             onClick={(e) => {
               this.arrowHandle(e, item, 'asc');
@@ -169,10 +177,7 @@ export default class ChartTable extends PureComponent {
             <i className={'anticon anticon-caret-up'} />
           </span>
           <span
-            className={`
-              ant-table-column-sorter-up
-              ${(orderIndicatorId === item.key && (orderType !== 'asc')) ? 'on' : 'off'}
-            `}
+            className={orderDown}
             title="↓"
             onClick={(e) => {
               this.arrowHandle(e, item, 'desc');

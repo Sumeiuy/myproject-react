@@ -448,6 +448,19 @@ const helper = {
     obj.removeEventListener('wheel', handler, false);
   },
 
+  /**
+   * 添加点击监听
+  */
+  addClickEvent(obj, handler) {
+    obj.addEventListener('click', handler, false);
+  },
+  /**
+   * 删除点击监听
+  */
+  removeClickEvent(obj, handler) {
+    obj.removeEventListener('click', handler, false);
+  },
+
   // 获取环比时间段事件
   queryMoMDuration(begin, end, duration) {
     let tempDuration;
