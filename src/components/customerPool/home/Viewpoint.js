@@ -67,9 +67,10 @@ export default class Viewpoint extends PureComponent {
   }
 
   render() {
-    const { information: { infoVOList = [] } } = this.props;
+    const { information = {} } = this.props;
+    const { infoVOList = [] } = _.isEmpty(information) ? {} : information;
     // 展示第一个新闻
-    const { texttitle = '', abstract = '' } = _.isEmpty(infoVOList) ? {} : infoVOList[0];
+    const { texttitle = '', abstract = '' } = _.isEmpty(infoVOList) ? {} : _.head(infoVOList);
     // : 为中文符号，英文的：不匹配
     const titleArray = _.split(texttitle, '：');
     const newTitle = _.last(titleArray);
