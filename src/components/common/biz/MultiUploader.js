@@ -2,7 +2,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-22 15:02:49
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-11-04 11:34:58
+ * @Last Modified time: 2017-11-13 21:20:01
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -33,7 +33,7 @@ const mapDispatchToProps = {
   deleteAttachment: fetchDataFunction(true, 'channelsTypeProtocol/deleteAttachment'),
 };
 
-@connect(mapStateToProps, mapDispatchToProps)
+@connect(mapStateToProps, mapDispatchToProps, Object.assign, { withRef: true })
 export default class MultiUpload extends PureComponent {
   static propTypes = {
     // 删除附件方法
@@ -88,6 +88,19 @@ export default class MultiUpload extends PureComponent {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    const { attachment: preAT } = this.props;
+    const { attachment: nextAT } = nextProps;
+    if (!_.isEqual(preAT, nextAT)) {
+      const { attachmentList, attachment } = nextProps;
+      this.setState({
+        fileList: attachmentList, // 文件列表
+        oldFileList: attachmentList, // 旧的文件列表
+        attachment, // 上传后的唯一 ID
+      });
+    }
+  }
+
   // 上传事件
   @autobind
   onChange(info) {
@@ -97,6 +110,7 @@ export default class MultiUpload extends PureComponent {
       percent: info.file.percent,
       fileList: info.fileList,
       file: uploadFile,
+      statusText: '上传中',
     });
     if (uploadFile.response && uploadFile.response.code) {
       if (uploadFile.response.code === '0') {
@@ -144,6 +158,20 @@ export default class MultiUpload extends PureComponent {
   @autobind
   findContainer() {
     return this.fileListMultiMain;
+  }
+
+  // 清空数据
+  @autobind
+  resetUpload() {
+    this.setState({
+      percent: 0, // 上传百分比
+      status: 'active', // 上传状态
+      statusText: '', // 上传状态对应文字
+      file: {}, // 当前上传的文件
+      fileList: [], // 文件列表
+      oldFileList: [], // 旧的文件列表
+      attachment: '', // 上传后的唯一 ID
+    });
   }
 
   render() {
@@ -267,7 +295,7 @@ export default class MultiUpload extends PureComponent {
         </div>
       );
     } else {
-      fileListElement = (<div className={styles.fileList}>
+      fileListElement = (<div className={`${styles.fileList} fileList`}>
         <div
           className={styles.fileItem}
         >
@@ -283,8 +311,7 @@ export default class MultiUpload extends PureComponent {
     }
     return (
       <div
-        className={`${styles.fileListMultiMain}
-        fileListMultiMain`}
+        className={`${styles.fileListMultiMain} fileListMultiMain`}
         ref={fileListMultiMain => this.fileListMultiMain = fileListMultiMain}
       >
         {

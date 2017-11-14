@@ -3,7 +3,7 @@
  * @Author: XuWenKang
  * @Date:   2017-09-19 14:47:08
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-11-04 18:00:28
+ * @Last Modified time: 2017-11-14 10:49:25
 */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
@@ -43,8 +43,8 @@ const attachmentRequired = {
 export default class EditForm extends PureComponent {
   static propTypes = {
     // 查询客户
-    onSearchCutList: PropTypes.func.isRequired,
-    canApplyCustList: PropTypes.array.isRequired,
+    onSearchCutList: PropTypes.func,
+    canApplyCustList: PropTypes.array,
     // 模板列表
     templateList: PropTypes.array.isRequired,
     // 协议详情-编辑时传入
@@ -72,10 +72,17 @@ export default class EditForm extends PureComponent {
     onQueryCust: PropTypes.func.isRequired,
     // 清空props数据
     clearPropsData: PropTypes.func.isRequired,
+    // 验证客户
+    getCustValidate: PropTypes.func.isRequired,
+    // 附件列表
+    attachmentList: PropTypes.array,
   }
 
   static defaultProps = {
+    onSearchCutList: () => {},
+    canApplyCustList: EMPTY_LIST,
     protocolDetail: EMPTY_OBJECT,
+    attachmentList: [],
   }
 
   constructor(props) {
@@ -89,7 +96,7 @@ export default class EditForm extends PureComponent {
       // 下挂客户表格数据
       cust: EMPTY_LIST,
       // 所选协议产品列表
-      protocolProductList: EMPTY_LIST,
+      productList: EMPTY_LIST,
       // 是否多账户
       multiUsedFlag: false,
       underCustList,
@@ -102,6 +109,39 @@ export default class EditForm extends PureComponent {
     this.setUploadConfig(hasCust);
   }
 
+  componentWillReceiveProps(nextProps) {
+    // const { protocolDetail: prePD } = this.props;
+    const { protocolDetail: nextPD, attachmentList } = nextProps;
+    if (!_.isEmpty(nextPD) && attachmentList.length) {
+      const { cust, item: productList } = nextPD;
+      const assignAttachment = attachmentMap.map((item) => {
+        let newItem = {};
+        attachmentList.forEach((child) => {
+          if (item.title === child.title) {
+            newItem = {
+              ...item,
+              ...child,
+            };
+          } else {
+            newItem = item;
+          }
+        });
+        return newItem;
+      });
+      const hasCust = nextPD.multiUsedFlag === 'Y' || false;
+      this.setState({
+        isEdit: true,
+        // 附件类型列表
+        attachmentTypeList: assignAttachment,
+        // 下挂客户表格数据
+        cust,
+        // 所选协议产品列表
+        productList,
+        multiUsedFlag: hasCust,
+      }, () => this.setUploadConfig(hasCust));
+    }
+  }
+
   componentWillUnmount() {
     // 销毁组件时清空数据
     const { clearPropsData } = this.props;
@@ -111,8 +151,10 @@ export default class EditForm extends PureComponent {
   // 切换多账户
   @autobind
   onChangeMultiCustomer(boolean) {
+    // 切换时隐藏显示下挂客户组件，并清空数据
     this.setState({
       multiUsedFlag: boolean,
+      cust: [],
     });
   }
 
@@ -121,7 +163,7 @@ export default class EditForm extends PureComponent {
   getData() {
     const baseInfoData = this.editBaseInfoComponent.getData();
     const { protocolClauseList } = this.props;
-    const { protocolProductList, attachmentTypeList, cust } = this.state;
+    const { productList, attachmentTypeList, cust } = this.state;
     const formData = {
       subType: baseInfoData.subType,
       custId: baseInfoData.client.cusId,
@@ -134,7 +176,7 @@ export default class EditForm extends PureComponent {
       templateId: baseInfoData.protocolTemplate.rowId,
       multiUsedFlag: baseInfoData.multiUsedFlag ? 'Y' : 'N',
       levelTenFlag: baseInfoData.levelTenFlag ? 'Y' : 'N',
-      item: protocolProductList,
+      item: productList,
       term: protocolClauseList,
       attachment: attachmentTypeList,
       cust,
@@ -143,6 +185,7 @@ export default class EditForm extends PureComponent {
   }
 
   // 设置上传配置项
+  @autobind
   setUploadConfig(hasCust) {
     const { attachmentTypeList } = this.state;
     // 找出需要必传的数组
@@ -182,10 +225,9 @@ export default class EditForm extends PureComponent {
   // 添加协议产品
   @autobind
   handleTransferChange(flag, newSelect, changeSecondArray) {
-    // console.log('changeSecondArray', flag, newSelect, changeSecondArray);
     this.setState({
       ...this.state,
-      protocolProductList: changeSecondArray,
+      productList: changeSecondArray,
     });
   }
 
@@ -210,10 +252,24 @@ export default class EditForm extends PureComponent {
       message.error('相同客户不能重复添加');
       return;
     }
-    const hasCust = true;
-    this.setState({
-      cust: [...cust, value],
-    }, this.setUploadConfig(hasCust));
+    const { subType, protocolTemplate: { rowId } } = baseInfoData;
+    const { custId, econNum, subCustType } = value;
+    const validatePayload = {
+      id: custId,
+      custType: subCustType === '个人客户' ? 'per' : 'org',
+      econNum,
+      agrId: '',
+      agrType: subType,
+      templateId: rowId,
+      type: 'ItuCust',
+    };
+    const { getCustValidate } = this.props;
+    getCustValidate(validatePayload).then(() => {
+      const hasCust = true;
+      this.setState({
+        cust: [...cust, value],
+      }, this.setUploadConfig(hasCust));
+    });
   }
 
   // 下挂客户搜索事件
@@ -232,6 +288,7 @@ export default class EditForm extends PureComponent {
       });
     });
   }
+
   // 表格删除事件
   @autobind
   deleteTableData(record, index) {
@@ -284,6 +341,33 @@ export default class EditForm extends PureComponent {
     });
   }
 
+  // 清除附件信息
+  @autobind
+  resetUpload() {
+    const { attachmentTypeList } = this.state;
+    const newAttachmentList = attachmentTypeList.map((item) => {
+      if (item.length) {
+        const type = `uploader${item.type}`;
+        this[type].getWrappedInstance().resetUpload();
+        return {
+          ...item,
+          length: 0,
+          uuid: '',
+        };
+      }
+      return {
+        ...item,
+      };
+    });
+    console.warn('resetUpload newAttachmentList', newAttachmentList);
+    this.setState({
+      productList: [],
+      attachmentTypeList: newAttachmentList,
+    });
+    // this.EditFormComponent.getData();
+  }
+
+
   render() {
     const {
       // 客户列表
@@ -306,8 +390,15 @@ export default class EditForm extends PureComponent {
       protocolProductList,
       // 查询协议产品列表
       queryChannelProtocolProduct,
+      // 验证客户
+      getCustValidate,
+      // 详情数据
+      protocolDetail,
+      // 清除数据
+      clearPropsData,
     } = this.props;
     const {
+      isEdit,
       cust,
       attachmentTypeList,
       multiUsedFlag,
@@ -332,6 +423,7 @@ export default class EditForm extends PureComponent {
       firstTitle: '待选协议产品',
       secondTitle: '已选协议产品',
       firstData: protocolProductList,
+      secondData: protocolDetail.item,
       firstColumns: protocolProductTitleList,
       secondColumns: protocolProductTitleList,
       transferChange: this.handleTransferChange,
@@ -348,18 +440,25 @@ export default class EditForm extends PureComponent {
     })) : EMPTY_LIST;
     return (
       <div className={styles.editComponent}>
-        <EditBaseInfo
-          queryChannelProtocolItem={queryChannelProtocolItem}
-          onSearchCutList={onSearchCutList}
-          custList={canApplyCustList}
-          templateList={templateList}
-          ref={ref => this.editBaseInfoComponent = ref}
-          queryTypeVaules={queryTypeVaules}
-          operationTypeList={operationTypeList}
-          subTypeList={subTypeList}
-          queryChannelProtocolProduct={queryChannelProtocolProduct}
-          onChangeMultiCustomer={this.onChangeMultiCustomer}
-        />
+        <div className={styles.editWrapper}>
+          <EditBaseInfo
+            queryChannelProtocolItem={queryChannelProtocolItem}
+            onSearchCutList={onSearchCutList}
+            custList={canApplyCustList}
+            templateList={templateList}
+            ref={ref => this.editBaseInfoComponent = ref}
+            queryTypeVaules={queryTypeVaules}
+            operationTypeList={operationTypeList}
+            subTypeList={subTypeList}
+            queryChannelProtocolProduct={queryChannelProtocolProduct}
+            onChangeMultiCustomer={this.onChangeMultiCustomer}
+            resetUpload={this.resetUpload}
+            getCustValidate={getCustValidate}
+            formData={protocolDetail}
+            clearPropsData={clearPropsData}
+            isEdit={isEdit}
+          />
+        </div>
         <div className={`${styles.editWrapper} ${styles.transferWrapper}`}>
           <InfoTitle
             head="协议产品"
@@ -373,7 +472,7 @@ export default class EditForm extends PureComponent {
             head="协议条款"
           />
           <CommonTable
-            data={protocolClauseList}
+            data={isEdit ? protocolDetail.term : protocolClauseList}
             titleList={protocolClauseTitleList}
           />
         </div>
@@ -410,14 +509,15 @@ export default class EditForm extends PureComponent {
                   type={item.type}
                   title={item.title}
                   required={item.required}
-                  attachment={''}
-                  attachmentList={[]}
+                  attachment={isEdit ? item.attachment : ''}
+                  attachmentList={isEdit ? item.attachmentList : []}
                   uploadCallback={this.handleUploadCallback}
                   deleteCallback={this.handleDeleteCallback}
+                  ref={(ref) => { this[`uploader${item.type}`] = ref; }}
                 />
               ) : null;
               return (
-                <div key={item.key}>
+                <div key={item.type}>
                   {uploaderElement}
                 </div>
               );

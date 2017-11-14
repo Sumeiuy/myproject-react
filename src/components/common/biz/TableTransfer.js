@@ -159,9 +159,9 @@ export default class TableTransfer extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { firstData: nextData } = nextProps;
-    const { firstData: prevData } = this.props;
-    if (!_.isEqual(prevData, nextData)) {
+    const { firstData: nextData, secondData: nextSecondData } = nextProps;
+    const { firstData: prevData, secondData: prevSecondData } = this.props;
+    if (!_.isEqual(prevData, nextData) || !_.isEqual(prevSecondData, nextSecondData)) {
       this.setState(this.resetDataSource(nextProps));
     }
   }
@@ -675,7 +675,6 @@ export default class TableTransfer extends Component {
     if (scrollX !== '') {
       scroll = { y: 253, x: scrollX };
     }
-
     return (
       <div className={styles.container}>
         <div className={styles.leftContent}>
