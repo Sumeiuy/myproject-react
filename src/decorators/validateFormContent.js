@@ -1,3 +1,11 @@
+/*
+ * @Author: xuxiaoqin
+ * @Date: 2017-11-14 13:26:52
+ * @Last Modified by:   xuxiaoqin
+ * @Last Modified time: 2017-11-14 13:26:52
+ * 校验表单内容
+ */
+
 import { Mention, message } from 'antd';
 import _ from 'lodash';
 

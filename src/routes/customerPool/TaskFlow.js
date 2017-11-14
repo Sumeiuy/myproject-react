@@ -477,7 +477,7 @@ export default class TaskFlow extends PureComponent {
       title: '提交',
       content: <TaskPreview
         ref={ref => (this.taskPreviewRef = ref)}
-        storedTaskFlowData={storedTaskFlowData}
+        storedData={storedTaskFlowData}
         approvalList={approvalList}
         currentTab={currentTab}
         getApprovalList={getApprovalList}
