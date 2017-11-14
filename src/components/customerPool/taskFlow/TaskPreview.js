@@ -2,7 +2,7 @@
  * @Author: xuxiaoqin
  * @Date: 2017-10-10 10:29:33
  * @Last Modified by: xuxiaoqin
- * @Last Modified time: 2017-11-10 10:41:33
+ * @Last Modified time: 2017-11-14 09:56:49
  */
 
 import React, { PureComponent } from 'react';
@@ -23,7 +23,7 @@ const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 
 const Search = Input.Search;
-const COLUMN_WIDTH = 100;
+const COLUMN_WIDTH = ['10%', '30%', '30%', '30%'];
 
 const renderColumnTitle = () => {
   const columns = [
@@ -344,7 +344,7 @@ export default class TaskPreview extends PureComponent {
                       onPressEnter={this.handleSearchApproval}
                       style={{
                         height: '30px',
-                        width: '250px',
+                        width: '300px',
                       }}
                       ref={inst => (this.inputRef = inst)}
                       suffix={(
@@ -359,22 +359,32 @@ export default class TaskPreview extends PureComponent {
                       )}
                     />
                   </div>
-                  <GroupTable
-                    pageData={{
-                      curPageNum: 1,
-                      curPageSize: 8,
-                      totalRecordNum: dataSize,
-                    }}
-                    listData={newDataSource}
-                    tableClass={styles.approvalListTable}
-                    titleColumn={titleColumn}
-                    columnWidth={COLUMN_WIDTH}
-                    bordered={false}
-                    isNeedRowSelection
-                    onSingleRowSelectionChange={onSingleRowSelectionChange}
-                    onRowSelectionChange={onRowSelectionChange}
-                    currentSelectRowKeys={currentSelectRowKeys}
-                  />
+                  {
+                    !_.isEmpty(newDataSource) ?
+                      <GroupTable
+                        pageData={{
+                          curPageNum: 1,
+                          curPageSize: 8,
+                          totalRecordNum: dataSize,
+                        }}
+                        listData={newDataSource}
+                        tableClass={styles.approvalListTable}
+                        titleColumn={titleColumn}
+                        columnWidth={COLUMN_WIDTH}
+                        bordered={false}
+                        isNeedRowSelection
+                        onSingleRowSelectionChange={onSingleRowSelectionChange}
+                        onRowSelectionChange={onRowSelectionChange}
+                        currentSelectRowKeys={currentSelectRowKeys}
+                      />
+                    :
+                      <div className={styles.emptyContent}>
+                        <span>
+                          <Icon className={styles.emptyIcon} type="frown-o" />
+                          暂无数据
+                        </span>
+                      </div>
+                  }
                 </div>
               }
             />

@@ -225,6 +225,11 @@ export default class CustomerList extends PureComponent {
   componentDidMount() {
     // 请求客户列表
     this.getCustomerList(this.props);
+    this.props.getSearchServerPersonList({
+      keyword: '',
+      pageSize: 10,
+      pageNum: 1,
+    });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -308,7 +313,9 @@ export default class CustomerList extends PureComponent {
       param.dateType = query.cycleSelect || (cycle[0] || {}).key;
       // 我的客户 和 没有权限时，custType=1,其余情况custType=3
       param.custType = CUST_MANAGER;
-      if (this.authority || (query.ptyMng && query.ptyMng.split('_')[1] !== empNum)) {
+      if (query.ptyMng && query.ptyMng.split('_')[1] === empNum) {
+        param.custType = CUST_MANAGER;
+      } else if (this.authority) {
         param.custType = ORG;
       }
     }

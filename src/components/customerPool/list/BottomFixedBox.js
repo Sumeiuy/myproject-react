@@ -207,13 +207,29 @@ export default class BottomFixedBox extends PureComponent {
     );
   }
 
+  @autobind
+  renderText() {
+    const {
+      selectCount,
+      mainServiceManager,
+    } = this.props;
+    let str = '';
+    if (mainServiceManager) {
+      str = '，或者把用户加入分组管理';
+    }
+    return (
+      <p className="left">
+        已选&nbsp;
+        <span className="marked">{selectCount}</span>
+        &nbsp;户，选择目标用户以创建自定义任务{str}
+      </p>
+    );
+  }
+
   render() {
     const {
       taskAndGroupLeftPos,
     } = this.state;
-    const {
-      selectCount,
-    } = this.props;
     return (
       <div
         id="fixedEleDom"
@@ -222,11 +238,7 @@ export default class BottomFixedBox extends PureComponent {
           left: taskAndGroupLeftPos,
         }}
       >
-        <p className="left">
-          已选&nbsp;
-          <span className="marked">{selectCount}</span>
-          &nbsp;户，选择目标用户以创建自定义任务，或者把用户加入分组管理
-        </p>
+        { this.renderText() }
         <div className="right">
           {this.renderGroup()}
           {this.renderCreateTaskBtn()}

@@ -273,6 +273,13 @@ const FixNumber = {
       item => (item / maxX) * 100,
     );
   },
+
+  // 柱状图自适应的最大值
+  getBarAdaptiveMax(datas) {
+    const maxAndMin = FixNumber.getMaxAndMinMoney(datas);
+    const maxX = FixNumber.getDenominator(maxAndMin.max, 'ceil');
+    return maxX;
+  },
 };
 
 export default FixNumber;

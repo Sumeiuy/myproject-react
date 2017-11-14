@@ -48,6 +48,11 @@ export default class PerformanceIndicators extends PureComponent {
   handleBusinessOpenClick(instance) {
     instance.on('click', (arg) => {
       const { clientNameData } = this.analyticHSRateAndBusinessIndicator();
+      // 当无数据是，展示 暂无数据，下面的下钻不需要了
+      if (_.isEmpty(clientNameData)) {
+        return;
+      }
+      // 当数据展示出来，需要下钻
       const {
         push,
         cycle,
@@ -168,8 +173,8 @@ export default class PerformanceIndicators extends PureComponent {
     // 产品销售（经营指标）
     const productSaleData = [
       filterEmptyToNumber(fundTranAmt),
-      filterEmptyToNumber(finaTranAmt),
       filterEmptyToNumber(privateTranAmt),
+      filterEmptyToNumber(finaTranAmt),
       filterEmptyToNumber(otcTranAmt),
     ];
     const {

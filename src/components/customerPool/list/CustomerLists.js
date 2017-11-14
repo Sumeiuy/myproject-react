@@ -394,6 +394,7 @@ export default class CustomerLists extends PureComponent {
       emailCustId: '',
     });
   }
+
   /**
  * 回调，关闭modal打开state
  */
@@ -415,14 +416,15 @@ export default class CustomerLists extends PureComponent {
       replace,
       handleSelect,
     } = this.props;
+    const ptyMng = `${item.ptyMngName}_${item.ptyMngId}`;
     // 手动上传日志
-    handleSelect({ param: `${item.ptyMngName}_${item.ptyMngId}` });
+    handleSelect({ param: ptyMng });
 
     replace({
       pathname,
       query: {
         ...query,
-        ptyMng: `${item.ptyMngName}_${item.ptyMngId}`,
+        ptyMng,
         curPageNum: 1,
         selectAll: false,
         selectedIds: '',
@@ -484,8 +486,8 @@ export default class CustomerLists extends PureComponent {
       custList,
       curPageNum,
       pageSize,
-      onPageChange,
       onSizeChange,
+      onPageChange,
       getCustIncome,
       monthlyProfits,
       location,
@@ -550,6 +552,7 @@ export default class CustomerLists extends PureComponent {
     const BottomFixedBoxVisible = (!_.isEmpty(selectIdsArr) || isAllSelectBool);
     // 已选中的条数：选择全选显示所有数据量，非全选显示选中的条数
     const selectCount = isAllSelectBool ? page.total : selectIdsArr.length;
+    console.log('authority', authority);
     // 默认服务经理
     let serviceManagerDefaultValue = `${empInfo.empName}（${empInfo.empNum}）`;
     if (authority) {
@@ -646,7 +649,9 @@ export default class CustomerLists extends PureComponent {
             </div>
             : <NoData />
         }
-        <div className="list-pagination">
+        <div
+          className="list-pagination"
+        >
           <Pagination
             current={current}
             total={curTotal}

@@ -1,3 +1,5 @@
+@import '../../../css/variable.less';
+
 .modalContainer {
   .searchWrapper {
     margin-bottom: 30px;
@@ -5,7 +7,32 @@
       .ant-input-affix-wrapper .ant-input-suffix {
         right: -46px;
       }
+      .ant-input-affix-wrapper {
+        input {
+          width: 268px;
+          border-radius: 0;
+          cursor: pointer;
+        }
+        .ant-input-suffix {
+          right: 0;
+          & button {
+            position: relative;
+            border-radius: 0;
+            width: 30px;
+            height: 30px;
+            & i {
+              position: absolute;
+              top: 5px;
+              left: 7px;
+              font-size: 18px;
+            }
+          }
+        }
+      }
     }
+  }
+  .emptyContent {
+    .emptyContent;
   }
 }
 .taskOverViewContainer {
@@ -141,6 +168,10 @@
   }
   table > thead > tr > th {
     background-color: #f7f7f7;
+  }
+  table > colgroup > col:first-child {
+    width: 10%;
+    min-width: 10%;
   }
 }
 .btnSection {
