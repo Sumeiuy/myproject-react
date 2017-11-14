@@ -446,15 +446,12 @@ export default class Home extends PureComponent {
     }
     // 有权限，但是posOrgId不在empOrg（组织机构树）中，
     // 用posOrgId去empPostnList中匹配，找出对应岗位的信息显示出来
-    _(empPostnList).forEach((obj) => {
-      if (obj.orgId === posOrgId) {
-        this.setState({
-          createCustRange: [{
-            id: obj.orgId,
-            name: obj.orgName,
-          }],
-        });
-      }
+    const curJob = _.find(empPostnList, obj => obj.orgId === posOrgId);
+    this.setState({
+      createCustRange: [{
+        id: curJob.orgId,
+        name: curJob.orgName,
+      }],
     });
   }
 
