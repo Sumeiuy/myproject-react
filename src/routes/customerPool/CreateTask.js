@@ -43,10 +43,6 @@ const mapDispatchToProps = {
     type: 'customerPool/saveCreateTaskData',
     payload: query,
   }),
-  clearCreateTaskData: query => ({
-    type: 'customerPool/clearCreateTaskData',
-    payload: query || {},
-  }),
   push: routerRedux.push,
   goBack: routerRedux.goBack,
   getApprovalList: fectchDataFunction(true, effects.getApprovalList),
@@ -68,7 +64,6 @@ export default class CreateTask extends PureComponent {
     saveCreateTaskData: PropTypes.func.isRequired,
     getApprovalList: PropTypes.func.isRequired,
     approvalList: PropTypes.array.isRequired,
-    clearCreateTaskData: PropTypes.func.isRequired,
     getApprovalListLoading: PropTypes.bool,
   };
 
@@ -111,13 +106,6 @@ export default class CreateTask extends PureComponent {
       });
     }
   }
-
-  componentWillUnmount() {
-    const { clearCreateTaskData } = this.props;
-    // 清除数据
-    clearCreateTaskData();
-  }
-
 
   @autobind
   handleCreateTaskSuccess(result) {
@@ -173,7 +161,6 @@ export default class CreateTask extends PureComponent {
       saveCreateTaskData,
       approvalList,
       getApprovalList,
-      clearCreateTaskData,
     } = this.props;
     const { isSuccess, isApprovalListLoadingEnd, isShowApprovalModal } = this.state;
     return (
@@ -190,7 +177,6 @@ export default class CreateTask extends PureComponent {
             push={push}
             orgId={orgId}
             onCloseTab={this.handleCancleTab}
-            clearCreateTaskData={clearCreateTaskData}
             isShowApprovalModal={isShowApprovalModal}
             isApprovalListLoadingEnd={isApprovalListLoadingEnd}
             onCancel={this.resetLoading}

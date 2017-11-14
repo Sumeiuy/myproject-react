@@ -13,7 +13,6 @@ import Button from '../../common/Button';
 import CreateTaskForm from './CreateTaskForm';
 import TaskFormFlowStep from './TaskFormFlowStep';
 import styles from './createTaskFormFlow.less';
-import { fspContainer } from '../../../config';
 import { fspGlobal } from '../../../utils';
 import { validateFormContent } from '../../../decorators/validateFormContent';
 
@@ -35,7 +34,6 @@ export default class CreateTaskFormFlow extends PureComponent {
     onCloseTab: PropTypes.func.isRequired,
     orgId: PropTypes.string,
     push: PropTypes.func.isRequired,
-    clearCreateTaskData: PropTypes.func.isRequired,
     isShowApprovalModal: PropTypes.bool.isRequired,
     isApprovalListLoadingEnd: PropTypes.bool.isRequired,
     onCancel: PropTypes.func.isRequired,
@@ -64,16 +62,6 @@ export default class CreateTaskFormFlow extends PureComponent {
     this.setState({
       showBtn: _.includes(['custGroupList'], source),
     });
-  }
-
-  componentWillUnmount() {
-    // 在关闭当前tab之后，才清楚缓存的数据
-    const { clearCreateTaskData } = this.props;
-    const custListTab = document.querySelector(fspContainer.custListTab);
-    if (!custListTab) {
-      // 客户列表tab不存在，自建任务已经关闭
-      clearCreateTaskData();
-    }
   }
 
   // 从业务目标池客户：businessCustPool
@@ -157,7 +145,6 @@ export default class CreateTaskFormFlow extends PureComponent {
           <div className={styles.taskcontent}>
             <CreateTaskForm
               previousData={storedCreateTaskData}
-              saveCreateTaskData={saveCreateTaskData}
               location={location}
               dict={dict}
               ref={ref => this.createTaskForm = ref}
