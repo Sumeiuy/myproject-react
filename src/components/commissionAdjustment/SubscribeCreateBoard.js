@@ -225,6 +225,8 @@ export default class SubscribeCreateBoard extends PureComponent {
     } else {
       this.setState({
         canShowAppover: false,
+        approverId: '',
+        approverName: '',
       });
     }
     if (flag === 'add') {
