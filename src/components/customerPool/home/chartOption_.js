@@ -90,7 +90,7 @@ const getBgItem = ({
   bgColor,
 }) => {
   const newData = data.map(
-    item => (maxValue - item.value),
+    item => (maxValue - item.value).toFixed(2),
   );
   return {
     stack: '总量',
@@ -108,12 +108,7 @@ const getBgItem = ({
         fontFamily: 'Microsoft YaHei',
         fontSize: 12,
         color: '#4a4a4a',
-        formatter: (params) => {
-          if (params.value !== 0) {
-            return `${(maxValue - params.value).toFixed(2)}%`;
-          }
-          return '';
-        },
+        formatter: params => `${(maxValue - params.value)}%`,
       },
     },
   };

@@ -20,6 +20,7 @@ const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 let COUNT = 0;
 let searchInput;
+const NONE_INFO = '无相关目标客户';
 export default class Search extends PureComponent {
 
   static propTypes = {
@@ -53,6 +54,7 @@ export default class Search extends PureComponent {
   state = {
     dataSource: EMPTY_LIST,
     inputVal: '',
+    isHasSearchResult: true,
     historySource: [{
       title: '历史搜索',
       children: [{
@@ -206,6 +208,26 @@ export default class Search extends PureComponent {
   }
 
   searchResult(query, hotList) {
+    if (_.isEmpty(hotList)) {
+      this.setState({
+        isHasSearchResult: false,
+      });
+      // 提示无相关目标客户
+      return [{
+        query,
+        category: NONE_INFO,
+        content: NONE_INFO,
+        desc: NONE_INFO,
+        labelMapping: NONE_INFO,
+        tagNumId: NONE_INFO,
+        id: NONE_INFO,
+      }];
+    }
+
+    this.setState({
+      isHasSearchResult: true,
+    });
+
     return _.map(hotList, (item, index) => ({
       query,
       category: `${item.labelNameVal}${index}`,
@@ -262,8 +284,15 @@ export default class Search extends PureComponent {
   }
 
   createOption() {
-    const { dataSource, historySource, inputVal } = this.state;
-    const newData = _.map(dataSource, this.renderOption);
+    const { dataSource, historySource, inputVal, isHasSearchResult } = this.state;
+    let newData;
+    if (isHasSearchResult) {
+      // 有搜索结果
+      newData = _.map(dataSource, this.renderOption);
+    } else {
+      // 无搜索结果
+      newData = _.map(dataSource, this.renderNoneSearchResult);
+    }
     if (!_.isEmpty(inputVal)) {
       return newData;
     }
@@ -309,6 +338,7 @@ export default class Search extends PureComponent {
       searchVal: saveVal,
     });
   }
+
   // 清除历史搜索
   @autobind
   handleClearHistory() {
@@ -348,6 +378,15 @@ export default class Search extends PureComponent {
           rel="noopener noreferrer"
         />
         <span className="desc">{item.desc}</span>
+      </Option>
+    );
+  }
+
+  @autobind
+  renderNoneSearchResult(item) {
+    return (
+      <Option key={item.id} text={item.labelNameVal} disabled>
+        {item.desc}
       </Option>
     );
   }

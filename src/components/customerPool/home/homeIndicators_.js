@@ -7,7 +7,7 @@ import _ from 'lodash';
 import { fspContainer } from '../../../config';
 import { fspGlobal, helper } from '../../../utils';
 import getSeries, { singleColorBar } from './chartOption_';
-import { toFomatterCust, toFixedCust, getPercentage, toFixedMoney } from '../../chartRealTime/FixNumber';
+import { toFomatterCust, toFixedCust, getPercentage, toFixedMoney, getBarAdaptiveMax } from '../../chartRealTime/FixNumber';
 
 export function filterEmptyToInteger(number) {
   return ((_.isEmpty(number)) ? 0 : _.parseInt(number, 10));
@@ -119,6 +119,7 @@ export function getClientsNumber({
     newUnit,
     newSeries,
   } = toFomatterCust(clientNumberData);
+  const max = getBarAdaptiveMax(newSeries);
   const items = {
     grid: {
       left: '12px',
@@ -150,7 +151,11 @@ export function getClientsNumber({
         triggerEvent: true,
       },
     ],
-    yAxis: [{ show: false }],
+    yAxis: [{
+      show: false,
+      max,
+      min: 0,
+    }],
     series: singleColorBar({
       data: newSeries,
       width: 13,
