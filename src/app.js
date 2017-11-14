@@ -68,6 +68,7 @@ app.model(require('./models/fullChannelServiceRecord'));
 app.model(require('./models/commission'));
 app.model(require('./models/commissionChange'));
 app.model(require('./models/channelsTypeProtocol'));
+app.model(require('./models/channelsEdit'));
 
 // 4. Router
 app.router(routerConfig);

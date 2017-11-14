@@ -22,5 +22,7 @@ export default function channels(api) {
     getFlowStepInfo: query => api.post('/groovynoauth/fsp/protocol/queryFlowStepInfo', query),
     // 审批流程
     postDoApprove: query => api.post('/groovynoauth/fsp/protocol/doApprove', query),
+    // 验证客户
+    getCustValidate: query => api.post('/groovynoauth/fsp/protocol/custValidate', query),
   };
 }

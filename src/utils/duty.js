@@ -19,6 +19,7 @@ const duty = {
   string_yybfwg: '营业部服务岗', // 营业部服务岗
   ten_level_template_id: '1-43OZSYG', // 十档行情模板ID
   zjkcd_id: '507070', // 紫金快车道子类型ID
+  zjkcd_name: '紫金快车道协议',  // 紫金快车道子类型名称
 };
 
 export const commission = {

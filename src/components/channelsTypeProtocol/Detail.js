@@ -3,7 +3,7 @@
  * @Author: LiuJianShu
  * @Date: 2017-09-19 09:37:42
  * @Last Modified by: LiuJianShu
- * @Last Modified time: 2017-11-04 15:37:56
+ * @Last Modified time: 2017-11-07 16:12:55
  */
 import React, { PureComponent } from 'react';
 import { autobind } from 'core-decorators';
@@ -39,13 +39,16 @@ export default class Detail extends PureComponent {
     protocolDetail: PropTypes.object.isRequired,
     flowHistory: PropTypes.array.isRequired,
     attachmentList: PropTypes.array,
+    // showEditModal: PropTypes.func,
+    // hasEditPermission: PropTypes.bool,
   }
 
   static defaultProps = {
     attachmentList: EMPTY_ARRAY,
     flowHistory: EMPTY_ARRAY,
     uploadAttachment: () => {},
-    showEditModal: () => {},
+    // showEditModal: () => {},
+    // hasEditPermission: false,
   }
 
   // 处理接口返回的拟稿提请时间
@@ -57,11 +60,20 @@ export default class Detail extends PureComponent {
     return EMPTY_PARAM;
   }
 
+  @autobind
+  changeEdit() {
+    this.setState({
+      edit: true,
+    });
+  }
+
   render() {
     const {
       protocolDetail,
       flowHistory,
       attachmentList,
+      // showEditModal,
+      // hasEditPermission,
     } = this.props;
     const nowStep = {
       // 当前步骤
@@ -82,7 +94,7 @@ export default class Detail extends PureComponent {
     return (
       <div className={styles.detailComponent}>
         <div className={styles.dcHeader}>
-          <span className={styles.dcHaderNumb}>编号{protocolDetail.applyId}</span>
+          <span className={styles.dcHaderNumb}>编号{protocolDetail.appId}</span>
         </div>
         <div className={styles.detailWrapper}>
           <InfoTitle head="基本信息" />
@@ -131,7 +143,7 @@ export default class Detail extends PureComponent {
               attachmentList={item.attachmentList}
               attachment={''}
               title={item.title}
-              key={item.title}
+              key={`${protocolDetail.id}${item.title}`}
             />))
           }
         </div>

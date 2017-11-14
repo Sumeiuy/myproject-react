@@ -40,6 +40,7 @@ import ChannelsTypeProtocol from './routes/channelsTypeProtocol/Home';
 import Approval from './routes/approval/Home';
 import PermissonHome from './routes/permission/Home';
 import Contract from './routes/contract/Home';
+import ChannelsTypeProtocolEdit from './routes/channelsTypeProtocol/Edit';
 
 function switchRouter() {
   const fsp = document.querySelector(fspContainer.container);
@@ -69,7 +70,10 @@ const routes = ({ history }) => (// eslint-disable-line
       <Route path="boardEdit" component={BoardEditHome} />
       <Route path="permission" component={PermissonHome} />
       <Route path="contract" component={Contract} />
-      <Route path="channelsTypeProtocol" component={ChannelsTypeProtocol} />
+      <Route path="channelsTypeProtocol">
+        <IndexRoute component={ChannelsTypeProtocol} />
+        <Route path="edit" component={ChannelsTypeProtocolEdit} />
+      </Route>
       <Route path="approval" component={Approval} />
       <Route path="customerPool">
         <IndexRoute component={CustomerPoolHome} />

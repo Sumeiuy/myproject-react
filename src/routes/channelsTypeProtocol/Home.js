@@ -99,6 +99,8 @@ const mapDispatchToProps = {
   getFlowStepInfo: fetchDataFunction(true, 'channelsTypeProtocol/getFlowStepInfo'),
   // 提交审批流程
   doApprove: fetchDataFunction(true, 'channelsTypeProtocol/doApprove'),
+  // 验证客户
+  getCustValidate: fetchDataFunction(true, 'channelsTypeProtocol/getCustValidate'),
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -151,6 +153,8 @@ export default class ChannelsTypeProtocol extends PureComponent {
     getFlowStepInfo: PropTypes.func.isRequired,
     // 提交审批流程
     doApprove: PropTypes.func.isRequired,
+    // 验证客户
+    getCustValidate: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -283,8 +287,9 @@ export default class ChannelsTypeProtocol extends PureComponent {
     getFlowStepInfo({
       flowId: '',
       operate: 1,
+    }).then(() => {
+      this.showModal('editFormModal');
     });
-    this.showModal('editFormModal');
   }
 
   // 打开弹窗
@@ -417,7 +422,6 @@ export default class ChannelsTypeProtocol extends PureComponent {
     // 对formData校验
     if (this.checkFormDataIsLegal(formData)) {
       const { attachment } = formData;
-      console.warn('formData', formData);
       const newAttachment = [];
       for (let i = 0; i < attachment.length; i++) {
         const item = attachment[i];
@@ -467,6 +471,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
       queryCust,  // 请求下挂客户接口
       clearPropsData, // 清除props数据
       flowStepInfo, // 审批人列表
+      getCustValidate,  // 验证客户接口
     } = this.props;
     const {
       editFormModal,
@@ -507,14 +512,7 @@ export default class ChannelsTypeProtocol extends PureComponent {
       list={flowStepInfo}
       onEmitEvent={this.footerBtnHandle}
     />);
-    const editFormModalProps = {
-      modalKey: 'editFormModal',
-      title: '新建协议管理',
-      closeModal: this.closeModal,
-      visible: editFormModal,
-      size: 'large',
-      selfBtnGroup,
-    };
+    // editForm 需要的 props
     const editFormProps = {
       // 客户列表
       canApplyCustList,
@@ -546,6 +544,22 @@ export default class ChannelsTypeProtocol extends PureComponent {
       onQueryCust: queryCust,
       // 清除props数据
       clearPropsData,
+      // 验证客户
+      getCustValidate,
+    };
+    // editFormModal 需要的 props
+    const editFormModalProps = {
+      modalKey: 'editFormModal',
+      title: '新建协议管理',
+      closeModal: this.closeModal,
+      visible: editFormModal,
+      size: 'large',
+      selfBtnGroup,
+      // 子元素
+      children: <EditForm
+        {...editFormProps}
+        ref={(ref) => { this.EditFormComponent = ref; }}
+      />,
     };
     return (
       <div className={styles.premissionbox} >
@@ -558,13 +572,8 @@ export default class ChannelsTypeProtocol extends PureComponent {
         />
         {
           editFormModal ?
-            <CommonModal {...editFormModalProps} >
-              <EditForm
-                {...editFormProps}
-                ref={(ref) => { this.EditFormComponent = ref; }}
-              />
-            </CommonModal>
-            :
+            <CommonModal {...editFormModalProps} />
+          :
             null
         }
         {
