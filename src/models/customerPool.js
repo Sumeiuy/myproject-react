@@ -112,6 +112,8 @@ export default {
     peopleOfLabelData: {},
     // 审批人列表
     approvalList: [],
+    // 存储自建任务数据
+    storedCreateTaskData: {},
   },
 
   subscriptions: {
@@ -1122,6 +1124,22 @@ export default {
       return {
         ...state,
         storedTaskFlowData: payload,
+      };
+    },
+    // 存储自建任务数据
+    saveCreateTaskData(state, action) {
+      const { payload } = action;
+      return {
+        ...state,
+        storedCreateTaskData: payload,
+      };
+    },
+    // 清除自建任务数据
+    clearCreateTaskData(state, action) {
+      const { payload = {} } = action;
+      return {
+        ...state,
+        storedCreateTaskData: payload,
       };
     },
     getCustRangeByAuthoritySuccess(state, action) {
